@@ -91,9 +91,8 @@ public class ChannelList {
     TvDataServiceProxy[] dataServiceArr
     = TvDataServiceProxyManager.getInstance().getDataServices();
 
-    for (int i=0;i<dataServiceArr.length;i++) {
+    for (int i=0;i<dataServiceArr.length;i++)
       addDataServiceChannels(dataServiceArr[i]);
-    }
     
     clearChannelMaps();
   }
@@ -110,20 +109,6 @@ public class ChannelList {
   }
 
   /**
-   * Set the day light time correction for a channel.
-   * 
-   * @param channel The channel to set the value.
-   */
-  public static void setDayLightSavingTimeCorrectionsForChannel(Channel channel) {
-    String value = mChannelDayLightCorrectionMap.get(getIdForChannel(channel));
-    
-    if(value != null && value.length() > 0) {
-      int corr=Integer.parseInt(value);
-      channel.setDayLightSavingTimeCorrection(corr);
-    }    
-  }
-
-  /**
    * Stores all settings used for the Channels
    */
   public static void storeAllSettings() {
@@ -132,62 +117,41 @@ public class ChannelList {
       storeChannelNames();
       storeChannelWebPages();
   }
-
-  /**
-   * Save the day light saving time correction for all channels
-   */
-  public static void storeDayLightSavingTimeCorrections() {
-    File f=new File(Settings.getUserSettingsDirName(),"daylight_correction.txt");
-
-    FileWriter fw;
-    PrintWriter out = null;
-    
-    try {
-      fw = new FileWriter(f);
-      out = new PrintWriter(fw);
-      
-      Channel[] channelArr = getAvailableChannels();
-      
-      for (Channel channel : channelArr) {
-        int corr=channel.getDayLightSavingTimeCorrection();
-        
-        if (corr!=0)
-          out.println(channel.getDataServiceProxy().getId()+":"+channel.getId()+"="+corr);
-      }
-    }catch(IOException e) {
-      // ignore
-    }
-    if (out!=null) {
-      out.close();
-    }
-
-  }
   
   private static void addDataServiceChannels(TvDataServiceProxy dataService) {
     Channel[] channelArr = dataService.getAvailableChannels();
-    for (Channel channel : channelArr) {
-      if(!mAvailableChannels.contains(channel)) {
-        mAvailableChannels.add(channel);
-        setDayLightSavingTimeCorrectionsForChannel(channel);
-        setChannelIconForChannel(channel);
-        setChannelNameForChannel(channel);
-        setWebPageForChannel(channel);
-      }
-    }
+    
+    for (Channel channel : channelArr)
+      addChannelToAvailableChannels(channel);
   }
 
   private static void addDataServiceChannelsForTvBrowserStart(TvDataServiceProxy dataService) {
     Channel[] channelArr = dataService.getChannelsForTvBrowserStart();
-    for (Channel channel : channelArr) {
-      if(!mAvailableChannels.contains(channel)) {
-        mAvailableChannels.add(channel);
-        setDayLightSavingTimeCorrectionsForChannel(channel);
-        setChannelIconForChannel(channel);
-        setChannelNameForChannel(channel);
-        setWebPageForChannel(channel);
-      }
+    
+    for (Channel channel : channelArr)
+      addChannelToAvailableChannels(channel);
+  }
+  
+  private static void addChannelToAvailableChannels(Channel channel) {
+    if(!mAvailableChannels.contains(channel)) {
+      mAvailableChannels.add(channel);
+    
+      String key = getIdForChannel(channel);
+      
+      if(!mChannelDayLightCorrectionMap.isEmpty())
+        setDayLightSavingTimeCorrectionsForChannel(channel, key);
+    
+      if(!mChannelIconMap.isEmpty())
+        setChannelIconForChannel(channel, key);
+    
+      if(!mChannelNameMap.isEmpty())
+        setChannelNameForChannel(channel, key);
+    
+      if(!mChannelWebpagesMap.isEmpty())
+        setWebPageForChannel(channel, key);
     }
-  }  
+  }
+  
   
   private static void loadChannelMaps() {
     mChannelIconMap = createMap(new File(Settings.getUserSettingsDirName(),"channel_icons.txt"));
@@ -213,9 +177,8 @@ public class ChannelList {
     
     loadChannelMaps();
     
-    for (int i=0;i<dataServiceArr.length;i++) {
+    for (int i=0;i<dataServiceArr.length;i++)
       addDataServiceChannelsForTvBrowserStart(dataServiceArr[i]);
-    }
   }
 
   /**
@@ -296,18 +259,7 @@ public class ChannelList {
     }
     return -1;
   }
-
-
-
-  /**
-   * Returns an Enumeration of all available Channel objects.
-   *
-   * @deprecated Use getAvailableChannels
-   */
-  public static Iterator getChannels() {
-    return mAvailableChannels.iterator();
-  }
-
+  
 
   /**
    * @return The available channels in an array.
@@ -359,12 +311,30 @@ public class ChannelList {
   }
   return result;
   }
-
+  
   /**
-   * Loads the Icon-Filenames
+   * Set the day light time correction for a channel.
+   * 
+   * @param channel The channel to set the value.
+   * @param key The id of the channel.
    */
-  private static void setChannelIconForChannel(Channel channel) {
-    String value = mChannelIconMap.get(getIdForChannel(channel));
+  private static void setDayLightSavingTimeCorrectionsForChannel(Channel channel, String key) {
+    String value = mChannelDayLightCorrectionMap.get(key);
+    
+    if(value != null && value.length() > 0) {
+      int corr=Integer.parseInt(value);
+      channel.setDayLightSavingTimeCorrection(corr);
+    }    
+  }
+  
+  /**
+   * Set the icon for a channel.
+   * 
+   * @param channel The channel to set the value for.
+   * @param key The id of the channel.
+   */
+  private static void setChannelIconForChannel(Channel channel, String key) {
+    String value = mChannelIconMap.get(key);
     
     if(value != null && value.length() > 0) {
       String[] settings = value.split(";");
@@ -377,10 +347,64 @@ public class ChannelList {
           channel.useUserIcon(false);
         }
       }
-    }    
+    }
+  }
+  
+  /**
+   * Sets the name for the given channel.
+   * 
+   * @param channel The channel to set the name for.
+   * @param key The id of the channel.
+   */
+  private static void setChannelNameForChannel(Channel channel, String key) {
+    String value = mChannelNameMap.get(key);
+    
+    if(value != null && value.length() > 0)      
+      channel.setUserChannelName(value);
   }
 
+  /**
+   * Sets the web page for a channel.
+   * 
+   * @param channel The channel to set the web page for.
+   * @param key The id of the channel.
+   */
+  private static void setWebPageForChannel(Channel channel, String key) {
+    String value = mChannelWebpagesMap.get(key);
+    
+    if(value != null && value.length() > 0)      
+      channel.setUserWebPage(value);
+  }
 
+  /**
+   * Save the day light saving time correction for all channels
+   */
+  private static void storeDayLightSavingTimeCorrections() {
+    File f=new File(Settings.getUserSettingsDirName(),"daylight_correction.txt");
+
+    FileWriter fw;
+    PrintWriter out = null;
+    
+    try {
+      fw = new FileWriter(f);
+      out = new PrintWriter(fw);
+      
+      Channel[] channelArr = getAvailableChannels();
+      
+      for (Channel channel : channelArr) {
+        int corr=channel.getDayLightSavingTimeCorrection();
+        
+        if (corr!=0)
+          out.println(channel.getDataServiceProxy().getId()+":"+channel.getId()+"="+corr);
+      }
+    }catch(IOException e) {
+      // ignore
+    }
+    if (out!=null) {
+      out.close();
+    }
+  }
+  
   /**
    * Stores all Icons
    */
@@ -410,22 +434,12 @@ public class ChannelList {
       }
   }
 
-  /**
-   * Sets the name for the given channel.
-   * 
-   * @param channel The channel to set the name for.
-   */
-  public static void setChannelNameForChannel(Channel channel) {
-    String value = mChannelNameMap.get(getIdForChannel(channel));
-    
-    if(value != null && value.length() > 0)      
-      channel.setUserChannelName(value);
-  }
+
 
   /**
    * Saves the channel names for all channels.
    */
-  public static void storeChannelNames() {
+  private static void storeChannelNames() {
     File f=new File(Settings.getUserSettingsDirName(),"channel_names.txt");
 
     FileWriter fw;
@@ -439,8 +453,10 @@ public class ChannelList {
       
       for (Channel channel : channelArr) {
         String userChannelName = channel.getUserChannelName();
+        String defaultChannelName = channel.getDefaultName();
         
-        if ((userChannelName != null) && (userChannelName.trim().length() > 0))
+        if ((userChannelName != null) && (userChannelName.trim().length() > 0)
+            && userChannelName.compareTo(defaultChannelName) != 0)
           out.println(channel.getDataServiceProxy().getId()+":"+channel.getId()+"=" + userChannelName.trim());
       }
     }catch(IOException e) {
@@ -452,22 +468,10 @@ public class ChannelList {
   }
 
   /**
-   * Sets the web page for a channel.
-   * 
-   * @param channel The channel to set the web page for.
-   */
-  public static void setWebPageForChannel(Channel channel) {
-    String value = mChannelWebpagesMap.get(getIdForChannel(channel));
-    
-    if(value != null && value.length() > 0)      
-      channel.setUserWebPage(value);
-  }
-
-  /**
    * Saves the web pages of all channels.
    *
    */
-  public static void storeChannelWebPages() {
+  private static void storeChannelWebPages() {
     File f=new File(Settings.getUserSettingsDirName(),"channel_webpages.txt");
 
     FileWriter fw;
@@ -481,8 +485,10 @@ public class ChannelList {
       
       for (Channel channel : channelArr) {
         String userWebPage = channel.getUserWebPage();
+        String defaultWebPage = channel.getDefaultWebPage();
         
-        if ((userWebPage != null) && (userWebPage.trim().length() > 0))
+        if ((userWebPage != null) && (userWebPage.trim().length() > 0)
+            && userWebPage.compareTo(defaultWebPage) != 0)
           out.println(channel.getDataServiceProxy().getId()+":"+channel.getId()+"=" + userWebPage.trim());
       }
     }catch(IOException e) {
