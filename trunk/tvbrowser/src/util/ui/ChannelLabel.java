@@ -41,17 +41,18 @@ import devplugin.Channel;
 public class ChannelLabel extends JLabel {
 
   /** A Icon-Cache for Perfomance-Reasons*/
-  static private WeakHashMap ICONCACHE = new WeakHashMap();
+  static private WeakHashMap<Icon,Icon> ICONCACHE = new WeakHashMap<Icon,Icon>();
   
   static Icon DEFAULT_ICON =  new ImageIcon("./imgs/tvbrowser16.png");
   private boolean mChannelIconsVisible;
   private boolean mTextIsVisible;
+  private boolean mShowDefaultValues;
   
   /**
    * Creates the ChannelLabel
    */
   public ChannelLabel() {
-    this(Settings.propEnableChannelIcons.getBoolean(), Settings.propShowChannelNames.getBoolean());
+    this(Settings.propEnableChannelIcons.getBoolean(), Settings.propShowChannelNames.getBoolean(),false);
   }
 
   /**
@@ -60,9 +61,9 @@ public class ChannelLabel extends JLabel {
    * @param channelIconsVisible Should the Icon be visible
    */
   public ChannelLabel(boolean channelIconsVisible) {
-    this(channelIconsVisible,Settings.propShowChannelNames.getBoolean());
+    this(channelIconsVisible,Settings.propShowChannelNames.getBoolean(),false);
   }
-  
+
   /**
    * Creates the ChanelLabel
    * 
@@ -70,8 +71,19 @@ public class ChannelLabel extends JLabel {
    * @param textIsVisible Should Text be visible ?
    */
   public ChannelLabel(boolean channelIconsVisible, boolean textIsVisible) {
+    this(channelIconsVisible,textIsVisible,false);
+  }
+  /**
+   * Creates the ChanelLabel
+   * 
+   * @param channelIconsVisible Should the Icon be visible
+   * @param textIsVisible Should Text be visible ?
+   * @param showDefaultValues Show the default channel icon and name.
+   */
+  public ChannelLabel(boolean channelIconsVisible, boolean textIsVisible, boolean showDefaultValues) {
     mChannelIconsVisible = channelIconsVisible;
     mTextIsVisible = textIsVisible;
+    mShowDefaultValues = showDefaultValues;
   }
 
   /**
@@ -119,10 +131,10 @@ public class ChannelLabel extends JLabel {
    */
   public void setChannel(Channel ch) {
     if (mChannelIconsVisible) {
-      setIcon(ch.getIcon());
+      setIcon(mShowDefaultValues ? ch.getDefaultIcon() : ch.getIcon());
     }
     if (mTextIsVisible) {
-      setText(ch.getName());
+      setText(mShowDefaultValues ? ch.getDefaultName() : ch.getName());
     }
     setMinimumSize(new Dimension(42,22));
     setToolTipText(ch.getName());

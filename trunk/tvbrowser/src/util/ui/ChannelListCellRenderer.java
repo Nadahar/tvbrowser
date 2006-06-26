@@ -41,18 +41,24 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
   private ChannelLabel mChannel;
   private boolean mChannelIconsVisible;
   private boolean mAllIsVisible;
+  private boolean mDefaultValues;
 
   public ChannelListCellRenderer() {
-    this(true,false);
+    this(true,false,false);
   }
 
   public ChannelListCellRenderer(boolean channelIconsVisible) {
-    this(channelIconsVisible,false);
+    this(channelIconsVisible,false,false);
   }
 
   public ChannelListCellRenderer(boolean channelIconsVisible, boolean allIsVisible) {
+    this(channelIconsVisible,allIsVisible,false);
+  }
+  
+  public ChannelListCellRenderer(boolean channelIconsVisible, boolean allIsVisible, boolean defaultValues) {
     mChannelIconsVisible = channelIconsVisible;
     mAllIsVisible = allIsVisible;
+    mDefaultValues = defaultValues;
   }
   
   public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
@@ -60,7 +66,7 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
     JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
     if (mChannel == null) {
-      mChannel = new ChannelLabel(mChannelIconsVisible,mAllIsVisible);
+      mChannel = new ChannelLabel(mChannelIconsVisible,mAllIsVisible,mDefaultValues);
     }
 
     if (value instanceof Channel) {
