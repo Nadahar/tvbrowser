@@ -78,8 +78,10 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
     if (mManager.isLoaded()) {
       if (b && !mTrayVisible) {
         mManager.systrayShow();
+        mTrayVisible = true;
       } else if (mTrayVisible){
         mManager.systrayHide();
+        mTrayVisible = false;
       }
     }
   }
