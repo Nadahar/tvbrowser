@@ -42,6 +42,7 @@ import tvbrowser.core.Settings;
  *  3. Jar of the Class
  * 
  * @author bodum
+ * @since 2.3
  */
 public class LocalizerClassloader extends ClassLoader {
 
