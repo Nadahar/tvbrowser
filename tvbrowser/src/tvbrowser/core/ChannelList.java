@@ -94,16 +94,6 @@ public class ChannelList {
     for (int i=0;i<dataServiceArr.length;i++) {
       addDataServiceChannels(dataServiceArr[i]);
     }
-
-    /* remove all subscribed channels which are not available any more */
-    Object[] currentSubscribedChannels = mSubscribedChannels.toArray();
-    for (int i=0; i<currentSubscribedChannels.length; i++) {
-      Channel ch = (Channel)currentSubscribedChannels[i];
-      if (!mAvailableChannels.contains(ch)) {
-        mLog.warning(ch+" is not available any more");
-        mSubscribedChannels.remove(ch);
-      }
-    }
     
     clearChannelMaps();
   }
@@ -225,16 +215,6 @@ public class ChannelList {
     
     for (int i=0;i<dataServiceArr.length;i++) {
       addDataServiceChannelsForTvBrowserStart(dataServiceArr[i]);
-    }
-
-    /* remove all subscribed channels which are not available any more */
-    Object[] currentSubscribedChannels = mSubscribedChannels.toArray();
-    for (int i=0; i<currentSubscribedChannels.length; i++) {
-      Channel ch = (Channel)currentSubscribedChannels[i];
-      if (!mAvailableChannels.contains(ch)) {
-        mLog.warning(ch+" is not available any more");
-        mSubscribedChannels.remove(ch);
-      }
     }
   }
 
