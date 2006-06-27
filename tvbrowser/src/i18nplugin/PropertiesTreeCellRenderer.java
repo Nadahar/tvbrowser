@@ -56,7 +56,7 @@ public class PropertiesTreeCellRenderer extends DefaultTreeCellRenderer {
 
     if (value instanceof LanguageNodeIf) {
       LanguageNodeIf entry = (LanguageNodeIf) value;
-      if (!entry.allTranslationsAvailableFor(mLocale)) {
+      if (!entry.allTranslationsAvailableFor(mLocale) && !sel) {
         label.setForeground(Color.RED);
       }
     }
