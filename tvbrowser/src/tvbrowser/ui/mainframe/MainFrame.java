@@ -28,7 +28,10 @@ package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.Frame;
 import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -807,13 +810,45 @@ public class MainFrame extends JFrame implements DateListener {
    * @param visibleTabId
    *          Id of the specific Tab
    */
-  public void showSettingsDialog(String visibleTabId) {
-    SettingsDialog dlg = new SettingsDialog(this, visibleTabId);
-    dlg.centerAndShow();
-    Settings.handleChangedSettings();
-    if (mPluginView != null) {
-      mPluginView.refreshTree();
-    }
+  public void showSettingsDialog(final String visibleTabId) {
+    new Thread(new Runnable() {
+      public void run() {
+        final Thread t = ChannelList.getChannelLoadThread();
+        
+        if(t != null && t.isAlive()) {
+           final SettingsWaitingDialog dialog;
+              
+           Window comp = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+           if (comp instanceof Dialog) {
+             dialog = new SettingsWaitingDialog((JDialog)comp);
+           } else { 
+             dialog = new SettingsWaitingDialog((JFrame)comp);
+           }
+
+           SwingUtilities.invokeLater(new Runnable() {
+             public void run() {
+               if (t.isAlive())
+                 UiUtilities.centerAndShow(dialog);
+             }
+           });
+           
+           try {
+             t.join();
+           }catch(Exception e) {
+             e.printStackTrace();
+           }
+           dialog.setVisible(false);
+           dialog.dispose();
+        }
+        
+        SettingsDialog dlg = new SettingsDialog(MainFrame.this, visibleTabId);
+        dlg.centerAndShow();
+        Settings.handleChangedSettings();
+        if (mPluginView != null) {
+          mPluginView.refreshTree();
+        }
+      }
+    }).start();
   }
 
   /*****************************************************************************
@@ -823,12 +858,7 @@ public class MainFrame extends JFrame implements DateListener {
    *          Plugin to show
    */
   public void showSettingsDialog(Plugin plugin) {
-    SettingsDialog dlg = new SettingsDialog(this, plugin.getId());
-    dlg.centerAndShow();
-    Settings.handleChangedSettings();
-    if (mPluginView != null) {
-      mPluginView.refreshTree();
-    }
+    showSettingsDialog(plugin.getId());
   }
 
   /**
@@ -876,7 +906,16 @@ public class MainFrame extends JFrame implements DateListener {
         JOptionPane.showMessageDialog(this, mLocalizer.msg("error.2",
             "No new items available"));
       } else {
-        SoftwareUpdateDlg dlg = new SoftwareUpdateDlg(this);
+        Window wnd = UiUtilities.getBestDialogParent(this);
+        
+        SoftwareUpdateDlg dlg;
+        
+        if (wnd instanceof Frame) {
+          dlg = new SoftwareUpdateDlg((Frame)wnd);
+        } else {
+          dlg = new SoftwareUpdateDlg((Dialog)wnd);
+        }
+          
         dlg.setSoftwareUpdateItems(mSoftwareUpdateItems);
         dlg.setLocationRelativeTo(UiUtilities.getLastModalChildOf(this));
         dlg.setVisible(true);
