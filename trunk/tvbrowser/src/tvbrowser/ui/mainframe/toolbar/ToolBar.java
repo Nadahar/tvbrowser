@@ -85,6 +85,8 @@ public class ToolBar extends JToolBar {
   private String mLocation;
   private boolean disabled = false;
 
+  private JButton mUpdateButton = null;
+  
   public ToolBar(ToolBarModel model) {
     super();
     setBorder(null);
@@ -110,13 +112,31 @@ public class ToolBar extends JToolBar {
     });
   }
 
+  public void updatePluginButtons() {
+    ((DefaultToolBarModel) mModel).updatePluginButtons();
+    update();
+  }
+  
   public void updateTimeButtons() {
     ((DefaultToolBarModel) mModel).updateTimeButtons();
     update();
   }
   
+  public void updateUpdateButton(boolean showStopButton) {
+    if(showStopButton)
+      ((DefaultToolBarModel)mModel).showStopButton();
+    else
+      ((DefaultToolBarModel)mModel).showUpdateButton();
+    
+    if(mUpdateButton != null) {
+      mUpdateButton.removeActionListener(mUpdateButton.getActionListeners()[0]);
+      addButtonProperties(mUpdateButton, ((DefaultToolBarModel)mModel).getUpdateAction());
+    }
+  }
+  
   public void update() {
     super.removeAll();
+    mUpdateButton = null;
     Action[] actions = mModel.getActions();
     for (Action action : actions) {
       Integer typeInteger = (Integer) action.getValue(ACTION_TYPE_KEY);
@@ -225,6 +245,9 @@ public class ToolBar extends JToolBar {
     addButtonProperties(button, action);
     button.setBorderPainted(false);
 
+    if(action.equals(((DefaultToolBarModel)mModel).getUpdateAction()))
+      mUpdateButton = button;
+    
     button.addMouseListener(new MouseAdapter() {
       public void mouseEntered(MouseEvent e) {
         button.setBorderPainted(true);
@@ -314,7 +337,12 @@ public class ToolBar extends JToolBar {
     Icon icon = getIcon(action);
     String title = getTitle(action);
     
-    button.setAction(action);
+    button.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        action.actionPerformed(new ActionEvent(action,ActionEvent.ACTION_PERFORMED,""));
+      }
+    });
+    
     button.setText(title);
     button.setIcon(icon);
     button.setName(action.getValue(ToolBar.ACTION_ID_KEY).toString());

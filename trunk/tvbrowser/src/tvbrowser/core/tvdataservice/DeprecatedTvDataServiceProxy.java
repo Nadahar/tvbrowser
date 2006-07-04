@@ -60,7 +60,7 @@ public class DeprecatedTvDataServiceProxy extends AbstractTvDataServiceProxy {
 
   public ChannelGroup[] getAvailableGroups() {
     return new ChannelGroup[]{
-        new ChannelGroupImpl("nix",mDataService.getInfo().getName(),mDataService.getInfo().getDescription(),mDataService.getInfo().getAuthor())
+        new ChannelGroupImpl("ID_"+mDataService.getInfo().getName(),mDataService.getInfo().getName(),mDataService.getInfo().getDescription(),mDataService.getInfo().getAuthor())
     };
   }
 

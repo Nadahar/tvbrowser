@@ -378,9 +378,13 @@ public class FavoritesPlugin {
 
     mFavoriteArr = list.toArray(new Favorite[list.size()]);
 
-    ReminderPlugin.getInstance().removePrograms(favorite.getPrograms());
+    String[] reminderServices = favorite.getReminderConfiguration().getReminderServices();    
+    
+    for (int i=0; i<reminderServices.length; i++)
+      if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderServices[i])) 
+        ReminderPlugin.getInstance().removePrograms(favorite.getPrograms());
+    
     updateRootNode();
-
   }
 
   /**
@@ -580,6 +584,10 @@ public class FavoritesPlugin {
       try {
         favorite.updatePrograms();
         addFavorite(favorite);
+        
+        if(ManageFavoritesDialog.getInstance() != null)
+          ManageFavoritesDialog.getInstance().addFavorite(favorite, null);
+        
       }catch (TvBrowserException exc) {
         ErrorHandler.handle(mLocalizer.msg("couldNotUpdateFavorites","Could not update favorites."), exc);
       }

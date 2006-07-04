@@ -46,10 +46,23 @@ public class ChannelUserSettings {
   private static HashMap mChannelUserSettings = new HashMap();
 
   public static ChannelUserSettings getSettings(Channel ch) {
-    ChannelUserSettings settings = (ChannelUserSettings)mChannelUserSettings.get(ch.getId());
+    if(ch == null || ch.getDataServiceProxy() == null || ch.getGroup() == null) {
+      ChannelUserSettings settings = (ChannelUserSettings)mChannelUserSettings.get(null);
+      
+      if (settings == null) {
+        settings = new ChannelUserSettings();
+        mChannelUserSettings.put(null, settings);
+      }
+      
+      return settings;
+    }
+      
+    String idValue = (new StringBuffer(ch.getDataServiceProxy().getId()).append(ch.getGroup().getId()).append(":").append(ch.getId())).toString();
+    
+    ChannelUserSettings settings = (ChannelUserSettings)mChannelUserSettings.get(idValue);
     if (settings == null) {
       settings = new ChannelUserSettings();
-      mChannelUserSettings.put(ch.getId(), settings);
+      mChannelUserSettings.put(idValue, settings);
     }
     return settings;
   }

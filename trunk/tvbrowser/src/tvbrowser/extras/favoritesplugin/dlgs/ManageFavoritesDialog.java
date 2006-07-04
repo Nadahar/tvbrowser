@@ -552,7 +552,9 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     }
   }
 
-
+  public void addFavorite(Favorite fav, Object dummy) {
+    mFavoritesListModel.addElement(fav);
+  }
 
   protected void editSelectedFavorite() {
     Favorite fav = (Favorite) mFavoritesList.getSelectedValue();

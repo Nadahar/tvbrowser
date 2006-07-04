@@ -54,16 +54,25 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
   private JLabel mHeaderLb;
   private ProgramPanel mProgramPanel;
   
-  
-  
+  /**
+   * Creates a new instance of ProgramListCellRenderer
+   */
   public ProgramListCellRenderer() {
+    this(false);    
+  }
+  
+  /**
+   * Creates a new instance of ProgramListCellRenderer
+   * @param showOnlyDateAndTitle If the programs should only show date and title.
+   */
+  public ProgramListCellRenderer(boolean showOnlyDateAndTitle) {
     mMainPanel = new JPanel(new BorderLayout());
     mMainPanel.setOpaque(true);
     
     mHeaderLb = new JLabel();
     mMainPanel.add(mHeaderLb, BorderLayout.NORTH);
     
-    mProgramPanel = new ProgramPanel();
+    mProgramPanel = new ProgramPanel(showOnlyDateAndTitle);
     mMainPanel.add(mProgramPanel, BorderLayout.CENTER);
   }
   

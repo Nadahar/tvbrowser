@@ -74,13 +74,22 @@ public class Exclusion {
   }
 
   public Exclusion(ObjectInputStream in) throws ClassNotFoundException, IOException {
-    in.readInt();  // version
-
+    int version = in.readInt();  // version
+    
     boolean hasChannel = in.readBoolean();
     if (hasChannel) {
-      String channelServiceClassName = (String) in.readObject();
-      String channelId=(String)in.readObject();
-      mChannel = Channel.getChannel(channelServiceClassName, channelId);
+      if(version < 3) {
+        String channelServiceClassName = (String) in.readObject();
+        String channelGroupId = null;
+      
+        if(version >= 2)
+          channelGroupId = (String) in.readObject();
+      
+        String channelId=(String)in.readObject();
+        mChannel = Channel.getChannel(channelServiceClassName, channelGroupId, null, channelId);
+      }
+      else
+        mChannel = Channel.readData(in, true);
     }
 
     boolean hasTitle = in.readBoolean();
@@ -101,11 +110,10 @@ public class Exclusion {
 
 
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(1);  // version
+    out.writeInt(3);  // version
     out.writeBoolean(mChannel != null);
     if (mChannel != null) {
-      out.writeObject(mChannel.getDataServiceProxy().getId());
-      out.writeObject(mChannel.getId());
+      mChannel.writeData(out);
     }
 
     out.writeBoolean(mTitle != null);

@@ -38,6 +38,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import devplugin.ContextMenuIf;
 import devplugin.Plugin;
 import devplugin.PluginManager;
 import devplugin.Program;
@@ -49,7 +50,7 @@ import devplugin.Program;
 public class ProgramList extends JList implements ChangeListener, ListDataListener {
 
     private Vector mPrograms = new Vector();
-
+    
 
     /**
      * Creates the JList and adds the default MouseListeners (PopUpBox)
@@ -80,6 +81,49 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
         super(programs);
         programs.addListDataListener(this);
         setCellRenderer(new ProgramListCellRenderer());
+    }
+    
+    /**
+     * Creates the JList and adds the default MouseListeners (PopUpBox)
+     *
+     * @param programArr Array of Programs to show
+     * @param showOnlyDateAndTitle
+     *          If this panel should only show date time and title.
+     *          
+     * @since 2.2.1  
+     */
+    public ProgramList(Vector programArr, boolean showOnlyDateAndTitle) {
+        super(programArr);
+        setCellRenderer(new ProgramListCellRenderer(showOnlyDateAndTitle));
+    }
+
+    /**
+     * Creates the JList and adds the default MouseListeners (PopUpBox)
+     *
+     * @param programArr Array of Programs to show
+     * @param showOnlyDateAndTitle
+     *          If this panel should only show date time and title.
+     *          
+     * @since 2.2.1  
+     */
+    public ProgramList(Program[] programArr, boolean showOnlyDateAndTitle) {
+        super(programArr);
+        setCellRenderer(new ProgramListCellRenderer(showOnlyDateAndTitle));
+    }
+
+    /**
+     * Creates the JList and adds the default MouseListeners (PopUpBox)
+     *
+     * @param programs Model with Programs to show
+     * @param showOnlyDateAndTitle
+     *          If this panel should only show date time and title.
+     *          
+     * @since 2.2.1  
+     */
+    public ProgramList(ListModel programs, boolean showOnlyDateAndTitle) {
+        super(programs);
+        programs.addListDataListener(this);
+        setCellRenderer(new ProgramListCellRenderer(showOnlyDateAndTitle));
     }
 
     /**
@@ -120,8 +164,13 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
 
     /**
      * Add a Mouse-Listener for the Popup-Box
+     * 
+     * The caller ContextMenuIfs menus are not shown, if you want
+     * to have all available menus just use <code>null</code> for caller.
+     * 
+     * @param caller The ContextMenuIf that called this.
      */
-    public void addMouseListeners(final Plugin caller) {
+    public void addMouseListeners(final ContextMenuIf caller) {
       addMouseListener(new MouseAdapter() {
 
         public void mousePressed(MouseEvent e) {
@@ -162,9 +211,9 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
     /**
      * Shows the Popup
      * @param e MouseEvent for X/Y Coordinates
-     * @param caller Plugin that called this
+     * @param caller The ContextMenuIf that called this
      */
-    private void showPopup(MouseEvent e, Plugin caller) {
+    private void showPopup(MouseEvent e, ContextMenuIf caller) {
       PluginManager mng = Plugin.getPluginManager();
 
       int inx = locationToIndex(e.getPoint());
@@ -173,7 +222,6 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
       if(getModel().getElementAt(inx) instanceof Program) {
         Program prog = (Program) getModel().getElementAt(inx);
         JPopupMenu menu = mng.createPluginContextMenu(prog, caller);
-
         menu.show(ProgramList.this, e.getX() - 15, e.getY() - 15);
       }
     }

@@ -27,10 +27,12 @@
 package tvbrowserdataservice;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -94,9 +96,10 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   private static ArrayList BLOCKEDSERVERS = new ArrayList();
   /** Mirror-Download Running?*/
   private boolean mMirrorDownloadRunning = true;
+  /** Exception on downloading in Thread */
+  private boolean mDownloadException = false;
   /** Data of Mirror-Download*/
   private byte[] mMirrorDownloadData = null;
-  
 
   public ChannelGroup(TvBrowserDataService dataservice, String id, String name, String description, String provider, String[] mirrorUrls, Properties settings) {
     mID = id;
@@ -268,20 +271,67 @@ public class ChannelGroup implements devplugin.ChannelGroup {
       }
     }
   }
+  
+  protected void setBaseMirror(String[] mirrorUrl) {
+    mMirrorUrlArr = mirrorUrl;
+  }
 
+  private Mirror getServerDefinedMirror() {
+    File groupFile = new File(mDataDir, TvBrowserDataService.CHANNEL_GROUPS_FILENAME);
+    Mirror mirror = null;
+    
+    if (!groupFile.exists())
+      mLog.info("Group file '"+TvBrowserDataService.CHANNEL_GROUPS_FILENAME+"' does not exist");
+    else {
+      BufferedReader in = null;      
+      
+      try {
+        in = new BufferedReader(new InputStreamReader(new BufferedInputStream(new FileInputStream(groupFile), 0x1000), "utf-8"));
+        String line = in.readLine();
+        while (line != null) {
+          String[] s = line.split(";");
+          
+          if (s.length>=5 && s[0].compareTo(mID) == 0) {
+            mirror = new Mirror(s[4], 1);
+            break;
+          }
+          
+          line = in.readLine();
+        }
+        in.close();
+      } catch (IOException e) {
+        mLog.log(Level.SEVERE, "Could not read group list "+TvBrowserDataService.CHANNEL_GROUPS_FILENAME, e);
+      }
+      finally {
+        if(in != null)
+          try {
+            in.close();
+          }catch(Exception ee) {}
+      }
+    }
+    
+    return mirror;
+  }
+  
   private Mirror[] loadMirrorList() {
     File file = new File(mDataDir, mID + "_" + Mirror.MIRROR_LIST_FILE_NAME);
     try {
-      ArrayList<Mirror> mirrorList = new ArrayList<Mirror>(Arrays.asList(Mirror.readMirrorListFromFile(file)));
-      
-      for (String mirrorUrl : mMirrorUrlArr) {
-        Mirror basemirror = new Mirror(mirrorUrl);
+      ArrayList mirrorList = new ArrayList(Arrays.asList(Mirror.readMirrorListFromFile(file)));
+
+      for (int i=0;i<mMirrorUrlArr.length;i++) {
+        Mirror basemirror = (Mirror)mirrorList.get(i);
         if (!mirrorList.contains(basemirror)) {
           mirrorList.add(basemirror);
         }
       }
-      
-      return mirrorList.toArray(new Mirror[mirrorList.size()]);
+
+      Mirror groupmirror = getServerDefinedMirror();
+
+      if(groupmirror != null)
+        if(!mirrorList.contains(groupmirror))
+          mirrorList.add(groupmirror);
+
+      return (Mirror[])mirrorList.toArray(new Mirror[mirrorList.size()]);
     } catch (Exception exc) {
 
       Mirror[] mirrorList = new Mirror[mMirrorUrlArr.length];
@@ -289,7 +339,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
         if (!BLOCKEDSERVERS.contains(getServerBase(mMirrorUrlArr[i]))) {
           mirrorList[i] = new Mirror(mMirrorUrlArr[i]);
         }
-        
+
       }
       return mirrorList;
 
@@ -349,16 +399,18 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     // Load the lastupdate file and parse it
     final String url = mirror.getUrl() + "/" + mID + "_lastupdate";
     Date lastupdated;
-    mMirrorDownloadRunning = true;
+    mMirrorDownloadRunning = true;    
     mMirrorDownloadData = null;
+    mDownloadException = false;
     
     mLog.info("Loading MirrorDate from " + url);
     
     new Thread(new Runnable() {
       public void run() {
         try {
-          mMirrorDownloadData = IOUtilities.loadFileFromHttpServer(new URL(url));
+          mMirrorDownloadData = IOUtilities.loadFileFromHttpServer(new URL(url), 60000);
         } catch (Exception e) {
+          mDownloadException = true;
         }
         mMirrorDownloadRunning = false;
       };
@@ -375,23 +427,29 @@ public class ChannelGroup implements devplugin.ChannelGroup {
       }
     }
 
-    if (mMirrorDownloadRunning || mMirrorDownloadData == null) {
+    if (mMirrorDownloadRunning || mMirrorDownloadData == null || mDownloadException) {
       mLog.info("Server " + url +" is down!");
       return false;
     }
     
-    mLog.info("Done !");
-    
     mDirectlyLoadedBytes += mMirrorDownloadData.length;
+    
+    try {
+      // Parse is. E.g.: '2003-10-09 11:48:45'
+      String asString = new String(mMirrorDownloadData);    
+      int year = Integer.parseInt(asString.substring(0, 4));
+      int month = Integer.parseInt(asString.substring(5, 7));
+      int day = Integer.parseInt(asString.substring(8, 10));
+      lastupdated = new Date(year, month, day);
+      
+      mLog.info("Done !");
+      
+      return lastupdated.compareTo(new Date().addDays(-MAX_LAST_UPDATE_DAYS)) >= 0;
+    }catch(NumberFormatException parseException) {
+      mLog.info("The file on the server has the wrong format!");
+    }
 
-    // Parse is. E.g.: '2003-10-09 11:48:45'
-    String asString = new String(mMirrorDownloadData);
-    int year = Integer.parseInt(asString.substring(0, 4));
-    int month = Integer.parseInt(asString.substring(5, 7));
-    int day = Integer.parseInt(asString.substring(8, 10));
-    lastupdated = new Date(year, month, day);
-
-    return lastupdated.compareTo(new Date().addDays(-MAX_LAST_UPDATE_DAYS)) >= 0;
+    return false;
   }
 
   private Mirror chooseUpToDateMirror(Mirror[] mirrorArr, ProgressMonitor monitor) throws TvBrowserException {

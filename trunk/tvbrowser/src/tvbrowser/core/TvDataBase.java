@@ -29,7 +29,9 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.logging.Level;
 
 import tvbrowser.core.data.OnDemandDayProgramFile;
@@ -64,12 +66,15 @@ public class TvDataBase {
   /** Contains date objects for each date for which we have a tv listing */
   private HashSet mAvailableDateSet;
 
+  private Hashtable mNewDayProgramsAfterUpdate;
+  
   private TvDataInventory mTvDataInventory;
 
   private TvDataBase() {
     mTvDataHash = new ValueCache();
     mListenerList = new ArrayList();
     mAvailableDateSet = new HashSet();
+    mNewDayProgramsAfterUpdate = new Hashtable();
     updateAvailableDateSet();
 
     TvDataUpdater.getInstance().addTvDataUpdateListener(
@@ -230,6 +235,21 @@ public class TvDataBase {
     for (int j = 0; j < ch.length; j++)
       for (int i = 0; i < days; i++)
         correctDayProgramFile(Date.getCurrentDate().addDays(i), ch[j]);
+    
+    Enumeration keys = mNewDayProgramsAfterUpdate.keys();
+    
+    while(keys.hasMoreElements()) {
+      ChannelDateItem key = (ChannelDateItem)keys.nextElement();
+      
+      // Inform the listeners about adding the new program
+      fireDayProgramAdded(getDayProgram(key.getDate(), key.getChannel()));
+      
+      Object oldProg = mNewDayProgramsAfterUpdate.get(key);
+      
+      // Inform the listeners about deleting the old program
+      if (oldProg instanceof ChannelDayProgram)
+        fireDayProgramDeleted((ChannelDayProgram)oldProg);
+    }
   }
 
   public synchronized void setDayProgram(MutableChannelDayProgram prog) {
@@ -269,8 +289,11 @@ public class TvDataBase {
     // Inform the listeners about adding the new program
     // NOTE: This must happen before saving to give the listeners the chance to
     // change the data and have those changes saved to disk.
-    fireDayProgramAdded(prog);
+    //fireDayProgramAdded(prog);
 
+    // create the DateChannel item for the update hashtable
+    ChannelDateItem laterKey = new ChannelDateItem(channel, date);
+    
     // Save the new program
     try {
       // Save the day program
@@ -281,10 +304,11 @@ public class TvDataBase {
         backupFile.delete();
       }
 
-      // Inform the listeners about deleting the old program
-      if (oldProg != null) {
-        fireDayProgramDeleted(oldProg);
-      }
+      // save the value for informing the listeners later
+      if(oldProg != null)
+        mNewDayProgramsAfterUpdate.put(laterKey, oldProg);
+      else
+        mNewDayProgramsAfterUpdate.put(laterKey, "null");
 
       // Set the new program to 'known'
       int version = (int) file.length();
@@ -292,6 +316,9 @@ public class TvDataBase {
     } catch (IOException exc) {
       // Remove the new program from the cache
       removeCacheEntry(key);
+      
+      // Remove the program from the later update list
+      mNewDayProgramsAfterUpdate.remove(laterKey);
 
       // Inform the listeners about removing the new program
       fireDayProgramDeleted(prog);
@@ -706,5 +733,38 @@ public class TvDataBase {
       }
     }
     return false;
+  }
+  
+  /**
+   *  A class for the update keys. 
+   */
+  private class ChannelDateItem  {
+    private Date mDate;
+    private Channel mChannel;
+    
+    /**
+     * Creates an instance of this item.
+     * 
+     * @param date The date of this item.
+     * @param channel The channel of this item.
+     */
+    public ChannelDateItem(Channel channel, Date date) {
+      mChannel = channel;
+      mDate = date;
+    }
+    
+    /**
+     * @return The channel of this item
+     */
+    public Channel getChannel() {
+      return mChannel;
+    }
+    
+    /**
+     * @return The date of this item.
+     */
+    public Date getDate() {
+      return mDate;
+    }
   }
 }

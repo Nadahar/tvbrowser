@@ -90,6 +90,8 @@ public class ShowviewEncoder {
     //       von Gerhard Zelczak siehe http://www.zelczak.com/showview.htm
     //       Daher stammen auch die Kommentare
     //       Diese HTML-Seiten sind auch im txt-Ordner archiviert
+    if(length < 1)
+      return null;
     
     year = year % 100;
     

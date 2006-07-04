@@ -86,13 +86,24 @@ public class ChannelArrayProperty extends Property {
         for (int i = 0; i < splits.length; i++) {
           int pos = splits[i].indexOf(':');
           if (pos > 0) {
-            String dataServiceClassName = splits[i].substring(0, pos);
-            String id = splits[i].substring(pos + 1);
-  
-            TvDataServiceProxy dataService
-              = TvDataServiceProxyManager.getInstance().findDataServiceById(dataServiceClassName);
+            String dataServiceId = splits[i].substring(0, pos);
+            String groupId = null;
+            String country = null;
+            String channelId = splits[i].substring(pos + 1);
+            
+            if(channelId.indexOf(":") != -1) {
+              String[] values = channelId.split(":");
+              groupId = values[0];
               
-            Channel ch = ChannelList.getChannel(dataService, id);
+              if(values.length > 2) {
+                country = values[1];
+                channelId = values[2];
+              }
+              else
+                channelId = values[1];
+            }
+            
+            Channel ch = ChannelList.getChannel(dataServiceId, groupId, country, channelId);
             if (ch != null) {
               channels.add(ch);
             }
@@ -139,8 +150,8 @@ public class ChannelArrayProperty extends Property {
         if (i != 0) {
           buffer.append(',');
         }
-        String dsClassName = value[i].getDataService().getClass().getName();
-        buffer.append(dsClassName).append(':').append(value[i].getId());
+        String dataServiceId = value[i].getDataServiceProxy().getId();
+        buffer.append(dataServiceId).append(":").append(value[i].getGroup().getId()).append(":").append(value[i].getCountry()).append(':').append(value[i].getId());
       }
       
       setProperty(buffer.toString());

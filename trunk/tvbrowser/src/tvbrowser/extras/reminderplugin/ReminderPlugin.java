@@ -385,7 +385,7 @@ public class ReminderPlugin {
         a.setActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             if (minutes == -1) {
-              mReminderList.remove(program);
+              mReminderList.removeWithoutChecking(program);
               updateRootNode();
             } else {
               item.setMinutes(minutes);

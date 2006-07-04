@@ -268,7 +268,7 @@ public class OnDemandDayProgramFile {
       dataFile.writeInt(programCount);
       for (int i = 0; i < programCount; i++) {
         Program program = mDayProgram.getProgramAt(i);
-        saveProgram(program, dataFile, date, channel);
+        saveProgram(program, dataFile);
       }
 
       dataFile.close();
@@ -292,10 +292,8 @@ public class OnDemandDayProgramFile {
     OnDemandProgram prog = new OnDemandProgram(channel, date, this);
 
     if (version == 3) {
-      // Channel.readData(objIn, false); // unused channel
-      // new devplugin.Date(objIn); // unused date
-      
       int fieldCount = dataFile.readInt();
+      
       for (int i = 0; i < fieldCount; i++) {
         int typeId = dataFile.readInt();
         ProgramFieldType type = ProgramFieldType.getTypeForId(typeId);
@@ -331,12 +329,8 @@ public class OnDemandDayProgramFile {
     return prog;
   }
 
-  private void saveProgram(Program program, RandomAccessFile dataFile,
-      Date localDate, Channel channel) throws IOException {
+  private void saveProgram(Program program, RandomAccessFile dataFile) throws IOException {
     dataFile.writeInt(3); // file version
-
-    // channel.writeData(objOut);
-    // localDate.writeData(objOut);
 
     int fieldCount = program.getFieldCount();
     dataFile.writeInt(fieldCount);
