@@ -667,8 +667,7 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   private void onDownloadStart() {
-    mToolBarModel.showStopButton();
-    mToolBar.update();
+    mToolBar.updateUpdateButton(true);
     mMenuBar.showStopMenuItem();
   }
 
@@ -676,8 +675,7 @@ public class MainFrame extends JFrame implements DateListener {
     TvDataUpdater.getInstance().stopDownload();
     mStatusBar.getProgressBar().setValue(0);
 
-    mToolBarModel.showUpdateButton();
-    mToolBar.update();
+    mToolBar.updateUpdateButton(false);
     mMenuBar.showUpdateMenuItem();
 
     mFinderPanel.updateItems();

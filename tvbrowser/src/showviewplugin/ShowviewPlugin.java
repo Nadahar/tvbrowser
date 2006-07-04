@@ -69,7 +69,9 @@ public class ShowviewPlugin extends Plugin {
       if (showview == null) {
         try {
           showview = ShowviewEncoder.getInstance().getShowviewNumberFor(prog);
-          prog.setTextField(ProgramFieldType.SHOWVIEW_NR_TYPE, showview);
+          
+          if(showview != null)
+            prog.setTextField(ProgramFieldType.SHOWVIEW_NR_TYPE, showview);
         }
         catch (Exception exc) {
           // We tried it...

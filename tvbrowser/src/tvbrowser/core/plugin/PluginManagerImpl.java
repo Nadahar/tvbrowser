@@ -51,7 +51,6 @@ import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MarkedProgramsList;
 import tvdataservice.MutableProgram;
-import tvdataservice.TvDataService;
 import util.exc.TvBrowserException;
 import devplugin.ActionMenu;
 import devplugin.Channel;
@@ -92,7 +91,9 @@ public class PluginManagerImpl implements PluginManager {
   private PluginManagerImpl() {
   }
 
-
+  /**
+   * @return The instance of this class.
+   */
   /**
    * Returns the instance of this class, if
    * there is no instance it is created first.
@@ -142,8 +143,14 @@ public class PluginManagerImpl implements PluginManager {
 
 
   private Channel getChannelFromProgId(String progId) {
-    String[] s = progId.split("_");
-    return ChannelList.getChannel(s[0]);
+    String[] s = progId.split("_");    
+    
+    if(s.length < 4)
+      return ChannelList.getChannel(null, null, null, s[0]);
+    else if(s.length == 4)      
+      return ChannelList.getChannel(s[0], s[1], null, s[2]);
+    else
+      return ChannelList.getChannel(s[0], s[1], s[2], s[3]);
   }
 
   /**
@@ -348,7 +355,7 @@ public class PluginManagerImpl implements PluginManager {
    * @return The TvDataService or <code>null</code> if there is no such
    *         TvDataService.
    */
-  public TvDataService getDataService(String dataServiceClassName) {
+  public tvdataservice.TvDataService getDataService(String dataServiceClassName) {
   //  return TvDataServiceManager.getInstance().getDataService(dataServiceClassName);
     return null; // todo: find a smarter implementation
   }
@@ -403,7 +410,7 @@ public class PluginManagerImpl implements PluginManager {
   public Program getExampleProgram() {
     if (mExampleProgram == null) {
       // TODO: interationalize
-
+      
       Channel exampleChannel = new Channel(null, "Channel 1",
           TimeZone.getDefault(), "de", "");
 

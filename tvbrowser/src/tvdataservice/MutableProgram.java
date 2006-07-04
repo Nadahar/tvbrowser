@@ -97,6 +97,10 @@ public class MutableProgram implements Program {
 
   /** The state of this program */
   private int mState;
+  
+  /** Contains the title of the program if the program is marked */
+  private String mTitle;
+  
   /**
    * Creates a new instance of MutableProgram.
    * <p>
@@ -140,13 +144,15 @@ public class MutableProgram implements Program {
     mMarkerArr = EMPTY_MARKER_ARR;
     mOnAir = false;
 
+    mTitle = null;
+
     // These attributes are not mutable, because they build the ID.
     mChannel = channel;
     mLocalDate = localDate;
-    
+
     // The title is not-null.
     setTextField(ProgramFieldType.TITLE_TYPE, "");
-    
+
     mMarkerArr = EMPTY_MARKER_ARR;
     mState = IS_VALID_STATE;
   }
@@ -155,13 +161,13 @@ public class MutableProgram implements Program {
   private void normalizeTimeZone(Date localDate, int localStartTime) {
     TimeZone channelTimeZone=mChannel.getTimeZone();
     TimeZone localTimeZone=TimeZone.getDefault();
-    
+
     int timeZoneOffset=(localTimeZone.getRawOffset()-channelTimeZone.getRawOffset())/3600000;
     timeZoneOffset+=mChannel.getDayLightSavingTimeCorrection();
- 
+
     mNormalizedStartTime = localStartTime + timeZoneOffset * 60;
     mNormalizedDate=localDate;
-    
+
     if (mNormalizedStartTime >= (24 * 60)) {
       mNormalizedStartTime -= (24 * 60);
       mNormalizedDate = mNormalizedDate.addDays(1);
@@ -172,7 +178,7 @@ public class MutableProgram implements Program {
     }
   }
 
-  
+
   /**
    * Adds a ChangeListener to the program.
    *
@@ -208,7 +214,7 @@ public class MutableProgram implements Program {
    */
   protected void fireStateChanged() {
     ChangeEvent changeEvent = new ChangeEvent(this);
-    
+
     for (int i = 0; i < mListenerList.size(); i++)
       mListenerList.get(i).stateChanged(changeEvent);
   }
@@ -257,7 +263,7 @@ public class MutableProgram implements Program {
 
   /**
    * Marks the program for a Java plugin.
-   * 
+   *
    * @param javaPlugin The plugin to mark the program for.
    */
   public final void mark(Plugin javaPlugin) {
@@ -277,41 +283,43 @@ public class MutableProgram implements Program {
     PluginAccess plugin = PluginProxyManager.getInstance().getPluginForId(javaPlugin.getId());
     unmark(plugin);
   }
-  
+
 
   /**
    * Marks the program for a plugin.
-   * 
+   *
    * @param marker The plugin to mark the program for.
    */
   public final void mark(Marker marker) {
-    
+
     boolean alreadyMarked = getMarkedByPluginIndex(marker) != -1;
     int oldCount = mMarkerArr.length;
-    
+
     if (! alreadyMarked) {
       // Append the new plugin
       Marker[] newArr = new Marker[oldCount + 1];
       System.arraycopy(mMarkerArr, 0, newArr, 0, oldCount);
       newArr[oldCount] = marker;
       mMarkerArr = newArr;
-      
+
       fireStateChanged();
     }
 
-    if(oldCount < 1)
+    if(oldCount < 1) {
+      mTitle = getTitle();
       MarkedProgramsList.getInstance().addProgram(this);
+    }
   }
 
   /**
    * Removes the marks from the program for a plugin.
    * <p>
    * If the program wasn't marked for the plugin, nothing happens.
-   * 
+   *
    * @param marker The plugin to remove the mark for.
    */
   public final void unmark(Marker marker) {
-    
+
     int idx = getMarkedByPluginIndex(marker);
     if (idx != -1) {
       if (mMarkerArr.length == 1) {
@@ -325,23 +333,29 @@ public class MutableProgram implements Program {
         System.arraycopy(mMarkerArr, idx + 1, newArr, idx, oldCount - idx - 1);
         mMarkerArr = newArr;
       }
-      
-      fireStateChanged();      
+
+      fireStateChanged();
     }
-    
-    if(mMarkerArr.length < 1)
+
+    if(mMarkerArr.length < 1) {
+
+      /* ----- MERGE: added in branch-2-2-x */
+      mTitle = null;
+
+
       MarkedProgramsList.getInstance().removeProgram(this);
+    }
   }
 
-  
-  
+
+
   private int getMarkedByPluginIndex(Marker plugin) {
     for (int i = 0; i < mMarkerArr.length; i++) {
       if (mMarkerArr[i].getId().compareTo(plugin.getId()) == 0) {
         return i;
       }
     }
-    
+
     return -1;
   }
 
@@ -386,7 +400,7 @@ public class MutableProgram implements Program {
     int currentMinutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
     int programMinutesAfterMidnight = getHours() * 60 + getMinutes() + getLength() - 1;
     return (programMinutesAfterMidnight < currentMinutesAfterMidnight);
-    
+
   }
 
 
@@ -397,23 +411,28 @@ public class MutableProgram implements Program {
    */
   public String getID() {
     if (mId == null) {
-      mId = getChannel().getId() + "_" + getHours() + ":" + getMinutes();
+      String dataServiceId = mChannel.getDataServiceProxy().getId();
+      String groupId = mChannel.getGroup().getId();
+      String channelId = mChannel.getId();
+      String country = mChannel.getCountry();
+
+      mId = (new StringBuffer(dataServiceId).append("_").append(groupId).append("_").append(country).append("_").append(channelId).append("_").append(getHours()).append(":").append(getMinutes())).toString();
     }
     return mId;
   }
-  
-  
+
+
   // FieldHash
   public byte[] getBinaryField(ProgramFieldType type) {
     return (byte[]) getField(type, ProgramFieldType.BINARY_FORMAT);
   }
-  
-  
+
+
   public String getTextField(ProgramFieldType type) {
     return (String) getField(type, ProgramFieldType.TEXT_FORMAT);
   }
-  
-  
+
+
   public int getIntField(ProgramFieldType type) {
     Integer value = (Integer) getField(type, ProgramFieldType.INT_FORMAT);
     if (value == null) {
@@ -422,15 +441,15 @@ public class MutableProgram implements Program {
       return value.intValue();
     }
   }
-  
-  
+
+
 
   /**
    * Gets the value of a int field as String.
-   * 
+   *
    * @param type The type of the wanted field. Must have a int format.
    * @return The value of the field as String or <code>null</code>, if there is
-   *         no value for this field. 
+   *         no value for this field.
    */
   public String getIntFieldAsString(ProgramFieldType type) {
     int value = getIntField(type);
@@ -440,8 +459,8 @@ public class MutableProgram implements Program {
       return Integer.toString(value);
     }
   }
-  
-  
+
+
   public int getTimeField(ProgramFieldType type) {
     Integer value = (Integer) getField(type, ProgramFieldType.TIME_FORMAT);
     if (value == null) {
@@ -454,10 +473,10 @@ public class MutableProgram implements Program {
 
   /**
    * Gets the value of a time field as String of the pattern "h:mm".
-   * 
+   *
    * @param type The type of the wanted field. Must have a time format.
    * @return The value of the field as String or <code>null</code>, if there is
-   *         no value for this field. 
+   *         no value for this field.
    */
   public String getTimeFieldAsString(ProgramFieldType type) {
     int value = getTimeField(type);
@@ -466,23 +485,23 @@ public class MutableProgram implements Program {
     } else {
       int hours = value / 60;
       int minutes = value % 60;
-      
+
       // Correct the TimeZone
       TimeZone channelTimeZone=mChannel.getTimeZone();
       TimeZone localTimeZone=TimeZone.getDefault();
-      
+
       int timeZoneOffset=(localTimeZone.getRawOffset()-channelTimeZone.getRawOffset())/3600000;
       timeZoneOffset+=mChannel.getDayLightSavingTimeCorrection();
-   
+
       hours = hours + timeZoneOffset;
-      
+
       if (hours >= 24) {
         hours -= 24;
       }
       else if (hours < 0) {
         hours += 24;
       }
-      
+
       return new StringBuffer().append(hours).append(":").append((minutes < 10) ? "0" : "").append(minutes).toString();
     }
   }
@@ -494,7 +513,7 @@ public class MutableProgram implements Program {
         + " can't be read as " + ProgramFieldType.getFormatName(fieldFormat)
         + ", because it is " + ProgramFieldType.getFormatName(type.getFormat()));
     }
-    
+
     synchronized (mFieldHash) {
       return mFieldHash.get(type);
     }
@@ -503,7 +522,7 @@ public class MutableProgram implements Program {
 
   /**
    * Gets the number of fields this program has.
-   * 
+   *
    * @return the number of fields this program has.
    */
   public int getFieldCount() {
@@ -513,26 +532,26 @@ public class MutableProgram implements Program {
 
   /**
    * Gets an iterator over the types of all fields this program has.
-   * 
+   *
    * @return an iterator over {@link ProgramFieldType}s.
    */
   public Iterator getFieldIterator() {
     return mFieldHash.keySet().iterator();
   }
-  
+
   /**
    * Set a binary field.
-   * 
+   *
    * @param type The type of the field.
    * @param value The binary value to set.
    */
   public void setBinaryField(ProgramFieldType type, byte[] value) {
     setField(type, ProgramFieldType.BINARY_FORMAT, value);
   }
-  
+
   /**
    * Set a text field.
-   * 
+   *
    * @param type The type of the field.
    * @param value The text value to set.
    */
@@ -541,14 +560,14 @@ public class MutableProgram implements Program {
     if (type == ProgramFieldType.SHORT_DESCRIPTION_TYPE) {
       value = validateShortInfo(value);
     }
-    
+
     setField(type, ProgramFieldType.TEXT_FORMAT, value);
   }
-  
-  
+
+
   /**
    * Set an int field.
-   * 
+   *
    * @param type The type of the field.
    * @param value The int value to set.
    */
@@ -559,11 +578,11 @@ public class MutableProgram implements Program {
     }
     setField(type, ProgramFieldType.INT_FORMAT, obj);
   }
-  
-  
+
+
   /**
    * Set a time field.
-   * 
+   *
    * @param type The type of the field.
    * @param value The time value to set.
    */
@@ -572,26 +591,26 @@ public class MutableProgram implements Program {
       mLog.warning("The time value for field " + type.getName()
         + " must be between in [0..1439], but it was set to " + value+"; program: "+toString());
     }
-    
+
     Integer obj = null;
     if (value != -1) {
       obj = new Integer(value);
     }
     setField(type, ProgramFieldType.TIME_FORMAT, obj);
-    
+
     if (type == ProgramFieldType.START_TIME_TYPE) {
       normalizeTimeZone(mLocalDate, value);
     }
   }
-  
-  
+
+
   protected void setField(ProgramFieldType type, int fieldFormat, Object value) {
     if (type.getFormat() != fieldFormat) {
       throw new IllegalArgumentException("The field " + type.getName()
         + " can't be written as " + ProgramFieldType.getFormatName(fieldFormat)
         + ", because it is " + ProgramFieldType.getFormatName(type.getFormat()));
     }
-    
+
     synchronized (mFieldHash) {
       if (value == null) {
         mFieldHash.remove(type);
@@ -602,24 +621,24 @@ public class MutableProgram implements Program {
 
     fireStateChanged();
   }
-  
-  
+
+
   private String validateShortInfo(String shortInfo) {
     if ((shortInfo != null) && (shortInfo.length() > MAX_SHORT_INFO_LENGTH)) {
       // Get the end of the last fitting sentense
       int lastDot = shortInfo.lastIndexOf('.', MAX_SHORT_INFO_LENGTH);
       int lastMidDot = shortInfo.lastIndexOf('\u00b7', MAX_SHORT_INFO_LENGTH);
-  
+
       int cutIdx = Math.max(lastDot, lastMidDot);
-  
+
       // But show at least half the maximum length
       if (cutIdx < (MAX_SHORT_INFO_LENGTH / 2)) {
         cutIdx = shortInfo.lastIndexOf(' ', MAX_SHORT_INFO_LENGTH);
       }
-  
+
       shortInfo = shortInfo.substring(0, cutIdx + 1) + "...";
     }
-    
+
     return shortInfo;
   }
 
@@ -630,6 +649,9 @@ public class MutableProgram implements Program {
    * @param title the new title of this program.
    */
   public void setTitle(String title) {
+    if(mTitle != null)
+      mTitle = title;
+
     setTextField(ProgramFieldType.TITLE_TYPE, title);
   }
 
@@ -639,7 +661,10 @@ public class MutableProgram implements Program {
    * @return the title of this program.
    */
   public String getTitle() {
-    return getTextField(ProgramFieldType.TITLE_TYPE);
+    if(mTitle != null)
+      return mTitle;
+    else
+      return getTextField(ProgramFieldType.TITLE_TYPE);
   }
 
 
@@ -715,7 +740,7 @@ public class MutableProgram implements Program {
     return mNormalizedStartTime % 60;
   }
 
-  
+
   /**
    * @return The local start time.
    */
@@ -735,7 +760,7 @@ public class MutableProgram implements Program {
     if (endTime >= (24 * 60)) {
       endTime -= (24 * 60);
     }
-    
+
     setTimeField(ProgramFieldType.END_TIME_TYPE, endTime);
   }
 
@@ -827,7 +852,7 @@ public class MutableProgram implements Program {
              && equals(getDate(), program.getDate())
              && getHours() == program.getHours()
              && getMinutes()  == program.getMinutes()
-             && equals(getTitle(), program.getTitle());
+             && getTitle().compareTo(program.getTitle()) == 0;
     }
     return false;
   }
@@ -835,7 +860,7 @@ public class MutableProgram implements Program {
 
   /**
    * Gets whether two objects are equal. Can handle null values.
-   * 
+   *
    * @param o1 The first object.
    * @param o2 The second object.
    * @return Whether the two objects are equal.
@@ -851,7 +876,7 @@ public class MutableProgram implements Program {
   /**
    * Sets the state of this program to a
    * program state.
-   * 
+   *
    * @param state The state of this program.
    * @since 2.2
    */
@@ -861,7 +886,7 @@ public class MutableProgram implements Program {
 
   /**
    * Returns the state of this program.
-   * 
+   *
    * @return The program state.
    * @since 2.2
    */
@@ -871,24 +896,30 @@ public class MutableProgram implements Program {
 
   /**
    * Informs the ChangeListeners for repainting if a Plugin
-   * uses more than one Icon for the Program. 
+   * uses more than one Icon for the Program.
    *
    * @since 2.3
    */
   public final void validateMarking() {
     fireStateChanged();
   }
-  
+
   /**
    * Sets the marker array of this program.
-   * 
+   *
    * @param marker The marker array.
    * @since 2.3
    */
   protected void setMarkerArr(Marker[] marker) {
     mMarkerArr = marker;
-    
+
+    /* ----- MERGE: added in branch-2-2-x */
+    if(marker.length > 0) {
+      mTitle = getTitle();
+    }
+
+
     fireStateChanged();
   }
- 
+
 }

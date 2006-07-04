@@ -132,7 +132,9 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       toDate = (endTimeForChannelLocale/24)-1+1;
     }
 
-
+    if(!TvDataBase.getInstance().isDayProgramAvailable(mMainDay.addDays(fromDate),ch))
+      fromDate++;
+    
     return new DateRange(fromDate, toDate-fromDate);
 
   }

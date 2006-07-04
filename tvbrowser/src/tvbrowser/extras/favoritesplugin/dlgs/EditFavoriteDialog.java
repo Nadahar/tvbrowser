@@ -27,6 +27,7 @@
 package tvbrowser.extras.favoritesplugin.dlgs;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Frame;
@@ -242,16 +243,27 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
         int inx = result.lastIndexOf(",");
         result = result.substring(0, inx) + ", ...";
       }
+
+      if(mChannelLabel != null)
+        mChannelLabel.setForeground((new JLabel()).getForeground());
+      
       return result;
-    } else {
+    } else if(!mLimitChannelCb.isSelected()){
       return mLocalizer.msg("allChannels", "All channels");
     }
+    else
+      return mLocalizer.msg("noChannels", "No channels");
   }
 
   private void setLimitChannelEnabled(boolean enabled) {
     mChangeChannelsBtn.setEnabled(enabled);
     mChannelLabel.setEnabled(enabled);
     mChannelLabel.setText(getChannelString(mChannelArr));
+    
+    if(mChannelArr == null || mChannelArr.length < 1)
+      mChannelLabel.setForeground(Color.red);
+    else
+      mChannelLabel.setForeground((new JLabel()).getForeground());
   }
 
   private JPanel createLimitPanel() {
@@ -268,11 +280,12 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mTimePeriodChooser = new TimePeriodChooser(from, to, TimePeriodChooser.ALIGN_RIGHT);
 
     mChangeChannelsBtn = new JButton(mLocalizer.msg("change", "Change"));
-    mChannelArr = mFavorite.getLimitationConfiguration().getChannels();
-    mChannelLabel = new JLabel(getChannelString(mChannelArr));
+    mChannelArr = mFavorite.getLimitationConfiguration().getChannels();    
 
     mLimitChannelCb = new JCheckBox(mLocalizer.msg("channels", "Channels:"));
     mLimitTimeCb = new JCheckBox(mLocalizer.msg("time", "Time:"));
+    
+    mChannelLabel = new JLabel(getChannelString(mChannelArr));
 
     mLimitDaysCB = new JComboBox(new Object[] { new Integer(LimitationConfiguration.DAYLIMIT_DAILY),
         new Integer(LimitationConfiguration.DAYLIMIT_WEEKDAY), new Integer(LimitationConfiguration.DAYLIMIT_WEEKEND),
@@ -587,7 +600,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
       mPassProgramPlugins[i].receivePrograms(mFavorite.getPrograms());
     }
 
-    if (mUseReminderCb.isSelected()) {
+    if (mUseReminderCb.isSelected() && !wasReminderEnabled) {
       ReminderPlugin.getInstance().addPrograms(mFavorite.getPrograms());
       ReminderPlugin.getInstance().updateRootNode();
     }

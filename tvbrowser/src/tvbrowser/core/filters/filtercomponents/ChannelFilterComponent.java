@@ -60,16 +60,29 @@ public class ChannelFilterComponent implements FilterComponent {
     this("", "");
   }
   
-  public void read(ObjectInputStream in, int version) throws IOException, ClassNotFoundException {
-      
+  public void read(ObjectInputStream in, int version) throws IOException, ClassNotFoundException {    
     ArrayList channels=new ArrayList();
-    int channelCnt = in.readInt();
+    int channelCnt = in.readInt();    
+    
     for (int i=0; i<channelCnt; i++) {
-      String dataServiceClassName = (String)in.readObject();
-      String channelId = (String)in.readObject();
-      Channel ch = Channel.getChannel(dataServiceClassName, channelId); 
-      if (ch!=null) {
-        channels.add(ch);  
+      if(version < 3) {
+        String dataServiceClassName = (String)in.readObject();
+        String groupId = null;
+      
+        if(version >= 2)
+          groupId = (String)in.readObject();
+      
+        String channelId = (String)in.readObject();
+        Channel ch = Channel.getChannel(dataServiceClassName, groupId, null, channelId); 
+        
+        if (ch!=null)
+          channels.add(ch);  
+      } 
+      else {
+        Channel ch = Channel.readData(in, true); 
+        
+        if (ch!=null)
+          channels.add(ch);        
       }
     }
     mSelectedChannels = new Channel[channels.size()];
@@ -79,11 +92,9 @@ public class ChannelFilterComponent implements FilterComponent {
 
   public void write(ObjectOutputStream out) throws IOException {    
     out.writeInt(mSelectedChannels.length);
-    for (int i=0; i<mSelectedChannels.length;i++) {
-      Channel ch = mSelectedChannels[i];   
-      out.writeObject(ch.getDataService().getClass().getName());
-      out.writeObject(ch.getId());   
-    }    
+    
+    for (int i=0; i<mSelectedChannels.length;i++)
+      mSelectedChannels[i].writeData(out);
   } 
   
 	public String toString() {
@@ -128,7 +139,7 @@ public class ChannelFilterComponent implements FilterComponent {
 
 
 	public int getVersion() {
-		return 1;
+		return 3;
 	}
 
 	

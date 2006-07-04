@@ -164,7 +164,7 @@ public class NewsPlugin extends Plugin {
             + fill(cal.get(Calendar.SECOND), 2);
 
         URL url = new URL(NEWS_URL + "?lastNews=" + asString);
-        byte[] newsData = IOUtilities.loadFileFromHttpServer(url);
+        byte[] newsData = IOUtilities.loadFileFromHttpServer(url, 60000);
         String news = new String(newsData, "ISO-8859-1");
         if (news.startsWith("<?xml version=\"1.0\" ")) {
           // There are new news

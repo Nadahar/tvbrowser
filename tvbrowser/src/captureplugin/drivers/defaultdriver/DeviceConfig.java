@@ -489,7 +489,7 @@ public class DeviceConfig {
      */
     public void writeData(ObjectOutputStream stream) throws IOException {
 
-        stream.writeInt(6);
+        stream.writeInt(8);
         
         stream.writeObject(getName());
         
@@ -544,8 +544,8 @@ public class DeviceConfig {
           "Sorry, older Versions of the CapturePlugin are not longer supported. Please create a new Device!"));
         }
         
-        setName((String) stream.readObject());     
-        readChannelsMappings(stream);
+        setName((String) stream.readObject());
+        readChannelsMappings(stream, version);
         setUserName((String) stream.readObject());
         setPassword((String) stream.readObject());
         setUseWebUrl(stream.readBoolean());
@@ -595,8 +595,8 @@ public class DeviceConfig {
           mUseTimeZone = stream.readBoolean();
           mTimeZone = (TimeZone) stream.readObject();
         }
-    }
-
+    }    
+    
     /**
      * Write the Channel-Mappings to a Stream
      * @param stream Write to this Stream
@@ -605,16 +605,14 @@ public class DeviceConfig {
     private void writeChannelMappings(ObjectOutputStream stream) throws IOException {
       stream.writeInt(mChannels.keySet().size());
       Iterator it = mChannels.keySet().iterator();
-
-      int i =0;
+      
       while (it.hasNext()) {
-        i++;
         Channel channel = (Channel) it.next();
-        stream.writeObject(channel.getDataService().getClass().getName());
-        stream.writeObject(channel.getId());
+        channel.writeData(stream);
         stream.writeObject(mChannels.get(channel));
       }
     }
+
     
     /**
      * Read the ChannelMappings from a Stream
@@ -622,18 +620,31 @@ public class DeviceConfig {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    private void readChannelsMappings(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    private void readChannelsMappings(ObjectInputStream stream, int version) throws IOException, ClassNotFoundException {
       int channelCnt = stream.readInt();
       mChannels.clear();
       for (int i=0; i<channelCnt; i++) {
-        String dataServiceClassName = (String)stream.readObject();
-        String channelId = (String)stream.readObject();
-        String value = (String)stream.readObject();
-        Channel ch = Channel.getChannel(dataServiceClassName, channelId); 
-        if (ch!=null) {
-          mChannels.put(ch, value);
+        if(version < 8) {
+          String dataServiceClassName = (String)stream.readObject();
+          String groupId = null;
+        
+          if(version == 7)
+            groupId = (String)stream.readObject();
+            
+          String channelId = (String)stream.readObject();
+          String value = (String)stream.readObject();
+          Channel ch = Channel.getChannel(dataServiceClassName, groupId, null, channelId); 
+
+          if (ch!=null)
+            mChannels.put(ch, value);
+        }
+        else {
+          Channel ch = Channel.readData(stream, true);
+          String value = (String)stream.readObject();
+          
+          if (ch!=null)
+            mChannels.put(ch, value);          
         }
       }
     }
-
 }

@@ -79,8 +79,8 @@ public class ProgressWindow implements devplugin.ProgressMonitor {
         progress.run();
         while (!mDialog.isVisible()) {
         }
-        ;
         mDialog.setVisible(false);
+        mDialog.dispose();
       }
     };
     thread.start();

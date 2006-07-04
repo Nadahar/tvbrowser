@@ -187,21 +187,35 @@ public class Channel {
   {
     int version = in.readInt();
         
-    String dataServiceClassName = (String)in.readObject();    
-    
+    String dataServiceId = null;
+    String groupId = null;
+    String country = null;
     String channelId;
     
     if (version==1) {
+      dataServiceId = (String)in.readObject();
       channelId=""+in.readInt();
     }
-    else {
+    else if (version < 3){
+      dataServiceId = (String)in.readObject();
       channelId=(String)in.readObject();
     }
+    else if (version == 3){
+      dataServiceId = in.readUTF();
+      groupId = in.readUTF();
+      channelId = in.readUTF();
+    }
+    else {
+      dataServiceId = in.readUTF();
+      groupId = in.readUTF();
+      country = in.readUTF();
+      channelId = in.readUTF();      
+    }
         
-    Channel channel = getChannel(dataServiceClassName, channelId);
+    Channel channel = getChannel(dataServiceId, groupId, country, channelId);
     if ((channel == null) && (! allowNull)) {
       throw new IOException("Channel with id " + channelId + " of data service "
-        + dataServiceClassName + " not found!");
+        + dataServiceId + " not found!");
     }
     return channel;
   }
@@ -222,33 +236,46 @@ public class Channel {
     throws IOException, ClassNotFoundException
   {
     int version = in.readInt();
+    Channel channel = null;
+    
+    String dataServiceId = null;
+    String groupId = null;
+    String country = null;
+    String channelId = null;
     
     if(version < 3)
       throw new IOException();
     
-    int length = in.readInt();
-    byte[] b = new byte[length];
+    if(version == 3) {
+      int length = in.readInt();
+      byte[] b = new byte[length];
     
-    in.readFully(b);
+      in.readFully(b);
     
-    String dataServiceClassName = new String(b);    
+      dataServiceId = new String(b);    
     
-    String channelId;
-    
-    if (version==1) {
-    	channelId=""+in.readInt();
-    }
-    else {
       length = in.readInt();
       b = new byte[length];
       in.readFully(b);
-    	channelId=new String(b);
+      channelId=new String(b);
     }
-        
-    Channel channel = getChannel(dataServiceClassName, channelId);
+    else if(version == 4) {
+      dataServiceId = in.readUTF();
+      groupId = in.readUTF();
+      channelId = in.readUTF();
+    }
+    else {
+      dataServiceId = in.readUTF();
+      groupId = in.readUTF();
+      country = in.readUTF();
+      channelId = in.readUTF();      
+    }
+    
+    channel = getChannel(dataServiceId, groupId, country, channelId);
+    
     if ((channel == null) && (! allowNull)) {
       throw new IOException("Channel with id " + channelId + " of data service "
-        + dataServiceClassName + " not found!");
+        + dataServiceId + " not found!");
     }
     return channel;
   }
@@ -262,21 +289,22 @@ public class Channel {
    * @since 2.2
    */
   public void writeToDataFile(RandomAccessFile out) throws IOException {
-    out.writeInt(3); // version
-    String name = mDataService.getClass().getName();
-    out.writeInt(name.length());//.writeObject();
-    out.writeBytes(name);
-    out.writeInt(mId.length());
-    out.writeBytes(mId);
+    out.writeInt(5); // version
+    out.writeUTF(getDataServiceProxy().getId());
+    out.writeUTF(getGroup().getId());
+    out.writeUTF(getCountry());
+    out.writeUTF(mId);
   }
   
   /**
    * Serialized this object.
    */
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(2); // version
-    out.writeObject(mDataService.getClass().getName());
-    out.writeObject(mId);
+    out.writeInt(4); // version
+    out.writeUTF(getDataServiceProxy().getId());
+    out.writeUTF(getGroup().getId());
+    out.writeUTF(getCountry());
+    out.writeUTF(mId);
   }
   
   public String getCopyrightNotice() {
@@ -298,16 +326,31 @@ public class Channel {
     return mCategories;
   }
 
-  public static Channel getChannel(String dataServiceClassName, String channelId) {
-    if (dataServiceClassName == null) {
+  /**
+   * @param dataServiceId The id of the data service of the channel to get.
+   * @param groupId The group id of the channel to get.
+   * @param country The country of the channel to get.
+   * @param channelId The id of the channel to get.
+   * 
+   * @return The channel with the given ids or <code>null</code> if no channel with the ids was found.
+   */
+  public static Channel getChannel(String dataServiceId, String groupId, String country, String channelId) {
+    if (dataServiceId == null) {
       // Fast return
       return null;
     }
     
     Channel[] channelArr = Plugin.getPluginManager().getSubscribedChannels();
     for (int i = 0; i < channelArr.length; i++) {
-      if (dataServiceClassName.equals(channelArr[i].getDataService().getClass().getName())
-        && (channelArr[i].getId().equals(channelId)))
+      String chDataServiceId = channelArr[i].getDataServiceProxy().getId();
+      String chGroupId = channelArr[i].getGroup().getId();
+      String chChannelId = channelArr[i].getId();
+      String chCountry = channelArr[i].getCountry();
+      
+      if (dataServiceId.compareTo(chDataServiceId) == 0 &&
+          ((groupId != null && groupId.compareTo(chGroupId) == 0) || groupId == null) &&
+          ((country != null && country.compareTo(chCountry) == 0) || country == null) &&
+          channelId.compareTo(chChannelId) == 0)
       {
         return channelArr[i];
       }      
@@ -340,7 +383,10 @@ public class Channel {
   }
 
   public TvDataServiceProxy getDataServiceProxy() {
-    return new DeprecatedTvDataServiceProxy(mDataService);
+    if(mDataService != null)
+      return new DeprecatedTvDataServiceProxy(mDataService);
+    else
+      return null;
   }
 
   /**
@@ -524,13 +570,25 @@ public class Channel {
   public boolean equals(Object obj) {
     if (obj instanceof Channel) {
       Channel cmp = (Channel) obj;
-      
-      if ((cmp.mDataService == null) || (mDataService == null)) {
+      try {
+        String dataServiceId = getDataServiceProxy().getId();
+        String groupId = getGroup().getId();
+        String channelId = getId();
 
-        return (cmp.mDataService == mDataService) && (mId.equals(cmp.mId));
+        String cmpDataServiceId = cmp.getDataServiceProxy().getId();
+        String cmpGroupId = cmp.getGroup().getId();
+        String cmpChannelId = cmp.getId();
 
+        return (dataServiceId.compareTo(cmpDataServiceId) == 0 &&
+          groupId.compareTo(cmpGroupId) == 0 &&
+          channelId.compareTo(cmpChannelId) == 0);
+      }catch(Exception e) {
+        //this is for the example program
+        if((getDataServiceProxy() == null && cmp.getDataServiceProxy() == null) &&
+          (getGroup() == null && cmp.getGroup() == null) &&
+          (getId().compareTo(cmp.getId())) == 0)
+          return true;
       }
-      return (mDataService.equals(cmp.mDataService)) && (mId.equals(cmp.mId));
     }
 
     return false;

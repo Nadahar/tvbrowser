@@ -1,11 +1,47 @@
 Changelog TVBrowser
 
+2.2.1 Beta
+=========
+
+- Bugs
+
+  *  1498322 Reminded programs are not removed from Plugin View
+  * 1498499 CapturePlugin - exception on no application path
+  * 1497324 Programinfo not translated
+  * 1499121 FavoritesDialog (ExpertMode) not modal child of Mainframe
+  * 1499528 On minimized start the autoupdate dialog doesn't work
+  * 1499507 Favorite program are not updated
+  * 1497683 TVBrowser crashes if DataService is removed (Bodo)
+  * 1498656 Country-Filter in Channel-Selection
+  * 1497144 WebPlugin: Sorting doesn't work
+  * 1503137 PluginSoftwareUpdater uses localized name for file
+  * 1504131 Reminder window - ProgramInfo is shown in back of it
+  * 1504303 Favorites send empty array to plugins after data update
+  * 1504330 Scrolling to a date after data update doesn't work
+  * 1507667 Uses Mirror from Groups.txt
+  * 1507758 Favorite forgets the channels
+  * 1507908 Today column of channels with other timezone could be empty
+  * 1508136 Some favorite programs are not marked after a data update
+  * 1508175 Reminder forgets the reference count
+  * 1508173 Remindering of a favorite program is deleted
+  * 1511430 Tray-Icon under Linux with Java 6
+  * 1512251 Tray deactivation leeds to crash under linux
+  * 1513660 Toolbar - update button shows text on update start
+  * 1514498 Timeout for reading from network isn't set somethimes
+  * 1514496 Plugin settings tab isn't available after activating plugins
+  * 1513918 Deactivated plugins are not removed from toolbar
+  * 1514584 Checking of the mirror date don't reacts on broken files
+  * 1515515 Reminder - Cut of program title in removed programs list
+  * 1515087 ChannelArrayProperty didn't saves the group 
+  * 1515781 Gray Dialog box after Channel-Update
+  
 2.2 Final
 =========
 
 -  Features
 
  * 1493046 dynamic ScrollableMenu 
+
 - Bugs
 
  * 1493031 IconFilter can crash TVB if Plugin was removed

@@ -244,7 +244,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
       for (int i = 0; i < selected.length; i++) {
         Program prog = (Program) mTable.getValueAt(selected[i], 0);
 
-        reminderList.remove(prog);
+        reminderList.removeWithoutChecking(prog);
       }
 
       final int row = selected[0] - 1;

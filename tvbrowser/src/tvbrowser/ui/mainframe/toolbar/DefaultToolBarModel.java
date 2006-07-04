@@ -226,25 +226,57 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
 
     PluginProxyManager pluginMng = PluginProxyManager.getInstance();
     PluginProxy[] pluginProxys = pluginMng.getActivatedPlugins();
-    for (int i = 0; i < pluginProxys.length; i++) {
-      ActionMenu actionMenu = pluginProxys[i].getButtonAction();
-      if (actionMenu != null) {
-        if (!actionMenu.hasSubItems()) {
-          Action action = actionMenu.getAction();
-          action.putValue(ToolBar.ACTION_ID_KEY, pluginProxys[i].getId());
-          mAvailableActions.put(pluginProxys[i].getId(), action);
-          String tooltip = (String) action.getValue(Action.SHORT_DESCRIPTION);
-          if (tooltip == null) {
-            action.putValue(Action.SHORT_DESCRIPTION, pluginProxys[i].getInfo()
-                .getDescription());
-          }
-        } else {
-          // TODO: create drop down list button
+    
+    for (int i = 0; i < pluginProxys.length; i++)
+      createPluginAction(pluginProxys[i]);
+  }
+  
+  private void createPluginAction(PluginProxy plugin) {
+    ActionMenu actionMenu = plugin.getButtonAction();
+    if (actionMenu != null) {
+      if (!actionMenu.hasSubItems()) {
+        Action action = actionMenu.getAction();
+        action.putValue(ToolBar.ACTION_ID_KEY, plugin.getId());
+        mAvailableActions.put(plugin.getId(), action);
+        String tooltip = (String) action.getValue(Action.SHORT_DESCRIPTION);
+        if (tooltip == null) {
+          action.putValue(Action.SHORT_DESCRIPTION, plugin.getInfo()
+              .getDescription());
         }
+      } else {
+        // TODO: create drop down list button
       }
     }
   }
-
+  
+  protected void updatePluginButtons() {
+    PluginProxy[] activatedPlugins = PluginProxyManager.getInstance().getActivatedPlugins();
+    
+    for(int i = 0; i < activatedPlugins.length; i++)
+      if(!mAvailableActions.containsKey(activatedPlugins[i].getId())) {
+        createPluginAction(activatedPlugins[i]);
+        
+        String[] buttonNames = Settings.propToolbarButtons.getStringArray();
+        
+        if(buttonNames != null) {
+          for (int j = 0; j < buttonNames.length; j++) {
+            if(buttonNames[j].compareTo(activatedPlugins[i].getId()) == 0) {
+              Object action = mAvailableActions.get(buttonNames[j]);
+          
+              if(action != null)
+                mVisibleActions.add(j, action);
+            }
+          }
+        }
+      }
+    
+    String[] deactivatedPlugins = PluginProxyManager.getInstance().getDeactivatedPluginIds();
+    
+    for(int i = 0; i < deactivatedPlugins.length; i++)
+      if(mAvailableActions.containsKey(deactivatedPlugins[i]))
+        mVisibleActions.remove(mAvailableActions.remove(deactivatedPlugins[i]));
+  }
+  
   protected void updateTimeButtons() {
     Object[] keys = mAvailableActions.keySet().toArray();
     ArrayList availableTimeActions = new ArrayList();
@@ -435,7 +467,11 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
 
   }
 
-  public void showStopButton() {
+  protected Action getUpdateAction() {
+    return mUpdateAction;
+  }
+  
+  protected void showStopButton() {
     mUpdateAction.putValue(Action.NAME, TVBrowser.mLocalizer.msg("button.stop",
         "Stop"));
     mUpdateAction.putValue(Action.SMALL_ICON, IconLoader.getInstance()
@@ -446,7 +482,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
         "menuinfo.stop", ""));
   }
 
-  public void showUpdateButton() {
+  protected void showUpdateButton() {
     mUpdateAction.putValue(Action.NAME, TVBrowser.mLocalizer.msg(
         "button.update", "Update"));
     mUpdateAction.putValue(Action.SMALL_ICON, IconLoader.getInstance()

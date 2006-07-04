@@ -70,7 +70,7 @@ public class ReminderList implements ActionListener {
       ClassNotFoundException {
 
     int version = in.readInt();
-    if (version == 1 || version == 3) { // version == 2 ==> read from plugin
+    if (version == 1 || version >= 3) { // version == 2 ==> read from plugin
                                         // tree
       int size = in.readInt();
       for (int i = 0; i < size; i++) {
@@ -80,17 +80,21 @@ public class ReminderList implements ActionListener {
         String programId = (String) in.readObject();
         Program program = Plugin.getPluginManager().getProgram(programDate,
             programId);
+        
+        int referenceCount = 1;
+
+        if(version == 4)
+          referenceCount = in.readInt();          
 
         // Only add items that were able to load their program
-        if (program != null) {
-          add(program, reminderMinutes);
-        }
+        if (program != null)
+          add(program, reminderMinutes, referenceCount);
       }
     }
   }
 
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(3); // version
+    out.writeInt(4); // version
     ReminderListItem[] items = getReminderItems();
     out.writeInt(items.length);
     for (int i = 0; i < items.length; i++) {
@@ -99,6 +103,7 @@ public class ReminderList implements ActionListener {
       Date date = items[i].getProgram().getDate();
       date.writeData(out);
       out.writeObject(items[i].getProgram().getID());
+      out.writeInt(items[i].getReferenceCount());
     }
   }
 
@@ -109,14 +114,19 @@ public class ReminderList implements ActionListener {
   }
 
   public void add(Program program, int minutes) {
+    add(program, minutes, 1);
+  }
+  
+  private void add(Program program, int minutes, int referenceCount) {
     if (!program.isExpired()) {
       ReminderListItem item = getReminderItem(program);
+      
       if (item != null) {
         item.incReferenceCount();
       } else {
         item = new ReminderListItem(program, minutes);
+        item.setReferenceCount(referenceCount);
         mList.add(item);
-        item.setReferenceCount(1);
         program.mark(mMarker);
       }
     }
@@ -138,6 +148,8 @@ public class ReminderList implements ActionListener {
         mList.add(item);
         programs[i].mark(mMarker);
       }
+      else if(contains(programs[i]))
+        getReminderItem(programs[i]).incReferenceCount();
     }
   }
 
@@ -196,6 +208,16 @@ public class ReminderList implements ActionListener {
       }
     }
   }
+  
+  public void removeWithoutChecking(Program program) {
+    ReminderListItem[] items = getReminderItems();
+    for (int i = 0; i < items.length; i++) {
+      if (items[i].getProgram().equals(program)) {
+        mList.remove(items[i]);
+        items[i].getProgram().unmark(mMarker);
+      }
+    }
+  }  
 
   public ReminderListItem getReminderItem(Program program) {
     ReminderListItem[] items = getReminderItems();
@@ -230,7 +252,7 @@ public class ReminderList implements ActionListener {
         removedPrograms.add(items[i].getProgram());
       else if(items[i].getProgram().getProgramState() == Program.WAS_UPDATED_STATE) {
         Program p = items[i].getProgram();
-        add(Plugin.getPluginManager().getProgram(p.getDate(), p.getID()),items[i].getMinutes());
+        add(Plugin.getPluginManager().getProgram(p.getDate(), p.getID()),items[i].getMinutes(), items[i].getReferenceCount());
       }
       else
         mList.add(items[i]);

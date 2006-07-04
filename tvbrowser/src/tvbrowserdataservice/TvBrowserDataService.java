@@ -75,7 +75,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   public static final util.ui.Localizer mLocalizer
           = util.ui.Localizer.getLocalizerFor(TvBrowserDataService.class);
 
-  private static final String CHANNEL_GROUPS_FILENAME = "groups.txt";
+  protected static final String CHANNEL_GROUPS_FILENAME = "groups.txt";
   private static final String CHANNEL_GROUPS_URL = "http://tvbrowser.org/listings/" + CHANNEL_GROUPS_FILENAME;
 
   private DownloadManager mDownloadManager;
@@ -165,7 +165,8 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
    */
   public void updateTvData(TvDataUpdateManager dataBase, Channel[] channelArr,
                            Date startDate, int dateCount, ProgressMonitor monitor) {
-
+    boolean groupsWereAllreadyUpdated = false;
+    
     // Check for Connection
     if (!NetworkUtilities.checkConnection()) {
       JOptionPane.showMessageDialog(null, 
@@ -197,7 +198,16 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
         try {
           curGroup.chooseMirrors();
         } catch(TvBrowserException e) {
-          ErrorHandler.handle(e);
+          try {
+            if(!groupsWereAllreadyUpdated) {
+              groupsWereAllreadyUpdated = true;
+              downloadChannelGroupFile();
+            }
+            setMirrorUrlForServerDefinedChannelGroup(curGroup);
+            curGroup.chooseMirrors();
+          }catch(TvBrowserException de) {
+            ErrorHandler.handle(de);
+          }
         }
       }
 
@@ -499,7 +509,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
       mLog.info("Group file '"+CHANNEL_GROUPS_FILENAME+"' does not exist");
       return new ArrayList();
     }
-    BufferedReader in;
+    BufferedReader in = null;
     ArrayList list = new ArrayList();
 
     try {
@@ -519,13 +529,54 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
         }
         line = in.readLine();
       }
+      in.close();
     } catch (IOException e) {
       mLog.log(Level.SEVERE, "Could not read group list "+CHANNEL_GROUPS_FILENAME, e);
     }
+    finally {
+      if(in != null)
+        try {
+          in.close();
+        }catch(Exception ee) {}
+    }
+
     return list;
 
   }
 
+  private void setMirrorUrlForServerDefinedChannelGroup(ChannelGroup group) {
+    File groupFile = new File(mDataDir, CHANNEL_GROUPS_FILENAME);
+    if (!groupFile.exists()) {
+      mLog.info("Group file '"+CHANNEL_GROUPS_FILENAME+"' does not exist");
+      return;
+    }
+
+    BufferedReader in = null;
+
+    try {
+      in = new BufferedReader(new InputStreamReader(new BufferedInputStream(new FileInputStream(groupFile), 0x1000), "utf-8"));
+      String line = in.readLine();
+      while (line != null) {
+        String[] s = line.split(";");
+        if (s.length>=5) {
+          if(s[0].compareTo(group.getId()) == 0) {
+            group.setBaseMirror(new String[] {s[4]});
+            break;
+          }
+        }
+        line = in.readLine();
+      }
+      in.close();
+    } catch (IOException e) {
+      mLog.log(Level.SEVERE, "Could not read group list "+CHANNEL_GROUPS_FILENAME, e);
+    }
+    finally {
+      if(in != null)
+        try {
+          in.close();
+        }catch(Exception ee) {}
+    }
+  }
 
   /**
    * Called by the host-application during shut-down. Implements this method to
@@ -564,7 +615,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   }
 
 
-  private void downloadChannelGroupFile() throws TvBrowserException {
+  protected void downloadChannelGroupFile() throws TvBrowserException {
     try {
       IOUtilities.download(new URL(CHANNEL_GROUPS_URL), new File(mDataDir, CHANNEL_GROUPS_FILENAME));
     } catch (MalformedURLException e) {
@@ -600,7 +651,8 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   }
 
   public Channel[] checkForAvailableChannels(devplugin.ChannelGroup g, ProgressMonitor monitor) throws TvBrowserException {
-
+    downloadChannelGroupFile();
+    
     ChannelGroup group = getChannelGroupById(g.getId());
     if (group == null) {
       mLog.warning("Unknown group: "+g.getId());

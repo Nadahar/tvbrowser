@@ -128,10 +128,22 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   /** Orientation of Progressbar */
   private int mAxis = Y_AXIS;
 
+  private boolean mShowOnlyDateAndTitle;
+
   /**
    * Creates a new instance of ProgramPanel.
    */
   public ProgramPanel() {
+    this(false);
+  }
+
+  /**
+   * Creates a new instance of ProgramPanel.
+   * 
+   * @param showOnlyDateAndTitle
+   *          If this panel should only show date time and title.
+   */
+  public ProgramPanel(boolean showOnlyDateAndTitle) {
     if (mTitleFont == null) {
       updateFonts();
     }
@@ -145,6 +157,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     mTitleIcon = new TextAreaIcon(null, mTitleFont, WIDTH_RIGHT - 5);
     mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5);
     mDescriptionIcon.setMaximumLineCount(3);
+    mShowOnlyDateAndTitle = showOnlyDateAndTitle;
   }
 
   /**
@@ -154,7 +167,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    *          The program to show in this panel.
    */
   public ProgramPanel(Program prog) {
-    this();
+    this(false);
     setProgram(prog);
   }
 
@@ -167,7 +180,40 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    *          Orientation of ProgressBar (X_AXIS/Y_AXIS)
    */
   public ProgramPanel(Program prog, int axis) {
-    this();
+    this(false);
+    mAxis = axis;
+    setProgram(prog);
+  }
+
+  /**
+   * Creates a new instance of ProgramPanel.
+   * 
+   * @param prog
+   *          The program to show in this panel.
+   * @param showOnlyDateAndTitle
+   *          If this panel should only show date time and title.
+   * 
+   * @since 2.2.1
+   */
+  public ProgramPanel(Program prog, boolean showOnlyDateAndTitle) {
+    this(showOnlyDateAndTitle);
+    setProgram(prog);
+  }
+
+  /**
+   * Creates a new instance of ProgramPanel.
+   * 
+   * @param prog
+   *          The program to show in this panel.
+   * @param axis
+   *          Orientation of ProgressBar (X_AXIS/Y_AXIS)
+   * @param showOnlyDateAndTitle
+   *          If this panel should only show date time and title.
+   * 
+   * @since 2.2.1
+   */
+  public ProgramPanel(Program prog, int axis, boolean showOnlyDateAndTitle) {
+    this(showOnlyDateAndTitle);
     mAxis = axis;
     setProgram(prog);
   }
@@ -281,21 +327,25 @@ public class ProgramPanel extends JComponent implements ChangeListener {
 
     if (programChanged
         || (maxDescLines != mDescriptionIcon.getMaximumLineCount())) {
+      int descHeight = 0;
       // (Re)set the description text
-      mDescriptionIcon.setMaximumLineCount(maxDescLines);
-      ProgramFieldType[] infoFieldArr = Settings.propProgramInfoFields
-          .getProgramFieldTypeArray();
-      Reader infoReader = new MultipleFieldReader(program, infoFieldArr);
-      try {
-        mDescriptionIcon.setText(infoReader);
-      } catch (IOException exc) {
-        mLog.log(Level.WARNING, "Reading program info failed for " + program,
-            exc);
-      }
+      if (!mShowOnlyDateAndTitle) {
+        mDescriptionIcon.setMaximumLineCount(maxDescLines);
+        ProgramFieldType[] infoFieldArr = Settings.propProgramInfoFields
+            .getProgramFieldTypeArray();
+        Reader infoReader = new MultipleFieldReader(program, infoFieldArr);
+        try {
+          mDescriptionIcon.setText(infoReader);
+        } catch (IOException exc) {
+          mLog.log(Level.WARNING, "Reading program info failed for " + program,
+              exc);
+        }
+        descHeight = mDescriptionIcon.getIconHeight();
+      } else
+        descHeight = 0;
 
       // Calculate the height
-      mHeight = mTitleIcon.getIconHeight() + 10
-          + mDescriptionIcon.getIconHeight();
+      mHeight = mTitleIcon.getIconHeight() + 10 + descHeight;
       setPreferredSize(new Dimension(WIDTH, mHeight));
 
       // Calculate the preferred height
@@ -465,42 +515,44 @@ public class ProgramPanel extends JComponent implements ChangeListener {
 
     mTitleIcon.paintIcon(this, grp, WIDTH_LEFT, 0);
 
-    if (mHeight >= mPreferredHeight)
-      mDescriptionIcon.paintIcon(this, grp, WIDTH_LEFT, mTitleIcon
-          .getIconHeight());
+    if (!mShowOnlyDateAndTitle) {
+      if (mHeight >= mPreferredHeight)
+        mDescriptionIcon.paintIcon(this, grp, WIDTH_LEFT, mTitleIcon
+            .getIconHeight());
 
-    // Paint the icons pale if the program is expired
-    if (PAINT_EXPIRED_PROGRAMS_PALE && mProgram.isExpired()) {
-      grp.setComposite(PALE_COMPOSITE);
-    }
+      // Paint the icons pale if the program is expired
+      if (PAINT_EXPIRED_PROGRAMS_PALE && mProgram.isExpired()) {
+        grp.setComposite(PALE_COMPOSITE);
+      }
 
-    // paint the icons of the plugins that have marked the program
-    int x = width - 1;
-    int y = mTitleIcon.getIconHeight() + mDescriptionIcon.getIconHeight() + 18;
-    y = Math.min(y, height - 1);
-    for (Marker marker: markedByPluginArr) {
-      Icon[] icons = marker.getMarkIcons(mProgram);
-      if (icons != null) {
-        for(int i = icons.length - 1; i >= 0 ; i--) {
-          x -= icons[i].getIconWidth();
-          icons[i].paintIcon(this, grp, x, y - icons[i].getIconHeight());
+
+      // paint the icons of the plugins that have marked the program
+      int x = width - 1;
+      int y = mTitleIcon.getIconHeight() + mDescriptionIcon.getIconHeight() + 18;
+      y = Math.min(y, height - 1);
+      for (Marker marker: markedByPluginArr) {
+        Icon[] icons = marker.getMarkIcons(mProgram);
+        if (icons != null) {
+          for(int i = icons.length - 1; i >= 0 ; i--) {
+            x -= icons[i].getIconWidth();
+            icons[i].paintIcon(this, grp, x, y - icons[i].getIconHeight());
+          }
+        }
+      }
+
+      // Paint the icons on the left side
+      if (mIconArr != null) {
+        x = 2;
+        y = mTimeFont.getSize() + 3;
+        for (Icon icon : mIconArr) {
+          int iconHeight = icon.getIconHeight();
+          if ((y + iconHeight) < mHeight) {
+            icon.paintIcon(this, grp, x, y);
+            y += iconHeight + 2;
+          }
         }
       }
     }
-
-    // Paint the icons on the left side
-    if (mIconArr != null) {
-      x = 2;
-      y = mTimeFont.getSize() + 3;
-      for (Icon icon : mIconArr) {
-        int iconHeight = icon.getIconHeight();
-        if ((y + iconHeight) < mHeight) {
-          icon.paintIcon(this, grp, x, y);
-          y += iconHeight + 2;
-        }
-      }
-    }
-
     // Reset the old composite
     if (PAINT_EXPIRED_PROGRAMS_PALE && mProgram.isExpired()) {
       grp.setComposite(NORMAL_COMPOSITE);

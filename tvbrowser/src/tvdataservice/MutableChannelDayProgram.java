@@ -105,7 +105,22 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
    */
   public Program getProgram(String progID) {
     for(Program prog : mProgramList) {
-      if (progID.equals(prog.getID())) {
+      String id = prog.getID();
+      
+      int idlength = progID.split("_").length;
+      
+      if(idlength < 4) {
+        String[] temp = id.split("_");
+       
+        id = temp[temp.length - 2] + "_" + temp[temp.length - 1];
+      }
+      else if(idlength == 4) {
+        String[] temp = id.split("_");
+        
+        id = temp[0] + "_" + temp[1] + "_" + temp[temp.length - 2] + "_" + temp[temp.length - 1];        
+      }
+      
+      if (progID.compareTo(id) == 0) {
         return prog;
       }
     }

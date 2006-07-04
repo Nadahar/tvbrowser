@@ -160,7 +160,7 @@ public class AdvancedFavorite extends Favorite {
       }else{
         certainChannelId=(String)in.readObject();
       }
-      Channel ch = Channel.getChannel(certainChannelServiceClassName, certainChannelId);
+      Channel ch = Channel.getChannel(certainChannelServiceClassName, null, null, certainChannelId);
       if (ch != null) {
         getLimitationConfiguration().setChannels(new Channel[]{ch});
       }
@@ -178,7 +178,7 @@ public class AdvancedFavorite extends Favorite {
             certainChannelId=(String)in.readObject();
           }
 
-          Channel channel = Channel.getChannel(certainChannelServiceClassName, certainChannelId);
+          Channel channel = Channel.getChannel(certainChannelServiceClassName, null, null, certainChannelId);
           if (channel != null) {
             list.add(channel);
           }

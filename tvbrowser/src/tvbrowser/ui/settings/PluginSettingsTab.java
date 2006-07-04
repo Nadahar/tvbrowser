@@ -373,6 +373,8 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
       mList.updateUI();
       updateBtns();
       mSettingsDialog.invalidateTree();
+      mSettingsDialog.createPluginTreeItems();
+      MainFrame.getInstance().getToolbar().updatePluginButtons();
     }
 
     // Update the settings
@@ -381,7 +383,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
   }
 
   public void saveSettings() {
-
+    
   }
 
   public Icon getIcon() {

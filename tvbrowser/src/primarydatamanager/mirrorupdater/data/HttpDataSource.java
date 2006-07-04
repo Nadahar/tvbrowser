@@ -65,7 +65,7 @@ public class HttpDataSource implements DataSource {
     
     InputStream in = null;
     try {
-      in = IOUtilities.getStream(new URL(mBaseUrl + fileName));
+      in = IOUtilities.getStream(new URL(mBaseUrl + fileName), 60000);
       
       return true;
     }
@@ -94,7 +94,7 @@ public class HttpDataSource implements DataSource {
 
   public byte[] loadFile(String fileName) throws UpdateException {
     try {
-      byte[] data = IOUtilities.loadFileFromHttpServer(new URL(mBaseUrl + fileName));
+      byte[] data = IOUtilities.loadFileFromHttpServer(new URL(mBaseUrl + fileName), 60000);
       mBytesRead += data.length;
       return data;
     }

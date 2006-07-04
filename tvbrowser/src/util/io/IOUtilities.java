@@ -38,10 +38,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Calendar;
+import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -56,7 +59,7 @@ import util.ui.TimeFormatter;
  */
 public class IOUtilities {
 
-  /** The logger for this class. */  
+  /** The logger for this class. */
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(IOUtilities.class.getName());
 
@@ -65,7 +68,7 @@ public class IOUtilities {
 
   /** Formatting the Time */
   private static final TimeFormatter TIME_FORMATTER = new TimeFormatter();
-  
+
   /**
    * Downloads a file from a HTTP server.
    *
@@ -73,14 +76,14 @@ public class IOUtilities {
    * @param targetFile The file where to store the downloaded data.
    * @throws IOException When download or saving failed.
    * @see #loadFileFromHttpServer(URL)
-   */  
+   */
   public static void download(URL url, File targetFile) throws IOException {
     mLog.info("Downloading '" + url + "' to '"
       + targetFile.getAbsolutePath() + "'");
-    
+
     InputStream stream = null;
     try {
-      stream = new BufferedInputStream(getStream(url), 0x4000);
+      stream = new BufferedInputStream(getStream(url, 60000), 0x4000);
       if (stream == null) {
         throw new IOException("Can't connect to '" + url + "'!");
       }
@@ -93,8 +96,8 @@ public class IOUtilities {
     }
   }
 
-  
-  
+
+
   /**
    * Saves the data from an InputStream into a file.
    *
@@ -102,14 +105,14 @@ public class IOUtilities {
    * @param targetFile The file where to store the data.
    * @throws IOException When saving failed or when the InputStream throws an
    *         IOException.
-   */  
+   */
   public static void saveStream(InputStream stream, File targetFile)
     throws IOException
   {
     BufferedOutputStream out = null;
     try {
       out = new BufferedOutputStream(new FileOutputStream(targetFile), 0x4000);
-      
+
       pipeStreams(stream, out);
     }
     finally {
@@ -118,12 +121,12 @@ public class IOUtilities {
       } catch (IOException exc) {}
     }
   }
-  
+
   public static InputStream getStream(URL page, boolean followRedirects) throws IOException {
     return getStream(page, followRedirects, 0);
   }
-  
-  
+
+
   /**
    * Originally copied from javax.swing.JEditorPane.
    * <p>
@@ -153,8 +156,20 @@ public class IOUtilities {
     throws IOException
   {
     URLConnection conn = page.openConnection();
-    conn.setReadTimeout(timeout);
-    
+
+    if (timeout > 0) {
+      try {
+        Method setReadTimeout = conn.getClass().getMethod("setReadTimeout", new Class[] {int.class});
+        setReadTimeout.invoke(conn, new Object[] {new Integer(timeout)});
+      } catch (NoSuchMethodException e) {
+        mLog.log(Level.WARNING, "Method 'URLConnection#setReadTimeout' not found - please upgrade to Java 5 (http://java.com)");
+      } catch (IllegalAccessException e) {
+        mLog.log(Level.SEVERE, e.getLocalizedMessage(), e);
+      } catch (InvocationTargetException e) {
+        mLog.log(Level.SEVERE, e.getLocalizedMessage(), e);
+      } catch (Throwable t) {}
+    }
+
     if (followRedirects && (conn instanceof HttpURLConnection)) {
       HttpURLConnection hconn = (HttpURLConnection) conn;
       hconn.setInstanceFollowRedirects(false);
@@ -175,7 +190,7 @@ public class IOUtilities {
         } else {
           page = new URL(page, loc);
         }
-        return getStream(page, followRedirects);
+        return getStream(page, followRedirects, timeout);
       }
     }
     
@@ -196,9 +211,9 @@ public class IOUtilities {
     return getStream(page, true, timeout);
   }
 
-
   /**
-   * Loads a file from a Http server.
+   * Loads a file from a Http server with an
+   * infinitive read timeout.
    * 
    * @param url The URL of the file
    * @return The content of the file
@@ -206,9 +221,23 @@ public class IOUtilities {
    * @see #download(URL, File)
    */
   public static byte[] loadFileFromHttpServer(URL url) throws IOException {
+    return loadFileFromHttpServer(url, 0);
+  }
+  
+  /**
+   * Loads a file from a Http server with the given
+   * read timeout.
+   * 
+   * @param url The URL of the file
+   * @param timeout The read timeout for the connection.
+   * @return The content of the file
+   * @throws IOException When the download failed
+   * @see #download(URL, File)
+   */
+  public static byte[] loadFileFromHttpServer(URL url, int timeout) throws IOException {
     InputStream in = null;
     try {
-      in = IOUtilities.getStream(url);
+      in = IOUtilities.getStream(url, timeout);
       ByteArrayOutputStream out = new ByteArrayOutputStream();
       
       pipeStreams(in, out);
@@ -360,7 +389,7 @@ public class IOUtilities {
   
   
   /**
-   * Lädt eine Datei aus einem Jar-File und gibt sie zurück.
+   * Lï¿½dt eine Datei aus einem Jar-File und gibt sie zurï¿½ck.
    * <P>
    * Ist keine Datei mit diesem Namen im Jar-File, so wird versucht, sie vom
    * Dateisystem zu laden.
@@ -402,12 +431,12 @@ public class IOUtilities {
     byte[] data = new byte[0];
     int len;
     while ((len = in.read(buffer)) != -1) {
-      // data Array vergrößern
+      // data Array vergrï¿½ï¿½ern
       byte[] oldData = data;
       data = new byte[oldData.length + len];
       System.arraycopy(oldData, 0, data, 0, oldData.length);
 
-      // Gerade gelesene Daten anhängen
+      // Gerade gelesene Daten anhï¿½ngen
       System.arraycopy(buffer, 0, data, oldData.length, len);
     }
 

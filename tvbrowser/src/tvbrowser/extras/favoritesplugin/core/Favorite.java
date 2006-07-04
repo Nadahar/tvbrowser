@@ -386,7 +386,13 @@ public abstract class Favorite {
         inx2++;
       }
       else {
-        // leave        
+        /* leave
+         *         
+         * check if the new found program is a new instance 
+         * of the program an mark it if it is so. */
+        if(p1[inx1].getProgramState() == Program.WAS_DELETED_STATE)
+          markProgram(p2[inx2]);
+          
         resultList.add(p2[inx2]);
         inx1++;
         inx2++;

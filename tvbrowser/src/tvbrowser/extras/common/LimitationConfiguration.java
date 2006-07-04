@@ -52,6 +52,7 @@ public class LimitationConfiguration {
 
   private int mFrom, mTo;
   private Channel[] mChannelArr;
+  private ArrayList mChannelItemList = new ArrayList();
   private boolean mIsLimitedByChannel;
   private boolean mIsLimitedByTime;
   private int mDayLimit;
@@ -72,13 +73,14 @@ public class LimitationConfiguration {
       int cnt = in.readInt();
       ArrayList list = new ArrayList();
       for (int i=0; i<cnt; i++) {
-        String channelServiceClassName = (String) in.readObject();
-        String certainChannelId=(String)in.readObject();
-        Channel channel = Channel.getChannel(channelServiceClassName, certainChannelId);
-        if (channel != null) {
-          list.add(channel);
+        ChannelItem item = new ChannelItem(in);
+        mChannelItemList.add(item);
+
+        if (item.getChannel() != null) {
+          list.add(item.getChannel());
         }
       }
+      
       mChannelArr = (Channel[])list.toArray(new Channel[list.size()]);
     }
 
@@ -100,11 +102,9 @@ public class LimitationConfiguration {
 
     out.writeBoolean(mIsLimitedByChannel);
     if (mIsLimitedByChannel) {
-      out.writeInt(mChannelArr.length);
-      for (int i=0; i<mChannelArr.length; i++) {
-        out.writeObject(mChannelArr[i].getDataServiceProxy().getId());
-        out.writeObject(mChannelArr[i].getId());
-      }
+      out.writeInt(mChannelItemList.size());
+      for (int i=0; i<mChannelItemList.size(); i++)
+        ((ChannelItem)mChannelItemList.get(i)).saveItem(out);
     }
 
     out.writeInt(mDayLimit);
@@ -126,6 +126,18 @@ public class LimitationConfiguration {
   }
 
   public void setChannels(Channel[] ch) {
+    for(int i = 0; i < ch.length; i++) {
+      boolean toAdd = true;
+      
+      for(int j = 0; j < mChannelItemList.size(); j++)
+        if(((ChannelItem)mChannelItemList.get(j)).mChannel.equals(ch[i])) {
+          toAdd = false;
+          break;
+        }
+      
+      if(toAdd)
+        mChannelItemList.add(new ChannelItem(ch[i]));
+    }
     mChannelArr = ch;
     mIsLimitedByChannel = true;
   }
@@ -158,5 +170,42 @@ public class LimitationConfiguration {
     return mDayLimit;
   }
 
+  private class ChannelItem {
+    private String mChannelDataServiceId;
+    private String mCertainChannelId;
+    private String mGroupId;
+    private String mCountry;
+    private Channel mChannel;
+    
+    public ChannelItem(Channel channel) {
+      mChannelDataServiceId = channel.getDataServiceProxy().getId();
+      mGroupId = channel.getGroup().getId();
+      mCertainChannelId = channel.getId();
+      mCountry = channel.getCountry();
+      mChannel = channel;
+    }
+    
+    public ChannelItem(ObjectInputStream in) throws IOException, ClassNotFoundException {
+      in.readInt(); //version
 
+      mChannelDataServiceId = in.readUTF();
+      mGroupId = in.readUTF();
+      mCountry = in.readUTF();
+      mCertainChannelId = in.readUTF();      
+      
+      mChannel = Channel.getChannel(mChannelDataServiceId, mGroupId, mCountry, mCertainChannelId);
+    }
+    
+    public Channel getChannel() {
+      return mChannel;
+    }
+    
+    public void saveItem(ObjectOutputStream out) throws IOException {
+      out.writeInt(1); //version
+      out.writeUTF(mChannelDataServiceId);
+      out.writeUTF(mGroupId);
+      out.writeUTF(mCountry);
+      out.writeUTF(mCertainChannelId);
+    }
+  }
 }
