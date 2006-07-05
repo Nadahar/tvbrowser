@@ -841,10 +841,15 @@ public class MainFrame extends JFrame implements DateListener {
         
         SettingsDialog dlg = new SettingsDialog(MainFrame.this, visibleTabId);
         dlg.centerAndShow();
-        Settings.handleChangedSettings();
-        if (mPluginView != null) {
-          mPluginView.refreshTree();
-        }
+        
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            Settings.handleChangedSettings();
+            if (mPluginView != null)
+              mPluginView.refreshTree();
+          }
+        });
+
       }
     }).start();
   }

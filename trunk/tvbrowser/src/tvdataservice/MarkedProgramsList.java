@@ -35,21 +35,20 @@ import util.program.ProgramUtilities;
 
 import devplugin.Date;
 import devplugin.Program;
-import devplugin.Marker;
 
 /**
  * A class that contains all marked programs.
  * 
- * @author Renï¿½ Mach
+ * @author René Mach
  * @since 2.2
  */
 public class MarkedProgramsList {
 
   private static MarkedProgramsList mInstance;
-  private ArrayList<Program> mList;
+  private ArrayList<MutableProgram> mList;
 
   private MarkedProgramsList() {
-    mList = new ArrayList<Program>();
+    mList = new ArrayList<MutableProgram>();
     mInstance = this;
 
     TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
@@ -70,12 +69,12 @@ public class MarkedProgramsList {
     return mInstance;
   }
 
-  protected void addProgram(Program p) {
+  protected void addProgram(MutableProgram p) {
     if(!mList.contains(p) && p.getMarkerArr().length > 0)
       mList.add(p);
   }
 
-  protected void removeProgram(Program p) {
+  protected void removeProgram(MutableProgram p) {
     if(mList.contains(p) && p.getMarkerArr().length < 1)
       mList.remove(p);
   }
@@ -166,39 +165,10 @@ public class MarkedProgramsList {
 
 
   private void revalidatePrograms() {
-    Program[] programs = mList.toArray(new Program[mList.size()]);
+    MutableProgram[] programs = mList.toArray(new MutableProgram[mList.size()]);
     mList.clear();
 
-    for(Program p : programs) {
-      MutableProgram programInList = (MutableProgram)p;
-      Marker[] markerArr = programInList.getMarkerArr();
-
-      MutableProgram testProg = (MutableProgram)PluginManagerImpl.getInstance().getProgram(programInList.getDate(), programInList.getID());
-
-      if(testProg == null || programInList.getTitle().toLowerCase().compareTo(testProg.getTitle().toLowerCase()) != 0) {
-        programInList.setMarkerArr(MutableProgram.EMPTY_MARKER_ARR);
-        programInList.setProgramState(Program.WAS_DELETED_STATE);
-      }
-      else if(testProg != programInList) {
-        programInList.setMarkerArr(MutableProgram.EMPTY_MARKER_ARR);
-        programInList.setProgramState(Program.WAS_UPDATED_STATE);
-        testProg.setMarkerArr(markerArr);
-        mList.add(testProg);
-      }
-      else
-        mList.add(programInList);
-    }
-  }
-
-  /* ---- MERGE ----
-   This is the version of the conflicted revalidateProgram() method of branch-2-2-x:
-
-   private void revalidatePrograms() {
-    Program[] programs = (Program[])mList.toArray(new Program[mList.size()]);
-    mList.clear();
-
-    for(int i = 0; i < programs.length; i++) {
-      MutableProgram programInList = (MutableProgram)programs[i];
+    for(MutableProgram programInList : programs) {
       MutableProgram testProg = (MutableProgram)PluginManagerImpl.getInstance().getProgram(programInList.getDate(), programInList.getID());
 
       if(testProg == null || programInList.getTitle().toLowerCase().compareTo(testProg.getTitle().toLowerCase()) != 0) {
@@ -214,10 +184,5 @@ public class MarkedProgramsList {
       else
         mList.add(programInList);
     }
-
-
-  */
-
-
-
+  }
 }

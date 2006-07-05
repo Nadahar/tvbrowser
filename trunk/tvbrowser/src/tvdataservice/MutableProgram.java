@@ -338,11 +338,7 @@ public class MutableProgram implements Program {
     }
 
     if(mMarkerArr.length < 1) {
-
-      /* ----- MERGE: added in branch-2-2-x */
       mTitle = null;
-
-
       MarkedProgramsList.getInstance().removeProgram(this);
     }
   }
@@ -908,16 +904,13 @@ public class MutableProgram implements Program {
    * Sets the marker array of this program.
    *
    * @param marker The marker array.
-   * @since 2.3
+   * @since 2.2.1
    */
   protected void setMarkerArr(Marker[] marker) {
     mMarkerArr = marker;
 
-    /* ----- MERGE: added in branch-2-2-x */
-    if(marker.length > 0) {
+    if(marker.length > 0)
       mTitle = getTitle();
-    }
-
 
     fireStateChanged();
   }

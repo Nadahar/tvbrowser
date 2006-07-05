@@ -74,7 +74,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
   private String mDescription, mProviderName;
 
-  private HashSet mChannels;
+  private HashSet<Channel> mChannels;
 
   /**
    * Settings for storing changes in ProviderName/Id
@@ -93,7 +93,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   private static final int MAX_LAST_UPDATE_DAYS = 5;
 
   /** List of blocked Servers */
-  private static ArrayList BLOCKEDSERVERS = new ArrayList();
+  private static ArrayList<String> BLOCKEDSERVERS = new ArrayList<String>();
   /** Mirror-Download Running?*/
   private boolean mMirrorDownloadRunning = true;
   /** Exception on downloading in Thread */
@@ -108,7 +108,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     mProviderName = provider;
     mDataService = dataservice;
     mMirrorUrlArr = mirrorUrls;  
-    mChannels = new HashSet();
+    mChannels = new HashSet<Channel>();
     mDataDir = dataservice.getDataDir();
     mSettings = settings;
   }
@@ -316,7 +316,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   private Mirror[] loadMirrorList() {
     File file = new File(mDataDir, mID + "_" + Mirror.MIRROR_LIST_FILE_NAME);
     try {
-      ArrayList mirrorList = new ArrayList(Arrays.asList(Mirror.readMirrorListFromFile(file)));
+      ArrayList<Mirror> mirrorList = new ArrayList<Mirror>(Arrays.asList(Mirror.readMirrorListFromFile(file)));
 
       for (int i=0;i<mMirrorUrlArr.length;i++) {
         Mirror basemirror = (Mirror)mirrorList.get(i);
@@ -351,7 +351,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     
     /* remove the old mirror from the mirrorlist */
     if (oldMirror != null) {
-      ArrayList mirrors = new ArrayList();
+      ArrayList<Mirror> mirrors = new ArrayList<Mirror>();
       for (int i = 0; i < mirrorArr.length; i++) {
         if (oldMirror != mirrorArr[i]) {
           mirrors.add(mirrorArr[i]);
