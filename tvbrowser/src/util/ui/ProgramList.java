@@ -49,7 +49,7 @@ import devplugin.Program;
  */
 public class ProgramList extends JList implements ChangeListener, ListDataListener {
 
-    private Vector mPrograms = new Vector();
+    private Vector<Program> mPrograms = new Vector<Program>();
     
 
     /**
@@ -146,7 +146,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
 
     private void removeFromPrograms() {
         for (int i=mPrograms.size() - 1; i >= 0; i--) {
-          ((Program)mPrograms.remove(i)).removeChangeListener(this);
+          mPrograms.remove(i).removeChangeListener(this);
         }
     }
 
