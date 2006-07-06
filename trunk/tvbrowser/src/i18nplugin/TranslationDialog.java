@@ -258,7 +258,7 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
   private void export() {
     JFileChooser fileChooser=new JFileChooser();
     fileChooser.setFileFilter(new util.ui.ExtensionFileFilter(".zip","Zip (*.zip)"));
-    int retVal = fileChooser.showOpenDialog(this);
+    int retVal = fileChooser.showSaveDialog(this);
     
     if (retVal == JFileChooser.APPROVE_OPTION) {
       File f=fileChooser.getSelectedFile();
