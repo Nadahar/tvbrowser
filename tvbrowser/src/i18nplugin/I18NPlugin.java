@@ -53,6 +53,23 @@ public class I18NPlugin extends Plugin {
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(I18NPlugin.class);
 
+  /** Instance of this Plugin */
+  private static I18NPlugin mInstance;
+  
+  /**
+   * Contructor, stores current instance in static field
+   */
+  public I18NPlugin() {
+    mInstance = this;
+  }
+
+  /**
+   * @return Instance of this Plugin.
+   */
+  public static I18NPlugin getInstance() {
+    return mInstance;
+  }
+  
   @Override
   public PluginInfo getInfo() {
     String name = mLocalizer.msg("pluginName", "I18NPlugin");

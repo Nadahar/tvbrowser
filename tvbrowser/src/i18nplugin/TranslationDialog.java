@@ -53,6 +53,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import util.exc.ErrorHandler;
 import util.ui.LinkButton;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -84,7 +85,9 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
 
   private PropertiesTreeCellRenderer mTreeRenderer;
 
-  private TranslatorEditor mEditor; 
+  private TranslatorEditor mEditor;
+
+  private PathNode mRoot; 
   
   public TranslationDialog(JDialog owner) {
     super(owner, true);
@@ -192,6 +195,13 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
     ButtonBarBuilder buttonbar = new ButtonBarBuilder();
     
     JButton save = new JButton(mLocalizer.msg("save","Save"));
+    
+    save.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        save();
+      }
+    });
+    
     JButton cancel = new JButton(mLocalizer.msg("cancel", "Cancel"));
     cancel.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -219,6 +229,20 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
   }
 
   /**
+   * Saves the current Editorfield and saves the changes by the user to his user-directory
+   */
+  protected void save() {
+    mEditor.save();
+    try {
+      mRoot.save();
+    } catch (Exception e) {
+      e.printStackTrace();
+      ErrorHandler.handle(mLocalizer.msg("problemWhileSaving","Problems while storing translations."), e);
+    }
+    close();
+  }
+
+  /**
    * Creates the Root-Node for the Tree on the Left.
    * 
    * The Tree has two Nodes:
@@ -229,9 +253,8 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
    * @return
    */
   private DefaultMutableTreeNode createRooNode() {
-    PathNode root = new PathNode(mLocalizer.msg("translations", "Translations"));
-    
-    root.add(new TranslationNode("TV-Browser", new File("tvbrowser.jar")));
+    mRoot = new PathNode(mLocalizer.msg("translations", "Translations"));
+    mRoot.add(new TranslationNode("TV-Browser", new File("tvbrowser.jar")));
     
     PathNode plugins = new PathNode("Plugins");
 
@@ -239,9 +262,9 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
     addJarFiles(plugins, new File(PluginProxyManager.PLUGIN_DIRECTORY));
     addJarFiles(plugins, new File(TvDataServiceProxyManager.PLUGIN_DIRECTORY));
     
-    root.add(plugins);
+    mRoot.add(plugins);
     
-    return root;
+    return mRoot;
   }
 
   /**

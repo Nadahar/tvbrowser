@@ -25,6 +25,8 @@
  */
 package i18nplugin;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Locale;
 
 /**
@@ -44,5 +46,10 @@ public interface LanguageNodeIf {
    * @return true, if translations are available
    */
   public boolean allTranslationsAvailableFor(Locale locale);
+  
+  /**
+   * Saves all changes to the User-Directory
+   */
+  public void save() throws FileNotFoundException, IOException;
   
 }

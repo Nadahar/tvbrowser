@@ -62,4 +62,11 @@ public class PropertiesEntryNode extends DefaultMutableTreeNode implements Langu
     return ((PropertiesNode) getParent()).containsKey(locale, getPropertyName());
   }
 
+  /*
+   * (non-Javadoc)
+   * @see i18nplugin.LanguageNodeIf#save()
+   */
+  public void save() {
+  }
+  
 }
