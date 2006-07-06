@@ -25,6 +25,10 @@
  */
 package i18nplugin;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
@@ -33,12 +37,15 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
+
+import tvbrowser.core.Settings;
 
 /**
  * A Properties-File
@@ -49,7 +56,8 @@ public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNo
   private Properties mProp;
   private JarFile mJarFile;
   private String mPropertiesFile;
-  private HashMap<Locale, Properties> mPropertyMap;
+  private HashMap<Locale, Properties> mOriginalPropertyMap;
+  private HashMap<Locale, Properties> mUserPropertyMap;
   
   /**
    * Create the Properties-File
@@ -62,7 +70,10 @@ public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNo
     mJarFile = jarfile;
     mPropertiesFile = entry.getName();
     
-    mPropertyMap = new HashMap<Locale, Properties>();
+    System.out.println(entry.getName());
+    
+    mOriginalPropertyMap = new HashMap<Locale, Properties>();
+    mUserPropertyMap = new HashMap<Locale, Properties>();
     
     createPropertyEntries(jarfile, entry);
   }
@@ -119,7 +130,12 @@ public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNo
    * @return value for specific locale and key
    */
   public String getPropertyValue(Locale locale, String key) {
-    return getProperty(locale).getProperty(key, "");
+    String value = getUserProperty(locale).getProperty(key, null);
+    
+    if (value != null)
+      return value;
+    
+    return getOriginalProperty(locale).getProperty(key, "");
   }
 
   /**
@@ -127,8 +143,8 @@ public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNo
    * @param locale Locale to get Properties for
    * @return Properties for a certain Locale
    */
-  private Properties getProperty(Locale locale) {
-    Properties prop = mPropertyMap.get(locale);
+  private Properties getOriginalProperty(Locale locale) {
+    Properties prop = mOriginalPropertyMap.get(locale);
     
     if (prop == null) {
       StringBuffer propName = new StringBuffer();
@@ -156,12 +172,63 @@ public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNo
         prop = new Properties();
       }
       
-      mPropertyMap.put(locale, prop);
+      mOriginalPropertyMap.put(locale, prop);
     }
     
     return prop;
   }
 
+  /**
+   * @param locale
+   * @return Returns the filename for the properties file of the current user
+   */
+  private String getUserPropertiesFileName(Locale locale) {
+    StringBuffer propName = new StringBuffer(Settings.getUserSettingsDirName()).append(File.separatorChar).append("lang").append(File.separatorChar);
+    
+    propName.append(mPropertiesFile.substring(0, mPropertiesFile.lastIndexOf(".properties")));
+   
+    propName.append('_').append(locale.getLanguage());
+    
+    if (locale.getCountry().length() > 0)
+      propName.append('_').append(locale.getCountry());
+
+    if (locale.getVariant().length() > 0)
+      propName.append('_').append(locale.getVariant());
+    
+    propName.append(".properties");
+
+    return propName.toString();
+  }
+
+  /**
+   * @param locale
+   * @return Returns the user defined properties
+   */
+  private Properties getUserProperty(Locale locale) {
+    Properties prop = mUserPropertyMap.get(locale);
+    
+    if (prop == null) {
+      
+      prop = new Properties();
+      
+      try {
+        File file = new File(getUserPropertiesFileName(locale));
+        if (file.exists()) {
+          InputStream in = new FileInputStream(file); 
+          if (in != null)
+            prop.load(in);
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+        prop = new Properties();
+      }
+      
+      mUserPropertyMap.put(locale, prop);
+    }
+    
+    return prop;
+  }
+  
   /**
    * Set the Property-Value. If the value is null, the key will be removed.
    * 
@@ -170,10 +237,15 @@ public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNo
    * @param value
    */
   public void setPropertyValue(Locale locale, String key, String value) {
-    if (value == null)
-      getProperty(locale).remove(key);
-    else
-      getProperty(locale).setProperty(key, value);
+    String oldvalue = getPropertyValue(locale, key);
+    
+    if (oldvalue != value) {
+      System.out.println(key + "---" + value);
+      if (value == null)
+        getUserProperty(locale).remove(key);
+      else
+        getUserProperty(locale).setProperty(key, value);
+    }
   }
 
   /**
@@ -184,7 +256,7 @@ public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNo
    * @return true if key is available
    */
   public boolean containsKey(Locale locale, String key) {
-    return getProperty(locale).getProperty(key) != null;
+    return ((getOriginalProperty(locale).getProperty(key) != null)||(getUserProperty(locale).getProperty(key) != null));
   }
 
   /*
@@ -202,4 +274,52 @@ public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNo
     
     return true;
   }  
+
+  /*
+   * (non-Javadoc)
+   * @see i18nplugin.LanguageNodeIf#save()
+   */
+  public void save() throws FileNotFoundException, IOException{
+    Set<Locale> keys = mUserPropertyMap.keySet();
+    for (Locale locale : keys) {
+      Properties prop = mUserPropertyMap.get(locale);
+      if (prop.size() > 0) {
+        
+        // Create new Property that has the default values AND the user defined values
+        Properties newprop = mixProperties(getOriginalProperty(locale), getUserProperty(locale));
+        
+        File propFile = new File(getUserPropertiesFileName(locale));
+        propFile.getParentFile().mkdirs();
+        newprop.store(new FileOutputStream(propFile), "Saved by i18n Plugin Version " + I18NPlugin.getInstance().getInfo().getVersion());
+      }
+    }
+    
+  }
+
+  /**
+   * Mixes two properties. The userProperty overwrites the original property
+   * 
+   * @param originalProperty
+   * @param userProperty
+   * @return mixed properties
+   */
+  private Properties mixProperties(Properties originalProperty, Properties userProperty) {
+    Properties prop = new Properties();
+    
+    Enumeration e = originalProperty.keys();
+    
+    while (e.hasMoreElements()) {
+      String key = (String) e.nextElement();
+      prop.setProperty(key, originalProperty.getProperty(key));
+    }
+
+    e = userProperty.keys();
+    
+    while (e.hasMoreElements()) {
+      String key = (String) e.nextElement();
+      prop.setProperty(key, userProperty.getProperty(key));
+    }
+    
+    return prop;
+  }
 }

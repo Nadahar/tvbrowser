@@ -25,6 +25,8 @@
  */
 package i18nplugin;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Locale;
@@ -84,5 +86,16 @@ public class PathNode extends DefaultMutableTreeNode implements LanguageNodeIf {
     
     return true;
   }  
+  
+  /*
+   * (non-Javadoc)
+   * @see i18nplugin.LanguageNodeIf#save()
+   */
+  public void save() throws FileNotFoundException, IOException{
+    int max = getChildCount();
+    for (int i=0;i<max;i++) {
+      ((LanguageNodeIf)getChildAt(i)).save();
+    }
+  }
   
 }
