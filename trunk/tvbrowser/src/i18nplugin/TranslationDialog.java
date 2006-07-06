@@ -30,6 +30,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.Locale;
 
 import javax.swing.DefaultListCellRenderer;
@@ -37,8 +38,10 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -54,6 +57,7 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import util.exc.ErrorHandler;
+import util.io.ZipUtil;
 import util.ui.LinkButton;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -212,6 +216,12 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
     JButton export = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "document-save-as", 16)); 
     export.setToolTipText(mLocalizer.msg("export", "Export Translations to File"));
     
+    export.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        export();
+      }
+    });
+    
     LinkButton link = new LinkButton(mLocalizer.msg("getHelp", "Get Help"), mLocalizer.msg("getHelpUrl", "http://enwiki.tvbrowser.org"));
 
     buttonbar.addFixed(export);
@@ -242,6 +252,35 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
     close();
   }
 
+  /**
+   * Opens a FileChooser and stores all User-Settings in a zip file
+   */
+  private void export() {
+    JFileChooser fileChooser=new JFileChooser();
+    fileChooser.setFileFilter(new util.ui.ExtensionFileFilter(".zip","Zip (*.zip)"));
+    int retVal = fileChooser.showOpenDialog(this);
+    
+    if (retVal == JFileChooser.APPROVE_OPTION) {
+      File f=fileChooser.getSelectedFile();
+      if (f!=null) {
+        
+        ZipUtil zip = new ZipUtil();
+        
+        StringBuffer dir = new StringBuffer(Settings.getUserSettingsDirName()).append(File.separatorChar).append("lang").append(File.separatorChar);
+        
+        try {
+          zip.zipDirectory(f, new File(dir.toString()));
+          JOptionPane.showMessageDialog(this, mLocalizer.msg("exportDone", "Export Done!"));
+        } catch (IOException e) {
+          e.printStackTrace();
+          ErrorHandler.handle(mLocalizer.msg("exportFailure", "Error while saving zip file."), e);
+        }
+        
+      }
+    }
+    
+  }
+  
   /**
    * Creates the Root-Node for the Tree on the Left.
    * 
