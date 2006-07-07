@@ -92,7 +92,7 @@ public class TimeDateChooserPanel extends JPanel {
             
               if(mCaretPosition >= text.length() || text.charAt(mCaretPosition) == ':' ||
                   text.charAt(mCaretPosition) == '.' || text.charAt(mCaretPosition) == '/' ||
-                  text.charAt(mCaretPosition) == ' ') {
+                  text.charAt(mCaretPosition) == ' ' || text.charAt(mCaretPosition) == '-') {
                 field.setCaretPosition(--mCaretPosition);
               }
             }
