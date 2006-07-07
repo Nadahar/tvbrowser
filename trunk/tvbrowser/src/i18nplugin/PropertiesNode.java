@@ -70,8 +70,6 @@ public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNo
     mJarFile = jarfile;
     mPropertiesFile = entry.getName();
     
-    System.out.println(entry.getName());
-    
     mOriginalPropertyMap = new HashMap<Locale, Properties>();
     mUserPropertyMap = new HashMap<Locale, Properties>();
     
@@ -240,7 +238,6 @@ public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNo
     String oldvalue = getPropertyValue(locale, key);
     
     if (oldvalue != value) {
-      System.out.println(key + "---" + value);
       if (value == null)
         getUserProperty(locale).remove(key);
       else

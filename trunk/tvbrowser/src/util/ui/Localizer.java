@@ -26,12 +26,22 @@
 
 package util.ui;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
+import tvbrowser.core.Settings;
 import util.io.IOUtilities;
 
 /**
@@ -296,4 +306,90 @@ public class Localizer {
     }
   }
   
+  /**
+   * Scans all Language-Directories for different Versions of tvbrowser/tvbrowser.properties.
+   * 
+   * This is faster than analysing all Files
+   *  
+   * @return all available Locales
+   * @since 2.3
+   */
+  public Locale[] getAllAvailabelLocales() {
+    Locale[] locales = null;
+    try {
+      ArrayList<Locale> langArray = new ArrayList<Locale>();
+
+      langArray.add(Locale.ENGLISH);
+      
+      // First Step: look into tvbrowser.jar
+      JarFile file = new JarFile(new File("tvbrowser.jar"));
+      
+      Enumeration<JarEntry> entries = file.entries();
+      
+      while (entries.hasMoreElements()) {
+        JarEntry entry = entries.nextElement();
+        String name = entry.getName();
+        if (name.startsWith("tvbrowser/tvbrowser_") && (name.lastIndexOf(".properties") > 0)) {
+          name = name.substring(20, name.lastIndexOf(".properties"));
+          langArray.add(getLocaleForString(name));
+        }
+      }
+      
+      addLocaleFiles(new File(Settings.getUserSettingsDirName() + "/lang/tvbrowser"), langArray);
+      addLocaleFiles(new File("lang/tvbrowser"), langArray);
+      
+      locales = langArray.toArray(new Locale[langArray.size()]);
+      
+      Arrays.sort(locales, new Comparator<Locale>() {
+        public int compare(Locale o1, Locale o2) {
+          return o1.getDisplayName().compareTo(o2.getDisplayName());
+        }
+      });
+      
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    
+    return locales;
+  }
+
+  /**
+   * Adds all found Locales of tvbrowser/tvbrowser.properties to the langArray
+   * 
+   * @param dir search this directory
+   * @param langArray add found locales to this ArrayList
+   */
+  private void addLocaleFiles(File dir, ArrayList<Locale> langArray) {
+    if (dir.exists() && dir.isDirectory()) {
+      String[] files = dir.list();
+      for (String string : files) {
+        if (string.startsWith("tvbrowser_") && string.endsWith(".properties")) {
+          Locale loc = getLocaleForString(string.substring(10, string.lastIndexOf(".properties")));
+          if (!langArray.contains(loc))
+            langArray.add(loc);
+        }
+      }
+    }
+  }
+
+  /**
+   * Get the Locale for a specific String.
+   * The String is in this format: "lang_country_variant"
+   * 
+   * @param string String with Locale
+   * @return Locale
+   */
+  private Locale getLocaleForString(String string) {
+    String[] split = string.split("_");
+
+    if (split.length >= 3) {
+      return new Locale(split[0], split[1], split[2]);
+    } else if (split.length == 2) {
+      return new Locale(split[0], split[1]);
+    } else {
+      return new Locale(split[0]);
+    }
+  }
 }
