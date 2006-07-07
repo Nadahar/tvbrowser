@@ -31,8 +31,12 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Locale;
+import java.util.Vector;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -91,7 +95,11 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
 
   private TranslatorEditor mEditor;
 
-  private PathNode mRoot; 
+  private PathNode mRoot;
+
+  private Vector<Locale> mCurrentLocales;
+
+  private JComboBox mLanguageCB; 
   
   public TranslationDialog(JDialog owner) {
     super(owner, true);
@@ -117,28 +125,42 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
     
     panel.add(new JLabel(mLocalizer.msg("language", "Language:")), cc.xy(2,3));
 
-    final JComboBox languageSelection = new JComboBox(new Locale[] {Locale.GERMAN, new Locale("sv")}); 
-
-    languageSelection.addActionListener(new ActionListener() {
+    mCurrentLocales = new Vector<Locale>();
+    Locale[] locales = mLocalizer.getAllAvailabelLocales();
+    
+    for (Locale locale : locales) {
+      if (!locale.getLanguage().equals("en"))
+        mCurrentLocales.add(locale);
+    }
+    
+    mLanguageCB = new JComboBox(mCurrentLocales);
+    mLanguageCB.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        mTreeRenderer.setCurrentLocale((Locale) languageSelection.getSelectedItem());
+        Locale loc = (Locale) mLanguageCB.getSelectedItem();
+        
+        mTreeRenderer.setCurrentLocale(loc);
         mEditor.save();
-        mEditor.setCurrentLocale((Locale) languageSelection.getSelectedItem());
+        mEditor.setCurrentLocale(loc);
         mTree.updateUI();
       }
     });
     
-    languageSelection.setRenderer(new DefaultListCellRenderer() {
+    mLanguageCB.setRenderer(new DefaultListCellRenderer() {
       public java.awt.Component getListCellRendererComponent(javax.swing.JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         return super.getListCellRendererComponent(list, ((Locale)value).getDisplayName(), index, isSelected, cellHasFocus);
       };
     });
     
-    panel.add(languageSelection, cc.xy(4,3));
+    panel.add(mLanguageCB, cc.xy(4,3));
     
     JButton newButton = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "document-new", 16));
-    
     newButton.setToolTipText(mLocalizer.msg("newLanguage", "Add new language"));
+    
+    newButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        addLanguage();
+      }
+    });
     
     panel.add(newButton, cc.xy(6,3));
     
@@ -236,6 +258,50 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
     UiUtilities.registerForClosing(this);
     
     setSize(Sizes.dialogUnitXAsPixel(400, this), Sizes.dialogUnitYAsPixel(350, this));
+  }
+
+  /**
+   * Shows a Dialog with a List of all available Languages
+   * and adds a selected Language
+   */
+  protected void addLanguage() {
+    LanguageChooser dialog = new LanguageChooser(this, mCurrentLocales);
+    UiUtilities.centerAndShow(dialog);
+    
+    Locale locale = dialog.getSelectedLocale();
+    
+    if (locale != null) {
+      mCurrentLocales.add(locale);
+      
+      Collections.sort(mCurrentLocales, new Comparator<Locale>() {
+        public int compare(Locale o1, Locale o2) {
+          return o1.getDisplayName().compareTo(o2.getDisplayName());
+        }
+      });
+      
+      StringBuffer buffer = new StringBuffer(Settings.getUserSettingsDirName() + "/lang/tvbrowser/tvbrowser");
+
+      buffer.append("_").append(locale.getLanguage());
+      
+      if (locale.getCountry().length() > 0)
+        buffer.append("_").append(locale.getCountry());
+
+      if (locale.getVariant().length() > 0)
+        buffer.append("_").append(locale.getVariant());
+
+      buffer.append(".properties");
+
+      try {
+        File file = new File(buffer.toString());
+        file.getParentFile().mkdirs();
+        file.createNewFile();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      
+      mLanguageCB.setModel(new DefaultComboBoxModel(mCurrentLocales));
+      mLanguageCB.setSelectedItem(dialog.getSelectedLocale());
+    }
   }
 
   /**
