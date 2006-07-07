@@ -132,8 +132,6 @@ public class I18NPlugin extends Plugin {
       UiUtilities.centerAndShow(dialog);
     
     mDevider = dialog.getDeviderLocation();
-    System.out.println("DEVIDER :  " +mDevider);
-
   }
 
   @Override
@@ -159,7 +157,6 @@ public class I18NPlugin extends Plugin {
     String devider = settings.getProperty("DialogDevider.Location");
     if (devider != null) {
       int dev = parseNumber(devider);
-      System.out.println("DEVIDER :  " +dev);
       mDevider = dev;
     }
   }
