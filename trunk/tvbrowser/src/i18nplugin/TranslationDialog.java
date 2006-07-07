@@ -99,19 +99,21 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
 
   private Vector<Locale> mCurrentLocales;
 
-  private JComboBox mLanguageCB; 
+  private JComboBox mLanguageCB;
+
+  private JSplitPane mSplitpane; 
   
-  public TranslationDialog(JDialog owner) {
+  public TranslationDialog(JDialog owner, int splitPos) {
     super(owner, true);
-    createGui();
+    createGui(splitPos);
   }
   
-  public TranslationDialog(JFrame owner) {
+  public TranslationDialog(JFrame owner, int splitPos) {
     super(owner, true);
-    createGui();
+    createGui(splitPos);
   }
 
-  private void createGui() {
+  private void createGui(final int splitPos) {
     setTitle(mLocalizer.msg("title","Translation Tool"));
 
     JPanel panel = (JPanel) getContentPane();
@@ -172,10 +174,10 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
     mTreeRenderer = new PropertiesTreeCellRenderer(Locale.GERMAN);
     mTree.setCellRenderer(mTreeRenderer);
     
-    final JSplitPane split = new JSplitPane();
-    split.setLeftComponent(new JScrollPane(mTree));
+    mSplitpane = new JSplitPane();
+    mSplitpane.setLeftComponent(new JScrollPane(mTree));
     
-    panel.add(split, cc.xyw(2,7,6));
+    panel.add(mSplitpane, cc.xyw(2,7,6));
     
     mEditor = new TranslatorEditor(Locale.GERMAN);
     final JPanel cardPanel = new JPanel(new CardLayout());
@@ -210,11 +212,11 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
     
     mTree.setSelectionPath(new TreePath(root));
     
-    split.setRightComponent(new JScrollPane(cardPanel));
+    mSplitpane.setRightComponent(new JScrollPane(cardPanel));
     
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        split.setDividerLocation(0.3);
+        mSplitpane.setDividerLocation(splitPos);
       }
     });
     
@@ -405,6 +407,13 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
    */
   public void close() {
     setVisible(false);
+  }
+
+  /**
+   * @return Location of the Devider
+   */
+  public int getDeviderLocation() {
+    return mSplitpane.getDividerLocation();
   }
 
 }
