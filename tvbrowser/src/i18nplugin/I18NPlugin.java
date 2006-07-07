@@ -25,8 +25,12 @@
  */
 package i18nplugin;
 
+import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentEvent;
+import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -55,6 +59,12 @@ public class I18NPlugin extends Plugin {
 
   /** Instance of this Plugin */
   private static I18NPlugin mInstance;
+
+  private Point mLocation = null;
+
+  private Dimension mSize = null;
+  
+  private int mDevider = -1;
   
   /**
    * Contructor, stores current instance in static field
@@ -97,14 +107,102 @@ public class I18NPlugin extends Plugin {
     Window wnd = UiUtilities.getLastModalChildOf(getParentFrame());
     
     if (wnd instanceof JDialog) {
-      dialog = new TranslationDialog((JDialog)wnd);
+      dialog = new TranslationDialog((JDialog)wnd, mDevider);
     } else {
-      dialog = new TranslationDialog((JFrame)wnd);
+      dialog = new TranslationDialog((JFrame)wnd, mDevider);
     }
     
-    UiUtilities.centerAndShow(dialog);
+    dialog.addComponentListener(new java.awt.event.ComponentAdapter() {
+      public void componentMoved(ComponentEvent e) {
+        mLocation = e.getComponent().getLocation(mLocation);
+      }
+
+      public void componentResized(ComponentEvent e) {
+        mSize = e.getComponent().getSize(mSize);
+      }
+    });
+
+    if (mSize != null) {
+      dialog.setSize(mSize);
+    }
+    if (mLocation != null) {
+      dialog.setLocation(mLocation);
+      dialog.setVisible(true);
+    } else
+      UiUtilities.centerAndShow(dialog);
+    
+    mDevider = dialog.getDeviderLocation();
+    System.out.println("DEVIDER :  " +mDevider);
+
   }
 
+  @Override
+  public void loadSettings(Properties settings) {
+    String width = settings.getProperty("DialogSize.Width");
+    String height = settings.getProperty("DialogSize.Height");
+
+    if ((width != null) && (height != null)) {
+      int w = parseNumber(width);
+      int h = parseNumber(height);
+      mSize = new Dimension(w, h);
+    }
+
+    String x = settings.getProperty("DialogLocation.X");
+    String y = settings.getProperty("DialogLocation.Y");
+
+    if ((x != null) && (y != null)) {
+      int xv = parseNumber(x);
+      int yv = parseNumber(y);
+      mLocation = new Point(xv, yv);
+    }
+    
+    String devider = settings.getProperty("DialogDevider.Location");
+    if (devider != null) {
+      int dev = parseNumber(devider);
+      System.out.println("DEVIDER :  " +dev);
+      mDevider = dev;
+    }
+  }
+  
+  /**
+   * Parses a Number from a String.
+   * 
+   * @param str
+   *          Number in String to Parse
+   * @return Number if successfull. Default is 0
+   */
+  public int parseNumber(String str) {
+
+    try {
+      return Integer.parseInt(str);
+    } catch (Exception e) {
+      // ignore
+    }
+
+    return 0;
+  }
+  
+  @Override
+  public Properties storeSettings() {
+    Properties prop = new Properties();
+
+    if (mLocation != null) {
+      prop.setProperty("DialogLocation.X", Integer.toString(mLocation.x));
+      prop.setProperty("DialogLocation.Y", Integer.toString(mLocation.y));
+    }
+
+    if (mSize != null) {
+      prop.setProperty("DialogSize.Width", Integer.toString(mSize.width));
+      prop.setProperty("DialogSize.Height", Integer.toString(mSize.height));
+    }
+
+    if (mDevider > 0) {
+      prop.setProperty("DialogDevider.Location", Integer.toString(mDevider));
+    }
+    
+    return prop;
+  }
+  
   /*
    * (non-Javadoc)
    * 
