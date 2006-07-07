@@ -25,6 +25,11 @@
 package captureplugin.drivers.utils;
 
 import java.awt.Color;
+import java.awt.Point;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Date;
 
 import javax.swing.JComponent;
@@ -32,6 +37,9 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
+import javax.swing.SwingUtilities;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 
 /**
  * A Panel that gives the possibility to choose date/time
@@ -43,6 +51,9 @@ public class TimeDateChooserPanel extends JPanel {
   private SpinnerDateModel mDateModel;
 
   private JSpinner mSpinner;
+  private Point mClickLocation;
+  private int mCaretPosition;
+  private CaretListener mCaretListener;
 
   /**
    * Create the Panel
@@ -52,11 +63,81 @@ public class TimeDateChooserPanel extends JPanel {
   public TimeDateChooserPanel(Date date) {
     mDateModel = new SpinnerDateModel();
     mDateModel.setValue(date);
+    mClickLocation = null;
+    mCaretPosition = -1;
 
     mSpinner = new JSpinner(mDateModel);
+    
+    if(mSpinner.getEditor() instanceof JSpinner.DateEditor) {
+      JFormattedTextField field = ((JSpinner.DateEditor)mSpinner.getEditor()).getTextField();
+      
+      createCaretListener(field);
+      addMouseListenerToField(field);
+      addFocusListenerToField(field);
+    }
+    
     add(mSpinner);
   }
+  
+  /** Create caret listener for making sure of editing the right value.*/
+  private void createCaretListener(final JFormattedTextField field) {
+    mCaretListener = new CaretListener() {
+      public void caretUpdate(final CaretEvent e) {
+        if(mCaretPosition != -1 && field.getSelectedText() == null) {
+          mCaretPosition = field.getCaretPosition();
+        
+          SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+              String text = field.getText();
+            
+              if(mCaretPosition >= text.length() || text.charAt(mCaretPosition) == ':' ||
+                  text.charAt(mCaretPosition) == '.' || text.charAt(mCaretPosition) == '/' ||
+                  text.charAt(mCaretPosition) == ' ') {
+                field.setCaretPosition(--mCaretPosition);
+              }
+            }
+          });
+        }
+      }
+    };
+  }
+  
+  /** Add mouse listener to the field to track clicks and get the location of it */
+  private void addMouseListenerToField(final JFormattedTextField field) {
+    field.addMouseListener(new MouseAdapter() {
+      public void mousePressed(MouseEvent e) {
+        mClickLocation = e.getPoint();
+      }
+    });
+  }
+  
+  /**  Add focus listener to set the location of the caret to the right place */
+  private void addFocusListenerToField(final JFormattedTextField field) {
+    field.addFocusListener(new FocusListener() {
+      public void focusGained(FocusEvent e) {
+        if(mCaretPosition == -1)
+          mCaretPosition = field.getText().indexOf(":") + 1;
+        
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {              
+            if(mClickLocation != null)
+              mCaretPosition = field.getUI().viewToModel(field, mClickLocation);
+            
+            mClickLocation = null;
+            
+            field.setCaretPosition(mCaretPosition);
+            field.addCaretListener(mCaretListener);
+          }
+        });
+      }
 
+      public void focusLost(FocusEvent e) {
+        mCaretPosition = field.getCaretPosition();
+        field.removeCaretListener(mCaretListener);
+      }
+    });      
+  }
+  
   /**
    * Set the Background Color of the Spinner
    * 
