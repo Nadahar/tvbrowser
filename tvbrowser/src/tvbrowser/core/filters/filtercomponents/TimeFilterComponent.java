@@ -39,6 +39,7 @@ import javax.swing.SpinnerDateModel;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterComponent;
+import util.ui.CaretPositionCorrector;
 import util.ui.UiUtilities;
 import devplugin.Program;
 
@@ -93,14 +94,18 @@ public class TimeFilterComponent implements FilterComponent {
 
     public JPanel getPanel() {
         JPanel content = new JPanel(new BorderLayout());
-
+        
         mFromTimeSp = new JSpinner(new SpinnerDateModel());
-        mFromTimeSp.setEditor(new JSpinner.DateEditor(mFromTimeSp, Settings.getTimePattern()));
-        mFromTimeSp.setValue(setTimeToDate(mFromTime));
+        JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mFromTimeSp, Settings.getTimePattern());
+        mFromTimeSp.setEditor(dateEditor);
+        mFromTimeSp.setValue(setTimeToDate(mFromTime));        
+        CaretPositionCorrector.createCorrector(dateEditor.getTextField(), new char[] {':'}, -1);
         
         mToTimeSp = new JSpinner(new SpinnerDateModel());
-        mToTimeSp.setEditor(new JSpinner.DateEditor(mToTimeSp, Settings.getTimePattern()));
+        dateEditor = new JSpinner.DateEditor(mToTimeSp, Settings.getTimePattern());
+        mToTimeSp.setEditor(dateEditor);
         mToTimeSp.setValue(setTimeToDate(mToTime));
+        CaretPositionCorrector.createCorrector(dateEditor.getTextField(), new char[] {':'}, -1);
         
         JPanel timePn = new JPanel(new GridLayout(2, 2));
         timePn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("TimeOfDay","Uhrzeit")));

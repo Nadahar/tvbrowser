@@ -68,6 +68,7 @@ import tvbrowser.ui.settings.tablebackgroundstyles.TableBackgroundStyle;
 import tvbrowser.ui.settings.tablebackgroundstyles.TimeBlockBackgroundStyle;
 import tvbrowser.ui.settings.util.ColorButton;
 import tvbrowser.ui.settings.util.ColorLabel;
+import util.ui.CaretPositionCorrector;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.factories.Borders;
@@ -200,18 +201,22 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("range", "Range")), cc.xyw(1,9,8));
     
     mSettingsPn.add(new JLabel(mLocalizer.msg("startOfDay", "Start of day")), cc.xy(2, 11));
-
+    
     mStartOfDayTimeSp = new JSpinner(new SpinnerDateModel());
-    mStartOfDayTimeSp.setEditor(new JSpinner.DateEditor(mStartOfDayTimeSp, Settings.getTimePattern()));
+    JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mStartOfDayTimeSp, Settings.getTimePattern());
+    mStartOfDayTimeSp.setEditor(dateEditor);
     mSettingsPn.add(mStartOfDayTimeSp, cc.xy(4, 11));
-    mSettingsPn.add(new JLabel("(" + mLocalizer.msg("today", "today") + ")"), cc.xy(6, 11));
+    mSettingsPn.add(new JLabel("(" + mLocalizer.msg("today", "today") + ")"), cc.xy(6, 11));    
+    CaretPositionCorrector.createCorrector(dateEditor.getTextField(), new char[] {':'}, -1);
     
     mSettingsPn.add(new JLabel(mLocalizer.msg("endOfDay", "End of day")), cc.xy(2, 13));
     
     mEndOfDayTimeSp = new JSpinner(new SpinnerDateModel());
-    mEndOfDayTimeSp.setEditor(new JSpinner.DateEditor(mEndOfDayTimeSp, Settings.getTimePattern()));
+    dateEditor = new JSpinner.DateEditor(mEndOfDayTimeSp, Settings.getTimePattern());
+    mEndOfDayTimeSp.setEditor(dateEditor);
     mSettingsPn.add(mEndOfDayTimeSp, cc.xy(4, 13));
-    mSettingsPn.add(new JLabel("(" + mLocalizer.msg("nextDay", "next day") + ")"), cc.xy(6, 13));
+    mSettingsPn.add(new JLabel("(" + mLocalizer.msg("nextDay", "next day") + ")"), cc.xy(6, 13));    
+    CaretPositionCorrector.createCorrector(dateEditor.getTextField(), new char[] {':'}, -1);
     
     int minutes;
     Calendar cal = Calendar.getInstance();
