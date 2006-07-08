@@ -28,6 +28,8 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Date;
@@ -72,6 +74,7 @@ public class TimeDateChooserPanel extends JPanel {
       JFormattedTextField field = ((JSpinner.DateEditor)mSpinner.getEditor()).getTextField();
       
       createCaretListener(field);
+      addKeyListenerToField(field);
       addMouseListenerToField(field);
       addFocusListenerToField(field);
     }
@@ -100,6 +103,23 @@ public class TimeDateChooserPanel extends JPanel {
         }
       }
     };
+  }
+  
+  /** Add key listener to the field to handle correct moving throw the text of the field */
+  private void addKeyListenerToField(final JFormattedTextField field) {
+    field.addKeyListener(new KeyAdapter() {
+      public void keyPressed(KeyEvent e) {
+        if(KeyEvent.VK_RIGHT == e.getKeyCode()) {
+          int pos = field.getCaretPosition() + 1;
+          if(pos < field.getText().length() && field.getSelectedText() == null &&
+              (field.getText().charAt(pos) == '.' || field.getText().charAt(pos) == '/' ||
+              field.getText().charAt(pos) == ' ' || field.getText().charAt(pos) == '-' ||
+              field.getText().charAt(pos) == ':')) {
+            field.setCaretPosition(pos);
+          }
+        }
+      }
+    });
   }
   
   /** Add mouse listener to the field to track clicks and get the location of it */
