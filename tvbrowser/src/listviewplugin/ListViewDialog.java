@@ -59,6 +59,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.Settings;
+import util.ui.CaretPositionCorrector;
 import util.ui.TimeFormatter;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -355,18 +356,14 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
     datetimeselect.add(new JLabel(" " + mLocalizer.msg("at", "at") + " "));
 
-    mTimeSpinner.setEditor(new JSpinner.DateEditor(mTimeSpinner, Settings.getTimePattern()));
+    JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mTimeSpinner, Settings.getTimePattern());
+    
+    mTimeSpinner.setEditor(dateEditor);
+    
+    CaretPositionCorrector.createCorrector(dateEditor.getTextField(), new char[] {':'}, -1);
 
     datetimeselect.add(mTimeSpinner);
     
-    // Dispache the KeyEvent to the RootPane for Closing the Dialog.
-    // Needed for Java 1.4.
-    mTimeSpinner.getEditor().getComponent(0).addKeyListener(new KeyAdapter() {
-      public void keyPressed(KeyEvent e) {
-        mTimeSpinner.getRootPane().dispatchEvent(e);
-      }
-    });
-
     // Event-Handler
 
     mRuns.addActionListener(new ActionListener() {
