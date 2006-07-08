@@ -34,15 +34,21 @@ public class CaretPositionCorrector {
     mClickLocation = null;
     mCaretPosition = -1;
     
-    createCaretListener(field);
+    if(jumpCharacters != null && jumpCharacters.length > 0) {
+      createCaretListener(field);
     
-    addKeyListenerToField(field);
+      addKeyListenerToField(field);
+    }
+    
     addMouseListenerToField(field);
     addFocusListenerToField(field);
   }
   
   /**
    * Creates an instance of the JSpinnerCaretPositionCorrector.
+   * 
+   * Use <code>null</code> for jumpCharacters if you only want to
+   * let the position set to the click position.
    * 
    * @param field The JFormattedTextField to correct the caret position of.
    * @param jumpCharacters The character to jump from if the caret is in front of it.
@@ -55,6 +61,9 @@ public class CaretPositionCorrector {
   
   /**
    * Creates an instance of the JSpinnerCaretPositionCorrector.
+   * 
+   * Use <code>null</code> for jumpCharacters if you only want to
+   * let the position set to the click position.
    * 
    * @param field The JFormattedTextField to correct the caret position of.
    * @param jumpCharacters The character to jump from if the caret is in front of it.
