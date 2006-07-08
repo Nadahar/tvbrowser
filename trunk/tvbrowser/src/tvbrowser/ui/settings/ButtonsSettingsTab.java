@@ -48,6 +48,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.ui.CaretPositionCorrector;
 import util.ui.TabLayout;
 
 import com.jgoodies.forms.factories.Borders;
@@ -126,8 +127,11 @@ public class ButtonsSettingsTab implements SettingsTab {
       setLayout(new BorderLayout());
 
       mTimeSp = new JSpinner(new SpinnerDateModel());
-      mTimeSp.setEditor(new JSpinner.DateEditor(mTimeSp, Settings.getTimePattern()));
+      JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mTimeSp, Settings.getTimePattern()); 
+      mTimeSp.setEditor(dateEditor);
 
+      CaretPositionCorrector.createCorrector(dateEditor.getTextField(), new char[] {':'}, -1);
+      
       add(mTimeSp, BorderLayout.EAST);
       setTime(minutes);
     }
