@@ -93,9 +93,8 @@ public class TimeDateChooserPanel extends JPanel {
             public void run() {
               String text = field.getText();
             
-              if(mCaretPosition >= text.length() || text.charAt(mCaretPosition) == ':' ||
-                  text.charAt(mCaretPosition) == '.' || text.charAt(mCaretPosition) == '/' ||
-                  text.charAt(mCaretPosition) == ' ' || text.charAt(mCaretPosition) == '-') {
+              if(mCaretPosition > 0 && (mCaretPosition >= text.length() ||
+                  hasToMoveCaret(text, mCaretPosition))) {
                 field.setCaretPosition(--mCaretPosition);
               }
             }
@@ -105,16 +104,21 @@ public class TimeDateChooserPanel extends JPanel {
     };
   }
   
+  private boolean hasToMoveCaret(String text, int pos) {
+    return (text.charAt(pos) == '.' || text.charAt(pos) == '/' ||
+            text.charAt(pos) == ' ' || text.charAt(pos) == '-' ||
+            text.charAt(pos) == ':');
+  }
+  
   /** Add key listener to the field to handle correct moving throw the text of the field */
   private void addKeyListenerToField(final JFormattedTextField field) {
     field.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
         if(KeyEvent.VK_RIGHT == e.getKeyCode()) {
           int pos = field.getCaretPosition() + 1;
-          if(pos < field.getText().length() && field.getSelectedText() == null &&
-              (field.getText().charAt(pos) == '.' || field.getText().charAt(pos) == '/' ||
-              field.getText().charAt(pos) == ' ' || field.getText().charAt(pos) == '-' ||
-              field.getText().charAt(pos) == ':')) {
+          if(pos < field.getText().length() && pos > 0 && 
+              field.getSelectedText() == null &&
+              hasToMoveCaret(field.getText(), pos)) {
             field.setCaretPosition(pos);
           }
         }
