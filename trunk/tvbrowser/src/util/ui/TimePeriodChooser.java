@@ -38,13 +38,17 @@ public class TimePeriodChooser extends JPanel {
     FlowLayout layout = new FlowLayout(FlowLayout.LEFT, 0, 0);
     
     JPanel content = new JPanel(new FormLayout("pref, 3dlu, pref, 3dlu, pref, 3dlu, pref", "pref"));
-
+    
     mTimeFromSp = new JSpinner(new SpinnerDateModel());
-    mTimeFromSp.setEditor(new JSpinner.DateEditor(mTimeFromSp, Settings.getTimePattern()));
-
+    JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mTimeFromSp, Settings.getTimePattern());
+    mTimeFromSp.setEditor(dateEditor);
+    CaretPositionCorrector.createCorrector(dateEditor.getTextField(), new char[] {':'}, -1);
+    
     mTimeToSp = new JSpinner(new SpinnerDateModel());
-    mTimeToSp.setEditor(new JSpinner.DateEditor(mTimeToSp, Settings.getTimePattern()));
-
+    dateEditor = new JSpinner.DateEditor(mTimeToSp, Settings.getTimePattern());
+    mTimeToSp.setEditor(dateEditor);
+    CaretPositionCorrector.createCorrector(dateEditor.getTextField(), new char[] {':'}, -1);
+    
     CellConstraints cc = new CellConstraints();
 
     content.add(mLabel1 = new JLabel(mLocalizer.msg("between", "between")), cc.xy(1, 1));
