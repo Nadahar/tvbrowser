@@ -260,6 +260,8 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
     UiUtilities.registerForClosing(this);
     
     setSize(Sizes.dialogUnitXAsPixel(400, this), Sizes.dialogUnitYAsPixel(350, this));
+    
+    mLanguageCB.setSelectedIndex(0);
   }
 
   /**
