@@ -50,7 +50,6 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -77,7 +76,6 @@ import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.wizards.TypeWizardStep;
 import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
-import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
@@ -230,7 +228,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     toolbarPn.addSeparator();
 
     msg = mLocalizer.msg("sort", "Sort favorites alphabetically");
-    icon = new ImageIcon(this.getClass().getClassLoader().getResource("tvbrowser/extras/favoritesplugin/Sort24.gif"));
+    icon = FavoritesPlugin.getInstance().getIconFromTheme("actions", "sort-list", 22);
     mSortBt = UiUtilities.createToolBarButton(msg, icon);
     mSortBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
