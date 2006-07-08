@@ -407,12 +407,14 @@ public class MutableProgram implements Program {
    */
   public String getID() {
     if (mId == null) {
-      String dataServiceId = mChannel.getDataServiceProxy().getId();
-      String groupId = mChannel.getGroup().getId();
-      String channelId = mChannel.getId();
-      String country = mChannel.getCountry();
+      if  (mChannel.getDataServiceProxy() != null) {
+        String dataServiceId = mChannel.getDataServiceProxy().getId();
+        String groupId = mChannel.getGroup().getId();
+        String channelId = mChannel.getId();
+        String country = mChannel.getCountry();
 
-      mId = (new StringBuffer(dataServiceId).append("_").append(groupId).append("_").append(country).append("_").append(channelId).append("_").append(getHours()).append(":").append(getMinutes())).toString();
+        mId = (new StringBuffer(dataServiceId).append("_").append(groupId).append("_").append(country).append("_").append(channelId).append("_").append(getHours()).append(":").append(getMinutes())).toString();
+      }
     }
     return mId;
   }
