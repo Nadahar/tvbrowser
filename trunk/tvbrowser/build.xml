@@ -285,7 +285,7 @@
     <unjar src="${lib.dir}/skinlf.jar" dest="${unpacked.dir}/skinlf.jar"/>
     <unjar src="${lib.dir}/bsh-2.0b1.jar" dest="${unpacked.dir}/bsh-2.0b1.jar"/>
     <unjar src="${lib.dir}/forms-1.0.7.jar" dest="${unpacked.dir}/forms-1.0.7.jar"/>
-    <unjar src="${lib.dir}/looks-2.0.3.jar" dest="${unpacked.dir}/looks-2.0.3.jar"/>
+    <unjar src="${lib.dir}/looks-2.0.4.jar" dest="${unpacked.dir}/looks-2.0.4.jar"/>
     <unjar src="${lib.dir}/l2fprod-common-tasks.jar" dest="${unpacked.dir}/l2fprod-common-tasks.jar"/>
     <unjar src="${lib.dir}/jRegistryKey.jar" dest="${unpacked.dir}/jRegistryKey.jar" /> 	 
     <unjar src="${lib.dir}/TVAnytimeAPI.jar" dest="${unpacked.dir}/TVAnytimeAPI.jar" /> 	 
@@ -308,7 +308,7 @@
       <fileset dir="${unpacked.dir}/skinlf.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/bsh-2.0b1.jar" includes="bsh/**"/>
       <fileset dir="${unpacked.dir}/forms-1.0.7.jar" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/looks-2.0.3.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/looks-2.0.4.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/l2fprod-common-tasks.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/jRegistryKey.jar" includes="ca/**" />
     </jar>
@@ -373,6 +373,11 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="i18nplugin/**"/>
     </jar>
+  	
+        <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/ExportPlugin.jar"
+             compress="false">
+          <fileset dir="${classes.dir}" includes="exportplugin/**"/>
+        </jar>  	
   	<!--   <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/MediaCenterPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="mediacenterplugin/**"/>
