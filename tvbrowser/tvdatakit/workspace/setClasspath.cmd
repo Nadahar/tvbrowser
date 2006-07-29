@@ -1,3 +1,3 @@
 @echo off
 
-set PDS_CLASSPATH=java;java\poi-2.5-final-20040302.jar;java\xercesImpl.jar
+set PDS_CLASSPATH=classes;lib\poi-2.5-final-20040302.jar;lib\xercesImpl.jar

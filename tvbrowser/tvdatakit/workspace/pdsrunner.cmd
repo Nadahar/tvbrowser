@@ -2,4 +2,4 @@
 
 call setClasspath.cmd
 
-java -cp java\PDSRunner.jar;%PDS_CLASSPATH% primarydatamanager.PDSRunner %*
+java -cp lib\PDSRunner.jar;%PDS_CLASSPATH% primarydatamanager.PDSRunner %*

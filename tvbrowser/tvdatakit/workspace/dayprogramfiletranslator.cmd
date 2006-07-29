@@ -2,4 +2,4 @@
 
 call setClasspath.cmd
 
-java -cp java\PrimaryDataManager.jar;%PDS_CLASSPATH% primarydatamanager.DayProgramFileTranslator %*
+java -cp lib\PrimaryDataManager.jar;%PDS_CLASSPATH% primarydatamanager.DayProgramFileTranslator %*
