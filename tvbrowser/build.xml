@@ -602,7 +602,8 @@
   <target name="runtime-tvdatakit" depends="clean-tvdatakit, runtime-tools">
     <!-- Compile the example PDSs -->
     <mkdir dir="${tvdatakit.runtime.dir}/workspace/java"/>
-    <javac destdir="${tvdatakit.runtime.dir}/workspace/java"
+    <mkdir dir="${tvdatakit.runtime.dir}/workspace/classes"/>
+    <javac destdir="${tvdatakit.runtime.dir}/workspace/classes"
            debug="${debug}"
            deprecation="true"
            srcdir="tvdatakit/workspace/java"
@@ -611,7 +612,7 @@
         <fileset dir="${tvdatatools.runtime.dir}">
           <include name="PrimaryDataManager.jar"/>
         </fileset>
-        <fileset dir="tvdatakit/workspace/java">
+        <fileset dir="tvdatakit/workspace/lib">
           <include name="*.jar"/>
         </fileset>
       </classpath>
@@ -621,7 +622,7 @@
     <copy todir="${tvdatakit.runtime.dir}">
       <fileset dir="tvdatakit" excludes="**/CVS/**"/>
     </copy>
-    <copy todir="${tvdatakit.runtime.dir}/workspace/java">
+    <copy todir="${tvdatakit.runtime.dir}/workspace/lib">
       <fileset dir="${tvdatatools.runtime.dir}" includes="*.jar"/>
       <fileset dir="${txt.dir}" includes="LICENSE.txt"/>
     </copy>
