@@ -534,6 +534,7 @@
     <!-- Extract the libraries for the jars into the temp.dir -->
     <mkdir dir="${unpacked.dir}/commons-net.jar"/>
     <unjar src="${lib.dir}/commons-net.jar" dest="${unpacked.dir}/commons-net.jar"/>
+    <unjar src="${lib.dir}/looks-2.0.4.jar" dest="${unpacked.dir}/looks-2.0.4.jar"/>
 
     <!-- Pack the MirrorUpdater.jar -->
     <jar jarfile="${tvdatatools.runtime.dir}/MirrorUpdater.jar"
@@ -551,6 +552,7 @@
       <fileset dir="${classes.dir}" includes="tvbrowser/core/tvdataservice/**"/>
       <fileset dir="${classes.dir}" includes="tvbrowser/core/ChannelUserSettings*"/>
       <fileset dir="${unpacked.dir}/commons-net.jar" includes="org/**"/>
+      <fileset dir="${unpacked.dir}/looks-2.0.4.jar" includes="com/**"/>
     </jar>
 
     <!-- Pack the PrimaryDataManager.jar -->
@@ -567,6 +569,7 @@
       <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
       <fileset dir="${classes.dir}" includes="devplugin/**"/>
       <fileset dir="${classes.dir}" includes="util/**"/>
+      <fileset dir="${unpacked.dir}/looks-2.0.4.jar" includes="com/**"/>
     </jar>
 
     <!-- Pack the PDSRunner.jar -->
@@ -583,6 +586,7 @@
       <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
       <fileset dir="${classes.dir}" includes="devplugin/**"/>
       <fileset dir="${classes.dir}" includes="util/**"/>
+      <fileset dir="${unpacked.dir}/looks-2.0.4.jar" includes="com/**"/>
     </jar>
 
     <!-- Copy the file(s) -->
