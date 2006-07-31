@@ -28,8 +28,6 @@ package util.settings;
 import java.util.ArrayList;
 
 import tvbrowser.core.ChannelList;
-import tvbrowser.core.tvdataservice.TvDataServiceProxy;
-import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import devplugin.Channel;
 
 /**

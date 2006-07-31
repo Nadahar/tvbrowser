@@ -206,6 +206,8 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
         if(TvDataBase.getInstance().dataAvailable(item.getDate()))
           item.setEnabled(true);
     }
+    
+    mList.updateUI();
   }
 
   /**

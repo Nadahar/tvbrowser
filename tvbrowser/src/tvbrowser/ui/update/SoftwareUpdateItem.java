@@ -70,15 +70,23 @@ public abstract class SoftwareUpdateItem {
     return new Version(major, minor, stable, getProperty("version.name"));
   }
   
-  public Version getRequiredVersion() {
-    String v = getProperty("requires");
-    if (v==null) {
+  protected boolean isStable() {
+    return "true".equalsIgnoreCase(getProperty("stable"));
+  }
+  
+  public boolean isOnlyUpdate() {
+    return "true".equalsIgnoreCase(getProperty("onlyUpdate"));
+  }
+  
+  private Version getVersion(String value) {
+    if (value==null)
       return null;
-    }
-    String[] s = v.split("\\.");
-    if (s.length!=2) {
+    
+    String[] s = value.split("\\.");
+    
+    if (s.length!=2)
       return null;
-    }
+    
     int major, minor;
     try {
       major = Integer.parseInt(s[0]);
@@ -86,7 +94,15 @@ public abstract class SoftwareUpdateItem {
     }catch(NumberFormatException e) {
       return null;
     }
-    return new Version(major, minor);      
+    return new Version(major, minor);    
+  }
+  
+  public Version getRequiredVersion() {
+    return getVersion(getProperty("requires"));
+  }  
+  
+  public Version getMaximumVersion() {
+    return getVersion(getProperty("maximalVersion"));    
   }
   
   public String getName() {
@@ -126,15 +142,15 @@ public abstract class SoftwareUpdateItem {
     return mClassName;   
   }
 	
-	public void download() throws TvBrowserException {
+	public boolean download() throws TvBrowserException {
     String url = getProperty("download");
     if (url == null) {
       throw new TvBrowserException(SoftwareUpdateItem.class, "error.2", "No Url");
     }
-    download(url);
+    return download(url);
   }
     
-  protected abstract void download(String url) throws TvBrowserException;
+  protected abstract boolean download(String url) throws TvBrowserException;
 	
 	
 }

@@ -250,7 +250,7 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler{
           } else {
               mMcdp = (MutableChannelDayProgram)mDayProgsHashTable.get(start.toString());
           }
-          MutableProgram prog = new MutableProgram(mMcdp.getChannel(),start,startHour,startMin);
+          MutableProgram prog = new MutableProgram(mMcdp.getChannel(),start,startHour,startMin,true);
           
           int progLength = (endHour*60) + endMin - (startHour*60) - startMin;
           //Assumption: If the program length is less than 0, the program spans midnight
@@ -286,6 +286,7 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler{
               prog.setTextField(ProgramFieldType.DIRECTOR_TYPE, directors);
           }
           prog.setTextField(ProgramFieldType.EPISODE_TYPE, episode);
+          prog.setProgramLoadingIsComplete();
           mMcdp.addProgram(prog);
         }
         break;

@@ -395,7 +395,7 @@ public class ProgramTextCreator {
           while (shortInfo.toString().endsWith("."))
             shortInfo.deleteCharAt(shortInfo.length() - 1);
 
-          if (!description.startsWith(shortInfo.toString())) {
+          if (!description.trim().startsWith(shortInfo.toString())) {
             addEntry(doc, buffer, prog,
                 ProgramFieldType.SHORT_DESCRIPTION_TYPE, true, showHelpLinks);
           }
@@ -470,15 +470,21 @@ public class ProgramTextCreator {
   }
 
   /**
-   * 
+   *
    * @return The default order of the entries.
    */
   public static Object[] getDefaultOrder() {
-    return new Object[] { ProgramFieldType.GENRE_TYPE,
-        ProgramFieldType.DESCRIPTION_TYPE, ProgramFieldType.ORIGIN_TYPE,
-        ProgramFieldType.DIRECTOR_TYPE, ProgramFieldType.SCRIPT_TYPE,
-        ProgramFieldType.ACTOR_LIST_TYPE, ProgramFieldType.MUSIC_TYPE,
-        ProgramFieldType.URL_TYPE, ProgramFieldType.ORIGINAL_TITLE_TYPE,
+    return new Object[] {
+        ProgramFieldType.GENRE_TYPE,
+        ProgramFieldType.DESCRIPTION_TYPE,
+        ProgramFieldType.ORIGIN_TYPE,
+        ProgramFieldType.DIRECTOR_TYPE,
+        ProgramFieldType.SCRIPT_TYPE,
+        ProgramFieldType.ACTOR_LIST_TYPE,
+        ProgramFieldType.MODERATION_TYPE,
+        ProgramFieldType.MUSIC_TYPE,
+        ProgramFieldType.URL_TYPE,
+        ProgramFieldType.ORIGINAL_TITLE_TYPE,
         ProgramFieldType.ORIGINAL_EPISODE_TYPE,
         ProgramFieldType.REPETITION_OF_TYPE,
         ProgramFieldType.REPETITION_ON_TYPE, ProgramFieldType.AGE_LIMIT_TYPE,

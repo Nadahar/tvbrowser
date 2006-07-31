@@ -28,14 +28,18 @@ package tvbrowserdataservice.file;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import util.exc.TvBrowserException;
+import util.io.DownloadJob;
+import util.io.IOUtilities;
 import devplugin.Date;
 
 /**
@@ -365,7 +369,7 @@ public class DayProgramFile extends AbstractFile {
 
 
 
-  public void readFromStream(InputStream stream)
+  public void readFromStream(InputStream stream, DownloadJob job)
     throws IOException, FileFormatException
   {
     GZIPInputStream gIn = new GZIPInputStream(stream);
@@ -378,6 +382,18 @@ public class DayProgramFile extends AbstractFile {
     mVersion = gIn.read();
     
     int programCount = gIn.read();
+    
+    if(programCount == 255) {
+      try {
+        if(job.getServerUrl() != null) {
+          String url = job.getServerUrl() + "/" + job.getFileName().substring(0, job.getFileName().lastIndexOf(".prog.gz")) + "_count.prog.gz";
+          programCount = readProgCountFromStream(IOUtilities.getStream(new URL(url), 60000));
+        }
+        else
+          programCount = readProgCountFromStream(new BufferedInputStream(new FileInputStream(job.getFileName()), 0x4000));
+      }catch(Exception e) {}
+    }
+    
     mProgramFrameList.clear();
     mProgramFrameList.ensureCapacity(programCount);
     for (int i = 0; i < programCount; i++) {
@@ -389,8 +405,28 @@ public class DayProgramFile extends AbstractFile {
     gIn.close();
   }
 
+  private int readProgCountFromStream(InputStream stream) throws IOException, FileFormatException {
+    GZIPInputStream gIn = new GZIPInputStream(stream);
+    
+    int count = ((gIn.read() & 0xFF) << 8 ) | (gIn.read() & 0xFF);
+        
+    gIn.close();
+    
+    return count;
+  }
+  
+  private void writeProgCountToStream(OutputStream stream) throws IOException, FileFormatException {
+    GZIPOutputStream gOut = new GZIPOutputStream(stream);
+    
+    int count = getProgramFrameCount();
+    
+    gOut.write((byte) (count >> 8));
+    gOut.write((byte) (count & 0xFF));
+    
+    gOut.close();
+  }
 
-  public void writeToStream(OutputStream stream)
+  public void writeToStream(OutputStream stream, File file)
     throws IOException, FileFormatException
   {
     checkFormat();
@@ -401,7 +437,29 @@ public class DayProgramFile extends AbstractFile {
     
     gOut.write(mVersion);
     
-    gOut.write(getProgramFrameCount());
+    if(getProgramFrameCount() > 255) {
+      if(file != null) {
+        String fileName = file.toString();
+        fileName = fileName.substring(0, fileName.lastIndexOf(".prog.gz")) + "_count.prog.gz";
+        FileOutputStream write = null;
+        
+        try {
+          write = new FileOutputStream(fileName);
+          writeProgCountToStream(write);
+        }catch(Exception e) {
+          try {
+            write.close();
+          }catch(Exception e2) {}
+          
+          (new File(fileName)).delete();
+        }
+      }
+      
+      gOut.write(255);
+    }
+    else    
+      gOut.write(getProgramFrameCount());
+    
     for (int i = 0; i < getProgramFrameCount(); i++) {
       ProgramFrame frame = getProgramFrameAt(i);
       frame.writeToStream(gOut);

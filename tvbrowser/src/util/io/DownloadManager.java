@@ -140,7 +140,7 @@ public class DownloadManager {
 
         if (stream != null) {
           try {
-            job.getDownloadHandler().handleDownload(job.getFileName(), stream);
+            job.getDownloadHandler().handleDownload(job, stream);
             stream.close();
           }
           catch (Throwable thr) {
@@ -172,33 +172,4 @@ public class DownloadManager {
     
     return false;
   }
-  
-  
-  
-  private class DownloadJob {
-    
-    private String mFileName;
-    private DownloadHandler mHandler;
-    private String mServerUrl;
-    
-    public DownloadJob(String serverUrl, String fileName, DownloadHandler handler) {
-      mFileName = fileName;
-      mHandler = handler;
-      mServerUrl = serverUrl;
-    }
-    
-    public String getFileName() {
-      return mFileName;
-    }
-    
-    public String getServerUrl() {
-      return mServerUrl;
-    }
-    
-    public DownloadHandler getDownloadHandler() {
-      return mHandler;
-    }
-    
-  }
-
 }

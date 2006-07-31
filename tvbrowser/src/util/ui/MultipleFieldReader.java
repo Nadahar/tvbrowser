@@ -222,11 +222,12 @@ public class MultipleFieldReader extends Reader {
       return false;
     }
 
-    if (shortDesc.endsWith("...")) {
-      return description.startsWith(shortDesc.substring(0, shortDesc.length() - 3));
-    } else {
-      return description.equals(shortDesc);
-    }
+    StringBuffer shortInfo = new StringBuffer(shortDesc.trim());
+    
+    while(shortInfo.toString().endsWith("."))
+      shortInfo.deleteCharAt(shortInfo.length() - 1);
+    
+    return description.trim().startsWith(shortInfo.toString());
   }
 
   

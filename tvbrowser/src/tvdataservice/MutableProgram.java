@@ -36,6 +36,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
+import tvbrowser.core.TvDataBase;
 import tvbrowser.core.plugin.PluginProxyManager;
 import util.io.IOUtilities;
 import devplugin.Channel;
@@ -76,6 +77,9 @@ public class MutableProgram implements Program {
 
   /** Contains whether this program is currently on air. */
   private boolean mOnAir;
+  
+  /** Tracks if the program is current loading/ being created. */
+  private boolean mIsLoading;
 
   /** The cached ID of this program. */
   private String mId;
@@ -111,16 +115,37 @@ public class MutableProgram implements Program {
    * @param localDate The date of this program.
    * @param localHours The hour-component of the start time of the program.
    * @param localMinutes The minute-component of the start time of the program.
+   * 
+   * @deprecated Since 2.2.2. Use {@link #MutableProgram(Channel, devplugin.Date, int, int, boolean)} instead.
    */
   public MutableProgram(Channel channel, devplugin.Date localDate,
     int localHours, int localMinutes)
   {
-    this (channel, localDate);
+    this (channel, localDate, localHours, localMinutes, false);
+  }
+  
+  /**
+   * Creates a new instance of MutableProgram.
+   * <p>
+   * The parameters channel, date, hours and minutes build the ID. That's why they
+   * are not mutable.
+   *
+   * @param channel The channel object of this program.
+   * @param localDate The date of this program.
+   * @param localHours The hour-component of the start time of the program.
+   * @param localMinutes The minute-component of the start time of the program.
+   * @param isLoading If the program is curently being created.
+   * 
+   * @see #setProgramLoadingIsComplete()
+   */
+  public MutableProgram(Channel channel, devplugin.Date localDate,
+    int localHours, int localMinutes, boolean isLoading)
+  {
+    this (channel, localDate, isLoading);
     
     int localStartTime = localHours * 60 + localMinutes;
     setTimeField(ProgramFieldType.START_TIME_TYPE, localStartTime);
   }
-  
 
   /**
    * Creates a new instance of MutableProgram.
@@ -130,8 +155,10 @@ public class MutableProgram implements Program {
    *
    * @param channel The channel object of this program.
    * @param localDate The date of this program.
+   * @param isLoading If the program is curently loading.
+   * @see #setProgramLoadingIsComplete()
    */
-  public MutableProgram(Channel channel, devplugin.Date localDate) {
+  public MutableProgram(Channel channel, devplugin.Date localDate, boolean isLoading) {
     if (channel == null) {
       throw new NullPointerException("channel is null");
     }
@@ -143,6 +170,7 @@ public class MutableProgram implements Program {
     mListenerList = new Vector<ChangeListener>();
     mMarkerArr = EMPTY_MARKER_ARR;
     mOnAir = false;
+    mIsLoading = isLoading;
 
     mTitle = null;
 
@@ -617,6 +645,11 @@ public class MutableProgram implements Program {
       }
     }
 
+    try {
+      if(!mIsLoading)
+        ((MutableChannelDayProgram)TvDataBase.getInstance().getDayProgram(getDate(),getChannel())).setWasChangedByPlugin();
+    }catch(Exception e) {}
+
     fireStateChanged();
   }
 
@@ -917,4 +950,13 @@ public class MutableProgram implements Program {
     fireStateChanged();
   }
 
+  /**
+   * Sets the loading state to false.
+   * Call this after creation of the program from the data service.
+   *
+   * @since 2.2.2
+   */
+  public void setProgramLoadingIsComplete() {
+    mIsLoading = false;
+  }
 }

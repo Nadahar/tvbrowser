@@ -800,7 +800,9 @@ public class Settings {
   /** Settings-Window Y-Position */
   public static final IntProperty propSettingsWindowY = new IntProperty(mProp,
       "settingsWindow.y", -1);
-  
+
+  public static final IntProperty propUpdateDialogDividerLocation = new IntProperty(
+      mProp, "updateDialog.devider", -1);
   /** Update-Dialog Width */
   public static final IntProperty propUpdateDialogWidth = new IntProperty(
       mProp, "updateDialog.width", -1);

@@ -27,12 +27,18 @@
 
 package tvbrowser.ui.update;
 
+import java.awt.Window;
 import java.io.File;
 import java.net.URL;
 
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+
 import tvbrowser.core.Settings;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.TvBrowserException;
 import util.io.IOUtilities;
+import util.ui.UiUtilities;
 
 
 public class PluginSoftwareUpdateItem extends SoftwareUpdateItem {
@@ -47,13 +53,33 @@ public class PluginSoftwareUpdateItem extends SoftwareUpdateItem {
     private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(PluginSoftwareUpdateItem.class);
 
-
   public PluginSoftwareUpdateItem(String name) {
-    super(name);
+    super(name); 
   }
 
-  protected void download(final String url) throws TvBrowserException {
-
+  protected boolean download(final String url) throws TvBrowserException {
+    if(!isStable()) {
+      JOptionPane pane = new JOptionPane();
+      
+      String ok = mLocalizer.msg("betawarning.oktext","Install beta version");
+      String cancel = mLocalizer.msg("betawarning.canceltext","Cancel installation");
+      
+      pane.setOptions(new String[] {ok,cancel});
+      pane.setMessageType(JOptionPane.QUESTION_MESSAGE);
+      pane.setOptionType(JOptionPane.YES_NO_OPTION);
+      pane.setInitialValue(cancel);
+      pane.setMessage(mLocalizer.msg("betawarning.text","<html>The plugin <b>{0}</b> is a beta version.<br>Beta versions are possible unstable and could contain errors.<br><br>Are you sure that you want to install this version?</html>",getName() + " " + getVersion()));
+      
+      Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+      
+      JDialog dialog = pane.createDialog(w, mLocalizer.msg("betawarning.title","Beta version"));
+      dialog.setModal(true);
+      dialog.setLocationRelativeTo(w);
+      dialog.setVisible(true);
+      
+      if(!ok.equals(pane.getValue()))
+        return false;
+    }
 
     final File toFile=new File(Settings.propPluginsDirectory.getString(),getClassName() + ".jar.inst");
     try {
@@ -62,6 +88,7 @@ public class PluginSoftwareUpdateItem extends SoftwareUpdateItem {
       throw new TvBrowserException(SoftwareUpdateItem.class, "error.1",
                 "Download failed", url,toFile.getAbsolutePath(),exc);
     }
+    return true;
   }
 
 

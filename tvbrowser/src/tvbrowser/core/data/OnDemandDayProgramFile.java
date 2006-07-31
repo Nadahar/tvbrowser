@@ -232,6 +232,9 @@ public class OnDemandDayProgramFile {
         }
       }
     }
+    
+    prog.setProgramLoadingIsComplete();
+    
     return prog;
   }
 
@@ -326,6 +329,8 @@ public class OnDemandDayProgramFile {
       }
     }
 
+    prog.setProgramLoadingIsComplete();
+    
     return prog;
   }
 

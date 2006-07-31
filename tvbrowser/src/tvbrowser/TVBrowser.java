@@ -111,8 +111,8 @@ public class TVBrowser {
   */
   public static final String[] ALL_VERSIONS = new String[]{
           "2.3 (SVN)",
-          "2.2.1beta2",
-          "2.2.1beta",
+          "2.2.1",
+          "2.2.1beta3",
           "2.2",
           "2.2beta2",
           "2.2beta1",

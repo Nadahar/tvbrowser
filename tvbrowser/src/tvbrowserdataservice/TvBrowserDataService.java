@@ -116,6 +116,9 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   private static TvBrowserDataService mInstance;
 
 
+  /**
+   * Creates a new TvBrowserDataService.
+   */
   public TvBrowserDataService() {
     mSettings = new Properties();
     mInstance=this;
@@ -123,6 +126,12 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   }
 
 
+  /**
+   * Get the instance of the TvBrowserDataService.
+   * If the instance isn't available it will be created.
+   *
+   * @return The instance of the TvBrowserDataService.
+   */
   public static TvBrowserDataService getInstance() {
     if (mInstance==null) {
       throw new RuntimeException("no instance of TvBrowserDataService class available");
@@ -141,6 +150,9 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     }
   }
 
+  /**
+   * @return The data directory of the TvBrowserDataService.
+   */
   public File getWorkingDirectory() {
     return mDataDir;
   }
@@ -166,19 +178,19 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   public void updateTvData(TvDataUpdateManager dataBase, Channel[] channelArr,
                            Date startDate, int dateCount, ProgressMonitor monitor) {
     boolean groupsWereAllreadyUpdated = false;
-    
+
     // Check for Connection
     if (!NetworkUtilities.checkConnection()) {
-      JOptionPane.showMessageDialog(null, 
+      JOptionPane.showMessageDialog(null,
           mLocalizer.msg("noConnectionMessage", "No connection!"),
           mLocalizer.msg("noConnectionTitle", "No connection!"),
           JOptionPane.ERROR_MESSAGE);
       return;
     }
-    
+
     // Reset list of banned Servers
     ChannelGroup.resetBannedServers();
-    
+
     mTvDataBase=dataBase;
     mProgressMonitor = monitor;
 
@@ -192,7 +204,6 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
       if (!groups.contains(curGroup)) {
         groups.add(curGroup);
-        curGroup.resetDirectlyLoadedBytes();
         mProgressMonitor.setMessage(mLocalizer.msg("info.8","Finding mirror for group {0} ...",curGroup.getName()));
 
         try {
@@ -416,10 +427,20 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     return null;
   }
 
+  /**
+   * Adds a new channel group to the TvBrowserDataService.
+   *
+   * @param group The channel group to add.
+   */
   public void addGroup(ChannelGroup group) {
     mAvailableChannelGroupsSet.add(group);
   }
 
+  /**
+   * Removes a channel group from the TvBrowserDataService.
+   *
+   * @param group The channel group to remove.
+   */
   public void removeGroup(ChannelGroup group) {
     mAvailableChannelGroupsSet.remove(group);
   }
@@ -463,6 +484,11 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   }
 
 
+  /**
+   * Sets the level of the tv data.
+   *
+   * @param levelArr The array with the tv data levels.
+   */
   public void setTvDataLevel(TvDataLevel[] levelArr) {
     mSubscribedLevelArr = levelArr;
   }

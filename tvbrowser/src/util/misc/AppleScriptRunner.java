@@ -31,7 +31,7 @@ import util.io.StreamReaderThread;
 /**
  * This class is the Interface to the AppleScript-System. It runs the Scripts
  * 
- * @since 2.3
+ * @since 2.2.1
  * @author bodum
  */
 public class AppleScriptRunner {

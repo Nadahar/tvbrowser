@@ -36,12 +36,14 @@ public class TvbrowserSoftwareUpdateItem extends SoftwareUpdateItem {
     super(name);
   }
 
-  protected void download(String url) throws TvBrowserException {
+  protected boolean download(String url) throws TvBrowserException {
     try {
       Launch.openURL("http://www.tvbrowser.org");
     } catch (Exception exc) {
       throw new TvBrowserException(BrowserLauncher.class, "error.1", "Could not open webbrowser", exc);
     }
+    
+    return true;
   }
 
 }

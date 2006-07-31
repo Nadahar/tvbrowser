@@ -60,6 +60,12 @@ public class TvDataBaseUpdater {
   private HashSet mUpdateJobSet;
   
   
+  /**
+   * Creates a new TvDataBaseUpdater.
+   * 
+   * @param dataService The dataservice of the data to update.
+   * @param dataBase The TvDataBaseUpdateManager.
+   */
   public TvDataBaseUpdater(TvBrowserDataService dataService,
     TvDataUpdateManager dataBase)
   {
@@ -70,7 +76,7 @@ public class TvDataBaseUpdater {
   }
   
   
-  public void addUpdateJobForDayProgramFile(String fileName)
+  protected void addUpdateJobForDayProgramFile(String fileName)
     throws TvBrowserException
   {
     // Parse the information from the fileName
@@ -90,13 +96,13 @@ public class TvDataBaseUpdater {
   
   
   
-  public synchronized void addUpdateJob(Date date, Channel channel) {
+  protected synchronized void addUpdateJob(Date date, Channel channel) {
     mUpdateJobSet.add(new UpdateJob(date, channel));
   }
 
 
 
-  public void updateTvDataBase(ProgressMonitor monitor) {
+  protected void updateTvDataBase(ProgressMonitor monitor) {
     monitor.setMaximum(mUpdateJobSet.size());
     int i=0;
     for (Iterator iter = mUpdateJobSet.iterator(); iter.hasNext();) {
@@ -192,7 +198,7 @@ public class TvDataBaseUpdater {
     int startTime = field.getTimeData();
     
     MutableProgram program
-      = new MutableProgram(channel, date, startTime / 60, startTime % 60);
+      = new MutableProgram(channel, date, startTime / 60, startTime % 60, true);
       
     int fieldCount = frame.getProgramFieldCount();
     for (int i = 0; i < fieldCount; i++) {
@@ -212,6 +218,8 @@ public class TvDataBaseUpdater {
       }
     }
 
+    program.setProgramLoadingIsComplete();
+    
     return program;
   }
   

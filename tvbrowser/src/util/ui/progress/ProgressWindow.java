@@ -88,9 +88,13 @@ public class ProgressWindow implements devplugin.ProgressMonitor {
   }
 
   public void setMaximum(int maximum) {
-    mBar.setMaximum(maximum);
-    mBar.setVisible(true);
-    mBar.setStringPainted(true);
+    if(maximum == -1)
+      mBar.setVisible(false);
+    else {
+      mBar.setMaximum(maximum);
+      mBar.setVisible(true);
+      mBar.setStringPainted(true);
+    }
   }
 
   public void setValue(int value) {

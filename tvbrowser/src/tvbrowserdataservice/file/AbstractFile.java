@@ -33,6 +33,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import util.io.DownloadJob;
+
 /**
  * Holds the common code of the file classes.
  * 
@@ -46,7 +48,7 @@ public abstract class AbstractFile {
     try {
       stream = new BufferedInputStream(new FileInputStream(file), 0x4000);
       
-      readFromStream(stream);
+      readFromStream(stream, new DownloadJob(null, file.toString(), null));
     }
     finally {
       if (stream != null) {
@@ -56,7 +58,7 @@ public abstract class AbstractFile {
   }
 
 
-  public abstract void readFromStream(InputStream stream)
+  public abstract void readFromStream(InputStream stream, DownloadJob job)
     throws IOException, FileFormatException;
 
 
@@ -69,7 +71,7 @@ public abstract class AbstractFile {
       try {
         stream = new FileOutputStream(file);
         
-        writeToStream(stream);
+        writeToStream(stream, file);
       }
       finally {
         // Close the file in every case
@@ -90,7 +92,7 @@ public abstract class AbstractFile {
   }
 
 
-  public abstract void writeToStream(OutputStream stream)
+  public abstract void writeToStream(OutputStream stream, File file)
     throws IOException, FileFormatException;
 
 }

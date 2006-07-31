@@ -219,7 +219,7 @@
   <target name="make-default" depends="copy-resources">
     <echo message="Compiling the source code ... "/>
     <mkdir dir="${classes.dir}"/>
-    <javac destdir="${classes.dir}" debug="${debug}" deprecation="true" encoding="iso-8859-15">
+    <javac destdir="${classes.dir}" debug="${debug}" deprecation="true" encoding="iso-8859-15" target="1.5" source="1.5">
       <src>
         <path refid="sourcepath"/>
       </src>
@@ -251,7 +251,7 @@
   <target name="make-mac" depends="copy-resources">
     <echo message="Compiling the source code ..."/>
     <mkdir dir="${classes.dir}"/>
-    <javac destdir="${classes.dir}" debug="${debug}" deprecation="true" encoding="iso-8859-15">
+    <javac destdir="${classes.dir}" debug="${debug}" deprecation="true" encoding="iso-8859-15" target="1.4" source="1.4">
       <src>
         <path refid="sourcepath"/>
       </src>
@@ -614,7 +614,9 @@
            debug="${debug}"
            deprecation="true"
            srcdir="tvdatakit/workspace/java"
-    	   encoding="iso-8859-15">
+    	   encoding="iso-8859-15"
+           target="1.4"
+           source="1.4">
       <classpath>
         <fileset dir="${tvdatatools.runtime.dir}">
           <include name="PrimaryDataManager.jar"/>

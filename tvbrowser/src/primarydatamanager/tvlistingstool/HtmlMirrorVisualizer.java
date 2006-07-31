@@ -108,7 +108,7 @@ public class HtmlMirrorVisualizer implements MirrorVisualizer {
       try {
         data = mSource.loadFile(summaryFileName);
         summary = new SummaryFile();
-        summary.readFromStream(new ByteArrayInputStream(data));
+        summary.readFromStream(new ByteArrayInputStream(data), null);
       } catch (Exception e) {
         printError("Could not load summary file '"+summaryFileName+"' for group '"+groupId+"'");
 

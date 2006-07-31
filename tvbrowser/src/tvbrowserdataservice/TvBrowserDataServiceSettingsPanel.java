@@ -70,6 +70,10 @@ import util.ui.UiUtilities;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 
+/**
+ * A class that implements the SettingsPanel for the TvBrowserDataService.
+ * 
+ */
 public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements ActionListener {
 
   private Properties mSettings;
@@ -224,6 +228,12 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
     }
   }
 
+  /**
+   * Get the settings panel of the TvBrowserDataService.
+   * 
+   * @param settings The properties of the TvBrowserDataService.
+   * @return The settings panel for TvBrowserDataService.
+   */
   public static SettingsPanel getInstance(Properties settings) {
     if (mInstance == null) {
       mInstance = new TvBrowserDataServiceSettingsPanel(settings);
