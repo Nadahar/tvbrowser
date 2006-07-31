@@ -251,7 +251,7 @@
   <target name="make-mac" depends="copy-resources">
     <echo message="Compiling the source code ..."/>
     <mkdir dir="${classes.dir}"/>
-    <javac destdir="${classes.dir}" debug="${debug}" deprecation="true" encoding="iso-8859-15" target="1.4" source="1.4">
+    <javac destdir="${classes.dir}" debug="${debug}" deprecation="true" encoding="iso-8859-15" target="1.5" source="1.5">
       <src>
         <path refid="sourcepath"/>
       </src>
@@ -494,7 +494,7 @@
 		icon="./images/additional/tvbrowser.icns"
                 mainclass="tvbrowser.TVBrowser"
                 extraclasspath="/System/Library/Java"
-                jvmversion="1.4+"
+                jvmversion="1.5+"
                 vmoptions="-Dpropertiesfile=osx.properties"
                 bundleid="org.tvbrowser"
                 smalltabs="true"
@@ -615,8 +615,8 @@
            deprecation="true"
            srcdir="tvdatakit/workspace/java"
     	   encoding="iso-8859-15"
-           target="1.4"
-           source="1.4">
+           target="1.5"
+           source="1.5">
       <classpath>
         <fileset dir="${tvdatatools.runtime.dir}">
           <include name="PrimaryDataManager.jar"/>
