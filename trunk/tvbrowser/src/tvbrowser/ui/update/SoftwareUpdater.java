@@ -69,33 +69,29 @@ public class SoftwareUpdater {
     ArrayList updateItems = new ArrayList();
     
     SoftwareUpdateItem curItem=null;
-    String line=reader.readLine();
+    String line=reader.readLine();    
     
     while (line != null) {
       matcher=pluginTypePattern.matcher(line);
       if (matcher.find()) { // new plugin 
         String type=matcher.group(1);
         String className=matcher.group(2);
-        if ("plugin".equals(type)) {
-          curItem=new PluginSoftwareUpdateItem(className); 
-        }
-        else if ("dataservice".equals(type)) {
-          curItem=new PluginSoftwareUpdateItem(className);
-        }
-        else if ("tvbrowser".equals(type)) {
-          curItem=new TvbrowserSoftwareUpdateItem(className);
-        }
-        if (curItem==null) {
-          throw new IOException("invalid software update file");    
-        }
         
-        updateItems.add(curItem);        
+        if ("plugin".equals(type) || "dataservice".equals(type))
+          curItem=new PluginSoftwareUpdateItem(className); 
+        else if ("tvbrowser".equals(type))
+          curItem=new TvbrowserSoftwareUpdateItem(className);
+        
+        if (curItem==null)
+          throw new IOException("invalid software update file");    
+                
+        updateItems.add(curItem);
       }
       else {
         matcher=keyValuePattern.matcher(line);
-        if (matcher.find()) { // new plugin 
+        
+        if (matcher.find()) // new plugin 
           curItem.addProperty(matcher.group(1), matcher.group(2));
-        }
       }
       line=reader.readLine();
     }
@@ -108,15 +104,17 @@ public class SoftwareUpdater {
       String className = item.getClassName();
       
       // remove incompatible items
-      Version required=item.getRequiredVersion();
-      if (required!=null && TVBrowser.VERSION.compareTo(required)<0) {
+      Version required = item.getRequiredVersion();
+      Version maximum = item.getMaximumVersion();
+      if ((required!=null && TVBrowser.VERSION.compareTo(required)<0) ||
+          (maximum != null && TVBrowser.VERSION.compareTo(maximum)>0)) {
         it.remove();
         continue;
       }
       
       // remove already installed plugins
       String pluginId = "java." + className.toLowerCase() + "." + className;      
-      PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);      
+      PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
       if (installedPlugin!=null && installedPlugin.getInfo().getVersion().compareTo(item.getVersion())>=0) {
         it.remove();
         continue;
@@ -127,8 +125,10 @@ public class SoftwareUpdater {
       if (service!=null && service.getInfo().getVersion().compareTo(item.getVersion())>=0) {
         it.remove();
         continue;
-      }     
-           
+      }
+      
+      if(item.isOnlyUpdate() && installedPlugin == null && service == null)
+        it.remove();
     }
     
     Object[]objs=updateItems.toArray();

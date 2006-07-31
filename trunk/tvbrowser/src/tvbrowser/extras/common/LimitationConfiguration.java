@@ -60,7 +60,7 @@ public class LimitationConfiguration {
 
 
   public LimitationConfiguration(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.readInt();  // version
+    int version = in.readInt();  // version
 
     mIsLimitedByTime = in.readBoolean();
     if (mIsLimitedByTime) {
@@ -73,8 +73,10 @@ public class LimitationConfiguration {
       int cnt = in.readInt();
       ArrayList list = new ArrayList();
       for (int i=0; i<cnt; i++) {
-        ChannelItem item = new ChannelItem(in);
-        mChannelItemList.add(item);
+        ChannelItem item = new ChannelItem(in, version);
+        
+        if(item.isValid())
+          mChannelItemList.add(item);
 
         if (item.getChannel() != null) {
           list.add(item.getChannel());
@@ -92,7 +94,7 @@ public class LimitationConfiguration {
   }
 
   public void store(ObjectOutputStream out) throws IOException {
-    out.writeInt(1); // version
+    out.writeInt(2); // version
 
     out.writeBoolean(mIsLimitedByTime);
     if (mIsLimitedByTime) {
@@ -108,7 +110,6 @@ public class LimitationConfiguration {
     }
 
     out.writeInt(mDayLimit);
-
   }
 
   public void setTime(int from, int to) {
@@ -185,15 +186,30 @@ public class LimitationConfiguration {
       mChannel = channel;
     }
     
-    public ChannelItem(ObjectInputStream in) throws IOException, ClassNotFoundException {
-      in.readInt(); //version
-
-      mChannelDataServiceId = in.readUTF();
-      mGroupId = in.readUTF();
-      mCountry = in.readUTF();
-      mCertainChannelId = in.readUTF();      
-      
-      mChannel = Channel.getChannel(mChannelDataServiceId, mGroupId, mCountry, mCertainChannelId);
+    public ChannelItem(ObjectInputStream in, int version) throws IOException, ClassNotFoundException {
+      if(version == 1) {
+        mChannelDataServiceId = (String) in.readObject();
+        mCertainChannelId =(String)in.readObject();
+        
+        mChannel = Channel.getChannel(mChannelDataServiceId, null, null, mCertainChannelId);
+        
+        if(mChannel != null) {
+          mGroupId = mChannel.getGroup().getId();
+          mCountry = mChannel.getCountry();
+        }
+      }
+      else {
+        mChannelDataServiceId = in.readUTF();
+        mGroupId = in.readUTF();
+        mCountry = in.readUTF();
+        mCertainChannelId = in.readUTF();
+        
+        mChannel = Channel.getChannel(mChannelDataServiceId, mGroupId, mCountry, mCertainChannelId);
+      }
+    }
+    
+    public boolean isValid() {
+      return mChannelDataServiceId != null && mGroupId != null && mCountry != null && mCertainChannelId != null; 
     }
     
     public Channel getChannel() {
@@ -201,7 +217,6 @@ public class LimitationConfiguration {
     }
     
     public void saveItem(ObjectOutputStream out) throws IOException {
-      out.writeInt(1); //version
       out.writeUTF(mChannelDataServiceId);
       out.writeUTF(mGroupId);
       out.writeUTF(mCountry);

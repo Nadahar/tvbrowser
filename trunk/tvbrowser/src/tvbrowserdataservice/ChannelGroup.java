@@ -52,6 +52,9 @@ import devplugin.Channel;
 import devplugin.Date;
 import devplugin.ProgressMonitor;
 
+/**
+ * The ChannelGroup implementation of the TvBrowserDataService
+ */
 public class ChannelGroup implements devplugin.ChannelGroup {
 
   private String mID;
@@ -67,8 +70,6 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   private SummaryFile mSummary;
 
   private String mName = null;
-
-  private int mDirectlyLoadedBytes;
 
   private TvBrowserDataService mDataService;
 
@@ -101,38 +102,79 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   /** Data of Mirror-Download*/
   private byte[] mMirrorDownloadData = null;
 
+  /**
+   * Creates a new ChannelGroup 
+   * 
+   * @param dataservice The data service of the group.
+   * @param id The id of the group.
+   * @param name The name of the group.
+   * @param description The description for the group.
+   * @param provider The provider of the group.
+   * @param mirrorUrls The mirror urls of the group.
+   * @param settings The properties of the group.
+   */
   public ChannelGroup(TvBrowserDataService dataservice, String id, String name, String description, String provider, String[] mirrorUrls, Properties settings) {
     mID = id;
     mName = name;
     mDescription = description;
     mProviderName = provider;
     mDataService = dataservice;
-    mMirrorUrlArr = mirrorUrls;  
+    mMirrorUrlArr = mirrorUrls;
     mChannels = new HashSet<Channel>();
     mDataDir = dataservice.getDataDir();
     mSettings = settings;
   }
 
+  /**
+   * Creates a new ChannelGroup
+   *
+   * @param dataservice The data service of the group.
+   * @param id The id of the group.
+   * @param mirrorUrls The mirror urls of the group.
+   * @param settings The properties of the group.
+   */
   public ChannelGroup(TvBrowserDataService dataservice, String id, String[] mirrorUrls, Properties settings) {
     this(dataservice, id, null, null, null, mirrorUrls, settings);
   }
 
-  public String[] getMirrorArr() {
+
+  protected String[] getMirrorArr() {
     return mMirrorUrlArr;
   }
 
+  /**
+   * Checks if a channel is a member of this group.
+   *
+   * @param ch The channel to check.
+   * @return True if the channel is a member of this group, false otherwise.
+   */
   public boolean isGroupMember(Channel ch) {
     return ch.getGroup() != null && ch.getGroup().getId() != null && ch.getGroup().getId().equalsIgnoreCase(mID);
   }
 
+  /**
+   * Sets the data directory.
+   *
+   * @param dataDir The data directory.
+   */
   public void setWorkingDirectory(File dataDir) {
     mDataDir = dataDir;
   }
 
+  /**
+   * Add a channel to this group.
+   *
+   * @param ch The channel to add.
+   */
   public void addChannel(Channel ch) {
     mChannels.add(ch);
   }
 
+  /**
+   * Get all channels.
+   *
+   * @return An Iterator with the channels.
+   */
   public Iterator getChannels() {
     return mChannels.iterator();
   }
@@ -219,7 +261,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     return getName();
   }
 
-  public void chooseMirrors() throws TvBrowserException {
+  protected void chooseMirrors() throws TvBrowserException {
     // load the mirror list
     Mirror[] mirrorArr = loadMirrorList();
 
@@ -246,10 +288,18 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     }
   }
 
+  /**
+   * @return The summary file.
+   */
   public SummaryFile getSummary() {
     return mSummary;
   }
 
+  /**
+   * Get the current mirror.
+   *
+   * @return The current mirror.
+   */
   public Mirror getMirror() {
     return mCurMirror;
   }
@@ -262,7 +312,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
       stream = IOUtilities.getStream(new URL(url), 60000);
 
       SummaryFile summary = new SummaryFile();
-      summary.readFromStream(stream);
+      summary.readFromStream(stream, null);
 
       return summary;
     } finally {
@@ -271,7 +321,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
       }
     }
   }
-  
+
   protected void setBaseMirror(String[] mirrorUrl) {
     mMirrorUrlArr = mirrorUrl;
   }
@@ -279,23 +329,23 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   private Mirror getServerDefinedMirror() {
     File groupFile = new File(mDataDir, TvBrowserDataService.CHANNEL_GROUPS_FILENAME);
     Mirror mirror = null;
-    
+
     if (!groupFile.exists())
       mLog.info("Group file '"+TvBrowserDataService.CHANNEL_GROUPS_FILENAME+"' does not exist");
     else {
-      BufferedReader in = null;      
-      
+      BufferedReader in = null;
+
       try {
         in = new BufferedReader(new InputStreamReader(new BufferedInputStream(new FileInputStream(groupFile), 0x1000), "utf-8"));
         String line = in.readLine();
         while (line != null) {
           String[] s = line.split(";");
-          
+
           if (s.length>=5 && s[0].compareTo(mID) == 0) {
             mirror = new Mirror(s[4], 1);
             break;
           }
-          
+
           line = in.readLine();
         }
         in.close();
@@ -309,12 +359,13 @@ public class ChannelGroup implements devplugin.ChannelGroup {
           }catch(Exception ee) {}
       }
     }
-    
+
     return mirror;
   }
-  
+
   private Mirror[] loadMirrorList() {
     File file = new File(mDataDir, mID + "_" + Mirror.MIRROR_LIST_FILE_NAME);
+
     try {
       ArrayList<Mirror> mirrorList = new ArrayList<Mirror>(Arrays.asList(Mirror.readMirrorListFromFile(file)));
 
@@ -333,16 +384,15 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
       return (Mirror[])mirrorList.toArray(new Mirror[mirrorList.size()]);
     } catch (Exception exc) {
+      ArrayList mirrorList = new ArrayList();
 
-      Mirror[] mirrorList = new Mirror[mMirrorUrlArr.length];
       for (int i = 0; i < mMirrorUrlArr.length; i++) {
-        if (!BLOCKEDSERVERS.contains(getServerBase(mMirrorUrlArr[i]))) {
-          mirrorList[i] = new Mirror(mMirrorUrlArr[i]);
+        if (!BLOCKEDSERVERS.contains(getServerBase(mMirrorUrlArr[i])) && mMirrorUrlArr[i] != null) {
+          mirrorList.add(new Mirror(mMirrorUrlArr[i]));
         }
-
       }
-      return mirrorList;
-
+      
+      return (Mirror[])mirrorList.toArray(new Mirror[mirrorList.size()]);
     }
   }
 
@@ -431,8 +481,6 @@ public class ChannelGroup implements devplugin.ChannelGroup {
       mLog.info("Server " + url +" is down!");
       return false;
     }
-    
-    mDirectlyLoadedBytes += mMirrorDownloadData.length;
     
     try {
       // Parse is. E.g.: '2003-10-09 11:48:45'
@@ -525,21 +573,11 @@ public class ChannelGroup implements devplugin.ChannelGroup {
       mLog.fine("Updateing Metafile " + url);
       try {
         IOUtilities.download(new URL(url), file);
-
-        mDirectlyLoadedBytes += (int) file.length();
       } catch (IOException exc) {
         throw new TvBrowserException(getClass(), "error.1", "Downloading file from '{0}' to '{1}' failed", url, file
                 .getAbsolutePath(), exc);
       }
     }
-  }
-
-  public int getDirectlyLoadedBytes() {
-    return mDirectlyLoadedBytes;
-  }
-
-  public void resetDirectlyLoadedBytes() {
-    mDirectlyLoadedBytes = 0;
   }
 
   private void updateChannelList(Mirror mirror) throws TvBrowserException {
@@ -561,6 +599,13 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     }
   }
 
+  /**
+   * Checks and returns the available channels of this group.
+   * 
+   * @param monitor The progress monitor that is to be used.
+   * @return The available channel array.
+   * @throws TvBrowserException
+   */
   public Channel[] checkForAvailableChannels(ProgressMonitor monitor) throws TvBrowserException {
     // load the mirror list
     Mirror[] mirrorArr = loadMirrorList();
@@ -582,6 +627,8 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
   /**
    * Gets the list of the channels that are available by this data service.
+   * 
+   * @return The available channel array.
    */
   public Channel[] getAvailableChannels() {
     if (mAvailableChannelArr == null) {

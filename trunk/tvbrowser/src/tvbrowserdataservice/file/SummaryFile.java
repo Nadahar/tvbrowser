@@ -25,6 +25,7 @@
  */
 package tvbrowserdataservice.file;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -36,6 +37,7 @@ import java.util.Iterator;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import util.io.DownloadJob;
 import util.io.IOUtilities;
 import devplugin.Date;
 
@@ -163,7 +165,7 @@ public class SummaryFile extends AbstractFile {
    * 
    * @param stream The stream to read the summary from.
    */
-  public void readFromStream(InputStream stream)
+  public void readFromStream(InputStream stream, DownloadJob job)
     throws IOException, FileFormatException
   {
     GZIPInputStream gIn = new GZIPInputStream(stream);
@@ -234,7 +236,7 @@ public class SummaryFile extends AbstractFile {
    * 
    * @param stream The stream to write the summary to.
    */
-  public void writeToStream(OutputStream stream)
+  public void writeToStream(OutputStream stream, File fileName)
     throws IOException, FileFormatException
   {
     GZIPOutputStream gOut = new GZIPOutputStream(stream);

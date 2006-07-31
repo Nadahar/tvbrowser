@@ -120,7 +120,7 @@ public class PluginManagerImpl implements PluginManager {
   //  Channel[] channels = ChannelList.getSubscribedChannels();  /* 04-17-2005: changed from getAvailableChannels() to getSubscribedChannels */
 
     Channel ch = getChannelFromProgId(progID);
-    if (ch != null) {
+    if (ch != null && ChannelList.isSubscribedChannel(ch)) {
       ChannelDayProgram dayProg = db.getDayProgram(date, ch);
       if (dayProg != null) {
         Program prog = dayProg.getProgram(progID);
@@ -135,7 +135,7 @@ public class PluginManagerImpl implements PluginManager {
         mLog.warning("day program not found: "+progID+"; "+date);
       }
     }else{
-      mLog.warning("channel for program '"+progID+"' not found");
+      mLog.warning("channel for program '"+progID+"' not found or not a subscribed channel");
     }
 
     return null;
@@ -415,7 +415,7 @@ public class PluginManagerImpl implements PluginManager {
           TimeZone.getDefault(), "de", "");
 
       MutableProgram prog = new MutableProgram(exampleChannel,
-                                               Date.getCurrentDate(), 14, 45);
+                                               Date.getCurrentDate(), 14, 45, true);
       prog.setTitle("Die Waltons");
       prog.setShortInfo("Die Verfilmung der Kindheits- und Jugenderinnerungen des Romanschriftstellers Earl Hamner jr.");
       prog.setDescription("Olivia ist schon seit einigen Tagen niedergeschlagen, obwohl ihr Geburtstag bevorsteht. Ihre einzige Freude scheint das Postflugzeug zu sein, dem sie allabendlich von der Haust\u00FCr aus sehnsuchtsvoll hinterhersieht.");

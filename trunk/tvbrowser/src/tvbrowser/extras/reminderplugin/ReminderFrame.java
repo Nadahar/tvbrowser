@@ -148,7 +148,7 @@ public class ReminderFrame implements WindowClosingIf {
     
     mReminderList = list;
     
-    list.remove(item.getProgramItem());
+    list.removeWithoutChecking(item.getProgramItem());
     list.blockProgram(item.getProgram());
     mProgram = item.getProgram();
     JPanel jcontentPane = new JPanel(new BorderLayout(0,10));

@@ -65,7 +65,7 @@ public class OnDemandProgram extends MutableProgram {
   public OnDemandProgram(Channel channel, devplugin.Date localDate,
     OnDemandDayProgramFile onDemandFile)
   {
-    super(channel, localDate);
+    super(channel, localDate, true);
     
     mOnDemandFile = onDemandFile;
   }

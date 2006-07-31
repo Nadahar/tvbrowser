@@ -209,6 +209,10 @@ public class ReminderList implements ActionListener {
     }
   }
   
+  public void removeWithoutChecking(ProgramItem item) {
+    removeWithoutChecking(item.getProgram());
+  }
+  
   public void removeWithoutChecking(Program program) {
     ReminderListItem[] items = getReminderItems();
     for (int i = 0; i < items.length; i++) {
@@ -300,8 +304,9 @@ public class ReminderList implements ActionListener {
     devplugin.Date today = new devplugin.Date();
     int diff = today.compareTo(remindDate);
 
-    return diff > 0
-        || (diff == 0 && IOUtilities.getMinutesAfterMidnight() >= remindTime);
+    return (diff > 0
+        || (diff == 0 && IOUtilities.getMinutesAfterMidnight() >= remindTime)) 
+        && !isBlocked(prog);
 
   }
 

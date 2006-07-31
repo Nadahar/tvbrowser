@@ -1,4 +1,6 @@
 /*
+ * CapturePlugin by Andreas Hessel (Vidrec@gmx.de), Bodo Tasche
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -30,9 +32,9 @@ import java.io.InputStreamReader;
 
 /**
  * A class that reads from InputStreams in a Thread.
- * 
- * @since 2.3
- * @author René Mach
+ *
+ * @author Renï¿½ Mach
+ *
  */
 public class StreamReaderThread extends Thread {
 
@@ -40,7 +42,7 @@ public class StreamReaderThread extends Thread {
   private boolean mSaveOutput;
   private StringBuffer mOutput;
   private String mEncoding;
-  
+
   /**
    * @param stream
    *          The InputStream to read from.
@@ -68,18 +70,18 @@ public class StreamReaderThread extends Thread {
     mOutput = new StringBuffer();
     mEncoding = encoding;
   }
-  
+
   public void run() {
     try {
       String line;
-      
+
       BufferedReader reader;
-      
+
       if (mEncoding != null)
           reader = new BufferedReader(new InputStreamReader(mInput, mEncoding));
       else
           reader = new BufferedReader(new InputStreamReader(mInput));
-      
+
       while ((line = reader.readLine()) != null)
         if (mSaveOutput)
           mOutput.append(line + "\n");

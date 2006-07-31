@@ -117,12 +117,48 @@ public class ChannelList {
       storeChannelWebPages();
   }
 
+
+  /*
   private static void addDataServiceChannels(TvDataServiceProxy dataService) {
     Channel[] channelArr = dataService.getAvailableChannels();
 
+<<<<<<< .working
     for (Channel channel : channelArr)
       addChannelToAvailableChannels(channel);
   }
+=======
+    FileWriter fw;
+    PrintWriter out=null;
+    try {
+      fw=new FileWriter(f);
+      out=new PrintWriter(fw);
+      Channel[] channels=getSubscribedChannels();
+        for (int i=0;i<channels.length;i++) {
+          int corr=channels[i].getDayLightSavingTimeCorrection();
+          if (corr!=0) {
+            out.println(createPropertyForChannel(channels[i], String.valueOf(corr)));
+          }
+        }
+    }catch(IOException e) {
+      // ignore
+    }
+    if (out!=null) {
+      out.close();
+    }
+>>>>>>> .merge-right.r2692
+   */
+
+
+  private static void addDataServiceChannels(TvDataServiceProxy dataService) {
+      Channel[] channelArr = dataService.getAvailableChannels();
+
+      for (Channel channel : channelArr)
+        addChannelToAvailableChannels(channel);
+    }
+
+
+
+
 
   private static void addDataServiceChannelsForTvBrowserStart(TvDataServiceProxy dataService) {
     Channel[] channelArr = dataService.getChannelsForTvBrowserStart();
@@ -238,14 +274,43 @@ public class ChannelList {
         return channel;
       }
     }
+         /*  merge-conflict: do we need these lines?
+
+//     If we haven't found the channel within the 'available channels', we try to find it
+//       in an unsubscribed group.
+//       If we find it there, we subscribe the affected group and add all channels of this group to
+//       the 'available channels' list
+
+    if(dataService != null) {
+      ChannelGroup[] groupArr = dataService.getAvailableGroups();
+      for (int i=0; i<groupArr.length; i++) {
+        if (!ChannelGroupManager.getInstance().isSubscribedGroup(groupArr[i]) &&
+            ((groupId != null && groupArr[i].getId().equals(groupId)) ||
+                groupId == null)) {
+          Channel[] channelArr = dataService.getAvailableChannels(groupArr[i]);
+          for (int j=0; j<channelArr.length; j++) {
+            if (((country != null && channelArr[j].getCountry().compareTo(country) == 0) ||
+                country == null)
+                &&  channelId.equals(channelArr[j].getId())) {
+              ChannelGroupManager.getInstance().subscribeGroup(groupArr[i]);
+              for (int k=0; k<channelArr.length; k++) {
+                mAvailableChannels.add(channelArr[k]);
+              }
+              return channelArr[j];
+            }
+          }
+        }
+      }
+    }
+           */
 
     return null;
   }
 
-  /** 
+  /**
    * Gets the position of the channel in the subscribed channel
    * array, or -1 if the channel isn't a subscribed channel.
-   * 
+   *
    * @param channel The channel to get the position for.
    * @return The positon or -1
    */
@@ -353,7 +418,7 @@ public class ChannelList {
    */
   private static void setChannelNameForChannel(Channel channel) {
     String value = getMapValueForChannel(channel, mChannelNameMap);
-    
+
     if(value != null && value.length() > 0)
       channel.setUserChannelName(value);
   }
@@ -477,20 +542,22 @@ public class ChannelList {
     }
   }
 
-  private static String getMapValueForChannel(Channel channel, HashMap<String, String> map) {    
+  private static String createPropertyForChannel(Channel channel, String value) {
+    return new StringBuffer(channel.getDataServiceProxy().getId()).append(":").append(channel.getGroup().getId()).append(":").append(channel.getCountry()).append(":").append(channel.getId()).append("=").append(value).toString();
+  }
+
+  private static String getMapValueForChannel(Channel channel, HashMap<String, String> map) {
     String value = map.get(new StringBuffer(channel.getDataServiceProxy().getId()).append(":").append(channel.getGroup().getId()).append(":").append(channel.getCountry()).append(":").append(channel.getId()).toString());
-    
+
     if(value == null)
       value = map.get(new StringBuffer(channel.getDataServiceProxy().getId()).append(":").append(channel.getGroup().getId()).append(":").append(channel.getId()).toString());
     if(value == null)
       value = map.get(new StringBuffer(channel.getDataServiceProxy().getId()).append(":").append(channel.getId()).toString());
-    
+
     return value;
   }
 
-  private static String createPropertyForChannel(Channel channel, String value) {
-    return new StringBuffer(channel.getDataServiceProxy().getId()).append(":").append(channel.getGroup().getId()).append(":").append(channel.getCountry()).append(":").append(channel.getId()).append("=").append(value).toString();
-  }
+
 
   /**
    * Create a HashMap from a Settings-File
@@ -499,7 +566,7 @@ public class ChannelList {
    */
   private static HashMap<String, String> createMap(File f) {
     HashMap<String, String> map = new HashMap<String, String>();
-    
+
     if (!f.exists()) {
       return map;
     }
@@ -518,8 +585,8 @@ public class ChannelList {
         try {
           String key=line.substring(0,pos);
           String val=line.substring(pos+1);
-          
-          if (val!=null)            
+
+          if (val!=null)
             map.put(key,val);
 
         }catch(IndexOutOfBoundsException e) {

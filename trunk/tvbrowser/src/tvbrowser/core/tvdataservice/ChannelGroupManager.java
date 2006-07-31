@@ -29,7 +29,6 @@ package tvbrowser.core.tvdataservice;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import tvbrowser.core.Settings;
 import util.exc.ErrorHandler;
@@ -149,6 +148,10 @@ public class ChannelGroupManager {
           }catch(TvBrowserException e) {
             ErrorHandler.handle(e);
           }
+          
+          /* ATTENTION: This is only for the 2-2-x branch*/
+          if(monitor != null)
+            monitor.setMaximum(-1);
         }
       }
     }

@@ -1,5 +1,35 @@
 Changelog TVBrowser
 
+2.2.1
+=====
+- Bugs
+ * 1519248 group refreshing - progress bar is visible if is not needed
+ * 1519252 Possible NumberformatError in EyeTV Software
+ * 1520554 ProgramInfo - Moderation isn't selectable
+
+2.2.1 Beta 3
+=========
+
+- Bugs
+
+ * 1516254 Use country as id for channel
+ * 1507758 Favorite forgets the channels
+ * 1517087 channel removed -> Exceptions on next start
+
+2.2.1 Beta 2
+=========
+
+- Bugs
+
+ * 1516043 Mange Favorite dialog isn't updated
+ * 1515953 Exception after data update
+ * 1516484 ShowView calculating is wrong 
+ 
+- Features
+
+ * 1508030 Improve checking of the program instances after data update
+ * 1516254 Use country as id for channel 
+
 2.2.1 Beta
 =========
 

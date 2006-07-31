@@ -43,6 +43,7 @@ import util.io.StreamReaderThread;
 import util.paramhandler.ParamParser;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+
 import captureplugin.utils.CaptureUtilities;
 
 /**
@@ -228,7 +229,7 @@ public class CaptureExecute {
             if(path == null || path.length() < 1 || !(new File(path).isDirectory()))
               path = System.getProperty("user.dir");
             
-            p = Runtime.getRuntime().exec(mData.getProgramPath() + " " + params, null, new File(path));
+            p = Runtime.getRuntime().exec((mData.getProgramPath() + " " + params).split(" "), null, new File(path));
         } catch (Exception e) {
             ErrorHandler.handle(mLocalizer.msg("ProblemAtStart", "Problems while starting Application."), e);
             return null;

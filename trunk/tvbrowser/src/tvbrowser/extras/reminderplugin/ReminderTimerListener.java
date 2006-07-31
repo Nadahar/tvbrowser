@@ -35,6 +35,8 @@ package tvbrowser.extras.reminderplugin;
 
 import java.util.Properties;
 
+import javax.swing.SwingUtilities;
+
 import util.exc.ErrorHandler;
 import util.paramhandler.ParamParser;
 import devplugin.Plugin;
@@ -67,7 +69,7 @@ public class ReminderTimerListener {
       new ReminderFrame(mReminderList, item,
           getAutoCloseReminderTime());
     } else {
-      mReminderList.remove(item.getProgramItem());
+      mReminderList.removeWithoutChecking(item.getProgramItem());
       mReminderList.blockProgram(item.getProgram());
     }
     if ("true" .equals(mSettings.getProperty( "useexec" ))) {
@@ -94,7 +96,18 @@ public class ReminderTimerListener {
       }
     }
     
-    ReminderPlugin.getInstance().updateRootNode();
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        new Thread() {
+          public void run() {
+            setPriority(Thread.MIN_PRIORITY);
+            ReminderPlugin.getInstance().updateRootNode();
+          }
+        }.start();
+      }
+    });
+    
+
   }
 
 

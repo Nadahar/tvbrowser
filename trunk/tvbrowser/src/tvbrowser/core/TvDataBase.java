@@ -29,7 +29,6 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.logging.Level;
@@ -236,20 +235,7 @@ public class TvDataBase {
       for (int i = 0; i < days; i++)
         correctDayProgramFile(Date.getCurrentDate().addDays(i), ch[j]);
     
-    Enumeration keys = mNewDayProgramsAfterUpdate.keys();
-    
-    while(keys.hasMoreElements()) {
-      ChannelDateItem key = (ChannelDateItem)keys.nextElement();
-      
-      // Inform the listeners about adding the new program
-      fireDayProgramAdded(getDayProgram(key.getDate(), key.getChannel()));
-      
-      Object oldProg = mNewDayProgramsAfterUpdate.get(key);
-      
-      // Inform the listeners about deleting the old program
-      if (oldProg instanceof ChannelDayProgram)
-        fireDayProgramDeleted((ChannelDayProgram)oldProg);
-    }
+    mNewDayProgramsAfterUpdate.clear();
   }
 
   public synchronized void setDayProgram(MutableChannelDayProgram prog) {
@@ -291,9 +277,6 @@ public class TvDataBase {
     // change the data and have those changes saved to disk.
     //fireDayProgramAdded(prog);
 
-    // create the DateChannel item for the update hashtable
-    ChannelDateItem laterKey = new ChannelDateItem(channel, date);
-    
     // Save the new program
     try {
       // Save the day program
@@ -306,9 +289,9 @@ public class TvDataBase {
 
       // save the value for informing the listeners later
       if(oldProg != null)
-        mNewDayProgramsAfterUpdate.put(laterKey, oldProg);
+        mNewDayProgramsAfterUpdate.put(key, oldProg);
       else
-        mNewDayProgramsAfterUpdate.put(laterKey, "null");
+        mNewDayProgramsAfterUpdate.put(key, "null");
 
       // Set the new program to 'known'
       int version = (int) file.length();
@@ -318,7 +301,7 @@ public class TvDataBase {
       removeCacheEntry(key);
       
       // Remove the program from the later update list
-      mNewDayProgramsAfterUpdate.remove(laterKey);
+      mNewDayProgramsAfterUpdate.remove(key);
 
       // Inform the listeners about removing the new program
       fireDayProgramDeleted(prog);
@@ -450,54 +433,69 @@ public class TvDataBase {
       int version = (int) file.length();
       int knownStatus = mTvDataInventory.getKnownStatus(date, channel, version);
 
-        boolean somethingChanged = calculateMissingLengths(getDayProgram(date,
-            channel));
-        if (somethingChanged) {
-          // Some missing lengths could now be calculated
-          // -> Try to save the changes
-          
-          // We use a temporary file. If saving suceeds we rename it
-          File tempFile = new File(file.getAbsolutePath() + ".changed");
-          try {
-            // Try to save the changed program
-            OnDemandDayProgramFile newProgFile = new OnDemandDayProgramFile(
-                tempFile, (MutableChannelDayProgram) getDayProgram(date,
-                    channel));
-            newProgFile.saveDayProgram();
+      MutableChannelDayProgram checkProg = (MutableChannelDayProgram)getDayProgram(date,channel);
+      
+      boolean somethingChanged = calculateMissingLengths(checkProg);
+        
+      {
+        Object oldProg = null;
+        
+        if((oldProg = mNewDayProgramsAfterUpdate.remove(key)) != null) {
+          // Inform the listeners about adding the new program
+          fireDayProgramAdded(checkProg);
             
-            // Saving the changed version succeed -> Delete the original
-            file.delete();
-
-            // Use the changed version now
-            tempFile.renameTo(file);
+          // Inform the listeners about deleting the old program
+          if (oldProg instanceof ChannelDayProgram)
+            fireDayProgramDeleted((ChannelDayProgram)oldProg);
+        } else if(somethingChanged)
+          fireDayProgramAdded(checkProg);
+      }
+        
+      if (somethingChanged || checkProg.getAndResetChangedByPluginState()) {
+        // Some missing lengths could now be calculated
+        // -> Try to save the changes
+          
+        // We use a temporary file. If saving suceeds we rename it
+        File tempFile = new File(file.getAbsolutePath() + ".changed");
+        try {
+          // Try to save the changed program
+          OnDemandDayProgramFile newProgFile = new OnDemandDayProgramFile(
+              tempFile, checkProg);
+          newProgFile.saveDayProgram();
             
-            // If the old version was known -> Set the new version to known too
-            if (knownStatus == TvDataInventory.KNOWN) {
-              version = (int) file.length();
-              mTvDataInventory.setKnown(date, channel, version);
-            }
-          } catch (Exception exc) {
-            // Saving the changes failed
-            // -> remove the temp file and keep the old one
-            tempFile.delete();
-          }
-                    
-          OnDemandDayProgramFile progFile = new OnDemandDayProgramFile(file, (MutableChannelDayProgram) getDayProgram(date,
-              channel));
-          progFile.loadDayProgram();
-          
-          // Invalidate the old program file from the cache
-          OnDemandDayProgramFile oldProgFile = getCacheEntry(date, channel, false);
-          if (oldProgFile != null) {
-            oldProgFile.setValid(false);
+          // Saving the changed version succeed -> Delete the original
+          file.delete();
 
-            // Remove the old entry from the cache (if it exists)
-            removeCacheEntry(key);
+          // Use the changed version now
+          tempFile.renameTo(file);
+            
+          // If the old version was known -> Set the new version to known too
+          if (knownStatus == TvDataInventory.KNOWN) {
+            version = (int) file.length();
+            mTvDataInventory.setKnown(date, channel, version);
           }
-          
-          // Put the new program file in the cache
-          addCacheEntry(key, progFile);
+        } catch (Exception exc) {
+          // Saving the changes failed
+          // -> remove the temp file and keep the old one
+          tempFile.delete();
         }
+                    
+        OnDemandDayProgramFile progFile = new OnDemandDayProgramFile(file, (MutableChannelDayProgram) getDayProgram(date,
+            channel));
+        progFile.loadDayProgram();
+          
+        // Invalidate the old program file from the cache
+        OnDemandDayProgramFile oldProgFile = getCacheEntry(date, channel, false);
+        if (oldProgFile != null) {
+          oldProgFile.setValid(false);
+
+          // Remove the old entry from the cache (if it exists)
+          removeCacheEntry(key);
+        }
+          
+        // Put the new program file in the cache
+        addCacheEntry(key, progFile);
+      }
     } catch (Exception exc) {
       mLog.log(Level.WARNING, "Loading program for " + channel + " from "
           + date + " failed. The file will be deleted...", exc);
@@ -733,38 +731,5 @@ public class TvDataBase {
       }
     }
     return false;
-  }
-  
-  /**
-   *  A class for the update keys. 
-   */
-  private class ChannelDateItem  {
-    private Date mDate;
-    private Channel mChannel;
-    
-    /**
-     * Creates an instance of this item.
-     * 
-     * @param date The date of this item.
-     * @param channel The channel of this item.
-     */
-    public ChannelDateItem(Channel channel, Date date) {
-      mChannel = channel;
-      mDate = date;
-    }
-    
-    /**
-     * @return The channel of this item
-     */
-    public Channel getChannel() {
-      return mChannel;
-    }
-    
-    /**
-     * @return The date of this item.
-     */
-    public Date getDate() {
-      return mDate;
-    }
   }
 }

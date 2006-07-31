@@ -55,7 +55,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
   /** The program list itself. */
   private ArrayList<Program> mProgramList;
 
-  private boolean mLastProgramHadEndOnUpdate;
+  private boolean mLastProgramHadEndOnUpdate, mWasChangedByPlugin;
 
   /**
    * Creates a new instance of MutableChannelDayProgram.
@@ -69,7 +69,8 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
     mDate = date;
     mChannel = channel;
     mLastProgramHadEndOnUpdate = false;
-
+    mWasChangedByPlugin = false;
+    
     mProgramList = new ArrayList<Program>();
   }
 
@@ -343,5 +344,33 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
    */
   public boolean getLastProgramHadEndOnUpdate() {
     return mLastProgramHadEndOnUpdate;
+  }
+
+  /**
+   * Sets the changed state to let the day program 
+   * be saved again to take over the changes.
+   *
+   * This works only if called from 
+   * devplugin.Plugin#handleTvDataAdded(ChannelDayProgram)
+   * otherwise the changes won't be saved.
+   * 
+   * @since 2.2.2
+   */
+  public void setWasChangedByPlugin() {
+    mWasChangedByPlugin = true;
+  }
+  
+  /**
+   * Get if the day program was changed by a 
+   * plugin and reset the changed state.
+   * 
+   * @return If this day program was changed by a plugin.
+   * @since 2.2.2
+   */
+  public boolean getAndResetChangedByPluginState() {
+    boolean temp = mWasChangedByPlugin;
+    mWasChangedByPlugin = false;
+    
+    return temp;
   }
 }

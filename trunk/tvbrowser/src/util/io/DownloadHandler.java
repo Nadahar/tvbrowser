@@ -9,9 +9,8 @@ import util.exc.TvBrowserException;
  */
 public interface DownloadHandler {
 
-  public void handleDownload(String fileName, InputStream stream)
+  public void handleDownload(DownloadJob job, InputStream stream)
     throws TvBrowserException;
 
   public void handleFileNotFound(String fileName) throws TvBrowserException;
-
 }

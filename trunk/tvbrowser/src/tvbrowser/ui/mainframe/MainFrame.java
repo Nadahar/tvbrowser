@@ -909,18 +909,16 @@ public class MainFrame extends JFrame implements DateListener {
         JOptionPane.showMessageDialog(this, mLocalizer.msg("error.2",
             "No new items available"));
       } else {
-        Window wnd = UiUtilities.getBestDialogParent(this);
-        
-        SoftwareUpdateDlg dlg;
-        
-        if (wnd instanceof Frame) {
-          dlg = new SoftwareUpdateDlg((Frame)wnd);
-        } else {
-          dlg = new SoftwareUpdateDlg((Dialog)wnd);
-        }
-          
+        Window w = UiUtilities.getLastModalChildOf(this);
+        SoftwareUpdateDlg dlg = null;
+
+        if(w instanceof JDialog)
+          dlg = new SoftwareUpdateDlg((JDialog)w);
+        else
+          dlg = new SoftwareUpdateDlg((JFrame)w);
+
         dlg.setSoftwareUpdateItems(mSoftwareUpdateItems);
-        dlg.setLocationRelativeTo(UiUtilities.getLastModalChildOf(this));
+        dlg.setLocationRelativeTo(w);
         dlg.setVisible(true);
       }
     }

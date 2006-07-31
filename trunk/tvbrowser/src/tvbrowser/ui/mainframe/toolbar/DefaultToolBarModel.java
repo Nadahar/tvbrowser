@@ -263,8 +263,10 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
             if(buttonNames[j].compareTo(activatedPlugins[i].getId()) == 0) {
               Object action = mAvailableActions.get(buttonNames[j]);
           
-              if(action != null)
-                mVisibleActions.add(j, action);
+              if(action != null) {
+                int index = mVisibleActions.size();
+                mVisibleActions.add(j > index ? index : j , action);
+              }
             }
           }
         }

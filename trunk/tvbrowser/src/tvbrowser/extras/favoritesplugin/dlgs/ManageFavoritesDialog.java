@@ -229,6 +229,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
 
     msg = mLocalizer.msg("sort", "Sort favorites alphabetically");
     icon = FavoritesPlugin.getInstance().getIconFromTheme("actions", "sort-list", 22);
+
     mSortBt = UiUtilities.createToolBarButton(msg, icon);
     mSortBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -747,3 +748,4 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     UiUtilities.moveSelectedItems(target,rows,true);
   }  
 }
+

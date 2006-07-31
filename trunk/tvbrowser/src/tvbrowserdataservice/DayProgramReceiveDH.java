@@ -31,6 +31,7 @@ import java.io.InputStream;
 import tvbrowserdataservice.file.DayProgramFile;
 import util.exc.TvBrowserException;
 import util.io.DownloadHandler;
+import util.io.DownloadJob;
 
 /**
  * 
@@ -46,6 +47,12 @@ public class DayProgramReceiveDH implements DownloadHandler {
   private TvDataBaseUpdater mUpdater;
 
 
+  /**
+   * Creates a new DayProgramReceiveDH.
+   * 
+   * @param dataService The dataservice of the data to receive.
+   * @param updater The TvDataBaseUpdater.
+   */
   public DayProgramReceiveDH(TvBrowserDataService dataService,
     TvDataBaseUpdater updater)
   {
@@ -54,14 +61,14 @@ public class DayProgramReceiveDH implements DownloadHandler {
   }
 
 
-  public void handleDownload(String fileName, InputStream stream)
+  public void handleDownload(DownloadJob job, InputStream stream)
     throws TvBrowserException
   {
-    mLog.fine("Receiving file " + fileName);
-    File completeFile = new File(mDataService.getDataDir(), fileName);
+    mLog.fine("Receiving file " + job.getFileName());
+    File completeFile = new File(mDataService.getDataDir(), job.getFileName());
     try {
       DayProgramFile prog = new DayProgramFile();
-      prog.readFromStream(stream);
+      prog.readFromStream(stream, job);
       
       // When we are here then the loading suceed -> The file is OK.
       // It is not a corrupt because it is currently being updated.
@@ -70,7 +77,7 @@ public class DayProgramReceiveDH implements DownloadHandler {
       prog.writeToFile(completeFile);
       
       // Tell the database updater that this file needs an update
-      mUpdater.addUpdateJobForDayProgramFile(fileName);
+      mUpdater.addUpdateJobForDayProgramFile(job.getFileName());
     }
     catch (Exception exc) {
       throw new TvBrowserException(getClass(), "error.1",

@@ -106,7 +106,8 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
     mSearchBt = new JButton(msg);
     mSearchBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-        search();
+    	if(!mSearchForm.hasFocus())
+          search();
       }
     });
     getRootPane().setDefaultButton(mSearchBt);
