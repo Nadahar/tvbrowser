@@ -374,10 +374,6 @@
       <fileset dir="${classes.dir}" includes="i18nplugin/**"/>
     </jar>
   	
-        <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/ExportPlugin.jar"
-             compress="false">
-          <fileset dir="${classes.dir}" includes="exportplugin/**"/>
-        </jar>  	
   	<!--   <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/MediaCenterPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="mediacenterplugin/**"/>
