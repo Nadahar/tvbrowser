@@ -101,10 +101,9 @@ public class ChannelFilter {
 
     if (mChannelName.length > 0) {
       String channelName = normalizeCharacters(channel.getName());
-      for (int i = mChannelName.length - 1; i >= 0; i--) {
-        if (!(channelName.indexOf(mChannelName[i]) >= 0)) {
-          return false;
-        }
+      for (String name:mChannelName) {
+          if (!channelName.contains(name))
+            return false;
       }
     }
 
