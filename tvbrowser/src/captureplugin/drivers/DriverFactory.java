@@ -24,13 +24,10 @@
  */
 package captureplugin.drivers;
 
-import java.util.ArrayList;
-
+import captureplugin.drivers.defaultdriver.DefaultDriver;
 import util.misc.OperatingSystem;
 
-import captureplugin.drivers.defaultdriver.DefaultDriver;
-import captureplugin.drivers.elgatodriver.ElgatoDriver;
-
+import java.util.ArrayList;
 
 /**
  * This Factory returns all availabe Drivers and
@@ -67,9 +64,14 @@ public class DriverFactory {
         ArrayList drivers = new ArrayList();
         drivers.add(new DefaultDriver());
         
-        if (OperatingSystem.isMacOs())
-          drivers.add(new ElgatoDriver());
-        
+        if (OperatingSystem.isMacOs()) {
+            try {
+                drivers.add(this.getClass().getClassLoader().loadClass("captureplugin.drivers.elgatodriver.ElgatoDriver"));
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
         return (DriverIf[])drivers.toArray(new DriverIf[0]);
     }
     
