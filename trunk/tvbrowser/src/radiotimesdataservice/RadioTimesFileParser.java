@@ -25,19 +25,19 @@
  */
 package radiotimesdataservice;
 
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
+import tvdataservice.MutableChannelDayProgram;
+import tvdataservice.MutableProgram;
+import tvdataservice.TvDataUpdateManager;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
-
-import tvdataservice.MutableChannelDayProgram;
-import tvdataservice.MutableProgram;
-import tvdataservice.TvDataUpdateManager;
-import devplugin.Channel;
-import devplugin.Date;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
 
 /**
  * Parses the RadioTimes Data
@@ -61,7 +61,7 @@ public class RadioTimesFileParser {
    * Parse the Data
    * 
    * @param updateManager
-   * @param dateCount 
+   * @param endDate 
    * @throws Exception
    */
   public void parse(TvDataUpdateManager updateManager, Date endDate) throws Exception {
@@ -93,7 +93,7 @@ public class RadioTimesFileParser {
         
         int[] time = parseTime(items[20]);
         
-        MutableProgram prog = new MutableProgram(mChannel,date, time[0], time[1]);
+        MutableProgram prog = new MutableProgram(mChannel,date, time[0], time[1], true);
         
         prog.setTitle(items[0]);
 
@@ -149,6 +149,7 @@ public class RadioTimesFileParser {
         int[] endtime = parseTime(items[20]);
         prog.setTimeField(ProgramFieldType.END_TIME_TYPE, endtime[0] * 60 + endtime[1]);
         
+        prog.setProgramLoadingIsComplete();
         mutDayProg.addProgram(prog);
       }
 
