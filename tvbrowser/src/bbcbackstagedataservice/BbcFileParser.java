@@ -25,17 +25,6 @@
  */
 package bbcbackstagedataservice;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.TimeZone;
-import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import tvdataservice.MutableChannelDayProgram;
-import tvdataservice.MutableProgram;
 import bbc.rd.tvanytime.Genre;
 import bbc.rd.tvanytime.Synopsis;
 import bbc.rd.tvanytime.TVAnytimeException;
@@ -55,6 +44,17 @@ import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
+import tvdataservice.MutableChannelDayProgram;
+import tvdataservice.MutableProgram;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.TimeZone;
+import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class parses the BBC Files
@@ -77,7 +77,7 @@ public class BbcFileParser {
 
   /**
    * 
-   * @param updateManager
+   * @param cache
    * @param channel 
    * @param channeldate
    */
@@ -167,7 +167,7 @@ public class BbcFileParser {
             }
             
             mHour = hour;
-            MutableProgram prog = new MutableProgram(mChannel,mChannelDate,hour, minutes);
+            MutableProgram prog = new MutableProgram(mChannel,mChannelDate,hour, minutes, true);
             
             prog.setTitle(programInformation.getBasicDescription().getTitle(0).getText());
             
@@ -314,6 +314,7 @@ public class BbcFileParser {
               prog.setInfo(bitset);
             }
             
+            prog.setProgramLoadingIsComplete();
             mutablechanneldayprogram.addProgram(prog);
           }
           
