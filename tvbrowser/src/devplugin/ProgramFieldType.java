@@ -76,11 +76,11 @@ public class ProgramFieldType {
     
   public static final ProgramFieldType SHORT_DESCRIPTION_TYPE
     = new ProgramFieldType(7, TEXT_FORMAT, true, "short description",
-                           "shortDescriprion", "Short description");
+                           "shortDescription", "Short description");
 
   public static final ProgramFieldType DESCRIPTION_TYPE
     = new ProgramFieldType(8, TEXT_FORMAT, true, "description",
-                           "descriprion", "Description");
+                           "description", "Description");
 
   public static final ProgramFieldType IMAGE_TYPE
     = new ProgramFieldType(9, BINARY_FORMAT, true, "image",
