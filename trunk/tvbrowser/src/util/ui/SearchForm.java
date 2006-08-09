@@ -26,7 +26,6 @@
 package util.ui;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.debug.FormDebugPanel;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -142,7 +141,7 @@ public class SearchForm extends JPanel {
     FormLayout layoutSearchIn = new FormLayout("3dlu, pref:grow","pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");
     FormLayout layoutOptions = new FormLayout("3dlu, pref, fill:pref:grow","pref, 3dlu, pref, 3dlu, pref,3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");
 
-    JPanel topPanel = new FormDebugPanel(layoutTop);
+    JPanel topPanel = new JPanel(layoutTop);
     JPanel searchInPanel = new JPanel(layoutSearchIn);
     JPanel optionsPanel = new JPanel(layoutOptions);
 
