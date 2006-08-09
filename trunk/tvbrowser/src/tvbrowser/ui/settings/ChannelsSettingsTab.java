@@ -156,7 +156,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
      * If this is > REFRESH_AFTER_MS the list of available channels gets
      * refiltered
      */
-    private int mRefreshItemCounter = -1;
+    private int mRefreshItemCounter = Integer.MAX_VALUE;
 
     /**
      * Create the SettingsTab
@@ -373,6 +373,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 if ((mRefreshItemCounter == REFRESH_AFTER_MS) && (!mListUpdating)){
+                    mRefreshItemCounter = Integer.MAX_VALUE;
                     mListUpdating = true;
                     fillAvailableChannelsListBox();
                     mListUpdating = false;
