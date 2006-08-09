@@ -25,6 +25,26 @@
  */
 package util.ui;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.debug.FormDebugPanel;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import devplugin.PluginManager;
+import devplugin.ProgramFieldType;
+import util.ui.customizableitems.SelectableItemList;
+
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JRootPane;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -34,18 +54,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import javax.swing.*;
-
-import util.ui.customizableitems.SelectableItemList;
-
-import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-
-import devplugin.PluginManager;
-import devplugin.ProgramFieldType;
 
 /**
  * A search form for searching TV listings.
@@ -130,11 +138,11 @@ public class SearchForm extends JPanel {
   public SearchForm(boolean showInputfield, boolean showHistory, boolean showTimeSelection, int layout) {
     super();
 
-    FormLayout layoutTop = new FormLayout("pref, 3dlu, fill:pref:grow", "");
+    FormLayout layoutTop = new FormLayout("pref, 3dlu, fill:10dlu:grow", "");
     FormLayout layoutSearchIn = new FormLayout("3dlu, pref:grow","pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");
     FormLayout layoutOptions = new FormLayout("3dlu, pref, fill:pref:grow","pref, 3dlu, pref, 3dlu, pref,3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");
 
-    JPanel topPanel = new JPanel(layoutTop);
+    JPanel topPanel = new FormDebugPanel(layoutTop);
     JPanel searchInPanel = new JPanel(layoutSearchIn);
     JPanel optionsPanel = new JPanel(layoutOptions);
 
