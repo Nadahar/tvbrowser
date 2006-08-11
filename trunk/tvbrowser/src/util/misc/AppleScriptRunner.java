@@ -36,7 +36,7 @@ import util.io.StreamReaderThread;
  */
 public class AppleScriptRunner {
     /** Default TimeOut in Seconds */
-    private int mTimeOut = 30;
+    private int mTimeOut = 60;
     
     /**
      * Creates the Runner with a default Timeout of 30 secs

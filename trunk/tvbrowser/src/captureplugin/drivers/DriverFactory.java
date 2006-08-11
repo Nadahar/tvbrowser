@@ -66,8 +66,10 @@ public class DriverFactory {
         
         if (OperatingSystem.isMacOs()) {
             try {
-                drivers.add(this.getClass().getClassLoader().loadClass("captureplugin.drivers.elgatodriver.ElgatoDriver"));
-            } catch (ClassNotFoundException e) {
+                DriverIf driver = (DriverIf) this.getClass().getClassLoader().loadClass("captureplugin.drivers.elgatodriver.ElgatoDriver").newInstance();
+                if (driver != null)
+                    drivers.add(driver);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
