@@ -22,19 +22,6 @@
  */
 package calendarexportplugin;
 
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.Properties;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JOptionPane;
-
-import util.ui.Localizer;
-import util.ui.UiUtilities;
 import calendarexportplugin.exporter.ExporterFactory;
 import calendarexportplugin.exporter.ExporterIf;
 import calendarexportplugin.utils.CalendarToolbox;
@@ -45,6 +32,18 @@ import devplugin.Program;
 import devplugin.SettingsTab;
 import devplugin.ThemeIcon;
 import devplugin.Version;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JOptionPane;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Properties;
 
 /**
  * This Plugin exports the Calendar to a external Application or File
@@ -111,7 +110,7 @@ public class CalendarExportPlugin extends Plugin {
     String name = mLocalizer.msg("pluginName", "Calendar export");
     String desc = mLocalizer.msg("description",
         "Exports a Program as a vCal/iCal File. This File can easily imported in other Calendar Applications.");
-    String author = "Bodo Tasche";
+    String author = "Bodo Tasche, Udo Weigelt";
     return new PluginInfo(name, desc, author, new Version(0, 3));
   }
 
