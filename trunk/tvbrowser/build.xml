@@ -44,7 +44,7 @@
   <property name="programname.file" value="tvbrowser"/>
   <property name="classes.dir" value="classes"/>
   <property name="lib.dir" value="lib"/>
- <property name="txt.dir" value="txt"/>
+  <property name="txt.dir" value="txt"/>
   <property name="src.dir" value="src"/>
   <property name="doc.dir" value="doc"/>
   <property name="doc.header" value="${programname} ${tvbrowser.version} API"/>
@@ -292,7 +292,8 @@
     <unjar src="${lib.dir}/commons-compress-20050911.jar" dest="${unpacked.dir}/commons-compress-20050911.jar" />
     <unjar src="${lib.dir}/gdata-calendar-1.0.jar" dest="${unpacked.dir}/gdata-calendar-1.0.jar" /> 	 
     <unjar src="${lib.dir}/gdata-client-1.0.jar" dest="${unpacked.dir}/gdata-client-1.0.jar" /> 	   	
-  	
+    <unjar src="${lib.dir}/jcom.jar" dest="${unpacked.dir}/jcom.jar" />
+
     <!-- Pack the tvbrowser.jar -->
     <jar jarfile="${tvbrowser-default.runtime.dir}/tvbrowser.jar"
          compress="false"
@@ -345,6 +346,7 @@
         <fileset dir="${classes.dir}" includes="calendarexportplugin/**"/>
         <fileset dir="${unpacked.dir}/gdata-calendar-1.0.jar" includes="**" /> 	 
         <fileset dir="${unpacked.dir}/gdata-client-1.0.jar" includes="**" /> 	 
+        <fileset dir="${unpacked.dir}/jcom.jar" includes="**" />
     </jar>
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/ClipboardPlugin.jar"
          compress="false">
@@ -460,6 +462,7 @@
       <fileset dir="${tvbrowser-default.runtime.dir}"/>
       <fileset dir="${win.dir}/desktopindicator" includes="DesktopIndicator.dll"/>
       <fileset dir="${win.dir}/jRegistryKey" includes="jRegistryKey.dll" />
+        <fileset dir="${win.dir}/jcom" includes="jcom.dll" />
       <fileset dir="${deployment.dir}" includes="windows.properties"/>
       <fileset dir="${win.dir}" includes="tvbrowser_noDD.txt"/>
     </copy>

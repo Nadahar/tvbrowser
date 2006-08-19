@@ -22,12 +22,12 @@
  */
 package calendarexportplugin.exporter;
 
+import util.misc.OperatingSystem;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-
-import util.misc.OperatingSystem;
 
 /**
  * Factory for the ExporterIf
@@ -50,6 +50,7 @@ public class ExporterFactory {
     mExporterList.add(new ICalExporter());
     mExporterList.add(new KOrganizerExporter());
     mExporterList.add(new VCalExporter());
+    mExporterList.add(new OutlookExporter());
 
     Collections.sort(mExporterList, new Comparator<ExporterIf>() {
       public int compare(ExporterIf o1, ExporterIf o2) {
@@ -106,7 +107,7 @@ public class ExporterFactory {
     if (property == null) {
       // Set the Defaults
       if (OperatingSystem.isWindows()) {
-        property = "calendarexportplugin.exporter.GoogleExporter:calendarexportplugin.exporter.ICalExporter:calendarexportplugin.exporter.VCalExporter";
+        property = "calendarexportplugin.exporter.GoogleExporter:calendarexportplugin.exporter.ICalExporter:calendarexportplugin.exporter.VCalExporter:calendarexportplugin.exporter.OutlookExporter";
       } else if (OperatingSystem.isMacOs()) {
         property = "calendarexportplugin.exporter.AppleiCalExporter:calendarexportplugin.exporter.GoogleExporter:calendarexportplugin.exporter.ICalExporter:calendarexportplugin.exporter.VCalExporter";
       } else {
