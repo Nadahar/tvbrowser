@@ -78,12 +78,12 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
   private MainFrame mMainFrame;
 
   protected JMenuItem mSettingsMI, mQuitMI, mToolbarMI, mStatusbarMI, mTimeBtnsMI, mDatelistMI,
-                    mChannellistMI, mPluginOverviewMI, mRestoreMI, mUpdateMI,
+                    mChannellistMI, mPluginOverviewMI, mUpdateMI,
                     mPluginManagerMI, mDonorMI, mFaqMI, mForumMI, mWebsiteMI, mHandbookMI,
                     mConfigAssistantMI, mAboutMI, mKeyboardShortcutsMI,
                     mPreviousDayMI, mNextDayMI, mGotoNowMenuItem, mEditTimeButtonsMenuItem,
                     mToolbarCustomizeMI,
-                    mFavoritesMI, mReminderMI;
+                    mFavoritesMI, mReminderMI, mFullscreenMI;
   protected JMenu mFiltersMenu, mPluginsViewMenu, mLicenseMenu, mGoMenu, mViewMenu, mToolbarMenu;
 
   private JMenu mGotoDateMenu, mGotoChannelMenu, mGotoTimeMenu;
@@ -183,14 +183,12 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
     mViewMenu = new JMenu(mLocalizer.msg("menuitem.view","View"));
 
+    mFullscreenMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.fullscreen","Fullscreen"));
+    mFullscreenMI.addActionListener(this);
 
     updateDateItems();
     updateChannelItems();
     updateTimeItems();
-
-
-    mRestoreMI = new JMenuItem(mLocalizer.msg("menuitem.restore", "Restore"));
-    mRestoreMI.addActionListener(this);
     
     mUpdateMI = new JMenuItem(mLocalizer.msg("menuitem.update", "Update..."), IconLoader.getInstance().getIconFromTheme("apps", "system-software-update", 16));
     mUpdateMI.addActionListener(this);
@@ -239,7 +237,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mViewMenu.addSeparator();
     mViewMenu.add(mFiltersMenu);
     mViewMenu.addSeparator();
-    mViewMenu.add(mRestoreMI);
+    mViewMenu.add(mFullscreenMI);
   }
 
 
@@ -393,13 +391,13 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
    protected JMenuItem[] createPluginMenuItems() {
      PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
 
-     Arrays.sort(plugins, new Comparator() {
-         public int compare(Object o1, Object o2) {
+     Arrays.sort(plugins, new Comparator<PluginProxy>() {
+         public int compare(PluginProxy o1, PluginProxy o2) {
              return o1.toString().compareTo(o2.toString());
          }
      });
      
-     ArrayList list = new ArrayList();
+     ArrayList<JMenuItem> list = new ArrayList<JMenuItem>();
      for (int i = 0; i < plugins.length; i++) {
        ActionMenu actionMenu = plugins[i].getButtonAction();
 
@@ -409,8 +407,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
          new MenuHelpTextAdapter(item,plugins[i].getInfo().getDescription(),mLabel);
        }
      }     
-     JMenuItem[] result = new JMenuItem[list.size()];
-     list.toArray(result);
+     JMenuItem[] result = list.toArray(new JMenuItem[list.size()]);
      
      return result;
    }
@@ -418,6 +415,10 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
   public void setPluginViewItemChecked(boolean selected) {
     mPluginOverviewMI.setSelected(selected);
+  }
+  
+  public void setFullscreenItemChecked(boolean selected) {
+    mFullscreenMI.setSelected(selected);
   }
 
    public void actionPerformed(ActionEvent event) {
@@ -448,8 +449,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
        mMainFrame.setShowPluginOverview(selected);
        mMainFrame.setPluginViewButton(selected);
      }
-     else if (source == mRestoreMI) {
-       mMainFrame.restoreViews();
+     else if (source == mFullscreenMI) {
+       mMainFrame.switchFullscreenMode();
      }
      
      else if (source == mUpdateMI) {
