@@ -22,17 +22,16 @@
  */
 package calendarexportplugin.exporter;
 
-import java.io.File;
-import java.util.Properties;
-
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-
-import util.ui.ExtensionFileFilter;
-import util.ui.Localizer;
 import calendarexportplugin.CalendarExportPlugin;
 import calendarexportplugin.utils.ICalFile;
 import devplugin.Program;
+import util.ui.ExtensionFileFilter;
+import util.ui.Localizer;
+
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import java.io.File;
+import java.util.Properties;
 
 /**
  * Exporter for iCal-Files
@@ -62,7 +61,7 @@ public class ICalExporter extends AbstractExporter {
   public boolean exportPrograms(Program[] programs, Properties settings) {
     mSavePath = settings.getProperty(SAVE_PATH);
     
-    File file = chooseFile();
+    File file = chooseFile(programs);
     
     if (file == null) {
       return false;
@@ -91,22 +90,33 @@ public class ICalExporter extends AbstractExporter {
    * 
    * @return selected File
    */
-  private File chooseFile() {
+  private File chooseFile(Program[] programs) {
     JFileChooser select = new JFileChooser();
 
     ExtensionFileFilter iCal = new ExtensionFileFilter("ics", "iCal (*.ics)");
     select.addChoosableFileFilter(iCal);
+    String ext= ".ics";
 
     if (mSavePath != null) {
       select.setSelectedFile(new File(mSavePath));
       select.setFileFilter(iCal);
     }
+    
+    // check if all programs have same title. if so, use as filename
+    String fileName = programs[0].getTitle();
+    for (int i=1; i<programs.length;i++) {
+      if (! programs[i].getTitle().equals(fileName)) {
+    	  fileName="";
+      }
+    }
+    
+    if (fileName!="") {
+    	select.setSelectedFile(new File((new File(mSavePath).getParent()) + File.separator + fileName + ext));
+    }
 
     if (select.showSaveDialog(CalendarExportPlugin.getInstance().getBestParentFrame()) == JFileChooser.APPROVE_OPTION) {
 
       String filename = select.getSelectedFile().getAbsolutePath();
-
-      String ext= ".ics";
 
       if (!filename.toLowerCase().endsWith(ext)) {
 
