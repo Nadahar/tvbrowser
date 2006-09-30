@@ -26,19 +26,6 @@
 
 package tvdataservice;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.TimeZone;
-import java.util.Vector;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.EventListenerList;
-
-import tvbrowser.core.TvDataBase;
-import tvbrowser.core.plugin.PluginProxyManager;
-import util.io.IOUtilities;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Marker;
@@ -46,6 +33,18 @@ import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
+import tvbrowser.core.TvDataBase;
+import tvbrowser.core.plugin.PluginProxyManager;
+import util.io.IOUtilities;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.EventListenerList;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.TimeZone;
+import java.util.Vector;
 
 /**
  * One program. Consists of the Channel, the time, the title and some extra
@@ -57,6 +56,8 @@ public class MutableProgram implements Program {
 
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(MutableProgram.class.getName());
+  
+  private static TimeZone localTimeZone = TimeZone.getDefault();
 
   /**
    * The maximum length of a short info. Used for generating a short info out of a
@@ -188,7 +189,6 @@ public class MutableProgram implements Program {
 
   private void normalizeTimeZone(Date localDate, int localStartTime) {
     TimeZone channelTimeZone=mChannel.getTimeZone();
-    TimeZone localTimeZone=TimeZone.getDefault();
 
     int timeZoneOffset=(localTimeZone.getRawOffset()-channelTimeZone.getRawOffset())/3600000;
     timeZoneOffset+=mChannel.getDayLightSavingTimeCorrection();

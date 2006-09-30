@@ -1,5 +1,12 @@
 package calendarexportplugin.utils;
 
+import calendarexportplugin.CalendarExportPlugin;
+import devplugin.Program;
+import util.exc.ErrorHandler;
+import util.paramhandler.ParamParser;
+import util.ui.Localizer;
+
+import javax.swing.JOptionPane;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -7,15 +14,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Properties;
 import java.util.TimeZone;
-
-import javax.swing.JOptionPane;
-
-import calendarexportplugin.CalendarExportPlugin;
-
-import util.exc.ErrorHandler;
-import util.paramhandler.ParamParser;
-import util.ui.Localizer;
-import devplugin.Program;
 
 public class ICalFile {
   /** Translator */
@@ -35,7 +33,7 @@ public class ICalFile {
    * 
    * @param intothis into this File
    * @param list List to export
-   * @param nulltime Lenght of Programs = 0?
+   * @param settings Settings for the Export
    */
   public void exportICal(File intothis, Program[] list, Properties settings) {
     try {
@@ -45,7 +43,7 @@ public class ICalFile {
       mTime.setTimeZone(TimeZone.getTimeZone("GMT"));
       mDate.setTimeZone(TimeZone.getTimeZone("GMT"));
 
-      PrintStream out = new PrintStream(new FileOutputStream(intothis));
+      PrintStream out = new PrintStream(new FileOutputStream(intothis),true,"UTF8");
 
       out.println("BEGIN:VCALENDAR");
       out.println("PRODID:-//TV Browser//Calendar Exporter");
@@ -61,7 +59,6 @@ public class ICalFile {
         Calendar c = Calendar.getInstance();
 
         out.println("CREATED:" + mDate.format(c.getTime()) + "T" + mTime.format(c.getTime()));
-        out.println("SEQUENZ:" + i);
 
         int classification = 0;
 

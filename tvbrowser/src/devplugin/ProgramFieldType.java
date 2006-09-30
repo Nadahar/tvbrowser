@@ -43,6 +43,7 @@ public class ProgramFieldType {
     = util.ui.Localizer.getLocalizerFor(ProgramFieldType.class);
 
   private static final ArrayList mKnownTypeList = new ArrayList();
+  private static ProgramFieldType[] mKnownTypeArray;
   
   public static final int UNKOWN_FORMAT = 1;
   public static final int BINARY_FORMAT = 2;
@@ -131,7 +132,7 @@ public class ProgramFieldType {
                            "script", "Script");
 
   public static final ProgramFieldType REPETITION_OF_TYPE
-    = new ProgramFieldType(21, TEXT_FORMAT, true, "repition of",
+    = new ProgramFieldType(21, TEXT_FORMAT, true, "repetition of",
                            "repetitionOf", "Repetition of");
    
   public static final ProgramFieldType MUSIC_TYPE
@@ -147,7 +148,7 @@ public class ProgramFieldType {
                            "productionYear", "Production year");
 
   public static final ProgramFieldType REPETITION_ON_TYPE
-      = new ProgramFieldType(25, TEXT_FORMAT, true, "repition on",
+      = new ProgramFieldType(25, TEXT_FORMAT, true, "repetition on",
                            "repetitionOn", "Repetition on");
 
   private int mTypeId;
@@ -178,18 +179,23 @@ public class ProgramFieldType {
     
     if (isKnownType) {
       mKnownTypeList.add(this);
+      int maxTypeId = 0;
+      for (int i=0;i<mKnownTypeList.size();i++) {
+      	maxTypeId = Math.max(maxTypeId, ((ProgramFieldType) mKnownTypeList.get(i)).getTypeId());
+      }
+      mKnownTypeArray=new ProgramFieldType[maxTypeId+1];
+      for (int i=0;i<mKnownTypeList.size();i++) {
+        ProgramFieldType type=(ProgramFieldType) mKnownTypeList.get(i);
+        mKnownTypeArray[type.getTypeId()] = type;
+      }
     }
   }
   
   
   
   public static ProgramFieldType getTypeForId(int typeId) {
-    for (int i = 0; i < mKnownTypeList.size(); i++) {
-      ProgramFieldType type = (ProgramFieldType) mKnownTypeList.get(i);
-      
-      if (type.getTypeId() == typeId) {
-        return type;
-      }     
+    if (typeId< mKnownTypeArray.length) {
+      return mKnownTypeArray[typeId];
     }
     
     return new ProgramFieldType(typeId, UNKOWN_FORMAT, false,
