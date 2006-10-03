@@ -77,6 +77,18 @@ public class LookAndFeelSettingsTab implements SettingsTab {
   
   private JCheckBox mUseChannelLogos;
 
+  private JTextArea mInfoArea; 
+  
+  private static int mStartLookAndIndex;
+  private static int mStartIconIndex;
+
+  private static Object mJGoodiesStartTheme;
+  private static boolean mJGoodiesStartShadow;
+  
+  private static Object mSkinLFStartTheme;
+  
+  private static boolean mSomethingChanged = false;
+
   class LookAndFeelObj {
     private UIManager.LookAndFeelInfo info;
 
@@ -172,6 +184,11 @@ public class LookAndFeelSettingsTab implements SettingsTab {
       mIconThemes.setSelectedItem(IconLoader.getInstance().getDefaultTheme());
     }
     
+    mIconThemes.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        checkIfAreaIsToMakeVisible();
+      }
+    });
     
     mSettingsPn.add(mIconThemes, cc.xy(4, 5));
 
@@ -211,13 +228,34 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     layout.appendRow(new RowSpec("fill:3dlu:grow"));
     layout.appendRow(new RowSpec("pref"));
 
-    JTextArea area = UiUtilities.createHelpTextArea(mLocalizer.msg("restartNote", "Please Restart"));
-    area.setForeground(Color.RED);
+    mInfoArea = UiUtilities.createHelpTextArea(mLocalizer.msg("restartNote", "Please Restart"));
+    mInfoArea.setForeground(Color.RED);
+    mInfoArea.setVisible(mSomethingChanged);
 
-    mSettingsPn.add(area, cc.xyw(1, 15, 6));
-
+    mSettingsPn.add(mInfoArea, cc.xyw(1, 15, 6));
+    
     lookChanged();
+    
+    if(!mSomethingChanged) {
+      mStartLookAndIndex = mLfComboBox.getSelectedIndex();
+      mStartIconIndex = mIconThemes.getSelectedIndex();
+      mJGoodiesStartTheme = Settings.propJGoodiesTheme.getString();
+      mJGoodiesStartShadow = Settings.propJGoodiesShadow.getBoolean();
+      mSkinLFStartTheme = Settings.propSkinLFThemepack.getString();
+    }
+    
+    checkIfAreaIsToMakeVisible();
+    
     return mSettingsPn;
+  }
+  
+  private void checkIfAreaIsToMakeVisible() {
+    mInfoArea.setVisible(
+        mLfComboBox.getSelectedIndex() != mStartLookAndIndex ||
+        mIconThemes.getSelectedIndex() != mStartIconIndex ||
+        mJGoodiesStartTheme != Settings.propJGoodiesTheme.getString() ||
+        mJGoodiesStartShadow != Settings.propJGoodiesShadow.getBoolean() ||
+        mSkinLFStartTheme != Settings.propSkinLFThemepack.getString());
   }
 
   protected void configTheme() {
@@ -230,6 +268,8 @@ public class LookAndFeelSettingsTab implements SettingsTab {
       SkinLNFSettings settings = new SkinLNFSettings((JDialog) UiUtilities.getBestDialogParent(mSettingsPn));
       UiUtilities.centerAndShow(settings);
     }
+    
+    checkIfAreaIsToMakeVisible();
   }
 
   protected void lookChanged() {
@@ -240,6 +280,8 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     } else {
       mConfigBtn.setEnabled(false);
     }
+    
+    checkIfAreaIsToMakeVisible();
   }
 
   public void saveSettings() {
@@ -249,7 +291,9 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     IconTheme theme = (IconTheme) mIconThemes.getSelectedItem();
     Settings.propIcontheme.setString(theme.getBase().getAbsolutePath());
     
-    Settings.propEnableChannelIcons.setBoolean(mUseChannelLogos.isSelected());    
+    Settings.propEnableChannelIcons.setBoolean(mUseChannelLogos.isSelected());
+    
+    mSomethingChanged = mInfoArea.isVisible();
   }
 
   public Icon getIcon() {

@@ -35,6 +35,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.SwingUtilities;
 
+import util.settings.ProgramPanelSettings;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
@@ -65,10 +66,20 @@ public class ListViewPlugin extends Plugin {
     /** Show at Startup */
     private boolean mShowAtStartup = false;
     
+    private static ListViewPlugin mInstance;
+    
     /**
      * Creates the Plugin
      */
     public ListViewPlugin() {
+      mInstance = this;
+    }
+    
+    /**
+     * @return The instance of this class.
+     */
+    public static ListViewPlugin getInstance() {
+      return mInstance;
     }
 
     /**
@@ -217,6 +228,14 @@ public class ListViewPlugin extends Plugin {
     }    
     
     public SettingsTab getSettingsTab() {
-      return new ListViewSettings(this, mSettings);
+      return new ListViewSettings(mSettings);
+    }
+    
+    /**
+     * @return The settings for the program panels of the list.
+     * @since 2.2.2
+     */
+    protected ProgramPanelSettings getProgramPanelSettings() {
+      return new ProgramPanelSettings(Integer.parseInt(mSettings.getProperty("pictureType","0")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeStart","1080")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeEnd","1380")), false, mSettings.getProperty("pictureShowsDescription","true").compareTo("true") == 0);
     }
 }

@@ -214,7 +214,7 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
       Settings.propTrayOnTimeProgramsEnabled.setBoolean(mIsEnabled.isSelected());
     if(mShowInSubMenu != null)
       Settings.propTrayOnTimeProgramsInSubMenu.setBoolean(mShowInSubMenu.isSelected());
-    if(mShowIconAndName != null && mShowName != null && mShowIcon != null) {
+    if(mShowIconAndName != null && mShowName != null && mShowIcon != null && Settings.propEnableChannelIcons.getBoolean()) {
       Settings.propTrayOnTimeProgramsContainsName.setBoolean(mShowIconAndName.isSelected() || mShowName.isSelected());
       Settings.propTrayOnTimeProgramsContainsIcon.setBoolean(mShowIconAndName.isSelected() || mShowIcon.isSelected());
     }

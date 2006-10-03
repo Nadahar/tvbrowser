@@ -366,5 +366,18 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
     }
 
   }
-
+  
+  /**
+   * @return The evening picture download check box.
+   */
+  public JCheckBox getEveningPictureCheckBox() {
+    return mLevelCheckboxes[mLevelCheckboxes.length-1];
+  }
+  
+  /**
+   * @return The morning picture download check box.
+   */
+  public JCheckBox getMorningPictureCheckBox() {
+    return mLevelCheckboxes[mLevelCheckboxes.length-2];
+  }
 }

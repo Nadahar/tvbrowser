@@ -455,8 +455,13 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     /* Load data level settings */
     String tvDataLevel=settings.getProperty("level");
     if (tvDataLevel==null) {
-      settings.setProperty("level","base:::more00-16:::base:::more16-00");
+      settings.setProperty("level","base:::more00-16:::more16-00:::picture16-00");
     }
+    
+    tvDataLevel = settings.getProperty("level");
+    
+    if(tvDataLevel.indexOf("image") != -1)
+      settings.setProperty("level",tvDataLevel.replaceAll("image","picture"));
 
     String[] levelIds=settings.getProperty("level").split(":::");
     ArrayList<TvDataLevel> levelList=new ArrayList<TvDataLevel>();
@@ -480,7 +485,6 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     refreshAvailableChannelGroups();
 
     setWorkingDirectory(mDataDir);
-
   }
 
 
@@ -492,7 +496,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   public void setTvDataLevel(TvDataLevel[] levelArr) {
     mSubscribedLevelArr = levelArr;
   }
-
+  
   public ChannelGroup[] getUserDefinedChannelGroups() {
     Collection<ChannelGroup> col1 = getUserDefinedChannelGroupsCollection();
     Collection<ChannelGroup> col2 = getServerDefinedChannelGroupsCollection();

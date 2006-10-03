@@ -66,7 +66,6 @@ import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.plugin.PluginProxyManager;
-import tvbrowser.core.plugin.PluginStateAdapter;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
@@ -267,16 +266,6 @@ public class MainFrame extends JFrame implements DateListener {
 
     if (Settings.propIsStatusbarVisible.getBoolean())
       jcontentPane.add(mStatusBar, BorderLayout.SOUTH);
-    PluginProxyManager.getInstance().addPluginStateListener(
-        new PluginStateAdapter() {
-          public void pluginActivated(Plugin p) {
-            updatePluginsMenu();
-          }
-
-          public void pluginDeactivated(Plugin p) {
-            updatePluginsMenu();
-          }
-        });
 
     setJMenuBar(mMenuBar);
     addContextMenuMouseListener(mMenuBar);
@@ -1203,7 +1192,7 @@ public class MainFrame extends JFrame implements DateListener {
       jcontentPane.validate();
       jcontentPane.requestFocus();
       
-      updateUI();
+      mRootNode.update();
     }
   }
 

@@ -147,15 +147,9 @@ public class ChannelListSettingsTab implements SettingsTab {
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
-      if (mShowNameAndIcon.isSelected()) {
-      Settings.propShowChannelIconsInChannellist.setBoolean(true);
-      Settings.propShowChannelNamesInChannellist.setBoolean(true);
-    } else if (mShowName.isSelected()) {
-      Settings.propShowChannelIconsInChannellist.setBoolean(false);
-      Settings.propShowChannelNamesInChannellist.setBoolean(true);
-    } else if (mShowIcon.isSelected()) {
-      Settings.propShowChannelIconsInChannellist.setBoolean(true);
-      Settings.propShowChannelNamesInChannellist.setBoolean(false);
+    if(Settings.propEnableChannelIcons.getBoolean()) {
+      Settings.propShowChannelIconsInChannellist.setBoolean(mShowNameAndIcon.isSelected() || mShowIcon.isSelected());
+      Settings.propShowChannelNamesInChannellist.setBoolean(mShowNameAndIcon.isSelected() || mShowName.isSelected());      
     }
   }
 

@@ -71,6 +71,7 @@ import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
+import util.settings.ProgramPanelSettings;
 import util.ui.UiUtilities;
 import util.ui.NullProgressMonitor;
 import devplugin.*;
@@ -154,7 +155,11 @@ public class FavoritesPlugin {
       if(!showInfoFavorites.isEmpty()) {
         mUpdateFavorites = (Favorite[])showInfoFavorites.toArray(new Favorite[showInfoFavorites.size()]);
 
-        showManageFavoritesDialog(true, mUpdateFavorites);
+        new Thread() {
+          public void run() {
+            showManageFavoritesDialog(true, mUpdateFavorites);
+          }
+        }.start();
       }
     }
   }
@@ -305,7 +310,11 @@ public class FavoritesPlugin {
     
     ProgressMonitor monitor;
     if (mFavoriteArr.length > 5) {    // if we have more then 5 favorites, we show a progress bar
-      monitor = MainFrame.getInstance().createProgressMonitor();
+      try {
+        monitor = MainFrame.getInstance().createProgressMonitor();
+      }catch(Exception e) {
+        monitor = new NullProgressMonitor();
+      }
     }
     else {
       monitor = new NullProgressMonitor();
@@ -547,6 +556,14 @@ public class FavoritesPlugin {
     mSettings.setProperty("expertMode",String.valueOf(value));
   }
 
+  public boolean isShowingPictures() {
+    return mSettings.getProperty("showPictures","false").compareTo("true") == 0;
+  }
+  
+  public void setIsShowingPictures(boolean value) {
+    mSettings.setProperty("showPictures",String.valueOf(value));
+  }
+  
   public void addFavorite(Favorite fav) {
     Favorite[] newFavoritesArr = new Favorite[mFavoriteArr.length + 1];
     System.arraycopy(mFavoriteArr, 0, newFavoritesArr, 0, mFavoriteArr.length);
@@ -783,4 +800,21 @@ public class FavoritesPlugin {
   public String getId() {
     return DATAFILE_PREFIX;
   }
+  
+  /**
+   * @return The settings of the FavoritesPlugin.
+   * @since 2.2.2
+   */
+  public Properties getSettings() {
+    return mSettings;
+  }
+  
+  /**
+   * @return The program panel settings for the program list.
+   * @since 2.2.2
+   */
+  public ProgramPanelSettings getProgramPanelSettings() {
+    return new ProgramPanelSettings(Integer.parseInt(mSettings.getProperty("pictureType","2")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeStart","1080")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeEnd","1380")), false, mSettings.getProperty("pictureShowsDescription","true").compareTo("true") == 0);
+  }
+
 }

@@ -435,9 +435,14 @@ public class RawDataProcessor {
         levelFrame.removeProgramFieldOfType(ProgramFieldType.DESCRIPTION_TYPE);
         levelFrame.removeProgramFieldOfType(ProgramFieldType.ACTOR_LIST_TYPE);
         levelFrame.removeProgramFieldOfType(ProgramFieldType.IMAGE_TYPE);
+        levelFrame.removeProgramFieldOfType(ProgramFieldType.PICTURE_TYPE);
+        levelFrame.removeProgramFieldOfType(ProgramFieldType.PICTURE_DESCRIPTION_TYPE);
+        levelFrame.removeProgramFieldOfType(ProgramFieldType.PICTURE_COPYRIGHT_TYPE);
+
       } else {
         ProgramField levelField1 = null;
         ProgramField levelField2 = null;
+        ProgramField levelField3 = null;
 
         switch (levelIdx) {        
           case 1:
@@ -456,7 +461,7 @@ public class RawDataProcessor {
               levelField2 = frame.getProgramFieldOfType(ProgramFieldType.ACTOR_LIST_TYPE);
             }
             break;
-          case 3:
+         /* case 3:
             // image00-16: Only the image between midnight and 16 pm
             if (PrimaryDataUtilities.getProgramStartTime(frame) < (16 * 60)) {
               levelField1 = frame.getProgramFieldOfType(ProgramFieldType.IMAGE_TYPE);
@@ -467,16 +472,39 @@ public class RawDataProcessor {
             if (PrimaryDataUtilities.getProgramStartTime(frame) >= (16 * 60)) {
               levelField1 = frame.getProgramFieldOfType(ProgramFieldType.IMAGE_TYPE);
             }
+            break;*/
+
+          case 3:
+            // picture00-16: Only the picture between midnight and 16 pm
+            if (PrimaryDataUtilities.getProgramStartTime(frame) < (16 * 60)) {
+              levelField1 = frame.getProgramFieldOfType(ProgramFieldType.PICTURE_TYPE);
+              levelField2 = frame.getProgramFieldOfType(ProgramFieldType.PICTURE_DESCRIPTION_TYPE);
+              levelField3 = frame.getProgramFieldOfType(ProgramFieldType.PICTURE_COPYRIGHT_TYPE);
+            }
             break;
+
+          case 4:
+            // picture16-00: Only the picture between 16 pm and midnight
+            if (PrimaryDataUtilities.getProgramStartTime(frame) >= (16 * 60)) {
+              levelField1 = frame.getProgramFieldOfType(ProgramFieldType.PICTURE_TYPE);
+              levelField2 = frame.getProgramFieldOfType(ProgramFieldType.PICTURE_DESCRIPTION_TYPE);
+              levelField3 = frame.getProgramFieldOfType(ProgramFieldType.PICTURE_COPYRIGHT_TYPE);
+            }
+            break;
+
+
         }
         
-        if ((levelField1 != null) || (levelField2 != null)) {
+        if ((levelField1 != null) || (levelField2 != null) || (levelField3 != null)) {
           levelFrame = new ProgramFrame(frame.getId());
           if (levelField1 != null) {
             levelFrame.addProgramField(levelField1);
           }
           if (levelField2 != null) {
             levelFrame.addProgramField(levelField2);
+          }
+          if (levelField3 != null) {
+            levelFrame.addProgramField(levelField3);
           }
         }
       }

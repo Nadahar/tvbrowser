@@ -26,6 +26,7 @@
 
 package tvdataservice;
 
+import util.program.ProgramUtilities;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Marker;
@@ -75,9 +76,6 @@ public class MutableProgram implements Program {
   /** Containes all Plugins that mark this program. We use a simple array,
    * because it takes less memory. */
   private Marker[] mMarkerArr;
-
-  /** Contains whether this program is currently on air. */
-  private boolean mOnAir;
   
   /** Tracks if the program is current loading/ being created. */
   private boolean mIsLoading;
@@ -170,7 +168,6 @@ public class MutableProgram implements Program {
     mFieldHash = new HashMap<ProgramFieldType,Object>();
     mListenerList = new Vector<ChangeListener>();
     mMarkerArr = EMPTY_MARKER_ARR;
-    mOnAir = false;
     mIsLoading = isLoading;
 
     mTitle = null;
@@ -265,27 +262,11 @@ public class MutableProgram implements Program {
   }
 
 
-
-  /**
-   * Sets whether this program is marked as "on air".
-   */
-  public void markAsOnAir(boolean onAir) {
-    // avoid unnessesary calls of fireStateChanged()
-    // call fireStateChanged() anyway if we are "on air"
-    // (for updating the "progress bar" painted by the ProgramPanel)
-    if (onAir || (onAir != mOnAir)) {
-      mOnAir = onAir;
-      fireStateChanged();
-    }
-  }
-
-
-
   /**
    * Gets whether this program is marked as "on air".
    */
   public boolean isOnAir() {
-    return mOnAir;
+    return ProgramUtilities.isOnAir(this);
   }
 
 

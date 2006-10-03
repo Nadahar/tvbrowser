@@ -52,6 +52,7 @@ import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import util.io.IOUtilities;
 import util.program.ProgramUtilities;
+import util.settings.ProgramPanelSettings;
 import devplugin.ContextMenuIf;
 import devplugin.Marker;
 import devplugin.Plugin;
@@ -108,6 +109,10 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   private TextAreaIcon mTitleIcon;
   /** The icon used to render the description. */
   private TextAreaIcon mDescriptionIcon;
+  
+  /** The icon used to paint the picture with */
+  private PictureAreaIcon mPictureAreaIcon;
+  
   /** The icons to show on the left side under the start time. */
   private Icon[] mIconArr;
   /** The program. */
@@ -127,14 +132,19 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   final public static int Y_AXIS = 1;
   /** Orientation of Progressbar */
   private int mAxis = Y_AXIS;
+  
+  /** The vertical gap between the programs */
+  private static int V_GAP = 5;
 
-  private boolean mShowOnlyDateAndTitle;
+  //private boolean mShowOnlyDateAndTitle, mShowPictures, mUsesPictureSettings;
+  
+  private ProgramPanelSettings mSettings;
 
   /**
    * Creates a new instance of ProgramPanel.
    */
   public ProgramPanel() {
-    this(false);
+    this(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean()));
   }
 
   /**
@@ -143,7 +153,25 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * @param showOnlyDateAndTitle
    *          If this panel should only show date time and title.
    */
-  public ProgramPanel(boolean showOnlyDateAndTitle) {
+  /*public ProgramPanel(ProgramPanelSettings settings) {
+    this(settings, true, false);
+  }*/
+
+  
+  /**
+   * Creates a new instance of ProgramPanel.
+   * 
+   * @param showOnlyDateAndTitle
+   *          If this panel should only show date time and title.
+   * @param showPicture 
+   *          If this panel should show the picture if it is available.
+   * @param usesPictureSettings If the panel should use the base picture settings.
+   *
+   * @since 2.2.2
+   */
+  public ProgramPanel(ProgramPanelSettings settings) {
+    mSettings = settings;
+    
     if (mTitleFont == null) {
       updateFonts();
     }
@@ -157,7 +185,6 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     mTitleIcon = new TextAreaIcon(null, mTitleFont, WIDTH_RIGHT - 5);
     mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5);
     mDescriptionIcon.setMaximumLineCount(3);
-    mShowOnlyDateAndTitle = showOnlyDateAndTitle;
   }
 
   /**
@@ -167,7 +194,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    *          The program to show in this panel.
    */
   public ProgramPanel(Program prog) {
-    this(false);
+    this();
     setProgram(prog);
   }
 
@@ -180,7 +207,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    *          Orientation of ProgressBar (X_AXIS/Y_AXIS)
    */
   public ProgramPanel(Program prog, int axis) {
-    this(false);
+    this();
     mAxis = axis;
     setProgram(prog);
   }
@@ -192,14 +219,50 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    *          The program to show in this panel.
    * @param showOnlyDateAndTitle
    *          If this panel should only show date time and title.
+   * @param showPicture 
+   *          If this panel should show the picture if it is available.
+   *
+   * @since 2.2.2
+   */
+  public ProgramPanel(Program prog, ProgramPanelSettings settings) {
+    this(settings);
+    setProgram(prog);
+  }
+  
+  /**
+   * Creates a new instance of ProgramPanel.
+   * 
+   * @param prog
+   *          The program to show in this panel.
+   * @param showOnlyDateAndTitle
+   *          If this panel should only show date time and title.
    * 
    * @since 2.2.1
    */
-  public ProgramPanel(Program prog, boolean showOnlyDateAndTitle) {
-    this(showOnlyDateAndTitle);
+  /*public ProgramPanel(Program prog, boolean showOnlyDateAndTitle) {
+    this(showOnlyDateAndTitle, true, false);    
+  }*/
+
+  /**
+   * Creates a new instance of ProgramPanel.
+   * 
+   * @param prog
+   *          The program to show in this panel.
+   * @param axis
+   *          Orientation of ProgressBar (X_AXIS/Y_AXIS)
+   * @param showOnlyDateAndTitle
+   *          If this panel should only show date time and title.
+   * @param showPicture 
+   *          If this panel should show the picture if it is available.
+   *
+   * @since 2.2.2
+   */
+  public ProgramPanel(Program prog, int axis, ProgramPanelSettings settings) {
+    this(settings);
+    mAxis = axis;
     setProgram(prog);
   }
-
+  
   /**
    * Creates a new instance of ProgramPanel.
    * 
@@ -212,11 +275,9 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * 
    * @since 2.2.1
    */
-  public ProgramPanel(Program prog, int axis, boolean showOnlyDateAndTitle) {
-    this(showOnlyDateAndTitle);
-    mAxis = axis;
-    setProgram(prog);
-  }
+  /*public ProgramPanel(Program prog, int axis, boolean showOnlyDateAndTitle) {
+    this(prog, axis, showOnlyDateAndTitle, true);
+  }*/
 
   /**
    * (Re)Loads the font settings.
@@ -233,6 +294,15 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       mNormalFont = Settings.propProgramInfoFont.getFont();
     }
 
+  }
+  
+  /**
+   * Change the settings of this panel.
+   * 
+   * @param settings The settings of this panel.
+   */
+  public void setProgramPanelSettings(ProgramPanelSettings settings) {
+    mSettings = settings;
   }
 
   public void forceRepaint() {
@@ -306,6 +376,9 @@ public class ProgramPanel extends JComponent implements ChangeListener {
 
     Program oldProgram = mProgram;
     mProgram = program;
+    
+    mTitleIcon.setMaximumLineCount(-1);
+    mDescriptionIcon.setMaximumLineCount(-1);
 
     boolean programChanged = (oldProgram != program);
     if (programChanged) {
@@ -317,19 +390,29 @@ public class ProgramPanel extends JComponent implements ChangeListener {
 
       programHasChanged();
     }
-
+    
+    // Create the picture area icon
+    if(mProgram.getBinaryField(ProgramFieldType.PICTURE_TYPE) == null ||
+        mSettings.isShowingPictureNever() ||
+        (mSettings.isShowingPictureInTimeRange() && 
+         ProgramUtilities.isNotInTimeRange(mSettings.getPictureTimeRangeStart(),mSettings.getPictureTimeRangeEnd(),program))
+       )
+      mPictureAreaIcon = new PictureAreaIcon();
+    else
+      mPictureAreaIcon = new PictureAreaIcon(program,mNormalFont, WIDTH_RIGHT - 4, mSettings.isShowingPictureDescription(), true);
+    
     // Calculate the maximum description lines
     int titleHeight = mTitleIcon.getIconHeight();
     int maxDescLines = 3;
     if (maxHeight != -1) {
-      maxDescLines = (maxHeight - titleHeight - 10) / mNormalFont.getSize();
+      maxDescLines = (maxHeight - titleHeight - mPictureAreaIcon.getIconHeight() - V_GAP) / mNormalFont.getSize();
     }
 
     if (programChanged
         || (maxDescLines != mDescriptionIcon.getMaximumLineCount())) {
       int descHeight = 0;
       // (Re)set the description text
-      if (!mShowOnlyDateAndTitle) {
+      if (!mSettings.isShowingOnlyDateAndTitle()) {
         mDescriptionIcon.setMaximumLineCount(maxDescLines);
         ProgramFieldType[] infoFieldArr = Settings.propProgramInfoFields
             .getProgramFieldTypeArray();
@@ -343,16 +426,16 @@ public class ProgramPanel extends JComponent implements ChangeListener {
         descHeight = mDescriptionIcon.getIconHeight();
       } else
         descHeight = 0;
-
+            
       // Calculate the height
-      mHeight = mTitleIcon.getIconHeight() + 10 + descHeight;
+      mHeight = titleHeight + descHeight + mPictureAreaIcon.getIconHeight() + V_GAP;
       setPreferredSize(new Dimension(WIDTH, mHeight));
 
       // Calculate the preferred height
-      mPreferredHeight = titleHeight + (3 * mNormalFont.getSize()) + 10;
-      if (mHeight < mPreferredHeight) {
+      mPreferredHeight = titleHeight + (maxDescLines * mNormalFont.getSize()) + mPictureAreaIcon.getIconHeight() + V_GAP;
+            
+      if (mHeight < mPreferredHeight)
         mPreferredHeight = mHeight;
-      }
     }
 
     if (isShowing()) {
@@ -439,9 +522,9 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     int width = getWidth();
     int height = USE_FULL_HEIGHT ? getHeight() : mHeight;
     Graphics2D grp = (Graphics2D) g;
-
+    
     // Draw the background if this program is on air
-    if (ProgramUtilities.isOnAir(mProgram)) {
+    if (mProgram.isOnAir()) {
       int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
       int progLength = mProgram.getLength();
       int startTime = mProgram.getHours() * 60 + mProgram.getMinutes();
@@ -515,10 +598,12 @@ public class ProgramPanel extends JComponent implements ChangeListener {
 
     mTitleIcon.paintIcon(this, grp, WIDTH_LEFT, 0);
 
-    if (!mShowOnlyDateAndTitle) {
+    if (!mSettings.isShowingOnlyDateAndTitle()) {
+      mPictureAreaIcon.paintIcon(this,grp, WIDTH_LEFT, mTitleIcon.getIconHeight());
+      
       if (mHeight >= mPreferredHeight)
         mDescriptionIcon.paintIcon(this, grp, WIDTH_LEFT, mTitleIcon
-            .getIconHeight());
+            .getIconHeight() + mPictureAreaIcon.getIconHeight());
 
       // Paint the icons pale if the program is expired
       if (PAINT_EXPIRED_PROGRAMS_PALE && mProgram.isExpired()) {
@@ -528,7 +613,8 @@ public class ProgramPanel extends JComponent implements ChangeListener {
 
       // paint the icons of the plugins that have marked the program
       int x = width - 1;
-      int y = mTitleIcon.getIconHeight() + mDescriptionIcon.getIconHeight() + 18;
+      int y = mTitleIcon.getIconHeight() + mDescriptionIcon.getIconHeight()
+          + mPictureAreaIcon.getIconHeight() + 17;
       y = Math.min(y, height - 1);
       for (Marker marker: markedByPluginArr) {
         Icon[] icons = marker.getMarkIcons(mProgram);

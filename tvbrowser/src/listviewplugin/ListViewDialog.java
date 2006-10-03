@@ -125,6 +125,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
    *
    * @param frame Frame for modal
    * @param plugin Plugin for reference
+   * @param settings The settings of the ListViewPlugin
    */
   public ListViewDialog(Frame frame, Plugin plugin, Properties settings) {
     super(frame, true);

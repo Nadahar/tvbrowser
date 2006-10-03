@@ -85,11 +85,6 @@ public interface ChannelDayProgram {
    * may check for gaps too.
    */
   public boolean isComplete();
-
-  /**
-   * Marks the program that is currently on air.
-   */
-  public void markProgramOnAir();
   
   /**
    * Gets the last program end time state on data update.

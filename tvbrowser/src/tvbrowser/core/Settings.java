@@ -54,11 +54,13 @@ import util.settings.FontProperty;
 import util.settings.IntArrayProperty;
 import util.settings.IntProperty;
 import util.settings.ProgramFieldTypeArrayProperty;
+import util.settings.ProgramPanelSettings;
 import util.settings.Property;
 import util.settings.PropertyManager;
 import util.settings.StringArrayProperty;
 import util.settings.StringProperty;
 import util.settings.VersionProperty;
+import util.ui.PictureSettingsPanel;
 import util.ui.view.SplitViewProperty;
 import devplugin.ProgramFieldType;
 
@@ -298,6 +300,12 @@ public class Settings {
       ProgramTableScrollPane scrollPane = mainFrame.getProgramTableScrollPane();
       scrollPane.forceRepaintAll();
     }
+    
+    propArr = new Property[] {propPictureType, propPictureStartTime,
+        propPictureEndTime, propIsPictureShowingDescription};
+    
+    if(mProp.hasChanged(propArr))
+      mainFrame.getProgramTableScrollPane().forceRepaintAll();
 
     if (mProp.hasChanged(propColumnWidth)) {
       util.ui.ProgramPanel.updateColumnWidth();
@@ -817,7 +825,19 @@ public class Settings {
       mProp, "programtable.endofday", 5 * 60);
   public static final BooleanProperty propHttpProxyUseProxy = new BooleanProperty(
       mProp, "proxy.http.useProxy", false);
-
+  
+  public static final IntProperty propPictureType = new IntProperty(
+      mProp, "pictures.type", PictureSettingsPanel.SHOW_IN_TIME_RANGE);
+  
+  public static final IntProperty propPictureStartTime = new IntProperty(
+      mProp, "pictures.startTime", 18 * 60);
+  
+  public static final IntProperty propPictureEndTime = new IntProperty(
+      mProp, "pictures.startEnd", 23 * 60);
+  
+  public static final BooleanProperty propIsPictureShowingDescription = new BooleanProperty(
+      mProp, "pictures.showDescription", true);
+  
   public static final StringProperty propHttpProxyHost = new StringProperty(
       mProp, "proxy.http.host", "");
 
@@ -852,10 +872,10 @@ public class Settings {
       mProp, "view.root", false, true, 50);
 
   public static final SplitViewProperty propViewMainframe = new SplitViewProperty(
-      mProp, "view.mainframe", false, false, 50);
+      mProp, "view.mainframe", false, false, 100);
 
   public static final SplitViewProperty propViewNavigation = new SplitViewProperty(
-      mProp, "view.navigation", true, true, 30);
+      mProp, "view.navigation", true, true, 100);
 
   public static final SplitViewProperty propViewDateChannel = new SplitViewProperty(
       mProp, "view.date_channel", true, true, 100);

@@ -30,10 +30,13 @@ import java.awt.Font;
 import java.util.ArrayList;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.UIManager;
 
 import tvbrowser.core.Settings;
+import util.settings.ProgramPanelSettings;
+import util.ui.PictureAreaIcon;
+import util.ui.PictureSettingsPanel;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.HTMLTextHelper;
 import util.ui.html.HorizontalLine;
@@ -57,6 +60,25 @@ public class ProgramTextCreator {
 
   private static String mBodyFontSize;
 
+
+  /**
+   * 
+   * @param prog
+   *          The Program to show
+   * @param doc
+   *          The HTMLDocument.
+   * @param fieldArr The object array with the field types.
+   * @param tFont The title Font.
+   * @param bFont The body Font.
+   * @param showImage If the image should be shown if it is available.
+   * @param showHelpLinks Show the Help-Links (Quality of Data, ShowView)
+   * @return The html String.
+   */
+  public static String createInfoText(Program prog, ExtendedHTMLDocument doc, 
+      Object[] fieldArr, Font tFont, Font bFont, boolean showImage, boolean showHelpLinks) {
+    return createInfoText(prog,doc,fieldArr,tFont,bFont,new ProgramPanelSettings(showImage ? PictureSettingsPanel.SHOW_EVER : PictureSettingsPanel.SHOW_NEVER, -1, -1, false, true),showHelpLinks);
+  }
+  
   /**
    * 
    * @param prog
@@ -74,10 +96,10 @@ public class ProgramTextCreator {
    * @param showHelpLinks
    *          Show the Help-Links (Quality of Data, ShowView)
    * @return The html String.
+   * @since 2.2.2
    */
-  public static String createInfoText(Program prog, ExtendedHTMLDocument doc,
-      Object[] fieldArr, Font tFont, Font bFont, boolean showImage,
-      boolean showHelpLinks) {
+  public static String createInfoText(Program prog, ExtendedHTMLDocument doc, 
+      Object[] fieldArr, Font tFont, Font bFont, ProgramPanelSettings settings, boolean showHelpLinks) {
     // NOTE: All field types are included until type 25 (REPETITION_ON_TYPE)
     StringBuffer buffer = new StringBuffer();
 
@@ -143,18 +165,20 @@ public class ProgramTextCreator {
 
     buffer.append("</td></tr>");
 
-    if (showImage) {
-      byte[] image = prog.getBinaryField(ProgramFieldType.IMAGE_TYPE);
+    if(settings.isShowingPictureEver() || (settings.isShowingPictureInTimeRange() && ProgramUtilities.isNotInTimeRange(settings.getPictureTimeRangeStart(),settings.getPictureTimeRangeEnd(), prog))) {
+      byte[] image = prog.getBinaryField(ProgramFieldType.PICTURE_TYPE);
       if (image != null) {
-        buffer.append("<tr><td></td><td>");
+        String line = "<tr><td></td><td valign=\"top\" style=\"color:#808080; font-size:0\">";
+        buffer.append(line);
         try {
-          Icon icon = new ImageIcon(image);
-          JLabel iconLabel = new JLabel(icon);
-          buffer.append(doc.createCompTag(iconLabel));
+          JLabel l = new JLabel(new PictureAreaIcon(prog, bFont, -1, settings.isShowingPictureDescription(), false));
+          l.setBackground(UIManager.getColor("EditorPane.background"));
+          l.setBorder(null);
+          buffer.append(doc.createCompTag(l));
           buffer.append("</td></tr>");
         } catch (Exception e) {
           // Picture was wrong;
-          buffer.delete(buffer.length() - 18, buffer.length());
+          buffer.delete(buffer.length() - line.length(), buffer.length());
         }
       }
     }
@@ -476,7 +500,7 @@ public class ProgramTextCreator {
   public static Object[] getDefaultOrder() {
     return new Object[] {
         ProgramFieldType.GENRE_TYPE,
-        ProgramFieldType.DESCRIPTION_TYPE,
+        ProgramFieldType.DESCRIPTION_TYPE,        
         ProgramFieldType.ORIGIN_TYPE,
         ProgramFieldType.DIRECTOR_TYPE,
         ProgramFieldType.SCRIPT_TYPE,

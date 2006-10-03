@@ -132,6 +132,8 @@ public class ProgramMenuItem extends JMenuItem {
       mShowName = true;
     }
     
+    mShowName = mShowName || !Settings.propEnableChannelIcons.getBoolean();
+    
     showIcon = showIcon && Settings.propEnableChannelIcons.getBoolean();
     
     mChannelName = new TextAreaIcon(p.getChannel().getName(), mBoldFont,CHANNEL_WIDTH);

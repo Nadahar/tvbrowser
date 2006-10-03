@@ -302,7 +302,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     mSplitPane.setLeftComponent(scrollPane);
 
     mProgramListModel = new DefaultListModel();
-    mProgramList = new ProgramList(mProgramListModel);
+    mProgramList = new ProgramList(mProgramListModel, FavoritesPlugin.getInstance().getProgramPanelSettings());
     mProgramList.addMouseListeners(null);
     mProgramScrollPane = new JScrollPane(mProgramList);
     mProgramScrollPane.setBorder(null);

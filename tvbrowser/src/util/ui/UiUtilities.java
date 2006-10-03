@@ -540,7 +540,19 @@ public class UiUtilities {
     // ensure the selection is visible
     list.ensureIndexIsVisible(list.getMaxSelectionIndex());
     list.ensureIndexIsVisible(list.getMinSelectionIndex());
-  }  
+  }
+  
+  /**
+   * Scale Icons to a specific width.
+   * The aspect ratio is kept.
+   * 
+   * @param icon The icon to scale.
+   * @param newWidth The new width of the icon.
+   * @return The scaled Icon.
+   */
+  public static Icon scaleIcon(Icon icon, int newWidth) {
+    return scaleIcon(icon, newWidth, (int)((newWidth/(float)icon.getIconWidth()) * icon.getIconHeight()));
+  }
   
   /**
    * Scales Icons to s specific size

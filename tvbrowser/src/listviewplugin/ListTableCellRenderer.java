@@ -85,7 +85,7 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
     } else if (value instanceof Program) {
 
       if (mProgramPanel == null) {
-        mProgramPanel = new ProgramPanel((Program)value, ProgramPanel.X_AXIS);
+        mProgramPanel = new ProgramPanel((Program)value, ProgramPanel.X_AXIS, ListViewPlugin.getInstance().getProgramPanelSettings());
       }
 
       JPanel rpanel = new JPanel(new BorderLayout());

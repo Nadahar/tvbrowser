@@ -441,15 +441,9 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
 
     Settings.propMouseOverColor.setColor(mMouseOverColorLb.getColor());
     
-    if (mShowNameAndIcon.isSelected()) {
-      Settings.propShowChannelIconsInProgramTable.setBoolean(true);
-      Settings.propShowChannelNamesInProgramTable.setBoolean(true);
-    } else if (mShowName.isSelected()) {
-      Settings.propShowChannelIconsInProgramTable.setBoolean(false);
-      Settings.propShowChannelNamesInProgramTable.setBoolean(true);
-    } else if (mShowIcon.isSelected()) {
-      Settings.propShowChannelIconsInProgramTable.setBoolean(true);
-      Settings.propShowChannelNamesInProgramTable.setBoolean(false);
+    if(Settings.propEnableChannelIcons.getBoolean()) {
+      Settings.propShowChannelIconsInProgramTable.setBoolean(mShowNameAndIcon.isSelected() || mShowIcon.isSelected());
+      Settings.propShowChannelNamesInProgramTable.setBoolean(mShowNameAndIcon.isSelected() || mShowName.isSelected());
     }
   }
 

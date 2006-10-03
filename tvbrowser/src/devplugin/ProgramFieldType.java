@@ -83,6 +83,9 @@ public class ProgramFieldType {
     = new ProgramFieldType(8, TEXT_FORMAT, true, "description",
                            "description", "Description");
 
+  /**
+   * @deprecated use {@link PICTURE_TYPE}
+   */
   public static final ProgramFieldType IMAGE_TYPE
     = new ProgramFieldType(9, BINARY_FORMAT, true, "image",
                            "image", "Image");
@@ -150,6 +153,19 @@ public class ProgramFieldType {
   public static final ProgramFieldType REPETITION_ON_TYPE
       = new ProgramFieldType(25, TEXT_FORMAT, true, "repetition on",
                            "repetitionOn", "Repetition on");
+
+  public static final ProgramFieldType PICTURE_TYPE
+      = new ProgramFieldType(26, BINARY_FORMAT, true, "picture",
+                            "picture", "Picture");
+
+  public static final ProgramFieldType PICTURE_COPYRIGHT_TYPE
+       = new ProgramFieldType(27, TEXT_FORMAT, true, "picture copyright",
+                              "pictureCopyright", "Picture copyright");
+
+  public static final ProgramFieldType PICTURE_DESCRIPTION_TYPE
+       = new ProgramFieldType(28, TEXT_FORMAT, true, "picture description",
+                              "pictureDescription", "Picture description");
+
 
   private int mTypeId;
 

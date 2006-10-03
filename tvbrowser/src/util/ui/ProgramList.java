@@ -38,6 +38,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import util.settings.ProgramPanelSettings;
+
 import devplugin.ContextMenuIf;
 import devplugin.Plugin;
 import devplugin.PluginManager;
@@ -93,8 +95,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
      * @since 2.2.1  
      */
     public ProgramList(Vector programArr, boolean showOnlyDateAndTitle) {
-        super(programArr);
-        setCellRenderer(new ProgramListCellRenderer(showOnlyDateAndTitle));
+      this(programArr, new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, showOnlyDateAndTitle, true));
     }
 
     /**
@@ -107,8 +108,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
      * @since 2.2.1  
      */
     public ProgramList(Program[] programArr, boolean showOnlyDateAndTitle) {
-        super(programArr);
-        setCellRenderer(new ProgramListCellRenderer(showOnlyDateAndTitle));
+      this(programArr, new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, showOnlyDateAndTitle, true));
     }
 
     /**
@@ -121,11 +121,49 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
      * @since 2.2.1  
      */
     public ProgramList(ListModel programs, boolean showOnlyDateAndTitle) {
-        super(programs);
-        programs.addListDataListener(this);
-        setCellRenderer(new ProgramListCellRenderer(showOnlyDateAndTitle));
+        this(programs, new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, showOnlyDateAndTitle, true));
     }
 
+    /**
+     * Creates the JList and adds the default MouseListeners (PopUpBox)
+     *
+     * @param programArr Array of Programs to show
+     * @param settings The settings for the program panel.
+     *          
+     * @since 2.2.2  
+     */
+    public ProgramList(Vector programArr, ProgramPanelSettings settings) {
+        super(programArr);
+        setCellRenderer(new ProgramListCellRenderer(settings));
+    }
+
+    /**
+     * Creates the JList and adds the default MouseListeners (PopUpBox)
+     *
+     * @param programArr Array of Programs to show
+     * @param settings The settings for the program panel.
+     *          
+     * @since 2.2.2  
+     */
+    public ProgramList(Program[] programArr, ProgramPanelSettings settings) {
+        super(programArr);
+        setCellRenderer(new ProgramListCellRenderer(settings));
+    }
+
+    /**
+     * Creates the JList and adds the default MouseListeners (PopUpBox)
+     *
+     * @param programs Model with Programs to show
+     * @param settings The settings for the program panel.
+     *         
+     * @since 2.2.2  
+     */
+    public ProgramList(ListModel programs, ProgramPanelSettings settings) {
+        super(programs);
+        programs.addListDataListener(this);
+        setCellRenderer(new ProgramListCellRenderer(settings));
+    }
+    
     /**
      * Add a ChangeListener to all Programs for repainting
      */
