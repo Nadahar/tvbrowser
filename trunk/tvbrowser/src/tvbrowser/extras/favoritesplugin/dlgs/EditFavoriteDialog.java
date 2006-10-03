@@ -197,7 +197,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     else
       mName = new JLabel(mFavorite.getName());    
     
-    JPanel panel = new JPanel(new FormLayout("pref,3dlu,pref:grow,3dlu,pref","pref"));
+    JPanel panel = new JPanel(new FormLayout("pref,3dlu,30dlu:grow,3dlu,pref","pref"));
     panel.add(new JLabel(mLocalizer.msg("name","Name:")), cc.xy(1,1));
     panel.add(mName, cc.xy(3,1));    
     

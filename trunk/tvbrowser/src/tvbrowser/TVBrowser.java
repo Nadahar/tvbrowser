@@ -62,6 +62,7 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.SystemTray;
+import tvbrowser.ui.configassistant.TvBrowserPictureSettingsUpdateDialog;
 import tvbrowser.ui.configassistant.TvBrowserUpdateAssistant;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.UpdateDlg;
@@ -182,6 +183,10 @@ public class TVBrowser {
         mLog.warning("Unknown command line parameter: '" + args[i] + "'");
       }
     }
+    
+    try {
+      Toolkit.getDefaultToolkit().setDynamicLayout(((Boolean)Toolkit.getDefaultToolkit().getDesktopProperty("awt.dynamicLayoutSupported")).booleanValue());
+    }catch(Exception e) {}
 
     mLocalizer = util.ui.Localizer.getLocalizerFor(TVBrowser.class);
     String msg;
@@ -228,7 +233,8 @@ public class TVBrowser {
 
     // Capture unhandled exceptions
     //System.setErr(new PrintStream(new MonitoringErrorStream()));
-    Locale.setDefault(new Locale(Settings.propLanguage.getString(), Settings.propCountry.getString(), Settings.propVariant.getString()));
+
+    Locale.setDefault(new Locale(Settings.propLanguage.getString()));
 
     String timezone = Settings.propTimezone.getString();
     if (timezone != null) {
@@ -246,7 +252,7 @@ public class TVBrowser {
     // Set the String to use for indicating the user agent in http requests
     System.setProperty("http.agent", MAINWINDOW_TITLE);
 
-    Version currentVersion = Settings.propTVBrowserVersion.getVersion();
+    final Version currentVersion = Settings.propTVBrowserVersion.getVersion();
     Settings.propTVBrowserVersion.setVersion(VERSION);
     if (currentVersion != null && currentVersion.compareTo(new Version(1,11))<0) {
       mLog.info("Running tvbrowser update assistant");
@@ -374,6 +380,10 @@ public class TVBrowser {
                 }
               }catch(Exception registry) {}
             }
+            
+            // check if user should select picture settings
+            if(currentVersion.compareTo(new Version(2,22))<0)
+              TvBrowserPictureSettingsUpdateDialog.createAndShow(mainFrame);
           }
         });
       }

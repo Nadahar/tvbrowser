@@ -58,7 +58,6 @@ import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MarkedProgramsList;
 import util.io.IOUtilities;
-import util.program.ProgramUtilities;
 import util.ui.ScrollableMenu;
 
 import com.gc.systray.SystemTrayFactory;
@@ -370,7 +369,7 @@ public class SystemTray {
                 Program p = yesterday
                     .getProgramAt(yesterday.getProgramCount() - 1);
 
-                if (ProgramUtilities.isOnAir(p)) {
+                if (p.isOnAir()) {
                   addProgramToNowRunning(p, programs, additional);
                   Program p1 = today.getProgramAt(0);
                   addToNext(p1, nextPrograms, nextAdditionalPrograms);
@@ -381,7 +380,7 @@ public class SystemTray {
 
             Program p = today.getProgramAt(j);
 
-            if (ProgramUtilities.isOnAir(p)) {
+            if (p.isOnAir()) {
               addProgramToNowRunning(p, programs, additional);
               if (j < today.getProgramCount() - 1) {
                 Program p1 = today.getProgramAt(j + 1);
@@ -740,7 +739,7 @@ public class SystemTray {
    */
   private boolean addToNext(Program p, ArrayList<ProgramMenuItem> nextPrograms,
       ArrayList<ProgramMenuItem> nextAdditionalPrograms) {
-    if (!p.isExpired() && !ProgramUtilities.isOnAir(p) 
+    if (!p.isExpired() && !p.isOnAir() 
         && MainFrame.getInstance().getProgramFilter().accept(p)) {
       if (this.isOnChannelList(p.getChannel())) {
         nextPrograms.set(getIndexOfChannel(p.getChannel()),
@@ -770,7 +769,7 @@ public class SystemTray {
    */
   private boolean addProgramToNowRunning(Program p, ArrayList<ProgramMenuItem> defaultList,
       ArrayList<ProgramMenuItem> addList) {
-    if (ProgramUtilities.isOnAir(p)
+    if (p.isOnAir()
         && MainFrame.getInstance().getProgramFilter().accept(p)) {
       if (isOnChannelList(p.getChannel())) {
         defaultList.set(getIndexOfChannel(p.getChannel()), new ProgramMenuItem(

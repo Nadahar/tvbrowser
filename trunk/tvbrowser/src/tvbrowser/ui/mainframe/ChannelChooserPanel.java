@@ -112,6 +112,7 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
   
   public void updateChannelChooser() {
     mList.setCellRenderer(new ChannelListCellRenderer(
+        Settings.propEnableChannelIcons.getBoolean() &&
         Settings.propShowChannelIconsInChannellist.getBoolean(), Settings.propShowChannelNamesInChannellist.getBoolean()));
     mChannelChooserModel.removeAllElements();
     Channel[] channelList = tvbrowser.core.ChannelList.getSubscribedChannels();

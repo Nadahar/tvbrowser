@@ -182,7 +182,7 @@ public class TrayImportantSettingsTab implements SettingsTab {
       Settings.propTrayImportantProgramsInSubMenu.setBoolean(mShowInSubMenu.isSelected());
     if(mSize != null)
       Settings.propTrayImportantProgramsSize.setInt(((Integer)mSize.getValue()).intValue());
-    if(mShowIconAndName != null && mShowName != null && mShowIcon != null) {
+    if(mShowIconAndName != null && mShowName != null && mShowIcon != null && Settings.propEnableChannelIcons.getBoolean()) {
       Settings.propTrayImportantProgramsContainsName.setBoolean(mShowIconAndName.isSelected() || mShowName.isSelected());
       Settings.propTrayImportantProgramsContainsIcon.setBoolean(mShowIconAndName.isSelected() || mShowIcon.isSelected());
     }

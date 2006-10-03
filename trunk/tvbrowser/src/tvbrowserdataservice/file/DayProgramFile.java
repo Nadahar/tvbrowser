@@ -46,50 +46,52 @@ import devplugin.Date;
  * @author Til Schneider, www.murfman.de
  */
 public class DayProgramFile extends AbstractFile {
-  
+
   private transient devplugin.Channel mChannel;
   private transient devplugin.Date mDate;
-  
+
   /** The localizer for this class. */
   public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(DayProgramFile.class);
-  
+
   public static final TvDataLevel[] LEVEL_ARR = new TvDataLevel[] {
     new TvDataLevel("base", mLocalizer.msg("basicTVListings","Basic TV listings"),true),
     new TvDataLevel("more00-16",mLocalizer.msg("more00-16","")),
     new TvDataLevel("more16-00",mLocalizer.msg("more16-00","")),
-     new TvDataLevel("image00-16", mLocalizer.msg("image00-16","")),
-     new TvDataLevel("image16-00", mLocalizer.msg("image16-00","")),
+    new TvDataLevel("picture00-16", mLocalizer.msg("picture00-16","")),
+    new TvDataLevel("picture16-00", mLocalizer.msg("picture16-00","")),
   };
 
   private static final int FILE_VERSION = 1;
 
+  private static final int ADDITONAL_FILE_VERSION = 1;
+
   private int mVersion;
 
   private ArrayList mProgramFrameList;
-  
-  
-  
+
+
+
   public DayProgramFile() {
     mVersion = 1;
     mProgramFrameList = new ArrayList();
   }
-  
+
   public DayProgramFile(devplugin.Date date, devplugin.Channel channel) {
     this();
     mDate=date;
     mChannel=channel;
   }
-  
-  
+
+
   public devplugin.Date getDate() {
     return mDate;
   }
-  
+
   public devplugin.Channel getChannel() {
     return mChannel;
   }
-  
+
   public int getVersion() {
     return mVersion;
   }
@@ -102,15 +104,15 @@ public class DayProgramFile extends AbstractFile {
   public void setVersion(int version) {
     mVersion = version;
   }
-  
-  
-  
+
+
+
   public int getProgramFrameCount() {
     return mProgramFrameList.size();
   }
-  
-  
-  
+
+
+
   public ProgramFrame getProgramFrameAt(int index) {
     return (ProgramFrame) mProgramFrameList.get(index);
   }
@@ -120,9 +122,9 @@ public class DayProgramFile extends AbstractFile {
   public void removeProgramFrameAt(int index) {
     mProgramFrameList.remove(index);
   }
-  
-  
-  
+
+
+
   public void removeAllProgramFrames() {
     mProgramFrameList.clear();
   }
@@ -132,16 +134,16 @@ public class DayProgramFile extends AbstractFile {
   public void addProgramFrame(ProgramFrame frame) {
     mProgramFrameList.add(frame);
   }
-  
-  
-  
+
+
+
   public int getProgramFrameIndexForId(int id) {
     for (int i = 0; i < getProgramFrameCount(); i++) {
       if (getProgramFrameAt(i).getId() == id) {
         return i;
       }
     }
-    
+
     // Nothing found
     return -1;
   }
@@ -150,11 +152,11 @@ public class DayProgramFile extends AbstractFile {
 
   /**
    * Updates this complete file with an update file.
-   * 
+   *
    * @param updateFile The update to use to patch this day program file.
    * @throws FileFormatException If the update file does not have a higher
    *         version as this file.
-   * 
+   *
    * @see #updateUpdateFile(DayProgramFile)
    * @see #merge(DayProgramFile)
    */
@@ -169,11 +171,11 @@ public class DayProgramFile extends AbstractFile {
 
   /**
    * Updates this update file with an update file.
-   * 
+   *
    * @param updateFile The update to use to patch this day program file.
    * @throws FileFormatException If the update file does not have a higher
    *         version as this file.
-   * 
+   *
    * @see #updateCompleteFile(DayProgramFile)
    * @see #merge(DayProgramFile)
    */
@@ -188,22 +190,22 @@ public class DayProgramFile extends AbstractFile {
 
   /**
    * Merges the day program file with a day program file of another level.
-   * 
+   *
    * @param otherProg The day program file to merge with this file.
    * @throws FileFormatException If merging failed.
-   * 
+   *
    * @see #updateCompleteFile(DayProgramFile)
    * @see #updateUpdateFile(DayProgramFile)
    */
   public void merge(DayProgramFile otherProg) throws FileFormatException {
     merge(otherProg, false, false);
   }
-  
-  
-  
+
+
+
   /**
    * Merges two day program files.
-   * 
+   *
    * @param otherFile The day program file to merge with this one.
    * @param thisIsUpdateFile Specifies whether this is an update file.
    *        When an update file is updated for each empty frame in the other
@@ -215,7 +217,7 @@ public class DayProgramFile extends AbstractFile {
    *        If this file is updated, an empty frame in the other file causes a
    *        deletion of the frame (or the creation of an empty frame).
    *        If this file is merged with another complete file, an empty frame in
-   *        the other file is ignored.  
+   *        the other file is ignored.
    * @throws FileFormatException If the version of the update file is not higher
    *         than the version of this file
    */
@@ -228,11 +230,11 @@ public class DayProgramFile extends AbstractFile {
       throw new FileFormatException("Update file must have a higher version ("
         + otherFile.getVersion() + " <= " + getVersion() + ")");
     }
-    
+
     // Go through all frames in the merge the day programs
     for (int frameNr = 0; frameNr < otherFile.getProgramFrameCount(); frameNr++) {
       ProgramFrame frame = otherFile.getProgramFrameAt(frameNr);
-      
+
       // Check whether this frame is obsolete
       // This is the case when the frame is empty (= has no fields)
       if (frame.getProgramFieldCount() == 0) {
@@ -240,13 +242,13 @@ public class DayProgramFile extends AbstractFile {
         if (thisIsUpdateFile) {
           // The new update file sais that this frame is obsolete
           // -> Add an empty frame to this update file, too
-          
+
           // Remove an existing frame first
           int index = getProgramFrameIndexForId(frame.getId());
           if (index != -1) {
             removeProgramFrameAt(index);
           }
-          
+
           // Add the empty frame (to mark the frame as obsolete)
           addProgramFrame(new ProgramFrame(frame.getId()));
         } else {
@@ -263,7 +265,7 @@ public class DayProgramFile extends AbstractFile {
         }
       } else {
         // Insert or update the frame
-        
+
         // Check whether we already have such a frame
         int index = getProgramFrameIndexForId(frame.getId());
         ProgramFrame targetFrame;
@@ -275,17 +277,17 @@ public class DayProgramFile extends AbstractFile {
           // This is a update
           targetFrame = getProgramFrameAt(index);
         }
-        
+
         // Replace all fields the update file provides
         for (int i = 0; i < frame.getProgramFieldCount(); i++) {
           ProgramField field = frame.getProgramFieldAt(i);
-          
+
           // Remove the old field, if present
           int fieldIdx = targetFrame.getProgramFieldIndexForTypeId(field.getTypeId());
           if (fieldIdx != -1) {
             targetFrame.removeProgramFieldAt(fieldIdx);
           }
-          
+
           // Check whether to update or delete the field
           if (field.getBinaryData() == null) {
             // This field should be deleted -> Do nothing
@@ -303,9 +305,9 @@ public class DayProgramFile extends AbstractFile {
       setVersion(otherFile.getVersion());
     }
   }
-  
-  
-  
+
+
+
   public void checkFormat() throws FileFormatException {
     // Check whether there are duplicate program IDs
     for (int i = 0; i < getProgramFrameCount(); i++) {
@@ -313,7 +315,7 @@ public class DayProgramFile extends AbstractFile {
       // Check whether there is a program that has the same ID than this one
       for (int j = i + 1; j < getProgramFrameCount(); j++) {
         ProgramFrame cmp = getProgramFrameAt(j);
-        
+
         if (frame.getId() == cmp.getId()) {
           throw new FileFormatException("Program #" + i + " and program #" + j
             + " have the same ID: " + frame.getId());
@@ -326,26 +328,26 @@ public class DayProgramFile extends AbstractFile {
 
   /**
    * Reads only the version from a stream.
-   * 
+   *
    * @param stream The stream to read from
    * @return The version of the file
    * @throws IOException If reading failed
    * @throws FileFormatException If the file has a unknown file version
-   */  
+   */
   public static int readVersionFromStream(InputStream stream)
     throws IOException, FileFormatException
   {
     GZIPInputStream gIn = new GZIPInputStream(stream);
-      
+
     int fileVersion = gIn.read();
     if (fileVersion > FILE_VERSION) {
       throw new FileFormatException("Unknown file version: " + fileVersion);
     }
-      
+
     int version = gIn.read();
 
     gIn.close();
-    
+
     return version;
   }
 
@@ -357,7 +359,7 @@ public class DayProgramFile extends AbstractFile {
     BufferedInputStream stream = null;
     try {
       stream = new BufferedInputStream(new FileInputStream(file), 0x4000);
-      
+
       return readVersionFromStream(stream);
     }
     finally {
@@ -373,27 +375,27 @@ public class DayProgramFile extends AbstractFile {
     throws IOException, FileFormatException
   {
     GZIPInputStream gIn = new GZIPInputStream(stream);
-    
+
     int fileVersion = gIn.read();
     if (fileVersion > FILE_VERSION) {
       throw new FileFormatException("Unknown file version: " + fileVersion);
     }
-    
+
     mVersion = gIn.read();
-    
+
     int programCount = gIn.read();
-    
+
     if(programCount == 255) {
       try {
         if(job.getServerUrl() != null) {
-          String url = job.getServerUrl() + "/" + job.getFileName().substring(0, job.getFileName().lastIndexOf(".prog.gz")) + "_count.prog.gz";
+          String url = job.getServerUrl() + "/" + getAdditionalFileName(job.getFileName());
           programCount = readProgCountFromStream(IOUtilities.getStream(new URL(url), 60000));
         }
         else
           programCount = readProgCountFromStream(new BufferedInputStream(new FileInputStream(job.getFileName()), 0x4000));
       }catch(Exception e) {}
     }
-    
+
     mProgramFrameList.clear();
     mProgramFrameList.ensureCapacity(programCount);
     for (int i = 0; i < programCount; i++) {
@@ -401,28 +403,32 @@ public class DayProgramFile extends AbstractFile {
       frame.readFromStream(gIn);
       mProgramFrameList.add(frame);
     }
-    
+
     gIn.close();
   }
 
   private int readProgCountFromStream(InputStream stream) throws IOException, FileFormatException {
     GZIPInputStream gIn = new GZIPInputStream(stream);
-    
+
+    gIn.read(); //version
+
     int count = ((gIn.read() & 0xFF) << 8 ) | (gIn.read() & 0xFF);
-        
+
     gIn.close();
-    
+
     return count;
   }
-  
+
   private void writeProgCountToStream(OutputStream stream) throws IOException, FileFormatException {
     GZIPOutputStream gOut = new GZIPOutputStream(stream);
-    
+
+    gOut.write(ADDITONAL_FILE_VERSION);
+
     int count = getProgramFrameCount();
-    
+
     gOut.write((byte) (count >> 8));
     gOut.write((byte) (count & 0xFF));
-    
+
     gOut.close();
   }
 
@@ -430,19 +436,18 @@ public class DayProgramFile extends AbstractFile {
     throws IOException, FileFormatException
   {
     checkFormat();
-    
+
     GZIPOutputStream gOut = new GZIPOutputStream(stream);
 
     gOut.write(FILE_VERSION);
-    
+
     gOut.write(mVersion);
-    
-    if(getProgramFrameCount() > 255) {
+
+    if(getProgramFrameCount() >= 255) {
       if(file != null) {
-        String fileName = file.toString();
-        fileName = fileName.substring(0, fileName.lastIndexOf(".prog.gz")) + "_count.prog.gz";
+        String fileName = getAdditionalFileName(file.toString());
         FileOutputStream write = null;
-        
+
         try {
           write = new FileOutputStream(fileName);
           writeProgCountToStream(write);
@@ -450,28 +455,31 @@ public class DayProgramFile extends AbstractFile {
           try {
             write.close();
           }catch(Exception e2) {}
-          
+
           (new File(fileName)).delete();
         }
       }
-      
+
       gOut.write(255);
     }
-    else    
+    else
       gOut.write(getProgramFrameCount());
-    
+
     for (int i = 0; i < getProgramFrameCount(); i++) {
       ProgramFrame frame = getProgramFrameAt(i);
       frame.writeToStream(gOut);
     }
-    
+
     gOut.close();
   }
 
+  private String getAdditionalFileName(String fileName) {
+    return fileName.substring(0, fileName.lastIndexOf(".prog.gz")) + "_additional.prog.gz";
+  }
 
   public String getProgramFileName() {
     if (mChannel==null || mDate==null) return null;
-    return getProgramFileName(mDate,mChannel);    
+    return getProgramFileName(mDate,mChannel);
   }
 
 
@@ -500,7 +508,7 @@ public class DayProgramFile extends AbstractFile {
     String channel, String level, int updateVersion)
   {
     StringBuffer buf = new StringBuffer();
-    
+
     buf.append(date.getYear());
     buf.append("-");
     buf.append(date.getMonth() < 10 ? "0" : "");
@@ -521,7 +529,7 @@ public class DayProgramFile extends AbstractFile {
     } else {
       buf.append("_full.prog.gz");
     }
-    
+
     return buf.toString();
   }
 
@@ -531,7 +539,7 @@ public class DayProgramFile extends AbstractFile {
   {
     try {
       // E.g. '2003-10-04_de_premiere-1_base_update_15.prog.gz'
-      //   or '2003-10-04_de_premiere-1_base_full.prog.gz'  
+      //   or '2003-10-04_de_premiere-1_base_full.prog.gz'
       int year = Integer.parseInt(fileName.substring(0, 4));
       int month = Integer.parseInt(fileName.substring(5, 7));
       int day = Integer.parseInt(fileName.substring(8, 10));
@@ -590,15 +598,15 @@ public class DayProgramFile extends AbstractFile {
         "Program file name has wrong syntax: {0}", fileName, exc);
     }
   }
-  
-  
+
+
   public static int getLevelIndexForId(String levelId) {
     for (int i = 0; i < LEVEL_ARR.length; i++) {
       if (levelId.equals(LEVEL_ARR[i].getId())) {
         return i;
       }
     }
-    
+
     return -1;
   }
 
@@ -606,14 +614,14 @@ public class DayProgramFile extends AbstractFile {
   public boolean equals(Object obj) {
     if (obj instanceof DayProgramFile) {
       DayProgramFile file = (DayProgramFile) obj;
-      
+
       if (getProgramFrameCount() != file.getProgramFrameCount()) {
         return false;
       }
-      
+
       for (int i = 0; i < getProgramFrameCount(); i++) {
         ProgramFrame frame = getProgramFrameAt(i);
-        
+
         int index = file.getProgramFrameIndexForId(frame.getId());
         if (index == -1) {
           return false;

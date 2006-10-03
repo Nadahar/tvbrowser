@@ -39,6 +39,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import util.settings.ProgramPanelSettings;
+
 import devplugin.Program;
 
 /**
@@ -66,16 +68,25 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
    * @param showOnlyDateAndTitle If the programs should only show date and title.
    */
   public ProgramListCellRenderer(boolean showOnlyDateAndTitle) {
+    this(new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, showOnlyDateAndTitle, true));
+  }
+  
+  /**
+   * Creates a new instance of ProgramListCellRenderer
+   * @param settings The settings for the program panel. 
+   * 
+   * @since 2.2.2
+   */
+  public ProgramListCellRenderer(ProgramPanelSettings settings) {
     mMainPanel = new JPanel(new BorderLayout());
     mMainPanel.setOpaque(true);
     
     mHeaderLb = new JLabel();
     mMainPanel.add(mHeaderLb, BorderLayout.NORTH);
     
-    mProgramPanel = new ProgramPanel(showOnlyDateAndTitle);
+    mProgramPanel = new ProgramPanel(settings);
     mMainPanel.add(mProgramPanel, BorderLayout.CENTER);
   }
-  
 
   
   /**

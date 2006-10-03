@@ -220,7 +220,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
 
   private void installTableModel(ReminderTableModel model) {
     mTable.setModel(model);
-    mTable.getColumnModel().getColumn(0).setCellRenderer(new ProgramTableCellRenderer());
+    mTable.getColumnModel().getColumn(0).setCellRenderer(new ProgramTableCellRenderer(ReminderPlugin.getInstance().getProgramPanelSettings(false)));
     mTable.getColumnModel().getColumn(1).setCellEditor(new MinutesCellEditor());
     mTable.getColumnModel().getColumn(1).setCellRenderer(new MinutesCellRenderer());
   }

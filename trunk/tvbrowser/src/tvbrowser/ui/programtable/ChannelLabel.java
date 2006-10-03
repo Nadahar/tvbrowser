@@ -28,13 +28,9 @@ public class ChannelLabel extends util.ui.ChannelLabel {
   public ChannelLabel(Channel ch) {
     super();
     mChannel = ch;
-
-    if (!Settings.propEnableChannelIcons.getBoolean()) {
-      Settings.propShowChannelIconsInProgramTable.setBoolean(false);
-      Settings.propShowChannelNamesInProgramTable.setBoolean(true);
-    }
     
-    if (Settings.propShowChannelIconsInProgramTable.getBoolean()) {
+    if (Settings.propEnableChannelIcons.getBoolean() &&
+        Settings.propShowChannelIconsInProgramTable.getBoolean()) {
       // Set Icon if it's available
       setIcon(ch.getIcon());
     }
@@ -95,7 +91,8 @@ public class ChannelLabel extends util.ui.ChannelLabel {
   }
 
   public void setIcon(Icon icon) {
-    if (Settings.propShowChannelIconsInProgramTable.getBoolean()) {
+    if (Settings.propEnableChannelIcons.getBoolean() &&
+        Settings.propShowChannelIconsInProgramTable.getBoolean()) {
       super.setIcon(icon);
     }
   }

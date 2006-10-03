@@ -309,17 +309,8 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
       public void run() {
         handleTimerEvent();
-
         registerAtPrograms(mProgramColumn);
-
-        // Update the programs on air
-        updateProgramsOnAir();
-
         fireTableDataChanged(callback);
-
-        /*if (callback != null) {
-          callback.run();
-        }*/
       }
     });
   }
@@ -432,9 +423,6 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     }
 
     mLastTimerMinutesAfterMidnight = minutesAfterMidnight;
-        
-    // Update the programs on air
-    updateProgramsOnAir();
     
     // Force a repaint of all programs on air
     // (so the progress background will be updated)
@@ -443,25 +431,6 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
         ProgramPanel panel = getProgramPanel(col, row);
         if (panel.getProgram().isOnAir()) {
           fireTableCellUpdated(col, row);
-        }
-      }
-    }
-  }
-  
-  
-  private void updateProgramsOnAir() {
-    checkThread();
-    
-    TvDataBase db = TvDataBase.getInstance();
-    for (int i = 0; i < mChannelArr.length; i++) {
-      Channel channel = mChannelArr[i];
-
-      DateRange dateRange = (DateRange)mDateRangeForChannel.get(channel);
-      int cnt = dateRange.getCount();
-      for (int j=0; j<cnt; j++) {
-        ChannelDayProgram dayProg = db.getDayProgram(mMainDay.addDays(j), channel);
-        if (dayProg != null) {
-          dayProg.markProgramOnAir();
         }
       }
     }

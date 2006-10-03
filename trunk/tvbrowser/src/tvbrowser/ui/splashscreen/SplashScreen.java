@@ -35,14 +35,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
-import javax.swing.JDialog;
+import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 
 import tvbrowser.TVBrowser;
 import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
 
-public class SplashScreen extends JDialog implements Splash {
+public class SplashScreen extends JWindow implements Splash {
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SplashScreen.class);
@@ -67,7 +67,6 @@ public class SplashScreen extends JDialog implements Splash {
     Color background, Color foreground)
   {
     super();
-    setUndecorated(true);
     
     mImage = ImageUtilities.createImage(imgFileName);
     if (mImage != null) {

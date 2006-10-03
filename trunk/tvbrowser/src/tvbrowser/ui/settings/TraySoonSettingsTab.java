@@ -138,7 +138,7 @@ public class TraySoonSettingsTab implements SettingsTab {
   public void saveSettings() {
     if(mIsEnabled != null)
       Settings.propTraySoonProgramsEnabled.setBoolean(mIsEnabled.isSelected());
-    if(mShowIconAndName != null && mShowName != null && mShowIcon != null) {
+    if(mShowIconAndName != null && mShowName != null && mShowIcon != null  && Settings.propEnableChannelIcons.getBoolean()) {
       Settings.propTraySoonProgramsContainsName.setBoolean(mShowIconAndName.isSelected() || mShowName.isSelected());
       Settings.propTraySoonProgramsContainsIcon.setBoolean(mShowIconAndName.isSelected() || mShowIcon.isSelected());
     }

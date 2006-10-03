@@ -73,7 +73,8 @@ import devplugin.SettingsTab;
  */
 public class ReminderSettingsTab implements SettingsTab {
 
-  private static final util.ui.Localizer mLocalizer
+  /** The localizer for this class. */
+  public static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(ReminderSettingsTab.class);
 
   private Properties mSettings;
@@ -84,7 +85,7 @@ public class ReminderSettingsTab implements SettingsTab {
   private JCheckBox mShowTimeSlectionDlg;
   private JButton mExecFileDialogBtn;
   private JSpinner mAutoCloseReminderTimeSp;
-
+  
   private JComboBox mDefaultReminderEntryList;
 
   private String mExecFileStr, mExecParamStr;
@@ -203,7 +204,7 @@ public class ReminderSettingsTab implements SettingsTab {
     
     mShowTimeSlectionDlg = new JCheckBox(mLocalizer.msg("showTimeSelectionDialog","Show time selection dialog"));    
     mShowTimeSlectionDlg.setSelected(mSettings.getProperty("showTimeSelectionDialog","true").compareTo("true") == 0);
-    
+        
     pb.addSeparator(mLocalizer.msg("remindBy", "Remind me by"), cc.xyw(1,1,10));
     pb.add(mReminderWindowChB, cc.xyw(2,3,4));
     pb.add(mSoundFileChB, cc.xyw(2,5,4));
@@ -229,7 +230,7 @@ public class ReminderSettingsTab implements SettingsTab {
     
     pb.addSeparator(mLocalizer.msg("timeChoosing","Time selection dialog"), cc.xyw(1,21,10));    
     pb.add(mShowTimeSlectionDlg, cc.xyw(2,23,4));
-    
+        
     soundTestBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         if(evt.getActionCommand().compareTo(mLocalizer.msg("test", "Test")) == 0) {
@@ -373,10 +374,9 @@ public class ReminderSettingsTab implements SettingsTab {
     ReminderPlugin.getInstance().setClientPluginIds(clientPluginIdArr);
     
     mSettings.setProperty("autoCloseReminderTime", mAutoCloseReminderTimeSp.getValue().toString());
-
     mSettings.setProperty("defaultReminderEntry",""+mDefaultReminderEntryList.getSelectedIndex());
-    
     mSettings.setProperty("showTimeSelectionDialog", String.valueOf(mShowTimeSlectionDlg.isSelected()));
+    
   }
 
   /**
@@ -390,6 +390,6 @@ public class ReminderSettingsTab implements SettingsTab {
    * Returns the title of the tab-sheet.
    */
   public String getTitle() {
-    return mLocalizer.msg("tabName", "Reminder");
+    return mLocalizer.msg("basicSettings", "Basic settings");
   }
 }

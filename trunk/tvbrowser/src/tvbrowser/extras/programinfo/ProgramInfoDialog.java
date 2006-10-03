@@ -162,7 +162,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     
     mDoc = (ExtendedHTMLDocument) mInfoEP.getDocument();
 
-    mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc, ProgramInfo.getInstance().getOrder(), getFont(true), getFont(false), true, true));
+    mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc, ProgramInfo.getInstance().getOrder(), getFont(true), getFont(false), ProgramInfo.getInstance().getProgramPanelSettings(), true));
     mInfoEP.setEditable(false);
     mInfoEP.addHyperlinkListener(new HyperlinkListener() {
       private String mTooltip;

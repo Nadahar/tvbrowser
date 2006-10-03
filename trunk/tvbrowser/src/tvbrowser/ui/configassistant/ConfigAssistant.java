@@ -103,6 +103,8 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
     CardPanel networkSuccessPanel = new NetworkSuccessPanel(this);
 
     CardPanel subscribeChannelPanel = new SubscribeChannelCardPanel(this);
+    CardPanel pictureSettingsPanel = new PictureCardPanel(this);
+    
     mFinishedPanel = new FinishCardPanel(this);
 
     mCardPn.add(welcomePanel.getPanel(), welcomePanel.toString());
@@ -110,6 +112,7 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
     mCardPn.add(networkSuccessPanel.getPanel(), networkSuccessPanel.toString());
     mCardPn.add(mFinishedPanel.getPanel(), mFinishedPanel.toString());
     mCardPn.add(subscribeChannelPanel.getPanel(), subscribeChannelPanel.toString());
+    mCardPn.add(pictureSettingsPanel.getPanel(), pictureSettingsPanel.toString());
 
     boolean dynamicChannelList = isDynamicChannelListSupported();
 
@@ -118,14 +121,17 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
       networkPanel.setNext(networkSuccessPanel);
       networkSuccessPanel.setNext(subscribeChannelPanel);
       subscribeChannelPanel.setPrev(networkSuccessPanel);
-      subscribeChannelPanel.setNext(mFinishedPanel);
-      mFinishedPanel.setPrev(subscribeChannelPanel);
+      subscribeChannelPanel.setNext(pictureSettingsPanel);
+      pictureSettingsPanel.setPrev(subscribeChannelPanel);
+      pictureSettingsPanel.setNext(mFinishedPanel);
+      mFinishedPanel.setPrev(pictureSettingsPanel);
     } else {
       networkPanel.setNext(networkSuccessPanel);
       networkSuccessPanel.setNext(subscribeChannelPanel);
-      subscribeChannelPanel.setPrev(networkSuccessPanel);
-      subscribeChannelPanel.setNext(mFinishedPanel);
-      mFinishedPanel.setPrev(subscribeChannelPanel);
+      subscribeChannelPanel.setNext(pictureSettingsPanel);
+      pictureSettingsPanel.setPrev(subscribeChannelPanel);
+      pictureSettingsPanel.setNext(mFinishedPanel);
+      mFinishedPanel.setPrev(pictureSettingsPanel);
     }
 
     mCurCardPanel = welcomePanel;

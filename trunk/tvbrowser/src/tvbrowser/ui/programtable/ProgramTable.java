@@ -57,6 +57,7 @@ import tvbrowser.ui.programtable.background.OneImageBackPainter;
 import tvbrowser.ui.programtable.background.TimeBlockBackPainter;
 import tvbrowser.ui.programtable.background.TimeOfDayBackPainter;
 import tvbrowser.ui.programtable.background.WhiteBackPainter;
+import util.settings.ProgramPanelSettings;
 import util.ui.ProgramPanel;
 import util.ui.TransferProgram;
 import devplugin.Channel;
@@ -357,6 +358,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
     for (int col = 0; col < mModel.getColumnCount(); col++) {
       for (int row = 0; row < mModel.getRowCount(col); row++) {
         ProgramPanel panel = mModel.getProgramPanel(col, row);
+        panel.setProgramPanelSettings(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean()));
         panel.forceRepaint();
       }
     }

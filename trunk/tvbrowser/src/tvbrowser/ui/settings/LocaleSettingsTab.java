@@ -28,6 +28,8 @@ package tvbrowser.ui.settings;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -67,6 +69,14 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
   private JRadioButton mTwelveHourFormat;
 
   private JRadioButton mTwentyfourHourFormat;
+  
+  private JTextArea mInfoArea;
+  
+  private static boolean mSomethingChanged = false;
+  
+  private static int mStartLanguageIndex;
+  private static int mStartTimeZoneIndex;
+  private static boolean mTwelveHourFormatIsSelected;
   
   /**
    * Creates a new instance of ProxySettingsTab.
@@ -143,10 +153,31 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
       mTwentyfourHourFormat.setSelected(true);
     }
     
-    JTextArea area = UiUtilities.createHelpTextArea(mLocalizer.msg("restartNote", "Please Restart"));
-    area.setForeground(Color.RED);
+    mInfoArea = UiUtilities.createHelpTextArea(mLocalizer.msg("restartNote", "Please Restart"));
+    mInfoArea.setForeground(Color.RED);
+    mInfoArea.setVisible(mSomethingChanged);
     
-    mSettingsPn.add(area, cc.xyw(1, 15, 5));
+    if(!mSomethingChanged) {
+      mStartLanguageIndex = mLanguageCB.getSelectedIndex();
+      mStartTimeZoneIndex = mTimezoneCB.getSelectedIndex();
+      mTwelveHourFormatIsSelected = mTwelveHourFormat.isSelected();
+    }    
+    
+    ItemListener itemListener= new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        mInfoArea.setVisible(mLanguageCB.getSelectedIndex() != mStartLanguageIndex ||
+            mTimezoneCB.getSelectedIndex() != mStartTimeZoneIndex ||
+            (mTwelveHourFormatIsSelected && !mTwelveHourFormat.isSelected() || 
+                !mTwelveHourFormatIsSelected && !mTwentyfourHourFormat.isSelected()));
+      }
+    };
+
+    mLanguageCB.addItemListener(itemListener);
+    mTimezoneCB.addItemListener(itemListener);
+    mTwelveHourFormat.addItemListener(itemListener);
+    mTwentyfourHourFormat.addItemListener(itemListener);
+    
+    mSettingsPn.add(mInfoArea, cc.xyw(1, 15, 5));
     
     return mSettingsPn;
   }
@@ -166,9 +197,11 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
       Settings.propTimezone.setString(null);
     } else {
       Settings.propTimezone.setString((String) mTimezoneCB.getSelectedItem());
-    }
+    }    
     
     Settings.propTwelveHourFormat.setBoolean(mTwelveHourFormat.isSelected());
+    
+    mSomethingChanged = mInfoArea.isVisible();
   }
 
   /**

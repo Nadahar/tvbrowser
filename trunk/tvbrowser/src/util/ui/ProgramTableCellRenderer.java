@@ -34,6 +34,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import util.settings.ProgramPanelSettings;
+
 import devplugin.Program;
 
 /**
@@ -56,13 +58,23 @@ public class ProgramTableCellRenderer extends DefaultTableCellRenderer {
      * Creates the Renderer
      */
     public ProgramTableCellRenderer() {
+      this(new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, false, true));
+    }
+    
+    /**
+     * Creates the Renderer
+     * 
+     * @param settings The settings for the program panel.
+     * @since 2.2.2
+     */
+    public ProgramTableCellRenderer(ProgramPanelSettings settings) {
         mMainPanel = new JPanel(new BorderLayout());
         mMainPanel.setOpaque(true);
 
         mHeaderLb = new JLabel();
         mMainPanel.add(mHeaderLb, BorderLayout.NORTH);
 
-        mProgramPanel = new ProgramPanel();
+        mProgramPanel = new ProgramPanel(settings);
         mMainPanel.add(mProgramPanel, BorderLayout.CENTER);
     }
 

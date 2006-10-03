@@ -59,12 +59,12 @@ import devplugin.SettingsTab;
 public class FavoritesSettingTab implements SettingsTab {
 
   /** The localizer for this class. */  
-  private static final util.ui.Localizer mLocalizer
+  public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(FavoritesSettingTab.class);
 
   private ProgramReceiveIf[] mClientPlugins;
   private JLabel mPluginLabel;
-  private JCheckBox mExpertMode;  
+  private JCheckBox mExpertMode;
   
   /**
    * Creates the settings panel for this tab.
@@ -117,7 +117,7 @@ public class FavoritesSettingTab implements SettingsTab {
     builder.add(mPluginLabel, cc.xy(2,3));
     builder.add(choose, cc.xy(4,3));
     builder.addSeparator(mLocalizer.msg("expertSettings","Expert mode"), cc.xyw(1,5,5));
-    builder.add(mExpertMode, cc.xyw(2,7,3));
+    builder.add(mExpertMode, cc.xyw(2,7,3));  
     
     return builder.getPanel();
   }
@@ -150,7 +150,7 @@ public class FavoritesSettingTab implements SettingsTab {
       clientPluginIdArr[i] = mClientPlugins[i].getId();
     
     FavoritesPlugin.getInstance().setClientPluginIds(clientPluginIdArr);
-    FavoritesPlugin.getInstance().setIsUsingExpertMode(mExpertMode.isSelected());
+    FavoritesPlugin.getInstance().setIsUsingExpertMode(mExpertMode.isSelected());    
   }
   
   /**
@@ -164,7 +164,7 @@ public class FavoritesSettingTab implements SettingsTab {
    * Returns the title of the tab-sheet.
    */
   public String getTitle() {
-    return mLocalizer.msg("name", "Favorite programs");
+    return mLocalizer.msg("basicSettings", "Basic settings");
   }
   
 }

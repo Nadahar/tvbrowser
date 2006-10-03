@@ -138,7 +138,7 @@ public class TrayNowSettingsTab implements SettingsTab {
     mShowInSubMenu.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowInTray.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mLookHelpLink.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
-    mShowName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
+    mShowName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);    
     mShowIconAndName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled && Settings.propEnableChannelIcons.getBoolean());
     mShowIcon.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled && Settings.propEnableChannelIcons.getBoolean());
     mShowTime.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
@@ -150,7 +150,7 @@ public class TrayNowSettingsTab implements SettingsTab {
       Settings.propTrayNowProgramsEnabled.setBoolean(mIsEnabled.isSelected());
     if(mShowInSubMenu != null)
       Settings.propTrayNowProgramsInSubMenu.setBoolean(mShowInSubMenu.isSelected());
-    if(mShowIconAndName != null && mShowName != null && mShowIcon != null) {
+    if(mShowIconAndName != null && mShowName != null && mShowIcon != null  && Settings.propEnableChannelIcons.getBoolean()) {
       Settings.propTrayNowProgramsContainsName.setBoolean(mShowIconAndName.isSelected() || mShowName.isSelected());
       Settings.propTrayNowProgramsContainsIcon.setBoolean(mShowIconAndName.isSelected() || mShowIcon.isSelected());
     }

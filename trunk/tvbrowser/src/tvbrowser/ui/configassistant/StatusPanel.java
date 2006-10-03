@@ -44,13 +44,14 @@ public class StatusPanel extends JPanel {
 
   public static final int NETWORK = 0;
   public static final int CHANNELS = 1;
-  public static final int READY = 2;
+  public static final int PICTURES = 2;
+  public static final int READY = 3;
   
   private Font mItalic;
   private Font mNormalFont;
 
   public StatusPanel(int selected) {
-    setLayout(new FormLayout("10dlu, pref, pref:grow, pref, pref:grow, pref, 20dlu", "3dlu, pref, 3dlu, 1px"));
+    setLayout(new FormLayout("10dlu, pref, pref:grow, pref, pref:grow, pref, pref:grow, pref, 20dlu", "3dlu, pref, 3dlu, 1px"));
     CellConstraints cc = new CellConstraints();
     
     JEditorPane textfield = new JEditorPane();
@@ -69,11 +70,13 @@ public class StatusPanel extends JPanel {
     add(new LineComponent(textfield.getForeground()), cc.xy(3,2));
     add(createStatusLabel("2. "+mLocalizer.msg("channel", "Choose channel"), selected == CHANNELS), cc.xy(4,2));
     add(new LineComponent(textfield.getForeground()), cc.xy(5,2));
-    add(createStatusLabel("3. "+mLocalizer.msg("done", "Done"), selected == READY), cc.xy(6,2));
+    add(createStatusLabel("3. "+mLocalizer.msg("pictures", "Pictures"), selected == PICTURES), cc.xy(6,2));
+    add(new LineComponent(textfield.getForeground()), cc.xy(7,2));
+    add(createStatusLabel("3. "+mLocalizer.msg("done", "Done"), selected == READY), cc.xy(8,2));
     
     JPanel black = new JPanel();
     black.setBackground(textfield.getForeground());
-    add(black, cc.xyw(1,4, 7));
+    add(black, cc.xyw(1,4,9));
   }
 
   private JLabel createStatusLabel(String string, boolean selected) {

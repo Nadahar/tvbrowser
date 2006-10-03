@@ -256,13 +256,6 @@ public abstract class Favorite {
 
     Exclusion[] exclusions = getExclusions();
     ArrayList<Program> list = new ArrayList<Program>();
-    boolean isLimitedByTime = getLimitationConfiguration().isLimitedByTime();
-    int timeFrom = getLimitationConfiguration().getTimeFrom();
-    int timeFromParsed = timeFrom;
-    int timeTo = getLimitationConfiguration().getTimeTo();
-
-    if(timeFrom > timeTo)
-      timeFromParsed -= 60*24;
     
     int allowedDayOfWeek = getLimitationConfiguration().getDayLimit();
     for (int i=0; i<progArr.length; i++) {
@@ -273,15 +266,9 @@ public abstract class Favorite {
           break;
         }
       }
-      if (!isExcluded && isLimitedByTime) {
-        int startTime = progArr[i].getHours() * 60 + progArr[i].getMinutes(); 
-          
-        if(timeFrom > timeTo && startTime >= timeFrom)
-          startTime -= 60*24;
-        
-        if (startTime < timeFromParsed || startTime > timeTo) {
+      if (!isExcluded && getLimitationConfiguration().isLimitedByTime()) {        
+        if (ProgramUtilities.isNotInTimeRange(getLimitationConfiguration().getTimeFrom(),getLimitationConfiguration().getTimeTo(),progArr[i]))
           isExcluded = true;
-        }
         else {
           if (allowedDayOfWeek != LimitationConfiguration.DAYLIMIT_DAILY) {
             Calendar cal = progArr[i].getDate().getCalendar();

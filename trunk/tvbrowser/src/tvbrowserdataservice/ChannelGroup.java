@@ -526,6 +526,10 @@ public class ChannelGroup implements devplugin.ChannelGroup {
         String blockedServer = getServerBase(mirror.getUrl()); 
         BLOCKEDSERVERS.add(blockedServer);
         mLog.info("Server blocked : " + blockedServer);
+        
+        if(mirrorArr.length == 1 && mirrorArr[0].equals(mirror))
+          throw new TvBrowserException(ChannelGroup.class, "noUpToDateServer", "The mirror {0} is out of date or down and no other mirror is available. Please contact the tv data provider for help.", mirror.getUrl());
+        
         // This one is not available -> choose another one
         Mirror oldMirror = mirror;
         mirror = chooseMirror(mirrorArr, mirror);

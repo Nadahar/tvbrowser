@@ -44,6 +44,7 @@ import tvbrowser.extras.common.ConfigurationHandler;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.program.ProgramTextCreator;
+import util.settings.ProgramPanelSettings;
 import util.ui.UiUtilities;
 
 import com.l2fprod.common.swing.plaf.LookAndFeelAddons;
@@ -367,5 +368,9 @@ public class ProgramInfo {
   
   public String getId() {
     return DATAFILE_PREFIX;
+  }
+  
+  protected ProgramPanelSettings getProgramPanelSettings() {
+    return new ProgramPanelSettings(Integer.parseInt(mSettings.getProperty("pictureType","1")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeStart","1080")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeEnd","1380")), false, mSettings.getProperty("pictureShowsDescription","true").compareTo("true") == 0);
   }
 }

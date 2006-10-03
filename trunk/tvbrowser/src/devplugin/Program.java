@@ -233,11 +233,6 @@ public interface Program {
    * @param plugin The plugin to remove the mark for.
    */
   public void unmark(Marker plugin);
-
-  /**
-   * Sets whether this program is marked as "on air".
-   */
-  public void markAsOnAir(boolean onAir);
   
   /**
    * Gets whether this program is marked as "on air".

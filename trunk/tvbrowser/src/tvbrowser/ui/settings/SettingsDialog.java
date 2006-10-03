@@ -63,12 +63,15 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.extras.favoritesplugin.FavoritesPicturesSettingsTab;
 import tvbrowser.extras.favoritesplugin.FavoritesSettingTab;
 import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.extras.programinfo.ProgramInfoDesignSettingsTab;
 import tvbrowser.extras.programinfo.ProgramInfoFontSettingsTab;
 import tvbrowser.extras.programinfo.ProgramInfoFunctionsSettingsTab;
 import tvbrowser.extras.programinfo.ProgramInfoOrderSettingsTab;
+import tvbrowser.extras.programinfo.ProgramInfoPicturesSettingsTab;
+import tvbrowser.extras.reminderplugin.ReminderPicturesSettingsTab;
 import tvbrowser.extras.reminderplugin.ReminderSettingsTab;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -309,6 +312,7 @@ public class SettingsDialog implements WindowClosingIf {
     programtableNode.add(new SettingNode(new ButtonsSettingsTab(), SettingsItem.TIMEBUTTONS));
 
     appearanceNode.add(new SettingNode(new ProgramTableSettingsTab(), SettingsItem.PROGRAMTABLELOOK));
+    appearanceNode.add(new SettingNode(new PictureSettingsTab()));
     appearanceNode.add(new SettingNode(new ChannelListSettingsTab(), SettingsItem.CHANNELLISTLOOK));
     appearanceNode.add(new SettingNode(new FontsSettingsTab()));
     appearanceNode.add(new SettingNode(new ProgramPanelSettingsTab()));
@@ -319,14 +323,24 @@ public class SettingsDialog implements WindowClosingIf {
 
     SettingNode programInfo = new SettingNode(new DefaultSettingsTab(ProgramInfo.getInstance().toString(), null));
     programInfo.add(new SettingNode(new ProgramInfoOrderSettingsTab(), SettingsItem.PROGRAMINFO));
+    programInfo.add(new SettingNode(new ProgramInfoPicturesSettingsTab()));
     programInfo.add(new SettingNode(new ProgramInfoFontSettingsTab()));
     programInfo.add(new SettingNode(new ProgramInfoDesignSettingsTab()));
     programInfo.add(new SettingNode(new ProgramInfoFunctionsSettingsTab()));
 
     root.add(programInfo);
-
-    root.add(new SettingNode(new FavoritesSettingTab(), SettingsItem.FAVORITE));
-    root.add(new SettingNode(new ReminderSettingsTab(), SettingsItem.REMINDER));
+    
+    SettingNode favoritesNode = new SettingNode(new DefaultSettingsTab(FavoritesSettingTab.mLocalizer.msg("name", "Favorite programs"), null));    
+    favoritesNode.add(new SettingNode(new FavoritesSettingTab(), SettingsItem.FAVORITE));
+    favoritesNode.add(new SettingNode(new FavoritesPicturesSettingsTab()));
+    
+    root.add(favoritesNode);
+    
+    SettingNode reminderNode = new SettingNode(new DefaultSettingsTab(ReminderSettingsTab.mLocalizer.msg("tabName", "Reminder"), null));    
+    reminderNode.add(new SettingNode(new ReminderSettingsTab(), SettingsItem.REMINDER));
+    reminderNode.add(new SettingNode(new ReminderPicturesSettingsTab()));
+    
+    root.add(reminderNode);
 
     // Plugins
     mPluginSettingsNode = new SettingNode(new PluginSettingsTab(this), SettingsItem.PLUGINS);

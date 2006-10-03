@@ -32,6 +32,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -59,6 +60,8 @@ import tvbrowser.extras.common.ConfigurationHandler;
 
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
+import util.settings.ProgramPanelSettings;
+import util.ui.PictureSettingsPanel;
 import util.ui.UiUtilities;
 import devplugin.*;
 
@@ -178,7 +181,7 @@ public class ReminderPlugin {
 
 
       File newFile = new File(Settings.getUserSettingsDirName(), DATAFILE_NAME);
-
+      
       if (newFile.exists()) {
         readData(getObjectInputStream(newFile));
       }
@@ -314,6 +317,10 @@ public class ReminderPlugin {
           mReminderList.add(program, reminderMinutes);
         }
       }
+    }
+    else if(version == 2) {
+      mReminderList.setReminderTimerListener(null);
+      mReminderList.read(in);
     }
   }
 
@@ -634,9 +641,20 @@ public class ReminderPlugin {
       }
 
     } catch (Exception e) {
-      String msg = mLocalizer.msg( "error.1",
+      if((new File(fileName)).isFile()) {
+        URL url;
+        try {
+          url = new File(fileName).toURL();
+          AudioClip clip= Applet.newAudioClip(url);
+          clip.play();
+        } catch (MalformedURLException e1) {
+        }
+      }
+      else {
+        String msg = mLocalizer.msg( "error.1",
           "Error loading reminder sound file!\n({0})" , fileName);
-      JOptionPane.showMessageDialog(UiUtilities.getBestDialogParent(MainFrame.getInstance()),msg,mLocalizer.msg("error","Error"),JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(UiUtilities.getBestDialogParent(MainFrame.getInstance()),msg,mLocalizer.msg("error","Error"),JOptionPane.ERROR_MESSAGE);
+      }
     }
     return null;
   }
@@ -649,4 +667,12 @@ public class ReminderPlugin {
     return DATAFILE_PREFIX;
   }
 
+  /**
+   * @param showOnlyDateAndTitle If the program panel should contain only date and title.
+   * @return The settings for the program panel
+   * @since 2.2.2
+   */
+  protected ProgramPanelSettings getProgramPanelSettings(boolean showOnlyDateAndTitle) {
+    return new ProgramPanelSettings(Integer.parseInt(mSettings.getProperty("pictureType","2")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeStart","1080")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeEnd","1380")), showOnlyDateAndTitle, mSettings.getProperty("pictureShowsDescription","true").compareTo("true") == 0);
+  }
 }

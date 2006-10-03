@@ -31,6 +31,8 @@ import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
+import util.ui.PictureSettingsPanel;
+
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -49,33 +51,33 @@ public class ListViewSettings implements SettingsTab {
   private Properties mSettings;
   /** Checkbox for showing at startup*/
   private JCheckBox mShowAtStart;
-  /** Plugin Instance */
-  private ListViewPlugin mPlugin;
-  
+  /** Picture settings */
+  private PictureSettingsPanel mPictureSettings;
   /**
    * Create the SettingsTab
    * @param settings Settings
    */
-  public ListViewSettings(ListViewPlugin plugin, Properties settings) {
-    mPlugin = plugin;
+  public ListViewSettings(Properties settings) {
     mSettings = settings;
   }
   
   /**
    * Create the Panel
    */
-  public JPanel createSettingsPanel() {
+  public JPanel createSettingsPanel() {    
     JPanel panel = new JPanel();
-    panel.setLayout(new FormLayout("5dlu,default:grow", "5dlu,default"));
+    panel.setLayout(new FormLayout("5dlu,default:grow", "5dlu,default,10dlu,fill:pref:grow"));
     
     CellConstraints cc = new CellConstraints();
     
     mShowAtStart = new JCheckBox(mLocalizer.msg("showAtStart", "Show at startup"));
+    mShowAtStart.setSelected(mSettings.getProperty("showAtStartup", "false").equals("true"));    
+
+    mPictureSettings = new PictureSettingsPanel(ListViewPlugin.getInstance().getProgramPanelSettings(),true,false);
     
-    mShowAtStart.setSelected(mSettings.getProperty("showAtStartup", "false").equals("true"));
-        
     panel.add(mShowAtStart, cc.xy(2,2));
-    
+    panel.add(mPictureSettings, cc.xyw(1,4,2));
+        
     return panel;
   }
 
@@ -83,17 +85,19 @@ public class ListViewSettings implements SettingsTab {
    * Save the Settings
    */
   public void saveSettings() {
-    if (mShowAtStart.isSelected())
-      mSettings.setProperty("showAtStartup", "true");
-    else
-      mSettings.setProperty("showAtStartup", "false");
+    mSettings.setProperty("showAtStartup", String.valueOf(mShowAtStart.isSelected()));
+    
+    mSettings.setProperty("pictureType", String.valueOf(mPictureSettings.getPictureShowingType()));
+    mSettings.setProperty("pictureTimeRangeStart", String.valueOf(mPictureSettings.getPictureTimeRangeStart()));
+    mSettings.setProperty("pictureTimeRangeEnd", String.valueOf(mPictureSettings.getPictureTimeRangeEnd()));
+    mSettings.setProperty("pictureShowsDescription", String.valueOf(mPictureSettings.getPictureIsShowingDescription()));
   }
 
   /**
    * Icon for the SettingsTab
    */
   public Icon getIcon() {
-    return mPlugin.createImageIcon("actions", "view-list", 16);
+    return ListViewPlugin.getInstance().createImageIcon("actions", "view-list", 16);
   }
 
   /**

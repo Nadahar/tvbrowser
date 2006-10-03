@@ -66,7 +66,7 @@ import devplugin.ProgramFieldType;
  * A class that creates a dialog for setting up the
  * printing of the Program infos.
  *  
- * @author René Mach
+ * @author Renï¿½ Mach
  *
  */
 public class ProgramInfoPrintDialog implements WindowClosingIf{
@@ -184,7 +184,8 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
       }
     });
     
-    boolean hasImage = program.getBinaryField(ProgramFieldType.IMAGE_TYPE) != null;
+    boolean hasImage = program.getBinaryField(ProgramFieldType.IMAGE_TYPE) != null
+                    || program.getBinaryField(ProgramFieldType.PICTURE_TYPE) != null;
     
     PanelBuilder b1 = new PanelBuilder(new FormLayout("5dlu,pref:grow","pref,5dlu,pref,10dlu,pref,5dlu,fill:default:grow" + (hasImage ? ",3dlu,pref" : "")));
     b1.setDefaultDialogBorder();

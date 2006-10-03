@@ -28,7 +28,7 @@ package tvdataservice;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import util.io.IOUtilities;
+//import util.io.IOUtilities;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.Program;
@@ -42,9 +42,6 @@ import devplugin.Program;
  * @author Til Schneider, www.murfman.de
  */
 public class MutableChannelDayProgram implements ChannelDayProgram {
-
-  /** The program that is currently on air. May be null. */
-  private Program mProgramOnAir;
 
   /** The date of this program list. */
   private devplugin.Date mDate;
@@ -230,101 +227,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
       return endTime >= (23 * 60);
     }
   }
-
-
-
-  /**
-   * Marks the program that is currently on air.
-   */
-  public synchronized void markProgramOnAir() {
-    Program newProgramOnAir = null;
-    
-    devplugin.Date today = new devplugin.Date();
-    int time = IOUtilities.getMinutesAfterMidnight();
-     
-    if (today.equals(getDate())) {
-      // This is the program for today -> Get the program that is currently on air
-      Iterator iter = getPrograms();
-      while (iter.hasNext()) {
-        
-        Program prog = (Program) iter.next();
-        if (!prog.getDate().equals(today)) {
-          continue;
-        }
-        
-      //  System.out.println("trying program: "+prog.getHours()+":"+prog.getMinutes()+" "+prog.getTitle()+", date: "+prog.getDate());
-        
-        /*
-        int startTime = prog.getHours() * 60 + prog.getMinutes();
-        int endTime = startTime + prog.getLength();
-        
-        if ((time >= startTime) && (time < endTime)) {
-          newProgramOnAir = prog;
-          break;
-        }
-        */
-        int startTime = prog.getHours() * 60 + prog.getMinutes();
-      //  System.out.println("time: "+time+", startTime: "+startTime);
-        if (startTime>time) {
-          break;
-        }
-        newProgramOnAir=prog;    
-      }
-    } else {
-      // Check whether this program was for yesterday
-      //devplugin.Date yesterday = new devplugin.Date(today.getDaysSince1970() - 1);
-      
-      devplugin.Date yesterday=today.addDays(-1);
-      
-      
-      if (yesterday.equals(getDate())) {
-        // This program was for yesterday -> Check whether the last program is
-        // still on air. This is the case, when it starts before midnight and
-        // reaches into the next day.
-        
-        
-        int programCount = getProgramCount();
-        if (programCount > 0) {
-          int lastIdx = programCount - 1;
-          Program lastProgram = getProgramAt(lastIdx);
-          
-          int startTime = lastProgram.getHours() * 60 + lastProgram.getMinutes();
-          int endTime = startTime + lastProgram.getLength();
-          
-          // Take the end time modulo 24 hours
-          int modEndTime = endTime % (24 * 60);
-          
-          if ((endTime > (24 * 60)) && (time < modEndTime)) {
-            newProgramOnAir = lastProgram;
-          }
-        }
-        
-      }
-    }
-    
-   // System.out.println("new program on air: "+newProgramOnAir);
-    
-    // check program length:
-    if (newProgramOnAir!=null) {
-      int endTime=newProgramOnAir.getHours()*60 + newProgramOnAir.getMinutes() + newProgramOnAir.getLength();
-      if (endTime<time) {
-        newProgramOnAir=null;
-      }
-    }
-    
-    
-    // Update the "on air" state of the programs
-    if (mProgramOnAir != newProgramOnAir) {
-      if (mProgramOnAir != null) {
-        mProgramOnAir.markAsOnAir(false);
-      }
-      if (newProgramOnAir != null) {
-        newProgramOnAir.markAsOnAir(true);
-      }
-      
-      mProgramOnAir = newProgramOnAir;
-    }
-  }
+  
 
   /**
    * Sets the last program end time state on data update.
