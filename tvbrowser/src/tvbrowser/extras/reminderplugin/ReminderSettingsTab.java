@@ -30,6 +30,8 @@ import java.awt.FlowLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -83,6 +85,7 @@ public class ReminderSettingsTab implements SettingsTab {
   private FileCheckBox mSoundFileChB;
   private JCheckBox mExecChB;
   private JCheckBox mShowTimeSlectionDlg;
+  private JCheckBox mAutoCloseReminderAfterProgramEnd;
   private JButton mExecFileDialogBtn;
   private JSpinner mAutoCloseReminderTimeSp;
   
@@ -106,7 +109,7 @@ public class ReminderSettingsTab implements SettingsTab {
   public JPanel createSettingsPanel() {
     FormLayout layout = new FormLayout("5dlu,pref,5dlu,pref,pref:grow,3dlu,pref,3dlu,pref,5dlu",
         "pref,5dlu,pref,1dlu,pref,1dlu,pref,10dlu,pref,5dlu," +
-        "pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu," +
+        "pref,10dlu,pref,5dlu,pref,pref,10dlu,pref,5dlu,pref,10dlu," +
         "pref,5dlu,pref");
     layout.setColumnGroups(new int[][] {{7,9}});
     PanelBuilder pb = new PanelBuilder(layout);
@@ -187,7 +190,10 @@ public class ReminderSettingsTab implements SettingsTab {
       // ignore
     }
     
+    mAutoCloseReminderAfterProgramEnd = new JCheckBox(mLocalizer.msg("autoCloseReminderAtProgramEnd","Program end"), mSettings.getProperty("autoCloseReminderAtProgramEnd","true").compareTo("true") == 0);
+    
     mAutoCloseReminderTimeSp = new JSpinner(new SpinnerNumberModel(autoCloseReminderTime,0,600,1));
+    mAutoCloseReminderTimeSp.setEnabled(!mAutoCloseReminderAfterProgramEnd.isSelected());
     
     String defaultReminderEntryStr = (String)mSettings.get("defaultReminderEntry");
     mDefaultReminderEntryList =new JComboBox(ReminderDialog.SMALL_REMIND_MSG_ARR);
@@ -201,7 +207,7 @@ public class ReminderSettingsTab implements SettingsTab {
         // ignore
       }
     }
-    
+        
     mShowTimeSlectionDlg = new JCheckBox(mLocalizer.msg("showTimeSelectionDialog","Show time selection dialog"));    
     mShowTimeSlectionDlg.setSelected(mSettings.getProperty("showTimeSelectionDialog","true").compareTo("true") == 0);
         
@@ -219,18 +225,20 @@ public class ReminderSettingsTab implements SettingsTab {
     pb.add(choose, cc.xyw(7,11,3));
     
     pb.addSeparator(mLocalizer.msg("autoCloseReminder", "Automatically close reminder after"), cc.xyw(1,13,10));
-    pb.add(mAutoCloseReminderTimeSp, cc.xy(2,15));
-    pb.addLabel(mLocalizer.msg("seconds", "seconds (0 = off)"), cc.xy(4,15));
+    pb.add(mAutoCloseReminderAfterProgramEnd, cc.xyw(2,15,5));
+    pb.add(mAutoCloseReminderTimeSp, cc.xy(2,16));
+    final JLabel secondsLabel = pb.addLabel(mLocalizer.msg("seconds", "seconds (0 = off)"), cc.xy(4,16));
+    secondsLabel.setEnabled(!mAutoCloseReminderAfterProgramEnd.isSelected());
     
     JPanel reminderEntry = new JPanel(new FlowLayout(FlowLayout.LEADING,0,0));
     reminderEntry.add(mDefaultReminderEntryList);
     
-    pb.addSeparator(mLocalizer.msg("defaltReminderEntry","Default reminder time"), cc.xyw(1,17,10));
-    pb.add(reminderEntry, cc.xyw(2,19,4));
+    pb.addSeparator(mLocalizer.msg("defaltReminderEntry","Default reminder time"), cc.xyw(1,18,10));
+    pb.add(reminderEntry, cc.xyw(2,20,4));
     
-    pb.addSeparator(mLocalizer.msg("timeChoosing","Time selection dialog"), cc.xyw(1,21,10));    
-    pb.add(mShowTimeSlectionDlg, cc.xyw(2,23,4));
-        
+    pb.addSeparator(mLocalizer.msg("timeChoosing","Time selection dialog"), cc.xyw(1,22,10));    
+    pb.add(mShowTimeSlectionDlg, cc.xyw(2,24,4));
+    
     soundTestBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         if(evt.getActionCommand().compareTo(mLocalizer.msg("test", "Test")) == 0) {
@@ -308,6 +316,13 @@ public class ReminderSettingsTab implements SettingsTab {
         showFileSettingsDialog();
       }
     });
+    
+    mAutoCloseReminderAfterProgramEnd.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        mAutoCloseReminderTimeSp.setEnabled(e.getStateChange() != ItemEvent.SELECTED);
+        secondsLabel.setEnabled(e.getStateChange() != ItemEvent.SELECTED);
+      }
+    });
 
     return pb.getPanel();
   }
@@ -373,6 +388,7 @@ public class ReminderSettingsTab implements SettingsTab {
     
     ReminderPlugin.getInstance().setClientPluginIds(clientPluginIdArr);
     
+    mSettings.setProperty("autoCloseReminderAtProgramEnd", String.valueOf(mAutoCloseReminderAfterProgramEnd.isSelected()));
     mSettings.setProperty("autoCloseReminderTime", mAutoCloseReminderTimeSp.getValue().toString());
     mSettings.setProperty("defaultReminderEntry",""+mDefaultReminderEntryList.getSelectedIndex());
     mSettings.setProperty("showTimeSelectionDialog", String.valueOf(mShowTimeSlectionDlg.isSelected()));
