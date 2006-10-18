@@ -38,7 +38,9 @@ import java.util.Properties;
 import javax.swing.SwingUtilities;
 
 import util.exc.ErrorHandler;
+import util.io.IOUtilities;
 import util.paramhandler.ParamParser;
+import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.ProgramReceiveIf;
 import devplugin.Program;
@@ -67,7 +69,7 @@ public class ReminderTimerListener {
 
     if ("true" .equals(mSettings.getProperty( "usemsgbox" ))) {
       new ReminderFrame(mReminderList, item,
-          getAutoCloseReminderTime());
+          getAutoCloseReminderTime(item.getProgram()));
     } else {
       mReminderList.removeWithoutChecking(item.getProgramItem());
       mReminderList.blockProgram(item.getProgram());
@@ -115,11 +117,18 @@ public class ReminderTimerListener {
      * Gets the time (in seconds) after which the reminder frame closes
      * automatically.
      */
-    private int getAutoCloseReminderTime() {
+    private int getAutoCloseReminderTime(Program p) {
       int autoCloseReminderTime = 0;
       try {
-        String asString = mSettings.getProperty("autoCloseReminderTime", "0");
-        autoCloseReminderTime = Integer.parseInt(asString);
+        if(mSettings.getProperty("autoCloseReminderAtProgramEnd", "true").compareTo("true") == 0) {
+          int endTime = p.getStartTime() + p.getLength();
+          int currentTime = p.getDate().equals(Date.getCurrentDate()) ? IOUtilities.getMinutesAfterMidnight() : 1440 + IOUtilities.getMinutesAfterMidnight();
+          autoCloseReminderTime = (endTime - currentTime) * 60;
+        }
+        else {
+          String asString = mSettings.getProperty("autoCloseReminderTime", "0");
+          autoCloseReminderTime = Integer.parseInt(asString);          
+        }
       } catch (Exception exc) {
         // ignore
       }
