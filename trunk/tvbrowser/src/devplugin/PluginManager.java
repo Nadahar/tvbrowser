@@ -358,7 +358,7 @@ public interface PluginManager {
    * Return all Plugins/Functions that are able to receive programs.
    * 
    * @return The ProgramReceiveIfs.
-   * @since 2.3
+   * @since 2.5
    */
   public ProgramReceiveIf[] getReceiveIfs();  
   
@@ -367,7 +367,7 @@ public interface PluginManager {
    * 
    * @param caller The caller ProgramReceiveIf.
    * @return The ProgramReceiveIfs.
-   * @since 2.3
+   * @since 2.5
    */
   public ProgramReceiveIf[] getReceiveIfs(ProgramReceiveIf caller);
   
@@ -378,7 +378,7 @@ public interface PluginManager {
    * @param id The id of the ReceiveIf.
    * 
    * @return The ReceiveIf with the given id or <code>null</code>
-   * @since 2.3
+   * @since 2.5
    */
   public ProgramReceiveIf getReceiceIfForId(String id);
   
@@ -386,7 +386,7 @@ public interface PluginManager {
    * Let TVB scroll to the given program.
    * 
    * @param program The program to scroll to.
-   * @since 2.3
+   * @since 2.5
    */
   public void scrollToProgram(Program program);
   
@@ -394,7 +394,7 @@ public interface PluginManager {
    * Let TVB scroll to the given time.
    * 
    * @param time The time to scroll to in minutes.
-   * @since 2.3
+   * @since 2.5
    */
   public void scrollToTime(int time);
   
@@ -402,7 +402,7 @@ public interface PluginManager {
    * Let TVB scroll to the given channel.
    * 
    * @param channel The channel to scroll to.
-   * @since 2.3
+   * @since 2.5
    */
   public void scrollToChannel(Channel channel);
   
@@ -410,7 +410,15 @@ public interface PluginManager {
    * Let TVB change the date to the given date.
    * 
    * @param date The date to show the program for.
-   * @since 2.3
+   * @since 2.5
    */
   public void goToDate(Date date);
+  
+  /**
+   * Returns the current selected filter of the program table.
+   * 
+   * @return The current selected filter of the program table.
+   * @since 2.5
+   */
+  public ProgramFilter getCurrentFilter();
 }
