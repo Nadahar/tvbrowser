@@ -88,7 +88,8 @@ public class PrintDayProgramsDialogContent implements DialogContent {
         mListingsTab.getToTime(),
         mLayoutTab.getColumnsPerPage(),
         mLayoutTab.getChannelsPerColumn(),
-        mExtrasTab.getProgramIconSettings()
+        mExtrasTab.getProgramIconSettings(),
+        mListingsTab.getSelectedFilter()
         );
   }
 

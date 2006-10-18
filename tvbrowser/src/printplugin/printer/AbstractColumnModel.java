@@ -34,11 +34,11 @@ import devplugin.Program;
 
 public abstract class AbstractColumnModel implements ColumnModel {
   
-  private ArrayList mPrograms;
+  private ArrayList<Program> mPrograms;
 
 
   public AbstractColumnModel(Program[] progs) {
-    mPrograms = new ArrayList();
+    mPrograms = new ArrayList<Program>();
     setPrograms(progs);
   }
 

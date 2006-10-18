@@ -26,23 +26,16 @@
 
 package printplugin.dlgs.components;
 
-import java.awt.BorderLayout;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import devplugin.Date;
-
-
 
 public class DateRangePanel extends JPanel {
 
@@ -51,70 +44,33 @@ public class DateRangePanel extends JPanel {
 
   private JComboBox mDateCb;
   private JSpinner mDayCountSpinner;
-  private JRadioButton mAllRb, mDateRb;
 
-  public DateRangePanel(boolean provideAllOption) {
-
-    setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("period","Zeitraum")));
-
-    setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
-    JPanel pn1 = new JPanel(new BorderLayout());
-    mAllRb = new JRadioButton("Alles");
-    pn1.add(mAllRb, BorderLayout.WEST);
-
-    JPanel pn2 = new JPanel();
-    pn2.setLayout(new BoxLayout(pn2,BoxLayout.X_AXIS));
-    if (provideAllOption) {
-      pn2.add(mDateRb = new JRadioButton());
-    }
-    pn2.add(new JLabel(mLocalizer.msg("from","Von")));
-    pn2.add(mDateCb = new JComboBox(createDateObjects(21)));
-    pn2.add(new JLabel(mLocalizer.msg("TVlistingsFor", "Programm fuer")));
-    pn2.add(mDayCountSpinner = new JSpinner(new SpinnerNumberModel(5,1,28,1)));
-    pn2.add(new JLabel(mLocalizer.msg("days","Tage")));
-
-    // Dispache the KeyEvent to the RootPane for Closing the Dialog.
-    // Needed for Java 1.4.
-    mDayCountSpinner.getEditor().getComponent(0).addKeyListener(new KeyAdapter() {
-      public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
-          mDayCountSpinner.getRootPane().dispatchEvent(e);
-      }
-    });
+  public DateRangePanel() {
+    CellConstraints cc = new CellConstraints();
     
-    JPanel pn3 = new JPanel(new BorderLayout());
-    pn3.add(pn2, BorderLayout.WEST);
-
-    if (provideAllOption) {
-      add(pn1);
-    }
-    add(pn3);
-
-    ButtonGroup group = new ButtonGroup();
-    group.add(mAllRb);
-    group.add(mDateRb);
-
-
-
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref,2dlu,pref,2dlu,pref,2dlu,pref,2dlu,pref:grow",
+        "pref,5dlu,pref,10dlu"), this);
+    pb.addSeparator(mLocalizer.msg("period","Period"), cc.xyw(1,1,10));
+    pb.addLabel(mLocalizer.msg("from","Von"), cc.xy(2,3));
+    pb.add(mDateCb = new JComboBox(createDateObjects(21)), cc.xy(4,3));
+    pb.addLabel(mLocalizer.msg("TVlistingsFor", "Program for"), cc.xy(6,3));
+    pb.add(mDayCountSpinner = new JSpinner(new SpinnerNumberModel(5,1,28,1)), cc.xy(8,3));
+    pb.addLabel(mLocalizer.msg("days","Days"), cc.xy(10,3));
   }
 
   private Date[] createDateObjects(int days) {
     Date[] result = new Date[days];
     Date today = Date.getCurrentDate();
-    for (int i=0;i<result.length;i++) {
+    
+    for (int i=0;i<result.length;i++)
       result[i]=today.addDays(i);
-    }
+    
     return result;
   }
 
   public void setFromDate(Date date) {
-    if (date == null) {
-      mAllRb.setSelected(true);
-    }
-    else {
+    if (date != null)
       mDateCb.setSelectedItem(date);
-    }
   }
 
   public void setNumberOfDays(int days) {
@@ -122,9 +78,6 @@ public class DateRangePanel extends JPanel {
   }
 
   public Date getFromDate() {
-    if (mAllRb.isSelected()) {
-      return null;
-    }
     return (Date)mDateCb.getSelectedItem();
   }
 

@@ -41,16 +41,18 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import printplugin.EmptyQueueAction;
 import printplugin.PrintPlugin;
 import printplugin.util.Util;
-import util.ui.TabLayout;
 import util.ui.UiUtilities;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
-
 
 public class GeneralTab extends JPanel {
 
@@ -64,27 +66,20 @@ public class GeneralTab extends JPanel {
   private JPanel mProgramListPanel;
 
   public GeneralTab(PluginTreeNode rootNode) {
-
-    super();
     mRootNode = rootNode;
-    setLayout(new BorderLayout());
-
-    JPanel content = new JPanel();
-    content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
-
-    mProgramListPanel = createProgramListPanel();
+    
+    CellConstraints cc = new CellConstraints();
+    
+    PanelBuilder pb = new PanelBuilder(new FormLayout("pref:grow",
+        "fill:pref:grow,2dlu,pref,2dlu,pref,10dlu"), this);
+    pb.setDefaultDialogBorder();
+    
     JPanel pn1 = new JPanel(new BorderLayout());
-    pn1.add(mProgramListPanel, BorderLayout.NORTH);
-
-    add(new JScrollPane(pn1), BorderLayout.CENTER);
-    add(content, BorderLayout.NORTH);
-
-    JPanel southPn = new JPanel(new TabLayout(1));
-    JPanel pn = new JPanel(new BorderLayout());
-    pn.add(mEmptyQueueBt = new JButton(new EmptyQueueAction()), BorderLayout.WEST);
-    southPn.add(pn);
-    southPn.add(mEmptyQueueCb = new JCheckBox(mLocalizer.msg("emptyQueue","empty queue after pringing")));
-    add(southPn, BorderLayout.SOUTH);
+    pn1.add(mProgramListPanel = createProgramListPanel(), BorderLayout.NORTH);
+    
+    pb.add(new JScrollPane(pn1), cc.xy(1,1));
+    pb.add(mEmptyQueueBt = new JButton(new EmptyQueueAction()), cc.xy(1,3));
+    pb.add(mEmptyQueueCb = new JCheckBox(mLocalizer.msg("emptyQueue","empty queue after pringing")), cc.xy(1,5));
 
     mEmptyQueueBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
@@ -93,7 +88,6 @@ public class GeneralTab extends JPanel {
         mProgramListPanel.updateUI();
       }
     });
-
   }
 
 

@@ -26,13 +26,12 @@
 
 package printplugin.dlgs.printfromqueuedialog;
 
-import java.awt.BorderLayout;
-
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 public class LayoutTab extends JPanel {
 
@@ -43,28 +42,15 @@ public class LayoutTab extends JPanel {
   private JComboBox mColumnsPerPageCB;
 
   public LayoutTab() {
-
-    super();
-    setLayout(new BorderLayout());
-
-    JPanel content = new JPanel();
-    content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
-
-    JPanel columnPanel = new JPanel(new BorderLayout());
-    columnPanel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("columns","Columns")));
-    JPanel pn1 = new JPanel();
-    pn1.setLayout(new BoxLayout(pn1, BoxLayout.X_AXIS));
-
-    JLabel columnLabel = new JLabel(mLocalizer.msg("columnsPerPage","Columns per page:"));
-    mColumnsPerPageCB = new JComboBox(createIntegerArray(1,4));
-
-    pn1.add(columnLabel);
-    pn1.add(mColumnsPerPageCB);
-    columnPanel.add(pn1, BorderLayout.WEST);
-
-    content.add(columnPanel);
-
-    add(content, BorderLayout.NORTH);
+    CellConstraints cc = new CellConstraints();
+    
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref,2dlu,pref,0dlu:grow",
+        "pref,5dlu,pref,10dlu"), this);
+    pb.setDefaultDialogBorder();
+    
+    pb.addSeparator(mLocalizer.msg("columns","Columns"), cc.xyw(1,1,5));
+    pb.addLabel(mLocalizer.msg("columnsPerPage","Columns per page:"), cc.xy(2,3));
+    pb.add(mColumnsPerPageCB = new JComboBox(createIntegerArray(1,4)), cc.xy(4,3));
   }
 
   public int getColumnsPerPage() {

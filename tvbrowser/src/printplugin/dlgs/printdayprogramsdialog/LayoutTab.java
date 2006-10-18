@@ -26,19 +26,17 @@
 
 package printplugin.dlgs.printdayprogramsdialog;
 
-import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import util.ui.TabLayout;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 public class LayoutTab extends JPanel {
 
@@ -52,21 +50,18 @@ public class LayoutTab extends JPanel {
   private DefaultComboBoxModel mLayoutCBModel;
 
   public LayoutTab() {
-    super();
-    setLayout(new BorderLayout());
-
-    JPanel content = new JPanel();
-    content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
-
-    mChannelsPerPageCB = new JComboBox(createIntegerArray(2,22));
+    CellConstraints cc = new CellConstraints();
     mLayoutCBModel = new DefaultComboBoxModel();
-    mLayoutCB = new JComboBox(mLayoutCBModel);
-    JPanel columnsPanel = new JPanel(new TabLayout(2));
-    columnsPanel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("channelsAndColumns","Channels and columns")));
-    columnsPanel.add(new JLabel(mLocalizer.msg("channelsPerPage","Channels per page")+":"));
-    columnsPanel.add(mChannelsPerPageCB);
-    columnsPanel.add(new JLabel(mLocalizer.msg("columnsPerPage","columns")+":"));
-    columnsPanel.add(mLayoutCB);
+    
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref,10dlu,pref:grow",
+        "pref,5dlu,pref,2dlu,pref,10dlu"), this);
+    pb.setDefaultDialogBorder();
+    
+    pb.addSeparator(mLocalizer.msg("channelsAndColumns","Channels and columns"), cc.xyw(1,1,4));
+    pb.addLabel(mLocalizer.msg("channelsPerPage","Channels per page")+":", cc.xy(2,3));
+    pb.add(mChannelsPerPageCB = new JComboBox(createIntegerArray(2,22)), cc.xy(4,3));
+    pb.addLabel(mLocalizer.msg("columnsPerPage","columns")+":", cc.xy(2,5));
+    pb.add(mLayoutCB = new JComboBox(mLayoutCBModel), cc.xy(4,5));
 
     mChannelsPerPageCB.addItemListener(new ItemListener(){
       public void itemStateChanged(ItemEvent e) {
@@ -74,9 +69,6 @@ public class LayoutTab extends JPanel {
         updateLayoutCombobox(val);
       }
     });
-
-    content.add(columnsPanel);
-    add(content, BorderLayout.NORTH);
   }
 
 
@@ -120,7 +112,7 @@ public class LayoutTab extends JPanel {
   }
 
   private int[] getPrimes(int val) {
-    ArrayList list = new ArrayList();
+    ArrayList<Integer> list = new ArrayList<Integer>();
     for (int i=1; i<=val/2; i++) {
       if (val%i==0) {
         list.add(new Integer(i));

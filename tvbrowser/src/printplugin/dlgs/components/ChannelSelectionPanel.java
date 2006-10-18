@@ -26,21 +26,21 @@
 
 package printplugin.dlgs.components;
 
-import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import util.ui.ChannelChooserDlg;
 import devplugin.Channel;
-
 
 
 /**
@@ -59,23 +59,19 @@ public class ChannelSelectionPanel extends JPanel {
 
   public ChannelSelectionPanel(final Frame dlgParent, Channel[] channels) {
     mChannels = channels;
-
-    setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
-    setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("channels","Kanaele")));
-
-    JPanel allChannelsPn = new JPanel(new BorderLayout());
-    allChannelsPn.add(mAllChannelsRb=new JRadioButton(mLocalizer.msg("all","Alle")));
-
-    JPanel channelSelectionPn = new JPanel(new BorderLayout());
-    channelSelectionPn.add(mSelectedChannelsRb=new JRadioButton(),BorderLayout.WEST);
-    channelSelectionPn.add(mChangeSelectedChannelsBt=new JButton(mLocalizer.msg("change","Aendern")+"..."),BorderLayout.EAST);
-
+    
+    CellConstraints cc = new CellConstraints();
+    
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref:grow,10dlu,pref",
+        "pref,5dlu,pref,2dlu,pref,10dlu"), this);
+    pb.addSeparator(mLocalizer.msg("channels","Channels"), cc.xyw(1,1,4));
+    pb.add(mAllChannelsRb=new JRadioButton(mLocalizer.msg("all","All")), cc.xy(2,3));
+    pb.add(mSelectedChannelsRb=new JRadioButton(), cc.xy(2,5));
+    pb.add(mChangeSelectedChannelsBt=new JButton(mLocalizer.msg("change","Change")+"..."), cc.xy(4,5));
+    
     ButtonGroup group = new ButtonGroup();
     group.add(mAllChannelsRb);
     group.add(mSelectedChannelsRb);
-
-    add(allChannelsPn);
-    add(channelSelectionPn);
 
     updateSelectedChannelsPanel();
 

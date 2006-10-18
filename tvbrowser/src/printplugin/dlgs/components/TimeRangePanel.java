@@ -28,14 +28,16 @@ package printplugin.dlgs.components;
 
 
 import java.awt.Component;
-import java.awt.GridLayout;
 
-import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 public class TimeRangePanel extends JPanel {
 
@@ -45,13 +47,16 @@ public class TimeRangePanel extends JPanel {
   private JComboBox mDayStartCb, mDayEndCb;
 
   public TimeRangePanel() {
-    setLayout(new GridLayout(2,2));
-    setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("dayBoundaries","Tagesgrenzen")));
-    add(new JLabel(mLocalizer.msg("startOfDay","Start of day")+":"));
-    add(mDayStartCb=new JComboBox(createIntegerArray(0,23,1)));
-    add(new JLabel(mLocalizer.msg("endOfDay","Tagesende")+":"));
-    add(mDayEndCb=new JComboBox(createIntegerArray(12,36,1)));
-
+    CellConstraints cc = new CellConstraints();
+    
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref,10dlu,pref:grow",
+        "pref,5dlu,pref,2dlu,pref,10dlu"), this);
+    pb.addSeparator(mLocalizer.msg("dayBoundaries","Day boundaries"), cc.xyw(1,1,4));
+    pb.addLabel(mLocalizer.msg("startOfDay","Start of day")+":", cc.xy(2,3));
+    pb.add(mDayStartCb=new JComboBox(createIntegerArray(0,23,1)), cc.xy(4,3));
+    pb.addLabel(mLocalizer.msg("endOfDay","End of day")+":", cc.xy(2,5));
+    pb.add(mDayEndCb=new JComboBox(createIntegerArray(12,36,1)), cc.xy(4,5));
+    
     mDayStartCb.setRenderer(new TimeListCellRenderer());
     mDayEndCb.setRenderer(new TimeListCellRenderer());
 

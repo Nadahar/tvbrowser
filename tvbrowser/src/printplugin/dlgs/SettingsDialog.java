@@ -90,9 +90,9 @@ public class SettingsDialog extends JDialog implements WindowClosingIf {
     eastBtnPanel.setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 0));
     eastBtnPanel.setLayout(new GridLayout(-1, 1));
 
-    JButton printerSetupBtn = new JButton(mLocalizer.msg("printer","Drucker")+"...",PrintPlugin.getInstance().createImageIcon("devices", "printer", 16));
-    JButton pageBtn = new JButton(mLocalizer.msg("page","Seite")+"...", PrintPlugin.getInstance().createImageIcon("actions", "document-properties", 16));
-    JButton previewBtn = new JButton(mLocalizer.msg("preview","Vorschau")+"...", PrintPlugin.getInstance().createImageIcon("actions", "document-print-preview", 16));
+    JButton printerSetupBtn = new JButton(mLocalizer.msg("printer","Printer")+"...",PrintPlugin.getInstance().createImageIcon("devices", "printer", 16));
+    JButton pageBtn = new JButton(mLocalizer.msg("page","Page")+"...", PrintPlugin.getInstance().createImageIcon("actions", "document-properties", 16));
+    JButton previewBtn = new JButton(mLocalizer.msg("preview","Preview")+"...", PrintPlugin.getInstance().createImageIcon("actions", "document-print-preview", 16));
 
     printerSetupBtn.setHorizontalAlignment(SwingConstants.LEFT);
     pageBtn.setHorizontalAlignment(SwingConstants.LEFT);
@@ -155,7 +155,7 @@ public class SettingsDialog extends JDialog implements WindowClosingIf {
     printBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         mResult = OK;
-        hide();
+        setVisible(false);
       }
     });
 

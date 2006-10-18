@@ -26,18 +26,21 @@
 
 package printplugin.dlgs.components;
 
-import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 
 import util.ui.FontChooserPanel;
 import util.ui.UiUtilities;
@@ -65,22 +68,33 @@ public class FontsDialog extends JDialog implements WindowClosingIf {
     
     UiUtilities.registerForClosing(this);
 
+    CellConstraints cc = new CellConstraints();
+    FormLayout layout = new FormLayout("5dlu,pref:grow",
+        "pref,5dlu,pref,2dlu,pref,5dlu,pref");
+    PanelBuilder pb = new PanelBuilder(layout, content);
+    pb.setBorder(Borders.DLU4_BORDER);
+    
+    pb.addSeparator(mLocalizer.msg("fonts","Fonts"), cc.xyw(1,1,2));
+    
     mTitleFontPanel=new FontChooserPanel(mLocalizer.msg("title","Title"), titleFont);
     mDescriptionFontPanel=new FontChooserPanel(mLocalizer.msg("description","Description"), descriptionFont);
     if (dateFont != null) {
       mDateFontPanel = new FontChooserPanel(mLocalizer.msg("date","Date"), dateFont);
     }
-    content.setLayout(new BorderLayout());
-
-    JPanel fontPanel=new JPanel(new GridLayout(-1,1));
-    fontPanel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("fonts","Fonts")));
-
-    fontPanel.add(mTitleFontPanel);
-    fontPanel.add(mDescriptionFontPanel);
-    if (dateFont != null) {
-      fontPanel.add(mDateFontPanel);
+    
+    int y = 3;
+    
+    pb.add(mTitleFontPanel, cc.xy(2,y++));
+    pb.add(mDescriptionFontPanel, cc.xy(2,++y));
+    
+    if(dateFont != null) {
+      layout.insertRow(++y,new RowSpec("2dlu"));
+      layout.insertRow(++y,new RowSpec("pref"));
+      
+      content.add(mDateFontPanel, cc.xy(2,y));
     }
-
+    y++;
+    
     JPanel btnPn = new JPanel(new FlowLayout());
 
     JButton okBt = new JButton(mLocalizer.msg("ok","OK"));
@@ -92,7 +106,7 @@ public class FontsDialog extends JDialog implements WindowClosingIf {
     okBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         mResult = OK;
-        hide();
+        setVisible(false);
       }
     });
 
@@ -101,9 +115,8 @@ public class FontsDialog extends JDialog implements WindowClosingIf {
         close();
       }
     });
-
-    content.add(fontPanel, BorderLayout.CENTER);
-    content.add(btnPn, BorderLayout.SOUTH);
+    
+    content.add(btnPn, cc.xyw(1,++y,2));
 
     mResult = CANCEL;
     pack();
