@@ -26,19 +26,20 @@
 
 package printplugin.dlgs.printfromqueuedialog;
 
-import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import printplugin.dlgs.components.ProgramPreviewPanel;
 import printplugin.settings.ProgramIconSettings;
-import util.ui.TabLayout;
 
 public class ExtrasTab extends JPanel {
 
@@ -52,26 +53,20 @@ public class ExtrasTab extends JPanel {
   private JCheckBox mShowPluginMarkingCb;
 
   public ExtrasTab(final Frame dlgParent) {
-    super();
-
-    setLayout(new BorderLayout());
-    JPanel content = new JPanel(new TabLayout(1));
-    JPanel previewPn = new JPanel(new BorderLayout());
-    previewPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("programItem","Program item")));
-    mProgramPreviewPanel = new ProgramPreviewPanel(dlgParent);
-    previewPn.add(mProgramPreviewPanel, BorderLayout.CENTER);
-
-    mShowPluginMarkingCb = new JCheckBox(mLocalizer.msg("showPluginMarkings","Show plugin markings"));
+    CellConstraints cc = new CellConstraints();
+    
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref:grow",
+        "pref,5dlu,pref,3dlu,pref,10dlu"), this);
+    pb.setDefaultDialogBorder();
+    pb.addSeparator(mLocalizer.msg("programItem","Program item"), cc.xyw(1,1,2));
+    pb.add(mProgramPreviewPanel = new ProgramPreviewPanel(dlgParent), cc.xy(2,3));
+    pb.add(mShowPluginMarkingCb = new JCheckBox(mLocalizer.msg("showPluginMarkings","Show plugin markings")), cc.xy(2,5));
+    
     mShowPluginMarkingCb.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         mProgramPreviewPanel.setShowPluginMarking(mShowPluginMarkingCb.isSelected());
       }
     });
-
-    content.add(previewPn);
-    content.add(mShowPluginMarkingCb);
-
-    add(content, BorderLayout.NORTH);
   }
 
   public void setProgramIconSettings(ProgramIconSettings programIconSettings) {

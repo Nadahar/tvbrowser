@@ -31,10 +31,10 @@ import java.util.ArrayList;
 
 public abstract class AbstractPageModel implements PageModel {
   
-  private ArrayList mColumns;
+  private ArrayList<ColumnModel> mColumns;
 
    public AbstractPageModel() {
-     mColumns = new ArrayList();
+     mColumns = new ArrayList<ColumnModel>();
    }
   
    public void addColumn(ColumnModel col) {

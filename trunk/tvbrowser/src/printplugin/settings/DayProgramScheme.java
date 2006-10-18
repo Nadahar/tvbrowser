@@ -71,7 +71,7 @@ public class DayProgramScheme extends Scheme {
     int channelsPerColumn = in.readInt();
     ProgramIconSettings programItemSettings = IO.readProgramIconSettings(in);
 
-    DayProgramPrinterSettings settings = new DayProgramPrinterSettings(fromDay, numberOfDays, channelArr, dayStartHour, dayEndHour, colCount, channelsPerColumn, programItemSettings);
+    DayProgramPrinterSettings settings = new DayProgramPrinterSettings(fromDay, numberOfDays, channelArr, dayStartHour, dayEndHour, colCount, channelsPerColumn, programItemSettings, Plugin.getPluginManager().getCurrentFilter());
     setSettings(settings);
   }
 
@@ -95,7 +95,7 @@ public class DayProgramScheme extends Scheme {
     }
     Channel[] subscribedChannels = Plugin.getPluginManager().getSubscribedChannels();
 
-    ArrayList list = new ArrayList();
+    ArrayList<Channel> list = new ArrayList<Channel>();
     for (int i=0; i<cnt; i++) {
       String channelId = (String)in.readObject();
       for (int chInx = 0; chInx<subscribedChannels.length; chInx++) {

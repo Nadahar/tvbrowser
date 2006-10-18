@@ -28,6 +28,7 @@ package printplugin.settings;
 
 import devplugin.Channel;
 import devplugin.Date;
+import devplugin.ProgramFilter;
 
 
 /**
@@ -50,6 +51,7 @@ public class DayProgramPrinterSettings implements Settings {
   private int mColCount;
   private int mChannelsPerColum;
   private ProgramIconSettings mProgramIconSettings;
+  private ProgramFilter mProgramFilter;
 
   public DayProgramPrinterSettings(Date fromDay,
                                        int numberOfDays,
@@ -58,7 +60,8 @@ public class DayProgramPrinterSettings implements Settings {
                                        int dayEndHour,
                                        int colCount,
                                        int channelsPerColumn,
-                                       ProgramIconSettings programIconSettings) {
+                                       ProgramIconSettings programIconSettings,
+                                       ProgramFilter filter) {
     mFromDay = fromDay;
     mNumberOfDays = numberOfDays;
     mChannelList = channelList;
@@ -67,6 +70,7 @@ public class DayProgramPrinterSettings implements Settings {
     mColCount = colCount;
     mChannelsPerColum = channelsPerColumn;
     mProgramIconSettings = programIconSettings;
+    mProgramFilter = filter;
   }
   
   public Date getFromDay() {
@@ -100,5 +104,9 @@ public class DayProgramPrinterSettings implements Settings {
   
   public ProgramIconSettings getProgramIconSettings() {
     return mProgramIconSettings;
+  }
+  
+  public ProgramFilter getProgramFilter() {
+    return mProgramFilter;
   }
 }
