@@ -47,7 +47,7 @@ public class FilterSelectionPanel extends JPanel {
     PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref,10dlu,30dlu:grow",
         "pref,5dlu,pref,2dlu,pref,10dlu"), this);
     pb.addSeparator(mLocalizer.msg("filters","Filters"), cc.xyw(1,1,4));
-    pb.addLabel("Zu benutzender Sendungs-Filter:", cc.xy(2,3));
+    pb.addLabel(mLocalizer.msg("toUseFilter","To use program filter:"), cc.xy(2,3));
     
     mFilterSelection = new JComboBox(Plugin.getPluginManager().getAvailableFilters());
     mFilterSelection.setSelectedItem(Plugin.getPluginManager().getCurrentFilter());
