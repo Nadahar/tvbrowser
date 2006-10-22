@@ -13,11 +13,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.TimeZone;
 
 
 /**
@@ -26,15 +24,12 @@ import java.util.TimeZone;
 public class SimplePDS extends AbstractPrimaryDataService {
 
     private static int DAYS_TO_DOWNLOAD = 7;
-    private static final String CHANNEL_GROUP_NAME = "myfirstgroup";
     private Channel[] mChannelList;
 
     /**
      * Create the Channellist
      */
     public SimplePDS() {
-        TimeZone timeZone = TimeZone.getTimeZone("MET"); // middle european time
-        devplugin.ChannelGroup group = new devplugin.ChannelGroupImpl(CHANNEL_GROUP_NAME, null, null);
         mChannelList = new Channel[] {
             new Channel("kanal12"),
             new Channel("quiz44"),
@@ -64,9 +59,9 @@ public class SimplePDS extends AbstractPrimaryDataService {
             date = date.addDays(1);
         }
 
-        for (int i = 0; i < dispatcher.length; i++) {
+        for (ProgramFrameDispatcher aDispatcher : dispatcher) {
             try {
-                dispatcher[i].store(dir);
+                aDispatcher.store(dir);
             }
             catch (IOException e) {
                 logException(e);
@@ -85,11 +80,9 @@ public class SimplePDS extends AbstractPrimaryDataService {
      * @param channel Channel to grab
      * @param dispatcher Store Result here
      *
-     * @throws MalformedURLException
-     * @throws IOException
+     * @throws IOException If download goes Wrong
      */
-    private void extract(Date date, Channel channel, ProgramFrameDispatcher dispatcher) throws MalformedURLException,
-            IOException {
+    private void extract(Date date, Channel channel, ProgramFrameDispatcher dispatcher) throws IOException {
 
         StringBuffer buf = new StringBuffer("http://www.tvbrowser.org/pdsstarterkit/");
         buf.append("pgv.php?day=")
@@ -155,7 +148,7 @@ public class SimplePDS extends AbstractPrimaryDataService {
     /**
      * For Testing only, don't use this!
      * 
-     * @param args
+     * @param args Arguments
      */
     public static void main(String[] args) {
         PrimaryDataService pds = new SimplePDS();
