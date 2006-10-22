@@ -207,8 +207,6 @@ public class CalendarExportPlugin extends Plugin {
     public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
         ExporterIf[] exporters = mExporterFactory.getActiveExporters();
 
-        System.out.println(">>>"+receiveTarget.getTargetId());
-
         for (ExporterIf export:exporters) {
             if (export.getClass().getName().equals(receiveTarget.getTargetId())) {
                 export.exportPrograms(programArr, mSettings);
@@ -226,7 +224,6 @@ public class CalendarExportPlugin extends Plugin {
         ProgramReceiveTarget[] targets = new ProgramReceiveTarget[exporters.length];
 
         for (int i =0;i<exporters.length;i++) {
-            System.out.println(exporters[i].getClass().getName());
             targets[i] = new ProgramReceiveTarget(this, exporters[i].getName(), exporters[i].getClass().getName());
         }
 
