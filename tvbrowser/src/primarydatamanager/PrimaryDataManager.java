@@ -25,6 +25,18 @@
  */
 package primarydatamanager;
 
+import devplugin.Channel;
+import devplugin.ChannelGroup;
+import devplugin.Date;
+import primarydatamanager.primarydataservice.PrimaryDataService;
+import tvbrowserdataservice.file.ChannelList;
+import tvbrowserdataservice.file.DayProgramFile;
+import tvbrowserdataservice.file.FileFormatException;
+import tvbrowserdataservice.file.Mirror;
+import tvbrowserdataservice.file.SummaryFile;
+import util.io.IOUtilities;
+import util.io.VerySimpleFormatter;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -38,18 +50,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import primarydatamanager.primarydataservice.PrimaryDataService;
-import tvbrowserdataservice.file.ChannelList;
-import tvbrowserdataservice.file.DayProgramFile;
-import tvbrowserdataservice.file.FileFormatException;
-import tvbrowserdataservice.file.Mirror;
-import tvbrowserdataservice.file.SummaryFile;
-import util.io.IOUtilities;
-import util.io.VerySimpleFormatter;
-import devplugin.Channel;
-import devplugin.ChannelGroup;
-import devplugin.Date;
 
 /**
  * 
@@ -75,7 +75,7 @@ public class PrimaryDataManager {
 
      
   public PrimaryDataManager(File baseDir) throws PreparationException {
-
+    Logger.getLogger("sun.awt.X11.timeoutTask.XToolkit").setLevel(Level.INFO);
     mRawDir      = new File(baseDir, "raw");
     mPreparedDir = new File(baseDir, "prepared");
     mWorkDir     = new File(baseDir, "temp");

@@ -1,13 +1,14 @@
 package primarydatamanager;
 
+import primarydatamanager.primarydataservice.PrimaryDataService;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.LinkedList;
 import java.util.logging.Level;
-
-import primarydatamanager.primarydataservice.PrimaryDataService;
+import java.util.logging.Logger;
 
 
 public class PDSRunner {
@@ -24,6 +25,7 @@ public class PDSRunner {
   
   
   public PDSRunner(File baseDir) {
+    Logger.getLogger("sun.awt.X11.timeoutTask.XToolkit").setLevel(Level.INFO);
     mPDSList=new LinkedList();    
     mRawDir=new File(baseDir,"raw");
     mLogDir=new File(baseDir,"pdslog");
