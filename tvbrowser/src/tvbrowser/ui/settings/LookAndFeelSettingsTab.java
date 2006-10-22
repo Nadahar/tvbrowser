@@ -82,10 +82,10 @@ public class LookAndFeelSettingsTab implements SettingsTab {
   private static int mStartLookAndIndex;
   private static int mStartIconIndex;
 
-  private static Object mJGoodiesStartTheme;
+  private static String mJGoodiesStartTheme;
   private static boolean mJGoodiesStartShadow;
   
-  private static Object mSkinLFStartTheme;
+  private static String mSkinLFStartTheme;
   
   private static boolean mSomethingChanged = false;
 
@@ -175,7 +175,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     });
     
     if (Settings.propIcontheme.getString() != null) {
-      IconTheme theme = IconLoader.getInstance().getIconTheme(new File(Settings.propIcontheme.getString()));
+      IconTheme theme = IconLoader.getInstance().getIconTheme(new File(Settings.propIcontheme.getString().replace('/',File.separatorChar)));
       if (theme.loadTheme())
         mIconThemes.setSelectedItem(theme);
       else
@@ -253,9 +253,9 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     mInfoArea.setVisible(
         mLfComboBox.getSelectedIndex() != mStartLookAndIndex ||
         mIconThemes.getSelectedIndex() != mStartIconIndex ||
-        mJGoodiesStartTheme != Settings.propJGoodiesTheme.getString() ||
+        mJGoodiesStartTheme.compareTo(Settings.propJGoodiesTheme.getString()) != 0 ||
         mJGoodiesStartShadow != Settings.propJGoodiesShadow.getBoolean() ||
-        mSkinLFStartTheme != Settings.propSkinLFThemepack.getString());
+        mSkinLFStartTheme.compareTo(Settings.propSkinLFThemepack.getString()) != 0);
   }
 
   protected void configTheme() {
@@ -289,7 +289,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     Settings.propLookAndFeel.setString(obj.getLFClassName());
     
     IconTheme theme = (IconTheme) mIconThemes.getSelectedItem();
-    Settings.propIcontheme.setString(theme.getBase().getAbsolutePath());
+    Settings.propIcontheme.setString(theme.getBase().getAbsolutePath().substring(System.getProperty("user.dir").length()+1).replace(File.separatorChar,'/'));
     
     Settings.propEnableChannelIcons.setBoolean(mUseChannelLogos.isSelected());
     

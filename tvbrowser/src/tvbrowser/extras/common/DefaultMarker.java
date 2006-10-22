@@ -35,10 +35,12 @@ public class DefaultMarker implements devplugin.Marker {
 
   private String mId;
   private Icon mIcon;
+  private String mName;
 
-  public DefaultMarker(String id, Icon icon) {
+  public DefaultMarker(String id, Icon icon, String name) {
     mId = id;
     mIcon = icon;
+    mName = name;
   }
 
   public String getId() {
@@ -47,6 +49,10 @@ public class DefaultMarker implements devplugin.Marker {
 
   public Icon getMarkIcon() {
     return mIcon;
+  }
+  
+  public String toString() {
+    return mName;
   }
 
   public Icon[] getMarkIcons(Program p) {

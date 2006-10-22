@@ -69,8 +69,8 @@ public class DevicePanel extends JPanel {
 
     /** List of Devices */
     private JList mDeviceList;
-    /** ParentFrame */
-    private JFrame mOwner;
+    /** ParentWindow */
+    private Window mOwner;
     /** Settings */
     private CapturePluginData mData;
     /** Translator */
@@ -84,7 +84,7 @@ public class DevicePanel extends JPanel {
      * @param owner ParentFrame
      * @param data Settings
      */
-    public DevicePanel(final JFrame owner, CapturePluginData data) {
+    public DevicePanel(final Window owner, CapturePluginData data) {
         mData = data;
         mOwner = owner;
         createGui();

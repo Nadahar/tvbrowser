@@ -81,8 +81,10 @@ public class SkinLNFSettings extends JDialog implements WindowClosingIf {
     content.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("help", "Help")), cc.xyw(1,1,5));
     
     content.add(UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("skinLFInfo", "Skin Info")), cc.xyw(2,3,3));
+
+    String temp = Settings.propSkinLFThemepack.getString().replace('/',File.separatorChar);
     
-    mThemePack = new JTextField(Settings.propSkinLFThemepack.getString());
+    mThemePack = new JTextField(temp.startsWith(".") ? System.getProperty("user.dir") + temp.substring(1) : temp);
     JButton chooseBtn = new JButton(mLocalizer.msg("choose", "Choose"));
 
     content.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("chooseThemepack", "Choose Themepack")), cc.xyw(1,5,5));
@@ -139,7 +141,7 @@ public class SkinLNFSettings extends JDialog implements WindowClosingIf {
    * OK was pressed
    */
   protected void okPressed() {
-    Settings.propSkinLFThemepack.setString(mThemePack.getText());
+    Settings.propSkinLFThemepack.setString("."+mThemePack.getText().substring(System.getProperty("user.dir").length()).replace(File.separatorChar,'/'));
     setVisible(false);
   }
 

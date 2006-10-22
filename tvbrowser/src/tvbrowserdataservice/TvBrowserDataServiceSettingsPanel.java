@@ -62,6 +62,7 @@ import com.jgoodies.forms.layout.Sizes;
 
 import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.TvDataLevel;
+import tvdataservice.PictureSettingsIf;
 import tvdataservice.SettingsPanel;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
@@ -74,7 +75,7 @@ import util.ui.progress.ProgressWindow;
  * A class that implements the SettingsPanel for the TvBrowserDataService.
  * 
  */
-public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements ActionListener {
+public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements ActionListener, PictureSettingsIf {
 
   private Properties mSettings;
 
@@ -366,18 +367,20 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
     }
 
   }
-  
-  /**
-   * @return The evening picture download check box.
-   */
-  public JCheckBox getEveningPictureCheckBox() {
-    return mLevelCheckboxes[mLevelCheckboxes.length-1];
+
+  public int getPictureState() {
+    int i = PictureSettingsIf.NO_PICTURES;
+    
+    if(mLevelCheckboxes[mLevelCheckboxes.length-2].isSelected())
+      i = PictureSettingsIf.MORNING_PICTURES;
+    if(mLevelCheckboxes[mLevelCheckboxes.length-1].isSelected())
+      i += PictureSettingsIf.EVENING_PICTURES;
+    
+    return i;
   }
-  
-  /**
-   * @return The morning picture download check box.
-   */
-  public JCheckBox getMorningPictureCheckBox() {
-    return mLevelCheckboxes[mLevelCheckboxes.length-2];
+
+  public void setPictureState(int type) {
+    mLevelCheckboxes[mLevelCheckboxes.length-2].setSelected(type == PictureSettingsIf.MORNING_PICTURES || type == PictureSettingsIf.ALL_PICTURES);
+    mLevelCheckboxes[mLevelCheckboxes.length-1].setSelected(type == PictureSettingsIf.EVENING_PICTURES || type == PictureSettingsIf.ALL_PICTURES);
   }
 }

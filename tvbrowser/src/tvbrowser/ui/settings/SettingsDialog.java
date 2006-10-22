@@ -349,7 +349,7 @@ public class SettingsDialog implements WindowClosingIf {
     createPluginTreeItems(false);
 
     // TVDataServices
-    node = new SettingNode(new DataServiceSettingsTab());
+    node = new SettingNode(new DataServiceSettingsTab(), SettingsItem.TVDATASERVICES);
     root.add(node);
     TvDataServiceProxy[] services = tvbrowser.core.tvdataservice.TvDataServiceProxyManager.getInstance()
         .getDataServices();

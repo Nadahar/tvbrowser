@@ -19,7 +19,6 @@
 package tvbrowser.ui.configassistant;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
@@ -29,6 +28,7 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvdataservice.PictureSettingsIf;
 import tvdataservice.SettingsPanel;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -47,7 +47,6 @@ public class PictureConfigPanel extends JPanel {
   
   private JRadioButton mDownloadAll, mDownloadNoPictures, mDownloadEvening, mDownloadMorning;
   private SettingsPanel mTvBrowserDataServiceSettingsPanel;
-  private JCheckBox mMorningPictureCheckBox, mEveningPictureCheckBox;
 
   /**
    * Creates this panel.
@@ -86,18 +85,13 @@ public class PictureConfigPanel extends JPanel {
     if(services != null && services.length == 1) {
       mTvBrowserDataServiceSettingsPanel = services[0].getSettingsPanel();
       
-      if(mTvBrowserDataServiceSettingsPanel instanceof tvbrowserdataservice.TvBrowserDataServiceSettingsPanel) {
-        mMorningPictureCheckBox = ((tvbrowserdataservice.TvBrowserDataServiceSettingsPanel)mTvBrowserDataServiceSettingsPanel).getMorningPictureCheckBox();
-        mEveningPictureCheckBox = ((tvbrowserdataservice.TvBrowserDataServiceSettingsPanel)mTvBrowserDataServiceSettingsPanel).getEveningPictureCheckBox();
+      if(mTvBrowserDataServiceSettingsPanel instanceof PictureSettingsIf) {
+        int i = ((PictureSettingsIf)mTvBrowserDataServiceSettingsPanel).getPictureState();
         
-        if(mMorningPictureCheckBox.isSelected() && mEveningPictureCheckBox.isSelected())
-          mDownloadAll.setSelected(true);
-        else if(mMorningPictureCheckBox.isSelected())
-          mDownloadMorning.setSelected(true);
-        else if(mEveningPictureCheckBox.isSelected())
-          mDownloadEvening.setSelected(true);
-        else
-          mDownloadNoPictures.setSelected(true);
+        mDownloadNoPictures.setSelected(i == PictureSettingsIf.NO_PICTURES);
+        mDownloadAll.setSelected(i == PictureSettingsIf.ALL_PICTURES);
+        mDownloadMorning.setSelected(i == PictureSettingsIf.MORNING_PICTURES);
+        mDownloadEvening.setSelected(i == PictureSettingsIf.EVENING_PICTURES);
       }
     }
   }
@@ -106,10 +100,18 @@ public class PictureConfigPanel extends JPanel {
    * Saves the picture settings for TvBrowserDataService.
    */
   public void saveSettings() {
-    if(mMorningPictureCheckBox != null) {      
-      mMorningPictureCheckBox.setSelected(mDownloadAll.isSelected() || mDownloadMorning.isSelected());
-      mEveningPictureCheckBox.setSelected(mDownloadAll.isSelected() || mDownloadEvening.isSelected());
+    if(mTvBrowserDataServiceSettingsPanel instanceof PictureSettingsIf) {      
+      PictureSettingsIf pictureIf = ((PictureSettingsIf)mTvBrowserDataServiceSettingsPanel);
       
+      if(mDownloadNoPictures.isSelected())
+        pictureIf.setPictureState(PictureSettingsIf.NO_PICTURES);
+      else if(mDownloadMorning.isSelected())
+        pictureIf.setPictureState(PictureSettingsIf.MORNING_PICTURES);
+      else if(mDownloadEvening.isSelected())
+        pictureIf.setPictureState(PictureSettingsIf.EVENING_PICTURES);
+      else if(mDownloadAll.isSelected())
+        pictureIf.setPictureState(PictureSettingsIf.ALL_PICTURES);
+
       mTvBrowserDataServiceSettingsPanel.ok();
     }
   }

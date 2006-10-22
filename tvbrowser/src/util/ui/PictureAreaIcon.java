@@ -18,6 +18,7 @@
  */
 package util.ui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -34,7 +35,7 @@ import devplugin.ProgramFieldType;
 /**
  * A class for painting a picture with copyright and description info.
  * 
- * @author Rene Mach
+ * @author René Mach
  * @since 2.2.2
  */
 public class PictureAreaIcon implements Icon {
@@ -79,7 +80,7 @@ public class PictureAreaIcon implements Icon {
       mScaledIcon = (ImageIcon)UiUtilities.scaleIcon(imic, width-6);
     }
     
-    mCopyrightText = new TextAreaIcon("(c) by " + p.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE),f.deriveFont((float)(f.getSize() * 0.9)),width-6);
+    mCopyrightText = new TextAreaIcon(p.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE),f.deriveFont((float)(f.getSize() * 0.9)),width-6);
     mDescriptionText = new TextAreaIcon(showDescription ? p.getTextField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE) : "",f,width-6);
   }
   
@@ -100,7 +101,12 @@ public class PictureAreaIcon implements Icon {
     
     y += 2;
     
-    g.clearRect(x,y,getIconWidth(),getIconHeight()-2);
+    Color color = g.getColor();
+    
+    g.setColor(c.getBackground());
+    g.fillRect(x,y,getIconWidth(),getIconHeight()-2);
+    
+    g.setColor(color);
     g.drawRect(x,y,getIconWidth()-1,getIconHeight()-3);
 
     y += 3;

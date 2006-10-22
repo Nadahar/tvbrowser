@@ -53,9 +53,9 @@ public class ReminderList implements ActionListener {
 
   private ReminderTimerListener mListener = null;
   private javax.swing.Timer mTimer;
-  private DefaultMarker mMarker = new DefaultMarker(
+  public static DefaultMarker MARKER = new DefaultMarker(
       "reminderplugin.ReminderPlugin", IconLoader.getInstance()
-          .getIconFromTheme("apps", "appointment", 16));
+          .getIconFromTheme("apps", "appointment", 16), ReminderPlugin.mLocalizer.msg("pluginName","Reminder"));
 
   private ArrayList mList;
 
@@ -127,7 +127,7 @@ public class ReminderList implements ActionListener {
         item = new ReminderListItem(program, minutes);
         item.setReferenceCount(referenceCount);
         mList.add(item);
-        program.mark(mMarker);
+        program.mark(MARKER);
       }
     }
   }
@@ -146,7 +146,7 @@ public class ReminderList implements ActionListener {
           && (!programs[i].isExpired())) {
         ReminderListItem item = new ReminderListItem(programs[i], minutes);
         mList.add(item);
-        programs[i].mark(mMarker);
+        programs[i].mark(MARKER);
       }
       else if(contains(programs[i]))
         getReminderItem(programs[i]).incReferenceCount();
@@ -182,7 +182,7 @@ public class ReminderList implements ActionListener {
     item.decReferenceCount();
     if (item.getReferenceCount() < 1) {
       mList.remove(item);
-      item.getProgram().unmark(mMarker);
+      item.getProgram().unmark(MARKER);
     }
   }
 
@@ -218,7 +218,7 @@ public class ReminderList implements ActionListener {
     for (int i = 0; i < items.length; i++) {
       if (items[i].getProgram().equals(program)) {
         mList.remove(items[i]);
-        items[i].getProgram().unmark(mMarker);
+        items[i].getProgram().unmark(MARKER);
       }
     }
   }  

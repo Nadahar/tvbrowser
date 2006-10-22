@@ -163,7 +163,7 @@ public class CapturePlugin extends devplugin.Plugin {
         showExecuteDialog(programArr);
     }
 
-    private void showExecuteDialog(Program[] program) {
+    private void showExecuteDialog(Program[] program) {      
         Window comp = UiUtilities.getLastModalChildOf(getParentFrame());
 
         if (comp instanceof JDialog) {

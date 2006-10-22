@@ -54,7 +54,6 @@ import util.settings.FontProperty;
 import util.settings.IntArrayProperty;
 import util.settings.IntProperty;
 import util.settings.ProgramFieldTypeArrayProperty;
-import util.settings.ProgramPanelSettings;
 import util.settings.Property;
 import util.settings.PropertyManager;
 import util.settings.StringArrayProperty;
@@ -302,7 +301,7 @@ public class Settings {
     }
     
     propArr = new Property[] {propPictureType, propPictureStartTime,
-        propPictureEndTime, propIsPictureShowingDescription};
+        propPictureEndTime, propIsPictureShowingDescription, propPicturePluginIds};
     
     if(mProp.hasChanged(propArr))
       mainFrame.getProgramTableScrollPane().forceRepaintAll();
@@ -828,6 +827,9 @@ public class Settings {
   
   public static final IntProperty propPictureType = new IntProperty(
       mProp, "pictures.type", PictureSettingsPanel.SHOW_IN_TIME_RANGE);
+  
+  public static final StringArrayProperty propPicturePluginIds = new StringArrayProperty(
+      mProp, "pictures.startTime", new String[0]);
   
   public static final IntProperty propPictureStartTime = new IntProperty(
       mProp, "pictures.startTime", 18 * 60);
