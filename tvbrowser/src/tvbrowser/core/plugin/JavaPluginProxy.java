@@ -461,6 +461,6 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   protected ProgramReceiveTarget[] doGetProgramReceiveTargets() {
     ProgramReceiveTarget[] targets = mPlugin.getProgramReceiveTargets();
     
-    return targets != null ? targets : ProgramReceiveTarget.createNullTargetArrayForProgramReceiveIf(mPlugin); 
+    return targets != null ? targets : ProgramReceiveTarget.createDefaultTargetArrayForProgramReceiveIf(mPlugin); 
   }
 }

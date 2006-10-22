@@ -475,8 +475,8 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     ArrayList<ProgramReceiveIf> plugins = new ArrayList<ProgramReceiveIf>();
     
     for(int i = 0; i < receiveTargetArr.length; i++) {
-      if(!plugins.contains(receiveTargetArr[i].getReceifeIdOfTarget()))
-        plugins.add(receiveTargetArr[i].getReceifeIdOfTarget());
+      if(!plugins.contains(receiveTargetArr[i].getReceifeIfForIdOfTarget()))
+        plugins.add(receiveTargetArr[i].getReceifeIfForIdOfTarget());
     }
     
     ProgramReceiveIf[] pluginArr = plugins.toArray(new ProgramReceiveIf[plugins.size()]);
@@ -608,7 +608,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     }
 
     for (int i = 0; i < mPassProgramPlugins.length; i++) {
-      mPassProgramPlugins[i].getReceifeIdOfTarget().receivePrograms(mFavorite.getPrograms(),mPassProgramPlugins[i]);
+      mPassProgramPlugins[i].getReceifeIfForIdOfTarget().receivePrograms(mFavorite.getPrograms(),mPassProgramPlugins[i]);
     }
 
     if (mUseReminderCb.isSelected() && !wasReminderEnabled) {

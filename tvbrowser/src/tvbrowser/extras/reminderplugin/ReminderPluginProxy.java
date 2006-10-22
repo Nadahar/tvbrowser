@@ -77,7 +77,7 @@ public class ReminderPluginProxy implements ContextMenuIf, ProgramReceiveIf {
   }
   
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
-    return ProgramReceiveTarget.createNullTargetArrayForProgramReceiveIf(this);
+    return ProgramReceiveTarget.createDefaultTargetArrayForProgramReceiveIf(this);
   }
   
   /** @deprecated Since 2.5 */

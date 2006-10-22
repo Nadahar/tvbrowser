@@ -346,7 +346,7 @@ public class FavoritesPlugin {
     
     for(ProgramReceiveTarget target : targets) {
       ArrayList<Program> list = mSendPluginsTable.get(target);            
-      target.getReceifeIdOfTarget().receivePrograms(list.toArray(new Program[list.size()]),target);
+      target.getReceifeIfForIdOfTarget().receivePrograms(list.toArray(new Program[list.size()]),target);
     }
   }
   
@@ -788,7 +788,7 @@ public class FavoritesPlugin {
   public ProgramReceiveTarget[] getDefaultClientPluginsTargets() {
     ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>();
     for (int i=0; i<mClientPluginTargets.length; i++) {
-      ProgramReceiveIf plugin = mClientPluginTargets[i].getReceifeIdOfTarget();
+      ProgramReceiveIf plugin = mClientPluginTargets[i].getReceifeIfForIdOfTarget();
       if (plugin != null && (plugin.canReceivePrograms() || plugin.canReceiveProgramsWithTarget())) {
         list.add(mClientPluginTargets[i]);
       }

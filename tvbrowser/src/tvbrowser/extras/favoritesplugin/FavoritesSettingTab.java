@@ -88,7 +88,7 @@ public class FavoritesSettingTab implements SettingsTab {
     ArrayList<ProgramReceiveTarget> clientPlugins = new ArrayList<ProgramReceiveTarget>();
     
     for(int i = 0; i < clientPluginIdArr.length; i++) {
-      ProgramReceiveIf plugin = clientPluginIdArr[i].getReceifeIdOfTarget();
+      ProgramReceiveIf plugin = clientPluginIdArr[i].getReceifeIfForIdOfTarget();
       if(plugin != null)
         clientPlugins.add(clientPluginIdArr[i]);
     }
@@ -128,8 +128,8 @@ public class FavoritesSettingTab implements SettingsTab {
     ArrayList<ProgramReceiveIf> plugins = new ArrayList<ProgramReceiveIf>();
     
     for(int i = 0; i < mClientPluginTargets.length; i++) {
-      if(!plugins.contains(mClientPluginTargets[i].getReceifeIdOfTarget()))
-        plugins.add(mClientPluginTargets[i].getReceifeIdOfTarget());
+      if(!plugins.contains(mClientPluginTargets[i].getReceifeIfForIdOfTarget()))
+        plugins.add(mClientPluginTargets[i].getReceifeIfForIdOfTarget());
     }
     
     ProgramReceiveIf[] mClientPlugins = plugins.toArray(new ProgramReceiveIf[plugins.size()]);

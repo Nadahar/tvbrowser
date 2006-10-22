@@ -22,13 +22,64 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import util.ui.Localizer;
+
 /**
  * Is a target for receiving of program from other plugins.
- * 
+ * <br><br>
+ * If your plugin should be able to receive programs from other plugins
+ * and handle that programs in a specific way you have to create ProgramReceiveTargets
+ * for the plugin.
+ * <br><br>
+ * To do this use the constructor <code>public ProgramReceiveTarget(ProgramReceiveIf receiveIf, String name, String targetId)</code>. 
+ * The <code>receiveIf</code> is you Plugin, the <code>name</code> is the name the user will be see for selection 
+ * of the target and the <code>targetId</code> is a unique id which is used for identifying the target.<br><br>
+ * If your plugin only supports one target simply don't override the method <code>getProgramReceiveTargets()</code>.
+ * <br><br>
+ * If you want to compare two targets always use the equals method.
+ * <br><br>
+ * Example:<br>
+ * Plugin name MyPlugin.
+ * <br><br>
+ * MyPlugin is a plugin which want to receive programs for two types of targets.
+ * One target will be used to show the received programs in a dialog window, the
+ * other target will be used to mark the programs for the plugin.
+ * <br><br>
+ * MyPlugin overrides the methods used for identifying it as a receiveable plugin:<br><br>
+ * <code>public boolean canReceiveProgramsWithTarget() {<br>
+  &nbsp;&nbsp;return true;<br>
+  }<br>
+  <br>
+  public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {<br>
+  &nbsp;&nbsp;ProgramReceiveTarget[] targets = getSupportedTargets();<br>
+    <br>
+  &nbsp;&nbsp;if(receiveTarget.equals(targets[0])<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;showProgramsInDialog(programArr);<br>
+  &nbsp;&nbsp;else if (receiveTarget.equals(targets[1])<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;for(Program p : programArr)<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p.mark(this);<br>
+  }<br>
+  <br>
+  public ProgramReceiveTarget[] getProgramReceiveTargets() {<br>
+  &nbsp;&nbsp;return getSupportedTargets();<br>
+  }</code><br><br>
+ * The method <code>getSupportedTargets()</code> looks like this:<br><br>
+ * <code>private ProgramReceiveTarget[] getSupportedTargets() {<br>
+  &nbsp;&nbsp;ProgramReceiveTarget target1 = new ProgramReceiveTarget(this,"Show programs in dialog","showDialog");<br>
+  &nbsp;&nbsp;ProgramReceiveTarget target2 = new ProgramReceiveTarget(this,"Mark programs for MyPlugin","markPrograms");<br>
+    <br>
+  &nbsp;&nbsp;return new ProgramReceiveTarget[] {target1,target2};<br>
+  }</code>
+ * <br><br>
+ * With this code the plugin MyPlugin is able to receive the programs
+ * from other plugins and handle it in the specified manner.
+ * <br><br>
  * @author René Mach
  * @since 2.5
  */
 public final class ProgramReceiveTarget {
+  private static Localizer mLocalizer = Localizer.getLocalizerFor(ProgramReceiveTarget.class);
+  
   private String mReceiveIfId;
   private String mTargetId;
   private String mTargetName;
@@ -39,8 +90,8 @@ public final class ProgramReceiveTarget {
    * @param receiveIf The ProgramReceiveIf to create the null target for.
    * @return The default target for ProgramReceiveIf.
    */
-  public static ProgramReceiveTarget[] createNullTargetArrayForProgramReceiveIf(ProgramReceiveIf receiveIf) {
-    return new ProgramReceiveTarget[] {new ProgramReceiveTarget(receiveIf, "Standardziel", "NULL")};
+  public static ProgramReceiveTarget[] createDefaultTargetArrayForProgramReceiveIf(ProgramReceiveIf receiveIf) {
+    return new ProgramReceiveTarget[] {new ProgramReceiveTarget(receiveIf, mLocalizer.msg("defaultTarget","Default target"), "NULL")};
   }
 
 
@@ -51,7 +102,7 @@ public final class ProgramReceiveTarget {
    * @return The default target for the id of the ProgramReceiveIf.
    */
   public static ProgramReceiveTarget createDefaultTargetForProgramReceiveIfId(String receiveIfId) {
-    return new ProgramReceiveTarget(receiveIfId, "Standardziel", "NULL");
+    return new ProgramReceiveTarget(receiveIfId, mLocalizer.msg("defaultTarget","Default target"), "NULL");
   }
   /**
    * Creates an instance of the ProgramReceiveTarget.
@@ -113,10 +164,16 @@ public final class ProgramReceiveTarget {
     return mTargetName;
   }
   
+  /**
+   * @return The id of the ProgramReceiveIf of this target.
+   */
   public String getReceiveIfId() {
     return mReceiveIfId;
   }
 
+  /**
+   * @return The id of this target.
+   */
   public String getTargetId() {
       return mTargetId;
   }
@@ -130,7 +187,21 @@ public final class ProgramReceiveTarget {
     return false;
   }
   
-  public ProgramReceiveIf getReceifeIdOfTarget() {
+  /**
+   * @return The ProgramReceiveIf for the ProgramReceiveIfId of this target.
+   */
+  public ProgramReceiveIf getReceifeIfForIdOfTarget() {
     return Plugin.getPluginManager().getReceiceIfForId(mReceiveIfId);
+  }
+  
+  /**
+   * Checks if the given target is the default target for the given ProgramReceiveIf.
+   * 
+   * @param receiveIf The ProgramReceiveIf to check.
+   * @param receiveTarget The ProgramReceiveTarget to check.
+   * @return True if the receiveTarget is the default ProgramReceiveTarget for the ProgramReceiveIf.
+   */
+  public static boolean isDefaultProgramReceiveTargetForProgramReceiveIf(ProgramReceiveIf receiveIf, ProgramReceiveTarget receiveTarget) {
+    return receiveIf.getId().compareTo(receiveTarget.mReceiveIfId) == 0 && receiveTarget.mTargetId.compareTo("NULL") == 0;
   }
 }
