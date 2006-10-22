@@ -116,7 +116,11 @@ public final class ProgramReceiveTarget {
   public String getReceiveIfId() {
     return mReceiveIfId;
   }
-  
+
+  public String getTargetId() {
+      return mTargetId;
+  }
+
   public boolean equals(Object o) {
     if(o == null)
       return false;
