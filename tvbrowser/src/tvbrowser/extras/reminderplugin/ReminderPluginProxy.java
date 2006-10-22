@@ -29,11 +29,13 @@ import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Program;
 import devplugin.ProgramReceiveIf;
+import devplugin.ProgramReceiveTarget;
 
 /**
  * Encapsulates the Reminder and manages the access to it.
  *
  * @author René Mach
+ * @since 2.5
  */
 public class ReminderPluginProxy implements ContextMenuIf, ProgramReceiveIf {
 
@@ -60,17 +62,31 @@ public class ReminderPluginProxy implements ContextMenuIf, ProgramReceiveIf {
   public String getId() {
     return ReminderPlugin.getInstance().getId();
   }
-
-  public boolean canReceivePrograms() {
-    return true;
-  }
-
-  public void receivePrograms(Program[] programArr) {
-    ReminderPlugin.getInstance().addPrograms(programArr);
-  }
   
   public String toString() {
     return ReminderPlugin.getInstance().toString();
   }
 
+  public boolean canReceiveProgramsWithTarget() {
+    return true;
+  }
+
+  public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
+    ReminderPlugin.getInstance().addPrograms(programArr);
+    return true;
+  }
+  
+  public ProgramReceiveTarget[] getProgramReceiveTargets() {
+    return ProgramReceiveTarget.createNullTargetArrayForProgramReceiveIf(this);
+  }
+  
+  /** @deprecated Since 2.5 */
+  public boolean canReceivePrograms() {
+    return true;
+  }
+
+  /** @deprecated Since 2.5 */
+  public void receivePrograms(Program[] programArr) {
+    ReminderPlugin.getInstance().addPrograms(programArr);
+  }
 }

@@ -43,6 +43,7 @@ import devplugin.Plugin;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.ProgramItem;
+import devplugin.ProgramReceiveTarget;
 
 /**
  * SimpleMarkerPlugin 1.4 Plugin for TV-Browser since version 2.3 to only mark
@@ -58,6 +59,7 @@ public class MarkList extends Vector<Program> {
   private static final long serialVersionUID = 1L;
 
   private String mName;
+  private String mId;
   private PluginTreeNode mRootNode;
   private Hashtable<String, LinkedList<Program>> mProgram = new Hashtable<String, LinkedList<Program>>();
   private Icon mMarkIcon;
@@ -72,6 +74,7 @@ public class MarkList extends Vector<Program> {
   public MarkList(String name) {
     mName = name;
     mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(null);
+    mId = name+System.currentTimeMillis();
   }
 
   /**
@@ -105,6 +108,7 @@ public class MarkList extends Vector<Program> {
 
     if (version == 1) {
       mName = (String) in.readObject();
+      mId = in.readUTF();
 
       SimpleMarkerPlugin.getInstance().removeListForName(mName);
 
@@ -131,7 +135,7 @@ public class MarkList extends Vector<Program> {
       else
         mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(
             mMarkIconPath);
-    }
+    }      
   }
 
   /**
@@ -144,6 +148,7 @@ public class MarkList extends Vector<Program> {
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(1); // Version
     out.writeObject(mName);
+    out.writeUTF(mId);
     out.writeInt(size());
 
     for (Program p : this) {
@@ -362,5 +367,12 @@ public class MarkList extends Vector<Program> {
       remove(p);
     
     SimpleMarkerPlugin.getInstance().revalidate(programs);
-  }  
+  }
+  
+  /**
+   * @return The ProgramReceiveTarget of this list.
+   */
+  public ProgramReceiveTarget getReceiveTarget() {
+    return new ProgramReceiveTarget(SimpleMarkerPlugin.getInstance(),mName,mId);
+  }
 }

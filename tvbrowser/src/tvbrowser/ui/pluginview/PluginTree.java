@@ -77,6 +77,7 @@ import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.Program;
 import devplugin.ProgramItem;
+import devplugin.ProgramReceiveTarget;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org) Date: 01.01.2005 Time:
@@ -222,7 +223,7 @@ public class PluginTree extends JTree implements DragGestureListener,
 
         ((PluginTreeModel) this.getModel()).setDisableUpdate(true);
 
-        Vector vec = this.getLeafElements(node, new Vector());
+        Vector<Program> vec = this.getLeafElements(node, new Vector<Program>());
 
         if (vec.size() == 1) {
           mDragNode = ((Program) vec.firstElement()).getTitle();
@@ -330,7 +331,7 @@ public class PluginTree extends JTree implements DragGestureListener,
 
                 for (int i = 0; i < pa.length; i++) {
                   if (pa[i].getRootNode().getMutableTreeNode().equals(target)) {
-                    if (pa[i].canReceivePrograms()) {
+                    if ((pa[i].canReceivePrograms() || pa[i].canReceiveProgramsWithTarget())) {
                       e.acceptDrag(e.getDropAction());
                       reject = false;
                       temp = pa[i];
@@ -549,7 +550,7 @@ public class PluginTree extends JTree implements DragGestureListener,
 
                   for (int i = 0; i < pa.length; i++) {
                     if (pa[i].getRootNode().getMutableTreeNode().equals(target)) {
-                      if (pa[i].canReceivePrograms()) {
+                      if ((pa[i].canReceivePrograms() || pa[i].canReceiveProgramsWithTarget())) {
                         Vector<Program> vec;
                         if (source.isLeaf()) {
                           vec = new Vector<Program>();
@@ -561,7 +562,7 @@ public class PluginTree extends JTree implements DragGestureListener,
                         Program[] p = new Program[vec.size()];
                         if (p.length > 0) {
                           vec.toArray(p);
-                          pa[i].receivePrograms(p);
+                          pa[i].receivePrograms(p,ProgramReceiveTarget.createDefaultTargetForProgramReceiveIfId(pa[i].getId()));
                         }
                       } else {
                         break;

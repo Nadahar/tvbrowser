@@ -33,6 +33,7 @@ import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.tree.TreePath;
@@ -47,6 +48,7 @@ import util.ui.menu.MenuUtil;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramItem;
+import devplugin.ProgramReceiveTarget;
 
 
 /**
@@ -143,20 +145,54 @@ public abstract class AbstractContextMenu implements ContextMenu {
     
     PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
     for (int i=0; i<plugins.length; i++) {
-      if (plugins[i].canReceivePrograms()) {
+      if ((plugins[i].canReceivePrograms() || plugins[i].canReceiveProgramsWithTarget())) {
         final PluginProxy plugin = plugins[i];
         if ((currentPlugin == null) || (!currentPlugin.getId().equals(plugin.getId()))) {
-          JMenuItem item = new JMenuItem(plugins[i].getInfo().getName());
-          item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
-          item.setIcon(plugins[i].getMarkIcon());
-          menu.add(item);
-          item.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-              Program[] programs = collectProgramsFromNode(node);
-              if ((programs != null) &&(programs.length > 0))
-                plugin.receivePrograms(programs);
+          ProgramReceiveTarget[] targets = plugin.getProgramReceiveTargets();
+          if(targets == null || targets.length <= 1 || !plugins[i].canReceiveProgramsWithTarget()) {
+            JMenuItem item = new JMenuItem(plugins[i].getInfo().getName());
+            item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
+
+            Icon[] icons = plugins[i].getMarkIcons(Plugin.getPluginManager().getExampleProgram());
+            
+            item.setIcon(icons != null ? icons[0] : null);
+            menu.add(item);
+            item.addActionListener(new ActionListener(){
+              public void actionPerformed(ActionEvent e) {
+                Program[] programs = collectProgramsFromNode(node);
+                if ((programs != null) &&(programs.length > 0)) {
+                  plugin.receivePrograms(programs,ProgramReceiveTarget.createDefaultTargetForProgramReceiveIfId(plugin.getId()));
+                }
+              }
+            });
+          }
+          else if(targets.length > 1) {
+            JMenu subMenu = new JMenu(plugins[i].getInfo().getName());
+            subMenu.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
+            
+            Icon[] icons = plugins[i].getMarkIcons(Plugin.getPluginManager().getExampleProgram());
+            
+            subMenu.setIcon(icons != null && icons.length > 0 ? icons[0] : null);
+            menu.add(subMenu);
+            
+            for(int j = 0; j < targets.length; j++) {
+              JMenuItem item = new JMenuItem(targets[j].toString());
+              item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);              
+              subMenu.add(item);
+              
+              final ProgramReceiveTarget target = targets[j];
+              
+              item.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent e) {
+                  Program[] programs = collectProgramsFromNode(node);
+                  if ((programs != null) &&(programs.length > 0)) {
+                    plugin.receivePrograms(programs,target);
+                  }
+                }
+              });
+              
             }
-          });
+          }
         }
       }
     }
@@ -207,7 +243,7 @@ public abstract class AbstractContextMenu implements ContextMenu {
       return null;
     }
     
-    ArrayList array = new ArrayList();
+    ArrayList<Program> array = new ArrayList<Program>();
     
     for (int i=0;i<node.getChildCount();i++) {
       
@@ -222,6 +258,6 @@ public abstract class AbstractContextMenu implements ContextMenu {
       }
     }
     
-    return (Program[])array.toArray(new Program[0]);
+    return array.toArray(new Program[0]);
   }
 }

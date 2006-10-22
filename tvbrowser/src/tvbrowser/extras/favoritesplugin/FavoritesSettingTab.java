@@ -30,6 +30,7 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -49,6 +50,7 @@ import util.ui.PluginChooserDlg;
 import util.ui.UiUtilities;
 import devplugin.Plugin;
 import devplugin.ProgramReceiveIf;
+import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 
 /**
@@ -61,8 +63,8 @@ public class FavoritesSettingTab implements SettingsTab {
   /** The localizer for this class. */  
   public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(FavoritesSettingTab.class);
-
-  private ProgramReceiveIf[] mClientPlugins;
+  
+  private ProgramReceiveTarget[] mClientPluginTargets;
   private JLabel mPluginLabel;
   private JCheckBox mExpertMode;
   
@@ -80,18 +82,18 @@ public class FavoritesSettingTab implements SettingsTab {
     JButton choose = new JButton(mLocalizer.msg("selectPlugins","Choose Plugins"));    
     mExpertMode = new JCheckBox(mLocalizer.msg("expertMode","Always use expert mode"),FavoritesPlugin.getInstance().isUsingExpertMode());    
     
-    String[] clientPluginIdArr
-    = FavoritesPlugin.getInstance().getClientPluginIds();    
+    ProgramReceiveTarget[] clientPluginIdArr
+    = FavoritesPlugin.getInstance().getClientPluginTargetIds();    
     
-    ArrayList<ProgramReceiveIf> clientPlugins = new ArrayList<ProgramReceiveIf>();
+    ArrayList<ProgramReceiveTarget> clientPlugins = new ArrayList<ProgramReceiveTarget>();
     
     for(int i = 0; i < clientPluginIdArr.length; i++) {
-      ProgramReceiveIf plugin = Plugin.getPluginManager().getReceiceIfForId(clientPluginIdArr[i]);
+      ProgramReceiveIf plugin = clientPluginIdArr[i].getReceifeIdOfTarget();
       if(plugin != null)
-        clientPlugins.add(plugin);
+        clientPlugins.add(clientPluginIdArr[i]);
     }
     
-    mClientPlugins = clientPlugins.toArray(new ProgramReceiveIf[clientPlugins.size()]);
+    mClientPluginTargets = clientPlugins.toArray(new ProgramReceiveTarget[clientPlugins.size()]);
     
     handlePluginSelection();
     
@@ -100,14 +102,14 @@ public class FavoritesSettingTab implements SettingsTab {
         Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
         PluginChooserDlg chooser = null;
         if(w instanceof JDialog)
-          chooser = new PluginChooserDlg((JDialog)w,mClientPlugins, null, ReminderPluginProxy.getInstance());
+          chooser = new PluginChooserDlg((JDialog)w,mClientPluginTargets, null, ReminderPluginProxy.getInstance());
         else
-          chooser = new PluginChooserDlg((JFrame)w,mClientPlugins, null, ReminderPluginProxy.getInstance());
+          chooser = new PluginChooserDlg((JFrame)w,mClientPluginTargets, null, ReminderPluginProxy.getInstance());
         
         chooser.setLocationRelativeTo(w);
         chooser.setVisible(true);
         
-        mClientPlugins = chooser.getPlugins();
+        mClientPluginTargets = chooser.getReceiveTargets();
         
         handlePluginSelection();
       }
@@ -123,6 +125,15 @@ public class FavoritesSettingTab implements SettingsTab {
   }
 
   private void handlePluginSelection() {
+    ArrayList<ProgramReceiveIf> plugins = new ArrayList<ProgramReceiveIf>();
+    
+    for(int i = 0; i < mClientPluginTargets.length; i++) {
+      if(!plugins.contains(mClientPluginTargets[i].getReceifeIdOfTarget()))
+        plugins.add(mClientPluginTargets[i].getReceifeIdOfTarget());
+    }
+    
+    ProgramReceiveIf[] mClientPlugins = plugins.toArray(new ProgramReceiveIf[plugins.size()]);
+    
     if(mClientPlugins.length > 0) {
       mPluginLabel.setText(mClientPlugins[0].toString());
       mPluginLabel.setEnabled(true);
@@ -144,12 +155,7 @@ public class FavoritesSettingTab implements SettingsTab {
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {    
-    String[] clientPluginIdArr = new String[mClientPlugins.length];
-    
-    for (int i = 0; i < mClientPlugins.length; i++)
-      clientPluginIdArr[i] = mClientPlugins[i].getId();
-    
-    FavoritesPlugin.getInstance().setClientPluginIds(clientPluginIdArr);
+    FavoritesPlugin.getInstance().setClientPluginTargets(mClientPluginTargets);
     FavoritesPlugin.getInstance().setIsUsingExpertMode(mExpertMode.isSelected());    
   }
   

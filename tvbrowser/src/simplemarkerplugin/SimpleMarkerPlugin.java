@@ -48,6 +48,7 @@ import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.Version;
 
@@ -84,7 +85,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
    * Standard contructor for this class.
    */
   public SimpleMarkerPlugin() {
-    mInstance = this;
+    mInstance = this;    
     mLocalizer = util.ui.Localizer.getLocalizerFor(SimpleMarkerPlugin.class);
     mMarkListVector = new MarkListsVector();
   }
@@ -118,6 +119,9 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
    * @return The MarkIcons.
    */
   public Icon[] getMarkIconsForProgram(Program p) {
+    if(p.equals(getPluginManager().getExampleProgram()))
+      return new Icon[] {mMarkListVector.get(0).getMarkIcon()};
+    
     String[] lists = mMarkListVector.getNamesOfListsContainingProgram(p);
     Icon[] icons = new Icon[lists.length];
 
@@ -126,7 +130,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
 
     return icons;
   }
-
+  
   public SettingsTab getSettingsTab() {
     return (new SimpleMarkerPluginSettingsTab());
   }
@@ -170,20 +174,46 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     return menu;
   }
 
-  public boolean canReceivePrograms() {
+  /*
+   * @deprecated 
+   */
+  /*public boolean canReceivePrograms() {
+    return true;
+  }*/
+
+  /*
+   * @deprecated 
+   */
+  /*public void receivePrograms(Program[] programs) {
+    receivePrograms(programs, ProgramReceiveTarget.createNullTargetArrayForProgramReceiveIf(this)[0]);
+  }*/
+
+  
+  public boolean canReceiveProgramsWithTarget() {
     return true;
   }
 
-  public void receivePrograms(Program[] programs) {
+  public ProgramReceiveTarget[] getProgramReceiveTargets() {
+    return mMarkListVector.getReceiveTargets();
+  }  
+  
+  public boolean receivePrograms(Program[] programs, ProgramReceiveTarget target) {
+    MarkList targetList = mMarkListVector.getMarkListForTarget(target);    
+    
+    if(targetList == null)
+      return false;
+    
     for (Program p : programs) {
-      if (mMarkListVector.getListAt(0).contains(p) || p.isExpired())
+      if (targetList.contains(p) || p.isExpired())
         continue;
       else {
-        mMarkListVector.getListAt(0).addElement(p);
+        targetList.addElement(p);
         p.mark(this);
       }
     }
-    mMarkListVector.getListAt(0).updateNode();
+    targetList.updateNode();
+    
+    return true;
   }
 
   public void handleTvDataUpdateFinished() {

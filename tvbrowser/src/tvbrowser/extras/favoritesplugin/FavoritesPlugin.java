@@ -89,10 +89,7 @@ public class FavoritesPlugin {
 
   private static FavoritesPlugin mInstance;
   private Favorite[] mFavoriteArr;
-
-  /** The IDs of the plugins that should receive the favorites. */
-  private String[] mClientPluginIdArr;
-
+  
   private Properties mSettings;
 
   private static String DATAFILE_PREFIX = "favoritesplugin.FavoritesPlugin";
@@ -111,7 +108,8 @@ public class FavoritesPlugin {
 
   private Favorite[] mUpdateFavorites;
 
-  private Hashtable<ProgramReceiveIf,ArrayList<Program>> mSendPluginsTable = new Hashtable<ProgramReceiveIf,ArrayList<Program>>();
+  private Hashtable<ProgramReceiveTarget,ArrayList<Program>> mSendPluginsTable = new Hashtable<ProgramReceiveTarget,ArrayList<Program>>();
+  private ProgramReceiveTarget[] mClientPluginTargets;
 
   /**
    * Creates a new instance of FavoritesPlugin.
@@ -119,7 +117,7 @@ public class FavoritesPlugin {
   private FavoritesPlugin() {
     mInstance = this;
     mFavoriteArr = new Favorite[0];
-    mClientPluginIdArr = new String[0];
+    mClientPluginTargets = new ProgramReceiveTarget[0];
     mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
     load();
     mRootNode = new PluginTreeNode(mLocalizer.msg("manageFavorites","Favorites"));
@@ -263,39 +261,43 @@ public class FavoritesPlugin {
     boolean reminderFound = false;
 
     // Get the client plugins
-    size = in.readInt();
-    mClientPluginIdArr = new String[size];
-    for (int i = 0; i < size; i++) {
-      if (version == 1) {
-        // In older versions of TV-Browser, not the plugin ID was saved,
-        // but its class name.
-        // -> We have to translate the class name into an ID.
-        String className = (String) in.readObject();
-        mClientPluginIdArr[i] = "java." + className;
-      } else {
-        mClientPluginIdArr[i] = (String) in.readObject();
-      }
+    if(version <= 4) {
+      size = in.readInt();
+      ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>(); 
+      for (int i = 0; i < size; i++) {
+        String id;
+        
+        if (version == 1) {
+          // In older versions of TV-Browser, not the plugin ID was saved,
+          // but its class name.
+          // -> We have to translate the class name into an ID.
+          String className = (String) in.readObject();
+          id = "java." + className;
+        } else {
+          id = (String) in.readObject();
+        }
 
-      if(version <= 2) {
-        if(mClientPluginIdArr[i].compareTo("java.reminderplugin.ReminderPlugin") == 0)
-          reminderFound = true;
+        if(version <= 2) {
+          if(id.compareTo("java.reminderplugin.ReminderPlugin") == 0)
+            reminderFound = true;
+        }
+        
+        if(version > 2 || (version <= 2 && id.compareTo("java.reminderplugin.ReminderPlugin") != 0))
+          list.add(ProgramReceiveTarget.createDefaultTargetForProgramReceiveIfId(id));
       }
+    }
+    else {
+      int n = in.readInt();
+      mClientPluginTargets = new ProgramReceiveTarget[n];
+      
+      for (int i = 0; i < n; i++)
+        mClientPluginTargets[i] = new ProgramReceiveTarget(in);
     }
 
     if(version <= 2 && reminderFound) {
-      ArrayList<String> clientPluginIdArr = new ArrayList<String>();
-
-      for(int i = 0; i < mClientPluginIdArr.length; i++) {
-        if(mClientPluginIdArr[i].compareTo("java.reminderplugin.ReminderPlugin") != 0) {
-          clientPluginIdArr.add(mClientPluginIdArr[i]);
-        }
-      }
-
-      mClientPluginIdArr = clientPluginIdArr.toArray(new String[clientPluginIdArr.size()]);
-
-      for(int i = 0; i < mFavoriteArr.length; i++) {
+      for(int i = 0; i < mFavoriteArr.length; i++)
         mFavoriteArr[i].getReminderConfiguration().setReminderServices(new String[] {ReminderConfiguration.REMINDER_DEFAULT});
-      }
+      
       updateAllFavorites();
     }
 
@@ -340,27 +342,27 @@ public class FavoritesPlugin {
   }
   
   private void sendToPlugins() {
-    Set<ProgramReceiveIf> plugins = mSendPluginsTable.keySet();
+    Set<ProgramReceiveTarget> targets = mSendPluginsTable.keySet();
     
-    for(ProgramReceiveIf plugin : plugins) {
-      ArrayList<Program> list = mSendPluginsTable.get(plugin);            
-      plugin.receivePrograms(list.toArray(new Program[list.size()]));
+    for(ProgramReceiveTarget target : targets) {
+      ArrayList<Program> list = mSendPluginsTable.get(target);            
+      target.getReceifeIdOfTarget().receivePrograms(list.toArray(new Program[list.size()]),target);
     }
   }
   
   /**
    * Add the programs to send to other Plugins to a Hashtable.
    * 
-   * @param plugins The Plugins to send the programs for.
+   * @param targets The ProgramReceiveTargets to send the programs for.
    * @param programs The Programs to send.
    */
-  public void addProgramsForSending(ProgramReceiveIf[] plugins, Program[] programs) {
-    for(ProgramReceiveIf plugin : plugins) {
-      ArrayList<Program> list = mSendPluginsTable.get(plugin);
+  public void addProgramsForSending(ProgramReceiveTarget[] targets, Program[] programs) {
+    for(ProgramReceiveTarget target : targets) {
+      ArrayList<Program> list = mSendPluginsTable.get(target);
       
       if(list == null) {
         list = new ArrayList<Program>();        
-        mSendPluginsTable.put(plugin, list);
+        mSendPluginsTable.put(target, list);
       }
       
       for(Program program : programs)
@@ -432,7 +434,7 @@ public class FavoritesPlugin {
   }
 
   private void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(4); // version
+    out.writeInt(5); // version
 
     out.writeInt(mFavoriteArr.length);
     for (int i = 0; i < mFavoriteArr.length; i++) {
@@ -440,9 +442,9 @@ public class FavoritesPlugin {
       mFavoriteArr[i].writeData(out);
     }
 
-    out.writeInt(mClientPluginIdArr.length);
-    for (int i = 0; i < mClientPluginIdArr.length; i++) {
-      out.writeObject(mClientPluginIdArr[i]);
+    out.writeInt(mClientPluginTargets.length);
+    for (ProgramReceiveTarget target : mClientPluginTargets) {
+      target.writeData(out);
     }
 
     out.writeBoolean(mShowInfoOnNewProgramsFound);
@@ -774,27 +776,24 @@ public class FavoritesPlugin {
     mRootNode.update();
     ReminderPlugin.getInstance().updateRootNode();
   }
-
-
-
-
-  public String[] getClientPluginIds() {
-    return mClientPluginIdArr;
+  
+  public ProgramReceiveTarget[] getClientPluginTargetIds() {
+    return mClientPluginTargets;
+  }
+  
+  public void setClientPluginTargets(ProgramReceiveTarget[] clientPluginTargetArr) {
+    mClientPluginTargets = clientPluginTargetArr;
   }
 
-  public void setClientPluginIds(String[] clientPluginArr) {
-    mClientPluginIdArr = clientPluginArr;
-  }
-
-  public ProgramReceiveIf[] getDefaultClientPlugins() {
-    ArrayList<ProgramReceiveIf> list = new ArrayList<ProgramReceiveIf>();
-    for (int i=0; i<mClientPluginIdArr.length; i++) {
-      ProgramReceiveIf plugin = Plugin.getPluginManager().getReceiceIfForId(mClientPluginIdArr[i]);
-      if (plugin != null && plugin.canReceivePrograms()) {
-        list.add(plugin);
+  public ProgramReceiveTarget[] getDefaultClientPluginsTargets() {
+    ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>();
+    for (int i=0; i<mClientPluginTargets.length; i++) {
+      ProgramReceiveIf plugin = mClientPluginTargets[i].getReceifeIdOfTarget();
+      if (plugin != null && (plugin.canReceivePrograms() || plugin.canReceiveProgramsWithTarget())) {
+        list.add(mClientPluginTargets[i]);
       }
     }
-    return list.toArray(new ProgramReceiveIf[list.size()]);
+    return list.toArray(new ProgramReceiveTarget[list.size()]);
   }
 
   public String getId() {

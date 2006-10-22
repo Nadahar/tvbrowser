@@ -38,6 +38,7 @@ import devplugin.ChannelDayProgram;
 import devplugin.ContextMenuIf;
 import devplugin.PluginInfo;
 import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
 
 /**
  * An abstract implementation of a plugin proxy. Encapsulates all calls to the
@@ -186,6 +187,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * 
    * @return Whether the plugin supports receiving programs from other plugins.
    * @see #receivePrograms(Program[])
+   * @deprecated Since 2.5
    */
   public final boolean canReceivePrograms() {
     try {
@@ -202,6 +204,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * 
    * @return Whether the plugin supports receiving programs from other plugins.
    * @see #receivePrograms(Program[])
+   * @deprecated Since 2.5
    */
   protected abstract boolean doCanReceivePrograms();
 
@@ -210,6 +213,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * 
    * @param programArr The programs passed from the other plugin.
    * @see #canReceivePrograms()
+   * @deprecated Since 2.5
    */
   public final void receivePrograms(Program[] programArr) {
     try {
@@ -225,6 +229,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * 
    * @param programArr The programs passed from the other plugin.
    * @see #canReceivePrograms()
+   * @deprecated Since 2.5
    */
   protected abstract void doReceivePrograms(Program[] programArr);
 
@@ -572,7 +577,91 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
       Settings.propDeactivatedPlugins.setStringArray(deactivatedPlugins);
     }
   }
+  
+  /**
+   * Gets whether the plugin supports receiving programs from other plugins with target.
+   * 
+   * @return Whether the plugin supports receiving programs from other plugins with target.
+   * @see #receivePrograms(Program[],ProgramReceiveTarget)
+   * @since 2.5
+   */
+  public final boolean canReceiveProgramsWithTarget() {
+    try {
+      return doCanReceiveProgramsWithTarget();
+    } catch (RuntimeException exc) {
+      handlePluginException(exc);
+      return false;
+    }
+  }
 
+  /**
+   * Really gets whether the plugin supports receiving programs from other
+   * plugins with target.
+   * 
+   * @return Whether the plugin supports receiving programs from other plugins with target.
+   * @see #receivePrograms(Program[],ProgramReceiveTarget)
+   * @since 2.5
+   */
+  protected abstract boolean doCanReceiveProgramsWithTarget();
+
+  /**
+   * Receives a list of programs from another plugin with a target.
+   * 
+   * @param programArr The programs passed from the other plugin.
+   * @param receiveTarget The target of the programs.
+   * @see #canReceiveProgramsWithTarget()
+   * @since 2.5
+   */
+  public final boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
+    try {
+      assertActivatedState();
+      return doReceivePrograms(programArr,receiveTarget);
+    } catch (Exception exc) {
+      handlePluginException(exc);
+    }
+    
+    return false;
+  }
+
+  /**
+   * Really receives a list of programs from another plugin with target.
+   * 
+   * @param programArr The programs passed from the other plugin with target.
+   * @param receiveTarget The target of the programs.
+   * @see #canReceiveProgramsWithTarget()
+   * @since 2.5
+   */
+  protected abstract boolean doReceivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget);
+
+  /**
+   * Returns an array of receive target or <code>null</code> if there is no target
+   * 
+   * @return The supported receive targets.
+   * @see #canReceiveProgramsWithTarget()
+   * @see #receivePrograms(Program[],ProgramReceiveTarget)
+   * @since 2.5
+   */
+  public final ProgramReceiveTarget[] getProgramReceiveTargets() {
+    try {
+      assertActivatedState();
+      return doGetProgramReceiveTargets();
+    } catch (Exception exc) {
+      handlePluginException(exc);
+    }
+    
+    return null;
+  }
+  
+  /**
+   * Really return an array of receive target or <code>null</code> if there is no target
+   * 
+   * @return The supported receive targets.
+   * @see #canReceiveProgramsWithTarget()
+   * @see #receivePrograms(Program[],ProgramReceiveTarget)
+   * @since 2.5
+   */
+  protected abstract ProgramReceiveTarget[] doGetProgramReceiveTargets();
+  
   /**
    * Checks whether the plugin is activated. If it is not an error message is
    * shown.

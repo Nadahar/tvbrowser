@@ -39,8 +39,9 @@ public interface ProgramReceiveIf {
    * @return Whether the ProgramReceiveIf supports receiving programs from other plugins.
    * 
    * @see #receivePrograms(Program[])
+   * @deprecated Since 2.5 Use {@link #canReceiveProgramsWithTarget()} instead.
    */
-  public boolean canReceivePrograms();
+  public boolean canReceivePrograms();  
   
   /**
    * Receives a list of programs from another plugin.
@@ -48,8 +49,41 @@ public interface ProgramReceiveIf {
    * @param programArr The programs passed from the other plugin.
    * 
    * @see #canReceivePrograms()
+   * @deprecated Since 2.5 Use {@link #receivePrograms(Program[],ProgramReceiveTarget)} instead.
    */
   public void receivePrograms(Program[] programArr);
+  
+  /**
+   * Gets whether the ProgramReceiveIf supports receiving programs from other plugins with a special target.
+   * 
+   * @return Whether the ProgramReceiveIf supports receiving programs from other plugins with a special target.
+   * 
+   * @see #receivePrograms(Program[],ProgramReceiveTarget)
+   * @since 2.5
+   */  
+  public boolean canReceiveProgramsWithTarget();
+  
+  /**
+   * Receives a list of programs from another plugin with a target.
+   * 
+   * @param programArr The programs passed from the other plugin.
+   * @param receiveTarget The receive target of the programs.
+   * @return If the programs were correct received (the target really exists).
+   * 
+   * @see #canReceiveProgramsWithTarget()
+   * @since 2.5
+   */
+  public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget);
+
+  /**
+   * Returns an array of receive target or <code>null</code> if there is no target
+   * 
+   * @return The supported receive targets.
+   * @see #canReceiveProgramsWithTarget()
+   * @see #receivePrograms(Program[],ProgramReceiveTarget)
+   * @since 2.5
+   */
+  public ProgramReceiveTarget[] getProgramReceiveTargets();
   
   public String getId();
 }

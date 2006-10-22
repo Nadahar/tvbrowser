@@ -17,6 +17,7 @@ import devplugin.ChannelDayProgram;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
 import devplugin.beanshell.BeanShellScriptIf;
 
 
@@ -99,20 +100,20 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
         return new PluginInfo(mBshFile.getName());
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
      * @see tvbrowser.core.plugin.AbstractPluginProxy#doCanReceivePrograms()
+     * @deprecated Since 2.5
      */
     protected boolean doCanReceivePrograms() {
         // TODO Auto-generated method stub
         return false;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
      * 
      * @see tvbrowser.core.plugin.AbstractPluginProxy#doReceivePrograms(devplugin.Program[])
+     * @deprecated Since 2.5
      */
     protected void doReceivePrograms(Program[] programArr) {
         // TODO Auto-generated method stub
@@ -288,6 +289,24 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
     }
        
     public PluginTreeNode getRootNode() {
+      return null;
+    }
+
+    @Override
+    protected boolean doCanReceiveProgramsWithTarget() {
+      // TODO Automatisch erstellter Methoden-Stub
+      return false;
+    }
+
+    @Override
+    protected boolean doReceivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
+      // TODO Automatisch erstellter Methoden-Stub
+      return false;
+    }
+
+    @Override
+    protected ProgramReceiveTarget[] doGetProgramReceiveTargets() {
+      // TODO Automatisch erstellter Methoden-Stub
       return null;
     }
  }

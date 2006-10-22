@@ -40,6 +40,7 @@ import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import util.ui.Localizer;
@@ -104,6 +105,7 @@ public class SelectableItemList extends JPanel {
           if (index != -1) {
             SelectableItem item = (SelectableItem) mListModel.elementAt(index);
             item.setSelected(! item.isSelected());
+            handleItemSelectionChanged();
             mList.repaint();
           }
         }
@@ -119,6 +121,7 @@ public class SelectableItemList extends JPanel {
               item.setSelected(!item.isSelected());
             }
           }
+          handleItemSelectionChanged();
           mList.repaint();
         }
       }
@@ -153,8 +156,20 @@ public class SelectableItemList extends JPanel {
     
   }
   
+  private void handleItemSelectionChanged() {System.out.println("xxxx");
+    ListSelectionListener[] listeners = mList.getListSelectionListeners();
+    if(listeners != null) {
+      for(ListSelectionListener listener : listeners) {
+        if(mList.getSelectedValue() != null) {
+          int[] indices = mList.getSelectedIndices();
+          listener.valueChanged(new ListSelectionEvent(mList.getSelectedValue(), indices[0], indices[indices.length-1], false));
+        }
+      }
+    }
+  }
+  
   /**
-   * @since 2.3
+   * @since 2.5
    * @param listener Add this Listener
    */
   public void addListSelectionListener(ListSelectionListener listener) {
@@ -162,7 +177,7 @@ public class SelectableItemList extends JPanel {
   }
   
   /**
-   * @since 2.3
+   * @since 2.5
    * @param listener Remove this Listener
    */
   public void removeListSelectionListener(ListSelectionListener listener) {
@@ -170,11 +185,19 @@ public class SelectableItemList extends JPanel {
   }
 
   /**
+   * @param selectionMode The selection mode of the list.
+   * @since 2.5
+   */
+  public void setSelectionMode(int selectionMode) {
+    mList.setSelectionMode(selectionMode);
+  }
+  
+  /**
    * Current selected Items in the List.
    * 
    * Attention: This is not a List with all activated Items.
    * 
-   * @since 2.3
+   * @since 2.5
    * @return Current selected Items in the List
    */
   public Object[] getListSelection() {
@@ -223,6 +246,14 @@ public class SelectableItemList extends JPanel {
     objList.toArray(asArr);
 
     return asArr;
+  }
+  
+  /**
+   * @return The current selected value (value that has focus)
+   * @since 2.5
+   */
+  public Object getSelectedValue() {
+    return mList.getSelectedValue();
   }
   
   /**
