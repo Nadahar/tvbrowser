@@ -27,6 +27,7 @@ package simplemarkerplugin;
 import java.util.Vector;
 
 import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
 
 /**
  * SimpleMarkerPlugin 1.4 Plugin for TV-Browser since version 2.3
@@ -131,5 +132,24 @@ public class MarkListsVector extends Vector<MarkList> {
       names[i] = elementAt(i).getName();
     
     return names;
+  }
+  
+  public ProgramReceiveTarget[] getReceiveTargets() {
+    ProgramReceiveTarget[] targets = new ProgramReceiveTarget[size()];
+      
+    targets[0] = ProgramReceiveTarget.createNullTargetArrayForProgramReceiveIf(SimpleMarkerPlugin.getInstance())[0];
+      
+    for(int i = 1; i < size(); i++)
+      targets[i] = get(i).getReceiveTarget();
+      
+    return targets;    
+  }
+  
+  public MarkList getMarkListForTarget(ProgramReceiveTarget target) {
+    for(int i = 1; i < size(); i++)
+      if(get(i).getReceiveTarget().equals(target))
+        return get(i);
+    
+    return (target == null || target.equals(ProgramReceiveTarget.createNullTargetArrayForProgramReceiveIf(SimpleMarkerPlugin.getInstance())[0])) ? get(0) : null;
   }
 }

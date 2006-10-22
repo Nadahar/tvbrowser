@@ -390,7 +390,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
         }
       }
     }
-
+    
     /**
      * @return The icon file name.
      */

@@ -6,24 +6,28 @@ package util.ui;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramReceiveIf;
+import devplugin.ProgramReceiveTarget;
 
 /**
  * Ein Dialog, der es erlaubt, Programme an andere Plugins weiter zu reichen
@@ -44,6 +48,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
    * List of Plugins
    */
   private JComboBox mPluginList;
+  private JComboBox mTargetList;
 
   private ProgramReceiveIf mCaller;
 
@@ -83,40 +88,51 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
   private void createDialog() {
     setTitle(mLocalizer.msg("title", "Send to other Plugin"));
     UiUtilities.registerForClosing(this);
-    
-    JPanel panel = (JPanel) this.getContentPane();
 
-    panel.setLayout(new GridBagLayout());
+    CellConstraints cc = new CellConstraints();
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref:grow,5dlu","pref,5dlu,pref,5dlu,pref,5dlu,pref,10dlu,pref"), (JPanel)this.getContentPane());
+    pb.setDefaultDialogBorder();
     
+    
+    pb.addSeparator(mLocalizer.msg("sendTo", "Send programs to"), cc.xyw(1,1,3));
+
+
+
+    System.out.println(mCaller);
     // get the installed plugins
     ProgramReceiveIf[] installedPluginArr = Plugin.getPluginManager().getReceiveIfs(mCaller);
 
     Arrays.sort(installedPluginArr, new ObjectComperator());
 
-    mPluginList = new JComboBox(installedPluginArr);
+    pb.add(mPluginList = new JComboBox(installedPluginArr), cc.xy(2,3));
 
-    GridBagConstraints c = new GridBagConstraints();
-
-    c.gridwidth = GridBagConstraints.REMAINDER;
-    c.weightx = 0;
-    c.weighty = 0;
-    c.insets = new Insets(5, 5, 5, 0);
-    c.anchor = GridBagConstraints.WEST;
-
-    panel.add(new JLabel(mLocalizer.msg("sendTo", "Send programs to")), c);
-
-    c.gridwidth = GridBagConstraints.REMAINDER;
-    c.weightx = 1.0;
-    c.weighty = 0;
-    c.anchor = GridBagConstraints.CENTER;
-    c.insets = new Insets(5, 5, 5, 5);
-
-    panel.add(mPluginList, c);
-
-    c.gridwidth = GridBagConstraints.REMAINDER;
-    c.anchor = GridBagConstraints.SOUTHEAST;
-    c.weightx = 1.0;
-    c.weighty = 1.0;
+    pb.addSeparator(mLocalizer.msg("target","Target:"), cc.xyw(1,5,3));
+    
+    pb.add(mTargetList = new JComboBox(installedPluginArr[0].getProgramReceiveTargets()), cc.xy(2,7));
+    final DefaultComboBoxModel model = (DefaultComboBoxModel)mTargetList.getModel();
+    mTargetList.setEnabled(installedPluginArr[0].canReceiveProgramsWithTarget());
+    
+    mPluginList.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        if(e.getStateChange() == ItemEvent.SELECTED) {
+          ProgramReceiveTarget[] targets = ((ProgramReceiveIf)e.getItem()).getProgramReceiveTargets();
+          
+          model.removeAllElements();
+          
+          if(((ProgramReceiveIf)e.getItem()).canReceiveProgramsWithTarget()) {
+            for(ProgramReceiveTarget target : targets)
+              model.addElement(target);
+            mTargetList.setEnabled(true);
+          }
+          else if(targets != null && targets.length > 0) {
+            model.addElement(targets[0]);
+            mTargetList.setEnabled(false);
+          }
+          
+          mTargetList.updateUI();
+        }
+      }
+    });
 
     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
@@ -142,9 +158,8 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
     });
 
     buttonPanel.add(cancelButton);
-
-    c.insets = new Insets(5, 5, 5, 0);
-    panel.add(buttonPanel, c);
+    
+    pb.add(buttonPanel, cc.xyw(1,9,3));
 
     pack();
     setResizable(false);
@@ -162,10 +177,10 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
       result = JOptionPane.showConfirmDialog(this, mLocalizer.msg("AskBeforeSend",
           "Are you really sure to sent {0} Programs\nto \"{1}\"?", new Integer(mPrograms.length), plug.toString()),
           mLocalizer.msg("Attention", "Attention"), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-    }
+    }    
 
     if (result == JOptionPane.YES_OPTION) {
-      plug.receivePrograms(mPrograms);
+      plug.receivePrograms(mPrograms, (ProgramReceiveTarget)mTargetList.getSelectedItem());
     }
   }
 

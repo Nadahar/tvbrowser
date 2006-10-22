@@ -37,14 +37,18 @@ import java.util.Properties;
 import java.util.logging.Logger;
 
 import javax.swing.Icon;
+import javax.swing.JOptionPane;
 
+import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.TvBrowserException;
+import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.ChannelDayProgram;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 
 
@@ -256,6 +260,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    * 
    * @return Whether the plugin supports receiving programs from other plugins.
    * @see #receivePrograms(Program[])
+   * @deprecated Since 2.5
    */
   protected boolean doCanReceivePrograms() {
     return mPlugin.canReceivePrograms();
@@ -267,6 +272,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    * 
    * @param programArr The programs passed from the other plugin.
    * @see #canReceivePrograms()
+   * @deprecated Since 2.5
    */
   protected void doReceivePrograms(Program[] programArr) {
     mPlugin.receivePrograms(programArr);
@@ -413,5 +419,48 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   
   public PluginTreeNode getRootNode() {
     return mPlugin.getRootNode();
+  }
+  
+  /**
+   * Really gets whether the plugin supports receiving programs from other
+   * plugins with target.
+   * 
+   * @return Whether the plugin supports receiving programs from other plugins with target.
+   * @see #receivePrograms(Program[],ProgramReceiveTarget)
+   * @since 2.5
+   */
+  protected boolean doCanReceiveProgramsWithTarget() {
+    return mPlugin.canReceiveProgramsWithTarget();
+  }
+
+  /**
+   * Really receives a list of programs from another plugin with target.
+   * 
+   * @param programArr The programs passed from the other plugin with target.
+   * @param receiveTarget The target of the programs.
+   * @see #canReceiveProgramsWithTarget()
+   * @since 2.5
+   */
+  protected boolean doReceivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
+    boolean value = mPlugin.receivePrograms(programArr, receiveTarget);
+    
+    if(!value)
+      JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()),mLocalizer.msg("error.noTarget","The programs for the target \"{0}\" couldn't be processed by \"{1}\".",receiveTarget,mPlugin.getInfo().getName()),mLocalizer.msg("error.title","Error"),JOptionPane.ERROR_MESSAGE);
+    
+    return value;
+  }
+
+  /**
+   * Really return an array of receive target or <code>null</code> if there is no target
+   * 
+   * @return The supported receive targets.
+   * @see #canReceiveProgramsWithTarget()
+   * @see #receivePrograms(Program[],ProgramReceiveTarget)
+   * @since 2.5
+   */
+  protected ProgramReceiveTarget[] doGetProgramReceiveTargets() {
+    ProgramReceiveTarget[] targets = mPlugin.getProgramReceiveTargets();
+    
+    return targets != null ? targets : ProgramReceiveTarget.createNullTargetArrayForProgramReceiveIf(mPlugin); 
   }
 }

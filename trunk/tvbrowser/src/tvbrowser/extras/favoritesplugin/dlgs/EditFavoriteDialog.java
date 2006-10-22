@@ -36,6 +36,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
@@ -71,6 +72,7 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Channel;
 import devplugin.ProgramReceiveIf;
+import devplugin.ProgramReceiveTarget;
 
 public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
@@ -106,7 +108,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
   private JCheckBox mPassProgramsCheckBox;
 
-  private ProgramReceiveIf[] mPassProgramPlugins;
+  private ProgramReceiveTarget[] mPassProgramPlugins;
 
   private JLabel mPassProgramsLb;
 
@@ -469,7 +471,16 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mDeleteExclusionBtn.setEnabled(selectedItem != null);
   }
 
-  private String getForwardPluginsLabelString(ProgramReceiveIf[] pluginArr) {
+  private String getForwardPluginsLabelString(ProgramReceiveTarget[] receiveTargetArr) {
+    ArrayList<ProgramReceiveIf> plugins = new ArrayList<ProgramReceiveIf>();
+    
+    for(int i = 0; i < receiveTargetArr.length; i++) {
+      if(!plugins.contains(receiveTargetArr[i].getReceifeIdOfTarget()))
+        plugins.add(receiveTargetArr[i].getReceifeIdOfTarget());
+    }
+    
+    ProgramReceiveIf[] pluginArr = plugins.toArray(new ProgramReceiveIf[plugins.size()]);
+    
     if (pluginArr != null && pluginArr.length > 0) {
       StringBuffer buf = new StringBuffer();
       if (pluginArr.length > 0) {
@@ -505,7 +516,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
         PluginChooserDlg dlg = new PluginChooserDlg(EditFavoriteDialog.this, mPassProgramPlugins, null, ReminderPluginProxy.getInstance());
                 
         UiUtilities.centerAndShow(dlg);
-        ProgramReceiveIf[] pluginArr = dlg.getPlugins();
+        ProgramReceiveTarget[] pluginArr = dlg.getReceiveTargets();
         if (pluginArr != null) {
           mPassProgramPlugins = pluginArr;
           mPassProgramsLb.setText(getForwardPluginsLabelString(mPassProgramPlugins));
@@ -543,7 +554,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mPassProgramsLb.setEnabled(mPassProgramsCheckBox.isSelected());
     mChangePassProgramsBtn.setEnabled(mPassProgramsCheckBox.isSelected());
     if (!mPassProgramsCheckBox.isSelected()) {
-      mPassProgramPlugins = new ProgramReceiveIf[] {};
+      mPassProgramPlugins = new ProgramReceiveTarget[] {};
     }
 
   }
@@ -597,7 +608,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     }
 
     for (int i = 0; i < mPassProgramPlugins.length; i++) {
-      mPassProgramPlugins[i].receivePrograms(mFavorite.getPrograms());
+      mPassProgramPlugins[i].getReceifeIdOfTarget().receivePrograms(mFavorite.getPrograms(),mPassProgramPlugins[i]);
     }
 
     if (mUseReminderCb.isSelected() && !wasReminderEnabled) {

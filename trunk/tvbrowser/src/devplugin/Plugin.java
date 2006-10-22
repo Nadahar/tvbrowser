@@ -328,6 +328,7 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    * 
    * @return Whether the plugin supports receiving programs from other plugins.
    * @see #receivePrograms(Program[])
+   * @deprecated Since 2.5 Use {@link #canReceiveProgramsWithTarget()} instead.
    */
   public boolean canReceivePrograms() {
     // Call the old and deprecated method
@@ -342,6 +343,7 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    * 
    * @param programArr The programs passed from the other plugin.
    * @see #canReceivePrograms()
+   * @deprecated Since 2.5 Use {@link #receivePrograms(Program[],ProgramReceiveTarget)} instead.
    */
   public void receivePrograms(Program[] programArr) {
     // Call the old and deprecated method
@@ -542,7 +544,7 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    * 
    * @return the icons to use for marking programs in the program table.
    * 
-   * @since 2.3
+   * @since 2.5
    */
   public final Icon[] getMarkIcons(Program p) {
     if(getMarkIcon() != null)  
@@ -566,7 +568,7 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    * 
    * @param p The Program to get the icons for.
    * @return The icons for the Program.
-   * @since 2.3
+   * @since 2.5
    */
   public Icon[] getMarkIconsForProgram(Program p) {
     return null;
@@ -674,7 +676,7 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    * @deprecated Since 1.1. Use {@link #canReceivePrograms()} instead.
    */
   public boolean supportMultipleProgramExecution() {
-    return false;
+    return canReceiveProgramsWithTarget();
   }
 
 
@@ -687,6 +689,8 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    * @deprecated Since 1.1. Use {@link #receivePrograms(Program[])} instead.
    */
   public void execute(Program[] programArr) {
+    if(canReceiveProgramsWithTarget())
+      receivePrograms(programArr, ProgramReceiveTarget.createNullTargetArrayForProgramReceiveIf(this)[0]);
   }
 
 
@@ -857,6 +861,49 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
     } catch (IOException e) {
       util.exc.ErrorHandler.handle(mLocalizer.msg("error.couldNotWriteFile","Storing file '{0}' failed.", f.getAbsolutePath()), e);
     }
+  }
+  
+  /**
+   * Gets whether the ProgramReceiveIf supports receiving programs from other plugins with a special target.
+   * 
+   * @return Whether the ProgramReceiveIf supports receiving programs from other plugins with a special target.
+   * 
+   * @see #receivePrograms(Program[],ProgramReceiveTarget)
+   * @since 2.5
+   */  
+  public boolean canReceiveProgramsWithTarget() {
+    return false;
+  }
+  
+  /**
+   * Receives a list of programs from another plugin with a target.
+   * 
+   * @param programArr The programs passed from the other plugin.
+   * @param receiveTarget The receive target of the programs.
+   * 
+   * @see #canReceiveProgramsWithTarget()
+   * @since 2.5
+   */
+  public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
+    // check if this should call the old method
+    if((receiveTarget == null || ProgramReceiveTarget.createNullTargetArrayForProgramReceiveIf(this)[0].equals(receiveTarget)) && canReceivePrograms()) {
+      receivePrograms(programArr);
+      return true;
+    }
+      
+    return false;
+  }
+  
+  /**
+   * Returns an array of receive target or <code>null</code> if there is no target
+   * 
+   * @return The supported receive targets.
+   * @see #canReceiveProgramsWithTarget()
+   * @see #receivePrograms(Program[],ProgramReceiveTarget)
+   * @since 2.5
+   */
+  public ProgramReceiveTarget[] getProgramReceiveTargets() {
+    return ProgramReceiveTarget.createNullTargetArrayForProgramReceiveIf(this);
   }
 
 

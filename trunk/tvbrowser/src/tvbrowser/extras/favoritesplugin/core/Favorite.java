@@ -55,7 +55,7 @@ public abstract class Favorite {
   private LimitationConfiguration mLimitationConfiguration;
   private boolean mRemindAfterDownload;
   private ArrayList<Exclusion> mExclusionList;
-  private ProgramReceiveIf[] mForwardPluginArr;
+  private ProgramReceiveTarget[] mForwardPluginArr;
 
   private ArrayList<Program> mBlackList;
   
@@ -67,7 +67,7 @@ public abstract class Favorite {
     mExclusionList = new ArrayList<Exclusion>();
     mBlackList = new ArrayList<Program>();
 
-    mForwardPluginArr = FavoritesPlugin.getInstance().getDefaultClientPlugins();
+    mForwardPluginArr = FavoritesPlugin.getInstance().getDefaultClientPluginsTargets();
   }
 
   public Favorite(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -83,17 +83,18 @@ public abstract class Favorite {
       mExclusionList.add(new Exclusion(in));
     }
 
-    ArrayList<ProgramReceiveIf> list = new ArrayList<ProgramReceiveIf>();
     int cnt = in.readInt();
+    mForwardPluginArr = new ProgramReceiveTarget[cnt];
+
     for (int i=0; i<cnt; i++) {
-      String id = (String)in.readObject();
-      ProgramReceiveIf plugin = Plugin.getPluginManager().getReceiceIfForId(id);
-      if (plugin != null) {
-        list.add(plugin);
+      if(version <=2) {
+        String id = (String)in.readObject();
+        mForwardPluginArr[i] = ProgramReceiveTarget.createDefaultTargetForProgramReceiveIfId(id);
       }
+      else
+        mForwardPluginArr[i] = new ProgramReceiveTarget(in);
     }
-    mForwardPluginArr = list.toArray(new ProgramReceiveIf[list.size()]);
-    
+        
     // Don't save the programs but only their date and id
     int size = in.readInt();
     ArrayList<Program> programList = new ArrayList<Program>(size);
@@ -151,11 +152,11 @@ public abstract class Favorite {
   }
 
 
-  public void setForwardPlugins(ProgramReceiveIf[] pluginArr) {
+  public void setForwardPlugins(ProgramReceiveTarget[] pluginArr) {
     mForwardPluginArr = pluginArr;
   }
 
-  public ProgramReceiveIf[] getForwardPlugins() {
+  public ProgramReceiveTarget[] getForwardPlugins() {
     return mForwardPluginArr;
   }
 
@@ -182,7 +183,7 @@ public abstract class Favorite {
 
 
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(2);  // version
+    out.writeInt(3);  // version
     out.writeObject(mName);
     mReminderConfiguration.store(out);
     mLimitationConfiguration.store(out);
@@ -195,7 +196,7 @@ public abstract class Favorite {
 
     out.writeInt(mForwardPluginArr.length);
     for (int i=0; i<mForwardPluginArr.length; i++) {
-      out.writeObject(mForwardPluginArr[i].getId());
+      mForwardPluginArr[i].writeData(out);
     }
 
     // Don't save the programs but only their date and id
@@ -403,12 +404,12 @@ public abstract class Favorite {
 
     // pass programs to plugins
     mNewProgramsArr = newPrograms.toArray(new Program[newPrograms.size()]);
-    ProgramReceiveIf[] pluginArr = getForwardPlugins();
+    ProgramReceiveTarget[] pluginArr = getForwardPlugins();
     
     if(mNewProgramsArr.length > 0) {
       if(!dataUpdate)
         for (int i=0; i<pluginArr.length; i++) {
-          pluginArr[i].receivePrograms(mNewProgramsArr);
+          pluginArr[i].getReceifeIdOfTarget().receivePrograms(mNewProgramsArr,pluginArr[i]);
         }
       else
         FavoritesPlugin.getInstance().addProgramsForSending(pluginArr, mNewProgramsArr);
