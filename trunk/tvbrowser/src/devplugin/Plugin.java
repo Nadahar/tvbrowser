@@ -690,7 +690,7 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    */
   public void execute(Program[] programArr) {
     if(canReceiveProgramsWithTarget())
-      receivePrograms(programArr, ProgramReceiveTarget.createNullTargetArrayForProgramReceiveIf(this)[0]);
+      receivePrograms(programArr, ProgramReceiveTarget.createDefaultTargetArrayForProgramReceiveIf(this)[0]);
   }
 
 
@@ -886,7 +886,7 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    */
   public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
     // check if this should call the old method
-    if((receiveTarget == null || ProgramReceiveTarget.createNullTargetArrayForProgramReceiveIf(this)[0].equals(receiveTarget)) && canReceivePrograms()) {
+    if((receiveTarget == null || ProgramReceiveTarget.isDefaultProgramReceiveTargetForProgramReceiveIf(this,receiveTarget)) && canReceivePrograms()) {
       receivePrograms(programArr);
       return true;
     }
@@ -903,7 +903,7 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    * @since 2.5
    */
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
-    return ProgramReceiveTarget.createNullTargetArrayForProgramReceiveIf(this);
+    return ProgramReceiveTarget.createDefaultTargetArrayForProgramReceiveIf(this);
   }
 
 
