@@ -39,6 +39,7 @@ import primarydatamanager.primarydataservice.ProgramFrameDispatcher;
 import tvbrowserdataservice.file.FileFormatException;
 import tvbrowserdataservice.file.ProgramField;
 import tvbrowserdataservice.file.ProgramFrame;
+import util.io.IOUtilities;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -407,6 +408,20 @@ public class XmlTvPDS extends AbstractPrimaryDataService {
                                 + "'stereo', 'surround', '5.1' or 'two channel tone' but it is '"
                                 + text + "'");
                     }
+                } else if (qName.equals("picture")) {
+                    File file = new File(text);
+                    if (file.exists() && file.isFile()) {
+                        try {
+                            addField(ProgramField.create(ProgramFieldType.PICTURE_TYPE, IOUtilities.getBytesFromFile(file)));
+                        } catch (IOException e) {
+                            logException(e);
+                        }
+                    } else
+                        logMessage("Warning: File does not exist: " + text);
+                } else if (qName.equals("picture-copyright")) {
+                    addField(ProgramField.create(ProgramFieldType.PICTURE_COPYRIGHT_TYPE, text));
+                } else if (qName.equals("picture-description")) {
+                    addField(ProgramField.create(ProgramFieldType.PICTURE_DESCRIPTION_TYPE, text));
                 } else if (qName.equals("programme")) {
                     ProgramFrameDispatcher dis
                             = mDispatcherHash.get(mChannelId);

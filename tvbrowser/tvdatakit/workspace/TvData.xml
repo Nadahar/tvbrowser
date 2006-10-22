@@ -114,6 +114,7 @@ all these tags are not required you don't have to use them.
 
       <!-- (TV-Browser only) The music -->
       <music>Peter Palaber</music>
+
     </credits>
 
     <video>
@@ -144,6 +145,12 @@ all these tags are not required you don't have to use them.
       <stereo>stereo</stereo>
     </audio>
 
+    <!-- (TV-Browser only) Picture for Programm -->
+    <picture>test.jpg</picture>
+      <!-- (TV-Browser only) Copyright for Picture -->
+    <picture-copyright>(c) By Test 24</picture-copyright>
+      <!-- (TV-Browser only) Description of Picture -->
+    <picture-description>Bart Simpson</picture-description>
   </programme>
 
 
