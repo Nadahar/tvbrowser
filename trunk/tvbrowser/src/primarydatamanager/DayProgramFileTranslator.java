@@ -25,17 +25,19 @@
  */
 package primarydatamanager;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-
+import devplugin.Program;
+import devplugin.ProgramFieldType;
 import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.FileFormatException;
 import tvbrowserdataservice.file.ProgramField;
 import tvbrowserdataservice.file.ProgramFrame;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
 
 /**
  * 
@@ -107,6 +109,9 @@ public class DayProgramFileTranslator {
     String transFileName = progFileName.substring(0, progFileName.length() - 8)
       + ".prog.txt";
 
+    String binFileName = progFileName.substring(0, progFileName.length() - 8);
+    int binNumber =0;
+
     FileOutputStream stream = null;
     try {
       
@@ -143,6 +148,10 @@ public class DayProgramFileTranslator {
                   int minutes = time % 60;
                   writer.println(hours + ":" + ((minutes < 10) ? "0" : "") + minutes);
                   break;
+                case ProgramFieldType.BINARY_FORMAT:
+                    binNumber++;
+                    writeBinary(new File(destDir, binFileName + "-" + binNumber + ".bin"), field.getBinaryData());
+                    break;
                 default:
                   writer.println("(binary data)");
                   break;
@@ -160,10 +169,27 @@ public class DayProgramFileTranslator {
       }
     }    
   }
-  
-  
-  
-  private static String programInfoToString(int info) {
+
+    /**
+     * Writes Binary-Data into a File
+     *
+     * @param file File to write Data into
+     * @param binaryData Data to write
+     */
+    private static void writeBinary(File file, byte[] binaryData) {
+        try {
+            System.out.println("Writing : " + file.getAbsolutePath());
+            BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+            out.write(binaryData);
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static String programInfoToString(int info) {
     StringBuffer buf = new StringBuffer();
 
     if (bitSet(info, Program.INFO_VISION_BLACK_AND_WHITE)) {

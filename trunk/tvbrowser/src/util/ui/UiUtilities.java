@@ -26,6 +26,27 @@
 
 package util.ui;
 
+import util.browserlauncher.Launch;
+import util.misc.OperatingSystem;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JRootPane;
+import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
+import javax.swing.border.Border;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -46,30 +67,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-
 import java.net.URL;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JRootPane;
-import javax.swing.JTextArea;
-import javax.swing.KeyStroke;
-import javax.swing.border.Border;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-
-import util.browserlauncher.Launch;
-import util.misc.OperatingSystem;
 
 /**
  * Provides utilities for UI stuff.
@@ -555,7 +553,7 @@ public class UiUtilities {
   }
   
   /**
-   * Scales Icons to s specific size
+   * Scales Icons to a specific size
    * 
    * @param icon Icon that should be scaled
    * @param x new X-Value
@@ -563,36 +561,48 @@ public class UiUtilities {
    * @return Scaled Icon
    */
   public static Icon scaleIcon(Icon icon, int x, int y) {
-    
     try {
-      // Create Image with Icon
-      BufferedImage iconimage = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
-      Graphics2D g2 = iconimage.createGraphics();
-      icon.paintIcon(null, g2, 0, 0);
-      g2.dispose();
-      
-      // Scale Image
-      Image image = new ImageIcon(iconimage.getScaledInstance(x, y, Image.SCALE_SMOOTH)).getImage();
-      
-      BufferedImage im = new BufferedImage(x, y, BufferedImage.TYPE_INT_ARGB);
+        // Create Image with Icon
+        BufferedImage bufferedImage = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = bufferedImage.createGraphics();
+        icon.paintIcon(null, g2, 0, 0);
+        g2.dispose();
 
-      g2 = im.createGraphics();
-      g2.drawImage(image, null, null);
-      g2.dispose();
-
-      im.flush();
-      
-      // Return new Icon
-      return new ImageIcon(image);
-
+         Image image = scaleIconToBufferedImage(bufferedImage, x, y);
+         // Return new Icon
+         return new ImageIcon(image);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
     
     return icon;
   }
-  
-  /**
+
+    /**
+     * Scales an image to a specific size and returns an BufferedImage
+     *
+     * @param img Scale this IMage
+     * @param x new X-Value
+     * @param y new Y-Value
+     * @return Scaled BufferedImage
+     *
+     * @since 2.5
+     */
+    public static BufferedImage scaleIconToBufferedImage(BufferedImage img, int x, int y) {
+        // Scale Image
+        Image image = img.getScaledInstance(x, y, Image.SCALE_SMOOTH);
+
+        BufferedImage im = new BufferedImage(x, y, img.getType());
+
+        Graphics2D g2 = im.createGraphics();
+        g2.drawImage(image, null, null);
+        g2.dispose();
+
+        im.flush();
+        return im;
+    }
+
+    /**
    * Creates a scaled Version of the Icon.
    * 
    * The scaled Version will have a Background and a Border.

@@ -572,6 +572,7 @@
       <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
       <fileset dir="${classes.dir}" includes="devplugin/**"/>
       <fileset dir="${classes.dir}" includes="util/**"/>
+      <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
       <fileset dir="${unpacked.dir}/looks-2.0.4.jar" includes="com/**"/>
     </jar>
 
@@ -589,6 +590,7 @@
       <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
       <fileset dir="${classes.dir}" includes="devplugin/**"/>
       <fileset dir="${classes.dir}" includes="util/**"/>
+      <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
       <fileset dir="${unpacked.dir}/looks-2.0.4.jar" includes="com/**"/>
     </jar>
 

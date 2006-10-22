@@ -37,7 +37,9 @@ import tvbrowserdataservice.file.ProgramFrame;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -133,8 +135,8 @@ public class ExcelPDS extends AbstractPrimaryDataService {
     /**
      * Extracts the program data of one program from a excel sheet.
      *
-     * @param sheet   The sheet to read the program from
-     * @param row     The row of the program to extract.
+     * @param sheet The sheet to read the program from
+     * @param row   The row of the program to extract.
      * @return The data of the extracted program.
      */
     private ProgramFrame extractProgramFrame(HSSFSheet sheet, int row) {
@@ -178,7 +180,70 @@ public class ExcelPDS extends AbstractPrimaryDataService {
         frame.addProgramField(ProgramField.create(ProgramFieldType.PRODUCTION_YEAR_TYPE,
                 getCellString(sheet, 18, row)));
 
+        String filename = getCellString(sheet, 19, row);
+        if (filename != null && (filename.trim().length() > 0)) {
+
+            File file = new File(filename);
+            if (file.exists() && file.isFile()) {
+                try {
+                    ProgramField field = ProgramField.create(ProgramFieldType.PICTURE_TYPE, getBytesFromFile(file));
+                    if (field != null) {
+                        frame.addProgramField(field);
+
+                        frame.addProgramField(ProgramField.create(ProgramFieldType.PICTURE_COPYRIGHT_TYPE, getCellString(sheet, 20, row)));
+                        frame.addProgramField(ProgramField.create(ProgramFieldType.PICTURE_DESCRIPTION_TYPE, getCellString(sheet, 21, row)));
+
+                        System.out.println("Picture added : " + filename);
+                    } else {
+                        System.out.println("The Picture " + filename + " was not added");
+                    }
+
+                } catch (FileNotFoundException e) {
+                    System.out.println("File " + filename + " not found!");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
         return frame;
+    }
+
+    // Returns the contents of the file in a byte array.
+    public static byte[] getBytesFromFile(File file) throws IOException {
+        InputStream is = new FileInputStream(file);
+
+        // Get the size of the file
+        long length = file.length();
+
+        // You cannot create an array using a long type.
+        // It needs to be an int type.
+        // Before converting to an int type, check
+        // to ensure that file is not larger than Integer.MAX_VALUE.
+        if (length > Integer.MAX_VALUE) {
+            // File is too large
+        }
+
+        // Create the byte array to hold the data
+        byte[] bytes = new byte[(int) length];
+
+        // Read in the bytes
+        int offset = 0;
+        int numRead = 0;
+        while (offset < bytes.length
+                && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
+            offset += numRead;
+        }
+
+        // Ensure all the bytes have been read in
+        if (offset < bytes.length) {
+            throw new IOException("Could not completely read file " + file.getName());
+        }
+
+        // Close the input stream and return bytes
+        is.close();
+        return bytes;
     }
 
 
