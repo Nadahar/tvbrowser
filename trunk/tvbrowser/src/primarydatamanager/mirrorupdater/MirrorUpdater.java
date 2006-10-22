@@ -25,18 +25,8 @@
  */
 package primarydatamanager.mirrorupdater;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.text.DateFormat;
-import java.util.Calendar;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import devplugin.Channel;
+import devplugin.Date;
 import primarydatamanager.mirrorupdater.config.Configuration;
 import primarydatamanager.mirrorupdater.config.PropertiesConfiguration;
 import primarydatamanager.mirrorupdater.data.DataSource;
@@ -48,8 +38,18 @@ import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.Mirror;
 import tvbrowserdataservice.file.SummaryFile;
 import util.io.VerySimpleFormatter;
-import devplugin.Channel;
-import devplugin.Date;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 
@@ -76,6 +76,7 @@ public class MirrorUpdater {
 
 
   public MirrorUpdater(Configuration config) {
+    Logger.getLogger("sun.awt.X11.timeoutTask.XToolkit").setLevel(Level.INFO);      
     mDataSource = config.getDataSource();
     mDataTarget = config.getDataTarget();
     mPrimaryServerUrl = config.getPrimaryServerUrl();
