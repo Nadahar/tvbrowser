@@ -212,6 +212,7 @@
       <fileset dir="${src.dir}" includes="**/*.png"/>
       <fileset dir="${src.dir}" includes="**/*.dtd"/>
       <fileset dir="${src.dir}" includes="**/*.properties"/>
+      <fileset dir="${src.dir}" includes="**/*.theme"/>
     </copy>
   </target>
 
