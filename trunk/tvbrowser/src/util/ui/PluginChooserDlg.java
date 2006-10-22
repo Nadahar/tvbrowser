@@ -72,11 +72,11 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
   private static final long serialVersionUID = 1L;
   private ProgramReceiveIf[] mResultPluginArr;
   private ProgramReceiveIf[] mPluginArr;
-  Hashtable<ProgramReceiveIf,ProgramReceiveTarget> mReceiveTargetTable;
+  private Hashtable<ProgramReceiveIf,ProgramReceiveTarget> mReceiveTargetTable;
   private SelectableItemList mPluginItemList;
   private JPanel mTargetPanel;
   private ProgramReceiveTarget[] mCurrentTargets;
-  
+  private boolean mOkWasPressed;
   
   private static final util.ui.Localizer mLocalizer
      = util.ui.Localizer.getLocalizerFor(PluginChooserDlg.class);
@@ -135,6 +135,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
   }
   
   private void init(ProgramReceiveIf[] pluginArr, String description, ProgramReceiveIf caller, Hashtable<ProgramReceiveIf,ProgramReceiveTarget> targetTable) {
+    mOkWasPressed = false;
     setTitle(mLocalizer.msg("title","Choose Plugins"));
     UiUtilities.registerForClosing(this);
     
@@ -261,6 +262,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
 
     okBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
+        mOkWasPressed = true;
         Object[] o = mPluginItemList.getSelection();
         mResultPluginArr = new PluginAccess[o.length];
         for (int i=0;i<o.length;i++) {
@@ -272,6 +274,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
 
     cancelBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
+        mOkWasPressed = false;
         mResultPluginArr = null;
         setVisible(false);
       }
@@ -301,7 +304,10 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
   }
   
   public ProgramReceiveTarget[] getReceiveTargets() {
-    return mReceiveTargetTable.values().toArray(new ProgramReceiveTarget[mReceiveTargetTable.values().size()]);
+    if(mOkWasPressed)
+      return mReceiveTargetTable.values().toArray(new ProgramReceiveTarget[mReceiveTargetTable.values().size()]);
+    else
+      return null;
   }
 
   public void close() {
