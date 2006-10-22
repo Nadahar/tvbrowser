@@ -52,6 +52,8 @@ public class SettingsItem {
 
   public static final String PROGRAMTABLELOOK = "#programtablelook";
   public static final String CHANNELLISTLOOK = "#channellistllook";
+  
+  public static final String TVDATASERVICES = "#tvdataservice";
 
   private SettingsItem () {}
 }

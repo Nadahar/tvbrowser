@@ -94,7 +94,7 @@ public class FavoritesPlugin {
 
   private static String DATAFILE_PREFIX = "favoritesplugin.FavoritesPlugin";
 
-  public static final Marker MARKER = new DefaultMarker(DATAFILE_PREFIX, IconLoader.getInstance().getIconFromTheme("apps", "bookmark", 16));
+  public static final Marker MARKER = new DefaultMarker(DATAFILE_PREFIX, IconLoader.getInstance().getIconFromTheme("apps", "bookmark", 16), mLocalizer.msg("manageFavorites","Favorites"));
 
   private ConfigurationHandler mConfigurationHandler;
 
@@ -815,5 +815,4 @@ public class FavoritesPlugin {
   public ProgramPanelSettings getProgramPanelSettings() {
     return new ProgramPanelSettings(Integer.parseInt(mSettings.getProperty("pictureType","2")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeStart","1080")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeEnd","1380")), false, mSettings.getProperty("pictureShowsDescription","true").compareTo("true") == 0);
   }
-
 }

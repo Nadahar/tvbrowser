@@ -26,6 +26,7 @@ package captureplugin.tabs;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -34,7 +35,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -69,14 +69,14 @@ public class ProgramListPanel extends JPanel {
     /** List of Programs */
     private DeviceTableModel mProgramTableModel;
 
-    private JFrame mParent;
+    private Window mParent;
 
     /**
      * Creates the Panel
      * @param parent Parent-Frame
      * @param data Configuration
      */
-    public ProgramListPanel(JFrame parent, CapturePluginData data) {
+    public ProgramListPanel(Window parent, CapturePluginData data) {
         mParent =parent;
         mData = data;
         mProgramTableModel = new DeviceTableModel();

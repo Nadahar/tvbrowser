@@ -26,15 +26,14 @@
 package captureplugin;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -82,7 +81,7 @@ public class CapturePluginDialog extends JDialog implements WindowClosingIf {
      * Creates the GUI
      * @param parent Parent
      */
-    public void createGui(Component parent) {
+    public void createGui(Window parent) {
         UiUtilities.registerForClosing(this);
       
         this.getContentPane().setLayout(new BorderLayout());
@@ -92,7 +91,8 @@ public class CapturePluginDialog extends JDialog implements WindowClosingIf {
         }
         this.setTitle(mLocalizer.msg("Title", "Capture Plugin - Settings"));
 
-        mPanel = new CapturePluginPanel((JFrame) parent, mData);
+        
+        mPanel = new CapturePluginPanel(parent, mData);
         this.getContentPane().add(mPanel, BorderLayout.CENTER);
         this.setSize(500, 450);
         

@@ -49,6 +49,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -104,6 +105,8 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
     updateBackground();
 
     setBackground(Color.white);
+    UIManager.put("programPanel.background",Color.white);
+    
     setOpaque(true);
 
     // setFocusable(true);
@@ -358,7 +361,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
     for (int col = 0; col < mModel.getColumnCount(); col++) {
       for (int row = 0; row < mModel.getRowCount(col); row++) {
         ProgramPanel panel = mModel.getProgramPanel(col, row);
-        panel.setProgramPanelSettings(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean()));
+        panel.setProgramPanelSettings(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPicturePluginIds.getStringArray()));
         panel.forceRepaint();
       }
     }

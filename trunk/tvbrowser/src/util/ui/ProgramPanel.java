@@ -44,6 +44,7 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -144,7 +145,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * Creates a new instance of ProgramPanel.
    */
   public ProgramPanel() {
-    this(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean()));
+    this(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPicturePluginIds.getStringArray()));
   }
 
   /**
@@ -185,6 +186,8 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     mTitleIcon = new TextAreaIcon(null, mTitleFont, WIDTH_RIGHT - 5);
     mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5);
     mDescriptionIcon.setMaximumLineCount(3);
+    
+    setBackground(UIManager.getColor("programPanel.background"));
   }
 
   /**
@@ -391,11 +394,32 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       programHasChanged();
     }
     
+    boolean dontShow = false;
+    
+    if(mSettings.isShowingPictureForPlugins()) {
+      String[] pluginIds = mSettings.getPluginIds();
+      Marker[] marker = mProgram.getMarkerArr();
+      
+      dontShow = true;
+      
+      if(marker != null && pluginIds != null) {
+        for(int i = 0; i < marker.length; i++) {
+          for(int j = 0; j < pluginIds.length; j++) {
+            if(marker[i].getId().compareTo(pluginIds[j]) == 0) {
+              dontShow = false;
+              break;
+            }
+          }
+        }
+      }
+    }
+    
     // Create the picture area icon
     if(mProgram.getBinaryField(ProgramFieldType.PICTURE_TYPE) == null ||
         mSettings.isShowingPictureNever() ||
         (mSettings.isShowingPictureInTimeRange() && 
-         ProgramUtilities.isNotInTimeRange(mSettings.getPictureTimeRangeStart(),mSettings.getPictureTimeRangeEnd(),program))
+         ProgramUtilities.isNotInTimeRange(mSettings.getPictureTimeRangeStart(),mSettings.getPictureTimeRangeEnd(),program)) ||
+         dontShow
        )
       mPictureAreaIcon = new PictureAreaIcon();
     else

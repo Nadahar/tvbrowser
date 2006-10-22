@@ -26,8 +26,8 @@
 package captureplugin;
 
 import java.awt.BorderLayout;
+import java.awt.Window;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
@@ -59,7 +59,7 @@ public class CapturePluginPanel extends JPanel {
      * 
      * @param data Data to use
      */
-    public CapturePluginPanel(JFrame owner, CapturePluginData data) {
+    public CapturePluginPanel(Window owner, CapturePluginData data) {
         this.mData = data;
         this.setLayout(new BorderLayout());
 

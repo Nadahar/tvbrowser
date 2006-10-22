@@ -32,7 +32,8 @@ public class ProgramPanelSettings {
   private int mTimeRangeEnd;
   private boolean mShowOnlyDateAndTitle; 
   private boolean mShowDescription;
-  
+  private String[] mPluginIds;
+
   /**
    * Creates an instance of this class.
    * 
@@ -43,11 +44,26 @@ public class ProgramPanelSettings {
    * @param showDescription If the picture description should be shown.
    */
   public ProgramPanelSettings(int type, int timeRangeStart, int timeRangeEnd, boolean showOnlyDateAndTitle, boolean showDescription) {
+    this(type, timeRangeStart, timeRangeEnd,showOnlyDateAndTitle, showDescription, null);
+  }
+  
+  /**
+   * Creates an instance of this class.
+   * 
+   * @param type The picture showing type.
+   * @param timeRangeStart The time range start time.
+   * @param timeRangeEnd The time range end time.
+   * @param showOnlyDateAndTitle If the program panel should only contain date and title.
+   * @param showDescription If the picture description should be shown.
+   * @param pluginIds The ids of the plugins to show the pictures for.
+   */
+  public ProgramPanelSettings(int type, int timeRangeStart, int timeRangeEnd, boolean showOnlyDateAndTitle, boolean showDescription, String[] pluginIds) {
     mType = type;
     mTimeRangeStart = timeRangeStart;
     mTimeRangeEnd = timeRangeEnd;
     mShowOnlyDateAndTitle = showOnlyDateAndTitle;
     mShowDescription = showDescription;
+    mPluginIds = pluginIds;
   }
   
   /**
@@ -70,6 +86,13 @@ public class ProgramPanelSettings {
   public boolean isShowingPictureNever() {
     return mType == PictureSettingsPanel.SHOW_NEVER;
   }
+  
+  /**
+   * @return If the type of the picture showing is set to show picture for plugins.
+   */
+  public boolean isShowingPictureForPlugins() {
+    return mType == PictureSettingsPanel.SHOW_FOR_PLUGINS;
+  }  
    
   /**
    * @return If the program panel should only containg date and title.
@@ -104,5 +127,12 @@ public class ProgramPanelSettings {
    */
   public int getPictureTimeRangeEnd() {
     return mTimeRangeEnd;
+  }
+  
+  /**
+   * @return The plugin ids to show the pictures for.
+   */
+  public String[] getPluginIds() {
+    return mPluginIds;
   }
 }
