@@ -26,14 +26,13 @@
 
 package devplugin;
 
-import java.util.Iterator;
-
-import javax.swing.ImageIcon;
-import javax.swing.JPopupMenu;
-
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvdataservice.TvDataService;
 import util.exc.TvBrowserException;
+
+import javax.swing.ImageIcon;
+import javax.swing.JPopupMenu;
+import java.util.Iterator;
 
 /**
  * The PluginManager provides some usefull methods for a plugin.
@@ -116,11 +115,10 @@ public interface PluginManager {
    *        If not, the results will be grouped by date and channel and the
    *        search will be faster.
    * @return The matching programs.
-   * @throws TvBrowserException
-   * @throws TvBrowserException If there is a syntax error in the regular expression.
    *
    * @deprecated Since 1.1. Use {@link #createProgramSearcher(int, String, boolean)}
    *             instead.
+   * @throws util.exc.TvBrowserException Error while searching
    */
   public Program[] search(String regex, boolean caseSensitive,
                           ProgramFieldType[] fieldArr, Date startDate, int nrDays, Channel[] channels,
@@ -323,7 +321,6 @@ public interface PluginManager {
    *  
    * @param plugin Plugin that wants to load an Icon
    * @param icon Icon in the Icon-Theme
-   * @param size Size of the Icon
    * @return Icon if found, null if not
    * @since 2.2
    */
