@@ -111,7 +111,9 @@ public class ICalExporter extends AbstractExporter {
     }
     
     if (fileName!="") {
-    	select.setSelectedFile(new File((new File(mSavePath).getParent()) + File.separator + fileName + ext));
+        if (mSavePath == null)
+            mSavePath = "";
+        select.setSelectedFile(new File((new File(mSavePath).getParent()) + File.separator + fileName + ext));
     }
 
     if (select.showSaveDialog(CalendarExportPlugin.getInstance().getBestParentFrame()) == JFileChooser.APPROVE_OPTION) {

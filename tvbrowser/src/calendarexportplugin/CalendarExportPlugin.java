@@ -24,11 +24,11 @@ package calendarexportplugin;
 
 import calendarexportplugin.exporter.ExporterFactory;
 import calendarexportplugin.exporter.ExporterIf;
-import calendarexportplugin.utils.CalendarToolbox;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.ThemeIcon;
 import devplugin.Version;
@@ -37,7 +37,6 @@ import util.ui.UiUtilities;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JOptionPane;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
@@ -47,245 +46,264 @@ import java.util.Properties;
 
 /**
  * This Plugin exports the Calendar to a external Application or File
- * 
+ *
  * @author bodo
  */
 public class CalendarExportPlugin extends Plugin {
-  /** Translator */
-  private static final Localizer mLocalizer = Localizer.getLocalizerFor(CalendarExportPlugin.class);
+    /**
+     * Translator
+     */
+    private static final Localizer mLocalizer = Localizer.getLocalizerFor(CalendarExportPlugin.class);
 
-  /** If true, set length to 0 min */
-  public static final String PROP_NULLTIME = "nulltime";
+    /**
+     * If true, set length to 0 min
+     */
+    public static final String PROP_NULLTIME = "nulltime";
 
-  /** Category of Item */
-  public static final String PROP_CATEGORIE = "Categorie";
+    /**
+     * Category of Item
+     */
+    public static final String PROP_CATEGORIE = "Categorie";
 
-  /** Show Time as Busy or Free - 0 = Busy, 1 = Free */
-  public static final String PROP_SHOWTIME = "ShowTime";
+    /**
+     * Show Time as Busy or Free - 0 = Busy, 1 = Free
+     */
+    public static final String PROP_SHOWTIME = "ShowTime";
 
-  /** Classification - 0 = Public, 1 = Private */
-  public static final String PROP_CLASSIFICATION = "Classification";
+    /**
+     * Classification - 0 = Public, 1 = Private
+     */
+    public static final String PROP_CLASSIFICATION = "Classification";
 
-  /** Parameters for Text-Creation */
-  public static final String PROP_PARAM = "paramToUse";
+    /**
+     * Parameters for Text-Creation
+     */
+    public static final String PROP_PARAM = "paramToUse";
 
-  /** Use Alarm ? */
-  public static final String PROP_ALARM = "usealarm";
+    /**
+     * Use Alarm ?
+     */
+    public static final String PROP_ALARM = "usealarm";
 
-  /** Minutes before ? */
-  public static final String PROP_ALARMBEFORE = "alarmbefore";
+    /**
+     * Minutes before ?
+     */
+    public static final String PROP_ALARMBEFORE = "alarmbefore";
 
-  /** List of active Exporters */
-  public static final String PROP_ACTIVE_EXPORTER = "activeexporter";
+    /**
+     * List of active Exporters
+     */
+    public static final String PROP_ACTIVE_EXPORTER = "activeexporter";
 
-  /** The Default-Parameters */
-  public static final String DEFAULT_PARAMETER = "{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n";
+    /**
+     * The Default-Parameters
+     */
+    public static final String DEFAULT_PARAMETER = "{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n";
 
-  /** Instance of this Plugin */
-  private static CalendarExportPlugin mInstance;
+    /**
+     * Instance of this Plugin
+     */
+    private static CalendarExportPlugin mInstance;
 
-  /** The Exporter to use */
-  private CalendarToolbox mExport = new CalendarToolbox();
+    /**
+     * Settings
+     */
+    private Properties mSettings;
 
-  /** Settings */
-  private Properties mSettings;
+    /**
+     * Factory for Export-Types
+     */
+    private ExporterFactory mExporterFactory;
 
-  /** Factory for Export-Types */
-  private ExporterFactory mExporterFactory;
-
-  /**
-   * Create Plugin
-   */
-  public CalendarExportPlugin() {
-    mExporterFactory = new ExporterFactory();
-    mInstance = this;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.Plugin#getInfo()
-   */
-  public PluginInfo getInfo() {
-    String name = mLocalizer.msg("pluginName", "Calendar export");
-    String desc = mLocalizer.msg("description",
-        "Exports a Program as a vCal/iCal File. This File can easily imported in other Calendar Applications.");
-    String author = "Bodo Tasche, Udo Weigelt";
-    return new PluginInfo(name, desc, author, new Version(0, 3));
-  }
-
-  /*
-   * (non-Javadoc)
-   * @see devplugin.Plugin#getMarkIconFromTheme()
-   */
-  public ThemeIcon getMarkIconFromTheme() {
-    return new ThemeIcon("apps", "office-calendar", 16);
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.Plugin#getContextMenuActions(devplugin.Program)
-   */
-  public ActionMenu getContextMenuActions(final Program program) {
-    ExporterIf[] activeExporter = mExporterFactory.getActiveExporters();
-
-    if (activeExporter.length == 0) {
-      return null;
+    /**
+     * Create Plugin
+     */
+    public CalendarExportPlugin() {
+        mExporterFactory = new ExporterFactory();
+        mInstance = this;
     }
 
-    Action mainaction = new devplugin.ContextMenuAction();
-    mainaction.putValue(Action.NAME, mLocalizer.msg("contextMenuText", "Export to Calendar-File"));
-    mainaction.putValue(Action.SMALL_ICON, createImageIcon("apps", "office-calendar", 16));
+    /*
+    * (non-Javadoc)
+    *
+    * @see devplugin.Plugin#getInfo()
+    */
+    public PluginInfo getInfo() {
+        String name = mLocalizer.msg("pluginName", "Calendar export");
+        String desc = mLocalizer.msg("description",
+                "Exports a Program as a vCal/iCal File. This File can easily imported in other Calendar Applications.");
+        String author = "Bodo Tasche, Udo Weigelt";
+        return new PluginInfo(name, desc, author, new Version(0, 3));
+    }
 
-    Action[] actions = new Action[activeExporter.length];
+    /*
+    * (non-Javadoc)
+    * @see devplugin.Plugin#getMarkIconFromTheme()
+    */
+    public ThemeIcon getMarkIconFromTheme() {
+        return new ThemeIcon("apps", "office-calendar", 16);
+    }
 
-    int max = activeExporter.length;
+    /*
+    * (non-Javadoc)
+    *
+    * @see devplugin.Plugin#getContextMenuActions(devplugin.Program)
+    */
+    public ActionMenu getContextMenuActions(final Program program) {
+        ExporterIf[] activeExporter = mExporterFactory.getActiveExporters();
 
-    for (int i = 0; i < max; i++) {
-      final ExporterIf export = activeExporter[i];
-      AbstractAction action = new AbstractAction() {
-        public void actionPerformed(ActionEvent evt) {
-          new Thread(new Runnable(){
-            public void run() {
-              Program[] programArr = { program };
-              export.exportPrograms(programArr, mSettings);
+        if (activeExporter.length == 0) {
+            return null;
+        }
+
+        Action mainaction = new devplugin.ContextMenuAction();
+        mainaction.putValue(Action.NAME, mLocalizer.msg("contextMenuText", "Export to Calendar-File"));
+        mainaction.putValue(Action.SMALL_ICON, createImageIcon("apps", "office-calendar", 16));
+
+        Action[] actions = new Action[activeExporter.length];
+
+        int max = activeExporter.length;
+
+        for (int i = 0; i < max; i++) {
+            final ExporterIf export = activeExporter[i];
+            AbstractAction action = new AbstractAction() {
+                public void actionPerformed(ActionEvent evt) {
+                    new Thread(new Runnable() {
+                        public void run() {
+                            Program[] programArr = {program};
+                            export.exportPrograms(programArr, mSettings);
+                        }
+                    }).start();
+                }
+            };
+
+            StringBuilder name = new StringBuilder();
+
+            if (max == 1) {
+                name.append(mLocalizer.msg("contextMenuText", "Export to")).append(' ');
             }
-          }).start();
+
+            name.append(activeExporter[i].getName());
+
+            action.putValue(Action.NAME, name.toString());
+            action.putValue(Action.SMALL_ICON, createImageIcon("apps", "office-calendar", 16));
+
+            actions[i] = action;
         }
-      };
 
-      StringBuilder name = new StringBuilder();
-
-      if (max == 1) {
-        name.append(mLocalizer.msg("contextMenuText", "Export to")).append(' ');
-      }
-
-      name.append(activeExporter[i].getName());
-
-      action.putValue(Action.NAME, name.toString());
-      action.putValue(Action.SMALL_ICON, createImageIcon("apps", "office-calendar", 16));
-
-      actions[i] = action;
-    }
-
-    if (actions.length == 1) {
-      return new ActionMenu(actions[0]);
-    }
-
-    return new ActionMenu(mainaction, actions);
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.Plugin#canReceivePrograms()
-   */
-  public boolean canReceivePrograms() {
-    return mExporterFactory.getActiveExporters().length > 0;
-  }
-
-  /**
-   * This method is invoked for multiple program execution.
-   * 
-   * @see #canReceivePrograms()
-   */
-  public void receivePrograms(final Program[] programArr) {
-    final ExporterIf[] export = mExporterFactory.getActiveExporters();
-    if (export.length == 1) {
-      new Thread(new Runnable(){
-        public void run() {
-          export[0].exportPrograms(programArr, mSettings);
+        if (actions.length == 1) {
+            return new ActionMenu(actions[0]);
         }
-      }).start();
-    } else if (export.length > 1) {
-      final ExporterIf ex = (ExporterIf) JOptionPane.showInputDialog(getParentFrame(), 
-          mLocalizer.msg("exportSelect", "Export to calendar:"), 
-          mLocalizer.msg("exportSelectTitle", "Choose calendar"), 
-          JOptionPane.PLAIN_MESSAGE, 
-          null, export, null);
-      if (ex != null) {
-        new Thread(new Runnable(){
-          public void run() {
-            ex.exportPrograms(programArr, mSettings);
-          }
-        }).start();        
-      }
+
+        return new ActionMenu(mainaction, actions);
     }
 
-  }
-
-  /**
-   * Get Settings-Tab
-   * 
-   * @return SettingsTab
-   */
-  public SettingsTab getSettingsTab() {
-    return new CalendarSettingsTab(this, mSettings);
-  }
-
-  /**
-   * Stores the Settings
-   * 
-   * @return Settings
-   */
-  public Properties storeSettings() {
-    return mSettings;
-  }
-
-  /**
-   * Loads the Settings
-   * 
-   * @param settings Settings for this Plugin
-   */
-  public void loadSettings(Properties settings) {
-    if (settings == null) {
-      settings = new Properties();
+    @Override
+    public boolean canReceiveProgramsWithTarget() {
+        return true;
     }
-    mSettings = settings;
 
-    mExporterFactory.setListOfActiveExporters(mSettings.getProperty(PROP_ACTIVE_EXPORTER));
-  }
+    @Override
+    public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
+        ExporterIf[] exporters = mExporterFactory.getActiveExporters();
 
-  /**
-   * Called by the host-application during start-up.
-   * 
-   * @see #writeData(ObjectOutputStream)
-   */
-  public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    try {
-      int version = in.readInt();
-    } catch (Exception e) {
+        System.out.println(">>>"+receiveTarget.getTargetId());
+
+        for (ExporterIf export:exporters) {
+            if (export.getClass().getName().equals(receiveTarget.getTargetId())) {
+                export.exportPrograms(programArr, mSettings);
+                return true;
+            }
+        }
+
+        return false;
     }
-  }
 
-  /**
-   * Counterpart to loadData. Called when the application shuts down.
-   * 
-   * @see #readData(ObjectInputStream)
-   */
-  public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(2);
-  }
+    @Override
+    public ProgramReceiveTarget[] getProgramReceiveTargets() {
+        ExporterIf[] exporters = mExporterFactory.getActiveExporters();
 
-  /**
-   * @return ExporterFactory
-   */
-  public ExporterFactory getExporterFactory() {
-    return mExporterFactory;
-  }
+        ProgramReceiveTarget[] targets = new ProgramReceiveTarget[exporters.length];
 
-  /**
-   * @return Instance of this Plugin
-   */
-  public static CalendarExportPlugin getInstance() {
-    return mInstance;
-  }
-  
-  /**
-   * @return get best Parent-Frame for Dialogs
-   */
-  public Window getBestParentFrame() {
-    return UiUtilities.getBestDialogParent(getParentFrame());
+        for (int i =0;i<exporters.length;i++) {
+            System.out.println(exporters[i].getClass().getName());
+            targets[i] = new ProgramReceiveTarget(this, exporters[i].getName(), exporters[i].getClass().getName());
+        }
+
+        return targets;
+    }
+
+    /**
+     * Get Settings-Tab
+     *
+     * @return SettingsTab
+     */
+    public SettingsTab getSettingsTab() {
+        return new CalendarSettingsTab(this, mSettings);
+    }
+
+    /**
+     * Stores the Settings
+     *
+     * @return Settings
+     */
+    public Properties storeSettings() {
+        return mSettings;
+    }
+
+    /**
+     * Loads the Settings
+     *
+     * @param settings Settings for this Plugin
+     */
+    public void loadSettings(Properties settings) {
+        if (settings == null) {
+            settings = new Properties();
+        }
+        mSettings = settings;
+
+        mExporterFactory.setListOfActiveExporters(mSettings.getProperty(PROP_ACTIVE_EXPORTER));
+    }
+
+    /**
+     * Called by the host-application during start-up.
+     *
+     * @see #writeData(ObjectOutputStream)
+     */
+    public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        try {
+            int version = in.readInt();
+        } catch (Exception e) {
+        }
+    }
+
+    /**
+     * Counterpart to loadData. Called when the application shuts down.
+     *
+     * @see #readData(ObjectInputStream)
+     */
+    public void writeData(ObjectOutputStream out) throws IOException {
+        out.writeInt(2);
+    }
+
+    /**
+     * @return ExporterFactory
+     */
+    public ExporterFactory getExporterFactory() {
+        return mExporterFactory;
+    }
+
+    /**
+     * @return Instance of this Plugin
+     */
+    public static CalendarExportPlugin getInstance() {
+        return mInstance;
+    }
+
+    /**
+     * @return get best Parent-Frame for Dialogs
+     */
+    public Window getBestParentFrame() {
+        return UiUtilities.getBestDialogParent(getParentFrame());
   }
 }
