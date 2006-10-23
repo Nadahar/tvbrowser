@@ -53,9 +53,9 @@ import util.ui.Localizer;
   public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {<br>
   &nbsp;&nbsp;ProgramReceiveTarget[] targets = getSupportedTargets();<br>
     <br>
-  &nbsp;&nbsp;if(receiveTarget.equals(targets[0])<br>
+  &nbsp;&nbsp;if(targets[0].equals(receiveTarget)<br>
   &nbsp;&nbsp;&nbsp;&nbsp;showProgramsInDialog(programArr);<br>
-  &nbsp;&nbsp;else if (receiveTarget.equals(targets[1])<br>
+  &nbsp;&nbsp;else if (targets[1].equals(receiveTarget)<br>
   &nbsp;&nbsp;&nbsp;&nbsp;for(Program p : programArr)<br>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p.mark(this);<br>
   }<br>
@@ -202,6 +202,24 @@ public final class ProgramReceiveTarget {
    * @return True if the receiveTarget is the default ProgramReceiveTarget for the ProgramReceiveIf.
    */
   public static boolean isDefaultProgramReceiveTargetForProgramReceiveIf(ProgramReceiveIf receiveIf, ProgramReceiveTarget receiveTarget) {
+    if(receiveIf == null || receiveTarget == null)
+      return false;
+    
     return receiveIf.getId().compareTo(receiveTarget.mReceiveIfId) == 0 && receiveTarget.mTargetId.compareTo("NULL") == 0;
+  }
+  
+  /**
+   * Checks if the given id is used by this instance of ProgramReceiveTarget
+   * and contains to the given ProgramReceiveIf.
+   * 
+   * @param id The id to check.
+   * @param receiveIf The receive if to which the ProgramReceiveTarget is connected.
+   * @return True if this instance is using the id and contains to the given ProgramReceiveIf.
+   */
+  public boolean isReceiveTargetWithIdOfProgramReceiveIf(ProgramReceiveIf receiveIf, String id) {
+    if(receiveIf == null || id == null)
+      return false;
+    
+    return receiveIf.getId().compareTo(mReceiveIfId) == 0 && id.compareTo(mTargetId) == 0;
   }
 }

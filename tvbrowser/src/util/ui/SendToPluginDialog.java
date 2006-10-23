@@ -122,7 +122,8 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
           if(((ProgramReceiveIf)e.getItem()).canReceiveProgramsWithTarget()) {
             for(ProgramReceiveTarget target : targets)
               model.addElement(target);
-            mTargetList.setEnabled(true);
+            
+            mTargetList.setEnabled(targets.length > 1);
           }
           else if(targets != null && targets.length > 0) {
             model.addElement(targets[0]);
