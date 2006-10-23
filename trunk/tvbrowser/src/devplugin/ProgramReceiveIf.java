@@ -26,7 +26,7 @@
 package devplugin;
 
 /**
- * A interface for a object that supports receiving programs.
+ * A interface for an object that supports receiving programs.
  * 
  * @author René Mach
  *

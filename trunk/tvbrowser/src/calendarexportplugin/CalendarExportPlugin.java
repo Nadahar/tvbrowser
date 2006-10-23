@@ -205,10 +205,13 @@ public class CalendarExportPlugin extends Plugin {
 
     @Override
     public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
+        if(receiveTarget == null)
+          return false;
+      
         ExporterIf[] exporters = mExporterFactory.getActiveExporters();
 
         for (ExporterIf export:exporters) {
-            if (export.getClass().getName().equals(receiveTarget.getTargetId())) {
+            if (receiveTarget.isReceiveTargetWithIdOfProgramReceiveIf(this,export.getClass().getName())) {
                 export.exportPrograms(programArr, mSettings);
                 return true;
             }
