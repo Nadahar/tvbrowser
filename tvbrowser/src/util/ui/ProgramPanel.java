@@ -178,7 +178,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     }
 
     if (WIDTH_LEFT == -1) {
-      WIDTH_LEFT = getFontMetrics(mTimeFont).stringWidth(TIME_FORMATTER.formatTime(24, 59))+3;
+      WIDTH_LEFT = getFontMetrics(mTimeFont).stringWidth(TIME_FORMATTER.formatTime(24, 59))+7;
       WIDTH_RIGHT = Settings.propColumnWidth.getInt() - WIDTH_LEFT;
       WIDTH = WIDTH_LEFT + WIDTH_RIGHT;
     }
