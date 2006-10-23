@@ -108,9 +108,11 @@ public class PictureSettingsPanel extends JPanel {
     
     mPictureStartTime = new JSpinner(new SpinnerDateModel());
     mPictureStartTime.setEditor(new JSpinner.DateEditor(mPictureStartTime, timePattern));
-
+    CaretPositionCorrector.createCorrector(((JSpinner.DateEditor)mPictureStartTime.getEditor()).getTextField(), new char[] {':'}, -1);
+    
     mPictureEndTime = new JSpinner(new SpinnerDateModel());
     mPictureEndTime.setEditor(new JSpinner.DateEditor(mPictureEndTime, timePattern));
+    CaretPositionCorrector.createCorrector(((JSpinner.DateEditor)mPictureEndTime.getEditor()).getTextField(), new char[] {':'}, -1);
 
     Calendar cal = Calendar.getInstance();
     cal.set(Calendar.HOUR_OF_DAY, timeRangeStart / 60);
