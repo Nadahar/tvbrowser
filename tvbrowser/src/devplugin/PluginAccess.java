@@ -91,9 +91,42 @@ public interface PluginAccess extends Marker,ProgramReceiveIf,ContextMenuIf {
    * 16x16.
    * 
    * @return the icons to use for marking programs in the program table.
-   * @since 2.3
+   * @since 2.5
    */
   public Icon[] getMarkIcons(Program p);
+  
+  /**
+   * Returns the available program filters that the plugin supports.
+   * @since 2.5
+   * 
+   * @return The available program filters that the plugin supports or <code>null</code> if it supports no filter.
+   */
+  public PluginsProgramFilter[] getAvailableFilter();
+
+  /**
+   * Is used to track if a program filter be deleted.
+   * Should be make sure only the plugin itself can delete program filters.
+   * 
+   * @param programFilter The program filter to delete.
+   * @return True if the program filter component can be deleted.
+   */
+  public boolean isAllowedToDeleteProgramFilter(PluginsProgramFilter programFilter);
+  
+  /**
+   * Returns the available plugins filter components.
+   * 
+   * @return The available plugins filter components or <code>null</code> if no plugins filter components are supported.
+   */
+  public PluginsFilterComponent[] getAvailableFilterComponents();
+ 
+  /**
+   * Is used to track if a filter component can be deleted or changed.
+   * Should be make sure only the plugin itself can change/delete filter component if it is not editable.
+   * 
+   * @param filterComponent The filter component to change/delete.
+   * @return True if the filter component can be deleted/changed.
+   */
+  public boolean isAllowedToDeleteOrChangeFilterComponent(PluginsFilterComponent filterComponent) ;
   
   public boolean canUseProgramTree();
 

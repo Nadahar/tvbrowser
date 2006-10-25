@@ -39,8 +39,7 @@ import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.contextmenu.ContextMenuManager;
-import tvbrowser.core.filters.FilterList;
-import tvbrowser.core.filters.SeparatorFilter;
+import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.search.booleansearch.BooleanSearcher;
 import tvbrowser.core.search.booleansearch.ParserException;
@@ -57,6 +56,7 @@ import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.ContextMenuIf;
 import devplugin.Date;
+import devplugin.FilterManager;
 import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.PluginManager;
@@ -382,22 +382,10 @@ public class PluginManagerImpl implements PluginManager {
    *
    * @return An array of all available filters.
    * @since 0.9.7.4
+   * * @deprecated Since 2.5 Use {@link #FilterManager.getAvailableFilters()} instead.
    */
   public ProgramFilter[] getAvailableFilters() {
-
-    ArrayList<ProgramFilter> filters = new ArrayList<ProgramFilter>();
-
-    FilterList filterList = FilterList.getInstance();
-
-    ProgramFilter[] filter = filterList.getFilterArr();
-
-    for (ProgramFilter filt : filter) {
-      if (!(filt instanceof SeparatorFilter)) {
-        filters.add(filt);
-      }
-    }
-
-    return filters.toArray(new ProgramFilter[filter.length]);
+    return FilterManagerImpl.getInstance().getAvailableFilters();
   }
 
 
@@ -785,12 +773,15 @@ public class PluginManagerImpl implements PluginManager {
   }
 
   /**
-   * Returns the current selected filter of the program table.
+   * Returns the filter manager of TV-Browser.
+   * With the filter manager you get access to the filter
+   * system of TV-Browser. You can add or remove filters
+   * of you plugin and switch the current used filter.
    * 
-   * @return The current selected filter of the program table.
+   * @return  The filter manager of TV-Browser.
    * @since 2.5
    */
-  public ProgramFilter getCurrentFilter() {
-    return MainFrame.getInstance().getProgramFilter();
+  public FilterManager getFilterManager() {
+    return FilterManagerImpl.getInstance();
   }
 }

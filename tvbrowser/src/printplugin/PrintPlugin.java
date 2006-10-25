@@ -305,7 +305,7 @@ public class PrintPlugin extends Plugin {
                     ProgramFieldType.ORIGIN_TYPE,
                     ProgramFieldType.PRODUCTION_YEAR_TYPE,
                     ProgramFieldType.SHORT_DESCRIPTION_TYPE
-                  }, false), getPluginManager().getCurrentFilter()));
+                  }, false), getPluginManager().getFilterManager().getCurrentFilter()));
       return new DayProgramScheme[]{scheme};
     }
   }

@@ -41,6 +41,8 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 import tvbrowser.core.filters.FilterComponent;
+
+
 import devplugin.Program;
 
 

@@ -50,6 +50,8 @@ import javax.swing.event.DocumentListener;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 
+
+
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
