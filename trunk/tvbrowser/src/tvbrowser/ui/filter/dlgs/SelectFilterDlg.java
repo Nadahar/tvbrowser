@@ -60,6 +60,7 @@ import util.ui.ListDragAndDropHandler;
 import util.ui.ListDropAction;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+import devplugin.PluginsProgramFilter;
 import devplugin.ProgramFilter;
 
 public class SelectFilterDlg extends JDialog implements ActionListener, WindowClosingIf, ListDropAction {
@@ -175,9 +176,11 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     
     mEditBtn
         .setEnabled(item != null
-            && !(item instanceof ShowAllFilter || item instanceof PluginFilter || item instanceof SubtitleFilter || item instanceof SeparatorFilter));
+            && !(item instanceof ShowAllFilter || item instanceof PluginFilter || item instanceof SubtitleFilter || item instanceof SeparatorFilter ||
+            item instanceof PluginsProgramFilter));
     mRemoveBtn.setEnabled(item != null
-        && !(item instanceof ShowAllFilter || item instanceof PluginFilter || item instanceof SubtitleFilter));
+        && !(item instanceof ShowAllFilter || item instanceof PluginFilter || item instanceof SubtitleFilter ||
+            item instanceof PluginsProgramFilter));
 
     int inx = mFilterListBox.getSelectedIndex();
     mUpBtn.setEnabled(inx > 0);

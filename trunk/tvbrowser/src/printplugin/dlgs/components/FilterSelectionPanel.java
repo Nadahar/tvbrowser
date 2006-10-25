@@ -49,8 +49,8 @@ public class FilterSelectionPanel extends JPanel {
     pb.addSeparator(mLocalizer.msg("filters","Filters"), cc.xyw(1,1,4));
     pb.addLabel(mLocalizer.msg("toUseFilter","To use program filter:"), cc.xy(2,3));
     
-    mFilterSelection = new JComboBox(Plugin.getPluginManager().getAvailableFilters());
-    mFilterSelection.setSelectedItem(Plugin.getPluginManager().getCurrentFilter());
+    mFilterSelection = new JComboBox(Plugin.getPluginManager().getFilterManager().getAvailableFilters());
+    mFilterSelection.setSelectedItem(Plugin.getPluginManager().getFilterManager().getCurrentFilter());
 
     pb.add(mFilterSelection, cc.xy(4,3));
   }

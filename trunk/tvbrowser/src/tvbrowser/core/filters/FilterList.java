@@ -39,7 +39,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import tvbrowser.core.Settings;
+import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.ui.mainframe.searchfield.SearchFilter;
+import devplugin.PluginAccess;
+import devplugin.PluginsProgramFilter;
 import devplugin.ProgramFilter;
 
 public class FilterList {
@@ -74,7 +77,7 @@ public class FilterList {
   }
   
   private ProgramFilter[] createFilterList() {
-    HashMap filterList = new HashMap();
+    HashMap<String,ProgramFilter> filterList = new HashMap<String,ProgramFilter>();
     
     /* Add default filters. The user may not remove them. */
     
@@ -108,7 +111,17 @@ public class FilterList {
       }
     }
     
-    ArrayList filterArr = new ArrayList();
+    PluginAccess[] plugins = PluginManagerImpl.getInstance().getActivatedPlugins();
+    
+    for(PluginAccess plugin : plugins) {
+      PluginsProgramFilter[] filters = plugin.getAvailableFilter();
+      
+      if(filters != null)
+        for(PluginsProgramFilter filter : filters)
+          filterList.put(filter.getName(), filter);
+    }
+    
+    ArrayList<ProgramFilter> filterArr = new ArrayList<ProgramFilter>();
     
     /* Sort the list*/
     File inxFile=new File(mFilterDirectory,FILTER_INDEX);
@@ -142,7 +155,7 @@ public class FilterList {
     
     
     if (filterList.size() > 0) {
-      Iterator it = filterList.values().iterator();
+      Iterator<ProgramFilter> it = filterList.values().iterator();
       while (it.hasNext()) {
         filterArr.add(it.next());
       }
@@ -197,19 +210,28 @@ public class FilterList {
     mFilterArr = filterArr;
   }
   
+  public void addProgramFilter(ProgramFilter filter) {
+    ProgramFilter[] newFilterArr = new ProgramFilter[mFilterArr.length + 1];
+    
+    System.arraycopy(mFilterArr,0,newFilterArr,0,mFilterArr.length);
+    newFilterArr[newFilterArr.length - 1] = filter;
+    
+    mFilterArr = newFilterArr;
+    store();
+  }
+  
   public void remove(ProgramFilter filter) {
-    ArrayList filterList = new ArrayList();
+    ArrayList<ProgramFilter> filterList = new ArrayList<ProgramFilter>();
     for (int i=0; i<mFilterArr.length; i++) {
       if (!mFilterArr[i].equals(filter)) {
         filterList.add(mFilterArr[i]);
       }
     }
-    ProgramFilter[] mFilterArr = new ProgramFilter[filterList.size()];
-    filterList.toArray(mFilterArr);
-    
+    mFilterArr = filterList.toArray(new ProgramFilter[filterList.size()]);
+    store();
   }
   
-  public void store() {
+  public void store() {    
     /* delete all filters*/
     File[] fileList=getFilterFiles();
     for (int i=0;i<fileList.length; i++) {
@@ -229,7 +251,7 @@ public class FilterList {
         inxOut = new BufferedWriter(new FileWriter(inxFile));
         
         for (int i = 0; i < mFilterArr.length; i++) {
-            inxOut.write(mFilterArr[i].getName()+ "\n");
+          inxOut.write(mFilterArr[i].getName()+ "\n");
         }
         inxOut.close();
     } catch (Exception e) {

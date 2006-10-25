@@ -62,6 +62,9 @@ import javax.swing.table.AbstractTableModel;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 
+import devplugin.PluginsFilterComponent;
+
+
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.FilterList;
@@ -184,7 +187,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
         if(SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2) {
           int row = mRuleTableBox.rowAtPoint(e.getPoint());
           
-          if(mRuleTableBox.getSelectedRow() == row)
+          if(mRuleTableBox.getSelectedRow() == row && mEditBtn.isEnabled())
             actionPerformed(new ActionEvent(mEditBtn,ActionEvent.ACTION_PERFORMED, mEditBtn.getActionCommand()));
         }
       }
@@ -274,7 +277,15 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
 
     mOkBtn.setEnabled(!("".equals(mFilterNameTF.getText())) && !("".equals(mFilterRuleTF.getText()))
         && mComponentTableModel.getRowCount() > 0 && validRule);
-
+    
+    if(mRuleTableBox.getSelectedRow() > -1) {
+      FilterComponent rule = mComponentTableModel.getElement(mRuleTableBox.getSelectedRow());
+    
+      if(rule instanceof PluginsFilterComponent) {
+        mEditBtn.setEnabled(((PluginsFilterComponent)rule).getPanel() != null);
+        mRemoveBtn.setEnabled(((PluginsFilterComponent)rule).getPanel() != null);
+      }
+    }
   }
 
   public void actionPerformed(ActionEvent e) {

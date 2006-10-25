@@ -37,6 +37,8 @@ import devplugin.ActionMenu;
 import devplugin.ChannelDayProgram;
 import devplugin.ContextMenuIf;
 import devplugin.PluginInfo;
+import devplugin.PluginsFilterComponent;
+import devplugin.PluginsProgramFilter;
 import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
 
@@ -661,6 +663,112 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * @since 2.5
    */
   protected abstract ProgramReceiveTarget[] doGetProgramReceiveTargets();
+    
+  /**
+   * Returns the available program filters that the plugin supports.
+   * 
+   * @return The available program filters that the plugin supports or <code>null</code> if it supports no filter.
+   * @since 2.5
+   */
+  public PluginsProgramFilter[] getAvailableFilter() {
+    try {
+      assertActivatedState();
+      return doGetAvailableFilter();
+    } catch (Exception exc) {
+      handlePluginException(exc);
+    }
+    
+    return null;
+  }
+  
+  /**
+   * Really returns the available program filters that the plugin supports.
+   * 
+   * @return The available program filters that the plugin supports or <code>null</code> if it supports no filter.
+   * @since 2.5
+   */
+  protected abstract PluginsProgramFilter[] doGetAvailableFilter();
+  
+  /**
+   * Is used to track if a program filter be deleted.
+   * Should be make sure only the plugin itself can delete program filters.
+   * 
+   * @param programFilter The program filter to delete.
+   * @return True if the program filter component can be deleted.
+   * @since 2.5
+   */
+  public boolean isAllowedToDeleteProgramFilter(PluginsProgramFilter programFilter) {
+    try {
+      assertActivatedState();
+      return doIsAllowedToDeleteProgramFilter(programFilter);
+    } catch (Exception exc) {
+      handlePluginException(exc);
+    }
+    
+    return false;
+  }
+  
+  /**
+   * Really return if a program filter can be deleted.
+   * 
+   * @param programFilter The program filter to delete.
+   * @return True if the program filter component can be deleted.
+   * @since 2.5
+   */
+  protected abstract boolean doIsAllowedToDeleteProgramFilter(PluginsProgramFilter programFilter);
+  
+  /**
+   * Returns the available plugins filter components.
+   * 
+   * @return The available plugins filter components or <code>null</code> if no plugins filter components are supported.
+   * @since 2.5
+   */
+  public PluginsFilterComponent[] getAvailableFilterComponents() {
+    try {
+      assertActivatedState();
+      return doGetAvailableFilterComponents();
+    } catch (Exception exc) {
+      handlePluginException(exc);
+    }
+    
+    return null;
+  }
+
+  /**
+   * Really returns the available plugins filter components.
+   * 
+   * @return The available plugins filter components or <code>null</code> if no plugins filter components are supported.
+   * @since 2.5
+   */
+  public abstract PluginsFilterComponent[] doGetAvailableFilterComponents();
+
+  /**
+   * Is used to track if a filter component can be deleted or changed.
+   * Should be make sure only the plugin itself can change/delete filter component if it is not editable.
+   * 
+   * @param filterComponent The filter component to change/delete.
+   * @return True if the filter component can be deleted/changed.
+   * @since 2.5
+   */
+  public boolean isAllowedToDeleteOrChangeFilterComponent(PluginsFilterComponent filterComponent) {
+    try {
+      assertActivatedState();
+      return doIsAllowedToDeleteOrChangeFilterComponent(filterComponent);
+    } catch (Exception exc) {
+      handlePluginException(exc);
+    }
+    
+    return false;
+  }
+  
+  /**
+   * Really return if a filter component can be deleted or changed.
+   * 
+   * @param filterComponent The filter component to change/delete.
+   * @return True if the filter component can be deleted/changed.
+   * @since 2.5
+   */
+  protected abstract boolean doIsAllowedToDeleteOrChangeFilterComponent(PluginsFilterComponent filterComponent);
   
   /**
    * Checks whether the plugin is activated. If it is not an error message is

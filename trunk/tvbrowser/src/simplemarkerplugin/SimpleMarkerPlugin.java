@@ -47,6 +47,8 @@ import devplugin.ContextMenuAction;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
+import devplugin.PluginsFilterComponent;
+import devplugin.PluginsProgramFilter;
 import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
@@ -61,8 +63,9 @@ import devplugin.Version;
  * License: GNU General Public License (GPL)
  * 
  * @author René Mach
+ * @param <PlugingsProgramFlter>
  */
-public class SimpleMarkerPlugin extends Plugin implements ActionListener {
+public class SimpleMarkerPlugin<PlugingsProgramFlter> extends Plugin implements ActionListener {
 
   /** The localizer for this class. */
   protected static util.ui.Localizer mLocalizer;
@@ -80,6 +83,8 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   private boolean mHasRightToUpdate = false, mHasToUpdate = false;
   
   private ManagePanel mManagePanel = null;
+  
+  private PluginsFilterComponent mChangeableFilterComponent = null;
 
   /**
    * Standard contructor for this class.
@@ -392,11 +397,28 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   }
 
   protected void removeList(MarkList list) {
+    setEditablePluginsFilterComponent(list.getFilterComponent());
+    getPluginManager().getFilterManager().deleteFilterComponent(list.getFilterComponent());
     mMarkListVector.removeListForName(list.getName());
   }
 
   protected MarkList getMarkListForName(String name) {
     return mMarkListVector.getListForName(name);
+  }
+  
+  public PluginsProgramFilter[] getAvailableFilter() {
+    return new PluginsProgramFilter[] {new PluginsProgramFilter(this) {
+
+      @Override
+      public String getSubName() {
+        return "Markiert auf Defaultliste";
+      }
+
+      public boolean accept(Program prog) {
+        return mMarkListVector.get(0).contains(prog);
+      }
+      
+    }};
   }
 
   protected void setIconFileNameForList(String listName, String fileName) {
@@ -410,6 +432,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
 
   protected void addList(MarkList list) {
     mMarkListVector.addElement(list);
+    getPluginManager().getFilterManager().addFilterComponent(list.getFilterComponent());
     updateTree();
   }
 
@@ -419,6 +442,16 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
    */
   public PluginTreeNode getRootNode() {
     return mRootNode;
+  }
+  
+  public PluginsFilterComponent[] getAvailableFilterComponents() {
+    PluginsFilterComponent[] components = new PluginsFilterComponent[mMarkListVector.size()];
+    
+    for(int i = 0; i < mMarkListVector.size(); i++) {
+      components[i] = mMarkListVector.get(i).getFilterComponent();
+    }
+    
+    return components;
   }
 
   protected Icon getIconForFileName(String fileName) {
@@ -439,5 +472,20 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   
   protected void resetManagePanel() {
     mManagePanel = null;
+  }
+  
+  protected void setEditablePluginsFilterComponent(PluginsFilterComponent component) {
+    mChangeableFilterComponent = component;
+  }
+  
+  public boolean isAllowedToDeleteOrChangeFilterComponent(PluginsFilterComponent component) {
+    boolean value = false;
+    
+    if(mChangeableFilterComponent != null)
+      value = component.equals(mChangeableFilterComponent);
+    
+    mChangeableFilterComponent = null;
+    
+    return value;
   }
 }

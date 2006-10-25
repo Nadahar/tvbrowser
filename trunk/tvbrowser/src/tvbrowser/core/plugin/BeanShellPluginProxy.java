@@ -16,6 +16,8 @@ import devplugin.ActionMenu;
 import devplugin.ChannelDayProgram;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
+import devplugin.PluginsFilterComponent;
+import devplugin.PluginsProgramFilter;
 import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
 import devplugin.beanshell.BeanShellScriptIf;
@@ -308,5 +310,29 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
     protected ProgramReceiveTarget[] doGetProgramReceiveTargets() {
       // TODO Automatisch erstellter Methoden-Stub
       return null;
+    }
+
+    @Override
+    protected PluginsProgramFilter[] doGetAvailableFilter() {
+      // TODO Automatisch erstellter Methoden-Stub
+      return null;
+    }
+
+    @Override
+    public PluginsFilterComponent[] doGetAvailableFilterComponents() {
+      // TODO Automatisch erstellter Methoden-Stub
+      return null;
+    }
+
+    @Override
+    protected boolean doIsAllowedToDeleteProgramFilter(PluginsProgramFilter programFilter) {
+      // TODO Automatisch erstellter Methoden-Stub
+      return false;
+    }
+
+    @Override
+    protected boolean doIsAllowedToDeleteOrChangeFilterComponent(PluginsFilterComponent filterComponent) {
+      // TODO Automatisch erstellter Methoden-Stub
+      return false;
     }
  }

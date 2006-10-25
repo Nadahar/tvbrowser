@@ -37,6 +37,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
 import tvbrowser.core.filters.FilterComponent;
+
+
 import devplugin.Program;
 
 /**

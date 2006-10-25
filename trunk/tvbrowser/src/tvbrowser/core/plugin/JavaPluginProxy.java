@@ -47,6 +47,8 @@ import devplugin.ChannelDayProgram;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
+import devplugin.PluginsFilterComponent;
+import devplugin.PluginsProgramFilter;
 import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
@@ -462,5 +464,25 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     ProgramReceiveTarget[] targets = mPlugin.getProgramReceiveTargets();
     
     return targets != null ? targets : ProgramReceiveTarget.createDefaultTargetArrayForProgramReceiveIf(mPlugin); 
+  }
+
+  @Override
+  protected PluginsProgramFilter[] doGetAvailableFilter() {
+    return mPlugin.getAvailableFilter();
+  }
+
+  @Override
+  public PluginsFilterComponent[] doGetAvailableFilterComponents() {
+    return mPlugin.getAvailableFilterComponents();
+  }
+
+  @Override
+  protected boolean doIsAllowedToDeleteOrChangeFilterComponent(PluginsFilterComponent filterComponent) {
+    return mPlugin.isAllowedToDeleteOrChangeFilterComponent(filterComponent);
+  }
+
+  @Override
+  protected boolean doIsAllowedToDeleteProgramFilter(PluginsProgramFilter programFilter) {
+    return mPlugin.isAllowedToDeleteProgramFilter(programFilter);
   }
 }

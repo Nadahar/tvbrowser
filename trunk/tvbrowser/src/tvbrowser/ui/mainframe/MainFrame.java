@@ -1148,6 +1148,10 @@ public class MainFrame extends JFrame implements DateListener {
     util.ui.UiUtilities.centerAndShow(dlg);
     mMenuBar.updateFiltersMenu();
   }
+  
+  public void updateFilterMenu() {
+    mMenuBar.updateFiltersMenu();
+  }
 
   public void showHelpDialog() {
 

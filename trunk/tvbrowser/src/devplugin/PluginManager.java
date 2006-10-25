@@ -207,6 +207,7 @@ public interface PluginManager {
    *
    * @return An array of all available filters.
    * @since 0.9.7.4
+   * @deprecated Since 2.5 Use {@link #FilterManager.getAvailableFilters()} instead.
    */
   public ProgramFilter[] getAvailableFilters();
 
@@ -412,10 +413,13 @@ public interface PluginManager {
   public void goToDate(Date date);
   
   /**
-   * Returns the current selected filter of the program table.
+   * Returns the filter manager of TV-Browser.
+   * With the filter manager you get access to the filter
+   * system of TV-Browser. You can add or remove filters
+   * of you plugin and switch the current used filter.
    * 
-   * @return The current selected filter of the program table.
+   * @return  The filter manager of TV-Browser.
    * @since 2.5
    */
-  public ProgramFilter getCurrentFilter();
+  public FilterManager getFilterManager();
 }
