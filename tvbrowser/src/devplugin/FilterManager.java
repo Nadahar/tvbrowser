@@ -57,7 +57,6 @@ public interface FilterManager {
   
   /**
    * @param name The name of the used filter rule. 
-   * @param description The description of the filter component
    * @param rule The rule to use for this user filter.
    * @return True if filter could be added. 
    */
