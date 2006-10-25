@@ -99,4 +99,12 @@ public class StringProperty extends Property {
     mCachedValue = null;
   }
 
+    /**
+     * Set the Default-Value of this Class
+     * @param defaultValue Default Value
+     * @since 2.5
+     */
+  public void setDefault(String defaultValue) {
+        mDefaultValue = defaultValue;
+  }
 }

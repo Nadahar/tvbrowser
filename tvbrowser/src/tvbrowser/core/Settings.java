@@ -25,18 +25,8 @@
  */
 package tvbrowser.core;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.util.logging.Level;
-
-import javax.swing.UIManager;
-
 import com.jgoodies.looks.plastic.PlasticLookAndFeel;
-
+import devplugin.ProgramFieldType;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.plugin.DefaultSettings;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -61,7 +51,16 @@ import util.settings.StringProperty;
 import util.settings.VersionProperty;
 import util.ui.PictureSettingsPanel;
 import util.ui.view.SplitViewProperty;
-import devplugin.ProgramFieldType;
+
+import javax.swing.UIManager;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.logging.Level;
 
 /**
  * The Settings class provides access to the settings of the whole application
@@ -91,8 +90,7 @@ public class Settings {
   private static final Font PROGRAMINFOFONT = new Font("Dialog", Font.PLAIN, 10);
   private static final Font CHANNELNAMEFONT = new Font("Dialog", Font.BOLD, 12);
   private static final Font PROGRAMTIMEFONT = new Font("Dialog", Font.BOLD, 12);
-  
- 
+
   private static PropertyManager mProp = new PropertyManager();
 
   /**
@@ -644,8 +642,7 @@ public class Settings {
       mProp, "skinLF.themepack", "themepacks/themepack.zip");
 
   public static final StringProperty propJGoodiesTheme = new StringProperty(
-      mProp, "jgoodies.theme", PlasticLookAndFeel.createMyDefaultTheme()
-          .getClass().getName());
+      mProp, "jgoodies.theme", "");
 
   public static final BooleanProperty propJGoodiesShadow = new BooleanProperty(
       mProp, "jgoodies.dropshadow", false);
@@ -980,4 +977,11 @@ public class Settings {
   public static final BooleanProperty propTwelveHourFormat = new BooleanProperty(
       mProp, "uswTwelveHourFormat", false);
 
+
+    static {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        if (!ge.isHeadless()) {
+            propJGoodiesTheme.setDefault(PlasticLookAndFeel.createMyDefaultTheme().getClass().getName());        
+        }
+    }
 }
