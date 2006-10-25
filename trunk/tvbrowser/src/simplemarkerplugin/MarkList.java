@@ -403,7 +403,7 @@ public class MarkList extends Vector<Program> {
     }
 
     public String getDescription() {
-      return "Marked on " + getName();
+      return SimpleMarkerPlugin.mLocalizer.msg("markedOn","Marked on ") + getName();
     }
 
     public String getSubName() {

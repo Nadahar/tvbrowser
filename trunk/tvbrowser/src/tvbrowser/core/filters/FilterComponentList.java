@@ -283,6 +283,13 @@ public class FilterComponentList {
     //return mComponentMap.containsKey(name.toUpperCase());  
   }
   
-  
-
+  public PluginsFilterComponent[] getPluginsFilterComponentsForPlugin(PluginAccess plugin) {
+    ArrayList<PluginsFilterComponent> list = new ArrayList<PluginsFilterComponent>();
+    
+    for(PluginsFilterComponent component : mPluginFilterComponentList)
+      if(component.getPluginAccessOfComponent().equals(plugin))
+        list.add(component);
+    
+    return list.toArray(new PluginsFilterComponent[list.size()]);
+  }
 }
