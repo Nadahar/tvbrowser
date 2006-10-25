@@ -207,7 +207,7 @@ public interface PluginManager {
    *
    * @return An array of all available filters.
    * @since 0.9.7.4
-   * @deprecated Since 2.5 Use {@link #FilterManager.getAvailableFilters()} instead.
+   * @deprecated Since 2.5 Use {@link devplugin.FilterManager#getAvailableFilters()} instead.
    */
   public ProgramFilter[] getAvailableFilters();
 
