@@ -102,7 +102,6 @@ public class FilterManagerImpl implements FilterManager {
 
   /**
    * @param name The name of the used filter rule. 
-   * @param description The description of the filter component
    * @param rule The rule to use for this user filter.
    * @return True if filter could be added. 
    */
@@ -125,7 +124,7 @@ public class FilterManagerImpl implements FilterManager {
 
   /**
    * @param name The name of the filter rule which should be deleted.
-   * @return True if filter could be added. 
+   * @return True if filter could be deleted. 
    */
   public boolean deleteUserFilterRule(String name) {
     ProgramFilter filter = FilterList.getInstance().getFilterByName(name);
@@ -163,15 +162,7 @@ public class FilterManagerImpl implements FilterManager {
    */
   public boolean deleteFilterComponent(PluginsFilterComponent filterComponent) {
     if(filterComponent.getPluginAccessOfComponent().isAllowedToDeleteOrChangeFilterComponent(filterComponent)) {
-      
-      UserFilter[] userFilters = FilterList.getInstance().getUserFilterArr();      
-      
-      for(int i = 0; i < userFilters.length; i++)
-        if(userFilters[i].getRule().indexOf(filterComponent.getName()) != -1)
-          deleteUserFilterRule(userFilters[i].getName());
-      
-      FilterComponentList.getInstance().remove(filterComponent.getName());      
-      MainFrame.getInstance().updateFilterMenu();
+      removeFilterComponents(filterComponent);
       return true;
     }
     
@@ -198,6 +189,9 @@ public class FilterManagerImpl implements FilterManager {
    */
   public boolean deleteFilter(PluginsProgramFilter filter) {
     if(filter.getPluginAccessOfFilter().isAllowedToDeleteProgramFilter(filter)) {
+      if(getCurrentFilter() == filter)
+        setCurrentFilter(FilterList.getInstance().getDefaultFilter());
+      
       FilterList.getInstance().remove(filter);
       FilterList.getInstance().store();
       MainFrame.getInstance().updateFilterMenu();
@@ -208,7 +202,7 @@ public class FilterManagerImpl implements FilterManager {
   }
   
   /**
-   * Changed the name of a filter component.
+   * Changes the name of a filter component.
    * 
    * @param component The changed filter component.
    * @param oldName The old name of the filter component.
@@ -238,5 +232,16 @@ public class FilterManagerImpl implements FilterManager {
     
     FilterList.getInstance().store();
     return true;
+  }
+  
+  public void removeFilterComponents(PluginsFilterComponent filterComponent) {
+    UserFilter[] userFilters = FilterList.getInstance().getUserFilterArr();      
+    
+    for(int i = 0; i < userFilters.length; i++)
+      if(userFilters[i].getRule().indexOf(filterComponent.getName()) != -1)
+        deleteUserFilterRule(userFilters[i].getName());
+    
+    FilterComponentList.getInstance().remove(filterComponent.getName());      
+    MainFrame.getInstance().updateFilterMenu();    
   }
 }

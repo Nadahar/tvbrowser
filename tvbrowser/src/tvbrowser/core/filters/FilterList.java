@@ -183,6 +183,19 @@ public class FilterList {
     return mFilterArr;    
   }
   
+  public PluginsProgramFilter[] getPluginsProgramFiltersForPlugin(PluginAccess plugin) {
+    ArrayList<PluginsProgramFilter> list = new ArrayList<PluginsProgramFilter>();
+    
+    for(ProgramFilter filter : mFilterArr) {
+      if(filter instanceof PluginsProgramFilter) {
+        if(((PluginsProgramFilter)filter).getPluginAccessOfFilter().equals(plugin))
+          list.add((PluginsProgramFilter)filter);
+      }
+    }
+    
+    return list.toArray(new PluginsProgramFilter[list.size()]);
+  }
+  
   public UserFilter[] getUserFilterArr() {
     ArrayList filterList = new ArrayList();
     for (int i=0; i<mFilterArr.length; i++) {

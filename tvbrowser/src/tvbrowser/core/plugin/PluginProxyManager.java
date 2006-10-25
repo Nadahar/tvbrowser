@@ -41,12 +41,18 @@ import tvbrowser.core.TvDataBaseListener;
 import tvbrowser.core.TvDataUpdateListener;
 import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.contextmenu.ContextMenuManager;
+import tvbrowser.core.filters.FilterComponentList;
+import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.FilterManagerImpl;
+import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MarkedProgramsList;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import devplugin.ChannelDayProgram;
 import devplugin.ContextMenuIf;
 import devplugin.PluginAccess;
+import devplugin.PluginsFilterComponent;
+import devplugin.PluginsProgramFilter;
 import devplugin.Program;
 
 /**
@@ -376,6 +382,16 @@ public class PluginProxyManager {
     if (item != null) {
       activatePlugin(item);
     }
+    
+    PluginsFilterComponent[] components = item.getPlugin().getAvailableFilterComponents();
+    
+    for(PluginsFilterComponent component : components)
+      FilterManagerImpl.getInstance().addFilterComponent(component);
+    
+    PluginsProgramFilter[] filters = item.getPlugin().getAvailableFilter();
+    
+    for(PluginsProgramFilter filter : filters)
+      FilterManagerImpl.getInstance().addFilter(filter);
   }
 
   /**
@@ -418,6 +434,23 @@ public class PluginProxyManager {
    * @throws TvBrowserException If deactivating failed
    */
   public void deactivatePlugin(PluginProxy plugin) throws TvBrowserException {
+    PluginsFilterComponent[] filterComponents = FilterComponentList.getInstance().getPluginsFilterComponentsForPlugin(plugin);
+    
+    for(PluginsFilterComponent filterComponent : filterComponents)
+      ((FilterManagerImpl)FilterManagerImpl.getInstance()).removeFilterComponents(filterComponent);
+    
+    PluginsProgramFilter[] filters = FilterList.getInstance().getPluginsProgramFiltersForPlugin(plugin);
+    
+    for(PluginsProgramFilter filter : filters) {
+      if(FilterManagerImpl.getInstance().getCurrentFilter() == filter)
+        FilterManagerImpl.getInstance().setCurrentFilter(FilterList.getInstance().getDefaultFilter());
+      
+      FilterList.getInstance().remove(filter);
+    }
+
+    FilterList.getInstance().store();
+    MainFrame.getInstance().updateFilterMenu();
+
     PluginListItem item = getItemForPlugin(plugin);
     if (item != null) {
       deactivatePlugin(item, true);

@@ -171,6 +171,8 @@ public class MainFrame extends JFrame implements DateListener {
   
   /** Store the Viewposition if a Filter is selected*/
   private Point mStoredViewPosition;
+  
+  private String mCurrentFilterName;
 
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
@@ -677,6 +679,8 @@ public class MainFrame extends JFrame implements DateListener {
         }
       });
     }
+    
+    mCurrentFilterName = filter.getName();
   }
 
   public ProgramFilter getProgramFilter() {
@@ -840,7 +844,7 @@ public class MainFrame extends JFrame implements DateListener {
     ProgramFilter filter = getProgramFilter();
     if (filter != null) {
       if (!(filter instanceof SearchFilter))
-        Settings.propLastUsedFilter.setString(getProgramFilter().getName());
+        Settings.propLastUsedFilter.setString(mCurrentFilterName);
       else
         Settings.propLastUsedFilter.setString(FilterList.getInstance().getDefaultFilter().getName());
     } else {

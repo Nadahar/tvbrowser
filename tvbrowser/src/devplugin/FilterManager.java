@@ -64,7 +64,7 @@ public interface FilterManager {
   
   /**
    * @param name The name of the filter rule which should be deleted.
-   * @return True if filter could be added. 
+   * @return True if filter could be deleted. 
    */
   public boolean deleteUserFilterRule(String name);
   
@@ -93,7 +93,7 @@ public interface FilterManager {
   public boolean deleteFilter(PluginsProgramFilter filter);
   
   /**
-   * Changed the name of a filter component.
+   * Changes the name of a filter component.
    * 
    * @param component The changed filter component.
    * @param oldName The old name of the filter component.
