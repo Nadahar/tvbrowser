@@ -46,6 +46,7 @@ import devplugin.ActionMenu;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.ThemeIcon;
 import devplugin.Version;
@@ -218,6 +219,38 @@ public class WebPlugin extends Plugin {
     ActionMenu result = new ActionMenu(mainAction, actions);
 
     return result;
+  }
+  
+  public boolean canReceiveProgramsWithTarget() {
+    return true;
+  }
+  
+  public ProgramReceiveTarget[] getProgramReceiveTargets() {
+    ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>();
+    
+    for (int i = 0; i < mAddresses.size(); i++) {
+      final WebAddress adr = (WebAddress) mAddresses.get(i);
+      
+      if (adr.isActive())
+        list.add(new ProgramReceiveTarget(this,mLocalizer.msg("SearchOn", "Search on ") + " " + adr.getName(),adr.getName() + "." + adr.getUrl()));      
+    }
+    
+    return list.toArray(new ProgramReceiveTarget[list.size()]);
+  }
+  
+  public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget target) {
+    for (int i = 0; i < mAddresses.size(); i++) {
+      final WebAddress adr = (WebAddress) mAddresses.get(i);
+      
+      if (adr.isActive() && target.isReceiveTargetWithIdOfProgramReceiveIf(this,adr.getName() + "." + adr.getUrl())) {
+        for(Program p : programArr)
+          openUrl(p, adr);
+        
+        return true;
+      }
+    }
+    
+    return false;
   }
 
   /**
