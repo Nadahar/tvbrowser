@@ -69,7 +69,6 @@ import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.Date;
 import devplugin.Program;
-import devplugin.ProgramFilter;
 import devplugin.SettingsItem;
 
 /**
@@ -488,20 +487,15 @@ public class SystemTray {
    */
   private JComponent addToImportantMenu(JComponent menu) {
     Program[] p = MarkedProgramsList.getInstance()
-        .getTimeSortedProgramsForTray();
-    
-    ProgramFilter f = MainFrame.getInstance().getProgramFilter();
+        .getTimeSortedProgramsForTray(MainFrame.getInstance().getProgramFilter());
     
     boolean added = false;
-    
-    if (p.length > 0) {
 
-      for (int i = 0; i < p.length; i++)
-        if(f.accept(p[i])) {
-          menu.add(new ProgramMenuItem(p[i], ProgramMenuItem.IMPORTANT_TYPE, -1,
-              i));
-          added = true;
-        }
+    if (p.length > 0) {
+      for (int i = 0; i < p.length; i++) {
+        menu.add(new ProgramMenuItem(p[i], ProgramMenuItem.IMPORTANT_TYPE, -1,i));
+        added = true;
+      }
     }
 
     if (p.length == 0 || !added) {

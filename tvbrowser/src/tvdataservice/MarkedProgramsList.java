@@ -35,6 +35,7 @@ import util.program.ProgramUtilities;
 
 import devplugin.Date;
 import devplugin.Program;
+import devplugin.ProgramFilter;
 
 /**
  * A class that contains all marked programs.
@@ -93,7 +94,7 @@ public class MarkedProgramsList {
    * 
    * @return The time sorted programs for the tray.
    */
-  public Program[] getTimeSortedProgramsForTray() {
+  public Program[] getTimeSortedProgramsForTray(ProgramFilter filter) {
     int n = mList.size() > Settings.propTrayImportantProgramsSize.getInt() ? Settings.propTrayImportantProgramsSize.getInt() : mList.size();
 
     ArrayList<Program> programs = new ArrayList<Program>();
@@ -106,7 +107,7 @@ public class MarkedProgramsList {
         break;
 
       Program p = mList.get(k);
-      if(ProgramUtilities.isOnAir(p) || p.isExpired()) {
+      if(ProgramUtilities.isOnAir(p) || p.isExpired() || !filter.accept(p)) {
         k++;
         continue;
       }
@@ -124,7 +125,7 @@ public class MarkedProgramsList {
         }
       }
 
-      if(!found)
+      if(!found && filter.accept(p))
         programs.add(p);
 
       k++;
