@@ -283,7 +283,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     
       if(rule instanceof PluginsFilterComponent) {
         mEditBtn.setEnabled(((PluginsFilterComponent)rule).getPanel() != null);
-        mRemoveBtn.setEnabled(((PluginsFilterComponent)rule).getPanel() != null);
+        mRemoveBtn.setEnabled(false);
       }
     }
   }
