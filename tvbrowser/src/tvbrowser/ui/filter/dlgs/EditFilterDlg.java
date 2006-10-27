@@ -39,6 +39,8 @@ import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -275,7 +277,10 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
       validRule = false;
     }
 
-    mOkBtn.setEnabled(!("".equals(mFilterNameTF.getText())) && !("".equals(mFilterRuleTF.getText()))
+    Pattern p = Pattern.compile("[\\p{Punct}&&[^_]]");
+    Matcher m = p.matcher(mFilterNameTF.getText());
+    
+    mOkBtn.setEnabled(mFilterNameTF.getText().trim().length() > 0 && !m.find() && !("".equals(mFilterRuleTF.getText()))
         && mComponentTableModel.getRowCount() > 0 && validRule);
     
     if(mRuleTableBox.getSelectedRow() > -1) {

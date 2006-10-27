@@ -91,6 +91,7 @@ public class ListViewSettings implements SettingsTab {
     mSettings.setProperty("pictureTimeRangeStart", String.valueOf(mPictureSettings.getPictureTimeRangeStart()));
     mSettings.setProperty("pictureTimeRangeEnd", String.valueOf(mPictureSettings.getPictureTimeRangeEnd()));
     mSettings.setProperty("pictureShowsDescription", String.valueOf(mPictureSettings.getPictureIsShowingDescription()));
+    mSettings.setProperty("pictureDuration", String.valueOf(mPictureSettings.getPictureDurationTime()));
   }
 
   /**

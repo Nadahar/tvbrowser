@@ -60,7 +60,7 @@ public class FontChooserPanel extends JPanel {
 
   public FontChooserPanel(String title, Font font, boolean style) {
     setLayout(new BorderLayout());
-    if (mTitle != null) {
+    if (title != null) {
       mTitle = new JLabel(title);
       add(mTitle, BorderLayout.NORTH);
     }

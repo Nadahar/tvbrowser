@@ -30,6 +30,7 @@ public class ProgramPanelSettings {
   private int mType;
   private int mTimeRangeStart;
   private int mTimeRangeEnd;
+  private int mDuration;
   private boolean mShowOnlyDateAndTitle; 
   private boolean mShowDescription;
   private String[] mPluginIds;
@@ -43,8 +44,8 @@ public class ProgramPanelSettings {
    * @param showOnlyDateAndTitle If the program panel should only contain date and title.
    * @param showDescription If the picture description should be shown.
    */
-  public ProgramPanelSettings(int type, int timeRangeStart, int timeRangeEnd, boolean showOnlyDateAndTitle, boolean showDescription) {
-    this(type, timeRangeStart, timeRangeEnd,showOnlyDateAndTitle, showDescription, null);
+  public ProgramPanelSettings(int type, int timeRangeStart, int timeRangeEnd, boolean showOnlyDateAndTitle, boolean showDescription, int duration) {
+    this(type, timeRangeStart, timeRangeEnd,showOnlyDateAndTitle, showDescription, duration, null);
   }
   
   /**
@@ -57,13 +58,14 @@ public class ProgramPanelSettings {
    * @param showDescription If the picture description should be shown.
    * @param pluginIds The ids of the plugins to show the pictures for.
    */
-  public ProgramPanelSettings(int type, int timeRangeStart, int timeRangeEnd, boolean showOnlyDateAndTitle, boolean showDescription, String[] pluginIds) {
+  public ProgramPanelSettings(int type, int timeRangeStart, int timeRangeEnd, boolean showOnlyDateAndTitle, boolean showDescription, int duration, String[] pluginIds) {
     mType = type;
     mTimeRangeStart = timeRangeStart;
     mTimeRangeEnd = timeRangeEnd;
     mShowOnlyDateAndTitle = showOnlyDateAndTitle;
     mShowDescription = showDescription;
     mPluginIds = pluginIds;
+    mDuration = duration;
   }
   
   /**
@@ -92,7 +94,14 @@ public class ProgramPanelSettings {
    */
   public boolean isShowingPictureForPlugins() {
     return mType == PictureSettingsPanel.SHOW_FOR_PLUGINS;
-  }  
+  }
+  
+  /**
+   * @return True if the type of the picture showing is set to show picture for duration.
+   */
+  public boolean isShowingPictureForDuration() {
+    return mType == PictureSettingsPanel.SHOW_FOR_DURATION;
+  }
    
   /**
    * @return If the program panel should only containg date and title.
@@ -127,6 +136,13 @@ public class ProgramPanelSettings {
    */
   public int getPictureTimeRangeEnd() {
     return mTimeRangeEnd;
+  }
+  
+  /**
+   * @return The duration value
+   */
+  public int getDuration() {
+    return mDuration;
   }
   
   /**

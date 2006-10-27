@@ -361,7 +361,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
     for (int col = 0; col < mModel.getColumnCount(); col++) {
       for (int row = 0; row < mModel.getRowCount(col); row++) {
         ProgramPanel panel = mModel.getProgramPanel(col, row);
-        panel.setProgramPanelSettings(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPicturePluginIds.getStringArray()));
+        panel.setProgramPanelSettings(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPictureDuration.getInt(), Settings.propPicturePluginIds.getStringArray()));
         panel.forceRepaint();
       }
     }

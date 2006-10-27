@@ -32,6 +32,8 @@ import javax.swing.JSeparator;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import tvbrowser.core.Settings;
+import util.ui.PictureSettingsPanel;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -111,6 +113,16 @@ public class TvBrowserPictureSettingsUpdateDialog extends JDialog implements Win
   public void actionPerformed(ActionEvent e) {
     if(e.getSource() == mOkButton) {
       mConfigPanel.saveSettings();
+      
+      if(Settings.propPictureType.getInt() != PictureSettingsPanel.SHOW_NEVER) {
+        String[] icons = Settings.propProgramTableIconPlugins.getStringArray();
+        String[] target = new String[icons.length + 1];
+        target[0] = "picture.id";
+        System.arraycopy(icons,0,target,1,icons.length);
+        Settings.propProgramTableIconPlugins.setStringArray(target);
+        Settings.handleChangedSettings();
+      }
+        
       close();
     }
     else if(e.getSource() == mCancelButton)

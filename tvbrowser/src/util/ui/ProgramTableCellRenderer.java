@@ -58,7 +58,7 @@ public class ProgramTableCellRenderer extends DefaultTableCellRenderer {
      * Creates the Renderer
      */
     public ProgramTableCellRenderer() {
-      this(new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, false, true));
+      this(new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, false, true, 10));
     }
     
     /**

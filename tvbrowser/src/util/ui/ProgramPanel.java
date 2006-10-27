@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
@@ -145,7 +146,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * Creates a new instance of ProgramPanel.
    */
   public ProgramPanel() {
-    this(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPicturePluginIds.getStringArray()));
+    this(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPictureDuration.getInt(), Settings.propPicturePluginIds.getStringArray()));
   }
 
   /**
@@ -419,11 +420,11 @@ public class ProgramPanel extends JComponent implements ChangeListener {
         mSettings.isShowingPictureNever() ||
         (mSettings.isShowingPictureInTimeRange() && 
          ProgramUtilities.isNotInTimeRange(mSettings.getPictureTimeRangeStart(),mSettings.getPictureTimeRangeEnd(),program)) ||
-         dontShow
+         dontShow || (mSettings.isShowingPictureForDuration() && mSettings.getDuration() > program.getLength())
        )
       mPictureAreaIcon = new PictureAreaIcon();
     else
-      mPictureAreaIcon = new PictureAreaIcon(program,mNormalFont, WIDTH_RIGHT - 4, mSettings.isShowingPictureDescription(), true);
+      mPictureAreaIcon = new PictureAreaIcon(program,mNormalFont, WIDTH_RIGHT - 4, mSettings.isShowingPictureDescription(), true, false);
     
     // Calculate the maximum description lines
     int titleHeight = mTitleIcon.getIconHeight();
@@ -501,6 +502,9 @@ public class ProgramPanel extends JComponent implements ChangeListener {
               }
             }
           }
+        } else if (iconPluginArr[pluginIdx].compareToIgnoreCase("picture.id") == 0) {
+          if(mProgram.getBinaryField(ProgramFieldType.PICTURE_TYPE) != null)
+            iconList.add(new ImageIcon("imgs/HasPicutre.gif"));
         } else {
           PluginProxy plugin = mng.getPluginForId(iconPluginArr[pluginIdx]);
 

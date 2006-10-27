@@ -371,6 +371,6 @@ public class ProgramInfo {
   }
   
   protected ProgramPanelSettings getProgramPanelSettings() {
-    return new ProgramPanelSettings(Integer.parseInt(mSettings.getProperty("pictureType","1")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeStart","1080")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeEnd","1380")), false, mSettings.getProperty("pictureShowsDescription","true").compareTo("true") == 0);
+    return new ProgramPanelSettings(Integer.parseInt(mSettings.getProperty("pictureType","1")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeStart","1080")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeEnd","1380")), false, mSettings.getProperty("pictureShowsDescription","true").compareTo("true") == 0, Integer.parseInt(mSettings.getProperty("pictureDuration","10")), mSettings.getProperty("clientPlugins","").split(";;"));
   }
 }

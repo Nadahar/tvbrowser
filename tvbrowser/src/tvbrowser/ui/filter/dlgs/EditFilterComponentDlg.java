@@ -33,6 +33,8 @@ import java.awt.event.ActionListener;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -248,8 +250,12 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
   }
 
   private void updateOkBtn() {
-    if (mOkBtn != null)
-      mOkBtn.setEnabled(!("".equals(mNameTF.getText())) && mRuleCb.getSelectedItem() instanceof FilterComponent);
+    if (mOkBtn != null) {
+      Pattern p = Pattern.compile("[\\p{Punct}\\s&&[^_]]");
+      Matcher m = p.matcher(mNameTF.getText());
+
+      mOkBtn.setEnabled(mNameTF.getText().length() > 0 && !m.find() && mRuleCb.getSelectedItem() instanceof FilterComponent);
+    }
   }
 
   public void changedUpdate(DocumentEvent e) {
