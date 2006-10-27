@@ -36,6 +36,7 @@ import javax.imageio.ImageWriter;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
+import java.awt.Graphics2D;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -67,12 +68,12 @@ public class ProgramField implements Cloneable {
      * Maximum Size of Images. Images get resized to this
      * size if they exceed the limit
      */
-    private static final int MAX_IMAGE_SIZE_X = 125;
+    private static final int MAX_IMAGE_SIZE_X = 150;
     /**
      * Maximum Size of Images. Images get resized to this
      * size if they exceed the limit
      */
-    private static final int MAX_IMAGE_SIZE_Y = 125;
+    private static final int MAX_IMAGE_SIZE_Y = 150;
 
 
     public ProgramField() {
@@ -178,9 +179,13 @@ public class ProgramField implements Cloneable {
                 newx = (int)((MAX_IMAGE_SIZE_Y/(float)cury) * curx);
             }
 
-            BufferedImage newImage = UiUtilities.scaleIconToBufferedImage(image, newx,newy);
-       //     BufferedImage newImage = image;
+            BufferedImage tempPic = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
+            Graphics2D g2d = tempPic.createGraphics();
+            g2d.drawImage(image, null, null);
+            g2d.dispose();
 
+            BufferedImage newImage = UiUtilities.scaleIconToBufferedImage(tempPic, newx, newy);
+ 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
             // Find a jpeg writer
@@ -198,7 +203,7 @@ public class ProgramField implements Cloneable {
                 JPEGImageWriteParam param = new JPEGImageWriteParam(null);
 
                 param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-                param.setCompressionQuality(0.75f);
+                param.setCompressionQuality(0.85f);
 
                 // Write the image
                 writer.write(null, new IIOImage(newImage, null, null), param);
