@@ -145,6 +145,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     ArrayList<IconPlugin> list = new ArrayList<IconPlugin>();
     
     list.add(new IconPlugin("Infos"));
+    list.add(new IconPlugin(mLocalizer.msg("hasPicure","Has picture")));
     
     PluginProxy[] pluginArr = PluginProxyManager.getInstance().getActivatedPlugins();
     for (int i = 0; i < pluginArr.length; i++) {
@@ -267,8 +268,10 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     public String getId() {
       if(mPlugin != null)
         return mPlugin.getId();
-      else
+      else if(mName != null && mName.compareTo("Infos") == 0)
         return "info.id";
+      else
+        return "picture.id";
     }
     
     public String toString() {

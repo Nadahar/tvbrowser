@@ -673,6 +673,6 @@ public class ReminderPlugin {
    * @since 2.2.2
    */
   protected ProgramPanelSettings getProgramPanelSettings(boolean showOnlyDateAndTitle) {
-    return new ProgramPanelSettings(Integer.parseInt(mSettings.getProperty("pictureType","2")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeStart","1080")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeEnd","1380")), showOnlyDateAndTitle, mSettings.getProperty("pictureShowsDescription","true").compareTo("true") == 0);
+    return new ProgramPanelSettings(Integer.parseInt(mSettings.getProperty("pictureType","2")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeStart","1080")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeEnd","1380")), showOnlyDateAndTitle, mSettings.getProperty("pictureShowsDescription","true").compareTo("true") == 0,Integer.parseInt(mSettings.getProperty("pictureDuration","10")));
   }
 }

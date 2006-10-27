@@ -299,7 +299,8 @@ public class Settings {
     }
     
     propArr = new Property[] {propPictureType, propPictureStartTime,
-        propPictureEndTime, propIsPictureShowingDescription, propPicturePluginIds};
+        propPictureEndTime, propIsPictureShowingDescription, propPicturePluginIds,
+        propPictureDuration};
     
     if(mProp.hasChanged(propArr))
       mainFrame.getProgramTableScrollPane().forceRepaintAll();
@@ -750,7 +751,7 @@ public class Settings {
           ProgramFieldType.SHORT_DESCRIPTION_TYPE });
 
   public static final StringArrayProperty propProgramTableIconPlugins = new StringArrayProperty(
-      mProp, "programpanel.iconPlugins", new String[] { "info.id",
+      mProp, "programpanel.iconPlugins", new String[] { "picture.id","info.id",
           "tvraterplugin.TVRaterPlugin", });
 
   /** Color for Program on Air - This shows how much was shown til now */
@@ -833,7 +834,10 @@ public class Settings {
   
   public static final IntProperty propPictureEndTime = new IntProperty(
       mProp, "pictures.startEnd", 23 * 60);
-  
+
+  public static final IntProperty propPictureDuration = new IntProperty(
+      mProp, "pictures.duration", 10);
+
   public static final BooleanProperty propIsPictureShowingDescription = new BooleanProperty(
       mProp, "pictures.showDescription", true);
   

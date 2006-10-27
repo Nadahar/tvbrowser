@@ -47,6 +47,7 @@ public class PictureAreaIcon implements Icon {
   private boolean mIsExpired;
   private boolean mIsGrayFilter;
   private boolean mShowDescription;
+  private int mWidthDiff;
   
   /**
    * Constructor for programs with no picture or if pictures for 
@@ -63,7 +64,7 @@ public class PictureAreaIcon implements Icon {
    * @param showDescription If description should be shown.
    * @param grayFilter If the image should be filtered to gray if the program is expired.
    */
-  public PictureAreaIcon(Program p, Font f, int width, boolean showDescription, boolean grayFilter) {
+  public PictureAreaIcon(Program p, Font f, int width, boolean showDescription, boolean grayFilter, boolean zoom) {
     mProgram = p;
     mIsExpired = false;
     mIsGrayFilter = grayFilter;
@@ -76,9 +77,16 @@ public class PictureAreaIcon implements Icon {
       
       if(width == -1)        
         width = imic.getIconWidth();
-
-      mScaledIcon = (ImageIcon)UiUtilities.scaleIcon(imic, width-6);
+      
+      if(imic.getIconWidth() > width || (zoom && imic.getIconWidth() != width))
+        mScaledIcon = (ImageIcon)UiUtilities.scaleIcon(imic, width - 6);
+      else
+        mScaledIcon = imic;
+      
+      mWidthDiff = width - mScaledIcon.getIconWidth();
     }
+    else
+      mWidthDiff = 0;
     
     mCopyrightText = new TextAreaIcon(p.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE),f.deriveFont((float)(f.getSize() * 0.9)),width-6);
     mDescriptionText = new TextAreaIcon(showDescription ? p.getTextField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE) : "",f,width-6);
@@ -92,14 +100,14 @@ public class PictureAreaIcon implements Icon {
   }
 
   public int getIconWidth() {
-    return mCopyrightText.getIconWidth() + 6;
+    return mCopyrightText.getIconWidth() - mWidthDiff + 12;
   }
 
   public void paintIcon(Component c, Graphics g, int x, int y) {
     if(mScaledIcon == null)
       return;
     
-    y += 2;
+    y += 2;    
     
     Color color = g.getColor();
     
@@ -120,7 +128,11 @@ public class PictureAreaIcon implements Icon {
     
     mScaledIcon.paintIcon(c,g,x,y);
     
+    if(!mProgram.isExpired())
+      g.setColor(Color.black);
+    
     mCopyrightText.paintIcon(c,g,x,y + mScaledIcon.getIconHeight());
-    mDescriptionText.paintIcon(c,g,x,y + mScaledIcon.getIconHeight() + mCopyrightText.getIconHeight() + 1);    
+    mDescriptionText.paintIcon(c,g,x,y + mScaledIcon.getIconHeight() + mCopyrightText.getIconHeight() + 1);
+    g.setColor(color);
   }
 }

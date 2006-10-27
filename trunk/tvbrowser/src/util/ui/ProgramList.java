@@ -95,7 +95,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
      * @since 2.2.1  
      */
     public ProgramList(Vector programArr, boolean showOnlyDateAndTitle) {
-      this(programArr, new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, showOnlyDateAndTitle, true));
+      this(programArr, new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, showOnlyDateAndTitle, true, 10));
     }
 
     /**
@@ -108,7 +108,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
      * @since 2.2.1  
      */
     public ProgramList(Program[] programArr, boolean showOnlyDateAndTitle) {
-      this(programArr, new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, showOnlyDateAndTitle, true));
+      this(programArr, new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, showOnlyDateAndTitle, true, 10));
     }
 
     /**
@@ -121,7 +121,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
      * @since 2.2.1  
      */
     public ProgramList(ListModel programs, boolean showOnlyDateAndTitle) {
-        this(programs, new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, showOnlyDateAndTitle, true));
+        this(programs, new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, showOnlyDateAndTitle, true, 10));
     }
 
     /**

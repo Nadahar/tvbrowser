@@ -30,6 +30,7 @@ import java.awt.Font;
 import java.util.ArrayList;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.UIManager;
 
@@ -76,7 +77,7 @@ public class ProgramTextCreator {
    */
   public static String createInfoText(Program prog, ExtendedHTMLDocument doc, 
       Object[] fieldArr, Font tFont, Font bFont, boolean showImage, boolean showHelpLinks) {
-    return createInfoText(prog,doc,fieldArr,tFont,bFont,new ProgramPanelSettings(showImage ? PictureSettingsPanel.SHOW_EVER : PictureSettingsPanel.SHOW_NEVER, -1, -1, false, true),showHelpLinks);
+    return createInfoText(prog,doc,fieldArr,tFont,bFont,new ProgramPanelSettings(showImage ? PictureSettingsPanel.SHOW_EVER : PictureSettingsPanel.SHOW_NEVER, -1, -1, false, true, 10),showHelpLinks, 100);
   }
   
   /**
@@ -99,7 +100,8 @@ public class ProgramTextCreator {
    * @since 2.2.2
    */
   public static String createInfoText(Program prog, ExtendedHTMLDocument doc, 
-      Object[] fieldArr, Font tFont, Font bFont, ProgramPanelSettings settings, boolean showHelpLinks) {
+      Object[] fieldArr, Font tFont, Font bFont, ProgramPanelSettings settings, 
+      boolean showHelpLinks, int zoom) {
     // NOTE: All field types are included until type 25 (REPETITION_ON_TYPE)
     StringBuffer buffer = new StringBuffer();
 
@@ -165,13 +167,38 @@ public class ProgramTextCreator {
 
     buffer.append("</td></tr>");
 
-    if(settings.isShowingPictureEver() || (settings.isShowingPictureInTimeRange() && ProgramUtilities.isNotInTimeRange(settings.getPictureTimeRangeStart(),settings.getPictureTimeRangeEnd(), prog))) {
+    boolean show = false;
+    
+    if(settings.isShowingPictureForPlugins()) {
+      String[] pluginIds = settings.getPluginIds();
+      Marker[] marker = prog.getMarkerArr();
+      
+      if(marker != null && pluginIds != null) {
+        for(int i = 0; i < marker.length; i++) {
+          for(int j = 0; j < pluginIds.length; j++) {
+            if(marker[i].getId().compareTo(pluginIds[j]) == 0) {
+              show = true;
+              break;
+            }
+          }
+        }
+      }
+    }
+    
+    if(settings.isShowingPictureEver() || 
+        (settings.isShowingPictureInTimeRange() && !ProgramUtilities.isNotInTimeRange(settings.getPictureTimeRangeStart(),settings.getPictureTimeRangeEnd(), prog)) ||
+        show || (settings.isShowingPictureForDuration() && settings.getDuration() <= prog.getLength())) {
       byte[] image = prog.getBinaryField(ProgramFieldType.PICTURE_TYPE);
       if (image != null) {
         String line = "<tr><td></td><td valign=\"top\" style=\"color:#808080; font-size:0\">";
         buffer.append(line);
         try {
-          JLabel l = new JLabel(new PictureAreaIcon(prog, bFont, -1, settings.isShowingPictureDescription(), false));
+          int width = -1;
+          
+          if(zoom != 100)
+            width = (new ImageIcon(image)).getIconWidth() * zoom/100;
+          
+          JLabel l = new JLabel(new PictureAreaIcon(prog, bFont, width, settings.isShowingPictureDescription(), false, true));
           l.setBackground(UIManager.getColor("EditorPane.background"));
           l.setBorder(null);
           buffer.append(doc.createCompTag(l));

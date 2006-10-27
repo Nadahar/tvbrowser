@@ -162,7 +162,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     
     mDoc = (ExtendedHTMLDocument) mInfoEP.getDocument();
 
-    mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc, ProgramInfo.getInstance().getOrder(), getFont(true), getFont(false), ProgramInfo.getInstance().getProgramPanelSettings(), true));
+    mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc, ProgramInfo.getInstance().getOrder(), getFont(true), getFont(false), ProgramInfo.getInstance().getProgramPanelSettings(), true, ProgramInfo.getInstance().getProperty("zoom","false").compareTo("true") == 0 ? Integer.parseInt(ProgramInfo.getInstance().getProperty("zoomValue","100")):100));
     mInfoEP.setEditable(false);
     mInfoEP.addHyperlinkListener(new HyperlinkListener() {
       private String mTooltip;

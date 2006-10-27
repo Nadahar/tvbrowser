@@ -59,6 +59,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -66,6 +67,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 
@@ -562,15 +564,20 @@ public class UiUtilities {
    */
   public static Icon scaleIcon(Icon icon, int x, int y) {
     try {
-        // Create Image with Icon
-        BufferedImage bufferedImage = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2 = bufferedImage.createGraphics();
-        icon.paintIcon(null, g2, 0, 0);
-        g2.dispose();
+      // Create Image with Icon
+      BufferedImage iconimage = new BufferedImage(x,y, BufferedImage.TYPE_INT_ARGB);
+      Graphics2D g2 = iconimage.createGraphics();
+      g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+      g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+      AffineTransform z = g2.getTransform();
+      z.scale((double)x/icon.getIconWidth(),(double)y/icon.getIconHeight());
+      g2.setTransform(z);      
+      icon.paintIcon(null, g2, 0, 0);
+      g2.dispose();
+      
+      // Return new Icon
+      return new ImageIcon(iconimage);
 
-         Image image = scaleIconToBufferedImage(bufferedImage, x, y);
-         // Return new Icon
-         return new ImageIcon(image);
     } catch (Exception ex) {
       ex.printStackTrace();
     }

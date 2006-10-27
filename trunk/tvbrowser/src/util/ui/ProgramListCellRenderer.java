@@ -68,7 +68,7 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
    * @param showOnlyDateAndTitle If the programs should only show date and title.
    */
   public ProgramListCellRenderer(boolean showOnlyDateAndTitle) {
-    this(new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, showOnlyDateAndTitle, true));
+    this(new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, showOnlyDateAndTitle, true, 10));
   }
   
   /**

@@ -53,7 +53,7 @@ public class TrayBaseSettingsTab implements SettingsTab {
   protected static final util.ui.Localizer mLocalizer = util.ui.Localizer
   .getLocalizerFor(TrayBaseSettingsTab.class);
   
-  private JCheckBox mTrayIsEnabled, mMinimizeToTrayChb, mOnlyMinimizeWhenWindowClosingChB;
+  private JCheckBox mTrayIsEnabled, mMinimizeToTrayChb;
   private boolean mOldState; 
   private static boolean mIsEnabled = Settings.propTrayIsEnabled.getBoolean();
     
@@ -61,7 +61,7 @@ public class TrayBaseSettingsTab implements SettingsTab {
     
     final PanelBuilder builder = new PanelBuilder(new FormLayout(
         "5dlu, pref:grow, 5dlu",        
-        "pref, 5dlu, pref, pref, pref"));
+        "pref, 5dlu, pref, pref"));
     builder.setDefaultDialogBorder();
     CellConstraints cc = new CellConstraints();
     
@@ -81,17 +81,10 @@ public class TrayBaseSettingsTab implements SettingsTab {
             JOptionPane.showMessageDialog(builder.getPanel(),mLocalizer.msg("minimizeToTrayWarning","This function could work not how expected on Unix systems like KDE or Gnome.\nSo it's recommended not to select this checkbox."),mLocalizer.msg("warning","Warning"), JOptionPane.WARNING_MESSAGE);        
         }
     });
-    
-    msg = mLocalizer.msg("onlyMinimizeWhenWindowClosing",
-        "When closing the main window only minimize TV-Browser, don't quit.");
-    checked = Settings.propOnlyMinimizeWhenWindowClosing.getBoolean() && mOldState;
-    mOnlyMinimizeWhenWindowClosingChB = new JCheckBox(msg, checked); 
-    mOnlyMinimizeWhenWindowClosingChB.setEnabled(mTrayIsEnabled.isSelected());
-        
+            
     builder.addSeparator(mLocalizer.msg("basics", "Basic settings"), cc.xyw(1,1,3));    
     builder.add(mTrayIsEnabled, cc.xy(2,3));
     builder.add(mMinimizeToTrayChb, cc.xy(2,4));
-    builder.add(mOnlyMinimizeWhenWindowClosingChB, cc.xy(2,5));
     
     mTrayIsEnabled.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -101,8 +94,7 @@ public class TrayBaseSettingsTab implements SettingsTab {
         TrayOnTimeSettingsTab.setTrayIsEnabled(mIsEnabled);
         TraySoonSettingsTab.setTrayIsEnabled(mIsEnabled);
         TrayProgramsChannelsSettingsTab.setTrayIsEnabled(mIsEnabled);
-        mMinimizeToTrayChb.setEnabled(mTrayIsEnabled.isSelected());
-        mOnlyMinimizeWhenWindowClosingChB.setEnabled(mTrayIsEnabled.isSelected());
+        mMinimizeToTrayChb.setEnabled(mTrayIsEnabled.isSelected());        
       }
     });
     
@@ -120,10 +112,6 @@ public class TrayBaseSettingsTab implements SettingsTab {
     if (mMinimizeToTrayChb != null) {
       boolean checked = mMinimizeToTrayChb.isSelected() && mTrayIsEnabled.isSelected();
       Settings.propTrayMinimizeTo.setBoolean(checked);
-    }
-    if (mOnlyMinimizeWhenWindowClosingChB != null) {
-      boolean checked = mOnlyMinimizeWhenWindowClosingChB.isSelected() && mTrayIsEnabled.isSelected();
-      Settings.propOnlyMinimizeWhenWindowClosing.setBoolean(checked);
     }
   }
 
