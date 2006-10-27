@@ -25,14 +25,13 @@
 */
 package webplugin;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import util.ui.ImageUtilities;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-
-import util.ui.ImageUtilities;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
  * A Web-Address
@@ -62,7 +61,6 @@ public class WebAddress implements Cloneable {
    * @param name Name
    * @param url Url ( {0} as placeholder )
    * @param iconFile Icon-File
-   * @param encoding Which encoding (UTF-8, ...)
    * @param userEntry Is this Entry editable?
    * @param active Is this Entry active?
    */
