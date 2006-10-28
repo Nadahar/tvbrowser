@@ -173,7 +173,7 @@ public class SearchHelper {
     });
     buttonPn.add(sendBt, BorderLayout.WEST);
 
-    JButton closeBt = new JButton(mLocalizer.msg("close", "Close"));
+    JButton closeBt = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
     closeBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         dlg.dispose();

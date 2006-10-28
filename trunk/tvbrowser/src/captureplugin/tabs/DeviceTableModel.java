@@ -107,7 +107,7 @@ public class DeviceTableModel extends AbstractTableModel {
         if (col == 0) {
             return mLocalizer.msg("Device", "Device");
         } else {
-            return mLocalizer.msg("Program", "Program");
+            return Localizer.getLocalization(Localizer.I18N_PROGRAM);
         }
     }
     

@@ -181,7 +181,7 @@ public class DeviceSelector extends JDialog {
         
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         
-        JButton ok = new JButton (mLocalizer.msg("OK","OK"));
+        JButton ok = new JButton (Localizer.getLocalization(Localizer.I18N_OK));
         
         ok.addActionListener(new ActionListener() {
 
@@ -192,7 +192,7 @@ public class DeviceSelector extends JDialog {
             
         });
         
-        JButton cancel = new JButton (mLocalizer.msg("Cancel","Cancel"));
+        JButton cancel = new JButton (Localizer.getLocalization(Localizer.I18N_CANCEL));
         
         cancel.addActionListener(new ActionListener() {
 
@@ -265,8 +265,8 @@ public class DeviceSelector extends JDialog {
         String[] str = new String[num];
         
         if (device.isAbleToAddAndRemovePrograms()) {
-            str[0] = mLocalizer.msg("Add", "Add");
-            str[1] = mLocalizer.msg("Remove", "Remove");
+            str[0] = Localizer.getLocalization(Localizer.I18N_ADD);
+            str[1] = Localizer.getLocalization(Localizer.I18N_DELETE);
         }
         
         for (int i=start;i < commands.length+start;i++) {

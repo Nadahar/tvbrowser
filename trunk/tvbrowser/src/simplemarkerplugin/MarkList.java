@@ -38,6 +38,8 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JPanel;
 
+import util.ui.Localizer;
+
 import devplugin.Date;
 import devplugin.NodeFormatter;
 import devplugin.Plugin;
@@ -242,8 +244,7 @@ public class MarkList extends Vector<Program> {
     mRootNode = root;
     root.removeAllChildren();
 
-    PluginTreeNode pNode = new PluginTreeNode(SimpleMarkerPlugin.mLocalizer
-        .msg("programs", "Programs"));
+    PluginTreeNode pNode = new PluginTreeNode(Localizer.getLocalization(Localizer.I18N_PROGRAMS));
     PluginTreeNode dNode = new PluginTreeNode(SimpleMarkerPlugin.mLocalizer
         .msg("days", "Days"));
     pNode.setGroupingByDateEnabled(false);

@@ -39,6 +39,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import util.ui.Localizer;
 import util.ui.OrderChooser;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -68,8 +69,8 @@ public class ProgramItemFieldsConfigDlg extends JDialog implements WindowClosing
     JPanel southPn = new JPanel(new BorderLayout());
     JPanel btnPn = new JPanel();
     
-    JButton okBt = new JButton(mLocalizer.msg("ok","OK"));
-    JButton cancelBt = new JButton(mLocalizer.msg("cancel","Cancel"));
+    JButton okBt = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
+    JButton cancelBt = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     
     btnPn.add(okBt);
     btnPn.add(cancelBt);

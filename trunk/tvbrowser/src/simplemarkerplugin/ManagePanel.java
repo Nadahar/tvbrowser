@@ -54,6 +54,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import devplugin.Plugin;
 import devplugin.Program;
 
+import util.ui.Localizer;
 import util.ui.ProgramList;
 import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
@@ -324,7 +325,7 @@ public class ManagePanel {
     p.add(mSend, cc.xy(3, 1));
     p.add(mDelete, cc.xy(5, 1));
         
-    mClose = new JButton(SimpleMarkerPlugin.mLocalizer.msg("close","Close"));    
+    mClose = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));    
       
     JPanel buttons = new JPanel(new BorderLayout());
     

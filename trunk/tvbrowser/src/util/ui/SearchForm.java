@@ -208,7 +208,7 @@ public class SearchForm extends JPanel {
     mSearchUserDefinedRB.addActionListener(updateEnabledListener);
     bg.add(mSearchUserDefinedRB);
 
-    mChangeSearchFieldsBt = new JButton(mLocalizer.msg("select", "Select"));
+    mChangeSearchFieldsBt = new JButton(Localizer.getLocalization(Localizer.I18N_SELECT));
     mChangeSearchFieldsBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         showSelectSearchFieldsDialog();
@@ -220,7 +220,7 @@ public class SearchForm extends JPanel {
     panel.add(mChangeSearchFieldsBt, cc.xy(3,1));
     searchInPanel.add(panel, cc.xy(2,7));
 
-    optionsPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("options", "Options")), cc.xyw(1,1,3));
+    optionsPanel.add(DefaultComponentFactory.getInstance().createSeparator(Localizer.getLocalization(Localizer.I18N_OPTIONS)), cc.xyw(1,1,3));
 
     mCaseSensitiveChB = new JCheckBox(mLocalizer.msg("caseSensitive", "Case sensitive"));
     optionsPanel.add(mCaseSensitiveChB, cc.xy(2,3));
@@ -614,8 +614,7 @@ public class SearchForm extends JPanel {
       JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
       main.add(buttonPn, BorderLayout.SOUTH);
       
-      msg = mLocalizer.msg("ok", "OK");
-      JButton okBt = new JButton(msg);
+      JButton okBt = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
       okBt.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
           handleOk();
@@ -623,9 +622,8 @@ public class SearchForm extends JPanel {
       });
       mDlg.getRootPane().setDefaultButton(okBt);
       buttonPn.add(okBt);
-
-      msg = mLocalizer.msg("cancel", "Cancel");
-      JButton cancelBt = new JButton(msg);
+      
+      JButton cancelBt = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
       cancelBt.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
           mDlg.dispose();

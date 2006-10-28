@@ -40,6 +40,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import util.ui.ChannelChooserDlg;
+import util.ui.Localizer;
 import devplugin.Channel;
 
 
@@ -64,7 +65,7 @@ public class ChannelSelectionPanel extends JPanel {
     
     PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref:grow,10dlu,pref",
         "pref,5dlu,pref,2dlu,pref,10dlu"), this);
-    pb.addSeparator(mLocalizer.msg("channels","Channels"), cc.xyw(1,1,4));
+    pb.addSeparator(Localizer.getLocalization(Localizer.I18N_CHANNELS), cc.xyw(1,1,4));
     pb.add(mAllChannelsRb=new JRadioButton(mLocalizer.msg("all","All")), cc.xy(2,3));
     pb.add(mSelectedChannelsRb=new JRadioButton(), cc.xy(2,5));
     pb.add(mChangeSelectedChannelsBt=new JButton(mLocalizer.msg("change","Change")+"..."), cc.xy(4,5));

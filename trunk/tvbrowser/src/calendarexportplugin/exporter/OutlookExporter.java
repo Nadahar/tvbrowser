@@ -97,7 +97,7 @@ public class OutlookExporter extends AbstractExporter {
                 outlook = new IDispatch(rm, "Outlook.Application"); // EXCEL–{‘Ì
             } catch (jp.ne.so_net.ga2.no_ji.jcom.JComException ex) {
                 JOptionPane.showMessageDialog(CalendarExportPlugin.getInstance().getBestParentFrame(),
-                        mLocalizer.msg("noOutlookFound", "MS Outlook is not installed."), mLocalizer.msg("error", "Error"), JOptionPane.WARNING_MESSAGE);
+                        mLocalizer.msg("noOutlookFound", "MS Outlook is not installed."), Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.WARNING_MESSAGE);
                 return false;
             }
             item = (IDispatch) outlook.invoke("CreateItem", IDispatch.PROPERTYGET, new Integer[]{olAppointmentItem});

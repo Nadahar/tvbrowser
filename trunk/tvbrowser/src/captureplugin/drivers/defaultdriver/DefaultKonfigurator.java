@@ -97,7 +97,7 @@ public class DefaultKonfigurator extends JDialog implements WindowClosingIf {
      * Create the GUI
      */
     private void createGui() {
-        setTitle(mLocalizer.msg("Settings", "Settings"));
+        setTitle(Localizer.getLocalization(Localizer.I18N_SETTINGS));
         UiUtilities.registerForClosing(this);
         
         JPanel panel = (JPanel) getContentPane();
@@ -124,13 +124,13 @@ public class DefaultKonfigurator extends JDialog implements WindowClosingIf {
         
         mTab.add(mLocalizer.msg("Application", "Application"), new ApplicationPanel(mConfig));
         mTab.add(mLocalizer.msg("Parameter", "Parameter"), new ParameterPanel(this, mConfig));
-        mTab.add(mLocalizer.msg("Channels", "Channels"), new ChannelPanel(mConfig));
+        mTab.add(Localizer.getLocalization(Localizer.I18N_CHANNELS), new ChannelPanel(mConfig));
         mTab.add(mLocalizer.msg("Variables", "Variables"), new VariablePanel(mConfig));
-        mTab.add(mLocalizer.msg("Settings", "Settings"), new SettingsPanel(mConfig));
+        mTab.add(Localizer.getLocalization(Localizer.I18N_SETTINGS), new SettingsPanel(mConfig));
         
         panel.add(mTab, BorderLayout.CENTER);
      
-        JButton ok = new JButton(mLocalizer.msg("OK", "OK"));
+        JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
 
         ok.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -140,7 +140,7 @@ public class DefaultKonfigurator extends JDialog implements WindowClosingIf {
             }
         });
         
-        JButton cancel = new JButton(mLocalizer.msg("Cancel", "Cancel"));
+        JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
         
         cancel.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

@@ -56,6 +56,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 
 import util.ui.ExtensionFileFilter;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.layout.CellConstraints;
@@ -191,8 +192,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
       Window w = UiUtilities.getLastModalChildOf(SimpleMarkerPlugin
           .getInstance().getSuperFrame());
 
-      chooser.showDialog(w, SimpleMarkerPlugin.mLocalizer.msg("choose",
-          "Choose"));
+      chooser.showDialog(w, Localizer.getLocalization(Localizer.I18N_SELECT));
 
       if (chooser.getSelectedFile() != null) {
         Icon icon = SimpleMarkerPlugin.getInstance().getIconForFileName(

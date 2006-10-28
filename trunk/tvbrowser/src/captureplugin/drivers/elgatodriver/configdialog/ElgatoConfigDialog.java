@@ -153,7 +153,7 @@ public class ElgatoConfigDialog extends JDialog implements WindowClosingIf {
     ButtonBarBuilder builder = new ButtonBarBuilder();
     builder.addGlue();
     
-    JButton ok = new JButton(mLocalizer.msg("ok", "OK"));
+    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     ok.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         if (mTable.isEditing()) {
@@ -166,7 +166,7 @@ public class ElgatoConfigDialog extends JDialog implements WindowClosingIf {
       };
     });
 
-    JButton cancel = new JButton(mLocalizer.msg("cancel","Cancel"));
+    JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     cancel.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         setVisible(false);

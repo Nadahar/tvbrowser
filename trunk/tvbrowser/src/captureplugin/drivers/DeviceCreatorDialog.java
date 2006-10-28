@@ -172,8 +172,8 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
 
         });
 
-        JButton ok = new JButton(mLocalizer.msg("OK", "OK"));
-        JButton cancel = new JButton(mLocalizer.msg("Cancel", "Cancel"));
+        JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
+        JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
         ok.addActionListener(new ActionListener() {
 
           public void actionPerformed(ActionEvent e) {
@@ -208,7 +208,7 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
     private void okPressed() {
 
         if (mName.getText().trim().length() == 0) {
-            JOptionPane.showMessageDialog(this, mLocalizer.msg("NoName", "No Name was entered"), mLocalizer.msg("Error", "Error"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, mLocalizer.msg("NoName", "No Name was entered"), Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);
 
         } else {
             mRetmode = JOptionPane.OK_OPTION;

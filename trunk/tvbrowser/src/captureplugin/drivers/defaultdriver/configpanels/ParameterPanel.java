@@ -131,7 +131,7 @@ public class ParameterPanel extends JPanel {
         add(scroll, c);
 
         // Remove
-        JLabel remFormatLabel = new JLabel(mLocalizer.msg("Remove", "remove"));
+        JLabel remFormatLabel = new JLabel(Localizer.getLocalization(Localizer.I18N_DELETE));
 
         c = new GridBagConstraints();
 

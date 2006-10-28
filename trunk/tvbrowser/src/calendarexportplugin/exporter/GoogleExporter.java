@@ -99,7 +99,7 @@ public class GoogleExporter extends AbstractExporter {
       }
       
       if ((login.getUsername().trim().length() == 0) ||(login.getPassword().trim().length() == 0)) {
-        JOptionPane.showMessageDialog(wnd, mLocalizer.msg("noUserOrPassword","No Username or Password entered!"), mLocalizer.msg("error", "Error"), JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(wnd, mLocalizer.msg("noUserOrPassword","No Username or Password entered!"), Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);
         return false;
       }
 

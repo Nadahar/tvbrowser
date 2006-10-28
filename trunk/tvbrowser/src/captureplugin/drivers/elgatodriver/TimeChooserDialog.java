@@ -65,7 +65,7 @@ public class TimeChooserDialog extends JDialog implements WindowClosingIf {
     mTimePanel = new TimeDateChooserPanel(date);
     panel.add(mTimePanel, cc.xy(1,3));
     
-    JButton ok = new JButton(mLocalizer.msg("ok", "OK"));
+    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     ok.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         mButtonPressed = JOptionPane.OK_OPTION;
@@ -73,7 +73,7 @@ public class TimeChooserDialog extends JDialog implements WindowClosingIf {
       };
     });
     
-    JButton cancel = new JButton(mLocalizer.msg("cancel", "Cancel"));
+    JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     cancel.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         setVisible(false);

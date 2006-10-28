@@ -60,7 +60,7 @@ public class ApplicationPanel extends JPanel {
 
     private JTextField mUrl = new JTextField();
     
-    private JButton mFileButton = new JButton(mLocalizer.msg("File", "File"));
+    private JButton mFileButton = new JButton(Localizer.getLocalization(Localizer.I18N_FILE));
     
     /**
      * Creates the Panel

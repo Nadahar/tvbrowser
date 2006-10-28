@@ -43,6 +43,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
 import util.ui.FontChooserPanel;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -97,8 +98,8 @@ public class FontsDialog extends JDialog implements WindowClosingIf {
     
     JPanel btnPn = new JPanel(new FlowLayout());
 
-    JButton okBt = new JButton(mLocalizer.msg("ok","OK"));
-    JButton cancelBt = new JButton(mLocalizer.msg("cancel","Cancel"));
+    JButton okBt = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
+    JButton cancelBt = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
 
     btnPn.add(okBt);
     btnPn.add(cancelBt);

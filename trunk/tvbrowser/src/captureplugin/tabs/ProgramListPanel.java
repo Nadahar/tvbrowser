@@ -203,7 +203,7 @@ public class ProgramListPanel extends JPanel {
 
        int ret = JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(mParent),
                mLocalizer.msg("ReallyDelete","Really delete recording?"),
-               mLocalizer.msg("Delete", "Delete?"),
+               Localizer.getLocalization(Localizer.I18N_DELETE)+"?",
                JOptionPane.YES_NO_OPTION);
 
        if (ret == JOptionPane.YES_OPTION) {

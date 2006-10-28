@@ -121,7 +121,7 @@ public class CaptureTimeDialog extends JDialog {
         c.weighty = 0.5;
         
         JPanel namePanel = new JPanel();
-        namePanel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("Program", "Program")));
+        namePanel.setBorder(BorderFactory.createTitledBorder(Localizer.getLocalization(Localizer.I18N_PROGRAM)));
         namePanel.setLayout(new BorderLayout());
 
         ProgramPanel p = new ProgramPanel(mPrgTime.getProgram());
@@ -149,7 +149,7 @@ public class CaptureTimeDialog extends JDialog {
         
         btPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
        
-        JButton ok = new JButton(mLocalizer.msg("OK","OK"));
+        JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
         
         ok.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -162,7 +162,7 @@ public class CaptureTimeDialog extends JDialog {
         
         btPanel.add(ok);
         
-        JButton cancel = new JButton(mLocalizer.msg("Cancel","Cancel"));
+        JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
         
         cancel.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

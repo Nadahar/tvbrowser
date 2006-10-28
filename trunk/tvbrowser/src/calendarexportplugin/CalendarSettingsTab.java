@@ -194,7 +194,7 @@ public class CalendarSettingsTab implements SettingsTab {
     mExporterList = new SelectableItemList(mPlugin.getExporterFactory().getActiveExporters(), mPlugin.getExporterFactory().getAllExporters());
     pb.add(mExporterList, cc.xyw(2,16,4));
 
-    final JButton settings = new JButton(mLocalizer.msg("settings", "Settings for this Interface"));
+    final JButton settings = new JButton(Localizer.getLocalization(Localizer.I18N_SETTINGS));
     settings.setEnabled(false);
     
     mExporterList.addListSelectionListener(new ListSelectionListener() {

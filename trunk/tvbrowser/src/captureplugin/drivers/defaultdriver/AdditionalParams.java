@@ -135,8 +135,8 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
-        JButton ok = new JButton(mLocalizer.msg("OK","OK"));
-        JButton cancel = new JButton(mLocalizer.msg("Cancel","Cancel"));
+        JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
+        JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
 
         ok.addActionListener(new ActionListener() {
 
@@ -183,7 +183,7 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
 
         JButton add = new JButton(CapturePlugin.getInstance().createImageIcon("actions", "document-new", 16));
         
-        add.setToolTipText(mLocalizer.msg("Add","Add"));
+        add.setToolTipText(Localizer.getLocalization(Localizer.I18N_ADD));
 
         add.addActionListener(new ActionListener() {
 
@@ -196,7 +196,7 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
         buttons.add(add);
 
         JButton remove = new JButton(CapturePlugin.getInstance().createImageIcon("actions", "edit-delete", 16));
-        remove.setToolTipText(mLocalizer.msg("Remove","Remove"));
+        remove.setToolTipText(Localizer.getLocalization(Localizer.I18N_DELETE));
 
         remove.addActionListener(new ActionListener() {
 
@@ -209,7 +209,7 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
         buttons.add(remove);
 
         final JButton up = new JButton(CapturePlugin.getInstance().createImageIcon("action", "go-up", 16));
-        up.setToolTipText(mLocalizer.msg("Up","Up"));
+        up.setToolTipText(Localizer.getLocalization(Localizer.I18N_UP));
         buttons.add(up);
 
         up.addActionListener(new ActionListener() {
@@ -221,7 +221,7 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
         });
         
         final JButton down = new JButton(CapturePlugin.getInstance().createImageIcon("action", "go-down", 16));
-        down.setToolTipText(mLocalizer.msg("Down","Down"));
+        down.setToolTipText(Localizer.getLocalization(Localizer.I18N_DOWN));
         buttons.add(down);
 
         down.addActionListener(new ActionListener() {

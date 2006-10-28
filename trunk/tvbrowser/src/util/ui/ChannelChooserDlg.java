@@ -164,8 +164,8 @@ public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
       pos += 2;
     }
 
-    JButton okBt = new JButton(mLocalizer.msg("OK","OK"));
-    JButton cancelBt = new JButton(mLocalizer.msg("Cancel","Cancel"));
+    JButton okBt = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
+    JButton cancelBt = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
 
     okBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {

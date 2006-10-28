@@ -29,6 +29,8 @@ import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
 
+import util.ui.Localizer;
+
 import devplugin.Channel;
 import devplugin.Program;
 
@@ -50,9 +52,9 @@ public class ListTableModel extends AbstractTableModel {
     public String getColumnName(int column) {
         switch (column) {
         case 0:
-            return mLocalizer.msg("Channel", "Channel");
+            return Localizer.getLocalization(Localizer.I18N_CHANNEL);
         case 1:
-            return mLocalizer.msg("Program", "Program");
+            return Localizer.getLocalization(Localizer.I18N_PROGRAM);
         case 2:
             return mLocalizer.msg("NextProgram","Next Program");
         default:
