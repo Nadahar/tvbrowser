@@ -22,9 +22,9 @@
  */
 package calendarexportplugin.exporter;
 
-import java.util.Properties;
-
 import devplugin.Program;
+
+import java.util.Properties;
 
 /**
  * This interface must be implemented for all export-methods 
@@ -49,7 +49,7 @@ public interface ExporterIf {
   
   /**
    * Show settings-dialog
-   * @param settings 
+   * @param settings Show Dialog with this settings 
    */
   public void showSettingsDialog(Properties settings);
   

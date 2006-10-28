@@ -22,9 +22,15 @@
  */
 package calendarexportplugin;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Properties;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import util.paramhandler.ParamHelpDialog;
+import util.paramhandler.ParamLibrary;
+import util.paramhandler.ParamParser;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -35,17 +41,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-
-import util.paramhandler.ParamHelpDialog;
-import util.paramhandler.ParamLibrary;
-import util.paramhandler.ParamParser;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Properties;
 
 /**
  * The Dialog for the Extended Settings.
@@ -146,7 +144,7 @@ public class ExtendedDialog extends JDialog {
     cancel.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         cancelPressed();
-      };
+      }
     });
     
     builder.addGriddedButtons(new JButton[]{ok, cancel});

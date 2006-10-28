@@ -22,12 +22,13 @@
  */
 package calendarexportplugin.exporter;
 
-import java.awt.Color;
-import java.awt.Dialog;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -37,15 +38,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.Sizes;
+import java.awt.Color;
+import java.awt.Dialog;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Login-Dialog for Google
@@ -69,10 +67,10 @@ public class GoogleLoginDialog extends JDialog implements WindowClosingIf {
 
   /**
    * Create Dialog
-   * @param owner
-   * @param username
-   * @param password
-   * @param storePassword
+   * @param owner Parent-Dialog
+   * @param username Username
+   * @param password Password
+   * @param storePassword store password ?
    */
   public GoogleLoginDialog(Dialog owner, String username, String password, boolean storePassword) {
     super(owner, true);
@@ -84,10 +82,10 @@ public class GoogleLoginDialog extends JDialog implements WindowClosingIf {
 
   /**
    * Create Dialog
-   * @param owner
-   * @param username
-   * @param password
-   * @param storePassword
+   * @param owner Parent-Frame
+   * @param username Username
+   * @param password Password
+   * @param storePassword store password ?
    */
   public GoogleLoginDialog(Frame owner, String username, String password, boolean storePassword) {
     super(owner, true);
