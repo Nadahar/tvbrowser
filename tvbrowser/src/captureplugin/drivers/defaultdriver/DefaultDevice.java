@@ -155,7 +155,7 @@ public class DefaultDevice implements DeviceIf {
             
             JOptionPane.showMessageDialog(parent,
                     mLocalizer.msg("OnlyFuture", "Sorry, you are not able to record Programs that are on Air or are expired!\n(See the Settings to enable this)"),
-                    mLocalizer.msg("Error","Error"),
+                    Localizer.getLocalization(Localizer.I18N_ERROR),
                     JOptionPane.ERROR_MESSAGE);
             
             return false;

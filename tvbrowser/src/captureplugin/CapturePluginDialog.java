@@ -97,7 +97,7 @@ public class CapturePluginDialog extends JDialog implements WindowClosingIf {
         this.setSize(500, 450);
         
 
-        JButton okButton = new JButton(mLocalizer.msg("OK", "ok"));
+        JButton okButton = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
         okButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {

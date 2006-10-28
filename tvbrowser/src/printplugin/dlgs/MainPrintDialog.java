@@ -42,6 +42,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import printplugin.PrintPlugin;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -81,8 +82,8 @@ public class MainPrintDialog extends JDialog implements ActionListener, WindowCl
 
     JPanel southPanel = new JPanel(new BorderLayout());
     JPanel btnPanel = new JPanel();
-    btnPanel.add(mOkBtn = new JButton(mLocalizer.msg("ok","OK")));
-    btnPanel.add(mCancelBtn = new JButton(mLocalizer.msg("cancel","Cancel")));
+    btnPanel.add(mOkBtn = new JButton(Localizer.getLocalization(Localizer.I18N_OK)));
+    btnPanel.add(mCancelBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL)));
     southPanel.add(btnPanel, BorderLayout.EAST);
     content.add(southPanel, BorderLayout.SOUTH);
     content.add(centerPanel, BorderLayout.CENTER);

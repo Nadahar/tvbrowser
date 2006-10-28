@@ -31,7 +31,9 @@ public class TextComponentPopupEventQueue extends EventQueue {
       .getLocalizerFor(TextComponentPopupEventQueue.class);
 
   protected void dispatchEvent(AWTEvent event) {
-    super.dispatchEvent(event);
+    try {
+      super.dispatchEvent(event);
+    }catch(Exception e) {return;}
 
     // interested only in mouseevents
     if (!(event instanceof MouseEvent))

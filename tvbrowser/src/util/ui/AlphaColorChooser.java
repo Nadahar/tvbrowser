@@ -200,8 +200,8 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
         layout.setColumnGroups(new int[][]{{1,3,5}});
         JPanel buttonPanel = new JPanel(layout);
         
-        JButton ok = new JButton(mLocalizer.msg("OK","OK"));
-        JButton cancel = new JButton(mLocalizer.msg("Cancel","Cancel"));
+        JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
+        JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
         ok.addActionListener(new ActionListener() {
 
           public void actionPerformed(ActionEvent e) {

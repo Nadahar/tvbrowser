@@ -232,7 +232,7 @@ public class CapturePlugin extends devplugin.Plugin {
                             updateMarkedPrograms();
                         }
                     };
-                    caction.putValue(Action.NAME, mLocalizer.msg("doDelete", "delete"));
+                    caction.putValue(Action.NAME, Localizer.getLocalization(Localizer.I18N_DELETE));
                     commandList.add(caction);
                 } else {
                     AbstractAction caction = new AbstractAction() {

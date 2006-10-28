@@ -113,7 +113,7 @@ public class ExtendedDialog extends JDialog {
       }
     });
     
-    JButton help = new JButton(mLocalizer.msg("help", "Help"));
+    JButton help = new JButton(Localizer.getLocalization(Localizer.I18N_HELP));
     help.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         ParamHelpDialog dialog = new ParamHelpDialog(ExtendedDialog.this, new ParamLibrary());
@@ -132,7 +132,7 @@ public class ExtendedDialog extends JDialog {
     
     builder.addGlue();
     
-    JButton ok = new JButton(mLocalizer.msg("ok", "OK"));
+    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     
     ok.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -140,7 +140,7 @@ public class ExtendedDialog extends JDialog {
       }
     });
     
-    JButton cancel = new JButton(mLocalizer.msg("cancel", "Cancel"));
+    JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     cancel.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         cancelPressed();

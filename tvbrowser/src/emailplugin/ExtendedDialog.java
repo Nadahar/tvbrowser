@@ -142,7 +142,7 @@ public class ExtendedDialog extends JDialog implements WindowClosingIf {
       }
     });
     
-    JButton help = new JButton(mLocalizer.msg("help", "Help"));
+    JButton help = new JButton(Localizer.getLocalization(Localizer.I18N_HELP));
     help.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
         ParamHelpDialog dialog = new ParamHelpDialog(ExtendedDialog.this, new ParamLibrary());
@@ -150,7 +150,7 @@ public class ExtendedDialog extends JDialog implements WindowClosingIf {
       }      
     });
     
-    JButton def = new JButton(mLocalizer.msg("default", "Default")); 
+    JButton def = new JButton(Localizer.getLocalization(Localizer.I18N_DEFAULT)); 
     def.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         defaultPressed();
@@ -161,7 +161,7 @@ public class ExtendedDialog extends JDialog implements WindowClosingIf {
     
     builder.addGlue();
     
-    JButton ok = new JButton(mLocalizer.msg("ok", "OK"));
+    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     
     ok.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -169,7 +169,7 @@ public class ExtendedDialog extends JDialog implements WindowClosingIf {
       }
     });
     
-    JButton cancel = new JButton(mLocalizer.msg("cancel", "Cancel"));
+    JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     cancel.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         cancelPressed();
@@ -217,7 +217,7 @@ public class ExtendedDialog extends JDialog implements WindowClosingIf {
     
     contentPanel.add(new JScrollPane(example), cc.xyw(1, 1, 2));
     
-    JButton ok = new JButton(mLocalizer.msg("ok", "OK"));
+    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     ok.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         dialog.setVisible(false);
@@ -238,7 +238,7 @@ public class ExtendedDialog extends JDialog implements WindowClosingIf {
   protected void defaultPressed() {
     int ret = JOptionPane.showConfirmDialog(ExtendedDialog.this, 
         mLocalizer.msg("reset", "Reset to default Settings?"), 
-        mLocalizer.msg("resetTitle", "Default"), JOptionPane.YES_NO_OPTION);
+        Localizer.getLocalization(Localizer.I18N_DEFAULT)+"?", JOptionPane.YES_NO_OPTION);
     if (ret == JOptionPane.YES_OPTION) {
       mContent.setText(EMailPlugin.DEFAULT_PARAMETER);
     }

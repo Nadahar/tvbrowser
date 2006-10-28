@@ -149,7 +149,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
 
     buttonPanel.add(sendButton);
 
-    JButton cancelButton = new JButton(mLocalizer.msg("cancel", "Cancel"));
+    JButton cancelButton = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
 
     cancelButton.addActionListener(new ActionListener() {
 

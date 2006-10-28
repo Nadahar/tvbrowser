@@ -257,8 +257,8 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
       pos += 2;
     }
 
-    JButton okBt = new JButton(mLocalizer.msg("ok","OK"));
-    JButton cancelBt = new JButton(mLocalizer.msg("cancel","Cancel"));
+    JButton okBt = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
+    JButton cancelBt = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
 
     okBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {

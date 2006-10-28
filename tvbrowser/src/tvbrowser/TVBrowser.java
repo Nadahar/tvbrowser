@@ -111,7 +111,7 @@ public class TVBrowser {
      We need the old version strings to import the settings.
   */
   public static final String[] ALL_VERSIONS = new String[]{
-          "2.3 (SVN)",
+          "2.5 alpha",
           "2.2.1",
           "2.2.1beta3",
           "2.2",

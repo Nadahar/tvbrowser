@@ -133,11 +133,8 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
 
   private void initUi() {
     mHistoryStack = new Stack();
-    
-    String msg;
 
-    msg = mLocalizer.msg("title", "Help");
-    mDialog.setTitle(msg);
+    mDialog.setTitle(Localizer.getLocalization(Localizer.I18N_HELP));
 
     JPanel main = new JPanel(new BorderLayout());
     mDialog.setContentPane(main);
@@ -148,22 +145,17 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
     mEditorPane.addHyperlinkListener(this);
     mEditorPane.setEditable(false);
     
-    
-    
-    
     main.add(mScrollPane = new JScrollPane(mEditorPane));
 
     // buttons
     JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
     main.add(buttonPn, BorderLayout.SOUTH);
-
-    msg = mLocalizer.msg("back", "Back");
-    buttonPn.add(mBackButton = new JButton(msg));
+    
+    buttonPn.add(mBackButton = new JButton(Localizer.getLocalization(Localizer.I18N_BACK)));
     mBackButton.addActionListener(this);
     mBackButton.setEnabled(false);
-
-    msg = mLocalizer.msg("close", "Close");
-    buttonPn.add(mCloseButton = new JButton(msg));
+    
+    buttonPn.add(mCloseButton = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE)));
     mCloseButton.addActionListener(this);
     mDialog.getRootPane().setDefaultButton(mCloseButton);
 

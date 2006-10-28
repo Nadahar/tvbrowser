@@ -99,7 +99,7 @@ public class MailCreator {
     }
 
     if (parser.hasErrors()) {
-      JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(parent), parser.getErrorString(), "Error",
+      JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(parent), parser.getErrorString(), Localizer.getLocalization(Localizer.I18N_ERROR),
           JOptionPane.ERROR_MESSAGE);
       return;
     }
@@ -238,7 +238,7 @@ public class MailCreator {
    * @param parent Parent-Dialog
    */
   private void showNotConfiguredCorrectly(Frame parent) {
-    int ret = JOptionPane.showConfirmDialog(parent, mLocalizer.msg("NotConfiguredCorrectly", "Not configured correctly"), mLocalizer.msg("error", "Error"), JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+    int ret = JOptionPane.showConfirmDialog(parent, mLocalizer.msg("NotConfiguredCorrectly", "Not configured correctly"), Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
     
     if (ret == JOptionPane.YES_OPTION) {
       EMailPlugin.getPluginManager().showSettings(mPlugin);
@@ -280,7 +280,7 @@ public class MailCreator {
     
     selfButton.setSelected(true);
     
-    JButton ok = new JButton(mLocalizer.msg("ok", "OK"));
+    JButton ok = new JButton(Localizer.I18N_OK);
     ok.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         dialog.setVisible(false);

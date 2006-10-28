@@ -39,7 +39,6 @@ import javax.swing.JPanel;
 
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.reminderplugin.ReminderList;
-import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import util.ui.customizableitems.SelectableItemList;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
@@ -109,7 +108,7 @@ public class MarkerChooserDlg extends JDialog implements WindowClosingIf {
     
     PluginAccess[] pluginAccess = Plugin.getPluginManager().getActivatedPlugins();
     
-    ArrayList list = new ArrayList();
+    ArrayList<Marker> list = new ArrayList<Marker>();
     
     list.add(FavoritesPlugin.MARKER);
     list.add(ReminderList.MARKER);
@@ -135,8 +134,8 @@ public class MarkerChooserDlg extends JDialog implements WindowClosingIf {
       pos += 2;
     }
 
-    JButton okBt = new JButton(mLocalizer.msg("ok","OK"));
-    JButton cancelBt = new JButton(mLocalizer.msg("cancel","Cancel"));
+    JButton okBt = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
+    JButton cancelBt = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
 
     okBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {

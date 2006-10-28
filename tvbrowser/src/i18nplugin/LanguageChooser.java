@@ -108,7 +108,7 @@ public class LanguageChooser extends JDialog implements WindowClosingIf {
     
     ButtonBarBuilder builder = new ButtonBarBuilder();
     
-    JButton ok = new JButton("OK");
+    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     ok.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         mSelectedLocale = (Locale) mLangBox.getSelectedItem();
@@ -116,7 +116,7 @@ public class LanguageChooser extends JDialog implements WindowClosingIf {
       }
     });
     
-    JButton cancel = new JButton("Cancel");
+    JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     cancel.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         close();

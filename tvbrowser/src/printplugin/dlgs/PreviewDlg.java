@@ -57,6 +57,7 @@ import javax.swing.SwingConstants;
 
 import printplugin.PrintPlugin;
 import tvbrowser.core.icontheme.IconLoader;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -171,7 +172,7 @@ public class PreviewDlg extends JDialog implements ActionListener, WindowClosing
     
     JPanel closePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
     
-    JButton close = new JButton(mLocalizer.msg("close", "Close"));
+    JButton close = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
     close.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         close();

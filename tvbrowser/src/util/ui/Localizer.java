@@ -65,7 +65,33 @@ import util.io.IOUtilities;
  * @author Til Schneider, www.murfman.de
  */
 public class Localizer {
-
+  private static Localizer mLocalizer = null;
+  
+  public final static String I18N_OK = "i18n_ok";
+  public final static String I18N_CANCEL = "i18n_cancel";  
+  public final static String I18N_CLOSE = "i18n_close";
+  public final static String I18N_DELETE = "i18n_delete";
+  public final static String I18N_EDIT = "i18n_edit";
+  public final static String I18N_PROGRAM = "i18n_program";
+  public final static String I18N_PROGRAMS = "i18n_programs";
+  public final static String I18N_CHANNEL = "i18n_channel";
+  public final static String I18N_CHANNELS = "i18n_channels";
+  public final static String I18N_HELP = "i18n_help";
+  public final static String I18N_FILE = "i18n_file";
+  public final static String I18N_ADD = "i18n_add";
+  public final static String I18N_SETTINGS = "i18n_settings";
+  public final static String I18N_UP = "i18n_up";
+  public final static String I18N_DOWN = "i18n_down";
+  public final static String I18N_LEFT = "i18n_left";
+  public final static String I18N_RIGHT = "i18n_right";
+  public final static String I18N_BACK = "i18n_back";
+  public final static String I18N_NEXT = "i18n_next";
+  public final static String I18N_PICTURES = "i18n_pictures";
+  public final static String I18N_OPTIONS = "i18n_options";
+  public final static String I18N_SELECT = "i18n_select";
+  public final static String I18N_ERROR = "i18n_error";
+  public final static String I18N_DEFAULT = "i18n_default";
+  
   /** The logger for this class. */  
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(Localizer.class.getName());
@@ -392,4 +418,65 @@ public class Localizer {
       return new Locale(split[0]);
     }
   }
+  
+  public static String getLocalization(String key) {
+    if(mLocalizer == null) 
+      mLocalizer = Localizer.getLocalizerFor(Localizer.class);
+    
+    String value = mLocalizer.msg(key,null);
+    
+    if(value == null) {
+      if(key.equals(I18N_OK))
+        value = "OK";
+      else if(key.equals(I18N_CANCEL))
+        value = "Cancel";
+      else if(key.equals(I18N_CLOSE))
+        value = "Close";
+      else if(key.equals(I18N_DELETE))
+        value = "Delete";
+      else if(key.equals(I18N_EDIT))
+        value = "Edit";
+      else if(key.equals(I18N_PROGRAM))
+        value = "Program";
+      else if(key.equals(I18N_PROGRAMS))
+        value = "Programs";
+      else if(key.equals(I18N_CHANNEL))
+        value = "Channel";
+      else if(key.equals(I18N_CHANNELS))
+        value = "Channels";
+      else if(key.equals(I18N_HELP))
+        value = "Help";
+      else if(key.equals(I18N_FILE))
+        value = "File";
+      else if(key.equals(I18N_ADD))
+        value = "Add";
+      else if(key.equals(I18N_SETTINGS))
+        value = "Settings";
+      else if(key.equals(I18N_UP))
+        value = "Up";
+      else if(key.equals(I18N_DOWN))
+        value = "Down";
+      else if(key.equals(I18N_LEFT))
+        value = "Left";
+      else if(key.equals(I18N_RIGHT))
+        value = "Right";
+      else if(key.equals(I18N_BACK))
+        value = "Back";
+      else if(key.equals(I18N_NEXT))
+        value = "Next";
+      else if(key.equals(I18N_PICTURES))
+        value = "Pictures";
+      else if(key.equals(I18N_OPTIONS))
+        value = "Options";
+      else if(key.equals(I18N_SELECT))
+        value = "Select";
+      else if(key.equals(I18N_ERROR))
+        value = "Error";
+      else if(key.equals(I18N_DEFAULT))
+        value = "Default";
+    }
+    
+    return value;
+  }
+
 }

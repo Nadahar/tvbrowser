@@ -50,6 +50,7 @@ import javax.swing.event.HyperlinkListener;
 
 import util.browserlauncher.Launch;
 import util.io.IOUtilities;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import util.ui.html.ExtendedHTMLDocument;
@@ -142,7 +143,7 @@ public class NewsDialog implements WindowClosingIf {
     JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
     main.add(buttonPn, BorderLayout.SOUTH);
     
-    mCloseBn = new JButton(mLocalizer.msg("close", "Close"));
+    mCloseBn = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
     mCloseBn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         mDialog.dispose();

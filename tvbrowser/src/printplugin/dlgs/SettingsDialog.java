@@ -49,6 +49,7 @@ import javax.swing.SwingConstants;
 import printplugin.PrintPlugin;
 import printplugin.printer.PrintJob;
 import printplugin.settings.Scheme;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -108,7 +109,7 @@ public class SettingsDialog extends JDialog implements WindowClosingIf {
     JPanel southPanel = new JPanel(new BorderLayout());
     JPanel okCancelBtnPanel = new JPanel(new FlowLayout());
     JButton printBt = new JButton(mLocalizer.msg("print","Drucken"));
-    JButton cancelBt = new JButton(mLocalizer.msg("cancel","Abbrechen"));
+    JButton cancelBt = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     okCancelBtnPanel.add(printBt);
     okCancelBtnPanel.add(cancelBt);
     southPanel.add(okCancelBtnPanel, BorderLayout.EAST);

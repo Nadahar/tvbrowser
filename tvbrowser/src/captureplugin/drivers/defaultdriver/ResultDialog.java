@@ -85,7 +85,7 @@ public class ResultDialog extends JDialog {
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         
-        JButton ok = new JButton (mLocalizer.msg("OK","OK"));
+        JButton ok = new JButton (Localizer.getLocalization(Localizer.I18N_OK));
         
         ok.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
