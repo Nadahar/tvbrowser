@@ -104,7 +104,7 @@ public class Settings {
   }
 
   /**
-   * Returns the user directory. (e.g.: ~/.tvbrowser/)
+   * @return the user directory. (e.g.: ~/.tvbrowser/)
    */
   public static String getUserDirectoryName() {
     String dir = new StringBuffer(System.getProperty("user.home")).append(
@@ -113,13 +113,12 @@ public class Settings {
   }
 
   public static String getUserSettingsDirName() {
-    String dir = new StringBuffer(getUserDirectoryName())
-        .append(File.separator).append(TVBrowser.VERSION).toString();
-    return dir;
+    return new StringBuffer(getUserDirectoryName()).append(File.separator).append(TVBrowser.VERSION).toString();
   }
 
   /**
    * Store all settings. This method is called on quitting the application.
+   * @throws util.exc.TvBrowserException Exception while saving the settings
    */
   public static void storeSettings() throws TvBrowserException {
     File f = new File(getUserSettingsDirName());
@@ -165,7 +164,7 @@ public class Settings {
       mLog.info("Try to load settings from a previous version of TV-Browser");
             
       File oldDir = null;
-      File testFile = null;
+      File testFile;
             
       for (int i = 1; i < TVBrowser.ALL_VERSIONS.length; i++) {
         testFile = new File(getUserDirectoryName() + File.separator + 
@@ -222,16 +221,16 @@ public class Settings {
 
               boolean version1 = false;
 
-              for (int i = 0; i < settings.length; i++) {
-                String name = "java." + settings[i].getName();
+                for (File setting : settings) {
+                    String name = "java." + setting.getName();
 
-                if (!settings[i].getName().toLowerCase().startsWith("java.")) {
-                  version1 = true;
-                  settings[i].renameTo(new File(settings[i].getParent(), name));
+                    if (!setting.getName().toLowerCase().startsWith("java.")) {
+                        version1 = true;
+                        setting.renameTo(new File(setting.getParent(), name));
+                    }
                 }
-              }
 
-              if (version1
+                if (version1
                   && !(new File(oldDirectoryName, newDir.getName()))
                       .isDirectory())
                 oldDir.renameTo(new File(System.getProperty("user.home", "")
@@ -254,8 +253,8 @@ public class Settings {
                   }
                 });
 
-                for (int i = 0; i < files.length; i++)
-                  files[i].renameTo(new File(backupDir,files[i].getName()));
+                  for (File file : files)
+                      file.renameTo(new File(backupDir, file.getName()));
               }
             }
           } catch (IOException e) {
@@ -983,8 +982,7 @@ public class Settings {
 
 
     static {
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        if (!ge.isHeadless()) {
+        if (!GraphicsEnvironment.isHeadless()) {
             propJGoodiesTheme.setDefault(PlasticLookAndFeel.createMyDefaultTheme().getClass().getName());        
         }
     }
