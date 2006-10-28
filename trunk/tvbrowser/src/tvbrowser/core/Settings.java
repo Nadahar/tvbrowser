@@ -451,7 +451,7 @@ public class Settings {
           "timeSynchronous", "compact", "realSynchronous" , "realCompact"});
 
   public static final ChoiceProperty propTableBackgroundStyle = new ChoiceProperty(
-      mProp, "tablebackground.style", "timeOfDay", new String[] { "white",
+      mProp, "tablebackground.style", "timeBlock", new String[] { "white",
           "oneImage", "timeBlock", "timeOfDay" });
 
   public static final StringProperty propOneImageBackground = new StringProperty(
@@ -473,7 +473,7 @@ public class Settings {
       mProp, "tablebackground.timeBlock.west2", "imgs/columns_afternoon.jpg");
 
   public static final BooleanProperty propTimeBlockShowWest = new BooleanProperty(
-      mProp, "tablebackground.timeBlock.showWest", true);
+      mProp, "tablebackground.timeBlock.showWest", false);
 
   public static final StringProperty propTimeOfDayBackgroundEdge = new StringProperty(
       mProp, "tablebackground.timeofday.edge", "imgs/columns_edge.jpg");
