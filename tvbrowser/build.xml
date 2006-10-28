@@ -395,12 +395,15 @@
     </jar> 	 
 
     <!-- Pack BBC data service --> 	 
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/BbcBackstageDataService.jar" compress="false"> 	 
+<!--
+        The BBC-Dataservice should not be release with the complete TV-Browser
+
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/BbcBackstageDataService.jar" compress="false">
             <fileset dir="${classes.dir}" includes="bbcbackstagedataservice/**" /> 	 
             <fileset dir="${unpacked.dir}/TVAnytimeAPI.jar" includes="bbc/**" /> 	 
             <fileset dir="${unpacked.dir}/commons-compress-20050911.jar" includes="**" /> 	 
     </jar> 	 
-
+    -->
     <!-- Pack RadioTimes data service --> 	 
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/RadioTimesDataService.jar" compress="false"> 	 
             <fileset dir="${classes.dir}" includes="radiotimesdataservice/**" /> 	 
