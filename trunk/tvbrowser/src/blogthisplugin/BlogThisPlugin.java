@@ -22,18 +22,6 @@
  */
 package blogthisplugin;
 
-import java.awt.event.ActionEvent;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Properties;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JOptionPane;
-
-import util.browserlauncher.Launch;
-import util.paramhandler.ParamParser;
-import util.ui.Localizer;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
@@ -41,6 +29,17 @@ import devplugin.Program;
 import devplugin.SettingsTab;
 import devplugin.ThemeIcon;
 import devplugin.Version;
+import util.browserlauncher.Launch;
+import util.paramhandler.ParamParser;
+import util.ui.Localizer;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JOptionPane;
+import java.awt.event.ActionEvent;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Properties;
 
 /**
  * The Main-Class for the Blog-Plugin
@@ -142,7 +141,8 @@ public class BlogThisPlugin extends Plugin {
      * @param content Content to show
      * @param url URL of the Channel
      * @return URL for the Web-Browser
-     * @throws UnsupportedEncodingException
+     *
+     * @throws UnsupportedEncodingException Problems with the selected Encoding
      */
     private String urlFactory(String title, String content, String url) throws UnsupportedEncodingException{
       if (mSettings.getProperty("BlogService", "").equals(BLOGGER)) {
