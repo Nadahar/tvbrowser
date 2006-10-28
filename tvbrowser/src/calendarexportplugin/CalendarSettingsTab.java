@@ -22,11 +22,15 @@
  */
 package calendarexportplugin;
 
-import java.awt.BorderLayout;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Properties;
+import calendarexportplugin.exporter.ExporterIf;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import devplugin.SettingsTab;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.customizableitems.SelectableItemList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -45,18 +49,11 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.customizableitems.SelectableItemList;
-import calendarexportplugin.exporter.ExporterIf;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.SettingsTab;
+import java.awt.BorderLayout;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Properties;
 
 /**
  * Settings Tab for Calendar Export
@@ -89,8 +86,9 @@ public class CalendarSettingsTab implements SettingsTab {
   
   /**
    * Creates the Tab
-   * 
-   * @param settings
+   *
+   * @param plugin Plugin-Instance
+   * @param settings Settings for this Plugin
    */
   public CalendarSettingsTab(CalendarExportPlugin plugin, Properties settings) {
     mPlugin = plugin;
@@ -116,6 +114,7 @@ public class CalendarSettingsTab implements SettingsTab {
     try {
       mShowTime.setSelectedIndex(Integer.parseInt(mSettings.getProperty(CalendarExportPlugin.PROP_SHOWTIME, "0")));
     } catch (Exception e) {
+        // Empty
     }
     
     String[] val2 = { mLocalizer.msg("Public", "Public"), mLocalizer.msg("Private", "Private"),
@@ -126,6 +125,7 @@ public class CalendarSettingsTab implements SettingsTab {
     try {
       mClassification.setSelectedIndex(Integer.parseInt(mSettings.getProperty(CalendarExportPlugin.PROP_CLASSIFICATION, "0")));
     } catch (Exception e) {
+        // empty
     }
     
     mNulltime = new JCheckBox(mLocalizer.msg("nullTime", "Set length to 0 Minutes"));
@@ -168,6 +168,7 @@ public class CalendarSettingsTab implements SettingsTab {
     try {
       mAlarmMinutes.setValue(Integer.parseInt(mSettings.getProperty(CalendarExportPlugin.PROP_ALARMBEFORE, "0")));
     } catch (Exception e) {
+        // empty
     }
     
     mAlarmMinutes.setEnabled(mUseAlarm.isSelected());

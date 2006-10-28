@@ -74,10 +74,11 @@ public class OutlookExporter extends AbstractExporter {
     * timeinfo; GetTimeZoneInformation(&timeinfo); var->date
     * =double(val)/(24*60*60*1000)+25569.0-(timeinfo.Bias/(60.0*24.0));
     */
-    private static Date correctTimeZone(Date date) {
-        Date ret = date;
+    private static Date correctTimeZone(final Date date) {
+        Date ret;
+        ret = date;
         if (java.util.TimeZone.getDefault().useDaylightTime())
-            ret.setTime(date.getTime() + 1 * 60 * 60 * 1000);
+            ret.setTime(date.getTime() + 60 * 60 * 1000);
         return ret;
     }
 
@@ -87,8 +88,8 @@ public class OutlookExporter extends AbstractExporter {
                                String categories, boolean durationIs0, int sensitivity) {
 
         ReleaseManager rm = null;
-        IDispatch outlook = null;
-        IDispatch item = null;
+        IDispatch outlook;
+        IDispatch item;
         try {
             System.loadLibrary("JCom");
             rm = new ReleaseManager();
@@ -99,19 +100,19 @@ public class OutlookExporter extends AbstractExporter {
                         mLocalizer.msg("noOutlookFound", "MS Outlook is not installed."), mLocalizer.msg("error", "Error"), JOptionPane.WARNING_MESSAGE);
                 return false;
             }
-            item = (IDispatch) outlook.invoke("CreateItem", IDispatch.PROPERTYGET, new Integer[]{new Integer(olAppointmentItem)});
+            item = (IDispatch) outlook.invoke("CreateItem", IDispatch.PROPERTYGET, new Integer[]{olAppointmentItem});
             item.put("Subject", subject);
             item.put("Body", body);
             item.put("Start", correctTimeZone(start));
             item.put("End", correctTimeZone(end));
-            item.put("ReminderSet", new Boolean(reminderSet));
+            item.put("ReminderSet", reminderSet);
             if (reminderSet)
-                item.put("ReminderMinutesBeforeStart", new Integer(reminderMinutesBeforeStart));
-            item.put("BusyStatus", new Integer(busyStatus));
+                item.put("ReminderMinutesBeforeStart", reminderMinutesBeforeStart);
+            item.put("BusyStatus", busyStatus);
             item.put("Categories", categories);
             if (durationIs0)
-                item.put("Duration", new Integer(0));
-            item.put("Sensitivity", new Integer(sensitivity));
+                item.put("Duration", 0);
+            item.put("Sensitivity", sensitivity);
             item.method("Save", null);
             item.release();
             outlook.release();
@@ -120,7 +121,8 @@ public class OutlookExporter extends AbstractExporter {
             ErrorHandler.handle(mLocalizer.msg("exportError", "An error occured while creating an appointment in MS Outlook."), e);
             return false;
         } finally {
-            rm.release();
+            if (rm != null)
+                rm.release();
         }
         return true;
     }
@@ -136,6 +138,7 @@ public class OutlookExporter extends AbstractExporter {
         try {
             classification = Integer.parseInt(settings.getProperty(CalendarExportPlugin.PROP_CLASSIFICATION, "0"));
         } catch (Exception e) {
+            // Empty
         }
         if (classification == 1)
             classification = olPrivate;
@@ -150,6 +153,7 @@ public class OutlookExporter extends AbstractExporter {
         try {
             showtime = Integer.parseInt(settings.getProperty(CalendarExportPlugin.PROP_SHOWTIME, "0"));
         } catch (Exception e) {
+            // empty
         }
         if (showtime == 1)
             showtime = olFree;
@@ -160,6 +164,7 @@ public class OutlookExporter extends AbstractExporter {
         try {
             alarmBefore = Integer.parseInt(settings.getProperty(CalendarExportPlugin.PROP_ALARMBEFORE, "0"));
         } catch (Exception ex) {
+            // empty
         }
         boolean useAlarm = false;
         if (settings.getProperty(CalendarExportPlugin.PROP_ALARM, "false").equals("true"))
@@ -169,8 +174,7 @@ public class OutlookExporter extends AbstractExporter {
         if (settings.getProperty(CalendarExportPlugin.PROP_NULLTIME, "false").equals("true"))
             nullTime = true;
 
-        for (int x = 0; x < programs.length; x++) {
-            Program program = programs[x];
+        for (Program program : programs) {
             ParamParser parser = new ParamParser();
             String desc = parser.analyse(settings.getProperty(
                     CalendarExportPlugin.PROP_PARAM, CalendarExportPlugin.DEFAULT_PARAMETER), program);

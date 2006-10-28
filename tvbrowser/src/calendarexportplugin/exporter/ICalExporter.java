@@ -87,7 +87,9 @@ public class ICalExporter extends AbstractExporter {
 
   /**
    * Shows a Filechooser for iCal Files.
-   * 
+   *
+   * @param programs this programs are exported
+   *
    * @return selected File
    */
   private File chooseFile(Program[] programs) {
@@ -110,7 +112,7 @@ public class ICalExporter extends AbstractExporter {
       }
     }
     
-    if (fileName!="") {
+    if (!fileName.equals("")) {
         if (mSavePath == null)
             mSavePath = "";
         select.setSelectedFile(new File((new File(mSavePath).getParent()) + File.separator + fileName + ext));

@@ -24,10 +24,6 @@ public class ICalFile {
   /** TimeFormat */
   private SimpleDateFormat mTime = new SimpleDateFormat("HHmmss");
 
-  /** TimeFormat */
-  private SimpleDateFormat mExtTime = new SimpleDateFormat("HH:mm");
-
-
   /**
    * Exports a list of Programs into a iCal-File
    * 
@@ -49,97 +45,95 @@ public class ICalFile {
       out.println("PRODID:-//TV Browser//Calendar Exporter");
       out.println("VERSION:2.0");
 
-      for (int i = 0; i < list.length; i++) {
+        for (Program p : list) {
 
-        Program p = list[i];
+            out.println();
+            out.println("BEGIN:VEVENT");
+
+            Calendar c = Calendar.getInstance();
+
+            out.println("CREATED:" + mDate.format(c.getTime()) + "T" + mTime.format(c.getTime()));
+
+            int classification = 0;
+
+            try {
+                classification = Integer.parseInt(settings.getProperty(CalendarExportPlugin.PROP_CLASSIFICATION, "0"));
+            } catch (Exception e) {
+                // Empty
+            }
+
+            switch (classification) {
+                case 0:
+                    out.println("CLASS:PUBLIC");
+                    break;
+                case 1:
+                    out.println("CLASS:PRIVATE");
+                    break;
+                case 2:
+                    out.println("CLASS:CONFIDENTIAL");
+                    break;
+
+                default:
+                    break;
+            }
+
+            out.println("PRIORITY:3");
+
+            if (settings.getProperty(CalendarExportPlugin.PROP_CATEGORIE, "").trim().length() > 0) {
+                out.println("CATEGORIES:" + settings.getProperty(CalendarExportPlugin.PROP_CATEGORIE, ""));
+            }
+
+            c = CalendarToolbox.getStartAsCalendar(p);
+
+            out.println("UID:" + mDate.format(c.getTime()) + "-" + p.getID());
+            out.println("SUMMARY:" + p.getChannel().getName() + " - " + CalendarToolbox.noBreaks(p.getTitle()));
+
+            out.println("DTSTART:" + mDate.format(c.getTime()) + "T" + mTime.format(c.getTime()) + "Z");
+
+            String desc = parser.analyse(settings.getProperty(CalendarExportPlugin.PROP_PARAM, CalendarExportPlugin.DEFAULT_PARAMETER), p);
+            if (parser.hasErrors()) {
+                JOptionPane.showMessageDialog(null, parser.getErrorString(), "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            out.println("DESCRIPTION:" + CalendarToolbox.noBreaks(desc));
+
+            if (!nulltime) {
+                c = CalendarToolbox.getEndAsCalendar(p);
+            }
+
+            int showtime = 0;
+
+            try {
+                showtime = Integer.parseInt(settings.getProperty(CalendarExportPlugin.PROP_SHOWTIME, "0"));
+            } catch (Exception e) {
+                // Empty
+            }
+
+            switch (showtime) {
+                case 0:
+                    out.println("TRANSP:OPAQUE");
+                    break;
+                case 1:
+                    out.println("TRANSP:TRANSPARENT");
+                    break;
+                default:
+                    break;
+            }
+
+            out.println("DTEND:" + mDate.format(c.getTime()) + "T" + mTime.format(c.getTime()) + "Z");
+
+            if (settings.getProperty(CalendarExportPlugin.PROP_ALARM, "false").equals("true")) {
+                out.println("BEGIN:VALARM");
+                out.println("DESCRIPTION:");
+                out.println("ACTION:DISPLAY");
+                out.println("TRIGGER;VALUE=DURATION:-PT" + settings.getProperty(CalendarExportPlugin.PROP_ALARMBEFORE, "0") + "M");
+                out.println("END:VALARM");
+            }
+
+            out.println("END:VEVENT\n");
+        }
 
         out.println();
-        out.println("BEGIN:VEVENT");
-
-        Calendar c = Calendar.getInstance();
-
-        out.println("CREATED:" + mDate.format(c.getTime()) + "T" + mTime.format(c.getTime()));
-
-        int classification = 0;
-
-        try {
-          classification = Integer.parseInt(settings.getProperty(CalendarExportPlugin.PROP_CLASSIFICATION, "0"));
-        } catch (Exception e) {
-
-        }
-
-        switch (classification) {
-        case 0:
-          out.println("CLASS:PUBLIC");
-          break;
-        case 1:
-          out.println("CLASS:PRIVATE");
-          break;
-        case 2:
-          out.println("CLASS:CONFIDENTIAL");
-          break;
-
-        default:
-          break;
-        }
-
-        out.println("PRIORITY:3");
-
-        if (settings.getProperty(CalendarExportPlugin.PROP_CATEGORIE, "").trim().length() > 0) {
-          out.println("CATEGORIES:" + settings.getProperty(CalendarExportPlugin.PROP_CATEGORIE, ""));
-        }
-
-        c = CalendarToolbox.getStartAsCalendar(p);
-
-        out.println("UID:" + mDate.format(c.getTime()) + "-" + p.getID());
-        out.println("SUMMARY:" + p.getChannel().getName() + " - " + CalendarToolbox.noBreaks(p.getTitle()));
-
-        out.println("DTSTART:" + mDate.format(c.getTime()) + "T" + mTime.format(c.getTime()) + "Z");
-
-        String desc = parser.analyse(settings.getProperty(CalendarExportPlugin.PROP_PARAM, CalendarExportPlugin.DEFAULT_PARAMETER), list[i]);
-        if (parser.hasErrors()) {
-          JOptionPane.showMessageDialog(null, parser.getErrorString(), "Error", JOptionPane.ERROR_MESSAGE);
-          return;
-        }        
-        out.println("DESCRIPTION:" + CalendarToolbox.noBreaks(desc));
-        
-        if (!nulltime) {
-          c = CalendarToolbox.getEndAsCalendar(p);
-        }
-
-        int showtime = 0;
-
-        try {
-          showtime = Integer.parseInt(settings.getProperty(CalendarExportPlugin.PROP_SHOWTIME, "0"));
-        } catch (Exception e) {
-
-        }
-
-        switch (showtime) {
-        case 0:
-          out.println("TRANSP:OPAQUE");
-          break;
-        case 1:
-          out.println("TRANSP:TRANSPARENT");
-          break;
-        default:
-          break;
-        }
-
-        out.println("DTEND:" + mDate.format(c.getTime()) + "T" + mTime.format(c.getTime()) + "Z");
-
-        if (settings.getProperty(CalendarExportPlugin.PROP_ALARM, "false").equals("true")) {
-          out.println("BEGIN:VALARM");
-          out.println("DESCRIPTION:");
-          out.println("ACTION:DISPLAY");
-          out.println("TRIGGER;VALUE=DURATION:-PT" + settings.getProperty(CalendarExportPlugin.PROP_ALARMBEFORE, "0") + "M");
-          out.println("END:VALARM");
-        }
-        
-        out.println("END:VEVENT\n");
-      }
-
-      out.println();
       out.println("END:VCALENDAR");
       out.close();
     } catch (Exception e) {
