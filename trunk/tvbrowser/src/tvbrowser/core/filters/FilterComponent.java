@@ -25,11 +25,10 @@
  */
 package tvbrowser.core.filters;
 
+import javax.swing.JPanel;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
-import javax.swing.JPanel;
 
 /**
  * An interface for the program filter system of TV-Browser. 
@@ -77,7 +76,7 @@ public interface FilterComponent {
   public JPanel getSettingsPanel();
   
   /**
-   * Is called when the settings, the user had made in the filter settings are to be saved.
+   * Is called when the settings should be saved (aka the users pressed the OK-Button in the Settings Dialog)
    */
   public void saveSettings();
   

@@ -25,9 +25,8 @@
  */
 package devplugin;
 
-import java.util.Iterator;
-
 import javax.swing.event.ChangeListener;
+import java.util.Iterator;
 
 /**
  * This interface provides a view of the program object in the host-application.
@@ -267,7 +266,7 @@ public interface Program {
    * Informs the ChangeListeners for repainting if a Plugin
    * uses more than one Icon for the Program. 
    *
-   * @see Plugin.getMarkIconsForProgram(Program)
+   * @see Plugin#getMarkIconsForProgram(Program)
    * @since 2.3
    */
   public void validateMarking();
