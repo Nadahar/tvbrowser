@@ -37,7 +37,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import devplugin.PluginAccess;
 import devplugin.PluginsFilterComponent;
 
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
@@ -53,15 +52,13 @@ import tvbrowser.core.filters.filtercomponents.ProgramLengthFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramRunningFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ReminderFilterComponent;
 import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
-import tvbrowser.core.plugin.PluginManagerImpl;
 
 public class FilterComponentList {
   
   private static FilterComponentList mInstance;
   
   //private static HashMap<String,FilterComponent> mComponentMap;
-  private static ArrayList<FilterComponent> mComponentList;
-  private static ArrayList<PluginsFilterComponent> mPluginFilterComponentList;
+  private static ArrayList<FilterComponent> mComponentList;  
   
   private static java.util.logging.Logger mLog
       = java.util.logging.Logger.getLogger(FilterComponentList.class.getName());
@@ -70,8 +67,7 @@ public class FilterComponentList {
   private FilterComponentList() {
     //mComponentMap = new HashMap();
     ObjectInputStream in=null;
-    mComponentList = new ArrayList<FilterComponent>();
-    mPluginFilterComponentList = new ArrayList<PluginsFilterComponent>();
+    mComponentList = new ArrayList<FilterComponent>();    
     
     try {
     
@@ -96,18 +92,7 @@ public class FilterComponentList {
           }
         }
         in.close();
-      }
-      
-      PluginAccess plugins[] = PluginManagerImpl.getInstance().getActivatedPlugins();
-      
-      for(PluginAccess plugin : plugins) {
-        PluginsFilterComponent[] components = plugin.getAvailableFilterComponents();
-        
-        if(components != null)
-          for(PluginsFilterComponent c : components)
-            mPluginFilterComponentList.add(c);
-      }
-      
+      }      
     }catch (FileNotFoundException e) {
       e.printStackTrace();
     }catch(IOException e) {
@@ -200,12 +185,17 @@ public class FilterComponentList {
     }
     else if (className.endsWith(".ReminderFilterComponent")) {
       filterComponent = new ReminderFilterComponent(name, description);
-    }
-    
+    }    
     else {
-      //throw new IOException("error reading filter component: "+className+" unknown");
-      mLog.warning("error reading filter component: "+className+" unknown");
-      return null;      
+      try {
+        filterComponent = (PluginsFilterComponent)Class.forName(className).newInstance();
+        filterComponent.setName(name);
+        filterComponent.setDescription(description);
+      }catch(Exception e) {
+        //throw new IOException("error reading filter component: "+className+" unknown");
+        mLog.warning("error reading filter component: "+className+" unknown");
+        return null;
+      }
     }
    
     if (filterComponent!=null) {
@@ -230,15 +220,7 @@ public class FilterComponentList {
   
   
   public FilterComponent[] getAvailableFilterComponents() {
-    FilterComponent[] components = mComponentList.toArray(new FilterComponent[mComponentList.size()]);
-    FilterComponent[] pluginFilteC = mPluginFilterComponentList.toArray(new FilterComponent[mPluginFilterComponentList.size()]);
-    
-    FilterComponent[] result = new FilterComponent[mComponentList.size() + mPluginFilterComponentList.size()];
-    
-    System.arraycopy(components,0,result,0,mComponentList.size());
-    System.arraycopy(pluginFilteC,0,result,mComponentList.size(),mPluginFilterComponentList.size());    
-    
-    return result;
+    return mComponentList.toArray(new FilterComponent[mComponentList.size()]);
   }
   
   
@@ -247,13 +229,8 @@ public class FilterComponentList {
       if(c.getName().compareTo(name) == 0)
         return c;
     }
-    for(FilterComponent c : mPluginFilterComponentList) {
-      if(c.getName().compareTo(name) == 0)
-        return c;
-    }
     
     return null;
-    //return (FilterComponent)mComponentList.get(name.toUpperCase());
   }
   
   
@@ -265,31 +242,16 @@ public class FilterComponentList {
   }
   
   public void add(FilterComponent comp) {
-    if(comp instanceof PluginsFilterComponent)
-      mPluginFilterComponentList.add((PluginsFilterComponent)comp);
-    else
-      mComponentList.add(comp);
+    mComponentList.add(comp);
     //mComponentMap.put(comp.getName().toUpperCase(), comp); 
   }
-  
-  public void remove(String filterCompName) {
-    if(!mComponentList.remove(getFilterComponentByName(filterCompName)))
-      mPluginFilterComponentList.remove(getFilterComponentByName(filterCompName));
-    //mComponentMap.remove(filterCompName.toUpperCase());
-  }
-  
+    
   public boolean exists(String name) {
     return getFilterComponentByName(name) != null;
     //return mComponentMap.containsKey(name.toUpperCase());  
   }
-  
-  public PluginsFilterComponent[] getPluginsFilterComponentsForPlugin(PluginAccess plugin) {
-    ArrayList<PluginsFilterComponent> list = new ArrayList<PluginsFilterComponent>();
-    
-    for(PluginsFilterComponent component : mPluginFilterComponentList)
-      if(component.getPluginAccessOfComponent().equals(plugin))
-        list.add(component);
-    
-    return list.toArray(new PluginsFilterComponent[list.size()]);
+  public void remove(String filterCompName) {
+    mComponentList.remove(getFilterComponentByName(filterCompName));
+    //mComponentMap.remove(filterCompName.toUpperCase());
   }
 }

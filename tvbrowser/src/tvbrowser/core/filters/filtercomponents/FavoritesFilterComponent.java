@@ -59,13 +59,13 @@ public class FavoritesFilterComponent implements FilterComponent {
   public void write(ObjectOutputStream out) throws IOException {
   }
 
-  public JPanel getPanel() {
+  public JPanel getSettingsPanel() {
     JPanel p1 = new JPanel();
     p1.add(new JLabel(mLocalizer.msg("desc","Accepts all programs that are marked as Favorite.")));
     return p1;
   }
 
-  public void ok() {
+  public void saveSettings() {
   }
 
   public String getName() {

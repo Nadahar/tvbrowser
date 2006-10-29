@@ -31,19 +31,85 @@ import java.io.ObjectOutputStream;
 
 import javax.swing.JPanel;
 
+/**
+ * An interface for the program filter system of TV-Browser. 
+ */
 public interface FilterComponent {
   
+  /**
+   * Gets the version number of a FilterComponent.
+   * 
+   * @return The version number of a FilterComponent.
+   */
   public int getVersion();
-  public boolean accept(devplugin.Program program);  
-  public void read(ObjectInputStream in, int version) throws IOException, ClassNotFoundException;
-  public void write(ObjectOutputStream out) throws IOException;
-  public JPanel getPanel();
-  public void ok();
-  public String getName();
-  public String getDescription();
-  public void setName(String name);
-  public void setDescription(String desc);
   
+  /**
+   * Checks a program if it is acceptable by the FilterComponent.
+   * 
+   * @param program The program to check.
+   * @return <code>true</code> if the program is acceptable by the FilterComponent, <code>false</code> otherwise.
+   */
+  public boolean accept(devplugin.Program program);
+  
+  /**
+   * Loads the settings of a FilterComponent from an ObjectInputStream.
+   * 
+   * @param in The stream to read from.
+   * @param version The version of the data.
+   * @throws IOException
+   * @throws ClassNotFoundException
+   */
+  public void read(ObjectInputStream in, int version) throws IOException, ClassNotFoundException;
+  
+  /**
+   * Saves the settings of a FilterComponent to an ObjectOutputStream.
+   * 
+   * @param out The stream to write to.
+   * @throws IOException
+   */
+  public void write(ObjectOutputStream out) throws IOException;
+  
+  /**
+   * Gets the settings panel for a FilterComponent.
+   * 
+   * @return The settings panel the FilterComponent.
+   */
+  public JPanel getSettingsPanel();
+  
+  /**
+   * Is called when the settings, the user had made in the filter settings are to be saved.
+   */
+  public void saveSettings();
+  
+  /**
+   * Gets the name of a FilterComponent.
+   * 
+   * @return The name of the FilterComponent.
+   */
+  public String getName();
+  
+  /**
+   * Gets the description of a FilterComponent.
+   * 
+   * @return The description of the FilterComponent.
+   */
+  public String getDescription();
+  
+  /**
+   * Sets the name of a FilterComponent.
+   * 
+   * @param name The new name of the FilterComponent.
+   * @return The name of the FilterComponent.
+   */
+  public void setName(String name);
+
+  /**
+   * Sets the description of a FilterComponent.
+   * 
+   * @param desc The new description of the FilterComponent.
+   * @return The description of the FilterComponent.
+   */
+  public void setDescription(String desc);  
 }
 
 

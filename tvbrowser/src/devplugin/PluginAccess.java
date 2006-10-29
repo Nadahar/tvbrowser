@@ -111,24 +111,19 @@ public interface PluginAccess extends Marker,ProgramReceiveIf,ContextMenuIf {
    * @return True if the program filter component can be deleted.
    */
   public boolean isAllowedToDeleteProgramFilter(PluginsProgramFilter programFilter);
-  
-  /**
-   * Returns the available plugins filter components.
-   * 
-   * @return The available plugins filter components or <code>null</code> if no plugins filter components are supported.
-   */
-  public PluginsFilterComponent[] getAvailableFilterComponents();
- 
-  /**
-   * Is used to track if a filter component can be deleted or changed.
-   * Should be make sure only the plugin itself can change/delete filter component if it is not editable.
-   * 
-   * @param filterComponent The filter component to change/delete.
-   * @return True if the filter component can be deleted/changed.
-   */
-  public boolean isAllowedToDeleteOrChangeFilterComponent(PluginsFilterComponent filterComponent) ;
-  
+    
   public boolean canUseProgramTree();
 
   public PluginTreeNode getRootNode();
+  
+  /**
+   * Returns the available plugins filter component classes.
+   * <br>
+   * ATTENTON: Use return <code>(Class<? extends PluginsFilterComponent>[]) new Class[] {MyFilterComponent1.class,MyFilterComponent2.class};</code>
+   * because the creation of a class array with generic type didn't work.
+   * 
+   * @return The available plugins filter components classes or <code>null</code> if no plugins filter components are supported.
+   * @since 2.5
+   */
+  public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses();
 }

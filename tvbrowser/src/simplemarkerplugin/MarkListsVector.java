@@ -15,12 +15,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * CVS information:
- *  $RCSfile$
- *   $Source$
- *     $Date: 2006-06-05 21:02:43 +0200 (Mo, 05 Jun 2006) $
- *   $Author: ds10 $
- * $Revision: 2537 $
+ * SVN information:
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package simplemarkerplugin;
 
@@ -48,7 +46,7 @@ public class MarkListsVector extends Vector<MarkList> {
    * Constructor of this class.
    */
   public MarkListsVector() {
-    addElement(new MarkList("Default"));
+    addElement(new MarkList(SimpleMarkerPlugin.mLocalizer.msg("default","default")));
   }
   /**
    * @param p
@@ -151,5 +149,18 @@ public class MarkListsVector extends Vector<MarkList> {
         return get(i);
     
     return (target == null || target.equals(ProgramReceiveTarget.createDefaultTargetArrayForProgramReceiveIf(SimpleMarkerPlugin.getInstance())[0])) ? get(0) : null;
+  }
+  
+  /**
+   * @param id
+   *          The id of the requested list.
+   * @return The list for the name.
+   */
+  public MarkList getListForId(String id) {
+    for (int i = 0; i < size(); i++)
+      if (elementAt(i).getId().equals(id))
+        return elementAt(i);
+
+    return null;
   }
 }

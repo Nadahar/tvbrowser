@@ -716,59 +716,34 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * @since 2.5
    */
   protected abstract boolean doIsAllowedToDeleteProgramFilter(PluginsProgramFilter programFilter);
-  
+
   /**
-   * Returns the available plugins filter components.
+   * Returns the available plugins filter component classes.
+   * <br>
+   * ATTENTON: Use return <code>(Class<? extends PluginsFilterComponent>[]) new Class[] {MyFilterComponent1.class,MyFilterComponent2.class};</code>
+   * because the creation of a class array with generic type didn't work.
    * 
-   * @return The available plugins filter components or <code>null</code> if no plugins filter components are supported.
+   * @return The available plugins filter components classes or <code>null</code> if no plugins filter components are supported.
    * @since 2.5
    */
-  public PluginsFilterComponent[] getAvailableFilterComponents() {
+  public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
     try {
       assertActivatedState();
-      return doGetAvailableFilterComponents();
+      return doGetAvailableFilterComponentClasses();
     } catch (Exception exc) {
       handlePluginException(exc);
     }
     
     return null;
   }
-
-  /**
-   * Really returns the available plugins filter components.
-   * 
-   * @return The available plugins filter components or <code>null</code> if no plugins filter components are supported.
-   * @since 2.5
-   */
-  public abstract PluginsFilterComponent[] doGetAvailableFilterComponents();
-
-  /**
-   * Is used to track if a filter component can be deleted or changed.
-   * Should be make sure only the plugin itself can change/delete filter component if it is not editable.
-   * 
-   * @param filterComponent The filter component to change/delete.
-   * @return True if the filter component can be deleted/changed.
-   * @since 2.5
-   */
-  public boolean isAllowedToDeleteOrChangeFilterComponent(PluginsFilterComponent filterComponent) {
-    try {
-      assertActivatedState();
-      return doIsAllowedToDeleteOrChangeFilterComponent(filterComponent);
-    } catch (Exception exc) {
-      handlePluginException(exc);
-    }
-    
-    return false;
-  }
   
   /**
-   * Really return if a filter component can be deleted or changed.
+   * Really gets the available filter component classes.
    * 
-   * @param filterComponent The filter component to change/delete.
-   * @return True if the filter component can be deleted/changed.
+   * @return The available plugins filter components classes or <code>null</code> if no plugins filter components are supported.
    * @since 2.5
    */
-  protected abstract boolean doIsAllowedToDeleteOrChangeFilterComponent(PluginsFilterComponent filterComponent);
+  protected abstract  Class<? extends PluginsFilterComponent>[]  doGetAvailableFilterComponentClasses();
   
   /**
    * Checks whether the plugin is activated. If it is not an error message is

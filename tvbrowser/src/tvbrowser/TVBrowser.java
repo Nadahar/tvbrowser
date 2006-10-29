@@ -374,7 +374,7 @@ public class TVBrowser {
                     }catch(Exception registySetting) {
                       JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(mainFrame),
                           mLocalizer.msg("registryNotChanged","<html>The Registry value couldn't be changed. Maybe you havn't the right to do it.<br>If it is so contact you Administrator and let him do it for you.<br><br><b><Attention:/b> The following description is for experts. If you change or delete the wrong value in the Registry you could destroy your Windows installation.<br><br>To get no warning on TV-Browser start the Registry value <b>WaitToKillAppTimeout</b> in the Registry path<br><b>HKEY_CURRENT_USER\\Control Panel\\Desktop</b> have to be at least <b>5000</b> or the value for <b>AutoEndTasks</b> in the same path have to be <b>0</b>.</html>"),
-                          mLocalizer.msg("error","Error"),JOptionPane.ERROR_MESSAGE);
+                          Localizer.getLocalization(Localizer.I18N_ERROR),JOptionPane.ERROR_MESSAGE);
                     }
                   }
                 }
@@ -487,7 +487,7 @@ public class TVBrowser {
 
   private static void showTVBrowserIsAlreadyRunningMessageBox() {
 
-    Object[] options = {mLocalizer.msg("close","Close"),
+    Object[] options = {Localizer.getLocalization(Localizer.I18N_CLOSE),
                     mLocalizer.msg("startAnyway","start anyway")};
     if (JOptionPane.showOptionDialog(null,
     mLocalizer.msg("alreadyRunning","TV-Browser is already running"),

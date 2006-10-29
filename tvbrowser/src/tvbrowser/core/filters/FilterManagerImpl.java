@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import tvbrowser.ui.mainframe.MainFrame;
 
 import devplugin.FilterManager;
-import devplugin.PluginsFilterComponent;
 import devplugin.PluginsProgramFilter;
 import devplugin.ProgramFilter;
 
@@ -94,82 +93,6 @@ public class FilterManagerImpl implements FilterManager {
   }
   
   /**
-   * @return The available filter components.
-   */
-  public FilterComponent[] getAvailableFilterComponents() {
-    return FilterComponentList.getInstance().getAvailableFilterComponents();
-  }
-
-  /**
-   * @param name The name of the used filter rule. 
-   * @param rule The rule to use for this user filter.
-   * @return True if filter could be added. 
-   */
-  public boolean addUserFilterRule(String name, String rule) {
-    if(FilterList.getInstance().getFilterByName(name) == null) {
-      UserFilter filter = new UserFilter(name);
-      
-      try {
-        filter.setRule(rule);
-      } catch (ParserException e) {
-        e.printStackTrace();
-        return false;
-      }
-      
-      FilterList.getInstance().addProgramFilter(filter);
-      MainFrame.getInstance().updateFilterMenu();
-    }
-    return false;
-  }
-
-  /**
-   * @param name The name of the filter rule which should be deleted.
-   * @return True if filter could be deleted. 
-   */
-  public boolean deleteUserFilterRule(String name) {
-    ProgramFilter filter = FilterList.getInstance().getFilterByName(name);
-    
-    if(filter != null && filter instanceof UserFilter) {
-      if(getCurrentFilter() == filter)
-         setCurrentFilter(FilterList.getInstance().getDefaultFilter());
-      
-      FilterList.getInstance().remove(filter);
-      MainFrame.getInstance().updateFilterMenu();
-      
-      return true;
-    }
-    
-    return false;
-  }
-  
-  /**
-   * @param filterComponent The filter component to add.
-   * @return True if the filter component could be added.
-   */
-  public boolean addFilterComponent(PluginsFilterComponent filterComponent) {
-    if(FilterComponentList.getInstance().getFilterComponentByName(filterComponent.getName()) == null) {
-      FilterComponentList.getInstance().add(filterComponent);
-      MainFrame.getInstance().updateFilterMenu();
-      return true;
-    }
-    
-    return false;
-  }
-  
-  /**
-   * @param filterComponent The filter component to delete.
-   * @return True if the filter component could be deleted.
-   */
-  public boolean deleteFilterComponent(PluginsFilterComponent filterComponent) {
-    if(filterComponent.getPluginAccessOfComponent().isAllowedToDeleteOrChangeFilterComponent(filterComponent)) {
-      removeFilterComponents(filterComponent);
-      return true;
-    }
-    
-    return false;
-  }
-  
-  /**
    * @param filter The filter to add.
    * @return True if the filter could be added.
    */
@@ -200,48 +123,13 @@ public class FilterManagerImpl implements FilterManager {
       
     return false;
   }
-  
+
   /**
-   * Changes the name of a filter component.
+   * Returns the default filter of the program table.
    * 
-   * @param component The changed filter component.
-   * @param oldName The old name of the filter component.
-   * @return True if the filter component could be changed.
+   * @return The default filter of the program table.
    */
-  public boolean changeFilterComponentName(PluginsFilterComponent component, String oldName) {
-    if(!component.getPluginAccessOfComponent().isAllowedToDeleteOrChangeFilterComponent(component))
-      return false;
-    
-    UserFilter[] userFilters = FilterList.getInstance().getUserFilterArr();
-    
-    for(UserFilter userFilter : userFilters) {
-      
-      String rule = userFilter.getRule();
-      
-      if(rule.indexOf(oldName) != -1) {
-        String newRule = rule.replace(oldName, component.getName());
-        
-        try {
-          userFilter.setRule(newRule);
-        } catch (ParserException e) {
-          e.printStackTrace();
-          return false;
-        }
-      }
-    }
-    
-    FilterList.getInstance().store();
-    return true;
-  }
-  
-  public void removeFilterComponents(PluginsFilterComponent filterComponent) {
-    UserFilter[] userFilters = FilterList.getInstance().getUserFilterArr();      
-    
-    for(int i = 0; i < userFilters.length; i++)
-      if(userFilters[i].getRule().indexOf(filterComponent.getName()) != -1)
-        deleteUserFilterRule(userFilters[i].getName());
-    
-    FilterComponentList.getInstance().remove(filterComponent.getName());      
-    MainFrame.getInstance().updateFilterMenu();    
+  public ProgramFilter getDefaultFilter() {
+    return FilterList.getInstance().getDefaultFilter();
   }
 }

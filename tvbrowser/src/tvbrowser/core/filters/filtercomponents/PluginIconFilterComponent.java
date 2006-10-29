@@ -82,7 +82,7 @@ public class PluginIconFilterComponent implements FilterComponent {
         return false;
     }
 
-    public JPanel getPanel() {
+    public JPanel getSettingsPanel() {
 
         JPanel content = new JPanel(new BorderLayout(0, 7));
         JTextArea ta = new JTextArea(mLocalizer.msg("desc", "Accept all programs marked by plugin:"));
@@ -106,10 +106,10 @@ public class PluginIconFilterComponent implements FilterComponent {
     }
 
     public String toString() {
-        return mLocalizer.msg("Plugin", "Plugin");
+        return mLocalizer.msg("PluginIcon", "PluginIcon");
     }
 
-    public void ok() {
+    public void saveSettings() {
         mPlugin = (PluginProxy) mBox.getSelectedItem();
     }
 

@@ -36,6 +36,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import tvbrowser.core.filters.FilterComponent;
+import util.ui.Localizer;
 import util.ui.OrderChooser;
 import devplugin.Channel;
 import devplugin.Program;
@@ -98,11 +99,11 @@ public class ChannelFilterComponent implements FilterComponent {
   } 
   
 	public String toString() {
-		return mLocalizer.msg("channel","Channel");
+		return Localizer.getLocalization(Localizer.I18N_CHANNEL);
 	}
 
 
-	public void ok() {
+	public void saveSettings() {
     Object[] o = mList.getOrder();
     mSelectedChannels = new Channel[o.length];
     for (int i=0; i<o.length; i++) {
@@ -113,7 +114,7 @@ public class ChannelFilterComponent implements FilterComponent {
 	
 
 	
-	public JPanel getPanel() {
+	public JPanel getSettingsPanel() {
     JPanel content = new JPanel(new BorderLayout());
     content.add(new JLabel(mLocalizer.msg("description","This filter accepts programs belonging to the following channels:")),BorderLayout.NORTH);
     Channel[] channels = tvbrowser.core.ChannelList.getSubscribedChannels();
