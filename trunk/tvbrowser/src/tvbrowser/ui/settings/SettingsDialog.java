@@ -120,7 +120,7 @@ public class SettingsDialog implements WindowClosingIf {
   public SettingsDialog(Component parent, String selectedTabId) {
     mInstance = this;
     mDialog = UiUtilities.createDialog(parent, true);
-    mDialog.setTitle(mLocalizer.msg("settings", "Settings"));
+    mDialog.setTitle(Localizer.getLocalization(Localizer.I18N_SETTINGS));
 
     UiUtilities.registerForClosing(this);
 
