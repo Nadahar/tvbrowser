@@ -1,5 +1,8 @@
 Changelog TVRaterPlugin
 
+1.0
+- Added Filters
+
 0.70
 - Bug #1280942: Error when no Data needs to be commited
 
