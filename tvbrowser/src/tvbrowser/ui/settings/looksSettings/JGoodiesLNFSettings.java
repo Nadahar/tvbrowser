@@ -40,6 +40,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 
 import tvbrowser.core.Settings;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -116,14 +117,14 @@ public class JGoodiesLNFSettings extends JDialog implements WindowClosingIf {
     mShadow.setSelected(Settings.propJGoodiesShadow.getBoolean());
     content.add(mShadow, cc.xyw(1,3,3));
     
-    JButton ok = new JButton(mLocalizer.msg("ok", "OK"));
+    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     ok.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         okPressed();
       }
     });
     
-    JButton cancel = new JButton(mLocalizer.msg("cancel", "Cancel"));
+    JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     cancel.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         cancelPressed();

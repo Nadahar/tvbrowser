@@ -58,8 +58,10 @@ public class MarkListFilterComponent extends PluginsFilterComponent {
     try {
       return SimpleMarkerPlugin.getInstance().getMarkListForId(mListId).contains(program);
     } catch(Exception e) {
-      JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(SimpleMarkerPlugin.getInstance().getSuperFrame()),SimpleMarkerPlugin.mLocalizer.msg("filterText","The list that is used for the filter component '{0}' was deleted.\nPlease correct your filter configuration.",getName()),Localizer.getLocalization(Localizer.I18N_ERROR),JOptionPane.ERROR_MESSAGE);
-      SimpleMarkerPlugin.getPluginManager().getFilterManager().setCurrentFilter(SimpleMarkerPlugin.getPluginManager().getFilterManager().getDefaultFilter());
+      if(SimpleMarkerPlugin.getInstance().getSuperFrame() != null) {
+        JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(SimpleMarkerPlugin.getInstance().getSuperFrame()),SimpleMarkerPlugin.mLocalizer.msg("filterErrorMessage","The mark list that is used for the filter component '{0}' was deleted.\nPlease correct your filter configuration.",getName()),Localizer.getLocalization(Localizer.I18N_ERROR) + ": " +SimpleMarkerPlugin.getInstance().getInfo().getName(),JOptionPane.ERROR_MESSAGE);
+        SimpleMarkerPlugin.getPluginManager().getFilterManager().setCurrentFilter(SimpleMarkerPlugin.getPluginManager().getFilterManager().getDefaultFilter());
+      }
     }
     
     return false;

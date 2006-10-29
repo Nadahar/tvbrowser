@@ -16,6 +16,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 import util.browserlauncher.Launch;
+import util.ui.Localizer;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
 import util.ui.html.HTMLTextHelper;
@@ -102,7 +103,7 @@ public class PluginInfoDialog extends JDialog {
     
     panel.add(new JScrollPane(infoPanel), cc.xyw(1,1,2));
     
-    JButton ok = new JButton(mLocalizer.msg("ok", "OK"));
+    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     
     ok.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

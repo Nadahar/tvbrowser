@@ -43,6 +43,7 @@ import javax.swing.event.HyperlinkListener;
 import tvbrowser.core.tvdataservice.ChannelGroupManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import util.browserlauncher.Launch;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import util.ui.html.ExtendedHTMLDocument;
@@ -111,7 +112,7 @@ public class ChannelGroupInfoDialog extends JDialog implements WindowClosingIf{
     final JScrollPane scrollPane = new JScrollPane(infoPanel);
     panel.add(scrollPane, cc.xyw(1,1,2));
 
-    JButton ok = new JButton(mLocalizer.msg("ok", "OK"));
+    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
 
     ok.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -161,7 +162,7 @@ public class ChannelGroupInfoDialog extends JDialog implements WindowClosingIf{
     html.append("<h1>").append(mLocalizer.msg("description", "Description")).append("</h1>");
     html.append(HTMLTextHelper.convertTextToHtml(getNotNull(mChannelGroup.getDescription()), true));
 
-    html.append("<h1>").append(mLocalizer.msg("channels", "Channels")).append("</h1>");
+    html.append("<h1>").append(Localizer.getLocalization(Localizer.I18N_CHANNELS)).append("</h1>");
     TvDataServiceProxy proxy = ChannelGroupManager.getInstance().getTvDataService(mChannelGroup);
     if (proxy != null) {
       Channel[] ch = proxy.getAvailableChannels(mChannelGroup);

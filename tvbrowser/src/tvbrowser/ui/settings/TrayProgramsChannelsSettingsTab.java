@@ -38,6 +38,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 import tvbrowser.core.Settings;
+import util.ui.Localizer;
 import util.ui.OrderChooser;
 import util.ui.UiUtilities;
 
@@ -169,7 +170,7 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
   }
 
   public String getTitle() {
-    return mLocalizer.msg("channels","Channels");
+    return Localizer.getLocalization(Localizer.I18N_CHANNELS);
   }
 
   protected static void setTrayIsEnabled(boolean value) {

@@ -37,6 +37,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import tvbrowser.core.Settings;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -78,7 +79,7 @@ public class SkinLNFSettings extends JDialog implements WindowClosingIf {
     
     CellConstraints cc = new CellConstraints();
     
-    content.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("help", "Help")), cc.xyw(1,1,5));
+    content.add(DefaultComponentFactory.getInstance().createSeparator(Localizer.getLocalization(Localizer.I18N_HELP)), cc.xyw(1,1,5));
     
     content.add(UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("skinLFInfo", "Skin Info")), cc.xyw(2,3,3));
 
@@ -104,14 +105,14 @@ public class SkinLNFSettings extends JDialog implements WindowClosingIf {
       }
     });
     
-    JButton ok = new JButton(mLocalizer.msg("ok", "OK"));
+    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     ok.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         okPressed();
       }
     });
     
-    JButton cancel = new JButton(mLocalizer.msg("cancel", "Cancel"));
+    JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     cancel.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         cancelPressed();

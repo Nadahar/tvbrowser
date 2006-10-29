@@ -43,6 +43,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import util.ui.ChannelListCellRenderer;
+import util.ui.Localizer;
 import util.ui.TabLayout;
 import devplugin.Channel;
 
@@ -128,18 +129,16 @@ public class ChannelGroupDialog extends JDialog {
         panel.add(createTextArea(mGroup.getDescription()));
         
         JPanel channelPanel = new JPanel(new BorderLayout());
-        channelPanel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("channels", "Channels")));
+        channelPanel.setBorder(BorderFactory.createTitledBorder(Localizer.getLocalization(Localizer.I18N_CHANNELS)));
         
         Channel[] c = mGroup.getAvailableChannels();
         Channel[] ch = new Channel[c.length];
         
         System.arraycopy(c, 0, ch, 0, c.length);
         
-        Arrays.sort(ch,new Comparator() {
-            public int compare(Object o1, Object o2) {
-                Channel g1 = (Channel) o1;
-                Channel g2 = (Channel) o2;
-                return g1.getName().compareToIgnoreCase(g2.getName());
+        Arrays.sort(ch,new Comparator<Channel>() {
+            public int compare(Channel o1, Channel o2) {
+                return o1.getName().compareToIgnoreCase(o2.getName());
             }
         });
         
@@ -150,7 +149,7 @@ public class ChannelGroupDialog extends JDialog {
         
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         
-        JButton ok = new JButton(mLocalizer.msg("ok", "OK"));
+        JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
         ok.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {

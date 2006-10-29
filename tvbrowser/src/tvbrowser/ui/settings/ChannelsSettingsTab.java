@@ -49,6 +49,7 @@ import util.ui.DragAndDropMouseListener;
 import util.ui.LinkButton;
 import util.ui.ListDragAndDropHandler;
 import util.ui.ListDropAction;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.customizableitems.SortableItemList;
 import util.ui.progress.Progress;
@@ -580,7 +581,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
      * Returns the title of the tab-sheet.
      */
     public String getTitle() {
-        return mLocalizer.msg("channels", "Channels");
+        return Localizer.getLocalization(Localizer.I18N_CHANNELS);
     }
 
     /**

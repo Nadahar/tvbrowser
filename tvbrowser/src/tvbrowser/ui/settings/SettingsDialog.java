@@ -73,6 +73,7 @@ import tvbrowser.extras.programinfo.ProgramInfoOrderSettingsTab;
 import tvbrowser.extras.programinfo.ProgramInfoPicturesSettingsTab;
 import tvbrowser.extras.reminderplugin.ReminderPicturesSettingsTab;
 import tvbrowser.extras.reminderplugin.ReminderSettingsTab;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -165,7 +166,7 @@ public class SettingsDialog implements WindowClosingIf {
     ButtonBarBuilder builder = new ButtonBarBuilder();
     builder.addGlue();
 
-    JButton okBt = new JButton(mLocalizer.msg("ok", "OK"));
+    JButton okBt = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     okBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         saveSettings();
@@ -175,7 +176,7 @@ public class SettingsDialog implements WindowClosingIf {
     });
     mDialog.getRootPane().setDefaultButton(okBt);
 
-    JButton cancelBt = new JButton(mLocalizer.msg("cancel", "Cancel"));
+    JButton cancelBt = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     cancelBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         mDialog.dispose();
@@ -266,12 +267,10 @@ public class SettingsDialog implements WindowClosingIf {
 
   private TreeNode createSelectionTree() {
     Icon icon;
-    String msg;
     SettingNode node;
 
-    icon = IconLoader.getInstance().getIconFromTheme("category", "preferences-desktop", 16);
-    msg = mLocalizer.msg("settings", "Settings");
-    SettingNode root = new SettingNode(new DefaultSettingsTab(msg, icon));
+    icon = IconLoader.getInstance().getIconFromTheme("category", "preferences-desktop", 16);    
+    SettingNode root = new SettingNode(new DefaultSettingsTab(Localizer.getLocalization(Localizer.I18N_SETTINGS), icon));
 
     SettingNode generalSettings = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("general", "General"), null));
     root.add(generalSettings);

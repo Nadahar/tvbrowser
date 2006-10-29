@@ -33,6 +33,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import tvbrowser.core.Settings;
+import util.ui.Localizer;
 import util.ui.PictureSettingsPanel;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -86,9 +87,9 @@ public class TvBrowserPictureSettingsUpdateDialog extends JDialog implements Win
     
     JPanel buttonPanel = new JPanel(layout);
     
-    mOkButton = new JButton(PictureConfigPanel.mLocalizer.msg("ok","OK"));
+    mOkButton = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     mOkButton.addActionListener(this);
-    mCancelButton = new JButton(PictureConfigPanel.mLocalizer.msg("cancel","Cancel"));
+    mCancelButton = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     mCancelButton.addActionListener(this);
     
     buttonPanel.add(new JSeparator(), cc.xyw(1,1,5));

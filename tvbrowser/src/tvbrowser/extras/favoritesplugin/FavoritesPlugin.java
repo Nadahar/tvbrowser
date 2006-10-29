@@ -302,7 +302,7 @@ public class FavoritesPlugin {
       updateAllFavorites();
     }
 
-    if(version == 4)
+    if(version >= 4)
       this.mShowInfoOnNewProgramsFound = in.readBoolean();
 
   }
