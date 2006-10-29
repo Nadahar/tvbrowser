@@ -382,12 +382,7 @@ public class PluginProxyManager {
     if (item != null) {
       activatePlugin(item);
     }
-    
-    PluginsFilterComponent[] components = item.getPlugin().getAvailableFilterComponents();
-    
-    for(PluginsFilterComponent component : components)
-      FilterManagerImpl.getInstance().addFilterComponent(component);
-    
+        
     PluginsProgramFilter[] filters = item.getPlugin().getAvailableFilter();
     
     for(PluginsProgramFilter filter : filters)
@@ -433,12 +428,7 @@ public class PluginProxyManager {
    * @param plugin The plugin to deactivate
    * @throws TvBrowserException If deactivating failed
    */
-  public void deactivatePlugin(PluginProxy plugin) throws TvBrowserException {
-    PluginsFilterComponent[] filterComponents = FilterComponentList.getInstance().getPluginsFilterComponentsForPlugin(plugin);
-    
-    for(PluginsFilterComponent filterComponent : filterComponents)
-      ((FilterManagerImpl)FilterManagerImpl.getInstance()).removeFilterComponents(filterComponent);
-    
+  public void deactivatePlugin(PluginProxy plugin) throws TvBrowserException {    
     PluginsProgramFilter[] filters = FilterList.getInstance().getPluginsProgramFiltersForPlugin(plugin);
     
     for(PluginsProgramFilter filter : filters) {

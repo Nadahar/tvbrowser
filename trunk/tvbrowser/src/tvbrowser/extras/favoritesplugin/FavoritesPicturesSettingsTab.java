@@ -22,6 +22,7 @@ import javax.swing.Icon;
 import javax.swing.JPanel;
 
 import devplugin.SettingsTab;
+import util.ui.Localizer;
 import util.ui.PictureSettingsPanel;
 
 /**
@@ -45,7 +46,7 @@ public class FavoritesPicturesSettingsTab implements SettingsTab {
   }
 
   public String getTitle() {
-    return PictureSettingsPanel.mLocalizer.msg("pictures","Pictures");
+    return Localizer.getLocalization(Localizer.I18N_PICTURES);
   }
 
   public void saveSettings() {

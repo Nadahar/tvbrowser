@@ -15,12 +15,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * CVS information:
- *  $RCSfile$
- *   $Source$
- *     $Date: 2006-06-05 21:02:43 +0200 (Mo, 05 Jun 2006) $
- *   $Author: ds10 $
- * $Revision: 2537 $
+ * SVN information:
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package simplemarkerplugin;
 
@@ -119,15 +117,20 @@ public class ManagePanel {
     JPanel panel = (JPanel)mParent.getContentPane();    
     panel.setBorder(Borders.createEmptyBorder("6dlu,6dlu,5dlu,6dlu"));
     
-    panel.setLayout(new FormLayout("max(90dlu;default),4dlu,fill:default:grow",
-        "pref,pref,4dlu,fill:default:grow,4dlu,pref"));    
+    FormLayout layout = new FormLayout("max(90dlu;default),4dlu,fill:default:grow",
+    "pref,pref,4dlu,fill:default:grow,4dlu,pref");
+    
+    panel.setLayout(layout);    
 
     CellConstraints cc = new CellConstraints();
     
     panel.add(mShowPrograms, cc.xy(1,1));
     panel.add(mShowTitles, cc.xy(1,2));
-    panel.add(mMarkListsScrolPane, cc.xy(1,4));
-    panel.add(mProgramsScrollPane, cc.xy(3,4));
+    
+    if(markListVector.size() > 1)
+      panel.add(mMarkListsScrolPane, cc.xy(1,4));
+    
+    panel.add(mProgramsScrollPane, (markListVector.size() > 1 ? cc.xy(3,4) : cc.xyw(1,4,3)));
     panel.add(getButtonPanel(cc), cc.xyw(1,6,3));
 
     mShowPrograms.addActionListener(new ActionListener() {

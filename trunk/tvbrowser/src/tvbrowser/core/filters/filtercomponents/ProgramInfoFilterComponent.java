@@ -109,9 +109,9 @@ public class ProgramInfoFilterComponent implements FilterComponent {
     /**
      * Gibt einen Panel zur�ck, der es erm�glicht, 
      * den Filter einzustellen
-     * @see tvbrowser.core.filters.FilterComponent#getPanel()
+     * @see tvbrowser.core.filters.FilterComponent#getSettingsPanel()
      */
-    public JPanel getPanel() {
+    public JPanel getSettingsPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         
@@ -152,9 +152,9 @@ public class ProgramInfoFilterComponent implements FilterComponent {
     /**
      * Im Dialog wurde OK gedr�ckt, alle Einstellungen k�nnen
      * nun �bernommen werden
-     * @see tvbrowser.core.filters.FilterComponent#ok()
+     * @see tvbrowser.core.filters.FilterComponent#saveSettings()
      */
-    public void ok() {
+    public void saveSettings() {
     	int selectedBits = 0;
     
     	for (int i = 0; i < _checkBox.length; i++) {

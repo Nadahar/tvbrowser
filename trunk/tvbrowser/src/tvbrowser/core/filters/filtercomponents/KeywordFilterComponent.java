@@ -93,7 +93,7 @@ public class KeywordFilterComponent implements FilterComponent {
   }
 
 
-  public void ok() {
+  public void saveSettings() {
     mSearchFormSettings = mSearchForm.getSearchFormSettings();
     this.setSearchFormSettings(mSearchFormSettings);
   }
@@ -102,7 +102,7 @@ public class KeywordFilterComponent implements FilterComponent {
     return mSearcher.matches(program, mSearchFieldArr);
   }
 
-  public JPanel getPanel() {
+  public JPanel getSettingsPanel() {
     String msg;
     
     JPanel content = new JPanel();

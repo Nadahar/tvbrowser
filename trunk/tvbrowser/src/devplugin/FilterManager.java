@@ -18,8 +18,6 @@
  */
 package devplugin;
 
-import tvbrowser.core.filters.FilterComponent;
-
 /**
  * The filter manager enables plugins to
  * use the filter system of TV-Browser.
@@ -35,6 +33,13 @@ public interface FilterManager {
    * @return The current selected filter of the program table.
    */
   public ProgramFilter getCurrentFilter();
+
+  /**
+   * Returns the default filter of the program table.
+   * 
+   * @return The default filter of the program table.
+   */
+  public ProgramFilter getDefaultFilter();
   
   /**
    * Activates a filter.
@@ -51,36 +56,6 @@ public interface FilterManager {
   public ProgramFilter[] getAvailableFilters();
   
   /**
-   * @return The available filter components.
-   */
-  public FilterComponent[] getAvailableFilterComponents();
-  
-  /**
-   * @param name The name of the used filter rule. 
-   * @param rule The rule to use for this user filter.
-   * @return True if filter could be added. 
-   */
-  public boolean addUserFilterRule(String name, String rule);
-  
-  /**
-   * @param name The name of the filter rule which should be deleted.
-   * @return True if filter could be deleted. 
-   */
-  public boolean deleteUserFilterRule(String name);
-  
-  /**
-   * @param filterComponent The filter component to add.
-   * @return True if the filter component could be added.
-   */
-  public boolean addFilterComponent(PluginsFilterComponent filterComponent);
-  
-  /**
-   * @param filterComponent The filter component to delete.
-   * @return True if the filter component could be deleted.
-   */
-  public boolean deleteFilterComponent(PluginsFilterComponent filterComponent);
-  
-  /**
    * @param filter The filter to add.
    * @return True if the filter could be added.
    */
@@ -90,14 +65,5 @@ public interface FilterManager {
    * @param filter The filter to delete.
    * @return True if the filter could be deleted.
    */
-  public boolean deleteFilter(PluginsProgramFilter filter);
-  
-  /**
-   * Changes the name of a filter component.
-   * 
-   * @param component The changed filter component.
-   * @param oldName The old name of the filter component.
-   * @return True if the filter component could be changed.
-   */
-  public boolean changeFilterComponentName(PluginsFilterComponent component, String oldName);
+  public boolean deleteFilter(PluginsProgramFilter filter);  
 }

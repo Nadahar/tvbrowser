@@ -136,7 +136,7 @@ public class MassFilterComponent implements FilterComponent {
     mSearchFormSettings.writeData(out);
   }
 
-  public JPanel getPanel() {
+  public JPanel getSettingsPanel() {
     mNewSearchFormSettings = mSearchFormSettings;
     
     mSettingsPanel = new JPanel(new BorderLayout());
@@ -187,7 +187,7 @@ public class MassFilterComponent implements FilterComponent {
     mNewSearchFormSettings = dialog.getSearchFormSettings();
   }
   
-  public void ok() {
+  public void saveSettings() {
     mText = mTextInput.getText();
     mSearchFormSettings = mNewSearchFormSettings;
     generateSearcher();

@@ -15,12 +15,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * CVS information:
- *  $RCSfile$
- *   $Source$
- *     $Date: 2006-06-05 21:02:43 +0200 (Mo, 05 Jun 2006) $
- *   $Author: ds10 $
- * $Revision: 2537 $
+ * SVN information:
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package simplemarkerplugin;
 
@@ -36,7 +34,6 @@ import java.util.Vector;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
-import javax.swing.JPanel;
 
 import util.ui.Localizer;
 
@@ -44,7 +41,6 @@ import devplugin.Date;
 import devplugin.NodeFormatter;
 import devplugin.Plugin;
 import devplugin.PluginTreeNode;
-import devplugin.PluginsFilterComponent;
 import devplugin.Program;
 import devplugin.ProgramItem;
 import devplugin.ProgramReceiveTarget;
@@ -68,7 +64,6 @@ public class MarkList extends Vector<Program> {
   private Hashtable<String, LinkedList<Program>> mProgram = new Hashtable<String, LinkedList<Program>>();
   private Icon mMarkIcon;
   private String mMarkIconPath;
-  private MarkListFilterComponent mFilterComponent;
 
   /**
    * The constructor for a new list.
@@ -80,7 +75,6 @@ public class MarkList extends Vector<Program> {
     mName = name;
     mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(null);
     mId = name+System.currentTimeMillis();
-    mFilterComponent = new MarkListFilterComponent(SimpleMarkerPlugin.getInstance(),mName,false);
   }
 
   /**
@@ -97,14 +91,7 @@ public class MarkList extends Vector<Program> {
    *          The name of this list.
    */
   public void setName(String name) {
-    if(mFilterComponent != null) {
-      String oldName = mFilterComponent.getName();
-      mName = name;
-      SimpleMarkerPlugin.getInstance().setEditablePluginsFilterComponent(mFilterComponent);
-      SimpleMarkerPlugin.getPluginManager().getFilterManager().changeFilterComponentName(mFilterComponent, oldName);
-    }
-    else
-      mName = name;
+    mName = name;
   }
 
   /**
@@ -149,8 +136,6 @@ public class MarkList extends Vector<Program> {
         mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(
             mMarkIconPath);
     }
-    
-    mFilterComponent = new MarkListFilterComponent(SimpleMarkerPlugin.getInstance(),mName,false);
   }
 
   /**
@@ -390,39 +375,11 @@ public class MarkList extends Vector<Program> {
     return new ProgramReceiveTarget(SimpleMarkerPlugin.getInstance(),mName,mId);
   }
   
-  public PluginsFilterComponent getFilterComponent() {
-    return mFilterComponent;
+  public String getId() {
+    return mId;
   }
   
-  private class MarkListFilterComponent extends PluginsFilterComponent {    
-    public MarkListFilterComponent(Plugin plugin, String componentId, boolean isEditable) {
-      super(plugin);
-    }    
-
-    public boolean accept(Program program) {
-      return contains(program);
-    }
-
-    public String getDescription() {
-      return SimpleMarkerPlugin.mLocalizer.msg("markedOn","Marked on ") + getName();
-    }
-
-    public String getSubName() {
-      return mName.replaceAll("\\s+","_");
-    }
-
-    public JPanel getPanel() {
-      return null;
-    }
-
-    public int getVersion() {
-      return 0;
-    }
-
-    public void ok() {}
-    public void setSubName(String name) {}
-    public void setDescription(String desc) {}
-    public void read(ObjectInputStream in, int version) throws IOException, ClassNotFoundException {}
-    public void write(ObjectOutputStream out) throws IOException {}
+  public String toString() {
+    return mName;
   }
 }

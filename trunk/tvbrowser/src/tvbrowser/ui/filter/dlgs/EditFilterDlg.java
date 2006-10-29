@@ -64,9 +64,6 @@ import javax.swing.table.AbstractTableModel;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 
-import devplugin.PluginsFilterComponent;
-
-
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.FilterList;
@@ -282,15 +279,6 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     
     mOkBtn.setEnabled(mFilterNameTF.getText().trim().length() > 0 && !m.find() && !("".equals(mFilterRuleTF.getText()))
         && mComponentTableModel.getRowCount() > 0 && validRule);
-    
-    if(mRuleTableBox.getSelectedRow() > -1) {
-      FilterComponent rule = mComponentTableModel.getElement(mRuleTableBox.getSelectedRow());
-    
-      if(rule instanceof PluginsFilterComponent) {
-        mEditBtn.setEnabled(((PluginsFilterComponent)rule).getPanel() != null);
-        mRemoveBtn.setEnabled(false);
-      }
-    }
   }
 
   public void actionPerformed(ActionEvent e) {

@@ -30,6 +30,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -52,6 +53,9 @@ import javax.swing.event.DocumentListener;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 
+import devplugin.PluginAccess;
+import devplugin.PluginsFilterComponent;
+
 
 
 import tvbrowser.core.filters.FilterComponent;
@@ -69,6 +73,7 @@ import tvbrowser.core.filters.filtercomponents.ProgramLengthFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramRunningFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ReminderFilterComponent;
 import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
+import tvbrowser.core.plugin.PluginManagerImpl;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -126,8 +131,8 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     mRuleCb.addItem(mLocalizer.msg("hint", "must choose one"));
     
     // The TreeSet sorts the Entries
-    TreeSet set = new TreeSet(new Comparator() {
-      public int compare(Object arg0, Object arg1) {
+    TreeSet<FilterComponent> set = new TreeSet<FilterComponent>(new Comparator<FilterComponent>() {
+      public int compare(FilterComponent arg0, FilterComponent arg1) {
         return arg0.toString().compareTo(arg1.toString());
       }
     });
@@ -145,6 +150,25 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     set.add(new BeanShellFilterComponent());
     set.add(new MassFilterComponent());
 
+    PluginAccess[] plugins = PluginManagerImpl.getInstance().getActivatedPlugins();
+    
+    for(PluginAccess plugin : plugins) {
+      Class<? extends PluginsFilterComponent>[] clazzes = plugin.getAvailableFilterComponentClasses();
+      
+      if(clazzes != null)
+        for(Class<? extends PluginsFilterComponent> clazz : clazzes) {
+          try {
+            set.add(clazz.newInstance());
+          } catch (InstantiationException e) {
+            // TODO Automatisch erstellter Catch-Block
+            e.printStackTrace();
+          } catch (IllegalAccessException e) {
+            // TODO Automatisch erstellter Catch-Block
+            e.printStackTrace();
+          }
+        }
+    }
+    
     Iterator it = set.iterator();
     
     while (it.hasNext()) {
@@ -214,9 +238,9 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
         mCenterPanel.remove(mRulePanel);
       }
       Object item = mRuleCb.getSelectedItem();
-      if (item instanceof FilterComponent) {
+      if (item instanceof FilterComponent) {System.out.println("hier");
         FilterComponent fItem = (FilterComponent) item;
-        mRulePanel = fItem.getPanel();
+        mRulePanel = fItem.getSettingsPanel();
         mRulePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         mCenterPanel.add(mRulePanel, BorderLayout.CENTER);
       }
@@ -233,7 +257,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
       } else {
 
         FilterComponent c = (FilterComponent) mRuleCb.getSelectedItem();
-        c.ok();
+        c.saveSettings();
         mSelectedFilterComponent = c;
         mSelectedFilterComponent.setName(compName);
         mSelectedFilterComponent.setDescription(mDescTF.getText());

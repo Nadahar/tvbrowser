@@ -18,6 +18,8 @@
  */
 package devplugin;
 
+import javax.swing.JPanel;
+
 import tvbrowser.core.filters.FilterComponent;
 
 
@@ -28,42 +30,65 @@ import tvbrowser.core.filters.FilterComponent;
  * @author René Mach
  */
 public abstract class PluginsFilterComponent implements FilterComponent {
-  private String mPluginId;
+  private String mName;
+  private String mDescription;
   
   /**
-   * Creates an instance of PluginsFilterComponent.
+   * Gets the name of this filter component.
    * 
-   * @param plugin The plugin to create for.
-   */
-  public PluginsFilterComponent(Plugin plugin) {
-    mPluginId = plugin.getId();
-  }
-  
-  /**
-   * @return The plugin access for this filter component.
-   */
-  public PluginAccess getPluginAccessOfComponent() {
-    return Plugin.getPluginManager().getActivatedPluginForId(mPluginId);
-  }
-  
-  /**
    * @return The name of this filter compoent.
    */
   public final String getName() {
-    return (getPluginAccessOfComponent().getInfo().getName()+ "_" +getSubName()).replaceAll("\\s+","_");
+    return mName;
   }
   
   /**
-   * @return The name part that the plugin sets.
+   * Gets the description of this filter component.
+   * 
+   * @return The description of this filter component.
    */
-  protected abstract String getSubName();
+  public final String getDescription() {
+    return mDescription;
+  }
   
   /**
-   * @param name Set the name part that the plugin creates.
+   * Sets the name of this filter component.
+   * 
+   * @param name The new name of this filter component.
    */
-  protected abstract void setSubName(String name);
-  
   public final void setName(String name) {
-    setSubName(name);
+    mName = name;
+  }
+  
+  /**
+   * Sets the description of this filter component.
+   * 
+   * @param desc The new description of this filter component.
+   */
+  public final void setDescription(String desc) {
+    mDescription = desc;
+  }
+  
+  /**
+   * Gets the settings panel for this filter component.
+   * 
+   * @return The settings panel for this filter component.
+   */
+  public JPanel getSettingsPanel() {
+    return new JPanel();
+  }
+  
+  /**
+   * Returns the user presentable name of this class.
+   * Don't return <code>null</code>, return always a
+   * clear name that discribes this filter component
+   * for selection in the filter component dialog.
+   * 
+   * @return The user presentable name of this class.
+   */
+  public abstract String getUserPresentableClassName();
+  
+  public final String toString() {
+    return getUserPresentableClassName();
   }
 }

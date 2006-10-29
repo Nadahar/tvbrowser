@@ -82,7 +82,7 @@ public class TimeFilterComponent implements FilterComponent {
         return mLocalizer.msg("Time","Time");
     }
 
-    public void ok() {
+    public void saveSettings() {
         mFromTime = getTimeFromDate((Date)mFromTimeSp.getValue());
         mToTime = getTimeFromDate((Date)mToTimeSp.getValue());
     }
@@ -92,7 +92,7 @@ public class TimeFilterComponent implements FilterComponent {
         out.writeInt(mToTime);
     }
 
-    public JPanel getPanel() {
+    public JPanel getSettingsPanel() {
         JPanel content = new JPanel(new BorderLayout());
         
         mFromTimeSp = new JSpinner(new SpinnerDateModel());

@@ -15,12 +15,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * CVS information:
- *  $RCSfile$
- *   $Source$
- *     $Date: 2006-06-05 21:02:43 +0200 (Mo, 05 Jun 2006) $
- *   $Author: ds10 $
- * $Revision: 2537 $
+ * SVN information:
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package simplemarkerplugin;
 
@@ -48,7 +46,6 @@ import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.PluginsFilterComponent;
-import devplugin.PluginsProgramFilter;
 import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
@@ -83,8 +80,6 @@ public class SimpleMarkerPlugin<PlugingsProgramFlter> extends Plugin implements 
   private boolean mHasRightToUpdate = false, mHasToUpdate = false;
   
   private ManagePanel mManagePanel = null;
-  
-  private PluginsFilterComponent mChangeableFilterComponent = null;
 
   /**
    * Standard contructor for this class.
@@ -178,21 +173,6 @@ public class SimpleMarkerPlugin<PlugingsProgramFlter> extends Plugin implements 
 
     return menu;
   }
-
-  /*
-   * @deprecated 
-   */
-  /*public boolean canReceivePrograms() {
-    return true;
-  }*/
-
-  /*
-   * @deprecated 
-   */
-  /*public void receivePrograms(Program[] programs) {
-    receivePrograms(programs, ProgramReceiveTarget.createNullTargetArrayForProgramReceiveIf(this)[0]);
-  }*/
-
   
   public boolean canReceiveProgramsWithTarget() {
     return true;
@@ -397,28 +377,15 @@ public class SimpleMarkerPlugin<PlugingsProgramFlter> extends Plugin implements 
   }
 
   protected void removeList(MarkList list) {
-    setEditablePluginsFilterComponent(list.getFilterComponent());
-    getPluginManager().getFilterManager().deleteFilterComponent(list.getFilterComponent());
     mMarkListVector.removeListForName(list.getName());
   }
 
   protected MarkList getMarkListForName(String name) {
     return mMarkListVector.getListForName(name);
   }
-  
-  public PluginsProgramFilter[] getAvailableFilter() {
-    return new PluginsProgramFilter[] {new PluginsProgramFilter(this) {
 
-      @Override
-      public String getSubName() {
-        return "Markiert auf Defaultliste";
-      }
-
-      public boolean accept(Program prog) {
-        return mMarkListVector.get(0).contains(prog);
-      }
-      
-    }};
+  protected MarkList getMarkListForId(String id) {
+    return mMarkListVector.getListForId(id);
   }
 
   protected void setIconFileNameForList(String listName, String fileName) {
@@ -432,7 +399,6 @@ public class SimpleMarkerPlugin<PlugingsProgramFlter> extends Plugin implements 
 
   protected void addList(MarkList list) {
     mMarkListVector.addElement(list);
-    getPluginManager().getFilterManager().addFilterComponent(list.getFilterComponent());
     updateTree();
   }
 
@@ -444,16 +410,6 @@ public class SimpleMarkerPlugin<PlugingsProgramFlter> extends Plugin implements 
     return mRootNode;
   }
   
-  public PluginsFilterComponent[] getAvailableFilterComponents() {
-    PluginsFilterComponent[] components = new PluginsFilterComponent[mMarkListVector.size()];
-    
-    for(int i = 0; i < mMarkListVector.size(); i++) {
-      components[i] = mMarkListVector.get(i).getFilterComponent();
-    }
-    
-    return components;
-  }
-
   protected Icon getIconForFileName(String fileName) {
     if (fileName != null)
       return createImageIconForFileName(fileName);
@@ -474,18 +430,10 @@ public class SimpleMarkerPlugin<PlugingsProgramFlter> extends Plugin implements 
     mManagePanel = null;
   }
   
-  protected void setEditablePluginsFilterComponent(PluginsFilterComponent component) {
-    mChangeableFilterComponent = component;
-  }
-  
-  public boolean isAllowedToDeleteOrChangeFilterComponent(PluginsFilterComponent component) {
-    boolean value = false;
+  public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
+    if(mMarkListVector.size() > 1)
+      return (Class<? extends PluginsFilterComponent>[]) new Class[] {MarkListFilterComponent.class};
     
-    if(mChangeableFilterComponent != null)
-      value = component.equals(mChangeableFilterComponent);
-    
-    mChangeableFilterComponent = null;
-    
-    return value;
+    return null;
   }
 }

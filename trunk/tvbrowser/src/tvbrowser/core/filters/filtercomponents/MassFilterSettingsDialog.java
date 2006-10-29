@@ -32,6 +32,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import util.ui.Localizer;
 import util.ui.SearchForm;
 import util.ui.SearchFormSettings;
 
@@ -91,7 +92,7 @@ public class MassFilterSettingsDialog extends JDialog {
     
     content.add(mForm, BorderLayout.NORTH);
     
-    JButton ok = new JButton(mLocalizer.msg("ok", "OK"));
+    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     ok.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
@@ -101,7 +102,7 @@ public class MassFilterSettingsDialog extends JDialog {
       
     });
     
-    JButton cancel = new JButton(mLocalizer.msg("cancel", "Cancel"));
+    JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     cancel.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {

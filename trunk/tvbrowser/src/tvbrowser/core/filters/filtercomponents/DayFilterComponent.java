@@ -76,7 +76,7 @@ public class DayFilterComponent implements FilterComponent {
     return mLocalizer.msg("day", "Day");
   }
 
-  public void ok() {
+  public void saveSettings() {
     mSelectedDays = 0;
     
     if (mMonday.isSelected()) {
@@ -102,7 +102,7 @@ public class DayFilterComponent implements FilterComponent {
     }
   }
 
-  public JPanel getPanel() {
+  public JPanel getSettingsPanel() {
     JPanel content = new JPanel(new TabLayout(1, 0, 5));
     content.add(new JLabel(mLocalizer.msg("description",
         "This filter accepts programs belonging to the following channels:")), BorderLayout.NORTH);

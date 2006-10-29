@@ -114,9 +114,9 @@ public class ProgramRunningFilterComponent implements FilterComponent {
     /**
      * Gibt einen Panel zurück, der es ermöglicht, 
      * den Filter einzustellen
-     * @see tvbrowser.core.filters.FilterComponent#getPanel()
+     * @see tvbrowser.core.filters.FilterComponent#getSettingsPanel()
      */
-    public JPanel getPanel() {
+    public JPanel getSettingsPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         
@@ -155,9 +155,9 @@ public class ProgramRunningFilterComponent implements FilterComponent {
     /**
      * Im Dialog wurde OK gedrückt, alle Einstellungen können
      * nun übernommen werden
-     * @see tvbrowser.core.filters.FilterComponent#ok()
+     * @see tvbrowser.core.filters.FilterComponent#saveSettings()
      */
-    public void ok() {
+    public void saveSettings() {
     	int selectedBits = 0;
     
     	if (_checkBox[0].isSelected()) {

@@ -319,20 +319,14 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
     }
 
     @Override
-    public PluginsFilterComponent[] doGetAvailableFilterComponents() {
-      // TODO Automatisch erstellter Methoden-Stub
-      return null;
-    }
-
-    @Override
     protected boolean doIsAllowedToDeleteProgramFilter(PluginsProgramFilter programFilter) {
       // TODO Automatisch erstellter Methoden-Stub
       return false;
     }
 
     @Override
-    protected boolean doIsAllowedToDeleteOrChangeFilterComponent(PluginsFilterComponent filterComponent) {
+    protected  Class<? extends PluginsFilterComponent>[] doGetAvailableFilterComponentClasses() {
       // TODO Automatisch erstellter Methoden-Stub
-      return false;
+      return null;
     }
  }

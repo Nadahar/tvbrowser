@@ -77,7 +77,7 @@ public class ProgramInfoPicturesSettingsTab implements SettingsTab {
   }
 
   public String getTitle() {
-    return PictureSettingsPanel.mLocalizer.msg("pictures","Pictures");
+    return Localizer.getLocalization(Localizer.I18N_PICTURES);
   }
 
   public void saveSettings() {

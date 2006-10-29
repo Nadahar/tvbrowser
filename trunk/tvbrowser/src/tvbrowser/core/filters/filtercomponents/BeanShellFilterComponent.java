@@ -106,7 +106,7 @@ public class BeanShellFilterComponent implements FilterComponent {
         return mLocalizer.msg("BeanShellFilter", "BeanShell-Filter");
     }
 
-    public void ok() {
+    public void saveSettings() {
         mScriptSource = mScriptEditor.getText();
         try {
             mScript = (BeanShellProgramFilterIf) new Interpreter().eval(mScriptSource);
@@ -116,7 +116,7 @@ public class BeanShellFilterComponent implements FilterComponent {
         }
     }
 
-    public JPanel getPanel() {
+    public JPanel getSettingsPanel() {
         JPanel content = new JPanel(new BorderLayout());
 
         mScriptEditor = new BeanShellEditor();

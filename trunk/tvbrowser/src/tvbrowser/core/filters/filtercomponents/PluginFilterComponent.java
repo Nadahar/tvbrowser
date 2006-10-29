@@ -103,7 +103,7 @@ public class PluginFilterComponent implements FilterComponent {
     return mPluginId;
   }
     
-  public JPanel getPanel() {
+  public JPanel getSettingsPanel() {
         
     JPanel content = new JPanel(new BorderLayout(0,7));
     JTextArea ta=new JTextArea(mLocalizer.msg("desc","Accept all programs marked by plugin:"));
@@ -115,9 +115,9 @@ public class PluginFilterComponent implements FilterComponent {
     content.add(ta,BorderLayout.NORTH);
 
     PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
-    Arrays.sort(plugins, new Comparator() {
+    Arrays.sort(plugins, new Comparator<PluginProxy>() {
 
-      public int compare(Object o1, Object o2) {
+      public int compare(PluginProxy o1, PluginProxy o2) {
           return o1.toString().compareTo(o2.toString());
       }
       
@@ -142,7 +142,7 @@ public class PluginFilterComponent implements FilterComponent {
         
     
         
-  public void ok() {
+  public void saveSettings() {
     mPlugin = (PluginProxy) mBox.getSelectedItem();
   }
 

@@ -33,6 +33,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -41,6 +42,7 @@ import javax.swing.JOptionPane;
 
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.TvBrowserException;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.ChannelDayProgram;
@@ -447,7 +449,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     boolean value = mPlugin.receivePrograms(programArr, receiveTarget);
     
     if(!value)
-      JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()),mLocalizer.msg("error.noTarget","The programs for the target \"{0}\" couldn't be processed by \"{1}\".",receiveTarget,mPlugin.getInfo().getName()),mLocalizer.msg("error.title","Error"),JOptionPane.ERROR_MESSAGE);
+      JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()),mLocalizer.msg("error.noTarget","The programs for the target \"{0}\" couldn't be processed by \"{1}\".",receiveTarget,mPlugin.getInfo().getName()),Localizer.getLocalization(Localizer.I18N_ERROR),JOptionPane.ERROR_MESSAGE);
     
     return value;
   }
@@ -466,23 +468,34 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     return targets != null ? targets : ProgramReceiveTarget.createDefaultTargetArrayForProgramReceiveIf(mPlugin); 
   }
 
-  @Override
+  /**
+   * Really returns the available program filters that the plugin supports.
+   * 
+   * @return The available program filters that the plugin supports or <code>null</code> if it supports no filter.
+   * @since 2.5
+   */
   protected PluginsProgramFilter[] doGetAvailableFilter() {
     return mPlugin.getAvailableFilter();
   }
 
-  @Override
-  public PluginsFilterComponent[] doGetAvailableFilterComponents() {
-    return mPlugin.getAvailableFilterComponents();
-  }
-
-  @Override
-  protected boolean doIsAllowedToDeleteOrChangeFilterComponent(PluginsFilterComponent filterComponent) {
-    return mPlugin.isAllowedToDeleteOrChangeFilterComponent(filterComponent);
-  }
-
-  @Override
+  /**
+   * Really return if a program filter can be deleted.
+   * 
+   * @param programFilter The program filter to delete.
+   * @return True if the program filter component can be deleted.
+   * @since 2.5
+   */
   protected boolean doIsAllowedToDeleteProgramFilter(PluginsProgramFilter programFilter) {
     return mPlugin.isAllowedToDeleteProgramFilter(programFilter);
+  }
+  
+  /**
+   * Really gets the available filter component classes.
+   * 
+   * @return The available plugins filter components classes or <code>null</code> if no plugins filter components are supported.
+   * @since 2.5
+   */
+  protected  Class<? extends PluginsFilterComponent>[] doGetAvailableFilterComponentClasses() {    
+    return mPlugin.getAvailableFilterComponentClasses();
   }
 }

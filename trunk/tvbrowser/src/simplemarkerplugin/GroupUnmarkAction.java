@@ -15,12 +15,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * CVS information:
- *  $RCSfile$
- *   $Source$
- *     $Date: 2006-06-05 21:02:43 +0200 (Mo, 05 Jun 2006) $
- *   $Author: ds10 $
- * $Revision: 2537 $
+ * SVN information:
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package simplemarkerplugin;
 

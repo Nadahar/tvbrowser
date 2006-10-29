@@ -120,9 +120,9 @@ public class ProgramLengthFilterComponent implements FilterComponent {
 
     /** 
      * Erzeugt das Settings-Panel
-     * @see tvbrowser.core.filters.FilterComponent#getPanel()
+     * @see tvbrowser.core.filters.FilterComponent#getSettingsPanel()
      */
-    public JPanel getPanel() {
+    public JPanel getSettingsPanel() {
     	JPanel panel = new JPanel();
 
 		_minSpinner = new JSpinner(new SpinnerNumberModel(_min, 0, 1000, 1));;
@@ -175,9 +175,9 @@ public class ProgramLengthFilterComponent implements FilterComponent {
 
     /**
      * Schreibt die GUI-Daten in die Variablen
-     * @see tvbrowser.core.filters.FilterComponent#ok()
+     * @see tvbrowser.core.filters.FilterComponent#saveSettings()
      */
-    public void ok() {
+    public void saveSettings() {
         _min = ((Integer)_minSpinner.getValue()).intValue();
         _max = ((Integer)_maxSpinner.getValue()).intValue();
         _useMin = _minBox.isSelected();
