@@ -17,6 +17,8 @@ import javax.swing.MenuSelectionManager;
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 
+import util.ui.Localizer;
+
 /**
  * This TextComponentPopupEventQueue is based on the Implementation of Santhosh
  * 
@@ -113,7 +115,7 @@ public class TextComponentPopupEventQueue extends EventQueue {
     JTextComponent comp;
 
     public DeleteAction(JTextComponent comp) {
-      super(mLocalizer.msg("delete", "Delete"));
+      super(Localizer.getLocalization(Localizer.I18N_DELETE));
       this.comp = comp;
     }
 

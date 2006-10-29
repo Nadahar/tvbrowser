@@ -49,10 +49,7 @@ import com.jgoodies.forms.layout.FormLayout;
 public class ParamHelpDialog extends JDialog implements WindowClosingIf {
 	/** The ParamLibrary to use */
   private ParamLibrary mParamLib;
-	
-  /** Translator */
-  private static final Localizer mLocalizer = Localizer.getLocalizerFor(ParamHelpDialog.class);
-  
+	  
   /**
    * Creates the Help-Dialog
    *  
@@ -105,7 +102,7 @@ public class ParamHelpDialog extends JDialog implements WindowClosingIf {
    * Creates the GUI
    */
 	private void createGui() {
-		setTitle(mLocalizer.msg("Title", "Help"));
+		setTitle(Localizer.getLocalization(Localizer.I18N_HELP));
 		JPanel panel = (JPanel)getContentPane();
     
     UiUtilities.registerForClosing(this);
@@ -117,7 +114,7 @@ public class ParamHelpDialog extends JDialog implements WindowClosingIf {
 		
 		panel.add(new ParamDescriptionPanel(mParamLib), cc.xyw(1,1, 3));
 		
-		JButton ok = new JButton(mLocalizer.msg("OK", "OK"));
+		JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
 		
 		ok.addActionListener(new ActionListener() {
 

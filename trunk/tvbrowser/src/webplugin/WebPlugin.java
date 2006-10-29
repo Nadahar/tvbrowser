@@ -265,7 +265,7 @@ public class WebPlugin extends Plugin {
       
       if (parser.hasErrors()) {
         JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(getParentFrame()), parser.getErrorString(), 
-            mLocalizer.msg("Error", "Error"),
+            Localizer.getLocalization(Localizer.I18N_ERROR),
             JOptionPane.ERROR_MESSAGE);
 
       } else {

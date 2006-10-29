@@ -69,6 +69,7 @@ import tvbrowser.ui.settings.tablebackgroundstyles.TimeBlockBackgroundStyle;
 import tvbrowser.ui.settings.util.ColorButton;
 import tvbrowser.ui.settings.util.ColorLabel;
 import util.ui.CaretPositionCorrector;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.factories.Borders;
@@ -494,8 +495,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
       JPanel pn = new JPanel();
       pn.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 0));
 
-      JButton okBtn = new JButton(mLocalizer.msg("ok", "OK"));
-      JButton cancelBtn = new JButton(mLocalizer.msg("cancel", "Cancel"));
+      JButton okBtn = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
+      JButton cancelBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
       pn.add(okBtn);
       pn.add(cancelBtn);
 

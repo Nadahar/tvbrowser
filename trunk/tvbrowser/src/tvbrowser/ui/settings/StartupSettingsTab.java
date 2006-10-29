@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.io.UrlFile;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 
 import ca.beq.util.win32.registry.RegistryKey;
@@ -155,7 +156,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
               JOptionPane.showMessageDialog(
                   UiUtilities.getLastModalChildOf(MainFrame.getInstance()),
                   mLocalizer.msg("creationError","Couldn't create autostart shortcut.\nMaybe your have not the right to write in the autostart directory."),
-                  mLocalizer.msg("error","Error"), JOptionPane.ERROR_MESSAGE);
+                  Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);
             }
           }
         } else if (mLinkFile.isFile() && !mLinkFile.delete()) {

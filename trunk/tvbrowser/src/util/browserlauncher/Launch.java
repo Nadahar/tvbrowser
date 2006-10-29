@@ -39,6 +39,7 @@ import javax.swing.JRootPane;
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -111,7 +112,7 @@ public class Launch {
         final JCheckBox showBrowserDialog = new JCheckBox(mLocalizer.msg("okCheckbox", "OK Checkbox")); 
         content.add(showBrowserDialog, cc.xy(1, 3));
         
-        JButton ok = new JButton(mLocalizer.msg("okOk", "OK"));
+        JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
         ok.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             dialog.setVisible(false);

@@ -120,7 +120,7 @@ public class ProgramListDialog extends JDialog implements WindowClosingIf {
         JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
         content.add(buttonPn, BorderLayout.SOUTH);
 
-        JButton closeButton = new JButton(mLocalizer.msg("close", "Close"));
+        JButton closeButton = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
         closeButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent evt) {

@@ -197,7 +197,7 @@ public class DialogRating extends JDialog implements WindowClosingIf {
 
         buttonpanel.add(rate);
 
-        JButton cancel = new JButton(_mLocalizer.msg("cancel", "Cancel"));
+        JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
 
         cancel.addActionListener(new java.awt.event.ActionListener() {
 

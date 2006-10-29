@@ -155,7 +155,7 @@ public class ParamInputField extends JPanel {
     
     add(check, cc.xy(3,3));
     
-    JButton help = new JButton(mLocalizer.msg("help","Help"));
+    JButton help = new JButton(Localizer.getLocalization(Localizer.I18N_HELP));
     
     help.addActionListener(new ActionListener() {
 

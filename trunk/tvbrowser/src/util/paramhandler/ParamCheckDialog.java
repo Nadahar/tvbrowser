@@ -117,7 +117,7 @@ public class ParamCheckDialog extends JDialog implements WindowClosingIf {
    * Creates the GUI
    */
 	private void createGui() {
-		setTitle(mLocalizer.msg("Title", "Result"));
+		setTitle(mLocalizer.msg("Result", "Result"));
 		JPanel panel = (JPanel)getContentPane();
 
     UiUtilities.registerForClosing(this);
@@ -146,7 +146,7 @@ public class ParamCheckDialog extends JDialog implements WindowClosingIf {
 
     });
     
-		JButton ok = new JButton(mLocalizer.msg("OK", "OK"));
+		JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
 		
 		ok.addActionListener(new ActionListener() {
 

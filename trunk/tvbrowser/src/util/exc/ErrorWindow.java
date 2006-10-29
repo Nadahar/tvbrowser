@@ -55,6 +55,7 @@ import javax.swing.JTextArea;
 import tvbrowser.core.icontheme.IconLoader;
 import util.io.IOUtilities;
 import util.ui.ImageUtilities;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 
 /**
@@ -138,11 +139,11 @@ class ErrorWindow {
       mDialog = UiUtilities.createDialog(ErrorHandler.mParent, true);
     }
 
-    msg = ErrorHandler.mLocalizer.msg("title", "Error");
+    
     if (mDialog != null) {
-      mDialog.setTitle(msg);
+      mDialog.setTitle(Localizer.getLocalization(Localizer.I18N_ERROR));
     } else {
-      mFrame.setTitle(msg);
+      mFrame.setTitle(Localizer.getLocalization(Localizer.I18N_ERROR));
     }
 
     mMainPn = new JPanel(new BorderLayout());
@@ -188,7 +189,7 @@ class ErrorWindow {
       buttonPn.add(mNoBt);
 
     } else {
-      mOkBt = new JButton(ErrorHandler.mLocalizer.msg("ok", "OK"));
+      mOkBt = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
       mOkBt.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
           mReturn = ErrorHandler.OK_PRESSED;

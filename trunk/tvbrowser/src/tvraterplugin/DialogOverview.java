@@ -199,7 +199,7 @@ public class DialogOverview extends JDialog implements WindowClosingIf {
       }
     });
 
-    JButton close = new JButton(_mLocalizer.msg("close", "Close"));
+    JButton close = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
     buttonpanel.add(close, c);
     close.addActionListener(new java.awt.event.ActionListener() {
 

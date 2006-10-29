@@ -353,7 +353,7 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
   private void deletePressed() {
 
     int result = JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(mParent), mLocalizer.msg(
-        "DeleteQuesiton", "Delete selected Item?"), mLocalizer.msg("Delete", "Delete?"), JOptionPane.YES_NO_OPTION,
+        "DeleteQuesiton", "Delete selected Item?"), Localizer.getLocalization(Localizer.I18N_DELETE)+"?", JOptionPane.YES_NO_OPTION,
         JOptionPane.QUESTION_MESSAGE);
 
     if (result != JOptionPane.YES_OPTION) {

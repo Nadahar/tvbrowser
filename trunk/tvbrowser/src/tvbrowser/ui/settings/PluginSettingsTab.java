@@ -59,6 +59,7 @@ import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
@@ -264,7 +265,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
   private void removePlugin(PluginProxy plugin) {
     String text = mLocalizer.msg("deletePlugin","Really delete the Plugin \"{0}\" ?",plugin.toString());
       
-    int result = JOptionPane.showConfirmDialog(mSettingsDialog.getDialog(), text, mLocalizer.msg("delete", "Delete?"), JOptionPane.YES_NO_OPTION);
+    int result = JOptionPane.showConfirmDialog(mSettingsDialog.getDialog(), text, Localizer.getLocalization(Localizer.I18N_DELETE)+"?", JOptionPane.YES_NO_OPTION);
       
     if (result == JOptionPane.YES_OPTION) {
         

@@ -49,6 +49,7 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.CaretPositionCorrector;
+import util.ui.Localizer;
 import util.ui.TabLayout;
 
 import com.jgoodies.forms.factories.Borders;
@@ -245,7 +246,7 @@ public class ButtonsSettingsTab implements SettingsTab {
     public Row(int time) {
       setLayout(new BorderLayout());
       mRemoveBtn = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16));
-      mRemoveBtn.setToolTipText(mLocalizer.msg("delete", "Delete"));
+      mRemoveBtn.setToolTipText(Localizer.getLocalization(Localizer.I18N_DELETE));
       JPanel row = new JPanel(new TabLayout(2, 14, 0));
 
       row.add(mTimePn = new TimePanel(time));

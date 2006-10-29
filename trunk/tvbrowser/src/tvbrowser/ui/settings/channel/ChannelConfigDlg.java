@@ -48,6 +48,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import util.ui.ImageUtilities;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -131,9 +132,7 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
     
     panel.add(mChannelName, cc.xy(3, 1));
 
-    panel.add(new JLabel(mLocalizer.msg("channelLogo", "Channel Logo") + ":"), cc.xy(1, 3));
-
-    ImageIcon icon;
+    panel.add(new JLabel(mLocalizer.msg("channelLogo", "Channel Logo") + ":"), cc.xy(1, 3));    
 
     if (mChannel.getUserIconFileName() != null)
       mIconFile = new File(mChannel.getUserIconFileName());
@@ -193,12 +192,12 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
     builder.addRelatedGap();
     builder.addGlue();
 
-    mOKBt = new JButton(mLocalizer.msg("ok", "OK"));
+    mOKBt = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     mOKBt.addActionListener(this);
     
     getRootPane().setDefaultButton(mOKBt);
     
-    mCloseBt = new JButton(mLocalizer.msg("cancel", "Cancel"));
+    mCloseBt = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     mCloseBt.addActionListener(this);
 
     builder.addGriddedButtons(new JButton[] { mOKBt, mCloseBt });

@@ -56,6 +56,7 @@ import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.toolbar.ContextMenu;
 import tvbrowser.ui.mainframe.toolbar.DefaultToolBarModel;
 import tvbrowser.ui.mainframe.toolbar.ToolBar;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import devplugin.Plugin;
@@ -162,7 +163,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     tSetPanel.setLayout(new BoxLayout(tSetPanel, BoxLayout.X_AXIS));
 
     mLocationCB = new JComboBox(new String[] { mLocalizer.msg("top", "top"),
-        mLocalizer.msg("left", "left"), });
+        Localizer.getLocalization(Localizer.I18N_LEFT), });
     mLocationCB.setMaximumSize(mLocationCB.getPreferredSize());
 
     if ("west".equals(Settings.propToolbarLocation.getString())) {

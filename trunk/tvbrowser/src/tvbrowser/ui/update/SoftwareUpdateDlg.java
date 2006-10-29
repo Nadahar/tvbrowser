@@ -57,6 +57,7 @@ import com.jgoodies.forms.builder.ButtonBarBuilder;
 import tvbrowser.core.Settings;
 import util.browserlauncher.Launch;
 import util.exc.TvBrowserException;
+import util.ui.Localizer;
 import util.ui.WindowClosingIf;
 import util.ui.html.ExtendedHTMLEditorKit;
 
@@ -90,7 +91,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     JPanel contentPane = (JPanel) getContentPane();
     contentPane.setLayout(new BorderLayout(0, 10));
     contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 11, 11));
-    mCloseBtn = new JButton(mLocalizer.msg("close", "Close"));
+    mCloseBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
     mCloseBtn.addActionListener(this);
 
     mDownloadBtn = new JButton(mLocalizer.msg("download", "Download selected items"));
