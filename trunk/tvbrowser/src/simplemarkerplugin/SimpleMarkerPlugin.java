@@ -370,6 +370,10 @@ public class SimpleMarkerPlugin<PlugingsProgramFlter> extends Plugin implements 
   protected MarkList[] getMarkLists() {
     return mMarkListVector.toArray(new MarkList[mMarkListVector.size()]);
   }
+  
+  protected String[] getMarkListNames() {
+    return mMarkListVector.getMarkListNames();
+  }
 
   protected void removeListForName(String name) {
     mMarkListVector.removeListForName(name);

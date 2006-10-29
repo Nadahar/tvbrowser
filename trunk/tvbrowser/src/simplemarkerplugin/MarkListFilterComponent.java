@@ -69,7 +69,7 @@ public class MarkListFilterComponent extends PluginsFilterComponent {
     CellConstraints cc = new CellConstraints();
     PanelBuilder pb = new PanelBuilder(new FormLayout("pref","pref"));
     
-    MarkList[] lists = SimpleMarkerPlugin.getInstance().getMarkLists();
+    String[] lists = SimpleMarkerPlugin.getInstance().getMarkListNames();
     
     mLists = new JComboBox(lists);
     
@@ -77,7 +77,7 @@ public class MarkListFilterComponent extends PluginsFilterComponent {
       MarkList selected = SimpleMarkerPlugin.getInstance().getMarkListForId(mListId);
       
       if(selected != null)
-        mLists.setSelectedItem(selected);
+        mLists.setSelectedItem(selected.getName());
     }
     
     pb.add(mLists, cc.xy(1,1));
@@ -91,7 +91,7 @@ public class MarkListFilterComponent extends PluginsFilterComponent {
 
   public void saveSettings() {
     if(mLists != null) {
-      mListId = ((MarkList)mLists.getSelectedItem()).getId();
+      mListId = SimpleMarkerPlugin.getInstance().getMarkListForName((String)mLists.getSelectedItem()).getId();
     }
   }
 
