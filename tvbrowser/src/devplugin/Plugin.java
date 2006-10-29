@@ -25,6 +25,16 @@
 */
 package devplugin;
 
+import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.IconLoader;
+import util.exc.TvBrowserException;
+import util.ui.FixedSizeIcon;
+import util.ui.ImageUtilities;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.BufferedInputStream;
@@ -35,20 +45,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.Properties;
 import java.util.jar.JarFile;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-
-import tvbrowser.core.Settings;
-import tvbrowser.core.icontheme.IconLoader;
-import util.exc.TvBrowserException;
-import util.ui.FixedSizeIcon;
-import util.ui.ImageUtilities;
 
 /**
  * Superclass for all Java-TV-Browser plugins.
@@ -240,7 +238,7 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    * Helper method that Loads an ImageIcon from the IconTheme
    * 
    * @param icon Icon to load
-   * @param size Size of the Icon
+   *
    * @return The Icon
    * @since 2.2
    */
@@ -564,8 +562,6 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    * This gets the mark icons for a Program.
    * 
    * Please cache the icons in the Plugin.
-   * 
-   * @see Program.validateMarking() for using this correctly.
    * 
    * @param p The Program to get the icons for.
    * @return The icons for the Program.

@@ -18,6 +18,21 @@
 
 package tvraterplugin;
 
+import devplugin.Program;
+import devplugin.ProgramFieldType;
+import util.ui.Localizer;
+import util.ui.TabLayout;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextPane;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -29,23 +44,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextPane;
-
-import util.ui.Localizer;
-import util.ui.TabLayout;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
+import java.text.MessageFormat;
 
 /**
  * This Dialog shows one Rating
@@ -90,7 +89,7 @@ public class DialogRating extends JDialog implements WindowClosingIf {
     /**
      * Creates the DialgoRating
      * 
-     * @param parent ParentFrame
+     * @param frame ParentFrame
      * @param rater TVRaterPlugin
      * @param programtitle the Title of the Program to rate
      */
@@ -119,7 +118,6 @@ public class DialogRating extends JDialog implements WindowClosingIf {
      * @param parent Parent-Frame
      * @param rater TVRaterPlugin
      * @param program Program to rate
-     * @param tvraterDB the Database
      */
     public DialogRating(Frame parent, TVRaterPlugin rater, Program program) {
         super(parent, true);
@@ -308,17 +306,13 @@ public class DialogRating extends JDialog implements WindowClosingIf {
      * @return true if all ratings are checked
      */
     private boolean checkAllRatings() {
-        for (int i = 0; i < _ratings.length; i++) {
-            if (_ratings[i].getSelectedItem() == null) {
+        for (JComboBox _rating : _ratings) {
+            if (_rating.getSelectedItem() == null) {
                 return false;
             }
         }
-        
-        if (_genre.getSelectedItem() == null) {
-            return false;
-        }
-        
-        return true;
+
+        return _genre.getSelectedItem() != null;
     }
 
     /**
@@ -380,7 +374,7 @@ public class DialogRating extends JDialog implements WindowClosingIf {
                     str = "0" + str;
                 }
                 
-                String text = "";
+                String text;
                 if (RatingIconTextFactory.getGenres().containsKey(str)) {
                     text = RatingIconTextFactory.getGenres().getProperty(str);
                 } else {
@@ -397,8 +391,7 @@ public class DialogRating extends JDialog implements WindowClosingIf {
             pane.setContentType("text/html");
             
             if ((_program != null) && !_rater.isProgramRateable(_program)) {
-                pane.setText("<center style='font-family: helvetica'>"
-                        + _mLocalizer.msg("tooshort", "Program too short for rating. <br>The minimum lenght is {0} min.<br>This reduces traffic on the server.", new Integer(TVRaterPlugin.MINLENGTH)));
+                pane.setText(MessageFormat.format("<center style=''font-family: helvetica''>{0}", _mLocalizer.msg("tooshort", "Program too short for rating. <br>The minimum lenght is {0} min.<br>This reduces traffic on the server.", TVRaterPlugin.MINLENGTH)));
             } else {
                 pane.setText("<center style='font-family: helvetica'>"
                         + _mLocalizer.msg("doesntexist", "Sorry, rating doesn't exist!") + "</center>");
@@ -414,15 +407,15 @@ public class DialogRating extends JDialog implements WindowClosingIf {
     /**
      * Creates a Ratingbox
      * 
-     * @param name Name of the Rating-Element
-     * @param value Value to show (1-5)
+     * @param rating Rating that should be shown
+     * @param type Element in rating that should be shown
      * @return JPanel with rating-box
      */
     private Component createRatingBox(Rating rating, Object type) {
         if ((type != null)) {
             int value = rating.getIntValue(type);
             
-            return new JLabel(RatingIconTextFactory.getStringForRating(type, value), (Icon) RatingIconTextFactory
+            return new JLabel(RatingIconTextFactory.getStringForRating(type, value), RatingIconTextFactory
                     .getImageIconForRating(value), JLabel.LEFT);
         } else {
             return new JLabel("-");

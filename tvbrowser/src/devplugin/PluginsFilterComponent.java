@@ -18,9 +18,9 @@
  */
 package devplugin;
 
-import javax.swing.JPanel;
-
 import tvbrowser.core.filters.FilterComponent;
+
+import javax.swing.JPanel;
 
 
 /**
@@ -77,7 +77,13 @@ public abstract class PluginsFilterComponent implements FilterComponent {
   public JPanel getSettingsPanel() {
     return new JPanel();
   }
-  
+
+    /**
+     * Is called when the settings should be saved (aka the users pressed the OK-Button in the Settings Dialog)
+     */
+  public void saveSettings() {
+  }
+
   /**
    * Returns the user presentable name of this class.
    * Don't return <code>null</code>, return always a

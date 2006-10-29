@@ -19,6 +19,23 @@
 
 package tvraterplugin;
 
+import devplugin.ActionMenu;
+import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.Program;
+import devplugin.SettingsTab;
+import devplugin.Version;
+import devplugin.PluginsFilterComponent;
+import devplugin.PluginsProgramFilter;
+import util.ui.ImageUtilities;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -28,22 +45,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Iterator;
 import java.util.Properties;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-
-import util.ui.ImageUtilities;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import devplugin.ActionMenu;
-import devplugin.Plugin;
-import devplugin.PluginInfo;
-import devplugin.Program;
-import devplugin.SettingsTab;
-import devplugin.Version;
 
 /**
  * This Plugin gives the User the possibility to rate a Movie
@@ -86,7 +87,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
                         "description",
                         "Gives the User the possibility to rate a Show/Movie and get ratings from other Users");
         String author = "Bodo Tasche";
-        return new PluginInfo(name, desc, author, new Version(0, 71));
+        return new PluginInfo(name, desc, author, new Version(1, 00));
     }
 
     /*
@@ -247,31 +248,34 @@ public class TVRaterPlugin extends devplugin.Plugin {
      * @see #getProgramTableIconText()
      */
     public Icon[] getProgramTableIcons(Program program) {
+        Rating  rating =getRating(program);
+
+        if (rating != null) {
+            return new Icon[] { RatingIconTextFactory.getImageIconForRating(rating.getIntValue(Rating.OVERALL))};
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the Rating for a program.
+     * This Function returns the personal rating if the settings say these ratings
+     * are preferred
+     *
+     * @param program Get rating for this program
+     * @return Rating
+     */
+    public Rating getRating(Program program) {
         Rating rating;
 
         if (_settings.getProperty("ownRating", "").equalsIgnoreCase("true")) {
             rating = _tvraterDB.getPersonalRating(program);
             if (rating != null) {
-                Icon[] iconArray = { RatingIconTextFactory.getImageIconForRating(rating.getIntValue(Rating.OVERALL))}; 
-                return iconArray;
+                return rating;
             }
         }
 
-        rating = _tvraterDB.getOverallRating(program);
-        if (rating != null) {
-            Icon[] iconArray = { RatingIconTextFactory.getImageIconForRating(rating.getIntValue(Rating.OVERALL))};
-            return iconArray;
-        }
-
-        if (_settings.getProperty("ownRating", "").equalsIgnoreCase("false")) {
-            rating = _tvraterDB.getPersonalRating(program);
-            if (rating != null) {
-                Icon[] iconArray = {RatingIconTextFactory.getImageIconForRating(rating.getIntValue(Rating.OVERALL))};
-                return iconArray;
-            }
-        }
-
-        return null;
+        return  _tvraterDB.getOverallRating(program);
     }
 
     /**
@@ -377,12 +381,12 @@ public class TVRaterPlugin extends devplugin.Plugin {
         if ((program.getTitle() != null) && (program.getLength() <= 0)) {
             program.getChannel();
             
-            Iterator it = Plugin.getPluginManager().getChannelDayProgram(program.getDate(), program.getChannel());
+            Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(program.getDate(), program.getChannel());
             
             Program last = null;
             
             while ((it != null) && (it.hasNext())) {
-                last = (Program) it.next();
+                last = it.next();
             }
             
             if (program == last) {
@@ -393,5 +397,14 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
         return false;
     }
-    
+
+    @Override
+    public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
+        return new Class[] {TVRaterFilter.class};
+    }
+
+    @Override
+    public PluginsProgramFilter[] getAvailableFilter() {
+        return new PluginsProgramFilter[] {new TVRaterProgramFilter(this)};
+    }
 }

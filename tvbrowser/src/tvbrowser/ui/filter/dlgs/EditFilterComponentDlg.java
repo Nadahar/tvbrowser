@@ -26,38 +26,9 @@
 
 package tvbrowser.ui.filter.dlgs;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
 import com.jgoodies.forms.factories.DefaultComponentFactory;
-
 import devplugin.PluginAccess;
 import devplugin.PluginsFilterComponent;
-
-
-
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
@@ -77,6 +48,29 @@ import tvbrowser.core.plugin.PluginManagerImpl;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class EditFilterComponentDlg extends JDialog implements ActionListener, DocumentListener, WindowClosingIf {
 
@@ -239,7 +233,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
         mCenterPanel.remove(mRulePanel);
       }
       Object item = mRuleCb.getSelectedItem();
-      if (item instanceof FilterComponent) {System.out.println("hier");
+      if (item instanceof FilterComponent) {
         FilterComponent fItem = (FilterComponent) item;
         mRulePanel = fItem.getSettingsPanel();
         mRulePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
