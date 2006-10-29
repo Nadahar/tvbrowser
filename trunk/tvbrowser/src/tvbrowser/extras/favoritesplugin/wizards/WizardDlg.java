@@ -35,6 +35,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -100,11 +101,11 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
   private JPanel createButtonPanel(int[] btns) {
     mDoneBtn = new JButton(mLocalizer.msg("done", "Done"));
     mDoneBtn.setEnabled(false);
-    mCancelBtn = new JButton(mLocalizer.msg("cancel", "Cancel"));
+    mCancelBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     mCancelBtn.setEnabled(false);
-    mNextBtn = new JButton(mLocalizer.msg("next", "Next") + " >>");
+    mNextBtn = new JButton(Localizer.getLocalization(Localizer.I18N_NEXT) + " >>");
     mNextBtn.setEnabled(false);
-    mBackBtn = new JButton("<< " + mLocalizer.msg("back", "Back"));
+    mBackBtn = new JButton("<< " + Localizer.getLocalization(Localizer.I18N_BACK));
     mBackBtn.setEnabled(false);
 
     JPanel panel = new JPanel(new FormLayout("fill:pref:grow, pref, 3dlu, pref", "pref"));

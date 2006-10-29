@@ -72,6 +72,7 @@ import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.settings.ProgramPanelSettings;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.NullProgressMonitor;
 import devplugin.*;
@@ -707,7 +708,7 @@ public class FavoritesPlugin {
       }
     };
     openSettings.putValue(Action.SMALL_ICON, getIconFromTheme("categories", "preferences-desktop", 16));
-    openSettings.putValue(Action.NAME, mLocalizer.msg("settingsTree", "Settings"));
+    openSettings.putValue(Action.NAME, Localizer.getLocalization(Localizer.I18N_SETTINGS));
     
     mRootNode.addAction(manageFavorite);
     mRootNode.addAction(addFavorite);

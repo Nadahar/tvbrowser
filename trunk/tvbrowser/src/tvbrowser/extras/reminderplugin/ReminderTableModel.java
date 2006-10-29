@@ -17,7 +17,7 @@ public class ReminderTableModel extends AbstractTableModel {
   public String getColumnName(int column) {
     switch (column) {
     case 0:
-      return mLocalizer.msg("programs","Programs");
+      return Localizer.getLocalization(Localizer.I18N_PROGRAMS);
     case 1:
       return mLocalizer.msg("timeMenu","Reminder time");
     default:

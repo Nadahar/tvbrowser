@@ -83,6 +83,7 @@ import util.ui.DragAndDropMouseListener;
 import util.ui.ExtensionFileFilter;
 import util.ui.ListDragAndDropHandler;
 import util.ui.ListDropAction;
+import util.ui.Localizer;
 import util.ui.ProgramList;
 import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
@@ -102,7 +103,7 @@ import devplugin.ProgramReceiveIf;
 public class ManageFavoritesDialog extends JDialog implements ListDropAction, WindowClosingIf{
 
   /** The localizer for this class. */
-  public static final util.ui.Localizer mLocalizer
+  private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ManageFavoritesDialog.class);
 
   private DefaultListModel mFavoritesListModel, mProgramListModel;
@@ -326,7 +327,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     
     main.add(buttonPn, BorderLayout.SOUTH);
 
-    mCloseBt = new JButton(mLocalizer.msg("close", "Close"));
+    mCloseBt = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
     mCloseBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         close();

@@ -40,6 +40,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import util.paramhandler.ParamInputField;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -117,7 +118,7 @@ public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
     
     panel.add(filePanel, BorderLayout.NORTH);
     
-    filePanel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("program", "Program")));
+    filePanel.setBorder(BorderFactory.createTitledBorder(Localizer.getLocalization(Localizer.I18N_PROGRAM)));
     
     mParam = new ParamInputField(mExecParam, true);
     
@@ -125,7 +126,7 @@ public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
     
     panel.add(mParam, BorderLayout.CENTER);
     
-    JButton ok = new JButton(mLocalizer.msg("ok", "OK"));
+    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     ok.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
@@ -135,7 +136,7 @@ public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
       
     });
     
-    JButton cancel = new JButton(mLocalizer.msg("cancel", "Cancel"));
+    JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     cancel.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {

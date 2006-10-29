@@ -44,6 +44,7 @@ import javax.swing.JPanel;
 import tvbrowser.core.Settings;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -88,9 +89,9 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
 
     mCardPn = new JPanel(new CardLayout());
 
-    mBackBt = new JButton("<< " + mLocalizer.msg("back", "back"));
-    mNextBt = new JButton(mLocalizer.msg("next", "next") + " >>");
-    mCancelBt = new JButton(mLocalizer.msg("cancel", "cancel"));
+    mBackBt = new JButton("<< " + Localizer.getLocalization(Localizer.I18N_BACK));
+    mNextBt = new JButton(Localizer.getLocalization(Localizer.I18N_NEXT) + " >>");
+    mCancelBt = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
 
     mBackBt.setEnabled(false);
 

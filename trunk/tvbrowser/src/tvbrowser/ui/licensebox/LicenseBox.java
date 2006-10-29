@@ -38,6 +38,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.Timer;
 
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -76,7 +77,7 @@ public class LicenseBox extends JDialog implements ActionListener,WindowClosingI
     mAgreeBt=new JButton(mLocalizer.msg("agree","I agree"));
     mDisagreeBt=new JButton(mLocalizer.msg("disagree","I do not agree"));
        
-    mCloseBt=new JButton(mLocalizer.msg("close","close"));
+    mCloseBt=new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
     
     mAgreeBt.addActionListener(this);
     mDisagreeBt.addActionListener(this);

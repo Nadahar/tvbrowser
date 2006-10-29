@@ -32,6 +32,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import util.ui.LineComponent;
+import util.ui.Localizer;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -70,7 +71,7 @@ public class StatusPanel extends JPanel {
     add(new LineComponent(textfield.getForeground()), cc.xy(3,2));
     add(createStatusLabel("2. "+mLocalizer.msg("channel", "Choose channel"), selected == CHANNELS), cc.xy(4,2));
     add(new LineComponent(textfield.getForeground()), cc.xy(5,2));
-    add(createStatusLabel("3. "+mLocalizer.msg("pictures", "Pictures"), selected == PICTURES), cc.xy(6,2));
+    add(createStatusLabel("3. "+Localizer.getLocalization(Localizer.I18N_PICTURES), selected == PICTURES), cc.xy(6,2));
     add(new LineComponent(textfield.getForeground()), cc.xy(7,2));
     add(createStatusLabel("3. "+mLocalizer.msg("done", "Done"), selected == READY), cc.xy(8,2));
     

@@ -39,6 +39,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import util.ui.Localizer;
 import util.ui.ProgramList;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -80,10 +81,10 @@ public class RemovedProgramsDialog extends JDialog implements WindowClosingIf{
   
   private JPanel createButtonPanel() {
     JPanel result = new JPanel(new BorderLayout());
-    JButton btn = new JButton(mLocalizer.msg("close","Close"));
+    JButton btn = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
     btn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
-        hide();
+        setVisible(false);
       }
     });
 

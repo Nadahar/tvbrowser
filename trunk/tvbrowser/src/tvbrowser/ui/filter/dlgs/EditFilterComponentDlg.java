@@ -74,6 +74,7 @@ import tvbrowser.core.filters.filtercomponents.ProgramRunningFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ReminderFilterComponent;
 import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
 import tvbrowser.core.plugin.PluginManagerImpl;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -183,13 +184,13 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
 
     JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
 
-    mOkBtn = new JButton(mLocalizer.msg("okButton", "OK"));
+    mOkBtn = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     mOkBtn.addActionListener(this);
     buttonPn.add(mOkBtn);
 
     getRootPane().setDefaultButton(mOkBtn);
 
-    mCancelBtn = new JButton(mLocalizer.msg("cancelButton", "Cancel"));
+    mCancelBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     mCancelBtn.addActionListener(this);
     buttonPn.add(mCancelBtn);
 

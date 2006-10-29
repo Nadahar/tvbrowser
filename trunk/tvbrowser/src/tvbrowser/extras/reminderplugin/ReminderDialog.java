@@ -53,6 +53,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -157,7 +158,7 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
     JPanel btnPn=new JPanel(new FlowLayout(FlowLayout.TRAILING));
     btnPn.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
     
-    JButton okBtn=new JButton(mLocalizer.msg("ok", "OK"));
+    JButton okBtn=new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     okBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         mOkPressed=true;
@@ -171,7 +172,7 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
     btnPn.add(okBtn);
     getRootPane().setDefaultButton(okBtn);
     
-    JButton cancelBtn=new JButton(mLocalizer.msg("cancel", "Cancel"));
+    JButton cancelBtn=new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     cancelBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         hide();

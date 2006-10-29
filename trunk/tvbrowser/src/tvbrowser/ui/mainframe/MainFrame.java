@@ -91,6 +91,7 @@ import tvbrowser.ui.update.SoftwareUpdateItem;
 import tvbrowser.ui.update.SoftwareUpdater;
 import util.browserlauncher.Launch;
 import util.misc.OperatingSystem;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
@@ -1062,7 +1063,7 @@ public class MainFrame extends JFrame implements DateListener {
 
   public void showUpdatePluginsDlg() {
     Object[] options = { mLocalizer.msg("checknow", "Check now"),
-        mLocalizer.msg("cancel", "Cancel") };
+        Localizer.getLocalization(Localizer.I18N_CANCEL) };
     String msg = mLocalizer.msg("question.1",
         "do you want to check for new plugins");
     int answer = JOptionPane.showOptionDialog(this, msg, mLocalizer.msg(

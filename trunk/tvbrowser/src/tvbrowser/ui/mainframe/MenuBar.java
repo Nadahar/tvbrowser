@@ -60,6 +60,7 @@ import tvbrowser.ui.licensebox.LicenseBox;
 import tvbrowser.ui.mainframe.toolbar.ContextMenu;
 import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
 import util.browserlauncher.Launch;
+import util.ui.Localizer;
 import util.ui.ScrollableMenu;
 import devplugin.ActionMenu;
 import devplugin.Channel;
@@ -169,7 +170,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
 
 
-    mGotoChannelMenu = new ScrollableMenu(mLocalizer.msg("menuitem.channel","channel"));
+    mGotoChannelMenu = new ScrollableMenu(Localizer.getLocalization(Localizer.I18N_CHANNEL));
     mGotoTimeMenu = new JMenu(mLocalizer.msg("menuitem.time","time"));
     mGoMenu.add(mPreviousDayMI);
     mGoMenu.add(mNextDayMI);

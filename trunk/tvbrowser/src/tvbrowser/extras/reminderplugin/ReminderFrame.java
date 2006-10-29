@@ -45,6 +45,7 @@ import javax.swing.Timer;
 
 import tvbrowser.ui.mainframe.MainFrame;
 import util.io.IOUtilities;
+import util.ui.Localizer;
 import util.ui.ProgramPanel;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -181,7 +182,7 @@ public class ReminderFrame implements WindowClosingIf {
     progPanel.add(panel, BorderLayout.CENTER);
     
     JPanel btnPanel = new JPanel(new BorderLayout(10,0));
-    mCloseBtText = mLocalizer.msg("close", "Close");
+    mCloseBtText = Localizer.getLocalization(Localizer.I18N_CLOSE);
     mCloseBt = new JButton(mCloseBtText);
     mDialog.getRootPane().setDefaultButton(mCloseBt);
     
