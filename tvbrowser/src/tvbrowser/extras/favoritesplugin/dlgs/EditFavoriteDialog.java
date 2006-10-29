@@ -57,6 +57,7 @@ import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.ChannelChooserDlg;
+import util.ui.Localizer;
 import util.ui.PluginChooserDlg;
 import util.ui.TabLayout;
 import util.ui.TimePeriodChooser;
@@ -162,8 +163,8 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     content.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("section.extras", "Extras")));
     content.add(createExtrasPanel());
 
-    JButton cancelBtn = new JButton(mLocalizer.msg("cancel", "Cancel"));
-    JButton okBtn = new JButton(mLocalizer.msg("ok", "OK"));
+    JButton cancelBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
+    JButton okBtn = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
 
     cancelBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

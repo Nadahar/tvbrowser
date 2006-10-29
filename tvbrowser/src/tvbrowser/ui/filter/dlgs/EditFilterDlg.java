@@ -69,6 +69,7 @@ import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.ParserException;
 import tvbrowser.core.filters.UserFilter;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -159,8 +160,8 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     panel1 = new JPanel(new GridLayout(0, 1, 0, 7));
 
     mNewBtn = new JButton(mLocalizer.msg("newButton", "new"));
-    mEditBtn = new JButton(mLocalizer.msg("editButton", "edit"));
-    mRemoveBtn = new JButton(mLocalizer.msg("removeButton", "remove"));
+    mEditBtn = new JButton(Localizer.getLocalization(Localizer.I18N_EDIT));
+    mRemoveBtn = new JButton(Localizer.getLocalization(Localizer.I18N_DELETE));
 
     mNewBtn.addActionListener(this);
     mEditBtn.addActionListener(this);
@@ -219,12 +220,12 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
 
     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
 
-    mOkBtn = new JButton(mLocalizer.msg("okButton", "OK"));
+    mOkBtn = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     buttonPanel.add(mOkBtn);
     mOkBtn.addActionListener(this);
     getRootPane().setDefaultButton(mOkBtn);
 
-    mCancelBtn = new JButton(mLocalizer.msg("cancelButton", "Cancel"));
+    mCancelBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     mCancelBtn.addActionListener(this);
     buttonPanel.add(mCancelBtn);
 
@@ -239,9 +240,9 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
 
     FilterComponent[] fc = FilterComponentList.getInstance().getAvailableFilterComponents();
 
-    Arrays.sort(fc, new Comparator() {
+    Arrays.sort(fc, new Comparator<FilterComponent>() {
 
-      public int compare(Object arg0, Object arg1) {
+      public int compare(FilterComponent arg0, FilterComponent arg1) {
         return ((FilterComponent) arg0).getName().compareToIgnoreCase(((FilterComponent) arg1).getName());
       }
 

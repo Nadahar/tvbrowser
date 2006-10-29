@@ -70,6 +70,7 @@ import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.browserlauncher.Launch;
 import util.program.ProgramTextCreator;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import util.ui.findasyoutype.TextComponentFindAction;
@@ -329,7 +330,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     
     buttonPn.add(bottomLeft, BorderLayout.WEST);
 
-    JButton closeBtn = new JButton(mLocalizer.msg("close", "Close"));
+    JButton closeBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
     closeBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         close();

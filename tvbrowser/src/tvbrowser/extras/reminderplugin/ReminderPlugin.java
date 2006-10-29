@@ -61,7 +61,7 @@ import tvbrowser.extras.common.ConfigurationHandler;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.settings.ProgramPanelSettings;
-import util.ui.PictureSettingsPanel;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.*;
 
@@ -653,7 +653,7 @@ public class ReminderPlugin {
       else {
         String msg = mLocalizer.msg( "error.1",
           "Error loading reminder sound file!\n({0})" , fileName);
-        JOptionPane.showMessageDialog(UiUtilities.getBestDialogParent(MainFrame.getInstance()),msg,mLocalizer.msg("error","Error"),JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(UiUtilities.getBestDialogParent(MainFrame.getInstance()),msg,Localizer.getLocalization(Localizer.I18N_ERROR),JOptionPane.ERROR_MESSAGE);
       }
     }
     return null;

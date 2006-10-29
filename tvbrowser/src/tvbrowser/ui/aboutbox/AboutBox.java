@@ -49,6 +49,7 @@ import javax.swing.text.Document;
 
 import tvbrowser.TVBrowser;
 import util.ui.ImageUtilities;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import util.ui.html.ExtendedHTMLDocument;
@@ -117,7 +118,7 @@ public class AboutBox extends JDialog implements WindowClosingIf{
       });
     btnPanel.add(copyClipboard);
     
-    JButton closeBtn = new JButton(mLocalizer.msg("close", "Close"));
+    JButton closeBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
 
     closeBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

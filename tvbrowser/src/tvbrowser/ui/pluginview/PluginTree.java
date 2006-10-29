@@ -71,6 +71,7 @@ import javax.swing.tree.TreePath;
 
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import util.ui.Localizer;
 import util.ui.OverlayListener;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
@@ -85,11 +86,7 @@ import devplugin.ProgramReceiveTarget;
  */
 public class PluginTree extends JTree implements DragGestureListener,
     DropTargetListener, DragSourceListener {
-
-  /** The localizer for this class. */
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
-      .getLocalizerFor(PluginTree.class);
-
+  
   private Rectangle2D mCueLine = new Rectangle2D.Float();
   private Object mPlugin = null;
   private Thread mDropThread = null;
@@ -231,7 +228,7 @@ public class PluginTree extends JTree implements DragGestureListener,
           mDragNode = ((ProgramItem) node.getUserObject()).getProgram()
               .getTitle();
         else
-          mDragNode = vec.size() + " " + mLocalizer.msg("programs", "Programs");
+          mDragNode = vec.size() + " " + Localizer.getLocalization(Localizer.I18N_PROGRAMS);
 
         JLabel lbl2 = new JLabel(mDragNode);
         lbl2.setForeground(Color.white);

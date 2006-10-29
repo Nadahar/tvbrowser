@@ -46,6 +46,7 @@ import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import devplugin.Channel;
@@ -90,7 +91,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
     buttonPanel.add(mUpdateBtn);
     getRootPane().setDefaultButton(mUpdateBtn);
 
-    mCancelBtn = new JButton(mLocalizer.msg("cancel", "Cancel"));
+    mCancelBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     mCancelBtn.addActionListener(this);
     buttonPanel.add(mCancelBtn);
 

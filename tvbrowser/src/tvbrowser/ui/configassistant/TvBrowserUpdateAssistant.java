@@ -19,6 +19,7 @@ import javax.swing.JTextArea;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import util.ui.progress.Progress;
@@ -71,7 +72,7 @@ public class TvBrowserUpdateAssistant extends JDialog implements ActionListener,
 
     JPanel btnPn = new JPanel();
     btnPn.add(mOkBtn = new JButton(mLocalizer.msg("startTVBrowser","TV-Browser starten")));
-    btnPn.add(mCancelBtn = new JButton(mLocalizer.msg("cancel","Abbrechen")));
+    btnPn.add(mCancelBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL)));
 
     mOkBtn.addActionListener(this);
     mCancelBtn.addActionListener(this);

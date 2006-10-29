@@ -37,6 +37,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
+import util.ui.Localizer;
+
 
 
 public class DefaultMenuBar extends MenuBar {
@@ -65,7 +67,7 @@ public class DefaultMenuBar extends MenuBar {
     mPluginsMenu.setMnemonic(KeyEvent.VK_P);
     add(mPluginsMenu);
     
-    JMenu helpMenu = new JMenu(mLocalizer.msg("menu.help", "Help"));
+    JMenu helpMenu = new JMenu(Localizer.getLocalization(Localizer.I18N_HELP));
     helpMenu.setMnemonic(KeyEvent.VK_H);
     add(helpMenu);
     

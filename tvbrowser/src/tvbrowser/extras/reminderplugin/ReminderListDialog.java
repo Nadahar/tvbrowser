@@ -48,6 +48,7 @@ import javax.swing.SwingUtilities;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.ui.Localizer;
 import util.ui.ProgramTableCellRenderer;
 import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
@@ -196,7 +197,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
 
     builder.addRelatedGap();
 
-    JButton ok = new JButton(mLocalizer.msg("close", "Close"));
+    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
 
     ok.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

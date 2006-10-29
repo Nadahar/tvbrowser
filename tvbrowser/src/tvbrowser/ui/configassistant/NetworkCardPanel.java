@@ -42,6 +42,7 @@ import javax.swing.JTextField;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import util.io.NetworkUtilities;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.factories.Borders;
@@ -182,7 +183,7 @@ class NetworkCardPanel extends AbstractCardPanel {
     if (!NetworkUtilities.checkConnection()) {
       JOptionPane.showMessageDialog(mContent,
           UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("connectionError", "Connection Error")),
-          mLocalizer.msg("error", "Error"), JOptionPane.ERROR_MESSAGE);
+          Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);
       return false;
     }
     

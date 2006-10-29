@@ -58,6 +58,7 @@ import tvbrowser.ui.mainframe.searchfield.SearchFilter;
 import util.ui.DragAndDropMouseListener;
 import util.ui.ListDragAndDropHandler;
 import util.ui.ListDropAction;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import devplugin.PluginsProgramFilter;
@@ -124,8 +125,8 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     JPanel btnPanel = new JPanel(new BorderLayout());
     JPanel panel1 = new JPanel(new GridLayout(0, 1, 0, 7));
     mNewBtn = new JButton(mLocalizer.msg("newButton", "new"));
-    mEditBtn = new JButton(mLocalizer.msg("editButton", "edit"));
-    mRemoveBtn = new JButton(mLocalizer.msg("deleteButton", "delete"));
+    mEditBtn = new JButton(Localizer.getLocalization(Localizer.I18N_EDIT)+"...");
+    mRemoveBtn = new JButton(Localizer.getLocalization(Localizer.I18N_DELETE));
     mSeperator = new JButton(mLocalizer.msg("seperatorButton", "seperator"));
     mNewBtn.addActionListener(this);
     mEditBtn.addActionListener(this);
@@ -149,12 +150,12 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
 
     JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
 
-    mOkBtn = new JButton(mLocalizer.msg("okButton", "OK"));
+    mOkBtn = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     buttonPn.add(mOkBtn);
     mOkBtn.addActionListener(this);
     getRootPane().setDefaultButton(mOkBtn);
 
-    mCancelBtn = new JButton(mLocalizer.msg("cancelButton", "Cancel"));
+    mCancelBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     mCancelBtn.addActionListener(this);
     buttonPn.add(mCancelBtn);
 

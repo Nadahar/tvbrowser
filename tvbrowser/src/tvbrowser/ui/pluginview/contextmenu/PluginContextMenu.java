@@ -39,6 +39,7 @@ import javax.swing.tree.TreePath;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.pluginview.PluginTree;
+import util.ui.Localizer;
 import util.ui.menu.MenuUtil;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
@@ -50,12 +51,6 @@ import devplugin.SettingsTab;
  * Time: 22:07:57
  */
 public class PluginContextMenu extends AbstractContextMenu {
-
-  /** The localizer for this class. */
-     private static final util.ui.Localizer mLocalizer
-       = util.ui.Localizer.getLocalizerFor(PluginContextMenu.class);
-
-
   private ActionMenu[] mActionMenus;
   private Action mDefaultAction;
   private Plugin mPlugin;
@@ -100,7 +95,7 @@ public class PluginContextMenu extends AbstractContextMenu {
     SettingsTab settingsTab = mPlugin.getSettingsTab();
     if (settingsTab != null) {
       menu.addSeparator();
-      JMenuItem menuItem = MenuUtil.createMenuItem(mLocalizer.msg("settings","settings"));
+      JMenuItem menuItem = MenuUtil.createMenuItem(Localizer.getLocalization(Localizer.I18N_SETTINGS)+"...");
       menuItem.setIcon(IconLoader.getInstance().getIconFromTheme("categories", "preferences-desktop", 16));
       menu.add(menuItem);
       menuItem.addActionListener(new ActionListener(){
