@@ -97,10 +97,10 @@ public class ReminderPlugin {
 
   private ReminderPlugin() {
     mInstance = this;
+    mClientPluginTargets = new ProgramReceiveTarget[0];
     mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
     loadSettings();
     mReminderList = new ReminderList();
-    mClientPluginTargets = new ProgramReceiveTarget[0];
     mReminderList.setReminderTimerListener(new ReminderTimerListener(mSettings, mReminderList));
     loadReminderData();
 
