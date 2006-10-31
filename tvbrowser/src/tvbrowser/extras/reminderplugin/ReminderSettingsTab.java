@@ -64,8 +64,8 @@ import util.ui.ExtensionFileFilter;
 import util.ui.FileCheckBox;
 import util.ui.PluginChooserDlg;
 import util.ui.UiUtilities;
-import devplugin.Plugin;
 import devplugin.ProgramReceiveIf;
+import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 
 
@@ -95,7 +95,7 @@ public class ReminderSettingsTab implements SettingsTab {
   private Object mTestSound;
 
   private JLabel mPluginLabel;
-  private ProgramReceiveIf[] mClientPlugins;
+  private ProgramReceiveTarget[] mClientPluginTargets;
   /**
    * Constructor.
    */
@@ -109,7 +109,7 @@ public class ReminderSettingsTab implements SettingsTab {
   public JPanel createSettingsPanel() {
     FormLayout layout = new FormLayout("5dlu,pref,5dlu,pref,pref:grow,3dlu,pref,3dlu,pref,5dlu",
         "pref,5dlu,pref,1dlu,pref,1dlu,pref,10dlu,pref,5dlu," +
-        "pref,10dlu,pref,5dlu,pref,pref,10dlu,pref,5dlu,pref,10dlu," +
+        "pref,10dlu,pref,5dlu,pref,3dlu,pref,10dlu,pref,5dlu,pref,10dlu," +
         "pref,5dlu,pref");
     layout.setColumnGroups(new int[][] {{7,9}});
     PanelBuilder pb = new PanelBuilder(layout);
@@ -147,20 +147,8 @@ public class ReminderSettingsTab implements SettingsTab {
     
     mPluginLabel = new JLabel();
     JButton choose = new JButton(mLocalizer.msg("selectPlugins","Choose Plugins"));
-    
-    String[] clientPluginIdArr
-    = ReminderPlugin.getInstance().getClientPluginIds();    
-    
-    ArrayList<ProgramReceiveIf> clientPlugins = new ArrayList<ProgramReceiveIf>();
-    
-    for(String id : clientPluginIdArr) {
-      ProgramReceiveIf plugin = Plugin.getPluginManager().getReceiceIfForId(id);
-      
-      if(plugin != null)
-        clientPlugins.add(plugin);
-    }
-    
-    mClientPlugins = clientPlugins.toArray(new ProgramReceiveIf[clientPlugins.size()]);
+        
+    mClientPluginTargets = ReminderPlugin.getInstance().getClientPluginsTargets();
     
     handlePluginSelection();
     
@@ -169,14 +157,14 @@ public class ReminderSettingsTab implements SettingsTab {
         Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
         PluginChooserDlg chooser = null;
         if(w instanceof JDialog)
-          chooser = new PluginChooserDlg((JDialog)w,mClientPlugins, null, ReminderPluginProxy.getInstance());
+          chooser = new PluginChooserDlg((JDialog)w,mClientPluginTargets, null, ReminderPluginProxy.getInstance());
         else
-          chooser = new PluginChooserDlg((JFrame)w,mClientPlugins, null, ReminderPluginProxy.getInstance());
+          chooser = new PluginChooserDlg((JFrame)w,mClientPluginTargets, null, ReminderPluginProxy.getInstance());
         
         chooser.setLocationRelativeTo(w);
         chooser.setVisible(true);
         
-        mClientPlugins = chooser.getPlugins();
+        mClientPluginTargets = chooser.getReceiveTargets();
         
         handlePluginSelection();
       }
@@ -226,18 +214,18 @@ public class ReminderSettingsTab implements SettingsTab {
     
     pb.addSeparator(mLocalizer.msg("autoCloseReminder", "Automatically close reminder after"), cc.xyw(1,13,10));
     pb.add(mAutoCloseReminderAfterProgramEnd, cc.xyw(2,15,5));
-    pb.add(mAutoCloseReminderTimeSp, cc.xy(2,16));
-    final JLabel secondsLabel = pb.addLabel(mLocalizer.msg("seconds", "seconds (0 = off)"), cc.xy(4,16));
+    pb.add(mAutoCloseReminderTimeSp, cc.xy(2,17));
+    final JLabel secondsLabel = pb.addLabel(mLocalizer.msg("seconds", "seconds (0 = off)"), cc.xy(4,17));
     secondsLabel.setEnabled(!mAutoCloseReminderAfterProgramEnd.isSelected());
     
     JPanel reminderEntry = new JPanel(new FlowLayout(FlowLayout.LEADING,0,0));
     reminderEntry.add(mDefaultReminderEntryList);
     
-    pb.addSeparator(mLocalizer.msg("defaltReminderEntry","Default reminder time"), cc.xyw(1,18,10));
-    pb.add(reminderEntry, cc.xyw(2,20,4));
+    pb.addSeparator(mLocalizer.msg("defaltReminderEntry","Default reminder time"), cc.xyw(1,19,10));
+    pb.add(reminderEntry, cc.xyw(2,21,4));
     
-    pb.addSeparator(mLocalizer.msg("timeChoosing","Time selection dialog"), cc.xyw(1,22,10));    
-    pb.add(mShowTimeSlectionDlg, cc.xyw(2,24,4));
+    pb.addSeparator(mLocalizer.msg("timeChoosing","Time selection dialog"), cc.xyw(1,23,10));    
+    pb.add(mShowTimeSlectionDlg, cc.xyw(2,25,4));
     
     soundTestBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -328,6 +316,15 @@ public class ReminderSettingsTab implements SettingsTab {
   }
 
   private void handlePluginSelection() {
+    ArrayList<ProgramReceiveIf> plugins = new ArrayList<ProgramReceiveIf>();
+    
+    for(int i = 0; i < mClientPluginTargets.length; i++) {
+      if(!plugins.contains(mClientPluginTargets[i].getReceifeIfForIdOfTarget()))
+        plugins.add(mClientPluginTargets[i].getReceifeIfForIdOfTarget());
+    }
+    
+    ProgramReceiveIf[] mClientPlugins = plugins.toArray(new ProgramReceiveIf[plugins.size()]);
+
     if(mClientPlugins.length > 0) {
       mPluginLabel.setText(mClientPlugins[0].toString());
       mPluginLabel.setEnabled(true);
@@ -381,12 +378,7 @@ public class ReminderSettingsTab implements SettingsTab {
     mSettings.setProperty("usesound", Boolean.valueOf(mSoundFileChB.isSelected()).toString());
     mSettings.setProperty("useexec", Boolean.valueOf(mExecChB.isSelected()).toString());
 
-    String[] clientPluginIdArr = new String[mClientPlugins.length];
-    
-    for (int i = 0; i < mClientPlugins.length; i++)
-      clientPluginIdArr[i] = mClientPlugins[i].getId();
-    
-    ReminderPlugin.getInstance().setClientPluginIds(clientPluginIdArr);
+    ReminderPlugin.getInstance().setClientPluginsTargets(mClientPluginTargets);
     
     mSettings.setProperty("autoCloseReminderAtProgramEnd", String.valueOf(mAutoCloseReminderAfterProgramEnd.isSelected()));
     mSettings.setProperty("autoCloseReminderTime", mAutoCloseReminderTimeSp.getValue().toString());
