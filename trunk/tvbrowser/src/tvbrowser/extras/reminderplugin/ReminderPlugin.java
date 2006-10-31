@@ -34,6 +34,7 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -92,13 +93,14 @@ public class ReminderPlugin {
   private boolean mHasRightToStartTimer = false;
   
   /** The IDs of the plugins that should receive the favorites. */
-  private String[] mClientPluginIdArr;
+  private ProgramReceiveTarget[] mClientPluginTargets;
 
   private ReminderPlugin() {
     mInstance = this;
     mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
     loadSettings();
     mReminderList = new ReminderList();
+    mClientPluginTargets = new ProgramReceiveTarget[0];
     mReminderList.setReminderTimerListener(new ReminderTimerListener(mSettings, mReminderList));
     loadReminderData();
 
@@ -267,11 +269,17 @@ public class ReminderPlugin {
   private void readData(ObjectInputStream in) throws IOException,
       ClassNotFoundException {
 
-    in.readInt(); // version
+    int version = in.readInt(); // version
 
     mReminderList.setReminderTimerListener(null);
     mReminderList.read(in);
-
+    
+    if(version == 3) {
+      mClientPluginTargets = new ProgramReceiveTarget[in.readInt()];
+      
+      for(int i = 0; i < mClientPluginTargets.length; i++)
+        mClientPluginTargets[i] = new ProgramReceiveTarget(in);
+    }
   }
 
   private void readReminderFromTVBrowser21and20(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -325,8 +333,12 @@ public class ReminderPlugin {
   }
 
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(2);
+    out.writeInt(3);
     mReminderList.writeData(out);
+    out.writeInt(mClientPluginTargets.length);
+    
+    for(ProgramReceiveTarget target : mClientPluginTargets)
+      target.writeData(out);
   }
 
   private void loadSettings(Properties settings) {
@@ -338,38 +350,28 @@ public class ReminderPlugin {
     }
     mSettings = settings;
 
-    String plugins = settings.getProperty("usethisplugin","").trim();
-    boolean sendEnabled = settings.getProperty("usesendplugin","").compareToIgnoreCase("true") == 0;
-    
-    if(plugins.length() > 0 && sendEnabled) {
-      if(plugins.indexOf(";") == -1) {
-        mClientPluginIdArr = new String[1];
-        mClientPluginIdArr[0] = plugins;
+    if(settings.containsKey("usethisplugin") || settings.containsKey("usesendplugin")) {
+      String plugins = settings.getProperty("usethisplugin","").trim();
+      boolean sendEnabled = settings.getProperty("usesendplugin","").compareToIgnoreCase("true") == 0;
+
+      settings.remove("usethisplugin");
+      settings.remove("usesendplugin");
+      
+      if(plugins.length() > 0 && sendEnabled) {
+        if(plugins.indexOf(";") == -1) {
+          mClientPluginTargets = new ProgramReceiveTarget[1];
+          mClientPluginTargets[0] = ProgramReceiveTarget.createDefaultTargetForProgramReceiveIfId(plugins);
+        }
+        else {
+          String[] ids = plugins.split(";");
+        
+          mClientPluginTargets = new ProgramReceiveTarget[ids.length];
+        
+          for(int i = 0; i < ids.length; i++)
+            mClientPluginTargets[i] = ProgramReceiveTarget.createDefaultTargetForProgramReceiveIfId(ids[i]);
+        }
       }
-      else
-        mClientPluginIdArr = plugins.split(";");
     }
-    else
-      mClientPluginIdArr = new String[0];
-  }
-  
-  public String[] getClientPluginIds() {
-    return mClientPluginIdArr;
-  }
-  
-  public void setClientPluginIds(String[] clientPluginArr) {
-    mClientPluginIdArr = clientPluginArr;
-    
-    String property = "";
-    
-    if(clientPluginArr.length > 0)
-      property = clientPluginArr[0];
-    
-    for(int i = 1; i < clientPluginArr.length; i++)
-      property += ";" + clientPluginArr[i];
-    
-    mSettings.setProperty("usethisplugin",property);
-    mSettings.setProperty("usesendplugin",String.valueOf(clientPluginArr.length > 0));
   }
 
   public ActionMenu getContextMenuActions(final Frame parentFrame,
@@ -667,6 +669,24 @@ public class ReminderPlugin {
     return DATAFILE_PREFIX;
   }
 
+  protected ProgramReceiveTarget[] getClientPluginsTargets() {
+    ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>();
+    for (int i=0; i<mClientPluginTargets.length; i++) {
+      ProgramReceiveIf plugin = mClientPluginTargets[i].getReceifeIfForIdOfTarget();
+      if (plugin != null && (plugin.canReceivePrograms() || plugin.canReceiveProgramsWithTarget())) {
+        list.add(mClientPluginTargets[i]);
+      }
+    }
+    return list.toArray(new ProgramReceiveTarget[list.size()]);
+  }
+  
+  protected void setClientPluginsTargets(ProgramReceiveTarget[] targets) {
+    if(targets != null)
+      mClientPluginTargets = targets;
+    else
+      mClientPluginTargets = new ProgramReceiveTarget[0];
+  }
+  
   /**
    * @param showOnlyDateAndTitle If the program panel should contain only date and title.
    * @return The settings for the program panel

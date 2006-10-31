@@ -44,6 +44,7 @@ import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.ProgramReceiveIf;
 import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
 
 public class ReminderTimerListener {
 
@@ -87,14 +88,13 @@ public class ReminderTimerListener {
       }
     }
 
-    String[] pluginIds = ReminderPlugin.getInstance().getClientPluginIds();
+    ProgramReceiveTarget[] targets = ReminderPlugin.getInstance().getClientPluginsTargets();
     
-    
-    for(int i = 0; i < pluginIds.length; i++) {
-      ProgramReceiveIf plugin = Plugin.getPluginManager().getReceiceIfForId(pluginIds[i]);
-      if (plugin != null && plugin.canReceivePrograms()) {
+    for(int i = 0; i < targets.length; i++) {
+      ProgramReceiveIf plugin = targets[i].getReceifeIfForIdOfTarget();
+      if (plugin != null && (plugin.canReceiveProgramsWithTarget() || plugin.canReceivePrograms())) {
         Program[] prArray = { item.getProgram()};
-        plugin.receivePrograms(prArray);
+        plugin.receivePrograms(prArray, targets[i]);
       }
     }
     
