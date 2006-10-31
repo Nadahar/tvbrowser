@@ -30,7 +30,6 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -48,7 +47,6 @@ import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.PluginChooserDlg;
 import util.ui.UiUtilities;
-import devplugin.Plugin;
 import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
@@ -82,15 +80,15 @@ public class FavoritesSettingTab implements SettingsTab {
     JButton choose = new JButton(mLocalizer.msg("selectPlugins","Choose Plugins"));    
     mExpertMode = new JCheckBox(mLocalizer.msg("expertMode","Always use expert mode"),FavoritesPlugin.getInstance().isUsingExpertMode());    
     
-    ProgramReceiveTarget[] clientPluginIdArr
+    ProgramReceiveTarget[] targetsArr
     = FavoritesPlugin.getInstance().getClientPluginTargetIds();    
     
     ArrayList<ProgramReceiveTarget> clientPlugins = new ArrayList<ProgramReceiveTarget>();
     
-    for(int i = 0; i < clientPluginIdArr.length; i++) {
-      ProgramReceiveIf plugin = clientPluginIdArr[i].getReceifeIfForIdOfTarget();
+    for(int i = 0; i < targetsArr.length; i++) {
+      ProgramReceiveIf plugin = targetsArr[i].getReceifeIfForIdOfTarget();
       if(plugin != null)
-        clientPlugins.add(clientPluginIdArr[i]);
+        clientPlugins.add(targetsArr[i]);
     }
     
     mClientPluginTargets = clientPlugins.toArray(new ProgramReceiveTarget[clientPlugins.size()]);

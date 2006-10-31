@@ -266,7 +266,7 @@ public class FavoritesPlugin {
       size = in.readInt();
       ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>(); 
       for (int i = 0; i < size; i++) {
-        String id;
+        String id = null;
         
         if (version == 1) {
           // In older versions of TV-Browser, not the plugin ID was saved,
@@ -278,14 +278,16 @@ public class FavoritesPlugin {
           id = (String) in.readObject();
         }
 
-        if(version <= 2) {
+        if(version <= 2)
           if(id.compareTo("java.reminderplugin.ReminderPlugin") == 0)
             reminderFound = true;
-        }
         
         if(version > 2 || (version <= 2 && id.compareTo("java.reminderplugin.ReminderPlugin") != 0))
           list.add(ProgramReceiveTarget.createDefaultTargetForProgramReceiveIfId(id));
       }
+      
+      if(!list.isEmpty())
+        mClientPluginTargets = list.toArray(new ProgramReceiveTarget[list.size()]);
     }
     else {
       int n = in.readInt();
