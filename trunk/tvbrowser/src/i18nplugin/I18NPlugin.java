@@ -25,25 +25,24 @@
  */
 package i18nplugin;
 
+import devplugin.ActionMenu;
+import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.ThemeIcon;
+import devplugin.Version;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 import java.util.Properties;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import devplugin.ActionMenu;
-import devplugin.Plugin;
-import devplugin.PluginInfo;
-import devplugin.ThemeIcon;
-import devplugin.Version;
 
 /**
  * This Plugin should help a User to create Translations for the TV-Browser 
@@ -156,8 +155,7 @@ public class I18NPlugin extends Plugin {
     
     String devider = settings.getProperty("DialogDevider.Location");
     if (devider != null) {
-      int dev = parseNumber(devider);
-      mDevider = dev;
+        mDevider = parseNumber(devider);
     }
   }
   

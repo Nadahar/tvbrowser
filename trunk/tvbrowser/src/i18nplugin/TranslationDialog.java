@@ -25,16 +25,22 @@
  */
 package i18nplugin;
 
-import java.awt.CardLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Locale;
-import java.util.Vector;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
+import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import util.exc.ErrorHandler;
+import util.io.ZipUtil;
+import util.ui.LinkButton;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
@@ -55,24 +61,16 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-
-import tvbrowser.core.Settings;
-import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.core.plugin.PluginProxyManager;
-import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
-import util.exc.ErrorHandler;
-import util.io.ZipUtil;
-import util.ui.LinkButton;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.Sizes;
+import java.awt.CardLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Locale;
+import java.util.Vector;
 
 /**
  * The Dialog for the Translation-Tool
@@ -150,7 +148,7 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
     mLanguageCB.setRenderer(new DefaultListCellRenderer() {
       public java.awt.Component getListCellRendererComponent(javax.swing.JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         return super.getListCellRendererComponent(list, ((Locale)value).getDisplayName(), index, isSelected, cellHasFocus);
-      };
+      }
     });
     
     panel.add(mLanguageCB, cc.xy(4,3));
@@ -168,7 +166,7 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
     
     panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("translate", "Translate")), cc.xyw(1,5,8));
 
-    DefaultMutableTreeNode root = createRooNode();
+    DefaultMutableTreeNode root = createRootNode();
     
     mTree = new JTree(root);
     mTreeRenderer = new PropertiesTreeCellRenderer(Locale.GERMAN);
@@ -184,10 +182,10 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
     
     cardPanel.add(mEditor, EDITOR);
     
-    JEditorPane help = new JEditorPane("text/html", "<h1>Help</h1><p>This is the Help!</p>");
+    JEditorPane help = new JEditorPane("text/html",mLocalizer.msg("helpText", "<h1>Help missing</h1>"));
     help.setEditable(false);
-    
-    cardPanel.add(new JScrollPane(help), HELP);
+
+    cardPanel.add(new JScrollPane(help, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), HELP);
     
     mTree.addTreeSelectionListener(new TreeSelectionListener() {
       public void valueChanged(TreeSelectionEvent e) {
@@ -212,7 +210,7 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
     
     mTree.setSelectionPath(new TreePath(root));
     
-    mSplitpane.setRightComponent(new JScrollPane(cardPanel));
+    mSplitpane.setRightComponent(cardPanel);
     
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
@@ -234,7 +232,7 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
     cancel.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         close();
-      };
+      }
     });
     
     JButton export = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "document-save-as", 16)); 
@@ -359,9 +357,9 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
    *    1. TV-Browser
    *    2. All Plugins
    * 
-   * @return
+   * @return new RootNOde
    */
-  private DefaultMutableTreeNode createRooNode() {
+  private DefaultMutableTreeNode createRootNode() {
     mRoot = new PathNode(mLocalizer.msg("translations", "Translations"));
     mRoot.add(new TranslationNode("TV-Browser", new File("tvbrowser.jar")));
     
@@ -379,17 +377,13 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
   /**
    * Adds all Jar-Files in a Directory to a Tree
    * 
-   * @param treenode
-   * @param file
+   * @param treenode Add to this TreeNode
+   * @param dir add all Jars in this directory
    */
   private void addJarFiles(DefaultMutableTreeNode treenode, File dir) {
     File[] files = dir.listFiles(new FileFilter() {
       public boolean accept(File pathname) {
-        
-        if (pathname.getName().toLowerCase().endsWith(".jar"))
-          return true;
-        
-        return false;
+          return pathname.getName().toLowerCase().endsWith(".jar");
       }
     });
     

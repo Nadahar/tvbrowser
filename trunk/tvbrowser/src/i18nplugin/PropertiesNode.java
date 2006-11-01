@@ -25,9 +25,13 @@
  */
 package i18nplugin;
 
+import tvbrowser.core.Settings;
+
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,12 +44,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
-
-import tvbrowser.core.Settings;
 
 /**
  * A Properties-File
@@ -276,7 +274,7 @@ public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNo
    * (non-Javadoc)
    * @see i18nplugin.LanguageNodeIf#save()
    */
-  public void save() throws FileNotFoundException, IOException{
+  public void save() throws IOException{
     Set<Locale> keys = mUserPropertyMap.keySet();
     for (Locale locale : keys) {
       Properties prop = mUserPropertyMap.get(locale);

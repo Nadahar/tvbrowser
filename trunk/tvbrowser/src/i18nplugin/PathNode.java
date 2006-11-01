@@ -25,15 +25,13 @@
  */
 package i18nplugin;
 
-import java.io.FileNotFoundException;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Locale;
-
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
 
 /**
  * A Path-Entry
@@ -44,7 +42,7 @@ public class PathNode extends DefaultMutableTreeNode implements LanguageNodeIf {
 
   /**
    * Create Path-Entry
-   * @param string
+   * @param string Path-Entry
    */
   public PathNode(String string) {
     super(string);
@@ -91,7 +89,7 @@ public class PathNode extends DefaultMutableTreeNode implements LanguageNodeIf {
    * (non-Javadoc)
    * @see i18nplugin.LanguageNodeIf#save()
    */
-  public void save() throws FileNotFoundException, IOException{
+  public void save() throws IOException{
     int max = getChildCount();
     for (int i=0;i<max;i++) {
       ((LanguageNodeIf)getChildAt(i)).save();

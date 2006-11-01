@@ -25,9 +25,8 @@
  */
 package i18nplugin;
 
-import java.util.Locale;
-
 import javax.swing.tree.DefaultMutableTreeNode;
+import java.util.Locale;
 
 /**
  * Entry for a Property
@@ -59,7 +58,7 @@ public class PropertiesEntryNode extends DefaultMutableTreeNode implements Langu
       return false;
     if (!(getParent() instanceof PropertiesNode))
       return false;
-    return ((PropertiesNode) getParent()).containsKey(locale, getPropertyName());
+    return ((PropertiesNode) getParent()).getPropertyValue(locale, getPropertyName()).length() > 0;
   }
 
   /*
