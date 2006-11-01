@@ -201,7 +201,7 @@ FunctionEnd
  LangString REMINDER ${LANG_GERMAN} "Erinnerer"
  LangString REMINDER ${LANG_ENGLISH} "Reminder"
 
- LangString I18N ${LANG_GERMAN} "Übersetungstool"
+ LangString I18N ${LANG_GERMAN} "Übersetzungstool"
  LangString I18N ${LANG_ENGLISH} "Translation tool"
  
  LangString PRINT ${LANG_GERMAN} "Drucken"
@@ -568,14 +568,14 @@ SubSection "Plugins"
     File "${RUNTIME_DIR}\plugins\CalendarExportPlugin.jar"
   SectionEnd
   
-  Section "${SIMPLEMARKER}"
+  Section "$(SIMPLEMARKER)"
     SectionIn 1
 
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\SimpleMarkerPlugin.jar"
   SectionEnd
 
-  Section "${I18N}"
+  Section "$(I18N)"
     SectionIn 1
 
     SetOutPath "$INSTDIR\plugins"
