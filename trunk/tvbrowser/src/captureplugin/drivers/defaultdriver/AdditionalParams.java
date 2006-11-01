@@ -24,17 +24,11 @@
  */
 package captureplugin.drivers.defaultdriver;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.Vector;
+import captureplugin.CapturePlugin;
+import util.paramhandler.ParamDescriptionPanel;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -50,12 +44,17 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import util.paramhandler.ParamDescriptionPanel;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-import captureplugin.CapturePlugin;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.Vector;
 
 /**
  * A DialogBox for the additional Parameters
@@ -101,14 +100,13 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
     }
 
     private void fillModel(DeviceConfig config) {
-
-      Vector vec = new Vector(config.getParamList());
+      Vector<Object> vec = new Vector<Object>(config.getParamList());
       mListModel = new DefaultListModel();
-      
-      for (int i=0;i<vec.size();i++) {
-        mListModel.addElement(vec.get(i));
+
+      for (Object aVec : vec) {
+            mListModel.addElement(aVec);
       }
-      
+
       if (vec.size() == 0) {
         mListModel.addElement(new ParamEntry());
       }
@@ -338,7 +336,7 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
     protected void okPressed() {
         saveSelected();
         
-        Vector l = new Vector();
+        Vector<ParamEntry> l = new Vector<ParamEntry>();
         
         for (int i = 0; i < mListModel.size(); i++) {
             ParamEntry e = (ParamEntry) mListModel.get(i);
@@ -413,7 +411,7 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
         
         saveSelected();
 
-        if ((ParamEntry) mList.getSelectedValue() != null) {
+        if (mList.getSelectedValue() != null) {
             mSelectedEntry = (ParamEntry) mList.getSelectedValue();
             mName.setText(mSelectedEntry.getName());
             mParam.setText(mSelectedEntry.getParam());

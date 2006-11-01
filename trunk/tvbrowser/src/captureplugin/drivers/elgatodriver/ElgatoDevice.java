@@ -24,24 +24,23 @@
  */
 package captureplugin.drivers.elgatodriver;
 
+import captureplugin.drivers.DeviceIf;
+import captureplugin.drivers.DriverIf;
+import captureplugin.drivers.elgatodriver.configdialog.ElgatoConfigDialog;
+import devplugin.Channel;
+import devplugin.Program;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import java.awt.Window;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.Calendar;
-
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import captureplugin.drivers.DeviceIf;
-import captureplugin.drivers.DriverIf;
-import captureplugin.drivers.elgatodriver.configdialog.ElgatoConfigDialog;
-import devplugin.Channel;
-import devplugin.Program;
 
 /**
  * The Elgato-Device
@@ -85,6 +84,10 @@ public class ElgatoDevice implements DeviceIf {
 
     public DriverIf getDriver() {
         return mDriver;
+    }
+
+    public String getId() {
+        return mConfig.getId();
     }
 
     public String getName() {

@@ -24,17 +24,14 @@
  */
 package captureplugin.tabs;
 
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.util.Vector;
+import captureplugin.CapturePluginData;
+import captureplugin.drivers.DeviceCreatorDialog;
+import captureplugin.drivers.DeviceIf;
+import captureplugin.utils.DeviceImportAndExport;
+import util.exc.ErrorHandler;
+import util.ui.ExtensionFileFilter;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -49,15 +46,17 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import util.exc.ErrorHandler;
-import util.ui.ExtensionFileFilter;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import captureplugin.CapturePluginData;
-import captureplugin.drivers.DeviceCreatorDialog;
-import captureplugin.drivers.DeviceIf;
-import captureplugin.utils.DeviceImportAndExport;
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.util.Vector;
 
 
 /**
@@ -75,8 +74,8 @@ public class DevicePanel extends JPanel {
     private CapturePluginData mData;
     /** Translator */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(DevicePanel.class);
-       
-    
+
+
     private JButton mAddDevice, mRemoveDevice, mExportDevice, mImportDevice, mConfigDevice;
 
     /**
@@ -97,7 +96,7 @@ public class DevicePanel extends JPanel {
         setLayout(new BorderLayout(5, 5));
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         
-        mDeviceList = new JList(new Vector(mData.getDevices()));
+        mDeviceList = new JList(new Vector<DeviceIf>(mData.getDevices()));
         mDeviceList.setCellRenderer(new DeviceCellRenderer());
         
         mDeviceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -120,7 +119,7 @@ public class DevicePanel extends JPanel {
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.insets = new Insets(0, 0, 5, 0);
-        
+
         mAddDevice = new JButton(mLocalizer.msg("Add", "Add Device"));
 
         mAddDevice.addActionListener(new ActionListener() {
@@ -128,7 +127,7 @@ public class DevicePanel extends JPanel {
               SwingUtilities.invokeLater(new Runnable()  {
                 public void run() {
                   addDevice();
-                };
+                }
               });
             }
         });
@@ -231,7 +230,7 @@ public class DevicePanel extends JPanel {
         if (device != null) {
             mData.getDevices().add(device);
             device.configDevice(UiUtilities.getLastModalChildOf(mOwner));
-            mDeviceList.setListData(new Vector(mData.getDevices()));
+            mDeviceList.setListData(new Vector<DeviceIf>(mData.getDevices()));
         }
         
     }
@@ -262,7 +261,7 @@ public class DevicePanel extends JPanel {
             
             if (result == JOptionPane.OK_OPTION) {
                 mData.getDevices().remove(device);
-                mDeviceList.setListData(new Vector(mData.getDevices()));
+                mDeviceList.setListData(new Vector<DeviceIf>(mData.getDevices()));
             }
         }
     }
@@ -287,7 +286,7 @@ public class DevicePanel extends JPanel {
           mData.getDevices().add(device);
         }
 
-        mDeviceList.setListData(new Vector(mData.getDevices()));
+        mDeviceList.setListData(new Vector<DeviceIf>(mData.getDevices()));
       }
     }
 
@@ -318,7 +317,7 @@ public class DevicePanel extends JPanel {
           ErrorHandler.handle(export.getError(), export.getException());
         }
 
-        mDeviceList.setListData(new Vector(mData.getDevices()));
+        mDeviceList.setListData(new Vector<DeviceIf>(mData.getDevices()));
       }
     }
     

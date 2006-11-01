@@ -24,14 +24,14 @@
  */
 package captureplugin.drivers.defaultdriver;
 
+import devplugin.Plugin;
+import devplugin.Program;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Calendar;
 import java.util.Date;
-
-import devplugin.Plugin;
-import devplugin.Program;
 
 
 /**
@@ -134,7 +134,7 @@ public class ProgramTime implements Cloneable {
     
     /**
      * Set the Start-Time
-     * @param start
+     * @param start new start-time
      */
     public void setStart(Date start) {
         mStart = Calendar.getInstance();
@@ -143,7 +143,7 @@ public class ProgramTime implements Cloneable {
 
     /**
      * Returns the Start-Time
-     * @return
+     * @return current start-time
      */
     public Date getStart() {
         return mStart.getTime();
@@ -151,7 +151,7 @@ public class ProgramTime implements Cloneable {
     
     /**
      * Sets the End-Time
-     * @param end
+     * @param end new end-time
      */
     public void setEnd(Date end) {
         mEnd = Calendar.getInstance();
@@ -160,7 +160,7 @@ public class ProgramTime implements Cloneable {
     
     /**
      * Returns the End-Time
-     * @return
+     * @return current end-time
      */
     public Date getEnd() {
         return mEnd.getTime();
@@ -201,14 +201,15 @@ public class ProgramTime implements Cloneable {
     /**
      * Clone
      */
+    @Override
     public Object clone() {
         return new ProgramTime(this);
     }
 
     /**
      * Save Data into Stream
-     * @param out
-     * @throws IOException
+     * @param out save to this stream
+     * @throws IOException problems during save operation
      */
     public void writeData(ObjectOutputStream out) throws IOException {
         out.writeInt(2);
@@ -221,9 +222,9 @@ public class ProgramTime implements Cloneable {
     
     /**
      * Read Data from Stream
-     * @param in
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @param in read data from this stream
+     * @throws IOException problems during load operation
+     * @throws ClassNotFoundException problem during class creation
      */
     public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
     

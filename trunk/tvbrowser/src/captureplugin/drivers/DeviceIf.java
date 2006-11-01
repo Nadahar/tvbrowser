@@ -24,17 +24,26 @@
  */
 package captureplugin.drivers;
 
+import devplugin.Program;
+
 import java.awt.Window;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import devplugin.Program;
-
 /**
  * This Interfaces represents a Device.
  */
 public interface DeviceIf extends Cloneable {
+    /**
+     * The Unique ID of this Device.
+     *
+     * Please use <code>IDGenerator.generateUniqueId()</code> to create the ID
+     *
+     * @return ID of this Device
+     */
+    public String getId();
+
     /**
      * Name of the Device
      * @return Name of Device
@@ -91,13 +100,12 @@ public interface DeviceIf extends Cloneable {
 
     /**
      * Get the List of Programs selected by this Device
-     * @return
+     * @return LIst of programs
      */
     public Program[] getProgramList();
 
     /**
      * Get the List of additional Commands
-     * @param program Program
      * @return List of additional Commands
      */
     public String[] getAdditionalCommands();
@@ -114,19 +122,19 @@ public interface DeviceIf extends Cloneable {
     
     /**
      * Clones this Device
-     * @return
+     * @return Clone
      */
     public Object clone();
 
     /**
      * Saves the Data into a Stream
-     * @param stream
+     * @param stream write Data into this stream
      */
     public void writeData(ObjectOutputStream stream) throws IOException;
 
     /**
      * Reads the Data from a Stream
-     * @param stream
+     * @param stream read data from this stream
      */
     public void readData(ObjectInputStream stream) throws IOException, ClassNotFoundException;
 }

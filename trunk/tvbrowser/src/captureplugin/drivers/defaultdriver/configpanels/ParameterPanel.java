@@ -24,6 +24,20 @@
  */
 package captureplugin.drivers.defaultdriver.configpanels;
 
+import captureplugin.drivers.defaultdriver.AdditionalParams;
+import captureplugin.drivers.defaultdriver.CaptureParamLibrary;
+import captureplugin.drivers.defaultdriver.DefaultKonfigurator;
+import captureplugin.drivers.defaultdriver.DeviceConfig;
+import util.paramhandler.ParamDescriptionPanel;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -34,21 +48,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-
-import util.paramhandler.ParamDescriptionPanel;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import captureplugin.drivers.defaultdriver.AdditionalParams;
-import captureplugin.drivers.defaultdriver.CaptureParamLibrary;
-import captureplugin.drivers.defaultdriver.DefaultKonfigurator;
-import captureplugin.drivers.defaultdriver.DeviceConfig;
 
 /**
  * Enter the Parameters
@@ -71,6 +70,7 @@ public class ParameterPanel extends JPanel {
     
     /**
      * Creates the Panel
+     * @param dialog Dialog for this Panel
      * @param data Settings
      */
     public ParameterPanel(DefaultKonfigurator dialog, DeviceConfig data) {

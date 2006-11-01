@@ -53,6 +53,7 @@ public class ParamEntry {
      * Creates a Param
      * @param name Name
      * @param param Param
+     * @param enabled True if Param is enabled
      */
     public ParamEntry(String name, String param, boolean enabled) {
         mName = name;
@@ -62,8 +63,8 @@ public class ParamEntry {
     
     /**
      * Save data to Stream
-     * @param out
-     * @throws IOException
+     * @param out save to this stream
+     * @throws IOException during save operation
      */
     public void writeData(ObjectOutputStream out) throws IOException {
         out.writeInt(2);
@@ -74,25 +75,21 @@ public class ParamEntry {
     
     /**
      * Read Data from Stream
-     * @param in
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @param in read data from this stream
+     * @throws IOException read errors
+     * @throws ClassNotFoundException problems while creating classes
      */
-    public void readData(java.io.ObjectInputStream in)throws IOException, ClassNotFoundException {
+    public void readData(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
         int version = in.readInt();
         mName = (String)in.readObject();
         mParam = (String)in.readObject();
-        
-        if (version >= 2) {
-          mEnabled = in.readBoolean();
-        } else {
-          mEnabled = true;
-        }
+
+        mEnabled = version < 2 || in.readBoolean();
     }
     
     /**
      * Get Name
-     * @return
+     * @return Name of this paramentry
      */
     public String getName() {
         return mName;
@@ -100,7 +97,7 @@ public class ParamEntry {
     
     /**
      * Set Name
-     * @param name
+     * @param name new name of this paramentry
      */
     public void setName(String name) {
         this.mName = name;
@@ -108,7 +105,7 @@ public class ParamEntry {
     
     /**
      * Get Param
-     * @return
+     * @return Parameter
      */
     public String getParam() {
         return mParam;
@@ -116,7 +113,7 @@ public class ParamEntry {
     
     /**
      * Set Param
-     * @param param
+     * @param param new parameter
      */
     public void setParam(String param) {
         this.mParam = param;
@@ -141,7 +138,7 @@ public class ParamEntry {
 
     /**
      * Enable/Disable Param
-     * @param enabled
+     * @param enabled true, if this param should be enabled
      */
     public void setEnabled(boolean enabled) {
       mEnabled = enabled;

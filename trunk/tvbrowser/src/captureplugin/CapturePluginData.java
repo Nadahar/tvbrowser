@@ -24,15 +24,15 @@
  */
 package captureplugin;
 
+import captureplugin.drivers.DeviceIf;
+import util.exc.ErrorHandler;
+import util.ui.Localizer;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.Vector;
-
-import util.exc.ErrorHandler;
-import util.ui.Localizer;
-import captureplugin.drivers.DeviceIf;
 
 
 /**
@@ -45,7 +45,7 @@ public class CapturePluginData implements Cloneable {
     /**
      * All Devices
      */
-    private Vector mDevices = new Vector();
+    private Vector<DeviceIf> mDevices = new Vector<DeviceIf>();
     
     /**
      * Default Constructor
@@ -60,14 +60,13 @@ public class CapturePluginData implements Cloneable {
      */
     public CapturePluginData(CapturePluginData data) {
         
-      mDevices = new Vector();
+      mDevices = new Vector<DeviceIf>();
       
-      Vector old = new Vector(data.getDevices());
-      
-      for (int i = 0; i < old.size(); i++) {
-          DeviceIf dev = (DeviceIf) old.get(i);
-          mDevices.add(dev.clone());
-      }
+      Vector<DeviceIf> old = new Vector<DeviceIf>(data.getDevices());
+
+        for (DeviceIf deviceIf : old) {
+            mDevices.add((DeviceIf) deviceIf.clone());
+        }
     }
     
     
@@ -75,7 +74,7 @@ public class CapturePluginData implements Cloneable {
      * Writes the Data to an OuputStream
      * 
      * @param out write here
-     * @throws Exception
+     * @throws IOException problems while writing
      */
     public void writeData(ObjectOutputStream out) throws IOException {
         out.writeInt(2);
@@ -85,14 +84,10 @@ public class CapturePluginData implements Cloneable {
         DeviceFileHandling writer = new DeviceFileHandling();
         
         writer.clearDirectory();
-        
-        for (int i = 0; i < mDevices.size(); i++) {
-            
-            DeviceIf dev = (DeviceIf) mDevices.get(i);
-            
+
+        for (DeviceIf dev : mDevices) {
             out.writeObject(dev.getDriver().getClass().getName());
             out.writeObject(dev.getName());
-            
             out.writeObject(writer.writeDevice(dev));
         }
     }
@@ -102,7 +97,8 @@ public class CapturePluginData implements Cloneable {
      * 
      * @param in InputStream
      * @param p Plugin
-     * @throws Exception
+     * @throws IOException problems while reading
+     * @throws ClassNotFoundException class creation problems
      */
     public void readData(ObjectInputStream in, CapturePlugin p) throws IOException, ClassNotFoundException {
         int version = in.readInt();
@@ -113,7 +109,7 @@ public class CapturePluginData implements Cloneable {
         
         int num = in.readInt();
         
-        mDevices = new Vector();
+        mDevices = new Vector<DeviceIf>();
         
         DeviceFileHandling reader = new DeviceFileHandling();
 
@@ -139,7 +135,7 @@ public class CapturePluginData implements Cloneable {
      * Returns all Devices
      * @return Devices
      */
-    public Collection getDevices() {
+    public Collection<DeviceIf> getDevices() {
         return mDevices;
     }
     
@@ -151,7 +147,7 @@ public class CapturePluginData implements Cloneable {
         DeviceIf[] dev = new DeviceIf[mDevices.size()];
         
         for (int i = 0; i < mDevices.size(); i++) {
-            dev[i] = (DeviceIf) mDevices.get(i);
+            dev[i] = mDevices.get(i);
         }
         
         return dev;

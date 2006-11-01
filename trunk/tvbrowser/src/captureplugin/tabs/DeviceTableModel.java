@@ -24,13 +24,12 @@
  */
 package captureplugin.tabs;
 
-import java.util.ArrayList;
-
-import javax.swing.table.AbstractTableModel;
-
-import util.ui.Localizer;
 import captureplugin.drivers.DeviceIf;
 import devplugin.Program;
+import util.ui.Localizer;
+
+import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
 
 
 /**
@@ -45,16 +44,16 @@ public class DeviceTableModel extends AbstractTableModel {
    
     
     /** List of Devices */
-    private ArrayList mDevices = new ArrayList();
+    private ArrayList<DeviceIf> mDevices = new ArrayList<DeviceIf>();
     /** List of Programs */
-    private ArrayList mPrograms = new ArrayList();
+    private ArrayList<Program> mPrograms = new ArrayList<Program>();
     
     /**
      * Creates the Model
      */
     public DeviceTableModel() {
-        mDevices = new ArrayList();
-        mPrograms = new ArrayList();
+        mDevices = new ArrayList<DeviceIf>();
+        mPrograms = new ArrayList<Program>();
     }
 
     /**
@@ -62,7 +61,7 @@ public class DeviceTableModel extends AbstractTableModel {
      * @param dev Device
      * @param prog Program in Device
      */
-    public void addProgram(DeviceIf dev, Program prog) {
+    public void addProgram(DeviceIf dev,  Program prog) {
         mDevices.add(dev);
         mPrograms.add(prog);
         fireTableRowsInserted(mDevices.size(), mDevices.size());
@@ -88,7 +87,6 @@ public class DeviceTableModel extends AbstractTableModel {
      * Clears the Table
      */
     public void clearTable() {
-        int size = mDevices.size();
         mDevices.clear();
         mPrograms.clear();
     }

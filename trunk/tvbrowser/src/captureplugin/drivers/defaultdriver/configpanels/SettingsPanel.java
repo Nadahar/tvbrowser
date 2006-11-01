@@ -24,6 +24,20 @@
  */
 package captureplugin.drivers.defaultdriver.configpanels;
 
+import captureplugin.drivers.defaultdriver.DeviceConfig;
+import util.ui.Localizer;
+
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -37,21 +51,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.TimeZone;
-
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import util.ui.Localizer;
-import captureplugin.drivers.defaultdriver.DeviceConfig;
 
 
 /**
@@ -182,17 +181,16 @@ public class SettingsPanel extends JPanel {
         panel.add(oldPrograms, c);
         
         
-        Integer value = new Integer(mData.getMaxSimultanious()); 
-        Integer min = new Integer(1);
-        Integer step = new Integer(1); 
+        Integer value = mData.getMaxSimultanious();
+        Integer min = 1;
+        Integer step = 1;
         SpinnerNumberModel model = new SpinnerNumberModel(value, min, null, step); 
-        int fifty = model.getNumber().intValue(); 
-        
+
         mMaxSimult = new JSpinner(model);
 
         mMaxSimult.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
-                mData.setMaxSimultanious(((Integer)mMaxSimult.getValue()).intValue());
+                mData.setMaxSimultanious((Integer) mMaxSimult.getValue());
             }
             
         });
@@ -212,13 +210,13 @@ public class SettingsPanel extends JPanel {
         panel.add(mMaxSimult,c);
         
         
-        model = new SpinnerNumberModel(new Integer(mData.getTimeOut()), new Integer(-1), new Integer(999), new Integer(1));
+        model = new SpinnerNumberModel(mData.getTimeOut(), -1, 999, 1);
 
         
         mMaxTimeout = new JSpinner(model);
         mMaxTimeout.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
-                mData.setTimeOut(((Integer)mMaxTimeout.getValue()).intValue());
+                mData.setTimeOut((Integer) mMaxTimeout.getValue());
             }
             
         });
@@ -345,15 +343,15 @@ public class SettingsPanel extends JPanel {
 
         panel.add(new JLabel(mLocalizer.msg("Earlier", "Number of minutes to start erlier")),lc);
 
-        Integer value = new Integer(mData.getPreTime()); 
-        Integer min = new Integer(0);
-        Integer step = new Integer(1); 
+        Integer value = mData.getPreTime();
+        Integer min = 0;
+        Integer step = 1;
 
         mPreTimeTextField = new JSpinner(new SpinnerNumberModel(value, min, null, step));
 
         mPreTimeTextField.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
-                mData.setPreTime(((Integer)mPreTimeTextField.getValue()).intValue());
+                mData.setPreTime((Integer) mPreTimeTextField.getValue());
             }
             
         });
@@ -371,13 +369,13 @@ public class SettingsPanel extends JPanel {
 
         panel.add(new JLabel(mLocalizer.msg("Later", "Number of minutes to stop later")),lc);
 
-        value = new Integer(mData.getPostTime()); 
+        value = mData.getPostTime();
 
         mPostTimeTextField = new JSpinner(new SpinnerNumberModel(value, min, null, step));
 
         mPostTimeTextField.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
-                mData.setPostTime(((Integer)mPostTimeTextField.getValue()).intValue());
+                mData.setPostTime((Integer) mPostTimeTextField.getValue());
             }
             
         });

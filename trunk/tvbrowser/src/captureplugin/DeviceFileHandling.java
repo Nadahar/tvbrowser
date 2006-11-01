@@ -24,6 +24,10 @@
  */
 package captureplugin;
 
+import captureplugin.drivers.DeviceIf;
+import captureplugin.drivers.DriverFactory;
+import devplugin.Plugin;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,10 +35,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
-import captureplugin.drivers.DeviceIf;
-import captureplugin.drivers.DriverFactory;
-import devplugin.Plugin;
 
 
 /**
@@ -49,6 +49,7 @@ public class DeviceFileHandling {
     
     /**
      * Creates a empty Directory
+     * @throws java.io.IOException Problems in delete operation
      */
     public void clearDirectory() throws IOException{
         
@@ -60,9 +61,9 @@ public class DeviceFileHandling {
         
         if (dirname.listFiles().length > 0) {
             File[] fileList = dirname.listFiles();
-            
-            for (int i = 0; i < fileList.length; i++) {
-                fileList[i].delete();
+
+            for (File file : fileList) {
+                file.delete();
             }
         }
         
@@ -73,6 +74,7 @@ public class DeviceFileHandling {
      * Saves a Device
      * @param dev Device to Save
      * @return Filename
+     * @throws java.io.IOException Problems reading the Device
      */
     public String writeDevice(DeviceIf dev) throws IOException {
         
@@ -99,6 +101,8 @@ public class DeviceFileHandling {
      * @param filename Filename
      * @param devname Name of the Device
      * @return DeviceIf
+     * @throws java.io.IOException  Problems while reading the device
+     * @throws ClassNotFoundException Class creation problems
      */
     public DeviceIf readDevice(String classname, String filename, String devname) throws IOException, ClassNotFoundException {
         DeviceIf dev = DriverFactory.getInstance().createDevice(classname, devname);
