@@ -24,13 +24,17 @@
  */
 package emailplugin;
 
-import java.awt.FlowLayout;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Properties;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import devplugin.Program;
+import tvbrowser.ui.mainframe.MainFrame;
+import util.exc.ErrorHandler;
+import util.misc.OperatingSystem;
+import util.paramhandler.ParamParser;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -40,20 +44,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JRootPane;
-
-import tvbrowser.ui.mainframe.MainFrame;
-import util.exc.ErrorHandler;
-import util.misc.OperatingSystem;
-import util.paramhandler.ParamParser;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.Program;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Properties;
 
 /**
  * This class creates the Mail and launches the Mail-Application.
@@ -93,7 +90,7 @@ public class MailCreator {
     int i = 0;
 
     while (!parser.hasErrors() && (i < program.length)) {
-      String prgResult = parser.analyse(param, (Program) program[i]);
+      String prgResult = parser.analyse(param, program[i]);
       result.append(prgResult).append("\n\n");
       i++;
     }
@@ -163,7 +160,7 @@ public class MailCreator {
    * 
    * @param string String to Encode
    * @return URL-Encoded String
-   * @throws UnsupportedEncodingException
+   * @throws UnsupportedEncodingException Problems during encoding
    */
   private String encodeString(String string) throws UnsupportedEncodingException {
     return URLEncoder.encode(string.trim(), mSettings.getProperty("encoding", "UTF-8")).replaceAll("\\+",
@@ -202,7 +199,7 @@ public class MailCreator {
       }
     });
     
-    JButton ok = new JButton(mLocalizer.msg("ok", "OK"));
+    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     ok.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if (dontShowAgain.isSelected()) {
@@ -280,7 +277,7 @@ public class MailCreator {
     
     selfButton.setSelected(true);
     
-    JButton ok = new JButton(Localizer.I18N_OK);
+    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     ok.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         dialog.setVisible(false);
