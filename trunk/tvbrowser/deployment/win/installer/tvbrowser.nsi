@@ -200,9 +200,9 @@ FunctionEnd
  
  LangString REMINDER ${LANG_GERMAN} "Erinnerer"
  LangString REMINDER ${LANG_ENGLISH} "Reminder"
- 
- LangString SEARCH ${LANG_GERMAN} "Sendungen suchen"
- LangString SEARCH ${LANG_ENGLISH} "Program search"
+
+ LangString I18N ${LANG_GERMAN} "Übersetungstool"
+ LangString I18N ${LANG_ENGLISH} "Translation tool"
  
  LangString PRINT ${LANG_GERMAN} "Drucken"
  LangString PRINT ${LANG_ENGLISH} "Print"
@@ -230,6 +230,9 @@ FunctionEnd
  
  LangString CALENDAR ${LANG_GERMAN} "Kalender Export"
  LangString CALENDAR ${LANG_ENGLISH} "Calendar export"
+
+ LangString SIMPLEMARKER ${LANG_GERMAN} "Markierungs-Plugin"
+ LangString SIMPLEMARKER ${LANG_ENGLISH} "Marker Plugin"
  
  LangString un.QUESTION ${LANG_GERMAN} "Sollen die Konfigurationsdateien und TV-Daten gelöscht werden?"
  LangString un.QUESTION ${LANG_ENGLISH} "Do you want to delete the setting and TV data files?"
@@ -264,6 +267,7 @@ Section "$(STD_SECTION_NAME)"
   File "${RUNTIME_DIR}\windows.properties"
   File "${RUNTIME_DIR}\DesktopIndicator.dll"
   File "${RUNTIME_DIR}\jRegistryKey.dll"
+  File "${RUNTIME_DIR}\jcom.dll"
 
 
 #  #set up the path to the user data in the windows.properties
@@ -492,13 +496,6 @@ SubSection "Plugins"
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\BlogThisPlugin.jar"
   SectionEnd
- 
-  Section "$(SEARCH)"
-    SectionIn 1
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\SearchPlugin.jar"
-  SectionEnd
 
   Section "$(PRINT)"
     SectionIn 1
@@ -571,13 +568,19 @@ SubSection "Plugins"
     File "${RUNTIME_DIR}\plugins\CalendarExportPlugin.jar"
   SectionEnd
   
-  Section "SimpleMarkerPlugin"
+  Section "${SIMPLEMARKER}"
     SectionIn 1
 
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\SimpleMarkerPlugin.jar"
   SectionEnd
 
+  Section "${I18N}"
+    SectionIn 1
+
+    SetOutPath "$INSTDIR\plugins"
+    File "${RUNTIME_DIR}\plugins\I18NPlugin.jar"
+  SectionEnd
 SubSectionEnd
 
 

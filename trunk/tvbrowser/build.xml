@@ -316,11 +316,7 @@
     </jar>
 
     <!-- Pack the plugin jars -->
-
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SearchPlugin.jar"
-         compress="false">
-      <fileset dir="${classes.dir}" includes="searchplugin/**"/>
-    </jar>
+	
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/PrintPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="printplugin/**"/>
