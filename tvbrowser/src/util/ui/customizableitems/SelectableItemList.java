@@ -156,7 +156,7 @@ public class SelectableItemList extends JPanel {
     
   }
   
-  private void handleItemSelectionChanged() {System.out.println("xxxx");
+  private void handleItemSelectionChanged() {
     ListSelectionListener[] listeners = mList.getListSelectionListeners();
     if(listeners != null) {
       for(ListSelectionListener listener : listeners) {
