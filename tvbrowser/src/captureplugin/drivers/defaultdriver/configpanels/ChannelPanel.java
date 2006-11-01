@@ -24,10 +24,9 @@
  */
 package captureplugin.drivers.defaultdriver.configpanels;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import captureplugin.drivers.defaultdriver.DeviceConfig;
+import util.ui.ChannelTableCellRenderer;
+import util.ui.Localizer;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -37,10 +36,10 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.table.TableCellEditor;
-
-import util.ui.ChannelTableCellRenderer;
-import util.ui.Localizer;
-import captureplugin.drivers.defaultdriver.DeviceConfig;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 
 /**
@@ -53,8 +52,6 @@ public class ChannelPanel extends JPanel {
 
     private JTable mChannelTable = new JTable();
 
-    private ChannelTableModel mChannelTableModel;
-    
     /** Settings */
     private DeviceConfig mData;
 
@@ -74,8 +71,8 @@ public class ChannelPanel extends JPanel {
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("ChannelNames", "Channel Names")));
 
-        mChannelTableModel = new ChannelTableModel(mData);
-        mChannelTable.setModel(mChannelTableModel);
+        ChannelTableModel tableModel = new ChannelTableModel(mData);
+        mChannelTable.setModel(tableModel);
         mChannelTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         mChannelTable.getTableHeader().setReorderingAllowed(false);
         mChannelTable.getColumnModel().getColumn(0).setCellRenderer(new ChannelTableCellRenderer());
@@ -101,12 +98,10 @@ public class ChannelPanel extends JPanel {
 
           public void ancestorAdded(AncestorEvent event) {
             // TODO Auto-generated method stub
-            
           }
 
           public void ancestorMoved(AncestorEvent event) {
             // TODO Auto-generated method stub
-            
           }
 
           public void ancestorRemoved(AncestorEvent event) {

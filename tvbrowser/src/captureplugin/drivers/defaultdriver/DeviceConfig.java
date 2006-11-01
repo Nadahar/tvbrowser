@@ -24,6 +24,11 @@
  */
 package captureplugin.drivers.defaultdriver;
 
+import captureplugin.utils.ChannelComperator;
+import captureplugin.drivers.utils.IDGenerator;
+import devplugin.Channel;
+import util.ui.Localizer;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -33,10 +38,6 @@ import java.util.Iterator;
 import java.util.TimeZone;
 import java.util.TreeMap;
 
-import util.ui.Localizer;
-import captureplugin.utils.ChannelComperator;
-import devplugin.Channel;
-
 
 /**
  * The Configuration for this Device
@@ -44,12 +45,15 @@ import devplugin.Channel;
 public class DeviceConfig {
     /** Translator */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(DeviceConfig.class);  
-  
+
+    /** Id of this Device */
+    private String mId;
+
     /** Device-Name */
     private String mName = "";
     
     /** Channels */
-    private TreeMap mChannels = new TreeMap(new ChannelComperator());
+    private TreeMap<Channel, String> mChannels = new TreeMap<Channel, String>(new ChannelComperator());
 
     /** Programs that are marked */
     private ProgramTimeList mMarkedPrograms = new ProgramTimeList();
@@ -100,7 +104,7 @@ public class DeviceConfig {
     private ArrayList mParamEntries = new ArrayList();
     
     /** Variables */
-    private ArrayList mVariables = new ArrayList();
+    private ArrayList<Variable> mVariables = new ArrayList<Variable>();
     
     /** Use TimeZone */
     private boolean mUseTimeZone = false;
@@ -116,7 +120,7 @@ public class DeviceConfig {
     
     /**
      * Copy Config
-     * @param config
+     * @param data Config to copy
      */
     public DeviceConfig(DeviceConfig data) {
         setChannels((TreeMap)data.getChannels().clone());
@@ -140,6 +144,7 @@ public class DeviceConfig {
         setVariables(data.getVariables());
         setUseTimeZone(data.useTimeZone());
         setTimeZone(data.getTimeZone());
+        setId(data.getId());
     }
 
     /**
@@ -160,8 +165,8 @@ public class DeviceConfig {
      * Get a Collection of all enabled Params
      * @return all enabled Params
      */
-    public Collection getEnabledParamList() {
-      ArrayList params = new ArrayList();
+    public Collection<ParamEntry> getEnabledParamList() {
+      ArrayList<ParamEntry> params = new ArrayList<ParamEntry>();
       
       for (int i=0;i< mParamEntries.size();i++) {
         ParamEntry entry = (ParamEntry)mParamEntries.get(i);
@@ -359,7 +364,7 @@ public class DeviceConfig {
     /**
      * @return
      */
-    public TreeMap getChannels() {
+    public TreeMap<Channel, String> getChannels() {
         return mChannels;
     }
 
@@ -437,7 +442,7 @@ public class DeviceConfig {
      * Get the Variables
      * @return Variables
      */
-    public Collection getVariables() {
+    public Collection<Variable> getVariables() {
       return mVariables;
     }
     
@@ -445,8 +450,8 @@ public class DeviceConfig {
      * Set the Variables
      * @param variables Variables
      */
-    public void setVariables(Collection variables) {
-      mVariables = new ArrayList(variables);
+    public void setVariables(Collection<Variable> variables) {
+      mVariables = new ArrayList<Variable>(variables);
     }
 
     /**
@@ -489,8 +494,8 @@ public class DeviceConfig {
      */
     public void writeData(ObjectOutputStream stream) throws IOException {
 
-        stream.writeInt(8);
-        
+        stream.writeInt(9);
+
         stream.writeObject(getName());
         
         writeChannelMappings(stream);
@@ -524,11 +529,13 @@ public class DeviceConfig {
         stream.writeInt(mVariables.size());
         
         for (int i = 0; i < mVariables.size(); i++) {
-            ((Variable)mVariables.get(i)).writeData(stream);
+            (mVariables.get(i)).writeData(stream);
         }
         
         stream.writeBoolean(mUseTimeZone);
         stream.writeObject(mTimeZone);
+
+        stream.writeObject(mId);
     }
 
     /**
@@ -579,7 +586,7 @@ public class DeviceConfig {
         
         mMaxTimeout = stream.readInt();
         
-        mVariables = new ArrayList();
+        mVariables = new ArrayList<Variable>();
         
         if (version > 4) {
           size = stream.readInt();
@@ -595,7 +602,13 @@ public class DeviceConfig {
           mUseTimeZone = stream.readBoolean();
           mTimeZone = (TimeZone) stream.readObject();
         }
-    }    
+
+        if (version > 8) {
+            mId = (String) stream.readObject();
+        } else {
+            mId = IDGenerator.generateUniqueId();
+        }
+    }
     
     /**
      * Write the Channel-Mappings to a Stream
@@ -647,4 +660,24 @@ public class DeviceConfig {
         }
       }
     }
+
+    /**
+     * @return Unique ID of this Device
+     */
+    public String getId() {
+        if (mId == null)
+            mId = IDGenerator.generateUniqueId();
+
+        return mId;
+    }
+
+    /**
+     * Set the ID of this Device
+     * @param id New ID of this Device
+     */
+    private void setId(String id) {
+        mId = id;
+    }
+
+
 }

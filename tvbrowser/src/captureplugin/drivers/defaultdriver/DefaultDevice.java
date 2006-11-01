@@ -24,6 +24,15 @@
  */
 package captureplugin.drivers.defaultdriver;
 
+import captureplugin.drivers.DeviceIf;
+import captureplugin.drivers.DriverIf;
+import devplugin.Program;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import java.awt.Window;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -31,16 +40,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import captureplugin.drivers.DeviceIf;
-import captureplugin.drivers.DriverIf;
-import devplugin.Program;
 
 /**
  * The Default-Device
@@ -67,7 +66,7 @@ public class DefaultDevice implements DeviceIf {
     
     /**
      * Creates a Clone of a DefaultDevice
-     * @param device
+     * @param device Clone this device
      */
     public DefaultDevice(DefaultDevice device) {
         mDriver = device.getDriver();
@@ -98,8 +97,15 @@ public class DefaultDevice implements DeviceIf {
     }
 
     /* (non-Javadoc)
-     * @see captureplugin.drivers.DeviceIf#getName()
+     * @see captureplugin.drivers.DeviceIf#getId()
      */
+    public String getId() {
+        return mConfig.getId();
+    }
+
+    /* (non-Javadoc)
+    * @see captureplugin.drivers.DeviceIf#getName()
+    */
     public String getName() {
         return mConfig.getName();
     }

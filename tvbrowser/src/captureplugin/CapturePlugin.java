@@ -24,55 +24,65 @@
  */
 package captureplugin;
 
+import captureplugin.drivers.DeviceIf;
+import devplugin.ActionMenu;
+import devplugin.ContextMenuAction;
+import devplugin.PluginInfo;
+import devplugin.PluginTreeNode;
+import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
+import devplugin.SettingsTab;
+import devplugin.ThemeIcon;
+import devplugin.Version;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JFrame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import captureplugin.drivers.DeviceIf;
-import devplugin.ActionMenu;
-import devplugin.PluginInfo;
-import devplugin.PluginTreeNode;
-import devplugin.Program;
-import devplugin.SettingsTab;
-import devplugin.ThemeIcon;
-import devplugin.Version;
-
 /**
  * Plugin to send the TV-Data to an external program
- * 
+ *
  * @author Andreas Hessel, Bodo Tasche
  */
 public class CapturePlugin extends devplugin.Plugin {
 
-    /** Translator */
+    /**
+     * Translator
+     */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(CapturePlugin.class);
 
-    /** mData that stores the Settings */
+    /**
+     * mData that stores the Settings
+     */
     private CapturePluginData mConfig = new CapturePluginData();
 
-    /** Current Marked Programs */
-    private Vector mMarkedPrograms = new Vector();
+    /**
+     * Current Marked Programs
+     */
+    private Vector<Program> mMarkedPrograms = new Vector<Program>();
 
-    /** The Singelton */
+    /**
+     * The Singelton
+     */
     private static CapturePlugin mInstance = null;
 
-    /** Root-Node for the Program-Tree */
+    /**
+     * Root-Node for the Program-Tree
+     */
     private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
-    
+    private static final String RECORD = "##record";
+    private static final String REMOVE = "##remove";
+
     /**
      * Creates the Plugin
      */
@@ -82,7 +92,7 @@ public class CapturePlugin extends devplugin.Plugin {
 
     /**
      * Returns this Instance
-     * 
+     *
      * @return Instance
      */
     public static CapturePlugin getInstance() {
@@ -92,7 +102,7 @@ public class CapturePlugin extends devplugin.Plugin {
     /**
      * Called by the host-application during start-up. Implement this method to
      * load any objects from the file system.
-     * 
+     *
      * @see #writeData(ObjectOutputStream)
      */
     public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -104,7 +114,7 @@ public class CapturePlugin extends devplugin.Plugin {
     /**
      * Counterpart to loadData. Called when the application shuts down.
      * Implement this method to store any objects to the file system.
-     * 
+     *
      * @see #readData(ObjectInputStream)
      */
     public void writeData(ObjectOutputStream out) throws IOException {
@@ -134,7 +144,7 @@ public class CapturePlugin extends devplugin.Plugin {
         String desc = mLocalizer.msg("Desc", "Starts a external Program with configurable Parameters");
         String author = "Bodo Tasche, Andreas Hessel";
 
-        return new PluginInfo(name, desc, author, new Version(2, 06));
+        return new PluginInfo(name, desc, author, new Version(2, 10));
     }
 
     /**
@@ -142,60 +152,6 @@ public class CapturePlugin extends devplugin.Plugin {
      */
     public SettingsTab getSettingsTab() {
         return new CapturePluginSettingsTab((JFrame) getParentFrame(), this);
-    }
-
-    /**
-     * Return true if execute(program[]) is supported
-     */
-    public boolean canReceivePrograms() {
-        return true;
-    }
-
-    /**
-     * Receives a list of programs from another plugin.
-     * <p>
-     * Override this method to receive programs from other plugins.
-     * 
-     * @param programArr The programs passed from the other plugin.
-     * @see #canReceivePrograms()
-     */
-    public void receivePrograms(Program[] programArr) {
-        showExecuteDialog(programArr);
-    }
-
-    private void showExecuteDialog(Program[] program) {      
-        Window comp = UiUtilities.getLastModalChildOf(getParentFrame());
-
-        if (comp instanceof JDialog) {
-            comp = (Window) comp.getParent();
-        }
-
-        if (mConfig.getDevices().size() <= 0) {
-            JOptionPane.showMessageDialog(comp, mLocalizer.msg("CreateDevice", "Please create Device first!"));
-
-            CapturePluginDialog dialog;
-
-            if (comp instanceof JFrame) {
-                dialog = new CapturePluginDialog((JFrame) comp, mConfig);
-            } else {
-                dialog = new CapturePluginDialog((JDialog) comp, mConfig);
-            }
-
-            dialog.show(CapturePluginPanel.TAB_DEVICELIST);
-            return;
-        }
-
-        DeviceSelector select;
-
-        if (comp instanceof JDialog)
-            select = new DeviceSelector((JDialog) comp, mConfig.getDeviceArray(), program);
-        else
-            select = new DeviceSelector((JFrame) comp, mConfig.getDeviceArray(), program);
-
-        int x = comp.getWidth() / 2;
-        int y = comp.getHeight() / 2;
-
-        select.setVisible(true);
     }
 
     /*
@@ -208,23 +164,21 @@ public class CapturePlugin extends devplugin.Plugin {
         final DeviceIf[] devices = mConfig.getDeviceArray();
 
         final Window parent = UiUtilities.getLastModalChildOf(getParentFrame());
-        
+
         Action mainaction = new devplugin.ContextMenuAction();
         mainaction.putValue(Action.NAME, mLocalizer.msg("record", "record Program"));
         mainaction.putValue(Action.SMALL_ICON, createImageIcon("mimetypes", "video-x-generic", 16));
 
-        ArrayList actionList = new ArrayList();
+        ArrayList<ActionMenu> actionList = new ArrayList<ActionMenu>();
 
-        for (int i = 0; i < devices.length; i++) {
-            final DeviceIf dev = devices[i];
+        for (final DeviceIf dev : devices) {
+            Action action = new ContextMenuAction();
+            action.putValue(Action.NAME, dev.getName());
 
-            Action action = new devplugin.ContextMenuAction();
-            action.putValue(Action.NAME, devices[i].getName());
-
-            ArrayList commandList = new ArrayList();
+            ArrayList<AbstractAction> commandList = new ArrayList<AbstractAction>();
 
             if (dev.isAbleToAddAndRemovePrograms()) {
-                
+
                 if (dev.isInList(program)) {
                     AbstractAction caction = new AbstractAction() {
                         public void actionPerformed(ActionEvent evt) {
@@ -241,28 +195,28 @@ public class CapturePlugin extends devplugin.Plugin {
                             updateMarkedPrograms();
                         }
                     };
-                    caction.putValue(Action.NAME, mLocalizer.msg("doRecord", "record"));
+                    caction.putValue(Action.NAME, mLocalizer.msg("record", "record"));
                     commandList.add(caction);
                 }
-                
+
             }
-            
-            String[] commands = devices[i].getAdditionalCommands();
+
+            String[] commands = dev.getAdditionalCommands();
 
             if (commands != null)
-              for (int y = 0; y < commands.length; y++) {
-                
-                final int num = y;
-                
-                AbstractAction caction = new AbstractAction() {
+                for (int y = 0; y < commands.length; y++) {
 
-                    public void actionPerformed(ActionEvent evt) {
-                        dev.executeAdditionalCommand(parent, num, program);
-                    }
-                };
-                caction.putValue(Action.NAME, commands[y]);
-                commandList.add(caction);
-              }
+                    final int num = y;
+
+                    AbstractAction caction = new AbstractAction() {
+
+                        public void actionPerformed(ActionEvent evt) {
+                            dev.executeAdditionalCommand(parent, num, program);
+                        }
+                    };
+                    caction.putValue(Action.NAME, commands[y]);
+                    commandList.add(caction);
+                }
 
             Action[] commandActions = new Action[commandList.size()];
             commandList.toArray(commandActions);
@@ -271,30 +225,30 @@ public class CapturePlugin extends devplugin.Plugin {
         }
 
         if (actionList.size() == 1) {
-          ActionMenu menu = (ActionMenu) actionList.get(0);
-          
-          if (menu.getSubItems().length==0) {
-            return null;
-          }
-          
-          if (menu.getSubItems().length == 1) {
-            Action action = menu.getSubItems()[0].getAction();
-            action.putValue(Action.SMALL_ICON, createImageIcon("mimetypes", "video-x-generic", 16));
-            return new ActionMenu(action);
-          } else {
-            mainaction.putValue(Action.NAME, menu.getTitle());
-            return new ActionMenu(mainaction, menu.getSubItems());
-          }
-          
+            ActionMenu menu = actionList.get(0);
+
+            if (menu.getSubItems().length == 0) {
+                return null;
+            }
+
+            if (menu.getSubItems().length == 1) {
+                Action action = menu.getSubItems()[0].getAction();
+                action.putValue(Action.SMALL_ICON, createImageIcon("mimetypes", "video-x-generic", 16));
+                return new ActionMenu(action);
+            } else {
+                mainaction.putValue(Action.NAME, menu.getTitle());
+                return new ActionMenu(mainaction, menu.getSubItems());
+            }
+
         }
-        
+
         ActionMenu[] actions = new ActionMenu[actionList.size()];
         actionList.toArray(actions);
 
         if (actions.length == 0) {
-          return null;
+            return null;
         }
-        
+
         return new ActionMenu(mainaction, actions);
     }
 
@@ -302,48 +256,46 @@ public class CapturePlugin extends devplugin.Plugin {
      * Updates the marked Programs.
      */
     public void updateMarkedPrograms() {
-        Vector list = getMarkedByDevices();
+        Vector<Program> list = getMarkedByDevices();
 
-        for (int i = 0; i < list.size(); i++) {
+        for (Program aList : list) {
 
-            if (mMarkedPrograms.contains(list.get(i))) {
-                mMarkedPrograms.remove(list.get(i));
+            if (mMarkedPrograms.contains(aList)) {
+                mMarkedPrograms.remove(aList);
             }
 
-            ((Program) list.get(i)).mark(this);
+            aList.mark(this);
         }
 
-        for (int i = 0; i < mMarkedPrograms.size(); i++) {
-            ((Program) mMarkedPrograms.get(i)).unmark(this);
+        for (Program mMarkedProgram : mMarkedPrograms) {
+            mMarkedProgram.unmark(this);
         }
 
         mMarkedPrograms = list;
-        
+
         updateTreeNode();
     }
 
     /**
      * This Function Iterates over all Devices and collects the list of Programs
      * to mark...
-     * 
+     *
      * @return List with all Programs to mark
      */
-    private Vector getMarkedByDevices() {
-        Vector v = new Vector();
+    private Vector<Program> getMarkedByDevices() {
+        Vector<Program> v = new Vector<Program>();
 
-        Iterator devIt = mConfig.getDevices().iterator();
-
-        while (devIt.hasNext()) {
-            DeviceIf device = (DeviceIf) devIt.next();
+        for (Object o : mConfig.getDevices()) {
+            DeviceIf device = (DeviceIf) o;
 
             Program[] programs = device.getProgramList();
 
             if (programs != null) {
-              for (int i = 0; i < programs.length; i++) {
-                if (!v.contains(programs[i])) {
-                    v.add(programs[i]);
+                for (Program program : programs) {
+                    if (!v.contains(program)) {
+                        v.add(program);
+                    }
                 }
-              }
             }
         }
 
@@ -380,12 +332,12 @@ public class CapturePlugin extends devplugin.Plugin {
     }
 
     public ThemeIcon getMarkIconFromTheme() {
-      return new ThemeIcon("mimetypes", "video-x-generic", 16);
+        return new ThemeIcon("mimetypes", "video-x-generic", 16);
     }
-    
+
     /**
      * Sets the CaputePluginData
-     * 
+     *
      * @param data CapturePluginData
      */
     public void setCapturePluginData(CapturePluginData data) {
@@ -394,7 +346,7 @@ public class CapturePlugin extends devplugin.Plugin {
 
     /**
      * Returns the CapturePluginData
-     * 
+     *
      * @return The CapaturePluginData
      */
     public CapturePluginData getCapturePluginData() {
@@ -405,42 +357,108 @@ public class CapturePlugin extends devplugin.Plugin {
      * Update the TreeNode
      */
     private void updateTreeNode() {
-      mRootNode.removeAllChildren();
+        mRootNode.removeAllChildren();
 
-      Iterator devIt = mConfig.getDevices().iterator();
+        for (Object o : mConfig.getDevices()) {
+            DeviceIf device = (DeviceIf) o;
 
-      while (devIt.hasNext()) {
-          DeviceIf device = (DeviceIf) devIt.next();
+            PluginTreeNode node = new PluginTreeNode(device.getName());
 
-          PluginTreeNode node = new PluginTreeNode(device.getName());
-          
-          Program[] programs = device.getProgramList();
+            Program[] programs = device.getProgramList();
 
-          if (programs != null)
-            for (int i = 0; i < programs.length; i++) {
-              node.addProgram(programs[i]);
-            }
-          
-          mRootNode.add(node);
-      }
-      
-      mRootNode.update();
+            if (programs != null)
+                for (Program program : programs) {
+                    node.addProgram(program);
+                }
+
+            mRootNode.add(node);
+        }
+
+        mRootNode.update();
     }
-    
+
     /**
-     * Get the Root-Node. 
-     * The CapturePlugin handles all Programs for itself. Some 
+     * Get the Root-Node.
+     * The CapturePlugin handles all Programs for itself. Some
      * Devices can remove Programs externaly
      */
     public PluginTreeNode getRootNode() {
-      return mRootNode;
+        return mRootNode;
     }
 
     /* (non-Javadoc)
      * @see devplugin.Plugin#canUseProgramTree()
      */
     public boolean canUseProgramTree() {
-      return true;
+        return true;
     }
-    
+
+    @Override
+    public boolean canReceiveProgramsWithTarget() {
+        return true;
+    }
+
+    @Override
+    public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
+        if (receiveTarget == null)
+            return false;
+
+        String id = receiveTarget.getTargetId();
+        String deviceid = id.substring(0, id.indexOf("#"));
+        String command= id.substring(id.indexOf("#"));
+
+        for (DeviceIf device : mConfig.getDevices()) {
+            if (device.getId().equals(deviceid)) {
+                if (command.equals(REMOVE)) {
+                    for (Program program:programArr) {
+                        device.remove(getParentFrame(), program);
+                    }
+                    updateMarkedPrograms();
+                    return true;
+                } else if (command.equals(RECORD)) {
+                    for (Program program:programArr) {
+                        device.add(getParentFrame(), program);
+                    }
+                    updateMarkedPrograms();
+                    return true;
+                }
+
+                if (command.startsWith("#_")) {
+                    command = command.substring(2);
+
+                    String[] cmdstr = device.getAdditionalCommands();
+
+                    for (int i = 0;i < cmdstr.length;i++) {
+                        if (cmdstr[i].equals(command)) {
+                            for (Program program:programArr) {
+                                device.executeAdditionalCommand(getParentFrame(), i, program);
+                            }
+                            return true;
+                        }
+                    }
+
+                }
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public ProgramReceiveTarget[] getProgramReceiveTargets() {
+        ArrayList<ProgramReceiveTarget> targets = new ArrayList<ProgramReceiveTarget>();
+
+        for (DeviceIf device : mConfig.getDevices()) {
+            if (device.isAbleToAddAndRemovePrograms()) {
+                targets.add(new ProgramReceiveTarget(this, device.getName() + " - " + mLocalizer.msg("record", "record"), device.getId() + RECORD));
+                targets.add(new ProgramReceiveTarget(this, device.getName() + " - " + mLocalizer.msg("remove", "remove"), device.getId() + REMOVE));
+            }
+
+            for (String command : device.getAdditionalCommands()) {
+                targets.add(new ProgramReceiveTarget(this, device.getName() + " - " + command, device.getId() + "#_" + command));
+            }
+        }
+
+        return targets.toArray(new ProgramReceiveTarget[0]);
+    }
 }

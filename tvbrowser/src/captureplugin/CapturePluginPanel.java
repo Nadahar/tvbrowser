@@ -25,15 +25,14 @@
 
 package captureplugin;
 
-import java.awt.BorderLayout;
-import java.awt.Window;
+import captureplugin.tabs.DevicePanel;
+import captureplugin.tabs.ProgramListPanel;
+import util.ui.Localizer;
 
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-
-import util.ui.Localizer;
-import captureplugin.tabs.DevicePanel;
-import captureplugin.tabs.ProgramListPanel;
+import java.awt.BorderLayout;
+import java.awt.Window;
 
 /**
  * This is a Panel for changing the Settings in the Plugin
@@ -47,9 +46,6 @@ public class CapturePluginPanel extends JPanel {
     public static final int TAB_PROGRAMLIST = 0;
     /** Tab for DeviceList */
     public static final int TAB_DEVICELIST = 1;
-    
-    /** Plugin-Data */
-    private CapturePluginData mData;
 
     /** GUI */
     private JTabbedPane mTabPane;
@@ -60,15 +56,13 @@ public class CapturePluginPanel extends JPanel {
      * @param data Data to use
      */
     public CapturePluginPanel(Window owner, CapturePluginData data) {
-        this.mData = data;
         this.setLayout(new BorderLayout());
 
-        JPanel p;
         mTabPane = new JTabbedPane();
 
-        mTabPane.addTab(mLocalizer.msg("ProgramList", "Programlist"), new ProgramListPanel(owner, mData));
+        mTabPane.addTab(mLocalizer.msg("ProgramList", "Programlist"), new ProgramListPanel(owner, data));
         
-        mTabPane.addTab(mLocalizer.msg("Devices", "Devices"), new DevicePanel(owner, mData));
+        mTabPane.addTab(mLocalizer.msg("Devices", "Devices"), new DevicePanel(owner, data));
         
         // Tabbed - Pane
         //	this.add(tabPane,BorderLayout.CENTER);

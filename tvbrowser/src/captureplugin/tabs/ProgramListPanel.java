@@ -24,15 +24,14 @@
  */
 package captureplugin.tabs;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.Arrays;
-import java.util.Iterator;
+import captureplugin.CapturePlugin;
+import captureplugin.CapturePluginData;
+import captureplugin.drivers.DeviceIf;
+import captureplugin.utils.ProgramTimeComparator;
+import devplugin.Program;
+import util.ui.Localizer;
+import util.ui.ProgramTableCellRenderer;
+import util.ui.UiUtilities;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -42,15 +41,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-
-import util.ui.Localizer;
-import util.ui.ProgramTableCellRenderer;
-import util.ui.UiUtilities;
-import captureplugin.CapturePlugin;
-import captureplugin.CapturePluginData;
-import captureplugin.drivers.DeviceIf;
-import captureplugin.utils.ProgramTimeComparator;
-import devplugin.Program;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Arrays;
 
 /**
  * Panel with List of Recordings
@@ -90,17 +88,14 @@ public class ProgramListPanel extends JPanel {
     private void createListData() {
         mProgramTableModel.clearTable();
 
-        Iterator it = mData.getDevices().iterator();
-
-        while (it.hasNext()) {
-            DeviceIf dev = (DeviceIf) it.next();
+        for (DeviceIf dev : mData.getDevices()) {
             Program[] prgList = dev.getProgramList();
 
             if (prgList != null) {
-              Arrays.sort(prgList,new ProgramTimeComparator());
-              for (int v = 0; v < prgList.length; v++) {
-                  mProgramTableModel.addProgram(dev, prgList[v]);
-              }
+                Arrays.sort(prgList, new ProgramTimeComparator());
+                for (Program program : prgList) {
+                    mProgramTableModel.addProgram(dev, program);
+                }
             }
         }
 

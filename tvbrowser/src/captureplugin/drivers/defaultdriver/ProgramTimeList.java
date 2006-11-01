@@ -24,13 +24,12 @@
  */
 package captureplugin.drivers.defaultdriver;
 
+import devplugin.Program;
+
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-
-import devplugin.Program;
 
 
 /**
@@ -39,14 +38,14 @@ import devplugin.Program;
 public class ProgramTimeList {
 
     /** List of ProgramTimes */
-    private ArrayList mPrgTimeList = new ArrayList();
+    private ArrayList<ProgramTime> mPrgTimeList = new ArrayList<ProgramTime>();
     
     /**
      * Create empty List
      *
      */
     public ProgramTimeList() {
-        mPrgTimeList = new ArrayList();
+        mPrgTimeList = new ArrayList<ProgramTime>();
     }
     
     /**
@@ -54,15 +53,14 @@ public class ProgramTimeList {
      * @param list List to copy
      */
     public ProgramTimeList(ProgramTimeList list) {
+        mPrgTimeList = new ArrayList<ProgramTime>();
         
-        mPrgTimeList = new ArrayList();
-        
-        ProgramTime[] prgTimes = list.getProgramTimes(); 
-        
-        for (int i = 0; i < prgTimes.length; i++) {
-            mPrgTimeList.add(prgTimes[i].clone());
+        ProgramTime[] prgTimes = list.getProgramTimes();
+
+        for (ProgramTime prgTime : prgTimes) {
+            mPrgTimeList.add((ProgramTime) prgTime.clone());
         }
-        
+
     }
     
     /**
@@ -78,12 +76,7 @@ public class ProgramTimeList {
      * @return true if Program is in List
      */
     public boolean contains(Program program) {
-
-        if (getProgamTimeForProgram(program) != null) {
-            return true;
-        }
-
-        return false;
+        return getProgamTimeForProgram(program) != null;
     }
 
     /**
@@ -101,12 +94,9 @@ public class ProgramTimeList {
      * @return ProgramTime for Program
      */
     public ProgramTime getProgamTimeForProgram(Program program) {
-        for (int i = 0; i < mPrgTimeList.size(); i++) {
-            
-            ProgramTime prgTime = (ProgramTime)mPrgTimeList.get(i);
-            
-            if (prgTime.getProgram() == program) {
-                return prgTime;
+        for (ProgramTime time : mPrgTimeList) {
+            if (time.getProgram() == program) {
+                return time;
             }
         }
 
@@ -129,7 +119,7 @@ public class ProgramTimeList {
         Program[] prg = new Program[mPrgTimeList.size()];
         
         for (int i = 0; i < mPrgTimeList.size(); i++) {
-            prg[i] = ((ProgramTime)mPrgTimeList.get(i)).getProgram();
+            prg[i] = mPrgTimeList.get(i).getProgram();
         }
         
         return prg;
@@ -137,13 +127,13 @@ public class ProgramTimeList {
     
     /**
      * Returns an Array of ProgramTimes in this List
-     * @return
+     * @return List of all programtimes
      */
     public ProgramTime[] getProgramTimes() {
         ProgramTime[] prgTime = new ProgramTime[mPrgTimeList.size()];
         
         for (int i = 0; i < mPrgTimeList.size(); i++) {
-            prgTime[i] = (ProgramTime)mPrgTimeList.get(i);
+            prgTime[i] = mPrgTimeList.get(i);
         }
         
         return prgTime;
@@ -152,24 +142,24 @@ public class ProgramTimeList {
     
     /**
      * Save data to Stream
-     * @param out
-     * @throws IOException
+     * @param out save to this stream
+     * @throws IOException problems during save operation
      */
     public void writeData(ObjectOutputStream out) throws IOException {
         out.writeInt(1);
         
         out.writeInt(mPrgTimeList.size());
-        
-        for (int i = 0; i < mPrgTimeList.size(); i++) {
-            ((ProgramTime)mPrgTimeList.get(i)).writeData(out);
+
+        for (ProgramTime time : mPrgTimeList) {
+            time.writeData(out);
         }
     }
     
     /**
      * Read Data from Stream
-     * @param in
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @param in read from this stream
+     * @throws IOException problems during read operation
+     * @throws ClassNotFoundException class creation problems
      */
     public void readData(java.io.ObjectInputStream in)throws IOException, ClassNotFoundException {
     
@@ -177,7 +167,7 @@ public class ProgramTimeList {
         
         int size = in.readInt();
         
-        mPrgTimeList = new ArrayList();
+        mPrgTimeList = new ArrayList<ProgramTime>();
         
         for (int i = 0; i < size; i++) {
             ProgramTime prgTime = new ProgramTime();
@@ -195,13 +185,9 @@ public class ProgramTimeList {
      * @return number of time-overlappings with Program
      */
     public int getMaxProgramsInTime(ProgramTime prgTime) {
-
-        DateFormat format = DateFormat.getTimeInstance();
-        
         Calendar cal = Calendar.getInstance();
         cal.setTime(prgTime.getStart());
-        
-        
+
         Calendar end = Calendar.getInstance();
         end.setTime(prgTime.getEnd());
         
@@ -212,18 +198,16 @@ public class ProgramTimeList {
         
         while (cal.getTime().before(end.getTime())) {
             int cur = 0;
-            
-            for (int i = 0; i < mPrgTimeList.size(); i++) {
-                ProgramTime pt = (ProgramTime) mPrgTimeList.get(i);
-                
+
+            for (ProgramTime pt : mPrgTimeList) {
                 if (pt.getStart().equals(cal.getTime()) ||
-                    pt.getEnd().equals(cal.getTime()) ||
-                    (pt.getStart().before(cal.getTime()) && (pt.getEnd().after(cal.getTime())))) {
+                        pt.getEnd().equals(cal.getTime()) ||
+                        (pt.getStart().before(cal.getTime()) && (pt.getEnd().after(cal.getTime())))) {
                     cur++;
                 }
-                
+
             }
-            
+
             if (cur > max) {
                 max = cur;
             }

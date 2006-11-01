@@ -24,14 +24,8 @@
  */
 package captureplugin.drivers.defaultdriver.configpanels;
 
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
+import captureplugin.drivers.defaultdriver.DeviceConfig;
+import util.ui.Localizer;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -40,9 +34,14 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-
-import util.ui.Localizer;
-import captureplugin.drivers.defaultdriver.DeviceConfig;
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 
 /**
@@ -64,7 +63,7 @@ public class ApplicationPanel extends JPanel {
     
     /**
      * Creates the Panel
-     * @param data
+     * @param data Configuration
      */
     public ApplicationPanel(DeviceConfig data) {
         mData = data;

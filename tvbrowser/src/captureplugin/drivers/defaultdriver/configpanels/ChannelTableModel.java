@@ -24,19 +24,18 @@
  */
 package captureplugin.drivers.defaultdriver.configpanels;
 
+import captureplugin.CapturePlugin;
+import captureplugin.drivers.defaultdriver.DeviceConfig;
+import devplugin.Channel;
+import devplugin.PluginManager;
+import util.ui.Localizer;
+
+import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeMap;
-
-import javax.swing.table.AbstractTableModel;
-
-import util.ui.Localizer;
-import captureplugin.CapturePlugin;
-import captureplugin.drivers.defaultdriver.DeviceConfig;
-import devplugin.Channel;
-import devplugin.PluginManager;
 
 /**
  * TableModel for ChannelTable
@@ -49,10 +48,11 @@ public class ChannelTableModel extends AbstractTableModel {
     private DeviceConfig mData;
 
     /** The Rows in the TableModel */
-    private ArrayList mChannelRows;
+    private ArrayList<Channel> mChannelRows;
     
     /**
      * creates a new ChannelTableModel
+     * @param data Configuration
      */
     public ChannelTableModel(DeviceConfig data) {
         mData = data;
@@ -67,29 +67,28 @@ public class ChannelTableModel extends AbstractTableModel {
         if (pl == null) {
             return;
         }
-        Channel[] c = pl.getSubscribedChannels();
-        TreeMap channels = mData.getChannels();
-        for (int i = 0; i < c.length; i++) {
-            if (!channels.containsKey(c[i])) {
-                channels.put(c[i], "");
+        TreeMap<Channel, String> channels = mData.getChannels();
+
+        Channel[] channelArray = pl.getSubscribedChannels();
+        for (Channel channel : channelArray) {
+            if (!channels.containsKey(channel)) {
+                channels.put(channel, "");
             }
         }
         mData.setChannels(channels);
         
-        mChannelRows = new ArrayList();
+        mChannelRows = new ArrayList<Channel>();
         
-        Iterator it = mData.getChannels().keySet().iterator();
-        Channel key = null;
-        int i = 0;
+        Iterator<Channel> it = mData.getChannels().keySet().iterator();
+        Channel key;
+
         while (it.hasNext()) {
-            key = (Channel) it.next();
+            key = it.next();
             mChannelRows.add(key);
         }
         
-        Collections.sort(mChannelRows, new Comparator() {
-          public int compare(Object arg0, Object arg1) {
-            Channel a = (Channel) arg0;
-            Channel b = (Channel) arg1;
+        Collections.sort(mChannelRows, new Comparator<Channel>() {
+          public int compare(Channel a, Channel b) {
             return a.getName().compareToIgnoreCase(b.getName());
           }
         });
@@ -124,10 +123,7 @@ public class ChannelTableModel extends AbstractTableModel {
      * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
      */
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-      if (columnIndex == 1) {
-        return true;
-      }
-      return false;
+        return columnIndex == 1;
     }
     
     /* (non-Javadoc)
@@ -138,7 +134,7 @@ public class ChannelTableModel extends AbstractTableModel {
       Channel key = getKeyForRow(rowIndex);
       
       if (key != null) {
-        mData.getChannels().put(key, aValue);
+        mData.getChannels().put(key, (String)aValue);
       }
       
       super.setValueAt(aValue, rowIndex, columnIndex);
@@ -153,7 +149,7 @@ public class ChannelTableModel extends AbstractTableModel {
         if (col == 0)
             return key;
         else
-            return (String) mData.getChannels().get(key);
+            return mData.getChannels().get(key);
     }
     
     /**
@@ -162,6 +158,6 @@ public class ChannelTableModel extends AbstractTableModel {
      * @return Channel for Row
      */
     private Channel getKeyForRow(int row){
-      return (Channel) mChannelRows.get(row);
+      return mChannelRows.get(row);
     }
 }

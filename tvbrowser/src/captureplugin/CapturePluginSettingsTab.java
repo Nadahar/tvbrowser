@@ -25,15 +25,14 @@
 
 package captureplugin;
 
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.Sizes;
+import devplugin.SettingsTab;
+import util.ui.Localizer;
+
 import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.Sizes;
-
-import util.ui.Localizer;
-import devplugin.SettingsTab;
 
 /**
  *	The Settings-Tab for the CapturePlugin,
@@ -53,7 +52,7 @@ public class CapturePluginSettingsTab implements SettingsTab {
     /**
      * Creates the SettingsTab
      * @param owner Frame-Owner
-     * @param panel use this Panel
+     * @param plugin the current instance of the plugin
      */
     public CapturePluginSettingsTab(JFrame owner, CapturePlugin plugin) {
         mPlugin = plugin;

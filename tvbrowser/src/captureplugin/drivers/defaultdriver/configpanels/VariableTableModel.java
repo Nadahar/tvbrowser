@@ -24,11 +24,11 @@
  */
 package captureplugin.drivers.defaultdriver.configpanels;
 
-import javax.swing.table.AbstractTableModel;
-
-import util.ui.Localizer;
 import captureplugin.drivers.defaultdriver.DeviceConfig;
 import captureplugin.drivers.defaultdriver.Variable;
+import util.ui.Localizer;
+
+import javax.swing.table.AbstractTableModel;
 
 /**
  * TableModel for VariableTable
@@ -42,6 +42,7 @@ public class VariableTableModel extends AbstractTableModel {
     
     /**
      * creates a new VariableTableModel
+     * @param data Configuration
      */
     public VariableTableModel(DeviceConfig data) {
         mData = data;
@@ -78,10 +79,7 @@ public class VariableTableModel extends AbstractTableModel {
      * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
      */
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-      if (columnIndex == 0) {
-        return false;
-      }
-      return true;
+        return columnIndex != 0;
     }
     
     /* (non-Javadoc)

@@ -24,6 +24,16 @@
  */
 package captureplugin.drivers.defaultdriver;
 
+import captureplugin.utils.CaptureUtilities;
+import util.exc.ErrorHandler;
+import util.io.StreamReaderThread;
+import util.paramhandler.ParamParser;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,19 +42,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
-import sun.misc.BASE64Encoder;
-import util.exc.ErrorHandler;
-import util.io.StreamReaderThread;
-import util.paramhandler.ParamParser;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-
-import captureplugin.utils.CaptureUtilities;
 
 /**
  * This Class contains excutes the Application/URL
@@ -70,10 +67,7 @@ public class CaptureExecute {
      * Creates the Execute
      * 
      * @param frame Frame
-     * @param plugin Plugin
      * @param data Data
-     * @param dialog Dialgo
-     * @param useReturnValue use the Return-Value 
      */
     public CaptureExecute(Component frame, DeviceConfig data) {
         mParent = frame;
@@ -127,12 +121,13 @@ public class CaptureExecute {
     /**
      * Executes the Program in mData and uses program
      * 
-     * @param program Program to use for Command-Line
+     * @param programTime Program to use for Command-Line
+     * @param param Parameter
+     * @return true if successfull
      */
     public boolean execute(ProgramTime programTime, String param) {
         try {
-            String output = "";
-            String channelNumber;
+            String output;
 
             if (!checkParams()) {
                 return false;
@@ -217,11 +212,10 @@ public class CaptureExecute {
      * Starts an Application
      * @param params Params for the Application
      * @return Output of Application
-     * @throws Exception
      */
-    private String executeApplication(String params) throws Exception{
+    private String executeApplication(String params) {
         
-        Process p = null;
+        Process p;
         try {
             String path = mData.getProgramPath();            
             path = path.substring(0,path.lastIndexOf(File.separator) + 1);
@@ -247,32 +241,35 @@ public class CaptureExecute {
         
         if (mData.getTimeOut() > 0 ){
             while (time < mData.getTimeOut() * 1000) {
-                Thread.sleep(100);
-                time += 100;
                 try {
+                    Thread.sleep(100);
+                    time += 100;
                     p.exitValue();
                     break;
-                } catch (IllegalThreadStateException e) {
+                } catch (Exception e) {
+                    // Empty
                 }
             }
         } else {
             while (true) {
-                Thread.sleep(100);
                 try {
+                    Thread.sleep(100);
                     p.exitValue();
                     break;
-                } catch (IllegalThreadStateException e) {
+                } catch (Exception e) {
+                    // Empty
                 }
             }
         }
         
         while (time < mData.getTimeOut() * 1000) {
-            Thread.sleep(100);
-            time += 100;
             try {
+                Thread.sleep(100);
+                time += 100;
                 p.exitValue();
                 break;
-            } catch (IllegalThreadStateException e) {
+            } catch (Exception e) {
+                // Empty
             }
         }
 
@@ -281,12 +278,8 @@ public class CaptureExecute {
         if(!out.isAlive())
           output = out.getOutput();
 
-        if (p.exitValue() != 0) {
-            mError = true;
-        } else {
-            mError = false;
-        }
-        
+        mError = p.exitValue() != 0;
+
         return output;
     }
     
@@ -294,7 +287,8 @@ public class CaptureExecute {
     /**
      * Executes the URL
      * @param params Params for the URL
-     * @return
+     * @return Result-Page
+     * @throws Exception Problems while loading the URL
      */
     private String executeUrl(String params) throws Exception{
         StringBuffer result = new StringBuffer();
@@ -302,10 +296,7 @@ public class CaptureExecute {
         URL url = new URL (mData.getWebUrl() + "?" +params);
         
         URLConnection uc = url.openConnection();
-        
 
-        BASE64Encoder enc = new BASE64Encoder();
-        
         String userpassword = mData.getUserName() + ":" + mData.getPassword();
         String encoded = new sun.misc.BASE64Encoder().encode (userpassword.getBytes());
 
@@ -313,7 +304,7 @@ public class CaptureExecute {
 
         if (uc instanceof HttpURLConnection) {
             if (((HttpURLConnection)uc).getResponseCode() != HttpURLConnection.HTTP_OK) {
-                InputStream content = (InputStream) ((HttpURLConnection)uc).getErrorStream();
+                InputStream content = ((HttpURLConnection)uc).getErrorStream();
                 BufferedReader in =  new BufferedReader (new InputStreamReader (content));
                 String line;
                 while ((line = in.readLine()) != null) {
@@ -324,7 +315,7 @@ public class CaptureExecute {
             }
         }
         
-        InputStream content = (InputStream)uc.getInputStream();
+        InputStream content = uc.getInputStream();
         BufferedReader in =  new BufferedReader (new InputStreamReader (content));
         String line;
         while ((line = in.readLine()) != null) {
