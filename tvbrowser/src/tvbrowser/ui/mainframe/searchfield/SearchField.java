@@ -51,6 +51,7 @@ import javax.swing.UIManager;
 
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.extras.searchplugin.SearchPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.TvBrowserException;
 import util.ui.Localizer;
@@ -169,7 +170,7 @@ public class SearchField extends JPanel {
               mCancelButton.setVisible(false);
             }
           } else {
-            SearchHelper.search(mText, mSearchFormSettings);
+            SearchHelper.search(mText, mSearchFormSettings, SearchPlugin.getInstance().getProgramPanelSettings());
           }
         }
       }

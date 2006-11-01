@@ -47,6 +47,7 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
+import util.settings.ProgramPanelSettings;
 import devplugin.Program;
 import devplugin.ProgramSearcher;
 
@@ -64,7 +65,22 @@ public class SearchHelper {
   private static SearchHelper mInstance;
 
   /** Private Constructor */
-  private SearchHelper() {}
+  private SearchHelper() {}  
+
+  /**
+   * Search for Programs and Display a Result-Dialog.
+   * This function creates a new Thread.
+   * 
+   * @param comp Parent-Component
+   * @param settings Settings for the Search.
+   */
+  public static void search(Component comp, SearchFormSettings settings, ProgramPanelSettings pictureSettings) {
+    if (mInstance == null) {
+      mInstance = new SearchHelper();
+    }
+
+    mInstance.doSearch(comp, settings, pictureSettings);
+  }
 
   /**
    * Search for Programs and Display a Result-Dialog.
@@ -74,11 +90,7 @@ public class SearchHelper {
    * @param settings Settings for the Search.
    */
   public static void search(Component comp, SearchFormSettings settings) {
-    if (mInstance == null) {
-      mInstance = new SearchHelper();
-    }
-
-    mInstance.doSearch(comp, settings);
+    search(comp,settings,null);
   }
 
   /**
@@ -86,7 +98,7 @@ public class SearchHelper {
    * @param comp Parent-Component
    * @param settings Settings for the Search.
    */
-  private void doSearch(final Component comp,final SearchFormSettings searcherSettings) {
+  private void doSearch(final Component comp,final SearchFormSettings searcherSettings, final ProgramPanelSettings pictureSettings) {
     new Thread(new Runnable() {
       public void run() {
         devplugin.Date startDate = new devplugin.Date();
@@ -105,7 +117,7 @@ public class SearchHelper {
             JOptionPane.showMessageDialog(MainFrame.getInstance(), msg);
           } else {
             String title = mLocalizer.msg("hitsTitle", "Sendungen mit {0}", searcherSettings.getSearchText());
-            showHitsDialog(comp, programArr, title);
+            showHitsDialog(comp, programArr, title, pictureSettings);
           }
         } catch (TvBrowserException exc) {
           comp.setCursor(cursor);
@@ -122,7 +134,7 @@ public class SearchHelper {
    * @param programArr The hits.
    * @param title The dialog's title.
    */
-  private void showHitsDialog(Component comp, final Program[] programArr, String title) {
+  private void showHitsDialog(Component comp, final Program[] programArr, String title, ProgramPanelSettings pictureSettings) {
     final JDialog dlg;
     
     Window w = UiUtilities.getBestDialogParent(comp);
@@ -148,7 +160,7 @@ public class SearchHelper {
     main.setBorder(UiUtilities.DIALOG_BORDER);
     dlg.setContentPane(main);
 
-    final ProgramList list = new ProgramList(programArr);
+    final ProgramList list = new ProgramList(programArr, pictureSettings);
     list.addMouseListeners(null);
 
     main.add(new JScrollPane(list), BorderLayout.CENTER);

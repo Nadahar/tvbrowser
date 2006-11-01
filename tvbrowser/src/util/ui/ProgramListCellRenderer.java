@@ -84,6 +84,9 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
     mHeaderLb = new JLabel();
     mMainPanel.add(mHeaderLb, BorderLayout.NORTH);
     
+    if(settings == null)
+      settings = new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, 1080, 1380, false, true, 90);
+    
     mProgramPanel = new ProgramPanel(settings);
     mMainPanel.add(mProgramPanel, BorderLayout.CENTER);
   }

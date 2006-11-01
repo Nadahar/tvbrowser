@@ -74,6 +74,9 @@ import tvbrowser.extras.programinfo.ProgramInfoPicturesSettingsTab;
 import tvbrowser.extras.reminderplugin.ReminderPicturesSettingsTab;
 import tvbrowser.extras.reminderplugin.ReminderSettingsTab;
 import util.ui.Localizer;
+import tvbrowser.extras.searchplugin.SearchPictureSettingsTab;
+import tvbrowser.extras.searchplugin.SearchPlugin;
+import tvbrowser.extras.searchplugin.SearchSettingsTab;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -321,6 +324,11 @@ public class SettingsDialog implements WindowClosingIf {
     technicalSettings.add(new SettingNode(new DirectoriesSettingsTab()));
     technicalSettings.add(new SettingNode(new WebbrowserSettingsTab(), SettingsItem.WEBBROWSER));
 
+    SettingNode search = new SettingNode(new DefaultSettingsTab(SearchPlugin.mLocalizer.msg("title", "Search"), null));
+    search.add(new SettingNode(new SearchSettingsTab(),SettingsItem.SEARCH));
+    search.add(new SettingNode(new SearchPictureSettingsTab()));
+    root.add(search);
+    
     SettingNode programInfo = new SettingNode(new DefaultSettingsTab(ProgramInfo.getInstance().toString(), null));
     programInfo.add(new SettingNode(new ProgramInfoOrderSettingsTab(), SettingsItem.PROGRAMINFO));
     programInfo.add(new SettingNode(new ProgramInfoPicturesSettingsTab()));

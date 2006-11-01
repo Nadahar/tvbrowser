@@ -71,6 +71,7 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.extras.searchplugin.SearchPlugin;
 import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
 import tvbrowser.ui.finder.FinderPanel;
@@ -712,6 +713,7 @@ public class MainFrame extends JFrame implements DateListener {
       mLog.info("Storing dataservice settings");
     TvDataServiceProxyManager.getInstance().shutDown();
 
+    SearchPlugin.getInstance().store();
     FavoritesPlugin.getInstance().store();
     ReminderPlugin.getInstance().store();
     ProgramInfo.getInstance().store();

@@ -53,6 +53,7 @@ import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.extras.searchplugin.SearchPlugin;
 import tvbrowser.ui.filter.dlgs.SelectFilterPopup;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.ScrollableMenu;
@@ -75,7 +76,8 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
   private Action mUpdateAction, mSettingsAction, mFilterAction,
       mPluginViewAction, mSeparatorAction, mScrollToNowAction,
       mGoToTodayAction, mGoToPreviousDayAction, mGoToNextDayAction, mFavoriteAction,
-      mReminderAction, mGoToDateAction, mScrollToChannelAction, mScrollToTimeAction;
+      mReminderAction, mGoToDateAction, mScrollToChannelAction, mScrollToTimeAction,
+      mSearchAction;
 
   private static DefaultToolBarModel sInstance;
 
@@ -182,6 +184,12 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
         IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16),
         IconLoader.getInstance().getIconFromTheme("apps", "appointment", 22),
         ToolBar.BUTTON_ACTION, this);
+    mSearchAction = createAction(SearchPlugin.mLocalizer.msg("searchPrograms", "Search programs")
+        , SettingsItem.SEARCH,
+        SearchPlugin.mLocalizer.msg("description", "Allows searching programs containing a certain text."),
+        IconLoader.getInstance().getIconFromTheme("actions", "system-search", 16),
+        IconLoader.getInstance().getIconFromTheme("actions", "system-search", 22),
+    ToolBar.BUTTON_ACTION, this);
     mFavoriteAction = createAction(FavoritesPlugin.mLocalizer.msg("buttonText",
         "Manage Favorites"), SettingsItem.FAVORITE,
         FavoritesPlugin.mLocalizer.msg("favoritesManager",
@@ -218,6 +226,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     mAvailableActions.put("#goToToday", mGoToTodayAction);
     mAvailableActions.put("#goToNextDay", mGoToNextDayAction);
     mAvailableActions.put("#goToPreviousDay", mGoToPreviousDayAction);
+    mAvailableActions.put(SettingsItem.SEARCH, mSearchAction);
     mAvailableActions.put(SettingsItem.REMINDER, mReminderAction);
     mAvailableActions.put(SettingsItem.FAVORITE, mFavoriteAction);
     mAvailableActions.put("#goToDate", mGoToDateAction);
@@ -344,6 +353,8 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
         mVisibleActions.add(action);
       } else if ("#separator".equals(buttonNames[i])) {
         mVisibleActions.add(mSeparatorAction);
+      } else if (buttonNames[i].compareTo("java.searchplugin.SearchPlugin") == 0) {
+        mVisibleActions.add(mSearchAction);
       } else if (buttonNames[i].compareTo("java.reminderplugin.ReminderPlugin") == 0) {
         mVisibleActions.add(mReminderAction);
       } else if (buttonNames[i].compareTo("java.favoritesplugin.FavoritesPlugin") == 0) {
@@ -367,6 +378,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     mVisibleActions.add(getSeparatorAction());
     mVisibleActions.add(mFavoriteAction);
     mVisibleActions.add(mReminderAction);
+    mVisibleActions.add(mSearchAction);
     mVisibleActions.add(getSeparatorAction());
 
     PluginProxyManager pluginMng = PluginProxyManager.getInstance();
@@ -442,6 +454,9 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
       MainFrame.getInstance().goToNextDay();
     } else if (source == mGoToPreviousDayAction) {
       MainFrame.getInstance().goToPreviousDay();
+    } else if (source == mSearchAction) {
+      SearchPlugin.getInstance().getButtonAction()
+          .getAction().actionPerformed(null);
     } else if (source == mReminderAction) {
       ReminderPlugin.getInstance().getButtonAction(MainFrame.getInstance())
           .getAction().actionPerformed(null);
