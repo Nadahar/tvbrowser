@@ -395,7 +395,7 @@ public class CapturePlugin extends devplugin.Plugin {
 
     @Override
     public boolean canReceiveProgramsWithTarget() {
-        return true;
+        return mConfig.getDevices().size() >0;
     }
 
     @Override
