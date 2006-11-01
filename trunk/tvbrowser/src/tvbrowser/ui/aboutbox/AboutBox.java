@@ -26,16 +26,13 @@
  
 package tvbrowser.ui.aboutbox;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import tvbrowser.TVBrowser;
+import util.ui.ImageUtilities;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
+import util.ui.html.ExtendedHTMLDocument;
+import util.ui.html.ExtendedHTMLEditorKit;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -46,14 +43,16 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-
-import tvbrowser.TVBrowser;
-import util.ui.ImageUtilities;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-import util.ui.html.ExtendedHTMLDocument;
-import util.ui.html.ExtendedHTMLEditorKit;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * 
@@ -237,8 +236,9 @@ public class AboutBox extends JDialog implements WindowClosingIf{
     
     buf.append("<div id=\"small\">");
     buf.append("This product includes software developed " +
-                       "by L2FProd.com (http://www.L2FProd.com/).");
-    
+                       "by L2FProd.com (http://www.L2FProd.com/) and\n" +
+            "The Apache Software Foundation (http://www.apache.org/)..");
+
     buf.append("</div>");
     buf.append("</p>");
     buf.append("  </body>" +
