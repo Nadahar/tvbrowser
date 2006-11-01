@@ -47,6 +47,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
@@ -609,7 +610,10 @@ public class TVBrowser {
     if(mMainWindowAdapter == null) {
       mMainWindowAdapter = new java.awt.event.WindowAdapter() {
         public void windowClosing(java.awt.event.WindowEvent e) {
-          mainFrame.quit();
+          if (Settings.propOnlyMinimizeWhenWindowClosing.getBoolean())
+            MainFrame.getInstance().setExtendedState(JFrame.ICONIFIED);
+          else
+            mainFrame.quit();
         }
       };
     }
