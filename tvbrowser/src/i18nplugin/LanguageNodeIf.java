@@ -25,7 +25,6 @@
  */
 package i18nplugin;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Locale;
 
@@ -49,7 +48,9 @@ public interface LanguageNodeIf {
   
   /**
    * Saves all changes to the User-Directory
+   *
+   * @throws java.io.IOException saving went wrong
    */
-  public void save() throws FileNotFoundException, IOException;
+  public void save() throws IOException;
   
 }

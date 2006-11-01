@@ -25,20 +25,18 @@
  */
 package i18nplugin;
 
-import java.util.Locale;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import util.ui.Localizer;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-
-import util.ui.Localizer;
-
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
+import java.util.Locale;
 
 /**
  * This is the Editor-Component. It shows the original text and a input field
@@ -96,7 +94,7 @@ public class TranslatorEditor extends JPanel {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         split.setDividerLocation(0.5);
-      };
+      }
     });
     
     add(split, cc.xy(1,1));
@@ -128,6 +126,7 @@ public class TranslatorEditor extends JPanel {
 
   /**
    * Set the Locale
+   * @param locale new Locale
    */
   public void setCurrentLocale(Locale locale) {
     mCurrentLocale = locale;
