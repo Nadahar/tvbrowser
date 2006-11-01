@@ -42,6 +42,7 @@ import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.programinfo.ProgramInfoProxy;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
+import tvbrowser.extras.searchplugin.SearchPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.menu.MenuUtil;
 import devplugin.ActionMenu;
@@ -125,6 +126,9 @@ public class ContextMenuManager {
     if(plugin != null)
       return (ContextMenuIf)plugin;
     else if (id != null){
+      if(id.compareTo(SearchPlugin.getInstance().getId()) == 0 || 
+          id.compareTo("java.searchplugin.SearchPlugin") == 0)
+        return SearchPlugin.getInstance();
       if(id.compareTo(ProgramInfoProxy.getInstance().getId()) == 0)
         return ProgramInfoProxy.getInstance();
       else if(id.compareTo(FavoritesPluginProxy.getInstance().getId()) == 0)
@@ -198,6 +202,7 @@ public class ContextMenuManager {
     
     ArrayList<ContextMenuIf> ifList = new ArrayList<ContextMenuIf>();
     
+    SearchPlugin search = SearchPlugin .getInstance();
     ProgramInfoProxy info = ProgramInfoProxy.getInstance();
     FavoritesPluginProxy favorite = FavoritesPluginProxy.getInstance();
     ReminderPluginProxy reminder = ReminderPluginProxy.getInstance();
@@ -205,6 +210,7 @@ public class ContextMenuManager {
     boolean lastWasSeparator = false;
     
     if(order == null) {
+      ifList.add(search);
       ifList.add(info);
       ifList.add(favorite);
       ifList.add(reminder);

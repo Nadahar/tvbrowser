@@ -23,20 +23,31 @@
  *   $Author$
  * $Revision$
  */
-package searchplugin;
+package tvbrowser.extras.searchplugin;
 
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.extras.common.ConfigurationHandler;
+import tvbrowser.extras.common.DataDeserializer;
+import tvbrowser.extras.common.DataSerializer;
+import tvbrowser.ui.mainframe.MainFrame;
+import util.exc.ErrorHandler;
+import util.settings.ProgramPanelSettings;
+import util.ui.PictureSettingsPanel;
 import util.ui.SearchFormSettings;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.ButtonAction;
 import devplugin.ContextMenuAction;
-import devplugin.Plugin;
+import devplugin.ContextMenuIf;
 import devplugin.PluginInfo;
 import devplugin.PluginManager;
 import devplugin.Program;
@@ -46,26 +57,57 @@ import devplugin.Version;
 
 /**
  * Provides a dialog for searching programs.
- * 
+ *
  * @author Til Schneider, www.murfman.de
  */
-public class SearchPlugin extends Plugin {
+public class SearchPlugin implements ContextMenuIf {
 
   /** The localizer for this class. */
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SearchPlugin.class);
-
+  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SearchPlugin.class);
+  private static String DATAFILE_PREFIX = "searchplugin.SearchPlugin";
+  
   private static SearchPlugin mInstance;
+  
+  private ConfigurationHandler mConfigurationHandler;
 
   private static SearchFormSettings[] mSearchHistory;
+  private ProgramPanelSettings mProgramPanelSettings;
 
   /**
    * Creates a new instance of SearchPlugin.
    */
-  public SearchPlugin() {
+  private SearchPlugin() {
     mInstance = this;
+    mProgramPanelSettings = new ProgramPanelSettings(PictureSettingsPanel.SHOW_IN_TIME_RANGE,1080,1380,false,true,90,new String[] {});
+    mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
+    load();
   }
 
-  public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
+  private void load() {
+    try {
+      mConfigurationHandler.loadData(new DataDeserializer(){
+        public void read(ObjectInputStream in) throws IOException, ClassNotFoundException {
+          readData(in);
+        }
+      });
+    }catch(IOException e) {
+      ErrorHandler.handle(mLocalizer.msg("couldNotLoadFavorites","Could not load favorites"), e);
+    }
+  }
+  
+  public void store() {
+    try {
+      mConfigurationHandler.storeData(new DataSerializer(){
+        public void write(ObjectOutputStream out) throws IOException {
+          writeData(out);
+        }
+      });
+    } catch (IOException e) {
+      ErrorHandler.handle(mLocalizer.msg("couldNotStoreFavorites","Could not store favorites"), e);
+    }
+  }
+  
+  private void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
     int version = in.readInt();
 
     int historySize = in.readInt();
@@ -83,7 +125,7 @@ public class SearchPlugin extends Plugin {
         boolean searchInInfoText = in.readBoolean();
         boolean caseSensitive = in.readBoolean();
         int option = in.readInt();
-        
+
         settings = new SearchFormSettings(searchText);
         if (searchInInfoText) {
           settings.setSearchIn(SearchFormSettings.SEARCH_IN_ALL);
@@ -106,10 +148,25 @@ public class SearchPlugin extends Plugin {
 
       mSearchHistory[i] = settings;
     }
+
+    if(version >= 3) {
+      int type = in.readInt();
+      int startTime = in.readInt();
+      int endTime = in.readInt();
+      int duration = in.readInt();
+      boolean desc = in.readBoolean();
+
+      String[] ids = new String[in.readInt()];
+
+      for(int i = 0; i < ids.length; i++)
+        ids[i] = in.readUTF();
+
+      mProgramPanelSettings = new ProgramPanelSettings(type,startTime,endTime,false,desc,duration,ids);
+    }
   }
 
-  public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(2); // version
+  private void writeData(ObjectOutputStream out) throws IOException {
+    out.writeInt(3); // version
 
     if (mSearchHistory == null) {
       out.writeInt(0); // length
@@ -119,19 +176,36 @@ public class SearchPlugin extends Plugin {
         mSearchHistory[i].writeData(out);
       }
     }
+    out.writeInt(mProgramPanelSettings.getPictureShowingType());
+    out.writeInt(mProgramPanelSettings.getPictureTimeRangeStart());
+    out.writeInt(mProgramPanelSettings.getPictureTimeRangeEnd());
+    out.writeInt(mProgramPanelSettings.getDuration());
+    out.writeBoolean(mProgramPanelSettings.isShowingPictureDescription());
+    out.writeInt(mProgramPanelSettings.getPluginIds().length);
+
+    for(int i = 0; i < mProgramPanelSettings.getPluginIds().length; i++)
+      out.writeUTF(mProgramPanelSettings.getPluginIds()[i]);
   }
 
   public ActionMenu getButtonAction() {
     ButtonAction action = new ButtonAction();
     action.setActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        SearchDialog dlg = new SearchDialog(SearchPlugin.this, getParentFrame());
+      public void actionPerformed(ActionEvent e) {        
+        SearchDialog dlg;
+        
+        Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+        
+        if(w instanceof Dialog)
+          dlg = new SearchDialog((Dialog)w);
+        else
+          dlg = new SearchDialog((Frame)w);
+        
         UiUtilities.centerAndShow(dlg);
       }
     });
 
-    action.setBigIcon(createImageIcon("actions", "system-search", 22));
-    action.setSmallIcon(createImageIcon("actions", "system-search", 16));
+    action.setBigIcon(IconLoader.getInstance().getIconFromTheme("actions", "system-search", 22));
+    action.setSmallIcon(IconLoader.getInstance().getIconFromTheme("actions", "system-search", 16));
     action.setShortDescription(mLocalizer.msg("description", "Allows searching programs containing a certain text."));
     action.setText(mLocalizer.msg("searchPrograms", "Search programs"));
 
@@ -141,10 +215,18 @@ public class SearchPlugin extends Plugin {
   public ActionMenu getContextMenuActions(final Program program) {
     ContextMenuAction action = new ContextMenuAction();
     action.setText(mLocalizer.msg("searchRepetion", "Search repetition"));
-    action.setSmallIcon(createImageIcon("actions", "system-search", 16));
+    action.setSmallIcon(IconLoader.getInstance().getIconFromTheme("actions", "system-search", 16));
     action.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        SearchDialog dlg = new SearchDialog(SearchPlugin.this, getParentFrame());
+        SearchDialog dlg;
+        
+        Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+        
+        if(w instanceof Dialog)
+          dlg = new SearchDialog((Dialog)w);
+        else
+          dlg = new SearchDialog((Frame)w);
+        
         dlg.setPatternText(program.getTitle());
         UiUtilities.centerAndShow(dlg);
       }
@@ -155,7 +237,7 @@ public class SearchPlugin extends Plugin {
   public ThemeIcon getMarkIconFromTheme() {
     return new ThemeIcon("actions", "system-search", 16);
   }
-  
+
   public PluginInfo getInfo() {
     String name = mLocalizer.msg("searchPrograms", "Search programs");
     String desc = mLocalizer.msg("description", "Allows searching programs containing a certain text.");
@@ -165,6 +247,9 @@ public class SearchPlugin extends Plugin {
   }
 
   public static SearchPlugin getInstance() {
+    if(mInstance == null)
+      new SearchPlugin();
+    
     return mInstance;
   }
 
@@ -178,11 +263,36 @@ public class SearchPlugin extends Plugin {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see devplugin.Plugin#getSettingsTab()
    */
   public SettingsTab getSettingsTab() {
     return new SearchSettingsTab();
   }
 
+  /**
+   * Return the program panel settings for the
+   * result list.
+   *
+   * @return The program panel settings for the list.
+   * @since 2.2.2
+   */
+  public ProgramPanelSettings getProgramPanelSettings() {
+    return mProgramPanelSettings;
+  }
+
+  /**
+   * Sets the program panel settings for the
+   * result list.
+   *
+   * @param value The new program panel settings for the list.
+   * @since 2.2.2
+   */
+  protected void setProgramPanelSettings(ProgramPanelSettings value) {
+    mProgramPanelSettings = value;
+  }
+
+  public String getId() {
+    return DATAFILE_PREFIX;
+  }
 }

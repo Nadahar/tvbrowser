@@ -24,10 +24,11 @@
  * $Revision$
  */
 
-package searchplugin;
+package tvbrowser.extras.searchplugin;
 
 
 import java.awt.BorderLayout;
+import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,7 +37,6 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
-import util.ui.Localizer;
 import util.ui.SearchForm;
 import util.ui.SearchFormSettings;
 import util.ui.SearchHelper;
@@ -57,10 +57,10 @@ import devplugin.PluginManager;
  */
 public class SearchDialog extends JDialog implements WindowClosingIf {
 
-  /** The localizer of this class. */  
-  private static final Localizer mLocalizer
+  /** The localizer of this class. */
+  private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SearchDialog.class);
-  
+
   /** The search form to use for specifying the search criteria. */
   private SearchForm mSearchForm;
   /** The button that starts the search. */
@@ -68,31 +68,38 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
   /** The button that closes the dialog. */
   private JButton mCloseBt;
 
-  /** The Caller-Plugin */
-  private Plugin mPlugin;
-  
   /**
    * Creates a new instance of SearchDialog.
    *
-   * @param plugin The Plugin
    * @param parent The dialog's parent.
    */
-  public SearchDialog(Plugin plugin, Frame parent) {
+  public SearchDialog(Frame parent) {
     super(parent, true);
-    
+    init();
+  }
+
+  /**
+   * Creates a new instance of SearchDialog.
+   *
+   * @param parent The dialog's parent.
+   */
+  public SearchDialog(Dialog parent) {
+    super(parent, true);
+    init();
+  }
+  
+  private void init() {
     UiUtilities.registerForClosing(this);
-    
-    mPlugin = plugin;
-    
+
     String msg;
-    
+
     msg = mLocalizer.msg("dlgTitle", "Search programs");
     setTitle(msg);
-    
+
     JPanel main = new JPanel(new TabLayout(1));
     main.setBorder(Borders.DLU4_BORDER);
     setContentPane(main);
-    
+
     // pattern
     mSearchForm = new SearchForm(true, true);
     mSearchForm.setHistory(SearchPlugin.getSearchHistory());
@@ -113,7 +120,8 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
     });
     getRootPane().setDefaultButton(mSearchBt);
 
-    mCloseBt = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
+    msg = mLocalizer.msg("cancel", "Cancel");
+    mCloseBt = new JButton(msg);
     mCloseBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         dispose();
@@ -122,17 +130,17 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
 
     ButtonBarBuilder buttons = new ButtonBarBuilder();
     buttons.addGriddedButtons(new JButton[]{mSearchBt, mCloseBt});
-    
+
     JPanel buttonPanel = new JPanel(new BorderLayout());
     buttonPanel.add(buttons.getPanel(), BorderLayout.EAST);
-    
+
     main.add(buttonPanel);
-    
+
     pack();
   }
-  
-  
-  
+
+
+
   /**
    * Sets the text of the pattern text field.
    *
@@ -143,20 +151,20 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
     settings.setSearchIn(SearchFormSettings.SEARCH_IN_TITLE);
     settings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY);
     settings.setCaseSensitive(true);
-    
+
     mSearchForm.setSearchFormSettings(settings);
   }
 
   /**
    * Starts the search.
-   */  
+   */
   private void search() {
     SearchPlugin.setSearchHistory(mSearchForm.getHistory());
-    SearchHelper.search(this, mSearchForm.getSearchFormSettings());
+    SearchHelper.search(this, mSearchForm.getSearchFormSettings(), SearchPlugin.getInstance().getProgramPanelSettings());
   }
 
   public void close() {
     dispose();
   }
-  
+
 }

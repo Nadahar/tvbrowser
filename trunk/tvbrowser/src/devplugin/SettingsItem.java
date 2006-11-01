@@ -44,6 +44,7 @@ public class SettingsItem {
   public static final String STARTUP = "#startup";
   public static final String PROGRAMINFO = "#programinfo";
   public static final String REMINDER = "#reminder";
+  public static final String SEARCH = "#search";
   public static final String FAVORITE = "#favorite";
   public static final String CHANNELS = "#channels";
   public static final String WEBBROWSER = "#webbrowser";

@@ -76,7 +76,7 @@ public class PictureAreaIcon implements Icon {
       ImageIcon imic = new ImageIcon(picture);
       
       if(width == -1)        
-        width = imic.getIconWidth();
+        width = imic.getIconWidth()+6;
       
       if(imic.getIconWidth() > width || (zoom && imic.getIconWidth() != width))
         mScaledIcon = (ImageIcon)UiUtilities.scaleIcon(imic, width - 6);
@@ -100,7 +100,7 @@ public class PictureAreaIcon implements Icon {
   }
 
   public int getIconWidth() {
-    return mCopyrightText.getIconWidth() - mWidthDiff + 12;
+    return mCopyrightText.getIconWidth() + 6;
   }
 
   public void paintIcon(Component c, Graphics g, int x, int y) {
@@ -126,10 +126,12 @@ public class PictureAreaIcon implements Icon {
       mIsExpired = true;
     }
     
-    mScaledIcon.paintIcon(c,g,x,y);
+    mScaledIcon.paintIcon(c,g,x+(mWidthDiff-6),y);
     
     if(!mProgram.isExpired())
       g.setColor(Color.black);
+    else
+      g.setColor(Color.gray);
     
     mCopyrightText.paintIcon(c,g,x,y + mScaledIcon.getIconHeight());
     mDescriptionText.paintIcon(c,g,x,y + mScaledIcon.getIconHeight() + mCopyrightText.getIconHeight() + 1);

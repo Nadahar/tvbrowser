@@ -284,6 +284,10 @@ public class ToolBar extends JToolBar {
         showall = true;
         label = mLocalizer.msg("configureTime", "Configure time buttons");
       }
+      else if(name.startsWith(SettingsItem.SEARCH)) {
+        showall = true;
+        label = mLocalizer.msg("configureSearch", "Configure Search");
+      }
       else if(name.startsWith(SettingsItem.REMINDER)) {
         showall = true;
         label = mLocalizer.msg("configureReminder", "Configure Reminder");
