@@ -180,8 +180,12 @@ FunctionEnd
 
  LangString DATA_SECTION_NAME ${LANG_German} "Daten-Services"
    LangString DATA_TVB_SUBSECTION_NAME ${LANG_German} "TV-Browser-Datenservice"
+   LangString DATA_RADIOTIMES_SUBSECTION_NAME ${LANG_German} "Radio-Times-Datenservice"
+   LangString DATA_SWEDB_SUBSECTION_NAME ${LANG_German} "SweDB TV-Datenservice"
  LangString DATA_SECTION_NAME ${LANG_ENGLISH} "Data service"
    LangString DATA_TVB_SUBSECTION_NAME ${LANG_ENGLISH} "TV-Browser data service"
+   LangString DATA_RADIOTIMES_SUBSECTION_NAME ${LANG_ENGLISH} "Radio Times data service"
+   LangString DATA_SWEDB_SUBSECTION_NAME ${LANG_ENGLISH} "SweDB TV data dervice"
  
  LangString MISC_DIR ${LANG_GERMAN} "Sonstiges"
  LangString MISC_DIR ${LANG_ENGLISH} "Misc"
@@ -485,6 +489,21 @@ SubSection "$(DATA_SECTION_NAME)"
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\TvBrowserDataService.jar"
   SectionEnd
+  
+  Section "$(DATA_RADIOTIMES_SUBSECTION_NAME)"
+    SectionIn 1 2
+
+    SetOutPath "$INSTDIR\plugins"
+    File "${RUNTIME_DIR}\plugins\RadioTimesDataService.jar"
+  SectionEnd
+
+  Section "$(DATA_SWEDB_SUBSECTION_NAME)"
+    SectionIn 1 2
+
+    SetOutPath "$INSTDIR\plugins"
+    File "${RUNTIME_DIR}\plugins\SweDBTvDataService.jar"
+  SectionEnd
+
 SubSectionEnd
 
 
