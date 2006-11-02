@@ -78,7 +78,7 @@ public class PictureAreaIcon implements Icon {
       if(width == -1)        
         width = imic.getIconWidth()+6;
       
-      if(imic.getIconWidth() > width || (zoom && imic.getIconWidth() != width))
+      if(imic.getIconWidth() > width-6 || (zoom && imic.getIconWidth() != width))
         mScaledIcon = (ImageIcon)UiUtilities.scaleIcon(imic, width - 6);
       else
         mScaledIcon = imic;
