@@ -704,7 +704,7 @@ public class PluginManagerImpl implements PluginManager {
       receiveIfs.add(ReminderPluginProxy.getInstance());
     
     for(PluginAccess plugin : plugins)
-      if((plugin.canReceivePrograms() || plugin.canReceiveProgramsWithTarget()) && (caller == null || plugin.getId().compareTo(caller.getId()) != 0))
+      if((plugin.canReceivePrograms() || plugin.canReceiveProgramsWithTarget()) && plugin.getProgramReceiveTargets() != null && plugin.getProgramReceiveTargets().length > 0 && (caller == null || plugin.getId().compareTo(caller.getId()) != 0))
         receiveIfs.add(plugin);
     
     return receiveIfs.toArray(new ProgramReceiveIf[receiveIfs.size()]);

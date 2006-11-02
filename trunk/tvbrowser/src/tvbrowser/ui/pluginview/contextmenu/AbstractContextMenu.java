@@ -145,11 +145,12 @@ public abstract class AbstractContextMenu implements ContextMenu {
     
     PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
     for (int i=0; i<plugins.length; i++) {
-      if ((plugins[i].canReceivePrograms() || plugins[i].canReceiveProgramsWithTarget())) {
-        final PluginProxy plugin = plugins[i];
+      if ((plugins[i].canReceivePrograms() || plugins[i].canReceiveProgramsWithTarget())  && plugins[i].getProgramReceiveTargets() != null && plugins[i].getProgramReceiveTargets().length > 0 ) {
+        final PluginProxy plugin = plugins[i];        
+        
         if ((currentPlugin == null) || (!currentPlugin.getId().equals(plugin.getId()))) {
           ProgramReceiveTarget[] targets = plugin.getProgramReceiveTargets();
-          if(targets == null || targets.length <= 1 || !plugins[i].canReceiveProgramsWithTarget()) {
+          if(!plugins[i].canReceiveProgramsWithTarget()) {
             JMenuItem item = new JMenuItem(plugins[i].getInfo().getName());
             item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
 

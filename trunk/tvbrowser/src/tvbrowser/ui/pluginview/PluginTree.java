@@ -547,7 +547,7 @@ public class PluginTree extends JTree implements DragGestureListener,
 
                   for (int i = 0; i < pa.length; i++) {
                     if (pa[i].getRootNode().getMutableTreeNode().equals(target)) {
-                      if ((pa[i].canReceivePrograms() || pa[i].canReceiveProgramsWithTarget())) {
+                      if ((pa[i].canReceivePrograms() || pa[i].canReceiveProgramsWithTarget()) && pa[i].getProgramReceiveTargets() != null && pa[i].getProgramReceiveTargets().length > 0) {
                         Vector<Program> vec;
                         if (source.isLeaf()) {
                           vec = new Vector<Program>();
@@ -559,7 +559,7 @@ public class PluginTree extends JTree implements DragGestureListener,
                         Program[] p = new Program[vec.size()];
                         if (p.length > 0) {
                           vec.toArray(p);
-                          pa[i].receivePrograms(p,ProgramReceiveTarget.createDefaultTargetForProgramReceiveIfId(pa[i].getId()));
+                          pa[i].receivePrograms(p,pa[i].getProgramReceiveTargets()[0]);
                         }
                       } else {
                         break;

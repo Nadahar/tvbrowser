@@ -133,22 +133,20 @@ public class MarkListsVector extends Vector<MarkList> {
   }
   
   public ProgramReceiveTarget[] getReceiveTargets() {
-    ProgramReceiveTarget[] targets = new ProgramReceiveTarget[size()];
+    ProgramReceiveTarget[] targets = new ProgramReceiveTarget[size()];    
       
-    targets[0] = ProgramReceiveTarget.createDefaultTargetArrayForProgramReceiveIf(SimpleMarkerPlugin.getInstance())[0];
-      
-    for(int i = 1; i < size(); i++)
+    for(int i = 0; i < size(); i++)
       targets[i] = get(i).getReceiveTarget();
       
     return targets;    
   }
   
   public MarkList getMarkListForTarget(ProgramReceiveTarget target) {
-    for(int i = 1; i < size(); i++)
+    for(int i = 0; i < size(); i++)
       if(get(i).getReceiveTarget().equals(target))
         return get(i);
     
-    return (target == null || target.equals(ProgramReceiveTarget.createDefaultTargetArrayForProgramReceiveIf(SimpleMarkerPlugin.getInstance())[0])) ? get(0) : null;
+    return null;
   }
   
   /**
