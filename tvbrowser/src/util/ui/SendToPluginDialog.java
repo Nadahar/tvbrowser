@@ -93,17 +93,13 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
     PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref:grow,5dlu","pref,5dlu,pref,5dlu,pref,5dlu,pref,10dlu,pref"), (JPanel)this.getContentPane());
     pb.setDefaultDialogBorder();
     
-    
     pb.addSeparator(mLocalizer.msg("sendTo", "Send programs to"), cc.xyw(1,1,3));
-
-
-
-    System.out.println(mCaller);
+    
     // get the installed plugins
     ProgramReceiveIf[] installedPluginArr = Plugin.getPluginManager().getReceiveIfs(mCaller);
 
     Arrays.sort(installedPluginArr, new ObjectComperator());
-
+    
     pb.add(mPluginList = new JComboBox(installedPluginArr), cc.xy(2,3));
 
     pb.addSeparator(mLocalizer.msg("target","Target:"), cc.xyw(1,5,3));
