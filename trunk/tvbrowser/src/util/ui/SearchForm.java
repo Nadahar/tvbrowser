@@ -67,7 +67,6 @@ public class SearchForm extends JPanel {
   
   /** The messages for the time combo box. */  
   private static final String[] TIME_STRING_ARR = new String[] {
-    mLocalizer.msg("search.-7", "Letzte Woche"),
     mLocalizer.msg("search.0", "Heute"),
     mLocalizer.msg("search.1", "Morgen"),
     mLocalizer.msg("search.7", "Eine Woche"),
@@ -78,7 +77,7 @@ public class SearchForm extends JPanel {
 
   /** The values for the time combo box. */  
   private static final int[] TIME_VALUE_ARR = new int[] {
-    -7, 0, 1, 7, 14, 21, 1000
+    0, 1, 7, 14, 21, 1000
   };
 
   /** The maximum length of the history */
