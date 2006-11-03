@@ -25,14 +25,13 @@
  */
 package util.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dialog;
-import java.awt.Frame;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import devplugin.Program;
+import devplugin.ProgramSearcher;
+import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.ui.mainframe.MainFrame;
+import util.exc.ErrorHandler;
+import util.exc.TvBrowserException;
+import util.settings.ProgramPanelSettings;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -42,14 +41,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
-
-import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.ui.mainframe.MainFrame;
-import util.exc.ErrorHandler;
-import util.exc.TvBrowserException;
-import util.settings.ProgramPanelSettings;
-import devplugin.Program;
-import devplugin.ProgramSearcher;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * This Class helps to search for a Program. 
@@ -73,6 +72,7 @@ public class SearchHelper {
    * 
    * @param comp Parent-Component
    * @param settings Settings for the Search.
+   * @param pictureSettings Settings for the pictures
    */
   public static void search(Component comp, SearchFormSettings settings, ProgramPanelSettings pictureSettings) {
     if (mInstance == null) {
@@ -96,7 +96,8 @@ public class SearchHelper {
   /**
    * Starts the search.
    * @param comp Parent-Component
-   * @param settings Settings for the Search.
+   * @param searcherSettings Settings for the Search.
+   * @param pictureSettings Settings for Pictures
    */
   private void doSearch(final Component comp,final SearchFormSettings searcherSettings, final ProgramPanelSettings pictureSettings) {
     new Thread(new Runnable() {
@@ -123,7 +124,7 @@ public class SearchHelper {
           comp.setCursor(cursor);
           ErrorHandler.handle(exc);
         }
-      };
+      }
     }).start();
 
   }
@@ -131,8 +132,10 @@ public class SearchHelper {
   /**
    * Shows a dialog containing the hits of the search.
    * 
+   * @param comp Parent Component
    * @param programArr The hits.
    * @param title The dialog's title.
+   * @param pictureSettings Picture Settings
    */
   private void showHitsDialog(Component comp, final Program[] programArr, String title, ProgramPanelSettings pictureSettings) {
     final JDialog dlg;
