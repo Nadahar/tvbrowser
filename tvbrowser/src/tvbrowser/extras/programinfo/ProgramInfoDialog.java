@@ -453,7 +453,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     }
 
     if (rebuild) {
-      mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc, ProgramInfo.getInstance().getOrder(), getFont(true), getFont(false), true, true));
+      mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc, ProgramInfo.getInstance().getOrder(), getFont(true), getFont(false), ProgramInfo.getInstance().getProgramPanelSettings(), true, ProgramInfo.getInstance().getProperty("zoom","false").compareTo("true") == 0 ? Integer.parseInt(ProgramInfo.getInstance().getProperty("zoomValue","100")):100));
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
           mInfoEP.setCaretPosition(0);
