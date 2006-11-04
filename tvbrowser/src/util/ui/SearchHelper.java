@@ -163,10 +163,23 @@ public class SearchHelper {
     main.setBorder(UiUtilities.DIALOG_BORDER);
     dlg.setContentPane(main);
 
+
+    // Find first program that is not expired
+    int curPos = -1;
+
+    int i = 0;
+    while (i < programArr.length && curPos == -1) {
+        if (!programArr[i].isExpired())
+            curPos = i;
+        i++;
+    }
+
     final ProgramList list = new ProgramList(programArr, pictureSettings);
     list.addMouseListeners(null);
 
     main.add(new JScrollPane(list), BorderLayout.CENTER);
+    if (curPos >= 0)
+        list.setSelectedValue(programArr[curPos], true);
 
     JPanel buttonPn = new JPanel(new BorderLayout());
     buttonPn.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
