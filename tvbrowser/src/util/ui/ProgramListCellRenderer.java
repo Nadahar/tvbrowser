@@ -60,12 +60,15 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
    * Creates a new instance of ProgramListCellRenderer
    */
   public ProgramListCellRenderer() {
-    this(false);    
+    this(new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, false, true, 10)); 
   }
   
   /**
    * Creates a new instance of ProgramListCellRenderer
    * @param showOnlyDateAndTitle If the programs should only show date and title.
+   * 
+   * @since 2.2.1
+   * @deprecated Since 2.2.2 User {@link #ProgramListCellRenderer(ProgramPanelSettings)} instead.
    */
   public ProgramListCellRenderer(boolean showOnlyDateAndTitle) {
     this(new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, showOnlyDateAndTitle, true, 10));

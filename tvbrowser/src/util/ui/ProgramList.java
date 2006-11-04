@@ -92,7 +92,8 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
      * @param showOnlyDateAndTitle
      *          If this panel should only show date time and title.
      *          
-     * @since 2.2.1  
+     * @since 2.2.1
+     * @deprecated Since 2.2.2 Use {@link #ProgramList(Vector, ProgramPanelSettings)} instead.
      */
     public ProgramList(Vector programArr, boolean showOnlyDateAndTitle) {
       this(programArr, new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, showOnlyDateAndTitle, true, 10));
@@ -105,7 +106,8 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
      * @param showOnlyDateAndTitle
      *          If this panel should only show date time and title.
      *          
-     * @since 2.2.1  
+     * @since 2.2.1
+     * @deprecated Since 2.2.2 Use {@link #ProgramList(Program[], ProgramPanelSettings)} instead.  
      */
     public ProgramList(Program[] programArr, boolean showOnlyDateAndTitle) {
       this(programArr, new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, showOnlyDateAndTitle, true, 10));
@@ -118,7 +120,8 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
      * @param showOnlyDateAndTitle
      *          If this panel should only show date time and title.
      *          
-     * @since 2.2.1  
+     * @since 2.2.1
+     * @deprecated Since 2.2.2 Use {@link #ProgramList(ListModel, ProgramPanelSettings)} instead.
      */
     public ProgramList(ListModel programs, boolean showOnlyDateAndTitle) {
         this(programs, new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, showOnlyDateAndTitle, true, 10));

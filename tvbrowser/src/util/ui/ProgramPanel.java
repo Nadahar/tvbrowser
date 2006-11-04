@@ -137,8 +137,6 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   
   /** The vertical gap between the programs */
   private static int V_GAP = 5;
-
-  //private boolean mShowOnlyDateAndTitle, mShowPictures, mUsesPictureSettings;
   
   private ProgramPanelSettings mSettings;
 
@@ -154,21 +152,18 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * 
    * @param showOnlyDateAndTitle
    *          If this panel should only show date time and title.
+   * @since 2.2.1
+   * @deprecated Since 2.2.2 Use {@link #ProgramPanel(ProgramPanelSettings)} instead.
    */
-  /*public ProgramPanel(ProgramPanelSettings settings) {
-    this(settings, true, false);
-  }*/
+  public ProgramPanel(boolean showOnlyDateAndTitle) {
+    this(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), showOnlyDateAndTitle, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPictureDuration.getInt(), Settings.propPicturePluginIds.getStringArray()));
+  }
 
   
   /**
    * Creates a new instance of ProgramPanel.
+   * @param settings The settings for this program panel. 
    * 
-   * @param showOnlyDateAndTitle
-   *          If this panel should only show date time and title.
-   * @param showPicture 
-   *          If this panel should show the picture if it is available.
-   * @param usesPictureSettings If the panel should use the base picture settings.
-   *
    * @since 2.2.2
    */
   public ProgramPanel(ProgramPanelSettings settings) {
@@ -223,30 +218,15 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    *          The program to show in this panel.
    * @param showOnlyDateAndTitle
    *          If this panel should only show date time and title.
-   * @param showPicture 
-   *          If this panel should show the picture if it is available.
-   *
-   * @since 2.2.2
+   * 
+   * @since 2.2.1
+   * @deprecated Since 2.2.2 Use {@link #ProgramPanel(Program, ProgramPanelSettings)} instead.
    */
-  public ProgramPanel(Program prog, ProgramPanelSettings settings) {
-    this(settings);
+  public ProgramPanel(Program prog, boolean showOnlyDateAndTitle) {
+    this(showOnlyDateAndTitle);
     setProgram(prog);
   }
   
-  /**
-   * Creates a new instance of ProgramPanel.
-   * 
-   * @param prog
-   *          The program to show in this panel.
-   * @param showOnlyDateAndTitle
-   *          If this panel should only show date time and title.
-   * 
-   * @since 2.2.1
-   */
-  /*public ProgramPanel(Program prog, boolean showOnlyDateAndTitle) {
-    this(showOnlyDateAndTitle, true, false);    
-  }*/
-
   /**
    * Creates a new instance of ProgramPanel.
    * 
@@ -256,13 +236,12 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    *          Orientation of ProgressBar (X_AXIS/Y_AXIS)
    * @param showOnlyDateAndTitle
    *          If this panel should only show date time and title.
-   * @param showPicture 
-   *          If this panel should show the picture if it is available.
-   *
-   * @since 2.2.2
+   * 
+   * @since 2.2.1
+   * @deprecated Since 2.2.2 Use {@link #ProgramPanel(Program, int, ProgramPanelSettings)} instead.
    */
-  public ProgramPanel(Program prog, int axis, ProgramPanelSettings settings) {
-    this(settings);
+  public ProgramPanel(Program prog, int axis, boolean showOnlyDateAndTitle) {
+    this(showOnlyDateAndTitle);
     mAxis = axis;
     setProgram(prog);
   }
@@ -272,16 +251,31 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * 
    * @param prog
    *          The program to show in this panel.
+   * @param settings The settings for this program panel.
+   *
+   * @since 2.2.2
+   */
+  public ProgramPanel(Program prog, ProgramPanelSettings settings) {
+    this(settings);
+    setProgram(prog);
+  }
+
+  /**
+   * Creates a new instance of ProgramPanel.
+   * 
+   * @param prog
+   *          The program to show in this panel.
    * @param axis
    *          Orientation of ProgressBar (X_AXIS/Y_AXIS)
-   * @param showOnlyDateAndTitle
-   *          If this panel should only show date time and title.
-   * 
-   * @since 2.2.1
+   * @param settings The settings for this program panel.
+   *
+   * @since 2.2.2
    */
-  /*public ProgramPanel(Program prog, int axis, boolean showOnlyDateAndTitle) {
-    this(prog, axis, showOnlyDateAndTitle, true);
-  }*/
+  public ProgramPanel(Program prog, int axis, ProgramPanelSettings settings) {
+    this(settings);
+    mAxis = axis;
+    setProgram(prog);
+  }
 
   /**
    * (Re)Loads the font settings.
@@ -309,6 +303,9 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     mSettings = settings;
   }
 
+  /**
+   * Repaints the complete panel.
+   */
   public void forceRepaint() {
     mTitleIcon = new TextAreaIcon(null, mTitleFont, WIDTH_RIGHT - 5);
     mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5);
