@@ -85,6 +85,7 @@ public class DefaultMenuBar extends MenuBar {
     // "Plugins" menu
     mPluginsMenu.add(mFavoritesMI);
     mPluginsMenu.add(mReminderMI);
+    mPluginsMenu.add(mSearchMI);
     mPluginsMenu.addSeparator();
 
     JMenuItem[] pluginItems = createPluginMenuItems();
