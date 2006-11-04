@@ -55,6 +55,7 @@ import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.extras.searchplugin.SearchPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MarkedProgramsList;
 import util.io.IOUtilities;
@@ -866,6 +867,8 @@ public class SystemTray {
     ActionMenu action = FavoritesPlugin.getInstance().getButtonAction(null);
     pluginsMenu.add(new JMenuItem(action.getAction()));
     action = ReminderPlugin.getInstance().getButtonAction(null);
+    pluginsMenu.add(new JMenuItem(action.getAction()));
+    action = SearchPlugin.getInstance().getButtonAction();
     pluginsMenu.add(new JMenuItem(action.getAction()));
     pluginsMenu.addSeparator();
     
