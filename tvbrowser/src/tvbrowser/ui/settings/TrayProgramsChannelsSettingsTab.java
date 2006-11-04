@@ -25,15 +25,21 @@
  */
 package tvbrowser.ui.settings;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
@@ -45,6 +51,7 @@ import util.ui.UiUtilities;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
 
 import devplugin.Channel;
 import devplugin.SettingsItem;
@@ -64,6 +71,7 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
   private OrderChooser mChannelOCh;
   private static boolean mTrayIsEnabled = Settings.propTrayIsEnabled.getBoolean();
   private JLabel mSeparator1;
+  private JSlider mChannelWidth;
   
   private String mHelpLinkText;
   
@@ -78,11 +86,14 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
     mInstance = this;
     
     PanelBuilder builder = new PanelBuilder(new FormLayout(
-        "5dlu,fill:default:grow,5dlu",
-        "pref,5dlu,pref,10dlu,fill:default:grow,5dlu,pref"));
+        "5dlu,pref,2dlu,default,5dlu,pref,fill:default:grow,5dlu",
+        "pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu,fill:default:grow,5dlu,pref"));
     builder.setDefaultDialogBorder();
     CellConstraints cc = new CellConstraints();
-    
+    try {
+   mChannelWidth = new JSlider(SwingConstants.HORIZONTAL, 50, 150, Settings.propTrayChannelWidth.getInt());
+    }catch(Exception e){e.printStackTrace();}
+    System.out.println(mChannelWidth);
     mUseUserChannels = new JCheckBox(mLocalizer.msg("userChannels","Use user defined channels"),Settings.propTrayUseSpecialChannels.getBoolean());
     mUseUserChannels.setToolTipText(mLocalizer.msg("userChannelsToolTip","<html>If you select this you can choose the channels that will be used for<br><b>Programs at...</b> and <b>Now/Soon running programs</b>.<br>If this isn't selected the first 10 channels in default order will be used.</html>"));
     
@@ -101,12 +112,34 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
     mHelpLinkText = mHelpLabel.getText();
     mHelpLabel.setFont(mUseUserChannels.getFont());
     
+    builder.addSeparator(mLocalizer.msg("channelColumnWidth","Column with for channel name"), cc.xyw(1, 1, 8));
+    builder.add(mChannelWidth, cc.xy(2,3));
+    final JLabel valueLabel = builder.addLabel(String.valueOf(mChannelWidth.getValue()), cc.xy(4,3));
+    valueLabel.setHorizontalAlignment(JLabel.RIGHT);
+    Dimension dim = valueLabel.getPreferredSize();
+    valueLabel.setPreferredSize(new Dimension(Sizes.dialogUnitXAsPixel(20, builder.getPanel()), dim.height));
+
+    mChannelWidth.addChangeListener(new ChangeListener() {
+      public void stateChanged(ChangeEvent e) {
+        valueLabel.setText(String.valueOf(mChannelWidth.getValue()));
+      }
+    });
+    
+    JButton reset = new JButton(Localizer.getLocalization(Localizer.I18N_DEFAULT));
+    reset.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        mChannelWidth.setValue(Settings.propTrayChannelWidth.getDefault());
+      }
+    });
+    
+    builder.add(reset, cc.xy(6,3));
+    
     JPanel c = (JPanel) builder.addSeparator(mLocalizer.msg(
         "channelsSeparator",
-        "Which channels should be used for these displays?"), cc.xyw(1, 1, 3));
-    builder.add(mUseUserChannels, cc.xy(2,3));
-    builder.add(mChannelOCh, cc.xy(2, 5));
-    builder.add(mHelpLabel, cc.xyw(1, 7, 3));
+        "Which channels should be used for these displays?"), cc.xyw(1, 5, 8));
+    builder.add(mUseUserChannels, cc.xyw(2,7,7));
+    builder.add(mChannelOCh, cc.xyw(2, 9,7));
+    builder.add(mHelpLabel, cc.xyw(1, 11, 8));
         
     mSeparator1 = (JLabel)c.getComponent(0);
     
@@ -162,7 +195,8 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
     if (order != null)
       Settings.propTraySpecialChannels.setChannelArray(ch);
     
-    
+    if (mChannelWidth != null)
+      Settings.propTrayChannelWidth.setInt(mChannelWidth.getValue());
   }
 
   public Icon getIcon() {
