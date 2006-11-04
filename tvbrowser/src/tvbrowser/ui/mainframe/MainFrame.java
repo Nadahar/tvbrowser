@@ -75,6 +75,7 @@ import tvbrowser.extras.searchplugin.SearchPlugin;
 import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
 import tvbrowser.ui.finder.FinderPanel;
+import tvbrowser.ui.licensebox.LicenseBox;
 import tvbrowser.ui.mainframe.searchfield.SearchField;
 import tvbrowser.ui.mainframe.searchfield.SearchFilter;
 import tvbrowser.ui.mainframe.toolbar.ContextMenu;
@@ -974,12 +975,30 @@ public class MainFrame extends JFrame implements DateListener {
     if (TvDataUpdater.getInstance().isDownloading()) {
       TvDataUpdater.getInstance().stopDownload();
     } else {
-      UpdateDlg dlg = new UpdateDlg(this, true);
-      dlg.pack();
-      UiUtilities.centerAndShow(dlg);
-      int daysToDownload = dlg.getResult();
-      if (daysToDownload != UpdateDlg.CANCEL) {
-        runUpdateThread(daysToDownload, dlg.getSelectedTvDataServices());
+      boolean accept = true;
+    
+      if(Settings.propLastDownloadDate.getDate() == null) {
+        TvDataServiceProxy[] services = TvDataServiceProxyManager.getInstance().getDataServices();
+        
+        for(int i = 0; i < services.length; i++) {
+          String license = services[i].getInfo().getLicense();
+          
+          if(license != null) {
+            LicenseBox box=new LicenseBox(this, license, true);
+            util.ui.UiUtilities.centerAndShow(box);
+            accept = accept && box.agreed();
+          }
+        }
+      }
+      
+      if(accept) {
+        UpdateDlg dlg = new UpdateDlg(this, true);
+        dlg.pack();
+        UiUtilities.centerAndShow(dlg);
+        int daysToDownload = dlg.getResult();
+        if (daysToDownload != UpdateDlg.CANCEL) {
+          runUpdateThread(daysToDownload, dlg.getSelectedTvDataServices());
+        }
       }
     }
   }
