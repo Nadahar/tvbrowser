@@ -63,7 +63,7 @@ public class I18NPlugin extends Plugin {
 
   private Dimension mSize = null;
   
-  private int mDevider = -1;
+  private int mDevider = 200;
   
   /**
    * Contructor, stores current instance in static field
