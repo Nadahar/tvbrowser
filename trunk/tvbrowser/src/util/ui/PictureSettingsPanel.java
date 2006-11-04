@@ -125,6 +125,9 @@ public class PictureSettingsPanel extends JPanel {
    * @param showDescription Show the picture description.
    * @param showTitle Show the title in this panel.
    * @param addBorder If the panel should contains an empty border.
+   * @param duration The duration in minutes programs should have to show pictures.  
+   * @param clientPluginIds The ids of the plugins that mark a program that should show pictures then.
+   * @param additionalPanel A panel with additional settings.
    */
   public PictureSettingsPanel(int type, int timeRangeStart, int timeRangeEnd, boolean showDescription, boolean showTitle, boolean addBorder, int duration, String[] clientPluginIds, JPanel additionalPanel) {
     mShowPicturesInTimeRange = new JRadioButton(mLocalizer.msg("showInTimeRange","Show in time range:"), type == SHOW_IN_TIME_RANGE);

@@ -63,6 +63,7 @@ public class PictureAreaIcon implements Icon {
    * @param width The width of this area.
    * @param showDescription If description should be shown.
    * @param grayFilter If the image should be filtered to gray if the program is expired.
+   * @param zoom If the piture should be zoomed to width.
    */
   public PictureAreaIcon(Program p, Font f, int width, boolean showDescription, boolean grayFilter, boolean zoom) {
     mProgram = p;
