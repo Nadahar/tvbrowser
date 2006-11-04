@@ -1,5 +1,72 @@
 Changelog TVBrowser
 
+2.5 alpha
+=========
+
+-Features
+ * 727883 Für Windows: Autostart-Funktion
+ * 1494138 Tray - Middle click should start middle click action
+ * 1494139 Tray - Use Filter
+ * 1498066 Real compact layout
+ * 1499645 Highlight separators on toolbar editing
+ * 1503964 RadioTimes Dataservice
+ * 1502368 Favorites - Send program at once to Plugins
+ * 1502367 Different icons for marking
+ * 1503637 Warning for Windows 2000/XP if Fast Shutdown is activated
+ * 1504306 More important programs in tray
+ * 1504446 WebPlugin: Load FavIcon
+ * 1505294 All plugins should be able to send programs to other plugins
+ * 1505702 Encapsulate access to base plugins
+ * 1506684 Clipboard-Plugin should only copy to clipboard
+ * 1507483 A plugin should be able to let TVB scroll
+ * 1507694 12 - Hour - Format
+ * 1281742 : Calendar-Plugin: Use DALARM
+ * 1506885 Remove Group-Concept
+ * 1511604 Translation-Tool
+ * 1508147 CalendarPlugin: add more Interfaces
+           - Anbindung an Outlook mit Hilfe von jcom
+           - Anbindung an Mac iCal mit Hilfe von AppleScript
+           - Anbindung an Google Calendar 
+ * 950551 Fullscreen-View (computer screen)
+ * 1551539 Reminder window should be closed at program end
+ * 1280121 PrintPlugin: Filter drucken
+ * 1582414 Plugin should be able to send program with target to plugin
+ * 1584657 Plugins should be able to create and use filters
+ * Default für ProgramTabelle auf "Zeitblock" setzen. (Bodo)
+ * Restliche Fehler im Sender-Filtern in den Einstellungen fixen (manchmal wird die Liste links nicht neugeladen sondern leer gelassen)
+ * Filter erzeugen im Bewertungs-Plugin (Bodo)
+ * Neues Senden-an-System im CapturePlugin (Bodo)
+ * Added ability to change channel width in tray 
+
+2.2.2
+=====
+
+- Bugs
+ * 1392687 SearchPlugin - Doppeltes Suchergebnis
+ * 1526349 TVB freezes on group update if a group isn't available
+ * 1524378 Reminder is shown more than one times
+ * 1519528 PluginUpdate - Warn if a beta version should be installed
+ * 1520553 Short desciption shown - also if it's the beginning of desc.
+ * 1526948 Program changes from plugins are not saved
+ * 1530884 CapturePlugin - quotes are not handled correct
+ * 1531360 Reminder - Reminder window needs long to be shown
+ * 1537620 Long Search-Entries corrupt the Search Dialog
+ * 1551366 Problems on update from older versions to version 2.2/2.2.1
+ * 1552718 Wrong text in settings
+ * 1552788 If global icon setting is disabled the special ones mustn't
+ * 1552864 Edit favorites - long name-entries corrupt the dialog size
+ * 1554048 Slow performance on reactivating from tray
+ * 1554050 Sidebar is decreased if a component of it is removed
+ * 1580056 Minize on closing has wrong position in settings
+ * 1590141 Edit favorites: programs are send two times to plugins 
+
+- Features
+ * 1519526 Show updates for plugins
+ * 1495140 A day should be able to have > 256 Programs
+ * 1317785 ProgramTable mit Bildern
+ * 1579224 Save paths to icon/skin-themes relative
+ * Move SearchPlugin into base application
+
 2.2.1
 =====
 - Bugs
