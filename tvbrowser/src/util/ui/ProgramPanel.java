@@ -54,6 +54,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -602,12 +603,17 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       grp.setColor(test);
       grp.fillRect(0, 0, width - 1, height - 1);
 
+      Stroke str = grp.getStroke();
+      Color col = grp.getColor();
       float dash[] = { 10.0f };
       BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
           BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f);
       grp.setColor(Color.BLACK);
       grp.setStroke(dashed);
       grp.drawRect(0, 0, width - 1, height - 1);
+      
+      grp.setStroke(str);
+      grp.setColor(col);
     }
 
     // Draw all the text
