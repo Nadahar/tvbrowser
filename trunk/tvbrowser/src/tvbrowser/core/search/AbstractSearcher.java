@@ -25,20 +25,18 @@
  */
 package tvbrowser.core.search;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-
-
-import tvbrowser.core.Settings;
-import tvbrowser.core.TvDataBase;
-
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.Date;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramSearcher;
+import tvbrowser.core.Settings;
+import tvbrowser.core.TvDataBase;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * An abstract searcher implementation that reduces the checks on String checks.
@@ -141,7 +139,8 @@ public abstract class AbstractSearcher implements ProgramSearcher {
    * @param fieldArr The fields to search in
    * @param startDate The date to start the search.
    * @param nrDays The number of days to include after the start date. If
-   *        negative the days before the start date are used.
+   *        negative every day get's searched (from yesterday to 4 weeks into the
+   *        future)
    * @param channels The channels to search in.
    * @param sortByStartTime Should the results be sorted by the start time?
    *        If not, the results will be grouped by date and channel and the
@@ -158,9 +157,9 @@ public abstract class AbstractSearcher implements ProgramSearcher {
     }
 
     if (nrDays < 0) {
-      // Search in the past
-      startDate = startDate.addDays(nrDays);
-      nrDays = Math.abs(nrDays);
+      // Search complete Data, beginning yesteray to 4 weeks into the future
+      startDate = startDate.addDays(-1);
+      nrDays = 4*7;
     }
 
     // Perform the actual search

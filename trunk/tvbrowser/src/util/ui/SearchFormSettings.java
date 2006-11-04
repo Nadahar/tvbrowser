@@ -25,16 +25,16 @@
  */
 package util.ui;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
-import tvbrowser.core.search.regexsearch.RegexSearcher;
-import util.exc.TvBrowserException;
 import devplugin.Plugin;
 import devplugin.PluginManager;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramSearcher;
+import tvbrowser.core.search.regexsearch.RegexSearcher;
+import util.exc.TvBrowserException;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
  * Settings for the SearchForm
@@ -381,6 +381,9 @@ public class SearchFormSettings {
 
   /**
    * Gets the Nr of Days
+   *
+   * If this value is negativ, it searches all data (incl. yesterday)
+   *
    * @return Nr of Days to search 
    */
   public int getNrDays() {
@@ -389,7 +392,10 @@ public class SearchFormSettings {
   
   /**
    * Sets the Nr of Days
-   * @param nr
+   *
+   * If this value is negativ, it searches all data (incl. yesterday)
+   *
+   * @param nr Nr of Days to search
    */
   public void setNrDays(int nr) {
       mNrDays = nr;

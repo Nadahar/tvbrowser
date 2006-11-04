@@ -77,7 +77,7 @@ public class SearchForm extends JPanel {
 
   /** The values for the time combo box. */  
   private static final int[] TIME_VALUE_ARR = new int[] {
-    0, 1, 7, 14, 21, 1000
+    0, 1, 7, 14, 21, -1
   };
 
   /** The maximum length of the history */
