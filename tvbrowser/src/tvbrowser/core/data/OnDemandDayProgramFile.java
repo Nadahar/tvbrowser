@@ -120,7 +120,11 @@ public class OnDemandDayProgramFile {
       mDayProgram.removeAllPrograms();
       for (int i = 0; i < size; i++) {
         Program prog = loadProgram(dataFile, date, channel);
-        mDayProgram.addProgram(prog);
+        
+        if(prog != null)
+          mDayProgram.addProgram(prog);
+        else
+          break;
       }
 
       dataFile.close();
@@ -292,6 +296,7 @@ public class OnDemandDayProgramFile {
   private Program loadProgram(RandomAccessFile dataFile, Date date,
       Channel channel) throws IOException, ClassNotFoundException {
     int version = dataFile.readInt();
+    
     OnDemandProgram prog = new OnDemandProgram(channel, date, this);
 
     if (version == 3) {
@@ -300,7 +305,10 @@ public class OnDemandDayProgramFile {
       for (int i = 0; i < fieldCount; i++) {
         int typeId = dataFile.readInt();
         ProgramFieldType type = ProgramFieldType.getTypeForId(typeId);
-        if (type.getFormat() == ProgramFieldType.BINARY_FORMAT) {
+        
+        if (type.getFormat() == ProgramFieldType.UNKOWN_FORMAT)
+          return null;
+        else if (type.getFormat() == ProgramFieldType.BINARY_FORMAT) {
           long position = dataFile.getFilePointer();
 
           int n = dataFile.readInt();
@@ -326,9 +334,9 @@ public class OnDemandDayProgramFile {
         } else if (type.getFormat() == ProgramFieldType.TIME_FORMAT) {
           prog.setTimeField(type, dataFile.readInt());
         }
-      }
+      }      
     }
-
+    
     prog.setProgramLoadingIsComplete();
     
     return prog;

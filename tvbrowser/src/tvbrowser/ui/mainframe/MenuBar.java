@@ -55,6 +55,7 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.extras.searchplugin.SearchPlugin;
 import tvbrowser.ui.filter.dlgs.FilterButtons;
 import tvbrowser.ui.licensebox.LicenseBox;
 import tvbrowser.ui.mainframe.toolbar.ContextMenu;
@@ -84,7 +85,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
                     mConfigAssistantMI, mAboutMI, mKeyboardShortcutsMI,
                     mPreviousDayMI, mNextDayMI, mGotoNowMenuItem, mEditTimeButtonsMenuItem,
                     mToolbarCustomizeMI,
-                    mFavoritesMI, mReminderMI, mFullscreenMI;
+                    mFavoritesMI, mReminderMI, mFullscreenMI, mSearchMI;
   protected JMenu mFiltersMenu, mPluginsViewMenu, mLicenseMenu, mGoMenu, mViewMenu, mToolbarMenu;
 
   private JMenu mGotoDateMenu, mGotoChannelMenu, mGotoTimeMenu;
@@ -228,6 +229,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
     mFavoritesMI = new JMenuItem(FavoritesPlugin.getInstance().getButtonAction(mMainFrame).getAction());
     mReminderMI = new JMenuItem(ReminderPlugin.getInstance().getButtonAction(mMainFrame).getAction());
+    mSearchMI = new JMenuItem(SearchPlugin.getInstance().getButtonAction().getAction());
     
     mViewMenu.add(mToolbarMenu);
     mViewMenu.add(mStatusbarMI);
