@@ -47,7 +47,6 @@ public class PictureAreaIcon implements Icon {
   private boolean mIsExpired;
   private boolean mIsGrayFilter;
   private boolean mShowDescription;
-  private int mWidthDiff;
   
   /**
    * Constructor for programs with no picture or if pictures for 
@@ -83,11 +82,7 @@ public class PictureAreaIcon implements Icon {
         mScaledIcon = (ImageIcon)UiUtilities.scaleIcon(imic, width - 6);
       else
         mScaledIcon = imic;
-      
-      mWidthDiff = width - mScaledIcon.getIconWidth();
     }
-    else
-      mWidthDiff = 0;
     
     mCopyrightText = new TextAreaIcon(p.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE),f.deriveFont((float)(f.getSize() * 0.9)),width-6);
     mDescriptionText = new TextAreaIcon(showDescription ? p.getTextField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE) : "",f,width-6);
@@ -127,7 +122,7 @@ public class PictureAreaIcon implements Icon {
       mIsExpired = true;
     }
     
-    mScaledIcon.paintIcon(c,g,x+(mWidthDiff-6),y);
+    mScaledIcon.paintIcon(c,g,x,y);
     
     if(!mProgram.isExpired())
       g.setColor(Color.black);

@@ -190,7 +190,9 @@ public class ProgramPanelSettingsTab implements SettingsTab {
       ProgramFieldType type = (ProgramFieldType) typeIter.next();
       
       if ((type.getFormat() != ProgramFieldType.BINARY_FORMAT)
-        && (type != ProgramFieldType.INFO_TYPE))
+        && (type != ProgramFieldType.INFO_TYPE) && 
+        (type != ProgramFieldType.PICTURE_DESCRIPTION_TYPE) && 
+        (type != ProgramFieldType.PICTURE_COPYRIGHT_TYPE))
       {
         typeList.add(type);
       }

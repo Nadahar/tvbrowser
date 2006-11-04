@@ -663,7 +663,8 @@ public class TVBrowser {
     String autoDLType = Settings.propAutoDownloadType.getString();
 
     if ((ChannelList.getNumberOfSubscribedChannels() == 0)
-      || autoDLType.equals("never"))
+      || autoDLType.equals("never") ||
+      Settings.propLastDownloadDate.getDate() == null)
     {
       // Nothing to do
       return false;
