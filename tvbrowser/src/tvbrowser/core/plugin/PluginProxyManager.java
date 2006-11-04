@@ -385,8 +385,9 @@ public class PluginProxyManager {
         
     PluginsProgramFilter[] filters = item.getPlugin().getAvailableFilter();
     
-    for(PluginsProgramFilter filter : filters)
-      FilterManagerImpl.getInstance().addFilter(filter);
+    if(filters != null)
+      for(PluginsProgramFilter filter : filters)
+        FilterManagerImpl.getInstance().addFilter(filter);
   }
 
   /**
