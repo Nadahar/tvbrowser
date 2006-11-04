@@ -90,7 +90,7 @@ public class ProgramMenuItem extends JMenuItem {
    * @param time The time after midnight of the menu entry for ON_TIME programs.
    * @param n A value represents the position of this MenuItem.
    */
-  public ProgramMenuItem(Program p, int type, int time, int n) {System.out.println(Plugin.getPluginManager().getExampleProgram().getDateString());
+  public ProgramMenuItem(Program p, int type, int time, int n) {
     mProgram = p;
     mBackground = getBackground();
     boolean showToolTip = true, showIcon = true;
