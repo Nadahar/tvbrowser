@@ -174,7 +174,7 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
 
     if (mShowName) {
       mChannelName.paintIcon(menuItem, g, x, y);
-      x += ProgramMenuItem.CHANNEL_WIDTH;
+      x += Settings.propTrayChannelWidth.getInt();
     }
 
     int temp = y

@@ -44,6 +44,7 @@ import tvbrowser.core.Settings;
 import util.ui.Localizer;
 import util.ui.TextAreaIcon;
 import util.ui.UiUtilities;
+import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.Program;
 
@@ -71,10 +72,9 @@ public class ProgramMenuItem extends JMenuItem {
   private boolean mShowStartTime, mShowDate, mShowName;
   private Icon mIcon = null;
   private TextAreaIcon mChannelName;
-  
-  protected static final int CHANNEL_WIDTH = 72;
-  protected static final int TIME_WIDTH = (new JMenuItem()).getFontMetrics(mBoldFont).stringWidth(Plugin.getPluginManager().getExampleProgram().getTimeString()) + 8;
-  protected static final int DATE_WIDTH = (new JMenuItem()).getFontMetrics(mBoldFont).stringWidth(Plugin.getPluginManager().getExampleProgram().getDateString()) + 5;
+    
+  protected static final int TIME_WIDTH = (new JMenuItem()).getFontMetrics(mBoldFont).stringWidth(Plugin.getPluginManager().getExampleProgram().getTimeString()) + 10;
+  protected static final int DATE_WIDTH = (new JMenuItem()).getFontMetrics(mBoldFont).stringWidth(Plugin.getPluginManager().getExampleProgram().getDateString()) + (Date.getCurrentDate().getDayOfMonth() < 10 ? 15 : 9);
   
   protected static final int NOW_TYPE = 0;
   protected static final int SOON_TYPE = 1;
@@ -90,7 +90,7 @@ public class ProgramMenuItem extends JMenuItem {
    * @param time The time after midnight of the menu entry for ON_TIME programs.
    * @param n A value represents the position of this MenuItem.
    */
-  public ProgramMenuItem(Program p, int type, int time, int n) {
+  public ProgramMenuItem(Program p, int type, int time, int n) {System.out.println(Plugin.getPluginManager().getExampleProgram().getDateString());
     mProgram = p;
     mBackground = getBackground();
     boolean showToolTip = true, showIcon = true;
@@ -136,7 +136,7 @@ public class ProgramMenuItem extends JMenuItem {
     
     showIcon = showIcon && Settings.propEnableChannelIcons.getBoolean();
     
-    mChannelName = new TextAreaIcon(p.getChannel().getName(), mBoldFont,CHANNEL_WIDTH);
+    mChannelName = new TextAreaIcon(p.getChannel().getName(), mBoldFont, Settings.propTrayChannelWidth.getInt());
 
     if(n % 2 == 1 && n != -1) {
       Color temp = mBackground.darker();
@@ -231,7 +231,7 @@ public class ProgramMenuItem extends JMenuItem {
       width += 30;
     
     if(mShowName)
-      width += CHANNEL_WIDTH;
+      width += Settings.propTrayChannelWidth.getInt();
     if(mShowStartTime)
       width += TIME_WIDTH;
     if(mShowDate)

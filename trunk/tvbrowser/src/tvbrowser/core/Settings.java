@@ -518,6 +518,9 @@ public class Settings {
 
   public static final ChannelArrayProperty propTraySpecialChannels = new ChannelArrayProperty(
       mProp, "traySpecialChannels", new devplugin.Channel[] {});
+  
+  public static final IntProperty propTrayChannelWidth = new IntProperty(
+      mProp, "trayChannelWidth", 72);
 
   /*
    * Settings for the ON_TIME_TYPE of the ProgramMenuItem.
