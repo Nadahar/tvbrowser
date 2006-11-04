@@ -25,6 +25,27 @@
  */
 package util.ui;
 
+import devplugin.ContextMenuIf;
+import devplugin.Marker;
+import devplugin.Plugin;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
+import devplugin.ProgramInfoHelper;
+import tvbrowser.core.Settings;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
+import util.io.IOUtilities;
+import util.program.ProgramUtilities;
+import util.settings.ProgramPanelSettings;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -39,28 +60,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.logging.Level;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import tvbrowser.core.Settings;
-import tvbrowser.core.plugin.PluginProxy;
-import tvbrowser.core.plugin.PluginProxyManager;
-import util.io.IOUtilities;
-import util.program.ProgramUtilities;
-import util.settings.ProgramPanelSettings;
-import devplugin.ContextMenuIf;
-import devplugin.Marker;
-import devplugin.Plugin;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
-import devplugin.ProgramInfoHelper;
 
 /**
  * A ProgramPanel is a JComponent representing a single program.
@@ -501,7 +500,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
           }
         } else if (iconPluginArr[pluginIdx].compareToIgnoreCase("picture.id") == 0) {
           if(mProgram.getBinaryField(ProgramFieldType.PICTURE_TYPE) != null)
-            iconList.add(new ImageIcon("imgs/HasPicutre.gif"));
+            iconList.add(new ImageIcon("imgs/Info_HasPicture.png"));
         } else {
           PluginProxy plugin = mng.getPluginForId(iconPluginArr[pluginIdx]);
 
