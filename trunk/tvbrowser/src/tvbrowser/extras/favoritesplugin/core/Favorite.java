@@ -300,21 +300,30 @@ public abstract class Favorite {
 
   }
 
-  
   /**
    * Performs a new search, and refreshes the program marks
    * @throws TvBrowserException
    */
   public void updatePrograms() throws TvBrowserException {
-    updatePrograms(false);
+    updatePrograms(false, true);
+  }
+  
+  /**
+   * Performs a new search, and refreshes the program marks
+   * @param send If the new found programs should be send to plugins.
+   * @throws TvBrowserException
+   */
+  public void updatePrograms(boolean send) throws TvBrowserException {
+    updatePrograms(false, send);
   }
 
   /**
    * Performs a new search, and refreshes the program marks
    * @param dataUpdate The update was started after a data update.
+   * @param send If the new found programs should be send to plugins.
    * @throws TvBrowserException
    */
-  public void updatePrograms(boolean dataUpdate) throws TvBrowserException {
+  public void updatePrograms(boolean dataUpdate, boolean send) throws TvBrowserException {
     Channel[] channelArr;
     if (getLimitationConfiguration().isLimitedByChannel()) {
       channelArr = getLimitationConfiguration().getChannels();
@@ -323,7 +332,7 @@ public abstract class Favorite {
       channelArr = Plugin.getPluginManager().getSubscribedChannels();
     }
 
-    updatePrograms(internalSearchForPrograms(channelArr), dataUpdate);
+    updatePrograms(internalSearchForPrograms(channelArr), dataUpdate, send);
   }
   
   /**
@@ -332,10 +341,10 @@ public abstract class Favorite {
    * @throws TvBrowserException
    */
   public void refreshPrograms() throws TvBrowserException {
-    updatePrograms(mPrograms, false);
+    updatePrograms(mPrograms, false, false);
   }
   
-  private void updatePrograms(Program[] progs, boolean dataUpdate) throws TvBrowserException {
+  private void updatePrograms(Program[] progs, boolean dataUpdate, boolean send) throws TvBrowserException {
     Program[] newProgList = filterByLimitations(progs);
 
 
@@ -406,7 +415,7 @@ public abstract class Favorite {
     mNewProgramsArr = newPrograms.toArray(new Program[newPrograms.size()]);
     ProgramReceiveTarget[] pluginArr = getForwardPlugins();
     
-    if(mNewProgramsArr.length > 0) {
+    if(mNewProgramsArr.length > 0 && send) {
       if(!dataUpdate)
         for (int i=0; i<pluginArr.length; i++) {
           pluginArr[i].getReceifeIfForIdOfTarget().receivePrograms(mNewProgramsArr,pluginArr[i]);

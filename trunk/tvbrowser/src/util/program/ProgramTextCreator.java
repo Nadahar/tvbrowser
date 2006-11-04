@@ -26,16 +26,12 @@
 
 package util.program;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
 
 import tvbrowser.core.Settings;
 import util.settings.ProgramPanelSettings;
@@ -193,7 +189,7 @@ public class ProgramTextCreator {
         show || (settings.isShowingPictureForDuration() && settings.getDuration() <= prog.getLength())) {
       byte[] image = prog.getBinaryField(ProgramFieldType.PICTURE_TYPE);
       if (image != null) {
-        String line = "<tr><td></td><td valign=\"top\" style=\"color:#808080; font-size:0\">";
+        String line = "<tr><td></td><td valign=\"top\" style=\"color:black; font-size:0\">";
         buffer.append(line);
         try {
           ImageIcon imageIcon = new ImageIcon(image);
@@ -201,26 +197,19 @@ public class ProgramTextCreator {
           if(zoom != 100)
             imageIcon = (ImageIcon)UiUtilities.scaleIcon(imageIcon, imageIcon.getIconWidth() * zoom/100);
           
-          JPanel imagePanel = new JPanel(new BorderLayout(0,0));
-          imagePanel.add(new JLabel(imageIcon), BorderLayout.WEST);
-          imagePanel.setBackground(Color.white);
-          
-          JTextArea area = new JTextArea();
-          area.setFont(bFont);
-          area.setOpaque(false);
-          area.setEditable(false);          
-          area.setLineWrap(true);
-          area.setWrapStyleWord(true);
-          
           StringBuffer value = new StringBuffer(prog.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE));
           
           if(settings.isShowingPictureDescription() &&  prog.getTextField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE) != null)
-            value.append("\n").append(prog.getTextField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE));
-          
-          area.setText(value.toString());
-              
-          imagePanel.add(area, BorderLayout.SOUTH);
-          buffer.append(doc.createCompTag(imagePanel));
+            value.append("<br>").append(prog.getTextField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE));
+                    
+          buffer.append(doc.createCompTag(new JLabel(imageIcon)));
+          buffer.append("<div style=\"font-size:");
+
+          buffer.append(mBodyFontSize);
+
+          buffer.append("\">");
+          buffer.append(value);
+          buffer.append("</div>");          
           buffer.append("</td></tr>");
         } catch (Exception e) {
           // Picture was wrong;
