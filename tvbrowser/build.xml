@@ -308,6 +308,7 @@
       <fileset dir="${classes.dir}" includes="util/**"/>
       <fileset dir="${classes.dir}" includes="com/**"/>
       <fileset dir="${unpacked.dir}/skinlf.jar" includes="com/**"/>
+   	  <fileset dir="${unpacked.dir}/skinlf.jar" includes="org/**"/>
       <fileset dir="${unpacked.dir}/bsh-2.0b1.jar" includes="bsh/**"/>
       <fileset dir="${unpacked.dir}/forms-1.0.7.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/looks-2.0.4.jar" includes="com/**"/>
