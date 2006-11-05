@@ -177,7 +177,7 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
       }
     });
     
-    JButton cancel = new JButton(SettingsDialog.mLocalizer.msg("cancel","Abbrechen"));
+    JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     cancel.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         close();
