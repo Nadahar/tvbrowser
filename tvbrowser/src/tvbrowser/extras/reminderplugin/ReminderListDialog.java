@@ -216,7 +216,10 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
 
     getRootPane().setDefaultButton(ok);
 
-    setSize(new Dimension(550, 350));
+    int width = Integer.parseInt(ReminderPlugin.getInstance().getSettings().getProperty("dlgWidth","550"));
+    int height = Integer.parseInt(ReminderPlugin.getInstance().getSettings().getProperty("dlgHeight","350"));
+    
+    setSize(new Dimension(width,height));
   }
 
   private void installTableModel(ReminderTableModel model) {

@@ -185,8 +185,8 @@ public class ProgramTextCreator {
     }
     
     if(settings.isShowingPictureEver() || 
-        (settings.isShowingPictureInTimeRange() && !ProgramUtilities.isNotInTimeRange(settings.getPictureTimeRangeStart(),settings.getPictureTimeRangeEnd(), prog)) ||
-        show || (settings.isShowingPictureForDuration() && settings.getDuration() <= prog.getLength())) {
+      (settings.isShowingPictureInTimeRange() && !ProgramUtilities.isNotInTimeRange(settings.getPictureTimeRangeStart(),settings.getPictureTimeRangeEnd(), prog)) ||
+      show || (settings.isShowingPictureForDuration() && settings.getDuration() <= prog.getLength())) {
       byte[] image = prog.getBinaryField(ProgramFieldType.PICTURE_TYPE);
       if (image != null) {
         String line = "<tr><td></td><td valign=\"top\" style=\"color:black; font-size:0\">";

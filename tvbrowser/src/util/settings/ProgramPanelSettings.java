@@ -72,7 +72,10 @@ public class ProgramPanelSettings {
    * @return If the type of the picture showing is set to show pictures in time range. 
    */
   public boolean isShowingPictureInTimeRange() {
-    return mType == PictureSettingsPanel.SHOW_IN_TIME_RANGE;
+    return mType == PictureSettingsPanel.SHOW_IN_TIME_RANGE || 
+           mType == PictureSettingsPanel.SHOW_IN_TIME_RANGE + PictureSettingsPanel.SHOW_FOR_DURATION + PictureSettingsPanel.SHOW_FOR_PLUGINS ||
+           mType == PictureSettingsPanel.SHOW_IN_TIME_RANGE + PictureSettingsPanel.SHOW_FOR_DURATION ||
+           mType == PictureSettingsPanel.SHOW_IN_TIME_RANGE + PictureSettingsPanel.SHOW_FOR_PLUGINS;
   }
 
   /**
@@ -93,14 +96,20 @@ public class ProgramPanelSettings {
    * @return If the type of the picture showing is set to show picture for plugins.
    */
   public boolean isShowingPictureForPlugins() {
-    return mType == PictureSettingsPanel.SHOW_FOR_PLUGINS;
+    return mType == PictureSettingsPanel.SHOW_FOR_PLUGINS ||
+           mType == PictureSettingsPanel.SHOW_FOR_PLUGINS + PictureSettingsPanel.SHOW_IN_TIME_RANGE + PictureSettingsPanel.SHOW_FOR_DURATION ||
+           mType == PictureSettingsPanel.SHOW_FOR_PLUGINS + PictureSettingsPanel.SHOW_IN_TIME_RANGE ||
+           mType == PictureSettingsPanel.SHOW_FOR_PLUGINS + PictureSettingsPanel.SHOW_FOR_DURATION;
   }
   
   /**
    * @return True if the type of the picture showing is set to show picture for duration.
    */
   public boolean isShowingPictureForDuration() {
-    return mType == PictureSettingsPanel.SHOW_FOR_DURATION;
+    return mType == PictureSettingsPanel.SHOW_FOR_DURATION ||
+           mType == PictureSettingsPanel.SHOW_FOR_DURATION + PictureSettingsPanel.SHOW_FOR_PLUGINS + PictureSettingsPanel.SHOW_IN_TIME_RANGE ||
+           mType == PictureSettingsPanel.SHOW_FOR_DURATION + PictureSettingsPanel.SHOW_FOR_PLUGINS ||
+           mType == PictureSettingsPanel.SHOW_FOR_DURATION + PictureSettingsPanel.SHOW_IN_TIME_RANGE;
   }
    
   /**

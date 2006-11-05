@@ -73,6 +73,7 @@ import devplugin.*;
  */
 public class ReminderPlugin {
 
+  /** The localizer for this class. */
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ReminderPlugin.class);
 
@@ -132,6 +133,12 @@ public class ReminderPlugin {
 
   }
 
+  /**
+   * Gets the current instance of this class, or if
+   * there is no instance creates a new one.
+   * 
+   * @return The current instance of this class.
+   */
   public static synchronized ReminderPlugin getInstance() {
     if (mInstance == null)
       new ReminderPlugin();
@@ -226,14 +233,25 @@ public class ReminderPlugin {
     }
   }
 
+  /**
+   * Gets the settings for the reminder.
+   * 
+   * @return The settings of the reminder.
+   */
   public Properties getSettings() {
     return mSettings;
   }
   
+  /**
+   * Halt the remider listener.
+   */
   public void pauseRemider() {
     mReminderList.stopTimer();
   }
 
+  /**
+   * Save the reminder data.
+   */
   public void store() {
     ObjectOutputStream out = null;
     try {
@@ -543,7 +561,21 @@ public class ReminderPlugin {
     AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent evt) {
         ReminderListDialog dlg = new ReminderListDialog(parentFrame, mReminderList);
-        UiUtilities.centerAndShow(dlg);
+        
+        int x = Integer.parseInt(mSettings.getProperty("dlgXPos","-1"));
+        int y = Integer.parseInt(mSettings.getProperty("dlgYPos","-1"));
+        
+        if(x == -1 || y == -1)
+          UiUtilities.centerAndShow(dlg);
+        else {
+          dlg.setLocation(x,y);
+          dlg.setVisible(true);
+        }
+        
+        mSettings.setProperty("dlgXPos", String.valueOf(dlg.getX()));
+        mSettings.setProperty("dlgYPos", String.valueOf(dlg.getY()));
+        mSettings.setProperty("dlgWidth", String.valueOf(dlg.getWidth()));
+        mSettings.setProperty("dlgHeight", String.valueOf(dlg.getHeight()));
       }
     };
 
@@ -693,6 +725,6 @@ public class ReminderPlugin {
    * @since 2.2.2
    */
   protected ProgramPanelSettings getProgramPanelSettings(boolean showOnlyDateAndTitle) {
-    return new ProgramPanelSettings(Integer.parseInt(mSettings.getProperty("pictureType","2")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeStart","1080")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeEnd","1380")), showOnlyDateAndTitle, mSettings.getProperty("pictureShowsDescription","true").compareTo("true") == 0,Integer.parseInt(mSettings.getProperty("pictureDuration","10")));
+    return new ProgramPanelSettings(Integer.parseInt(mSettings.getProperty("pictureType","0")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeStart","1080")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeEnd","1380")), showOnlyDateAndTitle, mSettings.getProperty("pictureShowsDescription","true").compareTo("true") == 0,Integer.parseInt(mSettings.getProperty("pictureDuration","10")));
   }
 }
