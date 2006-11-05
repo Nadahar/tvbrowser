@@ -29,6 +29,8 @@ package tvbrowser.ui.mainframe.macosx;
 
 import tvbrowser.ui.mainframe.MenuBar;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.ui.Localizer;
+
 import javax.swing.*;
 
 import com.apple.eawt.*;
@@ -59,7 +61,7 @@ public class MacOSXMenuBar extends MenuBar {
 		
     mPluginsMenu = new JMenu(mLocalizer.msg("menu.plugins", "Plugins"));
     add(mPluginsMenu);
-    JMenu helpMenu = new JMenu(mLocalizer.msg("menu.help", "Help"));
+    JMenu helpMenu = new JMenu(Localizer.getLocalization(Localizer.I18N_HELP));
     add(helpMenu);
 
 
