@@ -444,7 +444,7 @@ Section "$(STD_SECTION_NAME)"
       "$INSTDIR\forum.url"
 
     CreateShortCut \
-      "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\Deutsches Handuch.lnk" \
+      "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\Deutsches Handbuch.lnk" \
       "$INSTDIR\wiki.url"
 
     CreateShortCut \
