@@ -58,7 +58,7 @@ public class PictureSettingsTab implements SettingsTab {
       Settings.propPictureDuration.setInt(mPictureSettings.getPictureDurationTime());
       Settings.propIsPictureShowingDescription.setBoolean(mPictureSettings.getPictureIsShowingDescription());
       
-      if(mPictureSettings.getPictureShowingType() == PictureSettingsPanel.SHOW_FOR_PLUGINS)
+      if(PictureSettingsPanel.typeContainsType(mPictureSettings.getPictureShowingType(),PictureSettingsPanel.SHOW_FOR_PLUGINS))
         Settings.propPicturePluginIds.setStringArray(mPictureSettings.getClientPluginIds());
     }
   }

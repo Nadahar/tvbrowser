@@ -392,13 +392,11 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       programHasChanged();
     }
     
-    boolean dontShow = false;
+    boolean dontShow = true;
     
     if(mSettings.isShowingPictureForPlugins()) {
       String[] pluginIds = mSettings.getPluginIds();
       Marker[] marker = mProgram.getMarkerArr();
-      
-      dontShow = true;
       
       if(marker != null && pluginIds != null) {
         for(int i = 0; i < marker.length; i++) {
@@ -413,15 +411,15 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     }
     
     // Create the picture area icon
-    if(mProgram.getBinaryField(ProgramFieldType.PICTURE_TYPE) == null ||
-        mSettings.isShowingPictureNever() ||
+    if(mProgram.getBinaryField(ProgramFieldType.PICTURE_TYPE) != null && 
+        !mSettings.isShowingPictureNever() && (!dontShow || 
         (mSettings.isShowingPictureInTimeRange() && 
-         ProgramUtilities.isNotInTimeRange(mSettings.getPictureTimeRangeStart(),mSettings.getPictureTimeRangeEnd(),program)) ||
-         dontShow || (mSettings.isShowingPictureForDuration() && mSettings.getDuration() > program.getLength())
-       )
-      mPictureAreaIcon = new PictureAreaIcon();
-    else
+         !ProgramUtilities.isNotInTimeRange(mSettings.getPictureTimeRangeStart(),mSettings.getPictureTimeRangeEnd(),program)) ||
+         (mSettings.isShowingPictureForDuration() && mSettings.getDuration() <= program.getLength())
+         ))
       mPictureAreaIcon = new PictureAreaIcon(program,mNormalFont, WIDTH_RIGHT - 4, mSettings.isShowingPictureDescription(), true, false);
+    else
+      mPictureAreaIcon = new PictureAreaIcon();
     
     // Calculate the maximum description lines
     int titleHeight = mTitleIcon.getIconHeight();

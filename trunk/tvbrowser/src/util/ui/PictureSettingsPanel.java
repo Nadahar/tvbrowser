@@ -69,29 +69,29 @@ public class PictureSettingsPanel extends JPanel {
 
   /** The localizer for this class */
   public static Localizer mLocalizer = Localizer.getLocalizerFor(PictureSettingsPanel.class);
-  
-  /** Show the pictures in time range */
-  public static final int SHOW_IN_TIME_RANGE = 0;
+
+  /** Show the pictures never */
+  public static final int SHOW_NEVER = 0;
   /** Always show the pictures */
   public static final int SHOW_EVER = 1;
-  /** Show the pictures never */
-  public static final int SHOW_NEVER = 2;
+  /** Show the pictures in time range */
+  public static final int SHOW_IN_TIME_RANGE = 2;
   /** Show the pictures for selected plugins */
   public static final int SHOW_FOR_PLUGINS = 3;
   /** Show the pictures for programs with selected duration */
   public static final int SHOW_FOR_DURATION = 4;
   
-  private JRadioButton mShowPicturesInTimeRange, mShowPicturesEver, mShowPicturesNever, mShowPicturesForDuration;
+  private JRadioButton mShowPicturesEver, mShowPicturesNever, mShowPicturesForSelection;
+  private JCheckBox mShowPicturesInTimeRange, mShowPicturesForDuration, mShowPicturesForPlugins;
   private JSpinner mPictureStartTime, mPictureEndTime, mDuration;
   private JLabel mStartLabel, mEndLabel;
   private JCheckBox mShowDescription;
-  
-  //private JPanel mSubPanel;
-  private JRadioButton mShowPicturesForPlugins;
+    
   private JLabel mPluginLabel;
   private Marker[] mClientPlugins;
   
   private JEditorPane mHelpLabel;
+  private JButton choose;
 
   /**
    * Creates an instance of this class.
@@ -130,17 +130,19 @@ public class PictureSettingsPanel extends JPanel {
    * @param additionalPanel A panel with additional settings.
    */
   public PictureSettingsPanel(int type, int timeRangeStart, int timeRangeEnd, boolean showDescription, boolean showTitle, boolean addBorder, int duration, String[] clientPluginIds, JPanel additionalPanel) {
-    mShowPicturesInTimeRange = new JRadioButton(mLocalizer.msg("showInTimeRange","Show in time range:"), type == SHOW_IN_TIME_RANGE);
-    mShowPicturesEver = new JRadioButton(mLocalizer.msg("showEver","Show always"), type == SHOW_EVER);
+    try {
     mShowPicturesNever = new JRadioButton(mLocalizer.msg("showNever","Show never"), type == SHOW_NEVER);
-    mShowPicturesForDuration = new JRadioButton(mLocalizer.msg("showForDuration","Show for duration more than or equals to:"), type == SHOW_FOR_DURATION);
+    mShowPicturesEver = new JRadioButton(mLocalizer.msg("showEver","Show always"), type == SHOW_EVER);
+    mShowPicturesForSelection = new JRadioButton(mLocalizer.msg("showForSelection","Selection..."), type > 1);
+    
+    mShowPicturesInTimeRange = new JCheckBox(mLocalizer.msg("showInTimeRange","Show in time range:"), typeContainsType(type,SHOW_IN_TIME_RANGE));
+    mShowPicturesForDuration = new JCheckBox(mLocalizer.msg("showForDuration","Show for duration more than or equals to:"), typeContainsType(type,SHOW_FOR_DURATION));
     
     ButtonGroup bg = new ButtonGroup();
-    
-    bg.add(mShowPicturesInTimeRange);
+        
     bg.add(mShowPicturesEver);
     bg.add(mShowPicturesNever);
-    bg.add(mShowPicturesForDuration);
+    bg.add(mShowPicturesForSelection);
     
     String timePattern = mLocalizer.msg("timePattern","hh:mm a");       
     
@@ -176,8 +178,8 @@ public class PictureSettingsPanel extends JPanel {
     CellConstraints cc = new CellConstraints();
     
     FormLayout layout = new FormLayout(
-        "5dlu, 12dlu, pref, 5dlu, pref, 5dlu, pref:grow, 5dlu",
-        "pref,pref,pref,2dlu,pref,pref,2dlu,pref,pref,10dlu,pref,5dlu,pref,fill:10dlu:grow,pref");
+        "5dlu, 12dlu, 15dlu, pref, 5dlu, pref, 5dlu, pref:grow, 5dlu",
+        "pref,pref,pref,2dlu,pref,pref,2dlu,pref,2dlu,pref,pref,10dlu,pref,5dlu,pref,fill:10dlu:grow,pref");
     
     PanelBuilder pb = new PanelBuilder(layout, this);
     
@@ -190,28 +192,32 @@ public class PictureSettingsPanel extends JPanel {
       layout.insertRow(1,new RowSpec("5dlu"));
       layout.insertRow(1,new RowSpec("pref"));
     
-      pb.addSeparator(mLocalizer.msg("basics","Basic picture settings"), cc.xyw(1,y,8));
+      pb.addSeparator(mLocalizer.msg("basics","Basic picture settings"), cc.xyw(1,y,9));
       y += 2;
     }
     
-    pb.add(mShowPicturesInTimeRange, cc.xyw(2,y++,7));
-    mStartLabel = pb.addLabel(mLocalizer.msg("startTime","From:"), cc.xy(3,y));
-    pb.add(mPictureStartTime, cc.xy(5,y++));
-    mEndLabel = pb.addLabel(mLocalizer.msg("endTime","To:"), cc.xy(3,y));
-    pb.add(mPictureEndTime, cc.xy(5,y++));
+    pb.add(mShowPicturesNever, cc.xyw(2,y++,8));
+    pb.add(mShowPicturesEver, cc.xyw(2,y++,8));
+    pb.add(mShowPicturesForSelection, cc.xyw(2,y++,8));
     
-    pb.add(mShowPicturesForDuration, cc.xyw(2,++y,7));
-    pb.add(mDuration, cc.xy(5,++y));        
-    final JLabel minutesLabel = pb.addLabel(mLocalizer.msg("minutes","Minutes"), cc.xy(7,y++));
+    pb.add(mShowPicturesInTimeRange, cc.xyw(3,++y,7));
+    mStartLabel = pb.addLabel(mLocalizer.msg("startTime","From:"), cc.xy(4,++y));
+    pb.add(mPictureStartTime, cc.xy(6,y++));
+    mEndLabel = pb.addLabel(mLocalizer.msg("endTime","To:"), cc.xy(4,++y));
+    pb.add(mPictureEndTime, cc.xy(6,y++));
+    
+    pb.add(mShowPicturesForDuration, cc.xyw(3,++y,7));
+    pb.add(mDuration, cc.xy(6,++y));
+    final JLabel minutesLabel = pb.addLabel(mLocalizer.msg("minutes","Minutes"), cc.xy(8,y++));
     
     if(clientPluginIds != null) {
-      JPanel mSubPanel = new JPanel(new FormLayout("12dlu,pref:grow,5dlu,pref","pref,2dlu,pref"));
+      JPanel mSubPanel = new JPanel(new FormLayout("15dlu,pref:grow,5dlu,pref","pref,2dlu,pref"));
       
-      mShowPicturesForPlugins = new JRadioButton(mLocalizer.msg("showPicturesForPlugins","Show for programs that are marked by plugins:"), type == PictureSettingsPanel.SHOW_FOR_PLUGINS);        
+      mShowPicturesForPlugins = new JCheckBox(mLocalizer.msg("showPicturesForPlugins","Show for programs that are marked by plugins:"), typeContainsType(type,SHOW_FOR_PLUGINS));        
       mPluginLabel = new JLabel();
-      mPluginLabel.setEnabled(type == PictureSettingsPanel.SHOW_FOR_PLUGINS);
+      mPluginLabel.setEnabled(typeContainsType(type,SHOW_FOR_PLUGINS));
       
-      final JButton choose = new JButton(mLocalizer.msg("selectPlugins","Choose Plugins"));
+      choose = new JButton(mLocalizer.msg("selectPlugins","Choose Plugins"));
       choose.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
@@ -229,7 +235,7 @@ public class PictureSettingsPanel extends JPanel {
           handlePluginSelection();
         }
       });
-      choose.setEnabled(type == PictureSettingsPanel.SHOW_FOR_PLUGINS);
+      choose.setEnabled(typeContainsType(type,SHOW_FOR_PLUGINS));
       
       mShowPicturesForPlugins.addItemListener(new ItemListener() {
         public void itemStateChanged(ItemEvent e) {
@@ -258,26 +264,24 @@ public class PictureSettingsPanel extends JPanel {
       
       mSubPanel.add(mShowPicturesForPlugins, cc.xyw(1,1,4));
       mSubPanel.add(mPluginLabel, cc.xy(2,3));
-      mSubPanel.add(choose, cc.xy(4,3));
-
-      bg.add(mShowPicturesForPlugins);
+      mSubPanel.add(choose, cc.xy(4,3));      
       
+      layout.insertRow(y,new RowSpec("2dlu"));
       layout.insertRow(++y,new RowSpec("pref"));
-      pb.add(mSubPanel, cc.xyw(2,y,6));      
+      pb.add(mSubPanel, cc.xyw(3,y,6));      
       layout.insertRow(++y,new RowSpec("2dlu"));
+      y++;
     }
     
-    pb.add(mShowPicturesEver, cc.xyw(2,++y,7));
-    pb.add(mShowPicturesNever, cc.xyw(2,++y,7));y++;
-    pb.addSeparator(mLocalizer.msg("options","Picture options"), cc.xyw(1,++y,8));y++;
-    pb.add(mShowDescription, cc.xyw(2,++y,7));
+    pb.addSeparator(mLocalizer.msg("options","Picture options"), cc.xyw(1,++y,9));y++;
+    pb.add(mShowDescription, cc.xyw(2,++y,8));
     
     if(additionalPanel != null) {      
       layout.insertRow(++y,new RowSpec("pref"));
-      pb.add(additionalPanel, cc.xyw(1,y,8));      
+      pb.add(additionalPanel, cc.xyw(1,y,9));      
     }
     
-    pb.add(mHelpLabel, cc.xyw(2,y+2,7));
+    pb.add(mHelpLabel, cc.xyw(2,y+2,8));
     
     mShowPicturesInTimeRange.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
@@ -301,9 +305,31 @@ public class PictureSettingsPanel extends JPanel {
       }
     });
     
+    mShowPicturesForSelection.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        mShowPicturesForDuration.setEnabled(mShowPicturesForSelection.isSelected());
+        mShowPicturesInTimeRange.setEnabled(mShowPicturesForSelection.isSelected());
+        mStartLabel.setEnabled(mShowPicturesForSelection.isSelected());
+        mEndLabel.setEnabled(mShowPicturesForSelection.isSelected());
+        minutesLabel.setEnabled(mShowPicturesForSelection.isSelected());
+        mPictureStartTime.setEnabled(mShowPicturesForSelection.isSelected());
+        mPictureEndTime.setEnabled(mShowPicturesForSelection.isSelected());
+        mDuration.setEnabled(mShowPicturesForSelection.isSelected());
+        
+        if(mShowPicturesForPlugins != null)
+          mShowPicturesForPlugins.setEnabled(mShowPicturesForSelection.isSelected());
+        if(mPluginLabel != null)
+          mPluginLabel.setEnabled(mShowPicturesForSelection.isSelected());
+        if(choose != null)
+          choose.setEnabled(mShowPicturesForSelection.isSelected());
+      }
+    });
+    
     mShowPicturesInTimeRange.getItemListeners()[0].itemStateChanged(null);
     mShowPicturesForDuration.getItemListeners()[0].itemStateChanged(null);
+    mShowPicturesForSelection.getItemListeners()[0].itemStateChanged(null);
     mShowPicturesNever.getItemListeners()[0].itemStateChanged(null);
+    }catch(Exception e) {e.printStackTrace();}
   }
   
   private void handlePluginSelection() {
@@ -328,7 +354,20 @@ public class PictureSettingsPanel extends JPanel {
    * @return The picture showing type of this settings
    */
   public int getPictureShowingType() {
-    return mShowPicturesInTimeRange.isSelected() ? SHOW_IN_TIME_RANGE : (mShowPicturesEver.isSelected() ? SHOW_EVER : mShowPicturesForPlugins != null && mShowPicturesForPlugins.isSelected() ? SHOW_FOR_PLUGINS : (mShowPicturesForDuration.isSelected() ? SHOW_FOR_DURATION : SHOW_NEVER));
+    int value = SHOW_NEVER;
+    
+    if(mShowPicturesEver.isSelected())
+      value = SHOW_EVER;
+    else if(mShowPicturesForSelection.isSelected()) {
+      if(mShowPicturesForDuration.isSelected())
+        value += SHOW_FOR_DURATION;
+      if(mShowPicturesForPlugins != null && mShowPicturesForPlugins.isSelected())
+        value += SHOW_FOR_PLUGINS;
+      if(mShowPicturesInTimeRange.isSelected())
+        value += SHOW_IN_TIME_RANGE;
+    }
+    
+    return value;
   }
 
   /**
@@ -379,5 +418,35 @@ public class PictureSettingsPanel extends JPanel {
     }
     
     return null;
+  }
+  
+  /**
+   * Checks if a given type to check contains a type.
+   * 
+   * @param typeToCheck The type to check.
+   * @param containingType The type to which should the typeToCheck is to check for. 
+   * @return True if the typeToCheck contains the containingType
+   */
+  public static boolean typeContainsType(int typeToCheck, int containingType) {
+    if(containingType == SHOW_FOR_PLUGINS)
+      return 
+        typeToCheck == PictureSettingsPanel.SHOW_FOR_PLUGINS || 
+        typeToCheck == PictureSettingsPanel.SHOW_FOR_PLUGINS + PictureSettingsPanel.SHOW_IN_TIME_RANGE + PictureSettingsPanel.SHOW_FOR_DURATION ||
+        typeToCheck == PictureSettingsPanel.SHOW_FOR_PLUGINS + PictureSettingsPanel.SHOW_IN_TIME_RANGE ||
+        typeToCheck == PictureSettingsPanel.SHOW_FOR_PLUGINS + PictureSettingsPanel.SHOW_FOR_DURATION;
+    else if(containingType == SHOW_FOR_DURATION)
+      return
+        typeToCheck == PictureSettingsPanel.SHOW_FOR_DURATION ||
+        typeToCheck == PictureSettingsPanel.SHOW_FOR_DURATION + PictureSettingsPanel.SHOW_FOR_PLUGINS + PictureSettingsPanel.SHOW_IN_TIME_RANGE ||
+        typeToCheck == PictureSettingsPanel.SHOW_FOR_DURATION + PictureSettingsPanel.SHOW_FOR_PLUGINS ||
+        typeToCheck == PictureSettingsPanel.SHOW_FOR_DURATION + PictureSettingsPanel.SHOW_IN_TIME_RANGE;
+    else if(containingType == SHOW_IN_TIME_RANGE)
+      return
+        typeToCheck == PictureSettingsPanel.SHOW_IN_TIME_RANGE || 
+        typeToCheck == PictureSettingsPanel.SHOW_IN_TIME_RANGE + PictureSettingsPanel.SHOW_FOR_DURATION + PictureSettingsPanel.SHOW_FOR_PLUGINS ||
+        typeToCheck == PictureSettingsPanel.SHOW_IN_TIME_RANGE + PictureSettingsPanel.SHOW_FOR_DURATION ||
+        typeToCheck == PictureSettingsPanel.SHOW_IN_TIME_RANGE + PictureSettingsPanel.SHOW_FOR_PLUGINS;
+    else 
+      return typeToCheck == containingType;
   }
 }
