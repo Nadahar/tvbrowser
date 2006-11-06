@@ -246,7 +246,8 @@ public class ReminderFrame implements WindowClosingIf {
   
   
   private void updateCloseBtText() {
-    mCloseBt.setText(mCloseBtText + " (" + mRemainingSecs + ")");
+    if(mRemainingSecs <= 10)
+      mCloseBt.setText(mCloseBtText + " (" + mRemainingSecs + ")");
   }
   
   
