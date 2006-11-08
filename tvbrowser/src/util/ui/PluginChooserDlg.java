@@ -157,7 +157,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
     contentPane.setBorder(Borders.DLU4_BORDER);
     CellConstraints cc = new CellConstraints();
     
-    ProgramReceiveIf[] tempProgramReceiveIf = Plugin.getPluginManager().getReceiveIfs(caller);
+    ProgramReceiveIf[] tempProgramReceiveIf = Plugin.getPluginManager().getReceiveIfs(caller,null);
     
     if(caller != null) {
       ArrayList<ProgramReceiveIf> list = new ArrayList<ProgramReceiveIf>();

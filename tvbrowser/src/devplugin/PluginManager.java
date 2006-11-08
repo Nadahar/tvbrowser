@@ -364,10 +364,11 @@ public interface PluginManager {
    * Return all Plugins/Functions that are able to receive programs.
    * 
    * @param caller The caller ProgramReceiveIf.
+   * @param callerTarget The target that calls the receive if array.
    * @return The ProgramReceiveIfs.
    * @since 2.5
    */
-  public ProgramReceiveIf[] getReceiveIfs(ProgramReceiveIf caller);
+  public ProgramReceiveIf[] getReceiveIfs(ProgramReceiveIf caller, ProgramReceiveTarget callerTarget);
   
   /**
    * Return the ReceiveIfFor given id or <code>null</code> if there is

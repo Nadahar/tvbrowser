@@ -64,6 +64,7 @@ import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramFilter;
 import devplugin.ProgramReceiveIf;
+import devplugin.ProgramReceiveTarget;
 import devplugin.ProgramSearcher;
 import devplugin.ThemeIcon;
 import devplugin.TvBrowserSettings;
@@ -685,17 +686,18 @@ public class PluginManagerImpl implements PluginManager {
    * @since 2.5
    */
   public ProgramReceiveIf[] getReceiveIfs() {
-    return getReceiveIfs(null);
+    return getReceiveIfs(null,null);
   }
   
   /**
    * Return all Plugins/Functions that are able to receive programs.
    * 
    * @param caller The caller ProgramReceiveIf.
+   * @param callerTarget The target that calls the receive if array.
    * @return The ProgramReceiveIfs.
    * @since 2.5
    */
-  public ProgramReceiveIf[] getReceiveIfs(ProgramReceiveIf caller) {
+  public ProgramReceiveIf[] getReceiveIfs(ProgramReceiveIf caller, ProgramReceiveTarget callerTarget) {
     PluginAccess[] plugins = getActivatedPlugins();
     
     ArrayList<ProgramReceiveIf> receiveIfs = new ArrayList<ProgramReceiveIf>();
@@ -703,8 +705,9 @@ public class PluginManagerImpl implements PluginManager {
     if(caller == null || caller.getId().compareTo(ReminderPluginProxy.getInstance().getId()) != 0)
       receiveIfs.add(ReminderPluginProxy.getInstance());
     
-    for(PluginAccess plugin : plugins)
-      if((plugin.canReceivePrograms() || plugin.canReceiveProgramsWithTarget()) && plugin.getProgramReceiveTargets() != null && plugin.getProgramReceiveTargets().length > 0 && (caller == null || plugin.getId().compareTo(caller.getId()) != 0))
+    for(PluginAccess plugin : plugins)      
+      if((plugin.canReceivePrograms() || plugin.canReceiveProgramsWithTarget()) && plugin.getProgramReceiveTargets() != null && plugin.getProgramReceiveTargets().length > 0 &&
+          ((caller == null || plugin.getId().compareTo(caller.getId()) != 0) || (caller != null && plugin.getId().compareTo(caller.getId()) == 0) && callerTarget != null && !(plugin.getProgramReceiveTargets().length == 1 && plugin.getProgramReceiveTargets()[0].equals(callerTarget))))
         receiveIfs.add(plugin);
     
     return receiveIfs.toArray(new ProgramReceiveIf[receiveIfs.size()]);

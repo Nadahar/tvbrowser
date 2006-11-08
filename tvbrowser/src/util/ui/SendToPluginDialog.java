@@ -51,6 +51,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
   private JComboBox mTargetList;
 
   private ProgramReceiveIf mCaller;
+  private ProgramReceiveTarget mCallerTarget;
 
   /**
    * Create the Dialog
@@ -60,11 +61,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
    * @param prg List of Programs to send
    */
   public SendToPluginDialog(ProgramReceiveIf caller, Frame owner, Program[] prg) {
-    super(owner, true);
-    mPrograms = prg;
-    mCaller = caller;
-    createDialog();
-    setLocationRelativeTo(owner);
+    this(caller, null, owner, prg);
   }
 
   /**
@@ -75,9 +72,40 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
    * @param prg List of Programs to send
    */
   public SendToPluginDialog(ProgramReceiveIf caller, Dialog owner, Program[] prg) {
+    this(caller, null, owner, prg);
+  }
+  
+  /**
+   * Create the Dialog
+   * 
+   * @param caller Sender-Plugin
+   * @param callerTarget The target which calls this dialog
+   * @param owner Owner Frame
+   * @param prg List of Programs to send
+   */
+  public SendToPluginDialog(ProgramReceiveIf caller, ProgramReceiveTarget callerTarget, Frame owner, Program[] prg) {
     super(owner, true);
     mPrograms = prg;
     mCaller = caller;
+    mCallerTarget = callerTarget;
+    createDialog();
+    setLocationRelativeTo(owner);
+  }
+
+  /**
+   * Create the Dialog
+   * 
+   * @param caller Sender-Plugin
+   * @param callerTarget The target which calls this dialog
+   * @param owner Owner Frame 
+   * @param prg List of Programs to send
+   * @since 2.5
+   */
+  public SendToPluginDialog(ProgramReceiveIf caller, ProgramReceiveTarget callerTarget, Dialog owner, Program[] prg) {
+    super(owner, true);
+    mPrograms = prg;
+    mCaller = caller;
+    mCallerTarget = callerTarget;
     createDialog();
     setLocationRelativeTo(owner);
   }
@@ -96,7 +124,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
     pb.addSeparator(mLocalizer.msg("sendTo", "Send programs to"), cc.xyw(1,1,3));
     
     // get the installed plugins
-    ProgramReceiveIf[] installedPluginArr = Plugin.getPluginManager().getReceiveIfs(mCaller);
+    ProgramReceiveIf[] installedPluginArr = Plugin.getPluginManager().getReceiveIfs(mCaller,mCallerTarget);
 
     Arrays.sort(installedPluginArr, new ObjectComperator());
     
@@ -117,7 +145,8 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
           
           if(((ProgramReceiveIf)e.getItem()).canReceiveProgramsWithTarget()) {
             for(ProgramReceiveTarget target : targets)
-              model.addElement(target);
+              if(!target.equals(mCallerTarget))
+                model.addElement(target);
             
             mTargetList.setEnabled(targets.length > 1);
           }
