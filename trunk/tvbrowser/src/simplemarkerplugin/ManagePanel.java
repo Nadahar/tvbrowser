@@ -108,7 +108,7 @@ public class ManagePanel {
     
     mMarkListsList = new JList(mMarkListVector.getMarkListNames());
     mMarkListsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    mProgramsList = new ProgramList(mProgramListModel);
+    mProgramsList = new ProgramList(mProgramListModel,SimpleMarkerPlugin.getInstance().getProgramPanelSettings());
     mProgramsList.addMouseListeners(null);    
 
     mMarkListsScrolPane = new JScrollPane(mMarkListsList);
@@ -216,14 +216,12 @@ public class ManagePanel {
   
   private void send() {
     Program[] programs = null;
+    String value = (String) mMarkListsList.getSelectedValue();
+    MarkList list = mMarkListVector.getListForName(value);
     
-    if(mProgramsList.getSelectedValue() != null &&  mProgramsList instanceof Program) {
+    if(mProgramsList.getSelectedValue() != null && mProgramsList.getSelectedValue() instanceof Program)
       programs = mProgramsList.getSelectedPrograms();
-    }
     else if(mProgramsList.getSelectedValue() != null) {
-      String value = (String) mMarkListsList.getSelectedValue();
-      MarkList list = mMarkListVector.getListForName(value);
-
       Object[] values = mProgramsList.getSelectedValues();
       ArrayList<Program> progList = new ArrayList<Program>();
       
@@ -236,15 +234,12 @@ public class ManagePanel {
       
       programs = progList.toArray(new Program[progList.size()]);
     }
-    else if(mProgramsList.getSelectedValue() == null) {
-      String value = (String) mMarkListsList.getSelectedValue();
-      MarkList list = mMarkListVector.getListForName(value);
-      programs = list.toArray(new Program[list.size()]);
-    }
+    else if(mProgramsList.getSelectedValue() == null)
+      programs = list.toArray(new Program[list.size()]);    
 
     if(programs != null) {
       SendToPluginDialog send = new SendToPluginDialog(SimpleMarkerPlugin
-          .getInstance(), mParent, programs);
+          .getInstance(), list.getReceiveTarget(), mParent, programs);
 
       send.setVisible(true);
     }

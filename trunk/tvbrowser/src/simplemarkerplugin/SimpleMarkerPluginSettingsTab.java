@@ -46,15 +46,19 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 
 import util.ui.ExtensionFileFilter;
 import util.ui.Localizer;
+import util.ui.PictureSettingsPanel;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.layout.CellConstraints;
@@ -81,6 +85,8 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
   private JButton mAdd, mDelete;
   private DefaultTableModel mModel;
   private ArrayList<MarkListItem> mToDeleteItems;
+  private PictureSettingsPanel mPictureSettings;
+  private int mSelectedIndex = 0;
 
   public JPanel createSettingsPanel() {
     mToDeleteItems = new ArrayList<MarkListItem>();
@@ -88,6 +94,8 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
         "5dlu,fill:default:grow,3dlu,pref,5dlu"));
     CellConstraints cc = new CellConstraints();
 
+    mPictureSettings = new PictureSettingsPanel(SimpleMarkerPlugin.getInstance().getProgramPanelSettings(), true, true);
+    
     String[] column = {
         SimpleMarkerPlugin.mLocalizer.msg("settings.list",
             "Additional Mark Lists"), "Icon" };
@@ -141,10 +149,32 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     south.add(mDelete);
 
     panel.add(south, cc.xy(2, 4));
-    return panel;
+    
+    final JTabbedPane tabbedPane = new JTabbedPane();
+    
+    tabbedPane.addTab(SimpleMarkerPlugin.mLocalizer.msg("markList","Mark lists"),panel);
+    tabbedPane.addTab(Localizer.getLocalization(Localizer.I18N_PICTURES), mPictureSettings);
+    tabbedPane.setSelectedIndex(mSelectedIndex);
+    
+    tabbedPane.addChangeListener(new ChangeListener() {
+      public void stateChanged(ChangeEvent e) {
+        mSelectedIndex = tabbedPane.getSelectedIndex();
+      }
+    });
+    
+    JPanel p = new JPanel(new FormLayout("default:grow","5dlu,fill:default:grow"));
+    p.add(tabbedPane, cc.xy(1,2));
+    
+    return p;
   }
 
   public void saveSettings() {
+    SimpleMarkerPlugin.getInstance().getSettings().setProperty("pictureType", String.valueOf(mPictureSettings.getPictureShowingType()));
+    SimpleMarkerPlugin.getInstance().getSettings().setProperty("pictureTimeRangeStart", String.valueOf(mPictureSettings.getPictureTimeRangeStart()));
+    SimpleMarkerPlugin.getInstance().getSettings().setProperty("pictureTimeRangeEnd", String.valueOf(mPictureSettings.getPictureTimeRangeEnd()));
+    SimpleMarkerPlugin.getInstance().getSettings().setProperty("pictureShowsDescription", String.valueOf(mPictureSettings.getPictureIsShowingDescription()));
+    SimpleMarkerPlugin.getInstance().getSettings().setProperty("pictureDuration", String.valueOf(mPictureSettings.getPictureDurationTime()));
+    
     if (mListTable.isEditing())
       mListTable.getCellEditor().stopCellEditing();
 

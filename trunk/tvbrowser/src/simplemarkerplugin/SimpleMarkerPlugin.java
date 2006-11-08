@@ -36,6 +36,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 
+import util.settings.ProgramPanelSettings;
 import util.ui.UiUtilities;
 
 import devplugin.ActionMenu;
@@ -60,9 +61,8 @@ import devplugin.Version;
  * License: GNU General Public License (GPL)
  * 
  * @author René Mach
- * @param <PlugingsProgramFlter>
  */
-public class SimpleMarkerPlugin<PlugingsProgramFlter> extends Plugin implements ActionListener {
+public class SimpleMarkerPlugin extends Plugin implements ActionListener {
 
   /** The localizer for this class. */
   protected static util.ui.Localizer mLocalizer;
@@ -439,5 +439,13 @@ public class SimpleMarkerPlugin<PlugingsProgramFlter> extends Plugin implements 
       return (Class<? extends PluginsFilterComponent>[]) new Class[] {MarkListFilterComponent.class};
     
     return null;
+  }
+  
+  protected ProgramPanelSettings getProgramPanelSettings() {
+    return new ProgramPanelSettings(Integer.parseInt(mProperties.getProperty("pictureType","0")), Integer.parseInt(mProperties.getProperty("pictureTimeRangeStart","1080")), Integer.parseInt(mProperties.getProperty("pictureTimeRangeEnd","1380")), false, mProperties.getProperty("pictureShowsDescription","true").compareTo("true") == 0, Integer.parseInt(mProperties.getProperty("pictureDuration","10")), mProperties.getProperty("clientPlugins","").split(";;"));
+  }
+  
+  protected Properties getSettings() {
+    return mProperties;
   }
 }
