@@ -24,16 +24,16 @@
  */
 package captureplugin.drivers.elgatodriver;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-
-import util.misc.AppleScriptRunner;
 import captureplugin.CapturePlugin;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Program;
+import util.misc.AppleScriptRunner;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * This Class represents the Connection to the Elgato EyeTV.
@@ -245,7 +245,9 @@ public class ElgatoConnection {
         call = call.replaceAll("\\{3\\}", prg.getTitle());
         call = call.replaceAll("\\{4\\}", Integer.toString(conf
                 .getElgatoChannel(prg.getChannel()).getNumber()));
-        call = call.replaceAll("\\{5\\}", prg.getShortInfo().replaceAll("\"",
+
+        if (prg.getShortInfo() != null)
+            call = call.replaceAll("\\{5\\}", prg.getShortInfo().replaceAll("\"",
                 "\\\\\\\\\"").replace('\n', ' '));
 
         String res = null;
