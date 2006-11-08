@@ -55,5 +55,19 @@ public class FavoritesPicturesSettingsTab implements SettingsTab {
     FavoritesPlugin.getInstance().getSettings().setProperty("pictureTimeRangeEnd", String.valueOf(mPictureSettings.getPictureTimeRangeEnd()));
     FavoritesPlugin.getInstance().getSettings().setProperty("pictureShowsDescription", String.valueOf(mPictureSettings.getPictureIsShowingDescription()));
     FavoritesPlugin.getInstance().getSettings().setProperty("pictureDuration", String.valueOf(mPictureSettings.getPictureDurationTime()));
+    
+    if(PictureSettingsPanel.typeContainsType(mPictureSettings.getPictureShowingType(),PictureSettingsPanel.SHOW_FOR_PLUGINS)) {
+      StringBuffer temp = new StringBuffer();
+      
+      String[] plugins = mPictureSettings.getClientPluginIds();
+      
+      for(int i = 0; i < plugins.length; i++)
+        temp.append(plugins[i]).append(";;");
+      
+      if(temp.toString().endsWith(";;"))
+        temp.delete(temp.length()-2,temp.length());
+      
+      FavoritesPlugin.getInstance().getSettings().setProperty("picturePlugins", temp.toString());
+    }
   }
 }

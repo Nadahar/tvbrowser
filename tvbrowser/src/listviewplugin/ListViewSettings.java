@@ -92,6 +92,20 @@ public class ListViewSettings implements SettingsTab {
     mSettings.setProperty("pictureTimeRangeEnd", String.valueOf(mPictureSettings.getPictureTimeRangeEnd()));
     mSettings.setProperty("pictureShowsDescription", String.valueOf(mPictureSettings.getPictureIsShowingDescription()));
     mSettings.setProperty("pictureDuration", String.valueOf(mPictureSettings.getPictureDurationTime()));
+    
+    if(PictureSettingsPanel.typeContainsType(mPictureSettings.getPictureShowingType(),PictureSettingsPanel.SHOW_FOR_PLUGINS)) {
+      StringBuffer temp = new StringBuffer();
+      
+      String[] plugins = mPictureSettings.getClientPluginIds();
+      
+      for(int i = 0; i < plugins.length; i++)
+        temp.append(plugins[i]).append(";;");
+      
+      if(temp.toString().endsWith(";;"))
+        temp.delete(temp.length()-2,temp.length());
+      
+      mSettings.setProperty("picturePlugins", temp.toString());
+    }
   }
 
   /**

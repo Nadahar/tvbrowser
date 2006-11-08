@@ -43,6 +43,7 @@ public class ProgramPanelSettings {
    * @param timeRangeEnd The time range end time.
    * @param showOnlyDateAndTitle If the program panel should only contain date and title.
    * @param showDescription If the picture description should be shown.
+   * @param duration The minimum duration of the programs the pictures should be shown for.
    */
   public ProgramPanelSettings(int type, int timeRangeStart, int timeRangeEnd, boolean showOnlyDateAndTitle, boolean showDescription, int duration) {
     this(type, timeRangeStart, timeRangeEnd,showOnlyDateAndTitle, showDescription, duration, null);
@@ -57,6 +58,7 @@ public class ProgramPanelSettings {
    * @param showOnlyDateAndTitle If the program panel should only contain date and title.
    * @param showDescription If the picture description should be shown.
    * @param pluginIds The ids of the plugins to show the pictures for.
+   * @param duration The minimum duration of the programs the pictures should be shown for.
    */
   public ProgramPanelSettings(int type, int timeRangeStart, int timeRangeEnd, boolean showOnlyDateAndTitle, boolean showDescription, int duration, String[] pluginIds) {
     mType = type;

@@ -89,7 +89,7 @@ public class ProgramInfoPicturesSettingsTab implements SettingsTab {
     ProgramInfo.getInstance().getSettings().setProperty("zoom", String.valueOf(mZoomEnabled.isSelected()));
     ProgramInfo.getInstance().getSettings().setProperty("zoomValue", String.valueOf(mZoomValue.getValue()));
     
-    if(mPictureSettings.getPictureShowingType() == PictureSettingsPanel.SHOW_FOR_PLUGINS) {
+    if(PictureSettingsPanel.typeContainsType(mPictureSettings.getPictureShowingType(),PictureSettingsPanel.SHOW_FOR_PLUGINS)) {
       StringBuffer temp = new StringBuffer();
       
       String[] plugins = mPictureSettings.getClientPluginIds();
