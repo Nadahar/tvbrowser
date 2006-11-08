@@ -51,7 +51,6 @@ import com.l2fprod.common.swing.plaf.LookAndFeelAddons;
 
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
-import devplugin.ContextMenuIf;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 
