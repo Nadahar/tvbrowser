@@ -383,8 +383,10 @@ public class TVBrowser {
             }
             
             // check if user should select picture settings
-            if(currentVersion.compareTo(new Version(2,22))<0)
+            if(currentVersion.compareTo(new Version(2,22))<0) {
               TvBrowserPictureSettingsUpdateDialog.createAndShow(mainFrame);
+              Settings.propAcceptedLicenseArrForServiceIds.setStringArray(new String[] {"tvbrowserdataservice.TvBrowserDataService"});
+            }
           }
         });
       }
@@ -663,8 +665,7 @@ public class TVBrowser {
     String autoDLType = Settings.propAutoDownloadType.getString();
 
     if ((ChannelList.getNumberOfSubscribedChannels() == 0)
-      || autoDLType.equals("never") ||
-      Settings.propLastDownloadDate.getDate() == null)
+      || autoDLType.equals("never"))
     {
       // Nothing to do
       return false;
@@ -693,13 +694,7 @@ public class TVBrowser {
 
     if (nextDownloadDate.getNumberOfDaysSince(today)<=0) {
       if (Settings.propAskForAutoDownload.getBoolean()) {
-        UpdateDlg dlg = new UpdateDlg(mainFrame, true);
-        dlg.pack();
-        UiUtilities.centerAndShow(dlg);
-        int daysToDownload = dlg.getResult();
-        if (daysToDownload != UpdateDlg.CANCEL) {
-          mainFrame.runUpdateThread(daysToDownload, dlg.getSelectedTvDataServices());
-        }
+        mainFrame.updateTvData();
       }
       else {
         String[] dataServiceIDs = Settings.propDataServicesForUpdate.getStringArray();
@@ -710,7 +705,8 @@ public class TVBrowser {
         else {
           proxies = TvDataServiceProxyManager.getInstance().getTvDataServices(dataServiceIDs);
         }
-        mainFrame.runUpdateThread(Settings.propAutoDownloadPeriod.getInt(), proxies);
+        if(mainFrame.licenseForTvDataServicesWasAccepted(proxies))
+          mainFrame.runUpdateThread(Settings.propAutoDownloadPeriod.getInt(), proxies);
       }
       return true;
     }

@@ -975,32 +975,58 @@ public class MainFrame extends JFrame implements DateListener {
     if (TvDataUpdater.getInstance().isDownloading()) {
       TvDataUpdater.getInstance().stopDownload();
     } else {
-      boolean accept = true;
-    
-      if(Settings.propLastDownloadDate.getDate() == null) {
-        TvDataServiceProxy[] services = TvDataServiceProxyManager.getInstance().getDataServices();
+      UpdateDlg dlg = new UpdateDlg(this, true);
+      dlg.pack();
+      UiUtilities.centerAndShow(dlg);
         
-        for(int i = 0; i < services.length; i++) {
-          String license = services[i].getInfo().getLicense();
-          
-          if(license != null) {
-            LicenseBox box=new LicenseBox(this, license, true);
-            util.ui.UiUtilities.centerAndShow(box);
-            accept = accept && box.agreed();
-          }
-        }
-      }
-      
-      if(accept) {
-        UpdateDlg dlg = new UpdateDlg(this, true);
-        dlg.pack();
-        UiUtilities.centerAndShow(dlg);
+      if(licenseForTvDataServicesWasAccepted(dlg.getSelectedTvDataServices())) {
         int daysToDownload = dlg.getResult();
         if (daysToDownload != UpdateDlg.CANCEL) {
           runUpdateThread(daysToDownload, dlg.getSelectedTvDataServices());
         }
+      }      
+    }
+  }
+  
+  /**
+   * Checks if all users services license were accepted. 
+   * 
+   * @param updateServices The service to check for license.
+   * 
+   * @return If all used service licenses were accepted.
+   */
+  public boolean licenseForTvDataServicesWasAccepted(TvDataServiceProxy[] updateServices) {    
+    boolean accept = true;    
+    String[] acceptedFor = Settings.propAcceptedLicenseArrForServiceIds.getStringArray();
+    
+    for(int i = 0; i < updateServices.length; i++) {
+      boolean found = false;
+      
+      for(int j = 0; j < acceptedFor.length; j++) {
+        if(updateServices[i].getId().compareTo(acceptedFor[j]) == 0) {
+          found = true;
+          break;
+        }
+      }
+      
+      if(!found && updateServices[i].getInfo().getLicense() != null) {
+        LicenseBox box=new LicenseBox(this, updateServices[i].getInfo().getLicense(), true);
+        util.ui.UiUtilities.centerAndShow(box);
+        accept = accept && box.agreed();
+        
+        if(box.agreed()) {
+          String[] oldIds = Settings.propAcceptedLicenseArrForServiceIds.getStringArray();
+          String[] newIds = new String[oldIds.length + 1];
+          
+          System.arraycopy(acceptedFor,0,newIds,0,oldIds.length);
+          newIds[newIds.length-1] = updateServices[i].getId();
+          
+          Settings.propAcceptedLicenseArrForServiceIds.setStringArray(newIds);
+        }
       }
     }
+    
+    return accept;
   }
 
   /**

@@ -411,8 +411,8 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     }
     
     // Create the picture area icon
-    if(mProgram.getBinaryField(ProgramFieldType.PICTURE_TYPE) != null && 
-        !mSettings.isShowingPictureNever() && (!dontShow || 
+    if(mProgram.getBinaryField(ProgramFieldType.PICTURE_TYPE) != null && ( 
+        mSettings.isShowingPictureEver() || !dontShow || 
         (mSettings.isShowingPictureInTimeRange() && 
          !ProgramUtilities.isNotInTimeRange(mSettings.getPictureTimeRangeStart(),mSettings.getPictureTimeRangeEnd(),program)) ||
          (mSettings.isShowingPictureForDuration() && mSettings.getDuration() <= program.getLength())

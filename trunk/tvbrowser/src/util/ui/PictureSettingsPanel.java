@@ -309,19 +309,19 @@ public class PictureSettingsPanel extends JPanel {
       public void itemStateChanged(ItemEvent e) {
         mShowPicturesForDuration.setEnabled(mShowPicturesForSelection.isSelected());
         mShowPicturesInTimeRange.setEnabled(mShowPicturesForSelection.isSelected());
-        mStartLabel.setEnabled(mShowPicturesForSelection.isSelected());
-        mEndLabel.setEnabled(mShowPicturesForSelection.isSelected());
-        minutesLabel.setEnabled(mShowPicturesForSelection.isSelected());
-        mPictureStartTime.setEnabled(mShowPicturesForSelection.isSelected());
-        mPictureEndTime.setEnabled(mShowPicturesForSelection.isSelected());
-        mDuration.setEnabled(mShowPicturesForSelection.isSelected());
+        mStartLabel.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesInTimeRange.isSelected());
+        mEndLabel.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesInTimeRange.isSelected());
+        minutesLabel.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesForDuration.isSelected());
+        mPictureStartTime.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesInTimeRange.isSelected());
+        mPictureEndTime.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesInTimeRange.isSelected());
+        mDuration.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesForDuration.isSelected());
         
         if(mShowPicturesForPlugins != null)
           mShowPicturesForPlugins.setEnabled(mShowPicturesForSelection.isSelected());
         if(mPluginLabel != null)
-          mPluginLabel.setEnabled(mShowPicturesForSelection.isSelected());
+          mPluginLabel.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesForPlugins.isSelected());
         if(choose != null)
-          choose.setEnabled(mShowPicturesForSelection.isSelected());
+          choose.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesForPlugins.isSelected());
       }
     });
     
@@ -361,7 +361,7 @@ public class PictureSettingsPanel extends JPanel {
     else if(mShowPicturesForSelection.isSelected()) {
       if(mShowPicturesForDuration.isSelected())
         value += SHOW_FOR_DURATION;
-      if(mShowPicturesForPlugins != null && mShowPicturesForPlugins.isSelected())
+      if(mShowPicturesForPlugins != null && mShowPicturesForPlugins.isSelected() && mClientPlugins != null && mClientPlugins.length > 0)
         value += SHOW_FOR_PLUGINS;
       if(mShowPicturesInTimeRange.isSelected())
         value += SHOW_IN_TIME_RANGE;

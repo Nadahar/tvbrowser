@@ -989,4 +989,10 @@ public class Settings {
             propJGoodiesTheme.setDefault(PlasticLookAndFeel.createMyDefaultTheme().getClass().getName());        
         }
     }
+  
+    
+  /** An array with the ids of the tv data service which license was accepted. */
+  public static final StringArrayProperty propAcceptedLicenseArrForServiceIds = new StringArrayProperty(
+      mProp, "licnseIds", new String[] {});
+  
 }
