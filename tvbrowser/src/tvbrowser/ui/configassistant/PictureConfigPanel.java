@@ -115,4 +115,13 @@ public class PictureConfigPanel extends JPanel {
       mTvBrowserDataServiceSettingsPanel.ok();
     }
   }
+  
+  /**
+   * Gets if the picture downloading is activated.
+   * 
+   * @return If the picture downloading is activated.
+   */
+  public boolean isActivated() {
+    return !mDownloadNoPictures.isSelected();
+  }
 }
