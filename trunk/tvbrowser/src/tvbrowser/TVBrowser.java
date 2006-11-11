@@ -66,7 +66,6 @@ import tvbrowser.ui.SystemTray;
 import tvbrowser.ui.configassistant.TvBrowserPictureSettingsUpdateDialog;
 import tvbrowser.ui.configassistant.TvBrowserUpdateAssistant;
 import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.mainframe.UpdateDlg;
 import tvbrowser.ui.splashscreen.DummySplash;
 import tvbrowser.ui.splashscreen.Splash;
 import tvbrowser.ui.splashscreen.SplashScreen;
@@ -385,7 +384,9 @@ public class TVBrowser {
             // check if user should select picture settings
             if(currentVersion.compareTo(new Version(2,22))<0) {
               TvBrowserPictureSettingsUpdateDialog.createAndShow(mainFrame);
-              Settings.propAcceptedLicenseArrForServiceIds.setStringArray(new String[] {"tvbrowserdataservice.TvBrowserDataService"});
+              
+              if(Settings.propLastDownloadDate.getDate() != null)
+                Settings.propAcceptedLicenseArrForServiceIds.setStringArray(new String[] {"tvbrowserdataservice.TvBrowserDataService"});
             }
           }
         });

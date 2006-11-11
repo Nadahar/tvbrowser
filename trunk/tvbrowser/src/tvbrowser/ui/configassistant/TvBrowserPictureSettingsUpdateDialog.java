@@ -22,10 +22,13 @@ import java.awt.BorderLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
@@ -47,6 +50,7 @@ import util.ui.WindowClosingIf;
  * @since 2.2.2
  */
 public class TvBrowserPictureSettingsUpdateDialog extends JDialog implements WindowClosingIf, ActionListener {
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(TvBrowserPictureSettingsUpdateDialog.class);
   private static final long serialVersionUID = 1L;
   
   private PictureConfigPanel mConfigPanel;
@@ -101,6 +105,15 @@ public class TvBrowserPictureSettingsUpdateDialog extends JDialog implements Win
     content.add(buttonPanel, BorderLayout.SOUTH);
     
     setContentPane(content);
+    getRootPane().setDefaultButton(mOkButton);
+    
+    setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+    
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e) {
+        close();
+      }
+    });
     
     setSize(700,450);
     
@@ -108,12 +121,26 @@ public class TvBrowserPictureSettingsUpdateDialog extends JDialog implements Win
   }
 
   public void close() {
+    close(true);
+  }
+  
+  private void close(boolean cancel) {
+    if(!mConfigPanel.isActivated() || cancel) {      
+      String[] buttons = {mLocalizer.msg("accept","Yes, I don't want pictures"),mLocalizer.msg("back","Back to the settings")};
+      
+      if(JOptionPane.showOptionDialog(this, mLocalizer.msg("text","<html><span style=\"color:red\">ATTENTION: </span>The downloading of the pictures is disabled!<br><br>Are you sure that you don't want download pictures.</html>"), mLocalizer.msg("warning","Warning"),
+          JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, buttons, buttons[1]) != 0)
+        return;
+    }
+    
     dispose();
   }
+  
 
   public void actionPerformed(ActionEvent e) {
     if(e.getSource() == mOkButton) {
       mConfigPanel.saveSettings();
+      close(false);
       
       if(Settings.propPictureType.getInt() != PictureSettingsPanel.SHOW_NEVER) {
         String[] icons = Settings.propProgramTableIconPlugins.getStringArray();
@@ -135,8 +162,6 @@ public class TvBrowserPictureSettingsUpdateDialog extends JDialog implements Win
           Settings.handleChangedSettings();
         }
       }
-        
-      close();
     }
     else if(e.getSource() == mCancelButton)
       close();
