@@ -429,7 +429,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
         mCategoryCB.removeAllItems();
         mCategoryCB.addItem(new FilterItem(mLocalizer.msg("allCategories", "All Categories"), null));
 
-        mCategoryCB.addItem(new FilterItem(mLocalizer.msg("allExceptEventCinema", "All except Event/Cinema"), new Integer[]{Channel.CATEGORY_TV, Channel.CATEGORY_NONE}));
+        mCategoryCB.addItem(new FilterItem(mLocalizer.msg("allExceptEventCinema", "All except Event/Cinema"), new Integer[]{Channel.CATEGORY_TV, Channel.CATEGORY_RADIO, Channel.CATEGORY_NONE}));
 
         if (channelListContains(allChannels, Channel.CATEGORY_TV)) {
             mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryTVAll", "TV"), Channel.CATEGORY_TV));

@@ -41,7 +41,6 @@ import util.exc.ErrorHandler;
 import util.io.IOUtilities;
 import util.paramhandler.ParamParser;
 import devplugin.Date;
-import devplugin.Plugin;
 import devplugin.ProgramReceiveIf;
 import devplugin.Program;
 import devplugin.ProgramReceiveTarget;

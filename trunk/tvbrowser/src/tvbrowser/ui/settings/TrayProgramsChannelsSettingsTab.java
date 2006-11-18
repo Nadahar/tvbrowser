@@ -93,7 +93,7 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
     try {
    mChannelWidth = new JSlider(SwingConstants.HORIZONTAL, 50, 150, Settings.propTrayChannelWidth.getInt());
     }catch(Exception e){e.printStackTrace();}
-    System.out.println(mChannelWidth);
+    
     mUseUserChannels = new JCheckBox(mLocalizer.msg("userChannels","Use user defined channels"),Settings.propTrayUseSpecialChannels.getBoolean());
     mUseUserChannels.setToolTipText(mLocalizer.msg("userChannelsToolTip","<html>If you select this you can choose the channels that will be used for<br><b>Programs at...</b> and <b>Now/Soon running programs</b>.<br>If this isn't selected the first 10 channels in default order will be used.</html>"));
     
