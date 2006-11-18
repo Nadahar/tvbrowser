@@ -28,11 +28,13 @@ package tvbrowser.extras.favoritesplugin.core;
 
 import devplugin.Channel;
 import devplugin.Program;
+import devplugin.ProgramFieldType;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Iterator;
 
 import tvbrowser.extras.common.LimitationConfiguration;
 
@@ -185,14 +187,21 @@ public class Exclusion {
     }
 
     if (mTopic != null) {
-      String description = prog.getDescription()+" "+prog.getShortInfo();
-      if (description != null && description.indexOf(mTopic) >=0) {
-        topicExcl = true;
+      Iterator types = ProgramFieldType.getTypeIterator();
+      StringBuffer value = new StringBuffer();
+      
+      while(types.hasNext()) {
+        ProgramFieldType type = (ProgramFieldType)types.next();
+        
+        if(type.getFormat() == ProgramFieldType.TEXT_FORMAT)
+          value.append(prog.getTextField(type)).append(" ");
       }
+            
+      if (value.toString() != null && value.toString().toLowerCase().indexOf(mTopic.toLowerCase()) >=0)
+        topicExcl = true;
     }
-    else {
+    else
       topicExcl = true;
-    }
 
     int timeFromParsed = mTimeFrom;
     int progTime = prog.getHours()*60 + prog.getMinutes();

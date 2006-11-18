@@ -122,6 +122,7 @@ public class TitleFavorite extends Favorite {
 
     public void save() {
       String searchText = mSearchTextTf.getText();
+      mProgramTitle = searchText;
       mSearchFormSettings.setSearchText(searchText);
     }
   }
