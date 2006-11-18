@@ -335,7 +335,10 @@ public class ExcelPDS extends AbstractPrimaryDataService {
         if (xlsCell == null) {
             return null;
         } else {
+          if(!xlsCell.toString().equals("null"))
             return xlsCell.toString().trim();
+          else
+            return null;
         }
     }
 
@@ -354,14 +357,18 @@ public class ExcelPDS extends AbstractPrimaryDataService {
             return null;
         } else {
             java.util.Date date = xlsCell.getDateCellValue();
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
+            
+            if(date != null) {
+              Calendar cal = Calendar.getInstance();
+              cal.setTime(date);
 
-            int year = cal.get(Calendar.YEAR);
-            int month = cal.get(Calendar.MONTH) + 1;
-            int day = cal.get(Calendar.DAY_OF_MONTH);
+              int year = cal.get(Calendar.YEAR);
+              int month = cal.get(Calendar.MONTH) + 1;
+              int day = cal.get(Calendar.DAY_OF_MONTH);
 
-            return new devplugin.Date(year, month, day);
+              return new devplugin.Date(year, month, day);
+            }
+            return null;
         }
     }
 
@@ -380,13 +387,18 @@ public class ExcelPDS extends AbstractPrimaryDataService {
             return -1;
         } else {
             java.util.Date date = xlsCell.getDateCellValue();
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
+            
+            if(date != null) {
+              Calendar cal = Calendar.getInstance();
+              cal.setTime(date);
 
-            int hour = cal.get(Calendar.HOUR_OF_DAY);
-            int min = cal.get(Calendar.MINUTE);
+              int hour = cal.get(Calendar.HOUR_OF_DAY);
+              int min = cal.get(Calendar.MINUTE);
 
-            return (hour * 60) + min;
+              return (hour * 60) + min;
+            }
+            
+            return -1;
         }
     }
 
@@ -400,7 +412,7 @@ public class ExcelPDS extends AbstractPrimaryDataService {
      * @return The cell.
      */
     private HSSFCell getCell(HSSFSheet sheet, int col, int row) {
-        HSSFRow xlsRow = sheet.getRow(row);
+        HSSFRow xlsRow = sheet.getRow(row); 
         if (xlsRow == null) {
             return null;
         } else {
