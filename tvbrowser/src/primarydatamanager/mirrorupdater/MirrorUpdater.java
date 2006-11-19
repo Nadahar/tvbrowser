@@ -264,11 +264,11 @@ public class MirrorUpdater {
             additonalFileName = completeFileName.substring(0,index) + completeFileName.substring(index+8,completeFileName.indexOf(".prog.gz")) + "_additional.prog.gz";
           else
             additonalFileName = completeFileName.substring(0,completeFileName.indexOf(".prog.gz")) + "_additional.prog.gz";
-            
-          if(mDataSource.fileExists(additonalFileName)) {
-            if(mDataTarget.fileExists(additonalFileName))
-              mDataTarget.deleteFile(additonalFileName);
-            
+
+          if(mDataTarget.fileExists(additonalFileName))
+            mDataTarget.deleteFile(additonalFileName);
+
+          if(mDataSource.fileExists(additonalFileName)) {            
             mLog.fine("Adding additonal file: " + additonalFileName);
             byte[] data = mDataSource.loadFile(additonalFileName);
             mDataTarget.writeFile(additonalFileName, data);
