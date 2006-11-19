@@ -109,4 +109,11 @@ public class FileDataTarget implements DataTarget {
       + NumberFormat.getInstance().format(mBytesWritten) + " bytes written.");
   }
 
+
+  public boolean fileExists(String fileName) throws UpdateException {
+    File file = new File(mDir, fileName);
+    
+    return file.exists();
+  }
+
 }

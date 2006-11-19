@@ -185,19 +185,40 @@ public class ProgramFrame implements Cloneable {
   }
   
 
-
+  /**
+   * Reads the data from a stream
+   * 
+   * @param stream The stream to read from.
+   * @throws IOException Thrown if something goes wrong.
+   * @throws FileFormatException Thrown if something goes wrong.
+   */
   public void readFromStream(InputStream stream)
-    throws IOException, FileFormatException
+  throws IOException, FileFormatException
   {
     mId = stream.read();
-    
+  
     int fieldCount = stream.read();
+    
     mProgramFieldList.clear();
     mProgramFieldList.ensureCapacity(fieldCount);
     for (int i = 0; i < fieldCount; i++) {
       ProgramField field = new ProgramField();
       field.readFromStream(stream);
       mProgramFieldList.add(field);
+    }
+  
+    /*
+     * If the id is 255 we have to read the additional
+     * id from the additonal ProgramField.
+     */
+    if(mId == 255) {
+      ProgramField field = new ProgramField(null);
+      try {
+        field.readFromStream(stream);
+        mId += field.getIntData();
+      }catch(Exception e) { 
+          /*Ignore, maybe this is not a field that contains the id*/ 
+        }
     }
   }
 
@@ -207,13 +228,33 @@ public class ProgramFrame implements Cloneable {
     throws IOException, FileFormatException
   {
     checkFormat();
-    
-    stream.write(mId);
-    
+
+    /*
+     * Check if the id of this ProgramFrame is greater
+     * than or equal to 255. If this is so we only write
+     * 255 to stream as track value that we have an
+     * additonal id in a ProgramField. 
+     */
+    if(mId >= 255)
+      stream.write(255);
+    else
+      stream.write(mId);
+  
     stream.write(getProgramFieldCount());
+    
     for (int i = 0; i < getProgramFieldCount(); i++) {
       ProgramField field = getProgramFieldAt(i);
       field.writeToStream(stream);
+    }
+  
+    /*
+     * Write the additional ProgramField, that contains
+     * the additonal id value. 
+     */
+    if(mId >= 255) {
+      ProgramField additional = new ProgramField(null);
+      additional.setIntData(mId-255);
+      additional.writeToStream(stream, false);
     }
   }
 

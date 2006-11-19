@@ -384,15 +384,15 @@ public class DayProgramFile extends AbstractFile {
     mVersion = gIn.read();
 
     int programCount = gIn.read();
-
-    if(programCount == 255) {
+    
+    if(programCount == 254) {
       try {
         if(job.getServerUrl() != null) {
           String url = job.getServerUrl() + "/" + getAdditionalFileName(job.getFileName());
           programCount = readProgCountFromStream(IOUtilities.getStream(new URL(url), 60000));
         }
         else
-          programCount = readProgCountFromStream(new BufferedInputStream(new FileInputStream(job.getFileName()), 0x4000));
+          programCount = readProgCountFromStream(new BufferedInputStream(new FileInputStream(getAdditionalFileName(job.getFileName())), 0x4000));
       }catch(Exception e) {}
     }
 
@@ -443,7 +443,7 @@ public class DayProgramFile extends AbstractFile {
 
     gOut.write(mVersion);
 
-    if(getProgramFrameCount() >= 255) {
+    if(getProgramFrameCount() >= 254) {
       if(file != null) {
         String fileName = getAdditionalFileName(file.toString());
         FileOutputStream write = null;
@@ -460,7 +460,7 @@ public class DayProgramFile extends AbstractFile {
         }
       }
 
-      gOut.write(255);
+      gOut.write(254);
     }
     else
       gOut.write(getProgramFrameCount());
@@ -474,7 +474,12 @@ public class DayProgramFile extends AbstractFile {
   }
 
   private String getAdditionalFileName(String fileName) {
-    return fileName.substring(0, fileName.lastIndexOf(".prog.gz")) + "_additional.prog.gz";
+    int index = fileName.indexOf("_update_");
+    
+    if(index != -1)
+      return fileName.substring(0,index) + fileName.substring(index+8,fileName.indexOf(".prog.gz")) + "_additional.prog.gz";
+    else
+      return fileName.substring(0,fileName.indexOf(".prog.gz")) + "_additional.prog.gz";
   }
 
   public String getProgramFileName() {
