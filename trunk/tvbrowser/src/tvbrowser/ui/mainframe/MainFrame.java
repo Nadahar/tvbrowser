@@ -979,12 +979,9 @@ public class MainFrame extends JFrame implements DateListener {
       dlg.pack();
       UiUtilities.centerAndShow(dlg);
         
-      if(licenseForTvDataServicesWasAccepted(dlg.getSelectedTvDataServices())) {
-        int daysToDownload = dlg.getResult();
-        if (daysToDownload != UpdateDlg.CANCEL) {
-          runUpdateThread(daysToDownload, dlg.getSelectedTvDataServices());
-        }
-      }      
+      int daysToDownload = dlg.getResult();
+      if(daysToDownload != UpdateDlg.CANCEL && licenseForTvDataServicesWasAccepted(dlg.getSelectedTvDataServices()))
+        runUpdateThread(daysToDownload, dlg.getSelectedTvDataServices());        
     }
   }
   

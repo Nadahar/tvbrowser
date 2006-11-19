@@ -173,8 +173,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
 
   public TvDataServiceProxy[] getSelectedTvDataServices() {
     if (mSelectedTvDataServiceArr == null) {
-      mSelectedTvDataServiceArr = TvDataServiceProxyManager.getInstance()
-          .getDataServices();
+      mSelectedTvDataServiceArr = getActiveDataServices();
     }
 
     return mSelectedTvDataServiceArr;
@@ -191,8 +190,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
 
       if (mDataServiceCbArr == null) { // there is only one tvdataservice
                                         // available
-        mSelectedTvDataServiceArr = TvDataServiceProxyManager.getInstance()
-            .getDataServices();
+        mSelectedTvDataServiceArr = getActiveDataServices();
       } else {
         ArrayList<TvDataServiceProxy> dataServiceList = new ArrayList<TvDataServiceProxy>();
         for (int i = 0; i < mDataServiceCbArr.length; i++) {
