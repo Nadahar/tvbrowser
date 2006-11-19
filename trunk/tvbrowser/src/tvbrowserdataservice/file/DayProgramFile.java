@@ -443,9 +443,13 @@ public class DayProgramFile extends AbstractFile {
 
     gOut.write(mVersion);
 
+    String fileName = getAdditionalFileName(file.toString());
+    
+    if(new File(fileName).isFile())
+      new File(fileName).delete();
+    
     if(getProgramFrameCount() >= 254) {
       if(file != null) {
-        String fileName = getAdditionalFileName(file.toString());
         FileOutputStream write = null;
 
         try {
