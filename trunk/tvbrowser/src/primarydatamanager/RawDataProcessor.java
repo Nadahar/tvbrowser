@@ -194,6 +194,7 @@ public class RawDataProcessor {
     DayProgramFile[] levelProgArr = new DayProgramFile[levelFileNameArr.length];
     for (int i = 0; i < levelProgArr.length; i++) {
       File file = new File(preparedDir, levelFileNameArr[i]);
+      System.err.println(file);
       if (file.exists()) {
         levelProgArr[i] = new DayProgramFile();
         try {
@@ -524,10 +525,16 @@ public class RawDataProcessor {
   {
     // Copy the complete file
     String fileName = DayProgramFile.getProgramFileName(date, country, channel, level);
+    String additionalName = fileName.substring(0,fileName.indexOf(".prog.gz")) + "_additional.prog.gz";
+    
     File prepFile = new File(fromDir, fileName);
+    File additionalFile = new File(fromDir, additionalName);
     File workFile = new File(toDir, fileName);
     try {
       IOUtilities.copy(prepFile, workFile);
+      
+      if(additionalFile.isFile())
+        IOUtilities.copy(additionalFile, new File(toDir, additionalName));
     }
     catch (IOException exc) {
       throw new PreparationException("Copying complete file from '"
