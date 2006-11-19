@@ -80,6 +80,18 @@ public class ProgramField implements Cloneable {
         mDataFormat = ProgramFieldType.UNKOWN_FORMAT;
         mType = null;
     }
+    
+    /**
+     * Used for creating an instance of ProgramField to
+     * read/store the additional ProgramFrame id in.
+     * 
+     * @param o Dummy paramter.
+     * @since 2.2.2
+     */
+    protected ProgramField(Object o) {
+      mDataFormat = ProgramFieldType.UNKOWN_FORMAT;
+      mTypeId = 255;      
+    }
 
     /**
      * @deprecated use the factory method
@@ -427,8 +439,23 @@ public class ProgramField implements Cloneable {
 
 
     public void writeToStream(OutputStream stream)
+      throws IOException, FileFormatException {
+      writeToStream(stream, true);
+    }
+    
+    /**
+     * Writes the data to a stream.
+     * 
+     * @param stream The stream to write on
+     * @param check If the format should be checked
+     * @throws IOException Thrown if something goes wrong.
+     * @throws FileFormatException Thrown if something goes wrong.
+     * @since 2.2.2
+     */
+    protected void writeToStream(OutputStream stream, boolean check)
             throws IOException, FileFormatException {
         // Check whether the field has the right format
+      if(check)
         checkFormat();
 
         stream.write(mTypeId);

@@ -247,6 +247,7 @@ public class MirrorUpdater {
         
         // Check whether the mirror needs an update
         if (versionOnMirror < versionAtSource) {
+          String additonalFileName = null;
           if (versionOnMirror == -1) {
             mLog.fine("Adding version " + versionAtSource
               + ": " + completeFileName);
@@ -255,6 +256,25 @@ public class MirrorUpdater {
               + versionOnMirror + " to " + versionAtSource
               + ": " + completeFileName);
           }
+          
+          
+          int index = completeFileName.indexOf("_update_");
+            
+          if(index != -1)
+            additonalFileName = completeFileName.substring(0,index) + completeFileName.substring(index+8,completeFileName.indexOf(".prog.gz")) + "_additional.prog.gz";
+          else
+            additonalFileName = completeFileName.substring(0,completeFileName.indexOf(".prog.gz")) + "_additional.prog.gz";
+            
+          if(mDataSource.fileExists(additonalFileName)) {
+            if(mDataTarget.fileExists(additonalFileName))
+              mDataTarget.deleteFile(additonalFileName);
+            
+            mLog.fine("Adding additonal file: " + additonalFileName);
+            byte[] data = mDataSource.loadFile(additonalFileName);
+            mDataTarget.writeFile(additonalFileName, data);
+          }
+                      
+          
           // Update the mirror
           byte[] data = mDataSource.loadFile(completeFileName);
           mDataTarget.writeFile(completeFileName, data);
