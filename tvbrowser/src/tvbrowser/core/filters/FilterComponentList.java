@@ -37,6 +37,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import devplugin.PluginAccess;
 import devplugin.PluginsFilterComponent;
 
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
@@ -52,6 +53,7 @@ import tvbrowser.core.filters.filtercomponents.ProgramLengthFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramRunningFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ReminderFilterComponent;
 import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
+import tvbrowser.core.plugin.PluginManagerImpl;
 
 public class FilterComponentList {
   
@@ -188,7 +190,21 @@ public class FilterComponentList {
     }    
     else {
       try {
-        filterComponent = (PluginsFilterComponent)Class.forName(className).newInstance();
+        PluginAccess[] plugins = PluginManagerImpl.getInstance().getActivatedPlugins();
+        
+        for(PluginAccess plugin : plugins) {
+          Class<? extends PluginsFilterComponent>[] clazzes = plugin.getAvailableFilterComponentClasses();
+          
+          if(clazzes != null) {
+            for(Class<? extends PluginsFilterComponent> clazz : clazzes) {
+              if(clazz.getName().compareTo(className) == 0) {
+                filterComponent = clazz.newInstance();
+                break;
+              }
+            }
+          }
+        }
+        
         filterComponent.setName(name);
         filterComponent.setDescription(description);
       }catch(Exception e) {
