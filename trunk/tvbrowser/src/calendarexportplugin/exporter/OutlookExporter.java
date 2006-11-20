@@ -75,10 +75,11 @@ public class OutlookExporter extends AbstractExporter {
     * =double(val)/(24*60*60*1000)+25569.0-(timeinfo.Bias/(60.0*24.0));
     */
     private static Date correctTimeZone(final Date date) {
-        Date ret;
-        ret = date;
-        if (java.util.TimeZone.getDefault().useDaylightTime())
-            ret.setTime(date.getTime() + 60 * 60 * 1000);
+       Date ret=date;
+       if(java.util.TimeZone.getDefault().useDaylightTime()){
+            if(java.util.TimeZone.getDefault().inDaylightTime(date))
+                ret.setTime(date.getTime()+1*60*60*1000);
+        }
         return ret;
     }
 
@@ -187,4 +188,5 @@ public class OutlookExporter extends AbstractExporter {
         }
         return true;
     }
+
 }
