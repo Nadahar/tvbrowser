@@ -197,7 +197,10 @@ public class ProgramTextCreator {
           if(zoom != 100)
             imageIcon = (ImageIcon)UiUtilities.scaleIcon(imageIcon, imageIcon.getIconWidth() * zoom/100);
           
-          StringBuffer value = new StringBuffer(prog.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE));
+          StringBuffer value = new StringBuffer();
+            
+          if(prog.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE) != null)
+            value.append(prog.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE));
           
           if(settings.isShowingPictureDescription() &&  prog.getTextField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE) != null)
             value.append("<br>").append(prog.getTextField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE));
