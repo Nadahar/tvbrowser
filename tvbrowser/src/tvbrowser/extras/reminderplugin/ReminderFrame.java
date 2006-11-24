@@ -85,6 +85,7 @@ public class ReminderFrame implements WindowClosingIf {
     mLocalizer.msg("remind.120", "Remind me 2 hours before"),
     mLocalizer.msg("remind.240", "Remind me 4 hours before"),
     mLocalizer.msg("remind.480", "Remind me 8 hours before"),
+    mLocalizer.msg("remind.720", "Remind me 12 hours before"),
     mLocalizer.msg("remind.1440", "Remind me one day before"),
   };
 
