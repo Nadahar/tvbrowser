@@ -85,7 +85,7 @@ public class RealTimeSynchronousLayout extends AbstractProgramTableLayout {
           panel.setHeight((int)(length * scaleValue));
         }
         else
-          panel.setHeight(panel.getPreferredHeight());
+          panel.setHeight(panel.getProgram().getLength() > 0 ? (int)(panel.getProgram().getLength() * scaleValue) : panel.getPreferredHeight());
       }
     }
 
