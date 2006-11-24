@@ -184,12 +184,6 @@ public class LookAndFeelSettingsTab implements SettingsTab {
       mIconThemes.setSelectedItem(IconLoader.getInstance().getDefaultTheme());
     }
     
-    mIconThemes.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        checkIfAreaIsToMakeVisible();
-      }
-    });
-    
     mSettingsPn.add(mIconThemes, cc.xy(4, 5));
 
     layout.appendRow(new RowSpec("3dlu"));
@@ -234,8 +228,6 @@ public class LookAndFeelSettingsTab implements SettingsTab {
 
     mSettingsPn.add(mInfoArea, cc.xyw(1, 15, 6));
     
-    lookChanged();
-    
     if(!mSomethingChanged) {
       mStartLookAndIndex = mLfComboBox.getSelectedIndex();
       mStartIconIndex = mIconThemes.getSelectedIndex();
@@ -244,7 +236,13 @@ public class LookAndFeelSettingsTab implements SettingsTab {
       mSkinLFStartTheme = Settings.propSkinLFThemepack.getString();
     }
     
-    checkIfAreaIsToMakeVisible();
+    mIconThemes.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        checkIfAreaIsToMakeVisible();
+      }
+    });
+    
+    lookChanged();    
     
     return mSettingsPn;
   }
