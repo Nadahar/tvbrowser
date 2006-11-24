@@ -78,20 +78,8 @@ public class CaretPositionCorrector {
   private void createCaretListener(final JFormattedTextField field) {
     mCaretListener = new CaretListener() {
       public void caretUpdate(final CaretEvent e) {
-        if(mCaretPosition != -1 && field.getSelectedText() == null) {
+        if(mCaretPosition != -1 && field.getSelectedText() == null)
           mCaretPosition = field.getCaretPosition();
-        
-          SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-              String text = field.getText();
-            
-              if(mCaretPosition > 0 && (mCaretPosition >= text.length() ||
-                  hasToMoveCaret(text, mCaretPosition))) {
-                field.setCaretPosition(--mCaretPosition);
-              }
-            }
-          });
-        }
       }
     };
   }
@@ -108,16 +96,16 @@ public class CaretPositionCorrector {
   private void addKeyListenerToField(final JFormattedTextField field) {
     field.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
-        if(KeyEvent.VK_RIGHT == e.getKeyCode()) {
-          int pos = field.getCaretPosition() + 1;
-          if(pos < field.getText().length() && pos > 0 && 
+        if(KeyEvent.VK_UP == e.getKeyCode() || KeyEvent.VK_DOWN == e.getKeyCode()) {
+          mCaretPosition = field.getCaretPosition();
+          if(mCaretPosition <= field.getText().length() && mCaretPosition > 0 && 
               field.getSelectedText() == null &&
-              hasToMoveCaret(field.getText(), pos)) {
-            field.setCaretPosition(pos);
+              (mCaretPosition >= field.getText().length() || hasToMoveCaret(field.getText(), mCaretPosition))) {
+            field.setCaretPosition(--mCaretPosition);
           }
         }
       }
-    });
+    });  
   }
   
   /** Add mouse listener to the field to track clicks and get the location of it */
