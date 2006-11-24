@@ -58,6 +58,8 @@ public class TimeSynchronousLayout extends AbstractProgramTableLayout {
     int[] colYArr = new int[model.getColumnCount()];
 
     int minY = 0;
+    int maxY = 0;
+    
     Program minProgram;
     ProgramPanel minPanel;
     do {
@@ -116,10 +118,16 @@ public class TimeSynchronousLayout extends AbstractProgramTableLayout {
         // Prepare the next iteration
         minY = y;
         colYArr[programCol] = y + preferredHeight;
+        maxY = Math.max(maxY,colYArr[programCol]);
         rowIdxArr[programCol]++;
       }
     } while (minProgram != null);
-
+    
+    for (int col = 0; col < model.getColumnCount(); col++) {
+      ProgramPanel panel = model.getProgramPanel(col, model.getRowCount(col)-1);
+      model.getProgramPanel(col, model.getRowCount(col)-1).setHeight(maxY - colYArr[col] + panel.getHeight());
+    }
+    
     // Set the column starts
     setColumnStarts(columnStartArr);
   }
