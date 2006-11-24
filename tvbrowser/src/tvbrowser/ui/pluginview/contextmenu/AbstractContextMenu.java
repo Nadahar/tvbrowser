@@ -167,8 +167,27 @@ public abstract class AbstractContextMenu implements ContextMenu {
               }
             });
           }
-          else if(targets.length > 1) {
-            JMenu subMenu = new JMenu(plugins[i].getInfo().getName());
+          else if(targets.length == 1) {
+            JMenuItem item = new JMenuItem(targets[0].toString());
+            item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
+            
+            Icon[] icons = plugins[i].getMarkIcons(Plugin.getPluginManager().getExampleProgram());
+            
+            item.setIcon(icons != null ? icons[0] : null);
+            menu.add(item);
+            
+            final ProgramReceiveTarget target = targets[0];
+            
+            item.addActionListener(new ActionListener(){
+              public void actionPerformed(ActionEvent e) {
+                Program[] programs = collectProgramsFromNode(node);
+                if ((programs != null) &&(programs.length > 0)) {
+                  plugin.receivePrograms(programs,target);
+                }
+              }
+            });
+          } else if(targets.length >= 1) {
+            JMenu subMenu = new JMenu(plugins[i].getInfo().getName());            
             subMenu.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
             
             Icon[] icons = plugins[i].getMarkIcons(Plugin.getPluginManager().getExampleProgram());
