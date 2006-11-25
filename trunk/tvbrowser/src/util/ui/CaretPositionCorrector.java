@@ -26,6 +26,7 @@ public class CaretPositionCorrector {
   private CaretListener mCaretListener;
   private char[] mJumpCharacters;
   private char mStartIndexChar;
+  private boolean mMouseDown;
   
   private CaretPositionCorrector(JFormattedTextField field, char[] jumpCharacters, char startIndexChar, int startPosition) {
     mJumpCharacters = jumpCharacters;
@@ -112,7 +113,19 @@ public class CaretPositionCorrector {
   private void addMouseListenerToField(final JFormattedTextField field) {
     field.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
+        mMouseDown = true;
         mClickLocation = e.getPoint();
+      }
+      
+      public void mouseReleased(MouseEvent e) {
+        mMouseDown = false;
+        mCaretPosition = field.getUI().viewToModel(field, e.getPoint());
+        
+        if(mCaretPosition <= field.getText().length() && mCaretPosition > 0 && 
+            field.getSelectedText() == null &&
+            (mCaretPosition >= field.getText().length() || hasToMoveCaret(field.getText(), mCaretPosition))) {
+          field.setCaretPosition(--mCaretPosition);
+        }
       }
     });
   }
@@ -120,7 +133,7 @@ public class CaretPositionCorrector {
   /**  Add focus listener to set the location of the caret to the right place */
   private void addFocusListenerToField(final JFormattedTextField field) {
     field.addFocusListener(new FocusListener() {
-      public void focusGained(FocusEvent e) {
+      public void focusGained(FocusEvent e) {        
         if(mCaretPosition == -1) {
           if(mStartIndexChar != '\0')
             mCaretPosition = field.getText().indexOf(String.valueOf(mStartIndexChar)) + 1;
@@ -136,6 +149,11 @@ public class CaretPositionCorrector {
               mCaretPosition = field.getUI().viewToModel(field, mClickLocation);
             
             mClickLocation = null;
+            
+            if(mCaretPosition <= field.getText().length() && mCaretPosition > 0 && 
+                field.getSelectedText() == null && !mMouseDown &&
+                (mCaretPosition >= field.getText().length() || hasToMoveCaret(field.getText(), mCaretPosition)))
+              mCaretPosition--;            
             
             field.setCaretPosition(mCaretPosition);
             field.addCaretListener(mCaretListener);
