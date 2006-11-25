@@ -194,6 +194,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
       else {
         targetList.addElement(p);
         p.mark(this);
+        p.validateMarking();
       }
     }
     targetList.updateNode();
