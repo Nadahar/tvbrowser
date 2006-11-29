@@ -108,12 +108,4 @@ public class FileDataTarget implements DataTarget {
     mLog.info("In total there were "
       + NumberFormat.getInstance().format(mBytesWritten) + " bytes written.");
   }
-
-
-  public boolean fileExists(String fileName) throws UpdateException {
-    File file = new File(mDir, fileName);
-    
-    return file.exists();
-  }
-
 }

@@ -193,7 +193,15 @@ public class HtmlMirrorVisualizer implements MirrorVisualizer {
     mOut.println("<table width=\"1000\">");
     mOut.print("<tr><th width=\"200\"></th>");  
     for (int i=0; i < DAY_COUNT; i++) {
-      mOut.print("<th class=\"header_date\">"+TODAY.addDays(i).getDayOfMonth()+".</th>");
+      String month = String.valueOf(TODAY.addDays(i).getMonth());
+      String day = String.valueOf(TODAY.addDays(i).getDayOfMonth());
+      
+      if(month.length() == 1)
+        month = "0" + month;
+      if(day.length() == 1)
+        day = "0" + day;
+      
+      mOut.print("<th class=\"header_date\">"+TODAY.addDays(i).getYear()+"-<br>"+month+"-"+day+"</th>");
     }    
     mOut.println("</tr>");
     
