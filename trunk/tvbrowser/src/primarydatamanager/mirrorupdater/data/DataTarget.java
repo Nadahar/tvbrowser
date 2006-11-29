@@ -41,7 +41,4 @@ public interface DataTarget {
   public void writeFile(String fileName, byte[] data) throws UpdateException;
   
   public void close() throws UpdateException;
-  
-  public boolean fileExists(String fileName) throws UpdateException;
-
 }

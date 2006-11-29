@@ -265,11 +265,17 @@ public class MirrorUpdater {
           else
             additonalFileName = completeFileName.substring(0,completeFileName.indexOf(".prog.gz")) + "_additional.prog.gz";
 
-          if(mDataTarget.fileExists(additonalFileName))
-            mDataTarget.deleteFile(additonalFileName);
+          mLog.log(Level.INFO, "Checking for old additional file: " + additonalFileName);
+          for(String value : mTargetFileArr) {
+            if(value.compareTo(additonalFileName) == 0) {
+              mLog.fine("Deleting old additonal file: " + additonalFileName);
+              mDataTarget.deleteFile(additonalFileName);
+              break;
+            }
+          }
 
           if(mDataSource.fileExists(additonalFileName)) {            
-            mLog.fine("Adding additonal file: " + additonalFileName);
+            mLog.fine("Adding new additonal file: " + additonalFileName);
             byte[] data = mDataSource.loadFile(additonalFileName);
             mDataTarget.writeFile(additonalFileName, data);
           }

@@ -251,15 +251,4 @@ public class FtpDataTarget implements DataTarget {
       + NumberFormat.getInstance().format(mBytesWritten) + " bytes written.");
   }
 
-
-  public boolean fileExists(String fileName) throws UpdateException {
-    String[] files = listFiles();
-    
-    for(int i = 0; i < files.length; i++)
-      if(files[i].compareTo(fileName) == 0)
-        return true;
-    
-    return false;
-  }
-
 }
