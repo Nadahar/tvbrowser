@@ -128,6 +128,15 @@ public class TimeSynchronousLayout extends AbstractProgramTableLayout {
       model.getProgramPanel(col, model.getRowCount(col)-1).setHeight(maxY - colYArr[col] + panel.getHeight());
     }
     
+    for (int col = 0; col < model.getColumnCount(); col++) {
+      int count = model.getRowCount(col);
+      
+      if(count > 0) {
+        ProgramPanel panel = model.getProgramPanel(col, count-1);      
+        panel.setHeight(maxY - colYArr[col] + panel.getHeight());
+      }
+    }
+    
     // Set the column starts
     setColumnStarts(columnStartArr);
   }

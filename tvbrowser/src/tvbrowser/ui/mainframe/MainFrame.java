@@ -1322,6 +1322,16 @@ public class MainFrame extends JFrame implements DateListener {
     setShowPluginOverview(visible, true);
   }
 
+  /**
+   * Gets if the plugin overview is shown.
+   * <p>
+   * @return <code>true</code> if the plugin overview is shown, <code>false</code> otherwise.
+   * @since 2.2.2
+   */
+  public boolean isShowingPluginOverview() {
+    return mPluginView != null;
+  }
+
   public void setShowPluginOverview(boolean visible, boolean save) {
     if (visible) {
       mPluginView = new PluginView();

@@ -441,10 +441,8 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
         || source == mScrollToChannelAction || source == mScrollToTimeAction) {
       showPopupMenu(source);
     } else if (source == mPluginViewAction) {
-      AbstractButton button = (AbstractButton) source
-          .getValue(ToolBar.ACTION_VALUE);
-      MainFrame.getInstance().setShowPluginOverview(button.isSelected());
-      setPluginViewButtonSelected(button.isSelected());
+      MainFrame.getInstance().setShowPluginOverview(!MainFrame.getInstance().isShowingPluginOverview());
+      setPluginViewButtonSelected(MainFrame.getInstance().isShowingPluginOverview());
     } else if (source == mScrollToNowAction) {
       MainFrame.getInstance().scrollToNow();
     } else if (source == mGoToTodayAction) {

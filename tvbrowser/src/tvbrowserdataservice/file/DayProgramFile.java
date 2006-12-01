@@ -388,7 +388,7 @@ public class DayProgramFile extends AbstractFile {
     if(programCount == 254) {
       try {
         if(job.getServerUrl() != null) {
-          String url = job.getServerUrl() + "/" + getAdditionalFileName(job.getFileName());
+          String url = job.getServerUrl() + (job.getServerUrl().endsWith("/") ? "" : "/") + getAdditionalFileName(job.getFileName());
           programCount = readProgCountFromStream(IOUtilities.getStream(new URL(url), 60000));
         }
         else
@@ -455,7 +455,7 @@ public class DayProgramFile extends AbstractFile {
         try {
           write = new FileOutputStream(fileName);
           writeProgCountToStream(write);
-        }catch(Exception e) {
+        }catch(Exception e) {e.printStackTrace();
           try {
             write.close();
           }catch(Exception e2) {}
@@ -476,7 +476,6 @@ public class DayProgramFile extends AbstractFile {
 
     gOut.close();
   }
-
   private String getAdditionalFileName(String fileName) {
     int index = fileName.indexOf("_update_");
     
@@ -485,7 +484,7 @@ public class DayProgramFile extends AbstractFile {
     else
       return fileName.substring(0,fileName.indexOf(".prog.gz")) + "_additional.prog.gz";
   }
-
+  
   public String getProgramFileName() {
     if (mChannel==null || mDate==null) return null;
     return getProgramFileName(mDate,mChannel);

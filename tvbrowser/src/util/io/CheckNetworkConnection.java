@@ -69,7 +69,14 @@ class CheckNetworkConnection {
    */
   public boolean checkConnection() {
     try {
-      return checkConnection(new URL("http://tvbrowser.org"));
+      String[] check = {"http://www.google.com/",
+                        "http://www.yahoo.com/",
+                        "http://tvbrowser.org"};
+      
+      for(int i = 0; i < check.length; i++)
+        if(checkConnection(new URL(check[i])))
+          return true;
+      
     } catch (MalformedURLException e) {
       e.printStackTrace();
     }
@@ -100,8 +107,8 @@ class CheckNetworkConnection {
     }).start();
 
     int num = 0;
-    // Wait till second Thread is finished or 15000 ms reached
-    while ((mCheckRunning) && (num < 150)) {
+    // Wait till second Thread is finished or 10000 ms reached
+    while ((mCheckRunning) && (num < 100)) {
       num++;
       if (num == 7) {
         // Show the Dialog after 700 MS

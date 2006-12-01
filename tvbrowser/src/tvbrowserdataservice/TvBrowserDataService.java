@@ -76,7 +76,12 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
           = util.ui.Localizer.getLocalizerFor(TvBrowserDataService.class);
 
   protected static final String CHANNEL_GROUPS_FILENAME = "groups.txt";
-  private static final String CHANNEL_GROUPS_URL = "http://tvbrowser.org/listings/" + CHANNEL_GROUPS_FILENAME;
+  private static final String DEFAULT_CHANNEL_GROUPS_URL = "http://tvbrowser.org/listings";
+  
+  /** Contains the mirror urls useable for receiving the groups.txt from. */
+  private static final String[] DEFAULT_CHANNEL_GROUPS_MIRRORS = {
+    
+  };
 
   private DownloadManager mDownloadManager;
   private TvDataUpdateManager mTvDataBase;
@@ -644,14 +649,43 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     return group.getAvailableChannels();
   }
 
+  private Mirror getChannelGroupsMirror() {
+    File file = new File(mDataDir, CHANNEL_GROUPS_FILENAME.substring(0,CHANNEL_GROUPS_FILENAME.indexOf(".")) + "_" + Mirror.MIRROR_LIST_FILE_NAME);    
+    
+    try {
+      return ChannelGroup.chooseUpToDateMirror(Mirror.readMirrorListFromFile(file),null,"Groups.txt", "groups");
+    } catch (Exception exc) {
+      try {
+        if(DEFAULT_CHANNEL_GROUPS_MIRRORS.length > 0) {
+          Mirror[] mirr = new Mirror[DEFAULT_CHANNEL_GROUPS_MIRRORS.length];
+          
+          for(int i = 0; i < DEFAULT_CHANNEL_GROUPS_MIRRORS.length; i++)
+            mirr[i] = new Mirror(DEFAULT_CHANNEL_GROUPS_MIRRORS[i]);
+          
+          return ChannelGroup.chooseUpToDateMirror(mirr,null,"Groups.txt", "groups");
+        }
+        else
+          throw exc;
+      }catch (Exception exc2) {
+        return new Mirror(DEFAULT_CHANNEL_GROUPS_URL);
+      }
+    }
+  }
 
   protected void downloadChannelGroupFile() throws TvBrowserException {
+    String url = getChannelGroupsMirror().getUrl();
+    
     try {
-      IOUtilities.download(new URL(CHANNEL_GROUPS_URL), new File(mDataDir, CHANNEL_GROUPS_FILENAME));
+      String name = CHANNEL_GROUPS_FILENAME.substring(0,CHANNEL_GROUPS_FILENAME.indexOf(".")) + "_" + Mirror.MIRROR_LIST_FILE_NAME;
+      IOUtilities.download(new URL(url + (url.endsWith("/") ? "" : "/") + name), new File(mDataDir, name));
+    } catch(Exception ee) {}
+    
+    try {
+      IOUtilities.download(new URL(url + (url.endsWith("/") ? "" : "/") + CHANNEL_GROUPS_FILENAME), new File(mDataDir, CHANNEL_GROUPS_FILENAME));
     } catch (MalformedURLException e) {
-      throw new TvBrowserException(TvBrowserDataService.class, "invalidURL", "Invalid URL: {0}", CHANNEL_GROUPS_URL, e);
+      throw new TvBrowserException(TvBrowserDataService.class, "invalidURL", "Invalid URL: {0}", DEFAULT_CHANNEL_GROUPS_URL, e);
     } catch (IOException e) {
-      throw new TvBrowserException(TvBrowserDataService.class, "downloadGroupFileFailed","Could not download group file {0}", CHANNEL_GROUPS_URL, e);
+      throw new TvBrowserException(TvBrowserDataService.class, "downloadGroupFileFailed","Could not download group file {0}", url, e);
     }
   }
 
