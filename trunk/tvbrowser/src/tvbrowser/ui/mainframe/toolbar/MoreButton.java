@@ -75,8 +75,7 @@ public class MoreButton extends JToggleButton implements ActionListener{
         // hide & seek 
         toolbar.addComponentListener(new ComponentAdapter(){ 
             public void componentResized(ComponentEvent e){
-              if (toolbar.getComponentCount() > 0)
-                setVisible(!isVisible(toolbar.getComponent(toolbar.getComponentCount()-1), null));
+              setVisible(toolbar.getComponentCount() > 1 && !isVisible(toolbar.getComponent(toolbar.getComponentCount()-1), null));
             } 
         });
         
@@ -124,16 +123,17 @@ public class MoreButton extends JToggleButton implements ActionListener{
     }
     
     public void actionPerformed(ActionEvent e){
-        Component[] comp = toolbar.getComponents(); 
+        Component[] comp = toolbar.getComponents();
+        Action[] actions = DefaultToolBarModel.getInstance().getActions();
+        
         Rectangle visibleRect = toolbar.getVisibleRect(); 
         for(int i = 0; i<comp.length; i++){
             if(!isVisible(comp[i], visibleRect)){
                 mPopupMenu = new JPopupMenu(); 
-                for(; i<comp.length; i++){ 
-                    if(comp[i] instanceof AbstractButton){ 
-                        AbstractButton button = (AbstractButton)comp[i]; 
-                        if(button.getAction()!=null) 
-                          mPopupMenu.add(button.getAction()); 
+                for(; i<comp.length; i++){
+                    if(comp[i] instanceof AbstractButton) { 
+                      if(actions[i] != null)
+                        mPopupMenu.add(actions[i]);
                     } else if(comp[i] instanceof JSeparator) 
                       mPopupMenu.addSeparator(); 
                 }
@@ -145,10 +145,10 @@ public class MoreButton extends JToggleButton implements ActionListener{
                     } 
                     public void popupMenuCanceled(PopupMenuEvent e){} 
                     public void popupMenuWillBecomeVisible(PopupMenuEvent e){} 
-                }); 
-                mPopupMenu.show(this, 0, getHeight()); 
-            } 
-        } 
+                });
+                mPopupMenu.show(this, 0, getHeight());
+            }
+        }
     } 
  
     public static Component wrapToolBar(JToolBar toolbar, MainFrame mainFrame){

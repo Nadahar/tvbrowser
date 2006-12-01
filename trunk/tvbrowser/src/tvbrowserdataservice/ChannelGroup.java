@@ -96,11 +96,11 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   /** List of blocked Servers */
   private static ArrayList<String> BLOCKEDSERVERS = new ArrayList<String>();
   /** Mirror-Download Running?*/
-  private boolean mMirrorDownloadRunning = true;
+  private static boolean mMirrorDownloadRunning = true;
   /** Exception on downloading in Thread */
-  private boolean mDownloadException = false;
+  private static boolean mDownloadException = false;
   /** Data of Mirror-Download*/
-  private byte[] mMirrorDownloadData = null;
+  private static byte[] mMirrorDownloadData = null;
 
   /**
    * Creates a new ChannelGroup 
@@ -266,7 +266,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     Mirror[] mirrorArr = loadMirrorList();
 
     // Get a random Mirror that is up to date
-    mCurMirror = chooseUpToDateMirror(mirrorArr, null);
+    mCurMirror = chooseUpToDateMirror(mirrorArr, null, getName(), mID);
 
     mLog.info("Using mirror " + mCurMirror.getUrl());
     // monitor.setMessage(mLocalizer.msg("info.1","Downloading from mirror
@@ -305,7 +305,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   }
 
   private SummaryFile loadSummaryFile(Mirror mirror) throws IOException, FileFormatException {
-    String url = mirror.getUrl() + "/" + mID + "_" + SummaryFile.SUMMARY_FILE_NAME;
+    String url = mirror.getUrl() + (mirror.getUrl().endsWith("/") ? "" : "/") + mID + "_" + SummaryFile.SUMMARY_FILE_NAME;
 
     InputStream stream = null;
     try {
@@ -396,7 +396,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     }
   }
 
-  private Mirror chooseMirror(Mirror[] mirrorArr, Mirror oldMirror) throws TvBrowserException {
+  private static Mirror chooseMirror(Mirror[] mirrorArr, Mirror oldMirror, String name) throws TvBrowserException {
     Mirror[] oldMirrorArr = mirrorArr;
     
     /* remove the old mirror from the mirrorlist */
@@ -429,7 +429,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
         // Check whether this is the old mirror or Mirror is Blocked
         if (((mirror == oldMirror) || BLOCKEDSERVERS.contains(getServerBase(mirror.getUrl()))) && (mirrorArr.length > 1)) {
           // We chose the old mirror -> chose another one
-          return chooseMirror(mirrorArr, oldMirror);
+          return chooseMirror(mirrorArr, oldMirror, name);
         } else {
           return mirror;
         }
@@ -442,14 +442,14 @@ public class ChannelGroup implements devplugin.ChannelGroup {
       buf.append(oldMirrorArr[i].getUrl()).append("\n");
     }
 
-    throw new TvBrowserException(getClass(), "error.2", "No mirror found\ntried following mirrors: ", getName(), buf.toString());
+    throw new TvBrowserException(ChannelGroup.class, "error.2", "No mirror found\ntried following mirrors: ", name, buf.toString());
   }
 
-  private boolean mirrorIsUpToDate(Mirror mirror) throws TvBrowserException {
+  private static boolean mirrorIsUpToDate(Mirror mirror, String id) throws TvBrowserException {
     // Load the lastupdate file and parse it
-    final String url = mirror.getUrl() + "/" + mID + "_lastupdate";
+    final String url = mirror.getUrl() + (mirror.getUrl().endsWith("/") ? "" : "/") + id + "_lastupdate";
     Date lastupdated;
-    mMirrorDownloadRunning = true;    
+    mMirrorDownloadRunning = true;
     mMirrorDownloadData = null;
     mDownloadException = false;
     
@@ -500,22 +500,22 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     return false;
   }
 
-  private Mirror chooseUpToDateMirror(Mirror[] mirrorArr, ProgressMonitor monitor) throws TvBrowserException {
+  protected static Mirror chooseUpToDateMirror(Mirror[] mirrorArr, ProgressMonitor monitor, String name, String id) throws TvBrowserException {
 
     // Choose a random Mirror
-    Mirror mirror = chooseMirror(mirrorArr, null);
+    Mirror mirror = chooseMirror(mirrorArr, null, name);
     if (monitor != null) {
       monitor.setMessage(mLocalizer.msg("info.3", "Try to connect to mirror {0}", mirror.getUrl()));
     }
     // Check whether the mirror is up to date and available
     for (int i = 0; i < MAX_UP_TO_DATE_CHECKS; i++) {
       try {
-        if (mirrorIsUpToDate(mirror)) {
+        if (mirrorIsUpToDate(mirror, id)) {
           break;
         } else {
           // This one is not up to date -> choose another one
           Mirror oldMirror = mirror;
-          mirror = chooseMirror(mirrorArr, mirror);
+          mirror = chooseMirror(mirrorArr, mirror, name);
           mLog.info("Mirror " + oldMirror.getUrl() + " is out of date or down. Choosing " + mirror.getUrl() + " instead.");
           if (monitor != null) {
             monitor.setMessage(mLocalizer.msg("info.4", "Mirror {0} is out of date or down. Choosing {1}", oldMirror.getUrl(), mirror
@@ -532,7 +532,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
         
         // This one is not available -> choose another one
         Mirror oldMirror = mirror;
-        mirror = chooseMirror(mirrorArr, mirror);
+        mirror = chooseMirror(mirrorArr, mirror, name);
         mLog.info("Mirror " + oldMirror.getUrl() + " is not available. Choosing " + mirror.getUrl() + " instead.");
         if (monitor != null) {
           monitor.setMessage(mLocalizer.msg("info.5", "Mirror {0} is not available. Choosing {1}", oldMirror.getUrl(), mirror
@@ -550,7 +550,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
    * @param url Url to fetch the Server-Domain from
    * @return Server-Domain 
    */
-  private String getServerBase(String url) {
+  private static String getServerBase(String url) {
     if (url.startsWith("http://"))
       url = url.substring(7);
     if (url.indexOf('/') >= 0)
@@ -591,7 +591,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   private void updateChannelList(Mirror mirror, boolean forceUpdate) throws TvBrowserException {
     File file = new File(mDataDir, mID + "_" + ChannelList.FILE_NAME);
     if (forceUpdate || needsUpdate(file)) {
-      String url = mirror.getUrl() + "/" + mID + "_" + ChannelList.FILE_NAME;
+      String url = mirror.getUrl() + (mirror.getUrl().endsWith("/") ? "" : "/") + mID + "_" + ChannelList.FILE_NAME;
       try {
         IOUtilities.download(new URL(url), file);
       } catch (Exception exc) {
@@ -615,7 +615,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     Mirror[] mirrorArr = loadMirrorList();
 
     // Get a random Mirror that is up to date
-    Mirror mirror = chooseUpToDateMirror(mirrorArr, monitor);
+    Mirror mirror = chooseUpToDateMirror(mirrorArr, monitor, getName(), mID);
     mLog.info("Using mirror " + mirror.getUrl());
 
     // Update the mirrorlist (for the next time)

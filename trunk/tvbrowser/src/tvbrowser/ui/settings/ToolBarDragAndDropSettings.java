@@ -382,7 +382,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
   }
 
   public void drop(DropTargetDropEvent e) {
-
+    
     // Drop the TransferAction
     e.acceptDrop(e.getDropAction());
     Transferable tr = e.getTransferable();
@@ -426,7 +426,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
         JComponent c = (JComponent) MainFrame.getInstance().getToolbar()
             .getComponentAt(location);
 
-        if (c == null || c instanceof JToolBar) {
+        if ((c == null || c instanceof JToolBar) && MainFrame.getInstance().getToolbar().getComponentCount() > 0) {
           c = (JComponent) MainFrame.getInstance().getToolbar().getComponent(
               MainFrame.getInstance().getToolbar().getComponentCount() - 1);
 
@@ -436,39 +436,46 @@ public class ToolBarDragAndDropSettings extends JDialog implements
                 + c.getHeight() - 1);
         }
 
+        int n = 0;
+        
         if (c != null) {
           Point p = SwingUtilities.convertPoint(MainFrame.getInstance().getToolBarPanel(), location, c);
 
-          int n = MainFrame.getInstance().getToolbar().getComponentIndex(c);
+          n = MainFrame.getInstance().getToolbar().getComponentIndex(c);
 
           if (!((mWest && (p.y < c.getHeight() / 2)) || (!mWest && (p.x < c
               .getWidth() / 2))))
             n++;
-
-          if (index != -1) {
-            Action a = (Action) mCurrentActions.remove(index);
-
-            if (index < n)
-              n--;
-
-            if (n > MainFrame.getInstance().getToolbar().getComponentCount() - 1)
-              mCurrentActions.insertElementAt(a, n - 1);
-            else
-              mCurrentActions.insertElementAt(a, n);
-          } else
-            for (Action a : mAvailableActions) {
-              if (a.getValue(Action.NAME).equals(name)) {
-                if (!s.getValue(Action.NAME).equals(name))
-                  mAvailableActions.removeElement(a);
-                mCurrentActions.insertElementAt(a, n);
-                break;
-              }
-            }
         }
+
+        if (index != -1) {
+          Action a = (Action) mCurrentActions.remove(index);
+
+          if (index < n)
+            n--;
+
+          if (n > MainFrame.getInstance().getToolbar().getComponentCount() - 1)
+            mCurrentActions.insertElementAt(a, n - 1);
+          else
+            mCurrentActions.insertElementAt(a, n);
+        } else {
+          if(n < 0)
+            n = 0;
+            
+          for (Action a : mAvailableActions) {
+            if (a.getValue(Action.NAME).equals(name)) {
+              if (!s.getValue(Action.NAME).equals(name))
+                mAvailableActions.removeElement(a);
+              mCurrentActions.insertElementAt(a, n);
+              break;
+            }
+          }
+        }
+        
         saveSettings();
       }
       e.dropComplete(true);
-    } catch (Exception ee) {
+    } catch (Exception ee) {ee.printStackTrace();
       e.dropComplete(false);
     }
     mCueLine.setRect(0,0,0,0);
@@ -580,7 +587,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
       JComponent c = (JComponent) MainFrame.getInstance().getToolbar()
           .getComponentAt(location);
       
-      if (c == null || c instanceof JToolBar) {
+      if ((c == null || c instanceof JToolBar) && MainFrame.getInstance().getToolbar().getComponentCount()>0) {
         c = (JComponent) MainFrame.getInstance().getToolbar().getComponent(
             MainFrame.getInstance().getToolbar().getComponentCount() - 1);
 

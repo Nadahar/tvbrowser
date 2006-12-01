@@ -119,7 +119,7 @@ public class DownloadManager {
       }
       
       if (job != null) {
-        String url = job.getServerUrl() + "/" + job.getFileName();
+        String url = job.getServerUrl() + (job.getServerUrl().endsWith("/") ? "" : "/") + job.getFileName();
         mLog.info("Loading " + url + "...");
         InputStream stream = null;
         try {

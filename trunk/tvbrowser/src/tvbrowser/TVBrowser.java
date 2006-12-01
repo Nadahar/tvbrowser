@@ -110,7 +110,9 @@ public class TVBrowser {
   /* If you want to change the version string, add it to the beginning of this array.
      We need the old version strings to import the settings.
   */
+  /** The string array with the names of the ealier versions. */
   public static final String[] ALL_VERSIONS = new String[]{
+          "2.5beta2",
           "2.5beta1",
           "2.5 alpha",
           "2.2.1",
@@ -120,10 +122,11 @@ public class TVBrowser {
           "2.2beta1",
           "2.2 (SVN)"
   };
-
+  
+  /** The current version. */
   public static final devplugin.Version VERSION=new devplugin.Version(2,30,false,ALL_VERSIONS[0]);
 
-
+  /** The title bar string. */
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
 
   private static SystemTray mTray;
@@ -156,6 +159,7 @@ public class TVBrowser {
 
   /**
    * Entry point of the application
+   * @param args The arguments given in the command line.
    */
   public static void main(String[] args) {
 
@@ -578,7 +582,11 @@ public class TVBrowser {
     }
   }
 
-
+  /**
+   * Saves the main settings.
+   * 
+   * @param log If it should be written into the log.
+   */
   public static synchronized void flushSettings(boolean log) {
     if(log)
       mLog.info("Channel Settings (day light saving time corrections/icons)");
@@ -624,6 +632,11 @@ public class TVBrowser {
     mainFrame.addWindowListener(mMainWindowAdapter);
   }
   
+  /**
+   * Gets if the system tray is used.
+   * 
+   * @return <code>true</code> if the system tray is used, <code>false</code> otherwise.
+   */
   public static boolean isUsingSystemTray() {
     return mTray.isTrayUsed();
   }
@@ -717,7 +730,8 @@ public class TVBrowser {
     }
   }
 
-  public static void updateLookAndFeel() {
+  
+  private static void updateLookAndFeel() {
     if (OperatingSystem.isWindows()) {
       UIManager.installLookAndFeel("Extended Windows Look And Feel",  "com.jgoodies.looks.windows.WindowsLookAndFeel");
     }
@@ -807,6 +821,7 @@ public class TVBrowser {
    * Called when TV-Browser shuts down.
    * <p>
    * Stops the save thread and saves the settings.
+   * @param log If it should be written to the log.
    */
   public static void shutdown(boolean log) {
     mSaveThreadShouldStop = true;
@@ -814,6 +829,9 @@ public class TVBrowser {
   }
 
 
+  /**
+   * Updates the proxy settings.
+   */
   public static void updateProxySettings() {
     String httpHost = "", httpPort = "", httpUser = "", httpPassword = "";
 
@@ -852,6 +870,13 @@ public class TVBrowser {
     private Formatter mFormatter;
     private PrintWriter mWriter;
 
+    /**
+     * Creates an instance of FileLoggingHandler.
+     * 
+     * @param fName The name of the log file.
+     * @param formatter The formatter for the log file.
+     * @throws IOException Is thrown if something goes wrong.
+     */
     public FileLoggingHandler(String fName, Formatter formatter) throws IOException {
       mFormatter = formatter;
       File f = new File(fName);
