@@ -400,7 +400,8 @@ public class CapturePlugin extends devplugin.Plugin {
 
     @Override
     public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
-        if (receiveTarget == null)
+        if (receiveTarget == null || receiveTarget.getTargetId() == null ||
+            receiveTarget.getTargetId().indexOf("#") == -1)
             return false;
 
         String id = receiveTarget.getTargetId();
