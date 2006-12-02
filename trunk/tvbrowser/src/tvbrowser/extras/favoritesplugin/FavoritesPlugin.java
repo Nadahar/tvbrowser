@@ -332,7 +332,7 @@ public class FavoritesPlugin {
 
       try {
         mFavoriteArr[i].refreshBlackList();
-        mFavoriteArr[i].updatePrograms(true);
+        mFavoriteArr[i].updatePrograms(true,true);
       } catch (TvBrowserException e) {
         ErrorHandler.handle(e);
       }
@@ -346,10 +346,19 @@ public class FavoritesPlugin {
   
   private void sendToPlugins() {
     Set<ProgramReceiveTarget> targets = mSendPluginsTable.keySet();
+    StringBuffer buffer = new StringBuffer();
     
     for(ProgramReceiveTarget target : targets) {
-      ArrayList<Program> list = mSendPluginsTable.get(target);            
-      target.getReceifeIfForIdOfTarget().receivePrograms(list.toArray(new Program[list.size()]),target);
+      ArrayList<Program> list = mSendPluginsTable.get(target);
+      
+      if(!target.getReceifeIfForIdOfTarget().receivePrograms(list.toArray(new Program[list.size()]),target))
+        buffer.append(target.getReceifeIfForIdOfTarget().toString()).append(" - ").append(target.toString()).append("\n");
+    }
+    
+    if(buffer.length() > 0) {
+      buffer.insert(0,mLocalizer.msg("sendError","Error by sending programs to other plugins.\n\nPlease check the favorites that should send\nprograms to the following plugins:\n"));
+      
+      JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()),buffer.toString(),Localizer.getLocalization(Localizer.I18N_ERROR),JOptionPane.ERROR_MESSAGE);
     }
   }
   
