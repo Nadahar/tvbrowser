@@ -92,7 +92,7 @@ public class TVRaterFilter extends PluginsFilterComponent {
      * @throws ClassNotFoundException Problems creating classes while reading
      */
     public void read(ObjectInputStream in, int version) throws IOException, ClassNotFoundException {
-        if (version > 1) {
+        if (version >= 1) {
             _value = in.readInt();
             _best = in.readBoolean();
         }
@@ -104,7 +104,7 @@ public class TVRaterFilter extends PluginsFilterComponent {
      * @throws IOException Exception while storing the data
      */
     public void write(ObjectOutputStream out) throws IOException {
-        out.write(_value);
+        out.writeInt(_value);
         out.writeBoolean(_best);
     }
 
