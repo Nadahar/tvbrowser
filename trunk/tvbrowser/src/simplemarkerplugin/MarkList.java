@@ -375,6 +375,11 @@ public class MarkList extends Vector<Program> {
     return new ProgramReceiveTarget(SimpleMarkerPlugin.getInstance(),mName,mId);
   }
   
+  /**
+   * Gets the id String of this MarkList
+   * 
+   * @return The id String of this MarkList. 
+   */
   public String getId() {
     return mId;
   }
