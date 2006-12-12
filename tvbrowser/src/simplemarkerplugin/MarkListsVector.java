@@ -132,6 +132,11 @@ public class MarkListsVector extends Vector<MarkList> {
     return names;
   }
   
+  /**
+   * Gets the available ProgramReceiveTargets
+   * 
+   * @return Thr available ProgramReceiveTargets
+   */
   public ProgramReceiveTarget[] getReceiveTargets() {
     ProgramReceiveTarget[] targets = new ProgramReceiveTarget[size()];    
       
@@ -141,6 +146,13 @@ public class MarkListsVector extends Vector<MarkList> {
     return targets;    
   }
   
+  /**
+   * Gets the the MarkList of the given taget.
+   * 
+   * @param target The target to get the MarkList for.
+   * @return The wanted MarkList or <code>null</code> if the
+   *         list for the target was not found.
+   */
   public MarkList getMarkListForTarget(ProgramReceiveTarget target) {
     for(int i = 0; i < size(); i++)
       if(get(i).getReceiveTarget().equals(target))
