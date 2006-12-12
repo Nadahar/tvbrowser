@@ -80,7 +80,9 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   
   /** Contains the mirror urls useable for receiving the groups.txt from. */
   private static final String[] DEFAULT_CHANNEL_GROUPS_MIRRORS = {
-    
+    "http://tvbrowser.dyndns.tv",
+    "http://hdtv-online.org/TVB",
+    "http://tvbrowser.poschi.net"
   };
 
   private DownloadManager mDownloadManager;
@@ -683,7 +685,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     try {
       IOUtilities.download(new URL(url + (url.endsWith("/") ? "" : "/") + CHANNEL_GROUPS_FILENAME), new File(mDataDir, CHANNEL_GROUPS_FILENAME));
     } catch (MalformedURLException e) {
-      throw new TvBrowserException(TvBrowserDataService.class, "invalidURL", "Invalid URL: {0}", DEFAULT_CHANNEL_GROUPS_URL, e);
+      throw new TvBrowserException(TvBrowserDataService.class, "invalidURL", "Invalid URL: {0}", url, e);
     } catch (IOException e) {
       throw new TvBrowserException(TvBrowserDataService.class, "downloadGroupFileFailed","Could not download group file {0}", url, e);
     }

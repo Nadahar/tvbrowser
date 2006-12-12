@@ -351,9 +351,13 @@ public class TVBrowser {
         SwingUtilities.invokeLater(new Runnable(){
           public void run() {
             mainFrame.updateUI();
-            PluginProxyManager.getInstance().fireTvBrowserStartFinished();
-            ReminderPlugin.getInstance().handleTvBrowserStartFinished();
-            FavoritesPlugin.getInstance().handleTvBrowserStartFinished();
+            new Thread() {
+              public void run() {
+                PluginProxyManager.getInstance().fireTvBrowserStartFinished();
+                ReminderPlugin.getInstance().handleTvBrowserStartFinished();
+                FavoritesPlugin.getInstance().handleTvBrowserStartFinished();                
+              }
+            }.start();
             ChannelList.completeChannelLoading();
             
             if(Launch.isOsWindowsNtBranch()) {

@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -77,6 +78,8 @@ public class NewsPlugin extends Plugin {
 
   private boolean hasRightToDownload = false;
   private NewsDialog mNewsDialog;
+    
+  private long mNoConnectionTime = 0;
 
   /**
    * Creates a new instance of NewsPlugin.
@@ -134,19 +137,21 @@ public class NewsPlugin extends Plugin {
         "Gets the TV-Browser news after each TV data update.");
     String author = "Til Schneider, www.murfman.de";
 
-    return new PluginInfo(name, desc, author, new Version(1, 3));
+    return new PluginInfo(name, desc, author, new Version(1, 4));
   }
 
   /**
    * Checks for new news.
    */
   public void handleTvDataUpdateFinished() {
-    if (hasRightToDownload) {
+    long currentTime = System.currentTimeMillis();
+    if (hasRightToDownload && mNoConnectionTime < currentTime) {
+      int serverWaitDays = -1;
       try {
         Date lastNews;
         if (mNewsList.isEmpty()) {
           // We have no news
-          lastNews = new Date(System.currentTimeMillis()
+          lastNews = new Date(currentTime
               - (long) FIRST_NEWS_DAYS * 24L * 60L * 60L * 1000L);
         } else {
           News last = (News) mNewsList.get(mNewsList.size() - 1);
@@ -184,7 +189,9 @@ public class NewsPlugin extends Plugin {
               dlg.centerAndShow();
             }
           });
-        } else if (news.equals("No news available")) {
+          serverWaitDays = getServerNoConnectionDays(news);
+        } else if (news.startsWith("No news available")) {
+          serverWaitDays = getServerNoConnectionDays(news);
           // There are no new news
         } else {
           // There was an error
@@ -194,6 +201,11 @@ public class NewsPlugin extends Plugin {
         String msg = mLocalizer.msg("error.1", "Getting news failed.");
         ErrorHandler.handle(msg, exc);
       }
+      
+      long randomNoConnectionTime = (long)((1.0 + Math.random() * 2) * 24 * 60 * 60 * 1000) + currentTime;
+      long serverNoConnectionTime = (long)(serverWaitDays * 24 * 60 * 60 * 1000) + currentTime;
+            
+      mNoConnectionTime = Math.max(randomNoConnectionTime, serverNoConnectionTime);
     }
   }
 
@@ -213,6 +225,40 @@ public class NewsPlugin extends Plugin {
     }
     return str;
   }
+  
+  /**
+   * Gets the number of days the news shouldn't be received.
+   * 
+   * @param news The news text.
+   * @return The days the news shouldn't be received.
+   * @since 2.2.2
+   */
+  private int getServerNoConnectionDays(String news) {
+    try {
+      int index1 = news.indexOf("<noconnection days");
+      int index2 = news.indexOf("<noconnection date");
+    
+      if(index1 != -1) {
+        int startPos = news.indexOf("\"",index1) + 1;
+        int endPos = news.indexOf("\"",startPos);
+      
+        return Integer.parseInt(news.substring(startPos,endPos));
+      }
+      else if(index2 != 1) {
+        int startPos = news.indexOf("\"",index1) + 1;
+        int endPos = news.indexOf("\"",startPos);
+        
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        long value = format.parse(news.substring(startPos,endPos)).getTime();
+        value -= System.currentTimeMillis();
+        value /= (60000 * 60 * 24);
+        
+        return (int)value+1;
+      }
+    }catch(Exception e) {}
+    
+    return -1;
+  }
 
   private News[] parseNews(String news) {
     // Create a regex that extracts news
@@ -228,7 +274,7 @@ public class NewsPlugin extends Plugin {
       String author = matcher.group(2);
       String title = matcher.group(3);
       String text = matcher.group(4);
-
+      
       // Convert the date to a real date. E.g.: "2004-09-17 15:38:31"
       Calendar cal = Calendar.getInstance();
       cal.set(Calendar.YEAR, Integer.parseInt(dateAsString.substring(0, 4)));
@@ -245,7 +291,7 @@ public class NewsPlugin extends Plugin {
           .set(Calendar.SECOND, Integer
               .parseInt(dateAsString.substring(17, 19)));
       Date date = cal.getTime();
-
+      
       list.add(new News(date, author, title, text));
 
       lastPos = matcher.end();
@@ -267,13 +313,15 @@ public class NewsPlugin extends Plugin {
    *           When saving failed.
    */
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(1); // version
-
+    out.writeInt(2); // version
+    
     out.writeInt(mNewsList.size());
     for (int i = 0; i < mNewsList.size(); i++) {
       News news = (News) mNewsList.get(i);
       news.writeData(out);
     }
+    
+    out.writeLong(mNoConnectionTime);
   }
 
   /**
@@ -303,6 +351,9 @@ public class NewsPlugin extends Plugin {
         mNewsList.add(news);
       }
     }
+    
+    if(version >= 2)
+      mNoConnectionTime = in.readLong();
   }
 
 }

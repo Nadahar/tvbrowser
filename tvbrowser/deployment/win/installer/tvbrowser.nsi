@@ -53,7 +53,7 @@ SetCompressor lzma
 !define MUI_UNFINISHPAGE_TITLE_3LINES
 
 # Set the default start menu folder
-!define MUI_STARTMENUPAGE_DEFAULTFOLDER $7
+!define MUI_STARTMENUPAGE_DEFAULTFOLDER "$7"
 
 # Use no descriptions in the components page
 !define MUI_COMPONENTSPAGE_NODESC
@@ -111,16 +111,16 @@ Function .onInit
   isadmin:
   StrCpy $8 "HKLM"
   # Get installation folder from registry if available
-  ReadRegStr $0 HKLM "Software\${PROG_NAME}" "Install directory"
+  ReadRegStr $0 HKLM "Software\${PROG_NAME}${VERSION}" "Install directory"
   # Get the default start menu folder from registry if available
-  ReadRegStr $7 HKLM "Software\${PROG_NAME}" "Start Menu Folder"
+  ReadRegStr $7 HKLM "Software\${PROG_NAME}${VERSION}" "Start Menu Folder"
   goto goon
   isnotpower:
   StrCpy $8 "HKCU"
   # Get installation folder from registry if available
-  ReadRegStr $0 HKCU "Software\${PROG_NAME}" "Install directory"
+  ReadRegStr $0 HKCU "Software\${PROG_NAME}${VERSION}" "Install directory"
   # Get the default start menu folder from registry if available
-  ReadRegStr $7 HKCU "Software\${PROG_NAME}" "Start Menu Folder"
+  ReadRegStr $7 HKCU "Software\${PROG_NAME}${VERSION}" "Start Menu Folder"
   goon:
   IfErrors errors
   StrCpy $INSTDIR "$0"
@@ -337,9 +337,9 @@ Section "$(STD_SECTION_NAME)"
   user:
     SetShellVarContext current
     # Store installation folder in registry
-    WriteRegStr HKCU "Software\${PROG_NAME}" "Install directory" $INSTDIR
+    WriteRegStr HKCU "Software\${PROG_NAME}${VERSION}" "Install directory" $INSTDIR
     # Remember the selected start menu folder in registry
-    WriteRegStr HKCU "Software\${PROG_NAME}" "Start Menu Folder" $STARTMENU_FOLDER
+    WriteRegStr HKCU "Software\${PROG_NAME}${VERSION}" "Start Menu Folder" $STARTMENU_FOLDER
     WriteRegExpandStr \
       HKCU \
       "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
@@ -376,9 +376,9 @@ Section "$(STD_SECTION_NAME)"
     # Sets the context of $SMPROGRAMS and other shell folders. If set to 'all', the 'all users' shell folder is used.
     SetShellVarContext all
     # Store installation folder in registry
-    WriteRegStr HKLM "Software\${PROG_NAME}" "Install directory" $INSTDIR
+    WriteRegStr HKLM "Software\${PROG_NAME}${VERSION}" "Install directory" $INSTDIR
     # Remember the selected start menu folder in registry
-    WriteRegStr HKLM "Software\${PROG_NAME}" "Start Menu Folder" $STARTMENU_FOLDER
+    WriteRegStr HKLM "Software\${PROG_NAME}${VERSION}" "Start Menu Folder" $STARTMENU_FOLDER
 
     WriteRegExpandStr \
       HKLM \
@@ -643,20 +643,20 @@ Section "Uninstall"
   isnotadmin:
   StrCmp $1 "Power" isadmin isnotpower
   isadmin:
-    ReadRegStr $8 HKLM "Software\${PROG_NAME}" "Start Menu Folder"
+    ReadRegStr $8 HKLM "Software\${PROG_NAME}${VERSION}" "Start Menu Folder"
     DeleteRegKey \
     HKLM \
-    "Software\${PROG_NAME}"
+    "Software\${PROG_NAME}${VERSION}"
     DeleteRegKey \
     HKLM \
     "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}"
     SetShellVarContext all
     goto end
   isnotpower:
-    ReadRegStr $8 HKCU "Software\${PROG_NAME}" "Start Menu Folder"
+    ReadRegStr $8 HKCU "Software\${PROG_NAME}${VERSION}" "Start Menu Folder"
     DeleteRegKey \
     HKCU \
-    "Software\${PROG_NAME}"
+    "Software\${PROG_NAME}${VERSION}"
     DeleteRegKey \
     HKCU \
     "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}"
