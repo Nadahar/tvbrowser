@@ -211,6 +211,7 @@ public class SettingsDialog implements WindowClosingIf {
       showSettingsPanelForNode(n);
       TreePath selectedPath = new TreePath(n.getPath());
       mSelectionTree.setSelectionPath(selectedPath);
+      mSelectionTree.expandPath(selectedPath);
     } else {
       showSettingsPanelForSelectedNode();
     }
