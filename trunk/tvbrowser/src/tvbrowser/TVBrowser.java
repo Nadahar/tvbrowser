@@ -124,7 +124,7 @@ public class TVBrowser {
   };
   
   /** The current version. */
-  public static final devplugin.Version VERSION=new devplugin.Version(2,30,false,ALL_VERSIONS[0]);
+  public static final devplugin.Version VERSION=new devplugin.Version(2,50,false,ALL_VERSIONS[0]);
 
   /** The title bar string. */
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
