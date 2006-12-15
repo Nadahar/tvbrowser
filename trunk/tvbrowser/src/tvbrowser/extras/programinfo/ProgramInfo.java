@@ -242,7 +242,7 @@ public class ProgramInfo {
   }
 
   protected void showProgramInformation(Program program, boolean showSettings) {
-    Window parent = UiUtilities.getBestDialogParent(MainFrame.getInstance());
+    Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
     ProgramInfoDialog dlg;
 
     if (parent instanceof Dialog) {
