@@ -26,6 +26,7 @@
 package tvbrowser.extras.programinfo;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dialog;
 import java.awt.Dimension;
@@ -48,6 +49,7 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
@@ -476,25 +478,14 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     ProgramInfo.getInstance().setExpanded("showSearch",mFindAsYouType.isAlwaysVisible());
     dispose();
   }
+  
+  public void setVisible(boolean value) {
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        ((JPanel)getContentPane()).updateUI();
+      }
+    });
 
-  /**
-   * Shows the Popup
-   * 
-   * @param evt
-   *          MouseEvent for Popup-Location
-   * @param program
-   *          Program to use for Popup
-   */
-  /*
-   * private void showPopup(MouseEvent evt, Program program) { if (program !=
-   * null) { JPopupMenu menu =
-   * Plugin.getPluginManager().createPluginContextMenu(program, null);
-   * menu.show(mInfoEP, evt.getX() - 15, evt.getY() - 15); } }
-   * 
-   * private void handleMouseClicked(MouseEvent evt, Program program) { if
-   * (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
-   * Plugin.getPluginManager().handleProgramDoubleClick(program, null); } if
-   * (SwingUtilities.isMiddleMouseButton(evt) && (evt.getClickCount() == 1)) {
-   * Plugin.getPluginManager().handleProgramMiddleClick(program, null); } }
-   */
+    super.setVisible(value);
+  }
 }
