@@ -326,9 +326,9 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     mMirrorUrlArr = mirrorUrl;
   }
 
-  private Mirror getServerDefinedMirror() {
+  private Mirror[] getServerDefinedMirrors() {
     File groupFile = new File(mDataDir, TvBrowserDataService.CHANNEL_GROUPS_FILENAME);
-    Mirror mirror = null;
+    Mirror[] mirrorArr = null;
 
     if (!groupFile.exists())
       mLog.info("Group file '"+TvBrowserDataService.CHANNEL_GROUPS_FILENAME+"' does not exist");
@@ -340,9 +340,14 @@ public class ChannelGroup implements devplugin.ChannelGroup {
         String line = in.readLine();
         while (line != null) {
           String[] s = line.split(";");
-
+          
           if (s.length>=5 && s[0].compareTo(mID) == 0) {
-            mirror = new Mirror(s[4], 1);
+            int n = s.length-4;
+            mirrorArr = new Mirror[n];
+            
+            for(int i = 0; i < n; i++)
+              mirrorArr[i] = new Mirror(s[i+4], 1);
+            
             break;
           }
 
@@ -360,7 +365,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
       }
     }
 
-    return mirror;
+    return mirrorArr;
   }
 
   private Mirror[] loadMirrorList() {
@@ -376,11 +381,12 @@ public class ChannelGroup implements devplugin.ChannelGroup {
         }
       }
 
-      Mirror groupmirror = getServerDefinedMirror();
+      Mirror[] groupmirrorArr = getServerDefinedMirrors();
 
-      if(groupmirror != null)
-        if(!mirrorList.contains(groupmirror))
-          mirrorList.add(groupmirror);
+      if(groupmirrorArr != null)
+        for(int i = 0; i < groupmirrorArr.length; i++)
+          if(!mirrorList.contains(groupmirrorArr[i]))
+            mirrorList.add(groupmirrorArr[i]);
 
       return (Mirror[])mirrorList.toArray(new Mirror[mirrorList.size()]);
     } catch (Exception exc) {
