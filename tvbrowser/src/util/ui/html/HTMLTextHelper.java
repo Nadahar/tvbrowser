@@ -53,7 +53,7 @@ public class HTMLTextHelper {
         
         result.append(linkText);
         result.append("\">");
-        result.append(linkText);
+        result.append(linkText.length() > 40 ? linkText.substring(0,40) + "..." : linkText);
         result.append("</a>");
         end = matcher.end();
       }

@@ -159,7 +159,11 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     setContentPane(main);
 
     mInfoEP = new ProgramEditorPane();
-    mInfoEP.setEditorKit(new ExtendedHTMLEditorKit());
+    
+    ExtendedHTMLEditorKit kit = new ExtendedHTMLEditorKit();
+    kit.setLinkCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    
+    mInfoEP.setEditorKit(kit);
     
     mDoc = (ExtendedHTMLDocument) mInfoEP.getDocument();
 
@@ -169,14 +173,11 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
       private String mTooltip;
       public void hyperlinkUpdate(HyperlinkEvent evt) {
         if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {
-          mInfoEP.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
           mTooltip = mInfoEP.getToolTipText();
           mInfoEP.setToolTipText(evt.getURL().toExternalForm());
         }
-        if (evt.getEventType() == HyperlinkEvent.EventType.EXITED) {
-          mInfoEP.setCursor(Cursor.getDefaultCursor());
+        if (evt.getEventType() == HyperlinkEvent.EventType.EXITED)
           mInfoEP.setToolTipText(mTooltip);
-        }
         if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           URL url = evt.getURL();
           if (url != null) {
