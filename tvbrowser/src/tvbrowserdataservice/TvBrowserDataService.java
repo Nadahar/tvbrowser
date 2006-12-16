@@ -561,8 +561,15 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
           String name = s[1];
           String providername = s[2];
           String description = s[3];
-          String url = s[4];
-          ChannelGroup group = new ChannelGroup(this, id, name, description, providername, new String[]{url}, mSettings);
+          
+          int n = s.length - 4;
+          
+          String[] mirrors = new String[n];
+          
+          for(int i = 0; i < n; i++)
+            mirrors[i] = s[i+4];
+          
+          ChannelGroup group = new ChannelGroup(this, id, name, description, providername, mirrors, mSettings);
           group.setWorkingDirectory(mDataDir);
           list.add(group);
         }
