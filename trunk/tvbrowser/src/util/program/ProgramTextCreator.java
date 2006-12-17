@@ -128,8 +128,11 @@ public class ProgramTextCreator {
     buffer.append(";\"><tr>");
     buffer.append("<td width=\"60\">");
     buffer.append("<p \"align=center\">");
-    if (Settings.propEnableChannelIcons.getBoolean())
-      buffer.append(doc.createCompTag(new JLabel(prog.getChannel().getIcon())));
+    if (Settings.propEnableChannelIcons.getBoolean()) {
+      JLabel channelLogo = new JLabel(prog.getChannel().getIcon());
+      channelLogo.setToolTipText(prog.getChannel().getName());
+      buffer.append(doc.createCompTag(channelLogo));
+    }
     buffer.append("</p></td><td>");
     buffer.append("<div style=\"color:#ff0000; font-size:");
 
@@ -137,9 +140,9 @@ public class ProgramTextCreator {
 
     buffer.append(";\"><b>");
     buffer.append(prog.getDateString());
-    buffer.append(" | ");
+    buffer.append(" · ");
     buffer.append(prog.getTimeString());
-    buffer.append(" | ");
+    buffer.append(" · ");
     buffer.append(prog.getChannel());
 
     buffer.append("</b></div><div style=\"color:#003366; font-size:");
