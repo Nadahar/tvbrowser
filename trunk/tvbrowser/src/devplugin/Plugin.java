@@ -80,9 +80,6 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(Plugin.class );
 
-   private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(Plugin.class.getName());
-
   /** The jar file of this plugin. May be used to load ressources. */
   private JarFile mJarFile;
 
@@ -828,6 +825,11 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
   public void handleTvBrowserStartFinished() { 
   }
   
+  /**
+   * Gets the root node of the plugin for the plugin tree.
+   * 
+   * @return The root node.
+   */
   public PluginTreeNode getRootNode() {
     if (mRootNode == null) {
       mRootNode = new PluginTreeNode(this);
@@ -848,6 +850,9 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
     return mRootNode;
   }
 
+  /**
+   * Saves the entries under the root node in a file.
+   */
   public void storeRootNode() {
     ObjectOutputStream out;
     File f = new File(Settings.getUserSettingsDirName(),getId()+".node");
