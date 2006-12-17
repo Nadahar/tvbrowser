@@ -94,7 +94,7 @@ public class ReminderFrame implements WindowClosingIf {
    * reminder should appear.
    */
   public static final int[] REMIND_VALUE_ARR
-    = { -1, 0, 1, 2, 3, 5, 10, 15, 30, 60, 90, 120, 240, 480, 1440 };
+    = { -1, 0, 1, 2, 3, 5, 10, 15, 30, 60, 90, 120, 240, 480, 720, 1440 };
   
   /**
    * The frame that shows this reminder. The reminder is shown in a frame if
