@@ -104,9 +104,6 @@ public class MutableProgram implements Program {
   /** Contains the title of the program if the program is marked */
   private String mTitle;
   
-  /** True if the program was on air by last checking it with {@link #isOnAir()} */
-  private boolean mWasOnAir;
-  
   /**
    * Creates a new instance of MutableProgram.
    * <p>
@@ -269,23 +266,8 @@ public class MutableProgram implements Program {
    * Gets whether this program is marked as "on air".
    */
   public boolean isOnAir() {
-    mWasOnAir = ProgramUtilities.isOnAir(this);
-    return mWasOnAir;
+    return ProgramUtilities.isOnAir(this);
   }
-  
-  /**
-   * Gets if the program was in air by last checking it with {@link #isOnAir()}
-   * 
-   * @return If the program was on air by last checking it with {@link #isOnAir()}
-   * @see #isOnAir()
-   * @since 2.2.2
-   */
-  public boolean wasOnAir() {
-    boolean temp = mWasOnAir;
-    mWasOnAir = false;
-    return temp;
-  }
-
 
   /**
    * Marks the program for a Java plugin.

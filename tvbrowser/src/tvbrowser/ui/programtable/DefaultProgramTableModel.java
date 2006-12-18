@@ -28,6 +28,7 @@ package tvbrowser.ui.programtable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TimeZone;
@@ -70,6 +71,8 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   private ProgramFilter mProgramFilter=null;
 
   private HashMap mDateRangeForChannel;
+  
+  private int[] mOnAirRows;
 
   /**
    * Creates a new instance of DefaultProgramTableModel.
@@ -265,6 +268,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     final Runnable callback)
   {
     checkThread();
+    mOnAirRows = null;
     deregisterFromPrograms(mProgramColumn);
 
     TvDataBase db = TvDataBase.getInstance();
@@ -414,7 +418,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
 
 
-  private void handleTimerEvent() {
+  private void handleTimerEvent() {//TODO
     checkThread();
 
     // Avoid a repaint 6 times a minute (Once a minute is enough)
@@ -424,15 +428,46 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     }
 
     mLastTimerMinutesAfterMidnight = minutesAfterMidnight;
-    
+
     // Force a repaint of all programs on air
     // (so the progress background will be updated)
-    for (int col = 0; col < getColumnCount(); col++) {
-      for (int row = 0; row < getRowCount(col); row++) {
-        ProgramPanel panel = getProgramPanel(col, row);
-        if (((MutableProgram)panel.getProgram()).wasOnAir() || panel.getProgram().isOnAir()) {
-          panel.getProgram().validateMarking();
-          fireTableCellUpdated(col, row);
+    if(mOnAirRows == null) {
+      mOnAirRows = new int[getColumnCount()];
+      Arrays.fill(mOnAirRows, -1);
+      for (int col = 0; col < getColumnCount(); col++) {
+        for (int row = 0; row < getRowCount(col); row++) {
+          ProgramPanel panel = getProgramPanel(col, row);
+          if (panel.getProgram().isOnAir()) {
+            mOnAirRows[col] = row;
+            panel.getProgram().validateMarking();
+            fireTableCellUpdated(col, row);
+          }
+        }
+      }
+    }
+    else {
+      for (int col = 0; col < mOnAirRows.length; col++) {
+        if(mOnAirRows[col] != -1) {
+          ProgramPanel panel = getProgramPanel(col, mOnAirRows[col]);
+          
+          if(panel.getProgram().isOnAir()) {
+            panel.getProgram().validateMarking();
+            fireTableCellUpdated(col, mOnAirRows[col]);
+          }
+          else if(panel.getProgram().isExpired()){
+            panel.getProgram().validateMarking();
+            fireTableCellUpdated(col, mOnAirRows[col]);
+            
+            panel = getProgramPanel(col, mOnAirRows[col]+1);
+            
+            if(panel == null)
+              mOnAirRows[col] = -1;
+            else {
+              mOnAirRows[col] = mOnAirRows[col]+1;
+              panel.getProgram().validateMarking();
+              fireTableCellUpdated(col, mOnAirRows[col]);              
+            }
+          }
         }
       }
     }
