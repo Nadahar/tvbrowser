@@ -26,6 +26,9 @@
 
 package tvbrowser.extras.favoritesplugin.wizards;
 
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -71,8 +74,16 @@ public class NotificationWizardStep extends AbstractWizardStep {
     panelBuilder.add(mCheckOnUpdateCb = new JCheckBox(mLocalizer.msg("option.checkAfterUpdate","Sofort alarmieren, wenn die Sendung nach einer Aktualisierung gefunden wird.")), cc.xy(1,5));
 
     mReminderCb.setSelected(true);
-    return panelBuilder.getPanel();
+    JPanel result = panelBuilder.getPanel();
+    result.addFocusListener(new FocusListener() {
 
+      public void focusGained(FocusEvent e) {
+        mReminderCb.requestFocusInWindow();
+      }
+
+      public void focusLost(FocusEvent e) {
+      }});
+    return result;
   }
 
   public Object createDataObject(Object obj) {
