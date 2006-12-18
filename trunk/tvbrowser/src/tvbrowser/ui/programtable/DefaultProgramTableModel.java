@@ -38,6 +38,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.TvDataBase;
+import tvdataservice.MutableProgram;
 import util.io.IOUtilities;
 import util.ui.ProgramPanel;
 import devplugin.Channel;
@@ -429,7 +430,8 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     for (int col = 0; col < getColumnCount(); col++) {
       for (int row = 0; row < getRowCount(col); row++) {
         ProgramPanel panel = getProgramPanel(col, row);
-        if (panel.getProgram().isOnAir()) {
+        if (((MutableProgram)panel.getProgram()).wasOnAir() || panel.getProgram().isOnAir()) {
+          panel.getProgram().validateMarking();
           fireTableCellUpdated(col, row);
         }
       }

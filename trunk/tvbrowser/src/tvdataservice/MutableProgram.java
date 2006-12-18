@@ -104,6 +104,9 @@ public class MutableProgram implements Program {
   /** Contains the title of the program if the program is marked */
   private String mTitle;
   
+  /** True if the program was on air by last checking it with {@link #isOnAir()} */
+  private boolean mWasOnAir;
+  
   /**
    * Creates a new instance of MutableProgram.
    * <p>
@@ -266,7 +269,21 @@ public class MutableProgram implements Program {
    * Gets whether this program is marked as "on air".
    */
   public boolean isOnAir() {
-    return ProgramUtilities.isOnAir(this);
+    mWasOnAir = ProgramUtilities.isOnAir(this);
+    return mWasOnAir;
+  }
+  
+  /**
+   * Gets if the program was in air by last checking it with {@link #isOnAir()}
+   * 
+   * @return If the program was on air by last checking it with {@link #isOnAir()}
+   * @see #isOnAir()
+   * @since 2.2.2
+   */
+  public boolean wasOnAir() {
+    boolean temp = mWasOnAir;
+    mWasOnAir = false;
+    return temp;
   }
 
 
@@ -910,7 +927,7 @@ public class MutableProgram implements Program {
    * Informs the ChangeListeners for repainting if a Plugin
    * uses more than one Icon for the Program.
    *
-   * @since 2.3
+   * @since 2.2.2
    */
   public final void validateMarking() {
     fireStateChanged();

@@ -829,13 +829,13 @@ public class Settings {
       mProp, "pictures.type", PictureSettingsPanel.SHOW_IN_TIME_RANGE);
   
   public static final StringArrayProperty propPicturePluginIds = new StringArrayProperty(
-      mProp, "pictures.startTime", new String[0]);
+      mProp, "pictures.pluginIds", new String[0]);
   
   public static final IntProperty propPictureStartTime = new IntProperty(
       mProp, "pictures.startTime", 18 * 60);
   
   public static final IntProperty propPictureEndTime = new IntProperty(
-      mProp, "pictures.startEnd", 23 * 60);
+      mProp, "pictures.endTime", 23 * 60);
 
   public static final IntProperty propPictureDuration = new IntProperty(
       mProp, "pictures.duration", 10);
