@@ -1,5 +1,36 @@
 Changelog TVBrowser
 
+2.5 beta2
+=========
+
+-Bugs
+ * 1601964 ProgramTable layout: Last program should use available space
+ * 1604558 More button of toolbar is shown if toolbar is empty
+ * 1604560 More button of toolbar didn't works
+ * 1535149 Freeze bei Neustart
+ * 1601963 Plugin View: Export sometimes not available
+ * 1601964 ProgramTable layout: Last program should use available space
+ * 1602055 LookAndFeel settings not selectable
+ * 1602414 CaretPositionCorrector works not as expected 
+
+-Features
+ * 1603323 Change network connection test
+ * 1603322 Add mirror support for groups handling
+ * 1607594 NewsPlugin: Add ability to forbid connections
+ * 1614254 Win: Registry values for deinstall separate for every ver.
+
+2.5 beta1
+=========
+
+-Bugs
+ * 1592886 Nullpointer in Elgato-Driver of CapturePlugin
+ * 1591008 Reminder editing window forgets size
+ * 1598552 Favorite: Title favorite is not changeable
+ * 1596659 Favorite: Exclusion sometimes didn't work
+
+-Features
+ * 1601966 Reminder: Add 12 hour remind ability
+ 
 2.5 alpha
 =========
 
@@ -59,13 +90,27 @@ Changelog TVBrowser
  * 1554050 Sidebar is decreased if a component of it is removed
  * 1580056 Minize on closing has wrong position in settings
  * 1590141 Edit favorites: programs are send two times to plugins 
-
+ (2.5beta1:)
+ * 1591008 Reminder editing window forgets size
+ * 1598552 Favorite: Title favorite is not changeable
+ * 1596659 Favorite: Exclusion sometimes didn't work 
+ (2.5beta2)
+ * 1601964 ProgramTable layout: Last program should use available space
+ * 1604558 More button of toolbar is shown if toolbar is empty
+ * 1604560 More button of toolbar didn't works
+ * 1535149 Freeze bei Neustart 
+ 
 - Features
  * 1519526 Show updates for plugins
  * 1495140 A day should be able to have > 256 Programs
  * 1317785 ProgramTable mit Bildern
  * 1579224 Save paths to icon/skin-themes relative
  * Move SearchPlugin into base application
+ (2.5beta2)
+ * 1603323 Change network connection test
+ * 1603322 Add mirror support for groups handling
+ * 1607594 NewsPlugin: Add ability to forbid connections
+ * 1614254 Win: Registry values for deinstall separate for every ver. 
 
 2.2.1
 =====
