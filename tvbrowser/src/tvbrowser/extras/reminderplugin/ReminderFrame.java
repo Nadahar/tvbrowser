@@ -42,6 +42,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.Timer;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import tvbrowser.ui.mainframe.MainFrame;
 import util.io.IOUtilities;
@@ -57,7 +59,7 @@ import devplugin.Program;
  *
  * @author Martin Oberhauser
  */
-public class ReminderFrame implements WindowClosingIf {
+public class ReminderFrame implements WindowClosingIf, ChangeListener {
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ReminderFrame.class);
@@ -121,6 +123,7 @@ public class ReminderFrame implements WindowClosingIf {
   private Timer mAutoCloseTimer;
   private int mRemainingSecs;
 
+  private JLabel mHeader;
 
   /**
    * Creates a new instance of ReminderFrame.
@@ -152,7 +155,9 @@ public class ReminderFrame implements WindowClosingIf {
     
     list.removeWithoutChecking(item.getProgramItem());
     list.blockProgram(item.getProgram());
-    mProgram = item.getProgram();
+    
+    mProgram = item.getProgram();    
+    
     JPanel jcontentPane = new JPanel(new BorderLayout(0,10));
     mDialog.setContentPane(jcontentPane);
     
@@ -170,7 +175,7 @@ public class ReminderFrame implements WindowClosingIf {
       msg = mLocalizer.msg("soonStarts", "Soon starts");
     }
     
-    progPanel.add(new JLabel(msg), BorderLayout.NORTH);
+    progPanel.add(mHeader = new JLabel(msg), BorderLayout.NORTH);
     
     JLabel channelLabel=new JLabel(mProgram.getChannel().getName());
     channelLabel.setIcon(UiUtilities.createChannelIcon(mProgram.getChannel().getIcon()));
@@ -231,6 +236,8 @@ public class ReminderFrame implements WindowClosingIf {
         UiUtilities.getLastModalChildOf(MainFrame.getInstance()).toFront();
       }
     });
+    
+    mProgram.addChangeListener(this);
   }
   
   
@@ -291,5 +298,13 @@ public class ReminderFrame implements WindowClosingIf {
 
   public static int getMinutesForValue(int index) {
     return REMIND_VALUE_ARR[index + 1];
+  }
+  
+
+  public void stateChanged(ChangeEvent e) {
+    if(mProgram.isOnAir())
+      mHeader.setText(mLocalizer.msg("alreadyRunning", "Already running"));
+    else if(mProgram.isExpired())
+      mHeader.setText(mLocalizer.msg("ended", "Program elapsed"));
   }
 }
