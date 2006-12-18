@@ -187,6 +187,7 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
     getContentPane().add(mButtonPanel, cc.xy(1, 3));
     getContentPane().validate();
     ((JPanel)getContentPane()).updateUI();
+    mCurrentContentPanel.requestFocusInWindow();
   }
 
   public int getResult() {
