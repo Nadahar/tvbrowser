@@ -140,7 +140,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
    */
   public ActionMenu getContextMenuActions(Program p) {
     if (!p.equals(getPluginManager().getExampleProgram()))
-      if (p.isExpired())
+      if (p.isExpired() && !mMarkListVector.contains(p))
         return null;
 
     this.mProg = p;
