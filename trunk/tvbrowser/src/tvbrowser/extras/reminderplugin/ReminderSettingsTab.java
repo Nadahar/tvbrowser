@@ -53,6 +53,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -86,6 +88,7 @@ public class ReminderSettingsTab implements SettingsTab {
   private JCheckBox mExecChB;
   private JCheckBox mShowTimeSlectionDlg;
   private JCheckBox mAutoCloseReminderAfterProgramEnd;
+  private JCheckBox mShowTimeCounter;
   private JButton mExecFileDialogBtn;
   private JSpinner mAutoCloseReminderTimeSp;
   
@@ -109,7 +112,7 @@ public class ReminderSettingsTab implements SettingsTab {
   public JPanel createSettingsPanel() {
     FormLayout layout = new FormLayout("5dlu,pref,5dlu,pref,pref:grow,3dlu,pref,3dlu,pref,5dlu",
         "pref,5dlu,pref,1dlu,pref,1dlu,pref,10dlu,pref,5dlu," +
-        "pref,10dlu,pref,5dlu,pref,3dlu,pref,10dlu,pref,5dlu,pref,10dlu," +
+        "pref,10dlu,pref,5dlu,pref,3dlu,pref,3dlu,pref,10dlu,pref,5dlu,pref,10dlu," +
         "pref,5dlu,pref");
     layout.setColumnGroups(new int[][] {{7,9}});
     PanelBuilder pb = new PanelBuilder(layout);
@@ -183,6 +186,9 @@ public class ReminderSettingsTab implements SettingsTab {
     mAutoCloseReminderTimeSp = new JSpinner(new SpinnerNumberModel(autoCloseReminderTime,0,600,1));
     mAutoCloseReminderTimeSp.setEnabled(!mAutoCloseReminderAfterProgramEnd.isSelected());
     
+    mShowTimeCounter = new JCheckBox(mLocalizer.msg("showTimeCounter","Show time counter"),mSettings.getProperty("showTimeCounter","false").compareTo("true") == 0);
+    mShowTimeCounter.setEnabled(((Integer)mAutoCloseReminderTimeSp.getValue()).intValue() > 0 || mAutoCloseReminderAfterProgramEnd.isSelected());    
+    
     String defaultReminderEntryStr = (String)mSettings.get("defaultReminderEntry");
     mDefaultReminderEntryList =new JComboBox(ReminderDialog.SMALL_REMIND_MSG_ARR);
     if (defaultReminderEntryStr != null) {
@@ -214,18 +220,19 @@ public class ReminderSettingsTab implements SettingsTab {
     
     pb.addSeparator(mLocalizer.msg("autoCloseReminder", "Automatically close reminder after"), cc.xyw(1,13,10));
     pb.add(mAutoCloseReminderAfterProgramEnd, cc.xyw(2,15,5));
-    pb.add(mAutoCloseReminderTimeSp, cc.xy(2,17));
+    pb.add(mAutoCloseReminderTimeSp, cc.xy(2,17));    
     final JLabel secondsLabel = pb.addLabel(mLocalizer.msg("seconds", "seconds (0 = off)"), cc.xy(4,17));
     secondsLabel.setEnabled(!mAutoCloseReminderAfterProgramEnd.isSelected());
+    pb.add(mShowTimeCounter, cc.xyw(2,19,5));
     
     JPanel reminderEntry = new JPanel(new FlowLayout(FlowLayout.LEADING,0,0));
     reminderEntry.add(mDefaultReminderEntryList);
     
-    pb.addSeparator(mLocalizer.msg("defaltReminderEntry","Default reminder time"), cc.xyw(1,19,10));
-    pb.add(reminderEntry, cc.xyw(2,21,4));
+    pb.addSeparator(mLocalizer.msg("defaltReminderEntry","Default reminder time"), cc.xyw(1,21,10));
+    pb.add(reminderEntry, cc.xyw(2,23,4));
     
-    pb.addSeparator(mLocalizer.msg("timeChoosing","Time selection dialog"), cc.xyw(1,23,10));    
-    pb.add(mShowTimeSlectionDlg, cc.xyw(2,25,4));
+    pb.addSeparator(mLocalizer.msg("timeChoosing","Time selection dialog"), cc.xyw(1,25,10));    
+    pb.add(mShowTimeSlectionDlg, cc.xyw(2,27,4));
     
     soundTestBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -309,6 +316,13 @@ public class ReminderSettingsTab implements SettingsTab {
       public void itemStateChanged(ItemEvent e) {
         mAutoCloseReminderTimeSp.setEnabled(e.getStateChange() != ItemEvent.SELECTED);
         secondsLabel.setEnabled(e.getStateChange() != ItemEvent.SELECTED);
+        mShowTimeCounter.setEnabled(((Integer)mAutoCloseReminderTimeSp.getValue()).intValue() > 0 || mAutoCloseReminderAfterProgramEnd.isSelected());        
+      }
+    });
+    
+    mAutoCloseReminderTimeSp.addChangeListener(new ChangeListener() {
+      public void stateChanged(ChangeEvent e) {
+        mShowTimeCounter.setEnabled(((Integer)mAutoCloseReminderTimeSp.getValue()).intValue() > 0 || mAutoCloseReminderAfterProgramEnd.isSelected());        
       }
     });
 
@@ -384,7 +398,7 @@ public class ReminderSettingsTab implements SettingsTab {
     mSettings.setProperty("autoCloseReminderTime", mAutoCloseReminderTimeSp.getValue().toString());
     mSettings.setProperty("defaultReminderEntry",""+mDefaultReminderEntryList.getSelectedIndex());
     mSettings.setProperty("showTimeSelectionDialog", String.valueOf(mShowTimeSlectionDlg.isSelected()));
-    
+    mSettings.setProperty("showTimeCounter",String.valueOf((((Integer)mAutoCloseReminderTimeSp.getValue()).intValue() > 0 || mAutoCloseReminderAfterProgramEnd.isSelected()) && mShowTimeCounter.isSelected()));
   }
 
   /**

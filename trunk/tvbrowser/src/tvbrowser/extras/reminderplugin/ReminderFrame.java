@@ -254,7 +254,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
   
   
   private void updateCloseBtText() {
-    if(mRemainingSecs <= 10)
+    if(mRemainingSecs <= 10 || ReminderPlugin.getInstance().getSettings().getProperty("showTimeCounter","false").compareTo("true") == 0)
       mCloseBt.setText(mCloseBtText + " (" + mRemainingSecs + ")");
   }
   
