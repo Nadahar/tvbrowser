@@ -120,7 +120,7 @@ public class LicenseBox extends JDialog implements ActionListener,WindowClosingI
     
     
     
-    setSize(300,300);
+    setSize(420,500);
    
     
   }
