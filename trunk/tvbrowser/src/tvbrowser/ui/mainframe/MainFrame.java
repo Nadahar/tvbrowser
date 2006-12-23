@@ -794,7 +794,7 @@ public class MainFrame extends JFrame implements DateListener {
               if(mOnAirRowProgramsArr[i] == -1) {
                 chProg = TvDataBase.getInstance().getDayProgram(Date.getCurrentDate().addDays(1),ch[i]);
               
-                if(chProg != null && chProg.getProgramAt(0).isOnAir()) {
+                if(chProg != null && chProg.getProgramCount() > 0 && chProg.getProgramAt(0).isOnAir()) {
                   chProg.getProgramAt(0).validateMarking();
                   mOnAirRowProgramsArr[i] = 0;
                 }
@@ -809,9 +809,9 @@ public class MainFrame extends JFrame implements DateListener {
           for(int i = 0; i < mChannelDateArr.length; i++) {
             ChannelDayProgram chProg = TvDataBase.getInstance().getDayProgram(mChannelDateArr[i],ch[i]);
             
-            if(chProg != null || mOnAirRowProgramsArr[i] != -1) {
+            if((chProg != null && chProg.getProgramCount() > 0) || mOnAirRowProgramsArr[i] != -1) {
               Program p = chProg.getProgramAt(mOnAirRowProgramsArr[i]);
-            
+              
               if(p.isOnAir())
                 p.validateMarking();
               else if(p.isExpired()) {
@@ -819,8 +819,8 @@ public class MainFrame extends JFrame implements DateListener {
               
                 int n = mOnAirRowProgramsArr[i]+1;
               
-                if(n < chProg.getProgramCount()-1) {
-                  mOnAirRowProgramsArr[i] = mOnAirRowProgramsArr[i]+1;
+                if(n < chProg.getProgramCount()) {
+                  mOnAirRowProgramsArr[i] = n;
                   chProg.getProgramAt(mOnAirRowProgramsArr[i]).validateMarking();
                 }
                 else {
@@ -831,7 +831,7 @@ public class MainFrame extends JFrame implements DateListener {
                   chProg = TvDataBase.getInstance().getDayProgram(mChannelDateArr[i],ch[i]);
                 
                   // The next day has no data
-                  if(chProg == null)
+                  if(chProg == null || chProg.getProgramCount() < 1)
                     mOnAirRowProgramsArr[i] = -1;
                   else {
                     mOnAirRowProgramsArr[i] = 0;
@@ -847,7 +847,7 @@ public class MainFrame extends JFrame implements DateListener {
               
               chProg = TvDataBase.getInstance().getDayProgram(mChannelDateArr[i],ch[i]);
               
-              if(chProg != null) {
+              if(chProg != null && chProg.getProgramCount() > 0) {
                 mOnAirRowProgramsArr[i] = 0;
                 chProg.getProgramAt(mOnAirRowProgramsArr[i]).validateMarking();
               }
@@ -992,7 +992,7 @@ public class MainFrame extends JFrame implements DateListener {
 
     mFinderPanel.updateItems();
     Settings.propLastDownloadDate.setDate(Date.getCurrentDate());
-    MainFrame.getInstance().resetOnAirArrays();
+    resetOnAirArrays();
   }
 
   public void showChannel(Channel ch) {
