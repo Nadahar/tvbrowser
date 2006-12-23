@@ -73,7 +73,7 @@ public class StatusPanel extends JPanel {
     add(new LineComponent(textfield.getForeground()), cc.xy(5,2));
     add(createStatusLabel("3. "+Localizer.getLocalization(Localizer.I18N_PICTURES), selected == PICTURES), cc.xy(6,2));
     add(new LineComponent(textfield.getForeground()), cc.xy(7,2));
-    add(createStatusLabel("3. "+mLocalizer.msg("done", "Done"), selected == READY), cc.xy(8,2));
+    add(createStatusLabel("4. "+mLocalizer.msg("done", "Done"), selected == READY), cc.xy(8,2));
     
     JPanel black = new JPanel();
     black.setBackground(textfield.getForeground());
