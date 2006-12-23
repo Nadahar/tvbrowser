@@ -418,7 +418,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
 
 
-  private void handleTimerEvent() {//TODO
+  private void handleTimerEvent() {
     checkThread();
 
     // Avoid a repaint 6 times a minute (Once a minute is enough)
@@ -439,7 +439,6 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
           ProgramPanel panel = getProgramPanel(col, row);
           if (panel.getProgram().isOnAir()) {
             mOnAirRows[col] = row;
-            panel.getProgram().validateMarking();
             fireTableCellUpdated(col, row);
           }
         }
@@ -451,11 +450,9 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
           ProgramPanel panel = getProgramPanel(col, mOnAirRows[col]);
           
           if(panel.getProgram().isOnAir()) {
-            panel.getProgram().validateMarking();
             fireTableCellUpdated(col, mOnAirRows[col]);
           }
           else if(panel.getProgram().isExpired()){
-            panel.getProgram().validateMarking();
             fireTableCellUpdated(col, mOnAirRows[col]);
             
             panel = getProgramPanel(col, mOnAirRows[col]+1);
@@ -464,7 +461,6 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
               mOnAirRows[col] = -1;
             else {
               mOnAirRows[col] = mOnAirRows[col]+1;
-              panel.getProgram().validateMarking();
               fireTableCellUpdated(col, mOnAirRows[col]);              
             }
           }

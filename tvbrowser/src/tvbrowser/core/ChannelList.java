@@ -39,6 +39,7 @@ import java.util.Iterator;
 
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.ui.mainframe.MainFrame;
 import devplugin.Channel;
 
 
@@ -83,7 +84,7 @@ public class ChannelList {
   public static void reload() {
     mAvailableChannels.clear();
     loadChannelMaps();
-    create();
+    create();    
   }
 
   private static void create() {
@@ -94,6 +95,7 @@ public class ChannelList {
       addDataServiceChannels(dataServiceArr[i]);
 
     clearChannelMaps();
+    MainFrame.getInstance().resetOnAirArrays();
   }
 
   /**

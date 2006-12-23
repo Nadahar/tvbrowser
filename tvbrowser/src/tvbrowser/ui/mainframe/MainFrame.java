@@ -40,6 +40,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Constructor;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -92,6 +93,7 @@ import tvbrowser.ui.update.SoftwareUpdateDlg;
 import tvbrowser.ui.update.SoftwareUpdateItem;
 import tvbrowser.ui.update.SoftwareUpdater;
 import util.browserlauncher.Launch;
+import util.io.IOUtilities;
 import util.misc.OperatingSystem;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -99,6 +101,7 @@ import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 import util.ui.view.Node;
 import devplugin.Channel;
+import devplugin.ChannelDayProgram;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.Program;
@@ -176,11 +179,19 @@ public class MainFrame extends JFrame implements DateListener {
   private Point mStoredViewPosition;
   
   private String mCurrentFilterName;
+  
+  private int mLastTimerMinutesAfterMidnight;
+  
+  private Date[] mChannelDateArr;
+  private int[] mOnAirRowProgramsArr;
 
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
     mIsVisible = false;
 
+    mLastTimerMinutesAfterMidnight = -1;
+    mChannelDateArr = null;
+    mOnAirRowProgramsArr = null;
     mStatusBar = new StatusBar();
 
     if (OperatingSystem.isMacOs()) {
@@ -736,13 +747,124 @@ public class MainFrame extends JFrame implements DateListener {
       System.exit(0);
     }
   }
+  
+  /**
+   * Resets the arrays of on air programs for relaoding all.
+   */
+  public void resetOnAirArrays() {
+    mChannelDateArr = null;
+    mOnAirRowProgramsArr = null;
+  }
 
   private void handleTimerEvent() {
     Date date = Date.getCurrentDate();
+    // Avoid a repaint 6 times a minute (Once a minute is enough)
+    try {
+    int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
+    if (minutesAfterMidnight != mLastTimerMinutesAfterMidnight) {
+      mLastTimerMinutesAfterMidnight = minutesAfterMidnight;
+      Channel[] ch = ChannelList.getSubscribedChannels();
+      
+      if(ch != null) {
+        /* If no date array is available we have to find
+         * the n air programs */
+        if(mChannelDateArr == null) {
+          mChannelDateArr = new Date[ch.length];
+          mOnAirRowProgramsArr = new int[ch.length];
+        
+          Arrays.fill(mOnAirRowProgramsArr, -1);
+        
+          for(int i = 0; i < ch.length; i++) {
+            ChannelDayProgram chProg = TvDataBase.getInstance().getDayProgram(Date.getCurrentDate(),ch[i]);
+          
+            if(chProg == null)
+              mChannelDateArr[i] = null;
+            else {
+              int n = chProg.getProgramCount();
+            
+              for(int j = 0; j < n; j++) {
+                if(chProg.getProgramAt(j).isOnAir()) {
+                  chProg.getProgramAt(j).validateMarking();
+                  mOnAirRowProgramsArr[i] = j;
+                  mChannelDateArr[i] = Date.getCurrentDate();
+                  break;
+                }
+              }
+            
+              if(mOnAirRowProgramsArr[i] == -1) {
+                chProg = TvDataBase.getInstance().getDayProgram(Date.getCurrentDate().addDays(1),ch[i]);
+              
+                if(chProg != null && chProg.getProgramAt(0).isOnAir()) {
+                  chProg.getProgramAt(0).validateMarking();
+                  mOnAirRowProgramsArr[i] = 0;
+                }
+                
+                mChannelDateArr[i] = Date.getCurrentDate().addDays(1);
+              }
+            }
+          }
+        }
+        else {
+          /* We have a date array and can test the programs */
+          for(int i = 0; i < mChannelDateArr.length; i++) {
+            ChannelDayProgram chProg = TvDataBase.getInstance().getDayProgram(mChannelDateArr[i],ch[i]);
+            
+            if(chProg != null || mOnAirRowProgramsArr[i] != -1) {
+              Program p = chProg.getProgramAt(mOnAirRowProgramsArr[i]);
+            
+              if(p.isOnAir())
+                p.validateMarking();
+              else if(p.isExpired()) {
+                p.validateMarking();
+              
+                int n = mOnAirRowProgramsArr[i]+1;
+              
+                if(n < chProg.getProgramCount()-1) {
+                  mOnAirRowProgramsArr[i] = mOnAirRowProgramsArr[i]+1;
+                  chProg.getProgramAt(mOnAirRowProgramsArr[i]).validateMarking();
+                }
+                else {
+                  /* The last day program is expired so we have to
+                   * look for the on air program on the next day */
+                  mChannelDateArr[i] = mChannelDateArr[i].addDays(1);
+                
+                  chProg = TvDataBase.getInstance().getDayProgram(mChannelDateArr[i],ch[i]);
+                
+                  // The next day has no data
+                  if(chProg == null)
+                    mOnAirRowProgramsArr[i] = -1;
+                  else {
+                    mOnAirRowProgramsArr[i] = 0;
+                    chProg.getProgramAt(mOnAirRowProgramsArr[i]).validateMarking();
+                  }
+                }
+              }
+            }
+            else if(mChannelDateArr[i].compareTo(Date.getCurrentDate()) < 0) {
+              /* If the date array for the channel contains a date
+               * earlier than today we have to use today instead */
+              mChannelDateArr[i] = Date.getCurrentDate();
+              
+              chProg = TvDataBase.getInstance().getDayProgram(mChannelDateArr[i],ch[i]);
+              
+              if(chProg != null) {
+                mOnAirRowProgramsArr[i] = 0;
+                chProg.getProgramAt(mOnAirRowProgramsArr[i]).validateMarking();
+              }
+            }
+          }
+        }
+      }
+    }
+    }catch(Exception e) {}
+    
     if (date.equals(mCurrentDay)) {
       return;
     }
+    
+    mLastTimerMinutesAfterMidnight = -1;
     mCurrentDay = date;
+    
     if (mFinderPanel != null) {
       mFinderPanel.updateContent();
     }
@@ -870,7 +992,7 @@ public class MainFrame extends JFrame implements DateListener {
 
     mFinderPanel.updateItems();
     Settings.propLastDownloadDate.setDate(Date.getCurrentDate());
-
+    MainFrame.getInstance().resetOnAirArrays();
   }
 
   public void showChannel(Channel ch) {
