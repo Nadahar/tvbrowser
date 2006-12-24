@@ -46,7 +46,7 @@ public class TVRaterProgramFilter extends PluginsProgramFilter {
      * @return Name of this Filter
      */
     public String getSubName() {
-        return mLocalizer.msg("subname", "Good shows/movies");
+        return mLocalizer.msg("subname", "Very good shows/movies");
     }
 
     /**
