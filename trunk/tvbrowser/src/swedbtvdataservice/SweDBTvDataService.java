@@ -373,7 +373,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
    * Gets the list of the channels that are available for the given channel group.
    */
   public Channel[] getAvailableChannels(ChannelGroup group){
-      System.out.println("getAvailableChannels returnerar kanaler för grupp: " + group.getName());
+//      System.out.println("getAvailableChannels returnerar kanaler för grupp: " + group.getName());
 //      Iterator it = mChannelList.iterator();
       HashSet mTempHashSet = new HashSet();
       for (int i=0;i<mChannel.length;i++) {

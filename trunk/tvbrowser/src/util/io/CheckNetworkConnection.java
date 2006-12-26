@@ -138,8 +138,12 @@ class CheckNetworkConnection {
   }
 
   private void showDialog() {
-    if ((mCheckRunning) && (mWaitingDialog == null) && MainFrame.getInstance().isVisible() && 
-        MainFrame.getInstance().getExtendedState() != MainFrame.ICONIFIED) {
+    try {
+      if(!MainFrame.getInstance().isVisible() || MainFrame.getInstance().getExtendedState() == MainFrame.ICONIFIED)
+        return;
+    }catch(Exception e) {}
+    
+    if ((mCheckRunning) && (mWaitingDialog == null)) {
       Window comp = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
       if (comp instanceof Dialog) {
         mWaitingDialog = new JDialog((Dialog) comp, false);
