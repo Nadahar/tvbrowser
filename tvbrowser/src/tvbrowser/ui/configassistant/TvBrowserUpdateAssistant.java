@@ -114,7 +114,7 @@ public class TvBrowserUpdateAssistant extends JDialog implements ActionListener,
               JOptionPane.showMessageDialog(this, mLocalizer.msg("error.2","The selected directory doesn't contain valid tv listings."), mLocalizer.msg("error.2.title","Invalid directory"), JOptionPane.WARNING_MESSAGE);
             }
             else {
-              String[] options = new String[]{mLocalizer.msg("import","Importieren"),mLocalizer.msg("cancel","Abbrechen")};
+              String[] options = new String[]{mLocalizer.msg("import","Importieren"),Localizer.getLocalization(Localizer.I18N_CANCEL)};
                int n = JOptionPane.showOptionDialog(this, mLocalizer.msg("question.1","Es können TV-Daten mit {0} Sendern importiert werden.\nJetzt importieren?",importHandler.getChannelCount()+""),
                   mLocalizer.msg("question.1.title","Importieren"),
                   JOptionPane.YES_NO_OPTION,
@@ -132,7 +132,7 @@ public class TvBrowserUpdateAssistant extends JDialog implements ActionListener,
     }
     else if (source == mOkBtn) {
       if (!mListingsSuccessfullyImported) {
-        String[] options = new String[]{mLocalizer.msg("option.1","TV-Browser starten und neu einrichten"),mLocalizer.msg("cancel","Abbrechen")};
+        String[] options = new String[]{mLocalizer.msg("option.1","TV-Browser starten und neu einrichten"),Localizer.getLocalization(Localizer.I18N_CANCEL)};
         int n = JOptionPane.showOptionDialog(this, mLocalizer.msg("question.2","Sie haben kein TV-Daten für den Import ausgewählt.\nSind Sie sicher, daß Sie evtl. vorhandene Sender-Einstellungen verwerfen und TV-Browser neu einrichten wollen?"),
                 mLocalizer.msg("import","Importieren"),
                 JOptionPane.YES_NO_OPTION,
