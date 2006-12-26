@@ -1,6 +1,26 @@
 Changelog TVBrowser
 
-2.5 beta2
+2.5
+=========
+
+-Bugs
+ * 1618054 Reminder: No progress, wrong text
+ * 1621449 setup wizard has steps 1,2,3,3
+ * 1621447 i18n: english texts during setup wizard
+ * 1621460 Initial dialog size of tv data user agreement too small 
+
+2.5 beta3
+=========
+
+-Bugs
+ * 1618054 Reminder: No progress, wrong text
+ * 1618058 Pictures: Time value not changed if plugins selected
+ * 1617759 No context menu on programs with active reminder 
+
+-Features
+ * 1620348 Reminder: Enable/Disable time counter
+ 
+2.5 beta2 
 =========
 
 -Bugs
@@ -99,6 +119,8 @@ Changelog TVBrowser
  * 1604558 More button of toolbar is shown if toolbar is empty
  * 1604560 More button of toolbar didn't works
  * 1535149 Freeze bei Neustart 
+ (2.5beta3)
+ * 1618054 Reminder: No progress, wrong text
  
 - Features
  * 1519526 Show updates for plugins

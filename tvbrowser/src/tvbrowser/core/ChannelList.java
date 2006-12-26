@@ -95,7 +95,7 @@ public class ChannelList {
       addDataServiceChannels(dataServiceArr[i]);
 
     clearChannelMaps();
-    MainFrame.getInstance().resetOnAirArrays();
+    MainFrame.resetOnAirArrays();
   }
 
   /**

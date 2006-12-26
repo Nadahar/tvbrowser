@@ -182,8 +182,8 @@ public class MainFrame extends JFrame implements DateListener {
   
   private int mLastTimerMinutesAfterMidnight;
   
-  private Date[] mChannelDateArr;
-  private int[] mOnAirRowProgramsArr;
+  private static Date[] mChannelDateArr;
+  private static int[] mOnAirRowProgramsArr;
 
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
@@ -751,7 +751,7 @@ public class MainFrame extends JFrame implements DateListener {
   /**
    * Resets the arrays of on air programs for relaoding all.
    */
-  public void resetOnAirArrays() {
+  public static void resetOnAirArrays() {
     mChannelDateArr = null;
     mOnAirRowProgramsArr = null;
   }

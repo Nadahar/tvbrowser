@@ -112,6 +112,7 @@ public class TVBrowser {
   */
   /** The string array with the names of the ealier versions. */
   public static final String[] ALL_VERSIONS = new String[]{
+          "2.5",
           "2.5beta3",
           "2.5beta2",
           "2.5beta1",
@@ -125,7 +126,7 @@ public class TVBrowser {
   };
   
   /** The current version. */
-  public static final devplugin.Version VERSION=new devplugin.Version(2,50,false,ALL_VERSIONS[0]);
+  public static final devplugin.Version VERSION=new devplugin.Version(2,50,true,ALL_VERSIONS[0]);
 
   /** The title bar string. */
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
