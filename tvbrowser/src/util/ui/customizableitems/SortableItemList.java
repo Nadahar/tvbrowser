@@ -58,6 +58,8 @@ public class SortableItemList extends JPanel implements ActionListener, ListDrop
   
   protected JButton mUpBt;
   protected JButton mDownBt;
+  protected JButton mTopBtn;
+  protected JButton mBottomBtn;
   protected JList mList;
   protected JLabel mTitleLb;
   protected DefaultListModel mListModel;
@@ -108,6 +110,16 @@ public class SortableItemList extends JPanel implements ActionListener, ListDrop
     mDownBt.setToolTipText(msg);
     mDownBt.addActionListener(this);
     
+    mTopBtn = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-top", 22));
+    msg = mLocalizer.msg("tooltip.top", "Move selected rows to top");
+    mTopBtn.setToolTipText(msg);
+    mTopBtn.addActionListener(this);
+
+    mBottomBtn = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-bottom", 22));
+    msg = mLocalizer.msg("tooltip.bottom", "Move selected rows to bottom");
+    mBottomBtn.setToolTipText(msg);
+    mBottomBtn.addActionListener(this);
+
     mList = list;
     mListModel = new DefaultListModel();
     mList.setModel(mListModel);
@@ -130,9 +142,10 @@ public class SortableItemList extends JPanel implements ActionListener, ListDrop
     mBtnPanel=new JPanel();
     mBtnPanel.setBorder(BorderFactory.createEmptyBorder(0, Sizes.dialogUnitXAsPixel(3, mBtnPanel),0,0));
     mBtnPanel.setLayout(new TabLayout(1));
+    mBtnPanel.add(mTopBtn);
     mBtnPanel.add(mUpBt);
     mBtnPanel.add(mDownBt);
-    
+    mBtnPanel.add(mBottomBtn);
     
     setLayout(new BorderLayout());
     add(mTitleLb,BorderLayout.NORTH);
@@ -153,6 +166,8 @@ public class SortableItemList extends JPanel implements ActionListener, ListDrop
   private void updateBtns() {
     mUpBt.setEnabled(mList.getSelectedIndex()>0);
     mDownBt.setEnabled(mList.getSelectedIndex()<mListModel.size()-1);
+    mTopBtn.setEnabled(mUpBt.isEnabled());
+    mBottomBtn.setEnabled(mDownBt.isEnabled());
   }
   
   public void setTitle(String title) {
@@ -199,12 +214,28 @@ public class SortableItemList extends JPanel implements ActionListener, ListDrop
     Object o=event.getSource();
     if (o==mUpBt) {
       UiUtilities.moveSelectedItems(mList, -1);
+      if (mUpBt.isEnabled()) {
+    	  mUpBt.requestFocusInWindow();
+      }
     }
     else if (o==mDownBt) {
       UiUtilities.moveSelectedItems(mList, 1);
+      if (mDownBt.isEnabled()) {
+    	  mDownBt.requestFocusInWindow();
+      }
     }
-    
-    
+    else if (o==mTopBtn) {
+      UiUtilities.moveSelectedItems(mList, -10000);
+      if (mTopBtn.isEnabled()) {
+    	  mTopBtn.requestFocusInWindow();
+      }
+    }
+    else if (o==mBottomBtn) {
+      UiUtilities.moveSelectedItems(mList, +10000);
+      if (mBottomBtn.isEnabled()) {
+    	  mBottomBtn.requestFocusInWindow();
+      }
+    }
   }
   
   /**
@@ -221,6 +252,22 @@ public class SortableItemList extends JPanel implements ActionListener, ListDrop
    */
   public JButton getDownButton() {
     return mDownBt;
+  }
+
+  /**
+   * Returns the Top-Button
+   * @return Top-Button
+   */
+  public JButton getTopButton() {
+    return mTopBtn;
+  }
+
+  /**
+   * Returns the Bottom-Button
+   * @return Bottom-Button
+   */
+  public JButton getBottomButton() {
+    return mBottomBtn;
   }
 
   public void drop(JList source, JList target, int rows, boolean move) {

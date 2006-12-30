@@ -80,6 +80,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -200,7 +203,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
         mAllChannels.setCellRenderer(new ChannelListCellRenderer(true, true, true));
 
         listBoxPnLeft.add(new JScrollPane(mAllChannels), BorderLayout.CENTER);
-
+        
         mAllChannels.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 if ((mAllChannels.getModel().getSize() == 1) && (mAllChannels.getSelectedIndex() >= 0) && (mAllChannels.getSelectedValue() instanceof String)) {
@@ -271,8 +274,25 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
                 }
             }
         });
+        
+        // use INSERT key on left side to move selected channels to active channel list 
+        mAllChannels.addKeyListener(new KeyAdapter() {
+        public void keyPressed(KeyEvent e) {
+        	if (e.getKeyCode()==KeyEvent.VK_INSERT) {
+        		moveChannelsToRight();
+        	}
+        }});
 
-        JPanel btnPanel2 = createButtonPn(channelList.getUpButton(), channelList.getDownButton());
+        // use DELETE key on right side to remove selected channels
+        mSubscribedChannels.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode()==KeyEvent.VK_DELETE) {
+					moveChannelsToLeft();
+				}
+			}
+		});
+
+        JPanel btnPanel2 = createButtonPn(channelList.getTopButton(), channelList.getUpButton(), channelList.getDownButton(), channelList.getBottomButton());
         btnPanel2.setBorder(BorderFactory.createEmptyBorder(0, Sizes.dialogUnitXAsPixel(3, btnPanel2), 0, 0));
         listBoxPnRight.add(btnPanel2, BorderLayout.EAST);
 
@@ -536,6 +556,26 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
 
         result.add(btn1, cc.xy(1, 2));
         result.add(btn2, cc.xy(1, 4));
+
+        return result;
+    }
+
+    /**
+     * Create the ButtonPanel for up/down Buttons
+     *
+     * @param btn1 Button 1
+     * @param btn2 Button 2
+     * @return ButtonPanel
+     */
+    private JPanel createButtonPn(JButton btn1, JButton btn2, JButton btn3, JButton btn4) {
+        JPanel result = new JPanel(new FormLayout("pref", "fill:pref:grow, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, fill:pref:grow"));
+
+        CellConstraints cc = new CellConstraints();
+
+        result.add(btn1, cc.xy(1, 2));
+        result.add(btn2, cc.xy(1, 4));
+        result.add(btn3, cc.xy(1, 6));
+        result.add(btn4, cc.xy(1, 8));
 
         return result;
     }
