@@ -718,7 +718,7 @@ public class Settings {
       mProp, "deactivatedPlugins", null);
 
   public static final IntProperty propDownloadPeriod = new IntProperty(mProp,
-      "downloadperiod", 0);
+      "downloadperiod", 1);
 
   public static final ChoiceProperty propAutoDownloadType = new ChoiceProperty(
       mProp, "autodownload", "never", new String[] { "startup", "daily",
