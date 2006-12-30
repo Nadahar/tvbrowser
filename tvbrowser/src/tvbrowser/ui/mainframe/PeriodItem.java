@@ -52,7 +52,7 @@ public class PeriodItem {
       case 7 : return mLocalizer.msg("period.7", "Next week");
       case 14 : return mLocalizer.msg("period.14", "Next 2 week");
       case 21 : return mLocalizer.msg("period.21", "Next 3 week");
-      case UpdateDlg.GETALL : return mLocalizer.msg("period.1000", "Today");
+      case UpdateDlg.GETALL : return mLocalizer.msg("period.1000", "All");
       default : return "---";
     }
   }
