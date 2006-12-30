@@ -34,6 +34,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 import tvbrowser.core.Settings;
+import tvbrowser.extras.common.DefaultMarker;
 import util.settings.ProgramPanelSettings;
 import util.ui.PictureSettingsPanel;
 import util.ui.UiUtilities;
@@ -248,8 +249,12 @@ public class ProgramTextCreator {
             PluginAccess plugin = Plugin.getPluginManager()
                 .getActivatedPluginForId(marker.getId());
 
-            if (plugin != null)
+            if (plugin != null) {
               iconLabel.setToolTipText(plugin.getInfo().getName());
+            }
+            else if (marker instanceof DefaultMarker) {
+            	iconLabel.setToolTipText(((DefaultMarker) marker).toString());
+            }
 
             buffer.append(doc.createCompTag(iconLabel));
             buffer.append("&nbsp;&nbsp;");
