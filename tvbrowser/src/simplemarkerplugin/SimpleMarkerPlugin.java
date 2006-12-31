@@ -101,7 +101,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   public PluginInfo getInfo() {
     return (new PluginInfo(mLocalizer.msg("name","Marker plugin"), mLocalizer.msg("description",
         "A simple marker plugin (formerly Just_Mark)"), "René Mach", new Version(
-        1, 4, true, "1.4"), "GPL"));
+        1, 41, true, "1.4.1"), "GPL"));
   }
 
   public void loadSettings(Properties prop) {

@@ -319,7 +319,7 @@ public class ChannelList {
   public static int getPos(Channel channel) {
     for (int i = 0; i < mSubscribedChannels.size(); i++) {
       Channel ch = (Channel) mSubscribedChannels.get(i);
-      if (ch.equals(channel))
+      if (ch != null && ch.equals(channel))
         return i;
     }
     return -1;
@@ -346,7 +346,7 @@ public class ChannelList {
     if (channel==null) return false;
     for (int i=0;i<mSubscribedChannels.size();i++) {
       Channel ch=(Channel)mSubscribedChannels.get(i);
-      if (ch!=null && ch.getId().equals(channel.getId()) && ch.getDataServiceProxy().equals(channel.getDataServiceProxy())) {
+      if (ch != null && ch.equals(channel)) {
         return true;
       }
     }

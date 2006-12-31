@@ -635,10 +635,10 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
         Channel[] subscribedChannelArr = new Channel[subscribedChannelCount];
         Channel[] channels = mChannelListModel.getAvailableChannels();
         for (Channel channel : channels) {
-            if (ChannelList.isSubscribedChannel(channel)) {
-                int pos = ChannelList.getPos(channel);
-                subscribedChannelArr[pos] = channel;
-            }
+          int pos = ChannelList.getPos(channel);
+          
+          if(pos != -1)
+            subscribedChannelArr[pos] = channel;
         }
 
         // Add the subscribed channels

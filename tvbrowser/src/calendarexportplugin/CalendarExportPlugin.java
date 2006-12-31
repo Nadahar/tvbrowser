@@ -133,7 +133,7 @@ public class CalendarExportPlugin extends Plugin {
         String desc = mLocalizer.msg("description",
                 "Exports a Program as a vCal/iCal File. This File can easily imported in other Calendar Applications.");
         String author = "Bodo Tasche, Udo Weigelt";
-        return new PluginInfo(name, desc, author, new Version(0, 3));
+        return new PluginInfo(name, desc, author, new Version(0, 4));
     }
 
     /*

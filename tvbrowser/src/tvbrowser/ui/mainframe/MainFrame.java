@@ -758,104 +758,111 @@ public class MainFrame extends JFrame implements DateListener {
 
   private void handleTimerEvent() {
     Date date = Date.getCurrentDate();
+    
+    if(mLastTimerMinutesAfterMidnight == -1)
+      resetOnAirArrays();
+      
     // Avoid a repaint 6 times a minute (Once a minute is enough)
     try {
-    int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
-    if (minutesAfterMidnight != mLastTimerMinutesAfterMidnight) {
-      mLastTimerMinutesAfterMidnight = minutesAfterMidnight;
-      Channel[] ch = ChannelList.getSubscribedChannels();
+      int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
+      if (minutesAfterMidnight != mLastTimerMinutesAfterMidnight) {
+        mLastTimerMinutesAfterMidnight = minutesAfterMidnight;
+        Channel[] ch = ChannelList.getSubscribedChannels();
       
-      if(ch != null) {
-        /* If no date array is available we have to find
-         * the n air programs */
-        if(mChannelDateArr == null) {
-          mChannelDateArr = new Date[ch.length];
-          mOnAirRowProgramsArr = new int[ch.length];
+        if(ch != null) {
+          /* If no date array is available we have to find
+           * the n air programs */
+          if(mChannelDateArr == null) {
+            mChannelDateArr = new Date[ch.length];
+            mOnAirRowProgramsArr = new int[ch.length];
         
-          Arrays.fill(mOnAirRowProgramsArr, -1);
+            Arrays.fill(mOnAirRowProgramsArr, -1);
         
-          for(int i = 0; i < ch.length; i++) {
-            ChannelDayProgram chProg = TvDataBase.getInstance().getDayProgram(Date.getCurrentDate(),ch[i]);
+            for(int i = 0; i < ch.length; i++) {
+              ChannelDayProgram chProg = TvDataBase.getInstance().getDayProgram(Date.getCurrentDate(),ch[i]);
           
-            if(chProg == null)
-              mChannelDateArr[i] = null;
-            else {
-              int n = chProg.getProgramCount();
+              if(chProg == null)
+                mChannelDateArr[i] = null;
+              else {
+                int n = chProg.getProgramCount();
             
-              for(int j = 0; j < n; j++) {
-                if(chProg.getProgramAt(j).isOnAir()) {
-                  chProg.getProgramAt(j).validateMarking();
-                  mOnAirRowProgramsArr[i] = j;
-                  mChannelDateArr[i] = Date.getCurrentDate();
-                  break;
+                for(int j = 0; j < n; j++) {
+                  Program p = chProg.getProgramAt(j);
+                  if(p.isOnAir() || !p.isExpired()) {
+                    p.validateMarking();
+                    mOnAirRowProgramsArr[i] = j;
+                    mChannelDateArr[i] = Date.getCurrentDate();
+                    break;
+                  }
                 }
-              }
             
-              if(mOnAirRowProgramsArr[i] == -1) {
-                chProg = TvDataBase.getInstance().getDayProgram(Date.getCurrentDate().addDays(1),ch[i]);
+                if(mOnAirRowProgramsArr[i] == -1) {
+                  chProg = TvDataBase.getInstance().getDayProgram(Date.getCurrentDate().addDays(1),ch[i]);
               
-                if(chProg != null && chProg.getProgramCount() > 0 && chProg.getProgramAt(0).isOnAir()) {
-                  chProg.getProgramAt(0).validateMarking();
-                  mOnAirRowProgramsArr[i] = 0;
-                }
+                  if(chProg != null && chProg.getProgramCount() > 0 && chProg.getProgramAt(0).isOnAir()) {
+                    chProg.getProgramAt(0).validateMarking();
+                    mOnAirRowProgramsArr[i] = 0;
+                  }
                 
-                mChannelDateArr[i] = Date.getCurrentDate().addDays(1);
+                  mChannelDateArr[i] = Date.getCurrentDate().addDays(1);
+                }
               }
             }
           }
-        }
-        else {
-          /* We have a date array and can test the programs */
-          for(int i = 0; i < mChannelDateArr.length; i++) {
-            ChannelDayProgram chProg = TvDataBase.getInstance().getDayProgram(mChannelDateArr[i],ch[i]);
+          else {
+            /* We have a date array and can test the programs */
+            for(int i = 0; i < mChannelDateArr.length; i++) {
+              if(mChannelDateArr[i] != null) {
+                ChannelDayProgram chProg = TvDataBase.getInstance().getDayProgram(mChannelDateArr[i],ch[i]);
             
-            if((chProg != null && chProg.getProgramCount() > 0) || mOnAirRowProgramsArr[i] != -1) {
-              Program p = chProg.getProgramAt(mOnAirRowProgramsArr[i]);
+                if((chProg != null && chProg.getProgramCount() > 0) || mOnAirRowProgramsArr[i] != -1) {
+                  Program p = chProg.getProgramAt(mOnAirRowProgramsArr[i]);
               
-              if(p.isOnAir())
-                p.validateMarking();
-              else if(p.isExpired()) {
-                p.validateMarking();
+                  if(p.isOnAir())
+                    p.validateMarking();
+                  else if(p.isExpired()) {
+                    p.validateMarking();
               
-                int n = mOnAirRowProgramsArr[i]+1;
+                    int n = mOnAirRowProgramsArr[i]+1;
               
-                if(n < chProg.getProgramCount()) {
-                  mOnAirRowProgramsArr[i] = n;
-                  chProg.getProgramAt(mOnAirRowProgramsArr[i]).validateMarking();
+                    if(n < chProg.getProgramCount()) {
+                      mOnAirRowProgramsArr[i] = n;
+                      chProg.getProgramAt(mOnAirRowProgramsArr[i]).validateMarking();
+                    }
+                    else {
+                      /* The last day program is expired so we have to
+                       * look for the on air program on the next day */
+                      mChannelDateArr[i] = mChannelDateArr[i].addDays(1);
+                
+                      chProg = TvDataBase.getInstance().getDayProgram(mChannelDateArr[i],ch[i]);
+                
+                      // The next day has no data
+                      if(chProg == null || chProg.getProgramCount() < 1)
+                        mOnAirRowProgramsArr[i] = -1;
+                      else {
+                        mOnAirRowProgramsArr[i] = 0;
+                        chProg.getProgramAt(mOnAirRowProgramsArr[i]).validateMarking();
+                      }
+                    }
+                  }
                 }
-                else {
-                  /* The last day program is expired so we have to
-                   * look for the on air program on the next day */
-                  mChannelDateArr[i] = mChannelDateArr[i].addDays(1);
-                
+                else if(mChannelDateArr[i].compareTo(Date.getCurrentDate()) < 0) {
+                  /* If the date array for the channel contains a date
+                   * earlier than today we have to use today instead */
+                  mChannelDateArr[i] = Date.getCurrentDate();
+              
                   chProg = TvDataBase.getInstance().getDayProgram(mChannelDateArr[i],ch[i]);
-                
-                  // The next day has no data
-                  if(chProg == null || chProg.getProgramCount() < 1)
-                    mOnAirRowProgramsArr[i] = -1;
-                  else {
+              
+                  if(chProg != null && chProg.getProgramCount() > 0) {
                     mOnAirRowProgramsArr[i] = 0;
                     chProg.getProgramAt(mOnAirRowProgramsArr[i]).validateMarking();
                   }
                 }
               }
             }
-            else if(mChannelDateArr[i].compareTo(Date.getCurrentDate()) < 0) {
-              /* If the date array for the channel contains a date
-               * earlier than today we have to use today instead */
-              mChannelDateArr[i] = Date.getCurrentDate();
-              
-              chProg = TvDataBase.getInstance().getDayProgram(mChannelDateArr[i],ch[i]);
-              
-              if(chProg != null && chProg.getProgramCount() > 0) {
-                mOnAirRowProgramsArr[i] = 0;
-                chProg.getProgramAt(mOnAirRowProgramsArr[i]).validateMarking();
-              }
-            }
           }
         }
       }
-    }
     }catch(Exception e) {}
     
     if (date.equals(mCurrentDay)) {
