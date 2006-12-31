@@ -23,10 +23,16 @@
 package simplemarkerplugin;
 
 import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.LayoutManager;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -49,6 +55,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -152,8 +159,11 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     
     final JTabbedPane tabbedPane = new JTabbedPane();
     
+    JScrollPane pictures = new JScrollPane(mPictureSettings);
+    pictures.setBorder(null);
+    
     tabbedPane.addTab(SimpleMarkerPlugin.mLocalizer.msg("markList","Mark lists"),panel);
-    tabbedPane.addTab(Localizer.getLocalization(Localizer.I18N_PICTURES), mPictureSettings);
+    tabbedPane.addTab(Localizer.getLocalization(Localizer.I18N_PICTURES), pictures);
     tabbedPane.setSelectedIndex(mSelectedIndex);
     
     tabbedPane.addChangeListener(new ChangeListener() {

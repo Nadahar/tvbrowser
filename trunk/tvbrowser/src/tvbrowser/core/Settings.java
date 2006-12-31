@@ -642,7 +642,7 @@ public class Settings {
       mProp, "skinLF.enabled", false);
 
   public static final StringProperty propSkinLFThemepack = new StringProperty(
-      mProp, "skinLF.themepack", "./themepacks/themepack.zip");
+      mProp, "skinLF.themepack", "themepacks/themepack.zip");
 
   public static final StringProperty propJGoodiesTheme = new StringProperty(
       mProp, "jgoodies.theme", "");

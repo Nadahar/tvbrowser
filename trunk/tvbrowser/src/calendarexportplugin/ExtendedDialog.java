@@ -99,7 +99,7 @@ public class ExtendedDialog extends JDialog {
     panel.add(content, cc.xy(1, 1));
     
     mContent = new JTextArea();
-    mContent.setText(mSettings.getProperty(CalendarExportPlugin.DEFAULT_PARAMETER, CalendarExportPlugin.DEFAULT_PARAMETER));
+    mContent.setText(mSettings.getProperty(CalendarExportPlugin.PROP_PARAM, CalendarExportPlugin.DEFAULT_PARAMETER));
     mContent.setCaretPosition(0);
     
     panel.add(new JScrollPane(mContent), cc.xyw(1, 3, 3));
@@ -179,7 +179,7 @@ public class ExtendedDialog extends JDialog {
     
     contentPanel.add(new JScrollPane(example), cc.xyw(1, 1, 2));
     
-    JButton ok = new JButton(mLocalizer.msg("ok", "OK"));
+    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     ok.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         dialog.setVisible(false);

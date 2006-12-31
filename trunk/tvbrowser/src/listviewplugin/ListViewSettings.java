@@ -30,6 +30,7 @@ import java.util.Properties;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import util.ui.PictureSettingsPanel;
 
@@ -66,7 +67,7 @@ public class ListViewSettings implements SettingsTab {
    */
   public JPanel createSettingsPanel() {    
     JPanel panel = new JPanel();
-    panel.setLayout(new FormLayout("5dlu,default:grow", "5dlu,default,10dlu,fill:pref:grow"));
+    panel.setLayout(new FormLayout("5dlu,default:grow", "5dlu,default,10dlu,fill:default:grow"));
     
     CellConstraints cc = new CellConstraints();
     
@@ -75,8 +76,11 @@ public class ListViewSettings implements SettingsTab {
 
     mPictureSettings = new PictureSettingsPanel(ListViewPlugin.getInstance().getProgramPanelSettings(),true,false);
     
+    JScrollPane pictures = new JScrollPane(mPictureSettings);
+    pictures.setBorder(null);
+    
     panel.add(mShowAtStart, cc.xy(2,2));
-    panel.add(mPictureSettings, cc.xyw(1,4,2));
+    panel.add(pictures, cc.xyw(1,4,2));
         
     return panel;
   }

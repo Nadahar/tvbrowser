@@ -191,7 +191,7 @@ public class ExtendedDialog extends JDialog {
     
     contentPanel.add(new JScrollPane(example), cc.xyw(1, 1, 2));
     
-    JButton ok = new JButton(mLocalizer.msg("ok", "OK"));
+    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     ok.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         dialog.setVisible(false);

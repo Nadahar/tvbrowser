@@ -568,7 +568,7 @@ public class Channel {
   }
   
   public boolean equals(Object obj) {
-    if (obj instanceof Channel) {
+    if (obj != null && obj instanceof Channel) {
       Channel cmp = (Channel) obj;
       try {
         String dataServiceId = getDataServiceProxy().getId();

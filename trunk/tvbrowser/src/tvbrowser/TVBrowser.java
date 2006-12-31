@@ -112,6 +112,7 @@ public class TVBrowser {
   */
   /** The string array with the names of the ealier versions. */
   public static final String[] ALL_VERSIONS = new String[]{
+          "2.5.1beta1",
           "2.5",
           "2.5beta3",
           "2.5beta2",
@@ -126,7 +127,7 @@ public class TVBrowser {
   };
   
   /** The current version. */
-  public static final devplugin.Version VERSION=new devplugin.Version(2,50,true,ALL_VERSIONS[0]);
+  public static final devplugin.Version VERSION=new devplugin.Version(2,51,false,ALL_VERSIONS[0]);
 
   /** The title bar string. */
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
@@ -398,7 +399,11 @@ public class TVBrowser {
               
               if(Settings.propLastDownloadDate.getDate() != null)
                 Settings.propAcceptedLicenseArrForServiceIds.setStringArray(new String[] {"tvbrowserdataservice.TvBrowserDataService"});
+              
+              Settings.propIsSkinLFEnabled.setBoolean(false);
             }
+            else if(currentVersion.compareTo(new Version(2,50)) == 0)
+              Settings.propIsSkinLFEnabled.setBoolean(false);
           }
         });
       }

@@ -18,6 +18,8 @@
  */
 package util.ui;
 
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,6 +39,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
+import javax.swing.Scrollable;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.HyperlinkEvent;
@@ -64,7 +67,7 @@ import util.settings.ProgramPanelSettings;
  * @author René Mach
  * @since 2.2.2
  */
-public class PictureSettingsPanel extends JPanel {
+public class PictureSettingsPanel extends JPanel implements Scrollable {
   private static final long serialVersionUID = 1L;
 
   /** The localizer for this class */
@@ -179,7 +182,7 @@ public class PictureSettingsPanel extends JPanel {
     
     FormLayout layout = new FormLayout(
         "5dlu, 12dlu, 15dlu, pref, 5dlu, pref, 5dlu, pref:grow, 5dlu",
-        "pref,pref,pref,2dlu,pref,pref,2dlu,pref,2dlu,pref,pref,10dlu,pref,5dlu,pref,fill:10dlu:grow,pref");
+        "pref,pref,pref,2dlu,pref,pref,2dlu,pref,2dlu,pref,pref,10dlu,pref,5dlu,pref,fill:10dlu:grow,pref,5dlu");
     
     PanelBuilder pb = new PanelBuilder(layout, this);
     
@@ -448,5 +451,25 @@ public class PictureSettingsPanel extends JPanel {
         typeToCheck == PictureSettingsPanel.SHOW_IN_TIME_RANGE + PictureSettingsPanel.SHOW_FOR_PLUGINS;
     else 
       return typeToCheck == containingType;
+  }
+
+  public Dimension getPreferredScrollableViewportSize() {
+    return getPreferredSize();
+  }
+
+  public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+    return 50;
+  }
+
+  public boolean getScrollableTracksViewportHeight() {
+    return false;
+  }
+
+  public boolean getScrollableTracksViewportWidth() {
+    return true;
+  }
+
+  public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+    return 20;
   }
 }
