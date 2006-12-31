@@ -539,6 +539,9 @@ public class TVBrowser {
     mainFrame.setSize(windowWidth, windowHeight);
     int windowX = Settings.propWindowX.getInt();
     int windowY = Settings.propWindowY.getInt();
+    if (Settings.propIsWindowMaximized.getBoolean()) {
+        mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
+    }
     if (windowX == -1) {
       UiUtilities.centerAndShow(mainFrame);
     } else {
@@ -548,7 +551,11 @@ public class TVBrowser {
     ErrorHandler.setFrame(mainFrame);
 
     splash.hideSplash();
-
+/*
+ 	Bananeweizen: moved maximizing some lines higher to frame size construction
+ 	removed updateUI completely as that is already done after calling initUI
+ 	code not deleted as I can't test on all platforms
+ 	
     // maximize the frame if wanted
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
@@ -562,7 +569,7 @@ public class TVBrowser {
         }
       }
     });
-
+*/
     // minimize the frame if wanted
     if (startMinimized) {
       mainFrame.setExtendedState(Frame.ICONIFIED);
