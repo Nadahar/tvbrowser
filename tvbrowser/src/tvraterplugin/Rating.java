@@ -55,13 +55,13 @@ public class Rating implements Serializable {
 	/** Title of the Program this rating is about */
 	private String _title;
 	/** Values in this Rating-Element */
-	private HashMap _values;
+	private HashMap<Object, Integer> _values;
 
 	/**
 	 * Creates a empty Rating
 	 */
 	public Rating() {
-		_values = new HashMap();
+		_values = new HashMap<Object, Integer>();
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class Rating implements Serializable {
 	 */
 	public Rating(String title) {
 		_title = title;
-		_values = new HashMap();
+		_values = new HashMap<Object, Integer>();
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class Rating implements Serializable {
 	 * @param title Title of the Program this rating is about
 	 * @param values Values for the Rating
 	 */
-	public Rating(String title, HashMap values) {
+	public Rating(String title, HashMap<Object, Integer> values) {
 		_title = title;
 		_values = values;
 	}
@@ -158,6 +158,6 @@ public class Rating implements Serializable {
 	private synchronized void readObject(java.io.ObjectInputStream s) throws IOException, ClassNotFoundException {
 		int version = s.readInt();
 		_title = (String) s.readObject();
-		_values = (HashMap) s.readObject();
+		_values = (HashMap<Object, Integer>) s.readObject();
 	}
 }

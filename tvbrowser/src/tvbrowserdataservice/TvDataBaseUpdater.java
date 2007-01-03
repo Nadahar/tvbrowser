@@ -57,7 +57,7 @@ public class TvDataBaseUpdater {
   private TvBrowserDataService mDataService;
   private TvDataUpdateManager mDataBase;
   
-  private HashSet mUpdateJobSet;
+  private HashSet<UpdateJob> mUpdateJobSet;
   
   
   /**
@@ -72,7 +72,7 @@ public class TvDataBaseUpdater {
     mDataService = dataService;
     mDataBase = dataBase;
     
-    mUpdateJobSet = new HashSet();
+    mUpdateJobSet = new HashSet<UpdateJob>();
   }
   
   

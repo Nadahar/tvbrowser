@@ -53,7 +53,7 @@ public class ProgramDispatcher {
    * Contains for a Date (key) a hash containing for a Channel (key)
    * an MutableChannelDayProgram (value).
    */
-  private HashMap mDayProgramHash;
+  private HashMap<Date, HashMap<Channel, MutableChannelDayProgram>> mDayProgramHash;
 
 
 
@@ -61,7 +61,7 @@ public class ProgramDispatcher {
    * Creates a new instance of ProgramDispatcher.
    */
   public ProgramDispatcher() {
-    mDayProgramHash = new HashMap();
+    mDayProgramHash = new HashMap<Date, HashMap<Channel, MutableChannelDayProgram>>();
   }
 
 
@@ -124,10 +124,10 @@ public class ProgramDispatcher {
   {
     // get the hash containg for the channel (key)
     // the MutableChannelDayProgram (value)
-    HashMap channelDayProgramHash = (HashMap) mDayProgramHash.get(date);
+    HashMap<Channel, MutableChannelDayProgram> channelDayProgramHash = mDayProgramHash.get(date);
     if (channelDayProgramHash == null) {
       if (createIfNotExisting) {
-        channelDayProgramHash = new HashMap();
+        channelDayProgramHash = new HashMap<Channel, MutableChannelDayProgram>();
         mDayProgramHash.put(date, channelDayProgramHash);
       } else {
         return null;
@@ -136,7 +136,7 @@ public class ProgramDispatcher {
 
     // get the MutableChannelDayProgram
     MutableChannelDayProgram channelDayProg
-      = (MutableChannelDayProgram) channelDayProgramHash.get(channel);
+      = channelDayProgramHash.get(channel);
     if (channelDayProg == null) {
       if (createIfNotExisting) {
         channelDayProg = new MutableChannelDayProgram(date, channel);

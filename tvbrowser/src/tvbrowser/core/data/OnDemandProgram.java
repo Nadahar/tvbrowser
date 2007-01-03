@@ -95,7 +95,7 @@ public class OnDemandProgram extends MutableProgram {
     
     private ProgramFieldType mType;
     private long mPosition;
-    private SoftReference mValue;
+    private SoftReference<Object> mValue;
     
     
     OnDemandValue(ProgramFieldType type, long position) {
@@ -121,7 +121,7 @@ public class OnDemandProgram extends MutableProgram {
           }
           
           // Put the value into cache
-          mValue = new SoftReference(value);
+          mValue = new SoftReference<Object>(value);
           
           if (mLog.isLoggable(Level.FINE)) {
             mLog.fine("Loaded value on demand for field " + mType.getName());

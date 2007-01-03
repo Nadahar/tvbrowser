@@ -377,7 +377,7 @@ public class MutableProgram implements Program {
         list.add(plugin);
       }
     }
-    return (PluginAccess[])list.toArray(new PluginAccess[list.size()]);
+    return list.toArray(new PluginAccess[list.size()]);
   }
 
   public Marker[] getMarkerArr() {

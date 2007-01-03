@@ -32,18 +32,19 @@ import devplugin.Program;
  */
 public class Database {
 	/** The overall Rating */
-     private  HashMap _overalrating = new HashMap();
+     private  HashMap<String, Rating> _overalrating = new HashMap<String, Rating>();
 	/** The personal Rating */
-	private HashMap _personalrating = new HashMap();
+	private HashMap<String, Rating> _personalrating = new HashMap<String, Rating>();
 	/** The changes since the last contact with the Server */
-	private ArrayList _changedpersonal = new ArrayList();
+	private ArrayList<Rating> _changedpersonal = new ArrayList<Rating>();
 	
 	/**
 	 * Gets the overall Ratings in this Database
+	 * @return 
 	 * 
 	 * @return all overall Ratings
 	 */
-	public synchronized Collection getOverallRating() {
+	public synchronized Collection<Rating> getOverallRating() {
 		return _overalrating.values();
 	}
 	
@@ -73,7 +74,7 @@ public class Database {
 		}
 		
 		if (_overalrating.get(title.toLowerCase()) != null) {
-			return (Rating) _overalrating.get(title.toLowerCase());
+			return _overalrating.get(title.toLowerCase());
 		}
 		return null;
 	}
@@ -92,7 +93,7 @@ public class Database {
 	 * 
 	 * @return all personal Ratings
 	 */
-	public synchronized Collection getPersonalRating() {
+	public synchronized Collection<Rating> getPersonalRating() {
 		return _personalrating.values();
 	}
 	
@@ -129,13 +130,13 @@ public class Database {
 			return null;
 		}
 		
-		Rating rating = (Rating) _personalrating.get(title);
+		Rating rating = _personalrating.get(title);
 		if (rating != null) {
 			_personalrating.remove(title);
 			_personalrating.put(title.toLowerCase(), rating);
 		}
 		
-		rating = (Rating) _personalrating.get(title.toLowerCase()); 
+		rating = _personalrating.get(title.toLowerCase()); 
 		return rating;
 	}
 	
@@ -166,14 +167,14 @@ public class Database {
 	 * Empties the ChangedPersonal List
 	 */
 	public synchronized void clearChangedPersonal() {
-		_changedpersonal = new ArrayList();
+		_changedpersonal = new ArrayList<Rating>();
 	}
 	
 	/**
 	 * Empties the ChangedPersonal List
 	 */
 	public synchronized void clearOverall() {
-		_overalrating = new HashMap();
+		_overalrating = new HashMap<String, Rating>();
 	}
 	
 	/**
@@ -183,9 +184,9 @@ public class Database {
 	 */
 	public synchronized void readData(ObjectInputStream in) throws IOException,
 			ClassNotFoundException {
-		_personalrating = (HashMap) in.readObject();
-		_overalrating = (HashMap) in.readObject();
-		_changedpersonal = (ArrayList) in.readObject();
+		_personalrating = (HashMap<String, Rating>) in.readObject();
+		_overalrating = (HashMap<String, Rating>) in.readObject();
+		_changedpersonal = (ArrayList<Rating>) in.readObject();
 	}
 	
 	/**

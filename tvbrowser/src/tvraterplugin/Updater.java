@@ -423,7 +423,7 @@ public class Updater implements Progress {
    * @return Hashtable filled with Programs to rate
    */
   private Hashtable createUpdateList() {
-    Hashtable table = new Hashtable();
+    Hashtable<String, Program> table = new Hashtable<String, Program>();
 
     Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
 

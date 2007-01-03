@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 public class Form {
   
-  private ArrayList mFields;
+  private ArrayList<Field> mFields;
   
   public Form() {
-    mFields = new ArrayList(); 
+    mFields = new ArrayList<Field>(); 
   }
   
   public void addField(String key, String value) {

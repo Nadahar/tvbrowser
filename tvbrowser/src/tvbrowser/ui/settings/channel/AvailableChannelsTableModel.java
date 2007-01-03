@@ -47,11 +47,11 @@ public class AvailableChannelsTableModel extends AbstractTableModel {
                          "Country",
                          "Timezone"};
 
-     private ArrayList mChannelList;
+     private ArrayList<Channel> mChannelList;
      //private HashSet mSubscribedChannels;
 
      public AvailableChannelsTableModel() {
-       mChannelList = new ArrayList();
+       mChannelList = new ArrayList<Channel>();
        Channel[] ch = ChannelList.getAvailableChannels();
        for (int i=0; i<ch.length; i++) {
          if (!ChannelList.isSubscribedChannel(ch[i])) {
@@ -93,7 +93,7 @@ public class AvailableChannelsTableModel extends AbstractTableModel {
      }
 
      public Object getValueAt(int rowIndex, int columnIndex) {
-       Channel ch = (Channel)mChannelList.get(rowIndex);
+       Channel ch = mChannelList.get(rowIndex);
        ChannelGroup group = ch.getGroup();
        switch (columnIndex) {
          case 0 : return ch;

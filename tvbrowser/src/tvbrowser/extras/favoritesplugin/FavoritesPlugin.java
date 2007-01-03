@@ -152,7 +152,7 @@ public class FavoritesPlugin {
       }
 
       if(!showInfoFavorites.isEmpty()) {
-        mUpdateFavorites = (Favorite[])showInfoFavorites.toArray(new Favorite[showInfoFavorites.size()]);
+        mUpdateFavorites = showInfoFavorites.toArray(new Favorite[showInfoFavorites.size()]);
 
         new Thread() {
           public void run() {

@@ -53,11 +53,11 @@ public class TvDataInventory {
   public static final int OTHER_VERSION = 2;
   public static final int KNOWN = 3;
   
-  private HashMap mInventoryHash;
+  private HashMap<String, Integer> mInventoryHash;
   
   
   public TvDataInventory() {
-    mInventoryHash = new HashMap();
+    mInventoryHash = new HashMap<String, Integer>();
   }
   
   
@@ -80,7 +80,7 @@ public class TvDataInventory {
    */
   public synchronized int getKnownStatus(Date date, Channel channel, int version) {
     String key = TvDataBase.getDayProgramKey(date, channel);
-    Integer ver = (Integer) mInventoryHash.get(key);
+    Integer ver = mInventoryHash.get(key);
     
     if (ver == null) {
       return UNKNOWN;
@@ -190,7 +190,7 @@ public class TvDataInventory {
       Iterator iter = mInventoryHash.keySet().iterator();
       while (iter.hasNext()) {
         String key = (String) iter.next();
-        Integer ver = (Integer) mInventoryHash.get(key);
+        Integer ver = mInventoryHash.get(key);
         out.writeObject(key);
         out.writeInt(ver.intValue());
       }

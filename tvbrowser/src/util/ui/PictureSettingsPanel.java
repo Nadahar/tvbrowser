@@ -249,7 +249,7 @@ public class PictureSettingsPanel extends JPanel implements Scrollable {
       
       String[] clientPluginIdArr = clientPluginIds;    
       
-      ArrayList clientPlugins = new ArrayList();
+      ArrayList<Marker> clientPlugins = new ArrayList<Marker>();
       
       for(int i = 0; i < clientPluginIdArr.length; i++) {
         PluginAccess plugin = Plugin.getPluginManager().getActivatedPluginForId(clientPluginIdArr[i]);
@@ -261,7 +261,7 @@ public class PictureSettingsPanel extends JPanel implements Scrollable {
           clientPlugins.add(FavoritesPlugin.MARKER);
       }
       
-      mClientPlugins = (Marker[])clientPlugins.toArray(new Marker[clientPlugins.size()]);
+      mClientPlugins = clientPlugins.toArray(new Marker[clientPlugins.size()]);
       
       handlePluginSelection();
       

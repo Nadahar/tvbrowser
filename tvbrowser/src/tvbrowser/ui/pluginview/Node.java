@@ -51,7 +51,7 @@ public class Node extends DefaultMutableTreeNode {
 
   private int mType;
 
-  private ArrayList mActionMenuList;
+  private ArrayList<ActionMenu> mActionMenuList;
 
   private NodeFormatter mNodeFormatter;
   
@@ -77,7 +77,7 @@ public class Node extends DefaultMutableTreeNode {
   public Node(int type, Object o) {
     super(o);
     mType = type;
-    mActionMenuList = new ArrayList();
+    mActionMenuList = new ArrayList<ActionMenu>();
     if(type == ROOT)
       mShowLeafCount = false;
     else

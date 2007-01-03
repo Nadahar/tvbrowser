@@ -115,7 +115,7 @@ public class HTMLParser {
  
 
   private Iterator getTags() throws IOException {
-    ArrayList tags=new ArrayList();
+    ArrayList<Tag> tags=new ArrayList<Tag>();
     Tag curTextTag=null;
     String txt;
     Tag tag=null;

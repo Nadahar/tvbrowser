@@ -77,9 +77,9 @@ public class Launch {
         // Test if the JVM is a Mac-VM and the Application is an .app-File.
         // These Files must be launched differently
         if ((getOs() == OS_MAC) && (browserExecutable.trim().toLowerCase().endsWith(".app"))) {
-          Runtime.getRuntime().exec(new String[] { "open", "-a", (String) browserExecutable, url });
+          Runtime.getRuntime().exec(new String[] { "open", "-a", browserExecutable, url });
         } else {
-          Runtime.getRuntime().exec(new String[] { (String) browserExecutable, url });
+          Runtime.getRuntime().exec(new String[] { browserExecutable, url });
         }
       } else {
         BrowserLauncher.openURL(url);

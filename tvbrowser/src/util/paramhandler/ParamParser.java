@@ -253,7 +253,7 @@ public class ParamParser {
     boolean instring = false;
     StringBuffer curparam = new StringBuffer();
     
-    ArrayList list = new ArrayList();
+    ArrayList<String> list = new ArrayList<String>();
     
     char[] chars = params.toCharArray();
     
@@ -295,6 +295,6 @@ public class ParamParser {
     }
     
     list.add(curparam.toString().trim());
-    return (String[])list.toArray(new String[0]);
+    return list.toArray(new String[0]);
   }
 }

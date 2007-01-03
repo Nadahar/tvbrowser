@@ -66,13 +66,13 @@ public class CustomizableItemsPanel extends JPanel {
   private JLabel mRightLabel, mLeftLabel;
 
   private JButton mRightBt, mLeftBt, mUpBt, mDownBt;
-  private ArrayList mListeners;
+  private ArrayList<CustomizableItemsListener> mListeners;
   
 
   public CustomizableItemsPanel(String leftText, String rightText) {
     super(new GridLayout(1,2));
 
-    mListeners = new ArrayList();
+    mListeners = new ArrayList<CustomizableItemsListener>();
     String msg;
 
     JPanel leftPanel=new JPanel(new BorderLayout());

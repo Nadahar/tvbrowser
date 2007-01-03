@@ -21,12 +21,6 @@
 
 package swedbtvdataservice;
 
-import devplugin.*;
-import devplugin.Channel;
-import devplugin.ProgressMonitor;
-
-import java.io.*;
-
 
 
 

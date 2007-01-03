@@ -49,7 +49,7 @@ public class ProgramInfoOrderSettingsTab implements SettingsTab {
       for (int i = 0; i < order.length; i++)
         try {
           order[i] = ProgramFieldType
-              .getTypeForId(Integer.parseInt((String) id[i]));
+              .getTypeForId(Integer.parseInt(id[i]));
           
           if(((ProgramFieldType)order[i]).getTypeId() == ProgramFieldType.UNKOWN_FORMAT)
             order[i] = ProgramTextCreator.getDurationTypeString();

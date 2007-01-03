@@ -168,7 +168,7 @@ public class AdvancedFavorite extends Favorite {
     else {
       if (useCertainChannel) {
         int cnt = in.readInt();
-        ArrayList list = new ArrayList();
+        ArrayList<Channel> list = new ArrayList<Channel>();
         for (int i=0; i<cnt; i++) {
           String certainChannelServiceClassName = (String) in.readObject();
           String certainChannelId;
@@ -184,7 +184,7 @@ public class AdvancedFavorite extends Favorite {
           }
         }
 
-        getLimitationConfiguration().setChannels((Channel[])list.toArray(new Channel[list.size()]));
+        getLimitationConfiguration().setChannels(list.toArray(new Channel[list.size()]));
       }
     }
 
@@ -201,7 +201,7 @@ public class AdvancedFavorite extends Favorite {
 
     // Don't save the programs but only their date and id
     int size = in.readInt();
-    ArrayList programList = new ArrayList(size);
+    ArrayList<Program> programList = new ArrayList<Program>(size);
     for (int i = 0; i < size; i++) {
       Date date = new Date(in);
       String progID = (String) in.readObject();
@@ -255,7 +255,7 @@ public class AdvancedFavorite extends Favorite {
    * @return The Filter if found, otherwise null
    */
   private ProgramFilter getFilterByName(String name ){
-    ProgramFilter[] flist = Plugin.getPluginManager().getAvailableFilters();
+    ProgramFilter[] flist = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
 
     for (int i=0; i<flist.length;i++) {
       if (flist[i].getName().equals(name)) {
@@ -279,13 +279,13 @@ public class AdvancedFavorite extends Favorite {
                                                 );
 
     if (mFilter != null) {
-      ArrayList list = new ArrayList();
+      ArrayList<Program> list = new ArrayList<Program>();
       for (int i=0; i<progArr.length; i++) {
         if (mFilter.accept(progArr[i])) {
           list.add(progArr[i]);
         }
       }
-      return (Program[])list.toArray(new Program[list.size()]);
+      return list.toArray(new Program[list.size()]);
     }
     else {
       return progArr;
@@ -313,7 +313,7 @@ public class AdvancedFavorite extends Favorite {
 
       panelBuilder.add(mSearchForm, cc.xyw(1, 1, 4));
       panelBuilder.add(mFilterCheckbox = new JCheckBox(mLocalizer.msg("useFilter","Use filter:")), cc.xy(1, 3));
-      panelBuilder.add(mFilterCombo = new JComboBox(Plugin.getPluginManager().getAvailableFilters()), cc.xy(3, 3));
+      panelBuilder.add(mFilterCombo = new JComboBox(Plugin.getPluginManager().getFilterManager().getAvailableFilters()), cc.xy(3, 3));
 
       if (mFilter != null) {
         mFilterCheckbox.setSelected(true);

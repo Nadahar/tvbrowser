@@ -132,7 +132,7 @@ public class RadioTimesDataService extends AbstractTvDataService {
 
       monitor.setMessage(mLocalizer.msg("done", "Done with Radio Times data"));
 
-      return (Channel[]) channels.toArray(new Channel[channels.size()]);
+      return channels.toArray(new Channel[channels.size()]);
     } catch (Exception e) {
       throw new TvBrowserException(getClass(), "error.1", "Downloading Channellist failed", e);
     }
@@ -144,7 +144,7 @@ public class RadioTimesDataService extends AbstractTvDataService {
    * @see devplugin.TvDataService#getAvailableChannels(devplugin.ChannelGroup)
    */
   public Channel[] getAvailableChannels(ChannelGroup group) {
-    return (Channel[]) mChannels.toArray(new Channel[mChannels.size()]);
+    return mChannels.toArray(new Channel[mChannels.size()]);
   }
 
   /*

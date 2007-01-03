@@ -53,7 +53,7 @@ public class ContextMenuProvider {
 
   public ActionMenu getContextMenuActions(Program program) {
 
-      ArrayList favorites = new ArrayList();
+      ArrayList<Favorite> favorites = new ArrayList<Favorite>();
       for (int i = 0; i < mFavoriteArr.length; i++) {
         Program[] programs = mFavoriteArr[i].getPrograms();
         for (int j = 0; j < programs.length; j++) {
@@ -68,7 +68,7 @@ public class ContextMenuProvider {
         return createAddToFavoritesActionMenu(program);
       }
       else {
-        Favorite[] favArr = (Favorite[])favorites.toArray(new Favorite[favorites.size()]);
+        Favorite[] favArr = favorites.toArray(new Favorite[favorites.size()]);
         ContextMenuAction menu = new ContextMenuAction();
         menu.setText(mLocalizer.msg("favorites", "Favorites"));
         menu.setSmallIcon(FavoritesPlugin.getInstance().getIconFromTheme("apps", "bookmark", 16));
@@ -230,7 +230,7 @@ public class ContextMenuProvider {
         return null;
     }
     else {
-      ArrayList fromList = new ArrayList();
+      ArrayList<Favorite> fromList = new ArrayList<Favorite>();
       
       for(int i = 0; i < favArr.length; i++)
         if(favArr[i].isOnBlackList(program))
@@ -243,7 +243,7 @@ public class ContextMenuProvider {
       ContextMenuAction[] reactivateAction = new ContextMenuAction[fromList.size()];
             
       for(int i = 0; i < fromList.size(); i++) {
-        final Favorite fav = (Favorite)fromList.get(i);
+        final Favorite fav = fromList.get(i);
         reactivateAction[i] = new ContextMenuAction(fav.getName());
         reactivateAction[i].setSmallIcon(getIconFromTheme("apps", "bookmark", 16));
         reactivateAction[i].setActionListener(new ActionListener() {

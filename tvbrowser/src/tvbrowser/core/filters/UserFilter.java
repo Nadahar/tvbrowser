@@ -174,7 +174,7 @@ public class UserFilter implements devplugin.ProgramFilter {
           ruleLine=rule.toCharArray();
           curInx=0;
           Token curToken=null;
-          ArrayList list=new ArrayList();
+          ArrayList<Token> list=new ArrayList<Token>();
           do {
               curToken=readNextToken();    
               if (curToken!=null) {
@@ -184,7 +184,7 @@ public class UserFilter implements devplugin.ProgramFilter {
         
           Token[] result=new Token[list.size()];
           for (int i=0;i<result.length;i++) {
-              result[i]=(Token)list.get(i);
+              result[i]=list.get(i);
           }
           return result;
       }
@@ -396,10 +396,10 @@ public class UserFilter implements devplugin.ProgramFilter {
   
   abstract class Node {
  
-      protected HashSet nodes;
+      protected HashSet<Node> nodes;
  
       public Node() {
-          nodes=new HashSet();
+          nodes=new HashSet<Node>();
       }
     
       public void addNode(Node n) {

@@ -78,7 +78,6 @@ import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.Program;
 import devplugin.ProgramItem;
-import devplugin.ProgramReceiveTarget;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org) Date: 01.01.2005 Time:
@@ -223,7 +222,7 @@ public class PluginTree extends JTree implements DragGestureListener,
         Vector<Program> vec = this.getLeafElements(node, new Vector<Program>());
 
         if (vec.size() == 1) {
-          mDragNode = ((Program) vec.firstElement()).getTitle();
+          mDragNode = (vec.firstElement()).getTitle();
         } else if (node.isLeaf())
           mDragNode = ((ProgramItem) node.getUserObject()).getProgram()
               .getTitle();
@@ -248,7 +247,7 @@ public class PluginTree extends JTree implements DragGestureListener,
             lbl2.getPreferredSize().width, lbl2.getPreferredSize().height);
 
         lbl2.setSize(lbl2.getPreferredSize());
-        mGhostImage = new BufferedImage((int) lbl2.getWidth(), (int) lbl2
+        mGhostImage = new BufferedImage(lbl2.getWidth(), lbl2
             .getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
 
         mTreeImage = new BufferedImage(this.getWidth(), this.getHeight(),
@@ -280,9 +279,9 @@ public class PluginTree extends JTree implements DragGestureListener,
         // Finished with the graphics context now
         g2.dispose();
 
-        mCurrentPoint = (Point) e.getDragOrigin();
+        mCurrentPoint = e.getDragOrigin();
 
-        e.startDrag(null, (Image) mGhostImage, new Point(15, 5),
+        e.startDrag(null, mGhostImage, new Point(15, 5),
             new TransferNode(), this);
       }
     } catch (Exception ee) {
@@ -429,7 +428,7 @@ public class PluginTree extends JTree implements DragGestureListener,
 
             BufferedImage bf = new BufferedImage((int) target.getWidth(),
                 (int) target.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
-            Graphics2D g2b = (Graphics2D) bf.createGraphics();
+            Graphics2D g2b = bf.createGraphics();
 
             int width = ((int) (mTreeImage.getWidth() - (target.getX() + target
                 .getWidth()))) > 0 ? (int) target.getWidth()

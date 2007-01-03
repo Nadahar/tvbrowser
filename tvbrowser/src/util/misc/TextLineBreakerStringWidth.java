@@ -107,7 +107,7 @@ public class TextLineBreakerStringWidth {
       maxLines = Integer.MAX_VALUE;
     }
 
-    ArrayList lineList = new ArrayList();
+    ArrayList<String> lineList = new ArrayList<String>();
     boolean allProcessed;
     do {
       String line = readNextLine(textReader, width);
@@ -124,7 +124,7 @@ public class TextLineBreakerStringWidth {
     }
     while ((lineList.size() < maxLines) && (! allProcessed));
     int lastInx = lineList.size()-1;
-    String lastLine = (String)lineList.get(lastInx);
+    String lastLine = lineList.get(lastInx);
     if (lastLine.trim().length()==0) {
       lineList.remove(lastInx);
     }

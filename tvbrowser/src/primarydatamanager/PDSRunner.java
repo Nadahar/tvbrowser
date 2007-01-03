@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 public class PDSRunner {
   
-  private LinkedList mPDSList;
+  private LinkedList<PrimaryDataService> mPDSList;
   private int mActiveThreadCount;
   private Thread mWaitingThread;
   private File mLogDir, mRawDir;
@@ -26,7 +26,7 @@ public class PDSRunner {
   
   public PDSRunner(File baseDir) {
     Logger.getLogger("sun.awt.X11.timeoutTask.XToolkit").setLevel(Level.INFO);
-    mPDSList=new LinkedList();    
+    mPDSList=new LinkedList<PrimaryDataService>();    
     mRawDir=new File(baseDir,"raw");
     mLogDir=new File(baseDir,"pdslog");
   }
@@ -105,7 +105,7 @@ public class PDSRunner {
         if (mPDSList.isEmpty()) {
           isFinished = true;
         } else {
-          pds = (PrimaryDataService) mPDSList.removeFirst();
+          pds = mPDSList.removeFirst();
         }
       }
       

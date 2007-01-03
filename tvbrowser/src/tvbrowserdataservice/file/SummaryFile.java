@@ -61,7 +61,7 @@ public class SummaryFile extends AbstractFile {
    * (key = String (See {@link #getChannelKey(String, String)}),
    *  value = ChannelFrame)
    */
-  private HashMap mChannelFrameHash;
+  private HashMap<String, ChannelFrame> mChannelFrameHash;
   /** The number of levels used in this summary. */  
   private int mLevelCount;
   
@@ -70,7 +70,7 @@ public class SummaryFile extends AbstractFile {
    * Creates a new instance.
    */
   public SummaryFile() {
-    mChannelFrameHash = new HashMap();
+    mChannelFrameHash = new HashMap<String, ChannelFrame>();
     mLevelCount = 0;
   }
   
@@ -99,7 +99,7 @@ public class SummaryFile extends AbstractFile {
     
     // Try to get a frame from the hash
     String key = getChannelKey(country, channelId);
-    ChannelFrame frame = (ChannelFrame) mChannelFrameHash.get(key);
+    ChannelFrame frame = mChannelFrameHash.get(key);
     if (frame == null) {
       // There is no frame -> create one
       frame = new ChannelFrame(country, channelId);
@@ -132,7 +132,7 @@ public class SummaryFile extends AbstractFile {
     
     // Try to get a frame from the hash
     String key = getChannelKey(country, channelId);
-    ChannelFrame frame = (ChannelFrame) mChannelFrameHash.get(key);
+    ChannelFrame frame = mChannelFrameHash.get(key);
     
     if (frame == null) {
       // We have no data for that channel
@@ -371,7 +371,7 @@ public class SummaryFile extends AbstractFile {
      * The list of version arrays. Each version array contains the versions
      * for all levels. (<code>versionForLevel1 = versionArr[1]</code>)
      */
-    private ArrayList mVersionList;
+    private ArrayList<byte[]> mVersionList;
 
     
     /**
@@ -444,7 +444,7 @@ public class SummaryFile extends AbstractFile {
         int dateDaysSince1970 = getDaysSince1970(date);
         int differenceDays = dateDaysSince1970 - mStartDaysSince1970;
         if ((differenceDays >= 0) && (differenceDays < mVersionList.size())) {
-          versionArr = (byte[]) mVersionList.get(differenceDays);
+          versionArr = mVersionList.get(differenceDays);
         }
       }
       
@@ -478,7 +478,7 @@ public class SummaryFile extends AbstractFile {
       if (mVersionList == null) {
         // We have no versions
         mStartDaysSince1970 = dateDaysSince1970;
-        mVersionList = new ArrayList();
+        mVersionList = new ArrayList<byte[]>();
         mVersionList.add(versionArr);
       } else {
         // We already have versions

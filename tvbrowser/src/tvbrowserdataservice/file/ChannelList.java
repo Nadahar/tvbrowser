@@ -67,22 +67,22 @@ public class ChannelList {
 
   private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(ChannelList.class.getName());
 
-  private ArrayList mChannelList;
+  private ArrayList<ChannelItem> mChannelList;
 
   private ChannelGroup mGroup;
 
   /**
    * Icon Cache
    */
-  private static WeakHashMap ICON_CACHE = new WeakHashMap();
+  private static WeakHashMap<String, File> ICON_CACHE = new WeakHashMap<String, File>();
 
   public ChannelList(final String groupName) {
-    mChannelList = new ArrayList();
+    mChannelList = new ArrayList<ChannelItem>();
     mGroup = new ChannelGroupImpl(groupName, groupName, "");
   }
 
   public ChannelList(ChannelGroup group) {
-    mChannelList = new ArrayList();
+    mChannelList = new ArrayList<ChannelItem>();
     mGroup = group;
   }
 
@@ -99,14 +99,14 @@ public class ChannelList {
   }
 
   public Channel getChannelAt(int index) {
-    ChannelItem item = (ChannelItem) mChannelList.get(index);
+    ChannelItem item = mChannelList.get(index);
     return item.getChannel();
   }
 
   public Channel[] createChannelArray() {
     Channel[] channelArr = new Channel[mChannelList.size()];
     for (int i = 0; i < channelArr.length; i++) {
-      channelArr[i] = ((ChannelItem) mChannelList.get(i)).getChannel();
+      channelArr[i] = (mChannelList.get(i)).getChannel();
     }
     return channelArr;
   }
@@ -205,7 +205,7 @@ public class ChannelList {
 
     PrintWriter writer = new PrintWriter(gOut);
     for (int i = 0; i < getChannelCount(); i++) {
-      ChannelItem channelItem = (ChannelItem) mChannelList.get(i);
+      ChannelItem channelItem = mChannelList.get(i);
       Channel channel = channelItem.getChannel();
       StringBuffer line = new StringBuffer();
       line.append(channel.getCountry()).append(";").append(channel.getTimeZone().getID());
@@ -291,7 +291,7 @@ public class ChannelList {
         if (ICON_CACHE.containsKey(url)) {
           try {
             if (!ICON_CACHE.get(url).equals(iconFile)) {
-              copyFile((File) ICON_CACHE.get(url), iconFile);
+              copyFile(ICON_CACHE.get(url), iconFile);
               icon = getIconFromFile(iconFile);
             }
           } catch (Exception e) {

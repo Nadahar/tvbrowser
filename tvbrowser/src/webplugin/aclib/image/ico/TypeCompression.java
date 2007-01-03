@@ -122,7 +122,7 @@ public final class TypeCompression {
      * @return Type for the value specified.
      */
     public static TypeCompression getType(final long pValue) {
-        final TypeCompression lResult = (TypeCompression) TYPES.get(new Long(
+        final TypeCompression lResult = TYPES.get(new Long(
                 pValue));
         if (lResult == null) {
             throw new IllegalArgumentException("Compression type " + pValue

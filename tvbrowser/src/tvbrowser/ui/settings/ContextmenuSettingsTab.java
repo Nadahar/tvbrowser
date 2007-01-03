@@ -77,7 +77,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
   private int mSelectionWidth;
 
-  private ArrayList mDeactivatedItems;
+  private ArrayList<ContextMenuIf> mDeactivatedItems;
 
   public JPanel createSettingsPanel() {
     createList();
@@ -107,7 +107,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
         if (evt.getX() < mSelectionWidth) {
           int index = mList.getList().locationToIndex(evt.getPoint());
           if (index != -1) {
-            Object item = mList.getList().getModel().getElementAt(index);
+            ContextMenuIf item = (ContextMenuIf) mList.getList().getModel().getElementAt(index);
             if (!mDeactivatedItems.remove(item)) {
               mDeactivatedItems.add(item);
             }
@@ -185,7 +185,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     }
     mList.removeAllElements();
 
-    ArrayList items = new ArrayList();
+    ArrayList<ContextMenuIf> items = new ArrayList<ContextMenuIf>();
 
     ContextMenuIf[] menuIfList = ContextMenuManager.getInstance().getAvailableContextMenuIfs(true, false);
     Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
@@ -203,14 +203,14 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
       }
     }
     
-    mDeactivatedItems = new ArrayList(ContextMenuManager.getInstance().getDisabledContextMenuIfs());
+    mDeactivatedItems = new ArrayList<ContextMenuIf>(ContextMenuManager.getInstance().getDisabledContextMenuIfs());
     mFillingList = false;
   }
 
   public void saveSettings() {
     Object o[] = mList.getItems();
 
-    ArrayList pluginIDsList = new ArrayList();
+    ArrayList<String> pluginIDsList = new ArrayList<String>();
     String[] orderIDs = new String[o.length];
     for (int i = 0; i < o.length; i++) {
       ContextMenuIf menuIf = (ContextMenuIf) o[i];

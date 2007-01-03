@@ -73,7 +73,7 @@ public class ProgramListDialog extends JDialog implements WindowClosingIf {
             return;
         }
         
-        _programList = new Vector();
+        _programList = new Vector<Program>();
 
         Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
 
@@ -106,7 +106,7 @@ public class ProgramListDialog extends JDialog implements WindowClosingIf {
         Program[] prg = new Program[_programList.size()];
         
         for (int i = 0; i < _programList.size(); i++) {
-            prg[i] = (Program)_programList.get(i);
+            prg[i] = _programList.get(i);
         }
         
         _programJList = new ProgramList(prg);
@@ -139,7 +139,7 @@ public class ProgramListDialog extends JDialog implements WindowClosingIf {
 
     private ProgramList _programJList;
 
-    private Vector _programList;
+    private Vector<Program> _programList;
 
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramListDialog.class);
 

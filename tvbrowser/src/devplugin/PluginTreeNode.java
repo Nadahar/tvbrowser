@@ -55,19 +55,19 @@ public class PluginTreeNode {
       util.ui.Localizer.getLocalizerFor(PluginTreeNode.class);
 
   private int mNodeType;
-  private ArrayList mChildNodes;
+  private ArrayList<PluginTreeNode> mChildNodes;
   private Object mObject;
-  private ArrayList mNodeListeners;
+  private ArrayList<PluginTreeListener> mNodeListeners;
   private Marker mMarker;
   private Node mDefaultNode;
   private boolean mGroupingByDate;
 
   private PluginTreeNode(int type, Object o) {
-    mChildNodes = new ArrayList();
+    mChildNodes = new ArrayList<PluginTreeNode>();
     mNodeType = type;
     mObject = o;
     mDefaultNode = new Node(type, mObject);
-    mNodeListeners = new ArrayList();
+    mNodeListeners = new ArrayList<PluginTreeListener>();
     mGroupingByDate = true;
   }
 
@@ -145,7 +145,7 @@ public class PluginTreeNode {
   private void refreshAllPrograms(RemovedProgramsHandler handler) {
 
     for (int i=mChildNodes.size()-1; i>=0; i--) {
-      PluginTreeNode node = (PluginTreeNode)mChildNodes.get(i);
+      PluginTreeNode node = mChildNodes.get(i);
       node.mMarker = mMarker;
       
       if (node.isLeaf()) {
@@ -169,7 +169,7 @@ public class PluginTreeNode {
 
   private void fireProgramsRemoved(Program[] progArr) {
     for (int i=0; i<mNodeListeners.size(); i++) {
-      PluginTreeListener listener = (PluginTreeListener)mNodeListeners.get(i);
+      PluginTreeListener listener = mNodeListeners.get(i);
       listener.programsRemoved(progArr);
     }
   }
@@ -224,7 +224,7 @@ public class PluginTreeNode {
   private void createDefaultNodes() {
     mDefaultNode.removeAllChildren();
 
-    PluginTreeNode[] items = (PluginTreeNode[])mChildNodes.toArray(new PluginTreeNode[mChildNodes.size()]);
+    PluginTreeNode[] items = mChildNodes.toArray(new PluginTreeNode[mChildNodes.size()]);
     Arrays.sort(items, sPluginTreeNodeComparator);
     for (int i=0; i<items.length; i++) {
       PluginTreeNode n = items[i];
@@ -250,12 +250,12 @@ public class PluginTreeNode {
     /* We create new folders for each day and assign the program items
        to the appropriate folder */
 
-    Map dateMap = new HashMap();  // key: date; value: ArrayList of ProgramItem objects
+    Map<Date, ArrayList<PluginTreeNode>> dateMap = new HashMap<Date, ArrayList<PluginTreeNode>>();  // key: date; value: ArrayList of ProgramItem objects
     mDefaultNode.removeAllChildren();
 
-    Iterator it = mChildNodes.iterator();
+    Iterator<PluginTreeNode> it = mChildNodes.iterator();
     while (it.hasNext()) {
-      PluginTreeNode n = (PluginTreeNode)it.next();
+      PluginTreeNode n = it.next();
       if (!n.isLeaf()) {
         if (n.mGroupingByDate) {
           n.createDateNodes();
@@ -267,9 +267,9 @@ public class PluginTreeNode {
       }
       else {
       	Date date = ((ProgramItem)n.getUserObject()).getProgram().getDate();
-        ArrayList list = (ArrayList)dateMap.get(date);
+        ArrayList<PluginTreeNode> list = dateMap.get(date);
         if (list == null) {
-          list = new ArrayList();
+          list = new ArrayList<PluginTreeNode>();
           dateMap.put(date, list);
         }
         list.add(n);
@@ -277,7 +277,7 @@ public class PluginTreeNode {
     }
 
     // Create the new nodes
-    Set keySet = dateMap.keySet();
+    Set<Date> keySet = dateMap.keySet();
     Date[] dates = new Date[keySet.size()];
     keySet.toArray(dates);
     Arrays.sort(dates);
@@ -297,7 +297,7 @@ public class PluginTreeNode {
 
       Node node = new Node(Node.STRUCTURE_NODE, dateStr);
       mDefaultNode.add(node);
-      List list = (List)dateMap.get(dates[i]);
+      List<PluginTreeNode> list = dateMap.get(dates[i]);
       PluginTreeNode[] nodeArr = new PluginTreeNode[list.size()];
       list.toArray(nodeArr);
       Arrays.sort(nodeArr, sPluginTreeNodeComparator);
@@ -309,15 +309,12 @@ public class PluginTreeNode {
     }
   }
 
-  private static Comparator sPluginTreeNodeComparator = new Comparator() {
-    public int compare(Object o1, Object o2) {
-      if (o1 instanceof PluginTreeNode && o2 instanceof PluginTreeNode) {
-        PluginTreeNode n1 = (PluginTreeNode)o1;
-        PluginTreeNode n2 = (PluginTreeNode)o2;
+  private static Comparator<PluginTreeNode> sPluginTreeNodeComparator = new Comparator<PluginTreeNode>() {
+    public int compare(PluginTreeNode n1, PluginTreeNode n2) {
         Object u1 = n1.getUserObject();
         Object u2 = n2.getUserObject();
         if (u1 instanceof ProgramItem && u2 instanceof ProgramItem) {
-          return sProgramItemComparator.compare(u1, u2);
+          return sProgramItemComparator.compare((ProgramItem)u1, (ProgramItem)u2);
         }
         if (u1 instanceof String && u2 instanceof String) {
           return ((String)u1).compareTo((String)u2);
@@ -326,17 +323,13 @@ public class PluginTreeNode {
           return 1;
         }
         return -1;
-      }
-      return 0;
     }
-
   };
 
-  private static Comparator sProgramItemComparator = new Comparator(){
-    public int compare(Object o1, Object o2) {
-      if (o1 instanceof ProgramItem && o2 instanceof ProgramItem) {
-        Program p1 = ((ProgramItem)o1).getProgram();
-        Program p2 = ((ProgramItem)o2).getProgram();
+  private static Comparator<ProgramItem> sProgramItemComparator = new Comparator<ProgramItem>(){
+    public int compare(ProgramItem pi1, ProgramItem pi2) {
+        Program p1 = pi1.getProgram();
+        Program p2 = pi2.getProgram();
         int result = p1.getDate().compareTo(p2.getDate());
         if (result != 0) {
           return result;
@@ -349,9 +342,7 @@ public class PluginTreeNode {
         else if (t1 > t2) {
           return 1;
         }
-      }
-
-      return 0;
+		return 0;
     }
   };
 
@@ -471,10 +462,10 @@ public class PluginTreeNode {
   }
 
   public ProgramItem[] getProgramItems() {
-    ArrayList list = new ArrayList();
-    Iterator it = mChildNodes.iterator();
+    ArrayList<Object> list = new ArrayList<Object>();
+    Iterator<PluginTreeNode> it = mChildNodes.iterator();
     while (it.hasNext()) {
-      PluginTreeNode n = (PluginTreeNode)it.next();
+      PluginTreeNode n = it.next();
       if (n.isLeaf()) {
         list.add(n.getUserObject());
       }
@@ -486,10 +477,10 @@ public class PluginTreeNode {
   }
 
   public Program[] getPrograms() {
-    ArrayList list = new ArrayList();
-    Iterator it = mChildNodes.iterator();
+    ArrayList<Program> list = new ArrayList<Program>();
+    Iterator<PluginTreeNode> it = mChildNodes.iterator();
     while (it.hasNext()) {
-      PluginTreeNode n = (PluginTreeNode)it.next();
+      PluginTreeNode n = it.next();
       if (n.isLeaf()) {
         ProgramItem item = (ProgramItem)n.getUserObject();
         list.add(item.getProgram());
@@ -507,7 +498,7 @@ public class PluginTreeNode {
     out.writeInt(childrenCnt);
 
     for (int i=0; i<childrenCnt; i++) {
-      PluginTreeNode n = (PluginTreeNode)mChildNodes.get(i);
+      PluginTreeNode n = mChildNodes.get(i);
       out.writeInt(n.mNodeType);
       if (!n.isLeaf()) {
         String title = (String)n.getUserObject();
@@ -572,9 +563,9 @@ public class PluginTreeNode {
 
 
   class RemovedProgramsHandler {
-    private ArrayList mProgArr;
+    private ArrayList<Program> mProgArr;
     public RemovedProgramsHandler() {
-      mProgArr = new ArrayList();
+      mProgArr = new ArrayList<Program>();
     }
     public void clear() {
       mProgArr.clear();

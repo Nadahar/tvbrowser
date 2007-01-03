@@ -28,7 +28,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Vector;
 
@@ -98,7 +97,7 @@ public class DialogOverview extends JDialog implements WindowClosingIf {
 
     RatingComparator comperator = new RatingComparator();
 
-    Vector overallData = new Vector(_tvraterPlugin.getDatabase().getOverallRating());
+    Vector<Rating> overallData = new Vector<Rating>(_tvraterPlugin.getDatabase().getOverallRating());
     Collections.sort(overallData, comperator);
 
     _tabbed = new JTabbedPane();
@@ -129,7 +128,7 @@ public class DialogOverview extends JDialog implements WindowClosingIf {
 
     _tabbed.addTab(_mLocalizer.msg("overall", "Overall Ratings"), new JScrollPane(_overall));
 
-    Vector personalData = new Vector(_tvraterPlugin.getDatabase().getPersonalRating());
+    Vector<Rating> personalData = new Vector<Rating>(_tvraterPlugin.getDatabase().getPersonalRating());
     Collections.sort(personalData, comperator);
 
     _personal = new JList(personalData);
@@ -274,11 +273,11 @@ public class DialogOverview extends JDialog implements WindowClosingIf {
   private void updateLists() {
     RatingComparator comperator = new RatingComparator();
 
-    Vector personalVector = new Vector((Collection) _tvraterPlugin.getDatabase().getPersonalRating());
+    Vector<Rating> personalVector = new Vector<Rating>(_tvraterPlugin.getDatabase().getPersonalRating());
     Collections.sort(personalVector, comperator);
     _personal.setListData(personalVector);
 
-    Vector overallVector = new Vector((Collection) _tvraterPlugin.getDatabase().getOverallRating());
+    Vector<Rating> overallVector = new Vector<Rating>(_tvraterPlugin.getDatabase().getOverallRating());
     Collections.sort(overallVector, comperator);
     _overall.setListData(overallVector);
 

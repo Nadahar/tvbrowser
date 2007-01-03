@@ -127,7 +127,7 @@ public class CaptureParamLibrary extends ParamLibrary {
       
       try {
         int i = Integer.parseInt(params[0]);
-        Variable[] varArray = (Variable[]) mConfig.getVariables().toArray(new Variable[0]);
+        Variable[] varArray = mConfig.getVariables().toArray(new Variable[0]);
         
         if (varArray.length < i) {
           return "";
@@ -249,7 +249,7 @@ public class CaptureParamLibrary extends ParamLibrary {
    */
   private String getExternalChannelName(Program prg, boolean showError) {
     
-    if ((mConfig.getChannels().get(prg.getChannel()) == null) || (((String)mConfig.getChannels().get(prg.getChannel())).length() == 0)) {
+    if ((mConfig.getChannels().get(prg.getChannel()) == null) || ((mConfig.getChannels().get(prg.getChannel())).length() == 0)) {
 
       if (showError) {
         setErrors(true);
@@ -260,7 +260,7 @@ public class CaptureParamLibrary extends ParamLibrary {
       }
     }
     
-    return (String) mConfig.getChannels().get(prg.getChannel());
+    return mConfig.getChannels().get(prg.getChannel());
   }
   
   /**

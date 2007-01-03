@@ -61,7 +61,7 @@ public class DayProgramMapper {
     resetIDs(rawFile);
     
     // Create a list with all Programs that have not yet been assigned
-    ArrayList progList = new ArrayList();
+    ArrayList<ProgramFrame> progList = new ArrayList<ProgramFrame>();
     for (int i = 0; i < lastCompleteFile.getProgramFrameCount(); i++) {
       progList.add(lastCompleteFile.getProgramFrameAt(i));
     }
@@ -87,7 +87,7 @@ public class DayProgramMapper {
   
   
   private ArrayList createUnmappedList(DayProgramFile file) {
-    ArrayList unmappedList = new ArrayList();
+    ArrayList<ProgramFrame> unmappedList = new ArrayList<ProgramFrame>();
     for (int i = 0; i < file.getProgramFrameCount(); i++) {
       ProgramFrame frame = file.getProgramFrameAt(i);
       if (frame.getId() == -1) {

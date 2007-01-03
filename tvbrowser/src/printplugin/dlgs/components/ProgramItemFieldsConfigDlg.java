@@ -118,11 +118,11 @@ public class ProgramItemFieldsConfigDlg extends JDialog implements WindowClosing
   
  
   private ProgramFieldType[] getAvailableTypes() {
-    ArrayList typeList = new ArrayList();
+    ArrayList<ProgramFieldType> typeList = new ArrayList<ProgramFieldType>();
     
-    Iterator typeIter = ProgramFieldType.getTypeIterator();
+    Iterator<ProgramFieldType> typeIter = ProgramFieldType.getTypeIterator();
     while (typeIter.hasNext()) {
-      ProgramFieldType type = (ProgramFieldType) typeIter.next();
+      ProgramFieldType type = typeIter.next();
       
       if ((type.getFormat() != ProgramFieldType.BINARY_FORMAT)
         && (type != ProgramFieldType.INFO_TYPE)

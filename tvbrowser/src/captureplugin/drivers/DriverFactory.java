@@ -61,7 +61,7 @@ public class DriverFactory {
      * @return All available Drivers
      */
     public DriverIf[] getDrivers() {
-        ArrayList drivers = new ArrayList();
+        ArrayList<DriverIf> drivers = new ArrayList<DriverIf>();
         drivers.add(new DefaultDriver());
         
         if (OperatingSystem.isMacOs()) {
@@ -74,7 +74,7 @@ public class DriverFactory {
             }
         }
 
-        return (DriverIf[])drivers.toArray(new DriverIf[0]);
+        return drivers.toArray(new DriverIf[0]);
     }
     
     /**

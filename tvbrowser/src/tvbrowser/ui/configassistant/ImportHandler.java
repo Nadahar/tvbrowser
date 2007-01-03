@@ -64,7 +64,7 @@ public class ImportHandler {
   private int readContent(File root) {
     Pattern pattern = Pattern.compile("^(\\p{Alpha}{2})_(\\p{Alnum}+)_\\p{Alnum}+\\.\\p{Digit}{8}$");
     Matcher matcher;
-    HashSet channelSet = new HashSet();
+    HashSet<String> channelSet = new HashSet<String>();
     String[] files = root.list();
     for (int i=0; i<files.length; i++) {
       matcher = pattern.matcher(files[i]);

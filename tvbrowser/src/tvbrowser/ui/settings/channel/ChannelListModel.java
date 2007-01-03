@@ -33,12 +33,12 @@ import devplugin.Channel;
 
 public class ChannelListModel {
 
-  private HashSet mSubscribedChannels;
+  private HashSet<Channel> mSubscribedChannels;
 
   private Channel[] mAvailableChannels;
 
   public ChannelListModel() {
-    mSubscribedChannels = new HashSet();
+    mSubscribedChannels = new HashSet<Channel>();
     refresh();
   }
 

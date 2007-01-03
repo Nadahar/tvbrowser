@@ -95,7 +95,7 @@ public class PluginView extends JPanel implements MouseListener {
      PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
      ContextMenuIf[] menuIfs = ContextMenuManager.getInstance().getAvailableContextMenuIfs(true,true);
      
-     ArrayList pluginList = new ArrayList();
+     ArrayList<String> pluginList = new ArrayList<String>();
      
      for(int i = 0; i < plugins.length; i++) {
        if(plugins[i].canUseProgramTree())
@@ -115,7 +115,7 @@ public class PluginView extends JPanel implements MouseListener {
      }
      
      for(int i = 0; i < pluginList.size(); i++)
-       mModel.addPluginTree(PluginProxyManager.getInstance().getPluginForId((String)pluginList.get(i)));
+       mModel.addPluginTree(PluginProxyManager.getInstance().getPluginForId(pluginList.get(i)));
   }
   
   public void update() {

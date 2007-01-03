@@ -114,7 +114,7 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
     mListModel = new DefaultListModel();
 
     for (int i = 0; i < mOriginal.size(); i++) {
-      mListModel.addElement(((WebAddress) mOriginal.get(i)).clone());
+      mListModel.addElement((mOriginal.get(i)).clone());
     }
 
   }

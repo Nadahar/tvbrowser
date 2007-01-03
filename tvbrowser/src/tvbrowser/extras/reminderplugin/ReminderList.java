@@ -57,13 +57,13 @@ public class ReminderList implements ActionListener {
       "reminderplugin.ReminderPlugin", IconLoader.getInstance()
           .getIconFromTheme("apps", "appointment", 16), ReminderPlugin.mLocalizer.msg("pluginName","Reminder"));
 
-  private ArrayList mList;
+  private ArrayList<ReminderListItem> mList;
 
   /** List of Blocked Programs. These Programs don't trigger a reminder anymore */
-  private ArrayList mBlockedPrograms = new ArrayList();
+  private ArrayList<Program> mBlockedPrograms = new ArrayList<Program>();
 
   public ReminderList() {
-    mList = new ArrayList();
+    mList = new ArrayList<ReminderListItem>();
   }
 
   public void read(ObjectInputStream in) throws IOException,
@@ -235,7 +235,7 @@ public class ReminderList implements ActionListener {
   }
 
   public ReminderListItem[] getReminderItems() {
-    ReminderListItem[] items = (ReminderListItem[]) mList
+    ReminderListItem[] items = mList
         .toArray(new ReminderListItem[mList.size()]);
     Arrays.sort(items);
     return items;
@@ -249,7 +249,7 @@ public class ReminderList implements ActionListener {
   public Program[] updatePrograms() {
     ReminderListItem[] items = getReminderItems();
     mList.clear();
-    ArrayList removedPrograms = new ArrayList();
+    ArrayList<Program> removedPrograms = new ArrayList<Program>();
     
     for (int i = 0; i < items.length; i++) {
       if(items[i].getProgram().getProgramState() == Program.WAS_DELETED_STATE)
@@ -262,7 +262,7 @@ public class ReminderList implements ActionListener {
         mList.add(items[i]);
     }
     
-    return (Program[]) removedPrograms.toArray(new Program[removedPrograms
+    return removedPrograms.toArray(new Program[removedPrograms
         .size()]);
   }
 

@@ -64,7 +64,7 @@ public class RawDataProcessor {
    */
   private Date mDeadlineDay;
   
-  private HashSet mForceCompleteUpdateChannelSet;
+  private HashSet<String> mForceCompleteUpdateChannelSet;
   
   private int mQuarantineCount;
   
@@ -76,7 +76,7 @@ public class RawDataProcessor {
   
   public void forceCompleteUpdateFor(String channel) {
     if (mForceCompleteUpdateChannelSet == null) {
-      mForceCompleteUpdateChannelSet = new HashSet();
+      mForceCompleteUpdateChannelSet = new HashSet<String>();
     }
     
     mForceCompleteUpdateChannelSet.add(channel);

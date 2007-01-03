@@ -87,7 +87,7 @@ public class Mirror {
     GZIPInputStream gIn = new GZIPInputStream(stream);
     BufferedReader reader = new BufferedReader(new InputStreamReader(gIn));
 
-    ArrayList list = new ArrayList();
+    ArrayList<Mirror> list = new ArrayList<Mirror>();
     String line;
     int lineCount = 1;
     while ((line = reader.readLine()) != null) {

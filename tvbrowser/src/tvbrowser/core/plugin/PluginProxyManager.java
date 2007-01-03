@@ -41,7 +41,6 @@ import tvbrowser.core.TvDataBaseListener;
 import tvbrowser.core.TvDataUpdateListener;
 import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.contextmenu.ContextMenuManager;
-import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -50,8 +49,6 @@ import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import devplugin.ChannelDayProgram;
 import devplugin.ContextMenuIf;
-import devplugin.PluginAccess;
-import devplugin.PluginsFilterComponent;
 import devplugin.PluginsProgramFilter;
 import devplugin.Program;
 
@@ -119,10 +116,10 @@ public class PluginProxyManager {
    * The list containing all plugins (PluginListItem objects) in the right
    * order.
    */
-  private ArrayList mPluginList;
+  private ArrayList<PluginListItem> mPluginList;
 
   /** The registered {@link PluginStateListener}s. */
-  private ArrayList mPluginStateListenerList;
+  private ArrayList<PluginStateListener> mPluginStateListenerList;
 
   /** The currently activated plugins. This is only a cache, it might be null. */
   private PluginProxy[] mActivatedPluginCache;
@@ -134,8 +131,8 @@ public class PluginProxyManager {
    * Creates a new instance of PluginProxyManager.
    */
   private PluginProxyManager() {
-    mPluginList = new ArrayList();
-    mPluginStateListenerList = new ArrayList();
+    mPluginList = new ArrayList<PluginListItem>();
+    mPluginStateListenerList = new ArrayList<PluginStateListener>();
 
     TvDataBase.getInstance().addTvDataListener(new TvDataBaseListener() {
       public void dayProgramAdded(ChannelDayProgram prog) {
@@ -244,7 +241,7 @@ public class PluginProxyManager {
   public void setParentFrame(Frame parent) {
     synchronized (mPluginList) {
       for (int pluginIdx = 0; pluginIdx < mPluginList.size(); pluginIdx++) {
-        PluginListItem item = (PluginListItem) mPluginList.get(pluginIdx);
+        PluginListItem item = mPluginList.get(pluginIdx);
         item.getPlugin().setParentFrame(parent);
       }
     }
@@ -261,10 +258,10 @@ public class PluginProxyManager {
    */
   private String[] installedClassNamesToDeactivatedIds(String[] installedPluginClassNameArr) {
     // Create a list of IDs of deactivated plugins.
-    ArrayList deactivatedPluginList = new ArrayList();
+    ArrayList<String> deactivatedPluginList = new ArrayList<String>();
     synchronized (mPluginList) {
       for (int pluginIdx = 0; pluginIdx < mPluginList.size(); pluginIdx++) {
-        PluginListItem item = (PluginListItem) mPluginList.get(pluginIdx);
+        PluginListItem item = mPluginList.get(pluginIdx);
         String pluginId = item.getPlugin().getId();
 
         // Check whether this plugin is deactivated
@@ -308,7 +305,7 @@ public class PluginProxyManager {
 
     synchronized (mPluginList) {
       // Move all plugin list items to a temporary list
-      ArrayList tempList = new ArrayList(mPluginList.size());
+      ArrayList<PluginListItem> tempList = new ArrayList<PluginListItem>(mPluginList.size());
       tempList.addAll(mPluginList);
       mPluginList.clear();
 
@@ -318,7 +315,7 @@ public class PluginProxyManager {
 
         // Find the item with this id and move it to the mPluginList
         for (int i = 0; i < tempList.size(); i++) {
-          PluginListItem item = (PluginListItem) tempList.get(i);
+          PluginListItem item = tempList.get(i);
           if (id.equals(item.getPlugin().getId())) {
             tempList.remove(i);
             mPluginList.add(item);
@@ -345,7 +342,7 @@ public class PluginProxyManager {
   private void activateAllPluginsExcept(String[] deactivatedPluginIdArr) {
     synchronized (mPluginList) {
       for (int pluginIdx = 0; pluginIdx < mPluginList.size(); pluginIdx++) {
-        PluginListItem item = (PluginListItem) mPluginList.get(pluginIdx);
+        PluginListItem item = mPluginList.get(pluginIdx);
         String pluginId = item.getPlugin().getId();
 
         // Check whether this plugin is deactivated
@@ -550,7 +547,7 @@ public class PluginProxyManager {
     synchronized (mPluginList) {
       // Deactivate all active plugins
       for (int i = 0; i < mPluginList.size(); i++) {
-        PluginListItem item = (PluginListItem) mPluginList.get(i);
+        PluginListItem item = mPluginList.get(i);
         if (item.getPlugin().isActivated()) {
           try {
             deactivatePlugin(item, log);
@@ -562,7 +559,7 @@ public class PluginProxyManager {
 
       // Shut down all plugins
       for (int i = 0; i < mPluginList.size(); i++) {
-        PluginListItem item = (PluginListItem) mPluginList.get(i);
+        PluginListItem item = mPluginList.get(i);
 
         // Log this event
         if (log)
@@ -634,7 +631,7 @@ public class PluginProxyManager {
       synchronized (mPluginList) {
         allPluginArr = new PluginProxy[mPluginList.size()];
         for (int i = 0; i < mPluginList.size(); i++) {
-          PluginListItem item = (PluginListItem) mPluginList.get(i);
+          PluginListItem item = mPluginList.get(i);
           allPluginArr[i] = item.getPlugin();
         }
       }
@@ -644,7 +641,7 @@ public class PluginProxyManager {
     }
 
     // Return only a copy so the array may be changed by the caller
-    return (PluginProxy[]) allPluginArr.clone();
+    return allPluginArr.clone();
   }
 
   /**
@@ -663,10 +660,10 @@ public class PluginProxyManager {
       // The cache is empty -> We've got to fill it
 
       // Create a list with all activated plugins
-      ArrayList activatedPluginList = new ArrayList();
+      ArrayList<AbstractPluginProxy> activatedPluginList = new ArrayList<AbstractPluginProxy>();
       synchronized (mPluginList) {
         for (int i = 0; i < mPluginList.size(); i++) {
-          PluginListItem item = (PluginListItem) mPluginList.get(i);
+          PluginListItem item = mPluginList.get(i);
           if (item.getPlugin().isActivated()) {
             activatedPluginList.add(item.getPlugin());
           }
@@ -682,7 +679,7 @@ public class PluginProxyManager {
     }
 
     // Return only a copy so the array may be changed by the caller
-    return (PluginProxy[]) activatedPluginArr.clone();
+    return activatedPluginArr.clone();
   }
 
   /**
@@ -692,10 +689,10 @@ public class PluginProxyManager {
    */
   public String[] getDeactivatedPluginIds() {
     // Create a list with all deactivated plugin IDs
-    ArrayList deactivatedPluginIdList = new ArrayList();
+    ArrayList<String> deactivatedPluginIdList = new ArrayList<String>();
     synchronized (mPluginList) {
       for (int i = 0; i < mPluginList.size(); i++) {
-        PluginListItem item = (PluginListItem) mPluginList.get(i);
+        PluginListItem item = mPluginList.get(i);
         if (!item.getPlugin().isActivated()) {
           deactivatedPluginIdList.add(item.getPlugin().getId());
         }
@@ -723,7 +720,7 @@ public class PluginProxyManager {
        * if (pluginId == null) { return null; }
        */
       for (int i = 0; i < mPluginList.size(); i++) {
-        PluginListItem item = (PluginListItem) mPluginList.get(i);
+        PluginListItem item = mPluginList.get(i);
         if (item != null && pluginId != null && pluginId.equals(item.getPlugin().getId())) {
           if ((state == -1) || (item.getState() == state)) {
             return item.getPlugin();
@@ -770,7 +767,7 @@ public class PluginProxyManager {
   private PluginListItem getItemForPlugin(PluginProxy plugin) {
     synchronized (mPluginList) {
       for (int i = 0; i < mPluginList.size(); i++) {
-        PluginListItem item = (PluginListItem) mPluginList.get(i);
+        PluginListItem item = mPluginList.get(i);
 
         if (item.getPlugin() == plugin) {
           return item;
@@ -844,7 +841,7 @@ public class PluginProxyManager {
   private void firePluginLoaded(PluginProxy plugin) {
     synchronized (mPluginStateListenerList) {
       for (int i = 0; i < mPluginStateListenerList.size(); i++) {
-        PluginStateListener lst = (PluginStateListener) mPluginStateListenerList.get(i);
+        PluginStateListener lst = mPluginStateListenerList.get(i);
         try {
           lst.pluginLoaded(plugin);
         } catch (Throwable thr) {
@@ -862,7 +859,7 @@ public class PluginProxyManager {
   private void firePluginUnloaded(PluginProxy plugin) {
     synchronized (mPluginStateListenerList) {
       for (int i = 0; i < mPluginStateListenerList.size(); i++) {
-        PluginStateListener lst = (PluginStateListener) mPluginStateListenerList.get(i);
+        PluginStateListener lst = mPluginStateListenerList.get(i);
         try {
           lst.pluginUnloaded(plugin);
         } catch (Throwable thr) {
@@ -880,7 +877,7 @@ public class PluginProxyManager {
   private void firePluginActivated(PluginProxy plugin) {
     synchronized (mPluginStateListenerList) {
       for (int i = 0; i < mPluginStateListenerList.size(); i++) {
-        PluginStateListener lst = (PluginStateListener) mPluginStateListenerList.get(i);
+        PluginStateListener lst = mPluginStateListenerList.get(i);
         try {
           lst.pluginActivated(plugin);
         } catch (Throwable thr) {
@@ -898,7 +895,7 @@ public class PluginProxyManager {
   private void firePluginDeactivated(PluginProxy plugin, boolean log) {
     synchronized (mPluginStateListenerList) {
       for (int i = 0; i < mPluginStateListenerList.size(); i++) {
-        PluginStateListener lst = (PluginStateListener) mPluginStateListenerList.get(i);
+        PluginStateListener lst = mPluginStateListenerList.get(i);
         try {
           lst.pluginDeactivated(plugin);
         } catch (Throwable thr) {
@@ -919,7 +916,7 @@ public class PluginProxyManager {
   private void fireTvDataAdded(ChannelDayProgram newProg) {
     synchronized (mPluginList) {
       for (int i = 0; i < mPluginList.size(); i++) {
-        PluginListItem item = (PluginListItem) mPluginList.get(i);
+        PluginListItem item = mPluginList.get(i);
         if (item.getPlugin().isActivated()) {
           item.getPlugin().handleTvDataAdded(newProg);
         }
@@ -937,7 +934,7 @@ public class PluginProxyManager {
   private void fireTvDataDeleted(ChannelDayProgram deletedProg) {
     synchronized (mPluginList) {
       for (int i = 0; i < mPluginList.size(); i++) {
-        PluginListItem item = (PluginListItem) mPluginList.get(i);
+        PluginListItem item = mPluginList.get(i);
         if (item.getPlugin().isActivated()) {
           item.getPlugin().handleTvDataDeleted(deletedProg);
         }
@@ -954,7 +951,7 @@ public class PluginProxyManager {
   private void fireTvDataUpdateFinished() {
     synchronized (mPluginList) {
       for (int i = 0; i < mPluginList.size(); i++) {
-        PluginListItem item = (PluginListItem) mPluginList.get(i);
+        PluginListItem item = mPluginList.get(i);
         if (item.getPlugin().isActivated()) {
           item.getPlugin().handleTvDataUpdateFinished();
         }
@@ -971,7 +968,7 @@ public class PluginProxyManager {
   public void fireTvBrowserStartFinished() {
     synchronized(mPluginList) {
       for (int i = 0; i < mPluginList.size(); i++) {
-        PluginListItem item = (PluginListItem) mPluginList.get(i);
+        PluginListItem item = mPluginList.get(i);
         if (item.getPlugin().isActivated()) {
           item.getPlugin().handleTvBrowserStartFinished();
         }

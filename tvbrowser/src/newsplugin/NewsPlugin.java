@@ -71,7 +71,7 @@ public class NewsPlugin extends Plugin {
   private static int MAX_NEWS_AGE = 90;
 
   /** The news. */
-  private ArrayList mNewsList;
+  private ArrayList<News> mNewsList;
 
   /** Instance of this Plugin */
   private static NewsPlugin mInstance;
@@ -85,7 +85,7 @@ public class NewsPlugin extends Plugin {
    * Creates a new instance of NewsPlugin.
    */
   public NewsPlugin() {
-    mNewsList = new ArrayList();
+    mNewsList = new ArrayList<News>();
     mInstance = this;
   }
 
@@ -152,9 +152,9 @@ public class NewsPlugin extends Plugin {
         if (mNewsList.isEmpty()) {
           // We have no news
           lastNews = new Date(currentTime
-              - (long) FIRST_NEWS_DAYS * 24L * 60L * 60L * 1000L);
+              - FIRST_NEWS_DAYS * 24L * 60L * 60L * 1000L);
         } else {
-          News last = (News) mNewsList.get(mNewsList.size() - 1);
+          News last = mNewsList.get(mNewsList.size() - 1);
           lastNews = last.getTime();
         }
         Calendar cal = Calendar.getInstance();
@@ -203,7 +203,7 @@ public class NewsPlugin extends Plugin {
       }
       
       long randomNoConnectionTime = (long)((1.0 + Math.random() * 2) * 24 * 60 * 60 * 1000) + currentTime;
-      long serverNoConnectionTime = (long)(serverWaitDays * 24 * 60 * 60 * 1000) + currentTime;
+      long serverNoConnectionTime = (serverWaitDays * 24 * 60 * 60 * 1000) + currentTime;
             
       mNoConnectionTime = Math.max(randomNoConnectionTime, serverNoConnectionTime);
     }
@@ -267,7 +267,7 @@ public class NewsPlugin extends Plugin {
     Matcher matcher = Pattern.compile(regex).matcher(news);
 
     // Extract the news
-    ArrayList list = new ArrayList();
+    ArrayList<News> list = new ArrayList<News>();
     int lastPos = 0;
     while (matcher.find(lastPos)) {
       String dateAsString = matcher.group(1);
@@ -317,7 +317,7 @@ public class NewsPlugin extends Plugin {
     
     out.writeInt(mNewsList.size());
     for (int i = 0; i < mNewsList.size(); i++) {
-      News news = (News) mNewsList.get(i);
+      News news = mNewsList.get(i);
       news.writeData(out);
     }
     
@@ -341,7 +341,7 @@ public class NewsPlugin extends Plugin {
     int size = in.readInt();
     mNewsList.clear();
     mNewsList.ensureCapacity(size);
-    Date deadline = new Date(System.currentTimeMillis() - (long) MAX_NEWS_AGE
+    Date deadline = new Date(System.currentTimeMillis() - MAX_NEWS_AGE
         * 24L * 60L * 60L * 1000L);
     for (int i = 0; i < size; i++) {
       News news = News.readData(in, version);

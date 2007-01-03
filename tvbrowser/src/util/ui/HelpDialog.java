@@ -82,7 +82,7 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
   private JDialog mDialog;
 
   /** The history. */  
-  private Stack mHistoryStack;
+  private Stack<HistoryStackElement> mHistoryStack;
 
   /**
    * Quellpfad der aktuellen Seite. Kann <CODE>null</CODE> sein, wenn der Text
@@ -132,7 +132,7 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
 
 
   private void initUi() {
-    mHistoryStack = new Stack();
+    mHistoryStack = new Stack<HistoryStackElement>();
 
     mDialog.setTitle(Localizer.getLocalization(Localizer.I18N_HELP));
 
@@ -248,7 +248,7 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
    * Ruft die oberste Seite des mHistoryStack wieder auf.
    */
   protected void popFromHistory() {
-    HistoryStackElement lastSite = (HistoryStackElement) mHistoryStack.pop();
+    HistoryStackElement lastSite = mHistoryStack.pop();
 
     double updateScrollBarTo = lastSite.mVerticalScrollBarRelValue;
     setEditorText(lastSite.mText, updateScrollBarTo);

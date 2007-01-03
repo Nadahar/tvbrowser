@@ -318,7 +318,7 @@ public class ChannelList {
    */
   public static int getPos(Channel channel) {
     for (int i = 0; i < mSubscribedChannels.size(); i++) {
-      Channel ch = (Channel) mSubscribedChannels.get(i);
+      Channel ch = mSubscribedChannels.get(i);
       if (ch != null && ch.equals(channel))
         return i;
     }
@@ -345,7 +345,7 @@ public class ChannelList {
   public static boolean isSubscribedChannel(Channel channel) {
     if (channel==null) return false;
     for (int i=0;i<mSubscribedChannels.size();i++) {
-      Channel ch=(Channel)mSubscribedChannels.get(i);
+      Channel ch=mSubscribedChannels.get(i);
       if (ch != null && ch.equals(channel)) {
         return true;
       }
@@ -372,7 +372,7 @@ public class ChannelList {
   public static Channel[] getSubscribedChannels() {
   Channel[] result=new Channel[mSubscribedChannels.size()];
   for (int i=0;i<mSubscribedChannels.size();i++) {
-    result[i]=(Channel)mSubscribedChannels.get(i);
+    result[i]=mSubscribedChannels.get(i);
   }
   return result;
   }

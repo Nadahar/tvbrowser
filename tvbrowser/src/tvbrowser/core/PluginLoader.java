@@ -68,13 +68,13 @@ public class PluginLoader {
   /** The name of the directory where the plugins are located in TV-Browser 2.1 and later */
   private static String PLUGIN_DIRECTORY = "plugins";
 
-  private HashSet mSuccessfullyLoadedPluginFiles;
+  private HashSet<String> mSuccessfullyLoadedPluginFiles;
 
-  private HashMap mDeleteablePlugin;
+  private HashMap<AbstractPluginProxy, File> mDeleteablePlugin;
   
   private PluginLoader() {
-    mSuccessfullyLoadedPluginFiles = new HashSet();
-    mDeleteablePlugin = new HashMap();
+    mSuccessfullyLoadedPluginFiles = new HashSet<String>();
+    mDeleteablePlugin = new HashMap<AbstractPluginProxy, File>();
   }
 
   public static PluginLoader getInstance() {
@@ -152,7 +152,7 @@ public class PluginLoader {
         else if (plugin instanceof AbstractPluginProxy) {
           PluginProxyManager.getInstance().registerPlugin((AbstractPluginProxy)plugin);
           if (deleteable)
-            mDeleteablePlugin.put(plugin, pluginFile);
+            mDeleteablePlugin.put((AbstractPluginProxy)plugin, pluginFile);
         }
         else if (plugin instanceof devplugin.TvDataService) {
           TvDataServiceProxy proxy = new DefaultTvDataServiceProxy((devplugin.TvDataService)plugin);
@@ -288,7 +288,7 @@ public class PluginLoader {
    * @return true if successful
    */
   public boolean deletePlugin(PluginProxy proxy) {
-    File file = (File)mDeleteablePlugin.get(proxy);
+    File file = mDeleteablePlugin.get(proxy);
     
     Settings.propDeleteFilesAtStart.addItem(file.toString());
     

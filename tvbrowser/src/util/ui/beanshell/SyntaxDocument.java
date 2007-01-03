@@ -26,7 +26,7 @@ class SyntaxDocument extends DefaultStyledDocument
   private MutableAttributeSet comment;
   private MutableAttributeSet quote;
 
-  private HashSet keywords;
+  private HashSet<String> keywords;
 
   public SyntaxDocument()
   {
@@ -47,7 +47,7 @@ class SyntaxDocument extends DefaultStyledDocument
     quote = new SimpleAttributeSet();
     StyleConstants.setForeground(quote, Color.red);
 
-    keywords = new HashSet();
+    keywords = new HashSet<String>();
     keywords.add( "abstract" );
     keywords.add( "boolean" );
     keywords.add( "break" );

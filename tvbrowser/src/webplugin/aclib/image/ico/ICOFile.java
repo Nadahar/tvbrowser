@@ -341,7 +341,7 @@ public class ICOFile implements Comparable {
      * @return BitmapDescriptor.
      */
     public BitmapDescriptor getDescriptor(final int pDescriptorNo) {
-        return (BitmapDescriptor) _descriptors.get(pDescriptorNo);
+        return _descriptors.get(pDescriptorNo);
     }
 
     /**

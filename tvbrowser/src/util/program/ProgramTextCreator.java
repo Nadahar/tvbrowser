@@ -295,7 +295,7 @@ public class ProgramTextCreator {
       buffer.append("&nbsp;");
 
       for (int i = 0; i < icons.size(); i++) {
-        buffer.append(doc.createCompTag((JLabel) icons.get(i)));
+        buffer.append(doc.createCompTag(icons.get(i)));
         buffer.append("&nbsp;&nbsp;");
       }
 

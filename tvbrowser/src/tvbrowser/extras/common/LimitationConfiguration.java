@@ -52,7 +52,7 @@ public class LimitationConfiguration {
 
   private int mFrom, mTo;
   private Channel[] mChannelArr;
-  private ArrayList mChannelItemList = new ArrayList();
+  private ArrayList<ChannelItem> mChannelItemList = new ArrayList<ChannelItem>();
   private boolean mIsLimitedByChannel;
   private boolean mIsLimitedByTime;
   private int mDayLimit;
@@ -71,7 +71,7 @@ public class LimitationConfiguration {
     mIsLimitedByChannel = in.readBoolean();
     if (mIsLimitedByChannel) {
       int cnt = in.readInt();
-      ArrayList list = new ArrayList();
+      ArrayList<Channel> list = new ArrayList<Channel>();
       for (int i=0; i<cnt; i++) {
         ChannelItem item = new ChannelItem(in, version);
         
@@ -83,7 +83,7 @@ public class LimitationConfiguration {
         }
       }
       
-      mChannelArr = (Channel[])list.toArray(new Channel[list.size()]);
+      mChannelArr = list.toArray(new Channel[list.size()]);
     }
 
     mDayLimit = in.readInt();
@@ -106,7 +106,7 @@ public class LimitationConfiguration {
     if (mIsLimitedByChannel) {
       out.writeInt(mChannelItemList.size());
       for (int i=0; i<mChannelItemList.size(); i++)
-        ((ChannelItem)mChannelItemList.get(i)).saveItem(out);
+        (mChannelItemList.get(i)).saveItem(out);
     }
 
     out.writeInt(mDayLimit);
@@ -131,7 +131,7 @@ public class LimitationConfiguration {
       boolean toAdd = true;
       
       for(int j = 0; j < mChannelItemList.size(); j++)
-        if(((ChannelItem)mChannelItemList.get(j)).mChannel.equals(ch[i])) {
+        if((mChannelItemList.get(j)).mChannel.equals(ch[i])) {
           toAdd = false;
           break;
         }

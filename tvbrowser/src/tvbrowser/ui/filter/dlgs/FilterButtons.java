@@ -163,7 +163,7 @@ public class FilterButtons implements ActionListener {
      * @return visible Programs
      */
     private Program[] collectPrograms() {
-        ArrayList array = new ArrayList();
+        ArrayList<Program> array = new ArrayList<Program>();
         
         ProgramTableModel model = mMainFrame.getProgramTableModel();
         
@@ -179,7 +179,7 @@ public class FilterButtons implements ActionListener {
         Program[] prg = new Program[array.size()];
         
         for (int i = 0; i < array.size(); i++) {
-            prg[i] = (Program)array.get(i);
+            prg[i] = array.get(i);
         }
         
         return prg;

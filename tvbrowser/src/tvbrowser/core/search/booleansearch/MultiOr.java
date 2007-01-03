@@ -61,7 +61,7 @@ public class MultiOr implements Block {
   public Block finish() {
 
     //zuerst alle ORs unterhalb einsammeln
-    Vector blocksVector = new Vector();
+    Vector<Block> blocksVector = new Vector<Block>();
     for (int i = 0; i < blocks.length; i++) {
       blocksVector.add(blocks[i]);
     }
@@ -80,16 +80,16 @@ public class MultiOr implements Block {
       }
     } while (found);
 
-    Vector v = new Vector();
+    Vector<Block> v = new Vector<Block>();
     for (int i = 0; i < blocksVector.size(); i++) {
-      Block BB = (Block) blocksVector.get(i);
+      Block BB = blocksVector.get(i);
       BB = BB.finish();
       if (!v.contains(BB)) {
         v.add(BB);
       }
     }
     blocksVector = null;
-    blocks = (Block[]) v.toArray(new Block[v.size()]);
+    blocks = v.toArray(new Block[v.size()]);
     v = null;
 
     //dann die matcher nach vorne sortieren

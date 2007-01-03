@@ -226,7 +226,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
   
 
   public Object[] getOrder() {
-    ArrayList objList = new ArrayList();
+    ArrayList<Object> objList = new ArrayList<Object>();
     for (int i = 0; i < mListModel.size(); i++) {
       SelectableItem item = (SelectableItem) mListModel.elementAt(i);
       if (item.isSelected()) {

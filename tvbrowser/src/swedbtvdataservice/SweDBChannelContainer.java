@@ -21,7 +21,7 @@ public class SweDBChannelContainer {
   private String baseUrl;
   private String iconUrl;
   
-  private Hashtable lastUpdate = new Hashtable();
+  private Hashtable<String, Long> lastUpdate = new Hashtable<String, Long>();
 
   /** Creates a new instance of SweDBChannelContainer */
   public SweDBChannelContainer(String id, String name, String baseUrl, String iconUrl, String timeString) {
@@ -109,7 +109,7 @@ public class SweDBChannelContainer {
    * @return Value of property lastUpdate.
    */
   public long getLastUpdate(devplugin.Date day) {
-    Long temp = (Long)lastUpdate.get(Integer.toString(day.getYear())+":"+Integer.toString(day.getMonth())+":"+Integer.toString(day.getDayOfMonth()));
+    Long temp = lastUpdate.get(Integer.toString(day.getYear())+":"+Integer.toString(day.getMonth())+":"+Integer.toString(day.getDayOfMonth()));
     if (temp == null){
       return 0;
     } else {

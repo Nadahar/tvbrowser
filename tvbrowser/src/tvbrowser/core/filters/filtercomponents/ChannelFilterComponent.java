@@ -62,7 +62,7 @@ public class ChannelFilterComponent implements FilterComponent {
   }
   
   public void read(ObjectInputStream in, int version) throws IOException, ClassNotFoundException {    
-    ArrayList channels=new ArrayList();
+    ArrayList<Channel> channels=new ArrayList<Channel>();
     int channelCnt = in.readInt();    
     
     for (int i=0; i<channelCnt; i++) {

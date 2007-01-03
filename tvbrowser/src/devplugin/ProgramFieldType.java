@@ -42,7 +42,7 @@ public class ProgramFieldType {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ProgramFieldType.class);
 
-  private static final ArrayList mKnownTypeList = new ArrayList();
+  private static final ArrayList<ProgramFieldType> mKnownTypeList = new ArrayList<ProgramFieldType>();
   private static ProgramFieldType[] mKnownTypeArray;
   
   public static final int UNKOWN_FORMAT = 1;
@@ -197,11 +197,11 @@ public class ProgramFieldType {
       mKnownTypeList.add(this);
       int maxTypeId = 0;
       for (int i=0;i<mKnownTypeList.size();i++) {
-      	maxTypeId = Math.max(maxTypeId, ((ProgramFieldType) mKnownTypeList.get(i)).getTypeId());
+      	maxTypeId = Math.max(maxTypeId, (mKnownTypeList.get(i)).getTypeId());
       }
       mKnownTypeArray=new ProgramFieldType[maxTypeId+1];
       for (int i=0;i<mKnownTypeList.size();i++) {
-        ProgramFieldType type=(ProgramFieldType) mKnownTypeList.get(i);
+        ProgramFieldType type=mKnownTypeList.get(i);
         mKnownTypeArray[type.getTypeId()] = type;
       }
     }
@@ -230,7 +230,7 @@ public class ProgramFieldType {
   }
   
   
-  public static Iterator getTypeIterator() {
+  public static Iterator<ProgramFieldType> getTypeIterator() {
     return mKnownTypeList.iterator();
   }
 

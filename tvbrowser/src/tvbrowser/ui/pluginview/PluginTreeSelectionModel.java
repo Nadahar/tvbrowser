@@ -174,7 +174,7 @@ public class PluginTreeSelectionModel implements TreeSelectionModel {
 
   public void setSelectionPaths(TreePath[] paths) {
     if (paths != null && paths.length > 0) {      
-      ArrayList list = new ArrayList();
+      ArrayList<TreePath> list = new ArrayList<TreePath>();
       for (int i=0; i<paths.length; i++) {
         Plugin plugin = PluginTreeModel.getPlugin(paths[i]);
         if (plugin != null && 

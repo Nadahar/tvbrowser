@@ -120,7 +120,7 @@ public class LayoutTab extends JPanel {
     }
     int[] result = new int[list.size()];
     for (int i=0; i<list.size(); i++) {
-      result[i] = ((Integer)list.get(i)).intValue();
+      result[i] = (list.get(i)).intValue();
     }
     return result;
   }

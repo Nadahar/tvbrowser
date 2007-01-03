@@ -147,7 +147,7 @@ public class ProgramIcon implements Icon {
   }
 
   private Icon[] getPluginIcons(Program program) {
-    ArrayList list = new ArrayList();
+    ArrayList<Icon> list = new ArrayList<Icon>();
 
     String[] iconPluginArr = mSettings.getProgramTableIconPlugins();
     for (int i = 0; i < iconPluginArr.length; i++) {
@@ -341,13 +341,13 @@ public class ProgramIcon implements Icon {
 
   private Marker[] getMarkedByPlugins(Program prog) {
     Marker[] access = prog.getMarkerArr();
-    ArrayList list = new ArrayList();
+    ArrayList<Marker> list = new ArrayList<Marker>();
     for (int i=0; i<access.length; i++) {
       if (!access[i].getId().equals(PrintPlugin.getInstance().getId())) {
         list.add(access[i]);
       }
     }
-    return (Marker[])list.toArray(new Marker[list.size()]);
+    return list.toArray(new Marker[list.size()]);
   }
 
 

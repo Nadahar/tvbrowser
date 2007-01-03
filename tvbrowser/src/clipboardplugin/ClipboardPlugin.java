@@ -132,7 +132,7 @@ public class ClipboardPlugin extends Plugin {
     int i = 0;
 
     while (!parser.hasErrors() && (i < programs.length)) {
-      String prgResult = parser.analyse(param, (Program) programs[i]);
+      String prgResult = parser.analyse(param, programs[i]);
       result.append(prgResult);
       i++;
     }

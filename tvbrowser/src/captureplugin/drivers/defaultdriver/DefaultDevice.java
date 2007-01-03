@@ -317,13 +317,13 @@ public class DefaultDevice implements DeviceIf {
         
         CaptureExecute exec = new CaptureExecute(parent, mConfig);
         
-        ArrayList list = new ArrayList(mConfig.getEnabledParamList());
+        ArrayList<ParamEntry> list = new ArrayList<ParamEntry>(mConfig.getEnabledParamList());
         
         if (num <= list.size()) {
             
             ProgramTime time = new ProgramTime(program);
             
-            return exec.execute(time, ((ParamEntry)list.get(num)).getParam());
+            return exec.execute(time, list.get(num).getParam());
         }
         
         return false;

@@ -53,7 +53,7 @@ abstract public class IconTheme {
   /** Name and Comment */
   private String mThemeName, mThemeComment;
   /** Directory-Entries in the index.theme File*/
-  private ArrayList mDirectories;
+  private ArrayList<Directory> mDirectories;
   
   /**
    * Create the IconTheme
@@ -81,7 +81,7 @@ abstract public class IconTheme {
    */
   private boolean loadThemeFile() {
     try {
-      mDirectories = new ArrayList();
+      mDirectories = new ArrayList<Directory>();
       
       if (!entryExists("index.theme")) {
         return false;

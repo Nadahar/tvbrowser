@@ -180,7 +180,7 @@ public class Localizer {
    * @return the Localizer for the specified Class.
    */  
   public static Localizer getLocalizerFor(Class clazz) {
-    Localizer localizer = (Localizer) mLocalizerCache.get(clazz);
+    Localizer localizer = mLocalizerCache.get(clazz);
     
     if (localizer == null) {
       localizer = new Localizer(clazz);

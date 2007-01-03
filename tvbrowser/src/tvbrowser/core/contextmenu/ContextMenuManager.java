@@ -124,7 +124,7 @@ public class ContextMenuManager {
   public ContextMenuIf getContextMenuIfForId(String id) {
     PluginProxy plugin = PluginProxyManager.getInstance().getActivatedPluginForId(id);
     if(plugin != null)
-      return (ContextMenuIf)plugin;
+      return plugin;
     else if (id != null){
       if(id.compareTo(SearchPluginProxy.getInstance().getId()) == 0 || 
           id.compareTo("java.searchplugin.SearchPlugin") == 0)
@@ -216,7 +216,7 @@ public class ContextMenuManager {
       ifList.add(reminder);
 
       for(int i = 0; i < pluginArr.length; i++)
-        ifList.add((ContextMenuIf)pluginArr[i]);
+        ifList.add(pluginArr[i]);
     }
     else    
     for(int i = 0; i < order.length; i++) {
@@ -343,7 +343,7 @@ public class ContextMenuManager {
    * Returns a List with all disabled ContextMenuIfs
    * @return disabled ContextMenuIfs
    */
-  public List getDisabledContextMenuIfs() {
+  public List<ContextMenuIf> getDisabledContextMenuIfs() {
     String[] disabled = Settings.propContextMenuDisabledItems.getStringArray();
     
     ArrayList<ContextMenuIf> list = new ArrayList<ContextMenuIf>();

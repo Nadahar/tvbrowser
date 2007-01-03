@@ -47,7 +47,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
   /** Translator */
 
   /** The comparator that compares two programs by their start time and date */
-  private static Comparator mStartTimeComparator;
+  private static Comparator<Program> mStartTimeComparator;
   
   /** Indicates if the special characters should be replaced.*/
   protected boolean mReplaceSpCh = false;
@@ -58,14 +58,11 @@ public abstract class AbstractSearcher implements ProgramSearcher {
    * 
    * @return The start time comperator
    */
-  private static Comparator getStartTimeComparator() {
+  private static Comparator<Program> getStartTimeComparator() {
     if (mStartTimeComparator == null) {
       // Create an comparator that compares two programs by their start time and date
-      mStartTimeComparator = new Comparator() {
-        public int compare(Object o1, Object o2) {
-          Program prog1 = (Program) o1;
-          Program prog2 = (Program) o2;
-
+      mStartTimeComparator = new Comparator<Program>() {
+        public int compare(Program prog1, Program prog2) {
           int dateComp = prog1.getDate().compareTo(prog2.getDate());
           if (dateComp == 0) {
             // Both program are at the same date -> Check the start time
@@ -163,7 +160,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
     }
 
     // Perform the actual search
-    ArrayList hitList = new ArrayList();
+    ArrayList<Program> hitList = new ArrayList<Program>();
     int lastDayWithData = 0;
     for (int day = 0; day <= nrDays; day++) {
       for (int channelIdx = 0; channelIdx < channels.length; channelIdx++) {
