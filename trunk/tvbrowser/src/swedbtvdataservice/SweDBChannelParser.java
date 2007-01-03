@@ -19,7 +19,7 @@ import org.xml.sax.Attributes;
  */
 public class SweDBChannelParser extends org.xml.sax.helpers.DefaultHandler{
 
-  private Vector saveIn;
+  private Vector<SweDBChannelContainer> saveIn;
   private final int STATUS_CONSTRUCTION = 0;
   private final int STATUS_CONSTRUCTION_NAME = 1;
   private final int STATUS_CONSTRUCTION_URL = 2;
@@ -33,7 +33,7 @@ public class SweDBChannelParser extends org.xml.sax.helpers.DefaultHandler{
   private String iconUrl;
 
   /** Creates a new instance of SweDBChannelParser */
-  private SweDBChannelParser(Vector v) {
+  private SweDBChannelParser(Vector<SweDBChannelContainer> v) {
     saveIn = v;
   }
 
@@ -105,10 +105,10 @@ public class SweDBChannelParser extends org.xml.sax.helpers.DefaultHandler{
   }
 
   public static SweDBChannelContainer[] parse(InputStream in) throws Exception{
-    Vector v = new Vector();
+    Vector<SweDBChannelContainer> v = new Vector<SweDBChannelContainer>();
     SweDBChannelParser handler = new SweDBChannelParser(v);
     SAXParserFactory.newInstance().newSAXParser().parse(in,handler);
-    return (SweDBChannelContainer[])v.toArray(new SweDBChannelContainer[v.size()]);
+    return v.toArray(new SweDBChannelContainer[v.size()]);
   }
 
 }

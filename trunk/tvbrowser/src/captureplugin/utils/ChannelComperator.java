@@ -33,15 +33,12 @@ import devplugin.Channel;
  * 
  * @author bodum
  */
-public class ChannelComperator implements Comparator {
+public class ChannelComperator implements Comparator<Channel> {
 
   /**
    * Compares two channels
    */
-  public int compare(Object arg0, Object arg1) {
-    
-    Channel a = (Channel) arg0;
-    Channel b = (Channel) arg1;
+  public int compare(Channel a, Channel b) {
     
     int value = a.getDataService().getInfo().getName().compareTo(b.getDataService().getInfo().getName());
     

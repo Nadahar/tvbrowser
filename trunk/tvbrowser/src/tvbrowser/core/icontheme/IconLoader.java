@@ -59,9 +59,9 @@ public class IconLoader {
   /** Default Directory */
   private File mDefaultIconDir;
   /** Icon Cache */
-  private WeakHashMap mIconCache;
+  private WeakHashMap<ThemeIcon, ImageIcon> mIconCache;
   /** Icon Cache for Plugins */
-  private HashMap mPluginIconCache;
+  private HashMap<Plugin, WeakHashMap<Plugin, ImageIcon>> mPluginIconCache;
   
   /**
    * Private Constructor
@@ -76,8 +76,8 @@ public class IconLoader {
     if (Settings.propIcontheme.getString() != null)
         loadIconTheme(new File(Settings.propIcontheme.getString()));
     else {
-        mIconCache = new WeakHashMap();
-        mPluginIconCache = new HashMap();
+        mIconCache = new WeakHashMap<ThemeIcon, ImageIcon>();
+        mPluginIconCache = new HashMap<Plugin, WeakHashMap<Plugin, ImageIcon>>();
         mIconTheme = mDefaultIconTheme;
     }
   }
@@ -87,7 +87,7 @@ public class IconLoader {
    * @return all available themes
    */
   public IconTheme[] getAvailableThemes() {
-    ArrayList list = new ArrayList(); 
+    ArrayList<IconTheme> list = new ArrayList<IconTheme>(); 
     
     File root = new File("icons");
     
@@ -99,7 +99,7 @@ public class IconLoader {
       }
     }
     
-    return (IconTheme[])list.toArray(new IconTheme[0]);
+    return list.toArray(new IconTheme[0]);
   }
 
   /**
@@ -108,8 +108,8 @@ public class IconLoader {
    * @param iconset Directory with IconTheme
    */
   private void loadIconTheme(File iconset) {
-    mIconCache = new WeakHashMap();
-    mPluginIconCache = new HashMap();
+    mIconCache = new WeakHashMap<ThemeIcon, ImageIcon>();
+    mPluginIconCache = new HashMap<Plugin, WeakHashMap<Plugin, ImageIcon>>();
 
     if (!iconset.exists()) {
       iconset = mDefaultIconDir;
@@ -193,7 +193,7 @@ public class IconLoader {
    */
   public ImageIcon getIconFromTheme(Plugin plugin, ThemeIcon icon) {
     // Check the Cache
-    ImageIcon imageIcon = (ImageIcon) mIconCache.get(icon);
+    ImageIcon imageIcon = mIconCache.get(icon);
     if (imageIcon != null) {
       return imageIcon;
     }
@@ -217,10 +217,10 @@ public class IconLoader {
     }
  
     // Third Try: Plugin Icon Cache
-    WeakHashMap pluginCache = (WeakHashMap)mPluginIconCache.get(plugin); 
+    WeakHashMap<Plugin, ImageIcon> pluginCache = mPluginIconCache.get(plugin); 
     
     if (pluginCache != null) {
-      imageIcon = (ImageIcon) pluginCache.get(icon);
+      imageIcon = pluginCache.get(icon);
       if (imageIcon != null) {
         return imageIcon;
       }
@@ -236,7 +236,7 @@ public class IconLoader {
           
           if (imageIcon != null){
             if (pluginCache == null) {
-              pluginCache = new WeakHashMap();
+              pluginCache = new WeakHashMap<Plugin, ImageIcon>();
               mPluginIconCache.put(plugin, pluginCache);
             }
             pluginCache.put(plugin, imageIcon);

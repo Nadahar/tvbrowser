@@ -30,6 +30,7 @@ import java.util.Vector;
 
 import javax.swing.JPanel;
 
+import tvdataservice.MutableProgram;
 import util.exc.TvBrowserException;
 import devplugin.Channel;
 import devplugin.ChannelGroup;
@@ -60,13 +61,13 @@ public class zap2itimporter implements tvdataservice.TvDataService{
     if (mUsername!=null){
       try {
         SaxHandler sh = new SaxHandler(this,new Date(),0,monitor);
-        Hashtable result = sh.doWork();
-        Enumeration en = result.keys();
-        Vector v = new Vector();
+        Hashtable<Channel, Vector<MutableProgram>> result = sh.doWork();
+        Enumeration<Channel> en = result.keys();
+        Vector<Channel> v = new Vector<Channel>();
         while (en.hasMoreElements()){
           v.add(en.nextElement());
         }
-        mChannels =  (Channel[])v.toArray(new Channel[v.size()]);
+        mChannels =  v.toArray(new Channel[v.size()]);
         return mChannels;
       } catch (Exception e){
         e.printStackTrace();
@@ -166,18 +167,18 @@ public class zap2itimporter implements tvdataservice.TvDataService{
   public void updateTvData(tvdataservice.TvDataUpdateManager updateManager, Channel[] channelArr, Date startDate, int dateCount, devplugin.ProgressMonitor monitor) throws TvBrowserException {
     try {
       SaxHandler sh = new SaxHandler(this,new Date(startDate),dateCount,monitor);
-      java.util.Hashtable result = sh.doWork();
+      Hashtable<Channel, Vector<MutableProgram>> result = sh.doWork();
       monitor.setMessage ("transfering data to tvbrowser DB");
-      java.util.Enumeration en = result.keys();
-      Vector v = new Vector();
+      Enumeration<Channel> en = result.keys();
+      Vector<Channel> v = new Vector<Channel>();
       while (en.hasMoreElements()){
         v.add(en.nextElement());
       }
-      mChannels = (Channel[])v.toArray(new Channel[v.size()]);
+      mChannels = v.toArray(new Channel[v.size()]);
       for (int i=0;i<mChannels.length;i++){
-        Vector progs = (Vector) result.get(mChannels[i]);
+        Vector<MutableProgram> progs = result.get(mChannels[i]);
         if (progs!=null){
-          tvdataservice.MutableProgram[] progsToImport = (tvdataservice.MutableProgram[])progs.toArray(new tvdataservice.MutableProgram[progs.size()]);
+          tvdataservice.MutableProgram[] progsToImport = progs.toArray(new tvdataservice.MutableProgram[progs.size()]);
           for (int j=0;j<dateCount;j++){
             Date date = new Date(startDate);
             date = date.addDays(j);

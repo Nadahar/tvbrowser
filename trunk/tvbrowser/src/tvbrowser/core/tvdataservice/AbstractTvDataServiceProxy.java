@@ -54,7 +54,7 @@ public abstract class AbstractTvDataServiceProxy implements TvDataServiceProxy {
       monitor.setValue(i);
     }
     monitor.setValue(groups.length);
-    return (Channel[])list.toArray(new Channel[list.size()]);
+    return list.toArray(new Channel[list.size()]);
   }
 
   private Channel[] loadChannelsForGroups(ChannelGroup[] groups) {

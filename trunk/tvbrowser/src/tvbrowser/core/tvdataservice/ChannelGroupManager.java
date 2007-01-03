@@ -78,7 +78,7 @@ public class ChannelGroupManager {
   private void addGroup(TvDataServiceProxy service, ChannelGroup group) {
     mGroups.put(createId(service, group), group);
     mGroupToService.put(group, service);
-    ArrayList<ChannelGroup> groups = (ArrayList<ChannelGroup>)mServiceToGroupsMap.get(service);
+    ArrayList<ChannelGroup> groups = mServiceToGroupsMap.get(service);
     if (groups == null) {
       groups = new ArrayList<ChannelGroup>();
       mServiceToGroupsMap.put(service, groups);
@@ -96,7 +96,7 @@ public class ChannelGroupManager {
 
 
   public TvDataServiceProxy getTvDataService(ChannelGroup group) {
-    return (TvDataServiceProxy)mGroupToService.get(group);
+    return mGroupToService.get(group);
   }
 
    /**

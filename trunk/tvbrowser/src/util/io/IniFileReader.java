@@ -45,7 +45,7 @@ import java.util.regex.Pattern;
  */
 public class IniFileReader {
   /** HashMap for the Sections */
-  private HashMap mSections;
+  private HashMap<String, HashMap<String, String>> mSections;
   
   /**
    * Loads the Ini-File
@@ -79,9 +79,9 @@ public class IniFileReader {
 
     String str;
     
-    mSections = new HashMap();
+    mSections = new HashMap<String, HashMap<String, String>>();
     
-    HashMap map = new HashMap();
+    HashMap<String, String> map = new HashMap<String, String>();
     
     Pattern section = Pattern.compile("^\\[.*\\]\\w*");
     Pattern keyvalue = Pattern.compile("^.*=.*\\w*");
@@ -92,7 +92,7 @@ public class IniFileReader {
         str = str.trim();
         str = str.substring(1, str.length()-1);
         
-        map = new HashMap();
+        map = new HashMap<String, String>();
         mSections.put(str, map);
       } else if (keyvalue.matcher(str).matches()){
         String key = str.substring(0, str.indexOf('='));
@@ -111,7 +111,7 @@ public class IniFileReader {
    * @return Specific Section as HashMap
    */
   public HashMap getSection(String section) {
-    return (HashMap) mSections.get(section);
+    return mSections.get(section);
   }
  
   /**
@@ -119,8 +119,8 @@ public class IniFileReader {
    * @return
    */
   public String[] getAllSections() {
-    ArrayList list = new ArrayList(mSections.keySet());
-    return (String[])list.toArray(new String[0]);
+    ArrayList<String> list = new ArrayList<String>(mSections.keySet());
+    return list.toArray(new String[0]);
   }
  
 }

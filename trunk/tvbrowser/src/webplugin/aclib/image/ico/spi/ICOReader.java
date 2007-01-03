@@ -140,7 +140,7 @@ public class ICOReader extends ImageReader {
     }
 
     private BitmapDescriptor getICOEntry(final int pImageIndex) {
-        return (BitmapDescriptor) getICOFile().getDescriptors()
+        return getICOFile().getDescriptors()
                 .get(pImageIndex);
     }
 

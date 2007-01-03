@@ -25,7 +25,7 @@ import java.util.Comparator;
  * This class compares two Ratings. It uses the Title to compare them.
  * @author bodo tasche
  */
-public class RatingComparator implements Comparator {
+public class RatingComparator implements Comparator<Rating> {
 
 	/**
 	 * Compares two Ratings
@@ -34,8 +34,8 @@ public class RatingComparator implements Comparator {
 	 * @param o2 Object 2
 	 * @return Compare-Result
 	 */
-	public int compare(Object o1, Object o2) {
-		return o1.toString().compareToIgnoreCase(o2.toString());
+	public int compare(Rating r1, Rating r2) {
+		return r1.toString().compareToIgnoreCase(r2.toString());
 	}
 
 }

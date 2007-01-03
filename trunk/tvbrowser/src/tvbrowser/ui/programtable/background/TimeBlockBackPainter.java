@@ -193,10 +193,10 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
           
           // Go to the block of this program
           int blockIndex = list.size() - 1;
-          TimeBlock  block = (TimeBlock) list.get(blockIndex);
+          TimeBlock  block = list.get(blockIndex);
           while ((block.mStartTime > startTime) && (blockIndex > 0)) {
             blockIndex--;
-            block = (TimeBlock) list.get(blockIndex);
+            block = list.get(blockIndex);
           }
           
           // Check whether the y of the program is lower than the one of the block
@@ -212,7 +212,7 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
     
     // Remove the blocks that have no y
     for (int i = list.size() - 1; i >= 0; i--) {
-      TimeBlock  block = (TimeBlock) list.get(i);
+      TimeBlock  block = list.get(i);
       if (block.mStartY == -1) {
         list.remove(i);
       }

@@ -67,7 +67,7 @@ public abstract class AbstractOldTvDataServiceBridge implements TvDataService {
    * A set of the files, we downloaded or we tried to download. We need this
    * list, so we don't attempt to download a file where the download failed.
    */
-  private HashSet mAlreadyDownloadedFiles;
+  private HashSet<String> mAlreadyDownloadedFiles;
 
   public devplugin.Version getAPIVersion() {
     return new Version(1,0);
@@ -211,7 +211,7 @@ public abstract class AbstractOldTvDataServiceBridge implements TvDataService {
     }
 
     mProgramDispatcher = new ProgramDispatcher();
-    mAlreadyDownloadedFiles = new HashSet();
+    mAlreadyDownloadedFiles = new HashSet<String>();
   }
 
 

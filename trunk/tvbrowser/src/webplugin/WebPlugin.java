@@ -120,7 +120,7 @@ public class WebPlugin extends Plugin {
 
       if (!newone.isUserEntry()) {
         for (int v = 0; v < defaults.size(); v++) {
-          WebAddress def = (WebAddress) defaults.get(v);
+          WebAddress def = defaults.get(v);
           // Replace Default Webaddresses with Default Settings
           if (def.getName().equals(newone.getName())) {
             // Copy needed Data
@@ -152,7 +152,7 @@ public class WebPlugin extends Plugin {
     out.writeInt(mAddresses.size());
 
     for (int i = 0; i < mAddresses.size(); i++) {
-      ((WebAddress)mAddresses.get(i)).writeData(out);
+      (mAddresses.get(i)).writeData(out);
     }
 
   }
@@ -199,7 +199,7 @@ public class WebPlugin extends Plugin {
 
     for (int i = 0; i < mAddresses.size(); i++) {
 
-      final WebAddress adr = (WebAddress) mAddresses.get(i);
+      final WebAddress adr = mAddresses.get(i);
 
       if (adr.isActive()) {
         AbstractAction action = new AbstractAction() {
@@ -229,7 +229,7 @@ public class WebPlugin extends Plugin {
     ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>();
     
     for (int i = 0; i < mAddresses.size(); i++) {
-      final WebAddress adr = (WebAddress) mAddresses.get(i);
+      final WebAddress adr = mAddresses.get(i);
       
       if (adr.isActive())
         list.add(new ProgramReceiveTarget(this,mLocalizer.msg("SearchOn", "Search on ") + " " + adr.getName(),adr.getName() + "." + adr.getUrl()));      
@@ -240,7 +240,7 @@ public class WebPlugin extends Plugin {
   
   public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget target) {
     for (int i = 0; i < mAddresses.size(); i++) {
-      final WebAddress adr = (WebAddress) mAddresses.get(i);
+      final WebAddress adr = mAddresses.get(i);
       
       if (adr.isActive() && target.isReceiveTargetWithIdOfProgramReceiveIf(this,adr.getName() + "." + adr.getUrl())) {
         for(Program p : programArr)

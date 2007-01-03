@@ -41,14 +41,14 @@ public class ProgramFrame implements Cloneable {
 
   private int mId;
 
-  private ArrayList mProgramFieldList;
+  private ArrayList<ProgramField> mProgramFieldList;
   
   
   
   public ProgramFrame(int id) {
     mId = id;
     
-    mProgramFieldList = new ArrayList();
+    mProgramFieldList = new ArrayList<ProgramField>();
   }
 
 
@@ -64,7 +64,7 @@ public class ProgramFrame implements Cloneable {
       ProgramFrame clone = (ProgramFrame) super.clone();
       
       // Make a deep copy of the field list
-      clone.mProgramFieldList = (ArrayList) mProgramFieldList.clone();
+      clone.mProgramFieldList = (ArrayList<ProgramField>) mProgramFieldList.clone();
       
       return clone;
     }
@@ -101,13 +101,13 @@ public class ProgramFrame implements Cloneable {
   
   
   public ProgramField getProgramFieldAt(int index) {
-    return (ProgramField) mProgramFieldList.get(index);
+    return mProgramFieldList.get(index);
   }
 
 
 
   public ProgramField removeProgramFieldAt(int index) {
-    return (ProgramField) mProgramFieldList.remove(index);
+    return mProgramFieldList.remove(index);
   }
 
 

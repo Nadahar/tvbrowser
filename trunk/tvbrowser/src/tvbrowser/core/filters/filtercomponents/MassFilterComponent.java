@@ -92,7 +92,7 @@ public class MassFilterComponent implements FilterComponent {
    * Generates the Search-Array
    */
   private void generateSearcher() {
-    ArrayList array = new ArrayList();
+    ArrayList<ProgramSearcher> array = new ArrayList<ProgramSearcher>();
     String[] keys = mText.split("\\n");
     
     for (int i=0;i<keys.length;i++) {
@@ -103,7 +103,7 @@ public class MassFilterComponent implements FilterComponent {
       }
     }
     
-    mSearcher = (ProgramSearcher[]) array.toArray(new ProgramSearcher[0]);
+    mSearcher = array.toArray(new ProgramSearcher[0]);
   }
 
   public int getVersion() {

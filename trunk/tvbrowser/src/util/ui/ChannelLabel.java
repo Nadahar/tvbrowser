@@ -165,7 +165,7 @@ public class ChannelLabel extends JLabel {
    * @param ic Icon
    */
   public void setIcon(Icon ic) {
-    Icon cached = (Icon)ICONCACHE.get(ic); 
+    Icon cached = ICONCACHE.get(ic); 
     if (cached != null) {
       super.setIcon(cached);
     } else {

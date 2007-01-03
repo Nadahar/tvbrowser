@@ -79,7 +79,7 @@ public class DocumentRenderer implements Printable {
   /**
    * Stores the Start-Position for each Page
    */
-  private ArrayList mPageStarts = new ArrayList();
+  private ArrayList<Double> mPageStarts = new ArrayList<Double>();
   
 
   /**
@@ -225,7 +225,7 @@ public class DocumentRenderer implements Printable {
       if (pageIndex > mPageStarts.size()-1) {
         double lastSize = 0;
         if (mPageStarts.size() > 0)
-          lastSize = ((Double)mPageStarts.get(mPageStarts.size()-1)).doubleValue();
+          lastSize = (mPageStarts.get(mPageStarts.size()-1)).doubleValue();
         if (pageIndex > 0) {
           mPageStartY = lastSize + height; 
         } else {
@@ -233,7 +233,7 @@ public class DocumentRenderer implements Printable {
         }
         mPageStarts.add(new Double(mPageStartY));
       } else {
-        mPageStartY =  ((Double)mPageStarts.get(pageIndex)).doubleValue();
+        mPageStartY =  (mPageStarts.get(pageIndex)).doubleValue();
       }
       
       mPageEndY = height;
@@ -381,7 +381,7 @@ public class DocumentRenderer implements Printable {
      int height = (int) (mPageFormat.getImageableHeight());
 
      BufferedImage bufferedImage = new BufferedImage (width, height, BufferedImage.TYPE_4BYTE_ABGR_PRE );
-     Graphics2D g2d = ( Graphics2D)( bufferedImage.createGraphics() );
+     Graphics2D g2d = ( bufferedImage.createGraphics() );
      
      while (print(g2d, mPageFormat, count) == PAGE_EXISTS) {
        count++;

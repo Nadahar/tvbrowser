@@ -395,7 +395,7 @@ public class PrimaryDataManager {
   }
   
   private Mirror[] loadMirrorListTxt(String fileName) throws PreparationException {
-    ArrayList mirrorList = new ArrayList();
+    ArrayList<Mirror> mirrorList = new ArrayList<Mirror>();
 
     File fromFile = new File(mConfigDir, fileName);
     BufferedInputStream stream = null;
@@ -469,7 +469,7 @@ public class PrimaryDataManager {
     } else {
       try {
         PrimaryDataManager manager = new PrimaryDataManager(new File("."));
-        ArrayList groupNames = new ArrayList();
+        ArrayList<String> groupNames = new ArrayList<String>();
         for (int i = 0; i < args.length; i++) {
           if (args[i].equalsIgnoreCase("-forceCompleteUpdate")) {
             if ((i + 1) >= args.length) {

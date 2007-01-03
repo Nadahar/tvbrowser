@@ -375,7 +375,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
       ArrayList<Mirror> mirrorList = new ArrayList<Mirror>(Arrays.asList(Mirror.readMirrorListFromFile(file)));
 
       for (int i=0;i<mMirrorUrlArr.length;i++) {
-        Mirror basemirror = (Mirror)mirrorList.get(i);
+        Mirror basemirror = mirrorList.get(i);
         if (!mirrorList.contains(basemirror)) {
           mirrorList.add(basemirror);
         }
@@ -388,9 +388,9 @@ public class ChannelGroup implements devplugin.ChannelGroup {
           if(!mirrorList.contains(groupmirrorArr[i]))
             mirrorList.add(groupmirrorArr[i]);
 
-      return (Mirror[])mirrorList.toArray(new Mirror[mirrorList.size()]);
+      return mirrorList.toArray(new Mirror[mirrorList.size()]);
     } catch (Exception exc) {
-      ArrayList mirrorList = new ArrayList();
+      ArrayList<Mirror> mirrorList = new ArrayList<Mirror>();
 
       for (int i = 0; i < mMirrorUrlArr.length; i++) {
         if (!BLOCKEDSERVERS.contains(getServerBase(mMirrorUrlArr[i])) && mMirrorUrlArr[i] != null) {
@@ -398,7 +398,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
         }
       }
       
-      return (Mirror[])mirrorList.toArray(new Mirror[mirrorList.size()]);
+      return mirrorList.toArray(new Mirror[mirrorList.size()]);
     }
   }
 
@@ -569,7 +569,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     if (!file.exists()) {
       return true;
     } else {
-      long minLastModified = System.currentTimeMillis() - ((long) MAX_META_DATA_AGE * 24L * 60L * 60L * 1000L);
+      long minLastModified = System.currentTimeMillis() - (MAX_META_DATA_AGE * 24L * 60L * 60L * 1000L);
       return file.lastModified() < minLastModified;
     }
   }

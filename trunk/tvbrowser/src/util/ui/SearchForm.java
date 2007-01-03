@@ -424,13 +424,13 @@ public class SearchForm extends JPanel {
    * @return The history.
    */
   public SearchFormSettings[] getHistory() {
-    ArrayList list = new ArrayList(mPatternCBModel.getSize());
+    ArrayList<SearchFormSettings> list = new ArrayList<SearchFormSettings>(mPatternCBModel.getSize());
     
     // Get the old history
     for (int i = 0; i < mPatternCBModel.getSize(); i++) {
       Object item = mPatternCBModel.getElementAt(i);
       if (item instanceof SearchFormSettings) {
-        list.add(item);
+        list.add((SearchFormSettings)item);
       }
     }
 
@@ -438,9 +438,9 @@ public class SearchForm extends JPanel {
     SearchFormSettings settings = getSearchFormSettings();
     
     // Remove the current pattern from history if it already exists
-    Iterator iter = list.iterator();
+    Iterator<SearchFormSettings> iter = list.iterator();
     while (iter.hasNext()) {
-      SearchFormSettings hist = (SearchFormSettings) iter.next();
+      SearchFormSettings hist = iter.next();
       if (settings.getSearchText().equals(hist.getSearchText())) {
         iter.remove();
       }

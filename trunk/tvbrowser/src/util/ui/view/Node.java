@@ -35,7 +35,7 @@ public class Node {
   private Node mParent;
   private Component mLeafComponent;
   private Component mContent;
-  private ArrayList mNodes;  
+  private ArrayList<Node> mNodes;  
   private String mName;
   private ViewProperty mProperty;
   private View mView;
@@ -45,7 +45,7 @@ public class Node {
   
   public Node(Node parent) {
     mParent = parent;
-    mNodes = new ArrayList();
+    mNodes = new ArrayList<Node>();
     if (mParent!=null) {
       mParent.add(this);
     }
@@ -117,7 +117,7 @@ public class Node {
    * @return an array of nodes with at least one leaf (components)
    */
   public Node[] getNodes() {
-    ArrayList nodesList = new ArrayList();
+    ArrayList<Node> nodesList = new ArrayList<Node>();
     Iterator it = mNodes.iterator();
     while (it.hasNext()) {
       Node n = (Node)it.next();

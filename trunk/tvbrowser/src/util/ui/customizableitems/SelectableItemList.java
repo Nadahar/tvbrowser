@@ -216,7 +216,7 @@ public class SelectableItemList extends JPanel {
   private void setEntries(Object[] currSelection, Object[] allItems) {
     mListModel.removeAllElements();
     
-    ArrayList selectionList = new ArrayList();
+    ArrayList<Object> selectionList = new ArrayList<Object>();
     
     for (int i = 0; i < currSelection.length; i++)
       selectionList.add(currSelection[i]);
@@ -234,7 +234,7 @@ public class SelectableItemList extends JPanel {
    * @return The selected Objects
    */
   public Object[] getSelection() {
-    ArrayList objList = new ArrayList();
+    ArrayList<Object> objList = new ArrayList<Object>();
     for (int i = 0; i < mListModel.size(); i++) {
       SelectableItem item = (SelectableItem) mListModel.elementAt(i);
       if (item.isSelected()) {

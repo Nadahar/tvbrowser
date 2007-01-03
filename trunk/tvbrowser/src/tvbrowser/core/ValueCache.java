@@ -36,18 +36,18 @@ public class ValueCache {
 	 * Map to store <key, Reference> pairs,
 	 * where Reference is a soft reference to an Object.
 	 */
-	private Map cacheTable = new HashMap();
+	private Map<Object, SoftReference<Object>> cacheTable = new HashMap<Object, SoftReference<Object>>();
 	/**
 	 * Map to store <Reference, key> pairs,
 	 * to find the cacheTable-key of a garbage collected Reference.
 	 */
-	private Map refTable = new HashMap();
+	private Map<SoftReference<Object>, Object> refTable = new HashMap<SoftReference<Object>, Object>();
 
 	/**
 	 * The reference-queue that is registered with the soft references.
 	 * The garbage collector will enqueue soft references that are garbage collected.
 	 */
-	private ReferenceQueue refQueue = new ReferenceQueue();
+	private ReferenceQueue<Object> refQueue = new ReferenceQueue<Object>();
 
 	/**
 	 * Clean up all entries from the table for which the values were garbage collected.
@@ -67,7 +67,7 @@ public class ValueCache {
 	 */
 	public void put(Object key, Object value) {
 		cleanup();
-		SoftReference ref = new SoftReference(value, refQueue);
+		SoftReference<Object> ref = new SoftReference<Object>(value, refQueue);
 		cacheTable.put(key, ref);
 		refTable.put(ref, key);
 	}
@@ -82,7 +82,7 @@ public class ValueCache {
 	public Object get(Object key) {
 		cleanup();
 		Object value = null;
-		SoftReference ref = (SoftReference)cacheTable.get(key);
+		SoftReference ref = cacheTable.get(key);
 		if (ref != null) {
 			value = ref.get();
 		}
@@ -92,15 +92,15 @@ public class ValueCache {
 	/**
 	 * Returns a Collection view of the values contained in this cache.
 	 */
-	public Collection values() {
+	public Collection<Object> values() {
 		cleanup();
-		List returnValues = new ArrayList();
+		List<Object> returnValues = new ArrayList<Object>();
 		synchronized (cacheTable) {
-			Iterator iter = cacheTable.values().iterator();
-			SoftReference ref;
+			Iterator<SoftReference<Object>> iter = cacheTable.values().iterator();
+			SoftReference<Object> ref;
 			Object value;
 			while (iter.hasNext()) {
-				ref = (SoftReference)iter.next();
+				ref = iter.next();
 				value = ref.get();
 				if (value != null) {
 					returnValues.add(value);
@@ -114,15 +114,15 @@ public class ValueCache {
 	 * Returns a Collection view of the values contained in this cache that have the same
 	 * runtime class as the given Class.
 	 */
-	public Collection valuesWithType(Class type) {
+	public Collection<Object> valuesWithType(Class type) {
 		cleanup();
-		List returnValues = new ArrayList();
+		List<Object> returnValues = new ArrayList<Object>();
 		synchronized (cacheTable) {
-			Iterator iter = cacheTable.values().iterator();
-			SoftReference ref;
+			Iterator<SoftReference<Object>> iter = cacheTable.values().iterator();
+			SoftReference<Object> ref;
 			Object value;
 			while (iter.hasNext()) {
-				ref = (SoftReference)iter.next();
+				ref = iter.next();
 				value = ref.get();
 				if (value != null && value.getClass().equals(type)) {
 					returnValues.add(value);
@@ -140,7 +140,7 @@ public class ValueCache {
 	public Object remove(Object key) {
 		cleanup();
 		Object value = null;
-		SoftReference ref = (SoftReference)cacheTable.get(key);
+		SoftReference ref = cacheTable.get(key);
 		if (ref != null) {
 			value = ref.get();
 			refTable.remove(ref);

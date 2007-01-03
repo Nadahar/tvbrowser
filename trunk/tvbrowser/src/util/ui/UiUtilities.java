@@ -628,8 +628,8 @@ public class UiUtilities {
     int width	= 40;
 
     if ((ic.getIconWidth() != 0) && (ic.getIconHeight() != 0)) {
-        double iWidth	= (double)ic.getIconWidth();
-        double iHeight = (double)ic.getIconHeight();
+        double iWidth	= ic.getIconWidth();
+        double iHeight = ic.getIconHeight();
         if (iWidth/iHeight<2.0){
         	width=new Double(iWidth * (20.0 / iHeight)).intValue();
     	} else {

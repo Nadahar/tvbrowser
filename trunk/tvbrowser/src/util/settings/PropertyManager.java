@@ -46,15 +46,15 @@ public class PropertyManager {
     = java.util.logging.Logger.getLogger(PropertyManager.class.getName());
   
   private Properties mProperties;
-  private HashMap mPropertyHash;
-  private HashSet mChangedKeySet;
+  private HashMap<String, Property> mPropertyHash;
+  private HashSet<String> mChangedKeySet;
   
   
   
   public PropertyManager() {
     mProperties = new Properties();
-    mPropertyHash = new HashMap();
-    mChangedKeySet = new HashSet();
+    mPropertyHash = new HashMap<String, Property>();
+    mChangedKeySet = new HashSet<String>();
     
     
   }

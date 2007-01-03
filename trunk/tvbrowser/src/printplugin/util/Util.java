@@ -36,11 +36,8 @@ import devplugin.Program;
 public class Util {
 
   public static void sortProgramsByDateAndChannel(Program[] progArr) {
-    Arrays.sort(progArr, new Comparator(){
-      public int compare(Object o1, Object o2) {
-        if (o1 instanceof Program && o2 instanceof Program) {
-          Program p1 = (Program)o1;
-          Program p2 = (Program)o2;
+    Arrays.sort(progArr, new Comparator<Program>(){
+      public int compare(Program p1, Program p2) {
           int result = p1.getDate().compareTo(p2.getDate());
           if (result != 0) {
             return result;
@@ -66,10 +63,7 @@ public class Util {
           else {
             return 0;
           }
-        }
-        return 0;
       }
-
     });
   }
 

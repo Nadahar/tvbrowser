@@ -115,7 +115,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
       // Create parser
       SAXXMLParser parser = new SAXXMLParser();
       // Configure the parser to parse the standard profile (ie. everything).
-      ((SAXXMLParser) parser).setParseProfile(SAXXMLParser.STANDARD);
+      (parser).setParseProfile(SAXXMLParser.STANDARD);
 
       try {
         // Do the parsing...
@@ -144,7 +144,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
 
       monitor.setMessage(mLocalizer.msg("done", "Done with BBC data"));
 
-      return (Channel[]) channels.toArray(new Channel[channels.size()]);
+      return channels.toArray(new Channel[channels.size()]);
     } catch (TVAnytimeException tvae) {
       // Handle any other TVAnytime-specific exceptions that may be generated.
       // E.g. if the XML parser cannot be initialised.
@@ -161,7 +161,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
    * @see devplugin.TvDataService#getAvailableChannels(devplugin.ChannelGroup)
    */
   public Channel[] getAvailableChannels(ChannelGroup group) {
-    return (Channel[]) mChannels.toArray(new Channel[mChannels.size()]);
+    return mChannels.toArray(new Channel[mChannels.size()]);
   }
 
   /*

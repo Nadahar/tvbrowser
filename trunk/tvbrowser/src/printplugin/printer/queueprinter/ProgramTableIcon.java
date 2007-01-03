@@ -50,7 +50,7 @@ public class ProgramTableIcon implements Icon {
   private int mCurColumnInx;
   private int mCurY;
   private int mNumOfCols;
-  private ArrayList mPrograms;
+  private ArrayList<PositionedIcon> mPrograms;
   private ProgramIconSettings mProgramIconSettings;
   private Date mCurDate;
   private Font mDateFont;
@@ -63,7 +63,7 @@ public class ProgramTableIcon implements Icon {
     mNumOfCols = numOfCols;
     mCurColumnInx = 0;
     mCurY = 0;
-    mPrograms = new ArrayList();
+    mPrograms = new ArrayList<PositionedIcon>();
   }
 
   public boolean add(Program prog, boolean forceAdding) {
@@ -114,7 +114,7 @@ public class ProgramTableIcon implements Icon {
 
   public void paintIcon(Component c, Graphics graphics, int x, int y) {
     for (int i=0; i<mPrograms.size(); i++) {
-      PositionedIcon item = (PositionedIcon)mPrograms.get(i);
+      PositionedIcon item = mPrograms.get(i);
       item.paint(graphics, (int)(x+item.getX()), (int)(y+item.getY()));
     }
 

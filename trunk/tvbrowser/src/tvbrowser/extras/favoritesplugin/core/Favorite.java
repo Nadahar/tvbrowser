@@ -191,7 +191,7 @@ public abstract class Favorite {
 
     out.writeInt(mExclusionList.size());
     for (int i=0; i<mExclusionList.size(); i++) {
-      ((Exclusion)mExclusionList.get(i)).writeData(out);
+      (mExclusionList.get(i)).writeData(out);
     }
 
     out.writeInt(mForwardPluginArr.length);
@@ -209,7 +209,7 @@ public abstract class Favorite {
     // Save the programs on BlackList
     out.writeInt(mBlackList.size());
     for(int i = 0; i < mBlackList.size(); i++) {
-      Program p = (Program)mBlackList.get(i);
+      Program p = mBlackList.get(i);
       p.getDate().writeData(out);
       out.writeObject(p.getID());
     }
@@ -220,7 +220,7 @@ public abstract class Favorite {
 
 
   public Exclusion[] getExclusions() {
-    return (Exclusion[])mExclusionList.toArray(new Exclusion[mExclusionList.size()]);
+    return mExclusionList.toArray(new Exclusion[mExclusionList.size()]);
   }
 
   public void addExclusion(Exclusion exclusion) {
@@ -460,7 +460,7 @@ public abstract class Favorite {
    */
   public void refreshBlackList() {
     for(int i = mBlackList.size() - 1; i >= 0 ; i--) {
-      Program programInList = (Program)mBlackList.remove(i);
+      Program programInList = mBlackList.remove(i);
       Program testProg = PluginManagerImpl.getInstance().getProgram(programInList.getDate(), programInList.getID());
     
       if(testProg != null && programInList.getTitle().toLowerCase().compareTo(testProg.getTitle().toLowerCase()) == 0) 
@@ -529,7 +529,7 @@ public abstract class Favorite {
    * @return The programs that are on the black list.
    */
   public Program[] getBlackListPrograms() {
-    return (Program[])mBlackList.toArray(new Program[mBlackList.size()]);
+    return mBlackList.toArray(new Program[mBlackList.size()]);
   }
 
   public abstract FavoriteConfigurator createConfigurator();

@@ -35,20 +35,12 @@ import devplugin.ProgramFieldType;
  * If the 2 Programs are equal, 1 is returned
  * @author bodum
  */
-public class ProgramTimeComparator implements Comparator {
+public class ProgramTimeComparator implements Comparator<Program> {
 
     /* (non-Javadoc)
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
-    public int compare(Object o1, Object o2) {
-        
-        if (!(o1 instanceof Program) || !(o2 instanceof Program)) {
-            return -1;
-        }
-        
-        Program p1 = (Program) o1;
-        Program p2 = (Program) o2;
-        
+    public int compare(Program p1, Program p2) {
         int dc = p1.getDate().compareTo(p2.getDate());
         if (dc != 0)
             return dc;

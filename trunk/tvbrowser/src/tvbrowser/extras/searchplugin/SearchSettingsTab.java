@@ -33,13 +33,10 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import tvbrowser.core.icontheme.IconLoader;
-import util.settings.ProgramPanelSettings;
-import util.ui.PictureSettingsPanel;
 import util.ui.SearchFormSettings;
 import devplugin.SettingsTab;
 

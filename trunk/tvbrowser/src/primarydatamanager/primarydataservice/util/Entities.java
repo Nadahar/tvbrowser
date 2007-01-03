@@ -57,7 +57,7 @@ package primarydatamanager.primarydataservice.util;
 import java.util.Hashtable;
 
 public class Entities {
-  static final Hashtable decoder = new Hashtable(300);
+  static final Hashtable<String, String> decoder = new Hashtable<String, String>(300);
   static final String[]  encoder = new String[0x100];
 
   public static final String decode(String entity) {
@@ -74,7 +74,7 @@ public class Entities {
   new Character((char)Integer.parseInt(entity.substring(start), radix));
       return c.toString();
     } else {
-      String s = (String)decoder.get(entity);
+      String s = decoder.get(entity);
       if (s != null)
   return s;
       else return "";
@@ -86,7 +86,7 @@ public class Entities {
     StringBuffer buffer = new StringBuffer(length * 2);
     for (int i = 0; i < length; i++) {
       char c = s.charAt(i);
-      int j = (int)c;
+      int j = c;
       if (j < 0x100 && encoder[j] != null) {
   buffer.append(encoder[j]);      // have a named encoding
   buffer.append(';');

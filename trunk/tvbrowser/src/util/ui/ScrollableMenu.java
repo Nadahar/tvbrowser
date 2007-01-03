@@ -91,8 +91,8 @@ public class ScrollableMenu extends JMenu {
     ActionMap map = (ActionMap) UIManager.getLookAndFeelDefaults().get("PopupMenu.actionMap");
 
     if (map != null) {
-      Action downAction = (Action) map.get("selectNext");
-      Action upAction = (Action) map.get("selectPrevious");
+      Action downAction = map.get("selectNext");
+      Action upAction = map.get("selectPrevious");
 
       map.put("selectNext", new SelectNextItemAction(DOWN, downAction));
       map.put("selectPrevious", new SelectNextItemAction(UP, upAction));
@@ -102,7 +102,7 @@ public class ScrollableMenu extends JMenu {
   private void setMaxItemToDisplay() {
     // set max items count visible on screen
     Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-    maxItemsToDisplay = (int)(dim.height / maxHeight) - 1;
+    maxItemsToDisplay = (dim.height / maxHeight) - 1;
   }
   
   private static class SelectNextItemAction extends AbstractAction {
@@ -180,7 +180,7 @@ public class ScrollableMenu extends JMenu {
 
   private JSeparator downSeperator = new JSeparator();
 
-  private Vector scrollableItems = new Vector();
+  private Vector<Component> scrollableItems = new Vector<Component>();
 
   private int beginIndex = 0;
 
@@ -391,7 +391,7 @@ public class ScrollableMenu extends JMenu {
     if (pos > getItemCount()) {
       throw new IllegalArgumentException("index greater than the number of items.");
     }
-    removeScrollableComponent((Component) scrollableItems.elementAt(pos));
+    removeScrollableComponent(scrollableItems.elementAt(pos));
   }
 
   /**
@@ -433,7 +433,7 @@ public class ScrollableMenu extends JMenu {
    */
   public Component getMenuComponent(int n) {
     if (n >= 0 && n < scrollableItems.size()) {
-      return (Component) scrollableItems.elementAt(n);
+      return scrollableItems.elementAt(n);
     }
     return null;
   }
@@ -524,12 +524,12 @@ public class ScrollableMenu extends JMenu {
 
       if (beginIndex + maxItemsToDisplay <= scrollableItems.size()) {
         int end = beginIndex + maxItemsToDisplay - 1;
-        Component addComponent = (Component) scrollableItems.elementAt(end);
+        Component addComponent = scrollableItems.elementAt(end);
 
         super.add(addComponent, maxItemsToDisplay + 1);
       } else if (beginIndex > 0 && beginIndex <= scrollableItems.size()) {
 
-        Component addComponent = (Component) scrollableItems.elementAt(--beginIndex);
+        Component addComponent = scrollableItems.elementAt(--beginIndex);
 
         super.add(addComponent, 2);
       }
@@ -637,7 +637,7 @@ public class ScrollableMenu extends JMenu {
     }
 
     super.remove(maxItemsToDisplay + 1);
-    super.add((Component) scrollableItems.elementAt(--beginIndex), 2);
+    super.add(scrollableItems.elementAt(--beginIndex), 2);
 
     updateScrollingComponentsVisibility();
 
@@ -658,7 +658,7 @@ public class ScrollableMenu extends JMenu {
 
     super.remove(2);
     
-    super.add((Component) scrollableItems.elementAt(beginIndex + maxItemsToDisplay), maxItemsToDisplay + 1);
+    super.add(scrollableItems.elementAt(beginIndex + maxItemsToDisplay), maxItemsToDisplay + 1);
     beginIndex++;
     
     updateScrollingComponentsVisibility();

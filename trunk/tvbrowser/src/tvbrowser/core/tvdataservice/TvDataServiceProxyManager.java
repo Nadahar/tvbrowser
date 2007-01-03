@@ -54,10 +54,10 @@ public class TvDataServiceProxyManager {
   /**
    * The list of all installed TvDataServices
    */
-  private ArrayList mProxyList;
+  private ArrayList<TvDataServiceProxy> mProxyList;
 
   private TvDataServiceProxyManager() {
-    mProxyList = new ArrayList();
+    mProxyList = new ArrayList<TvDataServiceProxy>();
   }
 
   public static TvDataServiceProxyManager getInstance() {
@@ -174,7 +174,7 @@ public class TvDataServiceProxyManager {
 
 
   public TvDataServiceProxy[] getTvDataServices(String[] idArr) {
-    ArrayList list = new ArrayList();
+    ArrayList<TvDataServiceProxy> list = new ArrayList<TvDataServiceProxy>();
     for (int i=0; i<idArr.length; i++) {
       TvDataServiceProxy p = findDataServiceById(idArr[i]);
       if (p != null) {
@@ -182,7 +182,7 @@ public class TvDataServiceProxyManager {
       }
     }
     if(list.size() > 0)
-      return (TvDataServiceProxy[])list.toArray(new TvDataServiceProxy[list.size()]);
+      return list.toArray(new TvDataServiceProxy[list.size()]);
     else
       return getDataServices();
   }
@@ -192,7 +192,7 @@ public class TvDataServiceProxyManager {
     if (mProxyList == null) {
       return new TvDataServiceProxy[]{};
     }
-    return (TvDataServiceProxy[])mProxyList.toArray(new TvDataServiceProxy[mProxyList.size()]);
+    return mProxyList.toArray(new TvDataServiceProxy[mProxyList.size()]);
   }
 
 }

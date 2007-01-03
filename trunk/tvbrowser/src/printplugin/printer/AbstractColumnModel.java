@@ -54,7 +54,7 @@ public abstract class AbstractColumnModel implements ColumnModel {
 
   public Program getProgramAt(int inx) {
     if (inx>=0 && inx<mPrograms.size()) {
-      return (Program)mPrograms.get(inx);
+      return mPrograms.get(inx);
     }
     return null;
   }

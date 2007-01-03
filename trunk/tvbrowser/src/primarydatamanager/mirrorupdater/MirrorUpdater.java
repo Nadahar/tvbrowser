@@ -153,7 +153,7 @@ public class MirrorUpdater {
 
   private Channel[] updateChannelLists() throws UpdateException {
 		
-    HashSet channelSet=new HashSet();
+    HashSet<Channel> channelSet=new HashSet<Channel>();
     for (int i=0;i<mChannelGroupArr.length;i++) {
       Channel[] ch=updateChannelList(mChannelGroupArr[i]);
       for (int j=0;j<ch.length;j++) {

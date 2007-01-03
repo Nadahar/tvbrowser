@@ -43,11 +43,11 @@ public class ChannelUserSettings {
   private boolean mUseUserIconFile;
   private String mWebPage;
 
-  private static HashMap mChannelUserSettings = new HashMap();
+  private static HashMap<String, ChannelUserSettings> mChannelUserSettings = new HashMap<String, ChannelUserSettings>();
 
   public static ChannelUserSettings getSettings(Channel ch) {
     if(ch == null || ch.getDataServiceProxy() == null || ch.getGroup() == null) {
-      ChannelUserSettings settings = (ChannelUserSettings)mChannelUserSettings.get(null);
+      ChannelUserSettings settings = mChannelUserSettings.get(null);
       
       if (settings == null) {
         settings = new ChannelUserSettings();
@@ -59,7 +59,7 @@ public class ChannelUserSettings {
       
     String idValue = (new StringBuffer(ch.getDataServiceProxy().getId()).append(ch.getGroup().getId()).append(":").append(ch.getId())).toString();
     
-    ChannelUserSettings settings = (ChannelUserSettings)mChannelUserSettings.get(idValue);
+    ChannelUserSettings settings = mChannelUserSettings.get(idValue);
     if (settings == null) {
       settings = new ChannelUserSettings();
       mChannelUserSettings.put(idValue, settings);

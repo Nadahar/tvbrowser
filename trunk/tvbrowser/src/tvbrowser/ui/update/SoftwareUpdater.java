@@ -66,7 +66,7 @@ public class SoftwareUpdater {
     Pattern keyValuePattern = Pattern.compile("(.+?)=(.*)");
     Matcher matcher;
     
-    ArrayList updateItems = new ArrayList();
+    ArrayList<SoftwareUpdateItem> updateItems = new ArrayList<SoftwareUpdateItem>();
     
     SoftwareUpdateItem curItem=null;
     String line=reader.readLine();    

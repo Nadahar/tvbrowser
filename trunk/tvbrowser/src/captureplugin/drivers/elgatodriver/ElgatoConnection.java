@@ -128,7 +128,7 @@ public class ElgatoConnection {
             + "end tell";
 
     /** Map with Program - Elgato ID Mappings */
-    private HashMap mProgramMapping = new HashMap();
+    private HashMap<Program, String> mProgramMapping = new HashMap<Program, String>();
 
     /**
      * Get the List of all available Channels
@@ -136,7 +136,7 @@ public class ElgatoConnection {
      * @return All available Channels
      */
     public ElgatoChannel[] getAvailableChannels() {
-        ArrayList list = new ArrayList();
+        ArrayList<ElgatoChannel> list = new ArrayList<ElgatoChannel>();
 
         String res = null;
         try {
@@ -157,16 +157,16 @@ public class ElgatoConnection {
             list.add(channel);
         }
 
-        return (ElgatoChannel[]) list.toArray(new ElgatoChannel[list.size()]);
+        return list.toArray(new ElgatoChannel[list.size()]);
     }
 
     /**
      * @return List of all current Recordings
      */
     public Program[] getAllRecordings(ElgatoConfig conf) {
-        ArrayList programs = new ArrayList();
+        ArrayList<Program> programs = new ArrayList<Program>();
 
-        mProgramMapping = new HashMap();
+        mProgramMapping = new HashMap<Program, String>();
 
         String res = null;
         try {
@@ -222,7 +222,7 @@ public class ElgatoConnection {
             }
         }
 
-        return (Program[]) programs.toArray(new Program[programs.size()]);
+        return programs.toArray(new Program[programs.size()]);
     }
 
     /**
@@ -272,7 +272,7 @@ public class ElgatoConnection {
      * @param prg Remove recording of this Program
      */
     public void removeRecording(Program prg) {
-        String id = (String) mProgramMapping.get(prg);
+        String id = mProgramMapping.get(prg);
         try {
             mAppleScript.executeScript(REMOVERECORDING
                     .replaceAll("\\{0\\}", id));

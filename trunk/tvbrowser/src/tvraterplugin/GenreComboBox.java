@@ -20,10 +20,10 @@ import javax.swing.ListCellRenderer;
  * 
  * @author bodo
  */
-public class GenreComboBox extends JComboBox implements ListCellRenderer, Comparator {
+public class GenreComboBox extends JComboBox implements ListCellRenderer, Comparator<Object> {
 
     public GenreComboBox(int curRating) {
-        TreeSet tree = new TreeSet(this);
+        TreeSet<Object> tree = new TreeSet<Object>(this);
 
         tree.addAll(RatingIconTextFactory.getGenres().keySet());
         

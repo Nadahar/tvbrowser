@@ -47,7 +47,7 @@ public abstract class AbstractPageModel implements PageModel {
 
   
    public ColumnModel getColumnAt(int inx) {
-     return (ColumnModel)mColumns.get(inx);
+     return mColumns.get(inx);
    }
 
    public String getFooter() {

@@ -26,10 +26,7 @@
 
 package tvbrowser.ui.pluginview;
 
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Vector;
-
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;

@@ -47,7 +47,6 @@ import util.ui.WindowClosingIf;
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
 
-import devplugin.Plugin;
 import devplugin.PluginManager;
 
 /**

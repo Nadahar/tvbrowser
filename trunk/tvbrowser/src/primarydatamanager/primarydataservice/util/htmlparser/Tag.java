@@ -37,11 +37,11 @@ public class Tag {
   
   class DeepIterator implements Iterator {
     
-    private ArrayList list;
+    private ArrayList<Tag> list;
     private Iterator iterator;
     
     public DeepIterator(Tag tag) {
-      list=new ArrayList();
+      list=new ArrayList<Tag>();
       add(tag);      
       iterator=list.iterator();
     }
@@ -69,8 +69,8 @@ public class Tag {
     
   }
   
-  protected HashMap mAttribMap;
-  protected ArrayList mSubTags;
+  protected HashMap<String, String> mAttribMap;
+  protected ArrayList<Tag> mSubTags;
   protected String mStrTag;
   protected String mName;
   protected boolean mIsOpenTag, mIsText;
@@ -82,8 +82,8 @@ public class Tag {
   protected Tag(boolean isText, String tag) {
     
     mIsText=isText;
-    mAttribMap=new HashMap();
-    mSubTags=new ArrayList();
+    mAttribMap=new HashMap<String, String>();
+    mSubTags=new ArrayList<Tag>();
       
     if (isText) {
       mName=tag;
@@ -131,7 +131,7 @@ public class Tag {
   }
   
   public String getAttribute(String attrib) {
-    return (String)mAttribMap.get(attrib);
+    return mAttribMap.get(attrib);
   }
     
   public String getName() {

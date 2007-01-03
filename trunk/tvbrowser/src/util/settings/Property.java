@@ -40,12 +40,12 @@ public abstract class Property {
   private PropertyManager mManager;
   private String mKey;
   /** Vector for Change-Listeners */
-  private Vector mChangeList;
+  private Vector<ChangeListener> mChangeList;
   
   public Property(PropertyManager manager, String key) {
     mManager = manager;
     mKey = key;
-    mChangeList = new Vector();
+    mChangeList = new Vector<ChangeListener>();
     // Register this property
     mManager.addProperty(this);
   }
@@ -90,7 +90,7 @@ public abstract class Property {
    */
   public void fireChangeEvent() {
       for (int i = 0; i < mChangeList.size(); i++) {
-          ChangeListener l = (ChangeListener) mChangeList.get(i);
+          ChangeListener l = mChangeList.get(i);
           l.stateChanged(new ChangeEvent(this));
       }
   }

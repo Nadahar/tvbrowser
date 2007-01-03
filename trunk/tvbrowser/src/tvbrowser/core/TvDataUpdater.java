@@ -65,11 +65,11 @@ public class TvDataUpdater {
   /** Set to true if Stop was forced */
   private boolean mStopDownloading = false;
 
-  private ArrayList mListenerList;
+  private ArrayList<TvDataUpdateListener> mListenerList;
 
 
   private TvDataUpdater() {
-    mListenerList = new ArrayList();
+    mListenerList = new ArrayList<TvDataUpdateListener>();
   }
 
 
@@ -196,7 +196,7 @@ public class TvDataUpdater {
   void fireTvDataUpdateStarted() {
     synchronized(mListenerList) {
       for (int i = 0; i < mListenerList.size(); i++) {
-        TvDataUpdateListener lst = (TvDataUpdateListener) mListenerList.get(i);
+        TvDataUpdateListener lst = mListenerList.get(i);
         try {
           lst.tvDataUpdateStarted();
         } catch(Throwable thr) {
@@ -210,7 +210,7 @@ public class TvDataUpdater {
   void fireTvDataUpdateFinished() {
     synchronized(mListenerList) {
       for (int i = 0; i < mListenerList.size(); i++) {
-        TvDataUpdateListener lst = (TvDataUpdateListener) mListenerList.get(i);
+        TvDataUpdateListener lst = mListenerList.get(i);
         try {
           lst.tvDataUpdateFinished();
         } catch(Throwable thr) {
@@ -237,14 +237,14 @@ public class TvDataUpdater {
 
   private UpdateJob[] toUpdateJobArr(Channel[] subscribedChannels, TvDataServiceProxy[] services) {
 
-    ArrayList jobList = new ArrayList();
+    ArrayList<UpdateJob> jobList = new ArrayList<UpdateJob>();
     for (int channelIdx = 0; channelIdx < subscribedChannels.length; channelIdx++) {
       Channel channel = subscribedChannels[channelIdx];
 
       // Get the UpdateJob for this channel
       UpdateJob job = null;
       for (int i = 0; i < jobList.size(); i++) {
-        UpdateJob currJob = (UpdateJob) jobList.get(i);
+        UpdateJob currJob = jobList.get(i);
         if (currJob.getDataService().getId().equals(channel.getDataServiceProxy().getId())) {
           job = currJob;
           break;
@@ -287,12 +287,12 @@ public class TvDataUpdater {
   private class UpdateJob {
 
     private TvDataServiceProxy mTvDataServiceProxy;
-    private ArrayList mChannelList;
+    private ArrayList<Channel> mChannelList;
 
 
     public UpdateJob(TvDataServiceProxy dataService) {
       mTvDataServiceProxy = dataService;
-      mChannelList = new ArrayList();
+      mChannelList = new ArrayList<Channel>();
     }
 
 

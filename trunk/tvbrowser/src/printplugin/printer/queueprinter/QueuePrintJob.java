@@ -56,7 +56,7 @@ public class QueuePrintJob extends AbstractPrintJob {
   }
 
   protected Page[] createPages(PageModel pageModel) {
-    ArrayList pages = new ArrayList();
+    ArrayList<QueuePage> pages = new ArrayList<QueuePage>();
     QueuePage currentPage=new QueuePage(mSettings, getPageFormat());
     pages.add(currentPage);
     for (int i=0; i<pageModel.getColumnCount(); i++) {

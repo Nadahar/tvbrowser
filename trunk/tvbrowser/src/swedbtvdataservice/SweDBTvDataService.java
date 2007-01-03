@@ -12,10 +12,7 @@ package swedbtvdataservice;
 
 import java.awt.Image;
 import java.io.*;
-import java.io.IOException;
 import java.util.*;
-import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 import java.net.URL;
@@ -57,13 +54,13 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
     private Properties mProperties;
     private static SweDBTvDataService mInstance;
     private File mWorkingDirectory;
-    private HashSet mChannelGroupsList;
+    private HashSet<SweDBChannelGroup> mChannelGroupsList;
 //    private HashSet mChannelList;
     private SweDBChannelContainer[] mInternalChannel;
     private long mLastChannelUpdate=-1;
     private Channel[] mChannel;
     
-    private static WeakHashMap ICON_CACHE = new WeakHashMap();
+    private static WeakHashMap<String, File> ICON_CACHE = new WeakHashMap<String, File>();
     
     private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(SweDBTvDataService.class.getName());
@@ -76,7 +73,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
     	mLog.info("SweDBTvDataService initieras");
         mProperties = new Properties();
 
-        mChannelGroupsList = new HashSet();
+        mChannelGroupsList = new HashSet<SweDBChannelGroup>();
         mChannelGroupsList.clear();
         mChannelGroupsList.add(new SweDBChannelGroup(mLocalizer.msg("ChannelGroup.descriptionName","SweDB channelgroup"), "SweDB", mLocalizer.msg("ChannelGroup.description","Channels from the XMLTV-site tv.swedb.se"), "SweDB"));
 
@@ -118,7 +115,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
 
    */
   public ChannelGroup[] getAvailableGroups(){
-	  return (ChannelGroup[])mChannelGroupsList.toArray(new SweDBChannelGroup[mChannelGroupsList.size()]);
+	  return mChannelGroupsList.toArray(new SweDBChannelGroup[mChannelGroupsList.size()]);
   }
 
   /**
@@ -140,7 +137,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
       for (int a=0; a<channelArr.length;a++){
         for (int c=0; c<mChannel.length;c++){
           if (mChannel[c].equals(channelArr[a])){
-            ArrayList modifiedDates = new ArrayList();
+            ArrayList<Date> modifiedDates = new ArrayList<Date>();
             monitor.setMessage(mLocalizer.msg("updateTvData.progressmessage.10","{2}: Searching for updated/new programs on {0} for {1} days",startDate.toString(),""+dateCount,mChannel[c].getName()));
             for (int b=0; b<dateCount;b++){
               devplugin.Date testDay = testStart.addDays(b);
@@ -174,11 +171,11 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
               devplugin.Date prevDate;
               devplugin.Date currDate;
               
-              Hashtable fileDates = new Hashtable();
-              prevDate = new devplugin.Date(((devplugin.Date)modifiedDates.get(0)).addDays(-1));
+              Hashtable<String, Date> fileDates = new Hashtable<String, Date>();
+              prevDate = new devplugin.Date((modifiedDates.get(0)).addDays(-1));
               fileDates.put(prevDate.getDateString(),prevDate);
               for(int j=0;j<modifiedDates.size();j++){
-                currDate = (devplugin.Date)modifiedDates.get(j);
+                currDate = modifiedDates.get(j);
                 if(currDate.equals(prevDate.addDays(1))){
                   if (!fileDates.containsKey(currDate.getDateString())) {
                     fileDates.put(currDate.getDateString(), currDate);
@@ -208,7 +205,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
 /*            *******************************************************************
               OK... So now we are ready to start parsing the selected data files
               *******************************************************************/
-              Hashtable dataHashtable = new Hashtable();
+              Hashtable<String, MutableChannelDayProgram> dataHashtable = new Hashtable<String, MutableChannelDayProgram>();
               Enumeration en = fileDates.elements();
               monitor.setMessage(mLocalizer.msg("updateTvData.progressmessage.30","{0}: Reading datafiles",mChannel[c].getName()));
               while (en.hasMoreElements()){
@@ -235,7 +232,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
  *            database with our data...
  */
               for (int modDates = 0;modDates < modifiedDates.size();modDates++){
-                devplugin.Date date = (devplugin.Date)modifiedDates.get(modDates);
+                devplugin.Date date = modifiedDates.get(modDates);
                 if (dataHashtable.containsKey(date.toString())){
                   mLog.info("Updating database for day " + date.toString());
                   monitor.setMessage(mLocalizer.msg("updateTvData.progressmessage.40","{0}: Updating database",mChannel[c].getName()));
@@ -375,13 +372,13 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   public Channel[] getAvailableChannels(ChannelGroup group){
 //      System.out.println("getAvailableChannels returnerar kanaler för grupp: " + group.getName());
 //      Iterator it = mChannelList.iterator();
-      HashSet mTempHashSet = new HashSet();
+      HashSet<Channel> mTempHashSet = new HashSet<Channel>();
       for (int i=0;i<mChannel.length;i++) {
           if (mChannel[i].getGroup().getId().equalsIgnoreCase(group.getId())) {
               mTempHashSet.add(mChannel[i]);
           }
       }
-      return (Channel[])mTempHashSet.toArray(new Channel[mTempHashSet.size()]);
+      return mTempHashSet.toArray(new Channel[mTempHashSet.size()]);
   }
 
   /**
@@ -535,7 +532,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
 	        if (ICON_CACHE.containsKey(url)) {
 	          try {
 	            if (!ICON_CACHE.get(url).equals(iconFile)) {
-	              copyFile((File) ICON_CACHE.get(url), iconFile);
+	              copyFile(ICON_CACHE.get(url), iconFile);
 	              icon = getIconFromFile(iconFile);
 	            }
 	          } catch (Exception e) {

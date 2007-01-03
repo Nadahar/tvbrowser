@@ -405,7 +405,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
             }
           }
         } else if (index != -1) {
-          Action a = (Action) mCurrentActions.elementAt(index);
+          Action a = mCurrentActions.elementAt(index);
           mCurrentActions.removeElementAt(index);
           if (!s.getValue(Action.NAME).equals(name))
             mAvailableActions.addElement(a);
@@ -449,7 +449,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
         }
 
         if (index != -1) {
-          Action a = (Action) mCurrentActions.remove(index);
+          Action a = mCurrentActions.remove(index);
 
           if (index < n)
             n--;
@@ -520,7 +520,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     int size = mCurrentActions.size();
     String[] ids = new String[size];
     for (int i = 0; i < size; i++) {
-      Action action = (Action) mCurrentActions.elementAt(i);
+      Action action = mCurrentActions.elementAt(i);
       ids[i] = (String) action.getValue(ToolBar.ACTION_ID_KEY);
     }
     DefaultToolBarModel.getInstance().setButtonIds(ids);
@@ -654,7 +654,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
       Action s = DefaultToolBarModel.getInstance().getSeparatorAction();
 
       if (index != -1) {
-        Action a = (Action) mCurrentActions.elementAt(index);
+        Action a = mCurrentActions.elementAt(index);
         mCurrentActions.removeElementAt(index);
         if (!a.equals(s))
           mAvailableActions.addElement(a);
@@ -663,7 +663,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
             6, ((AbstractButton) e.getComponent()).getText().length() - 7);
 
         for (int i = 0; i < mAvailableActions.size(); i++) {
-          Action a = (Action) mAvailableActions.elementAt(i);
+          Action a = mAvailableActions.elementAt(i);
           if (a.getValue(Action.NAME).equals(name)) {
             if (!s.getValue(Action.NAME).equals(name))
               mAvailableActions.removeElement(a);

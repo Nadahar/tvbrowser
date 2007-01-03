@@ -309,7 +309,7 @@ public class MarkList extends Vector<Program> {
   private void updateTable() {
     mProgram.clear();
     for (int i = 0; i < size(); i++) {
-      Program p = (Program) elementAt(i);
+      Program p = elementAt(i);
       if (p == null || p.isExpired())
         continue;
       if (!mProgram.containsKey(p.getTitle())) {

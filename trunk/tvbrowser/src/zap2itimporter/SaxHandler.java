@@ -13,6 +13,7 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 
 import tvdataservice.MutableProgram;
+import devplugin.Channel;
 import devplugin.Date;
 import devplugin.ProgramFieldType;
 
@@ -30,11 +31,11 @@ public class SaxHandler extends org.xml.sax.helpers.DefaultHandler{
   
   private zap2itimporter mDataService;
   
-  private Hashtable channels = new Hashtable();
+  private Hashtable<String, Channel> channels = new Hashtable<String, Channel>();
   
-  private Hashtable progs = new Hashtable();
+  private Hashtable<String, Vector<MutableProgram>> progs = new Hashtable<String, Vector<MutableProgram>>();
   
-  private Hashtable progToChannel = new Hashtable();
+  private Hashtable<Channel, Vector<MutableProgram>> progToChannel = new Hashtable<Channel, Vector<MutableProgram>>();
   
   private int status = STATUS_BASE;
   
@@ -70,7 +71,7 @@ public class SaxHandler extends org.xml.sax.helpers.DefaultHandler{
   private static final int STATUS_BASE = 0;
   
   
-  private Hashtable mMapping = new Hashtable();
+  private Hashtable<String, ProgramFieldType> mMapping = new Hashtable<String, ProgramFieldType>();
   private String mLastStartedElement;
   private String mTempValue;
   
@@ -102,7 +103,7 @@ public class SaxHandler extends org.xml.sax.helpers.DefaultHandler{
     mLength = days;
   }
   
-  public Hashtable doWork() throws Exception {
+  public Hashtable<Channel, Vector<MutableProgram>> doWork() throws Exception {
     mMapping.put("title",ProgramFieldType.TITLE_TYPE);
     mMapping.put("description",ProgramFieldType.SHORT_DESCRIPTION_TYPE);
     mMapping.put("showType",ProgramFieldType.GENRE_TYPE);
@@ -140,7 +141,7 @@ public class SaxHandler extends org.xml.sax.helpers.DefaultHandler{
       String data = auth.substring(auth.indexOf(' ')).trim();
       String[] splitted = data.split(",\\s");
       //System.out.println("data: "+data);
-      Hashtable props = new Hashtable();
+      Hashtable<String, String> props = new Hashtable<String, String>();
       for (int i =0;i<splitted.length;i++){
         //System.out.println(splitted[i]);
         int breakout = splitted[i].indexOf('=');
@@ -164,11 +165,11 @@ public class SaxHandler extends org.xml.sax.helpers.DefaultHandler{
       String cnonce = encode(Long.toString(System.currentTimeMillis()).getBytes());
       props.put("cnonce",cnonce);
       
-      String realm = (String) props.get("realm");
-      String nonce = (String) props.get("nonce");
-      String qop = (String) props.get("qop");
-      String method = (String) props.get("methodname");
-      String algorithm = (String) props.get("algorithm");
+      String realm = props.get("realm");
+      String nonce = props.get("nonce");
+      String qop = props.get("qop");
+      String method = props.get("methodname");
+      String algorithm = props.get("algorithm");
       props.put("methodname","POST");
       
       java.security.MessageDigest md5Helper = java.security.MessageDigest.getInstance(algorithm);
@@ -332,10 +333,10 @@ public class SaxHandler extends org.xml.sax.helpers.DefaultHandler{
             }
           }
           if (programID!=null){
-            Vector save = (Vector) progs.get(programID);
+            Vector<MutableProgram> save = progs.get(programID);
             
             if (save!=null){
-              mToWorkWith = (MutableProgram[])save.toArray(new MutableProgram[save.size()]);
+              mToWorkWith = save.toArray(new MutableProgram[save.size()]);
               status = STATUS_CONSTRUCT_PROGRAM;
               mLastStartedElement = "";
               mTempValue = null;
@@ -368,7 +369,7 @@ public class SaxHandler extends org.xml.sax.helpers.DefaultHandler{
             }
           }
           if (channel!=null){
-            devplugin.Channel addTo = (devplugin.Channel) this.channels.get(channel);
+            devplugin.Channel addTo = this.channels.get(channel);
             if (addTo !=null){
               String date = null;
               String programmID = null;
@@ -398,20 +399,20 @@ public class SaxHandler extends org.xml.sax.helpers.DefaultHandler{
 					d = new java.util.Date (TimeZone.getDefault().getRawOffset()+d.getTime());
 					
 					
-                    MutableProgram prog = new MutableProgram(addTo,day, d.getHours(), d.getMinutes());
+                    MutableProgram prog = new MutableProgram(addTo,day, d.getHours(), d.getMinutes(),false);
 					System.out.println ("changed "+Integer.parseInt(date.substring(11,13))+":"+Integer.parseInt(date.substring(14,16))+" to "+d.getHours()+":"+ d.getMinutes());
-                    Vector save = (Vector)progs.get(programmID);
+                    Vector<MutableProgram> save = progs.get(programmID);
                     if (save==null){
-                      save = new Vector();
+                      save = new Vector<MutableProgram>();
                       progs.put(programmID,save);
                     }
                     save.add(prog);
                     
                    // counter2++;
                     
-                    Vector list = (Vector)progToChannel.get(addTo);
+                    Vector<MutableProgram> list = progToChannel.get(addTo);
                     if (list==null){
-                      list = new Vector();
+                      list = new Vector<MutableProgram>();
                       progToChannel.put(addTo,list);
                     }
                     list.add(prog);
@@ -476,7 +477,7 @@ public class SaxHandler extends org.xml.sax.helpers.DefaultHandler{
         }
         case (STATUS_CONSTRUCT_PROGRAM):{
           //System.out.println("STATUS_CONSTRUCT_PROGRAM : "+mLastStartedElement);
-          ProgramFieldType field = (ProgramFieldType) mMapping.get(mLastStartedElement);
+          ProgramFieldType field = mMapping.get(mLastStartedElement);
           if (field != null){
             if (field.getFormat() == ProgramFieldType.TEXT_FORMAT) {
               for (int i=0;i<mToWorkWith.length;i++){
@@ -533,7 +534,7 @@ public class SaxHandler extends org.xml.sax.helpers.DefaultHandler{
             this.mToWorkWith = null;
             status = STATUS_PROGRAMS;
           } else {
-            ProgramFieldType field = (ProgramFieldType) mMapping.get(mLastStartedElement);
+            ProgramFieldType field = mMapping.get(mLastStartedElement);
             if (field != null){
               if (field.getFormat() == ProgramFieldType.TEXT_FORMAT) {
                 for (int i=0;i<mToWorkWith.length;i++){

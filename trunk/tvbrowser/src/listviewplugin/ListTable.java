@@ -38,7 +38,7 @@ import devplugin.Program;
  */
 public class ListTable extends JTable implements ChangeListener {
     /** List of all Programs */
-    private Vector mPrograms = new Vector();;
+    private Vector<Program> mPrograms = new Vector<Program>();;
 
     /**
      * Creates the ListTable
@@ -102,7 +102,7 @@ public class ListTable extends JTable implements ChangeListener {
      */
     private void removeFromAllPrograms() {
         for (int i = 0; i < mPrograms.size(); i++) {
-            ((Program) mPrograms.get(i)).removeChangeListener(this);
+            (mPrograms.get(i)).removeChangeListener(this);
         }
     }
 

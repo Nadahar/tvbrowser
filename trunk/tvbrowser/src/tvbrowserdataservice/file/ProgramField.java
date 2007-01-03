@@ -390,10 +390,10 @@ public class ProgramField implements Cloneable {
             return 0;
         }
 
-        return (((int) data[0] & 0xFF) << (3 * 8))
-                | (((int) data[1] & 0xFF) << (2 * 8))
-                | (((int) data[2] & 0xFF) << (1 * 8))
-                | (((int) data[3] & 0xFF) << (0 * 8));
+        return ((data[0] & 0xFF) << (3 * 8))
+                | ((data[1] & 0xFF) << (2 * 8))
+                | ((data[2] & 0xFF) << (1 * 8))
+                | ((data[3] & 0xFF) << (0 * 8));
     }
 
 

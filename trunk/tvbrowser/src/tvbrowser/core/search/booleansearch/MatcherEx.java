@@ -41,7 +41,7 @@ public class MatcherEx implements Block {
   private Pattern pattern;
 
   /** Wird nur während dem Baumaufbau benutzt und danach entsorgt. */
-  private Vector vtemp = new Vector();
+  private Vector<String> vtemp = new Vector<String>();
 
   private boolean caseSensitive;
 
@@ -66,13 +66,13 @@ public class MatcherEx implements Block {
 
 
   public Block finish() {
-    String[] toTest = (String[]) vtemp.toArray(new String[vtemp.size()]);
+    String[] toTest = vtemp.toArray(new String[vtemp.size()]);
     int flags = Pattern.DOTALL;
     if (!caseSensitive) {
       flags |= Pattern.CASE_INSENSITIVE;
     }
 
-    toTest = (String[]) vtemp.toArray(new String[vtemp.size()]);
+    toTest = vtemp.toArray(new String[vtemp.size()]);
     String regex = ".*(" + toTest[0];
     for (int i = 1; i < toTest.length; i++) {
       regex = regex + "\\s" + toTest[i];

@@ -101,7 +101,7 @@ public class DeviceConfig {
     private int mMaxTimeout = 5;
     
     /** Param-Entries */
-    private ArrayList mParamEntries = new ArrayList();
+    private ArrayList<ParamEntry> mParamEntries = new ArrayList<ParamEntry>();
     
     /** Variables */
     private ArrayList<Variable> mVariables = new ArrayList<Variable>();
@@ -123,7 +123,7 @@ public class DeviceConfig {
      * @param data Config to copy
      */
     public DeviceConfig(DeviceConfig data) {
-        setChannels((TreeMap)data.getChannels().clone());
+        setChannels((TreeMap<Channel, String>) data.getChannels().clone());
         setMarkedPrograms((ProgramTimeList)data.getMarkedPrograms().clone());
         setParameterFormatAdd(data.getParameterFormatAdd());
         setParameterFormatRem(data.getParameterFormatRem());
@@ -150,14 +150,14 @@ public class DeviceConfig {
     /**
      * @param paramList
      */
-    public void setParamList(Collection paramList) {
-       mParamEntries = new ArrayList(paramList);
+    public void setParamList(Collection<ParamEntry> paramList) {
+       mParamEntries = new ArrayList<ParamEntry>(paramList);
     }
 
     /**
      * @return
      */
-    public Collection getParamList() {
+    public Collection<ParamEntry> getParamList() {
         return mParamEntries;
     }
 
@@ -169,7 +169,7 @@ public class DeviceConfig {
       ArrayList<ParamEntry> params = new ArrayList<ParamEntry>();
       
       for (int i=0;i< mParamEntries.size();i++) {
-        ParamEntry entry = (ParamEntry)mParamEntries.get(i);
+        ParamEntry entry = mParamEntries.get(i);
         if (entry.isEnabled()) {
           params.add(entry);
         }
@@ -357,7 +357,7 @@ public class DeviceConfig {
     /**
     * @param channels The channels to set.
     */
-   public void setChannels(TreeMap channels) {
+   public void setChannels(TreeMap<Channel, String> channels) {
        this.mChannels = channels;
    }    
     
@@ -521,7 +521,7 @@ public class DeviceConfig {
         stream.writeInt(mParamEntries.size());
         
         for (int i = 0; i < mParamEntries.size(); i++) {
-            ((ParamEntry)mParamEntries.get(i)).writeData(stream);
+            (mParamEntries.get(i)).writeData(stream);
         }
         
         stream.writeInt(mMaxTimeout);
@@ -576,7 +576,7 @@ public class DeviceConfig {
         
         int size = stream.readInt();
         
-        mParamEntries = new ArrayList();
+        mParamEntries = new ArrayList<ParamEntry>();
         
         for (int i = 0; i < size; i++) {
             ParamEntry entry = new ParamEntry();

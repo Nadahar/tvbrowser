@@ -69,9 +69,9 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(DefaultToolBarModel.class);
 
-  private Map mAvailableActions;
+  private Map<String, Action> mAvailableActions;
 
-  private ArrayList mVisibleActions;
+  private ArrayList<Action> mVisibleActions;
 
   private Action mUpdateAction, mSettingsAction, mFilterAction,
       mPluginViewAction, mSeparatorAction, mScrollToNowAction,
@@ -126,7 +126,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
   }
 
   private void createAvailableActions() {
-    mAvailableActions = new HashMap();
+    mAvailableActions = new HashMap<String, Action>();
     mUpdateAction = createAction(TVBrowser.mLocalizer.msg("button.update",
         "Update"), "#update", MainFrame.mLocalizer.msg("menuinfo.update", ""),
         IconLoader.getInstance().getIconFromTheme("apps",
@@ -270,7 +270,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
         if(buttonNames != null) {
           for (int j = 0; j < buttonNames.length; j++) {
             if(buttonNames[j].compareTo(activatedPlugins[i].getId()) == 0) {
-              Object action = mAvailableActions.get(buttonNames[j]);
+              Action action = mAvailableActions.get(buttonNames[j]);
           
               if(action != null) {
                 int index = mVisibleActions.size();
@@ -290,10 +290,10 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
   
   protected void updateTimeButtons() {
     Object[] keys = mAvailableActions.keySet().toArray();
-    ArrayList availableTimeActions = new ArrayList();
+    ArrayList<String> availableTimeActions = new ArrayList<String>();
 
     for (int i = 0; i < keys.length; i++) {
-      Action action = (Action) mAvailableActions.get(keys[i]);
+      Action action = mAvailableActions.get(keys[i]);
       String test = action.getValue(Action.NAME).toString();
 
       if (test.indexOf(":") != -1 && (test.length() == 4 || test.length() == 5))
@@ -338,7 +338,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     Iterator it = availableTimeActions.iterator();
 
     while (it.hasNext()) {
-      Action action = (Action) mAvailableActions.remove(it.next());
+      Action action = mAvailableActions.remove(it.next());
 
       if (mVisibleActions.contains(action))
         mVisibleActions.remove(action);
@@ -346,9 +346,9 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
   }
 
   private void createVisibleActions(String[] buttonNames) {
-    mVisibleActions = new ArrayList();
+    mVisibleActions = new ArrayList<Action>();
     for (int i = 0; i < buttonNames.length; i++) {
-      Action action = (Action) mAvailableActions.get(buttonNames[i]);
+      Action action = mAvailableActions.get(buttonNames[i]);
       if (action != null) {
         mVisibleActions.add(action);
       } else if ("#separator".equals(buttonNames[i])) {
@@ -362,7 +362,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
       } else { // if the buttonName is not valid, we try to add the
         // prefix '.java' - maybe it's a plugin from
         // TV-Browser 1.0
-        action = (Action) mAvailableActions.get("java." + buttonNames[i]);
+        action = mAvailableActions.get("java." + buttonNames[i]);
         if (action != null) {
           mVisibleActions.add(action);
         }
@@ -371,7 +371,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
   }
 
   private void createDefaultVisibleActions() {
-    mVisibleActions = new ArrayList();
+    mVisibleActions = new ArrayList<Action>();
     mVisibleActions.add(mUpdateAction);
     mVisibleActions.add(mPluginViewAction);
     mVisibleActions.add(mFilterAction);
@@ -387,7 +387,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
       ActionMenu actionMenu = pluginProxys[i].getButtonAction();
       if (actionMenu != null) {
         if (!actionMenu.hasSubItems()) {
-          Action action = (Action) mAvailableActions.get(pluginProxys[i]
+          Action action = mAvailableActions.get(pluginProxys[i]
               .getId());
           if (action != null) {
             mVisibleActions.add(action);

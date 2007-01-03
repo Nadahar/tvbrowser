@@ -288,7 +288,7 @@ public class ManagePanel {
         .getSelectedValue());
 
     if (mShowPrograms.isSelected()) {
-      Program[] programs = ((ProgramList) mProgramsList).getSelectedPrograms();
+      Program[] programs = (mProgramsList).getSelectedPrograms();
 
       for (Program p : programs)
         list.remove(p);

@@ -49,7 +49,7 @@ public class SystemTrayIconManager {
 
     private int image;
     private String tooltip;
-    private LinkedList listeners = new LinkedList();
+    private LinkedList<SystemTrayIconListener> listeners = new LinkedList<SystemTrayIconListener>();
     private int handler = 0;
     private Component leftClickView = null;
     private Component rightClickView = null;

@@ -39,7 +39,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.TvDataBase;
-import tvdataservice.MutableProgram;
 import util.io.IOUtilities;
 import util.ui.ProgramPanel;
 import devplugin.Channel;
@@ -58,19 +57,19 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   private int mTomorrowLatestTime;
   private int mTodayEarliestTime;
 
-  private ArrayList mListenerList;
+  private ArrayList<ProgramTableModelListener> mListenerList;
   
   private Channel[] mChannelArr, mShownChannelArr;
   private Date mMainDay;
   
-  private ArrayList[] mProgramColumn, mShownProgramColumn;
+  private ArrayList<ProgramPanel>[] mProgramColumn, mShownProgramColumn;
   
   private int mLastTimerMinutesAfterMidnight;
   private Timer mTimer;
   
   private ProgramFilter mProgramFilter=null;
 
-  private HashMap mDateRangeForChannel;
+  private HashMap<Channel, DateRange> mDateRangeForChannel;
   
   private int[] mOnAirRows;
 
@@ -80,9 +79,9 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   public DefaultProgramTableModel(Channel[] channelArr,
     int todayEarliestTime, int tomorrowLatestTime)
   {
-    mDateRangeForChannel = new HashMap();
+    mDateRangeForChannel = new HashMap<Channel, DateRange>();
 
-    mListenerList = new ArrayList();
+    mListenerList = new ArrayList<ProgramTableModelListener>();
     mTodayEarliestTime=todayEarliestTime;
     mTomorrowLatestTime=tomorrowLatestTime;
 
@@ -171,7 +170,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     
     mProgramColumn=new ArrayList[mChannelArr.length];
     for (int i=0;i<mProgramColumn.length;i++) {
-      mProgramColumn[i]=new ArrayList();
+      mProgramColumn[i]=new ArrayList<ProgramPanel>();
     }
 
     updateDateRange();
@@ -226,10 +225,10 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       if (cdp==null) {
         break;
       }
-      Iterator it=cdp.getPrograms();
+      Iterator<Program> it=cdp.getPrograms();
       if (it!=null) {
         while (it.hasNext()) {
-          Program prog=(Program)it.next();
+          Program prog=it.next();
           int time=prog.getHours()*60+prog.getMinutes();          
 	        if (compareDateTime(prog.getDate(), time, fromDate, fromMinutes) >=0 && compareDateTime(prog.getDate(), time, toDate, toMinutes)<=0) {
 		        if (mProgramFilter==null || mProgramFilter.accept(prog)) {
@@ -281,7 +280,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     Date nextDay = mMainDay.addDays(1);
     for (int i = 0; i < mChannelArr.length; i++) {
       mProgramColumn[i].clear();
-      DateRange dateRange = (DateRange)mDateRangeForChannel.get(mChannelArr[i]);
+      DateRange dateRange = mDateRangeForChannel.get(mChannelArr[i]);
       ChannelDayProgram[] cdp = new ChannelDayProgram[dateRange.getCount()];
 
       for (int d = 0; d<cdp.length; d++) {
@@ -297,7 +296,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     boolean showEmptyColumns = mProgramFilter instanceof tvbrowser.core.filters.ShowAllFilter;
 
     ArrayList newShownColumns = new ArrayList();
-    ArrayList newShownChannels = new ArrayList();
+    ArrayList<Channel> newShownChannels = new ArrayList<Channel>();
     for (int i = 0; i < mProgramColumn.length; i++) {
       if (showEmptyColumns || mProgramColumn[i].size() > 0) {
         newShownColumns.add(mProgramColumn[i]);
@@ -388,7 +387,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
   protected void fireTableDataChanged(Runnable callback) {
     for (int i = 0; i < mListenerList.size(); i++) {
-      ProgramTableModelListener lst = (ProgramTableModelListener) mListenerList.get(i);
+      ProgramTableModelListener lst = mListenerList.get(i);
       lst.tableDataChanged(callback);
     }
   }
@@ -397,7 +396,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   
   protected void fireTableCellUpdated(int col, int row) {
     for (int i = 0; i < mListenerList.size(); i++) {
-      ProgramTableModelListener lst = (ProgramTableModelListener) mListenerList.get(i);
+      ProgramTableModelListener lst = mListenerList.get(i);
       lst.tableCellUpdated(col, row);
     }
   }

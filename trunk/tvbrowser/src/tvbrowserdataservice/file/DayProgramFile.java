@@ -68,13 +68,13 @@ public class DayProgramFile extends AbstractFile {
 
   private int mVersion;
 
-  private ArrayList mProgramFrameList;
+  private ArrayList<ProgramFrame> mProgramFrameList;
 
 
 
   public DayProgramFile() {
     mVersion = 1;
-    mProgramFrameList = new ArrayList();
+    mProgramFrameList = new ArrayList<ProgramFrame>();
   }
 
   public DayProgramFile(devplugin.Date date, devplugin.Channel channel) {
@@ -114,7 +114,7 @@ public class DayProgramFile extends AbstractFile {
 
 
   public ProgramFrame getProgramFrameAt(int index) {
-    return (ProgramFrame) mProgramFrameList.get(index);
+    return mProgramFrameList.get(index);
   }
 
 

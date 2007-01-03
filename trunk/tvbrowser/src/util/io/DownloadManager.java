@@ -16,7 +16,7 @@ public class DownloadManager {
     
   private int mConcurrentDownloads;
   
-  private LinkedList mJobList;
+  private LinkedList<DownloadJob> mJobList;
   
   private int mActiveThreadCount;
   
@@ -34,7 +34,7 @@ public class DownloadManager {
      
       mConcurrentDownloads = concurrentDownloads;
     
-      mJobList = new LinkedList();
+      mJobList = new LinkedList<DownloadJob>();
     }
   
   
@@ -114,7 +114,7 @@ public class DownloadManager {
         if (mJobList.isEmpty()) {
           isFinished = true;
         } else {
-          job = (DownloadJob) mJobList.removeFirst();
+          job = mJobList.removeFirst();
         }
       }
       

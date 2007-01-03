@@ -29,9 +29,9 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
   /** Tray-Manager */
   private X11SystrayManager mManager;
   /** Left-Click-Mouseclick-Actions */
-  private ArrayList mLeftAction = new ArrayList();
+  private ArrayList<ActionListener> mLeftAction = new ArrayList<ActionListener>();
   /** Left-DoubleClick-Mouseclick-Actions */
-  private ArrayList mLeftDoubleAction = new ArrayList();
+  private ArrayList<ActionListener> mLeftDoubleAction = new ArrayList<ActionListener>();
   /** The Right-MouseClick-ActionLisener */
   private ActionListener mRightClick;
   /** The Popup-Menu */
@@ -161,11 +161,11 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
       
     } else if ((e.getButton() == MouseEvent.BUTTON1) && (e.getClickCount() == 2)) {
       for (int i = 0; i < mLeftDoubleAction.size(); i++) {
-        ((ActionListener) mLeftDoubleAction.get(i)).actionPerformed(null);
+        (mLeftDoubleAction.get(i)).actionPerformed(null);
       }
     } else if ((e.getButton() == MouseEvent.BUTTON1)) {
       for (int i = 0; i < mLeftAction.size(); i++) {
-        ((ActionListener) mLeftAction.get(i)).actionPerformed(null);
+        (mLeftAction.get(i)).actionPerformed(null);
       }
     }
   }

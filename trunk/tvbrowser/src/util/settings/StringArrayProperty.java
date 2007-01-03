@@ -196,7 +196,7 @@ public class StringArrayProperty  extends Property {
   private String[] splitStrings(String string) {
     String[] splitted = string.split(","); 
     
-    ArrayList list = new ArrayList();
+    ArrayList<String> list = new ArrayList<String>();
     
     StringBuffer current = new StringBuffer();
     
@@ -211,7 +211,7 @@ public class StringArrayProperty  extends Property {
       }
     }
     
-    return (String[])list.toArray(new String[0]);
+    return list.toArray(new String[0]);
   }
   
   /**

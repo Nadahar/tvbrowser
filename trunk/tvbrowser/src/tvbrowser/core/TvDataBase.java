@@ -60,10 +60,10 @@ public class TvDataBase {
   /** The TV data cache. */
   private ValueCache mTvDataHash;
 
-  private ArrayList mListenerList;
+  private ArrayList<TvDataBaseListener> mListenerList;
 
   /** Contains date objects for each date for which we have a tv listing */
-  private HashSet mAvailableDateSet;
+  private HashSet<Date> mAvailableDateSet;
 
   private Hashtable mNewDayProgramsAfterUpdate;
   
@@ -71,8 +71,8 @@ public class TvDataBase {
 
   private TvDataBase() {
     mTvDataHash = new ValueCache();
-    mListenerList = new ArrayList();
-    mAvailableDateSet = new HashSet();
+    mListenerList = new ArrayList<TvDataBaseListener>();
+    mAvailableDateSet = new HashSet<Date>();
     mNewDayProgramsAfterUpdate = new Hashtable();
     updateAvailableDateSet();
 
@@ -616,7 +616,7 @@ public class TvDataBase {
   private void fireDayProgramAdded(ChannelDayProgram prog) {
     synchronized (mListenerList) {
       for (int i = 0; i < mListenerList.size(); i++) {
-        TvDataBaseListener lst = (TvDataBaseListener) mListenerList.get(i);
+        TvDataBaseListener lst = mListenerList.get(i);
         lst.dayProgramAdded(prog);
       }
     }
@@ -625,7 +625,7 @@ public class TvDataBase {
   private void fireDayProgramDeleted(ChannelDayProgram prog) {
     synchronized (mListenerList) {
       for (int i = 0; i < mListenerList.size(); i++) {
-        TvDataBaseListener lst = (TvDataBaseListener) mListenerList.get(i);
+        TvDataBaseListener lst = mListenerList.get(i);
         lst.dayProgramDeleted(prog);
       }
     }

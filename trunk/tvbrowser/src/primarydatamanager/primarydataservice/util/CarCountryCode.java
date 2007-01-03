@@ -9,11 +9,11 @@ import java.util.HashMap;
  */
 public class CarCountryCode {
   
-  private static HashMap mCarCountryCodeHash;
+  private static HashMap<String, String> mCarCountryCodeHash;
 
 
   private static void init() {
-    mCarCountryCodeHash = new HashMap();
+    mCarCountryCodeHash = new HashMap<String, String>();
     
     // Quelle: http://www.schlaufuchs.at/list/l_akinte.htm
     mCarCountryCodeHash.put("A",   "Österreich");
@@ -218,7 +218,7 @@ public class CarCountryCode {
       init();
     }
     
-    return (String) mCarCountryCodeHash.get(carCountryCode);
+    return mCarCountryCodeHash.get(carCountryCode);
   }
 
 }

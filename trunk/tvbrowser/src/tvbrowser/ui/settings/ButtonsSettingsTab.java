@@ -212,7 +212,7 @@ public class ButtonsSettingsTab implements SettingsTab {
     private void updateContent() {
       mListPn.removeAll();
       for (int i = 0; i < mRows.size(); i++) {
-        Row row = (Row) mRows.get(i);
+        Row row = mRows.get(i);
         mListPn.add(row);
       }
       mListPn.updateUI();
@@ -222,7 +222,7 @@ public class ButtonsSettingsTab implements SettingsTab {
       ArrayList<Integer> list = new ArrayList<Integer>();
 
       for (int i = 0; i < mRows.size(); i++) {
-        int value = ((Row) mRows.get(i)).getTime();
+        int value = (mRows.get(i)).getTime();
 
         if (!list.contains(new Integer(value)))
           list.add(new Integer(value));
@@ -231,7 +231,7 @@ public class ButtonsSettingsTab implements SettingsTab {
       int[] result = new int[list.size()];
 
       for (int i = 0; i < result.length; i++)
-        result[i] = ((Integer) list.get(i)).intValue();
+        result[i] = (list.get(i)).intValue();
 
       return result;
     }

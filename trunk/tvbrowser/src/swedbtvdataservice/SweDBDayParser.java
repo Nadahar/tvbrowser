@@ -46,7 +46,7 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler{
   private int startMin;
   private int endHour;
   private int endMin;
-  private Hashtable mDayProgsHashTable;
+  private Hashtable<String, MutableChannelDayProgram> mDayProgsHashTable;
   private MutableChannelDayProgram mMcdp;
   private Channel mChannel;
   private final int STATUS_WAITING = 0;
@@ -66,7 +66,7 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler{
 
 
   /** Creates a new instance of SweDBDayParser */
-  private SweDBDayParser(Channel ch, Hashtable lht) {
+  private SweDBDayParser(Channel ch, Hashtable<String, MutableChannelDayProgram> lht) {
     mChannel = ch;
     mDayProgsHashTable=lht;
 //    mDayProgsHashTable.clear();
@@ -248,7 +248,7 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler{
               mMcdp = new MutableChannelDayProgram(start, mChannel);
               mDayProgsHashTable.put(start.toString(),mMcdp);
           } else {
-              mMcdp = (MutableChannelDayProgram)mDayProgsHashTable.get(start.toString());
+              mMcdp = mDayProgsHashTable.get(start.toString());
           }
           MutableProgram prog = new MutableProgram(mMcdp.getChannel(),start,startHour,startMin,true);
           
@@ -303,7 +303,7 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler{
   public void warning(SAXParseException e){
   }
 
-  public static void parseNew(InputStream in, Channel ch, devplugin.Date day, Hashtable ht) throws Exception {
+  public static void parseNew(InputStream in, Channel ch, devplugin.Date day, Hashtable<String, MutableChannelDayProgram> ht) throws Exception {
     SAXParserFactory fac = SAXParserFactory.newInstance();
     fac.setValidating(false);
     SAXParser sax = fac.newSAXParser();
@@ -314,14 +314,14 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler{
   
   public static MutableChannelDayProgram[] parse(InputStream in, Channel ch, devplugin.Date day) throws Exception {
 //    MutableChannelDayProgram prog = new MutableChannelDayProgram(day,ch);
-    Hashtable ht=new Hashtable();
+    Hashtable<String, MutableChannelDayProgram> ht=new Hashtable<String, MutableChannelDayProgram>();
     SAXParserFactory fac = SAXParserFactory.newInstance();
     fac.setValidating(false);
     SAXParser sax = fac.newSAXParser();
     InputSource input = new InputSource(in);
     input.setSystemId(new File("/").toURL().toString());
     sax.parse(input, new SweDBDayParser(ch,ht));
-    return (MutableChannelDayProgram[])ht.values().toArray(new MutableChannelDayProgram[ht.size()]);
+    return ht.values().toArray(new MutableChannelDayProgram[ht.size()]);
   }
 
 }

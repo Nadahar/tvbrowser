@@ -37,7 +37,7 @@ public class ChoiceProperty extends Property {
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(ChoiceProperty.class.getName());
 
-  private HashSet mAllowedValueSet;
+  private HashSet<String> mAllowedValueSet;
   private String mDefaultValue;
   private String mCachedValue;
   
@@ -51,7 +51,7 @@ public class ChoiceProperty extends Property {
     mDefaultValue = defaultValue;
     mCachedValue = null;
     
-    mAllowedValueSet = new HashSet(allowedValueArr.length);
+    mAllowedValueSet = new HashSet<String>(allowedValueArr.length);
     for (int i = 0; i < allowedValueArr.length; i++) {
       mAllowedValueSet.add(allowedValueArr[i]);
     }

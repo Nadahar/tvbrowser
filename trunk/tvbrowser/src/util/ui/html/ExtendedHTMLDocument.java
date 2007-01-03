@@ -46,7 +46,7 @@ public class ExtendedHTMLDocument extends HTMLDocument {
 
   protected static final HTML.Tag COMP_TAG = new HTML.Tag("comp") {};
   
-  protected ArrayList mKnownCompList;
+  protected ArrayList<Component> mKnownCompList;
   
   
   public ExtendedHTMLDocument(StyleSheet ss) {
@@ -56,7 +56,7 @@ public class ExtendedHTMLDocument extends HTMLDocument {
   
   public String createCompTag(Component comp) {
     if (mKnownCompList == null) {
-      mKnownCompList = new ArrayList();
+      mKnownCompList = new ArrayList<Component>();
     }
     
     int index = mKnownCompList.indexOf(comp);
@@ -82,7 +82,7 @@ public class ExtendedHTMLDocument extends HTMLDocument {
 
 
   protected void handleCompTag(HTML.Tag tag, MutableAttributeSet attributeSet,
-    Vector parseBuffer)
+    Vector<ElementSpec> parseBuffer)
   {
     if (mKnownCompList == null) {
       return;
@@ -92,7 +92,7 @@ public class ExtendedHTMLDocument extends HTMLDocument {
     if (indexAsString != null) {
       try {
         int index = Integer.parseInt(indexAsString);
-        Component comp = (Component) mKnownCompList.get(index);
+        Component comp = mKnownCompList.get(index);
         
         addComponent(parseBuffer, comp);
       }
@@ -103,7 +103,7 @@ public class ExtendedHTMLDocument extends HTMLDocument {
   }
 
 
-  protected void addComponent(Vector parseBuffer, Component comp) {
+  protected void addComponent(Vector<ElementSpec> parseBuffer, Component comp) {
     SimpleAttributeSet sas = new SimpleAttributeSet();
     sas.addAttribute(StyleConstants.CharacterConstants.ComponentAttribute, comp);
     sas.addAttribute(StyleConstants.NameAttribute, StyleConstants.ComponentElementName);
@@ -130,7 +130,7 @@ public class ExtendedHTMLDocument extends HTMLDocument {
       
       mCompAction = new TagAction() {
         public void start(HTML.Tag tag, MutableAttributeSet attributeSet) {
-          Vector parseBuffer = ExtendedHTMLReader.super.parseBuffer;
+          Vector<ElementSpec> parseBuffer = ExtendedHTMLReader.super.parseBuffer;
           handleCompTag(tag, attributeSet, parseBuffer);
         }
       };

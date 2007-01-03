@@ -45,11 +45,11 @@ public class ElgatoConfig {
     /**
      * Mapping TVB Channels - Elgato Channels
      */
-    private HashMap mChannels;
+    private HashMap<Channel, ElgatoChannel> mChannels;
     /**
      * List of all Available Elgato Channels
      */
-    private ArrayList mElgatoChannels;
+    private ArrayList<ElgatoChannel> mElgatoChannels;
     /**
      * Unique ID
      */
@@ -59,8 +59,8 @@ public class ElgatoConfig {
      * Create Config
      */
     public ElgatoConfig() {
-        mChannels = new HashMap();
-        mElgatoChannels = new ArrayList();
+        mChannels = new HashMap<Channel, ElgatoChannel>();
+        mElgatoChannels = new ArrayList<ElgatoChannel>();
     }
 
     /**
@@ -69,8 +69,8 @@ public class ElgatoConfig {
      * @param config config to clone
      */
     public ElgatoConfig(ElgatoConfig config) {
-        mChannels = (HashMap) config.getChannelMapping().clone();
-        mElgatoChannels = new ArrayList(Arrays.asList(config.getAllElgatoChannels()));
+        mChannels = (HashMap<Channel, ElgatoChannel>) config.getChannelMapping().clone();
+        mElgatoChannels = new ArrayList<ElgatoChannel>(Arrays.asList(config.getAllElgatoChannels()));
         mId = config.getId();
     }
 
@@ -82,8 +82,8 @@ public class ElgatoConfig {
      * @throws ClassNotFoundException
      */
     public ElgatoConfig(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        mChannels = new HashMap();
-        mElgatoChannels = new ArrayList();
+        mChannels = new HashMap<Channel, ElgatoChannel>();
+        mElgatoChannels = new ArrayList<ElgatoChannel>();
         readData(stream);
     }
 
@@ -97,10 +97,11 @@ public class ElgatoConfig {
 
     /**
      * Get Mapping of TVB-Channels - Elgato Channels
+     * @return 
      *
      * @return Mapping
      */
-    public HashMap getChannelMapping() {
+    public HashMap<Channel, ElgatoChannel> getChannelMapping() {
         return mChannels;
     }
 
@@ -111,7 +112,7 @@ public class ElgatoConfig {
      * @return Elgato Channel if mapped, else null
      */
     public ElgatoChannel getElgatoChannel(Channel channel) {
-        return (ElgatoChannel) mChannels.get(channel);
+        return mChannels.get(channel);
     }
 
     /**
@@ -132,16 +133,16 @@ public class ElgatoConfig {
      * @param channels List of Channels
      */
     public void setElgatoChannels(ElgatoChannel[] channels) {
-        mElgatoChannels = new ArrayList(Arrays.asList(channels));
+        mElgatoChannels = new ArrayList<ElgatoChannel>(Arrays.asList(channels));
 
         // Remove Channels that were removed/changed
         Iterator iterator = mChannels.keySet().iterator();
 
-        HashMap cloneMap = (HashMap) mChannels.clone();
+        HashMap<Channel, ElgatoChannel> cloneMap = (HashMap<Channel, ElgatoChannel>) mChannels.clone();
 
         while (iterator.hasNext()) {
             Channel rchan = (Channel) iterator.next();
-            ElgatoChannel channel = (ElgatoChannel) mChannels.get(rchan);
+            ElgatoChannel channel = mChannels.get(rchan);
             if (!mElgatoChannels.contains(channel)) {
                 cloneMap.remove(rchan);
             }
@@ -177,7 +178,7 @@ public class ElgatoConfig {
         if ((con != null) && (mElgatoChannels.size() == 0)) {
             setElgatoChannels(con.getAvailableChannels());
         }
-        return (ElgatoChannel[]) mElgatoChannels.toArray(new ElgatoChannel[mElgatoChannels.size()]);
+        return mElgatoChannels.toArray(new ElgatoChannel[mElgatoChannels.size()]);
     }
 
     /**
@@ -228,7 +229,7 @@ public class ElgatoConfig {
         stream.writeInt(mElgatoChannels.size());
 
         for (int i = 0; i < mElgatoChannels.size(); i++) {
-            ((ElgatoChannel) mElgatoChannels.get(i)).writeData(stream);
+            (mElgatoChannels.get(i)).writeData(stream);
         }
 
         stream.writeInt(mChannels.size());
@@ -238,7 +239,7 @@ public class ElgatoConfig {
         while (it.hasNext()) {
             Channel ch = (Channel) it.next();
             stream.writeUTF(ch.getId());
-            ((ElgatoChannel) mChannels.get(ch)).writeData(stream);
+            (mChannels.get(ch)).writeData(stream);
         }
 
         stream.writeObject(mId);
@@ -255,7 +256,7 @@ public class ElgatoConfig {
 
         while (it.hasNext()) {
             Channel ch = (Channel) it.next();
-            if (((ElgatoChannel) mChannels.get(ch)).getNumber() == channel)
+            if ((mChannels.get(ch)).getNumber() == channel)
                 return ch;
         }
 

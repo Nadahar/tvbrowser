@@ -44,7 +44,7 @@ public class ListTableModel extends AbstractTableModel {
     private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ListTableModel.class);
 
     /** Data in this Model */
-    private Vector mData = new Vector();
+    private Vector<ListTableModelData> mData = new Vector<ListTableModelData>();
     
     /**
      * Returns the Column-Name
@@ -95,7 +95,7 @@ public class ListTableModel extends AbstractTableModel {
       
       int pos = findRowWithChannel(channel);
       if (pos > -1) {
-        ListTableModelData olddata = (ListTableModelData)mData.get(pos); 
+        ListTableModelData olddata = mData.get(pos); 
         if (!olddata.equals(data)) {
           mData.remove(pos);
           mData.add(pos, data);
@@ -115,7 +115,7 @@ public class ListTableModel extends AbstractTableModel {
     private int findRowWithChannel(Channel channel) {
       int size = mData.size();
       for (int i = 0;i < size;i++) {
-        ListTableModelData data = (ListTableModelData)mData.get(i);
+        ListTableModelData data = mData.get(i);
         if (data.mChannel.equals(channel)) {
           return i;
         }
@@ -146,7 +146,7 @@ public class ListTableModel extends AbstractTableModel {
             return null;
         }
         
-        ListTableModelData data = (ListTableModelData) mData.get(rowIndex);
+        ListTableModelData data = mData.get(rowIndex);
 
         switch (columnIndex) {
         case 0:
@@ -202,7 +202,7 @@ public class ListTableModel extends AbstractTableModel {
             return null;
         }
         
-        return (ListTableModelData)mData.get(row);
+        return mData.get(row);
     }
     
     /**

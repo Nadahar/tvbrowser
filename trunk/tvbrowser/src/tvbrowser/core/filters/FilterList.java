@@ -135,7 +135,7 @@ public class FilterList {
         if (curFilterName.equals("[SEPARATOR]")) {
           filterArr.add(new SeparatorFilter());
         } else {
-          ProgramFilter filter = (ProgramFilter) filterList.get(curFilterName);
+          ProgramFilter filter = filterList.get(curFilterName);
           
           if (filter != null) {
             filterArr.add(filter);
@@ -161,7 +161,7 @@ public class FilterList {
       }
     }
     
-    return (ProgramFilter[]) filterArr.toArray(new ProgramFilter[0]);
+    return filterArr.toArray(new ProgramFilter[0]);
   }
   
   private File[] getFilterFiles() {
@@ -197,7 +197,7 @@ public class FilterList {
   }
   
   public UserFilter[] getUserFilterArr() {
-    ArrayList filterList = new ArrayList();
+    ArrayList<ProgramFilter> filterList = new ArrayList<ProgramFilter>();
     for (int i=0; i<mFilterArr.length; i++) {
       if (mFilterArr[i] instanceof UserFilter) {
         filterList.add(mFilterArr[i]);

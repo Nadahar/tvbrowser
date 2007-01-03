@@ -79,7 +79,7 @@ public class ChannelArrayProperty extends Property {
       if (asString != null) {
         String[] splits = asString.split(",");
         
-        ArrayList channels = new ArrayList();
+        ArrayList<Channel> channels = new ArrayList<Channel>();
         
         for (int i = 0; i < splits.length; i++) {
           int pos = splits[i].indexOf(':');
@@ -109,7 +109,7 @@ public class ChannelArrayProperty extends Property {
         }
 
         mCachedValue = new Channel[channels.size()];
-        mCachedValue = (Channel[]) channels.toArray(mCachedValue);
+        mCachedValue = channels.toArray(mCachedValue);
       }
   
       if (mCachedValue == null) {

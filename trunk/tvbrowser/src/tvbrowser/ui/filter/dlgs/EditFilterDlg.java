@@ -243,7 +243,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     Arrays.sort(fc, new Comparator<FilterComponent>() {
 
       public int compare(FilterComponent arg0, FilterComponent arg1) {
-        return ((FilterComponent) arg0).getName().compareToIgnoreCase(((FilterComponent) arg1).getName());
+        return (arg0).getName().compareToIgnoreCase((arg1).getName());
       }
 
     });
@@ -409,10 +409,10 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
 
   private class FilterTableModel extends AbstractTableModel {
 
-    private Vector dataVector;
+    private Vector<FilterComponent> dataVector;
 
     public FilterTableModel() {
-      dataVector = new Vector();
+      dataVector = new Vector<FilterComponent>();
     }
 
     public int getRowCount() {
@@ -468,7 +468,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
       if (row < 0 || row >= getRowCount()) {
         return null;
       }
-      return (FilterComponent) dataVector.get(row);
+      return dataVector.get(row);
     }
 
     public void removeElement(int row) {

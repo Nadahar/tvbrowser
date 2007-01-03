@@ -202,7 +202,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
             if(mCurrentTargets != null) {
               JRadioButton[] targetButtons = new JRadioButton[mCurrentTargets.length];
               ButtonGroup bg = new ButtonGroup();
-              ProgramReceiveTarget target = mReceiveTargetTable.get(((ProgramReceiveIf)((SelectableItem)o).getItem()));
+              ProgramReceiveTarget target = mReceiveTargetTable.get((((SelectableItem)o).getItem()));
               
               boolean hasSelection = false;
               

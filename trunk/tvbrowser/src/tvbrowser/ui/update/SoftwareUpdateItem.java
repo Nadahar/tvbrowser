@@ -34,19 +34,19 @@ import devplugin.Version;
 
 public abstract class SoftwareUpdateItem {
 	
-  private HashMap mPropertyMap;
+  private HashMap<String, String> mPropertyMap;
   private String mClassName;
   
   public SoftwareUpdateItem(String className) {
     mClassName = className;
-    mPropertyMap = new HashMap();
+    mPropertyMap = new HashMap<String, String>();
   }
   
   public void addProperty(String key, String value) {
     mPropertyMap.put(key, value);  
   }
   public String getProperty(String key) {
-    return (String)mPropertyMap.get(key);
+    return mPropertyMap.get(key);
   }
   
   public Version getVersion() {

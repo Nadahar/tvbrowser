@@ -644,7 +644,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
 
   public devplugin.ChannelGroup[] getAvailableGroups() {
-    return (ChannelGroup[])mAvailableChannelGroupsSet.toArray(new ChannelGroup[mAvailableChannelGroupsSet.size()]);
+    return mAvailableChannelGroupsSet.toArray(new ChannelGroup[mAvailableChannelGroupsSet.size()]);
   }
 
   /**

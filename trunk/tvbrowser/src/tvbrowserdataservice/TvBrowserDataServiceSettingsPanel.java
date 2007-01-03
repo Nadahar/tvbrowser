@@ -216,11 +216,9 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
 
   }
 
-  private void fillGroupList(devplugin.ChannelGroup[] groups) {
-    Arrays.sort(groups,new Comparator() {
-      public int compare(Object o1, Object o2) {
-        devplugin.ChannelGroup g1 = (devplugin.ChannelGroup) o1;
-        devplugin.ChannelGroup g2 = (devplugin.ChannelGroup) o2;
+  private void fillGroupList(ChannelGroup[] groups) {
+    Arrays.sort(groups,new Comparator<ChannelGroup>() {
+      public int compare(ChannelGroup g1, ChannelGroup g2) {
         return g1.getName().compareToIgnoreCase(g2.getName());
       }
     });
@@ -245,7 +243,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
 
   public void ok() {
     String setting = "";
-    ArrayList levelList = new ArrayList();
+    ArrayList<TvDataLevel> levelList = new ArrayList<TvDataLevel>();
 
     for (int i = 0; i < mLevelCheckboxes.length; i++) {
       if (mLevelCheckboxes[i].isSelected()) {
@@ -253,7 +251,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
         levelList.add(DayProgramFile.LEVEL_ARR[i]);
       }
     }
-    TvBrowserDataService.getInstance().setTvDataLevel((TvDataLevel[])levelList.toArray(new TvDataLevel[levelList.size()]));
+    TvBrowserDataService.getInstance().setTvDataLevel(levelList.toArray(new TvDataLevel[levelList.size()]));
 
     if (setting.length() > 3) {
       setting = setting.substring(3);

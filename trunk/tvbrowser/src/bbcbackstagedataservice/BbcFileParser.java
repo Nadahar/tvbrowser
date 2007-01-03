@@ -108,7 +108,7 @@ public class BbcFileParser {
     // Create parser
     SAXXMLParser parser = new SAXXMLParser();
 
-    ((SAXXMLParser)parser).setParseProfile(SAXXMLParser.STANDARD);
+    (parser).setParseProfile(SAXXMLParser.STANDARD);
     // Parse PI, PL and CR
     try {
       parser.parse(new File(file.getAbsoluteFile() + "_pi.xml"));

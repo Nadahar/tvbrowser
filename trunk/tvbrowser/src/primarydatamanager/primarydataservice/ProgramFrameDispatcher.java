@@ -35,6 +35,7 @@ import tvbrowserdataservice.file.FileFormatException;
 import tvbrowserdataservice.file.ProgramField;
 import tvbrowserdataservice.file.ProgramFrame;
 import devplugin.Channel;
+import devplugin.Date;
 import devplugin.ProgramFieldType;
 
 public class ProgramFrameDispatcher {
@@ -45,7 +46,7 @@ public class ProgramFrameDispatcher {
   private int mCurID=0;
   private Channel mChannel;
   
-  private HashMap mDayPrograms;
+  private HashMap<Date, DayProgramFile> mDayPrograms;
   
   /**
      * @deprecated
@@ -56,7 +57,7 @@ public class ProgramFrameDispatcher {
   
   public ProgramFrameDispatcher(Channel channel) {
     mChannel=channel;
-    mDayPrograms=new HashMap();
+    mDayPrograms=new HashMap<Date, DayProgramFile>();
   }
   
   
@@ -78,7 +79,7 @@ public class ProgramFrameDispatcher {
       throw new NullPointerException("date is null");
     }
 
-    DayProgramFile file=(DayProgramFile)mDayPrograms.get(date);
+    DayProgramFile file=mDayPrograms.get(date);
     if (file==null) {
       file=new DayProgramFile(date,mChannel);
       mDayPrograms.put(date,file);
