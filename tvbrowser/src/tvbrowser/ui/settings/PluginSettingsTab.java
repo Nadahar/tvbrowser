@@ -213,6 +213,8 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
 
   private JPopupMenu createContextMenu(final PluginProxy plugin) {
     JPopupMenu menu = new JPopupMenu();
+    
+    //info
     JMenuItem infoMI = new JMenuItem(mLocalizer.msg("info","Info"), IconLoader.getInstance().getIconFromTheme("status", "dialog-information", 16));
     infoMI.setFont(infoMI.getFont().deriveFont(Font.BOLD));
     infoMI.addActionListener(new ActionListener(){
@@ -222,6 +224,17 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
     });
     menu.add(infoMI);
 
+    //configure
+    JMenuItem configureMI;
+   	configureMI = new JMenuItem(mLocalizer.msg("configure", ""),IconLoader.getInstance().getIconFromTheme("category", "preferences-desktop", 16));
+   	configureMI.addActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent e) {
+          mSettingsDialog.showSettingsTab(plugin.getId());
+        }
+      });
+    menu.add(configureMI);
+
+    //activate
     JMenuItem enableMI;
     if (plugin.isActivated()) {
       enableMI = new JMenuItem(mLocalizer.msg("deactivate", ""),IconLoader.getInstance().getIconFromTheme("actions", "process-stop", 16));
@@ -237,6 +250,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
       });
     menu.add(enableMI);
 
+    //delete
     JMenuItem deleteMI = new JMenuItem(mLocalizer.msg("remove","Remove"),  IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16));
     deleteMI.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
