@@ -37,6 +37,8 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
@@ -74,6 +76,12 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
     ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mList,
         mList, this);
     new DragAndDropMouseListener(mList, mList, this, dnDHandler);    
+    
+    mList.addListSelectionListener(new ListSelectionListener() {
+		public void valueChanged(ListSelectionEvent e) {
+			showChannel();
+		}
+	});
     
     mList.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
