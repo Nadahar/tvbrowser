@@ -27,7 +27,9 @@ package util.paramhandler;
 
 import java.io.StringReader;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import util.misc.TextLineBreakerStringWidth;
 import util.ui.Localizer;
@@ -93,7 +95,8 @@ public class ParamLibrary {
   public String[] getPossibleKeys() {
     String[] str = { "title", "original_title", "start_day", "start_month", "start_year", "start_hour", "start_minute",
         "end_month", "end_year", "end_day", "end_hour", "end_minute", "length_minutes", "length_sec", "short_info",
-        "description", "episode", "original_episode", "channel_name", "url" };
+        "description", "episode", "original_episode", "channel_name", "url", "start_day_of_week", "start_month_name",
+        "genre"};
     return str;
   }
 
@@ -188,8 +191,16 @@ public class ParamLibrary {
       return removeNull(prg.getChannel().getName());
     } else if (key.equals("url")) {
       return removeNull(prg.getTextField(ProgramFieldType.URL_TYPE));
+    } else if (key.equals("start_day_of_week")) {
+      SimpleDateFormat format = new SimpleDateFormat("EEEE"); 
+      return format.format(new java.util.Date(prg.getDate().getCalendar().getTimeInMillis()));    
+    } else if (key.equals("start_month_name")) {
+      SimpleDateFormat format = new SimpleDateFormat("MMMM"); 
+      return format.format(new java.util.Date(prg.getDate().getCalendar().getTimeInMillis()));
+    } else if (key.equals("genre")) {
+      return removeNull(prg.getTextField(ProgramFieldType.GENRE_TYPE));
     }
-
+    
     mError = true;
     mErrorString = mLocalizer.msg("unkownParam", "Unknown Parameter") + ": '" + key + "'";
 
