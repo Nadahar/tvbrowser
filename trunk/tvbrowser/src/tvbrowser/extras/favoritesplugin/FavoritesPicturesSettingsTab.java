@@ -21,7 +21,7 @@ package tvbrowser.extras.favoritesplugin;
 import javax.swing.Icon;
 import javax.swing.JPanel;
 
-import devplugin.SettingsTab;
+import tvbrowser.ui.settings.AbstractSettingsTab;
 import util.ui.Localizer;
 import util.ui.PictureSettingsPanel;
 
@@ -31,7 +31,7 @@ import util.ui.PictureSettingsPanel;
  * @author René Mach
  * @since 2.2.2
  */
-public class FavoritesPicturesSettingsTab implements SettingsTab {
+public class FavoritesPicturesSettingsTab extends AbstractSettingsTab {
   /** Picture settings */
   private PictureSettingsPanel mPictureSettings;
   
@@ -42,7 +42,7 @@ public class FavoritesPicturesSettingsTab implements SettingsTab {
   }
 
   public Icon getIcon() {
-    return null;
+    return getPictureIcon();
   }
 
   public String getTitle() {

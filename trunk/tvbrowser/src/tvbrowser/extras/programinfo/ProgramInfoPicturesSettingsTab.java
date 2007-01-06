@@ -32,10 +32,9 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import tvbrowser.ui.settings.AbstractSettingsTab;
 import util.ui.Localizer;
 import util.ui.PictureSettingsPanel;
-
-import devplugin.SettingsTab;
 
 /**
  * The settings tab for the picture showing the the dialog.
@@ -43,7 +42,7 @@ import devplugin.SettingsTab;
  * @author René Mach
  * @since 2.2.2
  */
-public class ProgramInfoPicturesSettingsTab implements SettingsTab {  
+public class ProgramInfoPicturesSettingsTab extends AbstractSettingsTab {  
   /** Picture settings */
   private PictureSettingsPanel mPictureSettings;
   private JCheckBox mZoomEnabled;
@@ -73,7 +72,7 @@ public class ProgramInfoPicturesSettingsTab implements SettingsTab {
   }
 
   public Icon getIcon() {
-    return null;
+	  return getPictureIcon();
   }
 
   public String getTitle() {

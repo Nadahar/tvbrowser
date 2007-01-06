@@ -8,6 +8,8 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
+import tvbrowser.core.icontheme.IconLoader;
+
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -109,7 +111,7 @@ public class ProgramInfoDesignSettingsTab implements SettingsTab {
   }
   
   public Icon getIcon() {
-    return null;
+    return IconLoader.getInstance().getIconFromTheme("apps", "preferences-desktop-wallpaper", 16);
   }
 
   public String getTitle() {
