@@ -24,7 +24,6 @@ import javax.swing.JPanel;
 import tvbrowser.core.Settings;
 import util.ui.Localizer;
 import util.ui.PictureSettingsPanel;
-import devplugin.SettingsTab;
 
 /**
  * The settings tab for the program panel picture settings.
@@ -32,7 +31,7 @@ import devplugin.SettingsTab;
  * @author René Mach
  * @since 2.2.2
  */
-public class PictureSettingsTab implements SettingsTab {  
+public class PictureSettingsTab extends AbstractSettingsTab {  
   /** Picture settings */
   private PictureSettingsPanel mPictureSettings;
   
@@ -43,7 +42,7 @@ public class PictureSettingsTab implements SettingsTab {
   }
   
   public Icon getIcon() {
-    return null;
+    return getPictureIcon();
   }
 
   public String getTitle() {

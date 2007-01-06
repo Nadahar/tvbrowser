@@ -37,6 +37,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.PeriodItem;
 
 import com.jgoodies.forms.factories.Borders;
@@ -193,7 +194,7 @@ public class RefreshDataSettingsTab implements devplugin.SettingsTab {
    * Returns the name of the tab-sheet.
    */
   public Icon getIcon() {
-    return null;
+    return IconLoader.getInstance().getIconFromTheme("apps", "system-software-update", 16);
   }
 
   /**

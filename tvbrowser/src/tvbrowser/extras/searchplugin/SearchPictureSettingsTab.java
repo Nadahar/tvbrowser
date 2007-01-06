@@ -26,18 +26,17 @@ package tvbrowser.extras.searchplugin;
 import javax.swing.Icon;
 import javax.swing.JPanel;
 
+import tvbrowser.ui.settings.AbstractSettingsTab;
 import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
 import util.ui.PictureSettingsPanel;
-
-import devplugin.SettingsTab;
 
 /**
  * The picture settings for the search plugin and the search field.
  * 
  * @author René Mach
  */
-public class SearchPictureSettingsTab implements SettingsTab {
+public class SearchPictureSettingsTab extends AbstractSettingsTab {
   private PictureSettingsPanel mPicturePanel;
   
   public JPanel createSettingsPanel() {
@@ -47,7 +46,7 @@ public class SearchPictureSettingsTab implements SettingsTab {
   }
 
   public Icon getIcon() {
-    return null;
+    return getPictureIcon();
   }
 
   public String getTitle() {

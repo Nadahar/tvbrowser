@@ -48,7 +48,7 @@ public interface SettingsTab {
 
   
   /**
-   * Returns the name of the tab-sheet.
+   * Returns the icon of the tab-sheet.
    */
   public Icon getIcon();
   

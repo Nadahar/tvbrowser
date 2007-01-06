@@ -64,7 +64,7 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, Ancestor
     public TimeChooserPanel(MainFrame parent) {
       setOpaque(false);
       mParent=parent;
-      setLayout(new BorderLayout(0,7));
+      setLayout(new BorderLayout(0,2));
       setBorder(BorderFactory.createEmptyBorder(5,3,5,3));
       
       mGridPn = new JPanel(new GridFlowLayout(5,5,GridFlowLayout.TOP, GridFlowLayout.CENTER));

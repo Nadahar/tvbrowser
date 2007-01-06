@@ -41,6 +41,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.contextmenu.ConfigMenuItem;
 import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.contextmenu.SeparatorMenuItem;
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 
 import com.jgoodies.forms.factories.Borders;
@@ -147,7 +148,7 @@ public class MausSettingsTab implements devplugin.SettingsTab {
   }
 
   public Icon getIcon() {
-    return null;
+    return IconLoader.getInstance().getIconFromTheme("devices", "input-mouse", 16);
   }
 
   public String getTitle() {

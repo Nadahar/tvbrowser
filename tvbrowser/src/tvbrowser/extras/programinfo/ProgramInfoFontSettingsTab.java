@@ -18,6 +18,7 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import tvbrowser.core.icontheme.IconLoader;
 import util.ui.FontChooserPanel;
 
 import devplugin.Plugin;
@@ -169,7 +170,7 @@ public class ProgramInfoFontSettingsTab implements SettingsTab {
   }
 
   public Icon getIcon() {
-    return null;
+    return IconLoader.getInstance().getIconFromTheme("apps", "preferences-desktop-font", 16);
   }
 
   public String getTitle() {
