@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import javax.swing.SwingUtilities;
+
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -230,13 +232,32 @@ public class ChannelList {
    * @param channelArr The channels to set as subscribed channels,
    */
   public static void setSubscribeChannels(Channel[] channelArr) {
-    mSubscribedChannels = new ArrayList<Channel>(channelArr.length);
-    for (int i = 0; i < channelArr.length; i++) {
-      if (channelArr[i] == null)
-        mLog.warning("cannot subscribe channel #" + i + " - is null");
-      else
-        mSubscribedChannels.add(channelArr[i]);
-    }
+	  setSubscribeChannels(channelArr, false);
+  }
+  
+  public static void setSubscribeChannels(Channel[] channelArr, boolean update) {
+		boolean channelsAdded = false;
+		if (update) {
+			for (Channel channel : channelArr) {
+				if (! mSubscribedChannels.contains(channel)) {
+					channelsAdded = true;
+				}
+			}
+		}
+	    mSubscribedChannels = new ArrayList<Channel>(channelArr.length);
+	    for (int i = 0; i < channelArr.length; i++) {
+	      if (channelArr[i] == null)
+	        mLog.warning("cannot subscribe channel #" + i + " - is null");
+	      else
+	        mSubscribedChannels.add(channelArr[i]);
+	    }
+	    if (channelsAdded && update) {
+	        SwingUtilities.invokeLater(new Runnable() {
+	            public void run() {
+	            	MainFrame.getInstance().askForDataUpdateChannelsAdded();
+	            }
+	        });
+	    }
   }
 
   /**
