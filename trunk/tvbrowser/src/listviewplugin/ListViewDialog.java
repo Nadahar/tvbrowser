@@ -465,8 +465,20 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
       }
     });
 
-    final JCheckBox showAtStartup = new JCheckBox(mLocalizer.msg("showAtStart", "Show at start")); 
+    JPanel p = new JPanel(new FormLayout("pref,5dlu,pref,5dlu,pref", "pref"));;
+    JButton settings = new JButton(mPlugin.createImageIcon("categories",
+        "preferences-desktop", 16));    
+    settings.setToolTipText(mLocalizer.msg("settings","Open settings"));
+
+    settings.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          close();
+          Plugin.getPluginManager()
+              .showSettings(ListViewPlugin.getInstance());
+        }
+      });
     
+    final JCheckBox showAtStartup = new JCheckBox(mLocalizer.msg("showAtStart", "Show at start")); 
     showAtStartup.setSelected(mSettings.getProperty("showAtStartup", "false").equals("true"));
     
     showAtStartup.addChangeListener(new ChangeListener() {
@@ -478,8 +490,11 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
         }
       }
     });
-    
-    buttonPn.add(showAtStartup, BorderLayout.WEST);
+
+    p.add(settings, cc.xy(1, 1));
+    p.add(showAtStartup, cc.xy(3, 1));
+
+    buttonPn.add(p, BorderLayout.WEST);
 
     buttonPn.add(closeButton, BorderLayout.EAST);
     getRootPane().setDefaultButton(closeButton);
