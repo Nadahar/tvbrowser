@@ -105,8 +105,9 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
    
    Hashtable<ProgramReceiveIf,ProgramReceiveTarget> table = new Hashtable<ProgramReceiveIf,ProgramReceiveTarget>();
    
-   for(ProgramReceiveTarget target : pluginArr)
-     table.put(target.getReceifeIfForIdOfTarget(), target);
+   if(pluginArr != null)
+     for(ProgramReceiveTarget target : pluginArr)
+       table.put(target.getReceifeIfForIdOfTarget(), target);
    
    init(table.keySet().toArray(new ProgramReceiveIf[table.keySet().size()]), description, caller, table);
  }
@@ -128,8 +129,9 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
 
     Hashtable<ProgramReceiveIf,ProgramReceiveTarget> table = new Hashtable<ProgramReceiveIf,ProgramReceiveTarget>();
     
-    for(ProgramReceiveTarget target : targets)
-      table.put(target.getReceifeIfForIdOfTarget(), target);
+    if(targets != null)
+      for(ProgramReceiveTarget target : targets)
+        table.put(target.getReceifeIfForIdOfTarget(), target);
     
     init(table.keySet().toArray(new ProgramReceiveIf[table.keySet().size()]), description, caller, table);
   }
