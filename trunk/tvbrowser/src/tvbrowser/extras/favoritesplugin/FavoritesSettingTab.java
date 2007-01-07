@@ -107,7 +107,8 @@ public class FavoritesSettingTab implements SettingsTab {
         chooser.setLocationRelativeTo(w);
         chooser.setVisible(true);
         
-        mClientPluginTargets = chooser.getReceiveTargets();
+        if(chooser.getReceiveTargets() != null)
+          mClientPluginTargets = chooser.getReceiveTargets();
         
         handlePluginSelection();
       }
@@ -125,28 +126,30 @@ public class FavoritesSettingTab implements SettingsTab {
   private void handlePluginSelection() {
     ArrayList<ProgramReceiveIf> plugins = new ArrayList<ProgramReceiveIf>();
     
-    for(int i = 0; i < mClientPluginTargets.length; i++) {
-      if(!plugins.contains(mClientPluginTargets[i].getReceifeIfForIdOfTarget()))
-        plugins.add(mClientPluginTargets[i].getReceifeIfForIdOfTarget());
-    }
+    if(mClientPluginTargets != null) {
+      for(int i = 0; i < mClientPluginTargets.length; i++) {
+        if(!plugins.contains(mClientPluginTargets[i].getReceifeIfForIdOfTarget()))
+          plugins.add(mClientPluginTargets[i].getReceifeIfForIdOfTarget());
+      }
     
-    ProgramReceiveIf[] mClientPlugins = plugins.toArray(new ProgramReceiveIf[plugins.size()]);
+      ProgramReceiveIf[] mClientPlugins = plugins.toArray(new ProgramReceiveIf[plugins.size()]);
     
-    if(mClientPlugins.length > 0) {
-      mPluginLabel.setText(mClientPlugins[0].toString());
-      mPluginLabel.setEnabled(true);
-    }
-    else {
-      mPluginLabel.setText(mLocalizer.msg("noPlugins","No Plugins choosen"));
-      mPluginLabel.setEnabled(false);
-    }
+      if(mClientPlugins.length > 0) {
+        mPluginLabel.setText(mClientPlugins[0].toString());
+        mPluginLabel.setEnabled(true);
+      }
+      else {
+        mPluginLabel.setText(mLocalizer.msg("noPlugins","No Plugins choosen"));
+        mPluginLabel.setEnabled(false);
+      }
     
-    for (int i = 1; i < (mClientPlugins.length > 4 ? 3 : mClientPlugins.length); i++) {
-      mPluginLabel.setText(mPluginLabel.getText() + ", " + mClientPlugins[i]);
-    }
+      for (int i = 1; i < (mClientPlugins.length > 4 ? 3 : mClientPlugins.length); i++) {
+        mPluginLabel.setText(mPluginLabel.getText() + ", " + mClientPlugins[i]);
+      }
     
-    if(mClientPlugins.length > 4)
-      mPluginLabel.setText(mPluginLabel.getText() + " (" + (mClientPlugins.length - 3) + " " + mLocalizer.msg("otherPlugins","others...") + ")");
+      if(mClientPlugins.length > 4)
+        mPluginLabel.setText(mPluginLabel.getText() + " (" + (mClientPlugins.length - 3) + " " + mLocalizer.msg("otherPlugins","others...") + ")");
+    }
   }
   
   /**
