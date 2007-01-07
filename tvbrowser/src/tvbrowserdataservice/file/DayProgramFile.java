@@ -389,7 +389,7 @@ public class DayProgramFile extends AbstractFile {
       try {
         if(job.getServerUrl() != null) {
           String url = job.getServerUrl() + (job.getServerUrl().endsWith("/") ? "" : "/") + getAdditionalFileName(job.getFileName());
-          programCount = readProgCountFromStream(IOUtilities.getStream(new URL(url), 60000));
+          programCount = readProgCountFromStream(IOUtilities.getStream(new URL(url)));
         }
         else
           programCount = readProgCountFromStream(new BufferedInputStream(new FileInputStream(getAdditionalFileName(job.getFileName())), 0x4000));

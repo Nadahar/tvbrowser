@@ -321,9 +321,10 @@ public class SettingsDialog implements WindowClosingIf {
     appearanceNode.add(new SettingNode(new FontsSettingsTab()));
     appearanceNode.add(new SettingNode(new ProgramPanelSettingsTab()));
 
+    technicalSettings.add(new SettingNode(new NetworkSettingsTab()));
     technicalSettings.add(new SettingNode(new ProxySettingsTab()));
     technicalSettings.add(new SettingNode(new DirectoriesSettingsTab()));
-    technicalSettings.add(new SettingNode(new WebbrowserSettingsTab(), SettingsItem.WEBBROWSER));
+    technicalSettings.add(new SettingNode(new WebbrowserSettingsTab(), SettingsItem.WEBBROWSER));    
 
     SettingNode search = new SettingNode(new DefaultSettingsTab(SearchPlugin.mLocalizer.msg("title", "Search"), null));
     search.add(new SettingNode(new SearchSettingsTab(),SettingsItem.SEARCH));
