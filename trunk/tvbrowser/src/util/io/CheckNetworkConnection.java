@@ -42,6 +42,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.UiUtilities;
 
@@ -107,8 +108,9 @@ class CheckNetworkConnection {
     }).start();
 
     int num = 0;
-    // Wait till second Thread is finished or 10000 ms reached
-    while ((mCheckRunning) && (num < 100)) {
+    // Wait till second Thread is finished or Settings.propNetworkCheckTimeout is reached
+    int timeout = Settings.propNetworkCheckTimeout.getInt()/100;
+    while ((mCheckRunning) && (num < timeout)) {
       num++;
       if (num == 7) {
         // Show the Dialog after 700 MS

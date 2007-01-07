@@ -123,7 +123,7 @@ public class DownloadManager {
         mLog.info("Loading " + url + "...");
         InputStream stream = null;
         try {
-          stream = IOUtilities.getStream(new URL(url), 60000);
+          stream = IOUtilities.getStream(new URL(url));
         }
         catch (Throwable thr) {
           if (isFileNotFound(thr)) {

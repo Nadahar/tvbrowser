@@ -825,6 +825,12 @@ public class Settings {
   public static final BooleanProperty propHttpProxyUseProxy = new BooleanProperty(
       mProp, "proxy.http.useProxy", false);
   
+  public static final IntProperty propDefaultNetworkConnectionTimeout = new IntProperty(
+      mProp, "network.defaultConnectionTimeout", 60000);
+
+  public static final IntProperty propNetworkCheckTimeout = new IntProperty(
+      mProp, "network.checkTimeout", 10000);
+
   public static final IntProperty propPictureType = new IntProperty(
       mProp, "pictures.type", PictureSettingsPanel.SHOW_IN_TIME_RANGE);
   

@@ -26,6 +26,7 @@
 
 package util.io;
 
+import tvbrowser.core.Settings;
 import util.ui.TimeFormatter;
 
 import java.io.BufferedInputStream;
@@ -83,7 +84,7 @@ public class IOUtilities {
 
     InputStream stream = null;
     try {
-      stream = new BufferedInputStream(getStream(url, 60000), 0x4000);
+      stream = new BufferedInputStream(getStream(url), 0x4000);
       if (stream == null) {
         throw new IOException("Can't connect to '" + url + "'!");
       }
@@ -121,9 +122,21 @@ public class IOUtilities {
       } catch (IOException exc) {}
     }
   }
-
+  
+  /**
+   * Gets an InputStream to the given URL.
+   * <p>
+   * The connection has the Settings.propDefaultNetworkConnectionTimeout
+   * as connection timeout.
+   * 
+   * @param page The page to get the stream to.
+   * @param followRedirects If the stream should be also established if the page not exists
+   *        at the location but contains a redirect to an other location.
+   * @return The stream to the page.
+   * @throws IOException Thrown if something goes wrong.
+   */
   public static InputStream getStream(URL page, boolean followRedirects) throws IOException {
-    return getStream(page, followRedirects, 0);
+    return getStream(page, followRedirects, Settings.propDefaultNetworkConnectionTimeout.getInt());
   }
 
 
@@ -198,13 +211,33 @@ public class IOUtilities {
     return in;
   }
 
-
+  /**
+   * Gets an InputStream to the given URL.
+   * <p>
+   * The connection has the Settings.propDefaultNetworkConnectionTimeout
+   * as connection timeout.
+   * 
+   * @param page The page to get the stream to.
+   * @return The stream to the page.
+   * @throws IOException Thrown if something goes wrong.
+   */
   public static InputStream getStream(URL page)
     throws IOException
   {
-    return getStream(page, true, 0);
+    return getStream(page, true, Settings.propDefaultNetworkConnectionTimeout.getInt());
   }
 
+  /**
+   * Gets an InputStream to the given URL.
+   * <p>
+   * The connection has the given timeout
+   * as connection timeout.
+   * 
+   * @param page The page to get the stream to.
+   * @param timeout The timeout for the connection, use 0 for no timeout.
+   * @return The stream to the page.
+   * @throws IOException Thrown if something goes wrong.
+   */
   public static InputStream getStream(URL page, int timeout)
   throws IOException
   {
@@ -262,6 +295,7 @@ public class IOUtilities {
    *
    * @param from The stream to read the data from.
    * @param to The stream to write the data to.
+   * @throws IOException Thrown if something goes wrong.
    */
   public static void pipeStreams(InputStream from, OutputStream to)
     throws IOException
@@ -284,6 +318,7 @@ public class IOUtilities {
    *
    * @param reader The Reader to read the data from.
    * @param writer The Writer to write the data to.
+   * @throws IOException Thrown if something goes wrong.
    */
   public static void pipe(Reader reader, Writer writer) throws IOException {
     int len;
@@ -309,6 +344,13 @@ public class IOUtilities {
     return f;
   }
 
+  /**
+   * Copies files given in source to the target directory.
+   * 
+   * @param src The files to copy.
+   * @param targetDir The target dir of the files.
+   * @throws IOException Thrown if something goes wrong.
+   */
   public static void copy(File[] src, File targetDir) throws IOException {
 		for (int i=0; i<src.length; i++) {
 			if (src[i].isDirectory()) {
@@ -357,6 +399,7 @@ public class IOUtilities {
    * Deletes a directory with all its files and subdirectories.
    * 
    * @param dir The directory to delete.
+   * @throws IOException Thrown if something goes wrong.
    */
   public static void deleteDirectory(File dir) throws IOException {
     if (! dir.exists()) {
@@ -396,6 +439,7 @@ public class IOUtilities {
    *
    * @param fileName Der Name der Datei. (Ist case-sensitive!).
    * @param srcClass Eine Klasse, aus deren Jar-File das Image geladen werden soll.
+   * @return The file loaded from the jar file as byte array.
    *
    * @throws IOException Wenn ein Fehler beim Laden der Datei auftrat.
    */
@@ -453,6 +497,7 @@ public class IOUtilities {
    * @param srcFile The ZIP-File to read the data from.
    * @param entryName The name of the file in the ZIP-archive to unzip.
    * @param targetFile The file where to store the data.
+   * @throws IOException Thrown if something goes wrong.
    */  
   public static void unzip(File srcFile, String entryName, File targetFile)
     throws IOException
@@ -486,6 +531,7 @@ public class IOUtilities {
    *
    * @param srcFile The GZIP-File to unzip
    * @param targetFile The file where to store the data.
+   * @throws IOException Thrown if something goes wrong.
    */  
   public static void ungzip(File srcFile, File targetFile)
     throws IOException
@@ -584,6 +630,8 @@ public class IOUtilities {
    * Gets the number of minutes since midnight
    * <p>
    * This method does not create any objects.
+   * 
+   * @return The number of minutes since midnight as integer
    */
   public static int getMinutesAfterMidnight() {
     synchronized(CALENDAR) {
@@ -635,6 +683,7 @@ public class IOUtilities {
    *
    * @param text The text to encode
    * @param seed The seed of the Random object to use for getting the keys
+   * @return The encoded String
    */
   public static String xorEncode(String text, long seed) {
     java.util.Random rnd = new java.util.Random(seed);
@@ -653,6 +702,7 @@ public class IOUtilities {
    *
    * @param text The text to encode
    * @param seed The seed of the Random object to use for getting the keys
+   * @return The decoded String
    */
   public static String xorDecode(String text, long seed) {
     // We use XOR encoding -> encoding and decoding are the same

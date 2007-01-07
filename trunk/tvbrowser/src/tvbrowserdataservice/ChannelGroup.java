@@ -309,7 +309,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
     InputStream stream = null;
     try {
-      stream = IOUtilities.getStream(new URL(url), 60000);
+      stream = IOUtilities.getStream(new URL(url));
 
       SummaryFile summary = new SummaryFile();
       summary.readFromStream(stream, null);
