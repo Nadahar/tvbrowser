@@ -53,7 +53,7 @@ class SubscribeChannelCardPanel extends AbstractCardPanel {
   }
 
   public boolean onNext() {
-    mChannelsSettingsTab.saveSettings();
+    mChannelsSettingsTab.saveSettingsWithoutDataUpdate();
     if (ChannelList.getNumberOfSubscribedChannels() == 0) {
       JOptionPane.showMessageDialog(mContent,
           mLocalizer.msg("noChannelsSelected", "There are no channels selected..."), mLocalizer.msg(

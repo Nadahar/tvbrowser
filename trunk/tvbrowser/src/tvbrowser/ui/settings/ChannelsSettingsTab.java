@@ -581,10 +581,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
         return result;
     }
 
-    /**
-     * Called by the host-application, if the user wants to save the settings.
-     */
-    public void saveSettings() {
+    private void saveSettingsInternal(boolean autoUpdate) {
 
         Object[] list = ((DefaultListModel) mSubscribedChannels.getModel()).toArray();
 
@@ -599,7 +596,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
                 groups.add(new StringBuffer(channelArr[i].getDataServiceProxy().getId()).append('.').append(channelArr[i].getGroup().getId()).toString());
         }
 
-        ChannelList.setSubscribeChannels(channelArr);
+        ChannelList.setSubscribeChannels(channelArr, autoUpdate);
         ChannelList.storeAllSettings();
         Settings.propSubscribedChannels.setChannelArray(channelArr);
         Settings.propUsedChannelGroups.setStringArray(groups.toArray(new String[groups.size()]));
@@ -609,6 +606,17 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
             System.arraycopy(channelArr, 0, tempArr, 0, tempArr.length);
             Settings.propTraySpecialChannels.setChannelArray(tempArr);
         }
+    }
+    
+    /**
+     * Called by the host-application, if the user wants to save the settings.
+     */
+    public void saveSettings() {
+    	saveSettingsInternal(true);
+    }
+    
+    public void saveSettingsWithoutDataUpdate() {
+    	saveSettingsInternal(false);
     }
 
     /**

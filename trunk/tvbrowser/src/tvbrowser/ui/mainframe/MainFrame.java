@@ -957,7 +957,7 @@ public class MainFrame extends JFrame implements DateListener {
 
     boolean dataAvailable = TvDataBase.getInstance().dataAvailable(new Date());
     if (!dataAvailable) {
-      askForDataUpdate();
+      askForDataUpdateNoDataAvailable();
     }
 
     Settings.handleChangedSettings();
@@ -1300,25 +1300,32 @@ public class MainFrame extends JFrame implements DateListener {
   public void updateUI() {
     mRootNode.update();
   }
+  
+  public void askForDataUpdate(String reason) {
+	    String msg1 = mLocalizer.msg("askforupdatedlg.1", "update now");
+	    String msg2 = mLocalizer.msg("askforupdatedlg.2", "later");
+	    String msg4 = mLocalizer.msg("askforupdatedlg.4",
+	        "Do you want to update now?");
+	    String msg5 = mLocalizer.msg("askforupdatedlg.5", "Update tv data");
 
-  public void askForDataUpdate() {
+	    Object[] options = { msg1, msg2 };
+	    int result = JOptionPane.showOptionDialog(this, reason + "\n\n" + msg4, msg5,
+	        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
+	        options[0]);
 
-    String msg1 = mLocalizer.msg("askforupdatedlg.1", "update now");
-    String msg2 = mLocalizer.msg("askforupdatedlg.2", "later");
-    String msg3 = mLocalizer.msg("askforupdatedlg.3",
-        "No tv data for todays program available.");
-    String msg4 = mLocalizer.msg("askforupdatedlg.4",
-        "Do you want to update now?");
-    String msg5 = mLocalizer.msg("askforupdatedlg.5", "Update tv data");
+	    if (result == JOptionPane.YES_OPTION) {
+	      updateTvData();
+	    }
+  }
 
-    Object[] options = { msg1, msg2 };
-    int result = JOptionPane.showOptionDialog(this, msg3 + "\n\n" + msg4, msg5,
-        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
-        options[0]);
-
-    if (result == JOptionPane.YES_OPTION) {
-      updateTvData();
-    }
+  public void askForDataUpdateNoDataAvailable() {
+	  askForDataUpdate(mLocalizer.msg("askforupdatedlg.3",
+        "No tv data for todays program available."));
+  }
+  
+  public void askForDataUpdateChannelsAdded() {
+	  askForDataUpdate(mLocalizer.msg("askforupdatedlg.added",
+      "You have added channels."));
   }
 
   public void showFilterDialog() {
