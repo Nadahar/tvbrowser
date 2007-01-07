@@ -245,8 +245,10 @@ public class IOUtilities {
   }
 
   /**
-   * Loads a file from a Http server with an
-   * infinitive read timeout.
+   * Loads a file from a Http server.
+   * <p>
+   * The connection has the Settings.propDefaultNetworkConnectionTimeout
+   * as connection timeout.
    * 
    * @param url The URL of the file
    * @return The content of the file
@@ -254,7 +256,7 @@ public class IOUtilities {
    * @see #download(URL, File)
    */
   public static byte[] loadFileFromHttpServer(URL url) throws IOException {
-    return loadFileFromHttpServer(url, 0);
+    return loadFileFromHttpServer(url, Settings.propDefaultNetworkConnectionTimeout.getInt());
   }
   
   /**
