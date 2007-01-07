@@ -685,7 +685,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
             }
             mFilter.setFilter(country, categories, mChannelName.getText());
         }
-        ((DefaultListModel) mAllChannels.getModel()).removeAllElements();
 
         // Split the channels in subscribed and available
         Channel[] channels = mChannelListModel.getAvailableChannels();
@@ -702,11 +701,12 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
         availableChannelList.toArray(availableChannelArr);
         Arrays.sort(availableChannelArr, createChannelComparator());
 
-        DefaultListModel model = ((DefaultListModel) mAllChannels.getModel());
+        DefaultListModel newModel = new DefaultListModel();
         // Add the available channels
         for (Channel anAvailableChannelArr : availableChannelArr) {
-            model.addElement(anAvailableChannelArr);
+            newModel.addElement(anAvailableChannelArr);
         }
+        mAllChannels.setModel(newModel);
 
         if (mAllChannels.getModel().getSize() == 0) {
             ((DefaultListModel) mAllChannels.getModel()).addElement(mLocalizer.msg("noChannelFound", "No Channel Found"));
