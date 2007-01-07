@@ -465,6 +465,8 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
                 mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNews", "Nachrichten"), Channel.CATEGORY_SPECIAL_NEWS));
             if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_OTHER))
                 mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryOthers", "Sonstige Sparten"), Channel.CATEGORY_SPECIAL_OTHER));
+            if (channelListContains(allChannels, Channel.CATEGORY_PAY_TV))
+              mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryPayTV", "Pay TV"), Channel.CATEGORY_PAY_TV));
             if (channelListContains(allChannels, Channel.CATEGORY_RADIO))
                 mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryRadio", "Radio"), Channel.CATEGORY_RADIO));
         }
