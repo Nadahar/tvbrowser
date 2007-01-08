@@ -66,6 +66,9 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -114,6 +117,14 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     mNameTF = new JTextField(20);
 
     mNameTF.getDocument().addDocumentListener(this);
+    mNameTF.addKeyListener(new KeyAdapter() {
+
+		@Override
+		public void keyTyped(KeyEvent e) {
+			if (e.getKeyChar()==' ') {
+				e.setKeyChar('_');
+			}
+		}});
 
     namePanel.add(mNameTF, BorderLayout.EAST);
     mDescTF = new JTextField(20);
