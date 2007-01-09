@@ -292,7 +292,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
       mDownloadManager.runDownload();
     }
     finally {
-      // Update the programs for which the update suceed in every case
+      // Update the programs for which the update succeeded in every case
       mProgressMonitor.setMessage(mLocalizer.msg("info.2","Updating database"));
       updater.updateTvDataBase(monitor);
       mProgressMonitor.setMessage("");
@@ -376,7 +376,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
         }
 
       } catch (Exception exc) {
-//      // dont' throw an exception; try to download the file again
+//      // don't throw an exception; try to download the file again
 //      throw new TvBrowserException(getClass(), "error.5",
 //                "Reading version of TV data file failed: {0}",
 //                completeFile.getAbsolutePath(), exc);

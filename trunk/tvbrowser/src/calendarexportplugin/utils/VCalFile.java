@@ -35,7 +35,7 @@ public class VCalFile {
    * 
    * @param intothis into this File
    * @param list List to export
-   * @param nulltime Lenght of Programs = 0?
+   * @param nulltime Length of Programs = 0?
    */
   public void exportVCal(File intothis, Program[] list, Properties settings) {
     try {

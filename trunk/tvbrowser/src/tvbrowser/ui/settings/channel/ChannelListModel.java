@@ -68,7 +68,7 @@ public class ChannelListModel {
     return mAvailableChannels;
   }
 
-  public Collection getSubscribedChannels() {
+  public Collection<Channel> getSubscribedChannels() {
     return mSubscribedChannels;
   }
 

@@ -110,7 +110,7 @@ public class TVBrowser {
   /* If you want to change the version string, add it to the beginning of this array.
      We need the old version strings to import the settings.
   */
-  /** The string array with the names of the ealier versions. */
+  /** The string array with the names of the earlier versions. */
   public static final String[] ALL_VERSIONS = new String[]{
           "2.5.1beta1",
           "2.5",

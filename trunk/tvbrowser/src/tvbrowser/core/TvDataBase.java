@@ -455,7 +455,7 @@ public class TvDataBase {
         // Some missing lengths could now be calculated
         // -> Try to save the changes
           
-        // We use a temporary file. If saving suceeds we rename it
+        // We use a temporary file. If saving succeeds we rename it
         File tempFile = new File(file.getAbsolutePath() + ".changed");
         try {
           // Try to save the changed program
