@@ -19,7 +19,7 @@
 <mainClassName>tvbrowser.TVBrowser</mainClassName>
 <maximumMemoryHeap>-1</maximumMemoryHeap>
 <maximumVersion></maximumVersion>
-<minimumVersion>1.4.0</minimumVersion>
+<minimumVersion>1.5.0</minimumVersion>
 <skeletonName>Windowed Wrapper</skeletonName>
 <skeletonProperties>
 <key>Message</key>
