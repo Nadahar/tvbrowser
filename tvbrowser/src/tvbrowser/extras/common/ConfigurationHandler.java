@@ -88,7 +88,7 @@ public class ConfigurationHandler {
       serializer.write(out);
       out.close();
 
-      // Saving suceed -> Delete the old file and rename the temp file
+      // Saving succeeded -> Delete the old file and rename the temp file
       datFile.delete();
       tmpDatFile.renameTo(datFile);
     }
@@ -143,7 +143,7 @@ public class ConfigurationHandler {
         fOut.close();
       }
 
-      // Saving suceed -> Delete the old file and rename the temp file
+      // Saving succeeded -> Delete the old file and rename the temp file
       File propFile = new File(userDirectoryName, "java." + mFilePrefix + ".prop");
       propFile.delete();
       tmpPropFile.renameTo(propFile);

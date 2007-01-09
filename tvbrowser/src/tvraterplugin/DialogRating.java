@@ -391,7 +391,7 @@ public class DialogRating extends JDialog implements WindowClosingIf {
             pane.setContentType("text/html");
             
             if ((_program != null) && !_rater.isProgramRateable(_program)) {
-                pane.setText(MessageFormat.format("<center style=''font-family: helvetica''>{0}", _mLocalizer.msg("tooshort", "Program too short for rating. <br>The minimum lenght is {0} min.<br>This reduces traffic on the server.", TVRaterPlugin.MINLENGTH)));
+                pane.setText(MessageFormat.format("<center style=''font-family: helvetica''>{0}", _mLocalizer.msg("tooshort", "Program too short for rating. <br>The minimum length is {0} min.<br>This reduces traffic on the server.", TVRaterPlugin.MINLENGTH)));
             } else {
                 pane.setText("<center style='font-family: helvetica'>"
                         + _mLocalizer.msg("doesntexist", "Sorry, rating doesn't exist!") + "</center>");

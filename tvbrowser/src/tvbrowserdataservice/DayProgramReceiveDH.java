@@ -70,7 +70,7 @@ public class DayProgramReceiveDH implements DownloadHandler {
       DayProgramFile prog = new DayProgramFile();
       prog.readFromStream(stream, job);
       
-      // When we are here then the loading suceed -> The file is OK.
+      // When we are here then the loading succeed -> The file is OK.
       // It is not a corrupt because it is currently being updated.
 
       // Save the day program

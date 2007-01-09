@@ -198,7 +198,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
       mPlugin.writeData(out);
       out.close();
 
-      // Saving suceed -> Delete the old file and rename the temp file
+      // Saving succeeded -> Delete the old file and rename the temp file
       File datFile = new File(userDirectory, getId() + ".dat");
       datFile.delete();
       tmpDatFile.renameTo(datFile);
@@ -227,7 +227,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
         fOut.close();
       }
 
-      // Saving suceed -> Delete the old file and rename the temp file
+      // Saving succeeded -> Delete the old file and rename the temp file
       File propFile = new File(userDirectory, getId() + ".prop");
       propFile.delete();
       tmpPropFile.renameTo(propFile);

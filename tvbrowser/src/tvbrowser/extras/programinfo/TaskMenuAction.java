@@ -134,7 +134,7 @@ public class TaskMenuAction {
     
     /*
      * Listener to get expand state changes and store the state in the
-     * Properties for the Plguins menu.
+     * Properties for the Plugins menu.
      */
     group.addPropertyChangeListener(new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent evt) {

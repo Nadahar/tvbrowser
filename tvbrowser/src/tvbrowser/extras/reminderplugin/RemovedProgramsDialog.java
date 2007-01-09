@@ -70,7 +70,7 @@ public class RemovedProgramsDialog extends JDialog implements WindowClosingIf{
     contentPane.setLayout(new BorderLayout(6,6));
     contentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
-    JLabel lb = new JLabel(mLocalizer.msg("dialog.header","<html>Die folgenden Sendungen, an die sie erinnert werden wollten, sind in der aktualisierten Programvorschau nicht mehr enthalten:</html>"));
+    JLabel lb = new JLabel(mLocalizer.msg("dialog.header","<html>Die folgenden Sendungen, an die sie erinnert werden wollten, sind in der aktualisierten Programmvorschau nicht mehr enthalten:</html>"));
 
     contentPane.add(lb, BorderLayout.NORTH);
     contentPane.add(new JScrollPane(new ProgramList(programs, true)), BorderLayout.CENTER);
