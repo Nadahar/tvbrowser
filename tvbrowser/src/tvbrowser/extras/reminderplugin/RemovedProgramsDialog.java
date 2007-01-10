@@ -39,7 +39,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
+import util.ui.PictureSettingsPanel;
 import util.ui.ProgramList;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -73,7 +75,7 @@ public class RemovedProgramsDialog extends JDialog implements WindowClosingIf{
     JLabel lb = new JLabel(mLocalizer.msg("dialog.header","<html>Die folgenden Sendungen, an die sie erinnert werden wollten, sind in der aktualisierten Programmvorschau nicht mehr enthalten:</html>"));
 
     contentPane.add(lb, BorderLayout.NORTH);
-    contentPane.add(new JScrollPane(new ProgramList(programs, true)), BorderLayout.CENTER);
+    contentPane.add(new JScrollPane(new ProgramList(programs, new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, true, true, 10))), BorderLayout.CENTER);
     contentPane.add(createButtonPanel(), BorderLayout.SOUTH);
 
     setSize(400,200);

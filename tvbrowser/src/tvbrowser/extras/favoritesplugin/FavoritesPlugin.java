@@ -228,7 +228,7 @@ public class FavoritesPlugin {
     Favorite[] newFavoriteArr = new Favorite[size];
     for (int i = 0; i < size; i++) {
       if (version <= 2) {
-        newFavoriteArr[i] = new AdvancedFavorite(null, in);
+        newFavoriteArr[i] = new AdvancedFavorite(in);
       }
       else {
         String typeID = (String)in.readObject();
