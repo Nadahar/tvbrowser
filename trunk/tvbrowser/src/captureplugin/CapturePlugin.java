@@ -412,6 +412,7 @@ public class CapturePlugin extends devplugin.Plugin {
             if (device.getId().equals(deviceid)) {
                 if (command.equals(REMOVE)) {
                     for (Program program:programArr) {
+                      if(device.isInList(program))
                         device.remove(getParentFrame(), program);
                     }
                     updateMarkedPrograms();
