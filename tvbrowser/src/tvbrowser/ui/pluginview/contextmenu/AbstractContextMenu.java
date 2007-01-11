@@ -84,6 +84,22 @@ public abstract class AbstractContextMenu implements ContextMenu {
     return item;
   }
 
+  protected JMenuItem getCollapseAllMenuItem(final TreePath treePath) {
+
+		Action action = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				mTree.collapseAll(treePath);
+			}
+		};
+
+		action.putValue(Action.NAME, mLocalizer.msg("collapseAll",
+				"Collapse All"));
+
+		JMenuItem item = new JMenuItem(action);
+		item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
+		return item;
+	}
+
   protected Action getCollapseExpandAction(final TreePath treePath) {
 
     final boolean mIsExpanded = mTree.isExpanded(treePath);
