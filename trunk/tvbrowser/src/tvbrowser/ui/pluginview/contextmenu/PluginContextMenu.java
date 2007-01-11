@@ -73,6 +73,7 @@ public class PluginContextMenu extends AbstractContextMenu {
     menu.add(defaultMI);
     defaultMI.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
     menu.add(getExpandAllMenuItem(mPath));
+    menu.add(getCollapseAllMenuItem(mPath));
     menu.add(getExportMenu( mPath));
     
     ActionMenu pluginAction = mPlugin.getButtonAction();

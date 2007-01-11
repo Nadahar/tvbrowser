@@ -56,7 +56,7 @@ public class RootNodeContextMenu extends AbstractContextMenu {
     item.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
     menu.add(item);
     menu.add(getExpandAllMenuItem(mPath));
-
+    menu.add(getCollapseAllMenuItem(mPath));
     return menu;
   }
 

@@ -177,6 +177,19 @@ public class PluginTree extends JTree implements DragGestureListener,
     }
   }
 
+  public void collapseAll(TreePath path) {
+		TreeModel model = getModel();
+		if (path != null && model != null) {
+			Object comp = path.getLastPathComponent();
+			int cnt = model.getChildCount(comp);
+			for (int i = 0; i < cnt; i++) {
+				Object node = model.getChild(comp, i);
+				collapseAll(path.pathByAddingChild(node));
+			}
+		}
+		collapsePath(path);
+	}
+
   class TransferNode implements Transferable {
     private DataFlavor mDF;
 

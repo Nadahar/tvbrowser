@@ -65,6 +65,7 @@ public class CustomNodeContextMenu extends AbstractContextMenu {
     defaultMI.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
 
     menu.add(getExpandAllMenuItem(mPath));
+    menu.add(getCollapseAllMenuItem(mPath));
     menu.add(getExportMenu( mPath));
 
     if (mActionMenus.length>0) {
