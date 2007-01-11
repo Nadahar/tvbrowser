@@ -71,7 +71,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
 
   private Map<String, Action> mAvailableActions;
 
-  private ArrayList<Action> mVisibleActions;
+  private ArrayList<Action> mVisibleActions, actionOrder;
 
   private Action mUpdateAction, mSettingsAction, mFilterAction,
       mPluginViewAction, mSeparatorAction, mScrollToNowAction,
@@ -127,6 +127,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
 
   private void createAvailableActions() {
     mAvailableActions = new HashMap<String, Action>();
+    actionOrder = new ArrayList<Action>();
     mUpdateAction = createAction(TVBrowser.mLocalizer.msg("button.update",
         "Update"), "#update", MainFrame.mLocalizer.msg("menuinfo.update", ""),
         IconLoader.getInstance().getIconFromTheme("apps",
@@ -159,6 +160,12 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
         .getInstance().getIconFromTheme("actions", "scroll-to-now", 16),
         IconLoader.getInstance().getIconFromTheme("actions",
             "scroll-to-now", 22), ToolBar.BUTTON_ACTION, this);
+    mGoToPreviousDayAction = createAction(mLocalizer.msg(
+            "goToPreviousDay", "Previous day"), "#goToPreviousDay", 
+            mLocalizer.msg("goToPreviousToolTip", "Previous day"), IconLoader
+            .getInstance().getIconFromTheme("actions", "go-to-previous-day", 16), IconLoader
+            .getInstance().getIconFromTheme("actions", "go-to-previous-day", 22),
+            ToolBar.BUTTON_ACTION, this);
     mGoToTodayAction = createAction(TVBrowser.mLocalizer.msg(
         "button.today", "Today"), "#goToToday", scrollTo
         + TVBrowser.mLocalizer.msg("button.today", "Today"), IconLoader
@@ -171,12 +178,12 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
         .getInstance().getIconFromTheme("actions", "go-to-next-day", 16), IconLoader
         .getInstance().getIconFromTheme("actions", "go-to-next-day", 22),
         ToolBar.BUTTON_ACTION, this);
-    mGoToPreviousDayAction = createAction(mLocalizer.msg(
-        "goToPreviousDay", "Previous day"), "#goToPreviousDay", 
-        mLocalizer.msg("goToPreviousToolTip", "Previous day"), IconLoader
-        .getInstance().getIconFromTheme("actions", "go-to-previous-day", 16), IconLoader
-        .getInstance().getIconFromTheme("actions", "go-to-previous-day", 22),
-        ToolBar.BUTTON_ACTION, this);
+    mGoToDateAction = createAction(mLocalizer.msg("goToDate", "Go to date"),
+            "#goToDate", mLocalizer.msg("goToDateTooltip", "Go to a date"),
+            IconLoader.getInstance().getIconFromTheme("actions",
+                "go-to-date", 16), IconLoader.getInstance()
+                .getIconFromTheme("actions", "go-to-date", 22),
+            ToolBar.TOOGLE_BUTTON_ACTION, this);
     mReminderAction = createAction(ReminderPlugin.mLocalizer.msg("buttonText",
         "Reminder list"), SettingsItem.REMINDER,
         ReminderPlugin.mLocalizer.msg("description",
@@ -197,12 +204,6 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
             .getIconFromTheme("apps", "bookmark", 16), IconLoader.getInstance()
             .getIconFromTheme("apps", "bookmark", 22), ToolBar.BUTTON_ACTION,
         this);
-    mGoToDateAction = createAction(mLocalizer.msg("goToDate", "Go to date"),
-        "#goToDate", mLocalizer.msg("goToDateTooltip", "Go to a date"),
-        IconLoader.getInstance().getIconFromTheme("actions",
-            "go-to-date", 16), IconLoader.getInstance()
-            .getIconFromTheme("actions", "go-to-date", 22),
-        ToolBar.TOOGLE_BUTTON_ACTION, this);
     mScrollToChannelAction = createAction(mLocalizer.msg("scrollToChannel",
         "Scroll to channel"), "#scrollToChannel", mLocalizer.msg("scrollToChannelTooltip",
         "Scroll to a channel"), IconLoader.getInstance().getIconFromTheme(
@@ -217,21 +218,6 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     updateTimeButtons();
 
     setPluginViewButtonSelected(Settings.propShowPluginView.getBoolean());
-
-    mAvailableActions.put("#update", mUpdateAction);
-    mAvailableActions.put("#settings", mSettingsAction);
-    mAvailableActions.put("#filter", mFilterAction);
-    mAvailableActions.put("#pluginView", mPluginViewAction);
-    mAvailableActions.put("#scrollToNow", mScrollToNowAction);
-    mAvailableActions.put("#goToToday", mGoToTodayAction);
-    mAvailableActions.put("#goToNextDay", mGoToNextDayAction);
-    mAvailableActions.put("#goToPreviousDay", mGoToPreviousDayAction);
-    mAvailableActions.put(SettingsItem.SEARCH, mSearchAction);
-    mAvailableActions.put(SettingsItem.REMINDER, mReminderAction);
-    mAvailableActions.put(SettingsItem.FAVORITE, mFavoriteAction);
-    mAvailableActions.put("#goToDate", mGoToDateAction);
-    mAvailableActions.put("#scrollToChannel", mScrollToChannelAction);
-    mAvailableActions.put("#scrollToTime", mScrollToTimeAction);
 
     PluginProxyManager pluginMng = PluginProxyManager.getInstance();
     PluginProxy[] pluginProxys = pluginMng.getActivatedPlugins();
@@ -305,7 +291,6 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
         + ": ";
     // create Time Buttons
     int[] array = Settings.propTimeButtons.getIntArray();
-    Action timeButtonAction;
 
     for (int i = 0; i < array.length; i++) {
       int hour = array[i] / 60;
@@ -322,7 +307,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
         continue;
       }
 
-      timeButtonAction = createAction(time, "#scrollTo" + time,
+      createAction(time, "#scrollTo" + time,
           scrollTo + time, IconLoader.getInstance().getIconFromTheme("actions",
               "scroll-to-specific-time", 16), IconLoader.getInstance().getIconFromTheme(
               "actions", "scroll-to-specific-time", 22), ToolBar.BUTTON_ACTION,
@@ -331,8 +316,6 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
               MainFrame.getInstance().scrollToTime(scrollTime);
             }
           });
-
-      mAvailableActions.put("#scrollTo" + time, timeButtonAction);
     }
 
     Iterator it = availableTimeActions.iterator();
@@ -427,7 +410,8 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     action.putValue(Action.SHORT_DESCRIPTION, description);
     action.putValue(ToolBar.ACTION_TYPE_KEY, new Integer(type));
     action.putValue(ToolBar.ACTION_ID_KEY, id);
-
+    mAvailableActions.put(id, action);
+    actionOrder.add(action);
     return action;
   }
 
@@ -473,8 +457,15 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
   }
 
   public Action[] getAvailableActions() {
+    ArrayList<Action> orderedList = new ArrayList<Action>(actionOrder);
+    for (Iterator<Action> iter = mAvailableActions.values().iterator(); iter.hasNext();) {
+		Action action = iter.next();
+		if (! orderedList.contains(action)) {
+			orderedList.add(action);
+		}
+	}
     Action[] result = new Action[mAvailableActions.size()];
-    mAvailableActions.values().toArray(result);
+    orderedList.toArray(result);
     return result;
   }
 
