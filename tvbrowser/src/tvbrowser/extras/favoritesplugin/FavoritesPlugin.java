@@ -228,7 +228,10 @@ public class FavoritesPlugin {
     Favorite[] newFavoriteArr = new Favorite[size];
     for (int i = 0; i < size; i++) {
       if (version <= 2) {
-        newFavoriteArr[i] = new AdvancedFavorite(in);
+        /* read favorites from older TV-Browser versions
+         * this should be stay at least until version 3.0
+         * of TV-Browser */
+        newFavoriteArr[i] = new AdvancedFavorite(null, in);
       }
       else {
         String typeID = (String)in.readObject();
