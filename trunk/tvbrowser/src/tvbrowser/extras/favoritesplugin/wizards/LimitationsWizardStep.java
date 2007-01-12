@@ -44,6 +44,8 @@ import tvbrowser.extras.favoritesplugin.core.Favorite;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.*;
 
 public class LimitationsWizardStep extends AbstractWizardStep {
@@ -172,6 +174,12 @@ public class LimitationsWizardStep extends AbstractWizardStep {
     });
 
     mContent = panelBuilder.getPanel();
+    mContent.addFocusListener(new FocusAdapter() {
+
+        public void focusGained(FocusEvent e) {
+          mChannelCb.requestFocusInWindow();
+        }
+      });
     return mContent;
 
   }
