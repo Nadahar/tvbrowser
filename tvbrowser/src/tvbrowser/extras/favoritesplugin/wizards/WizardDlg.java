@@ -226,4 +226,8 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
   public void setDoneBtnText() {
     mDoneBtn.setText(mStep.getDoneBtnText());
   }
+
+  public void focusFinish() {
+	mDoneBtn.requestFocusInWindow();
+  }
 }

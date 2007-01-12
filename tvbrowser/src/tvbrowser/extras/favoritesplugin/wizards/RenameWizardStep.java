@@ -26,6 +26,9 @@
 
 package tvbrowser.extras.favoritesplugin.wizards;
 
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -60,7 +63,13 @@ public class RenameWizardStep extends AbstractWizardStep {
     panelBuilder.add(new JLabel(mLocalizer.msg("saveAs", "Save as:")), cc.xy(2,1));
     panelBuilder.add(mNameTf, cc.xy(4,1));
 
-    return panelBuilder.getPanel();
+    JPanel panel = panelBuilder.getPanel();
+    panel.addFocusListener(new FocusAdapter() {
+        public void focusGained(FocusEvent e) {
+          mNameTf.requestFocusInWindow();
+        }
+      });
+    return panel;
   }
 
  public int[] getButtons() {

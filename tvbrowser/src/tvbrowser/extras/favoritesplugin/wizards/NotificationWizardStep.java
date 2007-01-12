@@ -26,9 +26,8 @@
 
 package tvbrowser.extras.favoritesplugin.wizards;
 
+import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -75,14 +74,12 @@ public class NotificationWizardStep extends AbstractWizardStep {
 
     mReminderCb.setSelected(true);
     JPanel result = panelBuilder.getPanel();
-    result.addFocusListener(new FocusListener() {
+    result.addFocusListener(new FocusAdapter() {
 
       public void focusGained(FocusEvent e) {
         mReminderCb.requestFocusInWindow();
       }
-
-      public void focusLost(FocusEvent e) {
-      }});
+    });
     return result;
   }
 

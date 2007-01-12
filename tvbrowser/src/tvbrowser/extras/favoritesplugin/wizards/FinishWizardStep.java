@@ -26,6 +26,9 @@
 
 package tvbrowser.extras.favoritesplugin.wizards;
 
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -47,6 +50,13 @@ public class FinishWizardStep extends AbstractWizardStep {
     CellConstraints cc = new CellConstraints();
     pn.add(new JLabel(mLocalizer.msg("msg", "Die Lieblingssendung ist nun eingerichtet!"), JLabel.CENTER), cc.xy(1,1));
     handler.allowCancel(false);
+    final WizardDlg dialog=handler.getDialog();
+    pn.addFocusListener(new FocusAdapter() {
+
+        public void focusGained(FocusEvent e) {
+          dialog.focusFinish();
+        }
+      });
     return pn;
   }
 
