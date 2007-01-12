@@ -64,10 +64,6 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ReminderFrame.class);
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(ReminderFrame.class.getName());
-
-
   /**
    * The UI texts for the choosable options how long before a program start the
    * reminder should appear.
@@ -167,12 +163,14 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     // text label
     String msg;
     int progMinutesAfterMidnight = mProgram.getHours() * 60 + mProgram.getMinutes();
+    int remainingMinutes = 0;
     Date today = Date.getCurrentDate();
     if (today.compareTo(mProgram.getDate())>=0 && IOUtilities.getMinutesAfterMidnight() > progMinutesAfterMidnight) {
       msg = mLocalizer.msg("alreadyRunning", "Already running");
     }
     else {
       msg = mLocalizer.msg("soonStarts", "Soon starts");
+      remainingMinutes = IOUtilities.getMinutesAfterMidnight() - progMinutesAfterMidnight;
     }
     
     progPanel.add(mHeader = new JLabel(msg), BorderLayout.NORTH);
@@ -194,7 +192,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     
     mReminderCB = new JComboBox();
     int i=0;
-    while(i<REMIND_VALUE_ARR.length && REMIND_VALUE_ARR[i]<item.getMinutes()) {
+    while(i<REMIND_VALUE_ARR.length && REMIND_VALUE_ARR[i]<item.getMinutes() && REMIND_VALUE_ARR[i]< remainingMinutes) {
       mReminderCB.addItem(REMIND_MSG_ARR[i]);
       i++;
     }
