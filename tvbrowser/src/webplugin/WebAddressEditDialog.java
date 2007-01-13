@@ -71,6 +71,8 @@ public class WebAddressEditDialog extends JDialog {
 
   /** The return-value for this Dialog */
   private int returnValue;
+  
+  private JButton okButton;
 
   /**
    * Creates the Dialog
@@ -118,6 +120,11 @@ public class WebAddressEditDialog extends JDialog {
 
     mName = new JTextField();
     mName.setText(mWebAddress.getName());
+    mName.addKeyListener(new KeyAdapter() {
+		public void keyReleased(KeyEvent e) {
+			keysReleased();
+		}
+    });
 
     panel.add(mName, cc.xyw(3, 1, 3));
 
@@ -131,6 +138,11 @@ public class WebAddressEditDialog extends JDialog {
           ke.consume();
         }
       }
+	@Override
+	public void keyReleased(KeyEvent e) {
+		keysReleased();
+	}
+      
     });
 
     mUrl.setText(mWebAddress.getUrl());
@@ -182,8 +194,7 @@ public class WebAddressEditDialog extends JDialog {
 
     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
 
-    JButton okButton = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
-
+    okButton = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     okButton.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
@@ -223,9 +234,14 @@ public class WebAddressEditDialog extends JDialog {
       setSize(dim);
     }
 
+    keysReleased();
   }
 
-  /**
+  private void keysReleased() {
+	  okButton.setEnabled((mName.getText().trim().length() > 0) && (mUrl.getText().trim().length() > 0));
+  }
+
+/**
    * OK was pressed
    */
   private void okPressed() {
