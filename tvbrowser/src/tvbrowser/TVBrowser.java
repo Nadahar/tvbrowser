@@ -286,9 +286,7 @@ public class TVBrowser {
 
     splash.showSplash();
 
-    /* Initialize the MarkedProgramsList to be the first
-     * that reacts on a tv data update.
-     */
+    /* Initialize the MarkedProgramsList */
     MarkedProgramsList.getInstance();
     
     /*Maybe there are tvdataservices to install (.jar.inst files)*/
