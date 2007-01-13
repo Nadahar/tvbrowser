@@ -2,11 +2,11 @@
 ;Compatible with Modern UI 1.68
 
 ;Language: German (1031)
-;By L.King, changes by K. Windszus & R. Bisswanger & M. Simmack
+;By L.King, changes by K. Windszus & R. Bisswanger & M. Simmack & D. Weiß
 
 ;--------------------------------
 
-!insertmacro MUI_LANGUAGEFILE_BEGIN "GERMAN"
+!insertmacro MUI_LANGUAGEFILE_BEGIN "German"
 
   !define MUI_LANGNAME "Deutsch" ;Use only ASCII characters (if this is not possible, use the English name)
 
@@ -23,7 +23,11 @@
   !define MUI_TEXT_COMPONENTS_TITLE "Komponenten auswählen"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Wählen Sie die Komponenten aus, die Sie installieren möchten."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Beschreibung"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Bewegen Sie den Mauszeiger über eine Komponente, um ihre Beschreibung zu sehen."
+  !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Bewegen Sie den Mauszeiger über eine Komponente, um ihre Beschreibung zu sehen."
+  !else
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Selektieren Sie eine Komponente, um ihre Beschreibung zu sehen."
+  !endif
 
   !define MUI_TEXT_DIRECTORY_TITLE "Zielverzeichnis auswählen"
   !define MUI_TEXT_DIRECTORY_SUBTITLE "Wählen Sie das Verzeichnis aus, in das $(^NameDA) installiert werden soll."
@@ -39,7 +43,7 @@
 
   !define MUI_BUTTONTEXT_FINISH "&Fertig stellen"
   !define MUI_TEXT_FINISH_INFO_TITLE "Die Installation von $(^NameDA) wird abgeschlossen"
-  !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) ist auf Ihrem Computer installiert worden.\r\n\r\nKlicken Sie auf Fertig stellen, um den Installations-Assistenten zu schließen."
+  !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) wurde auf Ihrem Computer installiert.\r\n\r\nKlicken Sie auf Fertig stellen, um den Installations-Assistenten zu schließen."
   !define MUI_TEXT_FINISH_INFO_REBOOT "Windows muss neu gestartet werden, um die Installation von $(^NameDA) zu vervollständigen. Möchten Sie Windows jetzt neu starten?"
   !define MUI_TEXT_FINISH_REBOOTNOW "Jetzt neu starten"
   !define MUI_TEXT_FINISH_REBOOTLATER "Windows später selbst neu starten"
@@ -54,7 +58,7 @@
   !define MUI_TEXT_ABORTWARNING "Sind Sie sicher, dass Sie die Installation von $(^Name) abbrechen wollen?"
 
 
-  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Deinstallation von $(^NameDA)"
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Willkommen beim Deinstallations-\r\nAssistenten für $(^NameDA)"
   !define MUI_UNTEXT_WELCOME_INFO_TEXT "Dieser Assistent wird Sie durch die Deinstallation von $(^NameDA) begleiten.\r\n\r\nBitte beenden Sie $(^NameDA), bevor Sie mit der Deinstallation fortfahren.\r\n\r\n$_CLICK"
 
   !define MUI_UNTEXT_CONFIRM_TITLE "Deinstallation von $(^NameDA)"
@@ -82,7 +86,7 @@
   !define MUI_UNTEXT_ABORT_SUBTITLE "Die Deinstallation wurde nicht vollständig abgeschlossen."
 
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Die Deinstallation von $(^NameDA) wird abgeschlossen"
-  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) ist von ihrem Computer entfernt worden.\r\n\r\nKlicken Sie auf Beenden, um den Assistenten zu schließen."
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) ist von ihrem Computer entfernt worden.\r\n\r\nKlicken Sie auf Fertig stellen, um den Assistenten zu schließen."
   !define MUI_UNTEXT_FINISH_INFO_REBOOT "Windows muss neu gestartet werden, um die Deinstallation von $(^NameDA) zu vervollständigen. Möchten Sie Windows jetzt neu starten?"
 
   !define MUI_UNTEXT_ABORTWARNING "Sind Sie sicher, dass Sie die Deinstallation von $(^Name) abbrechen möchten?"
