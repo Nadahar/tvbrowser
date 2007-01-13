@@ -248,4 +248,20 @@ public class ProgramTime implements Cloneable {
           setTitle((String) in.readObject());
         }
     }
+    
+    /**
+     * Checks if the program of this ProgramTime was deleted
+     * or if it has not updated instead renew the instance of it.   
+     * 
+     * @return <code>true</code> if the program was deleted, <code>false</code> instead.
+     * @since 2.11
+     */
+    public boolean checkIfRemovedOrUpdateInstead() {
+      if(mProgram.getProgramState() == Program.WAS_UPDATED_STATE)
+        mProgram = Plugin.getPluginManager().getProgram(mProgram.getDate(), mProgram.getID());
+      else if(mProgram.getProgramState() == Program.WAS_DELETED_STATE)
+        return true;
+
+      return false;
+    }
 }

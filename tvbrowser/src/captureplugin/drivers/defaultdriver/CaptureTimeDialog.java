@@ -104,8 +104,6 @@ public class CaptureTimeDialog extends JDialog {
         mEnd.setBorder(BorderFactory.createTitledBorder(
                 mLocalizer.msg("EndTime","End-Time")));
         
-        System.out.println(mPrgTime.getProgram().getLength());
-        
         if (mPrgTime.getProgram().getLength() <= 0) {
           mEnd.setSpinnerBackground(new Color(255, 153, 153));
         }
@@ -124,7 +122,7 @@ public class CaptureTimeDialog extends JDialog {
         namePanel.setBorder(BorderFactory.createTitledBorder(Localizer.getLocalization(Localizer.I18N_PROGRAM)));
         namePanel.setLayout(new BorderLayout());
 
-        ProgramPanel p = new ProgramPanel(mPrgTime.getProgram());
+        ProgramPanel p = new ProgramPanel(mPrgTime.getProgram(), CapturePlugin.getInstance().getProgramPanelSettings());
         p.addPluginContextMenuMouseListener(CapturePlugin.getInstance());
         
         namePanel.add(p);

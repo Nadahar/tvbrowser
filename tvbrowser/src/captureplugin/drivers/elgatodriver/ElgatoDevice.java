@@ -24,6 +24,7 @@
  */
 package captureplugin.drivers.elgatodriver;
 
+import captureplugin.CapturePlugin;
 import captureplugin.drivers.DeviceIf;
 import captureplugin.drivers.DriverIf;
 import captureplugin.drivers.elgatodriver.configdialog.ElgatoConfigDialog;
@@ -39,6 +40,7 @@ import java.awt.Window;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 
@@ -231,5 +233,24 @@ public class ElgatoDevice implements DeviceIf {
     public Object clone() {
         return new ElgatoDevice(this);
     }
-
+    
+    public Program[] checkProgramsAfterDataUpdateAndGetDeleted() {      
+      boolean update = false;
+      ArrayList<Program> deletedPrograms = new ArrayList<Program>();
+      
+      for(Program p : mListOfRecordings) {
+        if(p.getProgramState() == Program.WAS_UPDATED_STATE)
+          update = true;
+        else if(p.getProgramState() == Program.WAS_DELETED_STATE) {
+          update = true;
+          deletedPrograms.add(p);
+          remove(UiUtilities.getLastModalChildOf(CapturePlugin.getInstance().getSuperFrame()), p);
+        }
+      }
+      
+      if(update)
+        getProgramList();
+      
+      return deletedPrograms.toArray(new Program[deletedPrograms.size()]);
+    }
 }

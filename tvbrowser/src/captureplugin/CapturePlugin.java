@@ -30,16 +30,27 @@ import devplugin.ContextMenuAction;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
+import devplugin.ProgramFieldType;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.ThemeIcon;
 import devplugin.Version;
+import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
+
+import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
@@ -76,6 +87,11 @@ public class CapturePlugin extends devplugin.Plugin {
      */
     private static CapturePlugin mInstance = null;
 
+    private boolean mAllowedToShowDialog = false;
+    private boolean mNeedsUpdate = false;
+    
+    private Properties mSettings;
+    
     /**
      * Root-Node for the Program-Tree
      */
@@ -126,6 +142,10 @@ public class CapturePlugin extends devplugin.Plugin {
      * load your plugins settings from the file system.
      */
     public void loadSettings(Properties settings) {
+      if(settings == null)
+        mSettings = new Properties();
+      else
+        mSettings = settings;
     }
 
     /**
@@ -133,7 +153,7 @@ public class CapturePlugin extends devplugin.Plugin {
      * to store your plugins settings to the file system.
      */
     public Properties storeSettings() {
-        return null;
+        return mSettings;
     }
 
     /**
@@ -144,7 +164,7 @@ public class CapturePlugin extends devplugin.Plugin {
         String desc = mLocalizer.msg("Desc", "Starts a external Program with configurable Parameters");
         String author = "Bodo Tasche, Andreas Hessel";
 
-        return new PluginInfo(name, desc, author, new Version(2, 10));
+        return new PluginInfo(name, desc, author, new Version(2, 11));
     }
 
     /**
@@ -462,5 +482,112 @@ public class CapturePlugin extends devplugin.Plugin {
         }
 
         return targets.toArray(new ProgramReceiveTarget[0]);
+    }
+    
+    public void handleTvBrowserStartFinished() {
+      mAllowedToShowDialog = true;
+      
+      if(mNeedsUpdate)
+        handleTvDataUpdateFinished();
+    }
+    
+    /**
+     * Check the programs after data update.
+     */
+    public void handleTvDataUpdateFinished() {
+      mNeedsUpdate = true;
+      
+      if(mAllowedToShowDialog) {
+        mNeedsUpdate = false;
+        
+        DeviceIf[] devices = mConfig.getDeviceArray();
+      
+        DefaultTableModel model = new DefaultTableModel() {
+          public boolean isCellEditable(int row, int column) {          
+            return false;
+          }
+        };
+      
+        model.setColumnCount(5);
+        model.setColumnIdentifiers(new String[] {mLocalizer.msg("device","Device"),Localizer.getLocalization(Localizer.I18N_CHANNEL),mLocalizer.msg("date","Date"),ProgramFieldType.START_TIME_TYPE.getLocalizedName(),ProgramFieldType.TITLE_TYPE.getLocalizedName()});    
+      
+        JTable table = new JTable(model);
+        table.getTableHeader().setReorderingAllowed(false);
+        table.getTableHeader().setResizingAllowed(false);
+      
+        int columnWidth[] = new int[5];
+      
+        for(int i = 0; i < columnWidth.length; i++)
+          columnWidth[i] =  UiUtilities.getStringWidth(table.getFont(),model.getColumnName(i)) + 10;
+      
+        for (DeviceIf device : devices) {
+          Program[] deleted = device.checkProgramsAfterDataUpdateAndGetDeleted();
+        
+          if(deleted != null && deleted.length > 0) {
+            for(Program p : deleted) {
+              device.remove(UiUtilities.getLastModalChildOf(getParentFrame()), p);
+            
+              String[] o = new String[] {device.getName(),p.getChannel().getName(),p.getDateString(),p.getTimeString(),p.getTitle()};
+            
+              for(int i = 0; i < columnWidth.length; i++)
+                columnWidth[i] = Math.max(columnWidth[i],UiUtilities.getStringWidth(table.getFont(),o[i])+10);
+            
+              model.addRow(o);
+            }
+          }
+        }
+      
+        if(model.getRowCount() > 0) {
+          int sum = 0;
+          
+          for(int i = 0; i < columnWidth.length; i++) {
+            table.getColumnModel().getColumn(i).setPreferredWidth(columnWidth[i]);
+            
+            if(i < columnWidth.length-1)
+              table.getColumnModel().getColumn(i).setMaxWidth(columnWidth[i]);
+            
+            sum += columnWidth[i];
+          }
+          
+          JScrollPane scrollPane = new JScrollPane(table);
+          scrollPane.setPreferredSize(new Dimension(450,250));
+          
+          if(sum > 500) {
+            table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+            scrollPane.getViewport().setPreferredSize(new Dimension(sum,scrollPane.getViewport().getPreferredSize().height));
+          }
+          
+          Object[] message = {mLocalizer.msg("deletedText","The data was changed and the following programs were deleted:"),scrollPane};
+        
+          JOptionPane pane = new JOptionPane();
+          pane.setMessage(message);
+          pane.setMessageType(JOptionPane.PLAIN_MESSAGE);
+        
+          final JDialog d = pane.createDialog(UiUtilities.getLastModalChildOf(getParentFrame()), mLocalizer.msg("CapturePlugin","CapturePlugin") + " - " + mLocalizer.msg("deletedTitle","Deleted programs"));
+          d.setResizable(true);
+          d.setModal(false);
+        
+          SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+              d.setVisible(true);
+            }
+          });
+        }
+      }
+    }
+    
+    /**
+     * @return The parent frame.
+     */
+    public Frame getSuperFrame() {
+      return getParentFrame();
+    }
+    
+    /**
+     * @return The settings for the program panels of the list.
+     * @since 2.06a/2.11
+     */
+    public ProgramPanelSettings getProgramPanelSettings() {
+      return new ProgramPanelSettings(Integer.parseInt(mSettings.getProperty("pictureType","2")),Integer.parseInt(mSettings.getProperty("pictureTimeRangeStart","1080")),Integer.parseInt(mSettings.getProperty("pictureTimeRangeEnd","1380")),false,mSettings.getProperty("pictureShowsDescription","true").compareTo("true") == 0,Integer.parseInt(mSettings.getProperty("pictureDuration","10")),mSettings.getProperty("picturePlugins","").split(";;"));
     }
 }

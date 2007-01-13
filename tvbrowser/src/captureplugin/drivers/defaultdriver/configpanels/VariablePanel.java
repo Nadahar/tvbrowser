@@ -24,12 +24,6 @@
  */
 package captureplugin.drivers.defaultdriver.configpanels;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-
-import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -37,6 +31,10 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.table.TableCellEditor;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 import util.ui.Localizer;
 import captureplugin.drivers.defaultdriver.DeviceConfig;
@@ -70,54 +68,34 @@ public class VariablePanel extends JPanel {
    * creates a JPanel for managing the variables
    */
   private void createPanel() {
-      setLayout(new GridBagLayout());
-      setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("Variables", "Variables")));
-
-      VariableTableModel variableTableModel = new VariableTableModel(mData);
-      mVariableTable.setModel(variableTableModel);
-      mVariableTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-      mVariableTable.getTableHeader().setReorderingAllowed(false);
-      mVariableTable.getColumnModel().getColumn(0).setPreferredWidth(40);
+    CellConstraints cc = new CellConstraints();
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref:grow,5dlu","pref,5dlu,fill:default:grow"),this);
+    pb.setDefaultDialogBorder();
       
-      // Dispache the KeyEvent to the RootPane for Closing the Dialog.
-      // Needed for Java 1.4.
-      mVariableTable.addKeyListener(new KeyAdapter() {
-        public void keyPressed(KeyEvent e) {
-          mVariableTable.getRootPane().dispatchEvent(e);
-        }
-      });
+    VariableTableModel variableTableModel = new VariableTableModel(mData);
+    mVariableTable.setModel(variableTableModel);
+    mVariableTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    mVariableTable.getTableHeader().setReorderingAllowed(false);
+    mVariableTable.getColumnModel().getColumn(0).setPreferredWidth(40);
+    
+    JScrollPane sp = new JScrollPane(mVariableTable);
+
+    addAncestorListener(new AncestorListener() {
+      public void ancestorAdded(AncestorEvent event) {}
       
-      JScrollPane sp = new JScrollPane(mVariableTable);
+      public void ancestorMoved(AncestorEvent event) {}
 
-      GridBagConstraints c = new GridBagConstraints();
-
-      c.fill = GridBagConstraints.BOTH;
-      c.weightx = 1;
-      c.weighty = 0.8;
-
-      addAncestorListener(new AncestorListener() {
-
-        public void ancestorAdded(AncestorEvent event) {
-          // TODO Auto-generated method stub
-          
+      public void ancestorRemoved(AncestorEvent event) {
+        if (mVariableTable.isEditing()) {
+          TableCellEditor editor = mVariableTable.getCellEditor();
+          if (editor != null)
+            editor.stopCellEditing();
         }
-
-        public void ancestorMoved(AncestorEvent event) {
-          // TODO Auto-generated method stub
-          
-        }
-
-        public void ancestorRemoved(AncestorEvent event) {
-          if (mVariableTable.isEditing()) {
-            TableCellEditor editor = mVariableTable.getCellEditor();
-            if (editor != null)
-              editor.stopCellEditing();
-          }
-        }
-        
-      });
-      
-      add(sp, c);
+      }
+    });
+    
+    pb.addSeparator(mLocalizer.msg("Variables", "Variables"), cc.xyw(1,1,3));
+    pb.add(sp, cc.xy(2,3));
   }
 
 }

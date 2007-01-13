@@ -34,6 +34,11 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -74,103 +79,71 @@ public class ApplicationPanel extends JPanel {
      * creates a JPanel for getting the programpath
      */
     private void createPanel() {
-        setLayout(new BorderLayout());
-        setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("What", "What to start")));
+      CellConstraints cc = new CellConstraints();
+      PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref,3dlu,pref:grow,3dlu,pref,2dlu",
+          "pref,5dlu,pref,3dlu,pref"),this);
+      pb.setDefaultDialogBorder();
 
+      pb.addSeparator(mLocalizer.msg("What", "What to start"), cc.xyw(1,1,7));
+      
+      JRadioButton application = new JRadioButton(mLocalizer.msg("Application", "Application"));
         
-        setLayout(new GridBagLayout());
+      pb.add(application, cc.xy(2,3));
         
-        GridBagConstraints rb = new GridBagConstraints();
-        rb.anchor = GridBagConstraints.NORTHWEST;
-        rb.insets = new Insets(0, 5, 0, 5);
-
-        JRadioButton application = new JRadioButton(mLocalizer.msg("Application", "Application"));
-        
-        add(application, rb);
-        
-        GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 1.0;
-        c.insets = new Insets(0, 5, 0, 5);
-        mPathTextField.setText(mData.getProgramPath());
-        
-        mPathTextField.addFocusListener(new FocusAdapter() {
-            public void focusLost(FocusEvent e) {
-                mData.setProgramPath(mPathTextField.getText());
-            }
-        });
-
-        add(mPathTextField, c);
-
-        
-        GridBagConstraints fb = new GridBagConstraints();
-        fb.gridwidth = GridBagConstraints.REMAINDER;
-        fb.weightx = 0;
-        fb.fill = GridBagConstraints.NONE;
-
-        mFileButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                pathButtonPressed(e);
-            }
-        });
-
-        add(mFileButton, fb);
-
-        
-        JRadioButton url = new JRadioButton(mLocalizer.msg("URL", "URL"));
-        
-        add(url, rb);
-        
-
-        GridBagConstraints uf = new GridBagConstraints();
-        uf.fill = GridBagConstraints.HORIZONTAL;
-        uf.weightx = 1.0;
-        uf.gridwidth = GridBagConstraints.REMAINDER;
-        uf.insets = new Insets(5, 5, 0, 0);
-
-        mUrl.setText(mData.getWebUrl());
-        
-        mUrl.addFocusListener(new FocusAdapter() {
-            public void focusLost(FocusEvent e) {
-                mData.setWebUrl(mUrl.getText());
-            }
-        });
-
-        add(mUrl, uf);
-        
-        ButtonGroup group = new ButtonGroup();
-        
-        group.add(application);
-        group.add(url);
-        
-        
-        GridBagConstraints filler = new GridBagConstraints();
-        filler.fill = GridBagConstraints.BOTH;
-        filler.weightx = 1.0;
-        filler.weighty = 1.0;
-        filler.gridwidth = GridBagConstraints.REMAINDER;
-        
-        add(new JPanel(), filler);
-        
-        url.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setUrlMode(true);
-            }
-        });
-        
-        application.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setUrlMode(false);
-            }
-        });
-        
-        if (mData.getUseWebUrl()) {
-            url.setSelected(true);
-        } else {
-            application.setSelected(true);
+      mPathTextField.setText(mData.getProgramPath());
+      mPathTextField.addFocusListener(new FocusAdapter() {
+        public void focusLost(FocusEvent e) {
+          mData.setProgramPath(mPathTextField.getText());
         }
-        setUrlMode(mData.getUseWebUrl());
+      });
+
+      pb.add(mPathTextField, cc.xy(4,3));
+
+      mFileButton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          pathButtonPressed(e);
+        }
+      });
+
+      pb.add(mFileButton, cc.xy(6,3));
+        
+      JRadioButton url = new JRadioButton(mLocalizer.msg("URL", "URL"));
+        
+      pb.add(url, cc.xy(2,5));
+        
+      mUrl.setText(mData.getWebUrl());
+        
+      mUrl.addFocusListener(new FocusAdapter() {
+        public void focusLost(FocusEvent e) {
+          mData.setWebUrl(mUrl.getText());
+        }
+      });
+
+      pb.add(mUrl, cc.xyw(4,5,3));
+        
+      ButtonGroup group = new ButtonGroup();
+        
+      group.add(application);
+      group.add(url);
+        
+      url.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          setUrlMode(true);
+        }
+      });
+        
+      application.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          setUrlMode(false);
+        }
+      });
+        
+      if (mData.getUseWebUrl())
+        url.setSelected(true);
+      else
+        application.setSelected(true);
+      
+      setUrlMode(mData.getUseWebUrl());
     }
 
     /**

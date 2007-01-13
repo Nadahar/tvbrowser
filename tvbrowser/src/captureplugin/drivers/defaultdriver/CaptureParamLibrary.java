@@ -96,7 +96,7 @@ public class CaptureParamLibrary extends ParamLibrary {
    * @see util.paramhandler.ParamLibrary#getDescriptionForFunctions(java.lang.String)
    */
   public String getDescriptionForFunctions(String function) {
-    String translation = mLocalizer.msg("function_" + function, "");
+    String translation = mLocalizer.msg("function_" + function, "", false);
     if (translation.startsWith("[CaptureParamLibrary.function")) {
       return super.getDescriptionForFunctions(function);
     }
@@ -149,7 +149,7 @@ public class CaptureParamLibrary extends ParamLibrary {
    * @see util.paramhandler.ParamLibrary#getDescriptionForKey(java.lang.String)
    */
   public String getDescriptionForKey(String key) {
-    String translation = mLocalizer.msg("parameter_" + key, "");
+    String translation = mLocalizer.msg("parameter_" + key, "", false);
     if (translation.startsWith("[CaptureParamLibrary.parameter")) {
       return super.getDescriptionForKey(key);
     }
