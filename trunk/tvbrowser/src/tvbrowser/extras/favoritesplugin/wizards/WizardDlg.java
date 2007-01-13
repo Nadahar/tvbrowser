@@ -30,10 +30,14 @@ import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
+import javax.swing.KeyStroke;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -168,6 +172,28 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
       }
     });
 
+    if(mNextBtn.isEnabled())
+      getRootPane().setDefaultButton(mNextBtn);
+    else
+      getRootPane().setDefaultButton(mDoneBtn);
+    
+    AbstractAction a = new AbstractAction() {
+      public void actionPerformed(ActionEvent e) {
+        if(mBackBtn.isEnabled()) {
+          mBackBtn.dispatchEvent(new KeyEvent(mBackBtn, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_SPACE, ' '));
+          mBackBtn.dispatchEvent(new KeyEvent(mBackBtn, KeyEvent.KEY_RELEASED, 0, 0, KeyEvent.VK_SPACE, ' '));
+        }
+      }
+    };
+    
+    KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0);
+    getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,"BACK");
+    getRootPane().getActionMap().put("BACK", a);
+    
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, KeyEvent.ALT_MASK);
+    getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,"BACK");
+    getRootPane().getActionMap().put("BACK", a);
+    
     return panel;
   }
 
@@ -199,16 +225,21 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
   }
 
   public void close() {
-    hide();
+    setVisible(false);
   }
 
   public void close(int val) {
     mResult = val;
-    hide();
+    close();
   }
 
   public void allowNext(boolean allow) {
     mNextBtn.setEnabled(allow);
+    
+    if(allow)
+      getRootPane().setDefaultButton(mNextBtn);
+    else
+      getRootPane().setDefaultButton(mDoneBtn);
   }
 
   public void allowFinish(boolean allow) {
@@ -228,6 +259,6 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
   }
 
   public void focusFinish() {
-	mDoneBtn.requestFocusInWindow();
+    mDoneBtn.requestFocusInWindow();
   }
 }

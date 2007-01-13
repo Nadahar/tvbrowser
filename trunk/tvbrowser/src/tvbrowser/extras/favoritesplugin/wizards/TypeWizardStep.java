@@ -31,6 +31,10 @@ import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
@@ -178,23 +182,29 @@ public class TypeWizardStep extends AbstractWizardStep {
     }
 
     mContent = panelBuilder.getPanel();
-    mContent.addFocusListener(new FocusListener() {
-
-      public void focusGained(FocusEvent e) {
-        if (mProgramNameTf.isEnabled()) {
-          mProgramNameTf.requestFocusInWindow();
-        }
-        else if (mTopicTf.isEnabled()) {
-          mTopicTf.requestFocusInWindow();
-        }
-        else if (mActorsTf.isEnabled()) {
-          mActorsTf.requestFocusInWindow();
-        }
+    
+    mContent.addComponentListener(new ComponentAdapter() {
+      public void componentResized(ComponentEvent e) {
+        handleFocusEvent();
       }
-
-      public void focusLost(FocusEvent e) {
-      }});
+    });
+    
+    mContent.addFocusListener(new FocusAdapter() {
+      public void focusGained(FocusEvent e) {
+        handleFocusEvent();
+      }
+    });
+    
     return mContent;
+  }
+  
+  private void handleFocusEvent() {
+    if (mProgramNameTf.isEnabled())
+      mProgramNameTf.requestFocusInWindow();
+    else if (mTopicTf.isEnabled())
+      mTopicTf.requestFocusInWindow();
+    else if (mActorsTf.isEnabled())
+      mActorsTf.requestFocusInWindow();
   }
 
   protected void updateTextfields() {
