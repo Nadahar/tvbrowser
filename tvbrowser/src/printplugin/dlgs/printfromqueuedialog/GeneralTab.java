@@ -71,7 +71,7 @@ public class GeneralTab extends JPanel {
     CellConstraints cc = new CellConstraints();
     
     PanelBuilder pb = new PanelBuilder(new FormLayout("pref:grow",
-        "fill:pref:grow,2dlu,pref,2dlu,pref,10dlu"), this);
+        "fill:default:grow,2dlu,pref,2dlu,pref,10dlu"), this);
     pb.setDefaultDialogBorder();
     
     JPanel pn1 = new JPanel(new BorderLayout());
