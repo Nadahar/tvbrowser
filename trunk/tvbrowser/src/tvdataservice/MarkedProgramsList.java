@@ -28,8 +28,6 @@ package tvdataservice;
 import java.util.ArrayList;
 
 import tvbrowser.core.Settings;
-import tvbrowser.core.TvDataUpdateListener;
-import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import util.program.ProgramUtilities;
 
@@ -51,14 +49,6 @@ public class MarkedProgramsList {
   private MarkedProgramsList() {
     mList = new ArrayList<MutableProgram>();
     mInstance = this;
-
-    TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
-      public void tvDataUpdateStarted() {}
-
-      public void tvDataUpdateFinished() {
-        revalidatePrograms();
-      }
-    });
   }
 
   /**
@@ -71,12 +61,12 @@ public class MarkedProgramsList {
   }
 
   protected void addProgram(MutableProgram p) {
-    if(!mList.contains(p) && p.getMarkerArr().length > 0)
+    if(p!= null && !mList.contains(p) && p.getMarkerArr().length > 0)
       mList.add(p);
   }
 
   protected void removeProgram(MutableProgram p) {
-    if(mList.contains(p) && p.getMarkerArr().length < 1)
+    if(p!= null && mList.contains(p) && p.getMarkerArr().length < 1)
       mList.remove(p);
   }
 
@@ -91,7 +81,7 @@ public class MarkedProgramsList {
   }
 
   /**
-   * 
+   * @param filter The filter to use for program filtering
    * @return The time sorted programs for the tray.
    */
   public Program[] getTimeSortedProgramsForTray(ProgramFilter filter) {
@@ -164,8 +154,10 @@ public class MarkedProgramsList {
     return trayPrograms;
   }
 
-
-  private void revalidatePrograms() {
+  /**
+   * Revalidate program markings
+   */
+  public void revalidatePrograms() {
     MutableProgram[] programs = mList.toArray(new MutableProgram[mList.size()]);
     mList.clear();
 

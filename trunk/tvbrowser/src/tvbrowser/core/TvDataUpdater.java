@@ -34,6 +34,7 @@ import javax.swing.JProgressBar;
 
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvdataservice.MarkedProgramsList;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.ErrorHandler;
@@ -209,6 +210,8 @@ public class TvDataUpdater {
 
   void fireTvDataUpdateFinished() {
     synchronized(mListenerList) {
+      MarkedProgramsList.getInstance().revalidatePrograms();
+      
       for (int i = 0; i < mListenerList.size(); i++) {
         TvDataUpdateListener lst = mListenerList.get(i);
         try {
