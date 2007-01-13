@@ -65,7 +65,7 @@ import devplugin.Version;
 public class SimpleMarkerPlugin extends Plugin implements ActionListener {
 
   /** The localizer for this class. */
-  protected static util.ui.Localizer mLocalizer;
+  protected static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SimpleMarkerPlugin.class);
 
   private Program mProg = null;
 
@@ -85,8 +85,10 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
    * Standard contructor for this class.
    */
   public SimpleMarkerPlugin() {
-    mInstance = this;    
-    mLocalizer = util.ui.Localizer.getLocalizerFor(SimpleMarkerPlugin.class);
+    mInstance = this;
+  }
+  
+  public void onActivation() {
     mMarkListVector = new MarkListsVector();
   }
 
@@ -101,7 +103,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   public PluginInfo getInfo() {
     return (new PluginInfo(mLocalizer.msg("name","Marker plugin"), mLocalizer.msg("description",
         "A simple marker plugin (formerly Just_Mark)"), "René Mach", new Version(
-        1, 41, true, "1.4.1"), "GPL"));
+        1, 42, true, "1.4.2"), "GPL"));
   }
 
   public void loadSettings(Properties prop) {
@@ -119,7 +121,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
    * @return The MarkIcons.
    */
   public Icon[] getMarkIconsForProgram(Program p) {
-    if(p.equals(getPluginManager().getExampleProgram()))
+    if(p == null || p.equals(getPluginManager().getExampleProgram()))
       return new Icon[] {mMarkListVector.get(0).getMarkIcon()};
     
     String[] lists = mMarkListVector.getNamesOfListsContainingProgram(p);
