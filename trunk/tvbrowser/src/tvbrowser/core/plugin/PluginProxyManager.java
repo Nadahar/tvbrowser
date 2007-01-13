@@ -97,21 +97,7 @@ public class PluginProxyManager {
    * An activated plugin has loaded its settings and is ready to be used.
    */
   public static int ACTIVATED_STATE = 3;
-
-  /**
-   * The font to use in the context menu for normal plugins.
-   * 
-   * @see #createPluginContextMenu(Program)
-   */
-  // private static Font CONTEXT_MENU_PLAINFONT = new Font("Dialog", Font.PLAIN,
-  // 12);
-  /**
-   * The font to use in the context menu for the default plugin.
-   * 
-   * @see #createPluginContextMenu(Program)
-   */
-  // private static Font CONTEXT_MENU_BOLDFONT = new Font("Dialog", Font.BOLD,
-  // 12);
+  
   /**
    * The list containing all plugins (PluginListItem objects) in the right
    * order.
@@ -378,13 +364,13 @@ public class PluginProxyManager {
     PluginListItem item = getItemForPlugin(plugin);
     if (item != null) {
       activatePlugin(item);
-    }
-        
-    PluginsProgramFilter[] filters = item.getPlugin().getAvailableFilter();
+      
+      PluginsProgramFilter[] filters = item.getPlugin().getAvailableFilter();
     
-    if(filters != null)
-      for(PluginsProgramFilter filter : filters)
-        FilterManagerImpl.getInstance().addFilter(filter);
+      if(filters != null)
+        for(PluginsProgramFilter filter : filters)
+          FilterManagerImpl.getInstance().addFilter(filter);
+    }
   }
 
   /**
@@ -426,21 +412,21 @@ public class PluginProxyManager {
    * @param plugin The plugin to deactivate
    * @throws TvBrowserException If deactivating failed
    */
-  public void deactivatePlugin(PluginProxy plugin) throws TvBrowserException {    
-    PluginsProgramFilter[] filters = FilterList.getInstance().getPluginsProgramFiltersForPlugin(plugin);
-    
-    for(PluginsProgramFilter filter : filters) {
-      if(FilterManagerImpl.getInstance().getCurrentFilter() == filter)
-        FilterManagerImpl.getInstance().setCurrentFilter(FilterList.getInstance().getDefaultFilter());
-      
-      FilterList.getInstance().remove(filter);
-    }
-
-    FilterList.getInstance().store();
-    MainFrame.getInstance().updateFilterMenu();
-
+  public void deactivatePlugin(PluginProxy plugin) throws TvBrowserException {
     PluginListItem item = getItemForPlugin(plugin);
     if (item != null) {
+      PluginsProgramFilter[] filters = FilterList.getInstance().getPluginsProgramFiltersForPlugin(plugin);
+    
+      for(PluginsProgramFilter filter : filters) {
+        if(FilterManagerImpl.getInstance().getCurrentFilter() == filter)
+          FilterManagerImpl.getInstance().setCurrentFilter(FilterList.getInstance().getDefaultFilter());
+      
+        FilterList.getInstance().remove(filter);
+      }
+
+      FilterList.getInstance().store();
+      MainFrame.getInstance().updateFilterMenu();
+
       deactivatePlugin(item, true);
     }
   }
@@ -488,35 +474,19 @@ public class PluginProxyManager {
     final PluginProxy plugin = item.getPlugin();
 
     // Run through all Programs and umark this Plugin
-    new Thread() {
-      public void run() {
-        setPriority(Thread.MIN_PRIORITY);
+    if(plugin != null) {
+      new Thread() {
+        public void run() {
+          setPriority(Thread.MIN_PRIORITY);
 
-        Program[] programs = MarkedProgramsList.getInstance().getMarkedPrograms();
+          Program[] programs = MarkedProgramsList.getInstance().getMarkedPrograms();
 
-        for (int i = 0; i < programs.length; i++)
-          programs[i].unmark(plugin);
-        /*
-         * Channel[] channels =
-         * Plugin.getPluginManager().getSubscribedChannels();
-         * 
-         * Date date = new Date();
-         * 
-         * int daysWithoutData = 0;
-         * 
-         * while (daysWithoutData < 10) { for (int i = 0; i < channels.length;
-         * i++) { Iterator it =
-         * Plugin.getPluginManager().getChannelDayProgram(date, channels[i]);
-         * 
-         * if ((it == null) || (!it.hasNext())) { daysWithoutData++; } else {
-         * daysWithoutData = 0; while ((it != null) && (it.hasNext())) { Program
-         * program = (Program) it.next(); program.unmark(plugin); } }
-         *  }
-         * 
-         * date = date.addDays(1); }
-         */
-      };
-    }.start();
+          for (int i = 0; i < programs.length; i++)
+            if(programs[i] != null)
+              programs[i].unmark(plugin);
+        };
+      }.start();
+    }
 
     // Inform the listeners
     firePluginDeactivated(item.getPlugin(), log);
@@ -963,10 +933,12 @@ public class PluginProxyManager {
    * Calls for every subscribed plugin the handleTvBrowserStartComplete() method,
    * so the plugin knows when the TV-Browser start is finished.
    *
-   * @see PluginProxy#fireTvBrowserStartFinished()
+   * @see PluginProxy#handleTvBrowserStartFinished()
    */
   public void fireTvBrowserStartFinished() {
     synchronized(mPluginList) {
+      ((PluginManagerImpl)PluginManagerImpl.getInstance()).handleTvBrowserStartFinished();
+      
       for (int i = 0; i < mPluginList.size(); i++) {
         PluginListItem item = mPluginList.get(i);
         if (item.getPlugin().isActivated()) {

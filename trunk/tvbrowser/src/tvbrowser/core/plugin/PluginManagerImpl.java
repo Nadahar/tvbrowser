@@ -85,6 +85,8 @@ public class PluginManagerImpl implements PluginManager {
     = Logger.getLogger(PluginManagerImpl.class.getName());
 
   private static PluginManagerImpl mInstance;
+  
+  private boolean mTvBrowserStartFinished = false;
 
   /**
    * Creates a new instance of PluginManagerImpl.
@@ -781,10 +783,17 @@ public class PluginManagerImpl implements PluginManager {
    * system of TV-Browser. You can add or remove filters
    * of you plugin and switch the current used filter.
    * 
-   * @return  The filter manager of TV-Browser.
+   * @return  The filter manager of TV-Browser or <code>null</code> if TV-Browser isn't fully loaded.
    * @since 2.5
    */
   public FilterManager getFilterManager() {
-    return FilterManagerImpl.getInstance();
+    if(mTvBrowserStartFinished)
+      return FilterManagerImpl.getInstance();
+    else
+      return null;
+  }
+  
+  protected void handleTvBrowserStartFinished() {
+    mTvBrowserStartFinished = true;
   }
 }

@@ -418,8 +418,10 @@ public interface PluginManager {
    * With the filter manager you get access to the filter
    * system of TV-Browser. You can add or remove filters
    * of you plugin and switch the current used filter.
-   * 
-   * @return  The filter manager of TV-Browser.
+   * <p>
+   * Don't use this method until TV-Browser is fully loaded.
+   * <p>
+   * @return  The filter manager of TV-Browser or <code>null</code> if TV-Browser isn't fully loaded.
    * @since 2.5
    */
   public FilterManager getFilterManager();
