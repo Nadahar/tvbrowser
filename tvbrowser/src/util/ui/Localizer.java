@@ -291,6 +291,19 @@ public class Localizer {
    * @return a localized message.
    */  
   public String msg(String key, String defaultMsg) {
+    return msg(key,defaultMsg,true);
+  }
+  
+  /**
+   * Gets a localized message.
+   *
+   * @param key The key of the message.
+   * @param defaultMsg The default message. (english)
+   * @param warn If warnings should be logged if key is not found.
+   * @return a localized message.
+   * @since 2.5.1
+   */
+  public String msg(String key, String defaultMsg, boolean warn) {
     if(mBundle != null && (mBundle.getLocale() != Locale.getDefault()))
       loadResouceBundle();
     
@@ -305,7 +318,7 @@ public class Localizer {
     }
     
     if (msg == null) {
-      if (mBundle != null) {
+      if (mBundle != null && warn) {
         // Workaround: There is a bug in the logging mechanism of Java.
         //             When someone tries to log an exception which uses
         //             localization then the logging stucks in a deadlock,
