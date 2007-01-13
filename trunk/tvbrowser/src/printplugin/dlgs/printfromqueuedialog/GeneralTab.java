@@ -76,8 +76,11 @@ public class GeneralTab extends JPanel {
     
     JPanel pn1 = new JPanel(new BorderLayout());
     pn1.add(mProgramListPanel = createProgramListPanel(), BorderLayout.NORTH);
+    JScrollPane scrollPane = new JScrollPane(pn1);
+    scrollPane.getVerticalScrollBar().setUnitIncrement(30);
+    scrollPane.getVerticalScrollBar().setBlockIncrement(80);
     
-    pb.add(new JScrollPane(pn1), cc.xy(1,1));
+    pb.add(scrollPane, cc.xy(1,1));
     pb.add(mEmptyQueueBt = new JButton(new EmptyQueueAction()), cc.xy(1,3));
     pb.add(mEmptyQueueCb = new JCheckBox(mLocalizer.msg("emptyQueue","empty queue after pringing")), cc.xy(1,5));
 
