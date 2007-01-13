@@ -190,7 +190,8 @@ public class DefaultDevice implements DeviceIf {
             cdialog = new CaptureTimeDialog((JFrame)parent, prgTime);
         }
         
-        UiUtilities.centerAndShow(cdialog);
+        if(mConfig.getShowTitleAndTimeDialog())
+          UiUtilities.centerAndShow(cdialog);
         
         prgTime = cdialog.getPrgTime();
         
@@ -235,7 +236,7 @@ public class DefaultDevice implements DeviceIf {
                     JOptionPane.YES_NO_OPTION);
             
             if (ret == JOptionPane.YES_OPTION) {
-                mConfig.getMarkedPrograms(). remove(prgTime);
+                mConfig.getMarkedPrograms().remove(prgTime);
                 return true;
             }
         }
@@ -327,5 +328,23 @@ public class DefaultDevice implements DeviceIf {
         }
         
         return false;
+    }
+    
+    /**
+     * Checks the programs marked by this device if there
+     * were updates or deletings of programs and returns
+     * the deleted programs as array.
+     * 
+     * @return The deleted programs as array.
+     */
+    public Program[] checkProgramsAfterDataUpdateAndGetDeleted() {
+      ProgramTime[] programTimes = mConfig.getMarkedPrograms().getProgramTimes();
+      ArrayList<Program> deleted = new ArrayList<Program>();      
+      
+      for(ProgramTime pTime : programTimes)
+        if(pTime.checkIfRemovedOrUpdateInstead())
+          deleted.add(pTime.getProgram());
+      
+      return deleted.toArray(new Program[deleted.size()]);
     }
 }

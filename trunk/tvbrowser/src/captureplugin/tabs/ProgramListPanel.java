@@ -111,7 +111,7 @@ public class ProgramListPanel extends JPanel {
 
         mProgramTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         mProgramTable.getColumnModel().getColumn(0).setCellRenderer(new DeviceTableCellRenderer());
-        mProgramTable.getColumnModel().getColumn(1).setCellRenderer(new ProgramTableCellRenderer());
+        mProgramTable.getColumnModel().getColumn(1).setCellRenderer(new ProgramTableCellRenderer(CapturePlugin.getInstance().getProgramPanelSettings()));
 
         mProgramTable.addMouseListener(new MouseAdapter() {
 

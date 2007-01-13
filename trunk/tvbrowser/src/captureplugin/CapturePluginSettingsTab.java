@@ -49,6 +49,10 @@ public class CapturePluginSettingsTab implements SettingsTab {
     /** Frame-Owner */
     private JFrame mOwner;
     
+    private CapturePluginPanel mPanel;
+    
+    private int mCurrentPanel = CapturePluginPanel.TAB_PROGRAMLIST;
+    
     /**
      * Creates the SettingsTab
      * @param owner Frame-Owner
@@ -65,9 +69,10 @@ public class CapturePluginSettingsTab implements SettingsTab {
      * @return Panel
      */
     public JPanel createSettingsPanel() {
-        CapturePluginPanel panel = new CapturePluginPanel(mOwner, mCloneData);
-        panel.setBorder(Borders.createEmptyBorder(Sizes.DLUY5,Sizes.DLUX5,Sizes.DLUY5,Sizes.DLUX5));
-        return panel;
+      mPanel = new CapturePluginPanel(mOwner, mCloneData);
+      mPanel.setBorder(Borders.createEmptyBorder(Sizes.DLUY5,Sizes.DLUX5,Sizes.DLUY5,Sizes.DLUX5));
+      mPanel.setSelectedTab(mCurrentPanel);
+      return mPanel;
     }
 
     /**
@@ -90,9 +95,10 @@ public class CapturePluginSettingsTab implements SettingsTab {
      * Save the Settings
      */
     public void saveSettings() {
+        mCurrentPanel = mPanel.getSelectedTabIndex();
         mPlugin.setCapturePluginData(mCloneData);
         mPlugin.updateMarkedPrograms();
-
+        mPanel.savePictureSettings();
     }
 
 }

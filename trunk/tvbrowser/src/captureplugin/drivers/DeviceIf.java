@@ -137,4 +137,12 @@ public interface DeviceIf extends Cloneable {
      * @param stream read data from this stream
      */
     public void readData(ObjectInputStream stream) throws IOException, ClassNotFoundException;
+    
+    /**
+     * Checks the programs if there were updates or deletings
+     * 
+     * @return The deleted programs as array.
+     * @since 2.11
+     */
+    public Program[] checkProgramsAfterDataUpdateAndGetDeleted();
 }

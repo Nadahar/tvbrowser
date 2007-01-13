@@ -112,6 +112,9 @@ public class DeviceConfig {
     /** The TimeZone used */
     private TimeZone mTimeZone = TimeZone.getDefault();
     
+    /** If the dialog for entering the title and time */
+    private boolean mShowTitleAndTimeDialog = true;
+    
     /**
      * Create a empty Config
      */
@@ -145,6 +148,7 @@ public class DeviceConfig {
         setUseTimeZone(data.useTimeZone());
         setTimeZone(data.getTimeZone());
         setId(data.getId());
+        setShowTitleAndTimeDialog(data.getShowTitleAndTimeDialog());
     }
 
     /**
@@ -494,7 +498,7 @@ public class DeviceConfig {
      */
     public void writeData(ObjectOutputStream stream) throws IOException {
 
-        stream.writeInt(9);
+        stream.writeInt(10);
 
         stream.writeObject(getName());
         
@@ -536,6 +540,7 @@ public class DeviceConfig {
         stream.writeObject(mTimeZone);
 
         stream.writeObject(mId);
+        stream.writeBoolean(mShowTitleAndTimeDialog);
     }
 
     /**
@@ -608,6 +613,9 @@ public class DeviceConfig {
         } else {
             mId = IDGenerator.generateUniqueId();
         }
+        if (version > 9) {
+          mShowTitleAndTimeDialog = stream.readBoolean();
+        }
     }
     
     /**
@@ -679,5 +687,19 @@ public class DeviceConfig {
         mId = id;
     }
 
+    /**
+     * Set the show title and time dialog state.
+     * @param value <code>true</code> if the dialog should be shown <code>false</code> otherwise.
+     */
+    public void setShowTitleAndTimeDialog(boolean value) {
+      mShowTitleAndTimeDialog = value;
+    }
 
+    /**
+     * Gets the show title and time dialog state.
+     * @return <code>true</code> if the dialog should be shown, <code>false</code> otherwise.
+     */
+    public boolean getShowTitleAndTimeDialog() {
+      return mShowTitleAndTimeDialog;
+    }
 }

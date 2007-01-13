@@ -32,20 +32,19 @@ import util.paramhandler.ParamDescriptionPanel;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -83,114 +82,74 @@ public class ParameterPanel extends JPanel {
     /**
      * creates a JPanel for getting the parameterformat
      */
-    private void createPanel() {
-        setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("Parameters", "Parameters")));
+    private void createPanel() {try {
+      CellConstraints cc = new CellConstraints();
+      PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref,5dlu,pref:grow,pref,5dlu",
+          "pref,5dlu,pref,55dlu,5dlu,pref,55dlu,5dlu,pref,5dlu,default"),this);
+      pb.setDefaultDialogBorder();
 
-        GridBagConstraints c = new GridBagConstraints();
+      pb.addSeparator(mLocalizer.msg("Parameters", "Parameters"), cc.xyw(1,1,6));
+      pb.addLabel(mLocalizer.msg("Record", "record"), cc.xy(2,3));
+      
 
-        c.insets = new Insets(2, 5, 2, 2);
-
-        // Record
-        JLabel addFormatLabel = new JLabel(mLocalizer.msg("Record", "record"));
-
-        c.anchor = GridBagConstraints.NORTHWEST;
-
-        c.weightx = 0;
-        c.weighty = 0;
-        add(addFormatLabel, c);
-
-        c.weightx = 1;
-        c.weighty = 0.3;
-        c.fill = GridBagConstraints.BOTH;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-
-        mAddFormatTextField.setLineWrap(true);
+      mAddFormatTextField.setLineWrap(true);
         // Consume Enter-Key
-        mAddFormatTextField.addKeyListener(new KeyAdapter() {
+      mAddFormatTextField.addKeyListener(new KeyAdapter() {
+        public void keyPressed(KeyEvent ke) {
+          if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
+            ke.consume();
+          }
+        }
+      });
+      
+      mAddFormatTextField.addFocusListener(new FocusAdapter() {
+        public void focusLost(FocusEvent e) {
+          addFormatChanged();
+        }
+      });
 
-            public void keyPressed(KeyEvent ke) {
-                if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
-                    ke.consume();
-                }
-            }
-        });
-        mAddFormatTextField.addFocusListener(new FocusListener() {
-            public void focusGained(FocusEvent e) {
-            }
+      mAddFormatTextField.setText(mData.getParameterFormatAdd());
 
-            public void focusLost(FocusEvent e) {
-                addFormatChanged();
-            }
-        });
-
-        mAddFormatTextField.setText(mData.getParameterFormatAdd());
-
-        JScrollPane scroll = new JScrollPane(mAddFormatTextField, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+      JScrollPane scroll = new JScrollPane(mAddFormatTextField, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        add(scroll, c);
+      
+      pb.add(scroll, cc.xywh(4,3,2,2));
+      
+      pb.addLabel(Localizer.getLocalization(Localizer.I18N_DELETE), cc.xy(2,6));
 
-        // Remove
-        JLabel remFormatLabel = new JLabel(Localizer.getLocalization(Localizer.I18N_DELETE));
+      mRemFormatTextField.setLineWrap(true);
+      
+      // Consume Enter-Key
+      mRemFormatTextField.addKeyListener(new KeyAdapter() {
+        public void keyPressed(KeyEvent ke) {
+          if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
+            ke.consume();
+          }
+        }
+      });
+      
+      mRemFormatTextField.addFocusListener(new FocusAdapter() {
+        public void focusLost(FocusEvent e) {
+          remFormatChanged();
+        }
+      });
 
-        c = new GridBagConstraints();
-
-        c.insets = new Insets(2, 5, 2, 2);
-        c.anchor = GridBagConstraints.NORTHWEST;
-
-        c.weightx = 0;
-        c.weighty = 0;
-        add(remFormatLabel, c);
-
-        c.weightx = 1;
-        c.weighty = 0.3;
-        c.fill = GridBagConstraints.BOTH;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-
-        mRemFormatTextField.setLineWrap(true);
-        // Consume Enter-Key
-        mRemFormatTextField.addKeyListener(new KeyAdapter() {
-
-            public void keyPressed(KeyEvent ke) {
-                if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
-                    ke.consume();
-                }
-            }
-        });
-        mRemFormatTextField.addFocusListener(new FocusListener() {
-            public void focusGained(FocusEvent e) {
-            }
-
-            public void focusLost(FocusEvent e) {
-                remFormatChanged();
-            }
-        });
-
-        mRemFormatTextField.setText(mData.getParameterFormatRem());
+      mRemFormatTextField.setText(mData.getParameterFormatRem());
             
-        scroll = new JScrollPane(mRemFormatTextField, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        add(scroll, c);
+      scroll = new JScrollPane(mRemFormatTextField, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      pb.add(scroll, cc.xywh(4,6,2,2));
         
-        JPanel addPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        JButton additional = new JButton(mLocalizer.msg("Additional", "Additional Parameters"));
-        additional.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                additionalPressed();
-            }
-        });
-        addPanel.add(additional);
+      
+      JButton additional = new JButton(mLocalizer.msg("Additional", "Additional Parameters"));
+      
+      additional.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          additionalPressed();
+        }
+      });
         
-        GridBagConstraints b = new GridBagConstraints();
-        b.weightx = 1;
-        b.gridwidth = GridBagConstraints.REMAINDER;
-        b.fill = GridBagConstraints.HORIZONTAL;
-        add(addPanel, b);
-        
-        // Description
-
-        c.weighty = 1.0;
-        
-        add(new ParamDescriptionPanel(new CaptureParamLibrary(mData)), c);
+      pb.add(additional, cc.xy(5,9));
+      pb.add(new ParamDescriptionPanel(new CaptureParamLibrary(mData)), cc.xyw(2,11,4));}catch(Exception e){e.printStackTrace();}
     }
 
     /**

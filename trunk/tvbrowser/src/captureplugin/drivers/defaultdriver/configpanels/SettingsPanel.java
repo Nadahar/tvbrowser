@@ -27,7 +27,6 @@ package captureplugin.drivers.defaultdriver.configpanels;
 import captureplugin.drivers.defaultdriver.DeviceConfig;
 import util.ui.Localizer;
 
-import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -38,18 +37,18 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.util.TimeZone;
 
 
@@ -58,13 +57,13 @@ import java.util.TimeZone;
  * 
  * @author bodum
  */
-public class SettingsPanel extends JPanel {
+public class SettingsPanel extends JPanel implements ActionListener, ChangeListener {
 
     /** Translator */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(SettingsPanel.class);
 
     /** GUI */
-    private JSpinner mPreTimeTextField;
+    private JSpinner mPreTimeSpinner;
 
     private JSpinner mPostTimeTextField;
     
@@ -79,6 +78,11 @@ public class SettingsPanel extends JPanel {
     
     /** Settings */
     private DeviceConfig mData;
+    
+    private JCheckBox mCheckReturn, mShowOnError, mShowTitleAndTimeDialog, mOldPrograms,
+                      mUseTime;
+    
+    private JComboBox mTimeZones;
 
     /**
      * Creates the SettingsPanel
@@ -93,305 +97,132 @@ public class SettingsPanel extends JPanel {
      * creates a JPanel for getting the time offsets
      */
     private void createPanel() {
-        
-        setLayout(new GridBagLayout());
-        
-        GridBagConstraints c = new GridBagConstraints();
-        
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 1;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        add(createTimePanel(), c);
-        
-        add(createUserPanel(), c);
-        
-        add(createAdditionalPanel(), c);
-        
-        c.weighty = 1;
-        c.fill = GridBagConstraints.BOTH;
-        add(new JPanel(), c);
-    }
+      CellConstraints cc = new CellConstraints();
+      PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,12dlu,pref:grow,5dlu,pref:grow,5dlu",
+      "pref,5dlu,pref,1dlu,pref,10dlu,pref,5dlu,pref,1dlu,"+
+          "pref,10dlu,pref,5dlu,pref,1dlu,pref,7dlu,pref,pref,pref,pref,7dlu,pref,pref"),this);
+      pb.setDefaultDialogBorder();      
+      
+      mPreTimeSpinner = new JSpinner(new SpinnerNumberModel(mData.getPreTime(), 0, null, 1));
+      mPostTimeTextField = new JSpinner(new SpinnerNumberModel(mData.getPostTime(), 0, null, 1));
+      
+      mUserName.setText(mData.getUserName());
+      mUserPwd.setText(mData.getPassword());
+      
+      mMaxSimult = new JSpinner(new SpinnerNumberModel(mData.getMaxSimultanious(), 1, null, 1));
+      mMaxTimeout = new JSpinner(new SpinnerNumberModel(mData.getTimeOut(), -1, 999, 1));
 
-    
-    /**
-     * Panel with additional Settings
-     * @return JPanel
-     */
-    private JPanel createAdditionalPanel() {
-
-        JPanel panel = new JPanel();
-        panel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("Additional", "Additonal")));
-
-        panel.setLayout(new GridBagLayout());
-        
-        GridBagConstraints c = new GridBagConstraints();
-        
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 1.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.insets = new Insets(2, 5, 2, 2);
-
-        GridBagConstraints lc = new GridBagConstraints();
-        
-        lc.weightx = 0.2;
-        lc.fill = GridBagConstraints.NONE;
-        lc.insets = new Insets(2, 5, 2, 2);
-        lc.anchor = GridBagConstraints.WEST;        
-        
-        final JCheckBox checkReturn = new JCheckBox(mLocalizer.msg("CheckError", "Check if returns Error"));
-        
-        checkReturn.setSelected(mData.useReturnValue());
-        
-        checkReturn.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                mData.setUseReturnValue(checkReturn.isSelected());
-            }
-            
-        });
-        panel.add(checkReturn, c);
-
-        
-        final JCheckBox showOnError = new JCheckBox(mLocalizer.msg("ShowResultOnError","Show Result-Dialog only on Error"));
-        
-        showOnError.setSelected(mData.getDialogOnlyOnError());
-        
-        showOnError.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                mData.setDialogOnlyOnError(showOnError.isSelected());
-            }
-            
-        });
-
-        panel.add(showOnError, c);
-
-        final JCheckBox oldPrograms = new JCheckBox(mLocalizer.msg("OnlyFuture", "Only allow Programs that are in the future"));
-        
-        oldPrograms.setSelected(mData.getOnlyFuturePrograms());
-        
-        oldPrograms.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                mData.setOnlyFuturePrograms(oldPrograms.isSelected());
-            }
-            
-        });
-        
-        panel.add(oldPrograms, c);
-        
-        
-        Integer value = mData.getMaxSimultanious();
-        Integer min = 1;
-        Integer step = 1;
-        SpinnerNumberModel model = new SpinnerNumberModel(value, min, null, step); 
-
-        mMaxSimult = new JSpinner(model);
-
-        mMaxSimult.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                mData.setMaxSimultanious((Integer) mMaxSimult.getValue());
-            }
-            
-        });
-        
-        // Dispache the KeyEvent to the RootPane for Closing the Dialog.
-        // Needed for Java 1.4.
-        mMaxSimult.getEditor().getComponent(0).addKeyListener(new KeyAdapter() {
-          public void keyPressed(KeyEvent e) {
-            if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
-              mMaxSimult.getRootPane().dispatchEvent(e);
-          }
-        });
-
-
-        panel.add(new JLabel(mLocalizer.msg("MaxSimult","Maximum simultaneous recordings")+ ":") , lc);
-        
-        panel.add(mMaxSimult,c);
-        
-        
-        model = new SpinnerNumberModel(mData.getTimeOut(), -1, 999, 1);
-
-        
-        mMaxTimeout = new JSpinner(model);
-        mMaxTimeout.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                mData.setTimeOut((Integer) mMaxTimeout.getValue());
-            }
-            
-        });
-        
-        // Dispache the KeyEvent to the RootPane for Closing the Dialog.
-        // Needed for Java 1.4.
-        mMaxTimeout.getEditor().getComponent(0).addKeyListener(new KeyAdapter() {
-          public void keyPressed(KeyEvent e) {
-            if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
-              mMaxTimeout.getRootPane().dispatchEvent(e);
-          }
-        });
-        
-        panel.add(new JLabel(mLocalizer.msg("Timeout","Wait sec. until Timeout (-1 = disabled)")+ ":") , lc);
-        
-        panel.add(mMaxTimeout,c);
-        
-        final JCheckBox useTime = new JCheckBox(mLocalizer.msg("useSystemTimezone","Use timezone provided by OS"), mData.useTimeZone());
-        
-        panel.add(useTime, c);
-
-        String[] zoneIds = TimeZone.getAvailableIDs();
-        final JComboBox timeZones = new JComboBox(zoneIds);
-        for (int i=0; i<zoneIds.length; i++) {
-          if (zoneIds[i].equals(mData.getTimeZone().getID())) {
-            timeZones.setSelectedIndex(i); break;
-          }
+      mCheckReturn = new JCheckBox(mLocalizer.msg("CheckError", "Check if returns Error"), mData.useReturnValue());
+      mShowOnError = new JCheckBox(mLocalizer.msg("ShowResultOnError","Show Result-Dialog only on Error"), mData.getDialogOnlyOnError());
+      mShowTitleAndTimeDialog = new JCheckBox(mLocalizer.msg("showTitleAndTime", "Show title and time settings dialog"), mData.getShowTitleAndTimeDialog());
+      mOldPrograms = new JCheckBox(mLocalizer.msg("OnlyFuture", "Only allow Programs that are in the future"), mData.getOnlyFuturePrograms());
+      
+      mUseTime = new JCheckBox(mLocalizer.msg("useSystemTimezone","Use timezone provided by OS"), !mData.useTimeZone());
+      
+      String[] zoneIds = TimeZone.getAvailableIDs();
+      mTimeZones = new JComboBox(zoneIds);
+      mTimeZones.setEnabled(mData.useTimeZone());
+      
+      for (int i=0; i<zoneIds.length; i++) {
+        if (zoneIds[i].equals(mData.getTimeZone().getID())) {
+          mTimeZones.setSelectedIndex(i); break;
         }
+      }
+      
+      pb.addSeparator(mLocalizer.msg("TimeSettings", "Timesettings"), cc.xyw(1,1,6));      
+      
+      pb.addLabel(mLocalizer.msg("Earlier", "Number of minutes to start erlier"),cc.xyw(2,3,2));
+      pb.add(mPreTimeSpinner, cc.xy(5,3));
+      
+      pb.addLabel(mLocalizer.msg("Later", "Number of minutes to stop later"),cc.xyw(2,5,2));
+      pb.add(mPostTimeTextField, cc.xy(5,5));      
+      
+      pb.addSeparator(mLocalizer.msg("User", "User"), cc.xyw(1,7,6));      
+      
+      pb.addLabel(mLocalizer.msg("Username", "Username") + ":", cc.xyw(2,9,2));      
+      pb.add(mUserName, cc.xy(5,9));
+      
+      pb.addLabel(mLocalizer.msg("Password", "Password") + ":", cc.xyw(2,11,2));
+      pb.add(mUserPwd, cc.xy(5,11));
+            
+      pb.addSeparator(mLocalizer.msg("Additional", "Additonal"), cc.xyw(1,13,6));
 
-        useTime.setSelected(!mData.useTimeZone());
-        
-        useTime.addChangeListener(new ChangeListener() {
-          public void stateChanged(ChangeEvent e) {
-            mData.setUseTimeZone(!useTime.isSelected());
-            timeZones.setEnabled(!useTime.isSelected());
-          }
-        });
-        
-        timeZones.addItemListener(new ItemListener() {
-          public void itemStateChanged(ItemEvent e) {
-            mData.setTimeZone(TimeZone.getTimeZone((String)timeZones.getSelectedItem()));
-          }
-        });
-        
-        JPanel timeZonePanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0));
-        timeZonePanel.add(new JLabel(mLocalizer.msg("Timezone","Timezone")+": "));
-        timeZonePanel.add(timeZones);
-        
-        panel.add(timeZonePanel, c);
-        timeZones.setEnabled(mData.useTimeZone());
-        
-        return panel;
-    }
+      pb.addLabel(mLocalizer.msg("MaxSimult","Maximum simultaneous recordings")+ ":" , cc.xyw(2,15,2));
+      pb.add(mMaxSimult,cc.xy(5,15));
+      
+      pb.addLabel(mLocalizer.msg("Timeout","Wait sec. until Timeout (-1 = disabled)")+ ":", cc.xyw(2,17,2));      
+      pb.add(mMaxTimeout,cc.xy(5,17));
 
-    private JPanel createUserPanel() {
-        JPanel panel = new JPanel();
-        panel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("User", "User")));
-        
-        panel.setLayout(new GridBagLayout());
-        
-        GridBagConstraints lc = new GridBagConstraints();
-        
-        lc.weightx = 0.2;
-        lc.fill = GridBagConstraints.NONE;
-        lc.insets = new Insets(2, 5, 2, 2);
-        lc.anchor = GridBagConstraints.WEST;
-        
-        GridBagConstraints fc = new GridBagConstraints();
-        
-        fc.weightx = 0.8;
-        fc.fill = GridBagConstraints.HORIZONTAL;
-        fc.gridwidth = GridBagConstraints.REMAINDER;
-        fc.insets = new Insets(2, 2, 2, 2);
-        
-        panel.add(new JLabel(mLocalizer.msg("Username", "Username") + ":"), lc);
-        
-        mUserName.setText(mData.getUserName());
-        mUserName.addFocusListener(new FocusAdapter() {
-            public void focusLost(FocusEvent e) {
-                mData.setUserName(mUserName.getText());
-            }
-        });
-        
-        panel.add(mUserName, fc);
-        
-        panel.add(new JLabel(mLocalizer.msg("Password", "Password") + ":"), lc);
-        
-        mUserPwd.setText(mData.getPassword());
-        mUserPwd.addFocusListener(new FocusAdapter() {
-            public void focusLost(FocusEvent e) {
-                mData.setPassword(new String(mUserPwd.getPassword()));
-            }
-        });
-        
-        panel.add(mUserPwd, fc);
-        
-        return panel;
-    }
+      pb.add(mCheckReturn, cc.xyw(2,19,4));
+      pb.add(mShowOnError, cc.xyw(2,20,4));
+      pb.add(mShowTitleAndTimeDialog, cc.xyw(2,21,4));
+      pb.add(mOldPrograms, cc.xyw(2,22,4));      
+      
+      pb.add(mUseTime, cc.xyw(2,24,4));
+      
+      JPanel timeZonePanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0));
+      timeZonePanel.add(new JLabel(mLocalizer.msg("Timezone","Timezone")+": "));
+      timeZonePanel.add(mTimeZones);
+      
+      pb.add(timeZonePanel, cc.xyw(3,25,3));      
+      
+      // add ChangeListener to the spinners
+      mPreTimeSpinner.addChangeListener(this);
+      mPostTimeTextField.addChangeListener(this);
+      mMaxSimult.addChangeListener(this);
+      mMaxTimeout.addChangeListener(this);
+      
+      // add ActionListener to the check boxes
+      mCheckReturn.addActionListener(this);
+      mShowOnError.addActionListener(this);
+      mShowTitleAndTimeDialog.addActionListener(this);
+      mOldPrograms.addActionListener(this);
+      mUseTime.addActionListener(this);
+      
+      mUserName.addFocusListener(new FocusAdapter() {
+        public void focusLost(FocusEvent e) {
+          mData.setUserName(mUserName.getText());
+        }
+      });
+      
+      mUserPwd.addFocusListener(new FocusAdapter() {
+        public void focusLost(FocusEvent e) {
+          mData.setPassword(new String(mUserPwd.getPassword()));
+        }
+      });
     
+      mTimeZones.addItemListener(new ItemListener() {
+        public void itemStateChanged(ItemEvent e) {
+          mData.setTimeZone(TimeZone.getTimeZone((String)mTimeZones.getSelectedItem()));
+        }
+      });
+    }
 
-    /**
-     * Creates a Panel for Time-Settings
-     * @return Time-Settings Panel
-     */
-    private JPanel createTimePanel() {
-        JPanel panel = new JPanel();
-        panel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("TimeSettings", "Timesettings")));
-        
-        panel.setLayout(new GridBagLayout());
-        
-        GridBagConstraints lc = new GridBagConstraints();
-        
-        lc.weightx = 0.2;
-        lc.fill = GridBagConstraints.NONE;
-        lc.insets = new Insets(2, 5, 2, 2);
-        lc.anchor = GridBagConstraints.WEST;
-        
-        GridBagConstraints fc = new GridBagConstraints();
-        
-        fc.weightx = 0.8;
-        fc.fill = GridBagConstraints.HORIZONTAL;
-        fc.gridwidth = GridBagConstraints.REMAINDER;
-        fc.insets = new Insets(2, 2, 2, 2);
+    public void actionPerformed(ActionEvent e) {
+      if(e.getSource().equals(mCheckReturn))
+        mData.setUseReturnValue(mCheckReturn.isSelected());
+      else if(e.getSource().equals(mShowOnError))
+        mData.setDialogOnlyOnError(mShowOnError.isSelected());
+      else if(e.getSource().equals(mShowTitleAndTimeDialog))
+        mData.setShowTitleAndTimeDialog(mShowTitleAndTimeDialog.isSelected());
+      else if(e.getSource().equals(mOldPrograms))
+        mData.setOnlyFuturePrograms(mOldPrograms.isSelected());
+      else if(e.getSource().equals(mUseTime)) {
+        mData.setUseTimeZone(!mUseTime.isSelected());
+        mTimeZones.setEnabled(!mUseTime.isSelected());
+      }
+      
+    }
 
-        panel.add(new JLabel(mLocalizer.msg("Earlier", "Number of minutes to start erlier")),lc);
-
-        Integer value = mData.getPreTime();
-        Integer min = 0;
-        Integer step = 1;
-
-        mPreTimeTextField = new JSpinner(new SpinnerNumberModel(value, min, null, step));
-
-        mPreTimeTextField.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                mData.setPreTime((Integer) mPreTimeTextField.getValue());
-            }
-            
-        });
-        
-        // Dispache the KeyEvent to the RootPane for Closing the Dialog.
-        // Needed for Java 1.4.
-        mPreTimeTextField.getEditor().getComponent(0).addKeyListener(new KeyAdapter() {
-          public void keyPressed(KeyEvent e) {
-            if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
-              mPreTimeTextField.getRootPane().dispatchEvent(e);
-          }
-        });
-        
-        panel.add(mPreTimeTextField, fc);
-
-        panel.add(new JLabel(mLocalizer.msg("Later", "Number of minutes to stop later")),lc);
-
-        value = mData.getPostTime();
-
-        mPostTimeTextField = new JSpinner(new SpinnerNumberModel(value, min, null, step));
-
-        mPostTimeTextField.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                mData.setPostTime((Integer) mPostTimeTextField.getValue());
-            }
-            
-        });
-
-        // Dispache the KeyEvent to the RootPane for Closing the Dialog.
-        // Needed for Java 1.4.
-        mPostTimeTextField.getEditor().getComponent(0).addKeyListener(new KeyAdapter() {
-          public void keyPressed(KeyEvent e) {
-            if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
-              mPostTimeTextField.getRootPane().dispatchEvent(e);
-          }
-        });
-        
-        panel.add(mPostTimeTextField, fc);
-        
-        return panel;
+    public void stateChanged(ChangeEvent e) {
+      if(e.getSource().equals(mMaxSimult))
+        mData.setMaxSimultanious((Integer) mMaxSimult.getValue());
+      else if(e.getSource().equals(mMaxTimeout))
+        mData.setTimeOut((Integer) mMaxTimeout.getValue());
+      else if(e.getSource().equals(mPreTimeSpinner))
+        mData.setPreTime((Integer) mPreTimeSpinner.getValue());
+      else if(e.getSource().equals(mPostTimeTextField))
+        mData.setPostTime((Integer) mPostTimeTextField.getValue());
     }
 
 }
