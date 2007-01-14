@@ -392,29 +392,28 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
   }
 
    protected JMenuItem[] createPluginMenuItems() {
-     PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
+		PluginProxy[] plugins = PluginProxyManager.getInstance()
+				.getActivatedPlugins();
+		ArrayList<JMenuItem> list = new ArrayList<JMenuItem>();
+		for (PluginProxy plugin : plugins) {
+			ActionMenu actionMenu = plugin.getButtonAction();
+			if (actionMenu != null) {
+				JMenuItem item = createMenuItem(actionMenu);
+				list.add(item);
+				new MenuHelpTextAdapter(item,
+						plugin.getInfo().getDescription(), mLabel);
+			}
+		}
+		JMenuItem[] result = list.toArray(new JMenuItem[list.size()]);
+		Arrays.sort(result, new Comparator<JMenuItem>() {
 
-     Arrays.sort(plugins, new Comparator<PluginProxy>() {
-         public int compare(PluginProxy o1, PluginProxy o2) {
-             return o1.toString().compareTo(o2.toString());
-         }
-     });
-     
-     ArrayList<JMenuItem> list = new ArrayList<JMenuItem>();
-     for (int i = 0; i < plugins.length; i++) {
-       ActionMenu actionMenu = plugins[i].getButtonAction();
+			public int compare(JMenuItem item1, JMenuItem item2) {
+				return item1.getText().compareTo(item2.getText());
+			}
+		});
 
-       if (actionMenu != null) {
-         JMenuItem item = createMenuItem(actionMenu);
-         list.add(item);
-         new MenuHelpTextAdapter(item,plugins[i].getInfo().getDescription(),mLabel);
-       }
-     }     
-     JMenuItem[] result = list.toArray(new JMenuItem[list.size()]);
-     
-     return result;
-   }
-
+		return result;
+	}
 
   public void setPluginViewItemChecked(boolean selected) {
     mPluginOverviewMI.setSelected(selected);
