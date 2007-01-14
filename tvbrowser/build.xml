@@ -109,6 +109,10 @@
            classname="net.charabia.jsmoothgen.ant.JSmoothGen"
            classpath="${deployment.dir}/win/jsmooth/lib/jsmoothgen-ant.jar" />
 
+  <!-- Creates a Windows Executable using launch4j (http://launch4j.sf.net) -->
+	<taskdef name="launch4j"
+	    classname="net.sf.launch4j.ant.Launch4jTask"
+	    classpath="${deployment.dir}/win/launch4j/launch4j.jar:${deployment.dir}/win/launch4j/lib/xstream.jar" />
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 |
 |  Display all targets
@@ -670,8 +674,12 @@
 
   <!-- Creates the windows exe file -->
   <target name="exe" depends="runtime-win">
+<!--
     <jsmoothgen project="${jsmooth.dir}/tvbrowser.jsmooth" skeletonroot="${jsmooth.dir}/skeletons"/>
     <jsmoothgen project="${jsmooth.dir}/tvbrowser_noDD.jsmooth" skeletonroot="${jsmooth.dir}/skeletons"/>
+-->
+  	<launch4j configFile="${deployment.dir}/win/launch4j/tvbrowser.xml" />
+  	<launch4j configFile="${deployment.dir}/win/launch4j/tvbrowser_noDD.xml" />
   </target>
 
 
