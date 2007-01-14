@@ -33,6 +33,7 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
@@ -380,16 +381,21 @@ public class SettingsDialog implements WindowClosingIf {
 
     PluginProxy[] pluginArr = PluginProxyManager.getInstance().getAllPlugins();
 
-    Arrays.sort(pluginArr, new Comparator<PluginProxy>() {
-      public int compare(PluginProxy o1, PluginProxy o2) {
-        return o1.toString().compareTo(o2.toString());
-      }
-    });
-
-    for (int i = 0; i < pluginArr.length; i++) {
-      ConfigPluginSettingsTab tab = new ConfigPluginSettingsTab(pluginArr[i]);
-      mPluginSettingsNode.add(new SettingNode(tab, pluginArr[i].getId()));
+    ArrayList<SettingNode> nodeList=new ArrayList<SettingNode>();
+    for (PluginProxy plugin : pluginArr) {
+    	ConfigPluginSettingsTab tab=new ConfigPluginSettingsTab(plugin);
+    	nodeList.add(new SettingNode(tab,plugin.getId()));
     }
+    SettingNode[] nodes = new SettingNode[nodeList.size()];
+    nodeList.toArray(nodes);
+    Arrays.sort(nodes, new Comparator<SettingNode>() {
+
+		public int compare(SettingNode o1, SettingNode o2) {
+			return o1.getSettingsTab().getTitle().compareTo(o2.getSettingsTab().getTitle());
+		}});
+    for (SettingNode node : nodes) {
+        mPluginSettingsNode.add(node);
+	}
     if (mSelectionTree != null)
       ((DefaultTreeModel) mSelectionTree.getModel()).reload(mPluginSettingsNode);
   }
@@ -502,7 +508,11 @@ public class SettingsDialog implements WindowClosingIf {
       mId = id;
     }
 
-    public SettingNode(SettingsTab settingsTab, String id) {
+    public SettingsTab getSettingsTab() {
+		return mSettingsTab;
+	}
+
+	public SettingNode(SettingsTab settingsTab, String id) {
       this(settingsTab.getIcon(), settingsTab.getTitle(), id);
       mSettingsTab = settingsTab;
     }
