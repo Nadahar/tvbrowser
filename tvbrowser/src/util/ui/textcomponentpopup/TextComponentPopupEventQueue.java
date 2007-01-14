@@ -44,7 +44,7 @@ public class TextComponentPopupEventQueue extends EventQueue {
     MouseEvent me = (MouseEvent) event;
 
     // interested only in popuptriggers
-    if (!me.isPopupTrigger())
+    if (!me.isPopupTrigger() || me.getComponent() == null)
       return;
 
     // me.getComponent(...) retunrs the heavy weight component on which event
