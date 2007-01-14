@@ -109,6 +109,9 @@ public class TVBrowser {
 
   /* If you want to change the version string, add it to the beginning of this array.
      We need the old version strings to import the settings.
+     
+     Please also update the version numbers in 
+     deployment\win\launch4j\tvbrowser*.xml
   */
   /** The string array with the names of the earlier versions. */
   public static final String[] ALL_VERSIONS = new String[]{
