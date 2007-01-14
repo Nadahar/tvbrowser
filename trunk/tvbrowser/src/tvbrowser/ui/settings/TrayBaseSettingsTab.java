@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
+import util.misc.JavaVersion;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -74,7 +75,13 @@ public class TrayBaseSettingsTab implements SettingsTab {
     mMinimizeToTrayChb = new JCheckBox(msg, checked && mOldState);
     mMinimizeToTrayChb.setEnabled(mTrayIsEnabled.isSelected());
     
-    if(System.getProperty("os.name").toLowerCase().startsWith("linux"))
+    boolean kde = false;
+    
+    try {
+      kde = System.getenv("KDE_FULL_SESSION").compareToIgnoreCase("true") == 0;
+    }catch(Exception e) {}
+    
+    if(System.getProperty("os.name").toLowerCase().startsWith("linux") && (JavaVersion.getVersion() < JavaVersion.VERSION_1_6 || kde))
       mMinimizeToTrayChb.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           if(mMinimizeToTrayChb.isSelected())
