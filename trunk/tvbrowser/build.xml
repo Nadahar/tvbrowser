@@ -39,7 +39,6 @@
 
   <property environment="env"/>
   <property file="build.properties"/>
-  <property name="tvbrowser.version.file" value="${tvbrowser.version}"/>
   <property name="programname" value="TV-Browser"/>
   <property name="programname.file" value="tvbrowser"/>
   <property name="classes.dir" value="classes"/>
@@ -678,8 +677,16 @@
     <jsmoothgen project="${jsmooth.dir}/tvbrowser.jsmooth" skeletonroot="${jsmooth.dir}/skeletons"/>
     <jsmoothgen project="${jsmooth.dir}/tvbrowser_noDD.jsmooth" skeletonroot="${jsmooth.dir}/skeletons"/>
 -->
-  	<launch4j configFile="${deployment.dir}/win/launch4j/tvbrowser.xml" />
-  	<launch4j configFile="${deployment.dir}/win/launch4j/tvbrowser_noDD.xml" />
+  	<launch4j configFile="${deployment.dir}/win/launch4j/tvbrowser.xml"
+  		fileversion="${tvbrowser.version.file}" 
+  		productversion="${tvbrowser.version.file}" 
+  		txtfileversion="${tvbrowser.version}" 
+  		txtproductversion="${tvbrowser.version}"/>
+  	<launch4j configFile="${deployment.dir}/win/launch4j/tvbrowser_noDD.xml"  
+  		fileversion="${tvbrowser.version.file}" 
+  		productversion="${tvbrowser.version.file}" 
+  		txtfileversion="${tvbrowser.version}" 
+  		txtproductversion="${tvbrowser.version}"/>
   </target>
 
 
