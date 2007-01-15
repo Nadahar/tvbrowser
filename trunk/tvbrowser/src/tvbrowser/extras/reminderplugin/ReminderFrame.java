@@ -170,7 +170,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     }
     else {
       msg = mLocalizer.msg("soonStarts", "Soon starts");
-      remainingMinutes = IOUtilities.getMinutesAfterMidnight() - progMinutesAfterMidnight;
+      remainingMinutes = progMinutesAfterMidnight - IOUtilities.getMinutesAfterMidnight();
       if (remainingMinutes < 0) {
     	  remainingMinutes = 0;
       }
