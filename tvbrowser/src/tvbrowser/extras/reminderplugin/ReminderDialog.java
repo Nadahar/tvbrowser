@@ -104,7 +104,12 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
     JPanel northPn = new JPanel();
     northPn.setLayout(new BoxLayout(northPn,BoxLayout.Y_AXIS));
 
-    JLabel titleLabel=new JLabel(program.getChannel().getName()+": "+program.getTitle());
+    JLabel channelLabel=new JLabel(program.getChannel().getName());
+    channelLabel.setIcon(UiUtilities.createChannelIcon(program.getChannel().getIcon()));
+    channelLabel.setVerticalTextPosition(JLabel.BOTTOM);
+    channelLabel.setHorizontalTextPosition(JLabel.CENTER);
+
+    JLabel titleLabel=new JLabel(program.getTitle());
     JPanel infoPanel=new JPanel(new GridLayout(2,1));
 
     Font font=titleLabel.getFont();
@@ -116,14 +121,13 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
 
     JPanel headerPanel=new JPanel(new BorderLayout(20,0));
     headerPanel.setBorder(BorderFactory.createEmptyBorder(0,0,10,0));
-    headerPanel.add(titleLabel,BorderLayout.WEST);
+    headerPanel.add(channelLabel,BorderLayout.WEST);
+    headerPanel.add(titleLabel,BorderLayout.CENTER);
     headerPanel.add(infoPanel,BorderLayout.EAST);
-    
     
     northPn.add(headerPanel);
     
     mList=new JComboBox(SMALL_REMIND_MSG_ARR);
-    
     
     String s=settings.getProperty("defaultReminderEntry");
     int reminderTime = 5;
