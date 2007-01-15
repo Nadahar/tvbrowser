@@ -38,10 +38,10 @@
 Name "${PROG_NAME} ${VERSION}"
 
 # The file to write
-OutFile "${PUBLIC_DIR}\${PROG_NAME_FILE}-${VERSION_FILE}.exe"
+OutFile "${PUBLIC_DIR}\${PROG_NAME_FILE}-${VERSION}.exe"
 
 # Use LZMA compression
-SetCompressor lzma
+SetCompressor /SOLID lzma
 
 # The icons of the installer and uninstaller
 !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\murfman-install.ico"
