@@ -85,6 +85,7 @@ import util.ui.ListDragAndDropHandler;
 import util.ui.ListDropAction;
 import util.ui.Localizer;
 import util.ui.ProgramList;
+import util.ui.ProgramPanel;
 import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -303,7 +304,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     mSplitPane.setLeftComponent(scrollPane);
 
     mProgramListModel = new DefaultListModel();
-    mProgramList = new ProgramList(mProgramListModel, FavoritesPlugin.getInstance().getProgramPanelSettings());
+    mProgramList = new ProgramList(mProgramListModel, FavoritesPlugin.getInstance().getProgramPanelSettings(), ProgramPanel.X_AXIS);
     mProgramList.addMouseListeners(null);
     mProgramScrollPane = new JScrollPane(mProgramList);
     mProgramScrollPane.setBorder(null);
