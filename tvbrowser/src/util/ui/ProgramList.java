@@ -167,7 +167,13 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
         setCellRenderer(new ProgramListCellRenderer(settings));
     }
     
-    /**
+    public ProgramList(ListModel programs, ProgramPanelSettings settings, int axis) {
+        super(programs);
+        programs.addListDataListener(this);
+        setCellRenderer(new ProgramListCellRenderer(settings, axis));
+	}
+
+	/**
      * Add a ChangeListener to all Programs for repainting
      */
     public void addNotify() {

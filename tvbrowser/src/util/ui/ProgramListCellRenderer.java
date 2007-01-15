@@ -81,21 +81,25 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
    * @since 2.2.2
    */
   public ProgramListCellRenderer(ProgramPanelSettings settings) {
-    mMainPanel = new JPanel(new BorderLayout());
-    mMainPanel.setOpaque(true);
-    
-    mHeaderLb = new JLabel();
-    mMainPanel.add(mHeaderLb, BorderLayout.NORTH);
-    
-    if(settings == null)
-      settings = new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, 1080, 1380, false, true, 90);
-    
-    mProgramPanel = new ProgramPanel(settings);
-    mMainPanel.add(mProgramPanel, BorderLayout.CENTER);
+	  this(settings, ProgramPanel.Y_AXIS);
   }
 
   
-  /**
+  public ProgramListCellRenderer(ProgramPanelSettings settings, int axis) {
+	    mMainPanel = new JPanel(new BorderLayout());
+	    mMainPanel.setOpaque(true);
+	    
+	    mHeaderLb = new JLabel();
+	    mMainPanel.add(mHeaderLb, BorderLayout.NORTH);
+	    
+	    if(settings == null)
+	      settings = new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, 1080, 1380, false, true, 90);
+	    
+	    mProgramPanel = new ProgramPanel(settings, axis);
+	    mMainPanel.add(mProgramPanel, BorderLayout.CENTER);
+}
+
+/**
    * Return a component that has been configured to display the specified
    * value. That component's <code>paint</code> method is then called to
    * "render" the cell.  If it is necessary to compute the dimensions

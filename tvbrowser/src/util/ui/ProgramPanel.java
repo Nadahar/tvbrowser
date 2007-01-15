@@ -277,7 +277,12 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     setProgram(prog);
   }
 
-  /**
+  public ProgramPanel(ProgramPanelSettings settings, int axis) {
+	  this(settings);
+	  mAxis = axis;
+}
+
+/**
    * (Re)Loads the font settings.
    */
   public static void updateFonts() {
