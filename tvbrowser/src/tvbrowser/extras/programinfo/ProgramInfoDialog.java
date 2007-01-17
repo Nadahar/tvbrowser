@@ -444,7 +444,11 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
         ActionMenu configure = new ActionMenu(action);
         new TaskMenuAction(mFunctionGroup, mProgram, configure, this,
             "id_configure", mFindAsYouType);
-      } else {
+      }
+      else if(p[i].getId().compareTo(ProgramInfo.getInstance().getId()) == 0) {
+    	  // don't show the program info action in the program info dialog
+      }
+      else {
         ActionMenu menu = p[i].getContextMenuActions(mProgram);
         
         if (menu != null && !p[i].equals(ProgramInfo.getInstance()))
