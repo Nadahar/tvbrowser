@@ -767,23 +767,9 @@ public class FavoritesPlugin {
           pNode.setNodeFormatter(new NodeFormatter() {
             public String format(ProgramItem pitem) {
             Program p = pitem.getProgram();
-            Date d = p.getDate();
-            String progdate;
-
-            if (d.equals(Date.getCurrentDate()))
-              progdate = mLocalizer.msg("today", "today");
-            else if (d.equals(Date.getCurrentDate().addDays(1)))
-              progdate = mLocalizer.msg("tomorrow", "tomorrow");
-            else
-              progdate = p.getDateString();
-
-            if(mFavoriteArr[x].getName().compareTo(p.getTitle()) != 0)
-              return (progdate + "  " + p.getTimeString() + "  " + p.getTitle() + "  (" + p.getChannel() + ")");
-            else
-              return (progdate + "  " + p.getTimeString() + "  (" + p.getChannel()+")");
+            return getFavoriteLabel(mFavoriteArr[x], p);
           }
         });
-
       }
       mRootNode.add(n);
     }
@@ -792,7 +778,24 @@ public class FavoritesPlugin {
     ReminderPlugin.getInstance().updateRootNode();
   }
   
-  public ProgramReceiveTarget[] getClientPluginTargetIds() {
+	protected String getFavoriteLabel(Favorite favorite, Program p) {
+		Date d = p.getDate();
+		String progdate;
+
+		if (d.equals(Date.getCurrentDate()))
+		  progdate = mLocalizer.msg("today", "today");
+		else if (d.equals(Date.getCurrentDate().addDays(1)))
+		  progdate = mLocalizer.msg("tomorrow", "tomorrow");
+		else
+		  progdate = p.getDateString();
+
+		if(favorite.getName().compareTo(p.getTitle()) != 0)
+		  return (progdate + "  " + p.getTimeString() + "  " + p.getTitle() + "  (" + p.getChannel() + ")");
+		else
+		  return (progdate + "  " + p.getTimeString() + "  (" + p.getChannel()+")");
+	}
+
+	public ProgramReceiveTarget[] getClientPluginTargetIds() {
     return mClientPluginTargets;
   }
   

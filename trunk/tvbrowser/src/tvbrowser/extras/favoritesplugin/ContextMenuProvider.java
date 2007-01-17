@@ -35,6 +35,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.ui.mainframe.MainFrame;
 
 import javax.swing.*;
 
@@ -79,7 +80,8 @@ public class ContextMenuProvider {
           return new ActionMenu(menu, new ActionMenu[]{
               createExcludeFromFavoritesMenuAction(favArr, program),
               createEditFavoriteMenuAction(favArr),
-              createDeleteFavoriteMenuAction(favArr)
+              createDeleteFavoriteMenuAction(favArr),
+              createRepetitionsMenuAction(favArr)
           });
         }
         else {
@@ -176,6 +178,39 @@ public class ContextMenuProvider {
       return new ActionMenu(menu, subItems);
     }
   }
+
+
+private ActionMenu createRepetitionsMenuAction(final Favorite[] favorites) {
+	ContextMenuAction topMenu = new ContextMenuAction();
+	topMenu.setSmallIcon(getIconFromTheme("actions", "system-search", 16));
+	topMenu.setText(mLocalizer.msg("repetitions", "More programs"));
+	if (favorites.length==1) {
+		return createFavoriteRepetitionMenu(topMenu,favorites[0]);
+	}
+	else {
+		ActionMenu[] menus=new ActionMenu[favorites.length];
+		for (int i=0; i < favorites.length; i++) {
+			ContextMenuAction subItem = new ContextMenuAction(favorites[i].getName());
+			menus[i] = createFavoriteRepetitionMenu(subItem,favorites[i]);
+		}
+		return new ActionMenu(topMenu, menus);
+	}
+}
+
+private ActionMenu createFavoriteRepetitionMenu(ContextMenuAction parent, Favorite favorite) {
+	Program[] programs = favorite.getPrograms();
+	ContextMenuAction[] subItems = new ContextMenuAction[programs.length];
+	for (int i = 0; i < subItems.length; i++) {
+		final Program program = programs[i];
+		subItems[i] = new ContextMenuAction(FavoritesPlugin.getInstance().getFavoriteLabel(favorite,program));
+		subItems[i].setActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MainFrame.getInstance().scrollToProgram(program);
+			}
+		});
+	}
+	return new ActionMenu(parent, subItems);
+}
 
 
   private ActionMenu createDeleteFavoriteMenuAction(final Favorite[] favArr) {
