@@ -33,6 +33,8 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
+import util.ui.ScrollableMenu;
+
 import devplugin.ActionMenu;
 
 /**
@@ -60,12 +62,12 @@ public class MenuUtil {
     }
     JMenuItem result = null;
     if (menu.hasSubItems()) {
-      result = new JMenu(menu.getAction());
+      result = new ScrollableMenu(menu.getAction());
       ActionMenu[] subItems = menu.getSubItems();
       for (int i=0; i<subItems.length; i++) {
         JMenuItem item = createMenuItem(subItems[i]);
         if (item == null) {
-          ((JMenu)result).addSeparator();
+          ((ScrollableMenu)result).addSeparator();
         }
         else {
           result.add(item);
