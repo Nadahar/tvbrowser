@@ -77,12 +77,23 @@ public class ContextMenuProvider {
         ActionMenu blackListAction = createBlackListFavoriteMenuAction(favArr, program); 
         
         if(blackListAction == null) {
-          return new ActionMenu(menu, new ActionMenu[]{
+          ActionMenu repetitions = createRepetitionsMenuAction(favArr, program);
+          
+          if(repetitions == null) {
+            return new ActionMenu(menu, new ActionMenu[]{
+              createExcludeFromFavoritesMenuAction(favArr, program),
+              createEditFavoriteMenuAction(favArr),
+              createDeleteFavoriteMenuAction(favArr)
+            });
+          }
+          else {
+            return new ActionMenu(menu, new ActionMenu[]{
               createExcludeFromFavoritesMenuAction(favArr, program),
               createEditFavoriteMenuAction(favArr),
               createDeleteFavoriteMenuAction(favArr),
-              createRepetitionsMenuAction(favArr)
-          });
+              repetitions
+            });            
+          }
         }
         else {
           return new ActionMenu(menu, new ActionMenu[]{
@@ -179,39 +190,54 @@ public class ContextMenuProvider {
     }
   }
 
+  private ActionMenu createRepetitionsMenuAction(final Favorite[] favorites, Program p) {
+    ContextMenuAction topMenu = new ContextMenuAction();
+    topMenu.setSmallIcon(getIconFromTheme("actions", "system-search", 16));
+    topMenu.setText(mLocalizer.msg("repetitions", "More programs"));
+    
+    if (favorites.length==1) {
+      return createFavoriteRepetitionMenu(topMenu,favorites[0], p);
+    }
+    else {
+      ArrayList<ActionMenu> menus = new ArrayList<ActionMenu>();
+      
+      for (int i=0; i < favorites.length; i++) {
+        ContextMenuAction subItem = new ContextMenuAction(favorites[i].getName());
+        ActionMenu menu = createFavoriteRepetitionMenu(subItem,favorites[i], p);
+        
+        if(menu != null)
+          menus.add(menu);
+      }
+      
+      return menus.isEmpty() ? null : new ActionMenu(topMenu, menus.toArray(new ActionMenu[menus.size()]));
+    }
+  }
 
-private ActionMenu createRepetitionsMenuAction(final Favorite[] favorites) {
-	ContextMenuAction topMenu = new ContextMenuAction();
-	topMenu.setSmallIcon(getIconFromTheme("actions", "system-search", 16));
-	topMenu.setText(mLocalizer.msg("repetitions", "More programs"));
-	if (favorites.length==1) {
-		return createFavoriteRepetitionMenu(topMenu,favorites[0]);
-	}
-	else {
-		ActionMenu[] menus=new ActionMenu[favorites.length];
-		for (int i=0; i < favorites.length; i++) {
-			ContextMenuAction subItem = new ContextMenuAction(favorites[i].getName());
-			menus[i] = createFavoriteRepetitionMenu(subItem,favorites[i]);
-		}
-		return new ActionMenu(topMenu, menus);
-	}
-}
-
-private ActionMenu createFavoriteRepetitionMenu(ContextMenuAction parent, Favorite favorite) {
-	Program[] programs = favorite.getPrograms();
-	ContextMenuAction[] subItems = new ContextMenuAction[programs.length];
-	for (int i = 0; i < subItems.length; i++) {
-		final Program program = programs[i];
-		subItems[i] = new ContextMenuAction(FavoritesPlugin.getInstance().getFavoriteLabel(favorite,program));
-		subItems[i].setActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				MainFrame.getInstance().scrollToProgram(program);
-			}
-		});
-	}
-	return new ActionMenu(parent, subItems);
-}
-
+  private ActionMenu createFavoriteRepetitionMenu(ContextMenuAction parent, Favorite favorite, Program p) {
+    Program[] programs = favorite.getPrograms();
+  
+    if(programs == null || (programs.length == 1 && programs[0].equals(p)))
+      return null;
+    
+    ArrayList<ContextMenuAction> subItems = new ArrayList<ContextMenuAction>();
+  
+    for (int i = 0; i < programs.length; i++) {
+      final Program program = programs[i];
+    
+      if(!program.isExpired() && !program.equals(p)) {
+        ContextMenuAction subItem = new ContextMenuAction(FavoritesPlugin.getInstance().getFavoriteLabel(favorite,program));
+        subItem.setActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            MainFrame.getInstance().scrollToProgram(program);
+          }
+        });
+      
+        subItems.add(subItem);
+      }
+    }
+  
+    return new ActionMenu(parent, subItems.toArray(new ContextMenuAction[subItems.size()]));
+  }
 
   private ActionMenu createDeleteFavoriteMenuAction(final Favorite[] favArr) {
       if (favArr.length == 1) {
