@@ -778,7 +778,11 @@ public class FavoritesPlugin {
     ReminderPlugin.getInstance().updateRootNode();
   }
   
-	protected String getFavoriteLabel(Favorite favorite, Program p) {
+	protected String getFavoriteLabel(Favorite favorite, Program program) {
+		return getFavoriteLabel(favorite, program, null);
+	}
+	
+	protected String getFavoriteLabel(Favorite favorite, Program p, Channel currentChannel) {
 		Date d = p.getDate();
 		String progdate;
 
@@ -789,10 +793,20 @@ public class FavoritesPlugin {
 		else
 		  progdate = p.getDateString();
 
+		String description = progdate + "  " + p.getTimeString(); 
 		if(favorite.getName().compareTo(p.getTitle()) != 0)
-		  return (progdate + "  " + p.getTimeString() + "  " + p.getTitle() + "  (" + p.getChannel() + ")");
-		else
-		  return (progdate + "  " + p.getTimeString() + "  (" + p.getChannel()+")");
+			description = description + "  " + p.getTitle();
+		String episode = p.getTextField(ProgramFieldType.EPISODE_TYPE);
+		if (episode != null && (! episode.trim().equalsIgnoreCase(""))) {
+			if (episode.length()<=3) {
+				episode = ProgramFieldType.EPISODE_TYPE.getLocalizedName() + " " + episode;
+			}
+			description = description + ": " + episode ;
+		}
+		if (null == currentChannel || currentChannel != p.getChannel()) {
+			description = description + "  (" + p.getChannel() + ")";
+		}
+		return description;
 	}
 
 	public ProgramReceiveTarget[] getClientPluginTargetIds() {
