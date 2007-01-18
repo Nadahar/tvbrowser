@@ -225,7 +225,7 @@ public class ContextMenuProvider {
       final Program program = programs[i];
     
       if(!program.isExpired() && !program.equals(p)) {
-        ContextMenuAction subItem = new ContextMenuAction(FavoritesPlugin.getInstance().getFavoriteLabel(favorite,program));
+        ContextMenuAction subItem = new ContextMenuAction(FavoritesPlugin.getInstance().getFavoriteLabel(favorite, program, p.getChannel()));
         subItem.setActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             MainFrame.getInstance().scrollToProgram(program);
