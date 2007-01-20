@@ -431,6 +431,7 @@ public interface PluginManager {
    * Gets the available global program configurations.
    * <p>
    * @return The available global program configurations.
+   * @since 2.5.1
    */
   public ProgramConfiguration[] getAvailableGlobalProgramConfigurations();
 }
