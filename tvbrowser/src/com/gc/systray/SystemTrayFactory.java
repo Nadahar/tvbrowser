@@ -22,7 +22,7 @@ public class SystemTrayFactory {
       kde = System.getenv("KDE_FULL_SESSION").compareToIgnoreCase("true") == 0;
     }catch(Exception e) {}
     
-    if (osname.startsWith("windows")) {
+    if (osname.startsWith("windows") && !osname.contains("vista")) {
       return new WinSystemTray();
     } else if (osname.startsWith("linux") && kde) {
       return new X11SystemTray();
