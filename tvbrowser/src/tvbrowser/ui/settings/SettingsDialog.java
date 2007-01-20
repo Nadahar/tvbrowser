@@ -308,6 +308,7 @@ public class SettingsDialog implements WindowClosingIf {
     generalSettings.add(new SettingNode(new LookAndFeelSettingsTab(), SettingsItem.LOOKANDFEEL));
     generalSettings.add(new SettingNode(new ContextmenuSettingsTab(), SettingsItem.CONTEXTMENU));
     generalSettings.add(new SettingNode(new MausSettingsTab()));
+    generalSettings.add(new SettingNode(new ProgramConfigurationsSettings(), SettingsItem.PLUGINPROGRAMFORMAT));
 
     generalSettings.add(new SettingNode(new StartupSettingsTab(), SettingsItem.STARTUP));
     generalSettings.add(new SettingNode(new CloseSettingsTab()));

@@ -51,6 +51,7 @@ import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MarkedProgramsList;
 import tvdataservice.MutableProgram;
 import util.exc.TvBrowserException;
+import util.program.ProgramConfiguration;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
@@ -795,5 +796,14 @@ public class PluginManagerImpl implements PluginManager {
   
   protected void handleTvBrowserStartFinished() {
     mTvBrowserStartFinished = true;
+  }
+  
+  /**
+   * Gets the available global program configurations.
+   * <p>
+   * @return The available global program configurations.
+   */
+  public ProgramConfiguration[] getAvailableGlobalProgramConfigurations() {
+    return ProgramConfigurationManager.getInstance().getAvailableProgramConfigurations();
   }
 }
