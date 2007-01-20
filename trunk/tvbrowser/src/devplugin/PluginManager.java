@@ -29,6 +29,7 @@ package devplugin;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvdataservice.TvDataService;
 import util.exc.TvBrowserException;
+import util.program.ProgramConfiguration;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
@@ -425,4 +426,11 @@ public interface PluginManager {
    * @since 2.5
    */
   public FilterManager getFilterManager();
+  
+  /**
+   * Gets the available global program configurations.
+   * <p>
+   * @return The available global program configurations.
+   */
+  public ProgramConfiguration[] getAvailableGlobalProgramConfigurations();
 }
