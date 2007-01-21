@@ -55,7 +55,9 @@ import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
 import util.ui.ChannelContextMenu;
 import util.ui.UiUtilities;
+import devplugin.Date;
 import devplugin.Plugin;
+import devplugin.ProgressMonitor;
 import devplugin.SettingsItem;
 
 public class ToolBar extends JToolBar {
@@ -468,4 +470,8 @@ public class ToolBar extends JToolBar {
   public boolean useBigIcons() {
     return mIconSize == ICON_BIG;
   }
+
+public void dateChanged(Date date, ProgressMonitor monitor, Runnable callback) {
+	mModel.dateChanged(date, monitor, callback);
+}
 }

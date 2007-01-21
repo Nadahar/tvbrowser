@@ -28,10 +28,14 @@ package tvbrowser.ui.mainframe.toolbar;
 
 import javax.swing.Action;
 
+import devplugin.Date;
+import devplugin.ProgressMonitor;
+
 
 public interface ToolBarModel {
 
   public Action[] getActions();
   public Action[] getAvailableActions();
+  public void dateChanged(Date date, ProgressMonitor monitor, Runnable callback);
     
 }

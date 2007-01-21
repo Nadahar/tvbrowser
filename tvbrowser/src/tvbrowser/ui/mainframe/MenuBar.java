@@ -45,6 +45,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 
 import tvbrowser.core.ChannelList;
+import tvbrowser.core.DateListener;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.filters.FilterList;
@@ -67,10 +68,11 @@ import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.ProgramFilter;
+import devplugin.ProgressMonitor;
 import devplugin.SettingsItem;
 
 
-public abstract class MenuBar extends JMenuBar implements ActionListener {
+public abstract class MenuBar extends JMenuBar implements ActionListener, DateListener {
   
     /** The localizer for this class. */
     public static final util.ui.Localizer mLocalizer
@@ -518,6 +520,11 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
      new MenuHelpTextAdapter(mWebsiteMI,mLocalizer.msg("website.tvbrowser",""),mLabel); 
      new MenuHelpTextAdapter(mConfigAssistantMI,mLocalizer.msg("menuinfo.configAssistant",""),mLabel);
    }
+
+public void dateChanged(Date date, ProgressMonitor monitor, Runnable callback) {
+    mPreviousDayMI.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(-1)));
+    mNextDayMI.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(1)));
+}
 
 
 
