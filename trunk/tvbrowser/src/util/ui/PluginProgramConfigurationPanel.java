@@ -61,7 +61,7 @@ public class PluginProgramConfigurationPanel extends JPanel implements ActionLis
     CellConstraints cc = new CellConstraints();
     PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default:grow,5dlu","pref,fill:default:grow,5dlu,pref,10dlu,pref"), this);
     
-    mDefaultLocalFormating = mDefaultLocalFormating == null ? new LocalPluginProgramFormating("Clipboard - default","{title}","{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n","UTF-8") : mDefaultLocalFormating;
+    mDefaultLocalFormating = (defaultLocalFormating == null) ? new LocalPluginProgramFormating("Plugin - Default","{title}","{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n","UTF-8") : defaultLocalFormating;
     mShowTitleSetting = showTitleSetting; 
     mShowEncodingSetting = showEncodingSetting;
     
