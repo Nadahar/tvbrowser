@@ -1061,6 +1061,12 @@ public class MainFrame extends JFrame implements DateListener {
     changeDate(date, monitor, callback);
     super.setTitle(TVBrowser.MAINWINDOW_TITLE + " - "
         + date.getLongDateString());
+    if (mMenuBar != null) {
+        mMenuBar.dateChanged(date, monitor, callback);
+    }
+    if (mToolBar != null) {
+    	mToolBar.dateChanged(date, monitor, callback);
+    }
   }
 
   public void runUpdateThread(final int daysToDownload,

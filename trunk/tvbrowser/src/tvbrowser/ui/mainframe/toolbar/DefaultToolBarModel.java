@@ -46,6 +46,7 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import tvbrowser.TVBrowser;
+import tvbrowser.core.DateListener;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.icontheme.IconLoader;
@@ -62,9 +63,10 @@ import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
+import devplugin.ProgressMonitor;
 import devplugin.SettingsItem;
 
-public class DefaultToolBarModel implements ToolBarModel, ActionListener {
+public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateListener {
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(DefaultToolBarModel.class);
@@ -643,4 +645,9 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     });
     return item;
   }
+
+public void dateChanged(Date date, ProgressMonitor monitor, Runnable callback) {
+    mGoToPreviousDayAction.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(-1)));
+    mGoToNextDayAction.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(1)));
+}
 }
