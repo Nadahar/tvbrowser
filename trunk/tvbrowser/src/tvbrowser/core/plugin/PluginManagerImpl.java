@@ -41,6 +41,7 @@ import tvbrowser.core.TvDataBase;
 import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.core.plugin.programformating.GlobalPluginProgramFormatingManager;
 import tvbrowser.core.search.booleansearch.BooleanSearcher;
 import tvbrowser.core.search.booleansearch.ParserException;
 import tvbrowser.core.search.regexsearch.RegexSearcher;
@@ -51,7 +52,7 @@ import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MarkedProgramsList;
 import tvdataservice.MutableProgram;
 import util.exc.TvBrowserException;
-import util.program.ProgramConfiguration;
+import util.program.AbstractPluginProgramFormating;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
@@ -804,7 +805,7 @@ public class PluginManagerImpl implements PluginManager {
    * @return The available global program configurations.
    * @since 2.5.1
    */
-  public ProgramConfiguration[] getAvailableGlobalProgramConfigurations() {
-    return ProgramConfigurationManager.getInstance().getAvailableProgramConfigurations();
+  public AbstractPluginProgramFormating[] getAvailableGlobalPuginProgramFormatings() {
+    return GlobalPluginProgramFormatingManager.getInstance().getAvailableGlobalPluginProgramFormatings();
   }
 }

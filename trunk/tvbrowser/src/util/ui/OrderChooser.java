@@ -32,6 +32,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -40,6 +41,7 @@ import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.event.ListSelectionListener;
 
 import com.jgoodies.forms.layout.Sizes;
 
@@ -324,5 +326,84 @@ public class OrderChooser extends JPanel implements ListDropAction{
     mDeSelectAllBt.setEnabled(value);
     mScrollPane.getVerticalScrollBar().setEnabled(value);
     mScrollPane.setWheelScrollingEnabled(value);
+  }
+  
+  /**
+   * Set the selection mode of the list.
+   * 
+   * @param value The new selection mode.
+   * @since 2.5.1
+   */
+  public void setSelectionMode(int value) {
+    mList.setSelectionMode(value);
+  }
+  
+  /**
+   * Add a list selection listener to the list.
+   * 
+   * @param listener The listener to add.
+   * @since 2.5.1
+   */
+  public void addListSelectionListener(ListSelectionListener listener) {
+    mList.addListSelectionListener(listener);
+  }
+  
+  public void addMouseListener(MouseListener listener) {
+    mList.addMouseListener(listener);
+  }
+  
+  /**
+   * Refreshes the list UI.
+   * @since 2.5.1
+   */
+  public void refreshList() {
+    mList.updateUI();
+  }
+  
+  /**
+   * Add a value to the list.
+   * 
+   * @param value
+   * @since 2.5.1
+   */
+  public void addElement(Object value) {
+    SelectableItem item = new SelectableItem(value,true);
+    mListModel.addElement(item);
+    mList.updateUI();
+  }
+  
+  /**
+   * Remove the value at the given index
+   * 
+   * @param index The index to remove.
+   * @since 2.5.1
+   */
+  public void removeElementAt(int index) {
+    mListModel.removeElementAt(index);
+    mList.updateUI();
+  }
+  
+  /**
+   * Gets the selected index of the list.
+   * 
+   * @return The selected index of the list.
+   * @since 2.5.1
+   */
+  public int getSelectedIndex() {
+    return mList.getSelectedIndex();
+  }
+  
+  /**
+   * Gets the selected value of this list.
+   * 
+   * @return The selected value of this list.
+   * @since 2.5.1
+   */
+  public Object getSelectedValue() {
+    if(mList.getSelectedValue() != null) {
+      SelectableItem item = (SelectableItem)mList.getSelectedValue();
+      return item.getItem();
+    }
+    return null;
   }
 }

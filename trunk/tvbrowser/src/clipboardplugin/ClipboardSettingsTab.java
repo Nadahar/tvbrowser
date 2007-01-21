@@ -25,8 +25,6 @@
  */
 package clipboardplugin;
 
-import java.util.Properties;
-
 import javax.swing.Icon;
 import javax.swing.JPanel;
 
@@ -34,8 +32,8 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-import util.paramhandler.ParamInputField;
 import util.ui.Localizer;
+import util.ui.PluginProgramConfigurationPanel;
 import devplugin.SettingsTab;
 
 /**
@@ -47,22 +45,17 @@ public class ClipboardSettingsTab implements SettingsTab {
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ClipboardSettingsTab.class);
 
-  /** Settings to use */
-  private Properties mSettings;
-
-  /** Text-Area for the Parameters */
-  private ParamInputField mParamText;
-
   /** Plugin */
   private ClipboardPlugin mPlugin;
+  
+  private PluginProgramConfigurationPanel mConfigPanel;
   
   /**
    * Creates the SettingsTab
    * 
-   * @param setttings Settings to use
+   * @param plugin The plugin instance.
    */
-  public ClipboardSettingsTab(ClipboardPlugin plugin, Properties setttings) {
-    mSettings = setttings;
+  public ClipboardSettingsTab(ClipboardPlugin plugin) {
     mPlugin = plugin;
   }
 
@@ -72,13 +65,12 @@ public class ClipboardSettingsTab implements SettingsTab {
    * @return Settings-Panel
    */
   public JPanel createSettingsPanel() {
-    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,fill:default:grow,5dlu","5dlu,pref,fill:default:grow,5dlu"));
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,fill:default:grow,5dlu","5dlu,fill:default:grow,5dlu"));
     CellConstraints cc = new CellConstraints();
     
-    pb.addLabel(mLocalizer.msg("createText","Text to create for each Program") + ":", cc.xy(2,2));
+    mConfigPanel = new PluginProgramConfigurationPanel(mPlugin.getSelectedPluginProgramFormatings(), mPlugin.getAvailableLocalPluginProgramFormatings(), ClipboardPlugin.getDefaultFormating(),false,false);
     
-    mParamText = new ParamInputField(mSettings.getProperty("ParamToUse", ClipboardPlugin.DEFAULT_PARAM));
-    pb.add(mParamText, cc.xy(2,3));
+    pb.add(mConfigPanel, cc.xyw(1,2,2));
 
     return pb.getPanel();
   }
@@ -87,7 +79,8 @@ public class ClipboardSettingsTab implements SettingsTab {
    * Save the Settings
    */
   public void saveSettings() {
-    mSettings.setProperty("ParamToUse", mParamText.getText());
+    mPlugin.setAvailableLocalPluginProgramFormatings(mConfigPanel.getAvailableLocalPluginProgramFormatings());
+    mPlugin.setSelectedPluginProgramFormatings(mConfigPanel.getSelectedPluginProgramFormatings());
   }
 
   /**
