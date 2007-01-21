@@ -180,9 +180,10 @@ public class ClipboardPlugin extends Plugin {
   public void loadSettings(Properties settings) {
     if(settings != null && settings.containsKey("ParamToUse")) {
       mConfigs = new AbstractPluginProgramFormating[1];
-      mConfigs[0] = new LocalPluginProgramFormating(mLocalizer.msg("pluginName","CliboardPlugin") + " - " + mLocalizer.msg("Standard","default"),"{title}",settings.getProperty("ParamToUse"),"UTF-8");
+      mConfigs[0] = new LocalPluginProgramFormating(mLocalizer.msg("defaultName","CliboardPlugin - Default"),"{title}",settings.getProperty("ParamToUse"),"UTF-8");
       mLocalFormatings = new LocalPluginProgramFormating[1];
       mLocalFormatings[0] = (LocalPluginProgramFormating)mConfigs[0];
+      DEFAULT_CONFIG = mLocalFormatings[0];
     }
   }
 

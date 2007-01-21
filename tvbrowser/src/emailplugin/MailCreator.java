@@ -32,6 +32,7 @@ import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.misc.OperatingSystem;
 import util.paramhandler.ParamParser;
+import util.program.AbstractPluginProgramFormating;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -58,9 +59,12 @@ import java.util.Properties;
  * 
  * @author bodum
  */
-public class MailCreator {
+public class MailCreator {  
   /** Settings for this Plugin */
   private Properties mSettings;
+  
+  private AbstractPluginProgramFormating mFormating;
+  
   /** The Plugin */
   private EMailPlugin mPlugin;
   /** Localizer */
@@ -70,10 +74,12 @@ public class MailCreator {
    * Create the MailCreator 
    * @param plugin Plugin to use
    * @param settings Settings for this MailCreator
+   * @param formating The program formating to use.
    */
-  public MailCreator(EMailPlugin plugin, Properties settings) {
+  public MailCreator(EMailPlugin plugin, Properties settings, AbstractPluginProgramFormating formating) {
     mPlugin = plugin;
     mSettings = settings;
+    mFormating = formating;
   }
 
   /**
@@ -83,7 +89,7 @@ public class MailCreator {
    * @param program Programs to show in the Mail
    */
   void createMail(Frame parent, Program[] program) {
-    String param = mSettings.getProperty("paramToUse", EMailPlugin.DEFAULT_PARAMETER);
+    String param = mFormating.getContentValue();//mSettings.getProperty("paramToUse", EMailPlugin.DEFAULT_PARAMETER);
     StringBuffer result = new StringBuffer();
     ParamParser parser = new ParamParser();
 
@@ -163,7 +169,7 @@ public class MailCreator {
    * @throws UnsupportedEncodingException Problems during encoding
    */
   private String encodeString(String string) throws UnsupportedEncodingException {
-    return URLEncoder.encode(string.trim(), mSettings.getProperty("encoding", "UTF-8")).replaceAll("\\+",
+    return URLEncoder.encode(string.trim(), mFormating.getEncodingValue()/*.getProperty("encoding", "UTF-8"))*/).replaceAll("\\+",
         "%20");
   }
 

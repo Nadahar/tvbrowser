@@ -25,7 +25,6 @@
 package emailplugin;
 
 import java.awt.BorderLayout;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -34,16 +33,15 @@ import java.util.Properties;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import util.misc.OperatingSystem;
 import util.ui.Localizer;
+import util.ui.PluginProgramConfigurationPanel;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.layout.CellConstraints;
@@ -84,6 +82,8 @@ public class EMailSettingsTab implements SettingsTab {
   /** Application-Label */
   private JLabel mAppLabel;
   
+  private PluginProgramConfigurationPanel mConfigPanel;
+  
   /**
    * Creates the SettingsTab
    * 
@@ -104,7 +104,7 @@ public class EMailSettingsTab implements SettingsTab {
     final JPanel configPanel = new JPanel();
 
     FormLayout layout = new FormLayout("5dlu, pref, 3dlu, pref:grow, fill:75dlu, 3dlu, pref, 5dlu",
-        "5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu");
+        "5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 10dlu, fill:default:grow, 3dlu");
     configPanel.setLayout(layout);
 
     CellConstraints cc = new CellConstraints();
@@ -159,16 +159,10 @@ public class EMailSettingsTab implements SettingsTab {
     });
     
     setInputState();
-    
-    JButton extended = new JButton(mLocalizer.msg("extended", "Extended Settings"));
-    
-    extended.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        showExtendedDialog(configPanel);
-      }
-    });
 
-    configPanel.add(extended, cc.xyw(5, 10, 3));
+    mConfigPanel = new PluginProgramConfigurationPanel(mPlugin.getSelectedPluginProgramFormatings(), mPlugin.getAvailableLocalPluginProgramFormatings(), EMailPlugin.getDefaultFormating(),false,true);
+
+    configPanel.add(mConfigPanel, cc.xyw(1, 10, 7));
     
     JPanel panel = new JPanel(new BorderLayout());
     
@@ -187,24 +181,6 @@ public class EMailSettingsTab implements SettingsTab {
     mHelpText.setEnabled(!mDefaultApplication.isSelected());
     mParameterLabel.setEnabled(!mDefaultApplication.isSelected());
     mAppLabel.setEnabled(!mDefaultApplication.isSelected());
-  }
-  
-  /**
-   * Shows the Dialog with the extended Settings
-   * @param panel Parent-Panel
-   */
-  private void showExtendedDialog(JPanel panel) {
-    ExtendedDialog dialog;
-    
-    Window comp = UiUtilities.getBestDialogParent(panel);
-    
-    if (comp instanceof JFrame) {
-      dialog = new ExtendedDialog((JFrame) comp, mSettings);
-    } else {
-      dialog = new ExtendedDialog((JDialog) comp, mSettings);
-    }
-    
-    UiUtilities.centerAndShow(dialog);
   }
   
   /**
@@ -231,6 +207,9 @@ public class EMailSettingsTab implements SettingsTab {
     } else {
       mSettings.put("defaultapp", "false");
     }
+    
+    mPlugin.setAvailableLocalPluginProgramFormatings(mConfigPanel.getAvailableLocalPluginProgramFormatings());
+    mPlugin.setSelectedPluginProgramFormatings(mConfigPanel.getSelectedPluginProgramFormatings());
   }
 
   /*
