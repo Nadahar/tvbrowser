@@ -56,7 +56,9 @@ import devplugin.Version;
  * A User can configure his favorite Search-Engines and search for the given Movie
  */
 public class WebPlugin extends Plugin {
-  /** Localizer */
+  private static final String CHANNEL_SITE = "channelSite";
+
+/** Localizer */
   private static final Localizer mLocalizer = Localizer
       .getLocalizerFor(WebPlugin.class);
 
@@ -69,7 +71,8 @@ public class WebPlugin extends Plugin {
       new WebAddress("Altavista", "http://de.altavista.com/web/results?q=%22{urlencode(title, \"UTF-8\")}%22", null, false, true),
       new WebAddress("Yahoo", "http://search.yahoo.com/search?p={urlencode(title, \"ISO-8859-1\")}", null, false, true),
       new WebAddress("Wikipedia (DE)", "http://de.wikipedia.org/wiki/Spezial:Search?search={urlencode(title, \"ISO-8859-1\")}", null, false, Locale.getDefault().equals(Locale.GERMAN)),
-      new WebAddress("Wikipedia (EN)", "http://en.wikipedia.org/wiki/Spezial:Search?search={urlencode(title, \"ISO-8859-1\")}", null, false, Locale.getDefault().equals(Locale.ENGLISH))
+      new WebAddress("Wikipedia (EN)", "http://en.wikipedia.org/wiki/Spezial:Search?search={urlencode(title, \"ISO-8859-1\")}", null, false, Locale.getDefault().equals(Locale.ENGLISH)),
+      new WebAddress(mLocalizer.msg("channelPageGeneral", "Open website of channel"),CHANNEL_SITE,null,false,true)
   };
 
   /** The WebAddresses */
@@ -199,7 +202,15 @@ public class WebPlugin extends Plugin {
 
     for (int i = 0; i < mAddresses.size(); i++) {
 
-      final WebAddress adr = mAddresses.get(i);
+    	WebAddress address = mAddresses.get(i);
+    	String actionName = mLocalizer.msg("SearchOn", "Search on ") + " " + address.getName();
+
+    	//create adress of channel on the fly
+    	if (address.getUrl().equals(CHANNEL_SITE)) {
+    		address = new WebAddress(mLocalizer.msg("channelPage", "Open page of {0}",program.getChannel().getName()),program.getChannel().getWebpage(),null,false,address.isActive());
+    		actionName = address.getName();
+    	}
+      final WebAddress adr = address;
 
       if (adr.isActive()) {
         AbstractAction action = new AbstractAction() {
@@ -208,7 +219,7 @@ public class WebPlugin extends Plugin {
             openUrl(program, adr);
           }
         };
-        action.putValue(Action.NAME, mLocalizer.msg("SearchOn", "Search on ") + " " + adr.getName());
+        action.putValue(Action.NAME, actionName);
         action.putValue(Action.SMALL_ICON, adr.getIcon());
 
         actionList.add(action);
@@ -289,7 +300,7 @@ public class WebPlugin extends Plugin {
       if (mAddresses != null) {
         for (WebAddress address : mAddresses) {
           
-          if (address.getIconFile() == null) {
+          if ((address.getIconFile() == null) && (! address.getUrl().equals(CHANNEL_SITE))) {
             String file = fetcher.fetchFavIconForUrl(address.getUrl());
           
             if (file != null) {
