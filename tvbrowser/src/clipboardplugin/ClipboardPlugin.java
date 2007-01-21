@@ -25,11 +25,13 @@
  */
 package clipboardplugin;
 
-import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import javax.swing.AbstractAction;
@@ -38,12 +40,16 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import util.paramhandler.ParamParser;
+import util.program.AbstractPluginProgramFormating;
+import util.program.LocalPluginProgramFormating;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
+import devplugin.ContextMenuAction;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.ThemeIcon;
 import devplugin.Version;
@@ -58,30 +64,66 @@ public class ClipboardPlugin extends Plugin {
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ClipboardPlugin.class);
 
-  /** Needed for Position */
-  private Point mLocationListDialog = null;
-
-  /** Needed for Position */
-  private Dimension mDimensionListDialog = null;
-
-  /** Settings for this Plugin */
-  private Properties mSettings;
-
   /** The Default-Parameters */
-  public static final String DEFAULT_PARAM = "{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n";
+  public static LocalPluginProgramFormating DEFAULT_CONFIG = new LocalPluginProgramFormating("clipDefault", mLocalizer.msg("defaultName","CliboardPlugin - Default"),"{title}","{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n","UTF-8");
+  
+  private AbstractPluginProgramFormating[] mConfigs = null;
+  private LocalPluginProgramFormating[] mLocalFormatings = null;
 
+  /**
+   * Creates an instance of this Plugin   
+   */
+  public ClipboardPlugin() {
+    createDefaultConfig();
+    createDefaultAvailable();
+  }
+  
+  private void createDefaultConfig() {
+    mConfigs = new AbstractPluginProgramFormating[1];
+    mConfigs[0] = DEFAULT_CONFIG;
+  }
+  
+  private void createDefaultAvailable() {
+    mLocalFormatings = new LocalPluginProgramFormating[1];
+    mLocalFormatings[0] = DEFAULT_CONFIG;        
+  }
+  
   public ActionMenu getContextMenuActions(final Program program) {
     ImageIcon img = createImageIcon("actions", "edit-paste", 16);
 
-    AbstractAction copyToSystem = new AbstractAction(mLocalizer.msg("copyToSystem", "Copy to System-Clipboard")) {
-      public void actionPerformed(ActionEvent evt) {
-        Program[] list = { program };
-        copyProgramsToSystem(list);
-      }
-    };
-    copyToSystem.putValue(Action.SMALL_ICON, img);
+    if(mConfigs.length > 1) {
+      ContextMenuAction copyToSystem = new ContextMenuAction(mLocalizer.msg("copyToSystem", "Copy to System-Clipboard")+ "...");
+      
+      ArrayList<AbstractAction>list = new ArrayList<AbstractAction>();
+    
+      for(int i = 0; i < mConfigs.length; i++) {
+        final AbstractPluginProgramFormating config = mConfigs[i];
+        if(config != null && config.isValid())
+          list.add(new AbstractAction(config.getName()) {
+            public void actionPerformed(ActionEvent e) {
+          
+              Program[] list = { program };
+              copyProgramsToSystem(list,config);
+            }
+          });
+        }
+    
+      copyToSystem.putValue(Action.SMALL_ICON, img);
 
-    return new ActionMenu(copyToSystem);
+      return new ActionMenu(copyToSystem, list.toArray(new AbstractAction[list.size()]));
+    }
+    else {
+      AbstractAction copyToSystem = new AbstractAction(mLocalizer.msg("copyToSystem", "Copy to System-Clipboard")) {
+        public void actionPerformed(ActionEvent evt) {
+          Program[] list = { program };
+          copyProgramsToSystem(list,mConfigs.length != 1 ? DEFAULT_CONFIG : mConfigs[0]);
+        }
+      };
+      
+      copyToSystem.putValue(Action.SMALL_ICON, img);
+      
+      return new ActionMenu(copyToSystem);
+    }
   }
 
   /*
@@ -94,37 +136,68 @@ public class ClipboardPlugin extends Plugin {
     String desc = mLocalizer.msg("description",
         "Copy programs to the Clipboard");
     String author = "Bodo Tasche";
-    return new PluginInfo(name, desc, author, new Version(0, 30));
+    return new PluginInfo(name, desc, author, new Version(0, 40));
   }
 
  
-  public boolean canReceivePrograms() {
+  public boolean canReceiveProgramsWithTarget() {
     return true;
   }
+  
+  public ProgramReceiveTarget[] getProgramReceiveTargets() {
+    ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>();
+    
+    for(AbstractPluginProgramFormating config : mConfigs)
+      if(config != null && config.isValid())
+        list.add(new ProgramReceiveTarget(this, config.getName(), config.getId()));
+    
+    if(list.isEmpty())
+      list.add(new ProgramReceiveTarget(this, DEFAULT_CONFIG.getName(), DEFAULT_CONFIG.getId()));
+    
+    return list.toArray(new ProgramReceiveTarget[list.size()]);
+  }
 
-  public void receivePrograms(Program[] programArr) {
-    copyProgramsToSystem(programArr);
+  public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget target) {
+    AbstractPluginProgramFormating formating = null;
+    
+    if(target.getTargetId().compareTo(DEFAULT_CONFIG.getId()) == 0)
+      formating = DEFAULT_CONFIG;
+    else
+      for(AbstractPluginProgramFormating config : mConfigs)
+        if(target.getTargetId().compareTo(config.getId()) == 0) {
+          formating = config;
+          break;
+        }
+    
+    if(formating != null) {
+      copyProgramsToSystem(programArr, formating);
+      return true;
+    }
+    
+    return false;
   }
 
   public void loadSettings(Properties settings) {
-    mSettings = settings;
-  }
-
-  public Properties storeSettings() {
-    return mSettings;
+    if(settings != null && settings.containsKey("ParamToUse")) {
+      mConfigs = new AbstractPluginProgramFormating[1];
+      mConfigs[0] = new LocalPluginProgramFormating(mLocalizer.msg("pluginName","CliboardPlugin") + " - " + mLocalizer.msg("Standard","default"),"{title}",settings.getProperty("ParamToUse"),"UTF-8");
+      mLocalFormatings = new LocalPluginProgramFormating[1];
+      mLocalFormatings[0] = (LocalPluginProgramFormating)mConfigs[0];
+    }
   }
 
   public SettingsTab getSettingsTab() {
-    return new ClipboardSettingsTab(this, mSettings);
+    return new ClipboardSettingsTab(this);
   }
 
   /**
    * Copy Programs to System-Clipboard
    * 
    * @param programs Programs to Copy
+   * @param config The program formating.
    */
-  public void copyProgramsToSystem(Program[] programs) {
-    String param = mSettings.getProperty("ParamToUse", DEFAULT_PARAM);
+  public void copyProgramsToSystem(Program[] programs, AbstractPluginProgramFormating config) {
+    String param = config.getContentValue();//mSettings.getProperty("ParamToUse", DEFAULT_PARAM);
 
     StringBuffer result = new StringBuffer();
     ParamParser parser = new ParamParser();
@@ -153,5 +226,104 @@ public class ClipboardPlugin extends Plugin {
   @Override
   public ThemeIcon getMarkIconFromTheme() {
     return new ThemeIcon("actions", "edit-paste", 16);
+  }
+  
+  public void writeData(ObjectOutputStream out) throws IOException {
+    out.writeInt(1); // write version
+    
+    if(mConfigs != null) {
+      ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
+      
+      for(AbstractPluginProgramFormating config : mConfigs)
+        if(config != null)
+          list.add(config);
+      
+      out.writeInt(list.size());
+      
+      for(AbstractPluginProgramFormating config : list)
+        config.writeData(out);
+    }
+    else
+      out.writeInt(0);
+    
+    if(mLocalFormatings != null) {
+      ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
+      
+      for(AbstractPluginProgramFormating config : mLocalFormatings)
+        if(config != null)
+          list.add(config);
+      
+      out.writeInt(list.size());
+      
+      for(AbstractPluginProgramFormating config : list)
+        config.writeData(out);      
+    }
+    
+  }
+  
+  public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    try {
+      in.readInt();
+    
+      int n = in.readInt();
+    
+      ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
+        
+      for(int i = 0; i < n; i++) {
+        AbstractPluginProgramFormating value = AbstractPluginProgramFormating.readData(in);
+      
+        if(value != null) { 
+          if(value.equals(DEFAULT_CONFIG))
+            DEFAULT_CONFIG = (LocalPluginProgramFormating)value;
+        
+          list.add(value);
+        }
+      }
+    
+      mConfigs = list.toArray(new AbstractPluginProgramFormating[list.size()]);
+    
+      mLocalFormatings = new LocalPluginProgramFormating[in.readInt()];
+    
+      for(int i = 0; i < mLocalFormatings.length; i++) {
+        LocalPluginProgramFormating value = (LocalPluginProgramFormating)LocalPluginProgramFormating.readData(in);
+        LocalPluginProgramFormating loadedInstance = getInstanceOfFormatingFromSelected(value);
+      
+        mLocalFormatings[i] = loadedInstance == null ? value : loadedInstance;
+      }
+    }catch(Exception e) {}
+  }
+  
+  private LocalPluginProgramFormating getInstanceOfFormatingFromSelected(LocalPluginProgramFormating value) {
+    for(AbstractPluginProgramFormating config : mConfigs)
+      if(config.equals(value))
+        return (LocalPluginProgramFormating)config;
+    
+    return null;
+  }
+  
+  protected static LocalPluginProgramFormating getDefaultFormating() {    
+    return new LocalPluginProgramFormating(mLocalizer.msg("defaultName","CliboardPlugin - Default"),"{title}","{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n","UTF-8");
+  }
+
+  protected LocalPluginProgramFormating[] getAvailableLocalPluginProgramFormatings() {
+    return mLocalFormatings;
+  }
+  
+  protected void setAvailableLocalPluginProgramFormatings(LocalPluginProgramFormating[] value) {
+    if(value == null || value.length < 1)
+      createDefaultAvailable();
+    else
+      mLocalFormatings = value;
+  }
+
+  protected AbstractPluginProgramFormating[] getSelectedPluginProgramFormatings() {
+    return mConfigs;
+  }
+  
+  protected void setSelectedPluginProgramFormatings(AbstractPluginProgramFormating[] value) {
+    if(value == null || value.length < 1)
+      createDefaultConfig();
+    else
+      mConfigs = value;
   }
 }

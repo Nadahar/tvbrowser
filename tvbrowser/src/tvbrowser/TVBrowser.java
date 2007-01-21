@@ -58,6 +58,7 @@ import tvbrowser.core.PluginLoader;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.plugin.programformating.GlobalPluginProgramFormatingManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
@@ -354,6 +355,7 @@ public class TVBrowser {
             mainFrame.updateUI();
             new Thread() {
               public void run() {
+                GlobalPluginProgramFormatingManager.getInstance();
                 PluginProxyManager.getInstance().fireTvBrowserStartFinished();
                 ReminderPlugin.getInstance().handleTvBrowserStartFinished();
                 FavoritesPlugin.getInstance().handleTvBrowserStartFinished();                

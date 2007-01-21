@@ -57,17 +57,21 @@ import devplugin.Plugin;
 import util.paramhandler.ParamHelpDialog;
 import util.paramhandler.ParamLibrary;
 import util.paramhandler.ParamParser;
-import util.program.ProgramConfiguration;
+import util.program.LocalPluginProgramFormating;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 /**
  * A settings dialog for the program configuration.
  * 
  * @author René Mach
+ * @since 2.5.1
  */
-public class ProgramConfigurationSettingsDialog extends JDialog implements WindowClosingIf, ActionListener {
-  private static Localizer mLocalizer = Localizer.getLocalizerFor(ProgramConfigurationSettingsDialog.class);
+public class LocalPluginProgramFormatingSettingsDialog extends JDialog implements WindowClosingIf, ActionListener {
+  private static Localizer mLocalizer = Localizer.getLocalizerFor(LocalPluginProgramFormatingSettingsDialog.class);
   
-  private ProgramConfiguration mConfig, mDefaultConfig;
+  private LocalPluginProgramFormating mConfig, mDefaultConfig;
   private JButton mSetName, mPreview, mSetBack, mHelp, mOk, mCancel;
   private JLabel mName;
   private JTextField mTitle;
@@ -83,24 +87,24 @@ public class ProgramConfigurationSettingsDialog extends JDialog implements Windo
    * @param showTitleSetting If the settings dialog should contain the title setting.
    * @param showEncodingSetting If the settings dialog should contain the encoding setting.
    */
-  public static void createInstance(Window parent, ProgramConfiguration config, ProgramConfiguration defaultConfig, boolean showTitleSetting, boolean showEncodingSetting) {
+  public static void createInstance(Window parent, LocalPluginProgramFormating config, LocalPluginProgramFormating defaultConfig, boolean showTitleSetting, boolean showEncodingSetting) {
     if(parent instanceof JDialog)
-      new ProgramConfigurationSettingsDialog((JDialog)parent, config, defaultConfig, showTitleSetting, showEncodingSetting);
+      new LocalPluginProgramFormatingSettingsDialog((JDialog)parent, config, defaultConfig, showTitleSetting, showEncodingSetting);
     else
-      new ProgramConfigurationSettingsDialog((JFrame)parent, config, defaultConfig, showTitleSetting, showEncodingSetting);
+      new LocalPluginProgramFormatingSettingsDialog((JFrame)parent, config, defaultConfig, showTitleSetting, showEncodingSetting);
   }
   
-  private ProgramConfigurationSettingsDialog(JDialog parent, ProgramConfiguration config, ProgramConfiguration defaultConfig, boolean showTitleSetting, boolean showEncodingSetting) {
+  private LocalPluginProgramFormatingSettingsDialog(JDialog parent, LocalPluginProgramFormating config, LocalPluginProgramFormating defaultConfig, boolean showTitleSetting, boolean showEncodingSetting) {
     super(parent, true);
     createGui(parent, config, defaultConfig, showTitleSetting, showEncodingSetting);
   }
 
-  private ProgramConfigurationSettingsDialog(JFrame parent, ProgramConfiguration config, ProgramConfiguration defaultConfig, boolean showTitleSetting, boolean showEncodingSetting) {
+  private LocalPluginProgramFormatingSettingsDialog(JFrame parent, LocalPluginProgramFormating config, LocalPluginProgramFormating defaultConfig, boolean showTitleSetting, boolean showEncodingSetting) {
     super(parent, true);
     createGui(parent, config, defaultConfig, showTitleSetting, showEncodingSetting);
   }
   
-  private void createGui(Window w, ProgramConfiguration config, ProgramConfiguration defaultConfig, boolean showTitleSetting, boolean showEncodingSetting) {
+  private void createGui(Window w, LocalPluginProgramFormating config, LocalPluginProgramFormating defaultConfig, boolean showTitleSetting, boolean showEncodingSetting) {
     mConfig = config;
     mDefaultConfig = defaultConfig;
     
