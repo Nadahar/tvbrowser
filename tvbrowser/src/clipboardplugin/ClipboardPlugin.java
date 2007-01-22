@@ -65,7 +65,7 @@ public class ClipboardPlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ClipboardPlugin.class);
 
   /** The Default-Parameters */
-  public static LocalPluginProgramFormating DEFAULT_CONFIG = new LocalPluginProgramFormating("clipDefault", mLocalizer.msg("defaultName","CliboardPlugin - Default"),"{title}","{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n","UTF-8");
+  private static LocalPluginProgramFormating DEFAULT_CONFIG = new LocalPluginProgramFormating("clipDefault", mLocalizer.msg("defaultName","CliboardPlugin - Default"),"{title}","{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n","UTF-8");
   
   private AbstractPluginProgramFormating[] mConfigs = null;
   private LocalPluginProgramFormating[] mLocalFormatings = null;
@@ -160,11 +160,14 @@ public class ClipboardPlugin extends Plugin {
   public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget target) {
     AbstractPluginProgramFormating formating = null;
     
-    if(target.getTargetId().compareTo(DEFAULT_CONFIG.getId()) == 0)
+    if(target == null)
+      return false;
+    
+    if(target.isReceiveTargetWithIdOfProgramReceiveIf(this,DEFAULT_CONFIG.getId()))
       formating = DEFAULT_CONFIG;
     else
       for(AbstractPluginProgramFormating config : mConfigs)
-        if(target.getTargetId().compareTo(config.getId()) == 0) {
+        if(target.isReceiveTargetWithIdOfProgramReceiveIf(this,config.getId())) {
           formating = config;
           break;
         }

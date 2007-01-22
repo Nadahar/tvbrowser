@@ -26,6 +26,8 @@ import devplugin.Program;
 
 import java.util.Properties;
 
+import util.program.AbstractPluginProgramFormating;
+
 /**
  * This interface must be implemented for all export-methods 
  * 
@@ -40,7 +42,7 @@ public interface ExporterIf {
    * @param settings the settings
    * @return true, if successfully
    */
-  public boolean exportPrograms(Program[] programs, Properties settings);
+  public boolean exportPrograms(Program[] programs, Properties settings, AbstractPluginProgramFormating formating);
   
   /**
    * @return true, if this exporter has a settings-dialog

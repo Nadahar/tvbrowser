@@ -29,6 +29,7 @@ import java.util.Properties;
 import util.exc.ErrorHandler;
 import util.misc.AppleScriptRunner;
 import util.paramhandler.ParamParser;
+import util.program.AbstractPluginProgramFormating;
 import calendarexportplugin.CalendarExportPlugin;
 import calendarexportplugin.utils.CalendarToolbox;
 import devplugin.Program;
@@ -55,7 +56,7 @@ public class AppleiCalExporter extends AbstractExporter {
      * @see calendarexportplugin.exporter.ExporterIf#exportPrograms(devplugin.Program[],
      *      java.util.Properties)
      */
-    public boolean exportPrograms(Program[] programs, Properties settings) {
+    public boolean exportPrograms(Program[] programs, Properties settings, AbstractPluginProgramFormating formating) {
         System.out.println("Apple iCal!");
 
         AppleScriptRunner runner = new AppleScriptRunner();
@@ -80,12 +81,14 @@ public class AppleiCalExporter extends AbstractExporter {
             script.append("\n");
             script.append("  set props to {start date:startDate, end date:endDate, summary:\"");
             
-            script.append(program.getTitle());
+            ParamParser parser = new ParamParser();
+            
+            String title = parser.analyse(formating.getTitleValue(), program);
+            script.append(title);
                
             script.append("\", event:true, description:\"");
             
-            ParamParser parser = new ParamParser();
-            String desc = parser.analyse(settings.getProperty(CalendarExportPlugin.PROP_PARAM, CalendarExportPlugin.DEFAULT_PARAMETER), program);
+            String desc = parser.analyse(formating.getContentValue(), program);
             script.append(desc.replaceAll("\"", "\\\\\"").replace('\n', ' '));
             
             script.append("\"}\n");

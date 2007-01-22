@@ -36,6 +36,7 @@ import javax.swing.JOptionPane;
 import util.exc.ErrorHandler;
 import util.io.IOUtilities;
 import util.paramhandler.ParamParser;
+import util.program.AbstractPluginProgramFormating;
 import util.ui.Localizer;
 import calendarexportplugin.CalendarExportPlugin;
 import calendarexportplugin.utils.CalendarToolbox;
@@ -74,7 +75,7 @@ public class GoogleExporter extends AbstractExporter {
    * (non-Javadoc)
    * @see calendarexportplugin.exporter.ExporterIf#exportPrograms(devplugin.Program[], java.util.Properties)
    */
-  public boolean exportPrograms(Program[] programs, Properties settings) {
+  public boolean exportPrograms(Program[] programs, Properties settings, AbstractPluginProgramFormating formating) {
     try {
       GoogleService myService = new GoogleService("cl", "tvbrowser-tvbrowsercalenderplugin-" + CalendarExportPlugin.getInstance().getInfo().getVersion().toString());
       
@@ -126,10 +127,12 @@ public class GoogleExporter extends AbstractExporter {
       for (Program program : programs) {
         EventEntry myEntry = new EventEntry();
 
-        myEntry.setTitle(new PlainTextConstruct(program.getTitle()));
-        
         ParamParser parser = new ParamParser();
-        String desc = parser.analyse(settings.getProperty(CalendarExportPlugin.PROP_PARAM, CalendarExportPlugin.DEFAULT_PARAMETER), program);
+        String title = parser.analyse(formating.getTitleValue(), program);
+        
+        myEntry.setTitle(new PlainTextConstruct(title));
+        
+        String desc = parser.analyse(formating.getContentValue(), program);
         myEntry.setContent(new PlainTextConstruct(desc));
 
         Calendar c = CalendarToolbox.getStartAsCalendar(program);

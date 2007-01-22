@@ -22,28 +22,18 @@
  */
 package calendarexportplugin;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import util.paramhandler.ParamHelpDialog;
-import util.paramhandler.ParamLibrary;
-import util.paramhandler.ParamParser;
 import util.ui.Localizer;
-import util.ui.UiUtilities;
+import util.ui.PluginProgramConfigurationPanel;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Properties;
 
 /**
  * The Dialog for the Extended Settings.
@@ -56,81 +46,44 @@ public class ExtendedDialog extends JDialog {
   /** Translator */
   private static final Localizer mLocalizer = Localizer
           .getLocalizerFor(ExtendedDialog.class);
-
-  /** Settings for the Plugin */
-  private Properties mSettings;
-  /** Content-Text */
-  private JTextArea mContent;
+  
+  private PluginProgramConfigurationPanel mConfigPanel;
   
   /**
    * Creates the Dialog
    * @param frame Parent-Frame
-   * @param settings Settings of this Plugin
    */
-  public ExtendedDialog(JFrame frame, Properties settings) {
-    super(frame, mLocalizer.msg("settings", "Extended Settings"), true);
-    mSettings = settings;
+  public ExtendedDialog(JFrame frame) {
+    super(frame, mLocalizer.msg("settings", "Extended Settings"), true);    
     createGui();
   }
 
   /**
    * Creates the Dialog
    * @param dialog Parent-Dialog
-   * @param settings Settings of this Plugin
    */
-  public ExtendedDialog(JDialog dialog, Properties settings) {
-    super(dialog, mLocalizer.msg("settings", "Extended Settings"), true);
-    mSettings = settings;
+  public ExtendedDialog(JDialog dialog) {
+    super(dialog, mLocalizer.msg("settings", "Extended Settings"), true);    
     createGui();
   }
 
   /**
    * Create the GUI
    */
-  private void createGui() {
-    JPanel panel = (JPanel) getContentPane();
-    
-    panel.setLayout(new FormLayout("pref, 3dlu, fill:pref:grow", "pref, 3dlu, fill:default:grow, 3dlu, pref"));
-    
+  private void createGui() {try {
     CellConstraints cc = new CellConstraints();
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default:grow,5dlu","pref,5dlu,fill:default:grow,5dlu,pref"), (JPanel)this.getContentPane());
+    pb.setDefaultDialogBorder();
     
-    JLabel content = new JLabel(mLocalizer.msg("content", "Content")+":");
+    mConfigPanel = new PluginProgramConfigurationPanel(CalendarExportPlugin.getInstance().getSelectedPluginProgramFormatings(), CalendarExportPlugin.getInstance().getAvailableLocalPluginProgramFormatings(), CalendarExportPlugin.getDefaultFormating(),true,false);
     
-    panel.add(content, cc.xy(1, 1));
+    pb.addSeparator(mLocalizer.msg("title","Formatings selection"), cc.xyw(1,1,3));
+    pb.add(mConfigPanel, cc.xy(2,3));
     
-    mContent = new JTextArea();
-    mContent.setText(mSettings.getProperty(CalendarExportPlugin.PROP_PARAM, CalendarExportPlugin.DEFAULT_PARAMETER));
-    mContent.setCaretPosition(0);
+    FormLayout layout = new FormLayout("0dlu:grow,pref,5dlu,pref","pref");
+    layout.setColumnGroups(new int[][] {{2,4}});
     
-    panel.add(new JScrollPane(mContent), cc.xyw(1, 3, 3));
-    
-    ButtonBarBuilder builder = new ButtonBarBuilder();
-
-    JButton preview = new JButton(mLocalizer.msg("preview", "Preview"));
-    preview.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        showPreview();
-      }
-    });
-    
-    JButton help = new JButton(Localizer.getLocalization(Localizer.I18N_HELP));
-    help.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent arg0) {
-        ParamHelpDialog dialog = new ParamHelpDialog(ExtendedDialog.this, new ParamLibrary());
-        dialog.setVisible(true);
-      }      
-    });
-    
-    JButton def = new JButton(mLocalizer.msg("default", "Default")); 
-    def.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        defaultPressed();
-      }
-    });
-    
-    builder.addGriddedButtons(new JButton[]{preview, def, help});
-    
-    builder.addGlue();
+    JPanel buttonPanel = new JPanel(layout);
     
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     
@@ -147,63 +100,14 @@ public class ExtendedDialog extends JDialog {
       }
     });
     
-    builder.addGriddedButtons(new JButton[]{ok, cancel});
+    buttonPanel.add(ok, cc.xy(2,1));
+    buttonPanel.add(cancel, cc.xy(4,1));
     
-    panel.add(builder.getPanel(), cc.xyw(1, 5, 3));
-    
-    panel.setBorder(Borders.DLU4_BORDER);
-    
+    pb.add(buttonPanel, cc.xy(2,5));
+        
     getRootPane().setDefaultButton(ok);
     
-    setSize(550, 400);
-  }
-
-  /**
-   * Show a Preview of the HTML that will be generated
-   */
-  protected void showPreview() {
-    ParamParser parser = new ParamParser();
-    String content = parser.analyse(mContent.getText(), CalendarExportPlugin.getPluginManager().getExampleProgram()).trim();
-    
-    final JDialog dialog = new JDialog(this, mLocalizer.msg("preview", "Preview"), true);
-    JPanel contentPanel = (JPanel) dialog.getContentPane();
-    
-    contentPanel.setLayout(new FormLayout("fill:default:grow, pref", "fill:default:grow, 3dlu, pref"));
-    contentPanel.setBorder(Borders.DLU4_BORDER);
-    
-    JEditorPane example = new JEditorPane("text/html", content.replaceAll("\n", "<br>\n"));
-    example.setEditable(false);
-    example.setCaretPosition(0);
-    
-    CellConstraints cc = new CellConstraints();
-    
-    contentPanel.add(new JScrollPane(example), cc.xyw(1, 1, 2));
-    
-    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
-    ok.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        dialog.setVisible(false);
-      }
-    });
-    dialog.getRootPane().setDefaultButton(ok);
-    
-    contentPanel.add(ok, cc.xy(2, 3));
-    
-    dialog.setSize(500, 400);
-    UiUtilities.centerAndShow(dialog);
-  }
-
-  /**
-   * Default was pressed.
-   * The Settings will be set to default-values after a confirm dialog
-   */
-  protected void defaultPressed() {
-    int ret = JOptionPane.showConfirmDialog(ExtendedDialog.this, 
-        mLocalizer.msg("reset", "Reset to default Settings?"), 
-        mLocalizer.msg("resetTitle", "Default"), JOptionPane.YES_NO_OPTION);
-    if (ret == JOptionPane.YES_OPTION) {
-      mContent.setText(CalendarExportPlugin.DEFAULT_PARAMETER);
-    }
+    setSize(550, 400);}catch(Exception e) {e.printStackTrace();}
   }
   
   /**
@@ -217,11 +121,8 @@ public class ExtendedDialog extends JDialog {
    * OK was pressed, the Settings will be saved
    */
   private void okPressed() {
-    if (!mContent.getText().trim().equals(CalendarExportPlugin.DEFAULT_PARAMETER.trim())) {
-      mSettings.setProperty(CalendarExportPlugin.PROP_PARAM, mContent.getText().trim());
-    } else {
-      mSettings.remove("Content");
-    }
+    CalendarExportPlugin.getInstance().setAvailableLocalPluginProgramFormatings(mConfigPanel.getAvailableLocalPluginProgramFormatings());
+    CalendarExportPlugin.getInstance().setSelectedPluginProgramFormatings(mConfigPanel.getSelectedPluginProgramFormatings());
     
     setVisible(false);
   }

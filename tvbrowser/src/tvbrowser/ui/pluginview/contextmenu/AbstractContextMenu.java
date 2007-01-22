@@ -189,7 +189,7 @@ public abstract class AbstractContextMenu implements ContextMenu {
             
             Icon[] icons = plugins[i].getMarkIcons(Plugin.getPluginManager().getExampleProgram());
             
-            item.setIcon(icons != null ? icons[0] : null);
+            item.setIcon(icons != null && icons.length > 0 ? icons[0] : null);
             menu.add(item);
             
             final ProgramReceiveTarget target = targets[0];
