@@ -23,6 +23,7 @@ import jp.ne.so_net.ga2.no_ji.jcom.IDispatch;
 import jp.ne.so_net.ga2.no_ji.jcom.ReleaseManager;
 import util.exc.ErrorHandler;
 import util.paramhandler.ParamParser;
+import util.program.AbstractPluginProgramFormating;
 import util.ui.Localizer;
 
 import javax.swing.JOptionPane;
@@ -134,7 +135,7 @@ public class OutlookExporter extends AbstractExporter {
     * @see calendarexportplugin.exporter.ExporterIf#exportPrograms(devplugin.Program[],
     *      java.util.Properties)
     */
-    public boolean exportPrograms(Program[] programs, Properties settings) {
+    public boolean exportPrograms(Program[] programs, Properties settings, AbstractPluginProgramFormating formating) {
         int classification = 0;
         try {
             classification = Integer.parseInt(settings.getProperty(CalendarExportPlugin.PROP_CLASSIFICATION, "0"));
@@ -177,12 +178,12 @@ public class OutlookExporter extends AbstractExporter {
 
         for (Program program : programs) {
             ParamParser parser = new ParamParser();
-            String desc = parser.analyse(settings.getProperty(
-                    CalendarExportPlugin.PROP_PARAM, CalendarExportPlugin.DEFAULT_PARAMETER), program);
+            String title = parser.analyse(formating.getTitleValue(), program);
+            String desc = parser.analyse(formating.getContentValue(), program);
             Date start = CalendarToolbox.getStartAsCalendar(program).getTime();
             Date end = CalendarToolbox.getEndAsCalendar(program).getTime();
 
-            if (!writeEvent(program.getTitle(), desc, start, end, alarmBefore,
+            if (!writeEvent(title, desc, start, end, alarmBefore,
                     useAlarm, showtime, categories, nullTime, classification))
                 return false;
         }

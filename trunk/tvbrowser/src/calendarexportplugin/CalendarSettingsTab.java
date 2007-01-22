@@ -234,9 +234,9 @@ public class CalendarSettingsTab implements SettingsTab {
     Window comp = UiUtilities.getBestDialogParent(panel);
     
     if (comp instanceof JFrame) {
-      dialog = new ExtendedDialog((JFrame) comp, mSettings);
+      dialog = new ExtendedDialog((JFrame) comp);
     } else {
-      dialog = new ExtendedDialog((JDialog) comp, mSettings);
+      dialog = new ExtendedDialog((JDialog) comp);
     }
     
     UiUtilities.centerAndShow(dialog);

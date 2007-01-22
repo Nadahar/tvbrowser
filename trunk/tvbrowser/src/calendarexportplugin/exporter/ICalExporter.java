@@ -25,6 +25,7 @@ package calendarexportplugin.exporter;
 import calendarexportplugin.CalendarExportPlugin;
 import calendarexportplugin.utils.ICalFile;
 import devplugin.Program;
+import util.program.AbstractPluginProgramFormating;
 import util.ui.ExtensionFileFilter;
 import util.ui.Localizer;
 
@@ -58,7 +59,7 @@ public class ICalExporter extends AbstractExporter {
    * (non-Javadoc)
    * @see calendarexportplugin.exporter.ExporterIf#exportPrograms(devplugin.Program[], java.util.Properties)
    */
-  public boolean exportPrograms(Program[] programs, Properties settings) {
+  public boolean exportPrograms(Program[] programs, Properties settings, AbstractPluginProgramFormating formating) {
     mSavePath = settings.getProperty(SAVE_PATH);
     
     File file = chooseFile(programs);
@@ -80,7 +81,7 @@ public class ICalExporter extends AbstractExporter {
     
     settings.setProperty(SAVE_PATH, mSavePath);
     
-    new ICalFile().exportICal(file, programs, settings);
+    new ICalFile().exportICal(file, programs, settings, formating);
 
     return true;
   }

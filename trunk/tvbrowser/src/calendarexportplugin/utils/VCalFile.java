@@ -14,6 +14,7 @@ import calendarexportplugin.CalendarExportPlugin;
 
 import util.exc.ErrorHandler;
 import util.paramhandler.ParamParser;
+import util.program.AbstractPluginProgramFormating;
 import util.ui.Localizer;
 import devplugin.Program;
 
@@ -35,9 +36,10 @@ public class VCalFile {
    * 
    * @param intothis into this File
    * @param list List to export
-   * @param nulltime Length of Programs = 0?
+   * @param settings The settings to use
+   * @param formating The formating value for the progam
    */
-  public void exportVCal(File intothis, Program[] list, Properties settings) {
+  public void exportVCal(File intothis, Program[] list, Properties settings, AbstractPluginProgramFormating formating) {
     try {
       ParamParser parser = new ParamParser();
       
@@ -94,11 +96,14 @@ public class VCalFile {
         c = CalendarToolbox.getStartAsCalendar(p);
 
         out.println("UID:" + mDate.format(c.getTime()) + "-" + p.getID());
-        out.println("SUMMARY:" + p.getChannel().getName() + " - " + CalendarToolbox.noBreaks(p.getTitle()));
+        
+        String summary = parser.analyse(formating.getTitleValue(), list[i]);
+        
+        out.println("SUMMARY:" + CalendarToolbox.noBreaks(summary));
 
         out.println("DTSTART:" + mDate.format(c.getTime()) + "T" + mTime.format(c.getTime()) + "Z");
 
-        String desc = parser.analyse(settings.getProperty(CalendarExportPlugin.PROP_PARAM, CalendarExportPlugin.DEFAULT_PARAMETER), list[i]);
+        String desc = parser.analyse(formating.getContentValue(), list[i]);
         if (parser.hasErrors()) {
           JOptionPane.showMessageDialog(null, parser.getErrorString(), "Error", JOptionPane.ERROR_MESSAGE);
           return;

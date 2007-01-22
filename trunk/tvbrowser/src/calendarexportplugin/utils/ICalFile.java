@@ -4,6 +4,7 @@ import calendarexportplugin.CalendarExportPlugin;
 import devplugin.Program;
 import util.exc.ErrorHandler;
 import util.paramhandler.ParamParser;
+import util.program.AbstractPluginProgramFormating;
 import util.ui.Localizer;
 
 import javax.swing.JOptionPane;
@@ -30,8 +31,9 @@ public class ICalFile {
    * @param intothis into this File
    * @param list List to export
    * @param settings Settings for the Export
+   * @param formating The formating for the program.
    */
-  public void exportICal(File intothis, Program[] list, Properties settings) {
+  public void exportICal(File intothis, Program[] list, Properties settings, AbstractPluginProgramFormating formating) {
     try {
       ParamParser parser = new ParamParser();
       boolean nulltime = settings.getProperty(CalendarExportPlugin.PROP_NULLTIME, "false").equals("true");
@@ -86,11 +88,14 @@ public class ICalFile {
             c = CalendarToolbox.getStartAsCalendar(p);
 
             out.println("UID:" + mDate.format(c.getTime()) + "-" + p.getID());
-            out.println("SUMMARY:" + p.getChannel().getName() + " - " + CalendarToolbox.noBreaks(p.getTitle()));
+            
+            String summary = parser.analyse(formating.getTitleValue(), p);
+            
+            out.println("SUMMARY:" + CalendarToolbox.noBreaks(summary));
 
             out.println("DTSTART:" + mDate.format(c.getTime()) + "T" + mTime.format(c.getTime()) + "Z");
 
-            String desc = parser.analyse(settings.getProperty(CalendarExportPlugin.PROP_PARAM, CalendarExportPlugin.DEFAULT_PARAMETER), p);
+            String desc = parser.analyse(formating.getContentValue(), p);
             if (parser.hasErrors()) {
                 JOptionPane.showMessageDialog(null, parser.getErrorString(), "Error", JOptionPane.ERROR_MESSAGE);
                 return;

@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import util.exc.ErrorHandler;
+import util.program.AbstractPluginProgramFormating;
 import calendarexportplugin.utils.ICalFile;
 import devplugin.Program;
 
@@ -49,13 +50,13 @@ public class KOrganizerExporter extends AbstractExporter {
    * (non-Javadoc)
    * @see calendarexportplugin.exporter.ExporterIf#exportPrograms(devplugin.Program[], java.util.Properties)
    */
-  public boolean exportPrograms(Program[] programs, Properties settings) {
+  public boolean exportPrograms(Program[] programs, Properties settings, AbstractPluginProgramFormating formating) {
     try {
       File file = File.createTempFile("tvbrowser", ".ics");
       file.deleteOnExit();
       
       ICalFile ical = new ICalFile();
-      ical.exportICal(file, programs, settings);
+      ical.exportICal(file, programs, settings, formating);
       
       Runtime.getRuntime().exec("korganizer --import " + file.getAbsolutePath());
       

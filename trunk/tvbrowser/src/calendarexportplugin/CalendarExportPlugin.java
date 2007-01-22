@@ -25,6 +25,7 @@ package calendarexportplugin;
 import calendarexportplugin.exporter.ExporterFactory;
 import calendarexportplugin.exporter.ExporterIf;
 import devplugin.ActionMenu;
+import devplugin.ContextMenuAction;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
@@ -32,6 +33,8 @@ import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.ThemeIcon;
 import devplugin.Version;
+import util.program.AbstractPluginProgramFormating;
+import util.program.LocalPluginProgramFormating;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 
@@ -42,6 +45,7 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Properties;
 
 /**
@@ -78,7 +82,7 @@ public class CalendarExportPlugin extends Plugin {
     /**
      * Parameters for Text-Creation
      */
-    public static final String PROP_PARAM = "paramToUse";
+    //public static final String PROP_PARAM = "paramToUse";
 
     /**
      * Use Alarm ?
@@ -98,8 +102,14 @@ public class CalendarExportPlugin extends Plugin {
     /**
      * The Default-Parameters
      */
-    public static final String DEFAULT_PARAMETER = "{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n";
+    //public static final String DEFAULT_PARAMETER = "{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n";
 
+    
+    private static LocalPluginProgramFormating DEFAULT_CONFIG = new LocalPluginProgramFormating("calendarDefault", mLocalizer.msg("defaultName","CalendarExportPlugin - Default"),"{channel_name} - {title}","{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n","UTF-8");
+    
+    private AbstractPluginProgramFormating[] mConfigs = null;
+    private LocalPluginProgramFormating[] mLocalFormatings = null;
+    
     /**
      * Instance of this Plugin
      */
@@ -119,8 +129,20 @@ public class CalendarExportPlugin extends Plugin {
      * Create Plugin
      */
     public CalendarExportPlugin() {
-        mExporterFactory = new ExporterFactory();
-        mInstance = this;
+      createDefaultConfig();
+      createDefaultAvailable();
+      mExporterFactory = new ExporterFactory();
+      mInstance = this;
+    }
+    
+    private void createDefaultConfig() {
+      mConfigs = new AbstractPluginProgramFormating[1];
+      mConfigs[0] = DEFAULT_CONFIG;
+    }
+    
+    private void createDefaultAvailable() {
+      mLocalFormatings = new LocalPluginProgramFormating[1];
+      mLocalFormatings[0] = DEFAULT_CONFIG;        
     }
 
     /*
@@ -133,7 +155,7 @@ public class CalendarExportPlugin extends Plugin {
         String desc = mLocalizer.msg("description",
                 "Exports a Program as a vCal/iCal File. This File can easily imported in other Calendar Applications.");
         String author = "Bodo Tasche, Udo Weigelt";
-        return new PluginInfo(name, desc, author, new Version(0, 4));
+        return new PluginInfo(name, desc, author, new Version(0, 5));
     }
 
     /*
@@ -160,18 +182,24 @@ public class CalendarExportPlugin extends Plugin {
         mainaction.putValue(Action.NAME, mLocalizer.msg("contextMenuText", "Export to Calendar-File"));
         mainaction.putValue(Action.SMALL_ICON, createImageIcon("apps", "office-calendar", 16));
 
-        Action[] actions = new Action[activeExporter.length];
+        if(mConfigs == null || mConfigs.length <= 1) {
+          if(mConfigs == null || mConfigs.length == 0) {
+            mConfigs = new AbstractPluginProgramFormating[1];
+            mConfigs[0] = DEFAULT_CONFIG;
+          }
+          
+          Action[] actions = new Action[activeExporter.length];
 
-        int max = activeExporter.length;
+          int max = activeExporter.length;
 
-        for (int i = 0; i < max; i++) {
+          for (int i = 0; i < max; i++) {
             final ExporterIf export = activeExporter[i];
             AbstractAction action = new AbstractAction() {
                 public void actionPerformed(ActionEvent evt) {
                     new Thread(new Runnable() {
                         public void run() {
                             Program[] programArr = {program};
-                            export.exportPrograms(programArr, mSettings);
+                            export.exportPrograms(programArr, mSettings,mConfigs[0]);
                         }
                     }).start();
                 }
@@ -189,13 +217,45 @@ public class CalendarExportPlugin extends Plugin {
             action.putValue(Action.SMALL_ICON, createImageIcon("apps", "office-calendar", 16));
 
             actions[i] = action;
-        }
+          }
 
-        if (actions.length == 1) {
-            return new ActionMenu(actions[0]);
-        }
+          if (actions.length == 1) {
+              return new ActionMenu(actions[0]);
+          }
 
-        return new ActionMenu(mainaction, actions);
+          return new ActionMenu(mainaction, actions);
+        }
+        else {
+          ActionMenu[] exporters = new ActionMenu[activeExporter.length];
+          
+          for(int i = 0; i < exporters.length; i++) {
+            Action[] actions = new Action[mConfigs.length];            
+            
+            for(int j = 0; j < actions.length; j++) {
+              final ExporterIf export = activeExporter[i];
+              final int count = j;
+              
+              actions[j] = new AbstractAction() {
+                public void actionPerformed(ActionEvent e) {
+                  new Thread(new Runnable() {
+                    public void run() {
+                      Program[] programArr = {program};
+                      export.exportPrograms(programArr, mSettings, mConfigs[count]);
+                    }
+                  }).start();
+                }
+              };
+              actions[j].putValue(Action.NAME, mConfigs[j].getName());
+            }
+            
+            ContextMenuAction context = new ContextMenuAction(activeExporter[i].getName());
+            context.putValue(Action.SMALL_ICON, createImageIcon("apps", "office-calendar", 16));
+            
+            exporters[i] = new ActionMenu(context, actions);
+          }
+          
+          return new ActionMenu(mainaction, exporters);
+        }
     }
 
     @Override
@@ -209,12 +269,19 @@ public class CalendarExportPlugin extends Plugin {
           return false;
       
         ExporterIf[] exporters = mExporterFactory.getActiveExporters();
+        
+        if(mConfigs == null || mConfigs.length < 1) {
+          mConfigs = new AbstractPluginProgramFormating[1];
+          mConfigs[0] = DEFAULT_CONFIG;
+        }
 
         for (ExporterIf export:exporters) {
-            if (receiveTarget.isReceiveTargetWithIdOfProgramReceiveIf(this,export.getClass().getName())) {
-                export.exportPrograms(programArr, mSettings);
-                return true;
+          for(AbstractPluginProgramFormating formating : mConfigs) {
+            if (receiveTarget.isReceiveTargetWithIdOfProgramReceiveIf(this,export.getClass().getName() + ";;;" + formating.getId())) {
+              export.exportPrograms(programArr, mSettings, formating);
+              return true;              
             }
+          }
         }
 
         return false;
@@ -224,13 +291,19 @@ public class CalendarExportPlugin extends Plugin {
     public ProgramReceiveTarget[] getProgramReceiveTargets() {
         ExporterIf[] exporters = mExporterFactory.getActiveExporters();
 
-        ProgramReceiveTarget[] targets = new ProgramReceiveTarget[exporters.length];
+        ArrayList<ProgramReceiveTarget> targets = new ArrayList<ProgramReceiveTarget>();
 
-        for (int i =0;i<exporters.length;i++) {
-            targets[i] = new ProgramReceiveTarget(this, exporters[i].getName(), exporters[i].getClass().getName());
+        if(mConfigs == null || mConfigs.length < 1) {
+          mConfigs = new AbstractPluginProgramFormating[1];
+          mConfigs[0] = DEFAULT_CONFIG;
+        }
+        
+        for (ExporterIf exporter : exporters) {
+          for(AbstractPluginProgramFormating formating : mConfigs)
+            targets.add(new ProgramReceiveTarget(this, exporter.getName() + (mConfigs.length > 1 ? " - " + formating.getName() : ""), exporter.getClass().getName() + ";;;" + formating.getId()));
         }
 
-        return targets;
+        return targets.toArray(new ProgramReceiveTarget[targets.size()]);
     }
 
     /**
@@ -263,27 +336,16 @@ public class CalendarExportPlugin extends Plugin {
         mSettings = settings;
 
         mExporterFactory.setListOfActiveExporters(mSettings.getProperty(PROP_ACTIVE_EXPORTER));
-    }
-
-    /**
-     * Called by the host-application during start-up.
-     *
-     * @see #writeData(ObjectOutputStream)
-     */
-    public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        try {
-            int version = in.readInt();
-        } catch (Exception e) {
+        
+        if(settings != null && settings.containsKey("paramToUse")) {
+          mConfigs = new AbstractPluginProgramFormating[1];
+          mConfigs[0] = new LocalPluginProgramFormating(mLocalizer.msg("defaultName","Calendar Export - Default"),"{channel_name} - {title}",settings.getProperty("paramToUse"),"UTF-8");
+          mLocalFormatings = new LocalPluginProgramFormating[1];
+          mLocalFormatings[0] = (LocalPluginProgramFormating)mConfigs[0];
+          DEFAULT_CONFIG = mLocalFormatings[0];
+          
+          settings.remove("paramToUse");
         }
-    }
-
-    /**
-     * Counterpart to loadData. Called when the application shuts down.
-     *
-     * @see #readData(ObjectInputStream)
-     */
-    public void writeData(ObjectOutputStream out) throws IOException {
-        out.writeInt(2);
     }
 
     /**
@@ -306,4 +368,105 @@ public class CalendarExportPlugin extends Plugin {
     public Window getBestParentFrame() {
         return UiUtilities.getBestDialogParent(getParentFrame());
   }
+    
+    public void writeData(ObjectOutputStream out) throws IOException {
+      out.writeInt(3); // write version
+      
+      if(mConfigs != null) {
+        ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
+        
+        for(AbstractPluginProgramFormating config : mConfigs)
+          if(config != null)
+            list.add(config);
+        
+        out.writeInt(list.size());
+        
+        for(AbstractPluginProgramFormating config : list)
+          config.writeData(out);
+      }
+      else
+        out.writeInt(0);
+      
+      if(mLocalFormatings != null) {
+        ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
+        
+        for(AbstractPluginProgramFormating config : mLocalFormatings)
+          if(config != null)
+            list.add(config);
+        
+        out.writeInt(list.size());
+        
+        for(AbstractPluginProgramFormating config : list)
+          config.writeData(out);      
+      }
+      
+    }
+    
+    public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
+      try {
+        int version = in.readInt();
+      
+        if(version == 3) {
+          int n = in.readInt();
+      
+          ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
+          
+          for(int i = 0; i < n; i++) {
+            AbstractPluginProgramFormating value = AbstractPluginProgramFormating.readData(in);
+        
+            if(value != null) { 
+              if(value.equals(DEFAULT_CONFIG))
+                DEFAULT_CONFIG = (LocalPluginProgramFormating)value;
+          
+              list.add(value);
+            }
+          }
+      
+          mConfigs = list.toArray(new AbstractPluginProgramFormating[list.size()]);
+      
+          mLocalFormatings = new LocalPluginProgramFormating[in.readInt()];
+      
+          for(int i = 0; i < mLocalFormatings.length; i++) {
+            LocalPluginProgramFormating value = (LocalPluginProgramFormating)LocalPluginProgramFormating.readData(in);
+            LocalPluginProgramFormating loadedInstance = getInstanceOfFormatingFromSelected(value);
+        
+            mLocalFormatings[i] = loadedInstance == null ? value : loadedInstance;
+          }
+        }
+      }catch(Exception e) {}
+    }
+    
+    private LocalPluginProgramFormating getInstanceOfFormatingFromSelected(LocalPluginProgramFormating value) {
+      for(AbstractPluginProgramFormating config : mConfigs)
+        if(config.equals(value))
+          return (LocalPluginProgramFormating)config;
+      
+      return null;
+    }
+    
+    protected static LocalPluginProgramFormating getDefaultFormating() {    
+      return new LocalPluginProgramFormating(mLocalizer.msg("defaultName","CliboardPlugin - Default"),"{title}","{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n","UTF-8");
+    }
+
+    protected LocalPluginProgramFormating[] getAvailableLocalPluginProgramFormatings() {
+      return mLocalFormatings;
+    }
+    
+    protected void setAvailableLocalPluginProgramFormatings(LocalPluginProgramFormating[] value) {
+      if(value == null || value.length < 1)
+        createDefaultAvailable();
+      else
+        mLocalFormatings = value;
+    }
+
+    protected AbstractPluginProgramFormating[] getSelectedPluginProgramFormatings() {
+      return mConfigs;
+    }
+    
+    protected void setSelectedPluginProgramFormatings(AbstractPluginProgramFormating[] value) {
+      if(value == null || value.length < 1)
+        createDefaultConfig();
+      else
+        mConfigs = value;
+    }
 }

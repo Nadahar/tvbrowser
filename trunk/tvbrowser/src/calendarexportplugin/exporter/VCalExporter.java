@@ -31,6 +31,7 @@ import javax.swing.JOptionPane;
 import calendarexportplugin.CalendarExportPlugin;
 import calendarexportplugin.utils.VCalFile;
 
+import util.program.AbstractPluginProgramFormating;
 import util.ui.ExtensionFileFilter;
 import util.ui.Localizer;
 
@@ -61,7 +62,7 @@ public class VCalExporter extends AbstractExporter {
    * (non-Javadoc)
    * @see calendarexportplugin.exporter.ExporterIf#exportPrograms(devplugin.Program[], java.util.Properties)
    */
-  public boolean exportPrograms(Program[] programs, Properties settings) {
+  public boolean exportPrograms(Program[] programs, Properties settings, AbstractPluginProgramFormating formating) {
     mSavePath = settings.getProperty(SAVE_PATH);
     
     File file = chooseFile();
@@ -83,7 +84,7 @@ public class VCalExporter extends AbstractExporter {
     
     settings.setProperty(SAVE_PATH, mSavePath);
     
-    new VCalFile().exportVCal(file, programs, settings);
+    new VCalFile().exportVCal(file, programs, settings, formating);
 
     return true;
   }

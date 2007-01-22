@@ -37,7 +37,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import util.ui.Localizer;
+import util.ui.PluginProgramConfigurationPanel;
 import util.ui.UiUtilities;
+
+import clipboardplugin.ClipboardPlugin;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -69,6 +72,8 @@ public class BlogSettingsTab implements SettingsTab {
 
     /** Textfield for Url */
     private JTextField mServiceUrlField;
+    
+    private PluginProgramConfigurationPanel mConfigPanel;
 
     /**
      * Create Plugin-Settingstab
@@ -86,8 +91,8 @@ public class BlogSettingsTab implements SettingsTab {
      */
     public JPanel createSettingsPanel() {
         final JPanel settingsPanel = new JPanel(new FormLayout(
-                "pref, 3dlu, pref, fill:pref:grow, pref",
-                "pref, 3dlu, pref, 3dlu, pref"));
+                "5dlu, pref, 3dlu, pref, fill:pref:grow",
+                "pref, 3dlu, pref, 10dlu, fill:default:grow"));
         settingsPanel.setBorder(Borders.DLU4_BORDER);
 
         String[] services = { "", "Blogger.com", "Wordpress",
@@ -120,20 +125,22 @@ public class BlogSettingsTab implements SettingsTab {
         mServiceUrlField.setText(mSettings.getProperty("BlogUrl"));
 
         CellConstraints cc = new CellConstraints();
-        settingsPanel.add(new JLabel(mLocalizer.msg("Service", "Blog-Service")+":"), cc.xy(1, 1));
-        settingsPanel.add(mServiceCombo, cc.xy(3, 1));
-        settingsPanel.add(mServiceUrlLabel, cc.xy(1, 3));
-        settingsPanel.add(mServiceUrlField, cc.xyw(3, 3, 3));
+        settingsPanel.add(new JLabel(mLocalizer.msg("Service", "Blog-Service")+":"), cc.xy(2, 1));
+        settingsPanel.add(mServiceCombo, cc.xy(4, 1));
+        settingsPanel.add(mServiceUrlLabel, cc.xy(2, 3));
+        settingsPanel.add(mServiceUrlField, cc.xyw(4, 3, 2));
 
-        JButton extended = new JButton(mLocalizer.msg("Extended", "Extended Settings"));
+        mConfigPanel = new PluginProgramConfigurationPanel(mPlugin.getSelectedPluginProgramFormatings(), mPlugin.getAvailableLocalPluginProgramFormatings(), BlogThisPlugin.getDefaultFormating(),true,false);
+        
+        /*JButton extended = new JButton(mLocalizer.msg("Extended", "Extended Settings"));
         
         extended.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             showExtendedDialog(settingsPanel);
           }
-        });
+        });*/
         
-        settingsPanel.add(extended, cc.xy(5, 5));
+        settingsPanel.add(mConfigPanel, cc.xyw(1, 5, 5));
 
         return settingsPanel;
     }
@@ -152,24 +159,6 @@ public class BlogSettingsTab implements SettingsTab {
         } else {
             mServiceUrlField.setText("");
         }
-    }
-
-    /**
-     * Shows the Dialog with the extended Settings
-     * @param panel Parent-Panel
-     */
-    private void showExtendedDialog(JPanel panel) {
-      ExtendedDialog dialog;
-      
-      Window comp = UiUtilities.getBestDialogParent(panel);
-      
-      if (comp instanceof JFrame) {
-        dialog = new ExtendedDialog((JFrame) comp, mSettings);
-      } else {
-        dialog = new ExtendedDialog((JDialog) comp, mSettings);
-      }
-      
-      UiUtilities.centerAndShow(dialog);
     }
     
     /**
@@ -192,6 +181,9 @@ public class BlogSettingsTab implements SettingsTab {
             break;
         }
         mSettings.setProperty("BlogUrl", mServiceUrlField.getText());
+        
+        mPlugin.setAvailableLocalPluginProgramFormatings(mConfigPanel.getAvailableLocalPluginProgramFormatings());
+        mPlugin.setSelectedPluginProgramFormatings(mConfigPanel.getSelectedPluginProgramFormatings());
     }
 
     /*
