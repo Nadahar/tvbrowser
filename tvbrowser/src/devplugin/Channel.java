@@ -27,6 +27,7 @@
 package devplugin;
 
 import java.awt.Image;
+import java.io.DataInput;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -233,7 +234,7 @@ public class Channel {
    * 
    * @since 2.2
    */
-  public static Channel readData(RandomAccessFile in, boolean allowNull)
+  public static Channel readData(DataInput in, boolean allowNull)
     throws IOException, ClassNotFoundException
   {
     int version = in.readInt();
@@ -572,17 +573,20 @@ public class Channel {
     if (obj != null && obj instanceof Channel) {
       Channel cmp = (Channel) obj;
       try {
-        String dataServiceId = getDataServiceProxy().getId();
-        String groupId = getGroup().getId();
-        String channelId = getId();
-
-        String cmpDataServiceId = cmp.getDataServiceProxy().getId();
-        String cmpGroupId = cmp.getGroup().getId();
-        String cmpChannelId = cmp.getId();
-
-        return (dataServiceId.compareTo(cmpDataServiceId) == 0 &&
-          groupId.compareTo(cmpGroupId) == 0 &&
-          channelId.compareTo(cmpChannelId) == 0);
+          String channelId = getId();
+          String cmpChannelId = cmp.getId();
+    	  if (channelId.compareTo(cmpChannelId) != 0) {
+    		  return false;
+    	  }
+          String groupId = getGroup().getId();
+          String cmpGroupId = cmp.getGroup().getId();
+          if (groupId.compareTo(cmpGroupId) != 0) {
+        	  return false;
+          }
+          String dataServiceId = getDataServiceProxy().getId();
+          String cmpDataServiceId = cmp.getDataServiceProxy().getId();
+          
+          return dataServiceId.compareTo(cmpDataServiceId) == 0;
       }catch(Exception e) {
         //this is for the example program
         if((getDataServiceProxy() == null && cmp.getDataServiceProxy() == null) &&
