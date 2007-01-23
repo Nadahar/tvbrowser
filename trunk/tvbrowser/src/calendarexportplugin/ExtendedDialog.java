@@ -54,7 +54,7 @@ public class ExtendedDialog extends JDialog {
    * @param frame Parent-Frame
    */
   public ExtendedDialog(JFrame frame) {
-    super(frame, mLocalizer.msg("settings", "Extended Settings"), true);    
+    super(frame, mLocalizer.msg("title","Formatings selection"), true);    
     createGui();
   }
 
@@ -63,7 +63,7 @@ public class ExtendedDialog extends JDialog {
    * @param dialog Parent-Dialog
    */
   public ExtendedDialog(JDialog dialog) {
-    super(dialog, mLocalizer.msg("settings", "Extended Settings"), true);    
+    super(dialog, mLocalizer.msg("title","Formatings selection"), true);    
     createGui();
   }
 
