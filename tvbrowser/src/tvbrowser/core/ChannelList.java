@@ -58,6 +58,7 @@ public class ChannelList {
     = java.util.logging.Logger.getLogger(ChannelList.class.getName());
 
   private static ArrayList<Channel> mAvailableChannels = new ArrayList<Channel>();
+  private static HashMap<Channel, Channel> mAvailableChannelsMap = new HashMap<Channel, Channel>();
 
   private static ArrayList<Channel> mSubscribedChannels = new ArrayList<Channel>();
 
@@ -85,6 +86,7 @@ public class ChannelList {
    */
   public static void reload() {
     mAvailableChannels.clear();
+    mAvailableChannelsMap.clear();
     loadChannelMaps();
     create();    
   }
@@ -172,8 +174,9 @@ public class ChannelList {
   }
 
   private static void addChannelToAvailableChannels(Channel channel) {
-    if(!mAvailableChannels.contains(channel)) {
+    if(!mAvailableChannelsMap.containsKey(channel)) {
       mAvailableChannels.add(channel);
+      mAvailableChannelsMap.put(channel, channel);
 
       if(!mChannelDayLightCorrectionMap.isEmpty())
         setDayLightSavingTimeCorrectionsForChannel(channel);
@@ -209,6 +212,7 @@ public class ChannelList {
    */
   public static void createForTvBrowserStart() {
     mAvailableChannels.clear();
+    mAvailableChannelsMap.clear();
     TvDataServiceProxy[] dataServiceArr
             = TvDataServiceProxyManager.getInstance().getDataServices();
 
