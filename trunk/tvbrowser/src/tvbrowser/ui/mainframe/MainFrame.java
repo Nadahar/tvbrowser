@@ -298,13 +298,6 @@ public class MainFrame extends JFrame implements DateListener {
     setProgramFilter(filter);
     addKeyboardAction();
 
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        scrollToNow();
-      }
-
-    });
-
     Timer timer = new Timer(10000, new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         handleTimerEvent();

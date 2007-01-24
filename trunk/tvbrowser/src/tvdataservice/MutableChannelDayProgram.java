@@ -100,11 +100,9 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
    * @return  the program object having the specified ID.
    */
   public Program getProgram(String progID) {
+    int idlength = progID.split("_").length;
     for(Program prog : mProgramList) {
       String id = prog.getID();
-      
-      int idlength = progID.split("_").length;
-      
       if(idlength < 4) {
         String[] temp = id.split("_");
        
@@ -161,10 +159,10 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
     // We search backwards, because the data may come already ordered. And if
     // this is the case we only have to compare once.
     int addIdx;
-    int time = program.getHours() * 60 + program.getMinutes();
+    int time = program.getStartTime();
     for (addIdx = mProgramList.size(); addIdx > 0; addIdx--) {
       Program cmp = mProgramList.get(addIdx - 1);
-      int cmpTime = cmp.getHours() * 60 + cmp.getMinutes();
+      int cmpTime = cmp.getStartTime();
 	  	  
 	  if (program.getDate().compareTo(cmp.getDate())>0) {
         break; // insert here

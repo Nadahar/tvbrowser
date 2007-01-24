@@ -402,7 +402,7 @@ public class MutableProgram implements Program {
 
     // This program is (or was) today -> We've got to check the time
     int currentMinutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
-    int programMinutesAfterMidnight = getHours() * 60 + getMinutes() + getLength() - 1;
+    int programMinutesAfterMidnight = getStartTime() + getLength() - 1;
     return (programMinutesAfterMidnight < currentMinutesAfterMidnight);
 
   }
