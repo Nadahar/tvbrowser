@@ -859,11 +859,10 @@ public class MutableProgram implements Program {
     if (o instanceof devplugin.Program) {
       devplugin.Program program = (devplugin.Program)o;
       return program!=null
-             && equals(mChannel, program.getChannel())
-             && equals(getDate(), program.getDate())
-             && getHours() == program.getHours()
-             && getMinutes()  == program.getMinutes()
-             && getTitle().compareTo(program.getTitle()) == 0;
+      	&& getStartTime() == program.getStartTime()
+        && equals(mChannel, program.getChannel())
+        && equals(getDate(), program.getDate())
+        && getTitle().compareTo(program.getTitle()) == 0;
     }
     return false;
   }
