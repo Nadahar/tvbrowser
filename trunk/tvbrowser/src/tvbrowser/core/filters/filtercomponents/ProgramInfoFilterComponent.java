@@ -39,6 +39,8 @@ import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 import tvbrowser.core.filters.FilterComponent;
 import util.ui.ImageUtilities;
@@ -121,6 +123,7 @@ public class ProgramInfoFilterComponent implements FilterComponent {
 
         GridBagConstraints b = new GridBagConstraints();
         b.fill = GridBagConstraints.NONE;
+        b.anchor = GridBagConstraints.WEST;
         
         _checkBox = new JCheckBox[ProgramInfoHelper.mInfoMsgArr.length];
         
@@ -128,7 +131,8 @@ public class ProgramInfoFilterComponent implements FilterComponent {
         
         	final JCheckBox box = new JCheckBox();
         	_checkBox[i] = box;
-        	JLabel label = new JLabel(ProgramInfoHelper.mInfoMsgArr[i], ProgramInfoHelper.mInfoIconArr[i], JLabel.LEFT);
+        	JLabel label = new JLabel(" " + ProgramInfoHelper.mInfoMsgArr[i], ProgramInfoHelper.mInfoIconArr[i], JLabel.LEFT);
+        	label.setBorder(new EmptyBorder(0,5,0,0));
         	
         	if (bitSet(selectedBits, ProgramInfoHelper.mInfoBitArr[i])) {
         		box.setSelected(true);
@@ -146,7 +150,9 @@ public class ProgramInfoFilterComponent implements FilterComponent {
 
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(panel, BorderLayout.NORTH);
-        return centerPanel;
+        JPanel centerPanel2 = new JPanel(new BorderLayout());
+        centerPanel2.add(centerPanel, BorderLayout.WEST);
+        return centerPanel2;
     }
 
     /**
