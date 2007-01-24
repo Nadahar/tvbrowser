@@ -43,10 +43,10 @@ public class ProgramUtilities {
    */
   public static boolean isOnAir(Program p) {
     int time = IOUtilities.getMinutesAfterMidnight();
-
-    if (Date.getCurrentDate().addDays(-1).compareTo(p.getDate()) == 0)
+    Date currentDate = Date.getCurrentDate();
+	if (currentDate.addDays(-1).compareTo(p.getDate()) == 0)
       time += 24 * 60;
-    if (Date.getCurrentDate().compareTo(p.getDate()) < 0)
+    if (currentDate.compareTo(p.getDate()) < 0)
       return false;
 
     if (p.getStartTime() <= time && (p.getStartTime() + p.getLength()) > time)
@@ -66,8 +66,8 @@ public class ProgramUtilities {
       int res=p1.getDate().compareTo(p2.getDate());
       if (res!=0) return res;
 
-      int minThis=p1.getHours()*60+p1.getMinutes();
-      int minOther=p2.getHours()*60+p2.getMinutes();
+      int minThis=p1.getStartTime();
+      int minOther=p2.getStartTime();
 
       if (minThis<minOther) {
         return -1;
@@ -104,7 +104,7 @@ public class ProgramUtilities {
     if(timeFrom > timeTo)
       timeFromParsed -= 60*24;
     
-    int startTime = p.getHours() * 60 + p.getMinutes(); 
+    int startTime = p.getStartTime(); 
     
     if(timeFrom > timeTo && startTime >= timeFrom)
       startTime -= 60*24;

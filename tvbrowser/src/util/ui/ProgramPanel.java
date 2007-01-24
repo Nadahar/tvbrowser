@@ -555,7 +555,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     if (mProgram.isOnAir()) {
       int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
       int progLength = mProgram.getLength();
-      int startTime = mProgram.getHours() * 60 + mProgram.getMinutes();
+      int startTime = mProgram.getStartTime();
       int elapsedMinutes;
       if (minutesAfterMidnight < startTime) {
         // The next day has begun -> we have to add 24 * 60 minutes

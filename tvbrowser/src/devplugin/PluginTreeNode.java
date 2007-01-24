@@ -334,8 +334,8 @@ public class PluginTreeNode {
         if (result != 0) {
           return result;
         }
-        int t1 = p1.getHours()*60 + p1.getMinutes();
-        int t2 = p2.getHours()*60 + p2.getMinutes();
+        int t1 = p1.getStartTime();
+        int t2 = p2.getStartTime();
         if (t1 < t2) {
           return -1;
         }

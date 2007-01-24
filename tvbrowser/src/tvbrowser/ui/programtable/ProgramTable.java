@@ -554,7 +554,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
     for (int row = 0; row < mModel.getRowCount(col); row++) {
       ProgramPanel panel = mModel.getProgramPanel(col, row);
       Program program = panel.getProgram();
-      int startTime = program.getHours() * 60 + program.getMinutes();
+      int startTime = program.getStartTime();
       
       // Add 24 hours for every day different to the model's main date
       startTime += program.getDate().getNumberOfDaysSince(mainDate) * 24 * 60;

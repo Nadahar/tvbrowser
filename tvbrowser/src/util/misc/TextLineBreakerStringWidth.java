@@ -163,7 +163,7 @@ public class TextLineBreakerStringWidth {
             return mCurrLineBuffer.toString();
           }
         }
-        while(isWhiteSpace((char) mCurrChar));
+        while(Character.isSpaceChar(((char) mCurrChar)));
 
         // Read the next word
         mNextWord = readNextWord(textReader);
@@ -239,7 +239,7 @@ public class TextLineBreakerStringWidth {
       
       mCurrChar = textReader.read();
     }
-    while ((! isWhiteSpace(mCurrChar)) && (! isEndOfLine(mCurrChar)));
+    while ((! Character.isSpaceChar((char) mCurrChar)) && (! isEndOfLine(mCurrChar)));
 
     return mCurrWordBuffer.toString();
   }
@@ -298,15 +298,6 @@ public class TextLineBreakerStringWidth {
    */
   public int getStringWidth(String str) {
     return str.length();
-  }
-  
-  /**
-   * Test if the Charater is is a Space-Char 
-   * @param ch test this Char
-   * @return true if ch is a Space Char
-   */
-  private boolean isWhiteSpace(int ch) {
-    return Character.isSpaceChar((char) ch);
   }
   
   /**

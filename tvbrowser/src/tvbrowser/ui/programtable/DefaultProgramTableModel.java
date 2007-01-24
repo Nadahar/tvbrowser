@@ -229,7 +229,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       if (it!=null) {
         while (it.hasNext()) {
           Program prog=it.next();
-          int time=prog.getHours()*60+prog.getMinutes();          
+          int time=prog.getStartTime();          
 	        if (compareDateTime(prog.getDate(), time, fromDate, fromMinutes) >=0 && compareDateTime(prog.getDate(), time, toDate, toMinutes)<=0) {
 		        if (mProgramFilter==null || mProgramFilter.accept(prog)) {
               ProgramPanel panel = new ProgramPanel(prog);

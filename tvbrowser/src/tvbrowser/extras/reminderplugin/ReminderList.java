@@ -291,10 +291,8 @@ public class ReminderList implements ActionListener {
     }
 
     Date remindDate = prog.getDate();
-    int m = prog.getMinutes();
-    int h = prog.getHours();
 
-    int remindTime = h * 60 + m - remindMinutes;
+    int remindTime = prog.getStartTime() - remindMinutes;
     if (remindTime < 0) {
       remindTime = -remindTime;
       int days = remindTime / 1440 + 1;
