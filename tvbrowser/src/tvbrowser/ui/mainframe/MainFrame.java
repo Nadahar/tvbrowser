@@ -39,6 +39,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -306,6 +308,15 @@ public class MainFrame extends JFrame implements DateListener {
     timer.start();
 
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    
+    addWindowListener(new WindowAdapter() {
+
+		@Override
+		public void windowDeiconified(WindowEvent e) {
+			if (Settings.propNowOnRestore.getBoolean()) {
+				scrollToNow();
+			}
+		}});
   }
   
   public void switchFullscreenMode() {

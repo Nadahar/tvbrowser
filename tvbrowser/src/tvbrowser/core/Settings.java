@@ -93,7 +93,7 @@ public class Settings {
 
   private static PropertyManager mProp = new PropertyManager();
 
-  /**
+ /**
    * Returns the Default-Settings. These Settings are stored in the mac, windows
    * and linux.properties-Files
    * 
@@ -509,6 +509,8 @@ public class Settings {
   public static final BooleanProperty propOnlyMinimizeWhenWindowClosing = new BooleanProperty(
       mProp, "onlyMinimizeWhenWindowClosing", false);
 
+  public static final BooleanProperty propNowOnRestore = new BooleanProperty(
+  		mProp, "jumpNowOnRestore",true);
   /*
    * Channel settings for the tray.
    */
