@@ -54,7 +54,7 @@ public class TrayBaseSettingsTab implements SettingsTab {
   protected static final util.ui.Localizer mLocalizer = util.ui.Localizer
   .getLocalizerFor(TrayBaseSettingsTab.class);
   
-  private JCheckBox mTrayIsEnabled, mMinimizeToTrayChb;
+  private JCheckBox mTrayIsEnabled, mMinimizeToTrayChb, mNowOnRestore;
   private boolean mOldState; 
   private static boolean mIsEnabled = Settings.propTrayIsEnabled.getBoolean();
     
@@ -62,7 +62,7 @@ public class TrayBaseSettingsTab implements SettingsTab {
     
     final PanelBuilder builder = new PanelBuilder(new FormLayout(
         "5dlu, pref:grow, 5dlu",        
-        "pref, 5dlu, pref, pref"));
+        "pref, 5dlu, pref, pref, pref, pref"));
     builder.setDefaultDialogBorder();
     CellConstraints cc = new CellConstraints();
     
@@ -75,6 +75,10 @@ public class TrayBaseSettingsTab implements SettingsTab {
     mMinimizeToTrayChb = new JCheckBox(msg, checked && mOldState);
     mMinimizeToTrayChb.setEnabled(mTrayIsEnabled.isSelected());
     
+    msg = mLocalizer.msg("nowOnDeIconify", "Jump to now when restoring application");
+    checked = Settings.propNowOnRestore.getBoolean();
+    mNowOnRestore = new JCheckBox(msg, checked);
+
     boolean kde = false;
     
     try {
@@ -92,6 +96,7 @@ public class TrayBaseSettingsTab implements SettingsTab {
     builder.addSeparator(mLocalizer.msg("basics", "Basic settings"), cc.xyw(1,1,3));    
     builder.add(mTrayIsEnabled, cc.xy(2,3));
     builder.add(mMinimizeToTrayChb, cc.xy(2,4));
+    builder.add(mNowOnRestore, cc.xy(2,5));
     
     mTrayIsEnabled.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -120,6 +125,7 @@ public class TrayBaseSettingsTab implements SettingsTab {
       boolean checked = mMinimizeToTrayChb.isSelected() && mTrayIsEnabled.isSelected();
       Settings.propTrayMinimizeTo.setBoolean(checked);
     }
+    Settings.propNowOnRestore.setBoolean(mNowOnRestore.isSelected());
   }
 
   public Icon getIcon() {
