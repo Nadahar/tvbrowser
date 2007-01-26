@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.logging.Level;
@@ -121,6 +122,11 @@ public class TvDataBase {
     if (tvDataArr == null) {
       return;
     }
+    //store all files in a map for faster lookup
+    HashMap<String,File> tvDataFiles=new HashMap<String,File>();
+    for (File file : tvDataArr) {
+		tvDataFiles.put(file.getName(), file);
+	}
 
     // Check whether day programs were removed
     String[] knownProgArr = mTvDataInventory.getKnownDayPrograms();
@@ -129,15 +135,7 @@ public class TvDataBase {
 
       // Check whether this file is still present
       // (The key is equal to the file name)
-      boolean stillPresent = false;
-      for (int i = 0; i < tvDataArr.length; i++) {
-        if (tvDataArr[i].getName().equals(key)) {
-          stillPresent = true;
-          break;
-        }
-      }
-
-      if (!stillPresent) {
+      if (!tvDataFiles.containsKey(key)) {
         // This day program was deleted -> Inform the listeners
 
         // Get the channel and date
