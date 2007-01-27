@@ -55,11 +55,15 @@ public class Database {
 	 * @return the overall Rating
 	 */
 	public synchronized Rating getOverallRating(Program program) {
-		if ((program == null) || (program.getTitle() == null) ) { 
+		if (program == null) { 
+			return null;
+		}
+		String title = program.getTitle();
+		if (title == null) {
 			return null;
 		}
 		
-		return getOverallRating(program.getTitle().toLowerCase());
+		return getOverallRating(title);
 	}
 	
 	/**
@@ -73,10 +77,7 @@ public class Database {
 			return null;
 		}
 		
-		if (_overalrating.get(title.toLowerCase()) != null) {
-			return _overalrating.get(title.toLowerCase());
-		}
-		return null;
+		return _overalrating.get(title.toLowerCase());
 	}
 	
 	/**
@@ -104,19 +105,15 @@ public class Database {
 	 * @return the personal Rating
 	 */
 	public synchronized Rating getPersonalRating(Program program) {
-		if ((program == null) || (program.getTitle() == null) ) { 
+		if (program == null) { 
 			return null;
 		}
-
-		
-		Rating rating = getPersonalRating(program.getTitle());
-		if (rating != null) {
-			_personalrating.remove(program.getTitle());
-			_personalrating.put(rating.getTitle().toLowerCase(), rating);
+		String title = program.getTitle();
+		if (title == null) {
+			return null;
 		}
 		
-		rating = getPersonalRating(program.getTitle().toLowerCase());
-		return rating;
+		return getPersonalRating(title);
 	}
 	
 	/**
@@ -130,13 +127,15 @@ public class Database {
 			return null;
 		}
 		
+		String lowerCaseTitle = title.toLowerCase();
 		Rating rating = _personalrating.get(title);
 		if (rating != null) {
 			_personalrating.remove(title);
-			_personalrating.put(title.toLowerCase(), rating);
+			_personalrating.put(lowerCaseTitle, rating);
+			return rating;
 		}
 		
-		rating = _personalrating.get(title.toLowerCase()); 
+		rating = _personalrating.get(lowerCaseTitle); 
 		return rating;
 	}
 	
