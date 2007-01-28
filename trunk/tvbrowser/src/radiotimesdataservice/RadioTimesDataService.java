@@ -196,9 +196,10 @@ public class RadioTimesDataService extends AbstractTvDataService {
 
     mChannels = new ArrayList<Channel>();
 
+    TimeZone timeZone = TimeZone.getTimeZone("GMT+0:00");
     for (int i = 0; i < numChannels; i++) {
-      Channel ch = new Channel(this, settings.getProperty("ChannelTitle-" + i, ""), settings.getProperty("ChannelId-"
-          + i, ""), TimeZone.getTimeZone("GMT+0:00"), "gb", "(c) Radio Times", "http://www.radiotimes.co.uk",
+    	Channel ch = new Channel(this, settings.getProperty("ChannelTitle-" + i, ""), settings.getProperty("ChannelId-"
+          + i, ""), timeZone, "gb", "(c) Radio Times", "http://www.radiotimes.co.uk",
           mRadioTimesChannelGroup);
       mChannels.add(ch);
       mLog.fine("Channel : " + ch.getName() + "{" + ch.getId() + "}");

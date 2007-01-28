@@ -31,6 +31,7 @@
 
 package devplugin;
 
+import java.io.DataInput;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -183,7 +184,7 @@ public class Date implements Comparable {
    * 
    * @since 2.2
    */
-  public Date(RandomAccessFile in) throws IOException, ClassNotFoundException {
+  public Date(DataInput in) throws IOException, ClassNotFoundException {
     int version = in.readInt();
     if (version == 1) { // currently, version==2 is used
       int date = in.readInt();
@@ -286,7 +287,7 @@ public class Date implements Comparable {
 
     if (obj instanceof Date) {
       Date d = (Date) obj;
-      return d.getValue() == getValue();
+      return d.getDayOfMonth()==getDayOfMonth() && d.getMonth()==getMonth() && d.getYear()==d.getYear();
     }
     return false;
 
@@ -332,17 +333,25 @@ public class Date implements Comparable {
 
   public int compareTo(Object obj) {
     Date d = (Date) obj;
-
-    long val = d.getValue();
-    long thisVal = getValue();
-
-    if (thisVal < val) {
-      return -1;
-    } else if (thisVal > val) {
-      return 1;
+    if (this.mYear < d.mYear) {
+    	return -1;
+    }
+    else if (this.mYear > d.mYear) {
+    	return 1;
+    }
+    else if (this.mMonth < d.mMonth) {
+    	return -1;
+    }
+    else if (this.mMonth > d.mMonth) {
+    	return 1;
+    }
+    else if (this.mDay < d.mDay) {
+    	return -1;
+    }
+    else if (this.mDay > d.mDay) {
+    	return 1;
     }
     return 0;
-
   }
 
 }
