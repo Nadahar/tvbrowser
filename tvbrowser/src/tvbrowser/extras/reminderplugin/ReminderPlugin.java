@@ -115,19 +115,21 @@ public class ReminderPlugin {
           }
 
           public void tvDataUpdateFinished() {
-            Program[] removedPrograms = mReminderList.updatePrograms();
-            if (removedPrograms.length > 0) {
-              RemovedProgramsDialog dlg;
-              Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-              if (parent instanceof JFrame) {
-                dlg = new RemovedProgramsDialog((JFrame) parent,
-                    removedPrograms);
-              } else {
-                dlg = new RemovedProgramsDialog((JDialog) parent,
-                    removedPrograms);
-              }
-              util.ui.UiUtilities.centerAndShow(dlg);
-            }
+        	  if (mSettings.getProperty("showRemovedDialog","true").compareTo("true") == 0) {
+	            Program[] removedPrograms = mReminderList.updatePrograms();
+	            if (removedPrograms.length > 0) {
+	              RemovedProgramsDialog dlg;
+	              Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+	              if (parent instanceof JFrame) {
+	                dlg = new RemovedProgramsDialog((JFrame) parent,
+	                    removedPrograms);
+	              } else {
+	                dlg = new RemovedProgramsDialog((JDialog) parent,
+	                    removedPrograms);
+	              }
+	              util.ui.UiUtilities.centerAndShow(dlg);
+	            }
+        	  }
           }
         });
 

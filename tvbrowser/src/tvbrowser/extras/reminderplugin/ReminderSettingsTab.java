@@ -86,7 +86,8 @@ public class ReminderSettingsTab implements SettingsTab {
   private JCheckBox mReminderWindowChB;
   private FileCheckBox mSoundFileChB;
   private JCheckBox mExecChB;
-  private JCheckBox mShowTimeSlectionDlg;
+  private JCheckBox mShowTimeSelectionDlg;
+  private JCheckBox mShowRemovedDlg;
   private JCheckBox mAutoCloseReminderAfterProgramEnd;
   private JCheckBox mShowTimeCounter;
   private JButton mExecFileDialogBtn;
@@ -113,7 +114,7 @@ public class ReminderSettingsTab implements SettingsTab {
     FormLayout layout = new FormLayout("5dlu,pref,5dlu,pref,pref:grow,3dlu,pref,3dlu,pref,5dlu",
         "pref,5dlu,pref,1dlu,pref,1dlu,pref,10dlu,pref,5dlu," +
         "pref,10dlu,pref,5dlu,pref,3dlu,pref,3dlu,pref,10dlu,pref,5dlu,pref,10dlu," +
-        "pref,5dlu,pref");
+        "pref,5dlu,pref,3dlu,pref");
     layout.setColumnGroups(new int[][] {{7,9}});
     PanelBuilder pb = new PanelBuilder(layout);
     pb.setDefaultDialogBorder();    
@@ -203,8 +204,10 @@ public class ReminderSettingsTab implements SettingsTab {
       }
     }
         
-    mShowTimeSlectionDlg = new JCheckBox(mLocalizer.msg("showTimeSelectionDialog","Show time selection dialog"));    
-    mShowTimeSlectionDlg.setSelected(mSettings.getProperty("showTimeSelectionDialog","true").compareTo("true") == 0);
+    mShowTimeSelectionDlg = new JCheckBox(mLocalizer.msg("showTimeSelectionDialog","Show time selection dialog"));    
+    mShowTimeSelectionDlg.setSelected(mSettings.getProperty("showTimeSelectionDialog","true").compareTo("true") == 0);
+    mShowRemovedDlg = new JCheckBox(mLocalizer.msg("showRemovedDialog","Show removed reminders after data update"));    
+    mShowRemovedDlg.setSelected(mSettings.getProperty("showRemovedDialog","true").compareTo("true") == 0);
         
     pb.addSeparator(mLocalizer.msg("remindBy", "Remind me by"), cc.xyw(1,1,10));
     pb.add(mReminderWindowChB, cc.xyw(2,3,4));
@@ -233,7 +236,8 @@ public class ReminderSettingsTab implements SettingsTab {
     pb.add(reminderEntry, cc.xyw(2,23,4));
     
     pb.addSeparator(mLocalizer.msg("timeChoosing","Time selection dialog"), cc.xyw(1,25,10));    
-    pb.add(mShowTimeSlectionDlg, cc.xyw(2,27,4));
+    pb.add(mShowTimeSelectionDlg, cc.xyw(2,27,4));
+    pb.add(mShowRemovedDlg, cc.xyw(2,29,4));
     
     soundTestBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -400,7 +404,8 @@ public class ReminderSettingsTab implements SettingsTab {
     mSettings.setProperty("autoCloseReminderAtProgramEnd", String.valueOf(mAutoCloseReminderAfterProgramEnd.isSelected()));
     mSettings.setProperty("autoCloseReminderTime", mAutoCloseReminderTimeSp.getValue().toString());
     mSettings.setProperty("defaultReminderEntry",""+mDefaultReminderEntryList.getSelectedIndex());
-    mSettings.setProperty("showTimeSelectionDialog", String.valueOf(mShowTimeSlectionDlg.isSelected()));
+    mSettings.setProperty("showTimeSelectionDialog", String.valueOf(mShowTimeSelectionDlg.isSelected()));
+    mSettings.setProperty("showRemovedDialog", String.valueOf(mShowRemovedDlg.isSelected()));
     mSettings.setProperty("showTimeCounter",String.valueOf((((Integer)mAutoCloseReminderTimeSp.getValue()).intValue() > 0 || mAutoCloseReminderAfterProgramEnd.isSelected()) && mShowTimeCounter.isSelected()));
   }
 
