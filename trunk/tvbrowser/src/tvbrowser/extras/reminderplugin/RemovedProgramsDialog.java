@@ -34,6 +34,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -51,7 +52,7 @@ public class RemovedProgramsDialog extends JDialog implements WindowClosingIf{
 
   private static final util.ui.Localizer mLocalizer
      = util.ui.Localizer.getLocalizerFor(RemovedProgramsDialog. class );
-
+  private JCheckBox mDisable;
 
   public RemovedProgramsDialog(Dialog parent, Program[] programs) {
     super(parent, false);
@@ -86,15 +87,19 @@ public class RemovedProgramsDialog extends JDialog implements WindowClosingIf{
     JButton btn = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
     btn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
-        setVisible(false);
+        close();
       }
     });
-
+    mDisable = new JCheckBox(mLocalizer.msg("dialog.dontShowAnymore","Don't show anymore"));
     result.add(btn, BorderLayout.EAST);
+    result.add(mDisable,BorderLayout.WEST);
     return result;
   }
 
   public void close() {
+	if (mDisable.isSelected()) {
+		ReminderPlugin.getInstance().getSettings().setProperty("showRemovedDialog", String.valueOf(false));
+	}
     setVisible(false);
   }
 
