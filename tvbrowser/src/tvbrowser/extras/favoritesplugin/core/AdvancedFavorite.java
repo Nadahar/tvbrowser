@@ -27,6 +27,8 @@
 package tvbrowser.extras.favoritesplugin.core;
 
 import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.ShowAllFilter;
 import devplugin.*;
 
@@ -60,6 +62,7 @@ public class AdvancedFavorite extends Favorite {
 
   private ProgramFilter mFilter;
 
+  private String mPendingFilterName = null;
 
   public AdvancedFavorite(ObjectInputStream in) throws IOException, ClassNotFoundException {
     super(in);
@@ -67,9 +70,10 @@ public class AdvancedFavorite extends Favorite {
     mSearchFormSettings = new SearchFormSettings(in);
     if (version > 1) {
       boolean useFilter = in.readBoolean();
+      
       if (useFilter) {
-        String filtername = (String)in.readObject();
-        mFilter = getFilterByName(filtername);
+        mPendingFilterName = (String)in.readObject();
+        FavoritesPlugin.getInstance().addPendingFavorite(this);
       }
     }
   }
@@ -216,12 +220,12 @@ public class AdvancedFavorite extends Favorite {
 
     if (version >=4) {
         boolean useFilter = in.readBoolean();  // useFilter
-        String filterName = (String)in.readObject();
+        mPendingFilterName = (String)in.readObject();
         
         if(useFilter)
-          mFilter = getFilterByName(filterName);
+          FavoritesPlugin.getInstance().addPendingFavorite(this);
         else
-          mFilter = null;
+          mPendingFilterName = null;
     } else {
         mFilter = null;
     }
@@ -354,5 +358,15 @@ public class AdvancedFavorite extends Favorite {
     }
   }
 
-
+  /**
+   * Loads the filters after TV-Browser start was finished.
+   * 
+   * @since 2.5.1
+   */
+  public void loadPendingFilter() {
+    if(mPendingFilterName != null) {
+      mFilter = getFilterByName(mPendingFilterName);
+      mPendingFilterName = null;
+    }
+  }
 }

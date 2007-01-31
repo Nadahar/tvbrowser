@@ -112,12 +112,15 @@ public class FavoritesPlugin {
   private Hashtable<ProgramReceiveTarget,ArrayList<Program>> mSendPluginsTable = new Hashtable<ProgramReceiveTarget,ArrayList<Program>>();
   private ProgramReceiveTarget[] mClientPluginTargets;
 
+  private ArrayList<AdvancedFavorite> mPendingFavorites;
+  
   /**
    * Creates a new instance of FavoritesPlugin.
    */
   private FavoritesPlugin() {
     mInstance = this;
-    mFavoriteArr = new Favorite[0];
+    mPendingFavorites = new ArrayList<AdvancedFavorite>();
+    mFavoriteArr = new Favorite[0];    
     mClientPluginTargets = new ProgramReceiveTarget[0];
     mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
     load();
@@ -170,10 +173,14 @@ public class FavoritesPlugin {
   }
   
   public void handleTvBrowserStartFinished() {
+    if(!mPendingFavorites.isEmpty())
+      for(AdvancedFavorite fav : mPendingFavorites)
+        fav.loadPendingFilter();
+    
     mHasRightToUpdate = true;
     
     if(mHasToUpdate)
-      handleTvDataUpdateFinsihed();
+      handleTvDataUpdateFinsihed();    
   }
 
   private void load() {
@@ -846,5 +853,15 @@ public class FavoritesPlugin {
    */
   public ProgramPanelSettings getProgramPanelSettings() {
     return new ProgramPanelSettings(Integer.parseInt(mSettings.getProperty("pictureType","0")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeStart","1080")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeEnd","1380")), false, mSettings.getProperty("pictureShowsDescription","true").compareTo("true") == 0, Integer.parseInt(mSettings.getProperty("pictureDuration","10")), mSettings.getProperty("picturePlugins","").split(";;"));
+  }
+  
+  /**
+   * Adds a AdvancedFavorite to the pending list (for loading filters after TV-Browser start was finished).
+   * 
+   * @param fav The AdvancedFavorite to add.
+   * @since 2.5.1
+   */
+  public void addPendingFavorite(AdvancedFavorite fav) {
+    mPendingFavorites.add(fav);
   }
 }
