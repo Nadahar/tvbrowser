@@ -66,7 +66,7 @@ public class GlobalPluginProgramFormatingSettings implements SettingsTab, Action
   public JPanel createSettingsPanel() {
     try {
       CellConstraints cc = new CellConstraints();
-      PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default:grow,5dlu","pref,5dlu,fill:default:grow,5dlu,pref"));
+      PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default:grow,5dlu","pref,5dlu,fill:default:grow,5dlu,pref,10dlu,pref"));
       pb.setDefaultDialogBorder();
       
       mConfigurations = new SortableItemList("",GlobalPluginProgramFormatingManager.getInstance().getAvailableGlobalPluginProgramFormatings());
@@ -108,6 +108,7 @@ public class GlobalPluginProgramFormatingSettings implements SettingsTab, Action
       buttonPanel.add(mDelete, cc.xy(5,1));
       
       pb.add(buttonPanel, cc.xy(2,5));
+      pb.addLabel(mLocalizer.msg("help","<html>This list of formating can be used by several plugins. So a formating don't have to be entered in every plugin that should use the formating. The selection of the formating can be done in the settings of the plugin.</html>"), cc.xy(2,7));
       
       mConfigurations.getList().addListSelectionListener(new ListSelectionListener() {
         public void valueChanged(ListSelectionEvent e) {
