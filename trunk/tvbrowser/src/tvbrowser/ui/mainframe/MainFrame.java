@@ -319,181 +319,190 @@ public class MainFrame extends JFrame implements DateListener {
 		}});
   }
   
+  /**
+   * Switch the fullscreen mode of TV-Browser
+   */
   public void switchFullscreenMode() {
     dispose();
-	  if(isUndecorated()) {
-      setUndecorated(false);
-      setBounds(mXPos, mYPos, mWidth, mHeight);
+    
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        
+        if(isUndecorated()) {
+          setUndecorated(false);
+          setBounds(mXPos, mYPos, mWidth, mHeight);
       
-      if(mMenuBar != null) {
-        mMenuBar.setFullscreenItemChecked(false);
-        mMenuBar.setVisible(true);
-      }
+          if(mMenuBar != null) {
+            mMenuBar.setFullscreenItemChecked(false);
+            mMenuBar.setVisible(true);
+          }
       
-      if(mToolBarPanel != null)
-        mToolBarPanel.setVisible(Settings.propIsTooolbarVisible.getBoolean());
+          if(mToolBarPanel != null)
+            mToolBarPanel.setVisible(Settings.propIsTooolbarVisible.getBoolean());
 
-      if(mStatusBar != null)
-        mStatusBar.setVisible(Settings.propIsStatusbarVisible.getBoolean());
+          if(mStatusBar != null)
+            mStatusBar.setVisible(Settings.propIsStatusbarVisible.getBoolean());
       
-      if(mChannelChooser != null)
-        mChannelChooser.setVisible(Settings.propShowChannels.getBoolean());
-      
-      if(mFinderPanel != null)
-        mFinderPanel.setVisible(Settings.propShowDatelist.getBoolean());
-      
-      setVisible(true);
-      
-      setShowPluginOverview(Settings.propShowPluginView.getBoolean(),false);      
-      setShowTimeButtons(Settings.propShowTimeButtons.getBoolean(), false);
-      setShowDatelist(Settings.propShowDatelist.getBoolean(), false);
-      setShowChannellist(Settings.propShowChannels.getBoolean(), false);
-    }
-    else {
-      mXPos = getX();
-      mYPos = getY();
-      mWidth = getWidth();
-      mHeight = getHeight();
-
-      setShowPluginOverview(false, false);
-      setShowTimeButtons(false, false);
-      setShowDatelist(false, false);
-      setShowChannellist(false, false);
-      
-      if(mStatusBar != null) {
-        mMenuBar.setFullscreenItemChecked(true);
-        mStatusBar.setVisible(false);
-      }
-      
-      if(mChannelChooser != null)
-        mChannelChooser.setVisible(false);
-      
-      if(mMenuBar != null)
-        mMenuBar.setVisible(false);
-      
-      if(mToolBarPanel != null)
-        mToolBarPanel.setVisible(false);
-      
-      if(mFinderPanel != null)
-        mFinderPanel.setVisible(false);
-      
-      final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-      
-      setUndecorated(true);
-      
-      setLocation(0,0);
-      setSize(screen);
-      
-      setVisible(true);
-      
-      new Thread() {
-        public void run() {
-          setPriority(Thread.MIN_PRIORITY);          
+          if(mChannelChooser != null)
+            mChannelChooser.setVisible(Settings.propShowChannels.getBoolean());
           
-          while(isUndecorated()) {
-            final Point p = MouseInfo.getPointerInfo().getLocation();
-            
-            if(isActive()) {
+          if(mFinderPanel != null)
+            mFinderPanel.setVisible(Settings.propShowDatelist.getBoolean());
+        
+          setVisible(true);
+          
+          setShowPluginOverview(Settings.propShowPluginView.getBoolean(),false);      
+          setShowTimeButtons(Settings.propShowTimeButtons.getBoolean(), false);
+          setShowDatelist(Settings.propShowDatelist.getBoolean(), false);
+          setShowChannellist(Settings.propShowChannels.getBoolean(), false);
+        }
+        else {
+          mXPos = getX();
+          mYPos = getY();
+          mWidth = getWidth();
+          mHeight = getHeight();
+    
+          setShowPluginOverview(false, false);
+          setShowTimeButtons(false, false);
+          setShowDatelist(false, false);
+          setShowChannellist(false, false);
+          
+          if(mStatusBar != null) {
+            mMenuBar.setFullscreenItemChecked(true);
+            mStatusBar.setVisible(false);
+          }
+          
+          if(mChannelChooser != null)
+            mChannelChooser.setVisible(false);
+          
+          if(mMenuBar != null)
+            mMenuBar.setVisible(false);
+          
+          if(mToolBarPanel != null)
+            mToolBarPanel.setVisible(false);
+          
+          if(mFinderPanel != null)
+            mFinderPanel.setVisible(false);
+          
+          final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+          
+          setUndecorated(true);
+          
+          setLocation(0,0);
+          setSize(screen);
+          
+          setVisible(true);
+          
+          new Thread() {
+            public void run() {
+              setPriority(Thread.MIN_PRIORITY);          
               
-              // mouse pointer is at top
-              if(p.y <= 10) {
-                if(mToolBarPanel != null && mToolBar.getToolbarLocation().compareTo(BorderLayout.NORTH) == 0)
-                  if(!mToolBarPanel.isVisible())
-                    mToolBarPanel.setVisible(Settings.propIsTooolbarVisible.getBoolean());
+              while(isUndecorated()) {
+                final Point p = MouseInfo.getPointerInfo().getLocation();
                 
-                  if(p.y == 0)
-                    mMenuBar.setVisible(true);
-              }
-              else if(p.y > (mMenuBar != null && mMenuBar.isVisible() ? mMenuBar.getHeight() : 0) + (Settings.propIsTooolbarVisible.getBoolean() ? mToolBarPanel.getHeight() : 0)) {
-                if(mMenuBar.isVisible())
-                  mMenuBar.setVisible(!isUndecorated());
+                if(isActive()) {
                   
-                if(mToolBarPanel != null && mToolBarPanel.isVisible() && mToolBar.getToolbarLocation().compareTo(BorderLayout.NORTH) == 0)
-                  mToolBarPanel.setVisible(!isUndecorated());
-              }
-            
-              // mouse pointer is at the bottom
-              if(p.y >= screen.height - 1 ) {
-                if(mStatusBar != null && !mStatusBar.isVisible())
-                  mStatusBar.setVisible(Settings.propIsStatusbarVisible.getBoolean());
-              }
-              else if(mStatusBar != null && mStatusBar.isVisible() && p.y < screen.height - mStatusBar.getHeight())
-                mStatusBar.setVisible(!isUndecorated());
-            
-              // mouse pointer is on the left side
-              if(p.x <= 5) {
-                if(p.x == 0 && mToolBarPanel != null & mToolBar.getToolbarLocation().compareTo(BorderLayout.WEST) == 0) {
-                  if(!mToolBarPanel.isVisible())
-                    mToolBarPanel.setVisible(Settings.propIsTooolbarVisible.getBoolean());
-                }
-                
-                if(Settings.propShowPluginView.getBoolean()) {
-                  SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                      setShowPluginOverview(true, false);
-                    }
-                  });
-                }
-              }
-              else {
-                int toolBarWidth = (mToolBarPanel != null && mToolBarPanel.isVisible() && mToolBar.getToolbarLocation().compareTo(BorderLayout.WEST) == 0) ? mToolBarPanel.getWidth() : 0;
-              
-                if(p.x > toolBarWidth && toolBarWidth != 0)
-                  mToolBarPanel.setVisible(!isUndecorated());
-                
-                if(Settings.propShowPluginView.getBoolean() && mPluginView != null && mPluginView.isVisible() && p.x > mPluginView.getWidth() + toolBarWidth + 25) {
-                  SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                      setShowPluginOverview(!isUndecorated(), false);
-                    }
-                  });
-                }
-              }
-              
-              // mouse pointer is on the right side
-              if(p.x >= screen.width - 1 &&
-                  (Settings.propShowTimeButtons.getBoolean() ||
-                   Settings.propShowDatelist.getBoolean() ||
-                   Settings.propShowChannels.getBoolean())) {
-                SwingUtilities.invokeLater(new Runnable() {
-                  public void run() {
-                    if(Settings.propShowTimeButtons.getBoolean() && !mTimeChooserPanel.isVisible())
-                      setShowTimeButtons(true, false);
+                  // mouse pointer is at top
+                  if(p.y <= 10) {
+                    if(mToolBarPanel != null && mToolBar.getToolbarLocation().compareTo(BorderLayout.NORTH) == 0)
+                      if(!mToolBarPanel.isVisible())
+                        mToolBarPanel.setVisible(Settings.propIsTooolbarVisible.getBoolean());
                     
-                    if(Settings.propShowDatelist.getBoolean() && !mFinderPanel.isVisible())
-                      setShowDatelist(true, false);
-                    
-                    if(Settings.propShowChannels.getBoolean() && !mChannelChooser.isVisible())
-                      setShowChannellist(true, false);
+                      if(p.y == 0)
+                        mMenuBar.setVisible(true);
                   }
-                });
-              }
-              else {
-                if(Settings.propShowChannels.getBoolean() ||
-                    Settings.propShowDatelist.getBoolean() ||
-                    Settings.propShowTimeButtons.getBoolean()) {
-                  SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                      if(mChannelChooser != null && mChannelChooser.isVisible() && p.x < screen.width - mChannelChooser.getWidth())
-                        setShowChannellist(!isUndecorated(), false);
+                  else if(p.y > (mMenuBar != null && mMenuBar.isVisible() ? mMenuBar.getHeight() : 0) + (Settings.propIsTooolbarVisible.getBoolean() ? mToolBarPanel.getHeight() : 0)) {
+                    if(mMenuBar.isVisible())
+                      mMenuBar.setVisible(!isUndecorated());
                       
-                      if(mFinderPanel != null && mFinderPanel.isVisible() && p.x < screen.width - mFinderPanel.getWidth())
-                        setShowDatelist(!isUndecorated(), false);
-                      
-                      if(mTimeChooserPanel != null && mTimeChooserPanel.isVisible() && p.x < screen.width - mTimeChooserPanel.getWidth())
-                        setShowTimeButtons(!isUndecorated(), false);
+                    if(mToolBarPanel != null && mToolBarPanel.isVisible() && mToolBar.getToolbarLocation().compareTo(BorderLayout.NORTH) == 0)
+                      mToolBarPanel.setVisible(!isUndecorated());
+                  }
+                
+                  // mouse pointer is at the bottom
+                  if(p.y >= screen.height - 1 ) {
+                    if(mStatusBar != null && !mStatusBar.isVisible())
+                      mStatusBar.setVisible(Settings.propIsStatusbarVisible.getBoolean());
+                  }
+                  else if(mStatusBar != null && mStatusBar.isVisible() && p.y < screen.height - mStatusBar.getHeight())
+                    mStatusBar.setVisible(!isUndecorated());
+                
+                  // mouse pointer is on the left side
+                  if(p.x <= 5) {
+                    if(p.x == 0 && mToolBarPanel != null & mToolBar.getToolbarLocation().compareTo(BorderLayout.WEST) == 0) {
+                      if(!mToolBarPanel.isVisible())
+                        mToolBarPanel.setVisible(Settings.propIsTooolbarVisible.getBoolean());
                     }
-                  });
+                    
+                    if(Settings.propShowPluginView.getBoolean()) {
+                      SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                          setShowPluginOverview(true, false);
+                        }
+                      });
+                    }
+                  }
+                  else {
+                    int toolBarWidth = (mToolBarPanel != null && mToolBarPanel.isVisible() && mToolBar.getToolbarLocation().compareTo(BorderLayout.WEST) == 0) ? mToolBarPanel.getWidth() : 0;
+                  
+                    if(p.x > toolBarWidth && toolBarWidth != 0)
+                      mToolBarPanel.setVisible(!isUndecorated());
+                    
+                    if(Settings.propShowPluginView.getBoolean() && mPluginView != null && mPluginView.isVisible() && p.x > mPluginView.getWidth() + toolBarWidth + 25) {
+                      SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                          setShowPluginOverview(!isUndecorated(), false);
+                        }
+                      });
+                    }
+                  }
+                  
+                  // mouse pointer is on the right side
+                  if(p.x >= screen.width - 1 &&
+                      (Settings.propShowTimeButtons.getBoolean() ||
+                       Settings.propShowDatelist.getBoolean() ||
+                       Settings.propShowChannels.getBoolean())) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                      public void run() {
+                        if(Settings.propShowTimeButtons.getBoolean() && !mTimeChooserPanel.isVisible())
+                          setShowTimeButtons(true, false);
+                        
+                        if(Settings.propShowDatelist.getBoolean() && !mFinderPanel.isVisible())
+                          setShowDatelist(true, false);
+                        
+                        if(Settings.propShowChannels.getBoolean() && !mChannelChooser.isVisible())
+                          setShowChannellist(true, false);
+                      }
+                    });
+                  }
+                  else {
+                    if(Settings.propShowChannels.getBoolean() ||
+                        Settings.propShowDatelist.getBoolean() ||
+                        Settings.propShowTimeButtons.getBoolean()) {
+                      SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                          if(mChannelChooser != null && mChannelChooser.isVisible() && p.x < screen.width - mChannelChooser.getWidth())
+                            setShowChannellist(!isUndecorated(), false);
+                          
+                          if(mFinderPanel != null && mFinderPanel.isVisible() && p.x < screen.width - mFinderPanel.getWidth())
+                            setShowDatelist(!isUndecorated(), false);
+                          
+                          if(mTimeChooserPanel != null && mTimeChooserPanel.isVisible() && p.x < screen.width - mTimeChooserPanel.getWidth())
+                            setShowTimeButtons(!isUndecorated(), false);
+                        }
+                      });
+                    }
+                  }
                 }
+                try {
+                  Thread.sleep(200);
+                }catch(Exception e) {}
               }
             }
-            try {
-              Thread.sleep(200);
-            }catch(Exception e) {}
-          }
-        }
-      }.start();
-    }
+          }.start();
+        }      
+      }
+    });
   }
   
   /**
@@ -504,11 +513,11 @@ public class MainFrame extends JFrame implements DateListener {
     JRootPane rootPane = this.getRootPane();
 
     mProgramTableScrollPane.deSelectItem();
-
+    
     KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0, false);
     rootPane.registerKeyboardAction(new ActionListener() {
     	public void actionPerformed(ActionEvent e) {
-        switchFullscreenMode();
+        switchFullscreenMode();        
     	}
     }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
     
@@ -715,7 +724,7 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   public void quit(boolean log) {
-    if(isUndecorated())
+    if(log && isUndecorated())
       switchFullscreenMode();
     if (mShuttingDown)
       return;
