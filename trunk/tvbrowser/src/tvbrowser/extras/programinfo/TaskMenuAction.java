@@ -107,7 +107,6 @@ public class TaskMenuAction {
     mAction.putValue(Action.SMALL_ICON,a.getValue(Action.SMALL_ICON));
     
     Component c = parent.add(mAction);
-    c.setForeground((new JButton()).getForeground());
     mFind.installKeyListener(c);
     
     if(c instanceof JLinkButton) {

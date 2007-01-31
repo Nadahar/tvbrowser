@@ -47,6 +47,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.LookAndFeel;
@@ -792,6 +793,9 @@ public class TVBrowser {
         ErrorHandler.handle(msg, exc);
       }
     }
+
+    // set colors for action pane at UIManager
+    UIManager.put("TaskPane.foreGround",(new JButton()).getForeground());
 
     if (mainFrame != null) {
       SwingUtilities.updateComponentTreeUI(mainFrame);
