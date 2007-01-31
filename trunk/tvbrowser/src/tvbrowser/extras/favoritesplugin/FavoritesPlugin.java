@@ -173,9 +173,12 @@ public class FavoritesPlugin {
   }
   
   public void handleTvBrowserStartFinished() {
-    if(!mPendingFavorites.isEmpty())
+    if(!mPendingFavorites.isEmpty()) {
       for(AdvancedFavorite fav : mPendingFavorites)
         fav.loadPendingFilter();
+      
+      mPendingFavorites.clear();
+    }
     
     mHasRightToUpdate = true;
     
