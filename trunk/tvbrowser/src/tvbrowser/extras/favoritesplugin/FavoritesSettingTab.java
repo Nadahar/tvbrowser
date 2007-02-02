@@ -64,7 +64,7 @@ public class FavoritesSettingTab implements SettingsTab {
   
   private ProgramReceiveTarget[] mClientPluginTargets;
   private JLabel mPluginLabel;
-  private JCheckBox mExpertMode;
+  private JCheckBox mExpertMode, mShowRepetitions;
   
   /**
    * Creates the settings panel for this tab.
@@ -73,12 +73,13 @@ public class FavoritesSettingTab implements SettingsTab {
     CellConstraints cc = new CellConstraints();
     PanelBuilder builder = new PanelBuilder(new FormLayout(
         "5dlu,min(150dlu;pref):grow,5dlu,pref,5dlu",
-        "pref,5dlu,pref,10dlu,pref,5dlu,pref"));
+        "pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu,pref"));
     builder.setDefaultDialogBorder();
     
     mPluginLabel = new JLabel();
     JButton choose = new JButton(mLocalizer.msg("selectPlugins","Choose Plugins"));    
-    mExpertMode = new JCheckBox(mLocalizer.msg("expertMode","Always use expert mode"),FavoritesPlugin.getInstance().isUsingExpertMode());    
+    mExpertMode = new JCheckBox(mLocalizer.msg("expertMode","Always use expert mode"),FavoritesPlugin.getInstance().isUsingExpertMode());
+    mShowRepetitions = new JCheckBox(mLocalizer.msg("showRepetitions","Show repetitions in context menu of a favorite program"),FavoritesPlugin.getInstance().isShowingRepetitions());
     
     ProgramReceiveTarget[] targetsArr
     = FavoritesPlugin.getInstance().getClientPluginTargetIds();    
@@ -118,8 +119,9 @@ public class FavoritesSettingTab implements SettingsTab {
     builder.add(mPluginLabel, cc.xy(2,3));
     builder.add(choose, cc.xy(4,3));
     builder.addSeparator(mLocalizer.msg("expertSettings","Expert mode"), cc.xyw(1,5,5));
-    builder.add(mExpertMode, cc.xyw(2,7,3));  
-    
+    builder.add(mExpertMode, cc.xyw(2,7,3));
+    builder.addSeparator(mLocalizer.msg("repetitionSettings","Repetitions"), cc.xyw(1,9,4));
+    builder.add(mShowRepetitions, cc.xyw(2,11,3));
     return builder.getPanel();
   }
 
@@ -158,6 +160,7 @@ public class FavoritesSettingTab implements SettingsTab {
   public void saveSettings() {    
     FavoritesPlugin.getInstance().setClientPluginTargets(mClientPluginTargets);
     FavoritesPlugin.getInstance().setIsUsingExpertMode(mExpertMode.isSelected());    
+    FavoritesPlugin.getInstance().setShowRepetitions(mShowRepetitions.isSelected());
   }
   
   /**
