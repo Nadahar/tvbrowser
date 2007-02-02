@@ -29,6 +29,8 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -48,6 +50,7 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRootPane;
@@ -55,7 +58,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -89,13 +91,16 @@ import devplugin.SettingsItem;
  * @author Martin Oberhauser
  */
 
-public class ProgramInfoDialog extends JDialog implements SwingConstants, WindowClosingIf {
+public class ProgramInfoDialog /*implements SwingConstants*/ {
 
   private static final long serialVersionUID = 1L;
 
   protected static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ProgramInfoDialog.class);
 
+  private JDialog mDialog;
+  private JPanel mMainPanel;
+  
   private JEditorPane mInfoEP;
   private JTaskPane mPluginsPane;
   private JTaskPaneGroup mFunctionGroup;
@@ -109,9 +114,10 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
   private boolean mShowSettings;
   
   private static ProgramInfoDialog instance;
+  private Action mUpAction, mDownAction;
+  private JButton mCloseBtn;
   
-  private ProgramInfoDialog(Dimension pluginsSize, boolean showSettings) {
-	  super(MainFrame.getInstance(), true);
+  private ProgramInfoDialog(Dimension pluginsSize, boolean showSettings) {	  
 	  init(pluginsSize, showSettings);
   }
   
@@ -122,6 +128,8 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
    *          The size of the Functions Panel.
    * @param showSettings
    *          Show the settings button.
+   *          
+   * @return The instance of this ProgramInfoDialog
    */
   public static ProgramInfoDialog getInstance(Program program, Dimension pluginsSize, boolean showSettings) {
 	  if (instance == null) {
@@ -143,18 +151,13 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
   }
   
   private void init(Dimension pluginsSize, boolean showSettings) {
-    UiUtilities.registerForClosing(this);
-    
     mShowSettings = showSettings;
     mFunctionGroup = new JTaskPaneGroup();
-    mFunctionGroup.setTitle(mLocalizer.msg("functions", "Functions"));
+    mFunctionGroup.setTitle(mLocalizer.msg("functions", "Functions"));    
 
-    setTitle(mLocalizer.msg("title", "Program information"));
-
-    JPanel main = new JPanel(new BorderLayout());
-    main.setPreferredSize(new Dimension(750, 500));
-    main.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-    setContentPane(main);
+    mMainPanel = new JPanel(new BorderLayout());
+    mMainPanel.setPreferredSize(new Dimension(750, 500));
+    mMainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
     mInfoEP = new ProgramEditorPane();
     
@@ -201,52 +204,24 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     final JScrollPane scrollPane = new JScrollPane(mInfoEP);
     scrollPane.getVerticalScrollBar().setUnitIncrement(30);
 
+    
     // ScrollActions
-    Action up = new AbstractAction() {
-
-      private static final long serialVersionUID = 1L;
-
+    mUpAction = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {
         scrollPane.getVerticalScrollBar().setValue(
             scrollPane.getVerticalScrollBar().getValue()
                 - scrollPane.getVerticalScrollBar().getUnitIncrement());
       }
     };
-
-    KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0);
-    mInfoEP.getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,
-        "SCROLL_UP");
-    mInfoEP.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke, "SCROLL_UP");
-    mInfoEP.getActionMap().put("SCROLL_UP", up);
-
-    getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,
-        "SCROLL_UP");
-    getRootPane().getInputMap(JRootPane.WHEN_FOCUSED).put(stroke, "SCROLL_UP");
-    getRootPane().getActionMap().put("SCROLL_UP", up);
-
-    Action down = new AbstractAction() {
-
-      private static final long serialVersionUID = 1L;
-
+    
+    mDownAction = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {
         scrollPane.getVerticalScrollBar().setValue(
           scrollPane.getVerticalScrollBar().getValue()
               + scrollPane.getVerticalScrollBar().getUnitIncrement());
       }
     };
-
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0);
-    mInfoEP.getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,
-        "SCROLL_DOWN");
-    mInfoEP.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke, "SCROLL_DOWN");
-    mInfoEP.getActionMap().put("SCROLL_DOWN", down);
-
-    getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,
-        "SCROLL_DOWN");
-    getRootPane().getInputMap(JRootPane.WHEN_FOCUSED)
-        .put(stroke, "SCROLL_DOWN");
-    getRootPane().getActionMap().put("SCROLL_DOWN", down);
-
+    
     mPluginsPane = new JTaskPane();
     mPluginsPane.add(mFunctionGroup);
     
@@ -273,21 +248,8 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
       split.setDividerLocation(mActionsPane.getPreferredSize().width + 1);
       split.setLeftComponent(mActionsPane);
       split.setRightComponent(scrollPane);
-      main.add(split, BorderLayout.CENTER);
-      mFindAsYouType.installKeyListener(split);
-      
-      addComponentListener(new ComponentListener() {
-        public void componentResized(ComponentEvent e) {
-          mActionsPane.getVerticalScrollBar().setBlockIncrement(mActionsPane.getVisibleRect().height);
-        }
-
-        public void componentShown(ComponentEvent e) {
-          mActionsPane.getVerticalScrollBar().setBlockIncrement(mActionsPane.getVisibleRect().height);
-        }
-
-        public void componentHidden(ComponentEvent e) {}
-        public void componentMoved(ComponentEvent e) {}
-      });
+      mMainPanel.add(split, BorderLayout.CENTER);
+      mFindAsYouType.installKeyListener(split);      
     }
     else {      
       final JButton functions = new JButton(mLocalizer.msg("functions","Functions"));
@@ -308,7 +270,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
       else
         bottomLeft.add(functions, BorderLayout.WEST);
       
-      main.add(scrollPane, BorderLayout.CENTER);
+      mMainPanel.add(scrollPane, BorderLayout.CENTER);
     }
 
     // buttons
@@ -316,11 +278,11 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     buttonPn.add(mFindAsYouType.getSearchBar(),BorderLayout.NORTH);
     buttonPn.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
 
-    main.add(buttonPn, BorderLayout.SOUTH);
+    mMainPanel.add(buttonPn, BorderLayout.SOUTH);
 
     configBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        close();
+        exit();
         MainFrame.getInstance().showSettingsDialog(
             SettingsItem.PROGRAMINFO);
       }
@@ -328,16 +290,14 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     
     buttonPn.add(bottomLeft, BorderLayout.WEST);
 
-    JButton closeBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
-    closeBtn.addActionListener(new ActionListener() {
+    mCloseBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
+    mCloseBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-        close();
+        exit();
       }
     });
 
-    buttonPn.add(closeBtn, BorderLayout.EAST);
-
-    getRootPane().setDefaultButton(closeBtn);
+    buttonPn.add(mCloseBtn, BorderLayout.EAST);
 
     /*
      * The action for the search button in the function panel.
@@ -365,14 +325,13 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     mSearchMenu = new ActionMenu(searchAction);
     
     mFindAsYouType.installKeyListener(scrollPane);
-    mFindAsYouType.installKeyListener(main);
+    mFindAsYouType.installKeyListener(mMainPanel);
     mFindAsYouType.installKeyListener(configBtn);
-    mFindAsYouType.installKeyListener(closeBtn);
+    mFindAsYouType.installKeyListener(mCloseBtn);
     mFindAsYouType.installKeyListener(buttonPn);
     mFindAsYouType.installKeyListener(mPluginsPane);
     mFindAsYouType.installKeyListener(mActionsPane);
-    mFindAsYouType.installKeyListener(mFunctionGroup);
-    mFindAsYouType.installKeyListener(getRootPane());
+    mFindAsYouType.installKeyListener(mFunctionGroup);    
     mFindAsYouType.installKeyListener(mActionsPane.getVerticalScrollBar());
     mFindAsYouType.installKeyListener(scrollPane.getVerticalScrollBar());
     
@@ -389,12 +348,6 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
       }
     });
     
-    addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        close();
-      }
-    });
-
     // Scroll to the beginning
     Runnable runnable = new Runnable() {
       public void run() {
@@ -471,19 +424,110 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
       return new Font(ProgramInfo.getInstance().getUserfont("bodyfont", "Verdana"), Font.PLAIN, Integer.parseInt(ProgramInfo.getInstance().getUserfont("small", "11")));
   }
 
-  public void close() {
-    ProgramInfo.getInstance().setSettings(this, mActionsPane.getSize());
+  private void exit() {
+    ProgramInfo.getInstance().setSettings(mDialog, mActionsPane.getSize());
     ProgramInfo.getInstance().setExpanded("showSearch",mFindAsYouType.isAlwaysVisible());
-    dispose();
+    ProgramInfo.getInstance().saveSizeAndLocation(mDialog.getSize(), mDialog.getLocation());
+    mDialog.dispose();
   }
   
-  public void setVisible(boolean value) {
+  private void addActionsToRootPane() {
+    KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0);
+    mInfoEP.getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,
+        "SCROLL_UP");
+    mInfoEP.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke, "SCROLL_UP");
+    mInfoEP.getActionMap().put("SCROLL_UP", mUpAction);
+    
+    mDialog.getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,
+    "SCROLL_UP");
+    mDialog.getRootPane().getInputMap(JRootPane.WHEN_FOCUSED).put(stroke, "SCROLL_UP");
+    mDialog.getRootPane().getActionMap().put("SCROLL_UP", mUpAction);
+
+
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0);
+    mInfoEP.getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,
+        "SCROLL_DOWN");
+    mInfoEP.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke, "SCROLL_DOWN");
+    mInfoEP.getActionMap().put("SCROLL_DOWN", mDownAction);
+
+    mDialog.getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,
+        "SCROLL_DOWN");
+    mDialog.getRootPane().getInputMap(JRootPane.WHEN_FOCUSED)
+        .put(stroke, "SCROLL_DOWN");
+    mDialog.getRootPane().getActionMap().put("SCROLL_DOWN", mDownAction);
+    
+    if(ProgramInfo.getInstance().isShowFunctions()) {
+      mDialog.addComponentListener(new ComponentListener() {
+        public void componentResized(ComponentEvent e) {
+          mActionsPane.getVerticalScrollBar().setBlockIncrement(mActionsPane.getVisibleRect().height);
+        }
+
+        public void componentShown(ComponentEvent e) {
+          mActionsPane.getVerticalScrollBar().setBlockIncrement(mActionsPane.getVisibleRect().height);
+        }
+
+        public void componentHidden(ComponentEvent e) {}
+        public void componentMoved(ComponentEvent e) {}
+      });
+    }
+    
+    mDialog.getRootPane().setDefaultButton(mCloseBtn);
+    
+    mFindAsYouType.installKeyListener(mDialog.getRootPane());
+    
+    mDialog.addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e) {
+        exit();
+      }
+    });
+  }
+  
+  /**
+   * Creates the dialog an makes it visible
+   */
+  public void show() {
+    Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+    
+    if(w instanceof JDialog)
+      mDialog = new JDialog((JDialog)w, true);
+    else
+      mDialog = new JDialog((JFrame)w, true);
+    
+    mDialog.setTitle(mLocalizer.msg("title", "Program information"));
+    mDialog.setContentPane(mMainPanel);
+    
+    UiUtilities.registerForClosing(new WindowClosingIf() {
+      public void close() {
+        exit();
+      }
+
+      public JRootPane getRootPane() {
+        return mDialog.getRootPane();
+      }
+    });
+    
+    addActionsToRootPane();
+    
+    mDialog.pack();
+    
+    Dimension size = ProgramInfo.getInstance().getSize();
+    Point location = ProgramInfo.getInstance().getLocation();
+    
+    if (size != null)
+      mDialog.setSize(size);
+    
+    if (location != null)
+      mDialog.setLocation(location);      
+    else
+      mDialog.setLocationRelativeTo(w);
+    
+    
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        ((JPanel)getContentPane()).updateUI();
+        mMainPanel.updateUI();
       }
     });
 
-    super.setVisible(value);
+    mDialog.setVisible(true);
   }
 }
