@@ -38,8 +38,9 @@ import devplugin.Program;
 public class RealTimeSynchronousLayout extends AbstractProgramTableLayout {
 
   public void updateLayout(ProgramTableModel model) {
-    // Init the column starts
-    int[] columnStartArr = new int[model.getColumnCount()];
+    int columnCount = model.getColumnCount();
+	// Init the column starts
+    int[] columnStartArr = new int[columnCount];
 
     // the value to scale the length with
     float scaleValue = 1;
@@ -47,8 +48,9 @@ public class RealTimeSynchronousLayout extends AbstractProgramTableLayout {
     // the minimum length of a program
     int minLength = 10000;
     
-    for (int col = 0; col < model.getColumnCount(); col++) {
-      for (int row = 0; row < model.getRowCount(col); row++) {
+    for (int col = 0; col < columnCount; col++) {
+      int rowCount = model.getRowCount(col);
+	  for (int row = 0; row < rowCount; row++) {
         ProgramPanel panel = model.getProgramPanel(col, row);
         
         if(panel.getProgram().getLength() > 0) {
@@ -63,15 +65,16 @@ public class RealTimeSynchronousLayout extends AbstractProgramTableLayout {
       }
     }
     
-    for (int col = 0; col < model.getColumnCount(); col++) {
-      for (int row = 0; row < model.getRowCount(col); row++) {
+    for (int col = 0; col < columnCount; col++) {
+      int rowCount = model.getRowCount(col);
+	  for (int row = 0; row < rowCount; row++) {
         ProgramPanel panel = model.getProgramPanel(col, row);
         Program program = panel.getProgram();
         
         if (row == 0)
           columnStartArr[col] = (int)(program.getStartTime() * scaleValue);
         
-        if(row != model.getRowCount(col) - 1) {
+        if(row != rowCount - 1) {
           Program next = model.getProgramPanel(col, row + 1).getProgram();
           int startTime = program.getStartTime();
           int endTime = next.getStartTime();

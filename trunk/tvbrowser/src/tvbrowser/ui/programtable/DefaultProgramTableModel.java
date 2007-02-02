@@ -431,10 +431,12 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     // Force a repaint of all programs on air
     // (so the progress background will be updated)
     if(mOnAirRows == null) {
-      mOnAirRows = new int[getColumnCount()];
+      int columnCount = getColumnCount();
+	  mOnAirRows = new int[columnCount];
       Arrays.fill(mOnAirRows, -1);
-      for (int col = 0; col < getColumnCount(); col++) {
-        for (int row = 0; row < getRowCount(col); row++) {
+      for (int col = 0; col < columnCount; col++) {
+        int rowCount = getRowCount(col);
+		for (int row = 0; row < rowCount; row++) {
           ProgramPanel panel = getProgramPanel(col, row);
           if (panel.getProgram().isOnAir()) {
             mOnAirRows[col] = row;
@@ -493,8 +495,9 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       return;
     }
     
-    // Get the row of this program
-    for (int row = 0; row < getRowCount(col); row++) {
+    int rowCount = getRowCount(col);
+	// Get the row of this program
+    for (int row = 0; row < rowCount; row++) {
       ProgramPanel panel = getProgramPanel(col, row);
       if (program == panel.getProgram()) {
         // Tell the panel that its program has changed

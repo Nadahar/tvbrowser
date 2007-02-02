@@ -241,8 +241,9 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
     int minCol = clipBounds.x / mColumnWidth;
     if (minCol < 0) minCol = 0;
     int maxCol = (clipBounds.x + clipBounds.width) / mColumnWidth;
-    if (maxCol >= mModel.getColumnCount()) {
-      maxCol = mModel.getColumnCount() - 1;
+    int columnCount = mModel.getColumnCount();
+	if (maxCol >= columnCount) {
+      maxCol = columnCount - 1;
     }
 
     // Paint the background
@@ -257,7 +258,8 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
     for (int col = minCol; col <= maxCol; col++) {
       int y = mLayout.getColumnStart(col);
 
-      for (int row = 0; row < mModel.getRowCount(col); row++) {
+      int rowCount = mModel.getRowCount(col);
+	  for (int row = 0; row < rowCount; row++) {
         // Get the program
         ProgramPanel panel = mModel.getProgramPanel(col, row);
         
@@ -345,7 +347,8 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
     if (y < currY) {
       return null;
     }
-    for (int row = 0; row < mModel.getRowCount(col); row++) {
+    int rowCount = mModel.getRowCount(col);
+	for (int row = 0; row < rowCount; row++) {
       ProgramPanel panel = mModel.getProgramPanel(col, row);
       currY += panel.getHeight();
       if (y < currY) {
@@ -358,8 +361,10 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
 
 
   public void forceRepaintAll() {
-    for (int col = 0; col < mModel.getColumnCount(); col++) {
-      for (int row = 0; row < mModel.getRowCount(col); row++) {
+    int columnCount = mModel.getColumnCount();
+	for (int col = 0; col < columnCount; col++) {
+      int rowCount = mModel.getRowCount(col);
+	  for (int row = 0; row < rowCount; row++) {
         ProgramPanel panel = mModel.getProgramPanel(col, row);
         panel.setProgramPanelSettings(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPictureDuration.getInt(), Settings.propPicturePluginIds.getStringArray()));
         panel.forceRepaint();
@@ -373,9 +378,11 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
 
     // Set the height equal to the highest column
     mHeight = 0;
-    for (int col = 0; col < mModel.getColumnCount(); col++) {
+    int columnCount = mModel.getColumnCount();
+	for (int col = 0; col < columnCount; col++) {
       int colHeight = mLayout.getColumnStart(col);
-      for (int row = 0; row < mModel.getRowCount(col); row++) {
+      int rowCount = mModel.getRowCount(col);
+	  for (int row = 0; row < rowCount; row++) {
         ProgramPanel panel = mModel.getProgramPanel(col, row);
         colHeight += panel.getHeight();
       }
@@ -526,7 +533,8 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
     // Get the total time y
     int totalTimeY = 0;
     int parts = 0;
-    for (int col = 0; col < mModel.getColumnCount(); col++) {
+    int columnCount = mModel.getColumnCount();
+	for (int col = 0; col < columnCount; col++) {
       int timeY = getTimeYOfColumn(col, minutesAfterMidnight);
       if (timeY != -1) {
         totalTimeY += timeY;
@@ -551,7 +559,8 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
 
     // Walk to the program that starts before the specified time
     int lastCellHeight = 0;
-    for (int row = 0; row < mModel.getRowCount(col); row++) {
+    int rowCount = mModel.getRowCount(col);
+	for (int row = 0; row < rowCount; row++) {
       ProgramPanel panel = mModel.getProgramPanel(col, row);
       Program program = panel.getProgram();
       int startTime = program.getStartTime();
@@ -584,7 +593,8 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
     int width = mColumnWidth;
 
     int y = mLayout.getColumnStart(cellCol);
-    for (int row = 0; row < mModel.getRowCount(cellCol); row++) {
+    int rowCount = mModel.getRowCount(cellCol);
+	for (int row = 0; row < rowCount; row++) {
       ProgramPanel panel = mModel.getProgramPanel(cellCol, row);
       int height = panel.getHeight();
       if (row == cellRow) {
@@ -877,7 +887,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
     int col = x / mColumnWidth;
     int[] matrix = new int[2];
 
-    if ((col < 0) || (col >= mModel.getColumnCount())) {
+	if ((col < 0) || (col >= mModel.getColumnCount())) {
       matrix[0] = -1;
       matrix[1] = -1;      
       return matrix;
@@ -890,7 +900,8 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
       return matrix;
     }  
 
-    for (int row = 0; row < mModel.getRowCount(col); row++) {
+    int rowCount = mModel.getRowCount(col);
+	for (int row = 0; row < rowCount; row++) {
       ProgramPanel panel = mModel.getProgramPanel(col, row);
       currY += panel.getHeight();
       if (y < currY) {

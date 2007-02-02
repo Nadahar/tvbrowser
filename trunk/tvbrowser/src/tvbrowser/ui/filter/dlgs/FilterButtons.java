@@ -167,8 +167,10 @@ public class FilterButtons implements ActionListener {
         
         ProgramTableModel model = mMainFrame.getProgramTableModel();
         
-        for (int col = 0; col < model.getColumnCount(); col++) {
-            for (int row = 0; row < model.getRowCount(col); row++) {
+        int columnCount = model.getColumnCount();
+		for (int col = 0; col < columnCount; col++) {
+            int rowCount = model.getRowCount(col);
+			for (int row = 0; row < rowCount; row++) {
                 // Get the program
                 ProgramPanel panel = model.getProgramPanel(col, row);
                 

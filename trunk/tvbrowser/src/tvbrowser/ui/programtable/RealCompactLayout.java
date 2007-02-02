@@ -37,12 +37,12 @@ public class RealCompactLayout extends AbstractProgramTableLayout {
   
   public void updateLayout(ProgramTableModel model) {
     // Init the column starts
-    int[] columnStartArr = new int[model.getColumnCount()];
+    int columnCount = model.getColumnCount();
+    int[] columnStartArr = new int[columnCount];
     
     // The total height of each column
-    int[] columnHeightArr = new int[model.getColumnCount()];
+    int[] columnHeightArr = new int[columnCount];
     
-    int columnCount = model.getColumnCount();
     for (int col = 0; col < columnCount; col++) {
       int rowCount = model.getRowCount(col);
       for (int row = 0; row < rowCount; row++) {
