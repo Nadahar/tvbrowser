@@ -867,4 +867,12 @@ public class FavoritesPlugin {
   public void addPendingFavorite(AdvancedFavorite fav) {
     mPendingFavorites.add(fav);
   }
+  
+  protected boolean isShowingRepetitions() {
+    return mSettings.getProperty("showRepetitions","true").compareTo("true") == 0;
+  }
+  
+  protected void setShowRepetitions(boolean value) {
+    mSettings.setProperty("showRepetitions", String.valueOf(value));
+  }
 }

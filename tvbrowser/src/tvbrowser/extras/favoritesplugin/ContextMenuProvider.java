@@ -77,7 +77,7 @@ public class ContextMenuProvider {
         ActionMenu blackListAction = createBlackListFavoriteMenuAction(favArr, program); 
         
         if(blackListAction == null) {
-          ActionMenu repetitions = createRepetitionsMenuAction(favArr, program);
+          ActionMenu repetitions = FavoritesPlugin.getInstance().isShowingRepetitions() ? createRepetitionsMenuAction(favArr, program) : null;
           
           if(repetitions == null) {
             return new ActionMenu(menu, new ActionMenu[]{
