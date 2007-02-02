@@ -172,17 +172,19 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
   private TimeBlock[] createBlockArray(ProgramTableLayout layout,
     ProgramTableModel model)
   {
-    ArrayList<TimeBlock> list = new ArrayList<TimeBlock>();
     int blockCount = 2 * 24 / mBlockSize;
+    TimeBlock[] blocks = new TimeBlock[blockCount];
     for (int i = 0; i < blockCount; i++) {
-      list.add(new TimeBlock(i * mBlockSize * 60));
+      blocks[i] = new TimeBlock(i * mBlockSize * 60);
     }
 
     // Go through the model and find the block borders
     Date mainDate = ((DefaultProgramTableModel) model).getDate();
-    for (int col = 0; col < model.getColumnCount(); col++) {
+    int columnCount = model.getColumnCount();
+	for (int col = 0; col < columnCount; col++) {
       int y = layout.getColumnStart(col);
-      for (int row = 0; row < model.getRowCount(col); row++) {        
+      int rowCount = model.getRowCount(col);
+	  for (int row = 0; row < rowCount; row++) {        
         ProgramPanel panel = model.getProgramPanel(col, row);
         if (panel != null) {
           Program prog = panel.getProgram();
@@ -192,12 +194,8 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
           }
           
           // Go to the block of this program
-          int blockIndex = list.size() - 1;
-          TimeBlock  block = list.get(blockIndex);
-          while ((block.mStartTime > startTime) && (blockIndex > 0)) {
-            blockIndex--;
-            block = list.get(blockIndex);
-          }
+          int blockIndex = startTime / (mBlockSize * 60);
+          TimeBlock block = blocks[blockIndex];
           
           // Check whether the y of the program is lower than the one of the block
           int blockY = block.mStartY;
@@ -211,10 +209,10 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
     }
     
     // Remove the blocks that have no y
-    for (int i = list.size() - 1; i >= 0; i--) {
-      TimeBlock  block = list.get(i);
-      if (block.mStartY == -1) {
-        list.remove(i);
+    ArrayList<TimeBlock> list = new ArrayList<TimeBlock>();
+    for (int i = 0; i < blockCount; i++) {
+      if (blocks[i].mStartY != -1) {
+        list.add(blocks[i]);
       }
     }
     

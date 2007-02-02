@@ -48,14 +48,15 @@ public class TimeSynchronousLayout extends AbstractProgramTableLayout {
   
   
   public void updateLayout(ProgramTableModel model) {
-    // Init the column starts
-    int[] columnStartArr = new int[model.getColumnCount()];
+    int columnCount = model.getColumnCount();
+	// Init the column starts
+    int[] columnStartArr = new int[columnCount];
 
     // Holds the row index of the next currProgram to layout for each column
-    int[] rowIdxArr = new int[model.getColumnCount()];
+    int[] rowIdxArr = new int[columnCount];
 
     // Holds the y-position of the end of the last currProgram
-    int[] colYArr = new int[model.getColumnCount()];
+    int[] colYArr = new int[columnCount];
 
     int minY = 0;
     int maxY = 0;
@@ -68,7 +69,7 @@ public class TimeSynchronousLayout extends AbstractProgramTableLayout {
       minPanel = null;
       int programCol = 0;
       long minStartTime = Long.MAX_VALUE;
-      for (int col = 0; col < model.getColumnCount(); col++) {
+      for (int col = 0; col < columnCount; col++) {
         ProgramPanel panel = model.getProgramPanel(col, rowIdxArr[col]);
         if (panel != null) {
           Program program = panel.getProgram();
@@ -123,7 +124,7 @@ public class TimeSynchronousLayout extends AbstractProgramTableLayout {
       }
     } while (minProgram != null);
     
-    for (int col = 0; col < model.getColumnCount(); col++) {
+    for (int col = 0; col < columnCount; col++) {
       int count = model.getRowCount(col);
       
       if(count > 0) {

@@ -62,7 +62,8 @@ public abstract class AbstractCellBasedBackPainter extends AbstractBackPainter {
       // Hintergrund vor den Sendungen
       fillImage(grp, x, 0, columnWidth, y, getOuterBackgroundImage(), clipBounds);
       
-      for (int row = 0; row < model.getRowCount(col); row++) {
+      int rowCount = model.getRowCount(col);
+	  for (int row = 0; row < rowCount; row++) {
         // Get the program
         ProgramPanel panel = model.getProgramPanel(col, row);
         
