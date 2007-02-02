@@ -26,11 +26,8 @@
 
 package tvbrowser.extras.programinfo;
 
-import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Point;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -41,7 +38,6 @@ import javax.swing.JDialog;
 
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ConfigurationHandler;
-import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.program.ProgramTextCreator;
 import util.settings.ProgramPanelSettings;
@@ -242,16 +238,7 @@ public class ProgramInfo {
   }
 
   protected void showProgramInformation(Program program, boolean showSettings) {
-    Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-    ProgramInfoDialog dlg;
-
-    if (parent instanceof Dialog) {
-      dlg = new ProgramInfoDialog((Dialog) parent, program, mLeftSplit,
-          showSettings);
-    } else {
-      dlg = new ProgramInfoDialog((Frame) parent, program, mLeftSplit,
-          showSettings);
-    }
+    ProgramInfoDialog dlg = ProgramInfoDialog.getInstance(program, mLeftSplit, showSettings);
 
     dlg.pack();
     dlg.addComponentListener(new java.awt.event.ComponentAdapter() {

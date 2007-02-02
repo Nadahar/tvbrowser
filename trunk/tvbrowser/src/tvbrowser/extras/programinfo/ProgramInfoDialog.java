@@ -27,10 +27,8 @@ package tvbrowser.extras.programinfo;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -109,45 +107,45 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
   private TaskMenuAction mTextSearch;
   
   private boolean mShowSettings;
-
-  /**
-   * @param parent
-   *          The parent dialog.
-   * @param program
-   *          The program to show the info for.
-   * @param pluginsSize
-   *          The size of the Functions Panel.
-   * @param showSettings
-   *          Show the settings button.
-   */
-  public ProgramInfoDialog(Dialog parent, Program program,
-      Dimension pluginsSize, boolean showSettings) {
-    super(parent, true);
-    init(program, pluginsSize, showSettings);
-  }
-
-  /**
-   * @param parent
-   *          The parent frame.
-   * @param program
-   *          The program to show the info for.
-   * @param pluginsSize
-   *          The size of the Functions Panel.
-   * @param showSettings
-   *          Show the settings button.
-   */
-  public ProgramInfoDialog(Frame parent, Program program,
-      Dimension pluginsSize, boolean showSettings) {
-    super(parent, true);
-    init(program, pluginsSize, showSettings);
+  
+  private static ProgramInfoDialog instance;
+  
+  private ProgramInfoDialog(Dimension pluginsSize, boolean showSettings) {
+	  super(MainFrame.getInstance(), true);
+	  init(pluginsSize, showSettings);
   }
   
-  private void init(final Program program, Dimension pluginsSize,
-      boolean showSettings) {
+  /**
+   * @param program
+   *          The program to show the info for.
+   * @param pluginsSize
+   *          The size of the Functions Panel.
+   * @param showSettings
+   *          Show the settings button.
+   */
+  public static ProgramInfoDialog getInstance(Program program, Dimension pluginsSize, boolean showSettings) {
+	  if (instance == null) {
+		  instance = new ProgramInfoDialog(pluginsSize, showSettings);
+	  }
+	  instance.setProgram(program);
+	  return instance;
+  }
+
+  private void setProgram(Program program) {
+	  mProgram = program;
+	  addPluginActions(false);
+	  mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc, ProgramInfo.getInstance().getOrder(), getFont(true), getFont(false), ProgramInfo.getInstance().getProgramPanelSettings(), true, ProgramInfo.getInstance().getProperty("zoom","false").compareTo("true") == 0 ? Integer.parseInt(ProgramInfo.getInstance().getProperty("zoomValue","100")):100));
+      SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            mInfoEP.setCaretPosition(0);
+          }
+      });
+  }
+  
+  private void init(Dimension pluginsSize, boolean showSettings) {
     UiUtilities.registerForClosing(this);
     
     mShowSettings = showSettings;
-    mProgram = program;
     mFunctionGroup = new JTaskPaneGroup();
     mFunctionGroup.setTitle(mLocalizer.msg("functions", "Functions"));
 
@@ -167,7 +165,6 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     
     mDoc = (ExtendedHTMLDocument) mInfoEP.getDocument();
 
-    mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc, ProgramInfo.getInstance().getOrder(), getFont(true), getFont(false), ProgramInfo.getInstance().getProgramPanelSettings(), true, ProgramInfo.getInstance().getProperty("zoom","false").compareTo("true") == 0 ? Integer.parseInt(ProgramInfo.getInstance().getProperty("zoomValue","100")):100));
     mInfoEP.setEditable(false);
     mInfoEP.addHyperlinkListener(new HyperlinkListener() {
       private String mTooltip;
@@ -378,8 +375,6 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     mFindAsYouType.installKeyListener(getRootPane());
     mFindAsYouType.installKeyListener(mActionsPane.getVerticalScrollBar());
     mFindAsYouType.installKeyListener(scrollPane.getVerticalScrollBar());
-    
-    addPluginActions(false);
     
     mFindAsYouType.getCloseButton().addComponentListener(new ComponentAdapter() {
       public void componentHidden(ComponentEvent e) {
