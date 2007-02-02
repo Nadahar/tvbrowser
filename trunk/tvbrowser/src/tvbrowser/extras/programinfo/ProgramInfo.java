@@ -238,29 +238,8 @@ public class ProgramInfo {
   }
 
   protected void showProgramInformation(Program program, boolean showSettings) {
-    ProgramInfoDialog dlg = ProgramInfoDialog.getInstance(program, mLeftSplit, showSettings);
-
-    dlg.pack();
-    dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
-      public void componentMoved(ComponentEvent e) {
-        e.getComponent().getLocation(mLocation);
-      }
-
-      public void componentResized(ComponentEvent e) {
-        mSize = e.getComponent().getSize(mSize);
-      }
-    });
-
-    if (mSize != null) {
-      dlg.setSize(mSize);
-    }
-    if (mLocation != null) {
-      dlg.setLocation(mLocation);
-      dlg.setVisible(true);
-    } else
-      UiUtilities.centerAndShow(dlg);
+    ProgramInfoDialog.getInstance(program, mLeftSplit, showSettings).show();
   }
-
 
   protected void setSettings(JDialog dialog, Dimension d) {
     mSize = dialog.getSize();
@@ -358,5 +337,18 @@ public class ProgramInfo {
   
   protected ProgramPanelSettings getProgramPanelSettings() {
     return new ProgramPanelSettings(Integer.parseInt(mSettings.getProperty("pictureType","1")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeStart","1080")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeEnd","1380")), false, mSettings.getProperty("pictureShowsDescription","true").compareTo("true") == 0, Integer.parseInt(mSettings.getProperty("pictureDuration","10")), mSettings.getProperty("clientPlugins","").split(";;"));
+  }
+  
+  protected void saveSizeAndLocation(Dimension size, Point location) {
+    mSize = size;
+    mLocation = location;
+  }
+  
+  protected Dimension getSize() {
+    return mSize;
+  }
+  
+  protected Point getLocation() {
+    return mLocation;
   }
 }
