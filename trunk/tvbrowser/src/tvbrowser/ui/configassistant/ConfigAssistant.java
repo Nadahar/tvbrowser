@@ -78,7 +78,7 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
     });
 
     File tvDataDir = new File(Settings.propTVDataDirectory.getString().trim());
-    Settings.propTVDataDirectory.setString(tvDataDir.toString());
+    Settings.propTVDataDirectory.setString(tvDataDir.toString().replaceAll("\\\\","/"));
     TvDataServiceProxyManager.getInstance().setTvDataDir(tvDataDir);
 
     setTitle(mLocalizer.msg("title", "Setup assistant"));
@@ -185,7 +185,7 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
         if (o == mBackBt) {
           if (mCurCardPanel == mFinishedPanel) {
             mCancelBt.setVisible(true);
-            mNextBt.setText(mLocalizer.msg("next", "next") + " >>");
+            mNextBt.setText(Localizer.getLocalization(Localizer.I18N_NEXT) + " >>");
           }
 
           if (!mCurCardPanel.onPrev()) {

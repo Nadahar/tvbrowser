@@ -32,6 +32,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.io.UrlFile;
@@ -91,7 +92,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
         .getBoolean());
     mSettingsPn.add(mShowSplashChB, cc.xy(2, 5));
 
-    if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+    if (System.getProperty("os.name").toLowerCase().startsWith("windows") && !TVBrowser.isTransportable()) {
       layout.appendRow(new RowSpec("3dlu"));
       layout.appendRow(new RowSpec("pref"));
       

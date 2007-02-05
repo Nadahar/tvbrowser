@@ -26,12 +26,20 @@
 package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
+import java.awt.Window;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.Icon;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.waiting.dlgs.TvDataCopyWaitingDlg;
+import util.io.IOUtilities;
 import util.ui.DirectoryChooserPanel;
 import util.ui.UiUtilities;
 
@@ -48,6 +56,11 @@ public class DirectoriesSettingsTab implements SettingsTab {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(DirectoriesSettingsTab.class);
 
   private util.ui.DirectoryChooserPanel mTVDataFolderPanel;
+  
+  private String mCurrentTvDataDir;
+  
+  private boolean mShowWaiting;
+  private TvDataCopyWaitingDlg mWaitingDlg;
 
   public DirectoriesSettingsTab() {
   }
@@ -69,8 +82,8 @@ public class DirectoriesSettingsTab implements SettingsTab {
     mainPanel.add(UiUtilities.createHelpTextArea(mLocalizer.msg("chooseFolder", "choose folder")), cc.xy(2,3));
     
     msg = mLocalizer.msg("tvdatadir", "tv data folder")+":";
-    String tvDataDir = Settings.propTVDataDirectory.getString();
-    mTVDataFolderPanel = new DirectoryChooserPanel(msg, tvDataDir, false);
+    mCurrentTvDataDir = Settings.propTVDataDirectory.getString();
+    mTVDataFolderPanel = new DirectoryChooserPanel(msg, mCurrentTvDataDir, false);
     mainPanel.add(mTVDataFolderPanel, cc.xy(2,5));
     
     return mainPanel;
@@ -80,7 +93,37 @@ public class DirectoriesSettingsTab implements SettingsTab {
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
-    Settings.propTVDataDirectory.setString(mTVDataFolderPanel.getText());
+    final File currentDir = new File(mCurrentTvDataDir);
+    final File newDir = new File(mTVDataFolderPanel.getText());
+    
+    if(!newDir.exists())
+      newDir.mkdirs();
+    
+    if(!currentDir.equals(newDir)) {      
+      
+        Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+        
+        if(w instanceof JFrame)
+          mWaitingDlg = new TvDataCopyWaitingDlg((JFrame)w, true);
+        else
+          mWaitingDlg = new TvDataCopyWaitingDlg((JDialog)w, true);
+        
+        mShowWaiting = true;
+        
+        new Thread() {
+          public void run() {
+            try {
+              IOUtilities.copy(new File[] {currentDir}, newDir.getName().toLowerCase().equals("tvdata") ? newDir.getParentFile() : newDir, true);
+              Settings.propTVDataDirectory.setString(newDir.toString().replaceAll("\\\\","/") + "/" + currentDir.getName());
+            } catch (IOException e) {
+            }
+            
+            mShowWaiting = false;
+            mWaitingDlg.setVisible(false);
+          }
+        }.start();
+        mWaitingDlg.setVisible(mShowWaiting);
+    }
   }
 
   /**

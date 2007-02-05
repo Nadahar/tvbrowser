@@ -223,7 +223,7 @@ public class ProgramMenuItem extends JMenuItem {
     FontMetrics fmPlain = getFontMetrics(mPlainFont);
     
     int height = mIconHeight;
-    int width = fmPlain.stringWidth(mProgram.getTitle()) + mInsets.left + mInsets.right + 10;
+    int width = fmPlain.stringWidth(mProgram.getTitle().length() > 70 ? mProgram.getTitle().substring(0,67) + "..." : mProgram.getTitle()) + mInsets.left + mInsets.right + 10;
     
     if(height != 0)
       width += mIcon.getIconWidth() + getIconTextGap();

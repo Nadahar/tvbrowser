@@ -30,7 +30,6 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -41,7 +40,6 @@ import tvbrowser.extras.common.ConfigurationHandler;
 import util.exc.ErrorHandler;
 import util.program.ProgramTextCreator;
 import util.settings.ProgramPanelSettings;
-import util.ui.UiUtilities;
 
 import com.l2fprod.common.swing.plaf.LookAndFeelAddons;
 
@@ -88,7 +86,7 @@ public class ProgramInfo {
     LookAndFeelAddons.setTrackingLookAndFeelChanges(true);
   }
 
-  public ActionMenu getContextMenuActions(final Program program) {
+  protected ActionMenu getContextMenuActions(final Program program) {
     ContextMenuAction action = new ContextMenuAction();
     action.setText(mLocalizer.msg("contextMenuText", "Program information"));
     action.setSmallIcon(IconLoader.getInstance().getIconFromTheme("actions",
@@ -331,7 +329,7 @@ public class ProgramInfo {
     return mLocalizer.msg("pluginName","Program details");
   }
   
-  public String getId() {
+  protected String getId() {
     return DATAFILE_PREFIX;
   }
   

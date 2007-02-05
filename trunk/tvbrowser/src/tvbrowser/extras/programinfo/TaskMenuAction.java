@@ -38,7 +38,6 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.Icon;
-import javax.swing.JButton;
 
 import util.ui.findasyoutype.TextComponentFindAction;
 

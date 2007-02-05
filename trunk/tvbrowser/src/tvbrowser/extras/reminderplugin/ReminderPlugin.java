@@ -394,7 +394,7 @@ public class ReminderPlugin {
     }
   }
 
-  public ActionMenu getContextMenuActions(final Frame parentFrame,
+  protected ActionMenu getContextMenuActions(final Frame parentFrame,
                                           final Program program) {
     if (mReminderList.contains(program)) {
       ContextMenuAction action = new ContextMenuAction();

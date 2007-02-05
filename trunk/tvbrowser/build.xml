@@ -58,6 +58,7 @@
 
   <property name="tvbrowser-win.runtime.dir" value="${runtime.dir}/tvbrowser_win"/>
   <property name="tvbrowser-linux.runtime.dir" value="${runtime.dir}/tvbrowser_linux"/>
+  <property name="tvbrowser-transportable.runtime.dir" value="${runtime.dir}/tvbrowser_transportable"/>
   <property name="tvbrowser-mac.runtime.dir" value="${runtime.dir}/tvbrowser_mac"/>
   <property name="tvdatatools.runtime.dir" value="${runtime.dir}/tvdatatools"/>
   <property name="tvdatakit.runtime.dir" value="${runtime.dir}/tvdatakit"/>
@@ -124,30 +125,33 @@
     <echo message=""/>
     <echo message="main targets:"/>
     <echo message="============="/>
-    <echo message="  targets            Shows this list of targets."/>
-    <echo message="  dump-info          Dumps some information (VM-Version...)."/>
-    <echo message="  public-default     Creates platform-independent binaries"/>
-    <echo message="  public-win         Creates binaries for the Microsoft Windows Platforms (requires Windows)"/>
-    <echo message="  public-mac         Creates binaries for the Mac OS X (requires Mac OS X)"/>
-    <echo message="  public-linux       Creates binaries for linux platforms (requires Linux)"/>
-    <echo message="  public-src         Creates a .zip file containing the full source code of TV-Browser"/>
-    <echo message="  public-tvdatakit   Creates a .zip file containing the TV-Browser TV data kit" />
-    <echo message="  public-doc         Generates the JavaDoc documentation."/>
+    <echo message="  targets               Shows this list of targets."/>
+    <echo message="  dump-info             Dumps some information (VM-Version...)."/>
+    <echo message="  public-default        Creates platform-independent binaries"/>
+    <echo message="  public-win            Creates binaries for the Microsoft Windows Platforms (requires Windows)"/>
+    <echo message="  public-mac            Creates binaries for the Mac OS X (requires Mac OS X)"/>
+    <echo message="  public-linux          Creates binaries for linux platforms (requires Linux)"/>
+  	<echo message="  public-transportable  Creates platform-independent binaries for transportable version of TV-Browser (requires Windows)"/>
+    <echo message="  public-src            Creates a .zip file containing the full source code of TV-Browser"/>
+    <echo message="  public-tvdatakit      Creates a .zip file containing the TV-Browser TV data kit" />
+    <echo message="  public-doc            Generates the JavaDoc documentation."/>
     <echo message=""/>
     <echo message="further targets:"/>
     <echo message="================"/>
-    <echo message="  clean              Deletes all class files, runtime directories and temporary files."/>
-    <echo message="  clean-runtime      Deletes the runtime directory."/>
-    <echo message="  make-default       Compiles the platform independent source code."/>
-    <echo message="  make-linux         Compiles the source code for linux platforms."/>
-    <echo message="  make-win           Compiles the source code for windows platforms."/>
-    <echo message="  make-mac           Compiles the source code for Mac OS X."/>
-    <echo message="  runtime-default    Creates the platform independent runtime directory" />
-    <echo message="  runtime-linux      Creates a runtime directory for linux platforms" />
-    <echo message="  runtime-mac        Creates a runtime directory for Mac OS X" />
-    <echo message="  runtime-win        Creates a runtime directory for MS Windows" />
-    <echo message="  runtime-tvdatakit  Creates a runtime directory for the TV-Browser TV data kit" />
-    <echo message="  test               Does the JUnit tests."/>
+    <echo message="  clean                 Deletes all class files, runtime directories and temporary files."/>
+    <echo message="  clean-runtime         Deletes the runtime directory."/>
+    <echo message="  make-default          Compiles the platform independent source code."/>
+   	<echo message="  make-transportable    Compiles the platform independent source code for transportable version."/>
+    <echo message="  make-linux            Compiles the source code for linux platforms."/>
+    <echo message="  make-win              Compiles the source code for windows platforms."/>
+    <echo message="  make-mac              Compiles the source code for Mac OS X."/>
+    <echo message="  runtime-default       Creates the platform independent runtime directory" />
+  	<echo message="  runtime-transportable Creates the platform independent runtime directory for transportable version" />
+    <echo message="  runtime-linux         Creates a runtime directory for linux platforms" />
+    <echo message="  runtime-mac           Creates a runtime directory for Mac OS X" />
+    <echo message="  runtime-win           Creates a runtime directory for MS Windows" />
+    <echo message="  runtime-tvdatakit     Creates a runtime directory for the TV-Browser TV data kit" />
+    <echo message="  test                  Does the JUnit tests."/>
 
 
   </target>
@@ -170,6 +174,11 @@
   <!-- Deletes the classes and the runtime directory. -->
   <target name="clean-default" depends="clean">
     <delete dir="${tvbrowser-default.runtime.dir}"/>
+  </target>
+	
+  <!-- Deletes the classes and the runtime directory. -->
+  <target name="clean-transportable" depends="clean">
+	<delete dir="${tvbrowser-transportable.runtime.dir}"/>
   </target>
 
   <!-- Deletes the classes and the runtime directory. -->
@@ -250,6 +259,10 @@
 
   </target>
 
+  <!-- Compiles the source code for transportable version of TV-Browser -->
+  <target name="make-transportable" depends="make-default">
+
+  </target>
 
   <!-- Compiles the source code for mac platforms -->
   <target name="make-mac" depends="copy-resources">
@@ -457,7 +470,20 @@
   <target name="runtime-default" depends="clean-default, make-default, runtime">
   </target>
 
-
+  <!-- Creates the runtime folder for the transportable version -->
+  <target name="runtime-transportable" depends="clean-transportable, make-transportable, runtime">  	
+	<echo message="deployment dir is ${deployment.dir}, win is ${win.dir}" />
+	<mkdir dir="${tvbrowser-transportable.runtime.dir}"/>
+  	<mkdir dir="${tvbrowser-transportable.runtime.dir}/settings"/>
+	<copy todir="${tvbrowser-transportable.runtime.dir}">
+  	  <fileset dir="${tvbrowser-default.runtime.dir}"/>
+	  <fileset dir="${win.dir}/desktopindicator" includes="DesktopIndicator.dll"/>
+      <fileset dir="${win.dir}/jRegistryKey" includes="jRegistryKey.dll" />
+	  <fileset dir="${win.dir}/jcom" includes="jcom.dll" />
+	  <fileset dir="${x11.dir}/src" includes="libDesktopIndicator.so"/>
+	</copy>
+  </target>
+	
   <!-- Creates the runtime folder for the windows platform -->
   <target name="runtime-win" depends="clean-win, make-win, runtime">
     <echo message="deployment dir is ${deployment.dir}, win is ${win.dir}" />
@@ -656,6 +682,20 @@
     </zip>
   </target>
 
+  <!-- Creates the release binaries (.zip) for the platform independent transportable TV-Browser version -->
+  <target name="public-transportable" depends="transportable-exe">
+    <mkdir dir="${public.dir}"/>
+
+   	<copy todir="${tvbrowser-transportable.runtime.dir}">
+   	  <fileset dir="${linux.dir}" includes="tvbrowser.sh"/>
+   	</copy>
+   	<move file="${tvbrowser-transportable.runtime.dir}/tvbrowser.sh" tofile="${tvbrowser-transportable.runtime.dir}/tvbrowser-transportable.sh"/>  	
+  	
+	<zip destfile="${public.dir}/tvbrowser-${tvbrowser.version}-transportable-bin.zip">
+      <zipfileset prefix="tvbrowser-transportable"
+                  dir="${tvbrowser-transportable.runtime.dir}"/>
+    </zip>
+  </target>
 
   <!-- Creates the release binaries (.tar.gz) for linux platforms -->
   <target name="public-linux" depends="runtime-linux">
@@ -689,7 +729,15 @@
   		txtproductversion="${tvbrowser.version}"/>
   </target>
 
-
+  <!-- Creates the windows transportable exe file -->
+  <target name="transportable-exe" depends="runtime-transportable">
+  	<launch4j configFile="${deployment.dir}/win/launch4j/tvbrowser-transportable.xml"
+  		fileversion="${tvbrowser.version.file}" 
+  		productversion="${tvbrowser.version.file}" 
+  		txtfileversion="${tvbrowser.version}" 
+  		txtproductversion="${tvbrowser.version}"/>
+  </target>
+	
   <!-- Creates the release binaries (.exe installer) for windows platforms -->
   <target name="public-win" depends="exe">
     <mkdir dir="${public.dir}"/>

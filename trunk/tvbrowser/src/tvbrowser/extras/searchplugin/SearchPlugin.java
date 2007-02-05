@@ -47,7 +47,6 @@ import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.ButtonAction;
 import devplugin.ContextMenuAction;
-import devplugin.ContextMenuIf;
 import devplugin.PluginInfo;
 import devplugin.PluginManager;
 import devplugin.Program;
@@ -60,7 +59,7 @@ import devplugin.Version;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class SearchPlugin implements ContextMenuIf {
+public class SearchPlugin {
 
   /** The localizer for this class. */
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SearchPlugin.class);
@@ -212,7 +211,7 @@ public class SearchPlugin implements ContextMenuIf {
     return new ActionMenu(action);
   }
 
-  public ActionMenu getContextMenuActions(final Program program) {
+  protected ActionMenu getContextMenuActions(final Program program) {
     ContextMenuAction action = new ContextMenuAction();
     action.setText(mLocalizer.msg("searchRepetion", "Search repetition"));
     action.setSmallIcon(IconLoader.getInstance().getIconFromTheme("actions", "system-search", 16));

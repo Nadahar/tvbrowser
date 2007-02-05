@@ -94,6 +94,7 @@ import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.update.SoftwareUpdateDlg;
 import tvbrowser.ui.update.SoftwareUpdateItem;
 import tvbrowser.ui.update.SoftwareUpdater;
+import tvbrowser.ui.waiting.dlgs.SettingsWaitingDialog;
 import util.browserlauncher.Launch;
 import util.io.IOUtilities;
 import util.misc.OperatingSystem;
@@ -314,7 +315,11 @@ public class MainFrame extends JFrame implements DateListener {
 		@Override
 		public void windowDeiconified(WindowEvent e) {
 			if (Settings.propNowOnRestore.getBoolean()) {
-				scrollToNow();
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            scrollToNow();
+          }
+        });
 			}
 		}});
   }

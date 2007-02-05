@@ -514,7 +514,7 @@ public class FavoritesPlugin {
   }
 
 
-  public ActionMenu getContextMenuActions(Program program) {
+  protected ActionMenu getContextMenuActions(Program program) {
     return new ContextMenuProvider(mFavoriteArr).getContextMenuActions(program);
   }
 
