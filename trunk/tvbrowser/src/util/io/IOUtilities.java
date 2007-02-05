@@ -407,7 +407,7 @@ public class IOUtilities {
       in = new BufferedInputStream(new FileInputStream(src), 0x4000);
       out = new BufferedOutputStream(outFile, 0x4000);
       
-      if(!onlyNew || (src.lastModified() > target.lastModified())) {
+      if(!onlyNew || target.length() < 1 || (src.lastModified() > target.lastModified())) {
         outFile.getChannel().truncate(0);                  
         pipeStreams(in, out);
       }
