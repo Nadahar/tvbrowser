@@ -103,7 +103,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   public PluginInfo getInfo() {
     return (new PluginInfo(mLocalizer.msg("name","Marker plugin"), mLocalizer.msg("description",
         "A simple marker plugin (formerly Just_Mark)"), "René Mach", new Version(
-        1, 42, true, "1.4.2"), "GPL"));
+        1, 43, true, "1.4.3"), "GPL"));
   }
 
   public void loadSettings(Properties prop) {
@@ -393,11 +393,6 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
 
   protected MarkList getMarkListForId(String id) {
     return mMarkListVector.getListForId(id);
-  }
-
-  protected void setIconFileNameForList(String listName, String fileName) {
-    MarkList list = mMarkListVector.getListForName(listName);
-    list.setMarkIconFileName(fileName);
   }
 
   protected void addList(String name) {

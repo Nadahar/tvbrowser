@@ -32,6 +32,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EventObject;
 
@@ -56,6 +57,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 
+import util.io.IOUtilities;
 import util.ui.ExtensionFileFilter;
 import util.ui.Localizer;
 import util.ui.PictureSettingsPanel;
@@ -226,8 +228,22 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
       chooser.showDialog(w, Localizer.getLocalization(Localizer.I18N_SELECT));
 
       if (chooser.getSelectedFile() != null) {
+        File dir = new File(SimpleMarkerPlugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome(),"simplemarkericons");
+        
+        if(!dir.isDirectory())
+          dir.mkdir();
+
+        String ext =  chooser.getSelectedFile().getName();
+        ext = ext.substring(ext.lastIndexOf("."));
+        
+        try {
+          IOUtilities.copy(chooser.getSelectedFile(),new File(dir,mListTable.getValueAt(row, 0).toString() + ext));
+        } catch (IOException e1) {
+          e1.printStackTrace();
+        }        
+        
         Icon icon = SimpleMarkerPlugin.getInstance().getIconForFileName(
-            chooser.getSelectedFile().toString());
+            dir + "/" + mListTable.getValueAt(row, 0).toString() + ext);
 
         if (icon.getIconWidth() != 16 || icon.getIconHeight() != 16) {
           JOptionPane.showMessageDialog(w, SimpleMarkerPlugin.mLocalizer.msg(
@@ -238,7 +254,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
         mListTable.setValueAt(icon, row, 1);
 
         ((MarkListItem) mListTable.getValueAt(row, 0))
-            .setMarkIconFileName(chooser.getSelectedFile().toString());
+            .setMarkIconFileName(mListTable.getValueAt(row, 0).toString() + ext);
       }
 
     }

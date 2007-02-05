@@ -36,6 +36,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 
+import util.io.IOUtilities;
 import util.program.ProgramUtilities;
 import util.ui.Localizer;
 
@@ -108,7 +109,7 @@ public class MarkList extends Vector<Program> {
       ClassNotFoundException {
     int version = in.readInt();
 
-    if (version == 1) {
+    if (version >= 1) {
       mName = (String) in.readObject();
       mId = in.readUTF();
 
@@ -134,9 +135,29 @@ public class MarkList extends Vector<Program> {
       if (mMarkIconPath == null || mMarkIconPath.compareTo("null") == 0
           || !(new File(mMarkIconPath)).isFile())
         mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(null);
-      else
+      else {
+        
+        if(version == 1) {
+          File dir = new File(SimpleMarkerPlugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome(),"simplemarkericons");
+          File src = new File(mMarkIconPath);
+          
+          if(!dir.isDirectory())
+            dir.mkdir();
+
+          String ext =  mMarkIconPath;
+          ext = ext.substring(ext.lastIndexOf("."));
+
+          try {
+            IOUtilities.copy(src, new File(dir,mName+ext));
+          }catch(Exception e) {e.printStackTrace();}
+          
+          
+          mMarkIconPath = dir + "/" + mName + ext;
+        }
+        
         mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(
             mMarkIconPath);
+      }
     }
   }
 
@@ -148,7 +169,7 @@ public class MarkList extends Vector<Program> {
    * @throws IOException
    */
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(1); // Version
+    out.writeInt(2); // Version
     out.writeObject(mName);
     out.writeUTF(mId);
     out.writeInt(size());
@@ -324,8 +345,8 @@ public class MarkList extends Vector<Program> {
   }
 
   protected void setMarkIconFileName(String fileName) {
-    mMarkIconPath = fileName;
-    mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(fileName);
+    mMarkIconPath = SimpleMarkerPlugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome() + "/simplemarkericons/" + fileName;
+    mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(mMarkIconPath);
   }
 
   protected Icon getMarkIcon() {
