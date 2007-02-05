@@ -434,8 +434,14 @@ public class Settings {
       mainFrame.updateChannelChooser();
     }
     
-    if(mProp.hasChanged(propTVDataDirectory))
+    if(mProp.hasChanged(propTVDataDirectory)) {
       TvDataServiceProxyManager.getInstance().setTvDataDir(new File(propTVDataDirectory.getString()));
+      
+      TvDataBase.getInstance().updateTvDataBase();      
+      TvDataBase.getInstance().checkTvDataInventory();
+      
+      MainFrame.getInstance().handleChangedTvDataDir();      
+    }
 
     mProp.clearChanges();
   }

@@ -1019,6 +1019,20 @@ public class MainFrame extends JFrame implements DateListener {
     Settings.propLastDownloadDate.setDate(Date.getCurrentDate());
     resetOnAirArrays();
   }
+  
+  /**
+   * Updates the entries of the finder panal.
+   * @since 2.2.2/2.5.1
+   */
+  public void handleChangedTvDataDir() {
+    mFinderPanel.updateItems();
+    changeDate(Date.getCurrentDate(), null, new Runnable() {
+      public void run() {
+        scrollToNow();
+        resetOnAirArrays();
+      }
+    });
+  }
 
   public void showChannel(Channel ch) {
     mProgramTableScrollPane.scrollToChannel(ch);

@@ -105,6 +105,15 @@ public class TvDataBase {
 
     return mSingleton;
   }
+  
+  /**
+   * Updates the tv data base.
+   *
+   * @since 2.2.2/2.5.1
+   */
+  protected void updateTvDataBase() {
+    updateAvailableDateSet();
+  }
 
   public void checkTvDataInventory() {
     // Get the channel of the subscribed channels
