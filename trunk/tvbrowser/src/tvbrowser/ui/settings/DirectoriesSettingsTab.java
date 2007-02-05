@@ -113,9 +113,11 @@ public class DirectoriesSettingsTab implements SettingsTab {
         new Thread() {
           public void run() {
             try {
-              IOUtilities.copy(new File[] {currentDir}, newDir.getName().toLowerCase().equals("tvdata") ? newDir.getParentFile() : newDir, true);
-              Settings.propTVDataDirectory.setString(newDir.toString().replaceAll("\\\\","/") + "/" + currentDir.getName());
-            } catch (IOException e) {
+              IOUtilities.copy(newDir.getName().toLowerCase().equals("tvdata") ? currentDir.listFiles() : new File[] {currentDir}, newDir, true);
+              Settings.propTVDataDirectory.setString((newDir.getName().equalsIgnoreCase("tvdata") ? newDir.getParentFile() : newDir).toString().replaceAll("\\\\","/") + "/" + currentDir.getName());
+            } catch (IOException e) {              
+              if(!currentDir.exists() && newDir.exists())
+                Settings.propTVDataDirectory.setString((newDir.getName().equalsIgnoreCase("tvdata") ? newDir.getParentFile() : newDir).toString().replaceAll("\\\\","/") + "/" + currentDir.getName());
             }
             
             mShowWaiting = false;
