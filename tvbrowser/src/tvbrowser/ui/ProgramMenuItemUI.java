@@ -200,6 +200,6 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
       x += ProgramMenuItem.TIME_WIDTH;
     }
     g.setFont(menuItem.getFont());
-    g.drawString(mProgram.getTitle(), x, y);
+    g.drawString(mProgram.getTitle().length() > 70 ? mProgram.getTitle().substring(0,67) + "..." : mProgram.getTitle(), x, y);
   }
 }

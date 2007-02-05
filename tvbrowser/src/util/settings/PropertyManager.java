@@ -35,6 +35,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
 
+import tvbrowser.TVBrowser;
+
 /**
  * 
  * 
@@ -62,6 +64,14 @@ public class PropertyManager {
 
   public void writeToFile(File settingsFile) throws IOException {
     FileOutputStream out = null;
+    
+    if(TVBrowser.isTransportable()) {
+      if(!mProperties.getProperty("dir.tvdata","").startsWith("."))
+        mProperties.setProperty("dir.tvdata","./settings/tvdata");
+      
+      mProperties.remove("dir.plugins");
+    }
+    
     try {
       out = new FileOutputStream(settingsFile);
       mProperties.store(out, null);
@@ -79,6 +89,12 @@ public class PropertyManager {
     try {
       in = new BufferedInputStream(new FileInputStream(settingsFile), 0x4000);
       mProperties.load(in);
+      
+      if(TVBrowser.isTransportable()) {
+        if(!mProperties.getProperty("dir.tvdata","./settings/tvdata").startsWith("./settings/tvdata"))
+          mProperties.remove("dir.tvdata");
+        mProperties.remove("dir.plugins");
+      }
       
       clearCaches();
       removeUnknownEntries();

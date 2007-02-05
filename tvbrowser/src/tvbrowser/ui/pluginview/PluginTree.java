@@ -69,6 +69,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import util.ui.Localizer;
 import util.ui.OverlayListener;
@@ -605,7 +606,7 @@ public class PluginTree extends JTree implements DragGestureListener,
 
                 if (FavoritesPlugin.getInstance().getRootNode()
                     .getMutableTreeNode().equals(target))
-                  action = getAction(FavoritesPlugin.getInstance()
+                  action = getAction(FavoritesPluginProxy.getInstance()
                       .getContextMenuActions(program));
                 else if (ReminderPlugin.getInstance().getRootNode()
                     .getMutableTreeNode().equals(target))

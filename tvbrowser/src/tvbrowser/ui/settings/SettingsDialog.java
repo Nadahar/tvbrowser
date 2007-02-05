@@ -74,6 +74,7 @@ import tvbrowser.extras.programinfo.ProgramInfoOrderSettingsTab;
 import tvbrowser.extras.programinfo.ProgramInfoPicturesSettingsTab;
 import tvbrowser.extras.reminderplugin.ReminderPicturesSettingsTab;
 import tvbrowser.extras.reminderplugin.ReminderSettingsTab;
+import util.exc.ErrorHandler;
 import util.ui.Localizer;
 import tvbrowser.extras.searchplugin.SearchPictureSettingsTab;
 import tvbrowser.extras.searchplugin.SearchPlugin;
@@ -325,7 +326,10 @@ public class SettingsDialog implements WindowClosingIf {
 
     technicalSettings.add(new SettingNode(new NetworkSettingsTab()));
     technicalSettings.add(new SettingNode(new ProxySettingsTab()));
-    technicalSettings.add(new SettingNode(new DirectoriesSettingsTab()));
+    
+    if(!TVBrowser.isTransportable())
+      technicalSettings.add(new SettingNode(new DirectoriesSettingsTab()));
+    
     technicalSettings.add(new SettingNode(new WebbrowserSettingsTab(), SettingsItem.WEBBROWSER));    
 
     SettingNode search = new SettingNode(new DefaultSettingsTab(SearchPlugin.mLocalizer.msg("title", "Search"), null));
@@ -493,8 +497,7 @@ public class SettingsDialog implements WindowClosingIf {
 
   // inner class SettingNode
 
-  private class SettingNode extends DefaultMutableTreeNode {
-
+  private class SettingNode extends DefaultMutableTreeNode {    
     private Icon mIcon;
 
     private JPanel mSettingsPn;
@@ -510,10 +513,10 @@ public class SettingsDialog implements WindowClosingIf {
     }
 
     public SettingsTab getSettingsTab() {
-		return mSettingsTab;
-	}
+      return mSettingsTab;
+    }
 
-	public SettingNode(SettingsTab settingsTab, String id) {
+    public SettingNode(SettingsTab settingsTab, String id) {
       this(settingsTab.getIcon(), settingsTab.getTitle(), id);
       mSettingsTab = settingsTab;
     }
@@ -552,7 +555,11 @@ public class SettingsDialog implements WindowClosingIf {
     public JPanel getSettingsPanel() {
       if (!isLoaded()) {
         if (mSettingsTab != null) {
-          mSettingsPn = mSettingsTab.createSettingsPanel();
+          try {
+            mSettingsPn = mSettingsTab.createSettingsPanel();
+          }catch(Exception e) {
+            ErrorHandler.handle(mLocalizer.msg("loadError","An error occurred during loading of {0}",mSettingsTab.getTitle()),e);
+          }
         }
       }
 

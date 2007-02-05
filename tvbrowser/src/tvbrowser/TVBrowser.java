@@ -108,6 +108,8 @@ public class TVBrowser {
   public static util.ui.Localizer mLocalizer;
 
   private static String curLookAndFeel;
+  
+  private static boolean mIsTransportable;
 
   /* If you want to change the version string, add it to the beginning of this array.
      We need the old version strings to import the settings.
@@ -129,7 +131,7 @@ public class TVBrowser {
   };
   
   /** The current version. */
-  public static final devplugin.Version VERSION=new devplugin.Version(2,51,false,ALL_VERSIONS[0]);
+  public static final devplugin.Version VERSION=new devplugin.Version(2,51,false,ALL_VERSIONS[0] + ((mIsTransportable = new File("settings").isDirectory()) ? " transportable" : ""));
 
   /** The title bar string. */
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
@@ -180,9 +182,10 @@ public class TVBrowser {
       } else if (args[i].startsWith("-D")) {
           if (args[i].indexOf("=") > 0) {
               String key = args[i].substring(2, args[i].indexOf("="));
-              String value = args[i].substring(args[i].indexOf("=")+1);
+              String value = args[i].substring(args[i].indexOf("=")+1);              
               if (key.equals("user.language")) {
-                  Locale.setDefault(new Locale(value));
+                System.getProperties().setProperty("user.language",value);
+                Locale.setDefault(new Locale(value));
               } else {
                   System.setProperty(key, value);
               }
@@ -209,6 +212,9 @@ public class TVBrowser {
       System.exit(1);
     }
 
+    if(mIsTransportable)
+      System.getProperties().remove("propertiesfile");
+    
     // setup logging
 
     // Get the default Logger
@@ -886,6 +892,15 @@ public class TVBrowser {
     System.setProperty("http.proxyPassword", httpPassword);
   }
 
+  /**
+   * Gets if TV-Browser runs as portable version.
+   * 
+   * @return If TV-Browser runa as portable version.
+   * @since 2.2.2/2.5.1 
+   */
+  public static boolean isTransportable() {
+    return mIsTransportable;
+  }
 }
   class FileLoggingHandler extends Handler {
 

@@ -19,12 +19,12 @@
  * CVS information:
  *  $RCSfile$
  *   $Source$
- *     $Date: 2006-06-26 22:54:28 +0200 (Mo, 26 Jun 2006) $
- *   $Author: ds10 $
- * $Revision: 2579 $
+ *     $Date$
+ *   $Author$
+ * $Revision$
  *
  */
-package tvbrowser.ui.mainframe;
+package tvbrowser.ui.waiting.dlgs;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -73,7 +73,7 @@ public class SettingsWaitingDialog extends JDialog {
     JPanel panel = (JPanel) getContentPane();
     panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-    panel.setLayout(new FormLayout("3dlu, pref, 3dlu", "3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu"));
+    panel.setLayout(new FormLayout("3dlu, pref, 3dlu", "3dlu, pref, 3dlu, pref, 3dlu"));
     CellConstraints cc = new CellConstraints();
 
     JLabel header = new JLabel(mLocalizer.msg("waitingHeader", "Listing the not subscribed channels"));

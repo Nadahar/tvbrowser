@@ -29,9 +29,11 @@ import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import devplugin.ProgramFieldType;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.plugin.DefaultSettings;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
+import tvbrowser.ui.waiting.dlgs.TvDataCopyWaitingDlg;
 import util.exc.TvBrowserException;
 import util.io.IOUtilities;
 import util.settings.BooleanProperty;
@@ -52,14 +54,17 @@ import util.settings.VersionProperty;
 import util.ui.PictureSettingsPanel;
 import util.ui.view.SplitViewProperty;
 
+import javax.swing.JFrame;
 import javax.swing.UIManager;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Properties;
 import java.util.logging.Level;
 
 /**
@@ -68,8 +73,7 @@ import java.util.logging.Level;
  * 
  * @author Martin Oberhauser
  */
-public class Settings {
-
+public class Settings {  
   private static java.util.logging.Logger mLog = java.util.logging.Logger
       .getLogger(Settings.class.getName());
 
@@ -93,6 +97,8 @@ public class Settings {
 
   private static PropertyManager mProp = new PropertyManager();
 
+  private static boolean mShowWaiting;
+  
  /**
    * Returns the Default-Settings. These Settings are stored in the mac, windows
    * and linux.properties-Files
@@ -104,16 +110,17 @@ public class Settings {
   }
 
   /**
-   * @return the user directory. (e.g.: ~/.tvbrowser/)
+   * Returns the user directory. (e.g.: ~/.tvbrowser/)
    */
   public static String getUserDirectoryName() {
     String dir = new StringBuffer(System.getProperty("user.home")).append(
         File.separator).append(DEFAULT_USER_DIR).toString();
-    return mDefaultSettings.getProperty("userdir", dir);
+    return TVBrowser.isTransportable() ? new File("settings").getAbsolutePath() : mDefaultSettings.getProperty("userdir", dir);
   }
 
   public static String getUserSettingsDirName() {
-    return new StringBuffer(getUserDirectoryName()).append(File.separator).append(TVBrowser.VERSION).toString();
+    return new StringBuffer(getUserDirectoryName())
+        .append(File.separator).append(TVBrowser.ALL_VERSIONS[0]).toString();
   }
 
   /**
@@ -164,32 +171,57 @@ public class Settings {
       mLog.info("Try to load settings from a previous version of TV-Browser");
             
       File oldDir = null;
-      File testFile;
-            
-      for (int i = 1; i < TVBrowser.ALL_VERSIONS.length; i++) {
-        testFile = new File(getUserDirectoryName() + File.separator + 
-            TVBrowser.ALL_VERSIONS[i], SETTINGS_FILE);
-        if(testFile.isFile()) {
-          oldDir = new File(getUserDirectoryName(),TVBrowser.ALL_VERSIONS[i]);
-          break;
-        }
-      }
+      File testFile = null;
       
-      if(oldDir == null) {
-        testFile = new File(getUserDirectoryName(), SETTINGS_FILE);
+      String[] directories = {getUserDirectoryName() , System.getProperty("user.home") + "/.tvbrowser" ,System.getProperty("user.home") + "/TV-Browser",System.getProperty("user.home") + "/Library/Preferences/TV-Browser"};      
+
+      for(int j = 0; j < (TVBrowser.isTransportable() ? directories.length : 1); j++) {        
+        for (int i = (j == 0 ? 1 : 0); i < TVBrowser.ALL_VERSIONS.length; i++) {
+          testFile = new File(directories[j] + File.separator + 
+              TVBrowser.ALL_VERSIONS[i], SETTINGS_FILE);
+          if(testFile.isFile()) {
+            oldDir = new File(directories[j],TVBrowser.ALL_VERSIONS[i]);
+            break;
+          }
+        }
         
-        if(testFile.isFile())
-          oldDir = new File(getUserDirectoryName());
-        else {
-          testFile = new File(oldDirectoryName, SETTINGS_FILE);
+        if(oldDir == null) {
+          testFile = new File(directories[j], SETTINGS_FILE);
           
           if(testFile.isFile())
-            oldDir = new File(oldDirectoryName);
-        }  
-      }
-
+            oldDir = new File(directories[j]);
+          else {
+            testFile = new File(oldDirectoryName, SETTINGS_FILE);
+            
+            if(testFile.isFile())
+              oldDir = new File(oldDirectoryName);
+          }  
+        }
+        
+        if(oldDir != null)
+          break;
+      }      
+      
       if (oldDir != null && oldDir.isDirectory() && oldDir.exists()) {
         final File newDir = new File(getUserSettingsDirName());
+
+        File oldTvDataDir = null;
+        
+        if(TVBrowser.isTransportable() && !(new File(getUserDirectoryName(),"tvdata").isDirectory())) {
+          try {
+            Properties p = new Properties();
+            FileInputStream in = new FileInputStream(testFile);
+            p.load(in);
+            
+            String temp = p.getProperty("dir.tvdata",null);
+            
+            if(temp != null)
+              oldTvDataDir = new File(temp);
+            
+            in.close();
+          }catch(Exception e) {}
+        }
+        
         if (newDir.mkdirs()) {
           try {
             IOUtilities.copy(oldDir.listFiles(new FilenameFilter() {
@@ -221,22 +253,49 @@ public class Settings {
 
               boolean version1 = false;
 
-                for (File setting : settings) {
-                    String name = "java." + setting.getName();
+              for (int i = 0; i < settings.length; i++) {
+                String name = "java." + settings[i].getName();
 
-                    if (!setting.getName().toLowerCase().startsWith("java.")) {
-                        version1 = true;
-                        setting.renameTo(new File(setting.getParent(), name));
-                    }
+                if (!settings[i].getName().toLowerCase().startsWith("java.")) {
+                  version1 = true;
+                  settings[i].renameTo(new File(settings[i].getParent(), name));
                 }
+              }
 
-                if (version1
+              if (version1
                   && !(new File(oldDirectoryName, newDir.getName()))
                       .isDirectory())
                 oldDir.renameTo(new File(System.getProperty("user.home", "")
                     + File.separator + "tvbrowser_BACKUP"));
             }
-
+            
+            /*
+             * Test if and copy TV data for the portable version.
+             */
+            if(oldTvDataDir != null && oldTvDataDir.isDirectory()) {
+              final File targetDir = new File(getUserDirectoryName(),"tvdata");
+              targetDir.mkdirs();
+              
+              final TvDataCopyWaitingDlg waiting = new TvDataCopyWaitingDlg(new JFrame(), false);
+              
+              mShowWaiting = true;
+              
+              final File srcDir = oldTvDataDir;
+              
+              new Thread() {
+                public void run() {
+                  try {
+                    IOUtilities.copy(srcDir.listFiles(), targetDir, true);
+                  }catch(Exception e) {}
+                  
+                  mShowWaiting = false;
+                  waiting.setVisible(false);
+                }
+              }.start();
+              
+              waiting.setVisible(mShowWaiting);
+            }
+            
             /*
              * Test if a settings file exist in the user directory, move the 
              * settings to backup.
@@ -253,8 +312,8 @@ public class Settings {
                   }
                 });
 
-                  for (File file : files)
-                      file.renameTo(new File(backupDir, file.getName()));
+                for (int i = 0; i < files.length; i++)
+                  files[i].renameTo(new File(backupDir,files[i].getName()));
               }
             }
           } catch (IOException e) {
@@ -374,6 +433,9 @@ public class Settings {
       mainFrame.getProgramTableScrollPane().updateChannelPanel();
       mainFrame.updateChannelChooser();
     }
+    
+    if(mProp.hasChanged(propTVDataDirectory))
+      TvDataServiceProxyManager.getInstance().setTvDataDir(new File(propTVDataDirectory.getString()));
 
     mProp.clearChanges();
   }
@@ -399,11 +461,11 @@ public class Settings {
       mProp, "enableantialiasing", false);
 
   private static String getDefaultTvDataDir() {
-    return getUserDirectoryName() + File.separator + "tvdata";
+    return TVBrowser.isTransportable() ? "./settings/tvdata" : getUserDirectoryName() + File.separator + "tvdata";
   }
 
   private static String getDefaultPluginsDir() {
-    return getUserSettingsDirName() + File.separator + "plugins";
+    return getUserSettingsDirName() + "/plugins";
   }
 
   public static final StringProperty propTVDataDirectory = new StringProperty(

@@ -331,9 +331,9 @@ public class IOUtilities {
   }
 
 
-  private static void copyFile(File src, File targetDir) throws IOException {
+  private static void copyFile(File src, File targetDir, boolean onlyNew) throws IOException {
     File destFile = new File(targetDir, src.getName());
-    copy(src, destFile);
+    copy(src, destFile, onlyNew);
   }
 
   private static File createDirectory(File targetDir, String dirName) throws IOException {
@@ -354,13 +354,26 @@ public class IOUtilities {
    * @throws IOException Thrown if something goes wrong.
    */
   public static void copy(File[] src, File targetDir) throws IOException {
+    copy(src, targetDir, false);
+  }
+  
+  /**
+   * Copies files given in source to the target directory.
+   * 
+   * @param src The files to copy.
+   * @param targetDir The target dir of the files.
+   * @param onlyNew Overwrite only older files.
+   * @throws IOException Thrown if something goes wrong.
+   * @since 2.2.2/2.5.1
+   */
+  public static void copy(File[] src, File targetDir, boolean onlyNew) throws IOException {
 		for (int i=0; i<src.length; i++) {
 			if (src[i].isDirectory()) {
         File newDir = createDirectory(targetDir, src[i].getName());
-        copy(src[i].listFiles(), newDir);
+        copy(src[i].listFiles(), newDir, onlyNew);
       }
       else {
-        copyFile(src[i], targetDir);
+        copyFile(src[i], targetDir, onlyNew);
       }
     }
   }
@@ -374,13 +387,30 @@ public class IOUtilities {
    * @throws IOException If copying failed
    */
   public static void copy(File src, File target) throws IOException {
+    copy(src, target, false);
+  }
+  
+  /**
+   * Copies a file.
+   * 
+   * @param src The file to read from
+   * @param target The file to write to
+   * @param onlyNew Overwrite only older files.
+   * @throws IOException If copying failed
+   * @since 2.2.2/2.5.1
+   */
+  public static void copy(File src, File target, boolean onlyNew) throws IOException {
     BufferedInputStream in = null;
     BufferedOutputStream out = null;
     try {
+      FileOutputStream outFile = new FileOutputStream(target);
       in = new BufferedInputStream(new FileInputStream(src), 0x4000);
-      out = new BufferedOutputStream(new FileOutputStream(target), 0x4000);
+      out = new BufferedOutputStream(outFile, 0x4000);
       
-      pipeStreams(in, out);
+      if(!onlyNew || (src.lastModified() > target.lastModified())) {
+        outFile.getChannel().truncate(0);                  
+        pipeStreams(in, out);
+      }
       
       in.close();
       out.close();
