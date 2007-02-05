@@ -58,6 +58,7 @@ import tvbrowser.core.ChannelList;
 import tvbrowser.core.PluginLoader;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
+import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.programformating.GlobalPluginProgramFormatingManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
@@ -429,7 +430,7 @@ public class TVBrowser {
             // ignore
           }
 
-          if(!mSaveThreadShouldStop)
+          if(!mSaveThreadShouldStop && !TvDataUpdater.getInstance().isDownloading())
             flushSettings(true);
         }
       }
