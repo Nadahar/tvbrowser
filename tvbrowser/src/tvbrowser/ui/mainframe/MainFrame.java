@@ -309,17 +309,20 @@ public class MainFrame extends JFrame implements DateListener {
     timer.start();
 
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-    
     addWindowListener(new WindowAdapter() {
 
 		@Override
 		public void windowDeiconified(WindowEvent e) {
 			if (Settings.propNowOnRestore.getBoolean()) {
-        SwingUtilities.invokeLater(new Runnable() {
+        new Thread() {
           public void run() {
-            scrollToNow();
+            SwingUtilities.invokeLater(new Runnable() {
+              public void run() {
+                scrollToNow();
+              }
+            });
           }
-        });
+        }.start();
 			}
 		}});
   }
