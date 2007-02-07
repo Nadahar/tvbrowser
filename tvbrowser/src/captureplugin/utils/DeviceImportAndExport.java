@@ -144,7 +144,7 @@ public class DeviceImportAndExport {
       ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
       
       out.writeInt(1);
-      out.writeObject(new String("\n\nDon't touch this ;)\n\n"));
+      out.writeObject("\n\nDon't touch this ;)\n\n");
       
       out.writeObject(device.getDriver().getClass().getName());
       out.writeObject(device.getName());

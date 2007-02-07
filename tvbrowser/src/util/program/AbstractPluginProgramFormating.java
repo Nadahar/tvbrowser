@@ -6,7 +6,6 @@ import java.io.ObjectOutputStream;
 
 import tvbrowser.core.plugin.programformating.GlobalPluginProgramFormating;
 import tvbrowser.core.plugin.programformating.GlobalPluginProgramFormatingManager;
-import tvbrowser.ui.settings.GlobalPluginProgramFormatingSettings;
 
 /**
  * A class for a program configuration setting.

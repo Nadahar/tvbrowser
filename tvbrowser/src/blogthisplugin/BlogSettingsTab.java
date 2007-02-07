@@ -22,26 +22,18 @@
  */
 package blogthisplugin;
 
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Properties;
 
 import javax.swing.Icon;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import util.ui.Localizer;
 import util.ui.PluginProgramConfigurationPanel;
-import util.ui.UiUtilities;
-
-import clipboardplugin.ClipboardPlugin;
-
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;

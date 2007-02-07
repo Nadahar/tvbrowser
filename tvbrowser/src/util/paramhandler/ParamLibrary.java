@@ -29,8 +29,6 @@ import java.io.StringReader;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
-
 import util.misc.TextLineBreakerStringWidth;
 import util.ui.Localizer;
 import devplugin.Program;

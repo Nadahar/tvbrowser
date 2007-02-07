@@ -30,7 +30,6 @@ import java.awt.Font;
 
 import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import util.ui.ScrollableMenu;

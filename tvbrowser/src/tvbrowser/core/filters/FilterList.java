@@ -50,7 +50,7 @@ public class FilterList {
   private static FilterList mInstance;
   private File mFilterDirectory;
   private ProgramFilter[] mFilterArr;
-  private final String FILTER_INDEX="filter.index";
+  private final static String FILTER_INDEX="filter.index";
   public static final String FILTER_DIRECTORY=Settings.getUserSettingsDirName()+"/filters";
 
 

@@ -152,7 +152,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     private boolean mListUpdating = false;
 
     /** MS after the last input of textfield */
-    private final int REFRESH_AFTER_MS = 200;
+    private final static int REFRESH_AFTER_MS = 200;
 
     /**
      * This is the Number of ms since the last change of an Filter Item.

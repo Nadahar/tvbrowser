@@ -96,7 +96,7 @@ public class ElgatoConnection {
             + "end tell";
 
     /** List all Recordings */
-    private final String LISTRECORDINGS = "set recList to {}\n"
+    private final static String LISTRECORDINGS = "set recList to {}\n"
             + "\n"
             + "script x\n"
             + "  on getIsoDate(dateObj)\n"
@@ -121,7 +121,7 @@ public class ElgatoConnection {
             + "set outString to reclist as text\n" + "outString";
 
     /** Remove a specific Recording */
-    private final String REMOVERECORDING = "tell application \"EyeTV\"\n"
+    private final static String REMOVERECORDING = "tell application \"EyeTV\"\n"
             + "  repeat with transmission in programs\n"
             + "    if unique ID of transmission is {0} then\n"
             + "      delete transmission\n" + "    end if\n" + "  end repeat\n"

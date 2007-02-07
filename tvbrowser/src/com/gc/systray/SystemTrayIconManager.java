@@ -55,7 +55,7 @@ public class SystemTrayIconManager {
     private Component rightClickView = null;
     private boolean mouseOnPopup = false;
 
-    private static String dllName = new String("DesktopIndicator");
+    private static String dllName = "DesktopIndicator";
 
     private JDialog d = new JDialog();
     private JWindow w = new JWindow(d);
@@ -63,7 +63,7 @@ public class SystemTrayIconManager {
     // this will contain the component if is not popup or window
     private JDialog wrapper = new JDialog();
 
-    private final int DISTANCE = 1000; // a positive value
+    private final static int DISTANCE = 1000; // a positive value
 
 
     /**
