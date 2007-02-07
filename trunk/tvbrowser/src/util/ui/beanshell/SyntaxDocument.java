@@ -180,7 +180,7 @@ class SyntaxDocument extends DefaultStyledDocument
 
     int endDelimiter = indexOf( content, getEndDelimiter(), startDelimiter );
 
-    if (endDelimiter < offset & endDelimiter != -1)
+    if (endDelimiter < offset && endDelimiter != -1)
       return false;
 
     //  End of comment not found, highlight the lines

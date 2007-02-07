@@ -14,7 +14,7 @@ import java.awt.event.MouseListener;
  */
 public class X11SystrayManager
 {
-    private String mNativeObjectFile     = new String("DesktopIndicator");
+    private String mNativeObjectFile     = "DesktopIndicator";
     
     private String           mTrayIcon   = null;
     private String           mToolTip    = null;

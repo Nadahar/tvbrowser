@@ -28,7 +28,6 @@ package tvbrowser.extras.favoritesplugin.core;
 
 import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.ShowAllFilter;
 import devplugin.*;
 

@@ -39,7 +39,6 @@ import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import tvbrowser.core.filters.FilterComponent;

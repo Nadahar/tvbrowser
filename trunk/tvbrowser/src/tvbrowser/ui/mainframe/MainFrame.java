@@ -437,7 +437,7 @@ public class MainFrame extends JFrame implements DateListener {
                 
                   // mouse pointer is on the left side
                   if(p.x <= 5) {
-                    if(p.x == 0 && mToolBarPanel != null & mToolBar.getToolbarLocation().compareTo(BorderLayout.WEST) == 0) {
+                    if(p.x == 0 && mToolBarPanel != null && mToolBar.getToolbarLocation().compareTo(BorderLayout.WEST) == 0) {
                       if(!mToolBarPanel.isVisible())
                         mToolBarPanel.setVisible(Settings.propIsTooolbarVisible.getBoolean());
                     }

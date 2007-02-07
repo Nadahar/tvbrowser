@@ -421,7 +421,7 @@ public class ToolBar extends JToolBar {
       mLocation = BorderLayout.NORTH;
     }
 
-    if (mLocation == BorderLayout.EAST || mLocation == BorderLayout.WEST) {
+    if (mLocation.equals(BorderLayout.EAST) || mLocation.equals(BorderLayout.WEST)) {
       setOrientation(JToolBar.VERTICAL);
     } else {
       setOrientation(JToolBar.HORIZONTAL);
@@ -443,7 +443,7 @@ public class ToolBar extends JToolBar {
 
     if (mLocation == null) {
       Settings.propToolbarLocation.setString("hidden");
-    } else if (mLocation == BorderLayout.WEST) {
+    } else if (mLocation.equals(BorderLayout.WEST)) {
       Settings.propToolbarLocation.setString("west");
     } else {
       Settings.propToolbarLocation.setString("north");

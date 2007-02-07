@@ -448,7 +448,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
             }
             for (int i=0;i<mInternalChannel.length;i++){
               mChannel[i] = new Channel(this, mInternalChannel[i].getName(), mInternalChannel[i].getId(), TimeZone.getTimeZone("CET"), "SE", "(c) swedb", "http://tv.swedb.se",groups[0]);
-              if (mInternalChannel[i].getIconUrl()!=""){
+              if (! mInternalChannel[i].getIconUrl().equals("")){
             	  try {
               	  	Icon icon = iconLoader.getIcon(mInternalChannel[i].getId(),mInternalChannel[i].getIconUrl());
             	  	mChannel[i].setDefaultIcon(icon);

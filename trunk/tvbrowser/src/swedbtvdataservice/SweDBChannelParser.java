@@ -20,11 +20,11 @@ import org.xml.sax.Attributes;
 public class SweDBChannelParser extends org.xml.sax.helpers.DefaultHandler{
 
   private Vector<SweDBChannelContainer> saveIn;
-  private final int STATUS_CONSTRUCTION = 0;
-  private final int STATUS_CONSTRUCTION_NAME = 1;
-  private final int STATUS_CONSTRUCTION_URL = 2;
-  private final int STATUS_ICONURL=3;
-  private final int STATUS_WAITING = 4;
+  private final static int STATUS_CONSTRUCTION = 0;
+  private final static int STATUS_CONSTRUCTION_NAME = 1;
+  private final static int STATUS_CONSTRUCTION_URL = 2;
+  private final static int STATUS_ICONURL=3;
+  private final static int STATUS_WAITING = 4;
   private int state = STATUS_WAITING;
 
   private String name;

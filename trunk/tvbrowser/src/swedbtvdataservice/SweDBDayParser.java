@@ -49,14 +49,14 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler{
   private Hashtable<String, MutableChannelDayProgram> mDayProgsHashTable;
   private MutableChannelDayProgram mMcdp;
   private Channel mChannel;
-  private final int STATUS_WAITING = 0;
-  private final int STATUS_PROG = 1;
-  private final int STATUS_TITLE = 2;
-  private final int STATUS_DESC = 3;
-  private final int STATUS_GENRE = 4;
-  private final int STATUS_EPISODE = 5;
-  private final int STATUS_ACTORS = 6;
-  private final int STATUS_DIRECTORS = 7;
+  private final static int STATUS_WAITING = 0;
+  private final static int STATUS_PROG = 1;
+  private final static int STATUS_TITLE = 2;
+  private final static int STATUS_DESC = 3;
+  private final static int STATUS_GENRE = 4;
+  private final static int STATUS_EPISODE = 5;
+  private final static int STATUS_ACTORS = 6;
+  private final static int STATUS_DIRECTORS = 7;
   
   private int state = 0;
   
@@ -258,7 +258,7 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler{
               progLength += 24*60; //adding 24 hours to the length
           }
           // Only allow program length for 12 hours.... This will take care of possible DST problems
-          if ((progLength>0) & (progLength < 12*60)) { 
+          if ((progLength>0) && (progLength < 12*60)) { 
               prog.setLength(progLength);
           }
           prog.setTitle(title);

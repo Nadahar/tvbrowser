@@ -304,8 +304,8 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
       else
         time = hour + ":" + time;
 
-      if (availableTimeActions.contains(new String("#scrollTo" + time))) {
-        availableTimeActions.remove(new String("#scrollTo" + time));
+      if (availableTimeActions.contains("#scrollTo" + time)) {
+        availableTimeActions.remove("#scrollTo" + time);
         continue;
       }
 
