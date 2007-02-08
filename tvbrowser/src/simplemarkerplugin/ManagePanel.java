@@ -272,17 +272,13 @@ public class ManagePanel {
         }
       });
     
-    mDelete.setEnabled(false);
-    
-    if(mProgramListModel.size() < 1)
-      mSend.setEnabled(false);
-    else
-      mSend.setEnabled(true);
+    mSend.setEnabled(mProgramListModel.size() > 0);
+    mDelete.setEnabled(mProgramListModel.size() > 0);
   }
 
   private void delete() {
     if (mProgramsList.getSelectedIndex() == -1)
-      return;
+      mProgramsList.setSelectionInterval(0, mProgramListModel.getSize()-1);      
 
     MarkList list = mMarkListVector.getListForName((String) mMarkListsList
         .getSelectedValue());
