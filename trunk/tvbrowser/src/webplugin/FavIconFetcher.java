@@ -103,7 +103,7 @@ public class FavIconFetcher {
           ImageIO.write(renderImage(img), "png", file);
           temp.delete();
           
-          return filename.toString();
+          return file.getName();
         }
       } catch (MalformedURLException e) {
         e.printStackTrace();

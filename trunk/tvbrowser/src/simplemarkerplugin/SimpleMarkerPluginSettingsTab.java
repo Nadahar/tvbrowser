@@ -32,6 +32,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EventObject;
@@ -236,11 +237,12 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
         String ext =  chooser.getSelectedFile().getName();
         ext = ext.substring(ext.lastIndexOf("."));
         
-        try {
-          IOUtilities.copy(chooser.getSelectedFile(),new File(dir,mListTable.getValueAt(row, 0).toString() + ext));
-        } catch (IOException e1) {
-          e1.printStackTrace();
-        }        
+        if(!new File(dir, mListTable.getValueAt(row, 0).toString() + ext).isFile())
+          try {
+            IOUtilities.copy(chooser.getSelectedFile(),new File(dir,mListTable.getValueAt(row, 0).toString() + ext));
+          } catch (IOException e1) {
+            e1.printStackTrace();
+          }        
         
         Icon icon = SimpleMarkerPlugin.getInstance().getIconForFileName(
             dir + "/" + mListTable.getValueAt(row, 0).toString() + ext);
@@ -476,7 +478,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     }
 
     public Object getCellEditorValue() {
-      String name = mTextField.getText();
+      final String name = mTextField.getText();
 
       boolean found = false;
 
@@ -486,8 +488,32 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
           break;
         }
 
-      if (name.length() > 0 && !found)
-        mItem.setName(name);
+      if (name.length() > 0 && !found) {
+        mItem.setName(name);        
+        
+        File dir = new File(SimpleMarkerPlugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome(),"simplemarkericons");
+        
+        File[] icons = dir.listFiles(new FileFilter() {
+          public boolean accept(File pathname) {
+            String file = pathname.getName();
+            
+            if(pathname.isFile() && file.substring(0,file.lastIndexOf(".")).equalsIgnoreCase(name))
+              return true;
+            
+            return false;
+          }
+        });
+        
+        if(icons != null && icons.length > 0) {
+          Icon icon = SimpleMarkerPlugin.getInstance().getIconForFileName(
+              icons[0].toString());
+
+          if (icon.getIconWidth() == 16 && icon.getIconHeight() == 16) {
+            mListTable.setValueAt(icon, mListTable.getSelectedRow(), 1);
+            mItem.setMarkIconFileName(icons[0].getName());
+          }
+        }
+      }
 
       return mItem;
     }

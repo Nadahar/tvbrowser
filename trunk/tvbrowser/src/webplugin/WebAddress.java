@@ -29,6 +29,10 @@ import util.ui.ImageUtilities;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+
+import devplugin.Plugin;
+
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -126,7 +130,10 @@ public class WebAddress implements Cloneable {
     if (mIconFile == null || mIconFile.length() == 0) { return DEFAULTICON; }
 
     try {
-      Icon icon = new ImageIcon(ImageUtilities.createImage(mIconFile));
+      StringBuffer filePath = new StringBuffer(Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome());
+      filePath.append(File.separator).append("WebFavIcons").append(File.separator).append(mIconFile);
+      
+      Icon icon = new ImageIcon(ImageUtilities.createImage(filePath.toString()));
       if ((icon != null) && (icon.getIconWidth() > 0)){
         return icon;
       }
@@ -170,6 +177,16 @@ public class WebAddress implements Cloneable {
 
     mName = (String) in.readObject();
     mIconFile = (String) in.readObject();
+    
+    if(version  == 2 && mIconFile != null) {
+      File iconFile = new File(mIconFile);
+      
+      if(iconFile.isFile())
+        mIconFile = iconFile.getName();
+      else
+        mIconFile = "";
+    }
+    
     mUrl = (String) in.readObject();
     
     if (version == 1) {
@@ -181,7 +198,7 @@ public class WebAddress implements Cloneable {
   }
 
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(2);
+    out.writeInt(3);
 
     out.writeObject(mName);
     out.writeObject(mIconFile);
