@@ -319,11 +319,15 @@ public class MainFrame extends JFrame implements DateListener {
 			if (Settings.propNowOnRestore.getBoolean()) {
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
-            new Thread() {
+            SwingUtilities.invokeLater(new Runnable() {
               public void run() {
-                scrollToNow();
+                new Thread() {
+                  public void run() {
+                    scrollToNow();
+                  }
+                }.start();
               }
-            }.start();
+            });
           }
         });
       }
