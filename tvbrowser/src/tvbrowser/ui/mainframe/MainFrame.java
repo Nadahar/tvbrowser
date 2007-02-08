@@ -188,10 +188,13 @@ public class MainFrame extends JFrame implements DateListener {
   private static Date[] mChannelDateArr;
   private static int[] mOnAirRowProgramsArr;
 
+  private boolean mSettingsWillBeOpened;
+  
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
     mIsVisible = false;
-
+    mSettingsWillBeOpened = false;
+    
     mLastTimerMinutesAfterMidnight = -1;
     mChannelDateArr = null;
     mOnAirRowProgramsArr = null;
@@ -314,16 +317,16 @@ public class MainFrame extends JFrame implements DateListener {
 		@Override
 		public void windowDeiconified(WindowEvent e) {
 			if (Settings.propNowOnRestore.getBoolean()) {
-        new Thread() {
+        SwingUtilities.invokeLater(new Runnable() {
           public void run() {
-            SwingUtilities.invokeLater(new Runnable() {
+            new Thread() {
               public void run() {
                 scrollToNow();
               }
-            });
+            }.start();
           }
-        }.start();
-			}
+        });
+      }
 		}});
   }
   
@@ -1210,8 +1213,12 @@ public class MainFrame extends JFrame implements DateListener {
    *          Id of the specific Tab
    */
   public void showSettingsDialog(final String visibleTabId) {
+    if(mSettingsWillBeOpened)
+      return;
+    
     new Thread(new Runnable() {
       public void run() {
+        mSettingsWillBeOpened = true;
         final Thread t = ChannelList.getChannelLoadThread();
         
         if(t != null && t.isAlive()) {
@@ -1250,7 +1257,7 @@ public class MainFrame extends JFrame implements DateListener {
               mPluginView.refreshTree();
           }
         });
-
+        mSettingsWillBeOpened = false;
       }
     }).start();
   }
