@@ -241,7 +241,9 @@ public class PluginTreeNode {
       	ProgramItem progItem = (ProgramItem)n.getUserObject();
         Node node = new Node(progItem);
         node.setNodeFormatter(n.getNodeFormatter());
-        mDefaultNode.add(node);
+        
+        if(progItem.getProgram().getDate().addDays(1).compareTo(Date.getCurrentDate()) >= 0)
+          mDefaultNode.add(node);
       }
     }
   }
@@ -267,12 +269,16 @@ public class PluginTreeNode {
       }
       else {
       	Date date = ((ProgramItem)n.getUserObject()).getProgram().getDate();
-        ArrayList<PluginTreeNode> list = dateMap.get(date);
-        if (list == null) {
-          list = new ArrayList<PluginTreeNode>();
-          dateMap.put(date, list);
+                
+        if(date.addDays(1).compareTo(Date.getCurrentDate()) >= 0) {
+          ArrayList<PluginTreeNode> list = dateMap.get(date);
+          if (list == null) {
+            list = new ArrayList<PluginTreeNode>();
+            dateMap.put(date, list);
+          }
+        
+          list.add(n);
         }
-        list.add(n);
       }
     }
 
