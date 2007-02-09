@@ -51,6 +51,7 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.Sizes;
 
 import devplugin.Plugin;
 
@@ -191,7 +192,7 @@ public class GlobalPluginProgramFormatingSettingsDialog extends JDialog implemen
     
     pb.add(buttonPanel, cc.xyw(1,++y,3));
     
-    setSize(500,400);
+    setSize(Sizes.getUnitConverter().dialogUnitXAsPixel(400,this),Sizes.getUnitConverter().dialogUnitXAsPixel(300,this));
     setLocationRelativeTo(w);
     setVisible(true);
   }
