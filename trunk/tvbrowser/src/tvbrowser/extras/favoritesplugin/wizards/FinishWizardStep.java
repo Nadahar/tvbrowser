@@ -46,7 +46,7 @@ public class FinishWizardStep extends AbstractWizardStep {
   }
 
   public JPanel createContent(WizardHandler handler) {
-    JPanel pn = new JPanel(new FormLayout("fill:pref:grow", "fill:pref:grow"));
+    JPanel pn = new JPanel(new FormLayout("fill:default:grow", "fill:pref:grow"));
     CellConstraints cc = new CellConstraints();
     pn.add(new JLabel(mLocalizer.msg("msg", "Die Lieblingssendung ist nun eingerichtet!"), JLabel.CENTER), cc.xy(1,1));
     handler.allowCancel(false);

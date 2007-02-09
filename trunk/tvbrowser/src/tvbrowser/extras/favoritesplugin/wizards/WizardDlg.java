@@ -96,7 +96,7 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
     mHandler = handler;
 
     JPanel panel = (JPanel) getContentPane();
-    panel.setLayout(new FormLayout("fill:pref:grow", "fill:pref:grow, 3dlu, bottom:pref"));
+    panel.setLayout(new FormLayout("fill:default:grow", "fill:pref:grow, 3dlu, bottom:pref"));
     panel.setBorder(Borders.DLU4_BORDER);
 
     switchToStep(step);
