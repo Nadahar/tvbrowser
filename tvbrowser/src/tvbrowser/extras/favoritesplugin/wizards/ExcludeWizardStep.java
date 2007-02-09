@@ -175,7 +175,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
         new Integer(LimitationConfiguration.DAYLIMIT_SATURDAY), new Integer(LimitationConfiguration.DAYLIMIT_SUNDAY), });
     mDayChooser.setRenderer(new DayListCellRenderer());
     CellConstraints cc = new CellConstraints();
-    PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("5dlu, pref, pref:grow",
+    PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("5dlu, pref, default:grow",
         "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
 
     mChannelCB = new JComboBox(ChannelList.getSubscribedChannels());

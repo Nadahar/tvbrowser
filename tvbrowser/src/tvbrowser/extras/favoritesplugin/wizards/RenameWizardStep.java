@@ -56,7 +56,7 @@ public class RenameWizardStep extends AbstractWizardStep {
     mNameTf = new JTextField(((Favorite)handler.getCurrentValue()).getName());
 
 
-    PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("5dlu, pref, 3dlu, pref:grow",
+    PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("5dlu, pref, 3dlu, default:grow",
         "pref"));
     panelBuilder.setBorder(Borders.DLU4_BORDER);
     CellConstraints cc = new CellConstraints();

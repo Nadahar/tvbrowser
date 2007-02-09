@@ -105,7 +105,7 @@ public class TypeWizardStep extends AbstractWizardStep {
     LinkButton expertBtn = new LinkButton(mLocalizer.msg("advancedView", "Switch to Classic View"), null);
 
     CellConstraints cc = new CellConstraints();
-    PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("5dlu, pref, pref:grow",
+    PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("5dlu, pref, default:grow",
         "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
 
     panelBuilder.add(new JLabel(mMainQuestion), cc.xyw(1, 1, 3));

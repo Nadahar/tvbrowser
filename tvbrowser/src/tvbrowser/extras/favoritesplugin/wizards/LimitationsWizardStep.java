@@ -115,7 +115,7 @@ public class LimitationsWizardStep extends AbstractWizardStep {
     mTimePeriodChooser = new TimePeriodChooser(lowBnd, upBnd, TimePeriodChooser.ALIGN_RIGHT);
 
     CellConstraints cc = new CellConstraints();
-    PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("pref, pref:grow, pref", "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
+    PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("pref, default:grow, pref", "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
 
     panelBuilder.setBorder(Borders.DLU4_BORDER);
     panelBuilder.add(new JLabel(mLocalizer.msg("mainQuestion", "Gibt es weitere Einschränkungen?")), cc.xy(1, 1));
