@@ -24,6 +24,7 @@ package simplemarkerplugin;
 
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -45,8 +46,10 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
@@ -54,6 +57,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
@@ -120,8 +125,15 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     mListTable.getColumnModel().getColumn(1).setMaxWidth(40);
 
     mListTable.setRowHeight(25);
-
-    mListTable.addMouseListener(this);
+    
+    mListTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      public void valueChanged(ListSelectionEvent e) {
+        if(!e.getValueIsAdjusting())
+          mDelete.setEnabled(e.getFirstIndex() > -1);
+      }
+    });
+    
+    mListTable.addMouseListener(this);    
     mListTable.addKeyListener(this);
     mListTable.getColumnModel().getColumn(0).setCellEditor(
         new MarkListItemCellEditor());
@@ -202,63 +214,10 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
   }
 
   public void mouseClicked(MouseEvent e) {
-    if (mListTable.getSelectedRow() != -1)
-      mDelete.setEnabled(true);
-
     if (SwingUtilities.isLeftMouseButton(e)
         && mListTable.columnAtPoint(e.getPoint()) == 1
         && e.getClickCount() >= 2) {
-      int row = mListTable.rowAtPoint(e.getPoint());
-      String iconPath = ((MarkListItem) mListTable.getValueAt(row, 0)).getMarkIconFileName();
-
-      JFileChooser chooser = new JFileChooser(iconPath == null ? new File("")
-          : (new File(iconPath)).getParentFile());
-      chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-
-      String msg = SimpleMarkerPlugin.mLocalizer.msg("iconFiles",
-          "Icon Files {0}", "*.png,*.jpg, *.gif");
-      String[] extArr = { ".png", ".jpg", ".gif" };
-
-      chooser.setFileFilter(new ExtensionFileFilter(extArr, msg));
-      chooser.setDialogTitle(SimpleMarkerPlugin.mLocalizer.msg("chooseIcon",
-          "Choose icon for {0}", mListTable.getValueAt(row, 0).toString()));
-
-      Window w = UiUtilities.getLastModalChildOf(SimpleMarkerPlugin
-          .getInstance().getSuperFrame());
-
-      chooser.showDialog(w, Localizer.getLocalization(Localizer.I18N_SELECT));
-
-      if (chooser.getSelectedFile() != null) {
-        File dir = new File(SimpleMarkerPlugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome(),"simplemarkericons");
-        
-        if(!dir.isDirectory())
-          dir.mkdir();
-
-        String ext =  chooser.getSelectedFile().getName();
-        ext = ext.substring(ext.lastIndexOf("."));
-        
-        if(!new File(dir, mListTable.getValueAt(row, 0).toString() + ext).isFile())
-          try {
-            IOUtilities.copy(chooser.getSelectedFile(),new File(dir,mListTable.getValueAt(row, 0).toString() + ext));
-          } catch (IOException e1) {
-            e1.printStackTrace();
-          }        
-        
-        Icon icon = SimpleMarkerPlugin.getInstance().getIconForFileName(
-            dir + "/" + mListTable.getValueAt(row, 0).toString() + ext);
-
-        if (icon.getIconWidth() != 16 || icon.getIconHeight() != 16) {
-          JOptionPane.showMessageDialog(w, SimpleMarkerPlugin.mLocalizer.msg(
-              "iconSize", "The icon has to be 16x16 in size."));
-          return;
-        }
-
-        mListTable.setValueAt(icon, row, 1);
-
-        ((MarkListItem) mListTable.getValueAt(row, 0))
-            .setMarkIconFileName(mListTable.getValueAt(row, 0).toString() + ext);
-      }
-
+      chooseIcon(mListTable.rowAtPoint(e.getPoint()));
     }
   }
 
@@ -266,9 +225,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     if (mListTable.isEditing())
       mListTable.getCellEditor().cancelCellEditing();
 
-    if (e.getActionCommand().equals(
-        SimpleMarkerPlugin.mLocalizer.msg("settings.add", "Add new list"))) {
-
+    if (e.getSource() == mAdd) {
       String name = "List " + (mListTable.getRowCount() + 1);
 
       boolean testName = false;
@@ -287,14 +244,16 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
           }
       } while (testName);
 
-      Object[] row = { new MarkListItem(new MarkList(name), true),
+      MarkListItem item = new MarkListItem(new MarkList(name), true);
+      
+      Object[] row = { item,
           SimpleMarkerPlugin.getInstance().getIconForFileName(null) };
       mModel.addRow(row);
+      mListTable.setRowSelectionInterval(mListTable.getRowCount()-1,mListTable.getRowCount()-1);
+      checkForIcon(item);
     }
-    if (e.getActionCommand().equals(
-        SimpleMarkerPlugin.mLocalizer.msg("settings.delete",
-            "Delete selected list(s)"))) {
-
+    if (e.getActionCommand().equals(SimpleMarkerPlugin.mLocalizer.msg("settings.delete",
+    "Delete selected list"))) {
       int[] rows = mListTable.getSelectedRows();
       for (int i = rows.length - 1; i >= 0; i--) {
         MarkListItem item = ((MarkListItem) mListTable.getValueAt(rows[i], 0));
@@ -313,6 +272,9 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
 
     if (mListTable.getSelectedRow() != -1)
       mDelete.setEnabled(true);
+    
+    if(e.getKeyCode() == KeyEvent.VK_F2 && mListTable.getSelectedColumn() == 1)
+      chooseIcon(mListTable.getSelectedRow());
   }
 
   public void keyReleased(KeyEvent e) {}
@@ -323,9 +285,47 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
 
   public void mouseExited(MouseEvent e) {}
 
-  public void mousePressed(MouseEvent e) {}
+  public void mousePressed(MouseEvent e) {
+    if(e.isPopupTrigger() && mListTable.rowAtPoint(e.getPoint()) > -1) {
+      int row = mListTable.rowAtPoint(e.getPoint());
+      mListTable.setRowSelectionInterval(row,row);
+      showPopupMenu(e.getPoint(), row);
+    }
+  }
 
-  public void mouseReleased(MouseEvent e) {}
+  public void mouseReleased(MouseEvent e) {
+    if(e.isPopupTrigger() && mListTable.rowAtPoint(e.getPoint()) > -1) {
+      int row = mListTable.rowAtPoint(e.getPoint());
+      mListTable.setRowSelectionInterval(row,row);
+      showPopupMenu(e.getPoint(), row);
+    }
+  }
+  
+  private void showPopupMenu(Point p, final int row) {
+    JPopupMenu popupMenu = new JPopupMenu();
+    
+    JMenuItem item = new JMenuItem(SimpleMarkerPlugin.mLocalizer.msg("settings.delete",
+    "Delete selected list"));
+    item.setIcon(SimpleMarkerPlugin.getPluginManager().getIconFromTheme(
+        SimpleMarkerPlugin.getInstance(), "actions", "edit-delete", 16));
+    item.addActionListener(this);
+    
+    popupMenu.add(item);
+    
+    item = new JMenuItem(SimpleMarkerPlugin.mLocalizer.msg("settings.changeIcon",
+    "Change list icon"));
+    item.setIcon(SimpleMarkerPlugin.getPluginManager().getIconFromTheme(
+        SimpleMarkerPlugin.getInstance(), "actions", "document-edit", 16));
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        chooseIcon(row);
+      }
+    });
+    
+    popupMenu.add(item);
+    
+    popupMenu.show(mListTable, p.x, p.y);
+  }
 
   private class TableRenderer extends DefaultTableCellRenderer {
     private static final long serialVersionUID = 1L;
@@ -489,30 +489,8 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
         }
 
       if (name.length() > 0 && !found) {
-        mItem.setName(name);        
-        
-        File dir = new File(SimpleMarkerPlugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome(),"simplemarkericons");
-        
-        File[] icons = dir.listFiles(new FileFilter() {
-          public boolean accept(File pathname) {
-            String file = pathname.getName();
-            
-            if(pathname.isFile() && file.substring(0,file.lastIndexOf(".")).equalsIgnoreCase(name))
-              return true;
-            
-            return false;
-          }
-        });
-        
-        if(icons != null && icons.length > 0) {
-          Icon icon = SimpleMarkerPlugin.getInstance().getIconForFileName(
-              icons[0].toString());
-
-          if (icon.getIconWidth() == 16 && icon.getIconHeight() == 16) {
-            mListTable.setValueAt(icon, mListTable.getSelectedRow(), 1);
-            mItem.setMarkIconFileName(icons[0].getName());
-          }
-        }
+        mItem.setName(name);
+        checkForIcon(mItem);
       }
 
       return mItem;
@@ -523,6 +501,83 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
       mItem = (MarkListItem) value;
       mTextField.setText(value.toString());
       return mTextField;
+    }
+  }
+  
+  private void checkForIcon(final MarkListItem item) {
+    File dir = new File(SimpleMarkerPlugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome(),"simplemarkericons");
+    
+    File[] icons = dir.listFiles(new FileFilter() {
+      public boolean accept(File pathname) {
+        String file = pathname.getName();
+        
+        if(pathname.isFile() && file.substring(0,file.lastIndexOf(".")).equalsIgnoreCase(item.toString()))
+          return true;
+        
+        return false;
+      }
+    });
+    
+    if(icons != null && icons.length > 0) {
+      Icon icon = SimpleMarkerPlugin.getInstance().getIconForFileName(
+          icons[0].toString());
+
+      if (icon.getIconWidth() == 16 && icon.getIconHeight() == 16) {
+        mListTable.setValueAt(icon, mListTable.getSelectedRow(), 1);
+        item.setMarkIconFileName(icons[0].getName());
+      }
+    }
+  }
+  
+  private void chooseIcon(int row) {    
+    String iconPath = ((MarkListItem) mListTable.getValueAt(row, 0)).getMarkIconFileName();
+
+    JFileChooser chooser = new JFileChooser(iconPath == null ? new File("")
+        : (new File(iconPath)).getParentFile());
+    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+    String msg = SimpleMarkerPlugin.mLocalizer.msg("iconFiles",
+        "Icon Files {0}", "*.png,*.jpg, *.gif");
+    String[] extArr = { ".png", ".jpg", ".gif" };
+
+    chooser.setFileFilter(new ExtensionFileFilter(extArr, msg));
+    chooser.setDialogTitle(SimpleMarkerPlugin.mLocalizer.msg("chooseIcon",
+        "Choose icon for {0}", mListTable.getValueAt(row, 0).toString()));
+
+    Window w = UiUtilities.getLastModalChildOf(SimpleMarkerPlugin
+        .getInstance().getSuperFrame());
+
+    chooser.showDialog(w, Localizer.getLocalization(Localizer.I18N_SELECT));
+
+    if (chooser.getSelectedFile() != null) {
+      File dir = new File(SimpleMarkerPlugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome(),"simplemarkericons");
+      
+      if(!dir.isDirectory())
+        dir.mkdir();
+
+      String ext =  chooser.getSelectedFile().getName();
+      ext = ext.substring(ext.lastIndexOf("."));
+      
+      if(!new File(dir, mListTable.getValueAt(row, 0).toString() + ext).isFile())
+        try {
+          IOUtilities.copy(chooser.getSelectedFile(),new File(dir,mListTable.getValueAt(row, 0).toString() + ext));
+        } catch (IOException e1) {
+          e1.printStackTrace();
+        }        
+      
+      Icon icon = SimpleMarkerPlugin.getInstance().getIconForFileName(
+          dir + "/" + mListTable.getValueAt(row, 0).toString() + ext);
+
+      if (icon.getIconWidth() != 16 || icon.getIconHeight() != 16) {
+        JOptionPane.showMessageDialog(w, SimpleMarkerPlugin.mLocalizer.msg(
+            "iconSize", "The icon has to be 16x16 in size."));
+        return;
+      }
+
+      mListTable.setValueAt(icon, row, 1);
+
+      ((MarkListItem) mListTable.getValueAt(row, 0))
+          .setMarkIconFileName(mListTable.getValueAt(row, 0).toString() + ext);
     }
   }
 }
