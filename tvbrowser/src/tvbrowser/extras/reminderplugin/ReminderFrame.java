@@ -224,19 +224,21 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     }
 
     mDialog.pack();
-    mDialog.setAlwaysOnTop(true);
+    mDialog.setAlwaysOnTop(ReminderPlugin.getInstance().getSettings().getProperty("alwaysOnTop","true").equalsIgnoreCase("true"));
     
     UiUtilities.centerAndShow(mDialog);
     mDialog.toFront();
     
-    mDialog.addWindowFocusListener(new WindowFocusListener() {
-      public void windowGainedFocus(WindowEvent e) {}
-
-      public void windowLostFocus(WindowEvent e) {
-        mDialog.setAlwaysOnTop(false);
-        UiUtilities.getLastModalChildOf(MainFrame.getInstance()).toFront();
-      }
-    });
+    if(mDialog.isAlwaysOnTop()) {
+      mDialog.addWindowFocusListener(new WindowFocusListener() {
+        public void windowGainedFocus(WindowEvent e) {}
+  
+        public void windowLostFocus(WindowEvent e) {
+          mDialog.setAlwaysOnTop(false);
+          UiUtilities.getLastModalChildOf(MainFrame.getInstance()).toFront();
+        }
+      });
+    }
     
     mProgram.addChangeListener(this);
   }

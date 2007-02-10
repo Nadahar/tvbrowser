@@ -392,6 +392,13 @@ public class ReminderPlugin {
         }
       }
     }
+    
+    if(settings.containsKey("autoCloseReminderAtProgramEnd")) {
+      if(settings.getProperty("autoCloseReminderAtProgramEnd","true").equalsIgnoreCase("true"))
+        settings.setProperty("autoCloseBehaviour","onEnd");
+      
+      settings.remove("autoCloseReminderAtProgramEnd");
+    }
   }
 
   protected ActionMenu getContextMenuActions(final Frame parentFrame,

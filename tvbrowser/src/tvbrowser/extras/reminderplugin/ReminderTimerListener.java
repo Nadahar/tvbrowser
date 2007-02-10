@@ -118,16 +118,18 @@ public class ReminderTimerListener {
      */
     private int getAutoCloseReminderTime(Program p) {
       int autoCloseReminderTime = 0;
-      try {
-        if(mSettings.getProperty("autoCloseReminderAtProgramEnd", "true").compareTo("true") == 0) {
+      try {        
+        if(mSettings.getProperty("autoCloseBehaviour","onEnd").equals("onEnd")) {
           int endTime = p.getStartTime() + p.getLength();
           int currentTime = p.getDate().equals(Date.getCurrentDate()) ? IOUtilities.getMinutesAfterMidnight() : 1440 + IOUtilities.getMinutesAfterMidnight();
           autoCloseReminderTime = (endTime - currentTime) * 60;
         }
-        else {
-          String asString = mSettings.getProperty("autoCloseReminderTime", "0");
+        else if(mSettings.getProperty("autoCloseBehaviour","onTime").equals("onTime")){
+          String asString = mSettings.getProperty("autoCloseReminderTime", "10");
           autoCloseReminderTime = Integer.parseInt(asString);          
         }
+        else
+          autoCloseReminderTime = 0;
       } catch (Exception exc) {
         // ignore
       }
