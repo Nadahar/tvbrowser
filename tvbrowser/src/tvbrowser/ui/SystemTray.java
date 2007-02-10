@@ -810,14 +810,17 @@ public class SystemTray {
         public void run() {
           MainFrame.getInstance().showFromTray(mState);
           toggleReminderState(true);
+          
+          if (Settings.propNowOnRestore.getBoolean())
+            MainFrame.getInstance().scrollToNow();
         }
       });
       toggleOpenCloseMenuItem(false);
     } else {
-      MainFrame.getInstance().setExtendedState(JFrame.ICONIFIED);
-      
       if (Settings.propTrayMinimizeTo.getBoolean())
         MainFrame.getInstance().setVisible(false);
+      else
+        MainFrame.getInstance().setExtendedState(JFrame.ICONIFIED);
       
       toggleOpenCloseMenuItem(true);
     }
