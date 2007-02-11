@@ -199,6 +199,9 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       mReminderCB.addItem(REMIND_MSG_ARR[i]);
       i++;
     }
+    // don't show reminder selection if it contains only the 
+    // entry "don't remind me"
+    mReminderCB.setVisible(mReminderCB.getItemCount() > 1);
     
     btnPanel.add(mReminderCB, BorderLayout.WEST);
     btnPanel.add(mCloseBt, BorderLayout.EAST);
