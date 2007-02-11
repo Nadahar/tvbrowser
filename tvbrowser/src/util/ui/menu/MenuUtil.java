@@ -56,6 +56,10 @@ public class MenuUtil {
   }
 
   public static JMenuItem createMenuItem(ActionMenu menu) {
+    return createMenuItem(menu, true);
+  }
+  
+  public static JMenuItem createMenuItem(ActionMenu menu, boolean setFont) {
     if (menu == null) {
       return null;
     }
@@ -64,7 +68,7 @@ public class MenuUtil {
       result = new ScrollableMenu(menu.getAction());
       ActionMenu[] subItems = menu.getSubItems();
       for (int i=0; i<subItems.length; i++) {
-        JMenuItem item = createMenuItem(subItems[i]);
+        JMenuItem item = createMenuItem(subItems[i], setFont);
         if (item == null) {
           ((ScrollableMenu)result).addSeparator();
         }
@@ -81,7 +85,7 @@ public class MenuUtil {
         result = new JMenuItem(menu.getAction());
       }
     }
-    if (result != null) {
+    if (result != null && setFont) {
       result.setFont(CONTEXT_MENU_PLAINFONT);
     }
     return result;

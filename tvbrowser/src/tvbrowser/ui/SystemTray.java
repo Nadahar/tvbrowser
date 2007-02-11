@@ -60,6 +60,8 @@ import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MarkedProgramsList;
 import util.io.IOUtilities;
 import util.ui.ScrollableMenu;
+import util.ui.UiUtilities;
+import util.ui.menu.MenuUtil;
 
 import com.gc.systray.SystemTrayFactory;
 import com.gc.systray.SystemTrayIf;
@@ -879,7 +881,7 @@ public class SystemTray {
     for (PluginProxy plugin : plugins) {
       action = plugin.getButtonAction();
       if (action != null) {
-        pluginsMenu.add(new JMenuItem(action.getAction()));
+        pluginsMenu.add(MenuUtil.createMenuItem(action,false));
       }
     }
   }

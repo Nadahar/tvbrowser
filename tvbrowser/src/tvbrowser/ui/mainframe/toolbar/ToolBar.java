@@ -27,6 +27,7 @@
 package tvbrowser.ui.mainframe.toolbar;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
@@ -43,6 +44,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -73,6 +75,8 @@ public class ToolBar extends JToolBar {
   public static final int BUTTON_ACTION = 0;
   public static final int TOOGLE_BUTTON_ACTION = 1;
   public static final int SEPARATOR = 2;
+  public static final int SPACE = 3;
+  public static final int GLUE = 4;
 
   public static final int STYLE_TEXT = 1, STYLE_ICON = 2;
   private static final int ICON_BIG = 1, ICON_SMALL = 2;
@@ -146,11 +150,28 @@ public class ToolBar extends JToolBar {
       if (typeInteger != null) {
         type = typeInteger.intValue();
       }
-
+      
       if (type == TOOGLE_BUTTON_ACTION) {
         addToggleButton(action);
       } else if (type == SEPARATOR) {
         addSeparator();
+      } else if (type == GLUE) {
+        JPanel gluePanel = new JPanel();
+        gluePanel.setOpaque(false);
+        gluePanel.setOpaque(false);
+        add(gluePanel);
+      } else if (type == SPACE) {
+        JPanel spacePanel = new JPanel();
+        spacePanel.setOpaque(false);
+        spacePanel.setBorder(null);
+        
+        int height = (mLocation == BorderLayout.NORTH ? getPreferredSize().height : 20);
+        
+        spacePanel.setPreferredSize(new Dimension(20,height));
+        spacePanel.setMaximumSize(new Dimension(20,height));
+        spacePanel.setMinimumSize(new Dimension(20,height));
+          
+        add(spacePanel);
       } else {
         addButton(action);
       }
@@ -186,7 +207,8 @@ public class ToolBar extends JToolBar {
         this.setPreferredSize(new Dimension(15, this.getHeight()));
 
     this.updateUI();
-
+    setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    
     int x = this.getComponentCount();
 
     /* Prepare all ToolBar buttons for Drag'n'Drop */
@@ -199,8 +221,19 @@ public class ToolBar extends JToolBar {
         b.setBorder(BorderFactory.createEmptyBorder(b.getInsets().top,b.getInsets().left,b.getInsets().bottom,b.getInsets().right));
         b.setEnabled(false);
       }
-      if(this.getComponent(i) instanceof JToolBar.Separator)
+      else if(this.getComponent(i) instanceof JToolBar.Separator) {
         ((JToolBar.Separator)this.getComponent(i)).setBorder(BorderFactory.createLineBorder(getBackground().darker().darker().darker()));
+      }
+      else if(this.getComponent(i) instanceof JPanel) {
+        JPanel filler = ((JPanel)this.getComponent(i));
+        
+        filler.setSize(filler.getWidth(),10);
+        filler.setVisible(true);
+        filler.setOpaque(true);
+        filler.setBackground(filler.getBackground().brighter());
+        
+        filler.setBorder(BorderFactory.createLineBorder(getBackground().darker().darker().darker()));
+      }
       
       this.getComponent(i).addMouseListener(s);
     }
