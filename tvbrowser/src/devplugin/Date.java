@@ -287,7 +287,7 @@ public class Date implements Comparable {
 
     if (obj instanceof Date) {
       Date d = (Date) obj;
-      return d.getDayOfMonth()==getDayOfMonth() && d.getMonth()==getMonth() && d.getYear()==d.getYear();
+      return d.getDayOfMonth()==getDayOfMonth() && d.getMonth()==getMonth() && d.getYear()==getYear();
     }
     return false;
 
