@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -381,6 +382,10 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     JMenuItem result;
     if (menu.hasSubItems()) {
       result = new JMenu(menu.getTitle());
+      
+      if(menu.getAction().getValue(Action.SMALL_ICON) != null)
+        result.setIcon((Icon)menu.getAction().getValue(Action.SMALL_ICON));
+      
       ActionMenu[] subItems = menu.getSubItems();
       for (int i=0; i<subItems.length; i++) {
         result.add(createMenuItem(subItems[i]));

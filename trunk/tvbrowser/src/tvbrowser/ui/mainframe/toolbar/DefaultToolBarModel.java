@@ -26,7 +26,10 @@
 
 package tvbrowser.ui.mainframe.toolbar;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -79,14 +82,16 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
       mPluginViewAction, mSeparatorAction, mScrollToNowAction,
       mGoToTodayAction, mGoToPreviousDayAction, mGoToNextDayAction, mFavoriteAction,
       mReminderAction, mGoToDateAction, mScrollToChannelAction, mScrollToTimeAction,
-      mSearchAction;
+      mSearchAction, mGlueAction, mSpaceAction;
 
   private static DefaultToolBarModel sInstance;
 
   private DefaultToolBarModel(String[] buttonIds) {
     createAvailableActions();
     mSeparatorAction = getSeparatorAction();
-
+    mGlueAction = getGlueAction();
+    mSpaceAction = getSpaceAction();
+    
     setButtonIds(buttonIds);
   }
 
@@ -241,9 +246,25 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
               .getDescription());
         }
       } else {
-        // TODO: create drop down list button
+        createPluginAction(plugin, actionMenu.getSubItems());
       }
     }
+  }
+  
+  private void createPluginAction(PluginProxy plugin, ActionMenu[] subMenus) {
+    for(ActionMenu menu : subMenus)
+      if(menu.hasSubItems())
+        createPluginAction(plugin, menu.getSubItems());
+      else {
+        Action action = menu.getAction();
+        action.putValue(ToolBar.ACTION_ID_KEY, plugin.getId() + "##" + action.getValue(Action.NAME));
+        mAvailableActions.put(plugin.getId() + "##" + action.getValue(Action.NAME), action);
+        String tooltip = (String) action.getValue(Action.SHORT_DESCRIPTION);
+        if (tooltip == null) {
+          action.putValue(Action.SHORT_DESCRIPTION, plugin.getInfo()
+              .getDescription());
+        }
+      }
   }
   
   protected void updatePluginButtons() {
@@ -338,6 +359,10 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
         mVisibleActions.add(action);
       } else if ("#separator".equals(buttonNames[i])) {
         mVisibleActions.add(mSeparatorAction);
+      } else if ("#glue".equals(buttonNames[i])) {
+        mVisibleActions.add(mGlueAction);
+      } else if ("#space".equals(buttonNames[i])) {
+        mVisibleActions.add(mSpaceAction);
       } else if (buttonNames[i].compareTo("java.searchplugin.SearchPlugin") == 0) {
         mVisibleActions.add(mSearchAction);
       } else if (buttonNames[i].compareTo("java.reminderplugin.ReminderPlugin") == 0) {
@@ -361,6 +386,8 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
     mVisibleActions.add(mPluginViewAction);
     mVisibleActions.add(mFilterAction);
     mVisibleActions.add(getSeparatorAction());
+    mVisibleActions.add(getGlueAction());
+    mVisibleActions.add(getSpaceAction());
     mVisibleActions.add(mFavoriteAction);
     mVisibleActions.add(mReminderAction);
     mVisibleActions.add(mSearchAction);
@@ -393,9 +420,105 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
       mSeparatorAction.putValue(ToolBar.ACTION_ID_KEY, "#separator");
       mSeparatorAction.putValue(ToolBar.ACTION_TYPE_KEY, new Integer(
           ToolBar.SEPARATOR));
-      mSeparatorAction.putValue(Action.NAME, "----SEPARATOR----");
+      mSeparatorAction.putValue(Action.NAME, "Separator");
     }
     return mSeparatorAction;
+  }
+  
+  public Action getGlueAction() {
+    if(mGlueAction == null) {
+      mGlueAction = new AbstractAction() {
+        public void actionPerformed(ActionEvent e) {
+
+        }
+      };
+      
+      mGlueAction.putValue(ToolBar.ACTION_ID_KEY, "#glue");
+      mGlueAction.putValue(ToolBar.ACTION_TYPE_KEY, new Integer(
+          ToolBar.GLUE));
+      mGlueAction.putValue(Action.NAME, mLocalizer.msg("flexibleSpace","Flexible Space"));
+      mGlueAction.putValue(Plugin.BIG_ICON, new Icon() {
+
+        public int getIconHeight() {
+          // TODO Automatisch erstellter Methoden-Stub
+          return 22;
+        }
+
+        public int getIconWidth() {
+          // TODO Automatisch erstellter Methoden-Stub
+          return 22;
+        }
+
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+          int width = c.getWidth();
+          int height = c.getHeight();
+          
+          int yMiddle = height/4 + 2;          
+          int xStart = width/2 - 20;
+          
+          int[] x1Values = {xStart + 4,xStart + 11,xStart + 11};
+          int[] x2Values = {xStart + 36,xStart + 29,xStart + 29};          
+
+          int[] yValues = {yMiddle, yMiddle - 7, yMiddle + 7};
+          
+          g.setColor(c.getBackground().darker().darker());
+          g.drawRect(xStart,1,40,height/2+1);
+          g.setColor(c.getBackground().brighter());
+          g.fillRect(xStart+1,2,38,height/2-1);
+          
+          g.setColor(Color.gray);
+          g.fillPolygon(x1Values,yValues,3);
+          g.fillPolygon(x2Values,yValues,3);
+          
+          for(int i = 0; i < 4; i++)
+            g.drawRect(xStart + 13 + 4*i,yMiddle,1,1);
+        }        
+      });
+    }
+    
+    return mGlueAction;
+  }
+  
+  public Action getSpaceAction() {
+    if(mSpaceAction == null) {
+      mSpaceAction = new AbstractAction() {
+        public void actionPerformed(ActionEvent e) {
+
+        }
+      };
+      
+      mSpaceAction.putValue(ToolBar.ACTION_ID_KEY, "#space");
+      mSpaceAction.putValue(ToolBar.ACTION_TYPE_KEY, new Integer(
+          ToolBar.SPACE));
+      mSpaceAction.putValue(Action.NAME, mLocalizer.msg("space","Space"));
+      mSpaceAction.putValue(Plugin.BIG_ICON, new Icon() {
+
+        public int getIconHeight() {
+          // TODO Automatisch erstellter Methoden-Stub
+          return 22;
+        }
+
+        public int getIconWidth() {
+          // TODO Automatisch erstellter Methoden-Stub
+          return 22;
+        }
+
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+          int width = c.getWidth();
+          int height = c.getHeight();
+          
+          int xStart = width/2 - 10;
+          
+          g.setColor(c.getBackground().darker().darker());
+          g.drawRect(xStart,1,20,height/2+1);
+          g.setColor(c.getBackground().brighter());
+          g.fillRect(xStart+1,2,18,height/2-1);          
+        }        
+      });
+
+    }
+    
+    return mSpaceAction;
   }
 
   private Action createAction(String name, String id, String description,
