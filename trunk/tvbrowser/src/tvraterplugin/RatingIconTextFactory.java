@@ -64,7 +64,7 @@ public class RatingIconTextFactory {
             return _icons[_icons.length - 1];
         }
         
-        if ((rating < 0) || (rating > _icons.length)) { 
+        if ((rating < 0) || (rating >= _icons.length)) { 
             return new ImageIcon( new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB)); 
         }
 
