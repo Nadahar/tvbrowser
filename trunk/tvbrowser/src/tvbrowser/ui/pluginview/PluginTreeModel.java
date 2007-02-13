@@ -33,6 +33,8 @@ import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import tvbrowser.core.TvDataUpdateListener;
+import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
@@ -50,7 +52,16 @@ public class PluginTreeModel extends DefaultTreeModel {
 
   private PluginTreeModel() {
     super(new Node(Node.ROOT, "Plugins"));
+    
+    TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
+      public void tvDataUpdateFinished() {
+        mDisableUpdate = false;
+      }
 
+      public void tvDataUpdateStarted() {
+        mDisableUpdate = true;
+      }
+    });
   }
 
   /**
@@ -61,7 +72,7 @@ public class PluginTreeModel extends DefaultTreeModel {
     if (!mDisableUpdate) {
       MutableTreeNode root = (MutableTreeNode) this.getRoot();
       Enumeration e = root.children();
-      while (e.hasMoreElements()) {
+      while (e.hasMoreElements() && !mDisableUpdate) {
         DefaultMutableTreeNode n = (DefaultMutableTreeNode) e.nextElement();
         
         Object o = n.getUserObject();

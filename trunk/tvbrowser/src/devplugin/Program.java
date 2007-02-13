@@ -48,6 +48,10 @@ public interface Program {
   public static final int WAS_UPDATED_STATE = 1;
   public static final int WAS_DELETED_STATE = 2;
   
+  public static final int MIN_MARK_PRIORITY = 0;
+  public static final int MEDIUM_MARK_PRIORITY = 1;
+  public static final int MAX_MARK_PRIORITY = 2;
+  
   /**
    * A subtitle for aurally handicapped. The subtitle is in the same language as
    * the audio.
@@ -267,7 +271,15 @@ public interface Program {
    * uses more than one Icon for the Program. 
    *
    * @see Plugin#getMarkIconsForProgram(Program)
-   * @since 2.3
+   * @since 2.5
    */
   public void validateMarking();
+  
+  /**
+   * Gets the priority of the marking of this program.
+   * 
+   * @return The mark priority.
+   * @since 2.5.1
+   */
+  public int getMarkPriority();
 }

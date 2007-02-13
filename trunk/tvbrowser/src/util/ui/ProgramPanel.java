@@ -378,14 +378,13 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * @param maxHeight
    *          The maximum height the program should have (in pixels).
    */
-  public void setProgram(devplugin.Program program, int maxHeight) {
-
+  public void setProgram(devplugin.Program program, int maxHeight) {    
     Program oldProgram = mProgram;
     mProgram = program;
     
     mTitleIcon.setMaximumLineCount(-1);
-    mDescriptionIcon.setMaximumLineCount(-1);
-
+    mDescriptionIcon.setMaximumLineCount(-1);    
+    
     boolean programChanged = (oldProgram != program);
     if (programChanged) {
       // Get the start time
@@ -396,6 +395,11 @@ public class ProgramPanel extends JComponent implements ChangeListener {
 
       programHasChanged();
     }
+    /* This is for debugging of the marking problem after a data update */
+    else if(program.getProgramState() == Program.WAS_DELETED_STATE)
+      setForeground(Color.red);
+    else if(program.getProgramState() == Program.WAS_UPDATED_STATE)
+      setForeground(Color.blue);
     
     boolean dontShow = true;
     
@@ -595,7 +599,13 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     // If there are plugins that have marked the program -> paint the background
     Marker[] markedByPluginArr = mProgram.getMarkerArr();
     if (markedByPluginArr.length != 0) {
-      grp.setColor(Settings.propProgramTableColorMarked.getColor());
+      switch(mProgram.getMarkPriority()) {
+        case Program.MEDIUM_MARK_PRIORITY: grp.setColor(Settings.propProgramTableMarkedMediumPriorityColor.getColor());break;
+        case Program.MAX_MARK_PRIORITY: grp.setColor(Settings.propProgramTableMarkedMaxPriorityColor.getColor());break;
+        
+        default: grp.setColor(Settings.propProgramTableMarkedMinPriorityColor.getColor());
+      }
+      
       grp.fill3DRect(0, 0, width, height, true);
     }
 

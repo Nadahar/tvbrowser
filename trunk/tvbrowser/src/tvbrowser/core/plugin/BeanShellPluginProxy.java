@@ -329,4 +329,10 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
       // TODO Automatisch erstellter Methoden-Stub
       return null;
     }
+
+    @Override
+    protected int doGetMarkPriorityForProgram(Program p) {
+      // TODO Automatisch erstellter Methoden-Stub
+      return Program.MIN_MARK_PRIORITY;
+    }
  }

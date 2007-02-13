@@ -104,6 +104,9 @@ public class MutableProgram implements Program {
   /** Contains the title of the program if the program is marked */
   private String mTitle;
   
+  /** Contains the current mark priority of this program */
+  private int mMarkPriority = -1;
+  
   /**
    * Creates a new instance of MutableProgram.
    * <p>
@@ -309,6 +312,8 @@ public class MutableProgram implements Program {
       System.arraycopy(mMarkerArr, 0, newArr, 0, oldCount);
       newArr[oldCount] = marker;
       mMarkerArr = newArr;
+      
+      mMarkPriority = Math.max(mMarkPriority,marker.getMarkPriorityForProgram(this));
 
       fireStateChanged();
     }
@@ -333,12 +338,19 @@ public class MutableProgram implements Program {
       if (mMarkerArr.length == 1) {
         // This was the only plugin
         mMarkerArr = EMPTY_MARKER_ARR;
+        mMarkPriority = Program.MIN_MARK_PRIORITY;
       }
       else {
         int oldCount = mMarkerArr.length;
         Marker[] newArr = new Marker[oldCount - 1];
         System.arraycopy(mMarkerArr, 0, newArr, 0, idx);
         System.arraycopy(mMarkerArr, idx + 1, newArr, idx, oldCount - idx - 1);
+        
+        mMarkPriority = Program.MIN_MARK_PRIORITY;
+        
+        for(Marker mark : newArr)
+          mMarkPriority = Math.max(mMarkPriority,mark.getMarkPriorityForProgram(this));
+        
         mMarkerArr = newArr;
       }
 
@@ -911,6 +923,11 @@ public class MutableProgram implements Program {
    * @since 2.2.2
    */
   public final void validateMarking() {
+    mMarkPriority = Program.MIN_MARK_PRIORITY;
+    
+    for(Marker mark : mMarkerArr)
+      mMarkPriority = Math.max(mMarkPriority,mark.getMarkPriorityForProgram(this));
+    
     fireStateChanged();
   }
 
@@ -926,7 +943,7 @@ public class MutableProgram implements Program {
     if(marker.length > 0)
       mTitle = getTitle();
 
-    fireStateChanged();
+    //fireStateChanged();
   }
 
   /**
@@ -937,5 +954,15 @@ public class MutableProgram implements Program {
    */
   public void setProgramLoadingIsComplete() {
     mIsLoading = false;
+  }
+  
+  /**
+   * Gets the priority of the marking of this program.
+   * 
+   * @return The mark priority.
+   * @since 2.5.1
+   */
+  public int getMarkPriority() {
+    return mMarkPriority;
   }
 }

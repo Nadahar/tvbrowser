@@ -145,4 +145,13 @@ public interface DeviceIf extends Cloneable {
      * @since 2.11
      */
     public Program[] checkProgramsAfterDataUpdateAndGetDeleted();
+
+    /**
+     * Gets if programs that were removed during a data
+     * update should be deleted automatically.
+     * 
+     * @return If the programs should be deleted.
+     * @since 2.11
+     */
+    public boolean getDeleteRemovedProgramsAutomatically();
 }

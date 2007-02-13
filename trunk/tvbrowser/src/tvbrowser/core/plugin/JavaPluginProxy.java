@@ -497,4 +497,14 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   protected  Class<? extends PluginsFilterComponent>[] doGetAvailableFilterComponentClasses() {    
     return mPlugin.getAvailableFilterComponentClasses();
   }
+
+  /**
+   * Really gets the mark priority for the given Program.
+   * <p>
+   * @param p The program to get the mark priority for.
+   * @return The mark priority for the given program.
+   */
+  protected int doGetMarkPriorityForProgram(Program p) {
+    return mPlugin.getMarkPriorityForProgram(p);
+  }
 }

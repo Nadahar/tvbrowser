@@ -158,24 +158,26 @@ public class MarkedProgramsList {
    * Revalidate program markings
    */
   public void revalidatePrograms() {
-    MutableProgram[] programs = mList.toArray(new MutableProgram[mList.size()]);
-    mList.clear();
+    synchronized(mList) {
+      MutableProgram[] programs = mList.toArray(new MutableProgram[mList.size()]);
+      mList.clear();
 
-    for(MutableProgram programInList : programs) {
-      MutableProgram testProg = (MutableProgram)PluginManagerImpl.getInstance().getProgram(programInList.getDate(), programInList.getID());
+      for(MutableProgram programInList : programs) {
+        MutableProgram testProg = (MutableProgram)PluginManagerImpl.getInstance().getProgram(programInList.getDate(), programInList.getID());
 
-      if(testProg == null || programInList.getTitle().toLowerCase().compareTo(testProg.getTitle().toLowerCase()) != 0) {
-        programInList.setMarkerArr(MutableProgram.EMPTY_MARKER_ARR);
-        programInList.setProgramState(Program.WAS_DELETED_STATE);
+        if(testProg == null || programInList.getTitle().toLowerCase().compareTo(testProg.getTitle().toLowerCase()) != 0) {
+          programInList.setMarkerArr(MutableProgram.EMPTY_MARKER_ARR);
+          programInList.setProgramState(Program.WAS_DELETED_STATE);
+        }
+        else if(testProg != programInList) {
+          testProg.setMarkerArr(programInList.getMarkerArr());
+          programInList.setMarkerArr(MutableProgram.EMPTY_MARKER_ARR);
+          programInList.setProgramState(Program.WAS_UPDATED_STATE);
+          mList.add(testProg);
+        }
+        else
+          mList.add(programInList);
       }
-      else if(testProg != programInList) {
-        testProg.setMarkerArr(programInList.getMarkerArr());
-        programInList.setMarkerArr(MutableProgram.EMPTY_MARKER_ARR);
-        programInList.setProgramState(Program.WAS_UPDATED_STATE);
-        mList.add(testProg);
-      }
-      else
-        mList.add(programInList);
     }
   }
 }

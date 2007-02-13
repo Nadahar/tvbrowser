@@ -203,6 +203,23 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     
     return true;
   }
+  
+  public int getMarkPriorityForProgram(Program p) {
+    int priority = Program.MIN_MARK_PRIORITY;
+    
+    if(p != null) {
+      String[] lists = mMarkListVector.getNamesOfListsContainingProgram(p);
+      
+      for(String list : lists) {
+        priority = Math.max(priority,mMarkListVector.getListForName(list).getMarkPriority());
+        
+        if(priority == Program.MAX_MARK_PRIORITY)
+          break;
+      }
+    }
+    
+    return priority;
+  }
 
   public void handleTvDataUpdateFinished() {
     mHasToUpdate = true;
@@ -291,7 +308,8 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     if (version == 1) {
       int size = in.readInt();
       for (int i = 0; i < size; i++)
-        mMarkListVector.addElement(new MarkList(in));
+        new MarkList(in);
+        //mMarkListVector.addElement();
     }
   }
 

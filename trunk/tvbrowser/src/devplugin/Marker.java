@@ -37,7 +37,10 @@ public interface Marker {
   
   public Icon getMarkIcon();
   
-  /** @since 2.3 */
+  /** @since 2.5 */
   public Icon[] getMarkIcons(Program p);
+  
+  /** @since 2.5.1 */
+  public int getMarkPriorityForProgram(Program p);
 
 }

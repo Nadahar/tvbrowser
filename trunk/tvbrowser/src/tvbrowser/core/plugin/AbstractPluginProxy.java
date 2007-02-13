@@ -746,6 +746,35 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   protected abstract  Class<? extends PluginsFilterComponent>[]  doGetAvailableFilterComponentClasses();
   
   /**
+   * Gets the mark priority for the given program that this Plugin uses.
+   * <p>
+   * The mark priority can be {@link Program#MIN_MARK_PRIORITY}, {@link Program#MEDIUM_MARK_PRIORITY} or
+   * {@link Program#MAX_MARK_PRIORITY}.
+   * <p>  
+   * @param p The program to get the mark prioriy for.
+   * @return The mark priority for the given program for this plugin.
+   * @since 2.5.1
+   */
+  public int getMarkPriorityForProgram(Program p) {
+    try {
+      assertActivatedState();
+      return doGetMarkPriorityForProgram(p);
+    } catch (Exception exc) {
+      handlePluginException(exc);
+    }
+    
+    return Program.MIN_MARK_PRIORITY;
+  }
+  
+  /**
+   * Really gets the mark priority for the given Program.
+   * <p>
+   * @param p The program to get the mark priority for.
+   * @return The mark priority for the given program.
+   */
+  protected abstract int doGetMarkPriorityForProgram(Program p);
+  
+  /**
    * Checks whether the plugin is activated. If it is not an error message is
    * shown.
    * 

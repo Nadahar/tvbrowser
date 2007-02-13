@@ -80,7 +80,7 @@ public class SettingsPanel extends JPanel implements ActionListener, ChangeListe
     private DeviceConfig mData;
     
     private JCheckBox mCheckReturn, mShowOnError, mShowTitleAndTimeDialog, mOldPrograms,
-                      mUseTime;
+                      mUseTime, mDeleteRemovedPrograms;
     
     private JComboBox mTimeZones;
 
@@ -100,7 +100,8 @@ public class SettingsPanel extends JPanel implements ActionListener, ChangeListe
       CellConstraints cc = new CellConstraints();
       PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,12dlu,pref:grow,5dlu,pref:grow,5dlu",
       "pref,5dlu,pref,1dlu,pref,10dlu,pref,5dlu,pref,1dlu,"+
-          "pref,10dlu,pref,5dlu,pref,1dlu,pref,7dlu,pref,pref,pref,pref,7dlu,pref,pref"),this);
+      "pref,10dlu,pref,5dlu,pref,1dlu,pref,7dlu,pref,pref," +
+      "pref,,pref,pref,7dlu,pref,pref"),this);
       pb.setDefaultDialogBorder();      
       
       mPreTimeSpinner = new JSpinner(new SpinnerNumberModel(mData.getPreTime(), 0, null, 1));
@@ -115,6 +116,7 @@ public class SettingsPanel extends JPanel implements ActionListener, ChangeListe
       mCheckReturn = new JCheckBox(mLocalizer.msg("CheckError", "Check if returns Error"), mData.useReturnValue());
       mShowOnError = new JCheckBox(mLocalizer.msg("ShowResultOnError","Show Result-Dialog only on Error"), mData.getDialogOnlyOnError());
       mShowTitleAndTimeDialog = new JCheckBox(mLocalizer.msg("showTitleAndTime", "Show title and time settings dialog"), mData.getShowTitleAndTimeDialog());
+      mDeleteRemovedPrograms = new JCheckBox(mLocalizer.msg("autoDeletePrograms", "Automatically delete programs that were removed during a data update"), mData.getDeleteRemovedPrograms());
       mOldPrograms = new JCheckBox(mLocalizer.msg("OnlyFuture", "Only allow Programs that are in the future"), mData.getOnlyFuturePrograms());
       
       mUseTime = new JCheckBox(mLocalizer.msg("useSystemTimezone","Use timezone provided by OS"), !mData.useTimeZone());
@@ -156,15 +158,16 @@ public class SettingsPanel extends JPanel implements ActionListener, ChangeListe
       pb.add(mCheckReturn, cc.xyw(2,19,4));
       pb.add(mShowOnError, cc.xyw(2,20,4));
       pb.add(mShowTitleAndTimeDialog, cc.xyw(2,21,4));
-      pb.add(mOldPrograms, cc.xyw(2,22,4));      
+      pb.add(mDeleteRemovedPrograms, cc.xyw(2,22,4));
+      pb.add(mOldPrograms, cc.xyw(2,23,4));
       
-      pb.add(mUseTime, cc.xyw(2,24,4));
+      pb.add(mUseTime, cc.xyw(2,25,4));
       
       JPanel timeZonePanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0));
       timeZonePanel.add(new JLabel(mLocalizer.msg("Timezone","Timezone")+": "));
       timeZonePanel.add(mTimeZones);
       
-      pb.add(timeZonePanel, cc.xyw(3,25,3));      
+      pb.add(timeZonePanel, cc.xyw(3,26,3));      
       
       // add ChangeListener to the spinners
       mPreTimeSpinner.addChangeListener(this);
@@ -176,6 +179,7 @@ public class SettingsPanel extends JPanel implements ActionListener, ChangeListe
       mCheckReturn.addActionListener(this);
       mShowOnError.addActionListener(this);
       mShowTitleAndTimeDialog.addActionListener(this);
+      mDeleteRemovedPrograms.addActionListener(this);
       mOldPrograms.addActionListener(this);
       mUseTime.addActionListener(this);
       
@@ -205,6 +209,8 @@ public class SettingsPanel extends JPanel implements ActionListener, ChangeListe
         mData.setDialogOnlyOnError(mShowOnError.isSelected());
       else if(e.getSource().equals(mShowTitleAndTimeDialog))
         mData.setShowTitleAndTimeDialog(mShowTitleAndTimeDialog.isSelected());
+      else if(e.getSource().equals(mDeleteRemovedPrograms))
+        mData.setDeleteRemovedPrograms(mDeleteRemovedPrograms.isSelected());
       else if(e.getSource().equals(mOldPrograms))
         mData.setOnlyFuturePrograms(mOldPrograms.isSelected());
       else if(e.getSource().equals(mUseTime)) {

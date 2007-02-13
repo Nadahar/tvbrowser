@@ -77,14 +77,20 @@ public class TvDataBase {
     mNewDayProgramsAfterUpdate = new Hashtable();
     updateAvailableDateSet();
 
-    TvDataUpdater.getInstance().addTvDataUpdateListener(
-        new TvDataUpdateListener() {
-          public void tvDataUpdateStarted() {}
-
-          public void tvDataUpdateFinished() {
-            updateAvailableDateSet();
-          }
-        });
+/* Uncommend testwise.
+ *  
+ * Now update of data base is started direct from TvDataUpdater to
+ * make sure the data base is updated before all other TvDataUpdateListener.
+ *      
+ *   TvDataUpdater.getInstance().addTvDataUpdateListener(
+ *       new TvDataUpdateListener() {
+ *         public void tvDataUpdateStarted() {}
+ *
+ *         public void tvDataUpdateFinished() {
+ *           updateAvailableDateSet();
+ *         }
+ *       });
+ */
 
     // Load inventory
     mTvDataInventory = new TvDataInventory();

@@ -347,4 +347,15 @@ public class DefaultDevice implements DeviceIf {
       
       return deleted.toArray(new Program[deleted.size()]);
     }
+    
+    /**
+     * Gets if programs that were removed during a data
+     * update should be deleted automatically.
+     * 
+     * @return If the programs should be deleted.
+     * @since 2.11
+     */
+    public boolean getDeleteRemovedProgramsAutomatically() {
+      return mConfig.getDeleteRemovedPrograms();
+    }
 }

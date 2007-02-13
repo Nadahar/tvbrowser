@@ -41,21 +41,30 @@ import util.ui.UiUtilities;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Vector;
@@ -502,7 +511,7 @@ public class CapturePlugin extends devplugin.Plugin {
         
         DeviceIf[] devices = mConfig.getDeviceArray();
       
-        DefaultTableModel model = new DefaultTableModel() {
+        final DefaultTableModel model = new DefaultTableModel() {
           public boolean isCellEditable(int row, int column) {          
             return false;
           }
@@ -514,6 +523,19 @@ public class CapturePlugin extends devplugin.Plugin {
         JTable table = new JTable(model);
         table.getTableHeader().setReorderingAllowed(false);
         table.getTableHeader().setResizingAllowed(false);
+        table.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
+          public Component getTableCellRendererComponent(JTable table, Object value,
+              boolean isSelected, boolean hasFocus, int row, int column) {
+            Component c = super.getTableCellRendererComponent(table,value,isSelected,hasFocus,row,column);
+            
+            if(value instanceof DeviceIf) {
+              if(((DeviceIf)value).getDeleteRemovedProgramsAutomatically() && !isSelected)
+                c.setForeground(Color.red);
+            }
+            
+            return c;
+          }
+        });
       
         int columnWidth[] = new int[5];
       
@@ -523,20 +545,22 @@ public class CapturePlugin extends devplugin.Plugin {
         for (DeviceIf device : devices) {
           Program[] deleted = device.checkProgramsAfterDataUpdateAndGetDeleted();
         
-          if(deleted != null && deleted.length > 0) {
+          if(deleted != null && deleted.length > 0 && device.getDeleteRemovedProgramsAutomatically()) {
             for(Program p : deleted) {
-              device.remove(UiUtilities.getLastModalChildOf(getParentFrame()), p);
+              if(!p.isExpired() && !p.isOnAir()) {
+                device.remove(UiUtilities.getLastModalChildOf(getParentFrame()), p);
             
-              String[] o = new String[] {device.getName(),p.getChannel().getName(),p.getDateString(),p.getTimeString(),p.getTitle()};
+                Object[] o = new Object[] {device,p.getChannel().getName(),p.getDateString(),p.getTimeString(),p.getTitle()};
             
-              for(int i = 0; i < columnWidth.length; i++)
-                columnWidth[i] = Math.max(columnWidth[i],UiUtilities.getStringWidth(table.getFont(),o[i])+10);
+                for(int i = 0; i < columnWidth.length; i++)
+                  columnWidth[i] = Math.max(columnWidth[i],UiUtilities.getStringWidth(table.getFont(),o[i].toString())+10);
             
-              model.addRow(o);
+                model.addRow(o);
+              }
             }
           }
-        }
-      
+        }        
+        
         if(model.getRowCount() > 0) {
           int sum = 0;
           
@@ -557,7 +581,56 @@ public class CapturePlugin extends devplugin.Plugin {
             scrollPane.getViewport().setPreferredSize(new Dimension(sum,scrollPane.getViewport().getPreferredSize().height));
           }
           
-          Object[] message = {mLocalizer.msg("deletedText","The data was changed and the following programs were deleted:"),scrollPane};
+          JButton export = new JButton(mLocalizer.msg("exportList","Export list"));
+          export.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+              JFileChooser chooser = new JFileChooser();
+              chooser.setDialogType(JFileChooser.SAVE_DIALOG);
+              chooser.setFileFilter(new FileFilter() {
+                public boolean accept(File f) {                  
+                  return f.isDirectory() || f.toString().toLowerCase().endsWith(".txt");
+                }
+
+                public String getDescription() {
+                  return "*.txt";
+                }
+              });
+              
+              chooser.setSelectedFile(new File("RemovedPrograms.txt"));
+              chooser.showSaveDialog(UiUtilities.getLastModalChildOf(getParentFrame()));
+              
+              if(chooser.getSelectedFile() != null) {
+                String file = chooser.getSelectedFile().getAbsolutePath();
+                
+                if(!file.toLowerCase().endsWith(".txt") && file.indexOf(".") == -1)
+                  file = file + ".txt";
+                
+                if(file.indexOf(".") != -1) {
+                  try {
+                    RandomAccessFile write = new RandomAccessFile(file,"rw");
+                    write.setLength(0);
+                    
+                    String eolStyle = File.separator.equals("/") ? "\n" : "\r\n";
+                    
+                    for(int i = 0; i < model.getRowCount(); i++) {
+                      StringBuffer line = new StringBuffer();
+                      
+                      for(int j = 0; j < model.getColumnCount(); j++)
+                        line.append(model.getValueAt(i,j)).append(" ");
+                      
+                      line.append(eolStyle);
+                      
+                      write.writeBytes(line.toString());
+                    }
+                    
+                    write.close();
+                  }catch(Exception ee) {}
+                }
+              }
+            }
+          });
+                    
+          Object[] message = {mLocalizer.msg("deletedText","The data was changed and the following programs were deleted:"),scrollPane,export};          
         
           JOptionPane pane = new JOptionPane();
           pane.setMessage(message);

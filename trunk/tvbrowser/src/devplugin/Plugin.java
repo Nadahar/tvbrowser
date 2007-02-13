@@ -945,4 +945,18 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
   public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
     return null;
   }
+  
+  /**
+   * Gets the mark priority for the given program that this Plugin uses.
+   * <p>
+   * The mark priority can be {@link Program#MIN_MARK_PRIORITY}, {@link Program#MEDIUM_MARK_PRIORITY} or
+   * {@link Program#MAX_MARK_PRIORITY}.
+   * <p>  
+   * @param p The program to get the mark prioriy for.
+   * @return The mark priority for the given program for this plugin.
+   * @since 2.5.1
+   */
+  public int getMarkPriorityForProgram(Program p) {
+    return Program.MIN_MARK_PRIORITY;
+  }
 }

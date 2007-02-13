@@ -55,7 +55,7 @@ public class ReminderList implements ActionListener {
   private javax.swing.Timer mTimer;
   public static DefaultMarker MARKER = new DefaultMarker(
       "reminderplugin.ReminderPlugin", IconLoader.getInstance()
-          .getIconFromTheme("apps", "appointment", 16), ReminderPlugin.mLocalizer.msg("pluginName","Reminder"));
+          .getIconFromTheme("apps", "appointment", 16), ReminderPlugin.mLocalizer.msg("pluginName","Reminder"), Program.MIN_MARK_PRIORITY);
 
   private ArrayList<ReminderListItem> mList;
 

@@ -41,6 +41,7 @@ import tvbrowser.core.filters.filtercomponents.PluginFilterComponent;
 import tvbrowser.core.filters.filtercomponents.PluginIconFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramInfoFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramLengthFilterComponent;
+import tvbrowser.core.filters.filtercomponents.ProgramMarkingPriorityFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramRunningFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ReminderFilterComponent;
 import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
@@ -154,6 +155,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     set.add(new ProgramRunningFilterComponent());
     set.add(new BeanShellFilterComponent());
     set.add(new MassFilterComponent());
+    set.add(new ProgramMarkingPriorityFilterComponent());
 
     PluginAccess[] plugins = PluginManagerImpl.getInstance().getActivatedPlugins();
     

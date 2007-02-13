@@ -36,11 +36,13 @@ public class DefaultMarker implements devplugin.Marker {
   private String mId;
   private Icon mIcon;
   private String mName;
+  private int mMarkPriority;
 
-  public DefaultMarker(String id, Icon icon, String name) {
+  public DefaultMarker(String id, Icon icon, String name, int markPriority) {
     mId = id;
     mIcon = icon;
     mName = name;
+    mMarkPriority = markPriority;
   }
 
   public String getId() {
@@ -59,4 +61,7 @@ public class DefaultMarker implements devplugin.Marker {
     return new Icon[] {mIcon};
   }
 
+  public int getMarkPriorityForProgram(Program p) {
+    return mMarkPriority;
+  }
 }

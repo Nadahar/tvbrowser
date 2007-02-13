@@ -67,6 +67,7 @@ public class MarkList extends Vector<Program> {
   private Hashtable<String, LinkedList<Program>> mProgram = new Hashtable<String, LinkedList<Program>>();
   private Icon mMarkIcon;
   private String mMarkIconPath;
+  private int mMarkPriority;
 
   /**
    * The constructor for a new list.
@@ -78,6 +79,7 @@ public class MarkList extends Vector<Program> {
     mName = name;
     mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(null);
     mId = name+System.currentTimeMillis();
+    mMarkPriority = Program.MIN_MARK_PRIORITY;
   }
 
   /**
@@ -108,12 +110,16 @@ public class MarkList extends Vector<Program> {
   public MarkList(ObjectInputStream in) throws IOException,
       ClassNotFoundException {
     int version = in.readInt();
-
+    
+    if(version >= 3)
+      mMarkPriority = in.readInt();
+    
     if (version >= 1) {
       mName = (String) in.readObject();
       mId = in.readUTF();
 
       SimpleMarkerPlugin.getInstance().removeListForName(mName);
+      SimpleMarkerPlugin.getInstance().addList(this);
 
       int size = in.readInt();
       for (int i = 0; i < size; i++) {
@@ -169,7 +175,8 @@ public class MarkList extends Vector<Program> {
    * @throws IOException
    */
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(2); // Version
+    out.writeInt(3); // Version
+    out.writeInt(mMarkPriority);
     out.writeObject(mName);
     out.writeUTF(mId);
     out.writeInt(size());
@@ -428,5 +435,13 @@ public class MarkList extends Vector<Program> {
       
       insertElementAt(p,index);
     }
+  }
+  
+  public int getMarkPriority() {
+    return mMarkPriority;
+  }
+  
+  public void setMarkPriority(int value) {
+    mMarkPriority = value;
   }
 }
