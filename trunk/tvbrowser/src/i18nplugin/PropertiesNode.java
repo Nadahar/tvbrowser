@@ -211,8 +211,7 @@ public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNo
         File file = new File(getUserPropertiesFileName(locale));
         if (file.exists()) {
           InputStream in = new FileInputStream(file); 
-          if (in != null)
-            prop.load(in);
+          prop.load(in);
         }
       } catch (IOException e) {
         e.printStackTrace();
@@ -235,7 +234,7 @@ public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNo
   public void setPropertyValue(Locale locale, String key, String value) {
     String oldvalue = getPropertyValue(locale, key);
     
-    if (oldvalue != value) {
+    if (! oldvalue.equals(value)) {
       if (value == null)
         getUserProperty(locale).remove(key);
       else
