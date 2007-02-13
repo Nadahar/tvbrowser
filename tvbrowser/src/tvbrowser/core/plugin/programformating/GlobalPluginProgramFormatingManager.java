@@ -114,9 +114,10 @@ public class GlobalPluginProgramFormatingManager {
       //write number of configurations
       out.writeInt(mAvailableProgramConfigurations.length);
       
-      for(GlobalPluginProgramFormating config : mAvailableProgramConfigurations)
+      for(GlobalPluginProgramFormating config : mAvailableProgramConfigurations) {
         config.store(out);
-      
+      }
+      out.close();
     }catch(Exception e) {}
   }
   

@@ -165,7 +165,7 @@ public class ToolBar extends JToolBar {
         spacePanel.setOpaque(false);
         spacePanel.setBorder(null);
         
-        int height = (mLocation == BorderLayout.NORTH ? getPreferredSize().height : 20);
+        int height = (mLocation.equals(BorderLayout.NORTH) ? getPreferredSize().height : 20);
         
         spacePanel.setPreferredSize(new Dimension(20,height));
         spacePanel.setMaximumSize(new Dimension(20,height));

@@ -96,7 +96,7 @@ public class MarkedProgramsList {
       if(k >= mList.size())
         break;
 
-      Program p = mList.get(k);
+      MutableProgram p = mList.get(k);
       if(ProgramUtilities.isOnAir(p) || p.isExpired() || !filter.accept(p)) {
         k++;
         continue;

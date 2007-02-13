@@ -73,7 +73,7 @@ public class ChannelFilter {
   public void setFilter(String country, int[] categories, String name) {
     mCountry = country;
     mCategories = categories;
-    if (mChannelName != null) {
+    if ((mChannelName != null) && (name != null)) {
       mChannelName = name.trim().split("\\s");
       for (int i = 0; i < mChannelName.length; i++) {
         mChannelName[i] = normalizeCharacters(mChannelName[i]);

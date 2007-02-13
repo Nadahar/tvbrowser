@@ -181,7 +181,7 @@ public class BbcFileParser {
               Synopsis synopsis = programInformation.getBasicDescription().getSynopsis(syni);
               
               if (synopsis.getLength() == Synopsis.SHORT) {
-                if ((synopsis.getLanguage() == "en") || (synopsis.getLanguage() == null)) {
+                if ((synopsis.getLanguage().equals("en")) || (synopsis.getLanguage() == null)) {
                   String text = synopsis.getText();
                   shortBuffer.append(text).append("\n\n");
                   if (text.length() > MutableProgram.MAX_SHORT_INFO_LENGTH) {
@@ -191,7 +191,7 @@ public class BbcFileParser {
                   mLog.warning("Unsupported Language: " + synopsis.getLanguage());
                 }
               } else {
-                if ((synopsis.getLanguage() == "en") || (synopsis.getLanguage() == null)) {
+                if ((synopsis.getLanguage().equals("en")) || (synopsis.getLanguage() == null)) {
                   longBuffer.append(synopsis.getText()).append("\n\n");
                 } else {
                   mLog.warning("Unsupported Language: " + synopsis.getLanguage());
