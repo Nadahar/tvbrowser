@@ -210,6 +210,7 @@ public class TvDataUpdater {
 
   void fireTvDataUpdateFinished() {
     synchronized(mListenerList) {
+      TvDataBase.getInstance().updateTvDataBase();
       MarkedProgramsList.getInstance().revalidatePrograms();
       
       for (int i = 0; i < mListenerList.size(); i++) {

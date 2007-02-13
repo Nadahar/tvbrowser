@@ -347,7 +347,9 @@ public class Settings {
 
     propArr = new Property[] { propProgramTitleFont, propProgramInfoFont,
         propProgramTimeFont, propChannelNameFont, propUseDefaultFonts,
-        propEnableAntialiasing };
+        propEnableAntialiasing, propProgramTableMarkedMinPriorityColor,
+        propProgramTableMarkedMediumPriorityColor, propProgramTableMarkedMaxPriorityColor,
+        propProgramTableColorOnAirLight, propProgramTableColorOnAirDark};
 
     if (mProp.hasChanged(propArr)) {
       util.ui.ProgramPanel.updateFonts();
@@ -832,9 +834,16 @@ public class Settings {
   /** Color for Program on Air - This shows how much is not shown til now */
   public static final ColorProperty propProgramTableColorOnAirLight = new ColorProperty(
       mProp, "programpanel.ColorOnAirLight", new Color(128, 128, 255, 40));
-  /** Color for marked Program */
-  public static final ColorProperty propProgramTableColorMarked = new ColorProperty(
+  
+  /** Color for Programs marked with MIN_PRIORITY */
+  public static final ColorProperty propProgramTableMarkedMinPriorityColor = new ColorProperty(
       mProp, "programpanel.ColorMarked", new Color(255, 0, 0, 40));
+  /** Color for Programs marked with MEDIUM_PRIORITY */
+  public static final ColorProperty propProgramTableMarkedMediumPriorityColor = new ColorProperty(
+      mProp, "programpanel.ColorMarkedMedium", new Color(0, 255, 100, 60));
+  /** Color for Programs marked with MAX_PRIORITY */
+  public static final ColorProperty propProgramTableMarkedMaxPriorityColor = new ColorProperty(
+      mProp, "programpanel.ColorMarkedMax", new Color(255, 0, 200, 80));
 
   public static final BooleanProperty propMouseOver = new BooleanProperty(
       mProp, "programpanel.MouseOver", false);

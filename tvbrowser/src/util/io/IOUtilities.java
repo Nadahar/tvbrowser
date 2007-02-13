@@ -165,11 +165,48 @@ public class IOUtilities {
    * @throws IOException if something went wrong.
    * @return a stream reading data from the specified URL.
    */
-  public static InputStream getStream(URL page, boolean followRedirects, int timeout)
+  public static InputStream getStream(URL page, boolean followRedirects, int timeout) throws IOException {
+    return getStream(page, followRedirects, timeout, null, null);
+  }
+  
+  /**
+   * Originally copied from javax.swing.JEditorPane.
+   * <p>
+   * Fetches a stream for the given URL, which is about to
+   * be loaded by the <code>setPage</code> method.  By
+   * default, this simply opens the URL and returns the
+   * stream.  This can be reimplemented to do useful things
+   * like fetch the stream from a cache, monitor the progress
+   * of the stream, etc.
+   * <p>
+   * This method is expected to have the the side effect of
+   * establishing the content type, and therefore setting the
+   * appropriate <code>EditorKit</code> to use for loading the stream.
+   * <p>
+   * If this the stream was an http connection, redirects
+   * will be followed and the resulting URL will be set as
+   * the <code>Document.StreamDescriptionProperty</code> so that relative
+   * URL's can be properly resolved.
+   *
+   * @param page the URL of the page
+   * @param followRedirects Follow redirects.
+   * @param timeout The read timeout.
+   * @param userName The user name to use for the connection.
+   * @param userPassword The password to use for the connection.
+   * @throws IOException if something went wrong.
+   * @return a stream reading data from the specified URL.
+   */
+  public static InputStream getStream(URL page, boolean followRedirects, int timeout, String userName, String userPassword)
     throws IOException
   {
     URLConnection conn = page.openConnection();
 
+    if(userName != null && userPassword != null) {
+      String password = userName + ":" + userPassword;
+      String encodedPassword = new sun.misc.BASE64Encoder().encode (password.getBytes());
+      conn.setRequestProperty  ("Authorization", "Basic " + encodedPassword);
+    }
+    
     if (timeout > 0) {
       try {
         Method setReadTimeout = conn.getClass().getMethod("setReadTimeout", new Class[] {int.class});
@@ -203,7 +240,7 @@ public class IOUtilities {
         } else {
           page = new URL(page, loc);
         }
-        return getStream(page, followRedirects, timeout);
+        return getStream(page, followRedirects, timeout, userName, userPassword);
       }
     }
     

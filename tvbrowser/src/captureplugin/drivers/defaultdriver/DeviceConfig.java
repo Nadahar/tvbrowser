@@ -114,7 +114,11 @@ public class DeviceConfig {
     
     /** If the dialog for entering the title and time */
     private boolean mShowTitleAndTimeDialog = true;
-    
+
+    /** If the programs that were removed during a data
+     *  update should be deleted automatically */
+    private boolean mDeletePrograms = true;
+
     /**
      * Create a empty Config
      */
@@ -149,6 +153,7 @@ public class DeviceConfig {
         setTimeZone(data.getTimeZone());
         setId(data.getId());
         setShowTitleAndTimeDialog(data.getShowTitleAndTimeDialog());
+        setDeleteRemovedPrograms(data.getDeleteRemovedPrograms());
     }
 
     /**
@@ -541,6 +546,7 @@ public class DeviceConfig {
 
         stream.writeObject(mId);
         stream.writeBoolean(mShowTitleAndTimeDialog);
+        stream.writeBoolean(mDeletePrograms);System.out.println(mDeletePrograms);
     }
 
     /**
@@ -615,6 +621,7 @@ public class DeviceConfig {
         }
         if (version > 9) {
           mShowTitleAndTimeDialog = stream.readBoolean();
+          mDeletePrograms = stream.readBoolean();
         }
     }
     
@@ -701,5 +708,21 @@ public class DeviceConfig {
      */
     public boolean getShowTitleAndTimeDialog() {
       return mShowTitleAndTimeDialog;
+    }
+
+    /**
+     * Sets if the programs that were removed during a data update should be deleted.
+     * @param value <code>true</code> if the programs should be deleted automatically <code>false</code> otherwise.
+     */
+    public void setDeleteRemovedPrograms(boolean value) {
+      mDeletePrograms = value;
+    }
+
+    /**
+     * Gets if the programs that were removed during a data update should be deleted.
+     * @return <code>true</code> if the programs should be deleted automatically, <code>false</code> otherwise.
+     */
+    public boolean getDeleteRemovedPrograms() {
+      return mDeletePrograms;
     }
 }

@@ -50,6 +50,7 @@ import tvbrowser.core.filters.filtercomponents.PluginFilterComponent;
 import tvbrowser.core.filters.filtercomponents.PluginIconFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramInfoFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramLengthFilterComponent;
+import tvbrowser.core.filters.filtercomponents.ProgramMarkingPriorityFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramRunningFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ReminderFilterComponent;
 import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
@@ -58,8 +59,7 @@ import tvbrowser.core.plugin.PluginManagerImpl;
 public class FilterComponentList {
   
   private static FilterComponentList mInstance;
-  
-  //private static HashMap<String,FilterComponent> mComponentMap;
+
   private static ArrayList<FilterComponent> mComponentList;  
   
   private static java.util.logging.Logger mLog
@@ -67,7 +67,6 @@ public class FilterComponentList {
 
   
   private FilterComponentList() {
-    //mComponentMap = new HashMap();
     ObjectInputStream in=null;
     mComponentList = new ArrayList<FilterComponent>();    
     
@@ -89,7 +88,6 @@ public class FilterComponentList {
             mLog.warning("error reading filter component: "+e);
           }
           if (comp != null) {
-           // mComponentMap.put(comp.getName().toUpperCase(), comp);
             mComponentList.add(comp);
           }
         }
@@ -117,8 +115,8 @@ public class FilterComponentList {
       
       
       
-      out.writeInt(/*mComponentMap.size()*/mComponentList.size());
-      Iterator it = mComponentList.iterator();//mComponentMap.values().iterator();
+      out.writeInt(mComponentList.size());
+      Iterator it = mComponentList.iterator();
       while (it.hasNext()) {
         FilterComponent comp = (FilterComponent)it.next();
         writeComponent(out,comp);
@@ -187,6 +185,9 @@ public class FilterComponentList {
     }
     else if (className.endsWith(".ReminderFilterComponent")) {
       filterComponent = new ReminderFilterComponent(name, description);
+    }
+    else if (className.endsWith(".ProgramMarkingPriorityFilterComponent")) {
+      filterComponent = new ProgramMarkingPriorityFilterComponent(name, description);
     }    
     else {
       try {

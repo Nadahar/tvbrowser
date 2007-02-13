@@ -393,11 +393,11 @@ public class PluginProxyManager {
     String userDirectoryName = Settings.getUserSettingsDirName();
     File userDirectory = new File(userDirectoryName);
 
-    // Load the plugin settings
-    item.getPlugin().loadSettings(userDirectory);
-
     // Set the plugin active
     item.setState(ACTIVATED_STATE);
+    
+    // Load the plugin settings
+    item.getPlugin().loadSettings(userDirectory);
 
     // Clear the activated plugins cache
     mActivatedPluginCache = null;

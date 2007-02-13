@@ -170,6 +170,9 @@ public class TextAreaIcon implements Icon {
    */
   public void paintIcon(Component comp, Graphics grp, int x, int y) {
     if (mTextLineArr != null) {
+      /* For debugging of the marking problem after a data update */
+      grp.setColor(comp.getForeground());
+      
       grp.setFont(mFont);
       
       int fontSize = mFont.getSize();
