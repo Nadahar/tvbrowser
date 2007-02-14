@@ -252,8 +252,9 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
       mListTable.getCellEditor().cancelCellEditing();
 
     if (e.getSource() == mAdd) {
-      String name = SimpleMarkerPlugin.mLocalizer.msg("settings.listName","List {0}", mListTable.getRowCount() + 1);
-      int n = 1;
+      int n = mListTable.getRowCount() + 1;
+      
+      String name = SimpleMarkerPlugin.mLocalizer.msg("settings.listName","List {0}", n);
       
       {
         int i = 0;
