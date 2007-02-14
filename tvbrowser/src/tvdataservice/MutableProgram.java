@@ -338,7 +338,7 @@ public class MutableProgram implements Program {
       if (mMarkerArr.length == 1) {
         // This was the only plugin
         mMarkerArr = EMPTY_MARKER_ARR;
-        mMarkPriority = Program.MIN_MARK_PRIORITY;
+        mMarkPriority = -1;
       }
       else {
         int oldCount = mMarkerArr.length;
