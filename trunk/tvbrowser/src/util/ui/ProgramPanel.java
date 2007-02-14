@@ -628,12 +628,14 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       grp.setStroke(str);
       grp.setColor(col);
     }
-
+    
     // Draw all the text
     if (PAINT_EXPIRED_PROGRAMS_PALE && mProgram.isExpired()
         && mTextColor.equals(Color.BLACK)) {
+      setForeground(Color.gray);
       grp.setColor(Color.gray);
     } else {
+      setForeground(mTextColor);
       grp.setColor(mTextColor);
     }
     grp.setFont(ProgramPanel.mTimeFont);
