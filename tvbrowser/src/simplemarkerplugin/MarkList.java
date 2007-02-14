@@ -437,10 +437,20 @@ public class MarkList extends Vector<Program> {
     }
   }
   
+  /**
+   * Gets the mark priority of this list.
+   * 
+   * @return The mark priority of this list.
+   */
   public int getMarkPriority() {
     return mMarkPriority;
   }
   
+  /**
+   * Sets the mark priority of this list.
+   * 
+   * @param value The new mark priority.
+   */
   public void setMarkPriority(int value) {
     mMarkPriority = value;
   }
