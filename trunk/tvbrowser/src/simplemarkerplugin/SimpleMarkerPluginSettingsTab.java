@@ -253,17 +253,19 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
 
     if (e.getSource() == mAdd) {
       String name = SimpleMarkerPlugin.mLocalizer.msg("settings.listName","List {0}", mListTable.getRowCount() + 1);
-      int n = 0;
+      int n = 1;
       
-    nextName:
-      do {
-        for (int i = 0; i < mListTable.getRowCount(); i++)
-          if (name.equals(mListTable.getValueAt(i, 0).toString())) {
-            name = SimpleMarkerPlugin.mLocalizer.msg("settings.listName","List {0}", n++);
-            continue nextName;
+      {
+        int i = 0;
+        
+        while(i < mListTable.getRowCount()) {
+          if (name.equals(mListTable.getValueAt(i++, 0).toString())) {
+            i = 0;
+            name = SimpleMarkerPlugin.mLocalizer.msg("settings.listName","List {0}", n++);          
           }
-      } while (false);
-
+        }
+      }
+      
       MarkListItem item = new MarkListItem(new MarkList(name), true);
       
       Object[] row = { item,
@@ -283,7 +285,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
 
         mModel.removeRow(rows[i]);
       }
-      if ((selectedIndex >= 0) && (selectedIndex<mListTable.getRowCount())) {
+      if ((selectedIndex > 0) && (selectedIndex<mListTable.getRowCount())) {
     	  mListTable.setRowSelectionInterval(selectedIndex,selectedIndex);
       }
 
