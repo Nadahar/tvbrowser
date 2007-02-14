@@ -258,7 +258,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
       
       for(int i = 0; i < mListTable.getRowCount(); i++) {
         if (name.equals(mListTable.getValueAt(i, 0).toString())) {
-          name = SimpleMarkerPlugin.mLocalizer.msg("settings.listName","List {0}", n++);
+          name = SimpleMarkerPlugin.mLocalizer.msg("settings.listName","List {0}", ++n);
           i = -1;
         }
       }
