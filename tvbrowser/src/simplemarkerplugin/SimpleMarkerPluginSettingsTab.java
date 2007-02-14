@@ -252,23 +252,17 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
       mListTable.getCellEditor().cancelCellEditing();
 
     if (e.getSource() == mAdd) {
-      String name = "List " + (mListTable.getRowCount() + 1);
-
-      boolean testName = false;
-
-      int n = -1;
-
+      String name = SimpleMarkerPlugin.mLocalizer.msg("settings.listName","List {0}", mListTable.getRowCount() + 1);
+      int n = 0;
+      
+    nextName:
       do {
-        testName = false;
-        n++;
-
         for (int i = 0; i < mListTable.getRowCount(); i++)
           if (name.equals(mListTable.getValueAt(i, 0).toString())) {
-            testName = true;
-            name = "List " + n;
-            break;
+            name = SimpleMarkerPlugin.mLocalizer.msg("settings.listName","List {0}", n++);
+            continue nextName;
           }
-      } while (testName);
+      } while (false);
 
       MarkListItem item = new MarkListItem(new MarkList(name), true);
       
@@ -280,6 +274,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     }
     if (e.getActionCommand().equals(SimpleMarkerPlugin.mLocalizer.msg("settings.delete",
     "Delete selected list"))) {
+      int selectedIndex = mListTable.getSelectedRow();
       int[] rows = mListTable.getSelectedRows();
       for (int i = rows.length - 1; i >= 0; i--) {
         MarkListItem item = ((MarkListItem) mListTable.getValueAt(rows[i], 0));
@@ -288,8 +283,11 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
 
         mModel.removeRow(rows[i]);
       }
+      if ((selectedIndex >= 0) && (selectedIndex<mListTable.getRowCount())) {
+    	  mListTable.setRowSelectionInterval(selectedIndex,selectedIndex);
+      }
 
-      mDelete.setEnabled(false);
+      mDelete.setEnabled(mListTable.getSelectedRowCount() > 0);
     }
   }
 
