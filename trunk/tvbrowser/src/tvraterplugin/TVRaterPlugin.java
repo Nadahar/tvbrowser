@@ -65,6 +65,8 @@ public class TVRaterPlugin extends devplugin.Plugin {
     private Point _locationOverviewDialog = null;
 
     private Dimension _dimensionOverviewDialog = null;
+    
+    private Dimension _dimensionRaterDialog = null;
 
     private static final Localizer mLocalizer = Localizer
             .getLocalizerFor(TVRaterPlugin.class);
@@ -171,15 +173,18 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
               public void componentMoved(ComponentEvent e) {
                   e.getComponent().getLocation(_locationRaterDialog);
+                  e.getComponent().getSize(_dimensionRaterDialog);
               }
           });
 
-          if (_locationRaterDialog != null) {
+          if (_locationRaterDialog != null && _dimensionRaterDialog != null) {
               dlg.setLocation(_locationRaterDialog);
+              dlg.setSize(_dimensionRaterDialog);
               dlg.setVisible(true);
           } else {
               UiUtilities.centerAndShow(dlg);
               _locationRaterDialog = dlg.getLocation();
+              _dimensionRaterDialog = dlg.getSize();
           }
         }
       
@@ -213,6 +218,26 @@ public class TVRaterPlugin extends devplugin.Plugin {
 		    if (Integer.parseInt(_settings.getProperty("updateIntervall", "0")) == 2) {
             updateDB();
         }
+        
+        int x = Integer.parseInt(_settings.getProperty("mOverviewXPos","-1"));
+        int y = Integer.parseInt(_settings.getProperty("mOverviewYPos","-1"));
+        int width = Integer.parseInt(_settings.getProperty("mOverviewWidth","-1"));
+        int height = Integer.parseInt(_settings.getProperty("mOverviewHeight","-1"));
+        
+        if(x != -1 && y != -1)
+          _locationOverviewDialog = new Point(x,y);
+        if(width != -1 && height != -1)
+          _dimensionOverviewDialog = new Dimension(width,height);
+
+        x = Integer.parseInt(_settings.getProperty("mRaterXPos","-1"));
+        y = Integer.parseInt(_settings.getProperty("mRaterYPos","-1"));
+        width = Integer.parseInt(_settings.getProperty("mRaterWidth","-1"));
+        height = Integer.parseInt(_settings.getProperty("mRaterHeight","-1"));
+        
+        if(x != -1 && y != -1)
+          _locationRaterDialog = new Point(x,y);
+        if(width != -1 && height != -1)
+          _dimensionRaterDialog = new Dimension(width,height);
     }
 
     public SettingsTab getSettingsTab() {
@@ -293,6 +318,16 @@ public class TVRaterPlugin extends devplugin.Plugin {
      * @return Settings
      */
     public Properties getSettings() {
+      _settings.setProperty("mOverviewXPos",String.valueOf(_locationOverviewDialog.x));
+      _settings.setProperty("mOverviewYPos",String.valueOf(_locationOverviewDialog.y));
+      _settings.setProperty("mOverviewWidth",String.valueOf(_dimensionOverviewDialog.width));
+      _settings.setProperty("mOverviewHeight",String.valueOf(_dimensionOverviewDialog.height));
+
+      _settings.setProperty("mRaterXPos",String.valueOf(_locationRaterDialog.x));
+      _settings.setProperty("mRaterYPos",String.valueOf(_locationRaterDialog.y));
+      _settings.setProperty("mRaterWidth",String.valueOf(_dimensionRaterDialog.width));
+      _settings.setProperty("mRaterHeight",String.valueOf(_dimensionRaterDialog.height));
+      
         return _settings;
     }
 
