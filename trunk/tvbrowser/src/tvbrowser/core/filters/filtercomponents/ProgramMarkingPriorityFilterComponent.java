@@ -1,3 +1,26 @@
+/*
+ * TV-Browser
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * CVS information:
+ *     $Date$
+ *   $Author$
+ * $Revision$
+ */
 package tvbrowser.core.filters.filtercomponents;
 
 import java.io.IOException;
@@ -14,6 +37,12 @@ import devplugin.Program;
 import tvbrowser.core.filters.FilterComponent;
 import util.ui.Localizer;
 
+/**
+ * A filter component for tracking programs that have a selected mark priority.
+ * 
+ * @author René Mach
+ * @since 2.5.1
+ */
 public class ProgramMarkingPriorityFilterComponent implements FilterComponent {
 
   private static Localizer mLocalizer = Localizer.getLocalizerFor(ProgramMarkingPriorityFilterComponent.class);
@@ -22,10 +51,20 @@ public class ProgramMarkingPriorityFilterComponent implements FilterComponent {
   private int mMarkPriority = Program.MIN_MARK_PRIORITY;
   private JComboBox mValueSelection;
   
+  /**
+   * Creates an new instance of this filter component.
+   */
   public ProgramMarkingPriorityFilterComponent() {
     this("","");
   }
   
+  /**
+   * Creates an instance of this filter component
+   * with given name and given description.
+   * 
+   * @param name The name of this filter component.
+   * @param desc The description for this filter component.
+   */
   public ProgramMarkingPriorityFilterComponent(String name, String desc) {
     mName = name;
     mDescription = desc;
