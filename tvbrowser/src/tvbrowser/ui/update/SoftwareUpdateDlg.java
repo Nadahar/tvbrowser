@@ -54,10 +54,14 @@ import javax.swing.event.ListSelectionListener;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 
+import devplugin.PluginAccess;
+
 import tvbrowser.core.Settings;
+import tvbrowser.core.plugin.PluginManagerImpl;
 import util.browserlauncher.Launch;
 import util.exc.TvBrowserException;
 import util.ui.Localizer;
+import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import util.ui.html.ExtendedHTMLEditorKit;
 
@@ -67,8 +71,6 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SoftwareUpdateDlg.class);
 
   private JButton mCloseBtn, mDownloadBtn;
-
-  private JLabel mInfoLb;
 
   private JList mList;
 
@@ -153,6 +155,8 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         close();
       }
     });
+    
+    UiUtilities.registerForClosing(this);
   }
 
   private void updateDescription(SoftwareUpdateItem item) {
@@ -172,15 +176,22 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
           "</p><br><table>");
 
       if (author != null) {
-        content.append("<tr><th>").append(mLocalizer.msg("author", "author")).append(":</th><td>").append(author)
+        content.append("<tr><th>").append(mLocalizer.msg("author", "Author")).append("</th><td>").append(author)
             .append("</td></tr>");
       }
       if (version != null) {
-        content.append("<tr><th>").append(mLocalizer.msg("version", "version")).append("</th><td>").append(version)
+        content.append("<tr><th>").append(mLocalizer.msg("version", "Available version")).append("</th><td>").append(version)
             .append("</td></tr>");
       }
+      for (PluginAccess plugin : PluginManagerImpl.getInstance().getActivatedPlugins()) {
+		if (plugin.getInfo().getName().equalsIgnoreCase(item.getName())) {
+	        content.append("<tr><th>").append(mLocalizer.msg("installed", "Installed version")).append("</th><td>").append(plugin.getInfo().getVersion())
+            .append("</td></tr>");
+	        break;
+		}
+	  } 
       if (website != null) {
-        content.append("<tr><th>").append(mLocalizer.msg("website", "website")).append("</th><td><a href=\"").append(
+        content.append("<tr><th>").append(mLocalizer.msg("website", "Website")).append("</th><td><a href=\"").append(
             website).append("\">").append(website).append("</a></td></tr>");
       }
       content.append("</table></body></html>");
