@@ -17,6 +17,8 @@ import javax.swing.event.HyperlinkListener;
 
 import util.browserlauncher.Launch;
 import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
 import util.ui.html.HTMLTextHelper;
@@ -32,7 +34,7 @@ import devplugin.PluginInfo;
  * 
  * @author bodum
  */
-public class PluginInfoDialog extends JDialog {
+public class PluginInfoDialog extends JDialog implements WindowClosingIf {
   /** Translation */
   private static final util.ui.Localizer mLocalizer
   = util.ui.Localizer.getLocalizerFor(PluginInfoDialog.class);
@@ -107,13 +109,15 @@ public class PluginInfoDialog extends JDialog {
     
     ok.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        setVisible(false);
+        close();
       }
     });
     
     panel.add(ok, cc.xy(2,3));
     
     setSize(500, 350);
+    
+    UiUtilities.registerForClosing(this);
   }
 
   /**
@@ -153,6 +157,10 @@ public class PluginInfoDialog extends JDialog {
     html.append("</body></html>");
     
     return html.toString();
+  }
+
+  public void close() {
+    setVisible(false);
   }
   
 }
