@@ -203,10 +203,21 @@ public class CaptureParamLibrary extends ParamLibrary {
     } else if (key.equals("device_password")) {
       return getPassword();
     } else if (key.equals("length_minutes")) {
-      int length = (int) (mEndTime.getTimeInMillis() - mStartTime.getTimeInMillis()) / (60*1000);
+      long duration = mEndTime.getTimeInMillis() - mStartTime.getTimeInMillis();
+      
+      if(duration % 60000 != 0)
+        duration += 60000;
+      
+      int length = (int) (duration) / (60*1000);
       return "" +length;
     } else if (key.equals("length_sec")) {
-      int length = (int) (mEndTime.getTimeInMillis() - mStartTime.getTimeInMillis()) / (60*1000);
+      long duration = mEndTime.getTimeInMillis() - mStartTime.getTimeInMillis();
+      
+      if(duration % 60000 != 0)
+        duration += 60000;
+      
+      int length = (int) (duration) / (60*1000);
+      
       return "" + ((length) * 60);
     }
     
