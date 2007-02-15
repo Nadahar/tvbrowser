@@ -94,7 +94,7 @@ public class ExporterFactory {
 
     for (ExporterIf exporter : mActiveExporter) {
       classes.append(exporter.getClass().getName());
-      classes.append(":");
+      classes.append(':');
     }
 
     return classes.substring(0, classes.length() - 1);

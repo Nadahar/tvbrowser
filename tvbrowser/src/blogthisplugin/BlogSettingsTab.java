@@ -109,7 +109,7 @@ public class BlogSettingsTab implements SettingsTab {
             }
         });
 
-        mServiceUrlLabel = new JLabel(mLocalizer.msg("Url", "Url")+":");
+        mServiceUrlLabel = new JLabel(mLocalizer.msg("Url", "Url")+':');
         mServiceUrlLabel.setEnabled(mServiceCombo.getSelectedIndex() >= 2);
 
         mServiceUrlField = new JTextField();
@@ -117,7 +117,7 @@ public class BlogSettingsTab implements SettingsTab {
         mServiceUrlField.setText(mSettings.getProperty("BlogUrl"));
 
         CellConstraints cc = new CellConstraints();
-        settingsPanel.add(new JLabel(mLocalizer.msg("Service", "Blog-Service")+":"), cc.xy(2, 1));
+        settingsPanel.add(new JLabel(mLocalizer.msg("Service", "Blog-Service")+':'), cc.xy(2, 1));
         settingsPanel.add(mServiceCombo, cc.xy(4, 1));
         settingsPanel.add(mServiceUrlLabel, cc.xy(2, 3));
         settingsPanel.add(mServiceUrlField, cc.xyw(4, 3, 2));
