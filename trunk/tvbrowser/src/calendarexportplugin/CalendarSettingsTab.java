@@ -134,11 +134,11 @@ public class CalendarSettingsTab implements SettingsTab {
       mNulltime.setSelected(true);
     }
     
-    pb.addLabel(mLocalizer.msg("Categorie", "Categorie") + ":", cc.xy(2,2));
+    pb.addLabel(mLocalizer.msg("Categorie", "Categorie") + ':', cc.xy(2,2));
     pb.add(mCategorie, cc.xyw(4,2,2));
-    pb.addLabel(mLocalizer.msg("ShowTime", "Show Time as") + ":", cc.xy(2,4));
+    pb.addLabel(mLocalizer.msg("ShowTime", "Show Time as") + ':', cc.xy(2,4));
     pb.add(mShowTime, cc.xy(4,4));
-    pb.addLabel(mLocalizer.msg("Classification", "Classification") + ":", cc.xy(2,6));
+    pb.addLabel(mLocalizer.msg("Classification", "Classification") + ':', cc.xy(2,6));
     pb.add(mClassification, cc.xy(4,6));
     
     mUseAlarm = new JCheckBox(mLocalizer.msg("reminder", "Use reminder"));

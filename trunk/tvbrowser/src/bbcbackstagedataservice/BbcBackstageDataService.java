@@ -137,7 +137,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
         Channel ch = new Channel(this, serviceInfo.getName(), serviceInfo.getServiceID(), TimeZone
             .getTimeZone("GMT"), "gb", "(c) BBC", "http://bbc.co.uk", mBbcChannelGroup);
         channels.add(ch);
-        mLog.fine("Channel : " + ch.getName() + "{" + ch.getId() + "}");
+        mLog.fine("Channel : " + ch.getName() + '{' + ch.getId() + '}');
       }
 
       mChannels = channels;
@@ -212,7 +212,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
       Channel ch = new Channel(this, settings.getProperty("ChannelTitle-"+i, ""), settings.getProperty("ChannelId-"+i, ""), TimeZone
           .getTimeZone("GMT+0:00"), "gb", "(c) BBC", "http://bbc.co.uk", mBbcChannelGroup);
       mChannels.add(ch);
-      mLog.fine("Channel : " + ch.getName() + "{" + ch.getId() + "}");
+      mLog.fine("Channel : " + ch.getName() + '{' + ch.getId() + '}');
     }
 
     mLog.info("Finnished loading settings for BbcBackstageDataService");

@@ -131,7 +131,7 @@ public class SystemTrayIconManager {
     private void fireClicked(int buttonType, int x, int y) {
         for (int i = 0; i < listeners.size(); i++) {
             SystemTrayIconListener listener =
-                (SystemTrayIconListener)listeners.get(i);
+                listeners.get(i);
             /**
              * depending on button type call listener's
              *  mouseClickLeftButton

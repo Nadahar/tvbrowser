@@ -558,8 +558,8 @@ public class SaxHandler extends org.xml.sax.helpers.DefaultHandler{
         case (STATUS_MESSAGE):{
           if ("mMessage".equals(qName)){
             status = STATUS_BASE;
-            
           }
+          break;
         }
         case (STATUS_CONSTRUCT_CHANNEL_NAME):{
           if ("name".equals(qName)){

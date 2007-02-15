@@ -236,7 +236,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
                 if (dataHashtable.containsKey(date.toString())){
                   mLog.info("Updating database for day " + date.toString());
                   monitor.setMessage(mLocalizer.msg("updateTvData.progressmessage.40","{0}: Updating database",mChannel[c].getName()));
-                  updateManager.updateDayProgram((MutableChannelDayProgram)dataHashtable.get(date.toString()));
+                  updateManager.updateDayProgram(dataHashtable.get(date.toString()));
                 } else {
                   mLog.info("Strange.... Didn't find the data for " + date.toString());
                 }

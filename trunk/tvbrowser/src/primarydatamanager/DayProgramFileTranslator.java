@@ -118,15 +118,19 @@ public class DayProgramFileTranslator {
       stream = new FileOutputStream(new File(destDir,transFileName));
       PrintWriter writer = new PrintWriter(stream);
       
-      writer.println("Version: " + prog.getVersion());
+      writer.print("Version: ");
+      writer.println(prog.getVersion());
       for (int frameIdx = 0; frameIdx < prog.getProgramFrameCount(); frameIdx++) {
         ProgramFrame frame = prog.getProgramFrameAt(frameIdx);
         writer.println();
-        writer.println("Program ID: " + frame.getId());
+        writer.print("Program ID: ");
+        writer.println(frame.getId());
         for (int fieldIdx = 0; fieldIdx < frame.getProgramFieldCount(); fieldIdx++) {
           ProgramField field = frame.getProgramFieldAt(fieldIdx);
           ProgramFieldType type = field.getType();
-          writer.print("  " + type.getName() + ": ");
+          writer.print("  ");
+          writer.print(type.getName());
+          writer.print(": ");
           
           if (type == ProgramFieldType.INFO_TYPE) {
             int info = field.getIntData();

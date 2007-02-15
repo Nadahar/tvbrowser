@@ -229,7 +229,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
     String[] deactivated = new String[mDeactivatedItems.size()];
     for (int i=0;i<mDeactivatedItems.size();i++) {
-      deactivated[i] = ((ContextMenuIf)mDeactivatedItems.get(i)).getId();
+      deactivated[i] = (mDeactivatedItems.get(i)).getId();
     }
     Settings.propContextMenuDisabledItems.setStringArray(deactivated);
   }
