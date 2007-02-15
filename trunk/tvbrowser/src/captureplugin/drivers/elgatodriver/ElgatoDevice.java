@@ -264,4 +264,12 @@ public class ElgatoDevice implements DeviceIf {
     public boolean getDeleteRemovedProgramsAutomatically() {
       return true;
     }
+    
+    /**
+     * Removes programs that were deleted during a data update
+     * 
+     * @param p The program to remove from this device. 
+     * @since 2.11
+     */
+    public void removeProgramWithoutExecution(Program p) {}
 }

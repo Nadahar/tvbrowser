@@ -154,4 +154,12 @@ public interface DeviceIf extends Cloneable {
      * @since 2.11
      */
     public boolean getDeleteRemovedProgramsAutomatically();
+    
+    /**
+     * Removes programs that were deleted during a data update
+     * 
+     * @param p The program to remove from this device. 
+     * @since 2.11
+     */
+    public void removeProgramWithoutExecution(Program p);
 }
