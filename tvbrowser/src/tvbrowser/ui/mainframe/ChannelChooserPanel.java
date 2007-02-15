@@ -80,10 +80,10 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
     new DragAndDropMouseListener(mList, mList, this, dnDHandler);    
     
     mList.addListSelectionListener(new ListSelectionListener() {
-		public void valueChanged(ListSelectionEvent e) {
-			showChannel();
-		}
-	});
+      public void valueChanged(ListSelectionEvent e) {
+        showChannel();
+      }
+    });
     
     mList.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
@@ -109,11 +109,11 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
     });
     
     mList.addMouseWheelListener(new MouseWheelListener() {
-
-		public void mouseWheelMoved(MouseWheelEvent e) {
-			mList.setSelectedIndex(mList.getSelectedIndex() + e.getWheelRotation());
-			mList.ensureIndexIsVisible(mList.getSelectedIndex());
-		}});
+      public void mouseWheelMoved(MouseWheelEvent e) {
+        mList.setSelectedIndex(mList.getSelectedIndex() + e.getWheelRotation());
+        mList.ensureIndexIsVisible(mList.getSelectedIndex());
+      }
+    });
   }
   
   private void showChannel() {
