@@ -358,4 +358,15 @@ public class DefaultDevice implements DeviceIf {
     public boolean getDeleteRemovedProgramsAutomatically() {
       return mConfig.getDeleteRemovedPrograms();
     }
+    
+    /**
+     * Removes programs that were deleted during a data update
+     * 
+     * @param p The program to remove from this device. 
+     * @since 2.11
+     */
+    public void removeProgramWithoutExecution(Program p) {
+      ProgramTime prgTime = mConfig.getMarkedPrograms().getProgamTimeForProgram(p);
+      mConfig.getMarkedPrograms().remove(prgTime);
+    }
 }

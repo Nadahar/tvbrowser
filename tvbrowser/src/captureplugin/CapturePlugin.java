@@ -545,21 +545,22 @@ public class CapturePlugin extends devplugin.Plugin {
         for (DeviceIf device : devices) {
           Program[] deleted = device.checkProgramsAfterDataUpdateAndGetDeleted();
         
-          if(deleted != null && deleted.length > 0 && device.getDeleteRemovedProgramsAutomatically()) {
+          if(deleted != null && deleted.length > 0) {
             for(Program p : deleted) {
-              if(!p.isExpired() && !p.isOnAir()) {
+              if(device.getDeleteRemovedProgramsAutomatically() && !p.isExpired() && !p.isOnAir())
                 device.remove(UiUtilities.getLastModalChildOf(getParentFrame()), p);
+              else
+                device.removeProgramWithoutExecution(p);
             
-                Object[] o = new Object[] {device,p.getChannel().getName(),p.getDateString(),p.getTimeString(),p.getTitle()};
+              Object[] o = new Object[] {device,p.getChannel().getName(),p.getDateString(),p.getTimeString(),p.getTitle()};
             
-                for(int i = 0; i < columnWidth.length; i++)
-                  columnWidth[i] = Math.max(columnWidth[i],UiUtilities.getStringWidth(table.getFont(),o[i].toString())+10);
+              for(int i = 0; i < columnWidth.length; i++)
+                columnWidth[i] = Math.max(columnWidth[i],UiUtilities.getStringWidth(table.getFont(),o[i].toString())+10);
             
-                model.addRow(o);
-              }
+              model.addRow(o);
             }
           }
-        }        
+        }
         
         if(model.getRowCount() > 0) {
           int sum = 0;
