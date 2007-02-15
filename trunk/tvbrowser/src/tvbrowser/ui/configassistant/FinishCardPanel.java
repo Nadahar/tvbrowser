@@ -56,7 +56,7 @@ class FinishCardPanel extends AbstractCardPanel {
     mContent.add(new StatusPanel(StatusPanel.READY), BorderLayout.NORTH);
 
     JPanel content = new JPanel(new FormLayout("fill:pref:grow, fill:300dlu:grow, fill:pref:grow",
-        "fill:pref:grow, pref, fill:pref:grow"));
+        "fill:0dlu:grow, pref, fill:0dlu:grow"));
     content.setBorder(Borders.DLU4_BORDER);
 
     CellConstraints cc = new CellConstraints();

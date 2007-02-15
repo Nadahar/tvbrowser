@@ -386,8 +386,6 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
     mVisibleActions.add(mPluginViewAction);
     mVisibleActions.add(mFilterAction);
     mVisibleActions.add(getSeparatorAction());
-    mVisibleActions.add(getGlueAction());
-    mVisibleActions.add(getSpaceAction());
     mVisibleActions.add(mFavoriteAction);
     mVisibleActions.add(mReminderAction);
     mVisibleActions.add(mSearchAction);
