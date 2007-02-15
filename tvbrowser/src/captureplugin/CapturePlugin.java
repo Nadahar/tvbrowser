@@ -552,14 +552,18 @@ public class CapturePlugin extends devplugin.Plugin {
               else
                 device.removeProgramWithoutExecution(p);
             
-              Object[] o = new Object[] {device,p.getChannel().getName(),p.getDateString(),p.getTimeString(),p.getTitle()};
+              if(!p.isExpired()) {
+                Object[] o = new Object[] {device,p.getChannel().getName(),p.getDateString(),p.getTimeString(),p.getTitle()};
             
-              for(int i = 0; i < columnWidth.length; i++)
-                columnWidth[i] = Math.max(columnWidth[i],UiUtilities.getStringWidth(table.getFont(),o[i].toString())+10);
+                for(int i = 0; i < columnWidth.length; i++)
+                  columnWidth[i] = Math.max(columnWidth[i],UiUtilities.getStringWidth(table.getFont(),o[i].toString())+10);
             
-              model.addRow(o);
+                model.addRow(o);
+              }
             }
           }
+          
+          device.getProgramList();
         }
         
         if(model.getRowCount() > 0) {

@@ -235,21 +235,12 @@ public class ElgatoDevice implements DeviceIf {
     }
     
     public Program[] checkProgramsAfterDataUpdateAndGetDeleted() {      
-      boolean update = false;
       ArrayList<Program> deletedPrograms = new ArrayList<Program>();
       
       for(Program p : mListOfRecordings) {
-        if(p.getProgramState() == Program.WAS_UPDATED_STATE)
-          update = true;
-        else if(p.getProgramState() == Program.WAS_DELETED_STATE) {
-          update = true;
+        if(p.getProgramState() == Program.WAS_DELETED_STATE)
           deletedPrograms.add(p);
-          remove(UiUtilities.getLastModalChildOf(CapturePlugin.getInstance().getSuperFrame()), p);
-        }
       }
-      
-      if(update)
-        getProgramList();
       
       return deletedPrograms.toArray(new Program[deletedPrograms.size()]);
     }
