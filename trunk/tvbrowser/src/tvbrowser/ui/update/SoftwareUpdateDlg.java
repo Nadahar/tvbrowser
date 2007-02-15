@@ -184,12 +184,12 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
             .append("</td></tr>");
       }
       for (PluginAccess plugin : PluginManagerImpl.getInstance().getActivatedPlugins()) {
-		if (plugin.getInfo().getName().equalsIgnoreCase(item.getName())) {
-	        content.append("<tr><th>").append(mLocalizer.msg("installed", "Installed version")).append("</th><td>").append(plugin.getInfo().getVersion())
-            .append("</td></tr>");
-	        break;
-		}
-	  } 
+        if (plugin.getInfo().getName().equalsIgnoreCase(item.getName())) {
+          content.append("<tr><th>").append(mLocalizer.msg("installed", "Installed version")).append("</th><td>").append(plugin.getInfo().getVersion())
+          .append("</td></tr>");
+          break;
+        }
+      } 
       if (website != null) {
         content.append("<tr><th>").append(mLocalizer.msg("website", "Website")).append("</th><td><a href=\"").append(
             website).append("\">").append(website).append("</a></td></tr>");
