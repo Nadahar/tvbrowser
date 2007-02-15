@@ -31,6 +31,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
@@ -105,6 +107,13 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
       public void mouseReleased(MouseEvent e) {
         showPopupMenu(e);      }
     });
+    
+    mList.addMouseWheelListener(new MouseWheelListener() {
+
+		public void mouseWheelMoved(MouseWheelEvent e) {
+			mList.setSelectedIndex(mList.getSelectedIndex() + e.getWheelRotation());
+			mList.ensureIndexIsVisible(mList.getSelectedIndex());
+		}});
   }
   
   private void showChannel() {
@@ -156,4 +165,5 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
     model.setChannels(ChannelList.getSubscribedChannels());
     MainFrame.getInstance().updateChannellist();
   }
+
 }
