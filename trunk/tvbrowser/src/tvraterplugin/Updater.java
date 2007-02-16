@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -86,11 +87,13 @@ public class Updater implements Progress {
    * Does the Update
    */
   public void run() {
-
-    if ((_tvraterPlugin.getSettings().getProperty("name") == null)
-        || (_tvraterPlugin.getSettings().getProperty("name").length() == 0)
-        || (_tvraterPlugin.getSettings().getProperty("password") == null)
-        || (_tvraterPlugin.getSettings().getProperty("password").length() == 0)) {
+    Properties settings = _tvraterPlugin.getSettings();
+    String name = settings.getProperty("name");
+    String password = settings.getProperty("password");
+    if ((name == null)
+        || (name.length() == 0)
+        || (password == null)
+        || (password.length() == 0)) {
 
       JOptionPane.showMessageDialog(_tvraterPlugin.getParentFrameForTVRater(), mLocalizer.msg("noUser",
           "Please Enter your Userdata in the\nconfiguration of this Plugin"), mLocalizer.msg("error",
@@ -139,7 +142,7 @@ public class Updater implements Progress {
 
       out.close();
     } catch (Exception e) {
-      ErrorHandler.handle(mLocalizer.msg("updateError", "An error occured while updateting the TVRater Database"), e);
+      ErrorHandler.handle(mLocalizer.msg("updateError", "An error occured while updating the TVRater Database"), e);
       e.printStackTrace();
     }
   }
