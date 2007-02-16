@@ -318,17 +318,24 @@ public class TVRaterPlugin extends devplugin.Plugin {
      * @return Settings
      */
     public Properties getSettings() {
-      _settings.setProperty("mOverviewXPos",String.valueOf(_locationOverviewDialog.x));
-      _settings.setProperty("mOverviewYPos",String.valueOf(_locationOverviewDialog.y));
+      if (_locationOverviewDialog != null) {
+        _settings.setProperty("mOverviewXPos",String.valueOf(_locationOverviewDialog.x));
+        _settings.setProperty("mOverviewYPos",String.valueOf(_locationOverviewDialog.y));
+      }
+      if (_dimensionOverviewDialog != null) {
       _settings.setProperty("mOverviewWidth",String.valueOf(_dimensionOverviewDialog.width));
       _settings.setProperty("mOverviewHeight",String.valueOf(_dimensionOverviewDialog.height));
-
-      _settings.setProperty("mRaterXPos",String.valueOf(_locationRaterDialog.x));
-      _settings.setProperty("mRaterYPos",String.valueOf(_locationRaterDialog.y));
-      _settings.setProperty("mRaterWidth",String.valueOf(_dimensionRaterDialog.width));
-      _settings.setProperty("mRaterHeight",String.valueOf(_dimensionRaterDialog.height));
+      }
+      if (_locationRaterDialog != null) {
+        _settings.setProperty("mRaterXPos",String.valueOf(_locationRaterDialog.x));
+        _settings.setProperty("mRaterYPos",String.valueOf(_locationRaterDialog.y));
+      }
+      if (_dimensionRaterDialog != null) {
+        _settings.setProperty("mRaterWidth",String.valueOf(_dimensionRaterDialog.width));
+        _settings.setProperty("mRaterHeight",String.valueOf(_dimensionRaterDialog.height));
+      }
       
-        return _settings;
+      return _settings;
     }
 
     /**
