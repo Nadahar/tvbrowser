@@ -79,17 +79,20 @@ public class ButtonsSettingsTab implements SettingsTab {
 
     mSettingsPn = new JPanel(new FormLayout("5dlu, pref, fill:pref:grow", "pref, 5dlu, fill:pref:grow"));
     mSettingsPn.setBorder(Borders.DIALOG_BORDER);
-
+    
     CellConstraints cc = new CellConstraints();
 
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(
         mLocalizer.msg("buttons.time", "Time buttons")), cc.xyw(1, 1, 3));
 
     mTimeButtonsPn = new TimesListPanel(Settings.propTimeButtons.getIntArray());
+    
     JScrollPane pane = new JScrollPane(mTimeButtonsPn);
     pane.setBorder(BorderFactory.createEmptyBorder());
+    pane.setViewportBorder(BorderFactory.createEmptyBorder());
+    
     mSettingsPn.add(pane, cc.xy(2, 3));
-
+    
     return mSettingsPn;
   }
 
@@ -163,7 +166,6 @@ public class ButtonsSettingsTab implements SettingsTab {
     private JPanel mListPn;
 
     public TimesListPanel(int[] times) {
-
       mRows = new ArrayList<Row>();
       setLayout(new FormLayout("right:pref, fill:pref:grow", "pref, 3dlu, pref"));
 

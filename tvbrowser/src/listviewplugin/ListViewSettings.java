@@ -78,6 +78,7 @@ public class ListViewSettings implements SettingsTab {
     
     JScrollPane pictures = new JScrollPane(mPictureSettings);
     pictures.setBorder(null);
+    pictures.setViewportBorder(null);
     
     panel.add(mShowAtStart, cc.xy(2,2));
     panel.add(pictures, cc.xyw(1,4,2));

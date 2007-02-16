@@ -592,6 +592,7 @@ public class MainFrame extends JFrame implements DateListener {
     mToolBarModel = DefaultToolBarModel.getInstance();
     mToolBar = new ToolBar(mToolBarModel);
     mToolBar.setOpaque(false);
+    
     String location = mToolBar.getToolbarLocation();
 
     if (Settings.propIsTooolbarVisible.getBoolean()) {
@@ -621,7 +622,7 @@ public class MainFrame extends JFrame implements DateListener {
 
       contentPane.add(mToolBarPanel, location);
     }
-
+    
     contentPane.invalidate();
     contentPane.updateUI();
   }

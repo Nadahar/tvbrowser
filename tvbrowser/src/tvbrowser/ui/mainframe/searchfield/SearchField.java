@@ -27,10 +27,13 @@ package tvbrowser.ui.mainframe.searchfield;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -135,14 +138,14 @@ public class SearchField extends JPanel {
    * Create the GUI
    */
   private void createGui() {
-    JPanel panel = new JPanel(new BorderLayout(3,0));
-    Color background = new Color(UIManager.getColor("TextField.background").getRGB());
-    
-    panel.setBackground(background);
+    final JPanel panel = new JPanel(new BorderLayout(3,0));
     panel.setBorder(BorderFactory.createCompoundBorder(UIManager.getBorder("TextField.border"),BorderFactory.createEmptyBorder(2,2,1,2)));
     
     mText = new SearchTextField(15);
-    mText.setBorder(BorderFactory.createEmptyBorder());
+    
+    if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel"))
+      mText.setBackground(Color.white);
+    
     mText.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -175,6 +178,8 @@ public class SearchField extends JPanel {
         }
       }
     });
+    mText.setBorder(BorderFactory.createLineBorder(mText.getBackground()));
+    panel.setBackground(mText.getBackground());
 
     mSearchButton = new JButton(IconLoader.getInstance().getIconFromTheme("action", "system-search", 16)); 
     mSearchButton.setBorder(BorderFactory.createEmptyBorder());
@@ -197,7 +202,9 @@ public class SearchField extends JPanel {
       public void actionPerformed(ActionEvent e) {
         cancelPressed();
       };
-    });
+    });mText.setEditable(true);
+    
+    panel.setOpaque(true);
     
     panel.add(mSearchButton, BorderLayout.WEST);
     panel.add(mText, BorderLayout.CENTER);
