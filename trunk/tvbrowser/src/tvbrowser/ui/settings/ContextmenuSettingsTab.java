@@ -101,7 +101,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
   private void createList() {
     mList = new SortableItemList();
-
+    
     mList.getList().addMouseListener(new MouseAdapter() {
       public void mouseReleased(MouseEvent evt) {
         if (evt.getX() < mSelectionWidth) {
@@ -266,7 +266,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
       if (value instanceof SeparatorMenuItem) {
         LineComponent comp = new LineComponent(label.getForeground());
         comp.setBackground(label.getBackground());
-        comp.setOpaque(label.isOpaque());
+        comp.setOpaque(isSelected);
         comp.setPreferredSize(label.getPreferredSize());
         return comp;
       } else if (value instanceof ConfigMenuItem) {
@@ -277,7 +277,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
         mItemLabel.setForeground(label.getForeground());
 
         mItemPanel.setBackground(label.getBackground());
-        mItemPanel.setOpaque(label.isOpaque());
+        mItemPanel.setOpaque(isSelected);
         
         return mItemPanel;
       } else if (value instanceof ContextMenuIf) {
@@ -310,7 +310,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
         mItemSelected.setSelected(!mDeactivatedItems.contains(value));
         
         mItemPanel.setBackground(label.getBackground());
-        mItemPanel.setOpaque(label.isOpaque());
+        mItemPanel.setOpaque(isSelected);
         return mItemPanel;
       }
       

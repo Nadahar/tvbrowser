@@ -27,10 +27,12 @@
 package tvbrowser.ui.mainframe.toolbar;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.LayoutManager;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragSource;
 import java.awt.event.ActionEvent;
@@ -41,6 +43,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
@@ -49,6 +52,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -95,7 +99,6 @@ public class ToolBar extends JToolBar {
   
   public ToolBar(ToolBarModel model) {
     super();
-    setBorder(null);
     mModel = model;
     loadSettings();
     mContextMenu = new ContextMenu(this);
@@ -155,15 +158,16 @@ public class ToolBar extends JToolBar {
         addToggleButton(action);
       } else if (type == SEPARATOR) {
         addSeparator();
+        ((JToolBar.Separator)getComponentAtIndex(getComponentCount()-1)).setBorder(BorderFactory.createLineBorder(getBackground()));
       } else if (type == GLUE) {
         JPanel gluePanel = new JPanel();
         gluePanel.setOpaque(false);
-        gluePanel.setOpaque(false);
+        gluePanel.setBorder(BorderFactory.createEmptyBorder());
         add(gluePanel);
       } else if (type == SPACE) {
         JPanel spacePanel = new JPanel();
         spacePanel.setOpaque(false);
-        spacePanel.setBorder(null);
+        spacePanel.setBorder(BorderFactory.createEmptyBorder());
         
         int height = (mLocation.equals(BorderLayout.NORTH) ? getPreferredSize().height : 20);
         
@@ -183,7 +187,17 @@ public class ToolBar extends JToolBar {
   
   public void updateUI() {
     super.updateUI();
-    setBorder(null);
+  }
+  
+  public void setBorder(Border b) {
+    super.setBorder(BorderFactory.createEmptyBorder());
+  }
+  
+  public void setLayout(LayoutManager manager) {
+    if(mLocation == null || mLocation.equals(BorderLayout.NORTH))
+      super.setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
+    else
+      super.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
   }
   
   /**
@@ -456,10 +470,9 @@ public class ToolBar extends JToolBar {
 
     if (mLocation.equals(BorderLayout.EAST) || mLocation.equals(BorderLayout.WEST)) {
       setOrientation(JToolBar.VERTICAL);
-    } else {
+    } else {      
       setOrientation(JToolBar.HORIZONTAL);
     }
-
   }
 
   public void storeSettings() {

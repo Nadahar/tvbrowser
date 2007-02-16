@@ -72,7 +72,7 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
     if (value instanceof Channel) {
 
       mChannel.setChannel((Channel) value);
-      mChannel.setOpaque(label.isOpaque());
+      mChannel.setOpaque(isSelected);
       mChannel.setBackground(label.getBackground());
       mChannel.setForeground(label.getForeground());
 
