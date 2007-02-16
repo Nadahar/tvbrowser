@@ -90,7 +90,7 @@ public class TableSorter extends AbstractTableModel {
 
     private static Directive EMPTY_DIRECTIVE = new Directive(-1, NOT_SORTED);
 
-    public static final Comparator COMPARABLE_COMAPRATOR = new Comparator<Comparable>() {
+    public static final Comparator COMPARABLE_COMPARATOR = new Comparator<Comparable>() {
         public int compare(Comparable c1, Comparable c2) {
             return c1.compareTo(c2);
         }
@@ -236,7 +236,7 @@ public class TableSorter extends AbstractTableModel {
             return comparator;
         }
         if (Comparable.class.isAssignableFrom(columnType)) {
-            return COMPARABLE_COMAPRATOR;
+            return COMPARABLE_COMPARATOR;
         }
         return LEXICAL_COMPARATOR;
     }
