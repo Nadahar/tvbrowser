@@ -44,7 +44,7 @@ public class ICalFile {
       PrintStream out = new PrintStream(new FileOutputStream(intothis),true,"UTF8");
 
       out.println("BEGIN:VCALENDAR");
-      out.println("PRODID:-//TV Browser//Calendar Exporter");
+      out.println("PRODID:-//TV-Browser//Calendar Exporter");
       out.println("VERSION:2.0");
 
         for (Program p : list) {
