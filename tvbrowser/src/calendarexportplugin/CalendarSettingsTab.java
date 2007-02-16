@@ -101,7 +101,7 @@ public class CalendarSettingsTab implements SettingsTab {
    * @see devplugin.SettingsTab#createSettingsPanel()
    */
   public JPanel createSettingsPanel() {
-    final PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref,5dlu,pref:grow, pref,5dlu",
+    final PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref,5dlu,default:grow, pref,5dlu",
         "5dlu,pref,3dlu,pref,3dlu,pref,3dlu,pref,3dlu,pref, 3dlu, pref, 5dlu, pref, 3dlu, fill:default:grow, 3dlu, pref"));
     CellConstraints cc = new CellConstraints();
     
@@ -175,7 +175,7 @@ public class CalendarSettingsTab implements SettingsTab {
     label.setEnabled(mUseAlarm.isSelected());
     
     
-    pb.add(panel, cc.xy(4, 8));
+    pb.add(panel, cc.xyw(4, 8, 2));
     
     pb.add(mNulltime, cc.xyw(2,10,4));
     
