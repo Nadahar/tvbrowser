@@ -50,7 +50,7 @@ public class VCalFile {
       PrintStream out = new PrintStream(new FileOutputStream(intothis));
 
       out.println("BEGIN:VCALENDAR");
-      out.println("PRODID:-//TV Browser//Calendar Exporter");
+      out.println("PRODID:-//TV-Browser//Calendar Exporter");
       out.println("VERSION:1.0");
 
       for (int i = 0; i < list.length; i++) {
