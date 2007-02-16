@@ -61,6 +61,7 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
   private DefaultListModel mChannelChooserModel;
   private JList mList;
   private MainFrame mParent;
+  protected boolean disableSync = false;
 
   /**
    * @param frame
@@ -81,7 +82,10 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
     
     mList.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
-        showChannel();
+        if (!disableSync) {
+          showChannel();
+        }
+        disableSync  = false;
       }
     });
     
@@ -164,6 +168,11 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
     DefaultProgramTableModel model = MainFrame.getInstance().getProgramTableModel();
     model.setChannels(ChannelList.getSubscribedChannels());
     MainFrame.getInstance().updateChannellist();
+  }
+
+  public void selectChannel(int index) {
+    disableSync = true;
+    mList.setSelectedIndex(index);
   }
 
 }

@@ -32,7 +32,10 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.JScrollPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
+import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.background.BackgroundPainter;
 import devplugin.Channel;
 
@@ -41,7 +44,7 @@ import devplugin.Channel;
  * @author Til Schneider, www.murfman.de
  */
 public class ProgramTableScrollPane extends JScrollPane implements ProgramTableModelListener,
-    MouseWheelListener {
+    MouseWheelListener, ChangeListener {
 
   private ProgramTable mProgramTable;
 
@@ -87,6 +90,8 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
       }
     });
     handleBackgroundPainterChanged(mProgramTable.getBackgroundPainter());
+    
+    getViewport().addChangeListener(this);
   }
 
   public ProgramTable getProgramTable() {
@@ -128,8 +133,8 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
       if (channel.equals(shownChannelArr[col])) {
         Point scrollPos = getViewport().getViewPosition();
         if (scrollPos != null) {
-          scrollPos.x = col * mProgramTable.getColumnWidth() - getViewport().getWidth() / 2
-              + mProgramTable.getColumnWidth() / 2;
+          int visibleColumns = (int) Math.floor(getViewport().getWidth() / mProgramTable.getColumnWidth());
+          scrollPos.x = (col - visibleColumns / 2) * mProgramTable.getColumnWidth();
           if (scrollPos.x < 0) {
             scrollPos.x = 0;
           }
@@ -251,6 +256,16 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
    */
   public void deSelectItem() {
     mProgramTable.deSelectItem();
+  }
+
+  public void stateChanged(ChangeEvent e) {
+    if (e.getSource()==viewport) {
+      Point viewPos = viewport.getViewPosition();
+      if (viewPos != null) {
+        int columnIndex = (viewPos.x + viewport.getWidth()/2) / mProgramTable.getColumnWidth();
+        MainFrame.getInstance().selectChannel(columnIndex);
+      }
+    }
   }
 
 }
