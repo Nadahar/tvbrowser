@@ -1546,4 +1546,8 @@ public class MainFrame extends JFrame implements DateListener {
   public ProgressMonitor createProgressMonitor() {
     return mStatusBar.createProgressMonitor();
   }
+  
+  public void selectChannel(int index) {
+    mChannelChooser.selectChannel(index);
+  }
 }
