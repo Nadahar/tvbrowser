@@ -24,6 +24,7 @@
  */
 package captureplugin.drivers.defaultdriver;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import util.paramhandler.ParamLibrary;
@@ -203,21 +204,10 @@ public class CaptureParamLibrary extends ParamLibrary {
     } else if (key.equals("device_password")) {
       return getPassword();
     } else if (key.equals("length_minutes")) {
-      long duration = mEndTime.getTimeInMillis() - mStartTime.getTimeInMillis();
-      
-      if(duration % 60000 != 0)
-        duration += 60000;
-      
-      int length = (int) (duration) / (60*1000);
+      int length = (int) ((mEndTime.getTimeInMillis() + 59000) / 60000 - (mStartTime.getTimeInMillis() + 59000) / 60000);
       return "" +length;
     } else if (key.equals("length_sec")) {
-      long duration = mEndTime.getTimeInMillis() - mStartTime.getTimeInMillis();
-      
-      if(duration % 60000 != 0)
-        duration += 60000;
-      
-      int length = (int) (duration) / (60*1000);
-      
+      int length = (int) ((mEndTime.getTimeInMillis() + 59000) / 60000 - (mStartTime.getTimeInMillis() + 59000) / 60000);
       return "" + ((length) * 60);
     }
     
