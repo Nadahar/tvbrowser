@@ -444,7 +444,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
         Point location = e.getLocation();
 
         if (mWest)
-          location.setLocation(5, location.y);
+          location.setLocation(10, location.y);
         else
           location.setLocation(location.x, MainFrame.getInstance().getToolbar()
               .getHeight() / 2);
@@ -613,7 +613,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
       Point location = e.getLocation();
 
       if (mWest)
-        location.setLocation(5,
+        location.setLocation(10,
             location.y);
       else
         location.setLocation(location.x, MainFrame.getInstance().getToolbar()

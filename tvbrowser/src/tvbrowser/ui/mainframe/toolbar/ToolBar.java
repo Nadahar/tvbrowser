@@ -146,6 +146,7 @@ public class ToolBar extends JToolBar {
   public void update() {
     super.removeAll();
     mUpdateButton = null;
+    
     Action[] actions = mModel.getActions();
     for (Action action : actions) {
       Integer typeInteger = (Integer) action.getValue(ACTION_TYPE_KEY);
@@ -159,15 +160,18 @@ public class ToolBar extends JToolBar {
       } else if (type == SEPARATOR) {
         addSeparator();
         ((JToolBar.Separator)getComponentAtIndex(getComponentCount()-1)).setBorder(BorderFactory.createLineBorder(getBackground()));
+        ((JToolBar.Separator)getComponentAtIndex(getComponentCount()-1)).setAlignmentX(JToolBar.Separator.CENTER_ALIGNMENT);
       } else if (type == GLUE) {
         JPanel gluePanel = new JPanel();
         gluePanel.setOpaque(false);
         gluePanel.setBorder(BorderFactory.createEmptyBorder());
+        gluePanel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
         add(gluePanel);
       } else if (type == SPACE) {
         JPanel spacePanel = new JPanel();
         spacePanel.setOpaque(false);
         spacePanel.setBorder(BorderFactory.createEmptyBorder());
+        spacePanel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
         
         int height = (mLocation.equals(BorderLayout.NORTH) ? getPreferredSize().height : 20);
         
@@ -194,10 +198,11 @@ public class ToolBar extends JToolBar {
   }
   
   public void setLayout(LayoutManager manager) {
-    if(mLocation == null || mLocation.equals(BorderLayout.NORTH))
-      super.setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
-    else
-      super.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+    if(mLocation != null)
+      if(mLocation.equals(BorderLayout.NORTH))
+        super.setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
+      else 
+        super.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
   }
   
   /**
@@ -255,6 +260,8 @@ public class ToolBar extends JToolBar {
 
   private void addToggleButton(final Action action) {
     final JToggleButton button = new JToggleButton();
+    button.setAlignmentX(JToggleButton.CENTER_ALIGNMENT);
+    
     action.putValue(ACTION_VALUE, button);
     addButtonProperties(button, action);
     Boolean isSelected = (Boolean) action.getValue(ACTION_IS_SELECTED);
@@ -293,6 +300,7 @@ public class ToolBar extends JToolBar {
     final JButton button = new JButton();
     addButtonProperties(button, action);
     button.setBorderPainted(false);
+    button.setAlignmentX(JButton.CENTER_ALIGNMENT);
 
     if(action.equals(((DefaultToolBarModel)mModel).getUpdateAction()))
       mUpdateButton = button;
@@ -473,6 +481,8 @@ public class ToolBar extends JToolBar {
     } else {      
       setOrientation(JToolBar.HORIZONTAL);
     }
+    
+    setLayout(null);
   }
 
   public void storeSettings() {
