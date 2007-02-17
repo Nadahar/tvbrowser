@@ -132,11 +132,11 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     mListTable = new JTable(mModel);
     mListTable.getColumnModel().getColumn(1).setCellRenderer(
         new TableRenderer());
-    mListTable.getColumnModel().getColumn(1).setMaxWidth(Sizes.getUnitConverter().dialogUnitXAsPixel(20,mListTable));
+    mListTable.getColumnModel().getColumn(1).setMaxWidth(Sizes.dialogUnitXAsPixel(20,mListTable));
     mListTable.getColumnModel().getColumn(2).setCellRenderer(
         new TableRenderer());
-    mListTable.getColumnModel().getColumn(2).setMaxWidth(Sizes.getUnitConverter().dialogUnitXAsPixel(70,mListTable));
-    mListTable.getColumnModel().getColumn(2).setMinWidth(Sizes.getUnitConverter().dialogUnitXAsPixel(70,mListTable));
+    mListTable.getColumnModel().getColumn(2).setMaxWidth(Sizes.dialogUnitXAsPixel(70,mListTable));
+    mListTable.getColumnModel().getColumn(2).setMinWidth(Sizes.dialogUnitXAsPixel(70,mListTable));
     
     mListTable.setRowHeight(25);
     
