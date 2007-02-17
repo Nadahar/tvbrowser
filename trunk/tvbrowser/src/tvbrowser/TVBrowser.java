@@ -564,12 +564,8 @@ public class TVBrowser {
     ErrorHandler.setFrame(mainFrame);
 
     splash.hideSplash();
-/*
- 	Bananeweizen: moved maximizing some lines higher to frame size construction
- 	removed updateUI completely as that is already done after calling initUI
- 	code not deleted as I can't test on all platforms
  	
-    // maximize the frame if wanted
+    // maximize the frame if wanted, needed for Linux
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         if (Settings.propIsWindowMaximized.getBoolean()) {
@@ -582,7 +578,7 @@ public class TVBrowser {
         }
       }
     });
-*/
+
     // minimize the frame if wanted
     if (startMinimized) {
       mainFrame.setExtendedState(Frame.ICONIFIED);
