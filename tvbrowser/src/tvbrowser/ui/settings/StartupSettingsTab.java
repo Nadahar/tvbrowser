@@ -118,7 +118,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
             mLinkFile.isFile());
         
         mSettingsPn.add(mAutostartWithWindows, cc.xy(2, 7));
-      } catch (Exception e) {}
+      } catch (Throwable e) {}
     }
 
     return mSettingsPn;
