@@ -398,7 +398,7 @@ public class TVBrowser {
                     }
                   }
                 }
-              }catch(Exception registry) {}
+              }catch(Throwable registry) {}
             }
             
             // check if user should select picture settings
