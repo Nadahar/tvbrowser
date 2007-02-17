@@ -207,7 +207,7 @@ public class DefaultDevice implements DeviceIf {
             return false;            
         }
         
-        CaptureExecute exec = new CaptureExecute(parent, mConfig);
+        CaptureExecute exec = CaptureExecute.getInstance(parent, mConfig);
         
         if (exec.addProgram(prgTime)) {
             mConfig.getMarkedPrograms().add(prgTime);
@@ -221,7 +221,7 @@ public class DefaultDevice implements DeviceIf {
      * @see captureplugin.drivers.DeviceIf#remove(devplugin.Program)
      */
     public boolean remove(Window parent, Program program) {
-        CaptureExecute exec = new CaptureExecute(parent, mConfig);
+        CaptureExecute exec = CaptureExecute.getInstance(parent, mConfig);
         
         ProgramTime prgTime = mConfig.getMarkedPrograms().getProgamTimeForProgram(program);
         
@@ -316,7 +316,7 @@ public class DefaultDevice implements DeviceIf {
      */
     public boolean executeAdditionalCommand(Window parent,int num, Program program) {
         
-        CaptureExecute exec = new CaptureExecute(parent, mConfig);
+        CaptureExecute exec = CaptureExecute.getInstance(parent, mConfig);
         
         ArrayList<ParamEntry> list = new ArrayList<ParamEntry>(mConfig.getEnabledParamList());
         

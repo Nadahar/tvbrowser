@@ -54,14 +54,13 @@ public class CaptureExecute {
     /** Data for Export */
     private DeviceConfig mData = new DeviceConfig();
 
-    /** Dialog for Settings if Settings not complete */
-    private DefaultKonfigurator mDialog;
-
     /** ParentFrame */
     private Component mParent;
     
     /** Success ? */
     private boolean mError = true;
+    
+    private static CaptureExecute mInstance = null;
 
     /**
      * Creates the Execute
@@ -69,14 +68,35 @@ public class CaptureExecute {
      * @param frame Frame
      * @param data Data
      */
-    public CaptureExecute(Component frame, DeviceConfig data) {
+    private CaptureExecute(Component frame, DeviceConfig data) {
         mParent = frame;
         mData = data;
-        if (frame instanceof JDialog) {
-            mDialog = new DefaultKonfigurator((JDialog)frame, data);
-        } else {
-            mDialog = new DefaultKonfigurator((JFrame)frame, data);
-        }
+        mInstance = this;
+    }
+    
+    private DefaultKonfigurator createDialog() {
+      if (mParent instanceof JDialog)
+        return new DefaultKonfigurator((JDialog)mParent, mData);
+      else
+        return new DefaultKonfigurator((JFrame)mParent, mData);
+    }
+    
+    /**
+     * Gets the capture execute for the given values.
+     * 
+     * @param frame The parent frame for the capture execute.
+     * @param data The configuration for the capture execute.
+     * @return The capture execute for the given values.
+     */
+    public static CaptureExecute getInstance(Component frame, DeviceConfig data){
+      if(mInstance == null)
+        new CaptureExecute(frame, data);
+      else {
+        mInstance.mParent = frame;
+        mInstance.mData = data;
+      }
+      
+      return mInstance;
     }
     
     /**
@@ -88,16 +108,16 @@ public class CaptureExecute {
         if (mData.getParameterFormatAdd().trim().length() == 0){
             JOptionPane.showMessageDialog(mParent, mLocalizer.msg("NoParamsAdd", "Please specify Parameters for adding of the Program!"),
                     mLocalizer.msg("CapturePlugin", "Capture Plugin"), JOptionPane.OK_OPTION);
-            mDialog.show(DefaultKonfigurator.TAB_PARAMETER);
+            createDialog().show(DefaultKonfigurator.TAB_PARAMETER);
             return false;
         }
 
         if (mData.getParameterFormatRem().trim().length() == 0){
           JOptionPane.showMessageDialog(mParent, mLocalizer.msg("NoParamsRemove", "Please specify Parameters for removing of the Program!"),
                   mLocalizer.msg("CapturePlugin", "Capture Plugin"), JOptionPane.OK_OPTION);
-          mDialog.show(DefaultKonfigurator.TAB_PARAMETER);
+          createDialog().show(DefaultKonfigurator.TAB_PARAMETER);
           return false;
-      }        
+      }
         
         return execute(programTime, mData.getParameterFormatAdd());
     }
@@ -111,7 +131,7 @@ public class CaptureExecute {
         if ((mData.getParameterFormatAdd().trim().length() == 0) || ((mData.getParameterFormatRem().trim().length() == 0))){
             JOptionPane.showMessageDialog(mParent, mLocalizer.msg("NoParams", "Please specify Parameters for the Program!"),
                     mLocalizer.msg("CapturePlugin", "Capture Plugin"), JOptionPane.OK_OPTION);
-            mDialog.show(DefaultKonfigurator.TAB_PARAMETER);
+            createDialog().show(DefaultKonfigurator.TAB_PARAMETER);
             return false;
         }
         
@@ -196,13 +216,13 @@ public class CaptureExecute {
         if (!mData.getUseWebUrl() && (mData.getProgramPath().trim().length() == 0)) {
             JOptionPane.showMessageDialog(mParent, mLocalizer.msg("NoProgram", "Please specify Application to use!"), mLocalizer
                     .msg("CapturePlugin", "Capture Plugin"), JOptionPane.OK_OPTION);
-            mDialog.show(DefaultKonfigurator.TAB_PATH);
+            createDialog().show(DefaultKonfigurator.TAB_PATH);
             return false;
         }
         if (mData.getUseWebUrl() && (mData.getWebUrl().trim().length() == 0)) {
             JOptionPane.showMessageDialog(mParent, mLocalizer.msg("NoUrl", "Please specify URL to use!"), mLocalizer
                     .msg("CapturePlugin", "Capture Plugin"), JOptionPane.OK_OPTION);
-            mDialog.show(DefaultKonfigurator.TAB_PATH);
+            createDialog().show(DefaultKonfigurator.TAB_PATH);
             return false;
         }
         return true;
