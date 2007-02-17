@@ -116,7 +116,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
   }
 
   public JPanel createSettingsPanel() {
-    FormLayout layout = new FormLayout("5dlu, pref, 3dlu, fill:pref:grow, 3dlu, pref, 5dlu", "");
+    FormLayout layout = new FormLayout("5dlu, pref, 3dlu, fill:default:grow, 3dlu, pref, 5dlu", "");
 
     CellConstraints cc = new CellConstraints();
     mSettingsPn = new JPanel(layout);

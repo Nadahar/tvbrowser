@@ -88,7 +88,7 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
    * Creates the settings panel for this tab.
    */
   public JPanel createSettingsPanel() {
-    mSettingsPn = new JPanel(new FormLayout("5dlu, pref, 3dlu, pref, fill:3dlu:grow, 3dlu", 
+    mSettingsPn = new JPanel(new FormLayout("5dlu, pref, 3dlu, default, fill:3dlu:grow, 3dlu", 
         "pref, 5dlu, pref, 3dlu, pref, 5dlu, pref, 3dlu, pref, 5dlu, pref, 3dlu, pref, fill:3dlu:grow, pref"));
     mSettingsPn.setBorder(Borders.DIALOG_BORDER);
     
