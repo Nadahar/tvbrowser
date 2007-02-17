@@ -192,7 +192,7 @@ public class GlobalPluginProgramFormatingSettingsDialog extends JDialog implemen
     
     pb.add(buttonPanel, cc.xyw(1,++y,3));
     
-    setSize(Sizes.getUnitConverter().dialogUnitXAsPixel(400,this),Sizes.getUnitConverter().dialogUnitXAsPixel(300,this));
+    setSize(Sizes.dialogUnitXAsPixel(400,this),Sizes.dialogUnitYAsPixel(300,this));
     setLocationRelativeTo(w);
     setVisible(true);
   }
