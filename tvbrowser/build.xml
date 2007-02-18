@@ -804,8 +804,8 @@
     <mkdir dir="${public.dir}"/>
 
     <zip destfile="${public.dir}/TvDataStarterKit-${tvdatakit.version}.zip">
-      <zipfileset prefix="TvDataStarterKit-${tvdatakit.version}"
-                  dir="${tvdatakit.runtime.dir}"/>
+      <zipfileset prefix="TvDataStarterKit-${tvdatakit.version}" dir="${tvdatakit.runtime.dir}" excludes="**/*.sh"/>
+   	  <zipfileset prefix="TvDataStarterKit-${tvdatakit.version}" dir="${tvdatakit.runtime.dir}" includes="**/*.sh" filemode="755"/>
     </zip>
   </target>
 
