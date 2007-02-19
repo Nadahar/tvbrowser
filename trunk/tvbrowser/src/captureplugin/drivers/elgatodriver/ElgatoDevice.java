@@ -24,7 +24,6 @@
  */
 package captureplugin.drivers.elgatodriver;
 
-import captureplugin.CapturePlugin;
 import captureplugin.drivers.DeviceIf;
 import captureplugin.drivers.DriverIf;
 import captureplugin.drivers.elgatodriver.configdialog.ElgatoConfigDialog;
