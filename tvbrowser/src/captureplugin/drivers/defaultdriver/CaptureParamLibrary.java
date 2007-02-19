@@ -24,7 +24,6 @@
  */
 package captureplugin.drivers.defaultdriver;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import util.paramhandler.ParamLibrary;
