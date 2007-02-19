@@ -1,10 +1,10 @@
 <launch4jConfig>
-  <dontWrapJar>true</dontWrapJar>
+  <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>tvbrowser.jar</jar>
+  <jar>..\launcher\bin\JarWinJavaExeLauncher.jar</jar>
   <outfile>..\..\..\runtime\tvbrowser_win\tvbrowser_noDD.exe</outfile>
   <errTitle></errTitle>
-  <cmdLine></cmdLine>
+  <cmdLine>/start tvbrowser.jar -Dpropertiesfile=windows.properties -Dsun.java2d.noddraw=true</cmdLine>
   <chdir>.</chdir>
   <priority>normal</priority>
   <downloadUrl>http://java.com/download</downloadUrl>
@@ -19,8 +19,6 @@
     <dontUsePrivateJres>false</dontUsePrivateJres>
     <initialHeapSize>0</initialHeapSize>
     <maxHeapSize>0</maxHeapSize>
-    <opt>-Dpropertiesfile=windows.properties</opt>
-    <opt>-Dsun.java2d.noddraw=true</opt>
   </jre>
   <versionInfo>
     <fileVersion>2.5.1.0</fileVersion>
