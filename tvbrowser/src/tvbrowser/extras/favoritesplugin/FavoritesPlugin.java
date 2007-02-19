@@ -773,13 +773,15 @@ public class FavoritesPlugin {
       for (int j=0; j<progArr.length; j++) {
         PluginTreeNode pNode = n.addProgram(progArr[j]);
         
-        if(progArr.length <= 10)
+        int numberOfDays = progArr[j].getDate().getNumberOfDaysSince(Date.getCurrentDate());
+        if ((progArr.length <= 10) || (numberOfDays > 1)) {
           pNode.setNodeFormatter(new NodeFormatter() {
             public String format(ProgramItem pitem) {
-            Program p = pitem.getProgram();
-            return getFavoriteLabel(mFavoriteArr[x], p);
-          }
-        });
+              Program p = pitem.getProgram();
+              return getFavoriteLabel(mFavoriteArr[x], p);
+            }
+          });
+        }
       }
       mRootNode.add(n);
     }
