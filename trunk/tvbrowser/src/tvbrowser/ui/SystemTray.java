@@ -60,7 +60,6 @@ import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MarkedProgramsList;
 import util.io.IOUtilities;
 import util.ui.ScrollableMenu;
-import util.ui.UiUtilities;
 import util.ui.menu.MenuUtil;
 
 import com.gc.systray.SystemTrayFactory;
@@ -219,12 +218,7 @@ public class SystemTray {
 
             public void windowClosing(java.awt.event.WindowEvent evt) {
               if (Settings.propOnlyMinimizeWhenWindowClosing.getBoolean()) {
-                // Only minimize the main window, don't quit
-                if (Settings.propTrayMinimizeTo.getBoolean())
-                  MainFrame.getInstance().setVisible(false);
-                else
-                  MainFrame.getInstance().setExtendedState(JFrame.ICONIFIED);
-                toggleOpenCloseMenuItem(true);
+                toggleShowHide();
               } else {
                 mSystemTray.setVisible(false);
                 MainFrame.getInstance().quit();
@@ -819,10 +813,10 @@ public class SystemTray {
       });
       toggleOpenCloseMenuItem(false);
     } else {
+      MainFrame.getInstance().setExtendedState(JFrame.ICONIFIED);
+      
       if (Settings.propTrayMinimizeTo.getBoolean())
         MainFrame.getInstance().setVisible(false);
-      else
-        MainFrame.getInstance().setExtendedState(JFrame.ICONIFIED);
       
       toggleOpenCloseMenuItem(true);
     }
