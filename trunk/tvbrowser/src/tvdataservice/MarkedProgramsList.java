@@ -171,7 +171,9 @@ public class MarkedProgramsList {
         }
         else if(testProg != programInList) {
           testProg.setMarkerArr(programInList.getMarkerArr());
+          testProg.setMarkPriority(programInList.getMarkPriority());
           programInList.setMarkerArr(MutableProgram.EMPTY_MARKER_ARR);
+          programInList.setMarkPriority(-1);
           programInList.setProgramState(Program.WAS_UPDATED_STATE);
           mList.add(testProg);
         }
