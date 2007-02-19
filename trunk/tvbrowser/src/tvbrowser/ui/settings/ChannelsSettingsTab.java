@@ -637,24 +637,30 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
      * Fills the List with the subscribed CHannels
      */
     private void fillSubscribedChannelsListBox() {
-        ((DefaultListModel) mSubscribedChannels.getModel()).removeAllElements();
-        Collection<Channel> subscribedChannels = mChannelListModel.getSubscribedChannels();
+      Channel[] subscribedChannelArr = null;
+      
+      if(mSubscribedChannels.getModel().getSize() < 1) {
+        Collection subscribedChannels = mChannelListModel.getSubscribedChannels();
 
         int subscribedChannelCount = subscribedChannels.size();
-        Channel[] subscribedChannelArr = new Channel[subscribedChannelCount];
-        Channel[] channels = mChannelListModel.getAvailableChannels();
-        for (Channel channel : channels) {
-          int pos = ChannelList.getPos(channel);
-          
-          if(pos != -1)
-            subscribedChannelArr[pos] = channel;
-        }
+        subscribedChannelArr = new Channel[subscribedChannelCount];
+      }
+      else
+        subscribedChannelArr = (Channel[])((DefaultListModel) mSubscribedChannels.getModel()).toArray();
 
-        // Add the subscribed channels
-        for (int i = 0; i < subscribedChannelArr.length; i++) {
-            Channel aSubscribedChannelArr = subscribedChannelArr[i];
-            ((DefaultListModel) mSubscribedChannels.getModel()).addElement(aSubscribedChannelArr);
-        }
+      Channel[] channels = mChannelListModel.getAvailableChannels();
+      for (Channel channel : channels) {
+        int pos = ChannelList.getPos(channel);
+          
+        if(pos != -1)
+          subscribedChannelArr[pos] = channel;
+      }
+
+      // Add the subscribed channels
+      for (int i = 0; i < subscribedChannelArr.length; i++) {
+        Channel aSubscribedChannelArr = subscribedChannelArr[i];
+        ((DefaultListModel) mSubscribedChannels.getModel()).addElement(aSubscribedChannelArr);
+      }
     }
 
     /**
