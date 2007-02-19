@@ -66,7 +66,7 @@ public class MarkedProgramsList {
   }
 
   protected void removeProgram(MutableProgram p) {
-    if(p!= null && mList.contains(p) && p.getMarkerArr().length < 1)
+    if(p!= null && p.getMarkerArr().length < 1)
       mList.remove(p);
   }
 
