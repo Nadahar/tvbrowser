@@ -965,4 +965,13 @@ public class MutableProgram implements Program {
   public int getMarkPriority() {
     return mMarkPriority;
   }
+  
+  /**
+   * Sets the mark priority for this program 
+   *
+   * @since 2.5.1
+   */
+  protected void setMarkPriority(int markPriority) {
+    mMarkPriority = markPriority;
+  }
 }
