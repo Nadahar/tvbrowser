@@ -255,6 +255,11 @@ public class PluginTreeNode {
     Map<Date, ArrayList<PluginTreeNode>> dateMap = new HashMap<Date, ArrayList<PluginTreeNode>>();  // key: date; value: ArrayList of ProgramItem objects
     mDefaultNode.removeAllChildren();
 
+    // return if no nodes available
+    if (mChildNodes.size() == 0) {
+      return;
+    }
+
     Iterator<PluginTreeNode> it = mChildNodes.iterator();
     while (it.hasNext()) {
       PluginTreeNode n = it.next();
@@ -281,7 +286,7 @@ public class PluginTreeNode {
         }
       }
     }
-
+    
     // Create the new nodes
     Set<Date> keySet = dateMap.keySet();
     Date[] dates = new Date[keySet.size()];
@@ -289,20 +294,45 @@ public class PluginTreeNode {
     Arrays.sort(dates);
     Date today = Date.getCurrentDate();
     Date nextDay = today.addDays(1);
+    Date yesterDay = today.addDays(-1);
+    Node node=null;
+    String lastDateStr="";
+    int numPrograms = 0;
+    for (Date date : dates) {
+      numPrograms += dateMap.get(date).size();
+    }
+    // show week nodes if there are less than 2 programs per day on average
+    boolean createWeekNodes = (numPrograms <= dates.length * 2);
     for (int i=0; i<dates.length; i++) {
       String dateStr;
-      if (today.equals(dates[i])) {
+      if (yesterDay.equals(dates[i])) {
+        dateStr = mLocalizer.msg("yesterday","yesterday");
+      }
+      else if (today.equals(dates[i])) {
         dateStr = mLocalizer.msg("today","today");
       }
       else if (nextDay.equals(dates[i])) {
         dateStr = mLocalizer.msg("tomorrow","tomorrow");
       }
       else {
-        dateStr = dates[i].toString();
+        if (createWeekNodes) {
+          int weeks = dates[i].getNumberOfDaysSince(today) / 7;
+          if (weeks <= 3) {
+            dateStr = mLocalizer.msg("weeks."+weeks,"in {0} weeks",weeks);
+          }
+          else {
+            dateStr = mLocalizer.msg("weeks.later","later");
+          }
+        }
+        else {
+          dateStr = dates[i].getLongDateString();
+        }
       }
-
-      Node node = new Node(Node.STRUCTURE_NODE, dateStr);
-      mDefaultNode.add(node);
+      if (!dateStr.equals(lastDateStr)) {
+        node = new Node(Node.STRUCTURE_NODE, dateStr);
+        mDefaultNode.add(node);
+        lastDateStr = dateStr;
+      }
       List<PluginTreeNode> list = dateMap.get(dates[i]);
       PluginTreeNode[] nodeArr = new PluginTreeNode[list.size()];
       list.toArray(nodeArr);
