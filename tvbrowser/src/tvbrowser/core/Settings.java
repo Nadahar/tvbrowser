@@ -173,7 +173,7 @@ public class Settings {
       File oldDir = null;
       File testFile = null;
       
-      String[] directories = {getUserDirectoryName() , System.getProperty("user.home") + "/.tvbrowser" ,System.getProperty("user.home") + "/TV-Browser",System.getProperty("user.home") + "/Library/Preferences/TV-Browser"};      
+      String[] directories = {getUserDirectoryName() ,System.getProperty("user.home") + "/TV-Browser",System.getProperty("user.home") + "/Library/Preferences/TV-Browser", System.getProperty("user.home") + "/.tvbrowser"};      
 
       for(int j = 0; j < (TVBrowser.isTransportable() ? directories.length : 1); j++) {        
         for (int i = (j == 0 ? 1 : 0); i < TVBrowser.ALL_VERSIONS.length; i++) {
