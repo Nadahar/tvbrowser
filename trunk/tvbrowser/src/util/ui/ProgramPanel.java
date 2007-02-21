@@ -396,21 +396,22 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       programHasChanged();
     }
     /* This is for debugging of the marking problem after a data update */
-    else if(program.getProgramState() == Program.WAS_DELETED_STATE)
+    else if(program.getProgramState() == Program.WAS_DELETED_STATE) {
       setForeground(Color.red);
-    else if(program.getProgramState() == Program.WAS_UPDATED_STATE)
+    } else if(program.getProgramState() == Program.WAS_UPDATED_STATE) {
       setForeground(Color.blue);
+    }
     
     boolean dontShow = true;
     
     if(mSettings.isShowingPictureForPlugins()) {
       String[] pluginIds = mSettings.getPluginIds();
-      Marker[] marker = mProgram.getMarkerArr();
+      Marker[] markers = mProgram.getMarkerArr();
       
-      if(marker != null && pluginIds != null) {
-        for(int i = 0; i < marker.length; i++) {
-          for(int j = 0; j < pluginIds.length; j++) {
-            if(marker[i].getId().compareTo(pluginIds[j]) == 0) {
+      if(markers != null && pluginIds != null) {
+        for (Marker marker : markers) {
+          for (String pluginId : pluginIds) {
+            if(marker.getId().compareTo(pluginId) == 0) {
               dontShow = false;
               break;
             }
@@ -425,10 +426,11 @@ public class ProgramPanel extends JComponent implements ChangeListener {
         (mSettings.isShowingPictureInTimeRange() && 
          !ProgramUtilities.isNotInTimeRange(mSettings.getPictureTimeRangeStart(),mSettings.getPictureTimeRangeEnd(),program)) ||
          (mSettings.isShowingPictureForDuration() && mSettings.getDuration() <= program.getLength())
-         ))
+         )) {
       mPictureAreaIcon = new PictureAreaIcon(program,mNormalFont, WIDTH_RIGHT - 4, mSettings.isShowingPictureDescription(), true, false);
-    else
+    } else {
       mPictureAreaIcon = new PictureAreaIcon();
+    }
     
     // Calculate the maximum description lines
     int titleHeight = mTitleIcon.getIconHeight();
@@ -453,8 +455,9 @@ public class ProgramPanel extends JComponent implements ChangeListener {
               exc);
         }
         descHeight = mDescriptionIcon.getIconHeight();
-      } else
+      } else {
         descHeight = 0;
+      }
             
       // Calculate the height
       mHeight = titleHeight + descHeight + mPictureAreaIcon.getIconHeight() + V_GAP;
@@ -463,8 +466,9 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       // Calculate the preferred height
       mPreferredHeight = titleHeight + (maxDescLines * mNormalFont.getSize()) + mPictureAreaIcon.getIconHeight() + V_GAP;
             
-      if (mHeight < mPreferredHeight)
+      if (mHeight < mPreferredHeight) {
         mPreferredHeight = mHeight;
+      }
     }
 
     if (isShowing()) {
@@ -486,14 +490,14 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     String[] iconPluginArr = Settings.propProgramTableIconPlugins
         .getStringArray();
 
-    if ((iconPluginArr == null) || (iconPluginArr.length == 0))
+    if ((iconPluginArr == null) || (iconPluginArr.length == 0)) {
       return new Icon[0];
-    else {
+    } else {
       PluginProxyManager mng = PluginProxyManager.getInstance();
       ArrayList<Icon> iconList = new ArrayList<Icon>();
       // Add the icons for each plugin
       for (int pluginIdx = 0; pluginIdx < iconPluginArr.length; pluginIdx++) {
-        if (iconPluginArr[pluginIdx].compareToIgnoreCase("info.id") == 0) {
+        if (iconPluginArr[pluginIdx].compareTo(Settings.INFO_ID) == 0) {
           int info = program.getInfo();
 
           if ((info != -1) && (info != 0)) {
@@ -506,9 +510,10 @@ public class ProgramPanel extends JComponent implements ChangeListener {
               }
             }
           }
-        } else if (iconPluginArr[pluginIdx].compareToIgnoreCase("picture.id") == 0) {
-          if(mProgram.getBinaryField(ProgramFieldType.PICTURE_TYPE) != null)
+        } else if (iconPluginArr[pluginIdx].compareTo(Settings.PICTURE_ID) == 0) {
+          if(mProgram.getBinaryField(ProgramFieldType.PICTURE_TYPE) != null) {
             iconList.add(new ImageIcon("imgs/Info_HasPicture.png"));
+          }
         } else {
           PluginProxy plugin = mng.getPluginForId(iconPluginArr[pluginIdx]);
 
@@ -611,8 +616,9 @@ public class ProgramPanel extends JComponent implements ChangeListener {
 
     if (mMouseOver || mIsSelected) {
       Color test = Settings.propMouseOverColor.getColor();
-      if (mIsSelected)
+      if (mIsSelected) {
         test = Settings.propKeyboardSelectedColor.getColor();
+      }
       grp.setColor(test);
       grp.fillRect(0, 0, width - 1, height - 1);
 
@@ -646,9 +652,10 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     if (!mSettings.isShowingOnlyDateAndTitle()) {
       mPictureAreaIcon.paintIcon(this,grp, WIDTH_LEFT, mTitleIcon.getIconHeight());
       
-      if (mHeight >= mPreferredHeight)
+      if (mHeight >= mPreferredHeight) {
         mDescriptionIcon.paintIcon(this, grp, WIDTH_LEFT, mTitleIcon
             .getIconHeight() + mPictureAreaIcon.getIconHeight());
+      }
 
       // Paint the icons pale if the program is expired
       if (PAINT_EXPIRED_PROGRAMS_PALE && mProgram.isExpired()) {

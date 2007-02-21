@@ -74,6 +74,9 @@ import java.util.logging.Level;
  * @author Martin Oberhauser
  */
 public class Settings {  
+  public static final String INFO_ID = "info.id";
+  public static final String PICTURE_ID = "picture.id";
+
   private static java.util.logging.Logger mLog = java.util.logging.Logger
       .getLogger(Settings.class.getName());
 
@@ -825,7 +828,7 @@ public class Settings {
           ProgramFieldType.SHORT_DESCRIPTION_TYPE });
 
   public static final StringArrayProperty propProgramTableIconPlugins = new StringArrayProperty(
-      mProp, "programpanel.iconPlugins", new String[] { "picture.id","info.id",
+      mProp, "programpanel.iconPlugins", new String[] { PICTURE_ID,INFO_ID,
           "tvraterplugin.TVRaterPlugin", });
 
   /** Color for Program on Air - This shows how much was shown til now */
