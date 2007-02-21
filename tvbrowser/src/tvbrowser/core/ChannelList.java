@@ -95,8 +95,9 @@ public class ChannelList {
     TvDataServiceProxy[] dataServiceArr
     = TvDataServiceProxyManager.getInstance().getDataServices();
 
-    for (int i=0;i<dataServiceArr.length;i++)
-      addDataServiceChannels(dataServiceArr[i]);
+    for (TvDataServiceProxy proxy : dataServiceArr) {
+      addDataServiceChannels(proxy);
+    }
 
     clearChannelMaps();
     MainFrame.resetOnAirArrays();
@@ -108,9 +109,11 @@ public class ChannelList {
   public static void initSubscribedChannels() {
     Channel[] channelArr = Settings.propSubscribedChannels.getChannelArray();
 
-    for (Channel channel : channelArr)
-      if (channel != null)
+    for (Channel channel : channelArr) {
+      if (channel != null) {
         subscribeChannel(channel);
+      }
+    }
   }
 
   /**
@@ -158,8 +161,9 @@ public class ChannelList {
   private static void addDataServiceChannels(TvDataServiceProxy dataService) {
       Channel[] channelArr = dataService.getAvailableChannels();
 
-      for (Channel channel : channelArr)
+      for (Channel channel : channelArr) {
         addChannelToAvailableChannels(channel);
+      }
     }
 
 
@@ -169,8 +173,9 @@ public class ChannelList {
   private static void addDataServiceChannelsForTvBrowserStart(TvDataServiceProxy dataService) {
     Channel[] channelArr = dataService.getChannelsForTvBrowserStart();
 
-    for (Channel channel : channelArr)
+    for (Channel channel : channelArr) {
       addChannelToAvailableChannels(channel);
+    }
   }
 
   private static void addChannelToAvailableChannels(Channel channel) {
@@ -178,17 +183,21 @@ public class ChannelList {
       mAvailableChannels.add(channel);
       mAvailableChannelsMap.put(channel, channel);
 
-      if(!mChannelDayLightCorrectionMap.isEmpty())
+      if(!mChannelDayLightCorrectionMap.isEmpty()) {
         setDayLightSavingTimeCorrectionsForChannel(channel);
+      }
 
-      if(!mChannelIconMap.isEmpty())
+      if(!mChannelIconMap.isEmpty()) {
         setChannelIconForChannel(channel);
+      }
 
-      if(!mChannelNameMap.isEmpty())
+      if(!mChannelNameMap.isEmpty()) {
         setChannelNameForChannel(channel);
+      }
 
-      if(!mChannelWebpagesMap.isEmpty())
+      if(!mChannelWebpagesMap.isEmpty()) {
         setWebPageForChannel(channel);
+      }
     }
   }
 
@@ -218,8 +227,9 @@ public class ChannelList {
 
     loadChannelMaps();
 
-    for (int i=0;i<dataServiceArr.length;i++)
-      addDataServiceChannelsForTvBrowserStart(dataServiceArr[i]);
+    for (TvDataServiceProxy proxy : dataServiceArr) {
+      addDataServiceChannelsForTvBrowserStart(proxy);
+    }
   }
 
   /**
@@ -250,10 +260,11 @@ public class ChannelList {
 		}
 	    mSubscribedChannels = new ArrayList<Channel>(channelArr.length);
 	    for (int i = 0; i < channelArr.length; i++) {
-	      if (channelArr[i] == null)
-	        mLog.warning("cannot subscribe channel #" + i + " - is null");
-	      else
-	        mSubscribedChannels.add(channelArr[i]);
+	      if (channelArr[i] == null) {
+          mLog.warning("cannot subscribe channel #" + i + " - is null");
+        } else {
+          mSubscribedChannels.add(channelArr[i]);
+        }
 	    }
 	    if (channelsAdded && update) {
 	        SwingUtilities.invokeLater(new Runnable() {
@@ -277,27 +288,26 @@ public class ChannelList {
    * @since 2.2.1
    */
   public static Channel getChannel(String dataServiceId, String groupId, String country, String channelId) {
-    Iterator iter = mAvailableChannels.iterator();
-
     TvDataServiceProxy dataService = null;
-
     if(dataServiceId != null) {
       dataService = TvDataServiceProxyManager.getInstance().findDataServiceById(dataServiceId);
 
-      if(dataService == null)
+      if(dataService == null) {
         return null;
+      }
     }
 
+    Iterator<Channel> iter = mAvailableChannels.iterator();
     while (iter.hasNext()) {
-      Channel channel = (Channel) iter.next();
+      Channel channel = iter.next();
 
-      if (((dataServiceId != null && channel.getDataServiceProxy().getId().compareTo(dataService.getId()) == 0) ||
+      if (channel.getId().compareTo(channelId) == 0 
+          && ((dataServiceId != null && channel.getDataServiceProxy().getId().compareTo(dataService.getId()) == 0) ||
             dataServiceId == null)
           && ((groupId != null && channel.getGroup().getId().compareTo(groupId) == 0) ||
               groupId == null)
           && ((country != null && channel.getCountry().compareTo(country) == 0) ||
-              country == null)
-          && channel.getId().compareTo(channelId) == 0) {
+              country == null)) {
         return channel;
       }
     }
@@ -344,8 +354,9 @@ public class ChannelList {
   public static int getPos(Channel channel) {
     for (int i = 0; i < mSubscribedChannels.size(); i++) {
       Channel ch = mSubscribedChannels.get(i);
-      if (ch != null && ch.equals(channel))
+      if (ch != null && ch.equals(channel)) {
         return i;
+      }
     }
     return -1;
   }
@@ -368,7 +379,9 @@ public class ChannelList {
    * @return True if the channel is subscribed, false otherwise.
    */
   public static boolean isSubscribedChannel(Channel channel) {
-    if (channel==null) return false;
+    if (channel==null) {
+      return false;
+    }
     for (int i=0;i<mSubscribedChannels.size();i++) {
       Channel ch=mSubscribedChannels.get(i);
       if (ch != null && ch.equals(channel)) {
@@ -446,8 +459,9 @@ public class ChannelList {
   private static void setChannelNameForChannel(Channel channel) {
     String value = getMapValueForChannel(channel, mChannelNameMap);
 
-    if(value != null && value.length() > 0)
+    if(value != null && value.length() > 0) {
       channel.setUserChannelName(value);
+    }
   }
 
   /**
@@ -458,8 +472,9 @@ public class ChannelList {
   private static void setWebPageForChannel(Channel channel) {
     String value = getMapValueForChannel(channel, mChannelWebpagesMap);
 
-    if(value != null && value.length() > 0)
+    if(value != null && value.length() > 0) {
       channel.setUserWebPage(value);
+    }
   }
 
   private static void storeDayLightSavingTimeCorrections() {
@@ -471,10 +486,10 @@ public class ChannelList {
       fw=new FileWriter(f);
       out=new PrintWriter(fw);
       Channel[] channels=getSubscribedChannels();
-        for (int i=0;i<channels.length;i++) {
-          int corr=channels[i].getDayLightSavingTimeCorrection();
+        for (Channel channel : channels) {
+          int corr=channel.getDayLightSavingTimeCorrection();
           if (corr!=0) {
-            out.println(createPropertyForChannel(channels[i], String.valueOf(corr)));
+            out.println(createPropertyForChannel(channel, String.valueOf(corr)));
           }
         }
     }catch(IOException e) {
@@ -498,10 +513,10 @@ public class ChannelList {
         fw=new FileWriter(f);
         out=new PrintWriter(fw);
         Channel[] channels=getSubscribedChannels();
-          for (int i=0;i<channels.length;i++) {
-            String filename = channels[i].getUserIconFileName();
+          for (Channel channel : channels) {
+            String filename = channel.getUserIconFileName();
             if ((filename != null) && (filename.trim().length() > 0)){
-              out.println(createPropertyForChannel(channels[i], channels[i].isUsingUserIcon()+";"+filename.trim()));
+              out.println(createPropertyForChannel(channel, channel.isUsingUserIcon()+";"+filename.trim()));
             }
           }
       }catch(IOException e) {
@@ -527,10 +542,10 @@ public class ChannelList {
       fw=new FileWriter(f);
       out=new PrintWriter(fw);
       Channel[] channels=getSubscribedChannels();
-        for (int i=0;i<channels.length;i++) {
-          String userChannelName = channels[i].getUserChannelName();
+        for (Channel channel : channels) {
+          String userChannelName = channel.getUserChannelName();
           if ((userChannelName != null) && (userChannelName.trim().length() > 0)){
-            out.println(createPropertyForChannel(channels[i], userChannelName.trim()));
+            out.println(createPropertyForChannel(channel, userChannelName.trim()));
           }
         }
     }catch(IOException e) {
@@ -555,10 +570,10 @@ public class ChannelList {
       fw=new FileWriter(f);
       out=new PrintWriter(fw);
       Channel[] channels=getSubscribedChannels();
-        for (int i=0;i<channels.length;i++) {
-          String userWebPage = channels[i].getUserWebPage();
+        for (Channel channel : channels) {
+          String userWebPage = channel.getUserWebPage();
           if ((userWebPage != null) && (userWebPage.trim().length() > 0)){
-            out.println(createPropertyForChannel(channels[i], userWebPage.trim()));
+            out.println(createPropertyForChannel(channel, userWebPage.trim()));
           }
         }
     }catch(IOException e) {
@@ -576,10 +591,12 @@ public class ChannelList {
   private static String getMapValueForChannel(Channel channel, HashMap<String, String> map) {
     String value = map.get(new StringBuffer(channel.getDataServiceProxy().getId()).append(":").append(channel.getGroup().getId()).append(":").append(channel.getCountry()).append(":").append(channel.getId()).toString());
 
-    if(value == null)
+    if(value == null) {
       value = map.get(new StringBuffer(channel.getDataServiceProxy().getId()).append(":").append(channel.getGroup().getId()).append(":").append(channel.getId()).toString());
-    if(value == null)
+    }
+    if(value == null) {
       value = map.get(new StringBuffer(channel.getDataServiceProxy().getId()).append(":").append(channel.getId()).toString());
+    }
 
     return value;
   }
@@ -613,8 +630,9 @@ public class ChannelList {
           String key=line.substring(0,pos);
           String val=line.substring(pos+1);
 
-          if (val!=null)
+          if (val!=null) {
             map.put(key,val);
+          }
 
         }catch(IndexOutOfBoundsException e) {
           // ignore
