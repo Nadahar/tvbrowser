@@ -300,9 +300,9 @@ public class ProgramPanelSettingsTab implements SettingsTab {
       if(mPlugin != null)
         return mPlugin.getId();
       else if(mName != null && mName.compareTo("Infos") == 0)
-        return "info.id";
+        return Settings.INFO_ID;
       else
-        return "picture.id";
+        return Settings.PICTURE_ID;
     }
     
     public String toString() {
