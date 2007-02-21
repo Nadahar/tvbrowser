@@ -119,14 +119,15 @@ public class TaskMenuAction {
    * submenus.
    */
   private void addTaskPaneGroup(JTaskPaneGroup parent,
-      Program program, final ActionMenu menu, ProgramInfoDialog info,
+      final Program program, final ActionMenu menu, final ProgramInfoDialog info,
       final String id) {
-    ActionMenu[] subs = menu.getSubItems();
+    final ActionMenu[] subs = menu.getSubItems();
 
     final JTaskPaneGroup group = new JTaskPaneGroup();
     group.setTitle((String) menu.getAction().getValue(Action.NAME));
-    group.setExpanded(ProgramInfo.getInstance().getExpanded(
-        id + "_" + (String) menu.getAction().getValue(Action.NAME)));
+    boolean expanded = ProgramInfo.getInstance().getExpanded(
+        id + "_" + (String) menu.getAction().getValue(Action.NAME));
+    group.setExpanded(expanded);
     group.setEnabled(true);
     mFind.installKeyListener(group);
     
@@ -145,9 +146,22 @@ public class TaskMenuAction {
     if (menu.getAction().getValue(Action.SMALL_ICON) != null)
       group.setIcon((Icon) menu.getAction().getValue(Action.SMALL_ICON));
 
-    for (int i = 0; i < subs.length; i++)
-      new TaskMenuAction(group, program, subs[i], info, id, mFind);
-
+    // delay group creation if it is not expanded
+    if (expanded) {
+      for (int i = 0; i < subs.length; i++)
+        new TaskMenuAction(group, program, subs[i], info, id, mFind);
+    }
+    else {
+      Thread thread = new Thread() {
+        @Override
+        public void run() {
+          for (int i = 0; i < subs.length; i++)
+            new TaskMenuAction(group, program, subs[i], info, id, mFind);
+        }
+      };
+      thread.setPriority(Thread.MIN_PRIORITY);
+      thread.start();
+    }
     parent.add(Box.createRigidArea(new Dimension(0, 10)));
     parent.add(group);
     parent.add(Box.createRigidArea(new Dimension(0, 5)));
