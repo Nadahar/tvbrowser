@@ -275,11 +275,15 @@ public class DialogOverview extends JDialog implements WindowClosingIf {
 
     Vector<Rating> personalVector = new Vector<Rating>(_tvraterPlugin.getDatabase().getPersonalRating());
     Collections.sort(personalVector, comperator);
+    int index = _personal.getSelectedIndex();
     _personal.setListData(personalVector);
+    _personal.setSelectedIndex(index);
 
     Vector<Rating> overallVector = new Vector<Rating>(_tvraterPlugin.getDatabase().getOverallRating());
     Collections.sort(overallVector, comperator);
+    index = _overall.getSelectedIndex();
     _overall.setListData(overallVector);
+    _overall.setSelectedIndex(index);
 
   }
 
