@@ -476,8 +476,12 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     ArrayList<ProgramReceiveIf> plugins = new ArrayList<ProgramReceiveIf>();
     
     for(int i = 0; i < receiveTargetArr.length; i++) {
-      if(!plugins.contains(receiveTargetArr[i].getReceifeIfForIdOfTarget()))
-        plugins.add(receiveTargetArr[i].getReceifeIfForIdOfTarget());
+      if(!plugins.contains(receiveTargetArr[i].getReceifeIfForIdOfTarget())) {
+        ProgramReceiveIf target = receiveTargetArr[i].getReceifeIfForIdOfTarget();
+        
+        if(target != null)
+          plugins.add(target);
+      }
     }
     
     ProgramReceiveIf[] pluginArr = plugins.toArray(new ProgramReceiveIf[plugins.size()]);
@@ -515,7 +519,6 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mChangePassProgramsBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         PluginChooserDlg dlg = new PluginChooserDlg(EditFavoriteDialog.this, mPassProgramPlugins, null, ReminderPluginProxy.getInstance());
-                
         UiUtilities.centerAndShow(dlg);
         ProgramReceiveTarget[] pluginArr = dlg.getReceiveTargets();
         if (pluginArr != null) {
@@ -526,7 +529,6 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
             updatePassProgramsPanel();
           }
         }
-
       }
     });
 
@@ -538,7 +540,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     panel.add(mChangePassProgramsBtn, cc.xy(3, 3));
     mReminderAfterDownloadCb.setSelected(mFavorite.isRemindAfterDownload());
 
-    mPassProgramsCheckBox.setSelected(mPassProgramPlugins != null && mPassProgramPlugins.length > 0);
+    mPassProgramsCheckBox.setSelected(mPassProgramPlugins != null && mPassProgramPlugins.length > 0 && !mPassProgramsLb.getText().equals(mLocalizer.msg("dontpass", "don't pass programs")));
 
     mPassProgramsCheckBox.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
