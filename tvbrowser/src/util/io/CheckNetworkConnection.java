@@ -134,8 +134,24 @@ class CheckNetworkConnection {
   
   private void hideDialog() {
     mCheckRunning = false;
-    if ((mWaitingDialog != null) && (mWaitingDialog.isVisible())) {
-      mWaitingDialog.setVisible(false);
+    if (mWaitingDialog != null) {
+      if(MainFrame.getInstance().isVisible())
+        mWaitingDialog.dispose();
+      else {
+        new Thread() {
+          public void run() {
+            setPriority(Thread.MIN_PRIORITY);
+            
+            while(!MainFrame.getInstance().isVisible()) {
+              try {
+                sleep(500);
+              }catch(Exception e) {}
+            }
+            
+            mWaitingDialog.dispose();
+          }
+        }.start();
+      }
     }
   }
 
@@ -177,7 +193,7 @@ class CheckNetworkConnection {
       mWaitingDialog.pack();
       if(mCheckRunning)
         UiUtilities.centerAndShow(mWaitingDialog);
-      mWaitingDialog.setVisible(mCheckRunning);
+      mWaitingDialog.setVisible(mCheckRunning && MainFrame.getInstance().isVisible() && MainFrame.getInstance().getExtendedState() != MainFrame.ICONIFIED);
     }
   }
 
