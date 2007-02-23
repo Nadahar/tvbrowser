@@ -383,16 +383,18 @@ public class FavoritesPlugin {
    */
   public void addProgramsForSending(ProgramReceiveTarget[] targets, Program[] programs) {
     for(ProgramReceiveTarget target : targets) {
-      ArrayList<Program> list = mSendPluginsTable.get(target);
+      if(target != null && target.getReceifeIfForIdOfTarget() != null) {
+        ArrayList<Program> list = mSendPluginsTable.get(target);
       
-      if(list == null) {
-        list = new ArrayList<Program>();        
-        mSendPluginsTable.put(target, list);
+        if(list == null) {
+          list = new ArrayList<Program>();        
+          mSendPluginsTable.put(target, list);
+        }
+      
+        for(Program program : programs)
+          if(!list.contains(program))
+            list.add(program);
       }
-      
-      for(Program program : programs)
-        if(!list.contains(program))
-          list.add(program);
     }
   }
 
