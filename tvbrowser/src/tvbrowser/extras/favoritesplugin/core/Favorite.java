@@ -418,7 +418,8 @@ public abstract class Favorite {
     if(mNewProgramsArr.length > 0 && send) {
       if(!dataUpdate) {
         for (int i=0; i<pluginArr.length; i++) {
-          pluginArr[i].getReceifeIfForIdOfTarget().receivePrograms(mNewProgramsArr,pluginArr[i]);
+          if(pluginArr[i] != null && pluginArr[i].getReceifeIfForIdOfTarget() != null)
+            pluginArr[i].getReceifeIfForIdOfTarget().receivePrograms(mNewProgramsArr,pluginArr[i]);
         }
       }
       else
