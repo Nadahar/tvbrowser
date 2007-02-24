@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.logging.Level;
 
 import tvbrowser.core.Settings;
 
@@ -42,10 +43,10 @@ import tvbrowser.core.Settings;
  *  3. Jar of the Class
  * 
  * @author bodum
- * @since 2.3
+ * @since 2.5
  */
 public class LocalizerClassloader extends ClassLoader {
-
+  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(LocalizerClassloader.class.getName());
   /**
    * Create Localizer-Classloader
    * 
@@ -57,26 +58,30 @@ public class LocalizerClassloader extends ClassLoader {
  
   @Override
   public InputStream getResourceAsStream(String name) {
-    // Check User-Home
-    File file = new File(Settings.getUserSettingsDirName() + "/lang/" +name);
+    try {
+      // Check User-Home
+      File file = new File(Settings.getUserSettingsDirName() + "/lang/" +name);
     
-    if (file.exists()) {
-      try {
-        return new FileInputStream(file);
-      } catch (FileNotFoundException e) {
-        e.printStackTrace();
+      if (file.exists()) {
+        try {
+          return new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+          mLog.log(Level.WARNING, "Could not open language properties found in user settings directory.", e);
+        }
       }
-    }
     
-    // Check TV-Browser Location
-    file = new File("lang/" + name);
+      // Check TV-Browser Location
+      file = new File("lang/" + name);
     
-    if (file.exists()) {
-      try {
-        return new FileInputStream(file);
-      } catch (FileNotFoundException e) {
-        e.printStackTrace();
+      if (file.exists()) {
+        try {
+          return new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+          mLog.log(Level.WARNING, "Could not open language properties found in program directory.", e);
+        }
       }
+    }catch(Throwable e) {
+      mLog.log(Level.SEVERE, "Could not open user defined language properties, using default instead.", e);
     }
     
     // Check Jar
