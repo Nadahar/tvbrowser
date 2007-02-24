@@ -1,5 +1,63 @@
 Changelog TVBrowser
 
+2.5.1beta1
+=========
+
+-Bugs
+ * 1622882 CalendarExport: problems with settings
+ * 1623607 Channel settings not usable
+ * 1623783 Picture settings destroying settings dialog layout
+ * 1624314 Refresh of program panels doesn't work if a channel is empty
+ * 1624512 SkinLookAndFeel themepacks seems not changeable
+ * 1625296 Multiple UI updates on startup
+ * 1629645 Plugin selection for sending somtimes didn't work
+ * 1629845 No scroll bar in print dialog (printer queue)
+ * 1629847 Channel name filter takes long time
+ * 1631115 Typos
+ * 1631666 tvbrowser.exe only requires Java 1.4
+ * 1631789 Toolbar buttons have random order in config dialog
+ * 1632224 CapturePlugin: error for receiving program for deleting
+ * 1633175 CapturePlugin: No update of programs after data update
+ * 1634420 Reminder for started program shows "Remind 5 minutes before"
+ * 1634665 Plugins can initialize FilterList to early
+ * 1634912 WebPlugin allows empty page name
+ * 1634939 Plugins not sorted alphabetically
+ * 1637427 Show program info menu useless in program info
+ * 1640885 Previous/Next day actions are wrongly enabled
+ * 1648166 Pluginview contains items out of date
+ * 1650939 New favorite dialog does not resize correctly
+ * 1652059 TV data have to be copied on changing TV data directory
+ * 1662012 NullPointerException in TVRaterPlugin
+ * 1662342 CapturePlugin: Freezes if manny programs where scheduled
+ * 1637210 Grouping of favorites sometimes useless
+ * 1667550 Favorite not editable if receive target don't exists
+ * 1667972 Exception in LocalizerClassloader inhibits TV-Browser start 
+ 
+-Features
+ * 1551370 Uncomplete keyboard navigation in the Favorites wizard
+ * 1575136 Use different program configuration for plugins
+ * 1624347 Parameter system: add parameter
+ * 1624351 Scroll to current on air programs on TVB restore
+ * 1625777 Scroll program table when using keys in channel list
+ * 1625033 Add pay tv type to channel and filters for it
+ * 1629839 Add settings for network connection timeout
+ * 1629843 Add time settings for internet connection test
+ * 1630178 Automatic data update after adding channels
+ * 1635192 Add tray support with Java6
+ * 1637197 Have repetitions of favorites in program context menu
+ * 1638413 Add global program configuration for plugins
+ * 1638702 Prevent settings dialog to be opened multiple times
+ * 1641077 have channel webpage in webplugin
+ * 1645922 Start search with keyboard
+ * 1646664 "removed reminders" dialog optional
+ * 1648312 Create transportable version of TV-Browser
+ * 1648506 Reuse program info dialog
+ * 1656634 Reminder: Add selectable always on top
+ * 1657097 More than one toolbar button per plugin
+ * 1657098 Add filler actions to toolbar
+ * 1659229 Add diffent colors for marking
+ * 1661310 Horizontal scrolling of program table with mouse wheel 
+
 2.5
 =========
 
