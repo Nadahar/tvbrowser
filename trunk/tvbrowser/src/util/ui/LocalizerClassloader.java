@@ -81,7 +81,7 @@ public class LocalizerClassloader extends ClassLoader {
         }
       }
     }catch(Throwable e) {
-      mLog.log(Level.SEVERE, "Could not open user defined language properties, using default instead.", e);
+      mLog.log(Level.SEVERE, "Could not load user defined language properties, using default instead.", e);
     }
     
     // Check Jar
