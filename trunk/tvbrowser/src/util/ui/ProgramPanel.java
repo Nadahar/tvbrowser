@@ -491,7 +491,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     String[] iconPluginArr = Settings.propProgramTableIconPlugins
         .getStringArray();
 
-    if ((iconPluginArr == null) || (iconPluginArr.length == 0)) {
+    if (mSettings.isShowingOnlyDateAndTitle() || (iconPluginArr == null) || (iconPluginArr.length == 0)) {
       return new Icon[0];
     } else {
       PluginProxyManager mng = PluginProxyManager.getInstance();
