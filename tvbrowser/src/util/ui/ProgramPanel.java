@@ -393,7 +393,8 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       // Set the new title
       mTitleIcon.setText(program.getTitle());
 
-      programHasChanged();
+      if(!mSettings.isShowingOnlyDateAndTitle() && mProgram.getProgramState() != Program.WAS_DELETED_STATE)
+        programHasChanged();
     }
     /* This is for debugging of the marking problem after a data update */
     else if(program.getProgramState() == Program.WAS_DELETED_STATE) {
@@ -421,7 +422,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     }
     
     // Create the picture area icon
-    if(mProgram.getBinaryField(ProgramFieldType.PICTURE_TYPE) != null && ( 
+    if(!mSettings.isShowingOnlyDateAndTitle() && mProgram.getBinaryField(ProgramFieldType.PICTURE_TYPE) != null && ( 
         mSettings.isShowingPictureEver() || !dontShow || 
         (mSettings.isShowingPictureInTimeRange() && 
          !ProgramUtilities.isNotInTimeRange(mSettings.getPictureTimeRangeStart(),mSettings.getPictureTimeRangeEnd(),program)) ||
