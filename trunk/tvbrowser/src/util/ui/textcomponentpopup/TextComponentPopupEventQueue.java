@@ -35,7 +35,7 @@ public class TextComponentPopupEventQueue extends EventQueue {
   protected void dispatchEvent(AWTEvent event) {
     try {
       super.dispatchEvent(event);
-    }catch(Exception e) {return;}
+    }catch(Throwable e) {return;}
 
     // interested only in mouseevents
     if (!(event instanceof MouseEvent))
