@@ -103,7 +103,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   public PluginInfo getInfo() {
     return (new PluginInfo(mLocalizer.msg("name","Marker plugin"), mLocalizer.msg("description",
         "A simple marker plugin (formerly Just_Mark)"), "René Mach", new Version(
-        1, 43, true, "1.4.3"), "GPL"));
+        1, 44, true, "1.4.4"), "GPL"));
   }
 
   public void loadSettings(Properties prop) {
@@ -182,7 +182,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
 
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
     return mMarkListVector.getReceiveTargets();
-  }  
+  }
   
   public boolean receivePrograms(Program[] programs, ProgramReceiveTarget target) {
     MarkList targetList = mMarkListVector.getMarkListForTarget(target);    
@@ -251,6 +251,9 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   }
 
   public void handleTvBrowserStartFinished() {
+    if(mMarkListVector.isEmpty())
+      mMarkListVector.addElement(new MarkList(mLocalizer.msg("default","default")));
+    
     mHasRightToUpdate = true;
     updateTree();
 

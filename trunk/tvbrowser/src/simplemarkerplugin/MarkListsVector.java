@@ -43,12 +43,6 @@ public class MarkListsVector extends Vector<MarkList> {
   private static final long serialVersionUID = 1L;
 
   /**
-   * Constructor of this class.
-   */
-  public MarkListsVector() {
-    addElement(new MarkList(SimpleMarkerPlugin.mLocalizer.msg("default","default")));
-  }
-  /**
    * @param p
    *          The Program to find.
    * @return True if a list contains the Program.
