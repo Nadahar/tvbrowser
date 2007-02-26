@@ -33,6 +33,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import tvbrowser.extras.common.ReminderConfiguration;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -72,7 +73,7 @@ public class NotificationWizardStep extends AbstractWizardStep {
     panelBuilder.add(mReminderCb = new JCheckBox(mLocalizer.msg("option.remind","Automatisch an diese Sendung erinnern.")), cc.xy(1,3));
     panelBuilder.add(mCheckOnUpdateCb = new JCheckBox(mLocalizer.msg("option.checkAfterUpdate","Sofort alarmieren, wenn die Sendung nach einer Aktualisierung gefunden wird.")), cc.xy(1,5));
 
-    mReminderCb.setSelected(true);
+    mReminderCb.setSelected(FavoritesPlugin.getInstance().isAutoSelectingRemider());
     JPanel result = panelBuilder.getPanel();
     result.addFocusListener(new FocusAdapter() {
 

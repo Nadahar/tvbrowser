@@ -64,7 +64,7 @@ public class FavoritesSettingTab implements SettingsTab {
   
   private ProgramReceiveTarget[] mClientPluginTargets;
   private JLabel mPluginLabel;
-  private JCheckBox mExpertMode, mShowRepetitions;
+  private JCheckBox mExpertMode, mShowRepetitions, mAutoSelectRemider;
   
   /**
    * Creates the settings panel for this tab.
@@ -73,13 +73,14 @@ public class FavoritesSettingTab implements SettingsTab {
     CellConstraints cc = new CellConstraints();
     PanelBuilder builder = new PanelBuilder(new FormLayout(
         "5dlu,min(150dlu;pref):grow,5dlu,pref,5dlu",
-        "pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu,pref"));
+        "pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu,pref"));
     builder.setDefaultDialogBorder();
     
     mPluginLabel = new JLabel();
     JButton choose = new JButton(mLocalizer.msg("selectPlugins","Choose Plugins"));    
     mExpertMode = new JCheckBox(mLocalizer.msg("expertMode","Always use expert mode"),FavoritesPlugin.getInstance().isUsingExpertMode());
     mShowRepetitions = new JCheckBox(mLocalizer.msg("showRepetitions","Show repetitions in context menu of a favorite program"),FavoritesPlugin.getInstance().isShowingRepetitions());
+    mAutoSelectRemider = new JCheckBox(mLocalizer.msg("autoSelectReminder","Select reminding automatically for new favorites"),FavoritesPlugin.getInstance().isAutoSelectingRemider());
     
     ProgramReceiveTarget[] targetsArr
     = FavoritesPlugin.getInstance().getClientPluginTargetIds();    
@@ -122,6 +123,9 @@ public class FavoritesSettingTab implements SettingsTab {
     builder.add(mExpertMode, cc.xyw(2,7,3));
     builder.addSeparator(mLocalizer.msg("repetitionSettings","Repetitions"), cc.xyw(1,9,4));
     builder.add(mShowRepetitions, cc.xyw(2,11,3));
+    builder.addSeparator(mLocalizer.msg("reminderSettings","Reminer auto selection"), cc.xyw(1,13,4));
+    builder.add(mAutoSelectRemider, cc.xyw(2,15,3));
+
     return builder.getPanel();
   }
 
@@ -161,6 +165,7 @@ public class FavoritesSettingTab implements SettingsTab {
     FavoritesPlugin.getInstance().setClientPluginTargets(mClientPluginTargets);
     FavoritesPlugin.getInstance().setIsUsingExpertMode(mExpertMode.isSelected());    
     FavoritesPlugin.getInstance().setShowRepetitions(mShowRepetitions.isSelected());
+    FavoritesPlugin.getInstance().setAutoSelectingReminder(mAutoSelectRemider.isSelected());
   }
   
   /**
