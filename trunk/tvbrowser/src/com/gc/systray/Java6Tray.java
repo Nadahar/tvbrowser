@@ -80,6 +80,7 @@ public class Java6Tray implements SystemTrayIf {
 
         mTrayParent.setSize(0, 0);
         mTrayParent.setUndecorated(true);
+        mTrayParent.setAlwaysOnTop(true);
         mTrayParent.setVisible(false);
       }
       
