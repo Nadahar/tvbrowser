@@ -144,7 +144,7 @@ public class CalendarSettingsTab implements SettingsTab {
     mUseAlarm = new JCheckBox(mLocalizer.msg("reminder", "Use reminder"));
     pb.add(mUseAlarm, cc.xy(2,8));
 
-    SpinnerModel model = new SpinnerNumberModel(0, 0, 180, 1);
+    SpinnerModel model = new SpinnerNumberModel(0, 0, 1440, 1);
     mAlarmMinutes = new JSpinner(model);
     JPanel panel = new JPanel(new BorderLayout());
     
