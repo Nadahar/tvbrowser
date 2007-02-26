@@ -60,7 +60,7 @@ public abstract class Favorite {
   private ArrayList<Program> mBlackList;
   
   public Favorite() {
-    mReminderConfiguration = new ReminderConfiguration();
+    mReminderConfiguration = new ReminderConfiguration(FavoritesPlugin.getInstance().isAutoSelectingRemider() ? new String[] {ReminderConfiguration.REMINDER_DEFAULT} : new String[0]);
     mLimitationConfiguration = new LimitationConfiguration();
     mPrograms = new Program[]{};
     mNewProgramsArr = new Program[]{};

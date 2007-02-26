@@ -39,8 +39,12 @@ public class ReminderConfiguration {
 
   private String[] mServiceIDs;
 
-  public ReminderConfiguration() {
-    mServiceIDs = new String[]{ REMINDER_DEFAULT };
+  public ReminderConfiguration(String[] ids) {
+    mServiceIDs = ids;
+  }
+  
+  public ReminderConfiguration() {    
+      mServiceIDs = new String[]{ REMINDER_DEFAULT };
   }
 
   public ReminderConfiguration(ObjectInputStream in) throws IOException, ClassNotFoundException {

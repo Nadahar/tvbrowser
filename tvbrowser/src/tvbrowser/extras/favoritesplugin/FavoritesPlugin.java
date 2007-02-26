@@ -875,8 +875,21 @@ public class FavoritesPlugin {
   protected boolean isShowingRepetitions() {
     return mSettings.getProperty("showRepetitions","true").compareTo("true") == 0;
   }
-  
+
   protected void setShowRepetitions(boolean value) {
     mSettings.setProperty("showRepetitions", String.valueOf(value));
+  }
+  
+  /**
+   * Gets if reminder should be automatically selected for new Favorites
+   * 
+   * @return If the reminder should be selected.
+   */
+  public boolean isAutoSelectingRemider() {
+    return mSettings.getProperty("autoSelectReminder","true").compareTo("true") == 0;
+  }
+
+  protected void setAutoSelectingReminder(boolean value) {
+    mSettings.setProperty("autoSelectReminder", String.valueOf(value));
   }
 }
