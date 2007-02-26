@@ -244,7 +244,7 @@ public class NewsPlugin extends Plugin {
       
         return Integer.parseInt(news.substring(startPos,endPos));
       }
-      else if(index2 != 1) {
+      else if(index2 != -1) {
         int startPos = news.indexOf("\"",index1) + 1;
         int endPos = news.indexOf("\"",startPos);
         
