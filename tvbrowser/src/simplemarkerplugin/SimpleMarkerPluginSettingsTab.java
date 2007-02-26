@@ -558,7 +558,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
 
     public boolean isCellEditable(EventObject evt) {
       if (evt instanceof MouseEvent) {
-        return ((MouseEvent) evt).getClickCount() >= 2 && (mListTable.getSelectedRow() != 0 || mListTable.getSelectedColumn() != 0);
+        return ((MouseEvent) evt).getClickCount() >= 2;
       }
       return true;
     }
