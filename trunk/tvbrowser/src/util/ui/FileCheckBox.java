@@ -57,7 +57,7 @@ public class FileCheckBox extends JComponent {
 
   
   
-  public FileCheckBox(String title, File file, int tab) {
+  public FileCheckBox(String title, File file, int tab, boolean addButton) {
     mTitle=title;
     setLayout(new BorderLayout(5,0));
 
@@ -77,7 +77,9 @@ public class FileCheckBox extends JComponent {
 
     add(mCheckbox,BorderLayout.WEST);
     add(mTextfield,BorderLayout.CENTER);
-    add(mChoosebtn,BorderLayout.EAST);
+    
+    if(addButton)
+      add(mChoosebtn,BorderLayout.EAST);
 
     mCheckbox.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
