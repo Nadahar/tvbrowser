@@ -63,12 +63,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -76,6 +77,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class EditFilterComponentDlg extends JDialog implements ActionListener, DocumentListener, WindowClosingIf {
+
+  private static final String REGEX_INVALID_CHARACTERS = "[\\p{Punct}\\s&&[^_]]";
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(EditFilterComponentDlg.class);
 
@@ -114,17 +117,14 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     JPanel typePanel = new JPanel(new BorderLayout());
 
     namePanel.add(new JLabel(mLocalizer.msg("componentName", "Component name:")), BorderLayout.WEST);
-    mNameTF = new JTextField(20);
+    mNameTF = new JTextField(new PlainDocument() {
 
+      public void insertString(int offset, String str, AttributeSet a) throws BadLocationException {
+        str = str.replaceAll(REGEX_INVALID_CHARACTERS, "_");
+        super.insertString(offset, str, a);
+      }
+    }, "", 20);
     mNameTF.getDocument().addDocumentListener(this);
-    mNameTF.addKeyListener(new KeyAdapter() {
-
-		@Override
-		public void keyTyped(KeyEvent e) {
-			if (e.getKeyChar()==' ') {
-				e.setKeyChar('_');
-			}
-		}});
 
     namePanel.add(mNameTF, BorderLayout.EAST);
     mDescTF = new JTextField(20);
@@ -282,9 +282,8 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
 
   private void updateOkBtn() {
     if (mOkBtn != null) {
-      Pattern p = Pattern.compile("[\\p{Punct}\\s&&[^_]]");
+      Pattern p = Pattern.compile(REGEX_INVALID_CHARACTERS);
       Matcher m = p.matcher(mNameTF.getText());
-
       mOkBtn.setEnabled(mNameTF.getText().length() > 0 && !m.find() && mRuleCb.getSelectedItem() instanceof FilterComponent);
     }
   }
