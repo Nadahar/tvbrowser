@@ -27,6 +27,7 @@
 package tvbrowser.extras.reminderplugin;
 
 import java.awt.Dimension;
+import java.awt.Event;
 import java.awt.FlowLayout;
 import java.awt.Rectangle;
 import java.awt.Window;
@@ -44,6 +45,8 @@ import javax.sound.midi.Sequencer;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
+import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.LineEvent.Type;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -285,13 +288,13 @@ public class ReminderSettingsTab implements SettingsTab {
           if(mTestSound != null)
             soundTestBt.setText(mLocalizer.msg("stop", "Stop"));
           if(mTestSound != null)
-            if(mTestSound instanceof Clip) {
-            ((Clip)mTestSound).addLineListener(new LineListener() {
-              public void update(LineEvent event) {
-                if(mTestSound == null || !((Clip)mTestSound).isRunning())
-                  soundTestBt.setText(mLocalizer.msg("test", "Test"));
-              }
-            });
+            if(mTestSound instanceof SourceDataLine) {
+              ((SourceDataLine)mTestSound).addLineListener(new LineListener() {
+                public void update(LineEvent event) {
+                  if(event.getType() == Type.CLOSE)
+                    soundTestBt.setText(mLocalizer.msg("test", "Test"));
+                }
+              });
             }
             else if(mTestSound instanceof Sequencer) {
               new Thread() {
@@ -309,8 +312,8 @@ public class ReminderSettingsTab implements SettingsTab {
             }
         }
         else if(mTestSound != null)
-          if(mTestSound instanceof Clip && ((Clip)mTestSound).isRunning())
-            ((Clip)mTestSound).stop();
+          if(mTestSound instanceof SourceDataLine && ((SourceDataLine)mTestSound).isRunning())
+            ((SourceDataLine)mTestSound).stop();
           else if(mTestSound instanceof Sequencer && ((Sequencer)mTestSound).isRunning())
             ((Sequencer)mTestSound).stop();
       }
