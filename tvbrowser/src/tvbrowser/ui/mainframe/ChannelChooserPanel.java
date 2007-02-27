@@ -170,9 +170,9 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
     MainFrame.getInstance().updateChannellist();
   }
 
-  public void selectChannel(int index) {
+  public void selectChannel(Channel channel) {
     disableSync = true;
-    mList.setSelectedIndex(index);
+    mList.setSelectedValue(channel,true);
   }
 
 }
