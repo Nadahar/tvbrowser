@@ -141,13 +141,7 @@ public class ReminderSettingsTab implements SettingsTab {
     JPanel reminderWindowCfg = new JPanel(new FormLayout("12dlu,default:grow","pref,1dlu,pref"));
     reminderWindowCfg.add(mReminderWindowChB, cc.xyw(1,1,2));
     reminderWindowCfg.add(mShowAlwaysOnTop, cc.xy(2,3));
-    
-    mReminderWindowChB.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        mShowAlwaysOnTop.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-      }
-    });
-    
+        
     mSoundFileChB = new FileCheckBox(mLocalizer.msg("playlingSound", "Play sound"), new File(soundFName), 0, false);
     
     JFileChooser soundChooser=new JFileChooser("sound/");
@@ -197,17 +191,19 @@ public class ReminderSettingsTab implements SettingsTab {
     int autoCloseReminderTime = 10;
     try {
       String asString = mSettings.getProperty("autoCloseReminderTime", "10");
-      autoCloseReminderTime = Integer.parseInt(asString);
-      
-      if(autoCloseReminderTime < 10)
-        autoCloseReminderTime = 10;
+      autoCloseReminderTime = Integer.parseInt(asString);      
     } catch (Exception exc) {
       // ignore
     }
     
     mCloseOnEnd = new JRadioButton(mLocalizer.msg("autoCloseReminderAtProgramEnd","Program end"), mSettings.getProperty("autoCloseBehaviour","onEnd").equals("onEnd"));
+    mCloseOnEnd.setEnabled(mReminderWindowChB.isSelected());
+    
     mCloseNever = new JRadioButton(mLocalizer.msg("autoCloseNever","Never close"), mSettings.getProperty("autoCloseBehaviour","onEnd").equals("never"));
+    mCloseNever.setEnabled(mReminderWindowChB.isSelected());
+    
     mCloseOnTime = new JRadioButton(mLocalizer.msg("autoCloseAfterTime","After time ..."), mSettings.getProperty("autoCloseBehaviour","onEnd").equals("onTime"));
+    mCloseOnTime.setEnabled(mReminderWindowChB.isSelected());
     
     ButtonGroup bg = new ButtonGroup();
     
@@ -215,11 +211,11 @@ public class ReminderSettingsTab implements SettingsTab {
     bg.add(mCloseNever);
     bg.add(mCloseOnTime);
     
-    mAutoCloseReminderTimeSp = new JSpinner(new SpinnerNumberModel(autoCloseReminderTime,5,600,1));
-    mAutoCloseReminderTimeSp.setEnabled(mCloseOnTime.isSelected());
+    mAutoCloseReminderTimeSp = new JSpinner(new SpinnerNumberModel(autoCloseReminderTime,autoCloseReminderTime < 5 ? 1 : 5,600,1));
+    mAutoCloseReminderTimeSp.setEnabled(mCloseOnTime.isSelected() && mReminderWindowChB.isSelected());
     
     mShowTimeCounter = new JCheckBox(mLocalizer.msg("showTimeCounter","Show time counter"),mSettings.getProperty("showTimeCounter","false").compareTo("true") == 0);
-    mShowTimeCounter.setEnabled(!mCloseNever.isSelected());    
+    mShowTimeCounter.setEnabled(!mCloseNever.isSelected() && mReminderWindowChB.isSelected());    
     
     PanelBuilder autoClosePanel = new PanelBuilder(new FormLayout("12dlu,default,2dlu,default:grow","pref,2dlu,pref,2dlu,pref,2dlu,pref,10dlu,pref"));
     autoClosePanel.add(mCloseOnEnd, cc.xyw(1,1,4));
@@ -231,7 +227,7 @@ public class ReminderSettingsTab implements SettingsTab {
     
     autoClosePanel.add(mShowTimeCounter, cc.xyw(1,9,4));
     
-    secondsLabel.setEnabled(mCloseOnTime.isSelected());
+    secondsLabel.setEnabled(mCloseOnTime.isSelected() && mReminderWindowChB.isSelected());
     
     String defaultReminderEntryStr = (String)mSettings.get("defaultReminderEntry");
     mDefaultReminderEntryList =new JComboBox(ReminderDialog.SMALL_REMIND_MSG_ARR);
@@ -265,7 +261,8 @@ public class ReminderSettingsTab implements SettingsTab {
     pb.add(mPluginLabel, cc.xyw(2,11,4));
     pb.add(choose, cc.xyw(7,11,3));
     
-    pb.addSeparator(mLocalizer.msg("autoCloseReminder", "Automatically close reminder"), cc.xyw(1,13,10));
+    final JLabel c = (JLabel) pb.addSeparator(mLocalizer.msg("autoCloseReminder", "Automatically close reminder"), cc.xyw(1,13,10)).getComponent(0);
+    c.setEnabled(mReminderWindowChB.isSelected());
     
     pb.add(autoClosePanel.getPanel(), cc.xyw(2,15,5));
     
@@ -278,6 +275,19 @@ public class ReminderSettingsTab implements SettingsTab {
     pb.addSeparator(mLocalizer.msg("miscSettings","Misc settings"), cc.xyw(1,21,10));    
     pb.add(mShowTimeSelectionDlg, cc.xyw(2,23,7));
     pb.add(mShowRemovedDlg, cc.xyw(2,25,7));
+    
+    mReminderWindowChB.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        mShowAlwaysOnTop.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+        c.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+        secondsLabel.setEnabled(e.getStateChange() == ItemEvent.SELECTED && mCloseOnTime.isSelected());
+        mCloseOnEnd.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+        mCloseNever.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+        mCloseOnTime.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+        mShowTimeCounter.setEnabled(e.getStateChange() == ItemEvent.SELECTED && !mCloseNever.isSelected());
+        mAutoCloseReminderTimeSp.setEnabled(e.getStateChange() == ItemEvent.SELECTED && mCloseOnTime.isSelected());
+      }
+    });
     
     soundTestBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
