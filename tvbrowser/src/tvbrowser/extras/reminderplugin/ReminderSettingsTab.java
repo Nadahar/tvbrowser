@@ -27,7 +27,6 @@
 package tvbrowser.extras.reminderplugin;
 
 import java.awt.Dimension;
-import java.awt.Event;
 import java.awt.FlowLayout;
 import java.awt.Rectangle;
 import java.awt.Window;
@@ -42,7 +41,6 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import javax.sound.midi.Sequencer;
-import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.SourceDataLine;
@@ -150,7 +148,7 @@ public class ReminderSettingsTab implements SettingsTab {
       }
     });
     
-    mSoundFileChB = new FileCheckBox(mLocalizer.msg("playlingSound", "Play sound"), new File(soundFName), 0);
+    mSoundFileChB = new FileCheckBox(mLocalizer.msg("playlingSound", "Play sound"), new File(soundFName), 0, false);
     
     JFileChooser soundChooser=new JFileChooser("sound/");
     soundChooser.setFileFilter(new ExtensionFileFilter(extArr, msg));
@@ -257,7 +255,7 @@ public class ReminderSettingsTab implements SettingsTab {
     
     pb.add(reminderWindowCfg, cc.xyw(2,3,4));
     pb.add(mSoundFileChB, cc.xyw(2,5,4));
-    pb.add(mSoundFileChB.removeButton(), cc.xy(7,5));
+    pb.add(mSoundFileChB.getButton(), cc.xy(7,5));
     pb.add(soundTestBt, cc.xy(9,5));
     pb.add(mExecChB, cc.xyw(2,7,4));
     pb.add(mExecFileDialogBtn, cc.xyw(7,7,3));
@@ -277,7 +275,7 @@ public class ReminderSettingsTab implements SettingsTab {
     pb.addSeparator(mLocalizer.msg("defaltReminderEntry","Default reminder time"), cc.xyw(1,17,10));
     pb.add(reminderEntry, cc.xyw(2,19,4));
     
-    pb.addSeparator(mLocalizer.msg("timeChoosing","Time selection dialog"), cc.xyw(1,21,10));    
+    pb.addSeparator(mLocalizer.msg("miscSettings","Misc settings"), cc.xyw(1,21,10));    
     pb.add(mShowTimeSelectionDlg, cc.xyw(2,23,7));
     pb.add(mShowRemovedDlg, cc.xyw(2,25,7));
     
