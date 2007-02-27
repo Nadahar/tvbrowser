@@ -262,8 +262,16 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
     if (e.getSource()==viewport) {
       Point viewPos = viewport.getViewPosition();
       if (viewPos != null) {
+        Channel[] shownChannels = MainFrame.getInstance().getProgramTableModel().getShownChannels();
+        // no channels visible -> dont sync channel list selection
+        if (shownChannels.length == 0) {
+          return;
+        }
         int columnIndex = (viewPos.x + viewport.getWidth()/2) / mProgramTable.getColumnWidth();
-        MainFrame.getInstance().selectChannel(columnIndex);
+        if (columnIndex >= shownChannels.length) {
+          columnIndex = shownChannels.length - 1;
+        }
+        MainFrame.getInstance().selectChannel(shownChannels[columnIndex]);
       }
     }
   }
