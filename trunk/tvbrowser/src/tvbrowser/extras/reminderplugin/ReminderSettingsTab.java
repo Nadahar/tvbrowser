@@ -215,7 +215,7 @@ public class ReminderSettingsTab implements SettingsTab {
     bg.add(mCloseNever);
     bg.add(mCloseOnTime);
     
-    mAutoCloseReminderTimeSp = new JSpinner(new SpinnerNumberModel(autoCloseReminderTime,10,600,1));
+    mAutoCloseReminderTimeSp = new JSpinner(new SpinnerNumberModel(autoCloseReminderTime,5,600,1));
     mAutoCloseReminderTimeSp.setEnabled(mCloseOnTime.isSelected());
     
     mShowTimeCounter = new JCheckBox(mLocalizer.msg("showTimeCounter","Show time counter"),mSettings.getProperty("showTimeCounter","false").compareTo("true") == 0);
