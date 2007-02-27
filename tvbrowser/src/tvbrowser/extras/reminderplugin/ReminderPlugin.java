@@ -45,8 +45,12 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.TargetDataLine;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JDialog;
@@ -638,44 +642,60 @@ public class ReminderPlugin {
 
         return sequencer;
       } else {
-        AudioInputStream ais = AudioSystem.getAudioInputStream(new File(
+        final AudioInputStream ais = AudioSystem.getAudioInputStream(new File(
             fileName));
 
-        AudioFormat format = ais.getFormat();
-        // ALAW/ULAW samples in PCM konvertieren
-        if (format.getEncoding() == AudioFormat.Encoding.ALAW || 
-            format.getEncoding() == AudioFormat.Encoding.ULAW) {
-          AudioFormat tmp = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
-              format.getSampleRate(), format.getSampleSizeInBits() * 2, format
-                  .getChannels(), format.getFrameSize() * 2, format
-                  .getFrameRate(), true);
-          ais = AudioSystem.getAudioInputStream(tmp, ais);
-          format = tmp;
-        }
-        final AudioInputStream stream = ais;
-
-        javax.sound.sampled.DataLine.Info info = new javax.sound.sampled.DataLine.Info(
-            Clip.class, format);
-
+        final AudioFormat format = ais.getFormat();        
+        final DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
+        
         if(AudioSystem.isLineSupported(info)) {
-          final Clip clip = (Clip) AudioSystem.getLine(info);
-          clip.open(ais);
-          clip.start();
-
-          clip.addLineListener(new LineListener() {
-            public void update(LineEvent event) {
-              if(clip != null && !clip.isRunning()) {
-                clip.close();
-                try {
-                  stream.close();
-                }catch(Exception ee) {
-                  // ignore
+          final SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);          
+          
+          line.open(format);          
+          line.start();
+          
+          new Thread() {
+            private boolean stopped;
+            public void run() {
+              byte[] myData = new byte[1024 * format.getFrameSize()];
+              int numBytesToRead = myData.length;
+              int numBytesRead = 0;
+              int total = 0;
+              int totalToRead = (int) (format.getFrameSize() * ais.getFrameLength());
+              stopped = false;
+              
+              line.addLineListener(new LineListener() {
+                public void update(LineEvent event) {                  
+                  if(line != null && !line.isRunning()) {
+                    stopped = true;
+                    line.close();
+                    try {
+                      ais.close();
+                    }catch(Exception ee) {
+                      // ignore
+                    }
+                  }
                 }
-              }
+              });
+              
+              try {
+                while (total < totalToRead && !stopped) {
+                  numBytesRead = ais.read(myData, 0, numBytesToRead);
+                  
+                  if (numBytesRead == -1)
+                    break;
+                  
+                  total += numBytesRead;
+                  line.write(myData, 0, numBytesRead); 
+                }
+              }catch(Exception e) {}
+              
+              line.drain();
+              line.stop();
             }
-          });
-
-          return clip;
+          }.start();
+          
+          return line;         
         }else {
           URL url = new File(fileName).toURL();
           AudioClip clip= Applet.newAudioClip(url);
@@ -683,7 +703,7 @@ public class ReminderPlugin {
         }
       }
 
-    } catch (Exception e) {
+    } catch (Exception e) {e.printStackTrace();
       if((new File(fileName)).isFile()) {
         URL url;
         try {
