@@ -133,6 +133,7 @@ public class MarkList extends Vector<Program> {
         if (program != null && !program.isExpired()) {
           addElement(program);
           program.mark(SimpleMarkerPlugin.getInstance());
+          program.validateMarking();
         }
       }
 
@@ -165,6 +166,7 @@ public class MarkList extends Vector<Program> {
             mMarkIconPath);
       }
     }
+    
   }
 
   /**
