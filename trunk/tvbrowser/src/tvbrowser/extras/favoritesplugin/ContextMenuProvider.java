@@ -221,9 +221,7 @@ public class ContextMenuProvider {
     
     ArrayList<ContextMenuAction> subItems = new ArrayList<ContextMenuAction>();
   
-    for (int i = 0; i < programs.length; i++) {
-      final Program program = programs[i];
-    
+    for (final Program program : programs) {
       if(!program.isExpired() && !program.equals(p)) {
         ContextMenuAction subItem = new ContextMenuAction(FavoritesPlugin.getInstance().getFavoriteLabel(favorite, program, p.getChannel()));
         subItem.setActionListener(new ActionListener() {
@@ -233,6 +231,9 @@ public class ContextMenuProvider {
         });
       
         subItems.add(subItem);
+        if (subItems.size() >= 30) {
+          break;
+        }
       }
     }
   
