@@ -70,13 +70,15 @@ class CheckNetworkConnection {
    */
   public boolean checkConnection() {
     try {
-      String[] check = {"http://www.google.com/",
+      String[] checkUrls = {"http://www.google.com/",
                         "http://www.yahoo.com/",
                         "http://tvbrowser.org"};
       
-      for(int i = 0; i < check.length; i++)
-        if(checkConnection(new URL(check[i])))
+      for (String url : checkUrls) {
+        if(checkConnection(new URL(url))) {
           return true;
+        }
+      }
       
     } catch (MalformedURLException e) {
       e.printStackTrace();
@@ -135,9 +137,9 @@ class CheckNetworkConnection {
   private void hideDialog() {
     mCheckRunning = false;
     if (mWaitingDialog != null) {
-      if(MainFrame.getInstance().isVisible())
+      if(MainFrame.getInstance().isVisible()) {
         mWaitingDialog.dispose();
-      else {
+      } else {
         new Thread() {
           public void run() {
             setPriority(Thread.MIN_PRIORITY);
@@ -157,8 +159,9 @@ class CheckNetworkConnection {
 
   private void showDialog() {
     try {
-      if(!MainFrame.getInstance().isVisible() || MainFrame.getInstance().getExtendedState() == MainFrame.ICONIFIED)
+      if(!MainFrame.getInstance().isVisible() || MainFrame.getInstance().getExtendedState() == MainFrame.ICONIFIED) {
         return;
+      }
     }catch(Exception e) {}
     
     if ((mCheckRunning) && (mWaitingDialog == null)) {
@@ -183,7 +186,7 @@ class CheckNetworkConnection {
       panel.add(header, cc.xy(2, 2));
 
       panel.add(
-          new JLabel(mLocalizer.msg("pleaseWait", "Please Wait")), cc
+          new JLabel(mLocalizer.msg("pleaseWait", "Checking the internet connection... This may take up to {0} seconds.", Settings.propNetworkCheckTimeout.getInt())), cc
               .xy(2, 4));
 
 //      JProgressBar bar = new JProgressBar();
@@ -191,8 +194,9 @@ class CheckNetworkConnection {
 //      panel.add(bar, cc.xy(2, 6));
 
       mWaitingDialog.pack();
-      if(mCheckRunning)
+      if(mCheckRunning) {
         UiUtilities.centerAndShow(mWaitingDialog);
+      }
       mWaitingDialog.setVisible(mCheckRunning && MainFrame.getInstance().isVisible() && MainFrame.getInstance().getExtendedState() != MainFrame.ICONIFIED);
     }
   }
