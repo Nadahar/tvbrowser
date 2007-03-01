@@ -28,7 +28,7 @@ Changelog TVBrowser
  * 1650939 New favorite dialog does not resize correctly
  * 1652059 TV data have to be copied on changing TV data directory
  * 1662012 NullPointerException in TVRaterPlugin
- * 1662342 CapturePlugin: Freezes if manny programs where scheduled
+ * 1662342 CapturePlugin: Freezes if manny programs were scheduled
  * 1637210 Grouping of favorites sometimes useless
  * 1667550 Favorite not editable if receive target don't exists
  * 1667972 Exception in LocalizerClassloader inhibits TV-Browser start 
