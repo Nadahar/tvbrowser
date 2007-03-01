@@ -658,21 +658,25 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
       String ext =  chooser.getSelectedFile().getName();
       ext = ext.substring(ext.lastIndexOf("."));
       
-      if(!new File(dir, mListTable.getValueAt(row, 0).toString() + ext).isFile())
-        try {
-          IOUtilities.copy(chooser.getSelectedFile(),new File(dir,mListTable.getValueAt(row, 0).toString() + ext));
-        } catch (IOException e1) {
-          e1.printStackTrace();
-        }        
-      
       Icon icon = SimpleMarkerPlugin.getInstance().getIconForFileName(
-          dir + "/" + mListTable.getValueAt(row, 0).toString() + ext);
+          chooser.getSelectedFile().getAbsolutePath());
 
       if (icon.getIconWidth() != 16 || icon.getIconHeight() != 16) {
         JOptionPane.showMessageDialog(w, SimpleMarkerPlugin.mLocalizer.msg(
             "iconSize", "The icon has to be 16x16 in size."));
         return;
       }
+      
+      if(!new File(dir, mListTable.getValueAt(row, 0).toString() + ext).equals(chooser.getSelectedFile())) {
+        try {
+          IOUtilities.copy(chooser.getSelectedFile(),new File(dir,mListTable.getValueAt(row, 0).toString() + ext));
+        } catch (IOException e1) {
+          e1.printStackTrace();
+        }
+      }
+
+      icon = SimpleMarkerPlugin.getInstance().getIconForFileName(
+             dir + "/" + mListTable.getValueAt(row, 0).toString() + ext);
 
       mListTable.setValueAt(icon, row, 1);
 
