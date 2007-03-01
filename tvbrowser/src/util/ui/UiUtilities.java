@@ -26,6 +26,7 @@
 
 package util.ui;
 
+import tvbrowser.ui.mainframe.MainFrame;
 import util.browserlauncher.Launch;
 import util.misc.OperatingSystem;
 
@@ -673,6 +674,14 @@ public class UiUtilities {
         KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.META_DOWN_MASK);
         component.getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,"CLOSE_ON_APPLE_W");
         component.getRootPane().getActionMap().put("CLOSE_ON_APPLE_W", a);
+        
+        stroke = KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.META_DOWN_MASK);
+        component.getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,"CLOSE_COMPLETE_ON_APPLE");
+        component.getRootPane().getActionMap().put("CLOSE_COMPLETE_ON_APPLE", new AbstractAction() {
+          public void actionPerformed(ActionEvent e) {
+            MainFrame.getInstance().quit();
+          }
+        });
     }
         
     KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
