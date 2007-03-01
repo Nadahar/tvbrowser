@@ -15,7 +15,7 @@ Changelog ReminderPlugin
 - Added Icons for Channels
 
 1.0.8
-- Fix for http://forum.tvbrowser.org/viewtopic.php?p=5809 
+- Fix for http://hilfe.tvbrowser.org/viewtopic.php?p=5809 
    (getParentFrame was Null in ReminderPlugin#timeEvent)
 
 1.0.7

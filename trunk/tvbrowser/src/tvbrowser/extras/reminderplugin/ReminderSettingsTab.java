@@ -191,7 +191,10 @@ public class ReminderSettingsTab implements SettingsTab {
     int autoCloseReminderTime = 10;
     try {
       String asString = mSettings.getProperty("autoCloseReminderTime", "10");
-      autoCloseReminderTime = Integer.parseInt(asString);      
+      autoCloseReminderTime = Integer.parseInt(asString);
+      
+      if(autoCloseReminderTime == 0)
+        autoCloseReminderTime = 10;
     } catch (Exception exc) {
       // ignore
     }
