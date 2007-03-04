@@ -483,6 +483,9 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    * <p>
    * Override this method to return the icons for the program table (shown below
    * the start time).
+   * <p>
+   * This method is only called, if the option to show program table icons for
+   * this plugin is set in the options.
    * 
    * @param program The programs to get the icons for.
    * @return The icons for the given program or <code>null</code> if the plugin
