@@ -744,6 +744,7 @@ public class FavoritesPlugin {
 
     for (int i=0; i<mFavoriteArr.length; i++) {
       PluginTreeNode n = new PluginTreeNode(mFavoriteArr[i].getName());
+      n.setGroupingByWeekEnabled(true);
 
       final int x = i;
       

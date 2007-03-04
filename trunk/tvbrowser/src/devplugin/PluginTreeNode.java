@@ -61,6 +61,7 @@ public class PluginTreeNode {
   private Marker mMarker;
   private Node mDefaultNode;
   private boolean mGroupingByDate;
+  private boolean mGroupWeekly;
 
   private PluginTreeNode(int type, Object o) {
     mChildNodes = new ArrayList<PluginTreeNode>();
@@ -69,6 +70,7 @@ public class PluginTreeNode {
     mDefaultNode = new Node(type, mObject);
     mNodeListeners = new ArrayList<PluginTreeListener>();
     mGroupingByDate = true;
+    mGroupWeekly = false;
   }
 
   /**
@@ -208,13 +210,26 @@ public class PluginTreeNode {
   }
 
   /**
-   * Enables/Disabled the 'grouping by date'-feature.
+   * Enables/Disables the 'grouping by date'-feature.
    * Default is 'enabled'
    *
    * @param enable
    */
   public void setGroupingByDateEnabled(boolean enable) {
     mGroupingByDate = enable;
+  }
+  
+  /**
+   * Enables/Disables 'grouping by week' for nodes showing
+   * programs by date. Only evaluated if "grouping by date"
+   * is enabled ({@link setGroupingByDateEnabled}).
+   * 
+   * Default is 'disabled'
+   *
+   * @param enable
+   */
+  public void setGroupingByWeekEnabled(boolean enable) {
+    mGroupWeekly = enable;
   }
 
   private NodeFormatter getNodeFormatter() {
@@ -302,7 +317,7 @@ public class PluginTreeNode {
       numPrograms += dateMap.get(date).size();
     }
     // show week nodes if there are less than 2 programs per day on average
-    boolean createWeekNodes = (numPrograms <= dates.length * 2);
+    boolean createWeekNodes = mGroupWeekly && (numPrograms <= dates.length * 2);
     for (int i=0; i<dates.length; i++) {
       String dateStr;
       if (yesterDay.equals(dates[i])) {
@@ -596,7 +611,25 @@ public class PluginTreeNode {
   public boolean isLeaf() {
     return (mDefaultNode.getType() == Node.PROGRAM);
   }
-
+  
+  @Override
+  public String toString() {
+    switch (mNodeType) {
+    case Node.PLUGIN_ROOT: {
+      return "plugin node: " + mObject.toString();
+    }
+    case Node.PROGRAM: {
+      return "program node: " + mObject.toString();
+    }
+    case Node.STRUCTURE_NODE: {
+      return "structure node: " + mObject.toString();
+    }
+    case Node.CUSTOM_NODE: {
+      return "custom node: " + mObject.toString();
+    }
+    }
+    return super.toString();
+  }
 
   class RemovedProgramsHandler {
     private ArrayList<Program> mProgArr;
