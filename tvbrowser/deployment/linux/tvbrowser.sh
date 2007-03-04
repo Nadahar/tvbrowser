@@ -11,7 +11,7 @@ MSG0="Loading TV-Browser:"
 MSG1="Starting TV-Browser..."
 MSG2="Java exec found in "
 MSG3="OOPS, your java version is too old "
-MSG4="You need to upgrade to JRE 1.4.x or newer from http://java.sun.com"
+MSG4="You need to upgrade to JRE 5.0 or newer from http://java.sun.com"
 MSG5="Suitable java version found "
 MSG6="Configuring environment..."
 MSG7="OOPS, you don't seem to have a valid JRE "
@@ -47,7 +47,7 @@ check_version()
   JAVA_IMPL=`echo ${JAVA_HEADER} | cut -f1 -d' '`
   if [ "$JAVA_IMPL" = "java" ] ; then
     VERSION=`echo ${JAVA_HEADER} | sed "s/java version \"\(.*\)\"/\1/"`
-    if echo $VERSION | grep "^1.[0-3]" ; then
+    if echo $VERSION | grep "^1.[0-4]" ; then
       echo $MSG3 "[${JAVA_PROGRAM_DIR}java = ${VERSION}]" ; echo $MSG4
       return 1
     else
