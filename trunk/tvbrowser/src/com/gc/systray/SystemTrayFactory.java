@@ -26,7 +26,7 @@ public class SystemTrayFactory {
       return new Java6Tray();
     } else if (osname.startsWith("windows")) {
       return new WinSystemTray();
-    } else if (osname.startsWith("linux") && kde) {
+    } else if (osname.startsWith("linux")) {
       return new X11SystemTray();
     }
     
