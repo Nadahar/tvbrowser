@@ -702,6 +702,7 @@ public class MainFrame extends JFrame implements DateListener {
     }
     
     mCurrentFilterName = filter.getName();
+    mProgramTableScrollPane.requestFocus();
   }
 
   public ProgramFilter getProgramFilter() {
