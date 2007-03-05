@@ -31,6 +31,7 @@ import java.util.Iterator;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginManagerImpl;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.program.ProgramUtilities;
 
 import devplugin.Date;
@@ -66,12 +67,18 @@ public class MarkedProgramsList {
   protected void addProgram(MutableProgram p) {
     if(p!= null && !mMarkedPrograms.contains(p) && p.getMarkerArr().length > 0) {
       mMarkedPrograms.add(p);
+      
+      if(PluginManagerImpl.getInstance().getFilterManager() != null && !PluginManagerImpl.getInstance().getFilterManager().getCurrentFilter().equals(PluginManagerImpl.getInstance().getFilterManager().getDefaultFilter()))
+        MainFrame.getInstance().getProgramTableModel().updateTableContent();
     }
   }
 
   protected void removeProgram(MutableProgram p) {
     if(p!= null && p.getMarkerArr().length < 1) {
       mMarkedPrograms.remove(p);
+      
+      if(PluginManagerImpl.getInstance().getFilterManager() != null && !PluginManagerImpl.getInstance().getFilterManager().getCurrentFilter().equals(PluginManagerImpl.getInstance().getFilterManager().getDefaultFilter()))
+        MainFrame.getInstance().getProgramTableModel().updateTableContent();
     }
   }
 
