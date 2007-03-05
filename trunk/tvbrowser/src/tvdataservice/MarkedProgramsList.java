@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import javax.swing.SwingUtilities;
+
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -48,6 +50,8 @@ public class MarkedProgramsList {
 
   private static MarkedProgramsList mInstance;
   private HashSet<MutableProgram> mMarkedPrograms;
+  private Thread mProgramTableRefreshThread;
+  private int mProgramTableRefreshThreadWaitTime;
 
   private MarkedProgramsList() {
     mMarkedPrograms = new HashSet<MutableProgram>();
@@ -63,13 +67,40 @@ public class MarkedProgramsList {
     }
     return mInstance;
   }
+  
+  private Thread getProgramTableRefreshThread() {
+    mProgramTableRefreshThreadWaitTime = 500;
+    return new Thread() {
+      public void run() {
+        while(mProgramTableRefreshThreadWaitTime > 0) {
+          try {
+            sleep(100);
+            mProgramTableRefreshThreadWaitTime -= 100;
+          }catch(Exception e) {}
+        }
+        
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            MainFrame.getInstance().getProgramTableModel().updateTableContent();
+          }
+        });
+      }
+    };
+  }
 
   protected void addProgram(MutableProgram p) {
     if(p!= null && !mMarkedPrograms.contains(p) && p.getMarkerArr().length > 0) {
       mMarkedPrograms.add(p);
       
-      if(PluginManagerImpl.getInstance().getFilterManager() != null && !PluginManagerImpl.getInstance().getFilterManager().getCurrentFilter().equals(PluginManagerImpl.getInstance().getFilterManager().getDefaultFilter()))
-        MainFrame.getInstance().getProgramTableModel().updateTableContent();
+      if(PluginManagerImpl.getInstance().getFilterManager() != null && !PluginManagerImpl.getInstance().getFilterManager().getCurrentFilter().equals(PluginManagerImpl.getInstance().getFilterManager().getDefaultFilter())) {
+        if(mProgramTableRefreshThread == null || !mProgramTableRefreshThread.isAlive()) {
+          mProgramTableRefreshThread = getProgramTableRefreshThread();
+          mProgramTableRefreshThread.start();
+        }
+        else {
+          mProgramTableRefreshThreadWaitTime = 500;
+        }
+      }        
     }
   }
 
@@ -77,8 +108,15 @@ public class MarkedProgramsList {
     if(p!= null && p.getMarkerArr().length < 1) {
       mMarkedPrograms.remove(p);
       
-      if(PluginManagerImpl.getInstance().getFilterManager() != null && !PluginManagerImpl.getInstance().getFilterManager().getCurrentFilter().equals(PluginManagerImpl.getInstance().getFilterManager().getDefaultFilter()))
-        MainFrame.getInstance().getProgramTableModel().updateTableContent();
+      if(PluginManagerImpl.getInstance().getFilterManager() != null && !PluginManagerImpl.getInstance().getFilterManager().getCurrentFilter().equals(PluginManagerImpl.getInstance().getFilterManager().getDefaultFilter())) {
+        if(mProgramTableRefreshThread == null || !mProgramTableRefreshThread.isAlive()) {
+          mProgramTableRefreshThread = getProgramTableRefreshThread();
+          mProgramTableRefreshThread.start();
+        }
+        else {
+          mProgramTableRefreshThreadWaitTime = 500;
+        }
+      }
     }
   }
 
