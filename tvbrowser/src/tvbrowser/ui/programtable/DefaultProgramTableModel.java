@@ -258,7 +258,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   }
   
   
-  private void updateTableContent() {
+  public void updateTableContent() {
     updateTableContent(null, null);
   }
 
