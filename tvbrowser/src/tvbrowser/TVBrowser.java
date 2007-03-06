@@ -526,7 +526,7 @@ public class TVBrowser {
     mLocalizer.msg("alreadyRunning","TV-Browser is already running"),
     JOptionPane.DEFAULT_OPTION,
     JOptionPane.WARNING_MESSAGE,
-    null, options, options[0])==0) {
+    null, options, options[0])!=1) {
       System.exit(-1);
     }
 
