@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -137,7 +138,7 @@ public class NewsPlugin extends Plugin {
         "Gets the TV-Browser news after each TV data update.");
     String author = "Til Schneider, www.murfman.de";
 
-    return new PluginInfo(name, desc, author, new Version(1, 4));
+    return new PluginInfo(name, desc, author, new Version(1, 5));
   }
 
   /**
@@ -169,33 +170,43 @@ public class NewsPlugin extends Plugin {
             + fill(cal.get(Calendar.SECOND), 2);
 
         URL url = new URL(NEWS_URL + "?lastNews=" + asString);
-        byte[] newsData = IOUtilities.loadFileFromHttpServer(url, 60000);
-        String news = new String(newsData, "ISO-8859-1");
-        if (news.startsWith("<?xml version=\"1.0\" ")) {
-          // There are new news
-          final News[] newsArr = parseNews(news);
-
-          // Add the new news
-          for (int i = 0; i < newsArr.length; i++) {
-            mNewsList.add(newsArr[i]);
-          }
-
-          // Show the dialog
-
-          SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-              NewsDialog dlg = new NewsDialog(getParentFrame(), mNewsList,
-                  newsArr.length);
-              dlg.centerAndShow();
+        URLConnection conn = url.openConnection();
+        
+        if(conn.getLastModified() > cal.getTimeInMillis()) {
+          byte[] newsData = IOUtilities.loadFileFromHttpServer(url, 60000);
+          
+          String news = new String(newsData, "ISO-8859-1");
+          if (news.startsWith("<?xml version=\"1.0\" ")) {
+            // There are new news
+            final News[] newsArr = parseNews(news);
+  
+            if(newsArr[0].getTime().compareTo(lastNews) > 0) {
+              // Add the new news
+              for (int i = 0; i < newsArr.length; i++) {
+                mNewsList.add(newsArr[i]);
+              }
+  
+              // Show the dialog
+              SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                  NewsDialog dlg = new NewsDialog(getParentFrame(), mNewsList,
+                      newsArr.length);
+                  dlg.centerAndShow();
+                }
+              });
             }
-          });
-          serverWaitDays = getServerNoConnectionDays(news);
-        } else if (news.startsWith("No news available")) {
-          serverWaitDays = getServerNoConnectionDays(news);
-          // There are no new news
-        } else {
-          // There was an error
-          throw new IOException("News script returned error: " + news);
+            
+            serverWaitDays = getServerNoConnectionDays(news);
+          } else if (news.startsWith("No news available")) {
+            serverWaitDays = getServerNoConnectionDays(news);
+            // There are no new news
+          } else {
+            // There was an error
+            throw new IOException("News script returned error: " + news);
+          }
+        }
+        else {
+          serverWaitDays = getServerNoConnectionDays("");
         }
       } catch (Exception exc) {
         String msg = mLocalizer.msg("error.1", "Getting news failed.");
