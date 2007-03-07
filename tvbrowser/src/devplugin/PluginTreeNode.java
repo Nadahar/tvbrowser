@@ -222,9 +222,10 @@ public class PluginTreeNode {
   /**
    * Enables/Disables 'grouping by week' for nodes showing
    * programs by date. Only evaluated if "grouping by date"
-   * is enabled ({@link setGroupingByDateEnabled}).
-   * 
+   * is enabled.
    * Default is 'disabled'
+   * 
+   * @see #setGroupingByDateEnabled(boolean).
    *
    * @param enable
    */
