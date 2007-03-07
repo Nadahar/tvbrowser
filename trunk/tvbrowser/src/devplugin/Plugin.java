@@ -104,7 +104,7 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    * <p>
    * Some old plugin may still directly access it. 
    * 
-   * @deprecated Use methode {@link #getParentFrame()} instead.
+   * @deprecated Use method {@link #getParentFrame()} instead.
    */
   protected Frame parent;
 
@@ -812,7 +812,8 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
   }
 
   /**
-   * 
+   * Signal whether this plugin participates in the plugin tree view or not.
+   * @see #getRootNode()
    * @return true, if the programs of this plugin are handled by the plugin
    *      tree view
    * @since 1.1
@@ -830,6 +831,7 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
   
   /**
    * Gets the root node of the plugin for the plugin tree.
+   * @see #canUseProgramTree()
    * 
    * @return The root node.
    */
