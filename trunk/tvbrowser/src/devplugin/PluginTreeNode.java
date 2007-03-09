@@ -254,12 +254,19 @@ public class PluginTreeNode {
         mDefaultNode.add(n.getMutableTreeNode());
       }
       else {
-      	ProgramItem progItem = (ProgramItem)n.getUserObject();
-        Node node = new Node(progItem);
-        node.setNodeFormatter(n.getNodeFormatter());
+        if (n.mNodeType == Node.PROGRAM) {
+          ProgramItem progItem = (ProgramItem)n.getUserObject();
+          Node node = new Node(progItem);
+          node.setNodeFormatter(n.getNodeFormatter());
         
-        if(progItem.getProgram().getDate().addDays(1).compareTo(Date.getCurrentDate()) >= 0)
+          if(progItem.getProgram().getDate().addDays(1).compareTo(Date.getCurrentDate()) >= 0)
+            mDefaultNode.add(node);
+        }
+        else {
+          Node node = new Node(n.mNodeType,n.getUserObject());
+          node.setNodeFormatter(n.getNodeFormatter());
           mDefaultNode.add(node);
+        }
       }
     }
   }
