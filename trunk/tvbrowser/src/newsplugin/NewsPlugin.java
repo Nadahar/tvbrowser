@@ -81,6 +81,7 @@ public class NewsPlugin extends Plugin {
   private NewsDialog mNewsDialog;
     
   private long mNoConnectionTime = 0;
+  private long mLastNewsFileModified = 0;
 
   /**
    * Creates a new instance of NewsPlugin.
@@ -171,16 +172,18 @@ public class NewsPlugin extends Plugin {
 
         URL url = new URL(NEWS_URL + "?lastNews=" + asString);
         URLConnection conn = url.openConnection();
+        long lastModified = conn.getLastModified();
         
-        if(conn.getLastModified() > cal.getTimeInMillis()) {
+        if(lastModified > mLastNewsFileModified) {
+          mLastNewsFileModified = lastModified;
           byte[] newsData = IOUtilities.loadFileFromHttpServer(url, 60000);
           
           String news = new String(newsData, "ISO-8859-1");
           if (news.startsWith("<?xml version=\"1.0\" ")) {
             // There are new news
             final News[] newsArr = parseNews(news);
-  
-            if(newsArr[0].getTime().compareTo(lastNews) > 0) {
+            
+            if(Math.abs(newsArr[0].getTime().getTime() - lastNews.getTime()) > 5000) {
               // Add the new news
               for (int i = 0; i < newsArr.length; i++) {
                 mNewsList.add(newsArr[i]);
@@ -324,7 +327,7 @@ public class NewsPlugin extends Plugin {
    *           When saving failed.
    */
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(2); // version
+    out.writeInt(3); // version
     
     out.writeInt(mNewsList.size());
     for (int i = 0; i < mNewsList.size(); i++) {
@@ -333,6 +336,7 @@ public class NewsPlugin extends Plugin {
     }
     
     out.writeLong(mNoConnectionTime);
+    out.writeLong(mLastNewsFileModified);
   }
 
   /**
@@ -365,6 +369,8 @@ public class NewsPlugin extends Plugin {
     
     if(version >= 2)
       mNoConnectionTime = in.readLong();
+    if(version >= 3)
+      mLastNewsFileModified = in.readLong();
   }
 
 }
