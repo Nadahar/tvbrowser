@@ -606,10 +606,11 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     Marker[] markedByPluginArr = mProgram.getMarkerArr();
     if (markedByPluginArr.length != 0) {
       switch(mProgram.getMarkPriority()) {
+        case Program.MIN_MARK_PRIORITY: grp.setColor(Settings.propProgramTableMarkedMinPriorityColor.getColor());break;
         case Program.MEDIUM_MARK_PRIORITY: grp.setColor(Settings.propProgramTableMarkedMediumPriorityColor.getColor());break;
         case Program.MAX_MARK_PRIORITY: grp.setColor(Settings.propProgramTableMarkedMaxPriorityColor.getColor());break;
         
-        default: grp.setColor(Settings.propProgramTableMarkedMinPriorityColor.getColor());
+        default: grp.setColor(Settings.propProgramTableMarkedDefaultPriorityColor.getColor());
       }
       
       grp.fill3DRect(0, 0, width, height, true);

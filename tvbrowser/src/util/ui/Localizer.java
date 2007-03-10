@@ -91,6 +91,7 @@ public class Localizer {
   public final static String I18N_SELECT = "i18n_select";
   public final static String I18N_ERROR = "i18n_error";
   public final static String I18N_DEFAULT = "i18n_default";
+  public final static String I18N_STANDARD = "i18n_standard";
   
   /** The logger for this class. */  
   private static java.util.logging.Logger mLog

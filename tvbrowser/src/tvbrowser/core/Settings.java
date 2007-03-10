@@ -833,31 +833,34 @@ public class Settings {
 
   /** Color for Program on Air - This shows how much was shown til now */
   public static final ColorProperty propProgramTableColorOnAirDark = new ColorProperty(
-      mProp, "programpanel.ColorOnAirDark", new Color(128, 128, 255, 80));
+      mProp, "programpanel.ColorOnAirDark", new Color(0, 0, 255, 60));
   /** Color for Program on Air - This shows how much is not shown til now */
   public static final ColorProperty propProgramTableColorOnAirLight = new ColorProperty(
-      mProp, "programpanel.ColorOnAirLight", new Color(128, 128, 255, 40));
+      mProp, "programpanel.ColorOnAirLight", new Color(0, 0, 255, 30));
   
+  /** Color for Programs marked with DEFAULt_PRIORITY */
+  public static final ColorProperty propProgramTableMarkedDefaultPriorityColor = new ColorProperty(
+      mProp, "programpanel.ColorMarked", new Color(255, 0, 0, 25));
   /** Color for Programs marked with MIN_PRIORITY */
   public static final ColorProperty propProgramTableMarkedMinPriorityColor = new ColorProperty(
-      mProp, "programpanel.ColorMarked", new Color(255, 0, 0, 40));
+      mProp, "programpanel.ColorMarkedMin", new Color(140, 255, 0, 60));
   /** Color for Programs marked with MEDIUM_PRIORITY */
   public static final ColorProperty propProgramTableMarkedMediumPriorityColor = new ColorProperty(
-      mProp, "programpanel.ColorMarkedMedium", new Color(0, 255, 100, 60));
+      mProp, "programpanel.ColorMarkedMedium", new Color(255, 255, 0, 60));
   /** Color for Programs marked with MAX_PRIORITY */
   public static final ColorProperty propProgramTableMarkedMaxPriorityColor = new ColorProperty(
-      mProp, "programpanel.ColorMarkedMax", new Color(255, 0, 200, 80));
+      mProp, "programpanel.ColorMarkedMax", new Color(255, 0, 200, 60));
 
   public static final BooleanProperty propMouseOver = new BooleanProperty(
       mProp, "programpanel.MouseOver", false);
 
   /** Color for Mouse-Over */
   public static final ColorProperty propMouseOverColor = new ColorProperty(
-      mProp, "programpanel.MouseOverColor", new Color(200, 200, 0, 40));
+      mProp, "programpanel.MouseOverColor", new Color(200, 200, 0, 60));
 
   /** Color for selected Program */
   public static final ColorProperty propKeyboardSelectedColor = new ColorProperty(
-      mProp, "programpanel.KeyboardSelectedColor", new Color(130, 255, 0, 100));
+      mProp, "programpanel.KeyboardSelectedColor", new Color(130, 255, 0, 120));
 
   public static final BooleanProperty propTitelAlwaysVisible = new BooleanProperty(
       mProp, "programpanel.TitelAlwaysVisible", false);

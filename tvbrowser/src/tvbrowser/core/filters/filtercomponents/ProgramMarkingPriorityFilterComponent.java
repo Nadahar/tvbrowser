@@ -48,7 +48,7 @@ public class ProgramMarkingPriorityFilterComponent implements FilterComponent {
   private static Localizer mLocalizer = Localizer.getLocalizerFor(ProgramMarkingPriorityFilterComponent.class);
   private String mName, mDescription;
   
-  private int mMarkPriority = Program.MIN_MARK_PRIORITY;
+  private int mMarkPriority = Program.DEFAULT_MARK_PRIORITY;
   private JComboBox mValueSelection;
   
   /**
@@ -86,7 +86,9 @@ public class ProgramMarkingPriorityFilterComponent implements FilterComponent {
     CellConstraints cc = new CellConstraints();
     JPanel p = new JPanel(new FormLayout("default","pref"));
     
-    String[] values = {mLocalizer.msg("min","Minimum priority"),
+    String[] values = {
+        Localizer.getLocalization(Localizer.I18N_STANDARD),
+        mLocalizer.msg("min","Minimum priority"),
         mLocalizer.msg("medium","Medium priority"),
         mLocalizer.msg("max","Maximum priority")};
     

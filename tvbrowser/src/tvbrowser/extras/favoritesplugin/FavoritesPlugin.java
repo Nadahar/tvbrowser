@@ -95,7 +95,7 @@ public class FavoritesPlugin {
 
   private static String DATAFILE_PREFIX = "favoritesplugin.FavoritesPlugin";
 
-  public static final Marker MARKER = new DefaultMarker(DATAFILE_PREFIX, IconLoader.getInstance().getIconFromTheme("apps", "bookmark", 16), mLocalizer.msg("manageFavorites","Favorites"), Program.MIN_MARK_PRIORITY);
+  public static final Marker MARKER = new DefaultMarker(DATAFILE_PREFIX, IconLoader.getInstance().getIconFromTheme("apps", "bookmark", 16), mLocalizer.msg("manageFavorites","Favorites"), Program.DEFAULT_MARK_PRIORITY);
 
   private ConfigurationHandler mConfigurationHandler;
 
