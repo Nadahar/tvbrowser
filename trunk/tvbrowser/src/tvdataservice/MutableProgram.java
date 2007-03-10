@@ -346,7 +346,7 @@ public class MutableProgram implements Program {
         System.arraycopy(mMarkerArr, 0, newArr, 0, idx);
         System.arraycopy(mMarkerArr, idx + 1, newArr, idx, oldCount - idx - 1);
         
-        mMarkPriority = Program.MIN_MARK_PRIORITY;
+        mMarkPriority = Program.DEFAULT_MARK_PRIORITY;
         
         for(Marker mark : newArr)
           mMarkPriority = Math.max(mMarkPriority,mark.getMarkPriorityForProgram(this));
@@ -923,7 +923,7 @@ public class MutableProgram implements Program {
    * @since 2.2.2
    */
   public final void validateMarking() {
-    mMarkPriority = Program.MIN_MARK_PRIORITY;
+    mMarkPriority = Program.DEFAULT_MARK_PRIORITY;
     
     for(Marker mark : mMarkerArr)
       mMarkPriority = Math.max(mMarkPriority,mark.getMarkPriorityForProgram(this));

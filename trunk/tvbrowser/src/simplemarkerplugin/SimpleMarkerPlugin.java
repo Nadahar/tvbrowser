@@ -205,7 +205,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   }
   
   public int getMarkPriorityForProgram(Program p) {
-    int priority = Program.MIN_MARK_PRIORITY;
+    int priority = Program.DEFAULT_MARK_PRIORITY;
     
     if(p != null) {
       String[] lists = mMarkListVector.getNamesOfListsContainingProgram(p);

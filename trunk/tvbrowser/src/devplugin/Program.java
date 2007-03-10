@@ -48,9 +48,10 @@ public interface Program {
   public static final int WAS_UPDATED_STATE = 1;
   public static final int WAS_DELETED_STATE = 2;
   
-  public static final int MIN_MARK_PRIORITY = 0;
-  public static final int MEDIUM_MARK_PRIORITY = 1;
-  public static final int MAX_MARK_PRIORITY = 2;
+  public static final int DEFAULT_MARK_PRIORITY = 0;
+  public static final int MIN_MARK_PRIORITY = 1;
+  public static final int MEDIUM_MARK_PRIORITY = 2;
+  public static final int MAX_MARK_PRIORITY = 3;
   
   /**
    * A subtitle for aurally handicapped. The subtitle is in the same language as

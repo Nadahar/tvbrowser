@@ -333,6 +333,6 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
     @Override
     protected int doGetMarkPriorityForProgram(Program p) {
       // TODO Automatisch erstellter Methoden-Stub
-      return Program.MIN_MARK_PRIORITY;
+      return Program.DEFAULT_MARK_PRIORITY;
     }
  }

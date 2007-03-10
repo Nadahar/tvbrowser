@@ -954,7 +954,7 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
   /**
    * Gets the mark priority for the given program that this Plugin uses.
    * <p>
-   * The mark priority can be {@link Program#MIN_MARK_PRIORITY}, {@link Program#MEDIUM_MARK_PRIORITY} or
+   * The mark priority can be {@link Program#DEFAULT_MARK_PRIORITY}, @link Program#MIN_MARK_PRIORITY}, {@link Program#MEDIUM_MARK_PRIORITY} or
    * {@link Program#MAX_MARK_PRIORITY}.
    * <p>  
    * @param p The program to get the mark prioriy for.
@@ -962,6 +962,6 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    * @since 2.5.1
    */
   public int getMarkPriorityForProgram(Program p) {
-    return Program.MIN_MARK_PRIORITY;
+    return Program.DEFAULT_MARK_PRIORITY;
   }
 }

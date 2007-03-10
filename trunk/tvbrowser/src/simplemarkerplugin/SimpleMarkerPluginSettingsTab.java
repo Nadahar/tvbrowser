@@ -266,7 +266,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
       MarkListItem item = new MarkListItem(new MarkList(name), true);
       
       Object[] row = { item,
-          SimpleMarkerPlugin.getInstance().getIconForFileName(null), Program.MIN_MARK_PRIORITY };
+          SimpleMarkerPlugin.getInstance().getIconForFileName(null), Program.DEFAULT_MARK_PRIORITY };
       mModel.addRow(row);
       mListTable.setRowSelectionInterval(mListTable.getRowCount()-1,mListTable.getRowCount()-1);
       checkForIcon(item);
@@ -371,10 +371,11 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
         JLabel b = new JLabel();
                 
         switch((Integer)value) {
+          case Program.MIN_MARK_PRIORITY: b.setText(SimpleMarkerPlugin.mLocalizer.msg("settings.min","Minimum"));break;
           case Program.MEDIUM_MARK_PRIORITY: b.setText(SimpleMarkerPlugin.mLocalizer.msg("settings.medium","Medium"));break;
           case Program.MAX_MARK_PRIORITY: b.setText(SimpleMarkerPlugin.mLocalizer.msg("settings.max","Maximum"));break;
         
-          default: b.setText(SimpleMarkerPlugin.mLocalizer.msg("settings.min","Minimum"));break;
+          default: b.setText(Localizer.getLocalization(Localizer.I18N_STANDARD));break;
         }
         
         b.setOpaque(false);
@@ -538,6 +539,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     private JComboBox mComboBox;
     
     private final String[] prioValues = {
+        Localizer.getLocalization(Localizer.I18N_STANDARD),
         SimpleMarkerPlugin.mLocalizer.msg("settings.min","Minimum"),
         SimpleMarkerPlugin.mLocalizer.msg("settings.medium","Medium"),
         SimpleMarkerPlugin.mLocalizer.msg("settings.max","Maximum")};
