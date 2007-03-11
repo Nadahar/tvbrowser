@@ -79,7 +79,7 @@ public class MarkList extends Vector<Program> {
     mName = name;
     mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(null);
     mId = name+System.currentTimeMillis();
-    mMarkPriority = Program.MIN_MARK_PRIORITY;
+    mMarkPriority = Program.DEFAULT_MARK_PRIORITY;
   }
 
   /**
