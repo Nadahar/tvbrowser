@@ -50,7 +50,7 @@ import devplugin.Program;
  */
 public class ProgramListCellRenderer extends DefaultListCellRenderer {
 
-  private static final Color SECOND_ROW_COLOR = new Color(220, 220, 220, 100);
+  private static final Color SECOND_ROW_COLOR = new Color(220, 220, 220, 80);
   
   private JPanel mMainPanel;
   private JLabel mHeaderLb;
@@ -138,6 +138,8 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
       
       if(program.isExpired())
         mHeaderLb.setForeground(Color.gray);
+      else
+        mHeaderLb.setForeground(mProgramPanel.getForeground());
       
       mMainPanel.setBackground(label.getBackground());
       mMainPanel.setEnabled(label.isEnabled());
