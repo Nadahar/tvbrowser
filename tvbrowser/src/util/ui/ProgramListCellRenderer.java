@@ -127,8 +127,9 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
     if (value instanceof Program) {
       Program program = (Program) value;
       
-      mProgramPanel.setProgram(program);      
-      
+      mProgramPanel.setProgram(program);
+      mProgramPanel.setTextColor(label.getForeground());
+            
       program.addChangeListener(new ChangeListener() {
         public void stateChanged(ChangeEvent e) {
           list.updateUI();
@@ -136,12 +137,16 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
       });
       mHeaderLb.setText(program.getDate() + " - " + program.getChannel().getName());
       
-      if(program.isExpired())
+      if(program.isExpired() && !isSelected)
         mHeaderLb.setForeground(Color.gray);
       else
-        mHeaderLb.setForeground(mProgramPanel.getForeground());
+        mHeaderLb.setForeground(label.getForeground());
       
       mMainPanel.setBackground(label.getBackground());
+      
+      if(isSelected)
+        mMainPanel.setForeground(label.getForeground());
+
       mMainPanel.setEnabled(label.isEnabled());
       mMainPanel.setBorder(label.getBorder());
 
