@@ -350,7 +350,8 @@ public class Settings {
 
     propArr = new Property[] { propProgramTitleFont, propProgramInfoFont,
         propProgramTimeFont, propChannelNameFont, propUseDefaultFonts,
-        propEnableAntialiasing, propProgramTableMarkedMinPriorityColor,
+        propEnableAntialiasing, propProgramTableMarkedDefaultPriorityShowsColor, 
+        propProgramTableMarkedDefaultPriorityColor, propProgramTableMarkedMinPriorityColor,
         propProgramTableMarkedMediumPriorityColor, propProgramTableMarkedMaxPriorityColor,
         propProgramTableColorOnAirLight, propProgramTableColorOnAirDark};
 
@@ -838,6 +839,9 @@ public class Settings {
   public static final ColorProperty propProgramTableColorOnAirLight = new ColorProperty(
       mProp, "programpanel.ColorOnAirLight", new Color(0, 0, 255, 30));
   
+  /** Used to enable color marking for default mark priority */
+  public static final BooleanProperty propProgramTableMarkedDefaultPriorityShowsColor = new BooleanProperty(
+      mProp, "programpanel.markedShowsColor", true);
   /** Color for Programs marked with DEFAULt_PRIORITY */
   public static final ColorProperty propProgramTableMarkedDefaultPriorityColor = new ColorProperty(
       mProp, "programpanel.ColorMarked", new Color(255, 0, 0, 25));
