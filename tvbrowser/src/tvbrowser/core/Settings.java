@@ -853,7 +853,7 @@ public class Settings {
       mProp, "programpanel.ColorMarkedMedium", new Color(255, 255, 0, 60));
   /** Color for Programs marked with MAX_PRIORITY */
   public static final ColorProperty propProgramTableMarkedMaxPriorityColor = new ColorProperty(
-      mProp, "programpanel.ColorMarkedMax", new Color(255, 0, 200, 60));
+      mProp, "programpanel.ColorMarkedMax", new Color(255, 180, 0, 100));
 
   public static final BooleanProperty propMouseOver = new BooleanProperty(
       mProp, "programpanel.MouseOver", false);
