@@ -27,6 +27,8 @@
 package tvbrowser.ui.settings;
 
 import java.awt.Color;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
@@ -82,7 +84,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
    */
   public JPanel createSettingsPanel() {
     mSettingsPn = new ScrollableJPanel(new FormLayout("5dlu, fill:50dlu:grow, 3dlu, fill:50dlu:grow, 3dlu", 
-        "pref, 5dlu, fill:pref:grow, 3dlu, top:pref, 5dlu, pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, 10dlu, pref, 5dlu, pref"));
+        "pref, 5dlu, fill:default:grow, 3dlu, top:pref, 5dlu, pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, 10dlu, pref, 5dlu, pref"));
     mSettingsPn.setBorder(Borders.DIALOG_BORDER);
     
     CellConstraints cc = new CellConstraints();
@@ -202,8 +204,14 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     scrollPane.setBorder(null);
     scrollPane.setViewportBorder(null);
     
-    JPanel scrollPanel = new JPanel(new FormLayout("default:grow","default"));
+    final JPanel scrollPanel = new JPanel(new FormLayout("default:grow","default"));
     scrollPanel.add(scrollPane,cc.xy(1,1));
+    
+    scrollPanel.addComponentListener(new ComponentAdapter() {
+      public void componentResized(ComponentEvent e) {
+        scrollPanel.updateUI();
+      }
+    });
     
     return scrollPanel;
   }
