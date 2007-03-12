@@ -26,10 +26,12 @@
 
 package tvbrowser.ui.programtable;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import devplugin.Channel;
 
@@ -52,7 +54,9 @@ public class ChannelPanel extends JPanel {
   public ChannelPanel(int columnWidth, Channel[] channelArr) {
     setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
     setOpaque(true);
-    setBackground(new java.awt.Color(208, 199, 241));
+    
+    Color c = UIManager.getColor("List.selectionBackground");
+    setBackground(new Color(c.getRed(),c.getGreen(),c.getBlue(),c.getAlpha()));
     
     setShownChannels(channelArr);
     setColumnWidth(columnWidth);

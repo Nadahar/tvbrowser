@@ -34,6 +34,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JProgressBar;
+import javax.swing.UIManager;
 
 import tvbrowser.core.DateListener;
 import devplugin.Date;
@@ -51,7 +52,6 @@ class FinderItem extends JComponent implements ProgressMonitor {
   private JLabel mLabel;
   private JList mList;
   
-  private static Color mColorChoosen=new Color(170,154,228);
   private static Color mColorSelected= new Color(236,236,212);
   
   public FinderItem(JList list, Date date, Date today) {
@@ -59,7 +59,7 @@ class FinderItem extends JComponent implements ProgressMonitor {
     mList=list;
     
     mProgressBar=new JProgressBar();
-    mProgressBar.setForeground(mColorChoosen);
+    mProgressBar.setForeground(UIManager.getColor("List.selectionBackground"));
     mProgressBar.setBorder(null);
     
     mLabel=new JLabel();
@@ -84,17 +84,19 @@ class FinderItem extends JComponent implements ProgressMonitor {
    */
   public void setChoosen() {
     mLabel.setOpaque(true);
-    mLabel.setBackground(mColorChoosen);   
+    mLabel.setBackground(UIManager.getColor("List.selectionBackground"));   
+    mLabel.setForeground(UIManager.getColor("List.selectionForeground"));
   }
   
   public void setSelected() {
      mLabel.setOpaque(true);
-     mLabel.setBackground(mColorSelected);   
+     mLabel.setBackground(mColorSelected); 
   }
     
   public void setOpaque(boolean b) {
     super.setOpaque(b);
-    mLabel.setOpaque(b);    
+    mLabel.setOpaque(b);
+    mLabel.setForeground(UIManager.getColor("List.foreground"));
   }
 
   public void setEnabled(boolean b) {

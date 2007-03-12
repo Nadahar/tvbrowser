@@ -350,7 +350,8 @@ public class Settings {
 
     propArr = new Property[] { propProgramTitleFont, propProgramInfoFont,
         propProgramTimeFont, propChannelNameFont, propUseDefaultFonts,
-        propEnableAntialiasing, propProgramTableMarkedDefaultPriorityShowsColor, 
+        propEnableAntialiasing, propProgramTableOnAirProgramsShowingBorder,
+        propProgramTableMarkedDefaultPriorityShowsColor, 
         propProgramTableMarkedDefaultPriorityColor, propProgramTableMarkedMinPriorityColor,
         propProgramTableMarkedMediumPriorityColor, propProgramTableMarkedMaxPriorityColor,
         propProgramTableColorOnAirLight, propProgramTableColorOnAirDark};
@@ -832,6 +833,9 @@ public class Settings {
       mProp, "programpanel.iconPlugins", new String[] { PICTURE_ID,INFO_ID,
           "tvraterplugin.TVRaterPlugin", });
 
+  /** Used to enable border on on air programs */
+  public static final BooleanProperty propProgramTableOnAirProgramsShowingBorder = new BooleanProperty(
+      mProp, "programpanel.onAirProgramsShowingBorder", false);
   /** Color for Program on Air - This shows how much was shown til now */
   public static final ColorProperty propProgramTableColorOnAirDark = new ColorProperty(
       mProp, "programpanel.ColorOnAirDark", new Color(0, 0, 255, 60));
@@ -853,7 +857,7 @@ public class Settings {
       mProp, "programpanel.ColorMarkedMedium", new Color(255, 255, 0, 60));
   /** Color for Programs marked with MAX_PRIORITY */
   public static final ColorProperty propProgramTableMarkedMaxPriorityColor = new ColorProperty(
-      mProp, "programpanel.ColorMarkedMax", new Color(255, 180, 0, 100));
+      mProp, "programpanel.ColorMarkedMax", new Color(255, 180, 0, 110));
 
   public static final BooleanProperty propMouseOver = new BooleanProperty(
       mProp, "programpanel.MouseOver", false);
