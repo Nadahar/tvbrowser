@@ -583,22 +583,30 @@ public class ProgramPanel extends JComponent implements ChangeListener {
           progressX = elapsedMinutes * width / progLength;
         }
 
+        int pos = Settings.propProgramTableOnAirProgramsShowingBorder.getBoolean() ? 1 : 0;
+        
         grp.setColor(Settings.propProgramTableColorOnAirDark.getColor());
-        grp.fillRect(1, 1, progressX - 1, height - 1);
+        grp.fillRect(pos, pos, progressX - pos, height - pos);
         grp.setColor(Settings.propProgramTableColorOnAirLight.getColor());
-        grp.fillRect(progressX, 1, width - progressX - 2, height - 1);
-        grp.draw3DRect(0, 0, width - 1, height - 1, true);
+        grp.fillRect(progressX, pos, width - progressX - pos * 2, height - pos);
+
+        if(Settings.propProgramTableOnAirProgramsShowingBorder.getBoolean())
+          grp.draw3DRect(0, 0, width - 1, height - 1, true);
       } else {
         int progressY = 0;
         if (progLength > 0) {
           progressY = elapsedMinutes * height / progLength;
         }
 
+        int pos = Settings.propProgramTableOnAirProgramsShowingBorder.getBoolean() ? 1 : 0;
+        
         grp.setColor(Settings.propProgramTableColorOnAirDark.getColor());
-        grp.fillRect(1, 1, width - 2, progressY - 1);
+        grp.fillRect(pos, pos, width - pos * 2, progressY - pos);
         grp.setColor(Settings.propProgramTableColorOnAirLight.getColor());
-        grp.fillRect(1, progressY, width - 2, height - progressY - 1);
-        grp.draw3DRect(0, 0, width - 1, height - 1, true);
+        grp.fillRect(pos, progressY, width - pos * 2, height - progressY - pos);
+        
+        if(Settings.propProgramTableOnAirProgramsShowingBorder.getBoolean())
+          grp.draw3DRect(0, 0, width - 1, height - 1, true);
       }
     }
 

@@ -77,7 +77,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
   
   private ColorLabel mProgramItemDefaultMarkedColorLb, mProgramItemMinMarkedColorLb, mProgramItemMediumMarkedColorLb, mProgramItemMaxMarkedColorLb;
   
-  private JCheckBox mProgramItemDefaultMarkedColorShown;
+  private JCheckBox mProgramItemDefaultMarkedColorShown, mBorderForOnAirPrograms;
 
   /**
    * Creates the settings panel for this tab.
@@ -121,23 +121,25 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     Color programItemDefaultKeyboardSelectedColor = Settings.propKeyboardSelectedColor.getDefaultColor();
 
     FormLayout formLayout = new FormLayout("default, 5dlu, default, 5dlu, default, 5dlu, default",
-            "default, 3dlu, default, 3dlu, default");    
+            "default, 5dlu, default, 3dlu, default, 3dlu, default");    
     colors.setLayout(formLayout);
 
-    colors.add(new JLabel(mLocalizer.msg("color.programOnAir","Hintergrundfarbe fuer laufende Sendung")), cc.xy(1,1));
-    colors.add(mProgramItemOnAirColorLb = new ColorLabel(programItemOnAirColor), cc.xy(3,1));
+    colors.add(mBorderForOnAirPrograms = new JCheckBox(mLocalizer.msg("color.programOnAirWithBorder","Border for programs on air"), Settings.propProgramTableOnAirProgramsShowingBorder.getBoolean()), cc.xyw(1,1,3)); 
+    
+    colors.add(new JLabel(mLocalizer.msg("color.programOnAir","Hintergrundfarbe fuer laufende Sendung")), cc.xy(1,3));
+    colors.add(mProgramItemOnAirColorLb = new ColorLabel(programItemOnAirColor), cc.xy(3,3));
     mProgramItemOnAirColorLb.setStandardColor(programItemDefaultOnAirColor);
-    colors.add(new ColorButton(mProgramItemOnAirColorLb), cc.xy(5,1));
+    colors.add(new ColorButton(mProgramItemOnAirColorLb), cc.xy(5,3));
 
-    colors.add(new JLabel(mLocalizer.msg("color.programProgress", "Fortschrittanzeige fuer laufende Sendung")), cc.xy(1,3));
-    colors.add(mProgramItemProgressColorLb = new ColorLabel(programItemProgressColor), cc.xy(3,3));
+    colors.add(new JLabel(mLocalizer.msg("color.programProgress", "Fortschrittanzeige fuer laufende Sendung")), cc.xy(1,5));
+    colors.add(mProgramItemProgressColorLb = new ColorLabel(programItemProgressColor), cc.xy(3,5));
     mProgramItemProgressColorLb.setStandardColor(programItemDefaultProgressColor);
-    colors.add(new ColorButton(mProgramItemProgressColorLb), cc.xy(5,3));
+    colors.add(new ColorButton(mProgramItemProgressColorLb), cc.xy(5,5));
 
-    colors.add(new JLabel(mLocalizer.msg("color.keyboardSelected","Markierung durch Plugins")), cc.xy(1,5));
-    colors.add(mProgramItemKeyboardSelectedLb = new ColorLabel(programItemKeyboardSelectedColor), cc.xy(3,5));
+    colors.add(new JLabel(mLocalizer.msg("color.keyboardSelected","Markierung durch Plugins")), cc.xy(1,7));
+    colors.add(mProgramItemKeyboardSelectedLb = new ColorLabel(programItemKeyboardSelectedColor), cc.xy(3,7));
     mProgramItemKeyboardSelectedLb.setStandardColor(programItemDefaultKeyboardSelectedColor);
-    colors.add(new ColorButton(mProgramItemKeyboardSelectedLb), cc.xy(5,5));
+    colors.add(new ColorButton(mProgramItemKeyboardSelectedLb), cc.xy(5,7));
 
     mSettingsPn.add(colors, cc.xyw(2,9,4));
 
@@ -306,6 +308,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     }
     Settings.propProgramInfoFields.setProgramFieldTypeArray(typeArr);
 
+    Settings.propProgramTableOnAirProgramsShowingBorder.setBoolean(mBorderForOnAirPrograms.isSelected());
     Settings.propProgramTableMarkedDefaultPriorityShowsColor.setBoolean(mProgramItemDefaultMarkedColorShown.isSelected());
     
     Settings.propProgramTableMarkedDefaultPriorityColor.setColor(mProgramItemDefaultMarkedColorLb.getColor());

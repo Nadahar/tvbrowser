@@ -50,7 +50,7 @@ import devplugin.Program;
  */
 public class ProgramListCellRenderer extends DefaultListCellRenderer {
 
-  private static final Color SECOND_ROW_COLOR = new Color(250, 250, 220);
+  private static final Color SECOND_ROW_COLOR = new Color(220, 220, 220, 100);
   
   private JPanel mMainPanel;
   private JLabel mHeaderLb;
@@ -127,8 +127,7 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
     if (value instanceof Program) {
       Program program = (Program) value;
       
-      mProgramPanel.setProgram(program);
-      mProgramPanel.setTextColor(label.getForeground());
+      mProgramPanel.setProgram(program);      
       
       program.addChangeListener(new ChangeListener() {
         public void stateChanged(ChangeEvent e) {
@@ -136,9 +135,11 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
         }
       });
       mHeaderLb.setText(program.getDate() + " - " + program.getChannel().getName());
-      mHeaderLb.setForeground(label.getForeground());
+      
+      if(program.isExpired())
+        mHeaderLb.setForeground(Color.gray);
+      
       mMainPanel.setBackground(label.getBackground());
-      mMainPanel.setForeground(label.getForeground());
       mMainPanel.setEnabled(label.isEnabled());
       mMainPanel.setBorder(label.getBorder());
 

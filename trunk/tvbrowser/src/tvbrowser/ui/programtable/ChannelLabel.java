@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.Icon;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
 import tvbrowser.core.Settings;
 import util.browserlauncher.Launch;
@@ -22,12 +23,13 @@ public class ChannelLabel extends util.ui.ChannelLabel {
   private static Cursor linkCursor=new Cursor(Cursor.HAND_CURSOR);
   private static Font channelNameFont;
 
-
   private Channel mChannel;
   
   public ChannelLabel(Channel ch) {
     super();
     mChannel = ch;
+    
+    setForeground(UIManager.getColor("List.selectionForeground"));
     
     if (Settings.propEnableChannelIcons.getBoolean() &&
         Settings.propShowChannelIconsInProgramTable.getBoolean()) {
@@ -77,11 +79,15 @@ public class ChannelLabel extends util.ui.ChannelLabel {
       }
       
       public void mouseEntered(MouseEvent e) {
-        e.getComponent().setForeground(Color.blue);
+        int r = (getForeground().getRed()   + getBackground().getRed())   >> 1;
+        int g = (getForeground().getGreen() + getBackground().getGreen()) >> 1;
+        int b = (getForeground().getBlue()  + getBackground().getBlue())  >> 1;
+        
+        e.getComponent().setForeground(new Color(r,g,b));
       }
       
       public void mouseExited(MouseEvent e) {
-        e.getComponent().setForeground(Color.black);
+        e.getComponent().setForeground(UIManager.getColor("List.selectionForeground"));
       }        
     });
   }
