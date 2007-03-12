@@ -606,14 +606,15 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     Marker[] markedByPluginArr = mProgram.getMarkerArr();
     if (markedByPluginArr.length != 0) {
       switch(mProgram.getMarkPriority()) {
-        case Program.MIN_MARK_PRIORITY: grp.setColor(Settings.propProgramTableMarkedMinPriorityColor.getColor());break;
-        case Program.MEDIUM_MARK_PRIORITY: grp.setColor(Settings.propProgramTableMarkedMediumPriorityColor.getColor());break;
-        case Program.MAX_MARK_PRIORITY: grp.setColor(Settings.propProgramTableMarkedMaxPriorityColor.getColor());break;
+        case Program.MIN_MARK_PRIORITY: grp.setColor(Settings.propProgramTableMarkedMinPriorityColor.getColor());grp.fill3DRect(0, 0, width, height, true);break;
+        case Program.MEDIUM_MARK_PRIORITY: grp.setColor(Settings.propProgramTableMarkedMediumPriorityColor.getColor());grp.fill3DRect(0, 0, width, height, true);break;
+        case Program.MAX_MARK_PRIORITY: grp.setColor(Settings.propProgramTableMarkedMaxPriorityColor.getColor());grp.fill3DRect(0, 0, width, height, true);break;
         
-        default: grp.setColor(Settings.propProgramTableMarkedDefaultPriorityColor.getColor());
+        default: if(Settings.propProgramTableMarkedDefaultPriorityShowsColor.getBoolean()) {
+                   grp.setColor(Settings.propProgramTableMarkedDefaultPriorityColor.getColor());
+                   grp.fill3DRect(0, 0, width, height, true); 
+                 }
       }
-      
-      grp.fill3DRect(0, 0, width, height, true);
     }
 
     if (mMouseOver || mIsSelected) {

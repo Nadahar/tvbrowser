@@ -26,9 +26,7 @@
 
 package tvbrowser.extras.reminderplugin;
 
-import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -58,7 +56,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
-import javax.swing.Scrollable;
 import javax.swing.SpinnerNumberModel;
 
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -70,6 +67,7 @@ import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.ExtensionFileFilter;
 import util.ui.FileCheckBox;
 import util.ui.PluginChooserDlg;
+import util.ui.ScrollableJPanel;
 import util.ui.UiUtilities;
 import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
@@ -122,7 +120,7 @@ public class ReminderSettingsTab implements SettingsTab {
         "pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu," +
         "pref,5dlu,pref,3dlu,pref");
     layout.setColumnGroups(new int[][] {{7,9}});
-    PanelBuilder pb = new PanelBuilder(layout, new ScrollabelJPanel());
+    PanelBuilder pb = new PanelBuilder(layout, new ScrollableJPanel());
     pb.setDefaultDialogBorder();    
     
     CellConstraints cc = new CellConstraints();
@@ -394,7 +392,7 @@ public class ReminderSettingsTab implements SettingsTab {
     JPanel scrollPanel = new JPanel(new FormLayout("default:grow","default"));
     scrollPanel.add(scrollPane,cc.xy(1,1));
     
-    return scrollPanel ;
+    return scrollPanel;
   }
 
   private void handlePluginSelection() {
@@ -487,29 +485,5 @@ public class ReminderSettingsTab implements SettingsTab {
    */
   public String getTitle() {
     return mLocalizer.msg("basicSettings", "Basic settings");
-  }
-  
-  private class ScrollabelJPanel extends JPanel implements Scrollable {
-
-    public Dimension getPreferredScrollableViewportSize() {
-      return getPreferredSize();
-    }
-
-    public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
-      return 50;
-    }
-
-    public boolean getScrollableTracksViewportHeight() {
-      return false;
-    }
-
-    public boolean getScrollableTracksViewportWidth() {
-      return true;
-    }
-
-    public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-      return 20;
-    }
-    
   }
 }
