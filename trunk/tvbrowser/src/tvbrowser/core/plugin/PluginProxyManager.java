@@ -465,15 +465,6 @@ public class PluginProxyManager {
       ErrorHandler.handle(e);
     }
 
-    // Tell the plugin that we deactivate it now
-    item.getPlugin().onDeactivation();
-
-    // Set the plugin active
-    item.setState(LOADED_STATE);
-
-    // Clear the activated plugins cache
-    mActivatedPluginCache = null;
-
     final PluginProxy plugin = item.getPlugin();
 
     // Run through all Programs and umark this Plugin
@@ -491,6 +482,15 @@ public class PluginProxyManager {
         };
       }.start();
     }
+    
+    // Tell the plugin that we deactivate it now
+    item.getPlugin().onDeactivation();
+
+    // Set the plugin active
+    item.setState(LOADED_STATE);
+
+    // Clear the activated plugins cache
+    mActivatedPluginCache = null;
 
     // Inform the listeners
     firePluginDeactivated(item.getPlugin(), log);
