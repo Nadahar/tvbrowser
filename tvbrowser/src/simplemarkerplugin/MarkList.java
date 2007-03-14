@@ -130,7 +130,7 @@ public class MarkList extends Vector<Program> {
             progId);
 
         // Only add items that were able to load their program
-        if (program != null && !program.isExpired()) {
+        if (program != null) {
           addElement(program);
           program.mark(SimpleMarkerPlugin.getInstance());
           program.validateMarking();
@@ -340,7 +340,7 @@ public class MarkList extends Vector<Program> {
     mProgram.clear();
     for (int i = 0; i < size(); i++) {
       Program p = elementAt(i);
-      if (p == null || p.isExpired())
+      if (p == null)
         continue;
       if (!mProgram.containsKey(p.getTitle())) {
         LinkedList<Program> list1 = new LinkedList<Program>();
