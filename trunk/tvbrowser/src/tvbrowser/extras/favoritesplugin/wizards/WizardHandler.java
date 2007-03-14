@@ -67,6 +67,10 @@ public class WizardHandler {
     if (result == WizardDlg.FINISH) {
       obj = mWizardDialog.getDataObject();
     }
+    
+    mWizardDialog.dispose();
+    mWizardDialog = null;
+    
     return obj;
   }
 
