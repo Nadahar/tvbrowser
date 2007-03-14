@@ -186,7 +186,7 @@ class CheckNetworkConnection {
       panel.add(header, cc.xy(2, 2));
 
       panel.add(
-          new JLabel(mLocalizer.msg("pleaseWait", "Checking the internet connection... This may take up to {0} seconds.", Settings.propNetworkCheckTimeout.getInt())), cc
+          new JLabel(mLocalizer.msg("pleaseWait", "Checking the internet connection... This may take up to {0} seconds.", Settings.propNetworkCheckTimeout.getInt()/1000)), cc
               .xy(2, 4));
 
 //      JProgressBar bar = new JProgressBar();
