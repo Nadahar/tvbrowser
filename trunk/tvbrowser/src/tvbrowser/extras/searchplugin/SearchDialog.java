@@ -37,6 +37,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import util.ui.Localizer;
 import util.ui.SearchForm;
 import util.ui.SearchFormSettings;
 import util.ui.SearchHelper;
@@ -118,9 +119,8 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
       }
     });
     getRootPane().setDefaultButton(mSearchBt);
-
-    msg = mLocalizer.msg("cancel", "Cancel");
-    mCloseBt = new JButton(msg);
+    
+    mCloseBt = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
     mCloseBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         dispose();
