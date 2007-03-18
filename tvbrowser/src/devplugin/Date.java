@@ -161,6 +161,17 @@ public class Date implements Comparable {
   public int getDayOfMonth() {
     return mDay;
   }
+  
+  /**
+   * Returns the week number within the current year.
+   * @return The week number.
+   *
+   * @since 2.5.1
+   */
+  public int getWeekOfYear() {
+    Calendar cal = getCalendar();
+    return cal.get(Calendar.WEEK_OF_YEAR);
+  } 
 
   public Date(Calendar cal) {
     mYear = cal.get(Calendar.YEAR);
