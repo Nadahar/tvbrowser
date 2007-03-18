@@ -461,7 +461,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
      * @param iconPath
      *          The path to the icon.
      */
-    public void setMarkIconFileName(String iconPath) {
+    public void setMarkIconFileName(String iconPath) {System.out.println(iconPath);
       mIconPath = iconPath;
     }
     
