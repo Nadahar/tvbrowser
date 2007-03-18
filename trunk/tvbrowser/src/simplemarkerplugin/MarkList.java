@@ -52,7 +52,7 @@ import devplugin.ProgramReceiveTarget;
  * SimpleMarkerPlugin 1.4 Plugin for TV-Browser since version 2.3 to only mark
  * programs and add them to the Plugin tree.
  * 
- * (Formerly  known as Just_Mark ;-))
+ * (Formerly known as Just_Mark ;-))
  * 
  * A class that is a list with marked programs.
  * 
@@ -140,10 +140,10 @@ public class MarkList extends Vector<Program> {
       mMarkIconPath = (String) in.readObject();
 
       if (mMarkIconPath == null || mMarkIconPath.compareTo("null") == 0
-          || !(new File(mMarkIconPath)).isFile())
+          || (version > 3 && !(new File(SimpleMarkerPlugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome() + mMarkIconPath)).isFile()))
         mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(null);
       else {
-        
+                
         if(version == 1) {
           File dir = new File(SimpleMarkerPlugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome(),"simplemarkericons");
           File src = new File(mMarkIconPath);
@@ -158,15 +158,22 @@ public class MarkList extends Vector<Program> {
             IOUtilities.copy(src, new File(dir,mName+ext));
           }catch(Exception e) {e.printStackTrace();}
           
-          
           mMarkIconPath = dir + "/" + mName + ext;
         }
         
+        if(version <= 3 ) {
+          mMarkIconPath = mMarkIconPath.substring(mMarkIconPath.lastIndexOf("simplemarkericons")-1);
+          
+          if(!new File(SimpleMarkerPlugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome() + mMarkIconPath).isFile()) {
+            mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(null);
+            return;
+          }
+        }
+                
         mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(
-            mMarkIconPath);
+            SimpleMarkerPlugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome() + mMarkIconPath);
       }
     }
-    
   }
 
   /**
@@ -177,7 +184,7 @@ public class MarkList extends Vector<Program> {
    * @throws IOException
    */
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(3); // Version
+    out.writeInt(4); // Version
     out.writeInt(mMarkPriority);
     out.writeObject(mName);
     out.writeUTF(mId);
@@ -354,8 +361,8 @@ public class MarkList extends Vector<Program> {
   }
 
   protected void setMarkIconFileName(String fileName) {
-    mMarkIconPath = SimpleMarkerPlugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome() + "/simplemarkericons/" + fileName;
-    mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(mMarkIconPath);
+    mMarkIconPath = "/simplemarkericons/" + fileName;
+    mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(SimpleMarkerPlugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome() + mMarkIconPath);
   }
 
   protected Icon getMarkIcon() {
