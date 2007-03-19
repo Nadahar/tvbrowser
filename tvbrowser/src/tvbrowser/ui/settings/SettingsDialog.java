@@ -33,6 +33,8 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -135,7 +137,7 @@ public class SettingsDialog implements WindowClosingIf {
     main.setBorder(Borders.DLU4_BORDER);
     mDialog.setContentPane(main);
 
-    JSplitPane splitPane = new JSplitPane();
+    final JSplitPane splitPane = new JSplitPane();
     main.add(splitPane, cc.xy(1, 1));
 
     mRootNode = createSelectionTree();
@@ -153,13 +155,10 @@ public class SettingsDialog implements WindowClosingIf {
     scrollPane.setMinimumSize(new Dimension(150, 0));
     scrollPane.setBorder(null);
     splitPane.setLeftComponent(scrollPane);
-
-    // Make the viewport as big as the tree when all nodes are expanded
+    
+    splitPane.setDividerLocation(Settings.propSettingsDialogDividerLocation.getInt());
+    
     int categoryCount = mRootNode.getChildCount();
-    for (int i = categoryCount; i >= 1; i--) {
-      mSelectionTree.expandRow(i);
-    }
-    scrollPane.getViewport().setPreferredSize(mSelectionTree.getPreferredSize());
     // Let the tree collapse
     for (int i = 1; i <= categoryCount; i++) {
       mSelectionTree.collapseRow(i);
@@ -231,7 +230,16 @@ public class SettingsDialog implements WindowClosingIf {
         Settings.propSettingsWindowHeight.setInt(mSize.height);
       }
     });
-
+    
+    mDialog.addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e) {
+        Settings.propSettingsDialogDividerLocation.setInt(splitPane.getDividerLocation());
+      }
+      
+      public void windowClosed(WindowEvent e) {
+        Settings.propSettingsDialogDividerLocation.setInt(splitPane.getDividerLocation());
+      }
+    });
   }
 
   void invalidateTree() {
@@ -255,10 +263,10 @@ public class SettingsDialog implements WindowClosingIf {
 
   public void centerAndShow() {
     if ((Settings.propSettingsWindowX.getInt() == -1) && (Settings.propSettingsWindowY.getInt() == -1)) {
-      mDialog.setSize(700,600);
+      mDialog.setSize(750,600);
       UiUtilities.centerAndShow(mDialog);
     } else if ((Settings.propSettingsWindowWidth.getInt() == -1) && (Settings.propSettingsWindowWidth.getInt() == -1)) {
-      mDialog.setSize(700,600);
+      mDialog.setSize(750,600);
       mLocation = new Point(Settings.propSettingsWindowX.getInt(), Settings.propSettingsWindowY.getInt());
       mDialog.setLocation(mLocation);
       mDialog.setVisible(true);
@@ -322,7 +330,12 @@ public class SettingsDialog implements WindowClosingIf {
     appearanceNode.add(new SettingNode(new PictureSettingsTab()));
     appearanceNode.add(new SettingNode(new ChannelListSettingsTab(), SettingsItem.CHANNELLISTLOOK));
     appearanceNode.add(new SettingNode(new FontsSettingsTab()));
-    appearanceNode.add(new SettingNode(new ProgramPanelSettingsTab(), SettingsItem.PROGRAMPANELLOOK));
+    
+    SettingNode programPanelNode = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("programPanel", "Program display"), null));    
+    appearanceNode.add(programPanelNode);
+    
+    programPanelNode.add(new SettingNode(new ProgramPanelSettingsTab(), SettingsItem.PROGRAMPANELLOOK));
+    programPanelNode.add(new SettingNode(new MarkingsSettingsTab()));
 
     technicalSettings.add(new SettingNode(new NetworkSettingsTab()));
     technicalSettings.add(new SettingNode(new ProxySettingsTab()));

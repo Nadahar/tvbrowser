@@ -888,6 +888,9 @@ public class Settings {
   public static final IntProperty propWindowY = new IntProperty(mProp,
       "window.y", -1);
 
+  public static final IntProperty propSettingsDialogDividerLocation = new IntProperty(mProp,
+      "settingsDialogDividerLocation", 200);
+  
   /** Settings-Window Width */
   public static final IntProperty propSettingsWindowWidth = new IntProperty(
       mProp, "settingsWindow.width", -1);
