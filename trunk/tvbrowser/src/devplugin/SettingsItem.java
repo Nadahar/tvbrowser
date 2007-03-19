@@ -53,6 +53,7 @@ public class SettingsItem {
   public static final String PLUGINPROGRAMFORMAT = "#pluginprogramformat";
 
   public static final String PROGRAMPANELLOOK = "#programpanellook";
+  public static final String PROGRAMPANELMARKING = "#programpanelmarking";
   public static final String PROGRAMTABLELOOK = "#programtablelook";
   public static final String CHANNELLISTLOOK = "#channellistllook";
   

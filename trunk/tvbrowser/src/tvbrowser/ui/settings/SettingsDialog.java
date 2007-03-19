@@ -335,7 +335,7 @@ public class SettingsDialog implements WindowClosingIf {
     appearanceNode.add(programPanelNode);
     
     programPanelNode.add(new SettingNode(new ProgramPanelSettingsTab(), SettingsItem.PROGRAMPANELLOOK));
-    programPanelNode.add(new SettingNode(new MarkingsSettingsTab()));
+    programPanelNode.add(new SettingNode(new MarkingsSettingsTab(), SettingsItem.PROGRAMPANELMARKING));
 
     technicalSettings.add(new SettingNode(new NetworkSettingsTab()));
     technicalSettings.add(new SettingNode(new ProxySettingsTab()));

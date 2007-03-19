@@ -184,7 +184,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     mHelpLabel = UiUtilities.createHtmlHelpTextArea(SimpleMarkerPlugin.mLocalizer.msg("settings.prioHelp","The mark priority is used for selecting the marking color. The marking colors of the priorities can be change in the <a href=\"#link\">program panel settings</a>. If a program is marked by more than one plugin/list the color with the highest priority given by the marking plugins/lists is used."), new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent e) {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          SettingsDialog.getInstance().showSettingsTab(SettingsItem.PROGRAMPANELLOOK);
+          SettingsDialog.getInstance().showSettingsTab(SettingsItem.PROGRAMPANELMARKING);
         }
       }
     });
