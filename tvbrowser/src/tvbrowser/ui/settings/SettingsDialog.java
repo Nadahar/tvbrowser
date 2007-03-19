@@ -138,6 +138,7 @@ public class SettingsDialog implements WindowClosingIf {
     mDialog.setContentPane(main);
 
     final JSplitPane splitPane = new JSplitPane();
+    splitPane.setContinuousLayout(true);
     main.add(splitPane, cc.xy(1, 1));
 
     mRootNode = createSelectionTree();
