@@ -27,10 +27,6 @@
 package tvbrowser.ui.settings;
 
 import java.awt.Color;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -38,7 +34,6 @@ import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
@@ -47,7 +42,6 @@ import tvbrowser.ui.settings.util.ColorButton;
 import tvbrowser.ui.settings.util.ColorLabel;
 import util.ui.Localizer;
 import util.ui.OrderChooser;
-import util.ui.ScrollableJPanel;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.factories.Borders;
@@ -73,17 +67,15 @@ public class ProgramPanelSettingsTab implements SettingsTab {
   private OrderChooser mIconPluginOCh;
   private OrderChooser mInfoTextOCh;
 
-  private ColorLabel mProgramItemOnAirColorLb, mProgramItemProgressColorLb, mProgramItemKeyboardSelectedLb;
+  private ColorLabel mProgramItemOnAirColorLb, mProgramItemProgressColorLb, mProgramItemKeyboardSelectedLb;  
   
-  private ColorLabel mProgramItemDefaultMarkedColorLb, mProgramItemMinMarkedColorLb, mProgramItemMediumMarkedColorLb, mProgramItemMaxMarkedColorLb;
-  
-  private JCheckBox mProgramItemDefaultMarkedColorShown, mBorderForOnAirPrograms;
+  private JCheckBox mBorderForOnAirPrograms;
 
   /**
    * Creates the settings panel for this tab.
    */
   public JPanel createSettingsPanel() {
-    mSettingsPn = new ScrollableJPanel(new FormLayout("5dlu, fill:50dlu:grow, 3dlu, fill:50dlu:grow, 3dlu", 
+    mSettingsPn = new JPanel(new FormLayout("5dlu, fill:50dlu:grow, 3dlu, fill:50dlu:grow, 3dlu", 
         "pref, 5dlu, fill:default:grow, 3dlu, top:pref, 5dlu, pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, 10dlu, pref, 5dlu, pref"));
     mSettingsPn.setBorder(Borders.DIALOG_BORDER);
     
@@ -142,80 +134,8 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     colors.add(new ColorButton(mProgramItemKeyboardSelectedLb), cc.xy(5,7));
 
     mSettingsPn.add(colors, cc.xyw(2,9,4));
-
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("color.programMarked","Markierung durch Plugins")), cc.xyw(1,11,5));    
     
-    JPanel defaultMarkings = new JPanel(new FormLayout("default, 5dlu, default, 5dlu, default",
-    "default"));
-    
-    Color programItemDefaultMarkedColor = Settings.propProgramTableMarkedDefaultPriorityColor.getColor();
-    Color programItemDefaultDefaultMarkedColor = Settings.propProgramTableMarkedDefaultPriorityColor.getDefaultColor();
-    
-    defaultMarkings.add(mProgramItemDefaultMarkedColorShown = new JCheckBox(mLocalizer.msg("color.showColor","Highlight with default color"), Settings.propProgramTableMarkedDefaultPriorityShowsColor.getBoolean()), cc.xy(1,1));
-    
-    defaultMarkings.add(mProgramItemDefaultMarkedColorLb = new ColorLabel(programItemDefaultMarkedColor), cc.xy(3,1));
-    mProgramItemDefaultMarkedColorLb.setStandardColor(programItemDefaultDefaultMarkedColor);
-    
-    final ColorButton defaultColorBtn = new ColorButton(mProgramItemDefaultMarkedColorLb);
-    defaultMarkings.add(defaultColorBtn, cc.xy(5,1));
-
-    mProgramItemDefaultMarkedColorLb.setEnabled(mProgramItemDefaultMarkedColorShown.isSelected());
-    defaultColorBtn.setEnabled(mProgramItemDefaultMarkedColorShown.isSelected());
-    
-    mProgramItemDefaultMarkedColorShown.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        mProgramItemDefaultMarkedColorLb.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-        defaultColorBtn.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-      }
-    });
-    
-    mSettingsPn.add(defaultMarkings, cc.xyw(2,13,4));
-    
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("color.programMarkedAdditional","Additional colors (replacing default color)")), cc.xyw(1,15,5));    
-    
-    JPanel markings = new JPanel(new FormLayout("default, 5dlu, default, 5dlu, default",
-        "default, 3dlu, default, 3dlu, default, 3dlu, default"));
-        
-    Color programItemMinMarkedColor = Settings.propProgramTableMarkedMinPriorityColor.getColor();
-    Color programItemMinDefaultMarkedColor = Settings.propProgramTableMarkedMinPriorityColor.getDefaultColor();
-    
-    markings.add(new JLabel(mLocalizer.msg("color.minPriority","Minimum priority")), cc.xy(1,1));
-    markings.add(mProgramItemMinMarkedColorLb = new ColorLabel(programItemMinMarkedColor), cc.xy(3,1));
-    mProgramItemMinMarkedColorLb.setStandardColor(programItemMinDefaultMarkedColor);
-    markings.add(new ColorButton(mProgramItemMinMarkedColorLb), cc.xy(5,1));
-    
-    Color programItemMediumMarkedColor = Settings.propProgramTableMarkedMediumPriorityColor.getColor();
-    Color programItemMediumDefaultMarkedColor = Settings.propProgramTableMarkedMediumPriorityColor.getDefaultColor();
-    
-    markings.add(new JLabel(mLocalizer.msg("color.mediumPriority","Medium priority")), cc.xy(1,3));
-    markings.add(mProgramItemMediumMarkedColorLb = new ColorLabel(programItemMediumMarkedColor), cc.xy(3,3));
-    mProgramItemMediumMarkedColorLb.setStandardColor(programItemMediumDefaultMarkedColor);
-    markings.add(new ColorButton(mProgramItemMediumMarkedColorLb), cc.xy(5,3));
-
-    Color programItemMaxMarkedColor = Settings.propProgramTableMarkedMaxPriorityColor.getColor();
-    Color programItemMaxDefaultMarkedColor = Settings.propProgramTableMarkedMaxPriorityColor.getDefaultColor();
-    
-    markings.add(new JLabel(mLocalizer.msg("color.maxPriority","Maximum priority")), cc.xy(1,5));
-    markings.add(mProgramItemMaxMarkedColorLb = new ColorLabel(programItemMaxMarkedColor), cc.xy(3,5));
-    mProgramItemMaxMarkedColorLb.setStandardColor(programItemMaxDefaultMarkedColor);
-    markings.add(new ColorButton(mProgramItemMaxMarkedColorLb), cc.xy(5,5));
-    
-    mSettingsPn.add(markings, cc.xyw(2,17,4));
-    
-    JScrollPane scrollPane = new JScrollPane(mSettingsPn);
-    scrollPane.setBorder(null);
-    scrollPane.setViewportBorder(null);
-    
-    final JPanel scrollPanel = new JPanel(new FormLayout("default:grow","default"));
-    scrollPanel.add(scrollPane,cc.xy(1,1));
-    
-    scrollPanel.addComponentListener(new ComponentAdapter() {
-      public void componentResized(ComponentEvent e) {
-        scrollPanel.updateUI();
-      }
-    });
-    
-    return scrollPanel;
+    return mSettingsPn;
   }
   
   
@@ -309,12 +229,6 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     Settings.propProgramInfoFields.setProgramFieldTypeArray(typeArr);
 
     Settings.propProgramTableOnAirProgramsShowingBorder.setBoolean(mBorderForOnAirPrograms.isSelected());
-    Settings.propProgramTableMarkedDefaultPriorityShowsColor.setBoolean(mProgramItemDefaultMarkedColorShown.isSelected());
-    
-    Settings.propProgramTableMarkedDefaultPriorityColor.setColor(mProgramItemDefaultMarkedColorLb.getColor());
-    Settings.propProgramTableMarkedMinPriorityColor.setColor(mProgramItemMinMarkedColorLb.getColor());
-    Settings.propProgramTableMarkedMediumPriorityColor.setColor(mProgramItemMediumMarkedColorLb.getColor());
-    Settings.propProgramTableMarkedMaxPriorityColor.setColor(mProgramItemMaxMarkedColorLb.getColor());
     
     Settings.propProgramTableColorOnAirDark.setColor(mProgramItemProgressColorLb.getColor());
     Settings.propProgramTableColorOnAirLight.setColor(mProgramItemOnAirColorLb.getColor());
@@ -334,7 +248,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
    * Returns the title of the tab-sheet.
    */
   public String getTitle() {
-    return mLocalizer.msg("programPanel", "Program display");
+    return mLocalizer.msg("basicSettings", "Basic settings");
   }
   
   
