@@ -103,12 +103,7 @@
   <taskdef name="jarbundler"
            classpath="deployment/macosx/jarbundler-1.4.jar"
            classname="com.loomcom.ant.tasks.jarbundler.JarBundler"/>
-
-  <!-- Creates a Windows Executable using JSmooth (http://jsmooth.sf.net) -->
-  <taskdef name="jsmoothgen"
-           classname="net.charabia.jsmoothgen.ant.JSmoothGen"
-           classpath="${deployment.dir}/win/jsmooth/lib/jsmoothgen-ant.jar" />
-
+  
   <!-- Creates a Windows Executable using launch4j (http://launch4j.sf.net) -->
 	<taskdef name="launch4j"
 	    classname="net.sf.launch4j.ant.Launch4jTask"
