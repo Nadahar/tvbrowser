@@ -1,7 +1,36 @@
 Changelog TVBrowser
 
+2.5.1beta3/2.5.1
+================
+
+-Bugs
+ * 1678589 reminder does not show repetition selection
+ * 1680195 Exception on deactivating plugin 
+    
+-Features
+ * 1679059 Use LookAndFeel colors in program table
+
+2.5.1beta2
+==========
+
+-Bugs
+ * 1631684 Filtered view not updated after changing favorites
+ * 1668627 Favorites: Creating doesn't remind reminder state
+ * 1668773 Have bigger reminder time span in export
+ * 1669383 Scrolling channel list with active filter does not work
+ * 1669620 Sound playing in reminder sometime didn't works
+ * 1669719 Scrolling does not work after activating filter
+ * 1669728 Slowdown of program info due to favorite programs
+ * 1669733 Grouping of programs for marker plugin confusing
+ * 1670353 Copied blanks in filter component name not replaced
+ * 1670583 Network checks shows wrong duration
+ * 1672077 No reaction in dialog windows on Mac with Apple+Q
+ * 1675285 Dont start second instance if not confirmed
+ * 1675580 NewsPlugin mustn't show old news if no news received
+ * 1676886 Windows: No ability to stop registry change 
+
 2.5.1beta1
-=========
+==========
 
 -Bugs
  * 1622882 CalendarExport: problems with settings
