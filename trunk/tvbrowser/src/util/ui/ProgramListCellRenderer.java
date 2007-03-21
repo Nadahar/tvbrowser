@@ -50,7 +50,7 @@ import devplugin.Program;
  */
 public class ProgramListCellRenderer extends DefaultListCellRenderer {
 
-  private static final Color SECOND_ROW_COLOR = new Color(220, 220, 220, 80);
+  private static final Color SECOND_ROW_COLOR = new Color(220, 220, 220, 150);
   
   private JPanel mMainPanel;
   private JLabel mHeaderLb;

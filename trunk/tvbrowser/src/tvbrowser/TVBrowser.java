@@ -118,6 +118,7 @@ public class TVBrowser {
   */
   /** The string array with the names of the earlier versions. */
   public static final String[] ALL_VERSIONS = new String[]{
+          "2.5.1",
           "2.5.1beta3",
           "2.5.1beta2",
           "2.5.1beta1",
@@ -138,7 +139,7 @@ public class TVBrowser {
   };
   
   /** The current version. */
-  public static final devplugin.Version VERSION=new devplugin.Version(2,51,false,ALL_VERSIONS[0] + ((mIsTransportable = new File("settings").isDirectory()) ? " transportable" : ""));
+  public static final devplugin.Version VERSION=new devplugin.Version(2,51,true,ALL_VERSIONS[0] + ((mIsTransportable = new File("settings").isDirectory()) ? " transportable" : ""));
 
   /** The title bar string. */
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
@@ -275,8 +276,11 @@ public class TVBrowser {
     // Set the String to use for indicating the user agent in http requests
     System.setProperty("http.agent", MAINWINDOW_TITLE);
 
-    final Version currentVersion = Settings.propTVBrowserVersion.getVersion();
+    final Version currentVersion = new Version(Settings.propTVBrowserVersion.getVersion().getMajor(),Settings.propTVBrowserVersion.getVersion().getMinor(),Settings.propTVBrowserVersionIsStable.getBoolean());
+    
     Settings.propTVBrowserVersion.setVersion(VERSION);
+    Settings.propTVBrowserVersionIsStable.setBoolean(VERSION.isStable());
+    
     if (currentVersion != null && currentVersion.compareTo(new Version(1,11))<0) {
       mLog.info("Running tvbrowser update assistant");
       javax.swing.plaf.metal.MetalLookAndFeel.setCurrentTheme(new NotBoldMetalTheme());
@@ -426,14 +430,12 @@ public class TVBrowser {
             // check if user should select picture settings
             if(currentVersion.compareTo(new Version(2,22))<0) {
               TvBrowserPictureSettingsUpdateDialog.createAndShow(mainFrame);
-              
-              if(Settings.propLastDownloadDate.getDate() != null)
-                Settings.propAcceptedLicenseArrForServiceIds.setStringArray(new String[] {"tvbrowserdataservice.TvBrowserDataService"});
-              
               Settings.propIsSkinLFEnabled.setBoolean(false);
             }
-            else if(currentVersion.compareTo(new Version(2,50)) == 0)
+            else if(currentVersion.compareTo(new Version(2,51,true)) < 0) {
               Settings.propIsSkinLFEnabled.setBoolean(false);
+              Settings.propAcceptedLicenseArrForServiceIds.setStringArray(new String[0]);
+            }
           }
         });
       }

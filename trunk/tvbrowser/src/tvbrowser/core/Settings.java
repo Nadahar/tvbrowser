@@ -466,6 +466,9 @@ public class Settings {
   
   public static final VersionProperty propTVBrowserVersion = new VersionProperty(
       mProp, "version", null);
+  
+  public static final BooleanProperty propTVBrowserVersionIsStable = new BooleanProperty(
+      mProp, "versionIsStable", false);
 
   public static final BooleanProperty propUseDefaultFonts = new BooleanProperty(
       mProp, "usedefaultfonts", true);
