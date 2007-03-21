@@ -82,14 +82,15 @@ public class JarWinJavaExeLauncher {
           int index = 0;
         
           for(int i = 1; i < jres.length; i++) {
-            if(getJreFromName(jres[i].getName()) > getJreFromName(jres[index].getName()))
+            if(new File(jres[i].getAbsolutePath() + "\\bin\\java.exe").isFile() && getJreFromName(jres[i].getName()) > getJreFromName(jres[index].getName()))
               index = i;
           }
-        
-          return jres[index].getAbsolutePath() + "\\bin\\java.exe";
+          
+          if(new File(jres[index].getAbsolutePath() + "\\bin\\java.exe").isFile())
+            return jres[index].getAbsolutePath() + "\\bin\\java.exe";
         }
       }
-    }catch(Throwable e) {}
+    }catch(Throwable e) {e.printStackTrace();}
     
     return "java.exe";
   }
@@ -97,14 +98,14 @@ public class JarWinJavaExeLauncher {
   private int getJreFromName(String name) throws Exception {
     String value = name.substring(name.indexOf(".")-1);
     
-    String[] version = value.split(".");
+    String[] version = value.split("[.]");
     int parsedVersion = 0;
     
     if(version != null && version.length == 3) {      
       parsedVersion = Integer.parseInt(version[0]) * 10000;
       parsedVersion += Integer.parseInt(version[1]) * 1000;
       
-      if(version[0].indexOf("_") == -1)
+      if(version[2].indexOf("_") == -1)
         parsedVersion += Integer.parseInt(version[2]) * 100;
       else {
         String[] subVersion = version[2].split("_");
