@@ -59,6 +59,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.Settings;
+import tvbrowser.core.filters.FilterComponent;
+import tvbrowser.core.filters.FilterComponentList;
+import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
+import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
 import util.ui.CaretPositionCorrector;
 import util.ui.TimeFormatter;
 import util.ui.UiUtilities;
@@ -107,6 +111,9 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
   /** Select for mRuns */
   private JComboBox mBox;
+
+  /** channel filter selection */
+  private JComboBox mChannels;
 
   /** Times */
   private int[] mTimes;
@@ -177,38 +184,44 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
       date = date.addDays(1);
       time -= 60 * 24;
     }
-
+    
     Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
+    if ((mChannels != null) && (mChannels.getSelectedIndex() > 0)) {
+      FilterComponent component = FilterComponentList.getInstance().getFilterComponentByName(mChannels.getSelectedItem().toString());
+      if (component instanceof ChannelFilterComponent) {
+        channels = ((ChannelFilterComponent) component).getChannels(); 
+      }
+    }
 
-    for (int i = 0; i < channels.length; i++) {
+    for (Channel channel : channels) {
 
-      Program prg = findProgram(date, time, channels[i]);
+      Program prg = findProgram(date, time, channel);
       Program nprg = null;
 
       if (prg == null) {
-        prg = findProgram(date.addDays(-1), time + 60 * 24, channels[i]);
+        prg = findProgram(date.addDays(-1), time + 60 * 24, channel);
       }
 
       if (prg != null) {
         nprg = findNextProgram(prg);
       } else {
-        Iterator it = Plugin.getPluginManager().getChannelDayProgram(date, channels[i]);
+        Iterator it = Plugin.getPluginManager().getChannelDayProgram(date, channel);
 
         if ((it != null) && (it.hasNext())) {
           Program p = (Program) it.next();
           if (p.getStartTime() > time) {
             nprg = p;
           } else {
-            nprg = findProgram(date, time + 60, channels[i]);
+            nprg = findProgram(date, time + 60, channel);
           }
         } else {
 
-          nprg = findProgram(date, time + 60, channels[i]);
+          nprg = findProgram(date, time + 60, channel);
         }
 
       }
 
-      mModel.updateRow(channels[i], prg, nprg);
+      mModel.updateRow(channel, prg, nprg);
     }
   }
 
@@ -309,9 +322,9 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
     TimeFormatter formatter = new TimeFormatter();
     
-    for (int i = 0; i < mTimes.length; i++) {
-      int h = mTimes[i] / 60;
-      int m = mTimes[i] % 60;
+    for (int time : mTimes) {
+      int h = time / 60;
+      int m = time % 60;
       StringBuilder builder = new StringBuilder();
       builder.append(mLocalizer.msg("at", "at"));
       builder.append(' ');
@@ -364,23 +377,24 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     CaretPositionCorrector.createCorrector(dateEditor.getTextField(), new char[] {':'}, -1);
 
     datetimeselect.add(mTimeSpinner);
+
+    Vector<String> filters = getChannelFilters();
+    mChannels = new JComboBox(filters);
+    datetimeselect.add(new JLabel("    "));
+    datetimeselect.add(mChannels);
     
     // Event-Handler
 
     mRuns.addActionListener(new ActionListener() {
-
       public void actionPerformed(ActionEvent arg0) {
         refreshView();
       }
-
     });
 
     mOn.addActionListener(new ActionListener() {
-
       public void actionPerformed(ActionEvent arg0) {
         refreshView();
       }
-
     });
 
     mDate.addActionListener(new ActionListener() {
@@ -390,10 +404,34 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     });
 
     mTimeSpinner.addChangeListener(new ChangeListener() {
-
       public void stateChanged(ChangeEvent arg0) {
         refreshView();
-
+      }
+    });
+    
+    mChannels.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        // user defined selection
+        if (mChannels.getSelectedIndex() == mChannels.getItemCount()-1) {
+          EditFilterComponentDlg dlg = new EditFilterComponentDlg(null, null, ChannelFilterComponent.class);
+          FilterComponent rule = dlg.getFilterComponent();
+          if (rule == null) {
+            return;
+          }
+          if (! (rule instanceof ChannelFilterComponent)) {
+            return;
+          }
+          FilterComponentList.getInstance().add(rule);
+          FilterComponentList.getInstance().store();
+          String filterName = rule.getName();
+          mChannels.removeAllItems();
+          for (String channel : getChannelFilters()) {
+            mChannels.addItem(channel);
+          }
+          mChannels.setSelectedItem(filterName);
+        }
+        mModel.removeAllRows();
+        refreshView();
       }
     });
 
@@ -499,6 +537,19 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     buttonPn.add(closeButton, BorderLayout.EAST);
     getRootPane().setDefaultButton(closeButton);
 
+  }
+
+  private Vector<String> getChannelFilters() {
+    Vector<String> filters = new Vector<String>();
+    filters.add(mLocalizer.msg("filterAll", "all channels"));
+    FilterComponent[] filterComponents = FilterComponentList.getInstance().getAvailableFilterComponents();
+    for (FilterComponent component : filterComponents) {
+      if (component instanceof ChannelFilterComponent) {
+        filters.add(component.getName());
+      }
+    }
+    filters.add(mLocalizer.msg("filterDefine", "define filter..."));
+    return filters;
   }
 
   /**
