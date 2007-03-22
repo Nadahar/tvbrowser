@@ -107,6 +107,12 @@ public class ListTableModel extends AbstractTableModel {
       }
     }
     
+    public void removeAllRows() {
+      int size = mData.size();
+      mData.removeAllElements();
+      fireTableRowsDeleted(0, size - 1);
+    }
+    
     /**
      * Trys to find a Row with a specific Channel and returns it's Index
      * @param channel Find Row with this Channel

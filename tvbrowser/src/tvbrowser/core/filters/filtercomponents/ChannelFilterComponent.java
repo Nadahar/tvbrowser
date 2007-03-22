@@ -161,8 +161,8 @@ public class ChannelFilterComponent implements FilterComponent {
     mDescription = desc;
   }
 	
-
-  
-  
+  public Channel[] getChannels() {
+    return mSelectedChannels;
+  }
   
 }

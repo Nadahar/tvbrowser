@@ -97,6 +97,10 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
   }
 
   public EditFilterComponentDlg(JFrame parent, FilterComponent comp) {
+    this(parent, comp, null);
+  }
+
+  public EditFilterComponentDlg(JFrame parent, FilterComponent comp, Class<? extends FilterComponent> filterComponentClass) {
     super(parent, true);
     
     UiUtilities.registerForClosing(this);
@@ -142,38 +146,52 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
         return arg0.toString().compareTo(arg1.toString());
       }
     });
-    set.add(new DayFilterComponent());
-    set.add(new KeywordFilterComponent());
-    set.add(new FavoritesFilterComponent());
-    set.add(new ReminderFilterComponent());
-    set.add(new PluginFilterComponent());
-    set.add(new PluginIconFilterComponent());
-    set.add(new ChannelFilterComponent());
-    set.add(new TimeFilterComponent());
-    set.add(new ProgramInfoFilterComponent());
-    set.add(new ProgramLengthFilterComponent());
-    set.add(new ProgramRunningFilterComponent());
-    set.add(new BeanShellFilterComponent());
-    set.add(new MassFilterComponent());
-    set.add(new ProgramMarkingPriorityFilterComponent());
-
-    PluginAccess[] plugins = PluginManagerImpl.getInstance().getActivatedPlugins();
     
-    for(PluginAccess plugin : plugins) {
-      Class<? extends PluginsFilterComponent>[] clazzes = plugin.getAvailableFilterComponentClasses();
+    if (filterComponentClass == null) {
+      set.add(new DayFilterComponent());
+      set.add(new KeywordFilterComponent());
+      set.add(new FavoritesFilterComponent());
+      set.add(new ReminderFilterComponent());
+      set.add(new PluginFilterComponent());
+      set.add(new PluginIconFilterComponent());
+      set.add(new ChannelFilterComponent());
+      set.add(new TimeFilterComponent());
+      set.add(new ProgramInfoFilterComponent());
+      set.add(new ProgramLengthFilterComponent());
+      set.add(new ProgramRunningFilterComponent());
+      set.add(new BeanShellFilterComponent());
+      set.add(new MassFilterComponent());
+      set.add(new ProgramMarkingPriorityFilterComponent());
+  
+      PluginAccess[] plugins = PluginManagerImpl.getInstance().getActivatedPlugins();
       
-      if(clazzes != null)
-        for(Class<? extends PluginsFilterComponent> clazz : clazzes) {
-          try {
-            set.add(clazz.newInstance());
-          } catch (InstantiationException e) {
-            // TODO Automatisch erstellter Catch-Block
-            e.printStackTrace();
-          } catch (IllegalAccessException e) {
-            // TODO Automatisch erstellter Catch-Block
-            e.printStackTrace();
+      for(PluginAccess plugin : plugins) {
+        Class<? extends PluginsFilterComponent>[] clazzes = plugin.getAvailableFilterComponentClasses();
+        
+        if(clazzes != null)
+          for(Class<? extends PluginsFilterComponent> clazz : clazzes) {
+            try {
+              set.add(clazz.newInstance());
+            } catch (InstantiationException e) {
+              // TODO Automatisch erstellter Catch-Block
+              e.printStackTrace();
+            } catch (IllegalAccessException e) {
+              // TODO Automatisch erstellter Catch-Block
+              e.printStackTrace();
+            }
           }
-        }
+      }
+    }
+    else {
+      try {
+        set.add(filterComponentClass.newInstance());
+      } catch (InstantiationException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      } catch (IllegalAccessException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
     
     Iterator it = set.iterator();
@@ -212,6 +230,9 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
 
     if (comp != null) {
       this.setFilterComponent(comp);
+    }
+    else if (mRuleCb.getItemCount() == 2) {
+      mRuleCb.setSelectedIndex(1);
     }
 
     updateOkBtn();
