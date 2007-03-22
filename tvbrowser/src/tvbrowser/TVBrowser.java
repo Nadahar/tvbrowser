@@ -430,11 +430,11 @@ public class TVBrowser {
             }
             
             // check if user should select picture settings
-            if(currentVersion.compareTo(new Version(2,22))<0) {
+            if(currentVersion != null && currentVersion.compareTo(new Version(2,22))<0) {
               TvBrowserPictureSettingsUpdateDialog.createAndShow(mainFrame);
               Settings.propIsSkinLFEnabled.setBoolean(false);
             }
-            else if(currentVersion.compareTo(new Version(2,51,true)) < 0) {
+            else if(currentVersion != null && currentVersion.compareTo(new Version(2,51,true)) < 0) {
               Settings.propIsSkinLFEnabled.setBoolean(false);
               Settings.propAcceptedLicenseArrForServiceIds.setStringArray(new String[0]);
             }
