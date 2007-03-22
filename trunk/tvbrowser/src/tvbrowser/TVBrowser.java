@@ -278,13 +278,10 @@ public class TVBrowser {
     System.setProperty("http.agent", MAINWINDOW_TITLE);
 
     Version tmpVer = Settings.propTVBrowserVersion.getVersion();
-    
-    final Version currentVersion = tmpVer != null ? new Version(Settings.propTVBrowserVersion.getVersion().getMajor(),Settings.propTVBrowserVersion.getVersion().getMinor(),Settings.propTVBrowserVersionIsStable.getBoolean()) : tmpVer;
+    final Version currentVersion = tmpVer != null ? new Version(tmpVer.getMajor(),tmpVer.getMinor(),Settings.propTVBrowserVersionIsStable.getBoolean()) : tmpVer;
     
     Settings.propTVBrowserVersion.setVersion(VERSION);
-    
-    if(currentVersion != null)
-      Settings.propTVBrowserVersionIsStable.setBoolean(VERSION.isStable());
+    Settings.propTVBrowserVersionIsStable.setBoolean(VERSION.isStable());
     
     if (currentVersion != null && currentVersion.compareTo(new Version(1,11))<0) {
       mLog.info("Running tvbrowser update assistant");
