@@ -449,6 +449,10 @@ public class Settings {
       
       MainFrame.getInstance().handleChangedTvDataDir();      
     }
+    
+    if (mProp.hasChanged(propEnableChannelIcons)) {
+      mainFrame.updateChannellist();
+    }
 
     mProp.clearChanges();
   }
