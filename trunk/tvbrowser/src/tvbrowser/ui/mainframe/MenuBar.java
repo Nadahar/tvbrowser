@@ -65,6 +65,7 @@ import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
 import util.browserlauncher.Launch;
 import util.ui.Localizer;
 import util.ui.ScrollableMenu;
+import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.Date;
@@ -258,7 +259,11 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
   }
 
   private JMenuItem createChannelMenuItem(final Channel channel) {
-    JMenuItem item = new JMenuItem(channel.getName());
+    Icon icon = null;
+    if (Settings.propEnableChannelIcons.getBoolean()) {
+      icon = UiUtilities.createChannelIcon(channel.getIcon());
+    }
+    JMenuItem item = new JMenuItem(channel.getName(), icon);
     item.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         mMainFrame.showChannel(channel);
