@@ -112,6 +112,21 @@ public class DreamboxConnector {
         return null;
     }
 
+    /**
+     * Switch to channel on Dreambox
+     * @param channel switch to this channel
+     */
+    public void switchToChannel(DreamboxChannel channel) {
+        try {
+            URL url = new URL("http://" + mAddress + "/web/zap?ZapTo=" + URLEncoder.encode(channel.getReference(), "UTF8"));
+            url.openStream();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void listTimers() {
         try {
             URL url = new URL("http://" + mAddress + "/web/timerlist");
