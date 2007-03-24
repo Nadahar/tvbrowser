@@ -261,5 +261,7 @@ public class ElgatoDevice implements DeviceIf {
      * @param p The program to remove from this device. 
      * @since 2.11
      */
-    public void removeProgramWithoutExecution(Program p) {}
+    public void removeProgramWithoutExecution(Program p) {
+        mConnection.removeRecording(p);
+    }
 }

@@ -25,6 +25,7 @@
 package captureplugin.drivers;
 
 import captureplugin.drivers.defaultdriver.DefaultDriver;
+import captureplugin.drivers.dreambox.DreamboxDriver;
 import util.misc.OperatingSystem;
 
 import java.util.ArrayList;
@@ -62,8 +63,10 @@ public class DriverFactory {
      */
     public DriverIf[] getDrivers() {
         ArrayList<DriverIf> drivers = new ArrayList<DriverIf>();
+
         drivers.add(new DefaultDriver());
-        
+        drivers.add(new DreamboxDriver());
+
         if (OperatingSystem.isMacOs()) {
             try {
                 DriverIf driver = (DriverIf) this.getClass().getClassLoader().loadClass("captureplugin.drivers.elgatodriver.ElgatoDriver").newInstance();
@@ -86,13 +89,13 @@ public class DriverFactory {
     public DeviceIf createDevice(String classname, String devname) {
         
         DriverIf[] drivers = getDrivers();
-        
-        for (int i = 0; i < drivers.length; i++) {
-            if (drivers[i].getClass().getName().equals(classname)) {
-                return drivers[i].createDevice(devname);
+
+        for (DriverIf driver : drivers) {
+            if (driver.getClass().getName().equals(classname)) {
+                return driver.createDevice(devname);
             }
         }
-        
+
         return null;
     }
     
