@@ -29,6 +29,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.swing.text.DateFormatter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -39,6 +40,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.TreeMap;
+import java.util.HashMap;
+import java.util.Calendar;
+import java.util.TimeZone;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
+import captureplugin.drivers.dreambox.DreamboxConfig;
+import captureplugin.CapturePlugin;
+import devplugin.Program;
+import devplugin.Channel;
+import devplugin.Date;
 
 /**
  * Connector for the Dreambox
@@ -127,7 +139,10 @@ public class DreamboxConnector {
         }
     }
 
-    private void listTimers() {
+    /**
+     * @return List of Timers
+     */
+    private ArrayList<HashMap<String, String>> getTimers() {
         try {
             URL url = new URL("http://" + mAddress + "/web/timerlist");
             InputStream stream = url.openStream();
@@ -138,8 +153,7 @@ public class DreamboxConnector {
 
             saxParser.parse(stream, handler);
 
-            ArrayList timers = handler.getTimers();
-            System.out.println(timers.size());
+            return handler.getTimers();
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         } catch (SAXException e) {
@@ -149,10 +163,56 @@ public class DreamboxConnector {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
-    public static void main(String[] args) {
-        new DreamboxConnector("192.168.1.140").listTimers();
-    }
+    /**
+     * @param config DreamboxConfig
+     * @return List of recordings on the dreambox
+     */
+    public Program[] getRecordings(DreamboxConfig config) {
+        ArrayList<Program> programs = new ArrayList<Program>();
 
+        ArrayList<HashMap<String, String>> timers = getTimers();
+
+        for(HashMap<String, String> timer:timers) {
+
+            DreamboxChannel channel = config.getDreamboxChannelForRef(timer.get("e2servicereference"));
+
+            if (channel != null) {
+                Channel tvbchannel = config.getChannel(channel);
+                Calendar begin = Calendar.getInstance();
+                begin.setTimeInMillis(Long.parseLong(timer.get("e2timebegin"))*1000);
+
+                Calendar end = Calendar.getInstance();
+                end.setTimeInMillis(Long.parseLong(timer.get("e2timeend"))*1000);
+
+                Date date = new Date(begin);
+
+                Iterator it = CapturePlugin.getPluginManager()
+                            .getChannelDayProgram(date, tvbchannel);
+                if (it != null) {
+                    boolean found = false;
+
+                    while (it.hasNext() && !found) {
+                        Program prog = (Program) it.next();
+
+                        if (prog.getHours() >= begin.get(Calendar.HOUR_OF_DAY) &&
+                            prog.getMinutes() >= begin.get(Calendar.MINUTE) &&
+                            prog.getHours() <= end.get(Calendar.HOUR_OF_DAY) &&
+                            prog.getMinutes() <= end.get(Calendar.MINUTE)
+                            && prog.getTitle().trim().equalsIgnoreCase(timer.get("e2name").trim())
+                            ) {
+                            found = true;
+                            programs.add(prog);
+                        }
+                    }
+                }
+
+            }
+
+        }
+
+        return programs.toArray(new Program[0]);
+    }
 }
