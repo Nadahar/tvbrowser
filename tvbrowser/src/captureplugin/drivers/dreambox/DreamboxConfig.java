@@ -47,6 +47,7 @@ public class DreamboxConfig {
     private DreamboxChannel[] mDreamboxChannels = new DreamboxChannel[0];
     /** HashMap for tvbrowser channels vs channels on dreambox*/
     private HashMap<Channel, DreamboxChannel> mChannels = new HashMap<Channel, DreamboxChannel>();
+    private HashMap<DreamboxChannel, Channel> mDChannels = new HashMap<DreamboxChannel, Channel>();
 
     /**
      * Constructor
@@ -63,6 +64,7 @@ public class DreamboxConfig {
         mDreamboxAddress = dreamboxConfig.getDreamboxAddress();
         mDreamboxChannels = dreamboxConfig.getDreamboxChannels();
         mChannels = dreamboxConfig.getChannels();
+        mDChannels = dreamboxConfig.getDreamChannels();
     }
 
     /**
@@ -137,8 +139,9 @@ public class DreamboxConfig {
 
         for (int i = 0; i < count; i++) {
             Channel ch = Channel.readData(stream, true);
-            DreamboxChannel dch = findDreamboxChannelForRef(stream.readUTF());
+            DreamboxChannel dch = getDreamboxChannelForRef(stream.readUTF());
             mChannels.put(ch, dch);
+            mDChannels.put(dch, ch);
         }
 
     }
@@ -148,7 +151,7 @@ public class DreamboxConfig {
      * @param ref ServiceReference
      * @return Channel with specific ref, <code>null</code>, if not found
      */
-    private DreamboxChannel findDreamboxChannelForRef(String ref) {
+    public DreamboxChannel getDreamboxChannelForRef(String ref) {
         for (DreamboxChannel channel : mDreamboxChannels) {
             if (channel.getReference().equals(ref)) {
                 return channel;
@@ -200,6 +203,13 @@ public class DreamboxConfig {
     }
 
     /**
+     *  @return internal HashMap for Dreambox vs TVBrowser Channels
+     */
+    private HashMap<DreamboxChannel, Channel> getDreamChannels() {
+        return mDChannels;
+    }
+
+    /**
      * Get a DreamboxChannel for a TVBrowser-channel
      * @param channel get DreamboxChannel for this channel
      * @return DreamboxChannel for given channel, <code>null</code> if not found
@@ -209,11 +219,22 @@ public class DreamboxConfig {
     }
 
     /**
+     * Get a TVBrowser-channel for a DreamboxChannel
+     * @param channel get TVBrowser channel for this channel
+     * @return TVBrowser channel for a given channel, <code>null</code> if not found
+     */
+    public Channel getChannel(DreamboxChannel channel) {
+        return mDChannels.get(channel);
+    }
+
+    /**
      * Set the mapping between dreamboxchannel and subscribedchannel
      * @param channel TVBrowser-Channel
      * @param dreamboxChannel DreamboxChannel
      */
     public void setDreamboxChannel(Channel channel, DreamboxChannel dreamboxChannel) {
         mChannels.put(channel, dreamboxChannel);
+        mDChannels.put(dreamboxChannel, channel);
     }
+
 }

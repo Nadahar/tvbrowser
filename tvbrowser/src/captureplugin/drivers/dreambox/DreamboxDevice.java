@@ -170,7 +170,8 @@ public class DreamboxDevice implements DeviceIf {
      * @see captureplugin.drivers.DeviceIf#getProgramList()
      */
     public Program[] getProgramList() {
-        return new Program[0];
+        DreamboxConnector con = new DreamboxConnector(mConfig.getDreamboxAddress());
+        return con.getRecordings(mConfig); 
     }
 
     /**
@@ -195,7 +196,9 @@ public class DreamboxDevice implements DeviceIf {
                     }
                 }).start();
             } else {
-                int ret = JOptionPane.showConfirmDialog(parent, "Channel not configured!", "Configure", JOptionPane.YES_NO_OPTION);
+                int ret = JOptionPane.showConfirmDialog(parent,
+                        mLocalizer.msg("notConfiguredText","Channel not configured, do\nyou want to do this now?"),
+                        mLocalizer.msg("notConfiguredTitle","Configure"), JOptionPane.YES_NO_OPTION);
 
                 if (ret == JOptionPane.YES_OPTION) {
                     configDevice(parent);
