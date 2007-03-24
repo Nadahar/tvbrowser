@@ -27,12 +27,15 @@ package captureplugin.drivers.dreambox;
 import captureplugin.drivers.DeviceIf;
 import captureplugin.drivers.DriverIf;
 import captureplugin.drivers.dreambox.configdialog.DreamboxConfigDialog;
+import captureplugin.drivers.dreambox.connector.DreamboxChannel;
+import captureplugin.drivers.dreambox.connector.DreamboxConnector;
 import devplugin.Program;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import java.awt.Window;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -181,6 +184,25 @@ public class DreamboxDevice implements DeviceIf {
      * @see captureplugin.drivers.DeviceIf#executeAdditionalCommand(java.awt.Window, int, devplugin.Program)
      */
     public boolean executeAdditionalCommand(Window parent, int num, Program program) {
+        if (num == 0) {
+            final DreamboxChannel channel =  mConfig.getDreamboxChannel(program.getChannel());
+
+            if (channel != null) {
+                new Thread(new Runnable() {
+                    public void run() {
+                        DreamboxConnector connect = new DreamboxConnector(mConfig.getDreamboxAddress());
+                        connect.switchToChannel(channel);
+                    }
+                }).start();
+            } else {
+                int ret = JOptionPane.showConfirmDialog(parent, "Channel not configured!", "Configure", JOptionPane.YES_NO_OPTION);
+
+                if (ret == JOptionPane.YES_OPTION) {
+                    configDevice(parent);
+                }
+            }
+            return true;
+        }
         return false;
     }
 
