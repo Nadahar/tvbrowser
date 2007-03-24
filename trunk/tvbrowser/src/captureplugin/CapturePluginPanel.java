@@ -70,14 +70,14 @@ public class CapturePluginPanel extends JPanel {
 
         mTabPane.addTab(mLocalizer.msg("ProgramList", "Programlist"), new ProgramListPanel(owner, data));
         
+        mTabPane.addTab(mLocalizer.msg("Devices", "Devices"), new DevicePanel(owner, data));
+
         mPictureSettings = new PictureSettingsPanel(CapturePlugin.getInstance().getProgramPanelSettings(),true,true);
         
         final JScrollPane scrollPane = new JScrollPane(mPictureSettings);
         scrollPane.setBorder(null);
         
         mTabPane.addTab(Localizer.getLocalization(Localizer.I18N_PICTURES), scrollPane);
-        
-        mTabPane.addTab(mLocalizer.msg("Devices", "Devices"), new DevicePanel(owner, data));
         
         // Tabbed - Pane
         //	this.add(tabPane,BorderLayout.CENTER);
