@@ -24,12 +24,17 @@
  */
 package captureplugin.drivers.dreambox.connector;
 
+import captureplugin.CapturePlugin;
+import captureplugin.drivers.dreambox.DreamboxConfig;
+import captureplugin.drivers.utils.ProgramTime;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.Program;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import javax.swing.text.DateFormatter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -37,21 +42,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.TreeMap;
-import java.util.HashMap;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.TimeZone;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
-import captureplugin.drivers.dreambox.DreamboxConfig;
-import captureplugin.drivers.utils.ProgramTime;
-import captureplugin.CapturePlugin;
-import devplugin.Program;
-import devplugin.Channel;
-import devplugin.Date;
+import java.util.TreeMap;
 
 /**
  * Connector for the Dreambox
@@ -107,7 +103,6 @@ public class DreamboxConnector {
             ArrayList<DreamboxChannel> allChannels = new ArrayList<DreamboxChannel>();
 
             TreeMap<String, String> bouquets = getServiceData(URLEncoder.encode(BOUQUETLIST, "UTF8"));
-            Iterator<String> it = bouquets.keySet().iterator();
 
             for (String key : bouquets.keySet()) {
                 TreeMap<String, String> map = getServiceData(URLEncoder.encode(key, "UTF8"));
@@ -184,7 +179,6 @@ public class DreamboxConnector {
                 Channel tvbchannel = config.getChannel(channel);
                 Calendar begin = Calendar.getInstance();
                 begin.setTimeInMillis(Long.parseLong(timer.get("e2timebegin"))*1000);
-
                 int beginMinutes = begin.get(Calendar.HOUR_OF_DAY) * 60 + begin.get(Calendar.MINUTE);
 
                 Calendar end = Calendar.getInstance();
@@ -205,11 +199,13 @@ public class DreamboxConnector {
 
                     while (it.hasNext() && !found) {
                         Program prog = (Program) it.next();
+                        int progTime = prog.getHours() * 60 + prog.getMinutes();
 
-                        if (prog.getHours()*60+prog.getMinutes() >= beginMinutes &&
-                            prog.getHours()*60+prog.getMinutes() <= endMinutes
+                        if (progTime >= beginMinutes &&
+                            progTime <= endMinutes
                             && prog.getTitle().trim().equalsIgnoreCase(timer.get("e2name").trim())
                             ) {
+
                             found = true;
                             programs.add(new ProgramTime(prog, begin.getTime(), end.getTime()));
                         }
@@ -225,19 +221,112 @@ public class DreamboxConnector {
 
     /**
      * Add a recording to the Dreambox
-     * @param prgTime add this ProgramTime
-     * @return true, if succcesfull
+     * @param dreamboxChannel the DreamboxChannel for the Program
+     * @param prgTime add this ProgramTime @return true, if succcesfull
+     * @return True, if successfull
      */
-    public boolean addRecording(ProgramTime prgTime) {
+    public boolean addRecording(DreamboxChannel dreamboxChannel, ProgramTime prgTime) {
+        try {
+            Calendar start = prgTime.getStartAsCalendar();
+            start.setTimeZone(TimeZone.getTimeZone("GMT+1"));
+            Calendar end = prgTime.getEndAsCalendar();
+            end.setTimeZone(TimeZone.getTimeZone("GMT+1"));
+
+            URL url = new URL("http://" + mAddress + "/web/tvbrowser?&command=add&action=0" +
+                    "&syear=" + start.get(Calendar.YEAR) +
+                    "&smonth=" + (start.get(Calendar.MONTH)+1) +
+                    "&sday=" + start.get(Calendar.DAY_OF_MONTH) +
+                    "&shour=" + start.get(Calendar.HOUR_OF_DAY)+
+                    "&smin=" + start.get(Calendar.MINUTE)+
+
+                    "&eyear=" + end.get(Calendar.YEAR) +
+                    "&emonth=" + (end.get(Calendar.MONTH)+1) +
+                    "&eday=" + end.get(Calendar.DAY_OF_MONTH) +
+                    "&ehour=" + end.get(Calendar.HOUR_OF_DAY)+
+                    "&emin=" + end.get(Calendar.MINUTE)+
+
+                    "&serviceref=" + URLEncoder.encode(dreamboxChannel.getName() +"|"+dreamboxChannel.getReference(), "UTF8") +
+                    "&name=" + URLEncoder.encode(prgTime.getProgram().getTitle(), "UTF8") +
+                    "&description=" + URLEncoder.encode(prgTime.getProgram().getShortInfo(), "UTF8") +
+
+                    "&afterevent=0&eit=&disabled=0&justplay=0&repeated=0");
+
+            InputStream stream = url.openStream();
+
+            SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
+
+            DreamboxStateHandler handler = new DreamboxStateHandler();
+
+            saxParser.parse(stream, handler);
+
+            return (handler.getState().equalsIgnoreCase("true"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        }
+
         return false;
     }
 
     /**
      * Remove a recording from the Dreambox
-     * @param time ProgramTime to remove
-     * @return true, if successfull
+     * @param dreamboxChannel the DreamboxChannel for the Program
+     * @param prgTime ProgramTime to remove @return true, if successfull
+     * @return True, if successfull
      */
-    public boolean removeRecording(ProgramTime time) {
+    public boolean removeRecording(DreamboxChannel dreamboxChannel, ProgramTime prgTime) {
+        try {
+            Calendar start = prgTime.getStartAsCalendar();
+            start.setTimeZone(TimeZone.getTimeZone("GMT+1"));
+            Calendar end = prgTime.getEndAsCalendar();
+            end.setTimeZone(TimeZone.getTimeZone("GMT+1"));
+
+            URL url = new URL("http://" + mAddress + "/web/tvbrowser?&command=del&action=0" +
+                    "&syear=" + start.get(Calendar.YEAR) +
+                    "&smonth=" + (start.get(Calendar.MONTH)+1) +
+                    "&sday=" + start.get(Calendar.DAY_OF_MONTH) +
+                    "&shour=" + start.get(Calendar.HOUR_OF_DAY)+
+                    "&smin=" + start.get(Calendar.MINUTE)+
+
+                    "&eyear=" + end.get(Calendar.YEAR) +
+                    "&emonth=" + (end.get(Calendar.MONTH)+1) +
+                    "&eday=" + end.get(Calendar.DAY_OF_MONTH) +
+                    "&ehour=" + end.get(Calendar.HOUR_OF_DAY)+
+                    "&emin=" + end.get(Calendar.MINUTE)+
+
+                    "&serviceref=" + URLEncoder.encode(dreamboxChannel.getName() +"|"+dreamboxChannel.getReference(), "UTF8") +
+                    "&name=" + URLEncoder.encode(prgTime.getProgram().getTitle(), "UTF8") +
+                    "&description=" + URLEncoder.encode(prgTime.getProgram().getShortInfo(), "UTF8") +
+
+                    "&afterevent=0&eit=&disabled=0&justplay=0&repeated=0");
+
+            InputStream stream = url.openStream();
+
+            SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
+
+            DreamboxStateHandler handler = new DreamboxStateHandler();
+
+            saxParser.parse(stream, handler);
+
+            return (handler.getState().equalsIgnoreCase("true"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        }
         return false;
     }
 }

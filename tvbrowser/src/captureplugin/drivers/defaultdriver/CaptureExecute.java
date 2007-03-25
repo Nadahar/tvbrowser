@@ -24,6 +24,7 @@
  */
 package captureplugin.drivers.defaultdriver;
 
+import captureplugin.drivers.utils.ProgramTime;
 import captureplugin.utils.CaptureUtilities;
 import captureplugin.drivers.utils.ProgramTime;
 import util.exc.ErrorHandler;

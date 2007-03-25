@@ -24,11 +24,12 @@
  */
 package captureplugin.drivers.defaultdriver;
 
-import java.util.Calendar;
-
+import captureplugin.drivers.utils.ProgramTime;
+import devplugin.Program;
 import util.paramhandler.ParamLibrary;
 import util.ui.Localizer;
-import devplugin.Program;
+
+import java.util.Calendar;
 import captureplugin.drivers.utils.ProgramTime;
 
 /**
