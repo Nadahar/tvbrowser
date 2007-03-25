@@ -172,7 +172,7 @@ public class CapturePlugin extends devplugin.Plugin {
         String desc = mLocalizer.msg("Desc", "Starts a external Program with configurable Parameters");
         String author = "Bodo Tasche, Andreas Hessel";
 
-        return new PluginInfo(name, desc, author, new Version(2, 11));
+        return new PluginInfo(name, desc, author, new Version(2, 5));
     }
 
     /**
