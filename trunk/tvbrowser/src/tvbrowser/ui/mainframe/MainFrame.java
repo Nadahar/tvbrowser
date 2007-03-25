@@ -1129,16 +1129,28 @@ public class MainFrame extends JFrame implements DateListener {
    * Starts the TV listings update.
    */
   public void updateTvData() {
-    if (TvDataUpdater.getInstance().isDownloading()) {
-      TvDataUpdater.getInstance().stopDownload();
-    } else {
-      UpdateDlg dlg = new UpdateDlg(this, true);
-      dlg.pack();
-      UiUtilities.centerAndShow(dlg);
-        
-      int daysToDownload = dlg.getResult();
-      if(daysToDownload != UpdateDlg.CANCEL && licenseForTvDataServicesWasAccepted(dlg.getSelectedTvDataServices()))
-        runUpdateThread(daysToDownload, dlg.getSelectedTvDataServices());        
+    if (ChannelList.getNumberOfSubscribedChannels() == 0) {
+      int result = JOptionPane.showOptionDialog(this, 
+          mLocalizer.msg("subscribeBeforeUpdate.msg", "You have not defined any channels.\n\nDo you want to subscribe to some channels before starting the data update?"), 
+          mLocalizer.msg("subscribeBeforeUpdate.title", "No subscribed channels"),
+          JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null,
+          null);
+      if (result == JOptionPane.YES_OPTION) {
+        showSettingsDialog();
+      }
+    }
+    else {
+      if (TvDataUpdater.getInstance().isDownloading()) {
+        TvDataUpdater.getInstance().stopDownload();
+      } else {
+        UpdateDlg dlg = new UpdateDlg(this, true);
+        dlg.pack();
+        UiUtilities.centerAndShow(dlg);
+          
+        int daysToDownload = dlg.getResult();
+        if(daysToDownload != UpdateDlg.CANCEL && licenseForTvDataServicesWasAccepted(dlg.getSelectedTvDataServices()))
+          runUpdateThread(daysToDownload, dlg.getSelectedTvDataServices());        
+      }
     }
   }
   
