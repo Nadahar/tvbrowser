@@ -184,8 +184,16 @@ public class DreamboxConnector {
                 Calendar begin = Calendar.getInstance();
                 begin.setTimeInMillis(Long.parseLong(timer.get("e2timebegin"))*1000);
 
+                int beginMinutes = begin.get(Calendar.HOUR_OF_DAY) * 60 + begin.get(Calendar.MINUTE);
+
                 Calendar end = Calendar.getInstance();
                 end.setTimeInMillis(Long.parseLong(timer.get("e2timeend"))*1000);
+
+                int endMinutes = end.get(Calendar.HOUR_OF_DAY) * 60 + end.get(Calendar.MINUTE);
+
+                if (endMinutes < beginMinutes) {
+                    endMinutes += 24*60;
+                }
 
                 Date date = new Date(begin);
 
@@ -197,10 +205,8 @@ public class DreamboxConnector {
                     while (it.hasNext() && !found) {
                         Program prog = (Program) it.next();
 
-                        if (prog.getHours() >= begin.get(Calendar.HOUR_OF_DAY) &&
-                            prog.getMinutes() >= begin.get(Calendar.MINUTE) &&
-                            prog.getHours() <= end.get(Calendar.HOUR_OF_DAY) &&
-                            prog.getMinutes() <= end.get(Calendar.MINUTE)
+                        if (prog.getHours()*60+prog.getMinutes() >= beginMinutes &&
+                            prog.getHours()*60+prog.getMinutes() <= endMinutes
                             && prog.getTitle().trim().equalsIgnoreCase(timer.get("e2name").trim())
                             ) {
                             found = true;
