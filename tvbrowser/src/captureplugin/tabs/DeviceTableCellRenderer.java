@@ -24,13 +24,12 @@
  */
 package captureplugin.tabs;
 
-import java.awt.Component;
+import captureplugin.drivers.DeviceIf;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-
-import captureplugin.drivers.DeviceIf;
+import java.awt.Component;
 
 
 /**

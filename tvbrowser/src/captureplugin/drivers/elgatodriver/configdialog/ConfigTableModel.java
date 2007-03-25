@@ -24,14 +24,13 @@
  */
 package captureplugin.drivers.elgatodriver.configdialog;
 
-import javax.swing.table.AbstractTableModel;
-
-import util.ui.Localizer;
-
 import captureplugin.CapturePlugin;
 import captureplugin.drivers.elgatodriver.ElgatoChannel;
 import captureplugin.drivers.elgatodriver.ElgatoConfig;
 import devplugin.Channel;
+import util.ui.Localizer;
+
+import javax.swing.table.AbstractTableModel;
 
 /**
  * The Table-Model for the mapping of the Channels

@@ -24,9 +24,9 @@
  */
 package captureplugin.drivers.elgatodriver;
 
-import util.ui.Localizer;
 import captureplugin.drivers.DeviceIf;
 import captureplugin.drivers.DriverIf;
+import util.ui.Localizer;
 
 /**
  * The Driver for the Elgato EyeTV Software

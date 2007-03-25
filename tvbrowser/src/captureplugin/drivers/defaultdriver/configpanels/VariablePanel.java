@@ -24,6 +24,12 @@
  */
 package captureplugin.drivers.defaultdriver.configpanels;
 
+import captureplugin.drivers.defaultdriver.DeviceConfig;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import util.ui.Localizer;
+
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -31,13 +37,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.table.TableCellEditor;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-import util.ui.Localizer;
-import captureplugin.drivers.defaultdriver.DeviceConfig;
 
 /**
  * The Panel for configuration of the Variables

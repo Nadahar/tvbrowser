@@ -24,16 +24,15 @@
  */
 package captureplugin.drivers.utils;
 
-import java.awt.Color;
-import java.util.Date;
+import util.ui.CaretPositionCorrector;
 
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
-
-import util.ui.CaretPositionCorrector;
+import java.awt.Color;
+import java.util.Date;
 
 /**
  * A Panel that gives the possibility to choose date/time

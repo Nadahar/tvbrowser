@@ -28,6 +28,9 @@ import captureplugin.drivers.defaultdriver.AdditionalParams;
 import captureplugin.drivers.defaultdriver.CaptureParamLibrary;
 import captureplugin.drivers.defaultdriver.DefaultKonfigurator;
 import captureplugin.drivers.defaultdriver.DeviceConfig;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 import util.paramhandler.ParamDescriptionPanel;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -36,11 +39,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;

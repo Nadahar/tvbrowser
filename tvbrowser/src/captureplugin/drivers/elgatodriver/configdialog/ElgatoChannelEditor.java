@@ -24,18 +24,17 @@
  */
 package captureplugin.drivers.elgatodriver.configdialog;
 
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.util.EventObject;
+import captureplugin.drivers.elgatodriver.ElgatoConfig;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
-
-import captureplugin.drivers.elgatodriver.ElgatoConfig;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.util.EventObject;
 
 /**
  * The Editor for the Elgato-Channel Mapping

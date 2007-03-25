@@ -24,8 +24,8 @@
  */
 package captureplugin.drivers.defaultdriver;
 
-import captureplugin.utils.ChannelComperator;
 import captureplugin.drivers.utils.IDGenerator;
+import captureplugin.utils.ChannelComperator;
 import devplugin.Channel;
 import util.ui.Localizer;
 
@@ -546,7 +546,7 @@ public class DeviceConfig {
 
         stream.writeObject(mId);
         stream.writeBoolean(mShowTitleAndTimeDialog);
-        stream.writeBoolean(mDeletePrograms);System.out.println(mDeletePrograms);
+        stream.writeBoolean(mDeletePrograms);
     }
 
     /**
