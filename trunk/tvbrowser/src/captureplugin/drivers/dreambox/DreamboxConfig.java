@@ -106,7 +106,14 @@ public class DreamboxConfig {
             channel.writeData(stream);
         }
 
-        stream.writeInt(mChannels.size());
+        int max = 0;
+        for (Channel channel : mChannels.keySet()) {
+            if (mChannels.get(channel) != null) {
+                max++;
+            }
+        }
+
+        stream.writeInt(max);
 
         for (Channel channel : mChannels.keySet()) {
             if (mChannels.get(channel) != null) {
