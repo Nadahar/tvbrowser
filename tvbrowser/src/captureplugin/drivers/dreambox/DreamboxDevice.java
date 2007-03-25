@@ -40,6 +40,8 @@ import java.awt.Window;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * The Dreambox-Device
@@ -56,6 +58,8 @@ public class DreamboxDevice implements DeviceIf {
     private String mName;
     /** Configuration for this Device */
     private DreamboxConfig mConfig;
+    /** List of Recordings */
+    private ArrayList<Program> _programList = new ArrayList<Program>();
 
     /**
      * Creates this Device
@@ -142,7 +146,7 @@ public class DreamboxDevice implements DeviceIf {
      * @see captureplugin.drivers.DeviceIf#isInList(devplugin.Program)
      */
     public boolean isInList(Program program) {
-        return false;
+        return _programList.contains(program);
     }
 
     /**
@@ -171,7 +175,11 @@ public class DreamboxDevice implements DeviceIf {
      */
     public Program[] getProgramList() {
         DreamboxConnector con = new DreamboxConnector(mConfig.getDreamboxAddress());
-        return con.getRecordings(mConfig); 
+
+        Program[] ret = con.getRecordings(mConfig);
+        _programList = new ArrayList<Program>(Arrays.asList(ret));
+
+        return ret;
     }
 
     /**
