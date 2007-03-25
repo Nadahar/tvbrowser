@@ -25,6 +25,7 @@
 package captureplugin.drivers.defaultdriver;
 
 import captureplugin.utils.CaptureUtilities;
+import captureplugin.drivers.utils.ProgramTime;
 import util.exc.ErrorHandler;
 import util.io.StreamReaderThread;
 import util.paramhandler.ParamParser;

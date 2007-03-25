@@ -47,6 +47,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import captureplugin.drivers.dreambox.DreamboxConfig;
+import captureplugin.drivers.utils.ProgramTime;
 import captureplugin.CapturePlugin;
 import devplugin.Program;
 import devplugin.Channel;
@@ -170,8 +171,8 @@ public class DreamboxConnector {
      * @param config DreamboxConfig
      * @return List of recordings on the dreambox
      */
-    public Program[] getRecordings(DreamboxConfig config) {
-        ArrayList<Program> programs = new ArrayList<Program>();
+    public ProgramTime[] getRecordings(DreamboxConfig config) {
+        ArrayList<ProgramTime> programs = new ArrayList<ProgramTime>();
 
         ArrayList<HashMap<String, String>> timers = getTimers();
 
@@ -210,7 +211,7 @@ public class DreamboxConnector {
                             && prog.getTitle().trim().equalsIgnoreCase(timer.get("e2name").trim())
                             ) {
                             found = true;
-                            programs.add(prog);
+                            programs.add(new ProgramTime(prog, begin.getTime(), end.getTime()));
                         }
                     }
                 }
@@ -219,6 +220,24 @@ public class DreamboxConnector {
 
         }
 
-        return programs.toArray(new Program[0]);
+        return programs.toArray(new ProgramTime[0]);
+    }
+
+    /**
+     * Add a recording to the Dreambox
+     * @param prgTime add this ProgramTime
+     * @return true, if succcesfull
+     */
+    public boolean addRecording(ProgramTime prgTime) {
+        return false;
+    }
+
+    /**
+     * Remove a recording from the Dreambox
+     * @param time ProgramTime to remove
+     * @return true, if successfull
+     */
+    public boolean removeRecording(ProgramTime time) {
+        return false;
     }
 }

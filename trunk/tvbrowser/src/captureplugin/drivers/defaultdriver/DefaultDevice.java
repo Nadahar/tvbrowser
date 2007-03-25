@@ -26,6 +26,8 @@ package captureplugin.drivers.defaultdriver;
 
 import captureplugin.drivers.DeviceIf;
 import captureplugin.drivers.DriverIf;
+import captureplugin.drivers.utils.ProgramTime;
+import captureplugin.drivers.utils.ProgramTimeDialog;
 import devplugin.Program;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -182,12 +184,12 @@ public class DefaultDevice implements DeviceIf {
             return false;            
         }
         
-        CaptureTimeDialog cdialog;
+        ProgramTimeDialog cdialog;
         
         if (parent instanceof JDialog) {
-            cdialog = new CaptureTimeDialog((JDialog)parent, prgTime);
+            cdialog = new ProgramTimeDialog((JDialog)parent, prgTime, true);
         } else {
-            cdialog = new CaptureTimeDialog((JFrame)parent, prgTime);
+            cdialog = new ProgramTimeDialog((JFrame)parent, prgTime, true);
         }
         
         if(mConfig.getShowTitleAndTimeDialog())
