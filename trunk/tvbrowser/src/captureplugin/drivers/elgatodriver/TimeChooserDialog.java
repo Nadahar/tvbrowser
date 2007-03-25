@@ -1,27 +1,24 @@
 package captureplugin.drivers.elgatodriver;
 
-import java.awt.event.ActionListener;
-import java.util.Calendar;
-import java.util.Date;
+import captureplugin.drivers.utils.TimeDateChooserPanel;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
+import devplugin.Program;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-import captureplugin.drivers.utils.TimeDateChooserPanel;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.Sizes;
-
-import devplugin.Program;
+import java.awt.event.ActionListener;
+import java.util.Calendar;
+import java.util.Date;
 
 public class TimeChooserDialog extends JDialog implements WindowClosingIf {
   /** Translator */

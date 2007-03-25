@@ -24,9 +24,9 @@
  */
 package captureplugin.utils;
 
-import java.util.Comparator;
-
 import devplugin.Channel;
+
+import java.util.Comparator;
 
 /**
  * Compares two Channels

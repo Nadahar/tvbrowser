@@ -24,8 +24,19 @@
  */
 package captureplugin.drivers.elgatodriver.configdialog;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import captureplugin.drivers.elgatodriver.ElgatoConfig;
+import captureplugin.drivers.elgatodriver.ElgatoConnection;
+import captureplugin.drivers.elgatodriver.ElgatoDevice;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
+import util.ui.ChannelTableCellRenderer;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -38,21 +49,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellEditor;
-
-import util.ui.ChannelTableCellRenderer;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-import captureplugin.drivers.elgatodriver.ElgatoConfig;
-import captureplugin.drivers.elgatodriver.ElgatoConnection;
-import captureplugin.drivers.elgatodriver.ElgatoDevice;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.Sizes;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Config Dialog

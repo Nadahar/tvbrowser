@@ -24,21 +24,20 @@
  */
 package captureplugin.utils;
 
+import captureplugin.CapturePluginData;
+import captureplugin.drivers.DeviceIf;
+import captureplugin.drivers.DriverFactory;
+import captureplugin.tabs.DevicePanel;
+import util.ui.Localizer;
+
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
-import util.ui.Localizer;
-import captureplugin.CapturePluginData;
-import captureplugin.drivers.DeviceIf;
-import captureplugin.drivers.DriverFactory;
-import captureplugin.tabs.DevicePanel;
 
 /**
  * This Class handles the im- and eexport of Device-Files

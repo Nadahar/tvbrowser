@@ -25,6 +25,9 @@
 package captureplugin.drivers.defaultdriver.configpanels;
 
 import captureplugin.drivers.defaultdriver.DeviceConfig;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 import util.ui.ChannelTableCellRenderer;
 import util.ui.Localizer;
 
@@ -35,10 +38,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.table.TableCellEditor;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * This Panel makes it possible to assign external names to channels

@@ -24,12 +24,11 @@
  */
 package captureplugin.drivers.elgatodriver.configdialog;
 
-import java.awt.Component;
+import captureplugin.drivers.elgatodriver.ElgatoChannel;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-
-import captureplugin.drivers.elgatodriver.ElgatoChannel;
+import java.awt.Component;
 
 /**
  * The Renderer for the Elgato Channel

@@ -24,10 +24,10 @@
  */
 package captureplugin.utils;
 
-import java.util.Comparator;
-
 import devplugin.Program;
 import devplugin.ProgramFieldType;
+
+import java.util.Comparator;
 
 
 /**

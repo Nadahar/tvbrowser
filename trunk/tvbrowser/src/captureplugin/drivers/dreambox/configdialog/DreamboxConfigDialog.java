@@ -217,7 +217,6 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
                             JOptionPane.showMessageDialog(DreamboxConfigDialog.this, mLocalizer.msg("errorText", "Sorry, could not load channellist from Dreambox."),
                                     mLocalizer.msg("errorTitle", "Error"), JOptionPane.ERROR_MESSAGE);
                         } else {
-                            System.out.println(channels);
                             mConfig.setDreamboxChannels(channels.toArray(new DreamboxChannel[0]));
                         }
                         mTable.updateUI();

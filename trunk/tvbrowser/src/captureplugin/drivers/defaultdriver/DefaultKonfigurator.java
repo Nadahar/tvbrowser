@@ -24,9 +24,16 @@
  */
 package captureplugin.drivers.defaultdriver;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import captureplugin.drivers.defaultdriver.configpanels.ApplicationPanel;
+import captureplugin.drivers.defaultdriver.configpanels.ChannelPanel;
+import captureplugin.drivers.defaultdriver.configpanels.ParameterPanel;
+import captureplugin.drivers.defaultdriver.configpanels.SettingsPanel;
+import captureplugin.drivers.defaultdriver.configpanels.VariablePanel;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -37,18 +44,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-import captureplugin.drivers.defaultdriver.configpanels.ApplicationPanel;
-import captureplugin.drivers.defaultdriver.configpanels.ChannelPanel;
-import captureplugin.drivers.defaultdriver.configpanels.ParameterPanel;
-import captureplugin.drivers.defaultdriver.configpanels.SettingsPanel;
-import captureplugin.drivers.defaultdriver.configpanels.VariablePanel;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.factories.Borders;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * The Configuration-Dialog for this Device
