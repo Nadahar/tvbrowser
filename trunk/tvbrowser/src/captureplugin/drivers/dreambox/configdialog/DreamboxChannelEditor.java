@@ -25,6 +25,7 @@
 package captureplugin.drivers.dreambox.configdialog;
 
 import captureplugin.drivers.dreambox.DreamboxConfig;
+import captureplugin.drivers.dreambox.connector.DreamboxChannel;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComboBox;
@@ -35,6 +36,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.EventObject;
+import java.util.Vector;
+import java.util.Arrays;
 
 /**
  * The Celleditor for the DreamboxChannel
@@ -70,7 +73,11 @@ public class DreamboxChannelEditor extends AbstractCellEditor implements TableCe
     }
 
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        mComboBox = new JComboBox(mConfig.getDreamboxChannels());
+        Vector<DreamboxChannel> data = new Vector<DreamboxChannel>();
+        data.add(null);
+        data.addAll(Arrays.asList(mConfig.getDreamboxChannels()));
+
+        mComboBox = new JComboBox(data);
         mComboBox.setSelectedItem(value);
         mComboBox.putClientProperty("JComboBox.isTableCellEditor", Boolean.TRUE);
         return mComboBox;
