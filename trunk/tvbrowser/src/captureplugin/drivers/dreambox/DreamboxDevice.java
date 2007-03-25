@@ -202,7 +202,7 @@ public class DreamboxDevice implements DeviceIf {
 
             if (dialog.getPrgTime() != null) {
                 DreamboxConnector connector = new DreamboxConnector(mConfig.getDreamboxAddress());
-                return connector.addRecording(mConfig.getDreamboxChannel(program.getChannel()), dialog.getPrgTime());
+                return connector.addRecording(channel, dialog.getPrgTime());
             }
         }
         
@@ -215,8 +215,11 @@ public class DreamboxDevice implements DeviceIf {
     public boolean remove(Window parent, Program program) {
         for (ProgramTime time : _programTimeList) {
             if (time.getProgram().equals(program)) {
-                DreamboxConnector connector = new DreamboxConnector(mConfig.getDreamboxAddress());
-                return connector.removeRecording(mConfig.getDreamboxChannel(program.getChannel()), time);
+                DreamboxChannel channel = mConfig.getDreamboxChannel(program.getChannel());
+                if (channel != null) {
+                    DreamboxConnector connector = new DreamboxConnector(mConfig.getDreamboxAddress());
+                    return connector.removeRecording(channel, time);
+                }
             }
         }
 
@@ -318,8 +321,11 @@ public class DreamboxDevice implements DeviceIf {
     public void removeProgramWithoutExecution(Program p) {
         for (ProgramTime time : _programTimeList) {
             if (time.getProgram().equals(p)) {
-                DreamboxConnector connector = new DreamboxConnector(mConfig.getDreamboxAddress());
-                connector.removeRecording(mConfig.getDreamboxChannel(p.getChannel()), time);
+                DreamboxChannel channel = mConfig.getDreamboxChannel(p.getChannel());
+                if (channel != null) {
+                    DreamboxConnector connector = new DreamboxConnector(mConfig.getDreamboxAddress());
+                    connector.removeRecording(channel, time);
+                }
             }
         }
     }
