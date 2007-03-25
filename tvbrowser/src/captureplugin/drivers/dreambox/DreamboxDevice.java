@@ -54,21 +54,32 @@ public class DreamboxDevice implements DeviceIf {
      */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(DreamboxDevice.class);
 
-    /** Driver */
+    /**
+     * Driver
+     */
     private DreamboxDriver mDriver;
-    /** Name for this Device */
+    /**
+     * Name for this Device
+     */
     private String mName;
-    /** Configuration for this Device */
+    /**
+     * Configuration for this Device
+     */
     private DreamboxConfig mConfig;
-    /** List of Recordings */
+    /**
+     * List of Recordings
+     */
     private ArrayList<ProgramTime> _programTimeList = new ArrayList<ProgramTime>();
-    /** List of Recordings */
+    /**
+     * List of Recordings
+     */
     private ArrayList<Program> _programList = new ArrayList<Program>();
 
     /**
      * Creates this Device
+     *
      * @param dreamboxDriver Driver for the Dreambox
-     * @param name Name for this Device
+     * @param name           Name for this Device
      */
     public DreamboxDevice(DreamboxDriver dreamboxDriver, String name) {
         mDriver = dreamboxDriver;
@@ -78,6 +89,7 @@ public class DreamboxDevice implements DeviceIf {
 
     /**
      * Clones another dreambox device
+     *
      * @param dreamboxDevice Device to clone
      */
     public DreamboxDevice(DreamboxDevice dreamboxDevice) {
@@ -109,6 +121,7 @@ public class DreamboxDevice implements DeviceIf {
 
     /**
      * Set the new Name for this Device
+     *
      * @param name new Name
      * @return new Name
      */
@@ -161,7 +174,7 @@ public class DreamboxDevice implements DeviceIf {
     }
 
     /**
-     * @see captureplugin.drivers.DeviceIf#add(java.awt.Window, devplugin.Program)
+     * @see captureplugin.drivers.DeviceIf#add(java.awt.Window,devplugin.Program)
      */
     public boolean add(Window parent, Program program) {
         ProgramTimeDialog dialog;
@@ -169,29 +182,29 @@ public class DreamboxDevice implements DeviceIf {
         ProgramTime time = new ProgramTime(program);
 
         if (parent instanceof JDialog) {
-            dialog = new ProgramTimeDialog((JDialog)parent, time, false);
+            dialog = new ProgramTimeDialog((JDialog) parent, time, false);
         } else {
-            dialog = new ProgramTimeDialog((JFrame)parent, time, false);
+            dialog = new ProgramTimeDialog((JFrame) parent, time, false);
         }
 
         UiUtilities.centerAndShow(dialog);
 
         if (dialog.getPrgTime() != null) {
             DreamboxConnector connector = new DreamboxConnector(mConfig.getDreamboxAddress());
-            return connector.addRecording(mConfig.getDreamboxChannel(program.getChannel()),dialog.getPrgTime());
+            return connector.addRecording(mConfig.getDreamboxChannel(program.getChannel()), dialog.getPrgTime());
         }
 
         return false;
     }
 
     /**
-     * @see captureplugin.drivers.DeviceIf#remove(java.awt.Window, devplugin.Program)
+     * @see captureplugin.drivers.DeviceIf#remove(java.awt.Window,devplugin.Program)
      */
     public boolean remove(Window parent, Program program) {
-        for (ProgramTime time: _programTimeList) {
+        for (ProgramTime time : _programTimeList) {
             if (time.getProgram().equals(program)) {
                 DreamboxConnector connector = new DreamboxConnector(mConfig.getDreamboxAddress());
-                return connector.removeRecording(mConfig.getDreamboxChannel(program.getChannel()),time);
+                return connector.removeRecording(mConfig.getDreamboxChannel(program.getChannel()), time);
             }
         }
 
@@ -204,16 +217,20 @@ public class DreamboxDevice implements DeviceIf {
     public Program[] getProgramList() {
         DreamboxConnector con = new DreamboxConnector(mConfig.getDreamboxAddress());
 
-        ProgramTime[] times = con.getRecordings(mConfig);
-        _programTimeList = new ArrayList<ProgramTime>(Arrays.asList(times));
+        if ((mConfig.getDreamboxAddress() != null)) {
+            ProgramTime[] times = con.getRecordings(mConfig);
+            _programTimeList = new ArrayList<ProgramTime>(Arrays.asList(times));
 
-        _programList = new ArrayList<Program>();
+            _programList = new ArrayList<Program>();
 
-        for (ProgramTime time:times) {
-            _programList.add(time.getProgram());
+            for (ProgramTime time : times) {
+                _programList.add(time.getProgram());
+            }
+
+            return _programList.toArray(new Program[0]);
         }
 
-        return _programList.toArray(new Program[0]);
+        return null;
     }
 
     /**
@@ -224,11 +241,11 @@ public class DreamboxDevice implements DeviceIf {
     }
 
     /**
-     * @see captureplugin.drivers.DeviceIf#executeAdditionalCommand(java.awt.Window, int, devplugin.Program)
+     * @see captureplugin.drivers.DeviceIf#executeAdditionalCommand(java.awt.Window,int,devplugin.Program)
      */
     public boolean executeAdditionalCommand(Window parent, int num, Program program) {
         if (num == 0) {
-            final DreamboxChannel channel =  mConfig.getDreamboxChannel(program.getChannel());
+            final DreamboxChannel channel = mConfig.getDreamboxChannel(program.getChannel());
 
             if (channel != null) {
                 new Thread(new Runnable() {
@@ -239,8 +256,8 @@ public class DreamboxDevice implements DeviceIf {
                 }).start();
             } else {
                 int ret = JOptionPane.showConfirmDialog(parent,
-                        mLocalizer.msg("notConfiguredText","Channel not configured, do\nyou want to do this now?"),
-                        mLocalizer.msg("notConfiguredTitle","Configure"), JOptionPane.YES_NO_OPTION);
+                        mLocalizer.msg("notConfiguredText", "Channel not configured, do\nyou want to do this now?"),
+                        mLocalizer.msg("notConfiguredTitle", "Configure"), JOptionPane.YES_NO_OPTION);
 
                 if (ret == JOptionPane.YES_OPTION) {
                     configDevice(parent);
@@ -287,7 +304,7 @@ public class DreamboxDevice implements DeviceIf {
      * @see captureplugin.drivers.DeviceIf#removeProgramWithoutExecution(devplugin.Program)
      */
     public void removeProgramWithoutExecution(Program p) {
-        for (ProgramTime time: _programTimeList) {
+        for (ProgramTime time : _programTimeList) {
             if (time.getProgram().equals(p)) {
                 DreamboxConnector connector = new DreamboxConnector(mConfig.getDreamboxAddress());
                 connector.removeRecording(mConfig.getDreamboxChannel(p.getChannel()), time);

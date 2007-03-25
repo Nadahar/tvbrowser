@@ -54,6 +54,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 
+import devplugin.Channel;
+
 /**
  * The configuration dialog for the dreambox
  */
@@ -126,7 +128,6 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         mDeviceName = new JTextField(mDevice.getName());
         miscPanel.add(mDeviceName, cc.xy(3, 1));
 
-
         miscPanel.add(new JLabel(mLocalizer.msg("ipaddress", "IP address")), cc.xy(1, 3));
         mDreamboxAddress = new JTextField(mConfig.getDreamboxAddress());
         miscPanel.add(mDreamboxAddress, cc.xy(3, 3));
@@ -170,6 +171,16 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
 
         ButtonBarBuilder builder = new ButtonBarBuilder();
 
+        JButton attach = new JButton(mLocalizer.msg("attach", "Attach"));
+        attach.setToolTipText(mLocalizer.msg("attachHelp", "Attach channels"));
+        attach.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                attachChannels();
+            }
+        });
+
+        builder.addGridded(attach);
+
         JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
         ok.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -189,9 +200,43 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
 
         getRootPane().setDefaultButton(ok);
 
-        panel.add(builder.getPanel(), cc.xyw(1, 9, 2));
+        panel.add(builder.getPanel(), cc.xyw(2, 9, 1));
 
         setSize(400, 400);
+    }
+
+    /**
+     * Try to attach internal channels with dreambox channels
+     */
+    private void attachChannels() {
+        Channel[] channels = CapturePlugin.getPluginManager().getSubscribedChannels();
+        DreamboxChannel[] dchannels = mConfig.getDreamboxChannels();
+
+        for (Channel channel:channels) {
+            if (mConfig.getDreamboxChannel(channel) == null) {
+
+                String name = normalizeName(channel.getName());
+
+                for (DreamboxChannel dch:dchannels) {
+                    if (normalizeName(dch.getName()).equals(name)) {
+                        mConfig.setDreamboxChannel(channel,  dch);
+                    }
+                }
+
+            }
+
+        }
+
+        mTable.updateUI();
+    }
+
+    /**
+     * Normalizes a channel name. Lowercase and no spaces.
+     * @param name channel name
+     * @return normalized channel name
+     */
+    private String normalizeName(String name) {
+        return name.toLowerCase().replaceAll("\\W", "");
     }
 
     /**

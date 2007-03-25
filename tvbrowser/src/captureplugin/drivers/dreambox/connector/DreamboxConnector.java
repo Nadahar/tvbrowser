@@ -41,6 +41,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -73,7 +74,10 @@ public class DreamboxConnector {
     public TreeMap<String, String> getServiceData(String service) {
         try {
             URL url = new URL("http://" + mAddress + "/web/fetchchannels?ServiceListBrowse=" + service);
-            InputStream stream = url.openStream();
+
+            URLConnection connection = url.openConnection();
+            connection.setConnectTimeout(10);
+            InputStream stream = connection.getInputStream();
 
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
 
@@ -127,7 +131,9 @@ public class DreamboxConnector {
     public void switchToChannel(DreamboxChannel channel) {
         try {
             URL url = new URL("http://" + mAddress + "/web/zap?ZapTo=" + URLEncoder.encode(channel.getReference(), "UTF8"));
-            url.openStream();
+            URLConnection connection = url.openConnection();
+            connection.setConnectTimeout(10);
+            InputStream stream = connection.getInputStream();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -141,7 +147,9 @@ public class DreamboxConnector {
     private ArrayList<HashMap<String, String>> getTimers() {
         try {
             URL url = new URL("http://" + mAddress + "/web/timerlist");
-            InputStream stream = url.openStream();
+            URLConnection connection = url.openConnection();
+            connection.setConnectTimeout(10);
+            InputStream stream = connection.getInputStream();
 
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
 
@@ -158,6 +166,8 @@ public class DreamboxConnector {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -171,49 +181,53 @@ public class DreamboxConnector {
 
         ArrayList<HashMap<String, String>> timers = getTimers();
 
+        if (timers == null) {
+            return new ProgramTime[0];
+        }
+
         for(HashMap<String, String> timer:timers) {
 
             DreamboxChannel channel = config.getDreamboxChannelForRef(timer.get("e2servicereference"));
 
             if (channel != null) {
                 Channel tvbchannel = config.getChannel(channel);
-                Calendar begin = Calendar.getInstance();
-                begin.setTimeInMillis(Long.parseLong(timer.get("e2timebegin"))*1000);
-                int beginMinutes = begin.get(Calendar.HOUR_OF_DAY) * 60 + begin.get(Calendar.MINUTE);
+                if (tvbchannel != null) {
+                    Calendar begin = Calendar.getInstance();
+                    begin.setTimeInMillis(Long.parseLong(timer.get("e2timebegin"))*1000);
+                    int beginMinutes = begin.get(Calendar.HOUR_OF_DAY) * 60 + begin.get(Calendar.MINUTE);
 
-                Calendar end = Calendar.getInstance();
-                end.setTimeInMillis(Long.parseLong(timer.get("e2timeend"))*1000);
+                    Calendar end = Calendar.getInstance();
+                    end.setTimeInMillis(Long.parseLong(timer.get("e2timeend"))*1000);
 
-                int endMinutes = end.get(Calendar.HOUR_OF_DAY) * 60 + end.get(Calendar.MINUTE);
+                    int endMinutes = end.get(Calendar.HOUR_OF_DAY) * 60 + end.get(Calendar.MINUTE);
 
-                if (endMinutes < beginMinutes) {
-                    endMinutes += 24*60;
-                }
+                    if (endMinutes < beginMinutes) {
+                        endMinutes += 24*60;
+                    }
 
-                Date date = new Date(begin);
+                    Date date = new Date(begin);
 
-                Iterator it = CapturePlugin.getPluginManager()
-                            .getChannelDayProgram(date, tvbchannel);
-                if (it != null) {
-                    boolean found = false;
+                    Iterator it = CapturePlugin.getPluginManager()
+                                .getChannelDayProgram(date, tvbchannel);
+                    if (it != null) {
+                        boolean found = false;
 
-                    while (it.hasNext() && !found) {
-                        Program prog = (Program) it.next();
-                        int progTime = prog.getHours() * 60 + prog.getMinutes();
+                        while (it.hasNext() && !found) {
+                            Program prog = (Program) it.next();
+                            int progTime = prog.getHours() * 60 + prog.getMinutes();
 
-                        if (progTime >= beginMinutes &&
-                            progTime <= endMinutes
-                            && prog.getTitle().trim().equalsIgnoreCase(timer.get("e2name").trim())
-                            ) {
+                            if (progTime >= beginMinutes &&
+                                progTime <= endMinutes
+                                && prog.getTitle().trim().equalsIgnoreCase(timer.get("e2name").trim())
+                                ) {
 
-                            found = true;
-                            programs.add(new ProgramTime(prog, begin.getTime(), end.getTime()));
+                                found = true;
+                                programs.add(new ProgramTime(prog, begin.getTime(), end.getTime()));
+                            }
                         }
                     }
                 }
-
             }
-
         }
 
         return programs.toArray(new ProgramTime[0]);
@@ -251,7 +265,9 @@ public class DreamboxConnector {
 
                     "&afterevent=0&eit=&disabled=0&justplay=0&repeated=0");
 
-            InputStream stream = url.openStream();
+            URLConnection connection = url.openConnection();
+            connection.setConnectTimeout(10);
+            InputStream stream = connection.getInputStream();
 
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
 
@@ -307,7 +323,9 @@ public class DreamboxConnector {
 
                     "&afterevent=0&eit=&disabled=0&justplay=0&repeated=0");
 
-            InputStream stream = url.openStream();
+            URLConnection connection = url.openConnection();
+            connection.setConnectTimeout(10);
+            InputStream stream = connection.getInputStream();
 
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
 
