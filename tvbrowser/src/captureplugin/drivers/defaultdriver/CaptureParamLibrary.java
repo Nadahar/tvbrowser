@@ -29,6 +29,7 @@ import java.util.Calendar;
 import util.paramhandler.ParamLibrary;
 import util.ui.Localizer;
 import devplugin.Program;
+import captureplugin.drivers.utils.ProgramTime;
 
 /**
  * This Class extends the ParamLibrary with Capture-Plugin-Specific Parameters.  
