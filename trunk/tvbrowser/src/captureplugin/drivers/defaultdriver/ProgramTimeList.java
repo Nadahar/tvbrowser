@@ -24,6 +24,7 @@
  */
 package captureplugin.drivers.defaultdriver;
 
+import captureplugin.drivers.utils.ProgramTime;
 import devplugin.Program;
 
 import java.io.IOException;
