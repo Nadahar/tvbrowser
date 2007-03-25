@@ -177,23 +177,35 @@ public class DreamboxDevice implements DeviceIf {
      * @see captureplugin.drivers.DeviceIf#add(java.awt.Window,devplugin.Program)
      */
     public boolean add(Window parent, Program program) {
-        ProgramTimeDialog dialog;
+        final DreamboxChannel channel = mConfig.getDreamboxChannel(program.getChannel());
 
-        ProgramTime time = new ProgramTime(program);
+        if (channel == null) {
+            int ret = JOptionPane.showConfirmDialog(parent,
+                    mLocalizer.msg("notConfiguredText", "Channel not configured, do\nyou want to do this now?"),
+                    mLocalizer.msg("notConfiguredTitle", "Configure"), JOptionPane.YES_NO_OPTION);
 
-        if (parent instanceof JDialog) {
-            dialog = new ProgramTimeDialog((JDialog) parent, time, false);
+            if (ret == JOptionPane.YES_OPTION) {
+                configDevice(parent);
+            }
         } else {
-            dialog = new ProgramTimeDialog((JFrame) parent, time, false);
+            ProgramTimeDialog dialog;
+
+            ProgramTime time = new ProgramTime(program);
+
+            if (parent instanceof JDialog) {
+                dialog = new ProgramTimeDialog((JDialog) parent, time, false);
+            } else {
+                dialog = new ProgramTimeDialog((JFrame) parent, time, false);
+            }
+
+            UiUtilities.centerAndShow(dialog);
+
+            if (dialog.getPrgTime() != null) {
+                DreamboxConnector connector = new DreamboxConnector(mConfig.getDreamboxAddress());
+                return connector.addRecording(mConfig.getDreamboxChannel(program.getChannel()), dialog.getPrgTime());
+            }
         }
-
-        UiUtilities.centerAndShow(dialog);
-
-        if (dialog.getPrgTime() != null) {
-            DreamboxConnector connector = new DreamboxConnector(mConfig.getDreamboxAddress());
-            return connector.addRecording(mConfig.getDreamboxChannel(program.getChannel()), dialog.getPrgTime());
-        }
-
+        
         return false;
     }
 
