@@ -239,8 +239,6 @@ public class DreamboxConnector {
      * @return long-Value or -1
      */
     private long getLong(String longStr) {
-        longStr = longStr +".34";
-
         if (longStr.contains(".")) {
             longStr = longStr.substring(0, longStr.indexOf('.'));
         }
