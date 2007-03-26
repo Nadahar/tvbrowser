@@ -193,11 +193,11 @@ public class DreamboxConnector {
                 Channel tvbchannel = config.getChannel(channel);
                 if (tvbchannel != null) {
                     Calendar begin = Calendar.getInstance();
-                    begin.setTimeInMillis(Long.parseLong(timer.get("e2timebegin"))*1000);
+                    begin.setTimeInMillis(getLong(timer.get("e2timebegin"))*1000);
                     int beginMinutes = begin.get(Calendar.HOUR_OF_DAY) * 60 + begin.get(Calendar.MINUTE);
 
                     Calendar end = Calendar.getInstance();
-                    end.setTimeInMillis(Long.parseLong(timer.get("e2timeend"))*1000);
+                    end.setTimeInMillis(getLong(timer.get("e2timeend"))*1000);
 
                     int endMinutes = end.get(Calendar.HOUR_OF_DAY) * 60 + end.get(Calendar.MINUTE);
 
@@ -234,6 +234,27 @@ public class DreamboxConnector {
     }
 
     /**
+     * Trys to parse a Long
+     * @param longStr String with Long-Value
+     * @return long-Value or -1
+     */
+    private long getLong(String longStr) {
+        longStr = longStr +".34";
+
+        if (longStr.contains(".")) {
+            longStr = longStr.substring(0, longStr.indexOf('.'));
+        }
+
+        try {
+            return Long.parseLong(longStr);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+
+        return -1;
+    }
+
+    /**
      * Add a recording to the Dreambox
      * @param dreamboxChannel the DreamboxChannel for the Program
      * @param prgTime add this ProgramTime @return true, if succcesfull
@@ -245,6 +266,11 @@ public class DreamboxConnector {
             start.setTimeZone(TimeZone.getTimeZone("GMT+1"));
             Calendar end = prgTime.getEndAsCalendar();
             end.setTimeZone(TimeZone.getTimeZone("GMT+1"));
+
+            String shortInfo = prgTime.getProgram().getShortInfo();
+            if (shortInfo == null) {
+                shortInfo = "";
+            }
 
             URL url = new URL("http://" + mAddress + "/web/tvbrowser?&command=add&action=0" +
                     "&syear=" + start.get(Calendar.YEAR) +
@@ -261,7 +287,7 @@ public class DreamboxConnector {
 
                     "&serviceref=" + URLEncoder.encode(dreamboxChannel.getName() +"|"+dreamboxChannel.getReference(), "UTF8") +
                     "&name=" + URLEncoder.encode(prgTime.getProgram().getTitle(), "UTF8") +
-                    "&description=" + URLEncoder.encode(prgTime.getProgram().getShortInfo(), "UTF8") +
+                    "&description=" + URLEncoder.encode(shortInfo, "UTF8") +
 
                     "&afterevent=0&eit=&disabled=0&justplay=0&repeated=0");
 
@@ -304,6 +330,11 @@ public class DreamboxConnector {
             Calendar end = prgTime.getEndAsCalendar();
             end.setTimeZone(TimeZone.getTimeZone("GMT+1"));
 
+            String shortInfo = prgTime.getProgram().getShortInfo();
+            if (shortInfo == null) {
+                shortInfo = "";
+            }
+
             URL url = new URL("http://" + mAddress + "/web/tvbrowser?&command=del&action=0" +
                     "&syear=" + start.get(Calendar.YEAR) +
                     "&smonth=" + (start.get(Calendar.MONTH)+1) +
@@ -319,7 +350,7 @@ public class DreamboxConnector {
 
                     "&serviceref=" + URLEncoder.encode(dreamboxChannel.getName() +"|"+dreamboxChannel.getReference(), "UTF8") +
                     "&name=" + URLEncoder.encode(prgTime.getProgram().getTitle(), "UTF8") +
-                    "&description=" + URLEncoder.encode(prgTime.getProgram().getShortInfo(), "UTF8") +
+                    "&description=" + URLEncoder.encode(shortInfo, "UTF8") +
 
                     "&afterevent=0&eit=&disabled=0&justplay=0&repeated=0");
 

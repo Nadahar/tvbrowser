@@ -44,6 +44,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 
 /**
  * The Dreambox-Device
@@ -177,6 +178,15 @@ public class DreamboxDevice implements DeviceIf {
      * @see captureplugin.drivers.DeviceIf#add(java.awt.Window,devplugin.Program)
      */
     public boolean add(Window parent, Program program) {
+
+        if (program.isExpired()) {
+            JOptionPane.showMessageDialog(parent,
+                    mLocalizer.msg("expiredText","This program has expired. It's not possible to record it.\nWell, unless you have a time-machine."), 
+                    mLocalizer.msg("expiredTitle","Expired"),
+                    JOptionPane.INFORMATION_MESSAGE);
+            return false;
+        }
+
         final DreamboxChannel channel = mConfig.getDreamboxChannel(program.getChannel());
 
         if (channel == null) {
@@ -191,6 +201,14 @@ public class DreamboxDevice implements DeviceIf {
             ProgramTimeDialog dialog;
 
             ProgramTime time = new ProgramTime(program);
+
+            Calendar start = time.getStartAsCalendar();
+            start.add(Calendar.MINUTE, mConfig.getPreTime()*-1);
+            time.setStart(start.getTime());
+
+            Calendar end = time.getEndAsCalendar();
+            end.add(Calendar.MINUTE, mConfig.getAfterTime());
+            time.setEnd(end.getTime());
 
             if (parent instanceof JDialog) {
                 dialog = new ProgramTimeDialog((JDialog) parent, time, false);
@@ -248,11 +266,11 @@ public class DreamboxDevice implements DeviceIf {
         return null;
     }
 
-    /**
+   /**
      * @see captureplugin.drivers.DeviceIf#getAdditionalCommands()
      */
     public String[] getAdditionalCommands() {
-        return new String[]{mLocalizer.msg("switch", "Switch channel")};
+       return new String[]{mLocalizer.msg("switch", "Switch channel")};
     }
 
     /**

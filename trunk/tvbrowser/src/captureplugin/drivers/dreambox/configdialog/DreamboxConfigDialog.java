@@ -49,6 +49,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.JSpinner;
 import javax.swing.table.TableCellEditor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -77,6 +79,8 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
     private JTextField mDeviceName;
     /** Table with channel mappings */
     private JTable mTable;
+    private SpinnerNumberModel mBeforeModel;
+    private SpinnerNumberModel mAfterModel;
 
     /**
      * Create the Dialog
@@ -122,7 +126,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
 
         panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("misc", "Miscellaneous")), cc.xyw(1, 1, 2));
 
-        JPanel miscPanel = new JPanel(new FormLayout("right:pref, 3dlu, fill:min:grow, 3dlu, pref, 3dlu, pref", "pref, 3dlu,pref, 3dlu, pref"));
+        JPanel miscPanel = new JPanel(new FormLayout("right:pref, 3dlu, fill:min:grow, 3dlu, pref, 3dlu, pref", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
 
         miscPanel.add(new JLabel(mLocalizer.msg("name","Name:")), cc.xy(1, 1));
         mDeviceName = new JTextField(mDevice.getName());
@@ -158,6 +162,18 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         refresh.addGriddedButtons(new JButton[]{refreshButton});
 
         miscPanel.add(refresh.getPanel(), cc.xy(3, 5));
+
+        miscPanel.add(new JLabel(mLocalizer.msg("preTime", "Time before in minutes:")), cc.xy(1,7));
+
+        mBeforeModel = new SpinnerNumberModel(mConfig.getPreTime(), 0, 60, 1);
+        JSpinner beforeSpinner = new JSpinner(mBeforeModel);
+        miscPanel.add(beforeSpinner, cc.xy(3,7));
+
+        miscPanel.add(new JLabel(mLocalizer.msg("afterTime", "Time after in minutes:")), cc.xy(1,9));
+
+        mAfterModel = new SpinnerNumberModel(mConfig.getAfterTime(), 0, 60, 1);
+        JSpinner afterSpinner = new JSpinner(mAfterModel);
+        miscPanel.add(afterSpinner, cc.xy(3,9));
 
         panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("channel", "Channel assignment")), cc.xyw(1, 5, 2));
 
@@ -202,7 +218,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
 
         panel.add(builder.getPanel(), cc.xyw(2, 9, 1));
 
-        setSize(400, 400);
+        setSize(450, 500);
     }
 
     /**
@@ -287,7 +303,10 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
             if (editor != null)
                 editor.stopCellEditing();
         }
-        
+
+        mConfig.setAfterTime(mAfterModel.getNumber().intValue());
+        mConfig.setBeforeTime(mBeforeModel.getNumber().intValue());
+
         mConfig.setDreamboxAddress(mDreamboxAddress.getText());
 
         setVisible(false);
