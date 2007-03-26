@@ -47,7 +47,14 @@ public class DreamboxConfig {
     private DreamboxChannel[] mDreamboxChannels = new DreamboxChannel[0];
     /** HashMap for tvbrowser channels vs channels on dreambox*/
     private HashMap<Channel, DreamboxChannel> mChannels = new HashMap<Channel, DreamboxChannel>();
+    /** HashMap for tvbrowser channels vs channels on dreambox*/
     private HashMap<DreamboxChannel, Channel> mDChannels = new HashMap<DreamboxChannel, Channel>();
+
+    /** Time after recording */
+    private int mAfter = 0;
+
+    /** Time before recording */
+    private int mBefore = 0;
 
     /**
      * Constructor
@@ -65,6 +72,8 @@ public class DreamboxConfig {
         mDreamboxChannels = dreamboxConfig.getDreamboxChannels();
         mChannels = dreamboxConfig.getChannels();
         mDChannels = dreamboxConfig.getDreamChannels();
+        mBefore = dreamboxConfig.getPreTime();
+        mAfter = dreamboxConfig.getAfterTime();
     }
 
     /**
@@ -97,7 +106,7 @@ public class DreamboxConfig {
      * @throws IOException io errors
      */
     public void writeData(ObjectOutputStream stream) throws IOException {
-        stream.writeInt(1);
+        stream.writeInt(2);
         stream.writeUTF(getId());
 
         stream.writeUTF(mDreamboxAddress);
@@ -121,6 +130,9 @@ public class DreamboxConfig {
                 stream.writeUTF(mChannels.get(channel).getReference());
             }
         }
+
+        stream.writeInt(mBefore);
+        stream.writeInt(mAfter);
     }
 
     /**
@@ -151,6 +163,10 @@ public class DreamboxConfig {
             mDChannels.put(dch, ch);
         }
 
+        if (version == 2) {
+            mBefore = stream.readInt();
+            mAfter = stream.readInt();
+        }
     }
 
     /**
@@ -244,4 +260,33 @@ public class DreamboxConfig {
         mDChannels.put(dreamboxChannel, channel);
     }
 
+    /**
+     * @return Time after recording
+     */
+    public int getAfterTime() {
+        return mAfter;
+    }
+
+    /**
+     * Set Time after recording
+     * @param after After recording
+     */
+    public void setAfterTime(int after) {
+        mAfter = after;
+    }
+
+    /**
+     * @return Time before recording
+     */
+    public int getPreTime() {
+        return mBefore;
+    }
+
+    /**
+     * Set Time before recording
+     * @param before before recording
+     */
+    public void setBeforeTime(int before) {
+        mBefore = before;
+    }
 }
