@@ -15,6 +15,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import tvbrowser.core.plugin.PluginProxyManager;
 import util.browserlauncher.Launch;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -153,6 +154,7 @@ public class PluginInfoDialog extends JDialog implements WindowClosingIf {
 
     html.append("<h1>").append(mLocalizer.msg("description", "Description")).append("</h1>");
     html.append(HTMLTextHelper.convertTextToHtml(mPluginInfo.getDescription(), true));
+    html.append("<br><br><a href=\"").append(PluginProxyManager.getInstance().getHelpURL(mPluginInfo.getName())).append("\">").append(mLocalizer.msg("pluginHelp", "Online help")).append("</a>");
 
     html.append("</body></html>");
     

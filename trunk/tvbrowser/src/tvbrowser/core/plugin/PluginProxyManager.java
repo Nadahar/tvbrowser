@@ -61,6 +61,10 @@ import devplugin.Program;
  * 
  * @author Til Schneider, www.murfman.de
  */
+/**
+ * @author bananeweizen
+ *
+ */
 public class PluginProxyManager {
 
   /** The logger for this class */
@@ -989,5 +993,20 @@ public class PluginProxyManager {
     }
 
   } // inner class PluginListItem
+
+  
+  /**
+   * get the wiki help URL for a plugin
+   * 
+   * @param plugin pluginProxy of the plugin
+   * @return
+   */
+  public String getHelpURL(PluginProxy plugin) {
+    return getHelpURL(plugin.getInfo().getName());
+  }
+  
+  public String getHelpURL(String pluginName) {
+    return mLocalizer.msg("wikiURL", "http://enwiki.tvbrowser.org") + "/" + pluginName;
+  }
 
 }

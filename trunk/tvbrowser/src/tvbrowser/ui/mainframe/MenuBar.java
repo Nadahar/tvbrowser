@@ -90,7 +90,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
                     mPreviousDayMI, mNextDayMI, mGotoNowMenuItem, mEditTimeButtonsMenuItem,
                     mToolbarCustomizeMI,
                     mFavoritesMI, mReminderMI, mFullscreenMI, mSearchMI;
-  protected JMenu mFiltersMenu, mPluginsViewMenu, mLicenseMenu, mGoMenu, mViewMenu, mToolbarMenu;
+  protected JMenu mFiltersMenu, mPluginsViewMenu, mLicenseMenu, mGoMenu, mViewMenu, mToolbarMenu, mPluginHelpMenu;
 
   private JMenu mGotoDateMenu, mGotoChannelMenu, mGotoTimeMenu;
   private JLabel mLabel;
@@ -230,6 +230,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     
     mKeyboardShortcutsMI = new JMenuItem(mLocalizer.msg("menuitem.keyboardshortcuts","Keyboard shortcuts"),urlHelpImg);
     mKeyboardShortcutsMI.addActionListener(this);
+
+    mPluginHelpMenu = new JMenu(mLocalizer.msg("menu.plugins","Plugins",urlHelpImg));
+    updatePluginHelpMenuItems();
 
     mFavoritesMI = new JMenuItem(FavoritesPlugin.getInstance().getButtonAction(mMainFrame).getAction());
     mReminderMI = new JMenuItem(ReminderPlugin.getInstance().getButtonAction(mMainFrame).getAction());
@@ -426,6 +429,41 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
 
 		return result;
 	}
+
+  protected void updatePluginHelpMenuItems() {
+     mPluginHelpMenu.removeAll();
+    PluginProxy[] plugins = PluginProxyManager.getInstance()
+        .getActivatedPlugins();
+    ArrayList<JMenuItem> list = new ArrayList<JMenuItem>();
+    for (final PluginProxy plugin : plugins) {
+      JMenuItem item = pluginHelpMenuItem(plugin.getInfo().getName());
+      list.add(item);
+    }
+    JMenuItem[] result = list.toArray(new JMenuItem[list.size()]);
+    Arrays.sort(result, new Comparator<JMenuItem>() {
+
+      public int compare(JMenuItem item1, JMenuItem item2) {
+        return item1.getText().compareTo(item2.getText());
+      }
+    });
+    mPluginHelpMenu.add(pluginHelpMenuItem(mLocalizer.msg("menuitem.helpFavorites", "Favorites")));
+    mPluginHelpMenu.add(pluginHelpMenuItem(mLocalizer.msg("menuitem.helpReminder", "Reminder")));
+    mPluginHelpMenu.add(pluginHelpMenuItem(mLocalizer.msg("menuitem.helpSearch", "Search")));
+    mPluginHelpMenu.addSeparator();
+    for (JMenuItem item : result) {
+      mPluginHelpMenu.add(item);
+    }
+  }
+
+  private JMenuItem pluginHelpMenuItem(final String pluginName) {
+    JMenuItem item = new JMenuItem(pluginName);
+    item.addActionListener(new ActionListener() {
+
+      public void actionPerformed(ActionEvent e) {
+        Launch.openURL(PluginProxyManager.getInstance().getHelpURL(pluginName));
+      }});
+    return item;
+  }
 
   public void setPluginViewItemChecked(boolean selected) {
     mPluginOverviewMI.setSelected(selected);

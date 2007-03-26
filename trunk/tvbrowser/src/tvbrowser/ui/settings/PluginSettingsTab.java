@@ -57,6 +57,7 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.Localizer;
@@ -259,7 +260,16 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
     });
     deleteMI.setEnabled(PluginLoader.getInstance().isPluginDeletable(plugin));
     menu.add(deleteMI);
-
+    
+    //help
+    JMenuItem helpMI = new JMenuItem(mLocalizer.msg("pluginHelp","Online help"), IconLoader.getInstance().getIconFromTheme("apps", "help-browser", 16));
+    helpMI.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        Launch.openURL(PluginProxyManager.getInstance().getHelpURL(plugin));
+      }
+    });
+    menu.add(helpMI);  
+    
     menu.addSeparator();
 
     JMenuItem refreshMI = new JMenuItem(mLocalizer.msg("updateInstallPlugin", "Update/Install Plugins"), IconLoader.getInstance().getIconFromTheme("actions", "web-search", 16));
