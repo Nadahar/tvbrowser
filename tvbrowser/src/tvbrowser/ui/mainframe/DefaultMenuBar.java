@@ -99,6 +99,7 @@ public class DefaultMenuBar extends MenuBar {
     helpMenu.add(mHandbookMI);
     helpMenu.add(mKeyboardShortcutsMI);
     helpMenu.add(mFaqMI);
+    helpMenu.add(mPluginHelpMenu);
     helpMenu.addSeparator();
     helpMenu.add(mForumMI);
     helpMenu.add(mWebsiteMI);
@@ -127,6 +128,7 @@ public class DefaultMenuBar extends MenuBar {
 
     mPluginsMenu.add(mFavoritesMI);
     mPluginsMenu.add(mReminderMI);
+    mPluginsMenu.add(mSearchMI);
     mPluginsMenu.addSeparator();
     
     JMenuItem[] pluginItems = createPluginMenuItems();

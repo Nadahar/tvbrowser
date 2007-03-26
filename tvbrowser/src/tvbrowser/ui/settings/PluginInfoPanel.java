@@ -27,9 +27,11 @@
 package tvbrowser.ui.settings;
 
 import java.awt.Font;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import tvbrowser.core.plugin.PluginProxyManager;
+import util.ui.LinkButton;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -47,6 +49,7 @@ import com.jgoodies.forms.layout.FormLayout;
    private JLabel authorLabel;
    private JLabel descriptionLabel;
    private boolean mShowSettingsSeparator;
+   private LinkButton wikiLink;
 
    public PluginInfoPanel(devplugin.PluginInfo info, boolean showSettingsSeparator) {
      this(showSettingsSeparator);
@@ -74,6 +77,10 @@ import com.jgoodies.forms.layout.FormLayout;
      add(new PluginLabel(mLocalizer.msg("description", "Description")), cc.xy(2,6));
      add(descriptionLabel=new JLabel(), cc.xy(4,6));
      descriptionLabel.setFont(PLAIN);
+     
+     add(new PluginLabel(mLocalizer.msg("pluginHelp","Online help")), cc.xy(2,7));
+     wikiLink = new LinkButton("-");
+     add(wikiLink,cc.xy(4,7));
    }
     
    public void setDefaultBorder(boolean plugin) {
@@ -88,7 +95,7 @@ import com.jgoodies.forms.layout.FormLayout;
        add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("settings","Settings")), cc.xyw(1,8,5));
    }
     
-   public void setPluginInfo(devplugin.PluginInfo info) {
+   public void setPluginInfo(final devplugin.PluginInfo info) {
      nameLabel.setText(info.getName());
      
      if (info.getVersion() == null)
@@ -98,6 +105,10 @@ import com.jgoodies.forms.layout.FormLayout;
      
      authorLabel.setText("<html>" + info.getAuthor() + "</html>");
      descriptionLabel.setText("<html>" + info.getDescription() + "</html>");
+     wikiLink.setText(info.getName());
+     String url = PluginProxyManager.getInstance().getHelpURL(info.getName());
+     wikiLink.setUrl(url);
+     wikiLink.setToolTipText(url);
    }
    
    
