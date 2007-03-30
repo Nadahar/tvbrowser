@@ -51,12 +51,16 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.JSpinner;
+import javax.swing.JComboBox;
 import javax.swing.table.TableCellEditor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
+import java.util.TimeZone;
+import java.util.Arrays;
 
 import devplugin.Channel;
+import tvbrowser.core.Settings;
 
 /**
  * The configuration dialog for the dreambox
@@ -79,8 +83,11 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
     private JTextField mDeviceName;
     /** Table with channel mappings */
     private JTable mTable;
+
     private SpinnerNumberModel mBeforeModel;
     private SpinnerNumberModel mAfterModel;
+
+    private JComboBox mTimezone;
 
     /**
      * Create the Dialog
@@ -126,7 +133,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
 
         panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("misc", "Miscellaneous")), cc.xyw(1, 1, 2));
 
-        JPanel miscPanel = new JPanel(new FormLayout("right:pref, 3dlu, fill:min:grow, 3dlu, pref, 3dlu, pref", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
+        JPanel miscPanel = new JPanel(new FormLayout("right:pref, 3dlu, fill:min:grow, 3dlu, pref, 3dlu, pref", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
 
         miscPanel.add(new JLabel(mLocalizer.msg("name","Name:")), cc.xy(1, 1));
         mDeviceName = new JTextField(mDevice.getName());
@@ -174,6 +181,22 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         mAfterModel = new SpinnerNumberModel(mConfig.getAfterTime(), 0, 60, 1);
         JSpinner afterSpinner = new JSpinner(mAfterModel);
         miscPanel.add(afterSpinner, cc.xy(3,9));
+
+        miscPanel.add(new JLabel(mLocalizer.msg("timeZone", "TimeZone :")), cc.xy(1,11));
+
+        String[] zoneIds = TimeZone.getAvailableIDs();
+        Arrays.sort(zoneIds);
+        mTimezone = new JComboBox(zoneIds);
+
+        String zone = mConfig.getTimeZoneAsString();
+        for (int i = 0; i < zoneIds.length; i++) {
+          if (zoneIds[i].equals(zone)) {
+            mTimezone.setSelectedIndex(i);
+            break;
+          }
+        }
+
+        miscPanel.add(mTimezone, cc.xy(3,11));
 
         panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("channel", "Channel assignment")), cc.xyw(1, 5, 2));
 
@@ -279,11 +302,11 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
                                     mLocalizer.msg("errorTitle", "Error"), JOptionPane.ERROR_MESSAGE);
                         } else {
                             mConfig.setDreamboxChannels(channels.toArray(new DreamboxChannel[0]));
+                            JOptionPane.showMessageDialog(DreamboxConfigDialog.this, mLocalizer.msg("okText", "Channellist updated."),
+                                    mLocalizer.msg("okTitle", "Updated"), JOptionPane.INFORMATION_MESSAGE);
                         }
                         mTable.updateUI();
 
-                        JOptionPane.showMessageDialog(DreamboxConfigDialog.this, mLocalizer.msg("okText", "Channellist updated."),
-                                mLocalizer.msg("okTitle", "Updated"), JOptionPane.INFORMATION_MESSAGE);
 
                     }
                 }).start();

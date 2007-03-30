@@ -34,10 +34,12 @@ import captureplugin.drivers.utils.ProgramTimeDialog;
 import devplugin.Program;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import util.paramhandler.ParamParser;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JComboBox;
 import java.awt.Window;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -210,17 +212,22 @@ public class DreamboxDevice implements DeviceIf {
             end.add(Calendar.MINUTE, mConfig.getAfterTime());
             time.setEnd(end.getTime());
 
+            JComboBox box = new JComboBox(new String[] {
+                    mLocalizer.msg("afterEventNothing", "Nothing"),
+                    mLocalizer.msg("afterEventStandby", "Standby"),
+                    mLocalizer.msg("afterEventDeepstandby", "Deepstandby")});
+
             if (parent instanceof JDialog) {
-                dialog = new ProgramTimeDialog((JDialog) parent, time, false);
+                dialog = new ProgramTimeDialog((JDialog) parent, time, false, mLocalizer.msg("afterEventTitle", "After recording"), box);
             } else {
-                dialog = new ProgramTimeDialog((JFrame) parent, time, false);
+                dialog = new ProgramTimeDialog((JFrame) parent, time, false, mLocalizer.msg("afterEventTitle", "After recording"), box);
             }
 
             UiUtilities.centerAndShow(dialog);
 
             if (dialog.getPrgTime() != null) {
                 DreamboxConnector connector = new DreamboxConnector(mConfig.getDreamboxAddress());
-                return connector.addRecording(channel, dialog.getPrgTime());
+                return connector.addRecording(channel, dialog.getPrgTime(), box.getSelectedIndex(), mConfig.getTimeZone());
             }
         }
         
@@ -236,7 +243,7 @@ public class DreamboxDevice implements DeviceIf {
                 DreamboxChannel channel = mConfig.getDreamboxChannel(program.getChannel());
                 if (channel != null) {
                     DreamboxConnector connector = new DreamboxConnector(mConfig.getDreamboxAddress());
-                    return connector.removeRecording(channel, time);
+                    return connector.removeRecording(channel, time, mConfig.getTimeZone());
                 }
             }
         }
@@ -270,7 +277,7 @@ public class DreamboxDevice implements DeviceIf {
      * @see captureplugin.drivers.DeviceIf#getAdditionalCommands()
      */
     public String[] getAdditionalCommands() {
-       return new String[]{mLocalizer.msg("switch", "Switch channel")};
+       return new String[]{mLocalizer.msg("switch", "Switch channel"), mLocalizer.msg("sendMessage", "Send as Message")};
     }
 
     /**
@@ -297,6 +304,12 @@ public class DreamboxDevice implements DeviceIf {
                 }
             }
             return true;
+        } else if (num == 1) {
+            DreamboxConnector connect = new DreamboxConnector(mConfig.getDreamboxAddress());
+
+            ParamParser parser = new ParamParser();
+
+            connect.sendMessage(parser.analyse("{channel_name} - {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n{title}", program));
         }
         return false;
     }
@@ -342,7 +355,7 @@ public class DreamboxDevice implements DeviceIf {
                 DreamboxChannel channel = mConfig.getDreamboxChannel(p.getChannel());
                 if (channel != null) {
                     DreamboxConnector connector = new DreamboxConnector(mConfig.getDreamboxAddress());
-                    connector.removeRecording(channel, time);
+                    connector.removeRecording(channel, time, mConfig.getTimeZone());
                 }
             }
         }
