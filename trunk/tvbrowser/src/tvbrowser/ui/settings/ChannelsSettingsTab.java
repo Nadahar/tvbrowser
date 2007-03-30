@@ -89,6 +89,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -487,12 +488,19 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
                 countries.add(country.toLowerCase());
             }
         }
-
+        
         mCountryCB.removeAllItems();
         mCountryCB.addItem(new FilterItem(mLocalizer.msg("allCountries", "All Countries"), null));
-        for (String country : countries) {
-            Locale locale = new Locale(Locale.getDefault().getLanguage(), country);
-            mCountryCB.addItem(new FilterItem(locale.getDisplayCountry(), country));
+        FilterItem[] items = new FilterItem[countries.size()];
+        Iterator<String> iter = countries.iterator();
+        for (int i=0; i < countries.size(); i++) {
+          String country = iter.next();
+          Locale locale = new Locale(Locale.getDefault().getLanguage(), country);
+          items[i] = new FilterItem(locale.getDisplayCountry(), country);
+        }
+        Arrays.sort(items);
+        for (FilterItem item : items) {
+          mCountryCB.addItem(item);
         }
     }
 
