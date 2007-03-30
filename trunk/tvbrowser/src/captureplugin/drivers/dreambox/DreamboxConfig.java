@@ -34,6 +34,7 @@ import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 /**
  * The configuration for the dreambox
@@ -55,11 +56,14 @@ public class DreamboxConfig {
 
     /** Time before recording */
     private int mBefore = 0;
+    /** The TimeZone */
+    private String mTimeZone;
 
     /**
      * Constructor
      */
     public DreamboxConfig() {
+        resetTimeZone();
     }
 
     /**
@@ -74,6 +78,7 @@ public class DreamboxConfig {
         mDChannels = dreamboxConfig.getDreamChannels();
         mBefore = dreamboxConfig.getPreTime();
         mAfter = dreamboxConfig.getAfterTime();
+        mTimeZone = dreamboxConfig.getTimeZoneAsString();
     }
 
     /**
@@ -106,7 +111,7 @@ public class DreamboxConfig {
      * @throws IOException io errors
      */
     public void writeData(ObjectOutputStream stream) throws IOException {
-        stream.writeInt(2);
+        stream.writeInt(3);
         stream.writeUTF(getId());
 
         stream.writeUTF(mDreamboxAddress);
@@ -133,6 +138,12 @@ public class DreamboxConfig {
 
         stream.writeInt(mBefore);
         stream.writeInt(mAfter);
+
+        if (mTimeZone == null) {
+            stream.writeUTF(TimeZone.getDefault().getID());
+        } else {
+            stream.writeUTF(mTimeZone);
+        }
     }
 
     /**
@@ -163,10 +174,20 @@ public class DreamboxConfig {
             mDChannels.put(dch, ch);
         }
 
-        if (version == 2) {
-            mBefore = stream.readInt();
-            mAfter = stream.readInt();
+
+        if (version < 2) {
+            return;
         }
+
+        mBefore = stream.readInt();
+        mAfter = stream.readInt();
+
+        if (version < 3) {
+            resetTimeZone();
+            return;
+        }
+
+        mTimeZone = stream.readUTF();
     }
 
     /**
@@ -289,4 +310,53 @@ public class DreamboxConfig {
     public void setBeforeTime(int before) {
         mBefore = before;
     }
+
+    /**
+     * Set the timezone
+     * @param timezone new Timezone
+     */
+    public void setTimeZone(String timezone) {
+        mTimeZone = timezone;
+    }
+
+    /**
+     * Get the Timezone as String
+     * @return timezone
+     */
+    public String getTimeZoneAsString() {
+        if (mTimeZone == null) {
+            resetTimeZone();
+        }
+        return mTimeZone;
+    }
+
+    /**
+     * Get the Timezone
+     * @return timezone
+     */
+    public TimeZone getTimeZone() {
+        return TimeZone.getTimeZone(getTimeZoneAsString());
+    }
+
+    /**
+     * Reset the TimeZone to the local default
+     */
+    private void resetTimeZone() {
+        TimeZone def = TimeZone.getDefault();
+
+        if (def.useDaylightTime()) {
+            int time = def.getRawOffset() / 1000 / 60 / 60;
+            String id = "Etc/GMT";
+            if (time > 0) {
+                id +="+"+time;
+            } else {
+                id += time;
+            }
+            def = TimeZone.getTimeZone(id);
+        }
+
+        mTimeZone = def.getID();
+    }
+
+
 }

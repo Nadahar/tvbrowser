@@ -37,14 +37,19 @@ public class DreamboxChannel {
     /** Name */
     private String mName;
 
+    /** Name of the Bouqet */
+    private String mBouqetName = "";
+
     /**
      * Create the DreamboxChannel
      * @param ref Service Reference
      * @param name Name
+     * @param bouqetName Name of the bouqet
      */
-    public DreamboxChannel(String ref, String name) {
+    public DreamboxChannel(String ref, String name, String bouqetName) {
         mReference = ref;
         mName = name;
+        mBouqetName = bouqetName;
     }
 
     /**
@@ -72,7 +77,7 @@ public class DreamboxChannel {
 
     @Override
     public String toString() {
-        return getName();
+        return getName()  + "  ( " + mBouqetName +" )";
     }
 
     /**
@@ -81,9 +86,10 @@ public class DreamboxChannel {
      * @throws IOException io errors
      */
     public void writeData(ObjectOutputStream stream) throws IOException {
-        stream.writeInt(1);
+        stream.writeInt(2);
         stream.writeUTF(mReference);
         stream.writeUTF(mName);
+        stream.writeUTF(mBouqetName);
     }
 
     /**
@@ -95,6 +101,10 @@ public class DreamboxChannel {
         int version = stream.readInt();
         mReference = stream.readUTF();
         mName = stream.readUTF();
+
+        if (version >= 2) {
+            mBouqetName = stream.readUTF();
+        }
     }
 
 }

@@ -109,10 +109,11 @@ public class DreamboxConnector {
             TreeMap<String, String> bouquets = getServiceData(URLEncoder.encode(BOUQUETLIST, "UTF8"));
 
             for (String key : bouquets.keySet()) {
+                String bouqetName = bouquets.get(key);
                 TreeMap<String, String> map = getServiceData(URLEncoder.encode(key, "UTF8"));
 
                 for (String mkey : map.keySet()) {
-                    allChannels.add(new DreamboxChannel(mkey, map.get(mkey)));
+                    allChannels.add(new DreamboxChannel(mkey, map.get(mkey), bouqetName));
                 }
             }
 
@@ -134,6 +135,7 @@ public class DreamboxConnector {
             URLConnection connection = url.openConnection();
             connection.setConnectTimeout(10);
             InputStream stream = connection.getInputStream();
+            stream.close();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -234,7 +236,7 @@ public class DreamboxConnector {
     }
 
     /**
-     * Trys to parse a Long
+     * Tries to parse a Long
      * @param longStr String with Long-Value
      * @return long-Value or -1
      */
@@ -256,14 +258,16 @@ public class DreamboxConnector {
      * Add a recording to the Dreambox
      * @param dreamboxChannel the DreamboxChannel for the Program
      * @param prgTime add this ProgramTime @return true, if succcesfull
+     * @param afterEvent 0=nothing, 1=standby, 2=deepstandby
+     * @param timezone TimeZone to use for recording
      * @return True, if successfull
      */
-    public boolean addRecording(DreamboxChannel dreamboxChannel, ProgramTime prgTime) {
+    public boolean addRecording(DreamboxChannel dreamboxChannel, ProgramTime prgTime, int afterEvent, TimeZone timezone) {
         try {
             Calendar start = prgTime.getStartAsCalendar();
-            start.setTimeZone(TimeZone.getTimeZone("GMT+1"));
+            start.setTimeZone(timezone);
             Calendar end = prgTime.getEndAsCalendar();
-            end.setTimeZone(TimeZone.getTimeZone("GMT+1"));
+            end.setTimeZone(timezone);
 
             String shortInfo = prgTime.getProgram().getShortInfo();
             if (shortInfo == null) {
@@ -287,7 +291,8 @@ public class DreamboxConnector {
                     "&name=" + URLEncoder.encode(prgTime.getProgram().getTitle(), "UTF8") +
                     "&description=" + URLEncoder.encode(shortInfo, "UTF8") +
 
-                    "&afterevent=0&eit=&disabled=0&justplay=0&repeated=0");
+                    "&afterevent="+afterEvent+
+                    "&eit=&disabled=0&justplay=0&repeated=0");
 
             URLConnection connection = url.openConnection();
             connection.setConnectTimeout(10);
@@ -319,14 +324,15 @@ public class DreamboxConnector {
      * Remove a recording from the Dreambox
      * @param dreamboxChannel the DreamboxChannel for the Program
      * @param prgTime ProgramTime to remove @return true, if successfull
+     * @param timezone Timezone to use for recording
      * @return True, if successfull
      */
-    public boolean removeRecording(DreamboxChannel dreamboxChannel, ProgramTime prgTime) {
+    public boolean removeRecording(DreamboxChannel dreamboxChannel, ProgramTime prgTime, TimeZone timezone) {
         try {
             Calendar start = prgTime.getStartAsCalendar();
-            start.setTimeZone(TimeZone.getTimeZone("GMT+1"));
+            start.setTimeZone(timezone);
             Calendar end = prgTime.getEndAsCalendar();
-            end.setTimeZone(TimeZone.getTimeZone("GMT+1"));
+            end.setTimeZone(timezone);
 
             String shortInfo = prgTime.getProgram().getShortInfo();
             if (shortInfo == null) {
@@ -375,5 +381,23 @@ public class DreamboxConnector {
             e.printStackTrace();
         }
         return false;
+    }
+
+    /**
+     * Sends a message to the screen of the dreambox
+     * @param message Message to send
+     */
+    public void sendMessage(String message) {
+        try {
+            final URL url = new URL("http://" + mAddress + "/web/message?type=2&timeout=10&text=" + URLEncoder.encode(message, "UTF8"));
+            URLConnection connection = url.openConnection();
+            connection.setConnectTimeout(10);
+            final InputStream stream = connection.getInputStream();
+            stream.close();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -34,6 +34,9 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -73,6 +76,14 @@ public class ProgramTimeDialog extends JDialog {
         createGui(editTitle);
     }
 
+
+    public ProgramTimeDialog(JDialog parent, ProgramTime time, boolean editTitle, String additonalText, JComponent additionalComponent) {
+        super(parent, true);
+        mPrgTime = time;
+        createGui(editTitle, additonalText, additionalComponent);
+    }
+
+
     /**
      * Crate the Dialog
      * @param parent Parent-Frame
@@ -85,10 +96,26 @@ public class ProgramTimeDialog extends JDialog {
         createGui(editTitle);
     }
 
+    public ProgramTimeDialog(JFrame parent, ProgramTime time, boolean editTitle, String additonalText, JComponent additionalComponent) {
+        super(parent, true);
+        mPrgTime = time;
+        createGui(editTitle, additonalText, additionalComponent);
+    }
+
     /**
      * Create the GUI
+     * @param titleEditable is the Title editable ?
      */
     private void createGui(final boolean titleEditable) {
+        createGui(titleEditable, null, null);
+    }
+
+
+    /**
+     * Create the GUI
+     * @param titleEditable is the Title editable ?
+     */
+    private void createGui(final boolean titleEditable, final String additonalText, final JComponent additionalComponent) {
         setTitle(mLocalizer.msg("SetTime","Set Time"));
         
         JPanel panel = (JPanel)getContentPane();
@@ -140,7 +167,15 @@ public class ProgramTimeDialog extends JDialog {
 
         center.add(mStart, c);
         center.add(mEnd, c);
-        
+
+        if (additonalText != null) {
+            JPanel additionalPanel = new JPanel();
+            additionalPanel.setBorder(BorderFactory.createTitledBorder(additonalText));
+            additionalPanel.add(additionalComponent);
+            center.add(additionalPanel, c);
+        }
+
+
         panel.add(center, BorderLayout.CENTER);
         
         JPanel btPanel = new JPanel();
