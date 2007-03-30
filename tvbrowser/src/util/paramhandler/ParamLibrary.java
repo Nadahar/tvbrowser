@@ -366,7 +366,7 @@ public class ParamLibrary {
     }
 
     mError = true;
-    mErrorString = mLocalizer.msg("unknownFunction", "Unkown function : {0}", function);
+    mErrorString = mLocalizer.msg("unknownFunction", "Unknown function : {0}", function);
 
     return null;
   }
