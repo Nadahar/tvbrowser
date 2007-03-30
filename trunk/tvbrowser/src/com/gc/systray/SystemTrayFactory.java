@@ -19,7 +19,10 @@ public class SystemTrayFactory {
     boolean kde = false;
     
     try {
-      kde = System.getenv("KDE_FULL_SESSION").compareToIgnoreCase("true") == 0;
+      String kdeSession = System.getenv("KDE_FULL_SESSION");
+      if (kdeSession != null) {
+        kde = kdeSession.compareToIgnoreCase("true") == 0;
+      }
     }catch(Exception e) {}
     
     if(JavaVersion.getVersion() >= JavaVersion.VERSION_1_6 && !kde) {
