@@ -86,8 +86,9 @@ public class ShowviewPlugin extends Plugin {
     String desc = mLocalizer.msg("description",
       "Tries to calculate the showview numbers for new TV data." );
     String author = "Til Schneider, www.murfman.de" ;
+    String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Showview_number_calculator");
     
-    return new PluginInfo(name, desc, author, new Version(1, 0));
+    return new PluginInfo(name, desc, author, helpUrl, new Version(1, 0));
   }
 
 }

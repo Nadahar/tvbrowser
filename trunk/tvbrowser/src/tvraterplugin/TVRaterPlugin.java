@@ -89,7 +89,9 @@ public class TVRaterPlugin extends devplugin.Plugin {
                         "description",
                         "Gives the User the possibility to rate a Show/Movie and get ratings from other Users");
         String author = "Bodo Tasche";
-        return new PluginInfo(name, desc, author, new Version(1, 00));
+        String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/TV_Rater");
+        
+        return new PluginInfo(name, desc, author, helpUrl, new Version(1, 00));
     }
 
     /*

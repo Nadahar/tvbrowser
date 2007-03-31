@@ -89,7 +89,8 @@ public class ListViewPlugin extends Plugin {
         String name = mLocalizer.msg("pluginName", "View List Plugin");
         String desc = mLocalizer.msg("description", "Shows a List of current running Programs");
         String author = "Bodo Tasche";
-        return new PluginInfo(name, desc, author, new Version(1, 42));
+        String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/View_List");
+        return new PluginInfo(name, desc, author, helpUrl, new Version(1, 42));
     }
 
     /**

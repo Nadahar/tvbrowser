@@ -85,7 +85,7 @@ public class LinkButton extends JButton implements ActionListener{
      * @param useLinkAction 
      */
     private void createButton(boolean useLinkAction) {
-        setBorder(BorderFactory.createEmptyBorder());
+        setBorder(BorderFactory.createEmptyBorder(2,0,0,0));
         setCursor(new Cursor(Cursor.HAND_CURSOR));
         setContentAreaFilled(false);
         setBorderPainted(false);

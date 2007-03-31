@@ -103,7 +103,7 @@ public class WebPlugin extends Plugin {
   public PluginInfo getInfo() {
     return new PluginInfo("WebPlugin",
         mLocalizer.msg("desc","Searches on the Web for a Program"),
-        "Bodo Tasche",new Version(1, 1));
+        "Bodo Tasche",mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/WebPlugin"),new Version(1, 1));
   }
 
   /**

@@ -262,13 +262,15 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
     menu.add(deleteMI);
     
     //help
-    JMenuItem helpMI = new JMenuItem(mLocalizer.msg("pluginHelp","Online help"), IconLoader.getInstance().getIconFromTheme("apps", "help-browser", 16));
-    helpMI.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e) {
-        Launch.openURL(PluginProxyManager.getInstance().getHelpURL(plugin));
-      }
-    });
-    menu.add(helpMI);  
+    if(plugin.getInfo().getHelpUrl() != null) {
+      JMenuItem helpMI = new JMenuItem(mLocalizer.msg("pluginHelp","Online help"), IconLoader.getInstance().getIconFromTheme("apps", "help-browser", 16));
+      helpMI.addActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent e) {
+          Launch.openURL(plugin.getInfo().getHelpUrl());
+        }
+      });
+      menu.add(helpMI);
+    }
     
     menu.addSeparator();
 
