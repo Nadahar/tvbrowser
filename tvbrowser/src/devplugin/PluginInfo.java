@@ -37,43 +37,188 @@ package devplugin;
  */
 public final class PluginInfo {
 
-    private Version version=null;
-    private String name="";
-    private String description="";
-    private String author="";
-    private String license=null;
+    private Version mVersion = null;
+    private String mName="";
+    private String mDescription="";
+    private String mAuthor="";
+    private String mLicense=null;
+    private String mHelpUrl=null;
 
+    /**
+     * Creates the default PluginVersion instance.
+     */
     public PluginInfo() {
+      this("");
     }
 
+    /**
+     * Creates an instance of PluginVersion with the
+     * default values and the given name.
+     * <p>
+     * @param name The name of the plugin.
+     */
     public PluginInfo(String name) {
-        this.name=name;
+      this(name,"");
     }
 
+    /**
+     * Creates an instance of PluginVersion with the
+     * default values and the given name and description.
+     * <p>
+     * @param name The name of the plugin.
+     * @param desc The description for the plugin.
+     */
     public PluginInfo(String name, String desc) {
-       this(name);
-       this.description=desc;
+      this(name,desc,"");       
     }
 
+    /**
+     * Creates an instance of PluginVersion with the
+     * default values and the given name, description and author.
+     * <p>
+     * @param name The name of the plugin.
+     * @param desc The description for the plugin.
+     * @param author The author of the plugin.
+     */
     public PluginInfo(String name, String desc, String author) {
-        this(name,desc);
-        this.author=author;
+      this(name,desc,author,null,null,null);        
     }
 
+    /**
+     * Creates an instance of PluginVersion with the
+     * default values and the given name, description, author and version.
+     * <p>
+     * @param name The name of the plugin.
+     * @param desc The description for the plugin.
+     * @param author The author of the plugin.
+     * @param version The version of the plugin.
+     */
     public PluginInfo(String name, String desc, String author, Version version) {
-        this(name,desc,author);
-        this.version=version;
+      this(name,desc,author,null,version,null);
+    }
+
+    /**
+     * Creates an instance of PluginVersion with the
+     * default values and the given name, description, author,
+     * version and license.
+     * <p>
+     * @param name The name of the plugin.
+     * @param desc The description for the plugin.
+     * @param author The author of the plugin.
+     * @param version The version of the plugin.
+     * @param license The lincense of the plugin.
+     */
+    public PluginInfo(String name, String desc, String author, Version version, String license) {
+      this(name,desc,author,null,version,license);      
     }
     
-    public PluginInfo(String name, String desc, String author, Version version, String license) {
-      this(name,desc,author,version);
-      this.license=license;
+    /**
+     * Creates an instance of PluginVersion with the
+     * default values and the given name, description, author
+     * and the help url.
+     * <p>
+     * @param name The name of the plugin.
+     * @param desc The description for the plugin.
+     * @param author The author of the plugin.
+     * @param helpUrl The url where to find help for the plugin.
+     * @since 2.6
+     */
+    public PluginInfo(String name, String desc, String author, String helpUrl) {
+       this(name,desc,author,helpUrl,null,null);
     }
+    
+    /**
+     * Creates an instance of PluginVersion with the
+     * default values and the given name, description, author,
+     * the help url, version and license.
+     * <p>
+     * @param name The name of the plugin.
+     * @param desc The description for the plugin.
+     * @param author The author of the plugin.
+     * @param helpUrl The url where to find help for the plugin.
+     * @param version The version of the plugin.
+     * @since 2.6
+     */
+    public PluginInfo(String name, String desc, String author, String helpUrl, Version version) {
+      this(name,desc,author,helpUrl,version,null);
+    }
+    
+    
 
-    public Version getVersion() { return version; }
-    public String getName() { return name; }
-    public String getDescription() { return description; }
-    public String getAuthor() { return author; }
-    public String getLicense() { return license; }
-
+    /**
+     * Creates an instance of PluginVersion with the
+     * default values and the given name, description, author,
+     * the help url, version and license.
+     * <p>
+     * @param name The name of the plugin.
+     * @param desc The description for the plugin.
+     * @param author The author of the plugin.
+     * @param helpUrl The url where to find help for the plugin.
+     * @param version The version of the plugin.
+     * @param license The lincense of the plugin.
+     * @since 2.6
+     */
+    public PluginInfo(String name, String desc, String author, String helpUrl, Version version, String license) {      
+      mName = name;
+      mDescription = desc;
+      mAuthor = author;
+      mHelpUrl = helpUrl;
+      mVersion = version;
+      mLicense = license;
+    }
+    
+    /**
+     * Gets the name of the plugin.
+     * <p>
+     * @return The name of the pluign.
+     */
+    public String getName() {
+      return mName; 
+    }
+    
+    /**
+     * Gets the description of the plugin.
+     * <p>
+     * @return The description for this plugin.
+     */
+    public String getDescription() {
+      return mDescription;
+    }
+    
+    /**
+     * Gets the author of the plugin.
+     * <p>
+     * @return The author of the plugin.
+     */
+    public String getAuthor() {
+      return mAuthor;
+    }
+    
+    /**
+     * Gets the help url for the plugin.
+     * <p>
+     * @return The help url for the plugin.
+     * @since 2.6
+     */
+    public String getHelpUrl() {
+      return mHelpUrl;
+    }
+    
+    /**
+     * Gets the version of the plugin.
+     * <p>
+     * @return The version of the plugin.
+     */
+    public Version getVersion() { 
+      return mVersion;
+    }    
+    
+    /**
+     * Gets the license of the plugin.
+     * <p>
+     * @return The license of the plugin.
+     */
+    public String getLicense() {
+      return mLicense;
+    }
 }

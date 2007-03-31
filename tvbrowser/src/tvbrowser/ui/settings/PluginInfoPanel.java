@@ -30,59 +30,78 @@ import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import tvbrowser.core.plugin.PluginProxyManager;
 import util.ui.LinkButton;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-  
- class PluginInfoPanel extends JPanel {
+
+/**
+ * Creates the info panel for an plugin.
+ */
+class PluginInfoPanel extends JPanel {
     
    private static final Font PLAIN=new Font("Dialog",Font.PLAIN,12);
    
    private static final util.ui.Localizer mLocalizer
      = util.ui.Localizer.getLocalizerFor(PluginInfoPanel.class);
     
-   private JLabel nameLabel;
-   private JLabel versionLabel;
-   private JLabel authorLabel;
-   private JLabel descriptionLabel;
+   private JLabel mNameLabel;
+   private JLabel mVersionLabel;
+   private JLabel mAuthorLabel;
+   private JLabel mDescriptionLabel;
    private boolean mShowSettingsSeparator;
-   private LinkButton wikiLink;
+   private LinkButton mWikiLink;
+   private int mYCount = 3;
 
-   public PluginInfoPanel(devplugin.PluginInfo info, boolean showSettingsSeparator) {
-     this(showSettingsSeparator);
-     setPluginInfo(info);
-   }
-   
+   /**
+    * Creates the default instance of this panel.
+    * <p>
+    * @param showSettingsSeparator
+    */
    public PluginInfoPanel(boolean showSettingsSeparator) {
+     this(null,showSettingsSeparator);
+   }
+
+   /**
+    * Creates an instance of this panel.
+    * <p>
+    * @param info The info of the plugin.
+    * @param showSettingsSeparator Show the settings separator.
+    */
+   public PluginInfoPanel(devplugin.PluginInfo info, boolean showSettingsSeparator) {
      mShowSettingsSeparator = showSettingsSeparator;
      setLayout(new FormLayout("5dlu,pref,10dlu,default:grow,5dlu",
-         "pref,5dlu,top:pref,top:pref,top:pref,top:pref,10dlu,pref"));
+         "pref,5dlu,top:pref,top:pref,top:pref,top:pref,"+ (info.getHelpUrl() != null ? "top:pref," : "") +"10dlu,pref"));
      CellConstraints cc = new CellConstraints();
+     
+     add(new PluginLabel(mLocalizer.msg("name", "Name")), cc.xy(2,mYCount));
+     add(mNameLabel=new JLabel("-"), cc.xy(4,mYCount++));
+     mNameLabel.setFont(PLAIN);
+     
+     add(new PluginLabel(mLocalizer.msg("version", "Version")), cc.xy(2,mYCount));
+     add(mVersionLabel=new JLabel("-"), cc.xy(4,mYCount++));
+     mVersionLabel.setFont(PLAIN);
+     
+     add(new PluginLabel(mLocalizer.msg("author", "Author")), cc.xy(2,mYCount));
+     add(mAuthorLabel=new JLabel("-"), cc.xy(4,mYCount++));
+     mAuthorLabel.setFont(PLAIN); 
       
-     add(new PluginLabel(mLocalizer.msg("name", "Name")), cc.xy(2,3));
-     add(nameLabel=new JLabel("-"), cc.xy(4,3));
-     nameLabel.setFont(PLAIN);
+     add(new PluginLabel(mLocalizer.msg("description", "Description")), cc.xy(2,mYCount));
+     add(mDescriptionLabel=new JLabel(), cc.xy(4,mYCount++));
+     mDescriptionLabel.setFont(PLAIN);
      
-     add(new PluginLabel(mLocalizer.msg("version", "Version")), cc.xy(2,4));
-     add(versionLabel=new JLabel("-"), cc.xy(4,4));
-     versionLabel.setFont(PLAIN);
-     
-     add(new PluginLabel(mLocalizer.msg("author", "Author")), cc.xy(2,5));
-     add(authorLabel=new JLabel("-"), cc.xy(4,5));
-     authorLabel.setFont(PLAIN); 
-      
-     add(new PluginLabel(mLocalizer.msg("description", "Description")), cc.xy(2,6));
-     add(descriptionLabel=new JLabel(), cc.xy(4,6));
-     descriptionLabel.setFont(PLAIN);
-     
-     add(new PluginLabel(mLocalizer.msg("pluginHelp","Online help")), cc.xy(2,7));
-     wikiLink = new LinkButton("-");
-     add(wikiLink,cc.xy(4,7));
+     if(info != null) {
+       if(info.getHelpUrl() != null) {
+         add(new PluginLabel(mLocalizer.msg("pluginHelp", "Online help")), cc.xy(2,mYCount));
+         add(mWikiLink = new LinkButton("-"), cc.xy(4,mYCount++));
+         mWikiLink.setHorizontalAlignment(LinkButton.LEFT);
+       }
+       
+       setPluginInfo(info);
+     }
    }
-    
+   
    public void setDefaultBorder(boolean plugin) {
      CellConstraints cc = new CellConstraints();
      
@@ -92,23 +111,25 @@ import com.jgoodies.forms.layout.FormLayout;
        add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("aboutDataService","About this DataService:")), cc.xyw(1,1,5));     
      
      if(mShowSettingsSeparator)
-       add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("settings","Settings")), cc.xyw(1,8,5));
+       add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("settings","Settings")), cc.xyw(1,++mYCount,5));
    }
     
    public void setPluginInfo(final devplugin.PluginInfo info) {
-     nameLabel.setText(info.getName());
+     mNameLabel.setText(info.getName());
      
      if (info.getVersion() == null)
-       versionLabel.setText("");
+       mVersionLabel.setText("");
      else
-       versionLabel.setText("<html>" + info.getVersion().toString() + "</html>");
+       mVersionLabel.setText("<html>" + info.getVersion().toString() + "</html>");
      
-     authorLabel.setText("<html>" + info.getAuthor() + "</html>");
-     descriptionLabel.setText("<html>" + info.getDescription() + "</html>");
-     wikiLink.setText(info.getName());
-     String url = PluginProxyManager.getInstance().getHelpURL(info.getName());
-     wikiLink.setUrl(url);
-     wikiLink.setToolTipText(url);
+     mAuthorLabel.setText("<html>" + info.getAuthor() + "</html>");
+     mDescriptionLabel.setText("<html>" + info.getDescription() + "</html>");
+     
+     if(mWikiLink != null) {
+       mWikiLink.setText(info.getName());     
+       mWikiLink.setUrl(info.getHelpUrl());
+       mWikiLink.setToolTipText(info.getHelpUrl());
+     }
    }
    
    

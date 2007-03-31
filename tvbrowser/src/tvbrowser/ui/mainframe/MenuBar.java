@@ -56,8 +56,11 @@ import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.extras.searchplugin.SearchPlugin;
+import tvbrowser.extras.searchplugin.SearchPluginProxy;
 import tvbrowser.ui.filter.dlgs.FilterButtons;
 import tvbrowser.ui.licensebox.LicenseBox;
 import tvbrowser.ui.mainframe.toolbar.ContextMenu;
@@ -69,6 +72,7 @@ import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.Date;
+import devplugin.PluginInfo;
 import devplugin.ProgramFilter;
 import devplugin.ProgressMonitor;
 import devplugin.SettingsItem;
@@ -231,7 +235,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mKeyboardShortcutsMI = new JMenuItem(mLocalizer.msg("menuitem.keyboardshortcuts","Keyboard shortcuts"),urlHelpImg);
     mKeyboardShortcutsMI.addActionListener(this);
 
-    mPluginHelpMenu = new JMenu(mLocalizer.msg("menu.plugins","Plugins",urlHelpImg));
+    mPluginHelpMenu = new JMenu(mLocalizer.msg("menu.plugins","Plugins"));
+    mPluginHelpMenu.setIcon(urlHelpImg);
     updatePluginHelpMenuItems();
 
     mFavoritesMI = new JMenuItem(FavoritesPlugin.getInstance().getButtonAction(mMainFrame).getAction());
@@ -436,8 +441,10 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
         .getActivatedPlugins();
     ArrayList<JMenuItem> list = new ArrayList<JMenuItem>();
     for (final PluginProxy plugin : plugins) {
-      JMenuItem item = pluginHelpMenuItem(plugin.getInfo().getName());
-      list.add(item);
+      if(plugin.getInfo().getHelpUrl() != null) {
+        JMenuItem item = pluginHelpMenuItem(plugin.getInfo());
+        list.add(item);
+      }
     }
     JMenuItem[] result = list.toArray(new JMenuItem[list.size()]);
     Arrays.sort(result, new Comparator<JMenuItem>() {
@@ -446,21 +453,24 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
         return item1.getText().compareTo(item2.getText());
       }
     });
-    mPluginHelpMenu.add(pluginHelpMenuItem(mLocalizer.msg("menuitem.helpFavorites", "Favorites")));
-    mPluginHelpMenu.add(pluginHelpMenuItem(mLocalizer.msg("menuitem.helpReminder", "Reminder")));
-    mPluginHelpMenu.add(pluginHelpMenuItem(mLocalizer.msg("menuitem.helpSearch", "Search")));
-    mPluginHelpMenu.addSeparator();
+    mPluginHelpMenu.add(pluginHelpMenuItem(new PluginInfo(FavoritesPluginProxy.getInstance().toString(),null,null,mLocalizer.msg("menuitem.helpFavorites", "Favorites"))));
+    mPluginHelpMenu.add(pluginHelpMenuItem(new PluginInfo(ReminderPluginProxy.getInstance().toString(),null,null,mLocalizer.msg("menuitem.helpReminder", "Reminder"))));
+    mPluginHelpMenu.add(pluginHelpMenuItem(new PluginInfo(SearchPluginProxy.getInstance().toString(),null,null,mLocalizer.msg("menuitem.helpSearch", "Search"))));
+    
+    if(result.length > 0)
+      mPluginHelpMenu.addSeparator();
+    
     for (JMenuItem item : result) {
       mPluginHelpMenu.add(item);
     }
   }
 
-  private JMenuItem pluginHelpMenuItem(final String pluginName) {
-    JMenuItem item = new JMenuItem(pluginName);
+  private JMenuItem pluginHelpMenuItem(final PluginInfo info) {
+    JMenuItem item = new JMenuItem(info.getName());
     item.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
-        Launch.openURL(PluginProxyManager.getInstance().getHelpURL(pluginName));
+        Launch.openURL(info.getHelpUrl());
       }});
     return item;
   }
