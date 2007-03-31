@@ -332,6 +332,8 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
 
         mConfig.setDreamboxAddress(mDreamboxAddress.getText());
 
+        mConfig.setTimeZone(((String) mTimezone.getSelectedItem()));
+
         setVisible(false);
     }
 
