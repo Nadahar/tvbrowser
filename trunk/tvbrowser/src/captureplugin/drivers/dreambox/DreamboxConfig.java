@@ -343,18 +343,6 @@ public class DreamboxConfig {
      */
     private void resetTimeZone() {
         TimeZone def = TimeZone.getDefault();
-
-        if (def.useDaylightTime()) {
-            int time = def.getRawOffset() / 1000 / 60 / 60;
-            String id = "Etc/GMT";
-            if (time > 0) {
-                id +="+"+time;
-            } else {
-                id += time;
-            }
-            def = TimeZone.getTimeZone(id);
-        }
-
         mTimeZone = def.getID();
     }
 
