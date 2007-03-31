@@ -72,7 +72,7 @@ class PluginInfoPanel extends JPanel {
    public PluginInfoPanel(devplugin.PluginInfo info, boolean showSettingsSeparator) {
      mShowSettingsSeparator = showSettingsSeparator;
      setLayout(new FormLayout("5dlu,pref,10dlu,default:grow,5dlu",
-         "pref,5dlu,top:pref,top:pref,top:pref,top:pref,"+ (info.getHelpUrl() != null ? "top:pref," : "") +"10dlu,pref"));
+         "pref,5dlu,top:pref,top:pref,top:pref,top:pref,"+ (info != null && info.getHelpUrl() != null ? "top:pref," : "") +"10dlu,pref"));
      CellConstraints cc = new CellConstraints();
      
      add(new PluginLabel(mLocalizer.msg("name", "Name")), cc.xy(2,mYCount));
