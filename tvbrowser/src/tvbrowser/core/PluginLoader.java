@@ -81,6 +81,8 @@ public class PluginLoader {
   private HashSet<String> mSuccessfullyLoadedPluginFiles;
 
   private HashMap<AbstractPluginProxy, File> mDeleteablePlugin;
+
+  private ArrayList<PluginProxy> loadedProxies;
   
   private PluginLoader() {
     mSuccessfullyLoadedPluginFiles = new HashSet<String>();
@@ -230,10 +232,9 @@ public class PluginLoader {
       Version version = new Version(major, minor, stable);
       String pluginId = in.readUTF();
       long fileSize = in.readLong();
+      String lcFileName = in.readUTF();
       in.close();
       PluginInfo info = new PluginInfo(name, description, author, version, license);
-      String lcFileName = proxyFile.getPath();
-      lcFileName = lcFileName.substring(0, lcFileName.length()-6);
       return new JavaPluginProxy(info, lcFileName, pluginId);
     } catch (IOException e) {
       // delete proxy on read error, maybe the format has changed
@@ -266,6 +267,7 @@ public class PluginLoader {
       out.writeBoolean(version.isStable());
       out.writeUTF(proxy.getId());
       out.writeLong(pluginFile.length());
+      out.writeUTF(proxy.getPluginFileName());
       out.close();
     } catch (IOException e) {
     }
@@ -287,34 +289,37 @@ public class PluginLoader {
    * @param deleteable True if the Plugins in this Folder are deleteable
    */
   private void loadPlugins(File folder, boolean deleteable) {
-    ArrayList<PluginProxy> loadedProxies = new ArrayList<PluginProxy>(); 
-    final String[] deactivatedPluginArr = Settings.propDeactivatedPlugins.getStringArray();
-    
-    // only check proxies if at least one plugin is not active
-    if (deactivatedPluginArr != null && deactivatedPluginArr.length > 0) {
-      File settingsDir = new File(Settings.getUserSettingsDirName());
-      File[] proxyFiles = settingsDir.listFiles(new FilenameFilter() {
-        public boolean accept(File dir, String name) {
-          if (!name.endsWith(".jar.proxy")) {
-            return false;
-          }
-          String mainName = name.substring(0, name.length() - 10).toLowerCase();
-          for (String deactivatedId : deactivatedPluginArr) {
-            if (deactivatedId.indexOf(mainName)>0) {
-              return true;
+    // check for plugin proxies only one time per run
+    if (loadedProxies == null) {
+      loadedProxies = new ArrayList<PluginProxy>();
+      final String[] deactivatedPluginArr = Settings.propDeactivatedPlugins.getStringArray();
+      
+      // only check proxies if at least one plugin is not active
+      if (deactivatedPluginArr != null && deactivatedPluginArr.length > 0) {
+        File settingsDir = new File(Settings.getUserSettingsDirName());
+        File[] proxyFiles = settingsDir.listFiles(new FilenameFilter() {
+          public boolean accept(File dir, String name) {
+            if (!name.endsWith(".jar.proxy")) {
+              return false;
             }
-          }
-          return false;
-        }});
-      if (proxyFiles != null) {
-        for (File proxyFile : proxyFiles) {
-          PluginProxy proxy = loadProxy(proxyFile);
-          if (proxy != null) {
-            loadedProxies.add(proxy);
-            mLog.info("Loaded plugin proxy " + proxyFile);
-          }
-          else {
-            mLog.warning("Failed loading plugin proxy " + proxyFile);
+            String mainName = name.substring(0, name.length() - 10).toLowerCase();
+            for (String deactivatedId : deactivatedPluginArr) {
+              if (deactivatedId.indexOf(mainName)>0) {
+                return true;
+              }
+            }
+            return false;
+          }});
+        if (proxyFiles != null) {
+          for (File proxyFile : proxyFiles) {
+            PluginProxy proxy = loadProxy(proxyFile);
+            if (proxy != null) {
+              loadedProxies.add(proxy);
+              mLog.info("Loaded plugin proxy " + proxyFile);
+            }
+            else {
+              mLog.warning("Failed loading plugin proxy " + proxyFile);
+            }
           }
         }
       }
