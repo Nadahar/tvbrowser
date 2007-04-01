@@ -25,6 +25,7 @@
  */
 package tvbrowser.core.plugin;
 
+import javax.swing.Icon;
 import devplugin.ActionMenu;
 import devplugin.ChannelDayProgram;
 import devplugin.PluginAccess;
@@ -137,4 +138,18 @@ public interface PluginProxy extends PluginAccess {
    * @since 2.1
    */
   public void handlePluginException(Throwable t);
+
+  /**
+   * return the file name of the plugin contained in this proxy
+   * @return
+   * @since 2.6
+   */
+  public String getPluginFileName();
+  
+  /**
+   * get the icon to represent this plugin in the settings
+   * @return
+   * @since 2.6
+   */
+  public Icon getPluginIcon();
 }

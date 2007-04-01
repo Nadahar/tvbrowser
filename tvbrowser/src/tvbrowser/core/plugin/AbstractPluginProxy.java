@@ -28,7 +28,9 @@ package tvbrowser.core.plugin;
 import java.awt.Frame;
 import java.io.File;
 
+import javax.swing.Action;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 import tvbrowser.core.Settings;
 import util.exc.ErrorHandler;
@@ -786,5 +788,24 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
           "It was attempted to call an operation of the inactive plugin {0} that "
               + "may only be called on activated plugins.", getInfo().getName());
     }
+  }
+
+  public Icon getPluginIcon() {
+    ActionMenu actionMenu = getButtonAction();
+    Action action = null;
+    if (actionMenu !=null) {
+      action = actionMenu.getAction();
+    }
+    if (action != null) {
+      return (Icon) action.getValue(Action.SMALL_ICON);
+    }
+    
+    // The plugin has no button icon -> Try the mark icon
+    Icon ico = getMarkIcon();
+    if (ico != null) {
+      return ico;
+    }
+    
+    return new ImageIcon("imgs/Jar16.gif");
   }
 }

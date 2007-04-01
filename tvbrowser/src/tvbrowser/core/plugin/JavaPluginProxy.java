@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
+import tvbrowser.core.PluginLoader;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.TvBrowserException;
 import util.ui.Localizer;
@@ -73,9 +74,20 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   /** The ID of this plugin. */
   private String mId;
   
+  private PluginInfo mPluginInfo;
+  
+  private String mPluginFileName;
+  
 
-  public JavaPluginProxy(Plugin plugin) {
+  public JavaPluginProxy(Plugin plugin, String pluginFileName) {
     mPlugin = plugin;
+    mPluginFileName = pluginFileName;
+  }
+
+  public JavaPluginProxy(PluginInfo info, String pluginFileName, String pluginId) {
+    mPluginInfo = info;
+    mPluginFileName = pluginFileName;
+    mId = pluginId;
   }
 
   /**
@@ -108,7 +120,9 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    * @param parent The parent frame to set.
    */
   void setParentFrame(Frame parent) {
-    mPlugin.setParent(parent);
+    if (mPlugin != null) {
+      mPlugin.setParent(parent);
+    }
   }
   
 
@@ -253,6 +267,9 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    * @return The meta information about the plugin.
    */
   protected PluginInfo doGetInfo() {
+    if (mPluginInfo != null) {
+      return mPluginInfo;
+    }
     return mPlugin.getInfo();
   }
 
@@ -316,7 +333,10 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    *         if the plugin does not provide this feature.
    */
   protected ActionMenu doGetButtonAction() {
-    return mPlugin.getButtonAction();
+    if (mPlugin != null) {
+      return mPlugin.getButtonAction();
+    }
+    return null;
   }
 
   
@@ -326,7 +346,10 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    * @return the icons to use for marking programs in the program table.
    */
   protected Icon[] doGetMarkIcons(Program p) {
-    return mPlugin.getMarkIcons(p);
+    if (mPlugin != null) {
+      return mPlugin.getMarkIcons(p);
+    }
+    return null;
   }
 
   
@@ -409,7 +432,14 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   }
 
   public void doOnActivation() {
-    mPlugin.onActivation();
+    plugin().onActivation();
+  }
+
+  private Plugin plugin() {
+    if (mPlugin == null) {
+      mPlugin = (Plugin) PluginLoader.getInstance().loadPlugin(new File(mPluginFileName), false);
+    }
+    return mPlugin;
   }
 
   public void doOnDeactivation() {
@@ -506,5 +536,20 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    */
   protected int doGetMarkPriorityForProgram(Program p) {
     return mPlugin.getMarkPriorityForProgram(p);
+  }
+
+  /* (non-Javadoc)
+   * @see tvbrowser.core.plugin.PluginProxy#getPluginFileName()
+   */
+  public String getPluginFileName() {
+    return mPluginFileName;
+  }
+  
+  /**
+   * connect a lazy loaded plugin to its proxy
+   * @param plugin
+   */
+  public void setPlugin(Plugin plugin) {
+    mPlugin = plugin;
   }
 }
