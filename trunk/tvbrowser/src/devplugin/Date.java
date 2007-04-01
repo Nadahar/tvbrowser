@@ -132,6 +132,8 @@ public class Date implements Comparable {
   }
 
   /**
+   * @param d The date to check for days since.
+   * @return The days since the given date.
    * @since 0.9.7.4 This method may not return the exactly number of days since
    *        the calculation is confounded by daylight savings time
    *        switchovers... Around midnight the result may not be correct.
@@ -145,6 +147,11 @@ public class Date implements Comparable {
     Calendar cal_2 = getCalendar();
     java.util.Date utilDate_2 = cal_2.getTime();
     long millis_2 = utilDate_2.getTime();
+    
+    int hours = (int)((millis_2 - millis_1) / 1000L / 60L / 60L);    
+    
+    if(hours % 24 > 1)
+      return (int)(hours / 24. + 0.99);
 
     return (int) ((millis_2 - millis_1) / 1000L / 60L / 60L / 24L);
 

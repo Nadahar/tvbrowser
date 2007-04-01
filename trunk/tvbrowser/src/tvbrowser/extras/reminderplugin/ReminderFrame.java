@@ -30,6 +30,7 @@ import java.awt.BorderLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 
@@ -120,6 +121,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
   private int mRemainingSecs;
 
   private JLabel mHeader;
+  private ReminderListItem mListItem;
 
   /**
    * Creates a new instance of ReminderFrame.
@@ -148,11 +150,10 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     UiUtilities.registerForClosing(this);
     
     mReminderList = list;
+    mListItem = item;
+    mProgram = item.getProgram();
     
-    list.removeWithoutChecking(item.getProgramItem());
-    list.blockProgram(item.getProgram());
-    
-    mProgram = item.getProgram();    
+    mReminderList.blockProgram(mListItem.getProgram());
     
     JPanel jcontentPane = new JPanel(new BorderLayout(0,10));
     mDialog.setContentPane(jcontentPane);
@@ -243,6 +244,13 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       });
     }
     
+    mDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+    mDialog.addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e) {
+        close();
+      }
+    });
+    
     mProgram.addChangeListener(this);
   }
   
@@ -267,12 +275,14 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
   
   
   public void close() {
+    mReminderList.removeWithoutChecking(mListItem.getProgramItem());
+    
     int inx = mReminderCB.getSelectedIndex();
     int minutes = REMIND_VALUE_ARR[inx];
     if (minutes != -1) {
       mReminderList.add(mProgram, minutes);
       mReminderList.unblockProgram(mProgram);
-      ReminderPlugin.getInstance().updateRootNode();
+      ReminderPlugin.getInstance().updateRootNode(true);
     }
     
     if (mAutoCloseTimer != null) {

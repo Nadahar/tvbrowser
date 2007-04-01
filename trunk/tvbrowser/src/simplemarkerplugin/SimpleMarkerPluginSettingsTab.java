@@ -114,7 +114,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     
     String[] column = {
         SimpleMarkerPlugin.mLocalizer.msg("settings.list",
-            "Additional Mark Lists"), "Icon" , SimpleMarkerPlugin.mLocalizer.msg("settings.markPriority",
+            "Additional Mark List"), "Icon" , SimpleMarkerPlugin.mLocalizer.msg("settings.markPriority",
             "Mark priority")};
 
     MarkList[] lists = SimpleMarkerPlugin.getInstance().getMarkLists();
@@ -130,6 +130,8 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     mModel = new MarkListTableModel(tableData, column);
 
     mListTable = new JTable(mModel);
+    mListTable.getColumnModel().getColumn(0).setCellRenderer(
+        new TableRenderer());
     mListTable.getColumnModel().getColumn(1).setCellRenderer(
         new TableRenderer());
     mListTable.getColumnModel().getColumn(1).setMaxWidth(Sizes.dialogUnitXAsPixel(20,mListTable));
@@ -266,7 +268,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
       MarkListItem item = new MarkListItem(new MarkList(name), true);
       
       Object[] row = { item,
-          SimpleMarkerPlugin.getInstance().getIconForFileName(null), Program.DEFAULT_MARK_PRIORITY };
+          SimpleMarkerPlugin.getInstance().getIconForFileName(null), Program.MIN_MARK_PRIORITY };
       mModel.addRow(row);
       mListTable.setRowSelectionInterval(mListTable.getRowCount()-1,mListTable.getRowCount()-1);
       checkForIcon(item);
@@ -367,19 +369,36 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
 
         p.add(b);
       }
-      else {
+      else if(value instanceof Integer) {
         JLabel b = new JLabel();
                 
         switch((Integer)value) {
           case Program.MIN_MARK_PRIORITY: b.setText(SimpleMarkerPlugin.mLocalizer.msg("settings.min","Minimum"));break;
+          case Program.LOWER_MEDIUM_MARK_PRIORITY: b.setText(SimpleMarkerPlugin.mLocalizer.msg("settings.lowerMedium","Lower medium"));break;
           case Program.MEDIUM_MARK_PRIORITY: b.setText(SimpleMarkerPlugin.mLocalizer.msg("settings.medium","Medium"));break;
+          case Program.HIGHER_MEDIUM_MARK_PRIORITY: b.setText(SimpleMarkerPlugin.mLocalizer.msg("settings.higherMedium","Higher Medium"));break;
           case Program.MAX_MARK_PRIORITY: b.setText(SimpleMarkerPlugin.mLocalizer.msg("settings.max","Maximum"));break;
         
-          default: b.setText(Localizer.getLocalization(Localizer.I18N_STANDARD));break;
+          default: b.setText(SimpleMarkerPlugin.mLocalizer.msg("settings.noPriority","None"));break;
         }
         
         b.setOpaque(false);
         b.setForeground(c.getForeground());
+        p.add(b);
+      }
+      else {
+        JLabel b = new JLabel();
+        b.setOpaque(false);
+        b.setForeground(c.getForeground());
+        
+        int count = ((MarkListItem)value).getProgramCountOfList();
+        
+        if(count > 0)
+          b.setText(value.toString() + " [" + count + "]");
+        else
+          b.setText(value.toString());
+        
+        p.setLayout(new FlowLayout(FlowLayout.LEFT));
         p.add(b);
       }
       
@@ -417,7 +436,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     private boolean mIsNewList = false;
     private String mName = null;
     private String mIconPath = null;
-    private int mMarkPriority = -1;
+    private int mMarkPriority = -2;
 
     /**
      * @param list
@@ -473,6 +492,15 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     public void setMarkPriority(int markPriority) {
       mMarkPriority = markPriority;
     }
+    
+    /**
+     * Gets the number of programs contained by the mark list of this item.
+     * 
+     * @return The number of programs contained by the mark list of this item.
+     */
+    public int getProgramCountOfList() {
+      return mList.size();
+    }
 
     /**
      * Starts the processing of the changes.
@@ -490,7 +518,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
           SimpleMarkerPlugin.getInstance().revalidate(
               mList.toArray(new Program[mList.size()]));
         }
-        if (mMarkPriority != -1) {
+        if (mMarkPriority != -2) {
           mList.setMarkPriority(mMarkPriority);
           SimpleMarkerPlugin.getInstance().revalidate(
               mList.toArray(new Program[mList.size()]));
@@ -539,9 +567,11 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     private JComboBox mComboBox;
     
     private final String[] prioValues = {
-        Localizer.getLocalization(Localizer.I18N_STANDARD),
+        SimpleMarkerPlugin.mLocalizer.msg("settings.noPriority","None"),
         SimpleMarkerPlugin.mLocalizer.msg("settings.min","Minimum"),
+        SimpleMarkerPlugin.mLocalizer.msg("settings.lowerMedium","Lower Medium"),
         SimpleMarkerPlugin.mLocalizer.msg("settings.medium","Medium"),
+        SimpleMarkerPlugin.mLocalizer.msg("settings.higherMedium","Higher Medium"),
         SimpleMarkerPlugin.mLocalizer.msg("settings.max","Maximum")};
 
     /** Constructor 
@@ -585,9 +615,9 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
         return mItem;
       }
       else {
-        mItem.setMarkPriority(mComboBox.getSelectedIndex());
+        mItem.setMarkPriority(mComboBox.getSelectedIndex()-1);
         
-        return new Integer(mComboBox.getSelectedIndex());
+        return new Integer(mComboBox.getSelectedIndex()-1);
       }
     }
 
@@ -600,7 +630,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
       }
       else {
         mItem = (MarkListItem)table.getValueAt(table.getSelectedRow(),0);
-        mComboBox.setSelectedIndex((Integer)value);
+        mComboBox.setSelectedIndex((Integer)value+1);
         return mComboBox;
       }
     }

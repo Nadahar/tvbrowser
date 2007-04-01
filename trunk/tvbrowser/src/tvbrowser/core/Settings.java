@@ -51,10 +51,12 @@ import util.settings.PropertyManager;
 import util.settings.StringArrayProperty;
 import util.settings.StringProperty;
 import util.settings.VersionProperty;
+import util.ui.Localizer;
 import util.ui.PictureSettingsPanel;
 import util.ui.view.SplitViewProperty;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import java.awt.Color;
 import java.awt.Font;
@@ -135,10 +137,25 @@ public class Settings {
     if (!f.exists()) {
       f.mkdirs();
     }
-
+    
     File settingsFile = new File(getUserSettingsDirName(), SETTINGS_FILE);
+    File firstSettingsBackupFile = new File(getUserSettingsDirName(), SETTINGS_FILE+ "_backup1");
+    File secondsSettingsBackupFile = new File(getUserSettingsDirName(), SETTINGS_FILE+ "_backup2");
+    
+    // Create backup of settings file backup
+    try {
+      if(firstSettingsBackupFile.isFile())
+        IOUtilities.copy(firstSettingsBackupFile,secondsSettingsBackupFile);
+    }catch(Exception e) {}
+    
     try {
       mProp.writeToFile(settingsFile);
+      
+      try {
+        if(settingsFile.isFile())
+          IOUtilities.copy(settingsFile,firstSettingsBackupFile);
+      }catch (Exception e) {}
+      
     } catch (IOException exc) {
       throw new TvBrowserException(Settings.class, "error.1",
           "Error when saving settings!\n({0})", settingsFile.getAbsolutePath(),
@@ -157,13 +174,48 @@ public class Settings {
     String newDirectoryName = getUserSettingsDirName();
 
     File settingsFile = new File(newDirectoryName, SETTINGS_FILE);
+    File firstSettingsBackupFile = new File(getUserSettingsDirName(), SETTINGS_FILE+ "_backup1");
+    File secondSettingsBackupFile = new File(getUserSettingsDirName(), SETTINGS_FILE+ "_backup2");
 
-    if (settingsFile.exists()) {
+    if (settingsFile.exists() || firstSettingsBackupFile.exists() || secondSettingsBackupFile.exists()) {
       try {
         mProp.readFromFile(settingsFile);
         mLog.info("Using settings from file " + settingsFile.getAbsolutePath());
       } catch (IOException evt) {
-        mLog.info("Could not read settings - using default user settings");
+        
+        if(firstSettingsBackupFile.isFile() || secondSettingsBackupFile.isFile()) {
+          Localizer localizer = Localizer.getLocalizerFor(Settings.class);
+          if(JOptionPane.showConfirmDialog(null,localizer.msg("settingBroken","Settings file broken.\nWould you like to load the backup file?\n\n(If you select No, the\ndefault settings are used)"),Localizer.getLocalization(Localizer.I18N_ERROR),JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION) {
+            boolean loadSecondBackup = !firstSettingsBackupFile.isFile();
+            
+            if(firstSettingsBackupFile.isFile()) {
+              try {
+                mProp.readFromFile(firstSettingsBackupFile);
+                mLog.info("Using settings from file " + firstSettingsBackupFile.getAbsolutePath());
+              }catch(Exception e) {
+                loadSecondBackup = true;
+              }
+            }
+            if(loadSecondBackup && secondSettingsBackupFile.isFile()) {
+              try {
+                mProp.readFromFile(secondSettingsBackupFile);
+                mLog.info("Using settings from file " + secondSettingsBackupFile.getAbsolutePath());                
+              }catch(Exception e) {
+                loadSecondBackup = true;
+              }
+            }
+            
+            if(loadSecondBackup)
+              mLog.info("Could not read settings - using default user settings");
+            else {
+              try {
+                storeSettings();
+              }catch(Exception e) {}
+            }
+          }
+        }
+        else        
+          mLog.info("Could not read settings - using default user settings");
       }
     }
     /*
@@ -220,6 +272,10 @@ public class Settings {
             
             if(temp != null)
               oldTvDataDir = new File(temp);
+            else if(new File(oldDir, "tvdata").isDirectory())
+              oldTvDataDir = new File(oldDir, "tvdata");
+            else if(new File(oldDir.getParent(), "tvdata").isDirectory())
+              oldTvDataDir = new File(oldDir.getParent(), "tvdata");
             
             in.close();
           }catch(Exception e) {}
@@ -277,26 +333,29 @@ public class Settings {
              */
             if(oldTvDataDir != null && oldTvDataDir.isDirectory()) {
               final File targetDir = new File(getUserDirectoryName(),"tvdata");
-              targetDir.mkdirs();
               
-              final TvDataCopyWaitingDlg waiting = new TvDataCopyWaitingDlg(new JFrame(), false);
-              
-              mShowWaiting = true;
-              
-              final File srcDir = oldTvDataDir;
-              
-              new Thread() {
-                public void run() {
-                  try {
-                    IOUtilities.copy(srcDir.listFiles(), targetDir, true);
-                  }catch(Exception e) {}
-                  
-                  mShowWaiting = false;
-                  waiting.setVisible(false);
-                }
-              }.start();
-              
-              waiting.setVisible(mShowWaiting);
+              if(!oldTvDataDir.equals(targetDir)) {
+                targetDir.mkdirs();
+                
+                final TvDataCopyWaitingDlg waiting = new TvDataCopyWaitingDlg(new JFrame(), false);
+                
+                mShowWaiting = true;
+                
+                final File srcDir = oldTvDataDir;
+                
+                new Thread() {
+                  public void run() {
+                    try {
+                      IOUtilities.copy(srcDir.listFiles(), targetDir, true);
+                    }catch(Exception e) {}
+                    
+                    mShowWaiting = false;
+                    waiting.setVisible(false);
+                  }
+                }.start();
+                
+                waiting.setVisible(mShowWaiting);
+              }
             }
             
             /*
@@ -351,9 +410,10 @@ public class Settings {
     propArr = new Property[] { propProgramTitleFont, propProgramInfoFont,
         propProgramTimeFont, propChannelNameFont, propUseDefaultFonts,
         propEnableAntialiasing, propProgramTableOnAirProgramsShowingBorder,
-        propProgramTableMarkedDefaultPriorityShowsColor, 
-        propProgramTableMarkedDefaultPriorityColor, propProgramTableMarkedMinPriorityColor,
-        propProgramTableMarkedMediumPriorityColor, propProgramTableMarkedMaxPriorityColor,
+        propProgramPanelUsesExtraSpaceForMarkIcons, 
+        propProgramPanelWithMarkingsShowingBoder, propProgramPanelUsedDefaultMarkPriority,
+        propProgramPanelMarkedLowerMediumPriorityColor, propProgramPanelMarkedMinPriorityColor,
+        propProgramPanelMarkedMediumPriorityColor, propProgramPanelMarkedMaxPriorityColor,
         propProgramTableColorOnAirLight, propProgramTableColorOnAirDark};
 
     if (mProp.hasChanged(propArr)) {
@@ -455,6 +515,10 @@ public class Settings {
     }
 
     mProp.clearChanges();
+    
+    try {
+      storeSettings();
+    }catch(Exception e) {}
   }
 
   /**
@@ -682,6 +746,10 @@ public class Settings {
    * Settings for the IMPORTANT_TYPE of the ProgramMenuItem.
    */
 
+  public static final IntProperty propTrayImportantProgramsPriority = new IntProperty(
+      mProp, "trayImportantProgramsPriority", 0
+      );
+  
   public static final BooleanProperty propTrayImportantProgramsEnabled = new BooleanProperty(
       mProp, "trayImportantProgramsEnabled", true);
 
@@ -850,20 +918,34 @@ public class Settings {
   public static final ColorProperty propProgramTableColorOnAirLight = new ColorProperty(
       mProp, "programpanel.ColorOnAirLight", new Color(0, 0, 255, 30));
   
-  /** Used to enable color marking for default mark priority */
+  /** Used to enable color marking for default mark priority 
+    * @deprecated since 2.5.3 */
   public static final BooleanProperty propProgramTableMarkedDefaultPriorityShowsColor = new BooleanProperty(
       mProp, "programpanel.markedShowsColor", true);
-  /** Color for Programs marked with DEFAULt_PRIORITY */
-  public static final ColorProperty propProgramTableMarkedDefaultPriorityColor = new ColorProperty(
-      mProp, "programpanel.ColorMarked", new Color(255, 0, 0, 25));
+  /** Used to track if a program panel should use addtional space for the mark icons */
+  public static final BooleanProperty propProgramPanelUsesExtraSpaceForMarkIcons = new BooleanProperty(
+      mProp, "programpanel.usesExtraSpaceForMarkIcons", true
+      );
+  /** Used to enable border on marked programs */
+  public static final BooleanProperty propProgramPanelWithMarkingsShowingBoder = new BooleanProperty(
+      mProp, "programpanel.markingsShowingBorder", true);
+  /** Used default mark priority for markings of plugins. */
+  public static final IntProperty propProgramPanelUsedDefaultMarkPriority = new IntProperty(
+      mProp, "programpanel.defaultMarkPriority", 0);  
   /** Color for Programs marked with MIN_PRIORITY */
-  public static final ColorProperty propProgramTableMarkedMinPriorityColor = new ColorProperty(
-      mProp, "programpanel.ColorMarkedMin", new Color(140, 255, 0, 60));
+  public static final ColorProperty propProgramPanelMarkedMinPriorityColor = new ColorProperty(
+      mProp, "programpanel.ColorMarked", new Color(255, 0, 0, 25));
+  /** Color for Programs marked with LOWER_MEDIUM_PRIORITY */
+  public static final ColorProperty propProgramPanelMarkedLowerMediumPriorityColor = new ColorProperty(
+      mProp, "programpanel.ColorMarkedLowerMedium", new Color(0, 255, 255, 50));
   /** Color for Programs marked with MEDIUM_PRIORITY */
-  public static final ColorProperty propProgramTableMarkedMediumPriorityColor = new ColorProperty(
-      mProp, "programpanel.ColorMarkedMedium", new Color(255, 255, 0, 60));
+  public static final ColorProperty propProgramPanelMarkedMediumPriorityColor = new ColorProperty(
+      mProp, "programpanel.ColorMarkedMedium", new Color(140, 255, 0, 60));
+  /** Color for Programs marked with HIGHER_MEDIUM_PRIORITY */
+  public static final ColorProperty propProgramPanelMarkedHigherMediumPriorityColor = new ColorProperty(
+      mProp, "programpanel.ColorMarkedHigherMedium", new Color(255, 255, 0, 60));
   /** Color for Programs marked with MAX_PRIORITY */
-  public static final ColorProperty propProgramTableMarkedMaxPriorityColor = new ColorProperty(
+  public static final ColorProperty propProgramPanelMarkedMaxPriorityColor = new ColorProperty(
       mProp, "programpanel.ColorMarkedMax", new Color(255, 180, 0, 110));
 
   public static final BooleanProperty propMouseOver = new BooleanProperty(

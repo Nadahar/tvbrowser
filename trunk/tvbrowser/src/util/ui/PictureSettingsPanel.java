@@ -55,8 +55,8 @@ import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.SettingsItem;
 
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.reminderplugin.ReminderList;
+import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
+import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.SettingsDialog;
 import util.settings.ProgramPanelSettings;
@@ -255,10 +255,10 @@ public class PictureSettingsPanel extends JPanel implements Scrollable {
         PluginAccess plugin = Plugin.getPluginManager().getActivatedPluginForId(clientPluginIdArr[i]);
         if(plugin != null)
           clientPlugins.add(plugin);
-        else if(ReminderList.MARKER.getId().compareTo(clientPluginIdArr[i]) == 0)
-          clientPlugins.add(ReminderList.MARKER);
-        else if(FavoritesPlugin.MARKER.getId().compareTo(clientPluginIdArr[i]) == 0)
-          clientPlugins.add(FavoritesPlugin.MARKER);
+        else if(ReminderPluginProxy.getInstance().getId().compareTo(clientPluginIdArr[i]) == 0)
+          clientPlugins.add(ReminderPluginProxy.getInstance());
+        else if(FavoritesPluginProxy.getInstance().getId().compareTo(clientPluginIdArr[i]) == 0)
+          clientPlugins.add(FavoritesPluginProxy.getInstance());
       }
       
       mClientPlugins = clientPlugins.toArray(new Marker[clientPlugins.size()]);

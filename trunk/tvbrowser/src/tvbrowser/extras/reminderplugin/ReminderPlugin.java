@@ -94,8 +94,11 @@ public class ReminderPlugin {
   
   private boolean mHasRightToStartTimer = false;
   
+  private boolean mHasRightToSave = true;
+  
   /** The IDs of the plugins that should receive the favorites. */
   private ProgramReceiveTarget[] mClientPluginTargets;
+  private int mMarkPriority = -2;
 
   private ReminderPlugin() {
     mInstance = this;
@@ -107,12 +110,12 @@ public class ReminderPlugin {
     loadReminderData();
 
     mRootNode = new PluginTreeNode(mLocalizer.msg("pluginName","Reminder"));
-    updateRootNode();
+    updateRootNode(false);
 
     TvDataUpdater.getInstance().addTvDataUpdateListener(
         new TvDataUpdateListener() {
           public void tvDataUpdateStarted() {
-
+            mHasRightToSave = false;
           }
 
           public void tvDataUpdateFinished() {
@@ -131,6 +134,13 @@ public class ReminderPlugin {
 	              util.ui.UiUtilities.centerAndShow(dlg);
 	            }
         	  }
+            
+            mHasRightToSave = true;
+            new Thread() {
+              public void run() {
+                store();
+              }
+            }.start();
           }
         });
 
@@ -142,7 +152,7 @@ public class ReminderPlugin {
    * 
    * @return The current instance of this class.
    */
-  public static synchronized ReminderPlugin getInstance() {
+  public static ReminderPlugin getInstance() {
     if (mInstance == null)
       new ReminderPlugin();
     return mInstance;
@@ -255,7 +265,7 @@ public class ReminderPlugin {
   /**
    * Save the reminder data.
    */
-  public void store() {
+  public synchronized void store() {
     ObjectOutputStream out = null;
     try {
       String userDirectoryName = Settings.getUserSettingsDirName();
@@ -423,7 +433,7 @@ public class ReminderPlugin {
           public void actionPerformed(ActionEvent e) {
             if (minutes == -1) {
               mReminderList.removeWithoutChecking(program);
-              updateRootNode();
+              updateRootNode(true);
             } else {
               item.setMinutes(minutes);
             }
@@ -469,7 +479,7 @@ public class ReminderPlugin {
               int minutes = dlg.getReminderMinutes();
               mReminderList.add(program, minutes);
               mReminderList.unblockProgram(program);
-              updateRootNode();
+              updateRootNode(true);
             }
             dlg.dispose();
           }
@@ -477,7 +487,7 @@ public class ReminderPlugin {
             int minutes = dlg.getReminderMinutes();
             mReminderList.add(program, minutes);
             mReminderList.unblockProgram(program);
-            updateRootNode();
+            updateRootNode(true);
           }
         }
       });
@@ -505,7 +515,7 @@ public class ReminderPlugin {
 
   public void addPrograms(Program[] programArr) {
     mReminderList.addAndCheckBlocked(programArr, getDefaultReminderTime());
-    updateRootNode();
+    updateRootNode(true);
   }
 
 
@@ -530,7 +540,7 @@ public class ReminderPlugin {
     return mRootNode;
   }
 
-  public void updateRootNode() {
+  public void updateRootNode(boolean save) {
 
     mRootNode.removeAllActions();
     
@@ -563,7 +573,14 @@ public class ReminderPlugin {
     }
 
     mRootNode.update();
-
+    
+    if(save && mHasRightToSave) {
+      new Thread() {
+        public void run() {
+          store();
+        }
+      }.start();
+    }
   }
 
 
@@ -752,5 +769,30 @@ public class ReminderPlugin {
    */
   protected ProgramPanelSettings getProgramPanelSettings(boolean showOnlyDateAndTitle) {
     return new ProgramPanelSettings(Integer.parseInt(mSettings.getProperty("pictureType","0")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeStart","1080")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeEnd","1380")), showOnlyDateAndTitle, mSettings.getProperty("pictureShowsDescription","true").compareTo("true") == 0,Integer.parseInt(mSettings.getProperty("pictureDuration","10")), mSettings.getProperty("picturePlugins","").split(";;"));
+  }
+  
+  protected int getMarkPriority() {
+    if(mMarkPriority == - 2 && mSettings != null) {
+      mMarkPriority = Integer.parseInt(mSettings.getProperty("markPriority",String.valueOf(Program.MIN_MARK_PRIORITY)));
+      return mMarkPriority;
+    } else
+      return mMarkPriority;
+  }
+  
+  protected void setMarkPriority(int priority) {
+    mMarkPriority = priority;
+    
+    ReminderListItem[] items = mReminderList.getReminderItems();
+    
+    for(ReminderListItem item : items)
+      item.getProgram().validateMarking();
+    
+    mSettings.setProperty("markPriority",String.valueOf(priority));
+    
+    new Thread() {
+      public void run() {
+        store();
+      }
+    }.start();
   }
 }

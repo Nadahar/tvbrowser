@@ -19,14 +19,19 @@
  * CVS information:
  *  $RCSfile$
  *   $Source$
- *     $Date: 2006-06-13 12:02:39 +0200 (Di, 13 Jun 2006) $
- *   $Author: ds10 $
- * $Revision: 2495 $
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package tvbrowser.extras.favoritesplugin;
 
+import javax.swing.Icon;
+
+import tvbrowser.core.icontheme.IconLoader;
+
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
+import devplugin.Marker;
 import devplugin.Program;
 
 /**
@@ -34,9 +39,10 @@ import devplugin.Program;
  *
  * @author René Mach
  */
-public class FavoritesPluginProxy implements ContextMenuIf {
+public class FavoritesPluginProxy implements ContextMenuIf, Marker {
   
   private static FavoritesPluginProxy mInstance;
+  private Icon mMarkIcon;
   
   private FavoritesPluginProxy() {
     mInstance = this;
@@ -62,5 +68,20 @@ public class FavoritesPluginProxy implements ContextMenuIf {
 
   public String toString() {
     return FavoritesPlugin.getInstance().toString();
+  }
+
+  public Icon getMarkIcon() {
+    if(mMarkIcon == null)
+      mMarkIcon = IconLoader.getInstance().getIconFromTheme("apps", "bookmark", 16);
+    
+    return mMarkIcon;
+  }
+
+  public Icon[] getMarkIcons(Program p) {
+    return new Icon[] {getMarkIcon()};
+  }
+
+  public int getMarkPriorityForProgram(Program p) {
+    return FavoritesPlugin.getInstance().getMarkPriority();
   }
 }

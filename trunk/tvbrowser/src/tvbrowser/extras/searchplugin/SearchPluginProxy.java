@@ -57,5 +57,9 @@ public class SearchPluginProxy implements ContextMenuIf {
   public String getId() {
     return SearchPlugin.getInstance().getId();
   }
+  
+  public String toString() {
+    return SearchPlugin.getInstance().toString();
+  }
 
 }

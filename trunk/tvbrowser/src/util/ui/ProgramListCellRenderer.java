@@ -51,6 +51,7 @@ import devplugin.Program;
 public class ProgramListCellRenderer extends DefaultListCellRenderer {
 
   private static final Color SECOND_ROW_COLOR = new Color(220, 220, 220, 150);
+  private static final Color SECOND_ROW_COLOR_EXPIRED = new Color(220, 220, 220, 55);
   
   private JPanel mMainPanel;
   private JLabel mHeaderLb;
@@ -150,8 +151,8 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
       mMainPanel.setEnabled(label.isEnabled());
       mMainPanel.setBorder(label.getBorder());
 
-      if ((index % 2 == 1) && (! isSelected)) {
-        mMainPanel.setBackground(SECOND_ROW_COLOR);
+      if ((index % 2 == 1) && (! isSelected) && program.getMarkPriority() < Program.MIN_MARK_PRIORITY) {
+        mMainPanel.setBackground(program.isExpired() ? SECOND_ROW_COLOR_EXPIRED : SECOND_ROW_COLOR); 
       }
 
       return mMainPanel;

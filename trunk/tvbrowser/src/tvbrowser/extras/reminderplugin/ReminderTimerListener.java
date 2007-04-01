@@ -102,7 +102,7 @@ public class ReminderTimerListener {
         new Thread() {
           public void run() {
             setPriority(Thread.MIN_PRIORITY);
-            ReminderPlugin.getInstance().updateRootNode();
+            ReminderPlugin.getInstance().updateRootNode(true);
           }
         }.start();
       }

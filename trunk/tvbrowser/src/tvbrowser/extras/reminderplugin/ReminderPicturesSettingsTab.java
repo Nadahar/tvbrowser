@@ -71,6 +71,12 @@ public class ReminderPicturesSettingsTab extends AbstractSettingsTab {
       
       ReminderPlugin.getInstance().getSettings().setProperty("picturePlugins", temp.toString());
     }
+    
+    new Thread() {
+      public void run() {
+        ReminderPlugin.getInstance().store();
+      }
+    }.start();
   }
 
 }

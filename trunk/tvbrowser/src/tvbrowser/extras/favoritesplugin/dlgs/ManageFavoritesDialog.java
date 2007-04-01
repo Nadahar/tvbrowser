@@ -564,7 +564,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     if (dlg.getOkWasPressed()) {
       mFavoritesList.repaint();
       favoriteSelectionChanged();
-      FavoritesPlugin.getInstance().updateRootNode();
+      FavoritesPlugin.getInstance().updateRootNode(true);
     }
   }
 

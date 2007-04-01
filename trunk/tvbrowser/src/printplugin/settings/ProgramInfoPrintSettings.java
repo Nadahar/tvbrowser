@@ -47,11 +47,13 @@ public class ProgramInfoPrintSettings {
   private Object[] mFieldTypes;
   private static ProgramInfoPrintSettings mInstance;
   private boolean mPrintImage;
+  private boolean mPrintPluginIcons;
   
   private ProgramInfoPrintSettings() {
     mInstance = this;
     mFont = new Font("Dialog",Font.PLAIN,12);
     mPrintImage = true;
+    mPrintPluginIcons = true;
     
     mAllFields = mFieldTypes = ProgramTextCreator.getDefaultOrder();    
   }
@@ -81,7 +83,7 @@ public class ProgramInfoPrintSettings {
       version = in.readInt();
     }catch(Exception e) {}
     
-    if(version == 1) {
+    if(version >= 1) {
       mFont = (Font) in.readObject();
       
       int n = in.readInt();
@@ -95,7 +97,11 @@ public class ProgramInfoPrintSettings {
       }
       
       mPrintImage = in.readBoolean();
-    }
+      
+      if(version == 2) {
+        mPrintPluginIcons = in.readBoolean();
+      }
+    }    
   }
   
   /**
@@ -105,7 +111,7 @@ public class ProgramInfoPrintSettings {
    * @throws IOException If something went wrong with the file io.
    */
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(1);
+    out.writeInt(2);
     out.writeObject(mFont);
     out.writeInt(mFieldTypes.length);
     
@@ -116,6 +122,7 @@ public class ProgramInfoPrintSettings {
         out.writeInt(ProgramFieldType.UNKOWN_FORMAT);
     
     out.writeBoolean(mPrintImage);
+    out.writeBoolean(mPrintPluginIcons);
   }
 
   /**
@@ -163,6 +170,23 @@ public class ProgramInfoPrintSettings {
   public boolean isPrintImage() {
     return mPrintImage;
   }
+
+  /**
+   * Set the printPluginIcons state of this setting
+   * 
+   * @param printIcons If the plugin icons should be printed.
+   */
+  public void setPrintPluginIcons(boolean printIcons) {
+    mPrintPluginIcons = printIcons;
+  }
+  
+  /**
+   * @return If the plugin icons should be printed.
+   */
+  public boolean isPrintPluginIcons() {
+    return mPrintPluginIcons;
+  }
+
   
   /**
    * Set the program field types of this settings.

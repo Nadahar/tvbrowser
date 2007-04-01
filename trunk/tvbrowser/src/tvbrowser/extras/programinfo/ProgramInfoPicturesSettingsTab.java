@@ -72,7 +72,7 @@ public class ProgramInfoPicturesSettingsTab extends AbstractSettingsTab {
   }
 
   public Icon getIcon() {
-	  return getPictureIcon();
+    return getPictureIcon();
   }
 
   public String getTitle() {
@@ -101,7 +101,5 @@ public class ProgramInfoPicturesSettingsTab extends AbstractSettingsTab {
       
       ProgramInfo.getInstance().getSettings().setProperty("clientPlugins", temp.toString());
     }
-      
   }
-
 }

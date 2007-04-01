@@ -105,7 +105,7 @@ public class MutableProgram implements Program {
   private String mTitle;
   
   /** Contains the current mark priority of this program */
-  private int mMarkPriority = -1;
+  private int mMarkPriority = Program.NO_MARK_PRIORITY;
   
   /**
    * Creates a new instance of MutableProgram.
@@ -338,7 +338,7 @@ public class MutableProgram implements Program {
       if (mMarkerArr.length == 1) {
         // This was the only plugin
         mMarkerArr = EMPTY_MARKER_ARR;
-        mMarkPriority = -1;
+        mMarkPriority = Program.NO_MARK_PRIORITY;
       }
       else {
         int oldCount = mMarkerArr.length;
@@ -346,7 +346,7 @@ public class MutableProgram implements Program {
         System.arraycopy(mMarkerArr, 0, newArr, 0, idx);
         System.arraycopy(mMarkerArr, idx + 1, newArr, idx, oldCount - idx - 1);
         
-        mMarkPriority = Program.DEFAULT_MARK_PRIORITY;
+        mMarkPriority = Program.NO_MARK_PRIORITY;
         
         for(Marker mark : newArr)
           mMarkPriority = Math.max(mMarkPriority,mark.getMarkPriorityForProgram(this));
@@ -923,7 +923,7 @@ public class MutableProgram implements Program {
    * @since 2.2.2
    */
   public final void validateMarking() {
-    mMarkPriority = Program.DEFAULT_MARK_PRIORITY;
+    mMarkPriority = Program.NO_MARK_PRIORITY;
     
     for(Marker mark : mMarkerArr)
       mMarkPriority = Math.max(mMarkPriority,mark.getMarkPriorityForProgram(this));

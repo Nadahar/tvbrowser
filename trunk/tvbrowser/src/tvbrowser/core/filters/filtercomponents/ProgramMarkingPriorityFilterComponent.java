@@ -35,6 +35,7 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Program;
 import tvbrowser.core.filters.FilterComponent;
+import tvbrowser.ui.settings.MarkingsSettingsTab;
 import util.ui.Localizer;
 
 /**
@@ -48,7 +49,7 @@ public class ProgramMarkingPriorityFilterComponent implements FilterComponent {
   private static Localizer mLocalizer = Localizer.getLocalizerFor(ProgramMarkingPriorityFilterComponent.class);
   private String mName, mDescription;
   
-  private int mMarkPriority = Program.DEFAULT_MARK_PRIORITY;
+  private int mMarkPriority = Program.MIN_MARK_PRIORITY;
   private JComboBox mValueSelection;
   
   /**
@@ -86,11 +87,13 @@ public class ProgramMarkingPriorityFilterComponent implements FilterComponent {
     CellConstraints cc = new CellConstraints();
     JPanel p = new JPanel(new FormLayout("default","pref"));
     
+    Localizer localizer = MarkingsSettingsTab.mLocalizer;
     String[] values = {
-        Localizer.getLocalization(Localizer.I18N_STANDARD),
-        mLocalizer.msg("min","Minimum priority"),
-        mLocalizer.msg("medium","Medium priority"),
-        mLocalizer.msg("max","Maximum priority")};
+        localizer.msg("color.minPriority","1. Color (minimum priority)"),
+        localizer.msg("color.lowerMediumPriority","2. Color (lower medium priority)"),
+        localizer.msg("color.mediumPriority","3. Color (Medium priority)"),
+        localizer.msg("color.higherMediumPriority","4. Color (higher medium priority)"),
+        localizer.msg("color.maxPriority","5. Color (maximum priority)")};
     
     mValueSelection = new JComboBox(values);
     mValueSelection.setSelectedIndex(mMarkPriority);

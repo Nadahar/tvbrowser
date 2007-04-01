@@ -315,6 +315,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     mTitleIcon = new TextAreaIcon(null, mTitleFont, WIDTH_RIGHT - 5);
     mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5);
     mDescriptionIcon.setMaximumLineCount(3);
+    mProgram.validateMarking();
     Program p = mProgram;
     mProgram = null;
     setProgram(p);
@@ -461,11 +462,11 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       }
             
       // Calculate the height
-      mHeight = titleHeight + descHeight + mPictureAreaIcon.getIconHeight() + V_GAP;
+      mHeight = titleHeight + descHeight + mPictureAreaIcon.getIconHeight() + 16 + V_GAP;
       setPreferredSize(new Dimension(WIDTH, mHeight));
 
       // Calculate the preferred height
-      mPreferredHeight = titleHeight + (maxDescLines * mNormalFont.getSize()) + mPictureAreaIcon.getIconHeight() + V_GAP;
+      mPreferredHeight = titleHeight + (maxDescLines * mNormalFont.getSize()) + mPictureAreaIcon.getIconHeight() + (Settings.propProgramPanelUsesExtraSpaceForMarkIcons.getBoolean() ? 16 : 0) + V_GAP;
             
       if (mHeight < mPreferredHeight) {
         mPreferredHeight = mHeight;
@@ -614,14 +615,25 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     Marker[] markedByPluginArr = mProgram.getMarkerArr();
     if (markedByPluginArr.length != 0) {
       switch(mProgram.getMarkPriority()) {
-        case Program.MIN_MARK_PRIORITY: grp.setColor(Settings.propProgramTableMarkedMinPriorityColor.getColor());grp.fill3DRect(0, 0, width, height, true);break;
-        case Program.MEDIUM_MARK_PRIORITY: grp.setColor(Settings.propProgramTableMarkedMediumPriorityColor.getColor());grp.fill3DRect(0, 0, width, height, true);break;
-        case Program.MAX_MARK_PRIORITY: grp.setColor(Settings.propProgramTableMarkedMaxPriorityColor.getColor());grp.fill3DRect(0, 0, width, height, true);break;
+        case Program.MIN_MARK_PRIORITY: grp.setColor(Settings.propProgramPanelMarkedMinPriorityColor.getColor());break;
+        case Program.LOWER_MEDIUM_MARK_PRIORITY: grp.setColor(Settings.propProgramPanelMarkedLowerMediumPriorityColor.getColor());break;
+        case Program.MEDIUM_MARK_PRIORITY: grp.setColor(Settings.propProgramPanelMarkedMediumPriorityColor.getColor());break;
+        case Program.HIGHER_MEDIUM_MARK_PRIORITY: grp.setColor(Settings.propProgramPanelMarkedHigherMediumPriorityColor.getColor());break;
+        case Program.MAX_MARK_PRIORITY: grp.setColor(Settings.propProgramPanelMarkedMaxPriorityColor.getColor());break;
         
-        default: if(Settings.propProgramTableMarkedDefaultPriorityShowsColor.getBoolean()) {
-                   grp.setColor(Settings.propProgramTableMarkedDefaultPriorityColor.getColor());
-                   grp.fill3DRect(0, 0, width, height, true); 
-                 }
+        default: grp.setColor(Settings.propProgramPanelMarkedMinPriorityColor.getColor());
+      }
+      
+      if(mProgram.isExpired())
+        grp.setColor(new Color(grp.getColor().getRed(), grp.getColor().getGreen(), grp.getColor().getBlue(), (int)(grp.getColor().getAlpha()*6/10.)));
+      
+      if(mProgram.getMarkPriority() > Program.NO_MARK_PRIORITY) {
+        if(Settings.propProgramPanelWithMarkingsShowingBoder.getBoolean()) {
+          grp.fill3DRect(0, 0, width, height, true);
+        }
+        else {
+          grp.fillRect(0, 0, width, height);
+        }
       }
     }
 
@@ -677,7 +689,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       // paint the icons of the plugins that have marked the program
       int x = width - 1;
       int y = mTitleIcon.getIconHeight() + mDescriptionIcon.getIconHeight()
-          + mPictureAreaIcon.getIconHeight() + 17;
+          + mPictureAreaIcon.getIconHeight() + 18;
       y = Math.min(y, height - 1);
       for (Marker marker: markedByPluginArr) {
         Icon[] icons = marker.getMarkIcons(mProgram);

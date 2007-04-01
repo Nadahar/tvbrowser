@@ -36,8 +36,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.extras.common.DefaultMarker;
 import util.io.IOUtilities;
 import devplugin.Date;
 import devplugin.Plugin;
@@ -53,10 +51,6 @@ public class ReminderList implements ActionListener {
 
   private ReminderTimerListener mListener = null;
   private javax.swing.Timer mTimer;
-  public static DefaultMarker MARKER = new DefaultMarker(
-      "reminderplugin.ReminderPlugin", IconLoader.getInstance()
-          .getIconFromTheme("apps", "appointment", 16), ReminderPlugin.mLocalizer.msg("pluginName","Reminder"), Program.DEFAULT_MARK_PRIORITY);
-
   private ArrayList<ReminderListItem> mList;
 
   /** List of Blocked Programs. These Programs don't trigger a reminder anymore */
@@ -127,7 +121,7 @@ public class ReminderList implements ActionListener {
         item = new ReminderListItem(program, minutes);
         item.setReferenceCount(referenceCount);
         mList.add(item);
-        program.mark(MARKER);
+        program.mark(ReminderPluginProxy.getInstance());
       }
     }
   }
@@ -146,7 +140,7 @@ public class ReminderList implements ActionListener {
           && (!programs[i].isExpired())) {
         ReminderListItem item = new ReminderListItem(programs[i], minutes);
         mList.add(item);
-        programs[i].mark(MARKER);
+        programs[i].mark(ReminderPluginProxy.getInstance());
       }
       else if(contains(programs[i]))
         getReminderItem(programs[i]).incReferenceCount();
@@ -182,7 +176,7 @@ public class ReminderList implements ActionListener {
     item.decReferenceCount();
     if (item.getReferenceCount() < 1) {
       mList.remove(item);
-      item.getProgram().unmark(MARKER);
+      item.getProgram().unmark(ReminderPluginProxy.getInstance());
     }
   }
 
@@ -213,15 +207,22 @@ public class ReminderList implements ActionListener {
     removeWithoutChecking(item.getProgram());
   }
   
-  public void removeWithoutChecking(Program program) {
+  public ReminderListItem removeWithoutChecking(Program program) {
     ReminderListItem[] items = getReminderItems();
     for (int i = 0; i < items.length; i++) {
       if (items[i].getProgram().equals(program)) {
         mList.remove(items[i]);
-        items[i].getProgram().unmark(MARKER);
+        items[i].getProgram().unmark(ReminderPluginProxy.getInstance());
+        return items[i];
       }
     }
-  }  
+    
+    return null;
+  }
+  
+  public void addWithoutChecking(ReminderListItem item) {
+    mList.add(item);
+  }
 
   public ReminderListItem getReminderItem(Program program) {
     ReminderListItem[] items = getReminderItems();

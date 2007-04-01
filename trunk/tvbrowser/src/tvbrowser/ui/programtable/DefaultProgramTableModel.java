@@ -414,7 +414,28 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     // No such column found
     return -1;
   }
-
+  
+  /**
+   * Checks if this model contains a program.
+   * 
+   * @param p The program to check.
+   * @return True if the program is contained.
+   * @throws Exception Thrown if something goes wrong.
+   * @since 2.5.3
+   */
+  public boolean contains(Program p) throws Exception {
+    checkThread();
+      
+    for(int i = 0; i < mShownChannelArr.length; i++) {
+      if(p.getChannel().equals(mShownChannelArr[i])) {
+        for(ProgramPanel panel : mShownProgramColumn[i])
+          if(panel.getProgram().equals(p))
+            return true;
+      }
+    }
+    
+    return false;
+  }
 
 
   private void handleTimerEvent() {

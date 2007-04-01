@@ -19,11 +19,10 @@
  * CVS information:
  *  $RCSfile$
  *   $Source$
- *     $Date: 2006-05-11 20:15:21 +0200 (Do, 11 Mai 2006) $
- *   $Author: ds10 $
- * $Revision: 2370 $
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
-
 package util.ui;
 
 import java.awt.Dialog;
@@ -37,8 +36,8 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.reminderplugin.ReminderList;
+import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
+import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import util.ui.customizableitems.SelectableItemList;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
@@ -110,8 +109,8 @@ public class MarkerChooserDlg extends JDialog implements WindowClosingIf {
     
     ArrayList<Marker> list = new ArrayList<Marker>();
     
-    list.add(FavoritesPlugin.MARKER);
-    list.add(ReminderList.MARKER);
+    list.add(FavoritesPluginProxy.getInstance());
+    list.add(ReminderPluginProxy.getInstance());
     
     for(int i = 0; i < pluginAccess.length; i++)      
       list.add(pluginAccess[i]);

@@ -70,9 +70,7 @@ import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
-import tvbrowser.extras.searchplugin.SearchPlugin;
 import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
 import tvbrowser.ui.finder.FinderPanel;
@@ -157,7 +155,10 @@ public class MainFrame extends JFrame implements DateListener {
 
   private Component mCenterComponent;
 
-  private boolean mIsVisible, mShuttingDown = false;
+  private boolean mIsVisible;
+  
+  private static boolean mShuttingDown = false;
+  private static boolean mStarting = true;
 
   private Node mMainframeNode;
 
@@ -732,11 +733,9 @@ public class MainFrame extends JFrame implements DateListener {
     if (log)
       mLog.info("Storing dataservice settings");
     TvDataServiceProxyManager.getInstance().shutDown();
-
-    SearchPlugin.getInstance().store();
+    
     FavoritesPlugin.getInstance().store();
     ReminderPlugin.getInstance().store();
-    ProgramInfo.getInstance().store();
 
     TVBrowser.shutdown(log);
 
@@ -754,6 +753,31 @@ public class MainFrame extends JFrame implements DateListener {
       mLog.info("Quitting");
       System.exit(0);
     }
+  }
+  
+  /**
+   * Gets if TV-Browser is currently being shutting down.
+   * @return True if TV-Browser is shutting down.
+   * @since 2.5.3
+   */
+  public static boolean isShuttingDown() {
+    return mShuttingDown;
+  }
+  
+  /**
+   * Gets id TV-Browser is currently being started. 
+   * @return True if TV-Browser is currently being started.
+   * @since 2.5.3
+   */
+  public static boolean isStarting() {
+    return mStarting;
+  }
+  
+  /**
+   * Handles done TV-Browser start.
+   */
+  public void handleTvBrowserStartFinished() {
+    mStarting = false;
   }
   
   /**
@@ -779,7 +803,7 @@ public class MainFrame extends JFrame implements DateListener {
       
         if(ch != null) {
           /* If no date array is available we have to find
-           * the n air programs */
+           * the on air programs */
           if(mChannelDateArr == null) {
             mChannelDateArr = new Date[ch.length];
             mOnAirRowProgramsArr = new int[ch.length];

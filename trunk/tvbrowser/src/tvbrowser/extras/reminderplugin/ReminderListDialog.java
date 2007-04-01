@@ -74,6 +74,10 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
   private ReminderList reminderList;
 
   private JTable mTable;
+  
+  private ReminderTableModel mModel;
+  private ReminderListItem[] mDeletedItems;
+  private JButton mUndo, mDelete, mSend;
 
   public ReminderListDialog(Frame parent, ReminderList list) {
     super(parent, true);
@@ -93,7 +97,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
 
     CellConstraints cc = new CellConstraints();
 
-    ReminderTableModel model = new ReminderTableModel(reminderList);
+    mModel = new ReminderTableModel(reminderList);
 
     mTable = new JTable();
     mTable.addKeyListener(new KeyAdapter() {
@@ -153,7 +157,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
       }
     });
 
-    installTableModel(model);
+    installTableModel(mModel);
 
     panel.add(new JScrollPane(mTable), cc.xy(1, 1));
 
@@ -172,30 +176,44 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
     builder.addFixed(config);
     builder.addRelatedGap();
     
-    JButton send = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "edit-copy", 16));
-    send.setToolTipText(mLocalizer.msg("send", "Send to other Plugins"));
+    mSend = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "edit-copy", 16));
+    mSend.setToolTipText(mLocalizer.msg("send", "Send to other Plugins"));
+    mSend.setEnabled(mTable.getRowCount() > 0);
 
-    send.addActionListener(new ActionListener() {
+    mSend.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         showSendDialog();
       }
     });
 
-    builder.addFixed(send);
+    builder.addFixed(mSend);
     builder.addRelatedGap();
 
-    JButton delete = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16));
-    delete.setToolTipText(mLocalizer.msg("delete", "Remove selected programs from reminder list"));
-
-    delete.addActionListener(new ActionListener() {
+    mDelete = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16));
+    mDelete.setToolTipText(mLocalizer.msg("delete", "Remove all/selected programs from reminder list"));
+    mDelete.setEnabled(mTable.getRowCount() > 0);
+    
+    mDelete.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         deleteItems();
       }
     });
 
-    builder.addFixed(delete);
-
+    builder.addFixed(mDelete);
     builder.addRelatedGap();
+    
+    mUndo = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "edit-undo", 16));
+    mUndo.setToolTipText(mLocalizer.msg("undo","Undo"));
+    mUndo.setEnabled(false);
+    
+    mUndo.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        undo();
+      }
+    });
+    
+    builder.addFixed(mUndo);
+    builder.addRelatedGap();    
 
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
 
@@ -233,23 +251,25 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
     int[] selected = mTable.getSelectedRows();
 
     if (selected.length < 1 && mTable.getRowCount() > 0) {
-      int i = JOptionPane.showConfirmDialog(this, mLocalizer.msg("deleteQuestion", "Should all Reminders be deleted?"),
-          mLocalizer.msg("delTitle", "Delete Reminder"), JOptionPane.YES_NO_CANCEL_OPTION);
-
-      if (i == 0) {
-        mTable.getSelectionModel().setSelectionInterval(0, mTable.getRowCount() - 1);
-        selected = mTable.getSelectedRows();
-      }
+      mTable.getSelectionModel().setSelectionInterval(0, mTable.getRowCount() - 1);
+      selected = mTable.getSelectedRows();
     }
 
     if (selected.length > 0) {
       Arrays.sort(selected);
 
+      ArrayList<ReminderListItem> itemList = new ArrayList<ReminderListItem>();
+      
       for (int i = 0; i < selected.length; i++) {
         Program prog = (Program) mTable.getValueAt(selected[i], 0);
 
-        reminderList.removeWithoutChecking(prog);
+        ReminderListItem item = reminderList.removeWithoutChecking(prog);
+        
+        if(item != null)
+          itemList.add(item);
       }
+      
+      mDeletedItems = itemList.toArray(new ReminderListItem[itemList.size()]);
 
       final int row = selected[0] - 1;
 
@@ -260,9 +280,28 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
         };
       });
       
-      ReminderPlugin.getInstance().updateRootNode();
+      ReminderPlugin.getInstance().updateRootNode(true);
     }
-
+    
+    mDelete.setEnabled(mTable.getRowCount() > 0);
+    mSend.setEnabled(mTable.getRowCount() > 0);
+    mUndo.setEnabled(mDeletedItems != null && mDeletedItems.length > 0);
+  }
+  
+  private void undo() {
+    for(ReminderListItem item : mDeletedItems) {
+      reminderList.addWithoutChecking(item);
+      item.getProgram().mark(ReminderPluginProxy.getInstance());
+    }
+    
+    mDeletedItems = null;
+    mUndo.setEnabled(false);
+   
+    installTableModel(new ReminderTableModel(reminderList));
+    ReminderPlugin.getInstance().updateRootNode(true);
+    
+    mDelete.setEnabled(mTable.getRowCount() > 0);
+    mSend.setEnabled(mTable.getRowCount() > 0);
   }
 
   private void showSendDialog() {

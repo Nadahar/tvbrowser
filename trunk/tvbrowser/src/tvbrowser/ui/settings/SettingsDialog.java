@@ -66,6 +66,7 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.extras.favoritesplugin.FavoritesMarkingsSettingsTab;
 import tvbrowser.extras.favoritesplugin.FavoritesPicturesSettingsTab;
 import tvbrowser.extras.favoritesplugin.FavoritesSettingTab;
 import tvbrowser.extras.programinfo.ProgramInfo;
@@ -74,6 +75,7 @@ import tvbrowser.extras.programinfo.ProgramInfoFontSettingsTab;
 import tvbrowser.extras.programinfo.ProgramInfoFunctionsSettingsTab;
 import tvbrowser.extras.programinfo.ProgramInfoOrderSettingsTab;
 import tvbrowser.extras.programinfo.ProgramInfoPicturesSettingsTab;
+import tvbrowser.extras.reminderplugin.ReminderMarkingsSettingsTab;
 import tvbrowser.extras.reminderplugin.ReminderPicturesSettingsTab;
 import tvbrowser.extras.reminderplugin.ReminderSettingsTab;
 import util.exc.ErrorHandler;
@@ -327,16 +329,15 @@ public class SettingsDialog implements WindowClosingIf {
     programtableNode.add(new SettingNode(new RefreshDataSettingsTab()));
     programtableNode.add(new SettingNode(new ButtonsSettingsTab(), SettingsItem.TIMEBUTTONS));
 
+    SettingNode programPanelNode = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("programPanel", "Program display"), null));    
+    programPanelNode.add(new SettingNode(new ProgramPanelSettingsTab(), SettingsItem.PROGRAMPANELLOOK));
+    programPanelNode.add(new SettingNode(new MarkingsSettingsTab(), SettingsItem.PROGRAMPANELMARKING));
+
+    appearanceNode.add(programPanelNode);
     appearanceNode.add(new SettingNode(new ProgramTableSettingsTab(), SettingsItem.PROGRAMTABLELOOK));
     appearanceNode.add(new SettingNode(new PictureSettingsTab()));
     appearanceNode.add(new SettingNode(new ChannelListSettingsTab(), SettingsItem.CHANNELLISTLOOK));
     appearanceNode.add(new SettingNode(new FontsSettingsTab()));
-    
-    SettingNode programPanelNode = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("programPanel", "Program display"), null));    
-    appearanceNode.add(programPanelNode);
-    
-    programPanelNode.add(new SettingNode(new ProgramPanelSettingsTab(), SettingsItem.PROGRAMPANELLOOK));
-    programPanelNode.add(new SettingNode(new MarkingsSettingsTab(), SettingsItem.PROGRAMPANELMARKING));
 
     technicalSettings.add(new SettingNode(new NetworkSettingsTab()));
     technicalSettings.add(new SettingNode(new ProxySettingsTab()));
@@ -363,12 +364,14 @@ public class SettingsDialog implements WindowClosingIf {
     SettingNode favoritesNode = new SettingNode(new DefaultSettingsTab(FavoritesSettingTab.mLocalizer.msg("name", "Favorite programs"), null));    
     favoritesNode.add(new SettingNode(new FavoritesSettingTab(), SettingsItem.FAVORITE));
     favoritesNode.add(new SettingNode(new FavoritesPicturesSettingsTab()));
+    favoritesNode.add(new SettingNode(new FavoritesMarkingsSettingsTab()));
     
     root.add(favoritesNode);
     
     SettingNode reminderNode = new SettingNode(new DefaultSettingsTab(ReminderSettingsTab.mLocalizer.msg("tabName", "Reminder"), null));    
     reminderNode.add(new SettingNode(new ReminderSettingsTab(), SettingsItem.REMINDER));
     reminderNode.add(new SettingNode(new ReminderPicturesSettingsTab()));
+    reminderNode.add(new SettingNode(new ReminderMarkingsSettingsTab()));
     
     root.add(reminderNode);
 

@@ -150,8 +150,16 @@ public class ProgramMenuItem extends JMenuItem {
       setMargin(new Insets(1,getMargin().left,1,getMargin().right));
     }
 
-    if (p.getMarkerArr().length > 0)
-      setForeground(Color.red);
+    /*if (p.getMarkerArr().length > 0) {
+      switch(mProgram.getMarkPriority()) {
+        case Program.NEUTRAL_MARK_PRIORITY: setForeground(Settings.propProgramPanelMarkedNeutralPriorityColor.getColor());break;
+        case Program.MIN_MARK_PRIORITY: setForeground(Settings.propProgramPanelMarkedMinPriorityColor.getColor());break;
+        case Program.MEDIUM_MARK_PRIORITY: setForeground(Settings.propProgramPanelMarkedMediumPriorityColor.getColor());break;
+        case Program.MAX_MARK_PRIORITY: setForeground(Settings.propProgramPanelMarkedMaxPriorityColor.getColor());break;
+      }
+    }
+    
+    setForeground(new Color(getForeground().getRed(),getForeground().getGreen(),getForeground().getBlue(),255).darker());*/
     
     mSelected = false;
 

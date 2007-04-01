@@ -103,7 +103,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   public PluginInfo getInfo() {
     return (new PluginInfo(mLocalizer.msg("name","Marker plugin"), mLocalizer.msg("description",
         "A simple marker plugin (formerly Just_Mark)"), "René Mach", new Version(
-        1, 44, true, "1.4.4"), "GPL"));
+        1, 45, true, "1.4.5"), "GPL"));
   }
 
   public void loadSettings(Properties prop) {
@@ -201,7 +201,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   }
   
   public int getMarkPriorityForProgram(Program p) {
-    int priority = Program.DEFAULT_MARK_PRIORITY;
+    int priority = Program.NO_MARK_PRIORITY;
     
     if(p != null) {
       String[] lists = mMarkListVector.getNamesOfListsContainingProgram(p);
