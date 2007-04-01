@@ -34,7 +34,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 import tvbrowser.core.Settings;
-import tvbrowser.extras.common.DefaultMarker;
 import util.settings.ProgramPanelSettings;
 import util.ui.PictureSettingsPanel;
 import util.ui.UiUtilities;
@@ -92,16 +91,46 @@ public class ProgramTextCreator {
    *          The title Font.
    * @param bFont
    *          The body Font.
+   * @param settings 
    * @param showImage
    *          Show the image.
    * @param showHelpLinks
    *          Show the Help-Links (Quality of Data, ShowView)
+   * @param zoom The zoom value for the picture.
    * @return The html String.
    * @since 2.2.2
    */
   public static String createInfoText(Program prog, ExtendedHTMLDocument doc, 
       Object[] fieldArr, Font tFont, Font bFont, ProgramPanelSettings settings, 
       boolean showHelpLinks, int zoom) {
+    return createInfoText(prog,doc,fieldArr,tFont,bFont,settings,showHelpLinks, zoom, true);
+  }
+
+  /**
+   * 
+   * @param prog
+   *          The Program to show
+   * @param doc
+   *          The HTMLDocument.
+   * @param fieldArr
+   *          The object array with the field types.
+   * @param tFont
+   *          The title Font.
+   * @param bFont
+   *          The body Font.
+   * @param settings 
+   * @param showImage
+   *          Show the image.
+   * @param showHelpLinks
+   *          Show the Help-Links (Quality of Data, ShowView)
+   * @param zoom The zoom value for the picture.
+   * @param showPluginIcons If the plugin icons should be shown.
+   * @return The html String.
+   * @since 2.5.3
+   */
+  public static String createInfoText(Program prog, ExtendedHTMLDocument doc, 
+      Object[] fieldArr, Font tFont, Font bFont, ProgramPanelSettings settings, 
+      boolean showHelpLinks, int zoom, boolean showPluginIcons) {
     // NOTE: All field types are included until type 25 (REPETITION_ON_TYPE)
     StringBuffer buffer = new StringBuffer();
 
@@ -226,7 +255,7 @@ public class ProgramTextCreator {
     }
 
     Marker[] pluginArr = prog.getMarkerArr();
-    if ((pluginArr != null) && (pluginArr.length != 0)) {
+    if (showPluginIcons && (pluginArr != null) && (pluginArr.length != 0)) {
       addSeperator(doc, buffer);
 
       buffer.append("<tr><td valign=\"top\" style=\"color:#808080; font-size:");
@@ -252,8 +281,8 @@ public class ProgramTextCreator {
             if (plugin != null) {
               iconLabel.setToolTipText(plugin.getInfo().getName());
             }
-            else if (marker instanceof DefaultMarker) {
-            	iconLabel.setToolTipText(((DefaultMarker) marker).toString());
+            else {
+            	iconLabel.setToolTipText(marker.toString());
             }
 
             buffer.append(doc.createCompTag(iconLabel));
@@ -278,7 +307,7 @@ public class ProgramTextCreator {
       }
     }
 
-    if (icons.size() > 0) {
+    if (showPluginIcons && icons.size() > 0) {
       addSeperator(doc, buffer);
 
       buffer

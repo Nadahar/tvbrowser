@@ -464,28 +464,31 @@ public class PluginProxyManager {
     if (log) {
       mLog.info("Deactivating plugin " + item.getPlugin().getId());
     }
-
-    // Get the user directory
-    String userDirectoryName = Settings.getUserSettingsDirName();
-    File userDirectory = new File(userDirectoryName);
-
-    // Create the user directory if it does not exist
-    if (!userDirectory.exists()) {
-      userDirectory.mkdirs();
-    }
-
+    
     // Try to save the plugin settings. If saving fails, we continue
     // deactivating the plugin.
     try {
-      item.getPlugin().saveSettings(userDirectory, log);
+      saveSettings(item);
     } catch (TvBrowserException e) {
       ErrorHandler.handle(e);
     }
 
     final PluginProxy plugin = item.getPlugin();
 
+    // Tell the plugin that we deactivate it now
+    item.getPlugin().onDeactivation();
+
+    // Set the plugin active
+    item.setState(LOADED_STATE);
+
+    // Clear the activated plugins cache
+    mActivatedPluginCache = null;
+
+    // Inform the listeners
+    firePluginDeactivated(item.getPlugin(), log);
+    
     // Run through all Programs and umark this Plugin
-    if(plugin != null) {
+    if(plugin != null && !MainFrame.isShuttingDown()) {
       new Thread() {
         public void run() {
           setPriority(Thread.MIN_PRIORITY);
@@ -499,18 +502,6 @@ public class PluginProxyManager {
         };
       }.start();
     }
-    
-    // Tell the plugin that we deactivate it now
-    item.getPlugin().onDeactivation();
-
-    // Set the plugin active
-    item.setState(LOADED_STATE);
-
-    // Clear the activated plugins cache
-    mActivatedPluginCache = null;
-
-    // Inform the listeners
-    firePluginDeactivated(item.getPlugin(), log);
   }
 
   /**
@@ -528,6 +519,35 @@ public class PluginProxyManager {
       mActivatedPluginCache = null;
       mAllPluginCache = null;
     }
+  }
+  
+  /**
+   * Saves the settings for the given PluginProxy.
+   * <p>
+   * @param plugin The plugin proxy to save the settings for.
+   * @return If the settings were successfully saved.
+   */
+  public boolean saveSettings(PluginProxy plugin) {
+    try {
+      saveSettings(getItemForPlugin(plugin));
+    }catch(Exception e) {
+      return false;
+    }
+    
+    return true;
+  }
+  
+  private void saveSettings(PluginListItem item) throws TvBrowserException {
+    // Get the user directory
+    String userDirectoryName = Settings.getUserSettingsDirName();
+    File userDirectory = new File(userDirectoryName);
+
+    // Create the user directory if it does not exist
+    if (!userDirectory.exists()) {
+      userDirectory.mkdirs();
+    }
+    
+    item.getPlugin().saveSettings(userDirectory,!MainFrame.isShuttingDown());    
   }
 
   /**

@@ -69,5 +69,11 @@ public class FavoritesPicturesSettingsTab extends AbstractSettingsTab {
       
       FavoritesPlugin.getInstance().getSettings().setProperty("picturePlugins", temp.toString());
     }
+    
+    new Thread() {
+      public void run() {
+        FavoritesPlugin.getInstance().store();
+      }
+    }.start();
   }
 }

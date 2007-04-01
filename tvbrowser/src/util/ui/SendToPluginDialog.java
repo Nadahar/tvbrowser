@@ -118,7 +118,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
     UiUtilities.registerForClosing(this);
 
     CellConstraints cc = new CellConstraints();
-    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref:grow,5dlu","pref,5dlu,pref,5dlu,pref,5dlu,pref,10dlu,pref"), (JPanel)this.getContentPane());
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,0dlu:grow,5dlu","pref,5dlu,pref,5dlu,pref,5dlu,pref,10dlu,pref"), (JPanel)this.getContentPane());
     pb.setDefaultDialogBorder();
     
     pb.addSeparator(mLocalizer.msg("sendTo", "Send programs to"), cc.xyw(1,1,3));

@@ -98,9 +98,11 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
 
     g.clearRect(0, 0, menuItem.getWidth(), menuItem.getHeight());
     
+    boolean isMarked = mProgram.getMarkPriority() > Program.NO_MARK_PRIORITY; 
+    
     if (menuItem.isArmed())
       g.setColor(bgColor);
-    else if (!isOnAir && ((mTime != -1
+    else if (!isOnAir && !isMarked && ((mTime != -1
             && Settings.propTrayOnTimeProgramsLightBackground.getColor().getAlpha() == 0 
             && Settings.propTrayOnTimeProgramsDarkBackground.getColor().getAlpha() == 0) || mTime == -1))
       g.setColor(menuItem.getBackground());
@@ -108,21 +110,37 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
       g.setColor(((ProgramMenuItem) menuItem).getDefaultBackground());
 
     g.fillRect(0, 0, menuItem.getWidth(), menuItem.getHeight());
+    
+    Insets i = menuItem.getMargin();
+    int x = mIcon == null ? 0 : mIcon.getIconWidth() + i.left;
 
+    int width = menuItem.getWidth() - x;
+    int height = menuItem.getHeight();
+    int top = i.top + 1;
+    int bottom = height - i.bottom - i.top - 1;
+
+    if (mIcon != null) {
+      top += 1;
+      bottom -= (i.bottom + i.top);
+    }    
+    
+    if(!menuItem.isArmed() && (isMarked || isOnAir || mTime != -1)) {
+      g.setColor(Color.white);
+      g.fillRect(x, top, menuItem.getWidth(), bottom);
+    }
+    
+    switch(mProgram.getMarkPriority()) {
+      case Program.MIN_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedMinPriorityColor.getColor());break;
+      case Program.LOWER_MEDIUM_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedLowerMediumPriorityColor.getColor());break;
+      case Program.MEDIUM_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedMediumPriorityColor.getColor());break;
+      case Program.HIGHER_MEDIUM_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedHigherMediumPriorityColor.getColor());break;
+      case Program.MAX_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedMaxPriorityColor.getColor());break;
+    }
+        
+    if(isMarked)
+      g.fillRect(x, top, menuItem.getWidth(), bottom);
+    
     if (isOnAir || mTime != -1) {
-      Insets i = menuItem.getMargin();
-      int x = mIcon == null ? 0 : mIcon.getIconWidth() + i.left;
-
-      int width = menuItem.getWidth() - x;
-      int height = menuItem.getHeight();
-      int top = i.top + 1;
-      int bottom = height - i.bottom - i.top - 1;
-
-      if (mIcon != null) {
-        top += 1;
-        bottom -= (i.bottom + i.top);
-      }
-
       int minutesAfterMidnight = mTime != -1 ? mTime : IOUtilities
           .getMinutesAfterMidnight();
       int progLength = mProgram.getLength();
@@ -142,11 +160,11 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
       if (progLength > 0) {
         progressX = elapsedMinutes * (width - i.left - i.right) / progLength;
       }
-
+      
       g.setColor(mTime == -1 ? Settings.propProgramTableColorOnAirLight
           .getColor() : Settings.propTrayOnTimeProgramsLightBackground.getColor());
-      g.fillRect(x + progressX - i.right - i.left, top, width - i.right
-          - i.left, bottom);
+      g.fillRect(x + progressX - i.right - i.left, top, width - progressX + i.right
+          + i.left, bottom);
       g.setColor(mTime == -1 ? Settings.propProgramTableColorOnAirDark
           .getColor() : Settings.propTrayOnTimeProgramsDarkBackground.getColor());
 
@@ -157,7 +175,7 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
 
     if (mIcon != null)
       mIcon.paintIcon(menuItem, g, menuItem.getMargin().left, menuItem
-          .getMargin().top);
+          .getMargin().top);    
   }
 
   protected void paintText(Graphics g, JMenuItem menuItem, Rectangle textRect,

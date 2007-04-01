@@ -91,33 +91,36 @@ public class MarkedProgramsList {
   protected void addProgram(MutableProgram p) {
     if(p!= null && !mMarkedPrograms.contains(p) && p.getMarkerArr().length > 0) {
       mMarkedPrograms.add(p);
-      
-      if(PluginManagerImpl.getInstance().getFilterManager() != null && !PluginManagerImpl.getInstance().getFilterManager().getCurrentFilter().equals(PluginManagerImpl.getInstance().getFilterManager().getDefaultFilter())) {
-        if(mProgramTableRefreshThread == null || !mProgramTableRefreshThread.isAlive()) {
-          mProgramTableRefreshThread = getProgramTableRefreshThread();
-          mProgramTableRefreshThread.start();
-        }
-        else {
-          mProgramTableRefreshThreadWaitTime = 500;
-        }
-      }        
+      handleFilterMarking(p);
     }
   }
 
   protected void removeProgram(MutableProgram p) {
     if(p!= null && p.getMarkerArr().length < 1) {
       mMarkedPrograms.remove(p);
-      
-      if(PluginManagerImpl.getInstance().getFilterManager() != null && !PluginManagerImpl.getInstance().getFilterManager().getCurrentFilter().equals(PluginManagerImpl.getInstance().getFilterManager().getDefaultFilter())) {
-        if(mProgramTableRefreshThread == null || !mProgramTableRefreshThread.isAlive()) {
-          mProgramTableRefreshThread = getProgramTableRefreshThread();
-          mProgramTableRefreshThread.start();
-        }
-        else {
-          mProgramTableRefreshThreadWaitTime = 500;
-        }
-      }
+      handleFilterMarking(p);
     }
+  }
+  
+  private void handleFilterMarking(Program p) {
+    if(!MainFrame.isStarting() && !MainFrame.isShuttingDown() && PluginManagerImpl.getInstance().getFilterManager() != null && !PluginManagerImpl.getInstance().getFilterManager().getCurrentFilter().equals(PluginManagerImpl.getInstance().getFilterManager().getDefaultFilter())) {
+      try {
+        boolean contained = MainFrame.getInstance().getProgramTableModel().contains(p);
+        boolean accepted = PluginManagerImpl.getInstance().getFilterManager().getCurrentFilter().accept(p);
+        
+        if((contained && !accepted) || (!contained && accepted)) {
+          if(mProgramTableRefreshThread == null || !mProgramTableRefreshThread.isAlive()) {
+            mProgramTableRefreshThread = getProgramTableRefreshThread();
+            mProgramTableRefreshThread.start();
+          }
+          else {
+            mProgramTableRefreshThreadWaitTime = 500;
+          }
+        }
+      }catch(Exception e) {
+        // ignore
+      }
+    } 
   }
 
   /**
@@ -132,9 +135,10 @@ public class MarkedProgramsList {
 
   /**
    * @param filter The filter to use for program filtering
+   * @param markPriority The minimum mark priority of programs to find.
    * @return The time sorted programs for the tray.
    */
-  public Program[] getTimeSortedProgramsForTray(ProgramFilter filter) {
+  public Program[] getTimeSortedProgramsForTray(ProgramFilter filter, int markPriority) {
     int n = mMarkedPrograms.size() > Settings.propTrayImportantProgramsSize.getInt() ? Settings.propTrayImportantProgramsSize.getInt() : mMarkedPrograms.size();
 
     ArrayList<Program> programs = new ArrayList<Program>();
@@ -150,7 +154,7 @@ public class MarkedProgramsList {
       }
 
       MutableProgram p = it.next();
-      if(ProgramUtilities.isOnAir(p) || p.isExpired() || !filter.accept(p)) {
+      if(ProgramUtilities.isOnAir(p) || p.isExpired() || !filter.accept(p) || p.getMarkPriority() < markPriority) {
         k++;
         continue;
       }
@@ -179,7 +183,7 @@ public class MarkedProgramsList {
     for(i = k; i < mMarkedPrograms.size(); i++) {
       Program p = it.next();
 
-      if(ProgramUtilities.isOnAir(p) || p.isExpired()) {
+      if(ProgramUtilities.isOnAir(p) || p.isExpired() || p.getMarkPriority() < markPriority) {
         continue;
       }
 

@@ -404,10 +404,14 @@ public class IOUtilities {
    * @since 2.2.2/2.5.1
    */
   public static void copy(File[] src, File targetDir, boolean onlyNew) throws IOException {
+    copy(targetDir,src,targetDir, onlyNew);
+  }
+  
+  private static void copy(File firstTargetDir, File[] src, File targetDir, boolean onlyNew) throws IOException {
 		for (int i=0; i<src.length; i++) {
-			if (src[i].isDirectory()) {
+			if (src[i].isDirectory() && !src[i].equals(targetDir) && !src[i].equals(firstTargetDir)) {
         File newDir = createDirectory(targetDir, src[i].getName());
-        copy(src[i].listFiles(), newDir, onlyNew);
+        copy(firstTargetDir,src[i].listFiles(), newDir, onlyNew);
       }
       else {
         copyFile(src[i], targetDir, onlyNew);

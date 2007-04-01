@@ -41,6 +41,7 @@ import util.program.ProgramUtilities;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
+import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
 import tvbrowser.extras.common.ReminderConfiguration;
 import tvbrowser.extras.common.LimitationConfiguration;
@@ -173,7 +174,7 @@ public abstract class Favorite {
     for(int i = 0; i < mPrograms.length; i++) {
       for(int j = 0; j < progs.length; j++) {
         if(mPrograms[i].equals(progs[j])) {
-          progs[j].mark(FavoritesPlugin.MARKER);
+          progs[j].mark(FavoritesPluginProxy.getInstance());
         }
       }
     }
@@ -432,7 +433,7 @@ public abstract class Favorite {
 
   private void markProgram(Program p) {
     if(!mBlackList.contains(p)) {
-      p.mark(FavoritesPlugin.MARKER);
+      p.mark(FavoritesPluginProxy.getInstance());
       String[] reminderServices = getReminderConfiguration().getReminderServices();
       for (int i=0; i<reminderServices.length; i++) {
         if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderServices[i])) {
@@ -444,7 +445,7 @@ public abstract class Favorite {
 
   private void unmarkProgram(Program p) {
     if(!FavoritesPlugin.getInstance().isContainedByOtherFavorites(this,p)) {
-      p.unmark(FavoritesPlugin.MARKER);
+      p.unmark(FavoritesPluginProxy.getInstance());
     }
       
     String[] reminderServices = getReminderConfiguration().getReminderServices();
@@ -488,7 +489,7 @@ public abstract class Favorite {
     if(!mBlackList.contains(program)) {
       mBlackList.add(program);
       unmarkProgram(program);
-      FavoritesPlugin.getInstance().updateRootNode();
+      FavoritesPlugin.getInstance().updateRootNode(true);
       
       if(ManageFavoritesDialog.getInstance() != null)
         ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
@@ -504,7 +505,7 @@ public abstract class Favorite {
   public void removeFromBlackList(Program program) {
     if(mBlackList.remove(program)) {
       markProgram(program);
-      FavoritesPlugin.getInstance().updateRootNode();
+      FavoritesPlugin.getInstance().updateRootNode(true);
       
       if(ManageFavoritesDialog.getInstance() != null)
         ManageFavoritesDialog.getInstance().favoriteSelectionChanged();

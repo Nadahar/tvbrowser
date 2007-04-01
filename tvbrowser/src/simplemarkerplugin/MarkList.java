@@ -79,7 +79,7 @@ public class MarkList extends Vector<Program> {
     mName = name;
     mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(null);
     mId = name+System.currentTimeMillis();
-    mMarkPriority = Program.DEFAULT_MARK_PRIORITY;
+    mMarkPriority = Program.MIN_MARK_PRIORITY;
   }
 
   /**
@@ -113,6 +113,7 @@ public class MarkList extends Vector<Program> {
     
     if(version >= 3)
       mMarkPriority = in.readInt();
+    
     
     if (version >= 1) {
       mName = (String) in.readObject();
@@ -396,8 +397,9 @@ public class MarkList extends Vector<Program> {
    * 
    * @param title
    *          The title of the Programs to remove
+   * @return The programs that were deleted.
    */
-  public void removeProgramsWithTitle(String title) {
+  public Program[] removeProgramsWithTitle(String title) {
     LinkedList<Program> list = mProgram.remove(title);
     Program[] programs = list.toArray(new Program[list.size()]);
     
@@ -405,6 +407,8 @@ public class MarkList extends Vector<Program> {
       remove(p);
     
     SimpleMarkerPlugin.getInstance().revalidate(programs);
+    
+    return programs;
   }
   
   /**

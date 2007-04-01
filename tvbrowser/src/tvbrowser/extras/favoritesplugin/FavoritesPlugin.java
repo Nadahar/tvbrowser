@@ -54,7 +54,6 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ConfigurationHandler;
 import tvbrowser.extras.common.DataDeserializer;
 import tvbrowser.extras.common.DataSerializer;
-import tvbrowser.extras.common.DefaultMarker;
 import tvbrowser.extras.common.ReminderConfiguration;
 import tvbrowser.extras.favoritesplugin.core.ActorsFavorite;
 import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
@@ -91,11 +90,9 @@ public class FavoritesPlugin {
   private static FavoritesPlugin mInstance;
   private Favorite[] mFavoriteArr;
   
-  private Properties mSettings;
+  private Properties mSettings = new Properties();
 
   private static String DATAFILE_PREFIX = "favoritesplugin.FavoritesPlugin";
-
-  public static final Marker MARKER = new DefaultMarker(DATAFILE_PREFIX, IconLoader.getInstance().getIconFromTheme("apps", "bookmark", 16), mLocalizer.msg("manageFavorites","Favorites"), Program.DEFAULT_MARK_PRIORITY);
 
   private ConfigurationHandler mConfigurationHandler;
 
@@ -106,6 +103,8 @@ public class FavoritesPlugin {
   private boolean mHasRightToUpdate = false;
 
   private boolean mHasToUpdate = false;
+  
+  private boolean mHasRightToSave = true;
 
   private Favorite[] mUpdateFavorites;
 
@@ -113,6 +112,7 @@ public class FavoritesPlugin {
   private ProgramReceiveTarget[] mClientPluginTargets;
 
   private ArrayList<AdvancedFavorite> mPendingFavorites;
+  private int mMarkPriority = -2;
   
   /**
    * Creates a new instance of FavoritesPlugin.
@@ -125,10 +125,11 @@ public class FavoritesPlugin {
     mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
     load();
     mRootNode = new PluginTreeNode(mLocalizer.msg("manageFavorites","Favorites"));
-    updateRootNode();
+    updateRootNode(false);
 
     TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
       public void tvDataUpdateStarted() {
+        mHasRightToSave = false;
       }
 
       public void tvDataUpdateFinished() {
@@ -142,10 +143,11 @@ public class FavoritesPlugin {
 
     if(mHasRightToUpdate) {
       mHasToUpdate = false;
-
+      
       updateAllFavorites();
 
-      updateRootNode();
+      mHasRightToSave = true;      
+      updateRootNode(true);
 
       ArrayList<Favorite> showInfoFavorites = new ArrayList<Favorite>();
 
@@ -166,7 +168,7 @@ public class FavoritesPlugin {
     }
   }
   
-  public static synchronized FavoritesPlugin getInstance() {
+  public static FavoritesPlugin getInstance() {
     if (mInstance == null)
       new FavoritesPlugin();
     return mInstance;
@@ -188,6 +190,13 @@ public class FavoritesPlugin {
 
   private void load() {
     try {
+      Properties prop = mConfigurationHandler.loadSettings();
+      loadSettings(prop);
+    }catch(IOException e) {
+      ErrorHandler.handle(mLocalizer.msg("couldNotLoadFavoritesSettings","Could not load settings for favorites"), e);
+    }
+
+    try {
       mConfigurationHandler.loadData(new DataDeserializer(){
         public void read(ObjectInputStream in) throws IOException, ClassNotFoundException {
           readData(in);
@@ -196,17 +205,9 @@ public class FavoritesPlugin {
     }catch(IOException e) {
       ErrorHandler.handle(mLocalizer.msg("couldNotLoadFavorites","Could not load favorites"), e);
     }
-
-    try {
-      Properties prop = mConfigurationHandler.loadSettings();
-      loadSettings(prop);
-    }catch(IOException e) {
-      ErrorHandler.handle(mLocalizer.msg("couldNotLoadFavoritesSettings","Could not load settings for favorites"), e);
-    }
   }
 
-  public void store() {
-
+  public synchronized void store() {
     try {
       mConfigurationHandler.storeData(new DataSerializer(){
         public void write(ObjectOutputStream out) throws IOException {
@@ -268,7 +269,7 @@ public class FavoritesPlugin {
     for (int i = 0; i < mFavoriteArr.length; i++) {
       Program[] programArr = mFavoriteArr[i].getWhiteListPrograms();
       for (int j = 0; j < programArr.length; j++) {
-        programArr[j].mark(MARKER);
+        programArr[j].mark(FavoritesPluginProxy.getInstance());
       }
     }
 
@@ -401,7 +402,7 @@ public class FavoritesPlugin {
   public void deleteFavorite(Favorite favorite) {
     Program[] delFavPrograms = favorite.getPrograms();
     for (int i=0; i<delFavPrograms.length; i++) {
-      delFavPrograms[i].unmark(MARKER);
+      delFavPrograms[i].unmark(FavoritesPluginProxy.getInstance());
     }
 
 
@@ -422,7 +423,7 @@ public class FavoritesPlugin {
       if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderServices[i])) 
         ReminderPlugin.getInstance().removePrograms(favorite.getPrograms());
     
-    updateRootNode();
+    updateRootNode(true);
   }
 
   /**
@@ -534,9 +535,8 @@ public class FavoritesPlugin {
     }
     UiUtilities.centerAndShow(dlg);
     if (dlg.getOkWasPressed()) {
-      updateRootNode();
+      updateRootNode(true);
     }
-
   }
 
   private void showManageFavoritesDialog(final boolean showNew, Favorite[] favoriteArr) {
@@ -567,14 +567,15 @@ public class FavoritesPlugin {
 
     UiUtilities.centerAndShow(dlg);
 
-    if (!showNew) {
-      mFavoriteArr = dlg.getFavorites();
-      updateRootNode();
-    }
     splitPanePosition = dlg.getSplitpanePosition();
     mSettings.setProperty("splitpanePosition", "" + splitPanePosition);
     mSettings.setProperty("width", "" + dlg.getWidth());
     mSettings.setProperty("height", "" + dlg.getHeight());
+    
+    if (!showNew) {
+      mFavoriteArr = dlg.getFavorites();
+      updateRootNode(true);
+    }
   }
 
   public boolean isUsingExpertMode() {
@@ -599,7 +600,7 @@ public class FavoritesPlugin {
     newFavoritesArr[mFavoriteArr.length] = fav;
     mFavoriteArr = newFavoritesArr;
 
-    updateRootNode();
+    updateRootNode(true);
 
   }
 
@@ -668,6 +669,12 @@ public class FavoritesPlugin {
        }
       }
     }
+    
+    new Thread() {
+      public void run() {
+        store();
+      }
+    }.start();
   }
 
 
@@ -679,7 +686,7 @@ public class FavoritesPlugin {
         fav.addExclusion((Exclusion)exclusion);
         try {
           fav.refreshPrograms();
-          updateRootNode();
+          updateRootNode(true);
         } catch (TvBrowserException exc) {
           ErrorHandler.handle(mLocalizer.msg("couldNotUpdateFavorites","Could not update favorites."), exc);
         }
@@ -696,6 +703,12 @@ public class FavoritesPlugin {
               mLocalizer.msg("delete", "Delete selected favorite..."),
               JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
       deleteFavorite(fav);
+      
+      new Thread() {
+        public void run() {
+          store();
+        }
+      }.start();
     }
   }
 
@@ -708,7 +721,7 @@ public class FavoritesPlugin {
     return mRootNode;
   }
 
-  public void updateRootNode() {
+  public void updateRootNode(boolean save) {
     mRootNode.removeAllActions();
 
     Action manageFavorite = new AbstractAction() {
@@ -790,7 +803,15 @@ public class FavoritesPlugin {
     }
 
     mRootNode.update();
-    ReminderPlugin.getInstance().updateRootNode();
+    ReminderPlugin.getInstance().updateRootNode(mHasRightToSave);
+    
+    if(save && mHasRightToSave) {
+      new Thread() {
+        public void run() {
+          store();
+        }
+      }.start();
+    }
   }
   
 	protected String getFavoriteLabel(Favorite favorite, Program program) {
@@ -892,5 +913,36 @@ public class FavoritesPlugin {
 
   protected void setAutoSelectingReminder(boolean value) {
     mSettings.setProperty("autoSelectReminder", String.valueOf(value));
+  }
+  
+  protected int getMarkPriority() {
+    if(mMarkPriority == - 2 && mSettings != null) {
+      mMarkPriority = Integer.parseInt(mSettings.getProperty("markPriority",String.valueOf(Program.MIN_MARK_PRIORITY)));
+      return mMarkPriority;
+    } else
+      return mMarkPriority;
+  }
+  
+  protected void setMarkPriority(int priority) {
+    mMarkPriority = priority;
+    
+    for(Favorite favorite: mFavoriteArr) {
+      Program[] programs = favorite.getWhiteListPrograms();
+      
+      for(Program program : programs)
+        program.validateMarking();
+    }
+    
+    mSettings.setProperty("markPriority",String.valueOf(priority));
+    
+    new Thread() {
+      public void run() {
+        store();
+      }
+    }.start();
+  }
+  
+  public String toString() {
+    return mLocalizer.msg("manageFavorites","Favorites");
   }
 }

@@ -443,6 +443,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     for (final PluginProxy plugin : plugins) {
       if(plugin.getInfo().getHelpUrl() != null) {
         JMenuItem item = pluginHelpMenuItem(plugin.getInfo());
+        item.setIcon(plugin.getMarkIcon());
         list.add(item);
       }
     }

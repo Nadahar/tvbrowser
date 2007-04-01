@@ -69,6 +69,7 @@ import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
+import devplugin.SettingsTab;
 import devplugin.ThemeIcon;
 import devplugin.Version;
 
@@ -86,6 +87,7 @@ public class PrintPlugin extends Plugin {
 
   /** Global Settings for the PrintPlugin */
   private Properties mSettings;
+  private int mMarkPriority = -2;
   
   public PrintPlugin() {
     mInstance = this;
@@ -105,7 +107,7 @@ public class PrintPlugin extends Plugin {
     String author = "Martin Oberhauser (martin@tvbrowser.org)";
     String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Print_program");
       
-    return new PluginInfo(name, desc, author, helpUrl, new Version(2,10));
+    return new PluginInfo(name, desc, author, helpUrl, new Version(2,11));
   }
 
   public void onActivation() {
@@ -116,6 +118,13 @@ public class PrintPlugin extends Plugin {
     }
     root.update();
     root.addAction(new EmptyQueueAction());
+  }
+  
+  public void handleTvBrowserStartFinished() {
+    Program[] programs = getRootNode().getPrograms();
+    
+    for(Program program : programs)
+      program.validateMarking();
   }
 
   public ActionMenu getContextMenuActions(final Program program) {
@@ -381,5 +390,24 @@ public class PrintPlugin extends Plugin {
 
   public Properties getSettings() {
     return mSettings;
+  }
+  
+  public SettingsTab getSettingsTab() {
+    return new PrintPluginSettingsTab();
+  }
+  
+  public int getMarkPriorityForProgram(Program p) {
+    if(mMarkPriority == - 2 && mSettings != null) {
+      mMarkPriority = Integer.parseInt(mSettings.getProperty("markPriority",String.valueOf(Program.MIN_MARK_PRIORITY)));
+      return mMarkPriority;
+    } else
+      return mMarkPriority;
+  }
+  
+  protected void setMarkPriority(int priority) {
+    mMarkPriority = priority;    
+    mSettings.setProperty("markPriority",String.valueOf(priority));
+    
+    handleTvBrowserStartFinished();
   }
 }

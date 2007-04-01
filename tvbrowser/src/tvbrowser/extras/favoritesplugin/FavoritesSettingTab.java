@@ -166,6 +166,12 @@ public class FavoritesSettingTab implements SettingsTab {
     FavoritesPlugin.getInstance().setIsUsingExpertMode(mExpertMode.isSelected());    
     FavoritesPlugin.getInstance().setShowRepetitions(mShowRepetitions.isSelected());
     FavoritesPlugin.getInstance().setAutoSelectingReminder(mAutoSelectRemider.isSelected());
+    
+    new Thread() {
+      public void run() {
+        FavoritesPlugin.getInstance().store();
+      }
+    }.start();
   }
   
   /**

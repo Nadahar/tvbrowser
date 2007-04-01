@@ -615,7 +615,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
     if (mUseReminderCb.isSelected() && !wasReminderEnabled) {
       ReminderPlugin.getInstance().addPrograms(mFavorite.getPrograms());
-      ReminderPlugin.getInstance().updateRootNode();
+      ReminderPlugin.getInstance().updateRootNode(true);
     }
     
     if(mName.getText().length() > 0 && mName.getText().compareTo(mLocalizer.msg("defaultName","Is going to be created automatically")) != 0)

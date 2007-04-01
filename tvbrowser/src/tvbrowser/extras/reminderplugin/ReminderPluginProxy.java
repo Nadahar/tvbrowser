@@ -25,8 +25,13 @@
  */
 package tvbrowser.extras.reminderplugin;
 
+import javax.swing.Icon;
+
+import tvbrowser.core.icontheme.IconLoader;
+
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
+import devplugin.Marker;
 import devplugin.Program;
 import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
@@ -37,9 +42,10 @@ import devplugin.ProgramReceiveTarget;
  * @author René Mach
  * @since 2.5
  */
-public class ReminderPluginProxy implements ContextMenuIf, ProgramReceiveIf {
+public class ReminderPluginProxy implements ContextMenuIf, ProgramReceiveIf, Marker {
 
   private static ReminderPluginProxy mInstance;
+  private Icon mMarkIcon;
   
   private ReminderPluginProxy() {
     mInstance = this;
@@ -48,7 +54,7 @@ public class ReminderPluginProxy implements ContextMenuIf, ProgramReceiveIf {
   /**
    * @return The instance of the ReminderPluginProxy
    */
-  public static synchronized ReminderPluginProxy getInstance() {
+  public static ReminderPluginProxy getInstance() {
     if(mInstance == null)
       new ReminderPluginProxy();
     
@@ -88,5 +94,20 @@ public class ReminderPluginProxy implements ContextMenuIf, ProgramReceiveIf {
   /** @deprecated Since 2.5 */
   public void receivePrograms(Program[] programArr) {
     ReminderPlugin.getInstance().addPrograms(programArr);
+  }
+
+  public Icon getMarkIcon() {
+    if(mMarkIcon == null)
+      mMarkIcon = IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16);
+    
+    return mMarkIcon;
+  }
+
+  public Icon[] getMarkIcons(Program p) {
+    return new Icon[] {getMarkIcon()};
+  }
+
+  public int getMarkPriorityForProgram(Program p) {
+    return ReminderPlugin.getInstance().getMarkPriority();
   }
 }

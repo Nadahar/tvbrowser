@@ -39,7 +39,7 @@ public class ReminderTableModel extends AbstractTableModel {
     } else if (columnIndex == 1) {
       return new Integer(mProgramItems[rowIndex].getMinutes());
     }
-
+    
     return "";
   }
 

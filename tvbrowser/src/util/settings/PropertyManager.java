@@ -104,6 +104,9 @@ public class PropertyManager {
         in.close();
       }
     }
+    
+    if(mProperties.isEmpty())
+      throw new IOException("Settings file is empty!");
   }
   
   

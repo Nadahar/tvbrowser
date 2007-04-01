@@ -65,7 +65,9 @@ import tvbrowser.core.plugin.programformating.GlobalPluginProgramFormatingManage
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.extras.searchplugin.SearchPlugin;
 import tvbrowser.ui.SystemTray;
 import tvbrowser.ui.configassistant.TvBrowserPictureSettingsUpdateDialog;
 import tvbrowser.ui.configassistant.TvBrowserUpdateAssistant;
@@ -141,7 +143,7 @@ public class TVBrowser {
   };
   
   /** The current version. */
-  public static final devplugin.Version VERSION=new devplugin.Version(2,52,true,ALL_VERSIONS[0] + ((mIsTransportable = new File("settings").isDirectory()) ? " transportable" : ""));
+  public static final devplugin.Version VERSION=new devplugin.Version(2,53,false,ALL_VERSIONS[0] + ((mIsTransportable = new File("settings").isDirectory()) ? " transportable" : ""));
 
   /** The title bar string. */
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
@@ -291,6 +293,9 @@ public class TVBrowser {
       lookAndFeelInitialized = true;
       showUpdateAssistant();
     }
+    else if(currentVersion != null && currentVersion.compareTo(new Version(2,53,false)) < 0) {
+      Settings.propProgramPanelUsedDefaultMarkPriority.setInt(Settings.propProgramTableMarkedDefaultPriorityShowsColor.getBoolean() ? 0 : -1);
+    }
 
     final Splash splash;
 
@@ -379,7 +384,8 @@ public class TVBrowser {
                 GlobalPluginProgramFormatingManager.getInstance();
                 PluginProxyManager.getInstance().fireTvBrowserStartFinished();
                 ReminderPlugin.getInstance().handleTvBrowserStartFinished();
-                FavoritesPlugin.getInstance().handleTvBrowserStartFinished();                
+                FavoritesPlugin.getInstance().handleTvBrowserStartFinished();
+                mainFrame.handleTvBrowserStartFinished();
               }
             }.start();
             ChannelList.completeChannelLoading();
@@ -645,6 +651,8 @@ public class TVBrowser {
       mLog.info("Channel Settings (day light saving time corrections/icons)");
     ChannelList.storeAllSettings();
 
+    SearchPlugin.getInstance().store();
+    ProgramInfo.getInstance().store();
     mainFrame.storeSettings();
 
     if(log) {
@@ -759,7 +767,7 @@ public class TVBrowser {
     else { // "daily"
       nextDownloadDate=lastDownloadDate;
     }
-
+    
     if (nextDownloadDate.getNumberOfDaysSince(today)<=0) {
       if (Settings.propAskForAutoDownload.getBoolean()) {
         mainFrame.updateTvData();

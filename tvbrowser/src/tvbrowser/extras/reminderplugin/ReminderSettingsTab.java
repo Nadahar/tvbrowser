@@ -470,7 +470,13 @@ public class ReminderSettingsTab implements SettingsTab {
     mSettings.setProperty("showRemovedDialog", String.valueOf(mShowRemovedDlg.isSelected()));
     
     mSettings.setProperty("showTimeCounter", String.valueOf(!mCloseNever.isSelected() && mShowTimeCounter.isSelected()));
-    mSettings.setProperty("alwaysOnTop", String.valueOf(mShowAlwaysOnTop.isSelected()));    
+    mSettings.setProperty("alwaysOnTop", String.valueOf(mShowAlwaysOnTop.isSelected()));
+    
+    new Thread() {
+      public void run() {
+        ReminderPlugin.getInstance().store();
+      }
+    }.start();
   }
 
   /**

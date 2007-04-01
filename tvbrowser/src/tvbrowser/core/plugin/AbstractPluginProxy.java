@@ -750,7 +750,8 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   /**
    * Gets the mark priority for the given program that this Plugin uses.
    * <p>
-   * The mark priority can be {@link Program#DEFAULT_MARK_PRIORITY}, @link Program#MIN_MARK_PRIORITY}, {@link Program#MEDIUM_MARK_PRIORITY} or
+   * The mark priority can be {@link Program#NO_MARK_PRIORITY}, {@link Program#MIN_MARK_PRIORITY}, {@link Program#LOWER_MEDIUM_MARK_PRIORITY},
+   * {@link Program#MEDIUM_MARK_PRIORITY}, {@link Program#HIGHER_MEDIUM_MARK_PRIORITY} or
    * {@link Program#MAX_MARK_PRIORITY}.
    * <p>  
    * @param p The program to get the mark prioriy for.
@@ -765,7 +766,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
       handlePluginException(exc);
     }
     
-    return Program.DEFAULT_MARK_PRIORITY;
+    return Program.MIN_MARK_PRIORITY;
   }
   
   /**

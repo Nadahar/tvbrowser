@@ -294,4 +294,7 @@ public class SearchPlugin {
   public String getId() {
     return DATAFILE_PREFIX;
   }
+  public String toString() {
+    return mLocalizer.msg("title","Search");
+  }
 }

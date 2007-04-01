@@ -484,7 +484,8 @@ public class SystemTray {
    */
   private JComponent addToImportantMenu(JComponent menu) {
     Program[] p = MarkedProgramsList.getInstance()
-        .getTimeSortedProgramsForTray(MainFrame.getInstance().getProgramFilter());
+        .getTimeSortedProgramsForTray(MainFrame.getInstance().getProgramFilter(),
+            Settings.propTrayImportantProgramsPriority.getInt());
     
     boolean added = false;
 
@@ -659,7 +660,7 @@ public class SystemTray {
             if (isOnChannelList(ch))
               programs.add(getIndexOfChannel(ch), new ProgramMenuItem(p,
                   ProgramMenuItem.ON_TIME_TYPE, time, -1));
-            else if (p.getMarkerArr().length > 0)
+            else if (p.getMarkerArr().length > 0 && p.getMarkPriority() >= Settings.propTrayImportantProgramsPriority.getInt())
               additional.add(new ProgramMenuItem(p,
                   ProgramMenuItem.ON_TIME_TYPE, time, -1));
           } else if(start > time && day == 1 && count == 0) {
@@ -680,7 +681,7 @@ public class SystemTray {
                 if (isOnChannelList(ch))
                   programs.add(getIndexOfChannel(ch), new ProgramMenuItem(p,
                       ProgramMenuItem.ON_TIME_TYPE, time, -1));
-                else if (p.getMarkerArr().length > 0)
+                else if (p.getMarkerArr().length > 0 && p.getMarkPriority() >= Settings.propTrayImportantProgramsPriority.getInt())
                   additional.add(new ProgramMenuItem(p,
                       ProgramMenuItem.ON_TIME_TYPE, time, -1));
               }
@@ -736,7 +737,7 @@ public class SystemTray {
         nextPrograms.set(getIndexOfChannel(p.getChannel()),
             new ProgramMenuItem(p, ProgramMenuItem.SOON_TYPE, -1, -1));
         return false;
-      } else if (p.getMarkerArr().length > 0) {
+      } else if (p.getMarkerArr().length > 0 && p.getMarkPriority() >= Settings.propTrayImportantProgramsPriority.getInt()) {
         nextAdditionalPrograms.add(new ProgramMenuItem(p,
             ProgramMenuItem.SOON_TYPE, -1, -1));
         return false;
@@ -766,7 +767,7 @@ public class SystemTray {
         defaultList.set(getIndexOfChannel(p.getChannel()), new ProgramMenuItem(
             p, ProgramMenuItem.NOW_TYPE, -1, -1));
         return true;
-      } else if (p.getMarkerArr().length > 0) {
+      } else if (p.getMarkerArr().length > 0 && p.getMarkPriority() >= Settings.propTrayImportantProgramsPriority.getInt()) {
         addList.add(new ProgramMenuItem(p, ProgramMenuItem.NOW_TYPE, -1,
             -1));
         return true;

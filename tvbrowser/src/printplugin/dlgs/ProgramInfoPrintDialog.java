@@ -34,6 +34,7 @@ import java.awt.print.PageFormat;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -47,9 +48,11 @@ import printplugin.PrintPlugin;
 import printplugin.printer.singleprogramprinter.DocumentRenderer;
 import printplugin.settings.ProgramInfoPrintSettings;
 import util.program.ProgramTextCreator;
+import util.settings.ProgramPanelSettings;
 import util.ui.FontChooserPanel;
 import util.ui.Localizer;
 import util.ui.OrderChooser;
+import util.ui.PictureSettingsPanel;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import util.ui.html.ExtendedHTMLDocument;
@@ -59,6 +62,8 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import devplugin.Plugin;
+import devplugin.PluginAccess;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 
@@ -66,7 +71,7 @@ import devplugin.ProgramFieldType;
  * A class that creates a dialog for setting up the
  * printing of the Program infos.
  *  
- * @author Renï¿½ Mach
+ * @author René Mach
  *
  */
 public class ProgramInfoPrintDialog implements WindowClosingIf{
@@ -107,6 +112,7 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
     final OrderChooser fieldChooser = new OrderChooser(ProgramInfoPrintSettings.getInstance().getFieldTypes(),ProgramTextCreator.getDefaultOrder(),true);
     final FontChooserPanel fontChooser = new FontChooserPanel("",ProgramInfoPrintSettings.getInstance().getFont(), false);    
     final JCheckBox printImage = new JCheckBox(mLocalizer.msg("printImage","Print image"), ProgramInfoPrintSettings.getInstance().isPrintImage());
+    final JCheckBox printPluginIcons = new JCheckBox(mLocalizer.msg("printPluginIcons","Print plugin icons"), ProgramInfoPrintSettings.getInstance().isPrintPluginIcons());
     final PrinterJob printerJob = PrinterJob.getPrinterJob();
     mPageFormat = printerJob.defaultPage();
     
@@ -144,7 +150,7 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
         
         mFieldTypes = fieldChooser.getOrder();
         
-        DocumentRenderer printJob = createPrintjob(program, fontChooser, printImage);
+        DocumentRenderer printJob = createPrintjob(program, fontChooser, printImage, printPluginIcons);
         
         PreviewDlg dlg = new PreviewDlg(mDialog, printJob, mPageFormat, printJob.getPageCount());
         dlg.setVisible(true);
@@ -163,9 +169,10 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
         ProgramInfoPrintSettings.getInstance().setFont(fontChooser.getChosenFont());
         ProgramInfoPrintSettings.getInstance().setFieldTypes(mFieldTypes);
         ProgramInfoPrintSettings.getInstance().setPrintImage(printImage.isSelected());
+        ProgramInfoPrintSettings.getInstance().setPrintPluginIcons(printPluginIcons.isSelected());
         close();
         
-        DocumentRenderer printable = createPrintjob(program, fontChooser, printImage);
+        DocumentRenderer printable = createPrintjob(program, fontChooser, printImage, printPluginIcons);
 
         printerJob.setPrintable(printable, mPageFormat);
         try {
@@ -187,7 +194,22 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
     boolean hasImage = program.getBinaryField(ProgramFieldType.IMAGE_TYPE) != null
                     || program.getBinaryField(ProgramFieldType.PICTURE_TYPE) != null;
     
-    PanelBuilder b1 = new PanelBuilder(new FormLayout("5dlu,pref:grow","pref,5dlu,pref,10dlu,pref,5dlu,fill:default:grow" + (hasImage ? ",3dlu,pref" : "")));
+    boolean hasIcons = program.getMarkerArr().length > 0;
+    
+    if(!hasIcons) {
+      PluginAccess[] plugins = Plugin.getPluginManager().getActivatedPlugins();
+        
+      for (int i = 0; i < plugins.length; i++) {
+        Icon[] ico = plugins[i].getProgramTableIcons(program);
+
+        if (ico != null && ico.length > 0) {
+          hasIcons = true;
+          break;
+        }
+      }
+    }
+    
+    PanelBuilder b1 = new PanelBuilder(new FormLayout("5dlu,pref:grow","pref,5dlu,pref,10dlu,pref,5dlu,fill:default:grow" + (hasIcons || hasImage ? ",3dlu" : "") + (hasIcons ? ",pref" : "") + (hasImage ? ",pref" : "")));
     b1.setDefaultDialogBorder();
 
     PanelBuilder b2 = new PanelBuilder(new FormLayout("pref,10dlu,pref","pref,2dlu,pref,2dlu,pref,default:grow,pref,5dlu,pref"));
@@ -200,8 +222,15 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
     b1.addSeparator(mLocalizer.msg("order","Info fields and order"), cc.xyw(1,5,2));
     b1.add(fieldChooser, cc.xyw(1,7,2));
     
-    if(hasImage)
-      b1.add(printImage, cc.xy(2,9));
+    if(hasIcons)
+      b1.add(printPluginIcons, cc.xy(2,9));
+    
+    if(hasImage) {
+      if(hasIcons)
+        b1.add(printImage, cc.xy(2,10));
+      else
+        b1.add(printImage, cc.xy(2,9));
+    }
     
     b2.add(printerSetupBtn, cc.xy(3,1));
     b2.add(pageBtn, cc.xy(3,3));
@@ -245,13 +274,15 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
    * @param printImage Print Image, if available ?
    * @return PrintJob
    */
-  private DocumentRenderer createPrintjob(final Program program, final FontChooserPanel fontChooser, final JCheckBox printImage) {
+  private DocumentRenderer createPrintjob(final Program program, final FontChooserPanel fontChooser, final JCheckBox printImage, final JCheckBox printIcons) {
     JEditorPane pane = new JEditorPane();
     pane.setEditorKit(new ExtendedHTMLEditorKit());
     ExtendedHTMLDocument doc = (ExtendedHTMLDocument) pane.getDocument();
     
-    String html = ProgramTextCreator.createInfoText(program, doc, 
-          mFieldTypes, null, fontChooser.getChosenFont(), printImage.isSelected(), false); 
+    String html = /*ProgramTextCreator.createInfoText(program, doc, 
+          mFieldTypes, null, fontChooser.getChosenFont(), printImage.isSelected(), false);*/ 
+    
+    ProgramTextCreator.createInfoText(program, doc, mFieldTypes, null, fontChooser.getChosenFont(), new ProgramPanelSettings(printImage.isSelected() ? PictureSettingsPanel.SHOW_EVER : PictureSettingsPanel.SHOW_NEVER, -1, -1, false, true, 10), false, 100, printIcons.isSelected());
     
     pane.setText(html);
     
