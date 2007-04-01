@@ -29,10 +29,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 
-import javax.swing.Action;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -44,8 +41,6 @@ import util.ui.UiUtilities;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.ActionMenu;
 
 /**
  * The CellRenderer for the Plugin-List
@@ -86,29 +81,10 @@ public class PluginListCellRenderer extends DefaultListCellRenderer {
         panel.add(icon, cc.xy(1,1));
         panel.add(name, cc.xy(3,1));
       }
-      
-      ActionMenu actionMenu = plugin.getButtonAction();
-      Action action = null;
-      if (actionMenu !=null) {
-        action = actionMenu.getAction();
-      }
-      Icon ico = null;
-      if (action != null) {
-        ico = (Icon) action.getValue(Action.SMALL_ICON);
-      }
-      
-      if (ico == null) {
-        // The plugin has no button icon -> Try the mark icon
-        ico = plugin.getMarkIcon();
-      }
-      
-      if (ico == null) {
-        ico = new ImageIcon("imgs/Jar16.gif");
-      }
-      
+
       icon.setOpaque(label.isOpaque());
       icon.setBackground(label.getBackground());
-      icon.setIcon(ico);
+      icon.setIcon(plugin.getPluginIcon());
 
       if (desc != null)
         panel.remove(desc);

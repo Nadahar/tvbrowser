@@ -25,11 +25,19 @@
  */
 package tvbrowser.core;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.Level;
@@ -48,6 +56,8 @@ import tvdataservice.TvDataService;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.Version;
 
 /**
  * The PluginLoader loads all plugins and assigns each plugin to
@@ -113,6 +123,22 @@ public class PluginLoader {
       }
     }
   }
+  
+  private PluginProxy loadProxy(File proxyFile) {
+    String lcFileName = proxyFile.getName().toLowerCase();
+    if (!lcFileName.endsWith(".proxy")) {
+      mLog.warning("not a valid proxy file "+proxyFile.getAbsolutePath());
+      return null;
+    }
+    if (proxyFile.canRead()) {
+      JavaPluginProxy proxy = readPluginProxy(proxyFile);
+      if (proxy != null) {
+        PluginProxyManager.getInstance().registerPlugin(proxy);
+        return proxy;
+      }
+    }
+    return null;
+  }
 
 
   /**
@@ -120,12 +146,12 @@ public class PluginLoader {
    * @param pluginFile File to load
    * @param deleteable is the Plugin deleteable
    */
-  private void loadPlugin(File pluginFile, boolean deleteable) {
+  public Object loadPlugin(File pluginFile, boolean deleteable) {
     Object plugin = null;
     String lcFileName = pluginFile.getName().toLowerCase();
     if (mSuccessfullyLoadedPluginFiles.contains(lcFileName)) {
       mLog.warning("cannot load plugin "+pluginFile.getAbsolutePath()+" - already loaded");
-      return;
+      return null;
     }
     mSuccessfullyLoadedPluginFiles.add(lcFileName);
       try {
@@ -139,15 +165,23 @@ public class PluginLoader {
           mLog.warning("Unknown plugin type: " + pluginFile.getAbsolutePath());
         }
 
-
         if (plugin instanceof Plugin) {
           ((Plugin)plugin).setJarFile(pluginFile);
-          
-          JavaPluginProxy javaplugin = new JavaPluginProxy((Plugin)plugin);
-          PluginProxyManager.getInstance().registerPlugin(javaplugin);
+          // check if the proxy is already loaded, but the plugin was not loaded yet
+          JavaPluginProxy javaplugin = (JavaPluginProxy) PluginProxyManager.getInstance().getPluginForId(JavaPluginProxy.getJavaPluginId((Plugin) plugin));
+          if (javaplugin != null) {
+            javaplugin.setPlugin((Plugin) plugin);
+          }
+          // it was not yet loaded, so create new proxy
+          else {
+            javaplugin = new JavaPluginProxy((Plugin)plugin, pluginFile.getPath());
+            PluginProxyManager.getInstance().registerPlugin(javaplugin);
+          }
 
           if (deleteable)
             mDeleteablePlugin.put(javaplugin, pluginFile);
+          
+          saveProxyInfo(pluginFile, javaplugin);
         }
         else if (plugin instanceof AbstractPluginProxy) {
           PluginProxyManager.getInstance().registerPlugin((AbstractPluginProxy)plugin);
@@ -171,9 +205,81 @@ public class PluginLoader {
             + pluginFile.getAbsolutePath(), thr);
         thr.printStackTrace();
       }
-
+    return plugin;
   }
 
+
+  /**
+   * read the contents of a proxy file to get the necessary
+   * information about the plugin managed by this proxy to recreate
+   * the proxy without the plugin actually being loaded
+   * 
+   * @param proxyFile
+   * @return pluginProxy
+   */
+  private JavaPluginProxy readPluginProxy(File proxyFile) {
+    try {
+      DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(proxyFile)));
+      String name = in.readUTF();
+      String author = in.readUTF();
+      String description = in.readUTF();
+      String license = in.readUTF();
+      int major = in.readInt();
+      int minor = in.readInt();
+      boolean stable = in.readBoolean();
+      Version version = new Version(major, minor, stable);
+      String pluginId = in.readUTF();
+      long fileSize = in.readLong();
+      in.close();
+      PluginInfo info = new PluginInfo(name, description, author, version, license);
+      String lcFileName = proxyFile.getPath();
+      lcFileName = lcFileName.substring(0, lcFileName.length()-6);
+      return new JavaPluginProxy(info, lcFileName, pluginId);
+    } catch (IOException e) {
+      // delete proxy on read error, maybe the format has changed
+      proxyFile.delete();
+      return null;
+    }
+  }
+
+  /**
+   * Saves the information of a plugin to disk, so it does not need to be loaded next time
+   * @param pluginFile full plugin file name
+   * @param javaplugin proxy of the plugin
+   */
+  private void saveProxyInfo(File pluginFile, JavaPluginProxy proxy) {
+    try {
+      DataOutputStream out = new DataOutputStream(new
+          BufferedOutputStream(new FileOutputStream(proxyFileName(pluginFile))));
+      PluginInfo info = proxy.getInfo();
+      out.writeUTF(info.getName());
+      out.writeUTF(info.getAuthor());
+      out.writeUTF(info.getDescription());
+      String license = info.getLicense();
+      if (license == null) {
+        license = "";
+      }
+      out.writeUTF(license);
+      Version version = info.getVersion();
+      out.writeInt(version.getMajor());
+      out.writeInt(version.getMinor());
+      out.writeBoolean(version.isStable());
+      out.writeUTF(proxy.getId());
+      out.writeLong(pluginFile.length());
+      out.close();
+    } catch (IOException e) {
+    }
+  }
+
+  /**
+   * file name of the proxy file for a plugin
+   * 
+   * @param pluginFile
+   * @return proxy file name
+   */
+  private String proxyFileName(File pluginFile) {
+    return Settings.getUserSettingsDirName() + File.separatorChar + pluginFile.getName() + ".proxy";
+  }
 
   /**
    * Loads all plugins within the specified folder
@@ -181,7 +287,39 @@ public class PluginLoader {
    * @param deleteable True if the Plugins in this Folder are deleteable
    */
   private void loadPlugins(File folder, boolean deleteable) {
-
+    ArrayList<PluginProxy> loadedProxies = new ArrayList<PluginProxy>(); 
+    final String[] deactivatedPluginArr = Settings.propDeactivatedPlugins.getStringArray();
+    
+    // only check proxies if at least one plugin is not active
+    if (deactivatedPluginArr != null && deactivatedPluginArr.length > 0) {
+      File settingsDir = new File(Settings.getUserSettingsDirName());
+      File[] proxyFiles = settingsDir.listFiles(new FilenameFilter() {
+        public boolean accept(File dir, String name) {
+          if (!name.endsWith(".jar.proxy")) {
+            return false;
+          }
+          String mainName = name.substring(0, name.length() - 10).toLowerCase();
+          for (String deactivatedId : deactivatedPluginArr) {
+            if (deactivatedId.indexOf(mainName)>0) {
+              return true;
+            }
+          }
+          return false;
+        }});
+      if (proxyFiles != null) {
+        for (File proxyFile : proxyFiles) {
+          PluginProxy proxy = loadProxy(proxyFile);
+          if (proxy != null) {
+            loadedProxies.add(proxy);
+            mLog.info("Loaded plugin proxy " + proxyFile);
+          }
+          else {
+            mLog.warning("Failed loading plugin proxy " + proxyFile);
+          }
+        }
+      }
+    }
+    
     File[] fileArr = folder.listFiles(new FilenameFilter(){
       public boolean accept(File dir, String name) {
         return !("FavoritesPlugin.jar".equals(name)
@@ -195,9 +333,17 @@ public class PluginLoader {
       return;
     }
 
-    for (int i = 0; i < fileArr.length; i++) {
-      // Try to load this plugin
-      loadPlugin(fileArr[i], deleteable);
+    for (File file : fileArr) {
+      boolean load = true;
+      for (PluginProxy proxy : loadedProxies) {
+        if (proxy.getPluginFileName().equalsIgnoreCase(file.getPath())) {
+          load = false;
+          break;
+        }
+      }
+      if (load) {
+        loadPlugin(file, deleteable);
+      }
     }
   }
 

@@ -335,4 +335,8 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
       // TODO Automatisch erstellter Methoden-Stub
       return Program.DEFAULT_MARK_PRIORITY;
     }
+
+    public String getPluginFileName() {
+      return mBshFile.getPath();
+    }
  }

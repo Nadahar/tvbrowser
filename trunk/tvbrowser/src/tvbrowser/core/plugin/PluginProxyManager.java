@@ -165,6 +165,19 @@ public class PluginProxyManager {
   public void registerPlugin(AbstractPluginProxy plugin) {
     // Add it to the list
     PluginListItem pluginListItem = new PluginListItem(plugin);
+    // first remove an earlier proxy of the same plugin
+    // may happen due to lazy plugin loading
+    PluginListItem remove = null;
+    for (PluginListItem listItem : mPluginList) {
+      if (listItem.getPlugin().getId().equals(plugin.getId())) {
+        remove = listItem;
+        break;
+      }
+    }
+    if (remove != null) {
+      mPluginList.remove(remove);
+    }
+    // now add the current proxy
     mPluginList.add(pluginListItem);
     mPluginMap.put(plugin.getId(), pluginListItem);
     firePluginLoaded(plugin);
@@ -746,7 +759,7 @@ public class PluginProxyManager {
     }
 
     // Nothing fonnd
-    mLog.warning("Unkown plugin: " + plugin.getId());
+    mLog.warning("Unknown plugin: " + plugin.getId());
     return null;
   }
 
