@@ -133,7 +133,7 @@ public class TvBrowserUpdateAssistant extends JDialog implements ActionListener,
     else if (source == mOkBtn) {
       if (!mListingsSuccessfullyImported) {
         String[] options = new String[]{mLocalizer.msg("option.1","TV-Browser starten und neu einrichten"),Localizer.getLocalization(Localizer.I18N_CANCEL)};
-        int n = JOptionPane.showOptionDialog(this, mLocalizer.msg("question.2","Sie haben kein TV-Daten für den Import ausgewählt.\nSind Sie sicher, daß Sie evtl. vorhandene Sender-Einstellungen verwerfen und TV-Browser neu einrichten wollen?"),
+        int n = JOptionPane.showOptionDialog(this, mLocalizer.msg("question.2","Sie haben kein TV-Daten für den Import ausgewählt.\nSind Sie sicher, dass Sie evtl. vorhandene Sender-Einstellungen verwerfen und TV-Browser neu einrichten wollen?"),
                 mLocalizer.msg("import","Importieren"),
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
