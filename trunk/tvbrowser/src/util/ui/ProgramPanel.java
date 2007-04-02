@@ -86,6 +86,10 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   private static Font mTimeFont;
   /** The normal font */
   private static Font mNormalFont;
+  /**
+   * the font size offset for the currently selected dynamic font size
+   */
+  private static int fontSizeOffset = 0;
 
   /** The width of the left part (the time). */
   private static int WIDTH_LEFT = -1;
@@ -283,9 +287,11 @@ public class ProgramPanel extends JComponent implements ChangeListener {
 }
 
 /**
-   * (Re)Loads the font settings.
-   */
-  public static void updateFonts() {
+ * Reloads the font settings and sets a dynamic font size
+ * @param newOffset increase or decrease compared to standard font size
+ * @since 2.6
+ */
+  public static void updateFonts(int newOffset) {
     boolean useDefaults = Settings.propUseDefaultFonts.getBoolean();
     if (useDefaults) {
       mTitleFont = Settings.propProgramTitleFont.getDefault();
@@ -296,7 +302,33 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       mTimeFont = Settings.propProgramTimeFont.getFont();
       mNormalFont = Settings.propProgramInfoFont.getFont();
     }
+    if (newOffset == 0) {
+      fontSizeOffset = 0;
+    }
+    else {
+      fontSizeOffset += newOffset;
+    }
+    if (fontSizeOffset != 0) {
+      mTitleFont = getDynamicFontSize(mTitleFont, fontSizeOffset);
+      mTimeFont = getDynamicFontSize(mTimeFont, fontSizeOffset);
+      mNormalFont = getDynamicFontSize(mNormalFont, fontSizeOffset);
+    }
+  }
 
+private static Font getDynamicFontSize(Font font, int offset) {
+  float size = font.getSize2D() + offset;
+  if (size < 4) {
+    size = 4;
+  }
+  return font.deriveFont(size);
+}
+  
+  /**
+   * Reloads the font settings and sets the dynamic font size
+   * to standard font size again
+   */
+  public static void updateFonts() {
+    updateFonts(0);
   }
   
   /**
