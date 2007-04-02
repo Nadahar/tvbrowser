@@ -93,10 +93,11 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
                     mConfigAssistantMI, mAboutMI, mKeyboardShortcutsMI,
                     mPreviousDayMI, mNextDayMI, mGotoNowMenuItem, mEditTimeButtonsMenuItem,
                     mToolbarCustomizeMI,
-                    mFavoritesMI, mReminderMI, mFullscreenMI, mSearchMI;
+                    mFavoritesMI, mReminderMI, mFullscreenMI, mSearchMI,
+                    mFontSizeLargerMI, mFontSizeSmallerMI, mFontSizeDefaultMI;
   protected JMenu mFiltersMenu, mPluginsViewMenu, mLicenseMenu, mGoMenu, mViewMenu, mToolbarMenu, mPluginHelpMenu;
 
-  private JMenu mGotoDateMenu, mGotoChannelMenu, mGotoTimeMenu;
+  private JMenu mGotoDateMenu, mGotoChannelMenu, mGotoTimeMenu, mFontSizeMenu;
   private JLabel mLabel;
   
   protected MenuBar(MainFrame mainFrame, JLabel label) {
@@ -243,6 +244,21 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mReminderMI = new JMenuItem(ReminderPlugin.getInstance().getButtonAction(mMainFrame).getAction());
     mSearchMI = new JMenuItem(SearchPlugin.getInstance().getButtonAction().getAction());
     
+    mFontSizeLargerMI = new JMenuItem(mLocalizer.msg("menuitem.fontSizeLarger", "Larger"));
+    mFontSizeLargerMI.addActionListener(this);
+    
+    mFontSizeSmallerMI = new JMenuItem(mLocalizer.msg("menuitem.fontSizeSmaller", "Smaller"));
+    mFontSizeSmallerMI.addActionListener(this);
+    
+    mFontSizeDefaultMI = new JMenuItem(mLocalizer.msg("menuitem.fontSizeDefault", "Reset to default"));
+    mFontSizeDefaultMI.addActionListener(this);
+    
+    mFontSizeMenu = new JMenu(mLocalizer.msg("menuitem.fontSize", "Font size"));
+    mFontSizeMenu.add(mFontSizeLargerMI);
+    mFontSizeMenu.add(mFontSizeSmallerMI);
+    mFontSizeMenu.addSeparator();
+    mFontSizeMenu.add(mFontSizeDefaultMI);
+    
     mViewMenu.add(mToolbarMenu);
     mViewMenu.add(mStatusbarMI);
     mViewMenu.add(mTimeBtnsMI);
@@ -251,6 +267,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mViewMenu.add(mPluginOverviewMI);
     mViewMenu.addSeparator();
     mViewMenu.add(mFiltersMenu);
+    mViewMenu.add(mFontSizeMenu);
     mViewMenu.addSeparator();
     mViewMenu.add(mFullscreenMI);
   }
@@ -443,7 +460,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     for (final PluginProxy plugin : plugins) {
       if(plugin.getInfo().getHelpUrl() != null) {
         JMenuItem item = pluginHelpMenuItem(plugin.getInfo());
-        item.setIcon(plugin.getMarkIcon());
+        item.setIcon(plugin.getPluginIcon());
         list.add(item);
       }
     }
@@ -454,15 +471,22 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
         return item1.getText().compareTo(item2.getText());
       }
     });
-    mPluginHelpMenu.add(pluginHelpMenuItem(new PluginInfo(FavoritesPluginProxy.getInstance().toString(),null,null,mLocalizer.msg("menuitem.helpFavorites", "Favorites"))));
-    mPluginHelpMenu.add(pluginHelpMenuItem(new PluginInfo(ReminderPluginProxy.getInstance().toString(),null,null,mLocalizer.msg("menuitem.helpReminder", "Reminder"))));
-    mPluginHelpMenu.add(pluginHelpMenuItem(new PluginInfo(SearchPluginProxy.getInstance().toString(),null,null,mLocalizer.msg("menuitem.helpSearch", "Search"))));
+    
+    JMenuItem item = pluginHelpMenuItem(new PluginInfo(FavoritesPluginProxy.getInstance().toString(),null,null,mLocalizer.msg("menuitem.helpFavorites", "Favorites")));
+    item.setIcon(FavoritesPluginProxy.getInstance().getMarkIcon());
+    mPluginHelpMenu.add(item);
+    item = pluginHelpMenuItem(new PluginInfo(ReminderPluginProxy.getInstance().toString(),null,null,mLocalizer.msg("menuitem.helpReminder", "Reminder")));
+    item.setIcon(ReminderPluginProxy.getInstance().getMarkIcon());
+    mPluginHelpMenu.add(item);
+    item = pluginHelpMenuItem(new PluginInfo(SearchPluginProxy.getInstance().toString(),null,null,mLocalizer.msg("menuitem.helpSearch", "Search")));
+    item.setIcon((Icon) SearchPlugin.getInstance().getButtonAction().getAction().getValue(Action.SMALL_ICON));
+    mPluginHelpMenu.add(item);
     
     if(result.length > 0)
       mPluginHelpMenu.addSeparator();
     
-    for (JMenuItem item : result) {
-      mPluginHelpMenu.add(item);
+    for (JMenuItem pluginMenuItem : result) {
+      mPluginHelpMenu.add(pluginMenuItem);
     }
   }
 
@@ -562,7 +586,15 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
      else if (source == mToolbarCustomizeMI) {
        new ToolBarDragAndDropSettings();
      }
-
+     else if (source == mFontSizeLargerMI) {
+       mMainFrame.changeFontSize(+1);
+     }
+     else if (source == mFontSizeSmallerMI) {
+       mMainFrame.changeFontSize(-1);
+     }
+     else if (source == mFontSizeDefaultMI) {
+       mMainFrame.changeFontSize(0);
+     }
    }
    
    private void createMenuItemInfos() {
