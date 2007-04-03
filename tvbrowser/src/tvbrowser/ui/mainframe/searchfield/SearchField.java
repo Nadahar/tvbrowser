@@ -185,7 +185,7 @@ public class SearchField extends JPanel {
     mSearchButton.setFocusPainted(false);
     mSearchButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        showConfigureDialog();
+        showConfigureDialog(mText);
       };
     });
     
@@ -224,8 +224,9 @@ public class SearchField extends JPanel {
 
   /**
    * Show the Configuration-Dialog
+   * @param textField 
    */
-  protected void showConfigureDialog() {
+  protected void showConfigureDialog(final SearchTextField textField) {
     final SearchForm form = new SearchForm(false, false, true);
     form.setSearchFormSettings(mSearchFormSettings);
     
@@ -247,6 +248,8 @@ public class SearchField extends JPanel {
         configure.setVisible(false);
         mSearchFormSettings = form.getSearchFormSettings();
         saveSearchFormSettings();
+        textField.requestFocusInWindow();
+        textField.selectAll();
       }
     });
     
@@ -256,6 +259,8 @@ public class SearchField extends JPanel {
       public void close() {
         configure.removeWindowListener(configure.getWindowListeners()[0]);
         configure.setVisible(false);
+        textField.requestFocusInWindow();
+        textField.selectAll();
       }
 
       public JRootPane getRootPane() {
