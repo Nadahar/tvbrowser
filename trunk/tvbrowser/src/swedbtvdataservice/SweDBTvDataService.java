@@ -59,6 +59,8 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
     private SweDBChannelContainer[] mInternalChannel;
     private long mLastChannelUpdate=-1;
     private Channel[] mChannel;
+
+    private boolean initialConversionDone = false;
     
     private static WeakHashMap<String, File> ICON_CACHE = new WeakHashMap<String, File>();
     
@@ -339,7 +341,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
                  mProperties.getProperty("ChannelIconUrl-"+i,""),
                  mProperties.getProperty("ChannelLastUpdate-"+i,""));
      }
-     convert();
+//     convert();
 //     mLog.info("mInternalChannel now contains " + mInternalChannel.length + " channels");
 //     mLog.info("mChannel now contains " + mChannel.length + "channels");
      mLog.info("Finnished loading settings for SweDBTvDataService");
@@ -370,21 +372,24 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
    * Gets the list of the channels that are available for the given channel group.
    */
   public Channel[] getAvailableChannels(ChannelGroup group){
-//      System.out.println("getAvailableChannels returnerar kanaler för grupp: " + group.getName());
-//      Iterator it = mChannelList.iterator();
-      HashSet<Channel> mTempHashSet = new HashSet<Channel>();
-      for (int i=0;i<mChannel.length;i++) {
-          if (mChannel[i].getGroup().getId().equalsIgnoreCase(group.getId())) {
-              mTempHashSet.add(mChannel[i]);
-          }
+    if (!initialConversionDone) {
+      convert();
+      initialConversionDone = true;
+    }
+    HashSet<Channel> mTempHashSet = new HashSet<Channel>();
+    for (int i = 0; i < mChannel.length; i++) {
+      if (mChannel[i].getGroup().getId().equalsIgnoreCase(group.getId())) {
+        mTempHashSet.add(mChannel[i]);
       }
-      return mTempHashSet.toArray(new Channel[mTempHashSet.size()]);
+    }
+    return mTempHashSet.toArray(new Channel[mTempHashSet.size()]);
   }
 
   /**
    * Some TvDataServices may need to connect to the internet to know their
    * channels. If supportsDanymicChannelList() returns true, this method is
    * called to check for availabel channels.
+   * 
    * @param group
    * @param monitor
    * @return
@@ -462,10 +467,10 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
             try {
             	iconLoader.close();
             } catch (IOException e){
-            	mLog.severe("Unable to close IconLoader for group ID " + groups[0].getId() + "in working directory " + this.mWorkingDirectory);
+            	mLog.severe("Unable to close IconLoader for group ID " + groups[0].getId() + " in working directory " + this.mWorkingDirectory);
             }
         } else {
-        	mLog.info("SweDBTvDataService: Working directory has not been intitalized yet. Icons not loaded");
+        	mLog.info("SweDBTvDataService: Working directory has not been initialized yet. Icons not loaded");
         }
   }
   
@@ -485,7 +490,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
             mLocalizer.msg("PluginInfo.description","A TV Data Service plugin which uses XMLTV-data from TV.SWEDB.SE"),
             "Inforama",
             new Version(0, 3),
-            mLocalizer.msg("PluginInfo.support","Support the SWEDB crew - Don't fotget to register with http://tv.swedb.se/"));
+            mLocalizer.msg("PluginInfo.support","Support the SWEDB crew - Don't forget to register with http://tv.swedb.se/"));
   }
 
   class IconLoader {
