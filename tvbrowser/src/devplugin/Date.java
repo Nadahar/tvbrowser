@@ -321,7 +321,6 @@ public class Date implements Comparable {
   }
 
   public String toString() {
-
     Calendar cal = getCalendar();
     int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK) - 1;
     int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
@@ -370,6 +369,25 @@ public class Date implements Comparable {
     	return 1;
     }
     return 0;
+  }
+  
+  /**
+   * get the day of the week for this date
+   * @return day of week, as Calendar.MONDAY and so on
+   * @since 2.6
+   */
+  public int getDayOfWeek() {
+    Calendar cal = getCalendar();
+    return cal.get(Calendar.DAY_OF_WEEK);
+  }
+
+  /**
+   * is this a Monday?
+   * @return
+   * @since 2.6
+   */
+  public boolean isFirstDayOfWeek() {
+    return getDayOfWeek() == Calendar.MONDAY;
   }
 
 }
