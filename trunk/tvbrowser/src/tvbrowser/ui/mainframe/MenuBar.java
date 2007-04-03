@@ -274,7 +274,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
 
 
   private JMenuItem createDateMenuItem(final Date date) {
-    JMenuItem item = new JMenuItem(date.toString());
+    JMenuItem item = new JMenuItem(date.getLongDateString());
     item.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         mMainFrame.goTo(date);
@@ -301,7 +301,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
   private JMenuItem createTimeMenuItem(final int time) {
     int h = time/60;
     int min = time%60;
-    JMenuItem item = new JMenuItem(h+":"+(min<10?"0":"")+min);
+    JMenuItem item = new JMenuItem((h<10?"0":"")+h+":"+(min<10?"0":"")+min);
     item.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         mMainFrame.scrollToTime(time);
@@ -385,6 +385,11 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     for (int i=0; i<21; i++) {
       if (!TvDataBase.getInstance().dataAvailable(curDate)) {
         break;
+      }
+      if (i > 0) {
+        if (curDate.isFirstDayOfWeek()) {
+          mGotoDateMenu.addSeparator();
+        }
       }
       mGotoDateMenu.add(createDateMenuItem(curDate));
       curDate = curDate.addDays(1);
