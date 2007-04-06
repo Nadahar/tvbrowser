@@ -34,6 +34,7 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
 import util.ui.ChannelTableCellRenderer;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -52,6 +53,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.JSpinner;
 import javax.swing.JComboBox;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextPane;
+import javax.swing.JPasswordField;
 import javax.swing.table.TableCellEditor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -88,6 +92,8 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
     private SpinnerNumberModel mAfterModel;
 
     private JComboBox mTimezone;
+    private JTextField mUserName;
+    private JPasswordField mPasswordField;
 
     /**
      * Create the Dialog
@@ -123,17 +129,17 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
 
         UiUtilities.registerForClosing(this);
 
-        JPanel panel = (JPanel) getContentPane();
-        panel.setBorder(Borders.DLU4_BORDER);
+        JPanel basicPanel = new JPanel();
+        basicPanel.setBorder(Borders.DLU4_BORDER);
 
-        panel.setLayout(new FormLayout("5dlu, fill:min:grow",
+        basicPanel.setLayout(new FormLayout("5dlu, fill:min:grow",
                 "pref, 3dlu, pref, 3dlu, pref, 3dlu, fill:min:grow, 3dlu, pref"));
 
         CellConstraints cc = new CellConstraints();
 
-        panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("misc", "Miscellaneous")), cc.xyw(1, 1, 2));
+        basicPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("misc", "Miscellaneous")), cc.xyw(1, 1, 2));
 
-        JPanel miscPanel = new JPanel(new FormLayout("right:pref, 3dlu, fill:min:grow, 3dlu, pref, 3dlu, pref", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
+        JPanel miscPanel = new JPanel(new FormLayout("right:pref, 3dlu, fill:min:grow, 3dlu, pref, 3dlu, pref", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
 
         miscPanel.add(new JLabel(mLocalizer.msg("name","Name:")), cc.xy(1, 1));
         mDeviceName = new JTextField(mDevice.getName());
@@ -143,16 +149,13 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         mDreamboxAddress = new JTextField(mConfig.getDreamboxAddress());
         miscPanel.add(mDreamboxAddress, cc.xy(3, 3));
 
-/*        JButton find = new JButton("Suchen...");
-        miscPanel.add(find, cc.xy(5,1));
-  */
         JButton help = new JButton(CapturePlugin.getInstance().createImageIcon("apps", "help-browser", 16));
         help.setToolTipText(mLocalizer.msg("help", "Help"));
         help.setOpaque(false);
         help.setBorder(Borders.EMPTY_BORDER);
         miscPanel.add(help, cc.xy(7, 3));
 
-        panel.add(miscPanel, cc.xy(2, 3));
+        basicPanel.add(miscPanel, cc.xy(2, 3));
 
         ButtonBarBuilder refresh = new ButtonBarBuilder();
 
@@ -182,7 +185,38 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         JSpinner afterSpinner = new JSpinner(mAfterModel);
         miscPanel.add(afterSpinner, cc.xy(3,9));
 
-        miscPanel.add(new JLabel(mLocalizer.msg("timeZone", "TimeZone :")), cc.xy(1,11));
+        basicPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("channel", "Channel assignment")), cc.xyw(1, 5, 2));
+
+        mTable = new JTable(new ConfigTableModel(mConfig));
+        mTable.getTableHeader().setReorderingAllowed(false);
+        mTable.getColumnModel().getColumn(0).setCellRenderer(new ChannelTableCellRenderer());
+        mTable.getColumnModel().getColumn(1).setCellRenderer(new DreamboxChannelRenderer());
+        mTable.getColumnModel().getColumn(1).setCellEditor(new DreamboxChannelEditor(mConfig));
+
+        basicPanel.add(new JScrollPane(mTable), cc.xy(2, 7));
+
+        ButtonBarBuilder builder = new ButtonBarBuilder();
+
+        builder.addGlue();
+
+        JButton attach = new JButton(mLocalizer.msg("attach", "Attach"));
+        attach.setToolTipText(mLocalizer.msg("attachHelp", "Attach channels"));
+        attach.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                attachChannels();
+            }
+        });
+
+        builder.addGridded(attach);
+
+        basicPanel.add(builder.getPanel(), cc.xyw(1,9,2));
+
+        JPanel extendedPanel = new JPanel();
+        extendedPanel.setBorder(Borders.DLU4_BORDER);
+        extendedPanel.setLayout(new FormLayout("5dlu, right:pref, 3dlu, fill:pref:grow, 5dlu", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
+
+        extendedPanel.add(DefaultComponentFactory.getInstance().createSeparator("Timezone"), cc.xyw(1,1,5));
+        extendedPanel.add(new JLabel(mLocalizer.msg("timeZone", "TimeZone :")), cc.xy(2,3));
 
         String[] zoneIds = TimeZone.getAvailableIDs();
         Arrays.sort(zoneIds);
@@ -196,29 +230,19 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
           }
         }
 
-        miscPanel.add(mTimezone, cc.xy(3,11));
+        extendedPanel.add(mTimezone, cc.xy(4,3));
 
-        panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("channel", "Channel assignment")), cc.xyw(1, 5, 2));
+        extendedPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("security", "Security")), cc.xyw(1,5,5));
 
-        mTable = new JTable(new ConfigTableModel(mConfig));
-        mTable.getTableHeader().setReorderingAllowed(false);
-        mTable.getColumnModel().getColumn(0).setCellRenderer(new ChannelTableCellRenderer());
-        mTable.getColumnModel().getColumn(1).setCellRenderer(new DreamboxChannelRenderer());
-        mTable.getColumnModel().getColumn(1).setCellEditor(new DreamboxChannelEditor(mConfig));
+        extendedPanel.add(new JLabel(mLocalizer.msg("userName", "Username :")), cc.xy(2,7));
+        mUserName = new JTextField(mConfig.getUserName());
+        extendedPanel.add(mUserName, cc.xy(4,7));
 
-        panel.add(new JScrollPane(mTable), cc.xy(2, 7));
+        extendedPanel.add(new JLabel(mLocalizer.msg("password", "Password :")), cc.xy(2,9));
+        mPasswordField = new JPasswordField(mConfig.getPassword());
+        extendedPanel.add(mPasswordField, cc.xy(4,9));
 
-        ButtonBarBuilder builder = new ButtonBarBuilder();
-
-        JButton attach = new JButton(mLocalizer.msg("attach", "Attach"));
-        attach.setToolTipText(mLocalizer.msg("attachHelp", "Attach channels"));
-        attach.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                attachChannels();
-            }
-        });
-
-        builder.addGridded(attach);
+        builder = new ButtonBarBuilder();
 
         JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
         ok.addActionListener(new ActionListener() {
@@ -239,9 +263,17 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
 
         getRootPane().setDefaultButton(ok);
 
-        panel.add(builder.getPanel(), cc.xyw(2, 9, 1));
+        JTabbedPane tabs = new JTabbedPane();
+        tabs.add(mLocalizer.msg("basicTitle", "Basic settings"), basicPanel);
+        tabs.add(mLocalizer.msg("extendedTitle", "Extended settings"), extendedPanel);
 
-        setSize(450, 500);
+        JPanel content = (JPanel) getContentPane();
+        content.setBorder(Borders.DLU4_BORDER);
+        content.setLayout(new FormLayout("fill:pref:grow", "fill:pref:grow, 3dlu, pref"));
+        content.add(tabs, cc.xy(1,1));
+        content.add(builder.getPanel(), cc.xy(1,3));
+
+        setSize(Sizes.dialogUnitXAsPixel(240, this), Sizes.dialogUnitYAsPixel(340, this));
     }
 
     /**
@@ -288,7 +320,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
                     public void run() {
                         mConfig.setDreamboxAddress(mDreamboxAddress.getText());
 
-                        DreamboxConnector connect = new DreamboxConnector(mConfig.getDreamboxAddress());
+                        DreamboxConnector connect = new DreamboxConnector(mConfig);
                         Collection<DreamboxChannel> channels = null;
 
                         try {
@@ -333,6 +365,9 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         mConfig.setDreamboxAddress(mDreamboxAddress.getText());
 
         mConfig.setTimeZone(((String) mTimezone.getSelectedItem()));
+
+        mConfig.setUserName(mUserName.getText());
+        mConfig.setPassword(mPasswordField.getPassword());
 
         setVisible(false);
     }

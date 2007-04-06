@@ -226,7 +226,7 @@ public class DreamboxDevice implements DeviceIf {
             UiUtilities.centerAndShow(dialog);
 
             if (dialog.getPrgTime() != null) {
-                DreamboxConnector connector = new DreamboxConnector(mConfig.getDreamboxAddress());
+                DreamboxConnector connector = new DreamboxConnector(mConfig);
                 return connector.addRecording(channel, dialog.getPrgTime(), box.getSelectedIndex(), mConfig.getTimeZone());
             }
         }
@@ -242,7 +242,7 @@ public class DreamboxDevice implements DeviceIf {
             if (time.getProgram().equals(program)) {
                 DreamboxChannel channel = mConfig.getDreamboxChannel(program.getChannel());
                 if (channel != null) {
-                    DreamboxConnector connector = new DreamboxConnector(mConfig.getDreamboxAddress());
+                    DreamboxConnector connector = new DreamboxConnector(mConfig);
                     return connector.removeRecording(channel, time, mConfig.getTimeZone());
                 }
             }
@@ -255,7 +255,7 @@ public class DreamboxDevice implements DeviceIf {
      * @see captureplugin.drivers.DeviceIf#getProgramList()
      */
     public Program[] getProgramList() {
-        DreamboxConnector con = new DreamboxConnector(mConfig.getDreamboxAddress());
+        DreamboxConnector con = new DreamboxConnector(mConfig);
 
         if ((mConfig.getDreamboxAddress() != null)) {
             ProgramTime[] times = con.getRecordings(mConfig);
@@ -290,7 +290,7 @@ public class DreamboxDevice implements DeviceIf {
             if (channel != null) {
                 new Thread(new Runnable() {
                     public void run() {
-                        DreamboxConnector connect = new DreamboxConnector(mConfig.getDreamboxAddress());
+                        DreamboxConnector connect = new DreamboxConnector(mConfig);
                         connect.switchToChannel(channel);
                     }
                 }).start();
@@ -305,7 +305,7 @@ public class DreamboxDevice implements DeviceIf {
             }
             return true;
         } else if (num == 1) {
-            DreamboxConnector connect = new DreamboxConnector(mConfig.getDreamboxAddress());
+            DreamboxConnector connect = new DreamboxConnector(mConfig);
 
             ParamParser parser = new ParamParser();
 
@@ -354,7 +354,7 @@ public class DreamboxDevice implements DeviceIf {
             if (time.getProgram().equals(p)) {
                 DreamboxChannel channel = mConfig.getDreamboxChannel(p.getChannel());
                 if (channel != null) {
-                    DreamboxConnector connector = new DreamboxConnector(mConfig.getDreamboxAddress());
+                    DreamboxConnector connector = new DreamboxConnector(mConfig);
                     connector.removeRecording(channel, time, mConfig.getTimeZone());
                 }
             }
