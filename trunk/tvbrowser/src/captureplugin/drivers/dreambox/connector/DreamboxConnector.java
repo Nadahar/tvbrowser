@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TimeZone;
 import java.util.TreeMap;
+import java.text.SimpleDateFormat;
 
 /**
  * Connector for the Dreambox
@@ -56,15 +57,15 @@ import java.util.TreeMap;
 public class DreamboxConnector {
     /** get list of bouquets */
     private final String BOUQUETLIST = "1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 195) || (type == 25)FROM BOUQUET \"bouquets.tv\" ORDER BY bouquet";
-    /** IP-Address of the dreambox */
-    private String mAddress;
+    /** Config of the dreambox */
+    private DreamboxConfig mConfig;
 
     /**
      * Constructor
-     * @param address IP-Address of the dreambox
+     * @param config Config of the dreambox
      */
-    public DreamboxConnector(String address) {
-        mAddress = address;
+    public DreamboxConnector(DreamboxConfig config) {
+        mConfig = config;
     }
 
     /**
@@ -73,9 +74,14 @@ public class DreamboxConnector {
      */
     public TreeMap<String, String> getServiceData(String service) {
         try {
-            URL url = new URL("http://" + mAddress + "/web/fetchchannels?ServiceListBrowse=" + service);
+            URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/web/fetchchannels?ServiceListBrowse=" + service);
 
             URLConnection connection = url.openConnection();
+
+            String userpassword = mConfig.getUserName() + ":" + mConfig.getPassword();
+            String encoded = new sun.misc.BASE64Encoder().encode (userpassword.getBytes());
+            connection.setRequestProperty  ("Authorization", "Basic " + encoded);
+
             connection.setConnectTimeout(10);
             InputStream stream = connection.getInputStream();
 
@@ -131,8 +137,13 @@ public class DreamboxConnector {
      */
     public void switchToChannel(DreamboxChannel channel) {
         try {
-            URL url = new URL("http://" + mAddress + "/web/zap?ZapTo=" + URLEncoder.encode(channel.getReference(), "UTF8"));
+            URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/web/zap?ZapTo=" + URLEncoder.encode(channel.getReference(), "UTF8"));
             URLConnection connection = url.openConnection();
+
+            String userpassword = mConfig.getUserName() + ":" + mConfig.getPassword();
+            String encoded = new sun.misc.BASE64Encoder().encode (userpassword.getBytes());
+            connection.setRequestProperty  ("Authorization", "Basic " + encoded);
+
             connection.setConnectTimeout(10);
             InputStream stream = connection.getInputStream();
             stream.close();
@@ -148,8 +159,13 @@ public class DreamboxConnector {
      */
     private ArrayList<HashMap<String, String>> getTimers() {
         try {
-            URL url = new URL("http://" + mAddress + "/web/timerlist");
+            URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/web/timerlist");
             URLConnection connection = url.openConnection();
+
+            String userpassword = mConfig.getUserName() + ":" + mConfig.getPassword();
+            String encoded = new sun.misc.BASE64Encoder().encode (userpassword.getBytes());
+            connection.setRequestProperty  ("Authorization", "Basic " + encoded);
+
             connection.setConnectTimeout(10);
             InputStream stream = connection.getInputStream();
 
@@ -207,27 +223,39 @@ public class DreamboxConnector {
                         endMinutes += 24*60;
                     }
 
-                    Date date = new Date(begin);
+                    Calendar runner = (Calendar) begin.clone();
 
-                    Iterator it = CapturePlugin.getPluginManager()
-                                .getChannelDayProgram(date, tvbchannel);
-                    if (it != null) {
-                        boolean found = false;
+                    long days = end.get(Calendar.DAY_OF_YEAR) - begin.get(Calendar.DAY_OF_YEAR);
 
-                        while (it.hasNext() && !found) {
-                            Program prog = (Program) it.next();
-                            int progTime = prog.getHours() * 60 + prog.getMinutes();
+                    if (end.get(Calendar.YEAR) != begin.get(Calendar.YEAR)) {
+                        days = 1;
+                    }
 
-                            if (progTime >= beginMinutes &&
-                                progTime <= endMinutes
-                                && prog.getTitle().trim().equalsIgnoreCase(timer.get("e2name").trim())
-                                ) {
+                    for (int i=0;i<=days;i++) {
+                        Iterator it = CapturePlugin.getPluginManager()
+                                    .getChannelDayProgram(new Date(runner), tvbchannel);
+                        if (it != null) {
+                            boolean found = false;
 
-                                found = true;
-                                programs.add(new ProgramTime(prog, begin.getTime(), end.getTime()));
+                            while (it.hasNext() && !found) {
+                                Program prog = (Program) it.next();
+                                int progTime = prog.getHours() * 60 + prog.getMinutes() + (i*24*60);
+
+                                if (progTime >= beginMinutes - 15 &&
+                                    progTime <= endMinutes + 15
+                                    && prog.getTitle().trim().equalsIgnoreCase(timer.get("e2name").trim())
+                                    ) {
+
+                                    found = true;
+                                    programs.add(new ProgramTime(prog, begin.getTime(), end.getTime()));
+                                }
                             }
                         }
+
+                        runner.add(Calendar.HOUR_OF_DAY, 24);
                     }
+
+
                 }
             }
         }
@@ -279,7 +307,7 @@ public class DreamboxConnector {
                 shortInfo = "";
             }
 
-            URL url = new URL("http://" + mAddress + "/web/tvbrowser?&command=add&action=0" +
+            URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/web/tvbrowser?&command=add&action=0" +
                     "&syear=" + start.get(Calendar.YEAR) +
                     "&smonth=" + (start.get(Calendar.MONTH)+1) +
                     "&sday=" + start.get(Calendar.DAY_OF_MONTH) +
@@ -300,6 +328,11 @@ public class DreamboxConnector {
                     "&eit=&disabled=0&justplay=0&repeated=0");
 
             URLConnection connection = url.openConnection();
+
+            String userpassword = mConfig.getUserName() + ":" + mConfig.getPassword();
+            String encoded = new sun.misc.BASE64Encoder().encode (userpassword.getBytes());
+            connection.setRequestProperty  ("Authorization", "Basic " + encoded);
+
             connection.setConnectTimeout(10);
             InputStream stream = connection.getInputStream();
 
@@ -349,7 +382,7 @@ public class DreamboxConnector {
                 shortInfo = "";
             }
 
-            URL url = new URL("http://" + mAddress + "/web/tvbrowser?&command=del&action=0" +
+            URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/web/tvbrowser?&command=del&action=0" +
                     "&syear=" + start.get(Calendar.YEAR) +
                     "&smonth=" + (start.get(Calendar.MONTH)+1) +
                     "&sday=" + start.get(Calendar.DAY_OF_MONTH) +
@@ -369,6 +402,11 @@ public class DreamboxConnector {
                     "&afterevent=0&eit=&disabled=0&justplay=0&repeated=0");
 
             URLConnection connection = url.openConnection();
+
+            String userpassword = mConfig.getUserName() + ":" + mConfig.getPassword();
+            String encoded = new sun.misc.BASE64Encoder().encode (userpassword.getBytes());
+            connection.setRequestProperty  ("Authorization", "Basic " + encoded);
+
             connection.setConnectTimeout(10);
             InputStream stream = connection.getInputStream();
 
@@ -399,8 +437,13 @@ public class DreamboxConnector {
      */
     public void sendMessage(String message) {
         try {
-            final URL url = new URL("http://" + mAddress + "/web/message?type=2&timeout=10&text=" + URLEncoder.encode(message, "UTF8"));
+            final URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/web/message?type=2&timeout=10&text=" + URLEncoder.encode(message, "UTF8"));
             URLConnection connection = url.openConnection();
+
+            String userpassword = mConfig.getUserName() + ":" + mConfig.getPassword();
+            String encoded = new sun.misc.BASE64Encoder().encode (userpassword.getBytes());
+            connection.setRequestProperty  ("Authorization", "Basic " + encoded);
+
             connection.setConnectTimeout(10);
             final InputStream stream = connection.getInputStream();
             stream.close();

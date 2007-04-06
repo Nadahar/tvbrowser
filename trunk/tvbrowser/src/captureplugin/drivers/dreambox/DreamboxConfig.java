@@ -36,6 +36,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.TimeZone;
 
+import util.io.IOUtilities;
+
 /**
  * The configuration for the dreambox
  */
@@ -59,6 +61,11 @@ public class DreamboxConfig {
     /** The TimeZone */
     private String mTimeZone;
 
+    /** UserName for Authentification */
+    private String mUsername = "";
+    /** Password for Authentification */
+    private String mPassword = "";
+
     /**
      * Constructor
      */
@@ -79,6 +86,8 @@ public class DreamboxConfig {
         mBefore = dreamboxConfig.getPreTime();
         mAfter = dreamboxConfig.getAfterTime();
         mTimeZone = dreamboxConfig.getTimeZoneAsString();
+        mUsername = dreamboxConfig.getUserName();
+        mPassword = dreamboxConfig.getPassword();
     }
 
     /**
@@ -111,7 +120,7 @@ public class DreamboxConfig {
      * @throws IOException io errors
      */
     public void writeData(ObjectOutputStream stream) throws IOException {
-        stream.writeInt(3);
+        stream.writeInt(4);
         stream.writeUTF(getId());
 
         stream.writeUTF(mDreamboxAddress);
@@ -144,6 +153,9 @@ public class DreamboxConfig {
         } else {
             stream.writeUTF(mTimeZone);
         }
+
+        stream.writeUTF(mUsername);
+        stream.writeUTF(IOUtilities.xorEncode(mPassword, 21341));
     }
 
     /**
@@ -188,6 +200,13 @@ public class DreamboxConfig {
         }
 
         mTimeZone = stream.readUTF();
+
+        if (version < 4) {
+            return;
+        }
+
+        mUsername = stream.readUTF();
+        mPassword = IOUtilities.xorDecode(stream.readUTF(), 21341);
     }
 
     /**
@@ -346,5 +365,31 @@ public class DreamboxConfig {
         mTimeZone = def.getID();
     }
 
+    /**
+     * @param username set the new username for authentification
+     */
+    public void setUserName(String username) {
+        mUsername = username;
+    }
 
+    /**
+     * @return username
+     */
+    public String getUserName() {
+        return mUsername;
+    }
+
+    /**
+     * @param password set the new password for authentification
+     */
+    public void setPassword(char[] password) {
+        mPassword = new String(password);
+    }
+
+    /**
+     * @return password
+     */
+    public String getPassword() {
+        return mPassword;
+    }
 }
