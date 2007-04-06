@@ -136,12 +136,12 @@ public class GoogleExporter extends AbstractExporter {
         myEntry.setContent(new PlainTextConstruct(desc));
 
         Calendar c = CalendarToolbox.getStartAsCalendar(program);
-        
-        DateTime startTime = DateTime.parseDateTime(formatDay.format(c.getTime())+"T"+formatTime.format(c.getTime()));
+
+        DateTime startTime = new DateTime(c.getTime(), c.getTimeZone());
 
         c = CalendarToolbox.getEndAsCalendar(program);
 
-        DateTime endTime = DateTime.parseDateTime(formatDay.format(c.getTime())+"T"+formatTime.format(c.getTime()));
+        DateTime endTime = new DateTime(c.getTime(), c.getTimeZone());
         
         When eventTimes = new When();
         
@@ -151,7 +151,7 @@ public class GoogleExporter extends AbstractExporter {
         myEntry.addTime(eventTimes);
         
         // Send the request and receive the response:
-        EventEntry insertedEntry = myService.insert(postUrl, myEntry);
+        myService.insert(postUrl, myEntry);
       }
       
       JOptionPane.showMessageDialog(CalendarExportPlugin.getInstance().getBestParentFrame(), mLocalizer.msg("exportDone", "Google Export done."), mLocalizer.msg("export","Export"), JOptionPane.INFORMATION_MESSAGE);
