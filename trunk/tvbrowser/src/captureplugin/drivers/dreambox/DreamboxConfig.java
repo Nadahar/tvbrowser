@@ -139,7 +139,7 @@ public class DreamboxConfig {
         stream.writeInt(max);
 
         for (Channel channel : mChannels.keySet()) {
-            if (mChannels.get(channel) != null) {
+            if ((channel != null) && (mChannels.get(channel) != null)) {
                 channel.writeData(stream);
                 stream.writeUTF(mChannels.get(channel).getReference());
             }
