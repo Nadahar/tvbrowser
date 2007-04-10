@@ -77,7 +77,8 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
   private int mHeight;
   
   private int mCurrentCol;
-  private int mCurrentRow; 
+  private int mCurrentRow;
+  private int mCurrentY;
   
   private ProgramTableLayout mLayout;
   private ProgramTableModel mModel;
@@ -98,6 +99,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
     
     mCurrentCol = -1;
     mCurrentRow = -1;
+    mCurrentY = 0;
 
     setColumnWidth(Settings.propColumnWidth.getInt());
     setModel(model);
@@ -713,7 +715,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
         Rectangle rectCur = getCellRect(mCurrentCol,1);
         
         if(rectCur != null && rectPrev != null) {          
-          int[] matrix = getMatrix(rectCur.x, rectPrev.y);
+          int[] matrix = getMatrix(rectCur.x, mCurrentY);
           if(matrix[0] != -1) {
             ProgramPanel panel = mModel.getProgramPanel(matrix[1], matrix[0]);
             if(panel != null && !panel.getProgram().isExpired()) {
@@ -772,6 +774,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
       if(mCurrentRow < 0)
         mCurrentRow = rows - 1;
       
+      mCurrentY = getCellRect(mCurrentCol, mCurrentRow).y;
       scrollToSelection();
     }    
   }
@@ -797,6 +800,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
       else
         mCurrentRow++;
       
+      mCurrentY = getCellRect(mCurrentCol, mCurrentRow).y;
       scrollToSelection();
     }
   }  
@@ -825,7 +829,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
           Rectangle rectCur = getCellRect(mCurrentCol,1);
           
           if(rectCur != null && rectPrev != null) {          
-            int[] matrix = getMatrix(rectCur.x, rectPrev.y);
+            int[] matrix = getMatrix(rectCur.x, mCurrentY);
             if(matrix[0] != -1) {
               ProgramPanel panel = mModel.getProgramPanel(matrix[1], matrix[0]);
               if(panel != null && !panel.getProgram().isExpired()) {
