@@ -34,6 +34,8 @@ import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.Vector;
 
+import devplugin.Program;
+
 
 /**
  * This Class contains all needed Data
@@ -42,6 +44,8 @@ public class CapturePluginData implements Cloneable {
     /** Translator */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(CapturePluginData.class);
 
+    private int mMarkPriority = Program.MIN_MARK_PRIORITY;
+    
     /**
      * All Devices
      */
@@ -59,7 +63,9 @@ public class CapturePluginData implements Cloneable {
      * @param data Data object to copy
      */
     public CapturePluginData(CapturePluginData data) {
-        
+      
+      mMarkPriority = data.getMarkPriority();
+      
       mDevices = new Vector<DeviceIf>();
       
       Vector<DeviceIf> old = new Vector<DeviceIf>(data.getDevices());
@@ -77,8 +83,9 @@ public class CapturePluginData implements Cloneable {
      * @throws IOException problems while writing
      */
     public void writeData(ObjectOutputStream out) throws IOException {
-        out.writeInt(2);
+        out.writeInt(3);
         
+        out.writeInt(mMarkPriority);
         out.writeInt(mDevices.size());
         
         DeviceFileHandling writer = new DeviceFileHandling();
@@ -105,6 +112,10 @@ public class CapturePluginData implements Cloneable {
         
         if (version < 2) {
             return;
+        }
+        
+        if(version >= 3) {
+          mMarkPriority = in.readInt();
         }
         
         int num = in.readInt();
@@ -159,6 +170,31 @@ public class CapturePluginData implements Cloneable {
     public Object clone() {
         return new CapturePluginData(this);
     }
-
-
+    
+    /**
+     * Gets the mark priority used by capture plugin.
+     * 
+     * @return The current mark priority
+     * @since 2.12
+     */
+    public int getMarkPriority() {
+      return mMarkPriority;
+    }
+    
+    /**
+     * Sets the mark priority used by capture plguin.
+     * 
+     * @param priority The new mark priority.
+     * @since 2.12
+     */
+    public void setMarkPriority(int priority) {
+      mMarkPriority = priority;
+      
+      for(DeviceIf device : mDevices) {
+        Program[] programs = device.getProgramList();
+        
+        for(Program program : programs)
+          program.validateMarking();
+      }
+    }
 }
