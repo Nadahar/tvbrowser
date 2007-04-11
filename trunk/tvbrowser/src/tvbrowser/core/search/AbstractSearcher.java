@@ -31,6 +31,7 @@ import devplugin.Date;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramSearcher;
+import devplugin.ProgressMonitor;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 
@@ -142,10 +143,11 @@ public abstract class AbstractSearcher implements ProgramSearcher {
    * @param sortByStartTime Should the results be sorted by the start time?
    *        If not, the results will be grouped by date and channel and the
    *        search will be faster.
+   * @param progress progress monitor for monitoring the status of the search
    * @return The matching programs.
    */
   public synchronized Program[] search(ProgramFieldType[] fieldArr, Date startDate,
-                          int nrDays, Channel[] channels, boolean sortByStartTime)
+                          int nrDays, Channel[] channels, boolean sortByStartTime, ProgressMonitor progress)
   {
 
     // Should we search in all channels?
@@ -162,8 +164,14 @@ public abstract class AbstractSearcher implements ProgramSearcher {
     // Perform the actual search
     ArrayList<Program> hitList = new ArrayList<Program>();
     int lastDayWithData = 0;
+    if (progress != null) {
+      progress.setMaximum(channels.length*(nrDays+1));
+    }
     for (int day = 0; day <= nrDays; day++) {
       for (int channelIdx = 0; channelIdx < channels.length; channelIdx++) {
+        if (progress != null) {
+          progress.setValue(day*channels.length + channelIdx);
+        }
         Channel channel = channels[channelIdx];
         if (channel != null) {
             ChannelDayProgram dayProg = TvDataBase.getInstance().getDayProgram(startDate, channel);
@@ -199,12 +207,35 @@ public abstract class AbstractSearcher implements ProgramSearcher {
     if (sortByStartTime) {
       Arrays.sort(hitArr, getStartTimeComparator());
     }
-
+    if (progress != null) {
+      progress.setValue(0);
+      progress.setMessage("");
+    }
     // return the result
     return hitArr;
   }
 
-
+  /**
+   * Searches the TV database for programs that match the criteria of this
+   * searcher.
+   * 
+   * @param fieldArr The fields to search in
+   * @param startDate The date to start the search.
+   * @param nrDays The number of days to include after the start date. If
+   *        negative every day get's searched (from yesterday to 4 weeks into the
+   *        future)
+   * @param channels The channels to search in.
+   * @param sortByStartTime Should the results be sorted by the start time?
+   *        If not, the results will be grouped by date and channel and the
+   *        search will be faster.
+   * @return The matching programs.
+   */
+  public synchronized Program[] search(ProgramFieldType[] fieldArr, Date startDate,
+                          int nrDays, Channel[] channels, boolean sortByStartTime)
+  {
+    return search(fieldArr, startDate, nrDays, channels, sortByStartTime, null);
+  }
+  
   /**
    * Checks whether a value matches to the criteria of this searcher.
    * 

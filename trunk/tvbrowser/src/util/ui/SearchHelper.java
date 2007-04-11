@@ -27,6 +27,8 @@ package util.ui;
 
 import devplugin.Program;
 import devplugin.ProgramSearcher;
+import devplugin.ProgressMonitor;
+import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
@@ -108,8 +110,13 @@ public class SearchHelper {
         try {
           comp.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
           ProgramSearcher searcher = searcherSettings.createSearcher();
+          ProgressMonitor progressMonitor = null;
+          if (!TvDataUpdater.getInstance().isDownloading()) {
+            progressMonitor = MainFrame.getInstance().getStatusBar().createProgressMonitor();
+            progressMonitor.setMessage(mLocalizer.msg("searching","Searching"));
+          };
           Program[] programArr = searcher.search(searcherSettings.getFieldTypes(), startDate, searcherSettings
-              .getNrDays(), null, true);
+              .getNrDays(), null, true, progressMonitor);
 
           comp.setCursor(cursor);
           if (programArr.length == 0) {

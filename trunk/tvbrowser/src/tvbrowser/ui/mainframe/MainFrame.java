@@ -1598,4 +1598,8 @@ public class MainFrame extends JFrame implements DateListener {
     ProgramTableScrollPane scrollPane = getProgramTableScrollPane();
     scrollPane.forceRepaintAll();
   }
+
+  public StatusBar getStatusBar() {
+    return mStatusBar;
+  }
 }
