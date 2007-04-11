@@ -215,7 +215,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
       mLog.fine("Channel : " + ch.getName() + '{' + ch.getId() + '}');
     }
 
-    mLog.info("Finnished loading settings for BbcBackstageDataService");
+    mLog.info("Finished loading settings for BbcBackstageDataService");
   }
 
   /*

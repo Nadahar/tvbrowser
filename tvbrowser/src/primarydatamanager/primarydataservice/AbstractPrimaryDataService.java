@@ -161,7 +161,7 @@ abstract public class AbstractPrimaryDataService implements PrimaryDataService {
    * Searches a number in a String and returns it. E.g. "g 12qp bla 567" will
    * return 12.
    * <p>
-   * Warning: Since the retrurn is a int, "12.54" will return 12, not 12.54
+   * Warning: Since the return is a int, "12.54" will return 12, not 12.54
    * 
    * @param s The String to search for a number.
    * @return The found number or -1 if there was no number.

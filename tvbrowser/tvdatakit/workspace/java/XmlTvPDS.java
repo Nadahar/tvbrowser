@@ -459,7 +459,7 @@ public class XmlTvPDS extends AbstractPrimaryDataService {
 
 
         /**
-         * Estracts the date from a XMLTV time value.
+         * Extracts the date from a XMLTV time value.
          *
          * @param value The value to extract the date from.
          * @return The date.

@@ -240,7 +240,7 @@ public class DayProgramFile extends AbstractFile {
       if (frame.getProgramFieldCount() == 0) {
         // Check whether this is an complete or an update file
         if (thisIsUpdateFile) {
-          // The new update file sais that this frame is obsolete
+          // The new update file says that this frame is obsolete
           // -> Add an empty frame to this update file, too
 
           // Remove an existing frame first
@@ -255,7 +255,7 @@ public class DayProgramFile extends AbstractFile {
           if (otherIsUpdateFile) {
             int index = getProgramFrameIndexForId(frame.getId());
             if (index != -1) {
-              // The update sais, that this frame is obsolete -> delete it
+              // The update says, that this frame is obsolete -> delete it
               removeProgramFrameAt(index);
             }
           } else {
