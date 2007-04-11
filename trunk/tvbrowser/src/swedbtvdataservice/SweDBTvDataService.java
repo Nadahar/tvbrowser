@@ -344,7 +344,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
 //     convert();
 //     mLog.info("mInternalChannel now contains " + mInternalChannel.length + " channels");
 //     mLog.info("mChannel now contains " + mChannel.length + "channels");
-     mLog.info("Finnished loading settings for SweDBTvDataService");
+     mLog.info("Finished loading settings for SweDBTvDataService");
   }
 
   /**

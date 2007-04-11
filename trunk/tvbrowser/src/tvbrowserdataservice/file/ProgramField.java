@@ -85,7 +85,7 @@ public class ProgramField implements Cloneable {
      * Used for creating an instance of ProgramField to
      * read/store the additional ProgramFrame id in.
      * 
-     * @param o Dummy paramter.
+     * @param o Dummy parameter.
      * @since 2.2.2
      */
     protected ProgramField(Object o) {

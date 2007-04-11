@@ -55,7 +55,7 @@ public class DayProgramMapper {
     //          This step is relatively slowly, which is the reason for step 1.
     //
     //       Warning: After this process there may still be programs that are
-    //                not mapped! These programs must ge a new ID.
+    //                not mapped! These programs must get a new ID.
 
     // First reset all IDs
     resetIDs(rawFile);
@@ -159,7 +159,7 @@ public class DayProgramMapper {
     //          [2,0] - similarity 4.
     //       The raw program #0 does not get a match.
     
-    // Compare each raw program with each prepared program and built a
+    // Compare each raw program with each prepared program and build a
     // similarity matrix
     double[][] similarity = new double[progList.size()][unmappedList.size()];
     for (int i = 0; i < progList.size(); i++) {

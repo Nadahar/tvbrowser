@@ -205,7 +205,7 @@ public class RadioTimesDataService extends AbstractTvDataService {
       mLog.fine("Channel : " + ch.getName() + "{" + ch.getId() + "}");
     }
 
-    mLog.info("Finnished loading settings for RadioTimesBackstageDataService");
+    mLog.info("Finished loading settings for RadioTimesBackstageDataService");
   }
 
   /*
