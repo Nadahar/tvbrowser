@@ -173,7 +173,7 @@ public class CapturePlugin extends devplugin.Plugin {
         String author = "Bodo Tasche, Andreas Hessel";
         String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Capture_Plugin");
 
-        return new PluginInfo(name, desc, author, new Version(2, 5));
+        return new PluginInfo(name, desc, author, helpUrl, new Version(2, 12));
     }
 
     /**
@@ -667,5 +667,9 @@ public class CapturePlugin extends devplugin.Plugin {
      */
     public ProgramPanelSettings getProgramPanelSettings() {
       return new ProgramPanelSettings(Integer.parseInt(mSettings.getProperty("pictureType","2")),Integer.parseInt(mSettings.getProperty("pictureTimeRangeStart","1080")),Integer.parseInt(mSettings.getProperty("pictureTimeRangeEnd","1380")),false,mSettings.getProperty("pictureShowsDescription","true").compareTo("true") == 0,Integer.parseInt(mSettings.getProperty("pictureDuration","10")),mSettings.getProperty("picturePlugins","").split(";;"));
+    }
+    
+    public int getMarkPriorityForProgram(Program p) {
+      return mConfig.getMarkPriority();
     }
 }

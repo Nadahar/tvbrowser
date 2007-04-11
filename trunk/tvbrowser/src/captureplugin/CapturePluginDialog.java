@@ -131,6 +131,7 @@ public class CapturePluginDialog extends JDialog implements WindowClosingIf {
     public void okButtonPressed() {
         this.setVisible(false);
         mPanel.savePictureSettings();
+        mPanel.saveMarkingSettings();
     }
 
     public void close() {

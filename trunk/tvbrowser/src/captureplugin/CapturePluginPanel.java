@@ -27,6 +27,7 @@ package captureplugin;
 
 import captureplugin.tabs.DevicePanel;
 import captureplugin.tabs.ProgramListPanel;
+import util.ui.DefaultMarkingPrioritySelectionPanel;
 import util.ui.Localizer;
 import util.ui.PictureSettingsPanel;
 
@@ -34,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
+
 import java.awt.BorderLayout;
 import java.awt.Window;
 
@@ -56,10 +58,12 @@ public class CapturePluginPanel extends JPanel {
     private JTabbedPane mTabPane;
 
     private PictureSettingsPanel mPictureSettings;
+    private DefaultMarkingPrioritySelectionPanel mMarkingPriorityPanel;
     
     /**
      * Creates the Panel
      * 
+     * @param owner The parent window.
      * @param data Data to use
      */
     public CapturePluginPanel(Window owner, CapturePluginData data) {
@@ -69,17 +73,18 @@ public class CapturePluginPanel extends JPanel {
 
         mTabPane.addTab(mLocalizer.msg("ProgramList", "Programlist"), new ProgramListPanel(owner, data));
         
-        mTabPane.addTab(mLocalizer.msg("Devices", "Devices"), new DevicePanel(owner, data));
-
         mPictureSettings = new PictureSettingsPanel(CapturePlugin.getInstance().getProgramPanelSettings(),true,true);
+                
+        mTabPane.addTab(mLocalizer.msg("Devices", "Devices"), new DevicePanel(owner, data));
         
         final JScrollPane scrollPane = new JScrollPane(mPictureSettings);
         scrollPane.setBorder(null);
         
         mTabPane.addTab(Localizer.getLocalization(Localizer.I18N_PICTURES), scrollPane);
         
-        // Tabbed - Pane
-        //	this.add(tabPane,BorderLayout.CENTER);
+        mMarkingPriorityPanel = DefaultMarkingPrioritySelectionPanel.createPanel(data.getMarkPriority(),true,true);
+        mTabPane.addTab(DefaultMarkingPrioritySelectionPanel.getTitle(), mMarkingPriorityPanel);
+
         this.add(mTabPane, BorderLayout.CENTER);
         
         SwingUtilities.invokeLater(new Runnable() {
@@ -130,5 +135,12 @@ public class CapturePluginPanel extends JPanel {
         
         CapturePlugin.getInstance().storeSettings().setProperty("picturePlugins", temp.toString());
       }
+    }
+    
+    /**
+     * Saves the marking settings for the program
+     */
+    public void saveMarkingSettings() {
+      CapturePlugin.getInstance().getCapturePluginData().setMarkPriority(mMarkingPriorityPanel.getSelectedPriority());      
     }
 }
