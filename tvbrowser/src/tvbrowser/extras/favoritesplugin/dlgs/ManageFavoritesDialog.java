@@ -77,6 +77,7 @@ import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.wizards.TypeWizardStep;
 import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.DragAndDropMouseListener;
@@ -94,6 +95,7 @@ import com.jgoodies.forms.factories.Borders;
 
 import devplugin.Program;
 import devplugin.ProgramReceiveIf;
+import devplugin.SettingsItem;
 
 
 /**
@@ -253,6 +255,18 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
 
     if(!mShowNew)
       toolbarPn.add(mImportBt);
+
+    msg = mLocalizer.msg("settings","Open settings");
+    icon = FavoritesPlugin.getInstance().getIconFromTheme("categories","preferences-desktop", 22);
+    JButton settings = UiUtilities.createToolBarButton(msg, icon);
+
+    settings.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          close();
+          MainFrame.getInstance().showSettingsDialog(SettingsItem.FAVORITE);
+        }
+      });
+    toolbarPn.add(settings);
 
     mSplitPane = new JSplitPane();
     mSplitPane.setDividerLocation(splitPanePosition);
