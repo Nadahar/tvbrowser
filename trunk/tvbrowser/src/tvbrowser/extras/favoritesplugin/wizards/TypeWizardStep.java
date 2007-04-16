@@ -169,7 +169,7 @@ public class TypeWizardStep extends AbstractWizardStep {
           FavoritesPlugin.getInstance().updateRootNode(true);
           
           if(ManageFavoritesDialog.getInstance() != null)
-            ManageFavoritesDialog.getInstance().addFavorite(favorite);
+            ManageFavoritesDialog.getInstance().addFavorite(favorite, false);
         }
       }
     });

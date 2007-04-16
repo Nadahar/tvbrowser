@@ -251,6 +251,10 @@ public class MutableProgram implements Program {
   public final String getTimeString() {
     return IOUtilities.timeToString(getStartTime());
   }
+  
+  public final String getEndTimeString() {
+	return IOUtilities.timeToString(getStartTime() + getLength());
+  }
 
 
   public final String getDateString() {

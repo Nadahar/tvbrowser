@@ -172,6 +172,8 @@ public class ProgramTextCreator {
     buffer.append(prog.getDateString());
     buffer.append(" · ");
     buffer.append(prog.getTimeString());
+    buffer.append(" - ");
+    buffer.append(prog.getEndTimeString());
     buffer.append(" · ");
     buffer.append(prog.getChannel());
 
@@ -366,15 +368,7 @@ public class ProgramTextCreator {
             String msg = mLocalizer.msg("minutes", "{0} min", new Integer(
                 length));
             buffer.append(msg).append(" (");
-
-            int hours = prog.getHours();
-            int minutes = prog.getMinutes();
-            int endTime = (hours * 60 + minutes + length) % (24 * 60);
-            minutes = endTime % 60;
-            hours = endTime / 60;
-            String until = new StringBuffer().append(hours).append(':').append(
-                minutes < 10 ? "0" : "").append(minutes).toString();
-            buffer.append(mLocalizer.msg("until", "until {0}", until));
+            buffer.append(mLocalizer.msg("until", "until {0}", prog.getEndTimeString()));
 
             int netLength = prog
                 .getIntField(ProgramFieldType.NET_PLAYING_TIME_TYPE);

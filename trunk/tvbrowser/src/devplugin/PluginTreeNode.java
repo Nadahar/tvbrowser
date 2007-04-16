@@ -144,7 +144,7 @@ public class PluginTreeNode {
   /**
    * Remove all programs from this node which are not available any more
    */
-  private void refreshAllPrograms(RemovedProgramsHandler handler) {
+  private synchronized void refreshAllPrograms(RemovedProgramsHandler handler) {
 
     for (int i=mChildNodes.size()-1; i>=0; i--) {
       PluginTreeNode node = mChildNodes.get(i);
@@ -410,7 +410,7 @@ public class PluginTreeNode {
     return mObject;
   }
 
-  public void removeAllChildren() {
+  public synchronized void removeAllChildren() {
     if (mMarker != null) {
       Program[] programs = getPrograms();
       for (int i=0; i<programs.length; i++) {
@@ -422,7 +422,7 @@ public class PluginTreeNode {
   }
 
 
-  public void add(PluginTreeNode node) {
+  public synchronized void add(PluginTreeNode node) {
     mChildNodes.add(node);    
     node.mMarker = mMarker;
   }
@@ -440,7 +440,7 @@ public class PluginTreeNode {
    * Refreshs the tree. Call this method after you have added/removed/changed nodes
    * of the (sub-)tree
    */
-  public void update() {
+  public synchronized void update() {
 
     if (mGroupingByDate) {
       createDateNodes();
@@ -454,11 +454,11 @@ public class PluginTreeNode {
   }
 
 
-  public PluginTreeNode addProgram(Program program) {
+  public synchronized PluginTreeNode addProgram(Program program) {
     return addProgram(new ProgramItem(program));
   }
 
-  public PluginTreeNode addProgram(ProgramItem item) {
+  public synchronized PluginTreeNode addProgram(ProgramItem item) {
 
     if (contains(item.getProgram(), false)) {
       return findProgramTreeNode(item.getProgram(), false);
@@ -500,11 +500,11 @@ public class PluginTreeNode {
   }
 
 
-  public void removeProgram(ProgramItem item) {
+  public synchronized void removeProgram(ProgramItem item) {
     removeProgram(item.getProgram());
   }
 
-  public void removeProgram(Program program) {
+  public synchronized void removeProgram(Program program) {
     PluginTreeNode node = findProgramTreeNode(program, false);
     if (node != null) {
       mChildNodes.remove(node);
@@ -514,7 +514,7 @@ public class PluginTreeNode {
     }
   }
 
-  public PluginTreeNode addNode(String title) {
+  public synchronized PluginTreeNode addNode(String title) {
     PluginTreeNode node = new PluginTreeNode(title);
     add(node);
     return node;
@@ -608,7 +608,7 @@ public class PluginTreeNode {
     return mChildNodes.size();
   }
 
-  public void clear() {
+  public synchronized void clear() {
     mChildNodes.clear();
   }
 

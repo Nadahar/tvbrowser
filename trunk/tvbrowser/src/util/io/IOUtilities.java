@@ -722,6 +722,7 @@ public class IOUtilities {
    * @return A String for the time
    */
   public static String timeToString(int minutesAfterMidnight) {
+	minutesAfterMidnight = minutesAfterMidnight % (24*60);
     int hours = minutesAfterMidnight / 60;
     int minutes = minutesAfterMidnight % 60;
     return TIME_FORMATTER.formatTime(hours, minutes);
