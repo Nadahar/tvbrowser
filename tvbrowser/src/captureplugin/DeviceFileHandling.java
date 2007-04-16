@@ -59,9 +59,8 @@ public class DeviceFileHandling {
             dirname.mkdir();
         }
         
-        if (dirname.listFiles().length > 0) {
-            File[] fileList = dirname.listFiles();
-
+        File[] fileList = dirname.listFiles();
+        if ((fileList != null) && (fileList.length > 0)) {
             for (File file : fileList) {
                 file.delete();
             }

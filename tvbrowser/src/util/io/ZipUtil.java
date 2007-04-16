@@ -72,27 +72,29 @@ public class ZipUtil {
     File[] files = directory.listFiles();
     System.out.println(">" + directory.getAbsolutePath());
     // Compress the files
-    for (int i = 0; i < files.length; i++) {
-      if (files[i].isDirectory()) {
-        zipDirFiles(out, files[i], parentlength);
-      } else {
-        System.out.println(">" + files[i].getAbsolutePath());
-        byte[] buf = new byte[1024];
-
-        FileInputStream in = new FileInputStream(files[i]);
-
-        // Add ZIP entry to output stream.
-        out.putNextEntry(new ZipEntry(files[i].getAbsolutePath().substring(parentlength)));
-
-        // Transfer bytes from the file to the ZIP file
-        int len;
-        while ((len = in.read(buf)) > 0) {
-          out.write(buf, 0, len);
+    if (files != null) {
+      for (int i = 0; i < files.length; i++) {
+        if (files[i].isDirectory()) {
+          zipDirFiles(out, files[i], parentlength);
+        } else {
+          System.out.println(">" + files[i].getAbsolutePath());
+          byte[] buf = new byte[1024];
+  
+          FileInputStream in = new FileInputStream(files[i]);
+  
+          // Add ZIP entry to output stream.
+          out.putNextEntry(new ZipEntry(files[i].getAbsolutePath().substring(parentlength)));
+  
+          // Transfer bytes from the file to the ZIP file
+          int len;
+          while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+          }
+  
+          // Complete the entry
+          out.closeEntry();
+          in.close();
         }
-
-        // Complete the entry
-        out.closeEntry();
-        in.close();
       }
     }
   }

@@ -312,12 +312,14 @@ public class Settings {
 
               boolean version1 = false;
 
-              for (int i = 0; i < settings.length; i++) {
-                String name = "java." + settings[i].getName();
-
-                if (!settings[i].getName().toLowerCase().startsWith("java.")) {
-                  version1 = true;
-                  settings[i].renameTo(new File(settings[i].getParent(), name));
+              if (settings != null) {
+                for (int i = 0; i < settings.length; i++) {
+                  String name = "java." + settings[i].getName();
+  
+                  if (!settings[i].getName().toLowerCase().startsWith("java.")) {
+                    version1 = true;
+                    settings[i].renameTo(new File(settings[i].getParent(), name));
+                  }
                 }
               }
 
@@ -374,8 +376,11 @@ public class Settings {
                   }
                 });
 
-                for (int i = 0; i < files.length; i++)
-                  files[i].renameTo(new File(backupDir,files[i].getName()));
+                if (files != null) {
+                  for (int i = 0; i < files.length; i++) {
+                    files[i].renameTo(new File(backupDir,files[i].getName()));
+                  }
+                }
               }
             }
           } catch (IOException e) {

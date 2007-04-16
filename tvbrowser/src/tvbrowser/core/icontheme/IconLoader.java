@@ -92,10 +92,12 @@ public class IconLoader {
     File root = new File("icons");
     
     File[] files = root.listFiles();
-    for (int i=0;i<files.length;i++) {
-      IconTheme theme = getIconTheme(files[i]);
-      if (theme.loadTheme()) {
-        list.add(theme);
+    if (files != null) {
+      for (int i=0;i<files.length;i++) {
+        IconTheme theme = getIconTheme(files[i]);
+        if (theme.loadTheme()) {
+          list.add(theme);
+        }
       }
     }
     

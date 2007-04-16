@@ -404,11 +404,13 @@ public class Localizer {
   private void addLocaleFiles(File dir, ArrayList<Locale> langArray) {
     if (dir.exists() && dir.isDirectory()) {
       String[] files = dir.list();
-      for (String string : files) {
-        if (string.startsWith("tvbrowser_") && string.endsWith(".properties")) {
-          Locale loc = getLocaleForString(string.substring(10, string.lastIndexOf(".properties")));
-          if (!langArray.contains(loc))
-            langArray.add(loc);
+      if (files != null) {
+        for (String string : files) {
+          if (string.startsWith("tvbrowser_") && string.endsWith(".properties")) {
+            Locale loc = getLocaleForString(string.substring(10, string.lastIndexOf(".properties")));
+            if (!langArray.contains(loc))
+              langArray.add(loc);
+          }
         }
       }
     }

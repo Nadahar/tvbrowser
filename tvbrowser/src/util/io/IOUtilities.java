@@ -408,6 +408,10 @@ public class IOUtilities {
   }
   
   private static void copy(File firstTargetDir, File[] src, File targetDir, boolean onlyNew) throws IOException {
+    // src might be null, if listFiles wasn't able to read the directory
+    if (src == null) {
+      return;
+    }
 		for (int i=0; i<src.length; i++) {
 			if (src[i].isDirectory() && !src[i].equals(targetDir) && !src[i].equals(firstTargetDir)) {
         File newDir = createDirectory(targetDir, src[i].getName());
@@ -486,12 +490,14 @@ public class IOUtilities {
     
     // Delete all the files and subdirectories
     File[] fileArr = dir.listFiles();
-    for (int i = 0; i < fileArr.length; i++) {
-      if (fileArr[i].isDirectory()) {
-        deleteDirectory(fileArr[i]);
-      } else {
-        if (! fileArr[i].delete()) {
-          throw new IOException("Can't delete file: " + fileArr[i].getAbsolutePath());
+    if (fileArr != null) {
+      for (int i = 0; i < fileArr.length; i++) {
+        if (fileArr[i].isDirectory()) {
+          deleteDirectory(fileArr[i]);
+        } else {
+          if (! fileArr[i].delete()) {
+            throw new IOException("Can't delete file: " + fileArr[i].getAbsolutePath());
+          }
         }
       }
     }
