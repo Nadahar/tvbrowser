@@ -818,7 +818,7 @@ public class TVBrowser {
           .valueOf(Settings.propJGoodiesShadow.getBoolean()));
       try {
         LookUtils.setLookAndTheme((LookAndFeel) Class.forName(Settings.propLookAndFeel.getString()).newInstance(), Class.forName(Settings.propJGoodiesTheme.getString()).newInstance());
-      } catch (Exception e) {
+      } catch (Throwable e) {
         ErrorHandler.handle("Could not load themepack.\nJGoodies is disabled now", e);
         Settings.propLookAndFeel.setString(Settings.propLookAndFeel.getDefault());
       }

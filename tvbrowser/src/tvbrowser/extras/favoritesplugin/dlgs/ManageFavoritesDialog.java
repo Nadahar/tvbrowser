@@ -549,13 +549,15 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       favorite = (tvbrowser.extras.favoritesplugin.core.Favorite)handler.show();
     }
 
-    addFavorite(favorite);
+    // in case of AdvancedFavorite: search not necessary (because already done)
+    addFavorite(favorite, !(favorite instanceof AdvancedFavorite));
   }
 
-  public void addFavorite(Favorite fav) {
+  public void addFavorite(Favorite fav, boolean update) {
     if (fav != null) {
     try {
-      fav.updatePrograms();
+      if (update)
+        fav.updatePrograms();
       mFavoritesListModel.addElement(fav);
       int idx = mFavoritesListModel.size() - 1;
       mFavoritesList.setSelectedIndex(idx);

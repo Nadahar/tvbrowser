@@ -137,8 +137,25 @@ public interface Program {
   public int getLength();
   
   public int getInfo();
+  
+  /**
+   * get the start time of this program as nicely formatted string
+   * @return the start time string
+   */
   public String getTimeString();
+  
+  /**
+   * get the date of this program as nicely formatted string
+   * @return the date string
+   */
   public String getDateString();
+  
+  /**
+   * get the end time of this program as nicely formatted string
+   * @return the end time string
+   * @since 2.5.3
+   */
+  public String getEndTimeString();
 
   public Channel getChannel();
   public Date getDate();
