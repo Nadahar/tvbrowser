@@ -404,11 +404,13 @@ public class BbcBackstageDataService extends AbstractTvDataService {
    */
   private void cleanWorkingDir() {
     File[] files = mWorkingDir.listFiles();
-    
-    int max = files.length;
-    
-    for (int i=0;i<max;i++) {
-      files[i].delete();
+    if (files != null) {
+      for (File file : files) {
+        file.delete();
+      }
+    }
+    else {
+      mLog.warning("Cannot clean working directory: " + mWorkingDir);
     }
   }
 

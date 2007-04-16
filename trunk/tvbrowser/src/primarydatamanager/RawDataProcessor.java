@@ -98,6 +98,9 @@ public class RawDataProcessor {
     
     // Go through the raw files and process them one by one
     File[] fileArr = rawDir.listFiles();
+    if (fileArr == null) {
+      return;
+    }
     for (int i = 0; i < fileArr.length; i++) {
       String fileName = fileArr[i].getName();
 			

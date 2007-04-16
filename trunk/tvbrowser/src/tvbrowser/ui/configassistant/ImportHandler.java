@@ -66,12 +66,14 @@ public class ImportHandler {
     Matcher matcher;
     HashSet<String> channelSet = new HashSet<String>();
     String[] files = root.list();
-    for (int i=0; i<files.length; i++) {
-      matcher = pattern.matcher(files[i]);
-      if (matcher.find()) {
-        String country = matcher.group(1);
-        String channelId = matcher.group(2);
-        channelSet.add(country+"_"+channelId);
+    if (files != null) {
+      for (int i=0; i<files.length; i++) {
+        matcher = pattern.matcher(files[i]);
+        if (matcher.find()) {
+          String country = matcher.group(1);
+          String channelId = matcher.group(2);
+          channelSet.add(country+"_"+channelId);
+        }
       }
     }
     return channelSet.size();
@@ -89,13 +91,15 @@ public class ImportHandler {
 
   private int tryOneLevelDepth(File root) {
     File[] files = root.listFiles();
-    for (int i=0; i<files.length; i++) {
-      File f = files[i];
-      if (f.isDirectory()) {
-        int cnt = readContent(f);
-        if (cnt >0) {
-          mSrcDirectory = f;
-          return cnt;
+    if (files != null) {
+      for (int i=0; i<files.length; i++) {
+        File f = files[i];
+        if (f.isDirectory()) {
+          int cnt = readContent(f);
+          if (cnt >0) {
+            mSrcDirectory = f;
+            return cnt;
+          }
         }
       }
     }

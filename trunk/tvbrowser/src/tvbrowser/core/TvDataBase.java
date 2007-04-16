@@ -612,15 +612,17 @@ public class TvDataBase {
     };
 
     String fList[] = tvDataDir.list(filter);
-    for (int i = 0; i < fList.length; i++) {
-      if (fList[i].length() > 8) {
-        String dateStr = fList[i].substring(fList[i].length() - 8);
-        try {
-          int year = Integer.parseInt(dateStr.substring(0, 4));
-          int month = Integer.parseInt(dateStr.substring(4, 6));
-          int day = Integer.parseInt(dateStr.substring(6, 8));
-          mAvailableDateSet.add(new devplugin.Date(year, month, day));
-        } catch (NumberFormatException e) {}
+    if (fList != null) {
+      for (int i = 0; i < fList.length; i++) {
+        if (fList[i].length() > 8) {
+          String dateStr = fList[i].substring(fList[i].length() - 8);
+          try {
+            int year = Integer.parseInt(dateStr.substring(0, 4));
+            int month = Integer.parseInt(dateStr.substring(4, 6));
+            int day = Integer.parseInt(dateStr.substring(6, 8));
+            mAvailableDateSet.add(new devplugin.Date(year, month, day));
+          } catch (NumberFormatException e) {}
+        }
       }
     }
 

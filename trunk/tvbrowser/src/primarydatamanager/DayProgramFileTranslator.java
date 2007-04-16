@@ -68,21 +68,25 @@ public class DayProgramFileTranslator {
     
     // Delete the old translations
     File[] fileArr = destDir.listFiles();
-    for (int i = 0; i < fileArr.length; i++) {
-      if (fileArr[i].getName().endsWith(".prog.txt")) {
-        // This is an old translation -> delete it
-        if (! fileArr[i].delete()) {
-          throw new IOException("Can't delete old translation: "
-            + fileArr[i].getAbsolutePath());
-        } 
+    if (fileArr != null) {
+      for (int i = 0; i < fileArr.length; i++) {
+        if (fileArr[i].getName().endsWith(".prog.txt")) {
+          // This is an old translation -> delete it
+          if (! fileArr[i].delete()) {
+            throw new IOException("Can't delete old translation: "
+              + fileArr[i].getAbsolutePath());
+          } 
+        }
       }
     }
  
     // Go through all files and translate
     fileArr = srcDir.listFiles();
-    for (int i = 0; i < fileArr.length; i++) {
-      if (fileArr[i].getName().endsWith(".prog.gz")) {
-        translateDayProgram(fileArr[i],destDir);
+    if (fileArr != null) {
+      for (int i = 0; i < fileArr.length; i++) {
+        if (fileArr[i].getName().endsWith(".prog.gz")) {
+          translateDayProgram(fileArr[i],destDir);
+        }
       }
     }
   }

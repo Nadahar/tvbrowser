@@ -247,8 +247,10 @@ public class FilterList {
   public void store() {    
     /* delete all filters*/
     File[] fileList=getFilterFiles();
-    for (int i=0;i<fileList.length; i++) {
-      fileList[i].delete();
+    if (fileList != null) {
+      for (int i=0;i<fileList.length; i++) {
+        fileList[i].delete();
+      }
     }
     
     for (int i=0;i<mFilterArr.length;i++) {
