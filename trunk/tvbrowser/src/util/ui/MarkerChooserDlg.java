@@ -30,6 +30,8 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -112,9 +114,15 @@ public class MarkerChooserDlg extends JDialog implements WindowClosingIf {
     list.add(FavoritesPluginProxy.getInstance());
     list.add(ReminderPluginProxy.getInstance());
     
-    for(int i = 0; i < pluginAccess.length; i++)      
-      list.add(pluginAccess[i]);
-
+    for (PluginAccess plugin : pluginAccess) {
+      if (plugin.getMarkIcon() != null) {
+        list.add(plugin);
+      }
+    }
+    Collections.sort(list, new Comparator<Marker>() {
+      public int compare(Marker arg0, Marker arg1) {
+        return (arg0.toString().compareTo(arg1.toString()));
+      }});
 
     mPluginItemList = new SelectableItemList(mResultPluginArr, list.toArray());
 

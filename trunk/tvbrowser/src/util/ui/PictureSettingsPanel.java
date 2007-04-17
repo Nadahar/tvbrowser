@@ -102,10 +102,10 @@ public class PictureSettingsPanel extends JPanel implements Scrollable {
    * @param settings The current picture settings
    * @param showTitle Show the title in this panel.
    * @param addBorder If the panel should contains an empty border.
-   * @param additonalPanel A JPanel with additonal options.
+   * @param additionalPanel A JPanel with additional options.
    */
-  public PictureSettingsPanel(ProgramPanelSettings settings, boolean showTitle, boolean addBorder, JPanel additonalPanel) {
-    this(settings.getPictureShowingType(), settings.getPictureTimeRangeStart(), settings.getPictureTimeRangeEnd(), settings.isShowingPictureDescription(), showTitle, addBorder, settings.getDuration(), settings.getPluginIds(), additonalPanel);
+  public PictureSettingsPanel(ProgramPanelSettings settings, boolean showTitle, boolean addBorder, JPanel additionalPanel) {
+    this(settings.getPictureShowingType(), settings.getPictureTimeRangeStart(), settings.getPictureTimeRangeEnd(), settings.isShowingPictureDescription(), showTitle, addBorder, settings.getDuration(), settings.getPluginIds(), additionalPanel);
   }
   
   /**
