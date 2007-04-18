@@ -36,10 +36,12 @@ import java.io.ObjectOutputStream;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
 import tvbrowser.core.PluginLoader;
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.TvBrowserException;
 import util.ui.Localizer;
@@ -334,7 +336,21 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    */
   protected ActionMenu doGetButtonAction() {
     if (mPlugin != null) {
-      return mPlugin.getButtonAction();
+      ActionMenu actMenu = mPlugin.getButtonAction();
+      if (actMenu != null) {
+        Action action = actMenu.getAction();
+        if (action != null) {
+          if (action.getValue(Action.SMALL_ICON) == null) {
+            action.putValue(Action.SMALL_ICON, IconLoader.getInstance()
+                .getIconFromTheme("status", "dialog-warning", 16));
+          }
+          if (action.getValue(Plugin.BIG_ICON) == null) {
+            action.putValue(Plugin.BIG_ICON, IconLoader.getInstance()
+                .getIconFromTheme("status", "dialog-warning", 22));
+          }
+        }
+      }
+      return actMenu;
     }
     return null;
   }
