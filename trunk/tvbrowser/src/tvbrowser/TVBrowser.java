@@ -647,6 +647,11 @@ public class TVBrowser {
    * @param log If it should be written into the log.
    */
   public static synchronized void flushSettings(boolean log) {
+    // don't store settings if mainFrame is not available
+    // may happen during debugging sessions
+    if (mainFrame == null) {
+      return;
+    }
     if(log)
       mLog.info("Channel Settings (day light saving time corrections/icons)");
     ChannelList.storeAllSettings();
