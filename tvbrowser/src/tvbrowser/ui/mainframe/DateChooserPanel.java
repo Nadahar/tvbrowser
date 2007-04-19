@@ -40,19 +40,12 @@ public class DateChooserPanel extends JPanel {
     public static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(DateChooserPanel.class);
 
-  
-  private MainFrame mParent;
-  private FinderPanel mFinderPanel;
-  private JPanel mTimeBtnPanel;
-  
+ 
   public DateChooserPanel(MainFrame parent, FinderPanel finderPanel) {
     setOpaque(false);
-    mParent=parent;
     setLayout(new BorderLayout(0,7));
-    mFinderPanel = finderPanel;
     
-    add(mFinderPanel,BorderLayout.CENTER);
-    
+    add(finderPanel,BorderLayout.CENTER);
   }
   
   

@@ -49,6 +49,7 @@ import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 
 import tvbrowser.core.DateListener;
 import tvbrowser.core.TvDataBase;
@@ -112,6 +113,7 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
 
   public FinderPanel() {
 
+    setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     mModel = new DefaultListModel();
     mList = new JList(mModel);
     mList.setOpaque(false);

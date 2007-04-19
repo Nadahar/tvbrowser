@@ -67,7 +67,7 @@ class FinderItem extends JComponent implements ProgressMonitor {
       mLabel.setText(mLocalizer.msg("today","today"));
     }
     else {
-      mLabel.setText(date.toString());
+      mLabel.setText(date.getShortDayLongMonthString());
     }
    
     setLayout(new BorderLayout());

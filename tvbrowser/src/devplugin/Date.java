@@ -275,18 +275,42 @@ public class Date implements Comparable {
 
   }
 
+  /**
+   * return the textual representation of this date with abbreviated day of week
+   * and abbreviated month name
+   * 
+   * @return date string
+   */
   public String getDateString() {
     return String.valueOf(getValue());
   }
-
-  public String getLongDateString() {
+  
+  private String getFormattedString(String[] dayArray, String[] monthArray) {
     Calendar cal = getCalendar();
     int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK) - 1;
     int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
     int month = cal.get(Calendar.MONTH);
 
-    return mLocalizer.msg("datePattern", "{0}, {1} {2}", LONG_DAY_MSG_ARR[dayOfWeek], LONG_MONTH_MSG_ARR[month], Integer
+    return mLocalizer.msg("datePattern", "{0}, {1} {2}", dayArray[dayOfWeek], monthArray[month], Integer
         .toString(dayOfMonth));
+  }
+
+  /**
+   * return the textual representation of this date with full day of week
+   * and full month name (neither abbreviated)
+   * 
+   * @return date string
+   */
+  public String getLongDateString() {
+    return getFormattedString(LONG_DAY_MSG_ARR, LONG_MONTH_MSG_ARR);
+  }
+
+  /**
+   * returns the textual representation of this date with abbreviated day of week, but full month
+   * @return date as string
+   */
+  public String getShortDayLongMonthString() {
+    return getFormattedString(DAY_MSG_ARR, LONG_MONTH_MSG_ARR);
   }
 
   public long getValue() {
@@ -321,13 +345,7 @@ public class Date implements Comparable {
   }
 
   public String toString() {
-    Calendar cal = getCalendar();
-    int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK) - 1;
-    int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
-    int month = cal.get(Calendar.MONTH);
-
-    return mLocalizer.msg("datePattern", "{0}, {1} {2}", DAY_MSG_ARR[dayOfWeek], MONTH_MSG_ARR[month], Integer
-        .toString(dayOfMonth));
+    return getFormattedString(DAY_MSG_ARR, MONTH_MSG_ARR);
   }
 
   /**
