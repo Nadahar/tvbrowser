@@ -649,7 +649,7 @@ public class TVBrowser {
   public static synchronized void flushSettings(boolean log) {
     // don't store settings if mainFrame is not available
     // may happen during debugging sessions
-    if (mainFrame == null) {
+    if ((mainFrame == null) || (mainFrame.getWidth() == 0)) {
       return;
     }
     if(log)
