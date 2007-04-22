@@ -394,6 +394,10 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
       mGotoDateMenu.add(createDateMenuItem(curDate));
       curDate = curDate.addDays(1);
     }
+    // update enable state of "goto previous/next" menu items after data download 
+    if (! MainFrame.isStarting()) {
+      dateChanged(mMainFrame.getCurrentSelectedDate(), null, null);
+    }
   }
 
    public void updateFiltersMenu() {
