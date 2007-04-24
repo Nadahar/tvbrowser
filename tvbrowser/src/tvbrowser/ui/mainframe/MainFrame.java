@@ -322,7 +322,7 @@ public class MainFrame extends JFrame implements DateListener {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         
-        if(isUndecorated()) {
+        if(isFullScreenMode()) {
           setUndecorated(false);
           setBounds(mXPos, mYPos, mWidth, mHeight);
       
@@ -391,7 +391,7 @@ public class MainFrame extends JFrame implements DateListener {
             public void run() {
               setPriority(Thread.MIN_PRIORITY);          
               
-              while(isUndecorated()) {
+              while(isFullScreenMode()) {
                 final Point p = MouseInfo.getPointerInfo().getLocation();
                 
                 if(isActive()) {
@@ -407,10 +407,10 @@ public class MainFrame extends JFrame implements DateListener {
                   }
                   else if(p.y > (mMenuBar != null && mMenuBar.isVisible() ? mMenuBar.getHeight() : 0) + (Settings.propIsTooolbarVisible.getBoolean() ? mToolBarPanel.getHeight() : 0)) {
                     if(mMenuBar.isVisible())
-                      mMenuBar.setVisible(!isUndecorated());
+                      mMenuBar.setVisible(!isFullScreenMode());
                       
                     if(mToolBarPanel != null && mToolBarPanel.isVisible() && mToolBar.getToolbarLocation().compareTo(BorderLayout.NORTH) == 0)
-                      mToolBarPanel.setVisible(!isUndecorated());
+                      mToolBarPanel.setVisible(!isFullScreenMode());
                   }
                 
                   // mouse pointer is at the bottom
@@ -419,7 +419,7 @@ public class MainFrame extends JFrame implements DateListener {
                       mStatusBar.setVisible(Settings.propIsStatusbarVisible.getBoolean());
                   }
                   else if(mStatusBar != null && mStatusBar.isVisible() && p.y < screen.height - mStatusBar.getHeight())
-                    mStatusBar.setVisible(!isUndecorated());
+                    mStatusBar.setVisible(!isFullScreenMode());
                 
                   // mouse pointer is on the left side
                   if(p.x <= 5) {
@@ -440,12 +440,12 @@ public class MainFrame extends JFrame implements DateListener {
                     int toolBarWidth = (mToolBarPanel != null && mToolBarPanel.isVisible() && mToolBar.getToolbarLocation().compareTo(BorderLayout.WEST) == 0) ? mToolBarPanel.getWidth() : 0;
                   
                     if(p.x > toolBarWidth && toolBarWidth != 0)
-                      mToolBarPanel.setVisible(!isUndecorated());
+                      mToolBarPanel.setVisible(!isFullScreenMode());
                     
                     if(Settings.propShowPluginView.getBoolean() && mPluginView != null && mPluginView.isVisible() && p.x > mPluginView.getWidth() + toolBarWidth + 25) {
                       SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
-                          setShowPluginOverview(!isUndecorated(), false);
+                          setShowPluginOverview(!isFullScreenMode(), false);
                         }
                       });
                     }
@@ -476,13 +476,13 @@ public class MainFrame extends JFrame implements DateListener {
                       SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
                           if(mChannelChooser != null && mChannelChooser.isVisible() && p.x < screen.width - mChannelChooser.getWidth())
-                            setShowChannellist(!isUndecorated(), false);
+                            setShowChannellist(!isFullScreenMode(), false);
                           
                           if(mFinderPanel != null && mFinderPanel.isVisible() && p.x < screen.width - mFinderPanel.getWidth())
-                            setShowDatelist(!isUndecorated(), false);
+                            setShowDatelist(!isFullScreenMode(), false);
                           
                           if(mTimeChooserPanel != null && mTimeChooserPanel.isVisible() && p.x < screen.width - mTimeChooserPanel.getWidth())
-                            setShowTimeButtons(!isUndecorated(), false);
+                            setShowTimeButtons(!isFullScreenMode(), false);
                         }
                       });
                     }
@@ -572,6 +572,18 @@ public class MainFrame extends JFrame implements DateListener {
 
       public void actionPerformed(ActionEvent e) {
         goToPreviousDay();
+      }
+
+    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+    // return from fullscreen using ESCAPE
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0);
+    rootPane.registerKeyboardAction(new ActionListener() {
+
+      public void actionPerformed(ActionEvent e) {
+        if (isFullScreenMode()) {
+          switchFullscreenMode();
+        }
       }
 
     }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -720,7 +732,7 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   public void quit(boolean log) {
-    if(log && isUndecorated())
+    if(log && this.isUndecorated())
       switchFullscreenMode();
     if (mShuttingDown)
       return;
@@ -1601,5 +1613,13 @@ public class MainFrame extends JFrame implements DateListener {
 
   public StatusBar getStatusBar() {
     return mStatusBar;
+  }
+
+  /**
+   * get whether the mainframe is currently in full screen mode
+   * @return in full screen mode
+   */
+  public boolean isFullScreenMode() {
+    return isUndecorated();
   }
 }

@@ -27,8 +27,6 @@
 package tvbrowser.ui.settings;
 
 import java.awt.Component;
-import java.util.ArrayList;
-
 import javax.swing.Action;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
@@ -40,6 +38,7 @@ import javax.swing.JPanel;
 import tvbrowser.core.Settings;
 import tvbrowser.core.contextmenu.ConfigMenuItem;
 import tvbrowser.core.contextmenu.ContextMenuManager;
+import tvbrowser.core.contextmenu.LeaveFullScreenMenuItem;
 import tvbrowser.core.contextmenu.SeparatorMenuItem;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
@@ -104,7 +103,6 @@ public class MausSettingsTab implements devplugin.SettingsTab {
 
   private void fillListbox() {
     mFillingList = true;
-    ArrayList items = new ArrayList();
 
     mDoubleClickBox.removeAllItems();
     mMiddleClickBox.removeAllItems();
@@ -113,7 +111,7 @@ public class MausSettingsTab implements devplugin.SettingsTab {
     Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
     for (int i = 0; i < menuIfList.length; i++) {
       if (menuIfList[i] instanceof SeparatorMenuItem) {
-      } else if (menuIfList[i] instanceof ConfigMenuItem) {
+      } else if (menuIfList[i] instanceof ConfigMenuItem || menuIfList[i] instanceof LeaveFullScreenMenuItem) {
       } else {
         ActionMenu actionMenu = menuIfList[i].getContextMenuActions(exampleProgram);
         if (actionMenu != null) {

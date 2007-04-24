@@ -47,6 +47,7 @@ import javax.swing.event.ListSelectionListener;
 import tvbrowser.core.Settings;
 import tvbrowser.core.contextmenu.ConfigMenuItem;
 import tvbrowser.core.contextmenu.ContextMenuManager;
+import tvbrowser.core.contextmenu.LeaveFullScreenMenuItem;
 import tvbrowser.core.contextmenu.SeparatorMenuItem;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
@@ -192,7 +193,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     for (int i = 0; i < menuIfList.length; i++) {
       if (menuIfList[i] instanceof SeparatorMenuItem) {
         mList.addElement(menuIfList[i]);
-      } else if (menuIfList[i] instanceof ConfigMenuItem) {
+      } else if (menuIfList[i] instanceof ConfigMenuItem || menuIfList[i] instanceof LeaveFullScreenMenuItem) {
           mList.addElement(menuIfList[i]);
       } else {
         ActionMenu actionMenu = menuIfList[i].getContextMenuActions(exampleProgram);
@@ -273,6 +274,17 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
         mItemSelected.setSelected(!mDeactivatedItems.contains(value));
 
         mItemLabel.setIcon(IconLoader.getInstance().getIconFromTheme("categories", "preferences-desktop", 16));
+        mItemLabel.setText(value.toString());
+        mItemLabel.setForeground(label.getForeground());
+
+        mItemPanel.setBackground(label.getBackground());
+        mItemPanel.setOpaque(isSelected);
+        
+        return mItemPanel;
+      } else if (value instanceof LeaveFullScreenMenuItem) {
+        mItemSelected.setSelected(!mDeactivatedItems.contains(value));
+
+        mItemLabel.setIcon(null);
         mItemLabel.setText(value.toString());
         mItemLabel.setForeground(label.getForeground());
 

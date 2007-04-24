@@ -137,6 +137,8 @@ public class ContextMenuManager {
         return ReminderPluginProxy.getInstance();      
       else if(id.compareTo(ConfigMenuItem.CONFIG) == 0) 
         return ConfigMenuItem.getInstance();
+      else if(id.compareTo(LeaveFullScreenMenuItem.LEAVEFULLSCREEN) == 0) 
+        return LeaveFullScreenMenuItem.getInstance();
     }
     
     return null;
@@ -231,6 +233,11 @@ public class ContextMenuManager {
           ifList.add(ConfigMenuItem.getInstance());
           lastWasSeparator = false;
         }
+      } else if (order[i].compareTo(LeaveFullScreenMenuItem.LEAVEFULLSCREEN) == 0) {
+        if ((includingDisabledItems) || (!disabledList.contains(LeaveFullScreenMenuItem.getInstance()))) {
+          ifList.add(LeaveFullScreenMenuItem.getInstance());
+          lastWasSeparator = false;
+        }
       } else {
         ContextMenuIf item = getContextMenuIfForId(order[i]);
         if ((item != null) && (includingDisabledItems || !disabledList.contains(item))) {
@@ -247,6 +254,11 @@ public class ContextMenuManager {
         }
     }    
     
+    if (!ifList.contains(LeaveFullScreenMenuItem.getInstance())) {
+      if ((includingDisabledItems) || (!disabledList.contains(LeaveFullScreenMenuItem.getInstance()))) {
+        ifList.add(LeaveFullScreenMenuItem.getInstance());
+      }
+    }
     if (!ifList.contains(ConfigMenuItem.getInstance())) {
       if ((includingDisabledItems) || (!disabledList.contains(ConfigMenuItem.getInstance()))) {
         if (!lastWasSeparator)
@@ -307,6 +319,19 @@ public class ContextMenuManager {
           };
         });
         rootMenu.add(item);
+      } else if (menuIf instanceof LeaveFullScreenMenuItem) {
+        if (MainFrame.getInstance().isFullScreenMode()) {
+          JMenuItem item = new JMenuItem(menuIf.toString());
+          item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
+          item.addActionListener(new ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+              if (MainFrame.getInstance().isFullScreenMode()) {
+                MainFrame.getInstance().switchFullscreenMode();
+              }
+            };
+          });
+          rootMenu.add(item);
+        }
       } else if (!equalsPlugin) {
         ActionMenu actionMenu = menuIf.getContextMenuActions(program);
         if (actionMenu != null) {
