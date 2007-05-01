@@ -56,6 +56,7 @@ import devplugin.Program;
 
 import util.ui.Localizer;
 import util.ui.ProgramList;
+import util.ui.ProgramPanel;
 import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -115,7 +116,7 @@ public class ManagePanel {
     mMarkListsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     mMarkListsList.setCellRenderer(new MarkListCellRenderer());
     
-    mProgramsList = new ProgramList(mProgramListModel,SimpleMarkerPlugin.getInstance().getProgramPanelSettings());
+    mProgramsList = new ProgramList(mProgramListModel,SimpleMarkerPlugin.getInstance().getProgramPanelSettings(), ProgramPanel.X_AXIS);
     mProgramsList.addMouseListeners(null);    
 
     mMarkListsScrolPane = new JScrollPane(mMarkListsList);
