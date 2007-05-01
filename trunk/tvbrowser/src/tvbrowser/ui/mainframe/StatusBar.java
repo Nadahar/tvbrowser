@@ -52,8 +52,8 @@ public class StatusBar extends JPanel {
   public StatusBar() {
     setOpaque(false);
     setLayout(new BorderLayout(2, 0));
-    setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-    setPreferredSize(new Dimension(0, 20));
+    setBorder(BorderFactory.createEmptyBorder(2,0,0,0));
+    setPreferredSize(new Dimension(0, 18));
 
     mInfoLabel = new JLabel();
     mInfoLabel.setBorder(BorderFactory.createEtchedBorder());

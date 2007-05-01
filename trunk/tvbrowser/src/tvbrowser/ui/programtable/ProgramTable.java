@@ -561,6 +561,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
 
     // Walk to the program that starts before the specified time
     int lastCellHeight = 0;
+    int lastDuration = 0;
     int rowCount = mModel.getRowCount(col);
 	for (int row = 0; row < rowCount; row++) {
       ProgramPanel panel = mModel.getProgramPanel(col, row);
@@ -570,11 +571,11 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
       // Add 24 hours for every day different to the model's main date
       startTime += program.getDate().getNumberOfDaysSince(mainDate) * 24 * 60;
 
-      if (startTime > minutesAfterMidnight) {
+      if (startTime > minutesAfterMidnight || row == rowCount-1) {
         // It was the last program
-        if(lastCellHeight != 0)
+        if(lastCellHeight != 0 && lastDuration > 0 && lastDuration < 360)
           timeY += lastCellHeight / 2; // Hit the center of the program
-        else // If the lastCellHeight is zero, exclude thes column from the calculation
+        else // If the lastCellHeight is zero or the program duration doesn't make sense, exclude thes column from the calculation
           timeY = -1;
         return timeY;
       } else {
@@ -583,6 +584,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
 
       // Remember the cell height
       lastCellHeight = panel.getHeight();
+      lastDuration = program.getLength();
     }
 
     return -1;

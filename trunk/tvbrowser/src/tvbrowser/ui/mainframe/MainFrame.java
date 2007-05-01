@@ -229,7 +229,7 @@ public class MainFrame extends JFrame implements DateListener {
 
     JPanel centerPanel = new JPanel(new BorderLayout());
     centerPanel.setOpaque(false);
-    centerPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    centerPanel.setBorder(BorderFactory.createEmptyBorder());
 
     mFilterPanel = new FilterPanel();
     mFilterPanel.setVisible(false);
@@ -613,9 +613,7 @@ public class MainFrame extends JFrame implements DateListener {
         mToolBarPanel = new JPanel(new BorderLayout()) {
           public void updateUI() {
             super.updateUI();
-            setBorder(BorderFactory.createBevelBorder(0, getBackground()
-                .brighter(), getBackground(), getBackground().darker(),
-                getBackground()));
+            setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, getBackground().darker()));
           }
         };
         addContextMenuMouseListener(mToolBarPanel);

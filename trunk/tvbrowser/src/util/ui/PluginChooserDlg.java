@@ -59,7 +59,6 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
 import devplugin.Plugin;
-import devplugin.PluginAccess;
 import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
 
@@ -144,8 +143,8 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
     UiUtilities.registerForClosing(this);
     
     if (pluginArr == null) {
-      mPluginArr = new PluginAccess[]{};
-      mResultPluginArr = new PluginAccess[]{};
+      mPluginArr = new ProgramReceiveIf[]{};
+      mResultPluginArr = new ProgramReceiveIf[]{};
       mReceiveTargetTable = new Hashtable<ProgramReceiveIf,ProgramReceiveTarget>();
     }
     else {
@@ -268,9 +267,9 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
       public void actionPerformed(ActionEvent event) {
         mOkWasPressed = true;
         Object[] o = mPluginItemList.getSelection();
-        mResultPluginArr = new PluginAccess[o.length];
+        mResultPluginArr = new ProgramReceiveIf[o.length];
         for (int i=0;i<o.length;i++) {
-          mResultPluginArr[i]=(PluginAccess)o[i];
+          mResultPluginArr[i]=(ProgramReceiveIf)o[i];
         }
         setVisible(false);
       }
