@@ -94,19 +94,22 @@ public class ClipboardPlugin extends Plugin {
     if(mConfigs.length > 1) {
       ContextMenuAction copyToSystem = new ContextMenuAction(mLocalizer.msg("copyToSystem", "Copy to System-Clipboard")+ "...");
       
-      ArrayList<AbstractAction>list = new ArrayList<AbstractAction>();
+      ArrayList<AbstractAction> list = new ArrayList<AbstractAction>();
     
-      for(int i = 0; i < mConfigs.length; i++) {
+      for (int i = 0; i < mConfigs.length; i++) {
         final AbstractPluginProgramFormating config = mConfigs[i];
-        if(config != null && config.isValid())
-          list.add(new AbstractAction(config.getName()) {
+        if (config != null && config.isValid()) {
+          final Program[] programs = { program };
+          AbstractAction copyAction = new AbstractAction(config.getName()) {
             public void actionPerformed(ActionEvent e) {
-          
-              Program[] list = { program };
-              copyProgramsToSystem(list,config);
+              copyProgramsToSystem(programs, config);
             }
-          });
+          };
+          String text = getTextForConfig(programs, config);
+          copyAction.setEnabled(text == null || !text.equalsIgnoreCase(""));
+          list.add(copyAction);
         }
+      }
     
       copyToSystem.putValue(Action.SMALL_ICON, img);
 
@@ -196,6 +199,27 @@ public class ClipboardPlugin extends Plugin {
     return new ClipboardSettingsTab(this);
   }
 
+  public String getTextForConfig(Program[] programs, AbstractPluginProgramFormating config) {
+    String param = config.getContentValue();//mSettings.getProperty("ParamToUse", DEFAULT_PARAM);
+
+    StringBuffer buffer = new StringBuffer();
+    ParamParser parser = new ParamParser();
+
+    int i = 0;
+
+    while (!parser.hasErrors() && (i < programs.length)) {
+      String prgResult = parser.analyse(param, programs[i]);
+      buffer.append(prgResult);
+      i++;
+    }
+
+    if (parser.hasErrors()) {
+      return null;
+    } else {
+      return buffer.toString();
+    }
+  }
+  
   /**
    * Copy Programs to System-Clipboard
    * 
