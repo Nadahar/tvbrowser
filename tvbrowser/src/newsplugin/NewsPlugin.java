@@ -140,7 +140,7 @@ public class NewsPlugin extends Plugin {
     String author = "Til Schneider, www.murfman.de";
     String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/News");
     
-    return new PluginInfo(name, desc, author, helpUrl, new Version(1, 5));
+    return new PluginInfo(name, desc, author, helpUrl, new Version(1, 6));
   }
 
   /**
@@ -151,27 +151,16 @@ public class NewsPlugin extends Plugin {
     if (hasRightToDownload && mNoConnectionTime < currentTime) {
       int serverWaitDays = -1;
       try {
-        Date lastNews;
+        long lastNews;
         if (mNewsList.isEmpty()) {
           // We have no news
-          lastNews = new Date(currentTime
-              - FIRST_NEWS_DAYS * 24L * 60L * 60L * 1000L);
+          lastNews = mLastNewsFileModified;
         } else {
           News last = mNewsList.get(mNewsList.size() - 1);
-          lastNews = last.getTime();
+          lastNews = last.getTime().getTime();
         }
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(lastNews);
 
-        // Create a String out of the date. Format, e.g.: "2004-09-17%2000:00"
-        String asString = fill(cal.get(Calendar.YEAR), 4) + "-"
-            + fill(cal.get(Calendar.MONTH) + 1, 2) + "-"
-            + fill(cal.get(Calendar.DAY_OF_MONTH), 2) + "%20"
-            + fill(cal.get(Calendar.HOUR_OF_DAY), 2) + ":"
-            + fill(cal.get(Calendar.MINUTE), 2) + ":"
-            + fill(cal.get(Calendar.SECOND), 2);
-
-        URL url = new URL(NEWS_URL + "?lastNews=" + asString);
+        URL url = new URL(NEWS_URL);
         URLConnection conn = url.openConnection();
         long lastModified = conn.getLastModified();
         
@@ -184,17 +173,23 @@ public class NewsPlugin extends Plugin {
             // There are new news
             final News[] newsArr = parseNews(news);
             
-            if(Math.abs(newsArr[0].getTime().getTime() - lastNews.getTime()) > 5000) {
-              // Add the new news
-              for (int i = 0; i < newsArr.length; i++) {
+            int addCount = 0;
+            
+            // Add the new news
+            for (int i = 0; i < newsArr.length; i++) {
+              if((newsArr[i].getTime().getTime() - lastNews) > 5000) {
                 mNewsList.add(newsArr[i]);
+                addCount++;
               }
-  
+            }
+            
+            if(addCount > 0) {
               // Show the dialog
+              final int newNewsCount = addCount; 
               SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                   NewsDialog dlg = new NewsDialog(getParentFrame(), mNewsList,
-                      newsArr.length);
+                      newNewsCount);
                   dlg.centerAndShow();
                 }
               });

@@ -27,7 +27,10 @@
 package util.ui.view;
 
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JSplitPane;
 
 import util.settings.Property;
@@ -36,28 +39,47 @@ import util.settings.Property;
 public class SplitView extends AbstractView {
 
   private Component mComponent;
-  private int mAbsoluteDividerLocation;
-
-
   public SplitView() {
   }
 
   public void setComponents(Component[] components) {
 
     if (components.length == 1) {
-      mComponent = components[0];
-    }
-    else if (components.length == 2) {
-      JSplitPane splitPane = new JSplitPane();
-      splitPane.setContinuousLayout(true);
-      splitPane.setOneTouchExpandable(true);
-      splitPane.setLeftComponent(components[0]);
-      splitPane.setRightComponent(components[1]);
-      mComponent = splitPane;
-    }
-    else {
-      throw new IllegalArgumentException("invalid number of components: "+components.length);
-    }
+			mComponent = components[0];
+		} else if (components.length == 2) {
+			final JSplitPane splitPane = new JSplitPane();
+			splitPane.setContinuousLayout(true);
+			splitPane.setOneTouchExpandable(true);
+			splitPane.setLeftComponent(components[0]);
+			splitPane.setRightComponent(components[1]);
+      splitPane.setBorder(BorderFactory.createEmptyBorder());
+			splitPane.addPropertyChangeListener("dividerLocation",
+					new PropertyChangeListener() {
+						public void propertyChange(PropertyChangeEvent evt) {
+							int oldValue = ((Integer) evt.getOldValue()).intValue();
+							int dividerLocation = ((Integer) evt.getNewValue()).intValue();
+							SplitViewProperty prop = (SplitViewProperty) getProperty();
+							int fixedWidth;
+							if (prop.getLeftComponentFixed()) {
+								fixedWidth = dividerLocation;
+							} else {
+								int width = mComponent.getWidth();
+								int height = mComponent.getHeight();
+								fixedWidth = (prop.getVerticalSplit() ? height : width)
+										- dividerLocation;
+							}
+							if ((oldValue >= 0) && (fixedWidth >= 0)
+									&& (prop.getFixedComponentWidth() != fixedWidth)) {
+								prop.setFixedComponentWidth(fixedWidth);
+								update();
+							}
+						}
+					});
+			mComponent = splitPane;
+		} else {
+			throw new IllegalArgumentException("invalid number of components: "
+					+ components.length);
+		}
   }
 
   public void update() {
@@ -83,13 +105,13 @@ public class SplitView extends AbstractView {
       splitPane.setOrientation(prop.getVerticalSplit()?JSplitPane.VERTICAL_SPLIT:JSplitPane.HORIZONTAL_SPLIT);
 
       int abs = prop.getFixedComponentWidth();
-      int width = mComponent.getWidth();
-      int height = mComponent.getHeight();
 
       if (prop.getLeftComponentFixed()) {
         splitPane.setDividerLocation(abs);
       }
       else {
+        int width = mComponent.getWidth();
+        int height = mComponent.getHeight();
         int dividerLocation = (prop.getVerticalSplit()?height:width) - abs;
         splitPane.setDividerLocation(dividerLocation);
       }

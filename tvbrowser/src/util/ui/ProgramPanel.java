@@ -498,7 +498,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
       setPreferredSize(new Dimension(WIDTH, mHeight));
 
       // Calculate the preferred height
-      mPreferredHeight = titleHeight + (maxDescLines * mNormalFont.getSize()) + mPictureAreaIcon.getIconHeight() + (Settings.propProgramPanelUsesExtraSpaceForMarkIcons.getBoolean() ? 16 : 0) + V_GAP;
+      mPreferredHeight = titleHeight + (maxDescLines * mNormalFont.getSize()) + mPictureAreaIcon.getIconHeight() + (Settings.propProgramPanelUsesExtraSpaceForMarkIcons.getBoolean() && program.getMarkerArr().length > 0 ? 16 : 0) + V_GAP;
             
       if (mHeight < mPreferredHeight) {
         mPreferredHeight = mHeight;

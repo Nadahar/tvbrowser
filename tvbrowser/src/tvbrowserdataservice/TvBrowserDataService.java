@@ -311,6 +311,10 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     Date deadlineDay = new Date().addDays(- 3);
 
     File[] fileArr = mDataDir.listFiles();
+    if (fileArr == null) {
+      mLog.warning("Cannot read data dir for file deletion: " + mDataDir);
+      return;
+    }
     for (int i = 0; i < fileArr.length; i++) {
       String fileName = fileArr[i].getName();
       if (fileName.endsWith(".prog.gz")) {

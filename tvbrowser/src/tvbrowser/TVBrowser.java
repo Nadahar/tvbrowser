@@ -404,11 +404,12 @@ public class TVBrowser {
                     JOptionPane pane = new JOptionPane();
                     
                     String cancel = mLocalizer.msg("registryCancel","Close TV-Browser");
+                    String dontDoIt = mLocalizer.msg("registryJumpOver","Not this time");
                     
-                    pane.setOptions(new String[] {Localizer.getLocalization(Localizer.I18N_OK),cancel});
-                    pane.setOptionType(JOptionPane.YES_NO_OPTION);
+                    pane.setOptions(new String[] {Localizer.getLocalization(Localizer.I18N_OK),dontDoIt,cancel});
+                    pane.setOptionType(JOptionPane.YES_NO_CANCEL_OPTION);
                     pane.setMessageType(JOptionPane.WARNING_MESSAGE);
-                    pane.setMessage(mLocalizer.msg("registryWarning","The fast shutdown of Windows is activated.\nThe timeout to wait for before Windows is closing an application is too shot,\nto let TV-Browser enough time to save all settings.\n\nThe setting hasn't the default value. It was changed by a tool or by you.\nTV-Browser will now try to change the timeout."));
+                    pane.setMessage(mLocalizer.msg("registryWarning","The fast shutdown of Windows is activated.\nThe timeout to wait for before Windows is closing an application is too short,\nto give TV-Browser enough time to save all settings.\n\nThe setting hasn't the default value. It was changed by a tool or by you.\nTV-Browser will now try to change the timeout.\n\nIf you don't want to change this timeout select 'Not this time' or 'Close TV-Browser'."));
                     
                     pane.setInitialValue(mLocalizer.msg("registryCancel","Close TV-Browser"));
                     
@@ -419,7 +420,7 @@ public class TVBrowser {
                     if(pane.getValue() == null || pane.getValue().equals(cancel)) {
                       mainFrame.quit();
                     }
-                    else {
+                    else if(!pane.getValue().equals(dontDoIt)) {
                       try {
                         killWait.setData("5000");
                         desktopSettings.setValue(killWait);
