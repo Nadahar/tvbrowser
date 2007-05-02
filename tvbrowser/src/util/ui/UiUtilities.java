@@ -375,8 +375,6 @@ public class UiUtilities {
     // get the selection
     int[] selection = fromList.getSelectedIndices();
 
-
-
     if (selection.length == 0) {
       return new Object[]{};
     }
@@ -394,10 +392,21 @@ public class UiUtilities {
       targetPos++;
     }
     
+    // suppress updates on both lists
+    if (selection.length >= 5) {
+      fromList.setModel(new DefaultListModel());
+      toList.setModel(new DefaultListModel());
+    }
+
     // move the elements
     for (int i = selection.length - 1; i >= 0; i--) {
       Object value = fromModel.remove(selection[i]);
       toModel.add(targetPos, value);
+    }
+    
+    if (selection.length >= 5) {
+      fromList.setModel(fromModel);
+      toList.setModel(toModel);
     }
     
     // change selection of the fromList
@@ -407,6 +416,13 @@ public class UiUtilities {
         newSelection = fromModel.getSize() - 1;
       }
       fromList.setSelectedIndex(newSelection);
+    }
+    
+    if (selection.length >= 5) {
+      fromList.repaint();
+      fromList.revalidate();
+      toList.repaint();
+      toList.revalidate();
     }
 
     // change selection of the toList
