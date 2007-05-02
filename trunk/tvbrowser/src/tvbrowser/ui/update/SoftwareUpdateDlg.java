@@ -38,6 +38,7 @@ import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
@@ -54,10 +55,10 @@ import javax.swing.event.ListSelectionListener;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 
-import devplugin.PluginAccess;
+import devplugin.Version;
 
 import tvbrowser.core.Settings;
-import tvbrowser.core.plugin.PluginManagerImpl;
+import tvbrowser.core.icontheme.IconLoader;
 import util.browserlauncher.Launch;
 import util.exc.TvBrowserException;
 import util.ui.Localizer;
@@ -166,7 +167,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       StringBuffer content = new StringBuffer();
       String author = item.getProperty("author");
       String website = item.getWebsite();
-      devplugin.Version version = item.getVersion();
+      Version version = item.getVersion();
 
       content.append(
           "<html><head>" + "<style type=\"text/css\" media=\"screen\"><!--" + "body { font-family: Dialog; }"
@@ -183,12 +184,10 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         content.append("<tr><th>").append(mLocalizer.msg("version", "Available version")).append("</th><td>").append(version)
             .append("</td></tr>");
       }
-      for (PluginAccess plugin : PluginManagerImpl.getInstance().getActivatedPlugins()) {
-        if (plugin.getInfo().getName().equalsIgnoreCase(item.getName())) {
-          content.append("<tr><th>").append(mLocalizer.msg("installed", "Installed version")).append("</th><td>").append(plugin.getInfo().getVersion())
+      Version installedVersion = item.getInstalledVersion(); 
+      if (installedVersion != null) {
+        content.append("<tr><th>").append(mLocalizer.msg("installed", "Installed version")).append("</th><td>").append(installedVersion)
           .append("</td></tr>");
-          break;
-        }
       } 
       if (website != null) {
         content.append("<tr><th>").append(mLocalizer.msg("website", "Website")).append("</th><td><a href=\"").append(
@@ -245,6 +244,8 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
   }
 
   class SoftwareUpdateItemRenderer extends DefaultListCellRenderer {
+    
+    private ImageIcon newVersionIcon = IconLoader.getInstance().getIconFromTheme("emblems", "emblem-important", 16);
 
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
         boolean cellHasFocus) {
@@ -254,9 +255,12 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       if (value instanceof SoftwareUpdateItem) {
         SoftwareUpdateItem item = (SoftwareUpdateItem) value;
         label.setText(item.getName());
+        Version installedVersion = item.getInstalledVersion(); 
+        if ((installedVersion != null) && (installedVersion.compareTo(item.getVersion()) < 0)) { 
+          label.setIcon(newVersionIcon);
+        }
       }
       return label;
-
     }
 
   }
@@ -267,5 +271,4 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
     setVisible(false);
   }
-
 }

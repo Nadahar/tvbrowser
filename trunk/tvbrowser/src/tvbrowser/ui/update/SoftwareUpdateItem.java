@@ -29,7 +29,9 @@ package tvbrowser.ui.update;
 import java.util.HashMap;
 import java.util.Locale;
 
+import tvbrowser.core.plugin.PluginProxyManager;
 import util.exc.TvBrowserException;
+import devplugin.PluginAccess;
 import devplugin.Version;
 
 public abstract class SoftwareUpdateItem {
@@ -152,5 +154,12 @@ public abstract class SoftwareUpdateItem {
     
   protected abstract boolean download(String url) throws TvBrowserException;
 	
-	
+	public Version getInstalledVersion() {
+    for (PluginAccess plugin : PluginProxyManager.getInstance().getAllPlugins()) {
+      if (plugin.getInfo().getName().equalsIgnoreCase(getName()) || plugin.getId().endsWith(getClassName())) {
+        return plugin.getInfo().getVersion();
+      }
+    }
+    return null;
+  }
 }
