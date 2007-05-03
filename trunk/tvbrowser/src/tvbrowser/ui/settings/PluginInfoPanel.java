@@ -51,7 +51,6 @@ class PluginInfoPanel extends JPanel {
    private JLabel mAuthorLabel;
    private JLabel mDescriptionLabel;
    private boolean mShowSettingsSeparator;
-   private LinkButton mWikiLink;
    private int mYCount = 3;
 
    /**
@@ -72,7 +71,7 @@ class PluginInfoPanel extends JPanel {
    public PluginInfoPanel(devplugin.PluginInfo info, boolean showSettingsSeparator) {
      mShowSettingsSeparator = showSettingsSeparator;
      setLayout(new FormLayout("5dlu,pref,10dlu,default:grow,5dlu",
-         "pref,5dlu,top:pref,top:pref,top:pref,top:pref,"+ (info != null && info.getHelpUrl() != null ? "top:pref," : "") +"10dlu,pref"));
+         "pref,5dlu,top:pref,top:pref,top:pref,top:pref,10dlu,pref"));
      CellConstraints cc = new CellConstraints();
      
      add(new PluginLabel(mLocalizer.msg("name", "Name")), cc.xy(2,mYCount));
@@ -91,13 +90,7 @@ class PluginInfoPanel extends JPanel {
      add(mDescriptionLabel=new JLabel(), cc.xy(4,mYCount++));
      mDescriptionLabel.setFont(PLAIN);
      
-     if(info != null) {
-       if(info.getHelpUrl() != null) {
-         add(new PluginLabel(mLocalizer.msg("pluginHelp", "Online help")), cc.xy(2,mYCount));
-         add(mWikiLink = new LinkButton("-"), cc.xy(4,mYCount++));
-         mWikiLink.setHorizontalAlignment(LinkButton.LEFT);
-       }
-       
+     if(info != null) {       
        setPluginInfo(info);
      }
    }
@@ -123,15 +116,8 @@ class PluginInfoPanel extends JPanel {
        mVersionLabel.setText("<html>" + info.getVersion().toString() + "</html>");
      
      mAuthorLabel.setText("<html>" + info.getAuthor() + "</html>");
-     mDescriptionLabel.setText("<html>" + info.getDescription() + "</html>");
-     
-     if(mWikiLink != null) {
-       mWikiLink.setText(info.getName());     
-       mWikiLink.setUrl(info.getHelpUrl());
-       mWikiLink.setToolTipText(info.getHelpUrl());
-     }
+     mDescriptionLabel.setText("<html>" + info.getDescription() + "</html>");     
    }
-   
    
    class PluginLabel extends JLabel {
      public PluginLabel(String name) {
