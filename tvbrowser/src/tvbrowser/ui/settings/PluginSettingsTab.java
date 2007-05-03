@@ -262,15 +262,19 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
     menu.add(deleteMI);
     
     //help
-    if(plugin.getInfo().getHelpUrl() != null) {
       JMenuItem helpMI = new JMenuItem(mLocalizer.msg("pluginHelp","Online help"), IconLoader.getInstance().getIconFromTheme("apps", "help-browser", 16));
       helpMI.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
-          Launch.openURL(plugin.getInfo().getHelpUrl());
+          String url = plugin.getInfo().getHelpUrl();
+          
+          if(url == null) {
+            url = "http://www.tvbrowser.org/showHelpFor.php?id=" + plugin.getId() + "&lang=" + System.getProperty("user.language");
+          }
+          
+          Launch.openURL(url);
         }
       });
       menu.add(helpMI);
-    }
     
     menu.addSeparator();
 

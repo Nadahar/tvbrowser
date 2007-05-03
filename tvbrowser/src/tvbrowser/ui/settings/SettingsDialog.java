@@ -78,6 +78,7 @@ import tvbrowser.extras.programinfo.ProgramInfoPicturesSettingsTab;
 import tvbrowser.extras.reminderplugin.ReminderMarkingsSettingsTab;
 import tvbrowser.extras.reminderplugin.ReminderPicturesSettingsTab;
 import tvbrowser.extras.reminderplugin.ReminderSettingsTab;
+import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
 import util.ui.Localizer;
 import tvbrowser.extras.searchplugin.SearchPictureSettingsTab;
@@ -91,6 +92,7 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import devplugin.PluginAccess;
 import devplugin.SettingsItem;
 import devplugin.SettingsTab;
 
@@ -122,6 +124,8 @@ public class SettingsDialog implements WindowClosingIf {
 
   /** Instance of the SettingsDialog */
   private static SettingsDialog mInstance;
+  
+  private JButton mHelpBt;
   
   /**
    * Creates a new instance of SettingsDialog.
@@ -171,8 +175,16 @@ public class SettingsDialog implements WindowClosingIf {
     splitPane.setRightComponent(mSettingsPn);
 
     ButtonBarBuilder builder = new ButtonBarBuilder();
-    builder.addGlue();
 
+    mHelpBt = new JButton(mLocalizer.msg("help","Online help"));
+    mHelpBt.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        Launch.openURL(mHelpBt.getToolTipText());
+      }
+    });
+
+    builder.addGridded(mHelpBt);
+    
     JButton okBt = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     okBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -200,8 +212,8 @@ public class SettingsDialog implements WindowClosingIf {
       }
     });
 
+    builder.addGlue();
     builder.addGriddedButtons(new JButton[] { okBt, cancelBt, applyBt });
-
     main.add(builder.getPanel(), cc.xy(1, 3));
 
     mDialog.pack();
@@ -452,8 +464,24 @@ public class SettingsDialog implements WindowClosingIf {
 
   private void showSettingsPanelForNode(SettingNode node) {
     JPanel pn = node.getSettingsPanel();
-    if (pn != null) {
+    
+    if (pn != null) {    
+      String help = node.getHelpUrl();
+      
+      if(help != null) {
+        mHelpBt.setToolTipText(help);
+        mHelpBt.setEnabled(true);
+      }
+      else {
+        mHelpBt.setToolTipText(mLocalizer.msg("noHelp", "No help available"));
+        mHelpBt.setEnabled(false);
+      }
+      
       mSettingsPn.add(pn);
+    }
+    else {
+      mHelpBt.setToolTipText(mLocalizer.msg("noHelp", "No help available"));
+      mHelpBt.setEnabled(false);
     }
   }
 
@@ -475,7 +503,7 @@ public class SettingsDialog implements WindowClosingIf {
     private String mTitle;
 
     private Icon mIcon;
-
+    
     public DefaultSettingsTab(String title, Icon icon) {
       mTitle = title;
       mIcon = icon;
@@ -522,11 +550,18 @@ public class SettingsDialog implements WindowClosingIf {
     private SettingsTab mSettingsTab;
 
     private String mId;
+    
+    private String mHelpUrl;
 
-    public SettingNode(Icon icon, String title, String id) {
+    public SettingNode(Icon icon, String title, String id, String helpUrl) {
       super(title);
       mIcon = icon;
       mId = id;
+      mHelpUrl = helpUrl;
+    }
+    
+    public SettingNode(Icon icon, String title, String id) {
+      this(icon,title,id,null);
     }
 
     public SettingsTab getSettingsTab() {
@@ -585,6 +620,22 @@ public class SettingsDialog implements WindowClosingIf {
 
     public Icon getIcon() {
       return mIcon;
+    }
+    
+    public String getHelpUrl() {
+      String url = mHelpUrl;
+      
+      if(mSettingsTab instanceof ConfigPluginSettingsTab) {
+        PluginAccess plugin = PluginProxyManager.getInstance().getPluginForId(mId);
+        
+        url = plugin.getInfo().getHelpUrl();
+        
+        if(url == null) {
+          url = "http://www.tvbrowser.org/showHelpFor.php?id=" + plugin.getId() + "&lang=" + System.getProperty("user.language");
+        }
+      }
+      
+      return url;
     }
 
   } // class SettingNode
