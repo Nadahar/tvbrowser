@@ -67,6 +67,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
   private JComboBox mComboBox;
   private TvDataServiceCheckBox[] mDataServiceCbArr;
   private TvDataServiceProxy[] mSelectedTvDataServiceArr;
+  private JCheckBox mCheckBox; 
 
   public UpdateDlg(JFrame parent, boolean modal) {
     super(parent, modal);
@@ -114,7 +115,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
       dataServicePanel.setLayout(new BoxLayout(dataServicePanel,
           BoxLayout.Y_AXIS));
       dataServicePanel.setBorder(BorderFactory.createTitledBorder(mLocalizer
-          .msg("useDataSources", "Use this data sources:")));
+          .msg("useDataSources", "Use these data sources:")));
       mDataServiceCbArr = new TvDataServiceCheckBox[serviceArr.length];
 
       String[] checkedServiceNames = Settings.propDataServicesForUpdate
@@ -134,6 +135,18 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
     int period = Settings.propDownloadPeriod.getInt();
     PeriodItem pi = new PeriodItem(period);
     mComboBox.setSelectedItem(pi);
+    
+    if (Settings.propAutoDownloadType.getString().equals("never")) {
+      JPanel p = new JPanel(new BorderLayout());
+      p.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
+      northPanel.add(p);
+      p = new JPanel(new BorderLayout());
+      p.setBorder(BorderFactory.createTitledBorder(mLocalizer
+          .msg("autoUpdateTitle", "Automatic update")));
+      mCheckBox = new JCheckBox(mLocalizer.msg("autoUpdateMessage", "Update data on TV-Browser startup"));
+      p.add(mCheckBox, BorderLayout.CENTER);
+      northPanel.add(p);
+    }
 
     contentPane.add(northPanel, BorderLayout.NORTH);
   }
@@ -210,6 +223,12 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
       }
       Settings.propDataServicesForUpdate.setStringArray(dataServiceArr);
       
+      if (mCheckBox != null) {
+        if (mCheckBox.isSelected()) {
+          Settings.propAutoDownloadType.setString("daily");
+          Settings.propAutoDownloadPeriod.setInt(mResult);
+        } 
+      }
       setVisible(false);
     }
   }
