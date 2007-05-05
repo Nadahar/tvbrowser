@@ -72,11 +72,12 @@ public class TextComponentFindAction extends FindAction implements
   private void ini() {
     PanelBuilder b = new PanelBuilder(new FormLayout(
         "2dlu,pref,5dlu,pref,5dlu,100dlu,5dlu,pref,5dlu,pref,15dlu,pref",
-        "pref"));
+        "pref,3dlu"));
     CellConstraints cc = new CellConstraints();
 
     mSearchBar = b.getPanel();
     mSearchBar.addComponentListener(this);
+    mSearchBar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, mSearchBar.getBackground().darker()));
 
     mSearchCloseBtn = new JButton(IconLoader.getInstance()
         .getIconFromTheme("actions", "process-stop", 16));
