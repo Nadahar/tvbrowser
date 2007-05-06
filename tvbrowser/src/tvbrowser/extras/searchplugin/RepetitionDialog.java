@@ -51,6 +51,7 @@ import util.ui.SearchHelper;
 import util.ui.Localizer;
 import tvbrowser.core.ChannelList;
 import devplugin.PluginManager;
+import devplugin.Channel;
 
 /**
  * A dialog specifically for repetitions. It only shows a simple Input-Form and
@@ -183,7 +184,9 @@ public class RepetitionDialog extends JDialog implements WindowClosingIf {
     settings.setSearcherType(PluginManager.SEARCHER_TYPE_KEYWORD);
     settings.setCaseSensitive(false);
 
-    // ToDo: Use Channel-Settings !!
+    if (mChannelChooser.getSelectedIndex() > 0) {
+      settings.setChannels(new Channel[] {(Channel) mChannelChooser.getSelectedItem()});
+    }
 
     SearchHelper.search(getParent(), settings, SearchPlugin.getInstance().getProgramPanelSettings());
   }

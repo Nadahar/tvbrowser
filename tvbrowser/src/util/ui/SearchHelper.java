@@ -116,7 +116,7 @@ public class SearchHelper {
             progressMonitor.setMessage(mLocalizer.msg("searching","Searching"));
           };
           Program[] programArr = searcher.search(searcherSettings.getFieldTypes(), startDate, searcherSettings
-              .getNrDays(), null, true, progressMonitor);
+              .getNrDays(), searcherSettings.getChannels(), true, progressMonitor);
 
           comp.setCursor(cursor);
           if (programArr.length == 0) {

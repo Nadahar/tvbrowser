@@ -29,6 +29,7 @@ import devplugin.Plugin;
 import devplugin.PluginManager;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramSearcher;
+import devplugin.Channel;
 import tvbrowser.core.search.regexsearch.RegexSearcher;
 import util.exc.TvBrowserException;
 
@@ -91,7 +92,8 @@ public class SearchFormSettings {
   private boolean mCaseSensitive;
   /** Specifies how many days to search. */
   private int mNrDays;
-
+  /** Search in this channels */
+  private Channel[] mChannels = null;
 
   /**
    * Creates a new SearchFormSettings instance.
@@ -400,4 +402,20 @@ public class SearchFormSettings {
   public void setNrDays(int nr) {
       mNrDays = nr;
   }
+
+  /**
+   * Get the Channels to search on
+   *
+   * This returns null when all channels should be searched
+   *
+   * @return channels to search on
+   */
+  public Channel[] getChannels() {
+    return mChannels;
+  }
+
+  public void setChannels(Channel[] channel) {
+    mChannels = channel;
+  }
+
 }
