@@ -27,7 +27,6 @@
 package tvbrowser.ui.configassistant;
 
 import java.awt.BorderLayout;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -81,9 +80,6 @@ class NetworkCardPanel extends AbstractCardPanel {
     CellConstraints cc = new CellConstraints();
     
     content.add(UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("preambel", "Preambel")), cc.xy(2,2));
-    JLabel proxy = new JLabel("Proxy:");
-    proxy.setFont(proxy.getFont().deriveFont(Font.BOLD));
-    content.add(proxy, cc.xy(2,4));
     
     mProxyCB = new JCheckBox(mLocalizer.msg("usingProxy", "Using Proxy"));
     mProxyCB.setSelected(Settings.propHttpProxyUseProxy.getBoolean());
@@ -186,8 +182,6 @@ class NetworkCardPanel extends AbstractCardPanel {
           Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);
       return false;
     }
-    
-
     return true;
   }
   
