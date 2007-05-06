@@ -217,14 +217,14 @@ public class SearchPlugin {
     action.setSmallIcon(IconLoader.getInstance().getIconFromTheme("actions", "system-search", 16));
     action.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        SearchDialog dlg;
-        
+        RepetitionDialog dlg;
+
         Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
         
         if(w instanceof Dialog)
-          dlg = new SearchDialog((Dialog)w);
+          dlg = new RepetitionDialog((Dialog)w);
         else
-          dlg = new SearchDialog((Frame)w);
+          dlg = new RepetitionDialog((Frame)w);
         
         dlg.setPatternText(program.getTitle());
         UiUtilities.centerAndShow(dlg);
@@ -242,7 +242,7 @@ public class SearchPlugin {
     String desc = mLocalizer.msg("description", "Allows searching programs containing a certain text.");
     String author = "Til Schneider, www.murfman.de";
 
-    return new PluginInfo(name, desc, author, new Version(1, 6));
+    return new PluginInfo(name, desc, author, new Version(1, 7));
   }
 
   public static SearchPlugin getInstance() {
