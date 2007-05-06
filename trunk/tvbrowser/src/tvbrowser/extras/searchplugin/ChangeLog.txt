@@ -1,5 +1,8 @@
 Changelog SearchPlugin
 
+1.0.7:
+- Added new Dialog for Repetitions
+
 1.0.6:
 - Add SettingsTab for Deletion of Search-History
 
