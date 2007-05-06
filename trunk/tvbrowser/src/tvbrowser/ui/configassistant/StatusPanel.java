@@ -31,7 +31,6 @@ import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import util.ui.LineComponent;
 import util.ui.Localizer;
 
 import com.jgoodies.forms.layout.CellConstraints;
@@ -48,7 +47,6 @@ public class StatusPanel extends JPanel {
   public static final int PICTURES = 2;
   public static final int READY = 3;
   
-  private Font mItalic;
   private Font mNormalFont;
 
   public StatusPanel(int selected) {
@@ -63,28 +61,28 @@ public class StatusPanel extends JPanel {
     setFont(textfield.getFont());
 
     mNormalFont = textfield.getFont();
-    mNormalFont = mNormalFont.deriveFont(Font.BOLD, mNormalFont.getSize()+1);
+    mNormalFont = mNormalFont.deriveFont(Font.BOLD, mNormalFont.getSize()+5);
     
-    mItalic = mNormalFont.deriveFont(Font.BOLD, mNormalFont.getSize()+5);
-    
-    add(createStatusLabel("1. "+mLocalizer.msg("network", "Network"), selected == NETWORK), cc.xy(2,2));
-    add(new LineComponent(textfield.getForeground()), cc.xy(3,2));
-    add(createStatusLabel("2. "+mLocalizer.msg("channel", "Choose channel"), selected == CHANNELS), cc.xy(4,2));
-    add(new LineComponent(textfield.getForeground()), cc.xy(5,2));
-    add(createStatusLabel("3. "+Localizer.getLocalization(Localizer.I18N_PICTURES), selected == PICTURES), cc.xy(6,2));
-    add(new LineComponent(textfield.getForeground()), cc.xy(7,2));
-    add(createStatusLabel("4. "+mLocalizer.msg("done", "Done"), selected == READY), cc.xy(8,2));
+    String text = "";
+    if (selected == NETWORK) {
+      text = mLocalizer.msg("network", "Network"); 
+    }
+    else if (selected == CHANNELS) {
+      text = mLocalizer.msg("channel", "Choose channel");
+    }
+    else if (selected == PICTURES) {
+      text = Localizer.getLocalization(Localizer.I18N_PICTURES);
+    }
+    else if (selected == READY) {
+      text = mLocalizer.msg("done", "Done");
+    }
+    JLabel label = new JLabel();
+    label.setText(mLocalizer.msg("title","Step {0} of {1}: {2}", selected + 1, 4, text));
+    label.setFont(mNormalFont);
+    add(label, cc.xy(2,2));
     
     JPanel black = new JPanel();
     black.setBackground(textfield.getForeground());
     add(black, cc.xyw(1,4,9));
   }
-
-  private JLabel createStatusLabel(String string, boolean selected) {
-    JLabel label = new JLabel();
-    label.setText((selected)?"<html><u>"+string+"</u></html>":string);
-    label.setFont((selected)?mItalic:mNormalFont);
-    return label;
-  }
-
 }
