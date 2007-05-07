@@ -91,7 +91,7 @@ public class RepetitionDialog extends JDialog implements WindowClosingIf {
    * Create the Gui
    */
   private void createGui() {
-    setTitle(mLocalizer.msg("title", "Search repetition!"));
+    setTitle(mLocalizer.msg("title", "Search repetition"));
 
     JPanel panel = (JPanel) getContentPane();
     panel.setLayout(new FormLayout("right:pref, 3dlu, fill:pref:grow", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, fill:3dlu:grow, pref"));
@@ -101,14 +101,14 @@ public class RepetitionDialog extends JDialog implements WindowClosingIf {
 
     panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("searchForRepetition","Search for repetitions")), cc.xyw(1,1,3));
 
-    panel.add(new JLabel(mLocalizer.msg("forProgram","for program:")), cc.xy(1,3));
+    panel.add(new JLabel(mLocalizer.msg("forProgram","of:")), cc.xy(1,3));
     mText = new JTextField();
     panel.add(mText, cc.xy(3,3));
 
     panel.add(new JLabel(mLocalizer.msg("on","on:")), cc.xy(1,5));
 
-    final Vector list = new Vector();
-    list.add(mLocalizer.msg("allChannels","Alle Sender"));
+    final Vector<Object> list = new Vector<Object>();
+    list.add(mLocalizer.msg("allChannels","All channels"));
     list.addAll(Arrays.asList(ChannelList.getSubscribedChannels()));
 
     mChannelChooser = new JComboBox(list);
