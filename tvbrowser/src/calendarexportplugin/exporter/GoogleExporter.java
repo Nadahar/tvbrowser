@@ -78,46 +78,17 @@ public class GoogleExporter extends AbstractExporter {
   public boolean exportPrograms(Program[] programs, Properties settings, AbstractPluginProgramFormating formating) {
     try {
       GoogleService myService = new GoogleService("cl", "tvbrowser-tvbrowsercalenderplugin-" + CalendarExportPlugin.getInstance().getInfo().getVersion().toString());
-      
-      GoogleLoginDialog login;
-      
-      Window wnd = CalendarExportPlugin.getInstance().getBestParentFrame();
-      
-      if (wnd instanceof JDialog) {
-        login = new GoogleLoginDialog((JDialog)wnd,
-            settings.getProperty(USERNAME, ""), 
-            IOUtilities.xorDecode(settings.getProperty(PASSWORD, ""), 345903), 
-            settings.getProperty(STOREPASSWORD, "false").equals("true"));
-      } else {
-        login = new GoogleLoginDialog((JFrame)wnd,
-            settings.getProperty(USERNAME, ""), 
-            IOUtilities.xorDecode(settings.getProperty(PASSWORD, ""), 345903), 
-            settings.getProperty(STOREPASSWORD, "false").equals("true"));
-      }
-      
-      if (login.askLogin() != JOptionPane.OK_OPTION) {
-        return false;
-      }
-      
-      if ((login.getUsername().trim().length() == 0) ||(login.getPassword().trim().length() == 0)) {
-        JOptionPane.showMessageDialog(wnd, mLocalizer.msg("noUserOrPassword","No Username or Password entered!"), Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);
-        return false;
+
+      if (!settings.getProperty(STOREPASSWORD, "false").equals("true")) {
+        if (!showLoginDialog(settings)) {
+          return false;
+        }
       }
 
-      settings.setProperty(USERNAME, login.getUsername().trim());
-
-      if (login.storePasswords()) {
-        settings.setProperty(PASSWORD, IOUtilities.xorEncode(login.getPassword().trim(), 345903));
-        settings.setProperty(STOREPASSWORD, "true");
-      } else {
-        settings.setProperty(PASSWORD, "");
-        settings.setProperty(STOREPASSWORD, "false");
-      }
-      
-      myService.setUserCredentials(login.getUsername().trim(), login.getPassword().trim());
+      myService.setUserCredentials(settings.getProperty(USERNAME, "").trim(), IOUtilities.xorDecode(settings.getProperty(PASSWORD, ""), 345903).trim());
       
       URL postUrl =
-        new URL("http://www.google.com/calendar/feeds/"+login.getUsername().trim()+"/private/full");
+        new URL("http://www.google.com/calendar/feeds/"+settings.getProperty(USERNAME, "").trim()+"/private/full");
       
       SimpleDateFormat formatDay = new SimpleDateFormat("yyyy-MM-dd");
       formatDay.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -163,5 +134,69 @@ public class GoogleExporter extends AbstractExporter {
     }
     
     return false;
+  }
+
+  /**
+   * Show the Login-Dialog
+   *
+   * @param settings Settings to use for this Dialog
+   * @return true, if successfull
+   */
+  private boolean showLoginDialog(Properties settings) {
+    GoogleLoginDialog login;
+
+    Window wnd = CalendarExportPlugin.getInstance().getBestParentFrame();
+
+    if (wnd instanceof JDialog) {
+      login = new GoogleLoginDialog((JDialog)wnd,
+          settings.getProperty(USERNAME, ""),
+          IOUtilities.xorDecode(settings.getProperty(PASSWORD, ""), 345903),
+          settings.getProperty(STOREPASSWORD, "false").equals("true"));
+    } else {
+      login = new GoogleLoginDialog((JFrame)wnd,
+          settings.getProperty(USERNAME, ""),
+          IOUtilities.xorDecode(settings.getProperty(PASSWORD, ""), 345903),
+          settings.getProperty(STOREPASSWORD, "false").equals("true"));
+    }
+
+    if (login.askLogin() != JOptionPane.OK_OPTION) {
+      return false;
+    }
+
+    if ((login.getUsername().trim().length() == 0) ||(login.getPassword().trim().length() == 0)) {
+      JOptionPane.showMessageDialog(wnd, mLocalizer.msg("noUserOrPassword","No Username or Password entered!"), Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);
+      return false;
+    }
+
+    settings.setProperty(USERNAME, login.getUsername().trim());
+
+    if (login.storePasswords()) {
+      settings.setProperty(PASSWORD, IOUtilities.xorEncode(login.getPassword().trim(), 345903));
+      settings.setProperty(STOREPASSWORD, "true");
+    } else {
+      settings.setProperty(PASSWORD, "");
+      settings.setProperty(STOREPASSWORD, "false");
+    }
+
+    return true;
+  }
+
+
+  /*
+   * (non-Javadoc)
+   * @see calendarexportplugin.exporter.ExporterIf#hasSettingsDialog()
+   */
+  @Override
+  public boolean hasSettingsDialog() {
+    return true;
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see calendarexportplugin.exporter.ExporterIf#showSettingsDialog(java.util.Properties)
+   */
+  @Override
+  public void showSettingsDialog(Properties settings) {
+    showLoginDialog(settings);
   }
 }
