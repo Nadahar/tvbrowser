@@ -588,7 +588,39 @@ public class MainFrame extends JFrame implements DateListener {
 
     }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_BEGIN, 0);
+    rootPane.registerKeyboardAction(new ActionListener() {
+
+      public void actionPerformed(ActionEvent e) {
+        goToLeftSide();
+      }
+
+    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_END, 0);
+    rootPane.registerKeyboardAction(new ActionListener() {
+
+      public void actionPerformed(ActionEvent e) {
+        goToRightSide();
+      }
+
+    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+
     this.setRootPane(rootPane);
+  }
+
+  protected void goToRightSide() {
+    Channel[] channels = MainFrame.getInstance().getProgramTableModel().getShownChannels();
+    if (channels != null && channels.length > 0) {
+      mProgramTableScrollPane.scrollToChannel(channels[channels.length-1]);
+    }
+  }
+
+  protected void goToLeftSide() {
+    Channel[] channels = MainFrame.getInstance().getProgramTableModel().getShownChannels();
+    if (channels != null && channels.length > 0) {
+      mProgramTableScrollPane.scrollToChannel(channels[0]);
+    }
   }
 
   public JLabel getStatusBarLabel() {
@@ -707,7 +739,9 @@ public class MainFrame extends JFrame implements DateListener {
       // Recreate last Position
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
-          mProgramTableScrollPane.getViewport().setViewPosition(mStoredViewPosition);
+          if (mStoredViewPosition != null) {
+            mProgramTableScrollPane.getViewport().setViewPosition(mStoredViewPosition);
+          }
         }
       });
     }
@@ -926,9 +960,22 @@ public class MainFrame extends JFrame implements DateListener {
     mMenuBar.updatePluginsMenu();
   }
 
-  public void scrollToProgram(Program program) {
-    scrollTo(program.getDate(), program.getHours());
-    mProgramTableScrollPane.scrollToChannel(program.getChannel());
+  public void scrollToProgram(final Program program) {
+    if (!getProgramFilter().accept(program)) {
+      int result = JOptionPane.showOptionDialog(this, mLocalizer.msg("programFiltered", "The program {0} is not visible with the filter {1} being active.\nDo you want to deactivate the filter?", program.getTitle(), getProgramFilter().getName()),mLocalizer.msg("programNotVisible","Program not visible"),
+          JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+      if (result == JOptionPane.YES_OPTION) {
+        mStoredViewPosition = null;
+        setProgramFilter(FilterList.getInstance().getDefaultFilter());
+      }
+    }
+    // invoke scrolling later as the upper filter deactivation may have pending operations for the UI
+    // so we currently can't scroll there yet
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        mProgramTableScrollPane.scrollToChannel(program.getChannel());
+        scrollTo(program.getDate(), program.getHours());
+      }});
   }
 
   public void scrollToTime(int time) {
