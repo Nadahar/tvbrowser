@@ -42,6 +42,7 @@ import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTree;
 import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
 import tvbrowser.extras.common.ReminderConfiguration;
 import tvbrowser.extras.common.LimitationConfiguration;
@@ -444,7 +445,7 @@ public abstract class Favorite {
   }
 
   private void unmarkProgram(Program p) {
-    if(!FavoritesPlugin.getInstance().isContainedByOtherFavorites(this,p)) {
+    if(!FavoriteTree.getInstance().isContainedByOtherFavorites(this,p)) {
       p.unmark(FavoritesPluginProxy.getInstance());
     }
       
