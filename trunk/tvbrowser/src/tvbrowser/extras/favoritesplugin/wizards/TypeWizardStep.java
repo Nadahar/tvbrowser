@@ -45,6 +45,8 @@ import javax.swing.JTextField;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.*;
 import tvbrowser.extras.favoritesplugin.dlgs.EditFavoriteDialog;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteNode;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTree;
 import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.LinkButton;
@@ -80,13 +82,21 @@ public class TypeWizardStep extends AbstractWizardStep {
   private Program mProgram;
 
   private String mMainQuestion;
+  
+  private FavoriteNode mParentNode;
 
   public TypeWizardStep() {
     this(null);
   }
-
+  
   public TypeWizardStep(Program program) {
+    this(program, FavoriteTree.getInstance().getRoot());
+  }
+
+  public TypeWizardStep(Program program, FavoriteNode parent) {
     mProgram = program;
+    mParentNode = parent;
+    
     if (mProgram == null) {
       mMainQuestion = mLocalizer.msg("mainQuestion.create",
           "Waehlen Sie eine Bedingung die die Lieblingssendung erfüllen muß:");
@@ -165,7 +175,7 @@ public class TypeWizardStep extends AbstractWizardStep {
         }
         UiUtilities.centerAndShow(dlg);
         if (dlg.getOkWasPressed()) {
-          FavoritesPlugin.getInstance().addFavorite(favorite);
+          FavoriteTree.getInstance().addFavorite(favorite, mParentNode);
           FavoritesPlugin.getInstance().updateRootNode(true);
           
           if(ManageFavoritesDialog.getInstance() != null)
