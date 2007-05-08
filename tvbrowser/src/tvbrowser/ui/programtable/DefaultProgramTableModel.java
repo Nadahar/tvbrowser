@@ -181,8 +181,8 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   
   public void setProgramFilter(ProgramFilter filter) {
     mProgramFilter=filter;
-    fireTableDataChanged(null);
     updateTableContent();
+    fireTableDataChanged(null);
   }
 
 
