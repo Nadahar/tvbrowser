@@ -47,49 +47,22 @@ public class FavoriteTreeModel extends DefaultTreeModel {
   }
   
   public void reload(TreeNode node) {
-    TreePath treePath = new TreePath(getPathToRoot(node));
-    Enumeration e = null;
-
-    if (treePath != null) {
-      FavoriteTree t = FavoriteTree.getInstance();
-      if (t != null)
-        e = FavoriteTree.getInstance().getExpandedDescendants(treePath);
-    }
-
     super.reload(node);
-
-    if (e != null) {
-      while (e.hasMoreElements()) {
-        TreePath tree = (TreePath) e.nextElement();
-
-        Object[] o = tree.getPath();
-
-        for (int i = 1; i < o.length; i++) {
-          TreeNode[] pathNodes = getPathToRoot((TreeNode) o[i]);
-
-          if (node == null || pathNodes[0].toString().compareTo("FAVORITES_ROOT") != 0) {
-            TreeNode n1 = (TreeNode) o[i - 1];
-            Enumeration e1 = n1.children();
-
-            while (e1.hasMoreElements()) {
-              TreeNode n2 = (TreeNode) e1.nextElement();
-              if (n2.toString().compareTo(o[i].toString()) == 0) {
-                o[i] = n2;
-                break;
-              }
-            }
-          }
-        }
-
-        tree = new TreePath(o);
-        FavoriteTree.getInstance().expandPath(tree);
-      }
+    FavoriteNode parent = (FavoriteNode)node;
+    Enumeration e = node.children();
+    
+    while(e.hasMoreElements()) {
+      FavoriteNode child = (FavoriteNode)e.nextElement();
+      
+      if(child.isDirectoryNode())
+        reload(child);
     }
+    
+    if(parent.wasExpanded())
+      FavoriteTree.getInstance().expandPath(new TreePath(((DefaultTreeModel)FavoriteTree.getInstance().getModel()).getPathToRoot(node)));
   }
   
   public void reload() {
     reload(root);
   }
-
-
 }

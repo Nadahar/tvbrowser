@@ -96,7 +96,6 @@ import util.ui.WindowClosingIf;
 import com.jgoodies.forms.factories.Borders;
 
 import devplugin.Program;
-import devplugin.ProgramFieldType;
 import devplugin.ProgramReceiveIf;
 import devplugin.SettingsItem;
 
