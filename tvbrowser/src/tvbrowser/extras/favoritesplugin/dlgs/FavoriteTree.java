@@ -400,6 +400,9 @@ DropTargetListener, DragSourceListener  {
         }
       }
     }
+    
+    clearSelection();
+    updateUI();
   }
   
   /**

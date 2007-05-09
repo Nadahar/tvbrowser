@@ -184,5 +184,12 @@ public class FavoriteNode extends DefaultMutableTreeNode {
       out.writeObject(getFavorite().getTypeID());
       getFavorite().writeData(out);
     }
-  }  
+  }
+  
+  public boolean equals(Object o) {
+    if(o instanceof Favorite)
+      return containsFavorite() && userObject == o;
+    else
+      return this == o;
+  }
 }
