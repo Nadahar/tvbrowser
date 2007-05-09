@@ -508,6 +508,10 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
           mSendBt.setEnabled(false);          
         }
       }
+      else {
+        mProgramListModel.clear();
+        mSendBt.setEnabled(false);          
+      }
     }
   }
 
@@ -660,6 +664,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
           fav = ((FavoriteNode)FavoriteTree.getInstance().getSelectionPath().getLastPathComponent()).getFavorite();
         }
         FavoriteTree.getInstance().deleteFavorite(fav);
+        favoriteSelectionChanged();
       }
     }
   }
