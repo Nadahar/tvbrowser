@@ -146,10 +146,11 @@ public class FavoriteNode extends DefaultMutableTreeNode {
   }
   
   protected boolean wasExpanded() {
-    boolean value = mWasExpanded;
-    mWasExpanded = false;
-    
-    return value;
+    return mWasExpanded;
+  }
+  
+  protected void setWasExpanded(boolean expanded) {
+    mWasExpanded = expanded;
   }
   
   /**

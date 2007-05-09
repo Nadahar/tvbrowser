@@ -23,6 +23,10 @@
  */
 package tvbrowser.extras.favoritesplugin.dlgs;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -30,10 +34,6 @@ import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragSource;
-import java.awt.dnd.DragSourceDragEvent;
-import java.awt.dnd.DragSourceDropEvent;
-import java.awt.dnd.DragSourceEvent;
-import java.awt.dnd.DragSourceListener;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
@@ -43,6 +43,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -60,11 +61,13 @@ import javax.swing.tree.TreeSelectionModel;
 
 import devplugin.Program;
 
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ReminderConfiguration;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 
 /**
@@ -74,13 +77,21 @@ import util.ui.UiUtilities;
  * @since 2.6
  */
 public class FavoriteTree extends JTree implements MouseListener, DragGestureListener,
-DropTargetListener, DragSourceListener  {
+DropTargetListener {
+  private static Localizer mLocalizer = Localizer.getLocalizerFor(FavoriteTree.class);
   
   private static FavoriteTree mInstance;
   
   private FavoriteNode mRootNode;
   private FavoriteNode mTransferNode;
+  private Rectangle2D mCueLine = new Rectangle2D.Float();
+  
+  private FavoriteNode mTargetNode;
+  private int mTarget;
+  private long mMousePressedTime;
 
+  protected static final DataFlavor FAVORITE_FLAVOR = new DataFlavor(TreePath.class, "FavoriteNodeExport");
+  
   /**
    * @deprecated Only used to load data from an old plugin version.
    * @param favoriteArr
@@ -112,7 +123,7 @@ DropTargetListener, DragSourceListener  {
         
     mRootNode = new FavoriteNode(in, version);
     
-    setModel(new FavoriteTreeModel(mRootNode));    
+    setModel(new FavoriteTreeModel(mRootNode));
     setRootVisible(false);
     
     expand(mRootNode);
@@ -187,40 +198,31 @@ DropTargetListener, DragSourceListener  {
   
   private void showContextMenu(MouseEvent e) {
     if(e.isPopupTrigger()) {
-      JPopupMenu menu = new JPopupMenu();
+      JPopupMenu menu = new JPopupMenu();      
+      TreePath path1 = getPathForLocation(e.getX(), e.getY());
       
-      JMenuItem item = new JMenuItem("Neu");
+      if(path1 == null)
+        path1 = new TreePath(mRootNode);
       
-      final TreePath path = getPathForLocation(e.getX(), e.getY());
+      final TreePath path = path1;
+      final FavoriteNode last = (FavoriteNode)path.getLastPathComponent();
+
       setSelectionPath(path);
       
-      Object[] o = path.getPath();
-      
-      final FavoriteNode last = (FavoriteNode)path.getLastPathComponent();
-      
-      final StringBuffer pathValue = new StringBuffer();
-      
-      for(Object p : o) {
-        pathValue.append(p.toString()).append(";;");
-      }
-      
-      if(pathValue.length() > 2) {
-        pathValue.delete(pathValue.length() - 2, pathValue.length());
-      }
+      JMenuItem item = new JMenuItem(mLocalizer.msg("newFavorite", "New Favorite"),
+          FavoritesPlugin.getInstance().getIconFromTheme("actions", "document-new", 16));
       
       item.addActionListener(new ActionListener() {
-
-        public void actionPerformed(ActionEvent arg0) {
-          
+        public void actionPerformed(ActionEvent e) {
           ManageFavoritesDialog.getInstance().newFavorite(last.isDirectoryNode() ? last : (FavoriteNode)last.getParent());
         }
-        
       });
       
-      if(((FavoriteNode)path.getLastPathComponent()).isDirectoryNode()) {
-        menu.add(item);
-        
-        item = new JMenuItem("Namen ändern:");
+      menu.add(item);
+      
+      if(last.isDirectoryNode() && !last.equals(mRootNode)) {
+        item = new JMenuItem(mLocalizer.msg("rename", "Umbenennen"),
+            IconLoader.getInstance().getIconFromTheme("actions", "document-edit", 16));
         
         item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
@@ -234,30 +236,35 @@ DropTargetListener, DragSourceListener  {
         });
         
         menu.add(item);
-        
       }
 
-      item = new JMenuItem("Neuer Ordner");      
+      item = new JMenuItem(mLocalizer.msg("newFolder", "New folder"),
+          IconLoader.getInstance().getIconFromTheme("actions", "folder-new", 16));      
       
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           String value = JOptionPane.showInputDialog(UiUtilities.getLastModalChildOf(ManageFavoritesDialog.getInstance()), "Name:", "Neuer Ordner");
           
           if(value != null) {
-            ((FavoriteNode)((FavoriteNode)path.getLastPathComponent()).getParent()).add(new FavoriteNode(value));
-            ((DefaultTreeModel)getModel()).reload(((FavoriteNode)path.getLastPathComponent()).getParent());
-          }
-          
+            FavoriteNode node = new FavoriteNode(value);
+            
+            if(last.equals(mRootNode))
+              last.add(node);
+            else
+              ((FavoriteNode)last.getParent()).add(node);
+            
+            getModel().reload(node.getParent());
+          }          
         }
       });
       
       menu.add(item);
       
-      item = new JMenuItem("Löschen");
+      item = new JMenuItem(Localizer.getLocalization(Localizer.I18N_DELETE),
+          IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16));
       
       item.addActionListener(new ActionListener() {
-
-        public void actionPerformed(ActionEvent arg0) {
+        public void actionPerformed(ActionEvent e) {
           if(last.isDirectoryNode()) {
             FavoriteNode parent = (FavoriteNode)last.getParent();
           
@@ -267,14 +274,12 @@ DropTargetListener, DragSourceListener  {
           else if(last.containsFavorite())
             ManageFavoritesDialog.getInstance().deleteSelectedFavorite();
         }
-        
       });
-      
+            
       item.setEnabled(last.getChildCount() < 1);
       
-      menu.add(item);
-      
-      
+      if(!last.equals(mRootNode))
+        menu.add(item);
       
       menu.show(this, e.getX(), e.getY());
     }
@@ -423,13 +428,7 @@ DropTargetListener, DragSourceListener  {
     return mRootNode;
   }
   
-  public void mouseClicked(MouseEvent e) {
-    if(SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2) {
-      if(((FavoriteNode)getLastSelectedPathComponent()).containsFavorite()) {
-        ManageFavoritesDialog.getInstance().editSelectedFavorite();
-      }
-    }
-  }
+  public void mouseClicked(MouseEvent e) {}
 
   public void mouseEntered(MouseEvent e) {}
 
@@ -437,10 +436,30 @@ DropTargetListener, DragSourceListener  {
 
   public void mousePressed(MouseEvent e) {
     showContextMenu(e);
+    mMousePressedTime = e.getWhen();
   }
 
   public void mouseReleased(MouseEvent e) {
     showContextMenu(e);
+    
+    if(SwingUtilities.isLeftMouseButton(e)) {
+      TreePath path = getPathForLocation(e.getX(), e.getY());
+      
+      if(((FavoriteNode)path.getLastPathComponent()).containsFavorite()) {
+        if(e.getClickCount() >= 2)
+          ManageFavoritesDialog.getInstance().editSelectedFavorite();
+      }
+      else if(((FavoriteNode)path.getLastPathComponent()).isDirectoryNode() && (e.getWhen() - mMousePressedTime) < 500) {
+        if(!isExpanded(path)) {
+          expandPath(path);
+        }
+        else {
+          collapsePath(path);
+        }
+        this.setSelectionPath(path);
+      }
+    }
+
   }
 
   public void dragGestureRecognized(DragGestureEvent e) {
@@ -451,24 +470,120 @@ DropTargetListener, DragSourceListener  {
     }
   }
 
-  public void dragEnter(DropTargetDragEvent arg0) {
-    // TODO Auto-generated method stub
-    
+  public void dragEnter(DropTargetDragEvent e) {
+    if(e.getCurrentDataFlavors().length > 1 || e.getCurrentDataFlavors().length < 1 || !e.getCurrentDataFlavors()[0].equals(FAVORITE_FLAVOR))
+      e.rejectDrag();
+    else {
+      Graphics2D g2 = (Graphics2D) getGraphics();
+      Color c = new Color(255, 0, 0, 40);
+      g2.setColor(c);
+      g2.fill(mCueLine);
+    }
   }
 
-  public void dragExit(DropTargetEvent arg0) {
-    // TODO Auto-generated method stub
-    
+  public void dragExit(DropTargetEvent e) {
+    this.paintImmediately(mCueLine.getBounds());
   }
-
+  
+  private int getTargetFor(FavoriteNode node, Point p, int row) {
+    Rectangle location = getRowBounds(getClosestRowForLocation(p.x, p.y));
+    
+    if(node.isDirectoryNode()) {
+      if(row != getRowCount() && p.y - location.y <= (location.height / 4)) {
+        return -1;
+      }
+      else if(row != getRowCount() && p.y - location.y <= (location.height - (location.height / 4))) {
+        return 0;
+      }
+      else
+        return 1;
+    }
+    else {
+      if(p.y - location.y <= (location.height / 2)) {
+        return -1;
+      }
+      else {
+        return  1;
+      }
+    }    
+  }
+  
   public void dragOver(DropTargetDragEvent e) {
+    if(e.getCurrentDataFlavors().length > 1 || e.getCurrentDataFlavors().length < 1 || !e.getCurrentDataFlavors()[0].equals(FAVORITE_FLAVOR)) {
+      paintImmediately(mCueLine.getBounds());
+      e.rejectDrag();
+      return;
+    }
+
+    int row = getClosestRowForLocation(e.getLocation().x, e.getLocation().y);;
     
+    Rectangle rowBounds = getRowBounds(row);
+    
+    if(rowBounds.y + rowBounds.height < e.getLocation().y)
+      row = this.getRowCount();
+    
+    TreePath path = getPathForRow(row);
+    
+    if(path == null)
+      path = new TreePath(mRootNode);
+    
+    if(mTransferNode != null && !new TreePath(mTransferNode.getPath()).isDescendant(path)) {
+      e.acceptDrag(e.getDropAction());
+      
+      FavoriteNode last = (FavoriteNode)path.getLastPathComponent();
+      FavoriteNode pointed = last;
+      
+      int target = getTargetFor(pointed, e.getLocation(), row);
+      
+      
+      if(target == -1 || (target == 1 && !isExpanded(new TreePath(pointed.getPath())))) {
+        if(!last.isRoot()) {        
+          last = (FavoriteNode)last.getParent();
+        }
+      }      
+      
+      if(mTargetNode != last || mTarget != target) {
+      
+      mTargetNode = last;
+      mTarget = target;
+      
+      this.paintImmediately(mCueLine.getBounds());
+      
+      int y = row != getRowCount() ? rowBounds.y : rowBounds.y + rowBounds.height;
+            
+      if(target == -1) {
+        Rectangle rect = new Rectangle(0 + 20 * (last.getPath().length-1),y-1,getWidth(),2);
+        
+        mCueLine.setRect(rect);
+      }
+      else if(target == 0) {        
+        Rectangle rect = new Rectangle(0,y,getWidth(),rowBounds.height);
+          
+        mCueLine.setRect(rect);
+      }
+      else if(target == 1) {
+        Rectangle rect= new Rectangle(0 + 20 * (last.getPath().length-1),y + rowBounds.height-1,getWidth(),2);;
+      
+        if(row == getRowCount()) {
+         rect = new Rectangle(0,y-1,getWidth(),2);
+        } 
+        mCueLine.setRect(rect);
+      }
+      
+      Graphics2D g2 = (Graphics2D) getGraphics();
+      Color c = new Color(255, 0, 0, 40);
+      g2.setColor(c);
+      g2.fill(mCueLine);
+      }
+    }
+    else
+      e.rejectDrag();
     
   }
 
   public void drop(DropTargetDropEvent e) {
     e.acceptDrop(e.getDropAction());
-    
+    this.paintImmediately(mCueLine.getBounds());
     Transferable transfer = e.getTransferable();
     
     if(transfer.isDataFlavorSupported(new DataFlavor(TreePath.class, "FavoriteNodeExport")))
@@ -476,7 +591,22 @@ DropTargetListener, DragSourceListener  {
       FavoriteNode node = mTransferNode;
       FavoriteNode parent = (FavoriteNode)node.getParent();
       
-      TreePath path = getPathForLocation(e.getLocation().x, e.getLocation().y);
+      int row = getClosestRowForLocation(e.getLocation().x, e.getLocation().y);;
+      
+      TreePath path = new TreePath(mRootNode);
+      
+      if(getRowBounds(row).y + getRowBounds(row).height < e.getLocation().y)
+        row = this.getRowCount();
+      else
+        path = getPathForRow(row);
+
+      FavoriteNode last = (FavoriteNode)path.getLastPathComponent();
+      FavoriteNode pointed = last;   
+      int target = getTargetFor(pointed, e.getLocation(), row);;
+
+
+      
+      
       
       if(path == null)
         path = new TreePath(mRootNode);
@@ -489,16 +619,33 @@ DropTargetListener, DragSourceListener  {
         parent.remove(node);
         
       
-        FavoriteNode last = (FavoriteNode)path.getLastPathComponent();
-        
-        if(last.containsFavorite())
-          last = (FavoriteNode)last.getParent();
         
         
+        int n = -1;
         
-        last.add(node);
+        if(target == -1 || (target == 1 && !isExpanded(new TreePath(pointed.getPath())))) {
+          if(last.isRoot())
+            n = 0;
+          else {
+            n = last.getParent().getIndex(last);
+            last = (FavoriteNode)last.getParent();
+          }
+        }
         
+        if(target == -1)
+          last.insert(node, n);
+        else if(target == 0) {
+          if(isExpanded(new TreePath(last)))
+            last.insert(node, 0);
+          else
+            last.add(node);
+        }
+        else if(row != getRowCount())
+          last.insert(node, n + 1);
+        else
+          last.add(node);
         
+        expand(last);
       }
       
       updateUI();
@@ -507,57 +654,35 @@ DropTargetListener, DragSourceListener  {
     e.dropComplete(true);
   }
 
-  public void dropActionChanged(DropTargetDragEvent arg0) {
-    // TODO Auto-generated method stub
-    
-  }
-
-  public void dragDropEnd(DragSourceDropEvent arg0) {
-    // TODO Auto-generated method stub
-    
-  }
-
-  public void dragEnter(DragSourceDragEvent e) {
-    
-    
-  }
-
-  public void dragExit(DragSourceEvent arg0) {
-    // TODO Auto-generated method stub
-    
-  }
-
-  public void dragOver(DragSourceDragEvent arg0) {
-    // TODO Auto-generated method stub
-    
-  }
-
-  public void dropActionChanged(DragSourceDragEvent arg0) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void dropActionChanged(DropTargetDragEvent e) {}
   
-  private class FavoriteTransferNode implements Transferable {
-    private DataFlavor mDataFlavor;
-    
-    /**
-     * Creates an instance of this class.
-     */
-    public FavoriteTransferNode() {
-      mDataFlavor = new DataFlavor(TreePath.class, "FavoriteNodeExport");
-    }
-    
+  private class FavoriteTransferNode implements Transferable {    
     public Object getTransferData(DataFlavor df) throws UnsupportedFlavorException, IOException {
       return null;
     }
 
     public DataFlavor[] getTransferDataFlavors() {
-      return new DataFlavor[] {mDataFlavor};
+      return new DataFlavor[] {FAVORITE_FLAVOR};
     }
 
     public boolean isDataFlavorSupported(DataFlavor df) {
-      return df.getMimeType().equals(mDataFlavor.getMimeType()) && df.getHumanPresentableName().equals(mDataFlavor.getHumanPresentableName());
+      return df.getMimeType().equals(FAVORITE_FLAVOR.getMimeType()) && df.getHumanPresentableName().equals(FAVORITE_FLAVOR.getHumanPresentableName());
     }
+  }
+  
+  public void expandPath(TreePath path) {
+    super.expandPath(path);
     
+    handleExpandedState((FavoriteNode)path.getLastPathComponent(),true);
+  }
+
+  public void collapsePath(TreePath path) {
+    super.collapsePath(path);
+    
+    handleExpandedState((FavoriteNode)path.getLastPathComponent(),false);
+  }
+
+  private void handleExpandedState(FavoriteNode node, boolean expanded) {
+    node.setWasExpanded(expanded);
   }
 }
