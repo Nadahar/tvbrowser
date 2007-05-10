@@ -114,6 +114,13 @@ public class PluginLoader {
         String fileName = fileArr[i].getAbsolutePath();
         String oldFileName = fileName.substring(0, fileName.length() - 5);
         File oldFile = new File(oldFileName);
+        
+        // delete the old proxy, this will force loading of the new plugin (even if it's not active)
+        String oldProxyName = proxyFileName(oldFile);
+        File oldProxy = new File(oldProxyName);
+        if (oldProxy.exists()) {
+          oldProxy.delete();
+        }
 
         // Delete the old file
         oldFile.delete();
