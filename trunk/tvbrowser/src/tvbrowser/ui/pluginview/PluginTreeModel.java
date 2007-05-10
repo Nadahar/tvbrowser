@@ -184,4 +184,13 @@ public class PluginTreeModel extends DefaultTreeModel {
     return sInstance;
   }
 
+  @Override
+  public boolean isLeaf(Object nodeObject) {
+    if (nodeObject instanceof Node) {
+      Node node = (Node) nodeObject;
+      return node.getChildCount() == 0;
+    }
+    return super.isLeaf(nodeObject);
+  }
+
 }
