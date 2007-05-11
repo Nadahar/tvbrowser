@@ -606,6 +606,34 @@ public class MainFrame extends JFrame implements DateListener {
 
     }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
+    // map font size keys also to numeric pad
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, KeyEvent.CTRL_MASK);
+    rootPane.registerKeyboardAction(new ActionListener() {
+
+      public void actionPerformed(ActionEvent e) {
+        changeFontSize(-1);
+      }
+
+    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD0, KeyEvent.CTRL_MASK);
+    rootPane.registerKeyboardAction(new ActionListener() {
+
+      public void actionPerformed(ActionEvent e) {
+        changeFontSize(0);
+      }
+
+    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ADD, KeyEvent.CTRL_MASK);
+    rootPane.registerKeyboardAction(new ActionListener() {
+
+      public void actionPerformed(ActionEvent e) {
+        changeFontSize(1);
+      }
+
+    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+
     this.setRootPane(rootPane);
   }
 
