@@ -59,6 +59,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -141,6 +143,20 @@ DropTargetListener {
             showContextMenu(new Point(pathBounds.x + pathBounds.width - 10, pathBounds.y + pathBounds.height - 5));
           }
         }
+      }
+    });
+    
+    addTreeExpansionListener(new TreeExpansionListener() {
+      public void treeCollapsed(TreeExpansionEvent e) {
+        if(e.getPath() != null) {
+          ((FavoriteNode)e.getPath().getLastPathComponent()).setWasExpanded(false);
+        }
+      }
+
+      public void treeExpanded(TreeExpansionEvent e) {
+        if(e.getPath() != null) {
+          ((FavoriteNode)e.getPath().getLastPathComponent()).setWasExpanded(true);
+        }        
       }
     });
     
@@ -400,7 +416,9 @@ DropTargetListener {
     }
     
     if(node.wasExpanded())
-      this.expandPath(new TreePath(((DefaultTreeModel)this.getModel()).getPathToRoot(node)));
+      expandPath(new TreePath(((DefaultTreeModel)this.getModel()).getPathToRoot(node)));
+    else
+      collapsePath(new TreePath(((DefaultTreeModel)this.getModel()).getPathToRoot(node)));
   }
   
   public FavoriteTreeModel getModel() {
@@ -775,22 +793,6 @@ DropTargetListener {
     public boolean isDataFlavorSupported(DataFlavor df) {
       return df.getMimeType().equals(FAVORITE_FLAVOR.getMimeType()) && df.getHumanPresentableName().equals(FAVORITE_FLAVOR.getHumanPresentableName());
     }
-  }
-  
-  public void expandPath(TreePath path) {
-    super.expandPath(path);
-    
-    handleExpandedState((FavoriteNode)path.getLastPathComponent(),true);
-  }
-
-  public void collapsePath(TreePath path) {
-    super.collapsePath(path);
-    
-    handleExpandedState((FavoriteNode)path.getLastPathComponent(),false);
-  }
-
-  private void handleExpandedState(FavoriteNode node, boolean expanded) {
-    node.setWasExpanded(expanded);
   }
   
   protected void newFolder(FavoriteNode last) {
