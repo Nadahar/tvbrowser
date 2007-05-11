@@ -41,6 +41,8 @@ import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
@@ -103,22 +105,11 @@ DropTargetListener {
     mInstance = this;
     
     mRootNode = new FavoriteNode("FAVORITES_ROOT");
-    setModel(new FavoriteTreeModel(mRootNode));
-    setRootVisible(false);
-    
     
     for(Favorite fav : favoriteArr)
       mRootNode.add(fav);
     
-    getModel().reload(mRootNode);
-    addMouseListener(this);
-    
-    getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-    
-    (new DragSource()).createDefaultDragGestureRecognizer(this,
-        DnDConstants.ACTION_MOVE, this);
-    
-    new DropTarget(this, this);
+    init();
   }
   
   private FavoriteTree(ObjectInputStream in, int version) throws IOException, ClassNotFoundException {
@@ -126,19 +117,39 @@ DropTargetListener {
         
     mRootNode = new FavoriteNode(in, version);
     
+    init();
+  }
+  
+  private void init() {
     setModel(new FavoriteTreeModel(mRootNode));
     setRootVisible(false);
     
     expand(mRootNode);
     
     addMouseListener(this);
+    addKeyListener(new KeyAdapter() {
+      public void keyPressed(KeyEvent e) {
+        if(e.getKeyCode() == KeyEvent.VK_DELETE) {
+          if(getSelectionPath() != null) {
+            delete((FavoriteNode)getSelectionPath().getLastPathComponent());
+          }
+        }
+        else if(e.getKeyCode() == KeyEvent.VK_R || e.getKeyCode() == KeyEvent.VK_CONTEXT_MENU) {
+          if(getSelectionPath() != null) {
+            Rectangle pathBounds = getRowBounds(getRowForPath(getSelectionPath()));
+            
+            showContextMenu(new Point(pathBounds.x + pathBounds.width - 10, pathBounds.y + pathBounds.height - 5));
+          }
+        }
+      }
+    });
     
     getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     
     (new DragSource()).createDefaultDragGestureRecognizer(this,
         DnDConstants.ACTION_MOVE, this);
     
-    new DropTarget(this, this);
+    new DropTarget(this, this);    
   }
   
   /**
@@ -191,7 +202,7 @@ DropTargetListener {
    * @param target The target node to add the favorite to or
    * <code>null</code> if the root node should be used.
    */
-  public void addFavorite(Favorite fav, FavoriteNode target) {System.out.println("hier");
+  public void addFavorite(Favorite fav, FavoriteNode target) {
     if(target == null)
       target = mRootNode;
     
@@ -199,10 +210,10 @@ DropTargetListener {
     FavoritesPlugin.getInstance().updateRootNode(true);
   }
   
-  private void showContextMenu(MouseEvent e) {
-    if(e.isPopupTrigger()) {
+  private void showContextMenu(Point p) {
+    
       JPopupMenu menu = new JPopupMenu();      
-      TreePath path1 = getPathForLocation(e.getX(), e.getY());
+      TreePath path1 = getPathForLocation(p.x, p.y);
       
       if(path1 == null)
         path1 = new TreePath(mRootNode);
@@ -325,14 +336,7 @@ DropTargetListener {
       
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          if(last.isDirectoryNode()) {
-            FavoriteNode parent = (FavoriteNode)last.getParent();
-          
-            parent.remove(last);
-            ((DefaultTreeModel)getModel()).reload(parent);
-          }
-          else if(last.containsFavorite())
-            ManageFavoritesDialog.getInstance().deleteSelectedFavorite();
+          delete(last);
         }
       });
             
@@ -341,8 +345,19 @@ DropTargetListener {
       if(!last.equals(mRootNode))
         menu.add(item);
       
-      menu.show(this, e.getX(), e.getY());
+      menu.show(this, p.x, p.y);
+    
+  }
+  
+  private void delete(FavoriteNode node) {
+    if(node.isDirectoryNode() && node.getChildCount() < 1) {
+      FavoriteNode parent = (FavoriteNode)node.getParent();
+    
+      parent.remove(node);
+      ((DefaultTreeModel)getModel()).reload(parent);
     }
+    else if(node.containsFavorite())
+      ManageFavoritesDialog.getInstance().deleteSelectedFavorite();
   }
   
   private void expandAll(FavoriteNode node) {
@@ -524,12 +539,15 @@ DropTargetListener {
   public void mouseExited(MouseEvent e) {}
 
   public void mousePressed(MouseEvent e) {
-    showContextMenu(e);
+    if(e.isPopupTrigger())
+      showContextMenu(e.getPoint());
+    
     mMousePressedTime = e.getWhen();
   }
 
   public void mouseReleased(MouseEvent e) {
-    showContextMenu(e);
+    if(e.isPopupTrigger())
+      showContextMenu(e.getPoint());
     
     if(SwingUtilities.isLeftMouseButton(e)) {
       TreePath path = getPathForLocation(e.getX(), e.getY());
@@ -781,10 +799,11 @@ DropTargetListener {
     if(value != null && value.length() > 0) {
       FavoriteNode node = new FavoriteNode(value);
       
-      if(last.equals(mRootNode))
+      if(last.equals(mRootNode) || last.isDirectoryNode()) {
         last.add(node);
-      else
-        ((FavoriteNode)last.getParent()).add(node);
+        expandPath(new TreePath(last.getPath()));
+      } else
+        ((FavoriteNode)last.getParent()).insert(node,last.getParent().getIndex(last));
       
       getModel().reload(node.getParent());
     }
@@ -820,6 +839,12 @@ DropTargetListener {
     return count;
   }
   
+  /**
+   * Sorts the path from the given node to all leafs alpabetically.
+   * 
+   * @param node The node to sort from.
+   * @param start If this is called with the root sort node.
+   */
   public void sort(FavoriteNode node, boolean start) {
     int result = JOptionPane.YES_OPTION;
     

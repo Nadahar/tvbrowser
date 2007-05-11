@@ -60,6 +60,8 @@ public class FavoriteTreeModel extends DefaultTreeModel {
     
     if(parent.wasExpanded())
       FavoriteTree.getInstance().expandPath(new TreePath(((DefaultTreeModel)FavoriteTree.getInstance().getModel()).getPathToRoot(node)));
+    else
+      FavoriteTree.getInstance().collapsePath(new TreePath(((DefaultTreeModel)FavoriteTree.getInstance().getModel()).getPathToRoot(node)));
   }
   
   public void reload() {
