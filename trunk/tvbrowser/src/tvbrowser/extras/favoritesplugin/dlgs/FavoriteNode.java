@@ -28,9 +28,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
 
 import tvbrowser.extras.favoritesplugin.core.ActorsFavorite;
 import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
@@ -172,10 +169,7 @@ public class FavoriteNode extends DefaultMutableTreeNode implements Comparable {
     if(isDirectoryNode()) {
       out.writeInt(getChildCount());
       out.writeObject(userObject);
-
-      TreeNode[] path = ((DefaultTreeModel)FavoriteTree.getInstance().getModel()).getPathToRoot(this);
-      
-      out.writeBoolean(FavoriteTree.getInstance().isExpanded(new TreePath(path)));
+      out.writeBoolean(mWasExpanded);
     
       for(int i = 0; i < getChildCount(); i++) {
         ((FavoriteNode)getChildAt(i)).store(out);
