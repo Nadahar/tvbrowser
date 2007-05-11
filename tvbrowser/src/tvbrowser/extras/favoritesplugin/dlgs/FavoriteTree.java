@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 
 import javax.swing.JMenuItem;
@@ -55,6 +56,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -67,6 +69,7 @@ import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 
@@ -188,7 +191,7 @@ DropTargetListener {
    * @param target The target node to add the favorite to or
    * <code>null</code> if the root node should be used.
    */
-  public void addFavorite(Favorite fav, FavoriteNode target) {
+  public void addFavorite(Favorite fav, FavoriteNode target) {System.out.println("hier");
     if(target == null)
       target = mRootNode;
     
@@ -209,7 +212,49 @@ DropTargetListener {
 
       setSelectionPath(path);
       
-      JMenuItem item = new JMenuItem(mLocalizer.msg("newFavorite", "New Favorite"),
+      JMenuItem item;
+      
+      if(last.isDirectoryNode()  && !last.equals(mRootNode)) {
+        item = new JMenuItem(isExpanded(path) ? mLocalizer.msg("collapse", "Collapse") : mLocalizer.msg("expand", "Expand"));
+        
+        item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            if(isExpanded(path))
+              collapsePath(path);
+            else
+              expandPath(path);
+          }
+        });
+        
+        menu.add(item);
+        
+        item = new JMenuItem(mLocalizer.msg("expandAll", "Expand all"));
+        
+        item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            expandAll(last);
+          }
+        });
+        
+        menu.add(item);
+
+        item = new JMenuItem(mLocalizer.msg("collapseAll", "Collapse all"));
+        
+        item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            collapseAll(last);
+          }
+        });
+        
+        menu.add(item);
+
+        menu.addSeparator();
+      }
+      
+      
+      
+      
+      item = new JMenuItem(mLocalizer.msg("newFavorite", "New Favorite"),
           FavoritesPlugin.getInstance().getIconFromTheme("actions", "document-new", 16));
       
       item.addActionListener(new ActionListener() {
@@ -221,7 +266,7 @@ DropTargetListener {
       menu.add(item);
       
       if(last.isDirectoryNode() && !last.equals(mRootNode)) {
-        item = new JMenuItem(mLocalizer.msg("rename", "Umbenennen"),
+        item = new JMenuItem(mLocalizer.msg("renameFolder", "Rename folder"),
             IconLoader.getInstance().getIconFromTheme("actions", "document-edit", 16));
         
         item.addActionListener(new ActionListener() {
@@ -236,6 +281,32 @@ DropTargetListener {
         });
         
         menu.add(item);
+        
+        if(last.getChildCount() > 0) {
+          item = new JMenuItem(mLocalizer.msg("sort", "Sort"),
+              IconLoader.getInstance().getIconFromTheme("actions", "sort-list", 16));
+          
+          item.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                sort(last,true);
+                getModel().reload(last);
+            }
+          });
+          
+          menu.add(item);
+        }
+      }
+      else {
+        item = new JMenuItem(mLocalizer.msg("editFavorite", "Edit favorite"),
+            IconLoader.getInstance().getIconFromTheme("actions", "document-edit", 16));
+        
+        item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            ManageFavoritesDialog.getInstance().editSelectedFavorite();
+          }
+        });
+        
+        menu.add(item);
       }
 
       item = new JMenuItem(mLocalizer.msg("newFolder", "New folder"),
@@ -243,18 +314,7 @@ DropTargetListener {
       
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          String value = JOptionPane.showInputDialog(UiUtilities.getLastModalChildOf(ManageFavoritesDialog.getInstance()), "Name:", "Neuer Ordner");
-          
-          if(value != null) {
-            FavoriteNode node = new FavoriteNode(value);
-            
-            if(last.equals(mRootNode))
-              last.add(node);
-            else
-              ((FavoriteNode)last.getParent()).add(node);
-            
-            getModel().reload(node.getParent());
-          }          
+          newFolder(last);
         }
       });
       
@@ -282,6 +342,35 @@ DropTargetListener {
         menu.add(item);
       
       menu.show(this, e.getX(), e.getY());
+    }
+  }
+  
+  private void expandAll(FavoriteNode node) {
+    if(node.isDirectoryNode()) {
+      expandPath(new TreePath(node.getPath()));
+      
+      for(int i = 0; i < node.getChildCount(); i++) {
+        FavoriteNode child = (FavoriteNode)node.getChildAt(i);
+        
+        if(child.isDirectoryNode()) {
+          expandPath(new TreePath(child.getPath()));
+          expandAll(child);
+        }
+      }
+    }
+  }
+  
+  private void collapseAll(FavoriteNode node) {
+    if(node.isDirectoryNode()) {
+      for(int i = 0; i < node.getChildCount(); i++) {
+        FavoriteNode child = (FavoriteNode)node.getChildAt(i);
+        
+        if(child.isDirectoryNode()) {
+          collapseAll(child);
+          collapsePath(new TreePath(child.getPath()));
+        }
+      }
+      collapsePath(new TreePath(node.getPath()));
     }
   }
   
@@ -684,5 +773,82 @@ DropTargetListener {
 
   private void handleExpandedState(FavoriteNode node, boolean expanded) {
     node.setWasExpanded(expanded);
+  }
+  
+  protected void newFolder(FavoriteNode last) {
+    String value = JOptionPane.showInputDialog(UiUtilities.getLastModalChildOf(ManageFavoritesDialog.getInstance()), "Name:", "Neuer Ordner");
+    
+    if(value != null && value.length() > 0) {
+      FavoriteNode node = new FavoriteNode(value);
+      
+      if(last.equals(mRootNode))
+        last.add(node);
+      else
+        ((FavoriteNode)last.getParent()).add(node);
+      
+      getModel().reload(node.getParent());
+    }
+  }
+  
+  public String convertValueToText(Object value, boolean selected,
+      boolean expanded, boolean leaf, int row, boolean hasFocus) {
+    StringBuffer text = new StringBuffer(value.toString());
+    
+    if(value instanceof FavoriteNode) {
+      text.append(" [").append(getProgramsCount((FavoriteNode)value)).append("]");
+    }
+    
+    return text.toString();
+  }
+  
+   /** Calculates the number of programs containded in the childs
+   * 
+   * @param node
+   *          use this Node
+   * @return Number of Child-Nodes
+   */
+  private int getProgramsCount(FavoriteNode node) {
+    int count = node.containsFavorite() ? node.getFavorite().getWhiteListPrograms().length : 0;
+    for (int i = 0; i < node.getChildCount(); i++) {
+      FavoriteNode child = (FavoriteNode)node.getChildAt(i);
+      if (child.containsFavorite()) {
+        count += child.getFavorite().getWhiteListPrograms().length;
+      } else {
+        count += getProgramsCount(child);
+      }
+    }
+    return count;
+  }
+  
+  public void sort(FavoriteNode node, boolean start) {
+    int result = JOptionPane.YES_OPTION;
+    
+    if(start) {
+      String msg = mLocalizer.msg("reallySort", "Do you really want to sort your " +
+      "favorites?\n\nThe current order will get lost.");
+      String title = UIManager.getString("OptionPane.titleText");
+      result = JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), msg, title, JOptionPane.YES_NO_OPTION);
+    }
+    
+    if (result == JOptionPane.YES_OPTION) {
+      FavoriteNode[] nodes = new FavoriteNode[node.getChildCount()];
+      
+      for(int i = 0; i < nodes.length; i++) {
+        nodes[i] = (FavoriteNode)node.getChildAt(i);
+      }
+      
+      node.removeAllChildren();
+      
+      Arrays.sort(nodes);
+      
+      for(FavoriteNode child : nodes) {
+        node.add(child);
+        
+        if(child.isDirectoryNode())
+          sort(child, false);
+      }
+    }
+    
+    ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
   }
 }

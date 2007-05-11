@@ -70,6 +70,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
 
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ReminderConfiguration;
@@ -173,6 +174,25 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     });
     if(!mShowNew) {
       toolbarPn.add(mNewBt);
+      
+      if(favoriteArr == null) {
+        JButton newFolder = UiUtilities.createToolBarButton(mLocalizer.msg("newFolder", "New folder"),
+            IconLoader.getInstance().getIconFromTheme("actions", "folder-new", 22));
+        
+        newFolder.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            TreePath path = FavoriteTree.getInstance().getSelectionPath();
+            
+            if(path != null)
+              FavoriteTree.getInstance().newFolder((FavoriteNode)path.getLastPathComponent());
+            else
+              FavoriteTree.getInstance().newFolder(FavoriteTree.getInstance().getRoot());
+          }          
+        });
+        
+        toolbarPn.add(newFolder);
+      }
+      
       toolbarPn.addSeparator();
     }
 
@@ -500,18 +520,25 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
         Favorite fav = ((FavoriteNode)FavoriteTree.getInstance().getSelectionPath().getLastPathComponent()).getFavorite();
         
         if(fav != null) {
+          enableButtons(true);
           changeProgramList(fav);
         }
         else {
           mProgramListModel.clear();
-          mSendBt.setEnabled(false);          
+          enableButtons(false);
         }
       }
       else {
         mProgramListModel.clear();
-        mSendBt.setEnabled(false);          
+        enableButtons(false);          
       }
     }
+  }
+  
+  private void enableButtons(boolean enabled) {
+    mSendBt.setEnabled(enabled);
+    mEditBt.setEnabled(enabled);
+    mDeleteBt.setEnabled(enabled);
   }
 
   private void changeProgramList(Favorite fav) {
@@ -601,10 +628,12 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     try {
       if (update)
         fav.updatePrograms();
-      mFavoritesListModel.addElement(fav);
-      int idx = mFavoritesListModel.size() - 1;
-      mFavoritesList.setSelectedIndex(idx);
-      mFavoritesList.ensureIndexIsVisible(idx);
+      if(mFavoritesList != null) {
+        mFavoritesListModel.addElement(fav);
+        int idx = mFavoritesListModel.size() - 1;
+        mFavoritesList.setSelectedIndex(idx);
+        mFavoritesList.ensureIndexIsVisible(idx);
+      }
       FavoriteTree.getInstance().addFavorite(fav, parent);
     } catch (TvBrowserException e) {
       ErrorHandler.handle("Creating favorites failed.", e);
@@ -684,31 +713,13 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
   }
 
 
-  protected void sortFavorites() {
-    String msg = mLocalizer.msg("reallySort", "Do you really want to sort your " +
-        "favorites?\n\nThe current order will get lost.");
-    String title = UIManager.getString("OptionPane.titleText");
-
-    int result = JOptionPane.showConfirmDialog(this, msg, title, JOptionPane.YES_NO_OPTION);
-    if (result == JOptionPane.YES_OPTION) {
-      // Create a comparator for Favorites
-      Comparator<Object> comp = new Comparator<Object>() {
-        public int compare(Object o1, Object o2) {
-          return ((Favorite)o1).getName().toLowerCase().compareTo(((Favorite)o2).getName().toLowerCase());
-        }
-      };
-
-      // Sort the list
+  protected void sortFavorites() {         
+    TreePath path = FavoriteTree.getInstance().getSelectionPath();
+    
+    if(path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode()) {
+      FavoriteTree.getInstance().sort((FavoriteNode)path.getLastPathComponent(), true);
       
-      Object[] asArr = mFavoritesListModel.toArray();
-      Arrays.sort(asArr, comp);
-      mFavoritesListModel.removeAllElements();
-      for (int i = 0; i < asArr.length; i++) {
-        mFavoritesListModel.addElement(asArr[i]);
-      }
-
-      // Update the buttons
-      favoriteSelectionChanged();
+      FavoriteTree.getInstance().getModel().reload((FavoriteNode)path.getLastPathComponent());
     }
   }
 
