@@ -711,7 +711,7 @@ public class ReminderPlugin {
           
           return line;         
         }else {
-          URL url = new File(fileName).toURL();
+          URL url = new File(fileName).toURI().toURL();
           AudioClip clip= Applet.newAudioClip(url);
           clip.play();
         }
@@ -721,7 +721,7 @@ public class ReminderPlugin {
       if((new File(fileName)).isFile()) {
         URL url;
         try {
-          url = new File(fileName).toURL();
+          url = new File(fileName).toURI().toURL();
           AudioClip clip= Applet.newAudioClip(url);
           clip.play();
         } catch (MalformedURLException e1) {

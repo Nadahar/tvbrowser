@@ -409,7 +409,7 @@ public class PluginLoader {
     // Create a class loader for the plugin
     ClassLoader classLoader;
     try {
-      URL[] urls = new URL[] { jarFile.toURL() };
+      URL[] urls = new URL[] { jarFile.toURI().toURL() };
       classLoader = URLClassLoader.newInstance(urls, ClassLoader.getSystemClassLoader());
     } catch (MalformedURLException exc) {
       throw new TvBrowserException(getClass(), "error.1",
