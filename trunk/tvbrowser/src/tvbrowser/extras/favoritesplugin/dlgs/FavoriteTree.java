@@ -108,6 +108,7 @@ DropTargetListener {
   private FavoriteNode mTargetNode;
   private int mTarget;
   private long mDragOverStart;
+  private boolean mExpandListenerIsEnabled;
   
   protected static final DataFlavor FAVORITE_FLAVOR = new DataFlavor(TreePath.class, "FavoriteNodeExport");
   
@@ -147,7 +148,9 @@ DropTargetListener {
     renderer.setLeafIcon(null);
     setCellRenderer(renderer);
     
+    mExpandListenerIsEnabled = false;
     expand(mRootNode);
+    mExpandListenerIsEnabled = true;
     
     addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
@@ -166,20 +169,22 @@ DropTargetListener {
       }
     });
     
+    mExpandListenerIsEnabled = true;
+    
     addTreeExpansionListener(new TreeExpansionListener() {
       public void treeCollapsed(TreeExpansionEvent e) {
-        if(e.getPath() != null) {
+        if(e.getPath() != null && mExpandListenerIsEnabled) {
           ((FavoriteNode)e.getPath().getLastPathComponent()).setWasExpanded(false);
         }
       }
 
       public void treeExpanded(TreeExpansionEvent e) {
-        if(e.getPath() != null) {
+        if(e.getPath() != null && mExpandListenerIsEnabled) {
           ((FavoriteNode)e.getPath().getLastPathComponent()).setWasExpanded(true);
         }
       }
     });
-    
+        
     getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     
     (new DragSource()).createDefaultDragGestureRecognizer(this,
@@ -242,8 +247,14 @@ DropTargetListener {
     if(target == null)
       target = mRootNode;
     
-    ((DefaultTreeModel)getModel()).reload(target.add(fav));
+    reload(target.add(fav));
     FavoritesPlugin.getInstance().updateRootNode(true);
+  }
+  
+  protected void reload(FavoriteNode node) {
+    mExpandListenerIsEnabled = false;
+    getModel().reload(node);
+    mExpandListenerIsEnabled = true;
   }
   
   private void showContextMenu(Point p) {
@@ -345,7 +356,7 @@ DropTargetListener {
           item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 sort(last,true);
-                getModel().reload(last);
+                reload(last);
             }
           });
           
@@ -387,7 +398,7 @@ DropTargetListener {
       FavoriteNode parent = (FavoriteNode)node.getParent();
     
       parent.remove(node);
-      ((DefaultTreeModel)getModel()).reload(parent);
+      reload(parent);
     }
     else if(node.containsFavorite())
       ManageFavoritesDialog.getInstance().deleteSelectedFavorite();
@@ -772,8 +783,13 @@ DropTargetListener {
         else
           last.add(node);
         
+        System.out.println(last);
+        
         expandPath(new TreePath(last.getPath()));
+        
+        mExpandListenerIsEnabled = false;
         expand(last);
+        mExpandListenerIsEnabled = true;
       }
       
       updateUI();
@@ -810,7 +826,7 @@ DropTargetListener {
       } else
         ((FavoriteNode)last.getParent()).insert(node,last.getParent().getIndex(last));
       
-      getModel().reload(node.getParent());
+      reload((FavoriteNode)node.getParent());
     }
   }
   
@@ -1088,17 +1104,20 @@ DropTargetListener {
         else
           tarParent.add(src);
         
-        getModel().reload(srcParent);
-        getModel().reload(tarParent);
+        reload(srcParent);
+        reload(tarParent);
         
         setSelectionPath(new TreePath(src.getPath()));
         
         expandPath(new TreePath(tarParent.getPath()));
+        
+        mExpandListenerIsEnabled = false;
         expand(tarParent);
+        mExpandListenerIsEnabled = true;
       }
     }
   }
-
+  
   protected void renameFolder(FavoriteNode node) {    
     if(node != null && node.isDirectoryNode()) {
       String value = JOptionPane.showInputDialog(UiUtilities.getLastModalChildOf(ManageFavoritesDialog.getInstance()), mLocalizer.msg("folderName","Folder name:"), node.getUserObject());
