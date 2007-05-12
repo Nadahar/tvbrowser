@@ -29,6 +29,10 @@ package util.io;
 import tvbrowser.core.Settings;
 import util.ui.TimeFormatter;
 
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -51,6 +55,9 @@ import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 /**
  * A utilities class for I/O stuff. It constists of serveral static
@@ -858,5 +865,46 @@ public class IOUtilities {
         // Close the input stream and return bytes
         is.close();
         return bytes;
+    }
+    
+    /**
+     * Writes the given image icon to the given file in the given imageType.
+     * 
+     * @param icon The icon to write.
+     * @param imageType The image type.
+     * @param targetFile The file to write the image to.
+     * 
+     * @return <code>True</code> if the file could be written, <code>false</code> if something went wrong.
+     * @since 2.6
+     */
+    public static boolean writeImageIconToFile(ImageIcon icon, String imageType, File targetFile) {
+      try {
+        BufferedImage iconimage = new BufferedImage(icon.getIconWidth(),icon.getIconWidth(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = iconimage.createGraphics();
+        icon.paintIcon(null, g2, 0, 0);
+        g2.dispose();
+        
+        ImageIO.write(iconimage, imageType , targetFile);
+      }catch(Exception e) {
+        return false;
+      }
+      
+      return true;
+    }
+    
+    /**
+     * Read the image from the given file to an icon image.
+     * 
+     * @param srcFile The file to read from.
+     * 
+     * @return The read icon image or <code>null</code> if something went wrong.
+     * @since 2.6
+     */
+    public ImageIcon readImageIconFromFile(File srcFile) {
+      try {
+        return new ImageIcon(ImageIO.read(srcFile));
+      }catch(Exception e) {}
+      
+      return null;
     }
 }
