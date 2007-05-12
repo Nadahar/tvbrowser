@@ -308,7 +308,7 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler{
     fac.setValidating(false);
     SAXParser sax = fac.newSAXParser();
     InputSource input = new InputSource(in);
-    input.setSystemId(new File("/").toURL().toString());
+    input.setSystemId(new File("/").toURI().toURL().toString());
     sax.parse(input, new SweDBDayParser(ch,ht));
   }
   
@@ -319,7 +319,7 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler{
     fac.setValidating(false);
     SAXParser sax = fac.newSAXParser();
     InputSource input = new InputSource(in);
-    input.setSystemId(new File("/").toURL().toString());
+    input.setSystemId(new File("/").toURI().toURL().toString());
     sax.parse(input, new SweDBDayParser(ch,ht));
     return ht.values().toArray(new MutableChannelDayProgram[ht.size()]);
   }

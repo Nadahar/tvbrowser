@@ -108,7 +108,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
           
         if(mLinkFile.exists())
           try {
-            if (!mLinkUrl.getUrl().equals((new File("tvbrowser.exe")).getAbsoluteFile().toURL()))
+            if (!mLinkUrl.getUrl().equals((new File("tvbrowser.exe")).getAbsoluteFile().toURI().toURL()))
               createLink(mLinkUrl);
           }catch(Exception linkException) {
             mLinkFile.delete();
@@ -128,7 +128,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     File tvb = new File("tvbrowser.exe");
     
     if(tvb.getAbsoluteFile().isFile()) {
-      link.setUrl(tvb.toURL());
+      link.setUrl(tvb.toURI().toURL());
       link.setIconFile(tvb.getAbsoluteFile().getParent() + "\\imgs\\desktop.ico");
       link.setIconIndex(0);
       link.setWorkingDirectory(tvb.getAbsoluteFile().getParent());

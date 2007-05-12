@@ -46,7 +46,6 @@ import javax.swing.text.Document;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -64,12 +63,6 @@ public class AboutBox extends JDialog implements WindowClosingIf{
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(AboutBox.class);
   
-  private static Font smallFont=new Font("Dialog", Font.PLAIN, 10);
-  private static Font bigFont=new Font("Dialog", Font.PLAIN, 24);
-  private static Font normalFont=new Font("Dialog", Font.PLAIN, 12);
-  private static Font boldFont=new Font("Dialog",Font.BOLD, 12);
-  
-
   public AboutBox(Frame parent) {
     super(parent,true);
     
