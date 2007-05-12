@@ -1047,25 +1047,27 @@ DropTargetListener {
       
       if(path != null) {
         FavoriteNode src = (FavoriteNode)getSelectionPath().getLastPathComponent();
+        FavoriteNode srcParent = (FavoriteNode)src.getParent();
+          
         FavoriteNode target = (FavoriteNode)path.getLastPathComponent();
+        FavoriteNode tarParent = target.equals(mRootNode) ? mRootNode : ((FavoriteNode)target.getParent());
         
-        FavoriteNode parent = target.equals(mRootNode) ? mRootNode : ((FavoriteNode)target.getParent());
+        int n = tarParent.getIndex(target);
         
-        int n = parent.getIndex(target);
-        
-        ((FavoriteNode)src.getParent()).remove(src);
+        srcParent.remove(src);
         
         if(n > -1)
-          parent.insert(src,n);
+          tarParent.insert(src,n);
         else
-          parent.add(src);
+          tarParent.add(src);
         
-        getModel().reload(parent);
+        getModel().reload(srcParent);
+        getModel().reload(tarParent);
         
         setSelectionPath(new TreePath(src.getPath()));
         
-        expandPath(new TreePath(parent.getPath()));
-        expand(parent);
+        expandPath(new TreePath(tarParent.getPath()));
+        expand(tarParent);
       }
     }
   }
