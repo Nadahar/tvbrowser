@@ -39,7 +39,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
@@ -56,7 +55,6 @@ import tvbrowser.ui.pluginview.contextmenu.StructureNodeContextMenu;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import devplugin.ContextMenuIf;
-import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.ProgramItem;
 
