@@ -67,4 +67,12 @@ public class FavoriteTreeModel extends DefaultTreeModel {
   public void reload() {
     reload(root);
   }
+  
+  public boolean isLeaf(Object nodeObject) {
+    if (nodeObject instanceof FavoriteNode) {
+      FavoriteNode node = (FavoriteNode) nodeObject;
+      return node.getChildCount() == 0;
+    }
+    return super.isLeaf(nodeObject);
+  }
 }

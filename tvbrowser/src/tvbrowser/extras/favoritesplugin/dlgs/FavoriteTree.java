@@ -24,6 +24,7 @@
 package tvbrowser.extras.favoritesplugin.dlgs;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -53,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -61,6 +63,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -83,7 +86,7 @@ import util.ui.UiUtilities;
  * @author René Mach
  * @since 2.6
  */
-public class FavoriteTree extends JTree implements MouseListener, DragGestureListener,
+public class FavoriteTree extends JTree implements DragGestureListener,
 DropTargetListener {
   private static Localizer mLocalizer = Localizer.getLocalizerFor(FavoriteTree.class);
   
@@ -96,7 +99,7 @@ DropTargetListener {
   private FavoriteNode mTargetNode;
   private int mTarget;
   private long mMousePressedTime;
-
+  
   protected static final DataFlavor FAVORITE_FLAVOR = new DataFlavor(TreePath.class, "FavoriteNodeExport");
   
   /**
@@ -121,14 +124,22 @@ DropTargetListener {
     
     init();
   }
+    
+  public void updateUI() {
+    setUI(new FavoriteTreeUI());
+    invalidate();
+  }
   
   private void init() {
     setModel(new FavoriteTreeModel(mRootNode));
     setRootVisible(false);
     
+    FavoriteTreeCellRenderer renderer = new FavoriteTreeCellRenderer();
+    renderer.setLeafIcon(null);
+    setCellRenderer(renderer);
+    
     expand(mRootNode);
     
-    addMouseListener(this);
     addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_DELETE) {
@@ -165,7 +176,7 @@ DropTargetListener {
     (new DragSource()).createDefaultDragGestureRecognizer(this,
         DnDConstants.ACTION_MOVE, this);
     
-    new DropTarget(this, this);    
+    new DropTarget(this, this);
   }
   
   /**
@@ -549,43 +560,6 @@ DropTargetListener {
   public FavoriteNode getRoot() {
     return mRootNode;
   }
-  
-  public void mouseClicked(MouseEvent e) {}
-
-  public void mouseEntered(MouseEvent e) {}
-
-  public void mouseExited(MouseEvent e) {}
-
-  public void mousePressed(MouseEvent e) {
-    if(e.isPopupTrigger())
-      showContextMenu(e.getPoint());
-    
-    mMousePressedTime = e.getWhen();
-  }
-
-  public void mouseReleased(MouseEvent e) {
-    if(e.isPopupTrigger())
-      showContextMenu(e.getPoint());
-    
-    if(SwingUtilities.isLeftMouseButton(e)) {
-      TreePath path = getPathForLocation(e.getX(), e.getY());
-      
-      if(((FavoriteNode)path.getLastPathComponent()).containsFavorite()) {
-        if(e.getClickCount() >= 2)
-          ManageFavoritesDialog.getInstance().editSelectedFavorite();
-      }
-      else if(((FavoriteNode)path.getLastPathComponent()).isDirectoryNode() && (e.getWhen() - mMousePressedTime) < 500) {
-        if(!isExpanded(path)) {
-          expandPath(path);
-        }
-        else {
-          collapsePath(path);
-        }
-        this.setSelectionPath(path);
-      }
-    }
-
-  }
 
   public void dragGestureRecognized(DragGestureEvent e) {
     mTransferNode = (FavoriteNode)getLastSelectedPathComponent();
@@ -598,12 +572,10 @@ DropTargetListener {
   public void dragEnter(DropTargetDragEvent e) {
     if(e.getCurrentDataFlavors().length > 1 || e.getCurrentDataFlavors().length < 1 || !e.getCurrentDataFlavors()[0].equals(FAVORITE_FLAVOR))
       e.rejectDrag();
-    else {
-      Graphics2D g2 = (Graphics2D) getGraphics();
-      Color c = new Color(255, 0, 0, 40);
-      g2.setColor(c);
-      g2.fill(mCueLine);
-    }
+    else if(calculateCueLine(e.getLocation()))
+      e.acceptDrag(e.getDropAction());
+    else
+      e.rejectDrag();
   }
 
   public void dragExit(DropTargetEvent e) {
@@ -633,18 +605,13 @@ DropTargetListener {
     }    
   }
   
-  public void dragOver(DropTargetDragEvent e) {
-    if(e.getCurrentDataFlavors().length > 1 || e.getCurrentDataFlavors().length < 1 || !e.getCurrentDataFlavors()[0].equals(FAVORITE_FLAVOR)) {
-      paintImmediately(mCueLine.getBounds());
-      e.rejectDrag();
-      return;
-    }
-
-    int row = getClosestRowForLocation(e.getLocation().x, e.getLocation().y);;
+  
+  private boolean calculateCueLine(Point p) {
+    int row = getClosestRowForLocation(p.x, p.y);;
     
     Rectangle rowBounds = getRowBounds(row);
     
-    if(rowBounds.y + rowBounds.height < e.getLocation().y)
+    if(rowBounds.y + rowBounds.height < p.y)
       row = this.getRowCount();
     
     TreePath path = getPathForRow(row);
@@ -652,14 +619,11 @@ DropTargetListener {
     if(path == null)
       path = new TreePath(mRootNode);
     
-    if(mTransferNode != null && !new TreePath(mTransferNode.getPath()).isDescendant(path)) {
-      e.acceptDrag(e.getDropAction());
-      
+    if(mTransferNode != null && !new TreePath(mTransferNode.getPath()).isDescendant(path)) {      
       FavoriteNode last = (FavoriteNode)path.getLastPathComponent();
       FavoriteNode pointed = last;
       
-      int target = getTargetFor(pointed, e.getLocation(), row);
-      
+      int target = getTargetFor(pointed, p, row);
       
       if(target == -1 || (target == 1 && !isExpanded(new TreePath(pointed.getPath())))) {
         if(!last.isRoot()) {        
@@ -668,42 +632,53 @@ DropTargetListener {
       }      
       
       if(mTargetNode != last || mTarget != target) {
-      
-      mTargetNode = last;
-      mTarget = target;
-      
-      this.paintImmediately(mCueLine.getBounds());
-      
-      int y = row != getRowCount() ? rowBounds.y : rowBounds.y + rowBounds.height;
-            
-      if(target == -1) {
-        Rectangle rect = new Rectangle(0 + 20 * (last.getPath().length-1),y-1,getWidth(),2);
+        mTargetNode = last;
+        mTarget = target;
         
-        mCueLine.setRect(rect);
-      }
-      else if(target == 0) {        
-        Rectangle rect = new Rectangle(0,y,getWidth(),rowBounds.height);
+        this.paintImmediately(mCueLine.getBounds());
+        
+        int y = row != getRowCount() ? rowBounds.y : rowBounds.y + rowBounds.height;
+              
+        if(target == -1) {
+          Rectangle rect = new Rectangle(rowBounds.x,y-1,rowBounds.width,2);
           
-        mCueLine.setRect(rect);
+          mCueLine.setRect(rect);
+        }
+        else if(target == 0) {        
+          Rectangle rect = new Rectangle(rowBounds.x,rowBounds.y,rowBounds.width,rowBounds.height);
+            
+          mCueLine.setRect(rect);
+        }
+        else if(target == 1) {
+          Rectangle rect= new Rectangle(rowBounds.x,y + rowBounds.height-1,rowBounds.width,2);;
+        
+          if(row == getRowCount()) {
+           rect = new Rectangle(0,y-1,getWidth(),2);
+          } 
+          mCueLine.setRect(rect);
+        }
+        
+        Graphics2D g2 = (Graphics2D) getGraphics();
+        Color c = new Color(255, 0, 0, 30);
+        g2.setColor(c);
+        g2.fill(mCueLine);
       }
-      else if(target == 1) {
-        Rectangle rect= new Rectangle(0 + 20 * (last.getPath().length-1),y + rowBounds.height-1,getWidth(),2);;
       
-        if(row == getRowCount()) {
-         rect = new Rectangle(0,y-1,getWidth(),2);
-        } 
-        mCueLine.setRect(rect);
-      }
-      
-      Graphics2D g2 = (Graphics2D) getGraphics();
-      Color c = new Color(255, 0, 0, 40);
-      g2.setColor(c);
-      g2.fill(mCueLine);
-      }
+      return true;
     }
+    
+    return false;
+  }
+  
+  public void dragOver(DropTargetDragEvent e) {
+    if(e.getCurrentDataFlavors().length > 1 || e.getCurrentDataFlavors().length < 1 || !e.getCurrentDataFlavors()[0].equals(FAVORITE_FLAVOR)) {
+      paintImmediately(mCueLine.getBounds());
+      e.rejectDrag();
+    }
+    else if(calculateCueLine(e.getLocation()))
+      e.acceptDrag(e.getDropAction());
     else
       e.rejectDrag();
-    
   }
 
   public void drop(DropTargetDropEvent e) {
@@ -728,10 +703,6 @@ DropTargetListener {
       FavoriteNode last = (FavoriteNode)path.getLastPathComponent();
       FavoriteNode pointed = last;   
       int target = getTargetFor(pointed, e.getLocation(), row);;
-
-
-      
-      
       
       if(path == null)
         path = new TreePath(mRootNode);
@@ -739,12 +710,7 @@ DropTargetListener {
       if(!new TreePath(node.getPath()).isDescendant(path)) {
         setSelectionPath(null);
         
-      
-        
         parent.remove(node);
-        
-      
-        
         
         int n = -1;
         
@@ -770,6 +736,7 @@ DropTargetListener {
         else
           last.add(node);
         
+        expandPath(new TreePath(last.getPath()));
         expand(last);
       }
       
@@ -877,5 +844,94 @@ DropTargetListener {
     }
     
     ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
+  }
+  
+  private class FavoriteTreeUI extends javax.swing.plaf.basic.BasicTreeUI implements MouseListener {
+    private static final int CLICK_WAIT_TIME = 250;
+    private Thread mClickedThread;
+    
+    protected MouseListener createMouseListener() {
+      return this;
+    }
+    
+    public void mousePressed(MouseEvent e) {
+      if(!e.isConsumed()) {
+        if(!tree.hasFocus())
+          tree.requestFocus();
+        
+        TreePath path = getClosestPathForLocation(tree, e.getX(), e.getY());
+        
+        if(getPathBounds(tree,path).contains(e.getPoint())) {
+          setSelectionPath(path);
+        }
+        
+        if(e.isPopupTrigger())
+          showContextMenu(e.getPoint());
+        
+        mMousePressedTime = e.getWhen();
+        
+        checkForClickInExpandControl(getClosestPathForLocation(tree, e.getX(), e.getY()),e.getX(),e.getY());
+        e.consume();
+      }
+    }
+    
+    public void mouseReleased(MouseEvent e) {
+      if(!e.isConsumed()) {
+        if(e.isPopupTrigger())
+          showContextMenu(e.getPoint());
+        
+        if(SwingUtilities.isLeftMouseButton(e)) {
+          final TreePath path = getClosestPathForLocation(tree, e.getX(), e.getY());
+          
+          if(((FavoriteNode)path.getLastPathComponent()).containsFavorite()) {
+            if(e.getClickCount() >= 2)
+              ManageFavoritesDialog.getInstance().editSelectedFavorite();
+          }
+          else if(((FavoriteNode)path.getLastPathComponent()).isDirectoryNode() && (e.getWhen() - mMousePressedTime) < CLICK_WAIT_TIME && getPathBounds(tree,path).contains(e.getPoint())) {
+            if(mClickedThread == null || !mClickedThread.isAlive()) {
+              mClickedThread = new Thread() {
+                public void run() {
+                  if(!isExpanded(path)) {
+                    expandPath(path);
+                  }
+                  else {
+                    collapsePath(path);
+                  }
+                  setSelectionPath(path);
+                  
+                  try {
+                    Thread.sleep(CLICK_WAIT_TIME*2);
+                  }catch(Exception e) {}
+                }
+              };
+              mClickedThread.start();
+            }
+          }
+        }
+        e.consume();
+      }
+    }
+
+    public void mouseClicked(MouseEvent e) {}
+
+    public void mouseEntered(MouseEvent e) {}
+
+    public void mouseExited(MouseEvent e) {}
+  }
+  
+  private class FavoriteTreeCellRenderer extends DefaultTreeCellRenderer {
+    public Component getTreeCellRendererComponent(JTree tree, Object value,
+        boolean sel,
+        boolean expanded,
+        boolean leaf, int row,
+        boolean hasFocus) {
+      JLabel label = (JLabel)super.getTreeCellRendererComponent(tree,value,sel,expanded,leaf,row,hasFocus);
+      
+      if(leaf && value instanceof FavoriteNode && ((FavoriteNode)value).isDirectoryNode()) {
+        label.setIcon(getClosedIcon());
+      }
+      
+      return label;
+    }
   }
 }
