@@ -107,7 +107,7 @@ DropTargetListener {
   
   private FavoriteNode mTargetNode;
   private int mTarget;
-  private long mMousePressedTime;
+  private long mDragOverStart;
   
   protected static final DataFlavor FAVORITE_FLAVOR = new DataFlavor(TreePath.class, "FavoriteNodeExport");
   
@@ -176,7 +176,7 @@ DropTargetListener {
       public void treeExpanded(TreeExpansionEvent e) {
         if(e.getPath() != null) {
           ((FavoriteNode)e.getPath().getLastPathComponent()).setWasExpanded(true);
-        }        
+        }
       }
     });
     
@@ -637,11 +637,22 @@ DropTargetListener {
         if(!last.isRoot()) {        
           last = (FavoriteNode)last.getParent();
         }
-      }      
+      }
+      
+      if(mTarget == 0 && (System.currentTimeMillis() - mDragOverStart) > 1000 && isCollapsed(new TreePath(last.getPath())) && last.getChildCount() > 0) {
+        expandPath(new TreePath(last.getPath()));
+
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            mTarget = -2;
+          }
+        });
+      }
       
       if(mTargetNode != last || mTarget != target) {
         mTargetNode = last;
         mTarget = target;
+        mDragOverStart = System.currentTimeMillis();
         
         this.paintImmediately(mCueLine.getBounds());
         
@@ -878,6 +889,7 @@ DropTargetListener {
   private class FavoriteTreeUI extends javax.swing.plaf.basic.BasicTreeUI implements MouseListener {
     private static final int CLICK_WAIT_TIME = 250;
     private Thread mClickedThread;
+    private long mMousePressedTime;
     
     protected MouseListener createMouseListener() {
       return this;
