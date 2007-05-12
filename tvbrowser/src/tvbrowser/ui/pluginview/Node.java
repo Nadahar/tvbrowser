@@ -145,5 +145,9 @@ public class Node extends DefaultMutableTreeNode {
   public int getLeafCount() {
     return mLeafCount;
   }
+  
+  public boolean isDirectoryNode() {
+    return mType != PROGRAM;
+  }
 
 }
