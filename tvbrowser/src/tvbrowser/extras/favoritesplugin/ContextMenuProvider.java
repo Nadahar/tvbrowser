@@ -35,6 +35,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTree;
 import tvbrowser.ui.mainframe.MainFrame;
 
 import javax.swing.*;
@@ -223,7 +224,7 @@ public class ContextMenuProvider {
   
     for (final Program program : programs) {
       if(!program.isExpired() && !program.equals(p)) {
-        ContextMenuAction subItem = new ContextMenuAction(FavoritesPlugin.getInstance().getFavoriteLabel(favorite, program, p.getChannel()));
+        ContextMenuAction subItem = new ContextMenuAction(FavoriteTree.getInstance().getFavoriteLabel(favorite, program, p.getChannel()));
         subItem.setActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             MainFrame.getInstance().scrollToProgram(program);

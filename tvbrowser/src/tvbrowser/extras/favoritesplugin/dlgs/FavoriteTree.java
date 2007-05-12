@@ -54,6 +54,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -68,7 +70,13 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.NodeFormatter;
+import devplugin.PluginTreeNode;
 import devplugin.Program;
+import devplugin.ProgramFieldType;
+import devplugin.ProgramItem;
 
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ReminderConfiguration;
@@ -252,7 +260,7 @@ DropTargetListener {
       
       JMenuItem item;
       
-      if(last.isDirectoryNode()  && !last.equals(mRootNode)) {
+      if(last.isDirectoryNode() && last.getChildCount() > 0 && !last.equals(mRootNode)) {
         item = new JMenuItem(isExpanded(path) ? mLocalizer.msg("collapse", "Collapse") : mLocalizer.msg("expand", "Expand"));
         
         item.addActionListener(new ActionListener() {
@@ -303,22 +311,24 @@ DropTargetListener {
       
       menu.add(item);
       
-      if(last.isDirectoryNode() && !last.equals(mRootNode)) {
-        item = new JMenuItem(mLocalizer.msg("renameFolder", "Rename folder"),
-            IconLoader.getInstance().getIconFromTheme("actions", "document-edit", 16));
-        
-        item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            String value = JOptionPane.showInputDialog(UiUtilities.getLastModalChildOf(ManageFavoritesDialog.getInstance()), "Name:", last.getUserObject());
-            
-            if(value != null) {
-              last.setUserObject(value);
-              updateUI();
+      if(last.isDirectoryNode()) {
+        if(!last.equals(mRootNode)) {
+          item = new JMenuItem(mLocalizer.msg("renameFolder", "Rename folder"),
+              IconLoader.getInstance().getIconFromTheme("actions", "document-edit", 16));
+          
+          item.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+              String value = JOptionPane.showInputDialog(UiUtilities.getLastModalChildOf(ManageFavoritesDialog.getInstance()), "Name:", last.getUserObject());
+              
+              if(value != null) {
+                last.setUserObject(value);
+                updateUI();
+              }
             }
-          }
-        });
-        
-        menu.add(item);
+          });
+          
+          menu.add(item);
+        }
         
         if(last.getChildCount() > 0) {
           item = new JMenuItem(mLocalizer.msg("sort", "Sort"),
@@ -659,7 +669,7 @@ DropTargetListener {
         }
         
         Graphics2D g2 = (Graphics2D) getGraphics();
-        Color c = new Color(255, 0, 0, 30);
+        Color c = new Color(255, 0, 0, mCueLine.getHeight() > 2 ? 40 : 180);
         g2.setColor(c);
         g2.fill(mCueLine);
       }
@@ -783,7 +793,11 @@ DropTargetListener {
     StringBuffer text = new StringBuffer(value.toString());
     
     if(value instanceof FavoriteNode) {
-      text.append(" [").append(getProgramsCount((FavoriteNode)value)).append("]");
+      int n = getProgramsCount((FavoriteNode)value);
+      
+      if(n > 0) {
+        text.append(" [").append(n).append("]");
+      }
     }
     
     return text.toString();
@@ -861,7 +875,7 @@ DropTargetListener {
         
         TreePath path = getClosestPathForLocation(tree, e.getX(), e.getY());
         
-        if(getPathBounds(tree,path).contains(e.getPoint())) {
+        if(path != null && getPathBounds(tree,path).contains(e.getPoint())) {
           setSelectionPath(path);
         }
         
@@ -883,11 +897,11 @@ DropTargetListener {
         if(SwingUtilities.isLeftMouseButton(e)) {
           final TreePath path = getClosestPathForLocation(tree, e.getX(), e.getY());
           
-          if(((FavoriteNode)path.getLastPathComponent()).containsFavorite()) {
+          if(path != null && ((FavoriteNode)path.getLastPathComponent()).containsFavorite()) {
             if(e.getClickCount() >= 2)
               ManageFavoritesDialog.getInstance().editSelectedFavorite();
           }
-          else if(((FavoriteNode)path.getLastPathComponent()).isDirectoryNode() && (e.getWhen() - mMousePressedTime) < CLICK_WAIT_TIME && getPathBounds(tree,path).contains(e.getPoint())) {
+          else if(path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode() && (e.getWhen() - mMousePressedTime) < CLICK_WAIT_TIME && getPathBounds(tree,path).contains(e.getPoint())) {
             if(mClickedThread == null || !mClickedThread.isAlive()) {
               mClickedThread = new Thread() {
                 public void run() {
@@ -934,4 +948,126 @@ DropTargetListener {
       return label;
     }
   }
+  
+  public void updatePluginTree(PluginTreeNode node, FavoriteNode parent) {
+    if(parent == null)
+      parent = mRootNode;
+    
+    if(parent.isDirectoryNode()) {
+      Enumeration e = parent.children();
+            
+      while(e.hasMoreElements()) {
+        final FavoriteNode child = (FavoriteNode)e.nextElement();
+      
+        PluginTreeNode newNode = new PluginTreeNode(child.toString());
+        newNode.setGroupingByWeekEnabled(true);
+        node.add(newNode);
+        
+        if(child.isDirectoryNode())
+          updatePluginTree(newNode,child);
+        else {
+          Action editFavorite = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+              FavoritesPlugin.getInstance().editFavorite(child.getFavorite());
+            }
+          };
+          editFavorite.putValue(Action.NAME, mLocalizer.msg("editTree","Edit..."));
+          editFavorite.putValue(Action.SMALL_ICON, FavoritesPlugin.getInstance().getIconFromTheme("actions", "document-edit", 16));
+
+          Action deleteFavorite = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+              FavoritesPlugin.getInstance().askAndDeleteFavorite(child.getFavorite());
+            }
+          };
+          deleteFavorite.putValue(Action.NAME, mLocalizer.msg("deleteTree","Delete..."));
+          deleteFavorite.putValue(Action.SMALL_ICON, FavoritesPlugin.getInstance().getIconFromTheme("actions", "edit-delete", 16));
+
+          newNode.addAction(editFavorite);
+          newNode.addAction(deleteFavorite);                    
+          
+          Program[] progArr = child.getFavorite().getWhiteListPrograms();
+            
+          if(progArr.length <= 10)
+            newNode.setGroupingByDateEnabled(false);
+          
+          for (int j=0; j<progArr.length; j++) {
+            PluginTreeNode pNode = newNode.addProgram(progArr[j]);
+            
+            int numberOfDays = progArr[j].getDate().getNumberOfDaysSince(Date.getCurrentDate());
+            if ((progArr.length <= 10) || (numberOfDays > 1)) {
+              pNode.setNodeFormatter(new NodeFormatter() {
+                public String format(ProgramItem pitem) {
+                  Program p = pitem.getProgram();
+                  return getFavoriteLabel(child.getFavorite(), p);
+                }
+              });
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  public String getFavoriteLabel(Favorite favorite, Program program) {
+    return getFavoriteLabel(favorite, program, null);
+  }
+  
+  public String getFavoriteLabel(Favorite favorite, Program p, Channel currentChannel) {
+    Date d = p.getDate();
+    String progdate;
+
+    if (d.equals(Date.getCurrentDate()))
+      progdate = mLocalizer.msg("today", "today");
+    else if (d.equals(Date.getCurrentDate().addDays(1)))
+      progdate = mLocalizer.msg("tomorrow", "tomorrow");
+    else
+      progdate = p.getDateString();
+
+    String description = progdate + "  " + p.getTimeString(); 
+    if(favorite.getName().compareTo(p.getTitle()) != 0)
+      description = description + "  " + p.getTitle();
+    String episode = p.getTextField(ProgramFieldType.EPISODE_TYPE);
+    if (episode != null && (! episode.trim().equalsIgnoreCase(""))) {
+      if (episode.length()<=3) {
+        episode = ProgramFieldType.EPISODE_TYPE.getLocalizedName() + " " + episode;
+      }
+      description = description + ": " + episode ;
+    }
+    if (null == currentChannel || currentChannel != p.getChannel()) {
+      description = description + "  (" + p.getChannel() + ")";
+    }
+    return description;
+  }
+
+  protected void moveSelectedFavorite(int rowCount) {
+    int row = getRowForPath(getSelectionPath());
+    
+    if(row != -1) {
+      TreePath path = getPathForRow(row+rowCount);
+      
+      if(path != null) {
+        FavoriteNode src = (FavoriteNode)getSelectionPath().getLastPathComponent();
+        FavoriteNode target = (FavoriteNode)path.getLastPathComponent();
+        
+        FavoriteNode parent = target.equals(mRootNode) ? mRootNode : ((FavoriteNode)target.getParent());
+        
+        int n = parent.getIndex(target);
+        
+        ((FavoriteNode)src.getParent()).remove(src);
+        
+        if(n > -1)
+          parent.insert(src,n);
+        else
+          parent.add(src);
+        
+        getModel().reload(parent);
+        
+        setSelectionPath(new TreePath(src.getPath()));
+        
+        expandPath(new TreePath(parent.getPath()));
+        expand(parent);
+      }
+    }
+  }
+
 }
