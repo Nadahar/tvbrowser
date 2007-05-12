@@ -589,7 +589,9 @@ DropTargetListener {
   }
 
   public void dragExit(DropTargetEvent e) {
-    this.paintImmediately(mCueLine.getBounds());
+    paintImmediately(mCueLine.getBounds());
+    mCueLine.setRect(0,0,0,0);
+    mTarget = -2;
   }
   
   private int getTargetFor(FavoriteNode node, Point p, int row) {
@@ -689,6 +691,23 @@ DropTargetListener {
       e.acceptDrag(e.getDropAction());
     else
       e.rejectDrag();
+    
+    if (this.getVisibleRect().width < this.getSize().width
+        || this.getVisibleRect().height < this.getSize().height) {
+      int scroll = 20;
+      if (e.getLocation().y + scroll + 5 > getVisibleRect().height)
+        scrollRectToVisible(new Rectangle(e.getLocation().x, e.getLocation().y
+            + scroll + 5, 1, 1));
+      if (e.getLocation().y - scroll < getVisibleRect().y)
+        scrollRectToVisible(new Rectangle(e.getLocation().x, e.getLocation().y
+            - scroll, 1, 1));
+      if (e.getLocation().x - scroll < getVisibleRect().x)
+        scrollRectToVisible(new Rectangle(e.getLocation().x - scroll, e
+            .getLocation().y, 1, 1));
+      if (e.getLocation().x + scroll + 5 > getVisibleRect().width)
+        scrollRectToVisible(new Rectangle(e.getLocation().x + scroll + 5, e
+            .getLocation().y, 1, 1));
+    }
   }
 
   public void drop(DropTargetDropEvent e) {
