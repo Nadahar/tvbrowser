@@ -783,8 +783,6 @@ DropTargetListener {
         else
           last.add(node);
         
-        System.out.println(last);
-        
         expandPath(new TreePath(last.getPath()));
         
         mExpandListenerIsEnabled = false;
