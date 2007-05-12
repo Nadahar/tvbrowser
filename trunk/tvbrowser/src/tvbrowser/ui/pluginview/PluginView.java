@@ -27,15 +27,19 @@
 package tvbrowser.ui.pluginview;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.Action;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
@@ -52,6 +56,7 @@ import tvbrowser.ui.pluginview.contextmenu.StructureNodeContextMenu;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import devplugin.ContextMenuIf;
+import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.ProgramItem;
 
@@ -70,7 +75,7 @@ public class PluginView extends JPanel implements MouseListener {
 
     insertPluginRootNodes();
 
-    DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
+    PluginTreeCellRenderer renderer = new PluginTreeCellRenderer();
     renderer.setLeafIcon(null);
     mTree = new PluginTree(mModel);
     mTree.setSelectionModel(new PluginTreeSelectionModel());
@@ -223,5 +228,19 @@ public class PluginView extends JPanel implements MouseListener {
 
   }
 
-
+  private class PluginTreeCellRenderer extends DefaultTreeCellRenderer {
+    public Component getTreeCellRendererComponent(JTree tree, Object value,
+        boolean sel,
+        boolean expanded,
+        boolean leaf, int row,
+        boolean hasFocus) {
+      JLabel label = (JLabel)super.getTreeCellRendererComponent(tree,value,sel,expanded,leaf,row,hasFocus);
+      
+      if(leaf && value instanceof Node && ((Node)value).isDirectoryNode()) {
+        label.setIcon(getClosedIcon());
+      }
+      
+      return label;
+    }
+  }
 }
