@@ -25,6 +25,7 @@ package tvbrowser.extras.favoritesplugin.dlgs;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -262,6 +263,7 @@ DropTargetListener {
       
       if(last.isDirectoryNode() && last.getChildCount() > 0 && !last.equals(mRootNode)) {
         item = new JMenuItem(isExpanded(path) ? mLocalizer.msg("collapse", "Collapse") : mLocalizer.msg("expand", "Expand"));
+        item.setFont(item.getFont().deriveFont(Font.BOLD));
         
         item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
@@ -297,8 +299,17 @@ DropTargetListener {
         menu.addSeparator();
       }
       
+      item = new JMenuItem(mLocalizer.msg("newFolder", "New folder"),
+          IconLoader.getInstance().getIconFromTheme("actions", "folder-new", 16));      
       
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          newFolder(last);
+        }
+      });
       
+      menu.add(item);
+      menu.addSeparator();
       
       item = new JMenuItem(mLocalizer.msg("newFavorite", "New Favorite"),
           FavoritesPlugin.getInstance().getIconFromTheme("actions", "document-new", 16));
@@ -318,19 +329,16 @@ DropTargetListener {
           
           item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-              String value = JOptionPane.showInputDialog(UiUtilities.getLastModalChildOf(ManageFavoritesDialog.getInstance()), "Name:", last.getUserObject());
-              
-              if(value != null) {
-                last.setUserObject(value);
-                updateUI();
-              }
+              renameFolder(last);
             }
           });
           
           menu.add(item);
         }
         
-        if(last.getChildCount() > 0) {
+        if(last.getChildCount() > 1) {
+          menu.addSeparator();
+          
           item = new JMenuItem(mLocalizer.msg("sort", "Sort"),
               IconLoader.getInstance().getIconFromTheme("actions", "sort-list", 16));
           
@@ -347,6 +355,7 @@ DropTargetListener {
       else {
         item = new JMenuItem(mLocalizer.msg("editFavorite", "Edit favorite"),
             IconLoader.getInstance().getIconFromTheme("actions", "document-edit", 16));
+        item.setFont(item.getFont().deriveFont(Font.BOLD));
         
         item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
@@ -356,17 +365,6 @@ DropTargetListener {
         
         menu.add(item);
       }
-
-      item = new JMenuItem(mLocalizer.msg("newFolder", "New folder"),
-          IconLoader.getInstance().getIconFromTheme("actions", "folder-new", 16));      
-      
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          newFolder(last);
-        }
-      });
-      
-      menu.add(item);
       
       item = new JMenuItem(Localizer.getLocalization(Localizer.I18N_DELETE),
           IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16));
@@ -376,17 +374,15 @@ DropTargetListener {
           delete(last);
         }
       });
-            
-      item.setEnabled(last.getChildCount() < 1);
       
-      if(!last.equals(mRootNode))
+      if(!last.equals(mRootNode) && last.getChildCount() < 1)
         menu.add(item);
       
       menu.show(this, p.x, p.y);
     
   }
   
-  private void delete(FavoriteNode node) {
+  protected void delete(FavoriteNode node) {
     if(node.isDirectoryNode() && node.getChildCount() < 1) {
       FavoriteNode parent = (FavoriteNode)node.getParent();
     
@@ -792,7 +788,7 @@ DropTargetListener {
   }
   
   protected void newFolder(FavoriteNode last) {
-    String value = JOptionPane.showInputDialog(UiUtilities.getLastModalChildOf(ManageFavoritesDialog.getInstance()), "Name:", "Neuer Ordner");
+    String value = JOptionPane.showInputDialog(UiUtilities.getLastModalChildOf(ManageFavoritesDialog.getInstance()), mLocalizer.msg("folderName","Folder name:"), mLocalizer.msg("newFolder","New folder"));
     
     if(value != null && value.length() > 0) {
       FavoriteNode node = new FavoriteNode(value);
@@ -1091,4 +1087,14 @@ DropTargetListener {
     }
   }
 
+  protected void renameFolder(FavoriteNode node) {    
+    if(node != null && node.isDirectoryNode()) {
+      String value = JOptionPane.showInputDialog(UiUtilities.getLastModalChildOf(ManageFavoritesDialog.getInstance()), mLocalizer.msg("folderName","Folder name:"), node.getUserObject());
+    
+      if(value != null) {
+        node.setUserObject(value);
+        updateUI();
+      }
+    }
+  }
 }

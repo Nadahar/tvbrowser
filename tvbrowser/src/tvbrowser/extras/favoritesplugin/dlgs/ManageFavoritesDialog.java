@@ -31,7 +31,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -44,8 +43,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Enumeration;
 
 import javax.swing.BorderFactory;
@@ -63,12 +60,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -193,7 +188,15 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       mNewBt = UiUtilities.createToolBarButton(msg, icon);
       mNewBt.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
-          newFavorite(FavoriteTree.getInstance().getRoot());
+          TreePath path = FavoriteTree.getInstance().getSelectionPath();
+          
+          if(path == null)
+            newFavorite(FavoriteTree.getInstance().getRoot());
+          else {
+            FavoriteNode node = (FavoriteNode)path.getLastPathComponent();
+                        
+            newFavorite(node.isDirectoryNode() ? node : (FavoriteNode)node.getParent());
+          }
         }
       });
 
@@ -205,7 +208,16 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     mEditBt = UiUtilities.createToolBarButton(msg, icon);
     mEditBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-        editSelectedFavorite();
+        if(mShowNew)
+          editSelectedFavorite();
+        else {
+          FavoriteNode node = (FavoriteNode)FavoriteTree.getInstance().getSelectionPath().getLastPathComponent();
+          
+          if(node.isDirectoryNode())
+            FavoriteTree.getInstance().renameFolder(node);
+          else
+            editSelectedFavorite();
+        }
       }
     });
     toolbarPn.add(mEditBt);
@@ -215,7 +227,16 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     mDeleteBt = UiUtilities.createToolBarButton(msg, icon);
     mDeleteBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-        deleteSelectedFavorite();
+        if(mShowNew)
+          deleteSelectedFavorite();
+        else {
+          FavoriteNode node = (FavoriteNode)FavoriteTree.getInstance().getSelectionPath().getLastPathComponent();
+          
+          if(node.isDirectoryNode())
+            FavoriteTree.getInstance().delete(node);
+          else
+            deleteSelectedFavorite();
+        }
       }
     });
     toolbarPn.add(mDeleteBt);
@@ -523,6 +544,9 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       mEditBt.setEnabled(selection != -1);
       mDeleteBt.setEnabled(selection != -1);
 
+      mEditBt.setToolTipText(mLocalizer.msg("edit", "Edit the selected favorite..."));
+      mDeleteBt.setToolTipText(mLocalizer.msg("delete", "Delete selected favorite..."));
+      
       mUpBt.setEnabled(selection > 0);
       mDownBt.setEnabled((selection != -1) && (selection < (size - 1)));
 
@@ -542,27 +566,41 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
         if(fav != null) {
           enableButtons(true);
           changeProgramList(fav);
+          mDeleteBt.setEnabled(true);
+          mEditBt.setToolTipText(mLocalizer.msg("edit", "Edit the selected favorite..."));
+          mDeleteBt.setToolTipText(mLocalizer.msg("delete", "Delete selected favorite..."));
         }
         else {
           mProgramListModel.clear();
-          enableButtons(false);
+          
+          FavoriteNode node = (FavoriteNode)FavoriteTree.getInstance().getSelectionPath().getLastPathComponent();
+          
+          enableButtons(node.isDirectoryNode());
+          
+          mDeleteBt.setEnabled(node.isDirectoryNode() && node.getChildCount() < 1);
+          mSendBt.setEnabled(false);
+          
+          mEditBt.setToolTipText(mLocalizer.msg("renameFolder", "Rename selected folder..."));
+          mDeleteBt.setToolTipText(mLocalizer.msg("deleteFolder", "Delete selected folder"));
         }
       }
       else {
         mProgramListModel.clear();
+        mDeleteBt.setEnabled(false);
+        mSendBt.setEnabled(false);
         enableButtons(false);          
       }
     }
   }
   
   private void enableButtons(boolean enabled) {
-    TreePath path = FavoriteTree.getInstance().getSelectionPath();
+    TreePath path = FavoriteTree.getInstance().getSelectionPath();        
     
-    mSendBt.setEnabled(enabled);
     mEditBt.setEnabled(enabled);
-    mDeleteBt.setEnabled(enabled);
+    
     mUpBt.setEnabled((enabled || (path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode())) && FavoriteTree.getInstance().getRowForPath(FavoriteTree.getInstance().getSelectionPath()) > 0 );
     mDownBt.setEnabled((enabled || (path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode())) && FavoriteTree.getInstance().getRowForPath(FavoriteTree.getInstance().getSelectionPath()) < FavoriteTree.getInstance().getRowCount() -1);
+    mSortBt.setEnabled(enabled && (path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode()) && ((FavoriteNode)path.getLastPathComponent()).getChildCount() > 1);
   }
 
   private void changeProgramList(Favorite fav) {
@@ -633,7 +671,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       favorite = new AdvancedFavorite("");
       EditFavoriteDialog dlg = new EditFavoriteDialog(this, favorite);
       UiUtilities.centerAndShow(dlg);
-
+      
       if (!dlg.getOkWasPressed()) {
         favorite = null;
       }
@@ -649,19 +687,24 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
 
   public void addFavorite(Favorite fav, boolean update, FavoriteNode parent) {
     if (fav != null) {
-    try {
-      if (update)
-        fav.updatePrograms();
-      if(mFavoritesList != null) {
-        mFavoritesListModel.addElement(fav);
-        int idx = mFavoritesListModel.size() - 1;
-        mFavoritesList.setSelectedIndex(idx);
-        mFavoritesList.ensureIndexIsVisible(idx);
+      try {
+        if (update)
+          fav.updatePrograms();
+        if(mFavoritesList != null) {
+          mFavoritesListModel.addElement(fav);
+          int idx = mFavoritesListModel.size() - 1;
+          mFavoritesList.setSelectedIndex(idx);
+          mFavoritesList.ensureIndexIsVisible(idx);
+        }
+        FavoriteTree.getInstance().addFavorite(fav, parent);
+      } catch (TvBrowserException e) {
+        ErrorHandler.handle("Creating favorites failed.", e);
       }
-      FavoriteTree.getInstance().addFavorite(fav, parent);
-    } catch (TvBrowserException e) {
-      ErrorHandler.handle("Creating favorites failed.", e);
     }
+
+    if(parent != null) {
+      FavoriteTree.getInstance().expandPath(new TreePath(parent.getPath()));
+      favoriteSelectionChanged();
     }
   }
 
