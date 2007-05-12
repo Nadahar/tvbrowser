@@ -771,7 +771,9 @@ public class FavoritesPlugin {
     mRootNode.addAction(openSettings);
     mRootNode.removeAllChildren();
 
-    final Favorite[] favoriteArr = FavoriteTree.getInstance().getFavoriteArr();
+    FavoriteTree.getInstance().updatePluginTree(mRootNode,null);
+    
+   /* final Favorite[] favoriteArr = FavoriteTree.getInstance().getFavoriteArr();
     
     for (int i=0; i<favoriteArr.length; i++) {
       PluginTreeNode n = new PluginTreeNode(favoriteArr[i].getName());
@@ -818,7 +820,7 @@ public class FavoritesPlugin {
         }
       }
       mRootNode.add(n);
-    }
+    }*/
 
     mRootNode.update();
     ReminderPlugin.getInstance().updateRootNode(mHasRightToSave);
@@ -832,36 +834,6 @@ public class FavoritesPlugin {
     }
   }
   
-	protected String getFavoriteLabel(Favorite favorite, Program program) {
-		return getFavoriteLabel(favorite, program, null);
-	}
-	
-	protected String getFavoriteLabel(Favorite favorite, Program p, Channel currentChannel) {
-		Date d = p.getDate();
-		String progdate;
-
-		if (d.equals(Date.getCurrentDate()))
-		  progdate = mLocalizer.msg("today", "today");
-		else if (d.equals(Date.getCurrentDate().addDays(1)))
-		  progdate = mLocalizer.msg("tomorrow", "tomorrow");
-		else
-		  progdate = p.getDateString();
-
-		String description = progdate + "  " + p.getTimeString(); 
-		if(favorite.getName().compareTo(p.getTitle()) != 0)
-			description = description + "  " + p.getTitle();
-		String episode = p.getTextField(ProgramFieldType.EPISODE_TYPE);
-		if (episode != null && (! episode.trim().equalsIgnoreCase(""))) {
-			if (episode.length()<=3) {
-				episode = ProgramFieldType.EPISODE_TYPE.getLocalizedName() + " " + episode;
-			}
-			description = description + ": " + episode ;
-		}
-		if (null == currentChannel || currentChannel != p.getChannel()) {
-			description = description + "  (" + p.getChannel() + ")";
-		}
-		return description;
-	}
 
 	public ProgramReceiveTarget[] getClientPluginTargetIds() {
     return mClientPluginTargets;
