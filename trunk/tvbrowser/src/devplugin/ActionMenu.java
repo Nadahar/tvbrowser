@@ -26,6 +26,8 @@
 
 package devplugin;
 
+import java.util.ArrayList;
+
 import javax.swing.Action;
 
 
@@ -63,6 +65,26 @@ public class ActionMenu {
     for (int i=0; i<mSubItems.length; i++) {
       mSubItems[i] = new ActionMenu(subItems[i]);
     }
+  }
+
+  /**
+   * Creates a menu item having sub menu items.
+   * @param action
+   * @param subItems, can be Actions or ActionMenus in mixed order
+   */
+  public ActionMenu(Action action, Object[] subItems) {
+    mAction = action;
+    ArrayList<ActionMenu> subMenus = new ArrayList<ActionMenu>();
+    for (int i=0; i<subItems.length; i++) {
+      if (subItems[i] instanceof Action) {
+        subMenus.add(new ActionMenu((Action) subItems[i]));
+      }
+      else if (subItems[i] instanceof ActionMenu) {
+        subMenus.add((ActionMenu) subItems[i]);
+      }
+    }
+    mSubItems = new ActionMenu[subMenus.size()];
+    subMenus.toArray(mSubItems);
   }
 
   /**
