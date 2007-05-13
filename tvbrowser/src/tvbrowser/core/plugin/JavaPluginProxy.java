@@ -80,16 +80,20 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   
   private String mPluginFileName;
   
+  /** plugin icon, only used if the plugin is not active */
+  private Icon mPluginIcon;
+  
 
   public JavaPluginProxy(Plugin plugin, String pluginFileName) {
     mPlugin = plugin;
     mPluginFileName = pluginFileName;
   }
 
-  public JavaPluginProxy(PluginInfo info, String pluginFileName, String pluginId) {
+  public JavaPluginProxy(PluginInfo info, String pluginFileName, String pluginId, Icon pluginIcon) {
     mPluginInfo = info;
     mPluginFileName = pluginFileName;
     mId = pluginId;
+    mPluginIcon = pluginIcon;
   }
 
   /**
@@ -567,5 +571,15 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    */
   public void setPlugin(Plugin plugin) {
     mPlugin = plugin;
+  }
+
+  @Override
+  public Icon getPluginIcon() {
+    // if only the proxy was loaded, then mPluginIcon contains the copied plugin icon
+    if (mPluginIcon != null) {
+      return mPluginIcon;
+    }
+    // otherwise get the icon as always
+    return super.getPluginIcon();
   }
 }
