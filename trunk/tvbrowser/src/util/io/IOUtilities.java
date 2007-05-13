@@ -898,7 +898,7 @@ public class IOUtilities {
      * @return The read icon image or <code>null</code> if something went wrong.
      * @since 2.6
      */
-    public ImageIcon readImageIconFromFile(File srcFile) {
+    public static ImageIcon readImageIconFromFile(File srcFile) {
       try {
         return new ImageIcon(ImageIO.read(srcFile));
       }catch(Exception e) {}

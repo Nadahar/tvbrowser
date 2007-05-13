@@ -43,6 +43,9 @@ import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
 import tvbrowser.core.plugin.AbstractPluginProxy;
 import tvbrowser.core.plugin.BeanShellPluginProxy;
 import tvbrowser.core.plugin.JavaPluginProxy;
@@ -55,6 +58,7 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvdataservice.TvDataService;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
+import util.io.IOUtilities;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Version;
@@ -116,10 +120,15 @@ public class PluginLoader {
         File oldFile = new File(oldFileName);
         
         // delete the old proxy, this will force loading of the new plugin (even if it's not active)
-        String oldProxyName = proxyFileName(oldFile);
+        String oldProxyName = getProxyFileName(oldFile);
         File oldProxy = new File(oldProxyName);
         if (oldProxy.exists()) {
           oldProxy.delete();
+        }
+        String oldIconName = getProxyIconFileName(oldFile);
+        File oldIcon = new File(oldIconName);
+        if (oldIcon.exists()) {
+          oldIcon.delete();
         }
 
         // Delete the old file
@@ -242,7 +251,14 @@ public class PluginLoader {
       String lcFileName = in.readUTF();
       in.close();
       PluginInfo info = new PluginInfo(name, description, author, version, license);
-      return new JavaPluginProxy(info, lcFileName, pluginId);
+      // now get icon
+      String iconFileName = getProxyIconFileName(proxyFile);
+      File iconFile = new File(iconFileName);
+      ImageIcon icon = null;
+      if (iconFile.canRead()) {
+        icon = IOUtilities.readImageIconFromFile(iconFile);
+      }
+      return new JavaPluginProxy(info, lcFileName, pluginId, icon);
     } catch (IOException e) {
       // delete proxy on read error, maybe the format has changed
       proxyFile.delete();
@@ -257,8 +273,9 @@ public class PluginLoader {
    */
   private void saveProxyInfo(File pluginFile, JavaPluginProxy proxy) {
     try {
+      String proxyFileName = getProxyFileName(pluginFile);
       DataOutputStream out = new DataOutputStream(new
-          BufferedOutputStream(new FileOutputStream(proxyFileName(pluginFile))));
+          BufferedOutputStream(new FileOutputStream(proxyFileName)));
       PluginInfo info = proxy.getInfo();
       out.writeUTF(info.getName());
       out.writeUTF(info.getAuthor());
@@ -276,8 +293,26 @@ public class PluginLoader {
       out.writeLong(pluginFile.length());
       out.writeUTF(proxy.getPluginFileName());
       out.close();
+      // also store the plugin icon
+      Icon pluginIcon = proxy.getPluginIcon();
+      if (pluginIcon != null && pluginIcon instanceof ImageIcon) {
+        String iconFileName = getProxyIconFileName(pluginFile);
+        File iconFile = new File(iconFileName);
+        IOUtilities.writeImageIconToFile((ImageIcon)pluginIcon, "png", iconFile);
+      }
     } catch (IOException e) {
     }
+  }
+
+  /**
+   * get the file name of the proxied icon for a plugin
+   * @param pluginFile
+   * @return icon file name
+   */
+  private String getProxyIconFileName(File pluginFile) {
+    String name = pluginFile.getName();
+    name = name.substring(0, name.indexOf("."));
+    return Settings.getUserSettingsDirName() + File.separatorChar + name + ".icon.png";
   }
 
   /**
@@ -286,7 +321,7 @@ public class PluginLoader {
    * @param pluginFile
    * @return proxy file name
    */
-  private String proxyFileName(File pluginFile) {
+  private String getProxyFileName(File pluginFile) {
     return Settings.getUserSettingsDirName() + File.separatorChar + pluginFile.getName() + ".proxy";
   }
 
