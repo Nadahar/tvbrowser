@@ -596,11 +596,11 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
   private void enableButtons(boolean enabled) {
     TreePath path = FavoriteTree.getInstance().getSelectionPath();        
     
-    mEditBt.setEnabled(enabled);
+    mEditBt.setEnabled(enabled && path != null && !path.getLastPathComponent().equals(FavoriteTree.getInstance().getRoot()));
     
-    mUpBt.setEnabled((enabled || (path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode())) && FavoriteTree.getInstance().getRowForPath(FavoriteTree.getInstance().getSelectionPath()) > 0 );
-    mDownBt.setEnabled((enabled || (path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode())) && FavoriteTree.getInstance().getRowForPath(FavoriteTree.getInstance().getSelectionPath()) < FavoriteTree.getInstance().getRowCount() -1);
-    mSortBt.setEnabled(enabled && (path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode()) && ((FavoriteNode)path.getLastPathComponent()).getChildCount() > 1);
+    mUpBt.setEnabled((enabled || (path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode())) && !path.getLastPathComponent().equals(FavoriteTree.getInstance().getRoot()) && FavoriteTree.getInstance().getRowForPath(FavoriteTree.getInstance().getSelectionPath()) > 0 );
+    mDownBt.setEnabled((enabled || (path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode())) && !path.getLastPathComponent().equals(FavoriteTree.getInstance().getRoot()) && FavoriteTree.getInstance().getRowForPath(FavoriteTree.getInstance().getSelectionPath()) < FavoriteTree.getInstance().getRowCount() -1);
+    mSortBt.setEnabled((enabled && (path != null && (((FavoriteNode)path.getLastPathComponent()).isDirectoryNode()) && ((FavoriteNode)path.getLastPathComponent()).getChildCount() > 1 || path.getLastPathComponent().equals(FavoriteTree.getInstance().getRoot()))) || path == null);
   }
 
   private void changeProgramList(Favorite fav) {
@@ -787,7 +787,10 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
   protected void sortFavorites() {         
     TreePath path = FavoriteTree.getInstance().getSelectionPath();
     
-    if(path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode()) {
+    if(path == null)
+      path = new TreePath(FavoriteTree.getInstance().getRoot());
+    
+    if(((FavoriteNode)path.getLastPathComponent()).isDirectoryNode()) {
       FavoriteTree.getInstance().sort((FavoriteNode)path.getLastPathComponent(), true);
       
       FavoriteTree.getInstance().reload((FavoriteNode)path.getLastPathComponent());

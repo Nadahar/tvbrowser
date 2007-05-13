@@ -156,7 +156,17 @@ DropTargetListener {
       public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_DELETE) {
           if(getSelectionPath() != null) {
+            FavoriteNode node = (FavoriteNode)getSelectionPath().getLastPathComponent();
+            FavoriteNode parent = (FavoriteNode)node.getParent();
+            
+            int n = parent.getIndex(node);
+                        
             delete((FavoriteNode)getSelectionPath().getLastPathComponent());
+            
+            if(n > 0)
+              setSelectionPath(new TreePath(((FavoriteNode)parent.getChildAt(n-1)).getPath()));
+            else
+              setSelectionPath(new TreePath(parent.getPath()));
           }
         }
         else if(e.getKeyCode() == KeyEvent.VK_R || e.getKeyCode() == KeyEvent.VK_CONTEXT_MENU) {
