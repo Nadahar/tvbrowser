@@ -91,6 +91,10 @@ public class WebPlugin extends Plugin {
   
   private static WebPlugin INSTANCE;
   
+  /** list of items to be searched if any searchable item shall be put into the context menu */
+  private ArrayList<String> searchItems = null;
+
+  
   /**
    * Creates the Plugin
    */
@@ -208,7 +212,7 @@ public class WebPlugin extends Plugin {
     mainAction.putValue(Action.SMALL_ICON, createImageIcon("actions", "web-search", 16));
 
     ArrayList<Object> actionList = new ArrayList<Object>();
-    ArrayList<String> searchItems = null;
+    searchItems = null;
 
     for (int i = 0; i < mAddresses.size(); i++) {
 
@@ -223,41 +227,7 @@ public class WebPlugin extends Plugin {
       if (address.isActive()) {
         // create items for a possible sub menu
         if (address.getUrl().contains(WEBSEARCH_ALL) && searchItems == null) {
-          searchItems = new ArrayList<String>();
-          searchItems.add(program.getTitle());
-          String directorField = program.getTextField(ProgramFieldType.DIRECTOR_TYPE);
-          if (directorField != null) {
-            String[] directors = directorField.split(",");
-            for (String director : directors) {
-              searchItems.add(director.trim());
-            }
-          }
-          String scriptField = program.getTextField(ProgramFieldType.SCRIPT_TYPE);
-          if (scriptField != null) {
-            String[] scripts = scriptField.split(",");
-            for (String script : scripts) {
-              searchItems.add(script.trim());
-            }
-          }
-          String actorsField = program.getTextField(ProgramFieldType.ACTOR_LIST_TYPE);
-          if (actorsField != null) {
-            String[] actors = actorsField.split(",");
-            for (String actor : actors) {
-              if (actor.contains("(") && actor.contains(")")) {
-                String part = actor.substring(0, actor.indexOf("(")).trim();
-                if (part != "") {
-                  searchItems.add(part);
-                }
-                part = actor.substring(actor.indexOf("(")+1,actor.indexOf(")")).trim();
-                if (part != "") {
-                  searchItems.add(part);
-                }
-              }
-              else {
-                searchItems.add(actor.trim());
-              }
-            }
-          }
+          findSearchItems(program);
         }
         if (address.getUrl().contains(WEBSEARCH_ALL) && searchItems.size() > 1) {
           AbstractAction[] subAction = new AbstractAction[searchItems.size()];
@@ -297,7 +267,72 @@ public class WebPlugin extends Plugin {
 
     return result;
   }
+
+  private void findSearchItems(final Program program) {
+    searchItems = new ArrayList<String>();
+    // first search actors, so we can sort them alphabetically and afterwards add title, director and script
+    String actorsField = program.getTextField(ProgramFieldType.ACTOR_LIST_TYPE);
+    if (actorsField != null) {
+      String[] actors = new String[0];
+      // actor list separated by newlines
+      if (actorsField.contains("\n")) {
+        actors = actorsField.split("\n");
+      }
+      // actor list separated by colon
+      else if (actorsField.contains(",")) {
+        actors = actorsField.split(",");
+      }
+      for (String actor : actors) {
+        // actor and role separated by brackets
+        if (actor.contains("(") && actor.contains(")")) {
+          addSearchItem(actor.substring(0, actor.indexOf("(")));
+          addSearchItem(actor.substring(actor.indexOf("(")+1,actor.indexOf(")")));
+        }
+        // actor and role separated by tab
+        else if (actor.contains("\t")) {
+          addSearchItem(actor.substring(0, actor.indexOf("\t")));
+          addSearchItem(actor.substring(actor.indexOf("\t")+1));
+        }
+        else {
+          addSearchItem(actor);
+        }
+      }
+    }
+    String[] actors = new String[searchItems.size()];
+    searchItems.toArray(actors);
+    Arrays.sort(actors);
+    searchItems = new ArrayList<String>();
+    searchItems.add(program.getTitle());
+    String directorField = program.getTextField(ProgramFieldType.DIRECTOR_TYPE);
+    if (directorField != null) {
+      String[] directors = directorField.split(",");
+      for (String director : directors) {
+        addSearchItem(director);
+      }
+    }
+    String scriptField = program.getTextField(ProgramFieldType.SCRIPT_TYPE);
+    if (scriptField != null) {
+      String[] scripts = scriptField.split(",");
+      for (String script : scripts) {
+        addSearchItem(script);
+      }
+    }
+    for (String actor : actors) {
+      if (actor.contains(" ") && !actor.equalsIgnoreCase("und andere") && !searchItems.contains(actor)) {
+        addSearchItem(actor);
+      }
+    }
+  }
   
+  private void addSearchItem(String search) {
+    if (search != null) {
+      search = search.trim();
+      if (search != "") {
+        searchItems.add(search);
+      }
+    }
+  }
+
   public boolean canReceiveProgramsWithTarget() {
     return true;
   }
