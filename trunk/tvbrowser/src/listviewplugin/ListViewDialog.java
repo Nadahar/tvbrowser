@@ -34,6 +34,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Properties;
@@ -543,10 +545,17 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     Vector<String> filters = new Vector<String>();
     filters.add(mLocalizer.msg("filterAll", "all channels"));
     FilterComponent[] filterComponents = FilterComponentList.getInstance().getAvailableFilterComponents();
+    ArrayList<String> channelFilters = new ArrayList<String>();
     for (FilterComponent component : filterComponents) {
       if (component instanceof ChannelFilterComponent) {
-        filters.add(component.getName());
+        channelFilters.add(component.getName());
       }
+    }
+    String[] sortedArray = new String[channelFilters.size()];
+    channelFilters.toArray(sortedArray);
+    Arrays.sort(sortedArray);
+    for (String filterName : sortedArray) {
+      filters.add(filterName);
     }
     filters.add(mLocalizer.msg("filterDefine", "define filter..."));
     return filters;
