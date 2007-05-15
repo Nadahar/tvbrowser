@@ -1222,6 +1222,7 @@ public class MainFrame extends JFrame implements DateListener {
 
       }
     };
+    downloadingThread.setPriority(Thread.MIN_PRIORITY);
     downloadingThread.start();
   }
 
