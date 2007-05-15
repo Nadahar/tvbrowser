@@ -240,7 +240,11 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
     comp.addKeyListener(new KeyAdapter() {
 
       public void keyTyped(KeyEvent e) {
-        
+ 
+        if (e.getKeyChar() == 'f' && e.isControlDown()) {
+          setBlockAutoClosing(true);
+          actionPerformed(new ActionEvent(this, 0, "show"));
+        }
         if (Character.isLetterOrDigit(e.getKeyChar()) && 
             !(e.isControlDown()||e.isMetaDown())) {
           actionPerformed(new ActionEvent(this, 0, "show"));
