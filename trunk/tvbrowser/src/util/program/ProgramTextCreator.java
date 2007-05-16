@@ -144,11 +144,13 @@ public class ProgramTextCreator {
       bodyFont = bFont.getFamily();
       titleSize = String.valueOf(tFont.getSize());
       mBodyFontSize = String.valueOf(bFont.getSize());
-    } else
+    } else {
       return null;
+    }
 
-    if (fieldArr == null)
+    if (fieldArr == null) {
       return null;
+    }
 
     buffer.append("<html>");
     buffer.append("<table width=\"100%\" style=\"font-family:");
@@ -229,16 +231,19 @@ public class ProgramTextCreator {
         try {
           ImageIcon imageIcon = new ImageIcon(image);
           
-          if(zoom != 100)
+          if(zoom != 100) {
             imageIcon = (ImageIcon)UiUtilities.scaleIcon(imageIcon, imageIcon.getIconWidth() * zoom/100);
+          }
           
           StringBuffer value = new StringBuffer();
             
-          if(prog.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE) != null)
+          if(prog.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE) != null) {
             value.append(prog.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE));
+          }
           
-          if(settings.isShowingPictureDescription() &&  prog.getTextField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE) != null)
+          if(settings.isShowingPictureDescription() &&  prog.getTextField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE) != null) {
             value.append("<br>").append(prog.getTextField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE));
+          }
                     
           buffer.append(doc.createCompTag(new JLabel(imageIcon)));
           buffer.append("<div style=\"font-size:");
@@ -258,7 +263,7 @@ public class ProgramTextCreator {
 
     Marker[] pluginArr = prog.getMarkerArr();
     if (showPluginIcons && (pluginArr != null) && (pluginArr.length != 0)) {
-      addSeperator(doc, buffer);
+      addSeparator(doc, buffer);
 
       buffer.append("<tr><td valign=\"top\" style=\"color:#808080; font-size:");
 
@@ -274,7 +279,7 @@ public class ProgramTextCreator {
       for (Marker marker : pluginArr) {
         Icon[] icons = marker.getMarkIcons(prog);
 
-        if (icons != null)
+        if (icons != null) {
           for (Icon icon : icons) {
             JLabel iconLabel = new JLabel(icon);
             PluginAccess plugin = Plugin.getPluginManager()
@@ -290,6 +295,7 @@ public class ProgramTextCreator {
             buffer.append(doc.createCompTag(iconLabel));
             buffer.append("&nbsp;&nbsp;");
           }
+        }
       }
       closePara(buffer);
       buffer.append("</td></tr>");
@@ -310,7 +316,7 @@ public class ProgramTextCreator {
     }
 
     if (showPluginIcons && icons.size() > 0) {
-      addSeperator(doc, buffer);
+      addSeparator(doc, buffer);
 
       buffer
           .append("<tr><td valign=\"middle\" style=\"color:#808080; font-size:");
@@ -334,14 +340,14 @@ public class ProgramTextCreator {
       buffer.append("</td></tr>");
     }
 
-    addSeperator(doc, buffer);
+    addSeparator(doc, buffer);
 
     Object[] id = fieldArr;
 
     for (int j = 0; j < id.length; j++) {
       ProgramFieldType type = null;
 
-      if (id[j] instanceof String)
+      if (id[j] instanceof String) {
         try {
           type = ProgramFieldType
               .getTypeForId(Integer.parseInt((String) id[j]));
@@ -382,21 +388,23 @@ public class ProgramTextCreator {
             closePara(buffer);
 
             buffer.append("</td></tr>");
-            addSeperator(doc, buffer);
+            addSeparator(doc, buffer);
           }
           continue;
         }
-      else
+      } else {
         type = (ProgramFieldType) id[j];
+      }
 
       if (type == ProgramFieldType.DESCRIPTION_TYPE) {
         if (prog.getDescription() != null
-            && prog.getDescription().trim().length() > 0)
+            && prog.getDescription().trim().length() > 0) {
           addEntry(doc, buffer, prog, ProgramFieldType.DESCRIPTION_TYPE, true,
               showHelpLinks);
-        else
+        } else {
           addEntry(doc, buffer, prog, ProgramFieldType.SHORT_DESCRIPTION_TYPE,
               true, showHelpLinks);
+        }
       } else if (type == ProgramFieldType.INFO_TYPE) {
         int info = prog.getInfo();
         if ((info != -1) && (info != 0)) {
@@ -439,13 +447,59 @@ public class ProgramTextCreator {
           closePara(buffer);
 
           buffer.append("</td></tr>");
-          addSeperator(doc, buffer);
+          addSeparator(doc, buffer);
         }
-      } else if (type == ProgramFieldType.URL_TYPE)
+      } else if (type == ProgramFieldType.URL_TYPE) {
         addEntry(doc, buffer, prog, ProgramFieldType.URL_TYPE, true,
             showHelpLinks);
-      else
+      } else if (type == ProgramFieldType.ACTOR_LIST_TYPE) {
+        String actorField = prog.getTextField(type);
+        if (actorField != null) {
+          actorField = actorField.trim();
+          String[] actors = new String[0];
+          if (actorField.contains("\n")) {
+            actors = actorField.split("\n");
+          }
+          else if (actorField.contains(",")) {
+            actors = actorField.split(",");
+          }
+          if (actors.length > 0) {
+            startInfoSection(buffer, type.getLocalizedName());
+            buffer.append("<table border=\"0\" cellpadding=\"0\" style=\"font-family:");
+            buffer.append(bodyFont);
+            buffer.append(";\">");
+            for (String actor : actors) {
+              actor = actor.trim();
+              if (actor != "") {
+                String part1 = actor;
+                String part2 = "";
+                if (actor.contains("\t")) {
+                  part1 = actor.substring(0, actor.indexOf("\t")).trim();
+                  part2 = actor.substring(actor.indexOf("\t")).trim();
+                }
+                else if (actor.contains("(") && actor.contains(")")) {
+                  part1 = actor.substring(0, actor.indexOf("(")).trim();
+                  part2 = actor.substring(actor.indexOf("(")+1, actor.indexOf(")")).trim();
+                }
+                buffer.append("<tr><td>");
+                buffer.append(part1);
+                buffer.append("</td><td width=\"10\">&nbsp;</td><td>");
+                buffer.append(part2);
+                buffer.append("</td></tr>");
+              }
+            }
+            buffer.append("</table>");
+            buffer.append("</td></tr>");
+            addSeparator(doc, buffer);
+          }
+          else {
+            addEntry(doc, buffer, prog, type, showHelpLinks);
+          }
+        }
+      }
+      else {
         addEntry(doc, buffer, prog, type, showHelpLinks);
+      }
     }
 
     if (showHelpLinks) {
@@ -485,8 +539,9 @@ public class ProgramTextCreator {
         if (prog.getShortInfo() != null) {
           StringBuffer shortInfo = new StringBuffer(prog.getShortInfo().trim());
 
-          while (shortInfo.toString().endsWith("."))
+          while (shortInfo.toString().endsWith(".")) {
             shortInfo.deleteCharAt(shortInfo.length() - 1);
+          }
 
           if (!description.trim().startsWith(shortInfo.toString())) {
             addEntry(doc, buffer, prog,
@@ -517,38 +572,40 @@ public class ProgramTextCreator {
       }
     }
 
-    if (text == null || text.trim().length() < 1)
-      if (ProgramFieldType.SHOWVIEW_NR_TYPE == fieldType)
+    if (text == null || text.trim().length() < 1) {
+      if (ProgramFieldType.SHOWVIEW_NR_TYPE == fieldType) {
         text = mLocalizer.msg("noShowview", "No Showview data ");
-      else
+      } else {
         return;
+      }
+    }
 
-    buffer.append("<tr><td valign=\"top\" style=\"color:#808080; font-size:");
-
-    buffer.append(mBodyFontSize);
-
-    buffer.append("\"><b>");
-    buffer.append(name);
-
-    buffer.append("</b></td><td style=\"font-size:");
-
-    buffer.append(mBodyFontSize);
-
-    buffer.append("\">");
+    startInfoSection(buffer, name);
     buffer.append(HTMLTextHelper.convertTextToHtml(text, createLinks));
 
-    if ((ProgramFieldType.SHOWVIEW_NR_TYPE == fieldType) && (showHelpLinks))
+    if ((ProgramFieldType.SHOWVIEW_NR_TYPE == fieldType) && (showHelpLinks)) {
       buffer.append(" (<a href=\"").append(
           mLocalizer.msg("showviewInfo",
               "http://wiki.tvbrowser.org/index.php/Showviewnummern")).append(
           "\">?</a>)");
+    }
 
     buffer.append("</td></tr>");
 
-    addSeperator(doc, buffer);
+    addSeparator(doc, buffer);
   }
 
-  private static void addSeperator(ExtendedHTMLDocument doc, StringBuffer buffer) {
+  private static void startInfoSection(StringBuffer buffer, String section) {
+    buffer.append("<tr><td valign=\"top\" style=\"color:#808080; font-size:");
+    buffer.append(mBodyFontSize);
+    buffer.append("\"><b>");
+    buffer.append(section);
+    buffer.append("</b></td><td style=\"font-size:");
+    buffer.append(mBodyFontSize);
+    buffer.append("\">");
+  }
+
+  private static void addSeparator(ExtendedHTMLDocument doc, StringBuffer buffer) {
     buffer.append("<tr><td colspan=\"2\">");
     buffer.append("<div style=\"font-size:0;\">").append(
         doc.createCompTag(new HorizontalLine())).append("</div></td></tr>");
