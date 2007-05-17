@@ -92,7 +92,9 @@ public class WebPlugin extends Plugin {
   private static WebPlugin INSTANCE;
   
   /** list of items to be searched if any searchable item shall be put into the context menu */
-  private ArrayList<String> searchItems = null;
+  private ArrayList<String> listActors = null;
+  private ArrayList<String> listScripts = null;
+  private ArrayList<String> listDirectors = null;
 
   
   /**
@@ -212,7 +214,7 @@ public class WebPlugin extends Plugin {
     mainAction.putValue(Action.SMALL_ICON, createImageIcon("actions", "web-search", 16));
 
     ArrayList<Object> actionList = new ArrayList<Object>();
-    searchItems = null;
+    listActors = null;
 
     for (int i = 0; i < mAddresses.size(); i++) {
 
@@ -226,37 +228,27 @@ public class WebPlugin extends Plugin {
     	}
       if (address.isActive()) {
         // create items for a possible sub menu
-        if (address.getUrl().contains(WEBSEARCH_ALL) && searchItems == null) {
+        if (address.getUrl().contains(WEBSEARCH_ALL) && listActors == null) {
           findSearchItems(program);
         }
-        if (address.getUrl().contains(WEBSEARCH_ALL) && searchItems.size() > 1) {
-          AbstractAction[] subAction = new AbstractAction[searchItems.size()];
-          for (int searchIndex = 0; searchIndex < subAction.length; searchIndex++) {
-            final WebAddress adr = new WebAddress(address.getName(), address.getUrl().replace(WEBSEARCH_ALL, "\"" + searchItems.get(searchIndex) + "\""), null, false, true);
-            subAction[searchIndex] = new AbstractAction() {
-              
-              public void actionPerformed(ActionEvent evt) {
-                openUrl(program, adr);
-              }
-            };
-            subAction[searchIndex].putValue(Action.NAME, searchItems.get(searchIndex));
-          }
-          ContextMenuAction action = new ContextMenuAction(address.getName(), address.getIcon());
-          ActionMenu searchMenu = new ActionMenu(action, subAction);
+        if (address.getUrl().contains(WEBSEARCH_ALL) && (listActors.size() + listDirectors.size() + listScripts.size() > 0)) {
+          ArrayList<Object> categoryList = new ArrayList<Object>();
+          // title
+          final WebAddress adrTitle = new WebAddress(address.getName(), address.getUrl().replace(WEBSEARCH_ALL, "\"" + program.getTitle() + "\""), null, false, true);
+          categoryList.add(createSearchAction(program, adrTitle, program.getTitle()));
+          
+          createSubMenu(program, address, categoryList, mLocalizer.msg("actor", "Actor"), listActors);
+          createSubMenu(program, address, categoryList, mLocalizer.msg("director","Director"), listDirectors);
+          createSubMenu(program, address, categoryList, mLocalizer.msg("script","Script"), listScripts);
+          
+          ContextMenuAction action = new ContextMenuAction(actionName, address.getIcon());
+          ActionMenu searchMenu = new ActionMenu(action, categoryList.toArray());
           actionList.add(searchMenu);
         }
         // create only a single menu item for this search
         else {
-          final WebAddress adr = address;
-          AbstractAction action = new AbstractAction() {
-  
-            public void actionPerformed(ActionEvent evt) {
-              openUrl(program, adr);
-            }
-          };
-          action.putValue(Action.NAME, actionName);
-          action.putValue(Action.SMALL_ICON, adr.getIcon());
-  
+          AbstractAction action = createSearchAction(program, address, actionName);
+          action.putValue(Action.SMALL_ICON, address.getIcon());
           actionList.add(action);
         }
       }
@@ -268,9 +260,41 @@ public class WebPlugin extends Plugin {
     return result;
   }
 
+  private void createSubMenu(final Program program, WebAddress address, ArrayList<Object> categoryList, String label, ArrayList<String> subItems) {
+    if (subItems.size() > 0) {
+      AbstractAction[] subActions = new AbstractAction[subItems.size()];
+      for (int index = 0; index < subActions.length; index++) {
+        final WebAddress modifiedAddress = new WebAddress(address.getName(), address.getUrl().replace(WEBSEARCH_ALL, "\"" + subItems.get(index) + "\""), null, false, true);
+        subActions[index] = createSearchAction(program, modifiedAddress, subItems.get(index));
+      }
+      if (subItems.size() > 1) {
+        ContextMenuAction menuAction = new ContextMenuAction(label);
+        ActionMenu menu = new ActionMenu(menuAction, subActions);
+        categoryList.add(menu);
+      }
+      else {
+        subActions[0].putValue(Action.NAME, subActions[0].getValue(Action.NAME) + " (" + label +")");
+        categoryList.add(subActions[0]);
+      }
+    }
+  }
+
+  private AbstractAction createSearchAction(final Program program, WebAddress address, String actionName) {
+    final WebAddress adr = address;
+    AbstractAction action = new AbstractAction() {
+ 
+      public void actionPerformed(ActionEvent evt) {
+        openUrl(program, adr);
+      }
+    };
+    action.putValue(Action.NAME, actionName);
+    return action;
+  }
+
   private void findSearchItems(final Program program) {
-    searchItems = new ArrayList<String>();
-    // first search actors, so we can sort them alphabetically and afterwards add title, director and script
+    listActors = new ArrayList<String>();
+    listDirectors = new ArrayList<String>();
+    listScripts = new ArrayList<String>();
     String actorsField = program.getTextField(ProgramFieldType.ACTOR_LIST_TYPE);
     if (actorsField != null) {
       String[] actors = new String[0];
@@ -282,53 +306,78 @@ public class WebPlugin extends Plugin {
       else if (actorsField.contains(",")) {
         actors = actorsField.split(",");
       }
+      ArrayList<String> listFirst = new ArrayList<String>();
+      ArrayList<String> listSecond = new ArrayList<String>();
       for (String actor : actors) {
         // actor and role separated by brackets
         if (actor.contains("(") && actor.contains(")")) {
-          addSearchItem(actor.substring(0, actor.indexOf("(")));
-          addSearchItem(actor.substring(actor.indexOf("(")+1,actor.indexOf(")")));
+          listFirst.add(actor.substring(0, actor.indexOf("(")));
+          listSecond.add(actor.substring(actor.indexOf("(")+1,actor.indexOf(")")));
         }
         // actor and role separated by tab
         else if (actor.contains("\t")) {
-          addSearchItem(actor.substring(0, actor.indexOf("\t")));
-          addSearchItem(actor.substring(actor.indexOf("\t")+1));
+          listFirst.add(actor.substring(0, actor.indexOf("\t")));
+          listSecond.add(actor.substring(actor.indexOf("\t")+1));
         }
         else {
-          addSearchItem(actor);
+          addSearchItem(listActors, actor);
+        }
+      }
+      // now estimate which are the actor names and which are the roles
+      int shortFirst = 0;
+      int shortSecond = 0;
+      for (String first : listFirst) {
+        if (!first.contains(" ")) {
+          shortFirst++;
+        }
+      }
+      for (String second : listSecond) {
+        if (!second.contains(" ")) {
+          shortSecond++;
+        }
+      }
+      if (shortFirst <= shortSecond) {
+        for (String first : listFirst) {
+          addSearchItem(listActors, first);
+        }
+      }
+      if (shortSecond <= shortFirst) {
+        for (String second : listSecond) {
+          addSearchItem(listActors, second);
         }
       }
     }
-    String[] actors = new String[searchItems.size()];
-    searchItems.toArray(actors);
+    String[] actors = new String[listActors.size()];
+    listActors.toArray(actors);
     Arrays.sort(actors);
-    searchItems = new ArrayList<String>();
-    searchItems.add(program.getTitle());
+    listActors = new ArrayList<String>();
+    // build the final list of sub menus
     String directorField = program.getTextField(ProgramFieldType.DIRECTOR_TYPE);
     if (directorField != null) {
       String[] directors = directorField.split(",");
       for (String director : directors) {
-        addSearchItem(director);
+        addSearchItem(listDirectors, director);
       }
     }
     String scriptField = program.getTextField(ProgramFieldType.SCRIPT_TYPE);
     if (scriptField != null) {
       String[] scripts = scriptField.split(",");
       for (String script : scripts) {
-        addSearchItem(script);
+        addSearchItem(listScripts, script);
       }
     }
     for (String actor : actors) {
-      if (actor.contains(" ") && !actor.equalsIgnoreCase("und andere") && !searchItems.contains(actor)) {
-        addSearchItem(actor);
+      if (actor.contains(" ") && !actor.equalsIgnoreCase("und andere") && !listActors.contains(actor)) {
+        addSearchItem(listActors, actor);
       }
     }
   }
   
-  private void addSearchItem(String search) {
+  private void addSearchItem(ArrayList<String> list, String search) {
     if (search != null) {
       search = search.trim();
       if (search != "") {
-        searchItems.add(search);
+        list.add(search);
       }
     }
   }
@@ -343,8 +392,9 @@ public class WebPlugin extends Plugin {
     for (int i = 0; i < mAddresses.size(); i++) {
       final WebAddress adr = mAddresses.get(i);
       
-      if (adr.isActive())
-        list.add(new ProgramReceiveTarget(this,mLocalizer.msg("SearchOn", "Search on ") + " " + adr.getName(),adr.getName() + "." + adr.getUrl()));      
+      if (adr.isActive()) {
+        list.add(new ProgramReceiveTarget(this,mLocalizer.msg("SearchOn", "Search on ") + " " + adr.getName(),adr.getName() + "." + adr.getUrl()));
+      }      
     }
     
     return list.toArray(new ProgramReceiveTarget[list.size()]);
@@ -355,8 +405,9 @@ public class WebPlugin extends Plugin {
       final WebAddress adr = mAddresses.get(i);
       
       if (adr.isActive() && target.isReceiveTargetWithIdOfProgramReceiveIf(this,adr.getName() + "." + adr.getUrl())) {
-        for(Program p : programArr)
+        for(Program p : programArr) {
           openUrl(p, adr);
+        }
         
         return true;
       }
