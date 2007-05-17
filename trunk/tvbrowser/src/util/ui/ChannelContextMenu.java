@@ -8,15 +8,22 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import tvbrowser.core.ChannelList;
+import tvbrowser.core.filters.FilterComponent;
+import tvbrowser.core.filters.FilterComponentList;
+import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.ChannelsSettingsTab;
 import tvbrowser.ui.settings.channel.ChannelConfigDlg;
 import util.browserlauncher.Launch;
 import devplugin.Channel;
+import devplugin.Program;
+import devplugin.ProgramFilter;
 
 /**
  * A class that builds a PopupMenu for a Channel.
@@ -33,7 +40,7 @@ public class ChannelContextMenu implements ActionListener {
       .getLocalizerFor(ChannelContextMenu.class);
 
   private JPopupMenu mMenu;
-  private JMenuItem mChAdd, mChConf, mChGoToURL;
+  private JMenuItem mChAdd, mChConf, mChGoToURL, mFilterChannels;
   private Object mSource;
   private Channel mChannel;
   private Component mComponent;
@@ -57,6 +64,18 @@ public class ChannelContextMenu implements ActionListener {
     mChAdd = new JMenuItem(mLocalizer.msg("addChannels", "Add/Remove channels"));
     mChConf = new JMenuItem(mLocalizer.msg("configChannel", "Setup channel"));
     mChGoToURL = new JMenuItem(mLocalizer.msg("openURL", "Open internet page"));
+    
+    // dynamically create filters from available channel filter components
+    mFilterChannels = new JMenu(mLocalizer.msg("filterChannels", "Channel filter"));
+    JMenuItem menuItem = new JMenuItem(mLocalizer.msg("filterAll", "All channels"));
+    menuItem.addActionListener(this);
+    mFilterChannels.add(menuItem);
+    String[] channelFilterNames = FilterComponentList.getInstance().getChannelFilterNames();
+    for (String filterName : channelFilterNames) {
+      menuItem = new JMenuItem(filterName);
+      menuItem.addActionListener(this);
+      mFilterChannels.add(menuItem);
+    }
 
     mChAdd.addActionListener(this);
     mChConf.addActionListener(this);
@@ -65,6 +84,7 @@ public class ChannelContextMenu implements ActionListener {
     mMenu.add(mChGoToURL);
     mMenu.add(mChConf);
     if (!(mSource instanceof ChannelsSettingsTab)) {
+      mMenu.add(mFilterChannels);
       mMenu.addSeparator();
       mMenu.add(mChAdd);
     }
@@ -76,7 +96,7 @@ public class ChannelContextMenu implements ActionListener {
     if (e.getSource().equals(mChAdd)) {
       MainFrame.getInstance().showSettingsDialog();
     }
-    if (e.getSource().equals(mChConf)) {
+    else if (e.getSource().equals(mChConf)) {
       if ((mSource instanceof ChannelsSettingsTab)) {
         ((ChannelsSettingsTab) mSource).configChannels();
       } else {
@@ -102,8 +122,30 @@ public class ChannelContextMenu implements ActionListener {
       MainFrame.getInstance().updateChannelChooser();
       ChannelList.storeAllSettings();
     }
-    if (e.getSource().equals(mChGoToURL)) {
+    else if (e.getSource().equals(mChGoToURL)) {
       Launch.openURL(mChannel.getWebpage());
+    }
+    else {
+      if (e.getSource() instanceof JMenuItem) {
+        JMenuItem channelItem = (JMenuItem) e.getSource();
+        String channelName = channelItem.getText();
+        final FilterComponent component = FilterComponentList.getInstance().getFilterComponentByName(channelName);
+        if (component instanceof ChannelFilterComponent) {
+          ProgramFilter filter = new ProgramFilter() {
+            public String getName() {
+              return component.getName();
+            }
+          
+            public boolean accept(Program program) {
+              return component.accept(program);
+            }
+          };
+          MainFrame.getInstance().setProgramFilter(filter); 
+        }
+        else {
+          MainFrame.getInstance().setProgramFilter(FilterList.getInstance().getDefaultFilter()); 
+        }
+      }
     }
   }
 }

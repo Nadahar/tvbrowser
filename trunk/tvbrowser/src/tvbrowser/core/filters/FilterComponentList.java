@@ -35,8 +35,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
-
 import devplugin.PluginAccess;
 import devplugin.PluginsFilterComponent;
 
@@ -65,7 +65,6 @@ public class FilterComponentList {
   private static java.util.logging.Logger mLog
       = java.util.logging.Logger.getLogger(FilterComponentList.class.getName());
 
-  
   private FilterComponentList() {
     ObjectInputStream in=null;
     mComponentList = new ArrayList<FilterComponent>();    
@@ -270,5 +269,18 @@ public class FilterComponentList {
   public void remove(String filterCompName) {
     mComponentList.remove(getFilterComponentByName(filterCompName));
     //mComponentMap.remove(filterCompName.toUpperCase());
+  }
+  
+  public String[] getChannelFilterNames() {
+    ArrayList<String> channelFilters = new ArrayList<String>();
+    for (FilterComponent component : getAvailableFilterComponents()) {
+      if (component instanceof ChannelFilterComponent) {
+        channelFilters.add(component.getName());
+      }
+    }
+    String[] sortedArray = new String[channelFilters.size()];
+    channelFilters.toArray(sortedArray);
+    Arrays.sort(sortedArray);
+    return sortedArray;
   }
 }

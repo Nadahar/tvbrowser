@@ -34,8 +34,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Properties;
@@ -380,7 +378,12 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
     datetimeselect.add(mTimeSpinner);
 
-    Vector<String> filters = getChannelFilters();
+    Vector<String> filters = new Vector<String>();
+    filters.add(mLocalizer.msg("filterAll", "all channels"));
+    for (String filterName : FilterComponentList.getInstance().getChannelFilterNames()) {
+      filters.add(filterName);
+    }
+    filters.add(mLocalizer.msg("filterDefine", "define filter..."));
     mChannels = new JComboBox(filters);
     datetimeselect.add(new JLabel("    "));
     datetimeselect.add(mChannels);
@@ -427,9 +430,11 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
           FilterComponentList.getInstance().store();
           String filterName = rule.getName();
           mChannels.removeAllItems();
-          for (String channel : getChannelFilters()) {
+          mChannels.addItem(mLocalizer.msg("filterAll", "all channels"));
+          for (String channel : FilterComponentList.getInstance().getChannelFilterNames()) {
             mChannels.addItem(channel);
           }
+          mChannels.addItem(mLocalizer.msg("filterDefine", "define filter..."));
           mChannels.setSelectedItem(filterName);
         }
         mModel.removeAllRows();
@@ -539,26 +544,6 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     buttonPn.add(closeButton, BorderLayout.EAST);
     getRootPane().setDefaultButton(closeButton);
 
-  }
-
-  private Vector<String> getChannelFilters() {
-    Vector<String> filters = new Vector<String>();
-    filters.add(mLocalizer.msg("filterAll", "all channels"));
-    FilterComponent[] filterComponents = FilterComponentList.getInstance().getAvailableFilterComponents();
-    ArrayList<String> channelFilters = new ArrayList<String>();
-    for (FilterComponent component : filterComponents) {
-      if (component instanceof ChannelFilterComponent) {
-        channelFilters.add(component.getName());
-      }
-    }
-    String[] sortedArray = new String[channelFilters.size()];
-    channelFilters.toArray(sortedArray);
-    Arrays.sort(sortedArray);
-    for (String filterName : sortedArray) {
-      filters.add(filterName);
-    }
-    filters.add(mLocalizer.msg("filterDefine", "define filter..."));
-    return filters;
   }
 
   /**
