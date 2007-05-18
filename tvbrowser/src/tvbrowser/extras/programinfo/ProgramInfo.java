@@ -26,8 +26,10 @@
 
 package tvbrowser.extras.programinfo;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -37,9 +39,12 @@ import javax.swing.JDialog;
 
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ConfigurationHandler;
+import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.programtable.ProgramTable;
 import util.exc.ErrorHandler;
 import util.program.ProgramTextCreator;
 import util.settings.ProgramPanelSettings;
+import util.ui.UiUtilities;
 
 import com.l2fprod.common.swing.plaf.LookAndFeelAddons;
 
@@ -105,8 +110,9 @@ public class ProgramInfo {
    * @return An instance of this class
    */
   public static synchronized ProgramInfo getInstance() {
-    if (mInstance == null)
+    if (mInstance == null) {
       new ProgramInfo();
+    }
     return mInstance;
   }
 
@@ -236,15 +242,27 @@ public class ProgramInfo {
   }
 
   protected void showProgramInformation(Program program, boolean showSettings) {
+    Window window = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+    // show busy cursor
+    ProgramTable programTable = MainFrame.getInstance().getProgramTableScrollPane().getProgramTable();
+    Cursor oldWindowCursor = window.getCursor();
+    Cursor oldTableCursor = programTable.getCursor();
+    window.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    programTable.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    // open dialog
     ProgramInfoDialog.getInstance(program, mLeftSplit, showSettings).show();
+    // restore cursors
+    programTable.setCursor(oldTableCursor);
+    window.setCursor(oldWindowCursor);
   }
 
   protected void setSettings(JDialog dialog, Dimension d) {
     mSize = dialog.getSize();
     mLocation = dialog.getLocation();
     
-    if(mShowFunctions)
+    if(mShowFunctions) {
       mLeftSplit = d;
+    }
   }
 
   protected boolean getExpanded(String key) {
@@ -268,28 +286,31 @@ public class ProgramInfo {
   }
 
   protected Object[] getOrder() {
-    if(mOrder == null)
+    if(mOrder == null) {
       setOrder();
+    }
     
     return mOrder;
   }
   
   protected void setOrder() {
-    if(mSettings.getProperty("setupwasdone","false").compareTo("false") == 0)
+    if(mSettings.getProperty("setupwasdone","false").compareTo("false") == 0) {
       mOrder = ProgramTextCreator.getDefaultOrder();
-    else {
+    } else {
       String[] id = mSettings.getProperty("order", "").trim().split(";");
       mOrder = new Object[id.length];
-      for (int i = 0; i < mOrder.length; i++)
+      for (int i = 0; i < mOrder.length; i++) {
         try {
           mOrder[i] = ProgramFieldType
               .getTypeForId(Integer.parseInt(id[i]));
           
-          if(((ProgramFieldType)mOrder[i]).getTypeId() == ProgramFieldType.UNKOWN_FORMAT)
+          if(((ProgramFieldType)mOrder[i]).getTypeId() == ProgramFieldType.UNKOWN_FORMAT) {
             mOrder[i] = ProgramTextCreator.getDurationTypeString();
+          }
         } catch (Exception e) {
           mOrder[i] = id[i];
         }
+      }
     }
   }
 
@@ -297,11 +318,12 @@ public class ProgramInfo {
     try {
       String lf = mSettings.getProperty("look", LookAndFeelAddons.getBestMatchAddonClassName());
       
-      if (lf.length() > 0)
+      if (lf.length() > 0) {
         LookAndFeelAddons.setAddon(lf);
-      else
+      } else {
         LookAndFeelAddons.setAddon(LookAndFeelAddons
             .getBestMatchAddonClassName());
+      }
     } catch (Exception e) {
       // ignore
     }
