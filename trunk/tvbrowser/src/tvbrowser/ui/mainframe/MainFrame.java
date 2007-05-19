@@ -28,6 +28,7 @@ package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.MouseInfo;
@@ -85,6 +86,7 @@ import tvbrowser.ui.pluginview.PluginView;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import tvbrowser.ui.programtable.FilterPanel;
 import tvbrowser.ui.programtable.KeyboardAction;
+import tvbrowser.ui.programtable.ProgramTable;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
 import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.update.SoftwareUpdateDlg;
@@ -1331,6 +1333,7 @@ public class MainFrame extends JFrame implements DateListener {
            final SettingsWaitingDialog dialog;
               
            Window comp = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+
            if (comp instanceof Dialog) {
              dialog = new SettingsWaitingDialog((JDialog)comp);
            } else { 
@@ -1353,8 +1356,20 @@ public class MainFrame extends JFrame implements DateListener {
            dialog.dispose();
         }
         
+        // show busy cursor
+        Window comp = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+        ProgramTable programTable = MainFrame.getInstance().getProgramTableScrollPane().getProgramTable();
+        Cursor oldWindowCursor = comp.getCursor();
+        Cursor oldTableCursor = programTable.getCursor();
+        comp.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        programTable.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
         SettingsDialog dlg = new SettingsDialog(MainFrame.this, visibleTabId);
         dlg.centerAndShow();
+
+        // restore cursors
+        programTable.setCursor(oldTableCursor);
+        comp.setCursor(oldWindowCursor);
         
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
