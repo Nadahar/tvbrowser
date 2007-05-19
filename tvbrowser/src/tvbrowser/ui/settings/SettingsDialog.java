@@ -188,9 +188,10 @@ public class SettingsDialog implements WindowClosingIf {
     JButton okBt = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     okBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
+        saveSettingsTab();
         saveSettings();
         invalidateTree();
-        mDialog.dispose();
+        close();
       }
     });
     mDialog.getRootPane().setDefaultButton(okBt);
@@ -198,7 +199,7 @@ public class SettingsDialog implements WindowClosingIf {
     JButton cancelBt = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     cancelBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-        mDialog.dispose();
+        close();
       }
     });
 
@@ -222,7 +223,10 @@ public class SettingsDialog implements WindowClosingIf {
       selectedTabId = SettingsItem.CHANNELS;
     }
 
-    SettingNode n = findSettingNode((SettingNode) mRootNode, selectedTabId);
+    SettingNode n = findSettingNodeById((SettingNode) mRootNode, selectedTabId);
+    if (n == null) {
+      n = findSettingNodeByPath((SettingNode) mRootNode, selectedTabId);
+    }
     if (n != null) {
       showSettingsPanelForNode(n);
       TreePath selectedPath = new TreePath(n.getPath());
@@ -257,18 +261,48 @@ public class SettingsDialog implements WindowClosingIf {
     });
   }
 
+  protected void saveSettingsTab() {
+    TreePath selection = mSelectionTree.getSelectionPath();
+    if (selection != null) {
+      String path = "";
+      for (int i = 0; i < selection.getPathCount(); i++) {
+        path = path + selection.getPathComponent(i);
+      }
+      Settings.propLastUsedSettingsPath.setString(path);
+    }
+  }
+
   void invalidateTree() {
     ((SettingNode) mRootNode).invalidate();
   }
 
-  private SettingNode findSettingNode(SettingNode root, String tabId) {
+  private SettingNode findSettingNodeById(SettingNode root, String tabId) {
 
     if (tabId.equals(root.getId())) {
       return root;
     }
     int cnt = root.getChildCount();
     for (int i = 0; i < cnt; i++) {
-      SettingNode result = findSettingNode((SettingNode) root.getChildAt(i), tabId);
+      SettingNode result = findSettingNodeById((SettingNode) root.getChildAt(i), tabId);
+      if (result != null) {
+        return result;
+      }
+    }
+    return null;
+  }
+
+  private SettingNode findSettingNodeByPath(SettingNode root, String searchPath) {
+    String pathString = "";
+    TreeNode[] rootPath = root.getPath();
+    for (int i = 0; i < rootPath.length; i++) {
+      pathString = pathString + ((SettingNode)rootPath[i]).toString();
+    }
+    if (searchPath.equals(pathString)) {
+      return root;
+    }
+    int cnt = root.getChildCount();
+    for (int i = 0; i < cnt; i++) {
+      SettingNode result = findSettingNodeByPath((SettingNode) root.getChildAt(i), searchPath);
       if (result != null) {
         return result;
       }
@@ -354,8 +388,9 @@ public class SettingsDialog implements WindowClosingIf {
     technicalSettings.add(new SettingNode(new NetworkSettingsTab()));
     technicalSettings.add(new SettingNode(new ProxySettingsTab()));
     
-    if(!TVBrowser.isTransportable())
+    if(!TVBrowser.isTransportable()) {
       technicalSettings.add(new SettingNode(new DirectoriesSettingsTab()));
+    }
     
     technicalSettings.add(new SettingNode(new WebbrowserSettingsTab(), SettingsItem.WEBBROWSER));    
 
@@ -430,8 +465,9 @@ public class SettingsDialog implements WindowClosingIf {
     for (SettingNode node : nodes) {
         mPluginSettingsNode.add(node);
 	}
-    if (mSelectionTree != null)
+    if (mSelectionTree != null) {
       ((DefaultTreeModel) mSelectionTree.getModel()).reload(mPluginSettingsNode);
+    }
   }
 
   /**
@@ -543,6 +579,7 @@ public class SettingsDialog implements WindowClosingIf {
   // inner class SettingNode
 
   private class SettingNode extends DefaultMutableTreeNode {    
+
     private Icon mIcon;
 
     private JPanel mSettingsPn;
@@ -678,7 +715,7 @@ public class SettingsDialog implements WindowClosingIf {
    * @param id ID to show (see devplugin.SettingsItem)
    */
   public void showSettingsTab(String id) {
-    SettingNode node = findSettingNode((SettingNode) mRootNode, id);
+    SettingNode node = findSettingNodeById((SettingNode) mRootNode, id);
     if (node != null) {
       TreePath selectedPath = new TreePath(node.getPath());
       mSelectionTree.setSelectionPath(selectedPath);

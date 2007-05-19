@@ -1311,7 +1311,7 @@ public class MainFrame extends JFrame implements DateListener {
    * Shows the settings dialog.
    */
   public void showSettingsDialog() {
-    showSettingsDialog("#channels");
+    showSettingsDialog(Settings.propLastUsedSettingsPath.getString());
   }
 
   /**
