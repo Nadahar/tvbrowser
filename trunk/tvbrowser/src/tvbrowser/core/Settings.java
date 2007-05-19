@@ -144,16 +144,18 @@ public class Settings {
     
     // Create backup of settings file backup
     try {
-      if(firstSettingsBackupFile.isFile())
+      if(firstSettingsBackupFile.isFile()) {
         IOUtilities.copy(firstSettingsBackupFile,secondsSettingsBackupFile);
+      }
     }catch(Exception e) {}
     
     try {
       mProp.writeToFile(settingsFile);
       
       try {
-        if(settingsFile.isFile())
+        if(settingsFile.isFile()) {
           IOUtilities.copy(settingsFile,firstSettingsBackupFile);
+        }
       }catch (Exception e) {}
       
     } catch (IOException exc) {
@@ -205,17 +207,17 @@ public class Settings {
               }
             }
             
-            if(loadSecondBackup)
+            if(loadSecondBackup) {
               mLog.info("Could not read settings - using default user settings");
-            else {
+            } else {
               try {
                 storeSettings();
               }catch(Exception e) {}
             }
           }
-        }
-        else        
+        } else {
           mLog.info("Could not read settings - using default user settings");
+        }
       }
     }
     /*
@@ -243,18 +245,20 @@ public class Settings {
         if(oldDir == null) {
           testFile = new File(directories[j], SETTINGS_FILE);
           
-          if(testFile.isFile())
+          if(testFile.isFile()) {
             oldDir = new File(directories[j]);
-          else {
+          } else {
             testFile = new File(oldDirectoryName, SETTINGS_FILE);
             
-            if(testFile.isFile())
+            if(testFile.isFile()) {
               oldDir = new File(oldDirectoryName);
+            }
           }  
         }
         
-        if(oldDir != null)
+        if(oldDir != null) {
           break;
+        }
       }      
       
       if (oldDir != null && oldDir.isDirectory() && oldDir.exists()) {
@@ -270,12 +274,13 @@ public class Settings {
             
             String temp = p.getProperty("dir.tvdata",null);
             
-            if(temp != null)
+            if(temp != null) {
               oldTvDataDir = new File(temp);
-            else if(new File(oldDir, "tvdata").isDirectory())
+            } else if(new File(oldDir, "tvdata").isDirectory()) {
               oldTvDataDir = new File(oldDir, "tvdata");
-            else if(new File(oldDir.getParent(), "tvdata").isDirectory())
+            } else if(new File(oldDir.getParent(), "tvdata").isDirectory()) {
               oldTvDataDir = new File(oldDir.getParent(), "tvdata");
+            }
             
             in.close();
           }catch(Exception e) {}
@@ -325,9 +330,10 @@ public class Settings {
 
               if (version1
                   && !(new File(oldDirectoryName, newDir.getName()))
-                      .isDirectory())
+                      .isDirectory()) {
                 oldDir.renameTo(new File(System.getProperty("user.home", "")
                     + File.separator + "tvbrowser_BACKUP"));
+              }
             }
             
             /*
@@ -432,8 +438,9 @@ public class Settings {
         propPictureEndTime, propIsPictureShowingDescription, propPicturePluginIds,
         propPictureDuration};
     
-    if(mProp.hasChanged(propArr))
+    if(mProp.hasChanged(propArr)) {
       mainFrame.getProgramTableScrollPane().forceRepaintAll();
+    }
 
     if (mProp.hasChanged(propColumnWidth)) {
       util.ui.ProgramPanel.updateColumnWidth();
@@ -1190,5 +1197,8 @@ public class Settings {
   /** An array with the ids of the tv data service which license was accepted. */
   public static final StringArrayProperty propAcceptedLicenseArrForServiceIds = new StringArrayProperty(
       mProp, "licnseIds", new String[] {});
+
+  /** the class name of the last settings tab that has been closed with OK before */ 
+  public static final StringProperty propLastUsedSettingsPath = new StringProperty(mProp, "lastUsedSettingsTabClassName", "#channels");
   
 }
