@@ -662,13 +662,18 @@ public class SettingsDialog implements WindowClosingIf {
     public String getHelpUrl() {
       String url = mHelpUrl;
       
-      if(mSettingsTab instanceof ConfigPluginSettingsTab) {
-        PluginAccess plugin = PluginProxyManager.getInstance().getPluginForId(mId);
-        
-        url = plugin.getInfo().getHelpUrl();
-        
-        if(url == null) {
-          url = "http://www.tvbrowser.org/showHelpFor.php?id=" + plugin.getId() + "&lang=" + System.getProperty("user.language");
+      if (url == null || url =="") {
+        if(mSettingsTab instanceof ConfigPluginSettingsTab) {
+          PluginAccess plugin = PluginProxyManager.getInstance().getPluginForId(mId);
+          
+          url = plugin.getInfo().getHelpUrl();
+          
+          if(url == null) {
+            url = "http://www.tvbrowser.org/showHelpFor.php?id=" + plugin.getId() + "&lang=" + System.getProperty("user.language");
+          }
+        }
+        else {
+          url = mLocalizer.msg("settingsUrl", "http://enwiki.tvbrowser.org/index.php/Settings {0}",mSettingsTab.getTitle()); 
         }
       }
       
