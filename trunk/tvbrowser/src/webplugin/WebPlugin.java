@@ -295,6 +295,23 @@ public class WebPlugin extends Plugin {
     listActors = new ArrayList<String>();
     listDirectors = new ArrayList<String>();
     listScripts = new ArrayList<String>();
+    // director
+    String directorField = program.getTextField(ProgramFieldType.DIRECTOR_TYPE);
+    if (directorField != null) {
+      String[] directors = directorField.split(",");
+      for (String director : directors) {
+        addSearchItem(listDirectors, director);
+      }
+    }
+    // script
+    String scriptField = program.getTextField(ProgramFieldType.SCRIPT_TYPE);
+    if (scriptField != null) {
+      String[] scripts = scriptField.split(",");
+      for (String script : scripts) {
+        addSearchItem(listScripts, script);
+      }
+    }
+    // actors
     String actorsField = program.getTextField(ProgramFieldType.ACTOR_LIST_TYPE);
     if (actorsField != null) {
       String[] actors = new String[0];
@@ -311,64 +328,83 @@ public class WebPlugin extends Plugin {
       for (String actor : actors) {
         // actor and role separated by brackets
         if (actor.contains("(") && actor.contains(")")) {
-          listFirst.add(actor.substring(0, actor.indexOf("(")));
-          listSecond.add(actor.substring(actor.indexOf("(")+1,actor.indexOf(")")));
+          listFirst.add(actor.substring(0, actor.indexOf("(")).trim());
+          listSecond.add(actor.substring(actor.indexOf("(")+1,actor.indexOf(")")).trim());
         }
         // actor and role separated by tab
         else if (actor.contains("\t")) {
-          listFirst.add(actor.substring(0, actor.indexOf("\t")));
-          listSecond.add(actor.substring(actor.indexOf("\t")+1));
+          listFirst.add(actor.substring(0, actor.indexOf("\t")).trim());
+          listSecond.add(actor.substring(actor.indexOf("\t")+1).trim());
         }
         else {
-          addSearchItem(listActors, actor);
+          addSearchItem(listActors, actor.trim());
         }
       }
-      // now estimate which are the actor names and which are the roles
-      int shortFirst = 0;
-      int shortSecond = 0;
-      for (String first : listFirst) {
-        if (!first.contains(" ")) {
-          shortFirst++;
-        }
-      }
-      for (String second : listSecond) {
-        if (!second.contains(" ")) {
-          shortSecond++;
-        }
-      }
-      if (shortFirst <= shortSecond) {
-        for (String first : listFirst) {
-          addSearchItem(listActors, first);
-        }
-      }
-      if (shortSecond <= shortFirst) {
-        for (String second : listSecond) {
-          addSearchItem(listActors, second);
-        }
-      }
+      separateRolesAndActors(listFirst, listSecond);
     }
     String[] actors = new String[listActors.size()];
     listActors.toArray(actors);
     Arrays.sort(actors);
     listActors = new ArrayList<String>();
     // build the final list of sub menus
-    String directorField = program.getTextField(ProgramFieldType.DIRECTOR_TYPE);
-    if (directorField != null) {
-      String[] directors = directorField.split(",");
-      for (String director : directors) {
-        addSearchItem(listDirectors, director);
-      }
-    }
-    String scriptField = program.getTextField(ProgramFieldType.SCRIPT_TYPE);
-    if (scriptField != null) {
-      String[] scripts = scriptField.split(",");
-      for (String script : scripts) {
-        addSearchItem(listScripts, script);
-      }
-    }
     for (String actor : actors) {
       if (actor.contains(" ") && !actor.equalsIgnoreCase("und andere") && !listActors.contains(actor)) {
         addSearchItem(listActors, actor);
+      }
+    }
+  }
+
+  /**
+   * decide which of the 2 lists contains the real actor names and which the role names
+   * @param listFirst first list of names
+   * @param listSecond second list of names
+   */
+  private void separateRolesAndActors(ArrayList<String> listFirst, ArrayList<String> listSecond) {
+    boolean useFirst = false;
+    boolean useSecond = false;
+    // search for director in actors list
+    for (String director : listDirectors) {
+      useFirst = useFirst || listFirst.contains(director);
+      useSecond = useSecond || listSecond.contains(director);
+    }
+    // search for script in actors list
+    for (String script : listScripts) {
+      useFirst = useFirst || listFirst.contains(script);
+      useSecond = useSecond || listSecond.contains(script);
+    }
+    if (useFirst) {
+      for (String first : listFirst) {
+        addSearchItem(listActors, first);
+      }
+      return;
+    }
+    else if (useSecond) {
+      for (String second : listSecond) {
+        addSearchItem(listActors, second);
+      }
+      return;
+    }
+    // check which list contains more names with one part only (i.e. no family name)
+    int shortFirst = 0;
+    int shortSecond = 0;
+    for (String first : listFirst) {
+      if (!first.contains(" ")) {
+        shortFirst++;
+      }
+    }
+    for (String second : listSecond) {
+      if (!second.contains(" ")) {
+        shortSecond++;
+      }
+    }
+    if (shortFirst <= shortSecond) {
+      for (String first : listFirst) {
+        addSearchItem(listActors, first);
+      }
+    }
+    if (shortSecond <= shortFirst) {
+      for (String second : listSecond) {
+        addSearchItem(listActors, second);
       }
     }
   }
