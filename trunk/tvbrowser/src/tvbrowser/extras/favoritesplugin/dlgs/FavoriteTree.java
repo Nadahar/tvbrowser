@@ -843,10 +843,13 @@ DropTargetListener {
     StringBuffer text = new StringBuffer(value.toString());
     
     if(value instanceof FavoriteNode) {
-      int n = getProgramsCount((FavoriteNode)value);
+      int[] count = getProgramsCount((FavoriteNode)value);
       
-      if(n > 0) {
-        text.append(" [").append(n).append("]");
+      if(count[0] > 0) {
+        if(count[1] < 1)
+          text.append(" [").append(count[0]).append("]");
+        else
+          text.append(" [").append(count[0]).append(", ").append(mLocalizer.msg("today","today")).append(": ").append(count[1]).append("]");
       }
     }
     
@@ -859,14 +862,29 @@ DropTargetListener {
    *          use this Node
    * @return Number of Child-Nodes
    */
-  private int getProgramsCount(FavoriteNode node) {
-    int count = node.containsFavorite() ? node.getFavorite().getWhiteListPrograms().length : 0;
+  private int[] getProgramsCount(FavoriteNode node) {
+    int[] count = new int[2];
+    
+    if(node.containsFavorite()) {
+      count[0] = node.getFavorite().getWhiteListPrograms().length;
+      
+      for(Program p : node.getFavorite().getWhiteListPrograms())
+        if(p.getDate().equals(Date.getCurrentDate()))
+          count[1]++;
+    }
+    
     for (int i = 0; i < node.getChildCount(); i++) {
       FavoriteNode child = (FavoriteNode)node.getChildAt(i);
       if (child.containsFavorite()) {
-        count += child.getFavorite().getWhiteListPrograms().length;
+        count[0] += child.getFavorite().getWhiteListPrograms().length;
+        
+        for(Program p : child.getFavorite().getWhiteListPrograms())
+          if(p.getDate().equals(Date.getCurrentDate()))
+            count[1]++;
       } else {
-        count += getProgramsCount(child);
+        int[] countReturned = getProgramsCount(child);
+        count[0] += countReturned[0];
+        count[1] += countReturned[1];
       }
     }
     return count;
