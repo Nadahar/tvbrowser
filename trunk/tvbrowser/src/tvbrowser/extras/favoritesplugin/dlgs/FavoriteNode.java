@@ -143,7 +143,7 @@ public class FavoriteNode extends DefaultMutableTreeNode implements Comparable {
   }
   
   protected boolean wasExpanded() {
-    return mWasExpanded;
+    return mWasExpanded || isRoot();
   }
   
   protected void setWasExpanded(boolean expanded) {
