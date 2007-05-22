@@ -328,7 +328,7 @@ public class DreamboxDevice implements DeviceIf {
     /**
      * @see captureplugin.drivers.DeviceIf#readData(java.io.ObjectInputStream)
      */
-    public void readData(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    public void readData(ObjectInputStream stream, boolean importDevice) throws IOException, ClassNotFoundException {
         mConfig = new DreamboxConfig(stream);
     }
 

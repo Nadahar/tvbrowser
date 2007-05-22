@@ -516,9 +516,12 @@ public class SystemTray {
   private boolean isOnChannelList(Channel ch) {
     Channel[] channels = Settings.propTraySpecialChannels.getChannelArray();
 
-    for (Channel channel : channels)
-      if (ch.getId().compareTo(channel.getId()) == 0)
+    for (Channel channel : channels) {
+      if (ch.equals(channel)) {
         return true;
+      }
+    }
+    
     return false;
   }
 
@@ -531,7 +534,7 @@ public class SystemTray {
     Channel[] channels = Settings.propTraySpecialChannels.getChannelArray();
 
     for (int i = 0; i < channels.length; i++)
-      if (ch.getId().compareTo(channels[i].getId()) == 0)
+      if (ch.equals(channels[i]))
         return i;
 
     return -1;

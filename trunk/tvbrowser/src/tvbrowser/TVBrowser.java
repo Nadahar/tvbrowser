@@ -25,6 +25,7 @@
  */
 package tvbrowser;
 
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -590,10 +591,13 @@ public class TVBrowser {
     mainFrame.setSize(windowWidth, windowHeight);
     int windowX = Settings.propWindowX.getInt();
     int windowY = Settings.propWindowY.getInt();
+    
+    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    
     if (Settings.propIsWindowMaximized.getBoolean()) {
         mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
     }
-    if (windowX == -1) {
+    if (windowX < 0 || windowX > screen.width || windowY < 0 || windowY > screen.height|| windowWidth < 200 || windowHeight < 200) {
       UiUtilities.centerAndShow(mainFrame);
     } else {
       mainFrame.setLocation(windowX, windowY);

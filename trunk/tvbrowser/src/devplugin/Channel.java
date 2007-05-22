@@ -573,20 +573,30 @@ public class Channel {
     if (obj != null && obj instanceof Channel) {
       Channel cmp = (Channel) obj;
       try {
-          String channelId = getId();
-          String cmpChannelId = cmp.getId();
+        String channelId = getId();
+        String cmpChannelId = cmp.getId();
+        
     	  if (channelId.compareTo(cmpChannelId) != 0) {
     		  return false;
     	  }
-          String groupId = getGroup().getId();
-          String cmpGroupId = cmp.getGroup().getId();
-          if (groupId.compareTo(cmpGroupId) != 0) {
-        	  return false;
-          }
-          String dataServiceId = getDataServiceProxy().getId();
-          String cmpDataServiceId = cmp.getDataServiceProxy().getId();
-          
-          return dataServiceId.compareTo(cmpDataServiceId) == 0;
+        String groupId = getGroup().getId();
+        String cmpGroupId = cmp.getGroup().getId();
+        
+        if (groupId.compareTo(cmpGroupId) != 0) {
+          return false;
+        }
+        
+        String dataServiceId = getDataServiceProxy().getId();
+        String cmpDataServiceId = cmp.getDataServiceProxy().getId();
+        
+        if(dataServiceId.compareTo(cmpDataServiceId) != 0) {
+          return false;
+        }
+        
+        String country = getCountry();
+        String cmpCountry = cmp.getCountry();
+        
+        return country.compareTo(cmpCountry) == 0;
       }catch(Exception e) {
         //this is for the example program
         if((getDataServiceProxy() == null && cmp.getDataServiceProxy() == null) &&

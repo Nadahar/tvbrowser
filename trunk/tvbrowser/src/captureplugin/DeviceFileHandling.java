@@ -115,7 +115,7 @@ public class DeviceFileHandling {
         
         ObjectInputStream stream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(data), 0x2000));
         
-        dev.readData(stream);
+        dev.readData(stream, false);
         
         stream.close();
         return dev;

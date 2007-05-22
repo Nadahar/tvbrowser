@@ -107,7 +107,7 @@ public class DeviceImportAndExport {
           return null;
       }
 
-      dev.readData(in);
+      dev.readData(in,true);
       
       return dev;
     } catch (Exception e) {
