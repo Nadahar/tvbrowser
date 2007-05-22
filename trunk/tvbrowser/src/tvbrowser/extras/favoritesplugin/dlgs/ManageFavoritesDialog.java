@@ -746,18 +746,19 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       }
     }
     if (selection != -1) {
+      Favorite fav;
+      if(mFavoritesList != null) {
+        fav = (Favorite) mFavoritesListModel.get(selection);
+        mFavoritesListModel.remove(selection);
+      }
+      else {
+        fav = ((FavoriteNode)FavoriteTree.getInstance().getSelectionPath().getLastPathComponent()).getFavorite();
+      }
+
       if (JOptionPane.showConfirmDialog(this,
-              mLocalizer.msg("reallyDelete", "Really delete favorite?"),
+              FavoritesPlugin.mLocalizer.msg("reallyDelete", "Really delete favorite '{0}'?", fav.getName()),
               mLocalizer.msg("delete", "Delete selected favorite..."),
               JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-        Favorite fav;
-        if(mFavoritesList != null) {
-          fav = (Favorite) mFavoritesListModel.get(selection);
-          mFavoritesListModel.remove(selection);
-        }
-        else {
-          fav = ((FavoriteNode)FavoriteTree.getInstance().getSelectionPath().getLastPathComponent()).getFavorite();
-        }
         FavoriteTree.getInstance().deleteFavorite(fav);
         favoriteSelectionChanged();
       }
