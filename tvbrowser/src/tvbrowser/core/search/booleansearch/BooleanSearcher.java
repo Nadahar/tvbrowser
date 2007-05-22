@@ -144,7 +144,7 @@ public class BooleanSearcher extends AbstractSearcher {
               ME.addPart(s);
             }
             part.remove(i);
-            i = 0;
+            i--;
             continue;
           }
           Matcher m = new Matcher(s, caseSensitive, matcherTable);

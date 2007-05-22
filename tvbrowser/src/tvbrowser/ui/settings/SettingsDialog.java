@@ -30,6 +30,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -311,10 +312,12 @@ public class SettingsDialog implements WindowClosingIf {
   }
 
   public void centerAndShow() {
-    if ((Settings.propSettingsWindowX.getInt() == -1) && (Settings.propSettingsWindowY.getInt() == -1)) {
+	Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+	  
+    if ((Settings.propSettingsWindowX.getInt() < 0) || (Settings.propSettingsWindowX.getInt() > screen.width) || (Settings.propSettingsWindowY.getInt() < 0) || (Settings.propSettingsWindowY.getInt() > screen.height)) {
       mDialog.setSize(750,600);
       UiUtilities.centerAndShow(mDialog);
-    } else if ((Settings.propSettingsWindowWidth.getInt() == -1) && (Settings.propSettingsWindowWidth.getInt() == -1)) {
+    } else if ((Settings.propSettingsWindowWidth.getInt() < 200) || (Settings.propSettingsWindowWidth.getInt() < 200)) {
       mDialog.setSize(750,600);
       mLocation = new Point(Settings.propSettingsWindowX.getInt(), Settings.propSettingsWindowY.getInt());
       mDialog.setLocation(mLocation);

@@ -277,8 +277,8 @@ public class DefaultDevice implements DeviceIf {
     /* (non-Javadoc)
      * @see captureplugin.drivers.DeviceIf#readData(java.io.ObjectInputStream)
      */
-    public void readData(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        mConfig.readData(stream);
+    public void readData(ObjectInputStream stream, boolean importDevice) throws IOException, ClassNotFoundException {
+        mConfig.readData(stream, importDevice);
     }
 
 

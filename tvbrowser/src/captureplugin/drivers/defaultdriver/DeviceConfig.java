@@ -551,9 +551,10 @@ public class DeviceConfig {
 
     /**
      * Read the Config from a Stream
-     * @param stream
+     * @param stream The stream to read from.
+     * @param importDevice <code>True</code> if a device should be imported.
      */
-    public void readData(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    public void readData(ObjectInputStream stream, boolean importDevice) throws IOException, ClassNotFoundException {
         int version = stream.readInt();
         
         if (version < 4) {
@@ -616,6 +617,10 @@ public class DeviceConfig {
 
         if (version > 8) {
             mId = (String) stream.readObject();
+            
+            if(importDevice) {
+            	mId = IDGenerator.generateUniqueId();
+            }
         } else {
             mId = IDGenerator.generateUniqueId();
         }

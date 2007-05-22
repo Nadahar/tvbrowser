@@ -220,7 +220,7 @@ public class ElgatoDevice implements DeviceIf {
       return true;
     }
     
-    public void readData(ObjectInputStream stream) throws IOException,
+    public void readData(ObjectInputStream stream, boolean importDevice) throws IOException,
             ClassNotFoundException {
       mConfig = new ElgatoConfig(stream);
     }
