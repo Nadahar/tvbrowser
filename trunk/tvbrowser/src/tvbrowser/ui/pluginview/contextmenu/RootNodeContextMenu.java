@@ -27,12 +27,10 @@
 package tvbrowser.ui.pluginview.contextmenu;
 
 import javax.swing.Action;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.TreePath;
 
 import tvbrowser.ui.pluginview.PluginTree;
-import util.ui.menu.MenuUtil;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
@@ -40,21 +38,16 @@ import util.ui.menu.MenuUtil;
  * Time: 22:43:03
  */
 public class RootNodeContextMenu extends AbstractContextMenu {
-
-  private Action mDefaultAction;
+  
   private TreePath mPath;
 
   public RootNodeContextMenu(PluginTree tree, TreePath path) {
     super(tree);
     mPath = path;
-    mDefaultAction = getCollapseExpandAction(path);
   }
 
   public JPopupMenu getPopupMenu() {
     JPopupMenu menu = new JPopupMenu();
-    JMenuItem item = new JMenuItem(mDefaultAction);
-    item.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
-    menu.add(item);
     menu.add(getExpandAllMenuItem(mPath));
     menu.add(getCollapseAllMenuItem(mPath));
     return menu;

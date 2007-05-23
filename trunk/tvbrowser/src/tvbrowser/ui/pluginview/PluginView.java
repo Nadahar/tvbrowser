@@ -169,7 +169,8 @@ public class PluginView extends JPanel implements MouseListener {
   private void showPopup(MouseEvent e) {
     TreePath path = mTree.getPathForLocation(e.getX(), e.getY());
     if (path == null) {
-      return;
+      path = new TreePath(mTree.getModel().getRoot());
+      mTree.setSelectionPath(path);
     }
 
     // After Popup-Trigger, there is should be only one path selected
