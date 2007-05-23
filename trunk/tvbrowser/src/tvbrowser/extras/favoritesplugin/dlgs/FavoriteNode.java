@@ -189,6 +189,6 @@ public class FavoriteNode extends DefaultMutableTreeNode implements Comparable {
   }
 
   public int compareTo(Object o) {
-    return toString().compareTo(o.toString());
+    return toString().compareToIgnoreCase(o.toString());
   }
 }

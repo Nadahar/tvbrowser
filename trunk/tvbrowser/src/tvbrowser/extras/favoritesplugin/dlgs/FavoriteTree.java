@@ -282,7 +282,7 @@ DropTargetListener {
       
       JMenuItem item;
       
-      if(last.isDirectoryNode() && last.getChildCount() > 0 && !last.equals(mRootNode)) {
+      if(last.isDirectoryNode() && last.getChildCount() > 0) {
         item = new JMenuItem(isExpanded(path) ? mLocalizer.msg("collapse", "Collapse") : mLocalizer.msg("expand", "Expand"));
         item.setFont(item.getFont().deriveFont(Font.BOLD));
         
@@ -295,7 +295,8 @@ DropTargetListener {
           }
         });
         
-        menu.add(item);
+        if(!last.equals(mRootNode))
+          menu.add(item);
         
         item = new JMenuItem(mLocalizer.msg("expandAll", "Expand all"));
         
@@ -439,7 +440,9 @@ DropTargetListener {
           collapsePath(new TreePath(child.getPath()));
         }
       }
-      collapsePath(new TreePath(node.getPath()));
+      
+      if(!node.equals(mRootNode))
+        collapsePath(new TreePath(node.getPath()));
     }
   }
   
