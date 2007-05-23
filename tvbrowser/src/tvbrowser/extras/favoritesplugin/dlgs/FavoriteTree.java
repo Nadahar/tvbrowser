@@ -177,6 +177,16 @@ DropTargetListener {
             showContextMenu(new Point(pathBounds.x + pathBounds.width - 10, pathBounds.y + pathBounds.height - 5));
           }
         }
+        else if(e.getKeyCode() == KeyEvent.VK_F2) {
+          if(getSelectionPath() != null) {
+            FavoriteNode node = (FavoriteNode)getSelectionPath().getLastPathComponent();
+            
+            if(node.isDirectoryNode())
+              renameFolder(node);
+            else
+              ManageFavoritesDialog.getInstance().editSelectedFavorite();
+          }
+        }
       }
     });
     
