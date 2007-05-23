@@ -376,7 +376,7 @@ public class PluginTreeNode {
           return sProgramItemComparator.compare((ProgramItem)u1, (ProgramItem)u2);
         }
         if (u1 instanceof String && u2 instanceof String) {
-          return ((String)u1).compareTo((String)u2);
+          return ((String)u1).compareToIgnoreCase((String)u2);
         }
         if (u1 instanceof String) {
           return 1;
