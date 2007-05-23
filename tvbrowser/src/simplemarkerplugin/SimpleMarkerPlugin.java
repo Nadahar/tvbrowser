@@ -28,6 +28,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import javax.swing.AbstractAction;
@@ -36,6 +37,11 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 
+import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.PluginFilter;
+import tvbrowser.core.filters.ShowAllFilter;
+import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.programtable.ProgramTableModel;
 import util.settings.ProgramPanelSettings;
 import util.ui.UiUtilities;
 
@@ -48,6 +54,7 @@ import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.PluginsFilterComponent;
 import devplugin.Program;
+import devplugin.ProgramFilter;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.Version;
@@ -142,22 +149,66 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
    */
   public ActionMenu getContextMenuActions(Program p) {
     this.mProg = p;
-
+    Object[] submenu = new Object[mMarkListVector.size() + 1];
+    ContextMenuAction menu = new ContextMenuAction();
+    menu.setText(mLocalizer.msg("name", "Marker plugin"));
+    menu.setSmallIcon(createImageIcon("actions", "just-mark", 16));
+    
     if (mMarkListVector.size() == 1) {
       // Create context menu entry
-      return new ActionMenu(getDefaultAction(p));
+      submenu[0] = getDefaultAction(p);
     } else {
-      ContextMenuAction menu = new ContextMenuAction();
-      menu.setText(mLocalizer.msg("name", "Marker plugin"));
-      menu.setSmallIcon(createImageIcon("actions", "just-mark", 16));
-
-      Action[] submenu = new Action[mMarkListVector.size()];
-
-      for (int i = 0; i < submenu.length; i++)
+      for (int i = 0; i < mMarkListVector.size(); i++)
         submenu[i] = mMarkListVector.getListAt(i).getContextMenuAction(p);
-
-      return new ActionMenu(menu, submenu);
     }
+    
+    submenu[submenu.length-1] = getExtendedMarkMenu();
+    return new ActionMenu(menu, submenu);
+  }
+
+  private ActionMenu getExtendedMarkMenu() {
+    // get all non-default filters
+    ArrayList<ProgramFilter> markFilters = new ArrayList<ProgramFilter>();
+    for (ProgramFilter filter : FilterList.getInstance().getFilterArr()) {
+      if ((!(filter instanceof ShowAllFilter)) && (!(filter instanceof PluginFilter))) {
+        markFilters.add(filter);
+      }
+    }
+    // create an action for each filter
+    AbstractAction[] filtersAction = new AbstractAction[markFilters.size()];
+    for (int i = 0; i < markFilters.size(); i++) {
+      final ProgramFilter filter = markFilters.get(i);
+      filtersAction[i] = new AbstractAction() {
+        public void actionPerformed(ActionEvent e) {
+          // collect all (visible) programs of this day which match the filter
+          ArrayList<Program> progList = new ArrayList<Program>();
+          ProgramTableModel model = MainFrame.getInstance().getProgramTableModel();
+
+          int columnCount = model.getColumnCount();
+          for (int col = 0; col < columnCount; col++) {
+            int rowCount = model.getRowCount(col);
+            for (int row = 0; row < rowCount; row++) {
+              Program program = model.getProgramPanel(col, row).getProgram();
+              if (filter.accept(program)) {
+                progList.add(program);
+              }
+            }
+          }
+          // now mark all those programs on the default list
+          for (Program program : progList) {
+            mMarkListVector.getListAt(0).addElement(program);
+            program.mark(SimpleMarkerPlugin.this);
+          }
+          mMarkListVector.getListAt(0).updateNode();
+        }};
+      filtersAction[i].putValue(Action.NAME, filter.getName());
+    }
+    // create the new (sub) menu
+    ContextMenuAction menuExtended = new ContextMenuAction();
+    menuExtended.setText(mLocalizer.msg("extendedMark", "Extended mark"));
+    menuExtended.setActionListener(this);
+    ActionMenu actionMenuExtendedMark = new ActionMenu(menuExtended, filtersAction);
+    return actionMenuExtendedMark;
   }
 
   private ContextMenuAction getDefaultAction(Program p) {
