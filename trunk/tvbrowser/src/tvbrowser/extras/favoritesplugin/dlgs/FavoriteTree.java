@@ -143,6 +143,7 @@ DropTargetListener {
   private void init() {
     setModel(new FavoriteTreeModel(mRootNode));
     setRootVisible(false);
+    setShowsRootHandles(true);
     
     FavoriteTreeCellRenderer renderer = new FavoriteTreeCellRenderer();
     renderer.setLeafIcon(null);
@@ -932,7 +933,7 @@ DropTargetListener {
   }
   
   private class FavoriteTreeUI extends javax.swing.plaf.basic.BasicTreeUI implements MouseListener {
-    private static final int CLICK_WAIT_TIME = 250;
+    private static final int CLICK_WAIT_TIME = 150;
     private Thread mClickedThread;
     private long mMousePressedTime;
     
