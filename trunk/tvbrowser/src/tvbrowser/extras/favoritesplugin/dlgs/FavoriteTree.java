@@ -411,8 +411,20 @@ DropTargetListener {
       if(!last.equals(mRootNode) && last.getChildCount() < 1)
         menu.add(item);
       
+      if(!ManageFavoritesDialog.getInstance().programListIsEmpty()) {
+        menu.addSeparator();
+        
+        item = new JMenuItem(ManageFavoritesDialog.mLocalizer.msg("send", "Send Programs to another Plugin"), FavoritesPlugin.getInstance().getIconFromTheme("actions", "edit-copy", 22));
+        item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent evt) {
+             ManageFavoritesDialog.getInstance().showSendDialog();
+          }
+        });
+        
+        menu.add(item);
+      }
+      
       menu.show(this, p.x, p.y);
-    
   }
   
   protected void delete(FavoriteNode node) {

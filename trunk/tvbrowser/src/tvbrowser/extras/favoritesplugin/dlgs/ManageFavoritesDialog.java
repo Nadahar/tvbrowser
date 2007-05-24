@@ -43,6 +43,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Enumeration;
 
 import javax.swing.BorderFactory;
@@ -81,6 +82,7 @@ import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
+import util.program.ProgramUtilities;
 import util.ui.DragAndDropMouseListener;
 import util.ui.ExtensionFileFilter;
 import util.ui.ListDragAndDropHandler;
@@ -107,7 +109,7 @@ import devplugin.SettingsItem;
 public class ManageFavoritesDialog extends JDialog implements ListDropAction, WindowClosingIf,TreeSelectionListener{
 
   /** The localizer for this class. */
-  private static final util.ui.Localizer mLocalizer
+  protected static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ManageFavoritesDialog.class);
 
   private DefaultListModel mFavoritesListModel, mProgramListModel;
@@ -571,15 +573,40 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
           mDeleteBt.setToolTipText(mLocalizer.msg("delete", "Delete selected favorite..."));
         }
         else {
-          mProgramListModel.clear();
+          Program[] p = ((FavoriteNode)FavoriteTree.getInstance().getSelectionPath().getLastPathComponent()).getAllPrograms();
           
-          FavoriteNode node = (FavoriteNode)FavoriteTree.getInstance().getSelectionPath().getLastPathComponent();
+          if(p != null && p.length > 0) {
+            enableButtons(true);
+            
+            Arrays.sort(p,ProgramUtilities.getProgramComparator());
+            
+            mProgramListModel.clear();
+            mProgramListModel.ensureCapacity(p.length);
+            
+            for (int i = 0; i < p.length; i++) {
+              mProgramListModel.addElement(p[i]);
+            }
+
+            SwingUtilities.invokeLater(new Runnable() {
+              public void run() {
+                mProgramScrollPane.getVerticalScrollBar().setValue(0);
+                mProgramScrollPane.getHorizontalScrollBar().setValue(0);
+              }
+            });
+            
+            mSendBt.setEnabled(true);
+            mDeleteBt.setEnabled(false);
+          }
+          else {
+            mProgramListModel.clear();
           
-          enableButtons(node.isDirectoryNode());
+            FavoriteNode node = (FavoriteNode)FavoriteTree.getInstance().getSelectionPath().getLastPathComponent();
           
-          mDeleteBt.setEnabled(node.isDirectoryNode() && node.getChildCount() < 1);
-          mSendBt.setEnabled(false);
+            enableButtons(node.isDirectoryNode());
           
+            mDeleteBt.setEnabled(node.isDirectoryNode() && node.getChildCount() < 1);
+            mSendBt.setEnabled(false);
+          }
           mEditBt.setToolTipText(mLocalizer.msg("renameFolder", "Rename selected folder..."));
           mDeleteBt.setToolTipText(mLocalizer.msg("deleteFolder", "Delete selected folder"));
         }
@@ -635,7 +662,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
         return;
       }
     }
-    else if(FavoriteTree.getInstance().getSelectionPath() == null || ((FavoriteNode)FavoriteTree.getInstance().getSelectionPath().getLastPathComponent()).isDirectoryNode())
+    else if(FavoriteTree.getInstance().getSelectionPath() == null)
       return;
 
     Program[] programs = mProgramList.getSelectedPrograms();
@@ -646,23 +673,23 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       fav = (Favorite) mFavoritesListModel.get(mFavoritesList.getSelectedIndex());
     }
     else {
-      fav = ((FavoriteNode)FavoriteTree.getInstance().getSelectionPath().getLastPathComponent()).getFavorite(); 
+      programs = ((FavoriteNode)FavoriteTree.getInstance().getSelectionPath().getLastPathComponent()).getAllPrograms();
+      fav = null;
     }
     
     if(programs == null || programs.length == 0) {
       programs = mShowNew ? fav.getNewPrograms() : fav.getWhiteListPrograms();
     }
-
+    
     ProgramReceiveIf caller = null;
     
-    if(fav.getReminderConfiguration().containsService(ReminderConfiguration.REMINDER_DEFAULT))
+    if(fav == null || fav.getReminderConfiguration().containsService(ReminderConfiguration.REMINDER_DEFAULT))
       caller = ReminderPluginProxy.getInstance();
     
     SendToPluginDialog send = new SendToPluginDialog(caller, this, programs);
 
     send.setVisible(true);
-
-}
+  }
 
 
   protected void newFavorite(FavoriteNode parent) {
@@ -922,6 +949,10 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
 
   public void valueChanged(TreeSelectionEvent e) {
     favoriteSelectionChanged();
-  }  
+  }
+  
+  protected boolean programListIsEmpty() {
+    return mProgramList.getModel().getSize() < 1;
+  }
 }
 
