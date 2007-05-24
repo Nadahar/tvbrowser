@@ -414,7 +414,7 @@ DropTargetListener {
       if(!ManageFavoritesDialog.getInstance().programListIsEmpty()) {
         menu.addSeparator();
         
-        item = new JMenuItem(ManageFavoritesDialog.mLocalizer.msg("send", "Send Programs to another Plugin"), FavoritesPlugin.getInstance().getIconFromTheme("actions", "edit-copy", 22));
+        item = new JMenuItem(ManageFavoritesDialog.mLocalizer.msg("send", "Send Programs to another Plugin"), FavoritesPlugin.getInstance().getIconFromTheme("actions", "edit-copy", 16));
         item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent evt) {
              ManageFavoritesDialog.getInstance().showSendDialog();
