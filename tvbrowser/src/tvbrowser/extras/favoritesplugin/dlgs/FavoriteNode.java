@@ -29,6 +29,8 @@ import java.io.ObjectOutputStream;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import devplugin.Program;
+
 import tvbrowser.extras.favoritesplugin.core.ActorsFavorite;
 import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
@@ -190,5 +192,36 @@ public class FavoriteNode extends DefaultMutableTreeNode implements Comparable {
 
   public int compareTo(Object o) {
     return toString().compareToIgnoreCase(o.toString());
+  }
+  
+  /**
+   * Gets all programs contains in this node and all children of it.
+   * 
+   * @return All programs contains in this node and all children of it.
+   */
+  public Program[] getAllPrograms() {
+    try{
+    if(isDirectoryNode()) {
+      Program[] progs = new Program[0];
+      
+      for(int i = 0; i < getChildCount(); i++) {
+        Program[] p = ((FavoriteNode)getChildAt(i)).getAllPrograms();
+        
+        if(p != null && p.length > 0) {
+          Program[] newArr = new Program[progs.length + p.length];
+          
+          System.arraycopy(progs,0,newArr,0,progs.length);
+          System.arraycopy(p,0,newArr,progs.length,p.length);
+          
+          progs = newArr;
+        }
+      }
+      
+      return progs;
+    }
+    else
+      return getFavorite().getWhiteListPrograms();
+    }catch(Exception e) {e.printStackTrace();}
+    return null;
   }
 }
