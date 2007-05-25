@@ -340,7 +340,10 @@ public class WebPlugin extends Plugin {
           addSearchItem(listActors, actor.trim());
         }
       }
-      separateRolesAndActors(listFirst, listSecond);
+      ArrayList<String>[] lists = new ArrayList[2];
+      lists[0] = listFirst;
+      lists[1] = listSecond;
+      separateRolesAndActors(lists);
     }
     String[] actors = new String[listActors.size()];
     listActors.toArray(actors);
@@ -359,53 +362,59 @@ public class WebPlugin extends Plugin {
    * @param listFirst first list of names
    * @param listSecond second list of names
    */
-  private void separateRolesAndActors(ArrayList<String> listFirst, ArrayList<String> listSecond) {
-    boolean useFirst = false;
-    boolean useSecond = false;
-    // search for director in actors list
-    for (String director : listDirectors) {
-      useFirst = useFirst || listFirst.contains(director);
-      useSecond = useSecond || listSecond.contains(director);
+  private void separateRolesAndActors(ArrayList<String>[] list) {
+    boolean use[] = new boolean[2];
+    for (int i = 0; i < use.length; i++) {
+      use[i] = false;
     }
-    // search for script in actors list
-    for (String script : listScripts) {
-      useFirst = useFirst || listFirst.contains(script);
-      useSecond = useSecond || listSecond.contains(script);
-    }
-    if (useFirst) {
-      for (String first : listFirst) {
-        addSearchItem(listActors, first);
+    // search for director or script in actors list
+    for (int i = 0; i < list.length; i++) {
+      for (String director : listDirectors) {
+        use[i] = use[i] || list[i].contains(director);
       }
-      return;
-    }
-    else if (useSecond) {
-      for (String second : listSecond) {
-        addSearchItem(listActors, second);
+      for (String script : listScripts) {
+        use[i] = use[i] || list[i].contains(script);
       }
-      return;
+      if (use[i]) {
+        addList(list[i]);
+        return;
+      }
     }
     // check which list contains more names with one part only (i.e. no family name)
-    int shortFirst = 0;
-    int shortSecond = 0;
-    for (String first : listFirst) {
-      if (!first.contains(" ")) {
-        shortFirst++;
+    int singleName[] = new int[2];
+    int abbreviation[] = new int[2];
+    for (int i = 0; i < list.length; i++) {
+      for (String name : list[i]) {
+        if (!name.contains(" ")) {
+          singleName[i]++;
+        }
+        // only count abbreviations at the beginning, so we do not count a middle initial like in "Jon M. Doe"
+        if (name.contains(".") && (name.indexOf(".") < name.indexOf(" "))) {
+          abbreviation[i]++;
+        }
       }
     }
-    for (String second : listSecond) {
-      if (!second.contains(" ")) {
-        shortSecond++;
-      }
+    if (singleName[0] < singleName[1]) {
+      addList(list[0]);
     }
-    if (shortFirst <= shortSecond) {
-      for (String first : listFirst) {
-        addSearchItem(listActors, first);
-      }
+    else if (singleName[1] < singleName[0]) {
+      addList(list[1]);
     }
-    if (shortSecond <= shortFirst) {
-      for (String second : listSecond) {
-        addSearchItem(listActors, second);
-      }
+    else if (abbreviation[0] < abbreviation[1]) {
+      addList(list[0]);
+    }
+    else if (abbreviation[1] < abbreviation[0]) {
+      addList(list[1]);
+    }
+    else {
+      addList(list[0]);
+      addList(list[1]);
+    }
+  }
+
+  private void addList(ArrayList<String> list) {
+    for (String name : list) {
+      addSearchItem(listActors, name);
     }
   }
   
