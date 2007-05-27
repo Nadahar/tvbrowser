@@ -90,6 +90,8 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * the font size offset for the currently selected dynamic font size
    */
   private static int fontSizeOffset = 0;
+  
+  private static int columnWidthOffset = 0;
 
   /** The width of the left part (the time). */
   private static int WIDTH_LEFT = -1;
@@ -357,8 +359,27 @@ private static Font getDynamicFontSize(Font font, int offset) {
    * (Re)Loads the column width settings.
    */
   public static void updateColumnWidth() {
-    WIDTH_RIGHT = Settings.propColumnWidth.getInt() - WIDTH_LEFT;
+    updateColumnWidth(0);
+  }
+  
+  public static int updateColumnWidth(int newOffset) {
+    if (newOffset == 0) {
+      columnWidthOffset = 0;
+    }
+    else {
+      columnWidthOffset += (20 * newOffset);
+    }
+    int columnWidth = Settings.propColumnWidth.getInt() + columnWidthOffset;
+    if (columnWidth < Settings.MIN_COLUMN_WIDTH) {
+      columnWidthOffset = Settings.MIN_COLUMN_WIDTH - Settings.propColumnWidth.getInt();
+    }
+    if (columnWidth > Settings.MAX_COLUMN_WIDTH) {
+      columnWidthOffset = Settings.MAX_COLUMN_WIDTH - Settings.propColumnWidth.getInt();
+    }
+    columnWidth = Settings.propColumnWidth.getInt() + columnWidthOffset;
+    WIDTH_RIGHT = columnWidth - WIDTH_LEFT;
     WIDTH = WIDTH_LEFT + WIDTH_RIGHT;
+    return columnWidth;
   }
 
   /**

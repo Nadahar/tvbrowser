@@ -94,10 +94,11 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
                     mPreviousDayMI, mNextDayMI, mGotoNowMenuItem, mEditTimeButtonsMenuItem,
                     mToolbarCustomizeMI,
                     mFavoritesMI, mReminderMI, mFullscreenMI, mSearchMI,
-                    mFontSizeLargerMI, mFontSizeSmallerMI, mFontSizeDefaultMI;
+                    mFontSizeLargerMI, mFontSizeSmallerMI, mFontSizeDefaultMI,
+                    mColumnWidthLargerMI, mColumnWidthSmallerMI, mColumnWidthDefaultMI;
   protected JMenu mFiltersMenu, mPluginsViewMenu, mLicenseMenu, mGoMenu, mViewMenu, mToolbarMenu, mPluginHelpMenu;
 
-  private JMenu mGotoDateMenu, mGotoChannelMenu, mGotoTimeMenu, mFontSizeMenu;
+  private JMenu mGotoDateMenu, mGotoChannelMenu, mGotoTimeMenu, mFontSizeMenu, mColumnWidthMenu;
   private JLabel mLabel;
   
   protected MenuBar(MainFrame mainFrame, JLabel label) {
@@ -259,6 +260,21 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mFontSizeMenu.addSeparator();
     mFontSizeMenu.add(mFontSizeDefaultMI);
     
+    mColumnWidthLargerMI = new JMenuItem(mLocalizer.msg("menuitem.columnWidthLarger", "Larger"));
+    mColumnWidthLargerMI.addActionListener(this);
+    
+    mColumnWidthSmallerMI = new JMenuItem(mLocalizer.msg("menuitem.columnWidthSmaller", "Smaller"));
+    mColumnWidthSmallerMI.addActionListener(this);
+    
+    mColumnWidthDefaultMI = new JMenuItem(mLocalizer.msg("menuitem.columnWidthDefault", "Reset to default"));
+    mColumnWidthDefaultMI.addActionListener(this);
+    
+    mColumnWidthMenu = new JMenu(mLocalizer.msg("menuitem.columnWidth", "ColumnWidth"));
+    mColumnWidthMenu.add(mColumnWidthLargerMI);
+    mColumnWidthMenu.add(mColumnWidthSmallerMI);
+    mColumnWidthMenu.addSeparator();
+    mColumnWidthMenu.add(mColumnWidthDefaultMI);
+    
     mViewMenu.add(mToolbarMenu);
     mViewMenu.add(mStatusbarMI);
     mViewMenu.add(mTimeBtnsMI);
@@ -268,6 +284,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mViewMenu.addSeparator();
     mViewMenu.add(mFiltersMenu);
     mViewMenu.add(mFontSizeMenu);
+    mViewMenu.add(mColumnWidthMenu);
     mViewMenu.addSeparator();
     mViewMenu.add(mFullscreenMI);
   }
@@ -603,6 +620,15 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
      }
      else if (source == mFontSizeDefaultMI) {
        mMainFrame.changeFontSize(0);
+     }
+     else if (source == mColumnWidthLargerMI) {
+       mMainFrame.changeColumnWidth(1);
+     }
+     else if (source == mColumnWidthSmallerMI) {
+       mMainFrame.changeColumnWidth(-1);
+     }
+     else if (source == mColumnWidthDefaultMI) {
+       mMainFrame.changeColumnWidth(0);
      }
    }
    

@@ -167,7 +167,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     // column width
     JPanel sliderPn = new JPanel(new BorderLayout());
 
-    mColWidthSl = new JSlider(SwingConstants.HORIZONTAL, 50, 300, Settings.propColumnWidth.getInt());
+    mColWidthSl = new JSlider(SwingConstants.HORIZONTAL, Settings.MIN_COLUMN_WIDTH, Settings.MAX_COLUMN_WIDTH, Settings.propColumnWidth.getInt());
 
     mColWidthSl.setPreferredSize(new Dimension(200, 25));
 
