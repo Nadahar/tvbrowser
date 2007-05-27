@@ -1700,6 +1700,18 @@ public class MainFrame extends JFrame implements DateListener {
     scrollPane.forceRepaintAll();
   }
 
+  /**
+   * increase/decrease the width of the program table columns
+   * @param offset positive values increase column width,
+   * negative values decrease column width, zero sets to default again
+   */
+  public void changeColumnWidth(int offset) {
+    int columnWidth = util.ui.ProgramPanel.updateColumnWidth(offset);
+    ProgramTableScrollPane scrollPane = getProgramTableScrollPane();
+    scrollPane.setColumnWidth(columnWidth);
+    scrollPane.forceRepaintAll();
+  }
+
   public StatusBar getStatusBar() {
     return mStatusBar;
   }

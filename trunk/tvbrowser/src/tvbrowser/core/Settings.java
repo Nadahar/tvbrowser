@@ -1200,5 +1200,7 @@ public class Settings {
 
   /** the class name of the last settings tab that has been closed with OK before */ 
   public static final StringProperty propLastUsedSettingsPath = new StringProperty(mProp, "lastUsedSettingsTabClassName", "#channels");
+  public static final int MAX_COLUMN_WIDTH = 300;
+  public static final int MIN_COLUMN_WIDTH = 50;
   
 }
