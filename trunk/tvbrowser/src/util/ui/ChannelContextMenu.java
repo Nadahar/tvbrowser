@@ -11,12 +11,14 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
+import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.ChannelsSettingsTab;
 import tvbrowser.ui.settings.channel.ChannelConfigDlg;
@@ -76,6 +78,20 @@ public class ChannelContextMenu implements ActionListener {
       menuItem.addActionListener(this);
       mFilterChannels.add(menuItem);
     }
+    mFilterChannels.add(new JSeparator());
+    menuItem = new JMenuItem(mLocalizer.msg("filterNew", "Add channel filter"));
+    menuItem.addActionListener(new ActionListener(){
+
+      public void actionPerformed(ActionEvent e) {
+        EditFilterComponentDlg dlg = new EditFilterComponentDlg(null, null, ChannelFilterComponent.class);
+        FilterComponent rule = dlg.getFilterComponent();
+        if ((rule != null) && (rule instanceof ChannelFilterComponent)) {
+          FilterComponentList.getInstance().add(rule);
+          FilterComponentList.getInstance().store();
+          setChannelFilter(rule);
+        }
+      }});
+    mFilterChannels.add(menuItem);
 
     mChAdd.addActionListener(this);
     mChConf.addActionListener(this);
@@ -127,25 +143,31 @@ public class ChannelContextMenu implements ActionListener {
     }
     else {
       if (e.getSource() instanceof JMenuItem) {
-        JMenuItem channelItem = (JMenuItem) e.getSource();
-        String channelName = channelItem.getText();
-        final FilterComponent component = FilterComponentList.getInstance().getFilterComponentByName(channelName);
-        if (component instanceof ChannelFilterComponent) {
-          ProgramFilter filter = new ProgramFilter() {
-            public String getName() {
-              return component.getName();
-            }
-          
-            public boolean accept(Program program) {
-              return component.accept(program);
-            }
-          };
-          MainFrame.getInstance().setProgramFilter(filter); 
-        }
-        else {
-          MainFrame.getInstance().setProgramFilter(FilterList.getInstance().getDefaultFilter()); 
+        JMenuItem filterItem = (JMenuItem) e.getSource();
+        String filterName = filterItem.getText();
+        final FilterComponent component = FilterComponentList.getInstance().getFilterComponentByName(filterName);
+        if (component != null) {
+          if (component instanceof ChannelFilterComponent) {
+            setChannelFilter(component); 
+          }
+          else {
+            MainFrame.getInstance().setProgramFilter(FilterList.getInstance().getDefaultFilter()); 
+          }
         }
       }
     }
+  }
+
+  private void setChannelFilter(final FilterComponent component) {
+    ProgramFilter filter = new ProgramFilter() {
+      public String getName() {
+        return component.getName();
+      }
+    
+      public boolean accept(Program program) {
+        return component.accept(program);
+      }
+    };
+    MainFrame.getInstance().setProgramFilter(filter);
   }
 }
