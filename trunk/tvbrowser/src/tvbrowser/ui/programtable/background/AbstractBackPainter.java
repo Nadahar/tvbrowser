@@ -71,11 +71,12 @@ public abstract class AbstractBackPainter implements BackgroundPainter {
       
       int minY = Math.max(y, clipBounds.y - ((clipBounds.y - y) % imgHeight));
       int maxY = Math.min(y + height, clipBounds.y + clipBounds.height);
-      for (int px = x; px < x + width; px += imgWidth) {
+//      for (int px = x; px < x + width; px += imgWidth) {
+      int px = x;
         for (int py = minY; py < maxY; py += imgHeight) {
           grp.drawImage(img, px, py, null);
         }  
-      }
+//      }
     }
   }
 
