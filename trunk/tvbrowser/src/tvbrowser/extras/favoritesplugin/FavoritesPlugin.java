@@ -89,7 +89,6 @@ public class FavoritesPlugin {
           .getLocalizerFor(FavoritesPlugin.class);
 
   private static FavoritesPlugin mInstance;
-//  private Favorite[] mFavoriteArr;
   
   private Properties mSettings = new Properties();
 
@@ -120,8 +119,7 @@ public class FavoritesPlugin {
    */
   private FavoritesPlugin() {
     mInstance = this;
-    mPendingFavorites = new ArrayList<AdvancedFavorite>();
-//    mFavoriteArr = new Favorite[0];    
+    mPendingFavorites = new ArrayList<AdvancedFavorite>(); 
     mClientPluginTargets = new ProgramReceiveTarget[0];
     mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
     load();
@@ -410,50 +408,6 @@ public class FavoritesPlugin {
     }
   }
 
-  /*public void deleteFavorite(Favorite favorite) {
-    Program[] delFavPrograms = favorite.getPrograms();
-    for (int i=0; i<delFavPrograms.length; i++) {
-      delFavPrograms[i].unmark(FavoritesPluginProxy.getInstance());
-    }
-
-
-    ArrayList<Favorite> list = new ArrayList<Favorite>();
-
-    for (int i = 0; i < mFavoriteArr.length; i++) {
-      if(!mFavoriteArr[i].equals(favorite)) {
-        mFavoriteArr[i].handleContainingPrograms(delFavPrograms);
-        list.add(mFavoriteArr[i]);
-      }
-    }
-
-    mFavoriteArr = list.toArray(new Favorite[list.size()]);
-
-    String[] reminderServices = favorite.getReminderConfiguration().getReminderServices();    
-    
-    for (int i=0; i<reminderServices.length; i++)
-      if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderServices[i])) 
-        ReminderPlugin.getInstance().removePrograms(favorite.getPrograms());
-    
-    updateRootNode(true);
-  }*/
-
-  /**
-   * Check if a program is marked by other Favorites to.
-   *
-   * @param favorite The Favorite that wants to check this.
-   * @param p The program to check.
-   * @return True if the program was found in other Favorites than the given one.
-   */
-  /*public boolean isContainedByOtherFavorites(Favorite favorite, Program p) {
-    for (int i = 0; i < mFavoriteArr.length; i++) {
-      if(!mFavoriteArr[i].equals(favorite)) {
-        if(mFavoriteArr[i].contains(p))
-          return true;
-      }
-    }
-    return false;
-  }*/
-
   /**
    * @return If the management dialog should show the 
    * programs on the black list too.
@@ -476,11 +430,6 @@ public class FavoritesPlugin {
     out.writeInt(6); // version
 
     FavoriteTree.getInstance().storeData(out);
-    /*out.writeInt(mFavoriteArr.length);
-    for (int i = 0; i < mFavoriteArr.length; i++) {
-      out.writeObject(mFavoriteArr[i].getTypeID());
-      mFavoriteArr[i].writeData(out);
-    }*/
 
     out.writeInt(mClientPluginTargets.length);
     for (ProgramReceiveTarget target : mClientPluginTargets) {
@@ -585,7 +534,6 @@ public class FavoritesPlugin {
     mSettings.setProperty("height", "" + dlg.getHeight());
     
     if (!showNew) {
-      //mFavoriteArr = dlg.getFavorites();
       updateRootNode(true);
     }
   }
@@ -605,16 +553,6 @@ public class FavoritesPlugin {
   public void setIsShowingPictures(boolean value) {
     mSettings.setProperty("showPictures",String.valueOf(value));
   }
-  //TODO
-  /*public void addFavorite(Favorite fav) {
-    Favorite[] newFavoritesArr = new Favorite[mFavoriteArr.length + 1];
-    System.arraycopy(mFavoriteArr, 0, newFavoritesArr, 0, mFavoriteArr.length);
-    newFavoritesArr[mFavoriteArr.length] = fav;
-    mFavoriteArr = newFavoritesArr;
-
-    updateRootNode(true);
-    FavoriteTree.getInstance().addFavorite(fav);
-  }*/
 
   public void showCreateFavoriteWizard(Program program) {
     showCreateFavoriteWizard(program, null);
@@ -772,55 +710,6 @@ public class FavoritesPlugin {
     mRootNode.removeAllChildren();
 
     FavoriteTree.getInstance().updatePluginTree(mRootNode,null);
-    
-   /* final Favorite[] favoriteArr = FavoriteTree.getInstance().getFavoriteArr();
-    
-    for (int i=0; i<favoriteArr.length; i++) {
-      PluginTreeNode n = new PluginTreeNode(favoriteArr[i].getName());
-      n.setGroupingByWeekEnabled(true);
-
-      final int x = i;
-      
-      Action editFavorite = new AbstractAction() {
-        public void actionPerformed(ActionEvent e) {
-          editFavorite(favoriteArr[x]);
-        }
-      };
-      editFavorite.putValue(Action.NAME, mLocalizer.msg("editTree","Edit..."));
-      editFavorite.putValue(Action.SMALL_ICON, getIconFromTheme("actions", "document-edit", 16));
-
-
-      Action deleteFavorite = new AbstractAction() {
-        public void actionPerformed(ActionEvent e) {
-          askAndDeleteFavorite(favoriteArr[x]);
-        }
-      };
-      deleteFavorite.putValue(Action.NAME, mLocalizer.msg("deleteTree","Delete..."));
-      deleteFavorite.putValue(Action.SMALL_ICON, getIconFromTheme("actions", "edit-delete", 16));
-
-      n.addAction(editFavorite);
-      n.addAction(deleteFavorite);
-
-      Program[] progArr = favoriteArr[i].getWhiteListPrograms();
-      
-      if(progArr.length <= 10)
-        n.setGroupingByDateEnabled(false);
-      
-      for (int j=0; j<progArr.length; j++) {
-        PluginTreeNode pNode = n.addProgram(progArr[j]);
-        
-        int numberOfDays = progArr[j].getDate().getNumberOfDaysSince(Date.getCurrentDate());
-        if ((progArr.length <= 10) || (numberOfDays > 1)) {
-          pNode.setNodeFormatter(new NodeFormatter() {
-            public String format(ProgramItem pitem) {
-              Program p = pitem.getProgram();
-              return getFavoriteLabel(favoriteArr[x], p);
-            }
-          });
-        }
-      }
-      mRootNode.add(n);
-    }*/
 
     mRootNode.update();
     ReminderPlugin.getInstance().updateRootNode(mHasRightToSave);
