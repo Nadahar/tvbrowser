@@ -91,7 +91,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
         String author = "Bodo Tasche";
         String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/TV_Rater");
         
-        return new PluginInfo(name, desc, author, helpUrl, new Version(1, 00));
+        return new PluginInfo(name, desc, author, helpUrl, new Version(1, 01));
     }
 
     /*
@@ -179,7 +179,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
               }
           });
 
-          if (_locationRaterDialog != null && _dimensionRaterDialog != null) {
+          if (_locationRaterDialog != null && _dimensionRaterDialog != null && _dimensionRaterDialog.width >= dlg.getWidth() && _dimensionRaterDialog.height >= dlg.getHeight()) {
               dlg.setLocation(_locationRaterDialog);
               dlg.setSize(_dimensionRaterDialog);
               dlg.setVisible(true);
@@ -226,20 +226,24 @@ public class TVRaterPlugin extends devplugin.Plugin {
         int width = Integer.parseInt(_settings.getProperty("mOverviewWidth","-1"));
         int height = Integer.parseInt(_settings.getProperty("mOverviewHeight","-1"));
         
-        if(x != -1 && y != -1)
+        if(x != -1 && y != -1) {
           _locationOverviewDialog = new Point(x,y);
-        if(width != -1 && height != -1)
+        }
+        if(width != -1 && height != -1) {
           _dimensionOverviewDialog = new Dimension(width,height);
+        }
 
         x = Integer.parseInt(_settings.getProperty("mRaterXPos","-1"));
         y = Integer.parseInt(_settings.getProperty("mRaterYPos","-1"));
         width = Integer.parseInt(_settings.getProperty("mRaterWidth","-1"));
         height = Integer.parseInt(_settings.getProperty("mRaterHeight","-1"));
         
-        if(x != -1 && y != -1)
+        if(x != -1 && y != -1) {
           _locationRaterDialog = new Point(x,y);
-        if(width != -1 && height != -1)
+        }
+        if(width != -1 && height != -1) {
           _dimensionRaterDialog = new Dimension(width,height);
+        }
     }
 
     public SettingsTab getSettingsTab() {
@@ -382,8 +386,9 @@ public class TVRaterPlugin extends devplugin.Plugin {
     public void handleTvDataUpdateFinished() {
       if (!((_settings.getProperty("name", "").length() == 0) || (_settings.getProperty("password", "").length() == 0)) 
           && hasRightToDownload) {
-        if (Integer.parseInt(_settings.getProperty("updateIntervall", "0")) < 3)
+        if (Integer.parseInt(_settings.getProperty("updateIntervall", "0")) < 3) {
           updateDB();
+        }
       }
     }
 
