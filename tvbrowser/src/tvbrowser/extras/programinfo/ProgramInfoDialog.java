@@ -48,6 +48,7 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
@@ -176,8 +177,9 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
           mTooltip = mInfoEP.getToolTipText();
           mInfoEP.setToolTipText(evt.getURL().toExternalForm());
         }
-        if (evt.getEventType() == HyperlinkEvent.EventType.EXITED)
+        if (evt.getEventType() == HyperlinkEvent.EventType.EXITED) {
           mInfoEP.setToolTipText(mTooltip);
+        }
         if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           URL url = evt.getURL();
           if (url != null) {
@@ -233,13 +235,15 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
     
     JPanel bottomLeft = new JPanel(new BorderLayout(3,0));    
     
-    if (showSettings)
+    if (showSettings) {
       bottomLeft.add(configBtn, BorderLayout.WEST);
+    }
     
-    if (pluginsSize == null)
+    if (pluginsSize == null) {
       mActionsPane.setPreferredSize(new Dimension(250, 500));
-    else
+    } else {
       mActionsPane.setPreferredSize(pluginsSize);
+    }
 
     if(ProgramInfo.getInstance().isShowFunctions()) {
       JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -265,10 +269,11 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
         }
       });
       
-      if(showSettings)
+      if(showSettings) {
         bottomLeft.add(functions, BorderLayout.EAST);
-      else
+      } else {
         bottomLeft.add(functions, BorderLayout.WEST);
+      }
       
       mMainPanel.add(scrollPane, BorderLayout.CENTER);
     }
@@ -311,9 +316,9 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
           mFindAsYouType.interrupt();
           mFindAsYouType.getSearchBar().setVisible(false);
           mFindAsYouType.getCloseButton().setVisible(false);
-        }
-        else
+        } else {
           mFindAsYouType.showSearchBar();
+        }
       }
     };
 
@@ -337,13 +342,15 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
     
     mFindAsYouType.getCloseButton().addComponentListener(new ComponentAdapter() {
       public void componentHidden(ComponentEvent e) {
-        if(mTextSearch != null)
+        if(mTextSearch != null) {
           mTextSearch.setText(mLocalizer.msg("search", "Search Text"));
+        }
         searchAction.putValue(Action.NAME, mLocalizer.msg("search", "Search Text"));
       }
       public void componentShown(ComponentEvent e) {
-        if(mTextSearch != null)
+        if(mTextSearch != null) {
           mTextSearch.setText(mLocalizer.msg("closeSearch", "Close search bar"));
+        }
         searchAction.putValue(Action.NAME, mLocalizer.msg("closeSearch", "Close search bar"));
       }
     });
@@ -358,26 +365,28 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
     
     if(ProgramInfo.getInstance().getProperty("showSearch","false").equals("true")) {
       mFindAsYouType.showSearchBar();
-      if(mTextSearch != null)
+      if(mTextSearch != null) {
         mTextSearch.setText(mLocalizer.msg("closeSearch", "Close search bar"));
+      }
     }
   }
     
   protected void addPluginActions(boolean rebuild) {
     mFunctionGroup.removeAll();
 
-    if(ProgramInfo.getInstance().isShowTextSearchButton())
+    if(ProgramInfo.getInstance().isShowTextSearchButton()) {
       mTextSearch = new TaskMenuAction(mFunctionGroup, mProgram, mSearchMenu,
         this, "id_sea", mFindAsYouType);
+    }
     
     ContextMenuIf[] p = ContextMenuManager.getInstance().getAvailableContextMenuIfs(false, true);
 
-    for (int i = 0; i < p.length; i++) {
-      if(p[i].getId().compareTo(SeparatorMenuItem.SEPARATOR) == 0) {
+    for (ContextMenuIf contextMenuIf : p) {
+      if(contextMenuIf.getId().compareTo(SeparatorMenuItem.SEPARATOR) == 0) {
         mFunctionGroup.add(Box.createRigidArea(new Dimension(0,2)));
         mFunctionGroup.add(new JSeparator());
         mFunctionGroup.add(Box.createRigidArea(new Dimension(0,2)));
-      } else if(p[i].getId().compareTo(ConfigMenuItem.CONFIG) == 0 && mShowSettings) {
+      } else if(contextMenuIf.getId().compareTo(ConfigMenuItem.CONFIG) == 0 && mShowSettings) {
         Action action = new AbstractAction() {
           private static final long serialVersionUID = 1L;
 
@@ -393,15 +402,15 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
         new TaskMenuAction(mFunctionGroup, mProgram, configure, this,
             "id_configure", mFindAsYouType);
       }
-      else if(p[i].getId().compareTo(ProgramInfo.getInstance().getId()) == 0) {
+      else if(contextMenuIf.getId().compareTo(ProgramInfo.getInstance().getId()) == 0) {
     	  // don't show the program info action in the program info dialog
       }
       else {
-        ActionMenu menu = p[i].getContextMenuActions(mProgram);
-        
-        if (menu != null && !p[i].equals(ProgramInfo.getInstance()))
+        ActionMenu menu = contextMenuIf.getContextMenuActions(mProgram);
+        if (menu != null) {
           new TaskMenuAction(mFunctionGroup, mProgram, menu, this,
-              p[i].getId(), mFindAsYouType);
+              contextMenuIf.getId(), mFindAsYouType);
+        }
       }
     }
 
@@ -418,10 +427,11 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
   }
   
   private Font getFont(boolean title) {
-    if(title)      
+    if(title) {
       return new Font(ProgramInfo.getInstance().getUserfont("titlefont", "Verdana"), Font.BOLD, Integer.parseInt(ProgramInfo.getInstance().getUserfont("title", "18")));
-    else
+    } else {
       return new Font(ProgramInfo.getInstance().getUserfont("bodyfont", "Verdana"), Font.PLAIN, Integer.parseInt(ProgramInfo.getInstance().getUserfont("small", "11")));
+    }
   }
 
   private void exit() {
@@ -433,26 +443,26 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
   
   private void addActionsToRootPane() {
     KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0);
-    mInfoEP.getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,
+    mInfoEP.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(stroke,
         "SCROLL_UP");
-    mInfoEP.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke, "SCROLL_UP");
+    mInfoEP.getInputMap(JComponent.WHEN_FOCUSED).put(stroke, "SCROLL_UP");
     mInfoEP.getActionMap().put("SCROLL_UP", mUpAction);
     
-    mDialog.getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,
+    mDialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(stroke,
     "SCROLL_UP");
-    mDialog.getRootPane().getInputMap(JRootPane.WHEN_FOCUSED).put(stroke, "SCROLL_UP");
+    mDialog.getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(stroke, "SCROLL_UP");
     mDialog.getRootPane().getActionMap().put("SCROLL_UP", mUpAction);
 
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0);
-    mInfoEP.getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,
+    mInfoEP.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(stroke,
         "SCROLL_DOWN");
-    mInfoEP.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke, "SCROLL_DOWN");
+    mInfoEP.getInputMap(JComponent.WHEN_FOCUSED).put(stroke, "SCROLL_DOWN");
     mInfoEP.getActionMap().put("SCROLL_DOWN", mDownAction);
 
-    mDialog.getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,
+    mDialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(stroke,
         "SCROLL_DOWN");
-    mDialog.getRootPane().getInputMap(JRootPane.WHEN_FOCUSED)
+    mDialog.getRootPane().getInputMap(JComponent.WHEN_FOCUSED)
         .put(stroke, "SCROLL_DOWN");
     mDialog.getRootPane().getActionMap().put("SCROLL_DOWN", mDownAction);
     
@@ -488,10 +498,11 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
   public void show() {
     Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
     
-    if(w instanceof JDialog)
+    if(w instanceof JDialog) {
       mDialog = new JDialog((JDialog)w, true);
-    else
+    } else {
       mDialog = new JDialog((JFrame)w, true);
+    }
     
     mDialog.setTitle(mLocalizer.msg("title", "Program information"));
     mDialog.setContentPane(mMainPanel);
@@ -513,13 +524,15 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
     Dimension size = ProgramInfo.getInstance().getSize();
     Point location = ProgramInfo.getInstance().getLocation();
     
-    if (size != null)
+    if (size != null) {
       mDialog.setSize(size);
+    }
     
-    if (location != null)
-      mDialog.setLocation(location);      
-    else
+    if (location != null) {
+      mDialog.setLocation(location);
+    } else {
       mDialog.setLocationRelativeTo(w);
+    }
     
     
     SwingUtilities.invokeLater(new Runnable() {
