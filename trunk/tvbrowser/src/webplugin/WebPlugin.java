@@ -31,6 +31,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Locale;
 
 import javax.swing.AbstractAction;
@@ -388,21 +389,50 @@ public class WebPlugin extends Plugin {
       }
     }
     // which list contains more names with one part only (i.e. no family name) -> role names
-    int singleName[] = new int[2];
+    int singleName[] = new int[list.length];
     // which list contains more abbreviations at the beginning -> role names
-    int abbreviation[] = new int[2];
+    int abbreviation[] = new int[list.length];
+    // which list contains more slashes -> double roles for a single actor
+    int slashes[] = new int[2];
+    // which list has duplicate family names -> roles
+    HashMap<String,Integer>[] familyNames = new HashMap[list.length];
+    int[] maxNames = new int[2];
     for (int i = 0; i < list.length; i++) {
+      familyNames[i] = new HashMap<String, Integer>();
       for (String name : list[i]) {
         if (!name.contains(" ")) {
           singleName[i]++;
+        }
+        else {
+          String familyName = name.substring(name.lastIndexOf(" ")+1);
+          Integer count = new Integer(1);
+          if (familyNames[i].containsKey(familyName)) {
+            count = familyNames[i].get(familyName);
+            count = new Integer(count.intValue()+1);
+          }
+          familyNames[i].put(familyName, count);
         }
         // only count abbreviations at the beginning, so we do not count a middle initial like in "Jon M. Doe"
         if (name.contains(".") && (name.indexOf(".") < name.indexOf(" "))) {
           abbreviation[i]++;
         }
+        if (name.contains("/")) {
+          slashes[i]++;
+        }
+      }
+      for (Integer familyCount : familyNames[i].values()) {
+        if (familyCount.intValue() > maxNames[i]) {
+          maxNames[i] = familyCount.intValue();
+        }
       }
     }
-    if (singleName[0] < singleName[1]) {
+    if (slashes[0] < slashes[1]) {
+      addList(list[0]);
+    }
+    else if (slashes[1] < slashes[0]) {
+      addList(list[1]);
+    }
+    else if (singleName[0] < singleName[1]) {
       addList(list[0]);
     }
     else if (singleName[1] < singleName[0]) {
@@ -412,6 +442,12 @@ public class WebPlugin extends Plugin {
       addList(list[0]);
     }
     else if (abbreviation[1] < abbreviation[0]) {
+      addList(list[1]);
+    }
+    else if (maxNames[0] < maxNames[1]) {
+      addList(list[0]);
+    }
+    else if (maxNames[1] < maxNames[0]) {
       addList(list[1]);
     }
     else {
