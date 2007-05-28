@@ -171,16 +171,18 @@ public class ReminderSettingsTab implements SettingsTab {
       public void actionPerformed(ActionEvent e) {try{
         Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
         PluginChooserDlg chooser = null;
-        if(w instanceof JDialog)
+        if(w instanceof JDialog) {
           chooser = new PluginChooserDlg((JDialog)w,mClientPluginTargets, null, ReminderPluginProxy.getInstance());
-        else
+        } else {
           chooser = new PluginChooserDlg((JFrame)w,mClientPluginTargets, null, ReminderPluginProxy.getInstance());
+        }
         
         chooser.setLocationRelativeTo(w);
         chooser.setVisible(true);
         
-        if(chooser.getReceiveTargets() != null)
+        if(chooser.getReceiveTargets() != null) {
           mClientPluginTargets = chooser.getReceiveTargets();
+        }
         
         handlePluginSelection();}catch(Exception ee) {ee.printStackTrace();}
       }
@@ -191,8 +193,9 @@ public class ReminderSettingsTab implements SettingsTab {
       String asString = mSettings.getProperty("autoCloseReminderTime", "10");
       autoCloseReminderTime = Integer.parseInt(asString);
       
-      if(autoCloseReminderTime == 0)
+      if(autoCloseReminderTime == 0) {
         autoCloseReminderTime = 10;
+      }
     } catch (Exception exc) {
       // ignore
     }
@@ -294,14 +297,16 @@ public class ReminderSettingsTab implements SettingsTab {
       public void actionPerformed(ActionEvent evt) {
         if(evt.getActionCommand().compareTo(mLocalizer.msg("test", "Test")) == 0) {
           mTestSound = ReminderPlugin.playSound(mSoundFileChB.getTextField().getText());
-          if(mTestSound != null)
+          if(mTestSound != null) {
             soundTestBt.setText(mLocalizer.msg("stop", "Stop"));
-          if(mTestSound != null)
+          }
+          if(mTestSound != null) {
             if(mTestSound instanceof SourceDataLine) {
               ((SourceDataLine)mTestSound).addLineListener(new LineListener() {
                 public void update(LineEvent event) {
-                  if(event.getType() == Type.CLOSE)
+                  if(event.getType() == Type.CLOSE) {
                     soundTestBt.setText(mLocalizer.msg("test", "Test"));
+                  }
                 }
               });
             }
@@ -319,12 +324,15 @@ public class ReminderSettingsTab implements SettingsTab {
                 }
               }.start();
             }
+          }
         }
-        else if(mTestSound != null)
-          if(mTestSound instanceof SourceDataLine && ((SourceDataLine)mTestSound).isRunning())
+        else if(mTestSound != null) {
+          if(mTestSound instanceof SourceDataLine && ((SourceDataLine)mTestSound).isRunning()) {
             ((SourceDataLine)mTestSound).stop();
-          else if(mTestSound instanceof Sequencer && ((Sequencer)mTestSound).isRunning())
+          } else if(mTestSound instanceof Sequencer && ((Sequencer)mTestSound).isRunning()) {
             ((Sequencer)mTestSound).stop();
+          }
+        }
       }
     });
     
@@ -339,19 +347,21 @@ public class ReminderSettingsTab implements SettingsTab {
         String text = mSoundFileChB.getTextField().getText();        
         if((new File(text)).isFile()) {
           boolean notFound = true;
-          for(int i = 0; i < extArr.length; i++)
-            if(text.toLowerCase().endsWith(extArr[i])) {
+          for (String extension : extArr) {
+            if(text.toLowerCase().endsWith(extension)) {
               notFound = false;
               break;
             }
+          }
           
-          if(notFound)
+          if(notFound) {
             soundTestBt.setEnabled(false);
-          else
+          } else {
             soundTestBt.setEnabled(true);
-        }
-        else
+          }
+        } else {
           soundTestBt.setEnabled(false);
+        }
       }
     });
     mSoundFileChB.getTextField().getKeyListeners()[0].keyReleased(null);
@@ -399,9 +409,10 @@ public class ReminderSettingsTab implements SettingsTab {
     ArrayList<ProgramReceiveIf> plugins = new ArrayList<ProgramReceiveIf>();
     
     if(mClientPluginTargets != null) {
-      for(int i = 0; i < mClientPluginTargets.length; i++) {
-        if(!plugins.contains(mClientPluginTargets[i].getReceifeIfForIdOfTarget()))
-          plugins.add(mClientPluginTargets[i].getReceifeIfForIdOfTarget());
+      for (ProgramReceiveTarget target : mClientPluginTargets) {
+        if(!plugins.contains(target.getReceifeIfForIdOfTarget())) {
+          plugins.add(target.getReceifeIfForIdOfTarget());
+        }
       }
     
       ProgramReceiveIf[] mClientPlugins = plugins.toArray(new ProgramReceiveIf[plugins.size()]);
@@ -419,8 +430,9 @@ public class ReminderSettingsTab implements SettingsTab {
         mPluginLabel.setText(mPluginLabel.getText() + ", " + mClientPlugins[i]);
       }
     
-      if(mClientPlugins.length > 4)
+      if(mClientPlugins.length > 4) {
         mPluginLabel.setText(mPluginLabel.getText() + " (" + (mClientPlugins.length - 3) + " " + mLocalizer.msg("otherPlugins","others...") + ")");
+      }
     }
   }
 
@@ -480,7 +492,7 @@ public class ReminderSettingsTab implements SettingsTab {
   }
 
   /**
-   * Returns the name of the tab-sheet.
+   * Returns the icon of the tab-sheet.
    */
   public Icon getIcon() {
     return IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16);
@@ -490,6 +502,6 @@ public class ReminderSettingsTab implements SettingsTab {
    * Returns the title of the tab-sheet.
    */
   public String getTitle() {
-    return mLocalizer.msg("basicSettings", "Basic settings");
+    return mLocalizer.msg("tabName", "Reminder");
   }
 }

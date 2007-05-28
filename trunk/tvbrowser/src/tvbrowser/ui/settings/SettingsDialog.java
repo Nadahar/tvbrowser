@@ -70,7 +70,6 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.extras.favoritesplugin.FavoritesMarkingsSettingsTab;
 import tvbrowser.extras.favoritesplugin.FavoritesPicturesSettingsTab;
 import tvbrowser.extras.favoritesplugin.FavoritesSettingTab;
-import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.extras.programinfo.ProgramInfoDesignSettingsTab;
 import tvbrowser.extras.programinfo.ProgramInfoFontSettingsTab;
 import tvbrowser.extras.programinfo.ProgramInfoFunctionsSettingsTab;
@@ -83,7 +82,6 @@ import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
 import util.ui.Localizer;
 import tvbrowser.extras.searchplugin.SearchPictureSettingsTab;
-import tvbrowser.extras.searchplugin.SearchPlugin;
 import tvbrowser.extras.searchplugin.SearchSettingsTab;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -295,8 +293,8 @@ public class SettingsDialog implements WindowClosingIf {
   private SettingNode findSettingNodeByPath(SettingNode root, String searchPath) {
     String pathString = "";
     TreeNode[] rootPath = root.getPath();
-    for (int i = 0; i < rootPath.length; i++) {
-      pathString = pathString + ((SettingNode)rootPath[i]).toString();
+    for (TreeNode treeNode : rootPath) {
+      pathString = pathString + ((SettingNode)treeNode).toString();
     }
     if (searchPath.equals(pathString)) {
       return root;
@@ -346,10 +344,9 @@ public class SettingsDialog implements WindowClosingIf {
     root.add(technicalSettings);
 
     if (TVBrowser.isUsingSystemTray()) {
-      SettingNode traySettings = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("tray", "Tray Settings"), null));
+      SettingNode traySettings = new SettingNode(new TrayBaseSettingsTab(), SettingsItem.TRAY);
       root.add(traySettings);
 
-      traySettings.add(new SettingNode(new TrayBaseSettingsTab(), SettingsItem.TRAY));
       traySettings.add(new SettingNode(new TrayImportantSettingsTab()));
       traySettings.add(new SettingNode(new TrayNowSettingsTab()));
       traySettings.add(new SettingNode(new TraySoonSettingsTab()));
@@ -357,12 +354,10 @@ public class SettingsDialog implements WindowClosingIf {
       traySettings.add(new SettingNode(new TrayProgramsChannelsSettingsTab()));
     }
 
-    SettingNode programtableNode = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("channelstable",
-        "Channelstable"), null));
+    SettingNode programtableNode = new SettingNode(new ChannelsSettingsTab(), SettingsItem.CHANNELS);
     root.add(programtableNode);
 
-    SettingNode appearanceNode = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("appearance", "Appearance"),
-        null));
+    SettingNode appearanceNode = new SettingNode(new ProgramTableSettingsTab(), SettingsItem.PROGRAMTABLELOOK);
     programtableNode.add(appearanceNode);
 
     generalSettings.add(new SettingNode(new LocaleSettingsTab()));
@@ -374,16 +369,13 @@ public class SettingsDialog implements WindowClosingIf {
     generalSettings.add(new SettingNode(new StartupSettingsTab(), SettingsItem.STARTUP));
     generalSettings.add(new SettingNode(new CloseSettingsTab()));
 
-    programtableNode.add(new SettingNode(new ChannelsSettingsTab(), SettingsItem.CHANNELS));
     programtableNode.add(new SettingNode(new RefreshDataSettingsTab()));
     programtableNode.add(new SettingNode(new ButtonsSettingsTab(), SettingsItem.TIMEBUTTONS));
 
-    SettingNode programPanelNode = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("programPanel", "Program display"), null));    
-    programPanelNode.add(new SettingNode(new ProgramPanelSettingsTab(), SettingsItem.PROGRAMPANELLOOK));
+    SettingNode programPanelNode = new SettingNode(new ProgramPanelSettingsTab(), SettingsItem.PROGRAMPANELLOOK);    
     programPanelNode.add(new SettingNode(new MarkingsSettingsTab(), SettingsItem.PROGRAMPANELMARKING));
 
     appearanceNode.add(programPanelNode);
-    appearanceNode.add(new SettingNode(new ProgramTableSettingsTab(), SettingsItem.PROGRAMTABLELOOK));
     appearanceNode.add(new SettingNode(new PictureSettingsTab()));
     appearanceNode.add(new SettingNode(new ChannelListSettingsTab(), SettingsItem.CHANNELLISTLOOK));
     appearanceNode.add(new SettingNode(new FontsSettingsTab()));
@@ -397,13 +389,11 @@ public class SettingsDialog implements WindowClosingIf {
     
     technicalSettings.add(new SettingNode(new WebbrowserSettingsTab(), SettingsItem.WEBBROWSER));    
 
-    SettingNode search = new SettingNode(new DefaultSettingsTab(SearchPlugin.mLocalizer.msg("title", "Search"), null));
-    search.add(new SettingNode(new SearchSettingsTab(),SettingsItem.SEARCH));
+    SettingNode search = new SettingNode(new SearchSettingsTab(),SettingsItem.SEARCH);
     search.add(new SettingNode(new SearchPictureSettingsTab()));
     root.add(search);
     
-    SettingNode programInfo = new SettingNode(new DefaultSettingsTab(ProgramInfo.getInstance().toString(), null));
-    programInfo.add(new SettingNode(new ProgramInfoOrderSettingsTab(), SettingsItem.PROGRAMINFO));
+    SettingNode programInfo = new SettingNode(new ProgramInfoOrderSettingsTab(), SettingsItem.PROGRAMINFO);
     programInfo.add(new SettingNode(new ProgramInfoPicturesSettingsTab()));
     programInfo.add(new SettingNode(new ProgramInfoFontSettingsTab()));
     programInfo.add(new SettingNode(new ProgramInfoDesignSettingsTab()));
@@ -411,15 +401,13 @@ public class SettingsDialog implements WindowClosingIf {
 
     root.add(programInfo);
     
-    SettingNode favoritesNode = new SettingNode(new DefaultSettingsTab(FavoritesSettingTab.mLocalizer.msg("name", "Favorite programs"), null));    
-    favoritesNode.add(new SettingNode(new FavoritesSettingTab(), SettingsItem.FAVORITE));
+    SettingNode favoritesNode = new SettingNode(new FavoritesSettingTab(), SettingsItem.FAVORITE);    
     favoritesNode.add(new SettingNode(new FavoritesPicturesSettingsTab()));
     favoritesNode.add(new SettingNode(new FavoritesMarkingsSettingsTab()));
     
     root.add(favoritesNode);
     
-    SettingNode reminderNode = new SettingNode(new DefaultSettingsTab(ReminderSettingsTab.mLocalizer.msg("tabName", "Reminder"), null));    
-    reminderNode.add(new SettingNode(new ReminderSettingsTab(), SettingsItem.REMINDER));
+    SettingNode reminderNode = new SettingNode(new ReminderSettingsTab(), SettingsItem.REMINDER);    
     reminderNode.add(new SettingNode(new ReminderPicturesSettingsTab()));
     reminderNode.add(new SettingNode(new ReminderMarkingsSettingsTab()));
     
@@ -436,8 +424,8 @@ public class SettingsDialog implements WindowClosingIf {
     root.add(node);
     TvDataServiceProxy[] services = tvbrowser.core.tvdataservice.TvDataServiceProxyManager.getInstance()
         .getDataServices();
-    for (int i = 0; i < services.length; i++) {
-      node.add(new SettingNode(new ConfigDataServiceSettingsTab(services[i])));
+    for (TvDataServiceProxy dataService : services) {
+      node.add(new SettingNode(new ConfigDataServiceSettingsTab(dataService)));
     }
 
     return root;

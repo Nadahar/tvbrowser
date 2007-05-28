@@ -145,14 +145,15 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
         mLocalizer.msg("realSynchronous", "Real time synchronous"), 
         mLocalizer.msg("compact", "Compact"),mLocalizer.msg("realCompact", "Real compact")};
     mProgramArrangementCB = new JComboBox(arrangementArr);
-    if (Settings.propTableLayout.getString().equals("compact"))
+    if (Settings.propTableLayout.getString().equals("compact")) {
       mProgramArrangementCB.setSelectedIndex(2);
-    else if (Settings.propTableLayout.getString().equals("realCompact"))
+    } else if (Settings.propTableLayout.getString().equals("realCompact")) {
       mProgramArrangementCB.setSelectedIndex(3);
-    else if (Settings.propTableLayout.getString().equals("timeSynchronous"))
+    } else if (Settings.propTableLayout.getString().equals("timeSynchronous")) {
       mProgramArrangementCB.setSelectedIndex(0);
-    else
+    } else {
       mProgramArrangementCB.setSelectedIndex(1);
+    }
 
     mSettingsPn.add(mProgramArrangementCB, cc.xy(4, 3));
 
@@ -412,14 +413,15 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
-    if (mProgramArrangementCB.getSelectedIndex() == 2)
+    if (mProgramArrangementCB.getSelectedIndex() == 2) {
       Settings.propTableLayout.setString("compact");
-    else if (mProgramArrangementCB.getSelectedIndex() == 3)
-      Settings.propTableLayout.setString("realCompact");    
-    else if (mProgramArrangementCB.getSelectedIndex() == 0)
+    } else if (mProgramArrangementCB.getSelectedIndex() == 3) {
+      Settings.propTableLayout.setString("realCompact");
+    } else if (mProgramArrangementCB.getSelectedIndex() == 0) {
       Settings.propTableLayout.setString("timeSynchronous");
-    else
+    } else {
       Settings.propTableLayout.setString("realSynchronous");
+    }
 
     String backgroundStyle = ((TableBackgroundStyle) mBackgroundStyleCB.getSelectedItem()).getSettingsString();
 
@@ -459,7 +461,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
    * Returns the title of the tab-sheet.
    */
   public String getTitle() {
-    return mLocalizer.msg("programTable", "Program table");
+    return mLocalizer.msg("title", "Appearance");
   }
 
   private TableBackgroundStyle[] getTableBackgroundStyles() {

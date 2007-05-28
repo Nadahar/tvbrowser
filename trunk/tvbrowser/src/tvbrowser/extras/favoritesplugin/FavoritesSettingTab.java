@@ -87,10 +87,11 @@ public class FavoritesSettingTab implements SettingsTab {
     
     ArrayList<ProgramReceiveTarget> clientPlugins = new ArrayList<ProgramReceiveTarget>();
     
-    for(int i = 0; i < targetsArr.length; i++) {
-      ProgramReceiveIf plugin = targetsArr[i].getReceifeIfForIdOfTarget();
-      if(plugin != null)
-        clientPlugins.add(targetsArr[i]);
+    for (ProgramReceiveTarget target : targetsArr) {
+      ProgramReceiveIf plugin = target.getReceifeIfForIdOfTarget();
+      if(plugin != null) {
+        clientPlugins.add(target);
+      }
     }
     
     mClientPluginTargets = clientPlugins.toArray(new ProgramReceiveTarget[clientPlugins.size()]);
@@ -101,16 +102,18 @@ public class FavoritesSettingTab implements SettingsTab {
       public void actionPerformed(ActionEvent e) {
         Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
         PluginChooserDlg chooser = null;
-        if(w instanceof JDialog)
+        if(w instanceof JDialog) {
           chooser = new PluginChooserDlg((JDialog)w,mClientPluginTargets, null, ReminderPluginProxy.getInstance());
-        else
+        } else {
           chooser = new PluginChooserDlg((JFrame)w,mClientPluginTargets, null, ReminderPluginProxy.getInstance());
+        }
         
         chooser.setLocationRelativeTo(w);
         chooser.setVisible(true);
         
-        if(chooser.getReceiveTargets() != null)
+        if(chooser.getReceiveTargets() != null) {
           mClientPluginTargets = chooser.getReceiveTargets();
+        }
         
         handlePluginSelection();
       }
@@ -133,9 +136,10 @@ public class FavoritesSettingTab implements SettingsTab {
     ArrayList<ProgramReceiveIf> plugins = new ArrayList<ProgramReceiveIf>();
     
     if(mClientPluginTargets != null) {
-      for(int i = 0; i < mClientPluginTargets.length; i++) {
-        if(!plugins.contains(mClientPluginTargets[i].getReceifeIfForIdOfTarget()))
-          plugins.add(mClientPluginTargets[i].getReceifeIfForIdOfTarget());
+      for (ProgramReceiveTarget element : mClientPluginTargets) {
+        if(!plugins.contains(element.getReceifeIfForIdOfTarget())) {
+          plugins.add(element.getReceifeIfForIdOfTarget());
+        }
       }
     
       ProgramReceiveIf[] mClientPlugins = plugins.toArray(new ProgramReceiveIf[plugins.size()]);
@@ -153,8 +157,9 @@ public class FavoritesSettingTab implements SettingsTab {
         mPluginLabel.setText(mPluginLabel.getText() + ", " + mClientPlugins[i]);
       }
     
-      if(mClientPlugins.length > 4)
+      if(mClientPlugins.length > 4) {
         mPluginLabel.setText(mPluginLabel.getText() + " (" + (mClientPlugins.length - 3) + " " + mLocalizer.msg("otherPlugins","others...") + ")");
+      }
     }
   }
   
@@ -175,7 +180,7 @@ public class FavoritesSettingTab implements SettingsTab {
   }
   
   /**
-   * Returns the name of the tab-sheet.
+   * Returns the icon of the tab-sheet.
    */
   public Icon getIcon() {
     return FavoritesPlugin.getInstance().getIconFromTheme("apps", "bookmark", 16);
@@ -185,7 +190,7 @@ public class FavoritesSettingTab implements SettingsTab {
    * Returns the title of the tab-sheet.
    */
   public String getTitle() {
-    return mLocalizer.msg("basicSettings", "Basic settings");
+    return mLocalizer.msg("name", "Favorite programs");
   }
   
 }
