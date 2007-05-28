@@ -146,10 +146,10 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     list.add(new IconPlugin(mLocalizer.msg("hasPicure","Has picture")));
     
     PluginProxy[] pluginArr = PluginProxyManager.getInstance().getActivatedPlugins();
-    for (int i = 0; i < pluginArr.length; i++) {
-      String iconText = pluginArr[i].getProgramTableIconText();
+    for (PluginProxy pluginProxy : pluginArr) {
+      String iconText = pluginProxy.getProgramTableIconText();
       if (iconText != null) {
-        list.add(new IconPlugin(pluginArr[i]));
+        list.add(new IconPlugin(pluginProxy));
       }
     }
     
@@ -163,12 +163,11 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     String[] selPluginArr = Settings.propProgramTableIconPlugins.getStringArray();
     ArrayList<IconPlugin> list = new ArrayList<IconPlugin>();
     
-    for (int i = 0; i < selPluginArr.length; i++) {
-      // Find the corresponing IconPlugin and put it into the list
-      for (int j = 0; j < allArr.length; j++) {
-        String pluginId = allArr[j].getId()/*.getPlugin().getId()*/;
-        if (pluginId.equals(selPluginArr[i])) {
-          list.add(allArr[j]);
+    for (String selectedPlugin : selPluginArr) {
+      for (IconPlugin iconPlugin : allArr) {
+        String pluginId = iconPlugin.getId()/*.getPlugin().getId()*/;
+        if (pluginId.equals(selectedPlugin)) {
+          list.add(iconPlugin);
           break;
         }
       }
@@ -237,7 +236,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
   
   
   /**
-   * Returns the name of the tab-sheet.
+   * Returns the icon of the tab-sheet.
    */
   public Icon getIcon() {
     return null;
@@ -248,7 +247,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
    * Returns the title of the tab-sheet.
    */
   public String getTitle() {
-    return mLocalizer.msg("basicSettings", "Basic settings");
+    return mLocalizer.msg("title", "Program display");
   }
   
   
@@ -267,19 +266,21 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     }
     
     public String getId() {
-      if(mPlugin != null)
+      if(mPlugin != null) {
         return mPlugin.getId();
-      else if(mName != null && mName.compareTo("Infos") == 0)
+      } else if(mName != null && mName.compareTo("Infos") == 0) {
         return Settings.INFO_ID;
-      else
+      } else {
         return Settings.PICTURE_ID;
+      }
     }
     
     public String toString() {
-      if(mPlugin != null)
+      if(mPlugin != null) {
         return mPlugin.getProgramTableIconText();
-      else
+      } else {
         return mName;
+      }
     }
     
   }

@@ -36,27 +36,30 @@ public class ProgramInfoOrderSettingsTab implements SettingsTab {
     Object[] order;
     
     if (mOldOrder.indexOf(";") == -1) {
-      if(mOldSetupState.compareTo("false") == 0)
+      if(mOldSetupState.compareTo("false") == 0) {
         order = ProgramTextCreator.getDefaultOrder();
-      else
+      } else {
         order = new Object[0];
+      }
       
       mList = new OrderChooser(order,ProgramTextCreator.getDefaultOrder(),true);
     }
     else {
       String[] id = mOldOrder.trim().split(";");
       order = new Object[id.length];
-      for (int i = 0; i < order.length; i++)
+      for (int i = 0; i < order.length; i++) {
         try {
           order[i] = ProgramFieldType
               .getTypeForId(Integer.parseInt(id[i]));
           
-          if(((ProgramFieldType)order[i]).getTypeId() == ProgramFieldType.UNKOWN_FORMAT)
+          if(((ProgramFieldType)order[i]).getTypeId() == ProgramFieldType.UNKOWN_FORMAT) {
             order[i] = ProgramTextCreator.getDurationTypeString();
+          }
           
         } catch (Exception e) {
           order[i] = id[i];
         }
+      }
       mList = new OrderChooser(order,ProgramTextCreator.getDefaultOrder(),true);
     }
     
@@ -100,15 +103,17 @@ public class ProgramInfoOrderSettingsTab implements SettingsTab {
   }
 
   public void saveSettings() {
-    Object[] o = mList.getOrder();
+    Object[] objects = mList.getOrder();
 
     String temp = "";
 
-    for (int i = 0; i < o.length; i++)
-      if (o[i] instanceof String)
-        temp += ProgramFieldType.UNKOWN_FORMAT + ";";        
-      else
-        temp += ((ProgramFieldType) o[i]).getTypeId() + ";";
+    for (Object object : objects) {
+      if (object instanceof String) {
+        temp += ProgramFieldType.UNKOWN_FORMAT + ";";
+      } else {
+        temp += ((ProgramFieldType) object).getTypeId() + ";";
+      }
+    }
 
     ProgramInfo.getInstance().getSettings().setProperty("order", temp);
     ProgramInfo.getInstance().getSettings().setProperty("setupwasdone", "true");
@@ -127,7 +132,7 @@ public class ProgramInfoOrderSettingsTab implements SettingsTab {
   }
 
   public String getTitle() {
-    return ProgramInfo.mLocalizer.msg("orderSettings","Info selection/ordering");
+    return ProgramInfo.getInstance().toString();
   }
 
 }

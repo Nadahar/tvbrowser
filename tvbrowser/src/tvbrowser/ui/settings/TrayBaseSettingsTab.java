@@ -85,13 +85,15 @@ public class TrayBaseSettingsTab implements SettingsTab {
       kde = System.getenv("KDE_FULL_SESSION").compareToIgnoreCase("true") == 0;
     }catch(Exception e) {}
     
-    if(System.getProperty("os.name").toLowerCase().startsWith("linux") && (JavaVersion.getVersion() < JavaVersion.VERSION_1_6 || kde))
+    if(System.getProperty("os.name").toLowerCase().startsWith("linux") && (JavaVersion.getVersion() < JavaVersion.VERSION_1_6 || kde)) {
       mMinimizeToTrayChb.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          if(mMinimizeToTrayChb.isSelected())
-            JOptionPane.showMessageDialog(builder.getPanel(),mLocalizer.msg("minimizeToTrayWarning","This function could work not how expected on Unix systems like KDE or Gnome.\nSo it's recommended not to select this checkbox."),mLocalizer.msg("warning","Warning"), JOptionPane.WARNING_MESSAGE);        
+          if(mMinimizeToTrayChb.isSelected()) {
+            JOptionPane.showMessageDialog(builder.getPanel(),mLocalizer.msg("minimizeToTrayWarning","This function could work not how expected on Unix systems like KDE or Gnome.\nSo it's recommended not to select this checkbox."),mLocalizer.msg("warning","Warning"), JOptionPane.WARNING_MESSAGE);
+          }        
         }
     });
+    }
             
     builder.addSeparator(mLocalizer.msg("basics", "Basic settings"), cc.xyw(1,1,3));    
     builder.add(mTrayIsEnabled, cc.xy(2,3));
@@ -116,10 +118,11 @@ public class TrayBaseSettingsTab implements SettingsTab {
   public void saveSettings() {
     if (mTrayIsEnabled != null) {
       Settings.propTrayIsEnabled.setBoolean(mTrayIsEnabled.isSelected());
-      if(mTrayIsEnabled.isSelected() && !mOldState)
+      if(mTrayIsEnabled.isSelected() && !mOldState) {
         TVBrowser.loadTray();
-      else if(!mTrayIsEnabled.isSelected() && mOldState)
+      } else if(!mTrayIsEnabled.isSelected() && mOldState) {
         TVBrowser.removeTray();
+      }
     }
     if (mMinimizeToTrayChb != null) {
       boolean checked = mMinimizeToTrayChb.isSelected() && mTrayIsEnabled.isSelected();
@@ -133,7 +136,7 @@ public class TrayBaseSettingsTab implements SettingsTab {
   }
 
   public String getTitle() {
-    return mLocalizer.msg("basics","Basic settings");
+    return mLocalizer.msg("title","Tray settings");
   }
   
   protected static boolean isTrayEnabled() {

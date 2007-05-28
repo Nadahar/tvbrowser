@@ -49,7 +49,6 @@ import util.ui.DragAndDropMouseListener;
 import util.ui.LinkButton;
 import util.ui.ListDragAndDropHandler;
 import util.ui.ListDropAction;
-import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.customizableitems.SortableItemList;
 import util.ui.progress.Progress;
@@ -398,8 +397,9 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
                     mListUpdating = true;
                     fillAvailableChannelsListBox();
                     mListUpdating = false;
-                } else if (mRefreshItemCounter < REFRESH_AFTER_MS)
-                    mRefreshItemCounter += period;
+                } else if (mRefreshItemCounter < REFRESH_AFTER_MS) {
+                  mRefreshItemCounter += period;
+                }
             }
         }, 0, period);
         
@@ -454,29 +454,40 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
         if (channelListContains(allChannels, Channel.CATEGORY_TV)) {
             mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryTVAll", "TV"), Channel.CATEGORY_TV));
 
-            if (channelListContains(allChannels, Channel.CATEGORY_TV))
-                mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNotSpecial", "TV"), Channel.CATEGORY_TV * -1));
-            if (channelListContains(allChannels, Channel.CATEGORY_DIGITAL))
-                mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryDigital", "Digitale"), Channel.CATEGORY_DIGITAL));
-            if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_MUSIC))
-                mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryMusic", "Musik"), Channel.CATEGORY_SPECIAL_MUSIC));
-            if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_SPORT))
-                mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categorySport", "Sport"), Channel.CATEGORY_SPECIAL_SPORT));
-            if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_NEWS))
-                mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNews", "Nachrichten"), Channel.CATEGORY_SPECIAL_NEWS));
-            if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_OTHER))
-                mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryOthers", "Sonstige Sparten"), Channel.CATEGORY_SPECIAL_OTHER));
-            if (channelListContains(allChannels, Channel.CATEGORY_PAY_TV))
+            if (channelListContains(allChannels, Channel.CATEGORY_TV)) {
+              mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNotSpecial", "TV"), Channel.CATEGORY_TV * -1));
+            }
+            if (channelListContains(allChannels, Channel.CATEGORY_DIGITAL)) {
+              mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryDigital", "Digitale"), Channel.CATEGORY_DIGITAL));
+            }
+            if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_MUSIC)) {
+              mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryMusic", "Musik"), Channel.CATEGORY_SPECIAL_MUSIC));
+            }
+            if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_SPORT)) {
+              mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categorySport", "Sport"), Channel.CATEGORY_SPECIAL_SPORT));
+            }
+            if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_NEWS)) {
+              mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNews", "Nachrichten"), Channel.CATEGORY_SPECIAL_NEWS));
+            }
+            if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_OTHER)) {
+              mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryOthers", "Sonstige Sparten"), Channel.CATEGORY_SPECIAL_OTHER));
+            }
+            if (channelListContains(allChannels, Channel.CATEGORY_PAY_TV)) {
               mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryPayTV", "Pay TV"), Channel.CATEGORY_PAY_TV));
-            if (channelListContains(allChannels, Channel.CATEGORY_RADIO))
-                mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryRadio", "Radio"), Channel.CATEGORY_RADIO));
+            }
+            if (channelListContains(allChannels, Channel.CATEGORY_RADIO)) {
+              mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryRadio", "Radio"), Channel.CATEGORY_RADIO));
+            }
         }
-        if (channelListContains(allChannels, Channel.CATEGORY_CINEMA))
-            mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryCinema", "Kino"), Channel.CATEGORY_CINEMA));
-        if (channelListContains(allChannels, Channel.CATEGORY_EVENTS))
-            mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryEvents", "Events"), Channel.CATEGORY_EVENTS));
-        if (channelListContains(allChannels, Channel.CATEGORY_NONE))
-            mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNone", "Not categorized"), Channel.CATEGORY_NONE));
+        if (channelListContains(allChannels, Channel.CATEGORY_CINEMA)) {
+          mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryCinema", "Kino"), Channel.CATEGORY_CINEMA));
+        }
+        if (channelListContains(allChannels, Channel.CATEGORY_EVENTS)) {
+          mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryEvents", "Events"), Channel.CATEGORY_EVENTS));
+        }
+        if (channelListContains(allChannels, Channel.CATEGORY_NONE)) {
+          mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNone", "Not categorized"), Channel.CATEGORY_NONE));
+        }
 
         mCategoryCB.setSelectedIndex(1);
 
@@ -513,9 +524,9 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
      */
     private boolean channelListContains(Channel[] allChannels, int category) {
         for (int i = allChannels.length - 1; i >= 0; i--) {
-            if ((allChannels[i].getCategories() & category) > 0)
-                return true;
-            else if ((allChannels[i].getCategories() == 0) && (category == 0)) {
+            if ((allChannels[i].getCategories() & category) > 0) {
+              return true;
+            } else if ((allChannels[i].getCategories() == 0) && (category == 0)) {
                 return true;
             }
         }
@@ -529,8 +540,9 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     private void restoreForPopup() {
         mSubscribedChannels.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-                if (SwingUtilities.isRightMouseButton(e))
-                    mSubscribedChannels.setSelectedIndex(mSubscribedChannels.locationToIndex(e.getPoint()));
+                if (SwingUtilities.isRightMouseButton(e)) {
+                  mSubscribedChannels.setSelectedIndex(mSubscribedChannels.locationToIndex(e.getPoint()));
+                }
                 showPopup(e);
             }
 
@@ -546,9 +558,10 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
      * @param e Mouse Event
      */
     private void showPopup(MouseEvent e) {
-        if (e.isPopupTrigger())
-            new ChannelContextMenu(e, (Channel) mSubscribedChannels.getModel().getElementAt(
-                    mSubscribedChannels.locationToIndex(e.getPoint())), this);
+        if (e.isPopupTrigger()) {
+          new ChannelContextMenu(e, (Channel) mSubscribedChannels.getModel().getElementAt(
+                  mSubscribedChannels.locationToIndex(e.getPoint())), this);
+        }
     }
 
     /**
@@ -600,8 +613,9 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
         for (int i = 0; i < list.length; i++) {
             channelArr[i] = (Channel) list[i];
 
-            if (!groups.contains(channelArr[i].getGroup().getId()))
-                groups.add(new StringBuffer(channelArr[i].getDataServiceProxy().getId()).append('.').append(channelArr[i].getGroup().getId()).toString());
+            if (!groups.contains(channelArr[i].getGroup().getId())) {
+              groups.add(new StringBuffer(channelArr[i].getDataServiceProxy().getId()).append('.').append(channelArr[i].getGroup().getId()).toString());
+            }
         }
 
         ChannelList.setSubscribeChannels(channelArr, autoUpdate);
@@ -638,7 +652,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
      * Returns the title of the tab-sheet.
      */
     public String getTitle() {
-        return Localizer.getLocalization(Localizer.I18N_CHANNELS);
+        return mLocalizer.msg("title", "Program table");
     }
 
     /**
@@ -652,21 +666,20 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
 
         int subscribedChannelCount = subscribedChannels.size();
         subscribedChannelArr = new Channel[subscribedChannelCount];
-      }
-      else
+      } else {
         subscribedChannelArr = (Channel[])((DefaultListModel) mSubscribedChannels.getModel()).toArray();
+      }
 
       Channel[] channels = mChannelListModel.getAvailableChannels();
       for (Channel channel : channels) {
         int pos = ChannelList.getPos(channel);
           
-        if(pos != -1)
+        if(pos != -1) {
           subscribedChannelArr[pos] = channel;
+        }
       }
 
-      // Add the subscribed channels
-      for (int i = 0; i < subscribedChannelArr.length; i++) {
-        Channel aSubscribedChannelArr = subscribedChannelArr[i];
+      for (Channel aSubscribedChannelArr : subscribedChannelArr) {
         ((DefaultListModel) mSubscribedChannels.getModel()).addElement(aSubscribedChannelArr);
       }
     }
