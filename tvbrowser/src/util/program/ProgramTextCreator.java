@@ -207,12 +207,12 @@ public class ProgramTextCreator {
     
     if(settings.isShowingPictureForPlugins()) {
       String[] pluginIds = settings.getPluginIds();
-      Marker[] marker = prog.getMarkerArr();
+      Marker[] markers = prog.getMarkerArr();
       
-      if(marker != null && pluginIds != null) {
-        for(int i = 0; i < marker.length; i++) {
-          for(int j = 0; j < pluginIds.length; j++) {
-            if(marker[i].getId().compareTo(pluginIds[j]) == 0) {
+      if(markers != null && pluginIds != null) {
+        for (Marker marker : markers) {
+          for (String pluginId : pluginIds) {
+            if(marker.getId().compareTo(pluginId) == 0) {
               show = true;
               break;
             }
@@ -302,20 +302,20 @@ public class ProgramTextCreator {
     }
 
     PluginAccess[] plugins = Plugin.getPluginManager().getActivatedPlugins();
-    ArrayList<JLabel> icons = new ArrayList<JLabel>();
-    for (int i = 0; i < plugins.length; i++) {
-      Icon[] ico = plugins[i].getProgramTableIcons(prog);
+    ArrayList<JLabel> iconLabels = new ArrayList<JLabel>();
+    for (PluginAccess plugin : plugins) {
+      Icon[] icons = plugin.getProgramTableIcons(prog);
 
-      if (ico != null) {
-        for (int t = 0; t < ico.length; t++) {
-          JLabel iconLabel = new JLabel(ico[t]);
-          iconLabel.setToolTipText(plugins[i].getInfo().getName());
-          icons.add(iconLabel);
+      if (icons != null) {
+        for (Icon icon : icons) {
+          JLabel iconLabel = new JLabel(icon);
+          iconLabel.setToolTipText(plugin.getInfo().getName());
+          iconLabels.add(iconLabel);
         }
       }
     }
 
-    if (showPluginIcons && icons.size() > 0) {
+    if (showPluginIcons && iconLabels.size() > 0) {
       addSeparator(doc, buffer);
 
       buffer
@@ -331,8 +331,8 @@ public class ProgramTextCreator {
       // Workaround: Without the &nbsp; the component are not put in one line.
       buffer.append("&nbsp;");
 
-      for (int i = 0; i < icons.size(); i++) {
-        buffer.append(doc.createCompTag(icons.get(i)));
+      for (int i = 0; i < iconLabels.size(); i++) {
+        buffer.append(doc.createCompTag(iconLabels.get(i)));
         buffer.append("&nbsp;&nbsp;");
       }
 
@@ -342,18 +342,18 @@ public class ProgramTextCreator {
 
     addSeparator(doc, buffer);
 
-    Object[] id = fieldArr;
+    Object[] ids = fieldArr;
 
-    for (int j = 0; j < id.length; j++) {
+    for (Object id : ids) {
       ProgramFieldType type = null;
 
-      if (id[j] instanceof String) {
+      if (id instanceof String) {
         try {
           type = ProgramFieldType
-              .getTypeForId(Integer.parseInt((String) id[j]));
+              .getTypeForId(Integer.parseInt((String) id));
         } catch (Exception e) {
           int length = prog.getLength();
-          if (length > 0 && ((String) id[j]).trim().length() > 0) {
+          if (length > 0 && ((String) id).trim().length() > 0) {
 
             buffer
                 .append("<tr><td valign=\"top\" style=\"color:gray; font-size:");
@@ -393,7 +393,7 @@ public class ProgramTextCreator {
           continue;
         }
       } else {
-        type = (ProgramFieldType) id[j];
+        type = (ProgramFieldType) id;
       }
 
       if (type == ProgramFieldType.DESCRIPTION_TYPE) {
@@ -479,7 +479,7 @@ public class ProgramTextCreator {
                 }
                 else if (actor.contains("(") && actor.contains(")")) {
                   part1 = actor.substring(0, actor.indexOf("(")).trim();
-                  part2 = actor.substring(actor.indexOf("(")+1, actor.indexOf(")")).trim();
+                  part2 = actor.substring(actor.indexOf("(")+1, actor.lastIndexOf(")")).trim();
                 }
                 buffer.append("<tr><td>");
                 buffer.append(part1);

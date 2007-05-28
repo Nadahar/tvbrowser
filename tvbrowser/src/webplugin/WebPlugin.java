@@ -329,7 +329,7 @@ public class WebPlugin extends Plugin {
         // actor and role separated by brackets
         if (actor.contains("(") && actor.contains(")")) {
           listFirst.add(actor.substring(0, actor.indexOf("(")).trim());
-          listSecond.add(actor.substring(actor.indexOf("(")+1,actor.indexOf(")")).trim());
+          listSecond.add(actor.substring(actor.indexOf("(")+1,actor.lastIndexOf(")")).trim());
         }
         // actor and role separated by tab
         else if (actor.contains("\t")) {
