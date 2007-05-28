@@ -107,14 +107,14 @@ public class PrintPlugin extends Plugin {
     String author = "Martin Oberhauser (martin@tvbrowser.org)";
     String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Print_program");
       
-    return new PluginInfo(name, desc, author, helpUrl, new Version(2,11));
+    return new PluginInfo(name, desc, author, helpUrl, new Version(2,12));
   }
 
   public void onActivation() {
     PluginTreeNode root = getRootNode();
     Program[] progs = root.getPrograms();
-    for (int i=0; i<progs.length; i++) {
-      progs[i].mark(this);
+    for (Program program : progs) {
+      program.mark(this);
     }
     root.update();
     root.addAction(new EmptyQueueAction());
@@ -123,8 +123,9 @@ public class PrintPlugin extends Plugin {
   public void handleTvBrowserStartFinished() {
     Program[] programs = getRootNode().getPrograms();
     
-    for(Program program : programs)
+    for(Program program : programs) {
       program.validateMarking();
+    }
   }
 
   public ActionMenu getContextMenuActions(final Program program) {
@@ -144,7 +145,7 @@ public class PrintPlugin extends Plugin {
         }
       };
       action[0].putValue(Action.NAME,mLocalizer.msg("removeFromPrinterQueue","Aus der Druckerwarteschlange loeschen"));
-      action[0].putValue(AbstractAction.SMALL_ICON, createImageIcon("devices", "printer", 16));
+      action[0].putValue(Action.SMALL_ICON, createImageIcon("devices", "printer", 16));
     }
     else {
       action[0] = new AbstractAction() {
@@ -155,19 +156,20 @@ public class PrintPlugin extends Plugin {
         }
       };
       action[0].putValue(Action.NAME,mLocalizer.msg("addToPrinterQueue","Zur Druckerwarteschlange hinzufuegen"));
-      action[0].putValue(AbstractAction.SMALL_ICON, createImageIcon("devices", "printer", 16));
+      action[0].putValue(Action.SMALL_ICON, createImageIcon("devices", "printer", 16));
     }
     action[1] = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {
         Window w = UiUtilities.getLastModalChildOf(getParentFrame());
-        if(w instanceof JDialog)
+        if(w instanceof JDialog) {
           new ProgramInfoPrintDialog((JDialog)w, program);
-        else if(w instanceof JFrame)
+        } else if(w instanceof JFrame) {
           new ProgramInfoPrintDialog((JFrame)w, program);
+        }
       }
     };
     action[1].putValue(Action.NAME, mLocalizer.msg("printProgramInfo","Print program info"));
-    action[1].putValue(AbstractAction.SMALL_ICON, createImageIcon("devices", "printer", 16));
+    action[1].putValue(Action.SMALL_ICON, createImageIcon("devices", "printer", 16));
     
     return new ActionMenu(menu,action);
   }
@@ -226,9 +228,9 @@ public class PrintPlugin extends Plugin {
       out = new ObjectOutputStream(new FileOutputStream(schemeFile));
       out.writeInt(1);  // version
       out.writeInt(schemes.length);
-      for (int i=0; i<schemes.length; i++) {
-        out.writeObject(schemes[i].getName());
-        ((DayProgramScheme)schemes[i]).store(out);
+      for (Scheme scheme : schemes) {
+        out.writeObject(scheme.getName());
+        ((DayProgramScheme)scheme).store(out);
       }
       out.close();
     }catch(IOException e) {
@@ -244,9 +246,9 @@ public class PrintPlugin extends Plugin {
       out = new ObjectOutputStream(new FileOutputStream(schemeFile));
       out.writeInt(1);  // version
       out.writeInt(schemes.length);
-      for (int i=0; i<schemes.length; i++) {
-        out.writeObject(schemes[i].getName());
-        ((QueueScheme)schemes[i]).store(out);
+      for (Scheme scheme : schemes) {
+        out.writeObject(scheme.getName());
+        ((QueueScheme)scheme).store(out);
       }
       out.close();
     }catch(IOException e) {
@@ -256,10 +258,10 @@ public class PrintPlugin extends Plugin {
 
   public void receivePrograms(Program[] programArr) {
     PluginTreeNode rootNode = getRootNode();
-    for (int i=0; i<programArr.length; i++) {
-      if (!rootNode.contains(programArr[i])) {
-        rootNode.addProgram(programArr[i]);
-        programArr[i].mark(this);
+    for (Program program : programArr) {
+      if (!rootNode.contains(program)) {
+        rootNode.addProgram(program);
+        program.mark(this);
       }
     }
     rootNode.update();
@@ -400,8 +402,9 @@ public class PrintPlugin extends Plugin {
     if(mMarkPriority == - 2 && mSettings != null) {
       mMarkPriority = Integer.parseInt(mSettings.getProperty("markPriority",String.valueOf(Program.MIN_MARK_PRIORITY)));
       return mMarkPriority;
-    } else
+    } else {
       return mMarkPriority;
+    }
   }
   
   protected void setMarkPriority(int priority) {

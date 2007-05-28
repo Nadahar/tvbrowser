@@ -77,7 +77,7 @@ public class MainPrintDialog extends JDialog implements ActionListener, WindowCl
     radioBtnPanel.add(mPrintDayProgramsRb = new JRadioButton(mLocalizer.msg("fullDayPrograms","Komplette Tagesprogramme")));
     radioBtnPanel.add(mPrintQueueRb = new JRadioButton(mLocalizer.msg("printFromQueue","Druckerwarteschlange")));
     radioBtnPanel.setBorder(BorderFactory.createEmptyBorder(5,0,0,15));
-    centerPanel.add(radioBtnPanel, BorderLayout.EAST);
+    centerPanel.add(radioBtnPanel, BorderLayout.WEST);
 
 
     JPanel southPanel = new JPanel(new BorderLayout());
@@ -96,12 +96,14 @@ public class MainPrintDialog extends JDialog implements ActionListener, WindowCl
     group.add(mPrintDayProgramsRb);
     group.add(mPrintQueueRb);
 
-    mPrintQueueRb.setEnabled(!PrintPlugin.getInstance().getRootNode().isEmpty());
+    boolean queueHasElements = !PrintPlugin.getInstance().getRootNode().isEmpty();
+    mPrintQueueRb.setEnabled(queueHasElements);
 
     mOkBtn.addActionListener(this);
     mCancelBtn.addActionListener(this);
 
-    mPrintDayProgramsRb.setSelected(true);
+    mPrintDayProgramsRb.setSelected(!queueHasElements);
+    mPrintQueueRb.setSelected(queueHasElements);
   }
 
   public int getResult() {
