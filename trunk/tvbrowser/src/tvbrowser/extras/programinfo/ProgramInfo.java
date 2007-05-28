@@ -83,6 +83,8 @@ public class ProgramInfo {
   private Object[] mOrder;
   
   private boolean mShowFunctions, mShowTextSearchButton;
+  
+  private static boolean mIsShowing = false;
 
   private ProgramInfo() {
     mInstance = this;
@@ -242,6 +244,7 @@ public class ProgramInfo {
   }
 
   protected void showProgramInformation(Program program, boolean showSettings) {
+    mIsShowing = true;
     Window window = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
     // show busy cursor
     ProgramTable programTable = MainFrame.getInstance().getProgramTableScrollPane().getProgramTable();
@@ -254,6 +257,7 @@ public class ProgramInfo {
     // restore cursors
     programTable.setCursor(oldTableCursor);
     window.setCursor(oldWindowCursor);
+    mIsShowing = false;
   }
 
   protected void setSettings(JDialog dialog, Dimension d) {
@@ -370,5 +374,13 @@ public class ProgramInfo {
   
   protected Point getLocation() {
     return mLocation;
+  }
+  
+  /**
+   * return whether the program info is currently shown or is to be shown immediately
+   * @return
+   */
+  public static boolean isShowing() {
+    return mIsShowing;
   }
 }

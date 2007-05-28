@@ -36,10 +36,12 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
+import javax.swing.WindowConstants;
 
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.PluginFilter;
 import tvbrowser.core.filters.ShowAllFilter;
+import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.ProgramTableModel;
 import util.settings.ProgramPanelSettings;
@@ -114,10 +116,11 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   }
 
   public void loadSettings(Properties prop) {
-    if (prop == null)
+    if (prop == null) {
       mProperties = new Properties();
-    else
+    } else {
       mProperties = prop;
+    }
   }
 
   public Properties storeSettings() {
@@ -128,14 +131,16 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
    * @return The MarkIcons.
    */
   public Icon[] getMarkIconsForProgram(Program p) {
-    if(p == null || p.equals(getPluginManager().getExampleProgram()))
+    if(p == null || p.equals(getPluginManager().getExampleProgram())) {
       return new Icon[] {mMarkListVector.get(0).getMarkIcon()};
+    }
     
     String[] lists = mMarkListVector.getNamesOfListsContainingProgram(p);
     Icon[] icons = new Icon[lists.length];
 
-    for (int i = 0; i < lists.length; i++)
+    for (int i = 0; i < lists.length; i++) {
       icons[i] = mMarkListVector.getListForName(lists[i]).getMarkIcon();
+    }
 
     return icons;
   }
@@ -149,7 +154,8 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
    */
   public ActionMenu getContextMenuActions(Program p) {
     this.mProg = p;
-    Object[] submenu = new Object[mMarkListVector.size() + 1];
+    boolean showExtendedMenu = !ProgramInfo.isShowing();
+    Object[] submenu = new Object[mMarkListVector.size() + (showExtendedMenu ? 1 : 0)];
     ContextMenuAction menu = new ContextMenuAction();
     menu.setText(mLocalizer.msg("name", "Marker plugin"));
     menu.setSmallIcon(createImageIcon("actions", "just-mark", 16));
@@ -158,11 +164,14 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
       // Create context menu entry
       submenu[0] = getDefaultAction(p);
     } else {
-      for (int i = 0; i < mMarkListVector.size(); i++)
+      for (int i = 0; i < mMarkListVector.size(); i++) {
         submenu[i] = mMarkListVector.getListAt(i).getContextMenuAction(p);
+      }
     }
     
-    submenu[submenu.length-1] = getExtendedMarkMenu();
+    if (showExtendedMenu) {
+      submenu[submenu.length-1] = getExtendedMarkMenu();
+    }
     return new ActionMenu(menu, submenu);
   }
 
@@ -214,8 +223,9 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   private ContextMenuAction getDefaultAction(Program p) {
     ContextMenuAction menu = new ContextMenuAction();
     menu.setText(mLocalizer.msg("mark", "Just mark"));
-    if (mMarkListVector.getListAt(0).contains(p))
+    if (mMarkListVector.getListAt(0).contains(p)) {
       menu.setText(mLocalizer.msg("unmark", "Just unmark"));
+    }
     menu.putValue(Action.ACTION_COMMAND_KEY, menu.getValue(Action.NAME));
     menu.setSmallIcon(createImageIcon("actions", "just-mark", 16));
     menu.setActionListener(this);
@@ -234,13 +244,14 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   public boolean receivePrograms(Program[] programs, ProgramReceiveTarget target) {
     MarkList targetList = mMarkListVector.getMarkListForTarget(target);    
     
-    if(targetList == null)
+    if(targetList == null) {
       return false;
+    }
     
     for (Program p : programs) {
-      if (targetList.contains(p))
+      if (targetList.contains(p)) {
         continue;
-      else {
+      } else {
         targetList.addElement(p);
         p.mark(this);
         p.validateMarking();
@@ -260,8 +271,9 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
       for(String list : lists) {
         priority = Math.max(priority,mMarkListVector.getListForName(list).getMarkPriority());
         
-        if(priority == Program.MAX_MARK_PRIORITY)
+        if(priority == Program.MAX_MARK_PRIORITY) {
           break;
+        }
       }
     }
     
@@ -274,8 +286,9 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     if (mHasRightToUpdate) {
       mHasToUpdate = false;
 
-      for (MarkList list : mMarkListVector)
+      for (MarkList list : mMarkListVector) {
         list.revalidateContainingPrograms();
+      }
     }
   }
 
@@ -298,21 +311,23 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   }
 
   public void handleTvBrowserStartFinished() {
-    if(mMarkListVector.isEmpty())
+    if(mMarkListVector.isEmpty()) {
       mMarkListVector.addElement(new MarkList(mLocalizer.msg("default","default")));
+    }
     
     mHasRightToUpdate = true;
     updateTree();
 
-    if (mHasToUpdate)
+    if (mHasToUpdate) {
       handleTvDataUpdateFinished();
+    }
   }
   
   private void showProgramsList() {
     final JDialog dialog = UiUtilities.createDialog(UiUtilities
         .getBestDialogParent(getParentFrame()), true);
     dialog.setTitle(mLocalizer.msg("name","Marker plugin"));
-    dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+    dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     
     mManagePanel = new ManagePanel(dialog, mMarkListVector);
 
@@ -357,17 +372,19 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
 
     if (version == 1) {
       int size = in.readInt();
-      for (int i = 0; i < size; i++)
+      for (int i = 0; i < size; i++) {
         new MarkList(in);
         //mMarkListVector.addElement();
+      }
     }
   }
 
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(1); // version
     out.writeInt(mMarkListVector.size());
-    for (int i = 0; i < mMarkListVector.size(); i++)
+    for (int i = 0; i < mMarkListVector.size(); i++) {
       mMarkListVector.getListAt(i).writeData(out);
+    }
   }
 
   public boolean canUseProgramTree() {
@@ -385,14 +402,14 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   public void handleAction(PluginTreeNode node, ActionEvent e) {
     if (e.getActionCommand().equals(
         mLocalizer.msg("unmarkall", "Just unmark all"))) {
-      Program[] p = node.getPrograms();
+      Program[] programs = node.getPrograms();
 
-      for (int i = 0; i < p.length; i++) {
-        mMarkListVector.remove(p[i]);
-        p[i].unmark(this);
+      for (Program program : programs) {
+        mMarkListVector.remove(program);
+        program.unmark(this);
       }
       
-      revalidate(p);
+      revalidate(programs);
       updateTree();
     }
   }
@@ -408,12 +425,13 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
 
     if (mMarkListVector.size() == 1) {
       mMarkListVector.getListAt(0).createNodes(node, false);
-    } else
+    } else {
       for (MarkList list : mMarkListVector) {
         PluginTreeNode temp = node.addNode(list.getName());
         temp.getMutableTreeNode().setShowLeafCountEnabled(false);
         list.createNodes(temp, false);
       }
+    }
     node.update();
   }
 
@@ -431,8 +449,9 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
       if (mMarkListVector.contains(p)) {
         p.mark(this);
         p.validateMarking();
-      } else
+      } else {
         p.unmark(this);
+      }
 
     }
     updateTree();
@@ -481,10 +500,11 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   }
   
   protected Icon getIconForFileName(String fileName) {
-    if (fileName != null)
+    if (fileName != null) {
       return createImageIconForFileName(fileName);
-    else
+    } else {
       return createImageIcon("actions", "just-mark", 16);
+    }
   }
 
   protected Frame getSuperFrame() {
@@ -492,8 +512,9 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   }
  
   protected void refreshManagePanel() {
-    if(mManagePanel != null)
+    if(mManagePanel != null) {
       mManagePanel.selectPrograms(false);
+    }
   }
   
   protected void resetManagePanel() {
@@ -501,9 +522,10 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   }
   
   public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
-    if(mMarkListVector.size() > 1)
+    if(mMarkListVector.size() > 1) {
       // Make sure the compiler not has to make unsafe class cast, therefor class is casted manually to needed type
-      return (Class<? extends PluginsFilterComponent>[]) new Class[] {MarkListFilterComponent.class};
+      return new Class[] {MarkListFilterComponent.class};
+    }
 
     return null;
   }
