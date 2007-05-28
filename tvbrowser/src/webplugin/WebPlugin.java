@@ -343,7 +343,7 @@ public class WebPlugin extends Plugin {
       ArrayList<String>[] lists = new ArrayList[2];
       lists[0] = listFirst;
       lists[1] = listSecond;
-      separateRolesAndActors(lists);
+      separateRolesAndActors(lists, program);
     }
     String[] actors = new String[listActors.size()];
     listActors.toArray(actors);
@@ -359,29 +359,37 @@ public class WebPlugin extends Plugin {
 
   /**
    * decide which of the 2 lists contains the real actor names and which the role names
+   * @param program 
    * @param listFirst first list of names
    * @param listSecond second list of names
    */
-  private void separateRolesAndActors(ArrayList<String>[] list) {
+  private void separateRolesAndActors(ArrayList<String>[] list, Program program) {
     boolean use[] = new boolean[2];
+    String lowerTitle = program.getTitle().toLowerCase();
     for (int i = 0; i < use.length; i++) {
       use[i] = false;
     }
-    // search for director or script in actors list
     for (int i = 0; i < list.length; i++) {
+      // search for director in actors list
       for (String director : listDirectors) {
         use[i] = use[i] || list[i].contains(director);
       }
+      // search for script in actors list
       for (String script : listScripts) {
         use[i] = use[i] || list[i].contains(script);
+      }
+      // search for role in program title
+      for (int j = 0; j < list[i].size(); j++) {
+        use[1-i] = use[1-i] || lowerTitle.contains(list[i].get(j).toLowerCase());
       }
       if (use[i]) {
         addList(list[i]);
         return;
       }
     }
-    // check which list contains more names with one part only (i.e. no family name)
+    // which list contains more names with one part only (i.e. no family name) -> role names
     int singleName[] = new int[2];
+    // which list contains more abbreviations at the beginning -> role names
     int abbreviation[] = new int[2];
     for (int i = 0; i < list.length; i++) {
       for (String name : list[i]) {
