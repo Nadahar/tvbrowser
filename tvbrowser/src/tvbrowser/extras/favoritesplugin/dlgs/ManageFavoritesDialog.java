@@ -479,33 +479,6 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     });
 
     menu.add(delete);
-
-    if (!mShowNew) {
-     /* JMenuItem moveUp = new JMenuItem(mLocalizer.msg("up", "Move the selected favorite up"),
-          FavoritesPlugin.getInstance().getIconFromTheme("actions", "go-up", 16));
-
-      moveUp.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          moveSelectedFavorite(-1);
-        }
-      });
-
-      moveUp.setEnabled(mFavoritesList.getSelectedIndex() > 0);
-      menu.add(moveUp);
-
-      JMenuItem moveDown = new JMenuItem(mLocalizer.msg("down", "Move the selected favorite down"),
-          FavoritesPlugin.getInstance().getIconFromTheme("actions", "go-down", 16));
-
-      moveDown.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          moveSelectedFavorite(1);
-        }
-      });
-
-      moveDown.setEnabled((mFavoritesList.getSelectedIndex() != -1) && (mFavoritesList.getSelectedIndex() < (mFavoritesListModel.getSize() - 1)));
-      menu.add(moveDown);*/
-    }
-
     menu.addSeparator();
 
     JMenuItem sendPrograms = new JMenuItem(mLocalizer.msg("send", "Send Programs to another Plugin"),
@@ -791,26 +764,6 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       }
     }
   }
-
-
-
-  /*protected void moveSelectedFavorite(int rowCount) {
-    
-    if(FavoriteTree.getInstance().moveSelectedFavorite(rowCount) != null) {
-      
-    }
-    int selection = mFavoritesList.getSelectedIndex();
-    if (selection != -1) {
-      int targetPos = selection + rowCount;
-      if ((targetPos >= 0) && (targetPos < mFavoritesListModel.size())) {
-        Favorite fav = (Favorite) mFavoritesListModel.remove(selection);
-        mFavoritesListModel.add(targetPos, fav);
-        mFavoritesList.setSelectedIndex(targetPos);
-        mFavoritesList.ensureIndexIsVisible(targetPos);
-      }
-    }
-  }*/
-
 
   protected void sortFavorites() {         
     TreePath path = FavoriteTree.getInstance().getSelectionPath();
