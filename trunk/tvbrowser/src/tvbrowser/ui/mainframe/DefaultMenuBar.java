@@ -89,8 +89,8 @@ public class DefaultMenuBar extends MenuBar {
     mPluginsMenu.addSeparator();
 
     JMenuItem[] pluginItems = createPluginMenuItems();
-    for (int i=0; i<pluginItems.length; i++) {
-      mPluginsMenu.add(pluginItems[i]);  
+    for (JMenuItem menuItem : pluginItems) {
+      mPluginsMenu.add(menuItem);  
     }
     mPluginsMenu.addSeparator();
     mPluginsMenu.add(mPluginManagerMI);
@@ -110,24 +110,28 @@ public class DefaultMenuBar extends MenuBar {
     helpMenu.add(mAboutMI);
     
     mSettingsMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, keyModifier));
-    
     mQuitMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, keyModifier));
     
-    mUpdateMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5,0));
     mPluginOverviewMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2,0));
+    mTimeBtnsMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3,0));
+    mDatelistMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4,0));
+    mChannellistMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F6,0));
+
+    mUpdateMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5,0));
+
     mPreviousDayMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.ALT_MASK));
     mNextDayMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_MASK));
     mGotoNowMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F9,0));
     mFullscreenMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F11,0));
     mSearchMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,InputEvent.CTRL_MASK));
     
-    mFontSizeLargerMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, KeyEvent.CTRL_MASK));
-    mFontSizeSmallerMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, KeyEvent.CTRL_MASK));
-    mFontSizeDefaultMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_0, KeyEvent.CTRL_MASK));
+    mFontSizeLargerMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, InputEvent.CTRL_MASK));
+    mFontSizeSmallerMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, InputEvent.CTRL_MASK));
+    mFontSizeDefaultMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_0, InputEvent.CTRL_MASK));
 
-    mColumnWidthLargerMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, KeyEvent.ALT_MASK));
-    mColumnWidthSmallerMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, KeyEvent.ALT_MASK));
-    mColumnWidthDefaultMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_0, KeyEvent.ALT_MASK));
+    mColumnWidthLargerMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, InputEvent.ALT_MASK));
+    mColumnWidthSmallerMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, InputEvent.ALT_MASK));
+    mColumnWidthDefaultMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_0, InputEvent.ALT_MASK));
   }
 
 
@@ -140,8 +144,8 @@ public class DefaultMenuBar extends MenuBar {
     mPluginsMenu.addSeparator();
     
     JMenuItem[] pluginItems = createPluginMenuItems();
-    for (int i=0; i<pluginItems.length; i++) {
-      mPluginsMenu.add(pluginItems[i]);  
+    for (JMenuItem menuItem : pluginItems) {
+      mPluginsMenu.add(menuItem);  
     }
     mPluginsMenu.addSeparator();
     mPluginsMenu.add(mPluginManagerMI);

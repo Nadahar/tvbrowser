@@ -276,11 +276,11 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mColumnWidthMenu.add(mColumnWidthDefaultMI);
     
     mViewMenu.add(mToolbarMenu);
-    mViewMenu.add(mStatusbarMI);
+    mViewMenu.add(mPluginOverviewMI);
     mViewMenu.add(mTimeBtnsMI);
     mViewMenu.add(mDatelistMI);
     mViewMenu.add(mChannellistMI);
-    mViewMenu.add(mPluginOverviewMI);
+    mViewMenu.add(mStatusbarMI);
     mViewMenu.addSeparator();
     mViewMenu.add(mFiltersMenu);
     mViewMenu.add(mFontSizeMenu);
@@ -351,10 +351,10 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
       
       JMenu licenseMenu = new JMenu(mLocalizer.msg("menuitem.license","Terms of Use"));
       TvDataServiceProxy services[]= TvDataServiceProxyManager.getInstance().getDataServices();
-      for (int i=0;i<services.length;i++) {
-        final String license=services[i].getInfo().getLicense();
+      for (TvDataServiceProxy service : services) {
+        final String license=service.getInfo().getLicense();
         if (license!=null) {
-          JMenuItem item=new JMenuItem(services[i].getInfo().getName(),new ImageIcon("imgs/tvbrowser16.png"));
+          JMenuItem item=new JMenuItem(service.getInfo().getName(),new ImageIcon("imgs/tvbrowser16.png"));
           item.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
               LicenseBox box=new LicenseBox(mMainFrame, license, false);
@@ -375,8 +375,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
    public void updateTimeItems() {
      mGotoTimeMenu.removeAll();
      int[] times = Settings.propTimeButtons.getIntArray();
-    for (int i=0; i<times.length; i++) {
-      mGotoTimeMenu.add(createTimeMenuItem(times[i]));
+    for (int time : times) {
+      mGotoTimeMenu.add(createTimeMenuItem(time));
     }
     mGotoTimeMenu.addSeparator();
     mEditTimeButtonsMenuItem = new JMenuItem(mLocalizer.msg("menuitem.editTimeItems","Edit Items..."));
@@ -391,8 +391,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
    public void updateChannelItems() {
      mGotoChannelMenu.removeAll();
      Channel[] channels = ChannelList.getSubscribedChannels();
-     for (int i=0; i<channels.length; i++) {
-       mGotoChannelMenu.add(createChannelMenuItem(channels[i]));
+     for (Channel channel : channels) {
+       mGotoChannelMenu.add(createChannelMenuItem(channel));
      }
    }
 
@@ -421,9 +421,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
        mFiltersMenu.removeAll();
        FilterButtons filterButtons = new FilterButtons(mMainFrame);
        JMenuItem[] filterMenuItems = filterButtons.createFilterMenuItems();
-       for (int i=0; i<filterMenuItems.length; i++) {
-         if (filterMenuItems[i] != null) {
-             mFiltersMenu.add(filterMenuItems[i]);
+       for (JMenuItem menuItem : filterMenuItems) {
+         if (menuItem != null) {
+             mFiltersMenu.add(menuItem);
          } else {
              mFiltersMenu.addSeparator();
          }
@@ -439,12 +439,13 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     if (menu.hasSubItems()) {
       result = new JMenu(menu.getTitle());
       
-      if(menu.getAction().getValue(Action.SMALL_ICON) != null)
+      if(menu.getAction().getValue(Action.SMALL_ICON) != null) {
         result.setIcon((Icon)menu.getAction().getValue(Action.SMALL_ICON));
+      }
       
       ActionMenu[] subItems = menu.getSubItems();
-      for (int i=0; i<subItems.length; i++) {
-        result.add(createMenuItem(subItems[i]));
+      for (ActionMenu subItem : subItems) {
+        result.add(createMenuItem(subItem));
       }
     }
     else {
@@ -508,8 +509,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     item.setIcon((Icon) SearchPlugin.getInstance().getButtonAction().getAction().getValue(Action.SMALL_ICON));
     mPluginHelpMenu.add(item);
     
-    if(result.length > 0)
+    if(result.length > 0) {
       mPluginHelpMenu.addSeparator();
+    }
     
     for (JMenuItem pluginMenuItem : result) {
       mPluginHelpMenu.add(pluginMenuItem);
