@@ -449,7 +449,8 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
     @Override
     public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
-        return new Class[] {TVRaterFilter.class};
+      //manually cast to avoid unsafe compiler cast
+      return (Class<? extends PluginsFilterComponent>[]) new Class[] {TVRaterFilter.class};
     }
 
     @Override

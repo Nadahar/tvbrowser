@@ -524,7 +524,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
     if(mMarkListVector.size() > 1) {
       // Make sure the compiler not has to make unsafe class cast, therefor class is casted manually to needed type
-      return new Class[] {MarkListFilterComponent.class};
+      return (Class<? extends PluginsFilterComponent>[]) new Class[] {MarkListFilterComponent.class};
     }
 
     return null;
