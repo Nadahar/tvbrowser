@@ -95,7 +95,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
 
   /** The width of the left part (the time). */
   private static int WIDTH_LEFT = -1;
-  /** The width of the left part (the title and short info). */
+  /** The width of the right part (the title and short info). */
   private static int WIDTH_RIGHT = Settings.propColumnWidth.getInt() - WIDTH_LEFT;
   /** The total width. */
   private static int WIDTH = WIDTH_LEFT + WIDTH_RIGHT;
@@ -179,17 +179,26 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       updateFonts();
     }
 
-    if (WIDTH_LEFT == -1) {
-      WIDTH_LEFT = getFontMetrics(mTimeFont).stringWidth(TIME_FORMATTER.formatTime(24, 59))+7;
-      WIDTH_RIGHT = Settings.propColumnWidth.getInt() - WIDTH_LEFT;
-      WIDTH = WIDTH_LEFT + WIDTH_RIGHT;
-    }
+    calculateWidth();
     
     mTitleIcon = new TextAreaIcon(null, mTitleFont, WIDTH_RIGHT - 5);
     mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5);
     mDescriptionIcon.setMaximumLineCount(3);
     
     setBackground(UIManager.getColor("programPanel.background"));
+  }
+
+  private void calculateWidth() {
+    if (WIDTH_LEFT == -1) {
+      // distance between time and title shall match title font settings, but at most n pixels
+      int distance = getFontMetrics(mTitleFont).stringWidth("n");
+      if (distance > 7) {
+        distance = 7;
+      }
+      WIDTH_LEFT = getFontMetrics(mTimeFont).stringWidth(TIME_FORMATTER.formatTime(23, 59)) + distance;
+      WIDTH_RIGHT = Settings.propColumnWidth.getInt() + columnWidthOffset - WIDTH_LEFT;
+      WIDTH = WIDTH_LEFT + WIDTH_RIGHT;
+    }
   }
 
   /**
@@ -315,6 +324,8 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       mTimeFont = getDynamicFontSize(mTimeFont, fontSizeOffset);
       mNormalFont = getDynamicFontSize(mNormalFont, fontSizeOffset);
     }
+    // reset width of the left part, will be recalculated during first forceRepaint
+    WIDTH_LEFT = -1;
   }
 
 private static Font getDynamicFontSize(Font font, int offset) {
@@ -346,6 +357,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
    * Repaints the complete panel.
    */
   public void forceRepaint() {
+    calculateWidth();
     mTitleIcon = new TextAreaIcon(null, mTitleFont, WIDTH_RIGHT - 5);
     mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5);
     mDescriptionIcon.setMaximumLineCount(3);
@@ -447,8 +459,9 @@ private static Font getDynamicFontSize(Font font, int offset) {
       // Set the new title
       mTitleIcon.setText(program.getTitle());
 
-      if(!mSettings.isShowingOnlyDateAndTitle() && mProgram.getProgramState() != Program.WAS_DELETED_STATE)
+      if(!mSettings.isShowingOnlyDateAndTitle() && mProgram.getProgramState() != Program.WAS_DELETED_STATE) {
         programHasChanged();
+      }
     }
     /* This is for debugging of the marking problem after a data update */
     else if(program.getProgramState() == Program.WAS_DELETED_STATE) {
@@ -644,8 +657,9 @@ private static Font getDynamicFontSize(Font font, int offset) {
         grp.setColor(Settings.propProgramTableColorOnAirLight.getColor());
         grp.fillRect(progressX, pos, width - progressX - pos * 2, height - pos);
 
-        if(Settings.propProgramTableOnAirProgramsShowingBorder.getBoolean())
+        if(Settings.propProgramTableOnAirProgramsShowingBorder.getBoolean()) {
           grp.draw3DRect(0, 0, width - 1, height - 1, true);
+        }
       } else {
         int progressY = 0;
         if (progLength > 0) {
@@ -659,8 +673,9 @@ private static Font getDynamicFontSize(Font font, int offset) {
         grp.setColor(Settings.propProgramTableColorOnAirLight.getColor());
         grp.fillRect(pos, progressY, width - pos * 2, height - progressY - pos);
         
-        if(Settings.propProgramTableOnAirProgramsShowingBorder.getBoolean())
+        if(Settings.propProgramTableOnAirProgramsShowingBorder.getBoolean()) {
           grp.draw3DRect(0, 0, width - 1, height - 1, true);
+        }
       }
     }
 
@@ -677,8 +692,9 @@ private static Font getDynamicFontSize(Font font, int offset) {
         default: grp.setColor(Settings.propProgramPanelMarkedMinPriorityColor.getColor());
       }
       
-      if(mProgram.isExpired())
+      if(mProgram.isExpired()) {
         grp.setColor(new Color(grp.getColor().getRed(), grp.getColor().getGreen(), grp.getColor().getBlue(), (int)(grp.getColor().getAlpha()*6/10.)));
+      }
       
       if(mProgram.getMarkPriority() > Program.NO_MARK_PRIORITY) {
         if(Settings.propProgramPanelWithMarkingsShowingBoder.getBoolean()) {
