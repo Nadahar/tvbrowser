@@ -295,9 +295,9 @@
     <!-- Extract the libraries for the tvbrowser.jar into the temp.dir -->
     <mkdir dir="${unpacked.dir}/skinlf.jar"/>
     <unjar src="${lib.dir}/skinlf.jar" dest="${unpacked.dir}/skinlf.jar"/>
-    <unjar src="${lib.dir}/bsh-2.0b1.jar" dest="${unpacked.dir}/bsh-2.0b1.jar"/>
-    <unjar src="${lib.dir}/forms-1.0.7.jar" dest="${unpacked.dir}/forms-1.0.7.jar"/>
-    <unjar src="${lib.dir}/looks-2.0.4.jar" dest="${unpacked.dir}/looks-2.0.4.jar"/>
+    <unjar src="${lib.dir}/bsh-2.0b4.jar" dest="${unpacked.dir}/bsh-2.0b4.jar"/>
+    <unjar src="${lib.dir}/forms-1.1.0.jar" dest="${unpacked.dir}/forms-1.1.0.jar"/>
+    <unjar src="${lib.dir}/looks-2.1.4.jar" dest="${unpacked.dir}/looks-2.1.4.jar"/>
     <unjar src="${lib.dir}/l2fprod-common-tasks.jar" dest="${unpacked.dir}/l2fprod-common-tasks.jar"/>
     <unjar src="${lib.dir}/jRegistryKey.jar" dest="${unpacked.dir}/jRegistryKey.jar" /> 	 
     <unjar src="${lib.dir}/TVAnytimeAPI.jar" dest="${unpacked.dir}/TVAnytimeAPI.jar" /> 	 
@@ -320,9 +320,9 @@
       <fileset dir="${classes.dir}" includes="com/**"/>
       <fileset dir="${unpacked.dir}/skinlf.jar" includes="com/**"/>
    	  <fileset dir="${unpacked.dir}/skinlf.jar" includes="org/**"/>
-      <fileset dir="${unpacked.dir}/bsh-2.0b1.jar" includes="bsh/**"/>
-      <fileset dir="${unpacked.dir}/forms-1.0.7.jar" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/looks-2.0.4.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/bsh-2.0b4.jar" includes="bsh/**"/>
+      <fileset dir="${unpacked.dir}/forms-1.1.0.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/looks-2.1.4.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/l2fprod-common-tasks.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/jRegistryKey.jar" includes="ca/**" />
     </jar>
@@ -558,7 +558,7 @@
     <!-- Extract the libraries for the jars into the temp.dir -->
     <mkdir dir="${unpacked.dir}/commons-net.jar"/>
     <unjar src="${lib.dir}/commons-net.jar" dest="${unpacked.dir}/commons-net.jar"/>
-    <unjar src="${lib.dir}/looks-2.0.4.jar" dest="${unpacked.dir}/looks-2.0.4.jar"/>
+    <unjar src="${lib.dir}/looks-2.1.4.jar" dest="${unpacked.dir}/looks-2.1.4.jar"/>
 
     <!-- Pack the MirrorUpdater.jar -->
     <jar jarfile="${tvdatatools.runtime.dir}/MirrorUpdater.jar"
@@ -579,7 +579,7 @@
       <fileset dir="${classes.dir}" includes="tvbrowser/core/plugin/DefaultSettings*"/>-->
       <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
       <fileset dir="${unpacked.dir}/commons-net.jar" includes="org/**"/>
-      <fileset dir="${unpacked.dir}/looks-2.0.4.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/looks-2.1.4.jar" includes="com/**"/>
     </jar>
 
     <!-- Pack the PrimaryDataManager.jar -->
@@ -597,7 +597,7 @@
       <fileset dir="${classes.dir}" includes="devplugin/**"/>
       <fileset dir="${classes.dir}" includes="util/**"/>
       <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
-      <fileset dir="${unpacked.dir}/looks-2.0.4.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/looks-2.1.4.jar" includes="com/**"/>
     </jar>
 
     <!-- Pack the PDSRunner.jar -->
@@ -615,7 +615,7 @@
       <fileset dir="${classes.dir}" includes="devplugin/**"/>
       <fileset dir="${classes.dir}" includes="util/**"/>
       <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
-      <fileset dir="${unpacked.dir}/looks-2.0.4.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/looks-2.1.4.jar" includes="com/**"/>
     </jar>
 
     <!-- Copy the file(s) -->
