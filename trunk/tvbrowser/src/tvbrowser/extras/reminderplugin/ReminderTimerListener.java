@@ -33,6 +33,7 @@
 
 package tvbrowser.extras.reminderplugin;
 
+import java.awt.Toolkit;
 import java.util.Properties;
 
 import javax.swing.SwingUtilities;
@@ -66,6 +67,9 @@ public class ReminderTimerListener {
     if ("true" .equals(mSettings.getProperty( "usesound" ))) {
       ReminderPlugin.playSound(mSettings.getProperty( "soundfile" ));
     }
+    if ("true" .equals(mSettings.getProperty( "usebeep" ))) {
+      Toolkit.getDefaultToolkit().beep();
+    }
 
     if ("true" .equals(mSettings.getProperty( "usemsgbox" ))) {
       new ReminderFrame(mReminderList, item,
@@ -89,11 +93,11 @@ public class ReminderTimerListener {
 
     ProgramReceiveTarget[] targets = ReminderPlugin.getInstance().getClientPluginsTargets();
     
-    for(int i = 0; i < targets.length; i++) {
-      ProgramReceiveIf plugin = targets[i].getReceifeIfForIdOfTarget();
+    for (ProgramReceiveTarget target : targets) {
+      ProgramReceiveIf plugin = target.getReceifeIfForIdOfTarget();
       if (plugin != null && (plugin.canReceiveProgramsWithTarget() || plugin.canReceivePrograms())) {
         Program[] prArray = { item.getProgram()};
-        plugin.receivePrograms(prArray, targets[i]);
+        plugin.receivePrograms(prArray, target);
       }
     }
     
@@ -127,9 +131,9 @@ public class ReminderTimerListener {
         else if(mSettings.getProperty("autoCloseBehaviour","onTime").equals("onTime")){
           String asString = mSettings.getProperty("autoCloseReminderTime", "10");
           autoCloseReminderTime = Integer.parseInt(asString);          
-        }
-        else
+        } else {
           autoCloseReminderTime = 0;
+        }
       } catch (Exception exc) {
         // ignore
       }
