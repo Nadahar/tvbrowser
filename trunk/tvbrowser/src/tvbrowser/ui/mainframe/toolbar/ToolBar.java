@@ -39,6 +39,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import javax.swing.AbstractButton;
 import javax.swing.Action;
@@ -400,6 +401,25 @@ public class ToolBar extends JToolBar {
       menu.addSeparator();
     }
 
+    JMenuItem item = new JMenuItem(mLocalizer.msg("removeButton", "Remove button"));
+    final String buttonName = name;
+    item.addActionListener(new ActionListener() {
+
+      public void actionPerformed(ActionEvent e) {
+        String[] ids = Settings.propToolbarButtons.getStringArray();
+        ArrayList<String> list = new ArrayList<String>();
+        for (String buttonId : ids) {
+          if (buttonId.compareTo(buttonName) != 0) {
+            list.add(buttonId);
+          }
+        }
+        ids = new String[list.size()];
+        list.toArray(ids);
+        DefaultToolBarModel.getInstance().setButtonIds(ids);
+        MainFrame.getInstance().updateToolbar();
+        Settings.propToolbarButtons.setStringArray(ids);
+      }});
+    menu.add(item);
     menu.add(ContextMenu.getSubMenu());
 
     menu.show(e.getComponent(), e.getX(), e.getY());
