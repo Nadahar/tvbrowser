@@ -88,6 +88,7 @@ public class ReminderSettingsTab implements SettingsTab {
 
   private JCheckBox mReminderWindowChB;
   private FileCheckBox mSoundFileChB;
+  private JCheckBox mBeep;
   private JCheckBox mExecChB;
   private JCheckBox mShowTimeSelectionDlg;
   private JCheckBox mShowRemovedDlg;  
@@ -116,7 +117,7 @@ public class ReminderSettingsTab implements SettingsTab {
    */
   public JPanel createSettingsPanel() {
     FormLayout layout = new FormLayout("5dlu,pref,5dlu,pref,pref:grow,3dlu,pref,3dlu,pref,5dlu",
-        "pref,5dlu,pref,1dlu,pref,1dlu,pref,10dlu,pref,5dlu," +
+        "pref,5dlu,pref,1dlu,pref,1dlu,pref,1dlu,pref,10dlu,pref,5dlu," +
         "pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu," +
         "pref,5dlu,pref,3dlu,pref");
     layout.setColumnGroups(new int[][] {{7,9}});
@@ -148,6 +149,8 @@ public class ReminderSettingsTab implements SettingsTab {
     mSoundFileChB.setFileChooser(soundChooser);
         
     mSoundFileChB.setSelected(mSettings.getProperty("usesound","false").equals("true"));
+    
+    mBeep = new JCheckBox(mLocalizer.msg("beep", "Speaker sound"), mSettings.getProperty("usebeep","true").equalsIgnoreCase("true"));
 
     mExecFileStr = mSettings.getProperty("execfile", "");
     mExecParamStr = mSettings.getProperty("execparam", "");    
@@ -257,28 +260,29 @@ public class ReminderSettingsTab implements SettingsTab {
     pb.add(mSoundFileChB, cc.xyw(2,5,4));
     pb.add(mSoundFileChB.getButton(), cc.xy(7,5));
     pb.add(soundTestBt, cc.xy(9,5));
-    pb.add(mExecChB, cc.xyw(2,7,4));
-    pb.add(mExecFileDialogBtn, cc.xyw(7,7,3));
+    pb.add(mBeep, cc.xy(2,7));
+    pb.add(mExecChB, cc.xyw(2,9,4));
+    pb.add(mExecFileDialogBtn, cc.xyw(7,9,3));
     
-    pb.addSeparator(mLocalizer.msg("sendToPlugin", "Send reminded program to"), cc.xyw(1,9,10));
+    pb.addSeparator(mLocalizer.msg("sendToPlugin", "Send reminded program to"), cc.xyw(1,11,10));
     
-    pb.add(mPluginLabel, cc.xyw(2,11,4));
-    pb.add(choose, cc.xyw(7,11,3));
+    pb.add(mPluginLabel, cc.xyw(2,13,4));
+    pb.add(choose, cc.xyw(7,13,3));
     
-    final JLabel c = (JLabel) pb.addSeparator(mLocalizer.msg("autoCloseReminder", "Automatically close reminder"), cc.xyw(1,13,10)).getComponent(0);
+    final JLabel c = (JLabel) pb.addSeparator(mLocalizer.msg("autoCloseReminder", "Automatically close reminder"), cc.xyw(1,15,10)).getComponent(0);
     c.setEnabled(mReminderWindowChB.isSelected());
     
-    pb.add(autoClosePanel.getPanel(), cc.xyw(2,15,5));
+    pb.add(autoClosePanel.getPanel(), cc.xyw(2,17,5));
     
     JPanel reminderEntry = new JPanel(new FlowLayout(FlowLayout.LEADING,0,0));
     reminderEntry.add(mDefaultReminderEntryList);
     
-    pb.addSeparator(mLocalizer.msg("defaltReminderEntry","Default reminder time"), cc.xyw(1,17,10));
-    pb.add(reminderEntry, cc.xyw(2,19,4));
+    pb.addSeparator(mLocalizer.msg("defaltReminderEntry","Default reminder time"), cc.xyw(1,19,10));
+    pb.add(reminderEntry, cc.xyw(2,21,4));
     
-    pb.addSeparator(mLocalizer.msg("miscSettings","Misc settings"), cc.xyw(1,21,10));    
-    pb.add(mShowTimeSelectionDlg, cc.xyw(2,23,7));
-    pb.add(mShowRemovedDlg, cc.xyw(2,25,7));
+    pb.addSeparator(mLocalizer.msg("miscSettings","Misc settings"), cc.xyw(1,23,10));    
+    pb.add(mShowTimeSelectionDlg, cc.xyw(2,25,7));
+    pb.add(mShowRemovedDlg, cc.xyw(2,27,7));
     
     mReminderWindowChB.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
@@ -470,6 +474,7 @@ public class ReminderSettingsTab implements SettingsTab {
 
     mSettings.setProperty("usemsgbox", Boolean.valueOf(mReminderWindowChB.isSelected()).toString());
     mSettings.setProperty("usesound", Boolean.valueOf(mSoundFileChB.isSelected()).toString());
+    mSettings.setProperty("usebeep", Boolean.valueOf(mBeep.isSelected()).toString());
     mSettings.setProperty("useexec", Boolean.valueOf(mExecChB.isSelected()).toString());
 
     ReminderPlugin.getInstance().setClientPluginsTargets(mClientPluginTargets);
