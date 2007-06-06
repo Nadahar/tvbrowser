@@ -26,6 +26,7 @@ import util.browserlauncher.Launch;
 import devplugin.Channel;
 import devplugin.Program;
 import devplugin.ProgramFilter;
+import devplugin.SettingsItem;
 
 /**
  * A class that builds a PopupMenu for a Channel.
@@ -110,7 +111,7 @@ public class ChannelContextMenu implements ActionListener {
 
   public void actionPerformed(ActionEvent e) {
     if (e.getSource().equals(mChAdd)) {
-      MainFrame.getInstance().showSettingsDialog();
+      MainFrame.getInstance().showSettingsDialog(SettingsItem.CHANNELS);
     }
     else if (e.getSource().equals(mChConf)) {
       if ((mSource instanceof ChannelsSettingsTab)) {
@@ -127,9 +128,10 @@ public class ChannelContextMenu implements ActionListener {
         dialog.centerAndShow();
 
         // If from a ChannelLabel update it
-        if (mSource instanceof tvbrowser.ui.programtable.ChannelLabel)
+        if (mSource instanceof tvbrowser.ui.programtable.ChannelLabel) {
           ((tvbrowser.ui.programtable.ChannelLabel) mSource)
               .setChannel(mChannel);
+        }
       }
       
       if (!(mSource instanceof tvbrowser.ui.programtable.ChannelLabel)) {

@@ -37,6 +37,7 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -58,6 +59,7 @@ import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.WindowConstants;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
@@ -108,6 +110,7 @@ import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramFilter;
 import devplugin.ProgressMonitor;
+import devplugin.SettingsItem;
 
 /**
  * TV-Browser
@@ -287,8 +290,9 @@ public class MainFrame extends JFrame implements DateListener {
       jcontentPane.add(mCenterComponent, BorderLayout.CENTER);
     }
 
-    if (Settings.propIsStatusbarVisible.getBoolean())
+    if (Settings.propIsStatusbarVisible.getBoolean()) {
       jcontentPane.add(mStatusBar, BorderLayout.SOUTH);
+    }
 
     setJMenuBar(mMenuBar);
     addContextMenuMouseListener(mMenuBar);
@@ -312,7 +316,7 @@ public class MainFrame extends JFrame implements DateListener {
     });
     timer.start();
 
-    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
   }
   
   /**
@@ -333,17 +337,21 @@ public class MainFrame extends JFrame implements DateListener {
             mMenuBar.setVisible(true);
           }
       
-          if(mToolBarPanel != null)
+          if(mToolBarPanel != null) {
             mToolBarPanel.setVisible(Settings.propIsTooolbarVisible.getBoolean());
+          }
 
-          if(mStatusBar != null)
+          if(mStatusBar != null) {
             mStatusBar.setVisible(Settings.propIsStatusbarVisible.getBoolean());
+          }
       
-          if(mChannelChooser != null)
+          if(mChannelChooser != null) {
             mChannelChooser.setVisible(Settings.propShowChannels.getBoolean());
+          }
           
-          if(mFinderPanel != null)
+          if(mFinderPanel != null) {
             mFinderPanel.setVisible(Settings.propShowDatelist.getBoolean());
+          }
         
           setVisible(true);
           
@@ -368,17 +376,21 @@ public class MainFrame extends JFrame implements DateListener {
             mStatusBar.setVisible(false);
           }
           
-          if(mChannelChooser != null)
+          if(mChannelChooser != null) {
             mChannelChooser.setVisible(false);
+          }
           
-          if(mMenuBar != null)
+          if(mMenuBar != null) {
             mMenuBar.setVisible(false);
+          }
           
-          if(mToolBarPanel != null)
+          if(mToolBarPanel != null) {
             mToolBarPanel.setVisible(false);
+          }
           
-          if(mFinderPanel != null)
+          if(mFinderPanel != null) {
             mFinderPanel.setVisible(false);
+          }
           
           final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
           
@@ -400,34 +412,42 @@ public class MainFrame extends JFrame implements DateListener {
                   
                   // mouse pointer is at top
                   if(p.y <= 10) {
-                    if(mToolBarPanel != null && mToolBar.getToolbarLocation().compareTo(BorderLayout.NORTH) == 0)
-                      if(!mToolBarPanel.isVisible())
+                    if(mToolBarPanel != null && mToolBar.getToolbarLocation().compareTo(BorderLayout.NORTH) == 0) {
+                      if(!mToolBarPanel.isVisible()) {
                         mToolBarPanel.setVisible(Settings.propIsTooolbarVisible.getBoolean());
+                      }
+                    }
                     
-                      if(p.y == 0)
+                      if(p.y == 0) {
                         mMenuBar.setVisible(true);
+                      }
                   }
                   else if(p.y > (mMenuBar != null && mMenuBar.isVisible() ? mMenuBar.getHeight() : 0) + (Settings.propIsTooolbarVisible.getBoolean() ? mToolBarPanel.getHeight() : 0)) {
-                    if(mMenuBar.isVisible())
+                    if(mMenuBar.isVisible()) {
                       mMenuBar.setVisible(!isFullScreenMode());
+                    }
                       
-                    if(mToolBarPanel != null && mToolBarPanel.isVisible() && mToolBar.getToolbarLocation().compareTo(BorderLayout.NORTH) == 0)
+                    if(mToolBarPanel != null && mToolBarPanel.isVisible() && mToolBar.getToolbarLocation().compareTo(BorderLayout.NORTH) == 0) {
                       mToolBarPanel.setVisible(!isFullScreenMode());
+                    }
                   }
                 
                   // mouse pointer is at the bottom
                   if(p.y >= screen.height - 1 ) {
-                    if(mStatusBar != null && !mStatusBar.isVisible())
+                    if(mStatusBar != null && !mStatusBar.isVisible()) {
                       mStatusBar.setVisible(Settings.propIsStatusbarVisible.getBoolean());
+                    }
                   }
-                  else if(mStatusBar != null && mStatusBar.isVisible() && p.y < screen.height - mStatusBar.getHeight())
+                  else if(mStatusBar != null && mStatusBar.isVisible() && p.y < screen.height - mStatusBar.getHeight()) {
                     mStatusBar.setVisible(!isFullScreenMode());
+                  }
                 
                   // mouse pointer is on the left side
                   if(p.x <= 5) {
                     if(p.x == 0 && mToolBarPanel != null && mToolBar.getToolbarLocation().compareTo(BorderLayout.WEST) == 0) {
-                      if(!mToolBarPanel.isVisible())
+                      if(!mToolBarPanel.isVisible()) {
                         mToolBarPanel.setVisible(Settings.propIsTooolbarVisible.getBoolean());
+                      }
                     }
                     
                     if(Settings.propShowPluginView.getBoolean()) {
@@ -441,8 +461,9 @@ public class MainFrame extends JFrame implements DateListener {
                   else {
                     int toolBarWidth = (mToolBarPanel != null && mToolBarPanel.isVisible() && mToolBar.getToolbarLocation().compareTo(BorderLayout.WEST) == 0) ? mToolBarPanel.getWidth() : 0;
                   
-                    if(p.x > toolBarWidth && toolBarWidth != 0)
+                    if(p.x > toolBarWidth && toolBarWidth != 0) {
                       mToolBarPanel.setVisible(!isFullScreenMode());
+                    }
                     
                     if(Settings.propShowPluginView.getBoolean() && mPluginView != null && mPluginView.isVisible() && p.x > mPluginView.getWidth() + toolBarWidth + 25) {
                       SwingUtilities.invokeLater(new Runnable() {
@@ -460,14 +481,17 @@ public class MainFrame extends JFrame implements DateListener {
                        Settings.propShowChannels.getBoolean())) {
                     SwingUtilities.invokeLater(new Runnable() {
                       public void run() {
-                        if(Settings.propShowTimeButtons.getBoolean() && !mTimeChooserPanel.isVisible())
+                        if(Settings.propShowTimeButtons.getBoolean() && !mTimeChooserPanel.isVisible()) {
                           setShowTimeButtons(true, false);
+                        }
                         
-                        if(Settings.propShowDatelist.getBoolean() && !mFinderPanel.isVisible())
+                        if(Settings.propShowDatelist.getBoolean() && !mFinderPanel.isVisible()) {
                           setShowDatelist(true, false);
+                        }
                         
-                        if(Settings.propShowChannels.getBoolean() && !mChannelChooser.isVisible())
+                        if(Settings.propShowChannels.getBoolean() && !mChannelChooser.isVisible()) {
                           setShowChannellist(true, false);
+                        }
                       }
                     });
                   }
@@ -477,14 +501,17 @@ public class MainFrame extends JFrame implements DateListener {
                         Settings.propShowTimeButtons.getBoolean()) {
                       SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
-                          if(mChannelChooser != null && mChannelChooser.isVisible() && p.x < screen.width - mChannelChooser.getWidth())
+                          if(mChannelChooser != null && mChannelChooser.isVisible() && p.x < screen.width - mChannelChooser.getWidth()) {
                             setShowChannellist(!isFullScreenMode(), false);
+                          }
                           
-                          if(mFinderPanel != null && mFinderPanel.isVisible() && p.x < screen.width - mFinderPanel.getWidth())
+                          if(mFinderPanel != null && mFinderPanel.isVisible() && p.x < screen.width - mFinderPanel.getWidth()) {
                             setShowDatelist(!isFullScreenMode(), false);
+                          }
                           
-                          if(mTimeChooserPanel != null && mTimeChooserPanel.isVisible() && p.x < screen.width - mTimeChooserPanel.getWidth())
+                          if(mTimeChooserPanel != null && mTimeChooserPanel.isVisible() && p.x < screen.width - mTimeChooserPanel.getWidth()) {
                             setShowTimeButtons(!isFullScreenMode(), false);
+                          }
                         }
                       });
                     }
@@ -518,19 +545,19 @@ public class MainFrame extends JFrame implements DateListener {
     }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
     
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP,
-        KeyEvent.CTRL_MASK);
+        InputEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
         KeyboardAction.KEY_UP), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
     
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.CTRL_MASK);
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
         KeyboardAction.KEY_RIGHT), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, KeyEvent.CTRL_MASK);
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
         KeyboardAction.KEY_DOWN), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.CTRL_MASK);
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
         KeyboardAction.KEY_LEFT), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
@@ -544,7 +571,7 @@ public class MainFrame extends JFrame implements DateListener {
         KeyboardAction.KEY_CONTEXTMENU), stroke,
         JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_MASK);
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_MASK);
     rootPane
         .registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
             KeyboardAction.KEY_DESELECT), stroke,
@@ -560,7 +587,7 @@ public class MainFrame extends JFrame implements DateListener {
         KeyboardAction.KEY_MIDDLECLICK), stroke,
         JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_MASK);
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
@@ -569,7 +596,7 @@ public class MainFrame extends JFrame implements DateListener {
 
     }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_MASK);
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
@@ -609,7 +636,7 @@ public class MainFrame extends JFrame implements DateListener {
     }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     // map font size keys also to numeric pad
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, KeyEvent.CTRL_MASK);
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, InputEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
@@ -618,7 +645,7 @@ public class MainFrame extends JFrame implements DateListener {
 
     }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD0, KeyEvent.CTRL_MASK);
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD0, InputEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
@@ -627,7 +654,7 @@ public class MainFrame extends JFrame implements DateListener {
 
     }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ADD, KeyEvent.CTRL_MASK);
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ADD, InputEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
@@ -680,17 +707,20 @@ public class MainFrame extends JFrame implements DateListener {
         };
         addContextMenuMouseListener(mToolBarPanel);
         mSearchField = new SearchField();
-      } else
+      } else {
         mToolBarPanel.removeAll();
+      }
       
       if (location.compareTo(BorderLayout.NORTH) == 0) {
         mToolBarPanel.add(MoreButton.wrapToolBar(mToolBar,this), BorderLayout.CENTER);
-        if(Settings.propIsSearchFieldVisible.getBoolean())
+        if(Settings.propIsSearchFieldVisible.getBoolean()) {
           mToolBarPanel.add(mSearchField, BorderLayout.EAST);
+        }
       } else {
         mToolBarPanel.add(MoreButton.wrapToolBar(mToolBar,this), BorderLayout.WEST);
-        if(Settings.propIsSearchFieldVisible.getBoolean())
+        if(Settings.propIsSearchFieldVisible.getBoolean()) {
           mToolBarPanel.add(mSearchField, BorderLayout.SOUTH);
+        }
       }
 
       contentPane.add(mToolBarPanel, location);
@@ -794,18 +824,22 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   public void quit(boolean log) {
-    if(log && this.isUndecorated())
+    if(log && this.isUndecorated()) {
       switchFullscreenMode();
-    if (mShuttingDown)
+    }
+    if (mShuttingDown) {
       return;
+    }
     mShuttingDown = true;
 
-    if (log)
+    if (log) {
       mLog.info("Finishing plugins");
+    }
     PluginProxyManager.getInstance().shutdownAllPlugins(log);
 
-    if (log)
+    if (log) {
       mLog.info("Storing dataservice settings");
+    }
     TvDataServiceProxyManager.getInstance().shutDown();
     
     FavoritesPlugin.getInstance().store();
@@ -813,14 +847,16 @@ public class MainFrame extends JFrame implements DateListener {
 
     TVBrowser.shutdown(log);
 
-    if (log)
+    if (log) {
       mLog.info("Closing tv data base");
+    }
 
     try {
       TvDataBase.getInstance().close();
     } catch (Exception exc) {
-      if (log)
+      if (log) {
         mLog.log(Level.WARNING, "Closing database failed", exc);
+      }
     }
 
     if (log) {
@@ -865,8 +901,9 @@ public class MainFrame extends JFrame implements DateListener {
   private void handleTimerEvent() {
     Date date = Date.getCurrentDate();
     
-    if(mLastTimerMinutesAfterMidnight == -1)
+    if(mLastTimerMinutesAfterMidnight == -1) {
       resetOnAirArrays();
+    }
       
     // Avoid a repaint 6 times a minute (Once a minute is enough)
     try {
@@ -887,9 +924,9 @@ public class MainFrame extends JFrame implements DateListener {
             for(int i = 0; i < ch.length; i++) {
               ChannelDayProgram chProg = TvDataBase.getInstance().getDayProgram(Date.getCurrentDate(),ch[i]);
           
-              if(chProg == null)
+              if(chProg == null) {
                 mChannelDateArr[i] = null;
-              else {
+              } else {
                 int n = chProg.getProgramCount();
             
                 for(int j = 0; j < n; j++) {
@@ -924,9 +961,9 @@ public class MainFrame extends JFrame implements DateListener {
                 if((chProg != null && chProg.getProgramCount() > 0) || mOnAirRowProgramsArr[i] != -1) {
                   Program p = chProg.getProgramAt(mOnAirRowProgramsArr[i]);
               
-                  if(p.isOnAir())
+                  if(p.isOnAir()) {
                     p.validateMarking();
-                  else if(p.isExpired()) {
+                  } else if(p.isExpired()) {
                     p.validateMarking();
               
                     int n = mOnAirRowProgramsArr[i]+1;
@@ -943,9 +980,9 @@ public class MainFrame extends JFrame implements DateListener {
                       chProg = TvDataBase.getInstance().getDayProgram(mChannelDateArr[i],ch[i]);
                 
                       // The next day has no data
-                      if(chProg == null || chProg.getProgramCount() < 1)
+                      if(chProg == null || chProg.getProgramCount() < 1) {
                         mOnAirRowProgramsArr[i] = -1;
-                      else {
+                      } else {
                         mOnAirRowProgramsArr[i] = 0;
                         chProg.getProgramAt(mOnAirRowProgramsArr[i]).validateMarking();
                       }
@@ -1095,10 +1132,11 @@ public class MainFrame extends JFrame implements DateListener {
     
     ProgramFilter filter = getProgramFilter();
     if (filter != null) {
-      if (!(filter instanceof SearchFilter))
+      if (!(filter instanceof SearchFilter)) {
         Settings.propLastUsedFilter.setString(mCurrentFilterName);
-      else
+      } else {
         Settings.propLastUsedFilter.setString(FilterList.getInstance().getDefaultFilter().getName());
+      }
     } else {
       Settings.propLastUsedFilter.setString(FilterList.getInstance().getDefaultFilter().getName());
     }
@@ -1145,14 +1183,15 @@ public class MainFrame extends JFrame implements DateListener {
    * Called when new TV listings was downloaded or when TV data was imported.
    */
   private void newTvDataAvailable(boolean scroll) {
-    if(scroll)
+    if(scroll) {
       changeDate(mFinderPanel.getSelectedDate(), null, new Runnable() {
         public void run() {
           scrollToNow();
         }
       });
-    else
+    } else {
       changeDate(mFinderPanel.getSelectedDate(), null, null);
+    }
     
     mMenuBar.updateDateItems();
   }
@@ -1248,7 +1287,7 @@ public class MainFrame extends JFrame implements DateListener {
           JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null,
           null);
       if (result == JOptionPane.YES_OPTION) {
-        showSettingsDialog();
+        showSettingsDialog(SettingsItem.CHANNELS);
       }
     }
     else {
@@ -1260,8 +1299,9 @@ public class MainFrame extends JFrame implements DateListener {
         UiUtilities.centerAndShow(dlg);
           
         int daysToDownload = dlg.getResult();
-        if(daysToDownload != UpdateDlg.CANCEL && licenseForTvDataServicesWasAccepted(dlg.getSelectedTvDataServices()))
-          runUpdateThread(daysToDownload, dlg.getSelectedTvDataServices());        
+        if(daysToDownload != UpdateDlg.CANCEL && licenseForTvDataServicesWasAccepted(dlg.getSelectedTvDataServices())) {
+          runUpdateThread(daysToDownload, dlg.getSelectedTvDataServices());
+        }        
       }
     }
   }
@@ -1277,18 +1317,18 @@ public class MainFrame extends JFrame implements DateListener {
     boolean accept = true;    
     String[] acceptedFor = Settings.propAcceptedLicenseArrForServiceIds.getStringArray();
     
-    for(int i = 0; i < updateServices.length; i++) {
+    for (TvDataServiceProxy serviceProxy : updateServices) {
       boolean found = false;
       
-      for(int j = 0; j < acceptedFor.length; j++) {
-        if(updateServices[i].getId().compareTo(acceptedFor[j]) == 0) {
+      for (String acceptedService : acceptedFor) {
+        if(serviceProxy.getId().compareTo(acceptedService) == 0) {
           found = true;
           break;
         }
       }
       
-      if(!found && updateServices[i].getInfo().getLicense() != null) {
-        LicenseBox box=new LicenseBox(this, updateServices[i].getInfo().getLicense(), true);
+      if(!found && serviceProxy.getInfo().getLicense() != null) {
+        LicenseBox box=new LicenseBox(this, serviceProxy.getInfo().getLicense(), true);
         util.ui.UiUtilities.centerAndShow(box);
         accept = accept && box.agreed();
         
@@ -1297,7 +1337,7 @@ public class MainFrame extends JFrame implements DateListener {
           String[] newIds = new String[oldIds.length + 1];
           
           System.arraycopy(acceptedFor,0,newIds,0,oldIds.length);
-          newIds[newIds.length-1] = updateServices[i].getId();
+          newIds[newIds.length-1] = serviceProxy.getId();
           
           Settings.propAcceptedLicenseArrForServiceIds.setStringArray(newIds);
         }
@@ -1321,8 +1361,9 @@ public class MainFrame extends JFrame implements DateListener {
    *          Id of the specific Tab
    */
   public void showSettingsDialog(final String visibleTabId) {
-    if(mSettingsWillBeOpened)
+    if(mSettingsWillBeOpened) {
       return;
+    }
     
     new Thread(new Runnable() {
       public void run() {
@@ -1342,8 +1383,9 @@ public class MainFrame extends JFrame implements DateListener {
 
            SwingUtilities.invokeLater(new Runnable() {
              public void run() {
-               if (t.isAlive())
-                 UiUtilities.centerAndShow(dialog);
+               if (t.isAlive()) {
+                UiUtilities.centerAndShow(dialog);
+              }
              }
            });
            
@@ -1374,8 +1416,9 @@ public class MainFrame extends JFrame implements DateListener {
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
             Settings.handleChangedSettings();
-            if (mPluginView != null)
+            if (mPluginView != null) {
               mPluginView.refreshTree();
+            }
           }
         });
         mSettingsWillBeOpened = false;
@@ -1441,10 +1484,11 @@ public class MainFrame extends JFrame implements DateListener {
         Window w = UiUtilities.getLastModalChildOf(this);
         SoftwareUpdateDlg dlg = null;
 
-        if(w instanceof JDialog)
+        if(w instanceof JDialog) {
           dlg = new SoftwareUpdateDlg((JDialog)w);
-        else
+        } else {
           dlg = new SoftwareUpdateDlg((JFrame)w);
+        }
 
         dlg.setSoftwareUpdateItems(mSoftwareUpdateItems);
         dlg.setLocationRelativeTo(w);
@@ -1567,8 +1611,9 @@ public class MainFrame extends JFrame implements DateListener {
     
     mTimeChooserPanel.setVisible(visible);
     
-    if(save)
+    if(save) {
       Settings.propShowTimeButtons.setBoolean(visible);
+    }
     
     updateViews();
   }
@@ -1586,8 +1631,9 @@ public class MainFrame extends JFrame implements DateListener {
     
     mFinderPanel.setVisible(visible);
     
-    if(save)
+    if(save) {
       Settings.propShowDatelist.setBoolean(visible);
+    }
     
     updateViews();
   }
@@ -1605,8 +1651,9 @@ public class MainFrame extends JFrame implements DateListener {
     
     mChannelChooser.setVisible(visible);
     
-    if(save)
+    if(save) {
       Settings.propShowChannels.setBoolean(visible);
+    }
     
     updateViews();
   }
@@ -1646,8 +1693,9 @@ public class MainFrame extends JFrame implements DateListener {
     mPluginsNode.setLeaf(mPluginView);
     mMenuBar.setPluginViewItemChecked(visible);
         
-    if(save)
+    if(save) {
       Settings.propShowPluginView.setBoolean(visible);
+    }
 
     updateViews();
   }

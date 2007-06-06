@@ -27,6 +27,7 @@
 package tvbrowser.ui.mainframe.toolbar;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -131,10 +132,11 @@ public class ToolBar extends JToolBar {
   }
   
   public void updateUpdateButton(boolean showStopButton) {
-    if(showStopButton)
+    if(showStopButton) {
       ((DefaultToolBarModel)mModel).showStopButton();
-    else
+    } else {
       ((DefaultToolBarModel)mModel).showUpdateButton();
+    }
     
     if(mUpdateButton != null) {
       mUpdateButton.removeActionListener(mUpdateButton.getActionListeners()[0]);
@@ -159,18 +161,18 @@ public class ToolBar extends JToolBar {
       } else if (type == SEPARATOR) {
         addSeparator();
         ((JToolBar.Separator)getComponentAtIndex(getComponentCount()-1)).setBorder(BorderFactory.createLineBorder(getBackground()));
-        ((JToolBar.Separator)getComponentAtIndex(getComponentCount()-1)).setAlignmentX(JToolBar.Separator.CENTER_ALIGNMENT);
+        ((JToolBar.Separator)getComponentAtIndex(getComponentCount()-1)).setAlignmentX(Component.CENTER_ALIGNMENT);
       } else if (type == GLUE) {
         JPanel gluePanel = new JPanel();
         gluePanel.setOpaque(false);
         gluePanel.setBorder(BorderFactory.createEmptyBorder());
-        gluePanel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+        gluePanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(gluePanel);
       } else if (type == SPACE) {
         JPanel spacePanel = new JPanel();
         spacePanel.setOpaque(false);
         spacePanel.setBorder(BorderFactory.createEmptyBorder());
-        spacePanel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+        spacePanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         
         int height = (mLocation.equals(BorderLayout.NORTH) ? getPreferredSize().height : 20);
         
@@ -197,11 +199,13 @@ public class ToolBar extends JToolBar {
   }
   
   public void setLayout(LayoutManager manager) {
-    if(mLocation != null)
-      if(mLocation.equals(BorderLayout.NORTH))
+    if(mLocation != null) {
+      if(mLocation.equals(BorderLayout.NORTH)) {
         super.setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
-      else 
+      } else {
         super.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+      }
+    }
   }
   
   /**
@@ -218,11 +222,13 @@ public class ToolBar extends JToolBar {
      * If the ToolBar is empty set the size for better dopping the first
      * ActionButton
      */
-    if (this.getComponentCount() == 0)
-      if (!west)
+    if (this.getComponentCount() == 0) {
+      if (!west) {
         this.setPreferredSize(new Dimension(this.getWidth(), 15));
-      else
+      } else {
         this.setPreferredSize(new Dimension(15, this.getHeight()));
+      }
+    }
 
     this.updateUI();
     setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -259,7 +265,7 @@ public class ToolBar extends JToolBar {
 
   private void addToggleButton(final Action action) {
     final JToggleButton button = new JToggleButton();
-    button.setAlignmentX(JToggleButton.CENTER_ALIGNMENT);
+    button.setAlignmentX(Component.CENTER_ALIGNMENT);
     
     action.putValue(ACTION_VALUE, button);
     addButtonProperties(button, action);
@@ -282,13 +288,15 @@ public class ToolBar extends JToolBar {
       }
 
       public void mousePressed(MouseEvent e) {
-        if (e.isPopupTrigger() && !disabled)
+        if (e.isPopupTrigger() && !disabled) {
           showPopupMenu(e);
+        }
       }
 
       public void mouseReleased(MouseEvent e) {
-        if (e.isPopupTrigger() && !disabled)
+        if (e.isPopupTrigger() && !disabled) {
           showPopupMenu(e);
+        }
       }
     });
 
@@ -299,10 +307,11 @@ public class ToolBar extends JToolBar {
     final JButton button = new JButton();
     addButtonProperties(button, action);
     button.setBorderPainted(false);
-    button.setAlignmentX(JButton.CENTER_ALIGNMENT);
+    button.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-    if(action.equals(((DefaultToolBarModel)mModel).getUpdateAction()))
+    if(action.equals(((DefaultToolBarModel)mModel).getUpdateAction())) {
       mUpdateButton = button;
+    }
     
     button.addMouseListener(new MouseAdapter() {
       public void mouseEntered(MouseEvent e) {
@@ -314,13 +323,15 @@ public class ToolBar extends JToolBar {
       }
 
       public void mousePressed(MouseEvent e) {
-        if (e.isPopupTrigger() && !disabled)
+        if (e.isPopupTrigger() && !disabled) {
           showPopupMenu(e);
+        }
       }
 
       public void mouseReleased(MouseEvent e) {
-        if (e.isPopupTrigger() && !disabled)
+        if (e.isPopupTrigger() && !disabled) {
           showPopupMenu(e);
+        }
       }
     });
 
@@ -361,10 +372,12 @@ public class ToolBar extends JToolBar {
         label = ChannelContextMenu.mLocalizer.msg("addChannels", "Add/Remove channels");
       }
       else if (PluginProxyManager.getInstance().getActivatedPluginForId(name) != null && 
-          PluginProxyManager.getInstance().getActivatedPluginForId(name).getSettingsTab() != null)
+          PluginProxyManager.getInstance().getActivatedPluginForId(name).getSettingsTab() != null) {
         showall = true;
-    } else
+      }
+    } else {
       return;
+    }
 
     if (showall) {
       JMenuItem item = new JMenuItem(label);
@@ -372,14 +385,15 @@ public class ToolBar extends JToolBar {
 
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          if (e.getActionCommand().startsWith("#scrollTo") && e.getActionCommand().indexOf("Channel") == -1)
+          if (e.getActionCommand().startsWith("#scrollTo") && e.getActionCommand().indexOf("Channel") == -1) {
             MainFrame.getInstance().showSettingsDialog("#timebuttons");
-          else if (e.getActionCommand().startsWith("#filter"))
+          } else if (e.getActionCommand().startsWith("#filter")) {
             MainFrame.getInstance().showFilterDialog();
-          else if (e.getActionCommand().startsWith("#scrollToChannel"))
-            MainFrame.getInstance().showSettingsDialog();
-          else
+          } else if (e.getActionCommand().startsWith("#scrollToChannel")) {
+            MainFrame.getInstance().showSettingsDialog(SettingsItem.CHANNELS);
+          } else {
             MainFrame.getInstance().showSettingsDialog(e.getActionCommand());
+          }
         }
       });
       menu.add(item);
@@ -476,9 +490,9 @@ public class ToolBar extends JToolBar {
     }
 
     if (mLocation.equals(BorderLayout.EAST) || mLocation.equals(BorderLayout.WEST)) {
-      setOrientation(JToolBar.VERTICAL);
+      setOrientation(SwingConstants.VERTICAL);
     } else {      
-      setOrientation(JToolBar.HORIZONTAL);
+      setOrientation(SwingConstants.HORIZONTAL);
     }
     
     setLayout(null);
