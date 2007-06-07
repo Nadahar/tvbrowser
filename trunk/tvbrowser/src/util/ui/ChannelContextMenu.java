@@ -11,9 +11,10 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
-
 import tvbrowser.core.ChannelList;
+import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.FilterList;
@@ -47,6 +48,12 @@ public class ChannelContextMenu implements ActionListener {
   private Object mSource;
   private Channel mChannel;
   private Component mComponent;
+
+  private JRadioButtonMenuItem layoutBoth;
+
+  private JRadioButtonMenuItem layoutLogo;
+
+  private JRadioButtonMenuItem layoutName;
 
   /**
    * Constructs the PopupMenu.
@@ -105,7 +112,27 @@ public class ChannelContextMenu implements ActionListener {
       mMenu.addSeparator();
       mMenu.add(mChAdd);
     }
+    JMenu configureLayout = new JMenu(mLocalizer.msg("layout", "Layout"));
+    layoutBoth = new JRadioButtonMenuItem(mLocalizer.msg("layoutBoth", "Logo and name"));
+    layoutLogo = new JRadioButtonMenuItem(mLocalizer.msg("layoutLogo", "Logo"));
+    layoutName = new JRadioButtonMenuItem(mLocalizer.msg("layoutName", "Name"));
+    configureLayout.add(layoutBoth);
+    configureLayout.add(layoutLogo);
+    configureLayout.add(layoutName);
+    mMenu.add(configureLayout);
+    
+    layoutBoth.addActionListener(this);
+    layoutLogo.addActionListener(this);
+    layoutName.addActionListener(this);
 
+    if (Settings.propShowChannelIconsInChannellist.getBoolean() &&
+        Settings.propShowChannelNamesInChannellist.getBoolean()) {
+      layoutBoth.setSelected(true);
+    } else if (Settings.propShowChannelIconsInChannellist.getBoolean()) {
+      layoutLogo.setSelected(true);
+    } else {
+      layoutName.setSelected(true);
+    }
     mMenu.show(e.getComponent(), e.getX(), e.getY());
   }
 
@@ -144,7 +171,12 @@ public class ChannelContextMenu implements ActionListener {
       Launch.openURL(mChannel.getWebpage());
     }
     else {
-      if (e.getSource() instanceof JMenuItem) {
+      if (e.getSource() instanceof JRadioButtonMenuItem) {
+        Settings.propShowChannelNamesInChannellist.setBoolean(e.getSource() == layoutBoth || e.getSource() == layoutName);       
+        Settings.propShowChannelIconsInChannellist.setBoolean(e.getSource() == layoutBoth || e.getSource() == layoutLogo);       
+        MainFrame.getInstance().updateChannelChooser();
+      }
+      else if (e.getSource() instanceof JMenuItem) {
         JMenuItem filterItem = (JMenuItem) e.getSource();
         String filterName = filterItem.getText();
         final FilterComponent component = FilterComponentList.getInstance().getFilterComponentByName(filterName);
