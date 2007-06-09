@@ -453,6 +453,13 @@ public class ProgramTextCreator {
         addEntry(doc, buffer, prog, ProgramFieldType.URL_TYPE, true,
             showHelpLinks);
       } else if (type == ProgramFieldType.ACTOR_LIST_TYPE) {
+        ArrayList<String> actorsList = new ArrayList<String>();
+        String[] recognizedActors = ProgramUtilities.getActorsFromActorsField(prog);
+        if (recognizedActors != null) {
+          for (String actorName : recognizedActors) {
+            actorsList.add(actorName);
+          }
+        }
         String actorField = prog.getTextField(type);
         if (actorField != null) {
           actorField = actorField.trim();
@@ -480,6 +487,12 @@ public class ProgramTextCreator {
                 else if (actor.contains("(") && actor.contains(")")) {
                   part1 = actor.substring(0, actor.indexOf("(")).trim();
                   part2 = actor.substring(actor.indexOf("(")+1, actor.lastIndexOf(")")).trim();
+                }
+                if (actorsList.contains(part1)) {
+                  part1 = addWikiLink(part1);
+                }
+                if (actorsList.contains(part2)) {
+                  part2 = addWikiLink(part2);
                 }
                 buffer.append("<tr><td>");
                 buffer.append(part1);
@@ -519,6 +532,38 @@ public class ProgramTextCreator {
     buffer.append("</table></html>");
 
     return buffer.toString();
+  }
+
+  private static String[] addWikiLinks(String[] strings) {
+    for (int i = 0; i < strings.length; i++) {
+      strings[i] = addWikiLink(strings[i]);
+    }
+    return strings;
+  }
+
+  private static String addWikiLink(String topic) {
+    String url = topic;
+    String style = " style=\"color:black; text-decoration:none; border-bottom: 1px dashed;\"";
+    String text = topic;
+    return mLocalizer.msg("wikipediaLink", "<a href=\"http://en.wikipedia.org/wiki/{0}\"{1}>{2}</a>", url, style, text);
+  }
+
+  private static String[] splitList(String field) {
+    String[] items;
+    if (field.contains("\n")) {
+      items = field.split("\n");
+    }
+    else if (field.contains(",")) {
+      items = field.split(",");
+    }
+    else {
+      items = new String[1];
+      items[0] = field;
+    }
+    for (int i = 0; i < items.length; i++) {
+      items[i] = items[i].trim();
+    }
+    return items;
   }
 
   private static void addEntry(ExtendedHTMLDocument doc, StringBuffer buffer,
@@ -579,10 +624,17 @@ public class ProgramTextCreator {
         return;
       }
     }
-
+    
     startInfoSection(buffer, name);
-    buffer.append(HTMLTextHelper.convertTextToHtml(text, createLinks));
 
+    // add wikipedia links
+    if (ProgramFieldType.DIRECTOR_TYPE == fieldType || ProgramFieldType.SCRIPT_TYPE == fieldType) {
+      buffer.append(concatList(addWikiLinks(splitList(text))));
+    }
+    else {
+      buffer.append(HTMLTextHelper.convertTextToHtml(text, createLinks));
+    }
+    
     if ((ProgramFieldType.SHOWVIEW_NR_TYPE == fieldType) && (showHelpLinks)) {
       buffer.append(" (<a href=\"").append(
           mLocalizer.msg("showviewInfo",
@@ -593,6 +645,17 @@ public class ProgramTextCreator {
     buffer.append("</td></tr>");
 
     addSeparator(doc, buffer);
+  }
+
+  private static String concatList(String[] strings) {
+    String result = "";
+    for (int i = 0; i < strings.length; i++) {
+      if (i > 0) {
+        result = result + ", ";
+      }
+      result = result + strings[i];
+    }
+    return result;
   }
 
   private static void startInfoSection(StringBuffer buffer, String section) {
