@@ -21,8 +21,11 @@ package util.program;
 import util.io.IOUtilities;
 import devplugin.Date;
 import devplugin.Program;
+import devplugin.ProgramFieldType;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 
 import tvbrowser.core.ChannelList;
 
@@ -44,13 +47,16 @@ public class ProgramUtilities {
   public static boolean isOnAir(Program p) {
     int time = IOUtilities.getMinutesAfterMidnight();
     Date currentDate = Date.getCurrentDate();
-	if (currentDate.addDays(-1).compareTo(p.getDate()) == 0)
+    if (currentDate.addDays(-1).compareTo(p.getDate()) == 0) {
       time += 24 * 60;
-    if (currentDate.compareTo(p.getDate()) < 0)
+    }
+    if (currentDate.compareTo(p.getDate()) < 0) {
       return false;
+    }
 
-    if (p.getStartTime() <= time && (p.getStartTime() + p.getLength()) > time)
+    if (p.getStartTime() <= time && (p.getStartTime() + p.getLength()) > time) {
       return true;
+    }
     return false;
   }
 
@@ -64,7 +70,9 @@ public class ProgramUtilities {
   private static Comparator<Program> sProgramComparator = new Comparator<Program>(){
     public int compare(Program p1, Program p2) {
       int res=p1.getDate().compareTo(p2.getDate());
-      if (res!=0) return res;
+      if (res!=0) {
+        return res;
+      }
 
       int minThis=p1.getStartTime();
       int minOther=p2.getStartTime();
@@ -101,14 +109,176 @@ public class ProgramUtilities {
   public static boolean isNotInTimeRange(int timeFrom, int timeTo, Program p) {
     int timeFromParsed = timeFrom;
 
-    if(timeFrom > timeTo)
+    if(timeFrom > timeTo) {
       timeFromParsed -= 60*24;
+    }
     
     int startTime = p.getStartTime(); 
     
-    if(timeFrom > timeTo && startTime >= timeFrom)
+    if(timeFrom > timeTo && startTime >= timeFrom) {
       startTime -= 60*24;
+    }
     
     return (startTime < timeFromParsed || startTime > timeTo);
+  }
+  
+  /**
+   * extract the actor names from the actor field
+   * 
+   * @param program the program to work on
+   * @return list fo real actor names or null (if it can not be decided)
+   */
+  public static String[] getActorsFromActorsField(Program program) {
+    String actorsField = program.getTextField(ProgramFieldType.ACTOR_LIST_TYPE);
+    if (actorsField != null) {
+      String[] actors = new String[0];
+      // actor list separated by newlines
+      if (actorsField.contains("\n")) {
+        actors = actorsField.split("\n");
+      }
+      // actor list separated by colon
+      else if (actorsField.contains(",")) {
+        actors = actorsField.split(",");
+      }
+      ArrayList<String> listFirst = new ArrayList<String>();
+      ArrayList<String> listSecond = new ArrayList<String>();
+      for (String actor : actors) {
+        // actor and role separated by brackets
+        if (actor.contains("(") && actor.contains(")")) {
+          listFirst.add(actor.substring(0, actor.indexOf("(")).trim());
+          listSecond.add(actor.substring(actor.indexOf("(")+1,actor.lastIndexOf(")")).trim());
+        }
+        // actor and role separated by tab
+        else if (actor.contains("\t")) {
+          listFirst.add(actor.substring(0, actor.indexOf("\t")).trim());
+          listSecond.add(actor.substring(actor.indexOf("\t")+1).trim());
+        }
+        else {
+          listFirst.add(actor.trim());
+        }
+      }
+      ArrayList<String>[] lists = new ArrayList[2];
+      lists[0] = listFirst;
+      lists[1] = listSecond;
+      ArrayList<String> result = separateRolesAndActors(lists, program);
+      if (result != null) {
+        String[] array = new String[result.size()];
+        result.toArray(array);
+        return array;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * decide which of the 2 lists contains the real actor names and which the role names
+   * @param program 
+   * @param listFirst first list of names
+   * @param listSecond second list of names
+   */
+  private static ArrayList<String> separateRolesAndActors(ArrayList<String>[] list, Program program) {
+    // return first list, if only one name per actor is available
+    if (list[1].size() == 0) {
+      return list[0];
+    }
+    // get directors names
+    String[] directors = new String[0];
+    String directorField = program.getTextField(ProgramFieldType.DIRECTOR_TYPE);
+    if (directorField != null) {
+      directors = directorField.split(",");
+    }
+    // get script writers
+    String[] scripts = new String[0];
+    String scriptField = program.getTextField(ProgramFieldType.SCRIPT_TYPE);
+    if (scriptField != null) {
+      scripts = scriptField.split(",");
+    }
+    boolean use[] = new boolean[2];
+    String lowerTitle = program.getTitle().toLowerCase();
+    for (int i = 0; i < use.length; i++) {
+      use[i] = false;
+    }
+    for (int i = 0; i < list.length; i++) {
+      // search for director in actors list
+      for (String director : directors) {
+        use[i] = use[i] || list[i].contains(director);
+      }
+      // search for script in actors list
+      for (String script : scripts) {
+        use[i] = use[i] || list[i].contains(script);
+      }
+      // search for role in program title
+      for (int j = 0; j < list[i].size(); j++) {
+        use[1-i] = use[1-i] || lowerTitle.contains(list[i].get(j).toLowerCase());
+      }
+      if (use[i]) {
+        return list[i];
+      }
+    }
+    // which list contains more names with one part only (i.e. no family name) -> role names
+    int singleName[] = new int[list.length];
+    // which list contains more abbreviations at the beginning -> role names
+    int abbreviation[] = new int[list.length];
+    // which list contains more slashes -> double roles for a single actor
+    int slashes[] = new int[2];
+    // which list has duplicate family names -> roles
+    HashMap<String,Integer>[] familyNames = new HashMap[list.length];
+    int[] maxNames = new int[2];
+    for (int i = 0; i < list.length; i++) {
+      familyNames[i] = new HashMap<String, Integer>();
+      for (String name : list[i]) {
+        if (!name.contains(" ")) {
+          singleName[i]++;
+        }
+        else {
+          String familyName = name.substring(name.lastIndexOf(" ")+1);
+          Integer count = new Integer(1);
+          if (familyNames[i].containsKey(familyName)) {
+            count = familyNames[i].get(familyName);
+            count = new Integer(count.intValue()+1);
+          }
+          familyNames[i].put(familyName, count);
+        }
+        // only count abbreviations at the beginning, so we do not count a middle initial like in "Jon M. Doe"
+        if (name.contains(".") && (name.indexOf(".") < name.indexOf(" "))) {
+          abbreviation[i]++;
+        }
+        if (name.contains("/")) {
+          slashes[i]++;
+        }
+      }
+      for (Integer familyCount : familyNames[i].values()) {
+        if (familyCount.intValue() > maxNames[i]) {
+          maxNames[i] = familyCount.intValue();
+        }
+      }
+    }
+    if (slashes[0] < slashes[1]) {
+      return list[0];
+    }
+    else if (slashes[1] < slashes[0]) {
+      return list[1];
+    }
+    else if (singleName[0] < singleName[1]) {
+      return list[0];
+    }
+    else if (singleName[1] < singleName[0]) {
+      return list[1];
+    }
+    else if (abbreviation[0] < abbreviation[1]) {
+      return list[0];
+    }
+    else if (abbreviation[1] < abbreviation[0]) {
+      return list[1];
+    }
+    else if (maxNames[0] < maxNames[1]) {
+      return list[0];
+    }
+    else if (maxNames[1] < maxNames[0]) {
+      return list[1];
+    }
+    else {
+      return null;
+    }
   }
 }

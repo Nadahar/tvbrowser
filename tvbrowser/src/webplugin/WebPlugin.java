@@ -31,7 +31,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Locale;
 
 import javax.swing.AbstractAction;
@@ -41,6 +40,7 @@ import javax.swing.JOptionPane;
 
 import util.browserlauncher.Launch;
 import util.paramhandler.ParamParser;
+import util.program.ProgramUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
@@ -313,155 +313,19 @@ public class WebPlugin extends Plugin {
       }
     }
     // actors
-    String actorsField = program.getTextField(ProgramFieldType.ACTOR_LIST_TYPE);
-    if (actorsField != null) {
-      String[] actors = new String[0];
-      // actor list separated by newlines
-      if (actorsField.contains("\n")) {
-        actors = actorsField.split("\n");
-      }
-      // actor list separated by colon
-      else if (actorsField.contains(",")) {
-        actors = actorsField.split(",");
-      }
-      ArrayList<String> listFirst = new ArrayList<String>();
-      ArrayList<String> listSecond = new ArrayList<String>();
+    String[] actors = ProgramUtilities.getActorsFromActorsField(program);
+    if (actors != null) {
+      Arrays.sort(actors);
+      listActors = new ArrayList<String>();
+      // build the final list of sub menus
       for (String actor : actors) {
-        // actor and role separated by brackets
-        if (actor.contains("(") && actor.contains(")")) {
-          listFirst.add(actor.substring(0, actor.indexOf("(")).trim());
-          listSecond.add(actor.substring(actor.indexOf("(")+1,actor.lastIndexOf(")")).trim());
+        if (actor.contains(" ") && !actor.equalsIgnoreCase("und andere") && !listActors.contains(actor)) {
+          addSearchItem(listActors, actor);
         }
-        // actor and role separated by tab
-        else if (actor.contains("\t")) {
-          listFirst.add(actor.substring(0, actor.indexOf("\t")).trim());
-          listSecond.add(actor.substring(actor.indexOf("\t")+1).trim());
-        }
-        else {
-          addSearchItem(listActors, actor.trim());
-        }
-      }
-      ArrayList<String>[] lists = new ArrayList[2];
-      lists[0] = listFirst;
-      lists[1] = listSecond;
-      separateRolesAndActors(lists, program);
-    }
-    String[] actors = new String[listActors.size()];
-    listActors.toArray(actors);
-    Arrays.sort(actors);
-    listActors = new ArrayList<String>();
-    // build the final list of sub menus
-    for (String actor : actors) {
-      if (actor.contains(" ") && !actor.equalsIgnoreCase("und andere") && !listActors.contains(actor)) {
-        addSearchItem(listActors, actor);
       }
     }
   }
 
-  /**
-   * decide which of the 2 lists contains the real actor names and which the role names
-   * @param program 
-   * @param listFirst first list of names
-   * @param listSecond second list of names
-   */
-  private void separateRolesAndActors(ArrayList<String>[] list, Program program) {
-    boolean use[] = new boolean[2];
-    String lowerTitle = program.getTitle().toLowerCase();
-    for (int i = 0; i < use.length; i++) {
-      use[i] = false;
-    }
-    for (int i = 0; i < list.length; i++) {
-      // search for director in actors list
-      for (String director : listDirectors) {
-        use[i] = use[i] || list[i].contains(director);
-      }
-      // search for script in actors list
-      for (String script : listScripts) {
-        use[i] = use[i] || list[i].contains(script);
-      }
-      // search for role in program title
-      for (int j = 0; j < list[i].size(); j++) {
-        use[1-i] = use[1-i] || lowerTitle.contains(list[i].get(j).toLowerCase());
-      }
-      if (use[i]) {
-        addList(list[i]);
-        return;
-      }
-    }
-    // which list contains more names with one part only (i.e. no family name) -> role names
-    int singleName[] = new int[list.length];
-    // which list contains more abbreviations at the beginning -> role names
-    int abbreviation[] = new int[list.length];
-    // which list contains more slashes -> double roles for a single actor
-    int slashes[] = new int[2];
-    // which list has duplicate family names -> roles
-    HashMap<String,Integer>[] familyNames = new HashMap[list.length];
-    int[] maxNames = new int[2];
-    for (int i = 0; i < list.length; i++) {
-      familyNames[i] = new HashMap<String, Integer>();
-      for (String name : list[i]) {
-        if (!name.contains(" ")) {
-          singleName[i]++;
-        }
-        else {
-          String familyName = name.substring(name.lastIndexOf(" ")+1);
-          Integer count = new Integer(1);
-          if (familyNames[i].containsKey(familyName)) {
-            count = familyNames[i].get(familyName);
-            count = new Integer(count.intValue()+1);
-          }
-          familyNames[i].put(familyName, count);
-        }
-        // only count abbreviations at the beginning, so we do not count a middle initial like in "Jon M. Doe"
-        if (name.contains(".") && (name.indexOf(".") < name.indexOf(" "))) {
-          abbreviation[i]++;
-        }
-        if (name.contains("/")) {
-          slashes[i]++;
-        }
-      }
-      for (Integer familyCount : familyNames[i].values()) {
-        if (familyCount.intValue() > maxNames[i]) {
-          maxNames[i] = familyCount.intValue();
-        }
-      }
-    }
-    if (slashes[0] < slashes[1]) {
-      addList(list[0]);
-    }
-    else if (slashes[1] < slashes[0]) {
-      addList(list[1]);
-    }
-    else if (singleName[0] < singleName[1]) {
-      addList(list[0]);
-    }
-    else if (singleName[1] < singleName[0]) {
-      addList(list[1]);
-    }
-    else if (abbreviation[0] < abbreviation[1]) {
-      addList(list[0]);
-    }
-    else if (abbreviation[1] < abbreviation[0]) {
-      addList(list[1]);
-    }
-    else if (maxNames[0] < maxNames[1]) {
-      addList(list[0]);
-    }
-    else if (maxNames[1] < maxNames[0]) {
-      addList(list[1]);
-    }
-    else {
-      addList(list[0]);
-      addList(list[1]);
-    }
-  }
-
-  private void addList(ArrayList<String> list) {
-    for (String name : list) {
-      addSearchItem(listActors, name);
-    }
-  }
-  
   private void addSearchItem(ArrayList<String> list, String search) {
     if (search != null) {
       search = search.trim();
