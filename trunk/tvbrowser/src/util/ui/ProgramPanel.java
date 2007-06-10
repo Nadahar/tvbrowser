@@ -54,6 +54,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -628,6 +629,14 @@ private static Font getDynamicFontSize(Font font, int offset) {
     int height = USE_FULL_HEIGHT ? getHeight() : mHeight;
     Graphics2D grp = (Graphics2D) g;
     
+    // if program table is anti-aliased, then this program panel too
+    if (Settings.propEnableAntialiasing.getBoolean()) {
+      if (null != grp) {
+        grp.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      }
+    }
+
     // Draw the background if this program is on air
     if (mProgram.isOnAir()) {
       int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
