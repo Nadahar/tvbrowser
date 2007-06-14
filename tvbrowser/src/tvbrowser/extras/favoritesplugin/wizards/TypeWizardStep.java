@@ -36,6 +36,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import javax.swing.ButtonGroup;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -49,6 +50,7 @@ import tvbrowser.extras.favoritesplugin.dlgs.FavoriteNode;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTree;
 import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.program.ProgramUtilities;
 import util.ui.LinkButton;
 import util.ui.UiUtilities;
 
@@ -67,7 +69,7 @@ public class TypeWizardStep extends AbstractWizardStep {
 
   private JTextField mTopicTf;
 
-  private JTextField mActorsTf;
+  private JComboBox mActorsCb;
 
   private JRadioButton mTitleRb;
 
@@ -126,7 +128,9 @@ public class TypeWizardStep extends AbstractWizardStep {
     panelBuilder.add(mTopicTf = new JTextField(), cc.xy(3, 5));
 
     panelBuilder.add(mActorsRb = new JRadioButton(mLocalizer.msg("option.actors","I like these actors:")), cc.xy(2,7));
-    panelBuilder.add(mActorsTf = new JTextField(), cc.xy(3,7));
+    mActorsCb = new JComboBox();
+    mActorsCb.setEditable(true);
+    panelBuilder.add(mActorsCb, cc.xy(3,7));
     panelBuilder.setBorder(Borders.DLU4_BORDER);
     panelBuilder.add(expertBtn, cc.xyw(1, 9, 3));
     ButtonGroup group = new ButtonGroup();
@@ -178,14 +182,21 @@ public class TypeWizardStep extends AbstractWizardStep {
           FavoriteTree.getInstance().addFavorite(favorite, mParentNode);
           FavoritesPlugin.getInstance().updateRootNode(true);
           
-          if(ManageFavoritesDialog.getInstance() != null)
+          if(ManageFavoritesDialog.getInstance() != null) {
             ManageFavoritesDialog.getInstance().addFavorite(favorite, false);
+          }
         }
       }
     });
 
     if (mProgram != null) {
       mProgramNameTf.setText(mProgram.getTitle());
+      String[] actors = ProgramUtilities.getActorsFromActorsField(mProgram);
+      if (actors != null) {
+        for (String actor : actors) {
+          mActorsCb.addItem(actor);
+        }
+      }
     }
 
     mContent = panelBuilder.getPanel();
@@ -206,26 +217,27 @@ public class TypeWizardStep extends AbstractWizardStep {
   }
   
   private void handleFocusEvent() {
-    if (mProgramNameTf.isEnabled())
+    if (mProgramNameTf.isEnabled()) {
       mProgramNameTf.requestFocusInWindow();
-    else if (mTopicTf.isEnabled())
+    } else if (mTopicTf.isEnabled()) {
       mTopicTf.requestFocusInWindow();
-    else if (mActorsTf.isEnabled())
-      mActorsTf.requestFocusInWindow();
+    } else if (mActorsCb.isEnabled()) {
+      mActorsCb.requestFocusInWindow();
+    }
   }
 
   protected void updateTextfields() {
     mProgramNameTf.setEnabled(mTitleRb.isSelected());
     mTopicTf.setEnabled(mTopicRb.isSelected());
-    mActorsTf.setEnabled(mActorsRb.isSelected());
+    mActorsCb.setEnabled(mActorsRb.isSelected());
     if (mProgramNameTf.isEnabled()) {
       mProgramNameTf.requestFocusInWindow();
     }
     else if (mTopicTf.isEnabled()) {
       mTopicTf.requestFocusInWindow();
     }
-    else if (mActorsTf.isEnabled()) {
-      mActorsTf.requestFocusInWindow();
+    else if (mActorsCb.isEnabled()) {
+      mActorsCb.requestFocusInWindow();
     }
   }
 
@@ -241,7 +253,7 @@ public class TypeWizardStep extends AbstractWizardStep {
         return new TopicFavorite(topic);
       }
     } else if (mActorsRb.isSelected()) {
-      String actors = mActorsTf.getText();
+      String actors = (String) mActorsCb.getSelectedItem();
       if (actors != null && actors.length() > 0) {
         return new ActorsFavorite(actors);
       }
@@ -285,7 +297,7 @@ public class TypeWizardStep extends AbstractWizardStep {
           JOptionPane.WARNING_MESSAGE);
       mTopicTf.requestFocusInWindow();
     } else if (mActorsRb.isSelected()) {
-      String actor = mActorsTf.getText();
+      String actor = (String) mActorsCb.getSelectedItem();
       if (actor != null && actor.trim().length() > 0) {
         return true;
       }
@@ -293,7 +305,7 @@ public class TypeWizardStep extends AbstractWizardStep {
           mLocalizer.msg("warningActorsMessage", "Enter Actors!"),
           mLocalizer.msg("warningActorsTitle", "Enter Actors"),
           JOptionPane.WARNING_MESSAGE);
-      mActorsTf.requestFocusInWindow();
+      mActorsCb.requestFocusInWindow();
     }
 
     return false;
