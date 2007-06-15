@@ -116,7 +116,7 @@ public class SettingsDialog extends JDialog implements WindowClosingIf {
 
     printerSetupBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
-        Thread thread = new Thread(){
+        Thread thread = new Thread("Printer setup"){
           public void run(){
             printerJob.printDialog();
           }
@@ -127,7 +127,7 @@ public class SettingsDialog extends JDialog implements WindowClosingIf {
 
     pageBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        Thread thread = new Thread(){
+        Thread thread = new Thread("Document properties (printing)"){
           public void run(){
             if (mPageFormat == null) {
               mPageFormat = printerJob.defaultPage();

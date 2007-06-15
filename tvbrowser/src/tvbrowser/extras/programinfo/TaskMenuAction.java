@@ -38,6 +38,7 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.Icon;
+import javax.swing.SwingConstants;
 
 import util.ui.findasyoutype.TextComponentFindAction;
 
@@ -79,10 +80,11 @@ public class TaskMenuAction {
     mInfo = info;
     mFind = comp;
 
-    if (!menu.hasSubItems())
+    if (!menu.hasSubItems()) {
       addAction(parent, menu);
-    else
+    } else {
       addTaskPaneGroup(parent, program, menu, info, id);
+    }
   }
 
   // Adds the action to the TaskPaneGroup.
@@ -96,8 +98,9 @@ public class TaskMenuAction {
         a.actionPerformed(e);
         
         if (mAction.getValue(Action.ACTION_COMMAND_KEY) == null
-            || !mAction.getValue(Action.ACTION_COMMAND_KEY).equals("action"))
+            || !mAction.getValue(Action.ACTION_COMMAND_KEY).equals("action")) {
           mInfo.addPluginActions(true);
+        }
       }      
     };
     
@@ -109,7 +112,7 @@ public class TaskMenuAction {
     mFind.installKeyListener(c);
     
     if(c instanceof JLinkButton) {
-      ((JLinkButton)c).setVerticalTextPosition(JLinkButton.TOP);
+      ((JLinkButton)c).setVerticalTextPosition(SwingConstants.TOP);
       ((JLinkButton)c).setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
     }
   }
@@ -143,20 +146,23 @@ public class TaskMenuAction {
       }
     });
 
-    if (menu.getAction().getValue(Action.SMALL_ICON) != null)
+    if (menu.getAction().getValue(Action.SMALL_ICON) != null) {
       group.setIcon((Icon) menu.getAction().getValue(Action.SMALL_ICON));
+    }
 
     // delay group creation if it is not expanded
     if (expanded) {
-      for (int i = 0; i < subs.length; i++)
-        new TaskMenuAction(group, program, subs[i], info, id, mFind);
+      for (ActionMenu subMenu : subs) {
+        new TaskMenuAction(group, program, subMenu, info, id, mFind);
+      }
     }
     else {
-      Thread thread = new Thread() {
+      Thread thread = new Thread("Lazy task menus") {
         @Override
         public void run() {
-          for (int i = 0; i < subs.length; i++)
-            new TaskMenuAction(group, program, subs[i], info, id, mFind);
+          for (ActionMenu subMenu : subs) {
+            new TaskMenuAction(group, program, subMenu, info, id, mFind);
+          }
         }
       };
       thread.setPriority(Thread.MIN_PRIORITY);

@@ -33,6 +33,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -157,13 +159,13 @@ public class DialogRating extends JDialog implements WindowClosingIf {
         JLabel title = new JLabel(_title);
         title.setPreferredSize(new Dimension(400, 40));
 
-        title.setHorizontalAlignment(JLabel.CENTER);
+        title.setHorizontalAlignment(SwingConstants.CENTER);
         title.setFont(new Font("Helvetica", Font.BOLD, 20));
         titlePanel.add(title);
 
         if (_originaltitle != null) {
             JLabel original = new JLabel("(" + _originaltitle + ")");
-            original.setHorizontalAlignment(JLabel.CENTER);
+            original.setHorizontalAlignment(SwingConstants.CENTER);
             titlePanel.add(original);
         }
 
@@ -284,7 +286,7 @@ public class DialogRating extends JDialog implements WindowClosingIf {
 
         if (Integer.parseInt(_rater.getSettings().getProperty("updateIntervall", "0")) == 1) {
 
-            Thread updateThread = new Thread() {
+            Thread updateThread = new Thread("TV rater update") {
 
                 public void run() {
                     System.out.println("Updater gestartet");
@@ -346,25 +348,25 @@ public class DialogRating extends JDialog implements WindowClosingIf {
 
             ratingPanel.setLayout(new GridBagLayout());
 
-            ratingPanel.add(new JLabel(_mLocalizer.msg("overall", "Overall") + ":", JLabel.LEFT), labc);
+            ratingPanel.add(new JLabel(_mLocalizer.msg("overall", "Overall") + ":", SwingConstants.LEFT), labc);
             ratingPanel.add(createRatingBox(rating, Rating.OVERALL), c);
 
-            ratingPanel.add(new JLabel(_mLocalizer.msg("action", "Action") + ":", JLabel.LEFT), labc);
+            ratingPanel.add(new JLabel(_mLocalizer.msg("action", "Action") + ":", SwingConstants.LEFT), labc);
             ratingPanel.add(createRatingBox(rating, Rating.ACTION), c);
 
-            ratingPanel.add(new JLabel(_mLocalizer.msg("fun", "Fun") + ":", JLabel.LEFT), labc);
+            ratingPanel.add(new JLabel(_mLocalizer.msg("fun", "Fun") + ":", SwingConstants.LEFT), labc);
             ratingPanel.add(createRatingBox(rating, Rating.FUN), c);
 
-            ratingPanel.add(new JLabel(_mLocalizer.msg("erotic", "Erotic") + ":", JLabel.LEFT), labc);
+            ratingPanel.add(new JLabel(_mLocalizer.msg("erotic", "Erotic") + ":", SwingConstants.LEFT), labc);
             ratingPanel.add(createRatingBox(rating, Rating.EROTIC), c);
 
-            ratingPanel.add(new JLabel(_mLocalizer.msg("tension", "Tension") + ":", JLabel.LEFT), labc);
+            ratingPanel.add(new JLabel(_mLocalizer.msg("tension", "Tension") + ":", SwingConstants.LEFT), labc);
             ratingPanel.add(createRatingBox(rating, Rating.TENSION), c);
 
-            ratingPanel.add(new JLabel(_mLocalizer.msg("entitlement", "Entitlement") + ":", JLabel.LEFT), labc);
+            ratingPanel.add(new JLabel(_mLocalizer.msg("entitlement", "Entitlement") + ":", SwingConstants.LEFT), labc);
             ratingPanel.add(createRatingBox(rating, Rating.ENTITLEMENT), c);
             
-            ratingPanel.add(new JLabel(_mLocalizer.msg("genre", "Genre") + ":", JLabel.LEFT), labc);
+            ratingPanel.add(new JLabel(_mLocalizer.msg("genre", "Genre") + ":", SwingConstants.LEFT), labc);
             
             if (rating.getIntValue(Rating.GENRE) >= 0) {
                 
@@ -416,7 +418,7 @@ public class DialogRating extends JDialog implements WindowClosingIf {
             int value = rating.getIntValue(type);
             
             return new JLabel(RatingIconTextFactory.getStringForRating(type, value), RatingIconTextFactory
-                    .getImageIconForRating(value), JLabel.LEFT);
+                    .getImageIconForRating(value), SwingConstants.LEFT);
         } else {
             return new JLabel("-");
         }

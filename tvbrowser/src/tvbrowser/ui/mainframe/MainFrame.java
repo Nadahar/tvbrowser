@@ -39,6 +39,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Constructor;
@@ -401,7 +402,7 @@ public class MainFrame extends JFrame implements DateListener {
           
           setVisible(true);
           
-          new Thread() {
+          new Thread("Fullscreen border detection") {
             public void run() {
               setPriority(Thread.MIN_PRIORITY);          
               
@@ -662,6 +663,23 @@ public class MainFrame extends JFrame implements DateListener {
       }
 
     }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    
+    rootPane.addKeyListener(new KeyListener() {
+
+      public void keyPressed(KeyEvent e) {
+        // TODO Auto-generated method stub
+        
+      }
+
+      public void keyReleased(KeyEvent e) {
+        // TODO Auto-generated method stub
+        
+      }
+
+      public void keyTyped(KeyEvent e) {
+        // TODO Auto-generated method stub
+        
+      }});
 
     this.setRootPane(rootPane);
   }
@@ -958,7 +976,7 @@ public class MainFrame extends JFrame implements DateListener {
               if(mChannelDateArr[i] != null) {
                 ChannelDayProgram chProg = TvDataBase.getInstance().getDayProgram(mChannelDateArr[i],ch[i]);
             
-                if((chProg != null && chProg.getProgramCount() > 0) || mOnAirRowProgramsArr[i] != -1) {
+                if((chProg != null && chProg.getProgramCount() > 0) && mOnAirRowProgramsArr[i] != -1) {
                   Program p = chProg.getProgramAt(mOnAirRowProgramsArr[i]);
               
                   if(p.isOnAir()) {
@@ -1243,7 +1261,7 @@ public class MainFrame extends JFrame implements DateListener {
 
   public void runUpdateThread(final int daysToDownload,
       final TvDataServiceProxy[] services) {
-    downloadingThread = new Thread() {
+    downloadingThread = new Thread("TV data update") {
       public void run() {
         onDownloadStart();
         

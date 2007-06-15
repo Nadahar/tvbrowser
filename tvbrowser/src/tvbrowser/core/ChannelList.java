@@ -71,7 +71,7 @@ public class ChannelList {
    * TV-Browser start was finished.
    */
   public static void completeChannelLoading() {
-    mCompleteChannelThread = new Thread() {
+    mCompleteChannelThread = new Thread("Load not subscribed channels") {
       public void run() {
         mLog.info("Loading the not subscribed channels");
         create();

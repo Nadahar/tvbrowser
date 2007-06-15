@@ -140,7 +140,7 @@ class CheckNetworkConnection {
       if(MainFrame.getInstance().isVisible()) {
         mWaitingDialog.dispose();
       } else {
-        new Thread() {
+        new Thread("Hide network connection dialog") {
           public void run() {
             setPriority(Thread.MIN_PRIORITY);
             
@@ -159,7 +159,7 @@ class CheckNetworkConnection {
 
   private void showDialog() {
     try {
-      if(!MainFrame.getInstance().isVisible() || MainFrame.getInstance().getExtendedState() == MainFrame.ICONIFIED) {
+      if(!MainFrame.getInstance().isVisible() || MainFrame.getInstance().getExtendedState() == Frame.ICONIFIED) {
         return;
       }
     }catch(Exception e) {}
@@ -197,7 +197,7 @@ class CheckNetworkConnection {
       if(mCheckRunning) {
         UiUtilities.centerAndShow(mWaitingDialog);
       }
-      mWaitingDialog.setVisible(mCheckRunning && MainFrame.getInstance().isVisible() && MainFrame.getInstance().getExtendedState() != MainFrame.ICONIFIED);
+      mWaitingDialog.setVisible(mCheckRunning && MainFrame.getInstance().isVisible() && MainFrame.getInstance().getExtendedState() != Frame.ICONIFIED);
     }
   }
 

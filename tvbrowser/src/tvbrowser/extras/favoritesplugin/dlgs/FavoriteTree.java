@@ -121,8 +121,9 @@ DropTargetListener {
     
     mRootNode = new FavoriteNode("FAVORITES_ROOT");
     
-    for(Favorite fav : favoriteArr)
+    for(Favorite fav : favoriteArr) {
       mRootNode.add(fav);
+    }
     
     init();
   }
@@ -164,10 +165,11 @@ DropTargetListener {
                         
             delete((FavoriteNode)getSelectionPath().getLastPathComponent());
             
-            if(n > 0)
+            if(n > 0) {
               setSelectionPath(new TreePath(((FavoriteNode)parent.getChildAt(n-1)).getPath()));
-            else
+            } else {
               setSelectionPath(new TreePath(parent.getPath()));
+            }
           }
         }
         else if(e.getKeyCode() == KeyEvent.VK_R || e.getKeyCode() == KeyEvent.VK_CONTEXT_MENU) {
@@ -181,10 +183,11 @@ DropTargetListener {
           if(getSelectionPath() != null) {
             FavoriteNode node = (FavoriteNode)getSelectionPath().getLastPathComponent();
             
-            if(node.isDirectoryNode())
+            if(node.isDirectoryNode()) {
               renameFolder(node);
-            else
+            } else {
               ManageFavoritesDialog.getInstance().editSelectedFavorite();
+            }
           }
         }
       }
@@ -265,8 +268,9 @@ DropTargetListener {
    * <code>null</code> if the root node should be used.
    */
   public void addFavorite(Favorite fav, FavoriteNode target) {
-    if(target == null)
+    if(target == null) {
       target = mRootNode;
+    }
     
     reload(target.add(fav));
     FavoritesPlugin.getInstance().updateRootNode(true);
@@ -283,8 +287,9 @@ DropTargetListener {
       JPopupMenu menu = new JPopupMenu();      
       TreePath path1 = getPathForLocation(p.x, p.y);
       
-      if(path1 == null)
+      if(path1 == null) {
         path1 = new TreePath(mRootNode);
+      }
       
       final TreePath path = path1;
       final FavoriteNode last = (FavoriteNode)path.getLastPathComponent();
@@ -299,15 +304,17 @@ DropTargetListener {
         
         item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            if(isExpanded(path))
+            if(isExpanded(path)) {
               collapsePath(path);
-            else
+            } else {
               expandPath(path);
+            }
           }
         });
         
-        if(!last.equals(mRootNode))
+        if(!last.equals(mRootNode)) {
           menu.add(item);
+        }
         
         item = new JMenuItem(mLocalizer.msg("expandAll", "Expand all"));
         
@@ -408,8 +415,9 @@ DropTargetListener {
         }
       });
       
-      if(!last.equals(mRootNode) && last.getChildCount() < 1)
+      if(!last.equals(mRootNode) && last.getChildCount() < 1) {
         menu.add(item);
+      }
       
       if(!ManageFavoritesDialog.getInstance().programListIsEmpty()) {
         menu.addSeparator();
@@ -434,8 +442,9 @@ DropTargetListener {
       parent.remove(node);
       reload(parent);
     }
-    else if(node.containsFavorite())
+    else if(node.containsFavorite()) {
       ManageFavoritesDialog.getInstance().deleteSelectedFavorite();
+    }
   }
   
   private void expandAll(FavoriteNode node) {
@@ -464,8 +473,9 @@ DropTargetListener {
         }
       }
       
-      if(!node.equals(mRootNode))
+      if(!node.equals(mRootNode)) {
         collapsePath(new TreePath(node.getPath()));
+      }
     }
   }
   
@@ -475,14 +485,16 @@ DropTargetListener {
     while(e.hasMoreElements()) {
       FavoriteNode child = (FavoriteNode)e.nextElement();
       
-      if(child.isDirectoryNode())
+      if(child.isDirectoryNode()) {
         expand(child);
+      }
     }
     
-    if(node.wasExpanded())
+    if(node.wasExpanded()) {
       expandPath(new TreePath(((DefaultTreeModel)this.getModel()).getPathToRoot(node)));
-    else
+    } else {
       collapsePath(new TreePath(((DefaultTreeModel)this.getModel()).getPathToRoot(node)));
+    }
   }
   
   public FavoriteTreeModel getModel() {
@@ -509,10 +521,11 @@ DropTargetListener {
       while(e.hasMoreElements()) {
         FavoriteNode child = (FavoriteNode)e.nextElement();
         
-        if(child.isDirectoryNode())
+        if(child.isDirectoryNode()) {
           fillFavoriteList(child, favoriteList);
-        else if(child.containsFavorite())
+        } else if(child.containsFavorite()) {
           favoriteList.add(child.getFavorite());
+        }
       }
     }
   }
@@ -524,17 +537,19 @@ DropTargetListener {
    */
   public void deleteFavorite(Favorite favorite) {
     Program[] delFavPrograms = favorite.getPrograms();
-    for (int i=0; i<delFavPrograms.length; i++) {
-      delFavPrograms[i].unmark(FavoritesPluginProxy.getInstance());
+    for (Program program : delFavPrograms) {
+      program.unmark(FavoritesPluginProxy.getInstance());
     }
 
     deleteFavorite(mRootNode, favorite);
     
     String[] reminderServices = favorite.getReminderConfiguration().getReminderServices();    
     
-    for (int i=0; i<reminderServices.length; i++)
-      if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderServices[i])) 
+    for (String reminderService : reminderServices) {
+      if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderService)) {
         ReminderPlugin.getInstance().removePrograms(favorite.getPrograms());
+      }
+    }
     
     FavoritesPlugin.getInstance().updateRootNode(true);
   }
@@ -559,9 +574,9 @@ DropTargetListener {
       while(e.hasMoreElements()) {
         FavoriteNode child = (FavoriteNode)e.nextElement();
         
-        if(child.isDirectoryNode())
+        if(child.isDirectoryNode()) {
           value = value || isContainedByOtherFavorites(child, favorite, p);
-        else if(child.containsFavorite()) {
+        } else if(child.containsFavorite()) {
           if(!child.equals(favorite)) {
             value = value || child.getFavorite().contains(p);
           }
@@ -579,9 +594,9 @@ DropTargetListener {
       while(e.hasMoreElements()) {
         FavoriteNode child = (FavoriteNode)e.nextElement();
         
-        if(child.isDirectoryNode())
+        if(child.isDirectoryNode()) {
           deleteFavorite(child, fav);
-        else if(child.containsFavorite()) {
+        } else if(child.containsFavorite()) {
           if(child.equals(fav)) {
             ((FavoriteNode)child.getParent()).remove(child);
           }
@@ -623,12 +638,13 @@ DropTargetListener {
   }
 
   public void dragEnter(DropTargetDragEvent e) {
-    if(e.getCurrentDataFlavors().length > 1 || e.getCurrentDataFlavors().length < 1 || !e.getCurrentDataFlavors()[0].equals(FAVORITE_FLAVOR))
+    if(e.getCurrentDataFlavors().length > 1 || e.getCurrentDataFlavors().length < 1 || !e.getCurrentDataFlavors()[0].equals(FAVORITE_FLAVOR)) {
       e.rejectDrag();
-    else if(calculateCueLine(e.getLocation()))
+    } else if(calculateCueLine(e.getLocation())) {
       e.acceptDrag(e.getDropAction());
-    else
+    } else {
       e.rejectDrag();
+    }
   }
 
   public void dragExit(DropTargetEvent e) {
@@ -646,9 +662,9 @@ DropTargetListener {
       }
       else if(row != getRowCount() && p.y - location.y <= (location.height - (location.height / 4))) {
         return 0;
-      }
-      else
+      } else {
         return 1;
+      }
     }
     else {
       if(p.y - location.y <= (location.height / 2)) {
@@ -666,13 +682,15 @@ DropTargetListener {
     
     Rectangle rowBounds = getRowBounds(row);
     
-    if(rowBounds.y + rowBounds.height < p.y)
+    if(rowBounds.y + rowBounds.height < p.y) {
       row = this.getRowCount();
+    }
     
     TreePath path = getPathForRow(row);
     
-    if(path == null)
+    if(path == null) {
       path = new TreePath(mRootNode);
+    }
     
     if(mTransferNode != null && !new TreePath(mTransferNode.getPath()).isDescendant(path)) {      
       FavoriteNode last = (FavoriteNode)path.getLastPathComponent();
@@ -741,26 +759,31 @@ DropTargetListener {
       paintImmediately(mCueLine.getBounds());
       e.rejectDrag();
     }
-    else if(calculateCueLine(e.getLocation()))
+    else if(calculateCueLine(e.getLocation())) {
       e.acceptDrag(e.getDropAction());
-    else
+    } else {
       e.rejectDrag();
+    }
     
     if (this.getVisibleRect().width < this.getSize().width
         || this.getVisibleRect().height < this.getSize().height) {
       int scroll = 20;
-      if (e.getLocation().y + scroll + 5 > getVisibleRect().height)
+      if (e.getLocation().y + scroll + 5 > getVisibleRect().height) {
         scrollRectToVisible(new Rectangle(e.getLocation().x, e.getLocation().y
             + scroll + 5, 1, 1));
-      if (e.getLocation().y - scroll < getVisibleRect().y)
+      }
+      if (e.getLocation().y - scroll < getVisibleRect().y) {
         scrollRectToVisible(new Rectangle(e.getLocation().x, e.getLocation().y
             - scroll, 1, 1));
-      if (e.getLocation().x - scroll < getVisibleRect().x)
+      }
+      if (e.getLocation().x - scroll < getVisibleRect().x) {
         scrollRectToVisible(new Rectangle(e.getLocation().x - scroll, e
             .getLocation().y, 1, 1));
-      if (e.getLocation().x + scroll + 5 > getVisibleRect().width)
+      }
+      if (e.getLocation().x + scroll + 5 > getVisibleRect().width) {
         scrollRectToVisible(new Rectangle(e.getLocation().x + scroll + 5, e
             .getLocation().y, 1, 1));
+      }
     }
   }
 
@@ -769,65 +792,70 @@ DropTargetListener {
     this.paintImmediately(mCueLine.getBounds());
     Transferable transfer = e.getTransferable();
     
-    if(transfer.isDataFlavorSupported(new DataFlavor(TreePath.class, "FavoriteNodeExport")))
-    try {
-      FavoriteNode node = mTransferNode;
-      FavoriteNode parent = (FavoriteNode)node.getParent();
-      
-      int row = getClosestRowForLocation(e.getLocation().x, e.getLocation().y);;
-      
-      TreePath path = new TreePath(mRootNode);
-      
-      if(getRowBounds(row).y + getRowBounds(row).height < e.getLocation().y)
-        row = this.getRowCount();
-      else
-        path = getPathForRow(row);
+    if(transfer.isDataFlavorSupported(new DataFlavor(TreePath.class, "FavoriteNodeExport"))) {
+      try {
+        FavoriteNode node = mTransferNode;
+        FavoriteNode parent = (FavoriteNode)node.getParent();
+        
+        int row = getClosestRowForLocation(e.getLocation().x, e.getLocation().y);;
+        
+        TreePath path = new TreePath(mRootNode);
+        
+        if(getRowBounds(row).y + getRowBounds(row).height < e.getLocation().y) {
+          row = this.getRowCount();
+        } else {
+          path = getPathForRow(row);
+        }
 
-      FavoriteNode last = (FavoriteNode)path.getLastPathComponent();
-      FavoriteNode pointed = last;   
-      int target = getTargetFor(pointed, e.getLocation(), row);;
-      
-      if(path == null)
-        path = new TreePath(mRootNode);
-      
-      if(!new TreePath(node.getPath()).isDescendant(path)) {
-        setSelectionPath(null);
+        FavoriteNode last = (FavoriteNode)path.getLastPathComponent();
+        FavoriteNode pointed = last;   
+        int target = getTargetFor(pointed, e.getLocation(), row);;
         
-        parent.remove(node);
+        if(path == null) {
+          path = new TreePath(mRootNode);
+        }
         
-        int n = -1;
-        
-        if(target == -1 || (target == 1 && !isExpanded(new TreePath(pointed.getPath())))) {
-          if(last.isRoot())
-            n = 0;
-          else {
-            n = last.getParent().getIndex(last);
-            last = (FavoriteNode)last.getParent();
+        if(!new TreePath(node.getPath()).isDescendant(path)) {
+          setSelectionPath(null);
+          
+          parent.remove(node);
+          
+          int n = -1;
+          
+          if(target == -1 || (target == 1 && !isExpanded(new TreePath(pointed.getPath())))) {
+            if(last.isRoot()) {
+              n = 0;
+            } else {
+              n = last.getParent().getIndex(last);
+              last = (FavoriteNode)last.getParent();
+            }
           }
-        }
-        
-        if(target == -1)
-          last.insert(node, n);
-        else if(target == 0) {
-          if(isExpanded(new TreePath(last)))
-            last.insert(node, 0);
-          else
+          
+          if(target == -1) {
+            last.insert(node, n);
+          } else if(target == 0) {
+            if(isExpanded(new TreePath(last))) {
+              last.insert(node, 0);
+            } else {
+              last.add(node);
+            }
+          }
+          else if(row != getRowCount()) {
+            last.insert(node, n + 1);
+          } else {
             last.add(node);
+          }
+          
+          expandPath(new TreePath(last.getPath()));
+          
+          mExpandListenerIsEnabled = false;
+          expand(last);
+          mExpandListenerIsEnabled = true;
         }
-        else if(row != getRowCount())
-          last.insert(node, n + 1);
-        else
-          last.add(node);
         
-        expandPath(new TreePath(last.getPath()));
-        
-        mExpandListenerIsEnabled = false;
-        expand(last);
-        mExpandListenerIsEnabled = true;
-      }
-      
-      updateUI();
-    }catch(Exception ex) {ex.printStackTrace();}
+        updateUI();
+      }catch(Exception ex) {ex.printStackTrace();}
+    }
     
     e.dropComplete(true);
   }
@@ -857,8 +885,9 @@ DropTargetListener {
       if(last.equals(mRootNode) || last.isDirectoryNode()) {
         last.add(node);
         expandPath(new TreePath(last.getPath()));
-      } else
+      } else {
         ((FavoriteNode)last.getParent()).insert(node,last.getParent().getIndex(last));
+      }
       
       reload((FavoriteNode)node.getParent());
     }
@@ -872,10 +901,11 @@ DropTargetListener {
       int[] count = getProgramsCount((FavoriteNode)value);
       
       if(count[0] > 0) {
-        if(count[1] < 1)
+        if(count[1] < 1) {
           text.append(" [").append(count[0]).append("]");
-        else
+        } else {
           text.append(" [").append(count[0]).append(", ").append(mLocalizer.msg("today","today")).append(": ").append(count[1]).append("]");
+        }
       }
     }
     
@@ -894,9 +924,11 @@ DropTargetListener {
     if(node.containsFavorite()) {
       count[0] = node.getFavorite().getWhiteListPrograms().length;
       
-      for(Program p : node.getFavorite().getWhiteListPrograms())
-        if(p.getDate().equals(Date.getCurrentDate()))
+      for(Program p : node.getFavorite().getWhiteListPrograms()) {
+        if(p.getDate().equals(Date.getCurrentDate())) {
           count[1]++;
+        }
+      }
     }
     
     for (int i = 0; i < node.getChildCount(); i++) {
@@ -904,9 +936,11 @@ DropTargetListener {
       if (child.containsFavorite()) {
         count[0] += child.getFavorite().getWhiteListPrograms().length;
         
-        for(Program p : child.getFavorite().getWhiteListPrograms())
-          if(p.getDate().equals(Date.getCurrentDate()))
+        for(Program p : child.getFavorite().getWhiteListPrograms()) {
+          if(p.getDate().equals(Date.getCurrentDate())) {
             count[1]++;
+          }
+        }
       } else {
         int[] countReturned = getProgramsCount(child);
         count[0] += countReturned[0];
@@ -946,8 +980,9 @@ DropTargetListener {
       for(FavoriteNode child : nodes) {
         node.add(child);
         
-        if(child.isDirectoryNode())
+        if(child.isDirectoryNode()) {
           sort(child, false);
+        }
       }
     }
     
@@ -965,8 +1000,9 @@ DropTargetListener {
     
     public void mousePressed(MouseEvent e) {
       if(!e.isConsumed()) {
-        if(!tree.hasFocus())
+        if(!tree.hasFocus()) {
           tree.requestFocus();
+        }
         
         TreePath path = getClosestPathForLocation(tree, e.getX(), e.getY());
         
@@ -974,8 +1010,9 @@ DropTargetListener {
           setSelectionPath(path);
         }
         
-        if(e.isPopupTrigger())
+        if(e.isPopupTrigger()) {
           showContextMenu(e.getPoint());
+        }
         
         mMousePressedTime = e.getWhen();
         
@@ -986,19 +1023,21 @@ DropTargetListener {
     
     public void mouseReleased(MouseEvent e) {
       if(!e.isConsumed()) {
-        if(e.isPopupTrigger())
+        if(e.isPopupTrigger()) {
           showContextMenu(e.getPoint());
+        }
         
         if(SwingUtilities.isLeftMouseButton(e)) {
           final TreePath path = getClosestPathForLocation(tree, e.getX(), e.getY());
           
           if(path != null && ((FavoriteNode)path.getLastPathComponent()).containsFavorite()) {
-            if(e.getClickCount() >= 2)
+            if(e.getClickCount() >= 2) {
               ManageFavoritesDialog.getInstance().editSelectedFavorite();
+            }
           }
           else if(path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode() && (e.getWhen() - mMousePressedTime) < CLICK_WAIT_TIME && getPathBounds(tree,path).contains(e.getPoint())) {
             if(mClickedThread == null || !mClickedThread.isAlive()) {
-              mClickedThread = new Thread() {
+              mClickedThread = new Thread("Double click favorite") {
                 public void run() {
                   if(!isExpanded(path)) {
                     expandPath(path);
@@ -1045,8 +1084,9 @@ DropTargetListener {
   }
   
   public void updatePluginTree(PluginTreeNode node, FavoriteNode parent) {
-    if(parent == null)
+    if(parent == null) {
       parent = mRootNode;
+    }
     
     if(parent.isDirectoryNode()) {
       Enumeration e = parent.children();
@@ -1058,9 +1098,9 @@ DropTargetListener {
         newNode.setGroupingByWeekEnabled(true);
         node.add(newNode);
         
-        if(child.isDirectoryNode())
+        if(child.isDirectoryNode()) {
           updatePluginTree(newNode,child);
-        else {
+        } else {
           Action editFavorite = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
               FavoritesPlugin.getInstance().editFavorite(child.getFavorite());
@@ -1082,13 +1122,14 @@ DropTargetListener {
           
           Program[] progArr = child.getFavorite().getWhiteListPrograms();
             
-          if(progArr.length <= 10)
+          if(progArr.length <= 10) {
             newNode.setGroupingByDateEnabled(false);
+          }
           
-          for (int j=0; j<progArr.length; j++) {
-            PluginTreeNode pNode = newNode.addProgram(progArr[j]);
+          for (Program program : progArr) {
+            PluginTreeNode pNode = newNode.addProgram(program);
             
-            int numberOfDays = progArr[j].getDate().getNumberOfDaysSince(Date.getCurrentDate());
+            int numberOfDays = program.getDate().getNumberOfDaysSince(Date.getCurrentDate());
             if ((progArr.length <= 10) || (numberOfDays > 1)) {
               pNode.setNodeFormatter(new NodeFormatter() {
                 public String format(ProgramItem pitem) {
@@ -1111,16 +1152,18 @@ DropTargetListener {
     Date d = p.getDate();
     String progdate;
 
-    if (d.equals(Date.getCurrentDate()))
+    if (d.equals(Date.getCurrentDate())) {
       progdate = mLocalizer.msg("today", "today");
-    else if (d.equals(Date.getCurrentDate().addDays(1)))
+    } else if (d.equals(Date.getCurrentDate().addDays(1))) {
       progdate = mLocalizer.msg("tomorrow", "tomorrow");
-    else
+    } else {
       progdate = p.getDateString();
+    }
 
     String description = progdate + "  " + p.getTimeString(); 
-    if(favorite.getName().compareTo(p.getTitle()) != 0)
+    if(favorite.getName().compareTo(p.getTitle()) != 0) {
       description = description + "  " + p.getTitle();
+    }
     String episode = p.getTextField(ProgramFieldType.EPISODE_TYPE);
     if (episode != null && (! episode.trim().equalsIgnoreCase(""))) {
       if (episode.length()<=3) {
@@ -1151,10 +1194,11 @@ DropTargetListener {
         
         srcParent.remove(src);
         
-        if(n > -1)
+        if(n > -1) {
           tarParent.insert(src,n);
-        else
+        } else {
           tarParent.add(src);
+        }
         
         reload(srcParent);
         reload(tarParent);

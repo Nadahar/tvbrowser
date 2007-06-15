@@ -172,7 +172,7 @@ public class FavoritesSettingTab implements SettingsTab {
     FavoritesPlugin.getInstance().setShowRepetitions(mShowRepetitions.isSelected());
     FavoritesPlugin.getInstance().setAutoSelectingReminder(mAutoSelectRemider.isSelected());
     
-    new Thread() {
+    new Thread("Save favorite settings") {
       public void run() {
         FavoritesPlugin.getInstance().store();
       }

@@ -315,7 +315,7 @@ public class ReminderSettingsTab implements SettingsTab {
               });
             }
             else if(mTestSound instanceof Sequencer) {
-              new Thread() {
+              new Thread("Test MIDI sound") {
                 public void run() {
                   setPriority(Thread.MIN_PRIORITY);
                   while(((Sequencer)mTestSound).isRunning()) {
@@ -489,7 +489,7 @@ public class ReminderSettingsTab implements SettingsTab {
     mSettings.setProperty("showTimeCounter", String.valueOf(!mCloseNever.isSelected() && mShowTimeCounter.isSelected()));
     mSettings.setProperty("alwaysOnTop", String.valueOf(mShowAlwaysOnTop.isSelected()));
     
-    new Thread() {
+    new Thread("Save reminders") {
       public void run() {
         ReminderPlugin.getInstance().store();
       }

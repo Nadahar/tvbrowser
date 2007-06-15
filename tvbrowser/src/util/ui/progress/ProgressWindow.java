@@ -74,7 +74,7 @@ public class ProgressWindow implements devplugin.ProgressMonitor {
   }
 
   public void run(final Progress progress) {
-    Thread thread = new Thread() {
+    Thread thread = new Thread("Progress window") {
       public void run() {
         progress.run();
         while (!mDialog.isVisible()) {
@@ -88,9 +88,9 @@ public class ProgressWindow implements devplugin.ProgressMonitor {
   }
 
   public void setMaximum(int maximum) {
-    if(maximum == -1)
+    if(maximum == -1) {
       mBar.setVisible(false);
-    else {
+    } else {
       mBar.setMaximum(maximum);
       mBar.setVisible(true);
       mBar.setStringPainted(true);

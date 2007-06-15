@@ -113,7 +113,7 @@ class FinderItem extends JComponent implements ProgressMonitor {
     remove(mLabel);
     add(mProgressBar,BorderLayout.CENTER);
     final ProgressMonitor monitor=this;
-    Thread thread=new Thread(){
+    Thread thread=new Thread("Finder"){
       public void run() {
         listener.dateChanged(mDate, monitor, callback);
         stopProgress();

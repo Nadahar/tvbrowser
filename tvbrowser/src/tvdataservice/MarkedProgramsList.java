@@ -70,7 +70,7 @@ public class MarkedProgramsList {
   
   private Thread getProgramTableRefreshThread() {
     mProgramTableRefreshThreadWaitTime = 500;
-    return new Thread() {
+    return new Thread("Program table refresh") {
       public void run() {
         while(mProgramTableRefreshThreadWaitTime > 0) {
           try {

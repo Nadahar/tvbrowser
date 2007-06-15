@@ -305,8 +305,9 @@ public class Localizer {
    * @since 2.5.1
    */
   public String msg(String key, String defaultMsg, boolean warn) {
-    if(mBundle != null && (mBundle.getLocale() != Locale.getDefault()))
+    if(mBundle != null && (mBundle.getLocale() != Locale.getDefault())) {
       loadResouceBundle();
+    }
     
     key = mKeyPrefix + key;
     
@@ -333,7 +334,7 @@ public class Localizer {
         //             can return and the error log gets its message and can
         //             unlock the logging.
         final String fkey = key;
-        Thread logThread = new Thread() {
+        Thread logThread = new Thread("Log missing resource") {
           public void run() {
             mLog.warning("Key '" + fkey + "' not found in resource bundle '" + mBaseName + "'");
           }
@@ -408,8 +409,9 @@ public class Localizer {
         for (String string : files) {
           if (string.startsWith("tvbrowser_") && string.endsWith(".properties")) {
             Locale loc = getLocaleForString(string.substring(10, string.lastIndexOf(".properties")));
-            if (!langArray.contains(loc))
+            if (!langArray.contains(loc)) {
               langArray.add(loc);
+            }
           }
         }
       }
@@ -436,60 +438,62 @@ public class Localizer {
   }
   
   public static String getLocalization(String key) {
-    if(mLocalizer == null) 
+    if(mLocalizer == null) {
       mLocalizer = Localizer.getLocalizerFor(Localizer.class);
+    }
     
     String value = mLocalizer.msg(key,null);
     
     if(value == null) {
-      if(key.equals(I18N_OK))
+      if(key.equals(I18N_OK)) {
         value = "OK";
-      else if(key.equals(I18N_CANCEL))
+      } else if(key.equals(I18N_CANCEL)) {
         value = "Cancel";
-      else if(key.equals(I18N_CLOSE))
+      } else if(key.equals(I18N_CLOSE)) {
         value = "Close";
-      else if(key.equals(I18N_DELETE))
+      } else if(key.equals(I18N_DELETE)) {
         value = "Delete";
-      else if(key.equals(I18N_EDIT))
+      } else if(key.equals(I18N_EDIT)) {
         value = "Edit";
-      else if(key.equals(I18N_PROGRAM))
+      } else if(key.equals(I18N_PROGRAM)) {
         value = "Program";
-      else if(key.equals(I18N_PROGRAMS))
+      } else if(key.equals(I18N_PROGRAMS)) {
         value = "Programs";
-      else if(key.equals(I18N_CHANNEL))
+      } else if(key.equals(I18N_CHANNEL)) {
         value = "Channel";
-      else if(key.equals(I18N_CHANNELS))
+      } else if(key.equals(I18N_CHANNELS)) {
         value = "Channels";
-      else if(key.equals(I18N_HELP))
+      } else if(key.equals(I18N_HELP)) {
         value = "Help";
-      else if(key.equals(I18N_FILE))
+      } else if(key.equals(I18N_FILE)) {
         value = "File";
-      else if(key.equals(I18N_ADD))
+      } else if(key.equals(I18N_ADD)) {
         value = "Add";
-      else if(key.equals(I18N_SETTINGS))
+      } else if(key.equals(I18N_SETTINGS)) {
         value = "Settings";
-      else if(key.equals(I18N_UP))
+      } else if(key.equals(I18N_UP)) {
         value = "Up";
-      else if(key.equals(I18N_DOWN))
+      } else if(key.equals(I18N_DOWN)) {
         value = "Down";
-      else if(key.equals(I18N_LEFT))
+      } else if(key.equals(I18N_LEFT)) {
         value = "Left";
-      else if(key.equals(I18N_RIGHT))
+      } else if(key.equals(I18N_RIGHT)) {
         value = "Right";
-      else if(key.equals(I18N_BACK))
+      } else if(key.equals(I18N_BACK)) {
         value = "Back";
-      else if(key.equals(I18N_NEXT))
+      } else if(key.equals(I18N_NEXT)) {
         value = "Next";
-      else if(key.equals(I18N_PICTURES))
+      } else if(key.equals(I18N_PICTURES)) {
         value = "Pictures";
-      else if(key.equals(I18N_OPTIONS))
+      } else if(key.equals(I18N_OPTIONS)) {
         value = "Options";
-      else if(key.equals(I18N_SELECT))
+      } else if(key.equals(I18N_SELECT)) {
         value = "Select";
-      else if(key.equals(I18N_ERROR))
+      } else if(key.equals(I18N_ERROR)) {
         value = "Error";
-      else if(key.equals(I18N_DEFAULT))
+      } else if(key.equals(I18N_DEFAULT)) {
         value = "Default";
+      }
     }
     
     return value;

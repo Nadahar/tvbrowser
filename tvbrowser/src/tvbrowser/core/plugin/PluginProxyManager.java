@@ -489,7 +489,7 @@ public class PluginProxyManager {
     
     // Run through all Programs and umark this Plugin
     if(plugin != null && !MainFrame.isShuttingDown()) {
-      new Thread() {
+      new Thread("Unmark all programs of plugin") {
         public void run() {
           setPriority(Thread.MIN_PRIORITY);
 
