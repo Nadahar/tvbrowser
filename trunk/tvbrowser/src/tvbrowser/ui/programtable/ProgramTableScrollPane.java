@@ -26,6 +26,9 @@
 package tvbrowser.ui.programtable;
 
 import java.awt.Point;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.beans.PropertyChangeEvent;
@@ -92,6 +95,23 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
     handleBackgroundPainterChanged(mProgramTable.getBackgroundPainter());
     
     getViewport().addChangeListener(this);
+    
+    addKeyListener(new KeyListener() {
+
+      public void keyPressed(KeyEvent e) {
+        // TODO Auto-generated method stub
+        
+      }
+
+      public void keyReleased(KeyEvent e) {
+        // TODO Auto-generated method stub
+        
+      }
+
+      public void keyTyped(KeyEvent e) {
+        // TODO Auto-generated method stub
+        
+      }});
   }
 
   public ProgramTable getProgramTable() {
@@ -106,10 +126,12 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
 
   public void repaint() {
     super.repaint();
-    if (mProgramTable != null)
+    if (mProgramTable != null) {
       mProgramTable.repaint();
-    if (mChannelPanel != null)
+    }
+    if (mChannelPanel != null) {
       mChannelPanel.repaint();
+    }
   }
 
   public void updateChannelPanel() {
@@ -186,7 +208,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
   public void mouseWheelMoved(MouseWheelEvent e) {
 
     if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
-      if ((e.getModifiersEx() & MouseWheelEvent.SHIFT_DOWN_MASK) != 0) {
+      if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0) {
         int amount = e.getUnitsToScroll() * getHorizontalScrollBar().getUnitIncrement();
         getHorizontalScrollBar().setValue(getHorizontalScrollBar().getValue() + amount);
       } else {

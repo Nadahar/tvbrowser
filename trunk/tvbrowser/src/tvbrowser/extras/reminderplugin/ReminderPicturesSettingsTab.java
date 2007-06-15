@@ -63,16 +63,18 @@ public class ReminderPicturesSettingsTab extends AbstractSettingsTab {
       
       String[] plugins = mPictureSettings.getClientPluginIds();
       
-      for(int i = 0; i < plugins.length; i++)
-        temp.append(plugins[i]).append(";;");
+      for (String pluginId : plugins) {
+        temp.append(pluginId).append(";;");
+      }
       
-      if(temp.toString().endsWith(";;"))
+      if(temp.toString().endsWith(";;")) {
         temp.delete(temp.length()-2,temp.length());
+      }
       
       ReminderPlugin.getInstance().getSettings().setProperty("picturePlugins", temp.toString());
     }
     
-    new Thread() {
+    new Thread("Save reminders") {
       public void run() {
         ReminderPlugin.getInstance().store();
       }

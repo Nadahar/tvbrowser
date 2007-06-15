@@ -95,7 +95,7 @@ public class MonitoringErrorStream extends OutputStream {
           
           // This thread loggs the error when no more lines arrived after a
           // waiting time.
-          Thread pollThread = new Thread() {
+          Thread pollThread = new Thread("Error logging") {
             public void run() {
               mCaptureThreadIsRunning = true;
   

@@ -103,7 +103,7 @@ public class ReminderTimerListener {
     
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        new Thread() {
+        new Thread("Update reminder tree") {
           public void run() {
             setPriority(Thread.MIN_PRIORITY);
             ReminderPlugin.getInstance().updateRootNode(true);

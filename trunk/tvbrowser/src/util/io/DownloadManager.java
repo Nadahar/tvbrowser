@@ -78,7 +78,7 @@ public class DownloadManager {
     }
     
     for (int i = 0; i < mConcurrentDownloads; i++) {
-      Thread downloadThread = new Thread() {
+      Thread downloadThread = new Thread("Download manager") {
         public void run() {
           downloadThreadRun();
         }

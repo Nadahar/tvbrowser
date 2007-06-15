@@ -152,15 +152,16 @@ public class FavoritesPlugin {
 
       Favorite[] favoriteArr = FavoriteTree.getInstance().getFavoriteArr();
       
-      for (int i = 0; i < favoriteArr.length; i++) {
-        if (favoriteArr[i].isRemindAfterDownload() && favoriteArr[i].getNewPrograms().length > 0)
-          showInfoFavorites.add(favoriteArr[i]);
+      for (Favorite favorite : favoriteArr) {
+        if (favorite.isRemindAfterDownload() && favorite.getNewPrograms().length > 0) {
+          showInfoFavorites.add(favorite);
+        }
       }
 
       if(!showInfoFavorites.isEmpty()) {
         mUpdateFavorites = showInfoFavorites.toArray(new Favorite[showInfoFavorites.size()]);
 
-        new Thread() {
+        new Thread("Manage favorites") {
           public void run() {
             showManageFavoritesDialog(true, mUpdateFavorites);
           }
@@ -170,23 +171,26 @@ public class FavoritesPlugin {
   }
   
   public static FavoritesPlugin getInstance() {
-    if (mInstance == null)
+    if (mInstance == null) {
       new FavoritesPlugin();
+    }
     return mInstance;
   }
   
   public void handleTvBrowserStartFinished() {
     if(!mPendingFavorites.isEmpty()) {
-      for(AdvancedFavorite fav : mPendingFavorites)
+      for(AdvancedFavorite fav : mPendingFavorites) {
         fav.loadPendingFilter();
+      }
       
       mPendingFavorites.clear();
     }
     
     mHasRightToUpdate = true;
     
-    if(mHasToUpdate)
-      handleTvDataUpdateFinsihed();    
+    if(mHasToUpdate) {
+      handleTvDataUpdateFinsihed();
+    }    
   }
 
   private void load() {
@@ -272,11 +276,10 @@ public class FavoritesPlugin {
       newFavoriteArr = FavoriteTree.getInstance().getFavoriteArr();
     }
 
-    // mark all the favorites
-    for (int i = 0; i < newFavoriteArr.length; i++) {
-      Program[] programArr = newFavoriteArr[i].getWhiteListPrograms();
-      for (int j = 0; j < programArr.length; j++) {
-        programArr[j].mark(FavoritesPluginProxy.getInstance());
+    for (Favorite newFavorite : newFavoriteArr) {
+      Program[] programArr = newFavorite.getWhiteListPrograms();
+      for (Program program : programArr) {
+        program.mark(FavoritesPluginProxy.getInstance());
       }
     }
 
@@ -299,34 +302,41 @@ public class FavoritesPlugin {
           id = (String) in.readObject();
         }
 
-        if(version <= 2)
-          if(id.compareTo("java.reminderplugin.ReminderPlugin") == 0)
+        if(version <= 2) {
+          if(id.compareTo("java.reminderplugin.ReminderPlugin") == 0) {
             reminderFound = true;
+          }
+        }
         
-        if(version > 2 || (version <= 2 && id.compareTo("java.reminderplugin.ReminderPlugin") != 0))
+        if(version > 2 || (version <= 2 && id.compareTo("java.reminderplugin.ReminderPlugin") != 0)) {
           list.add(ProgramReceiveTarget.createDefaultTargetForProgramReceiveIfId(id));
+        }
       }
       
-      if(!list.isEmpty())
+      if(!list.isEmpty()) {
         mClientPluginTargets = list.toArray(new ProgramReceiveTarget[list.size()]);
+      }
     }
     else {
       int n = in.readInt();
       mClientPluginTargets = new ProgramReceiveTarget[n];
       
-      for (int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++) {
         mClientPluginTargets[i] = new ProgramReceiveTarget(in);
+      }
     }
 
     if(version <= 2 && reminderFound) {
-      for(int i = 0; i < newFavoriteArr.length; i++)
-        newFavoriteArr[i].getReminderConfiguration().setReminderServices(new String[] {ReminderConfiguration.REMINDER_DEFAULT});
+      for (Favorite newFavorite : newFavoriteArr) {
+        newFavorite.getReminderConfiguration().setReminderServices(new String[] {ReminderConfiguration.REMINDER_DEFAULT});
+      }
       
       updateAllFavorites();
     }
 
-    if(version >= 4)
+    if(version >= 4) {
       this.mShowInfoOnNewProgramsFound = in.readBoolean();
+    }
   }
 
 
@@ -363,8 +373,9 @@ public class FavoritesPlugin {
     monitor.setMessage("");
     monitor.setValue(0);
     
-    if(!mSendPluginsTable.isEmpty())
+    if(!mSendPluginsTable.isEmpty()) {
       sendToPlugins();
+    }
   }
   
   private void sendToPlugins() {
@@ -374,8 +385,9 @@ public class FavoritesPlugin {
     for(ProgramReceiveTarget target : targets) {
       ArrayList<Program> list = mSendPluginsTable.get(target);
       
-      if(!target.getReceifeIfForIdOfTarget().receivePrograms(list.toArray(new Program[list.size()]),target))
+      if(!target.getReceifeIfForIdOfTarget().receivePrograms(list.toArray(new Program[list.size()]),target)) {
         buffer.append(target.getReceifeIfForIdOfTarget().toString()).append(" - ").append(target.toString()).append("\n");
+      }
     }
     
     if(buffer.length() > 0) {
@@ -401,9 +413,11 @@ public class FavoritesPlugin {
           mSendPluginsTable.put(target, list);
         }
       
-        for(Program program : programs)
-          if(!list.contains(program))
+        for(Program program : programs) {
+          if(!list.contains(program)) {
             list.add(program);
+          }
+        }
       }
     }
   }
@@ -519,8 +533,9 @@ public class FavoritesPlugin {
             
             JOptionPane.showMessageDialog(e.getComponent(),o);
 
-            if(chb.isSelected())
+            if(chb.isSelected()) {
               mShowInfoOnNewProgramsFound = false;
+            }
           }    
         }
       });
@@ -586,8 +601,9 @@ public class FavoritesPlugin {
         favorite.updatePrograms();
         FavoriteTree.getInstance().addFavorite(favorite);
         
-        if(ManageFavoritesDialog.getInstance() != null)
+        if(ManageFavoritesDialog.getInstance() != null) {
           ManageFavoritesDialog.getInstance().addFavorite(favorite, null);
+        }
         
       }catch (TvBrowserException exc) {
         ErrorHandler.handle(mLocalizer.msg("couldNotUpdateFavorites","Could not update favorites."), exc);
@@ -624,7 +640,7 @@ public class FavoritesPlugin {
       }
     }
     
-    new Thread() {
+    new Thread("Save favorites") {
       public void run() {
         store();
       }
@@ -645,8 +661,9 @@ public class FavoritesPlugin {
           ErrorHandler.handle(mLocalizer.msg("couldNotUpdateFavorites","Could not update favorites."), exc);
         }
       }
-      else if(exclusion instanceof String && exclusion.equals("blacklist"))
+      else if(exclusion instanceof String && exclusion.equals("blacklist")) {
         fav.addToBlackList(program);
+      }
     }
   }
 
@@ -658,7 +675,7 @@ public class FavoritesPlugin {
               JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
       FavoriteTree.getInstance().deleteFavorite(fav);
       
-      new Thread() {
+      new Thread("Save favorites") {
         public void run() {
           store();
         }
@@ -715,7 +732,7 @@ public class FavoritesPlugin {
     ReminderPlugin.getInstance().updateRootNode(mHasRightToSave);
     
     if(save && mHasRightToSave) {
-      new Thread() {
+      new Thread("Save favorites") {
         public void run() {
           store();
         }
@@ -734,10 +751,10 @@ public class FavoritesPlugin {
 
   public ProgramReceiveTarget[] getDefaultClientPluginsTargets() {
     ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>();
-    for (int i=0; i<mClientPluginTargets.length; i++) {
-      ProgramReceiveIf plugin = mClientPluginTargets[i].getReceifeIfForIdOfTarget();
+    for (ProgramReceiveTarget target : mClientPluginTargets) {
+      ProgramReceiveIf plugin = target.getReceifeIfForIdOfTarget();
       if (plugin != null && (plugin.canReceivePrograms() || plugin.canReceiveProgramsWithTarget())) {
-        list.add(mClientPluginTargets[i]);
+        list.add(target);
       }
     }
     return list.toArray(new ProgramReceiveTarget[list.size()]);
@@ -798,8 +815,9 @@ public class FavoritesPlugin {
     if(mMarkPriority == - 2 && mSettings != null) {
       mMarkPriority = Integer.parseInt(mSettings.getProperty("markPriority",String.valueOf(Program.MIN_MARK_PRIORITY)));
       return mMarkPriority;
-    } else
+    } else {
       return mMarkPriority;
+    }
   }
   
   protected void setMarkPriority(int priority) {
@@ -810,13 +828,14 @@ public class FavoritesPlugin {
     for(Favorite favorite: favoriteArr) {
       Program[] programs = favorite.getWhiteListPrograms();
       
-      for(Program program : programs)
+      for(Program program : programs) {
         program.validateMarking();
+      }
     }
     
     mSettings.setProperty("markPriority",String.valueOf(priority));
     
-    new Thread() {
+    new Thread("Save favorites") {
       public void run() {
         store();
       }

@@ -43,6 +43,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
 
 import printplugin.PrintPlugin;
 import printplugin.printer.singleprogramprinter.DocumentRenderer;
@@ -119,7 +120,7 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
     JButton printerSetupBtn = new JButton(SettingsDialog.mLocalizer.msg("printer","Drucker")+"...",PrintPlugin.getInstance().createImageIcon("devices", "printer", 16));
     printerSetupBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        new Thread() {
+        new Thread("Printer setup") {
           public void run() {
             printerJob.printDialog();
           }
@@ -130,7 +131,7 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
     JButton pageBtn = new JButton(SettingsDialog.mLocalizer.msg("page","Seite")+"...", PrintPlugin.getInstance().createImageIcon("actions", "document-properties", 16));
     pageBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        new Thread(){
+        new Thread("Document setup (printing)"){
           public void run(){
             if (mPageFormat == null) {
               mPageFormat = printerJob.defaultPage();
@@ -199,8 +200,8 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
     if(!hasIcons) {
       PluginAccess[] plugins = Plugin.getPluginManager().getActivatedPlugins();
         
-      for (int i = 0; i < plugins.length; i++) {
-        Icon[] ico = plugins[i].getProgramTableIcons(program);
+      for (PluginAccess pluginAccess : plugins) {
+        Icon[] ico = pluginAccess.getProgramTableIcons(program);
 
         if (ico != null && ico.length > 0) {
           hasIcons = true;
@@ -222,14 +223,16 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
     b1.addSeparator(mLocalizer.msg("order","Info fields and order"), cc.xyw(1,5,2));
     b1.add(fieldChooser, cc.xyw(1,7,2));
     
-    if(hasIcons)
+    if(hasIcons) {
       b1.add(printPluginIcons, cc.xy(2,9));
+    }
     
     if(hasImage) {
-      if(hasIcons)
+      if(hasIcons) {
         b1.add(printImage, cc.xy(2,10));
-      else
+      } else {
         b1.add(printImage, cc.xy(2,9));
+      }
     }
     
     b2.add(printerSetupBtn, cc.xy(3,1));
@@ -237,7 +240,7 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
     b2.add(previewBtn, cc.xy(3,5));
     b2.add(print,cc.xy(3,7));
     b2.add(cancel,cc.xy(3,9));
-    b2.add(new JSeparator(JSeparator.VERTICAL), cc.xywh(1,1,1,9));
+    b2.add(new JSeparator(SwingConstants.VERTICAL), cc.xywh(1,1,1,9));
     
     JPanel main = new JPanel(new BorderLayout());
     main.add(b1.getPanel(), BorderLayout.CENTER);

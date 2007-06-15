@@ -187,15 +187,15 @@ public class TVBrowser {
 
     // Read the command line parameters
     boolean showSplashScreen = true;
-    for (int i = 0; i < args.length; i++) {
-      if (args[i].equalsIgnoreCase("-minimized")) {
+    for (String argument : args) {
+      if (argument.equalsIgnoreCase("-minimized")) {
         Settings.propMinimizeAfterStartup.setBoolean(true);
-      } else if (args[i].equalsIgnoreCase("-nosplash")) {
+      } else if (argument.equalsIgnoreCase("-nosplash")) {
         showSplashScreen = false;
-      } else if (args[i].startsWith("-D")) {
-          if (args[i].indexOf("=") > 0) {
-              String key = args[i].substring(2, args[i].indexOf("="));
-              String value = args[i].substring(args[i].indexOf("=")+1);              
+      } else if (argument.startsWith("-D")) {
+          if (argument.indexOf("=") > 0) {
+              String key = argument.substring(2, argument.indexOf("="));
+              String value = argument.substring(argument.indexOf("=")+1);              
               if (key.equals("user.language")) {
                 System.getProperties().setProperty("user.language",value);
                 Locale.setDefault(new Locale(value));
@@ -203,10 +203,10 @@ public class TVBrowser {
                   System.setProperty(key, value);
               }
           } else {
-              mLog.warning("Wrong Syntax in parameter: '" + args[i] + "'");
+              mLog.warning("Wrong Syntax in parameter: '" + argument + "'");
           }
       } else {
-        mLog.warning("Unknown command line parameter: '" + args[i] + "'");
+        mLog.warning("Unknown command line parameter: '" + argument + "'");
       }
     }
     
@@ -225,8 +225,9 @@ public class TVBrowser {
       System.exit(1);
     }
 
-    if(mIsTransportable)
+    if(mIsTransportable) {
       System.getProperties().remove("propertiesfile");
+    }
     
     // setup logging
 
@@ -380,7 +381,7 @@ public class TVBrowser {
         SwingUtilities.invokeLater(new Runnable(){
           public void run() {
             mainFrame.updateUI();
-            new Thread() {
+            new Thread("Start finished callbacks") {
               public void run() {
                 GlobalPluginProgramFormatingManager.getInstance();
                 PluginProxyManager.getInstance().fireTvBrowserStartFinished();
@@ -454,7 +455,7 @@ public class TVBrowser {
 
     // Every 5 minutes we store all the settings so they are stored in case of
     // an unexpected failure
-    Thread saveThread = new Thread() {
+    Thread saveThread = new Thread("Store settings periodically") {
       public void run() {
         mSaveThreadShouldStop = false;
         while (! mSaveThreadShouldStop) {
@@ -465,8 +466,9 @@ public class TVBrowser {
             // ignore
           }
 
-          if(!mSaveThreadShouldStop && !TvDataUpdater.getInstance().isDownloading())
+          if(!mSaveThreadShouldStop && !TvDataUpdater.getInstance().isDownloading()) {
             flushSettings(true);
+          }
         }
       }
     };
@@ -474,7 +476,7 @@ public class TVBrowser {
     saveThread.start();
 
      // register the shutdown hook
-    Runtime.getRuntime().addShutdownHook(new Thread() {
+    Runtime.getRuntime().addShutdownHook(new Thread("Shutdown hook") {
       public void run() {
         deleteLockFile();
         MainFrame.getInstance().quit(false);
@@ -490,8 +492,9 @@ public class TVBrowser {
   private static boolean createLockFile() {
     String dir = Settings.getUserDirectoryName();
     
-    if(!new File(dir).isDirectory())
+    if(!new File(dir).isDirectory()) {
       new File(dir).mkdirs();
+    }
       
     File lockFile = new File(dir, ".lock");
 
@@ -500,8 +503,9 @@ public class TVBrowser {
         mLockFile = new RandomAccessFile(lockFile.toString(),"rw");
         mLock = mLockFile.getChannel().tryLock();
 
-        if(mLock == null)
+        if(mLock == null) {
           return false;
+        }
       }catch(Exception e) {
         return false;
       }
@@ -512,8 +516,9 @@ public class TVBrowser {
         mLockFile = new RandomAccessFile(lockFile.toString(),"rw");
         mLock = mLockFile.getChannel().tryLock();
       }catch(Exception e){
-        if(e instanceof IOException)
+        if(e instanceof IOException) {
           mLog.log(Level.WARNING, e.getLocalizedMessage(), e);
+        }
       }
     }
 
@@ -657,8 +662,9 @@ public class TVBrowser {
     if ((mainFrame == null) || (mainFrame.getWidth() == 0)) {
       return;
     }
-    if(log)
+    if(log) {
       mLog.info("Channel Settings (day light saving time corrections/icons)");
+    }
     ChannelList.storeAllSettings();
 
     SearchPlugin.getInstance().store();
@@ -680,8 +686,9 @@ public class TVBrowser {
       }
     }
 
-    if(log)
+    if(log) {
       mLog.info("Storing settings");
+    }
     try {
       Settings.storeSettings();
     } catch (TvBrowserException e) {
@@ -693,10 +700,11 @@ public class TVBrowser {
     if(mMainWindowAdapter == null) {
       mMainWindowAdapter = new java.awt.event.WindowAdapter() {
         public void windowClosing(java.awt.event.WindowEvent e) {
-          if (Settings.propOnlyMinimizeWhenWindowClosing.getBoolean())
+          if (Settings.propOnlyMinimizeWhenWindowClosing.getBoolean()) {
             MainFrame.getInstance().setExtendedState(JFrame.ICONIFIED);
-          else
+          } else {
             mainFrame.quit();
+          }
         }
       };
     }
@@ -716,12 +724,14 @@ public class TVBrowser {
    * Loads the tray icon.
    */
   public static void loadTray() {
-    if(!mTray.isTrayUsed())
+    if(!mTray.isTrayUsed()) {
       mTray.initSystemTray();
+    }
     if(mTray.isTrayUsed()) {
       mTray.createMenus();
-      if(mMainWindowAdapter != null)
+      if(mMainWindowAdapter != null) {
         mainFrame.removeWindowListener(mMainWindowAdapter);
+      }
     }
   }
   
@@ -791,8 +801,9 @@ public class TVBrowser {
         else {
           proxies = TvDataServiceProxyManager.getInstance().getTvDataServices(dataServiceIDs);
         }
-        if(mainFrame.licenseForTvDataServicesWasAccepted(proxies))
+        if(mainFrame.licenseForTvDataServicesWasAccepted(proxies)) {
           mainFrame.runUpdateThread(Settings.propAutoDownloadPeriod.getInt(), proxies);
+        }
       }
       return true;
     }

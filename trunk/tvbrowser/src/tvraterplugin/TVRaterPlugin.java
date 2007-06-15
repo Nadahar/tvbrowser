@@ -399,7 +399,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
     private void updateDB() {
         final TVRaterPlugin tvrater = this;
 
-        Thread updateThread = new Thread() {
+        Thread updateThread = new Thread("TV Rater update") {
             public void run() {
                 Updater up = new Updater(tvrater);
                 up.run();

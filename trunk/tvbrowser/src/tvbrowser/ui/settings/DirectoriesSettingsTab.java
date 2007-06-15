@@ -96,28 +96,31 @@ public class DirectoriesSettingsTab implements SettingsTab {
     final File currentDir = new File(mCurrentTvDataDir);
     final File newDir = new File(mTVDataFolderPanel.getText());
     
-    if(!newDir.exists())
+    if(!newDir.exists()) {
       newDir.mkdirs();
+    }
     
     if(!currentDir.equals(newDir)) {      
       
         Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
         
-        if(w instanceof JFrame)
+        if(w instanceof JFrame) {
           mWaitingDlg = new TvDataCopyWaitingDlg((JFrame)w, true);
-        else
+        } else {
           mWaitingDlg = new TvDataCopyWaitingDlg((JDialog)w, true);
+        }
         
         mShowWaiting = true;
         
-        new Thread() {
+        new Thread("Move TV data directory") {
           public void run() {
             try {
               IOUtilities.copy(newDir.getName().toLowerCase().equals("tvdata") ? currentDir.listFiles() : new File[] {currentDir}, newDir, true);
               Settings.propTVDataDirectory.setString((newDir.getName().equalsIgnoreCase("tvdata") ? newDir.getParentFile() : newDir).toString().replaceAll("\\\\","/") + "/" + currentDir.getName());
             } catch (IOException e) {              
-              if(!currentDir.exists() && newDir.exists())
+              if(!currentDir.exists() && newDir.exists()) {
                 Settings.propTVDataDirectory.setString((newDir.getName().equalsIgnoreCase("tvdata") ? newDir.getParentFile() : newDir).toString().replaceAll("\\\\","/") + "/" + currentDir.getName());
+              }
             }
             
             mShowWaiting = false;

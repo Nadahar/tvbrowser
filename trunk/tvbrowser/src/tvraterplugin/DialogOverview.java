@@ -291,7 +291,7 @@ public class DialogOverview extends JDialog implements WindowClosingIf {
    * Updates the Database from the Server
    */
   protected void update() {
-    Thread updateThread = new Thread() {
+    Thread updateThread = new Thread("TV rater update") {
 
       public void run() {
 
