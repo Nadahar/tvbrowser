@@ -72,9 +72,46 @@ public class DreamboxConnector {
      * @param service Service-ID
      * @return Data of specific service
      */
+    public TreeMap<String, String> getServiceDataBonquets(String service) {
+        try {
+            URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/web/getservices?bRef=" + service);
+
+            URLConnection connection = url.openConnection();
+
+            String userpassword = mConfig.getUserName() + ":" + mConfig.getPassword();
+            String encoded = new sun.misc.BASE64Encoder().encode (userpassword.getBytes());
+            connection.setRequestProperty  ("Authorization", "Basic " + encoded);
+
+            connection.setConnectTimeout(10);
+            InputStream stream = connection.getInputStream();
+
+            SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
+
+            DreamboxHandler handler = new DreamboxHandler();
+
+            saxParser.parse(stream, handler);
+
+            return handler.getData();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * @param service Service-ID
+     * @return Data of specific service
+     */
     public TreeMap<String, String> getServiceData(String service) {
         try {
-            URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/web/fetchchannels?ServiceListBrowse=" + service);
+            URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/web/getservices?sRef=" + service);
 
             URLConnection connection = url.openConnection();
 
@@ -112,7 +149,7 @@ public class DreamboxConnector {
         try {
             ArrayList<DreamboxChannel> allChannels = new ArrayList<DreamboxChannel>();
 
-            TreeMap<String, String> bouquets = getServiceData(URLEncoder.encode(BOUQUETLIST, "UTF8"));
+            TreeMap<String, String> bouquets = getServiceDataBonquets(URLEncoder.encode(BOUQUETLIST, "UTF8"));
 
             for (String key : bouquets.keySet()) {
                 String bouqetName = bouquets.get(key);
@@ -137,7 +174,7 @@ public class DreamboxConnector {
      */
     public void switchToChannel(DreamboxChannel channel) {
         try {
-            URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/web/zap?ZapTo=" + URLEncoder.encode(channel.getReference(), "UTF8"));
+            URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/web/zap?sRef=" + URLEncoder.encode(channel.getReference(), "UTF8"));
             URLConnection connection = url.openConnection();
 
             String userpassword = mConfig.getUserName() + ":" + mConfig.getPassword();
@@ -320,7 +357,7 @@ public class DreamboxConnector {
                     "&ehour=" + end.get(Calendar.HOUR_OF_DAY)+
                     "&emin=" + end.get(Calendar.MINUTE)+
 
-                    "&serviceref=" + URLEncoder.encode(dreamboxChannel.getName() +"|"+dreamboxChannel.getReference(), "UTF8") +
+                    "&sRef=" + URLEncoder.encode(dreamboxChannel.getName() +"|"+dreamboxChannel.getReference(), "UTF8") +
                     "&name=" + URLEncoder.encode(prgTime.getProgram().getTitle(), "UTF8") +
                     "&description=" + URLEncoder.encode(shortInfo, "UTF8") +
 
@@ -395,7 +432,7 @@ public class DreamboxConnector {
                     "&ehour=" + end.get(Calendar.HOUR_OF_DAY)+
                     "&emin=" + end.get(Calendar.MINUTE)+
 
-                    "&serviceref=" + URLEncoder.encode(dreamboxChannel.getName() +"|"+dreamboxChannel.getReference(), "UTF8") +
+                    "&sRef=" + URLEncoder.encode(dreamboxChannel.getName() +"|"+dreamboxChannel.getReference(), "UTF8") +
                     "&name=" + URLEncoder.encode(prgTime.getProgram().getTitle(), "UTF8") +
                     "&description=" + URLEncoder.encode(shortInfo, "UTF8") +
 
