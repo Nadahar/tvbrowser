@@ -173,7 +173,7 @@ public class CapturePlugin extends devplugin.Plugin {
         String author = "Bodo Tasche, Andreas Hessel";
         String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Capture_Plugin");
 
-        return new PluginInfo(name, desc, author, helpUrl, new Version(2, 12));
+        return new PluginInfo(name, desc, author, helpUrl, new Version(2, 13));
     }
 
     /**
