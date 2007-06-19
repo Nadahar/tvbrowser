@@ -1076,6 +1076,9 @@ public class Settings {
   public static final BooleanProperty propShowDatelist = new BooleanProperty(
       mProp, "show.datelist", true);
 
+  public static final BooleanProperty propShowFilterBar = new BooleanProperty(
+      mProp, "show.filterbar", true);
+
   public static final SplitViewProperty propViewRoot = new SplitViewProperty(
       mProp, "view.root", false, true, 50);
 
