@@ -88,7 +88,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
   private MainFrame mMainFrame;
 
   protected JMenuItem mSettingsMI, mQuitMI, mToolbarMI, mStatusbarMI, mTimeBtnsMI, mDatelistMI,
-                    mChannellistMI, mPluginOverviewMI, mUpdateMI,
+                    mChannellistMI, mPluginOverviewMI, mViewFilterBarMI, mUpdateMI,
                     mPluginManagerMI, mDonorMI, mFaqMI, mForumMI, mWebsiteMI, mHandbookMI,
                     mConfigAssistantMI, mAboutMI, mKeyboardShortcutsMI,
                     mPreviousDayMI, mNextDayMI, mGotoNowMenuItem, mEditTimeButtonsMenuItem,
@@ -164,6 +164,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mPluginOverviewMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.pluginOverview","Plugin overview"));
     mPluginOverviewMI.setSelected(Settings.propShowPluginView.getBoolean());
     mPluginOverviewMI.addActionListener(this);
+    mViewFilterBarMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.viewFilterBar","Filter bar"));
+    mViewFilterBarMI.setSelected(Settings.propShowFilterBar.getBoolean());
+    mViewFilterBarMI.addActionListener(this);
     
     mFiltersMenu = new JMenu(mLocalizer.msg("menuitem.filters","Filter"));
     updateFiltersMenu();
@@ -281,6 +284,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mViewMenu.add(mDatelistMI);
     mViewMenu.add(mChannellistMI);
     mViewMenu.add(mStatusbarMI);
+    mViewMenu.add(mViewFilterBarMI);
     mViewMenu.addSeparator();
     mViewMenu.add(mFiltersMenu);
     mViewMenu.add(mFontSizeMenu);
@@ -428,7 +432,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
              mFiltersMenu.addSeparator();
          }
        }
-       
+       mViewFilterBarMI.setEnabled(!mMainFrame.isShowAllFilterActivated());
    }
    
    protected abstract void setPluginMenuItems(JMenuItem[] items);
@@ -553,6 +557,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
      else if (source == mStatusbarMI) {
        mMainFrame.setShowStatusbar(mStatusbarMI.isSelected());
      }
+     else if (source == mViewFilterBarMI) {
+       mMainFrame.updateFilterPanel();
+     }
      else if (source == mDatelistMI) {
        mMainFrame.setShowDatelist(mDatelistMI.isSelected());  
      }
@@ -652,6 +659,10 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
 public void dateChanged(Date date, ProgressMonitor monitor, Runnable callback) {
     mPreviousDayMI.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(-1)));
     mNextDayMI.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(1)));
+}
+
+public boolean isShowFilterPanelEnabled() {
+  return mViewFilterBarMI.isSelected();
 }
 
 

@@ -790,7 +790,7 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   public boolean isShowAllFilterActivated() {
-    return mProgramTableModel.getProgramFilter() instanceof ShowAllFilter;
+    return (mProgramTableModel == null) || (mProgramTableModel.getProgramFilter() instanceof ShowAllFilter);
   }
 
   public void setProgramFilter(ProgramFilter filter) {
@@ -807,8 +807,7 @@ public class MainFrame extends JFrame implements DateListener {
     mMenuBar.updateFiltersMenu();
     mToolBarModel.setFilterButtonSelected(!(filter instanceof ShowAllFilter));
 
-    mFilterPanel.setCurrentFilter(filter);
-    mFilterPanel.setVisible(!(filter instanceof ShowAllFilter));
+    updateFilterPanel();
 
     mToolBar.update();
     addKeyboardAction();
@@ -826,6 +825,12 @@ public class MainFrame extends JFrame implements DateListener {
     
     mCurrentFilterName = filter.getName();
     mProgramTableScrollPane.requestFocus();
+  }
+
+  public void updateFilterPanel() {
+    ProgramFilter filter = mProgramTableModel.getProgramFilter();
+    mFilterPanel.setCurrentFilter(filter);
+    mFilterPanel.setVisible(!(filter instanceof ShowAllFilter) && mMenuBar.isShowFilterPanelEnabled());
   }
 
   public ProgramFilter getProgramFilter() {
