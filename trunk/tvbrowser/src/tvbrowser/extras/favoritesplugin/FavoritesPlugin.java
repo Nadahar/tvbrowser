@@ -144,6 +144,7 @@ public class FavoritesPlugin {
       mHasToUpdate = false;
       
       updateAllFavorites();
+      FavoriteTree.getInstance().updateUI();
 
       mHasRightToSave = true;      
       updateRootNode(true);

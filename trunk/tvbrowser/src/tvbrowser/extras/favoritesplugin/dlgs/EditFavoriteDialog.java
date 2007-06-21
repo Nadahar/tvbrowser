@@ -622,6 +622,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
       mFavorite.setName(mName.getText());
     
     mOkWasPressed = true;
+    FavoriteTree.getInstance().updateUI();
     hide();
   }
 
