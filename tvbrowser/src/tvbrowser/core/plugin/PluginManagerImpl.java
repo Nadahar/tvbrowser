@@ -25,6 +25,7 @@
  */
 package tvbrowser.core.plugin;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -601,6 +602,27 @@ public class PluginManagerImpl implements PluginManager {
       public Date getLastDownloadDate() {
         return Settings.propLastDownloadDate.getDate();
       }
+      
+      /**
+       * Gets the color for a marking priority.
+       * 
+       * @param priority The priority to get the color for.
+       * @return The color for the given priority or <code>null</code>
+       *         if the given priority don't exists.
+       * @since 2.6
+       */
+      public Color getColorForMarkingPriority(int priority) {
+        switch(priority) {
+          case Program.NO_MARK_PRIORITY: return new Color(255,255,255,0);
+          case Program.MIN_MARK_PRIORITY: return Settings.propProgramPanelMarkedMinPriorityColor.getColor();
+          case Program.LOWER_MEDIUM_MARK_PRIORITY: return Settings.propProgramPanelMarkedLowerMediumPriorityColor.getColor();
+          case Program.MEDIUM_MARK_PRIORITY: return Settings.propProgramPanelMarkedMediumPriorityColor.getColor();
+          case Program.HIGHER_MEDIUM_MARK_PRIORITY: return Settings.propProgramPanelMarkedHigherMediumPriorityColor.getColor();
+          case Program.MAX_MARK_PRIORITY: return Settings.propProgramPanelMarkedMaxPriorityColor.getColor();
+        }
+        
+        return null;
+      }
     };
   }
 
@@ -709,7 +731,7 @@ public class PluginManagerImpl implements PluginManager {
     if(caller == null || caller.getId().compareTo(ReminderPluginProxy.getInstance().getId()) != 0)
       receiveIfs.add(ReminderPluginProxy.getInstance());
     
-    for(PluginAccess plugin : plugins)      
+    for(PluginAccess plugin : plugins)
       if((plugin.canReceivePrograms() || plugin.canReceiveProgramsWithTarget()) && plugin.getProgramReceiveTargets() != null && plugin.getProgramReceiveTargets().length > 0 &&
           ((caller == null || plugin.getId().compareTo(caller.getId()) != 0) || (caller != null && plugin.getId().compareTo(caller.getId()) == 0) && callerTarget != null && !(plugin.getProgramReceiveTargets().length == 1 && plugin.getProgramReceiveTargets()[0].equals(callerTarget))))
         receiveIfs.add(plugin);

@@ -26,6 +26,8 @@
 
 package devplugin;
 
+import java.awt.Color;
+
 /**
  * Provides information of the current user settings.
  *  
@@ -47,4 +49,13 @@ public interface TvBrowserSettings {
    */
   public Date getLastDownloadDate();
 
+  /**
+   * Gets the color for a marking priority.
+   * 
+   * @param priority The priority to get the color for.
+   * @return The color for the given priority or <code>null</code>
+   *         if the given priority don't exists.
+   * @since 2.6
+   */
+  public Color getColorForMarkingPriority(int priority);
 }
