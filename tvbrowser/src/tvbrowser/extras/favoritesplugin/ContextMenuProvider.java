@@ -56,11 +56,11 @@ public class ContextMenuProvider {
   public ActionMenu getContextMenuActions(Program program) {
 
       ArrayList<Favorite> favorites = new ArrayList<Favorite>();
-      for (int i = 0; i < mFavoriteArr.length; i++) {
-        Program[] programs = mFavoriteArr[i].getPrograms();
-        for (int j = 0; j < programs.length; j++) {
-          if (programs[j].equals(program)) {
-            favorites.add(mFavoriteArr[i]);
+      for (Favorite favorite : mFavoriteArr) {
+        Program[] programs = favorite.getPrograms();
+        for (Program favProgram : programs) {
+          if (favProgram.equals(program)) {
+            favorites.add(favorite);
             break;
           }
         }
@@ -84,7 +84,8 @@ public class ContextMenuProvider {
             return new ActionMenu(menu, new ActionMenu[]{
               createExcludeFromFavoritesMenuAction(favArr, program),
               createEditFavoriteMenuAction(favArr),
-              createDeleteFavoriteMenuAction(favArr)
+              createDeleteFavoriteMenuAction(favArr),
+              createAddToFavoritesActionMenu(program)
             });
           }
           else {
@@ -92,7 +93,8 @@ public class ContextMenuProvider {
               createExcludeFromFavoritesMenuAction(favArr, program),
               createEditFavoriteMenuAction(favArr),
               createDeleteFavoriteMenuAction(favArr),
-              repetitions
+              repetitions,
+              createAddToFavoritesActionMenu(program)
             });            
           }
         }
@@ -101,7 +103,8 @@ public class ContextMenuProvider {
               createExcludeFromFavoritesMenuAction(favArr, program),
               blackListAction,
               createEditFavoriteMenuAction(favArr),
-              createDeleteFavoriteMenuAction(favArr)
+              createDeleteFavoriteMenuAction(favArr),
+              createAddToFavoritesActionMenu(program)
           });          
         }
       }
@@ -202,12 +205,13 @@ public class ContextMenuProvider {
     else {
       ArrayList<ActionMenu> menus = new ArrayList<ActionMenu>();
       
-      for (int i=0; i < favorites.length; i++) {
-        ContextMenuAction subItem = new ContextMenuAction(favorites[i].getName());
-        ActionMenu menu = createFavoriteRepetitionMenu(subItem,favorites[i], p);
+      for (Favorite favorite : favorites) {
+        ContextMenuAction subItem = new ContextMenuAction(favorite.getName());
+        ActionMenu menu = createFavoriteRepetitionMenu(subItem,favorite, p);
         
-        if(menu != null)
+        if(menu != null) {
           menus.add(menu);
+        }
       }
       
       return menus.isEmpty() ? null : new ActionMenu(topMenu, menus.toArray(new ActionMenu[menus.size()]));
@@ -217,8 +221,9 @@ public class ContextMenuProvider {
   private ActionMenu createFavoriteRepetitionMenu(ContextMenuAction parent, Favorite favorite, Program p) {
     Program[] programs = favorite.getPrograms();
   
-    if(programs == null || (programs.length == 1 && programs[0].equals(p)))
+    if(programs == null || (programs.length == 1 && programs[0].equals(p))) {
       return null;
+    }
     
     ArrayList<ContextMenuAction> subItems = new ArrayList<ContextMenuAction>();
   
@@ -288,16 +293,18 @@ public class ContextMenuProvider {
         });
         
         return (new ActionMenu(action));
-      }
-      else
+      } else {
         return null;
+      }
     }
     else {
       ArrayList<Favorite> fromList = new ArrayList<Favorite>();
       
-      for(int i = 0; i < favArr.length; i++)
-        if(favArr[i].isOnBlackList(program))
-          fromList.add(favArr[i]);
+      for (Favorite favorite : favArr) {
+        if(favorite.isOnBlackList(program)) {
+          fromList.add(favorite);
+        }
+      }
             
       ContextMenuAction reactivate = new ContextMenuAction(mLocalizer.msg("removeFromBlackList",
           "Put this program back into..."));
@@ -316,10 +323,11 @@ public class ContextMenuProvider {
         });
       }
       
-      if(!fromList.isEmpty())  
+      if(!fromList.isEmpty()) {
         return new ActionMenu(reactivate,reactivateAction);
-      else 
+      } else {
         return null;
+      }
     }
   }
 
