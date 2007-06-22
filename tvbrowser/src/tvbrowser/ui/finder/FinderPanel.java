@@ -170,9 +170,9 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
   }
 
   public devplugin.ProgressMonitor getProgressMonitorForDate(Date date) {
-    Object[] o = mModel.toArray();
-    for (int i = 0; i < o.length; i++) {
-      FinderItem item = (FinderItem) o[i];
+    Object[] objects = mModel.toArray();
+    for (Object object : objects) {
+      FinderItem item = (FinderItem) object;
       mRenderer.setSelectedItem(item);
 
       if (item.getDate().equals(date)) {
@@ -204,9 +204,11 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
     for (int i = 1; i < o.length; i++) {
       FinderItem item = (FinderItem) o[i];
       
-      if(!item.isEnabled())
-        if(TvDataBase.getInstance().dataAvailable(item.getDate()))
+      if(!item.isEnabled()) {
+        if(TvDataBase.getInstance().dataAvailable(item.getDate())) {
           item.setEnabled(true);
+        }
+      }
     }
     
     mList.updateUI();
@@ -227,9 +229,9 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
       return;
     }
 
-    Object[] o = mModel.toArray();
-    for (int i = 0; i < o.length; i++) {
-      final FinderItem item = (FinderItem) o[i];
+    Object[] objects = mModel.toArray();
+    for (Object object : objects) {
+      final FinderItem item = (FinderItem) object;
       if (item.getDate().equals(d)) {
         if (item.isEnabled()) {
           mCurChoosenDate = d;
@@ -239,8 +241,11 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
           /*
            * if (callback!=null) { callback.run(); }
            */
-          return;
         }
+        else {
+          MainFrame.getInstance().askForDataUpdate(mLocalizer.msg("noDataFor", "No tv data available for {0}.",d.toString()));
+        }
+        return;
       }
     }
   }

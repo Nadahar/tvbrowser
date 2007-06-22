@@ -1537,7 +1537,7 @@ public class MainFrame extends JFrame implements DateListener {
     mRootNode.update();
   }
   
-  public void askForDataUpdate(String reason) {
+  public int askForDataUpdate(String reason) {
 	    String msg1 = mLocalizer.msg("askforupdatedlg.1", "update now");
 	    String msg2 = mLocalizer.msg("askforupdatedlg.2", "later");
 	    String msg4 = mLocalizer.msg("askforupdatedlg.4",
@@ -1552,15 +1552,16 @@ public class MainFrame extends JFrame implements DateListener {
 	    if (result == JOptionPane.YES_OPTION) {
 	      updateTvData();
 	    }
+      return result;
   }
 
-  public void askForDataUpdateNoDataAvailable() {
-	  askForDataUpdate(mLocalizer.msg("askforupdatedlg.3",
+  public int askForDataUpdateNoDataAvailable() {
+	  return askForDataUpdate(mLocalizer.msg("askforupdatedlg.3",
         "No tv data for todays program available."));
   }
   
-  public void askForDataUpdateChannelsAdded() {
-	  askForDataUpdate(mLocalizer.msg("askforupdatedlg.added",
+  public int askForDataUpdateChannelsAdded() {
+	  return askForDataUpdate(mLocalizer.msg("askforupdatedlg.added",
       "You have added channels."));
   }
 
@@ -1793,5 +1794,11 @@ public class MainFrame extends JFrame implements DateListener {
    */
   public boolean isFullScreenMode() {
     return isUndecorated();
+  }
+
+  public void updatePluginTree() {
+    if (mPluginView != null) {
+      mPluginView.refreshTree();
+    }
   }
 }
