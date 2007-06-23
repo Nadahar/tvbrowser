@@ -967,8 +967,20 @@ public class PluginProxyManager {
       ((PluginManagerImpl)PluginManagerImpl.getInstance()).handleTvBrowserStartFinished();
       
       for (PluginListItem item : mPluginList) {
-        if (item.getPlugin().isActivated()) {
-          item.getPlugin().handleTvBrowserStartFinished();
+        AbstractPluginProxy plugin = item.getPlugin();
+        if (plugin.isActivated()) {
+          plugin.handleTvBrowserStartFinished();
+          if (plugin.hasArtificialPluginTree()) {
+            int childCount = plugin.getArtificialRootNode().size();
+            // update all children of the artificial tree or remove the tree completely
+            if (childCount > 0 && childCount < 100) {
+              plugin.getArtificialRootNode().update();
+            }
+            else {
+              plugin.removeArtificialPluginTree();
+            }
+            MainFrame.getInstance().updatePluginTree();
+          }
         }
       }
     }

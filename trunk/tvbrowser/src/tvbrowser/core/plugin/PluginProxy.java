@@ -26,6 +26,8 @@
 package tvbrowser.core.plugin;
 
 import javax.swing.Icon;
+
+import tvdataservice.MutableProgram;
 import devplugin.ActionMenu;
 import devplugin.ChannelDayProgram;
 import devplugin.PluginAccess;
@@ -152,4 +154,10 @@ public interface PluginProxy extends PluginAccess {
    * @since 2.6
    */
   public Icon getPluginIcon();
+
+  public boolean hasArtificialPluginTree();
+
+  public void addToArtificialPluginTree(MutableProgram program);
+
+  public PluginTreeNode getArtificialRootNode();
 }

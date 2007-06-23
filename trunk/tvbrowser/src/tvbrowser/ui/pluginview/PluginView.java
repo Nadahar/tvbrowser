@@ -95,30 +95,33 @@ public class PluginView extends JPanel implements MouseListener {
 
 
   private void insertPluginRootNodes() {
-     PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
-     ContextMenuIf[] menuIfs = ContextMenuManager.getInstance().getAvailableContextMenuIfs(true,true);
-     
-     ArrayList<String> pluginList = new ArrayList<String>();
-     
-     for(int i = 0; i < plugins.length; i++) {
-       if(plugins[i].canUseProgramTree())
-         pluginList.add(plugins[i].getId());
-     }
-     
-     for (int i = menuIfs.length - 1; i >= 0; i--) {
-       if(menuIfs[i].getId().compareTo(FavoritesPlugin.getInstance().getId()) == 0)
-         mModel.addCustomNode(FavoritesPlugin.getInstance().getRootNode());
-       else if(menuIfs[i].getId().compareTo(ReminderPlugin.getInstance().getId()) == 0)
-         mModel.addCustomNode(ReminderPlugin.getInstance().getRootNode());
-       else if(pluginList.contains(menuIfs[i].getId())) {
-         PluginProxy plugin = PluginProxyManager.getInstance().getPluginForId(menuIfs[i].getId());
-         mModel.addPluginTree(plugin);
-         pluginList.remove(menuIfs[i].getId());
-       }
-     }
-     
-     for(int i = 0; i < pluginList.size(); i++)
-       mModel.addPluginTree(PluginProxyManager.getInstance().getPluginForId(pluginList.get(i)));
+    PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
+    ContextMenuIf[] menuIfs = ContextMenuManager.getInstance().getAvailableContextMenuIfs(true,true);
+
+    ArrayList<String> pluginList = new ArrayList<String>();
+
+    for (PluginProxy proxy : plugins) {
+      // show real plugin tree always, show artificial tree only if it has children
+      if(proxy.canUseProgramTree() && !(proxy.hasArtificialPluginTree() && proxy.getArtificialRootNode().size() == 0)) {
+        pluginList.add(proxy.getId());
+      }
+    }
+
+    for (int i = menuIfs.length - 1; i >= 0; i--) {
+      if(menuIfs[i].getId().compareTo(FavoritesPlugin.getInstance().getId()) == 0) {
+        mModel.addCustomNode(FavoritesPlugin.getInstance().getRootNode());
+      } else if(menuIfs[i].getId().compareTo(ReminderPlugin.getInstance().getId()) == 0) {
+        mModel.addCustomNode(ReminderPlugin.getInstance().getRootNode());
+      } else if(pluginList.contains(menuIfs[i].getId())) {
+        PluginProxy plugin = PluginProxyManager.getInstance().getPluginForId(menuIfs[i].getId());
+        mModel.addPluginTree(plugin);
+        pluginList.remove(menuIfs[i].getId());
+      }
+    }
+
+    for(int i = 0; i < pluginList.size(); i++) {
+      mModel.addPluginTree(PluginProxyManager.getInstance().getPluginForId(pluginList.get(i)));
+    }
   }
   
   public void update() {

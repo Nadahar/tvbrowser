@@ -35,6 +35,7 @@ import devplugin.PluginAccess;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import tvbrowser.core.TvDataBase;
+import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import util.io.IOUtilities;
 
@@ -215,8 +216,9 @@ public class MutableProgram implements Program {
    * @see #removeChangeListener
    */
   public void addChangeListener(ChangeListener listener) {
-    if (!mListenerList.contains(listener))
+    if (!mListenerList.contains(listener)) {
       mListenerList.add(listener);
+    }
   }
 
 
@@ -243,8 +245,9 @@ public class MutableProgram implements Program {
   protected void fireStateChanged() {
     ChangeEvent changeEvent = new ChangeEvent(this);
 
-    for (int i = 0; i < mListenerList.size(); i++)
+    for (int i = 0; i < mListenerList.size(); i++) {
       mListenerList.get(i).stateChanged(changeEvent);
+    }
   }
 
 
@@ -319,6 +322,16 @@ public class MutableProgram implements Program {
       
       mMarkPriority = Math.max(mMarkPriority,marker.getMarkPriorityForProgram(this));
 
+      // add program to artificial plugin tree
+      if (marker instanceof PluginProxy) {
+        PluginProxy proxy = (PluginProxy) marker;
+        if (! proxy.canUseProgramTree() || proxy.hasArtificialPluginTree() ) {
+          if (proxy.getArtificialRootNode() == null || proxy.getArtificialRootNode().size() < 100) {
+            proxy.addToArtificialPluginTree(this);
+          }
+        }
+      }
+
       fireStateChanged();
     }
 
@@ -352,10 +365,19 @@ public class MutableProgram implements Program {
         
         mMarkPriority = Program.NO_MARK_PRIORITY;
         
-        for(Marker mark : newArr)
+        for(Marker mark : newArr) {
           mMarkPriority = Math.max(mMarkPriority,mark.getMarkPriorityForProgram(this));
+        }
         
         mMarkerArr = newArr;
+      }
+
+      // remove from artificial plugin tree
+      if (marker instanceof PluginProxy) {
+        PluginProxy proxy = (PluginProxy) marker;
+        if (proxy.hasArtificialPluginTree() && proxy.getArtificialRootNode().size() < 100) {
+          proxy.getArtificialRootNode().removeProgram(this);
+        }
       }
 
       fireStateChanged();
@@ -387,8 +409,8 @@ public class MutableProgram implements Program {
   public PluginAccess[] getMarkedByPlugins() {
     PluginAccess plugin;
     ArrayList<PluginAccess> list = new ArrayList<PluginAccess>();
-    for (int i=0; i<mMarkerArr.length; i++) {
-      plugin = PluginProxyManager.getInstance().getPluginForId(mMarkerArr[i].getId());
+    for (Marker marker : mMarkerArr) {
+      plugin = PluginProxyManager.getInstance().getPluginForId(marker.getId());
       if (plugin != null) {
         list.add(plugin);
       }
@@ -642,8 +664,9 @@ public class MutableProgram implements Program {
     }
 
     try {
-      if(!mIsLoading)
+      if(!mIsLoading) {
         ((MutableChannelDayProgram)TvDataBase.getInstance().getDayProgram(getDate(),getChannel())).setWasChangedByPlugin();
+      }
     }catch(Exception e) {}
 
     fireStateChanged();
@@ -676,8 +699,9 @@ public class MutableProgram implements Program {
    * @param title the new title of this program.
    */
   public void setTitle(String title) {
-    if(mTitle != null)
+    if(mTitle != null) {
       mTitle = title;
+    }
 
     setTextField(ProgramFieldType.TITLE_TYPE, title);
   }
@@ -688,10 +712,11 @@ public class MutableProgram implements Program {
    * @return the title of this program.
    */
   public String getTitle() {
-    if(mTitle != null)
+    if(mTitle != null) {
       return mTitle;
-    else
+    } else {
       return getTextField(ProgramFieldType.TITLE_TYPE);
+    }
   }
 
 
@@ -929,8 +954,9 @@ public class MutableProgram implements Program {
   public final void validateMarking() {
     mMarkPriority = Program.NO_MARK_PRIORITY;
     
-    for(Marker mark : mMarkerArr)
+    for(Marker mark : mMarkerArr) {
       mMarkPriority = Math.max(mMarkPriority,mark.getMarkPriorityForProgram(this));
+    }
     
     fireStateChanged();
   }
@@ -944,8 +970,9 @@ public class MutableProgram implements Program {
   protected void setMarkerArr(Marker[] marker) {
     mMarkerArr = marker;
 
-    if(marker.length > 0)
+    if(marker.length > 0) {
       mTitle = getTitle();
+    }
 
     //fireStateChanged();
   }
