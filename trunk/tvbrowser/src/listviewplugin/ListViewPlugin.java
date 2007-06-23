@@ -41,7 +41,6 @@ import devplugin.ActionMenu;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.SettingsTab;
-import devplugin.ThemeIcon;
 import devplugin.Version;
 
 /**
@@ -123,14 +122,6 @@ public class ListViewPlugin extends Plugin {
         }
 
     }
-
-    /**
-     * Icon to show for a marked program
-     */
-    public ThemeIcon getMarkIconFromTheme() {
-      return new ThemeIcon("actions", "view-list", 16);
-    }
-
 
     /*
      *  (non-Javadoc)
