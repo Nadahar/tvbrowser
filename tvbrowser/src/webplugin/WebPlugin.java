@@ -51,7 +51,6 @@ import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
-import devplugin.ThemeIcon;
 import devplugin.Version;
 
 /**
@@ -176,10 +175,6 @@ public class WebPlugin extends Plugin {
 
   }
 
-  public ThemeIcon getMarkIconFromTheme() {
-    return new ThemeIcon("actions", "web-search", 16);
-  }
-  
   /**
    * Creates the Settings-Tab
    */

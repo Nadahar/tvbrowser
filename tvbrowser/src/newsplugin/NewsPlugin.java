@@ -47,7 +47,6 @@ import util.io.IOUtilities;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
-import devplugin.ThemeIcon;
 import devplugin.Version;
 
 /**
@@ -102,10 +101,6 @@ public class NewsPlugin extends Plugin {
 
   public void handleTvBrowserStartFinished() {
     hasRightToDownload = true;
-  }
-
-  public ThemeIcon getMarkIconFromTheme() {
-    return new ThemeIcon("apps", "internet-news-reader", 16);
   }
 
   public ActionMenu getButtonAction() {
@@ -175,10 +170,9 @@ public class NewsPlugin extends Plugin {
             
             int addCount = 0;
             
-            // Add the new news
-            for (int i = 0; i < newsArr.length; i++) {
-              if((newsArr[i].getTime().getTime() - lastNews) > 5000) {
-                mNewsList.add(newsArr[i]);
+            for (News newsItem : newsArr) {
+              if((newsItem.getTime().getTime() - lastNews) > 5000) {
+                mNewsList.add(newsItem);
                 addCount++;
               }
             }
@@ -363,10 +357,12 @@ public class NewsPlugin extends Plugin {
       }
     }
     
-    if(version >= 2)
+    if(version >= 2) {
       mNoConnectionTime = in.readLong();
-    if(version >= 3)
+    }
+    if(version >= 3) {
       mLastNewsFileModified = in.readLong();
+    }
   }
 
 }
