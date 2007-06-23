@@ -80,10 +80,11 @@ public class PluginTreeModel extends DefaultTreeModel {
           Plugin p = (Plugin) o;
           p.getRootNode().update();
         }
-        else if(n.equals(FavoritesPlugin.getInstance().getRootNode().getMutableTreeNode()))
+        else if(n.equals(FavoritesPlugin.getInstance().getRootNode().getMutableTreeNode())) {
           FavoritesPlugin.getInstance().getRootNode().update();
-        else if(n.equals(ReminderPlugin.getInstance().getRootNode().getMutableTreeNode()))
+        } else if(n.equals(ReminderPlugin.getInstance().getRootNode().getMutableTreeNode())) {
           ReminderPlugin.getInstance().getRootNode().update();
+        }
       }
     }
   }
@@ -101,7 +102,13 @@ public class PluginTreeModel extends DefaultTreeModel {
 
 
   public void addPluginTree(PluginProxy plugin) {
-    PluginTreeNode pluginRoot = plugin.getRootNode();
+    PluginTreeNode pluginRoot;
+    if (plugin.hasArtificialPluginTree()) {
+      pluginRoot = plugin.getArtificialRootNode();
+    }
+    else {
+      pluginRoot = plugin.getRootNode();
+    }
     MutableTreeNode root = (MutableTreeNode) this.getRoot();
     root.insert(pluginRoot.getMutableTreeNode(), 0);
 
@@ -142,8 +149,9 @@ public class PluginTreeModel extends DefaultTreeModel {
 
     if (treePath != null) {
       PluginTree t = PluginTree.getInstance();
-      if (t != null)
+      if (t != null) {
         e = PluginTree.getInstance().getExpandedDescendants(treePath);
+      }
     }
 
     super.reload(node);

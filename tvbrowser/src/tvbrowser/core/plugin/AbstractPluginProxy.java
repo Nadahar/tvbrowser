@@ -33,12 +33,15 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import tvbrowser.core.Settings;
+import tvbrowser.ui.mainframe.MainFrame;
+import tvdataservice.MutableProgram;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import devplugin.ActionMenu;
 import devplugin.ChannelDayProgram;
 import devplugin.ContextMenuIf;
 import devplugin.PluginInfo;
+import devplugin.PluginTreeNode;
 import devplugin.PluginsFilterComponent;
 import devplugin.PluginsProgramFilter;
 import devplugin.Program;
@@ -71,6 +74,13 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * @see #assertActivatedState()
    */
   private boolean mIsActivated = false;
+
+  private PluginTreeNode mArtificialRootNode = null;
+
+  protected AbstractPluginProxy() {
+    super();
+    mArtificialRootNode = new PluginTreeNode(this, false);
+  }
 
   /**
    * Gets whether the plugin is currently activated.
@@ -530,7 +540,12 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   public boolean canUseProgramTree() {
     try {
-      return doCanUseProgramTree();
+      boolean canUse = doCanUseProgramTree();
+      // deactivate artificial plugin tree for plugins providing their own implementation
+      if (canUse && mArtificialRootNode != null) {
+        mArtificialRootNode = null;
+      }
+      return canUse || (mArtificialRootNode != null && mArtificialRootNode.size() < 100);
     } catch (RuntimeException exc) {
       handlePluginException(exc);
       return false;
@@ -808,5 +823,23 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
     }
     
     return new ImageIcon("imgs/Jar16.gif");
+  }
+
+  final public boolean hasArtificialPluginTree() {
+    return mArtificialRootNode != null;
+  }
+
+  final public void addToArtificialPluginTree(MutableProgram program) {
+    if (mArtificialRootNode != null) {
+      mArtificialRootNode.addProgram(program);
+    }
+  }
+  
+  final public PluginTreeNode getArtificialRootNode() {
+    return mArtificialRootNode;
+  }
+  
+  final public void removeArtificialPluginTree() {
+    mArtificialRootNode = null;
   }
 }
