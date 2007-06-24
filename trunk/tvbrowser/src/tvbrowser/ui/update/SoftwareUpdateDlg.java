@@ -48,6 +48,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.WindowConstants;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.ListSelectionEvent;
@@ -144,12 +145,13 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     contentPane.add(splitPn, BorderLayout.CENTER);
     contentPane.add(southPn, BorderLayout.SOUTH);
 
-    if (Settings.propUpdateDialogWidth.getInt() == -1 || Settings.propUpdateDialogHeight.getInt() == -1)
+    if (Settings.propUpdateDialogWidth.getInt() == -1 || Settings.propUpdateDialogHeight.getInt() == -1) {
       this.setSize(450, 400);
-    else
+    } else {
       this.setSize(Settings.propUpdateDialogWidth.getInt(), Settings.propUpdateDialogHeight.getInt());
+    }
 
-    setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+    setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
     addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
@@ -196,6 +198,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       content.append("</table></body></html>");
 
       mDescriptionPane.setText(content.toString());
+      mDescriptionPane.setCaretPosition(0);
     }
   }
 
@@ -203,10 +206,10 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     if (event.getSource() == mCloseBtn) {
       close();
     } else if (event.getSource() == mDownloadBtn) {
-      Object[] o = mList.getSelectedValues();
+      Object[] objects = mList.getSelectedValues();
       int successfullyDownloadedItems = 0;
-      for (int i = 0; i < o.length; i++) {
-        SoftwareUpdateItem item = (SoftwareUpdateItem) o[i];
+      for (Object object : objects) {
+        SoftwareUpdateItem item = (SoftwareUpdateItem) object;
         try {
           item.download();
           successfullyDownloadedItems++;
