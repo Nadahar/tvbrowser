@@ -170,7 +170,7 @@ public class SplashScreen extends JWindow implements Splash {
 
 
 	public void hideSplash() {
-		hide();		
+    setVisible(false);		
 	}
 
 }

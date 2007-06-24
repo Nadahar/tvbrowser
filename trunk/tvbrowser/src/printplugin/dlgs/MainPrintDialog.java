@@ -119,7 +119,7 @@ public class MainPrintDialog extends JDialog implements ActionListener, WindowCl
       else {
         mResult = PRINT_QUEUE;
       }
-      hide();
+      setVisible(false);
     }
     else if (e.getSource() == mCancelBtn) {
       close();

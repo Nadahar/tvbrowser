@@ -221,7 +221,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
       mFilterList.setProgramFilterArr(filters);
 
       mFilterList.store();
-      hide();
+      setVisible(false);
     } else if (e.getSource() == mCancelBtn) {
       close();
     } else if (e.getSource() == mSeperator) {

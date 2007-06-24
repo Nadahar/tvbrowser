@@ -120,7 +120,7 @@ public class UiUtilities {
     wPos.x = Math.max(0, wPos.x); // Make x > 0
     wPos.y = Math.max(0, wPos.y); // Make y > 0
     win.setLocation(wPos);
-    win.show();
+    win.setVisible(true);
   }
 
   

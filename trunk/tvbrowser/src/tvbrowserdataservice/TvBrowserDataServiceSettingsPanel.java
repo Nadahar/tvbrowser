@@ -361,7 +361,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
         } else {
           dialog = new ChannelGroupDialog((JDialog)parent, group);
         }
-        dialog.show();
+        dialog.setVisible(true);
       }
     }
 

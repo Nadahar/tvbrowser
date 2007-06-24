@@ -91,7 +91,7 @@ public class ProgramItemFieldsConfigDlg extends JDialog implements WindowClosing
     okBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
         mResult = OK;
-        hide();
+        setVisible(false);
       }      
       });
     

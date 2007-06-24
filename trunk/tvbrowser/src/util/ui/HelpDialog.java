@@ -198,7 +198,7 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
 
 
   public void show() {
-    mDialog.show();
+    mDialog.setVisible(true);
   }
 
 

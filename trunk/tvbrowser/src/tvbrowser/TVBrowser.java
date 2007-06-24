@@ -606,7 +606,7 @@ public class TVBrowser {
       UiUtilities.centerAndShow(mainFrame);
     } else {
       mainFrame.setLocation(windowX, windowY);
-      mainFrame.show();
+      mainFrame.setVisible(true);
     }
     ErrorHandler.setFrame(mainFrame);
 

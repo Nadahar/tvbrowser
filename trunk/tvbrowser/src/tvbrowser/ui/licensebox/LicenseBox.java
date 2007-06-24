@@ -107,7 +107,7 @@ public class LicenseBox extends JDialog implements ActionListener,WindowClosingI
       btnPanel.add(mCloseBt);
       mCloseBt.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          hide();
+          setVisible(false);
         }
       });
     }
@@ -128,11 +128,11 @@ public class LicenseBox extends JDialog implements ActionListener,WindowClosingI
   
   public void actionPerformed(ActionEvent e) {
     if (e.getSource()==mDisagreeBt) {
-      hide();
+      setVisible(false);
     }
     else if (e.getSource()==mAgreeBt) {
       mAgreed=true;
-      hide();
+      setVisible(false);
     }
   }
   

@@ -151,7 +151,7 @@ public class ParamCheckDialog extends JDialog implements WindowClosingIf {
 		ok.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent arg0) {
-				hide();
+        setVisible(false);
 			}
 			
 		});
@@ -179,7 +179,7 @@ public class ParamCheckDialog extends JDialog implements WindowClosingIf {
   }
 
   public void close() {
-    hide();
+    setVisible(false);
   }
   
 }

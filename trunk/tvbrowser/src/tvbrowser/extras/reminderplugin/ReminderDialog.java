@@ -170,7 +170,7 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
           settings.setProperty("defaultReminderEntry",""+mList.getSelectedIndex());
         }
         settings.setProperty("showTimeSelectionDialog",String.valueOf(!mDontShowDialog.isSelected()));
-        hide();
+        setVisible(false);
       }
     });
     btnPn.add(okBtn);
@@ -179,7 +179,7 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
     JButton cancelBtn=new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     cancelBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        hide();
+        setVisible(false);
       }
     });
     btnPn.add(cancelBtn);
