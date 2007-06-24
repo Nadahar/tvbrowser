@@ -374,14 +374,14 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
         try {
           mFilter.setRule(mFilterRuleTF.getText());
           FilterComponentList.getInstance().store();
-          hide();
+          setVisible(false);
         } catch (ParserException exc) {
           JOptionPane.showMessageDialog(this, mLocalizer.msg("invalidRule", "Invalid rule: ") + exc.getMessage());
         }
       }
 
     } else if (o == mCancelBtn) {
-      hide();
+      setVisible(false);
     }
 
   }

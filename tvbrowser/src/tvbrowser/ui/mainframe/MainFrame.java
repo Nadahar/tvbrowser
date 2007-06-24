@@ -1522,15 +1522,15 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   public void showFromTray(int state) {
-    super.show();
+    super.setVisible(true);
     toFront();
     setExtendedState(state);
     mIsVisible = true;
   }
 
-  public void show() {
-    super.show();
-    mIsVisible = true;
+  public void setVisible(boolean visible) {
+    super.setVisible(visible);
+    mIsVisible = visible;
   }
 
   public void updateUI() {

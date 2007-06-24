@@ -289,7 +289,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
         mSelectedFilterComponent = c;
         mSelectedFilterComponent.setName(compName);
         mSelectedFilterComponent.setDescription(mDescTF.getText());
-        hide();
+        setVisible(false);
       }
     } else if (o == mCancelBtn) {
       close();

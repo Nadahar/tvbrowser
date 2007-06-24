@@ -33,7 +33,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import tvbrowser.core.Settings;
-import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MutableProgram;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
@@ -355,10 +354,11 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   public Icon getMarkIcon() {
     Icon[] icon = getMarkIcons(null);
     
-    if(icon != null && icon.length > 0)
+    if(icon != null && icon.length > 0) {
       return icon[0];
-    else
+    } else {
       return null;
+    }
   }
 
   /**

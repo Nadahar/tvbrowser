@@ -168,7 +168,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
     cancelBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        hide();
+        setVisible(false);
       }
     });
 
@@ -623,7 +623,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     
     mOkWasPressed = true;
     FavoriteTree.getInstance().updateUI();
-    hide();
+    setVisible(false);
   }
 
   class ExclusionListCellRenderer extends DefaultListCellRenderer {
@@ -754,7 +754,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
    * @see util.ui.WindowClosingIf#close()
    */
   public void close() {
-    hide();
+    setVisible(false);
   }
 
 }

@@ -148,7 +148,7 @@ public class ParamInputField extends JPanel {
         } else {
           dialog = new ParamCheckDialog((JFrame)bestparent, mParamLibrary, mParamText.getText());
         }
-        dialog.show();
+        dialog.setVisible(true);
       }
       
     });
@@ -168,7 +168,7 @@ public class ParamInputField extends JPanel {
         } else {
           dialog = new ParamHelpDialog((JFrame)bestparent, mParamLibrary);
         }
-        dialog.show();
+        dialog.setVisible(true);
       }
       
     });
