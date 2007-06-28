@@ -65,5 +65,15 @@ public interface FilterManager {
    * @param filter The filter to delete.
    * @return True if the filter could be deleted.
    */
-  public boolean deleteFilter(PluginsProgramFilter filter);  
+  public boolean deleteFilter(PluginsProgramFilter filter);
+  
+  /**
+   * Tests if the filter is a plugin filter.
+   * 
+   * @param filter The filter to test.
+   * @return <code>True</code> if the filter is a plugin filter,
+   *         <code>false</code> otherwise.
+   * @since 2.6
+   */
+  public boolean isPluginFilter(ProgramFilter filter);
 }

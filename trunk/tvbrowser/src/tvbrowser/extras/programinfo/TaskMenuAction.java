@@ -46,6 +46,7 @@ import com.l2fprod.common.swing.JLinkButton;
 import com.l2fprod.common.swing.JTaskPaneGroup;
 
 import devplugin.ActionMenu;
+import devplugin.Plugin;
 import devplugin.Program;
 
 /**
@@ -79,18 +80,20 @@ public class TaskMenuAction {
       TextComponentFindAction comp) {
     mInfo = info;
     mFind = comp;
-
-    if (!menu.hasSubItems()) {
-      addAction(parent, menu);
-    } else {
-      addTaskPaneGroup(parent, program, menu, info, id);
+    
+    if(menu.getAction() == null || menu.getAction().getValue(Plugin.DISABLED_ON_TASK_MENU) == null || !((Boolean)menu.getAction().getValue(Plugin.DISABLED_ON_TASK_MENU))) {
+      if (!menu.hasSubItems()) {
+        addAction(parent, menu);
+      } else {
+        addTaskPaneGroup(parent, program, menu, info, id);
+      }
     }
   }
 
   // Adds the action to the TaskPaneGroup.
   private void addAction(JTaskPaneGroup parent, ActionMenu menu) {
-    final Action a = menu.getAction();
-    
+    final Action a = menu.getAction();    
+
     mAction = new AbstractAction() {
       private static final long serialVersionUID = 1L;
 
