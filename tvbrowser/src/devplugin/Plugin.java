@@ -77,6 +77,11 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    */
   public static final String BIG_ICON = "BigIcon";
 
+  /** The name to use for disabling a menu part for
+   *  showing in ProgramInfo. 
+   *  @since 2.6 */
+  public static final String DISABLED_ON_TASK_MENU = "DISABLED_ON_TASK_MENU";
+  
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(Plugin.class );

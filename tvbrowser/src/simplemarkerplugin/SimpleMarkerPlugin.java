@@ -38,10 +38,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.WindowConstants;
 
-import tvbrowser.core.filters.FilterList;
-import tvbrowser.core.filters.PluginFilter;
-import tvbrowser.core.filters.ShowAllFilter;
-import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.ProgramTableModel;
 import util.settings.ProgramPanelSettings;
@@ -154,8 +150,8 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
    */
   public ActionMenu getContextMenuActions(Program p) {
     this.mProg = p;
-    boolean showExtendedMenu = !ProgramInfo.isShowing();
-    Object[] submenu = new Object[mMarkListVector.size() + (showExtendedMenu ? 1 : 0)];
+    
+    Object[] submenu = new Object[mMarkListVector.size() + 1];
     ContextMenuAction menu = new ContextMenuAction();
     menu.setText(mLocalizer.msg("name", "Marker plugin"));
     menu.setSmallIcon(createImageIcon("actions", "just-mark", 16));
@@ -169,17 +165,16 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
       }
     }
     
-    if (showExtendedMenu) {
-      submenu[submenu.length-1] = getExtendedMarkMenu();
-    }
+    submenu[submenu.length-1] = getExtendedMarkMenu();
+    
     return new ActionMenu(menu, submenu);
   }
 
   private ActionMenu getExtendedMarkMenu() {
     // get all non-default filters
     ArrayList<ProgramFilter> markFilters = new ArrayList<ProgramFilter>();
-    for (ProgramFilter filter : FilterList.getInstance().getFilterArr()) {
-      if ((!(filter instanceof ShowAllFilter)) && (!(filter instanceof PluginFilter))) {
+    for (ProgramFilter filter : getPluginManager().getFilterManager().getAvailableFilters()) {
+      if ((!(filter.equals(getPluginManager().getFilterManager().getDefaultFilter()))) && (!(getPluginManager().getFilterManager().isPluginFilter(filter)))) {
         markFilters.add(filter);
       }
     }
@@ -216,6 +211,8 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     ContextMenuAction menuExtended = new ContextMenuAction();
     menuExtended.setText(mLocalizer.msg("extendedMark", "Extended mark"));
     menuExtended.setActionListener(this);
+    menuExtended.putValue(Plugin.DISABLED_ON_TASK_MENU,true);
+    
     ActionMenu actionMenuExtendedMark = new ActionMenu(menuExtended, filtersAction);
     return actionMenuExtendedMark;
   }

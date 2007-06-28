@@ -132,4 +132,16 @@ public class FilterManagerImpl implements FilterManager {
   public ProgramFilter getDefaultFilter() {
     return FilterList.getInstance().getDefaultFilter();
   }
+  
+  /**
+   * Tests if the filter is a plugin filter.
+   * 
+   * @param filter The filter to test.
+   * @return <code>True</code> if the filter is a plugin filter,
+   *         <code>false</code> otherwise.
+   * @since 2.6
+   */
+  public boolean isPluginFilter(ProgramFilter filter) {
+    return filter instanceof PluginFilter;
+  }
 }
