@@ -62,6 +62,7 @@ import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.TimeZone;
 import java.util.Arrays;
+import java.io.IOException;
 
 import devplugin.Channel;
 import tvbrowser.core.Settings;
@@ -321,24 +322,35 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
                         mConfig.setDreamboxAddress(mDreamboxAddress.getText());
 
                         DreamboxConnector connect = new DreamboxConnector(mConfig);
-                        Collection<DreamboxChannel> channels = null;
 
                         try {
-                            channels = connect.getChannels();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                          if (connect.testDreamboxVersion()) {
+                            Collection<DreamboxChannel> channels = null;
 
-                        if (channels == null) {
-                            JOptionPane.showMessageDialog(DreamboxConfigDialog.this, mLocalizer.msg("errorText", "Sorry, could not load channellist from Dreambox."),
-                                    mLocalizer.msg("errorTitle", "Error"), JOptionPane.ERROR_MESSAGE);
-                        } else {
-                            mConfig.setDreamboxChannels(channels.toArray(new DreamboxChannel[0]));
-                            JOptionPane.showMessageDialog(DreamboxConfigDialog.this, mLocalizer.msg("okText", "Channellist updated."),
-                                    mLocalizer.msg("okTitle", "Updated"), JOptionPane.INFORMATION_MESSAGE);
-                        }
-                        mTable.updateUI();
+                            try {
+                                channels = connect.getChannels();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
 
+                            if (channels == null) {
+                                JOptionPane.showMessageDialog(DreamboxConfigDialog.this, mLocalizer.msg("errorText", "Sorry, could not load channellist from Dreambox."),
+                                        mLocalizer.msg("errorTitle", "Error"), JOptionPane.ERROR_MESSAGE);
+                            } else {
+                                mConfig.setDreamboxChannels(channels.toArray(new DreamboxChannel[0]));
+                                JOptionPane.showMessageDialog(DreamboxConfigDialog.this, mLocalizer.msg("okText", "Channellist updated."),
+                                        mLocalizer.msg("okTitle", "Updated"), JOptionPane.INFORMATION_MESSAGE);
+                            }
+                            mTable.updateUI();
+                          } else {
+                            JOptionPane.showMessageDialog(DreamboxConfigDialog.this, mLocalizer.msg("wrongVersion", "Wrong Version of Dreambox-WebInterface. Please update!"),
+                                        mLocalizer.msg("errorTitle", "Error"), JOptionPane.INFORMATION_MESSAGE);
+                          }
+                        } catch (IOException e) {
+                          JOptionPane.showMessageDialog(DreamboxConfigDialog.this, mLocalizer.msg("errorText", "Sorry, could not load channellist from Dreambox."),
+                                  mLocalizer.msg("errorTitle", "Error"), JOptionPane.ERROR_MESSAGE);
+                          e.printStackTrace();
+                        }
 
                     }
                 }).start();
