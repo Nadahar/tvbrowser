@@ -406,15 +406,11 @@ public class DreamboxConnector {
      */
     public boolean removeRecording(DreamboxChannel dreamboxChannel, ProgramTime prgTime, TimeZone timezone) {
         try {
-            final int offset = (timezone.getDSTSavings() / 1000 / 60 / 60) * -1;
-
             Calendar start = prgTime.getStartAsCalendar();
             start.setTimeZone(timezone);
-            start.add(Calendar.HOUR, offset);
 
             Calendar end = prgTime.getEndAsCalendar();
             end.setTimeZone(timezone);
-            end.add(Calendar.HOUR, offset);
 
             String shortInfo = prgTime.getProgram().getShortInfo();
             if (shortInfo == null) {
