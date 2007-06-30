@@ -38,6 +38,7 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.io.ByteArrayOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -49,18 +50,23 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TimeZone;
 import java.util.TreeMap;
-import java.text.SimpleDateFormat;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+import util.io.IOUtilities;
 
 /**
  * Connector for the Dreambox
  */
 public class DreamboxConnector {
-    /** get list of bouquets */
-    private final String BOUQUETLIST = "1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 195) || (type == 25)FROM BOUQUET \"bouquets.tv\" ORDER BY bouquet";
-    /** Config of the dreambox */
-    private DreamboxConfig mConfig;
+  /** get list of bouquets */
+  private final String BOUQUETLIST = "1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 195) || (type == 25)FROM BOUQUET \"bouquets.tv\" ORDER BY bouquet";
+  /** Config of the dreambox */
+  private DreamboxConfig mConfig;
 
-    /**
+  private static final int WEBIFMINIMUMVERSION = 20070701;
+
+  /**
      * Constructor
      * @param config Config of the dreambox
      */
@@ -329,15 +335,11 @@ public class DreamboxConnector {
      */
     public boolean addRecording(DreamboxChannel dreamboxChannel, ProgramTime prgTime, int afterEvent, TimeZone timezone) {
         try {
-            final int offset = (timezone.getDSTSavings() / 1000 / 60 / 60) * -1;
-
             Calendar start = prgTime.getStartAsCalendar();
             start.setTimeZone(timezone);
-            start.add(Calendar.HOUR, offset);
 
             Calendar end = prgTime.getEndAsCalendar();
             end.setTimeZone(timezone);
-            end.add(Calendar.HOUR, offset);
 
             String shortInfo = prgTime.getProgram().getShortInfo();
             if (shortInfo == null) {
@@ -490,4 +492,34 @@ public class DreamboxConnector {
             e.printStackTrace();
         }
     }
+
+  public boolean testDreamboxVersion() throws IOException {
+    URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/ipkg?command=info&package=enigma2-plugin-extensions-webinterface");
+
+    URLConnection connection = url.openConnection();
+
+    String userpassword = mConfig.getUserName() + ":" + mConfig.getPassword();
+    String encoded = new sun.misc.BASE64Encoder().encode (userpassword.getBytes());
+    connection.setRequestProperty  ("Authorization", "Basic " + encoded);
+
+    connection.setConnectTimeout(10);
+    InputStream stream = connection.getInputStream();
+
+    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+
+    IOUtilities.pipeStreams(stream, bytes);
+
+    String version = bytes.toString();
+
+    Pattern p = Pattern.compile("Version:.*cvs(\\d{8}).*");
+    Matcher match = p.matcher(version);
+
+    if (match.find()) {
+      if (new Integer(match.group(1)) >= WEBIFMINIMUMVERSION) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 }
