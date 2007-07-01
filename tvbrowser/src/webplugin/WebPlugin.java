@@ -127,7 +127,7 @@ public class WebPlugin extends Plugin {
   public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
     mAddresses = new ArrayList<WebAddress>();
 
-    int version = in.readInt();
+    in.readInt(); // version number
 
     int size = in.readInt();
 
@@ -323,6 +323,12 @@ public class WebPlugin extends Plugin {
 
   private void addSearchItem(ArrayList<String> list, String search) {
     if (search != null) {
+      // remove additional bracket parts from script and director fields
+      int leftBracket = search.indexOf("(");
+      int rightBracket = search.lastIndexOf(")");
+      if (leftBracket > 0 && rightBracket > leftBracket) {
+        search = search.substring(0, leftBracket);
+      }
       search = search.trim();
       if (search != "") {
         list.add(search);
