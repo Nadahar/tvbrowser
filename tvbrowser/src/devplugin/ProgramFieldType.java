@@ -84,7 +84,7 @@ public class ProgramFieldType {
                            "description", "Description");
 
   /**
-   * @deprecated use {@link PICTURE_TYPE}
+   * @deprecated use {@link ProgramFieldType#PICTURE_TYPE}
    */
   public static final ProgramFieldType IMAGE_TYPE
     = new ProgramFieldType(9, BINARY_FORMAT, true, "image",
@@ -166,6 +166,35 @@ public class ProgramFieldType {
        = new ProgramFieldType(28, TEXT_FORMAT, true, "picture description",
                               "pictureDescription", "Picture description");
 
+  /*@since 2.6 */
+  public static final ProgramFieldType EPISODE_NUMBER_TYPE
+       = new ProgramFieldType(29, INT_FORMAT, true, "number of episode",
+                              "episodeNumber", "Number of Episode");
+
+  /*@since 2.6 */
+  public static final ProgramFieldType EPISODE_TOTAL_NUMBER_TYPE
+       = new ProgramFieldType(30, INT_FORMAT, true, "total number of episodes",
+                              "episodeNumberTotal", "Total number of Episodes");
+
+  /*@since 2.6 */
+  public static final ProgramFieldType SEASON_NUMBER_TYPE
+       = new ProgramFieldType(31, INT_FORMAT, true, "number of season",
+                              "seasonNumber", "Number of Season");
+
+  /*@since 2.6 */
+  public static final ProgramFieldType PRODUCER_TYPE
+       = new ProgramFieldType(32, TEXT_FORMAT, true, "producer",
+                              "producer", "Producer");
+
+  /*@since 2.6 */
+  public static final ProgramFieldType CAMERA_TYPE
+       = new ProgramFieldType(33, TEXT_FORMAT, true, "camera",
+                              "camera", "Camera");
+
+  /*@since 2.6 */
+  public static final ProgramFieldType CUTTER_TYPE
+       = new ProgramFieldType(34, TEXT_FORMAT, true, "cutter",
+                              "cutter", "Cutter");
 
   private int mTypeId;
 

@@ -28,7 +28,8 @@ public class ProgramInfoHelper {
             Program.INFO_AUDIO_DOLBY_DIGITAL_5_1,
             Program.INFO_AUDIO_TWO_CHANNEL_TONE,
             Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED, Program.INFO_LIVE,
-            Program.INFO_ORIGINAL_WITH_SUBTITLE,};
+            Program.INFO_ORIGINAL_WITH_SUBTITLE,
+            Program.INFO_MOVIE, Program.INFO_SERIES, Program.INFO_NEW};
 
     /**
      * The Icons for the Bits
@@ -45,6 +46,9 @@ public class ProgramInfoHelper {
             createIcon(mLocalizer.msg("subtitleForAurallyHandicappedImage","Info_SubtitleForAurallyHandicapped.gif")), // INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED
             null, // INFO_LIVE
             createIcon(mLocalizer.msg("originalWithSubtitleImage","Info_OriginalWithSubtitle_EN.gif")), // INFO_ORIGINAL_WITH_SUBTITLE
+            null, // INFO_MOVIE
+            null, // INFO_SERIES
+            null  // INFO_NEW
     };
 
     /**
@@ -71,6 +75,9 @@ public class ProgramInfoHelper {
                     "Subtitle for aurally handicapped"), // INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED
             mLocalizer.msg("live", "Live"), // INFO_LIVE
             mLocalizer.msg("originalWithSubtitle", "Original with subtitle"), // INFO_ORIGINAL_WITH_SUBTITLE
+            mLocalizer.msg("movie", "Movie"), // INFO_MOVIE
+            mLocalizer.msg("series", "Series"),
+            mLocalizer.msg("new", "New"),
     };
 
 
