@@ -80,7 +80,13 @@ public interface Program {
    */
   public static final int INFO_SUBTITLE = INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED;
   
-  
+  /* @since 2.6 */
+  public static final int INFO_MOVIE = 1 << 12;
+  /* @since 2.6 */
+  public static final int INFO_SERIES = 1 << 13;
+  /* @since 2.6 */
+  public static final int INFO_NEW = 1 << 14;
+
   /**
    * Adds a ChangeListener to the program.
    *

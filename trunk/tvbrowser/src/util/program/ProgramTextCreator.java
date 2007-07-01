@@ -92,8 +92,7 @@ public class ProgramTextCreator {
    * @param bFont
    *          The body Font.
    * @param settings 
-   * @param showImage
-   *          Show the image.
+   *          Settings of the ProgramPanel 
    * @param showHelpLinks
    *          Show the Help-Links (Quality of Data, ShowView)
    * @param zoom The zoom value for the picture.
@@ -118,9 +117,8 @@ public class ProgramTextCreator {
    *          The title Font.
    * @param bFont
    *          The body Font.
-   * @param settings 
-   * @param showImage
-   *          Show the image.
+   * @param settings
+   *          Settings of the ProgramPanel
    * @param showHelpLinks
    *          Show the Help-Links (Quality of Data, ShowView)
    * @param zoom The zoom value for the picture.
@@ -696,9 +694,15 @@ public class ProgramTextCreator {
         ProgramFieldType.ACTOR_LIST_TYPE,
         ProgramFieldType.MODERATION_TYPE,
         ProgramFieldType.MUSIC_TYPE,
+        ProgramFieldType.PRODUCER_TYPE,
+        ProgramFieldType.CAMERA_TYPE,
+        ProgramFieldType.CUTTER_TYPE,
         ProgramFieldType.URL_TYPE,
         ProgramFieldType.ORIGINAL_TITLE_TYPE,
         ProgramFieldType.ORIGINAL_EPISODE_TYPE,
+        ProgramFieldType.EPISODE_NUMBER_TYPE,
+        ProgramFieldType.EPISODE_TOTAL_NUMBER_TYPE,
+        ProgramFieldType.SEASON_NUMBER_TYPE,
         ProgramFieldType.REPETITION_OF_TYPE,
         ProgramFieldType.REPETITION_ON_TYPE, ProgramFieldType.AGE_LIMIT_TYPE,
         ProgramFieldType.INFO_TYPE, ProgramFieldType.VPS_TYPE,
