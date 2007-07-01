@@ -44,11 +44,11 @@ public class ProgramInfoHelper {
             createIcon("Info_DolbyDigital51.gif"), // INFO_AUDIO_DOLBY_DIGITAL_5_1
             createIcon("Info_TwoChannelTone.gif"), // INFO_AUDIO_TWO_CHANNEL_TONE
             createIcon(mLocalizer.msg("subtitleForAurallyHandicappedImage","Info_SubtitleForAurallyHandicapped.gif")), // INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED
-            null, // INFO_LIVE
+            createIcon("Info_Live.png"), // INFO_LIVE
             createIcon(mLocalizer.msg("originalWithSubtitleImage","Info_OriginalWithSubtitle_EN.gif")), // INFO_ORIGINAL_WITH_SUBTITLE
-            null, // INFO_MOVIE
-            null, // INFO_SERIES
-            null  // INFO_NEW
+            createIcon("Info_Movie.png"), // INFO_MOVIE
+            createIcon("Info_Series.png"), // INFO_SERIES
+            createIcon("Info_New.png")  // INFO_NEW
     };
 
     /**
