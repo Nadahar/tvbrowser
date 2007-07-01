@@ -143,19 +143,21 @@ public class ProgramUtilities {
       ArrayList<String> listFirst = new ArrayList<String>();
       ArrayList<String> listSecond = new ArrayList<String>();
       for (String actor : actors) {
-        // actor and role separated by brackets
-        if (actor.contains("(") && actor.contains(")")) {
-          String secondPart = actor.substring(actor.indexOf("(")+1,actor.lastIndexOf(")")).trim();
-          // don't use this name if it contains _multiple_ brackets
-          if (!secondPart.contains("(")) {
-            listFirst.add(actor.substring(0, actor.indexOf("(")).trim());
-            listSecond.add(secondPart);
-          }
-        }
         // actor and role separated by tab
-        else if (actor.contains("\t")) {
+        if (actor.contains("\t")) {
           listFirst.add(actor.substring(0, actor.indexOf("\t")).trim());
           listSecond.add(actor.substring(actor.indexOf("\t")+1).trim());
+        }
+        // actor and role separated by brackets
+        else if (actor.contains("(") || actor.contains(")")) {
+          if (actor.contains("(") && actor.contains(")")) {
+            String secondPart = actor.substring(actor.indexOf("(")+1,actor.lastIndexOf(")")).trim();
+            // don't use this name if it contains _multiple_ brackets
+            if (!secondPart.contains("(")) {
+              listFirst.add(actor.substring(0, actor.indexOf("(")).trim());
+              listSecond.add(secondPart);
+            }
+          }
         }
         else {
           listFirst.add(actor.trim());
