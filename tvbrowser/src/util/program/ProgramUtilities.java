@@ -157,6 +157,12 @@ public class ProgramUtilities {
               listFirst.add(actor.substring(0, actor.indexOf("(")).trim());
               listSecond.add(secondPart);
             }
+            else {
+              return null; // error: multiple brackets in one name
+            }
+          }
+          else {
+            return null; // error: only a left or only a right bracket 
           }
         }
         else {
