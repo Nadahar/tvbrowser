@@ -431,7 +431,13 @@ public class PluginManagerImpl implements PluginManager {
       prog.setTimeField(ProgramFieldType.VPS_TYPE, 14 * 60 + 45);
       prog.setInfo(Program.INFO_AUDIO_TWO_CHANNEL_TONE
                    | Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED);
-
+      //new fields for 2.6
+      prog.setIntField(ProgramFieldType.EPISODE_NUMBER_TYPE, 13);
+      prog.setIntField(ProgramFieldType.EPISODE_TOTAL_NUMBER_TYPE, 24);
+      prog.setIntField(ProgramFieldType.SEASON_NUMBER_TYPE, 2);
+      prog.setTextField(ProgramFieldType.PRODUCER_TYPE, "Lorimar Television");
+      prog.setTextField(ProgramFieldType.CAMERA_TYPE, "Jon Doe");
+      prog.setTextField(ProgramFieldType.CUTTER_TYPE, "Jon Doe");
       mExampleProgram = prog;
     }
 
