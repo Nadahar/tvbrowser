@@ -36,12 +36,12 @@ public class Matcher implements Block, StringCompare {
 
   private String toTest;
 
-  private Hashtable multiTable;
+  private Hashtable<String, Object> multiTable;
 
   private boolean caseSen;
 
 
-  public Matcher(String s, boolean caseSensitive, Hashtable matcherTab) {
+  public Matcher(String s, boolean caseSensitive, Hashtable<String, Object> matcherTab) {
     caseSen = caseSensitive;
     toTest = s;
     if (!caseSensitive) {

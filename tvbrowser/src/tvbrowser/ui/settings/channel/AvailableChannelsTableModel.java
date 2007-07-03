@@ -75,7 +75,7 @@ public class AvailableChannelsTableModel extends AbstractTableModel {
        return mChannelList.size();
      }
 
-     public Class getColumnClass(int columnIndex) {
+     public Class<?> getColumnClass(int columnIndex) {
        if (columnIndex == 0) {
          return Channel.class;
        }
