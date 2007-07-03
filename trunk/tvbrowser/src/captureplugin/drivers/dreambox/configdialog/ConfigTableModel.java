@@ -88,7 +88,7 @@ public class ConfigTableModel extends AbstractTableModel {
         }
     }
 
-    public Class getColumnClass(int columnIndex) {
+    public Class<?> getColumnClass(int columnIndex) {
         if (columnIndex == 0) {
             return Channel.class;
         }

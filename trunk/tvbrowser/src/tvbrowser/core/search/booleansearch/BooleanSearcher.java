@@ -101,7 +101,7 @@ public class BooleanSearcher extends AbstractSearcher {
     pattern = pattern.replaceAll("[\\p{Punct}&&[^()]]", ";");
     
     StringTokenizer ST = new StringTokenizer(pattern);
-    Vector part = new Vector();
+    Vector<Object> part = new Vector<Object>();
     while (ST.hasMoreElements()) {
 
       String S = ST.nextToken();
@@ -115,7 +115,7 @@ public class BooleanSearcher extends AbstractSearcher {
     root = root.finish();
   }
 
-  private static Object expect(Vector part, int index, Class expectedClass, String expectedName) throws ParserException {
+  private static Object expect(Vector<Object> part, int index, Class<Block> expectedClass, String expectedName) throws ParserException {
     Object o = part.get(index);
     if (expectedClass.isInstance(o)) {
       return o;
@@ -125,7 +125,7 @@ public class BooleanSearcher extends AbstractSearcher {
     }
   }
 
-  private static Block getBlock(Vector part, boolean caseSensitive,
+  private static Block getBlock(Vector<Object> part, boolean caseSensitive,
                                 Hashtable matcherTable) throws ParserException {
     boolean lastWasMatch = false;
     for (int i = 0; i < part.size(); i++) {
@@ -166,7 +166,9 @@ public class BooleanSearcher extends AbstractSearcher {
     for (int i = 0; i < part.size(); i++) {
       Object O = part.get(i);
       if (O instanceof Vector) {
-        part.set(i, getBlock((Vector) O, caseSensitive, matcherTable));
+        @SuppressWarnings("unchecked")
+        Vector<Object> v = (Vector<Object>) O;
+        part.set(i, getBlock(v, caseSensitive, matcherTable));
       }
     }
 
@@ -261,8 +263,8 @@ public class BooleanSearcher extends AbstractSearcher {
   }
 
 
-  private static Vector subPart(StringTokenizer ST) throws ParserException {
-    Vector v = new Vector();
+  private static Vector<Object> subPart(StringTokenizer ST) throws ParserException {
+    Vector<Object> v = new Vector<Object>();
     while (ST.hasMoreElements()) {
       String S = ST.nextToken();
       if (S.equals("(")) {

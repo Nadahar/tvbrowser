@@ -66,7 +66,7 @@ public class TvDataBase {
   /** Contains date objects for each date for which we have a tv listing */
   private HashSet<Date> mAvailableDateSet;
 
-  private Hashtable mNewDayProgramsAfterUpdate;
+  private Hashtable<String, Object> mNewDayProgramsAfterUpdate;
   
   private TvDataInventory mTvDataInventory;
 
@@ -74,7 +74,7 @@ public class TvDataBase {
     mTvDataHash = new ValueCache();
     mListenerList = new ArrayList<TvDataBaseListener>();
     mAvailableDateSet = new HashSet<Date>();
-    mNewDayProgramsAfterUpdate = new Hashtable();
+    mNewDayProgramsAfterUpdate = new Hashtable<String, Object>();
     updateAvailableDateSet();
 
 /* Uncommend testwise.

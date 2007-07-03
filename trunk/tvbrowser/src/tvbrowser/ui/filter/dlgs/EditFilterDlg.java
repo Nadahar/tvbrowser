@@ -432,7 +432,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
       return "?";
     }
 
-    public Class getColumnClass(int columnIndex) {
+    public Class<?> getColumnClass(int columnIndex) {
       return String.class;
     }
 

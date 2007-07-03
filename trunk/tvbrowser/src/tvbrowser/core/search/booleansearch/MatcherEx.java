@@ -45,11 +45,11 @@ public class MatcherEx implements Block {
 
   private boolean caseSensitive;
 
-  private Hashtable matcherTab;
+  private Hashtable<String, Object> matcherTab;
 
 
   public MatcherEx(String s1, String s2, boolean CaseSensitive,
-      Hashtable matcherTable) {
+      Hashtable<String, Object> matcherTable) {
     matcherTab = matcherTable;
     caseSensitive = CaseSensitive;
     pretest = new And(new Matcher(s1, caseSensitive, matcherTable),
