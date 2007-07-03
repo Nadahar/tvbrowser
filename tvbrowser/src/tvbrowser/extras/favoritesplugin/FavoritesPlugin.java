@@ -628,16 +628,19 @@ public class FavoritesPlugin {
       }
 
       else if (program != null && !favorite.contains(program)) {
-       Object[] options = {mLocalizer.msg("btn.editFavorite","Edit Favorite"), mLocalizer.msg("btn.ignore","Ignore")};
-       if (JOptionPane.showOptionDialog(parent, mLocalizer.msg("dlg.programDoesntMatch","The currently selected program does not belong to the newly created favorite.\n\nDo you want to edit the favorite?"),
-                  mLocalizer.msg("dlg.title.warning","Warning"),
-                  JOptionPane.YES_NO_OPTION,
-                  JOptionPane.WARNING_MESSAGE,
-                  null,
-                  options,
-                  options[1]) == JOptionPane.YES_OPTION) {
-         editFavorite(favorite);
-       }
+        // only show a warning for non matching favorites if the program is older than today
+        if (program.getDate().compareTo(new devplugin.Date()) >= 0) {
+          Object[] options = {mLocalizer.msg("btn.editFavorite","Edit Favorite"), mLocalizer.msg("btn.ignore","Ignore")};
+          if (JOptionPane.showOptionDialog(parent, mLocalizer.msg("dlg.programDoesntMatch","The currently selected program does not belong to the newly created favorite.\n\nDo you want to edit the favorite?"),
+              mLocalizer.msg("dlg.title.warning","Warning"),
+              JOptionPane.YES_NO_OPTION,
+              JOptionPane.WARNING_MESSAGE,
+              null,
+              options,
+              options[1]) == JOptionPane.YES_OPTION) {
+            editFavorite(favorite);
+          }
+        }
       }
     }
     
