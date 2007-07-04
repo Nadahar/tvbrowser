@@ -783,10 +783,49 @@ private static Font getDynamicFontSize(Font font, int offset) {
       if (mIconArr != null) {
         x = 2;
         y = mTimeFont.getSize() + 3;
-        for (Icon icon : mIconArr) {
-          int iconHeight = icon.getIconHeight();
+
+        // calculate height with double column layout
+        int sumHeights = -2;
+        int maxWidth = 0;
+        int rowWidth = 0;
+        for (int i = 0; i < mIconArr.length; i++) {
+          sumHeights += mIconArr[i].getIconHeight() + 2;
+          if (i % 2 == 0) {
+            rowWidth = mIconArr[i].getIconWidth();
+          }
+          else {
+            rowWidth += mIconArr[i].getIconWidth();
+          }
+          if (rowWidth > maxWidth) {
+            maxWidth = rowWidth;
+          }
+        }
+
+        // single column of icons
+        int colCount = 1;
+        // layout icons in pairs
+        if ((y + sumHeights >= mHeight) && (maxWidth < WIDTH_LEFT)) {
+          colCount = 2;
+        }
+        int iconHeight = 0;
+        int currentX = x;
+        for (int i = 0; i < mIconArr.length; i++) {
+          Icon icon = mIconArr[i];
+          boolean nextColumn = (colCount == 1) || (i % 2 == 0);
+          if (nextColumn) {
+            currentX = x;
+            iconHeight = icon.getIconHeight();
+          }
+          else {
+            iconHeight = Math.max(iconHeight, icon.getIconHeight());
+          }
           if ((y + iconHeight) < mHeight) {
-            icon.paintIcon(this, grp, x, y);
+            icon.paintIcon(this, grp, currentX, y);
+          }
+          if (nextColumn) {
+            currentX += icon.getIconWidth() + 2;
+          }
+          if (!nextColumn || (colCount == 1)) {
             y += iconHeight + 2;
           }
         }
