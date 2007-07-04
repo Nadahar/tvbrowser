@@ -532,20 +532,16 @@ public class ProgramTextCreator {
     return buffer.toString();
   }
 
-  private static String[] addWikiLinks(String[] strings) {
-    for (int i = 0; i < strings.length; i++) {
-      strings[i] = addWikiLink(strings[i]);
-    }
-    return strings;
+  private static String addWikiLink(String topic, String displayText) {
+    String url = topic;
+    String style = " style=\"color:black; text-decoration:none; border-bottom: 1px dashed;\"";
+    return mLocalizer.msg("wikipediaLink", "<a href=\"http://en.wikipedia.org/wiki/{0}\"{1}>{2}</a>", url, style, displayText);
   }
 
   private static String addWikiLink(String topic) {
-    String url = topic;
-    String style = " style=\"color:black; text-decoration:none; border-bottom: 1px dashed;\"";
-    String text = topic;
-    return mLocalizer.msg("wikipediaLink", "<a href=\"http://en.wikipedia.org/wiki/{0}\"{1}>{2}</a>", url, style, text);
+    return addWikiLink(topic, topic);
   }
-
+  
   private static String[] splitList(String field) {
     String[] items;
     if (field.contains("\n")) {
@@ -627,7 +623,15 @@ public class ProgramTextCreator {
 
     // add wikipedia links
     if (ProgramFieldType.DIRECTOR_TYPE == fieldType || ProgramFieldType.SCRIPT_TYPE == fieldType) {
-      buffer.append(concatList(addWikiLinks(splitList(text))));
+      String[] directors = splitList(text);
+      for (int i = 0; i < directors.length; i++) {
+        String topic = directors[i];
+        if (directors[i].contains("(")) {
+          topic = directors[i].substring(0, directors[i].indexOf("(")-1);
+        }
+        directors[i] = addWikiLink(topic, directors[i]);
+      }
+      buffer.append(concatList(directors));
     }
     else {
       buffer.append(HTMLTextHelper.convertTextToHtml(text, createLinks));
