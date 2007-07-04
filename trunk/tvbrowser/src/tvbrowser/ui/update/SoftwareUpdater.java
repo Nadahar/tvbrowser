@@ -90,8 +90,11 @@ public class SoftwareUpdater {
       else {
         matcher=keyValuePattern.matcher(line);
         
-        if (matcher.find()) // new plugin 
-          curItem.addProperty(matcher.group(1), matcher.group(2));
+        if (matcher.find()) { // new plugin 
+          String value = matcher.group(2);
+          value = value.replaceAll("\\\\&", "&"); // fix wrong HTML encoding in plugin descriptions
+          curItem.addProperty(matcher.group(1), value);
+        }
       }
       line=reader.readLine();
     }
