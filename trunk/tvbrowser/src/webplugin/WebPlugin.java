@@ -243,7 +243,8 @@ public class WebPlugin extends Plugin {
         }
         // create only a single menu item for this search
         else {
-          AbstractAction action = createSearchAction(program, address, actionName);
+          final WebAddress adrTitle = new WebAddress(address.getName(), address.getUrl().replace(WEBSEARCH_ALL, "\"" + program.getTitle() + "\""), null, false, true);
+          AbstractAction action = createSearchAction(program, adrTitle, actionName);
           action.putValue(Action.SMALL_ICON, address.getIcon());
           actionList.add(action);
         }
