@@ -595,17 +595,22 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   }
 
   private void updateChannelList(Mirror mirror, boolean forceUpdate) throws TvBrowserException {
-    File file = new File(mDataDir, mID + "_" + ChannelList.FILE_NAME);
+    String fileName = mID + "_" + ChannelList.FILE_NAME;
+    File file = new File(mDataDir, fileName + ".new");
     if (forceUpdate || needsUpdate(file)) {
-      String url = mirror.getUrl() + (mirror.getUrl().endsWith("/") ? "" : "/") + mID + "_" + ChannelList.FILE_NAME;
+      String url = mirror.getUrl() + (mirror.getUrl().endsWith("/") ? "" : "/") + fileName;
       try {
         IOUtilities.download(new URL(url), file);
+        if (file.canRead() && file.length() > 0) {
+          File oldFile = new File(mDataDir, fileName);
+          oldFile.delete();
+          file.renameTo(oldFile);
+          // Invalidate the channel list
+          mAvailableChannelArr = null;
+        }
       } catch (Exception exc) {
         throw new TvBrowserException(getClass(), "error.4", "Server has no channel list: {0}", mirror.getUrl(), exc);
       }
-
-      // Invalidate the channel list
-      mAvailableChannelArr = null;
     }
   }
 
