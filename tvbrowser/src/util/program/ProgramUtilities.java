@@ -205,26 +205,19 @@ public class ProgramUtilities {
     if (scriptField != null) {
       scripts = scriptField.split(",");
     }
-    boolean use[] = new boolean[2];
     String lowerTitle = program.getTitle().toLowerCase();
-    for (int i = 0; i < use.length; i++) {
-      use[i] = false;
-    }
     for (int i = 0; i < list.length; i++) {
       // search for director in actors list
       for (String director : directors) {
-        use[i] = use[i] || list[i].contains(director);
+        if (list[i].contains(director)) {
+          return list[i];
+        }
       }
       // search for script in actors list
       for (String script : scripts) {
-        use[i] = use[i] || list[i].contains(script);
-      }
-      // search for role in program title
-      for (int j = 0; j < list[i].size(); j++) {
-        use[1-i] = use[1-i] || lowerTitle.contains(list[i].get(j).toLowerCase());
-      }
-      if (use[i]) {
-        return list[i];
+        if (list[i].contains(script)) {
+          return list[i];
+        }
       }
     }
     // which list contains more names with one part only (i.e. no family name) -> role names
@@ -290,6 +283,14 @@ public class ProgramUtilities {
       return list[1];
     }
     else {
+      // search for role in program title
+      for (int i = 0; i < list.length; i++) {
+        for (int j = 0; j < list[i].size(); j++) {
+          if (lowerTitle.contains(list[i].get(j).toLowerCase())) {
+            return list[i];
+          }
+        }
+      }
       return null;
     }
   }
