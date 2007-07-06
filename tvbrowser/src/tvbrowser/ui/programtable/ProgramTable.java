@@ -93,6 +93,8 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
   private JPopupMenu mPopupMenu;
 
   private Runnable mCallback;
+  
+  private Thread mClickThread;
   /**
    * Creates a new instance of ProgramTable.
    */
@@ -105,7 +107,6 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
 
     setColumnWidth(Settings.propColumnWidth.getInt());
     setModel(model);
-    setCursor(new Cursor(Cursor.HAND_CURSOR));
     updateBackground();
 
     setBackground(Color.white);
@@ -132,6 +133,12 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
       }
       public void mouseReleased(MouseEvent evt) {
         mDraggingPoint = null;
+        
+        if(mClickThread != null && mClickThread.isAlive()) {
+          mClickThread.interrupt();
+        }
+        
+        setCursor(Cursor.getDefaultCursor());
         if (evt.isPopupTrigger()) {
           showPopup(evt);
         }
@@ -474,6 +481,22 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
   private void handleMousePressed(MouseEvent evt) {
     requestFocus();
     
+    if(mClickThread != null && mClickThread.isAlive()) {
+      mClickThread.interrupt();
+    }
+    
+    mClickThread = new Thread() {
+      public void run() {
+        try {
+          Thread.sleep(200);
+          setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+        } catch (InterruptedException e) {}
+      }
+    };
+    
+    if(!evt.isShiftDown() && SwingUtilities.isLeftMouseButton(evt))
+      mClickThread.start();
+    
     mDraggingPoint = evt.getPoint();
   }
 
@@ -485,6 +508,10 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
     Program program = getProgramAt(evt.getX(), evt.getY());
     
     if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
+      if(mClickThread != null && mClickThread.isAlive()) {
+        mClickThread.interrupt();
+      }
+      
       if (program != null) {
         deSelectItem();
         
