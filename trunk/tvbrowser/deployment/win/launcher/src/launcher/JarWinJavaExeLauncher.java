@@ -19,12 +19,12 @@
  */
 package laucher;
  
-import java.io.BufferedReader;
+//import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.IOException;
+/*import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.InputStreamReader;*/
 import java.util.ArrayList;
 
 /**
@@ -60,11 +60,16 @@ public class JarWinJavaExeLauncher {
       CMD += " " + cmd;    
     
     try {
-      Process p = Runtime.getRuntime().exec(CMD.split(" "), null, new File(System.getProperty("user.dir")));
+      /*Process p = */Runtime.getRuntime().exec(CMD.split(" "), null, new File(System.getProperty("user.dir")));
       
-      new StreamReaderThread(p.getInputStream()).start();
-      new StreamReaderThread(p.getErrorStream()).start();
-    }catch(Exception e) {}
+      //new StreamReaderThread(p.getInputStream()).start();
+      //new StreamReaderThread(p.getErrorStream()).start();
+      
+    }catch(Exception e) {
+      System.exit(1);
+    }
+    
+    System.exit(0);
   }
   
   private String findAcceptableJavaVersion() {
@@ -122,7 +127,7 @@ public class JarWinJavaExeLauncher {
     new JarWinJavaExeLauncher(args);
   }
   
-  private class StreamReaderThread extends Thread {
+  /*private class StreamReaderThread extends Thread {
     private InputStream mInput;
     
     public StreamReaderThread(InputStream in) {
@@ -136,5 +141,5 @@ public class JarWinJavaExeLauncher {
       } catch (IOException e) {}
       System.exit(0);
     }
-  }
+  }*/
 }
