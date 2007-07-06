@@ -122,6 +122,10 @@ public class TVBrowser {
   /** The string array with the names of the earlier versions. */
   public static final String[] ALL_VERSIONS = new String[]{
           "2.6 (alpha)", 
+          "2.5.3",
+          "2.5.3beta2",
+          "2.5.3beta1",
+          "2.5.3 (alpha)",
           "2.5.2",
           "2.5.1",
           "2.5.1beta3",
@@ -132,6 +136,8 @@ public class TVBrowser {
           "2.5beta2",
           "2.5beta1",
           "2.5 alpha",
+          "2.2.4",
+          "2.2.3",
           "2.2.2",
           "2.2.2beta2",
           "2.2.2beta1",
@@ -144,7 +150,7 @@ public class TVBrowser {
   };
   
   /** The current version. */
-  public static final devplugin.Version VERSION=new devplugin.Version(2,53,false,ALL_VERSIONS[0] + ((mIsTransportable = new File("settings").isDirectory()) ? " transportable" : ""));
+  public static final devplugin.Version VERSION=new devplugin.Version(2,53,true,ALL_VERSIONS[0] + ((mIsTransportable = new File("settings").isDirectory()) ? " transportable" : ""));
 
   /** The title bar string. */
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
@@ -602,7 +608,7 @@ public class TVBrowser {
     if (Settings.propIsWindowMaximized.getBoolean()) {
         mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
     }
-    if (windowX < 0 || windowX > screen.width || windowY < 0 || windowY > screen.height|| windowWidth < 200 || windowHeight < 200) {
+    if (windowX + windowWidth < 0 || windowX > screen.width || windowY + windowHeight < 0 || windowY > screen.height|| windowWidth < 200 || windowHeight < 200) {
       UiUtilities.centerAndShow(mainFrame);
     } else {
       mainFrame.setLocation(windowX, windowY);
@@ -674,9 +680,11 @@ public class TVBrowser {
     if(log) {
       mLog.info("Storing window size and location");
 
-      boolean maximized = mainFrame.getExtendedState() == Frame.MAXIMIZED_BOTH;
-
+      int state = mainFrame.getExtendedState();
+      
+      boolean maximized = (state & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH;
       Settings.propIsWindowMaximized.setBoolean(maximized);
+      
       if (! maximized) {
         // Save the window size and location only when not maximized
         Settings.propWindowWidth.setInt(mainFrame.getWidth());

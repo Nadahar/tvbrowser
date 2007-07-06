@@ -86,7 +86,7 @@ public class TopicFavorite extends Favorite {
 
     ProgramSearcher searcher = searchForm.createSearcher();
     return searcher.search(searchForm.getFieldTypes(),
-                                                new devplugin.Date(),
+                                                new devplugin.Date().addDays(-1),
                                                 1000,
                                                 channelArr,
                                                 false

@@ -946,7 +946,7 @@ public class Settings {
       mProp, "programpanel.defaultMarkPriority", 0);  
   /** Color for Programs marked with MIN_PRIORITY */
   public static final ColorProperty propProgramPanelMarkedMinPriorityColor = new ColorProperty(
-      mProp, "programpanel.ColorMarked", new Color(255, 0, 0, 25));
+      mProp, "programpanel.ColorMarked", new Color(255, 0, 0, 30));
   /** Color for Programs marked with LOWER_MEDIUM_PRIORITY */
   public static final ColorProperty propProgramPanelMarkedLowerMediumPriorityColor = new ColorProperty(
       mProp, "programpanel.ColorMarkedLowerMedium", new Color(0, 255, 255, 50));

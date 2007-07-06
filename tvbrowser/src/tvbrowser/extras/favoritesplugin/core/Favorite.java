@@ -82,7 +82,10 @@ public abstract class Favorite {
     mExclusionList = new ArrayList<Exclusion>();
     int exclSize = in.readInt();
     for (int i=0; i<exclSize; i++) {
-      mExclusionList.add(new Exclusion(in));
+      Exclusion exclusion = new Exclusion(in);
+      
+      if(!exclusion.isInvalid())
+        mExclusionList.add(exclusion);
     }
 
     int cnt = in.readInt();

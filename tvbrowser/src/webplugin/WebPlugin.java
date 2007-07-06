@@ -217,6 +217,7 @@ public class WebPlugin extends Plugin {
     	WebAddress address = mAddresses.get(i);
     	String actionName = mLocalizer.msg("SearchOn", "Search on ") + " " + address.getName();
 
+/*MERGE CONFLICT BEGINS HERE*/
     	//create adress of channel on the fly
     	if (address.getUrl().equals(CHANNEL_SITE)) {
     		address = new WebAddress(mLocalizer.msg("channelPage", "Open page of {0}",program.getChannel().getName()),program.getChannel().getWebpage(),null,false,address.isActive());
@@ -251,6 +252,37 @@ public class WebPlugin extends Plugin {
       }
     }
     Object[] actions = new Object[actionList.size()];
+/*MERGE CONFLICT ENDS HERE*/
+/*Mege alternative:
+				// create adress of channel on the fly
+				if (address.getUrl().equals(CHANNEL_SITE)) {
+					address = new WebAddress(
+							mLocalizer.msg("channelPage", "Open page of {0}",
+									program.getChannel().getName()), program
+									.getChannel().getWebpage(), null, false,
+							address.isActive());
+					actionName = address.getName();
+				}
+				final WebAddress adr = address;
+
+				if (adr.isActive()) {
+					AbstractAction action = new AbstractAction() {
+
+						public void actionPerformed(ActionEvent evt) {
+							openUrl(program, adr);
+						}
+					};
+					action.putValue(Action.NAME, actionName);
+					action.putValue(Action.SMALL_ICON, adr.getIcon());
+
+					actionList.add(action);
+				}
+			} catch (RuntimeException e) {
+				e.printStackTrace();
+			}
+		}
+    Action[] actions = new Action[actionList.size()];
+*/
     actionList.toArray(actions);
     ActionMenu result = new ActionMenu(mainAction, actions);
 

@@ -64,14 +64,11 @@ public class NewsPlugin extends Plugin {
   /** The URL of the news skript. */
   private static final String NEWS_URL = "http://www.tvbrowser.org/newsplugin/newsplugin-get.php";
 
-  /** When we have no news get the news of the last week. */
-  private static int FIRST_NEWS_DAYS = 7;
-
   /** The maximum age of news. Older news will be removed. */
   private static int MAX_NEWS_AGE = 90;
 
   /** The news. */
-  private ArrayList<News> mNewsList;
+  private NewsList mNewsList;
 
   /** Instance of this Plugin */
   private static NewsPlugin mInstance;
@@ -86,7 +83,7 @@ public class NewsPlugin extends Plugin {
    * Creates a new instance of NewsPlugin.
    */
   public NewsPlugin() {
-    mNewsList = new ArrayList<News>();
+    mNewsList = new NewsList();
     mInstance = this;
   }
 
@@ -107,7 +104,7 @@ public class NewsPlugin extends Plugin {
     AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent evt) {
         if(mNewsDialog == null || !mNewsDialog.isVisible()) {
-          mNewsDialog = new NewsDialog(getParentFrame(), mNewsList, -1);
+          mNewsDialog = new NewsDialog(getParentFrame(), mNewsList.getList(), -1);
           mNewsDialog.centerAndShow();
         }
       }
@@ -146,15 +143,8 @@ public class NewsPlugin extends Plugin {
     if (hasRightToDownload && mNoConnectionTime < currentTime) {
       int serverWaitDays = -1;
       try {
-        long lastNews;
-        if (mNewsList.isEmpty()) {
-          // We have no news
-          lastNews = mLastNewsFileModified;
-        } else {
-          News last = mNewsList.get(mNewsList.size() - 1);
-          lastNews = last.getTime().getTime();
-        }
-
+        long lastNews = mNewsList.getLastNewsTime(mLastNewsFileModified);
+        
         URL url = new URL(NEWS_URL);
         URLConnection conn = url.openConnection();
         long lastModified = conn.getLastModified();
@@ -170,9 +160,10 @@ public class NewsPlugin extends Plugin {
             
             int addCount = 0;
             
-            for (News newsItem : newsArr) {
-              if((newsItem.getTime().getTime() - lastNews) > 5000) {
-                mNewsList.add(newsItem);
+            // Add the new news
+            for (int i = 0; i < newsArr.length; i++) {
+              if((newsArr[i].getTime().getTime() - lastNews) > 5000) {
+                mNewsList.add(newsArr[i]);
                 addCount++;
               }
             }
@@ -182,7 +173,7 @@ public class NewsPlugin extends Plugin {
               final int newNewsCount = addCount; 
               SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                  NewsDialog dlg = new NewsDialog(getParentFrame(), mNewsList,
+                  NewsDialog dlg = new NewsDialog(getParentFrame(), mNewsList.getList(),
                       newNewsCount);
                   dlg.centerAndShow();
                 }
@@ -211,23 +202,6 @@ public class NewsPlugin extends Plugin {
             
       mNoConnectionTime = Math.max(randomNoConnectionTime, serverNoConnectionTime);
     }
-  }
-
-  /**
-   * Fills zeros to a number until it has a certain length
-   * 
-   * @param number
-   *          The number to fill with zeros
-   * @param charCount
-   *          The number of chars the number string should have
-   * @return A number String filled with zeros if nessesary.
-   */
-  private String fill(int number, int charCount) {
-    String str = Integer.toString(number);
-    while (str.length() < charCount) {
-      str = "0" + str;
-    }
-    return str;
   }
   
   /**
@@ -319,9 +293,9 @@ public class NewsPlugin extends Plugin {
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(3); // version
     
-    out.writeInt(mNewsList.size());
-    for (int i = 0; i < mNewsList.size(); i++) {
-      News news = mNewsList.get(i);
+    out.writeInt(mNewsList.getList().size());
+    for (int i = 0; i < mNewsList.getList().size(); i++) {
+      News news = mNewsList.getList().get(i);
       news.writeData(out);
     }
     
@@ -344,8 +318,8 @@ public class NewsPlugin extends Plugin {
     int version = in.readInt();
 
     int size = in.readInt();
-    mNewsList.clear();
-    mNewsList.ensureCapacity(size);
+    mNewsList.getList().clear();
+    mNewsList.getList().ensureCapacity(size);
     Date deadline = new Date(System.currentTimeMillis() - MAX_NEWS_AGE
         * 24L * 60L * 60L * 1000L);
     for (int i = 0; i < size; i++) {

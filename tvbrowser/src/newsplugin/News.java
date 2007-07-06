@@ -35,7 +35,7 @@ import java.util.Date;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class News {
+public class News implements Comparable {
 
   /** The timestamp of the news */
   private Date mTime;
@@ -139,5 +139,13 @@ public class News {
     
     return new News(time, author, title, text);
   }
+
   
+  public int compareTo(Object o) {
+    if(o instanceof News) {
+      return mTime.compareTo(((News)o).mTime);
+    }
+    
+    return 0;
+  }
 }
