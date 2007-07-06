@@ -43,13 +43,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Calendar;
-import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -213,16 +210,7 @@ public class IOUtilities {
     }
     
     if (timeout > 0) {
-      try {
-        Method setReadTimeout = conn.getClass().getMethod("setReadTimeout", new Class[] {int.class});
-        setReadTimeout.invoke(conn, new Object[] {new Integer(timeout)});
-      } catch (NoSuchMethodException e) {
-        mLog.log(Level.WARNING, "Method 'URLConnection#setReadTimeout' not found - please upgrade to Java 5 (http://java.com)");
-      } catch (IllegalAccessException e) {
-        mLog.log(Level.SEVERE, e.getLocalizedMessage(), e);
-      } catch (InvocationTargetException e) {
-        mLog.log(Level.SEVERE, e.getLocalizedMessage(), e);
-      } catch (Throwable t) {}
+      conn.setReadTimeout(timeout);
     }
 
     if (followRedirects && (conn instanceof HttpURLConnection)) {

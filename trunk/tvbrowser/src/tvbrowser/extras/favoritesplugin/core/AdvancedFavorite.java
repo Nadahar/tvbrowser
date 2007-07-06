@@ -275,7 +275,7 @@ public class AdvancedFavorite extends Favorite {
 
     ProgramSearcher searcher = searchForm.createSearcher();
     Program[] progArr = searcher.search(searchForm.getFieldTypes(),
-                                                new devplugin.Date(),
+                                                new devplugin.Date().addDays(-1),
                                                 1000,
                                                 channelArr,
                                                 false

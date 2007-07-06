@@ -106,7 +106,7 @@ public class ActorsFavorite extends Favorite {
     SearchFormSettings searchForm = mSearchFormSettings;
     ProgramFieldType[] fields = searchForm.getFieldTypes();
     ProgramSearcher searcher = new ActorSearcher(mActors);
-    Program[] foundPrograms = searcher.search(fields, new devplugin.Date(), 1000, channelArr, false);
+    Program[] foundPrograms = searcher.search(fields, new devplugin.Date().addDays(-1), 1000, channelArr, false);
     return foundPrograms;
   }
 

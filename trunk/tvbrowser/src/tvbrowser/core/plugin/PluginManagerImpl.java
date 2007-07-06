@@ -127,8 +127,25 @@ public class PluginManagerImpl implements PluginManager {
 
     Channel ch = getChannelFromProgId(progID);
     if (ch != null && ChannelList.isSubscribedChannel(ch)) {
+      if(!ch.getTimeZone().equals(TimeZone.getDefault())) {        
+        String[] id = progID.split("_");
+        int value = Integer.parseInt(id[id.length-1].split(":")[0]) * 60 * 60 * 1000 + Integer.parseInt(id[id.length-1].split(":")[1]) * 60 * 1000;
+
+        int diff = Math.abs(ch.getTimeZone().getRawOffset() - TimeZone.getDefault().getRawOffset());
+        
+        if(ch.getTimeZone().getRawOffset() < TimeZone.getDefault().getRawOffset()) {
+          if(value < diff) {
+            date = date.addDays(-1);
+          }
+        }
+        else if(value + diff >= 86400000) {
+          date = date.addDays(1);
+        }
+      }
+      
       ChannelDayProgram dayProg = db.getDayProgram(date, ch);
-      if (dayProg != null) {
+      
+      if (dayProg != null) {        
         Program prog = dayProg.getProgram(progID);
         if (prog != null) {
           return prog;

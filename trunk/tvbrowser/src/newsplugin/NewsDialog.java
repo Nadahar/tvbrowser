@@ -210,17 +210,17 @@ public class NewsDialog implements WindowClosingIf {
       
       // Show the news - backwards (newest first)
       int newsCount = mNewsList.size();
-      for (int i = newsCount - 1; i >= 0; i--) {
-        int currNews = newsCount - i - 1;
+      for (int i = 0; i < newsCount; i++) {
+        
         
         if ((mOnlyNewChB != null) && mOnlyNewChB.isSelected()
-          && (currNews >= mNewNewsCount))
+          && (i >= mNewNewsCount))
         {
           // Show only the new ones
           break;
         }
         
-        if (currNews != 0) {
+        if (i != 0) {
           buf.append("<hr>");
         }
         
@@ -228,7 +228,7 @@ public class NewsDialog implements WindowClosingIf {
         
         buf.append("<table width=\"100%\">");
         buf.append("<tr>");
-        if (currNews < mNewNewsCount) {
+        if (i < mNewNewsCount) {
           buf.append("<td rowspan=\"4\" width=\"30\" valign=\"top\">");
           JLabel iconLabel = new JLabel(mNewIcon);
           iconLabel.setToolTipText(mLocalizer.msg("newNews", "This news is new"));

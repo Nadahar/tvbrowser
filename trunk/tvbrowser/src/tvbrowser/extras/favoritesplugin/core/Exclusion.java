@@ -27,6 +27,7 @@
 package tvbrowser.extras.favoritesplugin.core;
 
 import devplugin.Channel;
+import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 
@@ -90,8 +91,9 @@ public class Exclusion {
         String channelId=(String)in.readObject();
         mChannel = Channel.getChannel(channelServiceClassName, channelGroupId, null, channelId);
       }
-      else
+      else {
         mChannel = Channel.readData(in, true);
+      }
     }
 
     boolean hasTitle = in.readBoolean();
@@ -166,7 +168,10 @@ public class Exclusion {
     boolean topicExcl = false;
     boolean timeExcl = false;
     boolean dayExcl = false;
-
+    
+    if(isInvalid())
+      return false;
+    
     if (mChannel != null) {
       Channel ch = prog.getChannel();
       if (ch.equals(mChannel)) {
@@ -249,5 +254,13 @@ public class Exclusion {
 
     return channelExcl && titleExcl && topicExcl && timeExcl && dayExcl;
   }
-
+  
+  /**
+   * Gets if this Exclusion is invalid.
+   * 
+   * @return <code>True</code> if this Exclusion is invalid, <code>false</code> otherwise.
+   */
+  public boolean isInvalid() {
+    return mTitle == null && mTopic == null && mChannel == null && mTimeFrom == -1 &&mTimeTo == -1 && mDayOfWeek == Exclusion.DAYLIMIT_DAILY;
+  }
 }

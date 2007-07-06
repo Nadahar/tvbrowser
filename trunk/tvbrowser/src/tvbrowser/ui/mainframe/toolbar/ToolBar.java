@@ -50,10 +50,14 @@ import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -160,9 +164,28 @@ public class ToolBar extends JToolBar {
       if (type == TOOGLE_BUTTON_ACTION) {
         addToggleButton(action);
       } else if (type == SEPARATOR) {
-        addSeparator();
-        ((JToolBar.Separator)getComponentAtIndex(getComponentCount()-1)).setBorder(BorderFactory.createLineBorder(getBackground()));
-        ((JToolBar.Separator)getComponentAtIndex(getComponentCount()-1)).setAlignmentX(Component.CENTER_ALIGNMENT);
+        JPanel separatorPanel = new JPanel(new FormLayout("0dlu:grow,default,0dlu:grow","fill:default:grow"));
+        
+        if(mLocation.equals(BorderLayout.WEST))
+          separatorPanel.setLayout(new FormLayout("default:grow","0dlu:grow,default,0dlu:grow"));
+          
+        separatorPanel.setOpaque(false);
+        separatorPanel.setBorder(BorderFactory.createEmptyBorder());
+        separatorPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        if(mLocation.equals(BorderLayout.NORTH))
+          separatorPanel.add(new JSeparator(JSeparator.VERTICAL), new CellConstraints().xy(2,1));
+        else
+          separatorPanel.add(new JSeparator(JSeparator.HORIZONTAL), new CellConstraints().xy(1,2));
+
+        int height = (int)((mLocation.equals(BorderLayout.NORTH) ? getPreferredSize().height : 20) * 0.85);
+        int width = mLocation.equals(BorderLayout.NORTH) ? 10 : 18;
+        
+        separatorPanel.setPreferredSize(new Dimension(width,height));
+        separatorPanel.setMaximumSize(new Dimension(width,height));
+        separatorPanel.setMinimumSize(new Dimension(width,height));        
+        
+        add(separatorPanel);
       } else if (type == GLUE) {
         JPanel gluePanel = new JPanel();
         gluePanel.setOpaque(false);
@@ -511,7 +534,7 @@ public class ToolBar extends JToolBar {
 
     if (mLocation.equals(BorderLayout.EAST) || mLocation.equals(BorderLayout.WEST)) {
       setOrientation(SwingConstants.VERTICAL);
-    } else {      
+    } else {        
       setOrientation(SwingConstants.HORIZONTAL);
     }
     

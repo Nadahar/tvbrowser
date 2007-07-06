@@ -48,6 +48,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.filters.PluginFilter;
 import tvbrowser.core.filters.SeparatorFilter;
 import tvbrowser.core.filters.ShowAllFilter;
@@ -221,6 +222,11 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
       mFilterList.setProgramFilterArr(filters);
 
       mFilterList.store();
+      // update main table if a filter is active
+      ProgramFilter currentFilter = FilterManagerImpl.getInstance().getCurrentFilter();
+      if (! currentFilter.equals(FilterManagerImpl.getInstance().getDefaultFilter())) {
+        FilterManagerImpl.getInstance().setCurrentFilter(currentFilter);
+      }
       setVisible(false);
     } else if (e.getSource() == mCancelBtn) {
       close();

@@ -127,18 +127,12 @@ public class LimitationConfiguration {
   }
 
   public void setChannels(Channel[] ch) {
+    mChannelItemList.clear();
+    
     for(int i = 0; i < ch.length; i++) {
-      boolean toAdd = true;
-      
-      for(int j = 0; j < mChannelItemList.size(); j++)
-        if((mChannelItemList.get(j)).mChannel.equals(ch[i])) {
-          toAdd = false;
-          break;
-        }
-      
-      if(toAdd)
-        mChannelItemList.add(new ChannelItem(ch[i]));
+      mChannelItemList.add(new ChannelItem(ch[i]));
     }
+    
     mChannelArr = ch;
     mIsLimitedByChannel = true;
   }

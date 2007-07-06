@@ -356,12 +356,11 @@ public class Localizer {
    * @since 2.3
    */
   public Locale[] getAllAvailabelLocales() {
-    Locale[] locales = null;
-    try {
-      ArrayList<Locale> langArray = new ArrayList<Locale>();
+	// always have English locale available
+    ArrayList<Locale> langArray = new ArrayList<Locale>();
+    langArray.add(Locale.ENGLISH);
 
-      langArray.add(Locale.ENGLISH);
-      
+    try {
       // First Step: look into tvbrowser.jar
       JarFile file = new JarFile(new File("tvbrowser.jar"));
       
@@ -378,20 +377,19 @@ public class Localizer {
       
       addLocaleFiles(new File(Settings.getUserSettingsDirName() + "/lang/tvbrowser"), langArray);
       addLocaleFiles(new File("lang/tvbrowser"), langArray);
-      
-      locales = langArray.toArray(new Locale[langArray.size()]);
-      
-      Arrays.sort(locales, new Comparator<Locale>() {
-        public int compare(Locale o1, Locale o2) {
-          return o1.getDisplayName().compareTo(o2.getDisplayName());
-        }
-      });
-      
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
     }
+
+    Locale[] locales = langArray.toArray(new Locale[langArray.size()]);
+    
+    Arrays.sort(locales, new Comparator<Locale>() {
+      public int compare(Locale o1, Locale o2) {
+        return o1.getDisplayName().compareTo(o2.getDisplayName());
+      }
+    });
     
     return locales;
   }

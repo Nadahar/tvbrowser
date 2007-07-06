@@ -419,6 +419,28 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
       mSeparatorAction.putValue(ToolBar.ACTION_TYPE_KEY, new Integer(
           ToolBar.SEPARATOR));
       mSeparatorAction.putValue(Action.NAME, "Separator");
+      mSeparatorAction.putValue(Plugin.BIG_ICON, new Icon() {
+
+        public int getIconHeight() {
+          return 22;
+        }
+
+        public int getIconWidth() {
+          return 22;
+        }
+
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+          int width = c.getWidth();
+          int height = c.getHeight();
+          
+          int xStart = width/2 - 1;
+          
+          g.setColor(c.getBackground().darker().darker());
+          g.drawLine(xStart,1,xStart++,height/2);
+          g.setColor(c.getBackground().brighter());
+          g.drawLine(xStart,1,xStart,height/2);          
+        }        
+      });
     }
     return mSeparatorAction;
   }
@@ -438,12 +460,10 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
       mGlueAction.putValue(Plugin.BIG_ICON, new Icon() {
 
         public int getIconHeight() {
-          // TODO Automatisch erstellter Methoden-Stub
           return 22;
         }
 
         public int getIconWidth() {
-          // TODO Automatisch erstellter Methoden-Stub
           return 22;
         }
 
@@ -492,12 +512,10 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
       mSpaceAction.putValue(Plugin.BIG_ICON, new Icon() {
 
         public int getIconHeight() {
-          // TODO Automatisch erstellter Methoden-Stub
           return 22;
         }
 
         public int getIconWidth() {
-          // TODO Automatisch erstellter Methoden-Stub
           return 22;
         }
 
