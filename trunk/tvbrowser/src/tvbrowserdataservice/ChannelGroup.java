@@ -602,6 +602,11 @@ public class ChannelGroup implements devplugin.ChannelGroup {
       try {
         IOUtilities.download(new URL(url), file);
         if (file.canRead() && file.length() > 0) {
+          // try reading the file
+          devplugin.ChannelGroup group = new devplugin.ChannelGroupImpl(mID, getName(), null, getProviderName());
+          ChannelList channelList = new ChannelList(group);
+          channelList.readFromFile(file, mDataService);
+          // ok, we can read it, so use this new file instead of the old
           File oldFile = new File(mDataDir, fileName);
           oldFile.delete();
           file.renameTo(oldFile);
