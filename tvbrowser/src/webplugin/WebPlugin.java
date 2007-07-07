@@ -213,76 +213,48 @@ public class WebPlugin extends Plugin {
     listActors = null;
 
     for (int i = 0; i < mAddresses.size(); i++) {
+    	try {
+        WebAddress address = mAddresses.get(i);
+        String actionName = mLocalizer.msg("SearchOn", "Search on ") + " " + address.getName();
 
-    	WebAddress address = mAddresses.get(i);
-    	String actionName = mLocalizer.msg("SearchOn", "Search on ") + " " + address.getName();
-
-/*MERGE CONFLICT BEGINS HERE*/
-    	//create adress of channel on the fly
-    	if (address.getUrl().equals(CHANNEL_SITE)) {
-    		address = new WebAddress(mLocalizer.msg("channelPage", "Open page of {0}",program.getChannel().getName()),program.getChannel().getWebpage(),null,false,address.isActive());
-    		actionName = address.getName();
-    	}
-      if (address.isActive()) {
-        // create items for a possible sub menu
-        if (address.getUrl().contains(WEBSEARCH_ALL) && listActors == null) {
-          findSearchItems(program);
+        //create adress of channel on the fly
+        if (address.getUrl().equals(CHANNEL_SITE)) {
+        	address = new WebAddress(mLocalizer.msg("channelPage", "Open page of {0}",program.getChannel().getName()),program.getChannel().getWebpage(),null,false,address.isActive());
+        	actionName = address.getName();
         }
-        if (address.getUrl().contains(WEBSEARCH_ALL) && (listActors.size() + listDirectors.size() + listScripts.size() > 0)) {
-          ArrayList<Object> categoryList = new ArrayList<Object>();
-          // title
-          final WebAddress adrTitle = new WebAddress(address.getName(), address.getUrl().replace(WEBSEARCH_ALL, "\"" + program.getTitle() + "\""), null, false, true);
-          categoryList.add(createSearchAction(program, adrTitle, program.getTitle()));
-          
-          createSubMenu(program, address, categoryList, mLocalizer.msg("actor", "Actor"), listActors);
-          createSubMenu(program, address, categoryList, mLocalizer.msg("director","Director"), listDirectors);
-          createSubMenu(program, address, categoryList, mLocalizer.msg("script","Script"), listScripts);
-          
-          ContextMenuAction action = new ContextMenuAction(actionName, address.getIcon());
-          ActionMenu searchMenu = new ActionMenu(action, categoryList.toArray());
-          actionList.add(searchMenu);
+        if (address.isActive()) {
+          // create items for a possible sub menu
+          if (address.getUrl().contains(WEBSEARCH_ALL) && listActors == null) {
+            findSearchItems(program);
+          }
+          if (address.getUrl().contains(WEBSEARCH_ALL) && (listActors.size() + listDirectors.size() + listScripts.size() > 0)) {
+            ArrayList<Object> categoryList = new ArrayList<Object>();
+            // title
+            final WebAddress adrTitle = new WebAddress(address.getName(), address.getUrl().replace(WEBSEARCH_ALL, "\"" + program.getTitle() + "\""), null, false, true);
+            categoryList.add(createSearchAction(program, adrTitle, program.getTitle()));
+            
+            createSubMenu(program, address, categoryList, mLocalizer.msg("actor", "Actor"), listActors);
+            createSubMenu(program, address, categoryList, mLocalizer.msg("director","Director"), listDirectors);
+            createSubMenu(program, address, categoryList, mLocalizer.msg("script","Script"), listScripts);
+            
+            ContextMenuAction action = new ContextMenuAction(actionName, address.getIcon());
+            ActionMenu searchMenu = new ActionMenu(action, categoryList.toArray());
+            actionList.add(searchMenu);
+          }
+          // create only a single menu item for this search
+          else {
+            final WebAddress adrTitle = new WebAddress(address.getName(), address.getUrl().replace(WEBSEARCH_ALL, "\"" + program.getTitle() + "\""), null, false, true);
+            AbstractAction action = createSearchAction(program, adrTitle, actionName);
+            action.putValue(Action.SMALL_ICON, address.getIcon());
+            actionList.add(action);
+          }
         }
-        // create only a single menu item for this search
-        else {
-          final WebAddress adrTitle = new WebAddress(address.getName(), address.getUrl().replace(WEBSEARCH_ALL, "\"" + program.getTitle() + "\""), null, false, true);
-          AbstractAction action = createSearchAction(program, adrTitle, actionName);
-          action.putValue(Action.SMALL_ICON, address.getIcon());
-          actionList.add(action);
-        }
+      } catch (RuntimeException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
       }
     }
     Object[] actions = new Object[actionList.size()];
-/*MERGE CONFLICT ENDS HERE*/
-/*Mege alternative:
-				// create adress of channel on the fly
-				if (address.getUrl().equals(CHANNEL_SITE)) {
-					address = new WebAddress(
-							mLocalizer.msg("channelPage", "Open page of {0}",
-									program.getChannel().getName()), program
-									.getChannel().getWebpage(), null, false,
-							address.isActive());
-					actionName = address.getName();
-				}
-				final WebAddress adr = address;
-
-				if (adr.isActive()) {
-					AbstractAction action = new AbstractAction() {
-
-						public void actionPerformed(ActionEvent evt) {
-							openUrl(program, adr);
-						}
-					};
-					action.putValue(Action.NAME, actionName);
-					action.putValue(Action.SMALL_ICON, adr.getIcon());
-
-					actionList.add(action);
-				}
-			} catch (RuntimeException e) {
-				e.printStackTrace();
-			}
-		}
-    Action[] actions = new Action[actionList.size()];
-*/
     actionList.toArray(actions);
     ActionMenu result = new ActionMenu(mainAction, actions);
 
