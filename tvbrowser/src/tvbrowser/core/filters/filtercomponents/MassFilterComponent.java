@@ -152,7 +152,7 @@ public class MassFilterComponent implements FilterComponent {
 
     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
-    JButton config = new JButton("Config");
+    JButton config = new JButton(mLocalizer.msg("configure", "Search options"));
 
     config.addActionListener(new ActionListener() {
 
