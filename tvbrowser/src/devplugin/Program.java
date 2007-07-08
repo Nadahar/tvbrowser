@@ -86,6 +86,8 @@ public interface Program {
   public static final int INFO_SERIES = 1 << 13;
   /* @since 2.6 */
   public static final int INFO_NEW = 1 << 14;
+  /* @since 2.6 */
+  public static final int INFO_AUDIO_DESCRIPTION = 1 << 15;
 
   /**
    * Adds a ChangeListener to the program.
