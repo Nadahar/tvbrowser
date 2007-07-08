@@ -132,7 +132,7 @@ public class NewsPlugin extends Plugin {
     String author = "Til Schneider, www.murfman.de";
     String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/News");
     
-    return new PluginInfo(name, desc, author, helpUrl, new Version(1, 6));
+    return new PluginInfo(name, desc, author, helpUrl, new Version(1, 7));
   }
 
   /**
