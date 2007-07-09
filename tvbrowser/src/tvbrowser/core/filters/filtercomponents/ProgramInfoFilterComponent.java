@@ -39,12 +39,16 @@ import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
 import tvbrowser.core.filters.FilterComponent;
 import util.ui.ImageUtilities;
 import devplugin.Program;
 import devplugin.ProgramInfoHelper;
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.factories.Borders;
 
 /**
  * Filtert nach bestimmten Programm-Informationen (zum Beispiel Untertitel)
@@ -71,7 +75,7 @@ public class ProgramInfoFilterComponent implements FilterComponent {
     }
 
     /** 
-     * Gibt die Version zur�ck
+     * Gibt die Version zurueck
      * @see tvbrowser.core.filters.FilterComponent#getVersion()
      */
     public int getVersion() {
@@ -108,22 +112,16 @@ public class ProgramInfoFilterComponent implements FilterComponent {
     }
 
     /**
-     * Gibt einen Panel zur�ck, der es erm�glicht, 
+     * Gibt einen Panel zurueck, der es ermoeglicht,
      * den Filter einzustellen
      * @see tvbrowser.core.filters.FilterComponent#getSettingsPanel()
      */
     public JPanel getSettingsPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridBagLayout());
-        
-        GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridwidth = GridBagConstraints.REMAINDER;
+        FormLayout layout = new FormLayout("pref, 3dlu, pref", "");
+        DefaultFormBuilder builder = new DefaultFormBuilder(layout);
+        builder.setDefaultDialogBorder();
+        builder.setBorder(Borders.EMPTY_BORDER);
 
-        GridBagConstraints b = new GridBagConstraints();
-        b.fill = GridBagConstraints.NONE;
-        b.anchor = GridBagConstraints.WEST;
-        
         _checkBox = new JCheckBox[ProgramInfoHelper.mInfoMsgArr.length];
         
         for (int i = 0; i < ProgramInfoHelper.mInfoMsgArr.length; i++) {
@@ -143,20 +141,19 @@ public class ProgramInfoFilterComponent implements FilterComponent {
         		 }
         	});
         	 
-            panel.add(box,b);
-            panel.add(label,c);
+          builder.append(box);
+          builder.append(label);
+          builder.nextLine();
         }
 
         JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.add(panel, BorderLayout.NORTH);
-        JPanel centerPanel2 = new JPanel(new BorderLayout());
-        centerPanel2.add(centerPanel, BorderLayout.WEST);
-        return centerPanel2;
+        centerPanel.add(new JScrollPane(builder.getPanel()), BorderLayout.CENTER);
+        return centerPanel;
     }
 
     /**
-     * Im Dialog wurde OK gedr�ckt, alle Einstellungen k�nnen
-     * nun �bernommen werden
+     * Im Dialog wurde OK gedrueckt, alle Einstellungen koennen
+     * nun uebernommen werden
      * @see tvbrowser.core.filters.FilterComponent#saveSettings()
      */
     public void saveSettings() {
@@ -171,7 +168,7 @@ public class ProgramInfoFilterComponent implements FilterComponent {
     }
 
     /**
-     * Gibt den momentanen Namen des Filters zur�ck
+     * Gibt den momentanen Namen des Filters zurueck
      * @see tvbrowser.core.filters.FilterComponent#getName()
      */
     public String getName() {
@@ -179,7 +176,7 @@ public class ProgramInfoFilterComponent implements FilterComponent {
     }
 
     /**
-     * Gibt die momentane Beschreibung des Filters zur�ck
+     * Gibt die momentane Beschreibung des Filters zurueck
      * @see tvbrowser.core.filters.FilterComponent#getDescription()
      */
     public String getDescription() {
@@ -203,16 +200,16 @@ public class ProgramInfoFilterComponent implements FilterComponent {
     }
 
     /**
-     * Gibt den Namen des Filters zur�ck 
+     * Gibt den Namen des Filters zurueck
      */
     public String toString() {
         return mLocalizer.msg("ProgrammInfo", "Program-Info");
     }
 
     /**
-     * �berpr�ft, ob Bits gesetzt sind
-     * @param num hier pr�fen
-     * @param pattern diese pattern pr�fen
+     * Ueberprueft, ob Bits gesetzt sind
+     * @param num hier pruefen
+     * @param pattern diese pattern pruefen
      * @return Pattern gesetzt?
      */
     private boolean bitSet(int num, int pattern) {
@@ -234,7 +231,7 @@ public class ProgramInfoFilterComponent implements FilterComponent {
     private int selectedBits = 0;
     
     /**
-     * Die CheckBoxen f�r den Panel
+     * Die CheckBoxen fuer den Panel
      */
     private JCheckBox[] _checkBox;
 
