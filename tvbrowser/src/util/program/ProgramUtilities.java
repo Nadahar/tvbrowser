@@ -26,6 +26,8 @@ import devplugin.ProgramFieldType;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import tvbrowser.core.ChannelList;
 
@@ -225,10 +227,13 @@ public class ProgramUtilities {
     // which list contains more abbreviations at the beginning -> role names
     int abbreviation[] = new int[list.length];
     // which list contains more slashes -> double roles for a single actor
-    int slashes[] = new int[2];
+    int slashes[] = new int[list.length];
     // which list has duplicate family names -> roles
     HashMap<String,Integer>[] familyNames = new HashMap[list.length];
-    int[] maxNames = new int[2];
+    int[] maxNames = new int[list.length];
+    // which list contains strings with consecutive uppercase letters -> roles
+    int[] uppercase = new int[list.length];
+    Pattern consecUpper = Pattern.compile(".*[A-Z]{2,}.*");
     for (int i = 0; i < list.length; i++) {
       familyNames[i] = new HashMap<String, Integer>();
       for (String name : list[i]) {
@@ -251,6 +256,10 @@ public class ProgramUtilities {
         if (name.contains("/")) {
           slashes[i]++;
         }
+        Matcher matcher = consecUpper.matcher(name);
+        if (matcher.matches()) {
+          uppercase[i]++;
+        }
       }
       for (Integer familyCount : familyNames[i].values()) {
         if (familyCount.intValue() > maxNames[i]) {
@@ -268,6 +277,12 @@ public class ProgramUtilities {
       return list[0];
     }
     else if (singleName[1] < singleName[0]) {
+      return list[1];
+    }
+    else if (uppercase[0] < uppercase[1]) {
+      return list[0];
+    }
+    else if (uppercase[1] < uppercase[0]) {
       return list[1];
     }
     else if (abbreviation[0] < abbreviation[1]) {
