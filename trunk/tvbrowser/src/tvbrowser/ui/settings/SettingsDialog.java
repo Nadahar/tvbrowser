@@ -422,8 +422,14 @@ public class SettingsDialog implements WindowClosingIf {
     // TVDataServices
     node = new SettingNode(new DataServiceSettingsTab(), SettingsItem.TVDATASERVICES);
     root.add(node);
+    Comparator<TvDataServiceProxy> comp = new Comparator<TvDataServiceProxy>() {
+
+      public int compare(TvDataServiceProxy proxy1, TvDataServiceProxy proxy2) {
+        return proxy1.getInfo().getName().compareTo(proxy2.getInfo().getName());
+      }};
     TvDataServiceProxy[] services = tvbrowser.core.tvdataservice.TvDataServiceProxyManager.getInstance()
         .getDataServices();
+    Arrays.sort(services,comp);
     for (TvDataServiceProxy dataService : services) {
       node.add(new SettingNode(new ConfigDataServiceSettingsTab(dataService)));
     }
