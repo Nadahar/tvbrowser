@@ -170,7 +170,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     int remainingMinutes = 0;
     Date today = Date.getCurrentDate();
     if (today.compareTo(mProgram.getDate())>=0 && IOUtilities.getMinutesAfterMidnight() > progMinutesAfterMidnight) {
-      msg = mLocalizer.msg("alreadyRunning", "Already running");
+      msg = updateRunningTime();
     }
     else {
       msg = mLocalizer.msg("soonStarts", "Soon starts");
@@ -266,6 +266,31 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     
     mProgram.addChangeListener(this);
   }
+
+
+  private String updateRunningTime() {
+    String msg = null;
+    int progMinutesAfterMidnight = mProgram.getHours() * 60 + mProgram.getMinutes();
+    if (Date.getCurrentDate().compareTo(mProgram.getDate())>=0 && IOUtilities.getMinutesAfterMidnight() > progMinutesAfterMidnight) {
+      int minutesRunning = IOUtilities.getMinutesAfterMidnight() - progMinutesAfterMidnight;
+      if (minutesRunning < 0) {
+        minutesRunning += 24 * 60;
+      }
+      if (minutesRunning == 0) {
+        msg = mLocalizer.msg("alreadyRunning", "Already running");
+      }
+      else if (minutesRunning == 1) {
+        msg = mLocalizer.msg("alreadyRunningMinute", "Already running {0} minute", minutesRunning);
+      }
+      else {
+        msg = mLocalizer.msg("alreadyRunningMinutes", "Already running {0} minutes", minutesRunning);
+      }
+      if (mHeader != null) {
+        mHeader.setText(msg);
+      }
+    }
+    return msg;
+  }
   
   
   private void handleTimerEvent() {
@@ -275,6 +300,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       close();
     } else {
       updateCloseBtText();
+      updateRunningTime();
     }
   }
 
