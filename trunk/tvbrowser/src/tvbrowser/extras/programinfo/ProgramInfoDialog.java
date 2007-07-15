@@ -117,6 +117,8 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
   private static ProgramInfoDialog instance;
   private Action mUpAction, mDownAction;
   private JButton mCloseBtn;
+
+  private JButton mConfigBtn;
   
   private ProgramInfoDialog(Dimension pluginsSize, boolean showSettings) {	  
 	  init(pluginsSize, showSettings);
@@ -136,11 +138,11 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
 	  if (instance == null) {
 		  instance = new ProgramInfoDialog(pluginsSize, showSettings);
 	  }
-	  instance.setProgram(program);
+	  instance.setProgram(program, showSettings);
 	  return instance;
   }
 
-  private void setProgram(Program program) {
+  private void setProgram(Program program, boolean showSettings) {
 	  mProgram = program;
 	  addPluginActions(false);
 	  mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc, ProgramInfo.getInstance().getOrder(), getFont(true), getFont(false), ProgramInfo.getInstance().getProgramPanelSettings(), true, ProgramInfo.getInstance().getProperty("zoom","false").compareTo("true") == 0 ? Integer.parseInt(ProgramInfo.getInstance().getProperty("zoomValue","100")):100));
@@ -149,6 +151,7 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
             mInfoEP.setCaretPosition(0);
           }
       });
+    mConfigBtn.setVisible(showSettings);
   }
   
   private void init(Dimension pluginsSize, boolean showSettings) {
@@ -229,15 +232,14 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
     
     mActionsPane = new JScrollPane(mPluginsPane);
     
-    JButton configBtn = new JButton(mLocalizer.msg("config","Configure view"));
-    configBtn.setIcon(IconLoader.getInstance().getIconFromTheme("categories",
+    mConfigBtn = new JButton(mLocalizer.msg("config","Configure view"));
+    mConfigBtn.setIcon(IconLoader.getInstance().getIconFromTheme("categories",
         "preferences-desktop", 16));
     
     JPanel bottomLeft = new JPanel(new BorderLayout(3,0));    
     
-    if (showSettings) {
-      bottomLeft.add(configBtn, BorderLayout.WEST);
-    }
+    bottomLeft.add(mConfigBtn, BorderLayout.WEST);
+    mConfigBtn.setVisible(showSettings);
     
     if (pluginsSize == null) {
       mActionsPane.setPreferredSize(new Dimension(250, 500));
@@ -286,7 +288,7 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
 
     mMainPanel.add(buttonPn, BorderLayout.SOUTH);
 
-    configBtn.addActionListener(new ActionListener() {
+    mConfigBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         exit();
         MainFrame.getInstance().showSettingsDialog(
@@ -332,7 +334,7 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
     
     mFindAsYouType.installKeyListener(scrollPane);
     mFindAsYouType.installKeyListener(mMainPanel);
-    mFindAsYouType.installKeyListener(configBtn);
+    mFindAsYouType.installKeyListener(mConfigBtn);
     mFindAsYouType.installKeyListener(mCloseBtn);
     mFindAsYouType.installKeyListener(buttonPn);
     mFindAsYouType.installKeyListener(mPluginsPane);
