@@ -328,6 +328,7 @@ public class ProgramInfo {
         LookAndFeelAddons.setAddon(LookAndFeelAddons
             .getBestMatchAddonClassName());
       }
+      ProgramInfoDialog.resetFunctionGroup();
     } catch (Exception e) {
       // ignore
     }
@@ -351,6 +352,7 @@ public class ProgramInfo {
     return mShowTextSearchButton;
   }
 
+  @Override
   public String toString() {
     return mLocalizer.msg("pluginName","Program details");
   }
