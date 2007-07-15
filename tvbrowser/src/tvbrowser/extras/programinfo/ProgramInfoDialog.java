@@ -260,6 +260,7 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
       functions.setFocusable(false);
       
       functions.addMouseListener(new MouseAdapter() {
+        @Override
         public void mouseClicked(MouseEvent e) {
           if(e.getClickCount() == 1) {
             JPopupMenu popupMenu = PluginProxyManager.createPluginContextMenu(mProgram,
@@ -341,12 +342,14 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
     mFindAsYouType.installKeyListener(scrollPane.getVerticalScrollBar());
     
     mFindAsYouType.getCloseButton().addComponentListener(new ComponentAdapter() {
+      @Override
       public void componentHidden(ComponentEvent e) {
         if(mTextSearch != null) {
           mTextSearch.setText(mLocalizer.msg("search", "Search Text"));
         }
         searchAction.putValue(Action.NAME, mLocalizer.msg("search", "Search Text"));
       }
+      @Override
       public void componentShown(ComponentEvent e) {
         if(mTextSearch != null) {
           mTextSearch.setText(mLocalizer.msg("closeSearch", "Close search bar"));
@@ -486,6 +489,7 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
     mFindAsYouType.installKeyListener(mDialog.getRootPane());
     
     mDialog.addWindowListener(new WindowAdapter() {
+      @Override
       public void windowClosing(WindowEvent e) {
         exit();
       }
@@ -542,5 +546,18 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
     });
 
     mDialog.setVisible(true);
+  }
+  
+  public static void resetFunctionGroup() {
+    if (instance != null) {
+      instance.resetFunctionGroupInternal();
+    }
+  }
+
+  private void resetFunctionGroupInternal() {
+    mFunctionGroup = new JTaskPaneGroup();
+    mFunctionGroup.setTitle(mLocalizer.msg("functions", "Functions"));
+    mPluginsPane.removeAll();
+    mPluginsPane.add(mFunctionGroup);
   }
 }
