@@ -132,12 +132,12 @@ public class FavoritesPlugin {
       }
 
       public void tvDataUpdateFinished() {
-        handleTvDataUpdateFinsihed();
+        handleTvDataUpdateFinished();
       }
     });
   }
 
-  private void handleTvDataUpdateFinsihed() {
+  private void handleTvDataUpdateFinished() {
     mHasToUpdate = true;
 
     if(mHasRightToUpdate) {
@@ -190,7 +190,7 @@ public class FavoritesPlugin {
     mHasRightToUpdate = true;
     
     if(mHasToUpdate) {
-      handleTvDataUpdateFinsihed();
+      handleTvDataUpdateFinished();
     }    
   }
 
