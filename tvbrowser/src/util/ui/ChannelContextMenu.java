@@ -180,13 +180,11 @@ public class ChannelContextMenu implements ActionListener {
         JMenuItem filterItem = (JMenuItem) e.getSource();
         String filterName = filterItem.getText();
         final FilterComponent component = FilterComponentList.getInstance().getFilterComponentByName(filterName);
-        if (component != null) {
-          if (component instanceof ChannelFilterComponent) {
-            setChannelFilter(component); 
-          }
-          else {
-            MainFrame.getInstance().setProgramFilter(FilterList.getInstance().getDefaultFilter()); 
-          }
+        if (component != null && component instanceof ChannelFilterComponent) {
+          setChannelFilter(component); 
+        }
+        else {
+          MainFrame.getInstance().setProgramFilter(FilterList.getInstance().getDefaultFilter()); 
         }
       }
     }
