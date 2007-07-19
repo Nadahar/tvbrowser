@@ -162,7 +162,7 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
   // can be overridden by subclasses to change initial search text etc.
   protected void initSearch(ActionEvent ae) {
     mSearchField.setText(""); // NOI18N
-    mSearchField.setForeground(Color.black);
+    reset();
   }
 
   private void changed(Position.Bias bias) {
