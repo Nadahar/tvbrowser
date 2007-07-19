@@ -149,6 +149,9 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
       SwingUtilities.invokeLater(new Runnable() {
           public void run() {
             mInfoEP.setCaretPosition(0);
+            if (mFindAsYouType.getSearchBar().isVisible()) {
+              mFindAsYouType.next();
+            }
           }
       });
     mConfigBtn.setVisible(showSettings);
