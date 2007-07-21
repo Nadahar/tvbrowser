@@ -353,7 +353,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
 
   private JMenu createLicenseMenuItems() {
       
-      JMenu licenseMenu = new JMenu(mLocalizer.msg("menuitem.license","Terms of Use"));
+      JMenu licenseMenu = new JMenu(mLocalizer.msg("menuitem.license","Terms of Use..."));
       TvDataServiceProxy services[]= TvDataServiceProxyManager.getInstance().getDataServices();
       for (TvDataServiceProxy service : services) {
         final String license=service.getInfo().getLicense();
@@ -366,6 +366,12 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
             }        
           });
           licenseMenu.add(item);
+        }
+      }
+      if (licenseMenu.getItemCount() > 1) {
+        licenseMenu.setText(mLocalizer.msg("menuitem.licenseMultiple","Terms of Use"));
+        for (int i = 0; i < licenseMenu.getItemCount(); i++) {
+          licenseMenu.getItem(i).setText(licenseMenu.getItem(i).getText()+"...");
         }
       }
       return licenseMenu;
