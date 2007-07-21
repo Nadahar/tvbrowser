@@ -219,7 +219,7 @@ public class SearchPlugin {
         action.setBigIcon(IconLoader.getInstance().getIconFromTheme("actions", "system-search", 22));
         action.setSmallIcon(IconLoader.getInstance().getIconFromTheme("actions", "system-search", 16));
         action.setShortDescription(mLocalizer.msg("description", "Allows searching programs containing a certain text."));
-        action.setText(mLocalizer.msg("searchPrograms", "Search programs"));
+        action.setText(mLocalizer.msg("searchPrograms", "Search programs..."));
 
         return new ActionMenu(action);
     }
