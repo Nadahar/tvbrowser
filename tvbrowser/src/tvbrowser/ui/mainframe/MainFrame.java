@@ -69,6 +69,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
@@ -664,22 +665,14 @@ public class MainFrame extends JFrame implements DateListener {
 
     }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
     
-    rootPane.addKeyListener(new KeyListener() {
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, true);
+    rootPane.registerKeyboardAction(new ActionListener() {
 
-      public void keyPressed(KeyEvent e) {
-        // TODO Auto-generated method stub
-        
+      public void actionPerformed(ActionEvent e) {
+        //Schnellnavigation starten
       }
+    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-      public void keyReleased(KeyEvent e) {
-        // TODO Auto-generated method stub
-        
-      }
-
-      public void keyTyped(KeyEvent e) {
-        // TODO Auto-generated method stub
-        
-      }});
 
     this.setRootPane(rootPane);
   }
@@ -931,6 +924,7 @@ public class MainFrame extends JFrame implements DateListener {
     // Avoid a repaint 6 times a minute (Once a minute is enough)
     try {
       int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
+      boolean onAirChanged = false;
       if (minutesAfterMidnight != mLastTimerMinutesAfterMidnight) {
         mLastTimerMinutesAfterMidnight = minutesAfterMidnight;
         Channel[] ch = ChannelList.getSubscribedChannels();
@@ -939,6 +933,7 @@ public class MainFrame extends JFrame implements DateListener {
           /* If no date array is available we have to find
            * the on air programs */
           if(mChannelDateArr == null) {
+            onAirChanged = true;
             mChannelDateArr = new Date[ch.length];
             mOnAirRowProgramsArr = new int[ch.length];
         
@@ -987,6 +982,7 @@ public class MainFrame extends JFrame implements DateListener {
                   if(p.isOnAir()) {
                     p.validateMarking();
                   } else if(p.isExpired()) {
+                    onAirChanged = true;
                     p.validateMarking();
               
                     int n = mOnAirRowProgramsArr[i]+1;
@@ -1016,6 +1012,7 @@ public class MainFrame extends JFrame implements DateListener {
                   /* If the date array for the channel contains a date
                    * earlier than today we have to use today instead */
                   mChannelDateArr[i] = Date.getCurrentDate();
+                  onAirChanged = true;
               
                   chProg = TvDataBase.getInstance().getDayProgram(mChannelDateArr[i],ch[i]);
               
@@ -1028,6 +1025,10 @@ public class MainFrame extends JFrame implements DateListener {
             }
           }
         }
+      }
+      // update filtered view if the "on air" condition changed for any program
+      if (onAirChanged && !getProgramFilter().equals(FilterManagerImpl.getInstance().getDefaultFilter())) {
+        setProgramFilter(getProgramFilter());
       }
     }catch(Exception e) {}
     
