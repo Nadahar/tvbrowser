@@ -30,6 +30,8 @@ import captureplugin.drivers.utils.ProgramTime;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Program;
+
+import org.apache.commons.codec.binary.Base64;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -85,7 +87,7 @@ public class DreamboxConnector {
             URLConnection connection = url.openConnection();
 
             String userpassword = mConfig.getUserName() + ":" + mConfig.getPassword();
-            String encoded = new sun.misc.BASE64Encoder().encode (userpassword.getBytes());
+            String encoded = new String(Base64.encodeBase64(userpassword.getBytes()));
             connection.setRequestProperty  ("Authorization", "Basic " + encoded);
 
             connection.setConnectTimeout(10);
@@ -122,7 +124,7 @@ public class DreamboxConnector {
             URLConnection connection = url.openConnection();
 
             String userpassword = mConfig.getUserName() + ":" + mConfig.getPassword();
-            String encoded = new sun.misc.BASE64Encoder().encode (userpassword.getBytes());
+            String encoded = new String(Base64.encodeBase64(userpassword.getBytes()));
             connection.setRequestProperty  ("Authorization", "Basic " + encoded);
 
             connection.setConnectTimeout(10);
@@ -184,7 +186,7 @@ public class DreamboxConnector {
             URLConnection connection = url.openConnection();
 
             String userpassword = mConfig.getUserName() + ":" + mConfig.getPassword();
-            String encoded = new sun.misc.BASE64Encoder().encode (userpassword.getBytes());
+            String encoded = new String(Base64.encodeBase64(userpassword.getBytes()));
             connection.setRequestProperty  ("Authorization", "Basic " + encoded);
 
             connection.setConnectTimeout(10);
@@ -206,7 +208,7 @@ public class DreamboxConnector {
             URLConnection connection = url.openConnection();
 
             String userpassword = mConfig.getUserName() + ":" + mConfig.getPassword();
-            String encoded = new sun.misc.BASE64Encoder().encode (userpassword.getBytes());
+            String encoded = new String(Base64.encodeBase64(userpassword.getBytes()));
             connection.setRequestProperty  ("Authorization", "Basic " + encoded);
 
             connection.setConnectTimeout(10);
@@ -369,7 +371,7 @@ public class DreamboxConnector {
             URLConnection connection = url.openConnection();
 
             String userpassword = mConfig.getUserName() + ":" + mConfig.getPassword();
-            String encoded = new sun.misc.BASE64Encoder().encode (userpassword.getBytes());
+            String encoded = new String(Base64.encodeBase64(userpassword.getBytes()));
             connection.setRequestProperty  ("Authorization", "Basic " + encoded);
 
             connection.setConnectTimeout(10);
@@ -439,7 +441,7 @@ public class DreamboxConnector {
             URLConnection connection = url.openConnection();
 
             String userpassword = mConfig.getUserName() + ":" + mConfig.getPassword();
-            String encoded = new sun.misc.BASE64Encoder().encode (userpassword.getBytes());
+            String encoded = new String(Base64.encodeBase64(userpassword.getBytes()));
             connection.setRequestProperty  ("Authorization", "Basic " + encoded);
 
             connection.setConnectTimeout(10);
@@ -476,7 +478,7 @@ public class DreamboxConnector {
             URLConnection connection = url.openConnection();
 
             String userpassword = mConfig.getUserName() + ":" + mConfig.getPassword();
-            String encoded = new sun.misc.BASE64Encoder().encode (userpassword.getBytes());
+            String encoded = new String(Base64.encodeBase64(userpassword.getBytes()));
             connection.setRequestProperty  ("Authorization", "Basic " + encoded);
 
             connection.setConnectTimeout(10);
@@ -495,7 +497,7 @@ public class DreamboxConnector {
     URLConnection connection = url.openConnection();
 
     String userpassword = mConfig.getUserName() + ":" + mConfig.getPassword();
-    String encoded = new sun.misc.BASE64Encoder().encode (userpassword.getBytes());
+    String encoded = new String(Base64.encodeBase64(userpassword.getBytes()));
     connection.setRequestProperty  ("Authorization", "Basic " + encoded);
 
     connection.setConnectTimeout(10);
