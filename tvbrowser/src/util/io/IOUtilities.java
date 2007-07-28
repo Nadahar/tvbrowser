@@ -54,6 +54,8 @@ import java.util.zip.ZipFile;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
+import org.apache.commons.codec.binary.Base64;
+
 /**
  * A utilities class for I/O stuff. It constists of serveral static
  * methods that perform some usefull things.
@@ -205,7 +207,7 @@ public class IOUtilities {
 
     if(userName != null && userPassword != null) {
       String password = userName + ":" + userPassword;
-      String encodedPassword = new sun.misc.BASE64Encoder().encode (password.getBytes());
+      String encodedPassword = new String(Base64.encodeBase64(password.getBytes()));
       conn.setRequestProperty  ("Authorization", "Basic " + encodedPassword);
     }
     

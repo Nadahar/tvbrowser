@@ -26,7 +26,6 @@ package captureplugin.drivers.defaultdriver;
 
 import captureplugin.drivers.utils.ProgramTime;
 import captureplugin.utils.CaptureUtilities;
-import captureplugin.drivers.utils.ProgramTime;
 import util.exc.ErrorHandler;
 import util.io.StreamReaderThread;
 import util.paramhandler.ParamParser;
@@ -36,6 +35,9 @@ import util.ui.UiUtilities;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+
+import org.apache.commons.codec.binary.Base64;
+
 import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.File;
@@ -320,7 +322,7 @@ public class CaptureExecute {
         URLConnection uc = url.openConnection();
 
         String userpassword = mData.getUserName() + ":" + mData.getPassword();
-        String encoded = new sun.misc.BASE64Encoder().encode (userpassword.getBytes());
+        String encoded = new String(Base64.encodeBase64(userpassword.getBytes()));
 
         uc.setRequestProperty  ("Authorization", "Basic " + encoded);
 
