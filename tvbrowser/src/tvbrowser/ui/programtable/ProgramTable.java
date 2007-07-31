@@ -371,7 +371,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
       return null;
     }
     int rowCount = mModel.getRowCount(col);
-	for (int row = 0; row < rowCount; row++) {
+    for (int row = 0; row < rowCount; row++) {
       ProgramPanel panel = mModel.getProgramPanel(col, row);
       currY += panel.getHeight();
       if (y < currY) {
@@ -385,9 +385,9 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
 
   public void forceRepaintAll() {
     int columnCount = mModel.getColumnCount();
-	for (int col = 0; col < columnCount; col++) {
+    for (int col = 0; col < columnCount; col++) {
       int rowCount = mModel.getRowCount(col);
-	  for (int row = 0; row < rowCount; row++) {
+      for (int row = 0; row < rowCount; row++) {
         ProgramPanel panel = mModel.getProgramPanel(col, row);
         panel.setProgramPanelSettings(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPictureDuration.getInt(), Settings.propPicturePluginIds.getStringArray()));
         panel.forceRepaint();
