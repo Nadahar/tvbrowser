@@ -359,16 +359,20 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    * Gets the actions for the context menu of a program.
    * <p>
    * Override this method to provide context menu items for programs (e.g. in
-   * the program table).
+   * the program table). If your plugin shows a context menu only for some
+   * programs, but not for all, then you should explicitly return a non-<code>null</code>
+   * menu for the example program. Otherwise your context menu will not be shown
+   * in the settings dialog for the context menu order.
    * <p>
    * The following action values will be used:
    * <ul>
    * <li><code>Action.NAME</code>: The text for the context menu item.</li>
    * <li><code>Action.SMALL_ICON</code>: The icon for the context menu item.
-   *     Should be 16x16.</li>
+   * Should be 16x16.</li>
    * </ul>
    * 
-   * @param program The program the context menu will be shown for.
+   * @param program
+   *          The program the context menu will be shown for.
    * @return the actions this plugin provides for the given program or
    *         <code>null</code> if the plugin does not provide this feature.
    * 
