@@ -565,4 +565,14 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
     mPluginsPane.removeAll();
     mPluginsPane.add(mFunctionGroup);
   }
+
+  public static void closeDialog() {
+    if (instance != null) {
+      instance.closeDialogInternal();
+    }
+  }
+
+  private void closeDialogInternal() {
+    mDialog.setVisible(false);
+  }
 }

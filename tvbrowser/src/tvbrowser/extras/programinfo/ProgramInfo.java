@@ -244,6 +244,9 @@ public class ProgramInfo {
   }
 
   protected void showProgramInformation(Program program, boolean showSettings) {
+    if (mIsShowing) {
+      ProgramInfoDialog.closeDialog();
+    }
     mIsShowing = true;
     Window window = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
     // show busy cursor
