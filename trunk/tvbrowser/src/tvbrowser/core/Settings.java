@@ -495,6 +495,7 @@ public class Settings {
       int startOfDay = propProgramTableStartOfDay.getInt();
       int endOfDay = propProgramTableEndOfDay.getInt();
       model.setTimeRange(startOfDay, endOfDay);
+      model.setDate(mainFrame.getCurrentSelectedDate(), null, null);
     }
 
     propArr = new Property[] { propProgramTableIconPlugins,
