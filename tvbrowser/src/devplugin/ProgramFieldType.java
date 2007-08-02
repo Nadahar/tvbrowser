@@ -169,7 +169,7 @@ public class ProgramFieldType {
   /**
    * number of episode
    * 
-   * @since 2.6 
+   * @since 2.6/2.2.4
    */
   public static final ProgramFieldType EPISODE_NUMBER_TYPE
        = new ProgramFieldType(29, INT_FORMAT, true, "number of episode",
@@ -178,7 +178,7 @@ public class ProgramFieldType {
   /**
    * total number of episodes
    * 
-   * @since 2.6 
+   * @since 2.6/2.2.4
    */
   public static final ProgramFieldType EPISODE_TOTAL_NUMBER_TYPE
        = new ProgramFieldType(30, INT_FORMAT, true, "total number of episodes",
@@ -187,7 +187,7 @@ public class ProgramFieldType {
   /**
    * number of season
    * 
-   * @since 2.6 
+   * @since 2.6/2.2.4
    */
   public static final ProgramFieldType SEASON_NUMBER_TYPE
        = new ProgramFieldType(31, INT_FORMAT, true, "number of season",
@@ -196,7 +196,7 @@ public class ProgramFieldType {
   /**
    * Producer
    * 
-   * @since 2.6 
+   * @since 2.6/2.2.4
    */
   public static final ProgramFieldType PRODUCER_TYPE
        = new ProgramFieldType(32, TEXT_FORMAT, true, "producer",
@@ -205,7 +205,7 @@ public class ProgramFieldType {
   /**
    * Camera
    * 
-   * @since 2.6 
+   * @since 2.6/2.2.4
    */
   public static final ProgramFieldType CAMERA_TYPE
        = new ProgramFieldType(33, TEXT_FORMAT, true, "camera",
@@ -214,7 +214,7 @@ public class ProgramFieldType {
   /**
    * Cutter
    * 
-   * @since 2.6 
+   * @since 2.6/2.2.4
    */
   public static final ProgramFieldType CUTTER_TYPE
        = new ProgramFieldType(34, TEXT_FORMAT, true, "cutter",
