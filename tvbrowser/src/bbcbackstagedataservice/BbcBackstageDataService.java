@@ -178,7 +178,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
    */
   public PluginInfo getInfo() {
     return new PluginInfo(mLocalizer.msg("name","BBC Data"), 
-        mLocalizer.msg("desc", "Data from BBC Backstage."), "Bodo Tasche", new Version(0, 35));
+        mLocalizer.msg("desc", "Data from BBC Backstage."), "Bodo Tasche", new Version(0, 36));
   }
 
   /*
@@ -343,7 +343,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
           
           mLog.fine("URL : " + url.toString());
           
-          in = url.openStream();
+          in = IOUtilities.getStream(url);
         } catch (Exception e) {
           in = null;
         }

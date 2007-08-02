@@ -32,6 +32,7 @@ import devplugin.ProgramFieldType;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
 import tvdataservice.TvDataUpdateManager;
+import util.io.IOUtilities;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -70,7 +71,7 @@ public class RadioTimesFileParser {
     builder.append(".dat");
     
     // Do the parsing...
-    BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(builder.toString()).openStream(), "UTF8"));
+    BufferedReader reader = new BufferedReader(new InputStreamReader(IOUtilities.getStream(new URL(builder.toString())), "UTF8"));
 
     String line;
 
