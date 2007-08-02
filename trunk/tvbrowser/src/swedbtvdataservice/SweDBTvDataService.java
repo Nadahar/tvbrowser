@@ -26,6 +26,7 @@ import javax.swing.ImageIcon;
 import devplugin.ChannelGroup;
 import devplugin.Channel;
 import devplugin.Date;
+import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Version;
 import devplugin.ProgressMonitor;
@@ -148,6 +149,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
                 String urlString = mInternalChannel[c].getBaseUrl()+mInternalChannel[c].getId()+"_"+fileDate+".xml.gz";
                 URL url = new URL(urlString);
                 HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+                conn.setReadTimeout(Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout());
                 conn.setIfModifiedSince(mInternalChannel[c].getLastUpdate(testDay));
                 conn.setRequestMethod("HEAD"); //Only make a HEAD request, to see if the file has been changed (only get the HTTP Header fields).
                 if (conn.getResponseCode()==200) {
@@ -217,6 +219,8 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
                   mLog.info("getting: "+mInternalChannel[c].getBaseUrl()+mInternalChannel[c].getId()+"_"+strFileDate+".xml.gz");
                   URL url = new URL(mInternalChannel[c].getBaseUrl()+mInternalChannel[c].getId()+"_"+strFileDate+".xml.gz");
                   HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                  con.setReadTimeout(Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout());
+                  
                   if (con.getResponseCode() == 200){
                     SweDBDayParser.parseNew(new GZIPInputStream(con.getInputStream()),channelArr[a],date,dataHashtable);
                     if (modifiedDates.contains(date)){
@@ -288,6 +292,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
             try {
               URL url = new URL(mInternalChannel[j].getBaseUrl()+mInternalChannel[j].getId()+"_"+datum+".xml.gz");
               HttpURLConnection con = (HttpURLConnection) url.openConnection();
+              con.setReadTimeout(Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout());
               con.setIfModifiedSince(mInternalChannel[j].getLastUpdate(day));
               if (con.getResponseCode() == 200){
                 MutableChannelDayProgram mcdp[];
@@ -392,7 +397,6 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
    * 
    * @param group
    * @param monitor
-   * @return
    * @throws TvBrowserException
    */
   public Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException {
@@ -412,7 +416,9 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
       }
 
       HttpURLConnection con = (HttpURLConnection) url.openConnection();
+      con.setReadTimeout(Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout());
       con.setIfModifiedSince(mLastChannelUpdate);
+      
       if (con.getResponseCode() == 200){
         if (monitor != null) {
             monitor.setMessage(mLocalizer.msg("Progressmessage.30","Parsing channel list"));
@@ -489,7 +495,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
             mLocalizer.msg("PluginInfo.name","SweDB TV Data Service Plugin"),
             mLocalizer.msg("PluginInfo.description","A TV Data Service plugin which uses XMLTV-data from TV.SWEDB.SE"),
             "Inforama",
-            new Version(0, 3),
+            new Version(0, 4),
             mLocalizer.msg("PluginInfo.support","Support the SWEDB crew - Don't forget to register with http://tv.swedb.se/"));
   }
 

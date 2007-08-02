@@ -36,6 +36,7 @@ import java.util.TimeZone;
 import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
+import util.io.IOUtilities;
 import util.ui.Localizer;
 import devplugin.AbstractTvDataService;
 import devplugin.Channel;
@@ -110,8 +111,8 @@ public class RadioTimesDataService extends AbstractTvDataService {
       monitor.setMessage(mLocalizer.msg("loadingChannels", "Loading Radio Times Channel List"));
 
       // Do the parsing...
-      BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(BASEURL + "channels.dat").openStream()));
-
+      BufferedReader reader = new BufferedReader(new InputStreamReader(IOUtilities.getStream(new URL(BASEURL + "channels.dat"))));
+      
       String line;
 
       while ((line = reader.readLine()) != null) {
@@ -163,7 +164,7 @@ public class RadioTimesDataService extends AbstractTvDataService {
    */
   public PluginInfo getInfo() {
     return new PluginInfo(mLocalizer.msg("name", "Radio Times Data"), mLocalizer.msg("desc", "Data from Radio Times."),
-        "Bodo Tasche", new Version(0, 30));
+        "Bodo Tasche", new Version(0, 31));
   }
 
   /*

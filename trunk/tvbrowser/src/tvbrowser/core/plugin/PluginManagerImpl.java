@@ -625,6 +625,15 @@ public class PluginManagerImpl implements PluginManager {
       public Date getLastDownloadDate() {
         return Settings.propLastDownloadDate.getDate();
       }
+            
+      /**
+       * @return The default network connection timeout
+       * @since 2.5.3
+       */
+      public int getDefaultNetworkConnectionTimeout(){
+        return Settings.propDefaultNetworkConnectionTimeout.getInt();
+      }
+      
       
       /**
        * Gets the color for a marking priority.

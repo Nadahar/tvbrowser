@@ -48,6 +48,12 @@ public interface TvBrowserSettings {
    * @return the date of the previous donwload
    */
   public Date getLastDownloadDate();
+  
+  /**
+   * @return The default network connection timeout
+   * @since 2.5.3
+   */
+  public int getDefaultNetworkConnectionTimeout();
 
   /**
    * Gets the color for a marking priority.
