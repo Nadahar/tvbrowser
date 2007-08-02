@@ -48,6 +48,8 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTree;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.io.IOUtilities;
 import util.ui.Localizer;
@@ -144,6 +146,21 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
     String title = mLocalizer.msg("title", "Reminder");
     
+    // if this is a favorite, change the title to the name of the favorite
+    boolean found = false;
+    for (Favorite favorite : FavoriteTree.getInstance().getFavoriteArr()) {
+      for (Program program : favorite.getPrograms()) {
+        if (program.equals(item.getProgram())) {
+          title = favorite.getName();
+          found = true;
+          break;
+        }
+      }
+      if (found) {
+        break;
+      }
+    } 
+
     if (parent instanceof JDialog) {
       mDialog = new JDialog((JDialog) parent, title);
     } else {
