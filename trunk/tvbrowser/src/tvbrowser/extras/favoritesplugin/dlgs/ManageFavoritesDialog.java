@@ -33,6 +33,7 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -548,6 +549,8 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
         else {
           Program[] p = ((FavoriteNode)FavoriteTree.getInstance().getSelectionPath().getLastPathComponent()).getAllPrograms();
           
+          int firstNotExpiredIndex = -1;
+          
           if(p != null && p.length > 0) {
             enableButtons(true);
             
@@ -558,14 +561,13 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
             
             for (int i = 0; i < p.length; i++) {
               mProgramListModel.addElement(p[i]);
+              
+              if(firstNotExpiredIndex == -1 && !p[i].isExpired()) {
+                firstNotExpiredIndex = i;
+              }
             }
 
-            SwingUtilities.invokeLater(new Runnable() {
-              public void run() {
-                mProgramScrollPane.getVerticalScrollBar().setValue(0);
-                mProgramScrollPane.getHorizontalScrollBar().setValue(0);
-              }
-            });
+            scrollInProgramListToIndex(firstNotExpiredIndex);
             
             mSendBt.setEnabled(true);
             mDeleteBt.setEnabled(false);
@@ -593,6 +595,20 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     }
   }
   
+  private void scrollInProgramListToIndex(final int index) {
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        mProgramScrollPane.getVerticalScrollBar().setValue(0);
+        mProgramScrollPane.getHorizontalScrollBar().setValue(0);
+        
+        Rectangle cellBounds = mProgramList.getCellBounds(index,index);
+        cellBounds.setLocation(cellBounds.x, cellBounds.y + mProgramScrollPane.getHeight() - cellBounds.height);
+        
+        mProgramList.scrollRectToVisible(cellBounds);
+      }
+    });
+  }
+  
   private void enableButtons(boolean enabled) {
     TreePath path = FavoriteTree.getInstance().getSelectionPath();        
     
@@ -612,21 +628,29 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     mProgramListModel.clear();
     mProgramListModel.ensureCapacity(mShowNew ? programArr.length : programArr.length + blackListPrograms.length);
     
+    int firstNotExpiredIndex = -1;
+    
     for (int i = 0; i < programArr.length; i++) {
       mProgramListModel.addElement(programArr[i]);
+      
+      if(firstNotExpiredIndex == -1 && !programArr[i].isExpired()) {
+        firstNotExpiredIndex = i;
+      }
     }
     
-    if(!mShowNew && mBlackListChb.isSelected())
-      for (int i = 0; i < blackListPrograms.length; i++)
+    if(!mShowNew && mBlackListChb.isSelected()) {
+      for (int i = 0; i < blackListPrograms.length; i++) {
         mProgramListModel.addElement(blackListPrograms[i]);
-    
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        mProgramScrollPane.getVerticalScrollBar().setValue(0);
-        mProgramScrollPane.getHorizontalScrollBar().setValue(0);
+        
+        if(firstNotExpiredIndex == -1 && !blackListPrograms[i].isExpired()) {
+          firstNotExpiredIndex = i;
+        }
       }
-    });
+    }
+    
+    scrollInProgramListToIndex(firstNotExpiredIndex);    
   }
+  
   public void showSendDialog() {
     if(mFavoritesList != null) {
       int selection = mFavoritesList.getSelectedIndex();
