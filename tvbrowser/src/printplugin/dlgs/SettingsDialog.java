@@ -169,9 +169,13 @@ public class SettingsDialog extends JDialog implements WindowClosingIf {
 
 
     JButton newSchemeBtn = new JButton(PrintPlugin.getInstance().createImageIcon("actions", "document-new", 16));
+    newSchemeBtn.setToolTipText(mLocalizer.msg("newScheme", "New scheme"));
     mEditSchemeBtn = new JButton(PrintPlugin.getInstance().createImageIcon("actions", "document-edit", 16));
+    mEditSchemeBtn.setToolTipText(mLocalizer.msg("editScheme", "Edit scheme"));
     mDeleteSchemeBtn = new JButton(PrintPlugin.getInstance().createImageIcon("actions", "edit-delete", 16));
+    mDeleteSchemeBtn.setToolTipText(mLocalizer.msg("deleteScheme", "Delete scheme"));
     mSaveSchemeBtn = new JButton(PrintPlugin.getInstance().createImageIcon("actions", "document-save", 16));
+    mSaveSchemeBtn.setToolTipText(mLocalizer.msg("saveScheme", "Save scheme"));
     newSchemeBtn.setMargin(UiUtilities.ZERO_INSETS);
     mDeleteSchemeBtn.setMargin(UiUtilities.ZERO_INSETS);
     mEditSchemeBtn.setMargin(UiUtilities.ZERO_INSETS);
