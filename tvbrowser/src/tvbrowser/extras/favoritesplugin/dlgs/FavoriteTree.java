@@ -1096,47 +1096,52 @@ DropTargetListener {
       
         PluginTreeNode newNode = new PluginTreeNode(child.toString());
         newNode.setGroupingByWeekEnabled(true);
-        node.add(newNode);
         
         if(child.isDirectoryNode()) {
           updatePluginTree(newNode,child);
-        } else {
-          Action editFavorite = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-              FavoritesPlugin.getInstance().editFavorite(child.getFavorite());
-            }
-          };
-          editFavorite.putValue(Action.NAME, mLocalizer.msg("editTree","Edit..."));
-          editFavorite.putValue(Action.SMALL_ICON, FavoritesPlugin.getInstance().getIconFromTheme("actions", "document-edit", 16));
-
-          Action deleteFavorite = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-              FavoritesPlugin.getInstance().askAndDeleteFavorite(child.getFavorite());
-            }
-          };
-          deleteFavorite.putValue(Action.NAME, mLocalizer.msg("deleteTree","Delete..."));
-          deleteFavorite.putValue(Action.SMALL_ICON, FavoritesPlugin.getInstance().getIconFromTheme("actions", "edit-delete", 16));
-
-          newNode.addAction(editFavorite);
-          newNode.addAction(deleteFavorite);                    
-          
-          Program[] progArr = child.getFavorite().getWhiteListPrograms();
-            
-          if(progArr.length <= 10) {
-            newNode.setGroupingByDateEnabled(false);
+          if (!newNode.isEmpty()) {
+            node.add(newNode);
           }
-          
-          for (Program program : progArr) {
-            PluginTreeNode pNode = newNode.addProgram(program);
+        } else {
+          Program[] progArr = child.getFavorite().getWhiteListPrograms();
+          if (progArr.length > 0) {
+            node.add(newNode);
+            Action editFavorite = new AbstractAction() {
+              public void actionPerformed(ActionEvent e) {
+                FavoritesPlugin.getInstance().editFavorite(child.getFavorite());
+              }
+            };
+            editFavorite.putValue(Action.NAME, mLocalizer.msg("editTree","Edit..."));
+            editFavorite.putValue(Action.SMALL_ICON, FavoritesPlugin.getInstance().getIconFromTheme("actions", "document-edit", 16));
+  
+            Action deleteFavorite = new AbstractAction() {
+              public void actionPerformed(ActionEvent e) {
+                FavoritesPlugin.getInstance().askAndDeleteFavorite(child.getFavorite());
+              }
+            };
+            deleteFavorite.putValue(Action.NAME, mLocalizer.msg("deleteTree","Delete..."));
+            deleteFavorite.putValue(Action.SMALL_ICON, FavoritesPlugin.getInstance().getIconFromTheme("actions", "edit-delete", 16));
+  
+            newNode.addAction(editFavorite);
+            newNode.addAction(deleteFavorite);                    
             
-            int numberOfDays = program.getDate().getNumberOfDaysSince(Date.getCurrentDate());
-            if ((progArr.length <= 10) || (numberOfDays > 1)) {
-              pNode.setNodeFormatter(new NodeFormatter() {
-                public String format(ProgramItem pitem) {
-                  Program p = pitem.getProgram();
-                  return getFavoriteLabel(child.getFavorite(), p);
-                }
-              });
+              
+            if(progArr.length <= 10) {
+              newNode.setGroupingByDateEnabled(false);
+            }
+            
+            for (Program program : progArr) {
+              PluginTreeNode pNode = newNode.addProgram(program);
+              
+              int numberOfDays = program.getDate().getNumberOfDaysSince(Date.getCurrentDate());
+              if ((progArr.length <= 10) || (numberOfDays > 1)) {
+                pNode.setNodeFormatter(new NodeFormatter() {
+                  public String format(ProgramItem pitem) {
+                    Program p = pitem.getProgram();
+                    return getFavoriteLabel(child.getFavorite(), p);
+                  }
+                });
+              }
             }
           }
         }
