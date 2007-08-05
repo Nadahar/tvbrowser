@@ -78,9 +78,9 @@ public class FavoritesSettingTab implements SettingsTab {
     
     mPluginLabel = new JLabel();
     JButton choose = new JButton(mLocalizer.msg("selectPlugins","Choose Plugins"));    
-    mExpertMode = new JCheckBox(mLocalizer.msg("expertMode","Always use expert mode"),FavoritesPlugin.getInstance().isUsingExpertMode());
+    mExpertMode = new JCheckBox(mLocalizer.msg("expertMode","Always show advanced favorite edit dialog"),FavoritesPlugin.getInstance().isUsingExpertMode());
     mShowRepetitions = new JCheckBox(mLocalizer.msg("showRepetitions","Show repetitions in context menu of a favorite program"),FavoritesPlugin.getInstance().isShowingRepetitions());
-    mAutoSelectRemider = new JCheckBox(mLocalizer.msg("autoSelectReminder","Select reminding automatically for new favorites"),FavoritesPlugin.getInstance().isAutoSelectingRemider());
+    mAutoSelectRemider = new JCheckBox(mLocalizer.msg("autoSelectReminder","Automatically remind of new favorite programs"),FavoritesPlugin.getInstance().isAutoSelectingRemider());
     
     ProgramReceiveTarget[] targetsArr
     = FavoritesPlugin.getInstance().getClientPluginTargetIds();    
@@ -126,7 +126,7 @@ public class FavoritesSettingTab implements SettingsTab {
     builder.add(mExpertMode, cc.xyw(2,7,3));
     builder.addSeparator(mLocalizer.msg("repetitionSettings","Repetitions"), cc.xyw(1,9,4));
     builder.add(mShowRepetitions, cc.xyw(2,11,3));
-    builder.addSeparator(mLocalizer.msg("reminderSettings","Reminer auto selection"), cc.xyw(1,13,4));
+    builder.addSeparator(mLocalizer.msg("reminderSettings","Automatic reminder"), cc.xyw(1,13,4));
     builder.add(mAutoSelectRemider, cc.xyw(2,15,3));
 
     return builder.getPanel();
