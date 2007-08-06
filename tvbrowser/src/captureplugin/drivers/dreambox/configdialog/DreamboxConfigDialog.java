@@ -216,8 +216,8 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         extendedPanel.setBorder(Borders.DLU4_BORDER);
         extendedPanel.setLayout(new FormLayout("5dlu, right:pref, 3dlu, fill:pref:grow, 5dlu", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
 
-        extendedPanel.add(DefaultComponentFactory.getInstance().createSeparator("Timezone"), cc.xyw(1,1,5));
-        extendedPanel.add(new JLabel(mLocalizer.msg("timeZone", "TimeZone :")), cc.xy(2,3));
+        extendedPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("timeZoneSeparator","Timezone")), cc.xyw(1,1,5));
+        extendedPanel.add(new JLabel(mLocalizer.msg("timeZone", "Timezone:")), cc.xy(2,3));
 
         String[] zoneIds = TimeZone.getAvailableIDs();
         Arrays.sort(zoneIds);
