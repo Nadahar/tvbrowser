@@ -48,13 +48,15 @@ import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.pluginview.contextmenu.ContextMenu;
 import tvbrowser.ui.pluginview.contextmenu.CustomNodeContextMenu;
-import tvbrowser.ui.pluginview.contextmenu.PluginContextMenu;
+import tvbrowser.ui.pluginview.contextmenu.PluginBasedPluginContextMenu;
 import tvbrowser.ui.pluginview.contextmenu.ProgramContextMenu;
+import tvbrowser.ui.pluginview.contextmenu.ProxyBasedPluginContextMenu;
 import tvbrowser.ui.pluginview.contextmenu.RootNodeContextMenu;
 import tvbrowser.ui.pluginview.contextmenu.StructureNodeContextMenu;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import devplugin.ContextMenuIf;
+import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramItem;
 
@@ -208,7 +210,16 @@ public class PluginView extends JPanel implements MouseListener {
       return new ProgramContextMenu(mTree, selectedPath, PluginTreeModel.getPlugin(selectedPath[0]), selectedPrograms);
     }
     else if (node.getType() == Node.PLUGIN_ROOT) {
-      return new PluginContextMenu(mTree, selectedPath[0], PluginTreeModel.getPlugin(selectedPath[0]), node.getActionMenus());
+      Plugin plugin = PluginTreeModel.getPlugin(selectedPath[0]);
+      if (plugin != null) {
+        return new PluginBasedPluginContextMenu(mTree, selectedPath[0], plugin, node.getActionMenus());
+      }
+      else {
+        PluginProxy proxy = PluginTreeModel.getPluginProxy(selectedPath[0]);
+        if (proxy != null) {
+          return new ProxyBasedPluginContextMenu(mTree, selectedPath[0], proxy, node.getActionMenus());
+        }
+      }
     }
     else if (node.getType() == Node.CUSTOM_NODE) {
       return new CustomNodeContextMenu(mTree, selectedPath[0], node.getActionMenus());
