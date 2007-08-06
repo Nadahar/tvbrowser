@@ -138,7 +138,19 @@ public class PluginTreeModel extends DefaultTreeModel {
         Plugin plugin = (Plugin) o;
         return plugin;
       }
+    }
+    return null;
+  }
 
+  public static PluginProxy getPluginProxy(TreePath path) {
+    if (path.getPathCount() > 1) {
+      Object o = path.getPathComponent(1);
+      DefaultMutableTreeNode node = (DefaultMutableTreeNode) o;
+      o = node.getUserObject();
+      if (o instanceof PluginProxy) {
+        PluginProxy proxy = (PluginProxy) o;
+        return proxy;
+      }
     }
     return null;
   }

@@ -42,24 +42,24 @@ import tvbrowser.ui.pluginview.PluginTree;
 import util.ui.Localizer;
 import util.ui.menu.MenuUtil;
 import devplugin.ActionMenu;
-import devplugin.Plugin;
-import devplugin.SettingsTab;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
  * Date: 03.01.2005
  * Time: 22:07:57
  */
-public class PluginContextMenu extends AbstractContextMenu {
+public abstract class PluginContextMenu extends AbstractContextMenu {
   private ActionMenu[] mActionMenus;
   private Action mDefaultAction;
-  private Plugin mPlugin;
   private TreePath mPath;
 
-  public PluginContextMenu(PluginTree tree, TreePath path, Plugin plugin, ActionMenu[] menus) {
+  public PluginContextMenu(PluginTree tree, TreePath path, ActionMenu[] menus) {
     super(tree);
+    initDefaultActions(path, menus);
+  }
+
+  private void initDefaultActions(TreePath path, ActionMenu[] menus) {
     mDefaultAction = getCollapseExpandAction(path);
-    mPlugin = plugin;
     mPath = path;
     mActionMenus = menus;
     if (mActionMenus == null) {
@@ -76,7 +76,7 @@ public class PluginContextMenu extends AbstractContextMenu {
     menu.add(getCollapseAllMenuItem(mPath));
     menu.add(getExportMenu( mPath));
     
-    ActionMenu pluginAction = mPlugin.getButtonAction();
+    ActionMenu pluginAction = getButtonAction();
     if (pluginAction != null) {
       menu.addSeparator();
       Action action = pluginAction.getAction();
@@ -92,22 +92,24 @@ public class PluginContextMenu extends AbstractContextMenu {
       }
     }
 
-
-    SettingsTab settingsTab = mPlugin.getSettingsTab();
-    if (settingsTab != null) {
+    if (hasSettingsTab()) {
       menu.addSeparator();
       JMenuItem menuItem = MenuUtil.createMenuItem(Localizer.getLocalization(Localizer.I18N_SETTINGS)+"...");
       menuItem.setIcon(IconLoader.getInstance().getIconFromTheme("categories", "preferences-desktop", 16));
       menu.add(menuItem);
       menuItem.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
-          MainFrame.getInstance().showSettingsDialog(mPlugin.getId());
+          MainFrame.getInstance().showSettingsDialog(getPluginId());
         }
       });
     }
 
     return menu;
   }
+
+  protected abstract String getPluginId();
+  protected abstract boolean hasSettingsTab();
+  protected abstract ActionMenu getButtonAction();
 
   public Action getDefaultAction() {
     return null;
