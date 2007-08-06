@@ -306,7 +306,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
 
 
   /**
-   * Rally gets the SettingsTab object, which is added to the settings-window.
+   * Really gets the SettingsTab object, which is added to the settings-window.
    * 
    * @return the SettingsTab object or <code>null</code> if the plugin does not
    *         provide this feature.
