@@ -604,6 +604,11 @@ public class PluginTreeNode {
   }
 
 
+  /**
+   * Get the number of child nodes.
+   * 
+   * @return number of child nodes
+   */
   public int size() {
     return mChildNodes.size();
   }

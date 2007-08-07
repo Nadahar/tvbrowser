@@ -267,46 +267,46 @@ public class MarkList extends Vector<Program> {
    */
   public void createNodes(PluginTreeNode root, boolean update) {
     mRootNode = root;
+    boolean addRootAction = root.size() == 0;
     root.removeAllChildren();
 
-    PluginTreeNode pNode = new PluginTreeNode(Localizer.getLocalization(Localizer.I18N_PROGRAMS));
-    PluginTreeNode dNode = new PluginTreeNode(SimpleMarkerPlugin.mLocalizer
+    PluginTreeNode programNode = new PluginTreeNode(Localizer.getLocalization(Localizer.I18N_PROGRAMS));
+    PluginTreeNode dateNode = new PluginTreeNode(SimpleMarkerPlugin.mLocalizer
         .msg("days", "Days"));
-    pNode.setGroupingByDateEnabled(false);
+    programNode.setGroupingByDateEnabled(false);
 
-    GroupUnmarkAction menu = new GroupUnmarkAction(dNode, this);
-    menu.setSmallIcon(SimpleMarkerPlugin.getInstance().createIconForTree(1));
-    menu.setText(SimpleMarkerPlugin.mLocalizer.msg("unmarkall",
-        "Just unmark all"));
-
-    dNode.addAction(menu);
+    GroupUnmarkAction menu = getUnmarkAction(dateNode);
+    dateNode.addAction(menu);
+    menu = getUnmarkAction(dateNode);
+    programNode.addAction(menu);
+    if (addRootAction) {
+      menu = getUnmarkAction(dateNode);
+      root.addAction(menu);
+    }
+    
     updateTable();
-    Hashtable<String, LinkedList<Program>> program = getSortedPrograms();
+    Hashtable<String, LinkedList<Program>> sortedPrograms = getSortedPrograms();
 
-    for (String name : program.keySet()) {
-      LinkedList<Program> list1 = program.get(name);
-      PluginTreeNode curNode = pNode.addNode(name);
+    for (String name : sortedPrograms.keySet()) {
+      LinkedList<Program> progList = sortedPrograms.get(name);
+      PluginTreeNode curNode = programNode.addNode(name);
 
       // Create context menu entry
-      menu = new GroupUnmarkAction(curNode, this);
-      menu.setSmallIcon(SimpleMarkerPlugin.getInstance().createIconForTree(1));
-      menu.setText(SimpleMarkerPlugin.mLocalizer.msg("unmarkall",
-          "Just unmark all"));
-
+      menu = getUnmarkAction(curNode);
       curNode.addAction(menu);
       curNode.setGroupingByDateEnabled(false);
 
-      for (Program p : list1) {
-        PluginTreeNode prog = curNode.addProgram(p);
+      for (Program program : progList) {
+        PluginTreeNode prog = curNode.addProgram(program);
         prog.setNodeFormatter(new NodeFormatter() {
           public String format(ProgramItem pitem) {
             Program p = pitem.getProgram();
-            Date d = p.getDate();
+            Date progDate = p.getDate();
             String progdate;
 
-            if (d.equals(Date.getCurrentDate()))
+            if (progDate.equals(Date.getCurrentDate()))
               progdate = SimpleMarkerPlugin.mLocalizer.msg("today", "today");
-            else if (d.equals(Date.getCurrentDate().addDays(1)))
+            else if (progDate.equals(Date.getCurrentDate().addDays(1)))
               progdate = SimpleMarkerPlugin.mLocalizer.msg("tomorrow",
                   "tomorrow");
             else
@@ -315,14 +315,22 @@ public class MarkList extends Vector<Program> {
             return (progdate + "  " + p.getTimeString() + "  " + p.getChannel());
           }
         });
-        dNode.addProgram(p);
+        dateNode.addProgram(program);
       }
     }
-    root.add(pNode);
-    root.add(dNode);
+    root.add(programNode);
+    root.add(dateNode);
 
     if (update)
       root.update();
+  }
+
+  private GroupUnmarkAction getUnmarkAction(PluginTreeNode dateNode) {
+    GroupUnmarkAction menu = new GroupUnmarkAction(dateNode, this);
+    menu.setSmallIcon(SimpleMarkerPlugin.getInstance().createIconForTree(1));
+    menu.setText(SimpleMarkerPlugin.mLocalizer.msg("unmarkall",
+        "Just unmark all"));
+    return menu;
   }
 
   protected void updateNode() {
