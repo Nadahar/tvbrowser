@@ -595,7 +595,7 @@ public class ScrollableMenu extends JMenu {
 
   private void setPreferedSizeForMenuItems(Component component) {    
     FontRenderContext fontrendercontext = new FontRenderContext(null, false, false);
-    if (component instanceof JComponent) {
+    if (component instanceof JComponent && !(component instanceof JPopupMenu.Separator)) {
       JComponent jcomp = (JComponent) component;
       
       int width = jcomp.getPreferredSize().width;

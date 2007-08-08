@@ -35,6 +35,7 @@ import javax.swing.JMenuItem;
 import util.ui.ScrollableMenu;
 
 import devplugin.ActionMenu;
+import devplugin.ContextMenuSeparatorAction;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
@@ -69,6 +70,7 @@ public class MenuUtil {
       ActionMenu[] subItems = menu.getSubItems();
       for (int i=0; i<subItems.length; i++) {
         JMenuItem item = createMenuItem(subItems[i], setFont);
+        
         if (item == null) {
           ((ScrollableMenu)result).addSeparator();
         }
@@ -80,6 +82,9 @@ public class MenuUtil {
     else {
       if (menu.isSelected()) {
         result = new JCheckBoxMenuItem(menu.getAction().getValue(Action.NAME).toString(), true);
+      }
+      else if(ContextMenuSeparatorAction.getInstance().equals(menu.getAction())) {
+        return null;
       }
       else if (menu.getAction()!=null) {
         result = new JMenuItem(menu.getAction());
