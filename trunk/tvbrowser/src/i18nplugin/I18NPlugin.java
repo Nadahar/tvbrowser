@@ -84,7 +84,7 @@ public class I18NPlugin extends Plugin {
     String name = mLocalizer.msg("pluginName", "I18NPlugin");
     String desc = mLocalizer.msg("description", "Tool for Translators");
     String author = "Bodo Tasche";
-    return new PluginInfo(name, desc, author, new Version(0, 1));
+    return new PluginInfo(name, desc, author, new Version(0, 2));
   }
 
   @Override
