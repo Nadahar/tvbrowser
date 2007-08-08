@@ -26,7 +26,13 @@
 package i18nplugin;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Entry for a Property
@@ -58,7 +64,61 @@ public class PropertiesEntryNode extends DefaultMutableTreeNode implements Langu
       return false;
     if (!(getParent() instanceof PropertiesNode))
       return false;
-    return ((PropertiesNode) getParent()).getPropertyValue(locale, getPropertyName()).length() > 0;
+    String translated = ((PropertiesNode)getParent()).getPropertyValue(locale, getPropertyName());
+    // check existence of translation
+    if (translated.length() == 0) {
+      return false;
+    }
+    // check same number of arguments
+    String original = ((PropertiesNode) getParent()).getPropertyValue(getPropertyName());
+    List<String> originalArgs = getArgumentList(original);
+    List<String> translatedArgs = getArgumentList(translated);
+    if (originalArgs.size() != translatedArgs.size()) {
+      return false;
+    }
+    // check same arguments
+    for (int i = 0; i < originalArgs.size(); i++) {
+      if (!originalArgs.get(i).equals(translatedArgs.get(i))) {
+        return false;
+      }
+      // now remove args to be to compare punctuaction afterwards
+      String arg = originalArgs.get(i);
+      while (original.indexOf(arg) >= 0) {
+        original = original.replace(arg, "");
+      }
+      while (translated.indexOf(arg) >= 0) {
+        translated = translated.replace(arg, "");
+      }
+    }
+    // check that the strings have the same non alphanumeric ends, e.g. "..." in menu items
+    Pattern lastChars = Pattern.compile(".*\\w(\\W*)");
+    Matcher matcher = lastChars.matcher(original);
+    if (matcher.matches()) {
+      String endOriginal = matcher.group(1);
+      matcher = lastChars.matcher(translated);
+      if (matcher.matches()) {
+        String endTranslated = matcher.group(1);
+        if (!endOriginal.equals(endTranslated)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  private List<String> getArgumentList(String input) {
+    List<String> args = new ArrayList<String>();
+    Pattern argumentPattern = Pattern.compile(".*?(['\"]\\{\\d\\}['\"]|\\{\\d\\}).*");
+    Matcher argumentMatcher = argumentPattern.matcher(input);
+    int index = 0;
+    while (argumentMatcher.matches()) {
+      String argument = argumentMatcher.group(1);
+      index+= argumentMatcher.end(1);
+      args.add(argument);
+      argumentMatcher = argumentPattern.matcher(input.substring(index));
+    }
+    Collections.sort(args);
+    return args;
   }
 
   /*
