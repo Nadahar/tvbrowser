@@ -634,7 +634,6 @@ public class PluginManagerImpl implements PluginManager {
         return Settings.propDefaultNetworkConnectionTimeout.getInt();
       }
       
-      
       /**
        * Gets the color for a marking priority.
        * 
@@ -655,28 +654,36 @@ public class PluginManagerImpl implements PluginManager {
         
         return null;
       }
+      
+      public int getProgramTableEndOfDay() {
+        return Settings.propProgramTableEndOfDay.getInt();
+      }
+
+      public int getProgramTableStartOfDay() {
+        return Settings.propProgramTableStartOfDay.getInt();
+      }
     };
   }
 
   /**
-   * Returns an Icon from the Icon-Theme-System
+   * Returns an icon from the icon-theme-system
    *  
-   * If your Plugin has Icons that are not available as Icons within an Theme, you can add
-   * your Icons into your Jar-File.
+   * If your plugin has icons that are not available as icons within an theme, you can add
+   * your icons into your jar-file.
    * 
-   * The Directory-Structure must be like this:
+   * The directory structure must be like this:
    * 
-   * [PackageOfYourPlugin]/icons/[Size]x[Size]/[category]/[icon].png
+   * [PackageOfYourPlugin]/icons/[size]x[size]/[category]/[icon].png
    * 
-   * Please try to use the FreeDesktop-Icon Naming Conventions
+   * Please try to use the icon naming conventions of the FreeDesktop project:
    * http://cvs.freedesktop.org/[*]checkout[*]/icon-theme/default-icon-theme/spec/icon-naming-spec.xml
    * (please remove the [ ])
    *  
-   * @param plugin Plugin that wants to load an Icon
-   * @param category Category of the Icon (Action, etc...) 
-   * @param iconName Icon-Name without File-Extension
-   * @param size Size of the Icon
-   * @return Icon if found, null if not
+   * @param plugin Plugin that wants to load an icon
+   * @param category Category of the icon (action, etc...) 
+   * @param iconName icon name without file extension
+   * @param size Size of the icon
+   * @return Icon if found, <code>null</code> if not
    */
   public ImageIcon getIconFromTheme(Plugin plugin, String category, String iconName, int size) {
     return IconLoader.getInstance().getIconFromTheme(plugin, category, iconName, size);
@@ -792,7 +799,7 @@ public class PluginManagerImpl implements PluginManager {
   }
 
   /**
-   * Let TVB scroll to the given program.
+   * Let TV-Browser scroll to the given program.
    * 
    * @param program The program to scroll to.
    * @since 2.5
@@ -803,9 +810,9 @@ public class PluginManagerImpl implements PluginManager {
   }
   
   /**
-   * Let TVB scroll to the given time.
+   * Let TV-Browser scroll to the given time.
    * 
-   * @param time The time to scroll to in minutes.
+   * @param time The time to scroll to in minutes after midnight.
    * @since 2.5
    */
   public void scrollToTime(int time) {
@@ -813,7 +820,7 @@ public class PluginManagerImpl implements PluginManager {
   }
   
   /**
-   * Let TVB scroll to the given channel.
+   * Let TV-Browser scroll to the given channel.
    * 
    * @param channel The channel to scroll to.
    * @since 2.5
@@ -823,7 +830,7 @@ public class PluginManagerImpl implements PluginManager {
   }
   
   /**
-   * Let TVB change the date to the given date.
+   * Let TV-Browser change the date to the given date.
    * 
    * @param date The date to show the program for.
    * @since 2.5
@@ -837,7 +844,7 @@ public class PluginManagerImpl implements PluginManager {
    * Returns the filter manager of TV-Browser.
    * With the filter manager you get access to the filter
    * system of TV-Browser. You can add or remove filters
-   * of you plugin and switch the current used filter.
+   * of your plugin and switch the currently used filter.
    * 
    * @return  The filter manager of TV-Browser or <code>null</code> if TV-Browser isn't fully loaded.
    * @since 2.5
