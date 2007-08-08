@@ -91,7 +91,7 @@ public class PropertiesEntryNode extends DefaultMutableTreeNode implements Langu
       }
     }
     // check that the strings have the same non alphanumeric ends, e.g. "..." in menu items
-    Pattern lastChars = Pattern.compile(".*\\w(\\W*)");
+    Pattern lastChars = Pattern.compile(".*[\\w\\sﬂ](\\W*)",Pattern.DOTALL);
     Matcher matcher = lastChars.matcher(original);
     if (matcher.matches()) {
       String endOriginal = matcher.group(1);
