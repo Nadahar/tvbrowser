@@ -64,4 +64,21 @@ public interface TvBrowserSettings {
    * @since 2.6
    */
   public Color getColorForMarkingPriority(int priority);
+
+  /**
+   * Gets the start of day time of the program table.
+   * 
+   * @return start of day in minutes since midnight
+   * @since 2.6
+   */
+  public int getProgramTableStartOfDay();
+
+  /**
+   * Gets the end of day time of the program table.
+   * 
+   * @return end of day in minutes since midnight
+   * @since 2.6
+   */
+  public int getProgramTableEndOfDay();
+  
 }
