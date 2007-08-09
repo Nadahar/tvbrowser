@@ -135,8 +135,9 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       toDate = (endTimeForChannelLocale/24)-1+1;
     }
 
-    if(!TvDataBase.getInstance().isDayProgramAvailable(mMainDay.addDays(fromDate),ch))
+    if(!TvDataBase.getInstance().isDayProgramAvailable(mMainDay.addDays(fromDate),ch)) {
       fromDate++;
+    }
     
     return new DateRange(fromDate, toDate-fromDate);
 
@@ -152,9 +153,9 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
   private void updateDateRange() {
     mDateRangeForChannel.clear();
-    for (int i=0; i<mChannelArr.length; i++) {
-      DateRange dateRange = getDateRangeForChannel(mChannelArr[i]);
-      mDateRangeForChannel.put(mChannelArr[i], dateRange);
+    for (Channel channel : mChannelArr) {
+      DateRange dateRange = getDateRangeForChannel(channel);
+      mDateRangeForChannel.put(channel, dateRange);
     }
   }
 
@@ -220,8 +221,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     }
     checkThread();
 
-    for (int i = 0; i<cdpArr.length; i++) {
-      ChannelDayProgram cdp = cdpArr[i];
+    for (ChannelDayProgram cdp : cdpArr) {
       if (cdp==null) {
         break;
       }
@@ -229,42 +229,47 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       if (it!=null) {
         while (it.hasNext()) {
           Program prog=it.next();
-          int time=prog.getStartTime();          
-	        if (compareDateTime(prog.getDate(), time, fromDate, fromMinutes) >=0 && compareDateTime(prog.getDate(), time, toDate, toMinutes)<=0) {
+          int progTime=prog.getStartTime();          
+	        Date progDate = prog.getDate();
+          // add the normal day programs
+          if (compareDateTime(progDate, progTime, fromDate, fromMinutes) >=0 && compareDateTime(progDate, progTime, toDate, toMinutes)<=0) {
 		        if (mProgramFilter==null || mProgramFilter.accept(prog)) {
               ProgramPanel panel = new ProgramPanel(prog);
               mProgramColumn[col].add(panel);
             }
           }
+	        else {
+            // add the last program _before_ the day start time which is still running afterwards  
+	          if (mProgramColumn[col].isEmpty()) {
+	            if (compareDateTime(progDate, progTime + prog.getLength(), fromDate, fromMinutes) > 0) {
+                if (mProgramFilter==null || mProgramFilter.accept(prog)) {
+                  ProgramPanel panel = new ProgramPanel(prog);
+                  mProgramColumn[col].add(panel);
+                }
+              }
+	          }
+	        }
         }
       }
     }
   }
 
-
-
-
-  public void setDate(Date date, ProgressMonitor monitor,
-    Runnable callback)
+  public void setDate(Date date, ProgressMonitor monitor, Runnable callback)
   {
     mMainDay = date;
     updateDateRange();
     updateTableContent(monitor, callback);
   }
   
-  
   public Date getDate() {
     return mMainDay;
   }
-  
   
   public void updateTableContent() {
     updateTableContent(null, null);
   }
 
-
-  private void updateTableContent(ProgressMonitor monitor,
-    final Runnable callback)
+  private void updateTableContent(ProgressMonitor monitor, final Runnable callback)
   {
     checkThread();
     mOnAirRows = null;
@@ -339,51 +344,42 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     return mShownChannelArr.length;
   }
 
-
-
   public int getRowCount(int col) {
     checkThread();
     return mShownProgramColumn[col].size();   
   }
 
-
-
   public ProgramPanel getProgramPanel(int col, int row) {
     checkThread();
 
-    ArrayList list=mShownProgramColumn[col];
-    if (list.size()<=row) return null;
-    return (ProgramPanel)list.get(row);
- 
+    ArrayList<ProgramPanel> list=mShownProgramColumn[col];
+    if (list.size()<=row) {
+      return null;
+    }
+    return list.get(row);
   }
 
-  
- 
-
-  private void deregisterFromPrograms(ArrayList[] columns) {
-    for (int i=0;i<columns.length;i++) {
-      Iterator it=columns[i].iterator();
+  private void deregisterFromPrograms(ArrayList<ProgramPanel>[] columns) {
+    for (ArrayList<ProgramPanel> list : columns) {
+      Iterator<ProgramPanel> it=list.iterator();
       while (it.hasNext()) {
-        ProgramPanel panel = (ProgramPanel) it.next();
+        ProgramPanel panel = it.next();
         Program prog = panel.getProgram();
         prog.removeChangeListener(this);
       }
     }          
   }
 
-
-  private void registerAtPrograms(ArrayList[] columns) {
-    for (int i=0;i<columns.length;i++) {
-      Iterator it=columns[i].iterator();
+  private void registerAtPrograms(ArrayList<ProgramPanel>[] columns) {
+    for (ArrayList<ProgramPanel> list : columns) {
+      Iterator<ProgramPanel> it=list.iterator();
       while (it.hasNext()) {
-        ProgramPanel panel = (ProgramPanel) it.next();
+        ProgramPanel panel = it.next();
         Program prog = panel.getProgram();
         prog.addChangeListener(this);
       }
     }
   }
-
- 
 
   protected void fireTableDataChanged(Runnable callback) {
     for (int i = 0; i < mListenerList.size(); i++) {
@@ -428,9 +424,11 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       
     for(int i = 0; i < mShownChannelArr.length; i++) {
       if(p.getChannel().equals(mShownChannelArr[i])) {
-        for(ProgramPanel panel : mShownProgramColumn[i])
-          if(panel.getProgram().equals(p))
+        for(ProgramPanel panel : mShownProgramColumn[i]) {
+          if(panel.getProgram().equals(p)) {
             return true;
+          }
+        }
       }
     }
     
@@ -479,9 +477,9 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
             
             panel = getProgramPanel(col, mOnAirRows[col]+1);
             
-            if(panel == null)
+            if(panel == null) {
               mOnAirRows[col] = -1;
-            else {
+            } else {
               mOnAirRows[col] = mOnAirRows[col]+1;
               fireTableCellUpdated(col, mOnAirRows[col]);              
             }
