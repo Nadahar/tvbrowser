@@ -39,7 +39,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Constructor;
@@ -1098,15 +1097,11 @@ public class MainFrame extends JFrame implements DateListener {
 
     int dayStart = Settings.propProgramTableStartOfDay.getInt();
     int dayEnd = Settings.propProgramTableEndOfDay.getInt();
-    int splitHour = (dayEnd - dayStart) / 60;
-    if (hour < (splitHour / 2 + splitHour % 2)
-        || (splitHour <= 0 && hour < dayEnd / 60)
-        || (hour < dayStart / 60 && dayStart < dayEnd)) {
-      // It's early in the morning -> use the program table of yesterday
+    if ((dayStart >= dayEnd && hour < dayEnd / 60) // no overlapping -> stay on last day until day end
+        || (dayStart < dayEnd && hour <= (dayEnd + dayStart) /60 /2)) { // overlapping -> stay until the middle between both times
       day = day.addDays(-1);
       hour += 24;
     }
-
     // Change to the shown day program to today if nessesary
     // and scroll to "now" afterwards
     final int fHour = hour;
@@ -1764,6 +1759,7 @@ public class MainFrame extends JFrame implements DateListener {
 
   /**
    * increase/decrease the font of the program table
+   * 
    * @param offset positive values increase font, negative values decrease font, zero sets to default again
    */
   public void changeFontSize(int offset) {
@@ -1775,6 +1771,7 @@ public class MainFrame extends JFrame implements DateListener {
 
   /**
    * increase/decrease the width of the program table columns
+   * 
    * @param offset positive values increase column width,
    * negative values decrease column width, zero sets to default again
    */
@@ -1791,7 +1788,9 @@ public class MainFrame extends JFrame implements DateListener {
 
   /**
    * get whether the mainframe is currently in full screen mode
+   * 
    * @return in full screen mode
+   * @since 2.5.3
    */
   public boolean isFullScreenMode() {
     return isUndecorated();
