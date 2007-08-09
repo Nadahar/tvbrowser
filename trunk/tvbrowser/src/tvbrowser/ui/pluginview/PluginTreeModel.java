@@ -26,6 +26,8 @@
 
 package tvbrowser.ui.pluginview;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -95,9 +97,7 @@ public class PluginTreeModel extends DefaultTreeModel {
 
 
   public void addCustomNode(PluginTreeNode n) {
-
-    MutableTreeNode root = (MutableTreeNode) this.getRoot();
-    root.insert(n.getMutableTreeNode(), 0);
+    insertSorted(n);
   }
 
 
@@ -109,21 +109,25 @@ public class PluginTreeModel extends DefaultTreeModel {
     else {
       pluginRoot = plugin.getRootNode();
     }
-    MutableTreeNode root = (MutableTreeNode) this.getRoot();
-    root.insert(pluginRoot.getMutableTreeNode(), 0);
-
+    addCustomNode(pluginRoot);
   }
 
-
-
+  private void insertSorted(PluginTreeNode pluginRoot) {
+    MutableTreeNode root = (MutableTreeNode) this.getRoot();
+    ArrayList<String> pluginNames = new ArrayList<String>();
+    for (int i = 0; i < root.getChildCount(); i++) {
+      pluginNames.add(root.getChildAt(i).toString());
+    }
+    Collections.sort(pluginNames);
+    int index = Collections.binarySearch(pluginNames, pluginRoot.getUserObject().toString());
+    root.insert(pluginRoot.getMutableTreeNode(), -index-1);
+  }
 
   /**
    * Removes all ChildNodes from this Tree
    */
   public void removeAllChildNodes() {
     MutableTreeNode root = (MutableTreeNode) this.getRoot();
-    int size = root.getChildCount();
-
     while (root.getChildCount() > 0) {
       root.remove(0);
     }
