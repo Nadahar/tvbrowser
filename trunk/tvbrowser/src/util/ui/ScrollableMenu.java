@@ -20,7 +20,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.font.FontRenderContext;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -593,8 +592,7 @@ public class ScrollableMenu extends JMenu {
     getPopupMenu().repaint();
   }
 
-  private void setPreferedSizeForMenuItems(Component component) {    
-    FontRenderContext fontrendercontext = new FontRenderContext(null, false, false);
+  private void setPreferedSizeForMenuItems(Component component) {
     if (component instanceof JComponent && !(component instanceof JPopupMenu.Separator)) {
       JComponent jcomp = (JComponent) component;
       
