@@ -168,7 +168,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
       }
     }
     
-    submenu[submenu.length-2] = ContextMenuSeparatorAction.getInstance();
+    submenu[submenu.length-2] = ContextMenuSeparatorAction.getDisabledOnTaskMenuInstance();
     submenu[submenu.length-1] = getExtendedMarkMenu();
     
     return new ActionMenu(menu, submenu);

@@ -40,20 +40,60 @@ import javax.swing.Action;
  */
 public final class ContextMenuSeparatorAction extends AbstractAction {
   private static ContextMenuSeparatorAction mInstance;
+  private static ContextMenuSeparatorAction mDisabledOnTaskMenuInstance;
+  
   private static final String SEPARATOR_NAME = "###PLUGIN###SEPARATOR###";
 
   private ContextMenuSeparatorAction() {
-    mInstance = this;
-    putValue(Action.NAME,SEPARATOR_NAME);
+    super.putValue(Action.NAME,SEPARATOR_NAME);
   }
   
+  /**
+   * Gets an instance of this class.
+   * The instance is also shown in task menu of the ProgramInfoDialog.
+   * 
+   * @see {@link #getDisabledOnTaskMenuInstance()} to get an instance that
+   * isn't show in the task menu of the ProgramInfoDialog. 
+   * 
+   * @return The instance of this class, that is shown in the task
+   * menu of the ProgramInfoDialog.
+   */
   public static ContextMenuSeparatorAction getInstance() {
     if(mInstance == null) {
-      new ContextMenuSeparatorAction();
+      mInstance = new ContextMenuSeparatorAction();
     }
     
     return mInstance;
   }
+  
+  /**
+   * Gets an instance of this class.
+   * The instance is <b>not</b> shown in task menu of the ProgramInfoDialog.
+   * 
+   * @see {@link #getInstance()} to get an instance that
+   * is show in the task menu of the ProgramInfoDialog. 
+   * 
+   * @return The instance of this class, that is <b>not</b> shown in the task
+   * menu of the ProgramInfoDialog.
+   */
+  public static ContextMenuSeparatorAction getDisabledOnTaskMenuInstance() {
+    if(mDisabledOnTaskMenuInstance == null) {
+      mDisabledOnTaskMenuInstance = new ContextMenuSeparatorAction();
+      mDisabledOnTaskMenuInstance.setDisabledOnTaskMenu();
+    }
+    
+    return mDisabledOnTaskMenuInstance;
+  }
+  
+  private void setDisabledOnTaskMenu() {
+    super.putValue(Plugin.DISABLED_ON_TASK_MENU, true);
+  }
+  
+  /**
+   * Overwritten to disable changings of values of this class.
+   * So use it or don't use it, it has no effect.
+   */
+  public void putValue(String key, Object newValue) {}
   
   public void actionPerformed(ActionEvent e) {
     //Do nothing, it's only a action for separator support of plugin menus.
