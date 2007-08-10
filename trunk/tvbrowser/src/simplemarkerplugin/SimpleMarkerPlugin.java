@@ -47,6 +47,7 @@ import devplugin.ActionMenu;
 
 import devplugin.ContextMenuAction;
 
+import devplugin.ContextMenuSeparatorAction;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
@@ -153,7 +154,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   public ActionMenu getContextMenuActions(Program p) {
     this.mProg = p;
     
-    Object[] submenu = new Object[mMarkListVector.size() + 1];
+    Object[] submenu = new Object[mMarkListVector.size() + 2];
     ContextMenuAction menu = new ContextMenuAction();
     menu.setText(mLocalizer.msg("name", "Marker plugin"));
     menu.setSmallIcon(createImageIcon("actions", "just-mark", 16));
@@ -167,6 +168,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
       }
     }
     
+    submenu[submenu.length-2] = ContextMenuSeparatorAction.getInstance();
     submenu[submenu.length-1] = getExtendedMarkMenu();
     
     return new ActionMenu(menu, submenu);
