@@ -26,6 +26,7 @@
 
 package tvbrowser.ui.programtable;
 
+import tvbrowser.core.Settings;
 import util.ui.ProgramPanel;
 import devplugin.Program;
 
@@ -103,7 +104,8 @@ public class TimeSynchronousLayout extends AbstractProgramTableLayout {
           // Adjust the last program of this column to reach the y position
           ProgramPanel lastPanel = model.getProgramPanel(programCol, programRow - 1);
           int height = lastPanel.getPreferredHeight();
-          height += y - colYArr[programCol];
+          int heightDiff = y - colYArr[programCol];
+          height += heightDiff;
           lastPanel.setHeight(height);
         }
 
@@ -124,12 +126,16 @@ public class TimeSynchronousLayout extends AbstractProgramTableLayout {
       }
     } while (minProgram != null);
     
+    // expand last program of each column up to end of day (if it reaches end of day)
     for (int col = 0; col < columnCount; col++) {
       int count = model.getRowCount(col);
       
       if(count > 0) {
-        ProgramPanel panel = model.getProgramPanel(col, count-1);      
-        panel.setHeight(maxY - colYArr[col] + panel.getHeight());
+        ProgramPanel panel = model.getProgramPanel(col, count-1);
+        Program program = panel.getProgram();
+        if (program.getStartTime() <= Settings.propProgramTableEndOfDay.getInt() && program.getStartTime() + program.getLength() >= Settings.propProgramTableEndOfDay.getInt()) {
+          panel.setHeight(maxY - colYArr[col] + panel.getHeight());
+        }
       }
     }
     
