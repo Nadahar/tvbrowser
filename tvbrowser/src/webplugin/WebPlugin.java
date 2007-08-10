@@ -45,6 +45,7 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
+import devplugin.ContextMenuSeparatorAction;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
@@ -221,6 +222,10 @@ public class WebPlugin extends Plugin {
         if (address.getUrl().equals(CHANNEL_SITE)) {
         	address = new WebAddress(mLocalizer.msg("channelPage", "Open page of {0}",program.getChannel().getName()),program.getChannel().getWebpage(),null,false,address.isActive());
         	actionName = address.getName();
+        	// automatically add separator if it is the last menu item (as it is by default)
+        	if (i == mAddresses.size() - 1) {
+        	  actionList.add(ContextMenuSeparatorAction.getInstance());
+        	}
         }
         if (address.isActive()) {
           // create items for a possible sub menu
@@ -232,10 +237,13 @@ public class WebPlugin extends Plugin {
             // title
             final WebAddress adrTitle = new WebAddress(address.getName(), address.getUrl().replace(WEBSEARCH_ALL, "\"" + program.getTitle() + "\""), null, false, true);
             categoryList.add(createSearchAction(program, adrTitle, program.getTitle()));
-            
+            categoryList.add(ContextMenuSeparatorAction.getInstance());
             createSubMenu(program, address, categoryList, mLocalizer.msg("actor", "Actor"), listActors);
             createSubMenu(program, address, categoryList, mLocalizer.msg("director","Director"), listDirectors);
             createSubMenu(program, address, categoryList, mLocalizer.msg("script","Script"), listScripts);
+            if (categoryList.size() == 2) {
+              categoryList.remove(1);
+            }
             
             ContextMenuAction action = new ContextMenuAction(actionName, address.getIcon());
             ActionMenu searchMenu = new ActionMenu(action, categoryList.toArray());

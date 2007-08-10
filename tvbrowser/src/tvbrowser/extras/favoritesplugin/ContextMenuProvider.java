@@ -27,6 +27,7 @@
 package tvbrowser.extras.favoritesplugin;
 
 import devplugin.ActionMenu;
+import devplugin.ContextMenuSeparatorAction;
 import devplugin.Program;
 import devplugin.ContextMenuAction;
 
@@ -81,19 +82,21 @@ public class ContextMenuProvider {
           ActionMenu repetitions = FavoritesPlugin.getInstance().isShowingRepetitions() ? createRepetitionsMenuAction(favArr, program) : null;
           
           if(repetitions == null) {
-            return new ActionMenu(menu, new ActionMenu[]{
+            return new ActionMenu(menu, new Object[]{
               createExcludeFromFavoritesMenuAction(favArr, program),
               createEditFavoriteMenuAction(favArr),
               createDeleteFavoriteMenuAction(favArr),
+              ContextMenuSeparatorAction.getInstance(),
               createAddToFavoritesActionMenu(program)
             });
           }
           else {
-            return new ActionMenu(menu, new ActionMenu[]{
+            return new ActionMenu(menu, new Object[]{
               createExcludeFromFavoritesMenuAction(favArr, program),
               createEditFavoriteMenuAction(favArr),
               createDeleteFavoriteMenuAction(favArr),
               repetitions,
+              ContextMenuSeparatorAction.getInstance(),
               createAddToFavoritesActionMenu(program)
             });            
           }
