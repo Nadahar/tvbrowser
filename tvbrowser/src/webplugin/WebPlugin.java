@@ -237,7 +237,7 @@ public class WebPlugin extends Plugin {
             // title
             final WebAddress adrTitle = new WebAddress(address.getName(), address.getUrl().replace(WEBSEARCH_ALL, "\"" + program.getTitle() + "\""), null, false, true);
             categoryList.add(createSearchAction(program, adrTitle, program.getTitle()));
-            categoryList.add(ContextMenuSeparatorAction.getInstance());
+            categoryList.add(ContextMenuSeparatorAction.getDisabledOnTaskMenuInstance());
             createSubMenu(program, address, categoryList, mLocalizer.msg("actor", "Actor"), listActors);
             createSubMenu(program, address, categoryList, mLocalizer.msg("director","Director"), listDirectors);
             createSubMenu(program, address, categoryList, mLocalizer.msg("script","Script"), listScripts);
