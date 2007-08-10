@@ -989,6 +989,12 @@ public class Settings {
 
   public static final IntProperty propWindowY = new IntProperty(mProp,
       "window.y", -1);
+  
+  public static final IntProperty propPluginChooserDlgWidth = new IntProperty(mProp,
+      "pluginChooserDlg.width", -1);
+
+  public static final IntProperty propPluginChooserDlgHeight = new IntProperty(mProp,
+      "pluginChooserDlg.height", -1);
 
   public static final IntProperty propSettingsDialogDividerLocation = new IntProperty(mProp,
       "settingsDialogDividerLocation", 200);
