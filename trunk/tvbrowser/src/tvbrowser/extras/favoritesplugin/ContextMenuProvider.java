@@ -96,7 +96,7 @@ public class ContextMenuProvider {
               createEditFavoriteMenuAction(favArr),
               createDeleteFavoriteMenuAction(favArr),
               repetitions,
-              ContextMenuSeparatorAction.getInstance(),
+              ContextMenuSeparatorAction.getDisabledOnTaskMenuInstance(),
               createAddToFavoritesActionMenu(program)
             });            
           }
