@@ -46,6 +46,7 @@ import com.l2fprod.common.swing.JLinkButton;
 import com.l2fprod.common.swing.JTaskPaneGroup;
 
 import devplugin.ActionMenu;
+import devplugin.ContextMenuSeparatorAction;
 import devplugin.Plugin;
 import devplugin.Program;
 
@@ -92,31 +93,32 @@ public class TaskMenuAction {
 
   // Adds the action to the TaskPaneGroup.
   private void addAction(JTaskPaneGroup parent, ActionMenu menu) {
-    final Action a = menu.getAction();    
-
-    mAction = new AbstractAction() {
-      private static final long serialVersionUID = 1L;
-
-      public void actionPerformed(ActionEvent e) {
-        a.actionPerformed(e);
-        
-        if (mAction.getValue(Action.ACTION_COMMAND_KEY) == null
-            || !mAction.getValue(Action.ACTION_COMMAND_KEY).equals("action")) {
-          mInfo.addPluginActions(true);
-        }
-      }      
-    };
-    
-    mAction.putValue(Action.NAME,"<html>" + a.getValue(Action.NAME)+ "</html>");
-    mAction.putValue(Action.ACTION_COMMAND_KEY,a.getValue(Action.ACTION_COMMAND_KEY));
-    mAction.putValue(Action.SMALL_ICON,a.getValue(Action.SMALL_ICON));
-    
-    Component c = parent.add(mAction);
-    mFind.installKeyListener(c);
-    
-    if(c instanceof JLinkButton) {
-      ((JLinkButton)c).setVerticalTextPosition(SwingConstants.TOP);
-      ((JLinkButton)c).setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
+    final Action a = menu.getAction();
+    if (! ContextMenuSeparatorAction.getInstance().equals(a)) {
+      mAction = new AbstractAction() {
+        private static final long serialVersionUID = 1L;
+  
+        public void actionPerformed(ActionEvent e) {
+          a.actionPerformed(e);
+          
+          if (mAction.getValue(Action.ACTION_COMMAND_KEY) == null
+              || !mAction.getValue(Action.ACTION_COMMAND_KEY).equals("action")) {
+            mInfo.addPluginActions(true);
+          }
+        }      
+      };
+      
+      mAction.putValue(Action.NAME,"<html>" + a.getValue(Action.NAME)+ "</html>");
+      mAction.putValue(Action.ACTION_COMMAND_KEY,a.getValue(Action.ACTION_COMMAND_KEY));
+      mAction.putValue(Action.SMALL_ICON,a.getValue(Action.SMALL_ICON));
+      
+      Component c = parent.add(mAction);
+      mFind.installKeyListener(c);
+      
+      if(c instanceof JLinkButton) {
+        ((JLinkButton)c).setVerticalTextPosition(SwingConstants.TOP);
+        ((JLinkButton)c).setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
+      }
     }
   }
 
