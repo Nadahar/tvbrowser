@@ -87,6 +87,7 @@ import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.Localizer;
+import util.ui.OverlayListener;
 import util.ui.UiUtilities;
 
 /**
@@ -211,6 +212,7 @@ DropTargetListener {
         
     getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     
+    new OverlayListener(this);
     (new DragSource()).createDefaultDragGestureRecognizer(this,
         DnDConstants.ACTION_MOVE, this);
     
