@@ -614,9 +614,8 @@ public class ScrollableMenu extends JMenu {
         Iterator iterator = scrollableItems.iterator();
         while (iterator.hasNext()) {
           Object object = iterator.next();
-          if (object instanceof JComponent) {
+          if (object instanceof JComponent && !(object instanceof JPopupMenu.Separator)) {
             JComponent jComponent = (JComponent) object;
-
             jComponent.setPreferredSize(new Dimension(maxWidth, maxHeight));
           }
         }
