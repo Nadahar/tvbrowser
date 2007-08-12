@@ -388,4 +388,8 @@ public class ProgramInfo {
   public static boolean isShowing() {
     return mIsShowing;
   }
+
+  public void showProgramInformation(Program program) {
+    showProgramInformation(program, true);
+  }
 }
