@@ -39,6 +39,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
@@ -249,8 +250,17 @@ public class PluginView extends JPanel implements MouseListener {
         boolean hasFocus) {
       JLabel label = (JLabel)super.getTreeCellRendererComponent(tree,value,sel,expanded,leaf,row,hasFocus);
       
-      if(leaf && value instanceof Node && ((Node)value).isDirectoryNode()) {
-        label.setIcon(getClosedIcon());
+      if (leaf && value instanceof Node) {
+        Node node = (Node)value; 
+        if(node.isDirectoryNode()) {
+          label.setIcon(getClosedIcon());
+        }
+        else if (node.getType() == Node.PROGRAM) {
+          Program program = ((ProgramItem)node.getUserObject()).getProgram();
+          if (program.isExpired()) {
+            label.setForeground(UIManager.getColor("Label.disabledForeground"));
+          }
+        }
       }
       
       return label;
