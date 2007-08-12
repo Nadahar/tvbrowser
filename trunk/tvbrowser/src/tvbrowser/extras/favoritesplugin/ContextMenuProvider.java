@@ -37,6 +37,7 @@ import java.awt.event.ActionEvent;
 
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTree;
+import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.ui.mainframe.MainFrame;
 
 import javax.swing.*;
@@ -236,6 +237,9 @@ public class ContextMenuProvider {
         subItem.setActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             MainFrame.getInstance().scrollToProgram(program);
+            if (ProgramInfo.isShowing()) {
+              ProgramInfo.getInstance().showProgramInformation(program);
+            }
           }
         });
       
