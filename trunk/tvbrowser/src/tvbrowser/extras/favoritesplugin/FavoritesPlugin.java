@@ -104,6 +104,9 @@ public class FavoritesPlugin {
 
   private boolean mHasToUpdate = false;
   
+  /**
+   * do not save the favorite tree during TV data updates because it might not be consistent 
+   */
   private boolean mHasRightToSave = true;
 
   private Favorite[] mUpdateFavorites;
@@ -132,7 +135,10 @@ public class FavoritesPlugin {
       }
 
       public void tvDataUpdateFinished() {
-        handleTvDataUpdateFinished();
+        // only update the favorites if new data was downloaded
+        if (TvDataUpdater.getInstance().tvDataWasChanged()) {
+          handleTvDataUpdateFinished();
+        }
       }
     });
   }
