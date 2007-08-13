@@ -231,23 +231,26 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
           Program prog=it.next();
           int progTime=prog.getStartTime();          
 	        Date progDate = prog.getDate();
-          // add the normal day programs
-          if (compareDateTime(progDate, progTime, fromDate, fromMinutes) >=0 && compareDateTime(progDate, progTime, toDate, toMinutes)<=0) {
-		        if (mProgramFilter==null || mProgramFilter.accept(prog)) {
-              ProgramPanel panel = new ProgramPanel(prog);
-              mProgramColumn[col].add(panel);
-            }
-          }
-	        else {
-            // add the last program _before_ the day start time which is still running afterwards  
-	          if (mProgramColumn[col].isEmpty()) {
-	            if (compareDateTime(progDate, progTime + prog.getLength(), fromDate, fromMinutes) > 0) {
-                if (mProgramFilter==null || mProgramFilter.accept(prog)) {
-                  ProgramPanel panel = new ProgramPanel(prog);
-                  mProgramColumn[col].add(panel);
-                }
+	        // program starts before given end time
+	        if (compareDateTime(progDate, progTime, toDate, toMinutes) <= 0) {
+            // program starts after or at given end time
+            if (compareDateTime(progDate, progTime, fromDate, fromMinutes) >= 0)  {
+  		        if (mProgramFilter==null || mProgramFilter.accept(prog)) {
+                ProgramPanel panel = new ProgramPanel(prog);
+                mProgramColumn[col].add(panel);
               }
-	          }
+            }
+  	        else {
+              // add the last program _before_ the day start time which is still running afterwards  
+  	          if (mProgramColumn[col].isEmpty()) {
+  	            if (compareDateTime(progDate, progTime + prog.getLength(), fromDate, fromMinutes) > 0) {
+                  if (mProgramFilter==null || mProgramFilter.accept(prog)) {
+                    ProgramPanel panel = new ProgramPanel(prog);
+                    mProgramColumn[col].add(panel);
+                  }
+                }
+  	          }
+  	        }
 	        }
         }
       }
