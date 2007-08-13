@@ -122,6 +122,10 @@ public class ProgramFieldType {
     = new ProgramFieldType(17, TEXT_FORMAT, true, "origin",
                            "origin", "Origin");
 
+  /**
+   * net playing time in minutes (may be shorter than end time-start time 
+   * due to commercials in between)
+   */
   public static final ProgramFieldType NET_PLAYING_TIME_TYPE
     = new ProgramFieldType(18, INT_FORMAT, true, "net playing time",
                            "netPlayingTime", "Net playing time");
@@ -134,6 +138,9 @@ public class ProgramFieldType {
     = new ProgramFieldType(20, TEXT_FORMAT, true, "script",
                            "script", "Script");
 
+  /**
+   * program is a repetition of this past date/time
+   */
   public static final ProgramFieldType REPETITION_OF_TYPE
     = new ProgramFieldType(21, TEXT_FORMAT, true, "repetition of",
                            "repetitionOf", "Repetition of");
@@ -150,6 +157,9 @@ public class ProgramFieldType {
     = new ProgramFieldType(24, INT_FORMAT, true, "production year",
                            "productionYear", "Production year");
 
+  /**
+   * program will be repeated at this future date/time
+   */
   public static final ProgramFieldType REPETITION_ON_TYPE
       = new ProgramFieldType(25, TEXT_FORMAT, true, "repetition on",
                            "repetitionOn", "Repetition on");
@@ -167,7 +177,7 @@ public class ProgramFieldType {
                               "pictureDescription", "Picture description");
 
   /**
-   * number of episode
+   * number of this episode
    * 
    * @since 2.6/2.2.4
    */
