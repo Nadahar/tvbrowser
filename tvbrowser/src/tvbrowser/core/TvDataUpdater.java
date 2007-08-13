@@ -65,6 +65,11 @@ public class TvDataUpdater {
 
   /** Set to true if Stop was forced */
   private boolean mStopDownloading = false;
+  
+  /**
+   * set to true if some changed data was given to the TV database
+   */
+  private boolean mTvDataWasChanged = false;
 
   private ArrayList<TvDataUpdateListener> mListenerList;
 
@@ -122,6 +127,7 @@ public class TvDataUpdater {
     // Set the download flag
     mIsDownloading = true;
     mStopDownloading = false;
+    mTvDataWasChanged = false;
 
     // Inform the listeners
     fireTvDataUpdateStarted();
@@ -138,6 +144,7 @@ public class TvDataUpdater {
     // Create a interactor that translates the database orders
     TvDataUpdateManager updateManager = new TvDataUpdateManager() {
       public void updateDayProgram(MutableChannelDayProgram program) {
+        mTvDataWasChanged = true;
         doUpdateDayProgram(program);
       }
 
@@ -283,8 +290,7 @@ public class TvDataUpdater {
     jobList.toArray(jobArr);
     return jobArr;
   }
-
-
+  
   // inner class UpdateJob
 
 
@@ -316,6 +322,15 @@ public class TvDataUpdater {
       return channelArr;
     }
 
+  }
+
+  /**
+   * check whether the last TV data update changed some data in the TV database 
+   * @return <code>true</code>, if data was changed during last update
+   * @since 2.6 
+   */
+  public boolean tvDataWasChanged() {
+    return mTvDataWasChanged;
   }
 
 }
