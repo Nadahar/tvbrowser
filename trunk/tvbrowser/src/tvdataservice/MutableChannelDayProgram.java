@@ -228,7 +228,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
   /**
    * Sets the last program end time state on data update.
    * 
-   * @param value If the last program had end time on data update.
+   * @param value the last program end time on data update
    * @since 2.2
    */
   public void setLastProgramHadEndOnUpdate(boolean value) {
@@ -238,7 +238,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
   /**
    * Gets the last program end time state on data update.
    * 
-   * @return If the last program had ent time on data update
+   * @return If the last program had end time on data update
    * @since 2.2
    */
   public boolean getLastProgramHadEndOnUpdate() {
