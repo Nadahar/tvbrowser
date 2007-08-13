@@ -145,9 +145,7 @@ public class TvDataBase {
 
     // Check whether day programs were removed
     String[] knownProgArr = mTvDataInventory.getKnownDayPrograms();
-    for (int progIdx = 0; progIdx < knownProgArr.length; progIdx++) {
-      String key = knownProgArr[progIdx];
-
+    for (String key : knownProgArr) {
       // Check whether this file is still present
       // (The key is equal to the file name)
       if (!tvDataFiles.containsKey(key)) {
@@ -169,8 +167,8 @@ public class TvDataBase {
     }
 
     // Check whether day programs were added or replaced
-    for (int fileIdx = 0; fileIdx < tvDataArr.length; fileIdx++) {
-      String fileName = tvDataArr[fileIdx].getName();
+    for (File tvDataFile : tvDataArr) {
+      String fileName = tvDataFile.getName();
 
       // Get the channel and date
       Channel channel = getChannelFromFileName(fileName, channelArr,
@@ -178,7 +176,7 @@ public class TvDataBase {
       Date date = getDateFromFileName(fileName);
       if ((channel != null) && (date != null)) {
         // Get the version
-        int version = (int) tvDataArr[fileIdx].length();
+        int version = (int) tvDataFile.length();
 
         // Check whether this day program is known
         int knownStatus = mTvDataInventory.getKnownStatus(date, channel,
@@ -242,11 +240,13 @@ public class TvDataBase {
    * @param days The number of days to recalculate
    */
   public synchronized void reCalculateTvData(int days) {
-    Channel[] ch = ChannelList.getSubscribedChannels();
+    Channel[] channels = ChannelList.getSubscribedChannels();
 
-    for (int j = 0; j < ch.length; j++)
-      for (int i = 0; i < days; i++)
-        correctDayProgramFile(Date.getCurrentDate().addDays(i), ch[j]);
+    for (Channel channel : channels) {
+      for (int i = 0; i < days; i++) {
+        correctDayProgramFile(Date.getCurrentDate().addDays(i), channel);
+      }
+    }
     
     mNewDayProgramsAfterUpdate.clear();
   }
@@ -301,10 +301,11 @@ public class TvDataBase {
       }
 
       // save the value for informing the listeners later
-      if(oldProg != null)
+      if(oldProg != null) {
         mNewDayProgramsAfterUpdate.put(key, oldProg);
-      else
+      } else {
         mNewDayProgramsAfterUpdate.put(key, "null");
+      }
 
       // Set the new program to 'known'
       int version = (int) file.length();
@@ -426,10 +427,10 @@ public class TvDataBase {
     };
 
     String tvDataDir = Settings.propTVDataDirectory.getString();
-    File fList[] = new File(tvDataDir).listFiles(filter);
-    if (fList != null) {
-      for (int i = 0; i < fList.length; i++) {
-        fList[i].delete();
+    File fileList[] = new File(tvDataDir).listFiles(filter);
+    if (fileList != null) {
+      for (File deleteFile : fileList) {
+        deleteFile.delete();
       }
     }
   }
@@ -438,8 +439,9 @@ public class TvDataBase {
       Channel channel) {
     File file = getDayProgramFile(date, channel);
     String key = getDayProgramKey(date, channel);
-    if (!file.exists())
+    if (!file.exists()) {
       return;
+    }
 
     try {
       // Check whether this day program is known
@@ -450,18 +452,17 @@ public class TvDataBase {
       
       boolean somethingChanged = calculateMissingLengths(checkProg);
         
-      {
-        Object oldProg = null;
-        
-        if((oldProg = mNewDayProgramsAfterUpdate.remove(key)) != null) {
-          // Inform the listeners about adding the new program
-          fireDayProgramAdded(checkProg);
-            
-          // Inform the listeners about deleting the old program
-          if (oldProg instanceof ChannelDayProgram)
-            fireDayProgramDeleted((ChannelDayProgram)oldProg);
-        } else if(somethingChanged)
-          fireDayProgramAdded(checkProg);
+      Object oldProg = null;
+      if((oldProg = mNewDayProgramsAfterUpdate.remove(key)) != null) {
+        // Inform the listeners about adding the new program
+        fireDayProgramAdded(checkProg);
+          
+        // Inform the listeners about deleting the old program
+        if (oldProg instanceof ChannelDayProgram) {
+          fireDayProgramDeleted((ChannelDayProgram)oldProg);
+        }
+      } else if(somethingChanged) {
+        fireDayProgramAdded(checkProg);
       }
         
       if (somethingChanged || checkProg.getAndResetChangedByPluginState()) {
@@ -597,13 +598,14 @@ public class TvDataBase {
 
     FilenameFilter filter = new FilenameFilter() {
       public boolean accept(File dir, String name) {
-        if (name.length() < 8)
+        if (name.length() < 8) {
           return false;
+        }
         String dateStr = name.substring(name.length() - 8);
         try {
-          int year = Integer.parseInt(dateStr.substring(0, 4));
-          int month = Integer.parseInt(dateStr.substring(4, 6));
-          int day = Integer.parseInt(dateStr.substring(6, 8));
+          Integer.parseInt(dateStr.substring(0, 4)); // year
+          Integer.parseInt(dateStr.substring(4, 6)); // month
+          Integer.parseInt(dateStr.substring(6, 8)); // day
         } catch (NumberFormatException e) {
           return false;
         }
@@ -611,11 +613,11 @@ public class TvDataBase {
       }
     };
 
-    String fList[] = tvDataDir.list(filter);
-    if (fList != null) {
-      for (int i = 0; i < fList.length; i++) {
-        if (fList[i].length() > 8) {
-          String dateStr = fList[i].substring(fList[i].length() - 8);
+    String fileNameList[] = tvDataDir.list(filter);
+    if (fileNameList != null) {
+      for (String fileName : fileNameList) {
+        if (fileName.length() > 8) {
+          String dateStr = fileName.substring(fileName.length() - 8);
           try {
             int year = Integer.parseInt(dateStr.substring(0, 4));
             int month = Integer.parseInt(dateStr.substring(4, 6));
