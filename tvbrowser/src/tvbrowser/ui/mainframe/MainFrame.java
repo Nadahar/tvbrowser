@@ -1763,10 +1763,11 @@ public class MainFrame extends JFrame implements DateListener {
    * @param offset positive values increase font, negative values decrease font, zero sets to default again
    */
   public void changeFontSize(int offset) {
-    util.ui.ProgramPanel.updateFonts(offset);
-    tvbrowser.ui.programtable.ChannelPanel.fontChanged();
-    ProgramTableScrollPane scrollPane = getProgramTableScrollPane();
-    scrollPane.forceRepaintAll();
+    if (util.ui.ProgramPanel.updateFonts(offset)) {
+      tvbrowser.ui.programtable.ChannelPanel.fontChanged();
+      ProgramTableScrollPane scrollPane = getProgramTableScrollPane();
+      scrollPane.forceRepaintAll();
+    }
   }
 
   /**
