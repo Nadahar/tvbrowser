@@ -31,6 +31,14 @@ import util.exc.TvBrowserException;
 
 public abstract class AbstractTvDataService implements devplugin.TvDataService, tvdataservice.TvDataService {
 
+  /**
+   * The plugin manager. It's the connection to TV-Browser.
+   * <p>
+   * Every communication between TV-Browser and the data server is either initiated
+   * by TV-Browser or made by using the plugin manager.
+   */
+  private static PluginManager mPluginManager;
+
   final public Channel[] getAvailableChannels() {
     return getAvailableChannels(null);
   }
@@ -41,6 +49,31 @@ public abstract class AbstractTvDataService implements devplugin.TvDataService, 
 
   final public Version getAPIVersion() {
     return new Version(1,0);
+  }
+  
+  /**
+   * Use this method to call methods of the plugin manager.
+   * <p>
+   * The plugin manager is your connection to TV-Browser. Every communication
+   * between TV-Browser and the data service is either initiated by TV-Browser or made
+   * by using the plugin manager.
+   * 
+   * @return The plugin manager.
+   * @since 2.6
+   */
+  final public static PluginManager getPluginManager() {
+    return mPluginManager;
+  }
+
+  /**
+   * Called by the host-application to provide access to the plugin manager.
+   * 
+   * @param manager The plugin manager the plugins should use.
+   */
+  final public static void setPluginManager(PluginManager manager) {
+    if (mPluginManager == null ) {
+      mPluginManager = manager;
+    }
   }
 
 }

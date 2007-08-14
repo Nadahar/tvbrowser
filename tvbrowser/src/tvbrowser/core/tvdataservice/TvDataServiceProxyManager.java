@@ -34,7 +34,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import devplugin.AbstractTvDataService;
+
 import tvbrowser.core.Settings;
+import tvbrowser.core.plugin.PluginManagerImpl;
 import util.exc.ErrorHandler;
 
 
@@ -58,6 +61,7 @@ public class TvDataServiceProxyManager {
 
   private TvDataServiceProxyManager() {
     mProxyList = new ArrayList<TvDataServiceProxy>();
+    AbstractTvDataService.setPluginManager(PluginManagerImpl.getInstance());
   }
 
   public static TvDataServiceProxyManager getInstance() {
@@ -121,12 +125,12 @@ public class TvDataServiceProxyManager {
    */
   public void setTvDataDir(File dir) {
     TvDataServiceProxy[] services = getDataServices();
-    for (int i=0; i<services.length; i++) {
-      File dataServiceDir=new File(dir,services[i].getId());
+    for (TvDataServiceProxy proxy : services) {
+      File dataServiceDir=new File(dir,proxy.getId());
       if (!dataServiceDir.exists()) {
         dataServiceDir.mkdirs();
       }
-      services[i].setWorkingDirectory(dataServiceDir);
+      proxy.setWorkingDirectory(dataServiceDir);
     }
   }
 
@@ -143,8 +147,8 @@ public class TvDataServiceProxyManager {
     setTvDataDir(rootDir);
 
     TvDataServiceProxy[] proxies = getDataServices();
-    for (int i=0; i<proxies.length; i++) {
-      loadServiceSettings(proxies[i]);
+    for (TvDataServiceProxy proxy : proxies) {
+      loadServiceSettings(proxy);
     }
 
 
@@ -157,16 +161,16 @@ public class TvDataServiceProxyManager {
 
   public void shutDown() {
     TvDataServiceProxy[] proxies = getDataServices();
-    for (int i=0; i<proxies.length; i++) {
-      storeServiceSettings(proxies[i]);
+    for (TvDataServiceProxy proxy : proxies) {
+      storeServiceSettings(proxy);
     }
   }
 
   public TvDataServiceProxy findDataServiceById(String id) {
     TvDataServiceProxy[] proxies = getDataServices();
-    for (int i=0; i<proxies.length; i++) {
-      if (id.equals(proxies[i].getId())) {
-        return proxies[i];
+    for (TvDataServiceProxy proxy : proxies) {
+      if (id.equals(proxy.getId())) {
+        return proxy;
       }
     }
     return null;
@@ -175,16 +179,17 @@ public class TvDataServiceProxyManager {
 
   public TvDataServiceProxy[] getTvDataServices(String[] idArr) {
     ArrayList<TvDataServiceProxy> list = new ArrayList<TvDataServiceProxy>();
-    for (int i=0; i<idArr.length; i++) {
-      TvDataServiceProxy p = findDataServiceById(idArr[i]);
-      if (p != null) {
-        list.add(p);
+    for (String id : idArr) {
+      TvDataServiceProxy proxy = findDataServiceById(id);
+      if (proxy != null) {
+        list.add(proxy);
       }
     }
-    if(list.size() > 0)
+    if(list.size() > 0) {
       return list.toArray(new TvDataServiceProxy[list.size()]);
-    else
+    } else {
       return getDataServices();
+    }
   }
 
 
