@@ -234,7 +234,7 @@ public interface Program {
    * 
    * @return an iterator over {@link ProgramFieldType}s.
    */
-  public Iterator getFieldIterator();
+  public Iterator<ProgramFieldType> getFieldIterator();
 
   /**
    * Marks the program for a Java plugin.
