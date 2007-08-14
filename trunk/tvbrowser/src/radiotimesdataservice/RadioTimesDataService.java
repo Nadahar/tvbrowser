@@ -84,11 +84,6 @@ public class RadioTimesDataService extends AbstractTvDataService {
    */
   private ArrayList<Channel> mChannels = new ArrayList<Channel>();
 
-  /**
-   * Working-Directory
-   */
-  private File mWorkingDir;
-
   /*
    * (non-Javadoc)
    * 
@@ -237,7 +232,7 @@ public class RadioTimesDataService extends AbstractTvDataService {
    * @see devplugin.TvDataService#setWorkingDirectory(java.io.File)
    */
   public void setWorkingDirectory(File dataDir) {
-    mWorkingDir = dataDir;
+    // not used
   }
 
   /*
@@ -282,6 +277,7 @@ public class RadioTimesDataService extends AbstractTvDataService {
     } catch (Exception e) {
       throw new TvBrowserException(getClass(), "error.2", "Downloading Data failed", e);
     }
+    monitor.setMessage("");
   }
 
 }
