@@ -303,7 +303,10 @@ public class ProgramPanel extends JComponent implements ChangeListener {
  * @param newOffset increase or decrease compared to standard font size
  * @since 2.6
  */
-  public static void updateFonts(int newOffset) {
+  public static boolean updateFonts(int newOffset) {
+    Font oldTitleFont = mTitleFont;
+    Font oldTimeFont = mTimeFont;
+    Font oldNormalFont = mNormalFont;
     boolean useDefaults = Settings.propUseDefaultFonts.getBoolean();
     if (useDefaults) {
       mTitleFont = Settings.propProgramTitleFont.getDefault();
@@ -325,8 +328,13 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       mTimeFont = getDynamicFontSize(mTimeFont, fontSizeOffset);
       mNormalFont = getDynamicFontSize(mNormalFont, fontSizeOffset);
     }
+    // if the font didn't change, avoid updates
+    if (mTitleFont.equals(oldTitleFont) && mTimeFont.equals(oldTimeFont) && mNormalFont.equals(oldNormalFont)) {
+      return false;
+    }
     // reset width of the left part, will be recalculated during first forceRepaint
     WIDTH_LEFT = -1;
+    return true;
   }
 
 private static Font getDynamicFontSize(Font font, int offset) {
