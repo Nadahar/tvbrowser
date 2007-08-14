@@ -579,7 +579,7 @@ public class MutableProgram implements Program {
    *
    * @return an iterator over {@link ProgramFieldType}s.
    */
-  public Iterator getFieldIterator() {
+  public Iterator<ProgramFieldType> getFieldIterator() {
     return mFieldHash.keySet().iterator();
   }
 
@@ -908,6 +908,31 @@ public class MutableProgram implements Program {
     return false;
   }
 
+  /**
+   * check if two programs are identical by their field contents
+   * 
+   * @param program
+   * @return <code>true</code>, if all fields are equal
+   * @since 2.6
+   */
+  public boolean equalsAllFields(MutableProgram program) {
+    if (!equals(program)) {
+      return false;
+    }
+    if (mFieldHash.size() != program.mFieldHash.size()) {
+      return false;
+    }
+    Iterator<ProgramFieldType> it = mFieldHash.keySet().iterator();
+    while (it.hasNext()) {
+      ProgramFieldType fieldType = it.next();
+      Object thisValue = getField(fieldType, fieldType.getFormat());
+      Object otherValue = program.getField(fieldType, fieldType.getFormat());
+      if (!thisValue.equals(otherValue)) {
+        return false;
+      }
+    }
+    return true;
+  }
 
   /**
    * Gets whether two objects are equal. Can handle null values.

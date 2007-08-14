@@ -272,4 +272,35 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
     
     return temp;
   }
+
+  /**
+   * Compare with the given dayProgram
+   * 
+   * @param dayProgram
+   * @return <code>true</code>, if all programs of the day match (with each field)
+   * @since 2.6
+   */
+  public boolean equals(ChannelDayProgram dayProgram) {
+    if (getProgramCount() != dayProgram.getProgramCount()) {
+      return false;
+    }
+    if (!getChannel().equals(dayProgram.getChannel())) {
+      return false;
+    }
+    for (int i = 0; i < getProgramCount(); i++) {
+      Program program = getProgramAt(i);
+      Program otherProgram = dayProgram.getProgramAt(i);
+      if (program instanceof MutableProgram && otherProgram instanceof MutableProgram) {
+        if (!((MutableProgram) program).equalsAllFields((MutableProgram) otherProgram)) {
+          return false;
+        }
+      }
+      else {
+        return false; // no mutable programs, we cant compare
+      }
+    }
+    return true; // everything checked, so they are the same
+  }
+
+
 }

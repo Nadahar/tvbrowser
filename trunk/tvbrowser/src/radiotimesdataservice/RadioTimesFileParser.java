@@ -39,11 +39,16 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Parses the RadioTimes Data
  * 
  * @author bodum
+ */
+/**
+ * @author bananeweizen
+ *
  */
 public class RadioTimesFileParser {
 
@@ -53,35 +58,44 @@ public class RadioTimesFileParser {
   
   /** Channel */
   private Channel mChannel;
+  
+  /**
+   * map of lazily created update channel day programs 
+   */
   private HashMap<Date, MutableChannelDayProgram> mMutMap = new HashMap<Date, MutableChannelDayProgram>();
 
   // field numbers used in the downloaded text files
-  private static int RT_TITLE = 0;
-  private static int RT_SUBTITLE = 1;
-  private static int RT_EPISODE = 2;
-  private static int RT_YEAR = 3;
-  private static int RT_DIRECTOR = 4;
-  private static int RT_ACTORS = 5;
-  private static int RT_MOVIE_PREMIERE = 6;
-  private static int RT_MOVIE = 7;
-  private static int RT_REPETITION = 8; // is a repetition
-  private static int RT_SUBTITLED = 9; // this does not mean ORIGINAL_WITH_SUBTITLE
-  private static int RT_16_TO_9 = 10;
-  private static int RT_NEW_SERIES = 11;
-  private static int RT_SUBTITLES_FOR_AURALLY_HANDICAPPED = 12;
-  private static int RT_BLACK_WHITE = 13;
-  private static int RT_STAR_RATING = 14; // 1 to 5 stars
-  private static int RT_AGE_LIMIT = 15;
-  private static int RT_GENRE = 16;
-  private static int RT_DESCRIPTION = 17;
-  private static int RT_CHOICE = 18; // ???
-  private static int RT_DATE = 19;
-  private static int RT_START_TIME = 20;
-  private static int RT_END_TIME = 21;
-  private static int RT_DURATION_MINUTES = 22;
+  private static final int RT_TITLE = 0;
+  private static final int RT_SUBTITLE = 1;
+  private static final int RT_EPISODE = 2;
+  private static final int RT_YEAR = 3;
+  private static final int RT_DIRECTOR = 4;
+  private static final int RT_ACTORS = 5;
+  private static final int RT_MOVIE_PREMIERE = 6;
+  private static final int RT_MOVIE = 7;
+  @SuppressWarnings("unused")
+  private static final int RT_REPETITION = 8; // is a repetition
+  @SuppressWarnings("unused")
+  private static final int RT_SUBTITLED = 9; // this does not mean ORIGINAL_WITH_SUBTITLE
+  private static final int RT_16_TO_9 = 10;
+  private static final int RT_NEW_SERIES = 11;
+  private static final int RT_SUBTITLES_FOR_AURALLY_HANDICAPPED = 12;
+  private static final int RT_BLACK_WHITE = 13;
+  @SuppressWarnings("unused")
+  private static final int RT_STAR_RATING = 14; // 1 to 5 stars
+  private static final int RT_AGE_LIMIT = 15;
+  private static final int RT_GENRE = 16;
+  private static final int RT_DESCRIPTION = 17;
+  @SuppressWarnings("unused")
+  private static final int RT_CHOICE = 18; // ???
+  private static final int RT_DATE = 19;
+  private static final int RT_START_TIME = 20;
+  private static final int RT_END_TIME = 21;
+  private static final int RT_DURATION_MINUTES = 22;
 
   /**
    * 
+   * @param radioTimesDataService 
    * @param ch Parse this Channel
    */
   public RadioTimesFileParser(Channel ch) {
@@ -111,9 +125,7 @@ public class RadioTimesFileParser {
       if (items.length == 23) {
         Date date = parseDate(items[RT_DATE]);
         if (date.compareTo(endDate) >  0) {
-          for (MutableChannelDayProgram mutDayProg : getAllMutableDayPrograms()) {
-            updateManager.updateDayProgram(mutDayProg);
-          }
+          storeDayPrograms(updateManager);
 
           reader.close();
           return;
@@ -160,8 +172,9 @@ public class RadioTimesFileParser {
         }
         
         field = items[RT_ACTORS].trim();
-        if (field.length() > 0)
+        if (field.length() > 0) {
           prog.setTextField(ProgramFieldType.ACTOR_LIST_TYPE, createCast(field));
+        }
         
         field = items[RT_GENRE].trim();
         if (field.length() > 0) {
@@ -216,11 +229,35 @@ public class RadioTimesFileParser {
 
     }
 
-    for (MutableChannelDayProgram mutDayProg : getAllMutableDayPrograms()) {
-      updateManager.updateDayProgram(mutDayProg);
-    }
-    
+    storeDayPrograms(updateManager);
     reader.close();
+  }
+
+  private void storeDayPrograms(TvDataUpdateManager updateManager) {
+    for (MutableChannelDayProgram newDayProg : getAllMutableDayPrograms()) {
+      // compare new and existing programs to avoid unnecessary updates
+      boolean update = true;
+      
+      Iterator<Program> itCurrProg = RadioTimesDataService.getPluginManager().getChannelDayProgram(newDayProg.getDate(), mChannel);
+      Iterator<Program> itNewProg = newDayProg.getPrograms();
+      if (itCurrProg != null && itNewProg != null) {
+        update = false;
+        while (itCurrProg.hasNext() && itNewProg.hasNext()) {
+          MutableProgram currProg = (MutableProgram) itCurrProg.next();
+          MutableProgram newProg = (MutableProgram) itNewProg.next();
+          if (!currProg.equalsAllFields(newProg)) {
+            update = true;
+          }
+        }
+        // not the same number of programs ?
+        if (itCurrProg.hasNext() != itNewProg.hasNext()) {
+          update = true;
+        }
+      }
+      if (update) {
+        updateManager.updateDayProgram(newDayProg);
+      }
+    }
   }
 
   /**
@@ -244,8 +281,9 @@ public class RadioTimesFileParser {
       }
       
       return actors.toString();
-    } else 
+    } else {
       return string.trim();
+    }
   }
 
   /**
@@ -261,6 +299,7 @@ public class RadioTimesFileParser {
 
   /**
    * Parse Date
+   * 
    * @param string Date to parse
    * @return Date
    * @throws Exception
@@ -289,14 +328,14 @@ public class RadioTimesFileParser {
    * @return MutableChannelDayProgram that fits to the Date, a new one is created if needed
    */
   private MutableChannelDayProgram getMutableDayProgram(Date date) {
-    MutableChannelDayProgram mut = mMutMap.get(date);
+    MutableChannelDayProgram dayProgram = mMutMap.get(date);
     
-    if (mut == null) {
-      mut = new MutableChannelDayProgram(date, mChannel);
-      mMutMap.put(date, mut);
+    if (dayProgram == null) {
+      dayProgram = new MutableChannelDayProgram(date, mChannel);
+      mMutMap.put(date, dayProgram);
     }
    
-    return mut;
+    return dayProgram;
   }
 
 }
