@@ -53,6 +53,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Enumeration;
 
 import javax.swing.AbstractAction;
@@ -63,7 +64,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -381,16 +381,26 @@ DropTargetListener {
         if(last.getChildCount() > 1) {
           menu.addSeparator();
           
-          item = new JMenuItem(mLocalizer.msg("sort", "Sort"),
+          item = new JMenuItem(mLocalizer.msg("sort", "Sort alphabetically"),
               IconLoader.getInstance().getIconFromTheme("actions", "sort-list", 16));
-          
+          final String titleAlpha = item.getText();
           item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                sort(last,true);
+                sort(last,true, FavoriteNodeComparator.getInstance(), titleAlpha);
                 reload(last);
             }
           });
-          
+          menu.add(item);
+
+          item = new JMenuItem(mLocalizer.msg("sortCount", "Sort by number of programs"),
+              IconLoader.getInstance().getIconFromTheme("actions", "sort-list", 16));
+          final String titleCount = item.getText();
+          item.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                sort(last,true, FavoriteNodeCountComparator.getInstance(),titleCount);
+                reload(last);
+            }
+          });
           menu.add(item);
         }
       }
@@ -958,13 +968,12 @@ DropTargetListener {
    * @param node The node to sort from.
    * @param start If this is called with the root sort node.
    */
-  public void sort(FavoriteNode node, boolean start) {
+  public void sort(FavoriteNode node, boolean start, Comparator<FavoriteNode> comp, String title) {
     int result = JOptionPane.YES_OPTION;
     
     if(start) {
       String msg = mLocalizer.msg("reallySort", "Do you really want to sort your " +
       "favorites?\n\nThe current order will get lost.");
-      String title = UIManager.getString("OptionPane.titleText");
       result = JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), msg, title, JOptionPane.YES_NO_OPTION);
     }
     
@@ -977,13 +986,13 @@ DropTargetListener {
       
       node.removeAllChildren();
       
-      Arrays.sort(nodes);
+      Arrays.sort(nodes, comp);
       
       for(FavoriteNode child : nodes) {
         node.add(child);
         
         if(child.isDirectoryNode()) {
-          sort(child, false);
+          sort(child, false, comp, title);
         }
       }
     }
