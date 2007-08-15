@@ -42,6 +42,8 @@ public class ChannelUserSettings {
   private String mIconFileName;
   private boolean mUseUserIconFile;
   private String mWebPage;
+  private int mStartTimeLimit;
+  private int mEndTimeLimit;
 
   private static HashMap<String, ChannelUserSettings> mChannelUserSettings = new HashMap<String, ChannelUserSettings>();
 
@@ -113,4 +115,60 @@ public class ChannelUserSettings {
     mWebPage = webpage;
   }
   
+  /**
+   * Gets the start time limit in minutes of day.
+   * This is used to exclude programs from the day program
+   * that starts before the start time limit.
+   * 
+   * @return The start time limit in minutes of day.
+   * @since 2.2.4/2.6
+   */
+  public int getStartTimeLimit() {
+    return mStartTimeLimit;
+  }
+
+  /**
+   * Sets the start time limit to the new value.
+   * 
+   * @param startTimeLimit The new value for start time
+   * limit in minutes of day.
+   * @since 2.2.4/2.6
+   */
+  public void setStartTimeLimit(int startTimeLimit) {
+    mStartTimeLimit = startTimeLimit;
+  }
+
+  /**
+   * Gets the end time limit in minutes of day.
+   * This is used to exclude programs from the day program
+   * that starts after the end time limit.
+   * 
+   * @return The start time limit in minutes of day.
+   * @since 2.2.4/2.6
+   */
+  public int getEndTimeLimit() {
+    return mEndTimeLimit;
+  }
+
+  /**
+   * Sets the end time limit to the new value.
+   * 
+   * @param endTimeLimit The new value for end time
+   * limit in minutes of day.
+   * @since 2.2.4/2.6
+   */
+  public void setEndTimeLimit(int endTimeLimit) {
+    mEndTimeLimit = endTimeLimit;
+  }
+  
+  /**
+   * Gets if the start and end time limit should be used.
+   * 
+   * @return <code>True</code> if the time limit is used,
+   * <code>false</code> otherwise.
+   * @since 2.2.4/2.6
+   */
+  public boolean isTimeLimited() {
+    return mStartTimeLimit != mEndTimeLimit;
+  }
 }

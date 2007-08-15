@@ -121,10 +121,24 @@ public class OnDemandDayProgramFile {
       for (int i = 0; i < size; i++) {
         Program prog = loadProgram(dataFile, date, channel);
         
-        if(prog != null)
-          mDayProgram.addProgram(prog);
-        else
+        if(prog != null) {
+          int time = prog.getHours() * 60 + prog.getMinutes();
+          
+          if(channel.isTimeLimited()) {
+            int startTimeLimit = channel.getStartTimeLimit();
+            int endTimeLimit = channel.getEndTimeLimit();
+            
+            if((startTimeLimit < endTimeLimit && time >= startTimeLimit && time < endTimeLimit) ||
+                (endTimeLimit < startTimeLimit && (time < endTimeLimit || time >= startTimeLimit))) {
+              mDayProgram.addProgram(prog);
+            }
+          }
+          else {
+            mDayProgram.addProgram(prog);
+          }
+        }else {
           break;
+        }
       }
 
       dataFile.close();

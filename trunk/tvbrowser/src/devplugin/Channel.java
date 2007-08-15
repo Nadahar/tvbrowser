@@ -609,5 +609,59 @@ public class Channel {
     return false;
   }
 
+  /**
+   * Gets if this channel is limited in start and end time.
+   * 
+   * @return <code>True</code> if this channel is time limited.
+   * @since 2.2.4/2.6
+   */
+  public boolean isTimeLimited() {
+    return ChannelUserSettings.getSettings(this).isTimeLimited();
+  }
+  
+  /**
+   * Gets the start time limit in minutes of day.
+   * This is used to exclude programs from the day program
+   * that starts before the start time limit.
+   * 
+   * @return The start time limit in minutes of day.
+   * @since 2.2.4/2.6
+   */
+  public int getStartTimeLimit() {
+    return ChannelUserSettings.getSettings(this).getStartTimeLimit();
+  }
+  
+  /**
+   * Sets the start time limit to the new value.
+   * 
+   * @param startTimeLimit The new value for start time
+   * limit in minutes of day.
+   * @since 2.2.4/2.6
+   */
+  public void setStartTimeLimit(int startTimeLimit) {
+    ChannelUserSettings.getSettings(this).setStartTimeLimit(startTimeLimit);
+  }
 
+  /**
+   * Gets the end time limit in minutes of day.
+   * This is used to exclude programs from the day program
+   * that starts after the end time limit.
+   * 
+   * @return The start time limit in minutes of day.
+   * @since 2.2.4/2.6
+   */
+  public int getEndTimeLimit() {
+    return ChannelUserSettings.getSettings(this).getEndTimeLimit();
+  }
+  
+  /**
+   * Sets the end time limit to the new value.
+   * 
+   * @param endTimeLimit The new value for end time
+   * limit in minutes of day.
+   * @since 2.2.4/2.6
+   */
+  public void setEndTimeLimit(int endTimeLimit) {
+    ChannelUserSettings.getSettings(this).setEndTimeLimit(endTimeLimit);
+  }
 }

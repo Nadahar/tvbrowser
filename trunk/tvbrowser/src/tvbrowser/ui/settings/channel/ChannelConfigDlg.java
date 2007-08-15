@@ -31,7 +31,9 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Calendar;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -42,18 +44,24 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SpinnerDateModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import util.ui.CaretPositionCorrector;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -89,6 +97,11 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
   /** Channel-WebPage*/
   private JTextField mWebPage;
   
+  /** Start time limit selection */
+  private JSpinner mStartTimeLimit;
+  /** End time limit selection */
+  private JSpinner mEndTimeLimit;
+  
   /**
    * Create the Dialog 
    * @param parent Parent
@@ -120,7 +133,7 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
     UiUtilities.registerForClosing(this);
     
     panel.setLayout(new FormLayout("default, 3dlu, fill:default:grow",
-        "default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu:grow, default"));
+    "default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default, 5dlu, default, 3dlu, default, 3dlu:grow, default, 5dlu, default"));
 
     CellConstraints cc = new CellConstraints();
 
@@ -177,6 +190,8 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
     txt.setMinimumSize(new Dimension(200, 20));
     panel.add(txt, cc.xy(3, 11));
 
+    panel.add(DefaultComponentFactory.getInstance().createLabel(mLocalizer.msg("timeLimits","Time limits:")), cc.xy(1,13));
+    
     ButtonBarBuilder builder = new ButtonBarBuilder();
     
     JButton defaultButton = new JButton(mLocalizer.msg("default", "Default"));
@@ -202,17 +217,64 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
 
     builder.addGriddedButtons(new JButton[] { mOKBt, mCloseBt });
 
-    panel.add(builder.getPanel(), cc.xyw(1, 13, 3));
+    panel.add(new JSeparator(), cc.xyw(1,17,3));
+    panel.add(builder.getPanel(), cc.xyw(1, 19, 3));
+    
+    String timePattern = mLocalizer.msg("timePattern", "hh:mm a");
+        
+    mStartTimeLimit = new JSpinner(new SpinnerDateModel());
+    mStartTimeLimit.setEditor(new JSpinner.DateEditor(mStartTimeLimit, timePattern));    
+    setTimeDate(mStartTimeLimit, mChannel.getStartTimeLimit());
 
+    mEndTimeLimit = new JSpinner(new SpinnerDateModel());
+    mEndTimeLimit.setEditor(new JSpinner.DateEditor(mEndTimeLimit, timePattern));
+    setTimeDate(mEndTimeLimit, mChannel.getEndTimeLimit());
+    
+    ((JSpinner.DateEditor)mStartTimeLimit.getEditor()).getTextField().setBorder(BorderFactory.createEmptyBorder(0,2,0,0));
+    ((JSpinner.DateEditor)mEndTimeLimit.getEditor()).getTextField().setBorder(BorderFactory.createEmptyBorder(0,2,0,0));
+    
+    ((JSpinner.DateEditor)mStartTimeLimit.getEditor()).getTextField().setHorizontalAlignment(JTextField.LEFT);    
+    ((JSpinner.DateEditor)mEndTimeLimit.getEditor()).getTextField().setHorizontalAlignment(JTextField.LEFT);
+    
+    CaretPositionCorrector.createCorrector(((JSpinner.DateEditor)mStartTimeLimit.getEditor()).getTextField(), new char[] {':'}, -1);
+    CaretPositionCorrector.createCorrector(((JSpinner.DateEditor)mEndTimeLimit.getEditor()).getTextField(), new char[] {':'}, -1);
+    
+    PanelBuilder timeLimitPanel = new PanelBuilder(new FormLayout("default:grow,10dlu,default:grow","default,2dlu,default"));
+    
+    timeLimitPanel.addLabel(mLocalizer.msg("startTime","Start time:"), cc.xy(1,1));
+    timeLimitPanel.addLabel(mLocalizer.msg("endTime","End time:"), cc.xy(3,1));
+    timeLimitPanel.add(mStartTimeLimit, cc.xy(1,3));
+    timeLimitPanel.add(mEndTimeLimit, cc.xy(3,3));
+    
+    panel.add(timeLimitPanel.getPanel(), cc.xy(3,13));
+    
+    JTextArea txt2 = UiUtilities.createHelpTextArea(mLocalizer.msg("DLSTNote", ""));
+    // Hack because of growing JTextArea in FormLayout
+    txt2.setMinimumSize(new Dimension(200, 20));
+    panel.add(txt2, cc.xy(3, 15));
+    
     pack();
 
     if (getWidth() < 500) {
       setSize(500, getHeight());
     }
-    if (getHeight() < 250) {
-      setSize(getWidth(), 250);
-    }
 
+    setSize(getWidth(), getHeight() + 30);
+  }
+  
+  private void setTimeDate(JSpinner toSet, int time) {
+    Calendar cal = Calendar.getInstance();
+    cal.set(Calendar.HOUR_OF_DAY, time / 60);
+    cal.set(Calendar.MINUTE, time % 60);
+    
+    toSet.setValue(cal.getTime());
+  }
+  
+  private int getTimeInMinutes(JSpinner toGet) {
+    Calendar cal = Calendar.getInstance();
+    cal.setTime((java.util.Date)toGet.getValue());
+    
+    return cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
   }
 
   /**
@@ -223,6 +285,8 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
     mChannelName.setText(mChannel.getDefaultName());
     mUseUserIcon.setSelected(false);
     mCorrectionCB.setSelectedIndex(1);
+    setTimeDate(mStartTimeLimit, 0);
+    setTimeDate(mEndTimeLimit, 0);
   }
 
   /**
@@ -280,6 +344,9 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
       }
       mChannel.setUserChannelName(mChannelName.getText());
       mChannel.setUserWebPage(mWebPage.getText());
+      mChannel.setStartTimeLimit(getTimeInMinutes(mStartTimeLimit));
+      mChannel.setEndTimeLimit(getTimeInMinutes(mEndTimeLimit));
+      
       setVisible(false);
     } else if (o == mCloseBt) {
       setVisible(false);
