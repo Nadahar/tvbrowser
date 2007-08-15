@@ -93,11 +93,18 @@ import ca.beq.util.win32.registry.RegistryValue;
 import ca.beq.util.win32.registry.RootKey;
 
 import com.jgoodies.looks.LookUtils;
-import com.jgoodies.looks.Options;
 import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
 
 import devplugin.Date;
 import devplugin.Version;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.PosixParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.GnuParser;
 
 /**
  * TV-Browser
@@ -174,52 +181,30 @@ public class TVBrowser {
    */
   private static boolean mSaveThreadShouldStop;
 
+  /**
+   * Show the SplashScreen during startup
+   */
+  private static boolean mShowSplashScreen = true;
 
-  private static void showUsage() {
+  /**
+   * Show TV-Browser in fullscreen
+   */
+  private static boolean mFullscreen = true;
 
-    System.out.println("command line options:");
-    System.out.println("    - minimized    The main window will be minimized after start up");
-    System.out.println("    - nosplash     No splash screen during start up");
-    System.out.println();
-
-  }
 
   /**
    * Entry point of the application
    * @param args The arguments given in the command line.
    */
   public static void main(String[] args) {
-
-    showUsage();
-
     // Read the command line parameters
-    boolean showSplashScreen = true;
-    for (String argument : args) {
-      if (argument.equalsIgnoreCase("-minimized")) {
-        Settings.propMinimizeAfterStartup.setBoolean(true);
-      } else if (argument.equalsIgnoreCase("-nosplash")) {
-        showSplashScreen = false;
-      } else if (argument.startsWith("-D")) {
-          if (argument.indexOf("=") > 0) {
-              String key = argument.substring(2, argument.indexOf("="));
-              String value = argument.substring(argument.indexOf("=")+1);              
-              if (key.equals("user.language")) {
-                System.getProperties().setProperty("user.language",value);
-                Locale.setDefault(new Locale(value));
-              } else {
-                  System.setProperty(key, value);
-              }
-          } else {
-              mLog.warning("Wrong Syntax in parameter: '" + argument + "'");
-          }
-      } else {
-        mLog.warning("Unknown command line parameter: '" + argument + "'");
-      }
-    }
-    
+    parseCommandline(args);
+
     try {
-      Toolkit.getDefaultToolkit().setDynamicLayout(((Boolean)Toolkit.getDefaultToolkit().getDesktopProperty("awt.dynamicLayoutSupported")).booleanValue());
-    }catch(Exception e) {}
+      Toolkit.getDefaultToolkit().setDynamicLayout((Boolean) Toolkit.getDefaultToolkit().getDesktopProperty("awt.dynamicLayoutSupported"));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
     mLocalizer = util.ui.Localizer.getLocalizerFor(TVBrowser.class);
     String msg;
@@ -308,7 +293,7 @@ public class TVBrowser {
 
     final Splash splash;
 
-    if (showSplashScreen && Settings.propSplashShow.getBoolean()) {
+    if (mShowSplashScreen && Settings.propSplashShow.getBoolean()) {
       splash = new SplashScreen(
           Settings.propSplashImage.getString(),
           Settings.propSplashTextPosX.getInt(),
@@ -491,6 +476,69 @@ public class TVBrowser {
      });
   }
 
+  private static void parseCommandline(String[] args) {
+    // create the command line parser
+    CommandLineParser parser = new GnuParser();
+
+    // create the Options
+    Options options = new Options();
+    options.addOption( "h", "help", false, "Shows this help" );
+    options.addOption( "m", "minimized", false, "The main window will be minimized after start up" );
+    options.addOption( "n", "nosplash", false, "No splash screen during start up" );
+    options.addOption( "f", "fullscreen", false, "Start TV-Browser in Fullscreen-Mode");
+    options.addOption( OptionBuilder.withArgName( "property=value" )
+                                .hasArg()
+                                .withValueSeparator()
+                                .withDescription( "Set special java properties (user.home, user.language, propertiesfile)" )
+                                .create( "D" ));
+    try {
+      // parse the command line arguments
+      CommandLine line = parser.parse( options, args );
+
+      // validate that block-size has been set
+      if(line.hasOption( "help" ) ) {
+        // automatically generate the help statement
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp( "tvbrowser", options );
+        System.exit(0);
+      }
+
+      if (line.hasOption("D")) {
+        for (String argument:line.getOptionValues( "D" )) {
+          if (argument.indexOf("=") > 0) {
+            String key = argument.substring(0, argument.indexOf("="));
+            String value = argument.substring(argument.indexOf("=")+1);
+
+            if (key.equals("user.language")) {
+              System.getProperties().setProperty("user.language",value);
+              Locale.setDefault(new Locale(value));
+            } else {
+                System.setProperty(key, value);
+            }
+          } else {
+              mLog.warning("Wrong Syntax in parameter: '" + argument + "'");
+          }
+        }
+      }
+
+      if (line.hasOption("minimized")) {
+        Settings.propMinimizeAfterStartup.setBoolean(true);
+      }
+
+      if (line.hasOption("nosplash")) {
+        mShowSplashScreen = false;
+      }
+
+      if (line.hasOption("fullscreen")) {
+        mFullscreen = true;
+      }
+
+    }
+    catch( ParseException exp ) {
+      exp.printStackTrace();
+    }
+  }
+
 
   /**
    * Create the .lock file in the user home directory
@@ -636,6 +684,10 @@ public class TVBrowser {
     // minimize the frame if wanted
     if (startMinimized) {
       mainFrame.setExtendedState(Frame.ICONIFIED);
+    }
+
+    if (mFullscreen) {
+      mainFrame.switchFullscreenMode();
     }
 
     if (Settings.propShowAssistant.getBoolean()) {
@@ -843,7 +895,7 @@ public class TVBrowser {
         Settings.propLookAndFeel.setString(Settings.propLookAndFeel.getDefault());
       }
     } else if (Settings.propLookAndFeel.getString().startsWith("com.jgoodies")) {
-      Options.setPopupDropShadowEnabled(Settings.propJGoodiesShadow.getBoolean());
+      com.jgoodies.looks.Options.setPopupDropShadowEnabled(Settings.propJGoodiesShadow.getBoolean());
       UIManager.put("jgoodies.popupDropShadowEnabled", Boolean
           .valueOf(Settings.propJGoodiesShadow.getBoolean()));
       try {
