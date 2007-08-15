@@ -38,6 +38,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -127,11 +128,11 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener, Wi
     builder.addRelatedGap();
     builder.addGlue();
 
-    mOKBt = new JButton(mLocalizer.msg("ok", "OK"));
+    mOKBt = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     mOKBt.addActionListener(this);
     getRootPane().setDefaultButton(mOKBt);
     
-    mCloseBt = new JButton(mLocalizer.msg("cancel", "Cancel"));
+    mCloseBt = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     mCloseBt.addActionListener(this);
 
     builder.addGriddedButtons(new JButton[] { mOKBt, mCloseBt });
