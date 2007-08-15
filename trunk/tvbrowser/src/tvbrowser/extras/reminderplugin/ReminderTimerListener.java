@@ -51,6 +51,8 @@ public class ReminderTimerListener {
   private static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(ReminderTimerListener.class );
 
+  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(ReminderTimerListener.class.getName());
+
   private Properties mSettings;
   private ReminderList mReminderList;
 
@@ -79,15 +81,20 @@ public class ReminderTimerListener {
       mReminderList.blockProgram(item.getProgram());
     }
     if ("true" .equals(mSettings.getProperty( "useexec" ))) {
-      String fName=mSettings.getProperty( "execfile" );
+      String fName=mSettings.getProperty( "execfile","" ).trim();
       ParamParser parser = new ParamParser();
       String fParam=parser.analyse(mSettings.getProperty("execparam",""), item.getProgram());
 
-      try {
-        Runtime.getRuntime().exec(fName + " " +  fParam);
-      } catch (Exception exc) {
-        String msg = mLocalizer.msg( "error.2" ,"Error executing reminder program!\n({0})" , fName, exc);
-        ErrorHandler.handle(msg, exc);
+      if (!fName.equals("")) {
+        try {
+          Runtime.getRuntime().exec(fName + " " +  fParam);
+        } catch (Exception exc) {
+          String msg = mLocalizer.msg( "error.2" ,"Error executing reminder program!\n({0})" , fName, exc);
+          ErrorHandler.handle(msg, exc);
+        }
+      }
+      else {
+        mLog.warning("Reminder program name is not defined!");
       }
     }
 
