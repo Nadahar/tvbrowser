@@ -45,6 +45,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Enumeration;
 
 import javax.swing.BorderFactory;
@@ -117,7 +118,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
   private JList mFavoritesList;
   private ProgramList mProgramList;
   private JSplitPane mSplitPane;
-  private JButton mNewBt, mEditBt, mDeleteBt, mUpBt, mDownBt, mSortBt, mImportBt, mSendBt;
+  private JButton mNewBt, mEditBt, mDeleteBt, mUpBt, mDownBt, mSortAlphaBt, mSortCountBt, mImportBt, mSendBt;
   private JButton mCloseBt;
   private JScrollPane mProgramScrollPane;
 
@@ -272,16 +273,28 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
 
     msg = mLocalizer.msg("sort", "Sort favorites alphabetically");
     icon = FavoritesPlugin.getInstance().getIconFromTheme("actions", "sort-list", 22);
-
-    mSortBt = UiUtilities.createToolBarButton(msg, icon);
-    mSortBt.addActionListener(new ActionListener() {
+    final String titleAlpha = msg;
+    mSortAlphaBt = UiUtilities.createToolBarButton(msg, icon);
+    mSortAlphaBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-        sortFavorites();
+        sortFavorites(FavoriteNodeComparator.getInstance(), titleAlpha);
       }
     });
 
-    if(!mShowNew)
-      toolbarPn.add(mSortBt);
+    msg = mLocalizer.msg("sortCount", "Sort favorites by number of programs");
+    icon = FavoritesPlugin.getInstance().getIconFromTheme("actions", "sort-list", 22);
+    final String titleCount = msg;
+    mSortCountBt = UiUtilities.createToolBarButton(msg, icon);
+    mSortCountBt.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        sortFavorites(FavoriteNodeCountComparator.getInstance(), titleCount);
+      }
+    });
+
+    if(!mShowNew) {
+      toolbarPn.add(mSortAlphaBt);
+      toolbarPn.add(mSortCountBt);
+    }
     
     msg = mLocalizer.msg("send", "Send Programs to another Plugin");
     icon = FavoritesPlugin.getInstance().getIconFromTheme("actions", "edit-copy", 22);
@@ -526,7 +539,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       mUpBt.setEnabled(selection > 0);
       mDownBt.setEnabled((selection != -1) && (selection < (size - 1)));
 
-      mSortBt.setEnabled(size >= 2);
+      mSortAlphaBt.setEnabled(size >= 2);
 
       if (selection == -1) {
         mProgramListModel.clear();
@@ -616,7 +629,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     
     mUpBt.setEnabled((enabled || (path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode())) && !path.getLastPathComponent().equals(FavoriteTree.getInstance().getRoot()) && FavoriteTree.getInstance().getRowForPath(FavoriteTree.getInstance().getSelectionPath()) > 0 );
     mDownBt.setEnabled((enabled || (path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode())) && !path.getLastPathComponent().equals(FavoriteTree.getInstance().getRoot()) && FavoriteTree.getInstance().getRowForPath(FavoriteTree.getInstance().getSelectionPath()) < FavoriteTree.getInstance().getRowCount() -1);
-    mSortBt.setEnabled((enabled && (path != null && (((FavoriteNode)path.getLastPathComponent()).isDirectoryNode()) && ((FavoriteNode)path.getLastPathComponent()).getChildCount() > 1 || path.getLastPathComponent().equals(FavoriteTree.getInstance().getRoot()))) || path == null);
+    mSortAlphaBt.setEnabled((enabled && (path != null && (((FavoriteNode)path.getLastPathComponent()).isDirectoryNode()) && ((FavoriteNode)path.getLastPathComponent()).getChildCount() > 1 || path.getLastPathComponent().equals(FavoriteTree.getInstance().getRoot()))) || path == null);
   }
 
   private void changeProgramList(Favorite fav) {
@@ -789,14 +802,14 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     }
   }
 
-  protected void sortFavorites() {         
+  protected void sortFavorites(Comparator<FavoriteNode> comp, String title) {         
     TreePath path = FavoriteTree.getInstance().getSelectionPath();
     
     if(path == null)
       path = new TreePath(FavoriteTree.getInstance().getRoot());
     
     if(((FavoriteNode)path.getLastPathComponent()).isDirectoryNode()) {
-      FavoriteTree.getInstance().sort((FavoriteNode)path.getLastPathComponent(), true);
+      FavoriteTree.getInstance().sort((FavoriteNode)path.getLastPathComponent(), true, comp, title);
       
       FavoriteTree.getInstance().reload((FavoriteNode)path.getLastPathComponent());
     }
