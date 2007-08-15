@@ -373,6 +373,9 @@ public class ReminderSettingsTab implements SettingsTab {
     mExecChB.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         mExecFileDialogBtn.setEnabled(mExecChB.isSelected());
+        if (mExecFileDialogBtn.isEnabled()) {
+          showFileSettingsDialog();
+        }
       }
     });
     
