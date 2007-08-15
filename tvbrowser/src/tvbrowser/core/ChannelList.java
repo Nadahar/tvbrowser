@@ -29,9 +29,13 @@ package tvbrowser.core;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -114,6 +118,8 @@ public class ChannelList {
         subscribeChannel(channel);
       }
     }
+    
+    loadChannelTimeLimits();
   }
 
   /**
@@ -124,38 +130,8 @@ public class ChannelList {
       storeChannelIcons();
       storeChannelNames();
       storeChannelWebPages();
+      storeChannelTimeLimits();
   }
-
-
-  /*
-  private static void addDataServiceChannels(TvDataServiceProxy dataService) {
-    Channel[] channelArr = dataService.getAvailableChannels();
-
-<<<<<<< .working
-    for (Channel channel : channelArr)
-      addChannelToAvailableChannels(channel);
-  }
-=======
-    FileWriter fw;
-    PrintWriter out=null;
-    try {
-      fw=new FileWriter(f);
-      out=new PrintWriter(fw);
-      Channel[] channels=getSubscribedChannels();
-        for (int i=0;i<channels.length;i++) {
-          int corr=channels[i].getDayLightSavingTimeCorrection();
-          if (corr!=0) {
-            out.println(createPropertyForChannel(channels[i], String.valueOf(corr)));
-          }
-        }
-    }catch(IOException e) {
-      // ignore
-    }
-    if (out!=null) {
-      out.close();
-    }
->>>>>>> .merge-right.r2692
-   */
 
 
   private static void addDataServiceChannels(TvDataServiceProxy dataService) {
@@ -655,5 +631,81 @@ public class ChannelList {
    */
   public static Thread getChannelLoadThread() {
     return mCompleteChannelThread;
+  }
+  
+  /**
+   * Writes the channels time limits to data file.
+   * @since 2.2.4/2.6
+   */
+  public static void loadChannelTimeLimits() {
+    File f = new File(Settings.getUserSettingsDirName(),"channelTimeLimit.dat");    
+    
+    if(f.isFile()) {
+      ObjectInputStream in = null;
+      
+      try {
+        in = new ObjectInputStream(new FileInputStream(f));
+        in.readShort(); // version
+        
+        short n = in.readShort(); // write number of channels
+        
+        for (int i = 0; i < n; i++) {
+          Channel ch = Channel.readData(in, true);
+          
+          short startTimeLimit = in.readShort();
+          short endTimeLimit = in.readShort();
+          
+          if(ch != null) {
+            ch.setStartTimeLimit(startTimeLimit);
+            ch.setEndTimeLimit(endTimeLimit);
+          }
+        }
+        
+        in.close();
+        in = null;
+      }catch(Exception e) {
+        // ignore
+      }
+      if (in!=null) {
+        try {
+        in.close();
+        }catch(Exception e) {}
+      }
+    }
+  }
+  
+  /**
+   * Writes the channels time limits to data file.
+   * @since 2.2.4/2.6
+   */
+  public static void storeChannelTimeLimits() {
+    File f = new File(Settings.getUserSettingsDirName(),"channelTimeLimit.dat");    
+    
+    ObjectOutputStream out = null;
+    
+    try {
+      out = new ObjectOutputStream(new FileOutputStream(f));
+      out.writeShort(1); // version
+      
+      Channel[] channels=getSubscribedChannels();
+      
+      out.writeShort(channels.length); // write number of channels
+      
+      for (int i = 0; i < channels.length; i++) {
+        channels[i].writeData(out);
+        out.writeShort(channels[i].getStartTimeLimit());
+        out.writeShort(channels[i].getEndTimeLimit());
+      }
+      
+      out.close();
+      out = null;
+    }catch(IOException e) {
+      // ignore
+    }
+    if (out!=null) {
+      try {
+      out.close();
+      }catch(Exception e) {}
+    }
   }
 }
