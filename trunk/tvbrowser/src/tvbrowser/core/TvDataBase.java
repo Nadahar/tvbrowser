@@ -411,6 +411,11 @@ public class TvDataBase {
       public boolean accept(File dir, String name) {
         int p = name.lastIndexOf('.');
         String s = name.substring(p + 1, name.length());
+        for (int i = 0; i < s.length(); i++) {
+          if (! Character.isDigit(s.charAt(i))) {
+            return false;
+          }
+        }
         int val;
         try {
           val = Integer.parseInt(s);
@@ -568,6 +573,11 @@ public class TvDataBase {
     }
 
     String valueAsString = fileName.substring(dotIdx + 1);
+    for (int i=0; i < valueAsString.length(); i++) {
+      if (!Character.isDigit(valueAsString.charAt(i))) {
+        return null;
+      }
+    }
     try {
       long value = Long.parseLong(valueAsString);
       return Date.createDateFromValue(value);
@@ -602,6 +612,11 @@ public class TvDataBase {
           return false;
         }
         String dateStr = name.substring(name.length() - 8);
+        for (int i = 0; i< dateStr.length(); i++) {
+          if (! Character.isDigit(dateStr.charAt(i))) {
+            return false;
+          }
+        }
         try {
           Integer.parseInt(dateStr.substring(0, 4)); // year
           Integer.parseInt(dateStr.substring(4, 6)); // month

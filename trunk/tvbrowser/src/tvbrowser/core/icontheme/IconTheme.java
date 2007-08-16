@@ -126,6 +126,9 @@ abstract public class IconTheme {
    * @return -1 if wrong, otherwise the Value of the String
    */
   private int parseInt(String str) {
+    if (str == null) {
+      return -1;
+    }
     try {
       int num = Integer.parseInt(str);
       return num;
@@ -268,6 +271,7 @@ abstract public class IconTheme {
    * (non-Javadoc)
    * @see java.lang.Object#hashCode()
    */
+  @Override
   public int hashCode() {
     return getBase().hashCode();
   }
@@ -276,19 +280,25 @@ abstract public class IconTheme {
    * (non-Javadoc)
    * @see java.lang.Object#equals(java.lang.Object)
    */
+  @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
+    }
     final IconTheme other = (IconTheme) obj;
     if (getBase() == null) {
-      if (other.getBase() != null)
+      if (other.getBase() != null) {
         return false;
-    } else if (!getBase().getAbsolutePath().equals(other.getBase().getAbsolutePath()))
+      }
+    } else if (!getBase().getAbsolutePath().equals(other.getBase().getAbsolutePath())) {
       return false;
+    }
     return true;
   }
 

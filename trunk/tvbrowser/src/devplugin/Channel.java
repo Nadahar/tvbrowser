@@ -245,8 +245,9 @@ public class Channel {
     String country = null;
     String channelId = null;
     
-    if(version < 3)
+    if(version < 3) {
       throw new IOException();
+    }
     
     if(version == 3) {
       int length = in.readInt();
@@ -343,18 +344,18 @@ public class Channel {
     }
     
     Channel[] channelArr = Plugin.getPluginManager().getSubscribedChannels();
-    for (int i = 0; i < channelArr.length; i++) {
-      String chDataServiceId = channelArr[i].getDataServiceProxy().getId();
-      String chGroupId = channelArr[i].getGroup().getId();
-      String chChannelId = channelArr[i].getId();
-      String chCountry = channelArr[i].getCountry();
+    for (Channel channel : channelArr) {
+      String chDataServiceId = channel.getDataServiceProxy().getId();
+      String chGroupId = channel.getGroup().getId();
+      String chChannelId = channel.getId();
+      String chCountry = channel.getCountry();
       
       if (dataServiceId.compareTo(chDataServiceId) == 0 &&
           ((groupId != null && groupId.compareTo(chGroupId) == 0) || groupId == null) &&
           ((country != null && country.compareTo(chCountry) == 0) || country == null) &&
           channelId.compareTo(chChannelId) == 0)
       {
-        return channelArr[i];
+        return channel;
       }      
     }
     
@@ -385,10 +386,11 @@ public class Channel {
   }
 
   public TvDataServiceProxy getDataServiceProxy() {
-    if(mDataService != null)
+    if(mDataService != null) {
       return new DeprecatedTvDataServiceProxy(mDataService);
-    else
+    } else {
       return null;
+    }
   }
 
   /**
@@ -408,6 +410,7 @@ public class Channel {
   }
 
 
+  @Override
   public String toString() {
     return getName();
   }
@@ -569,9 +572,18 @@ public class Channel {
     return mWebpage;
   }
   
+  @Override
   public boolean equals(Object obj) {
     if (obj != null && obj instanceof Channel) {
       Channel cmp = (Channel) obj;
+
+      // this is for the example program
+      if((getDataServiceProxy() == null && cmp.getDataServiceProxy() == null) &&
+        (getGroup() == null && cmp.getGroup() == null) &&
+        (getId().compareTo(cmp.getId())) == 0) {
+        return true;
+      }
+
       try {
         String channelId = getId();
         String cmpChannelId = cmp.getId();
@@ -579,7 +591,8 @@ public class Channel {
     	  if (channelId.compareTo(cmpChannelId) != 0) {
     		  return false;
     	  }
-        String groupId = getGroup().getId();
+
+    	  String groupId = getGroup().getId();
         String cmpGroupId = cmp.getGroup().getId();
         
         if (groupId.compareTo(cmpGroupId) != 0) {
@@ -598,11 +611,6 @@ public class Channel {
         
         return country.compareTo(cmpCountry) == 0;
       }catch(Exception e) {
-        //this is for the example program
-        if((getDataServiceProxy() == null && cmp.getDataServiceProxy() == null) &&
-          (getGroup() == null && cmp.getGroup() == null) &&
-          (getId().compareTo(cmp.getId())) == 0)
-          return true;
       }
     }
 

@@ -346,10 +346,15 @@ public class ProgramTextCreator {
       ProgramFieldType type = null;
 
       if (id instanceof String) {
-        try {
-          type = ProgramFieldType
-              .getTypeForId(Integer.parseInt((String) id));
-        } catch (Exception e) {
+        if (((String) id).matches("\\d+")) {
+          try {
+            type = ProgramFieldType
+                .getTypeForId(Integer.parseInt((String) id, 10));
+          } catch (Exception e) {
+            
+          }
+        }
+        if (type == null) {
           int length = prog.getLength();
           if (length > 0 && ((String) id).trim().length() > 0) {
 
