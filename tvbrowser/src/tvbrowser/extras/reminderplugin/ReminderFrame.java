@@ -287,14 +287,14 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
 
   private String updateRunningTime() {
     String msg = null;
-    int progMinutesAfterMidnight = mProgram.getHours() * 60 + mProgram.getMinutes();
-    if (Date.getCurrentDate().compareTo(mProgram.getDate())>=0 && IOUtilities.getMinutesAfterMidnight() > progMinutesAfterMidnight) {
+    if(mProgram.isOnAir()) {
+      int progMinutesAfterMidnight = mProgram.getHours() * 60 + mProgram.getMinutes();
       int minutesRunning = IOUtilities.getMinutesAfterMidnight() - progMinutesAfterMidnight;
       if (minutesRunning < 0) {
         minutesRunning += 24 * 60;
       }
       if (minutesRunning == 0) {
-        msg = mLocalizer.msg("alreadyRunning", "Already running");
+        msg = mLocalizer.msg("alreadyRunning", "Just started");
       }
       else if (minutesRunning == 1) {
         msg = mLocalizer.msg("alreadyRunningMinute", "Already running {0} minute", minutesRunning);
@@ -302,9 +302,15 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       else {
         msg = mLocalizer.msg("alreadyRunningMinutes", "Already running {0} minutes", minutesRunning);
       }
-      if (mHeader != null) {
-        mHeader.setText(msg);
-      }
+    } else if(mProgram.isExpired()) {
+      msg = mLocalizer.msg("ended", "Program elapsed");
+    }
+    else {
+      msg = mLocalizer.msg("soonStarts", "Soon starts");
+    }
+
+    if (mHeader != null) {
+      mHeader.setText(msg);
     }
     return msg;
   }
@@ -381,10 +387,6 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
   
 
   public void stateChanged(ChangeEvent e) {
-    if(mProgram.isOnAir()) {
-      mHeader.setText(mLocalizer.msg("alreadyRunning", "Already running"));
-    } else if(mProgram.isExpired()) {
-      mHeader.setText(mLocalizer.msg("ended", "Program elapsed"));
-    }
+    updateRunningTime();
   }
 }
