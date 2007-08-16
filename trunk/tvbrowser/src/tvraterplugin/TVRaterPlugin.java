@@ -21,14 +21,18 @@ package tvraterplugin;
 
 import devplugin.ActionMenu;
 import devplugin.Channel;
+import devplugin.ChannelDayProgram;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
+import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.SettingsTab;
 import devplugin.Version;
 import devplugin.PluginsFilterComponent;
 import devplugin.PluginsProgramFilter;
+import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTree;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -38,9 +42,12 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
+
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -66,6 +73,11 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
     private Point _locationOverviewDialog = null;
 
+    /**
+     * Root-Node for the Program-Tree
+     */
+    private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
+
     private Dimension _dimensionOverviewDialog = null;
     
     private Dimension _dimensionRaterDialog = null;
@@ -79,6 +91,25 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
     /** Instance of this Plugin */
     private static TVRaterPlugin _tvRaterInstance;
+
+    /**
+     * this class triggers an event when the main frame gets available, that is after
+     * activation of all plugins
+     * 
+     * @author bananeweizen
+     *
+     */
+    private class LateActivationAction implements ActionListener {
+      public void actionPerformed(ActionEvent e) {
+        if (null == getParentFrame()) {
+          return;
+        }
+        lateActivationSwingTimer.stop();
+        onLateActivation();
+      }
+    }
+    
+    private final Timer lateActivationSwingTimer = new Timer(200, new LateActivationAction());
 
     public TVRaterPlugin() {
         _tvRaterInstance = this;
@@ -302,13 +333,24 @@ public class TVRaterPlugin extends devplugin.Plugin {
         Rating rating;
 
         if (_settings.getProperty("ownRating", "").equalsIgnoreCase("true")) {
-            rating = _tvraterDB.getPersonalRating(program);
-            if (rating != null) {
-                return rating;
-            }
+          rating = getPersonalRating(program);
+          if (rating != null) {
+            return rating;
+          }
         }
 
         return  _tvraterDB.getOverallRating(program);
+    }
+
+    /**
+     * Get the personal rating for the given program
+     * 
+     * @param program
+     * @return personal rating or <code>null</code> if no personal rating is available
+     * @since 2.6 
+     */
+    private Rating getPersonalRating(Program program) {
+      return _tvraterDB.getPersonalRating(program);
     }
 
     /**
@@ -483,5 +525,50 @@ public class TVRaterPlugin extends devplugin.Plugin {
           }
         }
       }
+    }
+
+    @Override
+    public boolean canUseProgramTree() {
+      return true;
+    }
+
+    @Override
+    public PluginTreeNode getRootNode() {
+      return mRootNode;
+    }
+
+    private void updateRootNode() {
+      mRootNode.removeAllChildren();
+      mRootNode.getMutableTreeNode().setShowLeafCountEnabled(false);
+      PluginTreeNode favoritesNode = mRootNode.addNode(mLocalizer.msg("unratedFavorites", "Unrated favorites"));
+      Favorite[] favorites = FavoriteTree.getInstance().getFavoriteArr();
+      // add all expired favorites without user rating
+      for (int i=0; i<favorites.length; i++) {
+        Program[] programs = favorites[i].getPrograms();
+        for (int progIndex = 0; progIndex < programs.length; progIndex++) {
+          if (programs[progIndex].isExpired()) {
+            if (getPersonalRating(programs[progIndex]) == null) {
+              favoritesNode.addProgram(programs[progIndex]);
+            }
+            break;
+          }
+        }
+      }
+      mRootNode.update();
+    }
+
+    @Override
+    public void handleTvDataDeleted(ChannelDayProgram oldProg) {
+      updateRootNode();
+    }
+
+    public void onLateActivation() {
+      updateRootNode();
+    }
+
+    @Override
+    public void onActivation() {
+      // from now on check regularly for the existence of the main frame
+      lateActivationSwingTimer.start();
     }
 }
