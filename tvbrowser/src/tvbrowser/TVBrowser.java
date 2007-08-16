@@ -189,7 +189,12 @@ public class TVBrowser {
   /**
    * Show TV-Browser in fullscreen
    */
-  private static boolean mFullscreen = true;
+  private static boolean mFullscreen = false;
+
+  /**
+   * Show only minimzed
+   */
+  private static boolean mMinimized = false;
 
 
   /**
@@ -366,7 +371,7 @@ public class TVBrowser {
     Toolkit.getDefaultToolkit().getSystemEventQueue().push(new TextComponentPopupEventQueue());
 
     // Init the UI
-    final boolean fStartMinimized = Settings.propMinimizeAfterStartup.getBoolean();
+    final boolean fStartMinimized = Settings.propMinimizeAfterStartup.getBoolean() || mMinimized;
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         initUi(splash, fStartMinimized);
@@ -522,7 +527,7 @@ public class TVBrowser {
       }
 
       if (line.hasOption("minimized")) {
-        Settings.propMinimizeAfterStartup.setBoolean(true);
+        mMinimized = true;
       }
 
       if (line.hasOption("nosplash")) {
@@ -687,7 +692,11 @@ public class TVBrowser {
     }
 
     if (mFullscreen) {
-      mainFrame.switchFullscreenMode();
+       SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            mainFrame.switchFullscreenMode();
+         }
+       });
     }
 
     if (Settings.propShowAssistant.getBoolean()) {
