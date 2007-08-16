@@ -114,12 +114,22 @@ public class PluginTreeModel extends DefaultTreeModel {
 
   private void insertSorted(PluginTreeNode pluginRoot) {
     MutableTreeNode root = (MutableTreeNode) this.getRoot();
-    ArrayList<String> pluginNames = new ArrayList<String>();
+    ArrayList<String> pluginNames = new ArrayList<String>();    
+    
     for (int i = 0; i < root.getChildCount(); i++) {
       pluginNames.add(root.getChildAt(i).toString());
     }
+    
     Collections.sort(pluginNames);
-    int index = Collections.binarySearch(pluginNames, pluginRoot.getUserObject().toString());
+    int index = pluginNames.indexOf(pluginRoot.getUserObject().toString());
+    
+    if(index == -1) {
+      index = Collections.binarySearch(pluginNames, pluginRoot.getUserObject().toString());
+    }
+    else {
+      index = -index-1;
+    }
+    
     root.insert(pluginRoot.getMutableTreeNode(), -index-1);
   }
 
