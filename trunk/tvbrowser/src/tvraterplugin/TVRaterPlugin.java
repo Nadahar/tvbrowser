@@ -23,6 +23,7 @@ import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.Date;
+import devplugin.Marker;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
@@ -31,8 +32,6 @@ import devplugin.SettingsTab;
 import devplugin.Version;
 import devplugin.PluginsFilterComponent;
 import devplugin.PluginsProgramFilter;
-import tvbrowser.extras.favoritesplugin.core.Favorite;
-import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTree;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -84,6 +83,11 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
     private static final Localizer mLocalizer = Localizer
             .getLocalizerFor(TVRaterPlugin.class);
+
+    /**
+     * ID of the favorites plugin for recognition of unrated favorites
+     */
+    private static final String FAVORITES_PLUGIN_ID = "favoritesplugin.FavoritesPlugin";
 
     private Database _tvraterDB = new Database();
     
@@ -537,20 +541,27 @@ public class TVRaterPlugin extends devplugin.Plugin {
       return mRootNode;
     }
 
-    private void updateRootNode() {
+    /**
+     * collect all expired favorites without rating for the plugin tree
+     * 
+     * @since 2.6
+     */
+    protected void updateRootNode() {
       mRootNode.removeAllChildren();
       mRootNode.getMutableTreeNode().setShowLeafCountEnabled(false);
       PluginTreeNode favoritesNode = mRootNode.addNode(mLocalizer.msg("unratedFavorites", "Unrated favorites"));
-      Favorite[] favorites = FavoriteTree.getInstance().getFavoriteArr();
-      // add all expired favorites without user rating
-      for (int i=0; i<favorites.length; i++) {
-        Program[] programs = favorites[i].getPrograms();
-        for (int progIndex = 0; progIndex < programs.length; progIndex++) {
-          if (programs[progIndex].isExpired()) {
-            if (getPersonalRating(programs[progIndex]) == null) {
-              favoritesNode.addProgram(programs[progIndex]);
+      Program[] programs = getPluginManager().getMarkedPrograms();
+      for (int progIndex = 0; progIndex < programs.length; progIndex++) {
+        Program program = programs[progIndex];
+        if (program.isExpired()) {
+          Marker[] markers = program.getMarkerArr();
+          for (int markerIndex = 0; markerIndex < markers.length; markerIndex++) {
+            if (markers[markerIndex].getId().equalsIgnoreCase(FAVORITES_PLUGIN_ID)) {
+              if (getPersonalRating(program) == null) {
+                favoritesNode.addProgram(program);
+              }
+              break;
             }
-            break;
           }
         }
       }

@@ -300,7 +300,9 @@ public class DialogRating extends JDialog implements WindowClosingIf {
             };
             updateThread.start();
         }
-
+        
+        // refresh the plugin tree as we may need to remove the just rated program
+        _rater.updateRootNode();
     }
 
     /**
