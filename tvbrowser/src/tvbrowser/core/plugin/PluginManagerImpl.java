@@ -869,4 +869,8 @@ public class PluginManagerImpl implements PluginManager {
   public AbstractPluginProgramFormating[] getAvailableGlobalPuginProgramFormatings() {
     return GlobalPluginProgramFormatingManager.getInstance().getAvailableGlobalPluginProgramFormatings();
   }
+
+  public Date getCurrentDate() {
+    return MainFrame.getInstance().getCurrentSelectedDate();
+  }
 }

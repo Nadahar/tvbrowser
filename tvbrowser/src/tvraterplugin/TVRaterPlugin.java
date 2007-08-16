@@ -20,6 +20,8 @@
 package tvraterplugin;
 
 import devplugin.ActionMenu;
+import devplugin.Channel;
+import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
@@ -456,5 +458,30 @@ public class TVRaterPlugin extends devplugin.Plugin {
     @Override
     public PluginsProgramFilter[] getAvailableFilter() {
         return new PluginsProgramFilter[] {new TVRaterProgramFilter(this)};
+    }
+
+    /**
+     * Force an update of the currently shown programs in the program table
+     * where we need to add/update a TV rating.
+     * 
+     * Internally called after a successful update of the TV ratings database.
+     * 
+     * @since 2.6
+     */
+    public void updateCurrentDate() {
+      Date currentDate = getPluginManager().getCurrentDate();
+      final Channel[] channels = getPluginManager().getSubscribedChannels();
+      for (int i = 0; i < channels.length; ++i) {
+        final Iterator<Program> iter = getPluginManager().getChannelDayProgram(currentDate, channels[i]);
+        if (null == iter) {
+          continue;
+        }
+        while (iter.hasNext()) {
+          Program prog = iter.next();
+          if (getRating(prog) != null) { 
+            prog.validateMarking();
+          }
+        }
+      }
     }
 }
