@@ -138,6 +138,7 @@ public class Updater implements Progress {
       } else {
         readData(data);
         _wasSuccessfull = true;
+        _tvraterPlugin.updateCurrentDate();
       }
 
       out.close();

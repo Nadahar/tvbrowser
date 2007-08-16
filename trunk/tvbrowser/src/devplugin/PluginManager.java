@@ -434,4 +434,12 @@ public interface PluginManager {
    * @since 2.5.1
    */
   public AbstractPluginProgramFormating[] getAvailableGlobalPuginProgramFormatings();
+
+  /**
+   * Get the date currently shown in the program table.
+   * 
+   * @return date currently shown in program table
+   * @since 2.6
+   */
+  public Date getCurrentDate();
 }
