@@ -637,7 +637,7 @@ public class DeviceConfig {
      */
     private void writeChannelMappings(ObjectOutputStream stream) throws IOException {
       stream.writeInt(mChannels.keySet().size());
-      Iterator it = mChannels.keySet().iterator();
+      Iterator<Channel> it = mChannels.keySet().iterator();
       
       while (it.hasNext()) {
         Channel channel = (Channel) it.next();

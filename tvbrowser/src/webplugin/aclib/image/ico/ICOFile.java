@@ -316,9 +316,9 @@ public class ICOFile implements Comparable {
     public List<Image> getImages() {
         final List<Image> lImages = new ArrayList<Image>();
 
-        final Iterator lItDesc = getDescriptors().iterator();
+        final Iterator<BitmapDescriptor> lItDesc = getDescriptors().iterator();
         while (lItDesc.hasNext()) {
-            final BitmapDescriptor lDesc = (BitmapDescriptor) lItDesc.next();
+            final BitmapDescriptor lDesc = lItDesc.next();
             lImages.add(lDesc.getBitmap().createImageRGB());
         }
 

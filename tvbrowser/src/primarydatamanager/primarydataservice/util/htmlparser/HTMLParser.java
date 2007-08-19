@@ -114,7 +114,7 @@ public class HTMLParser {
   }
  
 
-  private Iterator getTags() throws IOException {
+  private Iterator<Tag> getTags() throws IOException {
     ArrayList<Tag> tags=new ArrayList<Tag>();
     Tag curTextTag=null;
     String txt;
@@ -165,10 +165,10 @@ public class HTMLParser {
   }
     
   
-  private Tag addTag(int depth, Tag openTag, Iterator it) {
+  private Tag addTag(int depth, Tag openTag, Iterator<Tag> it) {
     
       while (it.hasNext()) {
-        Tag curTag=(Tag)it.next();
+        Tag curTag=it.next();
         if (curTag.isText()) {
           openTag.add(curTag);
         }
@@ -191,8 +191,8 @@ public class HTMLParser {
   public static Tag parse(InputStream in) throws IOException {
     
     HTMLParser parser=new HTMLParser(in);
-    Iterator it=parser.getTags();
-    Tag result=(Tag)it.next();
+    Iterator<Tag> it=parser.getTags();
+    Tag result=it.next();
     parser.addTag(0,result,it);
     return result;    
   }

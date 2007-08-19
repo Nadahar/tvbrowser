@@ -474,7 +474,7 @@ public class PluginTreeNode {
 
 
   private PluginTreeNode findProgramTreeNode(PluginTreeNode root, Program prog, boolean recursive) {
-    Iterator it = root.mChildNodes.iterator();
+    Iterator<PluginTreeNode> it = root.mChildNodes.iterator();
     while (it.hasNext()) {
       PluginTreeNode node = (PluginTreeNode)it.next();
       if (!node.isLeaf()) {

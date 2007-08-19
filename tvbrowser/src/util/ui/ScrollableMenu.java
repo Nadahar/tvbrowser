@@ -447,10 +447,10 @@ public class ScrollableMenu extends JMenu {
    */
   public Component[] getMenuComponents() {
     Component[] components = new Component[getMenuComponentCount()];
-    Iterator iterator = scrollableItems.iterator();
+    Iterator<Component> iterator = scrollableItems.iterator();
     int index = 0;
     while (iterator.hasNext()) {
-      components[index++] = (Component) iterator.next();
+      components[index++] = iterator.next();
     }
     return components;
   }
@@ -611,7 +611,7 @@ public class ScrollableMenu extends JMenu {
           setMaxItemToDisplay();
         }
         
-        Iterator iterator = scrollableItems.iterator();
+        Iterator<Component> iterator = scrollableItems.iterator();
         while (iterator.hasNext()) {
           Object object = iterator.next();
           if (object instanceof JComponent && !(object instanceof JPopupMenu.Separator)) {

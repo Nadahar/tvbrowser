@@ -35,10 +35,10 @@ import java.util.Iterator;
 public class Tag {
   
   
-  class DeepIterator implements Iterator {
+  class DeepIterator implements Iterator<Tag> {
     
     private ArrayList<Tag> list;
-    private Iterator iterator;
+    private Iterator<Tag> iterator;
     
     public DeepIterator(Tag tag) {
       list=new ArrayList<Tag>();
@@ -48,9 +48,9 @@ public class Tag {
     
     private void add(Tag tag) {
       list.add(tag);
-      Iterator it=tag.shallowIterator();
+      Iterator<Tag> it=tag.shallowIterator();
       while (it.hasNext()) {
-        Tag t=(Tag)it.next();
+        Tag t=it.next();
         add(t);
       }
     }
@@ -59,7 +59,7 @@ public class Tag {
       return iterator.hasNext();      
     }
       
-    public Object next() {
+    public Tag next() {
       return iterator.next();
     }
 
@@ -168,10 +168,10 @@ public class Tag {
   }
   
   public Tag getSubtag(String name, int cntIgnore) {
-    java.util.Iterator it=shallowIterator();
+    java.util.Iterator<Tag> it=shallowIterator();
     int cnt=0;
     while (it.hasNext()) {
-      Tag curTag=(Tag)it.next();
+      Tag curTag=it.next();
       if (curTag.getName().equals(name)) {
         if (cntIgnore==cnt) {
           return curTag;
@@ -199,19 +199,19 @@ public class Tag {
     return getSubtag(name, 0);
   }
   
-  public java.util.Iterator shallowIterator() {
+  public java.util.Iterator<Tag> shallowIterator() {
     return mSubTags.iterator();
   }
   
-  public java.util.Iterator deepIterator() {
+  public java.util.Iterator<Tag> deepIterator() {
     
    return new DeepIterator(this);
   }
   
   public Tag find(String name) {
-    java.util.Iterator it=mSubTags.iterator();
+    java.util.Iterator<Tag> it=mSubTags.iterator();
     while (it.hasNext()) {
-      Tag t=(Tag)it.next();
+      Tag t=it.next();
       if (name.equals(t.getName())) {
         return t;
       }
@@ -225,9 +225,9 @@ public class Tag {
     return null;
   }
   
-  public static String getNextText(Iterator it) {
+  public static String getNextText(Iterator<Tag> it) {
     while (it.hasNext()) {
-      Tag t=(Tag)it.next();
+      Tag t=it.next();
       if (t.isText()) {
         return t.getName();
       }
@@ -235,9 +235,9 @@ public class Tag {
     return null;
   }
   
-  public static Tag getTag(String tagName, Iterator it) {
+  public static Tag getTag(String tagName, Iterator<Tag> it) {
     while (it.hasNext()) {
-      Tag t=(Tag)it.next();
+      Tag t=it.next();
       if (t.getName().equals(tagName)) {
         return t;
       }

@@ -31,6 +31,7 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.LinkedList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
@@ -269,8 +270,8 @@ public class ManagePanel {
       for (Program p : list)
         mProgramListModel.addElement(p);
     } else {
-      Hashtable table = list.getSortedPrograms();
-      Enumeration keys = table.keys();
+      Hashtable<String, LinkedList<Program>> table = list.getSortedPrograms();
+      Enumeration<String> keys = table.keys();
 
       while (keys.hasMoreElements())
         mProgramListModel.addElement(keys.nextElement());

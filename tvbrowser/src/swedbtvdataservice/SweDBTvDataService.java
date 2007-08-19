@@ -210,7 +210,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
               OK... So now we are ready to start parsing the selected data files
               *******************************************************************/
               Hashtable<String, MutableChannelDayProgram> dataHashtable = new Hashtable<String, MutableChannelDayProgram>();
-              Enumeration en = fileDates.elements();
+              Enumeration<Date> en = fileDates.elements();
               monitor.setMessage(mLocalizer.msg("updateTvData.progressmessage.30","{0}: Reading datafiles",mChannel[c].getName()));
               while (en.hasMoreElements()){
                 try {

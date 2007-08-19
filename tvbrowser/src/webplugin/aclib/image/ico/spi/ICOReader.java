@@ -200,7 +200,7 @@ public class ICOReader extends ImageReader {
      * @return ImageReader supporting ICO files.
      */
     private static ImageReader getICOReader() {
-        final Iterator lImageReaderIt = ImageIO
+        final Iterator<ImageReader> lImageReaderIt = ImageIO
                 .getImageReadersByFormatName("ico");
         if (lImageReaderIt == null || !lImageReaderIt.hasNext()) {
             System.err.println("No reader for format 'ICO' found");
@@ -208,7 +208,7 @@ public class ICOReader extends ImageReader {
         }
 
         // Use the first one found.
-        return (ImageReader) lImageReaderIt.next();
+        return lImageReaderIt.next();
     }
 
     private static JFrame createWindow(final String pTitle) {
@@ -243,9 +243,9 @@ public class ICOReader extends ImageReader {
         final String[] lFormats = ImageIO.getReaderFormatNames();
         for (int lFormatNo = 0; lFormatNo < lFormats.length; lFormatNo++) {
             final String lFormat = lFormats[lFormatNo];
-            final Iterator lItReader = ImageIO.getImageReadersBySuffix(lFormat);
+            final Iterator<ImageReader> lItReader = ImageIO.getImageReadersBySuffix(lFormat);
             while (lItReader.hasNext()) {
-                final ImageReader lReader = (ImageReader) lItReader.next();
+                final ImageReader lReader = lItReader.next();
                 final ImageReaderSpi lProvider = lReader
                         .getOriginatingProvider();
                 System.out.println(" o " + lFormat + " ("

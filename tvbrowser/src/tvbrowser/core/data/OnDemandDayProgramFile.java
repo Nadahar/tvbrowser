@@ -361,7 +361,7 @@ public class OnDemandDayProgramFile {
 
     int fieldCount = program.getFieldCount();
     dataFile.writeInt(fieldCount);
-    Iterator iter = program.getFieldIterator();
+    Iterator<ProgramFieldType> iter = program.getFieldIterator();
     for (int i = 0; i < fieldCount; i++) {
       ProgramFieldType type = (ProgramFieldType) iter.next();
       dataFile.writeInt(type.getTypeId());

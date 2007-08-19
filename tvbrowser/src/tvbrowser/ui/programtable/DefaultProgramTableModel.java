@@ -303,7 +303,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
     boolean showEmptyColumns = mProgramFilter instanceof tvbrowser.core.filters.ShowAllFilter;
 
-    ArrayList<ArrayList> newShownColumns = new ArrayList<ArrayList>();
+    ArrayList<ArrayList<ProgramPanel>> newShownColumns = new ArrayList<ArrayList<ProgramPanel>>();
     ArrayList<Channel> newShownChannels = new ArrayList<Channel>();
     for (int i = 0; i < mProgramColumn.length; i++) {
       if (showEmptyColumns || mProgramColumn[i].size() > 0) {

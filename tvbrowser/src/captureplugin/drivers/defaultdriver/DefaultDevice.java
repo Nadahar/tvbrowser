@@ -298,10 +298,10 @@ public class DefaultDevice implements DeviceIf {
      * @see captureplugin.drivers.DeviceIf#getAdditionalCommands(devplugin.Program)
      */
     public String[] getAdditionalCommands() {
-        Collection commands = mConfig.getEnabledParamList();
+        Collection<ParamEntry> commands = mConfig.getEnabledParamList();
         String[] values = new String[commands.size()];
         
-        Iterator it = commands.iterator();
+        Iterator<ParamEntry> it = commands.iterator();
 
         int i = 0;
         while (it.hasNext()) {

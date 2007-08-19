@@ -86,7 +86,7 @@ public class NewsDialog implements WindowClosingIf {
   private JButton mCloseBn;
   
   /** The news to show */
-  private ArrayList mNewsList;
+  private ArrayList<News> mNewsList;
   
   /** The number of news that should be marked as new */
   private int mNewNewsCount;
@@ -99,7 +99,7 @@ public class NewsDialog implements WindowClosingIf {
    * @param newsList The news to show.
    * @param newNewsCount The number of news that should be marked as new.
    */
-  public NewsDialog(Component parent, ArrayList newsList, int newNewsCount) {
+  public NewsDialog(Component parent, ArrayList<News> newsList, int newNewsCount) {
     mDialog = UiUtilities.createDialog(parent, false);
     mNewsList = newsList;
     mNewNewsCount = newNewsCount;
@@ -224,7 +224,7 @@ public class NewsDialog implements WindowClosingIf {
           buf.append("<hr>");
         }
         
-        News news = (News) mNewsList.get(i);
+        News news = mNewsList.get(i);
         
         buf.append("<table width=\"100%\">");
         buf.append("<tr>");

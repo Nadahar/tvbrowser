@@ -341,7 +341,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
           });
     }
 
-    Iterator it = availableTimeActions.iterator();
+    Iterator<String> it = availableTimeActions.iterator();
 
     while (it.hasNext()) {
       Action action = mAvailableActions.remove(it.next());

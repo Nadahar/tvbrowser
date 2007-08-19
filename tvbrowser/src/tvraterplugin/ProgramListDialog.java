@@ -81,9 +81,9 @@ public class ProgramListDialog extends JDialog implements WindowClosingIf {
         for (int d = 0; d < 31; d++) {
 
             for (int i = 0; i < channels.length; i++) {
-                Iterator it = Plugin.getPluginManager().getChannelDayProgram(date, channels[i]);
+                Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channels[i]);
                 while ((it != null) && (it.hasNext())) {
-                    Program program = (Program) it.next();
+                    Program program = it.next();
                     if ((program != null) && (program.getTitle() != null) && (program.getTitle().equalsIgnoreCase(_title))) {
                         _programList.add(program);
                     }

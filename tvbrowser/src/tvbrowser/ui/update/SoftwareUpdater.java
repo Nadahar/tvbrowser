@@ -101,7 +101,7 @@ public class SoftwareUpdater {
     
     // remove all items we can't use
     
-    Iterator it = updateItems.iterator();
+    Iterator<SoftwareUpdateItem> it = updateItems.iterator();
     while (it.hasNext()) {
       SoftwareUpdateItem item = (SoftwareUpdateItem) it.next();
       String className = item.getClassName();

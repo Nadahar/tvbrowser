@@ -54,7 +54,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.JSpinner;
 import javax.swing.JComboBox;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextPane;
 import javax.swing.JPasswordField;
 import javax.swing.table.TableCellEditor;
 import java.awt.event.ActionEvent;
@@ -65,7 +64,6 @@ import java.util.Arrays;
 import java.io.IOException;
 
 import devplugin.Channel;
-import tvbrowser.core.Settings;
 
 /**
  * The configuration dialog for the dreambox

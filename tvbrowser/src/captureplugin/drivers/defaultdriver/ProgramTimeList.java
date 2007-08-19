@@ -32,8 +32,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import captureplugin.drivers.utils.ProgramTime;
-
 
 /**
  * A List of ProgramTimes

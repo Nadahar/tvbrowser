@@ -277,13 +277,13 @@ public class DreamboxConnector {
                     }
 
                     for (int i=0;i<=days;i++) {
-                        Iterator it = CapturePlugin.getPluginManager()
+                        Iterator<Program> it = CapturePlugin.getPluginManager()
                                     .getChannelDayProgram(new Date(runner), tvbchannel);
                         if (it != null) {
                             boolean found = false;
 
                             while (it.hasNext() && !found) {
-                                Program prog = (Program) it.next();
+                                Program prog = it.next();
                                 int progTime = prog.getHours() * 60 + prog.getMinutes() + (i*24*60);
 
                                 if (progTime >= beginMinutes - 15 &&

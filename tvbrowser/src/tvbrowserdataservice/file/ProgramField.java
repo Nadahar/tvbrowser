@@ -202,9 +202,9 @@ public class ProgramField implements Cloneable {
 
             // Find a jpeg writer
             ImageWriter writer = null;
-            Iterator iter = ImageIO.getImageWritersByFormatName("jpg");
+            Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName("jpg");
             if (iter.hasNext()) {
-                writer = (ImageWriter)iter.next();
+                writer = iter.next();
             }
 
             if (writer != null) {

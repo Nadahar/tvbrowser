@@ -194,7 +194,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
       }
     }
     
-    Iterator it = set.iterator();
+    Iterator<FilterComponent> it = set.iterator();
     
     while (it.hasNext()) {
       mRuleCb.addItem(it.next());

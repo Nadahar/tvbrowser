@@ -158,7 +158,7 @@ public class Database {
 		}
 	}
 	
-	public synchronized ArrayList getChangedPersonal() {
+	public synchronized ArrayList<Rating> getChangedPersonal() {
 		return _changedpersonal;
 	}
 	

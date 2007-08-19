@@ -110,7 +110,7 @@ public class IniFileReader {
    * @param section Section to return
    * @return Specific Section as HashMap
    */
-  public HashMap getSection(String section) {
+  public HashMap<String, String> getSection(String section) {
     return mSections.get(section);
   }
  

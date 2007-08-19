@@ -175,7 +175,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
    *
    * @return An Iterator with the channels.
    */
-  public Iterator getChannels() {
+  public Iterator<Channel> getChannels() {
     return mChannels.iterator();
   }
 

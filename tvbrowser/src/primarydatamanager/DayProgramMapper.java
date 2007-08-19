@@ -72,7 +72,7 @@ public class DayProgramMapper {
     mapExactMatches(rawFile, progList);
     
     // Put the unmapped programs in a list
-    ArrayList unmappedList = createUnmappedList(rawFile);
+    ArrayList<ProgramFrame> unmappedList = createUnmappedList(rawFile);
     
     if (unmappedList.isEmpty()) {
       // Nothing to do any more
@@ -86,7 +86,7 @@ public class DayProgramMapper {
   
   
   
-  private ArrayList createUnmappedList(DayProgramFile file) {
+  private ArrayList<ProgramFrame> createUnmappedList(DayProgramFile file) {
     ArrayList<ProgramFrame> unmappedList = new ArrayList<ProgramFrame>();
     for (int i = 0; i < file.getProgramFrameCount(); i++) {
       ProgramFrame frame = file.getProgramFrameAt(i);
@@ -107,14 +107,14 @@ public class DayProgramMapper {
 
 
 
-  private void mapExactMatches(DayProgramFile rawFile, ArrayList progList) throws PreparationException {
+  private void mapExactMatches(DayProgramFile rawFile, ArrayList<ProgramFrame> progList) throws PreparationException {
     for (int frameNr = 0; frameNr < rawFile.getProgramFrameCount(); frameNr++) {
       ProgramFrame rawFrame = rawFile.getProgramFrameAt(frameNr);
       int rawStarttime = PrimaryDataUtilities.getProgramStartTime(rawFrame);
       String rawTitle = PrimaryDataUtilities.getProgramTitle(rawFrame);
       
       for (int i = 0; i < progList.size(); i++) {
-        ProgramFrame prepFrame = (ProgramFrame) progList.get(i);
+        ProgramFrame prepFrame = progList.get(i);
         int prepStarttime = PrimaryDataUtilities.getProgramStartTime(prepFrame);
         String prepTitle = PrimaryDataUtilities.getProgramTitle(prepFrame);
         
@@ -130,7 +130,7 @@ public class DayProgramMapper {
 
 
 
-  private void mapSimilarMatches(ArrayList progList, ArrayList unmappedList) {
+  private void mapSimilarMatches(ArrayList<ProgramFrame> progList, ArrayList<ProgramFrame> unmappedList) {
     // NOTE: We work with a similarity matrix to find the best matches.
     //       This matrix works as follows: It contains for each raw program
     //       and each prepared program their similarity.
@@ -163,9 +163,9 @@ public class DayProgramMapper {
     // similarity matrix
     double[][] similarity = new double[progList.size()][unmappedList.size()];
     for (int i = 0; i < progList.size(); i++) {
-      ProgramFrame prepFrame = (ProgramFrame) progList.get(i);
+      ProgramFrame prepFrame = progList.get(i);
       for (int j = 0; j < unmappedList.size(); j++) {
-        ProgramFrame rawFrame = (ProgramFrame) unmappedList.get(j);
+        ProgramFrame rawFrame = unmappedList.get(j);
         similarity[i][j] = getSimilarity(prepFrame, rawFrame);
       }
     }
@@ -191,8 +191,8 @@ public class DayProgramMapper {
       
       // map the programs
       if (maxSimilarity > 0) {
-        ProgramFrame prepFrame = (ProgramFrame) progList.get(maxI);
-        ProgramFrame rawFrame = (ProgramFrame) unmappedList.get(maxJ);
+        ProgramFrame prepFrame = progList.get(maxI);
+        ProgramFrame rawFrame = unmappedList.get(maxJ);
         rawFrame.setId(prepFrame.getId());
         
         // Set the similarities of these programs to 0 to avoid a second match

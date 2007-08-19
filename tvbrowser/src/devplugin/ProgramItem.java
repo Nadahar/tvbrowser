@@ -74,9 +74,9 @@ public class ProgramItem {
     String progId = mProgram.getID();
     out.writeObject(progId);
     
-    Set keys = mProperties.keySet();
+    Set<Object> keys = mProperties.keySet();
     out.writeInt(keys.size());
-    Iterator it = keys.iterator();
+    Iterator<Object> it = keys.iterator();
     while (it.hasNext()) {
       String key = (String)it.next();
       String value = (String)mProperties.get(key);

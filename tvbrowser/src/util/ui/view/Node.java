@@ -118,9 +118,9 @@ public class Node {
    */
   public Node[] getNodes() {
     ArrayList<Node> nodesList = new ArrayList<Node>();
-    Iterator it = mNodes.iterator();
+    Iterator<Node> it = mNodes.iterator();
     while (it.hasNext()) {
-      Node n = (Node)it.next();
+      Node n = it.next();
       if (n.hasComponent()) {
         nodesList.add(n);
       }
@@ -155,9 +155,9 @@ public class Node {
     if (getLeaf()!=null) {
       return true;
     }
-    Iterator it = mNodes.iterator();
+    Iterator<Node> it = mNodes.iterator();
     while (it.hasNext()) {
-      Node n = (Node)it.next();
+      Node n = it.next();
       if (n.hasComponent()) {
         return true;
       }

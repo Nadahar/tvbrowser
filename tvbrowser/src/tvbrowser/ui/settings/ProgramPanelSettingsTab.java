@@ -182,7 +182,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
   private ProgramFieldType[] getAvailableTypes() {
     ArrayList<ProgramFieldType> typeList = new ArrayList<ProgramFieldType>();
     
-    Iterator typeIter = ProgramFieldType.getTypeIterator();
+    Iterator<ProgramFieldType> typeIter = ProgramFieldType.getTypeIterator();
     while (typeIter.hasNext()) {
       ProgramFieldType type = (ProgramFieldType) typeIter.next();
       

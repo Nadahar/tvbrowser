@@ -72,7 +72,7 @@ public class Updater implements Progress {
   /** Update Successfull ? */
   private boolean _wasSuccessfull = false;
 
-  private Hashtable _updateList;
+  private Hashtable<String, Program> _updateList;
 
   /**
    * Creates the Updater
@@ -327,12 +327,12 @@ public class Updater implements Progress {
     Element setratings = document.createElement("setratings");
     data.appendChild(setratings);
 
-    ArrayList list = _tvraterPlugin.getDatabase().getChangedPersonal();
+    ArrayList<Rating> list = _tvraterPlugin.getDatabase().getChangedPersonal();
     for (int i = 0; i < list.size(); i++) {
       Element ratingElement = document.createElement("rating");
       setratings.appendChild(ratingElement);
 
-      Rating rating = (Rating) list.get(i);
+      Rating rating = list.get(i);
       ratingElement.appendChild(createNodeWithTextValue(document, "title", rating.getTitle()));
 
       ratingElement.appendChild(createNodeWithTextValue(document, "overall", rating.getIntValue(Rating.OVERALL)));
@@ -352,12 +352,12 @@ public class Updater implements Progress {
     Element getratings = document.createElement("getratings");
     data.appendChild(getratings);
 
-    Enumeration en = _updateList.elements();
+    Enumeration<Program> en = _updateList.elements();
     while (en.hasMoreElements()) {
       Element program = document.createElement("program");
       getratings.appendChild(program);
 
-      Program prog = (Program) en.nextElement();
+      Program prog = en.nextElement();
 
       program.appendChild(createNodeWithTextValue(document, "title", prog.getTitle()));
 
@@ -426,7 +426,7 @@ public class Updater implements Progress {
    * 
    * @return Hashtable filled with Programs to rate
    */
-  private Hashtable createUpdateList() {
+  private Hashtable<String, Program> createUpdateList() {
     Hashtable<String, Program> table = new Hashtable<String, Program>();
 
     Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
@@ -435,9 +435,9 @@ public class Updater implements Progress {
     date = date.addDays(-1);
     for (int d = 0; d < 32; d++) {
       for (int i = 0; i < channels.length; i++) {
-        Iterator it = Plugin.getPluginManager().getChannelDayProgram(date, channels[i]);
+        Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channels[i]);
         while ((it != null) && (it.hasNext())) {
-          Program program = (Program) it.next();
+          Program program = it.next();
           if ((program != null) && _tvraterPlugin.isProgramRateable(program)) {
             if (!table.containsKey(program.getTitle())) {
               table.put(program.getTitle(), program);

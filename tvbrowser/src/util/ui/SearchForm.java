@@ -529,7 +529,7 @@ public class SearchForm extends JPanel {
   public static ProgramFieldType[] getSearchableFieldTypes() {
     if (mSearchableFieldTypes == null) {
       ArrayList<ProgramFieldType> list = new ArrayList<ProgramFieldType>();
-      Iterator iter = ProgramFieldType.getTypeIterator();
+      Iterator<ProgramFieldType> iter = ProgramFieldType.getTypeIterator();
       while (iter.hasNext()) {
         ProgramFieldType type = (ProgramFieldType) iter.next();
         if (type.getFormat() != ProgramFieldType.BINARY_FORMAT
