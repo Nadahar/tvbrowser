@@ -127,7 +127,7 @@ public class SweDBChannelContainer {
 
   public String getLastUpdateString (){
     StringBuffer SB = new StringBuffer ();
-    Enumeration enu = lastUpdate.keys();
+    Enumeration<String> enu = lastUpdate.keys();
     while (enu.hasMoreElements()){
       String date = (String) enu.nextElement();
       SB.append(date);

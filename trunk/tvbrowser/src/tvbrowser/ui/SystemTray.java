@@ -639,7 +639,7 @@ public class SystemTray {
         programs.add(i, null);
 
       for (Channel ch : c) {
-        Iterator it = null;
+        Iterator<Program> it = null;
         int day = 0;
         
         try {
@@ -653,7 +653,7 @@ public class SystemTray {
         int count = 0;
         
         while (it != null && it.hasNext()) {
-          Program p = (Program) it.next();
+          Program p = it.next();
 
           int start = p.getStartTime();
           int end = p.getStartTime() + p.getLength();

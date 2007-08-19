@@ -115,9 +115,9 @@ public class FilterComponentList {
       
       
       out.writeInt(mComponentList.size());
-      Iterator it = mComponentList.iterator();
+      Iterator<FilterComponent> it = mComponentList.iterator();
       while (it.hasNext()) {
-        FilterComponent comp = (FilterComponent)it.next();
+        FilterComponent comp = it.next();
         writeComponent(out,comp);
       }
       out.close();

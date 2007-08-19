@@ -187,7 +187,7 @@ public class TvDataInventory {
       out.writeInt(1); // version
       
       out.writeInt(mInventoryHash.size());
-      Iterator iter = mInventoryHash.keySet().iterator();
+      Iterator<String> iter = mInventoryHash.keySet().iterator();
       while (iter.hasNext()) {
         String key = (String) iter.next();
         Integer ver = mInventoryHash.get(key);

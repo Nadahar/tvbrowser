@@ -89,23 +89,23 @@ abstract public class IconTheme {
 
       IniFileReader iniReader = new IniFileReader(getInputStream("index.theme"));
 
-      HashMap iconSection = iniReader.getSection("Icon Theme");
+      HashMap<String, String> iconSection = iniReader.getSection("Icon Theme");
       
-      mThemeName = (String)iconSection.get("Name");
-      mThemeComment = (String)iconSection.get("Comment");
+      mThemeName = iconSection.get("Name");
+      mThemeComment = iconSection.get("Comment");
 
-      String[] directories = ((String)iconSection.get("Directories")).split(",");
+      String[] directories = (iconSection.get("Directories")).split(",");
       
       int len = directories.length;
       for (int i = 0;i<len;i++) {
-        HashMap dirMap = iniReader.getSection(directories[i]);
+        HashMap<String, String> dirMap = iniReader.getSection(directories[i]);
         
-        String context = (String)dirMap.get("Context"); 
-        String type = (String)dirMap.get("Type");
-        int size = parseInt((String)dirMap.get("Size"));
-        int maxsize = parseInt((String)dirMap.get("MaxSize"));
-        int minsize = parseInt((String)dirMap.get("MinSize"));
-        int threshold = parseInt((String)dirMap.get("Threshold"));
+        String context = dirMap.get("Context"); 
+        String type = dirMap.get("Type");
+        int size = parseInt(dirMap.get("Size"));
+        int maxsize = parseInt(dirMap.get("MaxSize"));
+        int minsize = parseInt(dirMap.get("MinSize"));
+        int threshold = parseInt(dirMap.get("Threshold"));
         
         Directory dir = new Directory(directories[i],context, type, size, maxsize, minsize, threshold);
         mDirectories.add(dir);
@@ -172,9 +172,9 @@ abstract public class IconTheme {
    */
   public ImageIcon getIcon(ThemeIcon icon) {
     // First Try, find exact size matching Icon
-    Iterator it = mDirectories.iterator();
+    Iterator<Directory> it = mDirectories.iterator();
     while (it.hasNext()) {
-      Directory dir = (Directory)it.next();
+      Directory dir = it.next();
       if (sizeMatches(dir, icon.getSize())) {
         StringBuffer iconFile = new StringBuffer(dir.getName()).append("/").append(icon.getName()).append(".png");
         if (entryExists(iconFile.toString())) {
@@ -189,7 +189,7 @@ abstract public class IconTheme {
     
     it = mDirectories.iterator();
     while (it.hasNext()) {
-      Directory dir = (Directory)it.next();
+      Directory dir = it.next();
       int distance = sizeDistance(dir, icon.getSize()); 
       if (distance < minSize) {
         StringBuffer iconFile = new StringBuffer(dir.getName()).append("/").append(icon.getName()).append(".png");

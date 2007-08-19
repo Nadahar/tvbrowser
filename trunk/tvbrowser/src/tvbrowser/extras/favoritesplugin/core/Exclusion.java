@@ -27,7 +27,6 @@
 package tvbrowser.extras.favoritesplugin.core;
 
 import devplugin.Channel;
-import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 
@@ -192,7 +191,7 @@ public class Exclusion {
     }
 
     if (mTopic != null) {
-      Iterator types = ProgramFieldType.getTypeIterator();
+      Iterator<ProgramFieldType> types = ProgramFieldType.getTypeIterator();
       StringBuffer value = new StringBuffer();
       
       while(types.hasNext()) {

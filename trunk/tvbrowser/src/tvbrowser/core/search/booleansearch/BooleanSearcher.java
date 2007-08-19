@@ -91,7 +91,7 @@ public class BooleanSearcher extends AbstractSearcher {
    * gesorgt.
    */
   public BooleanSearcher(String pattern, boolean CaseSensitive) throws ParserException {
-    Hashtable matcherTab = new Hashtable();
+    Hashtable<String, Object> matcherTab = new Hashtable<String, Object>();
     caseSensitive = CaseSensitive;
     mReplaceSpCh = true;
     
@@ -126,7 +126,7 @@ public class BooleanSearcher extends AbstractSearcher {
   }
 
   private static Block getBlock(Vector<Object> part, boolean caseSensitive,
-                                Hashtable matcherTable) throws ParserException {
+                                Hashtable<String, Object> matcherTable) throws ParserException {
     boolean lastWasMatch = false;
     for (int i = 0; i < part.size(); i++) {
       Object O = part.get(i);

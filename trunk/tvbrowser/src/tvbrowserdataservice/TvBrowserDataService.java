@@ -153,7 +153,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     if (mAvailableChannelGroupsSet ==null) {
       return;
     }
-    Iterator it=mAvailableChannelGroupsSet.iterator();
+    Iterator<ChannelGroup> it=mAvailableChannelGroupsSet.iterator();
     while (it.hasNext()) {
       ((ChannelGroup)it.next()).setWorkingDirectory(dataDir);
     }
@@ -168,7 +168,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
 
   private ChannelGroup getChannelGroupById(String id) {
-    Iterator it=mAvailableChannelGroupsSet.iterator();
+    Iterator<ChannelGroup> it=mAvailableChannelGroupsSet.iterator();
     while (it.hasNext()) {
       ChannelGroup group=(ChannelGroup)it.next();
       if (group.getId().equalsIgnoreCase(id)) {
@@ -252,7 +252,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
     monitor.setMaximum(groups.size());
 
-    Iterator groupIt=groups.iterator();
+    Iterator<ChannelGroup> groupIt=groups.iterator();
     int i=0;
     while (groupIt.hasNext()) {
 
@@ -265,7 +265,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
         for (int day = 0; day < dateCount; day++) {
           for (int levelIdx = 0; levelIdx < mSubscribedLevelArr.length; levelIdx++) {
             String level = mSubscribedLevelArr[levelIdx].getId();
-            Iterator it=group.getChannels();
+            Iterator<Channel> it=group.getChannels();
             while (it.hasNext()) {
               Channel ch=(Channel)it.next();
               addDownloadJob(dataBase, group.getMirror(), date, level, ch,
@@ -428,7 +428,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
 
   Channel getChannel(String country, String channelName) {
-    Iterator it = mAvailableChannelGroupsSet.iterator();
+    Iterator<ChannelGroup> it = mAvailableChannelGroupsSet.iterator();
     while (it.hasNext()) {
       Channel[] chArr = getAvailableChannels((ChannelGroup)it.next());
       for (int i=0; i<chArr.length; i++) {

@@ -249,9 +249,9 @@ public class SummaryFile extends AbstractFile {
     
     // Get the minimum start date
     int minStartDaysSince1970 = Integer.MAX_VALUE;
-    Iterator iter = mChannelFrameHash.values().iterator();
+    Iterator<ChannelFrame> iter = mChannelFrameHash.values().iterator();
     while (iter.hasNext()) {
-      ChannelFrame frame = (ChannelFrame) iter.next();
+      ChannelFrame frame = iter.next();
       int startDaysSince1970 = frame.getStartDaysSince1970();
       if (startDaysSince1970 < minStartDaysSince1970) {
         minStartDaysSince1970 = startDaysSince1970;
@@ -276,7 +276,7 @@ public class SummaryFile extends AbstractFile {
 		System.out.println("minStartDaysSince1970: "+minStartDaysSince1970);
     iter = mChannelFrameHash.values().iterator();
     while (iter.hasNext()) {
-      ChannelFrame frame = (ChannelFrame) iter.next();
+      ChannelFrame frame = iter.next();
       
       
       System.out.println(frame.getChannelId()+", "+frame.getStartDaysSince1970()+", "+frame.getDaysCount(minStartDaysSince1970));

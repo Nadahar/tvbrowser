@@ -105,9 +105,9 @@ public class TvDataBaseUpdater {
   protected void updateTvDataBase(ProgressMonitor monitor) {
     monitor.setMaximum(mUpdateJobSet.size());
     int i=0;
-    for (Iterator iter = mUpdateJobSet.iterator(); iter.hasNext();) {
+    for (Iterator<UpdateJob> iter = mUpdateJobSet.iterator(); iter.hasNext();) {
       monitor.setValue(i++);
-      UpdateJob updateJob = (UpdateJob) iter.next();
+      UpdateJob updateJob = iter.next();
       
       try {
         MutableChannelDayProgram prog

@@ -411,9 +411,9 @@ public class UserFilter implements devplugin.ProgramFilter {
       public abstract void dump();
     
       public boolean containsRuleComponent(String compName) {
-          Iterator it=nodes.iterator();
+          Iterator<Node> it=nodes.iterator();
           while (it.hasNext()) {
-              Node n=(Node)it.next();
+              Node n=it.next();
               if (n.containsRuleComponent(compName)) {
                 return true;
               }
@@ -428,9 +428,9 @@ public class UserFilter implements devplugin.ProgramFilter {
       } 
     
       public boolean accept(devplugin.Program prog) {
-          Iterator it=nodes.iterator();
+          Iterator<Node> it=nodes.iterator();
           while (it.hasNext()) {
-              Node n=(Node)it.next();
+              Node n=it.next();
               if (n.accept(prog)) {
                   return true;    
               }
@@ -439,9 +439,9 @@ public class UserFilter implements devplugin.ProgramFilter {
       }
     
       public void dump() {
-          Iterator it=nodes.iterator();
+          Iterator<Node> it=nodes.iterator();
           while (it.hasNext()) {
-              Node n=(Node)it.next();
+              Node n=it.next();
               n.dump();
           }
           System.out.println("}");        
@@ -457,9 +457,9 @@ public class UserFilter implements devplugin.ProgramFilter {
       }
     
       public boolean accept(devplugin.Program prog) {
-          Iterator it=nodes.iterator();
+          Iterator<Node> it=nodes.iterator();
           while (it.hasNext()) {
-              Node n=(Node)it.next();
+              Node n=it.next();
               if (!n.accept(prog)) {
                   return false;    
               }
@@ -469,9 +469,9 @@ public class UserFilter implements devplugin.ProgramFilter {
     
       public void dump() {
           System.out.println("AndNode {");
-          Iterator it=nodes.iterator();
+          Iterator<Node> it=nodes.iterator();
           while (it.hasNext()) {
-              Node n=(Node)it.next();
+              Node n=it.next();
               n.dump();
           }        
           System.out.println("}");   

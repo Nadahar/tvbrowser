@@ -662,7 +662,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
       Channel[] subscribedChannelArr = null;
       
       if(mSubscribedChannels.getModel().getSize() < 1) {
-        Collection subscribedChannels = mChannelListModel.getSubscribedChannels();
+        Collection<Channel> subscribedChannels = mChannelListModel.getSubscribedChannels();
 
         int subscribedChannelCount = subscribedChannels.size();
         subscribedChannelArr = new Channel[subscribedChannelCount];

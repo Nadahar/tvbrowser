@@ -205,10 +205,10 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
       if (prg != null) {
         nprg = findNextProgram(prg);
       } else {
-        Iterator it = Plugin.getPluginManager().getChannelDayProgram(date, channel);
+        Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channel);
 
         if ((it != null) && (it.hasNext())) {
-          Program p = (Program) it.next();
+          Program p = it.next();
           if (p.getStartTime() > time) {
             nprg = p;
           } else {
@@ -232,16 +232,16 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
    * @return following Program
    */
   private Program findNextProgram(Program prg) {
-    Iterator it = Plugin.getPluginManager().getChannelDayProgram(prg.getDate(), prg.getChannel());
+    Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(prg.getDate(), prg.getChannel());
 
     Program nprg = null;
     boolean last = false;
 
     while ((it != null) && (it.hasNext())) {
-      Program p = (Program) it.next();
+      Program p = it.next();
 
       if (prg.equals(p) && it.hasNext()) {
-        return (Program) it.next();
+        return it.next();
       } else if (prg.equals(p) && !it.hasNext()) {
         last = true;
       }
@@ -251,7 +251,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
       it = Plugin.getPluginManager().getChannelDayProgram(prg.getDate().addDays(1), prg.getChannel());
 
       if ((it != null) && (it.hasNext())) {
-        Program p = (Program) it.next();
+        Program p = it.next();
 
         return p;
       }
@@ -270,9 +270,9 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
    * @return added a Program
    */
   private Program findProgram(Date date, int time, Channel channel) {
-    Iterator it = Plugin.getPluginManager().getChannelDayProgram(date, channel);
+    Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channel);
     while ((it != null) && (it.hasNext())) {
-      Program program = (Program) it.next();
+      Program program = it.next();
 
       int start = program.getStartTime();
       int ende = program.getStartTime() + program.getLength();

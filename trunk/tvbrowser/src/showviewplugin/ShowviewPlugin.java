@@ -31,6 +31,7 @@ import tvdataservice.MutableProgram;
 import devplugin.ChannelDayProgram;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
+import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.Version;
 
@@ -61,7 +62,7 @@ public class ShowviewPlugin extends Plugin {
    * @see #handleTvDataDeleted(ChannelDayProgram)
    */
   public void handleTvDataAdded(ChannelDayProgram newProg) {  
-    Iterator iterator = newProg.getPrograms();
+    Iterator<Program> iterator = newProg.getPrograms();
     while (iterator.hasNext()) {
       MutableProgram prog = (MutableProgram) iterator.next();
       

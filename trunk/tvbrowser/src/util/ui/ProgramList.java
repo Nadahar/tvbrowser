@@ -59,7 +59,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
      *
      * @param programArr Array of Programs to show
      */
-    public ProgramList(Vector programArr) {
+    public ProgramList(Vector<Program> programArr) {
         super(programArr);
         setCellRenderer(new ProgramListCellRenderer());
     }
@@ -95,7 +95,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
      * @since 2.2.1
      * @deprecated Since 2.2.2 Use {@link #ProgramList(Vector, ProgramPanelSettings)} instead.
      */
-    public ProgramList(Vector programArr, boolean showOnlyDateAndTitle) {
+    public ProgramList(Vector<Program> programArr, boolean showOnlyDateAndTitle) {
       this(programArr, new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, showOnlyDateAndTitle, true, 10));
     }
 
@@ -130,13 +130,13 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
     /**
      * Creates the JList and adds the default MouseListeners (PopUpBox)
      *
-     * @param programArr Array of Programs to show
+     * @param programVector Array of Programs to show
      * @param settings The settings for the program panel.
      *          
      * @since 2.2.2  
      */
-    public ProgramList(Vector programArr, ProgramPanelSettings settings) {
-        super(programArr);
+    public ProgramList(Vector<Program> programVector, ProgramPanelSettings settings) {
+        super(programVector);
         setCellRenderer(new ProgramListCellRenderer(settings));
     }
 

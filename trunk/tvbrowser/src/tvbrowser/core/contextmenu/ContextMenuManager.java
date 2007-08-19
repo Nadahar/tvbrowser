@@ -200,7 +200,7 @@ public class ContextMenuManager {
   public ContextMenuIf[] getAvailableContextMenuIfs(boolean includingDisabledItems, boolean cleanSeparator) {
     PluginProxy[] pluginArr = PluginProxyManager.getInstance().getActivatedPlugins();
     String[] order = Settings.propContextMenuOrder.getStringArray();    
-    List disabledList = getDisabledContextMenuIfs();
+    List<ContextMenuIf> disabledList = getDisabledContextMenuIfs();
     
     ArrayList<ContextMenuIf> ifList = new ArrayList<ContextMenuIf>();
     

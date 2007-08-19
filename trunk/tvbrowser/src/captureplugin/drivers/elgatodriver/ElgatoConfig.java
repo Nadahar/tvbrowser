@@ -136,7 +136,7 @@ public class ElgatoConfig {
         mElgatoChannels = new ArrayList<ElgatoChannel>(Arrays.asList(channels));
 
         // Remove Channels that were removed/changed
-        Iterator iterator = mChannels.keySet().iterator();
+        Iterator<Channel> iterator = mChannels.keySet().iterator();
 
         HashMap<Channel, ElgatoChannel> cloneMap = (HashMap<Channel, ElgatoChannel>) mChannels.clone();
 
@@ -234,7 +234,7 @@ public class ElgatoConfig {
 
         stream.writeInt(mChannels.size());
 
-        Iterator it = mChannels.keySet().iterator();
+        Iterator<Channel> it = mChannels.keySet().iterator();
 
         while (it.hasNext()) {
             Channel ch = (Channel) it.next();
@@ -252,7 +252,7 @@ public class ElgatoConfig {
      * @return TVB Channel, null if not found
      */
     public Channel getChannelForElgatoId(int channel) {
-        Iterator it = mChannels.keySet().iterator();
+        Iterator<Channel> it = mChannels.keySet().iterator();
 
         while (it.hasNext()) {
             Channel ch = (Channel) it.next();

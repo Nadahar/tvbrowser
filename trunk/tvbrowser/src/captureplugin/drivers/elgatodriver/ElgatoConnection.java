@@ -200,12 +200,12 @@ public class ElgatoConnection {
                 Channel chan = conf.getChannelForElgatoId(channel);
 
                 if (chan != null) {
-                    Iterator it = CapturePlugin.getPluginManager()
+                    Iterator<Program> it = CapturePlugin.getPluginManager()
                             .getChannelDayProgram(date, chan);
 
                     if (it != null)
                         while (it.hasNext()) {
-                            Program prog = (Program) it.next();
+                            Program prog = it.next();
 
                             if ((prog.getHours() == hour)
                                     && (prog.getMinutes() == min)

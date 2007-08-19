@@ -141,10 +141,10 @@ public class BbcFileParser {
           
           ScheduleEvent event = schedule.getScheduleEvent(eventct);
 
-          Vector vector = programInformationTable.getProgramInformation(event.getCRID());
+          Vector<ProgramInformation> vector = programInformationTable.getProgramInformation(event.getCRID());
           
           if (vector.size() == 1) {
-            ProgramInformation programInformation = (ProgramInformation)vector.elementAt(0);
+            ProgramInformation programInformation = vector.elementAt(0);
             
             Calendar cal = Calendar.getInstance();
             cal.setTimeZone(TimeZone.getTimeZone("GMT"));

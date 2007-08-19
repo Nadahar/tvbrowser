@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
@@ -68,8 +69,8 @@ public class ZipIconTheme extends IconTheme {
       JarFile zf = new JarFile(getBase());
 
       // Enumerate each entry
-      for (Enumeration entries = zf.entries(); entries.hasMoreElements();) {
-        ZipEntry entry = (ZipEntry) entries.nextElement();
+      for (Enumeration<JarEntry> entries = zf.entries(); entries.hasMoreElements();) {
+        ZipEntry entry = entries.nextElement();
         mZipFileEnties.put(entry.getName(), entry);
       }
     } catch (IOException e) {

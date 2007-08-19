@@ -158,16 +158,16 @@ public class PropertyManager {
   
   
   private void clearCaches() {
-    Iterator iter = mPropertyHash.values().iterator();
+    Iterator<Property> iter = mPropertyHash.values().iterator();
     while (iter.hasNext()) {
-      Property prop = (Property) iter.next();
+      Property prop = iter.next();
       prop.clearCache();
     }
   }
 
 
   private void removeUnknownEntries() {
-    Iterator iter = mProperties.keySet().iterator();
+    Iterator<Object> iter = mProperties.keySet().iterator();
     while (iter.hasNext()) {
       String key = (String) iter.next();
 

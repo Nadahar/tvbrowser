@@ -353,33 +353,33 @@ public class CustomizableItemsPanel extends JPanel {
   }
 
   private void fireLeftListSelectionChanged(final ListSelectionEvent e) {
-    Iterator it = mListeners.iterator();
+    Iterator<CustomizableItemsListener> it = mListeners.iterator();
     while (it.hasNext()) {
-      CustomizableItemsListener listener = (CustomizableItemsListener)it.next();
+      CustomizableItemsListener listener = it.next();
       listener.leftListSelectionChanged(e);
     }
   }
 
    private void fireRightListSelectionChanged(final ListSelectionEvent e) {
-    Iterator it = mListeners.iterator();
+    Iterator<CustomizableItemsListener> it = mListeners.iterator();
     while (it.hasNext()) {
-      CustomizableItemsListener listener = (CustomizableItemsListener)it.next();
+      CustomizableItemsListener listener = it.next();
       listener.rightListSelectionChanged(e);
     }
   }
 
   private void fireItemTransferredToLeftList(Object[] items) {
-    Iterator it = mListeners.iterator();
+    Iterator<CustomizableItemsListener> it = mListeners.iterator();
     while (it.hasNext()) {
-      CustomizableItemsListener listener = (CustomizableItemsListener)it.next();
+      CustomizableItemsListener listener = it.next();
       listener.itemsTransferredToLeftList(items);
     }
   }
 
   private void fireItemTransferredToRightList(Object[] items) {
-    Iterator it = mListeners.iterator();
+    Iterator<CustomizableItemsListener> it = mListeners.iterator();
     while (it.hasNext()) {
-      CustomizableItemsListener listener = (CustomizableItemsListener)it.next();
+      CustomizableItemsListener listener = it.next();
       listener.itemsTransferredToRightList(items);
     }
   }

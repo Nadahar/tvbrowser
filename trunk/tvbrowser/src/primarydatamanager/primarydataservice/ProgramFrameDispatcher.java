@@ -102,13 +102,13 @@ public class ProgramFrameDispatcher {
    * 
    * @return An iterator over all DayProgramFiles.
    */
-  public Iterator getDayProgramFiles() {
+  public Iterator<DayProgramFile> getDayProgramFiles() {
     return mDayPrograms.values().iterator();
   }
   
   
   public void store(String directory) throws FileFormatException, IOException {
-    Iterator it = getDayProgramFiles();
+    Iterator<DayProgramFile> it = getDayProgramFiles();
     while (it.hasNext()) {
       DayProgramFile f=(DayProgramFile)it.next();
       int cnt=f.getProgramFrameCount();
