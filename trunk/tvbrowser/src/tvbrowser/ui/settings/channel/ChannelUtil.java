@@ -70,7 +70,7 @@ public class ChannelUtil {
       StringBuffer buf = new StringBuffer(mLocalizer.msg("categoryTV", "TV"));
 
       if (categories.size() > 0) {
-        buf.append(" ( ");
+        buf.append(" (");
 
         for (int i = 0; i < categories.size(); i++) {
           buf.append(categories.get(i));
@@ -79,7 +79,7 @@ public class ChannelUtil {
           }
         }
 
-        buf.append(" )");
+        buf.append(")");
       }
 
       return buf.toString();
