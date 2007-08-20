@@ -434,23 +434,19 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
 
       if (deltaX!=0){
         viewPos.x += deltaX;
-
         int maxX = getWidth() - viewport.getWidth();
 
         viewPos.x = Math.min(viewPos.x, maxX);
         viewPos.x = Math.max(viewPos.x, 0);
-
-        viewport.setViewPosition(viewPos);
       }
-
       if (deltaY !=0){
         viewPos.y += deltaY;
         int maxY = getHeight() - viewport.getHeight();
+
         viewPos.y = Math.min(viewPos.y, maxY);
         viewPos.y = Math.max(viewPos.y, 0);
-
-        viewport.setViewPosition(viewPos);
       }
+      viewport.setViewPosition(viewPos);
     }
   }
 
@@ -494,8 +490,9 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
       }
     };
     
-    if(!evt.isShiftDown() && SwingUtilities.isLeftMouseButton(evt))
+    if(!evt.isShiftDown() && SwingUtilities.isLeftMouseButton(evt)) {
       mClickThread.start();
+    }
     
     mDraggingPoint = evt.getPoint();
   }
