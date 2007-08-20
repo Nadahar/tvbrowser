@@ -578,7 +578,8 @@ public class SettingsDialog implements WindowClosingIf {
   }
 
   private void showSettingsPanelForNode(SettingNode node) {
-    if (node.getId().equalsIgnoreCase(SettingsItem.CHANNELS)) {
+    String nodeId = node.getId();
+    if (nodeId != null && nodeId.equalsIgnoreCase(SettingsItem.CHANNELS)) {
       waitForLoadedChannels();
     }
     JPanel pn = node.getSettingsPanel();
