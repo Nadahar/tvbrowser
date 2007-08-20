@@ -29,7 +29,6 @@ package tvbrowser.ui.mainframe;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.MouseInfo;
 import java.awt.Point;
@@ -95,7 +94,6 @@ import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.update.SoftwareUpdateDlg;
 import tvbrowser.ui.update.SoftwareUpdateItem;
 import tvbrowser.ui.update.SoftwareUpdater;
-import tvbrowser.ui.waiting.dlgs.SettingsWaitingDialog;
 import util.browserlauncher.Launch;
 import util.io.IOUtilities;
 import util.misc.OperatingSystem;
@@ -1387,35 +1385,6 @@ public class MainFrame extends JFrame implements DateListener {
     new Thread(new Runnable() {
       public void run() {
         mSettingsWillBeOpened = true;
-        final Thread t = ChannelList.getChannelLoadThread();
-        
-        if(t != null && t.isAlive()) {
-           final SettingsWaitingDialog dialog;
-              
-           Window comp = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-
-           if (comp instanceof Dialog) {
-             dialog = new SettingsWaitingDialog((JDialog)comp);
-           } else { 
-             dialog = new SettingsWaitingDialog((JFrame)comp);
-           }
-
-           SwingUtilities.invokeLater(new Runnable() {
-             public void run() {
-               if (t.isAlive()) {
-                UiUtilities.centerAndShow(dialog);
-              }
-             }
-           });
-           
-           try {
-             t.join();
-           }catch(Exception e) {
-             e.printStackTrace();
-           }
-           dialog.setVisible(false);
-           dialog.dispose();
-        }
         
         // show busy cursor
         Window comp = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
