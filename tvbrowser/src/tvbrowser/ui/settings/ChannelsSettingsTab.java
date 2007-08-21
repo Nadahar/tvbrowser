@@ -89,6 +89,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -732,23 +733,20 @@ public class ChannelsSettingsTab implements
 
       int subscribedChannelCount = subscribedChannels.size();
       subscribedChannelArr = new Channel[subscribedChannelCount];
-    } else {
-      subscribedChannelArr = (Channel[]) ((DefaultListModel) mSubscribedChannels
-          .getModel()).toArray();
-    }
 
-    Channel[] channels = mChannelListModel.getAvailableChannels();
-    for (Channel channel : channels) {
-      int pos = ChannelList.getPos(channel);
+      Channel[] channels = mChannelListModel.getAvailableChannels();
+      for (Channel channel : channels) {
+        int pos = ChannelList.getPos(channel);
 
-      if (pos != -1) {
-        subscribedChannelArr[pos] = channel;
+        if (pos != -1) {
+          subscribedChannelArr[pos] = channel;
+        }
       }
-    }
 
-    for (Channel aSubscribedChannelArr : subscribedChannelArr) {
-      ((DefaultListModel) mSubscribedChannels.getModel())
-          .addElement(aSubscribedChannelArr);
+      for (Channel aSubscribedChannelArr : subscribedChannelArr) {
+        ((DefaultListModel) mSubscribedChannels.getModel())
+            .addElement(aSubscribedChannelArr);
+      }
     }
   }
 
@@ -844,6 +842,12 @@ public class ChannelsSettingsTab implements
 
     win.run(new Progress() {
       public void run() {
+        Channel[] channels = mChannelListModel.getAvailableChannels();
+        // make a copy of the channel list
+        final ArrayList<Channel> before = new ArrayList<Channel>();
+        for (int i = 0; i < channels.length; i++) {
+          before.add(channels[i]);
+        }
         ChannelGroupManager.getInstance().checkForAvailableGroupsAndChannels(
             win);
 
@@ -853,6 +857,7 @@ public class ChannelsSettingsTab implements
             updateFilterPanel();
             fillSubscribedChannelsListBox();
             fillAvailableChannelsListBox();
+            showChannelChanges(before);
           }
 
         });
@@ -860,6 +865,15 @@ public class ChannelsSettingsTab implements
     });
   }
 
+  private void showChannelChanges(ArrayList<Channel> channelsBefore) {
+    Channel[] channels = mChannelListModel.getAvailableChannels();
+    Channel[] channelsAfterArr = new Channel[channels.length];
+    System.arraycopy(channels, 0, channelsAfterArr, 0, channelsAfterArr.length);
+    List<Channel> channelsAfter = Arrays.asList(channelsAfterArr);
+    ChannelListChangesDialog changesDialog = new ChannelListChangesDialog(SettingsDialog.getInstance().getDialog(), channelsBefore, channelsAfter);
+    UiUtilities.centerAndShow(changesDialog);
+  }
+  
   /**
    * Display the Config-Channel
    */
