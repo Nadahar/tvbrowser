@@ -31,6 +31,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import tvdataservice.MutableChannelDayProgram;
@@ -63,6 +64,8 @@ public class OnDemandDayProgramFile {
    * replaced by another one
    */
   private boolean mValid;
+  
+  private boolean mTimeLimitationlData;
 
   public OnDemandDayProgramFile(File file, Date date, Channel channel) {
     this(file, new MutableChannelDayProgram(date, channel));
@@ -73,6 +76,7 @@ public class OnDemandDayProgramFile {
     mDayProgram = dayProgram;
 
     mValid = true;
+    mTimeLimitationlData = false;
   }
 
   public synchronized void setValid(boolean valid) {
@@ -82,16 +86,20 @@ public class OnDemandDayProgramFile {
   public MutableChannelDayProgram getDayProgram() {
     return mDayProgram;
   }
-
+  
   /**
    * Loads the day program for on demand access.
    * 
+   * @param update <code>True</code> if this is called from tv-data update,
+   *        <code>false</code> otherwise.
    * @throws IOException
    * @throws ClassNotFoundException
    */
-  public synchronized void loadDayProgram() throws IOException,
+  public synchronized void loadDayProgram(boolean update) throws IOException,
       ClassNotFoundException {
     checkValid();
+    
+    mTimeLimitationlData = !update;
 
     RandomAccessFile dataFile = null;
     try {
@@ -124,7 +132,7 @@ public class OnDemandDayProgramFile {
         if(prog != null) {
           int time = prog.getHours() * 60 + prog.getMinutes();
           
-          if(channel.isTimeLimited()) {
+          if(channel.isTimeLimited() && !update) {
             int startTimeLimit = channel.getStartTimeLimit();
             int endTimeLimit = channel.getEndTimeLimit();
             
@@ -427,5 +435,49 @@ public class OnDemandDayProgramFile {
       throw new IOException("The day program file is invalid. Maybe it was "
           + "replaced.");
     }
+  }
+  
+  /**
+   * Gets if this file data file is loaden for data base.
+   *  
+   * @return <code>True</code> if this data is used in program table,
+   * <code>false</code> if this data is used for data updae.
+   * @since 2.2.4/2.6
+   */
+  public boolean isTimeLimitationData() {
+    return mTimeLimitationlData;
+  }
+  
+  /**
+   * Calcualtes the time limits of this file.
+   * 
+   * @since 2.2.4/2.6
+   */
+  public void calculateTimeLimits() {
+    if(mDayProgram.getChannel().isTimeLimited()) {
+      ArrayList<Program> programs = new ArrayList<Program>();
+      
+      for(int i = 0; i < mDayProgram.getProgramCount(); i++) {
+        programs.add(mDayProgram.getProgramAt(i));
+      }
+      
+      mDayProgram.removeAllPrograms();
+      
+      Channel channel = mDayProgram.getChannel();
+      
+      for(Program prog : programs) {
+        int time = prog.getHours() * 60 + prog.getMinutes();
+        
+        int startTimeLimit = channel.getStartTimeLimit();
+        int endTimeLimit = channel.getEndTimeLimit();
+        
+        if((startTimeLimit < endTimeLimit && time >= startTimeLimit && time < endTimeLimit) ||
+            (endTimeLimit < startTimeLimit && (time < endTimeLimit || time >= startTimeLimit))) {
+          mDayProgram.addProgram(prog);
+        }
+      }
+    }
+    
+    mTimeLimitationlData = true;
   }
 }

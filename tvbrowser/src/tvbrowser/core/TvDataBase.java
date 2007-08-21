@@ -192,7 +192,7 @@ public class TvDataBase {
           // Inform the listeners
           mLog.info("Day program was changed by third party: " + date + " on "
               + channel.getName());
-          ChannelDayProgram newDayProg = getDayProgram(date, channel);
+          ChannelDayProgram newDayProg = getDayProgram(date, channel, true);
           handleKnownStatus(knownStatus, newDayProg, version);
 
           somethingChanged = true;
@@ -224,8 +224,11 @@ public class TvDataBase {
   }
 
   public ChannelDayProgram getDayProgram(Date date, Channel channel) {
-
-    OnDemandDayProgramFile progFile = getCacheEntry(date, channel, true);
+    return getDayProgram(date, channel, false);
+  }
+      
+  private ChannelDayProgram getDayProgram(Date date, Channel channel, boolean update) {
+    OnDemandDayProgramFile progFile = getCacheEntry(date, channel, true, update);
 
     if (progFile != null) {
       return progFile.getDayProgram();
@@ -261,7 +264,7 @@ public class TvDataBase {
     // Create a backup (Rename the old file if it exists)
     File file = getDayProgramFile(date, channel);
     File backupFile = null;
-    ChannelDayProgram oldProg = getDayProgram(date, channel);
+    ChannelDayProgram oldProg = getDayProgram(date, channel, false);
     if (file.exists()) {
       backupFile = new File(file.getAbsolutePath() + ".backup");
       if (!file.renameTo(backupFile)) {
@@ -271,7 +274,7 @@ public class TvDataBase {
     }
 
     // Invalidate the old program file from the cache
-    OnDemandDayProgramFile oldProgFile = getCacheEntry(date, channel, false);
+    OnDemandDayProgramFile oldProgFile = getCacheEntry(date, channel, false, false);
     if (oldProgFile != null) {
       oldProgFile.setValid(false);
 
@@ -281,7 +284,7 @@ public class TvDataBase {
 
     // Create a new program file
     OnDemandDayProgramFile newProgFile = new OnDemandDayProgramFile(file, prog);
-
+    
     // Put the new program file in the cache
     addCacheEntry(key, newProgFile);
 
@@ -341,7 +344,7 @@ public class TvDataBase {
   }
 
   private synchronized OnDemandDayProgramFile getCacheEntry(Date date,
-      Channel channel, boolean loadFromDisk) {
+      Channel channel, boolean loadFromDisk, boolean update) {
     String key = getDayProgramKey(date, channel);
 
     // Try to get the program from the cache
@@ -349,9 +352,9 @@ public class TvDataBase {
         .get(key);
 
     // Try to load the program from disk
-    if (loadFromDisk && (progFile == null)) {
-      progFile = loadDayProgram(date, channel);
-      if (progFile != null) {
+    if (loadFromDisk && (progFile == null || (update && progFile.isTimeLimitationData()))) {
+      progFile = loadDayProgram(date, channel, update);
+      if (progFile != null && !update) {
         addCacheEntry(key, progFile);
       }
     }
@@ -447,16 +450,17 @@ public class TvDataBase {
     if (!file.exists()) {
       return;
     }
-
+    
     try {
       // Check whether this day program is known
       int version = (int) file.length();
       int knownStatus = mTvDataInventory.getKnownStatus(date, channel, version);
 
-      MutableChannelDayProgram checkProg = (MutableChannelDayProgram)getDayProgram(date,channel);
-      
+      OnDemandDayProgramFile oldProgFile = getCacheEntry(date, channel, false, false);
+      MutableChannelDayProgram checkProg = (MutableChannelDayProgram)getDayProgram(date,channel,true);
+
       boolean somethingChanged = calculateMissingLengths(checkProg);
-        
+          
       Object oldProg = null;
       if((oldProg = mNewDayProgramsAfterUpdate.remove(key)) != null) {
         // Inform the listeners about adding the new program
@@ -499,12 +503,11 @@ public class TvDataBase {
           tempFile.delete();
         }
                     
-        OnDemandDayProgramFile progFile = new OnDemandDayProgramFile(file, (MutableChannelDayProgram) getDayProgram(date,
-            channel));
-        progFile.loadDayProgram();
-          
+        // We have to load the file again to get the new data positions
+        OnDemandDayProgramFile progFile = new OnDemandDayProgramFile(file, date, channel);
+        progFile.loadDayProgram(false);
+        
         // Invalidate the old program file from the cache
-        OnDemandDayProgramFile oldProgFile = getCacheEntry(date, channel, false);
         if (oldProgFile != null) {
           oldProgFile.setValid(false);
 
@@ -514,6 +517,8 @@ public class TvDataBase {
           
         // Put the new program file in the cache
         addCacheEntry(key, progFile);
+      } else if(oldProgFile != null) {
+        oldProgFile.calculateTimeLimits();
       }
     } catch (Exception exc) {
       mLog.log(Level.WARNING, "Loading program for " + channel + " from "
@@ -525,7 +530,7 @@ public class TvDataBase {
   
 
   private synchronized OnDemandDayProgramFile loadDayProgram(Date date,
-      Channel channel) {
+      Channel channel, boolean update) {
     File file = getDayProgramFile(date, channel);
     if (!file.exists()) {
       return null;
@@ -535,7 +540,7 @@ public class TvDataBase {
       // Load the program file
       OnDemandDayProgramFile progFile = new OnDemandDayProgramFile(file, date,
           channel);
-      progFile.loadDayProgram();
+      progFile.loadDayProgram(update);
 
       return progFile;
     } catch (Exception exc) {
@@ -734,7 +739,7 @@ public class TvDataBase {
     Date nextDate = channelProg.getDate().addDays(1);
     Channel channel = channelProg.getChannel();
     TvDataBase db = TvDataBase.getInstance();
-    ChannelDayProgram nextDayProg = db.getDayProgram(nextDate, channel);
+    ChannelDayProgram nextDayProg = db.getDayProgram(nextDate, channel, true);
 
     if ((nextDayProg != null) && (nextDayProg.getProgramCount() > 0)) {
       return (nextDayProg.getProgramAt(0));
