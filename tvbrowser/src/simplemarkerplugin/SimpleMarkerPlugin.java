@@ -530,11 +530,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
 
     return null;
   }
-  
-  protected ProgramPanelSettings getProgramPanelSettings() {
-    return new ProgramPanelSettings(Integer.parseInt(mProperties.getProperty("pictureType","0")), Integer.parseInt(mProperties.getProperty("pictureTimeRangeStart","1080")), Integer.parseInt(mProperties.getProperty("pictureTimeRangeEnd","1380")), false, mProperties.getProperty("pictureShowsDescription","true").compareTo("true") == 0, Integer.parseInt(mProperties.getProperty("pictureDuration","10")), mProperties.getProperty("clientPlugins","").split(";;"));
-  }
-  
+    
   protected Properties getSettings() {
     return mProperties;
   }

@@ -55,6 +55,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import devplugin.Plugin;
 import devplugin.Program;
 
+import util.settings.PluginPictureSettings;
 import util.ui.Localizer;
 import util.ui.ProgramList;
 import util.ui.ProgramPanel;
@@ -117,7 +118,7 @@ public class ManagePanel {
     mMarkListsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     mMarkListsList.setCellRenderer(new MarkListCellRenderer());
     
-    mProgramsList = new ProgramList(mProgramListModel,SimpleMarkerPlugin.getInstance().getProgramPanelSettings(), ProgramPanel.X_AXIS);
+    mProgramsList = new ProgramList(mProgramListModel,new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), ProgramPanel.X_AXIS);
     mProgramsList.addMouseListeners(null);    
 
     mMarkListsScrolPane = new JScrollPane(mMarkListsList);
