@@ -58,6 +58,7 @@ public class SettingsItem {
   public static final String CHANNELLISTLOOK = "#channellistllook";
   
   public static final String TVDATASERVICES = "#tvdataservice";
+  public static final String PICTURES = "#pictures";
 
   private SettingsItem () {}
 }

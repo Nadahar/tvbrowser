@@ -33,6 +33,7 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
+import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 
 import javax.swing.BorderFactory;
@@ -82,6 +83,19 @@ public class SearchHelper {
     }
 
     mInstance.doSearch(comp, settings, pictureSettings);
+  }
+  
+  /**
+   * Search for Programs and Display a Result-Dialog.
+   * This function creates a new Thread.
+   * 
+   * @param comp Parent-Component
+   * @param pictureSettings Settings for the pictures
+   * @param settings Settings for the Search.
+   * @since 2.6
+   */
+  public static void search(Component comp, PluginPictureSettings pictureSettings, SearchFormSettings settings) {
+    search(comp,settings,new ProgramPanelSettings(pictureSettings,false));
   }
 
   /**

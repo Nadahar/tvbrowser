@@ -17,7 +17,7 @@ import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
-import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -184,7 +184,7 @@ public class ChannelContextMenu implements ActionListener {
           setChannelFilter(component); 
         }
         else {
-          MainFrame.getInstance().setProgramFilter(FilterList.getInstance().getDefaultFilter()); 
+          MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getDefaultFilter()); 
         }
       }
     }

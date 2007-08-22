@@ -35,7 +35,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.SwingUtilities;
 
-import util.settings.ProgramPanelSettings;
+import util.settings.PluginPictureSettings;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
@@ -89,7 +89,7 @@ public class ListViewPlugin extends Plugin {
         String desc = mLocalizer.msg("description", "Shows a List of current running Programs");
         String author = "Bodo Tasche";
         String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/View_List");
-        return new PluginInfo(name, desc, author, helpUrl, new Version(1, 43));
+        return new PluginInfo(name, desc, author, helpUrl, new Version(1, 44));
     }
 
     /**
@@ -225,9 +225,9 @@ public class ListViewPlugin extends Plugin {
     
     /**
      * @return The settings for the program panels of the list.
-     * @since 2.2.2
+     * @since 2.6
      */
-    protected ProgramPanelSettings getProgramPanelSettings() {
-      return new ProgramPanelSettings(Integer.parseInt(mSettings.getProperty("pictureType","2")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeStart","1080")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeEnd","1380")), false, mSettings.getProperty("pictureShowsDescription","true").compareTo("true") == 0, Integer.parseInt(mSettings.getProperty("pictureDuration","10")), mSettings.getProperty("picturePlugins","").split(";;"));
+    protected PluginPictureSettings getPictureSettings() {
+      return new PluginPictureSettings(Integer.parseInt(mSettings.getProperty("pictureSettigns",String.valueOf(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE))));
     }
 }

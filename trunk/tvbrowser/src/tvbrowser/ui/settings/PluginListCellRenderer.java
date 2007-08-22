@@ -30,12 +30,15 @@ import java.awt.Dimension;
 import java.awt.Font;
 
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 
 import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.extras.common.InternalPluginProxyIf;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.factories.Borders;
@@ -67,9 +70,36 @@ public class PluginListCellRenderer extends DefaultListCellRenderer {
 
     JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
     
-    if (value instanceof PluginProxy) {
-      PluginProxy plugin = (PluginProxy) value;
-
+    if (value instanceof PluginProxy || value instanceof InternalPluginProxyIf) {
+      Icon iconValue = null;
+      String nameValue = null;
+      String descValue = null;
+      boolean isActivated = true;
+      
+      if(value instanceof PluginProxy) {
+        PluginProxy plugin = (PluginProxy) value;
+        
+        iconValue = plugin.getPluginIcon();
+        descValue = plugin.getInfo().getDescription();
+        
+        isActivated = plugin.isActivated();
+        
+        if(isActivated) {
+          nameValue = plugin.getInfo().getName() + " " + plugin.getInfo().getVersion();
+        }
+        else {
+          nameValue = plugin.getInfo().getName() + " " + plugin.getInfo().getVersion() + " ["+mLocalizer.msg("deactivated", "Deactivated")+"]";
+        }
+      }
+      else {
+        InternalPluginProxyIf plugin = (InternalPluginProxyIf)value;
+        
+        nameValue = plugin.getName();
+        descValue = plugin.getDescription();
+        iconValue = plugin.getIcon();
+      }
+      
+      
       if (panel == null) {
         icon = new JLabel();
         name = new JLabel();
@@ -84,29 +114,24 @@ public class PluginListCellRenderer extends DefaultListCellRenderer {
 
       icon.setOpaque(label.isOpaque());
       icon.setBackground(label.getBackground());
-      icon.setIcon(plugin.getPluginIcon());
+      icon.setIcon(iconValue);
 
       if (desc != null)
         panel.remove(desc);
-      desc = UiUtilities.createHelpTextArea(plugin.getInfo().getDescription());
+      desc = UiUtilities.createHelpTextArea(descValue);
       desc.setMinimumSize(new Dimension(100, 10));
       desc.setOpaque(false);
       desc.setForeground(label.getForeground());
       desc.setBackground(label.getBackground());
-      desc.setEnabled(plugin.isActivated());
+      desc.setEnabled(isActivated);
       panel.add(desc, cc.xy(3,3));
 
       name.setOpaque(false);
       name.setForeground(label.getForeground());
-      name.setBackground(label.getBackground());
+      name.setBackground(label.getBackground());     
       
-      if (plugin.isActivated()) {
-        name.setText(plugin.getInfo().getName() + " " + plugin.getInfo().getVersion());
-        name.setEnabled(true);        
-      } else {
-        name.setText(plugin.getInfo().getName() + " " + plugin.getInfo().getVersion() + " ["+mLocalizer.msg("deactivated", "Deactivated")+"]");
-        name.setEnabled(false);
-      }
+      name.setText(nameValue);
+      name.setEnabled(isActivated);        
       
       panel.setOpaque(label.isOpaque());
       panel.setBackground(label.getBackground());

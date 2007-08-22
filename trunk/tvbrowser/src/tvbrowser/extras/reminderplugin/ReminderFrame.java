@@ -52,6 +52,8 @@ import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTree;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.io.IOUtilities;
+import util.settings.PluginPictureSettings;
+import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
 import util.ui.ProgramPanel;
 import util.ui.UiUtilities;
@@ -209,7 +211,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     channelPanel.add(channelLabel, BorderLayout.CENTER);
     progPanel.add(channelPanel,BorderLayout.EAST);
     
-    ProgramPanel panel = new ProgramPanel(mProgram, ProgramPanel.X_AXIS, ReminderPlugin.getInstance().getProgramPanelSettings(false));
+    ProgramPanel panel = new ProgramPanel(mProgram, ProgramPanel.X_AXIS, new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE),false));
     panel.addPluginContextMenuMouseListener(ReminderPluginProxy.getInstance());
     progPanel.add(panel, BorderLayout.CENTER);
     

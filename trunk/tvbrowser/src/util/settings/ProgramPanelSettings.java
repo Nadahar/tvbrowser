@@ -18,8 +18,6 @@
  */
 package util.settings;
 
-import util.ui.PictureSettingsPanel;
-
 /**
  * A class that contains setting values for the program panel.
  * 
@@ -27,6 +25,17 @@ import util.ui.PictureSettingsPanel;
  * @since 2.2.2
  */
 public class ProgramPanelSettings {
+  /** Show the pictures never */
+  public static final int SHOW_PICTURES_NEVER = 0;
+  /** Always show the pictures */
+  public static final int SHOW_PICTURES_EVER = 1;
+  /** Show the pictures in time range */
+  public static final int SHOW_PICTURES_IN_TIME_RANGE = 2;
+  /** Show the pictures for selected plugins */
+  public static final int SHOW_PICTURES_FOR_PLUGINS = 3;
+  /** Show the pictures for programs with selected duration */
+  public static final int SHOW_PICTURES_FOR_DURATION = 4;
+  
   private int mType;
   private int mTimeRangeStart;
   private int mTimeRangeEnd;
@@ -35,6 +44,19 @@ public class ProgramPanelSettings {
   private boolean mShowDescription;
   private String[] mPluginIds;
 
+  /**
+   * Creates an instance of this class with the given values.
+   * 
+   * @param settings The PluginPictureSettings to be used.
+   * @param showOnlyDateAndTitle If the program panel should only contain date and title.
+   */
+  public ProgramPanelSettings(PluginPictureSettings settings, boolean showOnlyDateAndTitle) {
+    mType = settings.isShowingPictures() ? SHOW_PICTURES_EVER : SHOW_PICTURES_NEVER;
+    mShowDescription = settings.isShowingDescription();
+    
+    mShowOnlyDateAndTitle = showOnlyDateAndTitle;
+  }
+  
   /**
    * Creates an instance of this class.
    * 
@@ -74,44 +96,44 @@ public class ProgramPanelSettings {
    * @return If the type of the picture showing is set to show pictures in time range. 
    */
   public boolean isShowingPictureInTimeRange() {
-    return mType == PictureSettingsPanel.SHOW_IN_TIME_RANGE || 
-           mType == PictureSettingsPanel.SHOW_IN_TIME_RANGE + PictureSettingsPanel.SHOW_FOR_DURATION + PictureSettingsPanel.SHOW_FOR_PLUGINS ||
-           mType == PictureSettingsPanel.SHOW_IN_TIME_RANGE + PictureSettingsPanel.SHOW_FOR_DURATION ||
-           mType == PictureSettingsPanel.SHOW_IN_TIME_RANGE + PictureSettingsPanel.SHOW_FOR_PLUGINS;
+    return mType == SHOW_PICTURES_IN_TIME_RANGE || 
+           mType == SHOW_PICTURES_IN_TIME_RANGE + SHOW_PICTURES_FOR_DURATION + SHOW_PICTURES_FOR_PLUGINS ||
+           mType == SHOW_PICTURES_IN_TIME_RANGE + SHOW_PICTURES_FOR_DURATION ||
+           mType == SHOW_PICTURES_IN_TIME_RANGE + SHOW_PICTURES_FOR_PLUGINS;
   }
 
   /**
    * @return If the type of the picture showing is set to show picture always.
    */
   public boolean isShowingPictureEver() {
-    return mType == PictureSettingsPanel.SHOW_EVER;
+    return mType == SHOW_PICTURES_EVER;
   }
   
   /**
    * @return If the type of the picture showing is set to show picture never.
    */
   public boolean isShowingPictureNever() {
-    return mType == PictureSettingsPanel.SHOW_NEVER;
+    return mType == SHOW_PICTURES_NEVER;
   }
   
   /**
    * @return If the type of the picture showing is set to show picture for plugins.
    */
   public boolean isShowingPictureForPlugins() {
-    return mType == PictureSettingsPanel.SHOW_FOR_PLUGINS ||
-           mType == PictureSettingsPanel.SHOW_FOR_PLUGINS + PictureSettingsPanel.SHOW_IN_TIME_RANGE + PictureSettingsPanel.SHOW_FOR_DURATION ||
-           mType == PictureSettingsPanel.SHOW_FOR_PLUGINS + PictureSettingsPanel.SHOW_IN_TIME_RANGE ||
-           mType == PictureSettingsPanel.SHOW_FOR_PLUGINS + PictureSettingsPanel.SHOW_FOR_DURATION;
+    return mType == SHOW_PICTURES_FOR_PLUGINS ||
+           mType == SHOW_PICTURES_FOR_PLUGINS + SHOW_PICTURES_IN_TIME_RANGE + SHOW_PICTURES_FOR_DURATION ||
+           mType == SHOW_PICTURES_FOR_PLUGINS + SHOW_PICTURES_IN_TIME_RANGE ||
+           mType == SHOW_PICTURES_FOR_PLUGINS + SHOW_PICTURES_FOR_DURATION;
   }
   
   /**
    * @return True if the type of the picture showing is set to show picture for duration.
    */
   public boolean isShowingPictureForDuration() {
-    return mType == PictureSettingsPanel.SHOW_FOR_DURATION ||
-           mType == PictureSettingsPanel.SHOW_FOR_DURATION + PictureSettingsPanel.SHOW_FOR_PLUGINS + PictureSettingsPanel.SHOW_IN_TIME_RANGE ||
-           mType == PictureSettingsPanel.SHOW_FOR_DURATION + PictureSettingsPanel.SHOW_FOR_PLUGINS ||
-           mType == PictureSettingsPanel.SHOW_FOR_DURATION + PictureSettingsPanel.SHOW_IN_TIME_RANGE;
+    return mType == SHOW_PICTURES_FOR_DURATION ||
+           mType == SHOW_PICTURES_FOR_DURATION + SHOW_PICTURES_FOR_PLUGINS + SHOW_PICTURES_IN_TIME_RANGE ||
+           mType == SHOW_PICTURES_FOR_DURATION + SHOW_PICTURES_FOR_PLUGINS ||
+           mType == SHOW_PICTURES_FOR_DURATION + SHOW_PICTURES_IN_TIME_RANGE;
   }
    
   /**
@@ -161,5 +183,35 @@ public class ProgramPanelSettings {
    */
   public String[] getPluginIds() {
     return mPluginIds;
+  }
+  
+  /**
+   * Checks if a given type to check contains a type.
+   * 
+   * @param typeToCheck The type to check.
+   * @param containingType The type to which should the typeToCheck is to check for. 
+   * @return True if the typeToCheck contains the containingType
+   */
+  public static boolean typeContainsType(int typeToCheck, int containingType) {
+    if(containingType == SHOW_PICTURES_FOR_PLUGINS)
+      return 
+        typeToCheck == SHOW_PICTURES_FOR_PLUGINS || 
+        typeToCheck == SHOW_PICTURES_FOR_PLUGINS + SHOW_PICTURES_IN_TIME_RANGE + SHOW_PICTURES_FOR_DURATION ||
+        typeToCheck == SHOW_PICTURES_FOR_PLUGINS + SHOW_PICTURES_IN_TIME_RANGE ||
+        typeToCheck == SHOW_PICTURES_FOR_PLUGINS + SHOW_PICTURES_FOR_DURATION;
+    else if(containingType == SHOW_PICTURES_FOR_DURATION)
+      return
+        typeToCheck == SHOW_PICTURES_FOR_DURATION ||
+        typeToCheck == SHOW_PICTURES_FOR_DURATION + SHOW_PICTURES_FOR_PLUGINS + SHOW_PICTURES_IN_TIME_RANGE ||
+        typeToCheck == SHOW_PICTURES_FOR_DURATION + SHOW_PICTURES_FOR_PLUGINS ||
+        typeToCheck == SHOW_PICTURES_FOR_DURATION + SHOW_PICTURES_IN_TIME_RANGE;
+    else if(containingType == SHOW_PICTURES_IN_TIME_RANGE)
+      return
+        typeToCheck == SHOW_PICTURES_IN_TIME_RANGE || 
+        typeToCheck == SHOW_PICTURES_IN_TIME_RANGE + SHOW_PICTURES_FOR_DURATION + SHOW_PICTURES_FOR_PLUGINS ||
+        typeToCheck == SHOW_PICTURES_IN_TIME_RANGE + SHOW_PICTURES_FOR_DURATION ||
+        typeToCheck == SHOW_PICTURES_IN_TIME_RANGE + SHOW_PICTURES_FOR_PLUGINS;
+    else 
+      return typeToCheck == containingType;
   }
 }

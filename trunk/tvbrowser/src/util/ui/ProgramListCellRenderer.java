@@ -61,7 +61,7 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
    * Creates a new instance of ProgramListCellRenderer
    */
   public ProgramListCellRenderer() {
-    this(new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, false, true, 10)); 
+    this(new ProgramPanelSettings(ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, false, true, 10)); 
   }
   
   /**
@@ -72,7 +72,7 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
    * @deprecated Since 2.2.2 User {@link #ProgramListCellRenderer(ProgramPanelSettings)} instead.
    */
   public ProgramListCellRenderer(boolean showOnlyDateAndTitle) {
-    this(new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, showOnlyDateAndTitle, true, 10));
+    this(new ProgramPanelSettings(ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, showOnlyDateAndTitle, true, 10));
   }
   
   /**
@@ -94,7 +94,7 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
 	    mMainPanel.add(mHeaderLb, BorderLayout.NORTH);
 	    
 	    if(settings == null)
-	      settings = new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, 1080, 1380, false, true, 90);
+	      settings = new ProgramPanelSettings(ProgramPanelSettings.SHOW_PICTURES_NEVER, 1080, 1380, false, true, 90);
 	    
 	    mProgramPanel = new ProgramPanel(settings, axis);
 	    mMainPanel.add(mProgramPanel, BorderLayout.CENTER);

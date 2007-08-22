@@ -56,6 +56,8 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.extras.common.InternalPluginProxyIf;
+import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
@@ -88,6 +90,11 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
   /** SettingsDialog */
   private SettingsDialog mSettingsDialog;
 
+  /**
+   * Creates an instance of this class.
+   * 
+   * @param settingsDialog The TV-Browser settings dialog.
+   */
   public PluginSettingsTab(SettingsDialog settingsDialog) {
     mSettingsDialog = settingsDialog;
   }
@@ -128,8 +135,16 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
           int index = mList.locationToIndex(e.getPoint());
           if (index >=0) {
             mList.setSelectedIndex(index);
-            PluginProxy plugin = (PluginProxy)mList.getModel().getElementAt(index);
-            JPopupMenu menu = createContextMenu(plugin);
+            Object plugin = mList.getModel().getElementAt(index);
+            JPopupMenu menu;
+            
+            if(plugin instanceof PluginProxy) {
+              menu = createContextMenu((PluginProxy)plugin);
+            }
+            else {
+              menu = createContextMenu((InternalPluginProxyIf)plugin);
+            }
+            
             menu.show(mList, e.getX(),  e.getY());
           }
         }
@@ -140,8 +155,16 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
           int index = mList.locationToIndex(e.getPoint());
           if (index >=0) {
             mList.setSelectedIndex(index);
-            PluginProxy plugin = (PluginProxy)mList.getModel().getElementAt(index);
-            JPopupMenu menu = createContextMenu(plugin);
+            Object plugin = mList.getModel().getElementAt(index);
+            JPopupMenu menu;
+            
+            if(plugin instanceof PluginProxy) {
+              menu = createContextMenu((PluginProxy)plugin);
+            }
+            else {
+              menu = createContextMenu((InternalPluginProxyIf)plugin);
+            }
+            
             menu.show(mList, e.getX(),  e.getY());
           }
         }
@@ -210,7 +233,33 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
 
     return contentPanel;
   }
+  
+  private JPopupMenu createContextMenu(final InternalPluginProxyIf plugin) {
+    JPopupMenu menu = new JPopupMenu();
+    
+    //configure
+    JMenuItem configureMI;
+    configureMI = new JMenuItem(mLocalizer.msg("configure", ""),IconLoader.getInstance().getIconFromTheme("category", "preferences-desktop", 16));
+    configureMI.addActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent e) {
+          mSettingsDialog.showSettingsTab(plugin.getSettingsId());
+        }
+      });
+    menu.add(configureMI);
+    
+    //help
+    JMenuItem helpMI = new JMenuItem(mLocalizer.msg("pluginHelp","Online help"), IconLoader.getInstance().getIconFromTheme("apps", "help-browser", 16));
+    helpMI.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        String url = "http://www.tvbrowser.org/showHelpFor.php?id=" + plugin.getId() + "&lang=" + System.getProperty("user.language");
+        
+        Launch.openURL(url);
+      }
+    });
+    menu.add(helpMI);
 
+    return menu;
+  }
 
   private JPopupMenu createContextMenu(final PluginProxy plugin) {
     JPopupMenu menu = new JPopupMenu();
@@ -350,9 +399,21 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
 
     mListModel.removeAllElements();
     
+    /* Add base plugins */
+    InternalPluginProxyIf[] internalPluginProxies = InternalPluginProxyList.getInstance().getAvailableProxys();
+    Arrays.sort(internalPluginProxies, new Comparator<InternalPluginProxyIf>() {
+      public int compare(InternalPluginProxyIf o1, InternalPluginProxyIf o2) {
+        return o1.getName().compareToIgnoreCase(o2.getName());
+      }
+    });
+    
+    for(InternalPluginProxyIf internalPluginProxy : internalPluginProxies) {
+      mListModel.addElement(internalPluginProxy);
+    }
+    
     Arrays.sort(pluginList, new Comparator<PluginProxy>() {
       public int compare(PluginProxy o1, PluginProxy o2) {
-        return o1.getInfo().getName().compareTo(o2.getInfo().getName());
+        return o1.getInfo().getName().compareToIgnoreCase(o2.getInfo().getName());
       }
     });
 
@@ -367,18 +428,18 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
    *
    */
   private void updateBtns() {
-    PluginProxy plugin = (PluginProxy) mList.getSelectedValue();
+    Object plugin = mList.getSelectedValue();
 
-    if ((plugin != null) && plugin.isActivated()) {
-      mStartStopBtn.setEnabled(true);
-      mInfo.setEnabled(true);
-      mRemove.setEnabled(PluginLoader.getInstance().isPluginDeletable(plugin));
+    if ((plugin != null) && ((plugin instanceof PluginProxy && ((PluginProxy)plugin).isActivated()) || plugin instanceof InternalPluginProxyIf)) {
+      mStartStopBtn.setEnabled(plugin instanceof PluginProxy);
+      mInfo.setEnabled(plugin instanceof PluginProxy);
+      mRemove.setEnabled(plugin instanceof PluginProxy && PluginLoader.getInstance().isPluginDeletable((PluginProxy)plugin));
       mStartStopBtn.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "process-stop", 16));
       mStartStopBtn.setText(mLocalizer.msg("deactivate", ""));
     } else {
       mStartStopBtn.setEnabled(plugin != null);
       mInfo.setEnabled(plugin != null);
-      mRemove.setEnabled(PluginLoader.getInstance().isPluginDeletable(plugin));
+      mRemove.setEnabled(plugin != null && PluginLoader.getInstance().isPluginDeletable((PluginProxy)plugin));
       mStartStopBtn.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-refresh", 16));
       mStartStopBtn.setText(mLocalizer.msg("activate", ""));
     }

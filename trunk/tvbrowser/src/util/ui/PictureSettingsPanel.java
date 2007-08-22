@@ -59,6 +59,7 @@ import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.SettingsDialog;
+import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 
 /**
@@ -66,6 +67,7 @@ import util.settings.ProgramPanelSettings;
  * 
  * @author René Mach
  * @since 2.2.2
+ * @deprecated since 2.6 Use {@link PluginPictureSettings instead}
  */
 public class PictureSettingsPanel extends JPanel implements Scrollable {
   private static final long serialVersionUID = 1L;
@@ -73,16 +75,21 @@ public class PictureSettingsPanel extends JPanel implements Scrollable {
   /** The localizer for this class */
   public static Localizer mLocalizer = Localizer.getLocalizerFor(PictureSettingsPanel.class);
 
-  /** Show the pictures never */
-  public static final int SHOW_NEVER = 0;
-  /** Always show the pictures */
-  public static final int SHOW_EVER = 1;
-  /** Show the pictures in time range */
-  public static final int SHOW_IN_TIME_RANGE = 2;
-  /** Show the pictures for selected plugins */
-  public static final int SHOW_FOR_PLUGINS = 3;
-  /** Show the pictures for programs with selected duration */
-  public static final int SHOW_FOR_DURATION = 4;
+  /** Show the pictures never 
+   * @deprecated since 2.6 Use {@link ProgramPanelSettings#SHOW_PICTURES_NEVER}*/
+  public static final int SHOW_NEVER = ProgramPanelSettings.SHOW_PICTURES_NEVER;
+  /** Always show the pictures 
+   * @deprecated since 2.6 Use {@link ProgramPanelSettings#SHOW_PICTURES_EVER}*/
+  public static final int SHOW_EVER = ProgramPanelSettings.SHOW_PICTURES_EVER;
+  /** Show the pictures in time range
+   * @deprecated since 2.6 Use {@link ProgramPanelSettings#SHOW_PICTURES_IN_TIME_RANGE}*/
+  public static final int SHOW_IN_TIME_RANGE = ProgramPanelSettings.SHOW_PICTURES_IN_TIME_RANGE;
+  /** Show the pictures for selected plugins 
+    * @deprecated since 2.6 Use {@link ProgramPanelSettings#SHOW_PICTURES_FOR_PLUGINS}*/
+  public static final int SHOW_FOR_PLUGINS = ProgramPanelSettings.SHOW_PICTURES_FOR_PLUGINS;
+  /** Show the pictures for programs with selected duration
+   * @deprecated since 2.6 Use {@link ProgramPanelSettings#SHOW_PICTURES_FOR_DURATION}*/
+  public static final int SHOW_FOR_DURATION = ProgramPanelSettings.SHOW_PICTURES_FOR_DURATION;
   
   private JRadioButton mShowPicturesEver, mShowPicturesNever, mShowPicturesForSelection;
   private JCheckBox mShowPicturesInTimeRange, mShowPicturesForDuration, mShowPicturesForPlugins;
@@ -134,12 +141,12 @@ public class PictureSettingsPanel extends JPanel implements Scrollable {
    */
   public PictureSettingsPanel(int type, int timeRangeStart, int timeRangeEnd, boolean showDescription, boolean showTitle, boolean addBorder, int duration, String[] clientPluginIds, JPanel additionalPanel) {
     try {
-    mShowPicturesNever = new JRadioButton(mLocalizer.msg("showNever","Show never"), type == SHOW_NEVER);
-    mShowPicturesEver = new JRadioButton(mLocalizer.msg("showEver","Show always"), type == SHOW_EVER);
+    mShowPicturesNever = new JRadioButton(mLocalizer.msg("showNever","Show never"), type == ProgramPanelSettings.SHOW_PICTURES_NEVER);
+    mShowPicturesEver = new JRadioButton(mLocalizer.msg("showEver","Show always"), type == ProgramPanelSettings.SHOW_PICTURES_EVER);
     mShowPicturesForSelection = new JRadioButton(mLocalizer.msg("showForSelection","Selection..."), type > 1);
     
-    mShowPicturesInTimeRange = new JCheckBox(mLocalizer.msg("showInTimeRange","Show in time range:"), typeContainsType(type,SHOW_IN_TIME_RANGE));
-    mShowPicturesForDuration = new JCheckBox(mLocalizer.msg("showForDuration","Show for duration more than or equals to:"), typeContainsType(type,SHOW_FOR_DURATION));
+    mShowPicturesInTimeRange = new JCheckBox(mLocalizer.msg("showInTimeRange","Show in time range:"), typeContainsType(type,ProgramPanelSettings.SHOW_PICTURES_IN_TIME_RANGE));
+    mShowPicturesForDuration = new JCheckBox(mLocalizer.msg("showForDuration","Show for duration more than or equals to:"), typeContainsType(type,ProgramPanelSettings.SHOW_PICTURES_FOR_DURATION));
     
     ButtonGroup bg = new ButtonGroup();
         
@@ -216,9 +223,9 @@ public class PictureSettingsPanel extends JPanel implements Scrollable {
     if(clientPluginIds != null) {
       JPanel mSubPanel = new JPanel(new FormLayout("15dlu,pref:grow,5dlu,pref","pref,2dlu,pref"));
       
-      mShowPicturesForPlugins = new JCheckBox(mLocalizer.msg("showPicturesForPlugins","Show for programs that are marked by plugins:"), typeContainsType(type,SHOW_FOR_PLUGINS));        
+      mShowPicturesForPlugins = new JCheckBox(mLocalizer.msg("showPicturesForPlugins","Show for programs that are marked by plugins:"), typeContainsType(type,ProgramPanelSettings.SHOW_PICTURES_FOR_PLUGINS));        
       mPluginLabel = new JLabel();
-      mPluginLabel.setEnabled(typeContainsType(type,SHOW_FOR_PLUGINS));
+      mPluginLabel.setEnabled(typeContainsType(type,ProgramPanelSettings.SHOW_PICTURES_FOR_PLUGINS));
       
       choose = new JButton(mLocalizer.msg("selectPlugins","Choose Plugins"));
       choose.addActionListener(new ActionListener() {
@@ -238,7 +245,7 @@ public class PictureSettingsPanel extends JPanel implements Scrollable {
           handlePluginSelection();
         }
       });
-      choose.setEnabled(typeContainsType(type,SHOW_FOR_PLUGINS));
+      choose.setEnabled(typeContainsType(type,ProgramPanelSettings.SHOW_PICTURES_FOR_PLUGINS));
       
       mShowPicturesForPlugins.addItemListener(new ItemListener() {
         public void itemStateChanged(ItemEvent e) {
@@ -357,17 +364,17 @@ public class PictureSettingsPanel extends JPanel implements Scrollable {
    * @return The picture showing type of this settings
    */
   public int getPictureShowingType() {
-    int value = SHOW_NEVER;
+    int value = ProgramPanelSettings.SHOW_PICTURES_NEVER;
     
     if(mShowPicturesEver.isSelected())
-      value = SHOW_EVER;
+      value = ProgramPanelSettings.SHOW_PICTURES_EVER;
     else if(mShowPicturesForSelection.isSelected()) {
       if(mShowPicturesForDuration.isSelected())
-        value += SHOW_FOR_DURATION;
+        value += ProgramPanelSettings.SHOW_PICTURES_FOR_DURATION;
       if(mShowPicturesForPlugins != null && mShowPicturesForPlugins.isSelected() && mClientPlugins != null && mClientPlugins.length > 0)
-        value += SHOW_FOR_PLUGINS;
+        value += ProgramPanelSettings.SHOW_PICTURES_FOR_PLUGINS;
       if(mShowPicturesInTimeRange.isSelected())
-        value += SHOW_IN_TIME_RANGE;
+        value += ProgramPanelSettings.SHOW_PICTURES_IN_TIME_RANGE;
     }
     
     return value;
@@ -431,24 +438,24 @@ public class PictureSettingsPanel extends JPanel implements Scrollable {
    * @return True if the typeToCheck contains the containingType
    */
   public static boolean typeContainsType(int typeToCheck, int containingType) {
-    if(containingType == SHOW_FOR_PLUGINS)
+    if(containingType == ProgramPanelSettings.SHOW_PICTURES_FOR_PLUGINS)
       return 
-        typeToCheck == PictureSettingsPanel.SHOW_FOR_PLUGINS || 
-        typeToCheck == PictureSettingsPanel.SHOW_FOR_PLUGINS + PictureSettingsPanel.SHOW_IN_TIME_RANGE + PictureSettingsPanel.SHOW_FOR_DURATION ||
-        typeToCheck == PictureSettingsPanel.SHOW_FOR_PLUGINS + PictureSettingsPanel.SHOW_IN_TIME_RANGE ||
-        typeToCheck == PictureSettingsPanel.SHOW_FOR_PLUGINS + PictureSettingsPanel.SHOW_FOR_DURATION;
-    else if(containingType == SHOW_FOR_DURATION)
+        typeToCheck == ProgramPanelSettings.SHOW_PICTURES_FOR_PLUGINS || 
+        typeToCheck == ProgramPanelSettings.SHOW_PICTURES_FOR_PLUGINS + ProgramPanelSettings.SHOW_PICTURES_IN_TIME_RANGE + ProgramPanelSettings.SHOW_PICTURES_FOR_DURATION ||
+        typeToCheck == ProgramPanelSettings.SHOW_PICTURES_FOR_PLUGINS + ProgramPanelSettings.SHOW_PICTURES_IN_TIME_RANGE ||
+        typeToCheck == ProgramPanelSettings.SHOW_PICTURES_FOR_PLUGINS + ProgramPanelSettings.SHOW_PICTURES_FOR_DURATION;
+    else if(containingType == ProgramPanelSettings.SHOW_PICTURES_FOR_DURATION)
       return
-        typeToCheck == PictureSettingsPanel.SHOW_FOR_DURATION ||
-        typeToCheck == PictureSettingsPanel.SHOW_FOR_DURATION + PictureSettingsPanel.SHOW_FOR_PLUGINS + PictureSettingsPanel.SHOW_IN_TIME_RANGE ||
-        typeToCheck == PictureSettingsPanel.SHOW_FOR_DURATION + PictureSettingsPanel.SHOW_FOR_PLUGINS ||
-        typeToCheck == PictureSettingsPanel.SHOW_FOR_DURATION + PictureSettingsPanel.SHOW_IN_TIME_RANGE;
-    else if(containingType == SHOW_IN_TIME_RANGE)
+        typeToCheck == ProgramPanelSettings.SHOW_PICTURES_FOR_DURATION ||
+        typeToCheck == ProgramPanelSettings.SHOW_PICTURES_FOR_DURATION + ProgramPanelSettings.SHOW_PICTURES_FOR_PLUGINS + ProgramPanelSettings.SHOW_PICTURES_IN_TIME_RANGE ||
+        typeToCheck == ProgramPanelSettings.SHOW_PICTURES_FOR_DURATION + ProgramPanelSettings.SHOW_PICTURES_FOR_PLUGINS ||
+        typeToCheck == ProgramPanelSettings.SHOW_PICTURES_FOR_DURATION + ProgramPanelSettings.SHOW_PICTURES_IN_TIME_RANGE;
+    else if(containingType == ProgramPanelSettings.SHOW_PICTURES_IN_TIME_RANGE)
       return
-        typeToCheck == PictureSettingsPanel.SHOW_IN_TIME_RANGE || 
-        typeToCheck == PictureSettingsPanel.SHOW_IN_TIME_RANGE + PictureSettingsPanel.SHOW_FOR_DURATION + PictureSettingsPanel.SHOW_FOR_PLUGINS ||
-        typeToCheck == PictureSettingsPanel.SHOW_IN_TIME_RANGE + PictureSettingsPanel.SHOW_FOR_DURATION ||
-        typeToCheck == PictureSettingsPanel.SHOW_IN_TIME_RANGE + PictureSettingsPanel.SHOW_FOR_PLUGINS;
+        typeToCheck == ProgramPanelSettings.SHOW_PICTURES_IN_TIME_RANGE || 
+        typeToCheck == ProgramPanelSettings.SHOW_PICTURES_IN_TIME_RANGE + ProgramPanelSettings.SHOW_PICTURES_FOR_DURATION + ProgramPanelSettings.SHOW_PICTURES_FOR_PLUGINS ||
+        typeToCheck == ProgramPanelSettings.SHOW_PICTURES_IN_TIME_RANGE + ProgramPanelSettings.SHOW_PICTURES_FOR_DURATION ||
+        typeToCheck == ProgramPanelSettings.SHOW_PICTURES_IN_TIME_RANGE + ProgramPanelSettings.SHOW_PICTURES_FOR_PLUGINS;
     else 
       return typeToCheck == containingType;
   }

@@ -36,8 +36,8 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import tvbrowser.core.Settings;
+import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
-import util.ui.PictureSettingsPanel;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -142,7 +142,7 @@ public class TvBrowserPictureSettingsUpdateDialog extends JDialog implements Win
       mConfigPanel.saveSettings();
       close(false);
       
-      if(Settings.propPictureType.getInt() != PictureSettingsPanel.SHOW_NEVER) {
+      if(Settings.propPictureType.getInt() != ProgramPanelSettings.SHOW_PICTURES_NEVER) {
         String[] icons = Settings.propProgramTableIconPlugins.getStringArray();
                 
         boolean containsPictures = false;

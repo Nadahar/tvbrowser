@@ -45,6 +45,7 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.ui.DefaultMarkingPrioritySelectionPanel;
 import util.ui.PluginChooserDlg;
 import util.ui.UiUtilities;
 import devplugin.ProgramReceiveIf;
@@ -66,6 +67,7 @@ public class FavoritesSettingTab implements SettingsTab {
   private JLabel mPluginLabel;
   private JCheckBox mExpertMode, mShowRepetitions, mAutoSelectRemider;
   
+  private DefaultMarkingPrioritySelectionPanel mMarkingsPanel;
   /**
    * Creates the settings panel for this tab.
    */
@@ -73,7 +75,8 @@ public class FavoritesSettingTab implements SettingsTab {
     CellConstraints cc = new CellConstraints();
     PanelBuilder builder = new PanelBuilder(new FormLayout(
         "5dlu,min(150dlu;pref):grow,5dlu,pref,5dlu",
-        "pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu,pref"));
+        "pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu," +
+        "pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu,pref"));
     builder.setDefaultDialogBorder();
     
     mPluginLabel = new JLabel();
@@ -128,6 +131,9 @@ public class FavoritesSettingTab implements SettingsTab {
     builder.add(mShowRepetitions, cc.xyw(2,11,3));
     builder.addSeparator(mLocalizer.msg("reminderSettings","Automatic reminder"), cc.xyw(1,13,4));
     builder.add(mAutoSelectRemider, cc.xyw(2,15,3));
+        
+    builder.addSeparator(DefaultMarkingPrioritySelectionPanel.getTitle(), cc.xyw(1,17,4));
+    builder.add(mMarkingsPanel = DefaultMarkingPrioritySelectionPanel.createPanel(FavoritesPlugin.getInstance().getMarkPriority(),false,false), cc.xyw(2,19,3));
 
     return builder.getPanel();
   }
@@ -171,6 +177,7 @@ public class FavoritesSettingTab implements SettingsTab {
     FavoritesPlugin.getInstance().setIsUsingExpertMode(mExpertMode.isSelected());    
     FavoritesPlugin.getInstance().setShowRepetitions(mShowRepetitions.isSelected());
     FavoritesPlugin.getInstance().setAutoSelectingReminder(mAutoSelectRemider.isSelected());
+    FavoritesPlugin.getInstance().setMarkPriority(mMarkingsPanel.getSelectedPriority());
     
     new Thread("Save favorite settings") {
       public void run() {

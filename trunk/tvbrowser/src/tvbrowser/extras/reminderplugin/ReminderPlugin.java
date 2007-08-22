@@ -62,7 +62,6 @@ import tvbrowser.extras.common.ConfigurationHandler;
 
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
-import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.*;
@@ -771,16 +770,7 @@ public class ReminderPlugin {
       mClientPluginTargets = new ProgramReceiveTarget[0];
     }
   }
-  
-  /**
-   * @param showOnlyDateAndTitle If the program panel should contain only date and title.
-   * @return The settings for the program panel
-   * @since 2.2.2
-   */
-  protected ProgramPanelSettings getProgramPanelSettings(boolean showOnlyDateAndTitle) {
-    return new ProgramPanelSettings(Integer.parseInt(mSettings.getProperty("pictureType","0")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeStart","1080")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeEnd","1380")), showOnlyDateAndTitle, mSettings.getProperty("pictureShowsDescription","true").compareTo("true") == 0,Integer.parseInt(mSettings.getProperty("pictureDuration","10")), mSettings.getProperty("picturePlugins","").split(";;"));
-  }
-  
+    
   protected int getMarkPriority() {
     if(mMarkPriority == - 2 && mSettings != null) {
       mMarkPriority = Integer.parseInt(mSettings.getProperty("markPriority",String.valueOf(Program.MIN_MARK_PRIORITY)));

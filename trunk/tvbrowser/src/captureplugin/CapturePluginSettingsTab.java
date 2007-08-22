@@ -98,7 +98,6 @@ public class CapturePluginSettingsTab implements SettingsTab {
         mCurrentPanel = mPanel.getSelectedTabIndex();
         mPlugin.setCapturePluginData(mCloneData);
         mPlugin.updateMarkedPrograms();
-        mPanel.savePictureSettings();
         mPanel.saveMarkingSettings();
     }
 

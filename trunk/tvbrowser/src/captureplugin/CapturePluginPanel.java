@@ -29,12 +29,9 @@ import captureplugin.tabs.DevicePanel;
 import captureplugin.tabs.ProgramListPanel;
 import util.ui.DefaultMarkingPrioritySelectionPanel;
 import util.ui.Localizer;
-import util.ui.PictureSettingsPanel;
 
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
 
 import java.awt.BorderLayout;
 import java.awt.Window;
@@ -56,8 +53,7 @@ public class CapturePluginPanel extends JPanel {
 
     /** GUI */
     private JTabbedPane mTabPane;
-
-    private PictureSettingsPanel mPictureSettings;
+    
     private DefaultMarkingPrioritySelectionPanel mMarkingPriorityPanel;
     
     /**
@@ -72,26 +68,12 @@ public class CapturePluginPanel extends JPanel {
         mTabPane = new JTabbedPane();
 
         mTabPane.addTab(mLocalizer.msg("ProgramList", "Programlist"), new ProgramListPanel(owner, data));
-        
-        mPictureSettings = new PictureSettingsPanel(CapturePlugin.getInstance().getProgramPanelSettings(),true,true);
-                
         mTabPane.addTab(mLocalizer.msg("Devices", "Devices"), new DevicePanel(owner, data));
-        
-        final JScrollPane scrollPane = new JScrollPane(mPictureSettings);
-        scrollPane.setBorder(null);
-        
-        mTabPane.addTab(Localizer.getLocalization(Localizer.I18N_PICTURES), scrollPane);
         
         mMarkingPriorityPanel = DefaultMarkingPrioritySelectionPanel.createPanel(data.getMarkPriority(),true,true);
         mTabPane.addTab(DefaultMarkingPrioritySelectionPanel.getTitle(), mMarkingPriorityPanel);
 
-        this.add(mTabPane, BorderLayout.CENTER);
-        
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            scrollPane.getVerticalScrollBar().setValue(0);
-          }
-        });
+        this.add(mTabPane, BorderLayout.CENTER);        
     }
 
 
@@ -110,31 +92,6 @@ public class CapturePluginPanel extends JPanel {
      */
     public int getSelectedTabIndex() {
       return mTabPane.getSelectedIndex();
-    }
-    
-    /**
-     * Saves the picture settings for the program list
-     */
-    public void savePictureSettings() {
-      CapturePlugin.getInstance().storeSettings().setProperty("pictureType", String.valueOf(mPictureSettings.getPictureShowingType()));
-      CapturePlugin.getInstance().storeSettings().setProperty("pictureTimeRangeStart", String.valueOf(mPictureSettings.getPictureTimeRangeStart()));
-      CapturePlugin.getInstance().storeSettings().setProperty("pictureTimeRangeEnd", String.valueOf(mPictureSettings.getPictureTimeRangeEnd()));
-      CapturePlugin.getInstance().storeSettings().setProperty("pictureShowsDescription", String.valueOf(mPictureSettings.getPictureIsShowingDescription()));
-      CapturePlugin.getInstance().storeSettings().setProperty("pictureDuration", String.valueOf(mPictureSettings.getPictureDurationTime()));
-      
-      if(PictureSettingsPanel.typeContainsType(mPictureSettings.getPictureShowingType(),PictureSettingsPanel.SHOW_FOR_PLUGINS)) {
-        StringBuffer temp = new StringBuffer();
-        
-        String[] plugins = mPictureSettings.getClientPluginIds();
-        
-        for(int i = 0; i < plugins.length; i++)
-          temp.append(plugins[i]).append(";;");
-        
-        if(temp.toString().endsWith(";;"))
-          temp.delete(temp.length()-2,temp.length());
-        
-        CapturePlugin.getInstance().storeSettings().setProperty("picturePlugins", temp.toString());
-      }
     }
     
     /**

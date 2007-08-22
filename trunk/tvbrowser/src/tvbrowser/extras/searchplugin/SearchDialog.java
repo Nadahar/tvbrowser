@@ -37,6 +37,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import util.settings.PluginPictureSettings;
 import util.ui.Localizer;
 import util.ui.SearchForm;
 import util.ui.SearchFormSettings;
@@ -159,7 +160,7 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
    */
   private void search() {
     SearchPlugin.setSearchHistory(mSearchForm.getHistory());
-    SearchHelper.search(this, mSearchForm.getSearchFormSettings(), SearchPlugin.getInstance().getProgramPanelSettings());
+    SearchHelper.search(this, new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), mSearchForm.getSearchFormSettings());
   }
 
   public void close() {

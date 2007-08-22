@@ -85,6 +85,7 @@ import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.program.ProgramUtilities;
+import util.settings.PluginPictureSettings;
 import util.ui.DragAndDropMouseListener;
 import util.ui.ExtensionFileFilter;
 import util.ui.ListDragAndDropHandler;
@@ -394,7 +395,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     mSplitPane.setLeftComponent(scrollPane);
 
     mProgramListModel = new DefaultListModel();
-    mProgramList = new ProgramList(mProgramListModel, FavoritesPlugin.getInstance().getProgramPanelSettings(), ProgramPanel.X_AXIS);
+    mProgramList = new ProgramList(mProgramListModel, new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), ProgramPanel.X_AXIS);
     mProgramList.addMouseListeners(null);
     mProgramScrollPane = new JScrollPane(mProgramList);
     mProgramScrollPane.setBorder(null);

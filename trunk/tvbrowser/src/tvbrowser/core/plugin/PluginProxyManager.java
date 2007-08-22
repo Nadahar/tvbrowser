@@ -437,7 +437,7 @@ public class PluginProxyManager {
     
       for(PluginsProgramFilter filter : filters) {
         if(FilterManagerImpl.getInstance().getCurrentFilter() == filter) {
-          FilterManagerImpl.getInstance().setCurrentFilter(FilterList.getInstance().getDefaultFilter());
+          FilterManagerImpl.getInstance().setCurrentFilter(FilterManagerImpl.getInstance().getDefaultFilter());
         }
       
         FilterList.getInstance().remove(filter);

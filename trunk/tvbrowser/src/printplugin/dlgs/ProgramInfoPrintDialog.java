@@ -285,7 +285,7 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
     String html = /*ProgramTextCreator.createInfoText(program, doc, 
           mFieldTypes, null, fontChooser.getChosenFont(), printImage.isSelected(), false);*/ 
     
-    ProgramTextCreator.createInfoText(program, doc, mFieldTypes, null, fontChooser.getChosenFont(), new ProgramPanelSettings(printImage.isSelected() ? PictureSettingsPanel.SHOW_EVER : PictureSettingsPanel.SHOW_NEVER, -1, -1, false, true, 10), false, 100, printIcons.isSelected());
+    ProgramTextCreator.createInfoText(program, doc, mFieldTypes, null, fontChooser.getChosenFont(), new ProgramPanelSettings(printImage.isSelected() ? ProgramPanelSettings.SHOW_PICTURES_EVER : ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, false, true, 10), false, 100, printIcons.isSelected());
     
     pane.setText(html);
     

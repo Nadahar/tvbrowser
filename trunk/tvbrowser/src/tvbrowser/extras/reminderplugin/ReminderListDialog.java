@@ -47,6 +47,8 @@ import javax.swing.SwingUtilities;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.settings.PluginPictureSettings;
+
 import util.ui.Localizer;
 import util.ui.ProgramTableCellRenderer;
 import util.ui.SendToPluginDialog;
@@ -241,7 +243,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
 
   private void installTableModel(ReminderTableModel model) {
     mTable.setModel(model);
-    mTable.getColumnModel().getColumn(0).setCellRenderer(new ProgramTableCellRenderer(ReminderPlugin.getInstance().getProgramPanelSettings(false)));
+    mTable.getColumnModel().getColumn(0).setCellRenderer(new ProgramTableCellRenderer(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE)));
     mTable.getColumnModel().getColumn(1).setCellEditor(new MinutesCellEditor());
     mTable.getColumnModel().getColumn(1).setCellRenderer(new MinutesCellRenderer());
   }

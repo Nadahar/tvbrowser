@@ -302,7 +302,7 @@ public class MainFrame extends JFrame implements DateListener {
         .getFilterByName(Settings.propLastUsedFilter.getString());
 
     if (filter == null) {
-      filter = filterList.getDefaultFilter();
+      filter = FilterManagerImpl.getInstance().getDefaultFilter();
     }
 
     setProgramFilter(filter);
@@ -1054,7 +1054,7 @@ public class MainFrame extends JFrame implements DateListener {
           JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
       if (result == JOptionPane.YES_OPTION) {
         mStoredViewPosition = null;
-        setProgramFilter(FilterList.getInstance().getDefaultFilter());
+        setProgramFilter(FilterManagerImpl.getInstance().getDefaultFilter());
       }
     }
     // invoke scrolling later as the upper filter deactivation may have pending operations for the UI
@@ -1152,10 +1152,10 @@ public class MainFrame extends JFrame implements DateListener {
       if (!(filter instanceof SearchFilter)) {
         Settings.propLastUsedFilter.setString(mCurrentFilterName);
       } else {
-        Settings.propLastUsedFilter.setString(FilterList.getInstance().getDefaultFilter().getName());
+        Settings.propLastUsedFilter.setString(FilterManagerImpl.getInstance().getDefaultFilter().getName());
       }
     } else {
-      Settings.propLastUsedFilter.setString(FilterList.getInstance().getDefaultFilter().getName());
+      Settings.propLastUsedFilter.setString(FilterManagerImpl.getInstance().getDefaultFilter().getName());
     }
   }
 

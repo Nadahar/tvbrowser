@@ -34,6 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import util.settings.ProgramPanelSettings;
 import util.ui.ChannelLabel;
 import util.ui.ProgramPanel;
 import devplugin.Channel;
@@ -85,7 +86,7 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
     } else if (value instanceof Program) {
 
       if (mProgramPanel == null) {
-        mProgramPanel = new ProgramPanel((Program)value, ProgramPanel.X_AXIS, ListViewPlugin.getInstance().getProgramPanelSettings());
+        mProgramPanel = new ProgramPanel((Program)value, ProgramPanel.X_AXIS, new ProgramPanelSettings(ListViewPlugin.getInstance().getPictureSettings(),false));
       }
 
       JPanel rpanel = new JPanel(new BorderLayout());

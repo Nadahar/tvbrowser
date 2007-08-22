@@ -145,7 +145,7 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
   private void setProgram(Program program, boolean showSettings) {
 	  mProgram = program;
 	  addPluginActions(false);
-	  mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc, ProgramInfo.getInstance().getOrder(), getFont(true), getFont(false), ProgramInfo.getInstance().getProgramPanelSettings(), true, ProgramInfo.getInstance().getProperty("zoom","false").compareTo("true") == 0 ? Integer.parseInt(ProgramInfo.getInstance().getProperty("zoomValue","100")):100));
+	  mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc, ProgramInfo.getInstance().getOrder(), getFont(true), getFont(false), ProgramInfo.getInstance().getPictureSettings(), true, ProgramInfo.getInstance().getProperty("zoom","false").compareTo("true") == 0 ? Integer.parseInt(ProgramInfo.getInstance().getProperty("zoomValue","100")):100));
       SwingUtilities.invokeLater(new Runnable() {
           public void run() {
             mInfoEP.setCaretPosition(0);
@@ -423,7 +423,7 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
     }
 
     if (rebuild) {
-      mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc, ProgramInfo.getInstance().getOrder(), getFont(true), getFont(false), ProgramInfo.getInstance().getProgramPanelSettings(), true, ProgramInfo.getInstance().getProperty("zoom","false").compareTo("true") == 0 ? Integer.parseInt(ProgramInfo.getInstance().getProperty("zoomValue","100")):100));
+      mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc, ProgramInfo.getInstance().getOrder(), getFont(true), getFont(false), ProgramInfo.getInstance().getPictureSettings(), true, ProgramInfo.getInstance().getProperty("zoom","false").compareTo("true") == 0 ? Integer.parseInt(ProgramInfo.getInstance().getProperty("zoomValue","100")):100));
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
           mInfoEP.setCaretPosition(0);
@@ -562,8 +562,14 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
   private void resetFunctionGroupInternal() {
     mFunctionGroup = new JTaskPaneGroup();
     mFunctionGroup.setTitle(mLocalizer.msg("functions", "Functions"));
-    mPluginsPane.removeAll();
+    
+    mPluginsPane = new JTaskPane();
     mPluginsPane.add(mFunctionGroup);
+    
+    mActionsPane.setViewportView(mPluginsPane);
+    
+    mFindAsYouType.installKeyListener(mPluginsPane);    
+    mFindAsYouType.installKeyListener(mFunctionGroup);
   }
 
   public static void closeDialog() {
