@@ -219,7 +219,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
           curGroup.chooseMirrors();
         } catch(TvBrowserException e) {
           try {
-            if(!groupsWereAllreadyUpdated) {System.err.println("..XXX...");
+            if(!groupsWereAllreadyUpdated) {
               groupsWereAllreadyUpdated = true;
               downloadChannelGroupFile();
             }
