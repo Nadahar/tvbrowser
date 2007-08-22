@@ -34,6 +34,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 import tvbrowser.core.Settings;
+import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 import util.ui.PictureSettingsPanel;
 import util.ui.UiUtilities;
@@ -76,7 +77,7 @@ public class ProgramTextCreator {
    */
   public static String createInfoText(Program prog, ExtendedHTMLDocument doc, 
       Object[] fieldArr, Font tFont, Font bFont, boolean showImage, boolean showHelpLinks) {
-    return createInfoText(prog,doc,fieldArr,tFont,bFont,new ProgramPanelSettings(showImage ? PictureSettingsPanel.SHOW_EVER : PictureSettingsPanel.SHOW_NEVER, -1, -1, false, true, 10),showHelpLinks, 100);
+    return createInfoText(prog,doc,fieldArr,tFont,bFont,new ProgramPanelSettings(showImage ? ProgramPanelSettings.SHOW_PICTURES_EVER : ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, false, true, 10),showHelpLinks, 100);
   }
   
   /**
@@ -105,6 +106,32 @@ public class ProgramTextCreator {
     return createInfoText(prog,doc,fieldArr,tFont,bFont,settings,showHelpLinks, zoom, true);
   }
 
+  /**
+   * 
+   * @param prog
+   *          The Program to show
+   * @param doc
+   *          The HTMLDocument.
+   * @param fieldArr
+   *          The object array with the field types.
+   * @param tFont
+   *          The title Font.
+   * @param bFont
+   *          The body Font.
+   * @param settings 
+   *          Settings of the ProgramPanel 
+   * @param showHelpLinks
+   *          Show the Help-Links (Quality of Data, ShowView)
+   * @param zoom The zoom value for the picture.
+   * @return The html String.
+   * @since 2.6
+   */
+  public static String createInfoText(Program prog, ExtendedHTMLDocument doc, 
+      Object[] fieldArr, Font tFont, Font bFont, PluginPictureSettings settings, 
+      boolean showHelpLinks, int zoom) {
+    return createInfoText(prog,doc,fieldArr,tFont,bFont,new ProgramPanelSettings(settings,false),showHelpLinks, zoom, true);
+  }
+  
   /**
    * 
    * @param prog

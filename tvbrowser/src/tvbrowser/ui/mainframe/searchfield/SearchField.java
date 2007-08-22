@@ -49,11 +49,12 @@ import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.extras.searchplugin.SearchPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.TvBrowserException;
+import util.settings.PluginPictureSettings;
+import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
 import util.ui.SearchForm;
 import util.ui.SearchFormSettings;
@@ -166,11 +167,11 @@ public class SearchField extends JPanel {
               }
             } else {
               SearchFilter.getInstance().deactivateSearch();
-              MainFrame.getInstance().setProgramFilter(FilterList.getInstance().getDefaultFilter());
+              MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getDefaultFilter());
               mCancelButton.setVisible(false);
             }
           } else {
-            SearchHelper.search(mText, mSearchFormSettings, SearchPlugin.getInstance().getProgramPanelSettings());
+            SearchHelper.search(mText, mSearchFormSettings, new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE),false));
           }
         }
       }
@@ -217,7 +218,7 @@ public class SearchField extends JPanel {
   protected void cancelPressed() {
     mText.setText("");
     SearchFilter.getInstance().deactivateSearch();
-    MainFrame.getInstance().setProgramFilter(FilterList.getInstance().getDefaultFilter());
+    MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getDefaultFilter());
     mCancelButton.setVisible(false);
     mText.focusLost(null);
   }

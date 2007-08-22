@@ -28,18 +28,21 @@ package tvbrowser.extras.favoritesplugin;
 import javax.swing.Icon;
 
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.extras.common.InternalPluginProxyIf;
 
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Marker;
 import devplugin.Program;
+import devplugin.SettingsItem;
+import devplugin.SettingsTab;
 
 /**
  * Encapsulates the FavoritesPlugin and manages the access to it.
  *
  * @author René Mach
  */
-public class FavoritesPluginProxy implements ContextMenuIf, Marker {
+public class FavoritesPluginProxy implements ContextMenuIf, Marker, InternalPluginProxyIf {
   
   private static FavoritesPluginProxy mInstance;
   private Icon mMarkIcon;
@@ -83,5 +86,25 @@ public class FavoritesPluginProxy implements ContextMenuIf, Marker {
 
   public int getMarkPriorityForProgram(Program p) {
     return FavoritesPlugin.getInstance().getMarkPriority();
+  }
+
+  public Icon getIcon() {
+    return getMarkIcon();
+  }
+
+  public String getName() {
+    return toString();
+  }
+  
+  public String getDescription() {
+    return FavoritesPlugin.mLocalizer.msg("description","Automatically marks your favorite programs and passes them to other Plugins.");
+  }
+
+  public SettingsTab getSettingsTab() {
+    return new FavoritesSettingTab();
+  }
+
+  public String getSettingsId() {
+    return SettingsItem.FAVORITE;
   }
 }

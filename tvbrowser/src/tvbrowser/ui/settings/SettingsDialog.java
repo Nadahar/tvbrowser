@@ -72,22 +72,11 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
-import tvbrowser.extras.favoritesplugin.FavoritesMarkingsSettingsTab;
-import tvbrowser.extras.favoritesplugin.FavoritesPicturesSettingsTab;
-import tvbrowser.extras.favoritesplugin.FavoritesSettingTab;
-import tvbrowser.extras.programinfo.ProgramInfoDesignSettingsTab;
-import tvbrowser.extras.programinfo.ProgramInfoFontSettingsTab;
-import tvbrowser.extras.programinfo.ProgramInfoFunctionsSettingsTab;
-import tvbrowser.extras.programinfo.ProgramInfoOrderSettingsTab;
-import tvbrowser.extras.programinfo.ProgramInfoPicturesSettingsTab;
-import tvbrowser.extras.reminderplugin.ReminderMarkingsSettingsTab;
-import tvbrowser.extras.reminderplugin.ReminderPicturesSettingsTab;
-import tvbrowser.extras.reminderplugin.ReminderSettingsTab;
+import tvbrowser.extras.common.InternalPluginProxyIf;
+import tvbrowser.extras.common.InternalPluginProxyList;
 import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
 import util.ui.Localizer;
-import tvbrowser.extras.searchplugin.SearchPictureSettingsTab;
-import tvbrowser.extras.searchplugin.SearchSettingsTab;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.waiting.dlgs.SettingsWaitingDialog;
 import util.ui.UiUtilities;
@@ -389,6 +378,8 @@ public class SettingsDialog implements WindowClosingIf {
         SettingsItem.PROGRAMTABLELOOK);
     programtableNode.add(appearanceNode);
 
+    generalSettings.add(new SettingNode(new PictureSettingsTab(),
+        SettingsItem.PICTURES));
     generalSettings.add(new SettingNode(new LocaleSettingsTab()));
     generalSettings.add(new SettingNode(new LookAndFeelSettingsTab(),
         SettingsItem.LOOKANDFEEL));
@@ -412,8 +403,7 @@ public class SettingsDialog implements WindowClosingIf {
     programPanelNode.add(new SettingNode(new MarkingsSettingsTab(),
         SettingsItem.PROGRAMPANELMARKING));
 
-    appearanceNode.add(programPanelNode);
-    appearanceNode.add(new SettingNode(new PictureSettingsTab()));
+    appearanceNode.add(programPanelNode);    
     appearanceNode.add(new SettingNode(new ChannelListSettingsTab(),
         SettingsItem.CHANNELLISTLOOK));
     appearanceNode.add(new SettingNode(new FontsSettingsTab()));
@@ -427,46 +417,19 @@ public class SettingsDialog implements WindowClosingIf {
 
     technicalSettings.add(new SettingNode(new WebbrowserSettingsTab(),
         SettingsItem.WEBBROWSER));
-
-    SettingNode search = new SettingNode(new SearchSettingsTab(),
-        SettingsItem.SEARCH);
-    search.add(new SettingNode(new SearchPictureSettingsTab()));
-    root.add(search);
-
-    SettingNode programInfo = new SettingNode(
-        new ProgramInfoOrderSettingsTab(), SettingsItem.PROGRAMINFO);
-    programInfo.add(new SettingNode(new ProgramInfoPicturesSettingsTab()));
-    programInfo.add(new SettingNode(new ProgramInfoFontSettingsTab()));
-    programInfo.add(new SettingNode(new ProgramInfoDesignSettingsTab()));
-    programInfo.add(new SettingNode(new ProgramInfoFunctionsSettingsTab()));
-
-    root.add(programInfo);
-
-    SettingNode favoritesNode = new SettingNode(new FavoritesSettingTab(),
-        SettingsItem.FAVORITE);
-    favoritesNode.add(new SettingNode(new FavoritesPicturesSettingsTab()));
-    favoritesNode.add(new SettingNode(new FavoritesMarkingsSettingsTab()));
-
-    root.add(favoritesNode);
-
-    SettingNode reminderNode = new SettingNode(new ReminderSettingsTab(),
-        SettingsItem.REMINDER);
-    reminderNode.add(new SettingNode(new ReminderPicturesSettingsTab()));
-    reminderNode.add(new SettingNode(new ReminderMarkingsSettingsTab()));
-
-    root.add(reminderNode);
-
+    
     // Plugins
     mPluginSettingsNode = new SettingNode(new PluginSettingsTab(this),
         SettingsItem.PLUGINS);
     root.add(mPluginSettingsNode);
-
+    
     createPluginTreeItems(false);
 
     // TVDataServices
     node = new SettingNode(new DataServiceSettingsTab(),
         SettingsItem.TVDATASERVICES);
     root.add(node);
+    
     Comparator<TvDataServiceProxy> comp = new Comparator<TvDataServiceProxy>() {
 
       public int compare(TvDataServiceProxy proxy1, TvDataServiceProxy proxy2) {
@@ -492,9 +455,23 @@ public class SettingsDialog implements WindowClosingIf {
   private void createPluginTreeItems(boolean refresh) {
     mPluginSettingsNode.removeAllChildren();
 
+    /* Add base plugins */
+    InternalPluginProxyIf[] internalPluginProxies = InternalPluginProxyList.getInstance().getAvailableProxys();
+    Arrays.sort(internalPluginProxies, new Comparator<InternalPluginProxyIf>() {
+      public int compare(InternalPluginProxyIf o1, InternalPluginProxyIf o2) {
+        return o1.getName().compareToIgnoreCase(o2.getName());
+      }
+    });
+    
+    for(InternalPluginProxyIf internalPluginProxy : internalPluginProxies) {
+      mPluginSettingsNode.add(new SettingNode(internalPluginProxy.getSettingsTab(),
+          internalPluginProxy.getSettingsId()));
+    }
+    
     PluginProxy[] pluginArr = PluginProxyManager.getInstance().getAllPlugins();
 
     ArrayList<SettingNode> nodeList = new ArrayList<SettingNode>();
+    
     for (PluginProxy plugin : pluginArr) {
       ConfigPluginSettingsTab tab = new ConfigPluginSettingsTab(plugin);
       nodeList.add(new SettingNode(tab, plugin.getId()));
@@ -504,7 +481,7 @@ public class SettingsDialog implements WindowClosingIf {
     Arrays.sort(nodes, new Comparator<SettingNode>() {
 
       public int compare(SettingNode o1, SettingNode o2) {
-        return o1.getSettingsTab().getTitle().compareTo(
+        return o1.getSettingsTab().getTitle().compareToIgnoreCase(
             o2.getSettingsTab().getTitle());
       }
     });

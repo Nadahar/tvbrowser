@@ -28,6 +28,7 @@ package tvbrowser.extras.reminderplugin;
 import javax.swing.Icon;
 
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.extras.common.InternalPluginProxyIf;
 
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
@@ -35,6 +36,8 @@ import devplugin.Marker;
 import devplugin.Program;
 import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
+import devplugin.SettingsItem;
+import devplugin.SettingsTab;
 
 /**
  * Encapsulates the Reminder and manages the access to it.
@@ -42,7 +45,7 @@ import devplugin.ProgramReceiveTarget;
  * @author René Mach
  * @since 2.5
  */
-public class ReminderPluginProxy implements ContextMenuIf, ProgramReceiveIf, Marker {
+public class ReminderPluginProxy implements ContextMenuIf, ProgramReceiveIf, Marker, InternalPluginProxyIf {
 
   private static ReminderPluginProxy mInstance;
   private Icon mMarkIcon;
@@ -109,5 +112,25 @@ public class ReminderPluginProxy implements ContextMenuIf, ProgramReceiveIf, Mar
 
   public int getMarkPriorityForProgram(Program p) {
     return ReminderPlugin.getInstance().getMarkPriority();
+  }
+
+  public String getDescription() {
+    return ReminderPlugin.mLocalizer.msg("description","The reminder function of TV-Browser.");
+  }
+
+  public Icon getIcon() {
+    return getMarkIcon();
+  }
+
+  public String getName() {
+    return toString();
+  }
+
+  public SettingsTab getSettingsTab() {
+    return new ReminderSettingsTab();
+  }
+
+  public String getSettingsId() {
+    return SettingsItem.REMINDER;
   }
 }

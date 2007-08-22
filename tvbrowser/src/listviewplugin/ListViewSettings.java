@@ -30,10 +30,10 @@ import java.util.Properties;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
-import util.ui.PictureSettingsPanel;
+import util.ui.PluginsPictureSettingsPanel;
 
+import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -53,7 +53,8 @@ public class ListViewSettings implements SettingsTab {
   /** Checkbox for showing at startup*/
   private JCheckBox mShowAtStart;
   /** Picture settings */
-  private PictureSettingsPanel mPictureSettings;
+  private PluginsPictureSettingsPanel mPictureSettings;
+  
   /**
    * Create the SettingsTab
    * @param settings Settings
@@ -67,21 +68,18 @@ public class ListViewSettings implements SettingsTab {
    */
   public JPanel createSettingsPanel() {    
     JPanel panel = new JPanel();
-    panel.setLayout(new FormLayout("5dlu,default:grow", "5dlu,default,10dlu,fill:default:grow"));
+    panel.setLayout(new FormLayout("5dlu,default:grow", "5dlu,default,10dlu,pref,5dlu,fill:default:grow"));
     
     CellConstraints cc = new CellConstraints();
     
     mShowAtStart = new JCheckBox(mLocalizer.msg("showAtStart", "Show at startup"));
     mShowAtStart.setSelected(mSettings.getProperty("showAtStartup", "false").equals("true"));    
 
-    mPictureSettings = new PictureSettingsPanel(ListViewPlugin.getInstance().getProgramPanelSettings(),true,false);
-    
-    JScrollPane pictures = new JScrollPane(mPictureSettings);
-    pictures.setBorder(null);
-    pictures.setViewportBorder(null);
+    mPictureSettings = new PluginsPictureSettingsPanel(ListViewPlugin.getInstance().getPictureSettings(), false);
     
     panel.add(mShowAtStart, cc.xy(2,2));
-    panel.add(pictures, cc.xyw(1,4,2));
+    panel.add(DefaultComponentFactory.getInstance().createSeparator(PluginsPictureSettingsPanel.getTitle()), cc.xyw(1,4,2));
+    panel.add(mPictureSettings, cc.xy(2,6));
         
     return panel;
   }
@@ -91,26 +89,7 @@ public class ListViewSettings implements SettingsTab {
    */
   public void saveSettings() {
     mSettings.setProperty("showAtStartup", String.valueOf(mShowAtStart.isSelected()));
-    
-    mSettings.setProperty("pictureType", String.valueOf(mPictureSettings.getPictureShowingType()));
-    mSettings.setProperty("pictureTimeRangeStart", String.valueOf(mPictureSettings.getPictureTimeRangeStart()));
-    mSettings.setProperty("pictureTimeRangeEnd", String.valueOf(mPictureSettings.getPictureTimeRangeEnd()));
-    mSettings.setProperty("pictureShowsDescription", String.valueOf(mPictureSettings.getPictureIsShowingDescription()));
-    mSettings.setProperty("pictureDuration", String.valueOf(mPictureSettings.getPictureDurationTime()));
-    
-    if(PictureSettingsPanel.typeContainsType(mPictureSettings.getPictureShowingType(),PictureSettingsPanel.SHOW_FOR_PLUGINS)) {
-      StringBuffer temp = new StringBuffer();
-      
-      String[] plugins = mPictureSettings.getClientPluginIds();
-      
-      for(int i = 0; i < plugins.length; i++)
-        temp.append(plugins[i]).append(";;");
-      
-      if(temp.toString().endsWith(";;"))
-        temp.delete(temp.length()-2,temp.length());
-      
-      mSettings.setProperty("picturePlugins", temp.toString());
-    }
+    mSettings.setProperty("pictureSettigns", String.valueOf(mPictureSettings.getSettings().getType()));
   }
 
   /**

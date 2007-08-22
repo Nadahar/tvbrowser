@@ -43,7 +43,7 @@ import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.ProgramTable;
 import util.exc.ErrorHandler;
 import util.program.ProgramTextCreator;
-import util.settings.ProgramPanelSettings;
+import util.settings.PluginPictureSettings;
 import util.ui.UiUtilities;
 
 import com.l2fprod.common.swing.plaf.LookAndFeelAddons;
@@ -364,8 +364,8 @@ public class ProgramInfo {
     return DATAFILE_PREFIX;
   }
   
-  protected ProgramPanelSettings getProgramPanelSettings() {
-    return new ProgramPanelSettings(Integer.parseInt(mSettings.getProperty("pictureType","1")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeStart","1080")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeEnd","1380")), false, mSettings.getProperty("pictureShowsDescription","true").compareTo("true") == 0, Integer.parseInt(mSettings.getProperty("pictureDuration","10")), mSettings.getProperty("clientPlugins","").split(";;"));
+  protected PluginPictureSettings getPictureSettings() {
+    return new PluginPictureSettings(Integer.parseInt(mSettings.getProperty("pictureSettings",String.valueOf(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE))));
   }
   
   protected void saveSizeAndLocation(Dimension size, Point location) {

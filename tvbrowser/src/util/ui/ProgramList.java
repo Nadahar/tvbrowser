@@ -38,6 +38,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 
 import devplugin.ContextMenuIf;
@@ -61,7 +62,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
      */
     public ProgramList(Vector<Program> programArr) {
         super(programArr);
-        setCellRenderer(new ProgramListCellRenderer());
+        setCellRenderer(new ProgramListCellRenderer(new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false)));
     }
 
     /**
@@ -71,7 +72,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
      */
     public ProgramList(Program[] programArr) {
         super(programArr);
-        setCellRenderer(new ProgramListCellRenderer());
+        setCellRenderer(new ProgramListCellRenderer(new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false)));
     }
 
     /**
@@ -82,7 +83,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
     public ProgramList(ListModel programs) {
         super(programs);
         programs.addListDataListener(this);
-        setCellRenderer(new ProgramListCellRenderer());
+        setCellRenderer(new ProgramListCellRenderer(new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false)));
     }
     
     /**
@@ -96,7 +97,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
      * @deprecated Since 2.2.2 Use {@link #ProgramList(Vector, ProgramPanelSettings)} instead.
      */
     public ProgramList(Vector<Program> programArr, boolean showOnlyDateAndTitle) {
-      this(programArr, new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, showOnlyDateAndTitle, true, 10));
+      this(programArr, new ProgramPanelSettings(ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, showOnlyDateAndTitle, true, 10));
     }
 
     /**
@@ -110,7 +111,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
      * @deprecated Since 2.2.2 Use {@link #ProgramList(Program[], ProgramPanelSettings)} instead.  
      */
     public ProgramList(Program[] programArr, boolean showOnlyDateAndTitle) {
-      this(programArr, new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, showOnlyDateAndTitle, true, 10));
+      this(programArr, new ProgramPanelSettings(ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, showOnlyDateAndTitle, true, 10));
     }
 
     /**
@@ -124,7 +125,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
      * @deprecated Since 2.2.2 Use {@link #ProgramList(ListModel, ProgramPanelSettings)} instead.
      */
     public ProgramList(ListModel programs, boolean showOnlyDateAndTitle) {
-        this(programs, new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, showOnlyDateAndTitle, true, 10));
+        this(programs, new ProgramPanelSettings(ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, showOnlyDateAndTitle, true, 10));
     }
 
     /**
@@ -133,20 +134,20 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
      * @param programVector Array of Programs to show
      * @param settings The settings for the program panel.
      *          
-     * @since 2.2.2  
+     * @since 2.2.2
      */
     public ProgramList(Vector<Program> programVector, ProgramPanelSettings settings) {
         super(programVector);
         setCellRenderer(new ProgramListCellRenderer(settings));
     }
-
+    
     /**
      * Creates the JList and adds the default MouseListeners (PopUpBox)
      *
      * @param programArr Array of Programs to show
      * @param settings The settings for the program panel.
      *          
-     * @since 2.2.2  
+     * @since 2.2.2
      */
     public ProgramList(Program[] programArr, ProgramPanelSettings settings) {
         super(programArr);
@@ -171,8 +172,63 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
         super(programs);
         programs.addListDataListener(this);
         setCellRenderer(new ProgramListCellRenderer(settings, axis));
-	}
+    }
 
+    
+    /**
+     * Creates the JList and adds the default MouseListeners (PopUpBox)
+     *
+     * @param programVector Array of Programs to show
+     * @param settings The plugin picture settings for the program panel.
+     *          
+     * @since 2.6
+     */
+    public ProgramList(Vector<Program> programVector, PluginPictureSettings settings) {
+        super(programVector);
+        setCellRenderer(new ProgramListCellRenderer(new ProgramPanelSettings(settings,false)));
+    }
+    
+    /**
+     * Creates the JList and adds the default MouseListeners (PopUpBox)
+     *
+     * @param programArr Array of Programs to show
+     * @param settings The plugin picture settings for the program panel.
+     *          
+     * @since 2.6
+     */
+    public ProgramList(Program[] programArr, PluginPictureSettings settings) {
+        super(programArr);
+        setCellRenderer(new ProgramListCellRenderer(new ProgramPanelSettings(settings,false)));
+    }
+
+    /**
+     * Creates the JList and adds the default MouseListeners (PopUpBox)
+     *
+     * @param programs Model with Programs to show
+     * @param settings The plugin picture settings for the program panel.
+     *         
+     * @since 2.6  
+     */
+    public ProgramList(ListModel programs, PluginPictureSettings settings) {
+        super(programs);
+        programs.addListDataListener(this);
+        setCellRenderer(new ProgramListCellRenderer(new ProgramPanelSettings(settings,false)));
+    }
+
+    /**
+     * Creates the JList and adds the default MouseListeners (PopUpBox)
+     *
+     * @param programs Model with Programs to show
+     * @param settings The plugin picture settings for the program panel.
+     * @param axis The orientation of the progress bar.
+     */
+    public ProgramList(ListModel programs, PluginPictureSettings settings, int axis) {
+        super(programs);
+        programs.addListDataListener(this);
+        setCellRenderer(new ProgramListCellRenderer(new ProgramPanelSettings(settings,false), axis));
+    }
+
+    
 	/**
      * Add a ChangeListener to all Programs for repainting
      */

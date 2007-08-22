@@ -134,6 +134,15 @@ public class FilterManagerImpl implements FilterManager {
   }
   
   /**
+   * Gets the "ShowAll" filter of the program table.
+   * 
+   * @return The "ShowAll" filter of the program table.
+   */
+  public ProgramFilter getAllFilter() {
+    return FilterList.getInstance().getAllFilter();
+  }
+  
+  /**
    * Tests if the filter is a plugin filter.
    * 
    * @param filter The filter to test.

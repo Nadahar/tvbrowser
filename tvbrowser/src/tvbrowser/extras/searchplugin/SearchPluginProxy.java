@@ -23,16 +23,22 @@
  */
 package tvbrowser.extras.searchplugin;
 
+import javax.swing.Icon;
+
+import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.extras.common.InternalPluginProxyIf;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Program;
+import devplugin.SettingsItem;
+import devplugin.SettingsTab;
 
 /**
  * Encapsulates the SearchPlugin and manages the access to it.
  *
  * @author René Mach
  */
-public class SearchPluginProxy implements ContextMenuIf {
+public class SearchPluginProxy implements ContextMenuIf, InternalPluginProxyIf {
   
   private static SearchPluginProxy mInstance;
 
@@ -60,6 +66,26 @@ public class SearchPluginProxy implements ContextMenuIf {
   
   public String toString() {
     return SearchPlugin.getInstance().toString();
+  }
+
+  public String getDescription() {
+    return SearchPlugin.mLocalizer.msg("description", "Allows searching programs containing a certain text.");
+  }
+
+  public Icon getIcon() {
+    return IconLoader.getInstance().getIconFromTheme("actions", "system-search", 16);
+  }
+
+  public String getName() {
+    return toString();
+  }
+
+  public SettingsTab getSettingsTab() {
+    return new SearchSettingsTab();
+  }
+
+  public String getSettingsId() {
+    return SettingsItem.SEARCH;
   }
 
 }

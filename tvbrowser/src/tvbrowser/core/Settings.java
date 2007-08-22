@@ -45,14 +45,15 @@ import util.settings.EncodedStringProperty;
 import util.settings.FontProperty;
 import util.settings.IntArrayProperty;
 import util.settings.IntProperty;
+import util.settings.PluginPictureSettings;
 import util.settings.ProgramFieldTypeArrayProperty;
+import util.settings.ProgramPanelSettings;
 import util.settings.Property;
 import util.settings.PropertyManager;
 import util.settings.StringArrayProperty;
 import util.settings.StringProperty;
 import util.settings.VersionProperty;
 import util.ui.Localizer;
-import util.ui.PictureSettingsPanel;
 import util.ui.view.SplitViewProperty;
 
 import javax.swing.JFrame;
@@ -1036,7 +1037,7 @@ public class Settings {
       mProp, "network.checkTimeout", 10000);
 
   public static final IntProperty propPictureType = new IntProperty(
-      mProp, "pictures.type", PictureSettingsPanel.SHOW_IN_TIME_RANGE);
+      mProp, "pictures.type", ProgramPanelSettings.SHOW_PICTURES_IN_TIME_RANGE);
   
   public static final StringArrayProperty propPicturePluginIds = new StringArrayProperty(
       mProp, "pictures.pluginIds", new String[0]);
@@ -1212,5 +1213,9 @@ public class Settings {
   public static final StringProperty propLastUsedSettingsPath = new StringProperty(mProp, "lastUsedSettingsTabClassName", "#channels");
   public static final int MAX_COLUMN_WIDTH = 300;
   public static final int MIN_COLUMN_WIDTH = 60;
+  
+  /** The setting that contains the global picture settings value */
+  public static final IntProperty propPluginsPictureSetting = new IntProperty(
+      mProp, "pluginsPictureSetting", PluginPictureSettings.PICTURE_AND_DISCRIPTION_TYPE);
   
 }

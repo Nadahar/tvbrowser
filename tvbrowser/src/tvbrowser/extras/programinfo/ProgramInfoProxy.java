@@ -25,16 +25,22 @@
  */
 package tvbrowser.extras.programinfo;
 
+import javax.swing.Icon;
+
+import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.extras.common.InternalPluginProxyIf;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Program;
+import devplugin.SettingsItem;
+import devplugin.SettingsTab;
 
 /**
  * Encapsulates the ProgramInfo and manages the access to it.
  *
  * @author René Mach
  */
-public class ProgramInfoProxy implements ContextMenuIf {
+public class ProgramInfoProxy implements ContextMenuIf, InternalPluginProxyIf {
   
   private static ProgramInfoProxy mInstance;
   
@@ -62,5 +68,25 @@ public class ProgramInfoProxy implements ContextMenuIf {
   
   public String toString() {
     return ProgramInfo.getInstance().toString();
+  }
+
+  public String getDescription() {
+    return ProgramInfo.mLocalizer.msg("description","Shows details about a program.");
+  }
+
+  public Icon getIcon() {
+    return IconLoader.getInstance().getIconFromTheme("actions", "edit-find", 16);
+  }
+
+  public String getName() {
+    return toString();
+  }
+
+  public String getSettingsId() {
+    return SettingsItem.PROGRAMINFO;
+  }
+
+  public SettingsTab getSettingsTab() {
+    return new ProgramInfoOrderSettingsTab();
   }
 }

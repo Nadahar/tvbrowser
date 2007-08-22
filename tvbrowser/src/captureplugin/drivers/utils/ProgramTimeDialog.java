@@ -145,7 +145,7 @@ public class ProgramTimeDialog extends JDialog {
         namePanel.setBorder(BorderFactory.createTitledBorder(Localizer.getLocalization(Localizer.I18N_PROGRAM)));
         namePanel.setLayout(new BorderLayout());
 
-        ProgramPanel p = new ProgramPanel(mPrgTime.getProgram(), CapturePlugin.getInstance().getProgramPanelSettings());
+        ProgramPanel p = new ProgramPanel(mPrgTime.getProgram());
         p.addPluginContextMenuMouseListener(CapturePlugin.getInstance());
         
         namePanel.add(p);

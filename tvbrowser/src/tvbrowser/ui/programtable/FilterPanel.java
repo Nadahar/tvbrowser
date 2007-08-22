@@ -13,7 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
-import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.ui.mainframe.MainFrame;
 
 import devplugin.ProgramFilter;
@@ -49,7 +49,7 @@ public class FilterPanel extends JPanel {
     
     deactivate.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
-        MainFrame.getInstance().setProgramFilter(FilterList.getInstance().getDefaultFilter());
+        MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getDefaultFilter());
       };
     });
     

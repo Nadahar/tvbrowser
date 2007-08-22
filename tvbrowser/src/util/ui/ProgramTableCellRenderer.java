@@ -34,6 +34,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 
 import devplugin.Program;
@@ -58,7 +59,17 @@ public class ProgramTableCellRenderer extends DefaultTableCellRenderer {
      * Creates the Renderer
      */
     public ProgramTableCellRenderer() {
-      this(new ProgramPanelSettings(PictureSettingsPanel.SHOW_NEVER, -1, -1, false, true, 10));
+      this(new ProgramPanelSettings(ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, false, true, 10));
+    }
+    
+    /**
+     * Creates the Renderer
+     * 
+     * @param settings The settings to be used for this Renderer
+     * @since 2.6
+     */
+    public ProgramTableCellRenderer(PluginPictureSettings settings) {
+      this(new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE),false));      
     }
     
     /**

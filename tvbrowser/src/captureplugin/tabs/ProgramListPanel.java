@@ -29,6 +29,7 @@ import captureplugin.CapturePluginData;
 import captureplugin.drivers.DeviceIf;
 import captureplugin.utils.ProgramTimeComparator;
 import devplugin.Program;
+import util.settings.PluginPictureSettings;
 import util.ui.Localizer;
 import util.ui.ProgramTableCellRenderer;
 import util.ui.UiUtilities;
@@ -111,7 +112,7 @@ public class ProgramListPanel extends JPanel {
 
         mProgramTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         mProgramTable.getColumnModel().getColumn(0).setCellRenderer(new DeviceTableCellRenderer());
-        mProgramTable.getColumnModel().getColumn(1).setCellRenderer(new ProgramTableCellRenderer(CapturePlugin.getInstance().getProgramPanelSettings()));
+        mProgramTable.getColumnModel().getColumn(1).setCellRenderer(new ProgramTableCellRenderer(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE)));
 
         mProgramTable.addMouseListener(new MouseAdapter() {
 

@@ -39,10 +39,8 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
-import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
-import tvbrowser.extras.programinfo.ProgramInfoProxy;
-import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
-import tvbrowser.extras.searchplugin.SearchPluginProxy;
+import tvbrowser.extras.common.InternalPluginProxyIf;
+import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.menu.MenuUtil;
 import devplugin.ActionMenu;
@@ -126,15 +124,10 @@ public class ContextMenuManager {
     if(plugin != null)
       return plugin;
     else if (id != null){
-      if(id.compareTo(SearchPluginProxy.getInstance().getId()) == 0 || 
-          id.compareTo("java.searchplugin.SearchPlugin") == 0)
-        return SearchPluginProxy.getInstance();
-      if(id.compareTo(ProgramInfoProxy.getInstance().getId()) == 0)
-        return ProgramInfoProxy.getInstance();
-      else if(id.compareTo(FavoritesPluginProxy.getInstance().getId()) == 0)
-        return FavoritesPluginProxy.getInstance();
-      else if(id.compareTo(ReminderPluginProxy.getInstance().getId()) == 0)
-        return ReminderPluginProxy.getInstance();      
+      InternalPluginProxyIf internalPlugin = InternalPluginProxyList.getInstance().getProxyForId(id);
+      if(internalPlugin != null && internalPlugin instanceof ContextMenuIf) {
+        return (ContextMenuIf)internalPlugin;
+      }
       else if(id.compareTo(ConfigMenuItem.CONFIG) == 0) 
         return ConfigMenuItem.getInstance();
       else if(id.compareTo(LeaveFullScreenMenuItem.LEAVEFULLSCREEN) == 0) 
@@ -203,19 +196,17 @@ public class ContextMenuManager {
     List<ContextMenuIf> disabledList = getDisabledContextMenuIfs();
     
     ArrayList<ContextMenuIf> ifList = new ArrayList<ContextMenuIf>();
-    
-    SearchPluginProxy search = SearchPluginProxy.getInstance();
-    ProgramInfoProxy info = ProgramInfoProxy.getInstance();
-    FavoritesPluginProxy favorite = FavoritesPluginProxy.getInstance();
-    ReminderPluginProxy reminder = ReminderPluginProxy.getInstance();
-    
+        
     boolean lastWasSeparator = false;
     
     if(order == null) {
-      ifList.add(search);
-      ifList.add(info);
-      ifList.add(favorite);
-      ifList.add(reminder);
+      InternalPluginProxyIf[] internalPluginProxies = InternalPluginProxyList.getInstance().getAvailableProxys();
+      
+      for(InternalPluginProxyIf internalPluginProxy : internalPluginProxies) {
+        if(internalPluginProxy instanceof ContextMenuIf) {
+          ifList.add((ContextMenuIf)internalPluginProxy);
+        }
+      }
 
       for(int i = 0; i < pluginArr.length; i++)
         ifList.add(pluginArr[i]);

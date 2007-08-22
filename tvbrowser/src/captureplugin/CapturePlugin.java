@@ -35,7 +35,6 @@ import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.ThemeIcon;
 import devplugin.Version;
-import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 
@@ -173,7 +172,7 @@ public class CapturePlugin extends devplugin.Plugin {
         String author = "Bodo Tasche, Andreas Hessel";
         String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Capture_Plugin");
 
-        return new PluginInfo(name, desc, author, helpUrl, new Version(2, 13));
+        return new PluginInfo(name, desc, author, helpUrl, new Version(2, 14));
     }
 
     /**
@@ -659,14 +658,6 @@ public class CapturePlugin extends devplugin.Plugin {
      */
     public Frame getSuperFrame() {
       return getParentFrame();
-    }
-    
-    /**
-     * @return The settings for the program panels of the list.
-     * @since 2.06a/2.11
-     */
-    public ProgramPanelSettings getProgramPanelSettings() {
-      return new ProgramPanelSettings(Integer.parseInt(mSettings.getProperty("pictureType","2")),Integer.parseInt(mSettings.getProperty("pictureTimeRangeStart","1080")),Integer.parseInt(mSettings.getProperty("pictureTimeRangeEnd","1380")),false,mSettings.getProperty("pictureShowsDescription","true").compareTo("true") == 0,Integer.parseInt(mSettings.getProperty("pictureDuration","10")),mSettings.getProperty("picturePlugins","").split(";;"));
     }
     
     public int getMarkPriorityForProgram(Program p) {

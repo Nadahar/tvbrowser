@@ -32,6 +32,7 @@ import com.jgoodies.forms.layout.Sizes;
 import devplugin.Channel;
 import devplugin.PluginManager;
 import tvbrowser.core.ChannelList;
+import util.settings.PluginPictureSettings;
 import util.ui.ChannelListCellRenderer;
 import util.ui.Localizer;
 import util.ui.SearchFormSettings;
@@ -212,7 +213,7 @@ public class RepetitionDialog extends JDialog implements WindowClosingIf {
         }
 
 
-        SearchHelper.search(getParent(), settings, SearchPlugin.getInstance().getProgramPanelSettings());
+        SearchHelper.search(getParent(), new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), settings);
     }
 
     /**

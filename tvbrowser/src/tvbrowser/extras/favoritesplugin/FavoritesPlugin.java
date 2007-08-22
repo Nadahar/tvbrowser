@@ -71,7 +71,6 @@ import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
-import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.NullProgressMonitor;
@@ -780,14 +779,6 @@ public class FavoritesPlugin {
    */
   public Properties getSettings() {
     return mSettings;
-  }
-  
-  /**
-   * @return The program panel settings for the program list.
-   * @since 2.2.2
-   */
-  public ProgramPanelSettings getProgramPanelSettings() {
-    return new ProgramPanelSettings(Integer.parseInt(mSettings.getProperty("pictureType","0")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeStart","1080")), Integer.parseInt(mSettings.getProperty("pictureTimeRangeEnd","1380")), false, mSettings.getProperty("pictureShowsDescription","true").compareTo("true") == 0, Integer.parseInt(mSettings.getProperty("pictureDuration","10")), mSettings.getProperty("picturePlugins","").split(";;"));
   }
   
   /**

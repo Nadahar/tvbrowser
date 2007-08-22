@@ -64,6 +64,7 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.ui.DefaultMarkingPrioritySelectionPanel;
 import util.ui.ExtensionFileFilter;
 import util.ui.FileCheckBox;
 import util.ui.PluginChooserDlg;
@@ -105,6 +106,9 @@ public class ReminderSettingsTab implements SettingsTab {
 
   private JLabel mPluginLabel;
   private ProgramReceiveTarget[] mClientPluginTargets;
+  
+  private DefaultMarkingPrioritySelectionPanel mMarkingsPanel;
+  
   /**
    * Constructor.
    */
@@ -119,7 +123,7 @@ public class ReminderSettingsTab implements SettingsTab {
     FormLayout layout = new FormLayout("5dlu,pref,5dlu,pref,pref:grow,3dlu,pref,3dlu,pref,5dlu",
         "pref,5dlu,pref,1dlu,pref,1dlu,pref,1dlu,pref,10dlu,pref,5dlu," +
         "pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu," +
-        "pref,5dlu,pref,3dlu,pref");
+        "pref,5dlu,pref,3dlu,pref,10dlu,pref,5dlu,pref");
     layout.setColumnGroups(new int[][] {{7,9}});
     PanelBuilder pb = new PanelBuilder(layout, new ScrollableJPanel());
     pb.setDefaultDialogBorder();    
@@ -283,6 +287,9 @@ public class ReminderSettingsTab implements SettingsTab {
     pb.addSeparator(mLocalizer.msg("miscSettings","Misc settings"), cc.xyw(1,23,10));    
     pb.add(mShowTimeSelectionDlg, cc.xyw(2,25,7));
     pb.add(mShowRemovedDlg, cc.xyw(2,27,7));
+    
+    pb.addSeparator(DefaultMarkingPrioritySelectionPanel.getTitle(), cc.xyw(1,29,10));
+    pb.add(mMarkingsPanel = DefaultMarkingPrioritySelectionPanel.createPanel(ReminderPlugin.getInstance().getMarkPriority(),false,false),cc.xyw(2,31,9));
     
     mReminderWindowChB.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
@@ -491,6 +498,8 @@ public class ReminderSettingsTab implements SettingsTab {
     
     mSettings.setProperty("showTimeCounter", String.valueOf(!mCloseNever.isSelected() && mShowTimeCounter.isSelected()));
     mSettings.setProperty("alwaysOnTop", String.valueOf(mShowAlwaysOnTop.isSelected()));
+    
+    ReminderPlugin.getInstance().setMarkPriority(mMarkingsPanel.getSelectedPriority());
     
     new Thread("Save reminders") {
       public void run() {
