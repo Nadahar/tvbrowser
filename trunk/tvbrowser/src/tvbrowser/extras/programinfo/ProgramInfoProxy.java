@@ -87,6 +87,6 @@ public class ProgramInfoProxy implements ContextMenuIf, InternalPluginProxyIf {
   }
 
   public SettingsTab getSettingsTab() {
-    return new ProgramInfoOrderSettingsTab();
+    return new ProgramInfoSettingsTab();
   }
 }
