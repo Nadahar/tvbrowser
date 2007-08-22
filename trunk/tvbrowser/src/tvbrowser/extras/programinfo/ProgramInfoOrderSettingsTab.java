@@ -135,7 +135,7 @@ public class ProgramInfoOrderSettingsTab implements SettingsTab {
     });
     
     CellConstraints cc = new CellConstraints();
-    PanelBuilder formatPanelBuilder = new PanelBuilder(new FormLayout("5dlu,10dlu,pref,pref,pref:grow,5dlu",
+    PanelBuilder formatPanelBuilder = new PanelBuilder(new FormLayout("5dlu,10dlu,pref,pref,default:grow,5dlu",
         "pref,5dlu,pref,pref,pref,pref,10dlu,pref,5dlu,pref" +
         ",10dlu,pref,5dlu,pref,pref"));
     formatPanelBuilder.setDefaultDialogBorder();
@@ -219,7 +219,7 @@ public class ProgramInfoOrderSettingsTab implements SettingsTab {
       }
     });
         
-    PanelBuilder builder = new PanelBuilder(new FormLayout("5dlu,pref:grow,5dlu",
+    PanelBuilder builder = new PanelBuilder(new FormLayout("5dlu,default:grow,5dlu",
         "default,5dlu,default,5dlu,default,10dlu,default,5dlu,fill:default:grow"));
     builder.setDefaultDialogBorder();
 
@@ -258,7 +258,7 @@ public class ProgramInfoOrderSettingsTab implements SettingsTab {
       }
     });
     
-    FormLayout layout = new FormLayout("pref,pref:grow,pref","pref");
+    FormLayout layout = new FormLayout("default,default:grow,default","pref");
     layout.setColumnGroups(new int[][] {{1,3}});
     JPanel buttonPn = new JPanel(layout);
     buttonPn.add(previewBtn, cc.xy(3,1));
