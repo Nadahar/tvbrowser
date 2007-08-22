@@ -70,7 +70,7 @@ public class CapturePluginPanel extends JPanel {
         mTabPane.addTab(mLocalizer.msg("ProgramList", "Programlist"), new ProgramListPanel(owner, data));
         mTabPane.addTab(mLocalizer.msg("Devices", "Devices"), new DevicePanel(owner, data));
         
-        mMarkingPriorityPanel = DefaultMarkingPrioritySelectionPanel.createPanel(data.getMarkPriority(),true,true);
+        mMarkingPriorityPanel = DefaultMarkingPrioritySelectionPanel.createPanel(data.getMarkPriority(),false,true);
         mTabPane.addTab(DefaultMarkingPrioritySelectionPanel.getTitle(), mMarkingPriorityPanel);
 
         this.add(mTabPane, BorderLayout.CENTER);        
