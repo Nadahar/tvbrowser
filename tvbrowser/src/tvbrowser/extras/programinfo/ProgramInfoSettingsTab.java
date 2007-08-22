@@ -167,7 +167,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     
     formatPanelBuilder.addSeparator(ProgramInfoDialog.mLocalizer.msg("functions","Functions"), cc.xyw(1,12,6));
     formatPanelBuilder.add(mShowFunctions, cc.xyw(2,14,5));
-    formatPanelBuilder.add(mShowTextSearchButton, cc.xy(3,15));
+    formatPanelBuilder.add(mShowTextSearchButton, cc.xyw(3,15,4));
     
     mOldOrder = ProgramInfo.getInstance().getProperty("order", "");
     mOldSetupState = ProgramInfo.getInstance().getProperty("setupwasdone","false");        
