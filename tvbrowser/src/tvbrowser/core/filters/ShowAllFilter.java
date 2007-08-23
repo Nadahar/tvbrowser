@@ -26,6 +26,8 @@
 
 package tvbrowser.core.filters;
 
+import devplugin.ProgramFilter;
+
 public class ShowAllFilter implements devplugin.ProgramFilter {
     
   private static final util.ui.Localizer mLocalizer
@@ -45,4 +47,11 @@ public class ShowAllFilter implements devplugin.ProgramFilter {
     return mLocalizer.msg("ShowAll","Show all");
   }
    
+  public boolean equals(Object o) {
+    if(o instanceof ProgramFilter) {
+      return getClass().getName().equals(o.getClass().getName()) && getName().equals(((ProgramFilter)o).getName());
+    }
+    
+    return false;
+  }
 }

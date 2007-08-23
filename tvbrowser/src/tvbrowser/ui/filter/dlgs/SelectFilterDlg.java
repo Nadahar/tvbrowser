@@ -83,6 +83,8 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
   private DefaultListModel mFilterListModel;
 
   private FilterList mFilterList;
+  
+  private String mDefaultFilterId;
 
   public SelectFilterDlg(JFrame parent) {
 
@@ -91,6 +93,8 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     UiUtilities.registerForClosing(this);
 
     mFilterList = FilterList.getInstance();
+    mDefaultFilterId = Settings.propDefaultFilter.getString();
+    
     mParent = parent;
     JPanel contentPane = (JPanel) getContentPane();
     contentPane.setLayout(new BorderLayout(7, 13));
@@ -199,7 +203,12 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     int inx = mFilterListBox.getSelectedIndex();
     mUpBtn.setEnabled(inx > 0);
     mDownBtn.setEnabled(inx >= 0 && inx < mFilterListModel.getSize() - 1);
-    mDefaultFilterBtn.setEnabled(!(mFilterListBox.getSelectedValue() instanceof SeparatorFilter) && !FilterManagerImpl.getInstance().getDefaultFilter().equals(mFilterListBox.getSelectedValue()));
+    
+    Object filter = mFilterListBox.getSelectedValue();
+    
+    if(filter != null) {
+      mDefaultFilterBtn.setEnabled(!(mFilterListBox.getSelectedValue() instanceof SeparatorFilter) && ((!mDefaultFilterId.equals(filter.getClass().getName() + "###" + ((ProgramFilter)filter).getName())) || mDefaultFilterId.trim().length() < 1 && filter instanceof ShowAllFilter));
+    }
   }
 
   public FilterList getFilterList() {
@@ -235,11 +244,10 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
       mFilterList.setProgramFilterArr(filters);
 
       mFilterList.store();
-      // update main table if a filter is active
-      ProgramFilter currentFilter = FilterManagerImpl.getInstance().getCurrentFilter();
-      if (! currentFilter.equals(FilterManagerImpl.getInstance().getDefaultFilter())) {
-        FilterManagerImpl.getInstance().setCurrentFilter(currentFilter);
-      }
+      
+      Settings.propDefaultFilter.setString(mDefaultFilterId);
+      FilterManagerImpl.getInstance().setCurrentFilter(FilterManagerImpl.getInstance().getCurrentFilter());
+      
       setVisible(false);
     } else if (e.getSource() == mCancelBtn) {
       close();
@@ -247,9 +255,8 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
       mFilterListModel.addElement(new SeparatorFilter());
     } else if (e.getSource() == mDefaultFilterBtn) {
       ProgramFilter filter = ((ProgramFilter)mFilterListBox.getSelectedValue());      
-      Settings.propDefaultFilter.setString(filter.getClass().getName() + "###" + filter.getName());
+      mDefaultFilterId = filter.getClass().getName() + "###" + filter.getName();
       mFilterListBox.updateUI();
-      FilterManagerImpl.getInstance().setCurrentFilter(FilterManagerImpl.getInstance().getCurrentFilter());
       updateBtns();
     }
 
@@ -268,8 +275,14 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
       JLabel tc = (JLabel)super.getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);
       
-      if(value.equals(FilterManagerImpl.getInstance().getDefaultFilter())) {
-        tc.setFont(tc.getFont().deriveFont(Font.BOLD));
+      if(value instanceof ProgramFilter) {
+        String id = value.getClass().getName();
+        String name = ((ProgramFilter)value).getName();
+        
+        if((mDefaultFilterId.equals(id + "###" + name)) ||
+            (mDefaultFilterId.length() < 1 && value instanceof ShowAllFilter)) {
+          tc.setFont(tc.getFont().deriveFont(Font.BOLD));
+        }
       }
       
       return tc;

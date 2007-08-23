@@ -69,5 +69,12 @@ public class SubtitleFilter implements ProgramFilter {
     public String toString() {
         return mLocalizer.msg("Subtitled", "Subtitled");
     }
-
+    
+    public boolean equals(Object o) {
+      if(o instanceof ProgramFilter) {
+        return getClass().getName().equals(o.getClass().getName()) && getName().equals(((ProgramFilter)o).getName());
+      }
+      
+      return false;
+    }
 }

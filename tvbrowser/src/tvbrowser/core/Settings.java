@@ -1220,5 +1220,5 @@ public class Settings {
   
   /** The user selected default filter */
   public static final StringProperty propDefaultFilter = new StringProperty(
-      mProp, "defaultFilter", null);
+      mProp, "defaultFilter", "");
 }
