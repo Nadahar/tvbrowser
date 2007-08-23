@@ -52,6 +52,7 @@ import tvbrowser.TVBrowser;
 import tvbrowser.core.DateListener;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
+import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -707,8 +708,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
           AbstractButton button = (AbstractButton) item
               .getValue(ToolBar.ACTION_VALUE);
           if (item == mFilterAction) {
-            button.setSelected(!MainFrame.getInstance()
-                .isShowAllFilterActivated());
+            button.setSelected(!FilterManagerImpl.getInstance().getCurrentFilter().equals(FilterManagerImpl.getInstance().getDefaultFilter()));
             setFilterButtonSelected(button.isSelected());
           }
           if (item == mGoToDateAction)
