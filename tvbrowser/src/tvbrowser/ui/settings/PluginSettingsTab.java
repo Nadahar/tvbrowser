@@ -26,6 +26,7 @@
 
 package tvbrowser.ui.settings;
 
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,21 +36,23 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import javax.swing.Action;
-import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
 
 import tvbrowser.core.PluginLoader;
 import tvbrowser.core.Settings;
@@ -78,15 +81,15 @@ import devplugin.ActionMenu;
  * @author Martin Oberhauser
  */
 
-public class PluginSettingsTab implements devplugin.SettingsTab {
+public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListener {
   /** Localizer */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(PluginSettingsTab.class);
   /** List of Plugins */
-  private JList mList;
+  private JTable mTable;
   /** Buttons of Panel */
-  private JButton mStartStopBtn, mInfo, mRemove;
+  private JButton mInfo, mRemove;
   /** ListModel with Plugins */
-  private DefaultListModel mListModel;
+  private DefaultTableModel mTableModel;
   /** SettingsDialog */
   private SettingsDialog mSettingsDialog;
 
@@ -117,25 +120,61 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
     contentPanel.add(update, cc.xy(2,1));
     
     contentPanel.add(new JLabel(mLocalizer.msg("installedPlugins","Installed Plugins")+":"), cc.xy(1,1));
+
     
-    mListModel = new DefaultListModel();
-    mList = new JList(mListModel);
-    mList.setCellRenderer(new PluginListCellRenderer());
-    mList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    mList.addListSelectionListener(new ListSelectionListener() {
+    
+    mTableModel = new DefaultTableModel() {
+      public boolean isCellEditable(int row, int column) {
+        if (column == 0) {
+          return true;
+        }
+        return false;
+      }
+
+      @Override
+      public Class<?> getColumnClass(int columnIndex) {
+        if (columnIndex == 0) {
+          return Boolean.class;
+        }
+        return super.getColumnClass(columnIndex);
+      }
+      
+    };
+    mTableModel.setColumnCount(2);
+    mTableModel.setColumnIdentifiers(new String[] {mLocalizer.msg("active","Active"),mLocalizer.msg("plugin","Plugin")});    
+
+    mTable = new JTable(mTableModel);
+    mTable.getTableHeader().setReorderingAllowed(false);
+    mTable.getTableHeader().setResizingAllowed(false);
+    mTable.getColumnModel().getColumn(0).setCellRenderer(PluginTableCellRenderer.getInstance());
+    mTable.getColumnModel().getColumn(1).setCellRenderer(PluginTableCellRenderer.getInstance());
+    mTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    mTable.setRowHeight(40);
+    mTable.setShowVerticalLines(false);
+    mTable.setShowHorizontalLines(false);
+    mTable.getModel().addTableModelListener(this);
+
+    int columnWidth[] = new int[2];
+    for(int i = 0; i < columnWidth.length; i++) {
+      columnWidth[i] =  UiUtilities.getStringWidth(mTable.getFont(),mTableModel.getColumnName(i)) + 10;
+      mTable.getColumnModel().getColumn(i).setPreferredWidth(columnWidth[i]);
+    }
+    mTable.getColumnModel().getColumn(0).setMaxWidth(columnWidth[0]+5);
+    mTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent evt) {
         updateBtns();
       }
     });
 
-    mList.addMouseListener(new MouseAdapter() {
+    mTable.addMouseListener(new MouseAdapter() {
 
        public void mousePressed(MouseEvent e) {
         if (e.isPopupTrigger()) {
-          int index = mList.locationToIndex(e.getPoint());
-          if (index >=0) {
-            mList.setSelectedIndex(index);
-            Object plugin = mList.getModel().getElementAt(index);
+ //         int index = mTable.locationToIndex(e.getPoint());
+          int rowIndex = mTable.getSelectedRow();
+          if (rowIndex >=0) {
+//            mTable.setSelectedIndex(index);
+            Object plugin = mTable.getModel().getValueAt(rowIndex, 1);
             JPopupMenu menu;
             
             if(plugin instanceof PluginProxy) {
@@ -145,17 +184,18 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
               menu = createContextMenu((InternalPluginProxyIf)plugin);
             }
             
-            menu.show(mList, e.getX(),  e.getY());
+            menu.show(mTable, e.getX(),  e.getY());
           }
         }
       }
 
       public void mouseReleased(MouseEvent e) {
         if (e.isPopupTrigger()) {
-          int index = mList.locationToIndex(e.getPoint());
-          if (index >=0) {
-            mList.setSelectedIndex(index);
-            Object plugin = mList.getModel().getElementAt(index);
+//          int index = mTable.locationToIndex(e.getPoint());
+          int rowIndex = mTable.getSelectedRow();
+          if (rowIndex >=0) {
+//            mTable.setSelectedIndex(index);
+            Object plugin = mTable.getModel().getValueAt(rowIndex, 1);
             JPopupMenu menu;
             
             if(plugin instanceof PluginProxy) {
@@ -165,16 +205,16 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
               menu = createContextMenu((InternalPluginProxyIf)plugin);
             }
             
-            menu.show(mList, e.getX(),  e.getY());
+            menu.show(mTable, e.getX(),  e.getY());
           }
         }
       }
        
       public void mouseClicked(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
-           int inx = mList.getSelectedIndex();
-           if (inx >= 0) {
-             PluginProxy item = (PluginProxy)mListModel.getElementAt(inx);
+          int rowIndex = mTable.getSelectedRow();
+           if (rowIndex >= 0) {
+             PluginProxy item = (PluginProxy)mTableModel.getValueAt(rowIndex, 1);
              showInfoDialog(item);
            }
         }
@@ -183,25 +223,17 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
 
     populatePluginList();
     
-    contentPanel.add(new JScrollPane(mList), cc.xyw(1,3,2));
-    
-    mStartStopBtn = new JButton(mLocalizer.msg("activate", ""), IconLoader.getInstance().getIconFromTheme("actions", "view-refresh", 16));
-    mStartStopBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        PluginProxy plugin = (PluginProxy) mList.getSelectedValue();
-        onStartStopBtnClicked(plugin);
-      }
-    });
+    contentPanel.add(new JScrollPane(mTable), cc.xyw(1,3,2));
     
     ButtonBarBuilder builder = new ButtonBarBuilder();
 
     mInfo = new JButton(mLocalizer.msg("info","Info"), IconLoader.getInstance().getIconFromTheme("status", "dialog-information", 16));
     mInfo.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        int inx = mList.getSelectedIndex();
+        int inx = mTable.getSelectedRow();
         if (inx >= 0) {
-          PluginProxy item = (PluginProxy)mListModel.getElementAt(inx);
-          mList.ensureIndexIsVisible(inx);
+          PluginProxy item = (PluginProxy)mTableModel.getValueAt(inx,1);
+//          mTable.ensureIndexIsVisible(inx);
           showInfoDialog(item);
         }
       }
@@ -210,16 +242,15 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
     builder.addGridded(mInfo);
     builder.addRelatedGap();
     builder.addGlue();
-    builder.addFixed(mStartStopBtn);
     builder.addRelatedGap();
     
     mRemove = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16));
     mRemove.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        int inx = mList.getSelectedIndex();
-        if (inx >= 0) {
-          Object item = mListModel.getElementAt(inx);
-          mList.ensureIndexIsVisible(inx);
+        int rowIndex = mTable.getSelectedRow();
+        if (rowIndex >= 0) {
+          Object item = mTableModel.getValueAt(rowIndex, 1);
+//          mTable.ensureIndexIsVisible(inx);
           removePlugin((PluginProxy)item);
         }
       }
@@ -358,7 +389,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
         
       populatePluginList();
       mSettingsDialog.createPluginTreeItems();
-      mList.setSelectedIndex(0);
+  //    mTable.setSelectedIndex(0);
     }
   }
 
@@ -397,7 +428,9 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
   private void populatePluginList() {
     PluginProxy[] pluginList = PluginProxyManager.getInstance().getAllPlugins();
 
-    mListModel.removeAllElements();
+    while (mTableModel.getRowCount() > 0) {
+      mTableModel.removeRow(0);
+    }
     
     /* Add base plugins */
     InternalPluginProxyIf[] internalPluginProxies = InternalPluginProxyList.getInstance().getAvailableProxys();
@@ -407,8 +440,8 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
       }
     });
     
-    for(InternalPluginProxyIf internalPluginProxy : internalPluginProxies) {
-      mListModel.addElement(internalPluginProxy);
+    for (InternalPluginProxyIf internalPluginProxy : internalPluginProxies) {
+      mTableModel.addRow(new Object[]{null, internalPluginProxy});
     }
     
     Arrays.sort(pluginList, new Comparator<PluginProxy>() {
@@ -418,7 +451,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
     });
 
     for (int i = 0; i < pluginList.length; i++) {
-      mListModel.addElement(pluginList[i]);
+      mTableModel.addRow(new Object[]{new Boolean(pluginList[i].isActivated()),pluginList[i]});
     }
 
   }
@@ -428,20 +461,18 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
    *
    */
   private void updateBtns() {
-    Object plugin = mList.getSelectedValue();
+    int rowIndex = mTable.getSelectedRow();
+    Object plugin = null;
+    if (rowIndex >= 0) {
+      plugin = mTable.getValueAt(rowIndex, 1);
+    }
 
     if ((plugin != null) && ((plugin instanceof PluginProxy && ((PluginProxy)plugin).isActivated()) || plugin instanceof InternalPluginProxyIf)) {
-      mStartStopBtn.setEnabled(plugin instanceof PluginProxy);
       mInfo.setEnabled(plugin instanceof PluginProxy);
       mRemove.setEnabled(plugin instanceof PluginProxy && PluginLoader.getInstance().isPluginDeletable((PluginProxy)plugin));
-      mStartStopBtn.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "process-stop", 16));
-      mStartStopBtn.setText(mLocalizer.msg("deactivate", ""));
     } else {
-      mStartStopBtn.setEnabled(plugin != null);
       mInfo.setEnabled(plugin != null);
       mRemove.setEnabled(plugin != null && PluginLoader.getInstance().isPluginDeletable((PluginProxy)plugin));
-      mStartStopBtn.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-refresh", 16));
-      mStartStopBtn.setText(mLocalizer.msg("activate", ""));
     }
   }
 
@@ -462,7 +493,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
         ErrorHandler.handle(exc);
       }
 
-      mList.updateUI();
+      mTable.updateUI();
       updateBtns();
       mSettingsDialog.invalidateTree();
       mSettingsDialog.createPluginTreeItems();
@@ -484,6 +515,20 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
 
   public String getTitle() {
     return mLocalizer.msg("plugins", "Plugins");
+  }
+
+  public void tableChanged(TableModelEvent e) {
+    int row = e.getFirstRow();
+    int column = e.getColumn();
+    if (column == 0) {
+      Cursor oldCursor = mTable.getCursor();
+      mTable.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      Object plugin = mTableModel.getValueAt(row, 1);
+      if (plugin instanceof PluginProxy) {
+        onStartStopBtnClicked((PluginProxy) plugin);
+      }
+      mTable.setCursor(oldCursor);
+    }
   }
 
 }
