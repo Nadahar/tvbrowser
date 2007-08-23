@@ -53,7 +53,6 @@ import util.settings.ProgramPanelSettings;
 import util.ui.FontChooserPanel;
 import util.ui.Localizer;
 import util.ui.OrderChooser;
-import util.ui.PictureSettingsPanel;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import util.ui.html.ExtendedHTMLDocument;

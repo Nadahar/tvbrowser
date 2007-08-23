@@ -23,6 +23,7 @@ public class SweDBChannelParser extends org.xml.sax.helpers.DefaultHandler{
   private final static int STATUS_CONSTRUCTION = 0;
   private final static int STATUS_CONSTRUCTION_NAME = 1;
   private final static int STATUS_CONSTRUCTION_URL = 2;
+  @SuppressWarnings("unused")
   private final static int STATUS_ICONURL=3;
   private final static int STATUS_WAITING = 4;
   private int state = STATUS_WAITING;
@@ -97,7 +98,7 @@ public class SweDBChannelParser extends org.xml.sax.helpers.DefaultHandler{
             SweDBChannelContainer cc = new SweDBChannelContainer(id,name,url,iconUrl,"");
             saveIn.add(cc);
           }
-          state = this.STATUS_WAITING;
+          state = SweDBChannelParser.STATUS_WAITING;
         }
         break;
       }

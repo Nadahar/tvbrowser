@@ -42,7 +42,6 @@ import javax.swing.JScrollPane;
 
 import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
-import util.ui.PictureSettingsPanel;
 import util.ui.ProgramList;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
