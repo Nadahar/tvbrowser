@@ -29,8 +29,11 @@ package tvbrowser.ui.pluginview;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.FontMetrics;
 import java.awt.GradientPaint;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
@@ -70,9 +73,12 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import tvbrowser.core.Settings;
+import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import util.io.IOUtilities;
 import util.ui.Localizer;
 import util.ui.OverlayListener;
 import devplugin.ActionMenu;
@@ -110,7 +116,7 @@ public class PluginTree extends JTree implements DragGestureListener,
     InputMap inputMap = getInputMap();
     KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0);
     inputMap.put(keyStroke, "none");
-
+    
     new OverlayListener(this);
     (new DragSource()).createDefaultDragGestureRecognizer(this,
         DnDConstants.ACTION_MOVE, this);
@@ -788,5 +794,80 @@ public class PluginTree extends JTree implements DragGestureListener,
     public void mouseEntered(MouseEvent e) {}
 
     public void mouseExited(MouseEvent e) {}
+    
+    protected void paintRow(Graphics g, Rectangle clipBounds, Insets insets, Rectangle bounds, TreePath path, int row, boolean isExpanded, boolean hasBeenExpanded, boolean isLeaf)  {
+      if(path.getLastPathComponent() instanceof Node) {
+        Node node = (Node)path.getLastPathComponent();
+        
+        if(node.getType() == Node.PROGRAM) {
+          Program program = ((ProgramItem)node.getUserObject()).getProgram();
+          
+          boolean cleaned = false;
+          
+          /*if(program.getMarkerArr().length > 0 && program.getMarkPriority() >= Program.MIN_MARK_PRIORITY) {
+            cleaned = true;
+            
+            if(!program.isExpired()) {
+              g.setColor(Color.white);
+              g.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+            }
+            
+            switch(program.getMarkPriority()) {
+              case Program.MIN_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedMinPriorityColor.getColor());break;
+              case Program.LOWER_MEDIUM_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedLowerMediumPriorityColor.getColor());break;
+              case Program.MEDIUM_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedMediumPriorityColor.getColor());break;
+              case Program.HIGHER_MEDIUM_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedHigherMediumPriorityColor.getColor());break;
+              case Program.MAX_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedMaxPriorityColor.getColor());break;
+            }
+            
+            if(program.isExpired()) {
+              g.setColor(new Color(g.getColor().getRed(), g.getColor().getGreen(), g.getColor().getBlue(), (int)(g.getColor().getAlpha()*6/10.)));
+            }
+            
+            g.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+          }*/
+          
+          if(program.isOnAir()) {
+            if(!cleaned) {
+              g.setColor(Color.white);
+              g.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+            }
+            
+            int progressX = (int)((bounds.width)/(double)program.getLength() * (IOUtilities.getMinutesAfterMidnight() - program.getStartTime()));
+            
+            g.setColor(Settings.propProgramTableColorOnAirDark.getColor());
+            g.fillRect(bounds.x,bounds.y+1,progressX,bounds.height-2);            
+            
+            g.setColor(Settings.propProgramTableColorOnAirLight.getColor());
+            g.fillRect(bounds.x + progressX,bounds.y+1,bounds.width-progressX,bounds.height-2);
+          }
+          
+          if(program.isExpired()) {
+            g.setColor(UIManager.getColor("Label.disabledForeground"));            
+          }
+          else if(FilterManagerImpl.getInstance().getCurrentFilter().accept(program)) {
+            g.setColor(Color.black);
+          }
+          else {
+            g.setColor(Color.red);
+          }
+          
+          String text = node.getNodeFormatter().format((ProgramItem)node.getUserObject());          
+          FontMetrics fm = g.getFontMetrics();
+          
+          int fontPos = (int)(bounds.height/2 + fm.getHeight()/2) - fm.getDescent();
+          
+          g.drawString(text, bounds.x + fm.getLeading(), bounds.y + fontPos);
+        }
+        else {
+          super.paintRow(g,clipBounds,insets,bounds,path,row,isExpanded,hasBeenExpanded,isLeaf);
+        }
+      }
+      else {
+        super.paintRow(g,clipBounds,insets,bounds,path,row,isExpanded,hasBeenExpanded,isLeaf);
+      }
+    }
   }
 }
+
+
