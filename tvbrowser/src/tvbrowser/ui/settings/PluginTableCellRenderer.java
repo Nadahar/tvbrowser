@@ -17,11 +17,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * CVS information:
- *  $RCSfile$
- *   $Source$
- *     $Date: 2007-08-22 19:16:25 +0200 (Mi, 22 Aug 2007) $
- *   $Author: ds10 $
- * $Revision: 3626 $
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package tvbrowser.ui.settings;
 
