@@ -27,7 +27,9 @@
 package tvbrowser.ui.filter.dlgs;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,10 +37,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -47,6 +51,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.filters.PluginFilter;
@@ -73,7 +78,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
 
   private JFrame mParent;
 
-  private JButton mEditBtn, mRemoveBtn, mNewBtn, mCancelBtn, mOkBtn, mUpBtn, mDownBtn, mSeperator;
+  private JButton mEditBtn, mRemoveBtn, mNewBtn, mCancelBtn, mOkBtn, mUpBtn, mDownBtn, mSeperator, mDefaultFilterBtn;
 
   private DefaultListModel mFilterListModel;
 
@@ -101,6 +106,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     }
 
     mFilterListBox = new JList(mFilterListModel);
+    mFilterListBox.setCellRenderer(new FilterListCellRenderer());
     
     // Register DnD on the List.
     ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mFilterListBox,mFilterListBox,this);    
@@ -129,11 +135,17 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     mEditBtn = new JButton(Localizer.getLocalization(Localizer.I18N_EDIT)+"...");
     mRemoveBtn = new JButton(Localizer.getLocalization(Localizer.I18N_DELETE));
     mSeperator = new JButton(mLocalizer.msg("seperatorButton", "seperator"));
+    mDefaultFilterBtn = new JButton(Localizer.getLocalization(Localizer.I18N_STANDARD));
+    mDefaultFilterBtn.setEnabled(false);
+    
     mNewBtn.addActionListener(this);
     mEditBtn.addActionListener(this);
     mRemoveBtn.addActionListener(this);
     mSeperator.addActionListener(this);
+    mDefaultFilterBtn.addActionListener(this);
+    
     panel1.add(mNewBtn);
+    panel1.add(mDefaultFilterBtn);
     panel1.add(mEditBtn);
     panel1.add(mRemoveBtn);
     panel1.add(mSeperator);
@@ -187,6 +199,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     int inx = mFilterListBox.getSelectedIndex();
     mUpBtn.setEnabled(inx > 0);
     mDownBtn.setEnabled(inx >= 0 && inx < mFilterListModel.getSize() - 1);
+    mDefaultFilterBtn.setEnabled(!(mFilterListBox.getSelectedValue() instanceof SeparatorFilter) && !FilterManagerImpl.getInstance().getDefaultFilter().equals(mFilterListBox.getSelectedValue()));
   }
 
   public FilterList getFilterList() {
@@ -232,6 +245,12 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
       close();
     } else if (e.getSource() == mSeperator) {
       mFilterListModel.addElement(new SeparatorFilter());
+    } else if (e.getSource() == mDefaultFilterBtn) {
+      ProgramFilter filter = ((ProgramFilter)mFilterListBox.getSelectedValue());      
+      Settings.propDefaultFilter.setString(filter.getClass().getName() + "###" + filter.getName());
+      mFilterListBox.updateUI();
+      FilterManagerImpl.getInstance().setCurrentFilter(FilterManagerImpl.getInstance().getCurrentFilter());
+      updateBtns();
     }
 
   }
@@ -245,4 +264,15 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     UiUtilities.moveSelectedItems(target,rows,true);
   }
 
+  private class FilterListCellRenderer extends DefaultListCellRenderer {
+    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+      JLabel tc = (JLabel)super.getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);
+      
+      if(value.equals(FilterManagerImpl.getInstance().getDefaultFilter())) {
+        tc.setFont(tc.getFont().deriveFont(Font.BOLD));
+      }
+      
+      return tc;
+    }
+  }
 }

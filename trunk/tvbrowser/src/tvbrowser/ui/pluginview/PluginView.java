@@ -27,6 +27,7 @@
 package tvbrowser.ui.pluginview;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -45,6 +46,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
 
 import tvbrowser.core.contextmenu.ContextMenuManager;
+import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.pluginview.contextmenu.ContextMenu;
@@ -257,8 +259,11 @@ public class PluginView extends JPanel implements MouseListener {
         }
         else if (node.getType() == Node.PROGRAM) {
           Program program = ((ProgramItem)node.getUserObject()).getProgram();
-          if (program.isExpired()) {
+          if (program.isExpired() && !sel) {
             label.setForeground(UIManager.getColor("Label.disabledForeground"));
+          }
+          else if (!FilterManagerImpl.getInstance().getCurrentFilter().accept(program) && !sel) {
+            label.setForeground(Color.red);
           }
         }
       }

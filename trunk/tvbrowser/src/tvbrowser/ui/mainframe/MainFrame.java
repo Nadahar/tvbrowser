@@ -784,7 +784,9 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   public void setProgramFilter(ProgramFilter filter) {
-    if (!(filter instanceof ShowAllFilter)) { // Store Position
+    boolean isDefaultFilter = filter.equals(FilterManagerImpl.getInstance().getDefaultFilter());
+    
+    if (!isDefaultFilter) { // Store Position
       mStoredViewPosition = mProgramTableScrollPane.getViewport().getViewPosition();
     }
     
@@ -795,14 +797,19 @@ public class MainFrame extends JFrame implements DateListener {
     mProgramTableScrollPane.deSelectItem();
     mProgramTableModel.setProgramFilter(filter);
     mMenuBar.updateFiltersMenu();
-    mToolBarModel.setFilterButtonSelected(!(filter instanceof ShowAllFilter));
+    
+    mToolBarModel.setFilterButtonSelected(isDefaultFilter);
 
     updateFilterPanel();
 
     mToolBar.update();
     addKeyboardAction();
+    
+    if(mPluginView != null) {
+      mPluginView.updateUI();
+    }
 
-    if ((mStoredViewPosition != null) && (filter instanceof ShowAllFilter)) {
+    if ((mStoredViewPosition != null) && (isDefaultFilter)) {
       // Recreate last Position
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
@@ -820,7 +827,7 @@ public class MainFrame extends JFrame implements DateListener {
   public void updateFilterPanel() {
     ProgramFilter filter = mProgramTableModel.getProgramFilter();
     mFilterPanel.setCurrentFilter(filter);
-    mFilterPanel.setVisible(!(filter instanceof ShowAllFilter) && mMenuBar.isShowFilterPanelEnabled());
+    mFilterPanel.setVisible(!filter.equals(FilterManagerImpl.getInstance().getDefaultFilter()) && mMenuBar.isShowFilterPanelEnabled());
   }
 
   public ProgramFilter getProgramFilter() {
@@ -1054,7 +1061,7 @@ public class MainFrame extends JFrame implements DateListener {
           JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
       if (result == JOptionPane.YES_OPTION) {
         mStoredViewPosition = null;
-        setProgramFilter(FilterManagerImpl.getInstance().getDefaultFilter());
+        setProgramFilter(FilterManagerImpl.getInstance().getAllFilter());
       }
     }
     // invoke scrolling later as the upper filter deactivation may have pending operations for the UI
