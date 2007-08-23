@@ -29,7 +29,7 @@ import devplugin.SettingsTab;
 
 /**
  * Have to be implemented by all internal
- * plugins to support common mehtods.
+ * plugins to support common methods.
  * 
  * @author René Mach
  * @since 2.6
