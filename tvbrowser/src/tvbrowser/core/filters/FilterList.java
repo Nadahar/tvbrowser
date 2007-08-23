@@ -320,7 +320,7 @@ public class FilterList {
     String filterId = Settings.propDefaultFilter.getString();
     String filterName = null;
     
-    if(filterId != null) {
+    if(filterId != null && !filterId.equals("")) {
       String[] filterValues = filterId.split("###");
       filterId = filterValues[0];
       filterName = filterValues[1];
