@@ -69,7 +69,6 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler{
   private SweDBDayParser(Channel ch, Hashtable<String, MutableChannelDayProgram> lht) {
     mChannel = ch;
     mDayProgsHashTable=lht;
-//    mDayProgsHashTable.clear();
   }
 
   public InputSource resolveEntity(String publicId, String systemId){
@@ -150,9 +149,11 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler{
           try {
             String time = attributes.getValue("stop");
             if (time.length()>0) {
+/*
                 String year = time.substring(0,4);
                 String month = time.substring(4,6);
                 String day = time.substring(6,8);
+*/
                 String hourString = time.substring(8,10);
                 String minString = time.substring(10,12);
                 endHour = Integer.parseInt(hourString);
@@ -313,7 +314,6 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler{
   }
   
   public static MutableChannelDayProgram[] parse(InputStream in, Channel ch, devplugin.Date day) throws Exception {
-//    MutableChannelDayProgram prog = new MutableChannelDayProgram(day,ch);
     Hashtable<String, MutableChannelDayProgram> ht=new Hashtable<String, MutableChannelDayProgram>();
     SAXParserFactory fac = SAXParserFactory.newInstance();
     fac.setValidating(false);

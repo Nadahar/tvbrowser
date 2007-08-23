@@ -36,7 +36,6 @@ import javax.swing.JLabel;
 import tvbrowser.core.Settings;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
-import util.ui.PictureSettingsPanel;
 import util.ui.UiUtilities;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.HTMLTextHelper;
