@@ -154,12 +154,9 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     mTable.setShowHorizontalLines(false);
     mTable.getModel().addTableModelListener(this);
 
-    int columnWidth[] = new int[2];
-    for(int i = 0; i < columnWidth.length; i++) {
-      columnWidth[i] =  UiUtilities.getStringWidth(mTable.getFont(),mTableModel.getColumnName(i)) + 10;
-      mTable.getColumnModel().getColumn(i).setPreferredWidth(columnWidth[i]);
-    }
-    mTable.getColumnModel().getColumn(0).setMaxWidth(columnWidth[0]+5);
+    int columnWidth = UiUtilities.getStringWidth(mTable.getFont(),mTableModel.getColumnName(0)) + 16;
+    mTable.getColumnModel().getColumn(0).setPreferredWidth(columnWidth);
+    mTable.getColumnModel().getColumn(0).setMaxWidth(columnWidth);
     mTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent evt) {
         updateBtns();
@@ -170,10 +167,9 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
 
        public void mousePressed(MouseEvent e) {
         if (e.isPopupTrigger()) {
- //         int index = mTable.locationToIndex(e.getPoint());
-          int rowIndex = mTable.getSelectedRow();
+          int rowIndex = mTable.rowAtPoint(e.getPoint());
           if (rowIndex >=0) {
-//            mTable.setSelectedIndex(index);
+            mTable.setRowSelectionInterval(rowIndex, rowIndex);
             Object plugin = mTable.getModel().getValueAt(rowIndex, 1);
             JPopupMenu menu;
             
@@ -191,10 +187,9 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
 
       public void mouseReleased(MouseEvent e) {
         if (e.isPopupTrigger()) {
-//          int index = mTable.locationToIndex(e.getPoint());
-          int rowIndex = mTable.getSelectedRow();
+          int rowIndex = mTable.rowAtPoint(e.getPoint());
           if (rowIndex >=0) {
-//            mTable.setSelectedIndex(index);
+            mTable.setRowSelectionInterval(rowIndex, rowIndex);
             Object plugin = mTable.getModel().getValueAt(rowIndex, 1);
             JPopupMenu menu;
             
@@ -230,10 +225,10 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     mInfo = new JButton(mLocalizer.msg("info","Info"), IconLoader.getInstance().getIconFromTheme("status", "dialog-information", 16));
     mInfo.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        int inx = mTable.getSelectedRow();
-        if (inx >= 0) {
-          PluginProxy item = (PluginProxy)mTableModel.getValueAt(inx,1);
-//          mTable.ensureIndexIsVisible(inx);
+        int rowIndex = mTable.getSelectedRow();
+        if (rowIndex >= 0) {
+          PluginProxy item = (PluginProxy)mTableModel.getValueAt(rowIndex, 1);
+          mTable.scrollRectToVisible(mTable.getCellRect(rowIndex, 0, true));
           showInfoDialog(item);
         }
       }
@@ -250,7 +245,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
         int rowIndex = mTable.getSelectedRow();
         if (rowIndex >= 0) {
           Object item = mTableModel.getValueAt(rowIndex, 1);
-//          mTable.ensureIndexIsVisible(inx);
+          mTable.scrollRectToVisible(mTable.getCellRect(rowIndex, 0, true));
           removePlugin((PluginProxy)item);
         }
       }
@@ -389,7 +384,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
         
       populatePluginList();
       mSettingsDialog.createPluginTreeItems();
-  //    mTable.setSelectedIndex(0);
+      mTable.setRowSelectionInterval(0, 0);
     }
   }
 
