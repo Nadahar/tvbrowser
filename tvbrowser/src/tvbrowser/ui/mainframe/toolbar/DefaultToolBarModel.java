@@ -118,7 +118,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
 
   public void setFilterButtonSelected(boolean arg) {
     mFilterAction.putValue(ToolBar.ACTION_IS_SELECTED, Boolean.valueOf(arg));
-
+    
     if (arg) {
       mFilterAction.putValue(Action.SMALL_ICON,
           IconLoader.getInstance().getIconFromTheme("status","view-filter-set",16));

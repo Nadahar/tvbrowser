@@ -310,17 +310,35 @@ public class FilterList {
   }
   
   /**
-   * Returns the Default-Filter ("ShowAll")
+   * Returns the Default-Filter.
+   * 
    * @return the Default-Filter
    */
   protected ProgramFilter getDefaultFilter() {
-
-      for (int i = 0; i < mFilterArr.length; i++) {
-          if (mFilterArr[i].getClass().getName().equals("tvbrowser.core.filters.ShowAllFilter")) {
-              return mFilterArr[i];
-          }
+    ProgramFilter allFilter = null;
+    
+    String filterId = Settings.propDefaultFilter.getString();
+    String filterName = null;
+    
+    if(filterId != null) {
+      String[] filterValues = filterId.split("###");
+      filterId = filterValues[0];
+      filterName = filterValues[1];
+    }
+    
+    for (int i = 0; i < mFilterArr.length; i++) {
+      if (mFilterArr[i].getClass().getName().equals("tvbrowser.core.filters.ShowAllFilter")) {
+        allFilter = mFilterArr[i];
       }
-      
-      return new ShowAllFilter();
+      else if(filterName != null && mFilterArr[i].getClass().getName().equals(filterId) && mFilterArr[i].getName().equals(filterName)) {
+        return mFilterArr[i];
+      }
+    }
+    
+    if(allFilter != null) {
+      return allFilter;
+    }
+    
+    return new ShowAllFilter();
   }
 }

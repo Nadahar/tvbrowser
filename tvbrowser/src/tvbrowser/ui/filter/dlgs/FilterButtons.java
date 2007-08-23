@@ -26,6 +26,7 @@
 
 package tvbrowser.ui.filter.dlgs;
 
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 
 import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.filters.SeparatorFilter;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -110,6 +112,10 @@ public class FilterButtons implements ActionListener {
                     result[i].setSelected(true);
                 } else if ((curFilter == null) && (filter instanceof ShowAllFilter)) {
                     result[i].setSelected(true);
+                }
+                
+                if(filter.equals(FilterManagerImpl.getInstance().getDefaultFilter())) {
+                  result[i].setFont(result[i].getFont().deriveFont(Font.BOLD));
                 }
               }
               

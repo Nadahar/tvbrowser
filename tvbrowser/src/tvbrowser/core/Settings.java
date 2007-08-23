@@ -1218,4 +1218,7 @@ public class Settings {
   public static final IntProperty propPluginsPictureSetting = new IntProperty(
       mProp, "pluginsPictureSetting", PluginPictureSettings.PICTURE_AND_DISCRIPTION_TYPE);
   
+  /** The user selected default filter */
+  public static final StringProperty propDefaultFilter = new StringProperty(
+      mProp, "defaultFilter", null);
 }
