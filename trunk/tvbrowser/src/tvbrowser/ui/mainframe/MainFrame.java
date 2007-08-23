@@ -1036,6 +1036,10 @@ public class MainFrame extends JFrame implements DateListener {
       }
     }catch(Exception e) {}
     
+    if (mPluginView != null) {
+      mPluginView.updateUI();
+    }
+    
     if (date.equals(mCurrentDay)) {
       return;
     }
