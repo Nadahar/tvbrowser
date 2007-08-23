@@ -35,8 +35,8 @@ import javax.swing.ButtonGroup;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 
+import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterList;
-import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.filters.SeparatorFilter;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -114,7 +114,11 @@ public class FilterButtons implements ActionListener {
                     result[i].setSelected(true);
                 }
                 
-                if(filter.equals(FilterManagerImpl.getInstance().getDefaultFilter())) {
+                String id = filter.getClass().getName();
+                String name = filter.getName();
+                
+                if((Settings.propDefaultFilter.getString().equals(id + "###" + name)) ||
+                    (Settings.propDefaultFilter.getString().trim().length() < 1 && filter instanceof ShowAllFilter)) {
                   result[i].setFont(result[i].getFont().deriveFont(Font.BOLD));
                 }
               }
