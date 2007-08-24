@@ -75,6 +75,32 @@ import devplugin.Program;
 public class ProgramTable extends JPanel
 implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
 
+  private class ProgramPanelCoordinates {
+
+    private ProgramPanel panel;
+    private int x;
+    private int y;
+
+    public ProgramPanelCoordinates(ProgramPanel panel, int x, int y) {
+      this.panel = panel;
+      this.x = x;
+      this.y = y;
+    }
+
+    protected ProgramPanel getPanel() {
+      return panel;
+    }
+
+    protected int getX() {
+      return x;
+    }
+
+    protected int getY() {
+      return y;
+    }
+
+  }
+
   private int mColumnWidth;
   private int mHeight;
   
@@ -88,6 +114,9 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
 
   private Point mDraggingPoint;
 
+  /**
+   * current mouse coordinates over program table
+   */
   private Point mMouse;
 
   private JPopupMenu mPopupMenu;
@@ -95,6 +124,12 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
   private Runnable mCallback;
   
   private Thread mClickThread;
+  
+  /**
+   * program panel underneath the mouse cursor
+   */
+  private ProgramPanelCoordinates mMousePanel = null;
+
   /**
    * Creates a new instance of ProgramTable.
    */
@@ -241,7 +276,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
       final Graphics2D g2d = (Graphics2D) grp;
       if (null != g2d) {
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       }
     }
 
@@ -256,7 +291,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
     }
     int maxCol = (clipBounds.x + clipBounds.width) / mColumnWidth;
     int columnCount = mModel.getColumnCount();
-	if (maxCol >= columnCount) {
+    if (maxCol >= columnCount) {
       maxCol = columnCount - 1;
     }
 
@@ -264,7 +299,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
     super.paintComponent(grp);
     int tableHeight = Math.max(mHeight, clipBounds.y + clipBounds.height);
     mBackgroundPainter.paintBackground(grp, mColumnWidth, tableHeight,
-    minCol, maxCol, clipBounds, mLayout, mModel);
+        minCol, maxCol, clipBounds, mLayout, mModel);
 
     boolean mouseOver = false;
 
@@ -273,17 +308,17 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
       int y = mLayout.getColumnStart(col);
 
       int rowCount = mModel.getRowCount(col);
-	  for (int row = 0; row < rowCount; row++) {
+      for (int row = 0; row < rowCount; row++) {
         // Get the program
         ProgramPanel panel = mModel.getProgramPanel(col, row);
-        
+
         // Render the program
         if (panel != null) {
           int cellHeight = panel.getHeight();
 
           // Check whether the cell is within the clipping area
           if (((y + cellHeight) > clipBounds.y)
-          && (y < (clipBounds.y + clipBounds.height))) {
+              && (y < (clipBounds.y + clipBounds.height))) {
 
             if (Settings.propMouseOver.getBoolean()) {
               Rectangle rec = new Rectangle(x, y, mColumnWidth, cellHeight);
@@ -294,13 +329,12 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
               }
             }
 
-            //          Paint the cell
+            // Paint the cell
             grp.translate(x, y);
 
             panel.setSize(mColumnWidth, cellHeight);
             panel.paint(mouseOver,(row == mCurrentRow && col == mCurrentCol), grp);
 
-            // grp.drawRect(0, 0, mColumnWidth, cellHeight);
             grp.translate(-x, -y);
           }
 
@@ -323,6 +357,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
     FontMetrics metric = grp.getFontMetrics();
     for (Channel channel : channelArr) {
       String msg = channel.getCopyrightNotice();
+      // repeatedly reduce the font size while the copyright notice is wider than the column
       while (metric.stringWidth(msg) > mColumnWidth) {
         Font font = grp.getFont();
         grp.setFont(font.deriveFont((float)(font.getSize()-1)));
@@ -346,7 +381,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
       (int)(Math.random() * 256)));
     grp.drawRect(clipBounds.x, clipBounds.y, clipBounds.width - 1, clipBounds.height - 1);
     /**/
-      //scroll to somewhere?
+    //scroll to somewhere?
     if(mCallback != null) {
       runCallback();
     }
@@ -554,17 +589,48 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
     if (Settings.propMouseOver.getBoolean()) {
       if ((mPopupMenu == null) || (!mPopupMenu.isVisible())) {
         mMouse = evt.getPoint();
-        updateUI();
+        ProgramPanelCoordinates panelCoordinates = getPanelUnderPoint(mMouse);
+        if (panelCoordinates != null && (mMousePanel == null || panelCoordinates.getPanel() != mMousePanel.getPanel())) {
+          // restore previous panel under mouse
+          if (mMousePanel != null) {
+            paintPanel(false);
+          }
+          // now update the current panel
+          mMousePanel = panelCoordinates;
+          paintPanel(true);
+        }
       }
     }
+  }
+
+
+
+  private void paintPanel(boolean mouseBorder) {
+    // selection by keyboard
+    boolean selected = mCurrentCol >= 0 && mCurrentRow >= 0 && (mModel.getProgramPanel(mCurrentCol, mCurrentRow) == mMousePanel.getPanel());
+    int column = mMousePanel.getX() / mColumnWidth;
+    Rectangle clipBounds = new Rectangle(mMousePanel.getX(), mMousePanel.getY(), mColumnWidth, mMousePanel.getPanel().getHeight());
+    Graphics graphics = this.getGraphics();
+    // set clip, otherwise the background painter will repaint too much
+    graphics.setClip(clipBounds.x, clipBounds.y, clipBounds.width, clipBounds.height);
+    mBackgroundPainter.paintBackground(graphics, mColumnWidth, mHeight,
+       column, column, clipBounds, mLayout, mModel);
+    // translate graphics context as panel will paint itself at (0,0)
+    graphics.translate(mMousePanel.getX(), mMousePanel.getY());
+    mMousePanel.getPanel().paint(mouseBorder, selected, graphics);
+    graphics.translate(-mMousePanel.getX(), -mMousePanel.getY());
   }
 
   private void handleMouseExited(MouseEvent evt) {
     if (Settings.propMouseOver.getBoolean()) {
       JViewport viewport = (JViewport) getParent();
       if (((mPopupMenu == null) || (!mPopupMenu.isVisible())) && !viewport.getViewRect().contains(evt.getPoint())) {
+        if (mMousePanel != null) {
+          paintPanel(false);
+        }
         mMouse = null;
-        updateUI();
+        mMousePanel = null;
+//        updateUI();
       }
     }
   }
@@ -1018,5 +1084,39 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
 
   public void dragDropEnd(DragSourceDropEvent dsde) {
     deSelectItem();
+  }
+  
+  public ProgramPanelCoordinates getPanelUnderPoint(Point point) {
+    int minCol = 0;
+    if (minCol < 0) {
+      minCol = 0;
+    }
+    int maxCol = mModel.getColumnCount() - 1;
+    int columnCount = mModel.getColumnCount();
+    if (maxCol >= columnCount) {
+      maxCol = columnCount - 1;
+    }
+
+    int x = minCol * mColumnWidth;
+    for (int col = minCol; col <= maxCol; col++) {
+      int y = mLayout.getColumnStart(col);
+
+      int rowCount = mModel.getRowCount(col);
+      for (int row = 0; row < rowCount; row++) {
+        ProgramPanel panel = mModel.getProgramPanel(col, row);
+        if (panel != null) {
+          int cellHeight = panel.getHeight();
+          Rectangle rec = new Rectangle(x, y, mColumnWidth, cellHeight);
+          if (rec.contains(point)) {
+            return new ProgramPanelCoordinates(panel, x, y);
+          }
+          // Move to the next row in this column
+          y += cellHeight;
+        }
+      }
+      x += mColumnWidth;
+    }
+
+    return null;
   }
 }
