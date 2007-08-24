@@ -66,6 +66,7 @@ import tvbrowser.ui.licensebox.LicenseBox;
 import tvbrowser.ui.mainframe.toolbar.ContextMenu;
 import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
 import util.browserlauncher.Launch;
+import util.ui.FixedSizeIcon;
 import util.ui.Localizer;
 import util.ui.ScrollableMenu;
 import util.ui.UiUtilities;
@@ -450,7 +451,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
       result = new JMenu(menu.getTitle());
       
       if(menu.getAction().getValue(Action.SMALL_ICON) != null) {
-        result.setIcon((Icon)menu.getAction().getValue(Action.SMALL_ICON));
+        result.setIcon(new FixedSizeIcon(16, 16, (Icon) menu.getAction().getValue(Action.SMALL_ICON)));
       }
       
       ActionMenu[] subItems = menu.getSubItems();
@@ -460,6 +461,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     }
     else {
       result = new JMenuItem(menu.getAction());
+      if(menu.getAction().getValue(Action.SMALL_ICON) != null) {
+        result.setIcon(new FixedSizeIcon(16, 16, (Icon) menu.getAction().getValue(Action.SMALL_ICON)));
+      }
     }
     return result;
 

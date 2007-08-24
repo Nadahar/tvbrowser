@@ -31,6 +31,8 @@ import java.util.logging.Level;
 import javax.swing.Icon;
 import javax.swing.JPanel;
 
+import util.ui.FixedSizeIcon;
+
 import devplugin.SettingsTab;
 
 
@@ -69,7 +71,11 @@ public class SettingsTabProxy {
 
   public Icon getIcon() {
     try {
-      return mSettingsTab.getIcon();
+      Icon icon = mSettingsTab.getIcon();
+      if (icon != null) {
+        return new FixedSizeIcon(16, 16, icon);
+      }
+      return icon;
     }catch(Throwable t) {
       mLog.log(Level.WARNING, "Could not get settings icon", t);
       return null;
