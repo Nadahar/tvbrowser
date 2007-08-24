@@ -123,7 +123,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     mProgramItemOnAirColorLb.setStandardColor(programItemDefaultOnAirColor);
     colors.add(new ColorButton(mProgramItemOnAirColorLb), cc.xy(5,3));
 
-    colors.add(new JLabel(mLocalizer.msg("color.programProgress", "Fortschrittanzeige fuer laufende Sendung")), cc.xy(1,5));
+    colors.add(new JLabel(mLocalizer.msg("color.programProgress", "Fortschrittsanzeige fuer laufende Sendung")), cc.xy(1,5));
     colors.add(mProgramItemProgressColorLb = new ColorLabel(programItemProgressColor), cc.xy(3,5));
     mProgramItemProgressColorLb.setStandardColor(programItemDefaultProgressColor);
     colors.add(new ColorButton(mProgramItemProgressColorLb), cc.xy(5,5));
@@ -142,7 +142,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
   private IconPlugin[] getAvailableIconPlugins() {
     ArrayList<IconPlugin> list = new ArrayList<IconPlugin>();
     
-    list.add(new IconPlugin("Infos"));
+    list.add(new IconPlugin(mLocalizer.msg("programInfo", "Infos")));
     list.add(new IconPlugin(mLocalizer.msg("hasPicure","Has picture")));
     
     PluginProxy[] pluginArr = PluginProxyManager.getInstance().getActivatedPlugins();
@@ -268,7 +268,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     public String getId() {
       if(mPlugin != null) {
         return mPlugin.getId();
-      } else if(mName != null && mName.compareTo("Infos") == 0) {
+      } else if(mName != null && mName.compareTo(mLocalizer.msg("programInfo", "Infos")) == 0) {
         return Settings.INFO_ID;
       } else {
         return Settings.PICTURE_ID;
