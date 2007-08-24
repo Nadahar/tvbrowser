@@ -34,6 +34,8 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.SettingsTabProxy;
@@ -136,6 +138,9 @@ public class ConfigPluginSettingsTab implements SettingsTab {
             settingsDialog.createPluginTreeItems();
             settingsDialog.showSettingsTab(mPlugin.getId());
             MainFrame.getInstance().getToolbar().updatePluginButtons();
+            // Update the settings
+            String[] deactivatedPlugins = PluginProxyManager.getInstance().getDeactivatedPluginIds();
+            Settings.propDeactivatedPlugins.setStringArray(deactivatedPlugins);
           } catch (TvBrowserException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
