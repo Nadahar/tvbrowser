@@ -43,7 +43,7 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvdataservice.TvDataService;
 import util.ui.ImageUtilities;
 
-public class Channel {
+public class Channel implements Comparable<Channel> {
 
   public static final int CATEGORY_NONE = 0;
   public static final int CATEGORY_TV = 1;
@@ -671,5 +671,9 @@ public class Channel {
    */
   public void setEndTimeLimit(int endTimeLimit) {
     ChannelUserSettings.getSettings(this).setEndTimeLimit(endTimeLimit);
+  }
+
+  public int compareTo(Channel other) {
+    return getName().toLowerCase().compareTo(other.getName().toLowerCase());
   }
 }

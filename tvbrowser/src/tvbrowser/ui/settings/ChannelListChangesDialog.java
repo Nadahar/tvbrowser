@@ -30,14 +30,17 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import tvbrowser.ui.settings.channel.ChannelJList;
 import util.ui.ChannelListCellRenderer;
 import util.ui.Localizer;
 import devplugin.Channel;
@@ -61,11 +64,13 @@ public class ChannelListChangesDialog extends JDialog {
         mAddedList.add(channelsAfter.get(i));
       }
     }
+    Collections.sort(mAddedList);
     for (int i = 0; i < channelsBefore.size(); i++) {
       if (!channelsAfter.contains(channelsBefore.get(i))) {
         mDeletedList.add(channelsBefore.get(i));
       }
     }
+    Collections.sort(mDeletedList);
     createGui();
   }
 
@@ -85,7 +90,11 @@ public class ChannelListChangesDialog extends JDialog {
     JPanel panelAdded = new JPanel(new BorderLayout());
     panelAdded.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("added", "New channels")));
 
-    JList list = new JList(mAddedList.toArray());
+    DefaultListModel listModel = new DefaultListModel();
+    for (int i = 0; i < mAddedList.size(); i++) {
+      listModel.addElement(mAddedList.get(i));
+    }
+    ChannelJList list = new ChannelJList(listModel);
     list.setCellRenderer(new ChannelListCellRenderer(true, true));
 
     panelAdded.add(new JScrollPane(list), BorderLayout.CENTER);
@@ -93,7 +102,11 @@ public class ChannelListChangesDialog extends JDialog {
     JPanel panelDeleted = new JPanel(new BorderLayout());
     panelDeleted.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("deleted", "Removed channels")));
 
-    list = new JList(mDeletedList.toArray());
+    listModel = new DefaultListModel();
+    for (int i = 0; i < mDeletedList.size(); i++) {
+      listModel.addElement(mDeletedList.get(i));
+    }
+    list = new ChannelJList(listModel);
     list.setCellRenderer(new ChannelListCellRenderer(true, true));
 
     panelDeleted.add(new JScrollPane(list), BorderLayout.CENTER);
