@@ -857,7 +857,7 @@ public class PluginTree extends JTree implements DragGestureListener,
           
           int fontPos = (int)(bounds.height/2 + fm.getHeight()/2) - fm.getDescent();
           
-          g.drawString(text, bounds.x + fm.getLeading(), bounds.y + fontPos);
+          g.drawString(text, bounds.x, bounds.y + fontPos);
         }
         else {
           super.paintRow(g,clipBounds,insets,bounds,path,row,isExpanded,hasBeenExpanded,isLeaf);
