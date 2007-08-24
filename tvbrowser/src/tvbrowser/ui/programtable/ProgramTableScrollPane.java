@@ -27,12 +27,11 @@ package tvbrowser.ui.programtable;
 
 import java.awt.Point;
 import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Calendar;
 
 import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
@@ -53,7 +52,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
 
   private ChannelPanel mChannelPanel;
 
-  private boolean mBorderPainted;
+  private boolean initialScrollingDone = false;
 
   /**
    * Creates a new instance of ProgramTableScrollPane.
@@ -95,23 +94,6 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
     handleBackgroundPainterChanged(mProgramTable.getBackgroundPainter());
     
     getViewport().addChangeListener(this);
-    
-    addKeyListener(new KeyListener() {
-
-      public void keyPressed(KeyEvent e) {
-        // TODO Auto-generated method stub
-        
-      }
-
-      public void keyReleased(KeyEvent e) {
-        // TODO Auto-generated method stub
-        
-      }
-
-      public void keyTyped(KeyEvent e) {
-        // TODO Auto-generated method stub
-        
-      }});
   }
 
   public ProgramTable getProgramTable() {
@@ -124,6 +106,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
     getProgramTable().tableDataChanged(null);
   }
 
+  @Override
   public void repaint() {
     super.repaint();
     if (mProgramTable != null) {
@@ -180,7 +163,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
     }
 
     int max = mProgramTable.getHeight() - getViewport().getHeight();
-    if (scrollPos.y > max) {
+    if (max > 0 && scrollPos.y > max) {
       scrollPos.y = max;
     }
 
@@ -298,6 +281,17 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
     }
   }
 
+  @Override
+  public void doLayout() {
+    super.doLayout();
+    // scroll to current time when the main frame is switched visible
+    if (!initialScrollingDone) {
+      initialScrollingDone = true;
+      Calendar cal = Calendar.getInstance();
+      int hour = cal.get(Calendar.HOUR_OF_DAY);
+      scrollToTime(hour * 60);
+    }
+  }
 }
 
 // class ProgramTableBorder
