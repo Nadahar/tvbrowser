@@ -26,16 +26,24 @@
 package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.Action;
 import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
-
 import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.SettingsTabProxy;
+import tvbrowser.ui.mainframe.MainFrame;
+import util.exc.TvBrowserException;
 
 import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.ActionMenu;
 import devplugin.SettingsTab;
@@ -107,16 +115,35 @@ public class ConfigPluginSettingsTab implements SettingsTab {
       }
     } else {
       // The plugin is not activated -> Tell it the user
-      String msg = mLocalizer.msg("notactivated", "This Plugin is currently not activated.");
+      JPanel panelActivate = new JPanel();
+      panelActivate.setLayout(new FormLayout("5dlu,pref,10dlu,pref,default:grow", "pref,5dlu,pref"));
+      CellConstraints cc = new CellConstraints();
+
+      panelActivate.add(DefaultComponentFactory.getInstance().createSeparator(
+          mLocalizer.msg("activation", "Activation")), cc.xyw(1, 1, 5));
       
-      JTextArea msgArea =new JTextArea(3,40);
-      msgArea.setText(msg);
-      msgArea.setLineWrap(true);
-      msgArea.setWrapStyleWord(true);
-      msgArea.setEditable(false);
-      msgArea.setOpaque(false);
+      panelActivate.add(new JLabel(mLocalizer.msg("notactivated", "This Plugin is currently not activated.")), cc.xy(2, 3));
       
-      mPluginPanel.add(msgArea, BorderLayout.WEST);
+      final JButton btnActivate = new JButton(mLocalizer.msg("activate", "Activate"));
+      btnActivate.addActionListener(new ActionListener() {
+
+        public void actionPerformed(ActionEvent e) {
+          try {
+            btnActivate.setEnabled(false);
+            PluginProxyManager.getInstance().activatePlugin(mPlugin);
+            SettingsDialog settingsDialog = SettingsDialog.getInstance();
+            settingsDialog.invalidateTree();
+            settingsDialog.createPluginTreeItems();
+            settingsDialog.showSettingsTab(mPlugin.getId());
+            MainFrame.getInstance().getToolbar().updatePluginButtons();
+          } catch (TvBrowserException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+          }
+        }});
+      
+      panelActivate.add(btnActivate, cc.xy(4, 3));
+      mPluginPanel.add(panelActivate, BorderLayout.NORTH);
     }
     
     mPluginWasActivatedLastTime = mPlugin.isActivated();
