@@ -195,7 +195,12 @@ public class TVRaterPlugin extends devplugin.Plugin {
                 showRatingDialog(program);
             }
         };
-        action.putValue(Action.NAME, mLocalizer.msg("contextMenuText", "View rating"));
+        if (getRating(program) != null) {
+          action.putValue(Action.NAME, mLocalizer.msg("contextMenuText", "View rating"));
+        }
+        else {
+          action.putValue(Action.NAME, mLocalizer.msg("contextNoRating", "Rate program"));
+        }
         action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("tvraterplugin/imgs/tvrater.png", TVRaterPlugin.class)));
         
         return new ActionMenu(action);
