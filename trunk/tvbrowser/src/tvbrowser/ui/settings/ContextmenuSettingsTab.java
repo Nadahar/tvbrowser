@@ -54,6 +54,7 @@ import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateAdapter;
 import tvbrowser.ui.settings.util.LineButton;
+import util.ui.FixedSizeIcon;
 import util.ui.LineComponent;
 import util.ui.UiUtilities;
 import util.ui.customizableitems.SortableItemList;
@@ -104,6 +105,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     mList = new SortableItemList();
     
     mList.getList().addMouseListener(new MouseAdapter() {
+      @Override
       public void mouseReleased(MouseEvent evt) {
         if (evt.getX() < mSelectionWidth) {
           int index = mList.getList().locationToIndex(evt.getPoint());
@@ -136,8 +138,9 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     addSeparator.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         int pos = mList.getList().getSelectedIndex();
-        if (pos < 0)
+        if (pos < 0) {
           pos = mList.getList().getModel().getSize();
+        }
         mList.addElement(pos, new SeparatorMenuItem());
         mList.getList().setSelectedIndex(pos);
         mList.getList().ensureIndexIsVisible(pos);
@@ -151,8 +154,8 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     garbage.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         Object[] items = mList.getList().getSelectedValues();
-        for (int i=0;i<items.length;i++) {
-          mList.removeElement(items[i]);
+        for (Object item : items) {
+          mList.removeElement(item);
         }
       };
     });
@@ -190,16 +193,16 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
     ContextMenuIf[] menuIfList = ContextMenuManager.getInstance().getAvailableContextMenuIfs(true, false);
     Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
-    for (int i = 0; i < menuIfList.length; i++) {
-      if (menuIfList[i] instanceof SeparatorMenuItem) {
-        mList.addElement(menuIfList[i]);
-      } else if (menuIfList[i] instanceof ConfigMenuItem || menuIfList[i] instanceof LeaveFullScreenMenuItem) {
-          mList.addElement(menuIfList[i]);
+    for (ContextMenuIf menuIf : menuIfList) {
+      if (menuIf instanceof SeparatorMenuItem) {
+        mList.addElement(menuIf);
+      } else if (menuIf instanceof ConfigMenuItem || menuIf instanceof LeaveFullScreenMenuItem) {
+          mList.addElement(menuIf);
       } else {
-        ActionMenu actionMenu = menuIfList[i].getContextMenuActions(exampleProgram);
+        ActionMenu actionMenu = menuIf.getContextMenuActions(exampleProgram);
         if (actionMenu != null) {
-          mList.addElement(menuIfList[i]);
-          items.add(menuIfList[i]);
+          mList.addElement(menuIf);
+          items.add(menuIf);
         }
       }
     }
@@ -216,8 +219,9 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     for (int i = 0; i < o.length; i++) {
       ContextMenuIf menuIf = (ContextMenuIf) o[i];
       orderIDs[i] = menuIf.getId();
-      if (menuIf instanceof PluginProxy)
+      if (menuIf instanceof PluginProxy) {
         pluginIDsList.add(menuIf.getId());
+      }
     }
 
     String[] pluginIDs = new String[pluginIDsList.size()];
@@ -259,6 +263,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
       mItemPanel.add(mItemLabel, BorderLayout.CENTER);
     }
 
+    @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
         boolean cellHasFocus) {
 
@@ -305,7 +310,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
           Action action = actionMenu.getAction();
           if (action != null) {
             text.append((String) action.getValue(Action.NAME));
-            icon = (Icon) action.getValue(Action.SMALL_ICON);
+            icon = new FixedSizeIcon(16, 16, (Icon) action.getValue(Action.SMALL_ICON));
           } else if (menuIf instanceof PluginProxy) {
             text.append(((PluginProxy) menuIf).getInfo().getName());
             icon = ((PluginProxy) menuIf).getMarkIcon();
