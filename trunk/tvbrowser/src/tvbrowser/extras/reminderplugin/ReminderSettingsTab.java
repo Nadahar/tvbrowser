@@ -147,7 +147,7 @@ public class ReminderSettingsTab implements SettingsTab {
         
     mSoundFileChB = new FileCheckBox(mLocalizer.msg("playlingSound", "Play sound"), new File(soundFName), 0, false);
     
-    JFileChooser soundChooser=new JFileChooser("sound/");
+    JFileChooser soundChooser=new JFileChooser((String)null);
     soundChooser.setFileFilter(new ExtensionFileFilter(extArr, msg));
 
     mSoundFileChB.setFileChooser(soundChooser);
