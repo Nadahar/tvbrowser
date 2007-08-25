@@ -833,7 +833,11 @@ public class PluginTree extends JTree implements DragGestureListener,
               g.fillRect(bounds.x, bounds.y+1, bounds.width, bounds.height-2);
             }
             
-            int progressX = (int)((bounds.width)/(double)program.getLength() * (IOUtilities.getMinutesAfterMidnight() - program.getStartTime()));
+            int runTime = IOUtilities.getMinutesAfterMidnight() - program.getStartTime();
+            if (runTime < 0) {
+              runTime += 24 * 60;
+            }
+            int progressX = (int)((bounds.width)/(double)program.getLength() * runTime);
             
             g.setColor(Settings.propProgramTableColorOnAirDark.getColor());
             g.fillRect(bounds.x,bounds.y+1,progressX,bounds.height-2);            
