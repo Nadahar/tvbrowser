@@ -36,7 +36,7 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.Icon;
-import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
 import util.ui.findasyoutype.TextComponentFindAction;
@@ -114,7 +114,9 @@ public class TaskMenuAction {
     Component c;
     
     if(ContextMenuSeparatorAction.getInstance().equals(menu.getAction())) {
-      c = parent.add(new JPopupMenu.Separator());
+      parent.add(Box.createRigidArea(new Dimension(0,2)));
+      c = parent.add(new JSeparator());
+      parent.add(Box.createRigidArea(new Dimension(0,2)));
     }
     else {
       c = parent.add(mAction);
