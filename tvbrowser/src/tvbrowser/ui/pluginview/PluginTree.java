@@ -795,8 +795,8 @@ public class PluginTree extends JTree implements DragGestureListener,
 
     public void mouseExited(MouseEvent e) {}
     
-    protected void paintRow(Graphics g, Rectangle clipBounds, Insets insets, Rectangle bounds, TreePath path, int row, boolean isExpanded, boolean hasBeenExpanded, boolean isLeaf)  {
-      if(path.getLastPathComponent() instanceof Node) {
+    protected void paintRow(Graphics g, Rectangle clipBounds, Insets insets, Rectangle bounds, TreePath path, int row, boolean isExpanded, boolean hasBeenExpanded, boolean isLeaf)  {      
+      if(path.getLastPathComponent() instanceof Node && (tree.getSelectionPath() == null || !tree.getSelectionPath().equals(path))) {
         Node node = (Node)path.getLastPathComponent();
         
         if(node.getType() == Node.PROGRAM) {
