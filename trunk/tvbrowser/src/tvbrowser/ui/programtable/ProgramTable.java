@@ -72,34 +72,12 @@ import devplugin.Program;
  *
  * @author Til Schneider, www.murfman.de
  */
+/**
+ * @author bananeweizen
+ *
+ */
 public class ProgramTable extends JPanel
 implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
-
-  private class ProgramPanelCoordinates {
-
-    private ProgramPanel panel;
-    private int x;
-    private int y;
-
-    public ProgramPanelCoordinates(ProgramPanel panel, int x, int y) {
-      this.panel = panel;
-      this.x = x;
-      this.y = y;
-    }
-
-    protected ProgramPanel getPanel() {
-      return panel;
-    }
-
-    protected int getX() {
-      return x;
-    }
-
-    protected int getY() {
-      return y;
-    }
-
-  }
 
   private int mColumnWidth;
   private int mHeight;
@@ -126,9 +104,9 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
   private Thread mClickThread;
 
   /**
-   * program panel underneath the mouse cursor
+   * index of the panel underneath the mouse
    */
-  private ProgramPanelCoordinates mMousePanel = null;
+  private Point mMouseMatrix = new Point(-1, -1);
 
   /**
    * Creates a new instance of ProgramTable.
@@ -589,33 +567,54 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
     if (Settings.propMouseOver.getBoolean()) {
       if ((mPopupMenu == null) || (!mPopupMenu.isVisible())) {
         mMouse = evt.getPoint();
-        ProgramPanelCoordinates panelCoordinates = getPanelUnderPoint(mMouse);
-        if (panelCoordinates != null && (mMousePanel == null || panelCoordinates.getPanel() != mMousePanel.getPanel())) {
-          // restore previous panel under mouse
-          if (mMousePanel != null) {
-            repaint(mMousePanel.x, mMousePanel.y, mMousePanel.panel.getWidth(), mMousePanel.panel.getHeight());
+        Point cellIndex = getMatrix(mMouse.x, mMouse.y);
+        if (cellIndex.x >= 0 && cellIndex.y >= 0) {
+          if (cellIndex.x != mMouseMatrix.x || cellIndex.y != mMouseMatrix.y) {
+            // restore previous panel under mouse
+            repaintCell(mMouseMatrix);
+            // now update the current panel
+            mMouseMatrix  = cellIndex;
+            repaintCell(mMouseMatrix);
           }
-          // now update the current panel
-          mMousePanel = panelCoordinates;
-          repaint(mMousePanel.x, mMousePanel.y, mMousePanel.panel.getWidth(), mMousePanel.panel.getHeight());
         }
       }
     }
   }
 
+  /**
+   * repaint the program table cell with the given index
+   * 
+   * @param cellIndex index of the program panel
+   * @since 2.6
+   */
+  private void repaintCell(Point cellIndex) {
+    if (cellIndex.x >= 0 || cellIndex.y >= 0) {
+      repaint(getCellRect(cellIndex.x, cellIndex.y));
+    }
+  }
+
+  
+  /**
+   * repaint the currently selected cell (keyboard selection)
+   * @since 2.6
+   */
+  private void repaintCurrentCell() {
+    repaintCell(new Point(mCurrentCol, mCurrentRow));
+  }
+  
+  
   private void handleMouseExited(MouseEvent evt) {
     if (Settings.propMouseOver.getBoolean()) {
       JViewport viewport = (JViewport) getParent();
       if (((mPopupMenu == null) || (!mPopupMenu.isVisible())) && !viewport.getViewRect().contains(evt.getPoint())) {
-        if (mMousePanel != null) {
-          repaint(mMousePanel.x, mMousePanel.y, mMousePanel.panel.getWidth(), mMousePanel.panel.getHeight());
-        }
+        repaintCell(mMouseMatrix);
         mMouse = null;
-        mMousePanel = null;
+        mMouseMatrix = new Point(-1, -1);
       }
     }
   }
 
+  
   public int getTimeY(int minutesAfterMidnight) {
     // Get the total time y
     int totalTimeY = 0;
@@ -781,6 +780,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
    *
    */
   public void right() {
+    repaintCurrentCell();
     int cols = mModel.getColumnCount();
     int previousCol = mCurrentCol;
 
@@ -809,13 +809,13 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
         Rectangle rectCur = getCellRect(mCurrentCol,1);
 
         if(rectCur != null && rectPrev != null) {          
-          int[] matrix = getMatrix(rectCur.x, mCurrentY);
-          if(matrix[0] != -1) {
-            ProgramPanel panel = mModel.getProgramPanel(matrix[1], matrix[0]);
+          Point cellIndex = getMatrix(rectCur.x, mCurrentY);
+          if(cellIndex.y != -1) {
+            ProgramPanel panel = mModel.getProgramPanel(cellIndex.x, cellIndex.y);
             if(panel != null && !panel.getProgram().isExpired()) {
               find = false;
               found = true;
-              mCurrentRow = matrix[0];              
+              mCurrentRow = cellIndex.y;              
             }
           }
         }
@@ -841,13 +841,12 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
         }
       }
       if(colCount >= cols) {
-        mCurrentCol = -1;
-        mCurrentRow = -1;
-        updateUI();
+        deSelectItem();
         return;
       }
     }while(!found);
 
+    repaintCurrentCell();
     scrollToSelection();
   }
 
@@ -856,6 +855,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
    *
    */
   public void up() {
+    repaintCurrentCell();
     if(mCurrentCol == -1) {
       right();
     } else {
@@ -872,6 +872,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
         mCurrentRow = rows - 1;
       }
 
+      repaintCurrentCell();
       mCurrentY = getCellRect(mCurrentCol, mCurrentRow).y;
       scrollToSelection();
     }    
@@ -882,6 +883,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
    *
    */
   public void down() {
+    repaintCurrentCell();
     if(mCurrentCol == -1) {
       right();
     } else {
@@ -898,16 +900,18 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
         mCurrentRow++;
       }
 
+      repaintCurrentCell();
       mCurrentY = getCellRect(mCurrentCol, mCurrentRow).y;
       scrollToSelection();
     }
-  }  
+  }
 
   /**
    * Go to the left program of the current program.
    *
    */
   public void left() {
+    repaintCurrentCell();
     if(mCurrentCol == -1) {
       right();
     } else {      
@@ -928,13 +932,13 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
           Rectangle rectCur = getCellRect(mCurrentCol,1);
 
           if(rectCur != null && rectPrev != null) {          
-            int[] matrix = getMatrix(rectCur.x, mCurrentY);
-            if(matrix[0] != -1) {
-              ProgramPanel panel = mModel.getProgramPanel(matrix[1], matrix[0]);
+            Point cellIndex = getMatrix(rectCur.x, mCurrentY);
+            if(cellIndex.y != -1) {
+              ProgramPanel panel = mModel.getProgramPanel(cellIndex.x, cellIndex.y);
               if(panel != null && !panel.getProgram().isExpired()) {
                 find = false;
                 found = true;
-                mCurrentRow = matrix[0];              
+                mCurrentRow = cellIndex.y;
               } 
             }
           }
@@ -952,6 +956,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
         }
       }while(!found);
 
+      repaintCurrentCell();
       scrollToSelection();
     }
   }
@@ -969,7 +974,6 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
     }
 
     this.scrollRectToVisible(cell);
-    updateUI();
   }
 
   /**
@@ -977,59 +981,54 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
    *
    */
   public void deSelectItem() {
+    repaintCurrentCell();
     mCurrentRow = -1;
     mCurrentCol = -1;
-    updateUI();
   }
 
   /**
-   * Returns an array of the indices [0] = row
+   * Returns the cell indices for the given point with pixel coordinates
    * 
-   * @param x X position of the point.
-   * @param y Y position of the point.
-   * @return An array of the indices at the point that was given.
+   * @param pointX X position of the point.
+   * @param pointY Y position of the point.
+   * @return a point, where x is the column and y is the row number
    */
-  private int[] getMatrix(int x, int y) {
-    int col = x / mColumnWidth;
-    int[] matrix = new int[2];
+  private Point getMatrix(int pointX, int pointY) {
+    int col = pointX / mColumnWidth;
 
     if ((col < 0) || (col >= mModel.getColumnCount())) {
-      matrix[0] = -1;
-      matrix[1] = -1;      
-      return matrix;
+      return new Point(-1, -1);
     }
-
     int currY = mLayout.getColumnStart(col);
-    if (y < currY) {
-      matrix[0] = -1;
-      matrix[1] = -1;      
-      return matrix;
+    if (pointY < currY) {
+      return new Point(-1, -1);
     }  
 
     int rowCount = mModel.getRowCount(col);
     for (int row = 0; row < rowCount; row++) {
       ProgramPanel panel = mModel.getProgramPanel(col, row);
       currY += panel.getHeight();
-      if (y < currY) {
-        matrix[0] = row;
-        matrix[1] = col;
-        break;
+      if (pointY < currY) {
+        return new Point(col, row);
       }
     }
 
-    return matrix;
+    return new Point(-1, -1);
   }
 
   /**
    * Selects the program at the point(x,y)
-   * @param x X position of the point
-   * @param y Y position of the point
+   * @param pointX X position of the point
+   * @param pointY Y position of the point
    */
-  public void selectItemAt(int x, int y) {
-    int[] matrix = getMatrix(x,y);
-    mCurrentRow = matrix[0];
-    mCurrentCol = matrix[1];
-    updateUI();
+  public void selectItemAt(int pointX, int pointY) {
+    // restore
+    repaintCurrentCell();
+    // select
+    Point cellIndex = getMatrix(pointX,pointY);
+    mCurrentCol = cellIndex.x;
+    mCurrentRow = cellIndex.y;
+    repaintCurrentCell();
   }
 
   /**
@@ -1039,8 +1038,8 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
    * @return Is the point at a selected program?
    */
   private boolean isSelectedItemAt(int x, int y) {
-    int[] matrix = getMatrix(x,y);
-    return (mCurrentRow == matrix[0] && mCurrentCol == matrix[1]);
+    Point cellIndex = getMatrix(x,y);
+    return (mCurrentRow == cellIndex.y && mCurrentCol == cellIndex.x);
   }
 
   public void dragGestureRecognized(DragGestureEvent evt) {
@@ -1065,39 +1064,5 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
 
   public void dragDropEnd(DragSourceDropEvent dsde) {
     deSelectItem();
-  }
-
-  public ProgramPanelCoordinates getPanelUnderPoint(Point point) {
-    int minCol = 0;
-    if (minCol < 0) {
-      minCol = 0;
-    }
-    int maxCol = mModel.getColumnCount() - 1;
-    int columnCount = mModel.getColumnCount();
-    if (maxCol >= columnCount) {
-      maxCol = columnCount - 1;
-    }
-
-    int x = minCol * mColumnWidth;
-    for (int col = minCol; col <= maxCol; col++) {
-      int y = mLayout.getColumnStart(col);
-
-      int rowCount = mModel.getRowCount(col);
-      for (int row = 0; row < rowCount; row++) {
-        ProgramPanel panel = mModel.getProgramPanel(col, row);
-        if (panel != null) {
-          int cellHeight = panel.getHeight();
-          Rectangle rec = new Rectangle(x, y, mColumnWidth, cellHeight);
-          if (rec.contains(point)) {
-            return new ProgramPanelCoordinates(panel, x, y);
-          }
-          // Move to the next row in this column
-          y += cellHeight;
-        }
-      }
-      x += mColumnWidth;
-    }
-
-    return null;
   }
 }
