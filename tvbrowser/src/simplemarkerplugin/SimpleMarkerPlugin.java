@@ -40,7 +40,6 @@ import javax.swing.WindowConstants;
 
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.ProgramTableModel;
-import util.settings.ProgramPanelSettings;
 import util.ui.UiUtilities;
 
 import devplugin.ActionMenu;
