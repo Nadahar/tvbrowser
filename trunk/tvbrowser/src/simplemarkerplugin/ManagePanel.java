@@ -24,6 +24,7 @@ package simplemarkerplugin;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -43,6 +44,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -94,6 +96,8 @@ public class ManagePanel {
   
   private Program[] mDeletedPrograms;
   private MarkList mLastDeletingList;
+  
+  private JSplitPane mSplitPane;
 
   /**
    * Creates an instance of this panel.
@@ -123,25 +127,47 @@ public class ManagePanel {
 
     mMarkListsScrolPane = new JScrollPane(mMarkListsList);
     mProgramsScrollPane = new JScrollPane(mProgramsList);
+    mMarkListsScrolPane.setBorder(null);
+    mProgramsScrollPane.setBorder(null);
 
     JPanel panel = (JPanel)mParent.getContentPane();    
     panel.setBorder(Borders.createEmptyBorder("6dlu,6dlu,5dlu,6dlu"));
     
-    FormLayout layout = new FormLayout("max(90dlu;default),4dlu,fill:default:grow",
+    FormLayout layout = new FormLayout("default:grow",
     "pref,pref,4dlu,fill:default:grow,4dlu,pref");
     
     panel.setLayout(layout);    
 
-    CellConstraints cc = new CellConstraints();
+    CellConstraints cc = new CellConstraints();    
     
     panel.add(mShowPrograms, cc.xy(1,1));
     panel.add(mShowTitles, cc.xy(1,2));
     
-    if(markListVector.size() > 1)
-      panel.add(mMarkListsScrolPane, cc.xy(1,4));
+    if(markListVector.size() > 1) {
+      mSplitPane = new JSplitPane();
+      mSplitPane.setLeftComponent(mMarkListsScrolPane);
+      mSplitPane.setRightComponent(mProgramsScrollPane);
+      
+      mSplitPane.setContinuousLayout(true);
     
-    panel.add(mProgramsScrollPane, (markListVector.size() > 1 ? cc.xy(3,4) : cc.xyw(1,4,3)));
-    panel.add(getButtonPanel(cc), cc.xyw(1,6,3));
+      panel.add(mSplitPane, cc.xy(1,4));
+    
+      String pos = SimpleMarkerPlugin.getInstance().getSettings().getProperty("splitPosition");
+    
+      if(pos != null) {
+        mSplitPane.setDividerLocation(Integer.parseInt(pos));
+      }
+    }
+    else {
+      JPanel innerPanel = new JPanel(new FormLayout("fill:default:grow","fill:default:grow"));
+      innerPanel.setBorder(new JScrollPane().getBorder());
+      
+      innerPanel.add(mProgramsScrollPane, cc.xy(1,1));
+      
+      panel.add(innerPanel, cc.xy(1,4));
+    }
+    
+    panel.add(getButtonPanel(cc), cc.xy(1,6));
 
     mShowPrograms.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -227,6 +253,11 @@ public class ManagePanel {
   
   private void closeDialog() {
     mParent.dispose();
+    
+    if(mSplitPane != null) {
+      SimpleMarkerPlugin.getInstance().getSettings().setProperty("splitPosition", String.valueOf(mSplitPane.getDividerLocation()));
+    }
+    
     SimpleMarkerPlugin.getInstance().resetManagePanel();
   }
   
@@ -266,23 +297,39 @@ public class ManagePanel {
     mProgramListModel.clear();
 
     MarkList list = (MarkList)mMarkListsList.getSelectedValue();
-
+    int index = -1;
+    
     if (mShowPrograms.isSelected()) {
-      for (Program p : list)
-        mProgramListModel.addElement(p);
+      for (int i = 0; i < list.size(); i++) {
+        mProgramListModel.addElement(list.get(i));
+        
+        if(!list.get(i).isExpired() && index == -1) {
+          index = i;
+        }
+      }
     } else {
       Hashtable<String, LinkedList<Program>> table = list.getSortedPrograms();
       Enumeration<String> keys = table.keys();
 
-      while (keys.hasMoreElements())
+      while (keys.hasMoreElements()) {
         mProgramListModel.addElement(keys.nextElement());
+      }
     }
 
+    final int scrollIndex = index;
+    
     if(scroll)
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
           mProgramsScrollPane.getVerticalScrollBar().setValue(0);
           mProgramsScrollPane.getHorizontalScrollBar().setValue(0);
+          
+          if(scrollIndex != 1) {            
+            Rectangle cellBounds = mProgramsList.getCellBounds(scrollIndex,scrollIndex);
+            cellBounds.setLocation(cellBounds.x, cellBounds.y + mProgramsScrollPane.getHeight() - cellBounds.height);
+            
+            mProgramsList.scrollRectToVisible(cellBounds);
+          }
         }
       });
     
