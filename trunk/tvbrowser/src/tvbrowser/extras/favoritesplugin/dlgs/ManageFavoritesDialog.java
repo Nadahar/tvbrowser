@@ -344,6 +344,8 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
 
     mSplitPane = new JSplitPane();
     mSplitPane.setDividerLocation(splitPanePosition);
+    mSplitPane.setContinuousLayout(true);
+    
     main.add(mSplitPane, BorderLayout.CENTER);
     
     JScrollPane scrollPane;
