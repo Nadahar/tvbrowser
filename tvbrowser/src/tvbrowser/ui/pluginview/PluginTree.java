@@ -850,7 +850,7 @@ public class PluginTree extends JTree implements DragGestureListener,
             g.setColor(UIManager.getColor("Label.disabledForeground"));            
           }
           else if(FilterManagerImpl.getInstance().getCurrentFilter().accept(program)) {
-            g.setColor(Color.black);
+            g.setColor(UIManager.getColor("Label.foreground"));
           }
           else {
             g.setColor(Color.red);
