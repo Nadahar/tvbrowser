@@ -368,14 +368,6 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
         ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mFavoritesList,mFavoritesList,this);
         new DragAndDropMouseListener(mFavoritesList,mFavoritesList,this,dnDHandler);
       }
-
-      mFavoritesList.addKeyListener(new KeyAdapter() {
-          public void keyPressed(KeyEvent event) {
-              if (event.getKeyCode() == KeyEvent.VK_LEFT) {
-                  mSplitPane.getLeftComponent().requestFocus();
-              }
-          }
-      });
   
       mFavoritesList.addMouseListener(new MouseAdapter() {
         @Override
