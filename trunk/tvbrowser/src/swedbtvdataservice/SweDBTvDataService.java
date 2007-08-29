@@ -56,7 +56,6 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
     private static SweDBTvDataService mInstance;
     private File mWorkingDirectory;
     private HashSet<SweDBChannelGroup> mChannelGroupsList;
-//    private HashSet mChannelList;
     private SweDBChannelContainer[] mInternalChannel;
     private long mLastChannelUpdate=-1;
     private Channel[] mChannel;
@@ -232,7 +231,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
                   throw new TvBrowserException(SweDBTvDataService.class, "An error occurred in updateTvData","Please report this to the developer");
                 }
               }
-              mLog.info("All of the files has been parsed");
+              mLog.info("All of the files have been parsed");
 /*************************************************************************************
  *            Now all of the files has been parsed. Time to update the local
  *            database with our data...
@@ -255,63 +254,6 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
       
   }      
       
-      
-  /**
-   * Updates the TV listings provided by this data service.
-   *
-   * @throws util.exc.TvBrowserException
-   */
-  public void updateTvDataOld(TvDataUpdateManager updateManager,
-                           Channel[] channelArr, 
-                           Date startDate, 
-                           int dateCount, 
-                           ProgressMonitor monitor)
-                            throws TvBrowserException {
-    int counter = 0;
-    monitor.setMaximum(channelArr.length*dateCount);
-    devplugin.Date start = new devplugin.Date(startDate);
-
-    for (int time =0;time<dateCount;time++){
-      devplugin.Date day = start.addDays(time);
-      for (int i =0;i<channelArr.length;i++){
-        monitor.setValue(counter++);
-        for (int j=0;j<mChannel.length;j++){
-          if (mChannel[j].equals(channelArr[i])){
-            String datum = Integer.toString(day.getYear());
-            datum = datum + "-";
-            if (day.getMonth()< 10){
-              datum = datum + "0";
-            }
-            datum = datum + Integer.toString(day.getMonth());
-            datum = datum + "-";
-
-            if (day.getDayOfMonth()< 10){
-              datum = datum + "0";
-            }
-            datum = datum + Integer.toString(day.getDayOfMonth());
-            try {
-              URL url = new URL(mInternalChannel[j].getBaseUrl()+mInternalChannel[j].getId()+"_"+datum+".xml.gz");
-              HttpURLConnection con = (HttpURLConnection) url.openConnection();
-              con.setReadTimeout(Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout());
-              con.setIfModifiedSince(mInternalChannel[j].getLastUpdate(day));
-              if (con.getResponseCode() == 200){
-                MutableChannelDayProgram mcdp[];
-                mcdp = SweDBDayParser.parse(new GZIPInputStream(con.getInputStream()),channelArr[i],day);
-                for (int loop=0;loop<mcdp.length;loop++){
-                    updateManager.updateDayProgram(mcdp[loop]);
-                }
-                mInternalChannel[j].setLastUpdate(day,con.getLastModified());
-              }
-            } catch (Exception E){
-              throw new TvBrowserException(SweDBTvDataService.class, "An error occurred in updateTvData","Please report this to the developer");
-            }
-          }
-        }
-      }
-    }
-
-  }
-  
   private String createFileName(devplugin.Date fileDate) {
       String fileName = "";
       fileName = Integer.toString(fileDate.getYear()) + "-";
@@ -431,7 +373,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
         con.disconnect();
         convert();
         if (monitor != null) {
-            monitor.setMessage(mLocalizer.msg("Progressmessage.50","All channels has been retrieved"));
+            monitor.setMessage(mLocalizer.msg("Progressmessage.50","All channels have been retrieved"));
         }
       } else {
         if (monitor != null) {
@@ -495,7 +437,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
             mLocalizer.msg("PluginInfo.name","SweDB TV Data Service Plugin"),
             mLocalizer.msg("PluginInfo.description","A TV Data Service plugin which uses XMLTV-data from TV.SWEDB.SE"),
             "Inforama",
-            new Version(0, 4),
+            new Version(0, 5),
             mLocalizer.msg("PluginInfo.support","Support the SWEDB crew - Don't forget to register with http://tv.swedb.se/"));
   }
 
@@ -608,6 +550,5 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
 	    }
 	  }
 
-  
 }
 

@@ -59,18 +59,30 @@ public class ProgramFieldType {
     = new ProgramFieldType(2, TIME_FORMAT, true, "end time",
                            "endTime", "End time");
                            
+  /**
+   * title
+   */
   public static final ProgramFieldType TITLE_TYPE
     = new ProgramFieldType(3, TEXT_FORMAT, true, "title",
                            "title", "Title");
     
+  /**
+   * original language title
+   */
   public static final ProgramFieldType ORIGINAL_TITLE_TYPE
     = new ProgramFieldType(4, TEXT_FORMAT, true, "original title",
                            "originalTitle", "Original title");
     
+  /**
+   * episode title
+   */
   public static final ProgramFieldType EPISODE_TYPE
     = new ProgramFieldType(5, TEXT_FORMAT, true, "episode",
                            "episode", "Episode");
     
+  /**
+   * original language episode title
+   */
   public static final ProgramFieldType ORIGINAL_EPISODE_TYPE
     = new ProgramFieldType(6, TEXT_FORMAT, true, "original episode",
                            "originalEpisode", "Original episode");
