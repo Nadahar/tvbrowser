@@ -170,7 +170,7 @@ public final class PluginInfo {
     /**
      * Gets the name of the plugin.
      * <p>
-     * @return The name of the pluign.
+     * @return The name of the plugin.
      */
     public String getName() {
       return mName; 
