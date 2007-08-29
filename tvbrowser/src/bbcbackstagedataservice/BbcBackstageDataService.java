@@ -178,7 +178,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
    */
   public PluginInfo getInfo() {
     return new PluginInfo(mLocalizer.msg("name","BBC Data"), 
-        mLocalizer.msg("desc", "Data from BBC Backstage."), "Bodo Tasche", new Version(0, 36));
+        mLocalizer.msg("desc", "Data from BBC Backstage."), "Bodo Tasche", new Version(0, 37));
   }
 
   /*
