@@ -355,7 +355,13 @@ public class CapturePlugin extends devplugin.Plugin {
      */
     public void showDialog() {
         CapturePluginDialog dialog = new CapturePluginDialog(getParentFrame(), mConfig);
-        dialog.show(CapturePluginPanel.TAB_PROGRAMLIST);
+
+        if (mConfig.getDevices().isEmpty()) {
+            dialog.show(CapturePluginPanel.TAB_DEVICELIST);
+        } else {
+            dialog.show(CapturePluginPanel.TAB_PROGRAMLIST);
+        }
+
         updateMarkedPrograms();
     }
 
