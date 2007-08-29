@@ -266,7 +266,7 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
       // (layoutChanged() may set mBlockYArr to null during paining)
       TimeBlock[] blockArr = mBlockArr;
       if ((blockArr != null) && (blockArr.length > 0)) {
-        boolean toggleFlag = true;
+        boolean toggleFlag = false;
 
         int width = getWidth();
         int height = getHeight();
@@ -275,14 +275,7 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
         grp.setFont(TABLE_WEST_FONT);
         grp.setColor(TABLE_WEST_FONT_COLOR);
         for (int i = 0; i < blockArr.length; i++) {
-          // Get the image of this time block
-          Image backImg;
-          if (toggleFlag) {
-            backImg = mTableWestImage1;
-          } else {
-            backImg = mTableWestImage2;
-          }
-
+          toggleFlag = ! toggleFlag;
           // Get the y positions of this time block
           int minY = blockArr[i].mStartY;
           int maxY;
@@ -291,6 +284,18 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
           } else {
             maxY = height;
           }
+          if (! clipBounds.intersects(0, minY, width, maxY - minY)) {
+            // this piece is not visible at all
+            continue;
+          }
+
+          // Get the image of this time block
+          Image backImg;
+          if (toggleFlag) {
+            backImg = mTableWestImage1;
+          } else {
+            backImg = mTableWestImage2;
+          }
       
           // Paint the block
           fillImage(grp, 0, minY, width, (maxY - minY), backImg, clipBounds);
@@ -298,8 +303,6 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
           int msgWidth = mFontMetrics.stringWidth(msg);
           int x = width - msgWidth - 2;
           grp.drawString(msg, x, minY + TABLE_WEST_FONT.getSize());
-          
-          toggleFlag = ! toggleFlag;
         }
       }
     }

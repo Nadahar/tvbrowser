@@ -81,7 +81,7 @@ public class ChannelPanel extends JPanel {
    }
     
     setColumnWidth(mColumnWidth);
-    updateUI();
+    repaint();
   }
 
   
