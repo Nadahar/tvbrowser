@@ -34,12 +34,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -373,6 +368,14 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
         ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mFavoritesList,mFavoritesList,this);
         new DragAndDropMouseListener(mFavoritesList,mFavoritesList,this,dnDHandler);
       }
+
+      mFavoritesList.addKeyListener(new KeyAdapter() {
+          public void keyPressed(KeyEvent event) {
+              if (event.getKeyCode() == KeyEvent.VK_LEFT) {
+                  mSplitPane.getLeftComponent().requestFocus();
+              }
+          }
+      });
   
       mFavoritesList.addMouseListener(new MouseAdapter() {
         @Override
@@ -404,7 +407,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       scrollPane = new JScrollPane(FavoriteTree.getInstance());
       mFavoritesList = null;
     }
-    
+      
     scrollPane.setBorder(null);
     mSplitPane.setLeftComponent(scrollPane);
 
@@ -774,24 +777,29 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
   }
 
   protected void editSelectedFavorite() {
-    Favorite fav;
+    Favorite fav = null;
     
     if(mFavoritesList != null) {
       fav = (Favorite) mFavoritesList.getSelectedValue();
     }
     else {
-      fav = ((FavoriteNode)FavoriteTree.getInstance().getSelectionPath().getLastPathComponent()).getFavorite(); 
-    }
-    
-    EditFavoriteDialog dlg = new EditFavoriteDialog(this, fav);
-    UiUtilities.centerAndShow(dlg);
-    if (dlg.getOkWasPressed()) {
-      if(mFavoritesList != null) {
-        mFavoritesList.repaint();
+      if (FavoriteTree.getInstance().getSelectionCount() > 0) {
+          fav = ((FavoriteNode)FavoriteTree.getInstance().getSelectionPath().getLastPathComponent()).getFavorite(); 
       }
-      favoriteSelectionChanged();
-      FavoritesPlugin.getInstance().updateRootNode(true);
     }
+
+    if (fav != null) {
+        EditFavoriteDialog dlg = new EditFavoriteDialog(this, fav);
+        UiUtilities.centerAndShow(dlg);
+        if (dlg.getOkWasPressed()) {
+          if(mFavoritesList != null) {
+            mFavoritesList.repaint();
+          }
+          favoriteSelectionChanged();
+          FavoritesPlugin.getInstance().updateRootNode(true);
+        }
+    }
+
   }
 
 
