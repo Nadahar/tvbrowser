@@ -321,7 +321,10 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     }
     enableMI.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
-          onStartStopBtnClicked(plugin);
+          int row = mTable.getSelectedRow();
+          if (row >= 0) {
+            mTableModel.setValueAt(!(Boolean)mTableModel.getValueAt(row, 0), row, 0);
+          }
         }
       });
     menu.add(enableMI);
@@ -488,7 +491,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
         ErrorHandler.handle(exc);
       }
 
-      mTable.updateUI();
+      mTable.repaint();
       updateBtns();
       mSettingsDialog.invalidateTree();
       mSettingsDialog.createPluginTreeItems();
