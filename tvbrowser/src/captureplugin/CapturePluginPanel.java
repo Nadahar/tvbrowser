@@ -46,10 +46,10 @@ public class CapturePluginPanel extends JPanel {
 
     /** Tab for Programlist */
     public static final int TAB_PROGRAMLIST = 0;
-    /** Tab for PictureSettings */
-    public static final int TAB_PICTURE_SETTINGS = 1;
     /** Tab for DeviceList */
-    public static final int TAB_DEVICELIST = 2;
+    public static final int TAB_DEVICELIST = 1;
+    /** Tab for Marking */
+    public static final int TAB_MARKING = 2;
 
     /** GUI */
     private JTabbedPane mTabPane;
