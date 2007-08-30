@@ -178,7 +178,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
    */
   public PluginInfo getInfo() {
     return new PluginInfo(mLocalizer.msg("name","BBC Data"), 
-        mLocalizer.msg("desc", "Data from BBC Backstage."), "Bodo Tasche", new Version(0, 37));
+        mLocalizer.msg("desc", "Data from BBC Backstage."), "Bodo Tasche", new Version(0, 38));
   }
 
   /*
@@ -283,7 +283,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
 
     monitor.setValue(3);
 
-    HashMap<Date, MutableChannelDayProgram> cache = new HashMap<Date, MutableChannelDayProgram>();
+    HashMap<Channel,HashMap<Date, MutableChannelDayProgram>> cache = new HashMap<Channel,HashMap<Date, MutableChannelDayProgram>>();
 
     for (int i=0;i<dateCount;i++) {
       monitor.setValue(3+i);
@@ -293,6 +293,11 @@ public class BbcBackstageDataService extends AbstractTvDataService {
       date.append(addZero(startDate.getDayOfMonth()));
       
       for (int v=0;v<max;v++) {
+        HashMap<Date, MutableChannelDayProgram> channelCache = cache.get(channelArr[v]);
+        if (channelCache == null) {
+          channelCache = new HashMap<Date, MutableChannelDayProgram>();
+          cache.put(channelArr[v], channelCache);
+        }
         Date channeldate = startDate;
         StringBuilder filename = new StringBuilder(date);
         filename.append(channelArr[v].getId());
@@ -300,7 +305,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
         
         try {
 
-          BbcFileParser bbcparser = new BbcFileParser(cache, channelArr[v], channeldate);
+          BbcFileParser bbcparser = new BbcFileParser(channelCache, channelArr[v], channeldate);
           
           bbcparser.parseFile(new File(mWorkingDir, filename.toString()));
         } catch (Exception e) {
@@ -312,8 +317,10 @@ public class BbcBackstageDataService extends AbstractTvDataService {
       startDate = startDate.addDays(1);
     }
 
-    for (MutableChannelDayProgram mutDayProg : cache.values()) {
-      updateManager.updateDayProgram(mutDayProg);
+    for (HashMap<Date, MutableChannelDayProgram> channelCache : cache.values()) {
+      for (MutableChannelDayProgram mutDayProg : channelCache.values()) {
+        updateManager.updateDayProgram(mutDayProg);
+      }
     }
 
   }
