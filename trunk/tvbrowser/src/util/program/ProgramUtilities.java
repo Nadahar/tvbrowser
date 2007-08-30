@@ -142,6 +142,11 @@ public class ProgramUtilities {
       else if (actorsField.contains(",")) {
         actors = actorsField.split(",");
       }
+      // single actor
+      else if (actorsField.contains("\t")) {
+        actors = new String[1];
+        actors[0] = actorsField;
+      }
       ArrayList<String> listFirst = new ArrayList<String>();
       ArrayList<String> listSecond = new ArrayList<String>();
       for (String actor : actors) {
