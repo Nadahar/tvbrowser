@@ -34,17 +34,13 @@ import java.io.File;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
@@ -60,7 +56,6 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-import devplugin.SettingsItem;
 import devplugin.SettingsTab;
 
 public class LookAndFeelSettingsTab implements SettingsTab {
@@ -74,8 +69,6 @@ public class LookAndFeelSettingsTab implements SettingsTab {
   private JButton mConfigBtn;
 
   private JComboBox mIconThemes;
-  
-  private JCheckBox mUseChannelLogos;
 
   private JTextArea mInfoArea; 
   
@@ -191,33 +184,6 @@ public class LookAndFeelSettingsTab implements SettingsTab {
 
     mSettingsPn.add(new LinkButton(mLocalizer.msg("findMoreIcons","You can find more Icons on our Web-Page."),
         "http://www.tvbrowser.org/iconthemes.php"), cc.xy(4, 7));
-
-    layout.appendRow(new RowSpec("5dlu"));
-    layout.appendRow(new RowSpec("pref"));
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("channelIcons", "Channel Logos")), cc.xyw(1, 9, 7));
-    layout.appendRow(new RowSpec("5dlu"));
-    
-    layout.appendRow(new RowSpec("pref"));
-    mUseChannelLogos = new JCheckBox(mLocalizer.msg("useChannelIcons", "Display Channel Icons"));
-    
-    mUseChannelLogos.setSelected(Settings.propEnableChannelIcons.getBoolean());
-    
-    mSettingsPn.add(mUseChannelLogos, cc.xyw(2, 11, 4));
-    
-    layout.appendRow(new RowSpec("3dlu"));
-    layout.appendRow(new RowSpec("pref"));
-    
-    JEditorPane pane = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("iconsHelp","You can enable/disable Icons seperatly for the <a href=\"{0}\">Programtable</a> and the <a href=\"{1}\">Channellist</a>.", SettingsItem.PROGRAMTABLELOOK, SettingsItem.CHANNELLISTLOOK), new HyperlinkListener() {
-      public void hyperlinkUpdate(HyperlinkEvent e) {
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          String link = e.getDescription();
-          link = link.substring(1, link.length()-1);
-          SettingsDialog.getInstance().showSettingsTab(link);
-        }
-      }
-    });
-    
-    mSettingsPn.add(pane, cc.xyw(2, 13, 5));
     
     layout.appendRow(new RowSpec("fill:3dlu:grow"));
     layout.appendRow(new RowSpec("pref"));
@@ -226,7 +192,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     mInfoArea.setForeground(Color.RED);
     mInfoArea.setVisible(mSomethingChanged);
 
-    mSettingsPn.add(mInfoArea, cc.xyw(1, 15, 6));
+    mSettingsPn.add(mInfoArea, cc.xyw(1, 9, 6));
     
     if(!mSomethingChanged) {
       mStartLookAndIndex = mLfComboBox.getSelectedIndex();
@@ -288,8 +254,6 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     
     IconTheme theme = (IconTheme) mIconThemes.getSelectedItem();
     Settings.propIcontheme.setString(theme.getBase().getAbsolutePath().substring(System.getProperty("user.dir").length()+1).replace(File.separatorChar,'/'));
-    
-    Settings.propEnableChannelIcons.setBoolean(mUseChannelLogos.isSelected());
     
     mSomethingChanged = mInfoArea.isVisible();
   }

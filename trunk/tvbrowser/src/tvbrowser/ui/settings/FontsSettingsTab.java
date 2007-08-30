@@ -63,7 +63,7 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
 
   public JPanel createSettingsPanel() {
     JPanel mainPanel = new JPanel(new FormLayout("5dlu, 10dlu, pref, 3dlu, pref, fill:3dlu:grow", 
-        "pref, 5dlu, pref, 3dlu, pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
+        "pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
     mainPanel.setBorder(Borders.DIALOG_BORDER);
     
     CellConstraints cc = new CellConstraints();

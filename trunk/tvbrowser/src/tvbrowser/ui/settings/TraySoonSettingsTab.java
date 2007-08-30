@@ -37,7 +37,7 @@ public class TraySoonSettingsTab implements SettingsTab {
   private JLabel mIconSeparator,mSeparator1, mSeparator2; 
   private static boolean mTrayIsEnabled = Settings.propTrayIsEnabled.getBoolean();
   
-  private JEditorPane mHelpLabel, mLookHelpLink;
+  private JEditorPane mHelpLabel;
   private JRadioButton mShowIconAndName, mShowName, mShowIcon;
   
   private static TraySoonSettingsTab mInstance;
@@ -47,8 +47,8 @@ public class TraySoonSettingsTab implements SettingsTab {
     
     CellConstraints cc = new CellConstraints();
     PanelBuilder builder = new PanelBuilder(new FormLayout("5dlu,pref:grow,5dlu",
-        "pref,5dlu,pref,10dlu,pref,5dlu,pref,pref,pref,3dlu,pref," +
-        "10dlu,pref,5dlu,pref,pref,fill:pref:grow,pref"));
+        "pref,5dlu,pref,10dlu,pref,5dlu,pref,pref,pref," +
+        "10dlu,pref,5dlu,pref,pref,fill:default:grow,pref"));
     builder.setDefaultDialogBorder();
     
     mIsEnabled = new JCheckBox(mLocalizer.msg("soonEnabled","Show Soon running programs"),Settings.propTraySoonProgramsEnabled.getBoolean());
@@ -62,19 +62,9 @@ public class TraySoonSettingsTab implements SettingsTab {
     bg.add(mShowIcon);
     bg.add(mShowName);
     
-    mShowName.setSelected(!Settings.propEnableChannelIcons.getBoolean());
-    
     mShowTime = new JCheckBox(mLocalizer.msg("showTime","Show start time"),Settings.propTraySoonProgramsContainsTime.getBoolean());
     mShowToolTip = new JCheckBox(mLocalizer.msg("showToolTip","Show additional information of the program in a tool tip"),Settings.propTraySoonProgramsContainsToolTip.getBoolean());
     mShowToolTip.setToolTipText(mLocalizer.msg("toolTipTip","Tool tips are small helper to something, like this one."));
-    
-    mLookHelpLink = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("goToLook","To disable/enable Channel Icons globally, please look <a href=\"#link\">here</a>."), new HyperlinkListener() {
-      public void hyperlinkUpdate(HyperlinkEvent e) {
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          SettingsDialog.getInstance().showSettingsTab(SettingsItem.LOOKANDFEEL);
-        }
-      }
-    });
     
     mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","The Tray is deactivated. To activate these settings activate the option <b>Tray activated</b> in the <a href=\"#link\">Tray Base settings</a>."), new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent e) {
@@ -92,13 +82,12 @@ public class TraySoonSettingsTab implements SettingsTab {
     builder.add(mShowIconAndName, cc.xy(2,7));
     builder.add(mShowIcon, cc.xy(2,8));
     builder.add(mShowName, cc.xy(2,9));
-    builder.add(mLookHelpLink, cc.xy(2,11));
     
-    JPanel c2 = (JPanel) builder.addSeparator(mLocalizer.msg("settings","Settings"), cc.xyw(1,13,3));
+    JPanel c2 = (JPanel) builder.addSeparator(mLocalizer.msg("settings","Settings"), cc.xyw(1,11,3));
     
-    builder.add(mShowTime, cc.xy(2,15));
-    builder.add(mShowToolTip, cc.xy(2,16));
-    builder.add(mHelpLabel, cc.xyw(1,18,3));
+    builder.add(mShowTime, cc.xy(2,13));
+    builder.add(mShowToolTip, cc.xy(2,14));
+    builder.add(mHelpLabel, cc.xyw(1,16,3));
     
     mSeparator1 = (JLabel)c.getComponent(0);
     mIconSeparator = (JLabel)c1.getComponent(0);
@@ -126,10 +115,9 @@ public class TraySoonSettingsTab implements SettingsTab {
     TrayProgramsChannelsSettingsTab.setSoonIsEnabled(mIsEnabled.isSelected());
     mIconSeparator.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mSeparator2.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
-    mLookHelpLink.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
-    mShowIcon.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled && Settings.propEnableChannelIcons.getBoolean());
-    mShowIconAndName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled && Settings.propEnableChannelIcons.getBoolean());
+    mShowIcon.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
+    mShowIconAndName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     
     mShowTime.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowToolTip.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
@@ -138,7 +126,7 @@ public class TraySoonSettingsTab implements SettingsTab {
   public void saveSettings() {
     if(mIsEnabled != null)
       Settings.propTraySoonProgramsEnabled.setBoolean(mIsEnabled.isSelected());
-    if(mShowIconAndName != null && mShowName != null && mShowIcon != null  && Settings.propEnableChannelIcons.getBoolean()) {
+    if(mShowIconAndName != null && mShowName != null && mShowIcon != null) {
       Settings.propTraySoonProgramsContainsName.setBoolean(mShowIconAndName.isSelected() || mShowName.isSelected());
       Settings.propTraySoonProgramsContainsIcon.setBoolean(mShowIconAndName.isSelected() || mShowIcon.isSelected());
     }

@@ -507,7 +507,7 @@ public class Settings {
       model.setDate(mainFrame.getCurrentSelectedDate(), null, null);
     }
 
-    propArr = new Property[] { propEnableChannelIcons, propShowChannelNames,
+    propArr = new Property[] { 
         propShowChannelIconsInProgramTable, propShowChannelIconsInChannellist,
         propShowChannelNamesInProgramTable, propShowChannelNamesInChannellist };
     if (mProp.hasChanged(propArr)) {
@@ -524,9 +524,6 @@ public class Settings {
       MainFrame.getInstance().handleChangedTvDataDir();      
     }
     
-    if (mProp.hasChanged(propEnableChannelIcons)) {
-      mainFrame.updateChannellist();
-    }
 
     mProp.clearChanges();
     
@@ -1148,12 +1145,6 @@ public class Settings {
 
   public static final StringProperty propLogdirectory = new StringProperty(
       mProp, "logdirectory", mDefaultSettings.getProperty("logdirectory", null));
-
-  public static final BooleanProperty propEnableChannelIcons = new BooleanProperty(
-      mProp, "enableChannelIcons", true);
-
-  public static final BooleanProperty propShowChannelNames = new BooleanProperty(
-      mProp, "showChannelNames", true);
 
   public static final BooleanProperty propShowChannelIconsInProgramTable = new BooleanProperty(
       mProp, "showChannelIconsInProgramtable", true);

@@ -41,7 +41,7 @@ public class TrayImportantSettingsTab implements SettingsTab {
   private JSpinner mSize;
   private JLabel mIconSeparator, mSeparator1, mSeparator2, mSizeLabel, mSizeInfo;
   
-  private JEditorPane mHelpLabel, mLookHelpLink;
+  private JEditorPane mHelpLabel;
   private JRadioButton mShowIconAndName, mShowName, mShowIcon;
   
   private JComboBox mPriority;
@@ -55,7 +55,7 @@ public class TrayImportantSettingsTab implements SettingsTab {
     CellConstraints cc = new CellConstraints();
     PanelBuilder builder = new PanelBuilder(new FormLayout("5dlu,12dlu,pref,5dlu,pref,5dlu,pref:grow,5dlu",
         "pref,5dlu,pref,pref,pref,pref,pref,10dlu,pref,5dlu,pref," +
-        "pref,pref,3dlu,pref,10dlu,pref,5dlu,pref,pref,pref,fill:pref:grow,pref"));
+        "pref,pref,10dlu,pref,5dlu,pref,pref,pref,fill:pref:grow,pref"));
     builder.setDefaultDialogBorder();
     
     mIsEnabled = new JCheckBox(mLocalizer.msg("importantEnabled","Show important programs"),Settings.propTrayImportantProgramsEnabled.getBoolean());
@@ -82,21 +82,11 @@ public class TrayImportantSettingsTab implements SettingsTab {
     bg1.add(mShowIcon);
     bg1.add(mShowName);
     
-    mShowName.setSelected(!Settings.propEnableChannelIcons.getBoolean());
-    
     mShowDate = new JCheckBox(mLocalizer.msg("showDate","Show date"),Settings.propTrayImportantProgramsContainsDate.getBoolean());
     mShowTime = new JCheckBox(mLocalizer.msg("showTime","Show start time"),Settings.propTrayImportantProgramsContainsTime.getBoolean());
     mShowToolTip = new JCheckBox(mLocalizer.msg("showToolTip","Show additional information of the program in a tool tip"),Settings.propTrayImportantProgramsContainsToolTip.getBoolean());
     mShowToolTip.setToolTipText(mLocalizer.msg("toolTipTip","Tool tips are small helper to something, like this one."));
-    
-    mLookHelpLink = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("goToLook","To disable/enable Channel Icons globally, please look <a href=\"#link\">here</a>."), new HyperlinkListener() {
-      public void hyperlinkUpdate(HyperlinkEvent e) {
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          SettingsDialog.getInstance().showSettingsTab(SettingsItem.LOOKANDFEEL);
-        }
-      }
-    });
-    
+        
     mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","The Tray is deactivated. To activate these settings activate the option <b>Tray activated</b> in the <a href=\"#link\">Tray Base settings</a>."), new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent e) {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -128,17 +118,16 @@ public class TrayImportantSettingsTab implements SettingsTab {
     mSizeInfo = builder.addLabel(mLocalizer.msg("sizeInfo","(maximum: {0})",maxSizeValue), cc.xy(7,6));
     builder.add(priority, cc.xyw(3,7,5));
     
-    JPanel c1 = (JPanel) builder.addSeparator(mLocalizer.msg("iconNameSeparator","Channel icons/channel name"), cc.xyw(1,8,8));
+    JPanel c1 = (JPanel) builder.addSeparator(mLocalizer.msg("iconNameSeparator","Channel icons/channel name"), cc.xyw(1,9,8));
     builder.add(mShowIconAndName, cc.xyw(2,11,6));
     builder.add(mShowIcon, cc.xyw(2,12,6));
     builder.add(mShowName, cc.xyw(2,13,6));
-    builder.add(mLookHelpLink, cc.xyw(2,15,6));
     
-    JPanel c2 = (JPanel) builder.addSeparator(mLocalizer.msg("settings","Settings"), cc.xyw(1,16,8));
-    builder.add(mShowDate, cc.xyw(2,19,6));
-    builder.add(mShowTime, cc.xyw(2,20,6));
-    builder.add(mShowToolTip, cc.xyw(2,21,6));
-    builder.add(mHelpLabel, cc.xyw(1,23,8));
+    JPanel c2 = (JPanel) builder.addSeparator(mLocalizer.msg("settings","Settings"), cc.xyw(1,15,8));
+    builder.add(mShowDate, cc.xyw(2,17,6));
+    builder.add(mShowTime, cc.xyw(2,18,6));
+    builder.add(mShowToolTip, cc.xyw(2,19,6));
+    builder.add(mHelpLabel, cc.xyw(1,21,8));
     
     mSeparator1 = (JLabel)c.getComponent(0);
     mIconSeparator = (JLabel)c1.getComponent(0);
@@ -182,10 +171,9 @@ public class TrayImportantSettingsTab implements SettingsTab {
     mSeparator2.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowInSubMenu.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowInTray.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
-    mLookHelpLink.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
-    mShowIconAndName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled && Settings.propEnableChannelIcons.getBoolean());
-    mShowIcon.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled && Settings.propEnableChannelIcons.getBoolean());
+    mShowIconAndName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
+    mShowIcon.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowDate.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowTime.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowToolTip.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
@@ -203,7 +191,7 @@ public class TrayImportantSettingsTab implements SettingsTab {
       Settings.propTrayImportantProgramsInSubMenu.setBoolean(mShowInSubMenu.isSelected());
     if(mSize != null)
       Settings.propTrayImportantProgramsSize.setInt(((Integer)mSize.getValue()).intValue());
-    if(mShowIconAndName != null && mShowName != null && mShowIcon != null && Settings.propEnableChannelIcons.getBoolean()) {
+    if(mShowIconAndName != null && mShowName != null && mShowIcon != null) {
       Settings.propTrayImportantProgramsContainsName.setBoolean(mShowIconAndName.isSelected() || mShowName.isSelected());
       Settings.propTrayImportantProgramsContainsIcon.setBoolean(mShowIconAndName.isSelected() || mShowIcon.isSelected());
     }
