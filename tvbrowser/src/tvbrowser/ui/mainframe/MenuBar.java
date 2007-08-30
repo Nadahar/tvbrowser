@@ -307,7 +307,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
 
   private JMenuItem createChannelMenuItem(final Channel channel) {
     Icon icon = null;
-    if (Settings.propEnableChannelIcons.getBoolean()) {
+    if (Settings.propShowChannelIconsInChannellist.getBoolean()) {
       icon = UiUtilities.createChannelIcon(channel.getIcon());
     }
     JMenuItem item = new JMenuItem(channel.getName(), icon);

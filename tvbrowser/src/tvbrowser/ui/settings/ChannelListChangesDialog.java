@@ -17,11 +17,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * CVS information:
- *  $RCSfile$
- *   $Source$
- *     $Date: 2007-07-02 21:35:23 +0200 (Mo, 02 Jul 2007) $
- *   $Author: bananeweizen $
- * $Revision: 3507 $
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package tvbrowser.ui.settings;
 

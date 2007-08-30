@@ -26,13 +26,12 @@ public class ChannelLabel extends util.ui.ChannelLabel {
   private Channel mChannel;
   
   public ChannelLabel(Channel ch) {
-    super();
+    super(Settings.propShowChannelIconsInProgramTable.getBoolean(),Settings.propShowChannelNamesInProgramTable.getBoolean());
     mChannel = ch;
     
     setForeground(UIManager.getColor("List.selectionForeground"));
     
-    if (Settings.propEnableChannelIcons.getBoolean() &&
-        Settings.propShowChannelIconsInProgramTable.getBoolean()) {
+    if (Settings.propShowChannelIconsInProgramTable.getBoolean()) {
       // Set Icon if it's available
       setIcon(ch.getIcon());
     }
@@ -97,8 +96,7 @@ public class ChannelLabel extends util.ui.ChannelLabel {
   }
 
   public void setIcon(Icon icon) {
-    if (Settings.propEnableChannelIcons.getBoolean() &&
-        Settings.propShowChannelIconsInProgramTable.getBoolean()) {
+    if (Settings.propShowChannelIconsInProgramTable.getBoolean()) {
       super.setIcon(icon);
     }
   }

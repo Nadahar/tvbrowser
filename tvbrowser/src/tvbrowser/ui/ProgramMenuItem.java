@@ -131,11 +131,7 @@ public class ProgramMenuItem extends JMenuItem {
       mShowDate = false;
       mShowName = true;
     }
-    
-    mShowName = mShowName || !Settings.propEnableChannelIcons.getBoolean();
-    
-    showIcon = showIcon && Settings.propEnableChannelIcons.getBoolean();
-    
+        
     mChannelName = new TextAreaIcon(p.getChannel().getName(), mBoldFont, Settings.propTrayChannelWidth.getInt());
 
     if(n % 2 == 1 && n != -1) {
@@ -149,17 +145,6 @@ public class ProgramMenuItem extends JMenuItem {
       mIconHeight = mIcon.getIconHeight();
       setMargin(new Insets(1,getMargin().left,1,getMargin().right));
     }
-
-    /*if (p.getMarkerArr().length > 0) {
-      switch(mProgram.getMarkPriority()) {
-        case Program.NEUTRAL_MARK_PRIORITY: setForeground(Settings.propProgramPanelMarkedNeutralPriorityColor.getColor());break;
-        case Program.MIN_MARK_PRIORITY: setForeground(Settings.propProgramPanelMarkedMinPriorityColor.getColor());break;
-        case Program.MEDIUM_MARK_PRIORITY: setForeground(Settings.propProgramPanelMarkedMediumPriorityColor.getColor());break;
-        case Program.MAX_MARK_PRIORITY: setForeground(Settings.propProgramPanelMarkedMaxPriorityColor.getColor());break;
-      }
-    }
-    
-    setForeground(new Color(getForeground().getRed(),getForeground().getGreen(),getForeground().getBlue(),255).darker());*/
     
     mSelected = false;
 
@@ -199,7 +184,6 @@ public class ProgramMenuItem extends JMenuItem {
           info.insert(index, "<br>");
           i += index - i;
         }
-
       }
 
       StringBuffer toolTip = new StringBuffer(mLocalizer.msg("to", "To: "))

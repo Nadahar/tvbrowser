@@ -76,7 +76,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
    */
   public JPanel createSettingsPanel() {
     mSettingsPn = new JPanel(new FormLayout("5dlu, fill:50dlu:grow, 3dlu, fill:50dlu:grow, 3dlu", 
-        "pref, 5dlu, fill:default:grow, 3dlu, top:pref, 5dlu, pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, 10dlu, pref, 5dlu, pref"));
+        "pref, 5dlu, fill:default:grow, 3dlu, top:pref, 10dlu, pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, 10dlu, pref, 5dlu, pref"));
     mSettingsPn.setBorder(Borders.DIALOG_BORDER);
     
     CellConstraints cc = new CellConstraints();

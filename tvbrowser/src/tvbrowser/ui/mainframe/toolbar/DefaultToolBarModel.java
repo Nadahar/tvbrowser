@@ -745,7 +745,11 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
 
   private JMenuItem createChannelMenuItem(final Channel ch,
       final AbstractButton btn) {
-    JMenuItem item = new JMenuItem(ch.getName());
+    JMenuItem item = new JMenuItem();
+    
+    if (Settings.propShowChannelNamesInChannellist.getBoolean()) {
+      item.setText(ch.getName());
+    }
 
     if (Settings.propShowChannelIconsInChannellist.getBoolean()) {
       item.setIcon(UiUtilities.createChannelIcon(ch.getIcon()));

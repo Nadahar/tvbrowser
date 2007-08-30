@@ -184,11 +184,11 @@ public class ProgramTextCreator {
     buffer.append(";\"><tr>");
     buffer.append("<td width=\"60\">");
     buffer.append("<p \"align=center\">");
-    if (Settings.propEnableChannelIcons.getBoolean()) {
-      JLabel channelLogo = new JLabel(prog.getChannel().getIcon());
-      channelLogo.setToolTipText(prog.getChannel().getName());
-      buffer.append(doc.createCompTag(channelLogo));
-    }
+    
+    JLabel channelLogo = new JLabel(prog.getChannel().getIcon());
+    channelLogo.setToolTipText(prog.getChannel().getName());
+    buffer.append(doc.createCompTag(channelLogo));
+    
     buffer.append("</p></td><td>");
     buffer.append("<div style=\"color:#ff0000; font-size:");
 

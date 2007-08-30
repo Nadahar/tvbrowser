@@ -65,15 +65,20 @@ public class SelectableItemRenderer implements ListCellRenderer {
     p.add(cb, BorderLayout.WEST);
     
     if(selectableItem.getItem() instanceof Channel) {
-      JLabel l = new JLabel(selectableItem.getItem().toString());
+      JLabel l = new JLabel();
+      
+      if(Settings.propShowChannelNamesInChannellist.getBoolean()) {
+        l.setText(selectableItem.getItem().toString());
+      }
       
       if(!mIsEnabled)
         l.setEnabled(false);
       
       l.setOpaque(false);
       
-      if (Settings.propEnableChannelIcons.getBoolean())
+      if(Settings.propShowChannelIconsInChannellist.getBoolean()) {
         l.setIcon(UiUtilities.createChannelIcon(((Channel)selectableItem.getItem()).getIcon()));
+      }
       
       p.add(l, BorderLayout.CENTER);
       
