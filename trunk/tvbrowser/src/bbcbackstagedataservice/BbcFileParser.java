@@ -25,6 +25,7 @@
  */
 package bbcbackstagedataservice;
 
+import bbc.rd.tvanytime.Duration;
 import bbc.rd.tvanytime.Genre;
 import bbc.rd.tvanytime.Synopsis;
 import bbc.rd.tvanytime.TVAnytimeException;
@@ -141,6 +142,7 @@ public class BbcFileParser {
           
           ScheduleEvent event = schedule.getScheduleEvent(eventct);
 
+          @SuppressWarnings("unchecked")
           Vector<ProgramInformation> vector = programInformationTable.getProgramInformation(event.getCRID());
           
           if (vector.size() == 1) {
@@ -170,6 +172,14 @@ public class BbcFileParser {
             MutableProgram prog = new MutableProgram(mChannel,mChannelDate,hour, minutes, true);
             
             prog.setTitle(programInformation.getBasicDescription().getTitle(0).getText());
+            
+            Duration duration = event.getPublishedDuration();
+            if (duration != null) {
+              minutes = (int) (duration.getDurationInMsec() / 1000 /60);
+              if (minutes > 0) {
+                prog.setLength(minutes);
+              }
+            }
             
             // Get Description
             
@@ -211,35 +221,50 @@ public class BbcFileParser {
             
             int cmax = credits.getNumCreditsItems();
             
-            StringBuffer creditList = new StringBuffer();
             for (int ci = 0; ci< cmax;ci++){
               CreditsItem credit = credits.getCreditsItem(ci);
               
-              if (credit.getNumPersonNames() > 0) {
-                StringBuffer person = new StringBuffer();
-                
-                for (int cv =0;cv<credit.getNumCharacters();cv++) {
-                  person.append(credit.getCharacter(cv).getName().trim());
-                  person.append(", ");
-                }
-
-                person = new StringBuffer(person.substring(0, person.length()-2));
-                
-                person.append(" ... ");
-                
-                for (int cv =0;cv<credit.getNumPersonNames();cv++) {
-                  person.append(credit.getPersonName(cv).getName().trim());
-                  person.append(", ");
-                }
-
-                creditList.append(person.substring(0, person.length()-2)).append("\n");
+              if (credit.getRole() != null && credit.getRole().endsWith("DIRECTOR")) {
+                String director = getPersonNames(credit);
+                prog.setTextField(ProgramFieldType.DIRECTOR_TYPE, director);
               }
-              
-            }
+              else if (credit.getRole() != null && credit.getRole().endsWith("ACTOR")) {
+                
+                StringBuffer creditList = new StringBuffer();
+                if (credit.getNumPersonNames() > 0) {
+                  StringBuffer person = new StringBuffer();
+                  
+                  for (int cv =0;cv<credit.getNumCharacters();cv++) {
+                    person.append(credit.getCharacter(cv).getName().trim());
+                    person.append("/");
+                  }
+  
+                  person = new StringBuffer(person.substring(0, person.length()-1));
+                  
+                  person.append("\t");
+                  
+                  for (int cv =0;cv<credit.getNumPersonNames();cv++) {
+                    String name = credit.getPersonName(cv).getName().trim();
+                    if (name.startsWith("..")) {
+                      name = name.substring(2).trim();
+                    }
+                    person.append(name);
+                    person.append("/");
+                  }
+  
+                  creditList.append(person.substring(0, person.length()-1));
+                }
+                if (creditList.length() > 0) {
+                  prog.setTextField(ProgramFieldType.ACTOR_LIST_TYPE, creditList.toString().trim());
+                }
+              }
+/*
+              else {
+                System.out.println(credit.getRole());
+              }
+*/
+              }
 
-            if (creditList.length() > 0) {
-              prog.setTextField(ProgramFieldType.ACTOR_LIST_TYPE, creditList.toString().trim());
-            }
             
             // Genre
             int maxg = programInformation.getBasicDescription().getNumGenres();
@@ -321,6 +346,17 @@ public class BbcFileParser {
         }
       }
     }
+  }
+
+  private String getPersonNames(CreditsItem credit) {
+    StringBuffer result = new StringBuffer();
+    for (int i = 0; i < credit.getNumPersonNames(); i++) {
+      if (i > 0) {
+        result.append(", ");
+      }
+      result.append(credit.getPersonName(i).getName().trim());
+    }
+    return result.toString();
   }
 
 }
