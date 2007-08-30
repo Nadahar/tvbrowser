@@ -26,6 +26,7 @@
 package tvdataservice;
 
 import java.util.ArrayList;
+
 //import util.io.IOUtilities;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
@@ -40,6 +41,10 @@ import devplugin.Program;
  * @author Til Schneider, www.murfman.de
  */
 public class MutableChannelDayProgram implements ChannelDayProgram {
+
+  /** Logger */
+  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(MutableChannelDayProgram.class
+      .getName());
 
   /** The date of this program list. */
   private devplugin.Date mDate;
@@ -155,6 +160,10 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
    *        in the right position in the list, so the list stays ordered.
    */
   public void addProgram(Program program) {
+    if (!program.getChannel().equals(mChannel)) {
+      mLog.severe("Trying to add program of channel " + program.getChannel().getName() + " to day program of channel " + mChannel.getName());
+      return;
+    }
     // find the index where to add the program
     // We search backwards, because the data may come already ordered. And if
     // this is the case we only have to compare once.
