@@ -499,6 +499,10 @@ public class ProgramTextCreator {
           else if (actorField.contains(",")) {
             actors = actorField.split(",");
           }
+          else if (actorField.contains("\t")) {
+            actors = new String[1];
+            actors[0] = actorField;
+          }
           if (actors.length > 0) {
             startInfoSection(buffer, type.getLocalizedName());
             buffer.append("<table border=\"0\" cellpadding=\"0\" style=\"font-family:");
