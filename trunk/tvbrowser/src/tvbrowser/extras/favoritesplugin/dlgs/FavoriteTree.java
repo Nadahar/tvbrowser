@@ -23,6 +23,24 @@
  */
 package tvbrowser.extras.favoritesplugin.dlgs;
 
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.NodeFormatter;
+import devplugin.PluginTreeNode;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
+import devplugin.ProgramItem;
+import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.extras.common.ReminderConfiguration;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
+import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.ui.mainframe.MainFrame;
+import util.ui.Localizer;
+import util.ui.OverlayListener;
+import util.ui.UiUtilities;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -55,7 +73,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JLabel;
@@ -67,37 +84,16 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-
-import devplugin.Channel;
-import devplugin.Date;
-import devplugin.NodeFormatter;
-import devplugin.PluginTreeNode;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
-import devplugin.ProgramItem;
-
-import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.extras.common.ReminderConfiguration;
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
-import tvbrowser.extras.favoritesplugin.core.Favorite;
-import tvbrowser.extras.reminderplugin.ReminderPlugin;
-import tvbrowser.ui.mainframe.MainFrame;
-import util.ui.Localizer;
-import util.ui.OverlayListener;
-import util.ui.UiUtilities;
 
 /**
  * The tree for the ManageFavoritesDialog.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.6
  */
-public class FavoriteTree extends JTree implements DragGestureListener,
-DropTargetListener {
+public class FavoriteTree extends JTree implements DragGestureListener, DropTargetListener {
   private static Localizer mLocalizer = Localizer.getLocalizerFor(FavoriteTree.class);
   
   private static FavoriteTree mInstance;
@@ -115,7 +111,7 @@ DropTargetListener {
   
   /**
    * @deprecated Only used to load data from an old plugin version.
-   * @param favoriteArr
+   * @param favoriteArr Array of Favorites
    */
   private FavoriteTree(Favorite[] favoriteArr) {
     mInstance = this;
@@ -221,7 +217,7 @@ DropTargetListener {
   
   /**
    * @deprecated Used only for loading data from an old plugin version
-   * @param favoriteArr
+   * @param favoriteArr Array with favorites
    */
   public static void create(Favorite[] favoriteArr) {
     new FavoriteTree(favoriteArr);
@@ -503,9 +499,9 @@ DropTargetListener {
     }
     
     if(node.wasExpanded()) {
-      expandPath(new TreePath(((DefaultTreeModel)this.getModel()).getPathToRoot(node)));
+      expandPath(new TreePath((this.getModel()).getPathToRoot(node)));
     } else {
-      collapsePath(new TreePath(((DefaultTreeModel)this.getModel()).getPathToRoot(node)));
+      collapsePath(new TreePath((this.getModel()).getPathToRoot(node)));
     }
   }
   
@@ -690,7 +686,7 @@ DropTargetListener {
   
   
   private boolean calculateCueLine(Point p) {
-    int row = getClosestRowForLocation(p.x, p.y);;
+    int row = getClosestRowForLocation(p.x, p.y);
     
     Rectangle rowBounds = getRowBounds(row);
     
@@ -746,7 +742,7 @@ DropTargetListener {
           mCueLine.setRect(rect);
         }
         else if(target == 1) {
-          Rectangle rect= new Rectangle(rowBounds.x,y + rowBounds.height-1,rowBounds.width,2);;
+          Rectangle rect= new Rectangle(rowBounds.x,y + rowBounds.height-1,rowBounds.width,2);
         
           if(row == getRowCount()) {
            rect = new Rectangle(0,y-1,getWidth(),2);
@@ -809,7 +805,7 @@ DropTargetListener {
         FavoriteNode node = mTransferNode;
         FavoriteNode parent = (FavoriteNode)node.getParent();
         
-        int row = getClosestRowForLocation(e.getLocation().x, e.getLocation().y);;
+        int row = getClosestRowForLocation(e.getLocation().x, e.getLocation().y);
         
         TreePath path = new TreePath(mRootNode);
         
@@ -821,7 +817,7 @@ DropTargetListener {
 
         FavoriteNode last = (FavoriteNode)path.getLastPathComponent();
         FavoriteNode pointed = last;   
-        int target = getTargetFor(pointed, e.getLocation(), row);;
+        int target = getTargetFor(pointed, e.getLocation(), row);
         
         if(path == null) {
           path = new TreePath(mRootNode);
@@ -967,6 +963,8 @@ DropTargetListener {
    * 
    * @param node The node to sort from.
    * @param start If this is called with the root sort node.
+   * @param comp Comparator for sorting
+   * @param title Title of confirmation message dialog
    */
   public void sort(FavoriteNode node, boolean start, Comparator<FavoriteNode> comp, String title) {
     int result = JOptionPane.YES_OPTION;
@@ -1060,7 +1058,9 @@ DropTargetListener {
                   
                   try {
                     Thread.sleep(CLICK_WAIT_TIME*2);
-                  }catch(Exception e) {}
+                  }catch(Exception e) {
+                    e.printStackTrace();
+                  }
                 }
               };
               mClickedThread.start();
