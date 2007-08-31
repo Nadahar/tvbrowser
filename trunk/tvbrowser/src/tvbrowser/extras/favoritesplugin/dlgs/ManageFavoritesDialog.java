@@ -67,6 +67,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ReminderConfiguration;
@@ -465,6 +466,8 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
 
   /**
    * Show the Popup-Menu
+   * @param x X-Position for the popup
+   * @param y Y-Position for the popup
    */
   protected void showFavoritesPopUp(int x, int y) {
     JPopupMenu menu = new JPopupMenu();
@@ -706,7 +709,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       fav = null;
     }
     
-    if(programs == null || programs.length == 0) {
+    if (fav != null && (programs == null || programs.length == 0)) {
       programs = mShowNew ? fav.getNewPrograms() : fav.getWhiteListPrograms();
     }
     
@@ -812,19 +815,29 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     }
     if (selection != -1) {
       Favorite fav;
+      FavoriteNode parent = null;
       if(mFavoritesList != null) {
         fav = (Favorite) mFavoritesListModel.get(selection);
         mFavoritesListModel.remove(selection);
       }
       else {
-        fav = ((FavoriteNode)mFavoriteTree.getSelectionPath().getLastPathComponent()).getFavorite();
+        FavoriteNode node = ((FavoriteNode)mFavoriteTree.getSelectionPath().getLastPathComponent());
+        fav = node.getFavorite();
+        parent = (FavoriteNode) node.getParent();
       }
 
       if (JOptionPane.showConfirmDialog(this,
               FavoritesPlugin.mLocalizer.msg("reallyDelete", "Really delete favorite '{0}'?", fav.getName()),
               mLocalizer.msg("delete", "Delete selected favorite..."),
               JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+
         FavoriteTreeModel.getInstance().deleteFavorite(fav);
+
+        if (parent != null) {
+          mFavoriteTree.setSelectionPath(new TreePath(parent.getPath()));
+          mFavoriteTree.reload(parent);
+        }
+
         favoriteSelectionChanged();
       }
     }
