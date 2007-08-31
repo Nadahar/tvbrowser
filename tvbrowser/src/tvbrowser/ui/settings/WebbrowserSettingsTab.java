@@ -74,7 +74,7 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
     
     CellConstraints cc = new CellConstraints();
     
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("title", "Webbrowser")), cc.xyw(1,1,7));
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("browser", "Web browser")), cc.xyw(1,1,7));
     
     JButton testButton = new LinkButton(mLocalizer.msg("testBrowser", "Test Webbrowser"), "http://www.tvbrowser.org", LinkButton.LEFT, false);
     testButton.addActionListener(new ActionListener() {
@@ -177,7 +177,7 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
    * Returns the title of the tab-sheet.
    */
   public String getTitle() {
-    return mLocalizer.msg("title", "Webbrowser");
+    return mLocalizer.msg("browser", "Web browser");
   }
 
 }

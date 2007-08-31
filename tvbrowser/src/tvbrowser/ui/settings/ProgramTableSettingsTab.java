@@ -108,7 +108,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
       mColWidthSl.setValue(200);
     }
   }
-
+  
   /**
    * Creates the settings panel for this tab.
    */
@@ -118,7 +118,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mSettingsPn.setBorder(Borders.DIALOG_BORDER);
 
     CellConstraints cc = new CellConstraints();
-
+    
     // Layout-Rows ****************************************
     layout.appendRow(new RowSpec("pref"));
     layout.appendRow(new RowSpec("5dlu"));
@@ -192,7 +192,11 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     
     mSettingsPn.add(new JLabel(mLocalizer.msg("startOfDay", "Start of day")), cc.xy(2, 11));
     
-    mStartOfDayTimeSp = new JSpinner(new SpinnerDateModel());
+    TwoSpinnerDateModel startModel = new TwoSpinnerDateModel();
+    
+    mStartOfDayTimeSp = new JSpinner(startModel);
+    startModel.setMe(mStartOfDayTimeSp);
+    
     JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mStartOfDayTimeSp, Settings.getTimePattern());
     mStartOfDayTimeSp.setEditor(dateEditor);
     mSettingsPn.add(mStartOfDayTimeSp, cc.xy(4, 11));
@@ -201,7 +205,11 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     
     mSettingsPn.add(new JLabel(mLocalizer.msg("endOfDay", "End of day")), cc.xy(2, 13));
     
-    mEndOfDayTimeSp = new JSpinner(new SpinnerDateModel());
+    TwoSpinnerDateModel endModel = new TwoSpinnerDateModel();
+    
+    mEndOfDayTimeSp = new JSpinner(endModel);
+    endModel.setMe(mEndOfDayTimeSp);
+    
     dateEditor = new JSpinner.DateEditor(mEndOfDayTimeSp, Settings.getTimePattern());
     mEndOfDayTimeSp.setEditor(dateEditor);
     mSettingsPn.add(mEndOfDayTimeSp, cc.xy(4, 13));
@@ -214,11 +222,14 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     cal.set(Calendar.HOUR_OF_DAY, minutes / 60);
     cal.set(Calendar.MINUTE, minutes % 60);
     mStartOfDayTimeSp.setValue(cal.getTime());
-
+    
+    
     minutes = Settings.propProgramTableEndOfDay.getInt();
     cal.set(Calendar.HOUR_OF_DAY, minutes / 60);
     cal.set(Calendar.MINUTE, minutes % 60);
     mEndOfDayTimeSp.setValue(cal.getTime());
+    
+    
     
     // Table Background ***************************************
     layout.appendRow(new RowSpec("pref"));
@@ -353,13 +364,11 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     Settings.propColumnWidth.setInt(mColWidthSl.getValue());
 
     Calendar cal = Calendar.getInstance();
-    Date startTime = (Date) mStartOfDayTimeSp.getValue();
-    cal.setTime(startTime);
+    cal.setTime((Date) mStartOfDayTimeSp.getValue());
     int minutes = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
     Settings.propProgramTableStartOfDay.setInt(minutes);
 
-    Date endTime = (Date) mEndOfDayTimeSp.getValue();
-    cal.setTime(endTime);
+    cal.setTime((Date) mEndOfDayTimeSp.getValue());
     minutes = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
     Settings.propProgramTableEndOfDay.setInt(minutes);
 
@@ -444,5 +453,61 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     }
 
   }
-
+  
+  
+  private class TwoSpinnerDateModel extends SpinnerDateModel {
+    private JSpinner mMeSpinner;
+    
+    protected void setMe(JSpinner me) {
+      mMeSpinner = me;
+    }
+    
+    public void setValue(Object value) {
+      correctValues((Date)value);
+      
+      super.setValue(value);
+    }
+    
+    public Object getPreviousValue() {
+      Date d = (Date)super.getPreviousValue();
+      correctValues(d);
+      
+      return d;
+    }
+    
+    public Object getNextValue() {
+      Date d = (Date)super.getNextValue();
+      correctValues(d);      
+      
+      return d;
+    }
+    
+    private void correctValues(Date d) {
+      Calendar cal = Calendar.getInstance();
+      int endTime, startTime;
+      
+      if(mMeSpinner.equals(mStartOfDayTimeSp)) {
+        cal.setTime((Date)mEndOfDayTimeSp.getValue());
+        endTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);;
+        
+        cal.setTime(d);        
+        startTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
+        
+        if(endTime - startTime < 0) {
+          mEndOfDayTimeSp.setValue(d);
+        }
+      }
+      else {
+        cal.setTime(d);
+        endTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);;
+        
+        cal.setTime((Date)mStartOfDayTimeSp.getValue());        
+        startTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
+        
+        if(endTime - startTime < 0) {
+          mStartOfDayTimeSp.setValue(d);
+        }
+      }
+    }
+  }
 }
