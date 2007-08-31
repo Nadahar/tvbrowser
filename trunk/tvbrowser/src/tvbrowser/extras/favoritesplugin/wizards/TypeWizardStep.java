@@ -26,6 +26,26 @@
 
 package tvbrowser.extras.favoritesplugin.wizards;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import devplugin.Program;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.favoritesplugin.core.ActorsFavorite;
+import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
+import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.favoritesplugin.core.TitleFavorite;
+import tvbrowser.extras.favoritesplugin.core.TopicFavorite;
+import tvbrowser.extras.favoritesplugin.dlgs.EditFavoriteDialog;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteNode;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
+import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
+import tvbrowser.ui.mainframe.MainFrame;
+import util.program.ProgramUtilities;
+import util.ui.LinkButton;
+import util.ui.UiUtilities;
+
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Frame;
@@ -43,24 +63,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.favoritesplugin.core.*;
-import tvbrowser.extras.favoritesplugin.dlgs.EditFavoriteDialog;
-import tvbrowser.extras.favoritesplugin.dlgs.FavoriteNode;
-import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTree;
-import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
-import tvbrowser.ui.mainframe.MainFrame;
-import util.program.ProgramUtilities;
-import util.ui.LinkButton;
-import util.ui.UiUtilities;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.Program;
-
 public class TypeWizardStep extends AbstractWizardStep {
 
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(TypeWizardStep.class);
@@ -77,8 +79,6 @@ public class TypeWizardStep extends AbstractWizardStep {
 
   private JRadioButton mActorsRb;
 
-  private Favorite mFavorite;
-
   private JPanel mContent;
 
   private Program mProgram;
@@ -92,7 +92,7 @@ public class TypeWizardStep extends AbstractWizardStep {
   }
   
   public TypeWizardStep(Program program) {
-    this(program, FavoriteTree.getInstance().getRoot());
+    this(program, (FavoriteNode) FavoriteTreeModel.getInstance().getRoot());
   }
 
   public TypeWizardStep(Program program, FavoriteNode parent) {
@@ -179,7 +179,7 @@ public class TypeWizardStep extends AbstractWizardStep {
         }
         UiUtilities.centerAndShow(dlg);
         if (dlg.getOkWasPressed()) {
-          FavoriteTree.getInstance().addFavorite(favorite, mParentNode);
+          FavoriteTreeModel.getInstance().addFavorite(favorite, mParentNode);
           FavoritesPlugin.getInstance().updateRootNode(true);
           
           if(ManageFavoritesDialog.getInstance() != null) {
@@ -263,8 +263,7 @@ public class TypeWizardStep extends AbstractWizardStep {
   }
 
   public Object createDataObject(Object obj) {
-    mFavorite = createFavorite();
-    return mFavorite;
+    return createFavorite();
   }
 
   public WizardStep next() {

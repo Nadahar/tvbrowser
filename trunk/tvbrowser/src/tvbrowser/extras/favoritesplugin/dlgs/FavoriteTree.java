@@ -96,12 +96,10 @@ import javax.swing.tree.TreeSelectionModel;
 public class FavoriteTree extends JTree implements DragGestureListener, DropTargetListener {
   private static Localizer mLocalizer = Localizer.getLocalizerFor(FavoriteTree.class);
   
-  private static FavoriteTree mInstance;
-  
-  private FavoriteNode mRootNode;
   private FavoriteNode mTransferNode;
   private Rectangle2D mCueLine = new Rectangle2D.Float();
-  
+
+  private FavoriteNode mRootNode;
   private FavoriteNode mTargetNode;
   private int mTarget;
   private long mDragOverStart;
@@ -109,27 +107,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
   
   protected static final DataFlavor FAVORITE_FLAVOR = new DataFlavor(TreePath.class, "FavoriteNodeExport");
   
-  /**
-   * @deprecated Only used to load data from an old plugin version.
-   * @param favoriteArr Array of Favorites
-   */
-  private FavoriteTree(Favorite[] favoriteArr) {
-    mInstance = this;
-    
-    mRootNode = new FavoriteNode("FAVORITES_ROOT");
-    
-    for(Favorite fav : favoriteArr) {
-      mRootNode.add(fav);
-    }
-    
-    init();
-  }
-  
-  private FavoriteTree(ObjectInputStream in, int version) throws IOException, ClassNotFoundException {
-    mInstance = this;
-        
-    mRootNode = new FavoriteNode(in, version);
-    
+  public FavoriteTree() {
     init();
   }
     
@@ -139,10 +117,12 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
   }
   
   private void init() {
-    setModel(new FavoriteTreeModel(mRootNode));
+    setModel(FavoriteTreeModel.getInstance());
     setRootVisible(false);
     setShowsRootHandles(true);
-    
+
+    mRootNode = (FavoriteNode) FavoriteTreeModel.getInstance().getRoot();
+
     FavoriteTreeCellRenderer renderer = new FavoriteTreeCellRenderer();
     renderer.setLeafIcon(null);
     setCellRenderer(renderer);
@@ -214,66 +194,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
     
     new DropTarget(this, this);
   }
-  
-  /**
-   * @deprecated Used only for loading data from an old plugin version
-   * @param favoriteArr Array with favorites
-   */
-  public static void create(Favorite[] favoriteArr) {
-    new FavoriteTree(favoriteArr);
-  }
-  
-  /**
-   * Creates the instance of this class from the given ObjectInputStream.
-   * 
-   * @param in The stream to read the data from.
-   * @param version The file version of the data file.
-   * @throws IOException Thrown if something went wrong.
-   * @throws ClassNotFoundException Thrown if something went wrong.
-   */
-  public static void create(ObjectInputStream in, int version) throws IOException, ClassNotFoundException {
-    new FavoriteTree(in, version);
-  }
-  
-  /**
-   * Gets the instance of this class.
-   * 
-   * @return The instance of this class.
-   */
-  public static FavoriteTree getInstance() {
-    if(mInstance == null) {
-      new FavoriteTree(new Favorite[0]);
-    }
-    
-    return mInstance;
-  }
-  
-  /**
-   * Saves the data of this tree into the given stream.
-   * 
-   * @param out The stream to write the data to.
-   * @throws IOException Thrown if something went wrong
-   */
-  public void storeData(ObjectOutputStream out) throws IOException {
-    ((FavoriteNode)getModel().getRoot()).store(out);
-  }  
-  
-  /**
-   * Adds a favorite to this tree at the given target node.
-   * 
-   * @param fav The favorite to add.
-   * @param target The target node to add the favorite to or
-   * <code>null</code> if the root node should be used.
-   */
-  public void addFavorite(Favorite fav, FavoriteNode target) {
-    if(target == null) {
-      target = mRootNode;
-    }
-    
-    reload(target.add(fav));
-    FavoritesPlugin.getInstance().updateRootNode(true);
-  }
-  
+
   protected void reload(FavoriteNode node) {
     mExpandListenerIsEnabled = false;
     getModel().reload(node);
@@ -382,7 +303,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
           final String titleAlpha = item.getText();
           item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                sort(last,true, FavoriteNodeComparator.getInstance(), titleAlpha);
+                FavoriteTreeModel.getInstance().sort(last,true, FavoriteNodeComparator.getInstance(), titleAlpha);
                 reload(last);
             }
           });
@@ -393,7 +314,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
           final String titleCount = item.getText();
           item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                sort(last,true, FavoriteNodeCountComparator.getInstance(),titleCount);
+                FavoriteTreeModel.getInstance().sort(last,true, FavoriteNodeCountComparator.getInstance(),titleCount);
                 reload(last);
             }
           });
@@ -509,125 +430,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
     return (FavoriteTreeModel)super.getModel();
   }
   
-  /**
-   * Gets all favorites in an array.
-   * 
-   * @return All favorites in an array.
-   */
-  public Favorite[] getFavoriteArr() {
-    ArrayList<Favorite> favoriteList = new ArrayList<Favorite>();
-    
-    fillFavoriteList(mRootNode, favoriteList);
-    
-    return favoriteList.toArray(new Favorite[favoriteList.size()]);
-  }
-  
-  private void fillFavoriteList(FavoriteNode node, ArrayList<Favorite> favoriteList) {
-    if(node.isDirectoryNode()) {
-      Enumeration e = node.children();
-      
-      while(e.hasMoreElements()) {
-        FavoriteNode child = (FavoriteNode)e.nextElement();
-        
-        if(child.isDirectoryNode()) {
-          fillFavoriteList(child, favoriteList);
-        } else if(child.containsFavorite()) {
-          favoriteList.add(child.getFavorite());
-        }
-      }
-    }
-  }
-  
-  /**
-   * Deletes a favorite.
-   * 
-   * @param favorite The favorite to delete.
-   */
-  public void deleteFavorite(Favorite favorite) {
-    Program[] delFavPrograms = favorite.getPrograms();
-    for (Program program : delFavPrograms) {
-      program.unmark(FavoritesPluginProxy.getInstance());
-    }
 
-    deleteFavorite(mRootNode, favorite);
-    
-    String[] reminderServices = favorite.getReminderConfiguration().getReminderServices();    
-    
-    for (String reminderService : reminderServices) {
-      if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderService)) {
-        ReminderPlugin.getInstance().removePrograms(favorite.getPrograms());
-      }
-    }
-    
-    FavoritesPlugin.getInstance().updateRootNode(true);
-  }
-  
-  /**
-   * Check if a program is marked by other Favorites to.
-   *
-   * @param favorite The Favorite that wants to check this.
-   * @param p The program to check.
-   * @return True if the program was found in other Favorites than the given one.
-   */
-  public boolean isContainedByOtherFavorites(Favorite favorite, Program p) {
-    return isContainedByOtherFavorites(mRootNode,favorite,p);
-  }
-  
-  private boolean isContainedByOtherFavorites(FavoriteNode node,Favorite favorite, Program p) {
-    boolean value = false;
-    
-    if(node.isDirectoryNode()) {
-      Enumeration e = node.children();
-      
-      while(e.hasMoreElements()) {
-        FavoriteNode child = (FavoriteNode)e.nextElement();
-        
-        if(child.isDirectoryNode()) {
-          value = value || isContainedByOtherFavorites(child, favorite, p);
-        } else if(child.containsFavorite()) {
-          if(!child.equals(favorite)) {
-            value = value || child.getFavorite().contains(p);
-          }
-        }
-      }
-    }
-    
-    return value;
-  }
-  
-  private void deleteFavorite(FavoriteNode node, Favorite fav) {
-    if(node.isDirectoryNode()) {
-      Enumeration e = node.children();
-      
-      while(e.hasMoreElements()) {
-        FavoriteNode child = (FavoriteNode)e.nextElement();
-        
-        if(child.isDirectoryNode()) {
-          deleteFavorite(child, fav);
-        } else if(child.containsFavorite()) {
-          if(child.equals(fav)) {
-            ((FavoriteNode)child.getParent()).remove(child);
-          }
-          else {
-            child.getFavorite().handleContainingPrograms(fav.getPrograms());
-          }
-        }
-      }
-    }
-    
-    clearSelection();
-    updateUI();
-  }
-  
-  /**
-   * Adds a favorite to this tree at the root node.
-   * 
-   * @param fav The favorite to add.
-   */
-  public void addFavorite(Favorite fav) {
-    addFavorite(fav, mRootNode);
-  }
-  
   /**
    * Gets the root node of this tree.
    * 
@@ -900,14 +703,14 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
       reload((FavoriteNode)node.getParent());
     }
   }
-  
+
   public String convertValueToText(Object value, boolean selected,
       boolean expanded, boolean leaf, int row, boolean hasFocus) {
     StringBuffer text = new StringBuffer(value.toString());
-    
+
     if(value instanceof FavoriteNode) {
-      int[] count = getProgramsCount((FavoriteNode)value);
-      
+      int[] count = FavoriteTreeModel.getProgramsCount((FavoriteNode)value);
+
       if(count[0] > 0) {
         if(count[1] < 1) {
           text.append(" [").append(count[0]).append("]");
@@ -916,88 +719,12 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
         }
       }
     }
-    
+
     return text.toString();
   }
-  
-   /** Calculates the number of programs containded in the childs
-   * 
-   * @param node
-   *          use this Node
-   * @return Number of Child-Nodes
-   */
-  private int[] getProgramsCount(FavoriteNode node) {
-    int[] count = new int[2];
-    
-    if(node.containsFavorite()) {
-      count[0] = node.getFavorite().getWhiteListPrograms().length;
-      
-      for(Program p : node.getFavorite().getWhiteListPrograms()) {
-        if(p.getDate().equals(Date.getCurrentDate())) {
-          count[1]++;
-        }
-      }
-    }
-    
-    for (int i = 0; i < node.getChildCount(); i++) {
-      FavoriteNode child = (FavoriteNode)node.getChildAt(i);
-      if (child.containsFavorite()) {
-        count[0] += child.getFavorite().getWhiteListPrograms().length;
-        
-        for(Program p : child.getFavorite().getWhiteListPrograms()) {
-          if(p.getDate().equals(Date.getCurrentDate())) {
-            count[1]++;
-          }
-        }
-      } else {
-        int[] countReturned = getProgramsCount(child);
-        count[0] += countReturned[0];
-        count[1] += countReturned[1];
-      }
-    }
-    return count;
-  }
-  
-  /**
-   * Sorts the path from the given node to all leafs alpabetically.
-   * 
-   * @param node The node to sort from.
-   * @param start If this is called with the root sort node.
-   * @param comp Comparator for sorting
-   * @param title Title of confirmation message dialog
-   */
-  public void sort(FavoriteNode node, boolean start, Comparator<FavoriteNode> comp, String title) {
-    int result = JOptionPane.YES_OPTION;
-    
-    if(start) {
-      String msg = mLocalizer.msg("reallySort", "Do you really want to sort your " +
-      "favorites?\n\nThe current order will get lost.");
-      result = JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), msg, title, JOptionPane.YES_NO_OPTION);
-    }
-    
-    if (result == JOptionPane.YES_OPTION) {
-      FavoriteNode[] nodes = new FavoriteNode[node.getChildCount()];
-      
-      for(int i = 0; i < nodes.length; i++) {
-        nodes[i] = (FavoriteNode)node.getChildAt(i);
-      }
-      
-      node.removeAllChildren();
-      
-      Arrays.sort(nodes, comp);
-      
-      for(FavoriteNode child : nodes) {
-        node.add(child);
-        
-        if(child.isDirectoryNode()) {
-          sort(child, false, comp, title);
-        }
-      }
-    }
-    
-    ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
-  }
-  
+
+
+
   private class FavoriteTreeUI extends javax.swing.plaf.basic.BasicTreeUI implements MouseListener {
     private static final int CLICK_WAIT_TIME = 150;
     private Thread mClickedThread;
@@ -1094,105 +821,6 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
     }
   }
   
-  public void updatePluginTree(PluginTreeNode node, FavoriteNode parent) {
-    if(parent == null) {
-      parent = mRootNode;
-    }
-    
-    if(parent.isDirectoryNode()) {
-      Enumeration e = parent.children();
-            
-      while(e.hasMoreElements()) {
-        final FavoriteNode child = (FavoriteNode)e.nextElement();
-      
-        PluginTreeNode newNode = new PluginTreeNode(child.toString());
-        newNode.setGroupingByWeekEnabled(true);
-        
-        if(child.isDirectoryNode()) {
-          updatePluginTree(newNode,child);
-          if (!newNode.isEmpty()) {
-            node.add(newNode);
-          }
-        } else {
-          Program[] progArr = child.getFavorite().getWhiteListPrograms();
-          if (progArr.length > 0) {
-            node.add(newNode);
-            Action editFavorite = new AbstractAction() {
-              public void actionPerformed(ActionEvent e) {
-                FavoritesPlugin.getInstance().editFavorite(child.getFavorite());
-              }
-            };
-            editFavorite.putValue(Action.NAME, mLocalizer.msg("editTree","Edit..."));
-            editFavorite.putValue(Action.SMALL_ICON, FavoritesPlugin.getInstance().getIconFromTheme("actions", "document-edit", 16));
-  
-            Action deleteFavorite = new AbstractAction() {
-              public void actionPerformed(ActionEvent e) {
-                FavoritesPlugin.getInstance().askAndDeleteFavorite(child.getFavorite());
-              }
-            };
-            deleteFavorite.putValue(Action.NAME, mLocalizer.msg("deleteTree","Delete..."));
-            deleteFavorite.putValue(Action.SMALL_ICON, FavoritesPlugin.getInstance().getIconFromTheme("actions", "edit-delete", 16));
-  
-            newNode.addAction(editFavorite);
-            newNode.addAction(deleteFavorite);                    
-            
-              
-            if(progArr.length <= 10) {
-              newNode.setGroupingByDateEnabled(false);
-            }
-            
-            for (Program program : progArr) {
-              PluginTreeNode pNode = newNode.addProgram(program);
-              
-              int numberOfDays = program.getDate().getNumberOfDaysSince(Date.getCurrentDate());
-              if ((progArr.length <= 10) || (numberOfDays > 1)) {
-                pNode.setNodeFormatter(new NodeFormatter() {
-                  public String format(ProgramItem pitem) {
-                    Program p = pitem.getProgram();
-                    return getFavoriteLabel(child.getFavorite(), p);
-                  }
-                });
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  public String getFavoriteLabel(Favorite favorite, Program program) {
-    return getFavoriteLabel(favorite, program, null);
-  }
-  
-  public String getFavoriteLabel(Favorite favorite, Program p, Channel currentChannel) {
-    Date d = p.getDate();
-    String progdate;
-
-    if (d.equals(Date.getCurrentDate())) {
-      progdate = mLocalizer.msg("today", "today");
-    } else if (d.equals(Date.getCurrentDate().addDays(1))) {
-      progdate = mLocalizer.msg("tomorrow", "tomorrow");
-    } else {
-      progdate = p.getDateString();
-    }
-
-    String description = progdate + "  " + p.getTimeString(); 
-    if(favorite.getName().compareTo(p.getTitle()) != 0) {
-      description = description + "  " + p.getTitle();
-    }
-    String episode = p.getTextField(ProgramFieldType.EPISODE_TYPE);
-    if (episode != null && (! episode.trim().equalsIgnoreCase(""))) {
-      if (episode.length()<=3) {
-        episode = ProgramFieldType.EPISODE_TYPE.getLocalizedName() + " " + episode;
-      }
-      description = description + ": " + episode ;
-    }
-    if (null == currentChannel || currentChannel != p.getChannel()) {
-      description = description + "  (" + p.getChannel() + ")";
-    }
-    return description;
-  }
-
   protected void moveSelectedFavorite(int rowCount) {
     int row = getRowForPath(getSelectionPath());
     

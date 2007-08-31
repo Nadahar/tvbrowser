@@ -26,28 +26,15 @@
 
 package tvbrowser.extras.favoritesplugin;
 
-import java.awt.Component;
-import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
-import javax.swing.JOptionPane;
-
+import devplugin.ActionMenu;
+import devplugin.ButtonAction;
+import devplugin.PluginTreeNode;
+import devplugin.Program;
+import devplugin.ProgramReceiveIf;
+import devplugin.ProgramReceiveTarget;
+import devplugin.ProgressMonitor;
+import devplugin.SettingsItem;
+import devplugin.ThemeIcon;
 import tvbrowser.core.TvDataUpdateListener;
 import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.icontheme.IconLoader;
@@ -63,6 +50,7 @@ import tvbrowser.extras.favoritesplugin.core.TitleFavorite;
 import tvbrowser.extras.favoritesplugin.core.TopicFavorite;
 import tvbrowser.extras.favoritesplugin.dlgs.EditFavoriteDialog;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTree;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
 import tvbrowser.extras.favoritesplugin.wizards.ExcludeWizardStep;
 import tvbrowser.extras.favoritesplugin.wizards.TypeWizardStep;
@@ -72,9 +60,29 @@ import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.Localizer;
-import util.ui.UiUtilities;
 import util.ui.NullProgressMonitor;
-import devplugin.*;
+import util.ui.UiUtilities;
+
+import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Properties;
+import java.util.Set;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 
 /**
  * Plugin for managing the favorite programs.
@@ -149,14 +157,14 @@ public class FavoritesPlugin {
       mHasToUpdate = false;
       
       updateAllFavorites();
-      FavoriteTree.getInstance().updateUI();
+      FavoriteTreeModel.getInstance().reload();
 
       mHasRightToSave = true;      
       updateRootNode(true);
 
       ArrayList<Favorite> showInfoFavorites = new ArrayList<Favorite>();
 
-      Favorite[] favoriteArr = FavoriteTree.getInstance().getFavoriteArr();
+      Favorite[] favoriteArr = FavoriteTreeModel.getInstance().getFavoriteArr();
       
       for (Favorite favorite : favoriteArr) {
         if (favorite.isRemindAfterDownload() && favorite.getNewPrograms().length > 0) {
@@ -275,11 +283,11 @@ public class FavoritesPlugin {
   
         }
       }
-        FavoriteTree.create(newFavoriteArr);
+        FavoriteTreeModel.initInstance(newFavoriteArr);
     }
     else {
-      FavoriteTree.create(in,version);
-      newFavoriteArr = FavoriteTree.getInstance().getFavoriteArr();
+      FavoriteTreeModel.initInstance(in,version);
+      newFavoriteArr = FavoriteTreeModel.getInstance().getFavoriteArr();
     }
 
     for (Favorite newFavorite : newFavoriteArr) {
@@ -351,7 +359,7 @@ public class FavoritesPlugin {
     
     ProgressMonitor monitor;
     
-    Favorite[] favoriteArr = FavoriteTree.getInstance().getFavoriteArr();
+    Favorite[] favoriteArr = FavoriteTreeModel.getInstance().getFavoriteArr();
     
     if (favoriteArr.length > 5) {    // if we have more then 5 favorites, we show a progress bar
       try {
@@ -449,7 +457,7 @@ public class FavoritesPlugin {
   private void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(6); // version
 
-    FavoriteTree.getInstance().storeData(out);
+    FavoriteTreeModel.getInstance().storeData(out);
 
     out.writeInt(mClientPluginTargets.length);
     for (ProgramReceiveTarget target : mClientPluginTargets) {
@@ -499,7 +507,7 @@ public class FavoritesPlugin {
 
 
   protected ActionMenu getContextMenuActions(Program program) {
-    return new ContextMenuProvider(FavoriteTree.getInstance().getFavoriteArr()).getContextMenuActions(program);
+    return new ContextMenuProvider(FavoriteTreeModel.getInstance().getFavoriteArr()).getContextMenuActions(program);
   }
 
 
@@ -605,7 +613,7 @@ public class FavoritesPlugin {
     if (favorite != null) {
       try {        
         favorite.updatePrograms();
-        FavoriteTree.getInstance().addFavorite(favorite);
+        FavoriteTreeModel.getInstance().addFavorite(favorite);
         
         if(ManageFavoritesDialog.getInstance() != null) {
           ManageFavoritesDialog.getInstance().addFavorite(favorite, null);
@@ -682,7 +690,7 @@ public class FavoritesPlugin {
               mLocalizer.msg("reallyDelete", "Really delete favorite '{0}'?",fav.getName()),
               mLocalizer.msg("delete", "Delete selected favorite..."),
               JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-      FavoriteTree.getInstance().deleteFavorite(fav);
+      FavoriteTreeModel.getInstance().deleteFavorite(fav);
       
       new Thread("Save favorites") {
         public void run() {
@@ -735,7 +743,7 @@ public class FavoritesPlugin {
     mRootNode.addAction(openSettings);
     mRootNode.removeAllChildren();
 
-    FavoriteTree.getInstance().updatePluginTree(mRootNode,null);
+    FavoriteTreeModel.getInstance().updatePluginTree(mRootNode,null);
 
     mRootNode.update();
     ReminderPlugin.getInstance().updateRootNode(mHasRightToSave);
@@ -824,7 +832,7 @@ public class FavoritesPlugin {
   protected void setMarkPriority(int priority) {
     mMarkPriority = priority;
     
-    Favorite[] favoriteArr = FavoriteTree.getInstance().getFavoriteArr();
+    Favorite[] favoriteArr = FavoriteTreeModel.getInstance().getFavoriteArr();
     
     for(Favorite favorite: favoriteArr) {
       Program[] programs = favorite.getWhiteListPrograms();
