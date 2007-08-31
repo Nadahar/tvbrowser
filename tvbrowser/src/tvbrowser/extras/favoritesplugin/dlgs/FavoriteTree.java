@@ -23,20 +23,8 @@
  */
 package tvbrowser.extras.favoritesplugin.dlgs;
 
-import devplugin.Channel;
-import devplugin.Date;
-import devplugin.NodeFormatter;
-import devplugin.PluginTreeNode;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
-import devplugin.ProgramItem;
 import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.extras.common.ReminderConfiguration;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
-import tvbrowser.extras.favoritesplugin.core.Favorite;
-import tvbrowser.extras.reminderplugin.ReminderPlugin;
-import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.Localizer;
 import util.ui.OverlayListener;
 import util.ui.UiUtilities;
@@ -67,14 +55,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Enumeration;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -83,6 +64,7 @@ import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -369,7 +351,6 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
       FavoriteNode parent = (FavoriteNode)node.getParent();
     
       parent.remove(node);
-      reload(parent);
     }
     else if(node.containsFavorite()) {
       ManageFavoritesDialog.getInstance().deleteSelectedFavorite();

@@ -235,8 +235,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
           if(child.equals(fav)) {
             childPositions.add(v);
             removed.add(child);
-
-            ((FavoriteNode)child.getParent()).remove(child);
+            node.remove(child);
           }
           else {
             child.getFavorite().handleContainingPrograms(fav.getPrograms());
@@ -251,7 +250,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
         childs[i] = childPositions.get(i);
       }
 
-      fireTreeNodesRemoved(this, new Object[] {node}, childs, removed.toArray());
+//      fireTreeNodesRemoved(this, new Object[] {node}, childs, removed.toArray());
     }
 
   }
