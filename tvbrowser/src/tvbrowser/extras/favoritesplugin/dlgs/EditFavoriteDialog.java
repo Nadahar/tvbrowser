@@ -622,7 +622,6 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
       mFavorite.setName(mName.getText());
     
     mOkWasPressed = true;
-    FavoriteTree.getInstance().updateUI();
     setVisible(false);
   }
 
@@ -745,8 +744,6 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
       return defaultLabel;
     }
   }
-
-
 
   /*
    * (non-Javadoc)

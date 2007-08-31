@@ -26,6 +26,19 @@
 
 package tvbrowser.extras.reminderplugin;
 
+import devplugin.Date;
+import devplugin.Program;
+import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
+import tvbrowser.ui.mainframe.MainFrame;
+import util.io.IOUtilities;
+import util.settings.PluginPictureSettings;
+import util.settings.ProgramPanelSettings;
+import util.ui.Localizer;
+import util.ui.ProgramPanel;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
+
 import java.awt.BorderLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -33,7 +46,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -47,19 +59,6 @@ import javax.swing.Timer;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import tvbrowser.extras.favoritesplugin.core.Favorite;
-import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTree;
-import tvbrowser.ui.mainframe.MainFrame;
-import util.io.IOUtilities;
-import util.settings.PluginPictureSettings;
-import util.settings.ProgramPanelSettings;
-import util.ui.Localizer;
-import util.ui.ProgramPanel;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-import devplugin.Date;
-import devplugin.Program;
 
 /**
  * TV-Browser
@@ -150,7 +149,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     
     // if this is a favorite, change the title to the name of the favorite
     boolean found = false;
-    for (Favorite favorite : FavoriteTree.getInstance().getFavoriteArr()) {
+    for (Favorite favorite : FavoriteTreeModel.getInstance().getFavoriteArr()) {
       for (Program program : favorite.getPrograms()) {
         if (program.equals(item.getProgram())) {
           title = favorite.getName();

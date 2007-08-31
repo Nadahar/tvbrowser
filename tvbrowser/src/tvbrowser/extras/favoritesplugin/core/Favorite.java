@@ -26,27 +26,30 @@
 
 package tvbrowser.extras.favoritesplugin.core;
 
-import devplugin.*;
-
-import java.io.ObjectOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Calendar;
-
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
+import tvbrowser.core.plugin.PluginManagerImpl;
+import tvbrowser.extras.common.LimitationConfiguration;
+import tvbrowser.extras.common.ReminderConfiguration;
+import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
+import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import util.exc.TvBrowserException;
 import util.program.ProgramUtilities;
-import tvbrowser.core.plugin.PluginManagerImpl;
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
-import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
-import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTree;
-import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
-import tvbrowser.extras.common.ReminderConfiguration;
-import tvbrowser.extras.common.LimitationConfiguration;
-import tvbrowser.extras.reminderplugin.ReminderPlugin;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Comparator;
 
 public abstract class Favorite {
 
@@ -448,7 +451,7 @@ public abstract class Favorite {
   }
 
   private void unmarkProgram(Program p) {
-    if(!FavoriteTree.getInstance().isContainedByOtherFavorites(this,p)) {
+    if(!FavoriteTreeModel.getInstance().isContainedByOtherFavorites(this,p)) {
       p.unmark(FavoritesPluginProxy.getInstance());
     }
       
