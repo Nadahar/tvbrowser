@@ -39,6 +39,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.extras.common.InternalPluginProxyIf;
+import util.ui.FixedSizeIcon;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.factories.Borders;
@@ -122,6 +123,9 @@ public class PluginTableCellRenderer extends DefaultTableCellRenderer {
         PluginProxy plugin = (PluginProxy) value;
         
         iconValue = plugin.getPluginIcon();
+        if (iconValue != null) {
+          iconValue = new FixedSizeIcon(16, 16, iconValue);
+        }
         descValue = plugin.getInfo().getDescription().replace('\n', ' ');
         
         isActivated = plugin.isActivated();
