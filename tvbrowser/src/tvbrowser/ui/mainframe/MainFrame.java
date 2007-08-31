@@ -980,7 +980,7 @@ public class MainFrame extends JFrame implements DateListener {
               if(mChannelDateArr[i] != null) {
                 ChannelDayProgram chProg = TvDataBase.getInstance().getDayProgram(mChannelDateArr[i],ch[i]);
             
-                if((chProg != null && chProg.getProgramCount() > 0) && mOnAirRowProgramsArr[i] != -1) {
+                if(chProg != null && chProg.getProgramCount() > 0 && mOnAirRowProgramsArr[i] != -1) {
                   Program p = chProg.getProgramAt(mOnAirRowProgramsArr[i]);
               
                   if(p.isOnAir()) {
