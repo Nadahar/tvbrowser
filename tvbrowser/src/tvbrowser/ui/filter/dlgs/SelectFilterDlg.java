@@ -184,7 +184,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     contentPane.add(ta, BorderLayout.NORTH);
 
     updateBtns();
-    setSize(350, 350);
+    setSize(350, 400);
 
   }
 
