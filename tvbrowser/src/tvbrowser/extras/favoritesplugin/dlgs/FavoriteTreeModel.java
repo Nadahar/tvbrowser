@@ -59,7 +59,7 @@ import util.ui.UiUtilities;
 /**
  * The model for the favorite tree.
  * 
- * @author René Mach
+ * @author RenŽ Mach
  * @since 2.6
  */
 public class FavoriteTreeModel extends DefaultTreeModel {
