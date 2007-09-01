@@ -513,7 +513,9 @@ public class PluginProxyManager {
   public void removePlugin(PluginProxy plugin) throws TvBrowserException {
     PluginListItem item = getItemForPlugin(plugin);
     if (item != null) {
-      deactivatePlugin(item, true);
+      if (item.getState() == ACTIVATED_STATE) {
+        deactivatePlugin(item, true);
+      }
       mPluginList.remove(item);
       mPluginMap.remove(plugin.getId());
       mActivatedPluginCache = null;
