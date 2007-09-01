@@ -23,7 +23,7 @@
  *   $Author$
  * $Revision$
  */
-package tvbrowserdataservice.file;
+package util.io;
 
 /**
  * 

@@ -35,8 +35,8 @@ import primarydatamanager.tvlistingstool.HtmlMirrorVisualizer;
 import primarydatamanager.tvlistingstool.MirrorVisualizer;
 import tvbrowserdataservice.file.ChannelList;
 import tvbrowserdataservice.file.DayProgramFile;
-import tvbrowserdataservice.file.Mirror;
 import tvbrowserdataservice.file.SummaryFile;
+import util.io.Mirror;
 import util.io.VerySimpleFormatter;
 
 import java.io.ByteArrayInputStream;

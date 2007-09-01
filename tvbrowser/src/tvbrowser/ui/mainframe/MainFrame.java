@@ -91,6 +91,7 @@ import tvbrowser.ui.programtable.KeyboardAction;
 import tvbrowser.ui.programtable.ProgramTable;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
 import tvbrowser.ui.settings.SettingsDialog;
+import tvbrowser.ui.update.PluginAutoUpdater;
 import tvbrowser.ui.update.SoftwareUpdateDlg;
 import tvbrowser.ui.update.SoftwareUpdateItem;
 import tvbrowser.ui.update.SoftwareUpdater;
@@ -163,7 +164,7 @@ public class MainFrame extends JFrame implements DateListener {
   
   private static boolean mShuttingDown = false;
   private static boolean mStarting = true;
-
+  
   private Node mMainframeNode;
 
   private Node mNavigationNode;
@@ -1286,6 +1287,13 @@ public class MainFrame extends JFrame implements DateListener {
           public void run() {
             onDownloadDone();
             newTvDataAvailable(scroll);
+            try {
+
+            
+            if(Settings.propAutoUpdatePlugins.getBoolean() && (Settings.propLastPluginsUpdate.getDate() == null || Settings.propLastPluginsUpdate.getDate().addDays(7).compareTo(Date.getCurrentDate()) <= 0)) {
+              PluginAutoUpdater.searchForPluginUpdates();
+            }
+            }catch(Exception e) {e.printStackTrace();}
           }          
         });
 
@@ -1455,46 +1463,57 @@ public class MainFrame extends JFrame implements DateListener {
         JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
     if (answer == JOptionPane.YES_OPTION) {
-
-      ProgressWindow progWin = new ProgressWindow(this, mLocalizer.msg(
-          "title.2", "searching for new plugins..."));
-
-      progWin.run(new Progress() {
-        public void run() {
-          try {
-            java.net.URL url = new java.net.URL(
-                "http://www.tvbrowser.org/plugins/plugins.txt");
-            SoftwareUpdater softwareUpdater = new SoftwareUpdater(url);
-            mSoftwareUpdateItems = softwareUpdater
-                .getAvailableSoftwareUpdateItems();
-          } catch (java.io.IOException e) {
-            e.printStackTrace();
-          }
-        }
-      });
-
-      if (mSoftwareUpdateItems == null) {
-        JOptionPane.showMessageDialog(this, mLocalizer.msg("error.1",
-            "software check failed."));
-      } else if (mSoftwareUpdateItems.length == 0) {
-        JOptionPane.showMessageDialog(this, mLocalizer.msg("error.2",
-            "No new items available"));
-      } else {
-        Window w = UiUtilities.getLastModalChildOf(this);
-        SoftwareUpdateDlg dlg = null;
-
-        if(w instanceof JDialog) {
-          dlg = new SoftwareUpdateDlg((JDialog)w);
-        } else {
-          dlg = new SoftwareUpdateDlg((JFrame)w);
-        }
-
-        dlg.setSoftwareUpdateItems(mSoftwareUpdateItems);
-        dlg.setLocationRelativeTo(w);
-        dlg.setVisible(true);
-      }
+      updatePlugins(PluginAutoUpdater.DEFAULT_PLUGINS_DOWNLOAD_URL, false);
     }
+  }
+  
+  /**
+   * Search for updates of plugins.
+   * 
+   * @param baseUrl The url string to load the plugin updates from.
+   * @param showOnlyUpdates If the dialog is only to show when updates of
+   *                        installed plugins are found.
+   */
+  public void updatePlugins(final String baseUrl, final boolean showOnlyUpdates) {
+    ProgressWindow progWin = new ProgressWindow(this, mLocalizer.msg(
+        "title.2", "searching for new plugins..."));
 
+    progWin.run(new Progress() {
+      public void run() {
+        try {
+          java.net.URL url = new java.net.URL(baseUrl + "/" + PluginAutoUpdater.PLUGIN_UPDATES_FILENAME);
+          SoftwareUpdater softwareUpdater = new SoftwareUpdater(url,showOnlyUpdates);
+          mSoftwareUpdateItems = softwareUpdater
+              .getAvailableSoftwareUpdateItems();
+        } catch (java.io.IOException e) {
+          e.printStackTrace();
+        }
+      }
+    });
+
+    if (mSoftwareUpdateItems == null && !showOnlyUpdates) {
+      JOptionPane.showMessageDialog(this, mLocalizer.msg("error.1",
+          "software check failed."));
+    } else if (mSoftwareUpdateItems.length == 0 && !showOnlyUpdates) {
+      JOptionPane.showMessageDialog(this, mLocalizer.msg("error.2",
+          "No new items available"));
+    } else {
+      Window w = UiUtilities.getLastModalChildOf(this);
+      SoftwareUpdateDlg dlg = null;
+
+      if(w instanceof JDialog) {
+        dlg = new SoftwareUpdateDlg((JDialog)w, baseUrl, showOnlyUpdates);
+      } else {
+        dlg = new SoftwareUpdateDlg((JFrame)w, baseUrl, showOnlyUpdates);
+      }
+
+      dlg.setSoftwareUpdateItems(mSoftwareUpdateItems);
+      dlg.setLocationRelativeTo(w);
+      dlg.setVisible(true);
+    }
+    
+    Settings.propLastPluginsUpdate.setDate(Date.getCurrentDate());
+    mSoftwareUpdateItems = null;
   }
 
   public void showFromTray(int state) {

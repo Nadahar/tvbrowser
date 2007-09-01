@@ -44,7 +44,6 @@ import java.util.logging.Level;
 import javax.swing.JOptionPane;
 
 import tvbrowserdataservice.file.DayProgramFile;
-import tvbrowserdataservice.file.Mirror;
 import tvbrowserdataservice.file.SummaryFile;
 import tvbrowserdataservice.file.TvDataLevel;
 import tvdataservice.SettingsPanel;
@@ -53,6 +52,7 @@ import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.io.DownloadManager;
 import util.io.IOUtilities;
+import util.io.Mirror;
 import util.io.NetworkUtilities;
 import devplugin.Channel;
 import devplugin.Date;
@@ -198,7 +198,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     }
 
     // Reset list of banned Servers
-    ChannelGroup.resetBannedServers();
+    Mirror.resetBannedServers();
 
     mTvDataBase=dataBase;
     mProgressMonitor = monitor;
@@ -668,7 +668,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     File file = new File(mDataDir, CHANNEL_GROUPS_FILENAME.substring(0,CHANNEL_GROUPS_FILENAME.indexOf(".")) + "_" + Mirror.MIRROR_LIST_FILE_NAME);    
     
     try {
-      return ChannelGroup.chooseUpToDateMirror(Mirror.readMirrorListFromFile(file),null,"Groups.txt", "groups");
+      return Mirror.chooseUpToDateMirror(Mirror.readMirrorListFromFile(file),null,"Groups.txt", "groups", TvBrowserDataService.class, "  Please inform the TV-Browser team.");
     } catch (Exception exc) {
       try {
         if(DEFAULT_CHANNEL_GROUPS_MIRRORS.length > 0) {
@@ -677,7 +677,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
           for(int i = 0; i < DEFAULT_CHANNEL_GROUPS_MIRRORS.length; i++)
             mirr[i] = new Mirror(DEFAULT_CHANNEL_GROUPS_MIRRORS[i]);
           
-          return ChannelGroup.chooseUpToDateMirror(mirr,null,"Groups.txt", "groups");
+          return Mirror.chooseUpToDateMirror(mirr,null,"Groups.txt", "groups",TvBrowserDataService.class, " Please inform the TV-Browser team.");
         }
         else
           throw exc;

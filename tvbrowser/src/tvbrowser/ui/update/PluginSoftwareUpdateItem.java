@@ -42,22 +42,14 @@ import util.ui.UiUtilities;
 
 
 public class PluginSoftwareUpdateItem extends SoftwareUpdateItem {
-
-
-
-
-    private static java.util.logging.Logger mLog
-     = java.util.logging.Logger.getLogger(PluginSoftwareUpdateItem.class.getName());
-
-
-    private static final util.ui.Localizer mLocalizer
+  private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(PluginSoftwareUpdateItem.class);
 
   public PluginSoftwareUpdateItem(String name) {
     super(name); 
   }
 
-  protected boolean download(final String url) throws TvBrowserException {
+  protected boolean downloadFrom(final String url) throws TvBrowserException {
     if(!isStable()) {
       JOptionPane pane = new JOptionPane();
       

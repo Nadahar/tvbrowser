@@ -144,15 +144,15 @@ public abstract class SoftwareUpdateItem {
     return mClassName;   
   }
 	
-	public boolean download() throws TvBrowserException {
-    String url = getProperty("download");
+	public boolean download(String downloadUrl) throws TvBrowserException {	  
+    String url = getProperty("downloadtype") == null || !getProperty("downloadtype").toLowerCase().equals("mirros") ? getProperty("download") : downloadUrl + "/" + getProperty("filename");
     if (url == null) {
       throw new TvBrowserException(SoftwareUpdateItem.class, "error.2", "No Url");
     }
-    return download(url);
+    return downloadFrom(url);
   }
     
-  protected abstract boolean download(String url) throws TvBrowserException;
+  protected abstract boolean downloadFrom(String url) throws TvBrowserException;
 	
 	public Version getInstalledVersion() {
     for (PluginAccess plugin : PluginProxyManager.getInstance().getAllPlugins()) {

@@ -31,9 +31,9 @@ import java.util.HashSet;
 
 import tvbrowserdataservice.file.ChannelList;
 import tvbrowserdataservice.file.DayProgramFile;
-import tvbrowserdataservice.file.FileFormatException;
 import tvbrowserdataservice.file.ProgramField;
 import tvbrowserdataservice.file.ProgramFrame;
+import util.io.FileFormatException;
 import util.io.IOUtilities;
 import devplugin.Channel;
 import devplugin.Date;

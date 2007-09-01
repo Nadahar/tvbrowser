@@ -30,6 +30,8 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
@@ -39,6 +41,7 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -92,6 +95,8 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
   private DefaultTableModel mTableModel;
   /** SettingsDialog */
   private SettingsDialog mSettingsDialog;
+  /** The auto update check box */
+  private JCheckBox mAutoUpdates;
 
   /**
    * Creates an instance of this class.
@@ -119,9 +124,14 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
 
     contentPanel.add(update, cc.xy(2,1));
     
-    contentPanel.add(new JLabel(mLocalizer.msg("installedPlugins","Installed Plugins")+":"), cc.xy(1,1));
+    mAutoUpdates = new JCheckBox(mLocalizer.msg("autoUpdates","Find plugin updates automatically."), Settings.propAutoUpdatePlugins.getBoolean());
+    mAutoUpdates.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        Settings.propAutoUpdatePlugins.setBoolean(e.getStateChange() == ItemEvent.SELECTED);
+      }
+    });
 
-    
+    contentPanel.add(mAutoUpdates, cc.xy(1,1));
     
     mTableModel = new DefaultTableModel() {
       public boolean isCellEditable(int row, int column) {

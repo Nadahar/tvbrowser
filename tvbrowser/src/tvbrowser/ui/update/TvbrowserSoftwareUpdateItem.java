@@ -36,7 +36,7 @@ public class TvbrowserSoftwareUpdateItem extends SoftwareUpdateItem {
     super(name);
   }
 
-  protected boolean download(String url) throws TvBrowserException {
+  protected boolean downloadFrom(String url) throws TvBrowserException {
     try {
       Launch.openURL("http://www.tvbrowser.org");
     } catch (Exception exc) {
