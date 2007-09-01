@@ -283,7 +283,7 @@ public class FavoritesPlugin {
   
         }
       }
-        FavoriteTreeModel.initInstance(newFavoriteArr);
+      FavoriteTreeModel.initInstance(newFavoriteArr);
     }
     else {
       FavoriteTreeModel.initInstance(in,version);
