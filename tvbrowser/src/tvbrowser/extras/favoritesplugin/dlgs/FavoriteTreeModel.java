@@ -95,6 +95,11 @@ public class FavoriteTreeModel extends DefaultTreeModel {
   }
 
   public static FavoriteTreeModel getInstance() {
+    if (mInstance == null) {
+      FavoriteNode rootNode = new FavoriteNode("FAVORITES_ROOT");
+      mInstance = new FavoriteTreeModel(rootNode);
+    }
+
     return mInstance;
   }
 

@@ -967,7 +967,11 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
    */
   public void close() {
     mInstance = null;
-    mFavoriteTree.removeTreeSelectionListener(this);
+
+    if (mFavoriteTree != null) {
+      mFavoriteTree.removeTreeSelectionListener(this);
+    }
+
     dispose();
   }
 
