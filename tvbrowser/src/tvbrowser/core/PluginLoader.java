@@ -247,9 +247,17 @@ public class PluginLoader {
       boolean stable = in.readBoolean();
       Version version = new Version(major, minor, stable);
       String pluginId = in.readUTF();
+      @SuppressWarnings("unused")
       long fileSize = in.readLong();
       String lcFileName = in.readUTF();
       in.close();
+      // check existence of plugin file
+      File pluginFile = new File(lcFileName);
+      if (!pluginFile.canRead()) {
+        proxyFile.delete();
+        return null;
+      }
+      // everything seems fine, create plugin proxy and plugin info
       PluginInfo info = new PluginInfo(name, description, author, version, license);
       // now get icon
       String iconFileName = getProxyIconFileName(proxyFile);
@@ -481,9 +489,13 @@ public class PluginLoader {
    * @return true if successful
    */
   public boolean deletePlugin(PluginProxy proxy) {
+    // mark plugin file for deletion
     File file = mDeleteablePlugin.get(proxy);
-    
     Settings.propDeleteFilesAtStart.addItem(file.toString());
+    
+    // mark proxy file for deletion
+    String proxyFile = getProxyFileName(file);
+    Settings.propDeleteFilesAtStart.addItem(proxyFile);
     
     try {
         PluginProxyManager.getInstance().removePlugin(proxy);
