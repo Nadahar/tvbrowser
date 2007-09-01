@@ -32,6 +32,8 @@ import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
@@ -40,6 +42,7 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
@@ -77,19 +80,24 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
   private JList mList;
 
   private JEditorPane mDescriptionPane;
+  
+  private String mDownloadUrl;
+  
+  private JCheckBox mAutoUpdates;
 
-  public SoftwareUpdateDlg(Dialog parent) {
-    super(parent, true);
-    createGui();
+  public SoftwareUpdateDlg(Dialog parent, String downloadUrl, boolean onlyUpdate) {
+    super(parent, true);    
+    createGui(downloadUrl,onlyUpdate);
   }
 
   
-  public SoftwareUpdateDlg(Frame parent) {
+  public SoftwareUpdateDlg(Frame parent, String downloadUrl, boolean onlyUpdate) {
     super(parent, true);
-    createGui();
+    createGui(downloadUrl,onlyUpdate);
   }
   
-  private void createGui() {
+  private void createGui(String downloadUrl, boolean onlyUpdate) {
+    mDownloadUrl = downloadUrl;
     setTitle(mLocalizer.msg("title", "Download plugins"));
 
     JPanel contentPane = (JPanel) getContentPane();
@@ -104,6 +112,17 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
     ButtonBarBuilder builder = new ButtonBarBuilder();
     
+    if(onlyUpdate) {
+      mAutoUpdates = new JCheckBox(mLocalizer.msg("autoUpdates","Find plugin updates automatically."), Settings.propAutoUpdatePlugins.getBoolean());
+      mAutoUpdates.addItemListener(new ItemListener() {
+        public void itemStateChanged(ItemEvent e) {
+          Settings.propAutoUpdatePlugins.setBoolean(e.getStateChange() == ItemEvent.SELECTED);
+        }
+      });
+      
+      builder.addFixed(mAutoUpdates);
+    }
+    
     builder.addGlue();
     builder.addFixed(mDownloadBtn);
     builder.addRelatedGap();
@@ -114,8 +133,8 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     mList.addListSelectionListener(this);
 
     JPanel northPn = new JPanel();
-    northPn.add(new JLabel(mLocalizer.msg("header",
-        "Hier k&ouml;nnen neue Plugins heruntergeladen und installiert werden.")));
+    northPn.add(new JLabel(onlyUpdate ?mLocalizer.msg("updateHeader","Updates for installed plugins were found.") : 
+      mLocalizer.msg("header","Here you can download new plugins and updates for it.")));
 
     JPanel southPn = new JPanel(new BorderLayout());
 
@@ -139,14 +158,14 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
     JSplitPane splitPn = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, new JScrollPane(mList), new JScrollPane(
         mDescriptionPane));
-    splitPn.setDividerLocation(150);
+    splitPn.setDividerLocation(200);
 
     contentPane.add(northPn, BorderLayout.NORTH);
     contentPane.add(splitPn, BorderLayout.CENTER);
     contentPane.add(southPn, BorderLayout.SOUTH);
 
     if (Settings.propUpdateDialogWidth.getInt() == -1 || Settings.propUpdateDialogHeight.getInt() == -1) {
-      this.setSize(450, 400);
+      this.setSize(500, 400);
     } else {
       this.setSize(Settings.propUpdateDialogWidth.getInt(), Settings.propUpdateDialogHeight.getInt());
     }
@@ -211,7 +230,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       for (Object object : objects) {
         SoftwareUpdateItem item = (SoftwareUpdateItem) object;
         try {
-          item.download();
+          item.download(mDownloadUrl);
           successfullyDownloadedItems++;
         } catch (TvBrowserException e) {
           util.exc.ErrorHandler.handle(e);

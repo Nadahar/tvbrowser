@@ -26,6 +26,7 @@
 package tvbrowserdataservice.file;
 
 import devplugin.ProgramFieldType;
+import util.io.FileFormatException;
 import util.io.IOUtilities;
 import util.ui.UiUtilities;
 

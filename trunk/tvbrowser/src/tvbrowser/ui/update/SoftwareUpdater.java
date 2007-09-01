@@ -46,22 +46,20 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import devplugin.Version;
 
 public class SoftwareUpdater {
-	
- 
 	private SoftwareUpdateItem[] mSoftwareUpdateItems;
 	
-	public SoftwareUpdater(URL url) throws IOException {
+	public SoftwareUpdater(URL url, boolean onlyUpdates) throws IOException {
 		URLConnection con=url.openConnection();
 		
 		InputStream in=con.getInputStream();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 		
-		mSoftwareUpdateItems=readSoftwareUpdateItems(reader);
+		mSoftwareUpdateItems=readSoftwareUpdateItems(reader,onlyUpdates);
 		
 		reader.close();
 	}
 	
-  private SoftwareUpdateItem[] readSoftwareUpdateItems(BufferedReader reader) throws IOException {
+  private SoftwareUpdateItem[] readSoftwareUpdateItems(BufferedReader reader, boolean onlyUpdates) throws IOException {
     Pattern pluginTypePattern = Pattern.compile("\\[(.*):(.*)\\]");
     Pattern keyValuePattern = Pattern.compile("(.+?)=(.*)");
     Matcher matcher;
@@ -69,7 +67,7 @@ public class SoftwareUpdater {
     ArrayList<SoftwareUpdateItem> updateItems = new ArrayList<SoftwareUpdateItem>();
     
     SoftwareUpdateItem curItem=null;
-    String line=reader.readLine();    
+    String line=reader.readLine();
     
     while (line != null) {
       matcher=pluginTypePattern.matcher(line);
@@ -93,7 +91,10 @@ public class SoftwareUpdater {
         if (matcher.find()) { // new plugin 
           String value = matcher.group(2);
           value = value.replaceAll("\\\\&", "&"); // fix wrong HTML encoding in plugin descriptions
-          curItem.addProperty(matcher.group(1), value);
+          
+          if(curItem != null) {
+            curItem.addProperty(matcher.group(1), value);
+          }
         }
       }
       line=reader.readLine();
@@ -110,9 +111,20 @@ public class SoftwareUpdater {
       Version required = item.getRequiredVersion();
       Version maximum = item.getMaximumVersion();
       if ((required!=null && TVBrowser.VERSION.compareTo(required)<0) ||
-          (maximum != null && TVBrowser.VERSION.compareTo(maximum)>0)) {
+          (maximum != null && TVBrowser.VERSION.compareTo(maximum)>0) ||
+          !item.getProperty("filename").toLowerCase().endsWith(".jar")) {
         it.remove();
         continue;
+      }
+      
+      if(onlyUpdates) {
+        // remove all not installed plugins
+        String pluginId = "java." + className.toLowerCase() + "." + className;      
+        PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
+        if (installedPlugin == null) {
+          it.remove();
+          continue;
+        }        
       }
       
       // remove already installed plugins
@@ -149,6 +161,4 @@ public class SoftwareUpdater {
 		
 		return mSoftwareUpdateItems;
 	}
-	
-	
 }

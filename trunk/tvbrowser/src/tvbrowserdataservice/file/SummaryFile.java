@@ -38,6 +38,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import util.io.DownloadJob;
+import util.io.FileFormatException;
 import util.io.IOUtilities;
 import devplugin.Date;
 

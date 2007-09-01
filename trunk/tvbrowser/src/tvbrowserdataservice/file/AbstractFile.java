@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import util.io.DownloadJob;
+import util.io.FileFormatException;
 
 /**
  * Holds the common code of the file classes.

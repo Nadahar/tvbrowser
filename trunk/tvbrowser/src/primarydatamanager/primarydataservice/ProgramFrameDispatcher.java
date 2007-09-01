@@ -31,9 +31,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import tvbrowserdataservice.file.DayProgramFile;
-import tvbrowserdataservice.file.FileFormatException;
 import tvbrowserdataservice.file.ProgramField;
 import tvbrowserdataservice.file.ProgramFrame;
+import util.io.FileFormatException;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.ProgramFieldType;

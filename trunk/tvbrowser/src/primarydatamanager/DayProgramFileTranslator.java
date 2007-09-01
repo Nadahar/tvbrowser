@@ -28,9 +28,9 @@ package primarydatamanager;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import tvbrowserdataservice.file.DayProgramFile;
-import tvbrowserdataservice.file.FileFormatException;
 import tvbrowserdataservice.file.ProgramField;
 import tvbrowserdataservice.file.ProgramFrame;
+import util.io.FileFormatException;
 
 import java.io.File;
 import java.io.FileOutputStream;

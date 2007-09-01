@@ -51,6 +51,7 @@ import javax.swing.ImageIcon;
 
 import tvbrowserdataservice.TvBrowserDataService;
 import tvdataservice.TvDataService;
+import util.io.FileFormatException;
 import util.ui.ImageUtilities;
 import devplugin.Channel;
 import devplugin.ChannelGroup;

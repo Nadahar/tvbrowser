@@ -29,8 +29,8 @@ import java.io.File;
 import java.io.IOException;
 
 import junit.framework.TestCase;
-import tvbrowserdataservice.file.FileFormatException;
 import tvbrowserdataservice.file.SummaryFile;
+import util.io.FileFormatException;
 import devplugin.Date;
 
 /**

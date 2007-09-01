@@ -34,8 +34,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
@@ -43,13 +41,12 @@ import java.util.Properties;
 import java.util.logging.Level;
 
 import tvbrowserdataservice.file.ChannelList;
-import tvbrowserdataservice.file.FileFormatException;
-import tvbrowserdataservice.file.Mirror;
 import tvbrowserdataservice.file.SummaryFile;
 import util.exc.TvBrowserException;
+import util.io.FileFormatException;
 import util.io.IOUtilities;
+import util.io.Mirror;
 import devplugin.Channel;
-import devplugin.Date;
 import devplugin.ProgressMonitor;
 
 /**
@@ -88,19 +85,6 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ChannelGroup.class);
 
   private static final int MAX_META_DATA_AGE = 2;
-
-  private static final int MAX_UP_TO_DATE_CHECKS = 10;
-
-  private static final int MAX_LAST_UPDATE_DAYS = 5;
-
-  /** List of blocked Servers */
-  private static ArrayList<String> BLOCKEDSERVERS = new ArrayList<String>();
-  /** Mirror-Download Running?*/
-  private static boolean mMirrorDownloadRunning = true;
-  /** Exception on downloading in Thread */
-  private static boolean mDownloadException = false;
-  /** Data of Mirror-Download*/
-  private static byte[] mMirrorDownloadData = null;
 
   /**
    * Creates a new ChannelGroup 
@@ -263,10 +247,11 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
   protected void chooseMirrors() throws TvBrowserException {
     // load the mirror list
-    Mirror[] mirrorArr = loadMirrorList();
+    Mirror[] serverDefindeMirros = getServerDefinedMirrors();
+    Mirror[] mirrorArr = Mirror.loadMirrorList(new File(mDataDir, mID + "_" + Mirror.MIRROR_LIST_FILE_NAME), mMirrorUrlArr, serverDefindeMirros);
 
     // Get a random Mirror that is up to date
-    mCurMirror = chooseUpToDateMirror(mirrorArr, null, getName(), mID);
+    mCurMirror = Mirror.chooseUpToDateMirror(mirrorArr, null, getName(), mID, ChannelGroup.class, " Please contact the tv data provider for help.");
 
     mLog.info("Using mirror " + mCurMirror.getUrl());
     // monitor.setMessage(mLocalizer.msg("info.1","Downloading from mirror
@@ -367,203 +352,6 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
     return mirrorArr;
   }
-
-  private Mirror[] loadMirrorList() {
-    File file = new File(mDataDir, mID + "_" + Mirror.MIRROR_LIST_FILE_NAME);
-
-    try {
-      ArrayList<Mirror> mirrorList = new ArrayList<Mirror>(Arrays.asList(Mirror.readMirrorListFromFile(file)));
-
-      for (int i=0;i<mMirrorUrlArr.length;i++) {
-        Mirror basemirror = mirrorList.get(i);
-        if (!mirrorList.contains(basemirror)) {
-          mirrorList.add(basemirror);
-        }
-      }
-
-      Mirror[] groupmirrorArr = getServerDefinedMirrors();
-
-      if(groupmirrorArr != null)
-        for(int i = 0; i < groupmirrorArr.length; i++)
-          if(!mirrorList.contains(groupmirrorArr[i]))
-            mirrorList.add(groupmirrorArr[i]);
-
-      return mirrorList.toArray(new Mirror[mirrorList.size()]);
-    } catch (Exception exc) {
-      ArrayList<Mirror> mirrorList = new ArrayList<Mirror>();
-
-      for (int i = 0; i < mMirrorUrlArr.length; i++) {
-        if (!BLOCKEDSERVERS.contains(getServerBase(mMirrorUrlArr[i])) && mMirrorUrlArr[i] != null) {
-          mirrorList.add(new Mirror(mMirrorUrlArr[i]));
-        }
-      }
-      
-      return mirrorList.toArray(new Mirror[mirrorList.size()]);
-    }
-  }
-
-  private static Mirror chooseMirror(Mirror[] mirrorArr, Mirror oldMirror, String name) throws TvBrowserException {
-    Mirror[] oldMirrorArr = mirrorArr;
-    
-    /* remove the old mirror from the mirrorlist */
-    if (oldMirror != null) {
-      ArrayList<Mirror> mirrors = new ArrayList<Mirror>();
-      for (int i = 0; i < mirrorArr.length; i++) {
-        if (oldMirror != mirrorArr[i]) {
-          mirrors.add(mirrorArr[i]);
-        }
-      }
-      mirrorArr = new Mirror[mirrors.size()];
-      mirrors.toArray(mirrorArr);
-    }
-
-    // Get the total weight
-    int totalWeight = 0;
-    for (int i = 0; i < mirrorArr.length; i++) {
-      totalWeight += mirrorArr[i].getWeight();
-    }
-
-    // Choose a weight
-    int chosenWeight = (int) (Math.random() * totalWeight);
-
-    // Find the chosen mirror
-    int currWeight = 0;
-    for (int i = 0; i < mirrorArr.length; i++) {
-      currWeight += mirrorArr[i].getWeight();
-      if (currWeight > chosenWeight) {
-        Mirror mirror = mirrorArr[i];
-        // Check whether this is the old mirror or Mirror is Blocked
-        if (((mirror == oldMirror) || BLOCKEDSERVERS.contains(getServerBase(mirror.getUrl()))) && (mirrorArr.length > 1)) {
-          // We chose the old mirror -> chose another one
-          return chooseMirror(mirrorArr, oldMirror, name);
-        } else {
-          return mirror;
-        }
-      }
-    }
-
-    // We didn't find a mirror? This should not happen -> throw exception
-    StringBuffer buf = new StringBuffer();
-    for (int i = 0; i < oldMirrorArr.length; i++) {
-      buf.append(oldMirrorArr[i].getUrl()).append("\n");
-    }
-
-    throw new TvBrowserException(ChannelGroup.class, "error.2", "No mirror found\ntried following mirrors: ", name, buf.toString());
-  }
-
-  private static boolean mirrorIsUpToDate(Mirror mirror, String id) throws TvBrowserException {
-    // Load the lastupdate file and parse it
-    final String url = mirror.getUrl() + (mirror.getUrl().endsWith("/") ? "" : "/") + id + "_lastupdate";
-    Date lastupdated;
-    mMirrorDownloadRunning = true;
-    mMirrorDownloadData = null;
-    mDownloadException = false;
-    
-    mLog.info("Loading MirrorDate from " + url);
-    
-    new Thread(new Runnable() {
-      public void run() {
-        try {
-          mMirrorDownloadData = IOUtilities.loadFileFromHttpServer(new URL(url), 60000);
-        } catch (Exception e) {
-          mDownloadException = true;
-        }
-        mMirrorDownloadRunning = false;
-      };
-    }).start();
-
-    int num = 0;
-    // Wait till second Thread is finished or 15000 ms reached
-    while ((mMirrorDownloadRunning) && (num < 150)) {
-      num++;
-      try {
-        Thread.sleep(100);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-    }
-
-    if (mMirrorDownloadRunning || mMirrorDownloadData == null || mDownloadException) {
-      mLog.info("Server " + url +" is down!");
-      return false;
-    }
-    
-    try {
-      // Parse is. E.g.: '2003-10-09 11:48:45'
-      String asString = new String(mMirrorDownloadData);    
-      int year = Integer.parseInt(asString.substring(0, 4));
-      int month = Integer.parseInt(asString.substring(5, 7));
-      int day = Integer.parseInt(asString.substring(8, 10));
-      lastupdated = new Date(year, month, day);
-      
-      mLog.info("Done !");
-      
-      return lastupdated.compareTo(new Date().addDays(-MAX_LAST_UPDATE_DAYS)) >= 0;
-    }catch(NumberFormatException parseException) {
-      mLog.info("The file on the server has the wrong format!");
-    }
-
-    return false;
-  }
-
-  protected static Mirror chooseUpToDateMirror(Mirror[] mirrorArr, ProgressMonitor monitor, String name, String id) throws TvBrowserException {
-
-    // Choose a random Mirror
-    Mirror mirror = chooseMirror(mirrorArr, null, name);
-    if (monitor != null) {
-      monitor.setMessage(mLocalizer.msg("info.3", "Try to connect to mirror {0}", mirror.getUrl()));
-    }
-    // Check whether the mirror is up to date and available
-    for (int i = 0; i < MAX_UP_TO_DATE_CHECKS; i++) {
-      try {
-        if (mirrorIsUpToDate(mirror, id)) {
-          break;
-        } else {
-          // This one is not up to date -> choose another one
-          Mirror oldMirror = mirror;
-          mirror = chooseMirror(mirrorArr, mirror, name);
-          mLog.info("Mirror " + oldMirror.getUrl() + " is out of date or down. Choosing " + mirror.getUrl() + " instead.");
-          if (monitor != null) {
-            monitor.setMessage(mLocalizer.msg("info.4", "Mirror {0} is out of date or down. Choosing {1}", oldMirror.getUrl(), mirror
-                    .getUrl()));
-          }
-        }
-      } catch (TvBrowserException exc) {
-        String blockedServer = getServerBase(mirror.getUrl()); 
-        BLOCKEDSERVERS.add(blockedServer);
-        mLog.info("Server blocked : " + blockedServer);
-        
-        if(mirrorArr.length == 1 && mirrorArr[0].equals(mirror))
-          throw new TvBrowserException(ChannelGroup.class, "noUpToDateServer", "The mirror {0} is out of date or down and no other mirror is available. Please contact the tv data provider for help.", mirror.getUrl());
-        
-        // This one is not available -> choose another one
-        Mirror oldMirror = mirror;
-        mirror = chooseMirror(mirrorArr, mirror, name);
-        mLog.info("Mirror " + oldMirror.getUrl() + " is not available. Choosing " + mirror.getUrl() + " instead.");
-        if (monitor != null) {
-          monitor.setMessage(mLocalizer.msg("info.5", "Mirror {0} is not available. Choosing {1}", oldMirror.getUrl(), mirror
-                  .getUrl()));
-        }
-      }
-    }
-
-    // Return the mirror
-    return mirror;   
-  }
-
-  /**
-   * Get the Server-Domain of the Url
-   * @param url Url to fetch the Server-Domain from
-   * @return Server-Domain 
-   */
-  private static String getServerBase(String url) {
-    if (url.startsWith("http://"))
-      url = url.substring(7);
-    if (url.indexOf('/') >= 0)
-      url = url.substring(0, url.indexOf('/'));
-    
-    return url;
-  }
   
   private boolean needsUpdate(File file) {
     if (!file.exists()) {
@@ -628,10 +416,11 @@ public class ChannelGroup implements devplugin.ChannelGroup {
    */
   public Channel[] checkForAvailableChannels(ProgressMonitor monitor) throws TvBrowserException {
     // load the mirror list
-    Mirror[] mirrorArr = loadMirrorList();
+    Mirror[] serverDefindeMirros = getServerDefinedMirrors();
+    Mirror[] mirrorArr = Mirror.loadMirrorList(new File(mDataDir, mID + "_" + Mirror.MIRROR_LIST_FILE_NAME), mMirrorUrlArr, serverDefindeMirros);
 
     // Get a random Mirror that is up to date
-    Mirror mirror = chooseUpToDateMirror(mirrorArr, monitor, getName(), mID);
+    Mirror mirror = Mirror.chooseUpToDateMirror(mirrorArr, monitor, getName(), mID, ChannelGroup.class, " Please contact the tv data provider for help.");
     mLog.info("Using mirror " + mirror.getUrl());
 
     // Update the mirrorlist (for the next time)
@@ -689,17 +478,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
   }
 
-
   public int hashCode() {
     return mID.toLowerCase().hashCode();
   }
-
-  /**
-   * Reset the List of banned Servers
-   */
-  public static void resetBannedServers() {
-    BLOCKEDSERVERS.clear();
-  }
-
-
 }

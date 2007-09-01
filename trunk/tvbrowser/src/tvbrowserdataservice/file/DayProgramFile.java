@@ -39,6 +39,7 @@ import java.util.zip.GZIPOutputStream;
 
 import util.exc.TvBrowserException;
 import util.io.DownloadJob;
+import util.io.FileFormatException;
 import util.io.IOUtilities;
 import devplugin.Date;
 

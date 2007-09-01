@@ -1212,4 +1212,11 @@ public class Settings {
   /** The user selected default filter */
   public static final StringProperty propDefaultFilter = new StringProperty(
       mProp, "defaultFilter", "");
+  
+  /** If the plugin updates should be find automatically */
+  public static final BooleanProperty propAutoUpdatePlugins = new BooleanProperty(
+      mProp, "autoUpdatePlugins", true);
+  
+  public static final DateProperty propLastPluginsUpdate = new DateProperty(
+      mProp, "lastPluginsUpdate", null);
 }

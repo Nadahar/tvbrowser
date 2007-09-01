@@ -31,10 +31,10 @@ import devplugin.Date;
 import primarydatamanager.primarydataservice.PrimaryDataService;
 import tvbrowserdataservice.file.ChannelList;
 import tvbrowserdataservice.file.DayProgramFile;
-import tvbrowserdataservice.file.FileFormatException;
-import tvbrowserdataservice.file.Mirror;
 import tvbrowserdataservice.file.SummaryFile;
+import util.io.FileFormatException;
 import util.io.IOUtilities;
+import util.io.Mirror;
 import util.io.VerySimpleFormatter;
 
 import java.io.BufferedInputStream;
