@@ -59,7 +59,7 @@ import util.ui.UiUtilities;
 /**
  * The model for the favorite tree.
  * 
- * @author RenŽ Mach
+ * @author René Mach
  * @since 2.6
  */
 public class FavoriteTreeModel extends DefaultTreeModel {
@@ -225,11 +225,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
 
   private void deleteFavorite(FavoriteNode node, Favorite fav) {
     if(node.isDirectoryNode()) {
-      ArrayList<Integer> childPositions = new ArrayList<Integer>();
-      ArrayList<FavoriteNode> removed = new ArrayList<FavoriteNode>();
-
       Enumeration e = node.children();
-      int v = 0;
 
       while(e.hasMoreElements()) {
         FavoriteNode child = (FavoriteNode)e.nextElement();
@@ -238,24 +234,13 @@ public class FavoriteTreeModel extends DefaultTreeModel {
           deleteFavorite(child, fav);
         } else if(child.containsFavorite()) {
           if(child.equals(fav)) {
-            childPositions.add(v);
-            removed.add(child);
             node.remove(child);
           }
           else {
             child.getFavorite().handleContainingPrograms(fav.getPrograms());
           }
         }
-
-        v++;
       }
-
-      int[] childs = new int[childPositions.size()];
-      for (int i=0;i<childPositions.size();i++) {
-        childs[i] = childPositions.get(i);
-      }
-
-//      fireTreeNodesRemoved(this, new Object[] {node}, childs, removed.toArray());
     }
 
   }
