@@ -124,7 +124,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
 
     contentPanel.add(update, cc.xy(2,1));
     
-    mAutoUpdates = new JCheckBox(mLocalizer.msg("autoUpdates","Find plugin updates automatically."), Settings.propAutoUpdatePlugins.getBoolean());
+    mAutoUpdates = new JCheckBox(mLocalizer.msg("autoUpdates","Find plugin updates automatically"), Settings.propAutoUpdatePlugins.getBoolean());
     mAutoUpdates.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
         Settings.propAutoUpdatePlugins.setBoolean(e.getStateChange() == ItemEvent.SELECTED);

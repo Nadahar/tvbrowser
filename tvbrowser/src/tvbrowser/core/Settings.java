@@ -1213,7 +1213,7 @@ public class Settings {
   public static final StringProperty propDefaultFilter = new StringProperty(
       mProp, "defaultFilter", "");
   
-  /** If the plugin updates should be find automatically */
+  /** If the plugin updates should be found automatically */
   public static final BooleanProperty propAutoUpdatePlugins = new BooleanProperty(
       mProp, "autoUpdatePlugins", true);
   
