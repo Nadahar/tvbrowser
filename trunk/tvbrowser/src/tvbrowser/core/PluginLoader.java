@@ -152,7 +152,7 @@ public class PluginLoader {
       JavaPluginProxy proxy = readPluginProxy(proxyFile);
       if (proxy != null) {
         PluginProxyManager.getInstance().registerPlugin(proxy);
-        if (proxy.getPluginFileName().startsWith(Settings.propPluginsDirectory.getString())) {
+        if (new File(proxy.getPluginFileName()).getParentFile().equals(new File(Settings.propPluginsDirectory.getString()))) {
           File pluginFile = new File(proxy.getPluginFileName());
           mDeleteablePlugin.put(proxy, pluginFile);
         }
