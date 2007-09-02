@@ -26,10 +26,13 @@ package tvbrowser.ui.update;
 import java.io.File;
 import java.net.URL;
 
+import javax.swing.JLabel;
+
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.io.IOUtilities;
 import util.io.Mirror;
+import util.ui.Localizer;
 
 /**
  * A class that searchs for updates of the installed plugins.
@@ -37,6 +40,7 @@ import util.io.Mirror;
  * @author René Mach
  */
 public class PluginAutoUpdater {
+  private static Localizer mLocalizer = Localizer.getLocalizerFor(PluginAutoUpdater.class);
   /** The name of the updates file. */
   public static final String PLUGIN_UPDATES_FILENAME = "plugins.txt";
   /** The default plugins download url */
@@ -51,10 +55,12 @@ public class PluginAutoUpdater {
   
   /**
    * Search for plugin updates. (And only updates)
+   * @param infoLabel The label to show the info in.
    */
-  public static void searchForPluginUpdates() {
+  public static void searchForPluginUpdates(final JLabel infoLabel) {
     new Thread("Plugins update thread") {
       public void run() {
+        infoLabel.setText(mLocalizer.msg("searchForServer","Search for plugin update server..."));
         String url = getPluginUpdatesMirror().getUrl();
         
         try {
@@ -62,7 +68,7 @@ public class PluginAutoUpdater {
           IOUtilities.download(new URL(url + (url.endsWith("/") ? "" : "/") + name), new File(Settings.getUserSettingsDirName(), name));
         } catch(Exception ee) {}
         
-        MainFrame.getInstance().updatePlugins(url, true);
+        MainFrame.getInstance().updatePlugins(url, true, infoLabel);
       }
     }.start();
   }
