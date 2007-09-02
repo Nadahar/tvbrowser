@@ -113,7 +113,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     ButtonBarBuilder builder = new ButtonBarBuilder();
     
     if(onlyUpdate) {
-      mAutoUpdates = new JCheckBox(mLocalizer.msg("autoUpdates","Find plugin updates automatically."), Settings.propAutoUpdatePlugins.getBoolean());
+      mAutoUpdates = new JCheckBox(mLocalizer.msg("autoUpdates","Find plugin updates automatically"), Settings.propAutoUpdatePlugins.getBoolean());
       mAutoUpdates.addItemListener(new ItemListener() {
         public void itemStateChanged(ItemEvent e) {
           Settings.propAutoUpdatePlugins.setBoolean(e.getStateChange() == ItemEvent.SELECTED);
