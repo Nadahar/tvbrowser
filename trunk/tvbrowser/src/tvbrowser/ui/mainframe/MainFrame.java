@@ -1287,13 +1287,10 @@ public class MainFrame extends JFrame implements DateListener {
           public void run() {
             onDownloadDone();
             newTvDataAvailable(scroll);
-            try {
-
             
             if(Settings.propAutoUpdatePlugins.getBoolean() && (Settings.propLastPluginsUpdate.getDate() == null || Settings.propLastPluginsUpdate.getDate().addDays(7).compareTo(Date.getCurrentDate()) <= 0)) {
-              PluginAutoUpdater.searchForPluginUpdates();
+              PluginAutoUpdater.searchForPluginUpdates(mStatusBar.getLabel());
             }
-            }catch(Exception e) {e.printStackTrace();}
           }          
         });
 
@@ -1463,7 +1460,7 @@ public class MainFrame extends JFrame implements DateListener {
         JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
     if (answer == JOptionPane.YES_OPTION) {
-      updatePlugins(PluginAutoUpdater.DEFAULT_PLUGINS_DOWNLOAD_URL, false);
+      updatePlugins(PluginAutoUpdater.DEFAULT_PLUGINS_DOWNLOAD_URL, false, mStatusBar.getLabel());
     }
   }
   
@@ -1473,47 +1470,49 @@ public class MainFrame extends JFrame implements DateListener {
    * @param baseUrl The url string to load the plugin updates from.
    * @param showOnlyUpdates If the dialog is only to show when updates of
    *                        installed plugins are found.
+   * @param infoLabel The label to use to show infos.
    */
-  public void updatePlugins(final String baseUrl, final boolean showOnlyUpdates) {
-    ProgressWindow progWin = new ProgressWindow(this, mLocalizer.msg(
-        "title.2", "searching for new plugins..."));
-
-    progWin.run(new Progress() {
+  public void updatePlugins(final String baseUrl, final boolean showOnlyUpdates, final JLabel infoLabel) {
+    new Thread("Plugin Update Thread") {
       public void run() {
         try {
+          infoLabel.setText(mLocalizer.msg("searchForPluginUpdates","Search for plugin updates..."));
           java.net.URL url = new java.net.URL(baseUrl + "/" + PluginAutoUpdater.PLUGIN_UPDATES_FILENAME);
           SoftwareUpdater softwareUpdater = new SoftwareUpdater(url,showOnlyUpdates);
           mSoftwareUpdateItems = softwareUpdater
               .getAvailableSoftwareUpdateItems();
+          infoLabel.setText("");
         } catch (java.io.IOException e) {
           e.printStackTrace();
         }
-      }
-    });
-
-    if (mSoftwareUpdateItems == null && !showOnlyUpdates) {
-      JOptionPane.showMessageDialog(this, mLocalizer.msg("error.1",
-          "software check failed."));
-    } else if (mSoftwareUpdateItems.length == 0 && !showOnlyUpdates) {
-      JOptionPane.showMessageDialog(this, mLocalizer.msg("error.2",
-          "No new items available"));
-    } else {
-      Window w = UiUtilities.getLastModalChildOf(this);
-      SoftwareUpdateDlg dlg = null;
-
-      if(w instanceof JDialog) {
-        dlg = new SoftwareUpdateDlg((JDialog)w, baseUrl, showOnlyUpdates);
-      } else {
-        dlg = new SoftwareUpdateDlg((JFrame)w, baseUrl, showOnlyUpdates);
-      }
-
-      dlg.setSoftwareUpdateItems(mSoftwareUpdateItems);
-      dlg.setLocationRelativeTo(w);
-      dlg.setVisible(true);
-    }
+        
+        if (mSoftwareUpdateItems == null && !showOnlyUpdates) {
+          JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("error.1",
+              "software check failed."));
+        } else if (mSoftwareUpdateItems.length == 0 && !showOnlyUpdates) {
+          JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("error.2",
+              "No new items available"));
+        } else {
+          Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+          SoftwareUpdateDlg dlg = null;
     
-    Settings.propLastPluginsUpdate.setDate(Date.getCurrentDate());
-    mSoftwareUpdateItems = null;
+          if(w instanceof JDialog) {
+            dlg = new SoftwareUpdateDlg((JDialog)w, baseUrl, showOnlyUpdates);
+          } else {
+            dlg = new SoftwareUpdateDlg((JFrame)w, baseUrl, showOnlyUpdates);
+          }
+    
+          dlg.setSoftwareUpdateItems(mSoftwareUpdateItems);
+          dlg.setLocationRelativeTo(w);
+          dlg.setVisible(true);
+        }
+        
+        Settings.propLastPluginsUpdate.setDate(Date.getCurrentDate());
+        
+        infoLabel.setText("");
+        mSoftwareUpdateItems = null;
+      }
+    }.start();
   }
 
   public void showFromTray(int state) {
