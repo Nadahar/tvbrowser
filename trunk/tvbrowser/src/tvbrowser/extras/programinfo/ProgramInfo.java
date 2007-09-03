@@ -50,6 +50,7 @@ import com.l2fprod.common.swing.plaf.LookAndFeelAddons;
 
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
+import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 
@@ -85,12 +86,27 @@ public class ProgramInfo {
   private boolean mShowFunctions, mShowTextSearchButton;
   
   private static boolean mIsShowing = false;
+  
+  private Thread mInitThread;
 
   private ProgramInfo() {
     mInstance = this;
     mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
     loadSettings();
     LookAndFeelAddons.setTrackingLookAndFeelChanges(true);
+  }
+  
+  /**
+   * Inits the ProgramInfoDialog.
+   */
+  public void handleTvBrowserStartFinished() {
+    mInitThread = new Thread("Program Info init thread") {
+      public void run() {
+        setPriority(Thread.MIN_PRIORITY);
+        ProgramInfoDialog.getInstance(Plugin.getPluginManager().getExampleProgram(), mLeftSplit, true);
+      }
+    };
+    mInitThread.start();
   }
 
   protected ActionMenu getContextMenuActions(final Program program) {
@@ -244,6 +260,12 @@ public class ProgramInfo {
   }
 
   protected void showProgramInformation(Program program, boolean showSettings) {
+    if(mInitThread != null && mInitThread.isAlive()) {
+      try {
+        mInitThread.join();
+      }catch(InterruptedException e) {}
+    }
+    
     if (mIsShowing) {
       ProgramInfoDialog.closeDialog();
     }
