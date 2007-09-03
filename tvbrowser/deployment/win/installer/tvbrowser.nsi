@@ -141,14 +141,14 @@ Function un.onInit
 FunctionEnd
 
 # Function un.UninstallTvDataPage
-#  !insertmacro MUI_HEADER_TEXT "TV-Daten löschen" \
-#    "Bestimmen Sie, ob bereits heruntergeladene TV-Daten gelöscht werden sollen"
+#  !insertmacro MUI_HEADER_TEXT "TV-Daten lï¿½schen" \
+#    "Bestimmen Sie, ob bereits heruntergeladene TV-Daten gelï¿½scht werden sollen"
 #  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallTvData.ini"
 # FunctionEnd
 
 #Function un.UninstallSettingsPage
-#  !insertmacro MUI_HEADER_TEXT "Einstellungen löschen" \
-#    "Bestimmen Sie, ob Ihre Einstellungen gelöscht werden sollen"
+#  !insertmacro MUI_HEADER_TEXT "Einstellungen lï¿½schen" \
+#    "Bestimmen Sie, ob Ihre Einstellungen gelï¿½scht werden sollen"
 #  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallSettings.ini"
 #FunctionEnd
 
@@ -172,7 +172,7 @@ FunctionEnd
  LangString STD_SECTION_NAME ${LANG_German} "${PROG_NAME} (erforderlich)"
  LangString STD_SECTION_NAME ${LANG_ENGLISH} "${PROG_NAME} (necessary)"
 
- LangString LINK_SECTION_NAME ${LANG_German} "Verknüpfung auf dem Desktop"
+ LangString LINK_SECTION_NAME ${LANG_German} "Verknï¿½pfung auf dem Desktop"
  LangString LINK_SECTION_NAME ${LANG_ENGLISH} "Link on the desktop"
 
  LangString START_WITH_WINDOWS ${LANG_GERMAN} "TV-Browser mit Windows starten"
@@ -205,7 +205,7 @@ FunctionEnd
  LangString REMINDER ${LANG_GERMAN} "Erinnerer"
  LangString REMINDER ${LANG_ENGLISH} "Reminder"
 
- LangString I18N ${LANG_GERMAN} "Übersetzungstool"
+ LangString I18N ${LANG_GERMAN} "ï¿½bersetzungstool"
  LangString I18N ${LANG_ENGLISH} "Translation tool"
  
  LangString PRINT ${LANG_GERMAN} "Drucken"
@@ -220,7 +220,7 @@ FunctionEnd
  LangString TVRATER ${LANG_GERMAN} "TV-Bewertungen"
  LangString TVRATER ${LANG_ENGLISH} "TV rates"
  
- LangString LISTVIEW ${LANG_GERMAN} "Was läuft gerade"
+ LangString LISTVIEW ${LANG_GERMAN} "Was lï¿½uft gerade"
  LangString LISTVIEW ${LANG_ENGLISH} "What runs now"
  
  LangString NEWS ${LANG_GERMAN} "Nachrichten"
@@ -238,7 +238,7 @@ FunctionEnd
  LangString SIMPLEMARKER ${LANG_GERMAN} "Markierungs-Plugin"
  LangString SIMPLEMARKER ${LANG_ENGLISH} "Marker Plugin"
  
- LangString un.QUESTION ${LANG_GERMAN} "Sollen die Konfigurationsdateien und TV-Daten gelöscht werden?"
+ LangString un.QUESTION ${LANG_GERMAN} "Sollen die Konfigurationsdateien und TV-Daten gelï¿½scht werden?"
  LangString un.QUESTION ${LANG_ENGLISH} "Do you want to delete the setting and TV data files?"
 
  LangString un.CONFIRM ${LANG_GERMAN} "Sind Sie sicher?"
@@ -259,7 +259,8 @@ Section "$(STD_SECTION_NAME)"
 
   # Set output path to the installation directory.
   SetOutPath "$INSTDIR"
-  File "${RUNTIME_DIR}\LICENSE.txt"
+  # File "${RUNTIME_DIR}\LICENSE.txt"
+  # the license is already copied by the license page
   File "${RUNTIME_DIR}\tvbrowser.exe"
   File "${RUNTIME_DIR}\tvbrowser_noDD.exe"
   File "${RUNTIME_DIR}\tvbrowser_noDD.txt"
