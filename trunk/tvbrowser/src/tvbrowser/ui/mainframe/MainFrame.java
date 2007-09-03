@@ -1492,7 +1492,7 @@ public class MainFrame extends JFrame implements DateListener {
         } else if (mSoftwareUpdateItems.length == 0 && !showOnlyUpdates) {
           JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("error.2",
               "No new items available"));
-        } else {
+        } else if(mSoftwareUpdateItems != null && mSoftwareUpdateItems.length > 0) {
           Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
           SoftwareUpdateDlg dlg = null;
     
