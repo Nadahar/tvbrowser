@@ -315,10 +315,10 @@ public class ManagePanel {
         mProgramListModel.addElement(keys.nextElement());
       }
     }
-
+    
     final int scrollIndex = index;
     
-    if(scroll)
+    if(scroll) {
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
           mProgramsScrollPane.getVerticalScrollBar().setValue(0);
@@ -332,6 +332,7 @@ public class ManagePanel {
           }
         }
       });
+    }
     
     mSend.setEnabled(mProgramListModel.size() > 0);
     mDelete.setEnabled(mProgramListModel.size() > 0);
@@ -370,7 +371,7 @@ public class ManagePanel {
 
     SimpleMarkerPlugin.getInstance().revalidate(mDeletedPrograms);
     mLastDeletingList.updateNode();
-    SimpleMarkerPlugin.getInstance().refreshManagePanel();
+    SimpleMarkerPlugin.getInstance().refreshManagePanel(false);
   }
   
   private void undo() {
@@ -390,7 +391,7 @@ public class ManagePanel {
     mLastDeletingList = null;
     mDeletedPrograms = null;
     
-    SimpleMarkerPlugin.getInstance().refreshManagePanel();
+    SimpleMarkerPlugin.getInstance().refreshManagePanel(true);
   }
 
   private JPanel getButtonPanel(CellConstraints cc) {

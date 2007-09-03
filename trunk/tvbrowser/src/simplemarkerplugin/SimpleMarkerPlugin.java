@@ -363,7 +363,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
       mMarkListVector.getListAt(0).updateNode();
     }
     
-    refreshManagePanel();
+    refreshManagePanel(false);
   }
 
   public void readData(ObjectInputStream in) throws IOException,
@@ -511,9 +511,9 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     return getParentFrame();
   }
  
-  protected void refreshManagePanel() {
+  protected void refreshManagePanel(boolean scroll) {
     if(mManagePanel != null) {
-      mManagePanel.selectPrograms(false);
+      mManagePanel.selectPrograms(scroll);
     }
   }
   
