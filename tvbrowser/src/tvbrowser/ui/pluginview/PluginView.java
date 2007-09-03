@@ -34,6 +34,7 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -44,6 +45,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
 
 import tvbrowser.core.contextmenu.ContextMenuManager;
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.pluginview.contextmenu.ContextMenu;
@@ -253,6 +255,34 @@ public class PluginView extends JPanel implements MouseListener {
         Node node = (Node)value; 
         if(node.isDirectoryNode()) {
           label.setIcon(getClosedIcon());
+        }
+      }
+      
+      // get icon from plugin
+      if (value instanceof Node) {
+        Icon icon = null;
+        Node node = (Node)value; 
+        Object object = node.getUserObject();
+        if (node.getType() == Node.PLUGIN_ROOT) {
+          if (object instanceof Plugin) {
+            PluginProxy proxy = PluginProxyManager.getInstance().getPluginForId(((Plugin)object).getId());
+            icon = proxy.getPluginIcon();
+          }
+          else if (object instanceof PluginProxy) {
+            PluginProxy proxy = (PluginProxy) object;
+            icon = proxy.getPluginIcon();
+          }
+        }
+        else if (object instanceof String) {
+          if (node.equals(FavoritesPlugin.getInstance().getRootNode().getMutableTreeNode())) {
+            icon = FavoritesPlugin.getInstance().getIconFromTheme("action", "bookmark-new", 16);
+          }
+          else if (node.equals(ReminderPlugin.getInstance().getRootNode().getMutableTreeNode())) {
+            icon = IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16);
+          }
+        }
+        if (icon != null) {
+          label.setIcon(icon);
         }
       }
       
