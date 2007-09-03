@@ -384,6 +384,8 @@ public class TVBrowser {
                 ReminderPlugin.getInstance().handleTvBrowserStartFinished();
                 FavoritesPlugin.getInstance().handleTvBrowserStartFinished();
                 mainFrame.handleTvBrowserStartFinished();
+                
+                ProgramInfo.getInstance().handleTvBrowserStartFinished();
               }
             }.start();
             ChannelList.completeChannelLoading();
