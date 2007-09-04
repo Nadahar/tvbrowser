@@ -33,7 +33,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
-import tvbrowser.core.Settings;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 import util.ui.UiUtilities;
@@ -154,7 +153,7 @@ public class ProgramTextCreator {
    */
   public static String createInfoText(Program prog, ExtendedHTMLDocument doc, 
       Object[] fieldArr, Font tFont, Font bFont, ProgramPanelSettings settings, 
-      boolean showHelpLinks, int zoom, boolean showPluginIcons) {
+      boolean showHelpLinks, int zoom, boolean showPluginIcons) {try {
     // NOTE: All field types are included until type 25 (REPETITION_ON_TYPE)
     StringBuffer buffer = new StringBuffer();
 
@@ -213,7 +212,7 @@ public class ProgramTextCreator {
     buffer.append(prog.getTitle());
     buffer.append("</b></div>");
 
-    String episode = prog.getTextField(ProgramFieldType.EPISODE_TYPE);
+    /*String episode = prog.getTextField(ProgramFieldType.EPISODE_TYPE);
 
     if (episode != null && episode.trim().length() > 0) {
       buffer.append("<div style=\"color:#808080; font-size:");
@@ -223,7 +222,7 @@ public class ProgramTextCreator {
       buffer.append("\">");
       buffer.append(episode);
       buffer.append("</div>");
-    }
+    }*/
 
     buffer.append("</td></tr>");
 
@@ -380,6 +379,7 @@ public class ProgramTextCreator {
             
           }
         }
+        
         if (type == null) {
           int length = prog.getLength();
           if (length > 0 && ((String) id).trim().length() > 0) {
@@ -419,132 +419,142 @@ public class ProgramTextCreator {
             buffer.append("</td></tr>");
             addSeparator(doc, buffer);
           }
-          continue;
         }
-      } else {
-        type = (ProgramFieldType) id;
-      }
-
-      if (type == ProgramFieldType.DESCRIPTION_TYPE) {
-        if (prog.getDescription() != null
-            && prog.getDescription().trim().length() > 0) {
-          addEntry(doc, buffer, prog, ProgramFieldType.DESCRIPTION_TYPE, true,
-              showHelpLinks);
-        } else {
-          addEntry(doc, buffer, prog, ProgramFieldType.SHORT_DESCRIPTION_TYPE,
-              true, showHelpLinks);
-        }
-      } else if (type == ProgramFieldType.INFO_TYPE) {
-        int info = prog.getInfo();
-        if ((info != -1) && (info != 0)) {
-          buffer
-              .append("<tr><td valign=\"top\" style=\"color:gray; font-size:");
-
-          buffer.append(mBodyFontSize);
-
-          buffer.append("\"><b>");
-          buffer
-              .append(type.getLocalizedName()/*
-                                               * mLocalizer.msg("attributes",
-                                               * "Program attributes")
-                                               */);
-          buffer
-              .append("</b></td><td valign=\"middle\" style=\"font-size:5\">");
-
-          openPara(buffer, "info");
-          // Workaround: Without the &nbsp; the component are not put in one
-          // line.
-          buffer.append("&nbsp;");
-
-          int[] infoBitArr = ProgramInfoHelper.mInfoBitArr;
-          Icon[] infoIconArr = ProgramInfoHelper.mInfoIconArr;
-          String[] infoMsgArr = ProgramInfoHelper.mInfoMsgArr;
-
-          for (int i = 0; i < infoBitArr.length; i++) {
-            if (ProgramInfoHelper.bitSet(info, infoBitArr[i])) {
-              if (infoIconArr[i] != null) {
-                JLabel iconLabel = new JLabel(infoIconArr[i]);
-                iconLabel.setToolTipText(infoMsgArr[i]);
-                buffer.append(doc.createCompTag(iconLabel));
-              } else {
-                buffer.append(infoMsgArr[i]);
-              }
-              buffer.append("&nbsp;&nbsp;");
-            }
-          }
-
-          closePara(buffer);
-
-          buffer.append("</td></tr>");
-          addSeparator(doc, buffer);
-        }
-      } else if (type == ProgramFieldType.URL_TYPE) {
-        addEntry(doc, buffer, prog, ProgramFieldType.URL_TYPE, true,
-            showHelpLinks);
-      } else if (type == ProgramFieldType.ACTOR_LIST_TYPE) {
-        ArrayList<String> actorsList = new ArrayList<String>();
-        String[] recognizedActors = ProgramUtilities.getActorsFromActorsField(prog);
-        if (recognizedActors != null) {
-          for (String actorName : recognizedActors) {
-            actorsList.add(actorName);
-          }
-        }
-        String actorField = prog.getTextField(type);
-        if (actorField != null) {
-          actorField = actorField.trim();
-          String[] actors = new String[0];
-          if (actorField.contains("\n")) {
-            actors = actorField.split("\n");
-          }
-          else if (actorField.contains(",")) {
-            actors = actorField.split(",");
-          }
-          else if (actorField.contains("\t")) {
-            actors = new String[1];
-            actors[0] = actorField;
-          }
-          if (actors.length > 0) {
-            startInfoSection(buffer, type.getLocalizedName());
-            buffer.append("<table border=\"0\" cellpadding=\"0\" style=\"font-family:");
-            buffer.append(bodyFont);
-            buffer.append(";\">");
-            for (String actor : actors) {
-              actor = actor.trim();
-              if (actor != "") {
-                String part1 = actor;
-                String part2 = "";
-                if (actor.contains("\t")) {
-                  part1 = actor.substring(0, actor.indexOf("\t")).trim();
-                  part2 = actor.substring(actor.indexOf("\t")).trim();
-                }
-                else if (actor.contains("(") && actor.contains(")")) {
-                  part1 = actor.substring(0, actor.indexOf("(")).trim();
-                  part2 = actor.substring(actor.indexOf("(")+1, actor.lastIndexOf(")")).trim();
-                }
-                if (actorsList.contains(part1)) {
-                  part1 = addWikiLink(part1);
-                }
-                if (actorsList.contains(part2)) {
-                  part2 = addWikiLink(part2);
-                }
-                buffer.append("<tr><td>");
-                buffer.append(part1);
-                buffer.append("</td><td width=\"10\">&nbsp;</td><td>");
-                buffer.append(part2);
-                buffer.append("</td></tr>");
-              }
-            }
-            buffer.append("</table>");
-            buffer.append("</td></tr>");
-            addSeparator(doc, buffer);
-          }
-          else {
-            addEntry(doc, buffer, prog, type, showHelpLinks);
-          }
+      } else if(id instanceof CompoundedProgramFieldType) {
+        CompoundedProgramFieldType value = (CompoundedProgramFieldType) id;
+        String entry = value.getFormatedValueForProgram(prog);
+        
+        if(entry != null) {
+          startInfoSection(buffer, value.getName());
+          buffer.append(HTMLTextHelper.convertTextToHtml(entry, false));
+          
+          addSeparator(doc,buffer);
         }
       }
       else {
-        addEntry(doc, buffer, prog, type, showHelpLinks);
+        type = (ProgramFieldType) id;      
+
+        if (type == ProgramFieldType.DESCRIPTION_TYPE) {
+          if (prog.getDescription() != null
+              && prog.getDescription().trim().length() > 0) {
+            addEntry(doc, buffer, prog, ProgramFieldType.DESCRIPTION_TYPE, true,
+                showHelpLinks);
+          } else {
+            addEntry(doc, buffer, prog, ProgramFieldType.SHORT_DESCRIPTION_TYPE,
+                true, showHelpLinks);
+          }
+        } else if (type == ProgramFieldType.INFO_TYPE) {
+          int info = prog.getInfo();
+          if ((info != -1) && (info != 0)) {
+            buffer
+                .append("<tr><td valign=\"top\" style=\"color:gray; font-size:");
+  
+            buffer.append(mBodyFontSize);
+  
+            buffer.append("\"><b>");
+            buffer
+                .append(type.getLocalizedName()/*
+                                                 * mLocalizer.msg("attributes",
+                                                 * "Program attributes")
+                                                 */);
+            buffer
+                .append("</b></td><td valign=\"middle\" style=\"font-size:5\">");
+  
+            openPara(buffer, "info");
+            // Workaround: Without the &nbsp; the component are not put in one
+            // line.
+            buffer.append("&nbsp;");
+  
+            int[] infoBitArr = ProgramInfoHelper.mInfoBitArr;
+            Icon[] infoIconArr = ProgramInfoHelper.mInfoIconArr;
+            String[] infoMsgArr = ProgramInfoHelper.mInfoMsgArr;
+  
+            for (int i = 0; i < infoBitArr.length; i++) {
+              if (ProgramInfoHelper.bitSet(info, infoBitArr[i])) {
+                if (infoIconArr[i] != null) {
+                  JLabel iconLabel = new JLabel(infoIconArr[i]);
+                  iconLabel.setToolTipText(infoMsgArr[i]);
+                  buffer.append(doc.createCompTag(iconLabel));
+                } else {
+                  buffer.append(infoMsgArr[i]);
+                }
+                buffer.append("&nbsp;&nbsp;");
+              }
+            }
+  
+            closePara(buffer);
+  
+            buffer.append("</td></tr>");
+            addSeparator(doc, buffer);
+          }
+        } else if (type == ProgramFieldType.URL_TYPE) {
+          addEntry(doc, buffer, prog, ProgramFieldType.URL_TYPE, true,
+              showHelpLinks);
+        } else if (type == ProgramFieldType.ACTOR_LIST_TYPE) {
+          ArrayList<String> actorsList = new ArrayList<String>();
+          String[] recognizedActors = ProgramUtilities.getActorsFromActorsField(prog);
+          if (recognizedActors != null) {
+            for (String actorName : recognizedActors) {
+              actorsList.add(actorName);
+            }
+          }
+          String actorField = prog.getTextField(type);
+          if (actorField != null) {
+            actorField = actorField.trim();
+            String[] actors = new String[0];
+            if (actorField.contains("\n")) {
+              actors = actorField.split("\n");
+            }
+            else if (actorField.contains(",")) {
+              actors = actorField.split(",");
+            }
+            else if (actorField.contains("\t")) {
+              actors = new String[1];
+              actors[0] = actorField;
+            }
+            if (actors.length > 0) {
+              startInfoSection(buffer, type.getLocalizedName());
+              buffer.append("<table border=\"0\" cellpadding=\"0\" style=\"font-family:");
+              buffer.append(bodyFont);
+              buffer.append(";\">");
+              for (String actor : actors) {
+                actor = actor.trim();
+                if (actor != "") {
+                  String part1 = actor;
+                  String part2 = "";
+                  if (actor.contains("\t")) {
+                    part1 = actor.substring(0, actor.indexOf("\t")).trim();
+                    part2 = actor.substring(actor.indexOf("\t")).trim();
+                  }
+                  else if (actor.contains("(") && actor.contains(")")) {
+                    part1 = actor.substring(0, actor.indexOf("(")).trim();
+                    part2 = actor.substring(actor.indexOf("(")+1, actor.lastIndexOf(")")).trim();
+                  }
+                  if (actorsList.contains(part1)) {
+                    part1 = addWikiLink(part1);
+                  }
+                  if (actorsList.contains(part2)) {
+                    part2 = addWikiLink(part2);
+                  }
+                  buffer.append("<tr><td>");
+                  buffer.append(part1);
+                  buffer.append("</td><td width=\"10\">&nbsp;</td><td>");
+                  buffer.append(part2);
+                  buffer.append("</td></tr>");
+                }
+              }
+              buffer.append("</table>");
+              buffer.append("</td></tr>");
+              addSeparator(doc, buffer);
+            }
+            else {
+              addEntry(doc, buffer, prog, type, showHelpLinks);
+            }
+          }
+        }
+        else {
+          addEntry(doc, buffer, prog, type, showHelpLinks);
+        }
       }
     }
 
@@ -564,7 +574,8 @@ public class ProgramTextCreator {
     }
     buffer.append("</table></html>");
 
-    return buffer.toString();
+    return buffer.toString();}catch(Exception e) {e.printStackTrace();}
+    return "";
   }
 
   private static String addWikiLink(String topic, String displayText) {
@@ -739,13 +750,12 @@ public class ProgramTextCreator {
         ProgramFieldType.URL_TYPE,
         ProgramFieldType.ORIGINAL_TITLE_TYPE,
         ProgramFieldType.ORIGINAL_EPISODE_TYPE,
-        ProgramFieldType.EPISODE_NUMBER_TYPE,
-        ProgramFieldType.EPISODE_TOTAL_NUMBER_TYPE,
-        ProgramFieldType.SEASON_NUMBER_TYPE,
+        CompoundedProgramFieldType.EPISODE_COMPOSITION,
         ProgramFieldType.REPETITION_OF_TYPE,
         ProgramFieldType.REPETITION_ON_TYPE, ProgramFieldType.AGE_LIMIT_TYPE,
         ProgramFieldType.INFO_TYPE, ProgramFieldType.VPS_TYPE,
-        ProgramFieldType.SHOWVIEW_NR_TYPE, getDurationTypeString() };
+        ProgramFieldType.SHOWVIEW_NR_TYPE, 
+        getDurationTypeString() };
   }
 
   /**

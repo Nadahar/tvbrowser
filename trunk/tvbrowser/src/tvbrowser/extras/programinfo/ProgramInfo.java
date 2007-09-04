@@ -42,6 +42,7 @@ import tvbrowser.extras.common.ConfigurationHandler;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.ProgramTable;
 import util.exc.ErrorHandler;
+import util.program.CompoundedProgramFieldType;
 import util.program.ProgramTextCreator;
 import util.settings.PluginPictureSettings;
 import util.ui.UiUtilities;
@@ -329,15 +330,16 @@ public class ProgramInfo {
       String[] id = mSettings.getProperty("order", "").trim().split(";");
       mOrder = new Object[id.length];
       for (int i = 0; i < mOrder.length; i++) {
-        try {
-          mOrder[i] = ProgramFieldType
-              .getTypeForId(Integer.parseInt(id[i]));
-          
-          if(((ProgramFieldType)mOrder[i]).getTypeId() == ProgramFieldType.UNKOWN_FORMAT) {
-            mOrder[i] = ProgramTextCreator.getDurationTypeString();
-          }
-        } catch (Exception e) {
-          mOrder[i] = id[i];
+        int parsedId = Integer.parseInt(id[i]);
+        
+        if(parsedId == ProgramFieldType.UNKOWN_FORMAT) {
+          mOrder[i] = ProgramTextCreator.getDurationTypeString();
+        }
+        else if(parsedId >= 0) {
+          mOrder[i] = ProgramFieldType.getTypeForId(parsedId);
+        }
+        else {
+          mOrder[i] = CompoundedProgramFieldType.getCompoundedProgramFieldTypeForId(parsedId);
         }
       }
     }

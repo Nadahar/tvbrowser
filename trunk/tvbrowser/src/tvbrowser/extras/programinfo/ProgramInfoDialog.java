@@ -84,6 +84,7 @@ import com.l2fprod.common.swing.JTaskPaneGroup;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Program;
+import devplugin.ProgramFieldType;
 import devplugin.SettingsItem;
 
 /**
@@ -145,7 +146,7 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
   private void setProgram(Program program, boolean showSettings) {
 	  mProgram = program;
 	  addPluginActions(false);
-	  mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc, ProgramInfo.getInstance().getOrder(), getFont(true), getFont(false), ProgramInfo.getInstance().getPictureSettings(), true, ProgramInfo.getInstance().getProperty("zoom","false").compareTo("true") == 0 ? Integer.parseInt(ProgramInfo.getInstance().getProperty("zoomValue","100")):100));
+	  mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc,/* new ProgramFieldType[] {ProgramFieldType.DESCRIPTION_TYPE}*/ProgramInfo.getInstance().getOrder(), getFont(true), getFont(false), ProgramInfo.getInstance().getPictureSettings(), true, ProgramInfo.getInstance().getProperty("zoom","false").compareTo("true") == 0 ? Integer.parseInt(ProgramInfo.getInstance().getProperty("zoomValue","100")):100));
       SwingUtilities.invokeLater(new Runnable() {
           public void run() {
             mInfoEP.setCaretPosition(0);
