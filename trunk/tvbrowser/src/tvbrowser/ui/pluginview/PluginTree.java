@@ -86,6 +86,7 @@ import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.Program;
 import devplugin.ProgramItem;
+import devplugin.ProgramReceiveTarget;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org) Date: 01.01.2005 Time:
@@ -338,21 +339,25 @@ public class PluginTree extends JTree implements DragGestureListener,
               .getComponent()).getPathForLocation(e.getLocation().x, e
               .getLocation().y);
 
-          Node target = (Node) targetPath.getPathComponent(1);
+          Node target = (Node)targetPath.getLastPathComponent();
+          
+          if(target.getProgramReceiveTarget() == null) {
+            target = (Node) targetPath.getPathComponent(1);
+          }
 
           if (flavors[0].getHumanPresentableName().equals("NodeExport")) {
             TreePath sourcePath = ((PluginTree) ((DropTarget) e.getSource())
                 .getComponent()).getSelectionPath();
             Node plugin = (Node) sourcePath.getPathComponent(1);
-
-            if (!target.equals(plugin) && targetPath.getPathCount() <= 2) {
+            
+            if (!target.equals(plugin) && !targetPath.isDescendant(sourcePath)) {
               if (target.equals(ReminderPlugin.getInstance().getRootNode()
                   .getMutableTreeNode())) {
                 e.acceptDrag(e.getDropAction());
                 reject = false;
                 temp = ReminderPlugin.getInstance();
                 rejected = false;
-              } else {
+              } else if(target.getProgramReceiveTarget() == null) {
                 PluginAccess[] pluginAccessArray = Plugin.getPluginManager()
                     .getActivatedPlugins();
 
@@ -370,7 +375,14 @@ public class PluginTree extends JTree implements DragGestureListener,
                   }
                 }
               }
-
+              else if(!target.equals(sourcePath.getLastPathComponent())){
+                e.acceptDrag(e.getDropAction());
+                reject = rejected = false;
+                temp = target.getProgramReceiveTarget();
+              }
+              else {
+                mPlugin = null;
+              }
             }
           } else if (flavors[0].getHumanPresentableName().equals("Program")) {
             if (targetPath.getPathCount() <= 2) {
@@ -422,7 +434,7 @@ public class PluginTree extends JTree implements DragGestureListener,
 
             mCueLine.setRect(((PluginTree) ((DropTarget) e.getSource())
                 .getComponent()).getPathBounds(targetPath));
-
+            
             Graphics2D g2 = (Graphics2D) getGraphics();
             Color c = new Color(255, 0, 0, 40);
             g2.setColor(c);
@@ -541,7 +553,7 @@ public class PluginTree extends JTree implements DragGestureListener,
     final PluginTree tree = this;
     e.dropComplete(true);
     mDropThread = new Thread("Plugin view drop") {
-      public void run() {
+      public void run() {try {
         tree.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
         DataFlavor[] flavors = tr.getTransferDataFlavors();
@@ -550,7 +562,11 @@ public class PluginTree extends JTree implements DragGestureListener,
           try {
             TreePath targetPath = ((PluginTree) ((DropTarget) src)
                 .getComponent()).getPathForLocation(loc.x, loc.y);
-            Node target = (Node) targetPath.getPathComponent(1);
+            Node target = (Node) targetPath.getLastPathComponent();
+            
+            if(target.getProgramReceiveTarget() == null) {
+              target = (Node) targetPath.getPathComponent(1);
+            }
 
             if (flavors[0].getHumanPresentableName().equals("NodeExport")) {
 
@@ -559,52 +575,42 @@ public class PluginTree extends JTree implements DragGestureListener,
               Node plugin = (Node) sourcePath.getPathComponent(1);
               Node source = (Node) sourcePath.getLastPathComponent();
 
-              if (target.equals(plugin) || targetPath.getPathCount() > 2) {
+              if (target.equals(plugin) || targetPath.isDescendant(sourcePath)) {
                 return;
               } else {
-                if (target.equals(ReminderPlugin.getInstance().getRootNode()
-                    .getMutableTreeNode())) {
-                  Vector<Program> vec;
-                  if (source.isLeaf()) {
-                    vec = new Vector<Program>();
-                    if (source.getUserObject() instanceof ProgramItem) {
-                      vec.addElement(((ProgramItem) source.getUserObject())
-                          .getProgram());
-                    }
-                  } else {
-                    vec = getLeafElements(source, new Vector<Program>());
-                  }
-                  Program[] p = new Program[vec.size()];
-                  if (p.length > 0) {
-                    vec.toArray(p);
-                    ReminderPlugin.getInstance().addPrograms(p);
+                Vector<Program> vec;
+                if (source.isLeaf()) {
+                  vec = new Vector<Program>();
+                  if (source.getUserObject() instanceof ProgramItem) {
+                    vec.addElement(((ProgramItem) source.getUserObject())
+                        .getProgram());
                   }
                 } else {
-                  PluginAccess[] pa = Plugin.getPluginManager()
-                      .getActivatedPlugins();
-
-                  for (PluginAccess pluginAccess : pa) {
-                    if (pluginAccess.getRootNode().getMutableTreeNode().equals(target)) {
-                      if ((pluginAccess.canReceivePrograms() || pluginAccess.canReceiveProgramsWithTarget()) && pluginAccess.getProgramReceiveTargets() != null && pluginAccess.getProgramReceiveTargets().length > 0) {
-                        Vector<Program> vec;
-                        if (source.isLeaf()) {
-                          vec = new Vector<Program>();
-                          if (source.getUserObject() instanceof ProgramItem) {
-                            vec.addElement(((ProgramItem) source
-                                .getUserObject()).getProgram());
-                          }
-                        } else {
-                          vec = getLeafElements(source, new Vector<Program>());
-                        }
-                        Program[] p = new Program[vec.size()];
-                        if (p.length > 0) {
-                          vec.toArray(p);
+                  vec = getLeafElements(source, new Vector<Program>());
+                }
+                Program[] p = vec.toArray(new Program[vec.size()]);
+                
+                if(p.length > 0) {
+                  if (target.equals(ReminderPlugin.getInstance().getRootNode()
+                      .getMutableTreeNode())) {
+                      ReminderPlugin.getInstance().addPrograms(p);
+                  } else if(target.getProgramReceiveTarget() == null) {
+                    PluginAccess[] pa = Plugin.getPluginManager()
+                        .getActivatedPlugins();
+  
+                    for (PluginAccess pluginAccess : pa) {
+                      if (pluginAccess.getRootNode().getMutableTreeNode().equals(target)) {
+                        if ((pluginAccess.canReceivePrograms() || pluginAccess.canReceiveProgramsWithTarget()) && pluginAccess.getProgramReceiveTargets() != null && pluginAccess.getProgramReceiveTargets().length > 0) {
                           pluginAccess.receivePrograms(p,pluginAccess.getProgramReceiveTargets()[0]);
+                        } else {
+                          break;
                         }
-                      } else {
-                        break;
                       }
                     }
+                  }
+                  else {
+                    ProgramReceiveTarget receiveTarget = target.getProgramReceiveTarget();
+                    receiveTarget.getReceifeIfForIdOfTarget().receivePrograms(p,receiveTarget);
                   }
                 }
               }
@@ -661,6 +667,7 @@ public class PluginTree extends JTree implements DragGestureListener,
 
         mPlugin = null;
         tree.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      }catch(Exception ee) {ee.printStackTrace();}
       }
     };
     mDropThread.setPriority(Thread.MIN_PRIORITY);

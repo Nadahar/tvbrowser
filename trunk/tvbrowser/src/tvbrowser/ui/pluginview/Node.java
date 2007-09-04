@@ -28,12 +28,14 @@ package tvbrowser.ui.pluginview;
 
 import java.util.ArrayList;
 
+import javax.swing.Icon;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import devplugin.ActionMenu;
 import devplugin.NodeFormatter;
 import devplugin.Program;
 import devplugin.ProgramItem;
+import devplugin.ProgramReceiveTarget;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
@@ -58,6 +60,10 @@ public class Node extends DefaultMutableTreeNode {
   private boolean mShowLeafCount;
   
   private int mLeafCount = 0;
+  
+  private Icon mIcon;
+  
+  private ProgramReceiveTarget mReceiveTarget;
 
   private static NodeFormatter mDefaultNodeFormatter = new NodeFormatter(){
     public String format(ProgramItem item) {
@@ -87,6 +93,22 @@ public class Node extends DefaultMutableTreeNode {
   public Node(ProgramItem programItem) {
     this(PROGRAM, programItem);
     setAllowsChildren(false);
+  }
+  
+  public void setIcon(Icon icon) {
+    mIcon = icon;
+  }
+  
+  public Icon getIcon() {
+    return mIcon;
+  }
+  
+  public void setProgramReceiveTarget(ProgramReceiveTarget receiveTarget) {
+    mReceiveTarget = receiveTarget;
+  }
+  
+  public ProgramReceiveTarget getProgramReceiveTarget() {
+    return mReceiveTarget;
   }
 
   public void setNodeFormatter(NodeFormatter formatter) {
