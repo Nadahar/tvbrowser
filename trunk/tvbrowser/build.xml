@@ -693,6 +693,9 @@
 	<zip destfile="${public.dir}/tvbrowser-${tvbrowser.version}-transportable-bin.zip">
       <zipfileset prefix="tvbrowser-transportable"
                   dir="${tvbrowser-transportable.runtime.dir}"/>
+      <zipfileset prefix="tvbrowser-transportable"
+	                  dir="${tvbrowser-transportable.runtime.dir}"
+      	filemode="755" includes="**/tvbrowser-transportable.sh"/>
     </zip>
   </target>
 
