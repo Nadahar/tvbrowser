@@ -576,7 +576,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
           mDeleteBt.setToolTipText(mLocalizer.msg("delete", "Delete selected favorite..."));
         }
         else {
-          Program[] p = ((FavoriteNode)mFavoriteTree.getSelectionPath().getLastPathComponent()).getAllPrograms();
+          Program[] p = ((FavoriteNode)mFavoriteTree.getSelectionPath().getLastPathComponent()).getAllPrograms(false);
           
           int firstNotExpiredIndex = -1;
           
@@ -657,8 +657,6 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     Program[] programArr = mShowNew ? fav.getNewPrograms() : fav.getWhiteListPrograms();
     Program[] blackListPrograms = fav.getBlackListPrograms();
     
-    mSendBt.setEnabled(programArr.length > 0);
-    
     mProgramListModel.clear();
     mProgramListModel.ensureCapacity(mShowNew ? programArr.length : programArr.length + blackListPrograms.length);
     
@@ -671,6 +669,8 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
         firstNotExpiredIndex = i;
       }
     }
+    
+    mSendBt.setEnabled(mProgramListModel.size() > 0);
     
     if(!mShowNew && mBlackListChb.isSelected()) {
       for (int i = 0; i < blackListPrograms.length; i++) {
@@ -705,7 +705,12 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       fav = (Favorite) mFavoritesListModel.get(mFavoritesList.getSelectedIndex());
     }
     else {
-      programs = ((FavoriteNode)mFavoriteTree.getSelectionPath().getLastPathComponent()).getAllPrograms();
+      programs = ((FavoriteNode)mFavoriteTree.getSelectionPath().getLastPathComponent()).getAllPrograms(true);
+      
+      if(programs.length < 1) {
+        programs = ((FavoriteNode)mFavoriteTree.getSelectionPath().getLastPathComponent()).getAllPrograms(false);
+      }
+      
       fav = null;
     }
     
@@ -988,7 +993,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
   }
   
   protected boolean programListIsEmpty() {
-    return mProgramList.getModel().getSize() < 1;
+    return mProgramListModel.isEmpty();
   }
 }
 

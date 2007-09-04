@@ -197,17 +197,19 @@ public class FavoriteNode extends DefaultMutableTreeNode implements Comparable {
   /**
    * Gets all programs contains in this node and all children of it.
    * 
+   * @param onlyNotExpiredPrograms <code>true</code> if only not expired
+   * programs should be returned, <code>false</code> otherwise.
    * @return All programs contains in this node and all children of it.
    */
-  public Program[] getAllPrograms() {
+  public Program[] getAllPrograms(boolean onlyNotExpiredPrograms) {
     try{
     if(isDirectoryNode()) {
       Program[] progs = new Program[0];
       
       for(int i = 0; i < getChildCount(); i++) {
-        Program[] p = ((FavoriteNode)getChildAt(i)).getAllPrograms();
+        Program[] p = ((FavoriteNode)getChildAt(i)).getAllPrograms(onlyNotExpiredPrograms);
         
-        if(p != null && p.length > 0) {
+        if(p != null && p.length > 0 ) {
           Program[] newArr = new Program[progs.length + p.length];
           
           System.arraycopy(progs,0,newArr,0,progs.length);
@@ -219,8 +221,9 @@ public class FavoriteNode extends DefaultMutableTreeNode implements Comparable {
       
       return progs;
     }
-    else
-      return getFavorite().getWhiteListPrograms();
+    else {
+      return getFavorite().getWhiteListPrograms(onlyNotExpiredPrograms);
+    }
     }catch(Exception e) {e.printStackTrace();}
     return null;
   }

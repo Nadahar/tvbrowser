@@ -14,7 +14,7 @@ public class FavoriteNodeCountComparator implements Comparator<FavoriteNode> {
   }
 
   public int compare(FavoriteNode node1, FavoriteNode node2) {
-    int result = node2.getAllPrograms().length-node1.getAllPrograms().length;
+    int result = node2.getAllPrograms(false).length-node1.getAllPrograms(false).length;
     if (result == 0) {
       result = node1.getFavorite().getName().compareTo(node2.getFavorite().getName());
     }
