@@ -711,6 +711,7 @@ public class FavoritesPlugin {
 
   public void updateRootNode(boolean save) {
     mRootNode.removeAllActions();
+    mRootNode.getMutableTreeNode().setIcon(getIconFromTheme("action", "bookmark-new", 16));
 
     Action manageFavorite = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {

@@ -273,14 +273,10 @@ public class PluginView extends JPanel implements MouseListener {
             icon = proxy.getPluginIcon();
           }
         }
-        else if (object instanceof String) {
-          if (node.equals(FavoritesPlugin.getInstance().getRootNode().getMutableTreeNode())) {
-            icon = FavoritesPlugin.getInstance().getIconFromTheme("action", "bookmark-new", 16);
-          }
-          else if (node.equals(ReminderPlugin.getInstance().getRootNode().getMutableTreeNode())) {
-            icon = IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16);
-          }
+        else if (object instanceof String) {          
+          icon = node.getIcon();
         }
+        
         if (icon != null) {
           label.setIcon(icon);
         }

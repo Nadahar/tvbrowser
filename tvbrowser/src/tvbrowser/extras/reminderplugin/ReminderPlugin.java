@@ -548,8 +548,8 @@ public class ReminderPlugin {
   }
 
   public void updateRootNode(boolean save) {
-
     mRootNode.removeAllActions();
+    mRootNode.getMutableTreeNode().setIcon(IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16));
     
     Action editReminders = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {

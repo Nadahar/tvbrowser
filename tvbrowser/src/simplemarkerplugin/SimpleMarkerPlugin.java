@@ -429,6 +429,8 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
       for (MarkList list : mMarkListVector) {
         PluginTreeNode temp = node.addNode(list.getName());
         temp.getMutableTreeNode().setShowLeafCountEnabled(false);
+        temp.getMutableTreeNode().setIcon(list.getMarkIcon());
+        temp.getMutableTreeNode().setProgramReceiveTarget(list.getReceiveTarget());
         list.createNodes(temp, false);
       }
     }
