@@ -350,7 +350,8 @@ public class PluginTree extends JTree implements DragGestureListener,
                 .getComponent()).getSelectionPath();
             Node plugin = (Node) sourcePath.getPathComponent(1);
             
-            if (!target.equals(plugin) && !targetPath.isDescendant(sourcePath)) {
+            if (!target.equals(plugin) && !targetPath.isDescendant(sourcePath) &&
+                !sourcePath.isDescendant(targetPath)) {
               if (target.equals(ReminderPlugin.getInstance().getRootNode()
                   .getMutableTreeNode())) {
                 e.acceptDrag(e.getDropAction());
@@ -553,7 +554,7 @@ public class PluginTree extends JTree implements DragGestureListener,
     final PluginTree tree = this;
     e.dropComplete(true);
     mDropThread = new Thread("Plugin view drop") {
-      public void run() {try {
+      public void run() {
         tree.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
         DataFlavor[] flavors = tr.getTransferDataFlavors();
@@ -575,7 +576,7 @@ public class PluginTree extends JTree implements DragGestureListener,
               Node plugin = (Node) sourcePath.getPathComponent(1);
               Node source = (Node) sourcePath.getLastPathComponent();
 
-              if (target.equals(plugin) || targetPath.isDescendant(sourcePath)) {
+              if (target.equals(plugin) || targetPath.isDescendant(sourcePath) || sourcePath.isDescendant(targetPath)) {
                 return;
               } else {
                 Vector<Program> vec;
@@ -667,7 +668,6 @@ public class PluginTree extends JTree implements DragGestureListener,
 
         mPlugin = null;
         tree.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-      }catch(Exception ee) {ee.printStackTrace();}
       }
     };
     mDropThread.setPriority(Thread.MIN_PRIORITY);
