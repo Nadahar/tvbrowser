@@ -170,9 +170,9 @@ public abstract class AbstractContextMenu implements ContextMenu {
             JMenuItem item = new JMenuItem(plugins[i].getInfo().getName());
             item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
 
-            Icon[] icons = plugins[i].getMarkIcons(Plugin.getPluginManager().getExampleProgram());
+            Icon icon = plugins[i].getPluginIcon();
             
-            item.setIcon(icons != null ? icons[0] : null);
+            item.setIcon(icon != null ? icon : null);
             menu.add(item);
             item.addActionListener(new ActionListener(){
               public void actionPerformed(ActionEvent e) {
@@ -187,9 +187,9 @@ public abstract class AbstractContextMenu implements ContextMenu {
             JMenuItem item = new JMenuItem(targets[0].toString());
             item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
             
-            Icon[] icons = plugins[i].getMarkIcons(Plugin.getPluginManager().getExampleProgram());
+            Icon icon = plugins[i].getPluginIcon();
             
-            item.setIcon(icons != null && icons.length > 0 ? icons[0] : null);
+            item.setIcon(icon != null ? icon : null);
             menu.add(item);
             
             final ProgramReceiveTarget target = targets[0];
@@ -206,9 +206,9 @@ public abstract class AbstractContextMenu implements ContextMenu {
             JMenu subMenu = new JMenu(plugins[i].getInfo().getName());            
             subMenu.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
             
-            Icon[] icons = plugins[i].getMarkIcons(Plugin.getPluginManager().getExampleProgram());
+            Icon icon = plugins[i].getPluginIcon();
             
-            subMenu.setIcon(icons != null && icons.length > 0 ? icons[0] : null);
+            subMenu.setIcon(icon != null ? icon : null);
             menu.add(subMenu);
             
             for(int j = 0; j < targets.length; j++) {
