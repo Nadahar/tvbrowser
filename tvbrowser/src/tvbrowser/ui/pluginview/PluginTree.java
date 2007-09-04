@@ -104,9 +104,11 @@ public class PluginTree extends JTree implements DragGestureListener,
   private BufferedImage mGhostImage, mTreeImage;
   private boolean rejected = false;
   private static PluginTree mInstance;
+  private static boolean mUpdateAllowed = true;
 
   public PluginTree(TreeModel model) {
     super(model);
+    
     setRootVisible(false);
     setShowsRootHandles(true);
     
@@ -250,6 +252,7 @@ public class PluginTree extends JTree implements DragGestureListener,
 
         ((PluginTreeModel) this.getModel()).setDisableUpdate(true);
 
+        mUpdateAllowed = false;
         Vector<Program> vec = this.getLeafElements(node, new Vector<Program>());
 
         if (vec.size() == 1) {
@@ -319,6 +322,7 @@ public class PluginTree extends JTree implements DragGestureListener,
     } catch (Exception ee) {
 
       ((PluginTreeModel) this.getModel()).setDisableUpdate(false);
+      mUpdateAllowed = true;
     }
   }
 
@@ -726,13 +730,16 @@ public class PluginTree extends JTree implements DragGestureListener,
 
   public void dragDropEnd(DragSourceDropEvent dsde) {
     ((PluginTreeModel) this.getModel()).setDisableUpdate(false);
+    mUpdateAllowed = true;
   }
 
   public void dragExit(DragSourceEvent dse) {}
   
   public void updateUI() {
-    setUI(new PluginTreeUI());
-    invalidate();
+    if(mUpdateAllowed) {
+      setUI(new PluginTreeUI());
+      invalidate();
+    }
   }
   
   private class PluginTreeUI extends javax.swing.plaf.basic.BasicTreeUI implements MouseListener {
