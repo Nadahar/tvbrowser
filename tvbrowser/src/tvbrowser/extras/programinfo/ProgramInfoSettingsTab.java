@@ -26,6 +26,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.l2fprod.common.swing.plaf.LookAndFeelAddons;
 
 import tvbrowser.core.icontheme.IconLoader;
+import util.program.CompoundedProgramFieldType;
 import util.program.ProgramTextCreator;
 import util.ui.FontChooserPanel;
 import util.ui.Localizer;
@@ -187,16 +188,16 @@ public class ProgramInfoSettingsTab implements SettingsTab {
       String[] id = mOldOrder.trim().split(";");
       order = new Object[id.length];
       for (int i = 0; i < order.length; i++) {
-        try {
-          order[i] = ProgramFieldType
-              .getTypeForId(Integer.parseInt(id[i]));
-          
-          if(((ProgramFieldType)order[i]).getTypeId() == ProgramFieldType.UNKOWN_FORMAT) {
-            order[i] = ProgramTextCreator.getDurationTypeString();
-          }
-          
-        } catch (Exception e) {
-          order[i] = id[i];
+        int parsedId = Integer.parseInt(id[i]);
+        
+        if(parsedId == ProgramFieldType.UNKOWN_FORMAT) {
+          order[i] = ProgramTextCreator.getDurationTypeString();
+        }
+        else if(parsedId >= 0) {
+          order[i] = ProgramFieldType.getTypeForId(parsedId);
+        }
+        else {
+          order[i] = CompoundedProgramFieldType.getCompoundedProgramFieldTypeForId(parsedId);
         }
       }
       mList = new OrderChooser(order,ProgramTextCreator.getDefaultOrder(),true);
@@ -290,7 +291,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     }
   }
 
-  public void saveSettings() {
+  public void saveSettings() {try {
     Object[] objects = mList.getOrder();
 
     String temp = "";
@@ -298,7 +299,10 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     for (Object object : objects) {
       if (object instanceof String) {
         temp += ProgramFieldType.UNKOWN_FORMAT + ";";
-      } else {
+      } else if (object instanceof CompoundedProgramFieldType) {
+        temp += ((CompoundedProgramFieldType) object).getId() + ";";
+      }
+      else {
         temp += ((ProgramFieldType) object).getTypeId() + ";";
       }
     }
@@ -332,6 +336,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     if(mShowTextSearchButton != null) {
       ProgramInfo.getInstance().setShowTextSearchButton(mShowTextSearchButton.isSelected());
     }
+  }catch(Exception e) {e.printStackTrace();}
   }
 
   private void restoreSettings() {
