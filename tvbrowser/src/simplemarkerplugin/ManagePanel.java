@@ -281,8 +281,28 @@ public class ManagePanel {
       
       programs = progList.toArray(new Program[progList.size()]);
     }
-    else if(mProgramsList.getSelectedValue() == null)
-      programs = list.toArray(new Program[list.size()]);    
+    else if(mProgramsList.getSelectedValue() == null) {
+      ArrayList<Program> expiredProgs = new ArrayList<Program>();
+      ArrayList<Program> notExpiredProgs = new ArrayList<Program>();
+      
+      for(int i = 0; i < mProgramListModel.size(); i++) {
+        Program prog = (Program)mProgramListModel.get(i);
+        
+        if(prog.isExpired()) {
+          expiredProgs.add(prog);
+        }
+        else {
+          notExpiredProgs.add(prog);
+        }
+      }
+      
+      if(notExpiredProgs.isEmpty()) {
+        programs = expiredProgs.toArray(new Program[expiredProgs.size()]);
+      }
+      else {
+        programs = notExpiredProgs.toArray(new Program[notExpiredProgs.size()]);
+      }
+    }
 
     if(programs != null) {
       SendToPluginDialog send = new SendToPluginDialog(SimpleMarkerPlugin

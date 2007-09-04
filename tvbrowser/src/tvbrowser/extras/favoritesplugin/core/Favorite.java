@@ -520,13 +520,22 @@ public abstract class Favorite {
   }
   
   /**
+  * @return The programs that are not on the black list.
+  */
+  public Program[] getWhiteListPrograms() {
+    return getWhiteListPrograms(false);
+  }
+  
+  /**
+   * @param onlyNotExpiredPrograms <code>true</code> if only not expired
+   * programs should be returned, <code>false</code> otherwise.
    * @return The programs that are not on the black list.
    */
-  public Program[] getWhiteListPrograms() {
+  public Program[] getWhiteListPrograms(boolean onlyNotExpiredPrograms) {
     ArrayList<Program> tempProgramArr = new ArrayList<Program>();
     
     for(int i = 0; i < mPrograms.length; i++) {
-      if(!mBlackList.contains(mPrograms[i]))
+      if(!mBlackList.contains(mPrograms[i]) && (!onlyNotExpiredPrograms || !mPrograms[i].isExpired()))
         tempProgramArr.add(mPrograms[i]);
     }
         
