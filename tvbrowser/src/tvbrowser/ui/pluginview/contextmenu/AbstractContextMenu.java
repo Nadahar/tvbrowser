@@ -183,7 +183,7 @@ public abstract class AbstractContextMenu implements ContextMenu {
               }
             });
           }
-          else if(targets.length == 1) {
+          else if(targets.length == 1 && (!(o instanceof ProgramReceiveTarget) || !o.equals(targets[0]) )) {
             JMenuItem item = new JMenuItem(targets[0].toString());
             item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
             
@@ -212,21 +212,22 @@ public abstract class AbstractContextMenu implements ContextMenu {
             menu.add(subMenu);
             
             for(int j = 0; j < targets.length; j++) {
-              JMenuItem item = new JMenuItem(targets[j].toString());
-              item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);              
-              subMenu.add(item);
-              
-              final ProgramReceiveTarget target = targets[j];
-              
-              item.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent e) {
-                  Program[] programs = collectProgramsFromNode(node);
-                  if ((programs != null) &&(programs.length > 0)) {
-                    plugin.receivePrograms(programs,target);
+              if(o == null || !o.equals(targets[j])) {
+                JMenuItem item = new JMenuItem(targets[j].toString());
+                item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
+                subMenu.add(item);
+                
+                final ProgramReceiveTarget target = targets[j];
+                
+                item.addActionListener(new ActionListener(){
+                  public void actionPerformed(ActionEvent e) {
+                    Program[] programs = collectProgramsFromNode(node);
+                    if ((programs != null) &&(programs.length > 0)) {
+                      plugin.receivePrograms(programs,target);
+                    }
                   }
-                }
-              });
-              
+                });
+              }
             }
           }
         }
@@ -247,11 +248,17 @@ public abstract class AbstractContextMenu implements ContextMenu {
     
     Node parent = node;
     
-    while (parent != null && parent.getType() != Node.PLUGIN_ROOT && parent != ReminderPlugin.getInstance().getRootNode().getMutableTreeNode()) {
+
+    
+    while (parent != null && parent.getType() != Node.PLUGIN_ROOT && parent != ReminderPlugin.getInstance().getRootNode().getMutableTreeNode() && parent.getProgramReceiveTarget() == null) {
       parent = (Node) parent.getParent();
     }
-    
+        
     if (parent != null){
+      if(parent.getProgramReceiveTarget() != null) {
+        return parent.getProgramReceiveTarget();
+      }
+
       Object o = parent.getUserObject();
       
       if(o instanceof Plugin)
