@@ -28,6 +28,8 @@ package devplugin;
 
 import java.awt.Color;
 
+import tvbrowser.core.Settings;
+
 /**
  * Provides information of the current user settings.
  *  
@@ -81,4 +83,19 @@ public interface TvBrowserSettings {
    */
   public int getProgramTableEndOfDay();
   
+  /**
+   * Gets the light color of an on air program.
+   * 
+   * @return The light color of an on air program.
+   * @since 2.6
+   */
+  public Color getProgramPanelOnAirLightColor();
+  
+  /**
+   * Gets the dark color of an on air program.
+   * 
+   * @return The dark color of an on air program.
+   * @since 2.6
+   */
+  public Color getProgramPanelOnAirDarkColor();
 }

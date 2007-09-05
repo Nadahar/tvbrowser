@@ -662,6 +662,26 @@ public class PluginManagerImpl implements PluginManager {
       public int getProgramTableStartOfDay() {
         return Settings.propProgramTableStartOfDay.getInt();
       }
+      
+      /**
+       * Gets the light color of an on air program.
+       * 
+       * @return The light color of an on air program.
+       * @since 2.6
+       */
+      public Color getProgramPanelOnAirLightColor() {
+        return Settings.propProgramTableColorOnAirLight.getColor();
+      }
+      
+      /**
+       * Gets the dark color of an on air program.
+       * 
+       * @return The dark color of an on air program.
+       * @since 2.6
+       */
+      public Color getProgramPanelOnAirDarkColor() {
+        return Settings.propProgramTableColorOnAirDark.getColor();
+      }
     };
   }
 
