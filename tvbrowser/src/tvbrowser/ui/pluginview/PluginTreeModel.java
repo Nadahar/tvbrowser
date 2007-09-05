@@ -38,6 +38,7 @@ import javax.swing.tree.TreePath;
 import tvbrowser.core.TvDataUpdateListener;
 import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import devplugin.Plugin;
@@ -131,6 +132,15 @@ public class PluginTreeModel extends DefaultTreeModel {
     }
     
     root.insert(pluginRoot.getMutableTreeNode(), -index-1);
+
+    if(pluginRoot.getMutableTreeNode().getIcon() == null) {
+      if(pluginRoot.getUserObject() instanceof Plugin) {
+        pluginRoot.getMutableTreeNode().setIcon(PluginProxyManager.getInstance().getActivatedPluginForId(((Plugin)pluginRoot.getUserObject()).getId()).getPluginIcon());
+      }
+      else if(pluginRoot.getUserObject() instanceof PluginProxy) {
+        pluginRoot.getMutableTreeNode().setIcon(((PluginProxy)pluginRoot.getUserObject()).getPluginIcon());
+      }
+    }
   }
 
   /**
@@ -179,9 +189,9 @@ public class PluginTreeModel extends DefaultTreeModel {
         e = PluginTree.getInstance().getExpandedDescendants(treePath);
       }
     }
-
+    
     super.reload(node);
-
+    
     if (e != null) {
       while (e.hasMoreElements()) {
         TreePath tree = (TreePath) e.nextElement();
@@ -190,7 +200,7 @@ public class PluginTreeModel extends DefaultTreeModel {
 
         for (int i = 1; i < o.length; i++) {
           TreeNode[] pathNodes = getPathToRoot((TreeNode) o[i]);
-
+          
           if (node == null || pathNodes[0].toString().compareTo("Plugins") != 0) {
             TreeNode n1 = (TreeNode) o[i - 1];
             Enumeration e1 = n1.children();
@@ -204,7 +214,7 @@ public class PluginTreeModel extends DefaultTreeModel {
             }
           }
         }
-
+        
         tree = new TreePath(o);
         PluginTree.getInstance().expandPath(tree);
       }

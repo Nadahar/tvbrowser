@@ -258,25 +258,10 @@ public class PluginView extends JPanel implements MouseListener {
         }
       }
       
-      // get icon from plugin
+      // get icon from node
       if (value instanceof Node) {
-        Icon icon = null;
-        Node node = (Node)value; 
-        Object object = node.getUserObject();
-        if (node.getType() == Node.PLUGIN_ROOT) {
-          if (object instanceof Plugin) {
-            PluginProxy proxy = PluginProxyManager.getInstance().getPluginForId(((Plugin)object).getId());
-            icon = proxy.getPluginIcon();
-          }
-          else if (object instanceof PluginProxy) {
-            PluginProxy proxy = (PluginProxy) object;
-            icon = proxy.getPluginIcon();
-          }
-        }
-        else if (object instanceof String) {          
-          icon = node.getIcon();
-        }
-        
+        Icon icon = ((Node)value).getIcon();
+
         if (icon != null) {
           label.setIcon(icon);
         }
