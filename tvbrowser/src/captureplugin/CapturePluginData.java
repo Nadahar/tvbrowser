@@ -25,6 +25,7 @@
 package captureplugin;
 
 import captureplugin.drivers.DeviceIf;
+import devplugin.Program;
 import util.exc.ErrorHandler;
 import util.ui.Localizer;
 
@@ -33,8 +34,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.Vector;
-
-import devplugin.Program;
 
 
 /**

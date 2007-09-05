@@ -30,11 +30,11 @@ import util.ui.ProgramPanel;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.JComponent;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;

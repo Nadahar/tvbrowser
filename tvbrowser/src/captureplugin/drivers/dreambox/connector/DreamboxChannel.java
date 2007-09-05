@@ -24,6 +24,8 @@
  */
 package captureplugin.drivers.dreambox.connector;
 
+import captureplugin.utils.ExternalChannelIf;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -31,7 +33,7 @@ import java.io.ObjectOutputStream;
 /**
  * A channel in the dreambox
  */
-public class DreamboxChannel {
+public class DreamboxChannel implements ExternalChannelIf {
     /** Service Reference */
     private String mReference;
     /** Name */

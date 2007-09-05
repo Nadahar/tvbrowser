@@ -22,11 +22,11 @@
  *   $Author: troggan $
  * $Revision: 1944 $
  */
-package captureplugin.drivers.elgatodriver.configdialog;
+package captureplugin.drivers.elgatodriver;
 
-import captureplugin.drivers.elgatodriver.ElgatoConfig;
-import captureplugin.drivers.elgatodriver.ElgatoConnection;
-import captureplugin.drivers.elgatodriver.ElgatoDevice;
+import captureplugin.utils.ConfigTableModel;
+import captureplugin.utils.ExternalChannelTableCellEditor;
+import captureplugin.utils.ExternalChannelTableCellRenderer;
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
@@ -126,11 +126,11 @@ public class ElgatoConfigDialog extends JDialog implements WindowClosingIf {
     
     panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("channelAssignment","Channel assignment")), cc.xyw(1,5, 7));
     
-    mTable = new JTable(new ConfigTableModel(mConfig));
+    mTable = new JTable(new ConfigTableModel(mConfig, mLocalizer.msg("eyeTV", "Eye TV")));
     mTable.getTableHeader().setReorderingAllowed(false);
     mTable.getColumnModel().getColumn(0).setCellRenderer(new ChannelTableCellRenderer());
-    mTable.getColumnModel().getColumn(1).setCellRenderer(new ElgatoChannelRenderer());
-    mTable.getColumnModel().getColumn(1).setCellEditor(new ElgatoChannelEditor(mConfig));
+    mTable.getColumnModel().getColumn(1).setCellRenderer(new ExternalChannelTableCellRenderer());
+    mTable.getColumnModel().getColumn(1).setCellEditor(new ExternalChannelTableCellEditor(mConfig));
     panel.add(new JScrollPane(mTable), cc.xyw(2,7,5));
     
     JButton fetch = new JButton(mLocalizer.msg("fetchChannels","Fetch Channellist"));

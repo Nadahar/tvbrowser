@@ -1,6 +1,6 @@
 /*
  * CapturePlugin by Andreas Hessel (Vidrec@gmx.de), Bodo Tasche
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -18,32 +18,29 @@
  * CVS information:
  *  $RCSfile$
  *   $Source$
- *     $Date: 2006-03-06 17:29:38 +0100 (Mo, 06 Mär 2006) $
- *   $Author: troggan $
- * $Revision: 1944 $
+ *     $Date: 2007-01-03 09:06:40 +0100 (Mi, 03 Jan 2007) $
+ *   $Author: bananeweizen $
+ * $Revision: 2979 $
  */
-package captureplugin.drivers.elgatodriver.configdialog;
-
-import captureplugin.drivers.elgatodriver.ElgatoChannel;
+package captureplugin.utils;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.Component;
 
 /**
- * The Renderer for the Elgato Channel
- * 
- * @author bodum
+ * The renderer for the dreamboxchannel
  */
-public class ElgatoChannelRenderer extends DefaultTableCellRenderer {
+public class ExternalChannelTableCellRenderer extends DefaultTableCellRenderer {
 
-  public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-    
-    if (value instanceof ElgatoChannel) {
-      value = ((ElgatoChannel)value).toString();
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+
+        if (value instanceof ExternalChannelIf) {
+            value = value.toString();
+        }
+
+        return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
     }
-    
-    return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-  }
-  
+
 }

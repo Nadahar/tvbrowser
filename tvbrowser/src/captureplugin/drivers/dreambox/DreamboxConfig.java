@@ -26,7 +26,10 @@ package captureplugin.drivers.dreambox;
 
 import captureplugin.drivers.dreambox.connector.DreamboxChannel;
 import captureplugin.drivers.utils.IDGenerator;
+import captureplugin.utils.ConfigIf;
+import captureplugin.utils.ExternalChannelIf;
 import devplugin.Channel;
+import util.io.IOUtilities;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -36,12 +39,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.TimeZone;
 
-import util.io.IOUtilities;
-
 /**
  * The configuration for the dreambox
  */
-public class DreamboxConfig {
+public class DreamboxConfig implements ConfigIf {
     /** ID */
     private String mId;
     /** IP */
@@ -80,7 +81,7 @@ public class DreamboxConfig {
     public DreamboxConfig(DreamboxConfig dreamboxConfig) {
         mId = dreamboxConfig.getId();
         mDreamboxAddress = dreamboxConfig.getDreamboxAddress();
-        mDreamboxChannels = dreamboxConfig.getDreamboxChannels();
+        mDreamboxChannels = (DreamboxChannel[]) dreamboxConfig.getExternalChannels();
         mChannels = dreamboxConfig.getChannels();
         mDChannels = dreamboxConfig.getDreamChannels();
         mBefore = dreamboxConfig.getPreTime();
@@ -261,7 +262,7 @@ public class DreamboxConfig {
     /**
      * @return all channels on the dreambox
      */
-    public DreamboxChannel[] getDreamboxChannels() {
+    public ExternalChannelIf[] getExternalChannels() {
         return mDreamboxChannels;
     }
 
@@ -277,7 +278,7 @@ public class DreamboxConfig {
      * @param channel get DreamboxChannel for this channel
      * @return DreamboxChannel for given channel, <code>null</code> if not found
      */
-    public DreamboxChannel getDreamboxChannel(Channel channel) {
+    public ExternalChannelIf getExternalChannel(Channel channel) {
         return mChannels.get(channel);
     }
 
@@ -295,9 +296,9 @@ public class DreamboxConfig {
      * @param channel TVBrowser-Channel
      * @param dreamboxChannel DreamboxChannel
      */
-    public void setDreamboxChannel(Channel channel, DreamboxChannel dreamboxChannel) {
-        mChannels.put(channel, dreamboxChannel);
-        mDChannels.put(dreamboxChannel, channel);
+    public void setExternalChannel(Channel channel, ExternalChannelIf dreamboxChannel) {
+        mChannels.put(channel, (DreamboxChannel) dreamboxChannel);
+        mDChannels.put((DreamboxChannel) dreamboxChannel, channel);
     }
 
     /**

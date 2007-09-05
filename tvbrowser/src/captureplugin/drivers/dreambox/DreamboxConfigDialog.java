@@ -22,48 +22,48 @@
  *   $Author: bananeweizen $
  * $Revision: 2979 $
  */
-package captureplugin.drivers.dreambox.configdialog;
+package captureplugin.drivers.dreambox;
 
 import captureplugin.CapturePlugin;
-import captureplugin.drivers.dreambox.DreamboxConfig;
-import captureplugin.drivers.dreambox.DreamboxDevice;
 import captureplugin.drivers.dreambox.connector.DreamboxChannel;
 import captureplugin.drivers.dreambox.connector.DreamboxConnector;
+import captureplugin.utils.ConfigTableModel;
+import captureplugin.utils.ExternalChannelIf;
+import captureplugin.utils.ExternalChannelTableCellEditor;
+import captureplugin.utils.ExternalChannelTableCellRenderer;
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
-import util.ui.ChannelTableCellRenderer;
+import devplugin.Channel;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.JSpinner;
-import javax.swing.JComboBox;
-import javax.swing.JTabbedPane;
-import javax.swing.JPasswordField;
+import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellEditor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.TimeZone;
-import java.util.Arrays;
-import java.io.IOException;
-
-import devplugin.Channel;
 
 /**
  * The configuration dialog for the dreambox
@@ -186,11 +186,11 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
 
         basicPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("channel", "Channel assignment")), cc.xyw(1, 5, 2));
 
-        mTable = new JTable(new ConfigTableModel(mConfig));
+        mTable = new JTable(new ConfigTableModel(mConfig, mLocalizer.msg("dreambox", "Dreambox Channel")));
         mTable.getTableHeader().setReorderingAllowed(false);
-        mTable.getColumnModel().getColumn(0).setCellRenderer(new ChannelTableCellRenderer());
-        mTable.getColumnModel().getColumn(1).setCellRenderer(new DreamboxChannelRenderer());
-        mTable.getColumnModel().getColumn(1).setCellEditor(new DreamboxChannelEditor(mConfig));
+        mTable.getColumnModel().getColumn(0).setCellRenderer(new util.ui.ChannelTableCellRenderer());
+        mTable.getColumnModel().getColumn(1).setCellRenderer(new ExternalChannelTableCellRenderer());
+        mTable.getColumnModel().getColumn(1).setCellEditor(new ExternalChannelTableCellEditor(mConfig));
 
         basicPanel.add(new JScrollPane(mTable), cc.xy(2, 7));
 
@@ -280,16 +280,16 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
      */
     private void attachChannels() {
         Channel[] channels = CapturePlugin.getPluginManager().getSubscribedChannels();
-        DreamboxChannel[] dchannels = mConfig.getDreamboxChannels();
+        ExternalChannelIf[] dchannels = mConfig.getExternalChannels();
 
         for (Channel channel:channels) {
-            if (mConfig.getDreamboxChannel(channel) == null) {
+            if (mConfig.getExternalChannel(channel) == null) {
 
                 String name = normalizeName(channel.getName());
 
-                for (DreamboxChannel dch:dchannels) {
+                for (ExternalChannelIf dch:dchannels) {
                     if (normalizeName(dch.getName()).equals(name)) {
-                        mConfig.setDreamboxChannel(channel,  dch);
+                        mConfig.setExternalChannel(channel,  dch);
                     }
                 }
 
@@ -335,7 +335,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
                                 JOptionPane.showMessageDialog(DreamboxConfigDialog.this, mLocalizer.msg("errorText", "Sorry, could not load channellist from Dreambox."),
                                         mLocalizer.msg("errorTitle", "Error"), JOptionPane.ERROR_MESSAGE);
                             } else {
-                                mConfig.setDreamboxChannels(channels.toArray(new DreamboxChannel[0]));
+                                mConfig.setDreamboxChannels(channels.toArray(new DreamboxChannel[channels.size()]));
                                 JOptionPane.showMessageDialog(DreamboxConfigDialog.this, mLocalizer.msg("okText", "Channellist updated."),
                                         mLocalizer.msg("okTitle", "Updated"), JOptionPane.INFORMATION_MESSAGE);
                             }

@@ -162,6 +162,7 @@ public class ElgatoConnection {
 
     /**
      * @return List of all current Recordings
+     * @param conf Config
      */
     public Program[] getAllRecordings(ElgatoConfig conf) {
         ArrayList<Program> programs = new ArrayList<Program>();
@@ -243,8 +244,8 @@ public class ElgatoConnection {
         call = call.replaceAll("\\{1\\}", time);
         call = call.replaceAll("\\{2\\}", Integer.toString(length));
         call = call.replaceAll("\\{3\\}", prg.getTitle());
-        call = call.replaceAll("\\{4\\}", Integer.toString(conf
-                .getElgatoChannel(prg.getChannel()).getNumber()));
+        call = call.replaceAll("\\{4\\}", Integer.toString(((ElgatoChannel)conf
+                .getExternalChannel(prg.getChannel())).getNumber()));
 
         if (prg.getShortInfo() != null)
             call = call.replaceAll("\\{5\\}", prg.getShortInfo().replaceAll("\"",
@@ -257,14 +258,8 @@ public class ElgatoConnection {
             e.printStackTrace();
         }
 
-        if (res == null)
-            return false;
-
-        if (res.startsWith("program id"))
-            return true;
-
-        return false;
-    }
+        return res != null && res.startsWith("program id");
+   }
 
     /**
      * Remove Recording
@@ -290,7 +285,7 @@ public class ElgatoConnection {
     public void switchToChannel(ElgatoConfig conf, Program prg) {
         try {
             mAppleScript.executeScript(SWITCHCHANNEL.replaceAll("\\{0\\}",
-                    Integer.toString(conf.getElgatoChannel(prg.getChannel())
+                    Integer.toString(((ElgatoChannel)conf.getExternalChannel(prg.getChannel()))
                             .getNumber())));
         } catch (IOException e) {
             e.printStackTrace();

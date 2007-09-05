@@ -30,21 +30,21 @@ import captureplugin.drivers.utils.ProgramTime;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Program;
-
 import org.apache.commons.codec.binary.Base64;
 import org.xml.sax.SAXException;
+import util.io.IOUtilities;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.io.ByteArrayOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -52,10 +52,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TimeZone;
 import java.util.TreeMap;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-
-import util.io.IOUtilities;
+import java.util.regex.Pattern;
 
 /**
  * Connector for the Dreambox
