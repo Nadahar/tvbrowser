@@ -350,12 +350,12 @@ public class SettingsDialog implements WindowClosingIf {
     SettingNode root = new SettingNode(new DefaultSettingsTab(Localizer
         .getLocalization(Localizer.I18N_SETTINGS), icon));
 
-    SettingNode generalSettings = new SettingNode(new DefaultSettingsTab(
-        mLocalizer.msg("general", "General"), null));
+    SettingNode generalSettings = new SettingNode(new StartupSettingsTab(),
+        SettingsItem.STARTUP);
     root.add(generalSettings);
 
-    SettingNode graphicalSettings = new SettingNode(new DefaultSettingsTab(
-        mLocalizer.msg("graphical", "Graphical settings"), null));
+    SettingNode graphicalSettings = new SettingNode(new LookAndFeelSettingsTab(),
+        SettingsItem.LOOKANDFEEL);
     root.add(graphicalSettings);
     
     SettingNode technicalSettings = new SettingNode(new DefaultSettingsTab(
@@ -373,11 +373,9 @@ public class SettingsDialog implements WindowClosingIf {
       traySettings.add(new SettingNode(new TrayOnTimeSettingsTab()));
       traySettings.add(new SettingNode(new TrayProgramsChannelsSettingsTab()));
     }
-
-    SettingNode programtableNode = new SettingNode(new ProgramTableSettingsTab(),
-        SettingsItem.PROGRAMTABLELOOK);
-    root.add(programtableNode);
-
+    
+    generalSettings.add(new SettingNode(new ChannelsSettingsTab(),
+        SettingsItem.CHANNELS));
     generalSettings.add(new SettingNode(new LocaleSettingsTab()));
     generalSettings.add(new SettingNode(new ContextmenuSettingsTab(),
         SettingsItem.CONTEXTMENU));
@@ -385,27 +383,19 @@ public class SettingsDialog implements WindowClosingIf {
     generalSettings.add(new SettingNode(
         new GlobalPluginProgramFormatingSettings(),
         SettingsItem.PLUGINPROGRAMFORMAT));
-
-    generalSettings.add(new SettingNode(new StartupSettingsTab(),
-        SettingsItem.STARTUP));
-    generalSettings.add(new SettingNode(new CloseSettingsTab()));
+    generalSettings.add(new SettingNode(new ButtonsSettingsTab(),
+        SettingsItem.TIMEBUTTONS));
     
     graphicalSettings.add(new SettingNode(new PictureSettingsTab(),
         SettingsItem.PICTURES));
+    graphicalSettings.add(new SettingNode(new ProgramTableSettingsTab(),
+        SettingsItem.PROGRAMTABLELOOK));
     graphicalSettings.add(new SettingNode(
         new ProgramPanelSettingsTab(), SettingsItem.PROGRAMPANELLOOK));
     graphicalSettings.add(new SettingNode(new ChannelIconAndNameSettingsTab()));
     graphicalSettings.add(new SettingNode(new MarkingsSettingsTab(),
         SettingsItem.PROGRAMPANELMARKING));
     graphicalSettings.add(new SettingNode(new FontsSettingsTab()));
-    graphicalSettings.add(new SettingNode(new LookAndFeelSettingsTab(),
-        SettingsItem.LOOKANDFEEL));
-    
-    programtableNode.add(new SettingNode(new ChannelsSettingsTab(),
-        SettingsItem.CHANNELS));
-    programtableNode.add(new SettingNode(new RefreshDataSettingsTab()));
-    programtableNode.add(new SettingNode(new ButtonsSettingsTab(),
-        SettingsItem.TIMEBUTTONS));
 
     technicalSettings.add(new SettingNode(new NetworkSettingsTab()));
     technicalSettings.add(new SettingNode(new ProxySettingsTab()));
