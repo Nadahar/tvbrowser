@@ -326,9 +326,11 @@ public class PluginTree extends JTree implements DragGestureListener,
     }
   }
 
-  public void dragEnter(DropTargetDragEvent e) {}
-
-  public void dragOver(DropTargetDragEvent e) {
+  public void dragEnter(DropTargetDragEvent e) {
+    checkAndPaintTarget(e);
+  }
+  
+  private void checkAndPaintTarget(DropTargetDragEvent e) {
     boolean reject = true;
     boolean changed = false;
     Object temp = null;
@@ -345,7 +347,7 @@ public class PluginTree extends JTree implements DragGestureListener,
 
           Node target = (Node)targetPath.getLastPathComponent();
           
-          if(target.getProgramReceiveTarget() == null) {
+          if(target.getProgramReceiveTarget() == null && targetPath.getPathCount() <= 2) {
             target = (Node) targetPath.getPathComponent(1);
           }
 
@@ -436,7 +438,7 @@ public class PluginTree extends JTree implements DragGestureListener,
           if (!reject && (mPlugin == null || temp != mPlugin)) {
             changed = true;
             this.paintImmediately(mCueLine.getBounds());
-
+            
             mCueLine.setRect(((PluginTree) ((DropTarget) e.getSource())
                 .getComponent()).getPathBounds(targetPath));
             
@@ -542,6 +544,10 @@ public class PluginTree extends JTree implements DragGestureListener,
     }
   }
 
+  public void dragOver(DropTargetDragEvent e) {
+    checkAndPaintTarget(e);
+  }
+
   public void dropActionChanged(DropTargetDragEvent e) {}
 
   public void dragExit(DropTargetEvent e) {
@@ -569,7 +575,7 @@ public class PluginTree extends JTree implements DragGestureListener,
                 .getComponent()).getPathForLocation(loc.x, loc.y);
             Node target = (Node) targetPath.getLastPathComponent();
             
-            if(target.getProgramReceiveTarget() == null) {
+            if(target.getProgramReceiveTarget() == null && targetPath.getPathCount() <= 2) {
               target = (Node) targetPath.getPathComponent(1);
             }
 
