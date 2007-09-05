@@ -22,10 +22,7 @@
  *   $Author: bananeweizen $
  * $Revision: 2979 $
  */
-package captureplugin.drivers.dreambox.configdialog;
-
-import captureplugin.drivers.dreambox.DreamboxConfig;
-import captureplugin.drivers.dreambox.connector.DreamboxChannel;
+package captureplugin.utils;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComboBox;
@@ -36,17 +33,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.EventObject;
-import java.util.Vector;
-import java.util.Arrays;
 
 /**
  * The Celleditor for the DreamboxChannel
  */
-public class DreamboxChannelEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
+public class ExternalChannelTableCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
     private JComboBox mComboBox;
-    private DreamboxConfig mConfig;
+    private ConfigIf mConfig;
 
-    public DreamboxChannelEditor(DreamboxConfig config) {
+    public ExternalChannelTableCellEditor(ConfigIf config) {
         mConfig = config;
     }
 
@@ -73,11 +68,7 @@ public class DreamboxChannelEditor extends AbstractCellEditor implements TableCe
     }
 
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        Vector<DreamboxChannel> data = new Vector<DreamboxChannel>();
-        data.add(null);
-        data.addAll(Arrays.asList(mConfig.getDreamboxChannels()));
-
-        mComboBox = new JComboBox(data);
+        mComboBox = new JComboBox(mConfig.getExternalChannels());
         mComboBox.setSelectedItem(value);
         mComboBox.putClientProperty("JComboBox.isTableCellEditor", Boolean.TRUE);
         return mComboBox;

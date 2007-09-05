@@ -26,20 +26,20 @@ package captureplugin.drivers.dreambox;
 
 import captureplugin.drivers.DeviceIf;
 import captureplugin.drivers.DriverIf;
-import captureplugin.drivers.dreambox.configdialog.DreamboxConfigDialog;
 import captureplugin.drivers.dreambox.connector.DreamboxChannel;
 import captureplugin.drivers.dreambox.connector.DreamboxConnector;
 import captureplugin.drivers.utils.ProgramTime;
 import captureplugin.drivers.utils.ProgramTimeDialog;
+import captureplugin.utils.ExternalChannelIf;
 import devplugin.Program;
+import util.paramhandler.ParamParser;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
-import util.paramhandler.ParamParser;
 
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JComboBox;
 import java.awt.Window;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -189,7 +189,7 @@ public class DreamboxDevice implements DeviceIf {
             return false;
         }
 
-        final DreamboxChannel channel = mConfig.getDreamboxChannel(program.getChannel());
+        final DreamboxChannel channel = (DreamboxChannel) mConfig.getExternalChannel(program.getChannel());
 
         if (channel == null) {
             int ret = JOptionPane.showConfirmDialog(parent,
@@ -240,10 +240,10 @@ public class DreamboxDevice implements DeviceIf {
     public boolean remove(Window parent, Program program) {
         for (ProgramTime time : _programTimeList) {
             if (time.getProgram().equals(program)) {
-                DreamboxChannel channel = mConfig.getDreamboxChannel(program.getChannel());
+                ExternalChannelIf channel = mConfig.getExternalChannel(program.getChannel());
                 if (channel != null) {
                     DreamboxConnector connector = new DreamboxConnector(mConfig);
-                    return connector.removeRecording(channel, time, mConfig.getTimeZone());
+                    return connector.removeRecording((DreamboxChannel) channel, time, mConfig.getTimeZone());
                 }
             }
         }
@@ -267,7 +267,7 @@ public class DreamboxDevice implements DeviceIf {
                 _programList.add(time.getProgram());
             }
 
-            return _programList.toArray(new Program[0]);
+            return _programList.toArray(new Program[_programList.size()]);
         }
 
         return null;
@@ -285,7 +285,7 @@ public class DreamboxDevice implements DeviceIf {
      */
     public boolean executeAdditionalCommand(Window parent, int num, Program program) {
         if (num == 0) {
-            final DreamboxChannel channel = mConfig.getDreamboxChannel(program.getChannel());
+            final DreamboxChannel channel = (DreamboxChannel) mConfig.getExternalChannel(program.getChannel());
 
             if (channel != null) {
                 new Thread(new Runnable() {
@@ -326,7 +326,7 @@ public class DreamboxDevice implements DeviceIf {
     }
 
     /**
-     * @see captureplugin.drivers.DeviceIf#readData(java.io.ObjectInputStream)
+     * @see captureplugin.drivers.DeviceIf#readData(java.io.ObjectInputStream, boolean)
      */
     public void readData(ObjectInputStream stream, boolean importDevice) throws IOException, ClassNotFoundException {
         mConfig = new DreamboxConfig(stream);
@@ -352,7 +352,7 @@ public class DreamboxDevice implements DeviceIf {
     public void removeProgramWithoutExecution(Program p) {
         for (ProgramTime time : _programTimeList) {
             if (time.getProgram().equals(p)) {
-                DreamboxChannel channel = mConfig.getDreamboxChannel(p.getChannel());
+                DreamboxChannel channel = (DreamboxChannel) mConfig.getExternalChannel(p.getChannel());
                 if (channel != null) {
                     DreamboxConnector connector = new DreamboxConnector(mConfig);
                     connector.removeRecording(channel, time, mConfig.getTimeZone());

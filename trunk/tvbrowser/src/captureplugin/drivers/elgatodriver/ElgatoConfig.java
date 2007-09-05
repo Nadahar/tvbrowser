@@ -26,6 +26,8 @@ package captureplugin.drivers.elgatodriver;
 
 import captureplugin.CapturePlugin;
 import captureplugin.drivers.utils.IDGenerator;
+import captureplugin.utils.ConfigIf;
+import captureplugin.utils.ExternalChannelIf;
 import devplugin.Channel;
 
 import java.io.IOException;
@@ -41,7 +43,7 @@ import java.util.Iterator;
  *
  * @author bodum
  */
-public class ElgatoConfig {
+public class ElgatoConfig implements ConfigIf {
     /**
      * Mapping TVB Channels - Elgato Channels
      */
@@ -70,7 +72,7 @@ public class ElgatoConfig {
      */
     public ElgatoConfig(ElgatoConfig config) {
         mChannels = (HashMap<Channel, ElgatoChannel>) config.getChannelMapping().clone();
-        mElgatoChannels = new ArrayList<ElgatoChannel>(Arrays.asList(config.getAllElgatoChannels()));
+        mElgatoChannels = new ArrayList<ElgatoChannel>(Arrays.asList((ElgatoChannel[])config.getExternalChannels()));
         mId = config.getId();
     }
 
@@ -111,19 +113,19 @@ public class ElgatoConfig {
      * @param channel Get Elgato Channel for this TVB Channel
      * @return Elgato Channel if mapped, else null
      */
-    public ElgatoChannel getElgatoChannel(Channel channel) {
+    public ExternalChannelIf getExternalChannel(Channel channel) {
         return mChannels.get(channel);
     }
 
     /**
      * Set Mapping for Channel
      *
-     * @param channel       TVB Channel
-     * @param elgatoChannel Elgato Channel
+     * @param channel  TVB Channel
+     * @param external Elgato Channel
      */
-    public void setElgatoChannel(Channel channel, ElgatoChannel elgatoChannel) {
-        if ((elgatoChannel != null) && (channel != null))
-            mChannels.put(channel, elgatoChannel);
+    public void setExternalChannel(Channel channel, ExternalChannelIf external) {
+        if ((external != null) && (channel != null))
+            mChannels.put(channel, (ElgatoChannel) external);
     }
 
     /**
@@ -167,14 +169,14 @@ public class ElgatoConfig {
     /**
      * @return get all available Elgato Channels
      */
-    public ElgatoChannel[] getAllElgatoChannels() {
+    public ExternalChannelIf[] getExternalChannels() {
         return getAllElgatoChannels(null);
     }
 
     /**
      * @return get all available Elgato Channels
      */
-    public ElgatoChannel[] getAllElgatoChannels(ElgatoConnection con) {
+    public ExternalChannelIf[] getAllElgatoChannels(ElgatoConnection con) {
         if ((con != null) && (mElgatoChannels.size() == 0)) {
             setElgatoChannels(con.getAvailableChannels());
         }

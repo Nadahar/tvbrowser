@@ -22,11 +22,9 @@
  *   $Author: bananeweizen $
  * $Revision: 2979 $
  */
-package captureplugin.drivers.dreambox.configdialog;
+package captureplugin.utils;
 
 import captureplugin.CapturePlugin;
-import captureplugin.drivers.dreambox.DreamboxConfig;
-import captureplugin.drivers.dreambox.connector.DreamboxChannel;
 import devplugin.Channel;
 import util.ui.Localizer;
 
@@ -45,17 +43,20 @@ public class ConfigTableModel extends AbstractTableModel {
 
     private Channel[] mSubscribedChannels = CapturePlugin.getPluginManager().getSubscribedChannels();
 
-    private DreamboxConfig mConfig;
+    private ConfigIf mConfig;
 
-    public ConfigTableModel(DreamboxConfig config) {
+    private String mExternalName;
+
+    public ConfigTableModel(ConfigIf config, String externalName) {
         mConfig = config;
+        mExternalName = externalName;
     }
 
     public String getColumnName(int column) {
         if (column == 0) {
             return mLocalizer.msg("channel", "Channel");
         } else if (column == 1) {
-            return mLocalizer.msg("dreambox", "Dreambox Channel");
+            return mExternalName;
         }
         return null;
     }
@@ -72,7 +73,7 @@ public class ConfigTableModel extends AbstractTableModel {
         if (columnIndex == 0) {
             return mSubscribedChannels[rowIndex];
         } else if (columnIndex == 1) {
-            return mConfig.getDreamboxChannel(mSubscribedChannels[rowIndex]);
+            return mConfig.getExternalChannel(mSubscribedChannels[rowIndex]);
         }
 
         return null;
@@ -84,7 +85,7 @@ public class ConfigTableModel extends AbstractTableModel {
 
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         if (columnIndex == 1) {
-            mConfig.setDreamboxChannel(mSubscribedChannels[rowIndex], (DreamboxChannel) aValue);
+            mConfig.setExternalChannel(mSubscribedChannels[rowIndex], (ExternalChannelIf) aValue);
         }
     }
 
@@ -93,7 +94,7 @@ public class ConfigTableModel extends AbstractTableModel {
             return Channel.class;
         }
 
-        return DreamboxChannel.class;
+        return ExternalChannelIf.class;
     }
 
 }

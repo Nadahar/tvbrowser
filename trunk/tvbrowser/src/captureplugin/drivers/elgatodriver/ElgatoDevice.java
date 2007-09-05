@@ -26,7 +26,6 @@ package captureplugin.drivers.elgatodriver;
 
 import captureplugin.drivers.DeviceIf;
 import captureplugin.drivers.DriverIf;
-import captureplugin.drivers.elgatodriver.configdialog.ElgatoConfigDialog;
 import devplugin.Channel;
 import devplugin.Program;
 import util.ui.Localizer;
@@ -196,7 +195,7 @@ public class ElgatoDevice implements DeviceIf {
      * @return true if Channel is in Config
      */
     private boolean testConfig(Window parent, Channel ch) {
-      if (mConfig.getElgatoChannel(ch) == null) {
+      if (mConfig.getExternalChannel(ch) == null) {
         int ret = JOptionPane.showConfirmDialog(parent, mLocalizer.msg("channelAssign", "Please assign Channel first"), mLocalizer.msg("channelAssignTitle", "Assign Channel"), JOptionPane.YES_NO_OPTION);
         
         if (ret == JOptionPane.YES_OPTION) {

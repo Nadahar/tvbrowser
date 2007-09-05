@@ -24,6 +24,8 @@
  */
 package captureplugin.drivers.elgatodriver;
 
+import captureplugin.utils.ExternalChannelIf;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -33,7 +35,7 @@ import java.io.ObjectOutputStream;
  * 
  * @author bodum
  */
-public class ElgatoChannel {
+public class ElgatoChannel implements ExternalChannelIf {
     /** Number of the Channel */
     private int mNumber;
     /** Name of the Channel */

@@ -32,7 +32,6 @@ import util.ui.Localizer;
 
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-
 import java.awt.BorderLayout;
 import java.awt.Window;
 

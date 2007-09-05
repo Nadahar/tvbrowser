@@ -26,6 +26,7 @@ package captureplugin.drivers.defaultdriver;
 
 import captureplugin.drivers.utils.ProgramTime;
 import captureplugin.utils.CaptureUtilities;
+import org.apache.commons.codec.binary.Base64;
 import util.exc.ErrorHandler;
 import util.io.StreamReaderThread;
 import util.paramhandler.ParamParser;
@@ -35,9 +36,6 @@ import util.ui.UiUtilities;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-
-import org.apache.commons.codec.binary.Base64;
-
 import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.File;
