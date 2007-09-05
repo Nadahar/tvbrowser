@@ -27,6 +27,7 @@
 package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
+import java.awt.SystemTray;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -51,6 +53,7 @@ import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.CaretPositionCorrector;
 import util.ui.Localizer;
 import util.ui.TabLayout;
+import util.ui.UiUtilities;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
@@ -77,7 +80,7 @@ public class ButtonsSettingsTab implements SettingsTab {
    */
   public JPanel createSettingsPanel() {
 
-    mSettingsPn = new JPanel(new FormLayout("5dlu, pref, fill:pref:grow", "pref, 5dlu, fill:pref:grow"));
+    mSettingsPn = new JPanel(new FormLayout("5dlu, pref, fill:pref:grow", "pref, 5dlu, fill:pref:grow, pref"));
     mSettingsPn.setBorder(Borders.DIALOG_BORDER);
     
     CellConstraints cc = new CellConstraints();
@@ -92,6 +95,12 @@ public class ButtonsSettingsTab implements SettingsTab {
     pane.setViewportBorder(BorderFactory.createEmptyBorder());
     
     mSettingsPn.add(pane, cc.xy(2, 3));
+    
+    if(SystemTray.isSupported()) {
+      JEditorPane helpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("info","The times of the  buttons are also used for the 'Programs at...' in the tray menu."));
+      
+      mSettingsPn.add(helpLabel, cc.xyw(1,4,3));
+    }
     
     return mSettingsPn;
   }
