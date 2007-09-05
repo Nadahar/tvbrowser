@@ -192,21 +192,21 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
                 "go-to-date", 16), IconLoader.getInstance()
                 .getIconFromTheme("actions", "go-to-date", 22),
             ToolBar.TOOGLE_BUTTON_ACTION, this);
-    mReminderAction = createAction(ReminderPlugin.mLocalizer.msg("buttonText",
-        "Reminder list"), SettingsItem.REMINDER,
+    mReminderAction = createAction(ReminderPlugin.mLocalizer.msg("toolbar",
+        "Reminder"), SettingsItem.REMINDER,
         ReminderPlugin.mLocalizer.msg("description",
             "Eine einfache Implementierung einer Erinnerungsfunktion."),
         IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16),
         IconLoader.getInstance().getIconFromTheme("apps", "appointment", 22),
         ToolBar.BUTTON_ACTION, this);
-    mSearchAction = createAction(SearchPlugin.mLocalizer.msg("searchPrograms", "Search programs")
+    mSearchAction = createAction(SearchPlugin.mLocalizer.msg("toolbar", "Search")
         , SettingsItem.SEARCH,
         SearchPlugin.mLocalizer.msg("description", "Allows searching programs containing a certain text."),
         IconLoader.getInstance().getIconFromTheme("actions", "system-search", 16),
         IconLoader.getInstance().getIconFromTheme("actions", "system-search", 22),
     ToolBar.BUTTON_ACTION, this);
-    mFavoriteAction = createAction(FavoritesPlugin.mLocalizer.msg("buttonText",
-        "Manage Favorites"), SettingsItem.FAVORITE,
+    mFavoriteAction = createAction(FavoritesPlugin.mLocalizer.msg("toolbar",
+        "Favorites"), SettingsItem.FAVORITE,
         FavoritesPlugin.mLocalizer.msg("favoritesManager",
             "Manage favorite programs"), IconLoader.getInstance()
             .getIconFromTheme("apps", "bookmark", 16), IconLoader.getInstance()
