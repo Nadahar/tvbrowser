@@ -568,10 +568,10 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
       if ((mPopupMenu == null) || (!mPopupMenu.isVisible())) {
         mMouse = evt.getPoint();
         Point cellIndex = getMatrix(mMouse.x, mMouse.y);
+        // restore previous panel under mouse
+        repaintCell(mMouseMatrix);
         if (cellIndex.x >= 0 && cellIndex.y >= 0) {
           if (cellIndex.x != mMouseMatrix.x || cellIndex.y != mMouseMatrix.y) {
-            // restore previous panel under mouse
-            repaintCell(mMouseMatrix);
             // now update the current panel
             mMouseMatrix  = cellIndex;
             repaintCell(mMouseMatrix);
