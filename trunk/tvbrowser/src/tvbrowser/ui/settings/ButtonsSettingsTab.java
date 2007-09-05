@@ -27,7 +27,6 @@
 package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
-import java.awt.SystemTray;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -46,6 +45,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
 
+import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
@@ -96,7 +96,7 @@ public class ButtonsSettingsTab implements SettingsTab {
     
     mSettingsPn.add(pane, cc.xy(2, 3));
     
-    if(SystemTray.isSupported()) {
+    if(TVBrowser.isUsingSystemTray()) {
       JEditorPane helpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("info","The times of the  buttons are also used for the 'Programs at...' in the tray menu."));
       
       mSettingsPn.add(helpLabel, cc.xyw(1,4,3));
