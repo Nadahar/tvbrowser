@@ -1202,7 +1202,15 @@ public class Settings {
 
   /** the class name of the last settings tab that has been closed with OK before */ 
   public static final StringProperty propLastUsedSettingsPath = new StringProperty(mProp, "lastUsedSettingsTabClassName", "#channels");
+  
+  /**
+   * maximum width of the program table columns
+   */
   public static final int MAX_COLUMN_WIDTH = 300;
+  
+  /**
+   * minimum width of the program table columns 
+   */
   public static final int MIN_COLUMN_WIDTH = 60;
   
   /** The setting that contains the global picture settings value */
@@ -1219,4 +1227,14 @@ public class Settings {
   
   public static final DateProperty propLastPluginsUpdate = new DateProperty(
       mProp, "lastPluginsUpdate", null);
+  
+  /**
+   * enable checking date and time via NTP if no TV data can be downloaded
+   */
+  public static final BooleanProperty propNTPTimeCheck = new BooleanProperty(mProp, "ntpTimeCheckEnabled", true);
+  
+  /**
+   * date of last NTP internet time check
+   */
+  public static final DateProperty propLastNTPCheck = new DateProperty(mProp, "lastNTPCheck", null);
 }

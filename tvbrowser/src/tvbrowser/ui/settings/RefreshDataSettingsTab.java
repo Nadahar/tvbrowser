@@ -75,12 +75,14 @@ public class RefreshDataSettingsTab implements devplugin.SettingsTab {
 
   private JLabel mHowOften;
 
+  private JCheckBox mDateCheck;
+
   /**
    * Creates the settings panel for this tab.
    */
   public JPanel createSettingsPanel() {
     mSettingsPn = new JPanel(new FormLayout("5dlu, pref, 3dlu, pref, fill:3dlu:grow, 3dlu",
-        "pref, 5dlu, pref, 3dlu, pref"));
+        "pref, 5dlu, pref, 3dlu, pref, 5dlu, pref"));
     mSettingsPn.setBorder(Borders.DIALOG_BORDER);
 
     CellConstraints cc = new CellConstraints();
@@ -152,6 +154,10 @@ public class RefreshDataSettingsTab implements devplugin.SettingsTab {
 
     setAutoDownloadEnabled(mAutoDownloadCheck.isSelected());
 
+    mDateCheck = new JCheckBox(mLocalizer.msg("checkDate", "Check date via NTP if data download fails"));
+    mDateCheck.setSelected(Settings.propNTPTimeCheck.getBoolean());
+    mSettingsPn.add(mDateCheck, cc.xy(2, 7));
+
     return mSettingsPn;
   }
 
@@ -188,6 +194,8 @@ public class RefreshDataSettingsTab implements devplugin.SettingsTab {
 
     PeriodItem periodItem = (PeriodItem) mAutoDownloadPeriodCB.getSelectedItem();
     Settings.propAutoDownloadPeriod.setInt(periodItem.getDays());
+    
+    Settings.propNTPTimeCheck.setBoolean(mDateCheck.isSelected());
   }
 
   /**

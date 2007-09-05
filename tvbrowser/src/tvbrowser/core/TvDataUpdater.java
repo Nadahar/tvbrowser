@@ -26,10 +26,13 @@
 package tvbrowser.core;
 
 import java.io.File;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.logging.Level;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
@@ -38,6 +41,8 @@ import tvdataservice.MarkedProgramsList;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.ErrorHandler;
+import util.io.NetworkUtilities;
+import util.ui.Localizer;
 import util.ui.progress.ProgressMonitorGroup;
 import devplugin.Channel;
 import devplugin.Date;
@@ -195,11 +200,41 @@ public class TvDataUpdater {
     // Reset the download flag
     mIsDownloading = false;
     
+    checkLocalTime();
+    
     TvDataBase.getInstance().reCalculateTvData(daysToDownload);
     
     // Inform the listeners
     fireTvDataUpdateFinished();
   }
+
+  private void checkLocalTime() {
+    if (!tvDataWasChanged() && Settings.propNTPTimeCheck.getBoolean()) {
+      if (Settings.propLastNTPCheck.getDate() == null || Settings.propLastNTPCheck.getDate().compareTo(Date.getCurrentDate()) < 0) {
+        Settings.propLastNTPCheck.setDate(Date.getCurrentDate());
+        int serverNum = (int) (Math.random() * 4);
+        int differenceSecs = NetworkUtilities
+            .getTimeDifferenceSeconds(Integer.toString(serverNum) + ".tvbrowser.pool.ntp.org");
+        if (Math.abs(differenceSecs) >= 86400) {
+          DateFormat dateFormat = DateFormat.getDateTimeInstance();
+          Calendar date = Calendar.getInstance();
+          String localTime = dateFormat.format(date.getTime());
+          date.add(Calendar.SECOND, differenceSecs);
+          String internetTime = dateFormat.format(date.getTime());
+          JOptionPane
+              .showMessageDialog(
+                  null,
+                  mLocalizer
+                      .msg(
+                          "downloadFailed",
+                          "TV-Browser could not download any data. A check with an internet time server showed that your local computer time differs more than a day from the official time.\n\nPlease check the date and time settings of your computer.\n\nYour date and time: {0}\nInternet date and time: {1}",
+                          localTime, internetTime), Localizer.getLocalization(Localizer.I18N_ERROR),
+                  JOptionPane.WARNING_MESSAGE);
+        }
+      }
+    }
+  }
+
 
   void fireTvDataUpdateStarted() {
     synchronized(mListenerList) {
