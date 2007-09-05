@@ -152,7 +152,7 @@ public class ShowviewChannelTable {
 
     public boolean belongsTo(Channel channel) {
       for (int i = 0; i < mChannelNameArr.length; i++) {
-        if (mChannelNameArr[i].equalsIgnoreCase(channel.getName())) {
+        if (mChannelNameArr[i].equalsIgnoreCase(channel.getDefaultName())) {
           return true;
         }
       }
