@@ -35,7 +35,7 @@ import devplugin.Channel;
 public class ShowviewChannelTable {
 
   private static final ChannelTableEntry[] CHANNEL_TABLE = {
-    new ChannelTableEntry("ARD", 1),
+    new ChannelTableEntry(new String[] {"ARD", "Das Erste (ARD)", "Das Erste"}, 1),
     new ChannelTableEntry("ZDF", 2),
     new ChannelTableEntry("Radio Bremen", 3),
     new ChannelTableEntry("RTL", 4),
