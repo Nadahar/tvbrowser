@@ -395,8 +395,12 @@ public class CapturePlugin extends devplugin.Plugin {
 
         for (Object o : mConfig.getDevices()) {
             DeviceIf device = (DeviceIf) o;
-
+            
             PluginTreeNode node = new PluginTreeNode(device.getName());
+            
+            if(device.isAbleToAddAndRemovePrograms()) {
+              node.getMutableTreeNode().setProgramReceiveTarget(new ProgramReceiveTarget(this, device.getName() + " - " + mLocalizer.msg("record", "record"), device.getId() + RECORD));
+            }
 
             Program[] programs = device.getProgramList();
 
@@ -429,7 +433,7 @@ public class CapturePlugin extends devplugin.Plugin {
 
     @Override
     public boolean canReceiveProgramsWithTarget() {
-        return mConfig.getDevices().size() >0;
+        return getProgramReceiveTargets().length >0;
     }
 
     @Override
