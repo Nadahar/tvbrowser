@@ -135,7 +135,7 @@ public interface DeviceIf extends Cloneable {
     /**
      * Reads the Data from a Stream
      * @param stream read data from this stream
-     * @param <code>True</code> if the device should be imported.
+     * @param importDevice <code>True</code> if the device should be imported.
      */
     public void readData(ObjectInputStream stream, boolean importDevice) throws IOException, ClassNotFoundException;
     

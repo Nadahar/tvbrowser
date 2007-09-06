@@ -72,12 +72,16 @@ public class DriverFactory {
                 DriverIf driver = (DriverIf) this.getClass().getClassLoader().loadClass("captureplugin.drivers.elgatodriver.ElgatoDriver").newInstance();
                 if (driver != null)
                     drivers.add(driver);
+
+            /*    driver = (DriverIf) this.getClass().getClassLoader().loadClass("captureplugin.drivers.thetubedriver.TheTubeDriver").newInstance();
+                if (driver != null)
+                    drivers.add(driver); */
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        return drivers.toArray(new DriverIf[0]);
+        return drivers.toArray(new DriverIf[drivers.size()]);
     }
     
     /**

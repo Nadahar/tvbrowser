@@ -22,7 +22,7 @@
  *   $Author: troggan $
  * $Revision: 1944 $
  */
-package captureplugin.drivers.elgatodriver;
+package captureplugin.drivers.simpledevice;
 
 import captureplugin.drivers.DeviceIf;
 import captureplugin.drivers.DriverIf;
@@ -43,42 +43,44 @@ import java.util.Arrays;
 import java.util.Calendar;
 
 /**
- * The Elgato-Device
+ * The Applescript-Device
  * 
  * @author bodum
  */
-public class ElgatoDevice implements DeviceIf {
+public class SimpleDevice implements DeviceIf {
     /** Translator */
     private static final Localizer mLocalizer = Localizer
-            .getLocalizerFor(ElgatoDevice.class);
+            .getLocalizerFor(SimpleDevice.class);
 
     /** Driver */
-    private ElgatoDriver mDriver;
+    private DriverIf mDriver;
 
     /** Connection */
-    private ElgatoConnection mConnection = new ElgatoConnection();
+    private SimpleConnectionIf mConnection;
     
     /** Name of Device */
     private String mName;
 
     /** Configuration */
-    private ElgatoConfig mConfig = new ElgatoConfig();
+    private SimpleConfig mConfig = new SimpleConfig();
     
     /** List of Recordings */
     private Program[] mListOfRecordings;
     
-    public ElgatoDevice(ElgatoDriver driver, String name) {
+    public SimpleDevice(SimpleConnectionIf connection, DriverIf driver, String name) {
         mDriver = driver;
         mName = name;
+        mConnection = connection;
     }
 
-    public ElgatoDevice(ElgatoDevice device) {
-        mDriver = (ElgatoDriver) device.getDriver();
+    public SimpleDevice(SimpleDevice device) {
+        mDriver = device.getDriver();
         mName = device.getName();
-        mConfig = (ElgatoConfig) device.getConfig().clone();
+        mConfig = (SimpleConfig) device.getConfig().clone();
+        mConnection = device.getConnection();
     }
 
-    private ElgatoConfig getConfig() {
+    private SimpleConfig getConfig() {
       return mConfig;
     }
 
@@ -100,12 +102,12 @@ public class ElgatoDevice implements DeviceIf {
     }
 
     public void configDevice(Window parent) {
-      ElgatoConfigDialog dialog;
+      SimpleConfigDialog dialog;
       
       if (parent instanceof JFrame) {
-        dialog = new ElgatoConfigDialog((JFrame) parent, this, mConnection, mConfig);
+        dialog = new SimpleConfigDialog((JFrame) parent, this, mConnection, mConfig);
       } else {
-        dialog = new ElgatoConfigDialog((JDialog) parent, this, mConnection, mConfig);
+        dialog = new SimpleConfigDialog((JDialog) parent, this, mConnection, mConfig);
       }
       
       UiUtilities.centerAndShow(dialog);
@@ -125,7 +127,7 @@ public class ElgatoDevice implements DeviceIf {
             Program program) {
         if (num == 0) {
           if (testConfig(parent, program.getChannel())) {
-            mConnection.switchToChannel(mConfig, program);
+            mConnection.switchToChannel(mConfig, program.getChannel());
           }
         }
 
@@ -199,12 +201,12 @@ public class ElgatoDevice implements DeviceIf {
         int ret = JOptionPane.showConfirmDialog(parent, mLocalizer.msg("channelAssign", "Please assign Channel first"), mLocalizer.msg("channelAssignTitle", "Assign Channel"), JOptionPane.YES_NO_OPTION);
         
         if (ret == JOptionPane.YES_OPTION) {
-          ElgatoConfigDialog dialog;
+          SimpleConfigDialog dialog;
           
           if (parent instanceof JDialog) {
-            dialog = new ElgatoConfigDialog((JDialog)parent, this, mConnection, mConfig);
+            dialog = new SimpleConfigDialog((JDialog)parent, this, mConnection, mConfig);
           } else {
-            dialog = new ElgatoConfigDialog((JFrame)parent, this, mConnection, mConfig);
+            dialog = new SimpleConfigDialog((JFrame)parent, this, mConnection, mConfig);
           }
           UiUtilities.centerAndShow(dialog);
 
@@ -221,7 +223,7 @@ public class ElgatoDevice implements DeviceIf {
     
     public void readData(ObjectInputStream stream, boolean importDevice) throws IOException,
             ClassNotFoundException {
-      mConfig = new ElgatoConfig(stream);
+      mConfig = new SimpleConfig(stream);
     }
 
     public void writeData(ObjectOutputStream stream) throws IOException {
@@ -229,7 +231,7 @@ public class ElgatoDevice implements DeviceIf {
     }
 
     public Object clone() {
-        return new ElgatoDevice(this);
+        return new SimpleDevice(this);
     }
     
     public Program[] checkProgramsAfterDataUpdateAndGetDeleted() {      
@@ -262,5 +264,13 @@ public class ElgatoDevice implements DeviceIf {
      */
     public void removeProgramWithoutExecution(Program p) {
         mConnection.removeRecording(p);
+    }
+
+    /**
+     * @return ApplescriptConnection that is used for this device
+     * @since 2.6
+     */
+    public SimpleConnectionIf getConnection() {
+        return mConnection;
     }
 }

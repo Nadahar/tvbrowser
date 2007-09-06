@@ -32,7 +32,9 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.EventObject;
+import java.util.Vector;
 
 /**
  * The Celleditor for the DreamboxChannel
@@ -68,9 +70,13 @@ public class ExternalChannelTableCellEditor extends AbstractCellEditor implement
     }
 
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        mComboBox = new JComboBox(mConfig.getExternalChannels());
-        mComboBox.setSelectedItem(value);
-        mComboBox.putClientProperty("JComboBox.isTableCellEditor", Boolean.TRUE);
-        return mComboBox;
+      Vector<ExternalChannelIf> vec = new Vector<ExternalChannelIf>();
+      vec.add(null);
+      vec.addAll(Arrays.asList(mConfig.getExternalChannels()));
+
+      mComboBox = new JComboBox(vec);
+      mComboBox.setSelectedItem(value);
+      mComboBox.putClientProperty("JComboBox.isTableCellEditor", Boolean.TRUE);
+      return mComboBox;
     }
 }
