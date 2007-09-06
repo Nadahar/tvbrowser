@@ -22,7 +22,7 @@
  *   $Author: troggan $
  * $Revision: 1944 $
  */
-package captureplugin.drivers.elgatodriver;
+package captureplugin.drivers.simpledevice;
 
 import captureplugin.utils.ConfigTableModel;
 import captureplugin.utils.ExternalChannelTableCellEditor;
@@ -57,16 +57,16 @@ import java.awt.event.ActionListener;
  *  
  * @author bodum
  */
-public class ElgatoConfigDialog extends JDialog implements WindowClosingIf {
+public class SimpleConfigDialog extends JDialog implements WindowClosingIf {
   /** Translator */
-  private static final Localizer mLocalizer = Localizer.getLocalizerFor(ElgatoConfigDialog.class);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(SimpleConfigDialog.class);
 
   /** Device */
-  private ElgatoDevice mDevice;
+  private SimpleDevice mDevice;
   /** Connection */
-  private ElgatoConnection mConnection;
+  private SimpleConnectionIf mConnection;
   /** Configuration */
-  private ElgatoConfig mConfig;
+  private SimpleConfig mConfig;
   /** Which Button was pressed */
   private int mReturn = JOptionPane.CANCEL_OPTION;
   /** Table with mapping */
@@ -81,10 +81,10 @@ public class ElgatoConfigDialog extends JDialog implements WindowClosingIf {
    * @param connection Connection
    * @param config Configuration
    */
-  public ElgatoConfigDialog(JFrame frame, ElgatoDevice dev, ElgatoConnection connection, ElgatoConfig config) {
+  public SimpleConfigDialog(JFrame frame, SimpleDevice dev, SimpleConnectionIf connection, SimpleConfig config) {
     super(frame, true);
     mConnection = connection;
-    mConfig = (ElgatoConfig) config.clone();
+    mConfig = (SimpleConfig) config.clone();
     mDevice = dev;
     createGui();
   }
@@ -96,10 +96,10 @@ public class ElgatoConfigDialog extends JDialog implements WindowClosingIf {
    * @param connection Connection
    * @param config Configuration
    */
-  public ElgatoConfigDialog(JDialog dialog, ElgatoDevice dev, ElgatoConnection connection, ElgatoConfig config) {
+  public SimpleConfigDialog(JDialog dialog, SimpleDevice dev, SimpleConnectionIf connection, SimpleConfig config) {
     super(dialog, true);
     mConnection = connection;
-    mConfig = (ElgatoConfig) config.clone();
+    mConfig = (SimpleConfig) config.clone();
     mDevice = dev;
     createGui();
   }
@@ -108,10 +108,10 @@ public class ElgatoConfigDialog extends JDialog implements WindowClosingIf {
    * Create the Gui
    */
   private void createGui() {
-    mConfig.getAllElgatoChannels(mConnection);
+    mConfig.getAllExternalChannels(mConnection);
     JPanel panel = (JPanel) getContentPane();
     
-    setTitle(mLocalizer.msg("title","Elgato EyeTV Settings"));
+    setTitle(mLocalizer.msg("title","Device Settings"));
     
     panel.setLayout(new FormLayout("3dlu, pref, 3dlu, fill:pref:grow, 3dlu, pref, 3dlu", "pref, 5dlu, pref, 3dlu pref, 5dlu, fill:min:grow, 3dlu, pref, 3dlu, pref"));
     panel.setBorder(Borders.DIALOG_BORDER);
@@ -126,7 +126,7 @@ public class ElgatoConfigDialog extends JDialog implements WindowClosingIf {
     
     panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("channelAssignment","Channel assignment")), cc.xyw(1,5, 7));
     
-    mTable = new JTable(new ConfigTableModel(mConfig, mLocalizer.msg("eyeTV", "Eye TV")));
+    mTable = new JTable(new ConfigTableModel(mConfig, mLocalizer.msg("external", "external")));
     mTable.getTableHeader().setReorderingAllowed(false);
     mTable.getColumnModel().getColumn(0).setCellRenderer(new ChannelTableCellRenderer());
     mTable.getColumnModel().getColumn(1).setCellRenderer(new ExternalChannelTableCellRenderer());
@@ -139,7 +139,16 @@ public class ElgatoConfigDialog extends JDialog implements WindowClosingIf {
       public void actionPerformed(ActionEvent e) {
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
-            mConfig.setElgatoChannels(mConnection.getAvailableChannels());
+            SimpleChannel[] lists = mConnection.getAvailableChannels();
+
+            if (lists == null) {
+                JOptionPane.showMessageDialog(SimpleConfigDialog.this,
+                        mLocalizer.msg("errorChannels","Could not load external channels"),
+                        mLocalizer.msg("errorTitle","Error"), JOptionPane.ERROR_MESSAGE);
+            } else {
+                mConfig.setExternalChannels(lists);
+            }
+
             mTable.updateUI();
           }
         });
@@ -192,7 +201,7 @@ public class ElgatoConfigDialog extends JDialog implements WindowClosingIf {
   /**
    * @return Modified configuration
    */
-  public ElgatoConfig getConfig() {
+  public SimpleConfig getConfig() {
     return mConfig;
   }
 

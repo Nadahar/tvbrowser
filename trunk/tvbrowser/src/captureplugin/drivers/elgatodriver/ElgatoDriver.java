@@ -26,6 +26,7 @@ package captureplugin.drivers.elgatodriver;
 
 import captureplugin.drivers.DeviceIf;
 import captureplugin.drivers.DriverIf;
+import captureplugin.drivers.simpledevice.SimpleDevice;
 import util.ui.Localizer;
 
 /**
@@ -38,7 +39,7 @@ public class ElgatoDriver implements DriverIf {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ElgatoDriver.class);
   
   public DeviceIf createDevice(String name) {
-    return new ElgatoDevice(this, name);
+    return new SimpleDevice(new ElgatoConnection(), this, name);
   }
 
   public String getDriverDesc() {

@@ -25,6 +25,9 @@
 package captureplugin.drivers.elgatodriver;
 
 import captureplugin.CapturePlugin;
+import captureplugin.drivers.simpledevice.SimpleChannel;
+import captureplugin.drivers.simpledevice.SimpleConfig;
+import captureplugin.drivers.simpledevice.SimpleConnectionIf;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Program;
@@ -34,13 +37,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.logging.Logger;
 
 /**
  * This Class represents the Connection to the Elgato EyeTV.
  * 
  * @author bodum
  */
-public class ElgatoConnection {
+public class ElgatoConnection implements SimpleConnectionIf {
+    /**
+     * Logger
+     */
+    private static Logger mLog = Logger.getLogger(ElgatoConnection.class.getName());
+
     /** AppleScript Runner */
     private AppleScriptRunner mAppleScript = new AppleScriptRunner();
 
@@ -133,10 +142,10 @@ public class ElgatoConnection {
     /**
      * Get the List of all available Channels
      * 
-     * @return All available Channels
+     * @return All available Channels, <code>null</code> if error while loading
      */
-    public ElgatoChannel[] getAvailableChannels() {
-        ArrayList<ElgatoChannel> list = new ArrayList<ElgatoChannel>();
+    public SimpleChannel[] getAvailableChannels() {
+        ArrayList<SimpleChannel> lists = new ArrayList<SimpleChannel>();
 
         String res = null;
         try {
@@ -146,25 +155,30 @@ public class ElgatoConnection {
         }
 
         if (res == null) {
-            return new ElgatoChannel[0];
+            return new SimpleChannel[0];
         }
 
         String[] result = res.split("¥");
 
         for (int i = 0; i < result.length; i += 2) {
-            ElgatoChannel channel = new ElgatoChannel(Integer
-                    .parseInt(result[i]), result[i + 1]);
-            list.add(channel);
+            try {
+                SimpleChannel channel = new SimpleChannel(Integer
+                        .parseInt(result[i]), result[i + 1]);
+                lists.add(channel);
+            } catch (NumberFormatException e) {
+                mLog.warning("Could not parse channel data!");
+                return null;
+            }
         }
 
-        return list.toArray(new ElgatoChannel[list.size()]);
+        return lists.toArray(new SimpleChannel[lists.size()]);
     }
 
     /**
      * @return List of all current Recordings
      * @param conf Config
      */
-    public Program[] getAllRecordings(ElgatoConfig conf) {
+    public Program[] getAllRecordings(SimpleConfig conf) {
         ArrayList<Program> programs = new ArrayList<Program>();
 
         mProgramMapping = new HashMap<Program, String>();
@@ -176,7 +190,7 @@ public class ElgatoConnection {
             e.printStackTrace();
         }
 
-        if (res == null) {
+        if (res == null || res.trim().length() == 0) {
             return new Program[0];
         }
 
@@ -198,7 +212,7 @@ public class ElgatoConnection {
                 int hour = Integer.parseInt(hourStr[0]);
                 int min = Integer.parseInt(hourStr[1]);
 
-                Channel chan = conf.getChannelForElgatoId(channel);
+                Channel chan = conf.getChannelForExternalId(channel);
 
                 if (chan != null) {
                     Iterator<Program> it = CapturePlugin.getPluginManager()
@@ -234,9 +248,9 @@ public class ElgatoConnection {
      * @param length Length of Program
      * @return true if successfull
      */
-    public boolean addToRecording(ElgatoConfig conf, Program prg, int length) {
-        String date = prg.getDate().getYear() + "-" + prg.getDate().getMonth()
-                + "-" + prg.getDate().getDayOfMonth();
+    public boolean addToRecording(SimpleConfig conf, Program prg, int length) {
+          String date = prg.getDate().getYear() + "-" + prg.getDate().getMonth()
+                  + "-" + prg.getDate().getDayOfMonth();
 
         String time = prg.getHours() + ":" + prg.getMinutes();
 
@@ -244,7 +258,7 @@ public class ElgatoConnection {
         call = call.replaceAll("\\{1\\}", time);
         call = call.replaceAll("\\{2\\}", Integer.toString(length));
         call = call.replaceAll("\\{3\\}", prg.getTitle());
-        call = call.replaceAll("\\{4\\}", Integer.toString(((ElgatoChannel)conf
+        call = call.replaceAll("\\{4\\}", Integer.toString(((SimpleChannel)conf
                 .getExternalChannel(prg.getChannel())).getNumber()));
 
         if (prg.getShortInfo() != null)
@@ -280,12 +294,12 @@ public class ElgatoConnection {
      * Switch to Channel of Program
      * 
      * @param conf Config to use
-     * @param prg Switch to Channel of Program
+     * @param channel Switch to Channel
      */
-    public void switchToChannel(ElgatoConfig conf, Program prg) {
+    public void switchToChannel(SimpleConfig conf, Channel channel) {
         try {
             mAppleScript.executeScript(SWITCHCHANNEL.replaceAll("\\{0\\}",
-                    Integer.toString(((ElgatoChannel)conf.getExternalChannel(prg.getChannel()))
+                    Integer.toString(((SimpleChannel)conf.getExternalChannel(channel))
                             .getNumber())));
         } catch (IOException e) {
             e.printStackTrace();

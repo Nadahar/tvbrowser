@@ -22,7 +22,7 @@
  *   $Author: troggan $
  * $Revision: 1944 $
  */
-package captureplugin.drivers.elgatodriver;
+package captureplugin.drivers.simpledevice;
 
 import captureplugin.utils.ExternalChannelIf;
 
@@ -31,11 +31,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
- * This Class represents a Channel in the Elgato EyeTV
+ * This Class represents an external channel
  * 
  * @author bodum
  */
-public class ElgatoChannel implements ExternalChannelIf {
+public class SimpleChannel implements ExternalChannelIf {
     /** Number of the Channel */
     private int mNumber;
     /** Name of the Channel */
@@ -46,7 +46,7 @@ public class ElgatoChannel implements ExternalChannelIf {
      * @param number Number of the Channel
      * @param name Name of the Channel
      */
-    public ElgatoChannel(int number, String name) {
+    public SimpleChannel(int number, String name) {
         mNumber = number;
         mName = name;
     }
@@ -57,7 +57,7 @@ public class ElgatoChannel implements ExternalChannelIf {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public ElgatoChannel(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    public SimpleChannel(ObjectInputStream stream) throws IOException, ClassNotFoundException {
       readData(stream);
     }
 
@@ -94,7 +94,7 @@ public class ElgatoChannel implements ExternalChannelIf {
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        return mNumber + ". " + mName;
+        return mName;
     }
     
     /*
@@ -120,7 +120,7 @@ public class ElgatoChannel implements ExternalChannelIf {
         return false;
       if (getClass() != obj.getClass())
         return false;
-      final ElgatoChannel other = (ElgatoChannel) obj;
+      final SimpleChannel other = (SimpleChannel) obj;
       if (mName == null) {
         if (other.mName != null)
           return false;

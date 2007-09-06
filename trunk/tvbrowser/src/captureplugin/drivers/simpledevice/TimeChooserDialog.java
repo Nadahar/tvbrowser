@@ -1,4 +1,4 @@
-package captureplugin.drivers.elgatodriver;
+package captureplugin.drivers.simpledevice;
 
 import captureplugin.drivers.utils.TimeDateChooserPanel;
 import com.jgoodies.forms.builder.ButtonBarBuilder;

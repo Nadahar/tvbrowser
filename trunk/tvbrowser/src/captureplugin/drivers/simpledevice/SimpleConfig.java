@@ -22,7 +22,7 @@
  *   $Author: troggan $
  * $Revision: 1944 $
  */
-package captureplugin.drivers.elgatodriver;
+package captureplugin.drivers.simpledevice;
 
 import captureplugin.CapturePlugin;
 import captureplugin.drivers.utils.IDGenerator;
@@ -43,15 +43,15 @@ import java.util.Iterator;
  *
  * @author bodum
  */
-public class ElgatoConfig implements ConfigIf {
+public class SimpleConfig implements ConfigIf {
     /**
-     * Mapping TVB Channels - Elgato Channels
+     * Mapping TVB Channels - external channels
      */
-    private HashMap<Channel, ElgatoChannel> mChannels;
+    private HashMap<Channel, SimpleChannel> mChannels;
     /**
-     * List of all Available Elgato Channels
+     * List of all available external channels
      */
-    private ArrayList<ElgatoChannel> mElgatoChannels;
+    private ArrayList<SimpleChannel> mSimpleChannels;
     /**
      * Unique ID
      */
@@ -60,9 +60,9 @@ public class ElgatoConfig implements ConfigIf {
     /**
      * Create Config
      */
-    public ElgatoConfig() {
-        mChannels = new HashMap<Channel, ElgatoChannel>();
-        mElgatoChannels = new ArrayList<ElgatoChannel>();
+    public SimpleConfig() {
+        mChannels = new HashMap<Channel, SimpleChannel>();
+        mSimpleChannels = new ArrayList<SimpleChannel>();
     }
 
     /**
@@ -70,9 +70,9 @@ public class ElgatoConfig implements ConfigIf {
      *
      * @param config config to clone
      */
-    public ElgatoConfig(ElgatoConfig config) {
-        mChannels = (HashMap<Channel, ElgatoChannel>) config.getChannelMapping().clone();
-        mElgatoChannels = new ArrayList<ElgatoChannel>(Arrays.asList((ElgatoChannel[])config.getExternalChannels()));
+    public SimpleConfig(SimpleConfig config) {
+        mChannels = (HashMap<Channel, SimpleChannel>) config.getChannelMapping().clone();
+        mSimpleChannels = new ArrayList<SimpleChannel>(Arrays.asList((SimpleChannel[])config.getExternalChannels()));
         mId = config.getId();
     }
 
@@ -83,9 +83,9 @@ public class ElgatoConfig implements ConfigIf {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public ElgatoConfig(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        mChannels = new HashMap<Channel, ElgatoChannel>();
-        mElgatoChannels = new ArrayList<ElgatoChannel>();
+    public SimpleConfig(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        mChannels = new HashMap<Channel, SimpleChannel>();
+        mSimpleChannels = new ArrayList<SimpleChannel>();
         readData(stream);
     }
 
@@ -94,24 +94,22 @@ public class ElgatoConfig implements ConfigIf {
     * @see java.lang.Object#clone()
     */
     public Object clone() {
-        return new ElgatoConfig(this);
+        return new SimpleConfig(this);
     }
 
     /**
-     * Get Mapping of TVB-Channels - Elgato Channels
-     * @return 
-     *
+     * Get Mapping of TVB-Channels - external Channels
      * @return Mapping
      */
-    public HashMap<Channel, ElgatoChannel> getChannelMapping() {
+    public HashMap<Channel, SimpleChannel> getChannelMapping() {
         return mChannels;
     }
 
     /**
-     * Get Elgato Channel for TVB Channel
+     * Get external channel for TVB Channel
      *
-     * @param channel Get Elgato Channel for this TVB Channel
-     * @return Elgato Channel if mapped, else null
+     * @param channel Get external channel for this TVB Channel
+     * @return external channel if mapped, else null
      */
     public ExternalChannelIf getExternalChannel(Channel channel) {
         return mChannels.get(channel);
@@ -121,31 +119,33 @@ public class ElgatoConfig implements ConfigIf {
      * Set Mapping for Channel
      *
      * @param channel  TVB Channel
-     * @param external Elgato Channel
+     * @param external external Channel
      */
     public void setExternalChannel(Channel channel, ExternalChannelIf external) {
         if ((external != null) && (channel != null))
-            mChannels.put(channel, (ElgatoChannel) external);
+            mChannels.put(channel, (SimpleChannel) external);
+        else if (channel != null)
+            mChannels.remove(channel);
     }
 
     /**
-     * Set List of Elgato Channels.
-     * This checks the mappings and removes unavailable Elgato Channels
+     * Set List of external Channels.
+     * This checks the mappings and removes unavailable external Channels
      *
      * @param channels List of Channels
      */
-    public void setElgatoChannels(ElgatoChannel[] channels) {
-        mElgatoChannels = new ArrayList<ElgatoChannel>(Arrays.asList(channels));
+    public void setExternalChannels(SimpleChannel[] channels) {
+        mSimpleChannels = new ArrayList<SimpleChannel>(Arrays.asList(channels));
 
         // Remove Channels that were removed/changed
         Iterator<Channel> iterator = mChannels.keySet().iterator();
 
-        HashMap<Channel, ElgatoChannel> cloneMap = (HashMap<Channel, ElgatoChannel>) mChannels.clone();
+        HashMap<Channel, SimpleChannel> cloneMap = (HashMap<Channel, SimpleChannel>) mChannels.clone();
 
         while (iterator.hasNext()) {
             Channel rchan = (Channel) iterator.next();
-            ElgatoChannel channel = mChannels.get(rchan);
-            if (!mElgatoChannels.contains(channel)) {
+            SimpleChannel channel = mChannels.get(rchan);
+            if (!mSimpleChannels.contains(channel)) {
                 cloneMap.remove(rchan);
             }
         }
@@ -167,20 +167,22 @@ public class ElgatoConfig implements ConfigIf {
     }
 
     /**
-     * @return get all available Elgato Channels
+     * @return get all available external Channels
      */
     public ExternalChannelIf[] getExternalChannels() {
-        return getAllElgatoChannels(null);
+        return getAllExternalChannels(null);
     }
 
     /**
-     * @return get all available Elgato Channels
+     * @return get all available external Channels
      */
-    public ExternalChannelIf[] getAllElgatoChannels(ElgatoConnection con) {
-        if ((con != null) && (mElgatoChannels.size() == 0)) {
-            setElgatoChannels(con.getAvailableChannels());
+    public ExternalChannelIf[] getAllExternalChannels(SimpleConnectionIf con) {
+        if ((con != null) && (mSimpleChannels.size() == 0)) {
+            SimpleChannel[] lists = con.getAvailableChannels();
+            if (lists != null)
+                setExternalChannels(lists);
         }
-        return mElgatoChannels.toArray(new ElgatoChannel[mElgatoChannels.size()]);
+        return mSimpleChannels.toArray(new SimpleChannel[mSimpleChannels.size()]);
     }
 
     /**
@@ -195,8 +197,8 @@ public class ElgatoConfig implements ConfigIf {
 
         int elsize = stream.readInt();
         for (int i = 0; i < elsize; i++) {
-            ElgatoChannel channel = new ElgatoChannel(stream);
-            mElgatoChannels.add(channel);
+            SimpleChannel channel = new SimpleChannel(stream);
+            mSimpleChannels.add(channel);
         }
 
         int mapCount = stream.readInt();
@@ -205,7 +207,7 @@ public class ElgatoConfig implements ConfigIf {
 
         for (int i = 0; i < mapCount; i++) {
             String chanId = stream.readUTF();
-            ElgatoChannel channel = new ElgatoChannel(stream);
+            SimpleChannel channel = new SimpleChannel(stream);
 
             for (int v = 0; v < channels.length; v++) {
                 if (channels[v].getId().equals(chanId)) {
@@ -228,18 +230,15 @@ public class ElgatoConfig implements ConfigIf {
     public void writeData(ObjectOutputStream stream) throws IOException {
         stream.writeInt(2);
 
-        stream.writeInt(mElgatoChannels.size());
+        stream.writeInt(mSimpleChannels.size());
 
-        for (int i = 0; i < mElgatoChannels.size(); i++) {
-            (mElgatoChannels.get(i)).writeData(stream);
+        for (SimpleChannel mSimpleChannel : mSimpleChannels) {
+            mSimpleChannel.writeData(stream);
         }
 
         stream.writeInt(mChannels.size());
 
-        Iterator<Channel> it = mChannels.keySet().iterator();
-
-        while (it.hasNext()) {
-            Channel ch = (Channel) it.next();
+        for (Channel ch : mChannels.keySet()) {
             stream.writeUTF(ch.getId());
             (mChannels.get(ch)).writeData(stream);
         }
@@ -248,16 +247,14 @@ public class ElgatoConfig implements ConfigIf {
     }
 
     /**
-     * Returns TVB Channel for Elgato Chanel ID
+     * Returns TVB Channel for external Channel ID
      *
-     * @param channel Elgato Channel ID
+     * @param channel external Channel ID
      * @return TVB Channel, null if not found
      */
-    public Channel getChannelForElgatoId(int channel) {
-        Iterator<Channel> it = mChannels.keySet().iterator();
+    public Channel getChannelForExternalId(int channel) {
 
-        while (it.hasNext()) {
-            Channel ch = (Channel) it.next();
+        for (Channel ch : mChannels.keySet()) {
             if ((mChannels.get(ch)).getNumber() == channel)
                 return ch;
         }
