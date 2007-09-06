@@ -62,7 +62,10 @@ public class GoogleExporter extends AbstractExporter {
   private static final String USERNAME = "Google_Username";
   private static final String PASSWORD = "Google_Password";
   private static final String STOREPASSWORD = "Google_StorePassword";
-  
+
+  private String mPassword = "";
+
+
   /*
    * (non-Javadoc)
    * @see calendarexportplugin.exporter.ExporterIf#getName()
@@ -79,13 +82,15 @@ public class GoogleExporter extends AbstractExporter {
     try {
       GoogleService myService = new GoogleService("cl", "tvbrowser-tvbrowsercalenderplugin-" + CalendarExportPlugin.getInstance().getInfo().getVersion().toString());
 
+      mPassword = IOUtilities.xorDecode(settings.getProperty(PASSWORD, ""), 345903).trim();
+
       if (!settings.getProperty(STOREPASSWORD, "false").equals("true")) {
         if (!showLoginDialog(settings)) {
           return false;
         }
       }
 
-      myService.setUserCredentials(settings.getProperty(USERNAME, "").trim(), IOUtilities.xorDecode(settings.getProperty(PASSWORD, ""), 345903).trim());
+      myService.setUserCredentials(settings.getProperty(USERNAME, "").trim(), mPassword);
       
       URL postUrl =
         new URL("http://www.google.com/calendar/feeds/"+settings.getProperty(USERNAME, "").trim()+"/private/full");
@@ -178,6 +183,7 @@ public class GoogleExporter extends AbstractExporter {
       settings.setProperty(STOREPASSWORD, "false");
     }
 
+    mPassword = login.getPassword().trim();
     return true;
   }
 

@@ -48,9 +48,13 @@ public class ExporterFactory {
     mExporterList.add(new AppleiCalExporter());
     mExporterList.add(new GoogleExporter());
     mExporterList.add(new ICalExporter());
-    mExporterList.add(new KOrganizerExporter());
     mExporterList.add(new VCalExporter());
-    mExporterList.add(new OutlookExporter());
+
+    if (OperatingSystem.isOther()) {
+      mExporterList.add(new KOrganizerExporter());
+    } else if (OperatingSystem.isWindows()) {
+      mExporterList.add(new OutlookExporter());
+    }
 
     Collections.sort(mExporterList, new Comparator<ExporterIf>() {
       public int compare(ExporterIf o1, ExporterIf o2) {
