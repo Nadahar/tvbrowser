@@ -63,7 +63,7 @@ public class DefaultMarkingPrioritySelectionPanel extends JPanel {
     mPrioritySelection = new JComboBox(colors);
     mPrioritySelection.setSelectedIndex(priority+1);
     
-    mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","The selected higlighting color is only shown if the program is only marked by this plugin or if the other markings have a lower or the same priority. The marking colors of the priorities can be change in the <a href=\"#link\">program panel settings</a>."), new HyperlinkListener() {
+    mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","The selected higlighting color is only shown if the program is only marked by this plugin or if the other markings have a lower or the same priority. The marking colors of the priorities can be change in the <a href=\"#link\">marking settings</a>."), new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent e) {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           SettingsDialog.getInstance().showSettingsTab(SettingsItem.PROGRAMPANELMARKING);
