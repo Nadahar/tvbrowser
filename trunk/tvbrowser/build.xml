@@ -306,6 +306,7 @@
     <unjar src="${lib.dir}/commons-cli-1.1.jar" dest="${unpacked.dir}/commons-cli-1.1.jar" />
     <unjar src="${lib.dir}/gdata-calendar-1.0.jar" dest="${unpacked.dir}/gdata-calendar-1.0.jar" />
     <unjar src="${lib.dir}/gdata-client-1.0.jar" dest="${unpacked.dir}/gdata-client-1.0.jar" /> 	   	
+    <unjar src="${lib.dir}/gdata-core-1.0.jar" dest="${unpacked.dir}/gdata-core-1.0.jar" />
     <unjar src="${lib.dir}/jcom.jar" dest="${unpacked.dir}/jcom.jar" />
 
     <!-- Pack the tvbrowser.jar -->
@@ -359,6 +360,7 @@
         <fileset dir="${classes.dir}" includes="calendarexportplugin/**"/>
         <fileset dir="${unpacked.dir}/gdata-calendar-1.0.jar" includes="**" /> 	 
         <fileset dir="${unpacked.dir}/gdata-client-1.0.jar" includes="**" /> 	 
+        <fileset dir="${unpacked.dir}/gdata-core-1.0.jar" includes="**" /> 	 
         <fileset dir="${unpacked.dir}/jcom.jar" includes="**" />
     </jar>
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/ClipboardPlugin.jar"
