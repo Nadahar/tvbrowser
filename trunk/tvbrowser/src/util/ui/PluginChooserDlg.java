@@ -268,6 +268,9 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
                   targetList = new ArrayList<ProgramReceiveTarget>();
                   mReceiveTargetTable.put(((ProgramReceiveIf)((SelectableItem)mPluginItemList.getSelectedValue()).getItem()),targetList);  
                 }
+                else {
+                  targetList.clear();
+                }
                 
                 targetList.add(mCurrentTargets[0]);
               }
