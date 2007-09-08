@@ -22,33 +22,33 @@
  */
 package calendarexportplugin.exporter;
 
+import calendarexportplugin.CalendarExportPlugin;
+import calendarexportplugin.utils.CalendarToolbox;
+import com.google.gdata.client.GoogleService;
+import com.google.gdata.data.DateTime;
+import com.google.gdata.data.PlainTextConstruct;
+import com.google.gdata.data.extensions.EventEntry;
+import com.google.gdata.data.extensions.Reminder;
+import com.google.gdata.data.extensions.When;
+import com.google.gdata.util.AuthenticationException;
+import com.google.gdata.util.ServiceException;
+import devplugin.Program;
+import util.exc.ErrorHandler;
+import util.io.IOUtilities;
+import util.paramhandler.ParamParser;
+import util.program.AbstractPluginProgramFormating;
+import util.ui.Localizer;
+
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import java.awt.Window;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Properties;
 import java.util.TimeZone;
-
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
-import util.exc.ErrorHandler;
-import util.io.IOUtilities;
-import util.paramhandler.ParamParser;
-import util.program.AbstractPluginProgramFormating;
-import util.ui.Localizer;
-import calendarexportplugin.CalendarExportPlugin;
-import calendarexportplugin.utils.CalendarToolbox;
-
-import com.google.gdata.client.GoogleService;
-import com.google.gdata.data.DateTime;
-import com.google.gdata.data.PlainTextConstruct;
-import com.google.gdata.data.extensions.EventEntry;
-import com.google.gdata.data.extensions.When;
-import com.google.gdata.util.AuthenticationException;
-
-import devplugin.Program;
+import java.io.IOException;
 
 /**
  * Exporter for Google Calendar API
@@ -59,12 +59,18 @@ public class GoogleExporter extends AbstractExporter {
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(GoogleExporter.class);
   
-  private static final String USERNAME = "Google_Username";
-  private static final String PASSWORD = "Google_Password";
-  private static final String STOREPASSWORD = "Google_StorePassword";
+  public static final String USERNAME = "Google_Username";
+  public static final String PASSWORD = "Google_Password";
+  public static final String STOREPASSWORD = "Google_StorePassword";
+  public static final String STORESETTINGS = "Google_StoreSettgins";
+  public static final String SELECTEDCALENDAR = "Google_SelectedCalendar";
+  public static final String REMINDER = "Google_Reminder";
+  public static final String REMINDERMINUTES = "Google_ReminderMinutes";
+  public static final String REMINDERSMS = "Google_ReminderSMS";
+  public static final String REMINDEREMAIL = "Google_ReminderEMAIL";
+  public static final String REMINDERALERT = "Google_ReminderAlert";
 
   private String mPassword = "";
-
 
   /*
    * (non-Javadoc)
@@ -80,8 +86,6 @@ public class GoogleExporter extends AbstractExporter {
    */
   public boolean exportPrograms(Program[] programs, Properties settings, AbstractPluginProgramFormating formating) {
     try {
-      GoogleService myService = new GoogleService("cl", "tvbrowser-tvbrowsercalenderplugin-" + CalendarExportPlugin.getInstance().getInfo().getVersion().toString());
-
       mPassword = IOUtilities.xorDecode(settings.getProperty(PASSWORD, ""), 345903).trim();
 
       if (!settings.getProperty(STOREPASSWORD, "false").equals("true")) {
@@ -90,11 +94,18 @@ public class GoogleExporter extends AbstractExporter {
         }
       }
 
+      if (!settings.getProperty(STORESETTINGS, "false").equals("true")) {
+        if (!showCalendarSettings(settings)) {
+          return false;
+        }
+      }
+
+      GoogleService myService = new GoogleService("cl", "tvbrowser-tvbrowsercalenderplugin-" + CalendarExportPlugin.getInstance().getInfo().getVersion().toString());
       myService.setUserCredentials(settings.getProperty(USERNAME, "").trim(), mPassword);
-      
+
       URL postUrl =
-        new URL("http://www.google.com/calendar/feeds/"+settings.getProperty(USERNAME, "").trim()+"/private/full");
-      
+            new URL("http://www.google.com/calendar/feeds/" + settings.getProperty(SELECTEDCALENDAR) + "/private/full");
+
       SimpleDateFormat formatDay = new SimpleDateFormat("yyyy-MM-dd");
       formatDay.setTimeZone(TimeZone.getTimeZone("GMT"));
       SimpleDateFormat formatTime = new SimpleDateFormat("HH:mm:ss");
@@ -125,7 +136,30 @@ public class GoogleExporter extends AbstractExporter {
         eventTimes.setEndTime(endTime);
         
         myEntry.addTime(eventTimes);
-        
+
+        if (settings.getProperty(REMINDER, "false").equals("true")) {
+          int reminderMinutes = 0;
+
+          try {
+            reminderMinutes = Integer.parseInt(settings.getProperty(REMINDERMINUTES, "0"));
+          } catch (NumberFormatException e) {
+            e.printStackTrace();
+          }
+
+          if (settings.getProperty(REMINDERALERT, "false").equals("true")) {
+            addReminder(myEntry, reminderMinutes, Reminder.Method.ALERT);
+          }
+
+          if (settings.getProperty(REMINDEREMAIL, "false").equals("true")) {
+            addReminder(myEntry, reminderMinutes, Reminder.Method.EMAIL);
+          }
+
+          if (settings.getProperty(REMINDERSMS, "false").equals("true")) {
+            addReminder(myEntry, reminderMinutes, Reminder.Method.SMS);
+          }
+
+        }
+
         // Send the request and receive the response:
         myService.insert(postUrl, myEntry);
       }
@@ -134,11 +168,49 @@ public class GoogleExporter extends AbstractExporter {
       return true;
     } catch (AuthenticationException e) {
       ErrorHandler.handle(mLocalizer.msg("loginFailure", "Problems while Login to Service.\nMaybee bad Username/Password ?"), e);
+      settings.setProperty(GoogleExporter.STOREPASSWORD, "false");
     } catch (Exception e) {
       ErrorHandler.handle(mLocalizer.msg("commError", "Error while communicating with Google!"), e);
     }
     
     return false;
+  }
+
+  /**
+   * Create new Reminder
+   * @param myEntry add Reminder to this Entry
+   * @param reminderMinutes Remind x Minutes before event
+   * @param method what method to use
+   */
+  private void addReminder(EventEntry myEntry, int reminderMinutes, Reminder.Method method) {
+    Reminder reminder = new Reminder();
+    reminder.setMinutes(reminderMinutes);
+    reminder.setMethod(method);
+    myEntry.getReminder().add(reminder);
+  }
+
+  /**
+   * Show the Settings Dialog for the exporter
+   *
+   * @param settings Settings
+   * @return true, if ok was pressed
+   * 
+   * @throws IOException Exception during connection
+   * @throws ServiceException Problems with the google service
+    */
+  private boolean showCalendarSettings(Properties settings) throws IOException, ServiceException {
+    GoogleSettingsDialog settingsDialog;
+
+    Window wnd = CalendarExportPlugin.getInstance().getBestParentFrame();
+
+    if (wnd instanceof JDialog) {
+      settingsDialog = new GoogleSettingsDialog((JDialog)wnd, settings, mPassword);
+    } else {
+      settingsDialog = new GoogleSettingsDialog((JFrame)wnd, settings, mPassword);
+    }
+
+    return settingsDialog.showDialog() == JOptionPane.OK_OPTION;
+
   }
 
   /**
@@ -187,7 +259,6 @@ public class GoogleExporter extends AbstractExporter {
     return true;
   }
 
-
   /*
    * (non-Javadoc)
    * @see calendarexportplugin.exporter.ExporterIf#hasSettingsDialog()
@@ -203,6 +274,15 @@ public class GoogleExporter extends AbstractExporter {
    */
   @Override
   public void showSettingsDialog(Properties settings) {
-    showLoginDialog(settings);
+    if (showLoginDialog(settings)) {
+      try {
+        showCalendarSettings(settings);
+      } catch (AuthenticationException e) {
+        ErrorHandler.handle(mLocalizer.msg("loginFailure", "Problems while Login to Service.\nMaybee bad Username/Password ?"), e);
+        settings.setProperty(GoogleExporter.STOREPASSWORD, "false");
+      } catch (Exception e) {
+        ErrorHandler.handle(mLocalizer.msg("commError", "Error while communicating with Google!"), e);
+      }
+    }
   }
 }

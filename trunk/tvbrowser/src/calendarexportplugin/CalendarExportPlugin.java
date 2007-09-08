@@ -157,7 +157,7 @@ public class CalendarExportPlugin extends Plugin {
         String author = "Bodo Tasche, Udo Weigelt";
         String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Calendar_Export");
         
-        return new PluginInfo(name, desc, author, helpUrl, new Version(0, 5));
+        return new PluginInfo(name, desc, author, helpUrl, new Version(0, 8));
     }
 
     /*
