@@ -30,6 +30,7 @@ import com.google.gdata.data.PlainTextConstruct;
 import com.google.gdata.data.extensions.EventEntry;
 import com.google.gdata.data.extensions.Reminder;
 import com.google.gdata.data.extensions.When;
+import com.google.gdata.data.extensions.BaseEventEntry;
 import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
 import devplugin.Program;
@@ -52,13 +53,15 @@ import java.io.IOException;
 
 /**
  * Exporter for Google Calendar API
- *  
+ *
  * @author bodum
  */
 public class GoogleExporter extends AbstractExporter {
-  /** Translator */
+  /**
+   * Translator
+   */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(GoogleExporter.class);
-  
+
   public static final String USERNAME = "Google_Username";
   public static final String PASSWORD = "Google_Password";
   public static final String STOREPASSWORD = "Google_StorePassword";
@@ -104,21 +107,21 @@ public class GoogleExporter extends AbstractExporter {
       myService.setUserCredentials(settings.getProperty(USERNAME, "").trim(), mPassword);
 
       URL postUrl =
-            new URL("http://www.google.com/calendar/feeds/" + settings.getProperty(SELECTEDCALENDAR) + "/private/full");
+              new URL("http://www.google.com/calendar/feeds/" + settings.getProperty(SELECTEDCALENDAR) + "/private/full");
 
       SimpleDateFormat formatDay = new SimpleDateFormat("yyyy-MM-dd");
       formatDay.setTimeZone(TimeZone.getTimeZone("GMT"));
       SimpleDateFormat formatTime = new SimpleDateFormat("HH:mm:ss");
       formatTime.setTimeZone(TimeZone.getTimeZone("GMT"));
-      
+
       for (Program program : programs) {
         EventEntry myEntry = new EventEntry();
 
         ParamParser parser = new ParamParser();
         String title = parser.analyse(formating.getTitleValue(), program);
-        
+
         myEntry.setTitle(new PlainTextConstruct(title));
-        
+
         String desc = parser.analyse(formating.getContentValue(), program);
         myEntry.setContent(new PlainTextConstruct(desc));
 
@@ -129,12 +132,12 @@ public class GoogleExporter extends AbstractExporter {
         c = CalendarToolbox.getEndAsCalendar(program);
 
         DateTime endTime = new DateTime(c.getTime(), c.getTimeZone());
-        
+
         When eventTimes = new When();
-        
+
         eventTimes.setStartTime(startTime);
         eventTimes.setEndTime(endTime);
-        
+
         myEntry.addTime(eventTimes);
 
         if (settings.getProperty(REMINDER, "false").equals("true")) {
@@ -160,11 +163,29 @@ public class GoogleExporter extends AbstractExporter {
 
         }
 
+        int showtime = 0;
+
+        try {
+          showtime = Integer.parseInt(settings.getProperty(CalendarExportPlugin.PROP_SHOWTIME, "0"));
+        } catch (Exception e) {
+          // Empty
+        }
+
+        switch (showtime) {
+          case 0:
+            myEntry.setTransparency(BaseEventEntry.Transparency.OPAQUE);
+            break;
+          case 1:
+            myEntry.setTransparency(BaseEventEntry.Transparency.TRANSPARENT);
+            break;
+          default:
+            break;
+        }
         // Send the request and receive the response:
         myService.insert(postUrl, myEntry);
       }
-      
-      JOptionPane.showMessageDialog(CalendarExportPlugin.getInstance().getBestParentFrame(), mLocalizer.msg("exportDone", "Google Export done."), mLocalizer.msg("export","Export"), JOptionPane.INFORMATION_MESSAGE);
+
+      JOptionPane.showMessageDialog(CalendarExportPlugin.getInstance().getBestParentFrame(), mLocalizer.msg("exportDone", "Google Export done."), mLocalizer.msg("export", "Export"), JOptionPane.INFORMATION_MESSAGE);
       return true;
     } catch (AuthenticationException e) {
       ErrorHandler.handle(mLocalizer.msg("loginFailure", "Problems while Login to Service.\nMaybee bad Username/Password ?"), e);
@@ -172,15 +193,16 @@ public class GoogleExporter extends AbstractExporter {
     } catch (Exception e) {
       ErrorHandler.handle(mLocalizer.msg("commError", "Error while communicating with Google!"), e);
     }
-    
+
     return false;
   }
 
   /**
    * Create new Reminder
-   * @param myEntry add Reminder to this Entry
+   *
+   * @param myEntry         add Reminder to this Entry
    * @param reminderMinutes Remind x Minutes before event
-   * @param method what method to use
+   * @param method          what method to use
    */
   private void addReminder(EventEntry myEntry, int reminderMinutes, Reminder.Method method) {
     Reminder reminder = new Reminder();
@@ -194,19 +216,18 @@ public class GoogleExporter extends AbstractExporter {
    *
    * @param settings Settings
    * @return true, if ok was pressed
-   * 
-   * @throws IOException Exception during connection
+   * @throws IOException      Exception during connection
    * @throws ServiceException Problems with the google service
-    */
+   */
   private boolean showCalendarSettings(Properties settings) throws IOException, ServiceException {
     GoogleSettingsDialog settingsDialog;
 
     Window wnd = CalendarExportPlugin.getInstance().getBestParentFrame();
 
     if (wnd instanceof JDialog) {
-      settingsDialog = new GoogleSettingsDialog((JDialog)wnd, settings, mPassword);
+      settingsDialog = new GoogleSettingsDialog((JDialog) wnd, settings, mPassword);
     } else {
-      settingsDialog = new GoogleSettingsDialog((JFrame)wnd, settings, mPassword);
+      settingsDialog = new GoogleSettingsDialog((JFrame) wnd, settings, mPassword);
     }
 
     return settingsDialog.showDialog() == JOptionPane.OK_OPTION;
@@ -225,23 +246,23 @@ public class GoogleExporter extends AbstractExporter {
     Window wnd = CalendarExportPlugin.getInstance().getBestParentFrame();
 
     if (wnd instanceof JDialog) {
-      login = new GoogleLoginDialog((JDialog)wnd,
-          settings.getProperty(USERNAME, ""),
-          IOUtilities.xorDecode(settings.getProperty(PASSWORD, ""), 345903),
-          settings.getProperty(STOREPASSWORD, "false").equals("true"));
+      login = new GoogleLoginDialog((JDialog) wnd,
+              settings.getProperty(USERNAME, ""),
+              IOUtilities.xorDecode(settings.getProperty(PASSWORD, ""), 345903),
+              settings.getProperty(STOREPASSWORD, "false").equals("true"));
     } else {
-      login = new GoogleLoginDialog((JFrame)wnd,
-          settings.getProperty(USERNAME, ""),
-          IOUtilities.xorDecode(settings.getProperty(PASSWORD, ""), 345903),
-          settings.getProperty(STOREPASSWORD, "false").equals("true"));
+      login = new GoogleLoginDialog((JFrame) wnd,
+              settings.getProperty(USERNAME, ""),
+              IOUtilities.xorDecode(settings.getProperty(PASSWORD, ""), 345903),
+              settings.getProperty(STOREPASSWORD, "false").equals("true"));
     }
 
     if (login.askLogin() != JOptionPane.OK_OPTION) {
       return false;
     }
 
-    if ((login.getUsername().trim().length() == 0) ||(login.getPassword().trim().length() == 0)) {
-      JOptionPane.showMessageDialog(wnd, mLocalizer.msg("noUserOrPassword","No Username or Password entered!"), Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);
+    if ((login.getUsername().trim().length() == 0) || (login.getPassword().trim().length() == 0)) {
+      JOptionPane.showMessageDialog(wnd, mLocalizer.msg("noUserOrPassword", "No Username or Password entered!"), Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);
       return false;
     }
 
