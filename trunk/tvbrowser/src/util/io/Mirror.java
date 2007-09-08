@@ -418,7 +418,7 @@ public class Mirror {
         mLog.info("Server blocked : " + blockedServer);
         
         if(mirrorArr.length == 1 && mirrorArr[0].equals(mirror))
-          throw new TvBrowserException(caller.getClass(), "noUpToDateServer", "The mirror {0} is out of date or down and no other mirror is available." + additionalErrorMsg, mirror.getUrl());
+          throw new TvBrowserException(caller, "noUpToDateServer", "The mirror {0} is out of date or down and no other mirror is available." + additionalErrorMsg, mirror.getUrl());
         
         // This one is not available -> choose another one
         Mirror oldMirror = mirror;
@@ -436,7 +436,7 @@ public class Mirror {
       return mirror;
     }
     else {
-      throw new TvBrowserException(caller.getClass(), "noUpToDateServer", "The mirror {0} is out of date or down and no other mirror is available." + additionalErrorMsg, mirror.getUrl());
+      throw new TvBrowserException(caller, "noUpToDateServer", "The mirror {0} is out of date or down and no other mirror is available." + additionalErrorMsg, mirror.getUrl());
     }
   }
 
