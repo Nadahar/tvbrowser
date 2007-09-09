@@ -33,6 +33,8 @@ import javax.swing.JList;
 
 import util.ui.ChannelLabel;
 import devplugin.Channel;
+import tvbrowser.core.DublicateChannelNameCounter;
+import tvbrowser.core.ChannelList;
 
 /**
  * Creates a new Channellistrender.
@@ -43,7 +45,9 @@ public class FilteredChannelListCellRenderer extends DefaultListCellRenderer {
   private ChannelLabel mChannel;
   
   private ChannelFilter mFilter;
-  
+
+  private DublicateChannelNameCounter mChannelCounter;
+
   public FilteredChannelListCellRenderer(ChannelFilter filter) {
     mFilter = filter;
   }
@@ -55,6 +59,12 @@ public class FilteredChannelListCellRenderer extends DefaultListCellRenderer {
     if (mChannel == null) {
       mChannel = new ChannelLabel(true, true);
     }
+
+    if (mChannelCounter == null) {
+      mChannelCounter = new DublicateChannelNameCounter(ChannelList.getAvailableChannels());
+    }
+
+    mChannel.setShowCountry(mChannelCounter.isDublicate((Channel)value));
 
     if (value instanceof Channel) {
       mChannel.setChannel((Channel) value);

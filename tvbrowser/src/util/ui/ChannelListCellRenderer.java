@@ -33,6 +33,7 @@ import javax.swing.JList;
 
 import devplugin.Channel;
 import tvbrowser.core.DublicateChannelNameCounter;
+import tvbrowser.core.ChannelList;
 
 /**
  * A ListCellRenderer for Channel-Lists
@@ -90,7 +91,7 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
 
     if (mShowCountry) {
       if (mChannelCounter == null) {
-        mChannelCounter = new DublicateChannelNameCounter(list.getModel());
+        mChannelCounter = new DublicateChannelNameCounter(ChannelList.getAvailableChannels());
       }
 
       mChannel.setShowCountry(mChannelCounter.isDublicate((Channel)value));
