@@ -481,4 +481,24 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   public int hashCode() {
     return mID.toLowerCase().hashCode();
   }
+  
+  /**
+   * delete all the files created by this channel group,
+   * only to be called on deletion of a channel group
+   * @since 2.6
+   */
+  public void deleteAllFiles() {
+    File channelFile = new File(mDataDir, mID + "_" + ChannelList.FILE_NAME);
+    if (channelFile.exists()) {
+      channelFile.delete();
+    }
+    File mirrorFile = new File(mDataDir, mID + "_" + Mirror.MIRROR_LIST_FILE_NAME);
+    if (mirrorFile.exists()) {
+      mirrorFile.delete();
+    }
+    File infoFile = new File(mDataDir, mID + "_info");
+    if (infoFile.exists()) {
+      infoFile.delete();
+    }
+  }
 }
