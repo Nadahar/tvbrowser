@@ -146,7 +146,8 @@ public class SettingsDialog implements WindowClosingIf {
 
     mRootNode = createSelectionTree();
     mSelectionTree = new JTree(mRootNode);
-    mSelectionTree.setRootVisible(true);
+    mSelectionTree.setRootVisible(false);
+    mSelectionTree.setShowsRootHandles(true);
     mSelectionTree.getSelectionModel().setSelectionMode(
         TreeSelectionModel.SINGLE_TREE_SELECTION);
     mSelectionTree.setCellRenderer(new SettingNodeCellRenderer());
