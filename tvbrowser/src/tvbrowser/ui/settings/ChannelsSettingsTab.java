@@ -201,7 +201,7 @@ public class ChannelsSettingsTab implements
     // left list box
     JPanel listBoxPnLeft = new JPanel(new BorderLayout());
     mAllChannels = new ChannelJList(new DefaultListModel());
-    mAllChannels.setCellRenderer(new ChannelListCellRenderer(true, true, true));
+    mAllChannels.setCellRenderer(new ChannelListCellRenderer(true, true, true, true));
 
     listBoxPnLeft.add(new JScrollPane(mAllChannels), BorderLayout.CENTER);
 
@@ -248,12 +248,10 @@ public class ChannelsSettingsTab implements
 
     mSubscribedChannels = channelList.getList();
     mFilter = new ChannelFilter();
-    mSubscribedChannels.setCellRenderer(new FilteredChannelListCellRenderer(
-        mFilter));
+    mSubscribedChannels.setCellRenderer(new FilteredChannelListCellRenderer(mFilter));
 
     // Register DnD on the lists.
-    mDnDHandler = new ListDragAndDropHandler(mAllChannels, mSubscribedChannels,
-        this);
+    mDnDHandler = new ListDragAndDropHandler(mAllChannels, mSubscribedChannels, this);
     mDnDHandler.setPaintCueLine(false, true);
 
     // Register the listener for DnD on the lists.
