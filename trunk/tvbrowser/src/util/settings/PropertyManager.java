@@ -130,8 +130,14 @@ public class PropertyManager {
     }
   }
   
-  
-  String getProperty(String key) {
+  /**
+   * Gets the property with the given key.
+   * 
+   * @param key The key to get the property for.
+   * @return The property for the key or <code>null</code>
+   * if the key didn't exists.
+   */
+  public String getProperty(String key) {
     return mProperties.getProperty(key);
   }
 
