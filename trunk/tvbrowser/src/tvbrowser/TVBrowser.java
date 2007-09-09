@@ -97,13 +97,6 @@ import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
 
 import devplugin.Date;
 import devplugin.Version;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.GnuParser;
 
 /**
  * TV-Browser
@@ -495,66 +488,41 @@ public class TVBrowser {
      });
   }
 
+  private static void showUsage() {
+    System.out.println("command line options:");
+    System.out.println("    -minimized    The main window will be minimized after start up");
+    System.out.println("    -nosplash     No splash screen during start up");
+    System.out.println("    -fullscreen   Start in fullscreen-mode");
+    System.out.println();
+  }
+
   private static void parseCommandline(String[] args) {
-    // create the command line parser
-    CommandLineParser parser = new GnuParser();
-
-    // create the Options
-    Options options = new Options();
-    options.addOption( "h", "help", false, "Shows this help" );
-    options.addOption( "m", "minimized", false, "The main window will be minimized after start up" );
-    options.addOption( "n", "nosplash", false, "No splash screen during start up" );
-    options.addOption( "f", "fullscreen", false, "Start TV-Browser in Fullscreen-Mode");
-    options.addOption( OptionBuilder.withArgName( "property=value" )
-                                .hasArg()
-                                .withValueSeparator()
-                                .withDescription( "Set special java properties (user.home, user.language, propertiesfile)" )
-                                .create( "D" ));
-    try {
-      // parse the command line arguments
-      CommandLine line = parser.parse( options, args );
-
-      // validate that block-size has been set
-      if(line.hasOption( "help" ) ) {
-        // automatically generate the help statement
-        HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp( "tvbrowser", options );
+    showUsage();
+    for (String argument : args) {
+      if (argument.equalsIgnoreCase("-help") || argument.equalsIgnoreCase("-h")) {
         System.exit(0);
-      }
-
-      if (line.hasOption("D")) {
-        for (String argument:line.getOptionValues( "D" )) {
-          if (argument.indexOf("=") > 0) {
-            String key = argument.substring(0, argument.indexOf("="));
-            String value = argument.substring(argument.indexOf("=")+1);
-
-            if (key.equals("user.language")) {
-              System.getProperties().setProperty("user.language",value);
-              Locale.setDefault(new Locale(value));
-            } else {
-                System.setProperty(key, value);
-            }
-          } else {
-              mLog.warning("Wrong Syntax in parameter: '" + argument + "'");
-          }
-        }
-      }
-
-      if (line.hasOption("minimized")) {
+      } else if (argument.equalsIgnoreCase("-minimized") || argument.equalsIgnoreCase("-m")) {
         mMinimized = true;
-      }
-
-      if (line.hasOption("nosplash")) {
+      } else if (argument.equalsIgnoreCase("-nosplash") || argument.equalsIgnoreCase("-n")) {
         mShowSplashScreen = false;
-      }
-
-      if (line.hasOption("fullscreen")) {
+      } else if (argument.equalsIgnoreCase("-fullscreen") || argument.equalsIgnoreCase("-f")) {
         mFullscreen = true;
+      } else if (argument.startsWith("-D")) {
+        if (argument.indexOf("=") > 0) {
+          String key = argument.substring(2, argument.indexOf("="));
+          String value = argument.substring(argument.indexOf("=") + 1);
+          if (key.equals("user.language")) {
+            System.getProperties().setProperty("user.language", value);
+            Locale.setDefault(new Locale(value));
+          } else {
+            System.setProperty(key, value);
+          }
+        } else {
+          mLog.warning("Wrong Syntax in parameter: '" + argument + "'");
+        }
+      } else {
+        mLog.warning("Unknown command line parameter: '" + argument + "'");
       }
-
-    }
-    catch( ParseException exp ) {
-      exp.printStackTrace();
     }
   }
 
