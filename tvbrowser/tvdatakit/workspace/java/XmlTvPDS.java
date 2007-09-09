@@ -36,9 +36,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import primarydatamanager.primarydataservice.AbstractPrimaryDataService;
 import primarydatamanager.primarydataservice.ProgramFrameDispatcher;
-import tvbrowserdataservice.file.FileFormatException;
 import tvbrowserdataservice.file.ProgramField;
 import tvbrowserdataservice.file.ProgramFrame;
+import util.io.FileFormatException;
 import util.io.IOUtilities;
 
 import java.io.File;
