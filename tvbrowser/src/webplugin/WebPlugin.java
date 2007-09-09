@@ -65,6 +65,7 @@ public class WebPlugin extends Plugin {
   .getLogger(WebPlugin.class.getName());
   
   private static final String CHANNEL_SITE = "channelSite";
+  private static final String PROGRAM_SITE = "programSite";
 
 /** Localizer */
   private static final Localizer mLocalizer = Localizer
@@ -83,6 +84,7 @@ public class WebPlugin extends Plugin {
       new WebAddress("Yahoo", "http://search.yahoo.com/search?p={urlencode(title, \"ISO-8859-1\")}", null, false, true),
       new WebAddress("Wikipedia (DE)", "http://de.wikipedia.org/wiki/Spezial:Search?search={urlencode(title, \"ISO-8859-1\")}", null, false, Locale.getDefault().equals(Locale.GERMAN)),
       new WebAddress("Wikipedia (EN)", "http://en.wikipedia.org/wiki/Spezial:Search?search={urlencode(title, \"ISO-8859-1\")}", null, false, Locale.getDefault().equals(Locale.ENGLISH)),
+      new WebAddress(mLocalizer.msg("programPage", "Open website of program"),PROGRAM_SITE,null,false,true),
       new WebAddress(mLocalizer.msg("channelPageGeneral", "Open website of channel"),CHANNEL_SITE,null,false,true)
   };
 
@@ -223,14 +225,26 @@ public class WebPlugin extends Plugin {
         WebAddress address = mAddresses.get(i);
         String actionName = mLocalizer.msg("SearchOn", "Search on ") + " " + address.getName();
 
+        if (address.getUrl().equals(PROGRAM_SITE)) {
+          String url = program.getTextField(ProgramFieldType.URL_TYPE);
+          if (url != null && url.length() > 0) {
+            address = new WebAddress(mLocalizer.msg("programPage", "Open page of program"),url,null,false,address.isActive());
+            actionName = address.getName();
+          }
+          else {
+            address.setActive(false);
+          }
+        }
         //create adress of channel on the fly
         if (address.getUrl().equals(CHANNEL_SITE)) {
         	address = new WebAddress(mLocalizer.msg("channelPage", "Open page of {0}",program.getChannel().getName()),program.getChannel().getWebpage(),null,false,address.isActive());
         	actionName = address.getName();
+/*
         	// automatically add separator if it is the last menu item (as it is by default)
         	if (i == mAddresses.size() - 1) {
         	  actionList.add(ContextMenuSeparatorAction.getInstance());
         	}
+*/        	
         }
         if (address.isActive()) {
           // create items for a possible sub menu
@@ -425,10 +439,8 @@ public class WebPlugin extends Plugin {
     
       if (mAddresses != null) {
         for (WebAddress address : mAddresses) {
-          
-          if ((address.getIconFile() == null) && (! address.getUrl().equals(CHANNEL_SITE))) {
+          if ((address.getIconFile() == null) && ! address.getUrl().equals(CHANNEL_SITE) && ! address.getUrl().equals(PROGRAM_SITE)) {
             String file = fetcher.fetchFavIconForUrl(address.getUrl());
-          
             if (file != null) {
               address.setIconFile(file);
             } else {
