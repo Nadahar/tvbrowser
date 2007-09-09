@@ -3,7 +3,6 @@ package tvbrowser.core;
 import devplugin.Channel;
 
 import java.util.Hashtable;
-import javax.swing.ListModel;
 
 /**
  * This class returns the number of similar channels in
