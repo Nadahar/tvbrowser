@@ -141,12 +141,13 @@ public class Settings {
     
     File settingsFile = new File(getUserSettingsDirName(), SETTINGS_FILE);
     File firstSettingsBackupFile = new File(getUserSettingsDirName(), SETTINGS_FILE+ "_backup1");
-    File secondsSettingsBackupFile = new File(getUserSettingsDirName(), SETTINGS_FILE+ "_backup2");
+    File secondSettingsBackupFile = new File(getUserSettingsDirName(), SETTINGS_FILE+ "_backup2");
     
     // Create backup of settings file backup
     try {
       if(firstSettingsBackupFile.isFile()) {
-        IOUtilities.copy(firstSettingsBackupFile,secondsSettingsBackupFile);
+        secondSettingsBackupFile.delete();
+        firstSettingsBackupFile.renameTo(secondSettingsBackupFile);
       }
     }catch(Exception e) {}
     
@@ -171,7 +172,6 @@ public class Settings {
    * default settings are used.
    */
   public static void loadSettings() {
-
     String oldDirectoryName = System.getProperty("user.home", "")
         + File.separator + ".tvbrowser";
     String newDirectoryName = getUserSettingsDirName();
@@ -183,7 +183,13 @@ public class Settings {
     if (settingsFile.exists() || firstSettingsBackupFile.exists() || secondSettingsBackupFile.exists()) {
       try {
         mProp.readFromFile(settingsFile);
-        mLog.info("Using settings from file " + settingsFile.getAbsolutePath());
+        
+        if((mProp.getProperty("subscribedchannels") == null || mProp.getProperty("subscribedchannels").trim().length() < 1) && (firstSettingsBackupFile.isFile() || secondSettingsBackupFile.isFile())) {
+          throw new IOException();
+        }
+        else {
+          mLog.info("Using settings from file " + settingsFile.getAbsolutePath());  
+        }
       } catch (IOException evt) {
         
         if(firstSettingsBackupFile.isFile() || secondSettingsBackupFile.isFile()) {
@@ -194,7 +200,14 @@ public class Settings {
             if(firstSettingsBackupFile.isFile()) {
               try {
                 mProp.readFromFile(firstSettingsBackupFile);
-                mLog.info("Using settings from file " + firstSettingsBackupFile.getAbsolutePath());
+                
+                if((mProp.getProperty("subscribedchannels") == null || mProp.getProperty("subscribedchannels").trim().length() < 1) && secondSettingsBackupFile.isFile()) {
+                  loadSecondBackup = true;
+                }
+                else {                
+                  mLog.info("Using settings from file " + firstSettingsBackupFile.getAbsolutePath());
+                  loadSecondBackup = false;
+                }
               }catch(Exception e) {
                 loadSecondBackup = true;
               }
@@ -202,7 +215,8 @@ public class Settings {
             if(loadSecondBackup && secondSettingsBackupFile.isFile()) {
               try {
                 mProp.readFromFile(secondSettingsBackupFile);
-                mLog.info("Using settings from file " + secondSettingsBackupFile.getAbsolutePath());                
+                mLog.info("Using settings from file " + secondSettingsBackupFile.getAbsolutePath());
+                loadSecondBackup = false;
               }catch(Exception e) {
                 loadSecondBackup = true;
               }
