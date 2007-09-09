@@ -155,7 +155,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     }
     Iterator<ChannelGroup> it=mAvailableChannelGroupsSet.iterator();
     while (it.hasNext()) {
-      ((ChannelGroup)it.next()).setWorkingDirectory(dataDir);
+      (it.next()).setWorkingDirectory(dataDir);
     }
   }
 
@@ -170,7 +170,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   private ChannelGroup getChannelGroupById(String id) {
     Iterator<ChannelGroup> it=mAvailableChannelGroupsSet.iterator();
     while (it.hasNext()) {
-      ChannelGroup group=(ChannelGroup)it.next();
+      ChannelGroup group=it.next();
       if (group.getId().equalsIgnoreCase(id)) {
         return group;
       }
@@ -258,7 +258,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
       monitor.setValue(i++);
 
-      ChannelGroup group=(ChannelGroup)groupIt.next();
+      ChannelGroup group=groupIt.next();
       SummaryFile summaryFile = group.getSummary();
       if (summaryFile != null) {
         Date date = startDate;
@@ -267,7 +267,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
             String level = mSubscribedLevelArr[levelIdx].getId();
             Iterator<Channel> it=group.getChannels();
             while (it.hasNext()) {
-              Channel ch=(Channel)it.next();
+              Channel ch=it.next();
               addDownloadJob(dataBase, group.getMirror(), date, level, ch,
                       ch.getCountry(), receiveDH, updateDH, summaryFile);
             }
@@ -430,7 +430,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   Channel getChannel(String country, String channelName) {
     Iterator<ChannelGroup> it = mAvailableChannelGroupsSet.iterator();
     while (it.hasNext()) {
-      Channel[] chArr = getAvailableChannels((ChannelGroup)it.next());
+      Channel[] chArr = getAvailableChannels(it.next());
       for (int i=0; i<chArr.length; i++) {
         if (chArr[i].getCountry().equals(country) && chArr[i].getId().equals(channelName)) {
           return chArr[i];
@@ -456,6 +456,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
    */
   public void removeGroup(ChannelGroup group) {
     mAvailableChannelGroupsSet.remove(group);
+    group.deleteAllFiles();
   }
 
   /**
