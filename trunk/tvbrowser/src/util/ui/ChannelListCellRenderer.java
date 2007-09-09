@@ -32,6 +32,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 
 import devplugin.Channel;
+import tvbrowser.core.DublicateChannelNameCounter;
 
 /**
  * A ListCellRenderer for Channel-Lists
@@ -39,34 +40,60 @@ import devplugin.Channel;
 public class ChannelListCellRenderer extends DefaultListCellRenderer {
   /** Internal reused ChannelLabel */
   private ChannelLabel mChannel;
+
+  private DublicateChannelNameCounter mChannelCounter;
+
   private boolean mChannelIconsVisible;
-  private boolean mAllIsVisible;
+  private boolean mTextVisible;
   private boolean mDefaultValues;
+  private boolean mShowCountry;
 
   public ChannelListCellRenderer() {
     this(true,false,false);
   }
 
   public ChannelListCellRenderer(boolean channelIconsVisible) {
-    this(channelIconsVisible,false,false);
+    this(channelIconsVisible,false, false, false);
   }
 
-  public ChannelListCellRenderer(boolean channelIconsVisible, boolean allIsVisible) {
-    this(channelIconsVisible,allIsVisible,false);
+  public ChannelListCellRenderer(boolean channelIconsVisible, boolean textVisible) {
+    this(channelIconsVisible,textVisible,false);
   }
   
-  public ChannelListCellRenderer(boolean channelIconsVisible, boolean allIsVisible, boolean defaultValues) {
+  public ChannelListCellRenderer(boolean channelIconsVisible, boolean textVisible, boolean defaultValues) {
+    this(channelIconsVisible,textVisible,defaultValues, false);
+  }
+
+  /**
+   * Create Renderer
+   *
+   * @param channelIconsVisible show Channel Icon?
+   * @param textVisible show Channel Name?
+   * @param defaultValues show Default Channel Name?
+   * @param showCountry show Country Information if channel name is a dublicate?
+   * @since 2.6
+   */
+  public ChannelListCellRenderer(boolean channelIconsVisible, boolean textVisible, boolean defaultValues, boolean showCountry) {
     mChannelIconsVisible = channelIconsVisible;
-    mAllIsVisible = allIsVisible;
+    mTextVisible = textVisible;
     mDefaultValues = defaultValues;
+    mShowCountry = showCountry;
   }
-  
+
   public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
       boolean cellHasFocus) {
     JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
     if (mChannel == null) {
-      mChannel = new ChannelLabel(mChannelIconsVisible,mAllIsVisible,mDefaultValues);
+      mChannel = new ChannelLabel(mChannelIconsVisible, mTextVisible,mDefaultValues);
+    }
+
+    if (mShowCountry) {
+      if (mChannelCounter == null) {
+        mChannelCounter = new DublicateChannelNameCounter(list.getModel());
+      }
+
+      mChannel.setShowCountry(mChannelCounter.isDublicate((Channel)value));
     }
 
     if (value instanceof Channel) {

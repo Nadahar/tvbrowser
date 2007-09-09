@@ -47,6 +47,7 @@ public class ChannelLabel extends JLabel {
   private boolean mChannelIconsVisible;
   private boolean mTextIsVisible;
   private boolean mShowDefaultValues;
+  private boolean mShowCountry;
   
   /**
    * Creates the ChannelLabel
@@ -73,6 +74,7 @@ public class ChannelLabel extends JLabel {
   public ChannelLabel(boolean channelIconsVisible, boolean textIsVisible) {
     this(channelIconsVisible,textIsVisible,false);
   }
+
   /**
    * Creates the ChanelLabel
    * 
@@ -81,10 +83,26 @@ public class ChannelLabel extends JLabel {
    * @param showDefaultValues Show the default channel icon and name.
    */
   public ChannelLabel(boolean channelIconsVisible, boolean textIsVisible, boolean showDefaultValues) {
+    this(channelIconsVisible, textIsVisible, showDefaultValues, false);
+  }
+
+  /**
+   * Creates the ChanelLabel
+   *
+   * @param channelIconsVisible Should the Icon be visible
+   * @param textIsVisible Should Text be visible ?
+   * @param showDefaultValues Show the default channel icon and name.
+   * @param showCountry Show infomation about the country
+   *
+   * @since 2.6
+   */
+  public ChannelLabel(boolean channelIconsVisible, boolean textIsVisible, boolean showDefaultValues, boolean showCountry) {
     mChannelIconsVisible = channelIconsVisible;
     mTextIsVisible = textIsVisible;
     mShowDefaultValues = showDefaultValues;
+    mShowCountry = showCountry;
   }
+
 
   /**
    * Creates the ChannelLabel
@@ -134,7 +152,15 @@ public class ChannelLabel extends JLabel {
       setIcon(mShowDefaultValues ? ch.getDefaultIcon() : ch.getIcon());
     }
     if (mTextIsVisible) {
-      setText(mShowDefaultValues ? ch.getDefaultName() : ch.getName());
+      StringBuilder text = new StringBuilder(mShowDefaultValues ? ch.getDefaultName() : ch.getName());
+
+      if (mShowCountry) {
+        text.append(" (");
+        text.append(ch.getCountry());
+        text.append(")");
+      }
+
+      setText(text.toString());
     }
     setMinimumSize(new Dimension(42,22));
     setToolTipText(ch.getName());
@@ -189,5 +215,12 @@ public class ChannelLabel extends JLabel {
     return DEFAULT_ICON;
   }
 
-
+  /**
+   * Should the country be added to the channel name ?
+   * @param showCountry add country name to channel name ?
+   * @since 2.6
+   */
+  public void setShowCountry(boolean showCountry) {
+    mShowCountry = showCountry;
+  }
 }
