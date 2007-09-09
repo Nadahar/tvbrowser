@@ -18,14 +18,12 @@ public class DublicateChannelNameCounter {
   /**
    * Construct the Counter
    *
-   * @param model use channels in this List
+   * @param channels use channels in this List
    */
-  public DublicateChannelNameCounter(ListModel model) {
+  public DublicateChannelNameCounter(Channel[] channels) {
     mChannelnames = new Hashtable<String, Integer>();
 
-    for (int i = 0; i < model.getSize(); i++) {
-      Channel ch = (Channel) model.getElementAt(i);
-
+    for (Channel ch:channels) {
       Integer count = mChannelnames.get(ch.getName());
 
       if (count == null) {
