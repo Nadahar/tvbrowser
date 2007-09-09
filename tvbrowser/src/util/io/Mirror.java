@@ -210,10 +210,10 @@ public class Mirror {
     GZIPOutputStream gOut = new GZIPOutputStream(stream);
 
     PrintWriter writer = new PrintWriter(gOut);
-    for (int i = 0; i < mirrorArr.length; i++) {
-      writer.print(mirrorArr[i].getUrl());
+    for (Mirror mirror : mirrorArr) {
+      writer.print(mirror.getUrl());
       writer.print(";");
-      writer.println(String.valueOf(mirrorArr[i].getWeight()));
+      writer.println(String.valueOf(mirror.getWeight()));
     }
     writer.close();
 
@@ -262,18 +262,23 @@ public class Mirror {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
+    }
     final Mirror other = (Mirror) obj;
     if (mUrl == null) {
-      if (other.mUrl != null)
+      if (other.mUrl != null) {
         return false;
-    } else if (!mUrl.equals(other.mUrl))
+      }
+    } else if (!mUrl.equals(other.mUrl)) {
       return false;
+    }
     return true;
   }
   
@@ -297,10 +302,13 @@ public class Mirror {
         }
       }
 
-      if(serverDefindedMirros != null)
-        for(int i = 0; i < serverDefindedMirros.length; i++)
-          if(!mirrorList.contains(serverDefindedMirros[i]))
+      if(serverDefindedMirros != null) {
+        for(int i = 0; i < serverDefindedMirros.length; i++) {
+          if(!mirrorList.contains(serverDefindedMirros[i])) {
             mirrorList.add(serverDefindedMirros[i]);
+          }
+        }
+      }
 
       return mirrorList.toArray(new Mirror[mirrorList.size()]);
     } catch (Exception exc) {
@@ -322,10 +330,12 @@ public class Mirror {
    * @return Server-Domain 
    */
   private static String getServerBase(String url) {
-    if (url.startsWith("http://"))
+    if (url.startsWith("http://")) {
       url = url.substring(7);
-    if (url.indexOf('/') >= 0)
+    }
+    if (url.indexOf('/') >= 0) {
       url = url.substring(0, url.indexOf('/'));
+    }
     
     return url;
   }
@@ -336,9 +346,9 @@ public class Mirror {
     /* remove the old mirror from the mirrorlist */
     if (oldMirror != null) {
       ArrayList<Mirror> mirrors = new ArrayList<Mirror>();
-      for (int i = 0; i < mirrorArr.length; i++) {
-        if (oldMirror != mirrorArr[i]) {
-          mirrors.add(mirrorArr[i]);
+      for (Mirror mirror : mirrorArr) {
+        if (oldMirror != mirror) {
+          mirrors.add(mirror);
         }
       }
       mirrorArr = new Mirror[mirrors.size()];
@@ -347,8 +357,8 @@ public class Mirror {
 
     // Get the total weight
     int totalWeight = 0;
-    for (int i = 0; i < mirrorArr.length; i++) {
-      totalWeight += mirrorArr[i].getWeight();
+    for (Mirror mirror : mirrorArr) {
+      totalWeight += mirror.getWeight();
     }
 
     // Choose a weight
@@ -356,10 +366,9 @@ public class Mirror {
 
     // Find the chosen mirror
     int currWeight = 0;
-    for (int i = 0; i < mirrorArr.length; i++) {
-      currWeight += mirrorArr[i].getWeight();
+    for (Mirror mirror : mirrorArr) {
+      currWeight += mirror.getWeight();
       if (currWeight > chosenWeight) {
-        Mirror mirror = mirrorArr[i];
         // Check whether this is the old mirror or Mirror is Blocked
         if (((mirror == oldMirror) || BLOCKEDSERVERS.contains(getServerBase(mirror.getUrl()))) && (mirrorArr.length > 1)) {
           // We chose the old mirror -> chose another one
@@ -372,8 +381,8 @@ public class Mirror {
 
     // We didn't find a mirror? This should not happen -> throw exception
     StringBuffer buf = new StringBuffer();
-    for (int i = 0; i < oldMirrorArr.length; i++) {
-      buf.append(oldMirrorArr[i].getUrl()).append("\n");
+    for (Mirror mirror : oldMirrorArr) {
+      buf.append(mirror.getUrl()).append("\n");
     }
 
     throw new TvBrowserException(caller.getClass(), "error.2", "No mirror found\ntried following mirrors: ", name, buf.toString());
@@ -392,6 +401,7 @@ public class Mirror {
    * @throws TvBrowserException Thrown if no up to date mirror was found or something went wrong. 
    */
   public static Mirror chooseUpToDateMirror(Mirror[] mirrorArr, ProgressMonitor monitor, String name, String id, Class caller, String additionalErrorMsg) throws TvBrowserException {
+    boolean isUpToDate = false;
     // Choose a random Mirror
     Mirror mirror = chooseMirror(mirrorArr, null, name, caller);
     if (monitor != null) {
@@ -401,6 +411,7 @@ public class Mirror {
     for (int i = 0; i < MAX_UP_TO_DATE_CHECKS; i++) {
       try {
         if (mirrorIsUpToDate(mirror, id)) {
+          isUpToDate = true;
           break;
         } else {
           // This one is not up to date -> choose another one
@@ -417,8 +428,9 @@ public class Mirror {
         BLOCKEDSERVERS.add(blockedServer);
         mLog.info("Server blocked : " + blockedServer);
         
-        if(mirrorArr.length == 1 && mirrorArr[0].equals(mirror))
+        if(mirrorArr.length == 1 && mirrorArr[0].equals(mirror)) {
           throw new TvBrowserException(caller, "noUpToDateServer", "The mirror {0} is out of date or down and no other mirror is available." + additionalErrorMsg, mirror.getUrl());
+        }
         
         // This one is not available -> choose another one
         Mirror oldMirror = mirror;
@@ -432,7 +444,7 @@ public class Mirror {
     }
 
     // Return the mirror
-    if(mirrorIsUpToDate(mirror, id)) {
+    if (isUpToDate) {
       return mirror;
     }
     else {
