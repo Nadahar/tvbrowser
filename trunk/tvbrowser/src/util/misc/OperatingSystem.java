@@ -51,6 +51,14 @@ public class OperatingSystem {
   }
   
   /**
+   * @return <code>True</code>, if the Operation System is Linux.
+   * @since 2.2.4/2.6
+   */
+  public static boolean isLinux() {
+    return Launch.getOs() == Launch.OS_LINUX;
+  }
+  
+  /**
    * @return true, if the Operating System is not Windows or MacOS
    */
   public static boolean isOther() {
