@@ -17,8 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * CVS information:
- *  $RCSfile$
- *   $Source$
  *     $Date$
  *   $Author$
  * $Revision$
@@ -31,26 +29,54 @@ import java.util.Locale;
 
 import tvbrowser.core.plugin.PluginProxyManager;
 import util.exc.TvBrowserException;
+import util.misc.OperatingSystem;
 import devplugin.PluginAccess;
 import devplugin.Version;
 
+/**
+ * Contains informations about a sofware update.
+ */
 public abstract class SoftwareUpdateItem {
 	
   private HashMap<String, String> mPropertyMap;
   private String mClassName;
   
+  /**
+   * Creates an instances of this class.
+   * 
+   * @param className The class name of the software to update.
+   */
   public SoftwareUpdateItem(String className) {
     mClassName = className;
     mPropertyMap = new HashMap<String, String>();
   }
   
+  /**
+   * Adds a property to this item.
+   * 
+   * @param key The key of the property.
+   * @param value The value for the key.
+   */
   public void addProperty(String key, String value) {
     mPropertyMap.put(key, value);  
   }
+  
+  /**
+   * Gets a property for the given key.
+   * 
+   * @param key The key to get the property for.
+   * @return The property for the key, or <code>null</code>
+   * if the key was not found.
+   */
   public String getProperty(String key) {
     return mPropertyMap.get(key);
   }
   
+  /**
+   * Gets the version of this update item
+   * 
+   * @return The version of this update item.
+   */
   public Version getVersion() {
     String v = getProperty("version");
     if (v==null) {
@@ -76,8 +102,43 @@ public abstract class SoftwareUpdateItem {
     return "true".equalsIgnoreCase(getProperty("stable"));
   }
   
+  /**
+   * Gets if this is an only update item.
+   * 
+   * @return <code>True</code> if this is an
+   * only update item, <code>false</code> otherwise.
+   */
   public boolean isOnlyUpdate() {
     return "true".equalsIgnoreCase(getProperty("onlyUpdate"));
+  }
+  
+  /**
+   * Gets if the plugin supports the current OS.
+   * 
+   * @return <code>True</code> if the current OS
+   * is supported by the plugin, <code>false</code> otherwise.
+   * @since 2.2.4/2.6 
+   */
+  protected boolean isSupportingCurrentOs() {
+    String prop = getProperty("os.name");
+    
+    if(prop == null) {
+      return true;
+    }
+    else if(prop.indexOf("w") != -1 && OperatingSystem.isWindows()) {
+      return true;
+    }
+    else if(prop.indexOf("m") != -1 && OperatingSystem.isMacOs()) {
+      return true;
+    }
+    else if(prop.indexOf("l") != -1 && OperatingSystem.isLinux()) {
+      return true;
+    }
+    else if(prop.indexOf("o") != -1 && OperatingSystem.isOther()) {
+      return true;
+    }    
+    
+    return false;
   }
   
   private Version getVersion(String value) {
@@ -99,14 +160,30 @@ public abstract class SoftwareUpdateItem {
     return new Version(major, minor);    
   }
   
+  /**
+   * Gets the TV-Browser version that is required
+   * to support this update item.
+   * 
+   * @return The required TV-Browser version.
+   */
   public Version getRequiredVersion() {
     return getVersion(getProperty("requires"));
   }  
   
+  /**
+   * Gets the maximum supported TV-Browser version.
+   * 
+   * @return The maximum supported TV-Browser version.
+   */
   public Version getMaximumVersion() {
     return getVersion(getProperty("maximalVersion"));    
   }
   
+  /**
+   * Gets the name of this update item.
+   * 
+   * @return The name of this update item.
+   */
   public String getName() {
     String n = getProperty("name_de");
     
@@ -119,6 +196,11 @@ public abstract class SoftwareUpdateItem {
       return getClassName();
   }
   
+  /**
+   * Gets the description of this update item.
+   * 
+   * @return The description of this update item.
+   */
   public String getDescription() {
     String d = getProperty("description");
     
@@ -131,6 +213,11 @@ public abstract class SoftwareUpdateItem {
       return "";
   }
   
+  /**
+   * Gets the website of this update item.
+   * 
+   * @return The website of this update item.
+   */
   public String getWebsite() {
     String w = getProperty("website");
     
@@ -139,11 +226,26 @@ public abstract class SoftwareUpdateItem {
     
     return w;
   }
-   
+  
+  /**
+   * Gets the class name of this update item.
+   * 
+   * @return The class name of this update item.
+   */
 	public String getClassName() {
     return mClassName;   
   }
 	
+	/**
+	 * Downloads the file for this software update item.
+	 * 
+	 * @param downloadUrl A donwload URL to use, or <code>null</code>
+	 * if the default url should be used.
+	 * 
+	 * @return <code>True</code> if the download was successfull,
+   *         <code>false</code> otherwise.
+	 * @throws TvBrowserException
+	 */
 	public boolean download(String downloadUrl) throws TvBrowserException {	  
     String url = getProperty("downloadtype") == null || !getProperty("downloadtype").toLowerCase().equals("mirros") ? getProperty("download") : downloadUrl + "/" + getProperty("filename");
     if (url == null) {
@@ -154,6 +256,13 @@ public abstract class SoftwareUpdateItem {
     
   protected abstract boolean downloadFrom(String url) throws TvBrowserException;
 	
+  /**
+   * Gets the currently installed version of this software.
+   * 
+   * @return The installed version of this software or
+   * <code>null</code> if the software represented by this
+   * update item is not installed.
+   */
 	public Version getInstalledVersion() {
     for (PluginAccess plugin : PluginProxyManager.getInstance().getAllPlugins()) {
       if (plugin.getInfo().getName().equalsIgnoreCase(getName()) || plugin.getId().endsWith(getClassName())) {

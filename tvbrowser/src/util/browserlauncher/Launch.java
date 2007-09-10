@@ -65,7 +65,9 @@ public class Launch {
   public static int OS_WINDOWS = 1;
   /** Other OS JVM */
   public static int OS_OTHER = 2;
-
+  /** Linux OS JVM*/
+  public static int OS_LINUX = 3;
+  
   /**
    * Opens an URL in a web-browser
    * @param url Url to open
@@ -162,6 +164,8 @@ public class Launch {
       return OS_MAC;
     } else if (BrowserLauncher.getJvm() <= 7) {
       return OS_WINDOWS;
+    } else if (BrowserLauncher.getJvm() == 8) {
+      return OS_LINUX;
     }
     
     return OS_OTHER;

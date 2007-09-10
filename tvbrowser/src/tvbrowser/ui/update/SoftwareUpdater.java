@@ -45,9 +45,19 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import devplugin.Version;
 
+/**
+ * Loads software update information.
+ */
 public class SoftwareUpdater {
 	private SoftwareUpdateItem[] mSoftwareUpdateItems;
-	
+
+	/**
+	 * Creates an instance of this class.
+	 * 
+	 * @param url The url to download the informations from.
+	 * @param onlyUpdates If only updates and not new items should be accepted.
+	 * @throws IOException
+	 */
 	public SoftwareUpdater(URL url, boolean onlyUpdates) throws IOException {
 		URLConnection con=url.openConnection();
 		
@@ -112,7 +122,8 @@ public class SoftwareUpdater {
       Version maximum = item.getMaximumVersion();
       if ((required!=null && TVBrowser.VERSION.compareTo(required)<0) ||
           (maximum != null && TVBrowser.VERSION.compareTo(maximum)>0) ||
-          !item.getProperty("filename").toLowerCase().endsWith(".jar")) {
+          !item.getProperty("filename").toLowerCase().endsWith(".jar") ||
+          !item.isSupportingCurrentOs()) {
         it.remove();
         continue;
       }
@@ -142,8 +153,9 @@ public class SoftwareUpdater {
         continue;
       }
       
-      if(item.isOnlyUpdate() && installedPlugin == null && service == null)
+      if(item.isOnlyUpdate() && installedPlugin == null && service == null) {
         it.remove();
+      }
     }
     
     Object[]objs=updateItems.toArray();
@@ -153,12 +165,14 @@ public class SoftwareUpdater {
     }
     return ui;
     
-  }
+  }	
 	
-	
-	
-	public SoftwareUpdateItem[] getAvailableSoftwareUpdateItems() {
-		
+	/**
+	 * Gets all available update items in an array.
+	 * 
+	 * @return All available update items in an array.
+	 */
+	public SoftwareUpdateItem[] getAvailableSoftwareUpdateItems() {		
 		return mSoftwareUpdateItems;
 	}
 }

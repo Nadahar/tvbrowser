@@ -1,10 +1,10 @@
 package util.browserlauncher;
 
-import java.io.BufferedReader;
+//import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+/*import java.io.InputStream;
+import java.io.InputStreamReader;*/
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -125,10 +125,10 @@ class BrowserLauncher {
     private static Integer kAnyTransactionID;
 
     /** The linkage object required for JDirect 3 on Mac OS X */
-    private static Object linkage;
+//  private static Object linkage;
     
     /** The framework to reference on Mac OS X 10.0.x */
-    private static final String JDirect_MacOSX = "/System/Library/Frameworks/Carbon.framework/Frameworks/HIToolbox.framework/HIToolbox";
+//  private static final String JDirect_MacOSX = "/System/Library/Frameworks/Carbon.framework/Frameworks/HIToolbox.framework/HIToolbox";
 
     /** JVM constant for MRJ 2.0 */
     private static final int MRJ_2_0 = 0;
@@ -151,6 +151,9 @@ class BrowserLauncher {
     /** JVM constant for any Windows 9x JVM */
     private static final int WINDOWS_9x = 7;
 
+    /** JVM constant for any Linux JVM*/
+    private static final int LINUX = 8;
+    
     /** JVM constant for any other platform */
     private static final int OTHER = -1;
 
@@ -248,6 +251,8 @@ class BrowserLauncher {
             } else {
                 jvm = WINDOWS_NT;
             }
+        } else if (osName.startsWith("Linux")) {
+            jvm = LINUX;
         } else {
             jvm = OTHER;
         }
@@ -302,7 +307,7 @@ class BrowserLauncher {
                 try {
                     Class linker = Class.forName("com.apple.mrj.jdirect.Linker");
                     Constructor constructor = linker.getConstructor(new Class[]{ Class.class });
-                    linkage = constructor.newInstance(new Object[] { BrowserLauncher.class });
+                    constructor.newInstance(new Object[] { BrowserLauncher.class });
                 } catch (ClassNotFoundException cnfe) {
                     errorMessage = cnfe.getMessage();
                     return false;
@@ -322,11 +327,11 @@ class BrowserLauncher {
                 break;
             case MRJ_3_1:
             case MRJ_COCOA:
-                String className;
+                //String className;
                 if (jvm == MRJ_3_1) {
-                    className = "com.apple.mrj.MRJFileUtils";
+                  //  className = "com.apple.mrj.MRJFileUtils";
                 } else {
-                    className = "com.apple.eio.FileManager";
+                  //  className = "com.apple.eio.FileManager";
                 }
                 try {
                     mrjFileUtilsClass = Class.forName("com.apple.mrj.MRJFileUtils");
@@ -634,7 +639,7 @@ class BrowserLauncher {
      * @return The value of the BROWSER environment variable, or null if the variable does
      *         not exist or can't be read.
      */
-    private static String getEnvironmentBrowser() {
+ /*   private static String getEnvironmentBrowser() {
         String browser = null;
         try {
             String[] echoParams = { "/bin/sh", "-c", "echo $BROWSER" };
@@ -647,7 +652,7 @@ class BrowserLauncher {
             // If anything goes wrong, we'll return null.
         }
         return browser;
-    }
+    }*/
 
     /**
      * Returns the JVM
