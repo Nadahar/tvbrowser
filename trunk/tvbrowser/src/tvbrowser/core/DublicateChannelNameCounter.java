@@ -40,6 +40,7 @@ public class DublicateChannelNameCounter {
    * @return true, if name is a dublicate
    */
   public boolean isDublicate(Channel channel) {
-    return mChannelnames.get(channel.getName()) != 0;
+    Integer count = mChannelnames.get(channel.getName());
+    return (count != null) && (count != 0);
   }
 }
