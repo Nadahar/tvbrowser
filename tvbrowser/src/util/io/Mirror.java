@@ -385,7 +385,7 @@ public class Mirror {
       buf.append(mirror.getUrl()).append("\n");
     }
 
-    throw new TvBrowserException(caller.getClass(), "error.2", "No mirror found\ntried following mirrors: ", name, buf.toString());
+    throw new TvBrowserException(caller, "error.2", "No mirror found\ntried following mirrors: ", name, buf.toString());
   }
   
   /**

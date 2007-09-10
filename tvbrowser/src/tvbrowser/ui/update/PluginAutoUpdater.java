@@ -78,7 +78,7 @@ public class PluginAutoUpdater {
     File file = new File(new File(Settings.getUserSettingsDirName()), PLUGIN_UPDATES_FILENAME.substring(0,PLUGIN_UPDATES_FILENAME.indexOf(".")) + "_" + Mirror.MIRROR_LIST_FILE_NAME);    
     
     try {
-      return Mirror.chooseUpToDateMirror(Mirror.readMirrorListFromFile(file),null,PLUGIN_UPDATES_FILENAME, "plugins", PluginAutoUpdater.class, " Please inform the TV-Browser team.");
+      return Mirror.chooseUpToDateMirror(Mirror.readMirrorListFromFile(file),null,PLUGIN_UPDATES_FILENAME, "plugins", PluginAutoUpdater.class, mLocalizer.msg("error.additional"," Please inform the TV-Browser team."));
     } catch (Exception exc) {
       try {
         if(DEFAULT_PLUGINS_UPDATE_MIRRORS.length > 0) {
@@ -87,7 +87,7 @@ public class PluginAutoUpdater {
           for(int i = 0; i < DEFAULT_PLUGINS_UPDATE_MIRRORS.length; i++)
             mirr[i] = new Mirror(DEFAULT_PLUGINS_UPDATE_MIRRORS[i]);
           
-          return Mirror.chooseUpToDateMirror(mirr,null,PLUGIN_UPDATES_FILENAME, "plugins", PluginAutoUpdater.class, " Please inform the TV-Browser team.");
+          return Mirror.chooseUpToDateMirror(mirr,null,PLUGIN_UPDATES_FILENAME, "plugins", PluginAutoUpdater.class, mLocalizer.msg("error.additional"," Please inform the TV-Browser team."));
         }
         else
           throw exc;
