@@ -286,7 +286,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     });
 
     msg = mLocalizer.msg("sortCount", "Sort favorites by number of programs");
-    icon = FavoritesPlugin.getInstance().getIconFromTheme("actions", "sort-list", 22);
+    icon = FavoritesPlugin.getInstance().getIconFromTheme("actions", "sort-list-numerical", 22);
     final String titleCount = msg;
     mSortCountBt = UiUtilities.createToolBarButton(msg, icon);
     mSortCountBt.addActionListener(new ActionListener() {
