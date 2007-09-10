@@ -439,7 +439,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
              mFiltersMenu.addSeparator();
          }
        }
-       mViewFilterBarMI.setEnabled(!mMainFrame.isShowAllFilterActivated());
+       mViewFilterBarMI.setEnabled(!mMainFrame.isDefaultFilterActivated());
    }
    
    protected abstract void setPluginMenuItems(JMenuItem[] items);
