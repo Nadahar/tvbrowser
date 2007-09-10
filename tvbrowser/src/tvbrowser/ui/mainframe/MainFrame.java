@@ -783,6 +783,19 @@ public class MainFrame extends JFrame implements DateListener {
   public boolean isShowAllFilterActivated() {
     return (mProgramTableModel == null) || (mProgramTableModel.getProgramFilter() instanceof ShowAllFilter);
   }
+  
+  /**
+   * check if the default filter is active
+   * @return true, if the default filter is active
+   * @since 2.6
+   */
+  public boolean isDefaultFilterActivated() {
+    if (mProgramTableModel == null) {
+      return true;
+    }
+    ProgramFilter filter = mProgramTableModel.getProgramFilter(); 
+    return (Settings.propDefaultFilter.getString().equals(filter.getClass().getName() + "###" + filter.getName())); 
+  }
 
   public void setProgramFilter(ProgramFilter filter) {
     boolean isDefaultFilter = filter.equals(FilterManagerImpl.getInstance().getDefaultFilter());
