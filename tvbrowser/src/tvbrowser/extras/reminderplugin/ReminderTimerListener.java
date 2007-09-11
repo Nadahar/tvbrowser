@@ -132,7 +132,15 @@ public class ReminderTimerListener {
       try {        
         if(mSettings.getProperty("autoCloseBehaviour","onEnd").equals("onEnd")) {
           int endTime = p.getStartTime() + p.getLength();
-          int currentTime = p.getDate().equals(Date.getCurrentDate()) ? IOUtilities.getMinutesAfterMidnight() : 1440 + IOUtilities.getMinutesAfterMidnight();
+          
+          int currentTime = IOUtilities.getMinutesAfterMidnight();
+          int dateDiff = p.getDate().compareTo(Date.getCurrentDate()); 
+          if (dateDiff == -1) { // program started yesterday
+            currentTime += 1440;
+          }
+          else if (dateDiff == 1) { // program starts the next day
+            endTime += 1440;
+          }
           autoCloseReminderTime = (endTime - currentTime) * 60;
         }
         else if(mSettings.getProperty("autoCloseBehaviour","onTime").equals("onTime")){
