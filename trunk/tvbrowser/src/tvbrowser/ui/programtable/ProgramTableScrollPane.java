@@ -26,6 +26,8 @@
 package tvbrowser.ui.programtable;
 
 import java.awt.Point;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
@@ -37,6 +39,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.background.BackgroundPainter;
 import devplugin.Channel;
@@ -66,8 +69,8 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
     setWheelScrollingEnabled(false);
     addMouseWheelListener(this);
 
-    getHorizontalScrollBar().setUnitIncrement(30);
-    getVerticalScrollBar().setUnitIncrement(30);
+    getHorizontalScrollBar().setUnitIncrement(Settings.propColumnWidth.getInt());
+    getVerticalScrollBar().setUnitIncrement(50);
 
     getHorizontalScrollBar().setFocusable(false);
     getVerticalScrollBar().setFocusable(false);
@@ -94,6 +97,20 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
     handleBackgroundPainterChanged(mProgramTable.getBackgroundPainter());
     
     getViewport().addChangeListener(this);
+    addComponentListener(new ComponentListener() {
+
+      public void componentHidden(ComponentEvent e) {
+      }
+
+      public void componentMoved(ComponentEvent e) {
+      }
+
+      public void componentResized(ComponentEvent e) {
+        updateScrollBars();
+      }
+
+      public void componentShown(ComponentEvent e) {
+      }});
   }
 
   public ProgramTable getProgramTable() {
@@ -130,6 +147,8 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
   public void setColumnWidth(int columnWidth) {
     mProgramTable.setColumnWidth(columnWidth);
     mChannelPanel.setColumnWidth(columnWidth);
+    getHorizontalScrollBar().setUnitIncrement(columnWidth);
+    updateScrollBars();
   }
 
   public void scrollToChannel(Channel channel) {
@@ -290,7 +309,17 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
       Calendar cal = Calendar.getInstance();
       int hour = cal.get(Calendar.HOUR_OF_DAY);
       scrollToTime(hour * 60);
+      updateScrollBars();
     }
+  }
+
+  private void updateScrollBars() {
+    int columnWidth = mProgramTable.getColumnWidth();
+    int fullColumns = getViewport().getWidth() / columnWidth;
+    if (fullColumns < 1) {
+      fullColumns = 1;
+    }
+    getHorizontalScrollBar().setBlockIncrement(fullColumns * columnWidth);
   }
 }
 
