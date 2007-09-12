@@ -1,5 +1,210 @@
 Changelog TVBrowser
 
+2.6alpha1
+=========
+
+-Bugs
+ * 1675290 Empty tree nodes show plus sign
+ * 1679319 "Show program" does not work with active filter
+ * 1679347 background images not wide enough
+ * 1680394 search is not cancelled
+ * 1680400 have ellipses in menu items with following dialog
+ * 1683000 keyboard scrolling in table changes time
+ * 1687800 Rating icons not shown after first update
+ * 1691553 countries in channel selection have no sort order
+ * 1698232 typos found while browsing src
+ * 1698236 typo in tvdatakit
+ * 1701844 MarkerChooser shows plugins without mark icons
+ * 1711528 subscription of large channel list is ultra slow
+ * 1715212 Warning: Column out of bounds
+ * 1726376 layout issues with "Anspruchsvolle Elemente"
+ * 1726734 Exception with very small column width
+ * 1729308 font size changes lead to overlapping text
+ * 1734320 anti-aliasing not used in program panel
+ * 1734487 close button overlaps remind again box
+ * 1737458 copyright notice overlaps
+ * 1741987 marker chooser dialog shows non marking plugins
+ * 1742415 plugin update dialog not at upper left position
+ * 1747233 wrong error for creating favorite from yesterdays program
+ * 1747484 Avoid overwriting of channel list
+ * 1747962 display error when using quotes in plugin update dialog
+ * 1748229 menu items missing in Sendungsinfo-Betrachter
+ * 1749832 Reminders at 0:00 don't close automatically
+ * 1749892 Mass filter config not localized
+ * 1754304 design preview not applied to top group in program info
+ * 1754313 "configure" button in program info hidden after preview
+ * 1756608 FindAsYouType wrongly opens with "No result found"
+ * 1757725 Filtered view with time filters not updated
+ * 1760539 rating plugin: program not found due to upper/lower case
+ * 1762449 no execute access for tvbrowser-transportable.sh
+ * 1764891 multiple program info not handled correctly
+ * 1765125 changing day start or end does not update program table
+ * 1770609 programs already running at day start are not shown
+ * 1774866 exception with undefined program in reminder settings
+ * 1777811 program table dragging broken in 2 steps
+ * 1779828 plugin info shows empty plugin license
+ * 1780799 program info icon text not translated
+ * 1781481 tvrater icons to small leading to layout issues
+ * 1782929 Data mirror is used even if it is out of date
+ * 1783795 NPE in BBC plugin
+ * 1785704 Time range of program table can be less than 24h
+ * 1786050 NPE on updating running programs
+ * 1787231 installation error with non admin user
+
+-Features
+ * 1482904 Favorites-System: Sort by Program-Count
+ * 1482905 Favorites-System: Group Favorites
+ * 1669410 Settings of favorites can not be reached from dialog
+ * 1672681 Show end time in reminder dialog
+ * 1677685 have channel selection in listview
+ * 1680392 set focus to search field after search options dialog
+ * 1683002 change font size quickly
+ * 1683011 have long date format in menu
+ * 1683012 channel icon in main menu
+ * 1683949 change program info when selecting episodes of favorite
+ * 1687331 Dreambox-Connector
+ * 1687742 warning on data update with no channels defined
+ * 1687752 have a link from plugin description to wiki
+ * 1688688 have link from settings to wiki
+ * 1691557 lazy loading of icons for swedb
+ * 1691563 only load activated plugins
+ * 1698749 have progress monitor for search
+ * 1706842 have more abilities to leave full screen mode
+ * 1711469 indicate plugins with new version available
+ * 1713302 activate auto update from update dialog
+ * 1713830 Search for repetitions with a special dialog
+ * 1714427 don't open google login dialog if password is stored
+ * 1717878 Add methods for writing/reading ImageIcons to IOUtilities
+ * 1718142 WebPlugin: Search for actors, director and script
+ * 1719088 show wait cursor on opening dialogs
+ * 1719482 ctrl-f shortcut for text search in program info 
+ * 1720385 tabular actors list
+ * 1720507 configure channel filter from channel list
+ * 1721682 remember last settings tab
+ * 1722149 Markerplugin: Extended marking using filters
+ * 1723684 sort marker plugin tree independent of capitalization
+ * 1724474 Show number of programs in send to dialog
+ * 1725479 Better picture settings
+ * 1725997 Remove "general settings" tabs
+ * 1726443 dont stretch filtered programs up to next filtered program
+ * 1726572 easily change column width
+ * 1726743 preselect printer queue if it contains items
+ * 1727825 have shortcuts for view parts
+ * 1729815 have view configuration in channel list context menu
+ * 1730980 speaker beep as reminder action 
+ * 1732346 context menu to remove toolbar button
+ * 1734190 have wikipedia links in program info
+ * 1737500 have actor list in favorite creation
+ * 1739867 enable/disable filter bar in view menu
+ * 1741096 Plugins should be able to get the priority colors
+ * 1741169 have "add to favorite" for existing favorites
+ * 1741283 ask for data update on selecting day without data
+ * 1741322 create artificial plugin tree from marked programs
+ * 1744959 add ability to disable context menu parts for program info
+ * 1746035 Additional Fields (Episode Number, Total Episodes, Season, Producer, Cutter, Movies, Series, New)
+ * 1747990 group icons in program table if panel is not high enough
+ * 1749194 Use move cursor for program table
+ * 1749990 Renamed CapturePlugin
+ * 1753735 show number of minutes program is already running
+ * 1756612 automatically invoke text search again on next program info
+ * 1762809 remove dependencies on sun internal classes
+ * 1764268 have optional weekly plugin update check
+ * 1766377 Show favorite name in reminder dialog
+ * 1767896 hide empty favorite branches in plugin tree
+ * 1768194 have context menu for all tree nodes of simple marker plugin
+ * 1768405 Select more than one target for sending to other plugin
+ * 1770225 i18nplugin: check argument usage and punctuation
+ * 1770338 Have separator in plugins context menus
+ * 1770619 sort plugin tree root nodes alphabetically
+ * 1772329 avoid updating favorites if no tv data was downloaded
+ * 1772676 other color for old programs in plugin view
+ * 1772967 better parse RadioTimes data for more detailed info
+ * 1773036 RadioTimes: avoid database updates if program did not change
+ * 1773063 tvrater: use expired reminders to rate old programs
+ * 1773963 have plugin manager access in data service
+ * 1773984 update status line after radiotimes data download
+ * 1774603 have limitation of channel time
+ * 1774898 Add -fullscreen
+ * 1775564 dont use exceptions for control flow decisions
+ * 1777618 show changes after refreshing channel list 
+ * 1777723 show "loading channels" only for channel settings tab
+ * 1779464 be able to activate plugins directly in plugin list
+ * 1779581 Add ability to get the all filter in FilterManager
+ * 1780218 open TV-Browser at current time
+ * 1780311 PluginTree: programs in red that didn't fit current filter
+ * 1780312 User selectable default filter
+ * 1781418 reduce cpu load on mouse over effect of program table
+ * 1781619 change label for tvrater context menu if no rating available
+ * 1782605 Check date via NTP if no new data can be downloaded
+ * 1784434 support new program fields in SweDB
+ * 1784639 Change settings structure
+ * 1786996 Init program info dialog after startup
+ * 1787297 have icons in plugin tree
+ * 1787967 Export only not expired programs from Favorites and MarkList
+ * 1788028 PluginTree: Ability to set icon of tree nodes for plugins
+ * 1788029 PluginTree: Abilty to set receive target for a node
+ * 1788976 Shorten toolbar button labels for core plugins
+ * 1790611 Add new Google Calendar Features
+ * 1790695 webplugin: open program URL
+ * 1790897 remove settings root node
+ * 1791219 Add country to channel name
+ * 1791460 Add OS selection for plugin updates
+ * 1792930 scroll channel wise horizontally
+
+2.5.3beta3/2.5.3
+================
+
+-Bugs
+ * 1746022 program table not updated if current filter is edited
+ * 1746824 Marking problems on channels with different time zones
+ * 1749152 Channels cannot be removed in Favorites channel restriction
+ * 1749540 No connection timeout for SweDB and Radio Times data service
+ 
+2.5.3beta2
+==========
+
+-Bugs
+ * 1698591 #separator is too small to remove/modify it under MacOS
+ * 1734355 no programs found if invalid exclusion in favorite
+ * 1734692 Desc. and copyright for picture not readable
+ * 1738621 NPE for LocaleSettingsTab
+ * 1738622 Size of TV-Browser is not restored correct on startup
+ * 1738735 NPE in WebPlugin 
+
+2.5.3beta1
+==========
+
+-Bugs
+ * 1634797 ConcurrentModificationException in ReminderTimerListener
+ * 1680401 printing: plugin icons can't be removed
+ * 1686450 SendToPluginDlg layout sometime destroyed
+ * 1687340 TV-Browser transportable TV data import sometime didn't work
+ * 1687346 Automatically data update runs every TV-Browser start
+ * 1687497 layout restored wrongly switching plugin tree on or off
+ * 1687537 Update of filtered view to slow
+ * 1688332 Copy of TV data can result in an endless recursion
+ * 1688716 No remind again field for 24 hour reminders
+ * 1692658 Google Calendar Export TimeZone
+ * 1701139 NPE on TV data deletion
+ * 1705404 NewsPlugin shows old news as new news
+ * 1705442 Scrolling to now didn't work sometime
+ * 1707649 Reminder not selectable as ReceiveIf
+ * 1717929 Comparing of channel not correct
+ * 1722169 Boolean search missing parts
+ * 1722642 Prevent windows showing outside of screen
+ * 1723586 CapturePlugin: Id is maybe not unique on import
+
+-Features
+ * 1680402 show end time in first line of program info
+ * 1687342 Change marking system
+ * 1689233 Automatically create backup of settings.prop
+ * 1689235 Save most setting on changing
+ * 1689237 Allow plugins to decide when the settings should be saved
+ * 1689238 Add undo to deleting in SimpleMarkerPlugin
+ * 1689348 Add undo to deleting in Reminder
+ * 1689437 Use mark priority in tray for important programs
+ * 1703131 remove unneeded borders
+ 
 2.5.1beta3/2.5.1
 ================
 
