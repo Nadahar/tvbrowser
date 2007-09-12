@@ -24,12 +24,15 @@
  * $Revision$
  */
 
-package primarydatamanager.primarydataservice.util; 
+package primarydatamanager.primarydataservice.util;
 
 
 import java.io.FilterReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 
 public class RtfFilterReader extends FilterReader {
@@ -37,13 +40,11 @@ public class RtfFilterReader extends FilterReader {
   private int depth=0;
 	private static int DEPTH=2;  
   private int minDepth;
+  private ArrayList<Integer> buffer = new ArrayList<Integer>();
+  private int bufferCursor = 0;
 	
   public RtfFilterReader (Reader in) {
     this(in, DEPTH);
-    //super(in);
-    //depth=0;
-    //minDepth = DEPTH;
-    //this(in, DEPTH);
   }
 
   public RtfFilterReader (Reader in, int depth) {
@@ -57,7 +58,6 @@ public class RtfFilterReader extends FilterReader {
   }
  
   public int read(char[] cbuf, int off, int len) throws IOException {
-    
     int in=read();
     if (in==-1) {
       return -1;
@@ -74,29 +74,16 @@ public class RtfFilterReader extends FilterReader {
     
   }
   
-  private int ignoreGroup(int ch) throws IOException {
-    
-    while (ch!=-1 && ch!='{') {
-      ch=in.read();
-      
-    }
-    int depth=1;
-    while (ch!=-1 && depth>0) {
-          ch=in.read();
-          if (ch=='{') {
-            depth++;
-          }
-          else if (ch=='}') {
-            depth--;
-          }
-    }
-    return ch;
-    
-  }
-
-
-
   public int read() throws IOException {
+    if (buffer.size() > 0) {
+      int value = buffer.get(bufferCursor);
+      bufferCursor++;
+      if (bufferCursor == buffer.size()) {
+        buffer = new ArrayList<Integer>();
+      }
+      return value;
+    }
+
 
     int ch = getNext();
 
@@ -163,15 +150,16 @@ public class RtfFilterReader extends FilterReader {
 
 	
   private int getNext() throws IOException {
-
     int ch;
-		do {
+    String command = "";
+    do {
       do {
-        ch=in.read();
-        
+        ch = in.read();
+        command = command + (char) ch;
         // Ignore newlines and carage returns
         while ((ch == '\n') || (ch == '\r')) {
-          ch = in.read();
+          ch = (char) in.read();
+          command = command + (char) ch;
         }
         
         if (ch=='{') {
@@ -180,14 +168,25 @@ public class RtfFilterReader extends FilterReader {
 			  else if (ch=='}') {
 				  depth--;
 			  }		
-		  }while (ch=='{' || ch=='}');
-	//	}while (depth!=DEPTH && ch!=-1);
-    }while (depth!=minDepth && ch!=-1);
-		return ch;		
-	}
-	
-  public int readOLD() throws IOException {
+		  } while (ch=='{' || ch=='}');
+    }while (depth!=minDepth && ch !=-1);
+
+    String str = parseCommand(command);
+    if (str != null && str.length() > 0) {
+      for (byte b:str.getBytes()) {
+        buffer.add((int)b);
+      }
+      bufferCursor = 0;
+    }
     
+    return ch;
+	}
+
+  public String parseCommand(String command) {
+    return null;
+  }
+
+  public int readOLD() throws IOException {
     int ch=in.read();
   
     for(;;) {
