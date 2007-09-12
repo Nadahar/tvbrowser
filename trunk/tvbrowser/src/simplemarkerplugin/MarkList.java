@@ -248,9 +248,10 @@ public class MarkList extends Vector<Program> {
    */
   public void handleAction(PluginTreeNode node) {
     Program[] programs = node.getPrograms();
-
-    for (Program p : programs)
+    
+    for (Program p : programs) {
       remove(p);
+    }
     
     SimpleMarkerPlugin.getInstance().revalidate(programs);
 
@@ -267,25 +268,27 @@ public class MarkList extends Vector<Program> {
    */
   public void createNodes(PluginTreeNode root, boolean update) {
     mRootNode = root;
-    boolean addRootAction = root.size() == 0;
     root.removeAllChildren();
 
     PluginTreeNode programNode = new PluginTreeNode(Localizer.getLocalization(Localizer.I18N_PROGRAMS));
     PluginTreeNode dateNode = new PluginTreeNode(SimpleMarkerPlugin.mLocalizer
         .msg("days", "Days"));
     programNode.setGroupingByDateEnabled(false);
-
+        
+    updateTable();
+    Hashtable<String, LinkedList<Program>> sortedPrograms = getSortedPrograms();
+    
     GroupUnmarkAction menu = getUnmarkAction(dateNode);
-    dateNode.addAction(menu);
-    menu = getUnmarkAction(dateNode);
-    programNode.addAction(menu);
-    if (addRootAction) {
+    
+    if(!sortedPrograms.isEmpty()) {
+      dateNode.addAction(menu);
+      menu = getUnmarkAction(dateNode);
+      programNode.addAction(menu);
+      
+      root.removeAllActions();
       menu = getUnmarkAction(dateNode);
       root.addAction(menu);
     }
-    
-    updateTable();
-    Hashtable<String, LinkedList<Program>> sortedPrograms = getSortedPrograms();
 
     for (String name : sortedPrograms.keySet()) {
       LinkedList<Program> progList = sortedPrograms.get(name);
@@ -321,8 +324,9 @@ public class MarkList extends Vector<Program> {
     root.add(programNode);
     root.add(dateNode);
 
-    if (update)
+    if (update) {
       root.update();
+    }
   }
 
   private GroupUnmarkAction getUnmarkAction(PluginTreeNode dateNode) {
