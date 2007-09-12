@@ -394,12 +394,36 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
         }
       });
       
-      scrollPane = new JScrollPane(mFavoritesList);      
+      mFavoritesList.addKeyListener(new KeyAdapter() {
+        public void keyPressed(KeyEvent e) {
+          if (e.getKeyCode() == KeyEvent.VK_RIGHT && e.isControlDown()) {
+            mProgramList.grabFocus();
+            if (mProgramList.getSelectedIndex() == -1) {
+              mProgramList.setSelectedIndex(0);
+            }
+          }
+        }
+      });
+      
+      scrollPane = new JScrollPane(mFavoritesList);
     }
     else {
       mFavoriteTree = new FavoriteTree();
       mFavoriteTree.addTreeSelectionListener(this);
+
+      mFavoriteTree.addKeyListener(new KeyAdapter() {
+        public void keyPressed(KeyEvent e) {
+          if (e.getKeyCode() == KeyEvent.VK_RIGHT && e.isControlDown()) {
+            mProgramList.grabFocus();
+            if (mProgramList.getSelectedIndex() == -1) {
+              mProgramList.setSelectedIndex(0);
+            }
+          }
+        }
+      });
+
       scrollPane = new JScrollPane(mFavoriteTree);
+
       mFavoritesList = null;
     }
       
@@ -409,6 +433,25 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     mProgramListModel = new DefaultListModel();
     mProgramList = new ProgramList(mProgramListModel, new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), ProgramPanel.X_AXIS);
     mProgramList.addMouseListeners(null);
+
+    mProgramList.addKeyListener(new KeyAdapter() {
+        public void keyPressed(KeyEvent e) {
+          if (e.getKeyCode() == KeyEvent.VK_LEFT && e.isControlDown()) {
+            if (mFavoritesList != null) {
+              mFavoritesList.grabFocus();
+              if (mFavoritesList.getSelectedIndex() == -1) {
+                mFavoritesList.setSelectedIndex(0);
+              }
+            } else if (mFavoriteTree != null) {
+              mFavoriteTree.grabFocus();
+              if (mFavoriteTree.getSelectionCount() == 0) {
+                mFavoriteTree.setSelectionRow(0);
+              }
+            }
+          }
+        }
+      });
+
     mProgramScrollPane = new JScrollPane(mProgramList);
     mProgramScrollPane.setBorder(null);
     mSplitPane.setRightComponent(mProgramScrollPane);
