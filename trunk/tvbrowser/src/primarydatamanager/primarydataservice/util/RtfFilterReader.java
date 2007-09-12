@@ -31,49 +31,47 @@ import java.io.FilterReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 
 
 public class RtfFilterReader extends FilterReader {
-  
-  private int depth=0;
-	private static int DEPTH=2;  
+
+  private int depth = 0;
+  private static int DEPTH = 2;
   private int minDepth;
   private ArrayList<Integer> buffer = new ArrayList<Integer>();
   private int bufferCursor = 0;
-	
-  public RtfFilterReader (Reader in) {
+
+  public RtfFilterReader(Reader in) {
     this(in, DEPTH);
   }
 
-  public RtfFilterReader (Reader in, int depth) {
+  public RtfFilterReader(Reader in, int depth) {
     super(in);
-    this.depth=0;
-    minDepth=depth;
+    this.depth = 0;
+    minDepth = depth;
   }
 
-  public boolean markSupported () {
+  public boolean markSupported() {
     return false;
   }
- 
+
   public int read(char[] cbuf, int off, int len) throws IOException {
-    int in=read();
-    if (in==-1) {
+    int in = read();
+    if (in == -1) {
       return -1;
     }
-    cbuf[off]=(char)in;
-    for (int i=1;i<len;i++) {
-      in=read();
-      cbuf[off+i]=(char)in;
-      if (in==-1) {
+    cbuf[off] = (char) in;
+    for (int i = 1; i < len; i++) {
+      in = read();
+      cbuf[off + i] = (char) in;
+      if (in == -1) {
         return i;
-      }      
+      }
     }
     return len;
-    
+
   }
-  
+
   public int read() throws IOException {
     if (buffer.size() > 0) {
       int value = buffer.get(bufferCursor);
@@ -121,7 +119,7 @@ public class RtfFilterReader extends FilterReader {
         } while (ch != -1 && ch != ' ');
 
         String specChar = buf.toString();
-        
+
         int translated = translateSpecChar(specChar);
         if (translated != 0) {
           return translated;
@@ -144,75 +142,74 @@ public class RtfFilterReader extends FilterReader {
     if (specChar.equals("line")) {
       return '\n';
     }
-    
+
     return 0;
   }
 
-	
   private int getNext() throws IOException {
     int ch;
-    String command = "";
+    StringBuilder command = new StringBuilder();
     do {
       do {
         ch = in.read();
-        command = command + (char) ch;
+        command.append((char) ch);
+
         // Ignore newlines and carage returns
         while ((ch == '\n') || (ch == '\r')) {
-          ch = (char) in.read();
-          command = command + (char) ch;
+          ch = in.read();
+          command.append((char) ch);
         }
-        
-        if (ch=='{') {
-				  depth++;
-        }
-			  else if (ch=='}') {
-				  depth--;
-			  }		
-		  } while (ch=='{' || ch=='}');
-    }while (depth!=minDepth && ch !=-1);
 
-    String str = parseCommand(command);
+        if (ch == '{') {
+          depth++;
+        } else if (ch == '}') {
+          depth--;
+        }
+      } while (ch == '{' || ch == '}');
+    } while (depth != minDepth && ch != -1);
+
+    String str = parseCommand(command.toString());
     if (str != null && str.length() > 0) {
-      for (byte b:str.getBytes()) {
-        buffer.add((int)b);
+      for (byte b : str.getBytes()) {
+        buffer.add((int) b);
       }
       bufferCursor = 0;
     }
-    
+
     return ch;
-	}
+  }
 
   public String parseCommand(String command) {
     return null;
   }
 
   public int readOLD() throws IOException {
-    int ch=in.read();
-  
-    for(;;) {
-      if (ch=='{' || ch=='}') {
-        ch=in.read();
+    int ch = in.read();
+
+    for (; ;) {
+      if (ch == '{' || ch == '}') {
+        ch = in.read();
         continue;
       }
-			
-			while (ch=='\\') {
-				ch=in.read();
 
-				while (ch!=-1 && ch!=' ' && ch!='{') {
-					ch=in.read();
-				}
-				if (ch=='{') {
-					ch=in.read();
-				}
-			}
-				
-			return ch;
-				
+      while (ch == '\\') {
+        ch = in.read();
+
+        while (ch != -1 && ch != ' ' && ch != '{') {
+          ch = in.read();
+        }
+        if (ch == '{') {
+          ch = in.read();
+        }
+      }
+
+      return ch;
+
     }
-    
+
   }
-  
-  public boolean ready () {
+
+  public boolean ready() {
     return true;
   }
 
