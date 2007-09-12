@@ -445,7 +445,7 @@ public class TVBrowser {
               int startOfDay = Settings.propProgramTableStartOfDay.getInt();
               int endOfDay = Settings.propProgramTableEndOfDay.getInt();
               
-              if(endOfDay - startOfDay < 0) {
+              if(endOfDay - startOfDay < -1) {
                 Settings.propProgramTableEndOfDay.setInt(startOfDay);
                 
                 JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(mainFrame),mLocalizer.msg("timeInfoText","The time range of the program table was corrected because the defined day was shorter than 24 hours.\n\nIf the program table should show less than 24h use a time filter for that. That time filter can be selected\nto be the default filter by selecting it in the filter settings and pressing on the button 'Default'."),mLocalizer.msg("timeInfoTitle","Times corrected"), JOptionPane.INFORMATION_MESSAGE);

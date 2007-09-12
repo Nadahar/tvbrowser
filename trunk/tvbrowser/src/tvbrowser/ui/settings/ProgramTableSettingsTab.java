@@ -493,7 +493,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
         cal.setTime(d);        
         startTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
         
-        if(endTime - startTime < 0) {
+        if(endTime - startTime < -1) {
           mEndOfDayTimeSp.setValue(d);
         }
       }
@@ -504,7 +504,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
         cal.setTime((Date)mStartOfDayTimeSp.getValue());        
         startTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
         
-        if(endTime - startTime < 0) {
+        if(endTime - startTime < -1) {
           mStartOfDayTimeSp.setValue(d);
         }
       }
