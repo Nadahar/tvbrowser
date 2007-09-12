@@ -50,7 +50,7 @@ public class PluginAutoUpdater {
   private static final String[] DEFAULT_PLUGINS_UPDATE_MIRRORS = {
     "http://tvbrowser.dyndns.tv",
     "http://hdtv-online.org/TVB",
-    "http://tvbrowser.poschi.net"
+    "http://www.tvbrowserserver.de/"
   };
   
   /**

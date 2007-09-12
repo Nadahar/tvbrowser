@@ -82,7 +82,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   private static final String[] DEFAULT_CHANNEL_GROUPS_MIRRORS = {
     "http://tvbrowser.dyndns.tv",
     "http://hdtv-online.org/TVB",
-    "http://tvbrowser.poschi.net"
+    "http://www.tvbrowserserver.de/"
   };
 
   private DownloadManager mDownloadManager;
