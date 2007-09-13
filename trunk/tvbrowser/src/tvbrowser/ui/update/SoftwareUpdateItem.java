@@ -83,19 +83,24 @@ public abstract class SoftwareUpdateItem {
       return null;
     }
     String[] s = v.split("\\.");
-    if (s.length!=2) {
+    if (s.length<2) {
       return null;
     }
-    int major, minor;
+    
+    int major, minor, subMinor = 0;
     boolean stable;
     try {
       major = Integer.parseInt(s[0]);
       minor = Integer.parseInt(s[1]);
+      
+      if(s.length == 3) {
+        subMinor = Integer.parseInt(s[2]);
+      }
     }catch(NumberFormatException e) {
       return null;
     }
     stable = "true".equalsIgnoreCase(getProperty("stable"));
-    return new Version(major, minor, stable, getProperty("version.name"));
+    return new Version(major, minor, subMinor, stable, getProperty("version.name"));
   }
   
   protected boolean isStable() {
