@@ -55,6 +55,8 @@ import java.util.Properties;
  * @author bodum
  */
 public class BlogThisPlugin extends Plugin {
+  private static final Version mVersion = new Version(2,60);
+  
     /** Translator */
     private static final Localizer mLocalizer = Localizer
             .getLocalizerFor(BlogThisPlugin.class);
@@ -110,7 +112,7 @@ public class BlogThisPlugin extends Plugin {
         String desc = mLocalizer.msg("description", "Creates a new Blog-Entry");
         String author = "Bodo Tasche";
         String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Blog_this!");
-        return new PluginInfo(name, desc, author, helpUrl, new Version(0, 2));
+        return new PluginInfo(name, desc, author, helpUrl, mVersion);
     }
 
     /*

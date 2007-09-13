@@ -60,6 +60,7 @@ import devplugin.Version;
  * @author bodo
  */
 public class ClipboardPlugin extends Plugin {
+  private static final Version mVersion = new Version(2,60);
 
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ClipboardPlugin.class);
@@ -141,7 +142,7 @@ public class ClipboardPlugin extends Plugin {
     String author = "Bodo Tasche";
     String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Clipboard");
       
-    return new PluginInfo(name, desc, author, helpUrl, new Version(0, 40));
+    return new PluginInfo(name, desc, author, helpUrl, mVersion);
   }
 
  

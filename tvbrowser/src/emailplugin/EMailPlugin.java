@@ -54,6 +54,8 @@ import devplugin.Version;
  * @author bodum
  */
 public class EMailPlugin extends Plugin {
+  private static final Version mVersion = new Version(2,60);
+  
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(EMailPlugin.class);
 
@@ -95,7 +97,7 @@ public class EMailPlugin extends Plugin {
     String author = "Bodo Tasche";
     String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Send_e-mail");
     
-    return new PluginInfo(name, desc, author, helpUrl, new Version(0, 6));
+    return new PluginInfo(name, desc, author, helpUrl, mVersion);
   }
 
   /*

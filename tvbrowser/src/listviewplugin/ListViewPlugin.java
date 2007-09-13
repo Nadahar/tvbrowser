@@ -49,6 +49,7 @@ import devplugin.Version;
  * @author bodo
  */
 public class ListViewPlugin extends Plugin {
+  private static final Version mVersion = new Version(2,60);
 
     public static final int PROGRAMTABLEWIDTH = 200;
   
@@ -89,7 +90,7 @@ public class ListViewPlugin extends Plugin {
         String desc = mLocalizer.msg("description", "Shows a List of current running Programs");
         String author = "Bodo Tasche";
         String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/View_List");
-        return new PluginInfo(name, desc, author, helpUrl, new Version(1, 44));
+        return new PluginInfo(name, desc, author, helpUrl, mVersion);
     }
 
     /**

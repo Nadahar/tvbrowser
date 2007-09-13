@@ -68,7 +68,8 @@ import devplugin.Version;
  * @author René Mach
  */
 public class SimpleMarkerPlugin extends Plugin implements ActionListener {
-
+  private static final Version mVersion = new Version(2,60);
+  
   /** The localizer for this class. */
   protected static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SimpleMarkerPlugin.class);
 
@@ -109,8 +110,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Marker_Plugin");
     String name = mLocalizer.msg("name","Marker plugin");
     String description = mLocalizer.msg("description", "A simple marker plugin (formerly Just_Mark)");
-    return (new PluginInfo(name, description, "René Mach", helpUrl, new Version(
-        1, 45, true, "1.4.5"), "GPL"));
+    return (new PluginInfo(name, description, "René Mach", helpUrl, mVersion, "GPL"));
   }
 
   public void loadSettings(Properties prop) {

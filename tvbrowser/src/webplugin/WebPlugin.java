@@ -60,6 +60,7 @@ import devplugin.Version;
  * A User can configure his favorite Search-Engines and search for the given Movie
  */
 public class WebPlugin extends Plugin {
+  private static final Version mVersion = new Version(2,60);
 
   private static java.util.logging.Logger mLog = java.util.logging.Logger
   .getLogger(WebPlugin.class.getName());
@@ -126,7 +127,7 @@ public class WebPlugin extends Plugin {
   public PluginInfo getInfo() {
     return new PluginInfo("WebPlugin",
         mLocalizer.msg("desc","Searches on the Web for a Program"),
-        "Bodo Tasche",mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/WebPlugin"),new Version(1, 2));
+        "Bodo Tasche",mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/WebPlugin"),mVersion);
   }
 
   /**

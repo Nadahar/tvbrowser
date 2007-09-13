@@ -42,6 +42,7 @@ import devplugin.Version;
  * @author Til Schneider, www.murfman.de
  */
 public class ShowviewPlugin extends Plugin {
+  private static final Version mVersion = new Version(2,60);
 
   /** The localizer for this class. */  
   private static final util.ui.Localizer mLocalizer
@@ -89,7 +90,7 @@ public class ShowviewPlugin extends Plugin {
     String author = "Til Schneider, www.murfman.de" ;
     String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Showview_number_calculator");
     
-    return new PluginInfo(name, desc, author, helpUrl, new Version(1, 0));
+    return new PluginInfo(name, desc, author, helpUrl, mVersion);
   }
 
 }

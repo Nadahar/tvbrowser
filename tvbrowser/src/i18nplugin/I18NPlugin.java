@@ -53,6 +53,8 @@ import java.util.Properties;
  * @author bodum
  */
 public class I18NPlugin extends Plugin {
+  private static final Version mVersion = new Version(2,60);
+  
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(I18NPlugin.class);
 
@@ -84,7 +86,7 @@ public class I18NPlugin extends Plugin {
     String name = mLocalizer.msg("pluginName", "I18NPlugin");
     String desc = mLocalizer.msg("description", "Tool for Translators");
     String author = "Bodo Tasche";
-    return new PluginInfo(name, desc, author, new Version(0, 2));
+    return new PluginInfo(name, desc, author, mVersion);
   }
 
   @Override
