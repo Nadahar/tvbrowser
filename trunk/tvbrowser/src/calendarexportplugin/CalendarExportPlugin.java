@@ -54,6 +54,8 @@ import java.util.Properties;
  * @author bodo
  */
 public class CalendarExportPlugin extends Plugin {
+  private static final Version mVersion = new Version(2,60);
+  
     /**
      * Translator
      */
@@ -157,7 +159,7 @@ public class CalendarExportPlugin extends Plugin {
         String author = "Bodo Tasche, Udo Weigelt";
         String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Calendar_Export");
         
-        return new PluginInfo(name, desc, author, helpUrl, new Version(0, 8));
+        return new PluginInfo(name, desc, author, helpUrl, mVersion);
     }
 
     /*

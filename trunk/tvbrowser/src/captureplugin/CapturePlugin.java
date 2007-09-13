@@ -73,7 +73,8 @@ import java.util.Vector;
  * @author Andreas Hessel, Bodo Tasche
  */
 public class CapturePlugin extends devplugin.Plugin {
-
+  private static final Version mVersion = new Version(2,60);
+  
     /**
      * Translator
      */
@@ -172,7 +173,7 @@ public class CapturePlugin extends devplugin.Plugin {
         String author = "Bodo Tasche, Andreas Hessel";
         String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Capture_Plugin");
 
-        return new PluginInfo(name, desc, author, helpUrl, new Version(2, 14));
+        return new PluginInfo(name, desc, author, helpUrl, mVersion);
     }
 
     /**

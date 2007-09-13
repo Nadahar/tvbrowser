@@ -42,6 +42,8 @@ import devplugin.Version;
  * @author bodum
  */
 public class GrowlPlugin extends Plugin {
+  private static final Version mVersion = new Version(2,60);
+  
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(GrowlPlugin.class);
   /** The Growl-Container */
@@ -76,7 +78,7 @@ public class GrowlPlugin extends Plugin {
       String desc = mLocalizer.msg("description",
               "Sends all received Programs to Growl.");
       String author = "Bodo Tasche";
-      return new PluginInfo(name, desc, author, new Version(0, 1));
+      return new PluginInfo(name, desc, author, mVersion);
   }
 
   /*

@@ -75,6 +75,7 @@ import devplugin.Version;
 
 
 public class PrintPlugin extends Plugin {
+  private static final Version mVersion = new Version(2,60);
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer
@@ -107,7 +108,7 @@ public class PrintPlugin extends Plugin {
     String author = "Martin Oberhauser (martin@tvbrowser.org)";
     String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Print_program");
       
-    return new PluginInfo(name, desc, author, helpUrl, new Version(2,12));
+    return new PluginInfo(name, desc, author, helpUrl, mVersion);
   }
 
   public void onActivation() {

@@ -56,6 +56,7 @@ import devplugin.Version;
  * @author Til Schneider, www.murfman.de
  */
 public class NewsPlugin extends Plugin {
+  private static final Version mVersion = new Version(2,60);
 
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -132,7 +133,7 @@ public class NewsPlugin extends Plugin {
     String author = "Til Schneider, www.murfman.de";
     String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/News");
     
-    return new PluginInfo(name, desc, author, helpUrl, new Version(1, 7));
+    return new PluginInfo(name, desc, author, helpUrl, mVersion);
   }
 
   /**

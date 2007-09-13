@@ -63,6 +63,7 @@ import java.util.Properties;
  * @author Bodo Tasche
  */
 public class TVRaterPlugin extends devplugin.Plugin {
+  private static final Version mVersion = new Version(2,60);
     
     public final static int MINLENGTH = 15;
     
@@ -128,7 +129,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
         String author = "Bodo Tasche";
         String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/TV_Rater");
         
-        return new PluginInfo(name, desc, author, helpUrl, new Version(1, 01));
+        return new PluginInfo(name, desc, author, helpUrl, mVersion);
     }
 
     /*
