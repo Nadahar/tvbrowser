@@ -32,76 +32,180 @@
 
 package devplugin;
 
+/**
+ * A class for the Version value off
+ * TV-Browser and it's plugins.
+ */
 public final class Version implements Comparable {
 
-  private int major, minor;
-  private boolean stable;
-  private String name;
+  private int mMajor, mMinor, mSubMinor;
+  private boolean mIsStable;
+  private String mName;
 
+  /**
+   * Creates an instance of this class.
+   * 
+   * @param major The major version (the first number).
+   * @param minor The minor version (used for the second and third number).
+   */
   public Version(int major, int minor) {
-    this.major=major;
-    this.minor=minor;
-    name=null;
-    stable=true;
+    this(major, minor, 0, true, null);
   }
   
-  public Version(int major, int minor, boolean stable) {
-  	this(major,minor);
-  	this.stable=stable;
+  /**
+   * Creates an instance of this class.
+   * 
+   * @param major The major version (the first number).
+   * @param minor The minor version (used for the second and third number).
+   * @param isStable If the version is stable.
+   */
+  public Version(int major, int minor, boolean isStable) {
+    this(major, minor, 0, isStable, null);
   }
   
-  public Version(int major, int minor, boolean stable, String name) {
-  	this(major, minor, stable);
-  	this.name=name;
+  /**
+   * Creates an instance of this class.
+   * 
+   * @param major The major version (the first number).
+   * @param minor The minor version (used for the second and third number).
+   * @param isStable If the version is stable.
+   * @param name The name String of this verison, use <code>null</code>
+   *             to let the name be created from the version numbers.
+   */
+  public Version(int major, int minor, boolean isStable, String name) {
+    this(major, minor, 0, isStable, name);
+  }
+
+  /**
+   * Creates an instance of this class.
+   * 
+   * @param major The major version (the first number).
+   * @param minor The minor version (used for the second and third number).
+   * @param subMinor The sub minor version (the 4th number).
+   * 
+   * @since 2.2.4/2.6
+   */
+  public Version(int major, int subMinor, int minor) {
+    this(major, minor, subMinor, true, null);
+  }
+
+  /**
+   * Creates an instance of this class.
+   * 
+   * @param major The major version (the first number).
+   * @param minor The minor version (used for the second and third number).
+   * @param subMinor The sub minor version (the 4th number).
+   * @param isStable If the version is stable.
+   * 
+   * @since 2.2.4/2.6
+   */
+  public Version(int major, int minor, int subMinor, boolean isStable) {
+    this(major, minor, subMinor, isStable, null);
+  }
+  
+  /**
+   * Creates an instance of this class.
+   * 
+   * @param major The major version (the first number).
+   * @param minor The minor version (used for the second and third number).
+   * @param subMinor The sub minor version (the 4th number).
+   * @param isStable If the version is stable.
+   * @param name The name String of this verison, use <code>null</code>
+   *             to let the name be created from the version numbers.
+   *             
+   * @since 2.2.4/2.6
+   */
+  public Version(int major, int minor, int subMinor, boolean isStable, String name) {
+    mMajor = major;
+    mMinor = minor;
+    mSubMinor = subMinor;
+    mIsStable = isStable;
+    mName = name;
   }
 
   public String toString() {
-  	if (name==null) {
-      return major+(minor<10?".0":".")+minor+(stable?"":"beta");
+  	if (mName==null) {
+      return mMajor + "." + mMinor/10 + "." + mMinor%10 + "." + mSubMinor + (mIsStable?"":"beta");
   	}
-  	return name;
+  	return mName;
   }
 
-
+  /**
+   * Gets if this version is stable.
+   * 
+   * @return <code>True</code> if the version is stable,
+   * <code>false</code> otherwise.
+   */
   public boolean isStable() {
-  	return stable;
+  	return mIsStable;
   }
   
-
-  public int getMajor() { return major; }
-  public int getMinor() { return minor; }
+  /**
+   * Gets the major version.
+   * 
+   * @return The major version (first number).
+   */
+  public int getMajor() {
+    return mMajor;
+  }
+  
+  /**
+   * Gets the minor version.
+   * 
+   * @return The minor version (seconds and third number).
+   */
+  public int getMinor() {
+    return mMinor;
+  }
+  
+  /**
+   * Gets the sub minor version
+   * 
+   * @return The sub minor version (4th number).
+   */
+  public int getSubMinor() {
+    return mSubMinor;
+  }
   
   public int compareTo(Object obj) throws ClassCastException {
   	Version v=(Version)obj;
   	
-  	if (major>v.major) {
+  	if (mMajor>v.mMajor) {
   		return 1;
-  	}else if (major<v.major) {
+  	}else if (mMajor<v.mMajor) {
   		return -1;  		
   	}else {  // major is equals
-  		if (minor>v.minor) {
+  		if (mMinor>v.mMinor) {
   			return 1;
-  		} else if (minor<v.minor) {
+  		} else if (mMinor<v.mMinor) {
   			return -1;
-  		}else {  // minor is equals
-  			if (stable && !v.stable) {
-  				return 1;
-  			}
-  			else if (!stable && v.stable){
-  				return -1;				
-  			}
-  			else {
-  				return 0;
-  			}
+  		}else {
+  		  if (mSubMinor>v.mSubMinor) {
+  		    return 1;
+  		  }
+  		  else if(mSubMinor>v.mSubMinor) {
+  		    return -1;
+  		  }
+  		  else {
+  		    // sub minor is equals
+    			if (mIsStable && !v.mIsStable) {
+    				return 1;
+    			}
+    			else if (!mIsStable && v.mIsStable){
+    				return -1;				
+    			}
+    			else {
+    				return 0;
+    			}
+  		  }
   		}   		
   	} 	
   }
   
-  
   public boolean equals(Object obj) {
     if (obj instanceof Version) {
       Version ver = (Version) obj;
-      return (major == ver.major) && (minor == ver.minor) && (stable == ver.stable);
+      return (mMajor == ver.mMajor) && (mMinor == ver.mMinor) && (mSubMinor == ver.mSubMinor) && (mIsStable == ver.mIsStable);
     } else {
       return false;
     }
