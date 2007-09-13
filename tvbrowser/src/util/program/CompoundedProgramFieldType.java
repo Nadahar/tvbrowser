@@ -34,12 +34,14 @@ import devplugin.ProgramFieldType;
 public class CompoundedProgramFieldType {
   /** The compounded field type for the episode formating */
   public static CompoundedProgramFieldType EPISODE_COMPOSITION =
-    new CompoundedProgramFieldType(-1, new ProgramFieldType[] {ProgramFieldType.EPISODE_NUMBER_TYPE,ProgramFieldType.EPISODE_TOTAL_NUMBER_TYPE,ProgramFieldType.SEASON_NUMBER_TYPE,ProgramFieldType.EPISODE_TYPE}, ProgramFieldType.EPISODE_TYPE.getLocalizedName(), "{0}/{1} - {2}, {3}");
+    new CompoundedProgramFieldType(-1, new ProgramFieldType[] {ProgramFieldType.EPISODE_NUMBER_TYPE,ProgramFieldType.EPISODE_TOTAL_NUMBER_TYPE,ProgramFieldType.SEASON_NUMBER_TYPE,ProgramFieldType.EPISODE_TYPE}, ProgramFieldType.EPISODE_TYPE.getLocalizedName(), new String[] {"/"," - ",","});
   
   private int mId;
   private ProgramFieldType[] mFieldTypes;
   private String mName;
   private String mFormatString;
+  
+  private String[] mPartSeparators;
   
   /**
    * Creates an instance of this extra type.
@@ -56,6 +58,25 @@ public class CompoundedProgramFieldType {
     mFieldTypes = fieldTypes;
     mName = name;
     mFormatString = formatString;
+    mPartSeparators = null;
+  }
+  
+  /**
+   * Creates an instance of this extra type.
+   *  
+   * @param id The id of the compounded field type. (has to be a negative value!)
+   * @param fieldTypes The field type that this type contains.
+   * @param name The name for this field type, or <code>null</code> if
+   * the name of the first entry in the field type array should be used. 
+   * @param partSeparators The separator string between the fields. If one field value
+   * ist empty the part separator isn't used between the empty field and the next one.
+   */
+  private CompoundedProgramFieldType(int id, ProgramFieldType[] fieldTypes, String name, String[] partSeparators) {
+    mId = id;
+    mFieldTypes = fieldTypes;
+    mName = name;
+    mFormatString = null;
+    mPartSeparators = partSeparators;
   }
   
   /**
@@ -66,33 +87,74 @@ public class CompoundedProgramFieldType {
    * @return The formated value.
    */
   public String getFormatedValueForProgram(Program prog) {
-    String value = mFormatString;
-    boolean found = false;
-    
-    for(int i = 0; i < mFieldTypes.length; i++) {
-      String formatedValue = "";
+    if(mFormatString != null) { 
+      String value = mFormatString;
+      boolean found = false;
       
-      if(mFieldTypes[i].getFormat() == ProgramFieldType.TEXT_FORMAT) {
-        formatedValue = prog.getTextField(mFieldTypes[i]);
-      }
-      else if(mFieldTypes[i].getFormat() == ProgramFieldType.INT_FORMAT) {
-        formatedValue = prog.getIntFieldAsString(mFieldTypes[i]);
-      }
-      else if(mFieldTypes[i].getFormat() == ProgramFieldType.TIME_FORMAT) {
-        formatedValue = prog.getTimeFieldAsString(mFieldTypes[i]);
+      for(int i = 0; i < mFieldTypes.length; i++) {
+        String formatedValue = "";
+        
+        if(mFieldTypes[i].getFormat() == ProgramFieldType.TEXT_FORMAT) {
+          formatedValue = prog.getTextField(mFieldTypes[i]);
+        }
+        else if(mFieldTypes[i].getFormat() == ProgramFieldType.INT_FORMAT) {
+          formatedValue = prog.getIntFieldAsString(mFieldTypes[i]);
+        }
+        else if(mFieldTypes[i].getFormat() == ProgramFieldType.TIME_FORMAT) {
+          formatedValue = prog.getTimeFieldAsString(mFieldTypes[i]);
+        }
+        
+        if(formatedValue == null) {
+          formatedValue = "";
+        }
+        else {
+          found = true;
+        }
+        
+        value = value.replace("{"+i+"}",formatedValue);
       }
       
-      if(formatedValue == null) {
-        formatedValue = "?";
-      }
-      else {
-        found = true;
+      return found ? value : null;
+    }
+    else if(mPartSeparators != null) {
+      StringBuffer value = new StringBuffer();
+      
+      String prevValue = "";
+      String currentValue = "";
+      
+      for(int i = 0; i < mFieldTypes.length; i++) {
+        if(mFieldTypes[i].getFormat() == ProgramFieldType.TEXT_FORMAT) {
+          currentValue = prog.getTextField(mFieldTypes[i]);
+        }
+        else if(mFieldTypes[i].getFormat() == ProgramFieldType.INT_FORMAT) {
+          currentValue = prog.getIntFieldAsString(mFieldTypes[i]);
+        }
+        else if(mFieldTypes[i].getFormat() == ProgramFieldType.TIME_FORMAT) {
+          currentValue = prog.getTimeFieldAsString(mFieldTypes[i]);
+        }
+
+        
+        if((prevValue != null || value.length() > 0) && currentValue != null) {
+          if(i == 0) {
+            value.append(currentValue);
+          }
+          else {
+            value.append(mPartSeparators[i-1]).append(currentValue);
+          }
+        }
+        else if(currentValue != null) {
+          value.append(currentValue);
+        }
+        
+        prevValue = currentValue;
       }
       
-      value = value.replace("{"+i+"}",formatedValue);
+      if(value.toString().trim().length() > 0) {
+        return value.toString();
+      }
     }
     
-    return found ? value : null;
+    return null;
   }
   
   /**
