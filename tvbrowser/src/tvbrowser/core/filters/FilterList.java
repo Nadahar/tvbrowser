@@ -26,6 +26,13 @@
 
 package tvbrowser.core.filters;
 
+import devplugin.PluginAccess;
+import devplugin.PluginsProgramFilter;
+import devplugin.ProgramFilter;
+import tvbrowser.core.Settings;
+import tvbrowser.core.plugin.PluginManagerImpl;
+import tvbrowser.ui.mainframe.searchfield.SearchFilter;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -36,309 +43,302 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-
-import tvbrowser.core.Settings;
-import tvbrowser.core.plugin.PluginManagerImpl;
-import tvbrowser.ui.mainframe.searchfield.SearchFilter;
-import devplugin.PluginAccess;
-import devplugin.PluginsProgramFilter;
-import devplugin.ProgramFilter;
 
 public class FilterList {
-  
+
   private static FilterList mInstance;
   private File mFilterDirectory;
   private ProgramFilter[] mFilterArr;
-  private final static String FILTER_INDEX="filter.index";
-  public static final String FILTER_DIRECTORY=Settings.getUserSettingsDirName()+"/filters";
+  private final static String FILTER_INDEX = "filter.index";
+  public static final String FILTER_DIRECTORY = Settings.getUserSettingsDirName() + "/filters";
 
 
   private static java.util.logging.Logger mLog
-      = java.util.logging.Logger.getLogger(FilterList.class.getName());
+          = java.util.logging.Logger.getLogger(FilterList.class.getName());
 
   private FilterList() {
-    create();      
+    create();
   }
-  
+
   public void create() {
-    mFilterDirectory=new File(tvbrowser.core.filters.FilterList.FILTER_DIRECTORY);
+    mFilterDirectory = new File(tvbrowser.core.filters.FilterList.FILTER_DIRECTORY);
     if (!mFilterDirectory.exists()) {
       mFilterDirectory.mkdirs();
-    } 
-    mFilterArr = createFilterList();     
+    }
+    mFilterArr = createFilterList();
   }
-  
+
   public static FilterList getInstance() {
     if (mInstance == null) {
       mInstance = new FilterList();
     }
     return mInstance;
   }
-  
+
   private ProgramFilter[] createFilterList() {
-    HashMap<String,ProgramFilter> filterList = new HashMap<String,ProgramFilter>();
-    
+    HashMap<String, ProgramFilter> filterList = new HashMap<String, ProgramFilter>();
+
     /* Add default filters. The user may not remove them. */
-    
-    ProgramFilter showAll = new ShowAllFilter(); 
+
+    ProgramFilter showAll = new ShowAllFilter();
     filterList.put(showAll.getName(), showAll);
-    ProgramFilter pluginFilter = new PluginFilter(); 
+    ProgramFilter pluginFilter = new PluginFilter();
     filterList.put(pluginFilter.getName(), pluginFilter);
-    ProgramFilter subtitleFilter = new SubtitleFilter();    
+    ProgramFilter subtitleFilter = new SubtitleFilter();
     filterList.put(subtitleFilter.getName(), subtitleFilter);
-    
+    ProgramFilter audioDescriptionFilter = new AudioDescriptionFilter();
+    filterList.put(audioDescriptionFilter.getName(), audioDescriptionFilter);
+
     /* Read the available filters from the file system and add them to the array */
-    if (mFilterDirectory==null) {
+    if (mFilterDirectory == null) {
       throw new NullPointerException("directory is null");
     }
-   
-   
+
+
     File[] fileList = getFilterFiles();
-    
-    
-    if (fileList!=null) {
-      for (int i=0;i<fileList.length;i++) {
-        UserFilter filter=null;
+
+
+    if (fileList != null) {
+      for (File file : fileList) {
+        UserFilter filter = null;
         try {
-          filter = new UserFilter(fileList[i]);
-        }catch(ParserException e) {
-          mLog.warning("error parsing filter from file "+fileList[i]+"; exception: "+e);
+          filter = new UserFilter(file);
+        } catch (ParserException e) {
+          mLog.warning("error parsing filter from file " + file + "; exception: " + e);
         }
-        if (filter!=null) {
+        if (filter != null) {
           filterList.put(filter.getName(), filter);
         }
       }
     }
-    
+
     PluginAccess[] plugins = PluginManagerImpl.getInstance().getActivatedPlugins();
-    
-    for(PluginAccess plugin : plugins) {
+
+    for (PluginAccess plugin : plugins) {
       PluginsProgramFilter[] filters = plugin.getAvailableFilter();
-      
-      if(filters != null)
-        for(PluginsProgramFilter filter : filters)
+
+      if (filters != null)
+        for (PluginsProgramFilter filter : filters)
           filterList.put(filter.getName(), filter);
     }
-    
+
     ArrayList<ProgramFilter> filterArr = new ArrayList<ProgramFilter>();
-    
+
     /* Sort the list*/
-    File inxFile=new File(mFilterDirectory,FILTER_INDEX);
-    BufferedReader inxIn=null;
+    File inxFile = new File(mFilterDirectory, FILTER_INDEX);
+    BufferedReader inxIn = null;
     try {
-      inxIn=new BufferedReader(new FileReader(inxFile));
-      int cnt=0;
-      String curFilterName=null;
-      curFilterName=inxIn.readLine();
-      while (curFilterName!=null){
+      inxIn = new BufferedReader(new FileReader(inxFile));
+      String curFilterName = inxIn.readLine();
+      while (curFilterName != null) {
         if (curFilterName.equals("[SEPARATOR]")) {
           filterArr.add(new SeparatorFilter());
         } else {
           ProgramFilter filter = filterList.get(curFilterName);
-          
+
           if (filter != null) {
             filterArr.add(filter);
             filterList.remove(curFilterName);
           }
         }
 
-        curFilterName=inxIn.readLine();
+        curFilterName = inxIn.readLine();
       }
-    }catch (FileNotFoundException e) {
+    } catch (FileNotFoundException e) {
       // ignore
-    }catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
-    }finally{
-      try{ if (inxIn!=null) inxIn.close();}catch(IOException e){};
-    }    
-    
-    
-    if (filterList.size() > 0) {
-      Iterator<ProgramFilter> it = filterList.values().iterator();
-      while (it.hasNext()) {
-        filterArr.add(it.next());
+    } finally {
+      try {
+        if (inxIn != null) inxIn.close();
+      }
+      catch (IOException e) {
+        // Empty
       }
     }
-    
-    return filterArr.toArray(new ProgramFilter[0]);
+
+
+    if (filterList.size() > 0) {
+      for (ProgramFilter programFilter : filterList.values()) {
+        filterArr.add(programFilter);
+      }
+    }
+
+    return filterArr.toArray(new ProgramFilter[filterArr.size()]);
   }
-  
+
   private File[] getFilterFiles() {
-    File[] fileList=mFilterDirectory.listFiles(new FileFilter() {
-          public boolean accept(File f) {
-            return f.getAbsolutePath().endsWith(".filter");
-          }            
-        });
-    return fileList;
+    return mFilterDirectory.listFiles(new FileFilter() {
+      public boolean accept(File f) {
+        return f.getAbsolutePath().endsWith(".filter");
+      }
+    });
   }
-  
+
   public ProgramFilter[] getFilterArr() {
     if (SearchFilter.getInstance().isActive()) {
-      ProgramFilter[] filter = new ProgramFilter[mFilterArr.length+1];
+      ProgramFilter[] filter = new ProgramFilter[mFilterArr.length + 1];
       System.arraycopy(mFilterArr, 0, filter, 0, mFilterArr.length);
       filter[mFilterArr.length] = SearchFilter.getInstance();
       return filter;
     }
-    return mFilterArr;    
+    return mFilterArr;
   }
-  
+
   public PluginsProgramFilter[] getPluginsProgramFiltersForPlugin(PluginAccess plugin) {
     ArrayList<PluginsProgramFilter> list = new ArrayList<PluginsProgramFilter>();
-    
-    for(ProgramFilter filter : mFilterArr) {
-      if(filter instanceof PluginsProgramFilter) {
-        if(((PluginsProgramFilter)filter).getPluginAccessOfFilter().equals(plugin))
-          list.add((PluginsProgramFilter)filter);
-      }
-    }
-    
-    return list.toArray(new PluginsProgramFilter[list.size()]);
-  }
-  
-  public UserFilter[] getUserFilterArr() {
-    ArrayList<ProgramFilter> filterList = new ArrayList<ProgramFilter>();
-    for (int i=0; i<mFilterArr.length; i++) {
-      if (mFilterArr[i] instanceof UserFilter) {
-        filterList.add(mFilterArr[i]);
+
+    for (ProgramFilter filter : mFilterArr) {
+      if (filter instanceof PluginsProgramFilter) {
+        if (((PluginsProgramFilter) filter).getPluginAccessOfFilter().equals(plugin))
+          list.add((PluginsProgramFilter) filter);
       }
     }
 
-    UserFilter[] result = new UserFilter[filterList.size()];
-    filterList.toArray(result);
-    return result;
+    return list.toArray(new PluginsProgramFilter[list.size()]);
+  }
+
+  public UserFilter[] getUserFilterArr() {
+    ArrayList<UserFilter> filterList = new ArrayList<UserFilter>();
+    for (ProgramFilter filter : mFilterArr) {
+      if (filter instanceof UserFilter) {
+        filterList.add((UserFilter) filter);
+      }
+    }
+
+    return filterList.toArray(new UserFilter[filterList.size()]);
   }
 
 
   public boolean containsFilter(String filterName) {
-    for (int i=0; i<mFilterArr.length;i++) {
-      if (mFilterArr[i].getName().equalsIgnoreCase(filterName)) {
+    for (ProgramFilter filter : mFilterArr) {
+      if (filter.getName().equalsIgnoreCase(filterName)) {
         return true;
       }
     }
     return false;
   }
-  
+
   public void setProgramFilterArr(ProgramFilter[] filterArr) {
     mFilterArr = filterArr;
   }
-  
+
   public void addProgramFilter(ProgramFilter filter) {
     ProgramFilter[] newFilterArr = new ProgramFilter[mFilterArr.length + 1];
-    
-    System.arraycopy(mFilterArr,0,newFilterArr,0,mFilterArr.length);
+
+    System.arraycopy(mFilterArr, 0, newFilterArr, 0, mFilterArr.length);
     newFilterArr[newFilterArr.length - 1] = filter;
-    
+
     mFilterArr = newFilterArr;
     store();
   }
-  
+
   public void remove(ProgramFilter filter) {
     ArrayList<ProgramFilter> filterList = new ArrayList<ProgramFilter>();
-    for (int i=0; i<mFilterArr.length; i++) {
-      if (!mFilterArr[i].equals(filter)) {
-        filterList.add(mFilterArr[i]);
+    for (ProgramFilter programFilter : mFilterArr) {
+      if (!programFilter.equals(filter)) {
+        filterList.add(programFilter);
       }
     }
     mFilterArr = filterList.toArray(new ProgramFilter[filterList.size()]);
     store();
   }
-  
-  public void store() {    
+
+  public void store() {
     /* delete all filters*/
-    File[] fileList=getFilterFiles();
+    File[] fileList = getFilterFiles();
     if (fileList != null) {
-      for (int i=0;i<fileList.length; i++) {
-        fileList[i].delete();
-      }
-    }
-    
-    for (int i=0;i<mFilterArr.length;i++) {
-      if (mFilterArr[i] instanceof UserFilter) {
-        ((UserFilter)mFilterArr[i]).store();   
+      for (File file : fileList) {
+        file.delete();
       }
     }
 
-    File inxFile=new File(mFilterDirectory,FILTER_INDEX);
-    BufferedWriter inxOut=null;
-    
+    for (ProgramFilter filter : mFilterArr) {
+      if (filter instanceof UserFilter) {
+        ((UserFilter) filter).store();
+      }
+    }
+
+    File inxFile = new File(mFilterDirectory, FILTER_INDEX);
+
     try {
-        inxOut = new BufferedWriter(new FileWriter(inxFile));
-        
-        for (int i = 0; i < mFilterArr.length; i++) {
-          inxOut.write(mFilterArr[i].getName()+ "\n");
-        }
-        inxOut.close();
+      BufferedWriter inxOut = new BufferedWriter(new FileWriter(inxFile));
+
+      for (ProgramFilter filter : mFilterArr) {
+        inxOut.write(filter.getName() + "\n");
+      }
+      inxOut.close();
     } catch (Exception e) {
-        
+      // Empty
     }
   }
 
   /**
    * Returns the Filter named "name"
+   *
    * @param name Name of Filter to return
    * @return Filter with Name "name" or null if not found
    */
   public ProgramFilter getFilterByName(String name) {
-     if (name == null) {
-         return null;
-     }
-     
-     for (int i = 0; i < mFilterArr.length; i++) {
-         if (mFilterArr[i].getName().equals(name)) {
-             return mFilterArr[i];
-         }
-     }
-      
-     return null;
+    if (name == null) {
+      return null;
+    }
+
+    for (ProgramFilter filter : mFilterArr) {
+      if (filter.getName().equals(name)) {
+        return filter;
+      }
+    }
+
+    return null;
   }
 
   /**
    * Gets the "ShowAll" filter
-   * 
+   *
    * @return The "ShowAll" filter
    * @since 2.6
    */
   protected ProgramFilter getAllFilter() {
     for (ProgramFilter filter : mFilterArr) {
       if (filter.getClass().getName().equals("tvbrowser.core.filters.ShowAllFilter")) {
-          return filter;
+        return filter;
       }
+    }
+
+    return new ShowAllFilter();
   }
-  
-  return new ShowAllFilter();    
-  }
-  
+
   /**
    * Returns the Default-Filter.
-   * 
+   *
    * @return the Default-Filter
    */
   protected ProgramFilter getDefaultFilter() {
     ProgramFilter allFilter = null;
-    
+
     String filterId = Settings.propDefaultFilter.getString();
     String filterName = null;
-    
-    if(filterId != null && !filterId.equals("")) {
+
+    if (filterId != null && !filterId.equals("")) {
       String[] filterValues = filterId.split("###");
       filterId = filterValues[0];
       filterName = filterValues[1];
     }
-    
-    for (int i = 0; i < mFilterArr.length; i++) {
-      if (mFilterArr[i].getClass().getName().equals("tvbrowser.core.filters.ShowAllFilter")) {
-        allFilter = mFilterArr[i];
-      }
-      else if(filterName != null && mFilterArr[i].getClass().getName().equals(filterId) && mFilterArr[i].getName().equals(filterName)) {
-        return mFilterArr[i];
+
+    for (ProgramFilter filter : mFilterArr) {
+      if (filter.getClass().getName().equals("tvbrowser.core.filters.ShowAllFilter")) {
+        allFilter = filter;
+      } else
+      if (filterName != null && filter.getClass().getName().equals(filterId) && filter.getName().equals(filterName)) {
+        return filter;
       }
     }
-    
-    if(allFilter != null) {
+
+    if (allFilter != null) {
       return allFilter;
     }
-    
+
     return new ShowAllFilter();
   }
 }
