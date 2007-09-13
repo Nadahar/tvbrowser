@@ -88,6 +88,9 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
   
   protected static final DataFlavor FAVORITE_FLAVOR = new DataFlavor(TreePath.class, "FavoriteNodeExport");
   
+  /**
+   * Creates an instance of this class.
+   */
   public FavoriteTree() {
     init();
   }
@@ -291,7 +294,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
           menu.add(item);
 
           item = new JMenuItem(mLocalizer.msg("sortCount", "Sort by number of programs"),
-              IconLoader.getInstance().getIconFromTheme("actions", "sort-list", 16));
+              IconLoader.getInstance().getIconFromTheme("actions", "sort-list-numerical", 16));
           final String titleCount = item.getText();
           item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
