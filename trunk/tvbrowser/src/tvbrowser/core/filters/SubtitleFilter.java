@@ -29,52 +29,52 @@ import devplugin.Program;
 import devplugin.ProgramFilter;
 
 /**
- * This Filter filters Movies that have a Subtitle for Handicaped Persons or are 
- * Original with Subtitle 
+ * This Filter filters Movies that have a Subtitle for Handicaped Persons or are
+ * Original with Subtitle
  */
 public class SubtitleFilter implements ProgramFilter {
-    /** Localizer */
-    private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SubtitleFilter.class);
+  /**
+   * Localizer
+   */
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SubtitleFilter.class);
 
-    /**
-     * Accept only Programs with Subtitle
-     * @param prog Program to check
-     * @return true if prog is subtitled
-     */
-    public boolean accept(devplugin.Program prog) {
-        int info = prog.getInfo();
-        if (info < 1) { return false; }
+  /**
+   * Accept only Programs with Subtitle
+   *
+   * @param prog Program to check
+   * @return true if prog is subtitled
+   */
+  public boolean accept(devplugin.Program prog) {
+    int info = prog.getInfo();
 
-        return (bitSet(info, Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED) || 
-                bitSet(info, Program.INFO_ORIGINAL_WITH_SUBTITLE));
-    }
+    return info >= 1 && (bitSet(info, Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED) ||
+            bitSet(info, Program.INFO_ORIGINAL_WITH_SUBTITLE));
 
-    /**
-     * Checks if bits are set
-     * @param num check in here
-     * @param pattern this pattern
-     * @return Pattern set?
-     */
-    private boolean bitSet(int num, int pattern) {
-        return (num & pattern) == pattern;
-    }    
+  }
 
-    public String getName() {
-        return toString();
-    }
+  /**
+   * Checks if bits are set
+   *
+   * @param num     check in here
+   * @param pattern this pattern
+   * @return Pattern set?
+   */
+  private boolean bitSet(int num, int pattern) {
+    return (num & pattern) == pattern;
+  }
 
-    /**
-     * Name of Filter
-     */
-    public String toString() {
-        return mLocalizer.msg("Subtitled", "Subtitled");
-    }
-    
-    public boolean equals(Object o) {
-      if(o instanceof ProgramFilter) {
-        return getClass().getName().equals(o.getClass().getName()) && getName().equals(((ProgramFilter)o).getName());
-      }
-      
-      return false;
-    }
+  public String getName() {
+    return toString();
+  }
+
+  /**
+   * Name of Filter
+   */
+  public String toString() {
+    return mLocalizer.msg("Subtitled", "Subtitled");
+  }
+
+  public boolean equals(Object o) {
+    return o instanceof ProgramFilter && getClass().getName().equals(o.getClass().getName()) && getName().equals(((ProgramFilter) o).getName());
+  }
 }
