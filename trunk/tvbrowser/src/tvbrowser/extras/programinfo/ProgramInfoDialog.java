@@ -84,7 +84,6 @@ import com.l2fprod.common.swing.JTaskPaneGroup;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Program;
-import devplugin.ProgramFieldType;
 import devplugin.SettingsItem;
 
 /**
@@ -378,6 +377,10 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
         mTextSearch.setText(mLocalizer.msg("closeSearch", "Close search bar"));
       }
     }
+  }
+  
+  protected static void recreateInstance() {
+    instance = new ProgramInfoDialog(instance.mActionsPane.getPreferredSize(), instance.mShowSettings);
   }
     
   protected void addPluginActions(boolean rebuild) {
