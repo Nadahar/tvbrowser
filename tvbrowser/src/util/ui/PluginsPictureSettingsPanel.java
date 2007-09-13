@@ -66,7 +66,7 @@ public class PluginsPictureSettingsPanel extends JPanel {
     CellConstraints cc = new CellConstraints();
     
     mGlobalSettings = new JRadioButton(mLocalizer.msg("globalSettings","Use default settings for plugins"), settings.getType() == PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE);
-    mPictureAndDescription = new JRadioButton(mLocalizer.msg("pictureAndDesc","Show picture and description (if available)"), settings.getType() == PluginPictureSettings.PICTURE_AND_DISCRIPTION_TYPE);
+    mPictureAndDescription = new JRadioButton(mLocalizer.msg("pictureAndDesc","Show picture and picture description (if available)"), settings.getType() == PluginPictureSettings.PICTURE_AND_DISCRIPTION_TYPE);
     mOnlyPictures = new JRadioButton(mLocalizer.msg("onlyPictures","Show only pictures (if available)"), settings.getType() == PluginPictureSettings.ONLY_PICTURE_TYPE);    
     
     ButtonGroup bg = new ButtonGroup();
