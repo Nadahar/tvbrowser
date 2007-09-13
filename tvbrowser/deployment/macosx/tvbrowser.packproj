@@ -500,6 +500,54 @@
 							<key>Split Forks</key>
 							<true/>
 						</dict>
+						<key>Plugins</key>
+						<dict>
+							<key>PluginsList</key>
+							<array>
+								<dict>
+									<key>Path</key>
+									<string>Introduction</string>
+									<key>Type</key>
+									<integer>0</integer>
+								</dict>
+								<dict>
+									<key>Path</key>
+									<string>ReadMe</string>
+									<key>Type</key>
+									<integer>0</integer>
+								</dict>
+								<dict>
+									<key>Path</key>
+									<string>License</string>
+									<key>Type</key>
+									<integer>0</integer>
+								</dict>
+								<dict>
+									<key>Path</key>
+									<string>Target</string>
+									<key>Type</key>
+									<integer>0</integer>
+								</dict>
+								<dict>
+									<key>Path</key>
+									<string>PackageSelection</string>
+									<key>Type</key>
+									<integer>0</integer>
+								</dict>
+								<dict>
+									<key>Path</key>
+									<string>Install</string>
+									<key>Type</key>
+									<integer>0</integer>
+								</dict>
+								<dict>
+									<key>Path</key>
+									<string>FinishUp</string>
+									<key>Type</key>
+									<integer>0</integer>
+								</dict>
+							</array>
+						</dict>
 						<key>Scripts</key>
 						<dict>
 							<key>Additional Resources</key>
@@ -593,8 +641,6 @@
 								<key>IFPkgFlagAuthorizationAction</key>
 								<integer>1</integer>
 								<key>IFPkgFlagFollowLinks</key>
-								<false/>
-								<key>IFPkgFlagInstallFat</key>
 								<false/>
 								<key>IFPkgFlagIsRequired</key>
 								<true/>
@@ -973,6 +1019,54 @@
 							<key>Split Forks</key>
 							<true/>
 						</dict>
+						<key>Plugins</key>
+						<dict>
+							<key>PluginsList</key>
+							<array>
+								<dict>
+									<key>Path</key>
+									<string>Introduction</string>
+									<key>Type</key>
+									<integer>0</integer>
+								</dict>
+								<dict>
+									<key>Path</key>
+									<string>ReadMe</string>
+									<key>Type</key>
+									<integer>0</integer>
+								</dict>
+								<dict>
+									<key>Path</key>
+									<string>License</string>
+									<key>Type</key>
+									<integer>0</integer>
+								</dict>
+								<dict>
+									<key>Path</key>
+									<string>Target</string>
+									<key>Type</key>
+									<integer>0</integer>
+								</dict>
+								<dict>
+									<key>Path</key>
+									<string>PackageSelection</string>
+									<key>Type</key>
+									<integer>0</integer>
+								</dict>
+								<dict>
+									<key>Path</key>
+									<string>Install</string>
+									<key>Type</key>
+									<integer>0</integer>
+								</dict>
+								<dict>
+									<key>Path</key>
+									<string>FinishUp</string>
+									<key>Type</key>
+									<integer>0</integer>
+								</dict>
+							</array>
+						</dict>
 						<key>Scripts</key>
 						<dict>
 							<key>Additional Resources</key>
@@ -1067,8 +1161,6 @@
 								<integer>0</integer>
 								<key>IFPkgFlagFollowLinks</key>
 								<false/>
-								<key>IFPkgFlagInstallFat</key>
-								<false/>
 								<key>IFPkgFlagIsRequired</key>
 								<false/>
 								<key>IFPkgFlagOverwritePermissions</key>
@@ -1152,6 +1244,54 @@
 						<integer>1</integer>
 					</dict>
 				</dict>
+			</dict>
+			<key>Plugins</key>
+			<dict>
+				<key>PluginsList</key>
+				<array>
+					<dict>
+						<key>Path</key>
+						<string>Introduction</string>
+						<key>Type</key>
+						<integer>0</integer>
+					</dict>
+					<dict>
+						<key>Path</key>
+						<string>ReadMe</string>
+						<key>Type</key>
+						<integer>0</integer>
+					</dict>
+					<dict>
+						<key>Path</key>
+						<string>License</string>
+						<key>Type</key>
+						<integer>0</integer>
+					</dict>
+					<dict>
+						<key>Path</key>
+						<string>Target</string>
+						<key>Type</key>
+						<integer>0</integer>
+					</dict>
+					<dict>
+						<key>Path</key>
+						<string>PackageSelection</string>
+						<key>Type</key>
+						<integer>0</integer>
+					</dict>
+					<dict>
+						<key>Path</key>
+						<string>Install</string>
+						<key>Type</key>
+						<integer>0</integer>
+					</dict>
+					<dict>
+						<key>Path</key>
+						<string>FinishUp</string>
+						<key>Type</key>
+						<integer>0</integer>
+					</dict>
+				</array>
 			</dict>
 			<key>Scripts</key>
 			<dict>
@@ -1267,12 +1407,16 @@
 		<true/>
 		<key>Build Path</key>
 		<string>build</string>
+		<key>Build Path Type</key>
+		<integer>2</integer>
 		<key>Comment</key>
 		<string></string>
 		<key>Remove .DS_Store</key>
 		<true/>
 		<key>Remove .pbdevelopment</key>
 		<true/>
+		<key>Remove CVS</key>
+		<false/>
 	</dict>
 </dict>
 </plist>
