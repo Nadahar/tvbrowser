@@ -67,8 +67,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
-import javax.swing.tree.DefaultMutableTreeNode;
-
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ReminderConfiguration;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
@@ -599,6 +597,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       mDownBt.setEnabled((selection != -1) && (selection < (size - 1)));
 
       mSortAlphaBt.setEnabled(size >= 2);
+      mSortCountBt.setEnabled(mSortAlphaBt.isEnabled());
 
       if (selection == -1) {
         mProgramListModel.clear();
@@ -694,6 +693,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     mUpBt.setEnabled((enabled || (path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode())) && !path.getLastPathComponent().equals(mFavoriteTree.getRoot()) && mFavoriteTree.getRowForPath(mFavoriteTree.getSelectionPath()) > 0 );
     mDownBt.setEnabled((enabled || (path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode())) && !path.getLastPathComponent().equals(mFavoriteTree.getRoot()) && mFavoriteTree.getRowForPath(mFavoriteTree.getSelectionPath()) < mFavoriteTree.getRowCount() -1);
     mSortAlphaBt.setEnabled((enabled && (path != null && (((FavoriteNode)path.getLastPathComponent()).isDirectoryNode()) && ((FavoriteNode)path.getLastPathComponent()).getChildCount() > 1 || path.getLastPathComponent().equals(mFavoriteTree.getRoot()))) || path == null);
+    mSortCountBt.setEnabled(mSortAlphaBt.isEnabled());
   }
 
   private void changeProgramList(Favorite fav) {
