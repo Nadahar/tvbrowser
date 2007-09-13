@@ -59,6 +59,8 @@ public class ProgramInfoSettingsTab implements SettingsTab {
   mOldTitleFontSize, mOldBodyFontSize, mOldUserFontSelected,
   mOldAntiAliasingSelected;
   
+  private boolean mOldShowFunctions;
+  
   private String mOldLook;
   
   private JComboBox mLook;
@@ -123,6 +125,8 @@ public class ProgramInfoSettingsTab implements SettingsTab {
         mLook.setSelectedIndex(i);
         break;
       }
+    
+    mOldShowFunctions = ProgramInfo.getInstance().isShowFunctions();
     
     mShowFunctions = new JCheckBox(ProgramInfo.mLocalizer.msg("showFunctions","Show Functions"),ProgramInfo.getInstance().isShowFunctions());
     mShowTextSearchButton  = new JCheckBox(ProgramInfo.mLocalizer.msg("showTextSearchButton","Show \"Search in program\""),ProgramInfo.getInstance().isShowTextSearchButton());
@@ -332,6 +336,10 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     
     if(mShowFunctions != null) {
       ProgramInfo.getInstance().setShowFunctions(mShowFunctions.isSelected());
+      
+      if(mShowFunctions.isSelected() != mOldShowFunctions) {
+        ProgramInfoDialog.recreateInstance();
+      }
     }
     if(mShowTextSearchButton != null) {
       ProgramInfo.getInstance().setShowTextSearchButton(mShowTextSearchButton.isSelected());
@@ -353,6 +361,10 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     
     ProgramInfo.getInstance().getSettings().setProperty("look", mOldLook);
     ProgramInfo.getInstance().setLook();
+    
+    ProgramInfo.getInstance().setShowFunctions(mOldShowFunctions);
+    
+    ProgramInfoDialog.recreateInstance();
   }
 
   public Icon getIcon() {
