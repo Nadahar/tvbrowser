@@ -40,6 +40,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.net.URL;
 
 import tvbrowser.core.Settings;
 import util.io.IOUtilities;
@@ -318,7 +319,9 @@ public class Localizer {
       try {
         msg = mBundle.getString(key);
       }
-      catch (MissingResourceException exc) {}
+      catch (MissingResourceException exc) {
+        //Empty
+      }
     }
     
     if (msg == null) {
@@ -366,9 +369,7 @@ public class Localizer {
       File jar = new File("tvbrowser.jar");
 
       if (!jar.exists()) {
-        java.net.URL url = getClass().getProtectionDomain().getCodeSource().getLocation();
-
-        String location = url.getFile();
+        URL url = getClass().getProtectionDomain().getCodeSource().getLocation();
         jar = new File(url.getFile());
       }
 
