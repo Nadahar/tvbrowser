@@ -50,7 +50,7 @@ Changelog TVBrowser
  * 1785704 Time range of program table can be less than 24h
  * 1786050 NPE on updating running programs
  * 1787231 installation error with non admin user
-
+ * 1772659 Don't detect available Languages on Mac    	 
 -Features
  * 1482904 Favorites-System: Sort by Program-Count
  * 1482905 Favorites-System: Group Favorites
