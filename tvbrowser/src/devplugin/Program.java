@@ -35,13 +35,44 @@ import java.util.Iterator;
  */
 public interface Program {
 
+  /**
+   * black and white, no color
+   */
   public static final int INFO_VISION_BLACK_AND_WHITE  = 1 << 1;
+  
+  /**
+   * video aspect ratio 4:3
+   */
   public static final int INFO_VISION_4_TO_3           = 1 << 2;
+  
+  /**
+   * video aspect ratio 16:9 (widescreen)
+   */
   public static final int INFO_VISION_16_TO_9          = 1 << 3;
+  
+  /**
+   * single channel audio 
+   */
   public static final int INFO_AUDIO_MONO              = 1 << 4;
+  
+  /**
+   * double channel audio
+   */
   public static final int INFO_AUDIO_STEREO            = 1 << 5;
+  
+  /**
+   * dolby surround audio
+   */
   public static final int INFO_AUDIO_DOLBY_SURROUND    = 1 << 6;
+  
+  /**
+   * dolby digital 5.1 audio
+   */
   public static final int INFO_AUDIO_DOLBY_DIGITAL_5_1 = 1 << 7;
+  
+  /**
+   * Audio channels with different languages are available. 
+   */
   public static final int INFO_AUDIO_TWO_CHANNEL_TONE  = 1 << 8;
 
   public static final int IS_VALID_STATE = 0;
@@ -65,9 +96,12 @@ public interface Program {
    * @see #INFO_ORIGINAL_WITH_SUBTITLE
    */
   public static final int INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED = 1 << 9;
+  /**
+   * Program is live.
+   */
   public static final int INFO_LIVE                    = 1 << 10;
   /**
-   * Original with subtitle. The subtitle is in another language as
+   * Original with subtitle. The subtitle is in another language than
    * the audio.
    *
    * @see #INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED
@@ -80,13 +114,28 @@ public interface Program {
    */
   public static final int INFO_SUBTITLE = INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED;
   
-  /** @since 2.6/2.2.4 */
+  /**
+   * This program is a movie.
+   * @since 2.6/2.2.4 
+   */
   public static final int INFO_MOVIE = 1 << 12;
-  /** @since 2.6/2.2.4 */
+
+  /**
+   * This program is a series.
+   * @since 2.6/2.2.4
+   */
   public static final int INFO_SERIES = 1 << 13;
-  /** @since 2.6/2.2.4 */
+
+  /**
+   * This program has not been on air before.
+   * @since 2.6/2.2.4
+   */
   public static final int INFO_NEW = 1 << 14;
-  /** @since 2.6/2.2.4 */
+
+  /**
+   * Audio description is available for people with limited vision. 
+   * @since 2.6/2.2.4
+   */
   public static final int INFO_AUDIO_DESCRIPTION = 1 << 15;
 
   /**
@@ -166,6 +215,11 @@ public interface Program {
   public String getEndTimeString();
 
   public Channel getChannel();
+  
+  /**
+   * get the date when the program starts
+   * @return the date
+   */
   public Date getDate();
 
   /**
