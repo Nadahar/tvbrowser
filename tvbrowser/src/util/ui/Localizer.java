@@ -44,6 +44,8 @@ import java.util.jar.JarFile;
 import tvbrowser.core.Settings;
 import util.io.IOUtilities;
 
+import javax.swing.JOptionPane;
+
 /**
  * Does the localization of texts.
  * <p>
@@ -361,8 +363,17 @@ public class Localizer {
     langArray.add(Locale.ENGLISH);
 
     try {
+      File jar = new File("tvbrowser.jar");
+
+      if (!jar.exists()) {
+        java.net.URL url = getClass().getProtectionDomain().getCodeSource().getLocation();
+
+        String location = url.getFile();
+        jar = new File(url.getFile());
+      }
+
       // First Step: look into tvbrowser.jar
-      JarFile file = new JarFile(new File("tvbrowser.jar"));
+      JarFile file = new JarFile(jar);
       
       Enumeration<JarEntry> entries = file.entries();
       
