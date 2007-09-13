@@ -42,7 +42,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -136,7 +135,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     mTableModel = new DefaultTableModel() {
       public boolean isCellEditable(int row, int column) {
         if (column == 0) {
-          return true;
+          return (row >= InternalPluginProxyList.getInstance().getAvailableProxys().length);
         }
         return false;
       }
@@ -219,8 +218,13 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
         if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
           int rowIndex = mTable.getSelectedRow();
            if (rowIndex >= 0) {
-             PluginProxy item = (PluginProxy)mTableModel.getValueAt(rowIndex, 1);
-             showInfoDialog(item);
+             Object proxy = mTableModel.getValueAt(rowIndex, 1);
+             if (proxy instanceof PluginProxy) {
+               showInfoDialog((PluginProxy) proxy);
+             }
+             else {
+               showInfoDialog((InternalPluginProxyIf)proxy);
+             }
            }
         }
       }
@@ -431,6 +435,18 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
   }
   
   /**
+   * Show the Info-Dialog for internal plugins
+   *
+   */
+  private void showInfoDialog(InternalPluginProxyIf plugin) {
+    JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame
+        .getInstance()), mLocalizer.msg("internalPlugin",
+        "This is an internal plugin which cannot be disabled."), mLocalizer
+        .msg("internalPluginTitle", "Internal plugin"),
+        JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  /**
    * Populate the Plugin-List
    */
   private void populatePluginList() {
@@ -449,7 +465,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     });
     
     for (InternalPluginProxyIf internalPluginProxy : internalPluginProxies) {
-      mTableModel.addRow(new Object[]{null, internalPluginProxy});
+      mTableModel.addRow(new Object[]{true, internalPluginProxy});
     }
     
     Arrays.sort(pluginList, new Comparator<PluginProxy>() {

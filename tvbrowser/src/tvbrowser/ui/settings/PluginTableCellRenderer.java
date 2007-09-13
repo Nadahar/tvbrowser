@@ -39,6 +39,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.extras.common.InternalPluginProxyIf;
+import tvbrowser.extras.common.InternalPluginProxyList;
 import util.ui.FixedSizeIcon;
 import util.ui.UiUtilities;
 
@@ -66,11 +67,6 @@ public class PluginTableCellRenderer extends DefaultTableCellRenderer {
   private static final Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
   
   /**
-   * empty label for active column of core plugins
-   */
-  private static final JLabel EMPTY_LABEL = new JLabel();
-  
-  /**
    * checkBox to return for the first column (plugin active)
    */
   private static JCheckBox checkBox;
@@ -84,22 +80,20 @@ public class PluginTableCellRenderer extends DefaultTableCellRenderer {
       boolean isSelected, boolean hasFocus, int row, int column) {
     
     if (column == 0) {
-      if (value == null) {
-        return EMPTY_LABEL;
-      }
       if (checkBox == null) {
         checkBox = new JCheckBox();
         checkBox.setHorizontalAlignment(JLabel.CENTER);
         checkBox.setBorderPainted(true);
       }
-      if (isSelected) {
+      if (isSelected ) {
         checkBox.setForeground(table.getSelectionForeground());
         checkBox.setBackground(table.getSelectionBackground());
       } else {
         checkBox.setForeground(table.getForeground());
         checkBox.setBackground(table.getBackground());
       }
-      checkBox.setSelected((value != null && ((Boolean) value).booleanValue()));
+      checkBox.setSelected(((Boolean) value).booleanValue());
+      checkBox.setEnabled(row >= InternalPluginProxyList.getInstance().getAvailableProxys().length);
 
       if (hasFocus) {
         checkBox.setBorder(UIManager
