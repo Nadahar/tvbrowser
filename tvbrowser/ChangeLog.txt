@@ -150,6 +150,7 @@ Changelog TVBrowser
  * 1791219 Add country to channel name
  * 1791460 Add OS selection for plugin updates
  * 1792930 scroll channel wise horizontally
+ * 1793731 Add sub minor to Version, change Plugin versions
  * 1793754 Add new Filter: Audio description
 
 2.5.3beta3/2.5.3
