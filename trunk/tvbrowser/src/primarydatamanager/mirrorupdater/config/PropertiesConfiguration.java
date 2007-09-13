@@ -52,11 +52,8 @@ public class PropertiesConfiguration implements Configuration {
   
   private DataSource mDataSource;
   private DataTarget mDataTarget;
-  private int mMirrorWeight;
   private String[] mChannelgroups;
-  
-  
-  
+
   public PropertiesConfiguration(String propertiesFileName)
     throws UpdateException
   {
@@ -114,15 +111,6 @@ public class PropertiesConfiguration implements Configuration {
     }
     catch (Exception exc) {
       throw new UpdateException("Error initializing data target from "
-        + "properties file: " + propertiesFileName, exc);
-    }
-    
-    // Get the mirror weight
-    try {
-      mMirrorWeight = getIntProperty(prop, "mirror.weight", 100);
-    }
-    catch (Exception exc) {
-      throw new UpdateException("Error getting mirror weight from "
         + "properties file: " + propertiesFileName, exc);
     }
     
@@ -202,12 +190,6 @@ public class PropertiesConfiguration implements Configuration {
     return PRIMARY_SERVER_URL;
   }
 
-
-
-  public int getMirrorWeight() {
-    return mMirrorWeight;
-  }
-  
   public String[] getChannelgroups() {
     return mChannelgroups; 
   }
