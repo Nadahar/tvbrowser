@@ -152,17 +152,21 @@ public abstract class SoftwareUpdateItem {
     
     String[] s = value.split("\\.");
     
-    if (s.length!=2)
+    if (s.length<2)
       return null;
     
-    int major, minor;
+    int major, minor, subMinor = 0;
     try {
       major = Integer.parseInt(s[0]);
       minor = Integer.parseInt(s[1]);
+      
+      if(s.length == 3) {
+        subMinor = Integer.parseInt(s[2]);
+      }
     }catch(NumberFormatException e) {
       return null;
     }
-    return new Version(major, minor);    
+    return new Version(major, minor, subMinor);    
   }
   
   /**
