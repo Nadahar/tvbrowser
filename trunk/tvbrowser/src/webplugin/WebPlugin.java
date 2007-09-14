@@ -121,13 +121,17 @@ public class WebPlugin extends Plugin {
     return new ThemeIcon("actions", "web-search", 16);
   }
   
+  public static Version getVersion() {
+    return mVersion;
+  }
+  
   /**
    * Returns the Plugin-Info
    */
   public PluginInfo getInfo() {
     return new PluginInfo("WebPlugin",
         mLocalizer.msg("desc","Searches on the Web for a Program"),
-        "Bodo Tasche",mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/WebPlugin"),mVersion);
+        "Bodo Tasche",mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/WebPlugin"), getVersion());
   }
 
   /**

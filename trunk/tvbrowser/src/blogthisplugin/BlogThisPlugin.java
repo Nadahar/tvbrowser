@@ -102,6 +102,10 @@ public class BlogThisPlugin extends Plugin {
       mLocalFormatings[0] = DEFAULT_CONFIG;        
     }
     
+    public static Version getVersion() {
+      return mVersion;
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -112,7 +116,7 @@ public class BlogThisPlugin extends Plugin {
         String desc = mLocalizer.msg("description", "Creates a new Blog-Entry");
         String author = "Bodo Tasche";
         String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Blog_this!");
-        return new PluginInfo(name, desc, author, helpUrl, mVersion);
+        return new PluginInfo(name, desc, author, helpUrl, getVersion());
     }
 
     /*

@@ -147,6 +147,10 @@ public class CalendarExportPlugin extends Plugin {
       mLocalFormatings[0] = DEFAULT_CONFIG;        
     }
 
+    public static Version getVersion() {
+      return mVersion;
+    }
+    
     /*
     * (non-Javadoc)
     *
@@ -159,7 +163,7 @@ public class CalendarExportPlugin extends Plugin {
         String author = "Bodo Tasche, Udo Weigelt";
         String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Calendar_Export");
         
-        return new PluginInfo(name, desc, author, helpUrl, mVersion);
+        return new PluginInfo(name, desc, author, helpUrl, getVersion());
     }
 
     /*

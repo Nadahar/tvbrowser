@@ -305,6 +305,20 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
     return null;
   }
 
+  /**
+   * Gets the version of this plugin.
+   * <p>
+   * Override this to provide a check of the plugin
+   * for the version to load from main plugins dir
+   * or the user plugins dir. The plugin with the highest
+   * version will be loaded.
+   * 
+   * @return The version of this plugin.
+   * @since 2.6
+   */
+  public static Version getVersion() {
+    return new Version(0, 0);
+  }
 
   /**
    * Gets the meta information about the plugin.
@@ -318,7 +332,7 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
     String desc = mLocalizer.msg( "noDescription" ,"No description" );
     String author = mLocalizer.msg( "noAuthor" ,"No author given" );
 
-    return new PluginInfo(name, desc, author, new Version(0, 0));
+    return new PluginInfo(name, desc, author, getVersion());
   }
 
 

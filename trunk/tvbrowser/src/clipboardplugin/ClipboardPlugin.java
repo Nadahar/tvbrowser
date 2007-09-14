@@ -130,6 +130,10 @@ public class ClipboardPlugin extends Plugin {
     }
   }
 
+  public static Version getVersion() {
+    return mVersion;
+  }
+  
   /*
    * (non-Javadoc)
    * 
@@ -142,7 +146,7 @@ public class ClipboardPlugin extends Plugin {
     String author = "Bodo Tasche";
     String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Clipboard");
       
-    return new PluginInfo(name, desc, author, helpUrl, mVersion);
+    return new PluginInfo(name, desc, author, helpUrl, getVersion());
   }
 
  
