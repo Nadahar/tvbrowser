@@ -118,7 +118,7 @@ public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
     
     panel.add(filePanel, BorderLayout.NORTH);
     
-    filePanel.setBorder(BorderFactory.createTitledBorder(Localizer.getLocalization(Localizer.I18N_PROGRAM)));
+    filePanel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("executionApp","Application")));
     
     mParam = new ParamInputField(mExecParam, true);
     
