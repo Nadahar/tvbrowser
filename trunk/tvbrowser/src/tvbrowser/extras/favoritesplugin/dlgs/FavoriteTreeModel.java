@@ -41,7 +41,6 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
 import javax.swing.Action;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;

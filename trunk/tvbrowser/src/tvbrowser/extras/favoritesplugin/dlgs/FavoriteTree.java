@@ -278,34 +278,48 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
           
           menu.add(item);
         }
-        
-        if(last.getChildCount() > 1) {
-          menu.addSeparator();
-          
-          item = new JMenuItem(mLocalizer.msg("sort", "Sort alphabetically"),
-              IconLoader.getInstance().getIconFromTheme("actions", "sort-list", 16));
-          final String titleAlpha = item.getText();
-          item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                FavoriteTreeModel.getInstance().sort(last,true, FavoriteNodeComparator.getInstance(), titleAlpha);
-                reload(last);
-            }
-          });
-          menu.add(item);
-
-          item = new JMenuItem(mLocalizer.msg("sortCount", "Sort by number of programs"),
-              IconLoader.getInstance().getIconFromTheme("actions", "sort-list-numerical", 16));
-          final String titleCount = item.getText();
-          item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                FavoriteTreeModel.getInstance().sort(last,true, FavoriteNodeCountComparator.getInstance(),titleCount);
-                reload(last);
-            }
-          });
-          menu.add(item);
-        }
       }
-      else {
+      
+      FavoriteNode parentSort = null;
+      
+      if(!last.isDirectoryNode() && last.getParent().equals(mRootNode) && mRootNode.getChildCount() > 1) {
+        parentSort = (FavoriteNode)last.getParent();
+      }
+      
+      final FavoriteNode sortNode = parentSort == null ? last : parentSort;
+        
+      if(last.getChildCount() > 1 || (last.getParent().equals(mRootNode) && mRootNode.getChildCount() > 1 )) {
+        menu.addSeparator();
+        
+        item = new JMenuItem(mLocalizer.msg("sort", "Sort alphabetically"),
+            IconLoader.getInstance().getIconFromTheme("actions", "sort-list", 16));
+        final String titleAlpha = item.getText();
+        item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+              FavoriteTreeModel.getInstance().sort(sortNode,true, FavoriteNodeComparator.getInstance(), titleAlpha);
+              reload(sortNode);
+          }
+        });
+        menu.add(item);
+
+        item = new JMenuItem(mLocalizer.msg("sortCount", "Sort by number of programs"),
+            IconLoader.getInstance().getIconFromTheme("actions", "sort-list-numerical", 16));
+        final String titleCount = item.getText();
+        item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+              FavoriteTreeModel.getInstance().sort(sortNode,true, FavoriteNodeCountComparator.getInstance(),titleCount);
+              reload(sortNode);
+          }
+        });
+        menu.add(item);
+      }
+      
+      if(parentSort != null) {
+        menu.addSeparator();
+      }
+      
+      
+      if (!last.isDirectoryNode()) {
         item = new JMenuItem(mLocalizer.msg("editFavorite", "Edit favorite"),
             IconLoader.getInstance().getIconFromTheme("actions", "document-edit", 16));
         item.setFont(item.getFont().deriveFont(Font.BOLD));
