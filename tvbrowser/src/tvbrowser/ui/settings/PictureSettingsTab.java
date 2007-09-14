@@ -39,7 +39,6 @@ import util.ui.PluginsPictureSettingsPanel;
 import util.ui.ScrollableJPanel;
 import util.ui.UiUtilities;
 
-import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -57,7 +56,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import java.awt.BorderLayout;
-import java.awt.Color;
+
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -285,6 +284,7 @@ public class PictureSettingsTab extends AbstractSettingsTab {
 
       JScrollPane scrollPane = new JScrollPane(pb.getPanel());
       scrollPane.getViewport().setBackground(pb.getPanel().getBackground());
+      scrollPane.setBorder(null);
 
       JPanel scrollPanel = new JPanel(new BorderLayout());
       scrollPanel.add(scrollPane, BorderLayout.CENTER);
