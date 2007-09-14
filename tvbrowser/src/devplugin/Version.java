@@ -85,7 +85,7 @@ public final class Version implements Comparable {
    * 
    * @since 2.2.4/2.6
    */
-  public Version(int major, int subMinor, int minor) {
+  public Version(int major, int minor, int subMinor) {
     this(major, minor, subMinor, true, null);
   }
 
