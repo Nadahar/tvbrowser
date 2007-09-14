@@ -82,6 +82,9 @@ public class ShowviewPlugin extends Plugin {
     }
   }
 
+  public static Version getVersion() {
+    return mVersion;
+  }
 
   public PluginInfo getInfo() {
     String name = mLocalizer.msg("showviewCalculater", "Showview number calculator");
@@ -90,7 +93,7 @@ public class ShowviewPlugin extends Plugin {
     String author = "Til Schneider, www.murfman.de" ;
     String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Showview_number_calculator");
     
-    return new PluginInfo(name, desc, author, helpUrl, mVersion);
+    return new PluginInfo(name, desc, author, helpUrl, getVersion());
   }
 
 }

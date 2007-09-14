@@ -86,6 +86,10 @@ public class EMailPlugin extends Plugin {
     mLocalFormatings[0] = DEFAULT_CONFIG;        
   }
   
+  public static Version getVersion() {
+    return mVersion;
+  }
+  
   /*
    * (non-Javadoc)
    * 
@@ -97,7 +101,7 @@ public class EMailPlugin extends Plugin {
     String author = "Bodo Tasche";
     String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Send_e-mail");
     
-    return new PluginInfo(name, desc, author, helpUrl, mVersion);
+    return new PluginInfo(name, desc, author, helpUrl, getVersion());
   }
 
   /*

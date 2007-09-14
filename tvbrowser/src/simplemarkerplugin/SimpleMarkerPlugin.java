@@ -68,7 +68,7 @@ import devplugin.Version;
  * @author René Mach
  */
 public class SimpleMarkerPlugin extends Plugin implements ActionListener {
-  private static final Version mVersion = new Version(2,60);
+  private static final Version mVersion = new Version(2,60,0);
   
   /** The localizer for this class. */
   protected static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SimpleMarkerPlugin.class);
@@ -97,7 +97,11 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   public void onActivation() {
     mMarkListVector = new MarkListsVector();
   }
-
+  
+  public static Version getVersion() {
+    return mVersion;
+  }
+  
   /**
    * @return The instance of this class.
    */
@@ -110,7 +114,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Marker_Plugin");
     String name = mLocalizer.msg("name","Marker plugin");
     String description = mLocalizer.msg("description", "A simple marker plugin (formerly Just_Mark)");
-    return (new PluginInfo(name, description, "René Mach", helpUrl, mVersion, "GPL"));
+    return (new PluginInfo(name, description, "René Mach", helpUrl, getVersion(), "GPL"));
   }
 
   public void loadSettings(Properties prop) {
@@ -151,6 +155,10 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
    * @return The ActionMenu for this Plugin.
    */
   public ActionMenu getContextMenuActions(Program p) {
+    if(p == null || p.equals(getPluginManager().getExampleProgram())) {
+      return new ActionMenu(new ContextMenuAction(mLocalizer.msg("name", "Marker plugin"),createImageIcon("actions", "just-mark", 16)));
+    }
+    
     this.mProg = p;
     
     Object[] submenu = new Object[mMarkListVector.size() + 2];

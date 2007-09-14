@@ -121,6 +121,10 @@ public class NewsPlugin extends Plugin {
     return new ActionMenu(action);
   }
 
+  public static Version getVersion() {
+    return mVersion;
+  }
+  
   /**
    * Gets the plugin info.
    * 
@@ -133,7 +137,7 @@ public class NewsPlugin extends Plugin {
     String author = "Til Schneider, www.murfman.de";
     String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/News");
     
-    return new PluginInfo(name, desc, author, helpUrl, mVersion);
+    return new PluginInfo(name, desc, author, helpUrl, getVersion());
   }
 
   /**

@@ -102,13 +102,17 @@ public class PrintPlugin extends Plugin {
     return new ThemeIcon("devices", "printer", 16);
   }
   
+  public static Version getVersion() {
+    return mVersion;
+  }
+  
   public PluginInfo getInfo() {
     String name = mLocalizer.msg("printProgram" ,"Print program");
     String desc = mLocalizer.msg("printdescription" ,"Allows printing programs.");
     String author = "Martin Oberhauser (martin@tvbrowser.org)";
     String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Print_program");
       
-    return new PluginInfo(name, desc, author, helpUrl, mVersion);
+    return new PluginInfo(name, desc, author, helpUrl, getVersion());
   }
 
   public void onActivation() {

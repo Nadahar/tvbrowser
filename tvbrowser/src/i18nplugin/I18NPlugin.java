@@ -81,12 +81,16 @@ public class I18NPlugin extends Plugin {
     return mInstance;
   }
   
+  public static Version getVersion() {
+    return mVersion;
+  }
+  
   @Override
   public PluginInfo getInfo() {
     String name = mLocalizer.msg("pluginName", "I18NPlugin");
     String desc = mLocalizer.msg("description", "Tool for Translators");
     String author = "Bodo Tasche";
-    return new PluginInfo(name, desc, author, mVersion);
+    return new PluginInfo(name, desc, author, getVersion());
   }
 
   @Override

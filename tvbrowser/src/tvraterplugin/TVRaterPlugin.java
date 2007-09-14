@@ -120,6 +120,10 @@ public class TVRaterPlugin extends devplugin.Plugin {
         _tvRaterInstance = this;
     }
     
+    public static Version getVersion() {
+      return mVersion;
+    }
+    
     public PluginInfo getInfo() {
         String name = mLocalizer.msg("pluginName", "TV Rater");
         String desc = mLocalizer
@@ -129,7 +133,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
         String author = "Bodo Tasche";
         String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/TV_Rater");
         
-        return new PluginInfo(name, desc, author, helpUrl, mVersion);
+        return new PluginInfo(name, desc, author, helpUrl, getVersion());
     }
 
     /*

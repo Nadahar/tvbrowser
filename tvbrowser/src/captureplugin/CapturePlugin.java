@@ -164,6 +164,10 @@ public class CapturePlugin extends devplugin.Plugin {
         return mSettings;
     }
 
+    public static Version getVersion() {
+      return mVersion;
+    }
+    
     /**
      * Implement this function to provide information about your plugin.
      */
@@ -173,7 +177,7 @@ public class CapturePlugin extends devplugin.Plugin {
         String author = "Bodo Tasche, Andreas Hessel";
         String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Capture_Plugin");
 
-        return new PluginInfo(name, desc, author, helpUrl, mVersion);
+        return new PluginInfo(name, desc, author, helpUrl, getVersion());
     }
 
     /**

@@ -34,6 +34,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -175,58 +176,59 @@ public class PluginLoader {
       mLog.warning("cannot load plugin "+pluginFile.getAbsolutePath()+" - already loaded");
       return null;
     }
-    mSuccessfullyLoadedPluginFiles.add(lcFileName);
-      try {
-        if (lcFileName.endsWith(".jar")) {
-          plugin = loadJavaPlugin(pluginFile);
-        }
-        else if (lcFileName.endsWith(".bsh")) {
-          plugin = loadBeanShellPlugin(pluginFile);
-        }
-        else {
-          mLog.warning("Unknown plugin type: " + pluginFile.getAbsolutePath());
-        }
-
-        if (plugin instanceof Plugin) {
-          ((Plugin)plugin).setJarFile(pluginFile);
-          // check if the proxy is already loaded, but the plugin was not loaded yet
-          JavaPluginProxy javaplugin = (JavaPluginProxy) PluginProxyManager.getInstance().getPluginForId(JavaPluginProxy.getJavaPluginId((Plugin) plugin));
-          if (javaplugin != null) {
-            javaplugin.setPlugin((Plugin) plugin);
-          }
-          // it was not yet loaded, so create new proxy
-          else {
-            javaplugin = new JavaPluginProxy((Plugin)plugin, pluginFile.getPath());
-            PluginProxyManager.getInstance().registerPlugin(javaplugin);
-          }
-
-          if (deleteable)
-            mDeleteablePlugin.put(javaplugin, pluginFile);
-          
-          saveProxyInfo(pluginFile, javaplugin);
-        }
-        else if (plugin instanceof AbstractPluginProxy) {
-          PluginProxyManager.getInstance().registerPlugin((AbstractPluginProxy)plugin);
-          if (deleteable)
-            mDeleteablePlugin.put((AbstractPluginProxy)plugin, pluginFile);
-        }
-        else if (plugin instanceof devplugin.TvDataService) {
-          TvDataServiceProxy proxy = new DefaultTvDataServiceProxy((devplugin.TvDataService)plugin);
-          TvDataServiceProxyManager.getInstance().registerTvDataService(proxy);
-        }
-        else if (plugin instanceof TvDataService) {
-          TvDataServiceProxy proxy = new DeprecatedTvDataServiceProxy((TvDataService)plugin);
-          TvDataServiceProxyManager.getInstance().registerTvDataService(proxy);
-        }
-
-
-        mLog.info("Loaded plugin "+pluginFile.getAbsolutePath());
-
-      }catch (Throwable thr) {
-        mLog.log(Level.WARNING, "Loading plugin file failed: "
-            + pluginFile.getAbsolutePath(), thr);
-        thr.printStackTrace();
+    
+    try {
+      if (lcFileName.endsWith(".jar")) {
+        plugin = loadJavaPlugin(pluginFile);
       }
+      else if (lcFileName.endsWith(".bsh")) {
+        plugin = loadBeanShellPlugin(pluginFile);
+      }
+      else {
+        mLog.warning("Unknown plugin type: " + pluginFile.getAbsolutePath());
+      }
+
+      if (plugin instanceof Plugin) {
+        ((Plugin)plugin).setJarFile(pluginFile);
+        // check if the proxy is already loaded, but the plugin was not loaded yet
+        JavaPluginProxy javaplugin = (JavaPluginProxy) PluginProxyManager.getInstance().getPluginForId(JavaPluginProxy.getJavaPluginId((Plugin) plugin));
+        if (javaplugin != null) {
+          javaplugin.setPlugin((Plugin) plugin);
+        }
+        // it was not yet loaded, so create new proxy
+        else {
+          javaplugin = new JavaPluginProxy((Plugin)plugin, pluginFile.getPath());
+          PluginProxyManager.getInstance().registerPlugin(javaplugin);
+        }
+
+        if (deleteable)
+          mDeleteablePlugin.put(javaplugin, pluginFile);
+        
+        saveProxyInfo(pluginFile, javaplugin);
+      }
+      else if (plugin instanceof AbstractPluginProxy) {
+        PluginProxyManager.getInstance().registerPlugin((AbstractPluginProxy)plugin);
+        if (deleteable)
+          mDeleteablePlugin.put((AbstractPluginProxy)plugin, pluginFile);
+      }
+      else if (plugin instanceof devplugin.TvDataService) {
+        TvDataServiceProxy proxy = new DefaultTvDataServiceProxy((devplugin.TvDataService)plugin);
+        TvDataServiceProxyManager.getInstance().registerTvDataService(proxy);
+      }
+      else if (plugin instanceof TvDataService) {
+        TvDataServiceProxy proxy = new DeprecatedTvDataServiceProxy((TvDataService)plugin);
+        TvDataServiceProxyManager.getInstance().registerTvDataService(proxy);
+      }
+
+      if(plugin != null) {
+        mSuccessfullyLoadedPluginFiles.add(lcFileName);
+        mLog.info("Loaded plugin "+pluginFile.getAbsolutePath());
+      }
+    }catch (Throwable thr) {
+      mLog.log(Level.WARNING, "Loading plugin file failed: "
+          + pluginFile.getAbsolutePath(), thr);
+      thr.printStackTrace();
+    }
     return plugin;
   }
 
@@ -455,9 +457,18 @@ public class PluginLoader {
 
     // Create a class loader for the plugin
     ClassLoader classLoader;
+    ClassLoader classLoader2 = null;
+    
     try {
       URL[] urls = new URL[] { jarFile.toURI().toURL() };
       classLoader = URLClassLoader.newInstance(urls, ClassLoader.getSystemClassLoader());
+      
+      try {
+        if(!new File(PLUGIN_DIRECTORY).equals(jarFile.getParentFile()) && new File(PLUGIN_DIRECTORY,jarFile.getName()).isFile()) {
+          urls = new URL[] { new File(PLUGIN_DIRECTORY, jarFile.getName()).toURI().toURL() };
+          classLoader2 = URLClassLoader.newInstance(urls, ClassLoader.getSystemClassLoader());
+        }
+      } catch (MalformedURLException exc) {}
     } catch (MalformedURLException exc) {
       throw new TvBrowserException(getClass(), "error.1",
         "Loading Jar file failed of a plugin failed: {0}.",
@@ -473,6 +484,24 @@ public class PluginLoader {
     // Create a plugin instance
     try {
       Class pluginClass = classLoader.loadClass(pluginName.toLowerCase() + "." + pluginName);
+      
+      if(classLoader2 != null) {
+        try {
+        Method getVersion = pluginClass.getMethod("getVersion",new Class[0]);
+        
+        Class pluginClass2 = classLoader2.loadClass(pluginName.toLowerCase() + "." + pluginName);
+        Method getVersion2 = pluginClass2.getMethod("getVersion",new Class[0]);
+        
+        Version version1 = (Version)getVersion.invoke(pluginClass, new Object[0]);
+        Version version2 = (Version)getVersion2.invoke(pluginClass2, new Object[0]);
+        
+        if(version2.compareTo(version1) > 0) {
+          return null;
+        }
+        
+        }catch(Throwable t) {}
+      }
+      
       plugin = pluginClass.newInstance();
     }
     catch (Throwable thr) {
