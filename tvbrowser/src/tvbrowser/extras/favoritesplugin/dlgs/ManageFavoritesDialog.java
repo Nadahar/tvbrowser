@@ -688,11 +688,15 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
   private void enableButtons(boolean enabled) {
     TreePath path = mFavoriteTree.getSelectionPath();
     
+    if(path != null && !((FavoriteNode)path.getLastPathComponent()).isDirectoryNode() && path.getParentPath().getLastPathComponent().equals(mFavoriteTree.getRoot())) {
+      path = path.getParentPath();
+    }
+    
     mEditBt.setEnabled(enabled && path != null && !path.getLastPathComponent().equals(mFavoriteTree.getRoot()));
     
     mUpBt.setEnabled((enabled || (path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode())) && !path.getLastPathComponent().equals(mFavoriteTree.getRoot()) && mFavoriteTree.getRowForPath(mFavoriteTree.getSelectionPath()) > 0 );
     mDownBt.setEnabled((enabled || (path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode())) && !path.getLastPathComponent().equals(mFavoriteTree.getRoot()) && mFavoriteTree.getRowForPath(mFavoriteTree.getSelectionPath()) < mFavoriteTree.getRowCount() -1);
-    mSortAlphaBt.setEnabled((enabled && (path != null && (((FavoriteNode)path.getLastPathComponent()).isDirectoryNode()) && ((FavoriteNode)path.getLastPathComponent()).getChildCount() > 1 || path.getLastPathComponent().equals(mFavoriteTree.getRoot()))) || path == null);
+    mSortAlphaBt.setEnabled((enabled && (path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode() && ((FavoriteNode)path.getLastPathComponent()).getChildCount() > 1 || path.getLastPathComponent().equals(mFavoriteTree.getRoot()))) || path == null);
     mSortCountBt.setEnabled(mSortAlphaBt.isEnabled());
   }
 
@@ -893,11 +897,16 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
 
   protected void sortFavorites(Comparator<FavoriteNode> comp, String title) {         
     TreePath path = mFavoriteTree.getSelectionPath();
+
+    if(path != null && !((FavoriteNode)path.getLastPathComponent()).isDirectoryNode() && path.getParentPath().getLastPathComponent().equals(mFavoriteTree.getRoot())) {
+      path = path.getParentPath();
+    }
     
     if(path == null) {
       path = new TreePath(mFavoriteTree.getRoot());
     }
     
+    System.out.println(path);
     if(((FavoriteNode)path.getLastPathComponent()).isDirectoryNode()) {
       FavoriteTreeModel.getInstance().sort((FavoriteNode)path.getLastPathComponent(), true, comp, title);
       mFavoriteTree.reload((FavoriteNode)path.getLastPathComponent());
