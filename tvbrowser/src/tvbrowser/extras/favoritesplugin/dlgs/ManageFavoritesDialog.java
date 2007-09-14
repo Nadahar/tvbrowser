@@ -907,7 +907,6 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       path = new TreePath(mFavoriteTree.getRoot());
     }
     
-    System.out.println(path);
     if(((FavoriteNode)path.getLastPathComponent()).isDirectoryNode()) {
       FavoriteTreeModel.getInstance().sort((FavoriteNode)path.getLastPathComponent(), true, comp, title);
       mFavoriteTree.reload((FavoriteNode)path.getLastPathComponent());
