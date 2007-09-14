@@ -224,6 +224,9 @@ public class DayProgramFileTranslator {
     if (bitSet(info, Program.INFO_AUDIO_TWO_CHANNEL_TONE)) {
       buf.append("Two channel tone  ");
     }
+    if (bitSet(info, Program.INFO_AUDIO_DESCRIPTION)) {
+      buf.append("Audio Description  ");
+    }
     if (bitSet(info, Program.INFO_ORIGINAL_WITH_SUBTITLE)) {
       buf.append("Original with subtitle  ");
     }
@@ -233,7 +236,13 @@ public class DayProgramFileTranslator {
     if (bitSet(info, Program.INFO_LIVE)) {
       buf.append("Live  ");
     }
-    
+      if (bitSet(info, Program.INFO_MOVIE)) {
+        buf.append("Movie  ");
+      }
+      if (bitSet(info, Program.INFO_SERIES)) {
+        buf.append("Series  ");
+      }
+
     return buf.toString();
   }
   
