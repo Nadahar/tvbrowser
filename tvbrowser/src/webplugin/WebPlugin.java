@@ -149,7 +149,7 @@ public class WebPlugin extends Plugin {
         for (int v = 0; v < defaults.size(); v++) {
           WebAddress def = defaults.get(v);
           // Replace Default Webaddresses with Default Settings
-          if (def.getName().equals(newone.getName())) {
+          if (def.getName().equals(newone.getName()) || def.getUrl().equals(newone.getUrl())) {
             // Copy needed Data
             def.setActive(newone.isActive());
             def.setIconFile(newone.getIconFile());
