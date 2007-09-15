@@ -180,6 +180,8 @@ public class PluginTreeModel extends DefaultTreeModel {
   }
 
   public void reload(TreeNode node) {
+    TreePath selection = PluginTree.getInstance() != null ? PluginTree.getInstance().getSelectionPath() : null;
+    
     TreePath treePath = new TreePath(getPathToRoot(node));
     Enumeration e = null;
 
@@ -218,6 +220,10 @@ public class PluginTreeModel extends DefaultTreeModel {
         tree = new TreePath(o);
         PluginTree.getInstance().expandPath(tree);
       }
+    }
+    
+    if(selection != null) {
+      PluginTree.getInstance().setSelectionPath(selection);
     }
   }
 
