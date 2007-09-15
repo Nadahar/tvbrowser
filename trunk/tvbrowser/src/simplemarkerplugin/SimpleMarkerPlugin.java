@@ -50,6 +50,7 @@ import devplugin.ContextMenuAction;
 
 import devplugin.ContextMenuSeparatorAction;
 import devplugin.Plugin;
+import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.PluginsFilterComponent;
 import devplugin.Program;
@@ -87,6 +88,8 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   private boolean mHasRightToUpdate = false, mHasToUpdate = false;
   
   private ManagePanel mManagePanel = null;
+
+  private PluginInfo mPluginInfo;
   
   /**
    * Standard contructor for this class.
@@ -103,27 +106,23 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     return mVersion;
   }
   
-  public static String getName() {
-    return mLocalizer.msg("name","Marker plugin");
-  }
-  
-  public static String getDescription() {
-    return mLocalizer.msg("description", "A simple marker plugin (formerly Just_Mark)");
-  }
-  
-  public static String getAuthor() {
-    return "René Mach";
-  }
-  
-  public static String getHelpUrl() {
-    return mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Marker_Plugin");
-  }
-  
   /**
    * @return The instance of this class.
    */
   public static SimpleMarkerPlugin getInstance() {
     return mInstance;
+  }
+
+  /** @return The Plugin Info. */
+  public PluginInfo getInfo() {
+    if(mPluginInfo == null) {
+      String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Marker_Plugin");
+      String name = mLocalizer.msg("name","Marker plugin");
+      String description = mLocalizer.msg("description", "A simple marker plugin (formerly Just_Mark)");
+      mPluginInfo = new PluginInfo(SimpleMarkerPlugin.class, name, description, "René Mach", helpUrl, "GPL");
+    }
+    
+    return mPluginInfo;
   }
 
   public void loadSettings(Properties prop) {

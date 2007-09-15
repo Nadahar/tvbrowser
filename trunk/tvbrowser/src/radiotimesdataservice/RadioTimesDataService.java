@@ -158,7 +158,7 @@ public class RadioTimesDataService extends AbstractTvDataService {
    * @see devplugin.TvDataService#getInfo()
    */
   public PluginInfo getInfo() {
-    return new PluginInfo(mLocalizer.msg("name", "Radio Times Data"), mLocalizer.msg("desc", "Data from Radio Times."),
+    return new PluginInfo(RadioTimesDataService.class, mLocalizer.msg("name", "Radio Times Data"), mLocalizer.msg("desc", "Data from Radio Times."),
         "Bodo Tasche", new Version(2, 60));
   }
 

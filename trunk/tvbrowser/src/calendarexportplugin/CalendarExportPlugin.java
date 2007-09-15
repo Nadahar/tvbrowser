@@ -126,6 +126,8 @@ public class CalendarExportPlugin extends Plugin {
      * Factory for Export-Types
      */
     private ExporterFactory mExporterFactory;
+
+    private PluginInfo mPluginInfo;
     
     /**
      * Create Plugin
@@ -151,23 +153,25 @@ public class CalendarExportPlugin extends Plugin {
       return mVersion;
     }
     
-    public static String getName() {
-      return mLocalizer.msg("pluginName", "Calendar export");
+    /*
+    * (non-Javadoc)
+    *
+    * @see devplugin.Plugin#getInfo()
+    */
+    public PluginInfo getInfo() {
+      if(mPluginInfo == null) {
+        String name = mLocalizer.msg("pluginName", "Calendar export");
+        String desc = mLocalizer.msg("description",
+                "Exports a Program as a vCal/iCal File. This File can easily imported in other Calendar Applications.");
+        String author = "Bodo Tasche, Udo Weigelt";
+        String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Calendar_Export");
+        
+        mPluginInfo = new PluginInfo(CalendarExportPlugin.class, name, desc, author, helpUrl);
+      }
+      
+      return mPluginInfo;
     }
-    
-    public static String getDescription() {
-      return mLocalizer.msg("description",
-      "Exports a Program as a vCal/iCal File. This File can easily imported in other Calendar Applications.");
-    }
-    
-    public static String getAuthor() {
-      return "Bodo Tasche, Udo Weigelt";
-    }
-    
-    public static String getHelpUrl() {
-      return mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Calendar_Export");
-    }
-    
+
     /*
     * (non-Javadoc)
     * @see devplugin.Plugin#getMarkIconFromTheme()

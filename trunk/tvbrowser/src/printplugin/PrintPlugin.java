@@ -65,6 +65,7 @@ import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.Date;
 import devplugin.Plugin;
+import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
@@ -89,6 +90,8 @@ public class PrintPlugin extends Plugin {
   private Properties mSettings;
   private int mMarkPriority = -2;
   
+  private PluginInfo mPluginInfo;
+  
   public PrintPlugin() {
     mInstance = this;
   }
@@ -105,20 +108,17 @@ public class PrintPlugin extends Plugin {
     return mVersion;
   }
   
-  public static String getName() {
-    return mLocalizer.msg("printProgram" ,"Print program");
-  }
-  
-  public static String getDescription() {
-    return mLocalizer.msg("printdescription" ,"Allows printing programs.");
-  }
-  
-  public static String getAuthor() {
-    return "Martin Oberhauser (martin@tvbrowser.org)";
-  }
-  
-  public static String getHelpUrl() {
-    return mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Print_program");
+  public PluginInfo getInfo() {
+    if(mPluginInfo == null) {
+      String name = mLocalizer.msg("printProgram" ,"Print program");
+      String desc = mLocalizer.msg("printdescription" ,"Allows printing programs.");
+      String author = "Martin Oberhauser (martin@tvbrowser.org)";
+      String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Print_program");
+        
+      mPluginInfo = new PluginInfo(PrintPlugin.class, name, desc, author, helpUrl);
+    }
+    
+    return mPluginInfo;
   }
 
   public void onActivation() {

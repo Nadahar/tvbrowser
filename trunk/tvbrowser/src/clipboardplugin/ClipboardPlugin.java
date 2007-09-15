@@ -47,6 +47,7 @@ import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.Plugin;
+import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
@@ -69,6 +70,8 @@ public class ClipboardPlugin extends Plugin {
   
   private AbstractPluginProgramFormating[] mConfigs = null;
   private LocalPluginProgramFormating[] mLocalFormatings = null;
+
+  private PluginInfo mPluginInfo;
   
   /**
    * Creates an instance of this Plugin   
@@ -133,22 +136,25 @@ public class ClipboardPlugin extends Plugin {
     return mVersion;
   }
   
-  public static String getName() {
-    return mLocalizer.msg("pluginName", "Clipboard");
+  /*
+   * (non-Javadoc)
+   * 
+   * @see devplugin.Plugin#getInfo()
+   */
+  public PluginInfo getInfo() {
+    if(mPluginInfo == null) {
+      String name = mLocalizer.msg("pluginName", "Clipboard");
+      String desc = mLocalizer.msg("description",
+          "Copy programs to the Clipboard");
+      String author = "Bodo Tasche";
+      String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Clipboard");
+        
+      mPluginInfo = new PluginInfo(ClipboardPlugin.class, name, desc, author, helpUrl);
+    }
+    
+    return mPluginInfo;
   }
-  
-  public static String getDescription() {
-    return mLocalizer.msg("description",
-    "Copy programs to the Clipboard");
-  }
-  
-  public static String getAuthor() {
-    return "Bodo Tasche";
-  }
-  
-  public static String getHelpUrl() {
-    return mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Clipboard");
-  }
+
  
   public boolean canReceiveProgramsWithTarget() {
     return true;

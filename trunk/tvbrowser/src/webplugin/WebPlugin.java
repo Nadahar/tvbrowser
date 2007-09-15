@@ -47,6 +47,7 @@ import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.ContextMenuSeparatorAction;
 import devplugin.Plugin;
+import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramReceiveTarget;
@@ -99,6 +100,8 @@ public class WebPlugin extends Plugin {
   private ArrayList<String> listActors = null;
   private ArrayList<String> listScripts = null;
   private ArrayList<String> listDirectors = null;
+
+  private PluginInfo mPluginInfo;
   
   /**
    * Creates the Plugin
@@ -123,22 +126,19 @@ public class WebPlugin extends Plugin {
     return mVersion;
   }
   
-  public static String getName() {
-    return "WebPlugin";
+  /**
+   * Returns the Plugin-Info
+   */
+  public PluginInfo getInfo() {
+    if(mPluginInfo == null) {
+      mPluginInfo = new PluginInfo(WebPlugin.class, "WebPlugin",
+          mLocalizer.msg("desc","Searches on the Web for a Program"),
+          "Bodo Tasche",mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/WebPlugin"));
+    }
+    
+    return mPluginInfo;
   }
-  
-  public static String getDescription() {
-    return mLocalizer.msg("desc","Searches on the Web for a Program");
-  }
-  
-  public static String getAuthor() {
-    return "Bodo Tasche";
-  }
-  
-  public static String getHelpUrl() {
-    return mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/WebPlugin");
-  }
-  
+
   /**
    * Loads the Data
    */

@@ -25,6 +25,7 @@ import devplugin.ChannelDayProgram;
 import devplugin.Date;
 import devplugin.Marker;
 import devplugin.Plugin;
+import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.SettingsTab;
@@ -95,6 +96,8 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
     /** Instance of this Plugin */
     private static TVRaterPlugin _tvRaterInstance;
+    
+    private PluginInfo mPluginInfo;
 
     /**
      * this class triggers an event when the main frame gets available, that is after
@@ -123,23 +126,20 @@ public class TVRaterPlugin extends devplugin.Plugin {
       return mVersion;
     }
     
-    public static String getName() {
-      return mLocalizer.msg("pluginName", "TV Rater");
-    }
-    
-    public static String getDescription() {
-      return mLocalizer
-      .msg(
-          "description",
-          "Gives the User the possibility to rate a Show/Movie and get ratings from other Users");
-    }
-    
-    public static String getAuthor() {
-      return "Bodo Tasche";
-    }
-    
-    public static String getHelpUrl() {
-      return mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/TV_Rater");
+    public PluginInfo getInfo() {
+      if(mPluginInfo == null) {
+        String name = mLocalizer.msg("pluginName", "TV Rater");
+        String desc = mLocalizer
+                .msg(
+                        "description",
+                        "Gives the User the possibility to rate a Show/Movie and get ratings from other Users");
+        String author = "Bodo Tasche";
+        String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/TV_Rater");
+        
+        mPluginInfo = new PluginInfo(TVRaterPlugin.class, name, desc, author, helpUrl);
+      }
+      
+      return mPluginInfo;
     }
 
     /*
