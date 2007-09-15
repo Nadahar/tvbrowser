@@ -43,6 +43,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
 import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.plugin.PluginProxy;
@@ -71,20 +72,19 @@ public class PluginView extends JPanel implements MouseListener {
   public PluginView() {
     super(new BorderLayout());
 
-
     mModel = PluginTreeModel.getInstance();
 
     insertPluginRootNodes();
 
     PluginTreeCellRenderer renderer = new PluginTreeCellRenderer();
     renderer.setLeafIcon(null);
+    
     mTree = new PluginTree(mModel);
-    mTree.setSelectionModel(new PluginTreeSelectionModel());
+    mTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     mTree.addMouseListener(this);
     mTree.setCellRenderer(renderer);
+    
     add(new JScrollPane(mTree), BorderLayout.CENTER);
-
-
   }
 
   /**
