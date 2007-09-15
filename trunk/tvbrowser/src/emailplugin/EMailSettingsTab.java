@@ -135,7 +135,7 @@ public class EMailSettingsTab implements SettingsTab {
     mAppFinder.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
-        findApplictation(configPanel);
+        findApplication(configPanel);
       }
 
     });
@@ -186,7 +186,7 @@ public class EMailSettingsTab implements SettingsTab {
   /**
    * Opens a FileChooser and let the User open a File
    */
-  private void findApplictation(JPanel panel) {
+  private void findApplication(JPanel panel) {
     JFileChooser chooser = new JFileChooser(new File(mApplication.getText()));
     int returnVal = chooser.showOpenDialog(UiUtilities.getBestDialogParent(panel));
     if (returnVal == JFileChooser.APPROVE_OPTION) {
