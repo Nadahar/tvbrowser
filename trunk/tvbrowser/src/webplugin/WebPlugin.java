@@ -242,11 +242,11 @@ public class WebPlugin extends Plugin {
             actionName = address.getName();
           }
           else {
-            address.setActive(false);
+            address = null;
           }
         }
         //create adress of channel on the fly
-        if (address.getUrl().equals(CHANNEL_SITE)) {
+        if (address != null && address.getUrl().equals(CHANNEL_SITE)) {
         	address = new WebAddress(mLocalizer.msg("channelPage", "Open page of {0}",program.getChannel().getName()),program.getChannel().getWebpage(),null,false,address.isActive());
         	actionName = address.getName();
 /*
@@ -256,7 +256,7 @@ public class WebPlugin extends Plugin {
         	}
 */        	
         }
-        if (address.isActive()) {
+        if (address != null && address.isActive()) {
           // create items for a possible sub menu
           if (address.getUrl().contains(WEBSEARCH_ALL) && listActors == null) {
             findSearchItems(program);
