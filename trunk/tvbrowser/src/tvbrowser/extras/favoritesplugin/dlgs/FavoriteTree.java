@@ -181,7 +181,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
 
   protected void reload(FavoriteNode node) {
     mExpandListenerIsEnabled = false;
-    getModel().reload(node);
+    getModel().reload(this, node);
     mExpandListenerIsEnabled = true;
   }
   

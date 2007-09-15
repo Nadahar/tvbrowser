@@ -689,10 +689,10 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     TreePath path = mFavoriteTree.getSelectionPath();
     
     mEditBt.setEnabled(enabled && path != null && !path.getLastPathComponent().equals(mFavoriteTree.getRoot()));
-    
+
     mUpBt.setEnabled((enabled || (path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode())) && !path.getLastPathComponent().equals(mFavoriteTree.getRoot()) && mFavoriteTree.getRowForPath(mFavoriteTree.getSelectionPath()) > 0 );
     mDownBt.setEnabled((enabled || (path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode())) && !path.getLastPathComponent().equals(mFavoriteTree.getRoot()) && mFavoriteTree.getRowForPath(mFavoriteTree.getSelectionPath()) < mFavoriteTree.getRowCount() -1);
-    
+
     if(path != null && !((FavoriteNode)path.getLastPathComponent()).isDirectoryNode() && path.getParentPath().getLastPathComponent().equals(mFavoriteTree.getRoot())) {
       path = path.getParentPath();
     }
@@ -828,13 +828,14 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
 
   protected void editSelectedFavorite() {
     Favorite fav = null;
-    
+    FavoriteNode node = null;
     if(mFavoritesList != null) {
       fav = (Favorite) mFavoritesList.getSelectedValue();
     }
     else {
       if (mFavoriteTree.getSelectionCount() > 0) {
-          fav = ((FavoriteNode)mFavoriteTree.getSelectionPath().getLastPathComponent()).getFavorite();
+        node = (FavoriteNode)mFavoriteTree.getSelectionPath().getLastPathComponent();
+        fav = node.getFavorite();
       }
     }
 
@@ -849,7 +850,10 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
           FavoritesPlugin.getInstance().updateRootNode(true);
         }
 
-        mFavoriteTree.updateUI();
+        if (node != null) {
+          mFavoriteTree.reload(node);
+          mFavoriteTree.updateUI();
+        }
     }
 
   }
@@ -981,8 +985,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
         mFavoritesList.setSelectedIndex(firstNewIdx);
         mFavoritesList.ensureIndexIsVisible(firstNewIdx);
 
-        msg = mLocalizer.msg("importDone", "There were {0} new favorites imported.",
-            new Integer(importedFavoritesCount));
+        msg = mLocalizer.msg("importDone", "There were {0} new favorites imported.", importedFavoritesCount);
         JOptionPane.showMessageDialog(this, msg);
       }
     }
