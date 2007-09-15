@@ -71,6 +71,8 @@ public class ClipboardPlugin extends Plugin {
   private AbstractPluginProgramFormating[] mConfigs = null;
   private LocalPluginProgramFormating[] mLocalFormatings = null;
 
+  private PluginInfo mPluginInfo;
+  
   /**
    * Creates an instance of this Plugin   
    */
@@ -140,13 +142,17 @@ public class ClipboardPlugin extends Plugin {
    * @see devplugin.Plugin#getInfo()
    */
   public PluginInfo getInfo() {
-    String name = mLocalizer.msg("pluginName", "Clipboard");
-    String desc = mLocalizer.msg("description",
-        "Copy programs to the Clipboard");
-    String author = "Bodo Tasche";
-    String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Clipboard");
-      
-    return new PluginInfo(name, desc, author, helpUrl, getVersion());
+    if(mPluginInfo == null) {
+      String name = mLocalizer.msg("pluginName", "Clipboard");
+      String desc = mLocalizer.msg("description",
+          "Copy programs to the Clipboard");
+      String author = "Bodo Tasche";
+      String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Clipboard");
+        
+      mPluginInfo = new PluginInfo(ClipboardPlugin.class, name, desc, author, helpUrl);
+    }
+    
+    return mPluginInfo;
   }
 
  

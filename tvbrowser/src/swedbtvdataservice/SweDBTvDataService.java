@@ -433,11 +433,11 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
 
 
   public PluginInfo getInfo() {
-    return new devplugin.PluginInfo(
+    return new devplugin.PluginInfo(SweDBTvDataService.class,
             mLocalizer.msg("PluginInfo.name","SweDB TV Data Service Plugin"),
             mLocalizer.msg("PluginInfo.description","A TV Data Service plugin which uses XMLTV-data from TV.SWEDB.SE"),
             "Inforama",
-            new Version(0, 5),
+            new Version(2, 60),
             mLocalizer.msg("PluginInfo.support","Support the SWEDB crew - Don't forget to register with http://tv.swedb.se/"));
   }
 

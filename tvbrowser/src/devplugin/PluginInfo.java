@@ -32,6 +32,8 @@
 
 package devplugin;
 
+import java.lang.reflect.Method;
+
 /**
  * This class provides information about a plugin.
  */
@@ -48,14 +50,29 @@ public final class PluginInfo {
      * Creates the default PluginVersion instance.
      */
     public PluginInfo() {
-      this("");
+      this(Class.class,"");
     }
-
+    
+    /**
+     * Creates an instance of PluginVersion with the
+     * default values and the given name.
+     * If the caller class is a Plugin it will be tried to get
+     * the version from the static method getVersion() of Plugin.
+     * <p>
+     * @param caller The class that want to create this PluginInfo
+     * @param name The name of the plugin.
+     * @since 2.6
+     */
+    public PluginInfo(Class caller, String name) {
+      this(caller, name,"");
+    }
+    
     /**
      * Creates an instance of PluginVersion with the
      * default values and the given name.
      * <p>
      * @param name The name of the plugin.
+     * @deprecated since 2.6 Use {@link #PluginInfo(Class, String)} instead.
      */
     public PluginInfo(String name) {
       this(name,"");
@@ -67,9 +84,25 @@ public final class PluginInfo {
      * <p>
      * @param name The name of the plugin.
      * @param desc The description for the plugin.
+     * @deprecated since 2.6 Use {@link #PluginInfo(Class, String, String)} instead.
      */
     public PluginInfo(String name, String desc) {
       this(name,desc,"");       
+    }
+    
+    /**
+     * Creates an instance of PluginVersion with the
+     * default values and the given name and description.
+     * If the caller class is a Plugin it will be tried to get
+     * the version from the static method getVersion() of Plugin.
+     * <p>
+     * @param caller The class that want to create this PluginInfo
+     * @param name The name of the plugin.
+     * @param desc The description for the plugin.
+     * @since 2.6
+     */
+    public PluginInfo(Class caller, String name, String desc) {
+      this(caller,name,desc,"");       
     }
 
     /**
@@ -79,9 +112,43 @@ public final class PluginInfo {
      * @param name The name of the plugin.
      * @param desc The description for the plugin.
      * @param author The author of the plugin.
+     * @deprecated since 2.6 Use {@link #PluginInfo(Class, String, String, String)} instead.
      */
     public PluginInfo(String name, String desc, String author) {
-      this(name,desc,author,null,null,null);        
+      this(null,name,desc,author,null,null,null);        
+    }
+    
+    /**
+     * Creates an instance of PluginVersion with the
+     * default values and the given name, description and author.
+     * If the caller class is a Plugin it will be tried to get
+     * the version from the static method getVersion() of Plugin.
+     * <p>
+     * @param caller The class that want to create this PluginInfo
+     * @param name The name of the plugin.
+     * @param desc The description for the plugin.
+     * @param author The author of the plugin.
+     * @since 2.6
+     */
+    public PluginInfo(Class caller, String name, String desc, String author) {
+      this(caller, name,desc,author,null,null,null);        
+    }
+    
+    /**
+     * Creates an instance of PluginVersion with the
+     * default values and the given name, description, author and version.
+     * If the caller class is a Plugin the version will be compared to
+     * the static method getVersion() of Plugin.
+     * <p>
+     * @param caller The class that want to create this PluginInfo.
+     * @param name The name of the plugin.
+     * @param desc The description for the plugin.
+     * @param author The author of the plugin.
+     * @param version The version of the plugin.
+     * @since 2.6 
+     */
+    public PluginInfo(Class caller, String name, String desc, String author, Version version) {
+      this(name,desc,author,null,version,null);
     }
 
     /**
@@ -92,6 +159,8 @@ public final class PluginInfo {
      * @param desc The description for the plugin.
      * @param author The author of the plugin.
      * @param version The version of the plugin.
+     * @deprecated since 2.6 Use {@link #PluginInfo(Class, String, String, String, Version)} instead
+     * and if this is for a Plugin let your Plugin hide {@link Plugin#getVersion()}.
      */
     public PluginInfo(String name, String desc, String author, Version version) {
       this(name,desc,author,null,version,null);
@@ -100,13 +169,36 @@ public final class PluginInfo {
     /**
      * Creates an instance of PluginVersion with the
      * default values and the given name, description, author,
-     * version and license.
+     * version and license. If the caller class
+     * is a Plugin the version will be compared to the static method
+     * getVersion() of Plugin.
+     * <p>
+     * @param caller The class that want to create this PluginInfo.
+     * @param name The name of the plugin.
+     * @param desc The description for the plugin.
+     * @param author The author of the plugin.
+     * @param version The version of the plugin.
+     * @param license The lincense of the plugin.
+     * @since 2.6 
+     */
+    public PluginInfo(Class caller, String name, String desc, String author, Version version, String license) {
+      this(name,desc,author,null,version,license);      
+    }
+    
+    /**
+     * Creates an instance of PluginVersion with the
+     * default values and the given name, description, author,
+     * version and license. If the caller class
+     * is a Plugin the version will be compared to the static method
+     * getVersion() of Plugin.
      * <p>
      * @param name The name of the plugin.
      * @param desc The description for the plugin.
      * @param author The author of the plugin.
      * @param version The version of the plugin.
      * @param license The lincense of the plugin.
+     * @deprecated since 2.6 Use {@link #PluginInfo(Class, String, String, String, Version, String)} instead
+     * and if this is for a Plugin let your Plugin hide {@link Plugin#getVersion()}.
      */
     public PluginInfo(String name, String desc, String author, Version version, String license) {
       this(name,desc,author,null,version,license);      
@@ -115,35 +207,40 @@ public final class PluginInfo {
     /**
      * Creates an instance of PluginVersion with the
      * default values and the given name, description, author
-     * and the help url.
+     * and the help url. If the caller class
+     * is a Plugin it will be tried to get the version from the static method
+     * getVersion() of Plugin.
      * <p>
+     * @param caller The class that want to create this PluginInfo
      * @param name The name of the plugin.
      * @param desc The description for the plugin.
      * @param author The author of the plugin.
      * @param helpUrl The url where to find help for the plugin.
      * @since 2.6
      */
-    public PluginInfo(String name, String desc, String author, String helpUrl) {
-       this(name,desc,author,helpUrl,null,null);
+    public PluginInfo(Class caller, String name, String desc, String author, String helpUrl) {
+       this(caller,name,desc,author,helpUrl,null,null);
     }
     
     /**
      * Creates an instance of PluginVersion with the
      * default values and the given name, description, author,
-     * the help url, version and license.
+     * the help url, version and license. If the caller class
+     * is a Plugin the version will be compared to the static method
+     * getVersion() of Plugin.
      * <p>
+     * @param caller The class that want to create this PluginInfo
      * @param name The name of the plugin.
      * @param desc The description for the plugin.
      * @param author The author of the plugin.
      * @param helpUrl The url where to find help for the plugin.
-     * @param version The version of the plugin.
-     * @since 2.6
+     * @param license The lincense of the plugin.
+     * 
+     * since 2.6
      */
-    public PluginInfo(String name, String desc, String author, String helpUrl, Version version) {
-      this(name,desc,author,helpUrl,version,null);
+    public PluginInfo(Class caller, String name, String desc, String author, String helpUrl, String license) {      
+      this(caller,name,desc,author,helpUrl,null,license);
     }
-    
-    
 
     /**
      * Creates an instance of PluginVersion with the
@@ -156,14 +253,56 @@ public final class PluginInfo {
      * @param helpUrl The url where to find help for the plugin.
      * @param version The version of the plugin.
      * @param license The lincense of the plugin.
-     * @since 2.6
+     * 
+     * @deprecated since 2.6 Use {@link #PluginInfo(Class, String, String, String, String, Version, String)} instead
+     * and if this is for a Plugin let your Plugin hide {@link Plugin#getVersion()}.
      */
     public PluginInfo(String name, String desc, String author, String helpUrl, Version version, String license) {      
+      this(null,name,desc,author,helpUrl,version,license);
+    }
+    
+    /**
+     * Creates an instance of PluginVersion with the
+     * default values and the given name, description, author,
+     * the help url, version and license. If the caller class
+     * is a Plugin the version will be compared to the static method
+     * getVersion() of Plugin.
+     * <p>
+     * @param caller The class that want to create this PluginInfo.
+     * @param name The name of the plugin.
+     * @param desc The description for the plugin.
+     * @param author The author of the plugin.
+     * @param helpUrl The url where to find help for the plugin.
+     * @param version The version of the plugin.
+     * @param license The lincense of the plugin.
+     * @since 2.6
+     */
+    public PluginInfo(Class caller, String name, String desc, String author, String helpUrl, Version version, String license) {      
       mName = name;
       mDescription = desc;
       mAuthor = author;
       mHelpUrl = helpUrl;
-      mVersion = version;
+      
+      if(caller != null && caller.getSuperclass() != null && caller.getSuperclass().equals(Plugin.class)) {
+        try {
+          Method m = caller.getMethod("getVersion", new Class[0]);
+          Version pluginVersion = (Version)m.invoke(caller,new Object[0]);
+          
+          if(version != null && version.compareTo(pluginVersion) > 0) {
+            mVersion = version;
+          }
+          else {
+            mVersion = pluginVersion;
+          }
+          
+        }catch(Exception e) {e.printStackTrace();
+          mVersion = version;
+        }
+      }
+      else {
+        mVersion = version;
+      }
+      
       mLicense = license;
     }
     

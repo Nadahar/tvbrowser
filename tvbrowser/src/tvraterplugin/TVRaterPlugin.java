@@ -96,6 +96,8 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
     /** Instance of this Plugin */
     private static TVRaterPlugin _tvRaterInstance;
+    
+    private PluginInfo mPluginInfo;
 
     /**
      * this class triggers an event when the main frame gets available, that is after
@@ -125,6 +127,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
     }
     
     public PluginInfo getInfo() {
+      if(mPluginInfo == null) {
         String name = mLocalizer.msg("pluginName", "TV Rater");
         String desc = mLocalizer
                 .msg(
@@ -133,7 +136,10 @@ public class TVRaterPlugin extends devplugin.Plugin {
         String author = "Bodo Tasche";
         String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/TV_Rater");
         
-        return new PluginInfo(name, desc, author, helpUrl, getVersion());
+        mPluginInfo = new PluginInfo(TVRaterPlugin.class, name, desc, author, helpUrl);
+      }
+      
+      return mPluginInfo;
     }
 
     /*

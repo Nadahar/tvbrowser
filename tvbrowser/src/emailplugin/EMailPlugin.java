@@ -68,6 +68,8 @@ public class EMailPlugin extends Plugin {
   private AbstractPluginProgramFormating[] mConfigs = null;
   private LocalPluginProgramFormating[] mLocalFormatings = null;
   
+  private PluginInfo mPluginInfo;
+  
   /**
    * Creates an instance of this class.
    */
@@ -96,12 +98,16 @@ public class EMailPlugin extends Plugin {
    * @see devplugin.Plugin#getInfo()
    */
   public PluginInfo getInfo() {
-    String name = mLocalizer.msg("pluginName", "EMail export");
-    String desc = mLocalizer.msg("description", "Send a EMail with an external Program");
-    String author = "Bodo Tasche";
-    String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Send_e-mail");
+    if(mPluginInfo == null) {
+      String name = mLocalizer.msg("pluginName", "EMail export");
+      String desc = mLocalizer.msg("description", "Send a EMail with an external Program");
+      String author = "Bodo Tasche";
+      String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Send_e-mail");
+      
+      mPluginInfo = new PluginInfo(EMailPlugin.class, name, desc, author, helpUrl);
+    }
     
-    return new PluginInfo(name, desc, author, helpUrl, getVersion());
+    return mPluginInfo;
   }
 
   /*

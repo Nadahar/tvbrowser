@@ -513,13 +513,13 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
       }
     });
     
-    JMenuItem item = pluginHelpMenuItem(new PluginInfo(FavoritesPluginProxy.getInstance().toString(),null,null,mLocalizer.msg("menuitem.helpFavorites", "Favorites")));
+    JMenuItem item = pluginHelpMenuItem(new PluginInfo(FavoritesPluginProxy.class, FavoritesPluginProxy.getInstance().toString(),null,null,mLocalizer.msg("menuitem.helpFavorites", "Favorites")));
     item.setIcon(FavoritesPluginProxy.getInstance().getMarkIcon());
     mPluginHelpMenu.add(item);
-    item = pluginHelpMenuItem(new PluginInfo(ReminderPluginProxy.getInstance().toString(),null,null,mLocalizer.msg("menuitem.helpReminder", "Reminder")));
+    item = pluginHelpMenuItem(new PluginInfo(ReminderPluginProxy.class, ReminderPluginProxy.getInstance().toString(),null,null,mLocalizer.msg("menuitem.helpReminder", "Reminder")));
     item.setIcon(ReminderPluginProxy.getInstance().getMarkIcon());
     mPluginHelpMenu.add(item);
-    item = pluginHelpMenuItem(new PluginInfo(SearchPluginProxy.getInstance().toString(),null,null,mLocalizer.msg("menuitem.helpSearch", "Search")));
+    item = pluginHelpMenuItem(new PluginInfo(SearchPluginProxy.class, SearchPluginProxy.getInstance().toString(),null,null,mLocalizer.msg("menuitem.helpSearch", "Search")));
     item.setIcon((Icon) SearchPlugin.getInstance().getButtonAction().getAction().getValue(Action.SMALL_ICON));
     mPluginHelpMenu.add(item);
     

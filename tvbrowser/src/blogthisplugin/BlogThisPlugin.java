@@ -86,6 +86,7 @@ public class BlogThisPlugin extends Plugin {
     /** Settings */
     private Properties mSettings;
 
+    private PluginInfo mPluginInfo;
     
     public BlogThisPlugin() {
       createDefaultConfig();
@@ -112,11 +113,15 @@ public class BlogThisPlugin extends Plugin {
      * @see devplugin.Plugin#getInfo()
      */
     public PluginInfo getInfo() {
+      if(mPluginInfo == null) {
         String name = mLocalizer.msg("pluginName", "BlogThis");
         String desc = mLocalizer.msg("description", "Creates a new Blog-Entry");
         String author = "Bodo Tasche";
         String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Blog_this!");
-        return new PluginInfo(name, desc, author, helpUrl, getVersion());
+        mPluginInfo = new PluginInfo(BlogThisPlugin.class, name, desc, author, helpUrl);
+      }
+      
+      return mPluginInfo;
     }
 
     /*

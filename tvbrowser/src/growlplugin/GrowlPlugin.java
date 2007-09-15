@@ -78,7 +78,7 @@ public class GrowlPlugin extends Plugin {
       String desc = mLocalizer.msg("description",
               "Sends all received Programs to Growl.");
       String author = "Bodo Tasche";
-      return new PluginInfo(name, desc, author, mVersion);
+      return new PluginInfo(this, name, desc, author);
   }
 
   /*
