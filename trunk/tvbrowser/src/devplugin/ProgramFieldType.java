@@ -260,7 +260,7 @@ public class ProgramFieldType {
    * @since 2.6/2.2.4
    */
   public static final ProgramFieldType ADDITIONAL_PERSONS_TYPE
-       = new ProgramFieldType(34, TEXT_FORMAT, true, "additional persons",
+       = new ProgramFieldType(35, TEXT_FORMAT, true, "additional persons",
                               "additionalPersons", "additional persons");
 
   private int mTypeId;
