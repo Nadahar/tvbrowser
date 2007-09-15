@@ -22,7 +22,9 @@
  */
 package simplemarkerplugin;
 
+import java.awt.Component;
 import java.awt.Frame;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -229,6 +231,19 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     menuExtended.setText(mLocalizer.msg("extendedMark", "Extended mark"));
     menuExtended.setActionListener(this);
     menuExtended.putValue(Plugin.DISABLED_ON_TASK_MENU,true);
+    
+    // workaround for not correct menu painting
+    menuExtended.putValue(Action.SMALL_ICON, new Icon() {
+      public int getIconHeight() {
+        return 16;
+      }
+
+      public int getIconWidth() {
+        return 16;
+      }
+
+      public void paintIcon(Component c, Graphics g, int x, int y) {}
+    });
     
     ActionMenu actionMenuExtendedMark = new ActionMenu(menuExtended, filtersAction);
     return actionMenuExtendedMark;
