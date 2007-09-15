@@ -59,6 +59,7 @@ import tvbrowser.extras.searchplugin.SearchPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MarkedProgramsList;
 import util.io.IOUtilities;
+import util.misc.OperatingSystem;
 import util.ui.ScrollableMenu;
 import util.ui.menu.MenuUtil;
 
@@ -817,10 +818,13 @@ public class SystemTray {
       });
       toggleOpenCloseMenuItem(false);
     } else {
-      MainFrame.getInstance().setExtendedState(JFrame.ICONIFIED);
+      if(OperatingSystem.isWindows()) {
+        MainFrame.getInstance().setExtendedState(JFrame.ICONIFIED);
+      }
       
-      if (Settings.propTrayMinimizeTo.getBoolean())
+      if (Settings.propTrayMinimizeTo.getBoolean()) {
         MainFrame.getInstance().setVisible(false);
+      }
       
       toggleOpenCloseMenuItem(true);
     }
