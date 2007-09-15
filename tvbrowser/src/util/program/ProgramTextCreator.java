@@ -747,6 +747,7 @@ public class ProgramTextCreator {
         ProgramFieldType.PRODUCER_TYPE,
         ProgramFieldType.CAMERA_TYPE,
         ProgramFieldType.CUTTER_TYPE,
+        ProgramFieldType.ADDITIONAL_PERSONS_TYPE,
         ProgramFieldType.URL_TYPE,
         ProgramFieldType.ORIGINAL_TITLE_TYPE,
         ProgramFieldType.ORIGINAL_EPISODE_TYPE,

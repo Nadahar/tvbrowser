@@ -422,7 +422,7 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler {
         }
         if (genre.length() > 0) {
           if (genre.equalsIgnoreCase("series")) {
-            info = info | Program.INFO_SERIES;
+            info = info | Program.INFO_CATEGORIE_SERIES;
           }
         }
         if (info != 0) {
