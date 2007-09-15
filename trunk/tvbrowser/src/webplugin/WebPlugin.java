@@ -101,6 +101,7 @@ public class WebPlugin extends Plugin {
   private ArrayList<String> listScripts = null;
   private ArrayList<String> listDirectors = null;
 
+  private PluginInfo mPluginInfo;
   
   /**
    * Creates the Plugin
@@ -129,9 +130,13 @@ public class WebPlugin extends Plugin {
    * Returns the Plugin-Info
    */
   public PluginInfo getInfo() {
-    return new PluginInfo("WebPlugin",
-        mLocalizer.msg("desc","Searches on the Web for a Program"),
-        "Bodo Tasche",mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/WebPlugin"), getVersion());
+    if(mPluginInfo == null) {
+      mPluginInfo = new PluginInfo(WebPlugin.class, "WebPlugin",
+          mLocalizer.msg("desc","Searches on the Web for a Program"),
+          "Bodo Tasche",mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/WebPlugin"));
+    }
+    
+    return mPluginInfo;
   }
 
   /**

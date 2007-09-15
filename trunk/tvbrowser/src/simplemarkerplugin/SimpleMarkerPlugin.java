@@ -87,6 +87,8 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   
   private ManagePanel mManagePanel = null;
 
+  private PluginInfo mPluginInfo;
+  
   /**
    * Standard contructor for this class.
    */
@@ -111,10 +113,14 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
 
   /** @return The Plugin Info. */
   public PluginInfo getInfo() {
-    String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Marker_Plugin");
-    String name = mLocalizer.msg("name","Marker plugin");
-    String description = mLocalizer.msg("description", "A simple marker plugin (formerly Just_Mark)");
-    return (new PluginInfo(name, description, "René Mach", helpUrl, getVersion(), "GPL"));
+    if(mPluginInfo == null) {
+      String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Marker_Plugin");
+      String name = mLocalizer.msg("name","Marker plugin");
+      String description = mLocalizer.msg("description", "A simple marker plugin (formerly Just_Mark)");
+      mPluginInfo = new PluginInfo(SimpleMarkerPlugin.class, name, description, "René Mach", helpUrl, "GPL");
+    }
+    
+    return mPluginInfo;
   }
 
   public void loadSettings(Properties prop) {
@@ -185,7 +191,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     // get all non-default filters
     ArrayList<ProgramFilter> markFilters = new ArrayList<ProgramFilter>();
     for (ProgramFilter filter : getPluginManager().getFilterManager().getAvailableFilters()) {
-      if ((!(filter.equals(getPluginManager().getFilterManager().getDefaultFilter()))) && (!(getPluginManager().getFilterManager().isPluginFilter(filter)))) {
+      if (filter != null && (!(filter.equals(getPluginManager().getFilterManager().getDefaultFilter()))) && (!(getPluginManager().getFilterManager().isPluginFilter(filter)))) {
         markFilters.add(filter);
       }
     }

@@ -80,6 +80,8 @@ public class NewsPlugin extends Plugin {
   private long mNoConnectionTime = 0;
   private long mLastNewsFileModified = 0;
 
+  private PluginInfo mPluginInfo;
+  
   /**
    * Creates a new instance of NewsPlugin.
    */
@@ -131,13 +133,17 @@ public class NewsPlugin extends Plugin {
    * @return The plugin info.
    */
   public PluginInfo getInfo() {
-    String name = mLocalizer.msg("news", "News");
-    String desc = mLocalizer.msg("description",
-        "Gets the TV-Browser news after each TV data update.");
-    String author = "Til Schneider, www.murfman.de";
-    String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/News");
+    if(mPluginInfo == null) {
+      String name = mLocalizer.msg("news", "News");
+      String desc = mLocalizer.msg("description",
+          "Gets the TV-Browser news after each TV data update.");
+      String author = "Til Schneider, www.murfman.de";
+      String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/News");
+      
+      mPluginInfo = new PluginInfo(NewsPlugin.class, name, desc, author, helpUrl);
+    }
     
-    return new PluginInfo(name, desc, author, helpUrl, getVersion());
+    return mPluginInfo;
   }
 
   /**

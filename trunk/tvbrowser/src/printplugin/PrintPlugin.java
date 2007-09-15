@@ -90,6 +90,8 @@ public class PrintPlugin extends Plugin {
   private Properties mSettings;
   private int mMarkPriority = -2;
   
+  private PluginInfo mPluginInfo;
+  
   public PrintPlugin() {
     mInstance = this;
   }
@@ -107,12 +109,16 @@ public class PrintPlugin extends Plugin {
   }
   
   public PluginInfo getInfo() {
-    String name = mLocalizer.msg("printProgram" ,"Print program");
-    String desc = mLocalizer.msg("printdescription" ,"Allows printing programs.");
-    String author = "Martin Oberhauser (martin@tvbrowser.org)";
-    String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Print_program");
-      
-    return new PluginInfo(name, desc, author, helpUrl, getVersion());
+    if(mPluginInfo == null) {
+      String name = mLocalizer.msg("printProgram" ,"Print program");
+      String desc = mLocalizer.msg("printdescription" ,"Allows printing programs.");
+      String author = "Martin Oberhauser (martin@tvbrowser.org)";
+      String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Print_program");
+        
+      mPluginInfo = new PluginInfo(PrintPlugin.class, name, desc, author, helpUrl);
+    }
+    
+    return mPluginInfo;
   }
 
   public void onActivation() {

@@ -67,6 +67,8 @@ public class I18NPlugin extends Plugin {
   
   private int mDevider = 200;
   
+  private PluginInfo mPluginInfo;
+  
   /**
    * Contructor, stores current instance in static field
    */
@@ -87,10 +89,14 @@ public class I18NPlugin extends Plugin {
   
   @Override
   public PluginInfo getInfo() {
-    String name = mLocalizer.msg("pluginName", "I18NPlugin");
-    String desc = mLocalizer.msg("description", "Tool for Translators");
-    String author = "Bodo Tasche";
-    return new PluginInfo(name, desc, author, getVersion());
+    if(mPluginInfo == null) {
+      String name = mLocalizer.msg("pluginName", "I18NPlugin");
+      String desc = mLocalizer.msg("description", "Tool for Translators");
+      String author = "Bodo Tasche";
+      mPluginInfo = new PluginInfo(I18NPlugin.class, name, desc, author);
+    }
+    
+    return mPluginInfo;
   }
 
   @Override

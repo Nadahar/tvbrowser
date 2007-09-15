@@ -48,6 +48,7 @@ public class ShowviewPlugin extends Plugin {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ShowviewPlugin.class);
 
+  private PluginInfo mPluginInfo;
   
   public ShowviewPlugin() {
   }
@@ -87,13 +88,17 @@ public class ShowviewPlugin extends Plugin {
   }
 
   public PluginInfo getInfo() {
-    String name = mLocalizer.msg("showviewCalculater", "Showview number calculator");
-    String desc = mLocalizer.msg("description",
-      "Tries to calculate the showview numbers for new TV data." );
-    String author = "Til Schneider, www.murfman.de" ;
-    String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Showview_number_calculator");
+    if(mPluginInfo == null) {
+      String name = mLocalizer.msg("showviewCalculater", "Showview number calculator");
+      String desc = mLocalizer.msg("description",
+        "Tries to calculate the showview numbers for new TV data." );
+      String author = "Til Schneider, www.murfman.de" ;
+      String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Showview_number_calculator");
+      
+      mPluginInfo = new PluginInfo(ShowviewPlugin.class, name, desc, author, helpUrl);
+    }
     
-    return new PluginInfo(name, desc, author, helpUrl, getVersion());
+    return mPluginInfo;
   }
 
 }
