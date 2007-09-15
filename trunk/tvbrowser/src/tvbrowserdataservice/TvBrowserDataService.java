@@ -774,8 +774,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
    * Gets information about this TvDataService
    */
   public PluginInfo getInfo() {
-    return new devplugin.PluginInfo(TvBrowserDataService.class,
-            "TV-Browser",
+    return new devplugin.PluginInfo("TV-Browser",
             mLocalizer.msg("description", "Die eigenen TV-Daten des TV-Browser-Projektes"),
             "Til Schneider, www.murfman.de",
             new Version(2, 60),

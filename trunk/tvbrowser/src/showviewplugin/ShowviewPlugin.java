@@ -30,7 +30,6 @@ import java.util.Iterator;
 import tvdataservice.MutableProgram;
 import devplugin.ChannelDayProgram;
 import devplugin.Plugin;
-import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.Version;
@@ -47,8 +46,6 @@ public class ShowviewPlugin extends Plugin {
   /** The localizer for this class. */  
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ShowviewPlugin.class);
-
-  private PluginInfo mPluginInfo;
   
   public ShowviewPlugin() {
   }
@@ -86,19 +83,21 @@ public class ShowviewPlugin extends Plugin {
   public static Version getVersion() {
     return mVersion;
   }
-
-  public PluginInfo getInfo() {
-    if(mPluginInfo == null) {
-      String name = mLocalizer.msg("showviewCalculater", "Showview number calculator");
-      String desc = mLocalizer.msg("description",
-        "Tries to calculate the showview numbers for new TV data." );
-      String author = "Til Schneider, www.murfman.de" ;
-      String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Showview_number_calculator");
-      
-      mPluginInfo = new PluginInfo(ShowviewPlugin.class, name, desc, author, helpUrl);
-    }
-    
-    return mPluginInfo;
+  
+  public static String getName() {
+    return mLocalizer.msg("showviewCalculater", "Showview number calculator");
   }
-
+  
+  public static String getDescription() {
+    return mLocalizer.msg("description",
+    "Tries to calculate the showview numbers for new TV data." );
+  }
+  
+  public static String getAuthor() {
+    return "Til Schneider, www.murfman.de";
+  }
+  
+  public static String getHelpUrl() {
+    return mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Showview_number_calculator");
+  }
 }
