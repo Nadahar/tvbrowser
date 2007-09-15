@@ -129,8 +129,8 @@ public class PictureAreaIcon implements Icon {
     else
       g.setColor(Color.gray);
     
-    mCopyrightText.paintIcon(c,g,x,y + mScaledIcon.getIconHeight());
-    mDescriptionText.paintIcon(c,g,x,y + mScaledIcon.getIconHeight() + mCopyrightText.getIconHeight() + 1);
+    mCopyrightText.paintIcon(null,g,x,y + mScaledIcon.getIconHeight());
+    mDescriptionText.paintIcon(null,g,x,y + mScaledIcon.getIconHeight() + mCopyrightText.getIconHeight() + 1);
     g.setColor(color);
   }
 }
