@@ -39,7 +39,6 @@ import util.settings.PluginPictureSettings;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
-import devplugin.PluginInfo;
 import devplugin.SettingsTab;
 import devplugin.Version;
 
@@ -68,8 +67,6 @@ public class ListViewPlugin extends Plugin {
     
     private static ListViewPlugin mInstance;
     
-    private PluginInfo mPluginInfo;
-    
     /**
      * Creates the Plugin
      */
@@ -87,22 +84,23 @@ public class ListViewPlugin extends Plugin {
     public static Version getVersion() {
       return mVersion;
     }
-
-    /**
-     * Returns Informations about this Plugin
-     */
-    public PluginInfo getInfo() {
-      if(mPluginInfo == null) {
-        String name = mLocalizer.msg("pluginName", "View List Plugin");
-        String desc = mLocalizer.msg("description", "Shows a List of current running Programs");
-        String author = "Bodo Tasche";
-        String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/View_List");
-        mPluginInfo = new PluginInfo(ListViewPlugin.class, name, desc, author, helpUrl);
-      }
-      
-      return mPluginInfo;
+    
+    public static String getName() {
+      return mLocalizer.msg("pluginName", "View List Plugin");
     }
-
+    
+    public static String getDescription() {
+      return mLocalizer.msg("description", "Shows a List of current running Programs");
+    }
+    
+    public static String getAuthor() {
+      return "Bodo Tasche";
+    }
+    
+    public static String getHelpUrl() {
+      return mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/View_List");
+    }
+    
     /**
      * Creates the Dialog
      */

@@ -46,7 +46,6 @@ import util.exc.ErrorHandler;
 import util.io.IOUtilities;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
-import devplugin.PluginInfo;
 import devplugin.Version;
 
 /**
@@ -79,8 +78,6 @@ public class NewsPlugin extends Plugin {
     
   private long mNoConnectionTime = 0;
   private long mLastNewsFileModified = 0;
-
-  private PluginInfo mPluginInfo;
   
   /**
    * Creates a new instance of NewsPlugin.
@@ -118,7 +115,7 @@ public class NewsPlugin extends Plugin {
         "internet-news-reader", 16));
     action.putValue(BIG_ICON, createImageIcon("apps", "internet-news-reader",
         22));
-    action.putValue(Action.SHORT_DESCRIPTION, getInfo().getDescription());
+    action.putValue(Action.SHORT_DESCRIPTION, getDescription());
 
     return new ActionMenu(action);
   }
@@ -127,23 +124,21 @@ public class NewsPlugin extends Plugin {
     return mVersion;
   }
   
-  /**
-   * Gets the plugin info.
-   * 
-   * @return The plugin info.
-   */
-  public PluginInfo getInfo() {
-    if(mPluginInfo == null) {
-      String name = mLocalizer.msg("news", "News");
-      String desc = mLocalizer.msg("description",
-          "Gets the TV-Browser news after each TV data update.");
-      String author = "Til Schneider, www.murfman.de";
-      String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/News");
-      
-      mPluginInfo = new PluginInfo(NewsPlugin.class, name, desc, author, helpUrl);
-    }
-    
-    return mPluginInfo;
+  public static String getName() {
+    return mLocalizer.msg("news", "News");
+  }
+  
+  public static String getDescription() {
+    return mLocalizer.msg("description",
+    "Gets the TV-Browser news after each TV data update.");
+  }
+  
+  public static String getAuthor() {
+    return "Til Schneider, www.murfman.de";
+  }
+  
+  public static String getHelpUrl() {
+    return mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/News");
   }
 
   /**
