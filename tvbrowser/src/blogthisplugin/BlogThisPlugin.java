@@ -25,6 +25,7 @@ package blogthisplugin;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.Plugin;
+import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.SettingsTab;
 import devplugin.ThemeIcon;
@@ -84,6 +85,8 @@ public class BlogThisPlugin extends Plugin {
     
     /** Settings */
     private Properties mSettings;
+
+    private PluginInfo mPluginInfo;
     
     public BlogThisPlugin() {
       createDefaultConfig();
@@ -104,20 +107,21 @@ public class BlogThisPlugin extends Plugin {
       return mVersion;
     }
     
-    public static String getName() {
-      return mLocalizer.msg("pluginName", "BlogThis");
-    }
-    
-    public static String getDescription() {
-      return mLocalizer.msg("description", "Creates a new Blog-Entry");
-    }
-    
-    public static String getAuthor() {
-      return "Bodo Tasche";
-    }
-    
-    public static String getHelpUrl() {
-      return mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Blog_this!");
+    /*
+     * (non-Javadoc)
+     * 
+     * @see devplugin.Plugin#getInfo()
+     */
+    public PluginInfo getInfo() {
+      if(mPluginInfo == null) {
+        String name = mLocalizer.msg("pluginName", "BlogThis");
+        String desc = mLocalizer.msg("description", "Creates a new Blog-Entry");
+        String author = "Bodo Tasche";
+        String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Blog_this!");
+        mPluginInfo = new PluginInfo(BlogThisPlugin.class, name, desc, author, helpUrl);
+      }
+      
+      return mPluginInfo;
     }
 
     /*

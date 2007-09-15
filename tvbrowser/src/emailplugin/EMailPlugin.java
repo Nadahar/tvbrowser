@@ -40,6 +40,7 @@ import util.ui.Localizer;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.Plugin;
+import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
@@ -67,6 +68,8 @@ public class EMailPlugin extends Plugin {
   private AbstractPluginProgramFormating[] mConfigs = null;
   private LocalPluginProgramFormating[] mLocalFormatings = null;
   
+  private PluginInfo mPluginInfo;
+  
   /**
    * Creates an instance of this class.
    */
@@ -89,20 +92,22 @@ public class EMailPlugin extends Plugin {
     return mVersion;
   }
   
-  public static String getName() {
-    return mLocalizer.msg("pluginName", "EMail export");
-  }
-  
-  public static String getDescription() {
-    return mLocalizer.msg("description", "Send a EMail with an external Program");
-  }
-  
-  public static String getAuthor() {
-    return "Bodo Tasche";
-  }
-  
-  public static String getHelpUrl() {
-    return mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Send_e-mail");
+  /*
+   * (non-Javadoc)
+   * 
+   * @see devplugin.Plugin#getInfo()
+   */
+  public PluginInfo getInfo() {
+    if(mPluginInfo == null) {
+      String name = mLocalizer.msg("pluginName", "EMail export");
+      String desc = mLocalizer.msg("description", "Send a EMail with an external Program");
+      String author = "Bodo Tasche";
+      String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Send_e-mail");
+      
+      mPluginInfo = new PluginInfo(EMailPlugin.class, name, desc, author, helpUrl);
+    }
+    
+    return mPluginInfo;
   }
 
   /*

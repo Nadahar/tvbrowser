@@ -27,6 +27,7 @@ package i18nplugin;
 
 import devplugin.ActionMenu;
 import devplugin.Plugin;
+import devplugin.PluginInfo;
 import devplugin.ThemeIcon;
 import devplugin.Version;
 import util.ui.Localizer;
@@ -66,6 +67,8 @@ public class I18NPlugin extends Plugin {
   
   private int mDevider = 200;
   
+  private PluginInfo mPluginInfo;
+  
   /**
    * Contructor, stores current instance in static field
    */
@@ -84,16 +87,16 @@ public class I18NPlugin extends Plugin {
     return mVersion;
   }
   
-  public static String getName() {
-    return mLocalizer.msg("pluginName", "I18NPlugin");
-  }
-  
-  public static String getDescription() {
-    return mLocalizer.msg("description", "Tool for Translators");
-  }
-  
-  public static String getAuthor() {
-    return "Bodo Tasche";
+  @Override
+  public PluginInfo getInfo() {
+    if(mPluginInfo == null) {
+      String name = mLocalizer.msg("pluginName", "I18NPlugin");
+      String desc = mLocalizer.msg("description", "Tool for Translators");
+      String author = "Bodo Tasche";
+      mPluginInfo = new PluginInfo(I18NPlugin.class, name, desc, author);
+    }
+    
+    return mPluginInfo;
   }
 
   @Override

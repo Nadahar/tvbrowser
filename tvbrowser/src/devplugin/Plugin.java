@@ -319,71 +319,6 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
   public static Version getVersion() {
     return new Version(0, 0);
   }
-  
-  /**
-   * Gets the name of this plugin.
-   * <p>
-   * Override this to support the name
-   * info of this plugin.
-   * 
-   * @return The name of this plugin.
-   * @since 2.6
-   */
-  public static String getName() {
-    return mLocalizer.msg( "unkown" ,"Unknown" );
-  }
-  
-  /**
-   * Gets the description of this plugin.
-   * <p>
-   * Override this to support the description
-   * info of this plugin.
-   * 
-   * @return The description of this plugin.
-   * @since 2.6
-   */
-  public static String getDescription() {
-    return mLocalizer.msg( "noDescription" ,"No description"  ); 
-  }
-  
-  /**
-   * Gets the author info of this plugin.
-   * <p>
-   * Override this to support the author
-   * info of this plugin.
-   * 
-   * @return The author of this plugin.
-   * @since 2.6
-   */
-  public static String getAuthor() {
-    return mLocalizer.msg( "noAuthor" ,"No author given" );
-  }
-  
-  /**
-   * Gets the license info of this plugin.
-   * <p>
-   * Override this to support the license
-   * info of this plugin.
-   * 
-   * @return The license of this plugin.
-   * @since 2.6
-   */
-  public static String getLicense() {
-    return null;
-  }
-  
-  /**
-   * Gets the help url for this plugin.
-   * <p>
-   * Override this to support the help url
-   * info of this plugin.
-   *  
-   * @return The help url of this plugin.
-   * @since 2.6
-   */
-  public static String getHelpUrl() {
-    return null;
-  }
 
   /**
    * Gets the meta information about the plugin.
@@ -391,17 +326,15 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    * Override this method to provide information about your plugin.
    * 
    * @return The meta information about the plugin.
-   * 
-   * @deprecated since 2.6 Use {@link #getName()}, {@link #getDescription()},
-   * {@link #getAuthor()}, {@link #getHelpUrl()}, {@link #getVersion()} and
-   * {@link #getLicense()} instead. You don't have to hide all of these methods,
-   * if a Method is not hidden a default value will be used. But take care that
-   * you always hide {@link #getVersion()} to support the correct version info.
-   * With TV-Browser 3.0 this method will be final, so it cannot be overridden anymore. 
    */
   public PluginInfo getInfo() {
-    return new PluginInfo(getName(), getDescription(), getAuthor(), getHelpUrl(), getVersion(), getLicense());
+    String name = mLocalizer.msg( "unkown" ,"Unknown" );
+    String desc = mLocalizer.msg( "noDescription" ,"No description" );
+    String author = mLocalizer.msg( "noAuthor" ,"No author given" );
+
+    return new PluginInfo(name, desc, author, getVersion());
   }
+
 
   /**
    * Gets whether the plugin supports receiving programs from other plugins.

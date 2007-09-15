@@ -27,6 +27,7 @@ package captureplugin;
 import captureplugin.drivers.DeviceIf;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
+import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
@@ -105,6 +106,8 @@ public class CapturePlugin extends devplugin.Plugin {
     private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
     private static final String RECORD = "##record";
     private static final String REMOVE = "##remove";
+
+    private PluginInfo mPluginInfo;
     
     /**
      * Creates the Plugin
@@ -167,20 +170,19 @@ public class CapturePlugin extends devplugin.Plugin {
       return mVersion;
     }
     
-    public static String getName() {
-      return mLocalizer.msg("CapturePlugin", "Capture Plugin");
-    }
-    
-    public static String getDescription() {
-      return mLocalizer.msg("Desc", "Starts a external Program with configurable Parameters");
-    }
-    
-    public static String getAuthor() {
-      return "Bodo Tasche, Andreas Hessel";
-    }
-    
-    public static String getHelpUrl() {
-      return mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Capture_Plugin");
+    /**
+     * Implement this function to provide information about your plugin.
+     */
+    public PluginInfo getInfo() {
+      if(mPluginInfo == null) {
+        String name = mLocalizer.msg("CapturePlugin", "Capture Plugin");
+        String desc = mLocalizer.msg("Desc", "Starts a external Program with configurable Parameters");
+        String author = "Bodo Tasche, Andreas Hessel";
+        String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Capture_Plugin");
+
+        mPluginInfo = new PluginInfo(CapturePlugin.class, name, desc, author, helpUrl);
+      }
+      return mPluginInfo;
     }
 
     /**
