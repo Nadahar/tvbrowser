@@ -23,37 +23,36 @@
  */
 package tvbrowser.extras.favoritesplugin.dlgs;
 
-import tvbrowser.extras.favoritesplugin.core.Favorite;
-import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.common.ReminderConfiguration;
-import tvbrowser.extras.reminderplugin.ReminderPlugin;
-import tvbrowser.ui.mainframe.MainFrame;
-
-import java.util.Enumeration;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Arrays;
-import java.io.ObjectInputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.awt.event.ActionEvent;
-
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.Action;
-import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
-
-import devplugin.Program;
 import devplugin.Channel;
 import devplugin.Date;
-import devplugin.ProgramFieldType;
-import devplugin.PluginTreeNode;
 import devplugin.NodeFormatter;
+import devplugin.PluginTreeNode;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
 import devplugin.ProgramItem;
+import tvbrowser.extras.common.ReminderConfiguration;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
+import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+
+import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Enumeration;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JOptionPane;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
 /**
  * The model for the favorite tree.
@@ -104,7 +103,6 @@ public class FavoriteTreeModel extends DefaultTreeModel {
 
   public void reload(TreeNode node) {
     super.reload(node);
-    FavoriteNode parent = (FavoriteNode)node;
     Enumeration e = node.children();
     
     while(e.hasMoreElements()) {
@@ -113,17 +111,28 @@ public class FavoriteTreeModel extends DefaultTreeModel {
       if(child.isDirectoryNode())
         reload(child);
     }
-    
-/*
-    ToDo: reconstruct Expanding in Tree
+  }
+
+  public void reload(FavoriteTree tree, TreeNode node) {
+    super.reload(node);
+    Enumeration e = node.children();
+
+    while(e.hasMoreElements()) {
+      FavoriteNode child = (FavoriteNode)e.nextElement();
+
+      if(child.isDirectoryNode())
+        reload(tree, child);
+    }
+
+    FavoriteNode parent = (FavoriteNode)node;
 
     if(parent.wasExpanded())
-      FavoriteTree.getInstance().expandPath(new TreePath(((DefaultTreeModel)FavoriteTree.getInstance().getModel()).getPathToRoot(node)));
+      tree.expandPath(new TreePath((tree.getModel()).getPathToRoot(node)));
     else
-      FavoriteTree.getInstance().collapsePath(new TreePath(((DefaultTreeModel)FavoriteTree.getInstance().getModel()).getPathToRoot(node)));
-*/  
+      tree.collapsePath(new TreePath((tree.getModel()).getPathToRoot(node)));
   }
-  
+
+
   public void reload() {
     reload(root);
   }
