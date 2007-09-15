@@ -212,8 +212,8 @@ public class ProgramTextCreator {
     buffer.append(prog.getTitle());
     buffer.append("</b></div>");
 
-    /*String episode = prog.getTextField(ProgramFieldType.EPISODE_TYPE);
-
+    String episode = CompoundedProgramFieldType.EPISODE_COMPOSITION.getFormatedValueForProgram(prog);
+    
     if (episode != null && episode.trim().length() > 0) {
       buffer.append("<div style=\"color:#808080; font-size:");
 
@@ -222,7 +222,7 @@ public class ProgramTextCreator {
       buffer.append("\">");
       buffer.append(episode);
       buffer.append("</div>");
-    }*/
+    }
 
     buffer.append("</td></tr>");
 
@@ -751,7 +751,6 @@ public class ProgramTextCreator {
         ProgramFieldType.URL_TYPE,
         ProgramFieldType.ORIGINAL_TITLE_TYPE,
         ProgramFieldType.ORIGINAL_EPISODE_TYPE,
-        CompoundedProgramFieldType.EPISODE_COMPOSITION,
         ProgramFieldType.REPETITION_OF_TYPE,
         ProgramFieldType.REPETITION_ON_TYPE, ProgramFieldType.AGE_LIMIT_TYPE,
         ProgramFieldType.INFO_TYPE, ProgramFieldType.VPS_TYPE,
