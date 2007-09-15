@@ -29,8 +29,10 @@ public class ProgramInfoHelper {
             Program.INFO_AUDIO_TWO_CHANNEL_TONE,
             Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED, Program.INFO_LIVE,
             Program.INFO_ORIGINAL_WITH_SUBTITLE,
-            Program.INFO_MOVIE, Program.INFO_SERIES, Program.INFO_NEW,
-            Program.INFO_AUDIO_DESCRIPTION};
+            Program.INFO_CATEGORIE_MOVIE, Program.INFO_CATEGORIE_SERIES, Program.INFO_NEW,
+            Program.INFO_AUDIO_DESCRIPTION, Program.INFO_CATEGORIE_NEWS,
+            Program.INFO_CATEGORIE_SHOW, Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT
+    };
 
     /**
      * The Icons for the Bits
@@ -47,10 +49,13 @@ public class ProgramInfoHelper {
             createIcon(mLocalizer.msg("subtitleForAurallyHandicappedImage","Info_SubtitleForAurallyHandicapped.gif")), // INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED
             createIcon("Info_Live.png"), // INFO_LIVE
             createIcon(mLocalizer.msg("originalWithSubtitleImage","Info_OriginalWithSubtitle_EN.gif")), // INFO_ORIGINAL_WITH_SUBTITLE
-            createIcon("Info_Movie.png"), // INFO_MOVIE
-            createIcon("Info_Series.png"), // INFO_SERIES
+            createIcon("Info_Movie.png"), // INFO_CATEGORIE_MOVIE
+            createIcon("Info_Series.png"), // INFO_CATEGORIE_SERIES
             createIcon("Info_New.png"),  // INFO_NEW
             createIcon("Info_AudioDescription.png"),  // INFO_AUDIO_DESCRIPTION
+            null, // News
+            null, // Show
+            null, // Magazine/Infotainment
     };
 
     /**
@@ -77,10 +82,13 @@ public class ProgramInfoHelper {
                     "Subtitle for aurally handicapped"), // INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED
             mLocalizer.msg("live", "Live"), // INFO_LIVE
             mLocalizer.msg("originalWithSubtitle", "Original with subtitle"), // INFO_ORIGINAL_WITH_SUBTITLE
-            mLocalizer.msg("movie", "Movie"), // INFO_MOVIE
-            mLocalizer.msg("series", "Series"),
+            mLocalizer.msg("categorie_movie", "Movie"), // INFO_CATEGORIE_MOVIE
+            mLocalizer.msg("categorie_series", "Series"),
             mLocalizer.msg("new", "New"),
             mLocalizer.msg("audioDescription", "Audio Description"),
+            mLocalizer.msg("categorie_news", "news"),
+            mLocalizer.msg("categorie_show", "show"),
+            mLocalizer.msg("categorie_magazine_infotainment", "magazine/infotainment"),
     };
 
 

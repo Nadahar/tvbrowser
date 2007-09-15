@@ -118,13 +118,13 @@ public interface Program {
    * This program is a movie.
    * @since 2.6/2.2.4 
    */
-  public static final int INFO_MOVIE = 1 << 12;
+  public static final int INFO_CATEGORIE_MOVIE = 1 << 12;
 
   /**
    * This program is a series.
    * @since 2.6/2.2.4
    */
-  public static final int INFO_SERIES = 1 << 13;
+  public static final int INFO_CATEGORIE_SERIES = 1 << 13;
 
   /**
    * This program has not been on air before.
@@ -137,6 +137,24 @@ public interface Program {
    * @since 2.6/2.2.4
    */
   public static final int INFO_AUDIO_DESCRIPTION = 1 << 15;
+
+  /**
+   * This program is News
+   * @since 2.6/2.2.4
+   */
+  public static final int INFO_CATEGORIE_NEWS = 1 << 16;
+
+  /**
+   * This program is Show
+   * @since 2.6/2.2.4
+   */
+  public static final int INFO_CATEGORIE_SHOW = 1 << 17;
+
+  /**
+   * This program is a magazine or infotainment
+   * @since 2.6/2.2.4
+   */
+  public static final int INFO_CATEGORIE_MAGAZINE_INFOTAINMENT = 1 << 18;
 
   /**
    * Adds a ChangeListener to the program.

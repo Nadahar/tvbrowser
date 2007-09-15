@@ -196,7 +196,7 @@ public class RadioTimesFileParser {
         }
         
         if (items[RT_MOVIE].trim().equalsIgnoreCase("true")) {
-          bitset |= Program.INFO_MOVIE; 
+          bitset |= Program.INFO_CATEGORIE_MOVIE;
         }
         
         if (items[RT_MOVIE_PREMIERE].trim().equalsIgnoreCase("true")) {
@@ -205,7 +205,7 @@ public class RadioTimesFileParser {
 
         if (items[RT_NEW_SERIES].trim().equalsIgnoreCase("true")) {
           bitset |= Program.INFO_NEW;
-          bitset |= Program.INFO_SERIES;
+          bitset |= Program.INFO_CATEGORIE_MOVIE;
         }
        
         prog.setInfo(bitset);

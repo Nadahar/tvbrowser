@@ -102,6 +102,13 @@ public class ProgramFieldType {
     = new ProgramFieldType(9, BINARY_FORMAT, true, "image",
                            "image", "Image");
 
+  /**
+   * Actor-List. Shoud be in this Format:
+   *
+   * ActorName\t\t-\t\tRole,\n
+   * ActorName2\t\t-\t\tRole2\n
+   *
+   */
   public static final ProgramFieldType ACTOR_LIST_TYPE
     = new ProgramFieldType(10, TEXT_FORMAT, true, "actor list",
                            "actors", "Actors");
@@ -241,6 +248,20 @@ public class ProgramFieldType {
   public static final ProgramFieldType CUTTER_TYPE
        = new ProgramFieldType(34, TEXT_FORMAT, true, "cutter",
                               "cutter", "Cutter");
+
+  /**
+   * Additional persons (Stuntmen etc)
+   *
+   * Should be in this format:
+   *
+   * Person\t(Role),\n
+   * Person2\t(Role)
+   *
+   * @since 2.6/2.2.4
+   */
+  public static final ProgramFieldType ADDITIONAL_PERSONS_TYPE
+       = new ProgramFieldType(34, TEXT_FORMAT, true, "additional persons",
+                              "additionalPersons", "additional persons");
 
   private int mTypeId;
 
