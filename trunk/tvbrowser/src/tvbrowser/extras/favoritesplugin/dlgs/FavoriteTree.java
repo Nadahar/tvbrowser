@@ -720,12 +720,12 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
     return text.toString();
   }
 
-
-
   private class FavoriteTreeUI extends javax.swing.plaf.basic.BasicTreeUI implements MouseListener {
     private static final int CLICK_WAIT_TIME = 150;
     private Thread mClickedThread;
+    private TreePath mLastSelectionPath;
     private long mMousePressedTime;
+    private boolean mWasExpanded;
     
     protected MouseListener createMouseListener() {
       return this;
@@ -764,6 +764,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
           final TreePath path = getClosestPathForLocation(tree, e.getX(), e.getY());
           
           if(path != null && ((FavoriteNode)path.getLastPathComponent()).containsFavorite()) {
+            mLastSelectionPath = path;
             if(e.getClickCount() >= 2) {
               ManageFavoritesDialog.getInstance().editSelectedFavorite();
             }
@@ -774,21 +775,32 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
                 public void run() {
                   if(!isExpanded(path)) {
                     expandPath(path);
+                    mWasExpanded = true;
                   }
-                  else {
+                  else if(mLastSelectionPath != null && tree.getSelectionPath().equals(mLastSelectionPath)){
                     collapsePath(path);
+                    mWasExpanded = false;
                   }
                   setSelectionPath(path);
+                  mLastSelectionPath = path;
                   
                   try {
                     Thread.sleep(CLICK_WAIT_TIME*2);
                   }catch(Exception e) {
                     e.printStackTrace();
                   }
+                  
+                  mWasExpanded = false;
                 }
               };
               mClickedThread.start();
             }
+            else if(!mWasExpanded && mLastSelectionPath != null && tree.getSelectionPath().equals(mLastSelectionPath)){
+              collapsePath(path);
+            }
+          }
+          else {
+            mLastSelectionPath = path;
           }
         }
         e.consume();
