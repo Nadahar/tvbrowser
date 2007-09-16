@@ -39,6 +39,8 @@ import tvbrowser.core.ChannelList;
  */
 public class ProgramUtilities {
 
+  private static String ACTOR_ROLE_SEPARATOR = "\t\t-\t\t";
+
   /**
    * Helper method to check if a program runs.
    * 
@@ -150,8 +152,12 @@ public class ProgramUtilities {
       ArrayList<String> listFirst = new ArrayList<String>();
       ArrayList<String> listSecond = new ArrayList<String>();
       for (String actor : actors) {
+        if (actor.contains(ACTOR_ROLE_SEPARATOR)) {
+          listFirst.add(actor.substring(0, actor.indexOf(ACTOR_ROLE_SEPARATOR)).trim());
+          listSecond.add(actor.substring(actor.indexOf(ACTOR_ROLE_SEPARATOR) + ACTOR_ROLE_SEPARATOR.length()).trim());
+        }
         // actor and role separated by tab
-        if (actor.contains("\t")) {
+        else if (actor.contains("\t")) {
           listFirst.add(actor.substring(0, actor.indexOf("\t")).trim());
           listSecond.add(actor.substring(actor.indexOf("\t")+1).trim());
         }
@@ -159,6 +165,16 @@ public class ProgramUtilities {
         else if (actor.contains("(") || actor.contains(")")) {
           if (actor.contains("(") && actor.contains(")")) {
             String secondPart = actor.substring(actor.indexOf("(")+1,actor.lastIndexOf(")")).trim();
+            // there are multiple brackets, lets look for something like "actor (age) (role)"
+            if (secondPart.contains("(")) {
+              Pattern agePattern = Pattern.compile(".*(\\(\\d+\\)).*");
+              Matcher matcher = agePattern.matcher(actor);
+              if (matcher.matches()) {
+                String age = matcher.group(1);
+                actor = actor.substring(0, actor.indexOf(age)) + actor.substring(actor.indexOf(age) + age.length());
+                secondPart = actor.substring(actor.indexOf("(")+1,actor.lastIndexOf(")")).trim();
+              }
+            }
             // don't use this name if it contains _multiple_ brackets
             if (!secondPart.contains("(")) {
               listFirst.add(actor.substring(0, actor.indexOf("(")).trim());
@@ -176,10 +192,19 @@ public class ProgramUtilities {
           listFirst.add(actor.trim());
         }
       }
+
       ArrayList<String>[] lists = new ArrayList[2];
       lists[0] = listFirst;
       lists[1] = listSecond;
-      ArrayList<String> result = separateRolesAndActors(lists, program);
+      ArrayList<String> result;
+      // use first list if the field has special formatting
+      if (actorsField.contains(ACTOR_ROLE_SEPARATOR)) {
+        result = listFirst;
+      }
+      // otherwise do a statistical investigation
+      else {
+        result = separateRolesAndActors(lists, program);
+      }
       if (result != null) {
         String[] array = new String[result.size()];
         result.toArray(array);
@@ -190,7 +215,9 @@ public class ProgramUtilities {
   }
 
   /**
-   * decide which of the 2 lists contains the real actor names and which the role names
+   * decide which of the 2 lists contains the real actor names and which
+   * the role names by using statistical methods
+   *  
    * @param program 
    * @param listFirst first list of names
    * @param listSecond second list of names
@@ -239,6 +266,9 @@ public class ProgramUtilities {
     // which list contains strings with consecutive uppercase letters -> roles
     int[] uppercase = new int[list.length];
     Pattern consecUpper = Pattern.compile(".*[A-Z]{2,}.*");
+    // which list contains more role indication words
+    int[] roleWord = new int[list.length];
+    String[] roleIndications = new String[] {"der", "die", "das"};
     for (int i = 0; i < list.length; i++) {
       familyNames[i] = new HashMap<String, Integer>();
       for (String name : list[i]) {
@@ -265,6 +295,15 @@ public class ProgramUtilities {
         if (matcher.matches()) {
           uppercase[i]++;
         }
+        // check if there are words which should never occur in an actor name
+        String[] nameParts = name.split(" ");
+        for (String namePart: nameParts) {
+          for (String roleIndication : roleIndications) {
+            if (namePart.equalsIgnoreCase(roleIndication)) {
+              roleWord[i]++;
+            }
+          }
+        }
       }
       for (Integer familyCount : familyNames[i].values()) {
         if (familyCount.intValue() > maxNames[i]) {
@@ -272,7 +311,14 @@ public class ProgramUtilities {
         }
       }
     }
-    if (slashes[0] < slashes[1]) {
+    // now evaluate our statistics
+    if (roleWord[0] < roleWord[1]) {
+      return list[0];
+    }
+    else if (roleWord[1] < roleWord[0]) {
+      return list[1];
+    }
+    else if (slashes[0] < slashes[1]) {
       return list[0];
     }
     else if (slashes[1] < slashes[0]) {
