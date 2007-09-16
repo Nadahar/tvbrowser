@@ -15,7 +15,7 @@ public class InfoCategoryParser {
 
   private final String[] MOVIES = {"spielfilm", "tv movie", "pilotfilm", "romantische komödie", "psychothriller", "dokumentarfilm",
           "horrorkomödie", "komödie", "thriller", "western", "science fiction", "science-fiction", "musikfilm", "heimatfilm",
-          "tv-film", "horrorthriller", "jugendfilm", "tv-krimi", "erotikfilm", "fantasy", "drama", "animationsfilm", "abenteuerfilm",
+          "tv-film", "horrorthriller", "jugendfilm", "tv-krimi", "erotikfilm", "drama", "animationsfilm", "abenteuerfilm",
           "zeichentrickkomödie", "kinderfilm", "actionfilm", "kriminalfilm", "horrorfilm", "actionthriller", "actionkomödie",
           "tv-drama", "kriegsdrama", "familiendrama", "gesellschaftsdrama", "literaturverfilmung", "experimentalfilm", "actiondrama",
           "kriegsfilm", "episodenfilm", "italowestern", "jugenddrama", "roadmovie", "gaunerkomödie", "beziehungskomödie",
