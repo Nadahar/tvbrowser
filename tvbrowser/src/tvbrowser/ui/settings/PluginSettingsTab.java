@@ -232,7 +232,10 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
 
     populatePluginList();
     
-    contentPanel.add(new JScrollPane(mTable), cc.xyw(1,3,2));
+    JScrollPane pane = new JScrollPane(mTable);
+    pane.getViewport().setBackground(mTable.getBackground());
+    
+    contentPanel.add(pane, cc.xyw(1,3,2));
     
     ButtonBarBuilder builder = new ButtonBarBuilder();
 
