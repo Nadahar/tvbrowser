@@ -78,6 +78,7 @@ import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
 import util.ui.Localizer;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.pluginview.Node;
 import tvbrowser.ui.waiting.dlgs.SettingsWaitingDialog;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -145,7 +146,13 @@ public class SettingsDialog implements WindowClosingIf {
     main.add(splitPane, cc.xy(1, 1));
 
     mRootNode = createSelectionTree();
-    mSelectionTree = new JTree(mRootNode);
+    mSelectionTree = new JTree(mRootNode) {
+      public void updateUI() {
+        setUI(new util.ui.SingleAndDoubleClickTreeUI(util.ui.SingleAndDoubleClickTreeUI.AUTO_COLLAPSE_EXPAND));
+        invalidate();
+      }
+    };
+    
     mSelectionTree.setRootVisible(false);
     mSelectionTree.setShowsRootHandles(true);
     mSelectionTree.getSelectionModel().setSelectionMode(

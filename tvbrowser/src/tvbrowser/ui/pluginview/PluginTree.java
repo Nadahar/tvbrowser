@@ -54,8 +54,6 @@ import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -81,6 +79,7 @@ import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import util.io.IOUtilities;
 import util.ui.Localizer;
 import util.ui.OverlayListener;
+import util.ui.SingleAndDoubleClickTreeUI;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
 import devplugin.PluginAccess;
@@ -743,78 +742,16 @@ public class PluginTree extends JTree implements DragGestureListener,
   
   public void updateUI() {
     if(mUpdateAllowed) {
-      setUI(new PluginTreeUI());
+      setUI(new PluginTreeUI(SingleAndDoubleClickTreeUI.EXPAND_AND_COLLAPSE));
       invalidate();
     }
   }
   
-  private class PluginTreeUI extends javax.swing.plaf.basic.BasicTreeUI implements MouseListener {
-    private static final int CLICK_WAIT_TIME = 150;
-    private Thread mClickedThread;
-    private long mMousePressedTime;
-    
-    protected MouseListener createMouseListener() {
-      return this;
-    }
-    
-    public void mousePressed(MouseEvent e) {
-      if(!e.isConsumed()) {
-        if(!tree.hasFocus()) {
-          tree.requestFocus();
-        }
-        
-        TreePath path = getClosestPathForLocation(tree, e.getX(), e.getY());
-        
-        if(path != null && getPathBounds(tree,path).contains(e.getPoint())) {
-          setSelectionPath(path);
-        }
-        else {
-          setSelectionPath(new TreePath(getModel().getRoot()));
-        }
-        
-        mMousePressedTime = e.getWhen();
-        
-        checkForClickInExpandControl(getClosestPathForLocation(tree, e.getX(), e.getY()),e.getX(),e.getY());
-        e.consume();
-      }
-    }
-    
-    public void mouseReleased(MouseEvent e) {
-      if(!e.isConsumed()) {
-        if(SwingUtilities.isLeftMouseButton(e)) {
-          final TreePath path = getClosestPathForLocation(tree, e.getX(), e.getY());
-          
-          if(path != null && ((Node)path.getLastPathComponent()).getType() != Node.PROGRAM && (e.getWhen() - mMousePressedTime) < CLICK_WAIT_TIME && getPathBounds(tree,path).contains(e.getPoint())) {
-            if(mClickedThread == null || !mClickedThread.isAlive()) {
-              mClickedThread = new Thread("Plugin tree double click") {
-                public void run() {
-                  if(!isExpanded(path)) {
-                    expandPath(path);
-                  }
-                  else {
-                    collapsePath(path);
-                  }
-                  setSelectionPath(path);
-                  
-                  try {
-                    Thread.sleep(CLICK_WAIT_TIME*2);
-                  }catch(Exception e) {}
-                }
-              };
-              mClickedThread.start();
-            }
-          }
-        }
-        e.consume();
-      }
+  private class PluginTreeUI extends SingleAndDoubleClickTreeUI {
+    protected PluginTreeUI(int type) {
+      super(type);
     }
 
-    public void mouseClicked(MouseEvent e) {}
-
-    public void mouseEntered(MouseEvent e) {}
-
-    public void mouseExited(MouseEvent e) {}
-    
     protected void paintRow(Graphics g, Rectangle clipBounds, Insets insets, Rectangle bounds, TreePath path, int row, boolean isExpanded, boolean hasBeenExpanded, boolean isLeaf)  {      
       if(path.getLastPathComponent() instanceof Node && (tree.getSelectionPath() == null || !tree.getSelectionPath().equals(path))) {
         Node node = (Node)path.getLastPathComponent();
