@@ -742,14 +742,14 @@ public class PluginTree extends JTree implements DragGestureListener,
   
   public void updateUI() {
     if(mUpdateAllowed) {
-      setUI(new PluginTreeUI(SingleAndDoubleClickTreeUI.EXPAND_AND_COLLAPSE));
+      setUI(new PluginTreeUI(SingleAndDoubleClickTreeUI.EXPAND_AND_COLLAPSE, getSelectionPath()));
       invalidate();
     }
   }
   
   private class PluginTreeUI extends SingleAndDoubleClickTreeUI {
-    protected PluginTreeUI(int type) {
-      super(type);
+    protected PluginTreeUI(int type, TreePath selectionPath) {
+      super(type, selectionPath);
     }
 
     protected void paintRow(Graphics g, Rectangle clipBounds, Insets insets, Rectangle bounds, TreePath path, int row, boolean isExpanded, boolean hasBeenExpanded, boolean isLeaf)  {      
