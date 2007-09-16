@@ -56,9 +56,11 @@ public class SingleAndDoubleClickTreeUI extends javax.swing.plaf.basic.BasicTree
    * Creates an instance of this plugin.
    * 
    * @param type The type of this UI.
+   * @param selectedPath The currently selected path.
    */
-  public SingleAndDoubleClickTreeUI(int type) {
+  public SingleAndDoubleClickTreeUI(int type, TreePath selectedPath) {
     mType = type;
+    mLastSelectionPath = selectedPath;
   }
   
   protected MouseListener createMouseListener() {
@@ -92,7 +94,7 @@ public class SingleAndDoubleClickTreeUI extends javax.swing.plaf.basic.BasicTree
       if(SwingUtilities.isLeftMouseButton(e)) {
         final TreePath path = getClosestPathForLocation(tree, e.getX(), e.getY());
         
-        if(path != null && !((DefaultMutableTreeNode)path.getLastPathComponent()).isLeaf() && (e.getWhen() - mMousePressedTime) < CLICK_WAIT_TIME && getPathBounds(tree,path).contains(e.getPoint())) {
+        if(path != null && !((DefaultMutableTreeNode)path.getLastPathComponent()).isLeaf() && ((mType == EXPAND_AND_COLLAPSE && (e.getWhen() - mMousePressedTime) < CLICK_WAIT_TIME) || mType != EXPAND_AND_COLLAPSE) && getPathBounds(tree,path).contains(e.getPoint())) {
           if(mClickedThread == null || !mClickedThread.isAlive()) {
             mClickedThread = new Thread("Single click tree UI double click") {
               public void run() {

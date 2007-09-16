@@ -148,7 +148,7 @@ public class SettingsDialog implements WindowClosingIf {
     mRootNode = createSelectionTree();
     mSelectionTree = new JTree(mRootNode) {
       public void updateUI() {
-        setUI(new util.ui.SingleAndDoubleClickTreeUI(util.ui.SingleAndDoubleClickTreeUI.AUTO_COLLAPSE_EXPAND));
+        setUI(new util.ui.SingleAndDoubleClickTreeUI(util.ui.SingleAndDoubleClickTreeUI.AUTO_COLLAPSE_EXPAND, getSelectionPath()));
         invalidate();
       }
     };
