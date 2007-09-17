@@ -40,6 +40,7 @@ import util.exc.ErrorHandler;
 import util.io.ZipUtil;
 import util.ui.LinkButton;
 import util.ui.Localizer;
+import util.ui.SingleAndDoubleClickTreeUI;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -170,7 +171,13 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
 
     DefaultMutableTreeNode root = createRootNode();
     
-    mTree = new JTree(root);
+    mTree = new JTree(root) {
+      public void updateUI() {
+        setUI(new SingleAndDoubleClickTreeUI(SingleAndDoubleClickTreeUI.AUTO_COLLAPSE_EXPAND, getSelectionPath()));
+        invalidate();
+      }
+    };
+    
     mTreeRenderer = new PropertiesTreeCellRenderer(Locale.GERMAN);
     mTree.setCellRenderer(mTreeRenderer);
     
