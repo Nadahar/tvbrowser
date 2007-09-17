@@ -31,6 +31,7 @@ import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
+import devplugin.Channel;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -67,6 +68,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Locale;
@@ -361,7 +363,18 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
    */
   private DefaultMutableTreeNode createRootNode() {
     mRoot = new PathNode(mLocalizer.msg("translations", "Translations"));
-    mRoot.add(new TranslationNode("TV-Browser", new File("tvbrowser.jar")));
+    File jar = new File("tvbrowser.jar");
+
+    if (!jar.exists()) {
+      URL url = Channel.class.getProtectionDomain().getCodeSource().getLocation();
+      jar = new File(url.getFile());
+    }
+
+    if (!jar.exists()) {
+      JOptionPane.showConfirmDialog(null, "Jar not found : " + jar.getAbsolutePath());
+    }
+
+    mRoot.add(new TranslationNode("TV-Browser", jar));
     
     PathNode plugins = new PathNode("Plugins");
 
