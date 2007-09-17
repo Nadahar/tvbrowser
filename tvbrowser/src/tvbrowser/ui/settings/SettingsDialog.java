@@ -80,6 +80,7 @@ import util.ui.Localizer;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.pluginview.Node;
 import tvbrowser.ui.waiting.dlgs.SettingsWaitingDialog;
+import util.ui.SingleAndDoubleClickTreeUI;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -145,10 +146,12 @@ public class SettingsDialog implements WindowClosingIf {
     splitPane.setContinuousLayout(true);
     main.add(splitPane, cc.xy(1, 1));
 
+    final SingleAndDoubleClickTreeUI treeUI = new SingleAndDoubleClickTreeUI(SingleAndDoubleClickTreeUI.AUTO_COLLAPSE_EXPAND, null);
+    
     mRootNode = createSelectionTree();
     mSelectionTree = new JTree(mRootNode) {
       public void updateUI() {
-        setUI(new util.ui.SingleAndDoubleClickTreeUI(util.ui.SingleAndDoubleClickTreeUI.AUTO_COLLAPSE_EXPAND, getSelectionPath()));
+        setUI(treeUI);
         invalidate();
       }
     };
@@ -240,6 +243,7 @@ public class SettingsDialog implements WindowClosingIf {
       TreePath selectedPath = new TreePath(n.getPath());
       mSelectionTree.setSelectionPath(selectedPath);
       mSelectionTree.expandPath(selectedPath);
+      treeUI.setLastSelectedPath(selectedPath);
     } else {
       showSettingsPanelForSelectedNode();
     }
