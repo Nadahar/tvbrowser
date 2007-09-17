@@ -45,7 +45,75 @@ public final class PluginInfo {
     private String mAuthor="";
     private String mLicense=null;
     private String mHelpUrl=null;
+    
+    /**
+     * Creates an instance of PluginInfo with the
+     * default values and the given name.
+     * <p>
+     * @param name The name of the plugin.
+     * @deprecated since 2.6 Use {@link #PluginInfo(Class, String)} instead.
+     */
+    public PluginInfo(String name) {
+      this(Class.class,name,"");
+    }
 
+    /**
+     * Creates an instance of PluginInfo with the
+     * default values and the given name and description.
+     * <p>
+     * @param name The name of the plugin.
+     * @param desc The description for the plugin.
+     * @deprecated since 2.6 Use {@link #PluginInfo(Class, String, String)} instead.
+     */
+    public PluginInfo(String name, String desc) {
+      this(Class.class,name,desc,"");       
+    }
+    
+    /**
+     * Creates an instance of PluginInfo with the
+     * default values and the given name, description and author.
+     * <p>
+     * @param name The name of the plugin.
+     * @param desc The description for the plugin.
+     * @param author The author of the plugin.
+     * @deprecated since 2.6 Use {@link #PluginInfo(Class, String, String, String)} instead.
+     */
+    public PluginInfo(String name, String desc, String author) {
+      this(Class.class,name,desc,author,null,null,null);        
+    }
+    
+    /**
+     * Creates an instance of PluginInfo with the
+     * default values and the given name, description, author and version.
+     * <p>
+     * @param name The name of the plugin.
+     * @param desc The description for the plugin.
+     * @param author The author of the plugin.
+     * @param version The version of the plugin.
+     * @deprecated since 2.6 Use {@link #PluginInfo(Class, String, String, String)} instead
+     * and if this is for a Plugin let your Plugin hide {@link Plugin#getVersion()}.
+     */
+    public PluginInfo(String name, String desc, String author, Version version) {
+      this(Class.class,name,desc,author,null,version,null);
+    }
+
+    /**
+     * Creates an instance of PluginInfo with the
+     * default values and the given name, description, author,
+     * version and license.
+     * <p>
+     * @param name The name of the plugin.
+     * @param desc The description for the plugin.
+     * @param author The author of the plugin.
+     * @param version The version of the plugin.
+     * @param license The lincense of the plugin.
+     * @deprecated since 2.6 Use {@link #PluginInfo(Class, String, String, String, String, String)} instead
+     * and if this is for a Plugin let your Plugin hide {@link Plugin#getVersion()}.
+     */
+    public PluginInfo(String name, String desc, String author, Version version, String license) {
+      this(Class.class,name,desc,author,null,version,license);      
+    }
+    
     /**
      * Creates the default PluginVersion instance.
      */
@@ -54,10 +122,10 @@ public final class PluginInfo {
     }
     
     /**
-     * Creates an instance of PluginVersion with the
+     * Creates an instance of PluginInfo with the
      * default values and the given name.
-     * If the caller class is a Plugin it will be tried to get
-     * the version from the static method getVersion() of Plugin.
+     * If the caller class is a Plugin/TvDataService it will be tried to get
+     * the version from the static method getVersion() of Plugin/AbstractTvDataService.
      * <p>
      * @param caller The class that want to create this PluginInfo
      * @param name The name of the plugin.
@@ -68,33 +136,10 @@ public final class PluginInfo {
     }
     
     /**
-     * Creates an instance of PluginVersion with the
-     * default values and the given name.
-     * <p>
-     * @param name The name of the plugin.
-     * @deprecated since 2.6 Use {@link #PluginInfo(Class, String)} instead.
-     */
-    public PluginInfo(String name) {
-      this(name,"");
-    }
-
-    /**
-     * Creates an instance of PluginVersion with the
+     * Creates an instance of PluginInfo with the
      * default values and the given name and description.
-     * <p>
-     * @param name The name of the plugin.
-     * @param desc The description for the plugin.
-     * @deprecated since 2.6 Use {@link #PluginInfo(Class, String, String)} instead.
-     */
-    public PluginInfo(String name, String desc) {
-      this(name,desc,"");       
-    }
-    
-    /**
-     * Creates an instance of PluginVersion with the
-     * default values and the given name and description.
-     * If the caller class is a Plugin it will be tried to get
-     * the version from the static method getVersion() of Plugin.
+     * If the caller class is a Plugin/TvDataService it will be tried to get
+     * the version from the static method getVersion() of Plugin/AbstractTvDataService.
      * <p>
      * @param caller The class that want to create this PluginInfo
      * @param name The name of the plugin.
@@ -104,25 +149,12 @@ public final class PluginInfo {
     public PluginInfo(Class caller, String name, String desc) {
       this(caller,name,desc,"");       
     }
-
-    /**
-     * Creates an instance of PluginVersion with the
-     * default values and the given name, description and author.
-     * <p>
-     * @param name The name of the plugin.
-     * @param desc The description for the plugin.
-     * @param author The author of the plugin.
-     * @deprecated since 2.6 Use {@link #PluginInfo(Class, String, String, String)} instead.
-     */
-    public PluginInfo(String name, String desc, String author) {
-      this(null,name,desc,author,null,null,null);        
-    }
     
     /**
-     * Creates an instance of PluginVersion with the
+     * Creates an instance of PluginInfo with the
      * default values and the given name, description and author.
-     * If the caller class is a Plugin it will be tried to get
-     * the version from the static method getVersion() of Plugin.
+     * If the caller class is a Plugin/TvDataService it will be tried to get
+     * the version from the static method getVersion() of Plugin/AbstractTvDataService.
      * <p>
      * @param caller The class that want to create this PluginInfo
      * @param name The name of the plugin.
@@ -135,81 +167,11 @@ public final class PluginInfo {
     }
     
     /**
-     * Creates an instance of PluginVersion with the
-     * default values and the given name, description, author and version.
-     * If the caller class is a Plugin the version will be compared to
-     * the static method getVersion() of Plugin.
-     * <p>
-     * @param caller The class that want to create this PluginInfo.
-     * @param name The name of the plugin.
-     * @param desc The description for the plugin.
-     * @param author The author of the plugin.
-     * @param version The version of the plugin.
-     * @since 2.6 
-     */
-    public PluginInfo(Class caller, String name, String desc, String author, Version version) {
-      this(name,desc,author,null,version,null);
-    }
-
-    /**
-     * Creates an instance of PluginVersion with the
-     * default values and the given name, description, author and version.
-     * <p>
-     * @param name The name of the plugin.
-     * @param desc The description for the plugin.
-     * @param author The author of the plugin.
-     * @param version The version of the plugin.
-     * @deprecated since 2.6 Use {@link #PluginInfo(Class, String, String, String, Version)} instead
-     * and if this is for a Plugin let your Plugin hide {@link Plugin#getVersion()}.
-     */
-    public PluginInfo(String name, String desc, String author, Version version) {
-      this(name,desc,author,null,version,null);
-    }
-
-    /**
-     * Creates an instance of PluginVersion with the
-     * default values and the given name, description, author,
-     * version and license. If the caller class
-     * is a Plugin the version will be compared to the static method
-     * getVersion() of Plugin.
-     * <p>
-     * @param caller The class that want to create this PluginInfo.
-     * @param name The name of the plugin.
-     * @param desc The description for the plugin.
-     * @param author The author of the plugin.
-     * @param version The version of the plugin.
-     * @param license The lincense of the plugin.
-     * @since 2.6 
-     */
-    public PluginInfo(Class caller, String name, String desc, String author, Version version, String license) {
-      this(name,desc,author,null,version,license);      
-    }
-    
-    /**
-     * Creates an instance of PluginVersion with the
-     * default values and the given name, description, author,
-     * version and license. If the caller class
-     * is a Plugin the version will be compared to the static method
-     * getVersion() of Plugin.
-     * <p>
-     * @param name The name of the plugin.
-     * @param desc The description for the plugin.
-     * @param author The author of the plugin.
-     * @param version The version of the plugin.
-     * @param license The lincense of the plugin.
-     * @deprecated since 2.6 Use {@link #PluginInfo(Class, String, String, String, Version, String)} instead
-     * and if this is for a Plugin let your Plugin hide {@link Plugin#getVersion()}.
-     */
-    public PluginInfo(String name, String desc, String author, Version version, String license) {
-      this(name,desc,author,null,version,license);      
-    }
-    
-    /**
-     * Creates an instance of PluginVersion with the
+     * Creates an instance of PluginInfo with the
      * default values and the given name, description, author
      * and the help url. If the caller class
-     * is a Plugin it will be tried to get the version from the static method
-     * getVersion() of Plugin.
+     * is a Plugin/TvDataService it will be tried to get the version from the static method
+     * getVersion() of Plugin/AbstractTvDataService.
      * <p>
      * @param caller The class that want to create this PluginInfo
      * @param name The name of the plugin.
@@ -223,11 +185,11 @@ public final class PluginInfo {
     }
     
     /**
-     * Creates an instance of PluginVersion with the
+     * Creates an instance of PluginInfo with the
      * default values and the given name, description, author,
-     * the help url, version and license. If the caller class
-     * is a Plugin the version will be compared to the static method
-     * getVersion() of Plugin.
+     * the help url and license. If the caller class
+     * is a Plugin/TvDataService it will be tried to get the version from the static method
+     * getVersion() of Plugin/AbstractTvDataService.
      * <p>
      * @param caller The class that want to create this PluginInfo
      * @param name The name of the plugin.
@@ -241,49 +203,16 @@ public final class PluginInfo {
     public PluginInfo(Class caller, String name, String desc, String author, String helpUrl, String license) {      
       this(caller,name,desc,author,helpUrl,null,license);
     }
-
-    /**
-     * Creates an instance of PluginVersion with the
-     * default values and the given name, description, author,
-     * the help url, version and license.
-     * <p>
-     * @param name The name of the plugin.
-     * @param desc The description for the plugin.
-     * @param author The author of the plugin.
-     * @param helpUrl The url where to find help for the plugin.
-     * @param version The version of the plugin.
-     * @param license The lincense of the plugin.
-     * 
-     * @deprecated since 2.6 Use {@link #PluginInfo(Class, String, String, String, String, Version, String)} instead
-     * and if this is for a Plugin let your Plugin hide {@link Plugin#getVersion()}.
-     */
-    public PluginInfo(String name, String desc, String author, String helpUrl, Version version, String license) {      
-      this(null,name,desc,author,helpUrl,version,license);
-    }
     
-    /**
-     * Creates an instance of PluginVersion with the
-     * default values and the given name, description, author,
-     * the help url, version and license. If the caller class
-     * is a Plugin the version will be compared to the static method
-     * getVersion() of Plugin.
-     * <p>
-     * @param caller The class that want to create this PluginInfo.
-     * @param name The name of the plugin.
-     * @param desc The description for the plugin.
-     * @param author The author of the plugin.
-     * @param helpUrl The url where to find help for the plugin.
-     * @param version The version of the plugin.
-     * @param license The lincense of the plugin.
-     * @since 2.6
-     */
-    public PluginInfo(Class caller, String name, String desc, String author, String helpUrl, Version version, String license) {      
+    private PluginInfo(Class caller, String name, String desc, String author, String helpUrl, Version version, String license) {      
       mName = name;
       mDescription = desc;
       mAuthor = author;
       mHelpUrl = helpUrl;
       
-      if(caller != null && caller.getSuperclass() != null && caller.getSuperclass().equals(Plugin.class)) {
+      if(caller != null && caller.getSuperclass() != null && 
+          (caller.getSuperclass().equals(Plugin.class) || 
+              caller.getSuperclass().equals(AbstractTvDataService.class))) {
         try {
           Method m = caller.getMethod("getVersion", new Class[0]);
           Version pluginVersion = (Version)m.invoke(caller,new Object[0]);

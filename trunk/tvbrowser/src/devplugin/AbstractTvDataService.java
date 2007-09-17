@@ -28,7 +28,11 @@ package devplugin;
 
 import util.exc.TvBrowserException;
 
-
+/**
+ * Superclass for all TvDataServices.
+ * <p>
+ * Extend this class to provide your own TvDataService.
+ */
 public abstract class AbstractTvDataService implements devplugin.TvDataService, tvdataservice.TvDataService {
 
   /**
@@ -75,5 +79,13 @@ public abstract class AbstractTvDataService implements devplugin.TvDataService, 
       mPluginManager = manager;
     }
   }
-
+  
+  /**
+   * Gets the version of this data service.
+   * 
+   * @return The version of this data service.
+   */
+  public static Version getVersion() {
+    return new Version(0,0);
+  }
 }

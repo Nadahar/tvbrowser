@@ -171,6 +171,10 @@ public class BbcBackstageDataService extends AbstractTvDataService {
   public ChannelGroup[] getAvailableGroups() {
     return new ChannelGroup[] { mBbcChannelGroup };
   }
+  
+  public static Version getVersion() {
+    return new Version(2,60);
+  }
 
   /*
    * (non-Javadoc)
@@ -178,7 +182,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
    */
   public PluginInfo getInfo() {
     return new PluginInfo(BbcBackstageDataService.class, mLocalizer.msg("name","BBC Data"), 
-        mLocalizer.msg("desc", "Data from BBC Backstage."), "Bodo Tasche", new Version(2, 60));
+        mLocalizer.msg("desc", "Data from BBC Backstage."), "Bodo Tasche");
   }
 
   /*
