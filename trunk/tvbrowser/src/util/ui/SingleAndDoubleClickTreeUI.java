@@ -67,6 +67,15 @@ public class SingleAndDoubleClickTreeUI extends javax.swing.plaf.basic.BasicTree
     return this;
   }
   
+  /**
+   * Sets the last selected path to the given one.
+   * 
+   * @param path The path to set.
+   */
+  public void setLastSelectedPath(TreePath path) {
+    mLastSelectionPath = path;
+  }
+  
   public void mousePressed(MouseEvent e) {
     if(!e.isConsumed()) {
       if(!tree.hasFocus()) {
