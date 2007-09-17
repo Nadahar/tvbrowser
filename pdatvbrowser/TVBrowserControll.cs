@@ -997,7 +997,7 @@ namespace PocketTVBrowserCF2
                     {
                         input = input.Remove(0, 18);
                         int intInput = Int32.Parse(input);
-                        this.soundReminderTime = intInput * 60;
+                        this.soundReminderTime = intInput;
                     }
                     else if (input.StartsWith("[$reminderPopup]"))
                     {
