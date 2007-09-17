@@ -36,11 +36,13 @@ import util.exc.TvBrowserException;
 /**
  * Interface for data services methods.
  * 
- * Since 2.2.4/2.6 you cannot implement this interface to provide your own
- * data service. Instead you have to extend the class 
- * devplugin.AbstractTvDataService to provide your data service.
+ * @deprecated since 2.2.4/2.6 Your TvDataService should not implement this interface.
+ * The acces will be set back to protected with TV-Browser 3.0 and a later release of
+ * the 2.2.x branch, so your TvDataService will not be able to implement this interface.
+ * You have to extend the class devplugin.AbstractTvDataService instead
+ * to provide your data service.
  */
-interface TvDataService {
+public interface TvDataService {
 
   /**
    * This method is called by the host application to set the working folder.
