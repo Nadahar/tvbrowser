@@ -37,7 +37,7 @@ import util.exc.TvBrowserException;
  * Interface for data services methods.
  * 
  * @deprecated since 2.2.4/2.6 Your TvDataService should not implement this interface.
- * The acces will be set back to protected with TV-Browser 3.0 and a later release of
+ * The visibility will be set to protected with TV-Browser 3.0 and a later release of
  * the 2.2.x branch, so your TvDataService will not be able to implement this interface.
  * You have to extend the class devplugin.AbstractTvDataService instead
  * to provide your data service.
