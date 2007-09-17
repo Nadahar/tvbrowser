@@ -769,6 +769,10 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   }
 
 
+  public static Version getVersion() {
+    return new Version(2,60);
+  }
+  
 
   /**
    * Gets information about this TvDataService
@@ -778,7 +782,6 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
             "TV-Browser",
             mLocalizer.msg("description", "Die eigenen TV-Daten des TV-Browser-Projektes"),
             "Til Schneider, www.murfman.de",
-            new Version(2, 60),
             mLocalizer.msg("license","Terms of Use:\n=============\nAll TV/Radio listings provided by TV-Browser (http://www.tvbrowser.org) are protected by copyright laws and may only be used within TV-Browser or other name like applications authorizied by the manufacturer of TV-Browser (http://www.tvbrowser.org) for information about the upcoming program of the available channels.\nEvery other manner of using, reproducing or redistributing of the TV/Radio listings is illegal and may be prosecuted on civil or criminal law.\n\nOn downloading the TV/Radio listings you declare your agreement to these terms.\n\nIf you have any questions concerning these terms please contact dev@tvbrowser.org"));
   }
 

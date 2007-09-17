@@ -37,14 +37,14 @@ import devplugin.ChannelGroup;
 import devplugin.Date;
 import devplugin.PluginInfo;
 import devplugin.ProgressMonitor;
-import devplugin.TvDataService;
+import devplugin.AbstractTvDataService;
 
 
 public class DefaultTvDataServiceProxy extends AbstractTvDataServiceProxy {
 
-  public TvDataService mTvDataService;
+  public AbstractTvDataService mTvDataService;
 
-  public DefaultTvDataServiceProxy(TvDataService service) {
+  public DefaultTvDataServiceProxy(AbstractTvDataService service) {
     mTvDataService = service;
   }
 

@@ -34,9 +34,13 @@ import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
 
 /**
- * Implement this interface to write your own TvDataService.
+ * Interface for data services methods.
+ * 
+ * Since 2.2.4/2.6 you cannot implement this interface to provide your own
+ * data service. Instead you have to extend the class 
+ * devplugin.AbstractTvDataService to provide your data service.
  */
-public interface TvDataService {
+interface TvDataService {
 
   /**
    * This method is called by the host application to set the working folder.
