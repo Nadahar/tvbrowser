@@ -37,7 +37,8 @@ import devplugin.Version;
  * This is the Growl-Plugin
  * 
  * It sends Growl-Notifications for each Program it receives.
- * @see http://growl.info
+ *
+ * For more Details look at http://growl.info
  * 
  * @author bodum
  */
@@ -78,7 +79,11 @@ public class GrowlPlugin extends Plugin {
       String desc = mLocalizer.msg("description",
               "Sends all received Programs to Growl.");
       String author = "Bodo Tasche";
-      return new PluginInfo(this, name, desc, author);
+      return new PluginInfo(this.getClass(), name, desc, author);
+  }
+
+  public static Version getVersion() {
+    return mVersion;
   }
 
   /*
@@ -136,4 +141,6 @@ public class GrowlPlugin extends Plugin {
   public Properties storeSettings() {
     return mSettings;
   }
+
+
 }
