@@ -1,0 +1,18 @@
+#Configuration 0.1 Alpha
+
+#general
+[$dbPath]
+[$reload]0
+[$lastChannel]
+[$language]
+
+#reminder
+[$reminderWav]\Windows\Alarm3.wav
+[$reminderMinutes]5
+[$reminderPopup]True
+[$reminderPlaySound]True
+
+#favorites
+[$favoriteWav]\Windows\Alarm3.wav
+[$favoriteMinutes]0
+[$favoritePopup]False
