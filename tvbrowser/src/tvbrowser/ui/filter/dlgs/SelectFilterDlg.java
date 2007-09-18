@@ -59,6 +59,7 @@ import tvbrowser.core.filters.SeparatorFilter;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.filters.SubtitleFilter;
 import tvbrowser.core.filters.UserFilter;
+import tvbrowser.core.filters.AudioDescriptionFilter;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.searchfield.SearchFilter;
 import util.ui.DragAndDropMouseListener;
@@ -194,11 +195,11 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     
     mEditBtn
         .setEnabled(item != null
-            && !(item instanceof ShowAllFilter || item instanceof PluginFilter || item instanceof SubtitleFilter || item instanceof SeparatorFilter ||
-            item instanceof PluginsProgramFilter));
+            && !(item instanceof ShowAllFilter || item instanceof PluginFilter || item instanceof SubtitleFilter || item instanceof SeparatorFilter
+                || item instanceof PluginsProgramFilter || item instanceof AudioDescriptionFilter));
     mRemoveBtn.setEnabled(item != null
         && !(item instanceof ShowAllFilter || item instanceof PluginFilter || item instanceof SubtitleFilter ||
-            item instanceof PluginsProgramFilter));
+            item instanceof PluginsProgramFilter || item instanceof AudioDescriptionFilter));
 
     int inx = mFilterListBox.getSelectedIndex();
     mUpBtn.setEnabled(inx > 0);
