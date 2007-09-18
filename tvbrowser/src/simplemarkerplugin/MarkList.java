@@ -427,7 +427,7 @@ public class MarkList extends Vector<Program> {
    * @return The ProgramReceiveTarget of this list.
    */
   public ProgramReceiveTarget getReceiveTarget() {
-    return new ProgramReceiveTarget(SimpleMarkerPlugin.getInstance(),mName,mId);
+    return new ProgramReceiveTarget(SimpleMarkerPlugin.getInstance(),SimpleMarkerPlugin.mLocalizer.msg("list.export", "Add to'{0}'",mName),mId);
   }
   
   /**
