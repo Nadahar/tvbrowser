@@ -483,29 +483,31 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     }
     
     private void correctValues(Date d) {
-      Calendar cal = Calendar.getInstance();
-      int endTime, startTime;
-      
-      if(mMeSpinner.equals(mStartOfDayTimeSp)) {
-        cal.setTime((Date)mEndOfDayTimeSp.getValue());
-        endTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);;
+      if(mMeSpinner != null && mStartOfDayTimeSp != null && mEndOfDayTimeSp != null) {
+        Calendar cal = Calendar.getInstance();
+        int endTime, startTime;
         
-        cal.setTime(d);        
-        startTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
-        
-        if(endTime - startTime < -1) {
-          mEndOfDayTimeSp.setValue(d);
+        if(mMeSpinner.equals(mStartOfDayTimeSp)) {
+          cal.setTime((Date)mEndOfDayTimeSp.getValue());
+          endTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);;
+          
+          cal.setTime(d);        
+          startTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
+          
+          if(endTime - startTime < -1) {
+            mEndOfDayTimeSp.setValue(d);
+          }
         }
-      }
-      else {
-        cal.setTime(d);
-        endTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);;
-        
-        cal.setTime((Date)mStartOfDayTimeSp.getValue());        
-        startTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
-        
-        if(endTime - startTime < -1) {
-          mStartOfDayTimeSp.setValue(d);
+        else {
+          cal.setTime(d);
+          endTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);;
+          
+          cal.setTime((Date)mStartOfDayTimeSp.getValue());        
+          startTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
+          
+          if(endTime - startTime < -1) {
+            mStartOfDayTimeSp.setValue(d);
+          }
         }
       }
     }
