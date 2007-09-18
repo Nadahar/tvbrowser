@@ -26,7 +26,6 @@ package util.ui;
 import java.awt.Color;
 import java.awt.Component;
 
-import javax.swing.ComboBoxEditor;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
@@ -35,7 +34,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import javax.swing.plaf.basic.BasicComboBoxEditor;
 
 import tvbrowser.core.Settings;
 import tvbrowser.ui.settings.MarkingsSettingsTab;
@@ -72,40 +70,7 @@ public class DefaultMarkingPrioritySelectionPanel extends JPanel {
     
     mPrioritySelection = new JComboBox(colors);
     mPrioritySelection.setSelectedIndex(priority+1);
-    mPrioritySelection.setRenderer(new DefaultListCellRenderer() {
-      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        Component c = super.getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);
-        
-        if(!isSelected) {
-          JPanel colorPanel = new JPanel(new FormLayout("default:grow","fill:default:grow"));
-          ((JLabel)c).setOpaque(true);
-          
-          int colorIndex = index-1;
-          Color color = list.getBackground();
-          
-          if(index == -1) {
-            colorIndex = list.getSelectedIndex()-1;
-          }
-          
-          switch((colorIndex)) {
-            case Program.MIN_MARK_PRIORITY: color = Settings.propProgramPanelMarkedMinPriorityColor.getColor();break;
-            case Program.LOWER_MEDIUM_MARK_PRIORITY: color = Settings.propProgramPanelMarkedLowerMediumPriorityColor.getColor();break;
-            case Program.MEDIUM_MARK_PRIORITY: color = Settings.propProgramPanelMarkedMediumPriorityColor.getColor();break;
-            case Program.HIGHER_MEDIUM_MARK_PRIORITY: color = Settings.propProgramPanelMarkedHigherMediumPriorityColor.getColor();break;
-            case Program.MAX_MARK_PRIORITY: color = Settings.propProgramPanelMarkedMaxPriorityColor.getColor();break;
-          }
-          
-          c.setBackground(color);
-          
-          colorPanel.setOpaque(false);        
-          colorPanel.add(c, new CellConstraints().xy(1,1));
-          
-          c = colorPanel;
-        }
-        
-        return c;
-      }
-    });
+    mPrioritySelection.setRenderer(new MarkPriorityComboBoxRenderer());
     
     mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","The selected higlighting color is only shown if the program is only marked by this plugin or if the other markings have a lower or the same priority. The marking colors of the priorities can be change in the <a href=\"#link\">marking settings</a>."), new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent e) {

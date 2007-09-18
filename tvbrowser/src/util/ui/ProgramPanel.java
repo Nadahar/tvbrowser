@@ -701,15 +701,13 @@ private static Font getDynamicFontSize(Font font, int offset) {
     // If there are plugins that have marked the program -> paint the background
     Marker[] markedByPluginArr = mProgram.getMarkerArr();
     if (markedByPluginArr.length != 0) {
-      switch(mProgram.getMarkPriority()) {
-        case Program.MIN_MARK_PRIORITY: grp.setColor(Settings.propProgramPanelMarkedMinPriorityColor.getColor());break;
-        case Program.LOWER_MEDIUM_MARK_PRIORITY: grp.setColor(Settings.propProgramPanelMarkedLowerMediumPriorityColor.getColor());break;
-        case Program.MEDIUM_MARK_PRIORITY: grp.setColor(Settings.propProgramPanelMarkedMediumPriorityColor.getColor());break;
-        case Program.HIGHER_MEDIUM_MARK_PRIORITY: grp.setColor(Settings.propProgramPanelMarkedHigherMediumPriorityColor.getColor());break;
-        case Program.MAX_MARK_PRIORITY: grp.setColor(Settings.propProgramPanelMarkedMaxPriorityColor.getColor());break;
-        
-        default: grp.setColor(Settings.propProgramPanelMarkedMinPriorityColor.getColor());
+      Color c = Plugin.getPluginManager().getTvBrowserSettings().getColorForMarkingPriority(mProgram.getMarkPriority());
+      
+      if(c == null) {
+        c = Settings.propProgramPanelMarkedMinPriorityColor.getColor();
       }
+      
+      grp.setColor(c);
       
       if(mProgram.isExpired()) {
         grp.setColor(new Color(grp.getColor().getRed(), grp.getColor().getGreen(), grp.getColor().getBlue(), (int)(grp.getColor().getAlpha()*6/10.)));

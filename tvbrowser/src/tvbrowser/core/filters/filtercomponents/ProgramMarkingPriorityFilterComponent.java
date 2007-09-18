@@ -37,6 +37,7 @@ import devplugin.Program;
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.ui.settings.MarkingsSettingsTab;
 import util.ui.Localizer;
+import util.ui.MarkPriorityComboBoxRenderer;
 
 /**
  * A filter component for tracking programs that have a selected mark priority.
@@ -97,6 +98,7 @@ public class ProgramMarkingPriorityFilterComponent implements FilterComponent {
     
     mValueSelection = new JComboBox(values);
     mValueSelection.setSelectedIndex(mMarkPriority);
+    mValueSelection.setRenderer(new MarkPriorityComboBoxRenderer());
     
     p.add(mValueSelection, cc.xy(1,1));
     

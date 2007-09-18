@@ -18,6 +18,7 @@ import javax.swing.event.HyperlinkListener;
 
 import tvbrowser.core.Settings;
 import util.ui.Localizer;
+import util.ui.MarkPriorityComboBoxRenderer;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -105,6 +106,7 @@ public class TrayImportantSettingsTab implements SettingsTab {
     
     mPriority = new JComboBox(colors);
     mPriority.setSelectedIndex(Settings.propTrayImportantProgramsPriority.getInt());
+    mPriority.setRenderer(new MarkPriorityComboBoxRenderer());
 
     priority.add(mPriorityText, cc.xy(1,2));
     priority.add(mPriority, cc.xy(3,2));

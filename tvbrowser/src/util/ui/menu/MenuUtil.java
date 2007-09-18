@@ -43,6 +43,7 @@ import util.ui.ScrollableMenu;
 
 import devplugin.ActionMenu;
 import devplugin.ContextMenuSeparatorAction;
+import devplugin.Plugin;
 import devplugin.Program;
 
 /**
@@ -110,14 +111,10 @@ public class MenuUtil {
     Object o = item.getAction().getValue(Program.MARK_PRIORITY);
     
     if(o != null && o instanceof Integer) {
-      Color color = item.getBackground();
+      Color color = Plugin.getPluginManager().getTvBrowserSettings().getColorForMarkingPriority((Integer)o);
       
-      switch((Integer)o) {
-        case Program.MIN_MARK_PRIORITY: color = Settings.propProgramPanelMarkedMinPriorityColor.getColor();break;
-        case Program.LOWER_MEDIUM_MARK_PRIORITY: color = Settings.propProgramPanelMarkedLowerMediumPriorityColor.getColor();break;
-        case Program.MEDIUM_MARK_PRIORITY: color = Settings.propProgramPanelMarkedMediumPriorityColor.getColor();break;
-        case Program.HIGHER_MEDIUM_MARK_PRIORITY: color = Settings.propProgramPanelMarkedHigherMediumPriorityColor.getColor();break;
-        case Program.MAX_MARK_PRIORITY: color = Settings.propProgramPanelMarkedMaxPriorityColor.getColor();break;
+      if(color == null) {
+        color = item.getBackground();
       }
       
       final Color co = color;

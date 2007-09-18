@@ -41,6 +41,7 @@ import util.program.ProgramUtilities;
 import util.ui.Localizer;
 import util.ui.TextAreaIcon;
 import devplugin.Date;
+import devplugin.Plugin;
 import devplugin.Program;
 
 /**
@@ -128,18 +129,12 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
       g.fillRect(x, top, menuItem.getWidth(), bottom);
     }
     
-    Color markedColor = null;
-    
-    switch(mProgram.getMarkPriority()) {
-      case Program.MIN_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedMinPriorityColor.getColor());break;
-      case Program.LOWER_MEDIUM_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedLowerMediumPriorityColor.getColor());break;
-      case Program.MEDIUM_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedMediumPriorityColor.getColor());break;
-      case Program.HIGHER_MEDIUM_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedHigherMediumPriorityColor.getColor());break;
-      case Program.MAX_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedMaxPriorityColor.getColor());break;
-    }
+    Color markedColor = Plugin.getPluginManager().getTvBrowserSettings().getColorForMarkingPriority(mProgram.getMarkPriority());
     
     if(isMarked) {
-      markedColor = g.getColor();
+      if(markedColor != null) {
+        g.setColor(markedColor);
+      }
       g.fillRect(x, top, menuItem.getWidth(), bottom);
     }
     
