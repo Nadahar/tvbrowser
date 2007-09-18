@@ -232,10 +232,9 @@ public class MarkList extends Vector<Program> {
       action.putValue(Action.NAME, SimpleMarkerPlugin.mLocalizer.msg(
           "list.mark", "Add program to'{0}'", getName()));
       action.putValue(Action.SMALL_ICON, mMarkIcon);
+      action.putValue(Program.MARK_PRIORITY, new Integer(getMarkPriority()));
     }
     
-    action.putValue(Program.MARK_PRIORITY, new Integer(getMarkPriority()));
-
     return action;
   }
 
