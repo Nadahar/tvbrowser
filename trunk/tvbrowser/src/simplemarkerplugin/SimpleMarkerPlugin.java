@@ -257,9 +257,11 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     if (mMarkListVector.getListAt(0).contains(p)) {
       menu.setText(mLocalizer.msg("unmark", "Remove marking"));
     }
+    else {
+      menu.putValue(Program.MARK_PRIORITY, mMarkListVector.getListAt(0).getMarkPriority());
+    }
     
     menu.putValue(Action.ACTION_COMMAND_KEY, menu.getValue(Action.NAME));
-    menu.putValue(Program.MARK_PRIORITY, mMarkListVector.getListAt(0).getMarkPriority());
     menu.setSmallIcon(createImageIcon("actions", "just-mark", 16));
     menu.setActionListener(this);
 
