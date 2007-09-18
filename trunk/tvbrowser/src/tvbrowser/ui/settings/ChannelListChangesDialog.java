@@ -35,12 +35,14 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import tvbrowser.ui.settings.channel.ChannelJList;
 import util.ui.ChannelListCellRenderer;
 import util.ui.Localizer;
+import util.ui.UiUtilities;
 import devplugin.Channel;
 
 public class ChannelListChangesDialog extends JDialog {
@@ -52,23 +54,11 @@ public class ChannelListChangesDialog extends JDialog {
 
   private ArrayList<Channel> mDeletedList;
 
-  public ChannelListChangesDialog(JDialog dialog,
-      ArrayList<Channel> channelsBefore, List<Channel> channelsAfter) {
-    super(dialog, true);
-    mAddedList = new ArrayList<Channel>();
-    mDeletedList = new ArrayList<Channel>();
-    for (int i = 0; i < channelsAfter.size(); i++) {
-      if (!channelsBefore.contains(channelsAfter.get(i))) {
-        mAddedList.add(channelsAfter.get(i));
-      }
-    }
-    Collections.sort(mAddedList);
-    for (int i = 0; i < channelsBefore.size(); i++) {
-      if (!channelsAfter.contains(channelsBefore.get(i))) {
-        mDeletedList.add(channelsBefore.get(i));
-      }
-    }
-    Collections.sort(mDeletedList);
+  public ChannelListChangesDialog(JDialog owner,
+      ArrayList<Channel> addedList, ArrayList<Channel> deletedList) {
+    super(owner, true);
+    mAddedList = addedList;
+    mDeletedList = deletedList;
     createGui();
   }
 
@@ -126,5 +116,33 @@ public class ChannelListChangesDialog extends JDialog {
 
     pack();
 
+  }
+
+  public static void showChannelChanges(JDialog owner,
+      ArrayList<Channel> channelsBefore, List<Channel> channelsAfter) {
+    // compute changed channels
+    ArrayList<Channel> addedList = new ArrayList<Channel>();
+    ArrayList<Channel> deletedList = new ArrayList<Channel>();
+    for (int i = 0; i < channelsAfter.size(); i++) {
+      if (!channelsBefore.contains(channelsAfter.get(i))) {
+        addedList.add(channelsAfter.get(i));
+      }
+    }
+    Collections.sort(addedList);
+    for (int i = 0; i < channelsBefore.size(); i++) {
+      if (!channelsAfter.contains(channelsBefore.get(i))) {
+        deletedList.add(channelsBefore.get(i));
+      }
+    }
+    Collections.sort(deletedList);
+
+    // show changes
+    if (addedList.isEmpty() && deletedList.isEmpty()) {
+      JOptionPane.showMessageDialog(owner, mLocalizer.msg("noChanges.message", "There are no changes in the list of available channels."), mLocalizer.msg("noChanges.title", "No changes"), JOptionPane.INFORMATION_MESSAGE);
+    }
+    else {
+      ChannelListChangesDialog changesDialog = new ChannelListChangesDialog(SettingsDialog.getInstance().getDialog(), addedList, deletedList);
+      UiUtilities.centerAndShow(changesDialog);
+    }
   }
 }
