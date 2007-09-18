@@ -818,7 +818,7 @@ public class SystemTray {
       });
       toggleOpenCloseMenuItem(false);
     } else {
-      if(OperatingSystem.isWindows()) {
+      if(OperatingSystem.isWindows() || !Settings.propTrayMinimizeTo.getBoolean()) {
         MainFrame.getInstance().setExtendedState(JFrame.ICONIFIED);
       }
       
