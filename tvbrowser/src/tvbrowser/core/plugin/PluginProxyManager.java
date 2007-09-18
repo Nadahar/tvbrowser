@@ -377,9 +377,22 @@ public class PluginProxyManager {
    * @throws TvBrowserException If activating failed
    */
   public void activatePlugin(PluginProxy plugin) throws TvBrowserException {
+    activatePlugin(plugin, false);
+  }
+
+  /**
+   * Activates a plugin.
+   * 
+   * @param plugin The plugin to activate
+   * @throws TvBrowserException If activating failed
+   */
+  public void activatePlugin(PluginProxy plugin, boolean setParentFrame) throws TvBrowserException {
     PluginListItem item = getItemForPlugin(plugin);
     if (item != null) {
       activatePlugin(item);
+      if (setParentFrame) {
+        item.getPlugin().setParentFrame(MainFrame.getInstance());
+      }
       
       PluginsProgramFilter[] filters = item.getPlugin().getAvailableFilter();
     
@@ -1040,4 +1053,5 @@ public class PluginProxyManager {
     }
 
   } // inner class PluginListItem
+
 }
