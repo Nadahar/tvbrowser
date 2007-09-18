@@ -225,14 +225,12 @@ public class MarkList extends Vector<Program> {
 
     if (contains(p)) {
       action.putValue(Action.NAME, SimpleMarkerPlugin.mLocalizer.msg(
-          "list.unmark", "Unmark")
-          + " " + getName());
+          "list.unmark", "Remove program from '{0}'", getName()));
       action.putValue(Action.SMALL_ICON, SimpleMarkerPlugin.getInstance()
           .createIconForTree(0));
     } else {
       action.putValue(Action.NAME, SimpleMarkerPlugin.mLocalizer.msg(
-          "list.mark", "Mark")
-          + " " + getName());
+          "list.mark", "Add program to'{0}'", getName()));
       action.putValue(Action.SMALL_ICON, mMarkIcon);
     }
     

@@ -164,14 +164,14 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
    */
   public ActionMenu getContextMenuActions(Program p) {
     if(p == null || p.equals(getPluginManager().getExampleProgram())) {
-      return new ActionMenu(new ContextMenuAction(mLocalizer.msg("name", "Marker plugin"),createImageIcon("actions", "just-mark", 16)));
+      return new ActionMenu(new ContextMenuAction(mLocalizer.msg("mark", "Mark"),createImageIcon("actions", "just-mark", 16)));
     }
     
     this.mProg = p;
     
     Object[] submenu = new Object[mMarkListVector.size() + 2];
     ContextMenuAction menu = new ContextMenuAction();
-    menu.setText(mLocalizer.msg("name", "Marker plugin"));
+    menu.setText(mLocalizer.msg("mark", "Mark"));
     menu.setSmallIcon(createImageIcon("actions", "just-mark", 16));
     
     if (mMarkListVector.size() == 1) {
@@ -228,7 +228,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     }
     // create the new (sub) menu
     ContextMenuAction menuExtended = new ContextMenuAction();
-    menuExtended.setText(mLocalizer.msg("extendedMark", "Extended mark"));
+    menuExtended.setText(mLocalizer.msg("extendedMark", "Mark programs of filter..."));
     menuExtended.setActionListener(this);
     menuExtended.putValue(Plugin.DISABLED_ON_TASK_MENU,true);
     menuExtended.putValue(Program.MARK_PRIORITY, mMarkListVector.getListAt(0).getMarkPriority());
@@ -252,10 +252,10 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
 
   private ContextMenuAction getDefaultAction(Program p) {
     ContextMenuAction menu = new ContextMenuAction();
-    menu.setText(mLocalizer.msg("mark", "Just mark"));
+    menu.setText(mLocalizer.msg("markProgram", "Mark program"));
     
     if (mMarkListVector.getListAt(0).contains(p)) {
-      menu.setText(mLocalizer.msg("unmark", "Just unmark"));
+      menu.setText(mLocalizer.msg("unmark", "Remove marking"));
     }
     
     menu.putValue(Action.ACTION_COMMAND_KEY, menu.getValue(Action.NAME));
