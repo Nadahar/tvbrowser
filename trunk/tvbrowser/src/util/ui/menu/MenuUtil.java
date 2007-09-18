@@ -26,16 +26,24 @@
 
 package util.ui.menu;
 
+import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.Rectangle;
 
 import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
+import javax.swing.plaf.basic.BasicMenuItemUI;
+import javax.swing.plaf.basic.BasicMenuUI;
 
+import tvbrowser.core.Settings;
 import util.ui.ScrollableMenu;
 
 import devplugin.ActionMenu;
 import devplugin.ContextMenuSeparatorAction;
+import devplugin.Program;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
@@ -67,6 +75,7 @@ public class MenuUtil {
     JMenuItem result = null;
     if (menu.hasSubItems()) {
       result = new ScrollableMenu(menu.getAction());
+      checkAndSetBackgroundColor(result);
       ActionMenu[] subItems = menu.getSubItems();
       for (int i=0; i<subItems.length; i++) {
         JMenuItem item = createMenuItem(subItems[i], setFont);
@@ -75,6 +84,7 @@ public class MenuUtil {
           ((ScrollableMenu)result).addSeparator();
         }
         else {
+          checkAndSetBackgroundColor(item);
           result.add(item);
         }
       }
@@ -96,5 +106,81 @@ public class MenuUtil {
     return result;
   }
 
-
+  private static void checkAndSetBackgroundColor(JMenuItem item) {
+    Object o = item.getAction().getValue(Program.MARK_PRIORITY);
+    
+    if(o != null && o instanceof Integer) {
+      Color color = item.getBackground();
+      
+      switch((Integer)o) {
+        case Program.MIN_MARK_PRIORITY: color = Settings.propProgramPanelMarkedMinPriorityColor.getColor();break;
+        case Program.LOWER_MEDIUM_MARK_PRIORITY: color = Settings.propProgramPanelMarkedLowerMediumPriorityColor.getColor();break;
+        case Program.MEDIUM_MARK_PRIORITY: color = Settings.propProgramPanelMarkedMediumPriorityColor.getColor();break;
+        case Program.HIGHER_MEDIUM_MARK_PRIORITY: color = Settings.propProgramPanelMarkedHigherMediumPriorityColor.getColor();break;
+        case Program.MAX_MARK_PRIORITY: color = Settings.propProgramPanelMarkedMaxPriorityColor.getColor();break;
+      }
+      
+      final Color co = color;
+      
+      if(item instanceof ScrollableMenu) {
+        item.setUI(new BasicMenuUI() {
+          protected void paintBackground(Graphics g, JMenuItem menuItem, Color bgColor) {
+            if(!menuItem.isSelected()) {
+              Insets i = menuItem.getInsets();
+  
+              g.clearRect(0,0,menuItem.getWidth(),menuItem.getHeight());
+              g.setColor(Color.white);
+              
+              g.fillRect(i.left,i.top,menuItem.getWidth()-i.left-i.right,menuItem.getHeight()-i.top-i.bottom);
+              g.setColor(co);
+              g.fillRect(i.left,i.top,menuItem.getWidth()-i.left-i.right,menuItem.getHeight()-i.top-i.bottom);
+            }
+            else {
+              super.paintBackground(g,menuItem,bgColor);
+            }          }
+          
+          protected void paintText(Graphics g, JMenuItem menuItem, Rectangle textRect,
+              String text) {
+            if (menuItem.isSelected()) {
+              g.setColor(selectionForeground);
+            }else {
+              g.setColor(menuItem.getForeground());
+            }
+            
+            g.drawString(menuItem.getText(), textRect.x, textRect.y + menuItem.getFontMetrics(menuItem.getFont()).getAscent());
+          }
+        });
+      }
+      else {
+        item.setUI(new BasicMenuItemUI() {
+          protected void paintBackground(Graphics g, JMenuItem menuItem, Color bgColor) {
+            if(!menuItem.isArmed()) {
+              Insets i = menuItem.getInsets();
+  
+              g.clearRect(0,0,menuItem.getWidth(),menuItem.getHeight());
+              g.setColor(Color.white);
+              
+              g.fillRect(i.left,i.top,menuItem.getWidth()-i.left-i.right,menuItem.getHeight()-i.top-i.bottom);
+              g.setColor(co);
+              g.fillRect(i.left,i.top,menuItem.getWidth()-i.left-i.right,menuItem.getHeight()-i.top-i.bottom);
+            }
+            else {
+              super.paintBackground(g,menuItem,bgColor);
+            }
+          }
+          
+          protected void paintText(Graphics g, JMenuItem menuItem, Rectangle textRect,
+              String text) {
+            if (menuItem.isArmed()) {
+              g.setColor(selectionForeground);
+            }else {
+              g.setColor(menuItem.getForeground());
+            }
+            
+            g.drawString(text, textRect.x, textRect.y + menuItem.getFontMetrics(menuItem.getFont()).getAscent());
+          }
+        });    
+      }
+    }
+  }
 }

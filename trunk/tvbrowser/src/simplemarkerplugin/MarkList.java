@@ -235,6 +235,8 @@ public class MarkList extends Vector<Program> {
           + " " + getName());
       action.putValue(Action.SMALL_ICON, mMarkIcon);
     }
+    
+    action.putValue(Program.MARK_PRIORITY, new Integer(getMarkPriority()));
 
     return action;
   }

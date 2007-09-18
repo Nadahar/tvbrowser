@@ -231,6 +231,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     menuExtended.setText(mLocalizer.msg("extendedMark", "Extended mark"));
     menuExtended.setActionListener(this);
     menuExtended.putValue(Plugin.DISABLED_ON_TASK_MENU,true);
+    menuExtended.putValue(Program.MARK_PRIORITY, mMarkListVector.getListAt(0).getMarkPriority());
     
     // workaround for not correct menu painting
     menuExtended.putValue(Action.SMALL_ICON, new Icon() {
@@ -252,10 +253,13 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   private ContextMenuAction getDefaultAction(Program p) {
     ContextMenuAction menu = new ContextMenuAction();
     menu.setText(mLocalizer.msg("mark", "Just mark"));
+    
     if (mMarkListVector.getListAt(0).contains(p)) {
       menu.setText(mLocalizer.msg("unmark", "Just unmark"));
     }
+    
     menu.putValue(Action.ACTION_COMMAND_KEY, menu.getValue(Action.NAME));
+    menu.putValue(Program.MARK_PRIORITY, mMarkListVector.getListAt(0).getMarkPriority());
     menu.setSmallIcon(createImageIcon("actions", "just-mark", 16));
     menu.setActionListener(this);
 

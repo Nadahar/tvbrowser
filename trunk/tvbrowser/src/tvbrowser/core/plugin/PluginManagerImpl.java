@@ -50,6 +50,7 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.settings.SettingsDialog;
 import tvdataservice.MarkedProgramsList;
 import tvdataservice.MutableProgram;
 import util.exc.TvBrowserException;
@@ -751,7 +752,12 @@ public class PluginManagerImpl implements PluginManager {
    * @since 2.2
    */
   public void showSettings(String settingsItem) {
-    MainFrame.getInstance().showSettingsDialog(settingsItem);
+    if(SettingsDialog.getInstance() == null) {
+      MainFrame.getInstance().showSettingsDialog(settingsItem);
+    }
+    else {
+      SettingsDialog.getInstance().showSettingsTab(settingsItem);
+    }
   }  
   
   /**
