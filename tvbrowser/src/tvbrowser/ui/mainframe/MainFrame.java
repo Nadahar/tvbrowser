@@ -1502,7 +1502,7 @@ public class MainFrame extends JFrame implements DateListener {
         if (mSoftwareUpdateItems == null && !showOnlyUpdates) {
           JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("error.1",
               "software check failed."));
-        } else if (mSoftwareUpdateItems.length == 0 && !showOnlyUpdates) {
+        } else if (mSoftwareUpdateItems != null && mSoftwareUpdateItems.length == 0 && !showOnlyUpdates) {
           JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("error.2",
               "No new items available"));
         } else if(mSoftwareUpdateItems != null && mSoftwareUpdateItems.length > 0) {
