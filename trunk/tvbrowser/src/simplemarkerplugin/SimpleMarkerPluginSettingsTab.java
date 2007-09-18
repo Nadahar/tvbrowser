@@ -70,6 +70,7 @@ import javax.swing.table.TableCellEditor;
 import util.io.IOUtilities;
 import util.ui.ExtensionFileFilter;
 import util.ui.Localizer;
+import util.ui.MarkPriorityComboBoxRenderer;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.layout.CellConstraints;
@@ -565,7 +566,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
       }
       else {
         mComboBox = new JComboBox(prioValues);
-        mComboBox.setRenderer(new DefaultListCellRenderer() {
+        mComboBox.setRenderer(new MarkPriorityComboBoxRenderer());/*DefaultListCellRenderer() {
           public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             Component c = super.getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);
             
@@ -594,7 +595,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
             
             return c;
           }
-        });
+        });*/
         mTextField = null;
       }
     }
