@@ -866,8 +866,7 @@ public class ChannelsSettingsTab implements
     Channel[] channelsAfterArr = new Channel[channels.length];
     System.arraycopy(channels, 0, channelsAfterArr, 0, channelsAfterArr.length);
     List<Channel> channelsAfter = Arrays.asList(channelsAfterArr);
-    ChannelListChangesDialog changesDialog = new ChannelListChangesDialog(SettingsDialog.getInstance().getDialog(), channelsBefore, channelsAfter);
-    UiUtilities.centerAndShow(changesDialog);
+    ChannelListChangesDialog.showChannelChanges(SettingsDialog.getInstance().getDialog(), channelsBefore, channelsAfter);
   }
   
   /**
