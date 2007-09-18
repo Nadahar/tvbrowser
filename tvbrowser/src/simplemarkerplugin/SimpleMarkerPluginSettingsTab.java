@@ -22,6 +22,7 @@
  */
 package simplemarkerplugin;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Point;
@@ -42,12 +43,14 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -64,7 +67,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 
-import tvbrowser.ui.settings.SettingsDialog;
 import util.io.IOUtilities;
 import util.ui.ExtensionFileFilter;
 import util.ui.Localizer;
@@ -177,8 +179,8 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     
     mHelpLabel = UiUtilities.createHtmlHelpTextArea(SimpleMarkerPlugin.mLocalizer.msg("settings.prioHelp","The mark priority is used for selecting the marking color. The marking colors of the priorities can be change in the <a href=\"#link\">program panel settings</a>. If a program is marked by more than one plugin/list the color with the highest priority given by the marking plugins/lists is used."), new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent e) {
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          SettingsDialog.getInstance().showSettingsTab(SettingsItem.PROGRAMPANELMARKING);
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {System.out.println("hier");
+          SimpleMarkerPlugin.getPluginManager().showSettings(SettingsItem.PROGRAMPANELMARKING);
         }
       }
     });
@@ -334,6 +336,8 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
           isSelected, hasFocus, row, column);
 
       JPanel p = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
+      Color color = c.getBackground();
       
       if(value instanceof Icon) {      
         JLabel b = new JLabel((Icon) value);
@@ -352,6 +356,11 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
           case Program.MAX_MARK_PRIORITY: b.setText(SimpleMarkerPlugin.mLocalizer.msg("settings.max","Maximum"));break;
         
           default: b.setText(SimpleMarkerPlugin.mLocalizer.msg("settings.noPriority","None"));break;
+        }
+        Color testColor = SimpleMarkerPlugin.getPluginManager().getTvBrowserSettings().getColorForMarkingPriority((Integer)value);
+        
+        if(color != null && !isSelected) {
+          color = testColor;
         }
         
         b.setOpaque(false);
@@ -374,7 +383,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
         p.add(b);
       }
       
-      p.setBackground(c.getBackground());
+      p.setBackground(color);
       
       return p;
     }
@@ -556,6 +565,36 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
       }
       else {
         mComboBox = new JComboBox(prioValues);
+        mComboBox.setRenderer(new DefaultListCellRenderer() {
+          public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            Component c = super.getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);
+            
+            if(!isSelected) {
+              JPanel colorPanel = new JPanel(new FormLayout("default:grow","fill:default:grow"));
+              ((JLabel)c).setOpaque(true);
+              
+              int colorIndex = index-1;
+              Color color = list.getBackground();
+              
+              if(index == -1) {
+                colorIndex = list.getSelectedIndex()-1;
+              }
+              
+              color = SimpleMarkerPlugin.getPluginManager().getTvBrowserSettings().getColorForMarkingPriority(colorIndex);
+              
+              if(color != null) {
+                c.setBackground(color);
+              }
+              
+              colorPanel.setOpaque(false);        
+              colorPanel.add(c, new CellConstraints().xy(1,1));
+              
+              c = colorPanel;
+            }
+            
+            return c;
+          }
+        });
         mTextField = null;
       }
     }
