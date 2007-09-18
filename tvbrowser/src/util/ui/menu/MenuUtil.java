@@ -124,8 +124,10 @@ public class MenuUtil {
           protected void paintBackground(Graphics g, JMenuItem menuItem, Color bgColor) {
             if(!menuItem.isSelected()) {
               Insets i = menuItem.getInsets();
-  
+              
               g.clearRect(0,0,menuItem.getWidth(),menuItem.getHeight());
+              g.setColor(menuItem.getBackground());
+              g.fillRect(0,0,menuItem.getWidth(),menuItem.getHeight());
               g.setColor(Color.white);
               
               g.fillRect(i.left,i.top,menuItem.getWidth()-i.left-i.right,menuItem.getHeight()-i.top-i.bottom);
@@ -155,6 +157,8 @@ public class MenuUtil {
               Insets i = menuItem.getInsets();
   
               g.clearRect(0,0,menuItem.getWidth(),menuItem.getHeight());
+              g.setColor(menuItem.getBackground());
+              g.fillRect(0,0,menuItem.getWidth(),menuItem.getHeight());
               g.setColor(Color.white);
               
               g.fillRect(i.left,i.top,menuItem.getWidth()-i.left-i.right,menuItem.getHeight()-i.top-i.bottom);
