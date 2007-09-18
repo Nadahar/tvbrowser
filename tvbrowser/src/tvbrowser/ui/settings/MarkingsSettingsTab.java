@@ -24,12 +24,15 @@
 package tvbrowser.ui.settings;
 
 import java.awt.Color;
+import java.awt.Component;
 
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -44,6 +47,7 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import devplugin.Program;
 import devplugin.SettingsTab;
 
 /**
@@ -76,7 +80,42 @@ public class MarkingsSettingsTab implements SettingsTab {
     defaultMarkings.add(new JLabel(mLocalizer.msg("color.showColor","Highlight with color (default color):")), cc.xy(1,5));    
     defaultMarkings.add(mDefaultColor = new JComboBox(colors), cc.xy(3,5));    
     mDefaultColor.setSelectedIndex(Settings.propProgramPanelUsedDefaultMarkPriority.getInt()+1);
+    
+    mDefaultColor.setRenderer(new DefaultListCellRenderer() {
+      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        Component c = super.getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);
         
+        if(!isSelected) {
+          JPanel colorPanel = new JPanel(new FormLayout("default:grow","fill:default:grow"));
+          ((JLabel)c).setOpaque(true);
+          
+          int colorIndex = index-1;
+          Color color = list.getBackground();
+          
+          if(index == -1) {
+            colorIndex = list.getSelectedIndex()-1;
+          }
+          
+          switch((colorIndex)) {
+            case Program.MIN_MARK_PRIORITY: color = mProgramItemMinMarkedColorLb.getColor();break;
+            case Program.LOWER_MEDIUM_MARK_PRIORITY: color = mProgramItemLowerMediumMarkedColorLb.getColor();break;
+            case Program.MEDIUM_MARK_PRIORITY: color = mProgramItemMediumMarkedColorLb.getColor();break;
+            case Program.HIGHER_MEDIUM_MARK_PRIORITY: color = mProgramItemHigherMediumMarkedColorLb.getColor();break;
+            case Program.MAX_MARK_PRIORITY: color = mProgramItemMaxMarkedColorLb.getColor();break;
+          }
+          
+          c.setBackground(color);
+          
+          colorPanel.setOpaque(false);        
+          colorPanel.add(c, new CellConstraints().xy(1,1));
+          
+          c = colorPanel;
+        }
+        
+        return c;
+      }
+    });
+    
     JPanel markings = new JPanel(new FormLayout("default, 5dlu, default, 5dlu, default",
         "default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default"));
         
