@@ -333,27 +333,11 @@
 
     <!-- Pack the plugin jars -->
 	
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/PrintPlugin.jar"
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/BlogThisPlugin.jar"
          compress="false">
-      <fileset dir="${classes.dir}" includes="printplugin/**"/>
+      <fileset dir="${classes.dir}" includes="blogthisplugin/**"/>
     </jar>
 
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/ShowviewPlugin.jar"
-         compress="false">
-      <fileset dir="${classes.dir}" includes="showviewplugin/**"/>
-    </jar>
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/TVRaterPlugin.jar"
-         compress="false">
-      <fileset dir="${classes.dir}" includes="tvraterplugin/**"/>
-    </jar>
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/ListViewPlugin.jar"
-         compress="false">
-      <fileset dir="${classes.dir}" includes="listviewplugin/**"/>
-    </jar>
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/NewsPlugin.jar"
-         compress="false">
-      <fileset dir="${classes.dir}" includes="newsplugin/**"/>
-    </jar>
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/CalendarExportPlugin.jar"
          compress="false">
         <fileset dir="${classes.dir}" includes="calendarexportplugin/**"/>
@@ -362,40 +346,71 @@
         <fileset dir="${unpacked.dir}/gdata-core-1.0.jar" includes="**" /> 	 
         <fileset dir="${unpacked.dir}/jcom.jar" includes="**" />
     </jar>
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/ClipboardPlugin.jar"
-         compress="false">
-      <fileset dir="${classes.dir}" includes="clipboardplugin/**"/>
-    </jar>
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/CapturePlugin.jar"
+
+  	<jar jarfile="${tvbrowser-default.runtime.dir}/plugins/CapturePlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="captureplugin/**"/>
     </jar>
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/WebPlugin.jar"
+
+  	<jar jarfile="${tvbrowser-default.runtime.dir}/plugins/ClipboardPlugin.jar"
          compress="false">
-      <fileset dir="${classes.dir}" includes="webplugin/**"/>
+      <fileset dir="${classes.dir}" includes="clipboardplugin/**"/>
     </jar>
+
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/EMailPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="emailplugin/**"/>
     </jar>
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/BlogThisPlugin.jar"
+
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/GenrePlugin.jar"
          compress="false">
-      <fileset dir="${classes.dir}" includes="blogthisplugin/**"/>
+      <fileset dir="${classes.dir}" includes="genreplugin/**"/>
     </jar>
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SimpleMarkerPlugin.jar" compress="false"> 	 
-            <fileset dir="${classes.dir}" includes="simplemarkerplugin/**" /> 	 
-    </jar>
+
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/I18NPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="i18nplugin/**"/>
     </jar>
-  	
+
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/ListViewPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="listviewplugin/**"/>
+    </jar>
+
   	<!--   <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/MediaCenterPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="mediacenterplugin/**"/>
     </jar>  -->
 
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/NewsPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="newsplugin/**"/>
+    </jar>
 
+  	<jar jarfile="${tvbrowser-default.runtime.dir}/plugins/PrintPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="printplugin/**"/>
+    </jar>
+
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SimpleMarkerPlugin.jar" compress="false"> 	 
+      <fileset dir="${classes.dir}" includes="simplemarkerplugin/**" /> 	 
+    </jar>
+
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/ShowviewPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="showviewplugin/**"/>
+    </jar>
+
+  	<jar jarfile="${tvbrowser-default.runtime.dir}/plugins/TVRaterPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="tvraterplugin/**"/>
+    </jar>
+
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/WebPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="webplugin/**"/>
+    </jar>
+  	
     <!-- Pack the TV data service jars -->
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/TvBrowserDataService.jar"
          compress="false">
@@ -421,7 +436,7 @@
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/RadioTimesDataService.jar" compress="false"> 	 
             <fileset dir="${classes.dir}" includes="radiotimesdataservice/**" /> 	 
     </jar>  	
-  	
+
     <!-- Copy the other stuff -->
     <echo message="Copying the images and all the other stuff ..."/>
     <mkdir dir="${tvbrowser-default.runtime.dir}/imgs"/>

@@ -232,11 +232,14 @@ FunctionEnd
  LangString BLOGTHIS ${LANG_GERMAN} "Blog dies!"
  LangString BLOGTHIS ${LANG_ENGLISH} "Blog this!"
  
- LangString CALENDAR ${LANG_GERMAN} "Kalender Export"
+ LangString CALENDAR ${LANG_GERMAN} "Kalender-Export"
  LangString CALENDAR ${LANG_ENGLISH} "Calendar export"
 
  LangString SIMPLEMARKER ${LANG_GERMAN} "Markierungs-Plugin"
  LangString SIMPLEMARKER ${LANG_ENGLISH} "Marker Plugin"
+ 
+ LangString GENRES ${LANG_GERMAN} "Genres-Plugin"
+ LangString GENRES ${LANG_ENGLISH} "Genres Plugin"
  
  LangString un.QUESTION ${LANG_GERMAN} "Sollen die Konfigurationsdateien und TV-Daten gel�scht werden?"
  LangString un.QUESTION ${LANG_ENGLISH} "Do you want to delete the setting and TV data files?"
@@ -593,6 +596,13 @@ SubSection "Plugins"
 
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\SimpleMarkerPlugin.jar"
+  SectionEnd
+
+  Section "$(GENRES)"
+    SectionIn 1
+
+    SetOutPath "$INSTDIR\plugins"
+    File "${RUNTIME_DIR}\plugins\GenrePlugin.jar"
   SectionEnd
 
   Section "$(I18N)"
