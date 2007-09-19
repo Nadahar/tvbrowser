@@ -26,11 +26,23 @@ namespace PocketTVBrowserCF2
             this.con = new TVBrowserControll(this);
             this.con.setRefreshReminders(true);
             this.listViewBroadcasts = new CustomTVBrowserList(new System.Drawing.SizeF(this.Width, this.Height));
+            // 
+            // listViewBroadcasts
+            // 
             InitializeComponent();
+            this.listViewBroadcasts.Location = new System.Drawing.Point(0, 61);
+            this.listViewBroadcasts.Name = "listViewBroadcasts";
+            this.listViewBroadcasts.Size = new System.Drawing.Size(240, 142);
+            this.listViewBroadcasts.TabIndex = 5;
+            this.listViewBroadcasts.Click += new System.EventHandler(this.listViewBroadcasts_Click);
+            this.listViewBroadcasts.ContextMenu = this.contextMenuBroadcasts;
+            this.Controls.Add(this.listViewBroadcasts);
+            
             this.disableElements();
             this.Closing += new System.ComponentModel.CancelEventHandler(this.Mainform_Closing);
             this.initVideoMode();
             this.refreshLanguage();
+            this.showErrorMessages();
             this.fillChannels();
             if (this.con.getCurrentChannel() != null)
             {
@@ -138,7 +150,7 @@ namespace PocketTVBrowserCF2
                         {
                             this.listViewBroadcasts.Items.Add(this.con.createColoredListItem(temp, this.getReducedString(temp.getChannel() + "|" + temp.getTitle() + " (" + temp.getStart().ToShortTimeString() + ")", this.Width)));
                         }
-                        else if (this.con.getLastView() == 6 || this.con.getLastView() == 7)
+                        else if (this.con.getLastView() == 4 || this.con.getLastView() == 6 || this.con.getLastView() == 7)
                         {
                             this.listViewBroadcasts.Items.Add(this.con.createColoredListItem(temp, this.getReducedString(temp.getChannel() + "|" + temp.getStart().ToShortTimeString() + "|" + temp.getTitle(), this.Width)));
                         }
@@ -233,7 +245,7 @@ namespace PocketTVBrowserCF2
         public void refreshListView()
         {
             this.listViewBroadcasts.Dispose();
-            this.listViewBroadcasts = new PocketTVBrowserCF2.CustomTVBrowserList(new System.Drawing.SizeF(this.Width, this.Height));
+            this.listViewBroadcasts = new CustomTVBrowserList(new System.Drawing.SizeF(this.Width, this.Height));
             this.listViewBroadcasts.ImageList = null;
             this.listViewBroadcasts.Name = "listViewBroadcasts";
             this.listViewBroadcasts.ShowScrollbar = true;
@@ -242,6 +254,7 @@ namespace PocketTVBrowserCF2
             this.listViewBroadcasts.WrapText = false;
             this.listViewBroadcasts.Click += new System.EventHandler(this.listViewBroadcasts_Click);
             this.listViewBroadcasts.KeyDown += new KeyEventHandler(listViewBroadcasts_KeyDown);
+            this.listViewBroadcasts.ContextMenu = this.contextMenuBroadcasts;
             this.initVideoMode();
         }
 
@@ -411,12 +424,12 @@ namespace PocketTVBrowserCF2
                     this.comboBoxDate.SelectedIndex = this.comboBoxDate.SelectedIndex + 1;
                 e.Handled = true;
             }
-            else if (e.KeyValue == 13)
+            else if (e.KeyValue == 13)//fire
             {
                 //scroll to current broadcast
                 try
                 {
-                    if (((TVBrowserDate)this.comboBoxDate.SelectedItem).ToLongDateString().Equals(DateTime.Now.ToLongDateString()))
+                    if (((TVBrowserDate)this.comboBoxDate.SelectedItem).ToLongDateString().Equals(DateTime.Now.ToLongDateString()) && this.con.getLastView()==1)
                     {
                         this.listViewBroadcasts.SelectedIndex = this.currentBroadcast;
                     }
@@ -690,6 +703,7 @@ namespace PocketTVBrowserCF2
         {
             if (this.con.hasDB())
             {
+                this.comboBoxChannel.SelectedIndex = 0;
                 this.con.setLastView(6);
                 this.refresh = false;
                 this.lChannel.Text = this.con.getLanguageElement("Mainform.TodaysFavorites", "favorites");
@@ -714,6 +728,7 @@ namespace PocketTVBrowserCF2
         {
             if (this.con.hasDB())
             {
+                this.comboBoxChannel.SelectedIndex = 0;
                 this.con.setLastView(7);
                 this.refresh = false;
                 this.lChannel.Text = this.con.getLanguageElement("Mainform.TodaysReminders", "Todays Reminders");
@@ -851,18 +866,40 @@ namespace PocketTVBrowserCF2
             }
         }
 
-        public void showMessage(String message, String headline, bool exitProgram)
+        private void showErrorMessages()
         {
-            DialogResult dr = MessageBox.Show(message, headline);
-            if (dr == DialogResult.OK)
+            for (int i = 0; i < this.con.getErrorMessages().Count; i++)
             {
-                if (exitProgram)
-                    Application.Exit();
+                ErrorMessage temp = (ErrorMessage) this.con.getErrorMessages()[i];
+                DialogResult result = new DialogResult();
+                if (temp.getDialogResult() == DialogResult.OK)
+                {
+                    result = MessageBox.Show(temp.getMessage(), temp.getHeadline());
+                }
+                if (temp.getDialogResult() == DialogResult.Cancel)
+                {
+                    result = MessageBox.Show(temp.getMessage(), temp.getHeadline(), MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+                }
+                if (result == DialogResult.OK)
+                {
+                    if (!temp.getRun().Equals(""))
+                    {
+                        if (temp.getRun().Equals("Application.Exit()"))
+                        {
+                            Application.Exit();
+                        }
+                        if (temp.getRun().Equals("TVBrowserControll.transferReminders()"))
+                        {
+                            Cursor.Current = Cursors.WaitCursor;
+                            this.con.transferReminders();
+                            Cursor.Current = Cursors.Default;
+                        }
+                    }
+                }
             }
-            
         }
 
-        private void scrollToCurrent()
+        public void scrollToCurrent()
         {
             if (this.con.getLastView() == 1 && this.listViewBroadcasts.Items.Count>1)
             {
@@ -992,6 +1029,18 @@ namespace PocketTVBrowserCF2
             {
 
             }
+        }
+
+        protected override void OnClick(EventArgs e)
+        {
+            IRRemote remote = new IRRemote();
+            remote.ShowDialog();
+            base.OnClick(e);
+        }
+
+        private void contextMenuBroadcasts_Popup(object sender, EventArgs e)
+        {
+            //TODO
         }
     }
 }

@@ -30,6 +30,7 @@ namespace PocketTVBrowserCF2
             this.broadcast = broadcast;
             this.con = con;
             InitializeComponent();
+            this.Text = "PocketTVBrowser: " + this.broadcast.getTitle();
             this.refreshLanguage();
             this.MinimizeBox = false;
             this.getInformation();
@@ -77,7 +78,6 @@ namespace PocketTVBrowserCF2
                 }
             }
         }
-
 
         private void write()
         {
@@ -226,12 +226,14 @@ namespace PocketTVBrowserCF2
 
         private void menuItemReminder_Click(object sender, EventArgs e)
         {
+            Cursor.Current = Cursors.WaitCursor;
             if (!this.broadcast.isReminder())
             {
                 if (this.broadcast.getStart() > DateTime.Now)
                 {
                     this.broadcast.setReminder(true);
                     this.con.updateBroadcastReminder(this.broadcast.getID(), true);
+                    this.con.backupReminder(this.broadcast);
                     this.con.setRefreshReminders(true);
                     Details temp = new Details(this.broadcast, this.con);
                     temp.Show();
@@ -247,12 +249,14 @@ namespace PocketTVBrowserCF2
             {
                 this.con.updateBroadcastReminder(this.broadcast.getID(), false);
                 this.broadcast.setReminder(false);
+                this.con.backupReminder(this.broadcast);
                 this.con.setRefreshReminders(true);
                 Details temp = new Details(this.broadcast, this.con);
                 temp.Show();
                 temp.BringToFront();
                 this.Close();
-            }          
+            }
+            Cursor.Current = Cursors.Default;
         }
 
         private String decode(String text)

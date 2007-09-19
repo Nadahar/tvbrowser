@@ -55,6 +55,9 @@
             this.comboBoxDate = new System.Windows.Forms.ComboBox();
             this.timerRefreshView = new System.Windows.Forms.Timer();
             this.timerReminder = new System.Windows.Forms.Timer();
+            this.contextMenuBroadcasts = new System.Windows.Forms.ContextMenu();
+            this.menuItem1 = new System.Windows.Forms.MenuItem();
+            this.menuItem2 = new System.Windows.Forms.MenuItem();
             this.SuspendLayout();
             // 
             // mainMenu
@@ -219,13 +222,19 @@
             this.timerReminder.Interval = 20000;
             this.timerReminder.Tick += new System.EventHandler(this.timerReminder_Tick);
             // 
-            // listViewBroadcasts
+            // contextMenuBroadcasts
             // 
-            this.listViewBroadcasts.Location = new System.Drawing.Point(0, 61);
-            this.listViewBroadcasts.Name = "listViewBroadcasts";
-            this.listViewBroadcasts.Size = new System.Drawing.Size(240, 142);
-            this.listViewBroadcasts.TabIndex = 5;
-            this.listViewBroadcasts.Click += new System.EventHandler(this.listViewBroadcasts_Click);
+            this.contextMenuBroadcasts.MenuItems.Add(this.menuItem1);
+            this.contextMenuBroadcasts.MenuItems.Add(this.menuItem2);
+            this.contextMenuBroadcasts.Popup += new System.EventHandler(this.contextMenuBroadcasts_Popup);
+            // 
+            // menuItem1
+            // 
+            this.menuItem1.Text = "öffnen";
+            // 
+            // menuItem2
+            // 
+            this.menuItem2.Text = "erinnern";
             // 
             // Mainform
             // 
@@ -233,7 +242,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(240, 268);
-            this.Controls.Add(this.listViewBroadcasts);
             this.Controls.Add(this.comboBoxDate);
             this.Controls.Add(this.comboBoxChannel);
             this.Controls.Add(this.lDate);
@@ -274,6 +282,9 @@
         private System.Windows.Forms.MenuItem menuItemFilterRadio;
         private System.Windows.Forms.Timer timerRefreshView;
         private System.Windows.Forms.Timer timerReminder;
+        private System.Windows.Forms.ContextMenu contextMenuBroadcasts;
+        private System.Windows.Forms.MenuItem menuItem1;
+        private System.Windows.Forms.MenuItem menuItem2;
     }
 }
 

@@ -62,11 +62,10 @@ namespace PocketTVBrowserCF2
             this.comboBoxElement.Bounds = new Rectangle(0, this.tbSearch.Bounds.Bottom + 2, (this.Width * 2 / 3) - 1, this.comboBoxElement.Height);
             this.comboBoxDates.Bounds = new Rectangle(this.comboBoxElement.Width + 2, this.tbSearch.Bounds.Bottom + 2, (this.Width * 1 / 3) - 1, this.comboBoxDates.Height);
             this.comboBoxChannel.Bounds = new Rectangle(0, this.comboBoxElement.Bottom + 2, (this.Width * 2 / 3) - 1, this.comboBoxChannel.Height);
-            this.bSearch.Bounds = new Rectangle(this.comboBoxChannel.Bounds.Right + 2, this.comboBoxDates.Bottom + 2, (this.Width * 1 / 3) - 1, this.checkBoxExact.Height);
+            this.bSearch.Bounds = new Rectangle(this.comboBoxChannel.Bounds.Right + 2, this.comboBoxDates.Bottom + 2, (this.Width * 1 / 3) - 1, this.comboBoxElement.Height);
             this.radioButtonFavorites.Bounds = new Rectangle(0, this.comboBoxChannel.Bounds.Bottom + 2, (this.Width * 1 / 2), this.radioButtonFavorites.Height);
             this.radioButtonReminder.Bounds = new Rectangle(this.radioButtonFavorites.Width, this.comboBoxChannel.Bounds.Bottom + 2, (this.Width * 1 / 2), this.radioButtonReminder.Height);
             this.listViewBroadcasts.Bounds = new Rectangle(0, this.radioButtonFavorites.Bounds.Bottom, this.Width, this.Height - this.lSearch.Height - this.tbSearch.Height - this.comboBoxElement.Height - this.radioButtonFavorites.Height - this.comboBoxChannel.Height - 8);//this.Height - this.radioButtonFavorites.Bottom);
-
         }
 
 
@@ -148,7 +147,7 @@ namespace PocketTVBrowserCF2
             this.listViewBroadcasts.TopIndex = 0;
             this.listViewBroadcasts.WrapText = false;
             this.listViewBroadcasts.Click += new System.EventHandler(this.listViewBroadcasts_Click);
-            String stmt = "SELECT b.id as id, c.name as channel, b.title as title, strftime('%Y-%m-%d-%H-%M', b.start) as start, strftime('%Y-%m-%d-%H-%M', b.end) as end, b.favorite as favorite, b.reminder as reminder FROM channel c, broadcast b, info i where c.id = b.channel_id AND i.broadcast_id=b.id";
+            String stmt = "SELECT b.id as id, c.name as channel, b.channel_id as channel_id, b.title as title, strftime('%Y-%m-%d-%H-%M', b.start) as start, strftime('%Y-%m-%d-%H-%M', b.end) as end, b.favorite as favorite, b.reminder as reminder FROM channel c, broadcast b, info i where c.id = b.channel_id AND i.broadcast_id=b.id";
             if (this.radioButtonFavorites.Checked)
             {
                 stmt += " AND b.favorite='1'";
@@ -300,13 +299,18 @@ namespace PocketTVBrowserCF2
                 this.radioButtonFavorites.Checked = false;
                 this.tbSearch.Text = lastSearchWord;
                 this.checkBoxExact.Enabled = true;
+                this.comboBoxElement.Enabled = true;
                 this.favoriteChecked = false;
             }
             else
             {
+                if (!tbSearch.ReadOnly)
+                {
+                    this.lastSearchWord = this.tbSearch.Text;
+                }
                 this.radioButtonFavorites.Checked = true;
                 this.tbSearch.ReadOnly = true;
-                this.lastSearchWord = this.tbSearch.Text;
+                this.comboBoxElement.Enabled = false;
                 this.tbSearch.Text = "";
                 this.checkBoxExact.Enabled = false;
                 this.favoriteChecked = true;
@@ -322,15 +326,20 @@ namespace PocketTVBrowserCF2
                 this.radioButtonReminder.Checked = false;
                 this.tbSearch.Text = lastSearchWord;
                 this.checkBoxExact.Enabled = true;
+                this.comboBoxElement.Enabled = true;
                 this.reminderChecked = false;
             }
             else
             {
+                if (!tbSearch.ReadOnly)
+                {
+                    this.lastSearchWord = this.tbSearch.Text;
+                }
                 this.radioButtonReminder.Checked = true;
                 this.tbSearch.ReadOnly = true;
-                this.lastSearchWord = this.tbSearch.Text;
                 this.tbSearch.Text = "";
                 this.checkBoxExact.Enabled = false;
+                this.comboBoxElement.Enabled = false;
                 this.reminderChecked = true;
                 this.favoriteChecked = false;
             }

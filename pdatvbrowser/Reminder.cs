@@ -58,7 +58,7 @@ namespace PocketTVBrowserCF2
         {
             this.memos.Clear();
             this.lastUpdated = DateTime.Now;
-            ArrayList broadcasts = this.con.getBroadcastsBySearch("SELECT b.id as id, c.name as channel, b.title as title, strftime('%Y-%m-%d-%H-%M', b.start) as start, strftime('%Y-%m-%d-%H-%M', b.end) as end, b.favorite as favorite, b.reminder as reminder FROM channel c, broadcast b where c.id = b.channel_id AND (b.start BETWEEN datetime('now', 'localtime', '-3 hours') AND datetime('now', 'localtime', '+24 hours')) AND b.reminder='1'");
+            ArrayList broadcasts = this.con.getBroadcastsBySearch("SELECT b.id as id, c.name as channel, b.channel_id as channel_id, b.title as title, strftime('%Y-%m-%d-%H-%M', b.start) as start, strftime('%Y-%m-%d-%H-%M', b.end) as end, b.favorite as favorite, b.reminder as reminder FROM channel c, broadcast b where c.id = b.channel_id AND (b.start BETWEEN datetime('now', 'localtime', '-3 hours') AND datetime('now', 'localtime', '+24 hours')) AND b.reminder='1'");
             for (int i=0;i<broadcasts.Count; i++)
             {
                 Broadcast temp = (Broadcast) broadcasts[i];

@@ -154,7 +154,9 @@ namespace PocketTVBrowserCF2
 		private int topIndex;
 		private int itemWidth;
 		private bool showScrollbar;
+        private bool clicked;
 		private ScrollBar vScroll;
+        private ContextMenu contextmenu;
 		public TVBrowserList()
 		{
 			listItems = new ArrayList();
@@ -273,20 +275,56 @@ namespace PocketTVBrowserCF2
 			//Do nothing
 		}
 
+        protected override void OnClick(EventArgs e)
+        {
+            //this.contextmenu.Show(this, Control.MousePosition);
+            base.OnClick(e);
+        }
+        
+        public override ContextMenu ContextMenu
+        {
+            get
+            {
+                return this.contextmenu;
+            }
+            set
+            {
+                this.contextmenu = value;
+            }
+        }
 
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
-			if (listItems.Count == 0)
-				return;
-			int prevSelection = selectedIndex;
-			selectedIndex = this.vScroll.Value + (e.Y / this.ItemHeight);
-			Graphics gxTemp = this.CreateGraphics();
-			if (prevSelection!=-1)
-				PaintItem(gxTemp, prevSelection);
-			PaintItem(gxTemp, selectedIndex);
-			DrawBorder(gxTemp);
-			this.Focus();
+
+
+            if (clicked)
+            {
+                clicked = false;
+            }
+            else
+            {
+
+                clicked = true;
+            }
+
+            if (listItems.Count == 0)
+                return;
+            int prevSelection = selectedIndex;
+            selectedIndex = this.vScroll.Value + (e.Y / this.ItemHeight);
+            Graphics gxTemp = this.CreateGraphics();
+            if (prevSelection != -1)
+                PaintItem(gxTemp, prevSelection);
+            PaintItem(gxTemp, selectedIndex);
+            DrawBorder(gxTemp);
+            //this.Focus();
 		}
+        
+
+        protected override void OnDoubleClick(EventArgs e)
+        {
+            this.contextmenu.Show(this, Control.MousePosition);
+            base.OnDoubleClick(e);
+        }
 
 		/// <summary>
 		/// Gets or sets the zero-based index of the currently selected item in a OwnerDrawnList.  

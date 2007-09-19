@@ -12,17 +12,19 @@ namespace PocketTVBrowserCF2
     public class Broadcast /*: IComparable*/
     {
         private int id;
-        private string channel;
+        private String channel;
+        private String channelId;
         private String title;
         private DateTime start;
         private DateTime end;
         private bool favourite;
         private bool reminder;
 
-        public Broadcast(int id, String channel, String title, DateTime start, DateTime end, bool favourite, bool reminder)
+        public Broadcast(int id, String channel, String channelId, String title, DateTime start, DateTime end, bool favourite, bool reminder)
         {
             this.id = id;
             this.channel = channel;
+            this.channelId = channelId;
             this.title = title;
             this.start = start;
             this.end = end;
@@ -53,6 +55,11 @@ namespace PocketTVBrowserCF2
         public String getChannel()
         {
             return this.channel;
+        }
+
+        public String getChannelID()
+        {
+            return this.channelId;
         }
         
         public int getLength()
