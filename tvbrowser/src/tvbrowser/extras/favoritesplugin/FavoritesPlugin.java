@@ -75,6 +75,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Set;
@@ -118,7 +119,7 @@ public class FavoritesPlugin {
 
   private Favorite[] mUpdateFavorites;
 
-  private Hashtable<ProgramReceiveTarget,ArrayList<Program>> mSendPluginsTable = new Hashtable<ProgramReceiveTarget,ArrayList<Program>>();
+  private Hashtable<String,ReceiveTargetItem> mSendPluginsTable = new Hashtable<String,ReceiveTargetItem>();
   private ProgramReceiveTarget[] mClientPluginTargets;
 
   private ArrayList<AdvancedFavorite> mPendingFavorites;
@@ -393,15 +394,13 @@ public class FavoritesPlugin {
   }
   
   private void sendToPlugins() {
-    Set<ProgramReceiveTarget> targets = mSendPluginsTable.keySet();
+    Collection<ReceiveTargetItem> targets = mSendPluginsTable.values();
     StringBuffer buffer = new StringBuffer();
     ArrayList<Favorite> errorFavorites = new ArrayList<Favorite>();
     
-    for(ProgramReceiveTarget target : targets) {
-      ArrayList<Program> list = mSendPluginsTable.get(target);
-      
-      if(!target.getReceifeIfForIdOfTarget().receivePrograms(list.toArray(new Program[list.size()]),target)) {
-        Favorite[] favs =FavoriteTreeModel.getInstance().getFavoritesContainingReceiveTarget(target);
+    for(ReceiveTargetItem target : targets) {
+      if(!target.getReceiveTarget().getReceifeIfForIdOfTarget().receivePrograms(target.getPrograms(), target.getReceiveTarget())) {
+        Favorite[] favs =FavoriteTreeModel.getInstance().getFavoritesContainingReceiveTarget(target.getReceiveTarget());
         
         for(Favorite fav : favs) {
           if(!errorFavorites.contains(fav)) {
@@ -409,7 +408,7 @@ public class FavoritesPlugin {
           }
         }
         
-        buffer.append(target.getReceifeIfForIdOfTarget().toString()).append(" - ").append(target.toString()).append("\n");
+        buffer.append(target.getReceiveTarget().getReceifeIfForIdOfTarget().toString()).append(" - ").append(target.toString()).append("\n");
       }
     }
     
@@ -434,18 +433,14 @@ public class FavoritesPlugin {
   public void addProgramsForSending(ProgramReceiveTarget[] targets, Program[] programs) {
     for(ProgramReceiveTarget target : targets) {
       if(target != null && target.getReceifeIfForIdOfTarget() != null) {
-        ArrayList<Program> list = mSendPluginsTable.get(target);
-      
-        if(list == null) {
-          list = new ArrayList<Program>();        
-          mSendPluginsTable.put(target, list);
+        ReceiveTargetItem item = mSendPluginsTable.get(getKeyForReceiveTarget(target));
+        
+        if(item == null) {
+          item = new ReceiveTargetItem(target);
+          mSendPluginsTable.put(getKeyForReceiveTarget(target), item);
         }
-      
-        for(Program program : programs) {
-          if(!list.contains(program)) {
-            list.add(program);
-          }
-        }
+        
+        item.addPrograms(programs);
       }
     }
   }
@@ -868,5 +863,39 @@ public class FavoritesPlugin {
   
   public String toString() {
     return mLocalizer.msg("manageFavorites","Favorites");
-  }  
+  }
+  
+  private class ReceiveTargetItem {
+    private ProgramReceiveTarget mTarget;
+    private ArrayList<Program> mProgramsList;
+    
+    protected ReceiveTargetItem(ProgramReceiveTarget target) {
+      mTarget = target;
+      mProgramsList = new ArrayList<Program>();
+    }
+    
+    protected void addPrograms(Program[] programs) {
+      for(Program p : programs) {
+        if(!mProgramsList.contains(p)) {
+          mProgramsList.add(p);
+        }
+      }
+    }
+    
+    protected ProgramReceiveTarget getReceiveTarget() {
+      return mTarget;
+    }
+    
+    protected Program[] getPrograms() {
+      return mProgramsList.toArray(new Program[mProgramsList.size()]);
+    }
+  }
+  
+  private String getKeyForReceiveTarget(ProgramReceiveTarget target) {
+    if(target != null) {
+      return target.getReceiveIfId() + "###" + target.getTargetId();
+    }
+    
+    return null;
+  }
 }
