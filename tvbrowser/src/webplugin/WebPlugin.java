@@ -224,7 +224,7 @@ public class WebPlugin extends Plugin {
     }
 
     Action mainAction = new devplugin.ContextMenuAction();
-    mainAction.putValue(Action.NAME, "Online-Suche");
+    mainAction.putValue(Action.NAME, mLocalizer.msg("contextMenu", "Web search"));
     mainAction.putValue(Action.SMALL_ICON, createImageIcon("actions", "web-search", 16));
 
     ArrayList<Object> actionList = new ArrayList<Object>();
