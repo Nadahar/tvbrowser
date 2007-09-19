@@ -29,6 +29,8 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
+
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -36,6 +38,8 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -54,6 +58,7 @@ public class GenreSettingsTab implements SettingsTab {
   public GenreSettingsTab(GenrePlugin plugin, ArrayList<String> hiddenGenres) {
     mPlugin = plugin;
     mListModel = new DefaultListModel();
+    Collections.sort(hiddenGenres);
     for (String genre: hiddenGenres) {
       mListModel.addElement(genre);
     }
@@ -96,7 +101,7 @@ public class GenreSettingsTab implements SettingsTab {
         }
       }});
     
-    JButton removeFilter = new JButton(mLocalizer.msg("removeFilterBtn", "Remove filter"));
+    final JButton removeFilter = new JButton(mLocalizer.msg("removeFilterBtn", "Remove filter"));
     configPanel.add(removeFilter, cc.xy(4, 4));
     removeFilter.addActionListener(new ActionListener() {
 
@@ -107,6 +112,11 @@ public class GenreSettingsTab implements SettingsTab {
         }
       }});
     
+    mFilteredGenres.addListSelectionListener(new ListSelectionListener() {
+      public void valueChanged(ListSelectionEvent e) {
+        removeFilter.setEnabled(mFilteredGenres.getSelectedIndex() >= 0);
+      }});
+
     JPanel panel = new JPanel(new BorderLayout());
     panel.add(configPanel, BorderLayout.NORTH);
     return panel;

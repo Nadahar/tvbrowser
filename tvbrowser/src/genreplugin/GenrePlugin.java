@@ -74,6 +74,8 @@ public class GenrePlugin extends Plugin {
   private static final String FILTERED_GENRE = "filteredGenre";
   private static final String FILTERED_GENRES_COUNT = "filteredGenresCount";
 
+  private List<String> currentGenres;
+
   public GenrePlugin() {
     super();
     instance = this;
@@ -116,8 +118,7 @@ public class GenrePlugin extends Plugin {
     root.getMutableTreeNode().setShowLeafCountEnabled(true);
     
     HashMap<String, PluginTreeNode> genreNodes = new HashMap<String, PluginTreeNode>();
-    List<String> genres = new ArrayList<String>();
-    
+    currentGenres = new ArrayList<String>();
     Channel[] channels = devplugin.Plugin.getPluginManager().getSubscribedChannels();
     Date date = Date.getCurrentDate();
     for (int days = 0; days < MAX_DAYS; days++) {
@@ -132,25 +133,13 @@ public class GenrePlugin extends Plugin {
               genre = genre.trim();
               if (!hiddenGenres.contains(genre)) {
                 PluginTreeNode node = genreNodes.get(genre);
-    /*
-                if (node == null) {
-                  int index = genre.indexOf('-');
-                  if (index > 0) {
-                    String shortened = genre.replace("-", "");
-                    if (Character.isUpperCase(shortened.charAt(index))) {
-                      shortened = shortened.substring(0, index) + shortened.substring(index, index + 1).toLowerCase() + shortened.substring(index + 1);
-                    }
-                    node = genreNodes.get(shortened);
-                  }
-                }
-    */
                 if (node == null) {
                   node = new PluginTreeNode(genre);
                   node.setGroupingByDateEnabled(MAX_DAYS > 1);
                   Action hideCategory = new HideGenreAction(genre);
                   node.addAction(hideCategory );
                   genreNodes.put(genre, node);
-                  genres.add(genre);
+                  currentGenres.add(genre);
                 }
                 node.addProgram(prog);
               }
@@ -160,11 +149,49 @@ public class GenrePlugin extends Plugin {
       }
       date = date.addDays(1);
     }
-    Collections.sort(genres, String.CASE_INSENSITIVE_ORDER);
-    for (String genre : genres) {
-      root.add(genreNodes.get(genre));
+    Collections.sort(currentGenres, String.CASE_INSENSITIVE_ORDER);
+    mergeSimilarGenres(genreNodes);
+    for (String genre : currentGenres) {
+      PluginTreeNode genreNode = genreNodes.get(genre);
+      // the node may be deleted because of merging
+      if (genreNode != null) {
+        root.add(genreNode);
+      }
     }
     root.update();
+  }
+
+  private void mergeSimilarGenres(HashMap<String, PluginTreeNode> genreNodes) {
+    for (String genre : currentGenres) {
+      int index = genre.indexOf('-');
+      if (index > 0) {
+        String shortened = genre.replace("-", "");
+        if (Character.isUpperCase(shortened.charAt(index))) {
+          shortened = shortened.substring(0, index) + shortened.substring(index, index + 1).toLowerCase() + shortened.substring(index + 1);
+          mergeTwoGenres(genre, shortened, genreNodes);
+        }
+        String genreWithBlanks = genre.replace("-", " ");
+        mergeTwoGenres(genre, genreWithBlanks, genreNodes);
+      }
+      String umlauts = genre.replace("oe", "ö").replace("ae", "ä").replace("ue", "ü");
+      mergeTwoGenres(umlauts, genre, genreNodes);
+    }
+  }
+
+  private void mergeTwoGenres(String finalGenre, String removedGenre, HashMap<String,PluginTreeNode> genreNodes) {
+    if (!currentGenres.contains(removedGenre) || !currentGenres.contains(finalGenre)) {
+      return;
+    }
+    if (finalGenre.equals(removedGenre)) {
+      return;
+    }
+    PluginTreeNode firstNode = genreNodes.get(finalGenre);
+    PluginTreeNode secondNode = genreNodes.get(removedGenre);
+    for (Program program : secondNode.getPrograms()) {
+      firstNode.addProgram(program);
+    }
+    // delete the node to mark the genre deleted
+    genreNodes.remove(removedGenre);
   }
 
   @Override
