@@ -315,7 +315,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
 
   private void updateScrollBars() {
     int columnWidth = mProgramTable.getColumnWidth();
-    int fullColumns = getViewport().getWidth() / columnWidth;
+    int fullColumns = (getViewport().getWidth() + 8) / columnWidth;
     if (fullColumns < 1) {
       fullColumns = 1;
     }
