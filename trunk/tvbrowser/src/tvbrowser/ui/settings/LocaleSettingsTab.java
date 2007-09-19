@@ -44,6 +44,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 
+import tvbrowser.core.PluginLoader;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import util.ui.UiUtilities;
@@ -202,6 +203,11 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     Settings.propTwelveHourFormat.setBoolean(mTwelveHourFormat.isSelected());
     
     mSomethingChanged = mInfoArea.isVisible();
+    
+    // remove all plugin proxies as their cached plugin description needs to adapt to the new locale
+    if (mSomethingChanged) {
+      PluginLoader.getInstance().deleteAllPluginProxies();
+    }
   }
 
   /**

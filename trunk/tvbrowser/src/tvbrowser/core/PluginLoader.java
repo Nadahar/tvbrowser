@@ -554,5 +554,20 @@ public class PluginLoader {
     return mDeleteablePlugin.containsKey(plugin);
   }
 
+  /**
+   * delete all plugin proxies to force re-reading the plugin classes on next start
+   */
+  public void deleteAllPluginProxies() {
+    File settingsDir = new File(Settings.getUserSettingsDirName());
+    File[] proxyFiles = settingsDir.listFiles(new FilenameFilter() {
+      public boolean accept(File dir, String name) {
+        return name.endsWith(".jar.proxy");
+      }});
+    if (proxyFiles != null) {
+      for (File proxyFile : proxyFiles) {
+        Settings.propDeleteFilesAtStart.addItem(proxyFile.toString());
+      }
+    }
+  }
 
 }
