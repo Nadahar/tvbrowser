@@ -395,17 +395,31 @@ public class FavoritesPlugin {
   private void sendToPlugins() {
     Set<ProgramReceiveTarget> targets = mSendPluginsTable.keySet();
     StringBuffer buffer = new StringBuffer();
+    ArrayList<Favorite> errorFavorites = new ArrayList<Favorite>();
     
     for(ProgramReceiveTarget target : targets) {
       ArrayList<Program> list = mSendPluginsTable.get(target);
       
       if(!target.getReceifeIfForIdOfTarget().receivePrograms(list.toArray(new Program[list.size()]),target)) {
+        Favorite[] favs =FavoriteTreeModel.getInstance().getFavoritesContainingReceiveTarget(target);
+        
+        for(Favorite fav : favs) {
+          if(!errorFavorites.contains(fav)) {
+            errorFavorites.add(fav);
+          }
+        }
+        
         buffer.append(target.getReceifeIfForIdOfTarget().toString()).append(" - ").append(target.toString()).append("\n");
       }
     }
     
     if(buffer.length() > 0) {
       buffer.insert(0,mLocalizer.msg("sendError","Error by sending programs to other plugins.\n\nPlease check the favorites that should send\nprograms to the following plugins:\n"));
+      buffer.append(mLocalizer.msg("sendErrorFavorites","\nThe following Favorites are affected by this:\n"));
+      
+      for(Favorite fav : errorFavorites) {
+        buffer.append(fav.getName() + "\n");
+      }
       
       JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()),buffer.toString(),Localizer.getLocalization(Localizer.I18N_ERROR),JOptionPane.ERROR_MESSAGE);
     }
