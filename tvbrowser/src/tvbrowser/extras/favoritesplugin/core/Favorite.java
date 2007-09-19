@@ -556,4 +556,22 @@ public abstract class Favorite {
 
   protected abstract Program[] internalSearchForPrograms(Channel[] channelArr) throws TvBrowserException;
 
+  /**
+   * Gets if this Favorite contains the given receive target.
+   * <p>
+   * @param target The target to check for.
+   * @return <code>True</code> if this Favorite contains
+   * the given target, <code>false</code> otherwise.
+   */
+  public boolean containsReceiveTarget(ProgramReceiveTarget target) {
+    if(mForwardPluginArr != null && target != null) {
+      for(ProgramReceiveTarget tar : mForwardPluginArr) {
+        if(tar.getReceiveIfId().equals(target.getReceiveIfId())&& tar.getTargetId().equals(target.getTargetId())) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
+  }
 }

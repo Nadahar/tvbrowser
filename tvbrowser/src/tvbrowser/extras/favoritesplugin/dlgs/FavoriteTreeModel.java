@@ -30,6 +30,7 @@ import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramItem;
+import devplugin.ProgramReceiveTarget;
 import tvbrowser.extras.common.ReminderConfiguration;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
@@ -463,6 +464,25 @@ public class FavoriteTreeModel extends DefaultTreeModel {
     }
 
     ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
+  }
+  
+  /**
+   * Gets the Favorites containing the given receive target in an array.
+   * 
+   * @param target The target to check.
+   * @return The Favorites that contains the given receive target in an array.
+   */
+  public Favorite[] getFavoritesContainingReceiveTarget(ProgramReceiveTarget target) {
+    Favorite[] favorites = getFavoriteArr();
+    ArrayList<Favorite> receiveFavorites = new ArrayList<Favorite>();
+    
+    for(Favorite fav : favorites) {
+      if(fav.containsReceiveTarget(target)) {
+        receiveFavorites.add(fav);
+      }
+    }
+    
+    return receiveFavorites.toArray(new Favorite[receiveFavorites.size()]);
   }
     
 }
