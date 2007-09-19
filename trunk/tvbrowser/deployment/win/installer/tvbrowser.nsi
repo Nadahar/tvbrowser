@@ -205,20 +205,29 @@ FunctionEnd
  LangString REMINDER ${LANG_GERMAN} "Erinnerer"
  LangString REMINDER ${LANG_ENGLISH} "Reminder"
 
- LangString I18N ${LANG_GERMAN} "�bersetzungstool"
- LangString I18N ${LANG_ENGLISH} "Translation tool"
+ LangString BLOGTHIS ${LANG_GERMAN} "Blog dies!"
+ LangString BLOGTHIS ${LANG_ENGLISH} "Blog this!"
  
- LangString PRINT ${LANG_GERMAN} "Drucken"
- LangString PRINT ${LANG_ENGLISH} "Print"
- 
+ LangString CAPTURE ${LANG_GERMAN} "Aufnahmesteuerung"
+ LangString CAPTURE ${LANG_ENGLISH} "Capture Plugin"
+
+ LangString CALENDAR ${LANG_GERMAN} "Kalender-Export"
+ LangString CALENDAR ${LANG_ENGLISH} "Calendar export"
+
+ LangString CLIPBOARD ${LANG_GERMAN} "Zwischenablage"
+ LangString CLIPBOARD ${LANG_ENGLISH} "Clipboard Plugin"
+
+ LangString EMAIL ${LANG_GERMAN} "E-Mail"
+ LangString EMAIL ${LANG_ENGLISH} "E-Mail Plugin"
+
  LangString FAVORITES ${LANG_GERMAN} "Lieblingssendungen verwalten"
  LangString FAVORITES ${LANG_ENGLISH} "Manage favorite programs"
  
- LangString SHOWVIEW ${LANG_GERMAN} "Showviewnummern berechnen"
- LangString SHOWVIEW ${LANG_ENGLISH} "Calculate Showview numbers"
+ LangString GENRES ${LANG_GERMAN} "Genres-Plugin"
+ LangString GENRES ${LANG_ENGLISH} "Genres Plugin"
  
- LangString TVRATER ${LANG_GERMAN} "TV-Bewertungen"
- LangString TVRATER ${LANG_ENGLISH} "TV rates"
+ LangString I18N ${LANG_GERMAN} "�bersetzungstool"
+ LangString I18N ${LANG_ENGLISH} "Translation tool"
  
  LangString LISTVIEW ${LANG_GERMAN} "Was l�uft gerade"
  LangString LISTVIEW ${LANG_ENGLISH} "What runs now"
@@ -226,21 +235,21 @@ FunctionEnd
  LangString NEWS ${LANG_GERMAN} "Nachrichten"
  LangString NEWS ${LANG_ENGLISH} "News"
  
- LangString CLIPBOARD ${LANG_GERMAN} "Zwischenablage"
- LangString CLIPBOARD ${LANG_ENGLISH} "Clipboard-Plugin"
-
- LangString BLOGTHIS ${LANG_GERMAN} "Blog dies!"
- LangString BLOGTHIS ${LANG_ENGLISH} "Blog this!"
+ LangString PRINT ${LANG_GERMAN} "Drucken"
+ LangString PRINT ${LANG_ENGLISH} "Print"
  
- LangString CALENDAR ${LANG_GERMAN} "Kalender-Export"
- LangString CALENDAR ${LANG_ENGLISH} "Calendar export"
-
+ LangString SHOWVIEW ${LANG_GERMAN} "Showviewnummern berechnen"
+ LangString SHOWVIEW ${LANG_ENGLISH} "Calculate Showview numbers"
+ 
  LangString SIMPLEMARKER ${LANG_GERMAN} "Markierungs-Plugin"
  LangString SIMPLEMARKER ${LANG_ENGLISH} "Marker Plugin"
  
- LangString GENRES ${LANG_GERMAN} "Genres-Plugin"
- LangString GENRES ${LANG_ENGLISH} "Genres Plugin"
- 
+ LangString TVRATER ${LANG_GERMAN} "TV-Bewertungen"
+ LangString TVRATER ${LANG_ENGLISH} "TV rating"
+
+ LangString WEB ${LANG_GERMAN} "Internet-Suche"
+ LangString WEB ${LANG_ENGLISH} "Web Search"
+
  LangString un.QUESTION ${LANG_GERMAN} "Sollen die Konfigurationsdateien und TV-Daten gel�scht werden?"
  LangString un.QUESTION ${LANG_ENGLISH} "Do you want to delete the setting and TV data files?"
 
@@ -513,7 +522,7 @@ SubSectionEnd
 
 SubSection "Plugins"
  
-   Section "$(BLOGTHIS)"
+  Section "$(BLOGTHIS)"
     SectionIn 1
 
     SetOutPath "$INSTDIR\plugins"
@@ -527,7 +536,6 @@ SubSection "Plugins"
     File "${RUNTIME_DIR}\plugins\PrintPlugin.jar"
   SectionEnd
 
- 
   Section "$(SHOWVIEW)"
     SectionIn 1
 
@@ -535,14 +543,14 @@ SubSection "Plugins"
     File "${RUNTIME_DIR}\plugins\ShowviewPlugin.jar"
   SectionEnd
 
-  Section "Web Plugin"
+  Section "$(WEB)"
     SectionIn 1
 
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\WebPlugin.jar"
   SectionEnd
 
-  Section "E-Mail Plugin"
+  Section "$(EMAIL)"
     SectionIn 1
 
     SetOutPath "$INSTDIR\plugins"
@@ -570,7 +578,7 @@ SubSection "Plugins"
     File "${RUNTIME_DIR}\plugins\NewsPlugin.jar"
   SectionEnd
 
-  Section "Capture-Plugin"
+  Section "$(CAPTURE)"
     SectionIn 1
 
     SetOutPath "$INSTDIR\plugins"
