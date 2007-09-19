@@ -251,7 +251,7 @@ FunctionEnd
  LangString WEB ${LANG_ENGLISH} "Web Search"
 
  LangString un.QUESTION ${LANG_GERMAN} "Sollen die Konfigurationsdateien und TV-Daten gel�scht werden?"
- LangString un.QUESTION ${LANG_ENGLISH} "Do you want to delete the setting and TV data files?"
+ LangString un.QUESTION ${LANG_ENGLISH} "Do you want to delete the settings and TV data files?"
 
  LangString un.CONFIRM ${LANG_GERMAN} "Sind Sie sicher?"
  LangString un.CONFIRM ${LANG_ENGLISH} "Are you sure?"
