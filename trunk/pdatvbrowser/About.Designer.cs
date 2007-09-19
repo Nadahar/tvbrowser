@@ -45,7 +45,7 @@
             this.lVersion.Location = new System.Drawing.Point(0, 0);
             this.lVersion.Name = "lVersion";
             this.lVersion.Size = new System.Drawing.Size(240, 19);
-            this.lVersion.Text = "Version: 0.4.11 BETA";
+            this.lVersion.Text = "Version: 0.4.12 BETA";
             this.lVersion.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // pictureBoxIcon

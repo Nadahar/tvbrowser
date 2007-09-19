@@ -12,7 +12,6 @@ namespace PocketTVBrowserCF2
         [MTAThread]
         static void Main()
         {
-            //Application.Run(new Mainform());
             Application.Run(new Mainform());
         }
     }
