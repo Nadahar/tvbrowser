@@ -38,7 +38,6 @@ import javax.swing.JMenuItem;
 import javax.swing.plaf.basic.BasicMenuItemUI;
 import javax.swing.plaf.basic.BasicMenuUI;
 
-import tvbrowser.core.Settings;
 import util.ui.ScrollableMenu;
 
 import devplugin.ActionMenu;
@@ -108,7 +107,11 @@ public class MenuUtil {
   }
 
   private static void checkAndSetBackgroundColor(JMenuItem item) {
-    Object o = item.getAction().getValue(Program.MARK_PRIORITY);
+    Action action = item.getAction();
+    if (action == null) {
+      return;
+    }
+    Object o = action.getValue(Program.MARK_PRIORITY);
     
     if(o != null && o instanceof Integer) {
       Color color = Plugin.getPluginManager().getTvBrowserSettings().getColorForMarkingPriority((Integer)o);
