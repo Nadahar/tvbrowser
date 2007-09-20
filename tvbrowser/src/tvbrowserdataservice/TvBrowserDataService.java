@@ -89,6 +89,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   private TvDataUpdateManager mTvDataBase;
   private int mTotalDownloadJobCount;
   private ProgressMonitor mProgressMonitor;
+  private boolean mHasRightToDownloadIcons;
 
   private static final String[][] DEFAULT_CHANNEL_GROUP_MIRRORS = new String[][] {
           new String[] {"http://www.tvbrowser.org/mirrorlists"},
@@ -129,6 +130,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
    * Creates a new TvBrowserDataService.
    */
   public TvBrowserDataService() {
+    mHasRightToDownloadIcons = false;
     mSettings = new Properties();
     mInstance=this;
     mAvailableChannelGroupsSet =new HashSet<ChannelGroup>();
@@ -187,7 +189,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   public void updateTvData(TvDataUpdateManager dataBase, Channel[] channelArr,
                            Date startDate, int dateCount, ProgressMonitor monitor) {
     boolean groupsWereAllreadyUpdated = false;
-
+    mHasRightToDownloadIcons = true;
     // Check for Connection
     if (!NetworkUtilities.checkConnection()) {
       JOptionPane.showMessageDialog(null,
@@ -302,7 +304,8 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
       mTvDataBase = null;
       mProgressMonitor = null;
     }
-
+    
+    mHasRightToDownloadIcons = false;
   }
 
 
@@ -740,6 +743,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   }
 
   public Channel[] checkForAvailableChannels(devplugin.ChannelGroup g, ProgressMonitor monitor) throws TvBrowserException {
+    mHasRightToDownloadIcons = true;
     downloadChannelGroupFile();
     
     ChannelGroup group = getChannelGroupById(g.getId());
@@ -756,6 +760,8 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     for (int j=0;j<ch.length;j++) {
       channelList.add(ch[j]);
     }
+    
+    mHasRightToDownloadIcons = false;
     
     return channelList.toArray(new Channel[channelList.size()]);
   }
@@ -783,6 +789,15 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
             mLocalizer.msg("description", "Die eigenen TV-Daten des TV-Browser-Projektes"),
             "Til Schneider, www.murfman.de",null,
             mLocalizer.msg("license","Terms of Use:\n=============\nAll TV/Radio listings provided by TV-Browser (http://www.tvbrowser.org) are protected by copyright laws and may only be used within TV-Browser or other name like applications authorizied by the manufacturer of TV-Browser (http://www.tvbrowser.org) for information about the upcoming program of the available channels.\nEvery other manner of using, reproducing or redistributing of the TV/Radio listings is illegal and may be prosecuted on civil or criminal law.\n\nOn downloading the TV/Radio listings you declare your agreement to these terms.\n\nIf you have any questions concerning these terms please contact dev@tvbrowser.org"));
+  }
+  
+  /**
+   * Gets if it is allowed to download the channel icons.
+   * 
+   * @return <code>True</code> if the download of the channel icons is allowed.
+   */
+  public boolean hasRightToDownloadIcons() {
+    return mHasRightToDownloadIcons;
   }
 
 }

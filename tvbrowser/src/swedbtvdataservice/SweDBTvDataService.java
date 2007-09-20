@@ -67,12 +67,13 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
     private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(SweDBTvDataService.class.getName());
 
-
+    private boolean mHasRightToDownloadIcons;
     
     
     /** Creates a new instance of SweDBTvDataService */
     public SweDBTvDataService() {
     	mLog.info("SweDBTvDataService initieras");
+    	mHasRightToDownloadIcons = false;
         mProperties = new Properties();
 
         mChannelGroupsList = new HashSet<SweDBChannelGroup>();
@@ -131,7 +132,8 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
                            int dateCount, 
                            ProgressMonitor monitor)
                             throws TvBrowserException {
-
+    mHasRightToDownloadIcons = true;
+    
       int counter=0;
       mLog.info("Starting update for SweDBTvDataService from " + startDate.toString() + " for " + dateCount + " days");
       monitor.setMaximum(channelArr.length);
@@ -251,7 +253,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
         } //int c
         monitor.setValue(counter++);
       }//int a
-      
+    mHasRightToDownloadIcons = false;
   }      
       
   private String createFileName(devplugin.Date fileDate) {
@@ -342,6 +344,8 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
    * @throws TvBrowserException
    */
   public Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException {
+    mHasRightToDownloadIcons = true;
+    
    try {
       if ((mLastChannelUpdate)==-1){
     	  mLog.info("mLastChannelUpdate has not been intitalized yet. checkForAvailableChannels exits");
@@ -383,9 +387,10 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
     } catch (Exception E){
       throw new TvBrowserException(SweDBTvDataService.class, "something is wrong in checkForAvailableChannels","something is wrong");
     }
-    return mChannel;
-
     
+    mHasRightToDownloadIcons = false;
+    
+    return mChannel;
   }
 
   
@@ -481,7 +486,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
 	    	  mLog.warning("iconUrl is not in cache for channelId "+channelId+". prevUrl="+prevUrl+". currentUrl="+url);
 	      }
 
-	      if (icon == null) {
+	      if (icon == null && mHasRightToDownloadIcons) {
 	        if (ICON_CACHE.containsKey(url)) {
 	          try {
 	            if (!ICON_CACHE.get(url).equals(iconFile)) {

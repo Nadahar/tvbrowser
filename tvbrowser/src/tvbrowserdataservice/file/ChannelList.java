@@ -302,7 +302,7 @@ public class ChannelList {
         }
       }
 
-      if (icon == null) {
+      if (icon == null && TvBrowserDataService.getInstance().hasRightToDownloadIcons()) {
         // download the icon
         try {
           util.io.IOUtilities.download(new URL(url), iconFile);
