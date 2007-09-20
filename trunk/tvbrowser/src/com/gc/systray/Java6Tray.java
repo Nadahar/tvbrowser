@@ -29,6 +29,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.logging.Level;
 
 import javax.imageio.ImageIO;
 import javax.swing.JDialog;
@@ -94,7 +95,7 @@ public class Java6Tray implements SystemTrayIf {
       
       return value;
     }catch(Exception e) {
-      mLog.severe("Java 6 Tray could be inited.");
+      mLog.log(Level.SEVERE, "Java 6 Tray could not be inited.", e);
       mClass = null;
       return false;
     }
