@@ -491,57 +491,41 @@ public class ProgramTextCreator {
           addEntry(doc, buffer, prog, ProgramFieldType.URL_TYPE, true,
               showHelpLinks);
         } else if (type == ProgramFieldType.ACTOR_LIST_TYPE) {
-          ArrayList<String> actorsList = new ArrayList<String>();
-          String[] recognizedActors = ProgramUtilities.getActorsFromActorsField(prog);
+          ArrayList<String> knownNames = new ArrayList<String>();
+          String[] recognizedActors = ProgramUtilities.getActorNames(prog);
           if (recognizedActors != null) {
             for (String actorName : recognizedActors) {
-              actorsList.add(actorName);
+              knownNames.add(actorName);
             }
           }
           String actorField = prog.getTextField(type);
           if (actorField != null) {
-            actorField = actorField.trim();
-            String[] actors = new String[0];
-            if (actorField.contains("\n")) {
-              actors = actorField.split("\n");
+            ArrayList<String>[] lists = ProgramUtilities.splitActors(prog);
+            if (lists == null) {
+              lists = splitActorsSimple(prog);
             }
-            else if (actorField.contains(",")) {
-              actors = actorField.split(",");
-            }
-            else if (actorField.contains("\t")) {
-              actors = new String[1];
-              actors[0] = actorField;
-            }
-            if (actors.length > 0) {
+            if (lists[0].size() > 0) {
               startInfoSection(buffer, type.getLocalizedName());
               buffer.append("<table border=\"0\" cellpadding=\"0\" style=\"font-family:");
               buffer.append(bodyFont);
               buffer.append(";\">");
-              for (String actor : actors) {
-                actor = actor.trim();
-                if (actor != "") {
-                  String part1 = actor;
-                  String part2 = "";
-                  if (actor.contains("\t")) {
-                    part1 = actor.substring(0, actor.indexOf("\t")).trim();
-                    part2 = actor.substring(actor.indexOf("\t")).trim();
-                  }
-                  else if (actor.contains("(") && actor.contains(")")) {
-                    part1 = actor.substring(0, actor.indexOf("(")).trim();
-                    part2 = actor.substring(actor.indexOf("(")+1, actor.lastIndexOf(")")).trim();
-                  }
-                  if (actorsList.contains(part1)) {
-                    part1 = addWikiLink(part1);
-                  }
-                  if (actorsList.contains(part2)) {
-                    part2 = addWikiLink(part2);
-                  }
-                  buffer.append("<tr><td>");
-                  buffer.append(part1);
-                  buffer.append("</td><td width=\"10\">&nbsp;</td><td>");
-                  buffer.append(part2);
-                  buffer.append("</td></tr>");
+              for (int i=0; i<lists[0].size(); i++) {
+                String part1 = lists[0].get(i);
+                String part2 = "";
+                if (i < lists[1].size()) {
+                  part2 = lists[1].get(i);
                 }
+                if (knownNames.contains(part1)) {
+                  part1 = addWikiLink(part1);
+                }
+                if (knownNames.contains(part2)) {
+                  part2 = addWikiLink(part2);
+                }
+                buffer.append("<tr><td>");
+                buffer.append(part1);
+                buffer.append("</td><td width=\"10\">&nbsp;</td><td>");
+                buffer.append(part2);
+                buffer.append("</td></tr>");
               }
               buffer.append("</table>");
               buffer.append("</td></tr>");
@@ -578,6 +562,44 @@ public class ProgramTextCreator {
     return "";
   }
 
+  private static ArrayList<String>[] splitActorsSimple(Program prog) {
+    ArrayList<String> list1 = new ArrayList();
+    ArrayList<String> list2 = new ArrayList();
+    String actorField = prog.getTextField(ProgramFieldType.ACTOR_LIST_TYPE).trim();
+    String[] actors = new String[0];
+    if (actorField.contains("\n")) {
+      actors = actorField.split("\n");
+    }
+    else if (actorField.contains(",")) {
+      actors = actorField.split(",");
+    }
+    else if (actorField.contains("\t")) {
+      actors = new String[1];
+      actors[0] = actorField;
+    }
+    for (String actor : actors) {
+      actor = actor.trim();
+      if (actor != "") {
+        String part1 = actor;
+        String part2 = "";
+        if (actor.contains("\t")) {
+          part1 = actor.substring(0, actor.indexOf("\t")).trim();
+          part2 = actor.substring(actor.indexOf("\t")).trim();
+        }
+        else if (actor.contains("(") && actor.contains(")")) {
+          part1 = actor.substring(0, actor.indexOf("(")).trim();
+          part2 = actor.substring(actor.indexOf("(")+1, actor.lastIndexOf(")")).trim();
+        }
+        list1.add(part1);
+        list2.add(part2);
+      }
+    }
+    ArrayList<String>[] result = new ArrayList[2];
+    result[0] = list1;
+    result[1] = list2;
+    return result;
+  }
+
   private static String addWikiLink(String topic, String displayText) {
     String url = topic;
     String style = " style=\"color:black; text-decoration:none; border-bottom: 1px dashed;\"";
@@ -585,7 +607,15 @@ public class ProgramTextCreator {
   }
 
   private static String addWikiLink(String topic) {
-    return addWikiLink(topic, topic);
+    String[] parts = topic.split(" und ");
+    String result = "";
+    for (int i = 0; i < parts.length; i++) {
+      result = result + addWikiLink(parts[i], parts[i]);
+      if (i < parts.length - 1) {
+        result = result + " und ";
+      }
+    }
+    return result;
   }
   
   private static String[] splitList(String field) {
@@ -674,8 +704,11 @@ public class ProgramTextCreator {
         String topic = directors[i];
         if (directors[i].contains("(")) {
           topic = directors[i].substring(0, directors[i].indexOf("(")-1);
+          directors[i] = addWikiLink(topic, directors[i]);
         }
-        directors[i] = addWikiLink(topic, directors[i]);
+        else {
+          directors[i] = addWikiLink(directors[i]);
+        }
       }
       buffer.append(concatList(directors));
     }
