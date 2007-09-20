@@ -117,8 +117,8 @@ public class BlogThisPlugin extends Plugin {
         String name = mLocalizer.msg("pluginName", "BlogThis");
         String desc = mLocalizer.msg("description", "Creates a new Blog-Entry");
         String author = "Bodo Tasche";
-        String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Blog_this!");
-        mPluginInfo = new PluginInfo(BlogThisPlugin.class, name, desc, author, helpUrl);
+        
+        mPluginInfo = new PluginInfo(BlogThisPlugin.class, name, desc, author);
       }
       
       return mPluginInfo;

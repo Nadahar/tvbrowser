@@ -113,9 +113,8 @@ public class PrintPlugin extends Plugin {
       String name = mLocalizer.msg("printProgram" ,"Print program");
       String desc = mLocalizer.msg("printdescription" ,"Allows printing programs.");
       String author = "Martin Oberhauser (martin@tvbrowser.org)";
-      String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Print_program");
         
-      mPluginInfo = new PluginInfo(PrintPlugin.class, name, desc, author, helpUrl);
+      mPluginInfo = new PluginInfo(PrintPlugin.class, name, desc, author);
     }
     
     return mPluginInfo;

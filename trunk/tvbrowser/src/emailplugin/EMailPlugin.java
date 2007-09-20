@@ -102,9 +102,8 @@ public class EMailPlugin extends Plugin {
       String name = mLocalizer.msg("pluginName", "EMail export");
       String desc = mLocalizer.msg("description", "Send a EMail with an external Program");
       String author = "Bodo Tasche";
-      String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Send_e-mail");
       
-      mPluginInfo = new PluginInfo(EMailPlugin.class, name, desc, author, helpUrl);
+      mPluginInfo = new PluginInfo(EMailPlugin.class, name, desc, author);
     }
     
     return mPluginInfo;

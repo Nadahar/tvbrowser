@@ -138,9 +138,8 @@ public class NewsPlugin extends Plugin {
       String desc = mLocalizer.msg("description",
           "Gets the TV-Browser news after each TV data update.");
       String author = "Til Schneider, www.murfman.de";
-      String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/News");
       
-      mPluginInfo = new PluginInfo(NewsPlugin.class, name, desc, author, helpUrl);
+      mPluginInfo = new PluginInfo(NewsPlugin.class, name, desc, author);
     }
     
     return mPluginInfo;
