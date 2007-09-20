@@ -130,8 +130,9 @@ namespace PocketTVBrowserCF2
                         }
                         this.dbReader.Close();
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        String dummy = ex.Message.ToString();
                         this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error","Error"), this.getLanguageElement("TVBrowserControll.DBError","Database - Error. Your Export-Plugin isn't compatible with PocketTVBrowser Version"),DialogResult.OK,"Application.Exit()"));
                         this.dB = false;
                         Application.Exit();
@@ -1230,7 +1231,6 @@ namespace PocketTVBrowserCF2
                             DateTime dt = new DateTime(Int32.Parse(start.Substring(0,4)),Int32.Parse(start.Substring(5,2)),Int32.Parse(start.Substring(8,2)));
                             if (dt > DateTime.Now.AddDays(-1))
                                 backup += channel + "|" + start + "|" + title + "|" + reminderString + "\r\n";
-
                         }
                         catch
                         {

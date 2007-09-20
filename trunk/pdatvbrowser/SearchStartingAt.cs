@@ -59,6 +59,7 @@ namespace PocketTVBrowserCF2
             catch
             {
             }
+            this.con.getMainform().Show();
             this.broadcasts = this.con.getBroadcastsRunningAt(this.getDateTime());
             Cursor.Current = Cursors.Default;
         }
@@ -82,7 +83,22 @@ namespace PocketTVBrowserCF2
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
+            this.con.getMainform().Show();
             this.DialogResult = DialogResult.Cancel;
         }
+
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+
+            Rectangle rc = this.ClientRectangle;
+            rc.Height--;
+            rc.Width--;
+            Graphics g = this.CreateGraphics();
+            g.DrawRectangle(new Pen(Color.Black), rc);
+
+            base.OnPaint(e);
+        }
+
     }
 }

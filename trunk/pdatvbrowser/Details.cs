@@ -34,10 +34,15 @@ namespace PocketTVBrowserCF2
             this.refreshLanguage();
             this.MinimizeBox = false;
             this.getInformation();
+            this.disableElements();
+        }
+
+        private void disableElements()
+        {
             int osVersion = Int32.Parse(Environment.OSVersion.Version.ToString().Split('.')[0].ToString());
-            if (osVersion < 5)
+            if (osVersion < 5) 
             {
-                this.menuItemOutlook.Enabled = false;
+                this.menuItemOutlook.Enabled = false;//disable "Add to calendar"
             }
             Graphics g = this.CreateGraphics();
             SizeF size = g.MeasureString("G", this.Font);
@@ -45,7 +50,7 @@ namespace PocketTVBrowserCF2
             this.rowhight = 14;
             if (this.con.getCurrentScreen().Width >= 192)
                 this.rowhight = 28;
-            this.scrollStep = this.Height-5;
+            this.scrollStep = this.Height - 5;
             this.write();
             int osVersionSub = 0;
             try
@@ -63,7 +68,7 @@ namespace PocketTVBrowserCF2
                 w = h;
                 h = t;
             }
-            if ((w == 240 && h == 188) || (w == 480 && h == 376))
+            if ((w == 240 && h == 188) || (w == 480 && h == 376)) //disable rotate for quare displays
             {
                 this.menuItemRotate.Enabled = false;
             }
@@ -76,6 +81,15 @@ namespace PocketTVBrowserCF2
                 {
                     this.menuItemRotate.Enabled = false;
                 }
+            }
+            try //disbale sms
+            {   
+                //TODO
+                //MessagingApplication.DisplayComposeForm(
+            }
+            catch
+            {
+                this.menuItemSMS.Enabled = false;
             }
         }
 
@@ -106,7 +120,24 @@ namespace PocketTVBrowserCF2
             this.Controls.Add(lTitelContent);
             yPosition += lTitelContent.Height + 5;
 
-            //Additional Information
+            //Duration
+            Label lDuration = new Label();
+            lDuration.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            lDuration.ForeColor = System.Drawing.Color.Silver;
+            lDuration.Location = new System.Drawing.Point(0, yPosition);
+            lDuration.Size = new System.Drawing.Size(this.width, rowhight + 2);
+            lDuration.Text = this.con.getLanguageElement("Details.Duration", "duration");
+            yPosition += lDuration.Height - 3;
+            this.Controls.Add(lDuration);
+            int duration = this.broadcast.getLength();
+            Label lDurationContent = new Label();
+            lDurationContent.Text = duration.ToString() + " " + this.con.getLanguageElement("Details.Ends", "min. (ends") + " " + this.broadcast.getEnd().ToShortTimeString() + " - " + this.broadcast.getEnd().ToShortDateString() + ")";
+            lDurationContent.Location = new System.Drawing.Point(0, yPosition);
+            lDurationContent.Size = new System.Drawing.Size(this.width, rowhight);
+            yPosition += lDurationContent.Height + 5;
+            this.Controls.Add(lDurationContent);    
+
+            //additional Information
             for (int i = 0; i < this.elements.Count; i++)
             {
                 String[] element = (String[])this.elements[i];
@@ -132,24 +163,7 @@ namespace PocketTVBrowserCF2
                 yPosition += lContent.Height + 5;
                 this.Controls.Add(lName);
                 this.Controls.Add(lContent);
-            }
-
-            //Duration
-            Label lDuration = new Label();
-            lDuration.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
-            lDuration.ForeColor = System.Drawing.Color.Silver;
-            lDuration.Location = new System.Drawing.Point(0, yPosition);
-            lDuration.Size = new System.Drawing.Size(this.width, rowhight + 2);
-            lDuration.Text = this.con.getLanguageElement("Details.Duration","duration");
-            yPosition += lDuration.Height - 3;
-            this.Controls.Add(lDuration);
-            int duration = this.broadcast.getLength();
-            Label lDurationContent = new Label();
-            lDurationContent.Text = duration.ToString() + " " + this.con.getLanguageElement("Details.Ends", "min. (ends") + " " + this.broadcast.getEnd().ToShortTimeString() + " - " + this.broadcast.getEnd().ToShortDateString() + ")";
-            lDurationContent.Location = new System.Drawing.Point(0, yPosition);
-            lDurationContent.Size = new System.Drawing.Size(this.width, rowhight);
-            yPosition += lDurationContent.Height + 5;
-            this.Controls.Add(lDurationContent);         
+            }     
             
             // Bookmark
             int xPosition = 0;
@@ -396,7 +410,7 @@ namespace PocketTVBrowserCF2
                 if (SystemSettings.ScreenOrientation == ScreenOrientation.Angle0)
                 {
                     // change to landscape
-                    SystemSettings.ScreenOrientation = ScreenOrientation.Angle90;
+                    SystemSettings.ScreenOrientation = ScreenOrientation.Angle270;
                 }
                 else
                 {
@@ -419,6 +433,7 @@ namespace PocketTVBrowserCF2
             this.menuItemOutlook.Text = this.con.getLanguageElement("Details.Designer.AddToOutlook","Add to Calendar (WM5)");
             this.menuItemReminder.Text = this.con.getLanguageElement("Details.Designer.AddToReminders","Add to reminders");
             this.menuItemRotate.Text = this.con.getLanguageElement("Details.Rotate", "Rotate");
+            this.menuItemSMS.Text = this.con.getLanguageElement("Details.SMS", "sent as SMS");
         }
 
         private void menuItemRotate_Click(object sender, EventArgs e)
@@ -429,6 +444,39 @@ namespace PocketTVBrowserCF2
             temp.BringToFront();
             this.Close();
             Cursor.Current = Cursors.Default;
+        }
+
+        private void menuItemSMS_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                String name = "\n";
+                try
+                {
+                    Byte[] ownerbytes = (byte[])Microsoft.Win32.Registry.CurrentUser.OpenSubKey("ControlPanel\\Owner").GetValue("Owner");
+                    name += System.Text.Encoding.Unicode.GetString(ownerbytes, 0, 72).TrimEnd('\0');
+                }
+                catch
+                {
+                    name = "";
+                }
+                String message = this.con.getLanguageElement("Details.SMSMessage","My personal TV hint:") + "\n";
+                message += this.con.getLanguageElement("Details.SMSMessageBroadcast","Broadcast:") + " " + this.broadcast.getTitle()+"\n";
+                message += this.con.getLanguageElement("Details.SMSMessageTime","Time:") + " " + this.broadcast.getStart().ToShortDateString()+" "+this.broadcast.getStart().ToShortTimeString()+"\n";
+                message += this.con.getLanguageElement("Details.SMSMessageChannel","Channel:") + " " + this.broadcast.getChannel()+"\n";
+                message += this.con.getLanguageElement("Details.SMSMessageRegards","Regards");
+                if (!name.Equals(""))
+                {
+                    message += ", " + name;
+                }
+                SmsMessage sms = new SmsMessage();
+                sms.Body = message;
+                MessagingApplication.DisplayComposeForm(sms);
+            }
+            catch
+            {
+                this.menuItemSMS.Enabled = false;
+            }
         }
     }
 }

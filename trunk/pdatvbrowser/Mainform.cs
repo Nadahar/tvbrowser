@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Microsoft.WindowsCE.Forms;
+using System.Threading;
 
 namespace PocketTVBrowserCF2
 {
@@ -174,7 +175,7 @@ namespace PocketTVBrowserCF2
                 if (SystemSettings.ScreenOrientation == ScreenOrientation.Angle0)
                 {
                     // change to landscape
-                    SystemSettings.ScreenOrientation = ScreenOrientation.Angle90;
+                    SystemSettings.ScreenOrientation = ScreenOrientation.Angle270;
                 }
                 else
                 {
@@ -188,7 +189,7 @@ namespace PocketTVBrowserCF2
             }
             catch
             {
-                MessageBox.Show("Mainform.RotateError", "was't able so rotate screen");
+                MessageBox.Show("was't able so rotate screen", "Mainform.RotateError");
                 this.menuItemRotate.Enabled = false;
             }
         }
@@ -283,6 +284,9 @@ namespace PocketTVBrowserCF2
              }
         }
 
+
+      
+
         private void listViewBroadcasts_Click(object sender, EventArgs e)
         {
             try
@@ -298,12 +302,14 @@ namespace PocketTVBrowserCF2
                 }
                 else
                     MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+           
             }
             catch
             {
                 //Nothing - user just klicked in a free area of the screen
             }
         }
+
 
         public void setComboBoxChannelIndex(int index)
         {
@@ -663,32 +669,38 @@ namespace PocketTVBrowserCF2
 
         private void menuItemPrimetime_Click(object sender, EventArgs e)
         {
-            if (this.con.hasDB())
+            try
             {
-                DateTime dt = DateTime.Now;
-                try
+                if (this.con.hasDB())
                 {
-                    dt = ((TVBrowserDate)this.comboBoxDate.SelectedItem).getDateTime();
-                }
-                catch
-                {
-                    this.comboBoxDate.Items.Add(new TVBrowserDate(dt, this.con));
-                }
-                this.lChannel.Text = this.con.getLanguageElement("Mainform.PrimeTime", "PrimeTime - broadcasts for");
-                this.lDate.Text = dt.ToLongDateString();
+                    DateTime dt = DateTime.Now;
+                    try
+                    {
+                        dt = ((TVBrowserDate)this.comboBoxDate.SelectedItem).getDateTime();
+                    }
+                    catch
+                    {
+                        this.comboBoxDate.Items.Add(new TVBrowserDate(dt, this.con));
+                    }
+                    this.lChannel.Text = this.con.getLanguageElement("Mainform.PrimeTime", "PrimeTime - broadcasts for");
+                    this.lDate.Text = dt.ToLongDateString();
 
-                this.refreshListView();
+                    this.refreshListView();
 
-                this.broadcasts = this.con.getPrimetimeBroadcasts(dt);
-                for (int i = 0; i < broadcasts.Count; i++)
-                {
-                    Broadcast temp = (Broadcast)broadcasts[i];
-                    this.listViewBroadcasts.Items.Add(this.con.createColoredListItem(temp, this.getReducedString(temp.getChannel() + "|" + temp.ToString(),this.Width)));
+                    this.broadcasts = this.con.getPrimetimeBroadcasts(dt);
+                    for (int i = 0; i < broadcasts.Count; i++)
+                    {
+                        Broadcast temp = (Broadcast)broadcasts[i];
+                        this.listViewBroadcasts.Items.Add(this.con.createColoredListItem(temp, this.getReducedString(temp.getChannel() + "|" + temp.ToString(), this.Width)));
+                    }
+                    this.Controls.Add(this.listViewBroadcasts);
                 }
-                this.Controls.Add(this.listViewBroadcasts);
+                else
+                    MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
             }
-            else
-                MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+            catch
+            {
+            }
         }
 
         private void menuItemConfiguration_Click(object sender, EventArgs e)
@@ -701,52 +713,66 @@ namespace PocketTVBrowserCF2
 
         private void menuItemShowFavorites_Click(object sender, EventArgs e)
         {
-            if (this.con.hasDB())
+            try
             {
-                this.comboBoxChannel.SelectedIndex = 0;
-                this.con.setLastView(6);
-                this.refresh = false;
-                this.lChannel.Text = this.con.getLanguageElement("Mainform.TodaysFavorites", "favorites");
-
-                this.refreshListView();
-                TVBrowserDate date = (TVBrowserDate)this.comboBoxDate.SelectedItem;
-                this.lDate.Text = date.ToLongDateString();
-                this.broadcasts = this.con.getBroadcastsByFilter(true, false, date.getDateTime());
-                for (int i = 0; i < broadcasts.Count; i++)
+                if (this.con.hasDB())
                 {
-                    Broadcast temp = (Broadcast)broadcasts[i];
-                    this.listViewBroadcasts.Items.Add(this.con.createColoredListItem(temp, this.getReducedString(temp.getChannel() + "|" + temp.ToString(),this.Width)));
+                    this.comboBoxChannel.SelectedIndex = 0;
+                    this.con.setLastView(6);
+                    this.refresh = false;
+                    this.lChannel.Text = this.con.getLanguageElement("Mainform.TodaysFavorites", "favorites");
+
+                    this.refreshListView();
+                    TVBrowserDate date = (TVBrowserDate)this.comboBoxDate.SelectedItem;
+                    this.lDate.Text = date.ToLongDateString();
+                    this.broadcasts = this.con.getBroadcastsByFilter(true, false, date.getDateTime());
+                    for (int i = 0; i < broadcasts.Count; i++)
+                    {
+                        Broadcast temp = (Broadcast)broadcasts[i];
+                        this.listViewBroadcasts.Items.Add(this.con.createColoredListItem(temp, this.getReducedString(temp.getChannel() + "|" + temp.ToString(), this.Width)));
+                    }
+                    this.Controls.Add(this.listViewBroadcasts);
+                    this.refresh = true;
                 }
-                this.Controls.Add(this.listViewBroadcasts);
-                this.refresh = true;
+                else
+                    MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
             }
-            else
-                MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+            catch
+            {
+            }
         }
 
         private void menuItemShowReminders_Click(object sender, EventArgs e)
         {
-            if (this.con.hasDB())
+            try
             {
-                this.comboBoxChannel.SelectedIndex = 0;
-                this.con.setLastView(7);
-                this.refresh = false;
-                this.lChannel.Text = this.con.getLanguageElement("Mainform.TodaysReminders", "Todays Reminders");
-
-                this.refreshListView();
-                TVBrowserDate date = (TVBrowserDate)this.comboBoxDate.SelectedItem;
-                this.lDate.Text = date.ToLongDateString();
-                this.broadcasts = this.con.getBroadcastsByFilter(false, true, date.getDateTime());
-                for (int i = 0; i < broadcasts.Count; i++)
+                if (this.con.hasDB())
                 {
-                    Broadcast temp = (Broadcast)broadcasts[i];
-                    this.listViewBroadcasts.Items.Add(this.con.createColoredListItem(temp, this.getReducedString(temp.getChannel() + "|" + temp.ToString(),this.Width)));
+                    this.comboBoxChannel.SelectedIndex = 0;
+                    this.con.setLastView(7);
+                    this.refresh = false;
+                    this.lChannel.Text = this.con.getLanguageElement("Mainform.TodaysReminders", "Todays Reminders");
+
+                    this.refreshListView();
+                    TVBrowserDate date = (TVBrowserDate)this.comboBoxDate.SelectedItem;
+                    this.lDate.Text = date.ToLongDateString();
+                    this.broadcasts = this.con.getBroadcastsByFilter(false, true, date.getDateTime());
+                    for (int i = 0; i < broadcasts.Count; i++)
+                    {
+                        Broadcast temp = (Broadcast)broadcasts[i];
+                        this.listViewBroadcasts.Items.Add(this.con.createColoredListItem(temp, this.getReducedString(temp.getChannel() + "|" + temp.ToString(), this.Width)));
+                    }
+                    this.Controls.Add(this.listViewBroadcasts);
+                    this.refresh = true;
                 }
-                this.Controls.Add(this.listViewBroadcasts);
-                this.refresh = true;
+                else
+                    MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
             }
-            else
-                MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+            catch
+            {
+
+            }
+
         }
 
         private void menuItemRightSoft_Click(object sender, EventArgs e)
@@ -1033,13 +1059,14 @@ namespace PocketTVBrowserCF2
 
         protected override void OnClick(EventArgs e)
         {
-            IRRemote remote = new IRRemote();
-            remote.ShowDialog();
+           // IRRemote remote = new IRRemote();
+           // remote.ShowDialog();
             base.OnClick(e);
         }
 
         private void contextMenuBroadcasts_Popup(object sender, EventArgs e)
         {
+            String dummy = "";
             //TODO
         }
     }

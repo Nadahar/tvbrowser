@@ -47,9 +47,9 @@
             // lRemember
             // 
             this.lRemember.Font = new System.Drawing.Font("Tahoma", 11F, System.Drawing.FontStyle.Bold);
-            this.lRemember.Location = new System.Drawing.Point(0, 3);
+            this.lRemember.Location = new System.Drawing.Point(3, 3);
             this.lRemember.Name = "lRemember";
-            this.lRemember.Size = new System.Drawing.Size(240, 18);
+            this.lRemember.Size = new System.Drawing.Size(234, 18);
             this.lRemember.Text = "Remember!";
             this.lRemember.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 

@@ -35,10 +35,11 @@
             this.menuItemSearch = new System.Windows.Forms.MenuItem();
             this.menuItemOutlook = new System.Windows.Forms.MenuItem();
             this.menuItemReminder = new System.Windows.Forms.MenuItem();
+            this.menuItemRotate = new System.Windows.Forms.MenuItem();
             this.menuItemOK = new System.Windows.Forms.MenuItem();
             this.pictureBoxReminder = new System.Windows.Forms.PictureBox();
             this.pictureBoxBookmark = new System.Windows.Forms.PictureBox();
-            this.menuItemRotate = new System.Windows.Forms.MenuItem();
+            this.menuItemSMS = new System.Windows.Forms.MenuItem();
             this.SuspendLayout();
             // 
             // mainMenu1
@@ -51,6 +52,7 @@
             this.menuItemMenu.MenuItems.Add(this.menuItemSearch);
             this.menuItemMenu.MenuItems.Add(this.menuItemOutlook);
             this.menuItemMenu.MenuItems.Add(this.menuItemReminder);
+            this.menuItemMenu.MenuItems.Add(this.menuItemSMS);
             this.menuItemMenu.MenuItems.Add(this.menuItemRotate);
             this.menuItemMenu.Text = "Menu";
             // 
@@ -68,6 +70,11 @@
             // 
             this.menuItemReminder.Text = "Add to reminders";
             this.menuItemReminder.Click += new System.EventHandler(this.menuItemReminder_Click);
+            // 
+            // menuItemRotate
+            // 
+            this.menuItemRotate.Text = "Rotate";
+            this.menuItemRotate.Click += new System.EventHandler(this.menuItemRotate_Click);
             // 
             // menuItemOK
             // 
@@ -92,10 +99,10 @@
             this.pictureBoxBookmark.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBoxBookmark.Visible = false;
             // 
-            // menuItemRotate
+            // menuItemSMS
             // 
-            this.menuItemRotate.Text = "Rotate";
-            this.menuItemRotate.Click += new System.EventHandler(this.menuItemRotate_Click);
+            this.menuItemSMS.Text = "send as sms";
+            this.menuItemSMS.Click += new System.EventHandler(this.menuItemSMS_Click);
             // 
             // Details
             // 
@@ -122,5 +129,6 @@
         private System.Windows.Forms.PictureBox pictureBoxReminder;
         private System.Windows.Forms.PictureBox pictureBoxBookmark;
         private System.Windows.Forms.MenuItem menuItemRotate;
+        private System.Windows.Forms.MenuItem menuItemSMS;
     }
 }

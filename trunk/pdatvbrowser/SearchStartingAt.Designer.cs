@@ -82,9 +82,9 @@
             // lHeadline
             // 
             this.lHeadline.Font = new System.Drawing.Font("Tahoma", 11F, System.Drawing.FontStyle.Bold);
-            this.lHeadline.Location = new System.Drawing.Point(0, 5);
+            this.lHeadline.Location = new System.Drawing.Point(3, 5);
             this.lHeadline.Name = "lHeadline";
-            this.lHeadline.Size = new System.Drawing.Size(240, 18);
+            this.lHeadline.Size = new System.Drawing.Size(234, 18);
             this.lHeadline.Text = "Show broadcasts running at";
             this.lHeadline.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
