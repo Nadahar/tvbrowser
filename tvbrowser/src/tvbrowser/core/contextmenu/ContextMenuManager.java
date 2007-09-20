@@ -314,6 +314,7 @@ public class ContextMenuManager {
         if (MainFrame.getInstance().isFullScreenMode()) {
           JMenuItem item = new JMenuItem(menuIf.toString());
           item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
+          item.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-fullscreen", 16));
           item.addActionListener(new ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent e) {
               if (MainFrame.getInstance().isFullScreenMode()) {
