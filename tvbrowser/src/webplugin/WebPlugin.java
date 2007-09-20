@@ -350,7 +350,7 @@ public class WebPlugin extends Plugin {
       }
     }
     // actors
-    String[] actors = ProgramUtilities.getActorsFromActorsField(program);
+    String[] actors = ProgramUtilities.getActorNames(program);
     if (actors != null) {
       Arrays.sort(actors);
       listActors = new ArrayList<String>();

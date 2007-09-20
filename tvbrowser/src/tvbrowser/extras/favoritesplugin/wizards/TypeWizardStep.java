@@ -191,7 +191,7 @@ public class TypeWizardStep extends AbstractWizardStep {
 
     if (mProgram != null) {
       mProgramNameTf.setText(mProgram.getTitle());
-      String[] actors = ProgramUtilities.getActorsFromActorsField(mProgram);
+      String[] actors = ProgramUtilities.getActorNames(mProgram);
       if (actors != null) {
         for (String actor : actors) {
           mActorsCb.addItem(actor);
