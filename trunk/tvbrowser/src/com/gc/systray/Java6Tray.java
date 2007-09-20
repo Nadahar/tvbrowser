@@ -45,6 +45,9 @@ import javax.swing.event.PopupMenuListener;
  * @author René Mach
  */
 public class Java6Tray implements SystemTrayIf {
+  /** Logger */
+  private static java.util.logging.Logger mLog
+  = java.util.logging.Logger.getLogger(Java6Tray.class.getName());
   
   private Class mClass;
   private TrayIcon mTrayIcon;
@@ -82,10 +85,16 @@ public class Java6Tray implements SystemTrayIf {
         mTrayParent.setUndecorated(true);
         mTrayParent.setAlwaysOnTop(true);
         mTrayParent.setVisible(false);
+        
+        mLog.info("Java 6 Tray inited.");
+      }
+      else {
+        mLog.info("Java 6 Tray is not supported on current platform.");
       }
       
       return value;
     }catch(Exception e) {
+      mLog.severe("Java 6 Tray could be inited.");
       mClass = null;
       return false;
     }
