@@ -127,12 +127,12 @@ public class ProgramUtilities {
   }
   
   /**
-   * extract the actor names from the actor field
+   * get the actors and roles of a program
    * 
-   * @param program the program to work on
-   * @return list fo real actor names or null (if it can not be decided)
+   * @param program
+   * @return array of 2 lists, where one contains roles and the other actors
    */
-  public static String[] getActorsFromActorsField(Program program) {
+  public static ArrayList<String>[] splitActors(Program program) {
     String actorsField = program.getTextField(ProgramFieldType.ACTOR_LIST_TYPE);
     if (actorsField != null) {
       String[] actors = new String[0];
@@ -153,33 +153,33 @@ public class ProgramUtilities {
       ArrayList<String> listSecond = new ArrayList<String>();
       for (String actor : actors) {
         if (actor.contains(ACTOR_ROLE_SEPARATOR)) {
-          listFirst.add(actor.substring(0, actor.indexOf(ACTOR_ROLE_SEPARATOR)).trim());
-          listSecond.add(actor.substring(actor.indexOf(ACTOR_ROLE_SEPARATOR) + ACTOR_ROLE_SEPARATOR.length()).trim());
+          listFirst.add(nameFrom(actor.substring(0, actor.indexOf(ACTOR_ROLE_SEPARATOR))));
+          listSecond.add(nameFrom(actor.substring(actor.indexOf(ACTOR_ROLE_SEPARATOR) + ACTOR_ROLE_SEPARATOR.length())));
         }
         // actor and role separated by tab
         else if (actor.contains("\t")) {
-          listFirst.add(actor.substring(0, actor.indexOf("\t")).trim());
-          listSecond.add(actor.substring(actor.indexOf("\t")+1).trim());
+          listFirst.add(nameFrom(actor.substring(0, actor.indexOf("\t"))));
+          listSecond.add(nameFrom(actor.substring(actor.indexOf("\t")+1)));
         }
         // actor and role separated by brackets
         else if (actor.contains("(") || actor.contains(")")) {
           if (actor.contains("(") && actor.contains(")")) {
-            String secondPart = actor.substring(actor.indexOf("(")+1,actor.lastIndexOf(")")).trim();
+            String secondPart = nameFrom(actor.substring(actor.indexOf("(")+1,actor.lastIndexOf(")")));
             // there are multiple brackets, lets look for something like "actor (age) (role)"
             if (secondPart.contains("(")) {
               Pattern agePattern = Pattern.compile(".*(\\(\\d+\\)).*");
               Matcher matcher = agePattern.matcher(actor);
               if (matcher.matches()) {
                 String age = matcher.group(1);
-                actor = actor.substring(0, actor.indexOf(age)) + actor.substring(actor.indexOf(age) + age.length());
-                secondPart = actor.substring(actor.indexOf("(")+1,actor.lastIndexOf(")")).trim();
+                actor = nameFrom(actor.substring(0, actor.indexOf(age)) + actor.substring(actor.indexOf(age) + age.length()));
+                secondPart = nameFrom(actor.substring(actor.indexOf("(")+1,actor.lastIndexOf(")")));
               }
             }
             // only use a name with multiple brackets, if they are nested in the role part
             int indexOpen = secondPart.indexOf("(");
             int indexClose = secondPart.indexOf(")");
             if ((indexOpen == -1 && indexClose == -1) || (indexOpen < indexClose)) {
-              listFirst.add(actor.substring(0, actor.indexOf("(")).trim());
+              listFirst.add(nameFrom(actor.substring(0, actor.indexOf("("))));
               listSecond.add(secondPart);
             }
             else {
@@ -191,17 +191,31 @@ public class ProgramUtilities {
           }
         }
         else {
-          listFirst.add(actor.trim());
+          listFirst.add(nameFrom(actor));
         }
       }
-
       ArrayList<String>[] lists = new ArrayList[2];
       lists[0] = listFirst;
       lists[1] = listSecond;
+      return lists;
+    }
+    return null;
+  }
+  
+  /**
+   * extract the actor names from the actor field
+   * 
+   * @param program the program to work on
+   * @return list fo real actor names or null (if it can not be decided)
+   */
+  public static String[] getActorNames(Program program) {
+    String actorsField = program.getTextField(ProgramFieldType.ACTOR_LIST_TYPE);
+    if (actorsField != null) {
+      ArrayList<String>[] lists = splitActors(program);
       ArrayList<String> result;
       // use first list if the field has special formatting
       if (actorsField.contains(ACTOR_ROLE_SEPARATOR)) {
-        result = listFirst;
+        result = lists[0];
       }
       // otherwise do a statistical investigation
       else {
@@ -214,6 +228,14 @@ public class ProgramUtilities {
       }
     }
     return null;
+  }
+
+  private static String nameFrom(String name) {
+    name = name.trim();
+    if (name.endsWith(",")) {
+      name = name.substring(0, name.length() - 1);
+    }
+    return name;
   }
 
   /**
