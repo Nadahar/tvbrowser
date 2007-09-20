@@ -44,7 +44,7 @@ public class ActionMenu {
    * Creates a menu item having sub menu items. Theses items can have
    * further sub menu items.
    *
-   * @see {@link ContextMenuAction}
+   * @see ContextMenuAction
    *
    * @param action
    * @param subItems
@@ -70,7 +70,7 @@ public class ActionMenu {
   /**
    * Creates a menu item having sub menu items.
    * @param action
-   * @param subItems, can be Actions or ActionMenus in mixed order
+   * @param subItems sub menu items, can be Actions or ActionMenus in mixed order
    */
   public ActionMenu(Action action, Object[] subItems) {
     mAction = action;

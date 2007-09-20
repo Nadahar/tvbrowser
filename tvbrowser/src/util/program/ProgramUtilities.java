@@ -129,8 +129,9 @@ public class ProgramUtilities {
   /**
    * get the actors and roles of a program
    * 
-   * @param program
+   * @param program the program containing the actors
    * @return array of 2 lists, where one contains roles and the other actors
+   * @since 2.6
    */
   public static ArrayList<String>[] splitActors(Program program) {
     String actorsField = program.getTextField(ProgramFieldType.ACTOR_LIST_TYPE);
@@ -194,6 +195,7 @@ public class ProgramUtilities {
           listFirst.add(nameFrom(actor));
         }
       }
+      @SuppressWarnings("unchecked")
       ArrayList<String>[] lists = new ArrayList[2];
       lists[0] = listFirst;
       lists[1] = listSecond;
@@ -207,6 +209,7 @@ public class ProgramUtilities {
    * 
    * @param program the program to work on
    * @return list fo real actor names or null (if it can not be decided)
+   * @since 2.6
    */
   public static String[] getActorNames(Program program) {
     String actorsField = program.getTextField(ProgramFieldType.ACTOR_LIST_TYPE);
@@ -245,6 +248,7 @@ public class ProgramUtilities {
    * @param program 
    * @param listFirst first list of names
    * @param listSecond second list of names
+   * @since 2.6
    */
   private static ArrayList<String> separateRolesAndActors(ArrayList<String>[] list, Program program) {
     // return first list, if only one name per actor is available
@@ -285,6 +289,7 @@ public class ProgramUtilities {
     // which list contains more slashes -> double roles for a single actor
     int slashes[] = new int[list.length];
     // which list has duplicate family names -> roles
+    @SuppressWarnings("unchecked")
     HashMap<String,Integer>[] familyNames = new HashMap[list.length];
     int[] maxNames = new int[list.length];
     // which list contains strings with consecutive uppercase letters -> roles

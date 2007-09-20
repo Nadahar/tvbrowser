@@ -40,7 +40,6 @@ public class Database {
 	
 	/**
 	 * Gets the overall Ratings in this Database
-	 * @return 
 	 * 
 	 * @return all overall Ratings
 	 */
