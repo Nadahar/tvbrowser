@@ -44,6 +44,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
@@ -60,6 +62,8 @@ import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import devplugin.Plugin;
+import devplugin.SettingsItem;
 import devplugin.SettingsTab;
 
 /**
@@ -97,7 +101,13 @@ public class ButtonsSettingsTab implements SettingsTab {
     mSettingsPn.add(pane, cc.xy(2, 3));
     
     if(TVBrowser.isUsingSystemTray()) {
-      JEditorPane helpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("info","The times of the  buttons are also used for the 'Programs at...' in the tray menu."));
+      JEditorPane helpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("info","The times of the  buttons are also used for the '<a href=\"#link\">{0}</a>' in the tray menu.", TrayOnTimeSettingsTab.getName()), new HyperlinkListener() {
+        public void hyperlinkUpdate(HyperlinkEvent e) {
+          if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            Plugin.getPluginManager().showSettings(SettingsItem.TRAYONTIMEPROGRAMS);
+          }
+        }
+      });
       
       mSettingsPn.add(helpLabel, cc.xyw(1,4,3));
     }

@@ -60,6 +60,7 @@ public class SettingsItem {
   
   public static final String TVDATASERVICES = "#tvdataservice";
   public static final String PICTURES = "#pictures";
+  public static final String TRAYONTIMEPROGRAMS = "#trayOnTime";
 
   private SettingsItem () {}
 }
