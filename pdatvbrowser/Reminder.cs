@@ -42,7 +42,7 @@ namespace PocketTVBrowserCF2
         {
             Rectangle screen = Screen.PrimaryScreen.Bounds;
             this.Location = new Point((screen.Width - this.Width) / 2, (screen.Height - this.Height) / 2);
-            this.lRemember.Bounds = new Rectangle(0, 2, this.Width, this.lRemember.Height);
+            this.lRemember.Bounds = new Rectangle(1, 2, this.Width-2, this.lRemember.Height);
             this.listviewBroadcasts.Bounds = new Rectangle(2, this.lRemember.Bottom +2, this.Width-4, this.Height-this.lRemember.Height-this.buttonOK.Height-8);
             this.buttonOK.Bounds = new Rectangle(this.listviewBroadcasts.Bounds.Right - this.buttonOK.Width, this.listviewBroadcasts.Bottom+2, this.buttonOK.Width, this.buttonOK.Height);
         }
@@ -89,7 +89,7 @@ namespace PocketTVBrowserCF2
                         this.broadcasts.Add(temp.getBroadcast());
                         try
                         {
-                            this.listviewBroadcasts.Items.Add(this.con.createColoredListItem(temp.getBroadcast(), this.getReducedString(temp.getBroadcast().getChannel() + "|" + temp.getBroadcast().ToString(),this.listviewBroadcasts.Width)));
+                            this.listviewBroadcasts.Items.Add(this.con.createColoredListItem(temp.getBroadcast(), this.getReducedString(temp.getBroadcast().getChannel() + "|" + temp.getBroadcast().ToString(), this.listviewBroadcasts.Width)));
                         }
                         catch
                         {
@@ -107,6 +107,7 @@ namespace PocketTVBrowserCF2
 
         public DateTime getNextAlarm()
         {
+            this.sortMemos();
             for (int i = 0; i < memos.Count; i++)
             {
                 Memo temp = (Memo)memos[i];
@@ -114,6 +115,7 @@ namespace PocketTVBrowserCF2
                 {
                     if (!temp.isAlreadyDone())
                     {
+                        temp.setAlreadyDone();
                         return temp.getTimer().AddMinutes(-(this.con.getSoundReminderTime()));
                     }
                 }
@@ -133,6 +135,17 @@ namespace PocketTVBrowserCF2
         
         private void buttonOK_Click(object sender, EventArgs e)
         {
+            for (int i = 0; i < this.memos.Count; i++)
+            {
+                Memo temp = (Memo)this.memos[i];
+                for (int j=0; j<this.listviewBroadcasts.Items.Count; j++)
+                {
+                    Broadcast b = (Broadcast)this.broadcasts[j];
+                    if (temp.getBroadcast().Equals(b))
+                        temp.setAlreadyDone();
+                }
+            }
+            this.con.getMainform().Show();
             this.DialogResult = DialogResult.OK;
         }
 
@@ -204,6 +217,18 @@ namespace PocketTVBrowserCF2
                 result = original;
             }
             return result;
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+
+            Rectangle rc = this.ClientRectangle;
+            rc.Height--;
+            rc.Width--;
+            Graphics g = this.CreateGraphics();
+            g.DrawRectangle(new Pen(Color.Black), rc);
+
+            base.OnPaint(e);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)

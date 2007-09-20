@@ -31,22 +31,22 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(About));
             this.mainMenu1 = new System.Windows.Forms.MainMenu();
-            this.lVersion = new System.Windows.Forms.Label();
+            this.lVersionNumber = new System.Windows.Forms.Label();
             this.pictureBoxIcon = new System.Windows.Forms.PictureBox();
             this.labelThanks = new System.Windows.Forms.Label();
             this.textBoxThanksTo = new System.Windows.Forms.TextBox();
             this.lCopyright = new System.Windows.Forms.Label();
             this.lGNU = new System.Windows.Forms.Label();
+            this.lVersion = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // lVersion
+            // lVersionNumber
             // 
-            this.lVersion.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Bold);
-            this.lVersion.Location = new System.Drawing.Point(0, 0);
-            this.lVersion.Name = "lVersion";
-            this.lVersion.Size = new System.Drawing.Size(240, 19);
-            this.lVersion.Text = "Version: 0.4.12 BETA";
-            this.lVersion.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.lVersionNumber.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Bold);
+            this.lVersionNumber.Location = new System.Drawing.Point(114, 0);
+            this.lVersionNumber.Name = "lVersionNumber";
+            this.lVersionNumber.Size = new System.Drawing.Size(126, 19);
+            this.lVersionNumber.Text = "0.4.13 BETA";
             // 
             // pictureBoxIcon
             // 
@@ -93,18 +93,28 @@
             this.lGNU.Text = "created by Benedikt Grabenmeier";
             this.lGNU.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
+            // lVersion
+            // 
+            this.lVersion.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Bold);
+            this.lVersion.Location = new System.Drawing.Point(0, 0);
+            this.lVersion.Name = "lVersion";
+            this.lVersion.Size = new System.Drawing.Size(108, 19);
+            this.lVersion.Text = "Version:";
+            this.lVersion.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
             // About
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(240, 268);
+            this.Controls.Add(this.lVersion);
             this.Controls.Add(this.labelThanks);
             this.Controls.Add(this.textBoxThanksTo);
             this.Controls.Add(this.lCopyright);
             this.Controls.Add(this.lGNU);
             this.Controls.Add(this.pictureBoxIcon);
-            this.Controls.Add(this.lVersion);
+            this.Controls.Add(this.lVersionNumber);
             this.Menu = this.mainMenu1;
             this.MinimizeBox = false;
             this.Name = "About";
@@ -115,11 +125,12 @@
 
         #endregion
 
-        private System.Windows.Forms.Label lVersion;
+        private System.Windows.Forms.Label lVersionNumber;
         private System.Windows.Forms.PictureBox pictureBoxIcon;
         private System.Windows.Forms.Label labelThanks;
         private System.Windows.Forms.TextBox textBoxThanksTo;
         private System.Windows.Forms.Label lCopyright;
         private System.Windows.Forms.Label lGNU;
+        private System.Windows.Forms.Label lVersion;
     }
 }

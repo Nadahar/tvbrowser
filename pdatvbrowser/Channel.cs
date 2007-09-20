@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections;
+using System.Drawing;
 
 #endregion
 
@@ -15,6 +16,7 @@ namespace PocketTVBrowserCF2
         private String id;
         private String name;
         private char category;
+
        
         public Channel(String id, String name, char category)
         {

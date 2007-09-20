@@ -157,6 +157,7 @@ namespace PocketTVBrowserCF2
         private bool clicked;
 		private ScrollBar vScroll;
         private ContextMenu contextmenu;
+
 		public TVBrowserList()
 		{
 			listItems = new ArrayList();
@@ -228,6 +229,8 @@ namespace PocketTVBrowserCF2
 				this.SelectedIndexChanged(this, e);
 		}
 
+        
+
 		protected virtual void OnDrawItem(object sender, DrawItemEventArgs e)
 		{
 			if (this.DrawItem != null)
@@ -275,11 +278,6 @@ namespace PocketTVBrowserCF2
 			//Do nothing
 		}
 
-        protected override void OnClick(EventArgs e)
-        {
-            //this.contextmenu.Show(this, Control.MousePosition);
-            base.OnClick(e);
-        }
         
         public override ContextMenu ContextMenu
         {
@@ -295,15 +293,12 @@ namespace PocketTVBrowserCF2
 
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
-
-
             if (clicked)
             {
                 clicked = false;
             }
             else
             {
-
                 clicked = true;
             }
 
@@ -322,7 +317,7 @@ namespace PocketTVBrowserCF2
 
         protected override void OnDoubleClick(EventArgs e)
         {
-            this.contextmenu.Show(this, Control.MousePosition);
+            this.contextmenu.Show(this, new Point(10,10));
             base.OnDoubleClick(e);
         }
 
