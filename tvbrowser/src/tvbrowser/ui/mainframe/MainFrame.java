@@ -30,6 +30,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -327,11 +329,13 @@ public class MainFrame extends JFrame implements DateListener {
     
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
+        GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         
         if(isFullScreenMode()) {
+          device.setFullScreenWindow(null);
           setUndecorated(false);
-          setBounds(mXPos, mYPos, mWidth, mHeight);
-      
+          setBounds(mXPos, mYPos, mWidth, mHeight);          
+          
           if(mMenuBar != null) {
             mMenuBar.setFullscreenItemChecked(false);
             mMenuBar.setVisible(true);
@@ -392,12 +396,22 @@ public class MainFrame extends JFrame implements DateListener {
             mFinderPanel.setVisible(false);
           }
           
+          setUndecorated(true);
           final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
           
-          setUndecorated(true);
-          
-          setLocation(0,0);
-          setSize(screen);
+          if(device.isFullScreenSupported()) {
+            try {
+              device.setFullScreenWindow(MainFrame.getInstance());
+            } finally {
+              device.setFullScreenWindow(null);
+              setLocation(0,0);
+              setSize(screen);              
+            }
+          }
+          else {
+            setLocation(0,0);
+            setSize(screen);
+          }
           
           setVisible(true);
           
