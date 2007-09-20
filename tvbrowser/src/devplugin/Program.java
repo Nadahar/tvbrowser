@@ -156,7 +156,8 @@ public interface Program {
    */
   public static final int INFO_CATEGORIE_MAGAZINE_INFOTAINMENT = 1 << 18;
 
-  /** The key for the value of an action, to put the mark priority in */
+  /** The key for the value of an action, to put the mark priority in 
+   * @since 2.6 */
   public static final String MARK_PRIORITY = "MARK_PRIORITY";
 
   /**
