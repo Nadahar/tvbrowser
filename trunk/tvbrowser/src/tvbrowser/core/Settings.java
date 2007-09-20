@@ -305,9 +305,10 @@ public class Settings {
           try {
             IOUtilities.copy(oldDir.listFiles(new FilenameFilter() {
               public boolean accept(File dir, String name) {
-                return name.compareToIgnoreCase("tvdata") != 0
-                    && name.compareTo(newDir.getName()) != 0
-                    && name.compareTo("BACKUP") != 0;
+                return !name.equalsIgnoreCase("tvdata")
+                    && !name.equals(newDir.getName())
+                    && !name.equalsIgnoreCase("backup")
+                    && !name.equalsIgnoreCase("lang");
               }
             }), newDir);
 
