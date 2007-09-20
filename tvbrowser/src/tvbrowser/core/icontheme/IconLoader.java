@@ -52,6 +52,13 @@ import devplugin.ThemeIcon;
  * (please remove the [ ])
  */
 public class IconLoader {
+
+  /**
+   * problems logger 
+   */
+  private static java.util.logging.Logger mLog = java.util.logging.Logger
+    .getLogger(IconLoader.class.getName());
+  
   /** Singelton */
   private static IconLoader mInstance;
   /** Icon Themes to Load Icons from*/
@@ -257,6 +264,7 @@ public class IconLoader {
       return imageIcon;
     }
 
+    mLog.warning("Missing theme icon " +icon.getCategory() + "/"+ icon.getName() + " for size " + Integer.toString(icon.getSize()));
     // Failed, return null
     return null;
   }
