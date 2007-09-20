@@ -159,6 +159,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mDatelistMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.datelist","Date list"));
     mDatelistMI.setSelected(Settings.propShowDatelist.getBoolean());
     mDatelistMI.addActionListener(this);
+
     mChannellistMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.channellist","channel list"));
     mChannellistMI.setSelected(Settings.propShowChannels.getBoolean());
     mChannellistMI.addActionListener(this);
@@ -170,6 +171,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mViewFilterBarMI.addActionListener(this);
     
     mFiltersMenu = new JMenu(mLocalizer.msg("menuitem.filters","Filter"));
+    mFiltersMenu.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-filter", 16));
     updateFiltersMenu();
 
     mGoMenu = new JMenu(mLocalizer.msg("menuitem.go","Go"));
@@ -177,16 +179,20 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
 
     mPreviousDayMI = new JMenuItem(mLocalizer.msg("menuitem.previousDay","previous day"));
     mPreviousDayMI.addActionListener(this);
+    mPreviousDayMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-up", 16));
     mNextDayMI = new JMenuItem(mLocalizer.msg("menuitem.nextDay","next day"));
     mNextDayMI.addActionListener(this);
+    mNextDayMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-down", 16));
     mGotoNowMenuItem = new JMenuItem(mLocalizer.msg("menuitem.now","now"));
     mGotoNowMenuItem.addActionListener(this);
     mGotoDateMenu = new JMenu(mLocalizer.msg("menuitem.date","date"));
+    mGotoDateMenu.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "office-calendar", 16));
 
 
 
     mGotoChannelMenu = new ScrollableMenu(Localizer.getLocalization(Localizer.I18N_CHANNEL));
     mGotoTimeMenu = new JMenu(mLocalizer.msg("menuitem.time","time"));
+    mGotoTimeMenu.setIcon(IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16));
     mGoMenu.add(mPreviousDayMI);
     mGoMenu.add(mNextDayMI);
     mGoMenu.addSeparator();
@@ -200,6 +206,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mViewMenu = new JMenu(mLocalizer.msg("menuitem.view","View"));
 
     mFullscreenMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.fullscreen","Fullscreen"));
+    mFullscreenMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-fullscreen", 16));
     mFullscreenMI.addActionListener(this);
 
     updateDateItems();
@@ -251,9 +258,11 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     
     mFontSizeLargerMI = new JMenuItem(mLocalizer.msg("menuitem.fontSizeLarger", "Larger"));
     mFontSizeLargerMI.addActionListener(this);
+    mFontSizeLargerMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "zoom-in", 16));
     
     mFontSizeSmallerMI = new JMenuItem(mLocalizer.msg("menuitem.fontSizeSmaller", "Smaller"));
     mFontSizeSmallerMI.addActionListener(this);
+    mFontSizeSmallerMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "zoom-out", 16));
     
     mFontSizeDefaultMI = new JMenuItem(mLocalizer.msg("menuitem.fontSizeDefault", "Reset to default"));
     mFontSizeDefaultMI.addActionListener(this);
@@ -263,6 +272,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mFontSizeMenu.add(mFontSizeSmallerMI);
     mFontSizeMenu.addSeparator();
     mFontSizeMenu.add(mFontSizeDefaultMI);
+    mFontSizeMenu.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "zoom-in", 16));
     
     mColumnWidthLargerMI = new JMenuItem(mLocalizer.msg("menuitem.columnWidthLarger", "Larger"));
     mColumnWidthLargerMI.addActionListener(this);
