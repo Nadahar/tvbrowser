@@ -178,9 +178,8 @@ public class CapturePlugin extends devplugin.Plugin {
         String name = mLocalizer.msg("CapturePlugin", "Capture Plugin");
         String desc = mLocalizer.msg("Desc", "Starts a external Program with configurable Parameters");
         String author = "Bodo Tasche, Andreas Hessel";
-        String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Capture_Plugin");
 
-        mPluginInfo = new PluginInfo(CapturePlugin.class, name, desc, author, helpUrl);
+        mPluginInfo = new PluginInfo(CapturePlugin.class, name, desc, author);
       }
       return mPluginInfo;
     }

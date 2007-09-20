@@ -116,10 +116,10 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   /** @return The Plugin Info. */
   public PluginInfo getInfo() {
     if(mPluginInfo == null) {
-      String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Marker_Plugin");
       String name = mLocalizer.msg("name","Marker plugin");
       String description = mLocalizer.msg("description", "A simple marker plugin (formerly Just_Mark)");
-      mPluginInfo = new PluginInfo(SimpleMarkerPlugin.class, name, description, "René Mach", helpUrl, "GPL");
+      
+      mPluginInfo = new PluginInfo(SimpleMarkerPlugin.class, name, description, "René Mach", "GPL");
     }
     
     return mPluginInfo;

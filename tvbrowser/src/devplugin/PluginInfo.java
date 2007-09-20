@@ -94,7 +94,7 @@ public final class PluginInfo {
      * and if this is for a Plugin let your Plugin hide {@link Plugin#getVersion()}.
      */
     public PluginInfo(String name, String desc, String author, Version version) {
-      this(Class.class,name,desc,author,null,version,null);
+      this(Class.class,name,desc,author,null,null,version);
     }
 
     /**
@@ -111,7 +111,7 @@ public final class PluginInfo {
      * and if this is for a Plugin let your Plugin hide {@link Plugin#getVersion()}.
      */
     public PluginInfo(String name, String desc, String author, Version version, String license) {
-      this(Class.class,name,desc,author,null,version,license);      
+      this(Class.class,name,desc,author,license,null,version);      
     }
     
     /**
@@ -168,8 +168,8 @@ public final class PluginInfo {
     
     /**
      * Creates an instance of PluginInfo with the
-     * default values and the given name, description, author
-     * and the help url. If the caller class
+     * default values and the given name, description, author,
+     * the help url and license. If the caller class
      * is a Plugin/TvDataService it will be tried to get the version from the static method
      * getVersion() of Plugin/AbstractTvDataService.
      * <p>
@@ -177,11 +177,12 @@ public final class PluginInfo {
      * @param name The name of the plugin.
      * @param desc The description for the plugin.
      * @param author The author of the plugin.
-     * @param helpUrl The url where to find help for the plugin.
-     * @since 2.6
+     * @param license The lincense of the plugin.
+     * 
+     * since 2.6
      */
-    public PluginInfo(Class caller, String name, String desc, String author, String helpUrl) {
-       this(caller,name,desc,author,helpUrl,null,null);
+    public PluginInfo(Class caller, String name, String desc, String author, String license) {      
+      this(caller,name,desc,author,license,null,null);
     }
     
     /**
@@ -200,11 +201,11 @@ public final class PluginInfo {
      * 
      * since 2.6
      */
-    public PluginInfo(Class caller, String name, String desc, String author, String helpUrl, String license) {      
-      this(caller,name,desc,author,helpUrl,null,license);
+    public PluginInfo(Class caller, String name, String desc, String author, String license, String helpUrl) {      
+      this(caller,name,desc,author,license,helpUrl,null);
     }
     
-    private PluginInfo(Class caller, String name, String desc, String author, String helpUrl, Version version, String license) {      
+    private PluginInfo(Class caller, String name, String desc, String author, String license, String helpUrl, Version version) {      
       mName = name;
       mDescription = desc;
       mAuthor = author;

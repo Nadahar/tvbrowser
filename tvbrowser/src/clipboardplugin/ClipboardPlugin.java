@@ -147,9 +147,8 @@ public class ClipboardPlugin extends Plugin {
       String desc = mLocalizer.msg("description",
           "Copy programs to the Clipboard");
       String author = "Bodo Tasche";
-      String helpUrl = mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Clipboard");
         
-      mPluginInfo = new PluginInfo(ClipboardPlugin.class, name, desc, author, helpUrl);
+      mPluginInfo = new PluginInfo(ClipboardPlugin.class, name, desc, author);
     }
     
     return mPluginInfo;
