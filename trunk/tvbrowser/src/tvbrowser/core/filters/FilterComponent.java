@@ -98,7 +98,6 @@ public interface FilterComponent {
    * Sets the name of a FilterComponent.
    * 
    * @param name The new name of the FilterComponent.
-   * @return The name of the FilterComponent.
    */
   public void setName(String name);
 
@@ -106,7 +105,6 @@ public interface FilterComponent {
    * Sets the description of a FilterComponent.
    * 
    * @param desc The new description of the FilterComponent.
-   * @return The description of the FilterComponent.
    */
   public void setDescription(String desc);  
 }

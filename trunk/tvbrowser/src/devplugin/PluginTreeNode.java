@@ -225,7 +225,7 @@ public class PluginTreeNode {
    * is enabled.
    * Default is 'disabled'
    * 
-   * @see #setGroupingByDateEnabled(boolean).
+   * @see #setGroupingByDateEnabled(boolean)
    *
    * @param enable
    */
