@@ -382,7 +382,8 @@ public class SettingsDialog implements WindowClosingIf {
       traySettings.add(new SettingNode(new TrayImportantSettingsTab()));
       traySettings.add(new SettingNode(new TrayNowSettingsTab()));
       traySettings.add(new SettingNode(new TraySoonSettingsTab()));
-      traySettings.add(new SettingNode(new TrayOnTimeSettingsTab()));
+      traySettings.add(new SettingNode(new TrayOnTimeSettingsTab(),
+          SettingsItem.TRAYONTIMEPROGRAMS));
       traySettings.add(new SettingNode(new TrayProgramsChannelsSettingsTab()));
     }
     

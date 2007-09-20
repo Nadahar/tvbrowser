@@ -223,6 +223,15 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
   }
 
   public String getTitle() {
+    return getName();
+  }
+  
+  /**
+   * Gets the name of this settings tab.
+   * 
+   * @return The name of this settings tab.
+   */
+  public static String getName() {
     return mLocalizer.msg("onTime","Programs at...");
   }
   
