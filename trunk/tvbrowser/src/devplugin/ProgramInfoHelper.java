@@ -53,9 +53,9 @@ public class ProgramInfoHelper {
             createIcon("Info_Series.png"), // INFO_CATEGORIE_SERIES
             createIcon("Info_New.png"),  // INFO_NEW
             createIcon("Info_AudioDescription.png"),  // INFO_AUDIO_DESCRIPTION
-            null, // News
-            null, // Show
-            null, // Magazine/Infotainment
+            createIcon("Info_News.png"), // News
+            createIcon("Info_Show.png"), // Show
+            createIcon("Info_Infotainment.png"), // Magazine/Infotainment
     };
 
     /**
