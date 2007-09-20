@@ -399,14 +399,8 @@ public class MainFrame extends JFrame implements DateListener {
           setUndecorated(true);
           final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
           
-          if(device.isFullScreenSupported()) {
-            try {
-              device.setFullScreenWindow(MainFrame.getInstance());
-            } finally {
-              device.setFullScreenWindow(null);
-              setLocation(0,0);
-              setSize(screen);              
-            }
+          if(device.isFullScreenSupported()) {            
+            device.setFullScreenWindow(MainFrame.getInstance());
           }
           else {
             setLocation(0,0);
