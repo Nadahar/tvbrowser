@@ -94,11 +94,12 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
         mChannelCounter = new DublicateChannelNameCounter(ChannelList.getAvailableChannels());
       }
 
-      mChannel.setShowCountry(mChannelCounter.isDublicate((Channel)value));
+      if(value instanceof Channel) {
+        mChannel.setShowCountry(mChannelCounter.isDublicate((Channel)value));
+      }
     }
 
     if (value instanceof Channel) {
-
       mChannel.setChannel((Channel) value);
       mChannel.setOpaque(isSelected);
       mChannel.setBackground(label.getBackground());
