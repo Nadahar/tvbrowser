@@ -128,8 +128,9 @@ public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNo
   public String getPropertyValue(Locale locale, String key) {
     String value = getUserProperty(locale).getProperty(key, null);
     
-    if (value != null)
+    if (value != null) {
       return value;
+    }
     
     return getOriginalProperty(locale).getProperty(key, "");
   }
@@ -149,11 +150,13 @@ public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNo
      
       propName.append('_').append(locale.getLanguage());
       
-      if (locale.getCountry().length() > 0)
+      if (locale.getCountry().length() > 0) {
         propName.append('_').append(locale.getCountry());
+      }
 
-      if (locale.getVariant().length() > 0)
+      if (locale.getVariant().length() > 0) {
         propName.append('_').append(locale.getVariant());
+      }
       
       propName.append(".properties");
       
@@ -161,8 +164,9 @@ public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNo
       
       try {
         InputStream in = mJarFile.getInputStream(new JarEntry(propName.toString())); 
-        if (in != null)
+        if (in != null) {
           prop.load(in);
+        }
       } catch (IOException e) {
         e.printStackTrace();
         prop = new Properties();
@@ -185,11 +189,13 @@ public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNo
    
     propName.append('_').append(locale.getLanguage());
     
-    if (locale.getCountry().length() > 0)
+    if (locale.getCountry().length() > 0) {
       propName.append('_').append(locale.getCountry());
+    }
 
-    if (locale.getVariant().length() > 0)
+    if (locale.getVariant().length() > 0) {
       propName.append('_').append(locale.getVariant());
+    }
     
     propName.append(".properties");
 
@@ -235,10 +241,11 @@ public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNo
     String oldvalue = getPropertyValue(locale, key);
     
     if (! oldvalue.equals(value)) {
-      if (value == null)
+      if (value == null) {
         getUserProperty(locale).remove(key);
-      else
+      } else {
         getUserProperty(locale).setProperty(key, value);
+      }
     }
   }
 
@@ -257,16 +264,21 @@ public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNo
    * (non-Javadoc)
    * @see i18nplugin.LanguageNodeIf#allTranslationsAvailableFor(java.util.Locale)
    */
-  public boolean allTranslationsAvailableFor(Locale locale) {
+  public int translationStateFor(Locale locale) {
     int max = getChildCount();
+    int result = STATE_OK;
     
     for (int i=0;i<max;i++) {
-      if (!((LanguageNodeIf)getChildAt(i)).allTranslationsAvailableFor(locale)) {
-        return false;
+      int state = ((LanguageNodeIf)getChildAt(i)).translationStateFor(locale);
+      if (state == STATE_MISSING_TRANSLATION) {
+        return STATE_MISSING_TRANSLATION;
+      }
+      if (state == STATE_NON_WELLFORMED) {
+        result = STATE_NON_WELLFORMED;
       }
     }
     
-    return true;
+    return result;
   }  
 
   /*

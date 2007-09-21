@@ -59,27 +59,29 @@ public class PropertiesEntryNode extends DefaultMutableTreeNode implements Langu
    * (non-Javadoc)
    * @see i18nplugin.LanguageNodeIf#allTranslationsAvailableFor(java.util.Locale)
    */
-  public boolean allTranslationsAvailableFor(Locale locale) {
-    if (getParent() == null)
-      return false;
-    if (!(getParent() instanceof PropertiesNode))
-      return false;
+  public int translationStateFor(Locale locale) {
+    if (getParent() == null) {
+      return STATE_MISSING_TRANSLATION;
+    }
+    if (!(getParent() instanceof PropertiesNode)) {
+      return STATE_MISSING_TRANSLATION;
+    }
     String translated = ((PropertiesNode)getParent()).getPropertyValue(locale, getPropertyName());
     // check existence of translation
     if (translated.length() == 0) {
-      return false;
+      return STATE_MISSING_TRANSLATION;
     }
     // check same number of arguments
     String original = ((PropertiesNode) getParent()).getPropertyValue(getPropertyName());
     List<String> originalArgs = getArgumentList(original);
     List<String> translatedArgs = getArgumentList(translated);
     if (originalArgs.size() != translatedArgs.size()) {
-      return false;
+      return STATE_NON_WELLFORMED;
     }
     // check same arguments
     for (int i = 0; i < originalArgs.size(); i++) {
       if (!originalArgs.get(i).equals(translatedArgs.get(i))) {
-        return false;
+        return STATE_NON_WELLFORMED;
       }
       // now remove args to be to compare punctuaction afterwards
       String arg = originalArgs.get(i);
@@ -99,11 +101,11 @@ public class PropertiesEntryNode extends DefaultMutableTreeNode implements Langu
       if (matcher.matches()) {
         String endTranslated = matcher.group(1);
         if (!endOriginal.equals(endTranslated)) {
-          return false;
+          return STATE_NON_WELLFORMED;
         }
       }
     }
-    return true;
+    return STATE_OK;
   }
 
   private List<String> getArgumentList(String input) {

@@ -73,16 +73,21 @@ public class PathNode extends DefaultMutableTreeNode implements LanguageNodeIf {
    * (non-Javadoc)
    * @see i18nplugin.LanguageNodeIf#allTranslationsAvailableFor(java.util.Locale)
    */
-  public boolean allTranslationsAvailableFor(Locale locale) {
+  public int translationStateFor(Locale locale) {
     int max = getChildCount();
+    int result = STATE_OK;
     
     for (int i=0;i<max;i++) {
-      if (!((LanguageNodeIf)getChildAt(i)).allTranslationsAvailableFor(locale)) {
-        return false;
+      int state = ((LanguageNodeIf)getChildAt(i)).translationStateFor(locale);
+      if (state == STATE_MISSING_TRANSLATION) {
+        return STATE_MISSING_TRANSLATION;
+      }
+      if (state == STATE_NON_WELLFORMED) {
+        result = STATE_NON_WELLFORMED;
       }
     }
     
-    return true;
+    return result;
   }  
   
   /*
