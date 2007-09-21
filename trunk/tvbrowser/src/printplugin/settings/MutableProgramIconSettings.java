@@ -26,21 +26,26 @@
 
 package printplugin.settings;
 
-import java.awt.Color;
 import java.awt.Font;
 
 import devplugin.ProgramFieldType;
 
-
+/**
+ * The print settings for a mutable program.
+ */
 public class MutableProgramIconSettings implements ProgramIconSettings {
 
   private Font mTitleFont, mTextFont, mTimeFont;
   private int mTimeFieldWidth;
   private ProgramFieldType[] mProgramInfoFields;
   private String[] mProgramTableIconPlugins;
-  private Color mColorOnAir_dark, mColorOnAir_light, mColorMarked;
   private boolean mPaintExpiredProgramsPale, mPaintProgramOnAir, mPaintPluginMarks;
 
+  /**
+   * Creates an instance of this class with the given settings.
+   * 
+   * @param settings The settings for this class.
+   */
   public MutableProgramIconSettings(ProgramIconSettings settings) {
     mTitleFont = settings.getTitleFont();
     mTextFont = settings.getTextFont();
@@ -48,14 +53,11 @@ public class MutableProgramIconSettings implements ProgramIconSettings {
     mTimeFieldWidth = settings.getTimeFieldWidth();
     mProgramInfoFields = settings.getProgramInfoFields();
     mProgramTableIconPlugins = settings.getProgramTableIconPlugins();
-    mColorOnAir_dark = settings.getColorOnAir_dark();
-    mColorOnAir_light = settings.getColorOnAir_light();
-    mColorMarked = settings.getColorMarked();
     mPaintExpiredProgramsPale = settings.getPaintExpiredProgramsPale();
     mPaintProgramOnAir = settings.getPaintProgramOnAir();
     mPaintPluginMarks = settings.getPaintPluginMarks();
   }
-
+  
   public void setTitleFont(Font titleFont) {
     mTitleFont = titleFont;
   }
@@ -78,18 +80,6 @@ public class MutableProgramIconSettings implements ProgramIconSettings {
 
   public void setProgramTableIconPlugins(String[] programTableIconPlugins) {
     mProgramTableIconPlugins = programTableIconPlugins;
-  }
-
-  public void setColorOnAir_dark(Color colorOnAir_dark) {
-    mColorOnAir_dark = colorOnAir_dark;
-  }
-
-  public void setColorOnAir_light(Color colorOnAir_light) {
-    mColorOnAir_light = colorOnAir_light;
-  }
-
-  public void setColorMarked(Color colorMarked) {
-    mColorMarked = colorMarked;
   }
 
   public void setPaintExpiredProgramsPale(boolean paintExpiredProgramsPale) {
@@ -126,18 +116,6 @@ public class MutableProgramIconSettings implements ProgramIconSettings {
 
   public String[] getProgramTableIconPlugins() {
     return mProgramTableIconPlugins;
-  }
-
-  public Color getColorOnAir_dark() {
-    return mColorOnAir_dark;
-  }
-
-  public Color getColorOnAir_light() {
-    return mColorOnAir_light;
-  }
-
-  public Color getColorMarked() {
-    return mColorMarked;
   }
 
   public boolean getPaintExpiredProgramsPale() {
