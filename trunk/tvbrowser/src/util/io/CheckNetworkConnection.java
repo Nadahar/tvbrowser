@@ -159,6 +159,9 @@ class CheckNetworkConnection {
 
   private void showDialog() {
     try {
+      if (MainFrame.isStarting()) {
+        return;
+      }
       if(!MainFrame.getInstance().isVisible() || MainFrame.getInstance().getExtendedState() == Frame.ICONIFIED) {
         return;
       }
