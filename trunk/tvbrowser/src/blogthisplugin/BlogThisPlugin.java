@@ -137,16 +137,15 @@ public class BlogThisPlugin extends Plugin {
         "Create a new Blog-Entry") + "...");
         
         ArrayList<AbstractAction>list = new ArrayList<AbstractAction>();
-      
-        for(int i = 0; i < mConfigs.length; i++) {
-          final AbstractPluginProgramFormating config = mConfigs[i];
-          if(config != null && config.isValid())
+
+        for (final AbstractPluginProgramFormating config : mConfigs) {
+          if (config != null && config.isValid())
             list.add(new AbstractAction(config.getName()) {
               public void actionPerformed(ActionEvent e) {
-                blogThis(program,config);
+                blogThis(program, config);
               }
             });
-          }
+        }
       
         blog.putValue(Action.SMALL_ICON, img);
 
@@ -352,7 +351,9 @@ public class BlogThisPlugin extends Plugin {
         
           mLocalFormatings[i] = loadedInstance == null ? value : loadedInstance;
         }
-      }catch(Exception e) {}
+      }catch(Exception e) {
+        // Empty
+      }
     }
     
     private LocalPluginProgramFormating getInstanceOfFormatingFromSelected(LocalPluginProgramFormating value) {

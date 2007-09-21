@@ -27,11 +27,15 @@ package growlplugin;
 import java.util.Properties;
 
 import util.ui.Localizer;
+import util.ui.ImageUtilities;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.SettingsTab;
 import devplugin.Version;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 /**
  * This is the Growl-Plugin
@@ -103,8 +107,8 @@ public class GrowlPlugin extends Plugin {
   public void receivePrograms(Program[] programArr) {
     
     if (mInitialized) {
-      for (int i = 0; i < programArr.length;i++)
-        mContainer.notifyGrowl(mSettings, programArr[i]);
+      for (Program program : programArr)
+        mContainer.notifyGrowl(mSettings, program);
     }
      
   }
@@ -142,5 +146,12 @@ public class GrowlPlugin extends Plugin {
     return mSettings;
   }
 
-
+  /**
+   * Get mark icons for Plugin
+   * @param p get Icon for this Program
+   * @return MarkIcons for the Plugin
+   */
+  public Icon[] getMarkIconsForProgram(Program p) {
+    return new Icon[] {new ImageIcon(ImageUtilities.createImageFromJar("growlplugin/growlclaw.png", GrowlSettingsTab.class))};
+  }
 }
