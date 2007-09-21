@@ -510,21 +510,24 @@ public class ProgramTextCreator {
               buffer.append(bodyFont);
               buffer.append(";\">");
               for (int i=0; i<lists[0].size(); i++) {
-                String part1 = lists[0].get(i);
-                String part2 = "";
+                String[] parts = new String[2];
+                parts[0] = lists[0].get(i);
+                parts[1] = "";
                 if (i < lists[1].size()) {
-                  part2 = lists[1].get(i);
+                  parts[1] = lists[1].get(i);
                 }
-                if (knownNames.contains(part1)) {
-                  part1 = addWikiLink(part1);
+                int actorIndex = 0;
+                if (knownNames.contains(parts[0])) {
+                  parts[0] = addWikiLink(parts[0]);
                 }
-                if (knownNames.contains(part2)) {
-                  part2 = addWikiLink(part2);
+                else if (knownNames.contains(parts[1])) {
+                  parts[1] = addWikiLink(parts[1]);
+                  actorIndex = 1;
                 }
                 buffer.append("<tr><td>");
-                buffer.append(part1);
+                buffer.append(parts[actorIndex]);
                 buffer.append("</td><td width=\"10\">&nbsp;</td><td>");
-                buffer.append(part2);
+                buffer.append(parts[1-actorIndex]);
                 buffer.append("</td></tr>");
               }
               buffer.append("</table>");
@@ -563,7 +566,9 @@ public class ProgramTextCreator {
   }
 
   private static ArrayList<String>[] splitActorsSimple(Program prog) {
+    @SuppressWarnings("unchecked")
     ArrayList<String> list1 = new ArrayList();
+    @SuppressWarnings("unchecked")
     ArrayList<String> list2 = new ArrayList();
     String actorField = prog.getTextField(ProgramFieldType.ACTOR_LIST_TYPE).trim();
     String[] actors = new String[0];
@@ -594,6 +599,7 @@ public class ProgramTextCreator {
         list2.add(part2);
       }
     }
+    @SuppressWarnings("unchecked")
     ArrayList<String>[] result = new ArrayList[2];
     result[0] = list1;
     result[1] = list2;
