@@ -254,9 +254,9 @@ public class ProgramIcon implements Icon {
         progressY = elapsedMinutes * height / progLength;
       }
 
-      grp.setColor(mSettings.getColorOnAir_dark());
+      grp.setColor(Plugin.getPluginManager().getTvBrowserSettings().getProgramPanelOnAirDarkColor());
           grp.fillRect(1, 1, width - 2, progressY - 1);
-          grp.setColor(mSettings.getColorOnAir_light());
+          grp.setColor(Plugin.getPluginManager().getTvBrowserSettings().getProgramPanelOnAirLightColor());
           grp.fillRect(1, progressY, width - 2, height - progressY - 1);
           grp.draw3DRect(0, 0, width - 1, height - 1, true);
         }
@@ -264,8 +264,12 @@ public class ProgramIcon implements Icon {
         // If there are plugins that have marked the program -> paint the background
         Marker[] markedByPluginArr = getMarkedByPlugins(mProgram);
         if (mSettings.getPaintPluginMarks() && markedByPluginArr.length != 0) {
-          grp.setColor(mSettings.getColorMarked());
-          grp.fill3DRect(0, 0, width, height+2, true);
+          Color c = Plugin.getPluginManager().getTvBrowserSettings().getColorForMarkingPriority(mProgram.getMarkPriority());
+          
+          if(c != null && mProgram.getMarkPriority() > Program.NO_MARK_PRIORITY) {
+            grp.setColor(c);
+            grp.fill3DRect(0, 0, width, height+2, true);
+          }
         }
 
 
