@@ -266,7 +266,6 @@ public class PluginManagerImpl implements PluginManager {
    *        If not, the results will be grouped by date and channel and the
    *        search will be faster.
    * @return The matching programs.
-   * @throws TvBrowserException
    * @throws TvBrowserException If there is a syntax error in the regular expression.
    *
    * @deprecated Since 1.1. Use {@link #createProgramSearcher(int, String, boolean)}
@@ -406,7 +405,7 @@ public class PluginManagerImpl implements PluginManager {
    *
    * @return An array of all available filters.
    * @since 0.9.7.4
-   * * @deprecated Since 2.5 Use {@link #FilterManager.getAvailableFilters()} instead.
+   * * @deprecated Since 2.5 Use {@link devplugin.FilterManager#getAvailableFilters()} instead.
    */
   public ProgramFilter[] getAvailableFilters() {
     return FilterManagerImpl.getInstance().getAvailableFilters();
@@ -727,7 +726,7 @@ public class PluginManagerImpl implements PluginManager {
    *  
    * @param plugin Plugin that wants to load an Icon
    * @param icon ThemeIcon that represents the Icon
-   * @param size Size of the Icon
+   *
    * @return Icon if found, null if not
    */
   public ImageIcon getIconFromTheme(Plugin plugin, ThemeIcon icon) {
@@ -798,7 +797,7 @@ public class PluginManagerImpl implements PluginManager {
     
     for(PluginAccess plugin : plugins)
       if((plugin.canReceivePrograms() || plugin.canReceiveProgramsWithTarget()) && plugin.getProgramReceiveTargets() != null && plugin.getProgramReceiveTargets().length > 0 &&
-          ((caller == null || plugin.getId().compareTo(caller.getId()) != 0) || (caller != null && plugin.getId().compareTo(caller.getId()) == 0) && callerTarget != null && !(plugin.getProgramReceiveTargets().length == 1 && plugin.getProgramReceiveTargets()[0].equals(callerTarget))))
+          ((caller == null || plugin.getId().compareTo(caller.getId()) != 0) || (plugin.getId().compareTo(caller.getId()) == 0) && callerTarget != null && !(plugin.getProgramReceiveTargets().length == 1 && plugin.getProgramReceiveTargets()[0].equals(callerTarget))))
         receiveIfs.add(plugin);
     
     return receiveIfs.toArray(new ProgramReceiveIf[receiveIfs.size()]);
