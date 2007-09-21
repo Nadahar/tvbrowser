@@ -127,6 +127,7 @@ public abstract class AbstractContextMenu implements ContextMenu {
   /**
    * Create a Export-To-Other-Plugins Action
    * @return Export-To-Other-Plugins Action
+   * @param paths create action for this TreePath
    */
   protected JMenu getExportMenu(TreePath paths) {
     final Node node = (Node) paths.getLastPathComponent();
@@ -160,70 +161,65 @@ public abstract class AbstractContextMenu implements ContextMenu {
     }
     
     PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
-    for (int i=0; i<plugins.length; i++) {
-      if ((plugins[i].canReceivePrograms() || plugins[i].canReceiveProgramsWithTarget())  && plugins[i].getProgramReceiveTargets() != null && plugins[i].getProgramReceiveTargets().length > 0 ) {
-        final PluginProxy plugin = plugins[i];        
-        
+    for (final PluginProxy plugin : plugins) {
+     if ((plugin.canReceivePrograms() || plugin.canReceiveProgramsWithTarget()) && plugin.getProgramReceiveTargets() != null && plugin.getProgramReceiveTargets().length > 0) {
         if ((currentPlugin == null) || (!currentPlugin.getId().equals(plugin.getId()))) {
           ProgramReceiveTarget[] targets = plugin.getProgramReceiveTargets();
-          if(!plugins[i].canReceiveProgramsWithTarget()) {
-            JMenuItem item = new JMenuItem(plugins[i].getInfo().getName());
+          if (!plugin.canReceiveProgramsWithTarget()) {
+            JMenuItem item = new JMenuItem(plugin.getInfo().getName());
             item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
 
-            Icon icon = plugins[i].getPluginIcon();
-            
+            Icon icon = plugin.getPluginIcon();
+
             item.setIcon(icon != null ? icon : null);
             menu.add(item);
-            item.addActionListener(new ActionListener(){
+            item.addActionListener(new ActionListener() {
               public void actionPerformed(ActionEvent e) {
                 Program[] programs = collectProgramsFromNode(node);
-                if ((programs != null) &&(programs.length > 0)) {
-                  plugin.receivePrograms(programs,ProgramReceiveTarget.createDefaultTargetForProgramReceiveIfId(plugin.getId()));
+                if ((programs != null) && (programs.length > 0)) {
+                  plugin.receivePrograms(programs, ProgramReceiveTarget.createDefaultTargetForProgramReceiveIfId(plugin.getId()));
                 }
               }
             });
-          }
-          else if(targets.length == 1 && (!(o instanceof ProgramReceiveTarget) || !o.equals(targets[0]) )) {
+          } else if (targets.length == 1 && (!(o instanceof ProgramReceiveTarget) || !o.equals(targets[0]))) {
             JMenuItem item = new JMenuItem(targets[0].toString());
             item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
-            
-            Icon icon = plugins[i].getPluginIcon();
-            
+
+            Icon icon = plugin.getPluginIcon();
+
             item.setIcon(icon != null ? icon : null);
             menu.add(item);
-            
+
             final ProgramReceiveTarget target = targets[0];
-            
-            item.addActionListener(new ActionListener(){
+
+            item.addActionListener(new ActionListener() {
               public void actionPerformed(ActionEvent e) {
                 Program[] programs = collectProgramsFromNode(node);
-                if ((programs != null) &&(programs.length > 0)) {
-                  plugin.receivePrograms(programs,target);
+                if ((programs != null) && (programs.length > 0)) {
+                  plugin.receivePrograms(programs, target);
                 }
               }
             });
-          } else if(targets.length >= 1) {
-            JMenu subMenu = new JMenu(plugins[i].getInfo().getName());            
+          } else if (targets.length >= 1) {
+            JMenu subMenu = new JMenu(plugin.getInfo().getName());
             subMenu.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
-            
-            Icon icon = plugins[i].getPluginIcon();
-            
+
+            Icon icon = plugin.getPluginIcon();
+
             subMenu.setIcon(icon != null ? icon : null);
             menu.add(subMenu);
-            
-            for(int j = 0; j < targets.length; j++) {
-              if(o == null || !o.equals(targets[j])) {
-                JMenuItem item = new JMenuItem(targets[j].toString());
+
+            for (final ProgramReceiveTarget target : targets) {
+              if (o == null || !o.equals(target)) {
+                JMenuItem item = new JMenuItem(target.toString());
                 item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
                 subMenu.add(item);
-                
-                final ProgramReceiveTarget target = targets[j];
-                
-                item.addActionListener(new ActionListener(){
+
+                item.addActionListener(new ActionListener() {
                   public void actionPerformed(ActionEvent e) {
                     Program[] programs = collectProgramsFromNode(node);
-                    if ((programs != null) &&(programs.length > 0)) {
-                      plugin.receivePrograms(programs,target);
+                    if ((programs != null) && (programs.length > 0)) {
+                      plugin.receivePrograms(programs, target);
                     }
                   }
                 });
@@ -290,17 +286,17 @@ public abstract class AbstractContextMenu implements ContextMenu {
     
     for (int i=0;i<node.getChildCount();i++) {
       
-      Program[] prg = collectProgramsFromNode((Node)node.getChildAt(i));
-      if ((prg != null) && (prg.length != 0)) {
-       
-        for (int v = 0;v<prg.length;v++) {
-          if (!array.contains(prg[v])) {
-            array.add(prg[v]);
+      Program[] programs = collectProgramsFromNode((Node)node.getChildAt(i));
+      if ((programs != null) && (programs.length != 0)) {
+
+        for (Program prg : programs) {
+          if (!array.contains(prg)) {
+            array.add(prg);
           }
         }
       }
     }
     
-    return array.toArray(new Program[0]);
+    return array.toArray(new Program[array.size()]);
   }
 }
