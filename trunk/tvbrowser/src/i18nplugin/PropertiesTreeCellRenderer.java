@@ -55,9 +55,15 @@ public class PropertiesTreeCellRenderer extends DefaultTreeCellRenderer {
     JLabel label = (JLabel) super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus); 
 
     if (value instanceof LanguageNodeIf) {
-      LanguageNodeIf entry = (LanguageNodeIf) value;
-      if (!entry.allTranslationsAvailableFor(mLocale) && !sel) {
-        label.setForeground(Color.RED);
+      if (!sel) {
+        LanguageNodeIf entry = (LanguageNodeIf) value;
+        int state = entry.translationStateFor(mLocale);
+        if (state == LanguageNodeIf.STATE_MISSING_TRANSLATION) {
+          label.setForeground(Color.RED);
+        }
+        else if (state == LanguageNodeIf.STATE_NON_WELLFORMED) {
+          label.setForeground(Color.BLUE);
+        }
       }
     }
     

@@ -35,16 +35,20 @@ import java.util.Locale;
  * @author bodum
  */
 public interface LanguageNodeIf {
+  
+  int STATE_MISSING_TRANSLATION = 0;
+  int STATE_NON_WELLFORMED = 1;
+  int STATE_OK = 10;
 
   /**
-   * This method returns true if all translations are available for a certain locale.
+   * This method returns the translation state, if all translations are available for a certain locale.
    * 
    * The implementation has to go thru all child-nodes.
    * 
    * @param locale Locale
-   * @return true, if translations are available
+   * @return combined translation state for all sub nodes
    */
-  public boolean allTranslationsAvailableFor(Locale locale);
+  public int translationStateFor(Locale locale);
   
   /**
    * Saves all changes to the User-Directory
