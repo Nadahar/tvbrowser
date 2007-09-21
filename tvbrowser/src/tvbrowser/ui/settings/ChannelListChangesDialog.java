@@ -110,8 +110,8 @@ public class ChannelListChangesDialog extends JDialog {
     });
     btnPanel.add(ok);
 
-    contentPanel.add(panelAdded, BorderLayout.NORTH);
-    contentPanel.add(panelDeleted, BorderLayout.CENTER);
+    contentPanel.add(panelAdded, BorderLayout.WEST);
+    contentPanel.add(panelDeleted, BorderLayout.EAST);
     contentPanel.add(btnPanel, BorderLayout.SOUTH);
 
     pack();
