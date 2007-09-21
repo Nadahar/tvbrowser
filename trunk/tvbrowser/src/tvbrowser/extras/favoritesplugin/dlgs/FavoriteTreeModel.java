@@ -31,6 +31,7 @@ import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramItem;
 import devplugin.ProgramReceiveTarget;
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ReminderConfiguration;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
@@ -342,6 +343,8 @@ public class FavoriteTreeModel extends DefaultTreeModel {
             node.add(newNode);
           }
         } else {
+          newNode.getMutableTreeNode().setIcon(IconLoader.getInstance().getIconFromTheme("apps","bookmark",16));
+          
           Program[] progArr = child.getFavorite().getWhiteListPrograms();
           if (progArr.length > 0) {
             node.add(newNode);
