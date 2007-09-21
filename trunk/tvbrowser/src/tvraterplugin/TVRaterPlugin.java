@@ -118,6 +118,11 @@ public class TVRaterPlugin extends devplugin.Plugin {
     
     private final Timer lateActivationSwingTimer = new Timer(200, new LateActivationAction());
 
+    /**
+     * flag indicating that the host program has started
+     */
+    private boolean startFinished;
+
     public TVRaterPlugin() {
         _tvRaterInstance = this;
     }
@@ -440,6 +445,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
     public void handleTvBrowserStartFinished() {
       hasRightToDownload = true;
+      startFinished = true;
     }
     
     /*
@@ -530,6 +536,10 @@ public class TVRaterPlugin extends devplugin.Plugin {
      * @since 2.6
      */
     public void updateCurrentDate() {
+      // dont update the UI if the rating updater runs on TV-Browser start
+      if (! startFinished) {
+        return;
+      }
       Date currentDate = getPluginManager().getCurrentDate();
       final Channel[] channels = getPluginManager().getSubscribedChannels();
       for (int i = 0; i < channels.length; ++i) {
@@ -565,6 +575,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
       mRootNode.removeAllChildren();
       mRootNode.getMutableTreeNode().setShowLeafCountEnabled(false);
       PluginTreeNode favoritesNode = mRootNode.addNode(mLocalizer.msg("unratedFavorites", "Unrated favorites"));
+      favoritesNode.setGroupingByDateEnabled(false);
       Program[] programs = getPluginManager().getMarkedPrograms();
       for (int progIndex = 0; progIndex < programs.length; progIndex++) {
         Program program = programs[progIndex];
