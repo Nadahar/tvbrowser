@@ -29,6 +29,7 @@ package util.ui;
 /**
  * This class was moved to util.browserlauncher.Launch
  * @author bodum
+ * @deprecated Please use {@link util.browserlauncher.Launch} instead
  */
 public class BrowserLauncher {
 
