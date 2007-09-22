@@ -44,6 +44,7 @@ import javax.swing.Icon;
 import printplugin.PrintPlugin;
 import printplugin.settings.PrinterProgramIconSettings;
 import printplugin.settings.ProgramIconSettings;
+import tvbrowser.core.Settings;
 import util.io.IOUtilities;
 import util.ui.Localizer;
 import util.ui.MultipleFieldReader;
@@ -184,12 +185,14 @@ public class ProgramIcon implements Icon {
       // Set the new title
       mTitleIcon.setText(program.getTitle());
     }
+    
+    int additionalHeight = Plugin.getPluginManager().getTvBrowserSettings().isUsingExtraSpaceForMarkIcons() && program.getMarkerArr().length > 0 ? 16 : 0;
 
     // Calculate the maximum description lines
     int titleHeight = mTitleIcon.getIconHeight();
     int maxDescLines = 0; //3;
     if (maxHeight != -1) {
-      maxDescLines = (maxHeight - titleHeight) / mSettings.getTextFont().getSize();
+      maxDescLines = (maxHeight - titleHeight - additionalHeight) / mSettings.getTextFont().getSize();
     }
 
     if (programChanged || (maxDescLines != mDescriptionIcon.getMaximumLineCount())) {
@@ -206,7 +209,8 @@ public class ProgramIcon implements Icon {
         }
       }
       // Calculate the height
-      mHeight = mTitleIcon.getIconHeight() +  mDescriptionIcon.getIconHeight();
+      mHeight = mTitleIcon.getIconHeight() +  mDescriptionIcon.getIconHeight() + additionalHeight;
+      
       if (mEndTimeIcon!=null) {
         mHeight+=mEndTimeIcon.getIconHeight();
       }
@@ -268,7 +272,13 @@ public class ProgramIcon implements Icon {
           
           if(c != null && mProgram.getMarkPriority() > Program.NO_MARK_PRIORITY) {
             grp.setColor(c);
-            grp.fill3DRect(0, 0, width, height+2, true);
+            
+            if(Plugin.getPluginManager().getTvBrowserSettings().isMarkingBorderPainted()) {
+              grp.fill3DRect(0, 0, width, height+2, true);
+            }
+            else {
+              grp.fillRect(0,0,width,height+2);
+            }
           }
         }
 

@@ -26,7 +26,6 @@
 
 package printplugin.settings;
 
-import java.awt.Color;
 import java.awt.Font;
 
 import devplugin.ProgramFieldType;
@@ -38,10 +37,6 @@ public class PrinterProgramIconSettings implements ProgramIconSettings {
   private static final Font PROGRAMTEXTFONT=new Font("Dialog",Font.PLAIN,10);
   private static final Font PROGRAMTIMEFONT=new Font("Dialog",Font.BOLD,12);
   
-  private static final Color COLOR_ON_AIR_DARK  = new Color(128, 128, 255, 80);
-  private static final Color COLOR_ON_AIR_LIGHT = new Color(128, 128, 255, 40);
-  private static final Color COLOR_MARKED       = new Color(255, 0, 0, 40);
-
   private ProgramFieldType[] mProgramInfoFields;
   private boolean mShowPluginMark;
   
@@ -98,21 +93,6 @@ public class PrinterProgramIconSettings implements ProgramIconSettings {
   public String[] getProgramTableIconPlugins() {
     return new String[]{"java.programinfo.ProgramInfo"};
   }
-
-	
-	public Color getColorOnAir_dark() {
-		return COLOR_ON_AIR_DARK;
-	}
-
-	
-	public Color getColorOnAir_light() {
-		return COLOR_ON_AIR_LIGHT;
-	}
-
-	public Color getColorMarked() {
-		return COLOR_MARKED;
-	}
-
 	
 	public boolean getPaintExpiredProgramsPale() {
 		return false;
