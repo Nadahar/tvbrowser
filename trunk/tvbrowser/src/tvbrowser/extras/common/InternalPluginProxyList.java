@@ -83,13 +83,6 @@ public class InternalPluginProxyList {
    * <code>null</code> if the id was not found.
    */
   public InternalPluginProxyIf getProxyForId(String id) {
-    /* Remove java. prefix, because internal plugins don't use this prefix.
-     * But it could be stored in the settings with the old id and we want
-     * to find these plugins too. */
-    if(id.startsWith("java")) {
-      id = id.substring(id.indexOf(".")+1);
-    }
-    
     for(InternalPluginProxyIf internalPluginProxy : mList) {
       if(internalPluginProxy.getId().equals(id)) {
         return internalPluginProxy;
