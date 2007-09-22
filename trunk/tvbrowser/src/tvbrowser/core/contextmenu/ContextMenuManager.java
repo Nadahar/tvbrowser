@@ -191,6 +191,7 @@ public class ContextMenuManager {
    * @return The available context menu interfaces.
    */
   public ContextMenuIf[] getAvailableContextMenuIfs(boolean includingDisabledItems, boolean cleanSeparator) {
+    InternalPluginProxyIf[] internalPluginProxies = InternalPluginProxyList.getInstance().getAvailableProxys();
     PluginProxy[] pluginArr = PluginProxyManager.getInstance().getActivatedPlugins();
     String[] order = Settings.propContextMenuOrder.getStringArray();    
     List<ContextMenuIf> disabledList = getDisabledContextMenuIfs();
@@ -200,40 +201,50 @@ public class ContextMenuManager {
     boolean lastWasSeparator = false;
     
     if(order == null) {
-      InternalPluginProxyIf[] internalPluginProxies = InternalPluginProxyList.getInstance().getAvailableProxys();
-      
       for(InternalPluginProxyIf internalPluginProxy : internalPluginProxies) {
         if(internalPluginProxy instanceof ContextMenuIf) {
           ifList.add((ContextMenuIf)internalPluginProxy);
         }
       }
 
-      for(int i = 0; i < pluginArr.length; i++)
+      for(int i = 0; i < pluginArr.length; i++) {
         ifList.add(pluginArr[i]);
+      }
     }
-    else    
-    for(int i = 0; i < order.length; i++) {
-      if (order[i].compareTo(SeparatorMenuItem.SEPARATOR) == 0) {
-        // Add Separator only when when one Entry exists
-        if (!cleanSeparator || (cleanSeparator && (ifList.size() > 0) && !lastWasSeparator)) {
-          ifList.add(new SeparatorMenuItem());
-          lastWasSeparator = true;
+    else {    
+      for(int i = 0; i < order.length; i++) {
+        if (order[i].compareTo(SeparatorMenuItem.SEPARATOR) == 0) {
+          // Add Separator only when when one Entry exists
+          if (!cleanSeparator || (cleanSeparator && (ifList.size() > 0) && !lastWasSeparator)) {
+            ifList.add(new SeparatorMenuItem());
+            lastWasSeparator = true;
+          }
+        } else if (order[i].compareTo(ConfigMenuItem.CONFIG) == 0) {
+          if ((includingDisabledItems) || (!disabledList.contains(ConfigMenuItem.getInstance()))) {
+            ifList.add(ConfigMenuItem.getInstance());
+            lastWasSeparator = false;
+          }
+        } else if (order[i].compareTo(LeaveFullScreenMenuItem.LEAVEFULLSCREEN) == 0) {
+          if ((includingDisabledItems) || (!disabledList.contains(LeaveFullScreenMenuItem.getInstance()))) {
+            ifList.add(LeaveFullScreenMenuItem.getInstance());
+            lastWasSeparator = false;
+          }
+        } else {
+          ContextMenuIf item = getContextMenuIfForId(order[i]);
+          if ((item != null) && (includingDisabledItems || !disabledList.contains(item))) {
+            lastWasSeparator = false;
+            ifList.add(item);
+          }
         }
-      } else if (order[i].compareTo(ConfigMenuItem.CONFIG) == 0) {
-        if ((includingDisabledItems) || (!disabledList.contains(ConfigMenuItem.getInstance()))) {
-          ifList.add(ConfigMenuItem.getInstance());
-          lastWasSeparator = false;
-        }
-      } else if (order[i].compareTo(LeaveFullScreenMenuItem.LEAVEFULLSCREEN) == 0) {
-        if ((includingDisabledItems) || (!disabledList.contains(LeaveFullScreenMenuItem.getInstance()))) {
-          ifList.add(LeaveFullScreenMenuItem.getInstance());
-          lastWasSeparator = false;
-        }
-      } else {
-        ContextMenuIf item = getContextMenuIfForId(order[i]);
-        if ((item != null) && (includingDisabledItems || !disabledList.contains(item))) {
-          lastWasSeparator = false;
-          ifList.add(item);
+      }
+    }
+    
+    for(InternalPluginProxyIf internalPluginProxy : internalPluginProxies) {
+      if(internalPluginProxy instanceof ContextMenuIf) {
+        if(!ifList.contains(internalPluginProxy)) {
+          if ((includingDisabledItems) || ((internalPluginProxy != null) && (!disabledList.contains(internalPluginProxy)))) {
+            ifList.add((ContextMenuIf)internalPluginProxy);
+          }
         }
       }
     }
