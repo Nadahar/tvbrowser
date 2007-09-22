@@ -50,7 +50,7 @@ public class ExporterFactory {
     mExporterList.add(new ICalExporter());
     mExporterList.add(new VCalExporter());
 
-    if (OperatingSystem.isOther()) {
+    if (OperatingSystem.isOther() || OperatingSystem.isLinux()) {
       mExporterList.add(new KOrganizerExporter());
     } else if (OperatingSystem.isWindows()) {
       mExporterList.add(new OutlookExporter());
