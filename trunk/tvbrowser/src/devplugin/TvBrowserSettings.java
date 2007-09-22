@@ -98,4 +98,22 @@ public interface TvBrowserSettings {
    * @since 2.6
    */
   public Color getProgramPanelOnAirDarkColor();
+  
+  /**
+   * Gets if the marking have a colored border.
+   * 
+   * @return <code>True</code> if the border is painted,
+   * <code>false</code> otherwise.
+   * @since 2.6
+   */
+  public boolean isMarkingBorderPainted();
+  
+  /**
+   * Gets if extra space for the plugin icons is used.
+   * 
+   * @return <code>True</code> if extra space for the plugin icons is used,
+   * <code>false</code> otherwise.
+   * @since 2.6
+   */
+  public boolean isUsingExtraSpaceForMarkIcons();
 }

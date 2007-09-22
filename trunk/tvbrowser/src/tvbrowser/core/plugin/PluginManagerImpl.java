@@ -625,23 +625,11 @@ public class PluginManagerImpl implements PluginManager {
       public Date getLastDownloadDate() {
         return Settings.propLastDownloadDate.getDate();
       }
-            
-      /**
-       * @return The default network connection timeout
-       * @since 2.5.3
-       */
+      
       public int getDefaultNetworkConnectionTimeout(){
         return Settings.propDefaultNetworkConnectionTimeout.getInt();
       }
       
-      /**
-       * Gets the color for a marking priority.
-       * 
-       * @param priority The priority to get the color for.
-       * @return The color for the given priority or <code>null</code>
-       *         if the given priority don't exists.
-       * @since 2.6
-       */
       public Color getColorForMarkingPriority(int priority) {
         switch(priority) {
           case Program.NO_MARK_PRIORITY: return new Color(255,255,255,0);
@@ -663,24 +651,20 @@ public class PluginManagerImpl implements PluginManager {
         return Settings.propProgramTableStartOfDay.getInt();
       }
       
-      /**
-       * Gets the light color of an on air program.
-       * 
-       * @return The light color of an on air program.
-       * @since 2.6
-       */
       public Color getProgramPanelOnAirLightColor() {
         return Settings.propProgramTableColorOnAirLight.getColor();
       }
       
-      /**
-       * Gets the dark color of an on air program.
-       * 
-       * @return The dark color of an on air program.
-       * @since 2.6
-       */
       public Color getProgramPanelOnAirDarkColor() {
         return Settings.propProgramTableColorOnAirDark.getColor();
+      }
+
+      public boolean isMarkingBorderPainted() {
+        return Settings.propProgramPanelWithMarkingsShowingBoder.getBoolean();
+      }
+
+      public boolean isUsingExtraSpaceForMarkIcons() {
+        return Settings.propProgramPanelUsesExtraSpaceForMarkIcons.getBoolean();
       }
     };
   }
