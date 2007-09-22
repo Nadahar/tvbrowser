@@ -32,9 +32,7 @@ public class SystemTrayFactory {
       }
     }catch(Exception e) {}
     
-    
-    
-    if(JavaVersion.getVersion() >= JavaVersion.VERSION_1_6 && !kde) {
+    if(JavaVersion.getVersion() >= JavaVersion.VERSION_1_6 && (!kde || System.getProperty("os.arch").equalsIgnoreCase("amd64"))) {
       mLog.info("Try using Java 6 Tray.");
       return new Java6Tray();
     } else if (osname.startsWith("windows")) {
