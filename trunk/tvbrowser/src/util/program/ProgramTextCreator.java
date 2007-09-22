@@ -638,6 +638,9 @@ public class ProgramTextCreator {
     }
     for (int i = 0; i < items.length; i++) {
       items[i] = items[i].trim();
+      if (items[i].endsWith(",")) {
+        items[i] = items[i].substring(0, items[i].length() - 1);
+      }
     }
     return items;
   }
@@ -704,19 +707,23 @@ public class ProgramTextCreator {
     startInfoSection(buffer, name);
 
     // add wikipedia links
-    if (ProgramFieldType.DIRECTOR_TYPE == fieldType || ProgramFieldType.SCRIPT_TYPE == fieldType) {
-      String[] directors = splitList(text);
-      for (int i = 0; i < directors.length; i++) {
-        String topic = directors[i];
-        if (directors[i].contains("(")) {
-          topic = directors[i].substring(0, directors[i].indexOf("(")-1);
-          directors[i] = addWikiLink(topic, directors[i]);
-        }
-        else {
-          directors[i] = addWikiLink(directors[i]);
+    if (ProgramFieldType.DIRECTOR_TYPE == fieldType
+        || ProgramFieldType.SCRIPT_TYPE == fieldType
+        || ProgramFieldType.CAMERA_TYPE == fieldType
+        || ProgramFieldType.CUTTER_TYPE == fieldType
+        || ProgramFieldType.MUSIC_TYPE == fieldType
+        || ProgramFieldType.MODERATION_TYPE == fieldType) {
+      String[] persons = splitList(text);
+      for (int i = 0; i < persons.length; i++) {
+        String topic = persons[i];
+        if (persons[i].contains("(")) {
+          topic = persons[i].substring(0, persons[i].indexOf("(") - 1);
+          persons[i] = addWikiLink(topic, persons[i]);
+        } else {
+          persons[i] = addWikiLink(persons[i]);
         }
       }
-      buffer.append(concatList(directors));
+      buffer.append(concatList(persons));
     }
     else {
       buffer.append(HTMLTextHelper.convertTextToHtml(text, createLinks));
