@@ -27,6 +27,8 @@
 package util.program;
 
 import java.awt.Font;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import javax.swing.Icon;
@@ -607,9 +609,24 @@ public class ProgramTextCreator {
   }
 
   private static String addWikiLink(String topic, String displayText) {
-    String url = topic;
-    String style = " style=\"color:black; text-decoration:none; border-bottom: 1px dashed;\"";
-    return mLocalizer.msg("wikipediaLink", "<a href=\"http://en.wikipedia.org/wiki/{0}\"{1}>{2}</a>", url, style, displayText);
+    String url;
+    try {
+      url = URLEncoder.encode(topic, "UTF-8");
+      String style = " style=\"color:black; border-bottom: 1px dashed;\"";
+      StringBuffer buffer = new StringBuffer();
+      buffer.append("<a href=\"");
+      buffer.append(mLocalizer.msg("wikipediaLink", "http://en.wikipedia.org/wiki/{0}", url));
+      buffer.append("\" ");
+      buffer.append(style);
+      buffer.append(">");
+      buffer.append(displayText);
+      buffer.append("</a>");
+      return buffer.toString();
+    } catch (UnsupportedEncodingException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return displayText; // only reached in case of exception
   }
 
   private static String addWikiLink(String topic) {
