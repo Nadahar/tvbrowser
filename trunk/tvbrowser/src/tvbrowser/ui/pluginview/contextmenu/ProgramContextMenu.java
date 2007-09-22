@@ -25,11 +25,16 @@
  */
 
 
-
 package tvbrowser.ui.pluginview.contextmenu;
 
-import java.awt.Component;
-import java.awt.event.ActionEvent;
+import devplugin.Plugin;
+import devplugin.Program;
+import devplugin.ProgramItem;
+import tvbrowser.core.contextmenu.ContextMenuManager;
+import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.pluginview.Node;
+import tvbrowser.ui.pluginview.PluginTree;
+import util.ui.menu.MenuUtil;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -37,15 +42,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.TreePath;
-
-import tvbrowser.core.contextmenu.ContextMenuManager;
-import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.pluginview.Node;
-import tvbrowser.ui.pluginview.PluginTree;
-import util.ui.menu.MenuUtil;
-import devplugin.Plugin;
-import devplugin.Program;
-import devplugin.ProgramItem;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
@@ -54,30 +52,28 @@ import devplugin.ProgramItem;
  */
 public class ProgramContextMenu extends AbstractContextMenu {
 
-  /** The localizer for this class. */
-      private static final util.ui.Localizer mLocalizer
-        = util.ui.Localizer.getLocalizerFor(ProgramContextMenu.class);
-
-
+  /**
+   * The localizer for this class.
+   */
+  private static final util.ui.Localizer mLocalizer
+          = util.ui.Localizer.getLocalizerFor(ProgramContextMenu.class);
 
   private TreePath[] mPaths;
   private Action mDefaultAction;
-  private Plugin mPlugin;
   private Program[] mPrograms;
 
   public ProgramContextMenu(PluginTree tree, TreePath[] paths, Plugin plugin, Program[] programs) {
     super(tree);
     mPaths = paths;
-    mPlugin = plugin;
     mPrograms = programs;
-    mDefaultAction = new AbstractAction(){
-        public void actionPerformed(ActionEvent e) {
-          Node node = (Node)mPaths[0].getLastPathComponent();
-          ProgramItem programItem = (ProgramItem) node.getUserObject();
-          MainFrame.getInstance().scrollToProgram(programItem.getProgram());
-        }
-      };
-      mDefaultAction.putValue(Action.NAME, mLocalizer.msg("show","show"));
+    mDefaultAction = new AbstractAction() {
+      public void actionPerformed(ActionEvent e) {
+        Node node = (Node) mPaths[0].getLastPathComponent();
+        ProgramItem programItem = (ProgramItem) node.getUserObject();
+        MainFrame.getInstance().scrollToProgram(programItem.getProgram());
+      }
+    };
+    mDefaultAction.putValue(Action.NAME, mLocalizer.msg("show", "show"));
   }
 
   public JPopupMenu getPopupMenu() {
@@ -88,16 +84,16 @@ public class ProgramContextMenu extends AbstractContextMenu {
     showMI.setEnabled(mPaths.length == 1);
     menu.add(showMI);
 
-    menu.add(getExportMenu( mPaths[0]));
-    
+    menu.add(getExportMenu(mPaths[0]));
+
     menu.addSeparator();
 
     JMenu menus = ContextMenuManager.getInstance().createContextMenuItems(null, mPrograms[0], false);
 
     Component[] comps = menus.getMenuComponents();
-    for (int i = 0; i < comps.length; i++) {
-      menu.add(comps[i]);
-      comps[i].setEnabled(mPrograms.length == 1);
+    for (Component comp : comps) {
+      menu.add(comp);
+      comp.setEnabled(mPrograms.length == 1);
     }
 
     return menu;
@@ -106,8 +102,7 @@ public class ProgramContextMenu extends AbstractContextMenu {
   public Action getDefaultAction() {
     if (mPaths.length == 1) {
       return mDefaultAction;
-    }
-    else {
+    } else {
       return null;
     }
   }
