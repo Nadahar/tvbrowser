@@ -609,9 +609,8 @@ public class ProgramTextCreator {
   }
 
   private static String addWikiLink(String topic, String displayText) {
-    String url;
     try {
-      url = URLEncoder.encode(topic, "UTF-8");
+      String url = URLEncoder.encode(topic, "UTF-8").replace("+", "%20");
       String style = " style=\"color:black; border-bottom: 1px dashed;\"";
       StringBuffer buffer = new StringBuffer();
       buffer.append("<a href=\"");
