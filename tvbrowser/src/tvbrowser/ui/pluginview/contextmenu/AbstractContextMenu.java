@@ -285,7 +285,7 @@ public abstract class AbstractContextMenu implements ContextMenu {
         }
       }
     };
-    action.putValue(Action.NAME, mLocalizer.msg("filter","Filter contained programs"));
+    action.putValue(Action.NAME, mLocalizer.msg("filter","Show only contained programs"));
 
     JMenuItem item = new JMenuItem(action);
     item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
