@@ -387,12 +387,12 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   }
 
   public void actionPerformed(ActionEvent e) {
-    if (e.getActionCommand().equals(mLocalizer.msg("mark", "Just mark"))) {
+    if (e.getActionCommand().equals(mLocalizer.msg("markProgram", "Mark program"))) {
       mMarkListVector.getListAt(0).addElement(mProg);
       mProg.mark(this);
       mMarkListVector.getListAt(0).updateNode();
     } else if (e.getActionCommand().equals(
-        mLocalizer.msg("unmark", "Just unmark"))) {
+        mLocalizer.msg("unmark", "Remove marking"))) {
       mMarkListVector.getListAt(0).removeElement(mProg);
       mProg.unmark(this);
       mMarkListVector.getListAt(0).updateNode();
