@@ -58,6 +58,7 @@ public class StructureNodeContextMenu extends AbstractContextMenu {
     item.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
     menu.add(item);
     menu.add(getExpandAllMenuItem(mPath));
+    menu.add(getFilterMenuItem(mPath));
     menu.add(getExportMenu( mPath));
     return menu;
   }

@@ -66,6 +66,7 @@ public class CustomNodeContextMenu extends AbstractContextMenu {
 
     menu.add(getExpandAllMenuItem(mPath));
     menu.add(getCollapseAllMenuItem(mPath));
+    menu.add(getFilterMenuItem(mPath));
     menu.add(getExportMenu( mPath));
 
     if (mActionMenus.length>0) {

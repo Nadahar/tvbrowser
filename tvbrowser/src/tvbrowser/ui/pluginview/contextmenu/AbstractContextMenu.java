@@ -36,17 +36,21 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.tree.TreePath;
 
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.pluginview.Node;
 import tvbrowser.ui.pluginview.PluginTree;
+import util.ui.UiUtilities;
 import util.ui.menu.MenuUtil;
 import devplugin.Plugin;
 import devplugin.Program;
+import devplugin.ProgramFilter;
 import devplugin.ProgramItem;
 import devplugin.ProgramReceiveTarget;
 
@@ -143,8 +147,9 @@ public abstract class AbstractContextMenu implements ContextMenu {
     Object o = getObjectForNode(node);
     Plugin currentPlugin = null;
     
-    if(o instanceof Plugin)
+    if(o instanceof Plugin) {
       currentPlugin = (Plugin)o;
+    }
     
     if(o != ReminderPlugin.getInstance().getRootNode().getMutableTreeNode()) {
       JMenuItem item = new JMenuItem(ReminderPlugin.getInstance().toString());
@@ -154,8 +159,9 @@ public abstract class AbstractContextMenu implements ContextMenu {
       item.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
           Program[] programs = collectProgramsFromNode(node);
-          if ((programs != null) &&(programs.length > 0))
+          if ((programs != null) &&(programs.length > 0)) {
             ReminderPlugin.getInstance().addPrograms(programs);
+          }
         }
       });      
     }
@@ -233,6 +239,60 @@ public abstract class AbstractContextMenu implements ContextMenu {
     return menu;
   }
   
+  protected JMenuItem getFilterMenuItem(final TreePath treePath) {
+    final Node node = (Node) treePath.getLastPathComponent();
+    String pathName = "";
+    for (int i = 1; i < treePath.getPathCount(); i++) {
+      if (i > 1) {
+        pathName = pathName + "/";
+      }
+      pathName = pathName + treePath.getPathComponent(i);
+    }
+    final String filterName = mLocalizer.msg("pluginFilter.name", "Plugin filter ({0})", pathName);
+
+    Action action = new AbstractAction(){
+      public void actionPerformed(ActionEvent e) {
+        Program[] programs = collectProgramsFromNode(node);
+        final ArrayList<Program> programList = new ArrayList<Program>();
+        for (int i = 0; i < programs.length; i++) {
+          programList.add(programs[i]);
+        }
+        if (programs != null) {
+          if (programs.length > 0) {
+            ProgramFilter pluginFilter = new ProgramFilter() {
+
+              public boolean accept(Program prog) {
+                return programList.contains(prog);
+              }
+
+              public String getName() {
+                return filterName;
+              }
+            };
+            MainFrame.getInstance().setProgramFilter(pluginFilter);
+          }
+          else {
+            JOptionPane
+                .showMessageDialog(
+                    UiUtilities.getBestDialogParent(MainFrame.getInstance()),
+                    mLocalizer
+                        .msg(
+                            "pluginFilter.noPrograms",
+                            "The plugin has marked no program, therefore your current filter will remain active."),
+                    mLocalizer.msg("pluginFilter.noProgramsTitle",
+                        "No programs marked"), JOptionPane.INFORMATION_MESSAGE);
+          }
+        }
+      }
+    };
+    action.putValue(Action.NAME, mLocalizer.msg("filter","Filter contained programs"));
+
+    JMenuItem item = new JMenuItem(action);
+    item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
+    item.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-filter", 16));
+    return item;
+  }
+  
   /**
    * Returns the Plugin for this Node.
    * It searches for a Parent-Node containing a Plugin.
@@ -243,8 +303,6 @@ public abstract class AbstractContextMenu implements ContextMenu {
   public Object getObjectForNode(Node node) {
     
     Node parent = node;
-    
-
     
     while (parent != null && parent.getType() != Node.PLUGIN_ROOT && parent != ReminderPlugin.getInstance().getRootNode().getMutableTreeNode() && parent.getProgramReceiveTarget() == null) {
       parent = (Node) parent.getParent();
@@ -257,10 +315,11 @@ public abstract class AbstractContextMenu implements ContextMenu {
 
       Object o = parent.getUserObject();
       
-      if(o instanceof Plugin)
+      if(o instanceof Plugin) {
         return o;
-      else
+      } else {
         return parent;
+      }
     }
     
     return null;
