@@ -20,7 +20,7 @@ public class InfoCategoryParser {
           "tv-drama", "kriegsdrama", "familiendrama", "gesellschaftsdrama", "literaturverfilmung", "experimentalfilm", "actiondrama",
           "kriegsfilm", "episodenfilm", "italowestern", "jugenddrama", "roadmovie", "gaunerkomödie", "beziehungskomödie",
           "familienfilm", "familienfilm", "bikerfilm", "liebesdrama", "sportfilm", "agentenfilm", "teeniekomödie",
-          "katastrophenfilm", "krimikomödie", "politthriller", "tragikomödie", "thrillerkomödie", "romanze", "krimi", "tv-thriller",
+          "katastrophenfilm", "krimikomödie", "politthriller", "tragikomödie", "thrillerkomödie", "romanze", "tv-thriller",
           "westernkomödie", "romantikkomödie", "mysteryfilm", "science-fiction-komödie", "erotikthriller", "kurzfilm", "action-thriller",
           "krimi-thriller", "wildlife-serie", "sci-fi-komödie", "krimi-komödie", "kino-klassiker", "fantasy-komödie", "katastrophen-thriller",
           "gangster-komödie", "fantasy-abenteuer", "sci-fi-abenteuer", "alien-action", "krimi/thriller", "milieufilm",
