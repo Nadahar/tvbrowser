@@ -39,7 +39,7 @@ public class HideGenreAction extends ContextMenuAction implements Action {
   public HideGenreAction(String genre) {
     this.genre = genre;
     setText(mLocalizer.msg("label","Hide genre"));
-    setSmallIcon(GenrePlugin.getInstance().createImageIcon("actions", "view-filter", 16));
+    setSmallIcon(GenrePlugin.getInstance().createImageIcon("actions", "list-remove", 16));
   }
 
   @Override
