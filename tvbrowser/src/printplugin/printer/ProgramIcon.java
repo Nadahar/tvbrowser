@@ -44,7 +44,6 @@ import javax.swing.Icon;
 import printplugin.PrintPlugin;
 import printplugin.settings.PrinterProgramIconSettings;
 import printplugin.settings.ProgramIconSettings;
-import tvbrowser.core.Settings;
 import util.io.IOUtilities;
 import util.ui.Localizer;
 import util.ui.MultipleFieldReader;

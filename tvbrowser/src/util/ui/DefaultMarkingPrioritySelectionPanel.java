@@ -23,19 +23,12 @@
  */
 package util.ui;
 
-import java.awt.Color;
-import java.awt.Component;
-
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import tvbrowser.core.Settings;
 import tvbrowser.ui.settings.MarkingsSettingsTab;
 import tvbrowser.ui.settings.SettingsDialog;
 
@@ -43,7 +36,6 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-import devplugin.Program;
 import devplugin.SettingsItem;
 
 /**

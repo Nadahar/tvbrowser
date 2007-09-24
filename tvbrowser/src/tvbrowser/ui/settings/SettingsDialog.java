@@ -78,7 +78,6 @@ import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
 import util.ui.Localizer;
 import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.pluginview.Node;
 import tvbrowser.ui.waiting.dlgs.SettingsWaitingDialog;
 import util.ui.SingleAndDoubleClickTreeUI;
 import util.ui.UiUtilities;

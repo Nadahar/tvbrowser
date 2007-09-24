@@ -137,6 +137,8 @@ public class TvDataInventory {
   
   /**
    * Loads the inventory list.
+   * @throws IOException 
+   * @throws ClassNotFoundException 
    *
    * @see #writeData(File)
    */
@@ -175,6 +177,7 @@ public class TvDataInventory {
    * If TV-Browser failes to save the plugin data then the inventory list should
    * NOT be saved too. Doing so the plugins will update themselves automatically
    * on the next startup, because new TV data will be treated as unknown. 
+   * @throws IOException 
    *
    * @see #readData(File)
    */

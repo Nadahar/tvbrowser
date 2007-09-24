@@ -500,6 +500,7 @@ public class DeviceConfig {
     /**
      * Write the Config into a Stream
      * @param stream
+     * @throws IOException 
      */
     public void writeData(ObjectOutputStream stream) throws IOException {
 
@@ -553,6 +554,8 @@ public class DeviceConfig {
      * Read the Config from a Stream
      * @param stream The stream to read from.
      * @param importDevice <code>True</code> if a device should be imported.
+     * @throws IOException 
+     * @throws ClassNotFoundException 
      */
     public void readData(ObjectInputStream stream, boolean importDevice) throws IOException, ClassNotFoundException {
         int version = stream.readInt();

@@ -301,6 +301,7 @@ public class Channel implements Comparable<Channel> {
   
   /**
    * Serialized this object.
+   * @throws IOException 
    */
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(4); // version

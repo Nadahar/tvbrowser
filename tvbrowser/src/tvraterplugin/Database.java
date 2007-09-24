@@ -177,6 +177,8 @@ public class Database {
 	
 	/**
 	 * Called by the host-application during start-up. Loads the data.
+	 * @throws IOException 
+	 * @throws ClassNotFoundException 
 	 * 
 	 * @see #writeData(ObjectOutputStream)
 	 */
@@ -190,6 +192,7 @@ public class Database {
 	/**
 	 * Counterpart to loadData. Called when the application shuts down. Saves
 	 * the data.
+	 * @throws IOException 
 	 * 
 	 * @see #readData(ObjectInputStream)
 	 */
