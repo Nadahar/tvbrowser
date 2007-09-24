@@ -41,6 +41,7 @@ import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 import javax.swing.tree.TreePath;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -70,7 +71,12 @@ public class ProgramContextMenu extends AbstractContextMenu {
       public void actionPerformed(ActionEvent e) {
         Node node = (Node) mPaths[0].getLastPathComponent();
         ProgramItem programItem = (ProgramItem) node.getUserObject();
-        MainFrame.getInstance().scrollToProgram(programItem.getProgram());
+        final Program program = programItem.getProgram();
+        MainFrame.getInstance().scrollToProgram(program);
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            MainFrame.getInstance().getProgramTableScrollPane().getProgramTable().selectProgram(program);
+          }});
       }
     };
     mDefaultAction.putValue(Action.NAME, mLocalizer.msg("show", "show"));
