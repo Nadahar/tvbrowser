@@ -110,6 +110,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
 
   /**
    * Creates a new instance of ProgramTable.
+   * @param model program table model to use in the program table
    */
   public ProgramTable(ProgramTableModel model) {
     setProgramTableLayout(null);
@@ -1064,5 +1065,28 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
 
   public void dragDropEnd(DragSourceDropEvent dsde) {
     deSelectItem();
+  }
+
+
+
+  /**
+   * Select (highlight) a program in the program table. This will deselect any other programs.
+   * @param program the program to select
+   * @since 2.6
+   */
+  public void selectProgram(Program program) {
+    int columnCount = mModel.getColumnCount();
+    for (int col = 0; col < columnCount; col++) {
+      int rowCount = mModel.getRowCount(col);
+      for (int row = 0; row < rowCount; row++) {
+        ProgramPanel panel = mModel.getProgramPanel(col, row);
+        if (panel.getProgram().equals(program)) {
+          mCurrentCol = col;
+          mCurrentRow = row;
+          repaintCurrentCell();
+          return;
+        }
+      }
+    }
   }
 }
