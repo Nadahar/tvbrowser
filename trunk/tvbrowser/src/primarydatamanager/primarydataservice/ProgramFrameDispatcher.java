@@ -125,6 +125,8 @@ public class ProgramFrameDispatcher {
   
   
   /**
+   * @throws IOException 
+   * @throws FileFormatException 
    * @deprecated Use {@link #dispatchProgramFrame(ProgramFrame, devplugin.Date)}
    *             instead.
    */  
@@ -159,7 +161,9 @@ public class ProgramFrameDispatcher {
   }
   
   /**
-     * @deprecated
+   * @throws IOException 
+   * @throws FileFormatException 
+   * @deprecated
      */  
   public void flush() throws IOException, FileFormatException {
     mCurFile.writeToFile(new File(mDirectory,mCurFilename));    

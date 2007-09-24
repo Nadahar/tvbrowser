@@ -45,8 +45,6 @@ import java.net.URL;
 import tvbrowser.core.Settings;
 import util.io.IOUtilities;
 
-import javax.swing.JOptionPane;
-
 /**
  * Does the localization of texts.
  * <p>

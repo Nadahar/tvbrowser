@@ -1,6 +1,5 @@
 package captureplugin.drivers.thetubedriver;
 
-import captureplugin.drivers.elgatodriver.ElgatoConnection;
 import captureplugin.drivers.simpledevice.SimpleChannel;
 import captureplugin.drivers.simpledevice.SimpleConfig;
 import captureplugin.drivers.simpledevice.SimpleConnectionIf;

@@ -92,6 +92,8 @@ public class WebAddress implements Cloneable {
   /**
    * Create a WebAddress with a Stream
    * @param in Input-Stream
+   * @throws IOException 
+   * @throws ClassNotFoundException 
    */
   public WebAddress(ObjectInputStream in) throws IOException, ClassNotFoundException {
     readData(in);

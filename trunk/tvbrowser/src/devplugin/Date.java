@@ -199,6 +199,8 @@ public class Date implements Comparable {
 
   /**
    * Creates a new instance from a RandomAccessFile.
+   * @throws IOException 
+   * @throws ClassNotFoundException 
    * 
    * @since 2.2
    */
@@ -223,6 +225,8 @@ public class Date implements Comparable {
   
   /**
    * Creates a new instance from a stream.
+   * @throws IOException 
+   * @throws ClassNotFoundException 
    */
   public Date(ObjectInputStream in) throws IOException, ClassNotFoundException {
     int version = in.readInt();
@@ -259,6 +263,7 @@ public class Date implements Comparable {
 
   /**
    * Writes this instance to a stream.
+   * @throws IOException 
    */
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(2); // version
@@ -401,7 +406,7 @@ public class Date implements Comparable {
 
   /**
    * is this a Monday?
-   * @return
+   * @return <code>true</code>, if this is the first day of the week
    * @since 2.6
    */
   public boolean isFirstDayOfWeek() {

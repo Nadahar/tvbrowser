@@ -204,6 +204,7 @@ public abstract class AbstractOldTvDataServiceBridge implements TvDataService {
 
   /**
    * Called by the host-application before starting to download.
+   * @throws TvBrowserException 
    */
   public void connect() throws TvBrowserException {
     if (mProgramDispatcher != null) {
@@ -219,6 +220,7 @@ public abstract class AbstractOldTvDataServiceBridge implements TvDataService {
   /**
    * After the download is done, this method is called. Use this method for
    * clean-up.
+   * @throws TvBrowserException 
    */
   public void disconnect() throws TvBrowserException {
     if (mProgramDispatcher == null) {
@@ -233,6 +235,7 @@ public abstract class AbstractOldTvDataServiceBridge implements TvDataService {
 
   /**
    * Returns the whole program of the channel on the specified date.
+   * @throws TvBrowserException 
    */
   public MutableChannelDayProgram downloadDayProgram(devplugin.Date date,
     devplugin.Channel channel) throws TvBrowserException

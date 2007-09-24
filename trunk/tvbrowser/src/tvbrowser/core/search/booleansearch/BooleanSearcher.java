@@ -89,6 +89,7 @@ public class BooleanSearcher extends AbstractSearcher {
    * Erzeugt einen neuen Suchbaum. Der Baum wird automatisch optimiert. Es kann
    * immer nur ein Konstruktor gleichzeitig laufen. Fuer Synchronization ist
    * gesorgt.
+   * @throws ParserException 
    */
   public BooleanSearcher(String pattern, boolean CaseSensitive) throws ParserException {
     Hashtable<String, Object> matcherTab = new Hashtable<String, Object>();

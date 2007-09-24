@@ -118,6 +118,7 @@ public class TextAreaIcon implements Icon {
   /**
    * Set the Text of this Icon
    * @param textReader Text in this Icon
+   * @throws IOException 
    */
   public void setText(Reader textReader) throws IOException {
     if (textReader == null) {

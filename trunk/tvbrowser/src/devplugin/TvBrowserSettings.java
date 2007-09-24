@@ -28,8 +28,6 @@ package devplugin;
 
 import java.awt.Color;
 
-import tvbrowser.core.Settings;
-
 /**
  * Provides information of the current user settings.
  *  

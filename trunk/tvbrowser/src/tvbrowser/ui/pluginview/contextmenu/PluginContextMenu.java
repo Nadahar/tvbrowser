@@ -87,8 +87,8 @@ public abstract class PluginContextMenu extends AbstractContextMenu {
     }
 
     if (mActionMenus.length>0) {
-      for (int i=0; i<mActionMenus.length; i++) {
-        JMenuItem menuItem = MenuUtil.createMenuItem(mActionMenus[i]);
+      for (ActionMenu actionMenu : mActionMenus) {
+        JMenuItem menuItem = MenuUtil.createMenuItem(actionMenu);
         menu.add(menuItem);
       }
     }
