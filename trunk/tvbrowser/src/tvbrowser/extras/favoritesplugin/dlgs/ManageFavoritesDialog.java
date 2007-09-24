@@ -752,7 +752,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     if(mFavoritesList != null) {
       fav = (Favorite) mFavoritesListModel.get(mFavoritesList.getSelectedIndex());
     }
-    else {
+    else if(programs == null) {
       programs = ((FavoriteNode)mFavoriteTree.getSelectionPath().getLastPathComponent()).getAllPrograms(true);
       
       if(programs.length < 1) {
@@ -761,18 +761,15 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       
       fav = null;
     }
+    else {
+      fav = null;
+    }
     
     if (fav != null && (programs == null || programs.length == 0)) {
       programs = mShowNew ? fav.getNewPrograms() : fav.getWhiteListPrograms();
     }
     
-    ProgramReceiveIf caller = null;
-    
-    if(fav == null || fav.getReminderConfiguration().containsService(ReminderConfiguration.REMINDER_DEFAULT)) {
-      caller = ReminderPluginProxy.getInstance();
-    }
-    
-    SendToPluginDialog send = new SendToPluginDialog(caller, this, programs);
+    SendToPluginDialog send = new SendToPluginDialog(null, this, programs);
 
     send.setVisible(true);
   }
