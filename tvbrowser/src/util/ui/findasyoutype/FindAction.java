@@ -166,7 +166,7 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
   }
 
   private void changed(Position.Bias bias) {
-    mSearchField.requestFocus();
+    mSearchField.requestFocusInWindow();
     if(changed(mComponent, mSearchField.getText(), bias)) {
       reset();
     }
