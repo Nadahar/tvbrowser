@@ -804,7 +804,7 @@ public class PluginTree extends JTree implements DragGestureListener,
           }
           
           if(program.isExpired()) {
-            g.setColor(UIManager.getColor("Label.disabledForeground"));            
+            g.setColor(UIManager.getColor("ComboBox.disabledForeground"));            
           }
           else if(FilterManagerImpl.getInstance().getCurrentFilter().accept(program)) {
             g.setColor(UIManager.getColor("Label.foreground"));
