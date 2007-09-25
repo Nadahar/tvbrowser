@@ -141,14 +141,14 @@ Function un.onInit
 FunctionEnd
 
 # Function un.UninstallTvDataPage
-#  !insertmacro MUI_HEADER_TEXT "TV-Daten l�schen" \
-#    "Bestimmen Sie, ob bereits heruntergeladene TV-Daten gel�scht werden sollen"
+#  !insertmacro MUI_HEADER_TEXT "TV-Daten löschen" \
+#    "Bestimmen Sie, ob bereits heruntergeladene TV-Daten gelöscht werden sollen"
 #  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallTvData.ini"
 # FunctionEnd
 
 #Function un.UninstallSettingsPage
-#  !insertmacro MUI_HEADER_TEXT "Einstellungen l�schen" \
-#    "Bestimmen Sie, ob Ihre Einstellungen gel�scht werden sollen"
+#  !insertmacro MUI_HEADER_TEXT "Einstellungen löschen" \
+#    "Bestimmen Sie, ob Ihre Einstellungen gelöscht werden sollen"
 #  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallSettings.ini"
 #FunctionEnd
 
@@ -172,7 +172,7 @@ FunctionEnd
  LangString STD_SECTION_NAME ${LANG_German} "${PROG_NAME} (erforderlich)"
  LangString STD_SECTION_NAME ${LANG_ENGLISH} "${PROG_NAME} (necessary)"
 
- LangString LINK_SECTION_NAME ${LANG_German} "Verkn�pfung auf dem Desktop"
+ LangString LINK_SECTION_NAME ${LANG_German} "Verknüpfung auf dem Desktop"
  LangString LINK_SECTION_NAME ${LANG_ENGLISH} "Link on the desktop"
 
  LangString START_WITH_WINDOWS ${LANG_GERMAN} "TV-Browser mit Windows starten"
@@ -226,10 +226,10 @@ FunctionEnd
  LangString GENRES ${LANG_GERMAN} "Genres-Plugin"
  LangString GENRES ${LANG_ENGLISH} "Genres Plugin"
  
- LangString I18N ${LANG_GERMAN} "�bersetzungstool"
+ LangString I18N ${LANG_GERMAN} "Übersetzungstool"
  LangString I18N ${LANG_ENGLISH} "Translation tool"
  
- LangString LISTVIEW ${LANG_GERMAN} "Was l�uft gerade"
+ LangString LISTVIEW ${LANG_GERMAN} "Was läuft gerade"
  LangString LISTVIEW ${LANG_ENGLISH} "What runs now"
  
  LangString NEWS ${LANG_GERMAN} "Nachrichten"
@@ -250,7 +250,7 @@ FunctionEnd
  LangString WEB ${LANG_GERMAN} "Internet-Suche"
  LangString WEB ${LANG_ENGLISH} "Web Search"
 
- LangString un.QUESTION ${LANG_GERMAN} "Sollen die Konfigurationsdateien und TV-Daten gel�scht werden?"
+ LangString un.QUESTION ${LANG_GERMAN} "Sollen die Konfigurationsdateien und TV-Daten gelöscht werden?"
  LangString un.QUESTION ${LANG_ENGLISH} "Do you want to delete the settings and TV data files?"
 
  LangString un.CONFIRM ${LANG_GERMAN} "Sind Sie sicher?"
