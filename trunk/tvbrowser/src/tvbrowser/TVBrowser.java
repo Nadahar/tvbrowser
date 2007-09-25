@@ -642,10 +642,7 @@ public class TVBrowser {
     
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     
-    if (Settings.propIsWindowMaximized.getBoolean()) {
-        mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
-    }
-    if (!Settings.propIsWindowMaximized.getBoolean() && (windowX + windowWidth < 0 || windowX > screen.width + 10 || windowY + windowHeight < 0 || windowY > screen.height + 10 || windowWidth < 200 || windowHeight < 200)) {
+    if (windowX + windowWidth < 0 || windowX > screen.width + 10 || windowY + windowHeight < 0 || windowY > screen.height + 10 || windowWidth < 200 || windowHeight < 200) {
       UiUtilities.centerAndShow(mainFrame);
     } else {
       mainFrame.setLocation(windowX, windowY);
@@ -654,8 +651,8 @@ public class TVBrowser {
     ErrorHandler.setFrame(mainFrame);
 
     splash.hideSplash();
- 	
-    // maximize the frame if wanted, needed for Linux
+    
+    // maximize the frame if wanted, needed for Linux and also for Windows
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         if (Settings.propIsWindowMaximized.getBoolean()) {
