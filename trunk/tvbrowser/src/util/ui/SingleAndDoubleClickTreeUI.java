@@ -78,8 +78,8 @@ public class SingleAndDoubleClickTreeUI extends javax.swing.plaf.basic.BasicTree
   
   public void mousePressed(MouseEvent e) {
     if(!e.isConsumed()) {
-      if(!tree.hasFocus()) {
-        tree.requestFocus();
+      if(!tree.isFocusOwner()) {
+        tree.requestFocusInWindow();
       }
       
       TreePath path = getClosestPathForLocation(tree, e.getX(), e.getY());

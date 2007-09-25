@@ -396,7 +396,7 @@ public class TextComponentFindAction extends FindAction implements
     interrupt();
     mSearchBar.setVisible(true);
     mSearchCloseBtn.setVisible(true);
-    getSearchField().requestFocus();
+    getSearchField().requestFocusInWindow();
   }
 
   /**

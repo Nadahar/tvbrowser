@@ -23,12 +23,6 @@
  */
 package tvbrowser.extras.favoritesplugin.dlgs;
 
-import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import util.ui.Localizer;
-import util.ui.OverlayListener;
-import util.ui.UiUtilities;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -56,6 +50,7 @@ import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.Enumeration;
+
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -67,6 +62,12 @@ import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+
+import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import util.ui.Localizer;
+import util.ui.OverlayListener;
+import util.ui.UiUtilities;
 
 /**
  * The tree for the ManageFavoritesDialog.
@@ -733,8 +734,8 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
     
     public void mousePressed(MouseEvent e) {
       if(!e.isConsumed()) {
-        if(!tree.hasFocus()) {
-          tree.requestFocus();
+        if(!tree.isFocusOwner()) {
+          tree.requestFocusInWindow();
         }
         
         TreePath path = getClosestPathForLocation(tree, e.getX(), e.getY());
