@@ -215,6 +215,9 @@ public class ProgramUtilities {
     String actorsField = program.getTextField(ProgramFieldType.ACTOR_LIST_TYPE);
     if (actorsField != null) {
       ArrayList<String>[] lists = splitActors(program);
+      if (lists == null) {
+        return null;
+      }
       ArrayList<String> result;
       // use first list if the field has special formatting
       if (actorsField.contains(ACTOR_ROLE_SEPARATOR)) {

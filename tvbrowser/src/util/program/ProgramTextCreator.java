@@ -506,7 +506,7 @@ public class ProgramTextCreator {
             if (lists == null) {
               lists = splitActorsSimple(prog);
             }
-            if (lists[0].size() > 0) {
+            if (lists != null && lists[0].size() > 0) {
               startInfoSection(buffer, type.getLocalizedName());
               buffer.append("<table border=\"0\" cellpadding=\"0\" style=\"font-family:");
               buffer.append(bodyFont);
@@ -574,7 +574,12 @@ public class ProgramTextCreator {
     ArrayList<String> list2 = new ArrayList();
     String actorField = prog.getTextField(ProgramFieldType.ACTOR_LIST_TYPE).trim();
     String[] actors = new String[0];
+    // don't try any parsing if newlines and commas are available
+    // this must be recognized by the more advanced actors parsing
     if (actorField.contains("\n")) {
+      if (actorField.contains(",")) {
+        return null;
+      }
       actors = actorField.split("\n");
     }
     else if (actorField.contains(",")) {
