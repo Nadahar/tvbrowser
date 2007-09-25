@@ -60,6 +60,7 @@ import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.Localizer;
 import util.ui.NullProgressMonitor;
+import util.ui.ScrollableJPanel;
 import util.ui.UiUtilities;
 
 import java.awt.Component;
@@ -79,9 +80,15 @@ import java.util.Hashtable;
 import java.util.Properties;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 /**
  * Plugin for managing the favorite programs.
@@ -414,11 +421,27 @@ public class FavoritesPlugin {
       buffer.insert(0,mLocalizer.msg("sendError","Error by sending programs to other plugins.\n\nPlease check the favorites that should send\nprograms to the following plugins:\n"));
       buffer.append(mLocalizer.msg("sendErrorFavorites","\nThe following Favorites are affected by this:\n"));
       
+      ScrollableJPanel panel = new ScrollableJPanel();
+      panel.setBorder(BorderFactory.createEmptyBorder(0,1,0,1));
+      panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS));
+      
       for(Favorite fav : errorFavorites) {
-        buffer.append(fav.getName() + "\n");
+        final Favorite finalFav = fav;
+        panel.add(UiUtilities.createHtmlHelpTextArea("<a href=\"#link\">" + fav.getName() + "</a>",new HyperlinkListener() {
+          public void hyperlinkUpdate(HyperlinkEvent e) {
+            if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+              editFavorite(finalFav);
+            }
+          }
+        }));
       }
       
-      JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()),buffer.toString(),Localizer.getLocalization(Localizer.I18N_ERROR),JOptionPane.ERROR_MESSAGE);
+      JScrollPane pane = new JScrollPane(panel);
+      pane.setPreferredSize(new Dimension(0,100));
+      
+      Object[] msg = {buffer.toString(),pane};
+      
+      JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()),msg,Localizer.getLocalization(Localizer.I18N_ERROR),JOptionPane.ERROR_MESSAGE);
     }
   }
   
@@ -886,6 +909,10 @@ public class FavoritesPlugin {
     
     protected Program[] getPrograms() {
       return mProgramsList.toArray(new Program[mProgramsList.size()]);
+    }
+    
+    public String toString() {
+      return mTarget.toString();
     }
   }
   
