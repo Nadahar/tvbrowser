@@ -54,7 +54,7 @@ public class ProgramUtilities {
     if (currentDate.addDays(-1).compareTo(p.getDate()) == 0) {
       time += 24 * 60;
     }
-    if (currentDate.compareTo(p.getDate()) < 0 || p.getDate().compareTo(currentDate) < 0) {
+    if (currentDate.compareTo(p.getDate()) < 0 || p.getDate().addDays(1).compareTo(currentDate) < 0) {
       return false;
     }
 
