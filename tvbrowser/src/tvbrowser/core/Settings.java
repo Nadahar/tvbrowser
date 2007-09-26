@@ -991,6 +991,9 @@ public class Settings {
   public static final BooleanProperty propIsWindowMaximized = new BooleanProperty(
       mProp, "window.isMaximized", false);
 
+  public static final BooleanProperty propIsUsingFullscreen = new BooleanProperty(
+      mProp, "isUsingFullscreen", false);
+
   public static final IntProperty propWindowWidth = new IntProperty(mProp,
       "window.width", 770);
 

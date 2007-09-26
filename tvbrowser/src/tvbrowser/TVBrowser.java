@@ -656,7 +656,7 @@ public class TVBrowser {
     // maximize the frame if wanted, needed for Linux and also for Windows
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        if (Settings.propIsWindowMaximized.getBoolean()) {
+        if (Settings.propIsWindowMaximized.getBoolean() && !Settings.propIsUsingFullscreen.getBoolean()) {
           mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
           SwingUtilities.invokeLater(new Runnable(){
             public void run() {
@@ -672,7 +672,7 @@ public class TVBrowser {
       mainFrame.setExtendedState(Frame.ICONIFIED);
     }
 
-    if (mFullscreen) {
+    if (mFullscreen || Settings.propIsUsingFullscreen.getBoolean()) {
        SwingUtilities.invokeLater(new Runnable() {
           public void run() {
             mainFrame.switchFullscreenMode();

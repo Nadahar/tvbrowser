@@ -27,6 +27,8 @@ package tvbrowser.ui.settings;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 
 import javax.swing.ButtonGroup;
@@ -68,7 +70,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
 
   private JPanel mSettingsPn;
 
-  private JCheckBox mShowSplashChB, mMinimizeAfterStartUpChB,
+  private JCheckBox mShowSplashChB, mMinimizeAfterStartUpChB, mStartFullscreen,
       mAutostartWithWindows;
   
   private UrlFile mLinkUrl;
@@ -103,7 +105,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
   public JPanel createSettingsPanel() {
     FormLayout layout = new FormLayout(
         "5dlu, pref, 3dlu, pref, fill:3dlu:grow, 3dlu",
-        "pref, 5dlu, pref, 1dlu, pref, 10dlu, pref, 10dlu, pref, 5dlu, pref");
+        "pref, 5dlu, pref, 1dlu, pref, 1dlu, pref, 10dlu, pref, 10dlu, pref, 5dlu, pref");
     mSettingsPn = new JPanel(layout);
     mSettingsPn.setBorder(Borders.DIALOG_BORDER);
 
@@ -118,7 +120,30 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
         "minimizeAfterStartup", "Minimize main window after start up"),
         Settings.propMinimizeAfterStartup.getBoolean());
     mSettingsPn.add(mMinimizeAfterStartUpChB, cc.xy(2, ++y));
+    
+    y++;
+    
+    mStartFullscreen = new JCheckBox(mLocalizer.msg(
+        "startFullscreen","Start in fullscreen mode"),
+        Settings.propIsUsingFullscreen.getBoolean());
+    mSettingsPn.add(mStartFullscreen, cc.xy(2,++y));
+    
+    mMinimizeAfterStartUpChB.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        if(e.getStateChange() == ItemEvent.SELECTED) {
+          mStartFullscreen.setSelected(false);
+        }
+      }
+    });
 
+    mStartFullscreen.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        if(e.getStateChange() == ItemEvent.SELECTED) {
+          mMinimizeAfterStartUpChB.setSelected(false);
+        }
+      }
+    });
+    
     y++;
     
     mShowSplashChB = new JCheckBox(mLocalizer.msg("showSplashScreen",
@@ -196,6 +221,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     Settings.propMinimizeAfterStartup.setBoolean(mMinimizeAfterStartUpChB
         .isSelected());
     Settings.propSplashShow.setBoolean(mShowSplashChB.isSelected());
+    Settings.propIsUsingFullscreen.setBoolean(mStartFullscreen.isSelected());
     
     if(mAutostartWithWindows != null) {        
         if (mAutostartWithWindows.isSelected()) {
