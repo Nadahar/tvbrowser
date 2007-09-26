@@ -152,7 +152,12 @@ public class ProgramUtilities {
       }
       ArrayList<String> listFirst = new ArrayList<String>();
       ArrayList<String> listSecond = new ArrayList<String>();
-      for (String actor : actors) {
+      for (int i = 0; i < actors.length; i++) {
+        String actor = actors[i];
+        // if this actor has been deleted, do the next iteration
+        if (actor.length() == 0) {
+          continue;
+        }
         if (actor.contains(ACTOR_ROLE_SEPARATOR)) {
           listFirst.add(nameFrom(actor.substring(0, actor.indexOf(ACTOR_ROLE_SEPARATOR))));
           listSecond.add(nameFrom(actor.substring(actor.indexOf(ACTOR_ROLE_SEPARATOR) + ACTOR_ROLE_SEPARATOR.length())));
@@ -164,6 +169,13 @@ public class ProgramUtilities {
         }
         // actor and role separated by brackets
         else if (actor.contains("(") || actor.contains(")")) {
+          // maybe the splitting went wrong because of commata inside brackets
+          if (actor.contains("(") && !actor.contains(")")) {
+            if (i+1 < actors.length && actors[i+1].contains(")") && !actors[i+1].contains("(")) {
+              actor = actor + "," + actors[i+1];
+              actors[i+1] = "";
+            }
+          }
           if (actor.contains("(") && actor.contains(")")) {
             String secondPart = nameFrom(actor.substring(actor.indexOf("(")+1,actor.lastIndexOf(")")));
             // there are multiple brackets, lets look for something like "actor (age) (role)"
