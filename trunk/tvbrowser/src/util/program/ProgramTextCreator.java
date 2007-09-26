@@ -199,8 +199,10 @@ public class ProgramTextCreator {
     buffer.append(prog.getDateString());
     buffer.append(" · ");
     buffer.append(prog.getTimeString());
-    buffer.append("-");
-    buffer.append(prog.getEndTimeString());
+    if (prog.getLength() > 0) {
+      buffer.append("-");
+      buffer.append(prog.getEndTimeString());
+    }
     buffer.append(" · ");
     buffer.append(prog.getChannel());
 

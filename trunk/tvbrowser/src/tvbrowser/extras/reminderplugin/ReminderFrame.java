@@ -201,8 +201,10 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     progPanel.add(mHeader = new JLabel(msg), BorderLayout.NORTH);
     
     JPanel channelPanel = new JPanel(new BorderLayout());
-    JLabel endTime = new JLabel(mLocalizer.msg("endTime", "until {0}",mProgram.getEndTimeString()));
-    channelPanel.add(endTime, BorderLayout.NORTH);
+    if (mProgram.getLength() > 0) {
+      JLabel endTime = new JLabel(mLocalizer.msg("endTime", "until {0}",mProgram.getEndTimeString()));
+      channelPanel.add(endTime, BorderLayout.NORTH);
+    }
     JLabel channelLabel=new JLabel(mProgram.getChannel().getName());
     channelLabel.setIcon(UiUtilities.createChannelIcon(mProgram.getChannel().getIcon()));
     channelLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
