@@ -155,12 +155,12 @@ Function un.onInit
 FunctionEnd
 
 # Function un.UninstallTvDataPage
-#  !insertmacro MUI_HEADER_TEXT "TV-Daten lÃ¶schen" "Bestimmen Sie, ob bereits heruntergeladene TV-Daten gelÃ¶scht werden sollen"
+#  !insertmacro MUI_HEADER_TEXT "TV-Daten löschen" "Bestimmen Sie, ob bereits heruntergeladene TV-Daten gelöscht werden sollen"
 #  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallTvData.ini"
 # FunctionEnd
 
 #Function un.UninstallSettingsPage
-#  !insertmacro MUI_HEADER_TEXT "Einstellungen lÃ¶schen" "Bestimmen Sie, ob Ihre Einstellungen gelÃ¶scht werden sollen"
+#  !insertmacro MUI_HEADER_TEXT "Einstellungen löschen" "Bestimmen Sie, ob Ihre Einstellungen gelöscht werden sollen"
 #  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallSettings.ini"
 #FunctionEnd
 
@@ -178,7 +178,7 @@ FunctionEnd
  LangString STD_SECTION_NAME ${LANG_German} "${PROG_NAME} (erforderlich)"
  LangString STD_SECTION_NAME ${LANG_ENGLISH} "${PROG_NAME} (necessary)"
 
- LangString LINK_SECTION_NAME ${LANG_German} "VerknÃ¼pfung auf dem Desktop"
+ LangString LINK_SECTION_NAME ${LANG_German} "Verknüpfung auf dem Desktop"
  LangString LINK_SECTION_NAME ${LANG_ENGLISH} "Link on the desktop"
 
  LangString START_WITH_WINDOWS ${LANG_GERMAN} "TV-Browser mit Windows starten"
@@ -232,10 +232,10 @@ FunctionEnd
  LangString GENRES ${LANG_GERMAN} "Genres-Plugin"
  LangString GENRES ${LANG_ENGLISH} "Genres Plugin"
  
- LangString I18N ${LANG_GERMAN} "Ãœbersetzungstool"
+ LangString I18N ${LANG_GERMAN} "Übersetzungstool"
  LangString I18N ${LANG_ENGLISH} "Translation tool"
  
- LangString LISTVIEW ${LANG_GERMAN} "Was lÃ¤uft gerade"
+ LangString LISTVIEW ${LANG_GERMAN} "Was läuft gerade"
  LangString LISTVIEW ${LANG_ENGLISH} "What runs now"
  
  LangString NEWS ${LANG_GERMAN} "Nachrichten"
@@ -256,7 +256,7 @@ FunctionEnd
  LangString WEB ${LANG_GERMAN} "Internet-Suche"
  LangString WEB ${LANG_ENGLISH} "Web Search"
 
- LangString un.QUESTION ${LANG_GERMAN} "Sollen die Konfigurationsdateien und TV-Daten gelÃ¶scht werden?"
+ LangString un.QUESTION ${LANG_GERMAN} "Sollen die Konfigurationsdateien und TV-Daten gelöscht werden?"
  LangString un.QUESTION ${LANG_ENGLISH} "Do you want to delete the settings and TV data files?"
 
  LangString un.CONFIRM ${LANG_GERMAN} "Sind Sie sicher?"
@@ -696,52 +696,52 @@ SectionEnd
 
 
 LangString DESC_SEC_STANDARD ${LANG_ENGLISH} "TV-Browser application and files"
-LangString DESC_SEC_STANDARD ${LANG_GERMAN} "TV-Browser-Hauptprogramm und zusÃ¤tzliche Dateien"
+LangString DESC_SEC_STANDARD ${LANG_GERMAN} "TV-Browser-Hauptprogramm und zusätzliche Dateien"
 
-LangString DESC_SEC_LINK ${LANG_ENGLISH} "Create a link on your desktop to run TV-Browser"
-LangString DESC_SEC_LINK ${LANG_GERMAN} "Eine VerknÃ¼pfung zum TV-Browser auf dem Desktop anlegen"
+LangString DESC_SEC_LINK ${LANG_ENGLISH} "Create a link on your desktop to run TV-Browser."
+LangString DESC_SEC_LINK ${LANG_GERMAN} "Eine Verknüpfung zum TV-Browser auf dem Desktop anlegen."
 
 LangString DESC_SEC_DATASERVICES ${LANG_ENGLISH} "Data services bring you additional channels"
 LangString DESC_SEC_DATASERVICES ${LANG_GERMAN} "Datenquellen zum Download der Programm-Daten"
 
 LangString DESC_SEC_SERVICE_TVB ${LANG_ENGLISH} "TV-Browser standard service for program listings"
-LangString DESC_SEC_SERVICE_TVB ${LANG_GERMAN} "TV-Browser-Standarddienst fÃ¼r Sendungsdaten"
+LangString DESC_SEC_SERVICE_TVB ${LANG_GERMAN} "TV-Browser-Standarddienst für Sendungsdaten"
 
 LangString DESC_SEC_SERVICE_RADIOTIMES ${LANG_ENGLISH} "RadioTimes data service for English channels"
-LangString DESC_SEC_SERVICE_RADIOTIMES ${LANG_GERMAN} "RadioTimes-Datenquelle fÃ¼r englische Sender"
+LangString DESC_SEC_SERVICE_RADIOTIMES ${LANG_GERMAN} "RadioTimes-Datenquelle für englische Sender"
 
 LangString DESC_SEC_SERVICE_SWEDB ${LANG_ENGLISH} "SweDB data service for Swedish channels"
-LangString DESC_SEC_SERVICE_SWEDB ${LANG_GERMAN} "SweDB-Datenquelle fÃ¼r schwedische Sender"
+LangString DESC_SEC_SERVICE_SWEDB ${LANG_GERMAN} "SweDB-Datenquelle für schwedische Sender"
 
 LangString DESC_SEC_PLUGINS ${LANG_ENGLISH} "Plugins can provide additional features."
-LangString DESC_SEC_PLUGINS ${LANG_GERMAN} "Mit Plugins kÃ¶nnen zusÃ¤tzliche Funktionen bereitgestellt werden."
+LangString DESC_SEC_PLUGINS ${LANG_GERMAN} "Mit Plugins können zusätzliche Funktionen bereitgestellt werden."
 
-LangString DESC_SEC_PLUGIN_BLOGTHIS ${LANG_ENGLISH} "Creates a new blog entry"
-LangString DESC_SEC_PLUGIN_BLOGTHIS ${LANG_GERMAN} "Erzeugt einen neuen Eintrag in deinem Blog"
+LangString DESC_SEC_PLUGIN_BLOGTHIS ${LANG_ENGLISH} "Creates a new blog entry."
+LangString DESC_SEC_PLUGIN_BLOGTHIS ${LANG_GERMAN} "Erzeugt einen neuen Eintrag in einem Blog."
 
 LangString DESC_SEC_PLUGIN_CALENDAR ${LANG_ENGLISH} "Exports a program to a calendar application or a ical/vcal File."
-LangString DESC_SEC_PLUGIN_CALENDAR ${LANG_GERMAN} "Exportiert eine Sendung in eine Kalender-Anwendung"
+LangString DESC_SEC_PLUGIN_CALENDAR ${LANG_GERMAN} "Exportiert eine Sendung in eine Kalender-Anwendung."
 
-LangString DESC_SEC_PLUGIN_CAPTURE ${LANG_ENGLISH} "Starts an external program with configurable parameters"
-LangString DESC_SEC_PLUGIN_CAPTURE ${LANG_GERMAN} "Startet ein externes Programm mit einstellbaren Parametern"
+LangString DESC_SEC_PLUGIN_CAPTURE ${LANG_ENGLISH} "Starts an external program with configurable parameters."
+LangString DESC_SEC_PLUGIN_CAPTURE ${LANG_GERMAN} "Startet ein externes Programm mit einstellbaren Parametern."
 
-LangString DESC_SEC_PLUGIN_CLIPBOARD ${LANG_ENGLISH} "Copy programs to the Clipboard."
+LangString DESC_SEC_PLUGIN_CLIPBOARD ${LANG_ENGLISH} "Copy programs to the clipboard."
 LangString DESC_SEC_PLUGIN_CLIPBOARD ${LANG_GERMAN} "Sendungen in die Zwischenablage kopieren."
 
-LangString DESC_SEC_PLUGIN_EMAIL ${LANG_ENGLISH} "Send an e-mail with an external e-mail application"
-LangString DESC_SEC_PLUGIN_EMAIL ${LANG_GERMAN} "Verschickt eine E-Mail mit Hilfe einer externen E-Mail-Anwendung"
+LangString DESC_SEC_PLUGIN_EMAIL ${LANG_ENGLISH} "Sends an e-mail with an external e-mail application."
+LangString DESC_SEC_PLUGIN_EMAIL ${LANG_GERMAN} "Verschickt eine E-Mail mit Hilfe einer externen E-Mail-Anwendung."
 
 LangString DESC_SEC_PLUGIN_GENRES ${LANG_ENGLISH} "Shows the available programs sorted by genre."
 LangString DESC_SEC_PLUGIN_GENRES ${LANG_GERMAN} "Zeigt die Programme nach Genre sortiert an."
 
-LangString DESC_SEC_PLUGIN_I18N ${LANG_ENGLISH} "Tool for Translators of TV-Browser"
-LangString DESC_SEC_PLUGIN_I18N ${LANG_GERMAN} "Werkzeug fÃ¼r Ãœbersetzer des TV-Browser"
+LangString DESC_SEC_PLUGIN_I18N ${LANG_ENGLISH} "A tool for translators of TV-Browser."
+LangString DESC_SEC_PLUGIN_I18N ${LANG_GERMAN} "Ein Werkzeug für Übersetzer von TV-Browser."
 
-LangString DESC_SEC_PLUGIN_LISTVIEW ${LANG_ENGLISH} "Shows a list of currently running programs"
-LangString DESC_SEC_PLUGIN_LISTVIEW ${LANG_GERMAN} "Zeigt eine Liste von momentan laufenden Programmen"
+LangString DESC_SEC_PLUGIN_LISTVIEW ${LANG_ENGLISH} "Shows a list of currently running programs."
+LangString DESC_SEC_PLUGIN_LISTVIEW ${LANG_GERMAN} "Zeigt eine Liste von momentan laufenden Programmen."
 
 LangString DESC_SEC_PLUGIN_NEWS ${LANG_ENGLISH} "Checks for news about the TV-Browser project."
-LangString DESC_SEC_PLUGIN_NEWS ${LANG_GERMAN} "PrÃ¼ft automatisch nach Neuigkeiten rund um das TV-Browser-Projekt."
+LangString DESC_SEC_PLUGIN_NEWS ${LANG_GERMAN} "Prüft automatisch nach Neuigkeiten rund um das TV-Browser-Projekt."
 
 LangString DESC_SEC_PLUGIN_PRINT ${LANG_ENGLISH} "This plugin allows to print the program."
 LangString DESC_SEC_PLUGIN_PRINT ${LANG_GERMAN} "Mit diesem Plugin kann die Programmvorschau ausgedruckt werden."
@@ -749,14 +749,14 @@ LangString DESC_SEC_PLUGIN_PRINT ${LANG_GERMAN} "Mit diesem Plugin kann die Prog
 LangString DESC_SEC_PLUGIN_SHOWVIEW ${LANG_ENGLISH} "Tries to calculate the missing Showview numbers after a TV listings update."
 LangString DESC_SEC_PLUGIN_SHOWVIEW ${LANG_GERMAN} "Versucht nach dem Aktualisieren der TV-Daten die fehlenden Showviewnummern zu berechnen."
 
-LangString DESC_SEC_PLUGIN_SIMPLEMARKER ${LANG_ENGLISH} "A simple marker plugin"
-LangString DESC_SEC_PLUGIN_SIMPLEMARKER ${LANG_GERMAN} "Einfaches Markierungs-Plugin"
+LangString DESC_SEC_PLUGIN_SIMPLEMARKER ${LANG_ENGLISH} "A simple marker plugin."
+LangString DESC_SEC_PLUGIN_SIMPLEMARKER ${LANG_GERMAN} "Ein einfaches Markierungs-Plugin."
 
-LangString DESC_SEC_PLUGIN_TVRATER ${LANG_ENGLISH} "Allows to rate programs and view ratings entered by other users"
-LangString DESC_SEC_PLUGIN_TVRATER ${LANG_GERMAN} "ErmÃ¶glicht die Bewertung von Sendungen und zeigt Bewertungen von anderen Benutzern"
+LangString DESC_SEC_PLUGIN_TVRATER ${LANG_ENGLISH} "Allows to rate programs and view ratings entered by other users."
+LangString DESC_SEC_PLUGIN_TVRATER ${LANG_GERMAN} "Ermöglicht die Bewertung von Sendungen und zeigt Bewertungen von anderen Benutzern."
 
-LangString DESC_SEC_PLUGIN_WEB ${LANG_ENGLISH} "Searches the web for a program"
-LangString DESC_SEC_PLUGIN_WEB ${LANG_GERMAN} "Sucht im Netz nach einer Sendung"
+LangString DESC_SEC_PLUGIN_WEB ${LANG_ENGLISH} "Searches the web for a program."
+LangString DESC_SEC_PLUGIN_WEB ${LANG_GERMAN} "Sucht im Netz nach einer Sendung."
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
     !insertmacro MUI_DESCRIPTION_TEXT ${SEC_STANDARD} $(DESC_SEC_STANDARD)
