@@ -108,7 +108,8 @@ public class TrayBaseSettingsTab implements SettingsTab {
         TrayOnTimeSettingsTab.setTrayIsEnabled(mIsEnabled);
         TraySoonSettingsTab.setTrayIsEnabled(mIsEnabled);
         TrayProgramsChannelsSettingsTab.setTrayIsEnabled(mIsEnabled);
-        mMinimizeToTrayChb.setEnabled(mTrayIsEnabled.isSelected());        
+        mMinimizeToTrayChb.setEnabled(mTrayIsEnabled.isSelected());
+        mNowOnRestore.setEnabled(mTrayIsEnabled.isSelected());
       }
     });
     
