@@ -1,7 +1,7 @@
 TV-Browser ohne DirectX
 =========================
 Diese Exe-Datei bitte nur bei Darstellungs-Problemen benutzen. Darunter
-fallen z.b. graue Fenster, falsche Farben usw.
+fallen z.B. graue Fenster, falsche Farben usw.
 
 Die Probleme sind meistens auf fehlerhafte Implementierung innerhalb der 
-Treiber von Grafikkarten zurück zuführen. 
+Treiber von Grafikkarten zurückzuführen. 
