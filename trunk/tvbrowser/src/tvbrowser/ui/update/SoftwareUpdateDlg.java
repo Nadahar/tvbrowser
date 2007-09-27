@@ -165,9 +165,16 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     contentPane.add(southPn, BorderLayout.SOUTH);
 
     if (Settings.propUpdateDialogWidth.getInt() == -1 || Settings.propUpdateDialogHeight.getInt() == -1) {
-      this.setSize(500, 400);
+      setSize(500, 400);
     } else {
-      this.setSize(Settings.propUpdateDialogWidth.getInt(), Settings.propUpdateDialogHeight.getInt());
+      pack();
+      
+      if(getWidth() < Settings.propUpdateDialogWidth.getInt()) {
+        setSize(Settings.propUpdateDialogWidth.getInt(), getHeight());
+      }
+      if(getHeight() < Settings.propUpdateDialogHeight.getInt()) {
+        setSize(getWidth(), Settings.propUpdateDialogHeight.getInt());
+      }
     }
 
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
