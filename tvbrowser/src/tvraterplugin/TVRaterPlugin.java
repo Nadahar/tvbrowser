@@ -125,6 +125,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
     public TVRaterPlugin() {
         _tvRaterInstance = this;
+        mRootNode.getMutableTreeNode().setIcon(new ImageIcon(ImageUtilities.createImageFromJar("tvraterplugin/imgs/missingrating.png", TVRaterPlugin.class)));
     }
     
     public static Version getVersion() {
@@ -308,7 +309,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
     }
 
     public String getMarkIconName() {
-        return "tvraterplugin/imgs/tvrater.png";
+        return "tvraterplugin/imgs/missingrating.png";
     }
 
     /**
@@ -517,6 +518,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
       //manually cast to avoid unsafe compiler cast
       return (Class<? extends PluginsFilterComponent>[]) new Class[] {TVRaterFilter.class};
