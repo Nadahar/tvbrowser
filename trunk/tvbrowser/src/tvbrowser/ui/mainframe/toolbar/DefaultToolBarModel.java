@@ -155,9 +155,9 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
     mPluginViewAction = createAction(TVBrowser.mLocalizer.msg(
         "button.pluginView", "Plugin View"), "#pluginView",
         MainFrame.mLocalizer.msg("menuinfo.pluginView", ""), IconLoader
-        .getInstance().getIconFromTheme("actions", "view-plugins", 16),
+        .getInstance().getIconFromTheme("actions", "view-tree", 16),
         IconLoader.getInstance().getIconFromTheme("actions",
-            "view-plugins", 22),
+            "view-tree", 22),
         ToolBar.TOOGLE_BUTTON_ACTION, this);
     String scrollTo = MainFrame.mLocalizer
         .msg("menuinfo.scrollTo", "Scroll to")
