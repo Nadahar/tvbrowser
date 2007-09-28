@@ -179,20 +179,22 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
 
     mPreviousDayMI = new JMenuItem(mLocalizer.msg("menuitem.previousDay","previous day"));
     mPreviousDayMI.addActionListener(this);
-    mPreviousDayMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-up", 16));
+    mPreviousDayMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-to-previous-day", 16));
     mNextDayMI = new JMenuItem(mLocalizer.msg("menuitem.nextDay","next day"));
     mNextDayMI.addActionListener(this);
-    mNextDayMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-down", 16));
+    mNextDayMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-to-next-day", 16));
     mGotoNowMenuItem = new JMenuItem(mLocalizer.msg("menuitem.now","now"));
     mGotoNowMenuItem.addActionListener(this);
+    mGotoNowMenuItem.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "scroll-to-now", 16));
     mGotoDateMenu = new JMenu(mLocalizer.msg("menuitem.date","date"));
-    mGotoDateMenu.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "office-calendar", 16));
+    mGotoDateMenu.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-to-date", 16));
 
 
 
     mGotoChannelMenu = new ScrollableMenu(Localizer.getLocalization(Localizer.I18N_CHANNEL));
+    mGotoChannelMenu.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "scroll-to-channel", 16));
     mGotoTimeMenu = new JMenu(mLocalizer.msg("menuitem.time","time"));
-    mGotoTimeMenu.setIcon(IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16));
+    mGotoTimeMenu.setIcon(IconLoader.getInstance().getIconFromTheme("apps", "scroll-to-time", 16));
     mGoMenu.add(mPreviousDayMI);
     mGoMenu.add(mNextDayMI);
     mGoMenu.addSeparator();
