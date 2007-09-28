@@ -189,8 +189,8 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
     mGoToDateAction = createAction(mLocalizer.msg("goToDate", "Go to date"),
             "#goToDate", mLocalizer.msg("goToDateTooltip", "Go to a date"),
             IconLoader.getInstance().getIconFromTheme("actions",
-                "go-to-date", 16), IconLoader.getInstance()
-                .getIconFromTheme("actions", "go-to-date", 22),
+                "go-to-date-list", 16), IconLoader.getInstance()
+                .getIconFromTheme("actions", "go-to-date-list", 22),
             ToolBar.TOOGLE_BUTTON_ACTION, this);
     mReminderAction = createAction(ReminderPlugin.mLocalizer.msg("toolbar",
         "Reminder"), SettingsItem.REMINDER,
@@ -215,12 +215,12 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
     mScrollToChannelAction = createAction(mLocalizer.msg("scrollToChannel",
         "Scroll to channel"), "#scrollToChannel", mLocalizer.msg("scrollToChannelTooltip",
         "Scroll to a channel"), IconLoader.getInstance().getIconFromTheme(
-        "actions", "scroll-to-channel", 16),IconLoader.getInstance().getIconFromTheme(
-        "actions", "scroll-to-channel", 22), ToolBar.TOOGLE_BUTTON_ACTION, this);
+        "actions", "scroll-to-channel-list", 16),IconLoader.getInstance().getIconFromTheme(
+        "actions", "scroll-to-channel-list", 22), ToolBar.TOOGLE_BUTTON_ACTION, this);
     mScrollToTimeAction = createAction(mLocalizer.msg("scrollToTime", "Scroll to time"),
         "#scrollToTime", mLocalizer.msg("scrollToTimeTooltip", "Scroll to a time"),
-        IconLoader.getInstance().getIconFromTheme("actions", "scroll-to-time", 16),
-        IconLoader.getInstance().getIconFromTheme("actions", "scroll-to-time", 22),
+        IconLoader.getInstance().getIconFromTheme("actions", "scroll-to-time-list", 16),
+        IconLoader.getInstance().getIconFromTheme("actions", "scroll-to-time-list", 22),
         ToolBar.TOOGLE_BUTTON_ACTION, this);
 
     updateTimeButtons();
