@@ -321,10 +321,12 @@ public class ProgramIcon implements Icon {
 
         if (mSettings.getPaintPluginMarks()) {
           for (int i = 0; i < markedByPluginArr.length; i++) {
-            Icon icon = markedByPluginArr[i].getMarkIcon();
-            if (icon != null) {
-              x -= icon.getIconWidth();
-              icon.paintIcon(component, grp, x, y - icon.getIconHeight());
+            Icon[] icons = markedByPluginArr[i].getMarkIcons(mProgram);
+            if (icons != null) {
+              for(Icon icon : icons) {
+                x -= icon.getIconWidth();
+                icon.paintIcon(component, grp, x, y - icon.getIconHeight());
+              }
             }
           }
         }
