@@ -166,6 +166,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mPluginOverviewMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.pluginOverview","Plugin overview"));
     mPluginOverviewMI.setSelected(Settings.propShowPluginView.getBoolean());
     mPluginOverviewMI.addActionListener(this);
+    mPluginOverviewMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-tree", 16));
     mViewFilterBarMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.viewFilterBar","Filter bar"));
     mViewFilterBarMI.setSelected(Settings.propShowFilterBar.getBoolean());
     mViewFilterBarMI.addActionListener(this);
