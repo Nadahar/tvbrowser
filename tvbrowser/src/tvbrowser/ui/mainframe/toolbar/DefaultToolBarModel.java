@@ -122,14 +122,14 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
     
     if (arg) {
       mFilterAction.putValue(Action.SMALL_ICON,
-          IconLoader.getInstance().getIconFromTheme("status","view-filter-set",16));
+          IconLoader.getInstance().getIconFromTheme("status","view-filter-set-list",16));
       mFilterAction.putValue(Plugin.BIG_ICON, 
-          IconLoader.getInstance().getIconFromTheme("status","view-filter-set",22));
+          IconLoader.getInstance().getIconFromTheme("status","view-filter-set-list",22));
     } else {
       mFilterAction.putValue(Action.SMALL_ICON, 
-          IconLoader.getInstance().getIconFromTheme("actions","view-filter",16));
+          IconLoader.getInstance().getIconFromTheme("actions","view-filter-list",16));
       mFilterAction.putValue(Plugin.BIG_ICON,
-          IconLoader.getInstance().getIconFromTheme("actions","view-filter",22));
+          IconLoader.getInstance().getIconFromTheme("actions","view-filter-list",22));
     }
   }
 
@@ -149,8 +149,8 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
         "category", "preferences-desktop", 22), ToolBar.BUTTON_ACTION, this);
     mFilterAction = createAction(TVBrowser.mLocalizer.msg("button.filter",
         "Filter"), "#filter", MainFrame.mLocalizer.msg("menuinfo.filter", ""),
-        IconLoader.getInstance().getIconFromTheme("actions","view-filter",16),
-        IconLoader.getInstance().getIconFromTheme("actions","view-filter",22),
+        IconLoader.getInstance().getIconFromTheme("actions","view-filter-list",16),
+        IconLoader.getInstance().getIconFromTheme("actions","view-filter-list",22),
         ToolBar.TOOGLE_BUTTON_ACTION, this);
     mPluginViewAction = createAction(TVBrowser.mLocalizer.msg(
         "button.pluginView", "Plugin View"), "#pluginView",

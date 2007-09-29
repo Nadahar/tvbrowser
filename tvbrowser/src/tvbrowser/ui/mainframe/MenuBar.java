@@ -223,6 +223,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     
     mPluginManagerMI = new JMenuItem(mLocalizer.msg("menuitem.managePlugins", "Manage Plugins"));
     mPluginManagerMI.addActionListener(this);
+    mPluginManagerMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-plugins", 16));
     
     Icon urlHelpImg = IconLoader.getInstance().getIconFromTheme("apps", "help-browser", 16);
     Icon urlBrowserImg = IconLoader.getInstance().getIconFromTheme("apps", "internet-web-browser", 16);
