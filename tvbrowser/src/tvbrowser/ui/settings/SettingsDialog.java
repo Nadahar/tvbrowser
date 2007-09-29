@@ -166,6 +166,7 @@ public class SettingsDialog implements WindowClosingIf {
         showSettingsPanelForSelectedNode();
       }
     });
+    mSelectionTree.setRowHeight(17);
     JScrollPane scrollPane = new JScrollPane(mSelectionTree);
     scrollPane.setMinimumSize(new Dimension(150, 0));
     scrollPane.setBorder(null);
@@ -688,9 +689,10 @@ public class SettingsDialog implements WindowClosingIf {
       }
 
       mSettingsPn = null;
-      Enumeration e = children();
+      @SuppressWarnings("unchecked")
+      Enumeration<SettingNode> e = children();
       while (e.hasMoreElements()) {
-        SettingNode node = (SettingNode) e.nextElement();
+        SettingNode node = e.nextElement();
         node.invalidate();
       }
     }
