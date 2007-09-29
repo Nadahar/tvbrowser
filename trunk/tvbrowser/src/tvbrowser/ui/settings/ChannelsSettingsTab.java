@@ -707,7 +707,7 @@ public class ChannelsSettingsTab implements
    * Returns the name of the tab-sheet.
    */
   public Icon getIcon() {
-    return null;
+    return IconLoader.getInstance().getIconFromTheme("actions", "scroll-to-channel", 16);
   }
 
   /**
