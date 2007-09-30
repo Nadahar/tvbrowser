@@ -253,7 +253,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     }
 
     updateBtns();
-    setSize(600, 300);
+    UiUtilities.setSize(this, 600, 300);
     UiUtilities.centerAndShow(this);
 
   }

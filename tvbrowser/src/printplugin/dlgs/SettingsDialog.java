@@ -267,7 +267,7 @@ public class SettingsDialog extends JDialog implements WindowClosingIf {
       mPageFormat = printerJob.defaultPage();
     }
 
-    setSize(450,400);
+    UiUtilities.setSize(this, 450, 400);
 
     mResult = CANCEL;
   }
