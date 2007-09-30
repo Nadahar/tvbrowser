@@ -704,4 +704,22 @@ public class UiUtilities {
     component.getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,"CLOSE_ON_ESCAPE");
     component.getRootPane().getActionMap().put("CLOSE_ON_ESCAPE", a);
   }
+  
+  /**
+   * set the size of a dialog, but never sizes it smaller than the preferred size
+   * @param dialog dialog to be sized
+   * @param width wanted width
+   * @param height wanted height
+   */
+  public static void setSize(JDialog dialog, int width, int height) {
+    dialog.pack();
+    Dimension size = dialog.getMinimumSize();
+    if (width > size.width) {
+      size.width = width;
+    }
+    if (height > size.height) {
+      size.height = height;
+    }
+    dialog.setSize(size);
+  }
 }

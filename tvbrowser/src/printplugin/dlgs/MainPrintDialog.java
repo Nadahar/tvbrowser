@@ -90,20 +90,25 @@ public class MainPrintDialog extends JDialog implements ActionListener, WindowCl
 
     content.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
-    setSize(300,150);
-
     ButtonGroup group = new ButtonGroup();
     group.add(mPrintDayProgramsRb);
     group.add(mPrintQueueRb);
 
-    boolean queueHasElements = !PrintPlugin.getInstance().getRootNode().isEmpty();
-    mPrintQueueRb.setEnabled(queueHasElements);
-
     mOkBtn.addActionListener(this);
     mCancelBtn.addActionListener(this);
 
-    mPrintDayProgramsRb.setSelected(!queueHasElements);
-    mPrintQueueRb.setSelected(queueHasElements);
+    boolean queueHasElements = !PrintPlugin.getInstance().getRootNode().isEmpty();
+    mPrintQueueRb.setEnabled(queueHasElements);
+
+    if (queueHasElements) {
+      mPrintQueueRb.setSelected(true);
+      mPrintQueueRb.requestFocusInWindow();
+    }
+    else {
+      mPrintDayProgramsRb.setSelected(true);
+      mPrintDayProgramsRb.requestFocusInWindow();
+    }
+    UiUtilities.setSize(this, 300,150);
   }
 
   public int getResult() {
