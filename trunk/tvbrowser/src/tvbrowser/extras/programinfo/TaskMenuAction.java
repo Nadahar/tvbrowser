@@ -85,9 +85,33 @@ public class TaskMenuAction {
       if (!menu.hasSubItems()) {
         addAction(parent, menu);
       } else {
-        addTaskPaneGroup(parent, program, menu, info, id);
+        ActionMenu childMenu = getSingleActiveChild(menu);
+        if (childMenu != null) {
+          childMenu.getAction().putValue(Action.NAME, menu.getAction().getValue(Action.NAME));
+          childMenu.getAction().putValue(Action.SMALL_ICON, menu.getAction().getValue(Action.SMALL_ICON));
+          addAction(parent, childMenu);
+        }
+        else {
+          addTaskPaneGroup(parent, program, menu, info, id);
+        }
       }
     }
+  }
+
+  private ActionMenu getSingleActiveChild(ActionMenu menu) {
+    int count = 0;
+    ActionMenu result = null;
+    for (int i = 0; i < menu.getSubItems().length; i++) {
+      ActionMenu subItem = menu.getSubItems()[i];
+      if (subItem.getAction().getValue(Plugin.DISABLED_ON_TASK_MENU) == null) {
+        count++;
+        result = subItem;
+      }
+    }
+    if (count == 1) {
+      return result;
+    }
+    return null;
   }
 
   // Adds the action to the TaskPaneGroup.
