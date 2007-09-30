@@ -74,9 +74,10 @@ public class PluginTreeModel extends DefaultTreeModel {
   public void update() {
     if (!mDisableUpdate) {
       MutableTreeNode root = (MutableTreeNode) this.getRoot();
-      Enumeration e = root.children();
+      @SuppressWarnings("unchecked")
+      Enumeration<DefaultMutableTreeNode> e = root.children();
       while (e.hasMoreElements() && !mDisableUpdate) {
-        DefaultMutableTreeNode n = (DefaultMutableTreeNode) e.nextElement();
+        DefaultMutableTreeNode n = e.nextElement();
         
         Object o = n.getUserObject();
         if (o instanceof Plugin) {
@@ -183,7 +184,7 @@ public class PluginTreeModel extends DefaultTreeModel {
     TreePath selection = PluginTree.getInstance() != null ? PluginTree.getInstance().getSelectionPath() : null;
     
     TreePath treePath = new TreePath(getPathToRoot(node));
-    Enumeration e = null;
+    Enumeration<TreePath> e = null;
 
     if (treePath != null) {
       PluginTree t = PluginTree.getInstance();
@@ -196,7 +197,7 @@ public class PluginTreeModel extends DefaultTreeModel {
     
     if (e != null) {
       while (e.hasMoreElements()) {
-        TreePath tree = (TreePath) e.nextElement();
+        TreePath tree = e.nextElement();
 
         Object[] o = tree.getPath();
 
@@ -205,10 +206,11 @@ public class PluginTreeModel extends DefaultTreeModel {
           
           if (node == null || pathNodes[0].toString().compareTo("Plugins") != 0) {
             TreeNode n1 = (TreeNode) o[i - 1];
-            Enumeration e1 = n1.children();
+            @SuppressWarnings("unchecked")
+            Enumeration<DefaultMutableTreeNode> e1 = n1.children();
 
             while (e1.hasMoreElements()) {
-              TreeNode n2 = (TreeNode) e1.nextElement();
+              TreeNode n2 = e1.nextElement();
               if (n2.toString().compareTo(o[i].toString()) == 0) {
                 o[i] = n2;
                 break;
