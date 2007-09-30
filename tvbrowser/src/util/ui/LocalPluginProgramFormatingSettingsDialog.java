@@ -192,7 +192,7 @@ public class LocalPluginProgramFormatingSettingsDialog extends JDialog implement
     
     pb.add(buttonPanel, cc.xyw(1,++y,3));
     
-    setSize(500,400);
+    UiUtilities.setSize(this, 500, 400);
     setLocationRelativeTo(w);
     setVisible(true);
   }
