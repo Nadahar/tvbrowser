@@ -304,10 +304,12 @@ public class WebPlugin extends Plugin {
       for (int index = 0; index < subActions.length; index++) {
         final WebAddress modifiedAddress = new WebAddress(address.getName(), address.getUrl().replace(WEBSEARCH_ALL, "\"" + subItems.get(index) + "\""), null, false, true);
         subActions[index] = createSearchAction(program, modifiedAddress, subItems.get(index));
+        subActions[index].putValue(Plugin.DISABLED_ON_TASK_MENU, true);
       }
       if (subItems.size() > 1) {
         ContextMenuAction menuAction = new ContextMenuAction(label);
         ActionMenu menu = new ActionMenu(menuAction, subActions);
+        menuAction.putValue(Plugin.DISABLED_ON_TASK_MENU, true);
         categoryList.add(menu);
       }
       else {
