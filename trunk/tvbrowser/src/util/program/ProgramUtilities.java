@@ -397,7 +397,12 @@ public class ProgramUtilities {
       for (int i = 0; i < list.length; i++) {
         for (int j = 0; j < list[i].size(); j++) {
           if (lowerTitle.contains(list[i].get(j).toLowerCase())) {
-            return list[i];
+            if (lowerTitle.contains(" in:")) {
+              return list[i]; // "Jon Doe in: Some title"
+            }
+            else {
+              return list[1-i]; // "Indiana Jones 2"
+            }
           }
         }
       }
