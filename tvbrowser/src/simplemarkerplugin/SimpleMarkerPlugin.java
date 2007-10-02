@@ -163,7 +163,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
    * @return The ActionMenu for this Plugin.
    */
   public ActionMenu getContextMenuActions(Program p) {
-    if(p == null || p.equals(getPluginManager().getExampleProgram())) {
+    if(p == null || p.equals(getPluginManager().getExampleProgram()) || getPluginManager().getFilterManager() == null) {
       return new ActionMenu(new ContextMenuAction(mLocalizer.msg("mark", "Mark"),createImageIcon("actions", "just-mark", 16)));
     }
     
