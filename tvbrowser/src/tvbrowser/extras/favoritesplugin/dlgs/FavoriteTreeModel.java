@@ -105,10 +105,11 @@ public class FavoriteTreeModel extends DefaultTreeModel {
 
   public void reload(TreeNode node) {
     super.reload(node);
-    Enumeration e = node.children();
+    @SuppressWarnings("unchecked")
+    Enumeration<FavoriteNode> e = node.children();
     
     while(e.hasMoreElements()) {
-      FavoriteNode child = (FavoriteNode)e.nextElement();
+      FavoriteNode child = e.nextElement();
       
       if(child.isDirectoryNode())
         reload(child);
@@ -117,10 +118,11 @@ public class FavoriteTreeModel extends DefaultTreeModel {
 
   public void reload(FavoriteTree tree, TreeNode node) {
     super.reload(node);
-    Enumeration e = node.children();
+    @SuppressWarnings("unchecked")
+    Enumeration<FavoriteNode> e = node.children();
 
     while(e.hasMoreElements()) {
-      FavoriteNode child = (FavoriteNode)e.nextElement();
+      FavoriteNode child = e.nextElement();
 
       if(child.isDirectoryNode())
         reload(tree, child);
@@ -162,10 +164,11 @@ public class FavoriteTreeModel extends DefaultTreeModel {
 
   private void fillFavoriteList(FavoriteNode node, ArrayList<Favorite> favoriteList) {
     if(node.isDirectoryNode()) {
-      Enumeration e = node.children();
+      @SuppressWarnings("unchecked")
+      Enumeration<FavoriteNode> e = node.children();
 
       while(e.hasMoreElements()) {
-        FavoriteNode child = (FavoriteNode)e.nextElement();
+        FavoriteNode child = e.nextElement();
 
         if(child.isDirectoryNode()) {
           fillFavoriteList(child, favoriteList);
@@ -215,10 +218,11 @@ public class FavoriteTreeModel extends DefaultTreeModel {
     boolean value = false;
 
     if(node.isDirectoryNode()) {
-      Enumeration e = node.children();
+      @SuppressWarnings("unchecked")
+      Enumeration<FavoriteNode> e = node.children();
 
       while(e.hasMoreElements()) {
-        FavoriteNode child = (FavoriteNode)e.nextElement();
+        FavoriteNode child = e.nextElement();
 
         if(child.isDirectoryNode()) {
           value = value || isContainedByOtherFavorites(child, favorite, p);
@@ -235,10 +239,11 @@ public class FavoriteTreeModel extends DefaultTreeModel {
 
   private void deleteFavorite(FavoriteNode node, Favorite fav) {
     if(node.isDirectoryNode()) {
-      Enumeration e = node.children();
+      @SuppressWarnings("unchecked")
+      Enumeration<FavoriteNode> e = node.children();
 
       while(e.hasMoreElements()) {
-        FavoriteNode child = (FavoriteNode)e.nextElement();
+        FavoriteNode child = e.nextElement();
 
         if(child.isDirectoryNode()) {
           deleteFavorite(child, fav);
@@ -329,10 +334,11 @@ public class FavoriteTreeModel extends DefaultTreeModel {
     }
 
     if(parent.isDirectoryNode()) {
-      Enumeration e = parent.children();
+      @SuppressWarnings("unchecked")
+      Enumeration<FavoriteNode> e = parent.children();
 
       while(e.hasMoreElements()) {
-        final FavoriteNode child = (FavoriteNode)e.nextElement();
+        final FavoriteNode child = e.nextElement();
 
         PluginTreeNode newNode = new PluginTreeNode(child.toString());
         newNode.setGroupingByWeekEnabled(true);

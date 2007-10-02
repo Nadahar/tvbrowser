@@ -209,11 +209,11 @@ public class MainFrame extends JFrame implements DateListener {
     if (OperatingSystem.isMacOs()) {
       /* create the menu bar for MacOS X */
       try {
-        Class impl = Class
+        Class<?> impl = Class
             .forName("tvbrowser.ui.mainframe.macosx.MacOSXMenuBar");
-        Class mainFrameClass = this.getClass();
-        Class jlabelClass = Class.forName("javax.swing.JLabel");
-        Constructor cons = impl.getConstructor(new Class[] { mainFrameClass,
+        Class<? extends MainFrame> mainFrameClass = this.getClass();
+        Class<?> jlabelClass = Class.forName("javax.swing.JLabel");
+        Constructor<?> cons = impl.getConstructor(new Class[] { mainFrameClass,
             jlabelClass });
         mMenuBar = (MenuBar) cons.newInstance(new Object[] { this,
             mStatusBar.getLabel() });

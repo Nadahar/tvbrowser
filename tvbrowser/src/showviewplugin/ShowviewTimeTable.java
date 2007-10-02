@@ -1172,7 +1172,7 @@ public class ShowviewTimeTable {
   }
   
   
-  private static class TimeTableEntry implements Comparable {
+  private static class TimeTableEntry implements Comparable<TimeTableEntry> {
     private int mStartTime;
     private int mLength;
     private int mTableIndex;
@@ -1198,17 +1198,12 @@ public class ShowviewTimeTable {
       return mTableIndex;
     }
 
-    public int compareTo(Object obj) {
-      if (obj instanceof TimeTableEntry) {
-        TimeTableEntry entry = (TimeTableEntry) obj;
-        if (mStartTime != entry.mStartTime) {
-          return (mStartTime < entry.mStartTime) ? -1 : 1;
-        } else {
-          // The start time is equal -> Take a look at the length
-          return (mLength < entry.mLength) ? -1 : 1;
-        }
+    public int compareTo(TimeTableEntry entry) {
+      if (mStartTime != entry.mStartTime) {
+        return (mStartTime < entry.mStartTime) ? -1 : 1;
       } else {
-        return 0;
+        // The start time is equal -> Take a look at the length
+        return (mLength < entry.mLength) ? -1 : 1;
       }
     }
     

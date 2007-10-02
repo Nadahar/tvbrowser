@@ -407,10 +407,11 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
   }
   
   private void expand(FavoriteNode node) {
-    Enumeration e = node.children();
+    @SuppressWarnings("unchecked")
+    Enumeration<FavoriteNode> e = node.children();
     
     while(e.hasMoreElements()) {
-      FavoriteNode child = (FavoriteNode)e.nextElement();
+      FavoriteNode child = e.nextElement();
       
       if(child.isDirectoryNode()) {
         expand(child);

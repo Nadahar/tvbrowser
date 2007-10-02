@@ -43,7 +43,7 @@ import tvbrowser.extras.favoritesplugin.core.TopicFavorite;
  * @author René Mach
  * @since 2.6
  */
-public class FavoriteNode extends DefaultMutableTreeNode implements Comparable {
+public class FavoriteNode extends DefaultMutableTreeNode implements Comparable<FavoriteNode> {
   private boolean mWasExpanded;
   
   /**
@@ -190,8 +190,8 @@ public class FavoriteNode extends DefaultMutableTreeNode implements Comparable {
       return this == o;
   }
 
-  public int compareTo(Object o) {
-    return toString().compareToIgnoreCase(o.toString());
+  public int compareTo(FavoriteNode other) {
+    return toString().compareToIgnoreCase(other.toString());
   }
   
   /**
