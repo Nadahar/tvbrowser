@@ -187,17 +187,19 @@ public class PrintPlugin extends Plugin {
   public ActionMenu getButtonAction() {
     AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent evt) {
-        MainPrintDialog mainDialog = new MainPrintDialog(getParentFrame());
-        UiUtilities.centerAndShow(mainDialog);
-        int result = mainDialog.getResult();
-
-        if (result == MainPrintDialog.PRINT_DAYPROGRAMS) {
-          SettingsDialog dlg = showPrintDialog(new PrintDayProgramsDialogContent(getParentFrame()), loadDayProgramSchemes());
-          storeDayProgramSchemes(dlg.getSchemes());
-        }
-        else if (result == MainPrintDialog.PRINT_QUEUE) {
-          SettingsDialog dlg = showPrintDialog(new PrintFromQueueDialogContent(getRootNode(), getParentFrame()), loadQueueSchemes());
-          storeQueueSchemes(dlg.getSchemes());
+        if(getPluginManager().getFilterManager() != null) {
+          MainPrintDialog mainDialog = new MainPrintDialog(getParentFrame());
+          UiUtilities.centerAndShow(mainDialog);
+          int result = mainDialog.getResult();
+  
+          if (result == MainPrintDialog.PRINT_DAYPROGRAMS) {
+            SettingsDialog dlg = showPrintDialog(new PrintDayProgramsDialogContent(getParentFrame()), loadDayProgramSchemes());
+            storeDayProgramSchemes(dlg.getSchemes());
+          }
+          else if (result == MainPrintDialog.PRINT_QUEUE) {
+            SettingsDialog dlg = showPrintDialog(new PrintFromQueueDialogContent(getRootNode(), getParentFrame()), loadQueueSchemes());
+            storeQueueSchemes(dlg.getSchemes());
+          }
         }
       }
     };
