@@ -236,7 +236,10 @@ public class DayProgramFileTranslator {
     if (bitSet(info, Program.INFO_LIVE)) {
       buf.append("Live  ");
     }
-      if (bitSet(info, Program.INFO_CATEGORIE_MOVIE)) {
+    if (bitSet(info, Program.INFO_NEW)) {
+      buf.append("New  ");
+    }
+    if (bitSet(info, Program.INFO_CATEGORIE_MOVIE)) {
         buf.append("Movie  ");
       }
       if (bitSet(info, Program.INFO_CATEGORIE_SERIES)) {
