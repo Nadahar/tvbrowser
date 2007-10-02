@@ -38,7 +38,7 @@ import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.util.Calendar;
 
-public class Date implements Comparable {
+public class Date implements Comparable<Date> {
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(Date.class);
 
@@ -371,24 +371,23 @@ public class Date implements Comparable {
     return new Date(cal);
   }
 
-  public int compareTo(Object obj) {
-    Date d = (Date) obj;
-    if (this.mYear < d.mYear) {
+  public int compareTo(Date otherDate) {
+    if (this.mYear < otherDate.mYear) {
     	return -1;
     }
-    else if (this.mYear > d.mYear) {
+    else if (this.mYear > otherDate.mYear) {
     	return 1;
     }
-    else if (this.mMonth < d.mMonth) {
+    else if (this.mMonth < otherDate.mMonth) {
     	return -1;
     }
-    else if (this.mMonth > d.mMonth) {
+    else if (this.mMonth > otherDate.mMonth) {
     	return 1;
     }
-    else if (this.mDay < d.mDay) {
+    else if (this.mDay < otherDate.mDay) {
     	return -1;
     }
-    else if (this.mDay > d.mDay) {
+    else if (this.mDay > otherDate.mDay) {
     	return 1;
     }
     return 0;

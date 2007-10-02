@@ -85,7 +85,7 @@ public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNo
     try {
       mProp.load(jarfile.getInputStream(entry));
       
-      Enumeration keys = mProp.keys();
+      Enumeration<Object> keys = mProp.keys();
       
       while (keys.hasMoreElements()) {
         add(new PropertiesEntryNode((String) keys.nextElement()));

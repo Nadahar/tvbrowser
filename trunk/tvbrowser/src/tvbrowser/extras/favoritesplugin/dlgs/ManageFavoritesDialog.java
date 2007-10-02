@@ -68,13 +68,11 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.extras.common.ReminderConfiguration;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.wizards.TypeWizardStep;
 import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
-import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
@@ -94,7 +92,6 @@ import util.ui.WindowClosingIf;
 import com.jgoodies.forms.factories.Borders;
 
 import devplugin.Program;
-import devplugin.ProgramReceiveIf;
 import devplugin.SettingsItem;
 
 
@@ -934,10 +931,11 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
           line = line.trim();
           if ((line.length() > 0) && (! line.startsWith("***"))) {
             // This is a favorite -> Check whether we already have such a favorite
-            Enumeration en = mFavoritesListModel.elements();
+            @SuppressWarnings("unchecked")
+            Enumeration<Favorite> en = (Enumeration<Favorite>) mFavoritesListModel.elements();
             boolean alreadyKnown = false;
             while (en.hasMoreElements()) {
-              Favorite fav = (Favorite) en.nextElement();
+              Favorite fav = en.nextElement();
               String favName = fav.getName();
               if (line.equalsIgnoreCase(favName)) {
                 alreadyKnown = true;

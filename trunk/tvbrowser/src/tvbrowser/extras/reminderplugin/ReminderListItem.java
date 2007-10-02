@@ -32,7 +32,7 @@ import devplugin.ProgramItem;
 import util.program.ProgramUtilities;
 
 
-public class ReminderListItem implements Comparable {
+public class ReminderListItem implements Comparable<ReminderListItem> {
 
 
   private ProgramItem mProgramItem;
@@ -99,8 +99,7 @@ public class ReminderListItem implements Comparable {
     return mProgramItem.getProgram();
   }
 
-  public int compareTo(Object obj) {
-    ReminderListItem item=(ReminderListItem)obj;
-    return ProgramUtilities.getProgramComparator().compare(getProgram(), item.getProgram());
+  public int compareTo(ReminderListItem other) {
+    return ProgramUtilities.getProgramComparator().compare(getProgram(), other.getProgram());
   }
 }

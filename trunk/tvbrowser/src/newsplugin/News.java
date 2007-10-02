@@ -35,7 +35,7 @@ import java.util.Date;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class News implements Comparable {
+public class News implements Comparable<News> {
 
   /** The timestamp of the news */
   private Date mTime;
@@ -141,11 +141,7 @@ public class News implements Comparable {
   }
 
   
-  public int compareTo(Object o) {
-    if(o instanceof News) {
-      return mTime.compareTo(((News)o).mTime);
-    }
-    
-    return 0;
+  public int compareTo(News other) {
+    return mTime.compareTo(other.mTime);
   }
 }

@@ -28,7 +28,7 @@ package tvbrowser.ui.settings.channel;
 /**
  * This Class represents a Filter-Item in the ChannelsSettingsTab
  */
-public class FilterItem implements Comparable {
+public class FilterItem implements Comparable<FilterItem> {
   /** Name of the Item */
   private String mName;
   /** Value of the Item */
@@ -67,8 +67,8 @@ public class FilterItem implements Comparable {
     return mName;
   }
 
-  public int compareTo(Object object) {
-    return mName.compareTo(((FilterItem) object).mName);
+  public int compareTo(FilterItem other) {
+    return mName.compareTo(other.mName);
   }
 
 }
