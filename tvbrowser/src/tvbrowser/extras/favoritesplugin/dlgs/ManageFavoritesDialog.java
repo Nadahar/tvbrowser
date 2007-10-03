@@ -812,6 +812,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
 
     if(parent != null) {
       mFavoriteTree.expandPath(new TreePath(parent.getPath()));
+      mFavoriteTree.reload(parent);
       favoriteSelectionChanged();
     }
   }
