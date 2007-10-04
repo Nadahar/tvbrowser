@@ -63,7 +63,18 @@ public class GlobalPluginProgramFormatingManager {
         mAvailableProgramConfigurations[i] = GlobalPluginProgramFormating.load(in);
       
     }catch(Exception e) {
-      mAvailableProgramConfigurations = new GlobalPluginProgramFormating[] { getDefaultConfiguration() };
+      mAvailableProgramConfigurations = new GlobalPluginProgramFormating[2];
+      mAvailableProgramConfigurations[0] = getDefaultConfiguration();
+      new Thread("Plugin formating creation") {
+        public void run() {
+          try {
+            Thread.sleep(100);
+          } catch (InterruptedException e) {}
+          
+          mAvailableProgramConfigurations[1] = getTvPearlFormating();
+          store();
+        }
+      }.start();
     } finally {
       if (in!=null) {
         try { in.close(); } catch(IOException exc) {}      
@@ -128,6 +139,16 @@ public class GlobalPluginProgramFormatingManager {
    */
   public static GlobalPluginProgramFormating getDefaultConfiguration() {
     return new GlobalPluginProgramFormating(mLocalizer.msg("default","Default"),"{title}","{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n","UTF-8");
+  }
+  
+  /**
+   * Gets the TV pearl formating.
+   * 
+   * @return The TV pearl formating.
+   * @since 2.6
+   */
+  public static GlobalPluginProgramFormating getTvPearlFormating() {
+    return new GlobalPluginProgramFormating(mLocalizer.msg("tvPearl","TV Pearl"),"{title}","{start_day_of_week}, {start_day}. {start_month_name}, {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}, {channel_name}\n{title}\n\n{genre}","UTF-8");
   }
   
   protected GlobalPluginProgramFormating getConfigurationForId(String id) {
