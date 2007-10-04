@@ -144,8 +144,28 @@ public class GlobalPluginProgramFormatingSettings implements SettingsTab, Action
     
       GlobalPluginProgramFormatingManager.getInstance().setAvailableProgramConfigurations(p);
     }
-    else
-      GlobalPluginProgramFormatingManager.getInstance().setAvailableProgramConfigurations(new GlobalPluginProgramFormating[] {GlobalPluginProgramFormatingManager.getDefaultConfiguration()});
+    else {
+      final GlobalPluginProgramFormating[] formating = new GlobalPluginProgramFormating[2];
+      formating[0] = GlobalPluginProgramFormatingManager.getDefaultConfiguration();
+      
+      Thread t = new Thread("Plugin formating setting") {
+        public void run() {
+          try {
+            Thread.sleep(100);
+          } catch (InterruptedException e) {}
+          
+          formating[1] = GlobalPluginProgramFormatingManager.getTvPearlFormating();
+        }
+      };
+      
+      t.start();
+      
+      try {
+        t.join();
+      } catch (InterruptedException e) {}
+      
+      GlobalPluginProgramFormatingManager.getInstance().setAvailableProgramConfigurations(formating);
+    }
     
     GlobalPluginProgramFormatingManager.getInstance().store();
   }
