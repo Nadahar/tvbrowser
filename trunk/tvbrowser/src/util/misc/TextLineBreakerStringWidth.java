@@ -239,7 +239,7 @@ public class TextLineBreakerStringWidth {
       
       mCurrChar = textReader.read();
     }
-    while ((! Character.isSpaceChar((char) mCurrChar)) && (! isEndOfLine(mCurrChar)));
+    while ((! Character.isWhitespace((char) mCurrChar)) && (! isEndOfLine(mCurrChar)));
 
     return mCurrWordBuffer.toString();
   }
