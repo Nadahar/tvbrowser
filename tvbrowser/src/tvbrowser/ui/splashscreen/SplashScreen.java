@@ -29,8 +29,10 @@ package tvbrowser.ui.splashscreen;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -125,17 +127,14 @@ public class SplashScreen extends JWindow implements Splash {
     if (mImage != null) {
       grp.drawImage(mImage, 0, 0, null);
     }
+
+    // enable anti-aliasing for progress texts
+    Graphics2D graphics = (Graphics2D) grp;
+    if (null != grp) {
+      graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,  RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    }
     
-    // Draw the message border
-//    grp.setColor(mBackground);
     grp.setFont(MESSAGE_FONT);
-//    for (int x = -1; x <= 1; x++) {
-//      for (int y = -1; y <= 1; y++) {
-//        grp.drawString(mMessage, mMsgX + x, mMsgY + y);
-//      }
-//    }
-
-
 
     // Draw the message itself
     grp.setColor(mForeground);
