@@ -312,9 +312,9 @@ public class AdvancedFavorite extends Favorite {
 
 
       CellConstraints cc = new CellConstraints();
-      PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("pref, 3dlu, pref, pref:grow", "pref, 5dlu, pref"));
+      PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("pref:grow, 3dlu, pref:grow", "pref, 5dlu, pref"));
 
-      panelBuilder.add(mSearchForm, cc.xyw(1, 1, 4));
+      panelBuilder.add(mSearchForm, cc.xyw(1, 1, 3));
       panelBuilder.add(mFilterCheckbox = new JCheckBox(mLocalizer.msg("useFilter","Use filter:")), cc.xy(1, 3));
       panelBuilder.add(mFilterCombo = new JComboBox(Plugin.getPluginManager().getFilterManager().getAvailableFilters()), cc.xy(3, 3));
 
