@@ -1255,4 +1255,8 @@ public class Settings {
    * date of last NTP internet time check
    */
   public static final DateProperty propLastNTPCheck = new DateProperty(mProp, "lastNTPCheck", null);
+ 
+  /** If the internet connection should be checked before accessing internet */
+  public static final BooleanProperty propInternetConnectionCheck = new BooleanProperty(
+      mProp, "internetConnectionCheck", true);
 }
