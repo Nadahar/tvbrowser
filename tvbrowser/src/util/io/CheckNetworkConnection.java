@@ -75,7 +75,7 @@ class CheckNetworkConnection {
                         "http://tvbrowser.org"};
       
       for (String url : checkUrls) {
-        if(checkConnection(new URL(url))) {
+        if(!Settings.propInternetConnectionCheck.getBoolean() || checkConnection(new URL(url))) {
           return true;
         }
       }
