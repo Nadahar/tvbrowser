@@ -3,6 +3,8 @@
  */
 package devplugin;
 
+import java.awt.MediaTracker;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
@@ -18,6 +20,11 @@ public class ProgramInfoHelper {
      */
     private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ProgramInfoHelper.class);
 
+    /**
+     * Logger for this class
+     */
+    private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(ProgramInfoHelper.class.getName());
+    
     /**
      * The Bit-Array with all Posibilities
      */
@@ -98,7 +105,11 @@ public class ProgramInfoHelper {
      * @return created Icon
      */
     private static Icon createIcon(String fileName) {
-        return new ImageIcon("imgs/" + fileName);
+        ImageIcon icon = new ImageIcon("imgs/" + fileName);
+        if (icon.getImageLoadStatus() == MediaTracker.ERRORED) {
+          mLog.warning("Missing program info icon " + fileName);
+        }
+        return icon;
     }
     
     /**
@@ -106,7 +117,7 @@ public class ProgramInfoHelper {
      * number.
      * @param num 
      * @param pattern 
-     * @return 
+     * @return <code>true</code>, if the bit is set
      */
     public static boolean bitSet(int num, int pattern) {
       return (num & pattern) == pattern;
