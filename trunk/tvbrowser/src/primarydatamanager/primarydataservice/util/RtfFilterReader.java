@@ -31,7 +31,7 @@ import java.io.FilterReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-
+import java.math.BigInteger;
 
 public class RtfFilterReader extends FilterReader {
 
@@ -96,22 +96,11 @@ public class RtfFilterReader extends FilterReader {
         buf.append((char) getNext());
         String specChar = buf.toString();
 
-        if (specChar.equals("c4")) {
-          return '\u00c4';
-        } else if (specChar.equals("d6")) {
-          return '\u00d6';
-        } else if (specChar.equals("dc")) {
-          return '\u00dc';
-        } else if (specChar.equals("e4")) {
-          return '\u00e4';
-        } else if (specChar.equals("f6")) {
-          return '\u00f6';
-        } else if (specChar.equals("fc")) {
-          return '\u00fc';
-        } else if (specChar.equals("df")) {
-          return '\u00df';
+        if (specChar.matches("[a-z0-9]{2}")) {
+          // returns '\u00ab' etc.
+          BigInteger unicodeValue = new BigInteger("00"+specChar, 16);
+          return (char)unicodeValue.intValue();
         }
-
       } else {
         do {
           buf.append((char) ch);
@@ -154,7 +143,7 @@ public class RtfFilterReader extends FilterReader {
         ch = in.read();
         command.append((char) ch);
 
-        // Ignore newlines and carage returns
+        // Ignore newlines and carriage returns
         while ((ch == '\n') || (ch == '\r')) {
           ch = in.read();
           command.append((char) ch);
