@@ -185,6 +185,12 @@ public interface Program {
 
   public String getTitle();
   public String getShortInfo();
+  
+  /**
+   * Gets the description of the program
+   * 
+   * @return the description or <code>null</code>, if no description is available
+   */
   public String getDescription();
 
   /**
