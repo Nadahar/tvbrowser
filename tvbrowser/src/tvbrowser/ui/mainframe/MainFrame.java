@@ -850,6 +850,7 @@ public class MainFrame extends JFrame implements DateListener {
     ProgramFilter filter = mProgramTableModel.getProgramFilter();
     mFilterPanel.setCurrentFilter(filter);
     mFilterPanel.setVisible(!filter.equals(FilterManagerImpl.getInstance().getDefaultFilter()) && mMenuBar.isShowFilterPanelEnabled());
+    Settings.propShowFilterBar.setBoolean(mMenuBar.isShowFilterPanelEnabled());
   }
 
   public ProgramFilter getProgramFilter() {
