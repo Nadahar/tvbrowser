@@ -133,7 +133,9 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
             
       program.addChangeListener(new ChangeListener() {
         public void stateChanged(ChangeEvent e) {
-          list.updateUI();
+          if(list != null) {
+            list.updateUI();
+          }
         }
       });
       mHeaderLb.setText(program.getDate() + " - " + program.getChannel().getName());
