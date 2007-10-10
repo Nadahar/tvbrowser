@@ -84,7 +84,7 @@ public class FilterManagerImpl implements FilterManager {
     ProgramFilter[] filter = filterList.getFilterArr();
 
     for (ProgramFilter filt : filter) {
-      if (!(filt instanceof SeparatorFilter)) {
+      if (filt != null && !(filt instanceof SeparatorFilter)) {
         filters.add(filt);
       }
     }
