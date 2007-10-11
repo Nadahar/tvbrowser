@@ -34,7 +34,7 @@ public class NetworkSettingsTab implements SettingsTab {
   private JCheckBox mConnectionTest;
   
   public JPanel createSettingsPanel() {
-    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu, pref, 3dlu, 0dlu:grow", "pref, 5dlu, pref, 3dlu, pref 10dlu, pref, 5dlu, pref"));
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu, pref, 3dlu, 0dlu:grow", "pref, 5dlu, pref, 3dlu, pref, 10dlu, pref, 5dlu, pref"));
     pb.setDefaultDialogBorder();
     
     CellConstraints cc = new CellConstraints();
