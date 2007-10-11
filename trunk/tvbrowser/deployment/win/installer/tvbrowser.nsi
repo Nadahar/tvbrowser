@@ -668,6 +668,7 @@ Section "Uninstall"
   StrCmp $1 "Power" isadmin isnotpower
   isadmin:
     ReadRegStr $8 HKLM "Software\${PROG_NAME}${VERSION}" "Start Menu Folder"
+    IfErrors donothing
     DeleteRegKey \
     HKLM \
     "Software\${PROG_NAME}${VERSION}"
@@ -678,6 +679,7 @@ Section "Uninstall"
     goto end
   isnotpower:
     ReadRegStr $8 HKCU "Software\${PROG_NAME}${VERSION}" "Start Menu Folder"
+    IfErrors donothing
     DeleteRegKey \
     HKCU \
     "Software\${PROG_NAME}${VERSION}"
@@ -688,6 +690,7 @@ Section "Uninstall"
   end:
     # Remove start menu shortcuts
   RMDir /r "$SMPROGRAMS\$8"
+  donothing:
   pop $8
 
   # remove desktop shortcut
