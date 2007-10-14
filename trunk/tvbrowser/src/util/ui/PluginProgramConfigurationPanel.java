@@ -76,11 +76,13 @@ public class PluginProgramConfigurationPanel extends JPanel implements ActionLis
     
     int i = 0;
     
-    for(AbstractPluginProgramFormating config : availableGlobalFormatings)
+    for(AbstractPluginProgramFormating config : availableGlobalFormatings) {
       allArr[i++] = config;
+    }
       
-    for(LocalPluginProgramFormating config : availableLocalFormatings)
+    for(LocalPluginProgramFormating config : availableLocalFormatings) {
       allArr[i++] = config;
+    }
     
     FormLayout layout = new FormLayout("default,5dlu,default,5dlu,default","pref");
     layout.setColumnGroups(new int[][] {{1,3,5}});
@@ -151,8 +153,9 @@ public class PluginProgramConfigurationPanel extends JPanel implements ActionLis
     
     AbstractPluginProgramFormating[] configs = new AbstractPluginProgramFormating[o.length];
     
-    for(int i = 0; i < o.length; i++)
+    for(int i = 0; i < o.length; i++) {
       configs[i] = (AbstractPluginProgramFormating)o[i];
+    }
     
     return configs;
   }
@@ -167,19 +170,28 @@ public class PluginProgramConfigurationPanel extends JPanel implements ActionLis
     
     ArrayList<LocalPluginProgramFormating> list = new ArrayList<LocalPluginProgramFormating>();
     
-    for(Object value : order)
-      if(value instanceof LocalPluginProgramFormating)
+    for(Object value : order) {
+      if(value instanceof LocalPluginProgramFormating) {
         list.add((LocalPluginProgramFormating)value);
+      }
+    }
     
     return list.toArray(new LocalPluginProgramFormating[list.size()]);
   }
 
   public void actionPerformed(ActionEvent e) {
-    if(e.getSource() == mAdd)
-      mOrder.addElement(mDefaultLocalFormating);
-    else if(e.getSource() == mDelete)
-      mOrder.removeElementAt(mOrder.getSelectedIndex());
-    else if(e.getSource() == mEdit) {
+    if(e.getSource() == mAdd) {
+      LocalPluginProgramFormating newFormatting = new LocalPluginProgramFormating(mLocalizer.msg("newName", "New formatting"), mDefaultLocalFormating.getTitleValue(), mDefaultLocalFormating.getContentValue(), mDefaultLocalFormating.getEncodingValue());
+      mOrder.addElement(newFormatting);
+      mOrder.setSelectedIndex(mOrder.getItemCount() - 1);
+      LocalPluginProgramFormatingSettingsDialog.createInstance(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), (LocalPluginProgramFormating)mOrder.getSelectedValue(), mDefaultLocalFormating, mShowTitleSetting, mShowEncodingSetting);
+      mOrder.refreshList();
+    }
+    else if(e.getSource() == mDelete) {
+      int index = mOrder.getSelectedIndex();
+      mOrder.removeElementAt(index);
+      mOrder.setSelectedIndex(index);
+    } else if(e.getSource() == mEdit) {
       LocalPluginProgramFormatingSettingsDialog.createInstance(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), (LocalPluginProgramFormating)mOrder.getSelectedValue(), mDefaultLocalFormating, mShowTitleSetting, mShowEncodingSetting);
       mOrder.refreshList();
     }
