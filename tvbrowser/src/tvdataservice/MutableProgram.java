@@ -65,7 +65,7 @@ public class MutableProgram implements Program {
    * The maximum length of a short info. Used for generating a short info out of a
    * (long) description.
    */
-  public static final int MAX_SHORT_INFO_LENGTH = 100;
+  public static final int MAX_SHORT_INFO_LENGTH = 200;
   
   /** A plugin array that can be shared by all the programs that are not marked
    * by any plugin. */
@@ -473,7 +473,13 @@ public class MutableProgram implements Program {
 
 
   public String getTextField(ProgramFieldType type) {
-    return (String) getField(type, ProgramFieldType.TEXT_FORMAT);
+    String value = (String) getField(type, ProgramFieldType.TEXT_FORMAT);
+
+    if (type == ProgramFieldType.SHORT_DESCRIPTION_TYPE) {
+      value = validateShortInfo(value);
+    }
+
+    return value;
   }
 
 
@@ -677,6 +683,20 @@ public class MutableProgram implements Program {
     if ((shortInfo != null) && (shortInfo.length() > MAX_SHORT_INFO_LENGTH)) {
       // Get the end of the last fitting sentense
       int lastDot = shortInfo.lastIndexOf('.', MAX_SHORT_INFO_LENGTH);
+
+      int n = shortInfo.lastIndexOf('!', MAX_SHORT_INFO_LENGTH);
+      if (n > lastDot) {
+        lastDot = n;
+      }
+      n = shortInfo.lastIndexOf('?', MAX_SHORT_INFO_LENGTH);
+      if (n > lastDot) {
+        lastDot = n;
+      }
+      n = shortInfo.lastIndexOf(" - ", MAX_SHORT_INFO_LENGTH);
+      if (n > lastDot) {
+        lastDot = n;
+      }
+
       int lastMidDot = shortInfo.lastIndexOf('\u00b7', MAX_SHORT_INFO_LENGTH);
 
       int cutIdx = Math.max(lastDot, lastMidDot);
@@ -687,6 +707,8 @@ public class MutableProgram implements Program {
       }
 
       shortInfo = shortInfo.substring(0, cutIdx + 1) + "...";
+
+      mLog.warning("Short description is longer than " + MAX_SHORT_INFO_LENGTH + " characters, it will be truncated.");
     }
 
     return shortInfo;

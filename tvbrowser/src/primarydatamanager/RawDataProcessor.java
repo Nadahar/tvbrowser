@@ -38,6 +38,7 @@ import util.io.IOUtilities;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.ProgramFieldType;
+import tvdataservice.MutableProgram;
 
 /**
  * Compares the new raw data with the last prepared data and creates update
@@ -50,7 +51,10 @@ public class RawDataProcessor {
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(RawDataProcessor.class.getName());
 
-  public static int MAX_SHORT_DESCRIPTION_LENGTH = 150;
+  /**
+   * @Deprecated use #{tvdataservice.MutableProgram#MAX_SHORT_INFO_LENGTH}
+   */
+  public static int MAX_SHORT_DESCRIPTION_LENGTH = MutableProgram.MAX_SHORT_INFO_LENGTH;
   
   /**
    * The percentage of the number of frames that must stay in the version
@@ -352,10 +356,10 @@ public class RawDataProcessor {
         if (descField != null) {
           // Generate a short description from the description
           String shortDesc = descField.getTextData();
-          if (shortDesc.length() > MAX_SHORT_DESCRIPTION_LENGTH) {
-            int lastSpacePos = shortDesc.lastIndexOf(' ', MAX_SHORT_DESCRIPTION_LENGTH);
+          if (shortDesc.length() > MutableProgram.MAX_SHORT_INFO_LENGTH) {
+            int lastSpacePos = shortDesc.lastIndexOf(' ', MutableProgram.MAX_SHORT_INFO_LENGTH);
             if (lastSpacePos == -1) {
-              shortDesc = shortDesc.substring(0, MAX_SHORT_DESCRIPTION_LENGTH);
+              shortDesc = shortDesc.substring(0, MutableProgram.MAX_SHORT_INFO_LENGTH);
             } else {
               shortDesc = shortDesc.substring(0, lastSpacePos);
             }
