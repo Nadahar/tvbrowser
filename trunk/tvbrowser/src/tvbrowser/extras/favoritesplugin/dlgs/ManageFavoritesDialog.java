@@ -628,7 +628,10 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
             mProgramListModel.ensureCapacity(p.length);
             
             for (int i = 0; i < p.length; i++) {
-              mProgramListModel.addElement(p[i]);
+              // don't list programs twice, if they are marked by different favorites
+              if (! mProgramListModel.contains(p[i])) {
+                mProgramListModel.addElement(p[i]);
+              }
               
               if(firstNotExpiredIndex == -1 && !p[i].isExpired()) {
                 firstNotExpiredIndex = i;
