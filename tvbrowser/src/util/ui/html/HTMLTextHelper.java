@@ -43,9 +43,16 @@ public class HTMLTextHelper {
       
       while (matcher.find()) {
         result.append(text.substring(end, matcher.start()));
+        end = matcher.end();
         result.append("<a href=\"");
         
         String linkText = text.substring(matcher.start(), matcher.end());
+        
+        // remove trailing characters which are not part of the URL
+        while (linkText.endsWith(".")) {
+          linkText = linkText.substring(0, linkText.length() - 1);
+          end--;
+        }
       
         if (!linkText.startsWith("http://")) {
           result.append("http://");
@@ -58,7 +65,6 @@ public class HTMLTextHelper {
         }
         result.append(linkText.length() > 40 ? linkText.substring(0,40) + "..." : linkText);
         result.append("</a>");
-        end = matcher.end();
       }
 
       result.append(text.substring(end));
