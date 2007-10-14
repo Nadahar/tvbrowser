@@ -345,108 +345,114 @@ public class PluginTree extends JTree implements DragGestureListener,
               .getComponent()).getPathForLocation(e.getLocation().x, e
               .getLocation().y);
 
-          Node target = (Node)targetPath.getLastPathComponent();
-          
-          if(target.getProgramReceiveTarget() == null && targetPath.getPathCount() <= 2) {
-            target = (Node) targetPath.getPathComponent(1);
-          }
-
-          if (flavors[0].getHumanPresentableName().equals("NodeExport")) {
-            TreePath sourcePath = ((PluginTree) ((DropTarget) e.getSource())
-                .getComponent()).getSelectionPath();
-            Node plugin = (Node) sourcePath.getPathComponent(1);
+          if (targetPath != null) {
+            Node target = (Node)targetPath.getLastPathComponent();
             
-            if (!target.equals(plugin) && !targetPath.isDescendant(sourcePath) &&
-                !sourcePath.isDescendant(targetPath)) {
-              if (target.equals(ReminderPlugin.getInstance().getRootNode()
-                  .getMutableTreeNode())) {
-                e.acceptDrag(e.getDropAction());
-                reject = false;
-                temp = ReminderPlugin.getInstance();
-                rejected = false;
-              } else if(target.getProgramReceiveTarget() == null) {
-                PluginAccess[] pluginAccessArray = Plugin.getPluginManager()
-                    .getActivatedPlugins();
-
-                for (PluginAccess pluginAccess : pluginAccessArray) {
-                  if (pluginAccess.getRootNode().getMutableTreeNode().equals(target)) {
-                    if ((pluginAccess.canReceivePrograms() || pluginAccess.canReceiveProgramsWithTarget())) {
-                      e.acceptDrag(e.getDropAction());
-                      reject = false;
-                      temp = pluginAccess;
-                      rejected = false;
-                    } else {
-                      mPlugin = null;
-                      break;
+            if(target.getProgramReceiveTarget() == null && targetPath.getPathCount() <= 2) {
+              target = (Node) targetPath.getPathComponent(1);
+            }
+  
+            if (flavors[0].getHumanPresentableName().equals("NodeExport")) {
+              TreePath sourcePath = ((PluginTree) ((DropTarget) e.getSource())
+                  .getComponent()).getSelectionPath();
+              Node plugin = (Node) sourcePath.getPathComponent(1);
+              
+              if (!target.equals(plugin) && !targetPath.isDescendant(sourcePath) &&
+                  !sourcePath.isDescendant(targetPath)) {
+                if (target.equals(ReminderPlugin.getInstance().getRootNode()
+                    .getMutableTreeNode())) {
+                  e.acceptDrag(e.getDropAction());
+                  reject = false;
+                  temp = ReminderPlugin.getInstance();
+                  rejected = false;
+                } else if(target.getProgramReceiveTarget() == null) {
+                  PluginAccess[] pluginAccessArray = Plugin.getPluginManager()
+                      .getActivatedPlugins();
+  
+                  for (PluginAccess pluginAccess : pluginAccessArray) {
+                    if (pluginAccess.getRootNode() != null) {
+                      if (pluginAccess.getRootNode().getMutableTreeNode().equals(target)) {
+                        if ((pluginAccess.canReceivePrograms() || pluginAccess.canReceiveProgramsWithTarget())) {
+                          e.acceptDrag(e.getDropAction());
+                          reject = false;
+                          temp = pluginAccess;
+                          rejected = false;
+                        } else {
+                          mPlugin = null;
+                          break;
+                        }
+                      }
+                    }
+                  }
+                }
+                else if(!target.equals(sourcePath.getLastPathComponent())){
+                  e.acceptDrag(e.getDropAction());
+                  reject = rejected = false;
+                  temp = target.getProgramReceiveTarget();
+                }
+                else {
+                  mPlugin = null;
+                }
+              }
+            } else if (flavors[0].getHumanPresentableName().equals("Program")) {
+              if (targetPath.getPathCount() <= 2) {
+                if (FavoritesPlugin.getInstance().getRootNode()
+                    .getMutableTreeNode().equals(target)) {
+                  e.acceptDrag(e.getDropAction());
+                  rejected = false;
+                  reject = false;
+                  temp = FavoritesPlugin.getInstance();
+                } else if (ReminderPlugin.getInstance().getRootNode()
+                    .getMutableTreeNode().equals(target)) {
+                  e.acceptDrag(e.getDropAction());
+                  rejected = false;
+                  reject = false;
+                  temp = ReminderPlugin.getInstance();
+                } else {
+                  PluginAccess[] pa = Plugin.getPluginManager()
+                      .getActivatedPlugins();
+  
+                  for (PluginAccess pluginAccess : pa) {
+                    if (pluginAccess.getRootNode() != null) {
+                      if (pluginAccess.getRootNode().getMutableTreeNode().equals(target)) {
+    
+                        /*
+                         * This would only work with Java 1.5
+                         * 
+                         * Transferable tr = e.getTransferable(); Program program =
+                         * (Program) tr.getTransferData(flavors[0]);
+                         */
+    
+                        if (getAction(pluginAccess.getContextMenuActions(Plugin
+                            .getPluginManager().getExampleProgram())) == null) {
+                          mPlugin = null;
+                          break;
+                        }
+    
+                        e.acceptDrag(e.getDropAction());
+                        reject = false;
+                        rejected = false;
+                        temp = pluginAccess;
+                      }
                     }
                   }
                 }
               }
-              else if(!target.equals(sourcePath.getLastPathComponent())){
-                e.acceptDrag(e.getDropAction());
-                reject = rejected = false;
-                temp = target.getProgramReceiveTarget();
-              }
-              else {
-                mPlugin = null;
-              }
             }
-          } else if (flavors[0].getHumanPresentableName().equals("Program")) {
-            if (targetPath.getPathCount() <= 2) {
-              if (FavoritesPlugin.getInstance().getRootNode()
-                  .getMutableTreeNode().equals(target)) {
-                e.acceptDrag(e.getDropAction());
-                rejected = false;
-                reject = false;
-                temp = FavoritesPlugin.getInstance();
-              } else if (ReminderPlugin.getInstance().getRootNode()
-                  .getMutableTreeNode().equals(target)) {
-                e.acceptDrag(e.getDropAction());
-                rejected = false;
-                reject = false;
-                temp = ReminderPlugin.getInstance();
-              } else {
-                PluginAccess[] pa = Plugin.getPluginManager()
-                    .getActivatedPlugins();
-
-                for (PluginAccess pluginAccess : pa) {
-                  if (pluginAccess.getRootNode().getMutableTreeNode().equals(target)) {
-
-                    /*
-                     * This would only work with Java 1.5
-                     * 
-                     * Transferable tr = e.getTransferable(); Program program =
-                     * (Program) tr.getTransferData(flavors[0]);
-                     */
-
-                    if (getAction(pluginAccess.getContextMenuActions(Plugin
-                        .getPluginManager().getExampleProgram())) == null) {
-                      mPlugin = null;
-                      break;
-                    }
-
-                    e.acceptDrag(e.getDropAction());
-                    reject = false;
-                    rejected = false;
-                    temp = pluginAccess;
-                  }
-                }
-              }
+  
+            if (!reject && (mPlugin == null || temp != mPlugin)) {
+              changed = true;
+              this.paintImmediately(mCueLine.getBounds());
+              
+              mCueLine.setRect(((PluginTree) ((DropTarget) e.getSource())
+                  .getComponent()).getPathBounds(targetPath));
+              
+              Graphics2D g2 = (Graphics2D) getGraphics();
+              Color c = new Color(255, 0, 0, 40);
+              g2.setColor(c);
+              g2.fill(mCueLine);
+              mPlugin = temp;
             }
-          }
-
-          if (!reject && (mPlugin == null || temp != mPlugin)) {
-            changed = true;
-            this.paintImmediately(mCueLine.getBounds());
-            
-            mCueLine.setRect(((PluginTree) ((DropTarget) e.getSource())
-                .getComponent()).getPathBounds(targetPath));
-            
-            Graphics2D g2 = (Graphics2D) getGraphics();
-            Color c = new Color(255, 0, 0, 40);
-            g2.setColor(c);
-            g2.fill(mCueLine);
-            mPlugin = temp;
           }
         } catch (Exception e2) {
           e.rejectDrag();
@@ -610,11 +616,13 @@ public class PluginTree extends JTree implements DragGestureListener,
                         .getActivatedPlugins();
   
                     for (PluginAccess pluginAccess : pa) {
-                      if (pluginAccess.getRootNode().getMutableTreeNode().equals(target)) {
-                        if ((pluginAccess.canReceivePrograms() || pluginAccess.canReceiveProgramsWithTarget()) && pluginAccess.getProgramReceiveTargets() != null && pluginAccess.getProgramReceiveTargets().length > 0) {
-                          pluginAccess.receivePrograms(p,pluginAccess.getProgramReceiveTargets()[0]);
-                        } else {
-                          break;
+                      if (pluginAccess.getRootNode() != null) {
+                        if (pluginAccess.getRootNode().getMutableTreeNode().equals(target)) {
+                          if ((pluginAccess.canReceivePrograms() || pluginAccess.canReceiveProgramsWithTarget()) && pluginAccess.getProgramReceiveTargets() != null && pluginAccess.getProgramReceiveTargets().length > 0) {
+                            pluginAccess.receivePrograms(p,pluginAccess.getProgramReceiveTargets()[0]);
+                          } else {
+                            break;
+                          }
                         }
                       }
                     }
