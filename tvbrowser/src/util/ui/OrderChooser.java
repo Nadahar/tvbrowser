@@ -361,7 +361,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
   }
   
   /**
-   * Add a value to the list.
+   * Add a value to the end of the list.
    * 
    * @param value
    * @since 2.5.1
@@ -405,5 +405,25 @@ public class OrderChooser extends JPanel implements ListDropAction{
       return item.getItem();
     }
     return null;
+  }
+  
+  /**
+   * Set the selection index
+   * 
+   * @param index index of to be selected item
+   * @since 2.6
+   */
+  public void setSelectedIndex(int index) {
+    mList.setSelectedIndex(index);
+  }
+  
+  /**
+   * Get the number of items in the order chooser
+   * 
+   * @return number of items in the list
+   * @since 2.6
+   */
+  public int getItemCount() {
+    return mList.getModel().getSize();
   }
 }
