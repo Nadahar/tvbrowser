@@ -114,7 +114,7 @@ public class ChannelList {
 
   public void readFromStream(InputStream stream, TvDataService dataService) throws IOException, FileFormatException {
     GZIPInputStream gIn = new GZIPInputStream(stream);
-    BufferedReader reader = new BufferedReader(new InputStreamReader(gIn));
+    BufferedReader reader = new BufferedReader(new InputStreamReader(gIn, "ISO-8859-15"));
 
     String line;
     int lineCount = 1;
@@ -134,7 +134,6 @@ public class ChannelList {
       line = line.trim();
       if (line.length() > 0) {
         // This is not an empty line -> read it
-
         /*
          * Instead of StringTokenizer (previous implementation) we use
          * String#split(), because StringTokenizer ignores empty tokens.
