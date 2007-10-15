@@ -151,7 +151,7 @@ public class ReminderPlugin {
    * 
    * @return The current instance of this class.
    */
-  public static ReminderPlugin getInstance() {
+  public static synchronized ReminderPlugin getInstance() {
     if (mInstance == null) {
       new ReminderPlugin();
     }
