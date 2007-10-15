@@ -235,7 +235,7 @@ public class SearchPlugin {
         return new ThemeIcon("actions", "system-search", 16);
     }
 
-    public static SearchPlugin getInstance() {
+    public static synchronized SearchPlugin getInstance() {
         if (mInstance == null)
             new SearchPlugin();
 

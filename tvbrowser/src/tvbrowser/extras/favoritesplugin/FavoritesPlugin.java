@@ -189,7 +189,7 @@ public class FavoritesPlugin {
     }
   }
   
-  public static FavoritesPlugin getInstance() {
+  public static synchronized FavoritesPlugin getInstance() {
     if (mInstance == null) {
       new FavoritesPlugin();
     }
