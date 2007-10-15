@@ -134,7 +134,7 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
       program.addChangeListener(new ChangeListener() {
         public void stateChanged(ChangeEvent e) {
           if(list != null) {
-            list.updateUI();
+            list.repaint();
           }
         }
       });

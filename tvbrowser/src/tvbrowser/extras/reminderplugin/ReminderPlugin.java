@@ -109,7 +109,6 @@ public class ReminderPlugin {
     loadReminderData();
 
     mRootNode = new PluginTreeNode(mLocalizer.msg("pluginName","Reminder"));
-    updateRootNode(false);
 
     TvDataUpdater.getInstance().addTvDataUpdateListener(
         new TvDataUpdateListener() {
@@ -166,6 +165,7 @@ public class ReminderPlugin {
    * Is been called by TVBrowser when the TV-Browser start is finished.
    */
   public void handleTvBrowserStartFinished() {
+    updateRootNode(false);
     mHasRightToStartTimer = true;
     mReminderList.removeExpiredItems();
     mReminderList.startTimer();

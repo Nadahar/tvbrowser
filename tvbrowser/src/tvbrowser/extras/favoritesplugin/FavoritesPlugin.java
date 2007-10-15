@@ -139,7 +139,7 @@ public class FavoritesPlugin {
     mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
     load();
     mRootNode = new PluginTreeNode(mLocalizer.msg("manageFavorites","Favorites"));
-    updateRootNode(false);
+//    updateRootNode(false);
 
     TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
       public void tvDataUpdateStarted() {
@@ -197,6 +197,7 @@ public class FavoritesPlugin {
   }
   
   public void handleTvBrowserStartFinished() {
+    updateRootNode(false);
     if(!mPendingFavorites.isEmpty()) {
       for(AdvancedFavorite fav : mPendingFavorites) {
         fav.loadPendingFilter();
