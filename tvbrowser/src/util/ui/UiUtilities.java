@@ -57,6 +57,9 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Frame;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
@@ -111,8 +114,25 @@ public class UiUtilities {
       frameD = frame.getSize();
       framePos = frame.getLocation();
     } else {
-      frameD = Toolkit.getDefaultToolkit().getScreenSize();
-      framePos = new Point(0, 0);
+      GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+      GraphicsDevice[] gs = ge.getScreenDevices();
+      // dual head, use first screen
+      if (gs.length > 1) {
+        try {
+          GraphicsDevice gd = gs[0];
+          GraphicsConfiguration config = gd.getConfigurations()[0];
+          frameD = config.getBounds().getSize();
+          framePos = config.getBounds().getLocation();
+        } catch (RuntimeException e) {
+          frameD = Toolkit.getDefaultToolkit().getScreenSize();
+          framePos = new Point(0, 0);
+        }
+      }
+      // single screen only
+      else {
+        frameD = Toolkit.getDefaultToolkit().getScreenSize();
+        framePos = new Point(0, 0);
+      }
     }
 
     Point wPos = new Point(framePos.x + (frameD.width - wD.width) / 2,
@@ -212,6 +232,7 @@ public class UiUtilities {
    *        Text enthalten soll)
    * @param icon Das Icon des Buttons (Kann ebenfalls
    *        null sein, wenn der Button kein Icon enthalten soll).
+   * @return button
    */
   public static JButton createToolBarButton(String text, Icon icon) {
     final JButton btn;
