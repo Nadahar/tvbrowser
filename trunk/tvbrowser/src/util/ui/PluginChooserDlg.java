@@ -207,7 +207,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
     mTargetPanel.setLayout(new BoxLayout(mTargetPanel, BoxLayout.Y_AXIS));
     
     JScrollPane targetScrollPane = new JScrollPane(mTargetPanel);
-    targetScrollPane.setPreferredSize(new Dimension(150,100));
+    targetScrollPane.setMinimumSize(new Dimension(150,100));
     targetScrollPane.getVerticalScrollBar().setUnitIncrement(10);
     
     mPluginItemList.addListSelectionListener(new ListSelectionListener() {
@@ -336,7 +336,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
       pack();
     }
     else {
-      setSize(Settings.propPluginChooserDlgWidth.getInt(),Settings.propPluginChooserDlgHeight.getInt());
+      UiUtilities.setSize(this, Settings.propPluginChooserDlgWidth.getInt(),Settings.propPluginChooserDlgHeight.getInt());
     }
     
     setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
