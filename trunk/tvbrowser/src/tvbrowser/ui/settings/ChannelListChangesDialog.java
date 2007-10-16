@@ -25,6 +25,7 @@ package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -70,10 +71,8 @@ public class ChannelListChangesDialog extends JDialog {
 
     setLocationRelativeTo(getParent());
 
-    JPanel contentPanel = (JPanel) getContentPane();
-    contentPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-    contentPanel.setLayout(new BorderLayout());
+    JPanel contentPanel = new JPanel();
+    contentPanel.setLayout(new GridLayout(1, 2, 10, 0));
 
     JPanel panelAdded = new JPanel(new BorderLayout());
     panelAdded.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("added", "New channels")));
@@ -110,9 +109,12 @@ public class ChannelListChangesDialog extends JDialog {
     });
     btnPanel.add(ok);
 
-    contentPanel.add(panelAdded, BorderLayout.WEST);
-    contentPanel.add(panelDeleted, BorderLayout.EAST);
-    contentPanel.add(btnPanel, BorderLayout.SOUTH);
+    contentPanel.add(panelAdded);
+    contentPanel.add(panelDeleted);
+    JPanel pane = (JPanel) getContentPane();
+    pane.add(contentPanel, BorderLayout.CENTER);
+    pane.add(btnPanel, BorderLayout.SOUTH);
+    pane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
     pack();
 
@@ -135,7 +137,6 @@ public class ChannelListChangesDialog extends JDialog {
       }
     }
     Collections.sort(deletedList);
-
     // show changes
     if (addedList.isEmpty() && deletedList.isEmpty()) {
       JOptionPane.showMessageDialog(owner, mLocalizer.msg("noChanges.message", "There are no changes in the list of available channels."), mLocalizer.msg("noChanges.title", "No changes"), JOptionPane.INFORMATION_MESSAGE);
