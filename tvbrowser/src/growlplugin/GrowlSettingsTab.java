@@ -131,7 +131,7 @@ public class GrowlSettingsTab implements SettingsTab {
    * Save the Input-Field
    */
   public void saveSettings() {
-    if (!mInitialized){
+    if (mInitialized && mSettings != null){
       mSettings.setProperty("title", mTitle.getText());
       mSettings.setProperty("description", mDescription.getText());      
     }
