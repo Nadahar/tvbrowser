@@ -372,6 +372,11 @@
       <fileset dir="${classes.dir}" includes="i18nplugin/**"/>
     </jar>
 
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/KNotifyPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="knotifyplugin/**"/>
+    </jar>
+
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/ListViewPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="listviewplugin/**"/>
