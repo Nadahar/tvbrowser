@@ -40,6 +40,7 @@ import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.SettingsTab;
+import devplugin.ThemeIcon;
 import devplugin.Version;
 
 /**
@@ -199,9 +200,8 @@ public class GenrePlugin extends Plugin {
     updateRootNode();
   }
 
-  @Override
-  protected String getMarkIconName() {
-    return "genreplugin/genreplugin.png";
+  public ThemeIcon getMarkIconFromTheme() {
+    return new ThemeIcon("apps", "system-file-manager", 16);
   }
 
   @Override
