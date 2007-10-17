@@ -372,11 +372,6 @@
       <fileset dir="${classes.dir}" includes="i18nplugin/**"/>
     </jar>
 
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/KNotifyPlugin.jar"
-         compress="false">
-      <fileset dir="${classes.dir}" includes="knotifyplugin/**"/>
-    </jar>
-
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/ListViewPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="listviewplugin/**"/>
@@ -570,7 +565,13 @@
       <fileset dir="${deployment.dir}" includes="linux.properties"/>
       <fileset dir="${linux.dir}" includes="tvbrowser.sh"/>
     </copy>
-    	<chmod perm="u+x" file="${tvbrowser-linux.runtime.dir}/tvbrowser.sh"/>
+   	<chmod perm="u+x" file="${tvbrowser-linux.runtime.dir}/tvbrowser.sh"/>
+
+  	<jar jarfile="${tvbrowser-linux.runtime.dir}/plugins/KNotifyPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="knotifyplugin/**"/>
+    </jar>
+
   </target>
 
 
