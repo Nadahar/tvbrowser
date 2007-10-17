@@ -44,7 +44,6 @@ import javax.swing.event.ListSelectionListener;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import devplugin.SettingsTab;
 
@@ -123,8 +122,7 @@ public class GenreSettingsTab implements SettingsTab {
   }
 
   public Icon getIcon() {
-    String iconName = "genreplugin/genreplugin.png";
-    return ImageUtilities.createImageIconFromJar(iconName, getClass());
+    return GenrePlugin.getInstance().createImageIcon("apps", "system-file-manager", 16);
   }
 
   public String getTitle() {
