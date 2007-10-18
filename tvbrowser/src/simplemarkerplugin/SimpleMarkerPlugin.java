@@ -164,7 +164,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
    */
   public ActionMenu getContextMenuActions(Program p) {
     if(p == null || p.equals(getPluginManager().getExampleProgram()) || getPluginManager().getFilterManager() == null) {
-      return new ActionMenu(new ContextMenuAction(mLocalizer.msg("mark", "Mark"),createImageIcon("actions", "just-mark", 16)));
+      return new ActionMenu(new ContextMenuAction(mLocalizer.msg("mark", "Mark"),createImageIcon("status", "mail-attachment", 16)));
     }
     
     this.mProg = p;
@@ -172,7 +172,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     Object[] submenu = new Object[mMarkListVector.size() + 2];
     ContextMenuAction menu = new ContextMenuAction();
     menu.setText(mLocalizer.msg("mark", "Mark"));
-    menu.setSmallIcon(createImageIcon("actions", "just-mark", 16));
+    menu.setSmallIcon(createImageIcon("status", "mail-attachment", 16));
     
     if (mMarkListVector.size() == 1) {
       // Create context menu entry
@@ -262,7 +262,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     }
     
     menu.putValue(Action.ACTION_COMMAND_KEY, menu.getValue(Action.NAME));
-    menu.setSmallIcon(createImageIcon("actions", "just-mark", 16));
+    menu.setSmallIcon(createImageIcon("status", "mail-attachment", 16));
     menu.setActionListener(this);
 
     return menu;
@@ -338,10 +338,10 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     // Name of the buttons in the menu and the icon bar
     action.putValue(Action.NAME, mLocalizer.msg("name","Marker plugin"));
     // small icon
-    action.putValue(Action.SMALL_ICON, createImageIcon("actions", "just-mark",
+    action.putValue(Action.SMALL_ICON, createImageIcon("status", "mail-attachment",
         16));
     // big icon
-    action.putValue(BIG_ICON, createImageIcon("actions", "just-mark", 22));
+    action.putValue(BIG_ICON, createImageIcon("status", "mail-attachment", 22));
     return new ActionMenu(action);
   }
 
@@ -477,7 +477,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     case 0:
       return createImageIcon("actions", "edit-delete", 16);
     default:
-      return createImageIcon("actions", "just-mark", 16);
+      return createImageIcon("status", "mail-attachment", 16);
     }
   }
 
@@ -540,7 +540,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     if (fileName != null) {
       return createImageIconForFileName(fileName);
     } else {
-      return createImageIcon("actions", "just-mark", 16);
+      return createImageIcon("status", "mail-attachment", 16);
     }
   }
 
