@@ -100,6 +100,10 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
   protected JMenu mFiltersMenu, mPluginsViewMenu, mLicenseMenu, mGoMenu, mViewMenu, mToolbarMenu, mPluginHelpMenu;
 
   private JMenu mGotoDateMenu, mGotoChannelMenu, mGotoTimeMenu, mFontSizeMenu, mColumnWidthMenu;
+  
+  /**
+   * status bar label for menu help
+   */
   private JLabel mLabel;
   
   protected MenuBar(MainFrame mainFrame, JLabel label) {
@@ -131,8 +135,11 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
       
     mSettingsMI = new JMenuItem(mLocalizer.msg("menuitem.settings", "Settings..."), IconLoader.getInstance().getIconFromTheme("category", "preferences-desktop", 16));
     mSettingsMI.addActionListener(this);
+    new MenuHelpTextAdapter(mSettingsMI, mLocalizer.msg("menuinfo.settings",""), mLabel); 
+
     mQuitMI = new JMenuItem(mLocalizer.msg("menuitem.exit", "Exit..."));
     mQuitMI.addActionListener(this);
+    new MenuHelpTextAdapter(mQuitMI, mLocalizer.msg("menuinfo.quit",""), mLabel);
     
     mToolbarMenu = new JMenu(mLocalizer.msg("menuitem.viewToolbar","Toolbar"));
     
@@ -140,9 +147,11 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
         "showToolbar", "Show toolbar"));
     mToolbarMI.setSelected(Settings.propIsTooolbarVisible.getBoolean());
     mToolbarMI.addActionListener(this);
+    new MenuHelpTextAdapter(mToolbarMI, mLocalizer.msg("menuinfo.toolbar",""), mLabel);
     
     mToolbarCustomizeMI = new JMenuItem(ContextMenu.mLocalizer.msg("configure","Configure")+"...");
     mToolbarCustomizeMI.addActionListener(this);
+    new MenuHelpTextAdapter(mToolbarCustomizeMI, mLocalizer.msg("menuinfo.customizeToolbar",""), mLabel);
     
     mToolbarMenu.add(mToolbarMI);
     mToolbarMenu.addSeparator();
@@ -151,25 +160,33 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mStatusbarMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.viewStatusbar","Statusbar"));
     mStatusbarMI.setSelected(Settings.propIsStatusbarVisible.getBoolean());
     mStatusbarMI.addActionListener(this);
+    new MenuHelpTextAdapter(mStatusbarMI, mLocalizer.msg("menuinfo.statusbar",""), mLabel);
     
     mTimeBtnsMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.timebuttons", "Time buttons"));
     mTimeBtnsMI.setSelected(Settings.propShowTimeButtons.getBoolean());
     mTimeBtnsMI.addActionListener(this);    
+    new MenuHelpTextAdapter(mTimeBtnsMI, mLocalizer.msg("menuinfo.timebuttons",""), mLabel);
     
     mDatelistMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.datelist","Date list"));
     mDatelistMI.setSelected(Settings.propShowDatelist.getBoolean());
     mDatelistMI.addActionListener(this);
+    new MenuHelpTextAdapter(mDatelistMI, mLocalizer.msg("menuinfo.datelist",""), mLabel);
 
     mChannellistMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.channellist","channel list"));
     mChannellistMI.setSelected(Settings.propShowChannels.getBoolean());
     mChannellistMI.addActionListener(this);
+    new MenuHelpTextAdapter(mChannellistMI, mLocalizer.msg("menuinfo.channellist",""), mLabel);
+
     mPluginOverviewMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.pluginOverview","Plugin overview"));
     mPluginOverviewMI.setSelected(Settings.propShowPluginView.getBoolean());
     mPluginOverviewMI.addActionListener(this);
     mPluginOverviewMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-tree", 16));
+    new MenuHelpTextAdapter(mPluginOverviewMI, mLocalizer.msg("menuinfo.pluginOverview",""), mLabel);
+
     mViewFilterBarMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.viewFilterBar","Filter bar"));
     mViewFilterBarMI.setSelected(Settings.propShowFilterBar.getBoolean());
     mViewFilterBarMI.addActionListener(this);
+    new MenuHelpTextAdapter(mViewFilterBarMI, mLocalizer.msg("menuinfo.filterbar",""), mLabel);
     
     mFiltersMenu = new JMenu(mLocalizer.msg("menuitem.filters","Filter"));
     mFiltersMenu.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-filter", 16));
@@ -181,12 +198,18 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mPreviousDayMI = new JMenuItem(mLocalizer.msg("menuitem.previousDay","previous day"));
     mPreviousDayMI.addActionListener(this);
     mPreviousDayMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-to-previous-day", 16));
+    new MenuHelpTextAdapter(mPreviousDayMI, mLocalizer.msg("menuinfo.previousDay",""), mLabel);
+
     mNextDayMI = new JMenuItem(mLocalizer.msg("menuitem.nextDay","next day"));
     mNextDayMI.addActionListener(this);
     mNextDayMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-to-next-day", 16));
+    new MenuHelpTextAdapter(mNextDayMI, mLocalizer.msg("menuinfo.nextDay",""), mLabel);
+
     mGotoNowMenuItem = new JMenuItem(mLocalizer.msg("menuitem.now","now"));
     mGotoNowMenuItem.addActionListener(this);
     mGotoNowMenuItem.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "scroll-to-now", 16));
+    new MenuHelpTextAdapter(mGotoNowMenuItem, mLocalizer.msg("menuinfo.now",""), mLabel);
+
     mGotoDateMenu = new JMenu(mLocalizer.msg("menuitem.date","date"));
     mGotoDateMenu.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-to-date", 16));
 
@@ -211,6 +234,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mFullscreenMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.fullscreen","Fullscreen"));
     mFullscreenMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-fullscreen", 16));
     mFullscreenMI.addActionListener(this);
+    new MenuHelpTextAdapter(mFullscreenMI, mLocalizer.msg("menuinfo.fullscreen",""), mLabel);
 
     updateDateItems();
     updateChannelItems();
@@ -218,39 +242,49 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     
     mUpdateMI = new JMenuItem(mLocalizer.msg("menuitem.update", "Update..."), IconLoader.getInstance().getIconFromTheme("apps", "system-software-update", 16));
     mUpdateMI.addActionListener(this);
+    new MenuHelpTextAdapter(mUpdateMI, mLocalizer.msg("menuinfo.update",""), mLabel);
     
     mLicenseMenu = createLicenseMenuItems();
     
     mPluginManagerMI = new JMenuItem(mLocalizer.msg("menuitem.managePlugins", "Manage Plugins"));
     mPluginManagerMI.addActionListener(this);
     mPluginManagerMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-plugins", 16));
+    new MenuHelpTextAdapter(mPluginManagerMI, mLocalizer.msg("menuinfo.findplugins",""), mLabel);
     
     Icon urlHelpImg = IconLoader.getInstance().getIconFromTheme("apps", "help-browser", 16);
     Icon urlBrowserImg = IconLoader.getInstance().getIconFromTheme("apps", "internet-web-browser", 16);
     
     mDonorMI=new JMenuItem(mLocalizer.msg("menuitem.donors","Donors"), urlBrowserImg);
     mDonorMI.addActionListener(this);
+    new MenuHelpTextAdapter(mDonorMI,mLocalizer.msg("website.donors",""),mLabel); 
     
     mFaqMI=new JMenuItem("FAQ",urlHelpImg);   
     mFaqMI.addActionListener(this);
+    new MenuHelpTextAdapter(mFaqMI,mLocalizer.msg("website.faq",""),mLabel); 
     
     mForumMI=new JMenuItem("Forum",urlBrowserImg); 
     mForumMI.addActionListener(this);
+    new MenuHelpTextAdapter(mForumMI,mLocalizer.msg("website.forum",""),mLabel); 
     
     mHandbookMI=new JMenuItem(mLocalizer.msg("menuitem.handbook", "Handbook"),urlHelpImg); 
     mHandbookMI.addActionListener(this);
+    new MenuHelpTextAdapter(mHandbookMI,mLocalizer.msg("website.handbook",""),mLabel); 
     
     mWebsiteMI=new JMenuItem("Website",urlBrowserImg);
     mWebsiteMI.addActionListener(this);
+    new MenuHelpTextAdapter(mWebsiteMI,mLocalizer.msg("website.tvbrowser",""),mLabel); 
     
     mConfigAssistantMI=new JMenuItem(mLocalizer.msg("menuitem.configAssistant","setup assistant"),IconLoader.getInstance().getIconFromTheme("category", "preferences-desktop", 16));
     mConfigAssistantMI.addActionListener(this);
+    new MenuHelpTextAdapter(mConfigAssistantMI,mLocalizer.msg("menuinfo.configAssistant",""),mLabel);
     
     mAboutMI = new JMenuItem(mLocalizer.msg("menuitem.about", "About..."), new ImageIcon("imgs/tvbrowser16.png"));
     mAboutMI.addActionListener(this);
+    new MenuHelpTextAdapter(mAboutMI, mLocalizer.msg("menuinfo.about",""), mLabel);
     
     mKeyboardShortcutsMI = new JMenuItem(mLocalizer.msg("menuitem.keyboardshortcuts","Keyboard shortcuts"),urlHelpImg);
     mKeyboardShortcutsMI.addActionListener(this);
+    new MenuHelpTextAdapter(mKeyboardShortcutsMI,mLocalizer.msg("website.keyboardshortcuts",""),mLabel);
 
     mPluginHelpMenu = new JMenu(mLocalizer.msg("menu.plugins","Plugins"));
     mPluginHelpMenu.setIcon(urlHelpImg);
@@ -263,13 +297,16 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mFontSizeLargerMI = new JMenuItem(mLocalizer.msg("menuitem.fontSizeLarger", "Larger"));
     mFontSizeLargerMI.addActionListener(this);
     mFontSizeLargerMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "zoom-in", 16));
+    new MenuHelpTextAdapter(mFontSizeLargerMI, mLocalizer.msg("menuinfo.fontlarger",""), mLabel);
     
     mFontSizeSmallerMI = new JMenuItem(mLocalizer.msg("menuitem.fontSizeSmaller", "Smaller"));
     mFontSizeSmallerMI.addActionListener(this);
     mFontSizeSmallerMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "zoom-out", 16));
+    new MenuHelpTextAdapter(mFontSizeSmallerMI, mLocalizer.msg("menuinfo.fontsmaller",""), mLabel);
     
     mFontSizeDefaultMI = new JMenuItem(mLocalizer.msg("menuitem.fontSizeDefault", "Reset to default"));
     mFontSizeDefaultMI.addActionListener(this);
+    new MenuHelpTextAdapter(mFontSizeDefaultMI, mLocalizer.msg("menuinfo.fontdefault",""), mLabel);
     
     mFontSizeMenu = new JMenu(mLocalizer.msg("menuitem.fontSize", "Font size"));
     mFontSizeMenu.add(mFontSizeLargerMI);
@@ -280,12 +317,15 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     
     mColumnWidthLargerMI = new JMenuItem(mLocalizer.msg("menuitem.columnWidthLarger", "Larger"));
     mColumnWidthLargerMI.addActionListener(this);
+    new MenuHelpTextAdapter(mColumnWidthLargerMI, mLocalizer.msg("menuinfo.columnlarger",""), mLabel);
     
     mColumnWidthSmallerMI = new JMenuItem(mLocalizer.msg("menuitem.columnWidthSmaller", "Smaller"));
     mColumnWidthSmallerMI.addActionListener(this);
+    new MenuHelpTextAdapter(mColumnWidthSmallerMI, mLocalizer.msg("menuinfo.columnsmaller",""), mLabel);
     
     mColumnWidthDefaultMI = new JMenuItem(mLocalizer.msg("menuitem.columnWidthDefault", "Reset to default"));
     mColumnWidthDefaultMI.addActionListener(this);
+    new MenuHelpTextAdapter(mColumnWidthDefaultMI, mLocalizer.msg("menuinfo.columndefault",""), mLabel);
     
     mColumnWidthMenu = new JMenu(mLocalizer.msg("menuitem.columnWidth", "ColumnWidth"));
     mColumnWidthMenu.add(mColumnWidthLargerMI);
@@ -666,18 +706,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
    }
    
    private void createMenuItemInfos() {
-     new MenuHelpTextAdapter(mSettingsMI, mLocalizer.msg("menuinfo.settings",""), mLabel); 
-     new MenuHelpTextAdapter(mQuitMI, mLocalizer.msg("menuinfo.quit",""), mLabel);
-     new MenuHelpTextAdapter(mUpdateMI, mLocalizer.msg("menuinfo.update",""), mLabel);
-     new MenuHelpTextAdapter(mPluginManagerMI, mLocalizer.msg("menuinfo.findplugins",""), mLabel); 
-     new MenuHelpTextAdapter(mAboutMI, mLocalizer.msg("menuinfo.about",""), mLabel);
-     new MenuHelpTextAdapter(mDonorMI,mLocalizer.msg("website.donors",""),mLabel); 
-     new MenuHelpTextAdapter(mFaqMI,mLocalizer.msg("website.faq",""),mLabel); 
-     new MenuHelpTextAdapter(mForumMI,mLocalizer.msg("website.forum",""),mLabel); 
-     new MenuHelpTextAdapter(mHandbookMI,mLocalizer.msg("website.handbook",""),mLabel); 
-     new MenuHelpTextAdapter(mKeyboardShortcutsMI,mLocalizer.msg("website.keyboardshortcuts",""),mLabel);
-     new MenuHelpTextAdapter(mWebsiteMI,mLocalizer.msg("website.tvbrowser",""),mLabel); 
-     new MenuHelpTextAdapter(mConfigAssistantMI,mLocalizer.msg("menuinfo.configAssistant",""),mLabel);
+     
+     
    }
 
 public void dateChanged(Date date, ProgressMonitor monitor, Runnable callback) {
