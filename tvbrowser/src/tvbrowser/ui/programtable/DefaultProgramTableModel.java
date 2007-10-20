@@ -39,6 +39,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.TvDataBase;
+import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import util.io.IOUtilities;
 import util.ui.ProgramPanel;
 import devplugin.Channel;
@@ -72,6 +73,11 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   private HashMap<Channel, DateRange> mDateRangeForChannel;
   
   private int[] mOnAirRows;
+  
+  /**
+   * the currently active channel group
+   */
+  private ChannelFilterComponent mChannelFilter = null;
 
   /**
    * Creates a new instance of DefaultProgramTableModel.
@@ -180,8 +186,17 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   }
   
   
+  /* (non-Javadoc)
+   * @see tvbrowser.ui.programtable.ProgramTableModel#setProgramFilter(devplugin.ProgramFilter)
+   */
   public void setProgramFilter(ProgramFilter filter) {
     mProgramFilter=filter;
+    updateTableContent();
+    fireTableDataChanged(null);
+  }
+  
+  public void setChannelGroup(ChannelFilterComponent channelFilter) {
+    mChannelFilter = channelFilter;
     updateTableContent();
     fireTableDataChanged(null);
   }
@@ -235,7 +250,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 	        if (compareDateTime(progDate, progTime, toDate, toMinutes) <= 0) {
             // program starts after or at given end time
             if (compareDateTime(progDate, progTime, fromDate, fromMinutes) >= 0)  {
-  		        if (mProgramFilter==null || mProgramFilter.accept(prog)) {
+  		        if (filterAccepts(prog)) {
                 ProgramPanel panel = new ProgramPanel(prog);
                 mProgramColumn[col].add(panel);
               }
@@ -244,7 +259,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
               // add the last program _before_ the day start time which is still running afterwards  
   	          if (mProgramColumn[col].isEmpty()) {
   	            if (compareDateTime(progDate, progTime + prog.getLength(), fromDate, fromMinutes) > 0) {
-                  if (mProgramFilter==null || mProgramFilter.accept(prog)) {
+                  if (filterAccepts(prog)) {
                     ProgramPanel panel = new ProgramPanel(prog);
                     mProgramColumn[col].add(panel);
                   }
@@ -255,6 +270,11 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
         }
       }
     }
+  }
+
+
+  private boolean filterAccepts(Program program) {
+    return (mChannelFilter == null || mChannelFilter.accept(program)) && (mProgramFilter==null || mProgramFilter.accept(program));
   }
 
   public void setDate(Date date, ProgressMonitor monitor, Runnable callback)

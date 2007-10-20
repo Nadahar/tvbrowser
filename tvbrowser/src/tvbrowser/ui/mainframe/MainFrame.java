@@ -71,6 +71,7 @@ import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.filters.ShowAllFilter;
+import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
@@ -844,6 +845,15 @@ public class MainFrame extends JFrame implements DateListener {
     
     mCurrentFilterName = filter.getName();
     mProgramTableScrollPane.requestFocusInWindow();
+  }
+  
+  /**
+   * Set the active channel group
+   * @param channelFilter
+   * @since 2.6
+   */
+  public void setChannelGroup(ChannelFilterComponent channelFilter) {
+    mProgramTableModel.setChannelGroup(channelFilter);
   }
 
   public void updateFilterPanel() {
