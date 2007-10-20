@@ -26,6 +26,7 @@
 
 package tvbrowser.ui.programtable;
 
+import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import util.ui.ProgramPanel;
 import devplugin.Channel;
 import devplugin.Date;
@@ -49,6 +50,13 @@ public interface ProgramTableModel {
   
   public void setProgramFilter(ProgramFilter filter);
   
+  /**
+   * set the active channel group
+   * @param channelFilter
+   * @since 2.6
+   */
+  public void setChannelGroup(ChannelFilterComponent channelFilter);
+
   public ProgramPanel getProgramPanel(int col, int row);
 
 }

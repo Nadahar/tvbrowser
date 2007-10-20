@@ -17,7 +17,6 @@ import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
-import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -25,8 +24,6 @@ import tvbrowser.ui.settings.ChannelsSettingsTab;
 import tvbrowser.ui.settings.channel.ChannelConfigDlg;
 import util.browserlauncher.Launch;
 import devplugin.Channel;
-import devplugin.Program;
-import devplugin.ProgramFilter;
 import devplugin.SettingsItem;
 
 /**
@@ -96,7 +93,7 @@ public class ChannelContextMenu implements ActionListener {
         if ((rule != null) && (rule instanceof ChannelFilterComponent)) {
           FilterComponentList.getInstance().add(rule);
           FilterComponentList.getInstance().store();
-          setChannelFilter(rule);
+          setChannelGroup((ChannelFilterComponent) rule);
         }
       }});
     mFilterChannels.add(menuItem);
@@ -181,25 +178,16 @@ public class ChannelContextMenu implements ActionListener {
         String filterName = filterItem.getText();
         final FilterComponent component = FilterComponentList.getInstance().getFilterComponentByName(filterName);
         if (component != null && component instanceof ChannelFilterComponent) {
-          setChannelFilter(component); 
+          setChannelGroup((ChannelFilterComponent) component); 
         }
         else {
-          MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getDefaultFilter()); 
+          setChannelGroup(null);
         }
       }
     }
   }
 
-  private void setChannelFilter(final FilterComponent component) {
-    ProgramFilter filter = new ProgramFilter() {
-      public String getName() {
-        return component.getName();
-      }
-    
-      public boolean accept(Program program) {
-        return component.accept(program);
-      }
-    };
-    MainFrame.getInstance().setProgramFilter(filter);
+  private void setChannelGroup(final ChannelFilterComponent channelGroup) {
+    MainFrame.getInstance().setChannelGroup(channelGroup);
   }
 }
