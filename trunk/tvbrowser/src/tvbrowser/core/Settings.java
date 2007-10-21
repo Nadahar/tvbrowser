@@ -861,8 +861,17 @@ public class Settings {
   public static final StringProperty propMiddleClickIf = new StringProperty(
       mProp, "middleclickplugin", "programinfo.ProgramInfo");
 
+  /**
+   * the last active program filter
+   */
   public static final StringProperty propLastUsedFilter = new StringProperty(
       mProp, "lastusedfilter", null);
+
+  /**
+   * the last active channel group for filtering the channel list
+   */
+  public static final StringProperty propLastUsedChannelGroup = new StringProperty(
+      mProp, "lastchannelgroup", null);
 
   /**
    * The order of the plugin IDs.
