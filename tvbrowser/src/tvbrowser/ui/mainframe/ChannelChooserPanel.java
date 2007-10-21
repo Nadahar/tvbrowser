@@ -44,6 +44,7 @@ import javax.swing.event.ListSelectionListener;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
+import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import util.ui.ChannelContextMenu;
 import util.ui.ChannelListCellRenderer;
@@ -172,6 +173,14 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
   public void selectChannel(Channel channel) {
     disableSync = true;
     mList.setSelectedValue(channel,true);
+  }
+
+  public void setChannelGroup(ChannelFilterComponent channelFilter) {
+    Channel[] channels = null;
+    if (channelFilter != null) {
+      channels = channelFilter.getChannels();
+    }
+    ((ChannelListCellRenderer)mList.getCellRenderer()).setChannels(channels);
   }
 
 }

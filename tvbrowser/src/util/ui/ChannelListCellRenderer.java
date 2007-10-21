@@ -48,6 +48,7 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
   private boolean mTextVisible;
   private boolean mDefaultValues;
   private boolean mShowCountry;
+  private Channel[] mChannels;
 
   public ChannelListCellRenderer() {
     this(true,false,false);
@@ -65,6 +66,10 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
     this(channelIconsVisible,textVisible,defaultValues, false);
   }
 
+  public ChannelListCellRenderer(boolean channelIconsVisible, boolean textVisible, boolean defaultValues, boolean showCountry) {
+    this(channelIconsVisible,textVisible,defaultValues, showCountry, null);
+  }
+
   /**
    * Create Renderer
    *
@@ -74,11 +79,12 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
    * @param showCountry show Country Information if channel name is a dublicate?
    * @since 2.6
    */
-  public ChannelListCellRenderer(boolean channelIconsVisible, boolean textVisible, boolean defaultValues, boolean showCountry) {
+  public ChannelListCellRenderer(boolean channelIconsVisible, boolean textVisible, boolean defaultValues, boolean showCountry, Channel[] channels) {
     mChannelIconsVisible = channelIconsVisible;
     mTextVisible = textVisible;
     mDefaultValues = defaultValues;
     mShowCountry = showCountry;
+    mChannels = channels;
   }
 
   public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
@@ -105,6 +111,16 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
       mChannel.setBackground(label.getBackground());
       mChannel.setForeground(label.getForeground());
 
+      boolean found = (mChannels == null);
+      if (mChannels != null) {
+        for (int i = 0; i < mChannels.length; i++) {
+          if (mChannels[i].equals(value)) {
+            found = true;
+            break;
+          }
+        }
+      }
+      mChannel.setEnabled(found);
       return mChannel;
     }
 
@@ -113,5 +129,9 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
   
   public Component getListComponent() {
    return mChannel; 
+  }
+  
+  public void setChannels(Channel[] channels) {
+    mChannels = channels;
   }
 }

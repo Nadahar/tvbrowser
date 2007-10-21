@@ -68,6 +68,8 @@ import tvbrowser.core.DateListener;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataUpdater;
+import tvbrowser.core.filters.FilterComponent;
+import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.filters.ShowAllFilter;
@@ -300,16 +302,27 @@ public class MainFrame extends JFrame implements DateListener {
     setJMenuBar(mMenuBar);
     addContextMenuMouseListener(mMenuBar);
 
+    // set program filter
     FilterList filterList = FilterList.getInstance();
 
     ProgramFilter filter = filterList
         .getFilterByName(Settings.propLastUsedFilter.getString());
-
+    
     if (filter == null) {
       filter = FilterManagerImpl.getInstance().getDefaultFilter();
     }
 
     setProgramFilter(filter);
+
+    // set channel group filter
+    String channelGroupName = Settings.propLastUsedChannelGroup.getString();
+    if (channelGroupName != null) {
+      FilterComponent component = FilterComponentList.getInstance().getFilterComponentByName(channelGroupName);
+      if (component != null && component instanceof ChannelFilterComponent) {
+        setChannelGroup((ChannelFilterComponent) component);
+      }
+    }
+
     addKeyboardAction();
 
     Timer timer = new Timer(10000, new ActionListener() {
@@ -854,6 +867,13 @@ public class MainFrame extends JFrame implements DateListener {
    */
   public void setChannelGroup(ChannelFilterComponent channelFilter) {
     mProgramTableModel.setChannelGroup(channelFilter);
+    if (channelFilter != null) {
+      Settings.propLastUsedChannelGroup.setString(channelFilter.getName());
+    }
+    else {
+      Settings.propLastUsedChannelGroup.setString(null);
+    }
+    mChannelChooser.setChannelGroup(channelFilter);
   }
 
   public void updateFilterPanel() {
@@ -867,8 +887,14 @@ public class MainFrame extends JFrame implements DateListener {
     if (mProgramTableModel == null) {
       return null;
     }
-
     return mProgramTableModel.getProgramFilter();
+  }
+  
+  public ChannelFilterComponent getChannelGroup() {
+    if (mProgramTableModel == null) {
+      return null;
+    }
+    return mProgramTableModel.getChannelGroup();
   }
 
   public void quit() {
@@ -1200,6 +1226,14 @@ public class MainFrame extends JFrame implements DateListener {
       }
     } else {
       Settings.propLastUsedFilter.setString(FilterManagerImpl.getInstance().getDefaultFilter().getName());
+    }
+    
+    ChannelFilterComponent channelGroup = getChannelGroup();
+    if (channelGroup != null) {
+      Settings.propLastUsedChannelGroup.setString(channelGroup.getName());
+    }
+    else {
+      Settings.propLastUsedChannelGroup.setString(null);
     }
   }
 

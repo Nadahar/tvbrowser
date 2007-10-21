@@ -73,19 +73,24 @@ public class ChannelContextMenu implements ActionListener {
     mChGoToURL = new JMenuItem(mLocalizer.msg("openURL", "Open internet page"));
     
     // dynamically create filters from available channel filter components
+    String channelFilterName = Settings.propLastUsedChannelGroup.getString();
     mFilterChannels = new JMenu(mLocalizer.msg("filterChannels", "Channel filter"));
-    JMenuItem menuItem = new JMenuItem(mLocalizer.msg("filterAll", "All channels"));
+    JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(mLocalizer.msg("filterAll", "All channels"));
+    menuItem.setSelected(channelFilterName == null);
     menuItem.addActionListener(this);
     mFilterChannels.add(menuItem);
     String[] channelFilterNames = FilterComponentList.getInstance().getChannelFilterNames();
     for (String filterName : channelFilterNames) {
-      menuItem = new JMenuItem(filterName);
+      menuItem = new JRadioButtonMenuItem(filterName);
       menuItem.addActionListener(this);
       mFilterChannels.add(menuItem);
+      if (channelFilterName != null && filterName.equals(channelFilterName)) {
+        menuItem.setSelected(true);
+      }
     }
     mFilterChannels.add(new JSeparator());
-    menuItem = new JMenuItem(mLocalizer.msg("filterNew", "Add channel filter"));
-    menuItem.addActionListener(new ActionListener(){
+    JMenuItem menuItemAdd = new JMenuItem(mLocalizer.msg("filterNew", "Add channel filter"));
+    menuItemAdd.addActionListener(new ActionListener(){
 
       public void actionPerformed(ActionEvent e) {
         EditFilterComponentDlg dlg = new EditFilterComponentDlg(null, null, ChannelFilterComponent.class);
@@ -96,7 +101,7 @@ public class ChannelContextMenu implements ActionListener {
           setChannelGroup((ChannelFilterComponent) rule);
         }
       }});
-    mFilterChannels.add(menuItem);
+    mFilterChannels.add(menuItemAdd);
 
     mChAdd.addActionListener(this);
     mChConf.addActionListener(this);
@@ -169,19 +174,21 @@ public class ChannelContextMenu implements ActionListener {
     }
     else {
       if (e.getSource() instanceof JRadioButtonMenuItem) {
-        Settings.propShowChannelNamesInChannellist.setBoolean(e.getSource() == layoutBoth || e.getSource() == layoutName);       
-        Settings.propShowChannelIconsInChannellist.setBoolean(e.getSource() == layoutBoth || e.getSource() == layoutLogo);       
-        MainFrame.getInstance().updateChannelChooser();
-      }
-      else if (e.getSource() instanceof JMenuItem) {
-        JMenuItem filterItem = (JMenuItem) e.getSource();
-        String filterName = filterItem.getText();
-        final FilterComponent component = FilterComponentList.getInstance().getFilterComponentByName(filterName);
-        if (component != null && component instanceof ChannelFilterComponent) {
-          setChannelGroup((ChannelFilterComponent) component); 
+        if (e.getSource() == layoutBoth || e.getSource() == layoutName || e.getSource() == layoutLogo) {
+          Settings.propShowChannelNamesInChannellist.setBoolean(e.getSource() == layoutBoth || e.getSource() == layoutName);       
+          Settings.propShowChannelIconsInChannellist.setBoolean(e.getSource() == layoutBoth || e.getSource() == layoutLogo);       
+          MainFrame.getInstance().updateChannelChooser();
         }
         else {
-          setChannelGroup(null);
+          JRadioButtonMenuItem filterItem = (JRadioButtonMenuItem) e.getSource();
+          String filterName = filterItem.getText();
+          final FilterComponent component = FilterComponentList.getInstance().getFilterComponentByName(filterName);
+          if (component != null && component instanceof ChannelFilterComponent) {
+            setChannelGroup((ChannelFilterComponent) component); 
+          }
+          else {
+            setChannelGroup(null);
+          }
         }
       }
     }
