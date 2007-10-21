@@ -589,7 +589,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
    * @since 2.6
    */
   private void repaintCell(Point cellIndex) {
-    if (cellIndex.x >= 0 || cellIndex.y >= 0) {
+    if ((cellIndex.x >= 0 || cellIndex.y >= 0) && cellIndex.x < mModel.getColumnCount()) {
       repaint(getCellRect(cellIndex.x, cellIndex.y));
     }
   }
