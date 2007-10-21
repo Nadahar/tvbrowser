@@ -77,7 +77,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   /**
    * the currently active channel group
    */
-  private ChannelFilterComponent mChannelFilter = null;
+  private ChannelFilterComponent mChannelGroupFilter = null;
 
   /**
    * Creates a new instance of DefaultProgramTableModel.
@@ -196,7 +196,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   }
   
   public void setChannelGroup(ChannelFilterComponent channelFilter) {
-    mChannelFilter = channelFilter;
+    mChannelGroupFilter = channelFilter;
     updateTableContent();
     fireTableDataChanged(null);
   }
@@ -204,6 +204,10 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
   public ProgramFilter getProgramFilter() {
     return mProgramFilter;
+  }
+  
+  public ChannelFilterComponent getChannelGroup() {
+    return mChannelGroupFilter;
   }
 
 
@@ -274,7 +278,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
 
   private boolean filterAccepts(Program program) {
-    return (mChannelFilter == null || mChannelFilter.accept(program)) && (mProgramFilter==null || mProgramFilter.accept(program));
+    return (mChannelGroupFilter == null || mChannelGroupFilter.accept(program)) && (mProgramFilter==null || mProgramFilter.accept(program));
   }
 
   public void setDate(Date date, ProgressMonitor monitor, Runnable callback)
