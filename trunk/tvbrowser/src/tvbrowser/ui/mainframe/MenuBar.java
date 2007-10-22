@@ -44,12 +44,16 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JSeparator;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DateListener;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
+import tvbrowser.core.filters.FilterComponent;
+import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -61,6 +65,7 @@ import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.extras.searchplugin.SearchPlugin;
 import tvbrowser.extras.searchplugin.SearchPluginProxy;
+import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
 import tvbrowser.ui.filter.dlgs.FilterButtons;
 import tvbrowser.ui.licensebox.LicenseBox;
 import tvbrowser.ui.mainframe.toolbar.ContextMenu;
@@ -99,7 +104,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
                     mColumnWidthLargerMI, mColumnWidthSmallerMI, mColumnWidthDefaultMI;
   protected JMenu mFiltersMenu, mPluginsViewMenu, mLicenseMenu, mGoMenu, mViewMenu, mToolbarMenu, mPluginHelpMenu;
 
-  private JMenu mGotoDateMenu, mGotoChannelMenu, mGotoTimeMenu, mFontSizeMenu, mColumnWidthMenu;
+  private JMenu mGotoDateMenu, mGotoChannelMenu, mGotoTimeMenu, mFontSizeMenu, mColumnWidthMenu, mChannelGroupMenu;
   
   /**
    * status bar label for menu help
@@ -191,6 +196,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mFiltersMenu = new JMenu(mLocalizer.msg("menuitem.filters","Filter"));
     mFiltersMenu.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-filter", 16));
     updateFiltersMenu();
+    
+    mChannelGroupMenu = new JMenu(mLocalizer.msg("menuitem.channelgroup", "Channel group"));
+    updateChannelGroupMenu();
 
     mGoMenu = new JMenu(mLocalizer.msg("menuitem.go","Go"));
     mGoMenu.setMnemonic(KeyEvent.VK_G);
@@ -342,12 +350,53 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mViewMenu.add(mViewFilterBarMI);
     mViewMenu.addSeparator();
     mViewMenu.add(mFiltersMenu);
+    mViewMenu.add(mChannelGroupMenu);
     mViewMenu.add(mFontSizeMenu);
     mViewMenu.add(mColumnWidthMenu);
     mViewMenu.addSeparator();
     mViewMenu.add(mFullscreenMI);
   }
 
+
+  void updateChannelGroupMenu() {
+    mChannelGroupMenu.removeAll();
+    String channelFilterName = Settings.propLastUsedChannelGroup.getString();
+    JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(mLocalizer.msg("channelGroupAll", "All channels"));
+    menuItem.setSelected(channelFilterName == null);
+    menuItem.addActionListener(new ActionListener() {
+
+      public void actionPerformed(ActionEvent e) {
+        MainFrame.getInstance().setChannelGroup(null);
+      }});
+    mChannelGroupMenu.add(menuItem);
+    String[] channelFilterNames = FilterComponentList.getInstance().getChannelFilterNames();
+    for (final String filterName : channelFilterNames) {
+      menuItem = new JRadioButtonMenuItem(filterName);
+      menuItem.addActionListener(new ActionListener() {
+
+        public void actionPerformed(ActionEvent e) {
+          MainFrame.getInstance().setChannelGroup((ChannelFilterComponent) FilterComponentList.getInstance().getFilterComponentByName(filterName));
+        }});
+      mChannelGroupMenu.add(menuItem);
+      if (channelFilterName != null && filterName.equals(channelFilterName)) {
+        menuItem.setSelected(true);
+      }
+    }
+    mChannelGroupMenu.add(new JSeparator());
+    JMenuItem menuItemAdd = new JMenuItem(mLocalizer.msg("channelGroupNew", "Add channel group..."));
+    menuItemAdd.addActionListener(new ActionListener(){
+
+      public void actionPerformed(ActionEvent e) {
+        EditFilterComponentDlg dlg = new EditFilterComponentDlg(null, null, ChannelFilterComponent.class);
+        FilterComponent rule = dlg.getFilterComponent();
+        if ((rule != null) && (rule instanceof ChannelFilterComponent)) {
+          FilterComponentList.getInstance().add(rule);
+          FilterComponentList.getInstance().store();
+          MainFrame.getInstance().setChannelGroup((ChannelFilterComponent) rule);
+        }
+      }});
+    mChannelGroupMenu.add(menuItemAdd);
+  }
 
   private JMenuItem createDateMenuItem(final Date date) {
     JMenuItem item = new JMenuItem(date.getLongDateString());

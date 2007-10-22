@@ -874,6 +874,7 @@ public class MainFrame extends JFrame implements DateListener {
       Settings.propLastUsedChannelGroup.setString(null);
     }
     mChannelChooser.setChannelGroup(channelFilter);
+    mMenuBar.updateChannelGroupMenu();
   }
 
   public void updateFilterPanel() {
