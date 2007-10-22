@@ -390,8 +390,10 @@ public class UserFilter implements devplugin.ProgramFilter {
   }
   
   public boolean containsRuleComponent(String comp) {
-    boolean res=root.containsRuleComponent(comp);
-    return res;
+    if (root == null) {
+      return false;
+    }
+    return root.containsRuleComponent(comp);
   } 
   
   public boolean equals(Object o) {
