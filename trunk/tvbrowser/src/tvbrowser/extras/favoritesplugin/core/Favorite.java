@@ -49,6 +49,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Comparator;
 
 public abstract class Favorite {
@@ -62,6 +63,9 @@ public abstract class Favorite {
   private ArrayList<Exclusion> mExclusionList;
   private ProgramReceiveTarget[] mForwardPluginArr;
 
+  /**
+   * unsorted list of blacklisted (non-favorite) programs
+   */
   private ArrayList<Program> mBlackList;
   
   public Favorite() {
@@ -113,8 +117,10 @@ public abstract class Favorite {
       mBlackList = new ArrayList<Program>(size);
       readProgramsToList(mBlackList, size, in);
     }
-    else
+    else {
       mBlackList = new ArrayList<Program>();
+    }
+    Collections.sort(mBlackList, ProgramUtilities.getProgramComparator());
     
     mPrograms = programList.toArray(new Program[programList.size()]);
     
@@ -356,7 +362,7 @@ public abstract class Favorite {
     Program[] newProgList = filterByLimitations(progs);
 
 
-    /* Now we have to lists:
+    /* Now we have two lists:
          - mPrograms:   previous favorite programs
          - newProgList: new favorite programs
 
@@ -495,6 +501,7 @@ public abstract class Favorite {
   public void addToBlackList(Program program) {
     if(!mBlackList.contains(program)) {
       mBlackList.add(program);
+      Collections.sort(mBlackList, ProgramUtilities.getProgramComparator());
       unmarkProgram(program);
       FavoritesPlugin.getInstance().updateRootNode(true);
       
