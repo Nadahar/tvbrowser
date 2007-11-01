@@ -1,5 +1,57 @@
 Changelog TVBrowser
 
+2.6alpha3
+=========
+-Bugs
+ * 1710561 big fonts: filter components dialog not high enough
+ * 1738622 Size of TV-Browser is not restored correct on startup
+ * 1794024 English installation but German user language
+ * 1801671 FavoritesDialog: selection of programs ignored for sending
+ * 1801405 filtered view requests application focus
+ * 1802263 empty program info
+ * 1803024 wrong end time in program info
+ * 1805505 wrong actor recognition if role in title
+ * 1806919 Tree-Expanding after adding a favorite
+ * 1807886 advanced search form does not resize
+ * 1808374 Tab character not shown in program table 
+-Features
+ * 1800901 highlight program on showing from plugin tree
+ * 1802848 Fullscreen start selectable in settings
+ * 1804507 PrintPlugin: Use mark icons for program
+ * 1808385 antialiasing in splash screen
+ * 1808674 Make network connection test optional
+ * several new icons in the main menu and toolbar
+ 
+2.6alpha2
+=========
+-Bugs
+ * 1734692 Desc. and copyright for picture not readable
+ * 1738622 Size of TV-Browser is not restored correct on startup
+ * 1795481 Fixed Reload-Handling of Favorites-Tree
+ * 1795499 PluginTree: keyboard navigation didn't works
+ * 1796665 I18N Plugin didn't show translations for tvbrowser
+ * 1797086 AudioDescription Filter can be delted
+ * 1798003 FavoritePlugin: Programs send more than once to target
+ * 1798618 Channel settings tab goes gray on filter deleting
+ * 1799450 Exception in TV rater plugin
+ * 1800096 KOrganizer-Export missing
+ * 1800331 SearchPlugin context menu not available 
+ * split multiple person names in director field
+ * plugins shown in wrong language after changing language settings
+- Features
+ * 1777140 have filter menu for plugin nodes
+ * 1795272 Check plugin versions for loading from right directory
+ * 1795684 Better single click handling in trees
+ * 1796964 Add ability to show marking colors in context menu
+ * 1797875 Show favorites that could not send programs to a target
+ * 1798668 Do not download missing channel icons on TV-Browser start
+ * 1799463 program info: actor name always left, role name always right
+ * 1799909 PluginTree: Have icon for Favorites
+ * 1799911 PrintPlugin: Show marking colors
+ * new plugin: Genres
+ * avoid channel changes dialog if the list of available channels did not change
+ * more icons in the main menu 
+
 2.6alpha1
 =========
 
