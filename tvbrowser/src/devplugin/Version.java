@@ -125,7 +125,7 @@ public final class Version implements Comparable {
 
   public String toString() {
   	if (mName==null) {
-      return mMajor + "." + mMinor/10 + "." + mMinor%10 + "." + mSubMinor + (mIsStable?"":"beta");
+      return mMajor + "." + mMinor/10 + "." + mMinor%10 + "." + mSubMinor + (mIsStable?"":" beta");
   	}
   	return mName;
   }
