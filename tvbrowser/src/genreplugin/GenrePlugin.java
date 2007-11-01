@@ -16,9 +16,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * VCS information:
- *     $Date: 2007-09-15 19:13:12 +0200 (Sa, 15 Sep 2007) $
- *   $Author: bananeweizen $
- * $Revision: 1 $
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package genreplugin;
 
