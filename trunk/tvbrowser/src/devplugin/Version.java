@@ -183,7 +183,7 @@ public final class Version implements Comparable {
   		  if (mSubMinor>v.mSubMinor) {
   		    return 1;
   		  }
-  		  else if(mSubMinor>v.mSubMinor) {
+  		  else if(mSubMinor<v.mSubMinor) {
   		    return -1;
   		  }
   		  else {
