@@ -48,6 +48,7 @@ import devplugin.SettingsTab;
 public class ReminderPluginProxy implements ContextMenuIf, ProgramReceiveIf, Marker, InternalPluginProxyIf {
 
   private static ReminderPluginProxy mInstance;
+  private static ReminderPlugin mReminderInstance;
   private Icon mMarkIcon;
   
   private ReminderPluginProxy() {
@@ -58,22 +59,24 @@ public class ReminderPluginProxy implements ContextMenuIf, ProgramReceiveIf, Mar
    * @return The instance of the ReminderPluginProxy
    */
   public static ReminderPluginProxy getInstance() {
-    if(mInstance == null)
+    if(mInstance == null) {
+      mReminderInstance = ReminderPlugin.getInstance();
       new ReminderPluginProxy();
+    }
     
     return mInstance;
   }
   
   public ActionMenu getContextMenuActions(Program program) {
-    return ReminderPlugin.getInstance().getContextMenuActions(program);
+    return mReminderInstance.getContextMenuActions(program);
   }
 
   public String getId() {
-    return ReminderPlugin.getInstance().getId();
+    return mReminderInstance.getId();
   }
   
   public String toString() {
-    return ReminderPlugin.getInstance().toString();
+    return mReminderInstance.toString();
   }
 
   public boolean canReceiveProgramsWithTarget() {
@@ -81,7 +84,7 @@ public class ReminderPluginProxy implements ContextMenuIf, ProgramReceiveIf, Mar
   }
 
   public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
-    ReminderPlugin.getInstance().addPrograms(programArr);
+    mReminderInstance.addPrograms(programArr);
     return true;
   }
   
@@ -96,7 +99,7 @@ public class ReminderPluginProxy implements ContextMenuIf, ProgramReceiveIf, Mar
 
   /** @deprecated Since 2.5 */
   public void receivePrograms(Program[] programArr) {
-    ReminderPlugin.getInstance().addPrograms(programArr);
+    mReminderInstance.addPrograms(programArr);
   }
 
   public Icon getMarkIcon() {
@@ -111,7 +114,7 @@ public class ReminderPluginProxy implements ContextMenuIf, ProgramReceiveIf, Mar
   }
 
   public int getMarkPriorityForProgram(Program p) {
-    return ReminderPlugin.getInstance().getMarkPriority();
+    return mReminderInstance.getMarkPriority();
   }
 
   public String getDescription() {
