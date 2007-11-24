@@ -38,6 +38,7 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
+import javax.swing.ToolTipManager;
 import javax.swing.WindowConstants;
 
 import tvbrowser.ui.mainframe.MainFrame;
@@ -70,7 +71,7 @@ import devplugin.Version;
  * @author René Mach
  */
 public class SimpleMarkerPlugin extends Plugin implements ActionListener {
-  private static final Version mVersion = new Version(2,60,0);
+  private static final Version mVersion = new Version(2,60,1);
   
   /** The localizer for this class. */
   protected static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SimpleMarkerPlugin.class);
@@ -223,6 +224,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
             program.mark(SimpleMarkerPlugin.this);
           }
           mMarkListVector.getListAt(0).updateNode();
+          save();
         }};
       filtersAction[i].putValue(Action.NAME, filter.getName());
     }
@@ -293,6 +295,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
       }
     }
     targetList.updateNode();
+    save();
     
     return true;
   }
@@ -399,6 +402,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     }
     
     refreshManagePanel(false);
+    save();
   }
 
   public void readData(ObjectInputStream in) throws IOException,
@@ -469,7 +473,6 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
         list.createNodes(temp, false);
       }
     }
-    node.update();
   }
 
   protected ImageIcon createIconForTree(int i) {
@@ -492,6 +495,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
 
     }
     updateTree();
+    save();
   }
 
   protected MarkList[] getMarkLists() {
@@ -569,5 +573,9 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     
   protected Properties getSettings() {
     return mProperties;
+  }
+  
+  protected void save() {
+    saveMe();
   }
 }

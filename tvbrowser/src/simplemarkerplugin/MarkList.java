@@ -220,6 +220,7 @@ public class MarkList extends Vector<Program> {
         }
         createNodes(mRootNode, true);
         SimpleMarkerPlugin.getInstance().refreshManagePanel(false);
+        SimpleMarkerPlugin.getInstance().save();
       }
     };
 
