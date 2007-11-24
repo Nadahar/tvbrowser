@@ -204,6 +204,10 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
       ((MarkListItem) mListTable.getValueAt(i, 0)).doChanges();
     
     SimpleMarkerPlugin.getInstance().updateTree();
+    
+    if(mToDeleteItems.isEmpty()) {
+      SimpleMarkerPlugin.getInstance().save();
+    }
   }
 
   public Icon getIcon() {
