@@ -166,11 +166,6 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     int columnWidth = UiUtilities.getStringWidth(mTable.getFont(),mTableModel.getColumnName(0)) + 16;
     mTable.getColumnModel().getColumn(0).setPreferredWidth(columnWidth);
     mTable.getColumnModel().getColumn(0).setMaxWidth(columnWidth);
-    mTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent evt) {
-        updateBtns();
-      }
-    });
 
     mTable.addMouseListener(new MouseAdapter() {
 
@@ -271,6 +266,12 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     builder.addGridded(mRemove);
     
     contentPanel.add(builder.getPanel(), cc.xyw(1,5,2));
+    
+    mTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      public void valueChanged(ListSelectionEvent evt) {
+        updateBtns();
+      }
+    });
     
     updateBtns();
 
