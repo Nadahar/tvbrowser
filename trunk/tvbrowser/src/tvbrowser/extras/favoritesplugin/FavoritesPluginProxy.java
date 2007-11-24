@@ -45,6 +45,7 @@ import devplugin.SettingsTab;
 public class FavoritesPluginProxy implements ContextMenuIf, Marker, InternalPluginProxyIf {
   
   private static FavoritesPluginProxy mInstance;
+  private static FavoritesPlugin mFavoritesInstance;
   private Icon mMarkIcon;
   
   private FavoritesPluginProxy() {
@@ -54,23 +55,25 @@ public class FavoritesPluginProxy implements ContextMenuIf, Marker, InternalPlug
   /**
    * @return The instance of the FavoritesPluginProxy
    */
-  public static synchronized FavoritesPluginProxy getInstance() {
-    if(mInstance == null)
+  public static FavoritesPluginProxy getInstance() {
+    if(mInstance == null) {
+      mFavoritesInstance = FavoritesPlugin.getInstance();
       new FavoritesPluginProxy();
+    }
     
     return mInstance;
   }
   
   public ActionMenu getContextMenuActions(Program program) {
-    return FavoritesPlugin.getInstance().getContextMenuActions(program);
+    return mFavoritesInstance.getContextMenuActions(program);
   }
 
   public String getId() {
-    return FavoritesPlugin.getInstance().getId();
+    return mFavoritesInstance.getId();
   }
 
   public String toString() {
-    return FavoritesPlugin.getInstance().toString();
+    return mFavoritesInstance.toString();
   }
 
   public Icon getMarkIcon() {
@@ -85,7 +88,7 @@ public class FavoritesPluginProxy implements ContextMenuIf, Marker, InternalPlug
   }
 
   public int getMarkPriorityForProgram(Program p) {
-    return FavoritesPlugin.getInstance().getMarkPriority();
+    return mFavoritesInstance.getMarkPriority();
   }
 
   public Icon getIcon() {
