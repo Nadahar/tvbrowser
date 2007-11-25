@@ -27,6 +27,7 @@
 package tvbrowser.ui.update;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Frame;
@@ -287,6 +288,14 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         Version installedVersion = item.getInstalledVersion(); 
         if ((installedVersion != null) && (installedVersion.compareTo(item.getVersion()) < 0)) { 
           label.setIcon(newVersionIcon);
+        }
+        
+        if(!item.isStable()) {
+          if(!isSelected) {
+            label.setForeground(new Color(200, 0, 0));
+          }
+          
+          label.setText(label.getText() + " (Beta)");
         }
       }
       return label;
