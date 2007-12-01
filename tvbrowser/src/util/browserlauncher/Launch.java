@@ -39,6 +39,7 @@ import javax.swing.JRootPane;
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
+import util.io.ExecutionHandler;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -79,9 +80,9 @@ public class Launch {
         // Test if the JVM is a Mac-VM and the Application is an .app-File.
         // These Files must be launched differently
         if ((getOs() == OS_MAC) && (browserExecutable.trim().toLowerCase().endsWith(".app"))) {
-          Runtime.getRuntime().exec(new String[] { "open", "-a", browserExecutable, url });
+          new ExecutionHandler(new String[] { "open", "-a", browserExecutable, url }).execute();
         } else {
-          Runtime.getRuntime().exec(new String[] { browserExecutable, url });
+          new ExecutionHandler(new String[] { browserExecutable, url }).execute();
         }
       } else {
         BrowserLauncher.openURL(url);
