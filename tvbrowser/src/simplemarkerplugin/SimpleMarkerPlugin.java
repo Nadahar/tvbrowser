@@ -71,7 +71,7 @@ import devplugin.Version;
  * @author René Mach
  */
 public class SimpleMarkerPlugin extends Plugin implements ActionListener {
-  private static final Version mVersion = new Version(2,60,1);
+  private static final Version mVersion = new Version(2,61,0);
   
   /** The localizer for this class. */
   protected static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SimpleMarkerPlugin.class);
