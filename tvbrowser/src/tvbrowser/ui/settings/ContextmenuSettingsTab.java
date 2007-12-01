@@ -310,7 +310,10 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
           Action action = actionMenu.getAction();
           if (action != null) {
             text.append((String) action.getValue(Action.NAME));
-            icon = new FixedSizeIcon(16, 16, (Icon) action.getValue(Action.SMALL_ICON));
+            icon = (Icon) action.getValue(Action.SMALL_ICON);
+            if (icon != null) {
+              icon = new FixedSizeIcon(16, 16, icon);
+            }
           } else if (menuIf instanceof PluginProxy) {
             text.append(((PluginProxy) menuIf).getInfo().getName());
             icon = ((PluginProxy) menuIf).getMarkIcon();
