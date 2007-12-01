@@ -740,7 +740,7 @@ public class ProgramTextCreator {
       for (int i = 0; i < persons.length; i++) {
         String topic = persons[i];
         if (persons[i].contains("(")) {
-          topic = persons[i].substring(0, persons[i].indexOf("(") - 1);
+          topic = persons[i].substring(0, persons[i].indexOf("("));
           persons[i] = addWikiLink(topic, persons[i]);
         } else {
           persons[i] = addWikiLink(persons[i]);
