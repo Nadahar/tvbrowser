@@ -359,7 +359,7 @@ public class ManagePanel {
     mUndo.setEnabled(mLastDeletingList != null && mDeletedPrograms != null && mDeletedPrograms.length > 0);
     
     if(mMarkListsList != null && mParent.isVisible())
-      mMarkListsList.updateUI();
+      mMarkListsList.repaint();
   }
 
   private void delete() {

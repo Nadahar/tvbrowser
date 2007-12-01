@@ -758,7 +758,7 @@ public class MainFrame extends JFrame implements DateListener {
     }
     
     contentPane.invalidate();
-    contentPane.updateUI();
+    contentPane.repaint();
   }
 
   private void addContextMenuMouseListener(final JComponent c) {
@@ -842,7 +842,7 @@ public class MainFrame extends JFrame implements DateListener {
     addKeyboardAction();
     
     if(mPluginView != null) {
-      mPluginView.updateUI();
+      mPluginView.repaint();
     }
 
     if ((mStoredViewPosition != null) && (isDefaultFilter)) {
@@ -1097,7 +1097,7 @@ public class MainFrame extends JFrame implements DateListener {
     }catch(Exception e) {}
     
     if (mPluginView != null) {
-      mPluginView.updateUI();
+      mPluginView.repaint();
     }
     
     if (date.equals(mCurrentDay)) {
@@ -1811,7 +1811,7 @@ public class MainFrame extends JFrame implements DateListener {
     }
 
     contentPane.invalidate();
-    contentPane.updateUI();
+    contentPane.repaint();
   }
 
   public ProgressMonitor createProgressMonitor() {

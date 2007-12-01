@@ -153,7 +153,7 @@ public class ConfigPluginSettingsTab implements SettingsTab {
     
     mPluginWasActivatedLastTime = mPlugin.isActivated();
 
-    mContentPanel.updateUI();
+    mContentPanel.repaint();
   }
 
   

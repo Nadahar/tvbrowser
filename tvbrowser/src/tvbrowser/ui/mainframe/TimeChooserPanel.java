@@ -93,7 +93,7 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, Ancestor
 
     public void updateButtons() {
       createContent();
-      updateUI();
+      repaint();
     }
     
     private void createContent() {

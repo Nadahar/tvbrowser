@@ -210,7 +210,7 @@ public class ToolBar extends JToolBar {
       }
     }
 
-    updateUI();
+    repaint();
     disabled = false;
   }
   
@@ -254,7 +254,7 @@ public class ToolBar extends JToolBar {
       }
     }
 
-    this.updateUI();
+    this.repaint();
     setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     
     int x = this.getComponentCount();

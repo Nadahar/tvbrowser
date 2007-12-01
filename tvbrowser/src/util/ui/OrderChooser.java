@@ -357,7 +357,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
    * @since 2.5.1
    */
   public void refreshList() {
-    mList.updateUI();
+    mList.repaint();
   }
   
   /**
@@ -369,7 +369,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
   public void addElement(Object value) {
     SelectableItem item = new SelectableItem(value,true);
     mListModel.addElement(item);
-    mList.updateUI();
+    mList.repaint();
   }
   
   /**
@@ -380,7 +380,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
    */
   public void removeElementAt(int index) {
     mListModel.removeElementAt(index);
-    mList.updateUI();
+    mList.repaint();
   }
   
   /**

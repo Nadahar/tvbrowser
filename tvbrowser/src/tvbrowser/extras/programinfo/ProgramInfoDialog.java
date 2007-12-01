@@ -550,7 +550,7 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
     
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        mMainPanel.updateUI();
+        mMainPanel.repaint();
       }
     });
 

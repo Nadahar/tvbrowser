@@ -149,7 +149,7 @@ public class SimpleConfigDialog extends JDialog implements WindowClosingIf {
                 mConfig.setExternalChannels(lists);
             }
 
-            mTable.updateUI();
+            mTable.repaint();
           }
         });
       }

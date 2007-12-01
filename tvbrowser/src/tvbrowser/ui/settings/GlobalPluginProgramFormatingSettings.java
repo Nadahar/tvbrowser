@@ -76,7 +76,7 @@ public class GlobalPluginProgramFormatingSettings implements SettingsTab, Action
         public void mouseClicked(MouseEvent e) {
           if(SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2) {
             GlobalPluginProgramFormatingSettingsDialog.createInstance(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), (GlobalPluginProgramFormating)mConfigurations.getList().getSelectedValue(), GlobalPluginProgramFormatingManager.getDefaultConfiguration(), true, true);
-            mConfigurations.getList().updateUI();
+            mConfigurations.getList().repaint();
           }
         }
       });
@@ -177,7 +177,7 @@ public class GlobalPluginProgramFormatingSettings implements SettingsTab, Action
       mConfigurations.removeElementAt(mConfigurations.getList().getSelectedIndex());
     else if(e.getSource() == mEdit) {
       GlobalPluginProgramFormatingSettingsDialog.createInstance(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), (GlobalPluginProgramFormating)mConfigurations.getList().getSelectedValue(), GlobalPluginProgramFormatingManager.getDefaultConfiguration(), true, true);
-      mConfigurations.getList().updateUI();
+      mConfigurations.getList().repaint();
     }
   }
 }

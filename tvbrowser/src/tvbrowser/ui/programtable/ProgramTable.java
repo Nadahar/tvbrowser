@@ -478,7 +478,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
 
   private void showPopup(MouseEvent evt) {
     mMouse = evt.getPoint();
-    updateUI();
+    repaint();
 
     Program program = getProgramAt(evt.getX(), evt.getY());
     if (program != null) {
@@ -515,7 +515,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
 
   private void handleMouseClicked(MouseEvent evt) {
     mMouse = evt.getPoint();
-    updateUI();
+    repaint();
     Program program = getProgramAt(evt.getX(), evt.getY());
 
     if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {

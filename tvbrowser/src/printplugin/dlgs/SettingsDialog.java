@@ -217,7 +217,7 @@ public class SettingsDialog extends JDialog implements WindowClosingIf {
         if (newSchemeName != null) {
           if (newSchemeName.toString().trim().length()>0) {
             scheme.setName(newSchemeName.toString());
-            mSchemeCB.updateUI();
+            mSchemeCB.repaint();
           }
           else {
             JOptionPane.showMessageDialog(parent, mLocalizer.msg("invalidSchemeMsg","Invalid scheme name"), mLocalizer.msg("invalidInput","Invalid input"), JOptionPane.INFORMATION_MESSAGE);

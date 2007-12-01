@@ -257,7 +257,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     } else if (e.getSource() == mDefaultFilterBtn) {
       ProgramFilter filter = ((ProgramFilter)mFilterListBox.getSelectedValue());      
       mDefaultFilterId = filter.getClass().getName() + "###" + filter.getName();
-      mFilterListBox.updateUI();
+      mFilterListBox.repaint();
       updateBtns();
     }
 

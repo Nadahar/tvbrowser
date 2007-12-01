@@ -87,7 +87,7 @@ public class SearchTextField extends JTextField implements FocusListener{
       mHasText = true;
     }
       
-    updateUI();
+    repaint();
   }
   
 }

@@ -89,7 +89,7 @@ public class SkinPanel extends JPanel {
 	   }else {
 		 image=null;
 	   }
-	   updateUI();
+	   repaint();
 	 }
 
    }

@@ -333,7 +333,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
      * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
      */
     public void stateChanged(ChangeEvent e) {
-        updateUI();
+        repaint();
     }
 
     /* (non-Javadoc)
