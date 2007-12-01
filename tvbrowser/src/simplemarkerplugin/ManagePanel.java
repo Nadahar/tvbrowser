@@ -344,7 +344,7 @@ public class ManagePanel {
           mProgramsScrollPane.getVerticalScrollBar().setValue(0);
           mProgramsScrollPane.getHorizontalScrollBar().setValue(0);
           
-          if(scrollIndex != 1) {            
+          if(scrollIndex != -1) {            
             Rectangle cellBounds = mProgramsList.getCellBounds(scrollIndex,scrollIndex);
             cellBounds.setLocation(cellBounds.x, cellBounds.y + mProgramsScrollPane.getHeight() - cellBounds.height);
             
