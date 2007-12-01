@@ -376,7 +376,6 @@ public class TVBrowser {
         initUi(splash, fStartMinimized);
         SwingUtilities.invokeLater(new Runnable(){
           public void run() {
-            mainFrame.repaint();
             new Thread("Start finished callbacks") {
               public void run() {
                 GlobalPluginProgramFormatingManager.getInstance();
@@ -655,19 +654,21 @@ public class TVBrowser {
     }
     ErrorHandler.setFrame(mainFrame);
 
-    splash.hideSplash();
-    
-    // maximize the frame if wanted, needed for Linux and also for Windows
+    splash.hideSplash();    
+
     SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        if (Settings.propIsWindowMaximized.getBoolean() && !Settings.propIsUsingFullscreen.getBoolean()) {
-          mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
-          SwingUtilities.invokeLater(new Runnable(){
-            public void run() {
-              mainFrame.repaint();
-            }
-          });
+      public void run() {        
+        if (!Settings.propIsUsingFullscreen.getBoolean()) {
+          mainFrame.repaint();
         }
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            if(Settings.propIsWindowMaximized.getBoolean()) {
+              // maximize the frame if wanted
+              mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
+            }
+          }
+        });
       }
     });
 
