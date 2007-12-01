@@ -39,6 +39,7 @@ import java.util.Properties;
 import javax.swing.SwingUtilities;
 
 import util.exc.ErrorHandler;
+import util.io.ExecutionHandler;
 import util.io.IOUtilities;
 import util.paramhandler.ParamParser;
 import devplugin.Date;
@@ -87,7 +88,8 @@ public class ReminderTimerListener {
 
       if (!fName.equals("")) {
         try {
-          Runtime.getRuntime().exec(fName + " " +  fParam);
+          ExecutionHandler executionHandler = new ExecutionHandler(fParam, fName);
+          executionHandler.execute();
         } catch (Exception exc) {
           String msg = mLocalizer.msg( "error.2" ,"Error executing reminder program!\n({0})" , fName, exc);
           ErrorHandler.handle(msg, exc);

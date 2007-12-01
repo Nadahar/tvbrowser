@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import util.exc.ErrorHandler;
+import util.io.ExecutionHandler;
 import util.program.AbstractPluginProgramFormating;
 import calendarexportplugin.utils.ICalFile;
 import devplugin.Program;
@@ -58,8 +59,7 @@ public class KOrganizerExporter extends AbstractExporter {
       ICalFile ical = new ICalFile();
       ical.exportICal(file, programs, settings, formating);
       
-      Runtime.getRuntime().exec("korganizer --import " + file.getAbsolutePath());
-      
+      new ExecutionHandler("--import " + file.getAbsolutePath(), "korganizer").execute();
       return true;
     } catch (IOException e) {
       ErrorHandler.handle("Could not export to KOrganizer.", e);
