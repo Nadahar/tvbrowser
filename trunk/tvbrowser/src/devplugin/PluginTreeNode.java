@@ -459,15 +459,17 @@ public class PluginTreeNode {
   }
 
   public synchronized PluginTreeNode addProgram(ProgramItem item) {
-
-    if (contains(item.getProgram(), false)) {
-      return findProgramTreeNode(item.getProgram(), false);
+    // don't search using contains(), this would require a second search
+    PluginTreeNode node = findProgramTreeNode(item.getProgram(), false);
+    if (node != null) {
+      // node already exists
+      return node;
     }
 
     if (mMarker != null) {
       item.getProgram().mark(mMarker);
     }
-    PluginTreeNode node = new PluginTreeNode(item);
+    node = new PluginTreeNode(item);
     add(node);
     return node;
   }
@@ -580,7 +582,8 @@ public class PluginTreeNode {
         ProgramItem item = new ProgramItem();
         item.read(in);
 
-        if (!contains(item.getProgram(), true)) {
+        n = findProgramTreeNode(item.getProgram(), true);
+        if (n == null) {
           n = new PluginTreeNode(item);
           if (item.getProgram() != null) {
             add(n);
@@ -588,8 +591,6 @@ public class PluginTreeNode {
               item.getProgram().mark(mMarker);
             }
           }
-        } else {
-          n = findProgramTreeNode(item.getProgram(), false);
         }
 
       }
