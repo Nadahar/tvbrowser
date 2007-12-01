@@ -28,6 +28,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import devplugin.Program;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
+import util.io.ExecutionHandler;
 import util.misc.OperatingSystem;
 import util.paramhandler.ParamParser;
 import util.program.AbstractPluginProgramFormating;
@@ -143,7 +144,7 @@ public class MailCreator {
               + encodeString(result.toString()));
       }
 
-      Runtime.getRuntime().exec(application + " " + execparam);
+      new ExecutionHandler(execparam, application).execute();
 
       if (mSettings.getProperty("showEmailOpened", "true").equals("true"))
         showEMailOpenedDialog(parent);

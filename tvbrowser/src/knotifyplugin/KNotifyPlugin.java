@@ -16,22 +16,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * CVS information:
- *     $Date:  $
- *   $Author:  $
- * $Revision:  $
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 
 package knotifyplugin;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Properties;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import util.io.ExecutionHandler;
 import util.paramhandler.ParamParser;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
@@ -60,7 +58,7 @@ public class KNotifyPlugin extends Plugin {
   /**
    * plugin version
    */
-  private static final Version mVersion = new Version(2,60);
+  private static final Version mVersion = new Version(2,61);
 
   boolean mInitialized = false;
 
@@ -125,11 +123,11 @@ public class KNotifyPlugin extends Plugin {
 
   public void sendToKNotify(Properties settings, Program program) {
     try {
-      Process whichProc = Runtime.getRuntime().exec("which dcop");
-      InputStream in = whichProc.getInputStream();
-      BufferedReader br = new BufferedReader(new InputStreamReader(in));                
-      String dcopLocation = br.readLine();
-      br.close();
+      ExecutionHandler executionHandler = new ExecutionHandler("dcop","which");
+      executionHandler.execute(true);
+      
+      String dcopLocation = executionHandler.getInputStreamReaderThread().getOutput();
+      
       if (dcopLocation != null) {
         dcopLocation = dcopLocation.trim();
         if (dcopLocation.length() > 0) {
@@ -142,7 +140,7 @@ public class KNotifyPlugin extends Plugin {
           
           // run the notification command
           String[] command = {dcopLocation, "knotify", "Notify", "notify", "event", title, message, "", "", "16", "0"};
-          Runtime.getRuntime().exec(command);
+          new ExecutionHandler(command).execute();
         }
       }
       else {

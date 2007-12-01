@@ -28,7 +28,7 @@ import captureplugin.drivers.utils.ProgramTime;
 import captureplugin.utils.CaptureUtilities;
 import org.apache.commons.codec.binary.Base64;
 import util.exc.ErrorHandler;
-import util.io.StreamReaderThread;
+import util.io.ExecutionHandler;
 import util.paramhandler.ParamParser;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -38,7 +38,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import java.awt.Component;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -236,28 +235,18 @@ public class CaptureExecute {
      * @return Output of Application
      */
     private String executeApplication(String params) {
+        ExecutionHandler executionHandler;
         
-        Process p;
         try {
-            String path = mData.getProgramPath();            
-            path = path.substring(0,path.lastIndexOf(File.separator) + 1);
-            
-            if(path == null || path.length() < 1 || !(new File(path).isDirectory()))
-              path = System.getProperty("user.dir");
-            
-            p = Runtime.getRuntime().exec((mData.getProgramPath() + " " + params).split(" "), null, new File(path));
+            executionHandler = new ExecutionHandler(params, mData.getProgramPath());
+            executionHandler.execute(true);
         } catch (Exception e) {
             ErrorHandler.handle(mLocalizer.msg("ProblemAtStart", "Problems while starting Application."), e);
             return null;
         }
 
-        String output = "";
-        int time = 0;
         
-        StreamReaderThread out = new StreamReaderThread(p.getInputStream(),true);
-        StreamReaderThread error = new StreamReaderThread(p.getErrorStream(),false);
-        out.start();
-        error.start();
+        int time = 0;
         
         // wait until the process has exited, max MaxTimouts
         
@@ -266,7 +255,7 @@ public class CaptureExecute {
                 try {
                     Thread.sleep(100);
                     time += 100;
-                    p.exitValue();
+                    executionHandler.exitValue();
                     break;
                 } catch (Exception e) {
                     // Empty
@@ -276,7 +265,7 @@ public class CaptureExecute {
             while (true) {
                 try {
                     Thread.sleep(100);
-                    p.exitValue();
+                    executionHandler.exitValue();
                     break;
                 } catch (Exception e) {
                     // Empty
@@ -288,7 +277,7 @@ public class CaptureExecute {
             try {
                 Thread.sleep(100);
                 time += 100;
-                p.exitValue();
+                executionHandler.exitValue();
                 break;
             } catch (Exception e) {
                 // Empty
@@ -296,11 +285,13 @@ public class CaptureExecute {
         }
 
         // get the process output
+        String output = "";
         
-        if(!out.isAlive())
-          output = out.getOutput();
+        if(!executionHandler.getInputStreamReaderThread().isAlive()) {
+          output = executionHandler.getInputStreamReaderThread().getOutput();
+        }
 
-        mError = p.exitValue() != 0;
+        mError = executionHandler.exitValue() != 0;
 
         return output;
     }
