@@ -26,7 +26,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import util.io.StreamReaderThread;
+import util.io.ExecutionHandler;
 
 /**
  * This class is the Interface to the AppleScript-System. It runs the Scripts
@@ -66,16 +66,11 @@ public class AppleScriptRunner {
             writer.write(script);
             writer.close();
             
-            Process p = Runtime.getRuntime().exec("osascript " + file.getAbsolutePath());
-          
-            String output = "";
+            ExecutionHandler executionHandler = new ExecutionHandler(file.getAbsolutePath(),"osascript");
+            executionHandler.execute(true,"UTF-8");
+
             int time = 0;
-            
-            StreamReaderThread out = new StreamReaderThread(p.getInputStream(),true, "UTF-8");
-            StreamReaderThread error = new StreamReaderThread(p.getErrorStream(),false, "UTF-8");
-            out.start();
-            error.start();
-            
+                        
             // wait until the process has exited, max MaxTimouts
             
             if (mTimeOut > 0 ){
@@ -86,7 +81,7 @@ public class AppleScriptRunner {
                     }
                     time += 100;
                     try {
-                        p.exitValue();
+                        executionHandler.exitValue();
                         break;
                     } catch (IllegalThreadStateException e) {
                     }
@@ -98,7 +93,7 @@ public class AppleScriptRunner {
                     } catch (InterruptedException e1) {
                     }
                     try {
-                        p.exitValue();
+                        executionHandler.exitValue();
                         break;
                     } catch (IllegalThreadStateException e) {
                     }
@@ -112,18 +107,19 @@ public class AppleScriptRunner {
                 }
                 time += 100;
                 try {
-                    p.exitValue();
+                    executionHandler.exitValue();
                     break;
                 } catch (IllegalThreadStateException e) {
                 }
             }
 
             // get the process output
+            String output = "";
             
-            if(!out.isAlive())
-              output = out.getOutput();
+            if(!executionHandler.getInputStreamReaderThread().isAlive())
+              output = executionHandler.getInputStreamReaderThread().getOutput();
 
-            if (p.exitValue() >= 0)
+            if (executionHandler.exitValue() >= 0)
                 return output;
             
         return null;

@@ -10,6 +10,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import util.io.ExecutionHandler;
+
 /**
  * BrowserLauncher is a class that provides one static method, openURL, which opens the default
  * web browser for the current user of the system to the given URL.  It may support other
@@ -547,7 +549,7 @@ class BrowserLauncher {
                 }
                 break;
             case MRJ_2_1:
-                Runtime.getRuntime().exec(new String[] { (String) browser, url } );
+                new ExecutionHandler(new String[] { (String) browser, url }).execute();
                 break;
             case MRJ_3_0:
                 int[] instance = new int[1];
@@ -598,12 +600,14 @@ class BrowserLauncher {
                                           null };
                 }
                 arguments[arguments.length - 1] = '"' + url + '"';
-                Process process = Runtime.getRuntime().exec(arguments);
+                ExecutionHandler executionHandler = new ExecutionHandler(arguments);
+                executionHandler.execute();
+                
                 // This avoids a memory leak on some versions of Java on Windows.
                 // That's hinted at in <http://developer.java.sun.com/developer/qow/archive/68/>.
                 try {
-                    process.waitFor();
-                    process.exitValue();
+                    executionHandler.getProcess().waitFor();
+                    executionHandler.exitValue();
                 } catch (InterruptedException ie) {
                     throw new IOException("InterruptedException while launching browser: " + ie.getMessage());
                 }
@@ -612,15 +616,17 @@ class BrowserLauncher {
                 // Assume that we're on Unix and that Netscape is installed
                 
                 // Attempt to open the URL in a currently running session of Netscape
-                process = Runtime.getRuntime().exec(new String[] { (String) browser,
+                executionHandler = new ExecutionHandler(new String[] { (String) browser,
                                                     NETSCAPE_REMOTE_PARAMETER,
                                                     NETSCAPE_OPEN_PARAMETER_START +
                                                     url +
                                                     NETSCAPE_OPEN_PARAMETER_END });
+                executionHandler.execute();
+                
                 try {
-                    int exitCode = process.waitFor();
+                    int exitCode = executionHandler.getProcess().waitFor();
                     if (exitCode != 0) {    // if Netscape was not open
-                        Runtime.getRuntime().exec(new String[] { (String) browser, url });
+                        new ExecutionHandler(new String[] { (String) browser, url }).execute();
                     }
                 } catch (InterruptedException ie) {
                     throw new IOException("InterruptedException while launching browser: " + ie.getMessage());
@@ -628,7 +634,7 @@ class BrowserLauncher {
                 break;
             default:
                 // This should never occur, but if it does, we'll try the simplest thing possible
-                Runtime.getRuntime().exec(new String[] { (String) browser, url });
+                new ExecutionHandler(new String[] { (String) browser, url }).execute();
                 break;
         }
     }
