@@ -376,7 +376,7 @@ public class TVBrowser {
         initUi(splash, fStartMinimized);
         SwingUtilities.invokeLater(new Runnable(){
           public void run() {
-            mainFrame.updateUI();
+            mainFrame.repaint();
             new Thread("Start finished callbacks") {
               public void run() {
                 GlobalPluginProgramFormatingManager.getInstance();
@@ -664,7 +664,7 @@ public class TVBrowser {
           mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
           SwingUtilities.invokeLater(new Runnable(){
             public void run() {
-              mainFrame.updateUI();
+              mainFrame.repaint();
             }
           });
         }

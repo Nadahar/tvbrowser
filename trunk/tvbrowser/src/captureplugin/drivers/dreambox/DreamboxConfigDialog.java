@@ -297,7 +297,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
 
         }
 
-        mTable.updateUI();
+        mTable.repaint();
     }
 
     /**
@@ -339,7 +339,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
                                 JOptionPane.showMessageDialog(DreamboxConfigDialog.this, mLocalizer.msg("okText", "Channellist updated."),
                                         mLocalizer.msg("okTitle", "Updated"), JOptionPane.INFORMATION_MESSAGE);
                             }
-                            mTable.updateUI();
+                            mTable.repaint();
                           } else {
                             JOptionPane.showMessageDialog(DreamboxConfigDialog.this, mLocalizer.msg("wrongVersion", "Wrong Version of Dreambox-WebInterface. Please update!"),
                                         mLocalizer.msg("errorTitle", "Error"), JOptionPane.INFORMATION_MESSAGE);

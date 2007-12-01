@@ -154,7 +154,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
 
           PluginManagerImpl.getInstance().handleProgramMiddleClick(p, ReminderPluginProxy.getInstance());
         }
-        mTable.updateUI();
+        mTable.repaint();
       }
     });
 

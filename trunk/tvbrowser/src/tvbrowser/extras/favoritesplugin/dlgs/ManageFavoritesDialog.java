@@ -850,7 +850,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
 
         if (node != null) {
           mFavoriteTree.reload(node);
-          mFavoriteTree.updateUI();
+          mFavoriteTree.repaint();
         }
     }
 

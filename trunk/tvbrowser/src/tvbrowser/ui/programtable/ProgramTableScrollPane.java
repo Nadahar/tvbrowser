@@ -137,7 +137,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
   public void updateChannelPanel() {
     mChannelPanel = new ChannelPanel(mProgramTable.getColumnWidth(), mProgramTable.getModel().getShownChannels());
     setColumnHeaderView(mChannelPanel);
-    this.updateUI();
+    this.repaint();
   }
 
   public void updateChannelLabelForChannel(Channel ch) {

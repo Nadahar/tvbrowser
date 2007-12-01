@@ -105,7 +105,7 @@ public class ProgramTableCellRenderer extends DefaultTableCellRenderer {
             
             program.addChangeListener(new ChangeListener() {
               public void stateChanged(ChangeEvent e) {
-                table.updateUI();
+                table.repaint();
               }
             });
             

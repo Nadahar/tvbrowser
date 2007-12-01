@@ -272,7 +272,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
         mRulePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         mCenterPanel.add(mRulePanel, BorderLayout.CENTER);
       }
-      mContentPane.updateUI();
+      mContentPane.repaint();
       updateOkBtn();
 
     } else if (o == mOkBtn) {

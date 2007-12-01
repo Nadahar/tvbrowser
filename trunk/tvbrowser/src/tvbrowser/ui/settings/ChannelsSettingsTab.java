@@ -811,7 +811,7 @@ public class ChannelsSettingsTab implements
       ((DefaultListModel) mAllChannels.getModel()).addElement(mLocalizer.msg(
           "noChannelFound", "No Channel Found"));
     }
-    mSubscribedChannels.updateUI();
+    mSubscribedChannels.repaint();
     mSubscribedChannelListener.restore();
     restoreForPopup();
   }
@@ -904,7 +904,7 @@ public class ChannelsSettingsTab implements
       dialog.centerAndShow();
     }
 
-    mSubscribedChannels.updateUI();
+    mSubscribedChannels.repaint();
     mSubscribedChannelListener.restore();
     restoreForPopup();
   }

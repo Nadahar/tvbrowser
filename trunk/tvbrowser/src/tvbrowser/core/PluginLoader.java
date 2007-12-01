@@ -475,7 +475,7 @@ public class PluginLoader {
       } catch (MalformedURLException exc) {}
     } catch (MalformedURLException exc) {
       throw new TvBrowserException(getClass(), "error.1",
-        "Loading Jar file failed of a plugin failed: {0}.",
+        "Loading Jar file of a plugin failed: {0}.",
         jarFile.getAbsolutePath(), exc);
     }
 

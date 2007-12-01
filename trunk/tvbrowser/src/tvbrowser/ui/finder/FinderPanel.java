@@ -158,7 +158,7 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
         mList.setSelectedValue(fi, false);
       }
     }
-    mList.updateUI();
+    mList.repaint();
   }
 
   public void setDateListener(DateListener dateChangedListener) {
@@ -211,7 +211,7 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
       }
     }
     
-    mList.updateUI();
+    mList.repaint();
   }
 
   /**

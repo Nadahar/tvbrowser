@@ -212,7 +212,7 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
       public void actionPerformed(ActionEvent e) {
         WebAddress adr = (WebAddress) mAddressList.getSelectedValue();
         adr.setActive(!adr.isActive());
-        mAddressList.updateUI();
+        mAddressList.repaint();
         listSelectionChanged();
       }
 
@@ -292,7 +292,7 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
         f.delete();
       adr.setIconFile(null);
     }
-    mAddressList.updateUI();
+    mAddressList.repaint();
   }
 
   /**
@@ -422,7 +422,7 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
 
     UiUtilities.centerAndShow(editor);
 
-    mAddressList.updateUI();
+    mAddressList.repaint();
   }
 
   /*

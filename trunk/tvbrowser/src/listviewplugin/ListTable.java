@@ -112,6 +112,6 @@ public class ListTable extends JTable implements ChangeListener {
      * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
      */
     public void stateChanged(ChangeEvent e) {
-        updateUI();
+        repaint();
     }
 }

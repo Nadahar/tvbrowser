@@ -88,7 +88,7 @@ public class GeneralTab extends JPanel {
       public void actionPerformed(ActionEvent e) {
         mProgramListPanel.removeAll();
         mProgramListPanel.invalidate();
-        mProgramListPanel.updateUI();
+        mProgramListPanel.repaint();
       }
     });
   }
@@ -133,7 +133,7 @@ public class GeneralTab extends JPanel {
         mRootNode.removeProgram(program);
         mRootNode.update();
         content.remove(progPn);
-        content.updateUI();
+        content.repaint();
       }
     });
 
