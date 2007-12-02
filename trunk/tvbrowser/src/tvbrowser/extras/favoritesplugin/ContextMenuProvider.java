@@ -231,7 +231,7 @@ public class ContextMenuProvider {
   
     for (final Program program : programs) {
       if(!program.isExpired() && !program.equals(p)) {
-        ContextMenuAction subItem = new ContextMenuAction(FavoriteTreeModel.getInstance().getFavoriteLabel(favorite, program, p.getChannel()));
+        ContextMenuAction subItem = new ContextMenuAction(FavoriteTreeModel.getFavoriteLabel(favorite, program, p.getChannel()));
         subItem.setActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             MainFrame.getInstance().scrollToProgram(program);
@@ -246,6 +246,11 @@ public class ContextMenuProvider {
           break;
         }
       }
+    }
+
+    // maybe all other repetitions were already expired?
+    if (subItems.size() == 0) {
+      return null;
     }
   
     return new ActionMenu(parent, subItems.toArray(new ContextMenuAction[subItems.size()]));
