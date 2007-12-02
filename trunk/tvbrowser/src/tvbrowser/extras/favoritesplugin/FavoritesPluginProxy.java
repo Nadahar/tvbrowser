@@ -100,7 +100,7 @@ public class FavoritesPluginProxy implements ContextMenuIf, Marker, InternalPlug
   }
   
   public String getDescription() {
-    return FavoritesPlugin.mLocalizer.msg("description","Automatically marks your favorite programs and passes them to other Plugins.");
+    return FavoritesPlugin.mLocalizer.msg("description","Automatically marks your favorite programs and passes them to other plugins.");
   }
 
   public SettingsTab getSettingsTab() {
