@@ -89,6 +89,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.PluginAccess;
+import devplugin.PluginInfo;
 import devplugin.SettingsItem;
 import devplugin.SettingsTab;
 
@@ -732,11 +733,8 @@ public class SettingsDialog implements WindowClosingIf {
               .getPluginForId(mId);
 
           url = plugin.getInfo().getHelpUrl();
-
           if (url == null) {
-            url = "http://www.tvbrowser.org/showHelpFor.php?id="
-                + plugin.getId() + "&lang="
-                + System.getProperty("user.language");
+            url = PluginInfo.getHelpUrl(plugin.getId());
           }
         } else {
           url = mLocalizer.msg("settingsUrl",

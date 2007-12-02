@@ -602,8 +602,12 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
         .getActivatedPlugins();
     ArrayList<JMenuItem> list = new ArrayList<JMenuItem>();
     for (final PluginProxy plugin : plugins) {
-      if(plugin.getInfo().getHelpUrl() != null) {
-        JMenuItem item = pluginHelpMenuItem(plugin.getInfo());
+      String helpUrl = plugin.getInfo().getHelpUrl();
+      if (helpUrl == null) {
+        helpUrl = PluginInfo.getHelpUrl(plugin.getId());
+      }
+      if(helpUrl != null) {
+        JMenuItem item = pluginHelpMenuItem(plugin.getInfo().getName(), helpUrl);
         item.setIcon(plugin.getPluginIcon());
         list.add(item);
       }
@@ -616,13 +620,13 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
       }
     });
     
-    JMenuItem item = pluginHelpMenuItem(new PluginInfo(FavoritesPluginProxy.class, FavoritesPluginProxy.getInstance().toString(),null,null,mLocalizer.msg("menuitem.helpFavorites", "Favorites")));
+    JMenuItem item = pluginHelpMenuItem(FavoritesPlugin.getInstance().toString(), mLocalizer.msg("menuitem.helpFavorites", "Favorites"));
     item.setIcon(FavoritesPluginProxy.getInstance().getMarkIcon());
     mPluginHelpMenu.add(item);
-    item = pluginHelpMenuItem(new PluginInfo(ReminderPluginProxy.class, ReminderPluginProxy.getInstance().toString(),null,null,mLocalizer.msg("menuitem.helpReminder", "Reminder")));
+    item = pluginHelpMenuItem(ReminderPlugin.getInstance().toString(), mLocalizer.msg("menuitem.helpReminder", "Reminder"));
     item.setIcon(ReminderPluginProxy.getInstance().getMarkIcon());
     mPluginHelpMenu.add(item);
-    item = pluginHelpMenuItem(new PluginInfo(SearchPluginProxy.class, SearchPluginProxy.getInstance().toString(),null,null,mLocalizer.msg("menuitem.helpSearch", "Search")));
+    item = pluginHelpMenuItem(SearchPlugin.getInstance().toString(), mLocalizer.msg("menuitem.helpSearch", "Search"));
     item.setIcon((Icon) SearchPlugin.getInstance().getButtonAction().getAction().getValue(Action.SMALL_ICON));
     mPluginHelpMenu.add(item);
     
@@ -635,12 +639,12 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     }
   }
 
-  private JMenuItem pluginHelpMenuItem(final PluginInfo info) {
-    JMenuItem item = new JMenuItem(info.getName());
+  private JMenuItem pluginHelpMenuItem(final String name, final String helpUrl) {
+    JMenuItem item = new JMenuItem(name);
     item.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
-        Launch.openURL(info.getHelpUrl());
+        Launch.openURL(helpUrl);
       }});
     return item;
   }
