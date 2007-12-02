@@ -210,7 +210,7 @@ public class ToolBar extends JToolBar {
       }
     }
 
-    repaint();
+    updateUI();
     disabled = false;
   }
   
