@@ -34,6 +34,8 @@ package devplugin;
 
 import java.lang.reflect.Method;
 
+import tvbrowser.core.plugin.PluginProxyManager;
+
 /**
  * This class provides information about a plugin.
  */
@@ -289,5 +291,25 @@ public final class PluginInfo {
      */
     public String getLicense() {
       return mLicense;
+    }
+    
+    /**
+     * get the help URL (in the wiki) for a plugin
+     * 
+     * @param id plugin id
+     * @return generic help URL
+     */
+    public static String getHelpUrl(String id) {
+      PluginAccess plugin = PluginProxyManager.getInstance().getPluginForId(id);
+      String url = "";
+      if (plugin != null) {
+        url = plugin.getInfo().getHelpUrl();
+      }
+      if (url == null) {
+        url = "http://www.tvbrowser.org/showHelpFor.php?id="
+          + id + "&lang="
+          + System.getProperty("user.language");
+      }
+      return url;
     }
 }

@@ -76,6 +76,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.ActionMenu;
+import devplugin.PluginInfo;
 
 /**
  * This Tab shows the Plugin-Manager.
@@ -295,8 +296,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     JMenuItem helpMI = new JMenuItem(mLocalizer.msg("pluginHelp","Online help"), IconLoader.getInstance().getIconFromTheme("apps", "help-browser", 16));
     helpMI.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
-        String url = "http://www.tvbrowser.org/showHelpFor.php?id=" + plugin.getId() + "&lang=" + System.getProperty("user.language");
-        
+        String url = PluginInfo.getHelpUrl(plugin.getId());
         Launch.openURL(url);
       }
     });
@@ -361,12 +361,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
       JMenuItem helpMI = new JMenuItem(mLocalizer.msg("pluginHelp","Online help"), IconLoader.getInstance().getIconFromTheme("apps", "help-browser", 16));
       helpMI.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
-          String url = plugin.getInfo().getHelpUrl();
-          
-          if(url == null) {
-            url = "http://www.tvbrowser.org/showHelpFor.php?id=" + plugin.getId() + "&lang=" + System.getProperty("user.language");
-          }
-          
+          String url = PluginInfo.getHelpUrl(plugin.getId());
           Launch.openURL(url);
         }
       });
