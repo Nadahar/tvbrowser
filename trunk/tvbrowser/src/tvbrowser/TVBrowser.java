@@ -29,6 +29,8 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -622,7 +624,23 @@ public class TVBrowser {
   private static void initUi(Splash splash, boolean startMinimized) {
     mainFrame=MainFrame.getInstance();
     PluginProxyManager.getInstance().setParentFrame(mainFrame);
-
+    
+    mainFrame.addComponentListener(new ComponentAdapter() {
+      public void componentShown(ComponentEvent e) {
+        if (!Settings.propIsUsingFullscreen.getBoolean()) {
+          mainFrame.repaint();
+        }
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            if(Settings.propIsWindowMaximized.getBoolean()) {
+              // maximize the frame if wanted
+              mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
+            }
+          }
+        });
+      }
+    });
+    
     // Set the program icon
     Image iconImage = ImageUtilities.createImage("imgs/tvbrowser16.png");
     mainFrame.setIconImage(iconImage);
@@ -654,23 +672,7 @@ public class TVBrowser {
     }
     ErrorHandler.setFrame(mainFrame);
 
-    splash.hideSplash();    
-
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {        
-        if (!Settings.propIsUsingFullscreen.getBoolean()) {
-          mainFrame.repaint();
-        }
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            if(Settings.propIsWindowMaximized.getBoolean()) {
-              // maximize the frame if wanted
-              mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
-            }
-          }
-        });
-      }
-    });
+    splash.hideSplash();
 
     // minimize the frame if wanted
     if (startMinimized) {
