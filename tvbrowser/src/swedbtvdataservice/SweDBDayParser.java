@@ -41,6 +41,8 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler {
 
   private String title;
 
+  private String subTitle;
+
   private String genre;
 
   private String episode;
@@ -85,6 +87,8 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler {
 
   private static final int STATUS_DATE = 10;
 
+  private static final int STATUS_SUBTITLE = 11;
+  
   private int state = 0;
 
   private boolean multipleGenres = false;
@@ -165,6 +169,10 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler {
         state = STATUS_DATE;
         aspect = "";
       }
+      else if ("sub-title".equals(qName)) {
+        state = STATUS_SUBTITLE;
+        subTitle = "";
+      }     
       else if (! "credits".equals(qName) && ! "video".equals(qName)) {
         mLog.info("Unknown tag in SweDB data: " + qName);
       }
@@ -181,6 +189,7 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler {
         episodeNumber = "";
         aspect = "";
         date = "";
+        subTitle = "";
 
         multipleGenres = false;
         multipleActors = false;
@@ -261,6 +270,10 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler {
       date = date + new String(ch, start, length);
       break;
     }
+    case (STATUS_SUBTITLE): {
+      subTitle = subTitle + new String(ch, start, length);
+      break;
+    }
 
     }
   }
@@ -324,6 +337,12 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler {
       }
       break;
     }
+    case (STATUS_SUBTITLE): {
+      if ("sub-title".equals(qName)) {
+        state = STATUS_PROG;
+      }
+      break;
+    }
 
     case (STATUS_PROG): {
       if ("programme".equals(qName)) {
@@ -348,6 +367,9 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler {
           prog.setLength(progLength);
         }
         prog.setTitle(title);
+        // Since we don't have a field for sub titles, we add it to description
+        desc = (subTitle + "\n" + desc).trim();
+        
         prog.setDescription(desc);
         // Since there is no short description available, we have to create one
         // ourselves
@@ -367,6 +389,7 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler {
         prog.setShortInfo(shortDesc);
 
         if (genre.length() > 0) {
+          genre = genre.substring(0,1).toUpperCase() + genre.substring(1);
           prog.setTextField(ProgramFieldType.GENRE_TYPE, genre);
         }
         if (actors.length() > 0) {
@@ -421,8 +444,11 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler {
           }
         }
         if (genre.length() > 0) {
-          if (genre.equalsIgnoreCase("series")) {
+          if (genre.toLowerCase().indexOf("series") > -1) {
             info = info | Program.INFO_CATEGORIE_SERIES;
+          }
+          else if (genre.toLowerCase().indexOf("movie") > -1) {
+            info = info | Program.INFO_CATEGORIE_MOVIE;
           }
         }
         if (info != 0) {
