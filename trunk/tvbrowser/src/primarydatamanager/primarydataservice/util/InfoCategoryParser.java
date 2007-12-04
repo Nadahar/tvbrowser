@@ -41,11 +41,12 @@ public class InfoCategoryParser {
       "action/abenteuerserie", "actionserie", "agentenserie",
       "animationsserie", "animeserie", "anwaltsserie", "arztserie",
       "comedyserie", "dokumentarserie", "dramaserie", "erotikserie",
-      "familienserie", "horrorserie", "kinderserie", "krankenhausserie",
-      "kriegsserie", "krimiserie", "monumentalserie", "mysteryserie",
-      "polizeiserie", "puppentrickserie", "sciencefictionserie", "scifiserie",
-      "serie", "serienspecial", "sitcom", "soap", "thrillerserie",
-      "westernserie", "zeichentrickserie", "zoodokusoap" };
+      "familienserie", "fernsehserie", "horrorserie", "kinderserie",
+      "krankenhausserie", "kriegsserie", "krimiserie", "monumentalserie",
+      "mysteryserie", "polizeiserie", "puppentrickserie",
+      "sciencefictionserie", "scifiserie", "serie", "serienspecial", "sitcom",
+      "soap", "thrillerserie", "westernserie", "zeichentrickserie",
+      "zoodokusoap" };
 
   private final String[] NEWS = { "nachrichten", "nachrichtenmagazin",
       "regionalnachrichten" };
@@ -55,16 +56,17 @@ public class InfoCategoryParser {
   private final String[] MAGAZINE = { "auslandsmagazin", "automagazin",
       "boulevardmagazin", "buchjournal", "diskussion", "doku", "dokumentation",
       "erfindermagazin", "erotikmagazin", "erotikmagazin", "filmmagazin",
-      "fuﬂballmagazin", "geschichtsmagazin", "gespr‰ch", "gesundheitsmagazin",
-      "interview", "kindermagazin", "kinomagazin", "kulturmagazin",
-      "l‰ndermagazin", "lifestylemagazin", "literaturmagazin", "magazin",
-      "medienmagazin", "motorsportmagazin", "news+sportnachrichten",
+      "freizeitmagazin", "fuﬂballmagazin", "geschichtsmagazin", "gespr‰ch",
+      "gesundheitsmagazin", "interview", "kindermagazin", "kinomagazin",
+      "kulturmagazin", "l‰ndermagazin", "lifestylemagazin", "literaturmagazin",
+      "magazin", "medienmagazin", "motorsportmagazin", "news+sportnachrichten",
       "newsmagazin", "politikmagazin", "politmagazin", "ratgebermagazin",
       "regionalmagazin", "reisedokumentation", "reisemagazin",
       "reiseundreportagemagazin", "reisereportage", "reportage",
       "reportageundreisemagazin", "servicemagazin", "societymagazin",
       "sozialmagazin", "technikmagazin", "umweltmagazin", "verbrauchermagazin",
-      "wetter", "wirtschaftsmagazin", "wissenschaftsmagazin", "wissensmagazin" };
+      "wetter", "wirtschaftsmagazin", "wissenschaftsmagazin", "wissensmagazin",
+      "zeitgeschichte" };
 
   private ArrayList<String> mMovies, mSeries, mNews, mShows, mMagazines,
       mUnknown;
