@@ -343,7 +343,7 @@ public class TVBrowser {
     }
 
     mLog.info("Deleting expired TV listings...");
-    TvDataBase.getInstance().deleteExpiredFiles(1);
+    TvDataBase.getInstance().deleteExpiredFiles(1,false);
     
     mLog.info("Loading plugins...");
     msg = mLocalizer.msg("splash.plugins", "Loading plugins...");

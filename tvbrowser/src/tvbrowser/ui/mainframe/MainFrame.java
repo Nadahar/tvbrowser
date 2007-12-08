@@ -1104,6 +1104,15 @@ public class MainFrame extends JFrame implements DateListener {
       return;
     }
     
+    if(mCurrentDay != null) {
+      if(mProgramTableModel.getDate().compareTo(Date.getCurrentDate().addDays(-1)) < 0) {
+        scrollToNow();
+      }
+      
+      mLog.info("Deleting expired TV listings...");
+      TvDataBase.getInstance().deleteExpiredFiles(1, true);
+    }
+    
     mLastTimerMinutesAfterMidnight = -1;
     mCurrentDay = date;
     
