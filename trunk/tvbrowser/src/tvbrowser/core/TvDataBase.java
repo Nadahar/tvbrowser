@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.logging.Level;
 
 import tvbrowser.core.data.OnDemandDayProgramFile;
@@ -402,8 +403,9 @@ public class TvDataBase {
    * 
    * @param lifespan
    *          The number of days to delete from the past
+   * @param informPlugins If the plugins should be informed about the deleting. 
    */
-  public void deleteExpiredFiles(int lifespan) {
+  public void deleteExpiredFiles(int lifespan, boolean informPlugins) {
     if (lifespan < 0) {
       return; // manually
     }
@@ -433,13 +435,35 @@ public class TvDataBase {
         return curDate.getValue() < d.getValue();
       }
     };
-
+    
     String tvDataDir = Settings.propTVDataDirectory.getString();
     File fileList[] = new File(tvDataDir).listFiles(filter);
-    if (fileList != null) {
+    boolean somethingDeleted = false;
+    
+    if (fileList != null && fileList.length > 0) {
+      somethingDeleted = true;
+      
+      // Get the channel of the subscribed channels
+      Channel[] channelArr = ChannelList.getSubscribedChannels();
+      String[] channelIdArr = new String[channelArr.length];
+      for (int i = 0; i < channelArr.length; i++) {
+        channelIdArr[i] = getChannelKey(channelArr[i]);
+      }
+      
       for (File deleteFile : fileList) {
+        if(informPlugins) {
+          Channel ch = getChannelFromFileName(deleteFile.getName(), channelArr, channelIdArr);
+          Date date = getDateFromFileName(deleteFile.getName());
+          
+          fireDayProgramDeleted(getDayProgram(date, ch));
+        }
+        
         deleteFile.delete();
       }
+    }
+    
+    if(informPlugins && somethingDeleted) {
+      TvDataUpdater.getInstance().fireTvDataUpdateFinished();
     }
   }
   
