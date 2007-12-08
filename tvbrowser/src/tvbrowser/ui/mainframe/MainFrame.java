@@ -758,7 +758,7 @@ public class MainFrame extends JFrame implements DateListener {
     }
     
     contentPane.invalidate();
-    contentPane.repaint();
+    contentPane.updateUI();
   }
 
   private void addContextMenuMouseListener(final JComponent c) {
