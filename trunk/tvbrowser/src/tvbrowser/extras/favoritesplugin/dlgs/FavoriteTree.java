@@ -663,7 +663,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
           mExpandListenerIsEnabled = true;
         }
         
-        repaint();
+        updateUI();
       }catch(Exception ex) {ex.printStackTrace();}
     }
     
@@ -875,7 +875,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
     
       if(value != null) {
         node.setUserObject(value);
-        repaint();
+        updateUI();
       }
     }
   }
