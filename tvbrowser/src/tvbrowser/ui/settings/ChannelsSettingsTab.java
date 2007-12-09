@@ -161,6 +161,10 @@ public class ChannelsSettingsTab implements
    */
   private int mRefreshItemCounter = Integer.MAX_VALUE;
 
+  private JComponent mAvailableSeparator;
+
+  private JComponent mSubscribedSeparator;
+
   /**
    * Create the SettingsTab
    */
@@ -185,18 +189,18 @@ public class ChannelsSettingsTab implements
     panel.add(centerPn, BorderLayout.CENTER);
     panel.add(southPn, BorderLayout.SOUTH);
 
-    JComponent availableSeparator = DefaultComponentFactory.getInstance()
+    mAvailableSeparator = DefaultComponentFactory.getInstance()
         .createSeparator(
             mLocalizer.msg("availableChannels", "Available channels") + ":");
-    availableSeparator.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 5));
+    mAvailableSeparator.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 5));
 
-    JComponent subscribedSeparator = DefaultComponentFactory.getInstance()
+    mSubscribedSeparator = DefaultComponentFactory.getInstance()
         .createSeparator(
             mLocalizer.msg("subscribedChannels", "Subscribed channels") + ":");
-    subscribedSeparator.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 5));
+    mSubscribedSeparator.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 5));
 
-    northPn.add(availableSeparator, BorderLayout.NORTH);
-    northPn.add(subscribedSeparator, BorderLayout.NORTH);
+    northPn.add(mAvailableSeparator, BorderLayout.NORTH);
+    northPn.add(mSubscribedSeparator, BorderLayout.NORTH);
 
     // left list box
     JPanel listBoxPnLeft = new JPanel(new BorderLayout());
@@ -744,6 +748,13 @@ public class ChannelsSettingsTab implements
             .addElement(aSubscribedChannelArr);
       }
     }
+    updateChannelNumbers();
+  }
+
+  private void updateChannelNumbers() {
+    String text = mLocalizer.msg("channelCount", "subscribed to {0} of {1} channels", mSubscribedChannels.getModel().getSize(), mAllChannels.getModel().getSize());
+    mAvailableSeparator.setToolTipText(text);
+    mSubscribedSeparator.setToolTipText(text);
   }
 
   /**
@@ -814,6 +825,7 @@ public class ChannelsSettingsTab implements
     mSubscribedChannels.repaint();
     mSubscribedChannelListener.restore();
     restoreForPopup();
+    updateChannelNumbers();
   }
 
   /**
