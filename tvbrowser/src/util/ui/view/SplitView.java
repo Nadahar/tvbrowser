@@ -33,6 +33,7 @@ import java.beans.PropertyChangeListener;
 import javax.swing.BorderFactory;
 import javax.swing.JSplitPane;
 
+import tvbrowser.ui.mainframe.MainFrame;
 import util.settings.Property;
 
 
@@ -56,23 +57,25 @@ public class SplitView extends AbstractView {
 			splitPane.addPropertyChangeListener("dividerLocation",
 					new PropertyChangeListener() {
 						public void propertyChange(PropertyChangeEvent evt) {
-							int oldValue = ((Integer) evt.getOldValue()).intValue();
-							int dividerLocation = ((Integer) evt.getNewValue()).intValue();
-							SplitViewProperty prop = (SplitViewProperty) getProperty();
-							int fixedWidth;
-							if (prop.getLeftComponentFixed()) {
-								fixedWidth = dividerLocation;
-							} else {
-								int width = mComponent.getWidth();
-								int height = mComponent.getHeight();
-								fixedWidth = (prop.getVerticalSplit() ? height : width)
-										- dividerLocation;
-							}
-							if ((oldValue >= 0) && (fixedWidth >= 0)
-									&& (prop.getFixedComponentWidth() != fixedWidth)) {
-								prop.setFixedComponentWidth(fixedWidth);
-								update();
-							}
+              if(!MainFrame.isStarting()) {
+  							int oldValue = ((Integer) evt.getOldValue()).intValue();
+  							int dividerLocation = ((Integer) evt.getNewValue()).intValue();
+  							SplitViewProperty prop = (SplitViewProperty) getProperty();
+  							int fixedWidth;
+  							if (prop.getLeftComponentFixed()) {
+  								fixedWidth = dividerLocation;
+  							} else {
+  								int width = mComponent.getWidth();
+  								int height = mComponent.getHeight();
+  								fixedWidth = (prop.getVerticalSplit() ? height : width)
+  										- dividerLocation;
+  							}
+  							if ((oldValue >= 0) && (fixedWidth >= 0)
+  									&& (prop.getFixedComponentWidth() != fixedWidth)) {
+  								prop.setFixedComponentWidth(fixedWidth);
+  								update();
+  							}
+              }
 						}
 					});
 			mComponent = splitPane;
@@ -89,13 +92,10 @@ public class SplitView extends AbstractView {
   }
 
   protected void onPropertiesChanged(ViewProperty properties) {
-
     if (mComponent instanceof JSplitPane && properties instanceof SplitViewProperty) {
       JSplitPane splitPane = (JSplitPane)mComponent ;
       SplitViewProperty prop = (SplitViewProperty)properties;
-     // if (prop.getFixedComponent() == SplitViewProperties.LEFT) {
-     //   splitPane.setResizeWeight(0.0);
-     // }
+
       if (prop.getLeftComponentFixed()) {
         splitPane.setResizeWeight(0.0);
       }
@@ -105,7 +105,7 @@ public class SplitView extends AbstractView {
       splitPane.setOrientation(prop.getVerticalSplit()?JSplitPane.VERTICAL_SPLIT:JSplitPane.HORIZONTAL_SPLIT);
 
       int abs = prop.getFixedComponentWidth();
-
+      
       if (prop.getLeftComponentFixed()) {
         splitPane.setDividerLocation(abs);
       }
@@ -124,7 +124,7 @@ public class SplitView extends AbstractView {
 
   public void storeProperties() {
     Property property = getProperty();
-    if (property instanceof SplitViewProperty && mComponent instanceof JSplitPane) {
+    if (property instanceof SplitViewProperty && mComponent instanceof JSplitPane && !MainFrame.isStarting()) {
       JSplitPane splitPane = (JSplitPane)mComponent;
       SplitViewProperty prop = (SplitViewProperty)property;
       Component comp;
