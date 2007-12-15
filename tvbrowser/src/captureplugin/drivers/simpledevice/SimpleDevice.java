@@ -26,47 +26,58 @@ package captureplugin.drivers.simpledevice;
 
 import captureplugin.drivers.DeviceIf;
 import captureplugin.drivers.DriverIf;
+import captureplugin.drivers.utils.ProgramTime;
+import captureplugin.drivers.utils.ProgramTimeDialog;
 import devplugin.Channel;
 import devplugin.Program;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import java.awt.Window;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 
 /**
  * The Applescript-Device
- * 
+ *
  * @author bodum
  */
 public class SimpleDevice implements DeviceIf {
-    /** Translator */
+    /**
+     * Translator
+     */
     private static final Localizer mLocalizer = Localizer
             .getLocalizerFor(SimpleDevice.class);
 
-    /** Driver */
+    /**
+     * Driver
+     */
     private DriverIf mDriver;
 
-    /** Connection */
+    /**
+     * Connection
+     */
     private SimpleConnectionIf mConnection;
-    
-    /** Name of Device */
+
+    /**
+     * Name of Device
+     */
     private String mName;
 
-    /** Configuration */
+    /**
+     * Configuration
+     */
     private SimpleConfig mConfig = new SimpleConfig();
-    
-    /** List of Recordings */
+
+    /**
+     * List of Recordings
+     */
     private Program[] mListOfRecordings;
-    
+
     public SimpleDevice(SimpleConnectionIf connection, DriverIf driver, String name) {
         mDriver = driver;
         mName = name;
@@ -81,7 +92,7 @@ public class SimpleDevice implements DeviceIf {
     }
 
     private SimpleConfig getConfig() {
-      return mConfig;
+        return mConfig;
     }
 
     public DriverIf getDriver() {
@@ -102,33 +113,33 @@ public class SimpleDevice implements DeviceIf {
     }
 
     public void configDevice(Window parent) {
-      SimpleConfigDialog dialog;
-      
-      if (parent instanceof JFrame) {
-        dialog = new SimpleConfigDialog((JFrame) parent, this, mConnection, mConfig);
-      } else {
-        dialog = new SimpleConfigDialog((JDialog) parent, this, mConnection, mConfig);
-      }
-      
-      UiUtilities.centerAndShow(dialog);
-      
-      if (dialog.wasOkPressed()) {
-        mName = dialog.getName();
-        mConfig = dialog.getConfig();
-      }
+        SimpleConfigDialog dialog;
+
+        if (parent instanceof JFrame) {
+            dialog = new SimpleConfigDialog((JFrame) parent, this, mConnection, mConfig);
+        } else {
+            dialog = new SimpleConfigDialog((JDialog) parent, this, mConnection, mConfig);
+        }
+
+        UiUtilities.centerAndShow(dialog);
+
+        if (dialog.wasOkPressed()) {
+            mName = dialog.getName();
+            mConfig = dialog.getConfig();
+        }
     }
 
     public String[] getAdditionalCommands() {
-        return new String[] { mLocalizer.msg("switchChannel",
-                "Switch to Channel"), };
+        return new String[]{mLocalizer.msg("switchChannel",
+                "Switch to Channel"),};
     }
 
     public boolean executeAdditionalCommand(Window parent, int num,
-            Program program) {
+                                            Program program) {
         if (num == 0) {
-          if (testConfig(parent, program.getChannel())) {
-            mConnection.switchToChannel(mConfig, program.getChannel());
-          }
+            if (testConfig(parent, program.getChannel())) {
+                mConnection.switchToChannel(mConfig, program.getChannel());
+            }
         }
 
         return false;
@@ -152,33 +163,22 @@ public class SimpleDevice implements DeviceIf {
 
     public boolean add(Window parent, Program program) {
         if (testConfig(parent, program.getChannel())) {
-          int length = program.getLength() * 60;
-            
-          if (program.getLength() <= 0) {
-            TimeChooserDialog dialog;
-            if (parent instanceof JDialog)
-              dialog = new TimeChooserDialog((JDialog)parent, program);
-            else
-              dialog = new TimeChooserDialog((JFrame)parent, program);
-            
-            UiUtilities.centerAndShow(dialog);
-            
-            if (dialog.wasOkPressed()) {
-              Calendar cal = program.getDate().getCalendar();
-              cal.set(Calendar.HOUR_OF_DAY, program.getHours());
-              cal.set(Calendar.MINUTE, program.getMinutes());
-              cal.set(Calendar.SECOND, 0);
-              cal.set(Calendar.MILLISECOND, 0);
-              
-              long millenght = dialog.getDate().getTime() - cal.getTime().getTime(); 
-              length = (int) (millenght / 1000);
+            int length = program.getLength() * 60;
+
+            ProgramTimeDialog dialog;
+            ProgramTime time = new ProgramTime(program);
+
+            if (parent instanceof JDialog) {
+                dialog = new ProgramTimeDialog((JDialog) parent, time, false);
             } else {
-              return false;
+                dialog = new ProgramTimeDialog((JFrame) parent, time, false);
             }
-              
-          }
-          
-          return mConnection.addToRecording(mConfig, program, length);
+
+            UiUtilities.centerAndShow(dialog);
+
+            if (dialog.getPrgTime() != null) {
+                return mConnection.addToRecording(mConfig, dialog.getPrgTime());
+            }
         }
         return false;
     }
@@ -189,77 +189,77 @@ public class SimpleDevice implements DeviceIf {
     }
 
     /**
-     * Test if the Channel is in the Configuration. If not a 
+     * Test if the Channel is in the Configuration. If not a
      * Dialog is shown
-     * 
-     * @param parent Parent Dialog 
-     * @param ch Channel to check
+     *
+     * @param parent Parent Dialog
+     * @param ch     Channel to check
      * @return true if Channel is in Config
      */
     private boolean testConfig(Window parent, Channel ch) {
-      if (mConfig.getExternalChannel(ch) == null) {
-        int ret = JOptionPane.showConfirmDialog(parent, mLocalizer.msg("channelAssign", "Please assign Channel first"), mLocalizer.msg("channelAssignTitle", "Assign Channel"), JOptionPane.YES_NO_OPTION);
-        
-        if (ret == JOptionPane.YES_OPTION) {
-          SimpleConfigDialog dialog;
-          
-          if (parent instanceof JDialog) {
-            dialog = new SimpleConfigDialog((JDialog)parent, this, mConnection, mConfig);
-          } else {
-            dialog = new SimpleConfigDialog((JFrame)parent, this, mConnection, mConfig);
-          }
-          UiUtilities.centerAndShow(dialog);
+        if (mConfig.getExternalChannel(ch) == null) {
+            int ret = JOptionPane.showConfirmDialog(parent, mLocalizer.msg("channelAssign", "Please assign Channel first"), mLocalizer.msg("channelAssignTitle", "Assign Channel"), JOptionPane.YES_NO_OPTION);
 
-          if (dialog.wasOkPressed()) {
-            mConfig = dialog.getConfig();
-            mName = dialog.getName();
-          }
+            if (ret == JOptionPane.YES_OPTION) {
+                SimpleConfigDialog dialog;
+
+                if (parent instanceof JDialog) {
+                    dialog = new SimpleConfigDialog((JDialog) parent, this, mConnection, mConfig);
+                } else {
+                    dialog = new SimpleConfigDialog((JFrame) parent, this, mConnection, mConfig);
+                }
+                UiUtilities.centerAndShow(dialog);
+
+                if (dialog.wasOkPressed()) {
+                    mConfig = dialog.getConfig();
+                    mName = dialog.getName();
+                }
+            }
+            return false;
         }
-        return false;
-      } 
-      
-      return true;
+
+        return true;
     }
-    
+
     public void readData(ObjectInputStream stream, boolean importDevice) throws IOException,
             ClassNotFoundException {
-      mConfig = new SimpleConfig(stream);
+        mConfig = new SimpleConfig(stream);
     }
 
     public void writeData(ObjectOutputStream stream) throws IOException {
-      mConfig.writeData(stream);
+        mConfig.writeData(stream);
     }
 
     public Object clone() {
         return new SimpleDevice(this);
     }
-    
-    public Program[] checkProgramsAfterDataUpdateAndGetDeleted() {      
-      ArrayList<Program> deletedPrograms = new ArrayList<Program>();
-      
-      for(Program p : mListOfRecordings) {
-        if(p.getProgramState() == Program.WAS_DELETED_STATE)
-          deletedPrograms.add(p);
-      }
-      
-      return deletedPrograms.toArray(new Program[deletedPrograms.size()]);
+
+    public Program[] checkProgramsAfterDataUpdateAndGetDeleted() {
+        ArrayList<Program> deletedPrograms = new ArrayList<Program>();
+
+        for (Program p : mListOfRecordings) {
+            if (p.getProgramState() == Program.WAS_DELETED_STATE)
+                deletedPrograms.add(p);
+        }
+
+        return deletedPrograms.toArray(new Program[deletedPrograms.size()]);
     }
 
     /**
      * Gets if programs that were removed during a data
      * update should be deleted automatically.
-     * 
+     *
      * @return If the programs should be deleted.
      * @since 2.11
      */
     public boolean getDeleteRemovedProgramsAutomatically() {
-      return true;
+        return true;
     }
-    
+
     /**
      * Removes programs that were deleted during a data update
-     * 
-     * @param p The program to remove from this device. 
+     *
+     * @param p The program to remove from this device.
      * @since 2.11
      */
     public void removeProgramWithoutExecution(Program p) {

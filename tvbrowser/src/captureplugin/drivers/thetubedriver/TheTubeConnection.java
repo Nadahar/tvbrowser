@@ -1,16 +1,19 @@
 package captureplugin.drivers.thetubedriver;
 
+import captureplugin.CapturePlugin;
 import captureplugin.drivers.simpledevice.SimpleChannel;
 import captureplugin.drivers.simpledevice.SimpleConfig;
 import captureplugin.drivers.simpledevice.SimpleConnectionIf;
-import captureplugin.CapturePlugin;
+import captureplugin.drivers.utils.ProgramTime;
 import devplugin.Channel;
-import devplugin.Program;
 import devplugin.Date;
+import devplugin.Program;
 import util.misc.AppleScriptRunner;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
@@ -31,7 +34,7 @@ public class TheTubeConnection implements SimpleConnectionIf {
 
   private final String CHANNELLIST = "set chList to {}\n" +
           "tell application \"TheTube\"\n" +
-          "\trepeat with ch in channels of active device\n" +
+          "\trepeat with ch in channels\n" +
           "\t\tset end of chList to unique id of contents of ch\n" +
           "\t\tset end of chList to name of contents of ch\n" +
           "\tend repeat\n" +
@@ -42,7 +45,7 @@ public class TheTubeConnection implements SimpleConnectionIf {
           "outString";
 
   private final String SWITCHCHANNEL = "tell application \"TheTube\"\n" +
-          "\trepeat with ch in channels of active device\n" +
+          "\trepeat with ch in channels\n" +
           "\t\tif unique id of ch is {0} then\n" +
           "\t\t\tselect ch\n" +
           "\t\tend if\n" +
@@ -78,6 +81,46 @@ public class TheTubeConnection implements SimpleConnectionIf {
           "set text item delimiters to \"¥\"\n" +
           "set outString to chList as text\n" +
           "outString";
+
+  private final String CREATERECORDING = "on stringToList from theString for myDelimiters\n" +
+          "\ttell AppleScript\n" +
+          "\t\tset theSavedDelimiters to AppleScript's text item delimiters\n" +
+          "\t\tset text item delimiters to myDelimiters\n" +
+          "\t\t\n" +
+          "\t\tset outList to text items of theString\n" +
+          "\t\tset text item delimiters to theSavedDelimiters\n" +
+          "\t\t\n" +
+          "\t\treturn outList\n" +
+          "\tend tell\n" +
+          "end stringToList\n" +
+          "\n" +
+          "\n" +
+          "on getDateForISOdate(theISODate, theISOTime)\n" +
+          "\tlocal myDate\n" +
+          "\t-- converts an ISO format (YYYY-MM-DD) and time to a date object\n" +
+          "\tset monthConstants to {January, February, March, April, May, June, July, August, September, October, November, December}\n" +
+          "\t\n" +
+          "\tset theISODate to (stringToList from (theISODate) for \"-\")\n" +
+          "\t\n" +
+          "\tset myDate to date theISOTime\n" +
+          "\t\n" +
+          "\ttell theISODate\n" +
+          "\t\tset year of myDate to item 1\n" +
+          "\t\tset month of myDate to item (item 2) of monthConstants\n" +
+          "\t\tset day of myDate to item 3\n" +
+          "\tend tell\n" +
+          "\t\n" +
+          "\treturn myDate\n" +
+          "end getDateForISOdate\n" +
+          "\n" +
+          "set a to getDateForISOdate(\"{1}\", \"{2}\")\n" +
+          "set b to getDateForISOdate(\"{3}\", \"{4}\")\n" +
+          "\n" +
+          "tell application \"TheTube\"\n" +
+          "\tshow scheduled recordings view\n" +
+          "\tmake new scheduled recording with properties {name:\"{5}\", description:\"{6}\", rollIn interval:120.0, rollOut interval:300.0, startDate:a, endDate:b, channel id:{7}}\n" +
+          "end tell";
+
 
   public SimpleChannel[] getAvailableChannels() {
     ArrayList<SimpleChannel> lists = new ArrayList<SimpleChannel>();
@@ -172,10 +215,34 @@ public class TheTubeConnection implements SimpleConnectionIf {
     return programs.toArray(new Program[programs.size()]);
   }
 
-  public boolean addToRecording(SimpleConfig conf, Program prg, int length) {
+  public boolean addToRecording(SimpleConfig conf, ProgramTime prg) {
+      SimpleDateFormat dateformater = new SimpleDateFormat("yyyy-MM-dd");
+      SimpleDateFormat timeformater = new SimpleDateFormat("kk:mm");
 
+      String call = CREATERECORDING.replaceAll("\\{1\\}", dateformater.format(prg.getStart()));
+      call = call.replaceAll("\\{2\\}", timeformater.format(prg.getStart()));
+      call = call.replaceAll("\\{3\\}", dateformater.format(prg.getEnd()));
+      call = call.replaceAll("\\{4\\}", timeformater.format(prg.getEnd()));
 
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
+      call = call.replaceAll("\\{5\\}", mAppleScript.formatTextAsParam(prg.getProgram().getTitle()));
+
+      if (prg.getProgram().getShortInfo() != null) {
+          call = call.replaceAll("\\{6\\}", mAppleScript.formatTextAsParam(prg.getProgram().getShortInfo()));
+      } else {
+          call = call.replaceAll("\\{6\\}", "");
+      }
+
+      call = call.replaceAll("\\{7\\}", Integer.toString(((SimpleChannel)conf.getExternalChannel(prg.getProgram().getChannel())).getNumber()));
+      
+      String res = null;
+
+      try {
+          res = mAppleScript.executeScript(call);
+      } catch (IOException e) {
+          e.printStackTrace();
+      }
+
+      return res != null;
   }
 
   public void removeRecording(Program prg) {
