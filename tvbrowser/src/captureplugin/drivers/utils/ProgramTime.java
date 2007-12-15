@@ -279,4 +279,15 @@ public class ProgramTime implements Cloneable {
 
       return false;
     }
+
+    /**
+     * Calculates the time difference between start and end in minutes
+     *
+     * @return Time in Minutes between start and end
+     * Ïsince 2.6.1
+     */
+    public int getLength() {
+        long diff = mEnd.getTimeInMillis() - mStart.getTimeInMillis();
+        return (int)(diff / (1000L*60L));
+    }
 }

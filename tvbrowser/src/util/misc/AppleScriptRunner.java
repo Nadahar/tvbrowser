@@ -125,4 +125,13 @@ public class AppleScriptRunner {
         return null;
     }
 
+    /**
+     * Formats a string and escapes all problematic characters
+     *
+     * @param string Input-String
+     * @return string with escaped characters
+     */
+    public String formatTextAsParam(String string) {
+        return string.replaceAll("\"", "\\\\\\\\\"").replace('\n', ' ');
+    }
 }
