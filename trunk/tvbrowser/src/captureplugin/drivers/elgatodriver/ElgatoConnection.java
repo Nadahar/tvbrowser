@@ -28,6 +28,7 @@ import captureplugin.CapturePlugin;
 import captureplugin.drivers.simpledevice.SimpleChannel;
 import captureplugin.drivers.simpledevice.SimpleConfig;
 import captureplugin.drivers.simpledevice.SimpleConnectionIf;
+import captureplugin.drivers.utils.ProgramTime;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Program;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Logger;
+import java.text.SimpleDateFormat;
 
 /**
  * This Class represents the Connection to the Elgato EyeTV.
@@ -245,25 +247,24 @@ public class ElgatoConnection implements SimpleConnectionIf {
      * 
      * @param conf Config
      * @param prg Program to record
-     * @param length Length of Program
      * @return true if successfull
      */
-    public boolean addToRecording(SimpleConfig conf, Program prg, int length) {
-          String date = prg.getDate().getYear() + "-" + prg.getDate().getMonth()
-                  + "-" + prg.getDate().getDayOfMonth();
-
-        String time = prg.getHours() + ":" + prg.getMinutes();
+    public boolean addToRecording(SimpleConfig conf, ProgramTime prg) {
+        String date = new SimpleDateFormat("yyyy-MM-dd").format(prg.getStart());
+        String time = new SimpleDateFormat("kk:mm").format(prg.getStart());
 
         String call = CREATERECORDING.replaceAll("\\{0\\}", date);
         call = call.replaceAll("\\{1\\}", time);
-        call = call.replaceAll("\\{2\\}", Integer.toString(length));
+        call = call.replaceAll("\\{2\\}", Integer.toString(prg.getLength()));
         call = call.replaceAll("\\{3\\}", prg.getTitle());
         call = call.replaceAll("\\{4\\}", Integer.toString(((SimpleChannel)conf
-                .getExternalChannel(prg.getChannel())).getNumber()));
+                .getExternalChannel(prg.getProgram().getChannel())).getNumber()));
 
-        if (prg.getShortInfo() != null)
-            call = call.replaceAll("\\{5\\}", prg.getShortInfo().replaceAll("\"",
-                "\\\\\\\\\"").replace('\n', ' '));
+        if (prg.getProgram().getShortInfo() != null) {
+            call = call.replaceAll("\\{5\\}", mAppleScript.formatTextAsParam(prg.getProgram().getShortInfo()));
+        } else {
+            call = call.replaceAll("\\{5\\}", "");
+        }
 
         String res = null;
         try {

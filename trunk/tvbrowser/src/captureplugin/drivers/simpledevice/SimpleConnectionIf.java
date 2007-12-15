@@ -1,5 +1,6 @@
 package captureplugin.drivers.simpledevice;
 
+import captureplugin.drivers.utils.ProgramTime;
 import devplugin.Channel;
 import devplugin.Program;
 
@@ -26,10 +27,9 @@ public interface SimpleConnectionIf {
      *
      * @param conf configuration of this device
      * @param prg add this Program
-     * @param length lenght to record
      * @return <code>true</code> if successfully
      */
-    boolean addToRecording(SimpleConfig conf, Program prg, int length);
+    boolean addToRecording(SimpleConfig conf, ProgramTime prg);
 
     /**
      * Remove a recording
