@@ -86,6 +86,7 @@ public class PictureAreaIcon implements Icon {
     
     mCopyrightText = new TextAreaIcon(p.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE),f.deriveFont((float)(f.getSize() * 0.9)),width-6);
     mDescriptionText = new TextAreaIcon(showDescription ? p.getTextField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE) : "",f,width-6);
+    mDescriptionText.setMaximumLineCount(8);
   }
   
   public int getIconHeight() {
