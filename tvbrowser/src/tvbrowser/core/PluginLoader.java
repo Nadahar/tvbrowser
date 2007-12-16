@@ -33,7 +33,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -277,7 +276,7 @@ public class PluginLoader {
         icon = IOUtilities.readImageIconFromFile(iconFile);
       }
       return new JavaPluginProxy(info, lcFileName, pluginId, icon);
-    } catch (IOException e) {
+    } catch (Exception e) {
       // delete proxy on read error, maybe the format has changed
       proxyFile.delete();
       return null;
@@ -318,7 +317,7 @@ public class PluginLoader {
         File iconFile = new File(iconFileName);
         IOUtilities.writeImageIconToFile((ImageIcon)pluginIcon, "png", iconFile);
       }
-    } catch (IOException e) {
+    } catch (Exception e) {
     }
   }
 
