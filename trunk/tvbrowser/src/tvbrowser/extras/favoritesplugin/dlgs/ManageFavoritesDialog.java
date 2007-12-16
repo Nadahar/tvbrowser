@@ -935,25 +935,43 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
           line = line.trim();
           if ((line.length() > 0) && (! line.startsWith("***"))) {
             // This is a favorite -> Check whether we already have such a favorite
-            @SuppressWarnings("unchecked")
-            Enumeration<Favorite> en = (Enumeration<Favorite>) mFavoritesListModel.elements();
             boolean alreadyKnown = false;
-            while (en.hasMoreElements()) {
-              Favorite fav = en.nextElement();
-              String favName = fav.getName();
-              if (line.equalsIgnoreCase(favName)) {
-                alreadyKnown = true;
-                break;
-              }
-            }
+            if (mFavoritesListModel != null) {
+                @SuppressWarnings("unchecked")
+                Enumeration<Favorite> en = (Enumeration<Favorite>) mFavoritesListModel.elements();
+                          while (en.hasMoreElements()) {
+                            Favorite fav = en.nextElement();
+                            String favName = fav.getName();
+                            if (line.equalsIgnoreCase(favName)) {
+                              alreadyKnown = true;
+                              break;
+                            }
+                          }
 
-            // Import the favorite if it is new
-            if (! alreadyKnown) {
-              AdvancedFavorite fav = new AdvancedFavorite(line);
-              fav.updatePrograms();
+                // Import the favorite if it is new
+                if (! alreadyKnown) {
+                  AdvancedFavorite fav = new AdvancedFavorite(line);
+                  fav.updatePrograms();
 
-              mFavoritesListModel.addElement(fav);
-              importedFavoritesCount++;
+                  mFavoritesListModel.addElement(fav);
+                  importedFavoritesCount++;
+                }
+            } else if (mFavoriteTree != null) {
+                for (final Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()){
+                    String favName = fav.getName();
+                    if (line.equalsIgnoreCase(favName)) {
+                      alreadyKnown = true;
+                      break;
+                    }
+                }
+
+                // Import the favorite if it is new
+                if (! alreadyKnown) {
+                  AdvancedFavorite fav = new AdvancedFavorite(line);
+                  fav.updatePrograms();
+                  FavoriteTreeModel.getInstance().addFavorite(fav);
+                  importedFavoritesCount++;
+                }
             }
           }
         }
