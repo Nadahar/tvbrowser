@@ -708,7 +708,7 @@ public class MutableProgram implements Program {
 
       shortInfo = shortInfo.substring(0, cutIdx + 1) + "...";
 
-      mLog.warning("Short description is longer than " + MAX_SHORT_INFO_LENGTH + " characters, it will be truncated.");
+      mLog.warning("Short description longer than " + MAX_SHORT_INFO_LENGTH + " characters: " + this.toString());
     }
 
     return shortInfo;
