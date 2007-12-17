@@ -774,7 +774,7 @@ public class FavoritesPlugin {
     mRootNode.addAction(openSettings);
     mRootNode.removeAllChildren();
 
-    FavoriteTreeModel.getInstance().updatePluginTree(mRootNode,null);
+    FavoriteTreeModel.getInstance().updatePluginTree(mRootNode);
 
     mRootNode.update();
     ReminderPlugin.getInstance().updateRootNode(mHasRightToSave);
