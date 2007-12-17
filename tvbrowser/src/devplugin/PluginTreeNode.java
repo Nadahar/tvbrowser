@@ -30,9 +30,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,6 +45,7 @@ import tvbrowser.core.TvDataUpdateListener;
 import tvbrowser.core.TvDataUpdater;
 import tvbrowser.ui.pluginview.Node;
 import tvbrowser.ui.pluginview.PluginTreeModel;
+import util.program.ProgramUtilities;
 
 
 /**
@@ -453,28 +456,94 @@ public class PluginTreeNode {
 
   }
 
-
-  public synchronized PluginTreeNode addProgram(Program program) {
-    return addProgram(new ProgramItem(program));
+  public synchronized void addPrograms(List<Program> listNew) {
+    Iterator<Program> newIt = listNew.iterator();
+    // create sorted lists of current and new programs, but only if this node contains any children at all!
+    if (mChildNodes.size() > 0) {
+      Program[] currentProgs = getPrograms();
+      ArrayList<Program> listCurrent = new ArrayList<Program>(currentProgs.length);
+      for (int i = 0; i < currentProgs.length; i++) {
+        listCurrent.add(currentProgs[i]);
+      }
+      Comparator<Program> comp = ProgramUtilities.getProgramComparator();
+      Collections.sort(listCurrent, comp);
+      Collections.sort(listNew, comp);
+      Iterator<Program> currentIt = listCurrent.iterator();
+      
+      // iterate both lists in parallel and add only new programs
+      if (currentIt.hasNext() && newIt.hasNext()) {
+        Program newProg = newIt.next();
+        Program currentProg = currentIt.next();
+        while (newProg != null && currentProg != null) {
+          int comparison = comp.compare(newProg, currentProg);
+          // new program is sorted first -> add it and investigate next new
+          if (comparison < 0) {
+            markAndAdd(newProg);
+            if (newIt.hasNext()) {
+              newProg = newIt.next();
+            }
+            else {
+              newProg = null;
+            }
+          }
+          // old program is sorted first -> go to next old program for comparison
+          else if (comparison > 0) {
+            if (currentIt.hasNext()) {
+              currentProg = currentIt.next();
+            }
+            else {
+              currentProg = null;
+            }
+          }
+          // program already available -> skip
+          else if (comparison == 0) {
+            if (currentIt.hasNext()) {
+              currentProg = currentIt.next();
+            }
+            else {
+              currentProg = null;
+            }
+            if (newIt.hasNext()) {
+              newProg = newIt.next();
+            }
+            else {
+              newProg = null;
+            }
+          }
+        }
+      }
+    }
+    // add all remaining new programs
+    while (newIt.hasNext()) {
+      markAndAdd(newIt.next());
+    }
   }
 
-  public synchronized PluginTreeNode addProgram(ProgramItem item) {
+  private void markAndAdd(Program program) {
+    if (mMarker != null) {
+      program.mark(mMarker);
+    }
+    PluginTreeNode node = new PluginTreeNode(new ProgramItem(program));
+    add(node);
+  }
+
+  public synchronized PluginTreeNode addProgram(Program program) {
     // don't search using contains(), this would require a second search
-    PluginTreeNode node = findProgramTreeNode(item.getProgram(), false);
+    PluginTreeNode node = findProgramTreeNode(program, false);
     if (node != null) {
       // node already exists
       return node;
     }
 
     if (mMarker != null) {
-      item.getProgram().mark(mMarker);
+      program.mark(mMarker);
     }
-    node = new PluginTreeNode(item);
+    node = new PluginTreeNode(new ProgramItem(program));
     add(node);
     return node;
   }
 
-
+ 
   private PluginTreeNode findProgramTreeNode(PluginTreeNode root, Program prog, boolean recursive) {
     Iterator<PluginTreeNode> it = root.mChildNodes.iterator();
     while (it.hasNext()) {
