@@ -527,6 +527,13 @@ public class PluginTreeNode {
     add(node);
   }
 
+  /**
+   * add a single program to this tree node.
+   * If the program is already contained in this sub tree, it is not added again.
+   * 
+   * @param program
+   * @return the tree node containing the program
+   */
   public synchronized PluginTreeNode addProgram(Program program) {
     // don't search using contains(), this would require a second search
     PluginTreeNode node = findProgramTreeNode(program, false);
@@ -543,7 +550,23 @@ public class PluginTreeNode {
     return node;
   }
 
- 
+  /**
+   * add a single program node to this tree node.
+   * It it not checked if the program is already contained in this sub tree,
+   * so you may only use this method with newly created tree nodes!
+   * 
+   * @param program
+   * @return the tree node containing the program
+   */
+  public synchronized PluginTreeNode addProgramWithoutCheck(Program program) {
+    if (mMarker != null) {
+      program.mark(mMarker);
+    }
+    PluginTreeNode node = new PluginTreeNode(new ProgramItem(program));
+    add(node);
+    return node;
+  }
+
   private PluginTreeNode findProgramTreeNode(PluginTreeNode root, Program prog, boolean recursive) {
     Iterator<PluginTreeNode> it = root.mChildNodes.iterator();
     while (it.hasNext()) {
