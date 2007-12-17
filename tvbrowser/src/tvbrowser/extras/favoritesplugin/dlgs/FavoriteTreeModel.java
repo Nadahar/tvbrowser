@@ -384,7 +384,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
             }
 
             for (Program program : progArr) {
-              PluginTreeNode pNode = newNode.addProgram(program);
+              PluginTreeNode pNode = newNode.addProgramWithoutCheck(program);
 
               int numberOfDays = program.getDate().getNumberOfDaysSince(mCurrentDate);
               if ((progArr.length <= 10) || (numberOfDays > 1)) {
