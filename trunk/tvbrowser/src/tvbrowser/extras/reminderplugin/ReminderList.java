@@ -225,13 +225,11 @@ public class ReminderList implements ActionListener {
   }
 
   public ReminderListItem getReminderItem(Program program) {
-    ReminderListItem[] items = getReminderItems();
-    for (int i = 0; i < items.length; i++) {
-      if (items[i].getProgram().equals(program)) {
-        return items[i];
+    for (ReminderListItem item : mList) {
+      if (item.getProgram().equals(program)) {
+        return item;
       }
     }
-
     return null;
   }
 
