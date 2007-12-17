@@ -272,8 +272,9 @@ public class ReminderPlugin {
       File userDirectory = new File(userDirectoryName);
       File tmpDatFile = new File(userDirectory, DATAFILE_NAME + ".temp");
       File datFile = new File(userDirectory, DATAFILE_NAME);
-      out = new ObjectOutputStream(new FileOutputStream(tmpDatFile));
+      out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(tmpDatFile)));
       writeData(out);
+      out.flush();
       out.close();
       
       datFile.delete();
@@ -575,9 +576,11 @@ public class ReminderPlugin {
     mRootNode.removeAllChildren();
 
     ReminderListItem[] items = mReminderList.getReminderItems();
+    ArrayList<Program> listNewPrograms = new ArrayList<Program>(items.length);
     for (ReminderListItem reminderItem : items) {
-      mRootNode.addProgram(reminderItem.getProgram());
+      listNewPrograms.add(reminderItem.getProgram());
     }
+    mRootNode.addPrograms(listNewPrograms);
 
     mRootNode.update();
     
