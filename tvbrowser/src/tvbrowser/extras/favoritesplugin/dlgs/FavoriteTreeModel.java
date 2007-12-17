@@ -68,6 +68,11 @@ public class FavoriteTreeModel extends DefaultTreeModel {
   private static FavoriteTreeModel mInstance;
 
   /**
+   * private cache for current date, used during plugin tree update
+   */
+  private Date mCurrentDate;
+
+  /**
    * Creates an instance of this class.
    * 
    * @param root The root node for this model. 
@@ -328,14 +333,14 @@ public class FavoriteTreeModel extends DefaultTreeModel {
     ((FavoriteNode)getRoot()).store(out);
   }
 
-  public void updatePluginTree(PluginTreeNode node, FavoriteNode parent) {
-    if(parent == null) {
-      parent = (FavoriteNode) getRoot();
+  public void updatePluginTree(PluginTreeNode node, FavoriteNode parentFavorite) {
+    if(parentFavorite == null) {
+      parentFavorite = (FavoriteNode) getRoot();
     }
 
-    if(parent.isDirectoryNode()) {
+    if(parentFavorite.isDirectoryNode()) {
       @SuppressWarnings("unchecked")
-      Enumeration<FavoriteNode> e = parent.children();
+      Enumeration<FavoriteNode> e = parentFavorite.children();
 
       while(e.hasMoreElements()) {
         final FavoriteNode child = e.nextElement();
@@ -381,7 +386,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
             for (Program program : progArr) {
               PluginTreeNode pNode = newNode.addProgram(program);
 
-              int numberOfDays = program.getDate().getNumberOfDaysSince(Date.getCurrentDate());
+              int numberOfDays = program.getDate().getNumberOfDaysSince(mCurrentDate);
               if ((progArr.length <= 10) || (numberOfDays > 1)) {
                 pNode.setNodeFormatter(new NodeFormatter() {
                   public String format(ProgramItem pitem) {
@@ -492,6 +497,11 @@ public class FavoriteTreeModel extends DefaultTreeModel {
     }
     
     return receiveFavorites.toArray(new Favorite[receiveFavorites.size()]);
+  }
+
+  public void updatePluginTree(PluginTreeNode rootNode) {
+    mCurrentDate = Date.getCurrentDate();
+    updatePluginTree(rootNode,null);
   }
     
 }
