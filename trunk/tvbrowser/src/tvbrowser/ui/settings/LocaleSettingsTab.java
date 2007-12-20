@@ -194,11 +194,7 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     Settings.propCountry.setString(loc.getCountry());
     Settings.propVariant.setString(loc.getVariant());
     
-    if (mTimezoneCB.getSelectedItem().equals(TimeZone.getDefault().getID())) {
-      Settings.propTimezone.setString(null);
-    } else {
-      Settings.propTimezone.setString((String) mTimezoneCB.getSelectedItem());
-    }    
+    Settings.propTimezone.setString((String) mTimezoneCB.getSelectedItem());
     
     Settings.propTwelveHourFormat.setBoolean(mTwelveHourFormat.isSelected());
     
