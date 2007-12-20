@@ -299,7 +299,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
       b.setEnabled(false);
       mButtonPanel.add(b);
     }
-    mButtonPanel.repaint();
+    mButtonPanel.updateUI();
   }
 
   private void ini() {
