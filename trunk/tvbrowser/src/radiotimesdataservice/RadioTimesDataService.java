@@ -225,7 +225,7 @@ public class RadioTimesDataService extends AbstractTvDataService {
       prop.setProperty("ChannelId-" + i, ch.getId());
       prop.setProperty("ChannelTitle-" + i, ch.getName());
     }
-    mLog.info("Finnished storing settings for RadioTimesDataService");
+    mLog.info("Finished storing settings for RadioTimesDataService");
 
     return prop;
   }
