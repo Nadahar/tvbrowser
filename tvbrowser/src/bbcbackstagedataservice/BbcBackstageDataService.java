@@ -238,7 +238,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
       prop.setProperty("ChannelId-" + i, ch.getId());
       prop.setProperty("ChannelTitle-" + i, ch.getName());
     }
-    mLog.info("Finnished storing settings for BbcBackstageDataService");
+    mLog.info("Finished storing settings for BbcBackstageDataService");
 
     return prop;
   }

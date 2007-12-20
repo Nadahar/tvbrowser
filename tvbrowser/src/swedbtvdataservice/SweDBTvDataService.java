@@ -358,7 +358,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
           .getLastUpdateString());
     }
     mLog
-        .info("Finnished storing settings for SweDBTvDataService. Returning properties...");
+        .info("Finished storing settings for SweDBTvDataService. Returning properties...");
     return mProperties;
   }
 
