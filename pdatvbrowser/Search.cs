@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace PocketTVBrowserCF2
+namespace TVBrowserMini
 {
     public partial class Search : Form
     {
@@ -51,7 +51,6 @@ namespace PocketTVBrowserCF2
                 this.bSearch_Click(null, null);
             this.lastSearchWord = "";
             this.bSearch.Focus();
-            
         }
 
         private void initVideoMode()
@@ -147,7 +146,7 @@ namespace PocketTVBrowserCF2
             this.listViewBroadcasts.TopIndex = 0;
             this.listViewBroadcasts.WrapText = false;
             this.listViewBroadcasts.Click += new System.EventHandler(this.listViewBroadcasts_Click);
-            String stmt = "SELECT b.id as id, c.name as channel, b.channel_id as channel_id, b.title as title, strftime('%Y-%m-%d-%H-%M', b.start) as start, strftime('%Y-%m-%d-%H-%M', b.end) as end, b.favorite as favorite, b.reminder as reminder FROM channel c, broadcast b, info i where c.id = b.channel_id AND i.broadcast_id=b.id";
+            String stmt = "SELECT b.id as id, b.tvbrowserID as tvbrowserid, c.name as channel, b.channel_id as channel_id, b.title as title, strftime('%Y-%m-%d-%H-%M', b.start) as start, strftime('%Y-%m-%d-%H-%M', b.end) as end, b.favorite as favorite, b.reminder as reminder FROM channel c, broadcast b, info i where c.id = b.channel_id AND i.broadcast_id=b.id";
             if (this.radioButtonFavorites.Checked)
             {
                 stmt += " AND b.favorite='1'";
@@ -231,6 +230,12 @@ namespace PocketTVBrowserCF2
 
                 if (this.broadcasts.Count < 1)
                     MessageBox.Show(this.con.getLanguageElement("Search.WarningNothingFound", "Sorry - nothing found"));
+            }
+
+            if (this.listViewBroadcasts.Items.Count > 0)
+            {
+                this.listViewBroadcasts.SelectedIndex = 0;
+                this.listViewBroadcasts.Focus();
             }
         }
 

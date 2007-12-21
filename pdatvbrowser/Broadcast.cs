@@ -4,7 +4,7 @@ using System;
 
 #endregion
 
-namespace PocketTVBrowserCF2
+namespace TVBrowserMini
 {
     /// <summary>
     /// One single TVBrowser broadcast
@@ -14,15 +14,17 @@ namespace PocketTVBrowserCF2
         private int id;
         private String channel;
         private String channelId;
+        private String tvBrowserID;
         private String title;
         private DateTime start;
         private DateTime end;
         private bool favourite;
         private bool reminder;
 
-        public Broadcast(int id, String channel, String channelId, String title, DateTime start, DateTime end, bool favourite, bool reminder)
+        public Broadcast(int id, String tvBrowserID, String channel, String channelId, String title, DateTime start, DateTime end, bool favourite, bool reminder)
         {
             this.id = id;
+            this.tvBrowserID = tvBrowserID;
             this.channel = channel;
             this.channelId = channelId;
             this.title = title;
@@ -50,6 +52,11 @@ namespace PocketTVBrowserCF2
         public int getID()
         {
             return this.id;
+        }
+
+        public String getTVBrowserID()
+        {
+            return this.tvBrowserID;
         }
 
         public String getChannel()

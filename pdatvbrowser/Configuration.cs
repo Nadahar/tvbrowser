@@ -7,8 +7,10 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using System.Net;
+using System.Net.Sockets;
 
-namespace PocketTVBrowserCF2
+namespace TVBrowserMini
 {
     public partial class Configuration : Form
     {
@@ -20,8 +22,17 @@ namespace PocketTVBrowserCF2
         {
             this.con = con;
             InitializeComponent();
+
+            string name = Dns.GetHostName();
+            IPHostEntry e = Dns.Resolve(name);
+
+            this.labelDNSValue.Text = name;
+            this.labelIPValue.Text = e.AddressList[0].ToString();
+
+
             this.initVideoMode();
             this.refreshLanguage();
+            this.fillComboBoxHours();
             this.fillComboLanguages();
             this.MinimizeBox = false;
             this.load();
@@ -112,6 +123,26 @@ namespace PocketTVBrowserCF2
                         input = "[$language]" + this.languages[this.comboBoxLanguages.SelectedItem.ToString()].ToString();
                         copy += input + "\r\n";
                     }
+                    else if (input.StartsWith("[$daystartsat]"))
+                    {
+                        input = "[$daystartsat]" + this.comboBoxDayStarts.SelectedIndex;
+                        copy += input + "\r\n";
+                    }
+                    else if (input.StartsWith("[$dayendsat]"))
+                    {
+                        input = "[$dayendsat]" + this.comboBoxDayEnds.SelectedIndex;
+                        copy += input + "\r\n";
+                    }
+                    else if (input.StartsWith("[$port]"))
+                    {
+                        input = "[$port]" + this.textBoxPort.Text;
+                        copy += input + "\r\n";
+                    }
+                    else if (input.StartsWith("[$trans]"))
+                    {
+                        input = "[$trans]" + this.checkBoxTrans.Checked;
+                        copy += input + "\r\n";
+                    }
                 }
                 re.Close();
                 FileInfo t = new FileInfo(this.con.getSystemPath() + "\\conf.csv");
@@ -126,7 +157,8 @@ namespace PocketTVBrowserCF2
                 {
                     //nothing
                 }
-                this.con.closeDBConnect();
+                if (this.con.hasDB())
+                    this.con.closeDBConnect();
                 this.con.loadConf();
                 if (this.con.checkDBExists())
                 {
@@ -165,6 +197,9 @@ namespace PocketTVBrowserCF2
                         else if (input.StartsWith("[$dbPath]"))
                         {
                             input = input.Remove(0, 9);
+                            if (input == "")
+                                input = "tvdata.tvd";
+                            this.checkBoxTrans.Enabled = true;
                             this.textBoxPathDB.Text = input;
                         }
                         else if (input.StartsWith("[$reload]"))
@@ -212,6 +247,33 @@ namespace PocketTVBrowserCF2
                             this.comboBoxLanguages.Text = this.con.getLanguageElement("Filesystem.Language." + input, input);
                             this.loadedLanguage = input;
                         }
+                        else if (input.StartsWith("[$daystartsat]"))
+                        {
+                            input = input.Remove(0, 14);
+                            this.comboBoxDayStarts.SelectedIndex = Int32.Parse(input);
+                        }
+                        else if (input.StartsWith("[$dayendsat]"))
+                        {
+                            input = input.Remove(0, 12);
+                            this.comboBoxDayEnds.SelectedIndex = Int32.Parse(input);
+                        }
+                        else if (input.StartsWith("[$port]"))
+                        {
+                            input = input.Remove(0, 7);
+                            this.textBoxPort.Text = input;
+                        }
+                        else if (input.StartsWith("[$trans]"))
+                        {
+                            input = input.Remove(0, 8);
+                            if (input == "True")
+                            {
+                                this.checkBoxTrans.Checked = true;
+                            }
+                            else if (input == "False")
+                            {
+                                this.checkBoxTrans.Checked = false;
+                            }
+                        }
                     }
                     catch
                     {
@@ -222,7 +284,7 @@ namespace PocketTVBrowserCF2
             }
             catch
             {
-                MessageBox.Show(this.con.getLanguageElement("Configuration.CantLoadConf", "PocketTVBrowser wasn't able to load the configuration"), this.con.getLanguageElement("Configuration.Warning", "Warning!"));
+                MessageBox.Show(this.con.getLanguageElement("Configuration.CantLoadConf", "TV-Browser Mini wasn't able to load the configuration"), this.con.getLanguageElement("Configuration.Warning", "Warning!"));
                 Application.Exit();
             }
         }
@@ -249,9 +311,18 @@ namespace PocketTVBrowserCF2
             this.inputPanel.Enabled = true;
         }
 
-        private void tbPath_TextLostFocus(object sender, EventArgs e)
+
+        private void fillComboBoxHours()
         {
-            this.inputPanel.Enabled = false;
+            DateTime dt = new DateTime(1982, 5, 24, 0, 0, 0);
+            for (int i = 0; i < 24; i++)
+            {
+                this.comboBoxDayStarts.Items.Add(dt.ToString(this.con.getLanguageElement("Configuration.HourDesign", "hh:mm tt")));
+                this.comboBoxDayEnds.Items.Add(dt.ToString(this.con.getLanguageElement("Configuration.HourDesign", "hh:mm tt")));
+                dt = dt.AddHours(1);
+            }
+            this.comboBoxDayStarts.SelectedIndex = 0;
+            this.comboBoxDayEnds.SelectedIndex = 2;
         }
 
         private void fillComboLanguages()
@@ -293,6 +364,19 @@ namespace PocketTVBrowserCF2
             }
         }
 
+        void textBoxPort_TextChanged(object sender, System.EventArgs e)
+        {
+            try
+            {
+                int test = Int32.Parse(this.textBoxPort.Text);
+            }
+            catch
+            {
+                this.textBoxPort.Text = "13267";
+                MessageBox.Show(this.con.getLanguageElement("Configuration.ParseError", "Please insert a possible value"));
+            }
+        }
+
 
         private void refreshLanguage()
         {
@@ -311,6 +395,30 @@ namespace PocketTVBrowserCF2
             this.tabReminders.Text = this.con.getLanguageElement("Configuration.ReminderTab","reminders");
             this.lSeconds.Text = this.con.getLanguageElement("Configuration.Seconds", "seconds");
             this.checkBoxSoundReminder.Text = this.con.getLanguageElement("Configuration.PlaySoundReminder", "Play Sound");
+            this.labelDayBegin.Text = this.con.getLanguageElement("Configuration.DayBegin", "Day starts at");
+            this.labelDayEnds.Text = this.con.getLanguageElement("Configuration.DayEnd", "Day ends at");
+            this.labelToday.Text = this.con.getLanguageElement("Configuration.Today", "(today)");
+            this.labelTomorrow.Text = this.con.getLanguageElement("Configuration.Tomorrow", "(tomorrow)");
+            this.tabSync.Text = this.con.getLanguageElement("Configuration.TabSync","synchronization");
+            this.labelSyncTutorial.Text = this.con.getLanguageElement("Configuration.SyncTutorial","To be able to sync TV - data between PDA and PC you have to write your the DNS name or  IP of your device into TV-Browser Mini export plugin configuration. DNS name is preferred when your divce uses multible IPs.Both export plugin and PDA program must use the same port!");
+            this.labelDNS.Text = this.con.getLanguageElement("Configuration.DNSName","DNS name");
+            this.labelIP.Text = this.con.getLanguageElement("Configuration.IP","IP address");
+            this.labelPort.Text = this.con.getLanguageElement("Configuration.Port", "Port");
+            this.checkBoxTrans.Text = this.con.getLanguageElement("Configuration.ActivateSync", "activate synchronisation");
+        }
+
+
+        private void tbPath_TextLostFocus(object sender, EventArgs e)
+        {
+            if (textBoxPathDB.Text.Length > 4)
+            {
+                this.checkBoxTrans.Enabled = true;
+            }
+            else
+            {
+                this.checkBoxTrans.Enabled = false;
+                MessageBox.Show(this.con.getLanguageElement("Configuration.ParseError", "Please insert a possible value"));
+            }
         }
     }
 }

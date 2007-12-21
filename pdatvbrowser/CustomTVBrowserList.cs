@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using System.Drawing.Imaging;
 
 
-namespace PocketTVBrowserCF2
+namespace TVBrowserMini
 {
     /// <summary>
     /// List for the broadcasts

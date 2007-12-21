@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace PocketTVBrowserCF2
+namespace TVBrowserMini
 {
     public partial class Reminder : Form
     {
@@ -58,7 +58,7 @@ namespace PocketTVBrowserCF2
         {
             this.memos.Clear();
             this.lastUpdated = DateTime.Now;
-            ArrayList broadcasts = this.con.getBroadcastsBySearch("SELECT b.id as id, c.name as channel, b.channel_id as channel_id, b.title as title, strftime('%Y-%m-%d-%H-%M', b.start) as start, strftime('%Y-%m-%d-%H-%M', b.end) as end, b.favorite as favorite, b.reminder as reminder FROM channel c, broadcast b where c.id = b.channel_id AND (b.start BETWEEN datetime('now', 'localtime', '-3 hours') AND datetime('now', 'localtime', '+24 hours')) AND b.reminder='1'");
+            ArrayList broadcasts = this.con.getBroadcastsBySearch("SELECT b.id as id, b.tvbrowserID as tvbrowserid, c.name as channel, b.channel_id as channel_id, b.title as title, strftime('%Y-%m-%d-%H-%M', b.start) as start, strftime('%Y-%m-%d-%H-%M', b.end) as end, b.favorite as favorite, b.reminder as reminder FROM channel c, broadcast b where c.id = b.channel_id AND (b.start BETWEEN datetime('now', 'localtime', '-3 hours') AND datetime('now', 'localtime', '+24 hours')) AND b.reminder='1'");
             for (int i=0;i<broadcasts.Count; i++)
             {
                 Broadcast temp = (Broadcast) broadcasts[i];
@@ -85,7 +85,7 @@ namespace PocketTVBrowserCF2
                 {
                     if (temp.getBroadcastEnd() > DateTime.Now)
                     {
-                        temp.setAlreadyDone();
+                        //temp.setAlreadyDone();
                         this.broadcasts.Add(temp.getBroadcast());
                         try
                         {
@@ -115,7 +115,7 @@ namespace PocketTVBrowserCF2
                 {
                     if (!temp.isAlreadyDone())
                     {
-                        temp.setAlreadyDone();
+                        //temp.setAlreadyDone();
                         return temp.getTimer().AddMinutes(-(this.con.getSoundReminderTime()));
                     }
                 }
@@ -144,6 +144,10 @@ namespace PocketTVBrowserCF2
                     if (temp.getBroadcast().Equals(b))
                         temp.setAlreadyDone();
                 }
+                if (temp.getBroadcast().getEnd() < DateTime.Now)
+                {
+                    temp.setAlreadyDone();
+                }
             }
             this.con.getMainform().Show();
             this.DialogResult = DialogResult.OK;
@@ -157,15 +161,44 @@ namespace PocketTVBrowserCF2
 
         protected override void OnGotFocus(EventArgs e)
         {
+
+            for (int i = 0; i < this.memos.Count; i++)
+            {
+                Memo temp = (Memo)this.memos[i];
+                for (int j = 0; j < this.listviewBroadcasts.Items.Count; j++)
+                {
+                    Broadcast b = (Broadcast)this.broadcasts[j];
+                    if (temp.getBroadcast().Equals(b))
+                        temp.setAlreadyDone();
+                }
+                if (temp.getBroadcast().getEnd() < DateTime.Now)
+                {
+                    temp.setAlreadyDone();
+                }
+            }
+
+
+
             ArrayList backupItems = this.listviewBroadcasts.Items;
             Rectangle backupBounds = this.listviewBroadcasts.Bounds;
-            this.listviewBroadcasts.Dispose();
-            this.listviewBroadcasts = new CustomTVBrowserList(new SizeF(this.Width, this.Height));
-            this.listviewBroadcasts.Bounds = backupBounds;
-            this.listviewBroadcasts.Items.AddRange(backupItems);
-            this.listviewBroadcasts.Click += new System.EventHandler(this.listViewBroadcasts_Click);
-            this.Controls.Add(this.listviewBroadcasts);
+            if (backupItems.Count == 0)
+            {
+                this.DialogResult = DialogResult.OK;
+            }
+            else
+            {
+
+               
+                this.listviewBroadcasts.Dispose();
+                this.listviewBroadcasts = new CustomTVBrowserList(new SizeF(this.Width, this.Height));
+                this.listviewBroadcasts.Bounds = backupBounds;
+                this.listviewBroadcasts.Items.AddRange(backupItems);
+                this.listviewBroadcasts.Click += new System.EventHandler(this.listViewBroadcasts_Click);
+                this.Controls.Add(this.listviewBroadcasts);
+            }
         }
+
+        
 
         private void listViewBroadcasts_Click(object sender, EventArgs e)
         {
@@ -302,7 +335,10 @@ namespace PocketTVBrowserCF2
                 }
                 e.Handled = true;
             }
-            //base.OnKeyDown(e);
+            else
+            {
+                base.OnKeyDown(e);
+            }
         }
     }
 }

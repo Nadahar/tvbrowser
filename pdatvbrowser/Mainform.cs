@@ -8,8 +8,10 @@ using System.Text;
 using System.Windows.Forms;
 using Microsoft.WindowsCE.Forms;
 using System.Threading;
+using Microsoft.WindowsMobile.PocketOutlook;
 
-namespace PocketTVBrowserCF2
+
+namespace TVBrowserMini
 {
     public partial class Mainform : Form
     {
@@ -21,9 +23,12 @@ namespace PocketTVBrowserCF2
         private ScreenOrientation startOrientation;
         private DateTime dtSeatchAt;
         int scrollTo = 0;
+        int comboboxChannelIndex = 0;
+        int comboboxDateIndex = 0;
        
         public Mainform()
         {
+            Cursor.Current = Cursors.WaitCursor;
             this.con = new TVBrowserControll(this);
             this.con.setRefreshReminders(true);
             this.listViewBroadcasts = new CustomTVBrowserList(new System.Drawing.SizeF(this.Width, this.Height));
@@ -36,9 +41,11 @@ namespace PocketTVBrowserCF2
             this.listViewBroadcasts.Size = new System.Drawing.Size(240, 142);
             this.listViewBroadcasts.TabIndex = 5;
             this.listViewBroadcasts.Click += new System.EventHandler(this.listViewBroadcasts_Click);
+            this.listViewBroadcasts.KeyDown += new KeyEventHandler(listViewBroadcasts_KeyDown);
             this.listViewBroadcasts.ContextMenu = this.contextMenuBroadcasts;
-            this.Controls.Add(this.listViewBroadcasts);
             
+            this.Controls.Add(this.listViewBroadcasts);
+
             this.disableElements();
             this.Closing += new System.ComponentModel.CancelEventHandler(this.Mainform_Closing);
             this.initVideoMode();
@@ -63,12 +70,6 @@ namespace PocketTVBrowserCF2
             if (!this.con.hasDB())
             {
                 DialogResult dr = MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
-                if (dr == DialogResult.OK)
-                {
-                    Configuration conf = new Configuration(this.con);
-                    conf.Show();
-                    conf.BringToFront();
-                }
             }
             this.reminderForm = new Reminder(this.con);
             timerReminder.Enabled = true;
@@ -77,7 +78,9 @@ namespace PocketTVBrowserCF2
             this.comboBoxChannel.Focus();
             this.startOrientation = SystemSettings.ScreenOrientation;
             this.dtSeatchAt = new DateTime();
+            Cursor.Current = Cursors.Default;
         }
+
 
         private void disableElements()
         {
@@ -121,6 +124,9 @@ namespace PocketTVBrowserCF2
             this.lDate.Bounds = new Rectangle(0, this.lChannel.Height, this.Width, this.lDate.Height);
             this.comboBoxChannel.Bounds = new Rectangle(0, this.Height-this.comboBoxChannel.Height, this.Width * 3 / 5, this.comboBoxChannel.Height);
             this.comboBoxDate.Bounds = new Rectangle(this.comboBoxChannel.Width-1, this.Height - this.comboBoxDate.Height, (this.Width * 2 / 5)+1, this.comboBoxDate.Height);
+            this.labelQickViewChannel.Width = this.Width * 80 / 100;
+            this.labelQuickViewDate.Width = this.Width * 80 / 100;
+            this.panelQuickView.Bounds = new Rectangle(this.Width * 10 / 100, this.Height - this.labelQickViewChannel.Height - this.labelQuickViewDate.Height-this.comboBoxChannel.Height-10, this.Width * 80 / 100, this.labelQickViewChannel.Height + this.labelQuickViewDate.Height+5);
             try
             {
                 this.listViewBroadcasts.Bounds = new Rectangle(0, this.lDate.Location.Y + this.lDate.Height, this.Width, (this.Height - this.lDate.Height - this.lChannel.Height - this.comboBoxChannel.Height+5));
@@ -134,7 +140,14 @@ namespace PocketTVBrowserCF2
         protected override void OnResize(EventArgs e)
         {
             this.initVideoMode();
-            this.scrollToCurrent();
+            if (this.listViewBroadcasts.SelectedIndex > -1)
+            {
+                this.listViewBroadcasts.EnsureVisible(this.listViewBroadcasts.SelectedIndex);
+            }
+            else
+            {
+                this.scrollToCurrent();
+            }
             try
             {
                 this.listViewBroadcasts.Items.Clear();
@@ -201,8 +214,15 @@ namespace PocketTVBrowserCF2
 
         private void comboBoxChannel_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (!this.con.hasDB())
+            {
+                this.con.checkDBExists();
+            }
             if (this.comboBoxChannel.SelectedIndex > 0)
             {
+                this.timerQuickView.Enabled = false;
+                this.comboboxChannelIndex = this.comboBoxChannel.SelectedIndex;
+
                 this.con.setCurrentChannel((Channel)this.comboBoxChannel.SelectedItem);
                 this.lChannel.Text = this.con.getCurrentChannel().ToString();
                 this.comboBoxDate.Items.Clear();
@@ -234,6 +254,8 @@ namespace PocketTVBrowserCF2
         {
             if (refresh && this.comboBoxChannel.SelectedIndex > 0)
             {
+                this.timerQuickView.Enabled = false;
+                this.comboboxDateIndex = this.comboBoxDate.SelectedIndex;
                 DateTime dt = ((TVBrowserDate)this.comboBoxDate.SelectedItem).getDateTime();
                 this.con.setCurrentDate(dt);
                 this.lDate.Text = dt.ToLongDateString();
@@ -258,6 +280,7 @@ namespace PocketTVBrowserCF2
             this.listViewBroadcasts.ContextMenu = this.contextMenuBroadcasts;
             this.initVideoMode();
         }
+
 
         private void fillListView()
         {
@@ -289,6 +312,9 @@ namespace PocketTVBrowserCF2
 
         private void listViewBroadcasts_Click(object sender, EventArgs e)
         {
+            this.timerContextMenu.Enabled = true;
+            this.panelContext.Visible = true;
+            
             try
             {
                 if (this.con.hasDB())
@@ -301,13 +327,20 @@ namespace PocketTVBrowserCF2
                     d.BringToFront();
                 }
                 else
-                    MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+                {
+                    if (this.con.checkDBExists())
+                        listViewBroadcasts_Click(sender, e);
+                    else
+                        MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+                }
            
             }
             catch
             {
                 //Nothing - user just klicked in a free area of the screen
             }
+            this.panelContext.Visible = false;
+            this.timerContextMenu.Enabled = false;
         }
 
 
@@ -324,7 +357,9 @@ namespace PocketTVBrowserCF2
                 this.con.saveLastSettings();
                 SystemSettings.ScreenOrientation = this.startOrientation;
                 Cursor.Current = Cursors.Default;
+                this.con.killThread();
                 Application.Exit();
+                this.Close();
             }
             catch (Exception ex)
             {
@@ -337,6 +372,7 @@ namespace PocketTVBrowserCF2
             this.comboBoxChannel.Items.Clear();
             if (this.con.hasDB())
             {
+               
                 this.comboBoxChannel.Items.Add(this.con.getLanguageElement("Mainform.SelectChannel", "-select a channel-"));
                 for (int i = 0; i < this.con.getChannels().Count; i++)
                 {
@@ -400,34 +436,69 @@ namespace PocketTVBrowserCF2
             }
         }
 
+
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            if (e.KeyValue == 40)
+            if (e.KeyValue == 40) //down
             {
-                this.comboBoxChannel.Focus();
-                if (this.comboBoxChannel.SelectedIndex + 1 < this.comboBoxChannel.Items.Count)
-                    this.comboBoxChannel.SelectedIndex = this.comboBoxChannel.SelectedIndex + 1;
+                this.panelQuickView.Visible = true;
+                this.timerQuickView.Enabled = false;
+                this.timerQuickView.Enabled = true;
+                if (comboboxChannelIndex+1 > 0 && this.comboboxChannelIndex+1 < this.comboBoxChannel.Items.Count)
+                {
+                    this.comboboxChannelIndex++;
+                    this.labelQickViewChannel.Text = this.comboBoxChannel.Items[this.comboboxChannelIndex].ToString();
+                }
+                if (this.comboBoxDate.Items.Count > 0)
+                    this.labelQuickViewDate.Text = this.comboBoxDate.Items[this.comboboxDateIndex].ToString();
+                else
+                    this.labelQuickViewDate.Text = "";
                 e.Handled = true;
             }
-            else if (e.KeyValue == 38)
+            else if (e.KeyValue == 38) //up
             {
-                this.comboBoxChannel.Focus();
-                if (this.comboBoxChannel.SelectedIndex - 1 >= 0)
-                    this.comboBoxChannel.SelectedIndex = this.comboBoxChannel.SelectedIndex - 1;
+                this.panelQuickView.Visible = true;
+                this.timerQuickView.Enabled = false;
+                this.timerQuickView.Enabled = true;
+                
+                if (comboboxChannelIndex-1 > 0 && this.comboboxChannelIndex-1 < this.comboBoxChannel.Items.Count)
+                {
+                    this.comboboxChannelIndex--;
+                    this.labelQickViewChannel.Text = this.comboBoxChannel.Items[this.comboboxChannelIndex].ToString();
+                }
+                if (this.comboBoxDate.Items.Count>0)
+                    this.labelQuickViewDate.Text = this.comboBoxDate.Items[this.comboboxDateIndex].ToString();
+                else
+                    this.labelQuickViewDate.Text = "";
                 e.Handled = true;
             }
-            else if (e.KeyValue == 37)
+            else if (e.KeyValue == 37) //left
             {
-                this.comboBoxDate.Focus();
-                if (this.comboBoxDate.SelectedIndex - 1 >= 0)
-                    this.comboBoxDate.SelectedIndex = this.comboBoxDate.SelectedIndex - 1;
+
+                this.panelQuickView.Visible = true;
+                this.timerQuickView.Enabled = false;
+                this.timerQuickView.Enabled = true;
+
+                if (comboboxDateIndex - 1 > -1 && this.comboboxDateIndex - 1 < this.comboBoxDate.Items.Count)
+                {
+                    this.comboboxDateIndex--;
+                    this.labelQuickViewDate.Text = this.comboBoxDate.Items[this.comboboxDateIndex].ToString();
+                }
                 e.Handled = true;
             }
-            else if (e.KeyValue == 39)
+            else if (e.KeyValue == 39) //right
             {
-                this.comboBoxDate.Focus();
-                if (this.comboBoxDate.SelectedIndex + 1 < this.comboBoxDate.Items.Count)
-                    this.comboBoxDate.SelectedIndex = this.comboBoxDate.SelectedIndex + 1;
+                this.panelQuickView.Visible = true;
+                this.timerQuickView.Enabled = false;
+                this.timerQuickView.Enabled = true;
+
+                if (comboboxDateIndex + 1 > 0 && this.comboboxDateIndex + 1 < this.comboBoxDate.Items.Count)
+                {
+                    this.comboboxDateIndex++;
+                    this.labelQuickViewDate.Text = this.comboBoxDate.Items[this.comboboxDateIndex].ToString();
+                }
+                if (this.comboBoxDate.Items.Count > 0)
+                    this.labelQickViewChannel.Text = this.comboBoxChannel.Items[this.comboboxChannelIndex].ToString();
                 e.Handled = true;
             }
             else if (e.KeyValue == 13)//fire
@@ -435,7 +506,7 @@ namespace PocketTVBrowserCF2
                 //scroll to current broadcast
                 try
                 {
-                    if (((TVBrowserDate)this.comboBoxDate.SelectedItem).ToLongDateString().Equals(DateTime.Now.ToLongDateString()) && this.con.getLastView()==1)
+                    if (((TVBrowserDate)this.comboBoxDate.SelectedItem).ToLongDateString().Equals(DateTime.Now.ToLongDateString()) && this.con.getLastView() == 1)
                     {
                         this.listViewBroadcasts.SelectedIndex = this.currentBroadcast;
                     }
@@ -453,7 +524,10 @@ namespace PocketTVBrowserCF2
                 this.listViewBroadcasts.Focus();
                 e.Handled = true;
             }
-            base.OnKeyDown(e);
+            else
+            {
+                base.OnKeyDown(e);
+            }
         }
 
         private void menuItemAbout_Click(object sender, EventArgs e)
@@ -496,7 +570,12 @@ namespace PocketTVBrowserCF2
                 this.refresh = true;
             }
             else
-                MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+            {
+                if (this.con.checkDBExists())
+                    listViewBroadcasts_Click(sender, e);
+                else
+                    MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+            }
         }
 
         private void menuItemNext_Click(object sender, EventArgs e)
@@ -520,7 +599,12 @@ namespace PocketTVBrowserCF2
                 this.refresh = true;
             }
             else
-                MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+            {
+                if (this.con.checkDBExists())
+                    listViewBroadcasts_Click(sender, e);
+                else
+                    MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+            }
         }
 
         public void refreshView(String element)
@@ -549,7 +633,12 @@ namespace PocketTVBrowserCF2
                 }
             }
             else
-                MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+            {
+                if (this.con.checkDBExists())
+                    listViewBroadcasts_Click(sender, e);
+                else
+                    MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+            }
         }
 
         private void menuItemfilterReminders_Click(object sender, EventArgs e)
@@ -570,7 +659,12 @@ namespace PocketTVBrowserCF2
                 }
             }
             else
-                MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+            {
+                if (this.con.checkDBExists())
+                    listViewBroadcasts_Click(sender, e);
+                else
+                    MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+            }
         }
 
         private void menuItemFilterRadio_Click(object sender, EventArgs e)
@@ -592,7 +686,12 @@ namespace PocketTVBrowserCF2
                 this.comboBoxChannel.SelectedIndex = 0;
             }
             else
-                MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+            {
+                if (this.con.checkDBExists())
+                    listViewBroadcasts_Click(sender, e);
+                else
+                    MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+            }
         }
 
         private void menuItemFilterTV_Click(object sender, EventArgs e)
@@ -614,7 +713,12 @@ namespace PocketTVBrowserCF2
                 this.comboBoxChannel.SelectedIndex = 0;
             }
             else
-                MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+            {
+                if (this.con.checkDBExists())
+                    listViewBroadcasts_Click(sender, e);
+                else
+                    MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+            }
         }
 
         private void menuItemShowBroadcasts_Click(object sender, EventArgs e)
@@ -652,7 +756,12 @@ namespace PocketTVBrowserCF2
                 }
             }
             else
-                MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+            {
+                if (this.con.checkDBExists())
+                    listViewBroadcasts_Click(sender, e);
+                else
+                    MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+            }
         }
 
         private void menuItemSearch_Click(object sender, EventArgs e)
@@ -664,7 +773,12 @@ namespace PocketTVBrowserCF2
                 search.BringToFront();
             }
             else
-                MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+            {
+                if (this.con.checkDBExists())
+                    listViewBroadcasts_Click(sender, e);
+                else
+                    MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+            }
         }
 
         private void menuItemPrimetime_Click(object sender, EventArgs e)
@@ -696,7 +810,12 @@ namespace PocketTVBrowserCF2
                     this.Controls.Add(this.listViewBroadcasts);
                 }
                 else
-                    MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+                {
+                    if (this.con.checkDBExists())
+                        listViewBroadcasts_Click(sender, e);
+                    else
+                        MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+                }
             }
             catch
             {
@@ -735,7 +854,12 @@ namespace PocketTVBrowserCF2
                     this.refresh = true;
                 }
                 else
-                    MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+                {
+                    if (this.con.checkDBExists())
+                        listViewBroadcasts_Click(sender, e);
+                    else
+                        MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+                }
             }
             catch
             {
@@ -766,7 +890,12 @@ namespace PocketTVBrowserCF2
                     this.refresh = true;
                 }
                 else
-                    MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+                {
+                    if (this.con.checkDBExists())
+                        listViewBroadcasts_Click(sender, e);
+                    else
+                        MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+                }
             }
             catch
             {
@@ -820,7 +949,12 @@ namespace PocketTVBrowserCF2
                 }
             }
             else
-                MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+            {
+                if (this.con.checkDBExists())
+                    listViewBroadcasts_Click(sender, e);
+                else
+                    MessageBox.Show(this.con.getLanguageElement("Mainform.Directory", "Please specify the path to your tvdata.tvd (Menu - Configuration)"), this.con.getLanguageElement("Mainform.Directory.Warning", "WARNING - No TV-Data"));
+            }
         }
 
         private void timerRefreshView_Tick(object sender, EventArgs e)
@@ -880,6 +1014,7 @@ namespace PocketTVBrowserCF2
         {
             try
             {
+                this.con.killThread();
                 Cursor.Current = Cursors.WaitCursor;
                 this.con.saveLastSettings();
                 SystemSettings.ScreenOrientation = this.startOrientation;
@@ -912,6 +1047,7 @@ namespace PocketTVBrowserCF2
                     {
                         if (temp.getRun().Equals("Application.Exit()"))
                         {
+                            this.con.killThread();
                             Application.Exit();
                         }
                         if (temp.getRun().Equals("TVBrowserControll.transferReminders()"))
@@ -957,6 +1093,28 @@ namespace PocketTVBrowserCF2
                 {
                     this.listViewBroadcasts.EnsureVisible(this.scrollTo);
                 }
+            }
+        }
+
+        public void restart()
+        {
+            try
+            {
+                this.listViewBroadcasts.Items.Clear();
+                this.listViewBroadcasts.ShowScrollbar = false;
+                this.listViewBroadcasts.Refresh();
+                this.lChannel.Text = "";
+                this.lDate.Text = "";
+                this.Refresh();
+            }
+            catch
+            {
+
+            }
+            if (this.con.checkDBExists())
+            {
+                this.con.readChannels();
+                this.fillChannels();
             }
         }
 
@@ -1015,6 +1173,18 @@ namespace PocketTVBrowserCF2
         {
             try
             {
+                /*OutlookSession os = new OutlookSession();
+                AppointmentCollection ac = os.Appointments.Items;
+                ac.Sort("Start", false);
+                PropertyDescriptor pd = ac.SortProperty;
+
+
+                Appointment a = ac[0];*/
+
+
+                if (!this.con.hasDB())
+                    this.con.checkDBExists();
+
                 if (this.con.hasDB())
                 {
                     if (this.con.isRefreshReminders())
@@ -1030,9 +1200,23 @@ namespace PocketTVBrowserCF2
                             {
                                 Sound so = new Sound(this.con.getSoundReminder());
                                 so.Play();
+                                
+                                
                             }
                             if (this.con.isPopupReminder())
                             {
+                                /*try
+                                {
+                                    //System.Diagnostics.Process.Start("PowerOn2003.exe", "");
+                                 
+                                }
+                                catch
+                                {
+                                    String dummy = "";
+                                }*/
+
+                                this.reminderForm.DialogResult = DialogResult.OK;
+                                this.reminderForm.Refresh();
                                 this.reminderForm.createMessage();
                                 DialogResult dr = this.reminderForm.ShowDialog();
                                 if (dr == DialogResult.OK)
@@ -1064,10 +1248,29 @@ namespace PocketTVBrowserCF2
             base.OnClick(e);
         }
 
-        private void contextMenuBroadcasts_Popup(object sender, EventArgs e)
+
+        private void timerQuickView_Tick(object sender, EventArgs e)
         {
-            String dummy = "";
-            //TODO
+            this.panelQuickView.Visible = false;
+            if (this.comboboxDateIndex > -1 && this.comboboxDateIndex < this.comboBoxDate.Items.Count)
+            {
+                this.comboBoxDate.SelectedIndex = comboboxDateIndex;
+            }
+            if (this.comboboxChannelIndex > 0 && this.comboboxChannelIndex < this.comboBoxChannel.Items.Count)
+            {
+                this.comboBoxChannel.SelectedIndex = comboboxChannelIndex;
+            }
+
+            this.comboboxChannelIndex = this.comboBoxChannel.SelectedIndex;
+            this.comboboxDateIndex = this.comboBoxDate.SelectedIndex;
+            //this.Refresh();
+        }
+
+
+        void timerContextMenu_Tick(object sender, System.EventArgs e)
+        {
+            this.panelContext.Visible = true;
+            //throw new System.Exception("The method or operation is not implemented.");
         }
     }
 }

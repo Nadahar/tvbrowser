@@ -11,15 +11,16 @@ using System.Data.Common;
 using System.Drawing;
 using System.Data.SqlTypes;
 using System.Windows.Forms;
+using System.Threading;
 using Microsoft.WindowsCE.Forms;
 
 
 #endregion
 
-namespace PocketTVBrowserCF2
+namespace TVBrowserMini
 {
     /// <summary>
-    /// Controll-Class from PocketTVBrowser
+    /// Controll-Class from TV-Browser Mini
     /// </summary>
     public class TVBrowserControll
     {
@@ -55,6 +56,11 @@ namespace PocketTVBrowserCF2
         private String currentDB;
         private String lastDB;
         private ArrayList errorMessages;
+        private int startHour;
+        private int endHour;
+        private int listenPort;
+        private bool listen;
+        private TCPTransfer trans;
 
         public TVBrowserControll(Mainform main)
         {
@@ -68,6 +74,10 @@ namespace PocketTVBrowserCF2
             this.main = main;
             this.init();
             this.loadConf();
+            if (listen)
+            {
+                this.trans = new TCPTransfer(this, listenPort);
+            }
             this.channels = new ArrayList();
             this.loadLastSettings();
             this.checkDBExists();
@@ -132,9 +142,9 @@ namespace PocketTVBrowserCF2
                     }
                     catch (Exception ex)
                     {
-                        String dummy = ex.Message.ToString();
-                        this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error","Error"), this.getLanguageElement("TVBrowserControll.DBError","Database - Error. Your Export-Plugin isn't compatible with PocketTVBrowser Version"),DialogResult.OK,"Application.Exit()"));
                         this.dB = false;
+                        String dummy = ex.Message.ToString();
+                        this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error", "Error"), this.getLanguageElement("TVBrowserControll.DBError", "Database - Error. Your Export-Plugin isn't compatible with TV-Browser Mini Version"), DialogResult.OK, "Application.Exit()"));
                         Application.Exit();
                     }
                 }
@@ -160,8 +170,8 @@ namespace PocketTVBrowserCF2
                 }
                 catch
                 {
-                    this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error","Error"), this.getLanguageElement("TVBrowserControll.DBError","Database - Error. Your Export-Plugin isn't compatible with PocketTVBrowser Version"),DialogResult.OK,"Application.Exit()"));
                     this.dB = false;
+                    this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error", "Error"), this.getLanguageElement("TVBrowserControll.DBError", "Database - Error. Your Export-Plugin isn't compatible with TV-Browser Mini Version"), DialogResult.OK, "Application.Exit()"));
                 }
             }
             return result;
@@ -187,8 +197,8 @@ namespace PocketTVBrowserCF2
                 }
                 catch
                 {
-                    this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error","Error"), this.getLanguageElement("TVBrowserControll.DBError","Database - Error. Your Export-Plugin isn't compatible with PocketTVBrowser Version"),DialogResult.OK,"Application.Exit()"));
                     this.dB = false;
+                    this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error", "Error"), this.getLanguageElement("TVBrowserControll.DBError", "Database - Error. Your Export-Plugin isn't compatible with TV-Browser Mini Version"), DialogResult.OK, "Application.Exit()"));
                 }
             }
             return result;
@@ -218,8 +228,8 @@ namespace PocketTVBrowserCF2
                 }
                 catch
                 {
-                    this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error","Error"), this.getLanguageElement("TVBrowserControll.DBError","Database - Error. Your Export-Plugin isn't compatible with PocketTVBrowser Version"),DialogResult.OK,"Application.Exit()"));
                     this.dB = false;
+                    this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error", "Error"), this.getLanguageElement("TVBrowserControll.DBError", "Database - Error. Your Export-Plugin isn't compatible with TV-Browser Mini Version"), DialogResult.OK, "Application.Exit()"));
                 }
             }
             return result;
@@ -245,8 +255,8 @@ namespace PocketTVBrowserCF2
                 }
                 catch
                 {
-                    this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error","Error"), this.getLanguageElement("TVBrowserControll.DBError","Database - Error. Your Export-Plugin isn't compatible with PocketTVBrowser Version"),DialogResult.OK,"Application.Exit()"));
                     this.dB = false;
+                    this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error", "Error"), this.getLanguageElement("TVBrowserControll.DBError", "Database - Error. Your Export-Plugin isn't compatible with TV-Browser Mini Version"), DialogResult.OK, "Application.Exit()"));
                 }
             }
             return result;
@@ -258,54 +268,9 @@ namespace PocketTVBrowserCF2
             ArrayList result = new ArrayList();
             if (this.dB)
             {
-                if (DateTime.Now.Hour < 2) //show last broadcasts of the previous day
-                {
-                    DateTime dateBefore = date.AddDays(-1);
-                    String monthB = "";
-                    String dayB = "";
-                    if (dateBefore.Month < 10)
-                        monthB += "0";
-                    monthB += dateBefore.Month;
-                    if (dateBefore.Day < 10)
-                        dayB += "0";
-                    dayB += dateBefore.Day;
-                    this.dbCommand.CommandText = "SELECT max(b.id) as id, c.name as channel, b.channel_id as channel_id, b.title as title, strftime('%Y-%m-%d-%H-%M', b.start) as start, strftime('%Y-%m-%d-%H-%M', b.end) as end, b.favorite as favorite, b.reminder as reminder FROM channel c, broadcast b WHERE c.id = b.channel_id AND channel_id = '" + channelId + "' AND date(b.start) = date('" + dateBefore.Year + "-" + monthB + "-" + dayB + "')";
-                    if (this.filterReminders)
-                    {
-                        this.dbCommand.CommandText += " AND b.reminder='1'";
-                    }
-                    if (this.filterFavorites)
-                    {
-                        this.dbCommand.CommandText += " AND b.favorite='1'";
-                    }
-                    try
-                    {
-                        this.dbReader = this.dbCommand.ExecuteReader();
-                    }
-                    catch
-                    {
-                        this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error","Error"), this.getLanguageElement("TVBrowserControll.DBError","Database - Error. Your Export-Plugin isn't compatible with PocketTVBrowser Version"),DialogResult.OK,"Application.Exit()"));
-                        this.dB = false;
-                    }
-                    String strStartB = this.dbReader["start"].ToString();
-                    String strEndB = this.dbReader["end"].ToString();
-                    if (!strStartB.Equals(""))
-                    {
-                        DateTime dtStartB = new DateTime(Int32.Parse(strStartB.Split('-')[0]), Int32.Parse(strStartB.Split('-')[1]), Int32.Parse(strStartB.Split('-')[2]), Int32.Parse(strStartB.Split('-')[3]), Int32.Parse(strStartB.Split('-')[4]), 0);
-                        DateTime dtEndB = new DateTime(Int32.Parse(strEndB.Split('-')[0]), Int32.Parse(strEndB.Split('-')[1]), Int32.Parse(strEndB.Split('-')[2]), Int32.Parse(strEndB.Split('-')[3]), Int32.Parse(strEndB.Split('-')[4]), 0);
-                        result.Add(new Broadcast(Int32.Parse(this.dbReader["id"].ToString()), this.dbReader["channel"].ToString(), this.dbReader["channel_id"].ToString(), this.dbReader["title"].ToString(), dtStartB, dtEndB, Boolean.Parse(this.dbReader["favorite"].ToString()), Boolean.Parse(this.dbReader["reminder"].ToString())));
-                    }
-                    this.dbReader.Close();
-                }
-                String month = "";
-                String day = "";
-                if (date.Month < 10)
-                    month += "0";
-                month += date.Month;
-                if (date.Day < 10)
-                    day += "0";
-                day += date.Day;
-                this.dbCommand.CommandText = "SELECT b.id as id, c.name as channel, b.channel_id as channel_id, b.title as title, strftime('%Y-%m-%d-%H-%M', b.start) as start, strftime('%Y-%m-%d-%H-%M', b.end) as end, b.favorite as favorite, b.reminder as reminder  FROM channel c, broadcast b WHERE c.id = b.channel_id and channel_id = '" + channelId + "'";
+                DateTime nextDay = date.AddDays(1);
+
+                this.dbCommand.CommandText = "SELECT b.id as id, b.tvbrowserID as tvbrowserid,  c.name as channel, b.channel_id as channel_id, b.title as title, strftime('%Y-%m-%d-%H-%M', b.start) as start, strftime('%Y-%m-%d-%H-%M', b.end) as end, b.favorite as favorite, b.reminder as reminder  FROM channel c, broadcast b WHERE c.id = b.channel_id and channel_id = '" + channelId + "'";
                 if (this.filterReminders)
                 {
                     this.dbCommand.CommandText += " AND b.reminder='1'";
@@ -314,7 +279,10 @@ namespace PocketTVBrowserCF2
                 {
                     this.dbCommand.CommandText += " AND b.favorite='1'";
                 }
-                this.dbCommand.CommandText += " AND date(b.start) = date('" + date.Year + "-" + month + "-" + day + "') ORDER BY b.start";
+                //Exact one day
+                //this.dbCommand.CommandText += " AND date(b.start) = date('" + date.Year + "-" + month + "-" + day + "') ORDER BY b.start";
+                this.dbCommand.CommandText += " AND (b.end BETWEEN datetime('" + date.ToString("yyyy-MM-dd") + "', '+" + this.startHour + " hours') AND datetime('" + nextDay.ToString("yyyy-MM-dd") + "'," + "'+" + this.endHour + " hours','+59 minutes')) AND b.start >= datetime('" + date.ToString("yyyy-MM-dd") + "', '+" + this.startHour + " hours') AND b.start<= datetime('" + nextDay.ToString("yyyy-MM-dd") + "', '+" + this.endHour + " hours') ORDER BY b.start";
+                
                 try
                 {
                     this.dbReader = this.dbCommand.ExecuteReader();
@@ -325,14 +293,14 @@ namespace PocketTVBrowserCF2
                         DateTime dtStart = new DateTime(Int32.Parse(strStart.Split('-')[0]), Int32.Parse(strStart.Split('-')[1]), Int32.Parse(strStart.Split('-')[2]), Int32.Parse(strStart.Split('-')[3]), Int32.Parse(strStart.Split('-')[4]), 0);
                         DateTime dtEnd = new DateTime(Int32.Parse(strEnd.Split('-')[0]), Int32.Parse(strEnd.Split('-')[1]), Int32.Parse(strEnd.Split('-')[2]), Int32.Parse(strEnd.Split('-')[3]), Int32.Parse(strEnd.Split('-')[4]), 0);
                         //result.Add(new Broadcast(Int32.Parse(this.dbReader["id"].ToString()), this.dbReader["channel"].ToString(), this.dbReader["title"].ToString(), this.dbReader["short"].ToString(), dtStart, dtEnd, Boolean.Parse(this.dbReader["favorite"].ToString()), Boolean.Parse(this.dbReader["reminder"].ToString())));
-                        result.Add(new Broadcast(Int32.Parse(this.dbReader["id"].ToString()), this.dbReader["channel"].ToString(), this.dbReader["channel_id"].ToString(), this.dbReader["title"].ToString(), dtStart, dtEnd, Boolean.Parse(this.dbReader["favorite"].ToString()), Boolean.Parse(this.dbReader["reminder"].ToString())));
+                        result.Add(new Broadcast(Int32.Parse(this.dbReader["id"].ToString()), this.dbReader["tvbrowserid"].ToString(), this.dbReader["channel"].ToString(), this.dbReader["channel_id"].ToString(), this.dbReader["title"].ToString(), dtStart, dtEnd, Boolean.Parse(this.dbReader["favorite"].ToString()), Boolean.Parse(this.dbReader["reminder"].ToString())));
                     }
                     this.dbReader.Close();
                 }
                 catch
                 {
-                    this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error","Error"), this.getLanguageElement("TVBrowserControll.DBError","Database - Error. Your Export-Plugin isn't compatible with PocketTVBrowser Version"),DialogResult.OK,"Application.Exit()"));
                     this.dB = false;
+                    this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error", "Error"), this.getLanguageElement("TVBrowserControll.DBError", "Database - Error. Your Export-Plugin isn't compatible with TV-Browser Mini Version"), DialogResult.OK, "Application.Exit()"));
                 }
             }
             return result;
@@ -344,7 +312,7 @@ namespace PocketTVBrowserCF2
             ArrayList result = new ArrayList();
             if (this.dB)
             {
-                this.dbCommand.CommandText = "SELECT b.id as id, c.name as channel, b.channel_id as channel_id, b.title as title, strftime('%Y-%m-%d-%H-%M', b.start) as start, strftime('%Y-%m-%d-%H-%M', b.end) as end, b.favorite as favorite, b.reminder as reminder  FROM channel c, broadcast b WHERE (c.id = b.channel_id) AND (b.start <= datetime('now', 'localtime')) AND (datetime(b.end) > datetime('now', 'localtime'))";
+                this.dbCommand.CommandText = "SELECT b.id as id, b.tvbrowserID as tvbrowserid, c.name as channel, b.channel_id as channel_id, b.title as title, strftime('%Y-%m-%d-%H-%M', b.start) as start, strftime('%Y-%m-%d-%H-%M', b.end) as end, b.favorite as favorite, b.reminder as reminder  FROM channel c, broadcast b WHERE (c.id = b.channel_id) AND (b.start <= datetime('now', 'localtime')) AND (datetime(b.end) > datetime('now', 'localtime'))";
                 if (this.showRadio)
                 {
                     if (this.showTV)
@@ -364,6 +332,7 @@ namespace PocketTVBrowserCF2
                 {
                     this.dbCommand.CommandText += " AND (b.favorite='1')";
                 }
+                
                 this.dbCommand.CommandText += " AND (b.start BETWEEN datetime('now', 'localtime', '-12 hours') AND datetime('now', 'localtime')) ORDER BY b.id";
                 try
                 {
@@ -374,14 +343,15 @@ namespace PocketTVBrowserCF2
                         String strEnd = this.dbReader["end"].ToString();
                         DateTime dtStart = new DateTime(Int32.Parse(strStart.Split('-')[0]), Int32.Parse(strStart.Split('-')[1]), Int32.Parse(strStart.Split('-')[2]), Int32.Parse(strStart.Split('-')[3]), Int32.Parse(strStart.Split('-')[4]), 0);
                         DateTime dtEnd = new DateTime(Int32.Parse(strEnd.Split('-')[0]), Int32.Parse(strEnd.Split('-')[1]), Int32.Parse(strEnd.Split('-')[2]), Int32.Parse(strEnd.Split('-')[3]), Int32.Parse(strEnd.Split('-')[4]), 0);
-                        result.Add(new Broadcast(Int32.Parse(this.dbReader["id"].ToString()), this.dbReader["channel"].ToString(), this.dbReader["channel_id"].ToString(), this.dbReader["title"].ToString(), dtStart, dtEnd, Boolean.Parse(this.dbReader["favorite"].ToString()), Boolean.Parse(this.dbReader["reminder"].ToString())));
+                        if (dtEnd > DateTime.Now)
+                            result.Add(new Broadcast(Int32.Parse(this.dbReader["id"].ToString()), this.dbReader["tvbrowserid"].ToString(), this.dbReader["channel"].ToString(), this.dbReader["channel_id"].ToString(), this.dbReader["title"].ToString(), dtStart, dtEnd, Boolean.Parse(this.dbReader["favorite"].ToString()), Boolean.Parse(this.dbReader["reminder"].ToString())));
                     }
                     this.dbReader.Close();
                 }
                 catch
                 {
-                    this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error","Error"), this.getLanguageElement("TVBrowserControll.DBError","Database - Error. Your Export-Plugin isn't compatible with PocketTVBrowser Version"),DialogResult.OK,"Application.Exit()"));
                     this.dB = false;
+                    this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error", "Error"), this.getLanguageElement("TVBrowserControll.DBError", "Database - Error. Your Export-Plugin isn't compatible with TV-Browser Mini Version"), DialogResult.OK, "Application.Exit()"));
                 }
             }
             return result;
@@ -406,7 +376,7 @@ namespace PocketTVBrowserCF2
                 if (dt.Month < 10)
                     month = "0" + dt.Month;
 
-                this.dbCommand.CommandText = "SELECT b.id as id, c.name as channel, b.channel_id as channel_id, b.title as title, strftime('%Y-%m-%d-%H-%M', b.start) as start, strftime('%Y-%m-%d-%H-%M', b.end) as end, b.favorite as favorite, b.reminder as reminder  FROM channel c, broadcast b WHERE (c.id = b.channel_id) AND (b.start <= datetime('" + dt.Year + "-" + month + "-" + day + " " + hour + ":" + minute + ":00')) AND (datetime(b.end) > datetime('" + dt.Year + "-" + month + "-" + day + " " + hour + ":" + minute + ":00'))";
+                this.dbCommand.CommandText = "SELECT b.id as id, b.tvbrowserID as tvbrowserid, c.name as channel, b.channel_id as channel_id, b.title as title, strftime('%Y-%m-%d-%H-%M', b.start) as start, strftime('%Y-%m-%d-%H-%M', b.end) as end, b.favorite as favorite, b.reminder as reminder  FROM channel c, broadcast b WHERE (c.id = b.channel_id) AND (b.start <= datetime('" + dt.Year + "-" + month + "-" + day + " " + hour + ":" + minute + ":00')) AND (datetime(b.end) > datetime('" + dt.Year + "-" + month + "-" + day + " " + hour + ":" + minute + ":00'))";
                 if (this.showRadio)
                 {
                     if (this.showTV)
@@ -436,14 +406,14 @@ namespace PocketTVBrowserCF2
                         String strEnd = this.dbReader["end"].ToString();
                         DateTime dtStart = new DateTime(Int32.Parse(strStart.Split('-')[0]), Int32.Parse(strStart.Split('-')[1]), Int32.Parse(strStart.Split('-')[2]), Int32.Parse(strStart.Split('-')[3]), Int32.Parse(strStart.Split('-')[4]), 0);
                         DateTime dtEnd = new DateTime(Int32.Parse(strEnd.Split('-')[0]), Int32.Parse(strEnd.Split('-')[1]), Int32.Parse(strEnd.Split('-')[2]), Int32.Parse(strEnd.Split('-')[3]), Int32.Parse(strEnd.Split('-')[4]), 0);
-                        result.Add(new Broadcast(Int32.Parse(this.dbReader["id"].ToString()), this.dbReader["channel"].ToString(), this.dbReader["channel_id"].ToString(), this.dbReader["title"].ToString(), dtStart, dtEnd, Boolean.Parse(this.dbReader["favorite"].ToString()), Boolean.Parse(this.dbReader["reminder"].ToString())));
+                        result.Add(new Broadcast(Int32.Parse(this.dbReader["id"].ToString()), this.dbReader["tvbrowserid"].ToString(), this.dbReader["channel"].ToString(), this.dbReader["channel_id"].ToString(), this.dbReader["title"].ToString(), dtStart, dtEnd, Boolean.Parse(this.dbReader["favorite"].ToString()), Boolean.Parse(this.dbReader["reminder"].ToString())));
                     }
                     this.dbReader.Close();
                 }
                 catch
                 {
-                    this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error","Error"), this.getLanguageElement("TVBrowserControll.DBError","Database - Error. Your Export-Plugin isn't compatible with PocketTVBrowser Version"),DialogResult.OK,"Application.Exit()"));
-                    this.dB = false;
+                    this.dB = false; 
+                    this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error", "Error"), this.getLanguageElement("TVBrowserControll.DBError", "Database - Error. Your Export-Plugin isn't compatible with TV-Browser Mini Version"), DialogResult.OK, "Application.Exit()"));
                 }
             }
             return result;
@@ -455,7 +425,7 @@ namespace PocketTVBrowserCF2
             ArrayList result = new ArrayList();
             if (this.dB)
             {
-                this.dbCommand.CommandText = "SELECT b.id as id, c.name as channel, b.channel_id as channel_id, b.title as title, strftime('%Y-%m-%d-%H-%M', b.start) as start, strftime('%Y-%m-%d-%H-%M', b.end) as end, b.favorite as favorite, b.reminder as reminder  FROM channel c, broadcast b WHERE (c.id = b.channel_id) AND b.id IN";
+                this.dbCommand.CommandText = "SELECT b.id as id, b.tvbrowserID, c.name as channel, b.channel_id as channel_id, b.title as title, strftime('%Y-%m-%d-%H-%M', b.start) as start, strftime('%Y-%m-%d-%H-%M', b.end) as end, b.favorite as favorite, b.reminder as reminder  FROM channel c, broadcast b WHERE (c.id = b.channel_id) AND b.id IN";
                 this.dbCommand.CommandText += " (SELECT b.id+1 as id FROM channel c, broadcast b WHERE (c.id = b.channel_id) AND (b.start <= datetime('now', 'localtime')) AND (datetime(b.end) > datetime('now', 'localtime'))";
                 if (this.showRadio)
                 {
@@ -486,14 +456,14 @@ namespace PocketTVBrowserCF2
                         String strEnd = this.dbReader["end"].ToString();
                         DateTime dtStart = new DateTime(Int32.Parse(strStart.Split('-')[0]), Int32.Parse(strStart.Split('-')[1]), Int32.Parse(strStart.Split('-')[2]), Int32.Parse(strStart.Split('-')[3]), Int32.Parse(strStart.Split('-')[4]), 0);
                         DateTime dtEnd = new DateTime(Int32.Parse(strEnd.Split('-')[0]), Int32.Parse(strEnd.Split('-')[1]), Int32.Parse(strEnd.Split('-')[2]), Int32.Parse(strEnd.Split('-')[3]), Int32.Parse(strEnd.Split('-')[4]), 0);
-                        result.Add(new Broadcast(Int32.Parse(this.dbReader["id"].ToString()), this.dbReader["channel"].ToString(), this.dbReader["channel_id"].ToString(), this.dbReader["title"].ToString(), dtStart, dtEnd, Boolean.Parse(this.dbReader["favorite"].ToString()), Boolean.Parse(this.dbReader["reminder"].ToString())));
+                        result.Add(new Broadcast(Int32.Parse(this.dbReader["id"].ToString()), this.dbReader["tvbrowserid"].ToString(), this.dbReader["channel"].ToString(), this.dbReader["channel_id"].ToString(), this.dbReader["title"].ToString(), dtStart, dtEnd, Boolean.Parse(this.dbReader["favorite"].ToString()), Boolean.Parse(this.dbReader["reminder"].ToString())));
                     }
                     this.dbReader.Close();
                 }
                 catch
                 {
-                    this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error","Error"), this.getLanguageElement("TVBrowserControll.DBError","Database - Error. Your Export-Plugin isn't compatible with PocketTVBrowser Version"),DialogResult.OK,"Application.Exit()"));
                     this.dB = false;
+                    this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error", "Error"), this.getLanguageElement("TVBrowserControll.DBError", "Database - Error. Your Export-Plugin isn't compatible with TV-Browser Mini Version"), DialogResult.OK, "Application.Exit()"));
                 }
             }
             return result;
@@ -514,7 +484,7 @@ namespace PocketTVBrowserCF2
                     day += "0";
                 day += date.Day;
 
-                this.dbCommand.CommandText = "SELECT b.id as id, c.name as channel, b.channel_id as channel_id, b.title as title, strftime('%Y-%m-%d-%H-%M', b.start) as start, strftime('%Y-%m-%d-%H-%M', b.end) as end, b.favorite as favorite, b.reminder as reminder  FROM channel c, broadcast b WHERE (c.id = b.channel_id) AND (b.start BETWEEN datetime('" + date.Year + "-" + month + "-" + day + " 19:59:59') AND datetime('" + date.Year + "-" + month + "-" + day + " 20:16:00')) ORDER BY b.id";
+                this.dbCommand.CommandText = "SELECT b.id as id, b.tvbrowserID as tvbrowserid, c.name as channel, b.channel_id as channel_id, b.title as title, strftime('%Y-%m-%d-%H-%M', b.start) as start, strftime('%Y-%m-%d-%H-%M', b.end) as end, b.favorite as favorite, b.reminder as reminder  FROM channel c, broadcast b WHERE (c.id = b.channel_id) AND (b.start BETWEEN datetime('" + date.Year + "-" + month + "-" + day + " 19:59:59') AND datetime('" + date.Year + "-" + month + "-" + day + " 20:16:00')) ORDER BY b.id";
                 try
                 {
                     this.dbReader = this.dbCommand.ExecuteReader();
@@ -524,14 +494,14 @@ namespace PocketTVBrowserCF2
                         String strEnd = this.dbReader["end"].ToString();
                         DateTime dtStart = new DateTime(Int32.Parse(strStart.Split('-')[0]), Int32.Parse(strStart.Split('-')[1]), Int32.Parse(strStart.Split('-')[2]), Int32.Parse(strStart.Split('-')[3]), Int32.Parse(strStart.Split('-')[4]), 0);
                         DateTime dtEnd = new DateTime(Int32.Parse(strEnd.Split('-')[0]), Int32.Parse(strEnd.Split('-')[1]), Int32.Parse(strEnd.Split('-')[2]), Int32.Parse(strEnd.Split('-')[3]), Int32.Parse(strEnd.Split('-')[4]), 0);
-                        result.Add(new Broadcast(Int32.Parse(this.dbReader["id"].ToString()), this.dbReader["channel"].ToString(), this.dbReader["channel_id"].ToString(), this.dbReader["title"].ToString(), dtStart, dtEnd, Boolean.Parse(this.dbReader["favorite"].ToString()), Boolean.Parse(this.dbReader["reminder"].ToString())));
+                        result.Add(new Broadcast(Int32.Parse(this.dbReader["id"].ToString()), this.dbReader["tvbrowserid"].ToString(), this.dbReader["channel"].ToString(), this.dbReader["channel_id"].ToString(), this.dbReader["title"].ToString(), dtStart, dtEnd, Boolean.Parse(this.dbReader["favorite"].ToString()), Boolean.Parse(this.dbReader["reminder"].ToString())));
                     }
                     this.dbReader.Close();
                 }
                 catch
                 {
-                    this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error","Error"), this.getLanguageElement("TVBrowserControll.DBError","Database - Error. Your Export-Plugin isn't compatible with PocketTVBrowser Version"),DialogResult.OK,"Application.Exit()"));
                     this.dB = false;
+                    this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error", "Error"), this.getLanguageElement("TVBrowserControll.DBError", "Database - Error. Your Export-Plugin isn't compatible with TV-Browser Mini Version"), DialogResult.OK, "Application.Exit()"));
                 }
             }
             return result;
@@ -550,7 +520,7 @@ namespace PocketTVBrowserCF2
                 if (date.Day < 10)
                     day += "0";
                 day += date.Day;
-                String stmt = "SELECT b.id as id, c.name as channel, b.channel_id as channel_id, b.title as title, strftime('%Y-%m-%d-%H-%M', b.start) as start, strftime('%Y-%m-%d-%H-%M', b.end) as end, b.favorite as favorite, b.reminder as reminder FROM channel c, broadcast b WHERE c.id = b.channel_id and date(b.start) = date('" + date.Year + "-" + month + "-" + day + "')";
+                String stmt = "SELECT b.id as id, b.tvbrowserID as tvbrowserid, c.name as channel, b.channel_id as channel_id, b.title as title, strftime('%Y-%m-%d-%H-%M', b.start) as start, strftime('%Y-%m-%d-%H-%M', b.end) as end, b.favorite as favorite, b.reminder as reminder FROM channel c, broadcast b WHERE c.id = b.channel_id and date(b.start) = date('" + date.Year + "-" + month + "-" + day + "')";
                 if (favorite)
                     stmt += " AND b.favorite=1 ";
                 if (reminder)
@@ -565,15 +535,15 @@ namespace PocketTVBrowserCF2
                         String strEnd = this.dbReader["end"].ToString();
                         DateTime dtStart = new DateTime(Int32.Parse(strStart.Split('-')[0]), Int32.Parse(strStart.Split('-')[1]), Int32.Parse(strStart.Split('-')[2]), Int32.Parse(strStart.Split('-')[3]), Int32.Parse(strStart.Split('-')[4]), 0);
                         DateTime dtEnd = new DateTime(Int32.Parse(strEnd.Split('-')[0]), Int32.Parse(strEnd.Split('-')[1]), Int32.Parse(strEnd.Split('-')[2]), Int32.Parse(strEnd.Split('-')[3]), Int32.Parse(strEnd.Split('-')[4]), 0);
-                        result.Add(new Broadcast(Int32.Parse(this.dbReader["id"].ToString()), this.dbReader["channel"].ToString(), this.dbReader["channel_id"].ToString(), this.dbReader["title"].ToString(), dtStart, dtEnd, Boolean.Parse(this.dbReader["favorite"].ToString()), Boolean.Parse(this.dbReader["reminder"].ToString())));
+                        result.Add(new Broadcast(Int32.Parse(this.dbReader["id"].ToString()), this.dbReader["tvbrowserid"].ToString(), this.dbReader["channel"].ToString(), this.dbReader["channel_id"].ToString(), this.dbReader["title"].ToString(), dtStart, dtEnd, Boolean.Parse(this.dbReader["favorite"].ToString()), Boolean.Parse(this.dbReader["reminder"].ToString())));
                     }
                     result.Sort(new BroadcastComparer());
                     this.dbReader.Close();
                 }
                 catch
                 {
-                    this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error","Error"), this.getLanguageElement("TVBrowserControll.DBError","Database - Error. Your Export-Plugin isn't compatible with PocketTVBrowser Version"),DialogResult.OK,"Application.Exit()"));
                     this.dB = false;
+                    this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error", "Error"), this.getLanguageElement("TVBrowserControll.DBError", "Database - Error. Your Export-Plugin isn't compatible with TV-Browser Mini Version"), DialogResult.OK, "Application.Exit()"));
                 }
             }
             return result;
@@ -594,14 +564,14 @@ namespace PocketTVBrowserCF2
                         String strEnd = this.dbReader["end"].ToString();
                         DateTime dtStart = new DateTime(Int32.Parse(strStart.Split('-')[0]), Int32.Parse(strStart.Split('-')[1]), Int32.Parse(strStart.Split('-')[2]), Int32.Parse(strStart.Split('-')[3]), Int32.Parse(strStart.Split('-')[4]), 0);
                         DateTime dtEnd = new DateTime(Int32.Parse(strEnd.Split('-')[0]), Int32.Parse(strEnd.Split('-')[1]), Int32.Parse(strEnd.Split('-')[2]), Int32.Parse(strEnd.Split('-')[3]), Int32.Parse(strEnd.Split('-')[4]), 0);
-                        result.Add(new Broadcast(Int32.Parse(this.dbReader["id"].ToString()), this.dbReader["channel"].ToString(), this.dbReader["channel_id"].ToString(), this.dbReader["title"].ToString(), dtStart, dtEnd, Boolean.Parse(this.dbReader["favorite"].ToString()), Boolean.Parse(this.dbReader["reminder"].ToString())));
+                        result.Add(new Broadcast(Int32.Parse(this.dbReader["id"].ToString()), this.dbReader["tvbrowserid"].ToString(), this.dbReader["channel"].ToString(), this.dbReader["channel_id"].ToString(), this.dbReader["title"].ToString(), dtStart, dtEnd, Boolean.Parse(this.dbReader["favorite"].ToString()), Boolean.Parse(this.dbReader["reminder"].ToString())));
                     }
                     this.dbReader.Close();
                 }
                 catch
                 {
-                    this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error","Error"), this.getLanguageElement("TVBrowserControll.DBError","Database - Error. Your Export-Plugin isn't compatible with PocketTVBrowser Version"),DialogResult.OK,"Application.Exit()"));
                     this.dB = false;
+                    this.errorMessages.Add(new ErrorMessage(this.getLanguageElement("TVBrowserControll.Error", "Error"), this.getLanguageElement("TVBrowserControll.DBError", "Database - Error. Your Export-Plugin isn't compatible with TV-Browser Mini Version"), DialogResult.OK, "Application.Exit()"));
                 }
                 result.Sort(new BroadcastComparer());
             }
@@ -826,18 +796,19 @@ namespace PocketTVBrowserCF2
             }
             catch
             {
+
             }
         }
 
         public void closeDBConnect()
         {
-            try
-            {
-                this.dbConnect.Close();
-            }
-            catch
-            {
-            }
+            this.dB = false;
+            this.dbReader.Close();
+            this.dbCommand.CommandText = "";
+            this.dbConnect.Close();
+            this.dbConnect.Dispose();
+            Thread.Sleep(1000);
+               
         }
 
         public void setCurrentScreen(SizeF value)
@@ -1094,6 +1065,35 @@ namespace PocketTVBrowserCF2
                             input = "English";
                         this.currentLanguage = input;
                     }
+                    else if (input.StartsWith("[$daystartsat]"))
+                    {
+                        input = input.Remove(0, 14);
+                        this.startHour = Int32.Parse(input);
+                    }
+                    else if (input.StartsWith("[$dayendsat]"))
+                    {
+                        input = input.Remove(0, 12);
+                        this.endHour = Int32.Parse(input);
+                    }
+
+                    else if (input.StartsWith("[$port]"))
+                    {
+                        input = input.Remove(0, 7);
+                        this.listenPort = Int32.Parse(input);
+                    }
+                    else if (input.StartsWith("[$trans]"))
+                    {
+                        input = input.Remove(0, 8);
+                        if (input == "True")
+                        {
+                            this.listen = true;
+                        }
+                        else if (input == "False")
+                        {
+                            this.listen = false;
+                        }
+                    }
+
                 }
                 catch
                 {
@@ -1201,6 +1201,16 @@ namespace PocketTVBrowserCF2
             return this.videoMode;
         }
 
+        public String getDBPath()
+        {
+            return this.dbPath;
+        }
+
+        public void setDBPath(String path)
+        {
+            this.dbPath = path;
+        }
+
         public void transferReminders()
         {
             if (this.dB)
@@ -1214,23 +1224,23 @@ namespace PocketTVBrowserCF2
                     {
                         try
                         {
-                            String channel = input.Split('|')[0];
-                            String start = input.Split('|')[1];
-                            String title = input.Split('|')[2];
+                            String channelid = input.Split('|')[0];
+                            String tvbrowserid = input.Split('|')[1];
+                            String start = input.Split('|')[2];
                             String reminderString = input.Split('|')[3];
-                            channel = channel.Replace("@_@", "|");
-                            title = title.Replace("@_@", "|");
+                            channelid = channelid.Replace("@_@", "|");
 
                             int reminder = 1;
                             if (reminderString.Equals("False"))
                                 reminder = 0;
 
-                            String stmt = "UPDATE 'broadcast' SET reminder='" + reminder + "' WHERE channel_id='" + channel + "' AND start='"+start+"' AND title='"+title+"'";
-                            this.updateBroadcast(stmt);
-
                             DateTime dt = new DateTime(Int32.Parse(start.Substring(0,4)),Int32.Parse(start.Substring(5,2)),Int32.Parse(start.Substring(8,2)));
                             if (dt > DateTime.Now.AddDays(-1))
-                                backup += channel + "|" + start + "|" + title + "|" + reminderString + "\r\n";
+                            {
+                                backup += channelid + "|" + tvbrowserid + "|" + start+ "|" + reminderString + "\r\n";
+                                String stmt = "UPDATE 'broadcast' SET reminder='" + reminder + "' WHERE tvbrowserID='" + tvbrowserid + "' AND start='" + start + "'";
+                                this.updateBroadcast(stmt);
+                            }
                         }
                         catch
                         {
@@ -1243,12 +1253,16 @@ namespace PocketTVBrowserCF2
                         StreamWriter writer = t.CreateText();
                         writer.Write(backup);
                         writer.Close();
+                        this.saveLastSettings();
                     }
                     catch
                     {
-                        String dummy = "";
                     }
                 }
+            }
+            else
+            {
+                this.checkDBExists();
             }
         }
 
@@ -1263,12 +1277,23 @@ namespace PocketTVBrowserCF2
                 }
                 FileInfo t = new FileInfo(this.getSystemPath() + "\\reminderBackup.csv");
                 StreamWriter writer = t.AppendText();
-                writer.WriteLine(broadcast.getChannelID().Replace("|","@_@") + "|" + broadcast.getStart().ToString("yyyy-MM-dd HH:mm:ss") + "|" + broadcast.getTitle().Replace("|","@_@") + "|" + broadcast.isReminder());
+                writer.WriteLine(broadcast.getChannelID().Replace("|", "@_@") + "|" + broadcast.getTVBrowserID() + "|"+ broadcast.getStart().ToString("yyyy-MM-dd HH:mm:ss") + "|" + broadcast.isReminder());
                 writer.Close();
             }
             catch (Exception ex) 
             {
                 throw new Exception(ex.Message.ToString());
+            }
+        }
+
+        public void killThread()
+        {
+            try
+            {
+                this.trans.endThread();
+            }
+            catch
+            {
             }
         }
 
@@ -1301,7 +1326,7 @@ namespace PocketTVBrowserCF2
                         {
                             key = input.Split('=')[0];
                             key = key.Substring(0, key.Length - 1);
-                            value = input.Split('=')[1];
+                            value = input.Split(    '=')[1];
                             value = value.Substring(1, value.Length - 1);
                             this.addLanguageElement(key, value);
                         }

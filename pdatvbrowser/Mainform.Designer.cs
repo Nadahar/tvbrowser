@@ -1,4 +1,4 @@
-﻿namespace PocketTVBrowserCF2
+﻿namespace TVBrowserMini
 {
     partial class Mainform
     {
@@ -58,6 +58,13 @@
             this.contextMenuBroadcasts = new System.Windows.Forms.ContextMenu();
             this.menuItem1 = new System.Windows.Forms.MenuItem();
             this.menuItem2 = new System.Windows.Forms.MenuItem();
+            this.panelQuickView = new System.Windows.Forms.Panel();
+            this.labelQuickViewDate = new System.Windows.Forms.Label();
+            this.labelQickViewChannel = new System.Windows.Forms.Label();
+            this.timerQuickView = new System.Windows.Forms.Timer();
+            this.timerContextMenu = new System.Windows.Forms.Timer();
+            this.panelContext = new System.Windows.Forms.Panel();
+            this.panelQuickView.SuspendLayout();
             this.SuspendLayout();
             // 
             // mainMenu
@@ -226,7 +233,6 @@
             // 
             this.contextMenuBroadcasts.MenuItems.Add(this.menuItem1);
             this.contextMenuBroadcasts.MenuItems.Add(this.menuItem2);
-            this.contextMenuBroadcasts.Popup += new System.EventHandler(this.contextMenuBroadcasts_Popup);
             // 
             // menuItem1
             // 
@@ -236,19 +242,72 @@
             // 
             this.menuItem2.Text = "erinnern";
             // 
+            // panelQuickView
+            // 
+            this.panelQuickView.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.panelQuickView.Controls.Add(this.labelQuickViewDate);
+            this.panelQuickView.Controls.Add(this.labelQickViewChannel);
+            this.panelQuickView.Location = new System.Drawing.Point(16, 189);
+            this.panelQuickView.Name = "panelQuickView";
+            this.panelQuickView.Size = new System.Drawing.Size(211, 46);
+            this.panelQuickView.Visible = false;
+            // 
+            // labelQuickViewDate
+            // 
+            this.labelQuickViewDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.labelQuickViewDate.Font = new System.Drawing.Font("Tahoma", 11F, System.Drawing.FontStyle.Bold);
+            this.labelQuickViewDate.ForeColor = System.Drawing.Color.Black;
+            this.labelQuickViewDate.Location = new System.Drawing.Point(3, 22);
+            this.labelQuickViewDate.Name = "labelQuickViewDate";
+            this.labelQuickViewDate.Size = new System.Drawing.Size(205, 19);
+            this.labelQuickViewDate.Text = "day";
+            this.labelQuickViewDate.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // labelQickViewChannel
+            // 
+            this.labelQickViewChannel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.labelQickViewChannel.Font = new System.Drawing.Font("Tahoma", 11F, System.Drawing.FontStyle.Bold);
+            this.labelQickViewChannel.ForeColor = System.Drawing.Color.Black;
+            this.labelQickViewChannel.Location = new System.Drawing.Point(3, 3);
+            this.labelQickViewChannel.Name = "labelQickViewChannel";
+            this.labelQickViewChannel.Size = new System.Drawing.Size(205, 19);
+            this.labelQickViewChannel.Text = "channel";
+            this.labelQickViewChannel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // timerQuickView
+            // 
+            this.timerQuickView.Interval = 750;
+            this.timerQuickView.Tick += new System.EventHandler(this.timerQuickView_Tick);
+            // 
+            // timerContextMenu
+            // 
+            this.timerContextMenu.Interval = 300;
+            this.timerContextMenu.Tick += new System.EventHandler(this.timerContextMenu_Tick);
+            // 
+            // panelContext
+            // 
+            this.panelContext.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(224)))), ((int)(((byte)(255)))));
+            this.panelContext.Location = new System.Drawing.Point(54, 52);
+            this.panelContext.Name = "panelContext";
+            this.panelContext.Size = new System.Drawing.Size(128, 126);
+            this.panelContext.Visible = false;
+            // 
             // Mainform
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(240, 268);
+            this.Controls.Add(this.panelContext);
+            this.Controls.Add(this.panelQuickView);
             this.Controls.Add(this.comboBoxDate);
             this.Controls.Add(this.comboBoxChannel);
             this.Controls.Add(this.lDate);
             this.Controls.Add(this.lChannel);
             this.Menu = this.mainMenu;
             this.Name = "Mainform";
-            this.Text = "PocketTVBrowser";
+            this.Text = "TV-Browser Mini";
+            this.panelQuickView.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -285,6 +344,12 @@
         private System.Windows.Forms.ContextMenu contextMenuBroadcasts;
         private System.Windows.Forms.MenuItem menuItem1;
         private System.Windows.Forms.MenuItem menuItem2;
+        private System.Windows.Forms.Panel panelQuickView;
+        private System.Windows.Forms.Timer timerQuickView;
+        private System.Windows.Forms.Label labelQuickViewDate;
+        private System.Windows.Forms.Label labelQickViewChannel;
+        private System.Windows.Forms.Timer timerContextMenu;
+        private System.Windows.Forms.Panel panelContext;
     }
 }
 

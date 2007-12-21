@@ -1,10 +1,14 @@
-#Configuration 0.1 Alpha
+#change nothing in here
 
 #general
 [$dbPath]
 [$reload]0
 [$lastChannel]
 [$language]
+[$daystartsat]0
+[$dayendsat]0
+[$port]13267
+[$trans]False
 
 #reminder
 [$reminderWav]\Windows\Alarm3.wav
