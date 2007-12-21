@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Text;
 
-namespace PocketTVBrowserCF2
+namespace TVBrowserMini
 {
     class MemoComparer : IComparer
     {

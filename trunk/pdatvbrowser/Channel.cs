@@ -6,7 +6,7 @@ using System.Drawing;
 
 #endregion
 
-namespace PocketTVBrowserCF2
+namespace TVBrowserMini
 {
     /// <summary>
     /// One single TVBrowser channel

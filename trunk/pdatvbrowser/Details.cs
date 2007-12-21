@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 using Microsoft.WindowsMobile.PocketOutlook;
 using Microsoft.WindowsCE.Forms;
 
-namespace PocketTVBrowserCF2
+namespace TVBrowserMini
 {
     public partial class Details : Form
     {
@@ -29,8 +29,9 @@ namespace PocketTVBrowserCF2
         {
             this.broadcast = broadcast;
             this.con = con;
+            this.elements = new ArrayList();
             InitializeComponent();
-            this.Text = "PocketTVBrowser: " + this.broadcast.getTitle();
+            this.Text = "TV-Browser Mini: " + this.broadcast.getTitle();
             this.refreshLanguage();
             this.MinimizeBox = false;
             this.getInformation();
@@ -50,7 +51,7 @@ namespace PocketTVBrowserCF2
             this.rowhight = 14;
             if (this.con.getCurrentScreen().Width >= 192)
                 this.rowhight = 28;
-            this.scrollStep = this.Height - 5;
+            this.scrollStep = this.Height - (int)size.Height;
             this.write();
             int osVersionSub = 0;
             try
@@ -131,7 +132,7 @@ namespace PocketTVBrowserCF2
             this.Controls.Add(lDuration);
             int duration = this.broadcast.getLength();
             Label lDurationContent = new Label();
-            lDurationContent.Text = duration.ToString() + " " + this.con.getLanguageElement("Details.Ends", "min. (ends") + " " + this.broadcast.getEnd().ToShortTimeString() + " - " + this.broadcast.getEnd().ToShortDateString() + ")";
+            lDurationContent.Text = duration.ToString() + " " + this.con.getLanguageElement("Details.Ends", "min. (") + this.broadcast.getStart().ToShortTimeString() + " - "+ this.broadcast.getEnd().ToShortTimeString() + " / " + this.broadcast.getEnd().ToShortDateString() + ")";
             lDurationContent.Location = new System.Drawing.Point(0, yPosition);
             lDurationContent.Size = new System.Drawing.Size(this.width, rowhight);
             yPosition += lDurationContent.Height + 5;
@@ -200,12 +201,17 @@ namespace PocketTVBrowserCF2
 
         private void getInformation()
         {
-            try
+            if (!this.con.hasDB())
+                this.con.checkDBExists();
+            if (this.con.hasDB())
             {
-                this.elements = this.con.getBroadcastInformation(this.broadcast.getID());
-            }
-            catch
-            {
+                try
+                {
+                    this.elements = this.con.getBroadcastInformation(this.broadcast.getID());
+                }
+                catch
+                {
+                }
             }
         }
 
@@ -225,7 +231,7 @@ namespace PocketTVBrowserCF2
                 a.Subject = this.broadcast.getTitle();
                 a.Sensitivity = Sensitivity.Private;
                 a.Location = this.broadcast.getChannel();
-                a.Categories = "PocketTVBrowser";
+                a.Categories = "TV-Browser Mini";
                 a.Body = "(c) TVBrowser.org / " + this.broadcast.getChannel();
                 a.Start = this.broadcast.getStart();
                 a.Duration = this.broadcast.getEnd() - this.broadcast.getStart();
@@ -433,7 +439,9 @@ namespace PocketTVBrowserCF2
             this.menuItemOutlook.Text = this.con.getLanguageElement("Details.Designer.AddToOutlook","Add to Calendar (WM5)");
             this.menuItemReminder.Text = this.con.getLanguageElement("Details.Designer.AddToReminders","Add to reminders");
             this.menuItemRotate.Text = this.con.getLanguageElement("Details.Rotate", "Rotate");
-            this.menuItemSMS.Text = this.con.getLanguageElement("Details.SMS", "sent as SMS");
+            this.menuItemSMS.Text = this.con.getLanguageElement("Details.SMS", "SMS");
+            this.menuItemEMail.Text = this.con.getLanguageElement("Details.Email", "E-Mail");
+            this.menuItemSendAs.Text = this.con.getLanguageElement("Details.SendAs", "send as");
         }
 
         private void menuItemRotate_Click(object sender, EventArgs e)
@@ -445,6 +453,7 @@ namespace PocketTVBrowserCF2
             this.Close();
             Cursor.Current = Cursors.Default;
         }
+
 
         private void menuItemSMS_Click(object sender, EventArgs e)
         {
@@ -476,6 +485,39 @@ namespace PocketTVBrowserCF2
             catch
             {
                 this.menuItemSMS.Enabled = false;
+            }
+        }
+
+        private void menuItemEMail_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                String name = "\n";
+                try
+                {
+                    Byte[] ownerbytes = (byte[])Microsoft.Win32.Registry.CurrentUser.OpenSubKey("ControlPanel\\Owner").GetValue("Owner");
+                    name += System.Text.Encoding.Unicode.GetString(ownerbytes, 0, 72).TrimEnd('\0');
+                }
+                catch
+                {
+                    name = "";
+                }
+                EmailMessage email = new EmailMessage();
+                String message = this.con.getLanguageElement("Details.SMSMessage", "My personal TV hint:") + "\n";
+                message += this.con.getLanguageElement("Details.SMSMessageBroadcast", "Broadcast:") + " " + this.broadcast.getTitle() + "\n";
+                message += this.con.getLanguageElement("Details.SMSMessageTime", "Time:") + " " + this.broadcast.getStart().ToShortDateString() + " " + this.broadcast.getStart().ToShortTimeString() + "\n";
+                message += this.con.getLanguageElement("Details.SMSMessageChannel", "Channel:") + " " + this.broadcast.getChannel() + "\n";
+                message += this.con.getLanguageElement("Details.SMSMessageRegards", "Regards");
+                if (!name.Equals(""))
+                {
+                    message += ", " + name;
+                }
+                email.BodyText = message;
+                MessagingApplication.DisplayComposeForm(email);
+            }
+            catch
+            {
+                this.menuItemEMail.Enabled = false;
             }
         }
     }

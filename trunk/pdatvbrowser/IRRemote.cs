@@ -9,7 +9,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.IO;
 
-namespace PocketTVBrowserCF2
+namespace TVBrowserMini
 {
     public partial class IRRemote : Form
     {
@@ -21,6 +21,7 @@ namespace PocketTVBrowserCF2
 
         private void button1_Click(object sender, EventArgs e)
         {
+            /*
             try
             {
                 Cursor.Current = Cursors.WaitCursor;
@@ -53,6 +54,7 @@ namespace PocketTVBrowserCF2
             {
                 MessageBox.Show(ex.ToString());
             }
+            */
         }
 
         private void buttonVplumeMinus_Click(object sender, EventArgs e)

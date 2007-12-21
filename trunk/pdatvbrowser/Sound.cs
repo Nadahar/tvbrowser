@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace PocketTVBrowserCF2
+namespace TVBrowserMini
 {
     class Sound
     {

@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Text;
 
-namespace PocketTVBrowserCF2
+namespace TVBrowserMini
 {
     /// <summary>
     /// Compares the beginning time of tw broadcasts

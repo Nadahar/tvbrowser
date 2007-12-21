@@ -7,7 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 
 
-namespace PocketTVBrowserCF2
+namespace TVBrowserMini
 {
     public partial class About : Form
     {
@@ -29,7 +29,7 @@ namespace PocketTVBrowserCF2
                 this.pictureBoxIcon.Height = this.pictureBoxIcon.Height / 2;
                 this.pictureBoxIcon.Width = this.pictureBoxIcon.Width / 2;
             }
-            this.pictureBoxIcon.Bounds = new Rectangle((this.Width-this.pictureBoxIcon.Width)/2, this.lVersionNumber.Height, this.pictureBoxIcon.Width, this.pictureBoxIcon.Height);
+            this.pictureBoxIcon.Bounds = new Rectangle((this.Width-this.pictureBoxIcon.Width)/2, this.lVersionNumber.Bottom, this.pictureBoxIcon.Width, this.pictureBoxIcon.Height);
             this.labelThanks.Bounds = new Rectangle(1, this.pictureBoxIcon.Bounds.Bottom, this.Width-1, this.labelThanks.Height);
             this.lCopyright.Bounds = new Rectangle(0, this.Height - this.lCopyright.Height, this.Width, this.lCopyright.Height);
             this.lGNU.Bounds = new Rectangle(0, this.Height - this.lCopyright.Height - this.lGNU.Height, this.Width, this.lGNU.Height);

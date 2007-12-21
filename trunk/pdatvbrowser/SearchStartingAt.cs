@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace PocketTVBrowserCF2
+namespace TVBrowserMini
 {
     public partial class SearchStartingAt : Form
     {

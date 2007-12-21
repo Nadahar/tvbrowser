@@ -1,4 +1,4 @@
-﻿namespace PocketTVBrowserCF2
+﻿namespace TVBrowserMini
 {
     partial class Reminder
     {

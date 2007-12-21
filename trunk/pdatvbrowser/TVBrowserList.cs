@@ -4,7 +4,7 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Threading;
 
-namespace PocketTVBrowserCF2
+namespace TVBrowserMini
 {
 	public delegate void DrawItemEventHandler(object sender, DrawItemEventArgs e);
 	#region DrawItemState enum
@@ -314,12 +314,6 @@ namespace PocketTVBrowserCF2
             //this.Focus();
 		}
         
-
-        protected override void OnDoubleClick(EventArgs e)
-        {
-            this.contextmenu.Show(this, new Point(10,10));
-            base.OnDoubleClick(e);
-        }
 
 		/// <summary>
 		/// Gets or sets the zero-based index of the currently selected item in a OwnerDrawnList.  

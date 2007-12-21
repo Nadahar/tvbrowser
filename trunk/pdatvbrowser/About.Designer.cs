@@ -1,4 +1,4 @@
-﻿namespace PocketTVBrowserCF2
+﻿namespace TVBrowserMini
 {
     partial class About
     {
@@ -46,14 +46,15 @@
             this.lVersionNumber.Location = new System.Drawing.Point(114, 0);
             this.lVersionNumber.Name = "lVersionNumber";
             this.lVersionNumber.Size = new System.Drawing.Size(126, 19);
-            this.lVersionNumber.Text = "0.4.13 BETA";
+            this.lVersionNumber.Text = "0.6.2 BETA";
+            this.lVersionNumber.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // pictureBoxIcon
             // 
             this.pictureBoxIcon.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxIcon.Image")));
             this.pictureBoxIcon.Location = new System.Drawing.Point(3, 25);
             this.pictureBoxIcon.Name = "pictureBoxIcon";
-            this.pictureBoxIcon.Size = new System.Drawing.Size(131, 131);
+            this.pictureBoxIcon.Size = new System.Drawing.Size(120, 120);
             this.pictureBoxIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             // 
             // labelThanks
@@ -100,7 +101,7 @@
             this.lVersion.Name = "lVersion";
             this.lVersion.Size = new System.Drawing.Size(108, 19);
             this.lVersion.Text = "Version:";
-            this.lVersion.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.lVersion.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // About
             // 

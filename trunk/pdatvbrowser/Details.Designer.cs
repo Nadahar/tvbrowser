@@ -1,4 +1,4 @@
-﻿namespace PocketTVBrowserCF2
+﻿namespace TVBrowserMini
 {
     partial class Details
     {
@@ -33,13 +33,15 @@
             this.mainMenu1 = new System.Windows.Forms.MainMenu();
             this.menuItemMenu = new System.Windows.Forms.MenuItem();
             this.menuItemSearch = new System.Windows.Forms.MenuItem();
+            this.menuItemSendAs = new System.Windows.Forms.MenuItem();
+            this.menuItemSMS = new System.Windows.Forms.MenuItem();
+            this.menuItemEMail = new System.Windows.Forms.MenuItem();
             this.menuItemOutlook = new System.Windows.Forms.MenuItem();
             this.menuItemReminder = new System.Windows.Forms.MenuItem();
             this.menuItemRotate = new System.Windows.Forms.MenuItem();
             this.menuItemOK = new System.Windows.Forms.MenuItem();
             this.pictureBoxReminder = new System.Windows.Forms.PictureBox();
             this.pictureBoxBookmark = new System.Windows.Forms.PictureBox();
-            this.menuItemSMS = new System.Windows.Forms.MenuItem();
             this.SuspendLayout();
             // 
             // mainMenu1
@@ -50,9 +52,9 @@
             // menuItemMenu
             // 
             this.menuItemMenu.MenuItems.Add(this.menuItemSearch);
+            this.menuItemMenu.MenuItems.Add(this.menuItemSendAs);
             this.menuItemMenu.MenuItems.Add(this.menuItemOutlook);
             this.menuItemMenu.MenuItems.Add(this.menuItemReminder);
-            this.menuItemMenu.MenuItems.Add(this.menuItemSMS);
             this.menuItemMenu.MenuItems.Add(this.menuItemRotate);
             this.menuItemMenu.Text = "Menu";
             // 
@@ -60,6 +62,22 @@
             // 
             this.menuItemSearch.Text = "Search similar";
             this.menuItemSearch.Click += new System.EventHandler(this.menuItemSearch_Click);
+            // 
+            // menuItemSendAs
+            // 
+            this.menuItemSendAs.MenuItems.Add(this.menuItemSMS);
+            this.menuItemSendAs.MenuItems.Add(this.menuItemEMail);
+            this.menuItemSendAs.Text = "send as";
+            // 
+            // menuItemSMS
+            // 
+            this.menuItemSMS.Text = "SMS";
+            this.menuItemSMS.Click += new System.EventHandler(this.menuItemSMS_Click);
+            // 
+            // menuItemEMail
+            // 
+            this.menuItemEMail.Text = "E-mail";
+            this.menuItemEMail.Click += new System.EventHandler(this.menuItemEMail_Click);
             // 
             // menuItemOutlook
             // 
@@ -99,11 +117,6 @@
             this.pictureBoxBookmark.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBoxBookmark.Visible = false;
             // 
-            // menuItemSMS
-            // 
-            this.menuItemSMS.Text = "send as sms";
-            this.menuItemSMS.Click += new System.EventHandler(this.menuItemSMS_Click);
-            // 
             // Details
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -114,7 +127,7 @@
             this.Controls.Add(this.pictureBoxBookmark);
             this.Menu = this.mainMenu1;
             this.Name = "Details";
-            this.Text = "PocketTVBrowser";
+            this.Text = "TV-Browser Mini";
             this.ResumeLayout(false);
 
         }
@@ -130,5 +143,7 @@
         private System.Windows.Forms.PictureBox pictureBoxBookmark;
         private System.Windows.Forms.MenuItem menuItemRotate;
         private System.Windows.Forms.MenuItem menuItemSMS;
+        private System.Windows.Forms.MenuItem menuItemEMail;
+        private System.Windows.Forms.MenuItem menuItemSendAs;
     }
 }
