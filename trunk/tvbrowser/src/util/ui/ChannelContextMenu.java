@@ -41,9 +41,13 @@ public class ChannelContextMenu implements ActionListener {
       .getLocalizerFor(ChannelContextMenu.class);
 
   private JPopupMenu mMenu;
+
   private JMenuItem mChAdd, mChConf, mChGoToURL, mFilterChannels;
+
   private Object mSource;
+
   private Channel mChannel;
+
   private Component mComponent;
 
   private JRadioButtonMenuItem layoutBoth;
@@ -71,15 +75,18 @@ public class ChannelContextMenu implements ActionListener {
     mChAdd = new JMenuItem(mLocalizer.msg("addChannels", "Add/Remove channels"));
     mChConf = new JMenuItem(mLocalizer.msg("configChannel", "Setup channel"));
     mChGoToURL = new JMenuItem(mLocalizer.msg("openURL", "Open internet page"));
-    
+
     // dynamically create filters from available channel filter components
     String channelFilterName = Settings.propLastUsedChannelGroup.getString();
-    mFilterChannels = new JMenu(mLocalizer.msg("filterChannels", "Channel filter"));
-    JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(mLocalizer.msg("filterAll", "All channels"));
+    mFilterChannels = new JMenu(mLocalizer.msg("filterChannels",
+        "Channel filter"));
+    JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(mLocalizer.msg(
+        "filterAll", "All channels"));
     menuItem.setSelected(channelFilterName == null);
     menuItem.addActionListener(this);
     mFilterChannels.add(menuItem);
-    String[] channelFilterNames = FilterComponentList.getInstance().getChannelFilterNames();
+    String[] channelFilterNames = FilterComponentList.getInstance()
+        .getChannelFilterNames();
     for (String filterName : channelFilterNames) {
       menuItem = new JRadioButtonMenuItem(filterName);
       menuItem.addActionListener(this);
@@ -89,18 +96,21 @@ public class ChannelContextMenu implements ActionListener {
       }
     }
     mFilterChannels.add(new JSeparator());
-    JMenuItem menuItemAdd = new JMenuItem(mLocalizer.msg("filterNew", "Add channel filter"));
-    menuItemAdd.addActionListener(new ActionListener(){
+    JMenuItem menuItemAdd = new JMenuItem(mLocalizer.msg("filterNew",
+        "Add channel filter"));
+    menuItemAdd.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
-        EditFilterComponentDlg dlg = new EditFilterComponentDlg(null, null, ChannelFilterComponent.class);
+        EditFilterComponentDlg dlg = new EditFilterComponentDlg(null, null,
+            ChannelFilterComponent.class);
         FilterComponent rule = dlg.getFilterComponent();
         if ((rule != null) && (rule instanceof ChannelFilterComponent)) {
           FilterComponentList.getInstance().add(rule);
           FilterComponentList.getInstance().store();
           setChannelGroup((ChannelFilterComponent) rule);
         }
-      }});
+      }
+    });
     mFilterChannels.add(menuItemAdd);
 
     mChAdd.addActionListener(this);
@@ -113,27 +123,30 @@ public class ChannelContextMenu implements ActionListener {
       mMenu.add(mFilterChannels);
       mMenu.addSeparator();
       mMenu.add(mChAdd);
-    }
-    JMenu configureLayout = new JMenu(mLocalizer.msg("layout", "Layout"));
-    layoutBoth = new JRadioButtonMenuItem(mLocalizer.msg("layoutBoth", "Logo and name"));
-    layoutLogo = new JRadioButtonMenuItem(mLocalizer.msg("layoutLogo", "Logo"));
-    layoutName = new JRadioButtonMenuItem(mLocalizer.msg("layoutName", "Name"));
-    configureLayout.add(layoutBoth);
-    configureLayout.add(layoutLogo);
-    configureLayout.add(layoutName);
-    mMenu.add(configureLayout);
-    
-    layoutBoth.addActionListener(this);
-    layoutLogo.addActionListener(this);
-    layoutName.addActionListener(this);
+      JMenu configureLayout = new JMenu(mLocalizer.msg("layout", "Layout"));
+      layoutBoth = new JRadioButtonMenuItem(mLocalizer.msg("layoutBoth",
+          "Logo and name"));
+      layoutLogo = new JRadioButtonMenuItem(mLocalizer
+          .msg("layoutLogo", "Logo"));
+      layoutName = new JRadioButtonMenuItem(mLocalizer
+          .msg("layoutName", "Name"));
+      configureLayout.add(layoutBoth);
+      configureLayout.add(layoutLogo);
+      configureLayout.add(layoutName);
+      mMenu.add(configureLayout);
 
-    if (Settings.propShowChannelIconsInChannellist.getBoolean() &&
-        Settings.propShowChannelNamesInChannellist.getBoolean()) {
-      layoutBoth.setSelected(true);
-    } else if (Settings.propShowChannelIconsInChannellist.getBoolean()) {
-      layoutLogo.setSelected(true);
-    } else {
-      layoutName.setSelected(true);
+      layoutBoth.addActionListener(this);
+      layoutLogo.addActionListener(this);
+      layoutName.addActionListener(this);
+
+      if (Settings.propShowChannelIconsInChannellist.getBoolean()
+          && Settings.propShowChannelNamesInChannellist.getBoolean()) {
+        layoutBoth.setSelected(true);
+      } else if (Settings.propShowChannelIconsInChannellist.getBoolean()) {
+        layoutLogo.setSelected(true);
+      } else {
+        layoutName.setSelected(true);
+      }
     }
     mMenu.show(e.getComponent(), e.getX(), e.getY());
   }
@@ -141,8 +154,7 @@ public class ChannelContextMenu implements ActionListener {
   public void actionPerformed(ActionEvent e) {
     if (e.getSource().equals(mChAdd)) {
       MainFrame.getInstance().showSettingsDialog(SettingsItem.CHANNELS);
-    }
-    else if (e.getSource().equals(mChConf)) {
+    } else if (e.getSource().equals(mChConf)) {
       if ((mSource instanceof ChannelsSettingsTab)) {
         ((ChannelsSettingsTab) mSource).configChannels();
       } else {
@@ -162,31 +174,35 @@ public class ChannelContextMenu implements ActionListener {
               .setChannel(mChannel);
         }
       }
-      
+
       if (!(mSource instanceof tvbrowser.ui.programtable.ChannelLabel)) {
-        MainFrame.getInstance().getProgramTableScrollPane().updateChannelLabelForChannel(mChannel);
+        MainFrame.getInstance().getProgramTableScrollPane()
+            .updateChannelLabelForChannel(mChannel);
       }
       MainFrame.getInstance().updateChannelChooser();
       ChannelList.storeAllSettings();
-    }
-    else if (e.getSource().equals(mChGoToURL)) {
+    } else if (e.getSource().equals(mChGoToURL)) {
       Launch.openURL(mChannel.getWebpage());
-    }
-    else {
+    } else {
       if (e.getSource() instanceof JRadioButtonMenuItem) {
-        if (e.getSource() == layoutBoth || e.getSource() == layoutName || e.getSource() == layoutLogo) {
-          Settings.propShowChannelNamesInChannellist.setBoolean(e.getSource() == layoutBoth || e.getSource() == layoutName);       
-          Settings.propShowChannelIconsInChannellist.setBoolean(e.getSource() == layoutBoth || e.getSource() == layoutLogo);       
+        if (e.getSource() == layoutBoth || e.getSource() == layoutName
+            || e.getSource() == layoutLogo) {
+          Settings.propShowChannelNamesInChannellist
+              .setBoolean(e.getSource() == layoutBoth
+                  || e.getSource() == layoutName);
+          Settings.propShowChannelIconsInChannellist
+              .setBoolean(e.getSource() == layoutBoth
+                  || e.getSource() == layoutLogo);
           MainFrame.getInstance().updateChannelChooser();
-        }
-        else {
-          JRadioButtonMenuItem filterItem = (JRadioButtonMenuItem) e.getSource();
+        } else {
+          JRadioButtonMenuItem filterItem = (JRadioButtonMenuItem) e
+              .getSource();
           String filterName = filterItem.getText();
-          final FilterComponent component = FilterComponentList.getInstance().getFilterComponentByName(filterName);
+          final FilterComponent component = FilterComponentList.getInstance()
+              .getFilterComponentByName(filterName);
           if (component != null && component instanceof ChannelFilterComponent) {
-            setChannelGroup((ChannelFilterComponent) component); 
-          }
-          else {
+            setChannelGroup((ChannelFilterComponent) component);
+          } else {
             setChannelGroup(null);
           }
         }
