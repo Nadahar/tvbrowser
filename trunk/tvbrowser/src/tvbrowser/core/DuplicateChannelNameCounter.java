@@ -10,7 +10,7 @@ import java.util.Hashtable;
  *
  * @since 2.6
  */
-public class DublicateChannelNameCounter {
+public class DuplicateChannelNameCounter {
 
   Hashtable<String, Integer> mChannelnames = new Hashtable<String, Integer>();
 
@@ -19,7 +19,7 @@ public class DublicateChannelNameCounter {
    *
    * @param channels use channels in this List
    */
-  public DublicateChannelNameCounter(Channel[] channels) {
+  public DuplicateChannelNameCounter(Channel[] channels) {
     mChannelnames = new Hashtable<String, Integer>();
 
     for (Channel ch:channels) {
@@ -35,11 +35,14 @@ public class DublicateChannelNameCounter {
   }
 
   /**
-   * Check if a channel is a dublicate
+   * Check if a channel is a duplicate
    * @param channel Channel to check
-   * @return true, if name is a dublicate
+   * @return true, if name is a duplicate
    */
-  public boolean isDublicate(Channel channel) {
+  public boolean isDuplicate(Channel channel) {
+    if (channel == null) {
+      return false;
+    }
     Integer count = mChannelnames.get(channel.getName());
     return (count != null) && (count != 0);
   }
