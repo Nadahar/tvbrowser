@@ -32,7 +32,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 
 import devplugin.Channel;
-import tvbrowser.core.DublicateChannelNameCounter;
+import tvbrowser.core.DuplicateChannelNameCounter;
 import tvbrowser.core.ChannelList;
 
 /**
@@ -42,7 +42,7 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
   /** Internal reused ChannelLabel */
   private ChannelLabel mChannel;
 
-  private DublicateChannelNameCounter mChannelCounter;
+  private DuplicateChannelNameCounter mChannelCounter;
 
   private boolean mChannelIconsVisible;
   private boolean mTextVisible;
@@ -97,11 +97,11 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
 
     if (mShowCountry) {
       if (mChannelCounter == null) {
-        mChannelCounter = new DublicateChannelNameCounter(ChannelList.getAvailableChannels());
+        mChannelCounter = new DuplicateChannelNameCounter(ChannelList.getAvailableChannels());
       }
 
       if(value instanceof Channel) {
-        mChannel.setShowCountry(mChannelCounter.isDublicate((Channel)value));
+        mChannel.setShowCountry(mChannelCounter.isDuplicate((Channel)value));
       }
     }
 
