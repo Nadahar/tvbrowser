@@ -56,7 +56,7 @@ public class ExecutionHandler {
       if(path == null || path.length() < 1 || !(new File(path).isDirectory()))
         path = System.getProperty("user.dir");
       
-      mRuntimeDirectory = new File(path);
+      mRuntimeDirectory = new File(path.trim());
     }
   }
   
@@ -68,7 +68,7 @@ public class ExecutionHandler {
    * @param runtimeDirectory The runtime directory for the application.
    */
   public ExecutionHandler(String parameter, String programPath, String runtimeDirectory) {
-    this(parameter, programPath, new File(runtimeDirectory));
+    this(parameter, programPath, new File(runtimeDirectory.trim()));
   }
 
   /**
@@ -99,7 +99,7 @@ public class ExecutionHandler {
    * @param runtimeDirectory The runtime directory for the application.
    */
   public ExecutionHandler(String[] parameterWithProgramPath, String runtimeDirectory) {
-    this(parameterWithProgramPath, new File(runtimeDirectory));
+    this(parameterWithProgramPath, new File(runtimeDirectory.trim()));
   }
   
   /**
@@ -238,7 +238,7 @@ public class ExecutionHandler {
     StringBuilder lastString = null;
     ArrayList<String> args = new ArrayList<String>();
     
-    args.add(programPath);
+    args.add(programPath.trim());
     
     for (String part : parameter.split(" ")) {
       if (part.length() > 0 && part.charAt(0) == '"') {
