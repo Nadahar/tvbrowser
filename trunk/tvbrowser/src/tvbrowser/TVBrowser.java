@@ -122,6 +122,7 @@ public class TVBrowser {
   */
   /** The string array with the names of the earlier versions. */
   public static final String[] ALL_VERSIONS = new String[]{
+          "2.6.1",
           "2.6.1beta",
           "2.6.1 (SVN)",
           "2.6",
@@ -160,7 +161,7 @@ public class TVBrowser {
   };
   
   /** The current version. */
-  public static final devplugin.Version VERSION=new devplugin.Version(2,61,false,ALL_VERSIONS[0] + ((mIsTransportable = new File("settings").isDirectory()) ? " transportable" : ""));
+  public static final devplugin.Version VERSION=new devplugin.Version(2,61,true,ALL_VERSIONS[0] + ((mIsTransportable = new File("settings").isDirectory()) ? " transportable" : ""));
 
   /** The title bar string. */
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
