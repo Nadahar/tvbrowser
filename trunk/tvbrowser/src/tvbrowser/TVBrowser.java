@@ -461,6 +461,7 @@ public class TVBrowser {
                 Settings.handleChangedSettings();
               }
             }
+            MainFrame.getInstance().getProgramTableScrollPane().requestFocusInWindow();
           }
         });
       }
