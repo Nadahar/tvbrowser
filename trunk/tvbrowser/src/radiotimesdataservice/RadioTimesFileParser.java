@@ -113,7 +113,6 @@ public class RadioTimesFileParser {
     StringBuilder builder = new StringBuilder(RadioTimesDataService.BASEURL);
     builder.append(mChannel.getId().substring(RadioTimesDataService.RADIOTIMES.length()));
     builder.append(".dat");
-    System.out.println("==>" + builder);
     // Do the parsing...
     BufferedReader reader = new BufferedReader(new InputStreamReader(IOUtilities.getStream(new URL(builder.toString())), "UTF8"));
 
