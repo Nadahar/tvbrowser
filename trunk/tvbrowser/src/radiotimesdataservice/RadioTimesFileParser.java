@@ -113,7 +113,7 @@ public class RadioTimesFileParser {
     StringBuilder builder = new StringBuilder(RadioTimesDataService.BASEURL);
     builder.append(mChannel.getId().substring(RadioTimesDataService.RADIOTIMES.length()));
     builder.append(".dat");
-    
+    System.out.println("==>" + builder);
     // Do the parsing...
     BufferedReader reader = new BufferedReader(new InputStreamReader(IOUtilities.getStream(new URL(builder.toString())), "UTF8"));
 
@@ -141,6 +141,11 @@ public class RadioTimesFileParser {
 
         StringBuilder desc = new StringBuilder(items[RT_SUBTITLE].trim()).append("\n\n");
         desc.append(items[RT_DESCRIPTION]);
+        desc.append("\n\n");
+        if (items[RT_STAR_RATING].length() != 0) {
+            desc.append("[Rating ").append(items[RT_STAR_RATING]).append("*]");
+        }
+
         prog.setTextField(ProgramFieldType.DESCRIPTION_TYPE, desc.toString().trim());
 
         prog.setTextField(ProgramFieldType.SHORT_DESCRIPTION_TYPE, items[RT_DESCRIPTION].trim());
