@@ -124,22 +124,21 @@ public class PluginManagerImpl implements PluginManager {
   public Program getProgram(Date date, String progID) {
     TvDataBase db = TvDataBase.getInstance();
 
-  //  Channel[] channels = ChannelList.getSubscribedChannels();  /* 04-17-2005: changed from getAvailableChannels() to getSubscribedChannels */
-
     Channel ch = getChannelFromProgId(progID);
     if (ch != null && ChannelList.isSubscribedChannel(ch)) {
       if(!ch.getTimeZone().equals(TimeZone.getDefault())) {        
         String[] id = progID.split("_");
-        int value = Integer.parseInt(id[id.length-1].split(":")[0]) * 60 * 60 * 1000 + Integer.parseInt(id[id.length-1].split(":")[1]) * 60 * 1000;
+        String[] hourMinute = id[id.length-1].split(":");
+        int milliSeconds = Integer.parseInt(hourMinute[0]) * 60 * 60 * 1000 + Integer.parseInt(hourMinute[1]) * 60 * 1000;
 
         int diff = Math.abs(ch.getTimeZone().getRawOffset() - TimeZone.getDefault().getRawOffset());
         
         if(ch.getTimeZone().getRawOffset() < TimeZone.getDefault().getRawOffset()) {
-          if(value < diff) {
+          if(milliSeconds < diff) {
             date = date.addDays(-1);
           }
         }
-        else if(value + diff >= 86400000) {
+        else if(milliSeconds + diff >= 86400 * 1000) {
           date = date.addDays(1);
         }
       }

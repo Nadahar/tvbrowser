@@ -178,6 +178,7 @@ public interface Program {
   
   /**
    * Gets the ID of this program. This ID is unique for a certain date.
+   * This value becomes invalid when changing the application time zone.
    *
    * @return The ID of this program.
    */
@@ -202,6 +203,8 @@ public interface Program {
 
   /**
    * Gets the hour-component of the start time of the program.
+   * This is local time (i.e. for the current time zone).
+   * This value becomes invalid when changing the time zone!
    *
    * @return the hour-component of the start time.
    */
@@ -209,7 +212,9 @@ public interface Program {
 
   /**
    * Gets the minute-component of the start time of the program.
-   *
+   * This is local time (i.e. for the current time zone).
+   * This value becomes invalid when changing the time zone!
+   * 
    * @return the minute-component of the start time.
    */
   public int getMinutes();
@@ -245,7 +250,7 @@ public interface Program {
   public Channel getChannel();
   
   /**
-   * get the date when the program starts
+   * get the date when the program starts.
    * @return the date
    */
   public Date getDate();
