@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.logging.Level;
 
 import tvbrowser.core.data.OnDemandDayProgramFile;
@@ -451,11 +450,15 @@ public class TvDataBase {
       }
       
       for (File deleteFile : fileList) {
-        if(informPlugins) {
-          Channel ch = getChannelFromFileName(deleteFile.getName(), channelArr, channelIdArr);
-          Date date = getDateFromFileName(deleteFile.getName());
+        Channel ch = getChannelFromFileName(deleteFile.getName(), channelArr, channelIdArr);
+        Date date = getDateFromFileName(deleteFile.getName());
+
+        if(ch != null && date != null) {
+          if(informPlugins) {          
+            fireDayProgramDeleted(getDayProgram(date, ch));
+          }        
           
-          fireDayProgramDeleted(getDayProgram(date, ch));
+          removeCacheEntry(getDayProgramKey(date,ch));
         }
         
         deleteFile.delete();
