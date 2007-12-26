@@ -1262,6 +1262,7 @@ public class MainFrame extends JFrame implements DateListener {
   private void onDownloadStart() {
     mToolBar.updateUpdateButton(true);
     mMenuBar.showStopMenuItem();
+    Settings.propLastDownloadDate.setDate(Date.getCurrentDate());
   }
 
   private void onDownloadDone() {
@@ -1272,7 +1273,6 @@ public class MainFrame extends JFrame implements DateListener {
     mMenuBar.showUpdateMenuItem();
 
     mFinderPanel.updateItems();
-    Settings.propLastDownloadDate.setDate(Date.getCurrentDate());
     resetOnAirArrays();
   }
   
