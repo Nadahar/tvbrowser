@@ -666,6 +666,12 @@ public class ChannelsSettingsTab implements
 
     Object[] list = ((DefaultListModel) mSubscribedChannels.getModel())
         .toArray();
+    
+    // under unknown circumstances it may happen that channel settings
+    // are stored although the list box has no valid content
+    if ((list.length > 0) && (list[0] == null)) {
+      return;
+    }
 
     // Convert the list into a Channel[] and fill channels
     ArrayList<String> groups = new ArrayList<String>();
