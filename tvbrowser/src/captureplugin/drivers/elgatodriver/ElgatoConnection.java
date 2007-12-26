@@ -255,7 +255,7 @@ public class ElgatoConnection implements SimpleConnectionIf {
 
         String call = CREATERECORDING.replaceAll("\\{0\\}", date);
         call = call.replaceAll("\\{1\\}", time);
-        call = call.replaceAll("\\{2\\}", Integer.toString(prg.getLength()));
+        call = call.replaceAll("\\{2\\}", Integer.toString(prg.getLength()*60));
         call = call.replaceAll("\\{3\\}", prg.getTitle());
         call = call.replaceAll("\\{4\\}", Integer.toString(((SimpleChannel)conf
                 .getExternalChannel(prg.getProgram().getChannel())).getNumber()));
