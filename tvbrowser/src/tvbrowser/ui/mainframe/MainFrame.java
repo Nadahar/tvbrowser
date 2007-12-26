@@ -1079,8 +1079,12 @@ public class MainFrame extends JFrame implements DateListener {
         scrollToNow();
       }
       
-      mLog.info("Deleting expired TV listings...");
-      TvDataBase.getInstance().deleteExpiredFiles(1, true);
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          mLog.info("Deleting expired TV listings...");
+          TvDataBase.getInstance().deleteExpiredFiles(1, true);
+        }
+      });
     }
     
     mLastTimerMinutesAfterMidnight = -1;
