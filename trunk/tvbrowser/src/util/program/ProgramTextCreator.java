@@ -679,6 +679,10 @@ public class ProgramTextCreator {
 
     String text = null;
     String name = fieldType.getLocalizedName();
+    int blank = name.indexOf(' ', 16);
+    if (blank > 0) {
+      name = name.substring(0, blank) + "<br>" + name.substring(blank +1);
+    }
     if (fieldType.getFormat() == ProgramFieldType.TEXT_FORMAT) {
       if (fieldType == ProgramFieldType.DESCRIPTION_TYPE) {
         String description = prog.getDescription().trim();
