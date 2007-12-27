@@ -25,30 +25,42 @@
  */
 package tvbrowser.extras.favoritesplugin.core;
 
-import tvbrowser.core.search.AbstractSearcher;
+import tvbrowser.core.search.regexsearch.RegexSearcher;
+import util.exc.TvBrowserException;
 
 /**
  * This is the actual Searcher for the Actors
  * 
- * @author bodum
+ * @author bananeweizen
  */
-public class ActorSearcher extends AbstractSearcher {
-  /** Actor String Searcher */
-  private ActorStringSearcher mActorStringSearcher;
-  
-  /**
-   * Create Searcher
-   * @param actor search for this Actor
-   */
-  public ActorSearcher(String actor) {
-    mActorStringSearcher = new ActorStringSearcher(actor);
-  }
+public class ActorSearcher extends RegexSearcher {
 
-  /**
-   * @return true, if Actor is in Search-String
-   */
-  protected boolean matches(String value) {
-    return mActorStringSearcher.actorInProgram(value);
+  public ActorSearcher(String actor)
+      throws TvBrowserException {
+    super(getSearchTerm(actor), false);
+  }
+  
+  private static String getSearchTerm(String actor) {
+    if (actor == null) {
+      return null;
+    }
+    String[] actorStr = actor.split("\\s");
+    
+    // first pattern is actor name without changes
+    String regEx = ".*\\b((" + actor+")";
+    
+    // use additional variants, if the name consists of multiple parts
+    int actorMax = actorStr.length-1;
+    if (actorStr.length > 1) {
+      regEx = regEx 
+        // _Doe,_Jon_ 
+        + "|(" + actorStr[actorMax] + "\\s*,\\s*"+ actorStr[0]+")"
+        // _J._Doe_
+        // _Jon_M._Doe_
+        + "|(" + actorStr[0].substring(0,1) + "(" + ".|" + actorStr[0].substring(1) + ")\\s*\\w*.?\\s*"+ actorStr[actorMax]+")";
+    }
+    regEx = regEx + ")\\b.*";
+    return regEx;
   }
 
 }

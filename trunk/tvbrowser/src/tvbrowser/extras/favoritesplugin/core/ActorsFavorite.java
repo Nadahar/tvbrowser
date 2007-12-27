@@ -42,7 +42,6 @@ import devplugin.Channel;
 import devplugin.PluginManager;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
-import devplugin.ProgramSearcher;
 
 public class ActorsFavorite extends Favorite {
 
@@ -105,7 +104,7 @@ public class ActorsFavorite extends Favorite {
   protected Program[] internalSearchForPrograms(Channel[] channelArr) throws TvBrowserException {
     SearchFormSettings searchForm = mSearchFormSettings;
     ProgramFieldType[] fields = searchForm.getFieldTypes();
-    ProgramSearcher searcher = new ActorSearcher(mActors);
+    ActorSearcher searcher = new ActorSearcher(mActors);
     Program[] foundPrograms = searcher.search(fields, new devplugin.Date().addDays(-1), 1000, channelArr, false);
     return foundPrograms;
   }
