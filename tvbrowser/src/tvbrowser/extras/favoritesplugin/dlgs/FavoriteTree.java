@@ -127,8 +127,11 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
                         
             delete((FavoriteNode)getSelectionPath().getLastPathComponent());
             
+            if (n >= parent.getChildCount()) {
+              n--;
+            }
             if(n > 0) {
-              setSelectionPath(new TreePath(((FavoriteNode)parent.getChildAt(n-1)).getPath()));
+              setSelectionPath(new TreePath(((FavoriteNode)parent.getChildAt(n)).getPath()));
             } else {
               setSelectionPath(new TreePath(parent.getPath()));
             }
