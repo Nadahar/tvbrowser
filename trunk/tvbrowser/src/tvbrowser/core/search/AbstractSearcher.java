@@ -93,7 +93,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
       return false;
     }
 
-    /* Concatenate all all fields into one string and do the match */
+    /* Concatenate all fields into one string and do the match */
     StringBuffer buf = new StringBuffer();
 
     for (int i = 0; i < fieldArr.length; i++) {
