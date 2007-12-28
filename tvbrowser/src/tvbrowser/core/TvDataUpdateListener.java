@@ -26,7 +26,7 @@
 package tvbrowser.core;
 
 /**
- * A listener that listenes for TV update events.
+ * A listener that listens for TV update events.
  * 
  * @author Til Schneider, www.murfman.de
  */
