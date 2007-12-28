@@ -35,11 +35,25 @@ import util.exc.TvBrowserException;
  */
 public class ActorSearcher extends RegexSearcher {
 
+  private String mLastName;
+
   public ActorSearcher(String actor)
       throws TvBrowserException {
     super(getSearchTerm(actor), false);
+    String[] actorStr = actor.split("\\s");
+    mLastName = actorStr[actorStr.length-1].toLowerCase();
   }
   
+  @Override
+  protected boolean matches(String value) {
+    // the last name part _must_ occur in the string
+    // so don't use the regex at all, if we don't find that part
+    if (value.toLowerCase().indexOf(mLastName) < 0) {
+      return false;
+    }
+    return super.matches(value);
+  }
+
   private static String getSearchTerm(String actor) {
     if (actor == null) {
       return null;

@@ -96,18 +96,18 @@ public abstract class AbstractSearcher implements ProgramSearcher {
     /* Concatenate all fields into one string and do the match */
     StringBuffer buf = new StringBuffer();
 
-    for (int i = 0; i < fieldArr.length; i++) {
+    for (ProgramFieldType fieldType : fieldArr) {
       // Get the field value as String
       String value = null;
-      if (fieldArr[i] != null) {
-        if (fieldArr[i].getFormat() == ProgramFieldType.TEXT_FORMAT) {
-          value = prog.getTextField(fieldArr[i]);
+      if (fieldType != null) {
+        if (fieldType.getFormat() == ProgramFieldType.TEXT_FORMAT) {
+          value = prog.getTextField(fieldType);
         }
-        else if (fieldArr[i].getFormat() == ProgramFieldType.INT_FORMAT) {
-          value = prog.getIntFieldAsString(fieldArr[i]);
+        else if (fieldType.getFormat() == ProgramFieldType.INT_FORMAT) {
+          value = prog.getIntFieldAsString(fieldType);
         }
-        else if (fieldArr[i].getFormat() == ProgramFieldType.TIME_FORMAT) {
-          value = prog.getTimeFieldAsString(fieldArr[i]);
+        else if (fieldType.getFormat() == ProgramFieldType.TIME_FORMAT) {
+          value = prog.getTimeFieldAsString(fieldType);
         }
       }
 
@@ -119,15 +119,29 @@ public abstract class AbstractSearcher implements ProgramSearcher {
     /* Remove special characters */
     String s = buf.toString();
     
-    if(mReplaceSpCh)
+    if(mReplaceSpCh) {
       s = s.replaceAll("\\p{Punct}", ";");
-    s = s.replaceAll("\n", " ");
-    s = s.trim();
+    }
+
+    // remove line breaks. for performance, do this manually
+    int stringLength = s.length();
+    char[] arr = s.toCharArray();
+    StringBuffer res = new StringBuffer(stringLength);
+    for (int i = 0; i < stringLength; i++) {
+      if (arr[i] != '\n') {
+        res.append(arr[i]);
+      }
+      else {
+        res.append(' ');
+      }
+    }
+    s = res.toString().trim();
     
-    if(s.length() == 0)
+    if(s.length() == 0) {
       return false;
-    else
+    } else {
       return matches(s);
+    }
   }
   
   /**
