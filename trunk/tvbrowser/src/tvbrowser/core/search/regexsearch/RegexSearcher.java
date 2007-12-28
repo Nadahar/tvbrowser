@@ -41,6 +41,11 @@ public class RegexSearcher extends AbstractSearcher {
 
   /** The regex pattern. Is null if the pattern would match everything. */
   private Pattern mPattern;
+  /**
+   * the (non regex) search term to search first.
+   * only if this is found, the regex search is done
+   */
+  private String preFilter;
 
   /**
    * Creates a new instance of RegexSearcher.
@@ -69,6 +74,28 @@ public class RegexSearcher extends AbstractSearcher {
     } else {
       mPattern = createSearchPattern(regex, caseSensitive);      
     }
+  }
+
+  /**
+   * Creates a new instance of RegexSearcher.
+   * 
+   * @param regex
+   * @param caseSensitive
+   * @throws TvBrowserException If there is a syntax error in the regular expression.
+   */
+  public RegexSearcher(String regex, boolean caseSensitive, String searchTerm)
+    throws TvBrowserException
+  {
+    this(regex, caseSensitive);
+    // use largest word part for a first pass filter
+    String[] parts = searchTerm.split("\\s");
+    preFilter = parts[0];
+    for (int i = 1; i < parts.length; i++) {
+      if (parts[i].length() > preFilter.length()) {
+        preFilter = parts[i];
+      }
+    }
+    preFilter = preFilter.toLowerCase();
   }
 
   /**
@@ -154,6 +181,13 @@ public class RegexSearcher extends AbstractSearcher {
       // (This avoids that a pattern matches everything)
       return false;
     } else {
+      // first do a quick string search
+      if (preFilter != null) {
+        if (value.toLowerCase().indexOf(preFilter) < 0) {
+          return false;
+        }
+      }
+      // second step: regex search
       Matcher matcher = mPattern.matcher(value);
       return matcher.matches();
     }

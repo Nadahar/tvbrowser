@@ -168,12 +168,13 @@ public class PluginManagerImpl implements PluginManager {
   private Channel getChannelFromProgId(String progId) {
     String[] s = progId.split("_");    
     
-    if(s.length < 4)
+    if(s.length < 4) {
       return ChannelList.getChannel(null, null, null, s[0]);
-    else if(s.length == 4)      
+    } else if(s.length == 4) {
       return ChannelList.getChannel(s[0], s[1], null, s[2]);
-    else
+    } else {
       return ChannelList.getChannel(s[0], s[1], s[2], s[3]);
+    }
   }
 
   /**
@@ -300,11 +301,11 @@ public class PluginManagerImpl implements PluginManager {
     switch(type) {
       case SEARCHER_TYPE_EXACTLY: {
         String regex = RegexSearcher.searchTextToRegex(searchTerm, false);
-        return new RegexSearcher(regex, caseSensitive);
+        return new RegexSearcher(regex, caseSensitive, searchTerm);
       }
       case SEARCHER_TYPE_KEYWORD: {
         String regex = RegexSearcher.searchTextToRegex(searchTerm, true);
-        return new RegexSearcher(regex, caseSensitive);
+        return new RegexSearcher(regex, caseSensitive, searchTerm);
       }
       case SEARCHER_TYPE_REGULAR_EXPRESSION:
         return new RegexSearcher(searchTerm, caseSensitive);
@@ -775,13 +776,16 @@ public class PluginManagerImpl implements PluginManager {
     
     ArrayList<ProgramReceiveIf> receiveIfs = new ArrayList<ProgramReceiveIf>();
     
-    if(caller == null || caller.getId().compareTo(ReminderPluginProxy.getInstance().getId()) != 0)
+    if(caller == null || caller.getId().compareTo(ReminderPluginProxy.getInstance().getId()) != 0) {
       receiveIfs.add(ReminderPluginProxy.getInstance());
+    }
     
-    for(PluginAccess plugin : plugins)
+    for(PluginAccess plugin : plugins) {
       if((plugin.canReceivePrograms() || plugin.canReceiveProgramsWithTarget()) && plugin.getProgramReceiveTargets() != null && plugin.getProgramReceiveTargets().length > 0 &&
-          ((caller == null || plugin.getId().compareTo(caller.getId()) != 0) || (plugin.getId().compareTo(caller.getId()) == 0) && callerTarget != null && !(plugin.getProgramReceiveTargets().length == 1 && plugin.getProgramReceiveTargets()[0].equals(callerTarget))))
+          ((caller == null || plugin.getId().compareTo(caller.getId()) != 0) || (plugin.getId().compareTo(caller.getId()) == 0) && callerTarget != null && !(plugin.getProgramReceiveTargets().length == 1 && plugin.getProgramReceiveTargets()[0].equals(callerTarget)))) {
         receiveIfs.add(plugin);
+      }
+    }
     
     return receiveIfs.toArray(new ProgramReceiveIf[receiveIfs.size()]);
   }
@@ -799,9 +803,11 @@ public class PluginManagerImpl implements PluginManager {
   public ProgramReceiveIf getReceiceIfForId(String id) {
     ProgramReceiveIf[] receiveIfs = getReceiveIfs();
     
-    for(ProgramReceiveIf receiveIf : receiveIfs)
-      if(receiveIf.getId().compareTo(id) == 0)
+    for(ProgramReceiveIf receiveIf : receiveIfs) {
+      if(receiveIf.getId().compareTo(id) == 0) {
         return receiveIf;
+      }
+    }
     
     return null;
   }
@@ -813,8 +819,9 @@ public class PluginManagerImpl implements PluginManager {
    * @since 2.5
    */  
   public void scrollToProgram(Program program) {
-    if(program != null)
+    if(program != null) {
       MainFrame.getInstance().scrollToProgram(program);
+    }
   }
   
   /**
@@ -844,8 +851,9 @@ public class PluginManagerImpl implements PluginManager {
    * @since 2.5
    */
   public void goToDate(Date date) {
-    if(TvDataBase.getInstance().dataAvailable(date))
+    if(TvDataBase.getInstance().dataAvailable(date)) {
       MainFrame.getInstance().goTo(date);
+    }
   }
 
   /**
@@ -858,10 +866,11 @@ public class PluginManagerImpl implements PluginManager {
    * @since 2.5
    */
   public FilterManager getFilterManager() {
-    if(mTvBrowserStartFinished)
+    if(mTvBrowserStartFinished) {
       return FilterManagerImpl.getInstance();
-    else
+    } else {
       return null;
+    }
   }
   
   protected void handleTvBrowserStartFinished() {
