@@ -12,7 +12,8 @@ import java.util.Hashtable;
  */
 public class DuplicateChannelNameCounter {
 
-  Hashtable<String, Integer> mChannelnames = new Hashtable<String, Integer>();
+  Hashtable<String, Integer> mChannelNames = new Hashtable<String, Integer>();
+  Hashtable<String, Integer> mChannelCountryNames = new Hashtable<String, Integer>();
 
   /**
    * Construct the Counter
@@ -20,16 +21,29 @@ public class DuplicateChannelNameCounter {
    * @param channels use channels in this List
    */
   public DuplicateChannelNameCounter(Channel[] channels) {
-    mChannelnames = new Hashtable<String, Integer>();
+    mChannelNames = new Hashtable<String, Integer>();
 
     for (Channel ch:channels) {
-      Integer count = mChannelnames.get(ch.getName());
+      // names only
+      String key = ch.getName();
+      Integer count = mChannelNames.get(key);
 
       if (count == null) {
-        mChannelnames.put(ch.getName(), 0);
+        mChannelNames.put(key, 0);
       } else {
         count++;
-        mChannelnames.put(ch.getName(), count);
+        mChannelNames.put(key, count);
+      }
+      
+      // names and country
+      key = ch.getName()+ch.getCountry();
+      count = mChannelCountryNames.get(key);
+
+      if (count == null) {
+        mChannelCountryNames.put(key, 0);
+      } else {
+        count++;
+        mChannelCountryNames.put(key, count);
       }
     }
   }
@@ -43,7 +57,21 @@ public class DuplicateChannelNameCounter {
     if (channel == null) {
       return false;
     }
-    Integer count = mChannelnames.get(channel.getName());
+    Integer count = mChannelNames.get(channel.getName());
     return (count != null) && (count != 0);
   }
+
+  /**
+   * Check if a channel is a duplicate, including the country name
+   * @param channel Channel to check
+   * @return true, if name is a duplicate
+   */
+  public boolean isDuplicateIncludingCountry(Channel channel) {
+    if (channel == null) {
+      return false;
+    }
+    Integer count = mChannelCountryNames.get(channel.getName()+channel.getCountry());
+    return (count != null) && (count != 0);
+  }
+
 }

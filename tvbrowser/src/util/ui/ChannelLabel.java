@@ -48,6 +48,8 @@ public class ChannelLabel extends JLabel {
   private boolean mTextIsVisible;
   private boolean mShowDefaultValues;
   private boolean mShowCountry;
+
+  private boolean mShowService;
   
   /**
    * Creates the ChannelLabel
@@ -154,9 +156,19 @@ public class ChannelLabel extends JLabel {
     if (mTextIsVisible) {
       StringBuilder text = new StringBuilder(mShowDefaultValues ? ch.getDefaultName() : ch.getName());
 
-      if (mShowCountry) {
+      if (mShowCountry || mShowService) {
         text.append(" (");
+      }
+      if (mShowCountry) {
         text.append(ch.getCountry());
+      }
+      if (mShowService) {
+        if (mShowCountry) {
+          text.append(", ");
+        }
+        text.append(ch.getDataServiceProxy().getInfo().getName());
+      }
+      if (mShowCountry || mShowService) {
         text.append(")");
       }
 
@@ -222,5 +234,14 @@ public class ChannelLabel extends JLabel {
    */
   public void setShowCountry(boolean showCountry) {
     mShowCountry = showCountry;
+  }
+
+  /**
+   * Should the service name be added to the channel name ?
+   * @param showService add service name to channel name ?
+   * @since 2.6
+   */
+  public void setShowService(boolean showService) {
+    mShowService = showService;
   }
 }

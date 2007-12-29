@@ -38,7 +38,7 @@ import tvbrowser.core.ChannelList;
 
 /**
  * Creates a new Channellistrender.
- * If the Filter doesn't match, the Channel is disabeld
+ * If the Filter doesn't match, the Channel is disabled
  */
 public class FilteredChannelListCellRenderer extends DefaultListCellRenderer {
   /** Internal reused ChannelLabel */
@@ -65,6 +65,7 @@ public class FilteredChannelListCellRenderer extends DefaultListCellRenderer {
     }
 
     mChannel.setShowCountry(mChannelCounter.isDuplicate((Channel)value));
+    mChannel.setShowService(mChannelCounter.isDuplicateIncludingCountry((Channel)value));
 
     if (value instanceof Channel) {
       mChannel.setChannel((Channel) value);
