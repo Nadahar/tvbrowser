@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import tvdataservice.MutableChannelDayProgram;
+import util.io.BufferedRandomAccessFile;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Program;
@@ -101,16 +102,16 @@ public class OnDemandDayProgramFile {
     
     mTimeLimitationlData = !update;
 
-    RandomAccessFile dataFile = null;
+    BufferedRandomAccessFile dataFile = null;
     try {
-      dataFile = new RandomAccessFile(mFile, "rw");
+      dataFile = new BufferedRandomAccessFile(mFile, "rw");
 
       int version = dataFile.readInt();
 
       if (version < 2) {
         dataFile.close();
         updateToVersion2();
-        dataFile = new RandomAccessFile(mFile, "rw");
+        dataFile = new BufferedRandomAccessFile(mFile, "rw");
         int ver2 = dataFile.readInt();
 
         if (ver2 < 2) {
