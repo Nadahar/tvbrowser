@@ -113,8 +113,12 @@ public class RadioTimesDataService extends AbstractTvDataService {
       while ((line = reader.readLine()) != null) {
         String[] channel = line.split("\\|");
 
+        // format of a line in this file:
+        // 92|BBC1
         if (channel.length == 2) {
-          Channel ch = new Channel(this, channel[1], RADIOTIMES + channel[0], TimeZone.getTimeZone("GMT+0:00"), "gb",
+          String channelId = channel[0];
+          String channelName = channel[1];
+          Channel ch = new Channel(this, channelName, RADIOTIMES + channelId, TimeZone.getTimeZone("GMT+0:00"), "gb",
               "(c) Radio Times", "http://www.radiotimes.co.uk", mRadioTimesChannelGroup);
           channels.add(ch);
           mLog.fine("Channel : " + ch.getName() + "{" + ch.getId() + "}");
@@ -198,9 +202,9 @@ public class RadioTimesDataService extends AbstractTvDataService {
 
     TimeZone timeZone = TimeZone.getTimeZone("GMT+0:00");
     for (int i = 0; i < numChannels; i++) {
-    	Channel ch = new Channel(this, settings.getProperty("ChannelTitle-" + i, ""), settings.getProperty("ChannelId-"
-          + i, ""), timeZone, "gb", "(c) Radio Times", "http://www.radiotimes.co.uk",
-          mRadioTimesChannelGroup);
+    	String channelName = settings.getProperty("ChannelTitle-" + i, "");
+      String channelId = settings.getProperty("ChannelId-" + i, "");
+      Channel ch = new Channel(this, channelName, channelId, timeZone, "gb", "(c) Radio Times", "http://www.radiotimes.co.uk", mRadioTimesChannelGroup);
       mChannels.add(ch);
       mLog.fine("Channel : " + ch.getName() + "{" + ch.getId() + "}");
     }
