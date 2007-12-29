@@ -135,7 +135,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
         ServiceInformation serviceInfo = parser.getServiceInformationTable().getServiceInformation(i);
 
         Channel ch = new Channel(this, serviceInfo.getName(), serviceInfo.getServiceID(), TimeZone
-            .getTimeZone("GMT"), "gb", "(c) BBC", "http://bbc.co.uk", mBbcChannelGroup);
+            .getTimeZone("GMT"), "gb", "(c) BBC", getChannelUrl(serviceInfo.getName()), mBbcChannelGroup);
         channels.add(ch);
         mLog.fine("Channel : " + ch.getName() + '{' + ch.getId() + '}');
       }
@@ -147,13 +147,32 @@ public class BbcBackstageDataService extends AbstractTvDataService {
       return channels.toArray(new Channel[channels.size()]);
     } catch (TVAnytimeException tvae) {
       // Handle any other TVAnytime-specific exceptions that may be generated.
-      // E.g. if the XML parser cannot be initialised.
+      // E.g. if the XML parser cannot be initialized.
       throw new TvBrowserException(getClass(), "error.1", "Problems while Parsing the Data.", tvae);
 
     } catch (IOException ioe) {
       // Handle IOExceptions: things like missing file
       throw new TvBrowserException(getClass(), "error.2", "Problems while loading the Data.", ioe);
     }
+  }
+
+  private String getChannelUrl(String channelName) {
+    HashMap<String, String> urls = new HashMap<String, String>();
+    urls.put("BBC Radio 1","http://www.bbc.co.uk/radio1/");
+    urls.put("BBC Radio 2","http://www.bbc.co.uk/radio2/");
+    urls.put("BBC Radio 3","http://www.bbc.co.uk/radio3/");
+    urls.put("BBC Radio 4","http://www.bbc.co.uk/radio4/");
+    urls.put("BBC Radio 5 Live","http://www.bbc.co.uk/fivelive/");
+    urls.put("1Xtra","http://www.bbc.co.uk/1xtra/");
+    urls.put("BBC 6 Music","http://www.bbc.co.uk/6music/");
+    urls.put("BBC 7","http://www.bbc.co.uk/bbc7/");
+    urls.put("BBC Asian Network","http://www.bbc.co.uk/asiannetwork/");
+    urls.put("BBC World Service","http://www.bbc.co.uk/worldservice/");
+    String url = urls.get(channelName);
+    if (url != null) {
+      return url;
+    }
+    return "http://bbc.co.uk";
   }
 
   /*
@@ -213,8 +232,10 @@ public class BbcBackstageDataService extends AbstractTvDataService {
     mChannels = new ArrayList<Channel>();
     
     for (int i=0;i<numChannels;i++){
-      Channel ch = new Channel(this, settings.getProperty("ChannelTitle-"+i, ""), settings.getProperty("ChannelId-"+i, ""), TimeZone
-          .getTimeZone("GMT+0:00"), "gb", "(c) BBC", "http://bbc.co.uk", mBbcChannelGroup);
+      String channelName = settings.getProperty("ChannelTitle-"+i, "");
+      String channelId = settings.getProperty("ChannelId-"+i, "");
+      Channel ch = new Channel(this, channelName, channelId, TimeZone
+          .getTimeZone("GMT+0:00"), "gb", "(c) BBC", getChannelUrl(channelName), mBbcChannelGroup);
       mChannels.add(ch);
       mLog.fine("Channel : " + ch.getName() + '{' + ch.getId() + '}');
     }
