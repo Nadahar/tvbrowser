@@ -102,6 +102,7 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
 
       if(value instanceof Channel) {
         mChannel.setShowCountry(mChannelCounter.isDuplicate((Channel)value));
+        mChannel.setShowService(mChannelCounter.isDuplicateIncludingCountry((Channel)value));
       }
     }
 
