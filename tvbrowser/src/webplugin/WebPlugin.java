@@ -223,10 +223,6 @@ public class WebPlugin extends Plugin {
       createDefaultSettings();
     }
 
-    Action mainAction = new devplugin.ContextMenuAction();
-    mainAction.putValue(Action.NAME, mLocalizer.msg("contextMenu", "Web search"));
-    mainAction.putValue(Action.SMALL_ICON, createImageIcon("actions", "web-search", 16));
-
     ArrayList<Object> actionList = new ArrayList<Object>();
     listActors = null;
 
@@ -291,8 +287,23 @@ public class WebPlugin extends Plugin {
         e.printStackTrace();
       }
     }
+    
+    if (actionList.size() == 1) {
+      Object action = actionList.get(0);
+      if (action instanceof ActionMenu) {
+        return (ActionMenu) action;
+      }
+      else if (action instanceof Action) {
+        return new ActionMenu((Action)action);
+      }
+    }
+    
     Object[] actions = new Object[actionList.size()];
     actionList.toArray(actions);
+    Action mainAction = new devplugin.ContextMenuAction();
+    mainAction.putValue(Action.NAME, mLocalizer.msg("contextMenu", "Web search"));
+    mainAction.putValue(Action.SMALL_ICON, createImageIcon("actions", "web-search", 16));
+
     ActionMenu result = new ActionMenu(mainAction, actions);
 
     return result;
