@@ -701,12 +701,6 @@ public class FavoritesPlugin {
     if (exclusion != null) {
       if(exclusion instanceof Exclusion) {
         fav.addExclusion((Exclusion)exclusion);
-        try {
-          fav.refreshPrograms();
-          updateRootNode(true);
-        } catch (TvBrowserException exc) {
-          ErrorHandler.handle(mLocalizer.msg("couldNotUpdateFavorites","Could not update favorites."), exc);
-        }
       }
       else if(exclusion instanceof String && exclusion.equals("blacklist")) {
         fav.addToBlackList(program);

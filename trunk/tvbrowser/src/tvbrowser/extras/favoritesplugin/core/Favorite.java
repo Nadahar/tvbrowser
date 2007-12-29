@@ -40,6 +40,7 @@ import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.program.ProgramUtilities;
 
@@ -239,6 +240,13 @@ public abstract class Favorite {
 
   public void addExclusion(Exclusion exclusion) {
     mExclusionList.add(exclusion);
+    try {
+      refreshPrograms();
+      FavoritesPlugin.getInstance().updateRootNode(true);
+    } catch (TvBrowserException exc) {
+      ErrorHandler.handle("Could not update favorites.", exc);
+    }
+    updateManageDialog();
   }
 
   public void removeExclusion(Exclusion exclusion) {
@@ -350,7 +358,7 @@ public abstract class Favorite {
   }
   
   /**
-   * Checks all current programs if the are not excluded,
+   * Checks all current programs if they are not excluded,
    * and refreshes the program marks.
    * @throws TvBrowserException
    */
@@ -504,9 +512,7 @@ public abstract class Favorite {
       Collections.sort(mBlackList, ProgramUtilities.getProgramComparator());
       unmarkProgram(program);
       FavoritesPlugin.getInstance().updateRootNode(true);
-      
-      if(ManageFavoritesDialog.getInstance() != null)
-        ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
+      updateManageDialog();
     }
   }
   
@@ -520,10 +526,13 @@ public abstract class Favorite {
     if(mBlackList.remove(program)) {
       markProgram(program);
       FavoritesPlugin.getInstance().updateRootNode(true);
-      
-      if(ManageFavoritesDialog.getInstance() != null)
-        ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
+      updateManageDialog();
     }
+  }
+
+  private void updateManageDialog() {
+    if(ManageFavoritesDialog.getInstance() != null)
+      ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
   }
   
   /**
