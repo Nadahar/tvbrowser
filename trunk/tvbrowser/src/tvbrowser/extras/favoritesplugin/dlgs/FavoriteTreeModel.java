@@ -116,8 +116,9 @@ public class FavoriteTreeModel extends DefaultTreeModel {
     while(e.hasMoreElements()) {
       FavoriteNode child = e.nextElement();
       
-      if(child.isDirectoryNode())
+      if(child.isDirectoryNode()) {
         reload(child);
+      }
     }
   }
 
@@ -129,16 +130,18 @@ public class FavoriteTreeModel extends DefaultTreeModel {
     while(e.hasMoreElements()) {
       FavoriteNode child = e.nextElement();
 
-      if(child.isDirectoryNode())
+      if(child.isDirectoryNode()) {
         reload(tree, child);
+      }
     }
 
     FavoriteNode parent = (FavoriteNode)node;
 
-    if(parent.wasExpanded())
+    if(parent.wasExpanded()) {
       tree.expandPath(new TreePath((tree.getModel()).getPathToRoot(node)));
-    else
+    } else {
       tree.collapsePath(new TreePath((tree.getModel()).getPathToRoot(node)));
+    }
   }
 
 
@@ -402,7 +405,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
     }
   }
 
-   /** Calculates the number of programs containded in the childs
+   /** Calculates the number of programs contained in the children
    *
    * @param node
    *          use this Node
@@ -411,11 +414,12 @@ public class FavoriteTreeModel extends DefaultTreeModel {
   public static int[] getProgramsCount(FavoriteNode node) {
     int[] count = new int[2];
 
+    Date currentDate = Date.getCurrentDate();
     if(node.containsFavorite()) {
-      count[0] = node.getFavorite().getWhiteListPrograms().length;
-
-      for(Program p : node.getFavorite().getWhiteListPrograms()) {
-        if(p.getDate().equals(Date.getCurrentDate())) {
+      Program[] whiteListPrograms = node.getFavorite().getWhiteListPrograms();
+      count[0] = whiteListPrograms.length;
+      for(Program p : whiteListPrograms) {
+        if(p.getDate().equals(currentDate)) {
           count[1]++;
         }
       }
@@ -424,10 +428,11 @@ public class FavoriteTreeModel extends DefaultTreeModel {
     for (int i = 0; i < node.getChildCount(); i++) {
       FavoriteNode child = (FavoriteNode)node.getChildAt(i);
       if (child.containsFavorite()) {
-        count[0] += child.getFavorite().getWhiteListPrograms().length;
+        Program[] whiteListPrograms = child.getFavorite().getWhiteListPrograms();
+        count[0] += whiteListPrograms.length;
 
-        for(Program p : child.getFavorite().getWhiteListPrograms()) {
-          if(p.getDate().equals(Date.getCurrentDate())) {
+        for(Program p : whiteListPrograms) {
+          if(p.getDate().equals(currentDate)) {
             count[1]++;
           }
         }
@@ -441,7 +446,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
   }
 
   /**
-   * Sorts the path from the given node to all leafs alpabetically.
+   * Sorts the path from the given node to all leafs alphabetically.
    *
    * @param node The node to sort from.
    * @param start If this is called with the root sort node.
