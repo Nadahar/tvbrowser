@@ -148,6 +148,7 @@ public class MarkedProgramsList {
     
     Iterator<MutableProgram> it = mMarkedPrograms.iterator();
 
+    long currentDateValue = Date.getCurrentDate().getValue();
     while(i < n) {
       if(k >= mMarkedPrograms.size()) {
         break;
@@ -158,12 +159,12 @@ public class MarkedProgramsList {
         k++;
         continue;
       }
-      long value1 = (p.getDate().getValue() - Date.getCurrentDate().getValue()) * 24 * 60 + p.getStartTime();
+      long value1 = (p.getDate().getValue() - currentDateValue) * 24 * 60 + p.getStartTime();
       boolean found = false;
 
       for(int j = 0; j < programs.size(); j++) {
         Program p1 = programs.get(j);
-        long value2 = (p1.getDate().getValue() - Date.getCurrentDate().getValue()) * 24 * 60 + p1.getStartTime();
+        long value2 = (p1.getDate().getValue() - currentDateValue) * 24 * 60 + p1.getStartTime();
 
         if(value2 > value1) {
           programs.add(j,p);
@@ -187,14 +188,14 @@ public class MarkedProgramsList {
         continue;
       }
 
-      long valueNew = (p.getDate().getValue() - Date.getCurrentDate().getValue()) * 24 * 60 + p.getStartTime();
+      long valueNew = (p.getDate().getValue() - currentDateValue) * 24 * 60 + p.getStartTime();
       Program p1 = programs.get(programs.size() - 1);
 
-      long valueOld = (p1.getDate().getValue() - Date.getCurrentDate().getValue()) * 24 * 60 + p1.getStartTime();
+      long valueOld = (p1.getDate().getValue() - currentDateValue) * 24 * 60 + p1.getStartTime();
       if(valueOld > valueNew) {
         for(int j = 0; j < programs.size(); j++) {
           p1 = programs.get(j);
-          valueOld = (p1.getDate().getValue() - Date.getCurrentDate().getValue()) * 24 * 60 + p1.getStartTime();
+          valueOld = (p1.getDate().getValue() - currentDateValue) * 24 * 60 + p1.getStartTime();
 
           if(valueOld > valueNew) {
             programs.add(j,p);
