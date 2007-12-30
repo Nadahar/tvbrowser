@@ -360,8 +360,9 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
     Vector<Date> dates = new Vector<Date>();
 
+    Date currentDate = Date.getCurrentDate();
     for (int i = 0; i < 14; i++) {
-      dates.add(Date.getCurrentDate().addDays(i));
+      dates.add(currentDate.addDays(i));
     }
     
     mDate = new JComboBox(dates);

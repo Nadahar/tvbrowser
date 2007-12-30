@@ -206,9 +206,10 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
         / 2 - 1 + menuItem.getFont().getSize();
     if (mShowDate) {
       g.setFont(menuItem.getFont().deriveFont(Font.BOLD));
-      if (Date.getCurrentDate().equals(mProgram.getDate()))
+      Date currentDate = Date.getCurrentDate();
+      if (currentDate.equals(mProgram.getDate()))
         g.drawString(mLocalizer.msg("today", "today"), x, y);
-      else if (Date.getCurrentDate().addDays(1).equals(mProgram.getDate()))
+      else if (currentDate.addDays(1).equals(mProgram.getDate()))
         g.drawString(mLocalizer.msg("tomorrow", "tomorrow"), x, y);
       else
         g.drawString(mProgram.getDateString(), x, y);

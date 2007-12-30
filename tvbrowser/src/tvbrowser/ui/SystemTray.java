@@ -349,9 +349,10 @@ public class SystemTray {
       /*
        * Search through all channels.
        */
+      Date currentDate = Date.getCurrentDate();
       for (Channel channel : channels) {
         ChannelDayProgram today = TvDataBase.getInstance().getDayProgram(
-            Date.getCurrentDate(), channel);
+            currentDate, channel);
 
         if (today != null && today.getProgramCount() > 0)
           for (int j = 0; j < today.getProgramCount(); j++) {
@@ -360,7 +361,7 @@ public class SystemTray {
                     .getMinutesAfterMidnight()) {
               ChannelDayProgram yesterday = TvDataBase
                   .getInstance()
-                  .getDayProgram(Date.getCurrentDate().addDays(-1), channel);
+                  .getDayProgram(currentDate.addDays(-1), channel);
 
               if (yesterday != null && yesterday.getProgramCount() > 0) {
                 Program p = yesterday
@@ -384,7 +385,7 @@ public class SystemTray {
                 addToNext(p1, nextPrograms, nextAdditionalPrograms);
               } else {
                 ChannelDayProgram tomorrow = TvDataBase.getInstance()
-                    .getDayProgram(Date.getCurrentDate().addDays(1),
+                    .getDayProgram(currentDate.addDays(1),
                         channel);
 
                 if (tomorrow != null && tomorrow.getProgramCount() > 0) {
@@ -639,6 +640,7 @@ public class SystemTray {
       for (int i = 0; i < Settings.propTraySpecialChannels.getChannelArray().length; i++)
         programs.add(i, null);
 
+      Date currentDate = Date.getCurrentDate();
       for (Channel ch : c) {
         Iterator<Program> it = null;
         int day = 0;
@@ -646,7 +648,7 @@ public class SystemTray {
         try {
           it = TvDataBase.getInstance()
               .getDayProgram(
-                  Date.getCurrentDate().addDays(
+                  currentDate.addDays(
                       (time < IOUtilities.getMinutesAfterMidnight() ? ++day : day)),
                   ch).getPrograms();
         } catch (Exception ee) {}
@@ -673,7 +675,7 @@ public class SystemTray {
             try {
               ChannelDayProgram dayProg = TvDataBase.getInstance()
                   .getDayProgram(
-                      Date.getCurrentDate(),
+                      currentDate,
                       ch);
               p = dayProg.getProgramAt(dayProg.getProgramCount() - 1);
               

@@ -301,9 +301,10 @@ public class FavoriteTreeModel extends DefaultTreeModel {
     Date d = p.getDate();
     String progdate;
 
-    if (d.equals(Date.getCurrentDate())) {
+    Date currentDate = Date.getCurrentDate();
+    if (d.equals(currentDate)) {
       progdate = mLocalizer.msg("today", "today");
-    } else if (d.equals(Date.getCurrentDate().addDays(1))) {
+    } else if (d.equals(currentDate.addDays(1))) {
       progdate = mLocalizer.msg("tomorrow", "tomorrow");
     } else {
       progdate = p.getDateString();

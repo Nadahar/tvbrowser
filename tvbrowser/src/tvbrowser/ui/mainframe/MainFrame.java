@@ -1104,8 +1104,9 @@ public class MainFrame extends JFrame implements DateListener {
     
     Arrays.fill(mOnAirRowProgramsArr, -1);
     
+    Date currentDate = Date.getCurrentDate();
     for(int i = 0; i < ch.length; i++) {
-      ChannelDayProgram chProg = TvDataBase.getInstance().getDayProgram(Date.getCurrentDate(),ch[i]);
+      ChannelDayProgram chProg = TvDataBase.getInstance().getDayProgram(currentDate,ch[i]);
      
       if(chProg == null) {
         mChannelDateArr[i] = null;
@@ -1117,20 +1118,20 @@ public class MainFrame extends JFrame implements DateListener {
           if(p.isOnAir() || !p.isExpired()) {
             p.validateMarking();
             mOnAirRowProgramsArr[i] = j;
-            mChannelDateArr[i] = Date.getCurrentDate();
+            mChannelDateArr[i] = currentDate;
             break;
           }
         }
     
         if(mOnAirRowProgramsArr[i] == -1) {
-          chProg = TvDataBase.getInstance().getDayProgram(Date.getCurrentDate().addDays(1),ch[i]);
+          chProg = TvDataBase.getInstance().getDayProgram(currentDate.addDays(1),ch[i]);
       
           if(chProg != null && chProg.getProgramCount() > 0 && chProg.getProgramAt(0).isOnAir()) {
             chProg.getProgramAt(0).validateMarking();
             mOnAirRowProgramsArr[i] = 0;
           }
         
-          mChannelDateArr[i] = Date.getCurrentDate().addDays(1);
+          mChannelDateArr[i] = currentDate.addDays(1);
         }
       }
     }

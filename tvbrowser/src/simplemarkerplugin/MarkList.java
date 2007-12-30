@@ -307,9 +307,10 @@ public class MarkList extends Vector<Program> {
             Date progDate = p.getDate();
             String progdate;
 
-            if (progDate.equals(Date.getCurrentDate()))
+            Date currentDate = Date.getCurrentDate();
+            if (progDate.equals(currentDate))
               progdate = SimpleMarkerPlugin.mLocalizer.msg("today", "today");
-            else if (progDate.equals(Date.getCurrentDate().addDays(1)))
+            else if (progDate.equals(currentDate.addDays(1)))
               progdate = SimpleMarkerPlugin.mLocalizer.msg("tomorrow",
                   "tomorrow");
             else

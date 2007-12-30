@@ -245,9 +245,10 @@ public class TvDataBase {
   public synchronized void reCalculateTvData(int days) {
     Channel[] channels = ChannelList.getSubscribedChannels();
 
+    Date currentDate = Date.getCurrentDate();
     for (Channel channel : channels) {
       for (int i = 0; i < days; i++) {
-        correctDayProgramFile(Date.getCurrentDate().addDays(i), channel);
+        correctDayProgramFile(currentDate.addDays(i), channel);
       }
     }
     
