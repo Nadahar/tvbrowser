@@ -51,7 +51,9 @@ import java.awt.event.ComponentEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -579,6 +581,9 @@ public class TVRaterPlugin extends devplugin.Plugin {
       PluginTreeNode favoritesNode = mRootNode.addNode(mLocalizer.msg("unratedFavorites", "Unrated favorites"));
       favoritesNode.setGroupingByDateEnabled(false);
       Program[] programs = getPluginManager().getMarkedPrograms();
+      
+      // search all unrated favorites
+      List<Program> unratedFavs = new ArrayList<Program>();
       for (int progIndex = 0; progIndex < programs.length; progIndex++) {
         Program program = programs[progIndex];
         if (program.isExpired()) {
@@ -586,13 +591,14 @@ public class TVRaterPlugin extends devplugin.Plugin {
           for (int markerIndex = 0; markerIndex < markers.length; markerIndex++) {
             if (markers[markerIndex].getId().equalsIgnoreCase(FAVORITES_PLUGIN_ID)) {
               if (getPersonalRating(program) == null) {
-                favoritesNode.addProgram(program);
+                unratedFavs.add(program);
               }
               break;
             }
           }
         }
       }
+      favoritesNode.addPrograms(unratedFavs);
       mRootNode.update();
     }
 
