@@ -436,6 +436,10 @@
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/RadioTimesDataService.jar" compress="false"> 	 
             <fileset dir="${classes.dir}" includes="radiotimesdataservice/**" /> 	 
     </jar>  	
+      <!-- Pack Dreambox data service -->
+      <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/DreamboxDataService.jar" compress="false">
+              <fileset dir="${classes.dir}" includes="dreamboxdataservice/**" /> 	 
+      </jar>
 
     <!-- Copy the other stuff -->
     <echo message="Copying the images and all the other stuff ..."/>
