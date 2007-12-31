@@ -428,13 +428,13 @@ public class MutableProgram implements Program {
    * Gets whether this program is expired.
    */
   public boolean isExpired() {
-    devplugin.Date today=new devplugin.Date();
+    devplugin.Date today = Date.getCurrentDate();
 
-
-    if (today.compareTo(getDate()) < 0) {
+    int comp = today.compareTo(getDate());
+    if (comp < 0) {
       return false;
     }
-    if (today.compareTo(getDate()) > 0) {
+    if (comp > 0) {
       return ! isOnAir();
     }
 
