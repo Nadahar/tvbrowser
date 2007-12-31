@@ -590,7 +590,10 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
    */
   private void repaintCell(Point cellIndex) {
     if ((cellIndex.x >= 0 || cellIndex.y >= 0) && cellIndex.x < mModel.getColumnCount()) {
-      repaint(getCellRect(cellIndex.x, cellIndex.y));
+      Rectangle cellRect = getCellRect(cellIndex.x, cellIndex.y);
+      if (cellRect != null) {
+        repaint(cellRect);
+      }
     }
   }
 
