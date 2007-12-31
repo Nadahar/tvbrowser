@@ -245,6 +245,7 @@ public class PluginTreeNode {
 
     PluginTreeNode[] items = mChildNodes.toArray(new PluginTreeNode[mChildNodes.size()]);
     Arrays.sort(items, sPluginTreeNodeComparator);
+    Date currentDate = null;
     for (int i=0; i<items.length; i++) {
       PluginTreeNode n = items[i];
       if (!n.isLeaf()) {
@@ -261,8 +262,11 @@ public class PluginTreeNode {
           ProgramItem progItem = (ProgramItem)n.getUserObject();
           Node node = new Node(progItem);
           node.setNodeFormatter(n.getNodeFormatter());
-        
-          if(progItem.getProgram().getDate().addDays(1).compareTo(Date.getCurrentDate()) >= 0)
+          
+          if (currentDate == null) {
+            currentDate = Date.getCurrentDate();
+          }
+          if(progItem.getProgram().getDate().addDays(1).compareTo(currentDate) >= 0)
             mDefaultNode.add(node);
         }
         else {
