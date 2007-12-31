@@ -1,5 +1,6 @@
 /*
- * CapturePlugin by Andreas Hessel (Vidrec@gmx.de), Bodo Tasche
+ * TV-Browser
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,9 +19,10 @@
  * CVS information:
  *  $RCSfile$
  *   $Source$
- *     $Date: 2007-01-03 09:06:40 +0100 (Mi, 03 Jan 2007) $
+ *     $Date: 2007-09-20 23:45:38 +0200 (Do, 20 Sep 2007) $
  *   $Author: bananeweizen $
- * $Revision: 2979 $
+ * $Revision: 3894 $
+ * Revision: 2979 $
  */
 package dreamboxdataservice;
 
