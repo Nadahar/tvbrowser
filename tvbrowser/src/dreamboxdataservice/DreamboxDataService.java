@@ -203,7 +203,6 @@ public class DreamboxDataService extends AbstractTvDataService {
 
             if (bouquets != null) {
                 for (String key : bouquets.keySet()) {
-                    String bouqetName = bouquets.get(key);
                     TreeMap<String, String> map = getServiceData(URLEncoder.encode(key, "UTF8"));
 
                     for (String mkey : map.keySet()) {
