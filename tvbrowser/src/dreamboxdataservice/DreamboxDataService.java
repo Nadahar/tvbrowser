@@ -1,3 +1,28 @@
+/*
+ * TV-Browser
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date: 2007-09-20 23:45:38 +0200 (Do, 20 Sep 2007) $
+ *   $Author: bananeweizen $
+ * $Revision: 3894 $
+ */
 package dreamboxdataservice;
 
 import devplugin.*;
@@ -154,7 +179,7 @@ public class DreamboxDataService extends AbstractTvDataService {
 
 
     public static Version getVersion() {
-        return new Version(0, 6);
+        return new Version(0, 6, 1);
     }
 
     /*
@@ -176,14 +201,16 @@ public class DreamboxDataService extends AbstractTvDataService {
 
             TreeMap<String, String> bouquets = getServiceDataBonquets(URLEncoder.encode(BOUQUETLIST, "UTF8"));
 
-            for (String key : bouquets.keySet()) {
-                String bouqetName = bouquets.get(key);
-                TreeMap<String, String> map = getServiceData(URLEncoder.encode(key, "UTF8"));
+            if (bouquets != null) {
+                for (String key : bouquets.keySet()) {
+                    String bouqetName = bouquets.get(key);
+                    TreeMap<String, String> map = getServiceData(URLEncoder.encode(key, "UTF8"));
 
-                for (String mkey : map.keySet()) {
-                    Channel ch = new Channel(this, map.get(mkey), "DREAM" + mkey.replaceAll(":", "_"), TimeZone.getTimeZone("GMT+1:00"), "de",
-                            "Imported from Dreambox", "", mChannelGroup, null, Channel.CATEGORY_TV);
-                    allChannels.add(ch);
+                    for (String mkey : map.keySet()) {
+                        Channel ch = new Channel(this, map.get(mkey), "DREAM" + mkey.replaceAll(":", "_"), TimeZone.getTimeZone("GMT+1:00"), "de",
+                                "Imported from Dreambox", "", mChannelGroup, null, Channel.CATEGORY_TV);
+                        allChannels.add(ch);
+                    }
                 }
             }
 
@@ -192,7 +219,7 @@ public class DreamboxDataService extends AbstractTvDataService {
             e.printStackTrace();
         }
 
-        return null;
+        return new ArrayList<Channel>();
     }
 
     /**
