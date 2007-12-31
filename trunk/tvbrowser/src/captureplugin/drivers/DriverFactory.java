@@ -73,9 +73,9 @@ public class DriverFactory {
                 if (driver != null)
                     drivers.add(driver);
 
-            /*    driver = (DriverIf) this.getClass().getClassLoader().loadClass("captureplugin.drivers.thetubedriver.TheTubeDriver").newInstance();
+                driver = (DriverIf) this.getClass().getClassLoader().loadClass("captureplugin.drivers.thetubedriver.TheTubeDriver").newInstance();
                 if (driver != null)
-                    drivers.add(driver); */
+                    drivers.add(driver);
             } catch (Exception e) {
                 e.printStackTrace();
             }
