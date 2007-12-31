@@ -39,7 +39,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Collection;
-import java.text.SimpleDateFormat;
 
 public class DreamboxChannelHandler extends DefaultHandler {
     StringBuffer mCharacters = new StringBuffer();
