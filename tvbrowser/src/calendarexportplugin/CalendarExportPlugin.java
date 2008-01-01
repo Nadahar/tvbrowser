@@ -54,7 +54,7 @@ import java.util.Properties;
  * @author bodo
  */
 public class CalendarExportPlugin extends Plugin {
-  private static final Version mVersion = new Version(2,61);
+  private static final Version mVersion = new Version(2,62);
   
     /**
      * Translator
