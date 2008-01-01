@@ -30,6 +30,7 @@ import javax.swing.JOptionPane;
 
 import calendarexportplugin.CalendarExportPlugin;
 import calendarexportplugin.utils.VCalFile;
+import calendarexportplugin.utils.CalendarToolbox;
 
 import util.program.AbstractPluginProgramFormating;
 import util.ui.ExtensionFileFilter;
@@ -65,7 +66,7 @@ public class VCalExporter extends AbstractExporter {
   public boolean exportPrograms(Program[] programs, Properties settings, AbstractPluginProgramFormating formating) {
     mSavePath = settings.getProperty(SAVE_PATH);
     
-    File file = chooseFile();
+    File file = chooseFile(programs);
     
     if (file == null) {
       return false;
@@ -93,23 +94,39 @@ public class VCalExporter extends AbstractExporter {
    * Shows a Filechooser for vCal Files.
    * 
    * @return selected File
+   * @param programs programs that are exported
    */
-  private File chooseFile() {
+  private File chooseFile(Program[] programs) {
     JFileChooser select = new JFileChooser();
 
     ExtensionFileFilter vCal = new ExtensionFileFilter("vcs", "vCal (*.vcs)");
     select.addChoosableFileFilter(vCal);
+    String ext= ".ics";
 
     if (mSavePath != null) {
       select.setSelectedFile(new File(mSavePath));
       select.setFileFilter(vCal);
     }
 
+    // check if all programs have same title. if so, use as filename
+    String fileName = programs[0].getTitle();
+    for (int i=1; i<programs.length;i++) {
+      if (! programs[i].getTitle().equals(fileName)) {
+          fileName="";
+      }
+    }
+
+    fileName = CalendarToolbox.cleanFilename(fileName);
+
+    if (!fileName.equals("")) {
+      if (mSavePath == null)
+          mSavePath = "";
+      select.setSelectedFile(new File((new File(mSavePath).getParent()) + File.separator + fileName + ext));
+    }
+
     if (select.showSaveDialog(CalendarExportPlugin.getInstance().getBestParentFrame()) == JFileChooser.APPROVE_OPTION) {
 
       String filename = select.getSelectedFile().getAbsolutePath();
-
-      String ext= ".vcs";
 
       if (!filename.toLowerCase().endsWith(ext)) {
 

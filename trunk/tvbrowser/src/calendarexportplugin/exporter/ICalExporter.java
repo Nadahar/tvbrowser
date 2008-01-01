@@ -24,6 +24,7 @@ package calendarexportplugin.exporter;
 
 import calendarexportplugin.CalendarExportPlugin;
 import calendarexportplugin.utils.ICalFile;
+import calendarexportplugin.utils.CalendarToolbox;
 import devplugin.Program;
 import util.program.AbstractPluginProgramFormating;
 import util.ui.ExtensionFileFilter;
@@ -112,7 +113,9 @@ public class ICalExporter extends AbstractExporter {
     	  fileName="";
       }
     }
-    
+
+    fileName = CalendarToolbox.cleanFilename(fileName);
+
     if (!fileName.equals("")) {
         if (mSavePath == null)
             mSavePath = "";

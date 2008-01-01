@@ -67,5 +67,16 @@ public class CalendarToolbox {
 
     return cal;
   }
-  
+
+  /**
+   * Remove special Chars from Filename
+   *
+   * @param fileName Filename to celan
+   * @return cleaned Filename
+   * @since 2.62
+   *
+   */
+  public static String cleanFilename(String fileName) {
+    return fileName.replaceAll("[^A-z0-9ŠšŸ\\s]*", "");
+  }
 }
