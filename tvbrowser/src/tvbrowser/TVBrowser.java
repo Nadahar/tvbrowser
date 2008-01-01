@@ -386,6 +386,8 @@ public class TVBrowser {
               public void run() {
                 GlobalPluginProgramFormatingManager.getInstance();
                 PluginProxyManager.getInstance().fireTvBrowserStartFinished();
+                TvDataServiceProxyManager.getInstance().fireTvBrowserStartFinished();
+                  
                 ReminderPlugin.getInstance().handleTvBrowserStartFinished();
                 FavoritesPlugin.getInstance().handleTvBrowserStartFinished();
                 mainFrame.handleTvBrowserStartFinished();
@@ -629,7 +631,8 @@ public class TVBrowser {
   private static void initUi(Splash splash, boolean startMinimized) {
     mainFrame=MainFrame.getInstance();
     PluginProxyManager.getInstance().setParentFrame(mainFrame);
-    
+    TvDataServiceProxyManager.getInstance().setParamFrame(mainFrame);
+
     mainFrame.addComponentListener(new ComponentAdapter() {
       public void componentShown(ComponentEvent e) {
         if (!Settings.propIsUsingFullscreen.getBoolean()) {

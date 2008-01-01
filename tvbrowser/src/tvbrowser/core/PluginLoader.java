@@ -214,10 +214,6 @@ public class PluginLoader {
         TvDataServiceProxy proxy = new DefaultTvDataServiceProxy((devplugin.AbstractTvDataService)plugin);
         TvDataServiceProxyManager.getInstance().registerTvDataService(proxy);
       }
-      else if (plugin instanceof devplugin.TvDataService) {
-        TvDataServiceProxy proxy = new DefaultTvDataServiceProxy((devplugin.TvDataService)plugin);
-        TvDataServiceProxyManager.getInstance().registerTvDataService(proxy);
-      }
       else if (plugin instanceof TvDataService) {
         TvDataServiceProxy proxy = new DeprecatedTvDataServiceProxy((TvDataService)plugin);
         TvDataServiceProxyManager.getInstance().registerTvDataService(proxy);

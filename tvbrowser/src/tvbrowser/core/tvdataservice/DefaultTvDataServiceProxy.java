@@ -28,6 +28,7 @@ package tvbrowser.core.tvdataservice;
 
 import java.io.File;
 import java.util.Properties;
+import java.awt.*;
 
 import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
@@ -41,9 +42,9 @@ import devplugin.ProgressMonitor;
 
 public class DefaultTvDataServiceProxy extends AbstractTvDataServiceProxy {
 
-  public devplugin.TvDataService mTvDataService;
+  public devplugin.AbstractTvDataService mTvDataService;
 
-  public DefaultTvDataServiceProxy(devplugin.TvDataService service) {
+  public DefaultTvDataServiceProxy(devplugin.AbstractTvDataService service) {
     mTvDataService = service;
   }
 
@@ -102,5 +103,37 @@ public class DefaultTvDataServiceProxy extends AbstractTvDataServiceProxy {
 
   public String getId() {
     return mTvDataService.getClass().getName();
+  }
+
+
+  /**
+   * Called by the host-application to provide the parent frame.
+   *
+   * @param parent The parent frame.
+   * @since 2.7
+   */
+  final public void setParent(Frame parent) {
+    mTvDataService.setParent(parent);
+  }
+
+
+  /**
+   * Gets the parent frame.
+   * <p>
+   * The parent frame may be used for showing dialogs.
+   *
+   * @return The parent frame.
+   * @since 2.7
+   */
+  final public Frame getParentFrame() {
+    return mTvDataService.getParentFrame();
+  }
+
+  /**
+   * This method is called when the TV-Browser start is complete.
+   * @since 2.7
+   */
+  public void handleTvBrowserStartFinished() {
+    mTvDataService.handleTvBrowserStartFinished();
   }
 }

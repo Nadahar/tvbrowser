@@ -28,6 +28,7 @@ package tvbrowser.core.tvdataservice;
 
 import java.io.File;
 import java.util.Properties;
+import java.awt.*;
 
 import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
@@ -137,4 +138,28 @@ public interface TvDataServiceProxy {
    */
   public String getId();
 
+  /**
+   * Called by the host-application to provide the parent frame.
+   *
+   * @param parent The parent frame.
+   * @since 2.7
+   */
+  public void setParent(Frame parent);
+
+
+  /**
+   * Gets the parent frame.
+   * <p>
+   * The parent frame may be used for showing dialogs.
+   *
+   * @return The parent frame.
+   * @since 2.7
+   */
+  public Frame getParentFrame();
+
+  /**
+   * This method is called when the TV-Browser start is complete.
+   * @since 2.7
+   */
+  public void handleTvBrowserStartFinished();
 }
