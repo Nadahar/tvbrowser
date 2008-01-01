@@ -282,7 +282,7 @@ public class PluginLoader {
   /**
    * Saves the information of a plugin to disk, so it does not need to be loaded next time
    * @param pluginFile full plugin file name
-   * @param javaplugin proxy of the plugin
+   * @param proxy proxy of the plugin
    */
   private void saveProxyInfo(File pluginFile, JavaPluginProxy proxy) {
     try {
