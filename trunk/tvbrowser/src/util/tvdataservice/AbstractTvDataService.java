@@ -34,6 +34,7 @@ import tvdataservice.TvDataService;
  * 
  * 
  * @author Til Schneider, www.murfman.de
+ * @deprecated Please use <code>util.AbstractTvDataService</code>
  */
 public abstract class AbstractTvDataService implements TvDataService {
 

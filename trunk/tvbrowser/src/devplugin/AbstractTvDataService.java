@@ -28,12 +28,16 @@ package devplugin;
 
 import util.exc.TvBrowserException;
 
+import java.awt.*;
+
 /**
  * Superclass for all TvDataServices.
  * <p>
  * Extend this class to provide your own TvDataService.
  */
 public abstract class AbstractTvDataService implements devplugin.TvDataService, tvdataservice.TvDataService {
+    /** The parent frame. May be used for dialogs. */
+    private Frame mParentFrame;
 
   /**
    * The plugin manager. It's the connection to TV-Browser.
@@ -87,5 +91,37 @@ public abstract class AbstractTvDataService implements devplugin.TvDataService, 
    */
   public static Version getVersion() {
     return new Version(0,0);
+  }
+
+
+  /**
+   * Called by the host-application to provide the parent frame.
+   *
+   * @param parent The parent frame.
+   * @since 2.7
+   */
+  final public void setParent(Frame parent) {
+    mParentFrame = parent;
+  }
+
+
+  /**
+   * Gets the parent frame.
+   * <p>
+   * The parent frame may be used for showing dialogs.
+   *
+   * @return The parent frame.
+   * @since 2.7
+   */
+  final public Frame getParentFrame() {
+    return mParentFrame;
+  }
+
+  /**
+   * This method is called when the TV-Browser start is complete.
+   * @since 2.7
+   */
+  public void handleTvBrowserStartFinished() {
+
   }
 }

@@ -38,7 +38,10 @@ import devplugin.AbstractTvDataService;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginManagerImpl;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
+
+import javax.swing.*;
 
 
 /**
@@ -200,4 +203,22 @@ public class TvDataServiceProxyManager {
     return mProxyList.toArray(new TvDataServiceProxy[mProxyList.size()]);
   }
 
+  /**
+   * Set the Parent-Frame for all Dataservices
+   * @param frame Parentframe
+   */
+  public void setParamFrame(JFrame frame) {
+      TvDataServiceProxy[] services = getDataServices();
+      for (TvDataServiceProxy proxy : services) {
+        proxy.setParent(frame);
+      }
+
+  }
+
+  public void fireTvBrowserStartFinished() {
+    TvDataServiceProxy[] services = getDataServices();
+    for (TvDataServiceProxy proxy : services) {
+        proxy.handleTvBrowserStartFinished();    
+    }
+  }
 }
