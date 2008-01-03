@@ -49,7 +49,7 @@ import devplugin.Version;
  */
 public class GenrePlugin extends Plugin {
 
-  private static final int MAX_DAYS = 1;
+  private static final int MAX_DAYS = 14;
 
   /**
    * plugin version
@@ -220,6 +220,7 @@ public class GenrePlugin extends Plugin {
 
   @Override
   public Properties storeSettings() {
+    saveSettings(hiddenGenres.toArray());
     return mSettings;
   }
 
@@ -227,7 +228,7 @@ public class GenrePlugin extends Plugin {
     hiddenGenres.add(genre);
   }
 
-  private void getFilterFromSettings() {
+  protected void getFilterFromSettings() {
     int filterCount = Integer.parseInt(mSettings.getProperty(FILTERED_GENRES_COUNT, "0"));
     for (int i = 0; i<filterCount; i++) {
       hiddenGenres.add(mSettings.getProperty(FILTERED_GENRE+String.valueOf(i),""));
