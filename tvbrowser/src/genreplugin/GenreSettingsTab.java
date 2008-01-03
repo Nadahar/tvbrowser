@@ -131,6 +131,7 @@ public class GenreSettingsTab implements SettingsTab {
 
   public void saveSettings() {
     mPlugin.saveSettings(mListModel.toArray());
+    mPlugin.getFilterFromSettings();
     mPlugin.updateRootNode();
   }
 
