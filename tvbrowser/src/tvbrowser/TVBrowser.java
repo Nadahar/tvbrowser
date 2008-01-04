@@ -665,14 +665,14 @@ public class TVBrowser {
 
     splash.hideSplash();
     
-    // maximize the frame if wanted, needed for Linux
+    // maximize the frame if wanted
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         if (Settings.propIsWindowMaximized.getBoolean()) {
-          mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
+          mainFrame.repaint();
           SwingUtilities.invokeLater(new Runnable(){
             public void run() {
-              mainFrame.repaint();
+              mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
             }
           });
         }
