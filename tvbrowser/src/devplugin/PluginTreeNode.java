@@ -291,6 +291,7 @@ public class PluginTreeNode {
     }
 
     Iterator<PluginTreeNode> it = mChildNodes.iterator();
+    Date currentDate = Date.getCurrentDate();
     while (it.hasNext()) {
       PluginTreeNode n = it.next();
       if (!n.isLeaf()) {
@@ -305,7 +306,7 @@ public class PluginTreeNode {
       else {
       	Date date = ((ProgramItem)n.getUserObject()).getProgram().getDate();
                 
-        if(date.addDays(1).compareTo(Date.getCurrentDate()) >= 0) {
+        if(date.addDays(1).compareTo(currentDate) >= 0) {
           ArrayList<PluginTreeNode> list = dateMap.get(date);
           if (list == null) {
             list = new ArrayList<PluginTreeNode>();
@@ -322,7 +323,7 @@ public class PluginTreeNode {
     Date[] dates = new Date[keySet.size()];
     keySet.toArray(dates);
     Arrays.sort(dates);
-    Date today = Date.getCurrentDate();
+    Date today = currentDate;
     Date nextDay = today.addDays(1);
     Date yesterDay = today.addDays(-1);
     Node node=null;

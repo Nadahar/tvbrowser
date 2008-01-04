@@ -533,10 +533,7 @@ public class ReminderPlugin {
   }
 
   public void removePrograms(Program[] progArr) {
-    for (Program program : progArr) {
-      removeProgram(program);
-    }
-
+    mReminderList.remove(progArr);
   }
 
   public void addProgram(Program prog) {
