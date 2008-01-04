@@ -1007,7 +1007,7 @@ public class MainFrame extends JFrame implements DateListener {
                 ChannelDayProgram chProg = TvDataBase.getInstance().getDayProgram(mChannelDateArr[i],ch[i]);
             
                 if(chProg != null && chProg.getProgramCount() > 0 && mOnAirRowProgramsArr[i] != -1) {
-                  if (mOnAirRowProgramsArr[i] > chProg.getProgramCount()) {
+                  if (mOnAirRowProgramsArr[i] >= chProg.getProgramCount()) {
                     fillOnAirArrays(ch);
                     mLog.warning("Reset of on-air-arrays");
                   }
