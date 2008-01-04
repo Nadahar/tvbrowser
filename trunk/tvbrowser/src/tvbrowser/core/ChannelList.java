@@ -73,7 +73,7 @@ public class ChannelList {
    * map of channel position per subscribed channels, needed for fast channel
    * comparison
    */
-  private static HashMap<Channel, Integer> mSubscribedChannelPosition = new HashMap<Channel, Integer>();
+  private static HashMap<String, Integer> mSubscribedChannelPosition = new HashMap<String, Integer>();
 
   private static Thread mCompleteChannelThread;
 
@@ -227,11 +227,11 @@ public class ChannelList {
   }
 
   private static void calculateChannelPositions() {
-    mSubscribedChannelPosition = new HashMap<Channel, Integer>();
+    mSubscribedChannelPosition = new HashMap<String, Integer>();
     for (int i = 0; i < mSubscribedChannels.size(); i++) {
       Channel ch = mSubscribedChannels.get(i);
       if (ch != null) {
-        mSubscribedChannelPosition.put(ch, i);
+        mSubscribedChannelPosition.put(ch.getId(), i);
       }
     }
   }
@@ -247,6 +247,12 @@ public class ChannelList {
     setSubscribeChannels(channelArr, false);
   }
 
+  /**
+   * Sets the subscribed channels.
+   * 
+   * @param channelArr The array with the subscribed channels.
+   * @param update ?
+   */
   public static void setSubscribeChannels(Channel[] channelArr, boolean update) {
     boolean channelsAdded = false;
     if (update) {
@@ -264,7 +270,9 @@ public class ChannelList {
         mSubscribedChannels.add(channelArr[i]);
       }
     }
+    
     calculateChannelPositions();
+    
     if (channelsAdded && update) {
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
@@ -349,13 +357,17 @@ public class ChannelList {
    * @return The position or -1
    */
   public static int getPos(Channel channel) {
-    Integer pos = mSubscribedChannelPosition.get(channel);
-    if (pos == null) {
-      return -1;
+    if(channel != null) {
+      Integer pos = mSubscribedChannelPosition.get(channel.getId());
+      if (pos == null) {
+        return -1;
+      }
+      else {
+        return pos.intValue();
+      }
     }
-    else {
-      return pos.intValue();
-    }
+    
+    return -1;
   }
 
   /**
