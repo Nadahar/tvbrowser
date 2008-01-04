@@ -382,7 +382,6 @@ public class TVBrowser {
           public void run() {
             new Thread("Start finished callbacks") {
               public void run() {
-                mainFrame.repaint();
                 GlobalPluginProgramFormatingManager.getInstance();
                 PluginProxyManager.getInstance().fireTvBrowserStartFinished();
                 TvDataServiceProxyManager.getInstance().fireTvBrowserStartFinished();
@@ -665,19 +664,12 @@ public class TVBrowser {
 
     splash.hideSplash();
     
+    mainFrame.repaint();
+  
     // maximize the frame if wanted
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        if (Settings.propIsWindowMaximized.getBoolean()) {
-          mainFrame.repaint();
-          SwingUtilities.invokeLater(new Runnable(){
-            public void run() {
-              mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
-            }
-          });
-        }
-      }
-    });
+    if (Settings.propIsWindowMaximized.getBoolean()) {
+      mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
+    }
 
     // minimize the frame if wanted
     if (startMinimized) {
