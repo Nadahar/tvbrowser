@@ -92,6 +92,7 @@ import devplugin.PluginAccess;
 import devplugin.PluginInfo;
 import devplugin.SettingsItem;
 import devplugin.SettingsTab;
+import devplugin.CancelableSettingsTab;
 
 /**
  * 
@@ -211,6 +212,7 @@ public class SettingsDialog implements WindowClosingIf {
         .getLocalization(Localizer.I18N_CANCEL));
     cancelBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
+        cancelSettings();
         close();
       }
     });
@@ -276,7 +278,20 @@ public class SettingsDialog implements WindowClosingIf {
     });
   }
 
-  protected void saveSettingsTab() {
+    private void cancelSettings() {
+        cancelSettings((SettingNode) mSelectionTree.getModel().getRoot());
+    }
+
+
+    private void cancelSettings(SettingNode node) {
+      node.cancelSettings();
+
+      for (int i = 0; i < node.getChildCount(); i++) {
+        cancelSettings((SettingNode) node.getChildAt(i));
+      }
+    }
+
+    protected void saveSettingsTab() {
     TreePath selection = mSelectionTree.getSelectionPath();
     if (selection != null) {
       String path = "";
@@ -701,6 +716,12 @@ public class SettingsDialog implements WindowClosingIf {
     public void saveSettings() {
       if (isLoaded()) {
         mSettingsTab.saveSettings();
+      }
+    }
+  
+    public void cancelSettings() {
+      if (isLoaded() && mSettingsTab instanceof CancelableSettingsTab) {
+        ((CancelableSettingsTab)mSettingsTab).cancel();
       }
     }
 

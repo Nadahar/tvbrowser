@@ -31,7 +31,11 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.factories.Borders;
 
 import javax.swing.*;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.DocumentEvent;
 import java.util.Properties;
+import java.awt.event.KeyListener;
+import java.awt.event.KeyEvent;
 
 import util.ui.Localizer;
 import util.io.IOUtilities;
@@ -48,9 +52,18 @@ public class DreamboxSettingsPanel extends SettingsPanel {
     private JTextField mUsername;
     private JPasswordField mPassword;
 
+    private String mOldAdress;
+    private String mOldPassword;
+    private String mOldUserName;
+
 
     public DreamboxSettingsPanel(Properties properties) {
         mProperties = properties;
+
+        mOldUserName = mProperties.getProperty("username", "");
+        mOldPassword = mProperties.getProperty("password", "");
+        mOldAdress = mProperties.getProperty("ip", "");
+
         createGui();
     }
 
@@ -62,17 +75,69 @@ public class DreamboxSettingsPanel extends SettingsPanel {
         add(new JLabel(mLocalizer.msg("ip", "IP of the Dreambox") + ":"), cc.xy(1, 1));
 
         mDreamAddress = new JTextField();
-        mDreamAddress.setText(mProperties.getProperty("ip", ""));
+        mDreamAddress.setText(mOldAdress);
+        mDreamAddress.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent event) {
+                updateValue();
+            }
+
+            public void removeUpdate(DocumentEvent event) {
+                updateValue();
+            }
+
+            public void changedUpdate(DocumentEvent event) {
+                updateValue();
+            }
+
+            public void updateValue() {
+                mProperties.setProperty("ip", mDreamAddress.getText());
+            }
+        });
+
         add(mDreamAddress, cc.xy(3, 1));
 
         add(new JLabel(mLocalizer.msg("user", "Username") + ":"), cc.xy(1, 3));
         mUsername = new JTextField();
-        mUsername.setText(mProperties.getProperty("username", ""));
+        mUsername.setText(mOldUserName);
+        mUsername.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent event) {
+                updateValue();
+            }
+
+            public void removeUpdate(DocumentEvent event) {
+                updateValue();
+            }
+
+            public void changedUpdate(DocumentEvent event) {
+                updateValue();
+            }
+
+            public void updateValue() {
+                mProperties.setProperty("username", mUsername.getText());
+            }
+        });
         add(mUsername, cc.xy(3, 3));
 
         add(new JLabel(mLocalizer.msg("password", "Password") + ":"), cc.xy(1, 5));
         mPassword = new JPasswordField();
-        mPassword.setText(IOUtilities.xorDecode(mProperties.getProperty("password", ""), PASSWORDSEED));
+        mPassword.setText(IOUtilities.xorDecode(mOldPassword, PASSWORDSEED));
+        mPassword.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent event) {
+                updateValue();
+            }
+
+            public void removeUpdate(DocumentEvent event) {
+                updateValue();
+            }
+
+            public void changedUpdate(DocumentEvent event) {
+                updateValue();
+            }
+
+            public void updateValue() {
+                mProperties.setProperty("password", IOUtilities.xorEncode(new String(mPassword.getPassword()), PASSWORDSEED));
+            }
+        });
         add(mPassword, cc.xy(3, 5));
     }
 
@@ -80,5 +145,11 @@ public class DreamboxSettingsPanel extends SettingsPanel {
         mProperties.setProperty("ip", mDreamAddress.getText());
         mProperties.setProperty("username", mUsername.getText());
         mProperties.setProperty("password", IOUtilities.xorEncode(new String(mPassword.getPassword()), PASSWORDSEED));
+    }
+
+    public void cancel() {
+        mProperties.setProperty("ip", mOldAdress);
+        mProperties.setProperty("username", mOldUserName);
+        mProperties.setProperty("password", mOldPassword);
     }
 }

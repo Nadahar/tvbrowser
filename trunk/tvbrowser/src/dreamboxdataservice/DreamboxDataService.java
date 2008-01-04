@@ -25,30 +25,36 @@
  */
 package dreamboxdataservice;
 
-import devplugin.*;
+import devplugin.AbstractTvDataService;
+import devplugin.Channel;
+import devplugin.ChannelGroup;
 import devplugin.Date;
-
-import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.io.InputStream;
-import java.io.IOException;
-import java.util.*;
-import java.net.URLEncoder;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.MalformedURLException;
-
-import tvdataservice.TvDataUpdateManager;
-import tvdataservice.SettingsPanel;
-import util.exc.TvBrowserException;
-import util.ui.Localizer;
-import util.io.IOUtilities;
-import org.xml.sax.SAXException;
+import devplugin.PluginInfo;
+import devplugin.ProgressMonitor;
+import devplugin.Version;
 import org.apache.commons.codec.binary.Base64;
+import org.xml.sax.SAXException;
+import tvdataservice.SettingsPanel;
+import tvdataservice.TvDataUpdateManager;
+import util.exc.TvBrowserException;
+import util.io.IOUtilities;
+import util.ui.Localizer;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Properties;
+import java.util.TimeZone;
+import java.util.TreeMap;
 
 
 public class DreamboxDataService extends AbstractTvDataService {

@@ -31,6 +31,9 @@ import javax.swing.JPanel;
 
 /**
  * Represents a page in the settings dialog.
+ *
+ * If you want to detect a cancel pressed action, you should use {@link CancelableSettingsTab}
+ *
  * @author Martin Oberhauser
  */
 public interface SettingsTab {

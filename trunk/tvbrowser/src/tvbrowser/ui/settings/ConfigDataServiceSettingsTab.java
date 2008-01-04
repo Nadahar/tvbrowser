@@ -38,8 +38,7 @@ import tvdataservice.SettingsPanel;
 
 import com.jgoodies.forms.factories.Borders;
 
-public class ConfigDataServiceSettingsTab implements devplugin.SettingsTab {
-
+public class ConfigDataServiceSettingsTab implements devplugin.CancelableSettingsTab {
 
   private TvDataServiceProxy mDataService;
   private SettingsPanel mSettingsPanel;
@@ -90,4 +89,10 @@ public class ConfigDataServiceSettingsTab implements devplugin.SettingsTab {
       return mDataService.getInfo().getName();
     }
 
+    /**
+     * Cancel was pressed
+     */
+    public void cancel() {
+        mSettingsPanel.cancel();
+    }
 }

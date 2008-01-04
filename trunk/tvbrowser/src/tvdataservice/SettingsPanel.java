@@ -23,10 +23,23 @@
  * @author Martin Oberhauser
  */
  
- package tvdataservice;
- 
- public abstract class SettingsPanel extends javax.swing.JPanel {
- 
- 	public abstract void ok();
- 	
+package tvdataservice;
+
+/**
+ * This is a SettingsPanel for a Dataservice
+ */
+public abstract class SettingsPanel extends javax.swing.JPanel {
+
+    /**
+     *  Will be called if ok was pressed in the settings dialog
+     */
+    public abstract void ok();
+
+    /**
+     * Will be called if cancel was pressed
+     * @since 2.7
+     */
+    public void cancel() {
+
+    }
  }
