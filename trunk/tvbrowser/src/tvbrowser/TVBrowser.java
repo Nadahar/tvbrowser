@@ -382,6 +382,7 @@ public class TVBrowser {
           public void run() {
             new Thread("Start finished callbacks") {
               public void run() {
+                mainFrame.repaint();
                 GlobalPluginProgramFormatingManager.getInstance();
                 PluginProxyManager.getInstance().fireTvBrowserStartFinished();
                 TvDataServiceProxyManager.getInstance().fireTvBrowserStartFinished();
@@ -391,7 +392,6 @@ public class TVBrowser {
                 mainFrame.handleTvBrowserStartFinished();
                 
                 ProgramInfo.getInstance().handleTvBrowserStartFinished();
-                mainFrame.repaint();
               }
             }.start();
             ChannelList.completeChannelLoading();
