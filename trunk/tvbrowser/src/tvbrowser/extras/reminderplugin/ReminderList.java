@@ -50,7 +50,9 @@ import devplugin.ProgramItem;
 public class ReminderList implements ActionListener {
 
   private ReminderTimerListener mListener = null;
+
   private javax.swing.Timer mTimer;
+
   private ArrayList<ReminderListItem> mList;
 
   /** List of Blocked Programs. These Programs don't trigger a reminder anymore */
@@ -65,7 +67,7 @@ public class ReminderList implements ActionListener {
 
     int version = in.readInt();
     if (version == 1 || version >= 3) { // version == 2 ==> read from plugin
-                                        // tree
+      // tree
       int size = in.readInt();
       for (int i = 0; i < size; i++) {
         in.readInt(); // read version
@@ -74,15 +76,17 @@ public class ReminderList implements ActionListener {
         String programId = (String) in.readObject();
         Program program = Plugin.getPluginManager().getProgram(programDate,
             programId);
-        
+
         int referenceCount = 1;
 
-        if(version == 4)
-          referenceCount = in.readInt();          
+        if (version == 4) {
+          referenceCount = in.readInt();
+        }
 
         // Only add items that were able to load their program
-        if (program != null)
+        if (program != null) {
           add(program, reminderMinutes, referenceCount);
+        }
       }
     }
   }
@@ -91,30 +95,30 @@ public class ReminderList implements ActionListener {
     out.writeInt(4); // version
     ReminderListItem[] items = getReminderItems();
     out.writeInt(items.length);
-    for (int i = 0; i < items.length; i++) {
+    for (ReminderListItem item : items) {
       out.writeInt(3);
-      out.writeInt(items[i].getMinutes());
-      Date date = items[i].getProgram().getDate();
+      out.writeInt(item.getMinutes());
+      Date date = item.getProgram().getDate();
       date.writeData(out);
-      out.writeObject(items[i].getProgram().getID());
-      out.writeInt(items[i].getReferenceCount());
+      out.writeObject(item.getProgram().getID());
+      out.writeInt(item.getReferenceCount());
     }
   }
 
   public void add(Program[] programs, int minutes) {
-    for (int i = 0; i < programs.length; i++) {
-      add(programs[i], minutes);
+    for (Program program : programs) {
+      add(program, minutes);
     }
   }
 
   public void add(Program program, int minutes) {
     add(program, minutes, 1);
   }
-  
+
   private void add(Program program, int minutes, int referenceCount) {
     if (!program.isExpired()) {
       ReminderListItem item = getReminderItem(program);
-      
+
       if (item != null) {
         item.incReferenceCount();
       } else {
@@ -141,33 +145,35 @@ public class ReminderList implements ActionListener {
         ReminderListItem item = new ReminderListItem(programs[i], minutes);
         mList.add(item);
         programs[i].mark(ReminderPluginProxy.getInstance());
-      }
-      else if(contains(programs[i]))
+      } else if (contains(programs[i])) {
         getReminderItem(programs[i]).incReferenceCount();
+      }
     }
   }
 
   public void setReminderTimerListener(ReminderTimerListener listener) {
     this.mListener = listener;
-    
-    if(ReminderPlugin.getInstance().isAllowedToStartTimer())
+
+    if (ReminderPlugin.getInstance().isAllowedToStartTimer()) {
       startTimer();
+    }
   }
-  
+
   protected void startTimer() {
     if (mListener != null && mTimer == null) {
       mTimer = new javax.swing.Timer(10000, this);
       mTimer.start();
     } else if (!mTimer.isRunning()) {
       mTimer.start();
-    }    
+    }
   }
 
   public void removeExpiredItems() {
-    ReminderListItem[] items = getReminderItems();
-    for (int i = 0; i < items.length; i++) {
-      if (items[i].getProgram().isExpired()) {
-        remove(items[i]);
+    ArrayList<ReminderListItem> localItems = (ArrayList<ReminderListItem>) mList
+        .clone();
+    for (ReminderListItem item : localItems) {
+      if (item.getProgram().isExpired()) {
+        remove(item);
       }
     }
   }
@@ -185,9 +191,8 @@ public class ReminderList implements ActionListener {
   }
 
   public boolean contains(Program program) {
-    ReminderListItem[] items = getReminderItems();
-    for (int i = 0; i < items.length; i++) {
-      if (items[i].getProgram().equals(program)) {
+    for (ReminderListItem item : mList) {
+      if (item.getProgram().equals(program)) {
         return true;
       }
     }
@@ -195,31 +200,38 @@ public class ReminderList implements ActionListener {
   }
 
   public void remove(Program program) {
-    ReminderListItem[] items = getReminderItems();
-    for (int i = 0; i < items.length; i++) {
-      if (items[i].getProgram().equals(program)) {
-        remove(items[i]);
+    remove(new Program[] {program});
+  }
+
+  public void remove(Program[] programs) {
+    ArrayList<ReminderListItem> localItems = (ArrayList<ReminderListItem>) mList
+        .clone();
+    for (int i = 0; i < programs.length; i++) {
+      for (ReminderListItem item : localItems) {
+        if (item.getProgram().equals(programs[i])) {
+          remove(item);
+          break;
+        }
       }
     }
   }
-  
+
   public void removeWithoutChecking(ProgramItem item) {
     removeWithoutChecking(item.getProgram());
   }
-  
+
   public ReminderListItem removeWithoutChecking(Program program) {
-    ReminderListItem[] items = getReminderItems();
-    for (int i = 0; i < items.length; i++) {
-      if (items[i].getProgram().equals(program)) {
-        mList.remove(items[i]);
-        items[i].getProgram().unmark(ReminderPluginProxy.getInstance());
-        return items[i];
+    for (ReminderListItem item : mList) {
+      if (item.getProgram().equals(program)) {
+        mList.remove(item);
+        item.getProgram().unmark(ReminderPluginProxy.getInstance());
+        return item;
       }
     }
-    
+
     return null;
   }
-  
+
   public void addWithoutChecking(ReminderListItem item) {
     mList.add(item);
   }
@@ -243,26 +255,26 @@ public class ReminderList implements ActionListener {
   /**
    * Checks all programs, if they currently exists
    * 
-   * @return all remove programs
+   * @return all removed programs
    */
   public Program[] updatePrograms() {
-    ReminderListItem[] items = getReminderItems();
+    ArrayList<ReminderListItem> localItems = (ArrayList<ReminderListItem>) mList.clone();
     mList.clear();
     ArrayList<Program> removedPrograms = new ArrayList<Program>();
-    
-    for (int i = 0; i < items.length; i++) {
-      if(items[i].getProgram().getProgramState() == Program.WAS_DELETED_STATE)
-        removedPrograms.add(items[i].getProgram());
-      else if(items[i].getProgram().getProgramState() == Program.WAS_UPDATED_STATE) {
-        Program p = items[i].getProgram();
-        add(Plugin.getPluginManager().getProgram(p.getDate(), p.getID()),items[i].getMinutes(), items[i].getReferenceCount());
+
+    for (ReminderListItem item : localItems) {
+      if (item.getProgram().getProgramState() == Program.WAS_DELETED_STATE) {
+        removedPrograms.add(item.getProgram());
+      } else if (item.getProgram().getProgramState() == Program.WAS_UPDATED_STATE) {
+        Program p = item.getProgram();
+        add(Plugin.getPluginManager().getProgram(p.getDate(), p.getID()),
+            item.getMinutes(), item.getReferenceCount());
+      } else {
+        mList.add(item);
       }
-      else
-        mList.add(items[i]);
     }
-    
-    return removedPrograms.toArray(new Program[removedPrograms
-        .size()]);
+
+    return removedPrograms.toArray(new Program[removedPrograms.size()]);
   }
 
   public void actionPerformed(ActionEvent event) {
@@ -275,9 +287,9 @@ public class ReminderList implements ActionListener {
     cal.setTime(new java.util.Date());
 
     ReminderListItem[] items = getReminderItems();
-    for (int i = 0; i < items.length; i++) {
-      if (isRemindEventRequired(items[i].getProgram(), items[i].getMinutes())) {
-        mListener.timeEvent(items[i]);
+    for (ReminderListItem item : items) {
+      if (isRemindEventRequired(item.getProgram(), item.getMinutes())) {
+        mListener.timeEvent(item);
       }
     }
 
@@ -301,8 +313,7 @@ public class ReminderList implements ActionListener {
     devplugin.Date today = new devplugin.Date();
     int diff = today.compareTo(remindDate);
 
-    return (diff > 0
-        || (diff == 0 && IOUtilities.getMinutesAfterMidnight() >= remindTime)) 
+    return (diff > 0 || (diff == 0 && IOUtilities.getMinutesAfterMidnight() >= remindTime))
         && !isBlocked(prog);
 
   }
