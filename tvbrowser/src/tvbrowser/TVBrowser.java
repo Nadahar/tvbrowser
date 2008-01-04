@@ -29,8 +29,6 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -393,6 +391,7 @@ public class TVBrowser {
                 mainFrame.handleTvBrowserStartFinished();
                 
                 ProgramInfo.getInstance().handleTvBrowserStartFinished();
+                mainFrame.repaint();
               }
             }.start();
             ChannelList.completeChannelLoading();
@@ -632,22 +631,6 @@ public class TVBrowser {
     mainFrame=MainFrame.getInstance();
     PluginProxyManager.getInstance().setParentFrame(mainFrame);
     TvDataServiceProxyManager.getInstance().setParamFrame(mainFrame);
-
-    mainFrame.addComponentListener(new ComponentAdapter() {
-      public void componentShown(ComponentEvent e) {
-        if (!Settings.propIsUsingFullscreen.getBoolean()) {
-          mainFrame.repaint();
-        }
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            if(Settings.propIsWindowMaximized.getBoolean()) {
-              // maximize the frame if wanted
-              mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
-            }
-          }
-        });
-      }
-    });
     
     // Set the program icon
     Image iconImage = ImageUtilities.createImage("imgs/tvbrowser16.png");
@@ -681,6 +664,20 @@ public class TVBrowser {
     ErrorHandler.setFrame(mainFrame);
 
     splash.hideSplash();
+    
+    // maximize the frame if wanted, needed for Linux
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        if (Settings.propIsWindowMaximized.getBoolean()) {
+          mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
+          SwingUtilities.invokeLater(new Runnable(){
+            public void run() {
+              mainFrame.repaint();
+            }
+          });
+        }
+      }
+    });
 
     // minimize the frame if wanted
     if (startMinimized) {
