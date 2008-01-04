@@ -230,8 +230,9 @@ public class ChannelList {
     mSubscribedChannelPosition = new HashMap<String, Integer>();
     for (int i = 0; i < mSubscribedChannels.size(); i++) {
       Channel ch = mSubscribedChannels.get(i);
+      System.out.println(ch.getId());
       if (ch != null) {
-        mSubscribedChannelPosition.put(ch.getId(), i);
+        mSubscribedChannelPosition.put(getChannelKey(ch), i);
       }
     }
   }
@@ -358,7 +359,7 @@ public class ChannelList {
    */
   public static int getPos(Channel channel) {
     if(channel != null) {
-      Integer pos = mSubscribedChannelPosition.get(channel.getId());
+      Integer pos = mSubscribedChannelPosition.get(getChannelKey(channel));
       if (pos == null) {
         return -1;
       }
@@ -759,5 +760,9 @@ public class ChannelList {
       } catch (Exception e) {
       }
     }
+  }
+  
+  private static String getChannelKey(Channel ch) {
+    return new StringBuilder(ch.getDataServiceProxy().getId()).append("_").append(ch.getGroup().getId()).append("_").append(ch.getCountry()).append("_").append(ch.getId()).toString();
   }
 }
