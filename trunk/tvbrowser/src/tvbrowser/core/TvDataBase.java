@@ -193,7 +193,9 @@ public class TvDataBase {
           mLog.info("Day program was changed by third party: " + date + " on "
               + channel.getName());
           ChannelDayProgram newDayProg = getDayProgram(date, channel, true);
-          handleKnownStatus(knownStatus, newDayProg, version);
+          if (newDayProg != null) {
+            handleKnownStatus(knownStatus, newDayProg, version);
+          }
 
           somethingChanged = true;
         }
