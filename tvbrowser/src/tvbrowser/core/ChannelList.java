@@ -230,7 +230,7 @@ public class ChannelList {
     mSubscribedChannelPosition = new HashMap<String, Integer>();
     for (int i = 0; i < mSubscribedChannels.size(); i++) {
       Channel ch = mSubscribedChannels.get(i);
-      System.out.println(ch.getId());
+      
       if (ch != null) {
         mSubscribedChannelPosition.put(getChannelKey(ch), i);
       }
