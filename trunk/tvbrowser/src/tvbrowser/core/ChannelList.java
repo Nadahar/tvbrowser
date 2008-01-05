@@ -99,7 +99,7 @@ public class ChannelList {
   /**
    * Reload the channel list.
    */
-  public static void reload() {System.out.println();
+  public static void reload() {
     loadChannelMaps();
     create();
   }
