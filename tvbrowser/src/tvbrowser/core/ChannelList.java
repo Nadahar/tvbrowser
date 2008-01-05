@@ -123,7 +123,7 @@ public class ChannelList {
         mAvailableChannels.remove(i);
         mAvailableChannelsMap.remove(getChannelKey(ch));
         
-        /* remove all subscribed channels which are not available any more */
+        /* remove subscribed channels which are not available any more */
         if(mSubscribedChannels.contains(ch)) {
           mLog.warning(ch+" is not available any more");
           mSubscribedChannels.remove(ch);
@@ -136,6 +136,7 @@ public class ChannelList {
     
     if(removed) {
       Settings.propSubscribedChannels.setChannelArray(mSubscribedChannels.toArray(new Channel[mSubscribedChannels.size()]));
+      calculateChannelPositions();
     }
     
     clearChannelMaps();
