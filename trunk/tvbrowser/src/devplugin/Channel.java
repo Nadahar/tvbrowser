@@ -37,6 +37,7 @@ import java.util.TimeZone;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import tvbrowser.core.ChannelList;
 import tvbrowser.core.ChannelUserSettings;
 import tvbrowser.core.tvdataservice.DeprecatedTvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
@@ -676,5 +677,57 @@ public class Channel implements Comparable<Channel> {
 
   public int compareTo(Channel other) {
     return getName().toLowerCase().compareTo(other.getName().toLowerCase());
+  }
+  
+  /**
+   * Sets the name of this channel.
+   * If this is used by a Plugin nothing will happen.
+   * 
+   * @param name The new name for the channel.
+   * @since 2.2.5/2.6.3
+   */
+  public void setChannelName(String name) {
+    if(ChannelList.hasCalledChannelValueChangeForChannel(this)) {
+      mName = name;
+    }
+  }
+
+  /**
+   * Sets the icon of this channel.
+   * If this is used by a Plugin nothing will happen.
+   * 
+   * @param icon The new icon for the channel.
+   * @since 2.2.5/2.6.3
+   */
+  public void setChannelIcon(Icon icon) {
+    if(ChannelList.hasCalledChannelValueChangeForChannel(this)) {
+      mIcon = icon;
+    }
+  }
+  
+  /**
+   * Sets the copyright notice of this channel.
+   * If this is used by a Plugin nothing will happen.
+   * 
+   * @param copyrightNotice The new copyright notice for the channel.
+   * @since 2.2.5/2.6.3
+   */
+  public void setChannelCopyrightNotice(String copyrightNotice) {
+    if(ChannelList.hasCalledChannelValueChangeForChannel(this)) {
+      mCopyrightNotice = copyrightNotice;
+    }
+  }
+  
+  /**
+   * Sets the webpage of this channel.
+   * If this is used by a Plugin nothing will happen.
+   * 
+   * @param webpage The new webpage for the channel.
+   * @since 2.2.5/2.6.3
+   */
+  public void setChannelWebpage(String webpage) {
+    if(ChannelList.hasCalledChannelValueChangeForChannel(this)) {
+      mWebpage = webpage;
+    }
   }
 }
