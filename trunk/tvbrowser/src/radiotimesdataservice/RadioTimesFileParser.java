@@ -111,20 +111,16 @@ public class RadioTimesFileParser {
     StringBuilder builder = new StringBuilder(RadioTimesDataService.BASEURL);
     builder.append(mChannel.getId().substring(RadioTimesDataService.RADIOTIMES.length()));
     builder.append(".dat");
-    // Do the parsing...
-    BufferedReader reader = new BufferedReader(new InputStreamReader(IOUtilities.getStream(new URL(builder.toString())), "UTF8"));
 
-    String line;
+    String file = new String(IOUtilities.loadFileFromHttpServer(new URL(builder.toString())), "UTF8");
 
-    while ((line = reader.readLine()) != null) {
+    for (String line:file.split("\n")) {
       String[] items = line.split("~");
 
       if (items.length == 23) {
         Date date = parseDate(items[RT_DATE]);
         if (date.compareTo(endDate) >  0) {
           storeDayPrograms(updateManager);
-
-          reader.close();
           return;
         }
         
@@ -137,10 +133,15 @@ public class RadioTimesFileParser {
         prog.setTitle(items[RT_TITLE]);
 
         StringBuilder desc = new StringBuilder(items[RT_SUBTITLE].trim()).append("\n\n");
+
+        if (items[RT_DESCRIPTION].indexOf(0x0D) > 0) {
+          items[RT_DESCRIPTION] = items[RT_DESCRIPTION].replace((char)0x0D, '\n');
+        }
+
         if (items[RT_STAR_RATING].length() != 0) {
             items[RT_DESCRIPTION] = "[" + items[RT_STAR_RATING] + "/5] " + items[RT_DESCRIPTION];
         }
-        
+
         desc.append(items[RT_DESCRIPTION]);
         desc.append("\n\n");
 
@@ -233,7 +234,6 @@ public class RadioTimesFileParser {
     }
 
     storeDayPrograms(updateManager);
-    reader.close();
   }
 
   private void storeDayPrograms(TvDataUpdateManager updateManager) {
