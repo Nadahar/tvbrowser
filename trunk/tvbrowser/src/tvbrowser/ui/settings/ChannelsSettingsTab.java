@@ -83,7 +83,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -731,27 +730,25 @@ public class ChannelsSettingsTab implements
   private void fillSubscribedChannelsListBox() {
     Channel[] subscribedChannelArr = null;
 
-    if (mSubscribedChannels.getModel().getSize() < 1) {
-      Collection<Channel> subscribedChannels = mChannelListModel
-          .getSubscribedChannels();
+    subscribedChannelArr = new Channel[mChannelListModel.getSubscribedChannels().size()];
+    ((DefaultListModel) mSubscribedChannels.getModel()).clear();
+    
+    Channel[] channels = mChannelListModel.getAvailableChannels();
+    for (Channel channel : channels) {
+      int pos = ChannelList.getPos(channel);
 
-      int subscribedChannelCount = subscribedChannels.size();
-      subscribedChannelArr = new Channel[subscribedChannelCount];
-
-      Channel[] channels = mChannelListModel.getAvailableChannels();
-      for (Channel channel : channels) {
-        int pos = ChannelList.getPos(channel);
-
-        if (pos != -1) {
-          subscribedChannelArr[pos] = channel;
-        }
+      if (pos != -1) {
+        subscribedChannelArr[pos] = channel;
       }
+    }
 
-      for (Channel aSubscribedChannelArr : subscribedChannelArr) {
+    for (Channel aSubscribedChannelArr : subscribedChannelArr) {
+      if(aSubscribedChannelArr != null) {
         ((DefaultListModel) mSubscribedChannels.getModel())
             .addElement(aSubscribedChannelArr);
       }
     }
+    
     updateChannelNumbers();
   }
 

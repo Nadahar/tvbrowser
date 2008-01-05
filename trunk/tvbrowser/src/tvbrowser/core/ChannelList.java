@@ -114,13 +114,28 @@ public class ChannelList {
       addDataServiceChannels(proxy,availableChannels);
     }
 
+    boolean removed = false;
+    
     for(int i = mAvailableChannels.size()-1; i >= 0; i--) {
       Channel ch = (Channel)mAvailableChannels.get(i);
       
       if(!availableChannels.contains(ch)) {
         mAvailableChannels.remove(i);
         mAvailableChannelsMap.remove(getChannelKey(ch));
+        
+        /* remove all subscribed channels which are not available any more */
+        if(mSubscribedChannels.contains(ch)) {
+          mLog.warning(ch+" is not available any more");
+          mSubscribedChannels.remove(ch);
+          mSubscribedChannelPosition.remove(getChannelKey(ch));
+          
+          removed = true;
+        }
       }
+    }
+    
+    if(removed) {
+      Settings.propSubscribedChannels.setChannelArray(mSubscribedChannels.toArray(new Channel[mSubscribedChannels.size()]));
     }
     
     clearChannelMaps();
