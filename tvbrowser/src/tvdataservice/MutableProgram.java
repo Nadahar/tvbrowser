@@ -678,37 +678,46 @@ public class MutableProgram implements Program {
     fireStateChanged();
   }
 
+  /**
+   * Trimm text for shortinfo-field
+   * @param shortInfo generate Text from this field
+   * @return Text that fits into shortInfo
+   * @since 2.7
+   */
+  public static String generateShortInfoFromDescription(String shortInfo) {
+    // Get the end of the last fitting sentense
+    int lastDot = shortInfo.lastIndexOf('.', MAX_SHORT_INFO_LENGTH);
+
+    int n = shortInfo.lastIndexOf('!', MAX_SHORT_INFO_LENGTH);
+    if (n > lastDot) {
+      lastDot = n;
+    }
+    n = shortInfo.lastIndexOf('?', MAX_SHORT_INFO_LENGTH);
+    if (n > lastDot) {
+      lastDot = n;
+    }
+    n = shortInfo.lastIndexOf(" - ", MAX_SHORT_INFO_LENGTH);
+    if (n > lastDot) {
+      lastDot = n;
+    }
+
+    int lastMidDot = shortInfo.lastIndexOf('\u00b7', MAX_SHORT_INFO_LENGTH);
+
+    int cutIdx = Math.max(lastDot, lastMidDot);
+
+    // But show at least half the maximum length
+    if (cutIdx < (MAX_SHORT_INFO_LENGTH / 2)) {
+      cutIdx = shortInfo.lastIndexOf(' ', MAX_SHORT_INFO_LENGTH);
+    }
+
+    return shortInfo.substring(0, cutIdx + 1) + "...";
+  }
+
 
   private String validateShortInfo(String shortInfo) {
-    if ((shortInfo != null) && (shortInfo.length() > MAX_SHORT_INFO_LENGTH)) {
-      // Get the end of the last fitting sentense
-      int lastDot = shortInfo.lastIndexOf('.', MAX_SHORT_INFO_LENGTH);
-
-      int n = shortInfo.lastIndexOf('!', MAX_SHORT_INFO_LENGTH);
-      if (n > lastDot) {
-        lastDot = n;
-      }
-      n = shortInfo.lastIndexOf('?', MAX_SHORT_INFO_LENGTH);
-      if (n > lastDot) {
-        lastDot = n;
-      }
-      n = shortInfo.lastIndexOf(" - ", MAX_SHORT_INFO_LENGTH);
-      if (n > lastDot) {
-        lastDot = n;
-      }
-
-      int lastMidDot = shortInfo.lastIndexOf('\u00b7', MAX_SHORT_INFO_LENGTH);
-
-      int cutIdx = Math.max(lastDot, lastMidDot);
-
-      // But show at least half the maximum length
-      if (cutIdx < (MAX_SHORT_INFO_LENGTH / 2)) {
-        cutIdx = shortInfo.lastIndexOf(' ', MAX_SHORT_INFO_LENGTH);
-      }
-
-      shortInfo = shortInfo.substring(0, cutIdx + 1) + "...";
-
-      mLog.warning("Short description longer than " + MAX_SHORT_INFO_LENGTH + " characters: " + this.toString());
+    if ((shortInfo != null) && (shortInfo.length() > MAX_SHORT_INFO_LENGTH + 4)) {
+      shortInfo = generateShortInfoFromDescription(shortInfo);
+      mLog.warning("Short description longer than " + MAX_SHORT_INFO_LENGTH + " characters: ("+shortInfo.length()+") " + this.toString());
     }
 
     return shortInfo;

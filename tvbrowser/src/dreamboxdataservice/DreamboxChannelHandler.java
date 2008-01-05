@@ -50,7 +50,6 @@ public class DreamboxChannelHandler extends DefaultHandler {
     private Channel mChannel;
     private HashMap<String, String> mCurrentEvent;
     private TvDataUpdateManager mUpdateManager;
-    private static final int MAX_SHORT_DESCRIPTION_LENGTH = 200;
 
     public DreamboxChannelHandler(TvDataUpdateManager updateManager, Channel ch) {
         mChannel = ch;
@@ -86,18 +85,8 @@ public class DreamboxChannelHandler extends DefaultHandler {
                 if (shortDesc.length() == 0) {
                     shortDesc = mCurrentEvent.get("e2eventdescriptionextended");
                 }
-                if (shortDesc.length() > MAX_SHORT_DESCRIPTION_LENGTH) {
-                    int lastSpacePos = shortDesc.lastIndexOf(' ',
-                            MAX_SHORT_DESCRIPTION_LENGTH - 3);
-                    if (lastSpacePos == -1) {
-                        shortDesc = shortDesc
-                                .substring(0, MAX_SHORT_DESCRIPTION_LENGTH - 3)
-                                + "...";
-                    } else {
-                        shortDesc = shortDesc.substring(0, lastSpacePos) + "...";
-                    }
-                }
 
+                shortDesc = MutableProgram.generateShortInfoFromDescription(shortDesc);
                 prog.setShortInfo(shortDesc);
                 prog.setLength(Integer.parseInt(mCurrentEvent.get("e2eventduration")) / 60);
 
