@@ -670,7 +670,11 @@ public class TVBrowser {
   
     // maximize the frame if wanted
     if (Settings.propIsWindowMaximized.getBoolean()) {
-      mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
+        }
+      });
     }
 
     // minimize the frame if wanted
