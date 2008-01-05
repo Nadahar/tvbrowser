@@ -134,16 +134,12 @@ public class DreamboxDataService extends AbstractTvDataService {
     public Properties storeSettings() {
       Properties prop = new Properties();
 
-      if (mProperties != null) {
-        prop.setProperty("ip", mProperties.getProperty("ip"));
-        prop.setProperty("username", mProperties.getProperty("username"));
-        prop.setProperty("password", mProperties.getProperty("password"));
-      } else {
-        prop.setProperty("ip", "");
-        prop.setProperty("username", "");
-        prop.setProperty("password", "");
-      }
-
+      if (mProperties == null) {
+        mProperties = new Properties();
+      };
+      prop.setProperty("ip", mProperties.getProperty("ip",""));
+      prop.setProperty("username", mProperties.getProperty("username", ""));
+      prop.setProperty("password", mProperties.getProperty("password", ""));
 
       if (mChannels != null) {
         prop.setProperty("NumberOfChannels", Integer.toString(mChannels.size()));
@@ -157,7 +153,7 @@ public class DreamboxDataService extends AbstractTvDataService {
         prop.setProperty("NumberOfChannels", "0");
       }
 
-        return prop;
+      return prop;
     }
 
 
@@ -245,7 +241,7 @@ public class DreamboxDataService extends AbstractTvDataService {
      */
     public TreeMap<String, String> getServiceDataBonquets(String service) {
         try {
-            URL url = new URL("http://" + mProperties.getProperty("ip") + "/web/getservices?bRef=" + service);
+            URL url = new URL("http://" + mProperties.getProperty("ip","") + "/web/getservices?bRef=" + service);
 
             URLConnection connection = url.openConnection();
 
@@ -282,7 +278,7 @@ public class DreamboxDataService extends AbstractTvDataService {
      */
     public TreeMap<String, String> getServiceData(String service) {
         try {
-            URL url = new URL("http://" + mProperties.getProperty("ip") + "/web/getservices?sRef=" + service);
+            URL url = new URL("http://" + mProperties.getProperty("ip", "") + "/web/getservices?sRef=" + service);
             URLConnection connection = url.openConnection();
 
             String userpassword = mProperties.getProperty("username", "") + ":" + IOUtilities.xorEncode(mProperties.getProperty("password", ""), DreamboxSettingsPanel.PASSWORDSEED);
@@ -314,7 +310,7 @@ public class DreamboxDataService extends AbstractTvDataService {
 
     private void getEPGData(TvDataUpdateManager updateManager, Channel ch) {
         try {
-            URL url = new URL("http://" + mProperties.getProperty("ip") + "/web/epgservice?sRef=" + ch.getId().substring(5).replaceAll("_", ":"));
+            URL url = new URL("http://" + mProperties.getProperty("ip", "") + "/web/epgservice?sRef=" + ch.getId().substring(5).replaceAll("_", ":"));
 
             URLConnection connection = url.openConnection();
 
