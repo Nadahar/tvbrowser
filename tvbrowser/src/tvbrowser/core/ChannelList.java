@@ -62,7 +62,7 @@ public class ChannelList {
 
   private static ArrayList<Channel> mAvailableChannels = new ArrayList<Channel>();
 
-  private static HashMap<Channel, Channel> mAvailableChannelsMap = new HashMap<Channel, Channel>();
+  private static HashMap<String, Channel> mAvailableChannelsMap = new HashMap<String, Channel>();
 
   /**
    * list of subscribed channels
@@ -79,6 +79,8 @@ public class ChannelList {
 
   private static HashMap<String, String> mChannelIconMap, mChannelNameMap,
       mChannelWebpagesMap, mChannelDayLightCorrectionMap;
+  
+  private static Channel mCurrentChangeChannel = null;
 
   /**
    * Load the not subscribed channels after TV-Browser start was finished.
@@ -97,9 +99,7 @@ public class ChannelList {
   /**
    * Reload the channel list.
    */
-  public static void reload() {
-    mAvailableChannels.clear();
-    mAvailableChannelsMap.clear();
+  public static void reload() {System.out.println();
     loadChannelMaps();
     create();
   }
@@ -108,10 +108,21 @@ public class ChannelList {
     TvDataServiceProxy[] dataServiceArr = TvDataServiceProxyManager
         .getInstance().getDataServices();
 
+    ArrayList<Channel> availableChannels = new ArrayList<Channel>();
+    
     for (TvDataServiceProxy proxy : dataServiceArr) {
-      addDataServiceChannels(proxy);
+      addDataServiceChannels(proxy,availableChannels);
     }
 
+    for(int i = mAvailableChannels.size()-1; i >= 0; i--) {
+      Channel ch = (Channel)mAvailableChannels.get(i);
+      
+      if(!availableChannels.contains(ch)) {
+        mAvailableChannels.remove(i);
+        mAvailableChannelsMap.remove(getChannelKey(ch));
+      }
+    }
+    
     clearChannelMaps();
     MainFrame.resetOnAirArrays();
   }
@@ -142,11 +153,12 @@ public class ChannelList {
     storeChannelTimeLimits();
   }
 
-  private static void addDataServiceChannels(TvDataServiceProxy dataService) {
+  private static void addDataServiceChannels(TvDataServiceProxy dataService,
+      ArrayList<Channel> availableChannels) {
     Channel[] channelArr = dataService.getAvailableChannels();
-
+    
     for (Channel channel : channelArr) {
-      addChannelToAvailableChannels(channel);
+      addChannelToAvailableChannels(channel,availableChannels);
     }
   }
 
@@ -155,14 +167,17 @@ public class ChannelList {
     Channel[] channelArr = dataService.getChannelsForTvBrowserStart();
 
     for (Channel channel : channelArr) {
-      addChannelToAvailableChannels(channel);
+      addChannelToAvailableChannels(channel, new ArrayList<Channel>());
     }
   }
 
-  private static void addChannelToAvailableChannels(Channel channel) {
-    if (!mAvailableChannelsMap.containsKey(channel)) {
+  private static void addChannelToAvailableChannels(Channel channel, ArrayList<Channel> availableChannels) {
+    mCurrentChangeChannel = mAvailableChannelsMap.get(getChannelKey(channel));
+    
+    if (mCurrentChangeChannel == null) {
+      availableChannels.add(channel);
       mAvailableChannels.add(channel);
-      mAvailableChannelsMap.put(channel, channel);
+      mAvailableChannelsMap.put(getChannelKey(channel), channel);
 
       if (!mChannelDayLightCorrectionMap.isEmpty()) {
         setDayLightSavingTimeCorrectionsForChannel(channel);
@@ -180,6 +195,16 @@ public class ChannelList {
         setWebPageForChannel(channel);
       }
     }
+    else {
+      mCurrentChangeChannel.setChannelName(channel.getDefaultName());
+      mCurrentChangeChannel.setChannelIcon(channel.getDefaultIcon());
+      mCurrentChangeChannel.setChannelCopyrightNotice(channel.getCopyrightNotice());
+      mCurrentChangeChannel.setChannelWebpage(channel.getDefaultWebPage());
+      
+      availableChannels.add(mCurrentChangeChannel);
+    }
+    
+    mCurrentChangeChannel = null;
   }
 
   private static void loadChannelMaps() {
@@ -764,5 +789,15 @@ public class ChannelList {
   
   private static String getChannelKey(Channel ch) {
     return new StringBuilder(ch.getDataServiceProxy().getId()).append("_").append(ch.getGroup().getId()).append("_").append(ch.getCountry()).append("_").append(ch.getId()).toString();
+  }
+  
+  /**
+   * Gets if the channel values are allowed to be changed for the given channel.
+   * 
+   * @param ch The channel to check if the value change is allowed.
+   * @return <code>True</code> if the channel value are allowed to be changed, <code>false</code> otherwise.
+   */
+  public static boolean hasCalledChannelValueChangeForChannel(Channel ch) {
+    return mCurrentChangeChannel != null && ch != null && mCurrentChangeChannel.equals(ch);
   }
 }
