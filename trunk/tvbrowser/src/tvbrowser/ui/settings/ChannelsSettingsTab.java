@@ -530,6 +530,10 @@ public class ChannelsSettingsTab implements
       mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryEvents",
           "Events"), Channel.CATEGORY_EVENTS));
     }
+    if (channelListContains(allChannels, Channel.CATEGORY_PAYED_DATA_TV)) {
+      mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryPayedData",
+          "Payed Data"), Channel.CATEGORY_PAYED_DATA_TV));
+    }
     if (channelListContains(allChannels, Channel.CATEGORY_NONE)) {
       mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNone",
           "Not categorized"), Channel.CATEGORY_NONE));
