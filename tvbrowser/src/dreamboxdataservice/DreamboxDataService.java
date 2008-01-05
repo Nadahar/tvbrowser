@@ -132,11 +132,20 @@ public class DreamboxDataService extends AbstractTvDataService {
      * @see devplugin.TvDataService#storeSettings()
      */
     public Properties storeSettings() {
-        Properties prop = new Properties();
+      Properties prop = new Properties();
+
+      if (mProperties != null) {
         prop.setProperty("ip", mProperties.getProperty("ip"));
         prop.setProperty("username", mProperties.getProperty("username"));
         prop.setProperty("password", mProperties.getProperty("password"));
+      } else {
+        prop.setProperty("ip", "");
+        prop.setProperty("username", "");
+        prop.setProperty("password", "");
+      }
 
+
+      if (mChannels != null) {
         prop.setProperty("NumberOfChannels", Integer.toString(mChannels.size()));
         int max = mChannels.size();
         for (int i = 0; i < max; i++) {
@@ -144,6 +153,9 @@ public class DreamboxDataService extends AbstractTvDataService {
             prop.setProperty("ChannelId-" + i, ch.getId());
             prop.setProperty("ChannelTitle-" + i, ch.getName());
         }
+      } else {
+        prop.setProperty("NumberOfChannels", "0");
+      }
 
         return prop;
     }
