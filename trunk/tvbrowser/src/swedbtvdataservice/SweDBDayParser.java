@@ -33,8 +33,6 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler {
   private static java.util.logging.Logger mLog
   = java.util.logging.Logger.getLogger(SweDBDayParser.class.getName());
 
-  private static int MAX_SHORT_DESCRIPTION_LENGTH = 150;
-
   private devplugin.Date start;
 
   private String desc;
@@ -371,22 +369,7 @@ public class SweDBDayParser extends org.xml.sax.helpers.DefaultHandler {
         desc = (subTitle + "\n" + desc).trim();
         
         prog.setDescription(desc);
-        // Since there is no short description available, we have to create one
-        // ourselves
-        String shortDesc = desc;
-        if (shortDesc.length() > MAX_SHORT_DESCRIPTION_LENGTH) {
-          int lastSpacePos = shortDesc.lastIndexOf(' ',
-              MAX_SHORT_DESCRIPTION_LENGTH - 3);
-          if (lastSpacePos == -1) {
-            shortDesc = shortDesc
-                .substring(0, MAX_SHORT_DESCRIPTION_LENGTH - 3)
-                + "...";
-          } else {
-            shortDesc = shortDesc.substring(0, lastSpacePos) + "...";
-          }
-        }
-
-        prog.setShortInfo(shortDesc);
+        prog.setShortInfo(MutableProgram.generateShortInfoFromDescription(desc));
 
         if (genre.length() > 0) {
           genre = genre.substring(0,1).toUpperCase() + genre.substring(1);

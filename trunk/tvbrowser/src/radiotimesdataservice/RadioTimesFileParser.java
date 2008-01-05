@@ -94,8 +94,6 @@ public class RadioTimesFileParser {
   private static final int RT_DURATION_MINUTES = 22;
 
   /**
-   * 
-   * @param radioTimesDataService 
    * @param ch Parse this Channel
    */
   public RadioTimesFileParser(Channel ch) {
@@ -139,16 +137,17 @@ public class RadioTimesFileParser {
         prog.setTitle(items[RT_TITLE]);
 
         StringBuilder desc = new StringBuilder(items[RT_SUBTITLE].trim()).append("\n\n");
+        if (items[RT_STAR_RATING].length() != 0) {
+            items[RT_DESCRIPTION] = "[" + items[RT_STAR_RATING] + "/5] " + items[RT_DESCRIPTION];
+        }
+        
         desc.append(items[RT_DESCRIPTION]);
         desc.append("\n\n");
-        if (items[RT_STAR_RATING].length() != 0) {
-            desc.append("[Rating ").append(items[RT_STAR_RATING]).append("*]");
-        }
 
         prog.setTextField(ProgramFieldType.DESCRIPTION_TYPE, desc.toString().trim());
 
-        prog.setTextField(ProgramFieldType.SHORT_DESCRIPTION_TYPE, items[RT_DESCRIPTION].trim());
-        
+        prog.setTextField(ProgramFieldType.SHORT_DESCRIPTION_TYPE, MutableProgram.generateShortInfoFromDescription(items[RT_DESCRIPTION].trim()));
+
         String field = items[RT_EPISODE].trim();
         if (field.length() > 0) {
           prog.setTextField(ProgramFieldType.EPISODE_TYPE, field);
