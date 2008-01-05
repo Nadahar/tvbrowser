@@ -21,7 +21,6 @@ package tvraterplugin;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.util.Locale;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
@@ -29,10 +28,8 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -105,7 +102,7 @@ public class TVRaterSettingsTab implements SettingsTab {
     pb.addLabel(mLocalizer.msg("transmit", "Transmit data") + ":", cc.xy(2,4));
     pb.add(_updateTime, cc.xyw(4,4,4));
     pb.addSeparator(mLocalizer.msg("accountsetting", "Account settings"), cc.xyw(1,6,8));
-    JLabel name = pb.addLabel(mLocalizer.msg("name", "Name") + ":", cc.xy(2,8));
+    pb.addLabel(mLocalizer.msg("name", "Name") + ":", cc.xy(2,8));
     pb.add(_name, cc.xyw(4,8,4));
     pb.addLabel(mLocalizer.msg("password", "Password") + ":", cc.xy(2,10));
     pb.add(_password, cc.xyw(4,10,4));
@@ -116,18 +113,7 @@ public class TVRaterSettingsTab implements SettingsTab {
     urlLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 
     JPanel urlPanel = new JPanel(new BorderLayout(0,0));
-
-    if (!Locale.getDefault().equals(Locale.GERMANY)) {
-      JTextArea help = new JTextArea(
-          "Hi!\nThis plugin is not 100% translated.\nIf you want to help, please contact me via the HP.\nThanks!");
-      help.setEditable(false);
-      help.setForeground(name.getForeground());
-      help.setBackground(name.getBackground());
-      urlPanel.add(help, BorderLayout.CENTER);
-      urlPanel.add(urlLabel, BorderLayout.SOUTH);
-    } else {
-      urlPanel.add(urlLabel, BorderLayout.CENTER);
-    }
+    urlPanel.add(urlLabel, BorderLayout.CENTER);
     
     pb.add(urlPanel, cc.xyw(2,14,6));
 

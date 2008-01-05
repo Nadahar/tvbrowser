@@ -277,10 +277,6 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
         this._settings = settings;
 
-		    if (Integer.parseInt(_settings.getProperty("updateIntervall", "0")) == 2) {
-            updateDB();
-        }
-        
         int x = Integer.parseInt(_settings.getProperty("mOverviewXPos","-1"));
         int y = Integer.parseInt(_settings.getProperty("mOverviewYPos","-1"));
         int width = Integer.parseInt(_settings.getProperty("mOverviewWidth","-1"));
@@ -449,6 +445,9 @@ public class TVRaterPlugin extends devplugin.Plugin {
     public void handleTvBrowserStartFinished() {
       hasRightToDownload = true;
       startFinished = true;
+      if (Integer.parseInt(_settings.getProperty("updateIntervall", "0")) == 2) {
+        updateDB();
+      }
     }
     
     /*
