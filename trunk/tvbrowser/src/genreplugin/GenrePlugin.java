@@ -47,14 +47,12 @@ import devplugin.Version;
  * @author bananeweizen
  *
  */
-public class GenrePlugin extends Plugin {
-
-  private static final int MAX_DAYS = 14;
+public class GenrePlugin extends Plugin implements IGenreSettings {
 
   /**
    * plugin version
    */
-  private static final Version PLUGIN_VERSION = new Version(2,60);
+  private static final Version PLUGIN_VERSION = new Version(2,70);
 
   /**
    * localizer for this class
@@ -71,9 +69,6 @@ public class GenrePlugin extends Plugin {
   private Properties mSettings;
   
   private ArrayList<String> hiddenGenres = new ArrayList<String>();
-
-  private static final String FILTERED_GENRE = "filteredGenre";
-  private static final String FILTERED_GENRES_COUNT = "filteredGenresCount";
 
   private List<String> currentGenres;
 
@@ -109,7 +104,7 @@ public class GenrePlugin extends Plugin {
   
   @Override
   public SettingsTab getSettingsTab() {
-    return new GenreSettingsTab(this, hiddenGenres);
+    return new GenreSettingsTab(this, hiddenGenres, mSettings);
   }
 
   protected void updateRootNode() {
@@ -122,7 +117,8 @@ public class GenrePlugin extends Plugin {
     currentGenres = new ArrayList<String>();
     Channel[] channels = devplugin.Plugin.getPluginManager().getSubscribedChannels();
     Date date = Date.getCurrentDate();
-    for (int days = 0; days < MAX_DAYS; days++) {
+    int maxDays = Integer.valueOf(mSettings.getProperty(SETTINGS_DAYS, "7"));
+    for (int days = 0; days < maxDays; days++) {
       for (int i = 0; i < channels.length; ++i) {
         Iterator<Program> iter = devplugin.Plugin.getPluginManager()
             .getChannelDayProgram(date, channels[i]);
@@ -136,7 +132,7 @@ public class GenrePlugin extends Plugin {
                 PluginTreeNode node = genreNodes.get(genre);
                 if (node == null) {
                   node = new PluginTreeNode(genre);
-                  node.setGroupingByDateEnabled(MAX_DAYS > 1);
+                  node.setGroupingByDateEnabled(maxDays > 1);
                   Action hideCategory = new HideGenreAction(genre);
                   node.addAction(hideCategory );
                   genreNodes.put(genre, node);
@@ -225,13 +221,16 @@ public class GenrePlugin extends Plugin {
   }
 
   public void hideGenre(String genre) {
-    hiddenGenres.add(genre);
+    if (!hiddenGenres.contains(genre)) {
+      hiddenGenres.add(genre);
+    }
   }
 
   protected void getFilterFromSettings() {
+    hiddenGenres.clear();
     int filterCount = Integer.parseInt(mSettings.getProperty(FILTERED_GENRES_COUNT, "0"));
     for (int i = 0; i<filterCount; i++) {
-      hiddenGenres.add(mSettings.getProperty(FILTERED_GENRE+String.valueOf(i),""));
+      hideGenre(mSettings.getProperty(FILTERED_GENRE+String.valueOf(i),""));
     }
   }
 
