@@ -47,7 +47,7 @@ public class TimeListPlugin extends Plugin {
   /**
    * plugin version
    */
-  private static final Version PLUGIN_VERSION = new Version(2, 60, false);
+  private static final Version PLUGIN_VERSION = new Version(2, 62, false);
 
   /**
    * localizer for this class

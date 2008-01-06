@@ -25,7 +25,6 @@ package timelistplugin;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -167,8 +166,22 @@ public class ProgramListDialog extends JDialog implements WindowClosingIf {
 
     content.add(scrollPane, BorderLayout.CENTER);
 
-    JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+    JPanel buttonPn = new JPanel(new BorderLayout());
+    buttonPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     content.add(buttonPn, BorderLayout.SOUTH);
+    
+    JButton buttonSettings = new JButton(TimeListPlugin.getInstance().createImageIcon("categories",
+        "preferences-desktop", 16));    
+    buttonSettings.setToolTipText(mLocalizer.msg("settings","Open settings"));
+
+    buttonSettings.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          close();
+          Plugin.getPluginManager()
+              .showSettings(TimeListPlugin.getInstance());
+        }
+      });
+    buttonPn.add(buttonSettings, BorderLayout.WEST);
 
     JButton closeButton = new JButton(Localizer
         .getLocalization(Localizer.I18N_CLOSE));
@@ -178,7 +191,7 @@ public class ProgramListDialog extends JDialog implements WindowClosingIf {
         dispose();
       }
     });
-    buttonPn.add(closeButton);
+    buttonPn.add(closeButton, BorderLayout.EAST);
 
     getRootPane().setDefaultButton(closeButton);
     pack();
