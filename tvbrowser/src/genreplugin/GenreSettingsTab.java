@@ -30,14 +30,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Properties;
 
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -47,27 +51,30 @@ import com.jgoodies.forms.layout.FormLayout;
 import util.ui.Localizer;
 import devplugin.SettingsTab;
 
-public class GenreSettingsTab implements SettingsTab {
+public class GenreSettingsTab implements SettingsTab, IGenreSettings {
 
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(GenreSettingsTab.class);
   private GenrePlugin mPlugin;
   private DefaultListModel mListModel;
   private JList mFilteredGenres;
+  private Properties mSettings;
+  private JSpinner mSpinner;
 
-  public GenreSettingsTab(GenrePlugin plugin, ArrayList<String> hiddenGenres) {
+  public GenreSettingsTab(GenrePlugin plugin, ArrayList<String> hiddenGenres, Properties settings) {
     mPlugin = plugin;
     mListModel = new DefaultListModel();
     Collections.sort(hiddenGenres);
     for (String genre: hiddenGenres) {
       mListModel.addElement(genre);
     }
+    mSettings = settings;
   }
 
   public JPanel createSettingsPanel() {
     final JPanel configPanel = new JPanel();
 
     FormLayout layout = new FormLayout("5dlu, pref, 3dlu, pref, 5dlu",
-        "5dlu, fill:default:grow, 3dlu, pref, 3dlu");
+        "5dlu, fill:default:grow, 3dlu, pref, 3dlu, pref, 3dlu");
     configPanel.setLayout(layout);
 
     mFilteredGenres = new JList(mListModel);
@@ -115,6 +122,14 @@ public class GenreSettingsTab implements SettingsTab {
       public void valueChanged(ListSelectionEvent e) {
         removeFilter.setEnabled(mFilteredGenres.getSelectedIndex() >= 0);
       }});
+    
+    JLabel label = new JLabel(mLocalizer.msg("daysToShow", "Days to show"));
+    configPanel.add(label, cc.xy(2, 6));
+    
+    SpinnerNumberModel model = new SpinnerNumberModel(7, 1, 28, 1);
+    mSpinner = new JSpinner(model);
+    mSpinner.setValue(Integer.valueOf(mSettings.getProperty(SETTINGS_DAYS, "7")));
+    configPanel.add(mSpinner, cc.xy(4, 6));
 
     JPanel panel = new JPanel(new BorderLayout());
     panel.add(configPanel, BorderLayout.NORTH);
@@ -130,6 +145,7 @@ public class GenreSettingsTab implements SettingsTab {
   }
 
   public void saveSettings() {
+    mSettings.setProperty(SETTINGS_DAYS, mSpinner.getValue().toString());
     mPlugin.saveSettings(mListModel.toArray());
     mPlugin.getFilterFromSettings();
     mPlugin.updateRootNode();
