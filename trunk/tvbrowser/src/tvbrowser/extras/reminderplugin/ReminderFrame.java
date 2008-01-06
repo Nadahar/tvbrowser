@@ -339,7 +339,29 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
   }
 
   private String getCloseButtonText(int seconds) {
-    return mCloseBtText + " (" + seconds + ")";
+    StringBuilder builder = new StringBuilder(mCloseBtText);
+    builder.append(" ("); 
+    if (seconds <= 60) {
+      builder.append(seconds);
+    }
+    else {
+      if (seconds >= 3600) {
+        int hours = seconds / 3600;
+        builder.append(hours).append(":");
+        seconds = seconds - 3600 * hours;
+      }
+      int minutes = seconds / 60;
+      if (minutes < 10) {
+        builder.append("0");
+      }
+      builder.append(minutes).append(":");
+      seconds = seconds - 60 * minutes;
+      if (seconds < 10) {
+        builder.append("0");
+      }
+      builder.append(seconds);
+    }
+    return builder.append(")").toString();
   }
   
   public void close() {
