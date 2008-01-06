@@ -157,7 +157,7 @@ public class RadioTimesDataService extends AbstractTvDataService {
   }
 
   public static Version getVersion() {
-    return new Version(2,60);
+    return new Version(2,61);
   }
   
   /*
