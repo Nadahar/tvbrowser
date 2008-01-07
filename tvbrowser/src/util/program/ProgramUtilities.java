@@ -253,6 +253,10 @@ public class ProgramUtilities {
     if (name.endsWith(",")) {
       name = name.substring(0, name.length() - 1);
     }
+    // remove surrounding brackets
+    if (name.length() > 1 && name.startsWith("(") && name.endsWith(")") && name.indexOf("(",1) < 0 && name.lastIndexOf(")", name.length()-2) < 0) {
+      name = name.substring(1, name.length()-1);
+    }
     return name;
   }
 
