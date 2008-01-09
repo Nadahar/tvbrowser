@@ -204,7 +204,7 @@ public class ChannelsSettingsTab implements
     // left list box
     JPanel listBoxPnLeft = new JPanel(new BorderLayout());
     mAllChannels = new ChannelJList(new DefaultListModel());
-    mAllChannels.setCellRenderer(new ChannelListCellRenderer(true, true, false, true));
+    mAllChannels.setCellRenderer(new ChannelListCellRenderer(true, true, true, true));
 
     listBoxPnLeft.add(new JScrollPane(mAllChannels), BorderLayout.CENTER);
 
