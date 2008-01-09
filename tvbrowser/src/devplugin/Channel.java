@@ -95,7 +95,7 @@ public class Channel implements Comparable<Channel> {
     mCopyrightNotice=copyrightNotice;
     mWebpage=webpage;
     mGroup=group;
-    mIcon=icon;
+    mDefaultIcon=icon;
     mCategories = categories;
   }
 
@@ -689,19 +689,6 @@ public class Channel implements Comparable<Channel> {
   public void setChannelName(String name) {
     if(ChannelList.hasCalledChannelValueChangeForChannel(this)) {
       mName = name;
-    }
-  }
-
-  /**
-   * Sets the icon of this channel.
-   * If this is used by a Plugin nothing will happen.
-   * 
-   * @param icon The new icon for the channel.
-   * @since 2.2.5/2.6.3
-   */
-  public void setChannelIcon(Icon icon) {
-    if(ChannelList.hasCalledChannelValueChangeForChannel(this)) {
-      mIcon = icon;
     }
   }
   
