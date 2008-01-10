@@ -213,7 +213,7 @@ public class ChannelList {
     }
     else {
       mCurrentChangeChannel.setChannelName(channel.getDefaultName());
-      mCurrentChangeChannel.setChannelIcon(channel.getIcon());
+      mCurrentChangeChannel.setDefaultIcon(channel.getDefaultIcon());
       mCurrentChangeChannel.setChannelCopyrightNotice(channel.getCopyrightNotice());
       mCurrentChangeChannel.setChannelWebpage(channel.getDefaultWebPage());
       
