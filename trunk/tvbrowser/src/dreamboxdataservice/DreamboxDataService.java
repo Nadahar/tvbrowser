@@ -310,7 +310,7 @@ public class DreamboxDataService extends AbstractTvDataService {
 
     private void getEPGData(TvDataUpdateManager updateManager, Channel ch) {
         try {
-            URL url = new URL("http://" + mProperties.getProperty("ip", "") + "/web/epgservice?sRef=" + ch.getId().substring(5).replaceAll("_", ":"));
+            URL url = new URL("http://" + mProperties.getProperty("ip", "") + "/web/epgservice?sRef=" + ch.getId().substring(5).replaceAll("_", ":").replaceAll(" ", "%20"));
 
             URLConnection connection = url.openConnection();
 
