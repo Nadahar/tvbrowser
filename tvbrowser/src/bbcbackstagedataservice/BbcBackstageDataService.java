@@ -117,9 +117,17 @@ public class BbcBackstageDataService extends AbstractTvDataService {
       // Configure the parser to parse the standard profile (ie. everything).
       (parser).setParseProfile(SAXXMLParser.STANDARD);
 
+      String info = "";
       try {
         // Do the parsing...
-        parser.parse(new File(mWorkingDir, "ServiceInformation.xml"));
+        File file = new File(mWorkingDir, "ServiceInformation.xml");
+        parser.parse(file);
+        
+        FileInputStream stream = new FileInputStream(file);
+        int bytes= stream.available();
+        byte buffer[]= new byte[bytes];
+        stream.read(buffer);
+        info = new String(buffer).toLowerCase();
       } catch (NonFatalXMLException nfxe) {
         // Handle non-fatal XML exceptions
         // Contain any invalid TVAnytime data values from XML source.
@@ -130,12 +138,27 @@ public class BbcBackstageDataService extends AbstractTvDataService {
 
       monitor.setMessage(mLocalizer.msg("store", "Storing BBC Data"));
       
+      int categories = Channel.CATEGORY_NONE;
       int max = parser.getServiceInformationTable().getNumServiceInformations();
       for (int i = 0; i < max; i++) {
         ServiceInformation serviceInfo = parser.getServiceInformationTable().getServiceInformation(i);
 
+        // find out, whether this is radio or TV
+        int pos = info.indexOf(("<ServiceInformation serviceId='" + serviceInfo.getServiceID() +"'>").toLowerCase());
+        if (pos >= 0) {
+          pos = info.indexOf("<![CDATA[".toLowerCase(), pos);
+          if (pos >= 0) {
+            pos += 9;
+            if (info.substring(pos).startsWith("Audio and video".toLowerCase())) {
+              categories = Channel.CATEGORY_TV;
+            }
+            else if (info.substring(pos).startsWith("Audio only".toLowerCase())) {
+              categories = Channel.CATEGORY_RADIO;
+            }
+          }
+        }
         Channel ch = new Channel(this, serviceInfo.getName(), serviceInfo.getServiceID(), TimeZone
-            .getTimeZone("GMT"), "gb", "(c) BBC", getChannelUrl(serviceInfo.getName()), mBbcChannelGroup);
+            .getTimeZone("GMT"), "gb", "(c) BBC", getChannelUrl(serviceInfo.getName()), mBbcChannelGroup, null, categories);
         channels.add(ch);
         mLog.fine("Channel : " + ch.getName() + '{' + ch.getId() + '}');
       }
@@ -232,10 +255,12 @@ public class BbcBackstageDataService extends AbstractTvDataService {
     mChannels = new ArrayList<Channel>();
     
     for (int i=0;i<numChannels;i++){
-      String channelName = settings.getProperty("ChannelTitle-"+i, "");
-      String channelId = settings.getProperty("ChannelId-"+i, "");
+      String channelName = settings.getProperty("ChannelTitle-" + i, "");
+      String channelId = settings.getProperty("ChannelId-" + i, "");
+      int categories = Integer.parseInt(settings.getProperty("ChannelCategories-" + i, "0"));
+      
       Channel ch = new Channel(this, channelName, channelId, TimeZone
-          .getTimeZone("GMT+0:00"), "gb", "(c) BBC", getChannelUrl(channelName), mBbcChannelGroup);
+          .getTimeZone("GMT+0:00"), "gb", "(c) BBC", getChannelUrl(channelName), mBbcChannelGroup, null, categories);
       mChannels.add(ch);
       mLog.fine("Channel : " + ch.getName() + '{' + ch.getId() + '}');
     }
@@ -258,6 +283,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
       Channel ch = mChannels.get(i);
       prop.setProperty("ChannelId-" + i, ch.getId());
       prop.setProperty("ChannelTitle-" + i, ch.getName());
+      prop.setProperty("ChannelCategories-" + i, Integer.toString(ch.getCategories()));
     }
     mLog.info("Finished storing settings for BbcBackstageDataService");
 
