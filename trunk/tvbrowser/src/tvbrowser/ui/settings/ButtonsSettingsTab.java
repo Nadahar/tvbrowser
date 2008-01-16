@@ -234,7 +234,7 @@ public class ButtonsSettingsTab implements SettingsTab {
         Row row = mRows.get(i);
         mListPn.add(row);
       }
-      mListPn.repaint();
+      mListPn.updateUI();
     }
 
     public int[] getTimes() {
