@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import org.apache.commons.compress.tar.TarEntry;
 import org.apache.commons.compress.tar.TarInputStream;
@@ -57,6 +59,8 @@ import devplugin.Date;
 import devplugin.PluginInfo;
 import devplugin.ProgressMonitor;
 import devplugin.Version;
+
+import javax.swing.*;
 
 /**
  * This Dataservice collects Data from http://backstage.bbc.co.uk/feeds/tvradio/
@@ -108,58 +112,43 @@ public class BbcBackstageDataService extends AbstractTvDataService {
       ArrayList<Channel> channels = new ArrayList<Channel>();
 
       monitor.setMessage(mLocalizer.msg("loading", "Loading BBC data"));
-      
-      loadBBCData();
-      
-      monitor.setMessage(mLocalizer.msg("parsing", "Parsing BBC Data"));
-      // Create parser
-      SAXXMLParser parser = new SAXXMLParser();
-      // Configure the parser to parse the standard profile (ie. everything).
-      (parser).setParseProfile(SAXXMLParser.STANDARD);
 
-      String info = "";
-      try {
-        // Do the parsing...
-        File file = new File(mWorkingDir, "ServiceInformation.xml");
-        parser.parse(file);
-        
-        FileInputStream stream = new FileInputStream(file);
-        int bytes= stream.available();
-        byte buffer[]= new byte[bytes];
-        stream.read(buffer);
-        info = new String(buffer).toLowerCase();
-      } catch (NonFatalXMLException nfxe) {
-        // Handle non-fatal XML exceptions
-        // Contain any invalid TVAnytime data values from XML source.
-        // These are all collated by the parser and thrown at the end to avoid
-        // having to abort the parsing.
-        nfxe.printStackTrace();
-      }
+      String channelInfo = new String(IOUtilities.loadFileFromHttpServer(new URL("http://www0.rdthdo.bbc.co.uk/cgi-perl/api/query.pl?method=bbc.channel.list&format=simple")), "ISO-8859-9");
 
-      monitor.setMessage(mLocalizer.msg("store", "Storing BBC Data"));
-      
-      int categories = Channel.CATEGORY_NONE;
-      int max = parser.getServiceInformationTable().getNumServiceInformations();
-      for (int i = 0; i < max; i++) {
-        ServiceInformation serviceInfo = parser.getServiceInformationTable().getServiceInformation(i);
+      Matcher m = Pattern.compile("<channel channel_id=\"(.*)\" name=\"(.*)\" />", Pattern.MULTILINE).matcher(channelInfo);
 
-        // find out, whether this is radio or TV
-        int pos = info.indexOf(("<ServiceInformation serviceId='" + serviceInfo.getServiceID() +"'>").toLowerCase());
-        if (pos >= 0) {
-          pos = info.indexOf("<![CDATA[".toLowerCase(), pos);
-          if (pos >= 0) {
-            pos += 9;
-            if (info.substring(pos).startsWith("Audio and video".toLowerCase())) {
-              categories = Channel.CATEGORY_TV;
-            }
-            else if (info.substring(pos).startsWith("Audio only".toLowerCase())) {
-              categories = Channel.CATEGORY_RADIO;
-            }
+      Pattern genrePattern = Pattern.compile("<genre genre_id=\".*\" name=\"(.*)/>", Pattern.MULTILINE);
+      Pattern iconPattern = Pattern.compile("<logo url=\"(.*_small.gif)\" type=\"image/gif\" width=\"\\d*\" height=\"\\d*\" />", Pattern.MULTILINE);
+
+      while (m.find()) {
+        int categories = Channel.CATEGORY_NONE;
+
+        String details = new String(IOUtilities.loadFileFromHttpServer(new URL("http://www0.rdthdo.bbc.co.uk/cgi-perl/api/query.pl?method=bbc.channel.getInfo&channel_id="+ m.group(1))));
+
+        Matcher ma = genrePattern.matcher(details);
+
+        if (ma.find()) {
+          // find out, whether this is radio or TV
+          if (ma.group(1).equals("Audio and video")) {
+            categories = Channel.CATEGORY_TV;
+          }
+          else if (ma.group(1).equals("Audio only".toLowerCase())) {
+            categories = Channel.CATEGORY_RADIO;
           }
         }
-        Channel ch = new Channel(this, serviceInfo.getName(), serviceInfo.getServiceID(), TimeZone
-            .getTimeZone("GMT"), "gb", "(c) BBC", getChannelUrl(serviceInfo.getName()), mBbcChannelGroup, null, categories);
+
+        Icon icon = null;
+        ma = iconPattern.matcher(details);
+        if (ma.find()) {
+          System.out.println(mWorkingDir.getAbsolutePath());
+          IOUtilities.download(new URL(ma.group(1)), new File(mWorkingDir, m.group(1) + ".gif"));
+          icon = new ImageIcon(new File(mWorkingDir, m.group(1) + ".gif").getAbsolutePath());
+        }
+
+        Channel ch = new Channel(this, m.group(2), m.group(1), TimeZone
+            .getTimeZone("GMT"), "gb", "(c) BBC", getChannelUrl(m.group(2)), mBbcChannelGroup, icon, categories);
         channels.add(ch);
+
         mLog.fine("Channel : " + ch.getName() + '{' + ch.getId() + '}');
       }
 
@@ -168,11 +157,6 @@ public class BbcBackstageDataService extends AbstractTvDataService {
       monitor.setMessage(mLocalizer.msg("done", "Done with BBC data"));
 
       return channels.toArray(new Channel[channels.size()]);
-    } catch (TVAnytimeException tvae) {
-      // Handle any other TVAnytime-specific exceptions that may be generated.
-      // E.g. if the XML parser cannot be initialized.
-      throw new TvBrowserException(getClass(), "error.1", "Problems while Parsing the Data.", tvae);
-
     } catch (IOException ioe) {
       // Handle IOExceptions: things like missing file
       throw new TvBrowserException(getClass(), "error.2", "Problems while loading the Data.", ioe);
@@ -215,7 +199,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
   }
   
   public static Version getVersion() {
-    return new Version(2,60);
+    return new Version(2,61);
   }
 
   /*
@@ -258,9 +242,17 @@ public class BbcBackstageDataService extends AbstractTvDataService {
       String channelName = settings.getProperty("ChannelTitle-" + i, "");
       String channelId = settings.getProperty("ChannelId-" + i, "");
       int categories = Integer.parseInt(settings.getProperty("ChannelCategories-" + i, "0"));
-      
+
+      File iconFile = new File(mWorkingDir, channelId + ".gif");
+
+      Icon icon = null;
+
+      if (iconFile.exists()) {
+        icon = new ImageIcon(iconFile.getAbsolutePath());
+      }
+
       Channel ch = new Channel(this, channelName, channelId, TimeZone
-          .getTimeZone("GMT+0:00"), "gb", "(c) BBC", getChannelUrl(channelName), mBbcChannelGroup, null, categories);
+          .getTimeZone("GMT+0:00"), "gb", "(c) BBC", getChannelUrl(channelName), mBbcChannelGroup, icon, categories);
       mChannels.add(ch);
       mLog.fine("Channel : " + ch.getName() + '{' + ch.getId() + '}');
     }
