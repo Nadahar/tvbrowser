@@ -21,6 +21,7 @@ import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
 import util.ui.Localizer;
+import util.io.IOUtilities;
 import util.io.Mirror;
 
 import java.io.File;
@@ -37,8 +38,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import javax.swing.Icon;
-
-import tvbrowser.core.Settings;
 
 public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   /** The default plugins download url */
@@ -246,6 +245,11 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
 
       URL url = new URL(urlMirror + (urlMirror.endsWith("/") ? "" : "/") + ((DataFoxChannelGroup) group).getChannelFile());
 
+      // Download the mirror list for the next run
+      try {
+        IOUtilities.download(new URL(urlMirror + (urlMirror.endsWith("/") ? "" : "/") + "main_" + Mirror.MIRROR_LIST_FILE_NAME), new File(mWorkingDirectory , "main_" + Mirror.MIRROR_LIST_FILE_NAME));
+      } catch(Exception ee) {}
+      
       if (monitor != null) {
         monitor.setMessage(mLocalizer.msg("Progressmessage.20",
                 "Getting channel list from")
