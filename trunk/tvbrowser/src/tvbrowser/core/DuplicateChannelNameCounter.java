@@ -25,7 +25,7 @@ public class DuplicateChannelNameCounter {
 
     for (Channel ch:channels) {
       // names only
-      String key = ch.getName();
+      String key = ch.getName().toLowerCase();
       Integer count = mChannelNames.get(key);
 
       if (count == null) {
@@ -36,7 +36,7 @@ public class DuplicateChannelNameCounter {
       }
       
       // names and country
-      key = ch.getName()+ch.getCountry();
+      key = ch.getName().toLowerCase()+ch.getCountry().toLowerCase();
       count = mChannelCountryNames.get(key);
 
       if (count == null) {
@@ -57,7 +57,7 @@ public class DuplicateChannelNameCounter {
     if (channel == null) {
       return false;
     }
-    Integer count = mChannelNames.get(channel.getName());
+    Integer count = mChannelNames.get(channel.getName().toLowerCase());
     return (count != null) && (count != 0);
   }
 
@@ -70,7 +70,7 @@ public class DuplicateChannelNameCounter {
     if (channel == null) {
       return false;
     }
-    Integer count = mChannelCountryNames.get(channel.getName()+channel.getCountry());
+    Integer count = mChannelCountryNames.get(channel.getName().toLowerCase()+channel.getCountry().toLowerCase());
     return (count != null) && (count != 0);
   }
 
