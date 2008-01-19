@@ -22,7 +22,7 @@ public class DataFoxFileParser {
   public static final Localizer mLocalizer = Localizer.getLocalizerFor(DataFoxFileParser.class);
   private static Logger mLog = Logger.getLogger(DataFoxFileParser.class.getName());
 
-  public void loadDataForChannel(TvDataUpdateManager updateManager, Date startDate, int dateCount, ProgressMonitor monitor, Date testStart, DataFoxChannelContainer internalChannel, Channel channel) throws TvBrowserException {
+  public void loadDataForChannel(SweDBTvDataService service, TvDataUpdateManager updateManager, Date startDate, int dateCount, ProgressMonitor monitor, Date testStart, DataFoxChannelContainer internalChannel, Channel channel) throws TvBrowserException {
     ArrayList<Date> modifiedDates = new ArrayList<Date>();
     monitor.setMessage(mLocalizer.msg("updateTvData.progressmessage.10",
             "{2}: Searching for updated/new programs on {0} for {1} days",
@@ -125,7 +125,7 @@ public class DataFoxFileParser {
 
           if (con.getResponseCode() == 200) {
             DataFoxDayParser.parseNew(new GZIPInputStream(con
-                    .getInputStream()), channel, date, dataHashtable);
+                    .getInputStream()), channel, date, dataHashtable, service);
             if (modifiedDates.contains(date)) {
               mLog.info("Updating lastUpdate property for date "
                       + date.toString());
