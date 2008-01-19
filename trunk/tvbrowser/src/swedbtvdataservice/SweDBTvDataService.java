@@ -69,8 +69,8 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
     mProperties = new Properties();
 
     mChannelGroups = new HashMap<String, DataFoxChannelGroup>();
-    mChannelGroups.put("SweDB", new DataFoxChannelGroup("SweDB", "SweDB.se", "(c) swedb.se", "http://tv.swedb.se", "swedb_channels.xml.gz"));
-    mChannelGroups.put("MSPC", new DataFoxChannelGroup("MSPC", "mspc.no", "(c) mspc.no", "http://www.mspc.no", "mspc_channels.xml.gz"));
+    mChannelGroups.put("SweDB", new DataFoxChannelGroup("SweDB", "SweDB.se", "(c) swedb.se", "http://tv.swedb.se", "swedb_channels.xml.gz", "se"));
+    mChannelGroups.put("MSPC", new DataFoxChannelGroup("MSPC", "mspc.no", "(c) mspc.no", "http://www.mspc.no", "mspc_channels.xml.gz", "no"));
   }
 
   public boolean supportsDynamicChannelList() {
@@ -331,7 +331,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
       }
 
       Channel channel = new Channel(this, container.getName(),
-              container.getId(), TimeZone.getTimeZone("CET"), "SE",
+              container.getId(), TimeZone.getTimeZone("CET"), group.getCountry(),
               group.getCopyright(), group.getUrl(), group, null, category);
 
       if (!container.getIconUrl().equals("")) {
