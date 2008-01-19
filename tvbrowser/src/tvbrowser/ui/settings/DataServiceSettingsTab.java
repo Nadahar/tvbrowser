@@ -75,7 +75,7 @@ public class DataServiceSettingsTab implements devplugin.SettingsTab {
      * Returns the title of the tab-sheet.
      */
     public String getTitle() {
-      return "TVDataServices";
+      return mLocalizer.msg("title", "TV-Data Plugin");
     }
   
 }
