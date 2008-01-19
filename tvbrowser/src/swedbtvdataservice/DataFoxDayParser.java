@@ -22,10 +22,13 @@ import java.util.Hashtable;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import util.ui.Localizer;
+
 /**
  * @author Inforama
  */
 public class DataFoxDayParser extends org.xml.sax.helpers.DefaultHandler {
+  public static final Localizer mLocalizer = Localizer.getLocalizerFor(DataFoxDayParser.class);
 
   private static java.util.logging.Logger mLog
           = java.util.logging.Logger.getLogger(DataFoxDayParser.class.getName());
@@ -98,13 +101,16 @@ public class DataFoxDayParser extends org.xml.sax.helpers.DefaultHandler {
 
   private String date;
 
+  private SweDBTvDataService mDataService;
+
   /**
    * Creates a new instance of DataFoxDayParser
    */
   private DataFoxDayParser(Channel ch,
-                           Hashtable<String, MutableChannelDayProgram> lht) {
+                           Hashtable<String, MutableChannelDayProgram> lht, SweDBTvDataService dataService) {
     mChannel = ch;
     mDayProgsHashTable = lht;
+    mDataService = dataService;
   }
 
   public InputSource resolveEntity(String publicId, String systemId) {
@@ -358,6 +364,10 @@ public class DataFoxDayParser extends org.xml.sax.helpers.DefaultHandler {
           // Since we don't have a field for sub titles, we add it to description
           desc = (subTitle + "\n" + desc).trim();
 
+          if ("true".equals(mDataService.getProperties().getProperty(SweDBTvDataService.SHOW_REGISTER_TEXT, "true"))) {
+            desc += "\n\n" + mLocalizer.msg("register", "Please Register at {0}", mChannel.getWebpage());
+          }
+
           prog.setDescription(desc);
           prog.setShortInfo(MutableProgram.generateShortInfoFromDescription(desc));
 
@@ -450,13 +460,13 @@ public class DataFoxDayParser extends org.xml.sax.helpers.DefaultHandler {
   }
 
   public static void parseNew(InputStream in, Channel ch, devplugin.Date day,
-                              Hashtable<String, MutableChannelDayProgram> ht) throws Exception {
+                              Hashtable<String, MutableChannelDayProgram> ht, SweDBTvDataService dataService) throws Exception {
     SAXParserFactory fac = SAXParserFactory.newInstance();
     fac.setValidating(false);
     SAXParser sax = fac.newSAXParser();
     InputSource input = new InputSource(in);
     input.setSystemId(new File("/").toURI().toURL().toString());
-    sax.parse(input, new DataFoxDayParser(ch, ht));
+    sax.parse(input, new DataFoxDayParser(ch, ht, dataService));
   }
 
 }

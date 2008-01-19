@@ -39,6 +39,8 @@ import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import javax.swing.Icon;
 
+import org.xml.sax.XMLReader;
+
 public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   /** The default plugins download url */
   public static final String DEFAULT_PLUGINS_DOWNLOAD_URL = "http://www.tvbrowser.org/mirrorlists";
@@ -71,6 +73,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   private boolean mHasRightToDownloadIcons;
 
   private DataFoxFileParser mParser = new DataFoxFileParser();
+  static final String SHOW_REGISTER_TEXT = "showRegisterText";
 
   /**
    * Creates a new instance of SweDBTvDataService
@@ -97,7 +100,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   }
 
   public SettingsPanel getSettingsPanel() {
-    return new DataFoxSettingsPanel();
+    return new DataFoxSettingsPanel(mProperties);
   }
 
   public void setWorkingDirectory(File dataDir) {
@@ -137,7 +140,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
 
     int counter = 0;
     for (Channel channel : channelArr) {
-      mParser.loadDataForChannel(updateManager, startDate, dateCount, monitor, testStart, mInternalChannels.get(channel), channel);
+      mParser.loadDataForChannel(this, updateManager, startDate, dateCount, monitor, testStart, mInternalChannels.get(channel), channel);
       monitor.setValue(counter++);
     }
 
@@ -410,6 +413,11 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
     return mIconCache;
   }
 
+
+  public Properties getProperties() {
+    return mProperties;
+  }
+
   public ChannelGroup[] checkForAvailableChannelGroups(ProgressMonitor monitor)
           throws TvBrowserException {
     return getAvailableGroups();
@@ -418,8 +426,6 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   public static Version getVersion() {
     return new Version(2, 61);
   }
-
-
 
   public PluginInfo getInfo() {
     return new devplugin.PluginInfo(
