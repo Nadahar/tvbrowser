@@ -32,13 +32,15 @@ public class DataFoxChannelGroup implements devplugin.ChannelGroup {
   private String mCopyright;
   private String mUrl;
   private String mChannelFile;
+  private String mCountry;
 
-  public DataFoxChannelGroup(String id, String provider, String copyright, String url, String channelFile) {
+  public DataFoxChannelGroup(String id, String provider, String copyright, String url, String channelFile, String country) {
     mId = id;
     mProvider = provider;
     mCopyright = copyright;
     mUrl = url;
     mChannelFile = channelFile;
+    mCountry = country;
   }
 
   /**
@@ -90,5 +92,9 @@ public class DataFoxChannelGroup implements devplugin.ChannelGroup {
 
   public String getChannelFile() {
     return mChannelFile;
+  }
+
+  public String getCountry() {
+    return mCountry;
   }
 }
