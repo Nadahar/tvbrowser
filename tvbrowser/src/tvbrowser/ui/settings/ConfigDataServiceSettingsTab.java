@@ -93,6 +93,8 @@ public class ConfigDataServiceSettingsTab implements devplugin.CancelableSetting
      * Cancel was pressed
      */
     public void cancel() {
+      if (mSettingsPanel != null) {
         mSettingsPanel.cancel();
+      }
     }
 }
