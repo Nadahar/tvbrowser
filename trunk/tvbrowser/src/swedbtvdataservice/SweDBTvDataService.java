@@ -21,6 +21,7 @@ import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
 import util.ui.Localizer;
+import util.io.Mirror;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +38,18 @@ import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import javax.swing.Icon;
 
+import tvbrowser.core.Settings;
+
 public class SweDBTvDataService extends devplugin.AbstractTvDataService {
+  /** The default plugins download url */
+  public static final String DEFAULT_PLUGINS_DOWNLOAD_URL = "http://www.tvbrowser.org/mirrorlists";
+
+  /** Contains the mirror urls useable for receiving the channellist.xml.gz from. */
+  private static final String[] DEFAULT_MIRRORS = {
+    "http://tvbrowser.dyndns.tv",
+    "http://hdtv-online.org/TVB",
+    "http://www.tvbrowserserver.de/"
+  };
 
   public static final Localizer mLocalizer = Localizer.getLocalizerFor(SweDBTvDataService.class);
 
@@ -86,7 +98,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   }
 
   public SettingsPanel getSettingsPanel() {
-    return null;
+    return new DataFoxSettingsPanel();
   }
 
   public void setWorkingDirectory(File dataDir) {
@@ -230,7 +242,9 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
 
       mLog.log(Level.ALL, "Loading Channel file : " + ((DataFoxChannelGroup) group).getChannelFile());
 
-      URL url = new URL("http://www.tvbrowser.org/mirrorlists/" + ((DataFoxChannelGroup) group).getChannelFile());
+      String urlMirror = getMirror().getUrl();
+
+      URL url = new URL(urlMirror + (urlMirror.endsWith("/") ? "" : "/") + ((DataFoxChannelGroup) group).getChannelFile());
 
       if (monitor != null) {
         monitor.setMessage(mLocalizer.msg("Progressmessage.20",
@@ -310,6 +324,30 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
     return channels;
   }
 
+  private Mirror getMirror() {
+    File file = new File(mWorkingDirectory , "main_" + Mirror.MIRROR_LIST_FILE_NAME);
+
+    try {
+      return Mirror.chooseUpToDateMirror(Mirror.readMirrorListFromFile(file),null,"DataFox", "main", SweDBTvDataService.class, mLocalizer.msg("error.additional"," Please inform the TV-Browser team."));
+    } catch (Exception exc) {
+      try {
+        if(DEFAULT_MIRRORS.length > 0) {
+          Mirror[] mirr = new Mirror[DEFAULT_MIRRORS.length];
+
+          for(int i = 0; i < DEFAULT_MIRRORS.length; i++)
+            mirr[i] = new Mirror(DEFAULT_MIRRORS[i]);
+
+          return Mirror.chooseUpToDateMirror(mirr,null,"DataFox", "main", SweDBTvDataService.class, mLocalizer.msg("error.additional"," Please inform the TV-Browser team."));
+        }
+        else
+          throw exc;
+      }catch (Exception exc2) {
+        return new Mirror(DEFAULT_PLUGINS_DOWNLOAD_URL);
+      }
+    }
+  }
+
+
   private Channel createTVBrowserChannel(DataFoxChannelGroup group, DataFoxChannelContainer container) {
     if (mWorkingDirectory != null) {
       IconLoader iconLoader = null;
@@ -376,6 +414,8 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   public static Version getVersion() {
     return new Version(2, 61);
   }
+
+
 
   public PluginInfo getInfo() {
     return new devplugin.PluginInfo(
