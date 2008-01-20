@@ -123,16 +123,16 @@ public class PluginLoader {
         String oldProxyName = getProxyFileName(oldFile);
         File oldProxy = new File(oldProxyName);
         if (oldProxy.exists()) {
-          oldProxy.delete();
+          deletePluginProxy(oldProxy);
         }
         String oldIconName = getProxyIconFileName(oldFile);
         File oldIcon = new File(oldIconName);
         if (oldIcon.exists()) {
-          oldIcon.delete();
+          deletePluginProxy(oldIcon);
         }
 
         // Delete the old file
-        oldFile.delete();
+        deletePluginProxy(oldFile);
 
         // Rename the file, so the PluginLoader will install it later
         if (!fileArr[i].renameTo(oldFile)) {
@@ -259,24 +259,26 @@ public class PluginLoader {
       // check existence of plugin file
       File pluginFile = new File(lcFileName);
       if (!pluginFile.canRead()) {
-        proxyFile.delete();
+        deletePluginProxy(proxyFile);
         return null;
       }
       // everything seems fine, create plugin proxy and plugin info
       PluginInfo info = new PluginInfo(name, description, author, version, license);
       // now get icon
       String iconFileName = getProxyIconFileName(proxyFile);
-      File iconFile = new File(iconFileName);
-      ImageIcon icon = null;
-      if (iconFile.canRead()) {
-        icon = IOUtilities.readImageIconFromFile(iconFile);
-      }
-      return new JavaPluginProxy(info, lcFileName, pluginId, icon);
+      return new JavaPluginProxy(info, lcFileName, pluginId, iconFileName);
     } catch (Exception e) {
       // delete proxy on read error, maybe the format has changed
-      proxyFile.delete();
+      deletePluginProxy(proxyFile);
       return null;
     }
+  }
+
+  private void deletePluginProxy(File proxyFile) {
+    String iconName = getProxyIconFileName(proxyFile);
+    proxyFile.delete();
+    File iconFile = new File(iconName);
+    iconFile.delete();
   }
 
   /**
@@ -306,12 +308,14 @@ public class PluginLoader {
       out.writeLong(pluginFile.length());
       out.writeUTF(proxy.getPluginFileName());
       out.close();
-      // also store the plugin icon
-      Icon pluginIcon = proxy.getPluginIcon();
-      if (pluginIcon != null && pluginIcon instanceof ImageIcon) {
-        String iconFileName = getProxyIconFileName(pluginFile);
-        File iconFile = new File(iconFileName);
-        IOUtilities.writeImageIconToFile((ImageIcon)pluginIcon, "png", iconFile);
+      // also store the plugin icon, if it is not yet available
+      String iconFileName = getProxyIconFileName(pluginFile);
+      File iconFile = new File(iconFileName);
+      if (!iconFile.exists()) {
+        Icon pluginIcon = proxy.getPluginIcon();
+        if (pluginIcon != null && pluginIcon instanceof ImageIcon) {
+          IOUtilities.writeImageIconToFile((ImageIcon)pluginIcon, "png", iconFile);
+        }
       }
     } catch (Exception e) {
     }
