@@ -123,7 +123,7 @@ public class ButtonsSettingsTab implements SettingsTab {
     Arrays.sort(times);
     
     Settings.propTimeButtons.setIntArray(times);
-    MainFrame.getInstance().getToolbar().updateTimeButtons();
+    MainFrame.getInstance().updateTimeButtons();
   }
 
   /**

@@ -802,6 +802,11 @@ public class MainFrame extends JFrame implements DateListener {
     return mSingleton;
   }
 
+  public void updateTimeButtons() {
+    mToolBar.updateTimeButtons();
+    mTimeChooserPanel.updateButtons();
+  }
+  
   public boolean isShowAllFilterActivated() {
     return (mProgramTableModel == null) || (mProgramTableModel.getProgramFilter() instanceof ShowAllFilter);
   }
