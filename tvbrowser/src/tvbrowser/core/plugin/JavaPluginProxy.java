@@ -44,6 +44,7 @@ import tvbrowser.core.PluginLoader;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.TvBrowserException;
+import util.io.IOUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
@@ -56,8 +57,6 @@ import devplugin.PluginsProgramFilter;
 import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
-
-
 
 /**
  * A plugin proxy for Java plugins.
@@ -83,6 +82,11 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   /** plugin icon, only used if the plugin is not active */
   private Icon mPluginIcon;
   
+  /**
+   * file name of the icon of this plugin proxy, used for lazy loading 
+   */
+  private String mIconFileName;
+  
 
   public JavaPluginProxy(Plugin plugin, String pluginFileName) {
     mPlugin = plugin;
@@ -94,6 +98,13 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     mPluginFileName = pluginFileName;
     mId = pluginId;
     mPluginIcon = pluginIcon;
+  }
+
+  public JavaPluginProxy(PluginInfo info, String pluginFileName, String pluginId, String iconFileName) {
+    mPluginInfo = info;
+    mPluginFileName = pluginFileName;
+    mId = pluginId;
+    mIconFileName = iconFileName;
   }
 
   /**
@@ -576,6 +587,12 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   @Override
   public Icon getPluginIcon() {
     // if only the proxy was loaded, then mPluginIcon contains the copied plugin icon
+    if (mPluginIcon == null && mIconFileName != null) {
+      File iconFile = new File(mIconFileName);
+      if (iconFile.canRead()) {
+        mPluginIcon = IOUtilities.readImageIconFromFile(iconFile);
+      }
+    }
     if (mPluginIcon != null) {
       return mPluginIcon;
     }
