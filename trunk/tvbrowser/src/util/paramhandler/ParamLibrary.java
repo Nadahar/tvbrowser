@@ -117,7 +117,7 @@ public class ParamLibrary {
    * @return List of possible Functions
    */
   public String[] getPossibleFunctions() {
-    String[] str = { "isset", "urlencode", "concat", "clean", "cleanLess", "leadingZero", "splitAt", "testparam" };
+    String[] str = { "isset", "urlencode", "concat", "clean", "cleanLess", "leadingZero", "splitAt", "testparam", "maxlength" };
     return str;
   }
 
@@ -363,6 +363,30 @@ public class ParamLibrary {
       }
       
       return result.toString().trim();
+    } else if (function.equals("maxlength")) {
+      if (params.length != 2) {
+        mError = true;
+        mErrorString = mLocalizer.msg("maxlength2Params", "maxlength needs 2 Parameters");
+        return null;
+      }
+
+      int num = -1;
+
+      try {
+        num = Integer.parseInt(params[1]);
+      } catch (Exception ex) {
+        mError = true;
+        mErrorString = mLocalizer.msg("maxlengthNumberProblems", "Could not parse Number") + " : " + params[1];
+        return null;
+      }
+
+      String result = params[0];
+
+      if (result.length() > num) {
+        result = result.substring(0, num);
+      }
+
+      return result;
     }
 
     mError = true;
