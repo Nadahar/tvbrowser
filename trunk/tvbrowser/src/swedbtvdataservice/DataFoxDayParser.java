@@ -364,12 +364,21 @@ public class DataFoxDayParser extends org.xml.sax.helpers.DefaultHandler {
           // Since we don't have a field for sub titles, we add it to description
           desc = (subTitle + "\n" + desc).trim();
 
+          String shortDesc = desc;
+
+          if (shortDesc.length() > 200) {
+            shortDesc = shortDesc.substring(0, 200) + "...";
+          }
+          /*
+            shortDesc = MutableProgram.generateShortInfoFromDescription(desc);
+           */
+          prog.setShortInfo(shortDesc);
+                    
           if ("true".equals(mDataService.getProperties().getProperty(SweDBTvDataService.SHOW_REGISTER_TEXT, "true"))) {
             desc += "\n\n" + mLocalizer.msg("register", "Please Register at {0}", mChannel.getWebpage());
           }
 
           prog.setDescription(desc);
-          prog.setShortInfo(MutableProgram.generateShortInfoFromDescription(desc));
 
           if (genre.length() > 0) {
             genre = genre.substring(0, 1).toUpperCase() + genre.substring(1);
