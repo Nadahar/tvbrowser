@@ -140,7 +140,7 @@ public class ExecutionHandler {
    * @throws IOException Thrown if something went wrong on process building.
    */  
   public void execute(boolean logInputStream) throws IOException {
-    execute(true,false);
+    execute(logInputStream,false);
   }
 
   /**
@@ -153,7 +153,7 @@ public class ExecutionHandler {
    * @throws IOException Thrown if something went wrong on process building.
    */  
   public void execute(boolean logInputStream, String encoding) throws IOException {
-    execute(true,false,encoding);
+    execute(logInputStream,false,encoding);
   }
 
 
@@ -169,7 +169,7 @@ public class ExecutionHandler {
    * @throws IOException Thrown if something went wrong on process building.
    */  
   public void execute(boolean logInputStream, boolean logErrorStream) throws IOException {
-    execute(logErrorStream, logErrorStream, null);
+    execute(logInputStream, logErrorStream, null);
   }
   
   /**
