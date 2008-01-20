@@ -28,7 +28,7 @@ public class DataFoxSettingsPanel extends SettingsPanel {
   }
 
   private void createGui() {
-    setLayout(new FormLayout("5dlu, fill:pref:grow", "3dlu, pref, 3dlu, pref, 3dlu, fill:pref:grow"));
+    setLayout(new FormLayout("5dlu, fill:10dlu:grow", "3dlu, pref, 3dlu, pref, 3dlu, fill:pref:grow"));
 
     CellConstraints cc = new CellConstraints();
 
