@@ -53,6 +53,8 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import devplugin.Program;
+
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -62,20 +64,22 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ReminderDialog.class);
 
-  public static final String[] SMALL_REMIND_MSG_ARR
-    = new String[ReminderFrame.REMIND_MSG_ARR.length - 1];
+  public static final String[] SMALL_REMIND_MSG_ARR = new String[ReminderFrame.REMIND_MSG_ARR.length - 1];
 
-  public static final int[] SMALL_REMIND_VALUE_ARR
-    = new int[ReminderFrame.REMIND_VALUE_ARR.length - 1];
-  
+  public static final int[] SMALL_REMIND_VALUE_ARR = new int[ReminderFrame.REMIND_VALUE_ARR.length - 1];
+
   static {
     // use the same entries as the ReminderFrame but without "don't remind me"
     System.arraycopy(ReminderFrame.REMIND_MSG_ARR, 1, SMALL_REMIND_MSG_ARR, 0,
-      SMALL_REMIND_MSG_ARR.length);
-    System.arraycopy(ReminderFrame.REMIND_VALUE_ARR, 1, SMALL_REMIND_VALUE_ARR, 0,
-      SMALL_REMIND_VALUE_ARR.length);
+        SMALL_REMIND_MSG_ARR.length);
+    System.arraycopy(ReminderFrame.REMIND_VALUE_ARR, 1, SMALL_REMIND_VALUE_ARR,
+        0, SMALL_REMIND_VALUE_ARR.length);
   }
+  
+  private String[] mRemindMessages;
 
+  private int[] mRemindValues;
+  
   private boolean mOkPressed=false;
 
   private JComboBox mList;
@@ -93,6 +97,8 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
   }
   
   private void createGui(devplugin.Program program, final java.util.Properties settings) {
+    calculatePossibleReminders(program);
+
     setTitle(mLocalizer.msg("title", "New reminder"));
 
     UiUtilities.registerForClosing(this);
@@ -127,7 +133,7 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
     
     northPn.add(headerPanel);
     
-    mList=new JComboBox(SMALL_REMIND_MSG_ARR);
+    mList=new JComboBox(mRemindMessages);
     
     String s=settings.getProperty("defaultReminderEntry");
     int reminderTime = 5;
@@ -138,11 +144,11 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
         // ignore
       }
     }
-    if (reminderTime>=0 && reminderTime<SMALL_REMIND_MSG_ARR.length) {
+    if (reminderTime>=0 && reminderTime<mRemindMessages.length) {
       mList.setSelectedIndex(reminderTime);
     }
     else {
-      mList.setSelectedIndex(5);
+      mList.setSelectedIndex(mRemindMessages.length - 1);
     }
     
     northPn.add(mList);
@@ -190,11 +196,26 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
     pack();
   }
 
-  
+  private void calculatePossibleReminders(Program program) {
+    int remainingMinutes = ReminderPlugin.getTimeToProgramStart(program);
+    int maxIndex = 1;
+    for (int i=1; i < ReminderFrame.REMIND_VALUE_ARR.length; i++) {
+      if (ReminderFrame.REMIND_VALUE_ARR[i] < remainingMinutes) {
+        maxIndex = i;
+      }
+    }
+    // use the same entries as the ReminderFrame but without "don't remind me"
+    mRemindMessages = new String[maxIndex];
+    mRemindValues = new int[maxIndex];
+
+    System.arraycopy(ReminderFrame.REMIND_MSG_ARR, 1, mRemindMessages, 0, maxIndex);
+    System.arraycopy(ReminderFrame.REMIND_VALUE_ARR, 1, mRemindValues, 0, maxIndex);
+  }
+
   
   public int getReminderMinutes() {
     int idx = mList.getSelectedIndex();
-    return SMALL_REMIND_VALUE_ARR[idx];
+    return mRemindValues[idx];
   }
 
   

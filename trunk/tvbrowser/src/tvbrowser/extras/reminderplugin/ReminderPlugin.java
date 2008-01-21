@@ -62,6 +62,7 @@ import tvbrowser.extras.common.ConfigurationHandler;
 
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
+import util.io.IOUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.*;
@@ -134,11 +135,7 @@ public class ReminderPlugin {
         	  }
             
             mHasRightToSave = true;
-            new Thread("Save reminders") {
-              public void run() {
-                store();
-              }
-            }.start();
+            saveReminders();
           }
         });
 
@@ -426,12 +423,22 @@ public class ReminderPlugin {
       action.setSmallIcon(IconLoader.getInstance().getIconFromTheme("apps",
           "appointment", 16));
 
+      int remainingMinutes = getTimeToProgramStart(program);
+      if (remainingMinutes < 0) {
+        remainingMinutes = 1;
+      }
+      int maxIndex = 1;
+      for (int i=1; i < ReminderFrame.REMIND_VALUE_ARR.length; i++) {
+        if (ReminderFrame.REMIND_VALUE_ARR[i] < remainingMinutes) {
+          maxIndex = i;
+        }
+      }
       final ReminderListItem item = mReminderList.getReminderItem(program);
       String[] entries = ReminderFrame.REMIND_MSG_ARR;
-      ActionMenu[] actions = new ActionMenu[entries.length - 1];
+      ActionMenu[] actions = new ActionMenu[maxIndex];
       ActionMenu[] sub = new ActionMenu[2];
       
-      for (int i = 0; i < entries.length; i++) {
+      for (int i = 0; i <= maxIndex; i++) {
         final int minutes = ReminderFrame.REMIND_VALUE_ARR[i];
         ContextMenuAction a = new ContextMenuAction();
         a.setText(entries[i]);
@@ -582,12 +589,18 @@ public class ReminderPlugin {
     mRootNode.update();
     
     if(save && mHasRightToSave) {
-      new Thread("Save reminders") {
-        public void run() {
-          store();
-        }
-      }.start();
+      saveReminders();
     }
+  }
+
+  private void saveReminders() {
+    Thread thread = new Thread("Save reminders") {
+      public void run() {
+        store();
+      }
+    };
+    thread.setPriority(Thread.MIN_PRIORITY);
+    thread.start();
   }
 
 
@@ -790,11 +803,16 @@ public class ReminderPlugin {
     }
     
     mSettings.setProperty("markPriority",String.valueOf(priority));
-    
-    new Thread("Save reminders") {
-      public void run() {
-        store();
-      }
-    }.start();
+    saveReminders();
   }
+  
+  protected static int getTimeToProgramStart(Program program) {
+    int progMinutesAfterMidnight = program.getHours() * 60 + program.getMinutes();
+    int remainingMinutes = progMinutesAfterMidnight - IOUtilities.getMinutesAfterMidnight();
+    if ((remainingMinutes < 0) || (Date.getCurrentDate().compareTo(program.getDate()) < 0)) {
+      remainingMinutes += 24 * 60;
+    }
+    return remainingMinutes;
+  }
+
 }
