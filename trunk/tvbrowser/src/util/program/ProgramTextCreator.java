@@ -513,7 +513,7 @@ public class ProgramTextCreator {
               buffer.append("<table border=\"0\" cellpadding=\"0\" style=\"font-family:");
               buffer.append(bodyFont);
               buffer.append(";\">");
-              for (int i=0; i<lists[0].size(); i++) {
+              for (int i=0; i < lists[0].size(); i++) {
                 String[] parts = new String[2];
                 parts[0] = lists[0].get(i);
                 parts[1] = "";
