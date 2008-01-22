@@ -591,6 +591,9 @@ public class ProgramTextCreator {
       actors = new String[1];
       actors[0] = actorField;
     }
+    else {
+      return null;
+    }
     for (String actor : actors) {
       actor = actor.trim();
       if (actor != "") {

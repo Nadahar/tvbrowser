@@ -150,6 +150,10 @@ public class ProgramUtilities {
         actors = new String[1];
         actors[0] = actorsField;
       }
+      // unknown format
+      else {
+        return null;
+      }
       ArrayList<String> listFirst = new ArrayList<String>();
       ArrayList<String> listSecond = new ArrayList<String>();
       for (int i = 0; i < actors.length; i++) {
@@ -220,7 +224,7 @@ public class ProgramUtilities {
    * extract the actor names from the actor field
    * 
    * @param program the program to work on
-   * @return list fo real actor names or null (if it can not be decided)
+   * @return list of real actor names or null (if it can not be decided)
    * @since 2.6
    */
   public static String[] getActorNames(Program program) {
