@@ -261,6 +261,10 @@ public class ProgramUtilities {
     if (name.length() > 1 && name.startsWith("(") && name.endsWith(")") && name.indexOf("(",1) < 0 && name.lastIndexOf(")", name.length()-2) < 0) {
       name = name.substring(1, name.length()-1);
     }
+    // filter wrong dataservice actors
+    if (name.equals("null")) {
+      return "";
+    }
     return name;
   }
 
