@@ -45,6 +45,7 @@ import util.ui.WindowClosingIf;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -93,6 +94,8 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
     private JComboBox mTimezone;
     private JTextField mUserName;
     private JPasswordField mPasswordField;
+    
+    private JTextField mMediaplayer;
 
     /**
      * Create the Dialog
@@ -210,11 +213,11 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
 
         basicPanel.add(builder.getPanel(), cc.xyw(1,9,2));
 
-        JPanel extendedPanel = new JPanel();
+        final JPanel extendedPanel = new JPanel();
         extendedPanel.setBorder(Borders.DLU4_BORDER);
-        extendedPanel.setLayout(new FormLayout("5dlu, right:pref, 3dlu, fill:pref:grow, 5dlu", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
+        extendedPanel.setLayout(new FormLayout("5dlu, right:pref, 3dlu, fill:pref:grow, 3dlu, pref, 5dlu", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
 
-        extendedPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("timeZoneSeparator","Timezone")), cc.xyw(1,1,5));
+        extendedPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("timeZoneSeparator","Timezone")), cc.xyw(1,1,7));
         extendedPanel.add(new JLabel(mLocalizer.msg("timeZone", "Timezone:")), cc.xy(2,3));
 
         String[] zoneIds = TimeZone.getAvailableIDs();
@@ -229,18 +232,36 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
           }
         }
 
-        extendedPanel.add(mTimezone, cc.xy(4,3));
+        extendedPanel.add(mTimezone, cc.xyw(4,3,3));
 
-        extendedPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("security", "Security")), cc.xyw(1,5,5));
+        extendedPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("security", "Security")), cc.xyw(1,5,7));
 
         extendedPanel.add(new JLabel(mLocalizer.msg("userName", "Username :")), cc.xy(2,7));
         mUserName = new JTextField(mConfig.getUserName());
-        extendedPanel.add(mUserName, cc.xy(4,7));
+        extendedPanel.add(mUserName, cc.xyw(4,7,3));
 
         extendedPanel.add(new JLabel(mLocalizer.msg("password", "Password :")), cc.xy(2,9));
         mPasswordField = new JPasswordField(mConfig.getPassword());
-        extendedPanel.add(mPasswordField, cc.xy(4,9));
-
+        extendedPanel.add(mPasswordField, cc.xyw(4,9,3));
+        
+        extendedPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("streaming", "Streaming")), cc.xyw(1, 11, 7));
+        
+        extendedPanel.add(new JLabel(mLocalizer.msg("mediaplayer", "Mediaplayer :")), cc.xy(2, 13));
+        mMediaplayer = new JTextField(mConfig.getMediaplayer());
+        extendedPanel.add(mMediaplayer, cc.xy(4, 13));
+        
+        JButton select = new JButton(mLocalizer.msg("select", "Select"));
+        select.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser mediaplayerChooser = new JFileChooser();
+                int returnVal = mediaplayerChooser.showOpenDialog(extendedPanel);
+                if(returnVal == JFileChooser.APPROVE_OPTION) {
+                    mMediaplayer.setText(mediaplayerChooser.getSelectedFile().getAbsolutePath());
+               }
+            }
+        });
+        extendedPanel.add(select, cc.xy(6, 13));
+        
         builder = new ButtonBarBuilder();
 
         JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
@@ -378,6 +399,8 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
 
         mConfig.setUserName(mUserName.getText());
         mConfig.setPassword(mPasswordField.getPassword());
+        
+        mConfig.setMediaplayer(mMediaplayer.getText());
 
         setVisible(false);
     }

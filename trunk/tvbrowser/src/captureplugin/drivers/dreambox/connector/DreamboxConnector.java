@@ -38,6 +38,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -517,5 +518,28 @@ public class DreamboxConnector {
     }
 
     return false;
+  }
+
+  public boolean streamChannel(DreamboxChannel channel) {
+    boolean success = false;
+    
+    if (new File(mConfig.getMediaplayer()).exists()) {
+      try {
+        final URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/web/stream.m3u?ref=" + URLEncoder.encode(channel.getReference(), "UTF8"));
+        String cmd[] = {mConfig.getMediaplayer(),  url.toString()};
+        try {
+          Runtime.getRuntime().exec(cmd);
+          success = true;
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      } catch (MalformedURLException e) {
+        e.printStackTrace();
+      } catch (UnsupportedEncodingException e) {
+        e.printStackTrace();
+      }
+    }
+    
+    return success;
   }
 }

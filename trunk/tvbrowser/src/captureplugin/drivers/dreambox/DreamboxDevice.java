@@ -277,7 +277,7 @@ public class DreamboxDevice implements DeviceIf {
      * @see captureplugin.drivers.DeviceIf#getAdditionalCommands()
      */
     public String[] getAdditionalCommands() {
-       return new String[]{mLocalizer.msg("switch", "Switch channel"), mLocalizer.msg("sendMessage", "Send as Message")};
+       return new String[]{mLocalizer.msg("switch", "Switch channel"), mLocalizer.msg("sendMessage", "Send as Message"), mLocalizer.msg("streamChannel", "Open channel with mediaplayer")};
     }
 
     /**
@@ -310,6 +310,20 @@ public class DreamboxDevice implements DeviceIf {
             ParamParser parser = new ParamParser();
 
             connect.sendMessage(parser.analyse("{channel_name} - {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n{title}", program));
+        } else if (num == 2) {
+            final DreamboxChannel channel = (DreamboxChannel) mConfig.getExternalChannel(program.getChannel());
+          
+            if (channel != null) {
+                DreamboxConnector connect = new DreamboxConnector(mConfig);
+                if (!connect.streamChannel(channel)) {
+                    int ret = JOptionPane.showConfirmDialog(parent,
+                        mLocalizer.msg("mediaplayerNotConfiguredText", "Unfortunately, a problem occurred during executing the mediaplayer,\ndo you want to correct the configuration now?"),
+                        mLocalizer.msg("mediaplayerNotConfiguredTitle", "Configure"), JOptionPane.YES_NO_OPTION);
+                    if (ret == JOptionPane.YES_OPTION) {
+                        configDevice(parent);
+                    }
+                }
+            }
         }
         return false;
     }
