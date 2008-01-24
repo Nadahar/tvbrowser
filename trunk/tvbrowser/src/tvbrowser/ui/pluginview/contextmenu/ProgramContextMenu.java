@@ -34,6 +34,7 @@ import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.pluginview.Node;
 import tvbrowser.ui.pluginview.PluginTree;
+import tvbrowser.ui.programtable.ProgramTable;
 import util.ui.menu.MenuUtil;
 
 import javax.swing.AbstractAction;
@@ -72,10 +73,11 @@ public class ProgramContextMenu extends AbstractContextMenu {
         Node node = (Node) mPaths[0].getLastPathComponent();
         ProgramItem programItem = (ProgramItem) node.getUserObject();
         final Program program = programItem.getProgram();
-        MainFrame.getInstance().scrollToProgram(program);
-        SwingUtilities.invokeLater(new Runnable() {
+        MainFrame.getInstance().scrollToProgram(program, new Runnable() {
           public void run() {
-            MainFrame.getInstance().getProgramTableScrollPane().getProgramTable().selectProgram(program);
+            ProgramTable table = MainFrame.getInstance().getProgramTableScrollPane().getProgramTable();
+            table.deSelectItem();
+            table.selectProgram(program);
           }});
       }
     };

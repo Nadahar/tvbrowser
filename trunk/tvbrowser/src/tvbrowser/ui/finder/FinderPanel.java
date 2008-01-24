@@ -238,12 +238,10 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
           mRenderer.setSelectedItem(item);
           mList.setSelectedValue(item, true);
           item.startProgress(mDateChangedListener, callback);
-          /*
-           * if (callback!=null) { callback.run(); }
-           */
-        }
-        else {
-          MainFrame.getInstance().askForDataUpdate(mLocalizer.msg("noDataFor", "No tv data available for {0}.",d.toString()));
+        } else {
+          MainFrame.getInstance().askForDataUpdate(
+              mLocalizer.msg("noDataFor", "No tv data available for {0}.", d
+                  .toString()));
         }
         return;
       }
