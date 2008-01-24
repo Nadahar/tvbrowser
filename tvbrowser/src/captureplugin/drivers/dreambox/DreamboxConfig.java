@@ -66,6 +66,9 @@ public class DreamboxConfig implements ConfigIf {
     private String mUsername = "";
     /** Password for Authentification */
     private String mPassword = "";
+    
+    /** Path to a Mediaplayer typically vlc */
+    private String mMediaplayer = "vlc";
 
     /**
      * Constructor
@@ -89,6 +92,7 @@ public class DreamboxConfig implements ConfigIf {
         mTimeZone = dreamboxConfig.getTimeZoneAsString();
         mUsername = dreamboxConfig.getUserName();
         mPassword = dreamboxConfig.getPassword();
+        mMediaplayer = dreamboxConfig.getMediaplayer();
     }
 
     /**
@@ -157,6 +161,8 @@ public class DreamboxConfig implements ConfigIf {
 
         stream.writeUTF(mUsername);
         stream.writeUTF(IOUtilities.xorEncode(mPassword, 21341));
+        
+        stream.writeUTF(mMediaplayer);
     }
 
     /**
@@ -208,6 +214,8 @@ public class DreamboxConfig implements ConfigIf {
 
         mUsername = stream.readUTF();
         mPassword = IOUtilities.xorDecode(stream.readUTF(), 21341);
+        
+        mMediaplayer = stream.readUTF();
     }
 
     /**
@@ -392,5 +400,13 @@ public class DreamboxConfig implements ConfigIf {
      */
     public String getPassword() {
         return mPassword;
+    }
+
+    public String getMediaplayer() {
+      return mMediaplayer;
+    }
+
+    public void setMediaplayer(String mediaplayer) {
+      mMediaplayer = mediaplayer;
     }
 }
