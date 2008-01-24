@@ -1147,6 +1147,10 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   public void scrollToProgram(final Program program) {
+    scrollToProgram(program, null);
+  }
+  
+  public void scrollToProgram(final Program program, final Runnable callback) {
     if (!getProgramFilter().accept(program)) {
       int result = JOptionPane.showOptionDialog(this, mLocalizer.msg("programFiltered", "The program {0} is not visible with the filter {1} being active.\nDo you want to deactivate the filter?", program.getTitle(), getProgramFilter().getName()),mLocalizer.msg("programNotVisible","Program not visible"),
           JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
@@ -1160,7 +1164,7 @@ public class MainFrame extends JFrame implements DateListener {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         mProgramTableScrollPane.scrollToChannel(program.getChannel());
-        scrollTo(program.getDate(), program.getHours());
+        scrollTo(program.getDate(), program.getHours(), callback);
       }});
   }
 
@@ -1175,8 +1179,12 @@ public class MainFrame extends JFrame implements DateListener {
     devplugin.Date day = new devplugin.Date();
     scrollTo(day, hour);
   }
-
+  
   private void scrollTo(Date day, int hour) {
+    scrollTo(day, hour, null);
+  }
+
+  private void scrollTo(Date day, int hour, final Runnable callback) {
     mProgramTableScrollPane.deSelectItem();
     // Choose the day.
     // NOTE: If its early in the morning before the setted "day start" we should
@@ -1205,6 +1213,9 @@ public class MainFrame extends JFrame implements DateListener {
       public void run() {
         // Scroll to now
         mProgramTableScrollPane.scrollToTime(fHour * 60);
+        if (callback != null) {
+          callback.run();
+        }
       }
     });
   }
