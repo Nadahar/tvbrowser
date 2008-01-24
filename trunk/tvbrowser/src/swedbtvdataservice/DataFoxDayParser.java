@@ -367,7 +367,7 @@ public class DataFoxDayParser extends org.xml.sax.helpers.DefaultHandler {
           String shortDesc = desc;
 
           if (shortDesc.length() > 200) {
-            shortDesc = shortDesc.substring(0, 200) + "...";
+            shortDesc = shortDesc.substring(0, 197) + "...";
           }
           /*
             shortDesc = MutableProgram.generateShortInfoFromDescription(desc);
