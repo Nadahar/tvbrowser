@@ -17,8 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * CVS information:
- *  $RCSfile$
- *   $Source$
  *     $Date$
  *   $Author$
  * $Revision$
@@ -30,6 +28,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
@@ -44,7 +45,6 @@ import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.PeriodItem;
-import util.io.UrlFile;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 
@@ -73,8 +73,8 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
   private JCheckBox mShowSplashChB, mMinimizeAfterStartUpChB, mStartFullscreen,
       mAutostartWithWindows;
   
-  private UrlFile mLinkUrl;
-  private File mLinkFile;
+  private File mLinkFileFile;
+  private LinkFile mLinkFile;
   
   /* Refresh settings */
   private static final String[] AUTO_DOWNLOAD_MSG_ARR = new String[] {
@@ -162,23 +162,27 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
         if(path == null || path.length() < 1 || !(new File(path)).isDirectory())
           throw new Exception();
         
-        mLinkFile = new File(path,"TV-Browser.url");        
-        mLinkUrl = new UrlFile(mLinkFile);
-          
-        if(mLinkFile.exists())
-          try {
-            if (!mLinkUrl.getUrl().equals((new File("tvbrowser.exe")).getAbsoluteFile().toURI().toURL()))
-              createLink(mLinkUrl);
-          }catch(Exception linkException) {
-            mLinkFile.delete();
+        mLinkFileFile = new File(path,"TV-Browser.url");
+        
+        try {
+          mLinkFile = new LinkFile(mLinkFileFile);
+        
+          if(mLinkFileFile.isFile()) {
+            try {
+              if (!mLinkFile.hasTarget((new File("tvbrowser.exe")).getAbsoluteFile())) {
+                createLink(mLinkFile);
+              }
+            }catch(Exception linkException) {
+              mLinkFileFile.delete();
+            }
           }
+        }catch(FileNotFoundException fe) {}
 
         mAutostartWithWindows = new JCheckBox(mLocalizer.msg("autostart","Start TV-Browser with Windows"),
-            mLinkFile.isFile());
-        
+            mLinkFileFile.isFile());
         
         mSettingsPn.add(mAutostartWithWindows, cc.xy(2, y));
-      } catch (Throwable e) {}
+      } catch (Throwable e) {e.printStackTrace();}
     }
 
     y++;
@@ -201,16 +205,11 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     return mSettingsPn;
   }
 
-  private void createLink(UrlFile link) throws Exception {
+  private void createLink(LinkFile link) throws Exception {
     File tvb = new File("tvbrowser.exe");
     
     if(tvb.getAbsoluteFile().isFile()) {
-      link.setUrl(tvb.toURI().toURL());
-      link.setIconFile(tvb.getAbsoluteFile().getParent() + "\\imgs\\desktop.ico");
-      link.setIconIndex(0);
-      link.setWorkingDirectory(tvb.getAbsoluteFile().getParent());
-      link.setShowCommand(UrlFile.SHOWCOMMAND_MAXIMIZED);
-      link.save();
+      mLinkFile = new LinkFile(mLinkFileFile, tvb, new File(tvb.getAbsoluteFile().getParent() + "\\imgs\\desktop.ico"),0);
     }
   }
   
@@ -225,12 +224,12 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     
     if(mAutostartWithWindows != null) {        
         if (mAutostartWithWindows.isSelected()) {
-          if(!mLinkFile.isFile()) {
+          if(!mLinkFileFile.isFile()) {
             try {
-              createLink(mLinkUrl);
+              createLink(mLinkFile);
             } catch (Exception createLink) {}
 
-            if (!mLinkFile.isFile()) {
+            if (!mLinkFileFile.isFile()) {
               mAutostartWithWindows.setSelected(false);
               JOptionPane.showMessageDialog(
                   UiUtilities.getLastModalChildOf(MainFrame.getInstance()),
@@ -238,7 +237,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
                   Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);
             }
           }
-        } else if (mLinkFile.isFile() && !mLinkFile.delete()) {
+        } else if (mLinkFileFile.isFile() && !mLinkFileFile.delete()) {
             mAutostartWithWindows.setSelected(true);
             JOptionPane.showMessageDialog(
                 UiUtilities.getLastModalChildOf(MainFrame.getInstance()),
@@ -379,5 +378,59 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     enabled = !(mAskBeforeDownloadRadio.isSelected() || !enabled);
 
     mAutoDownloadPeriodCB.setEnabled(enabled);
+  }
+  
+  /**
+   * Used to create autostart link for Windows.
+   * 
+   * @author René Mach
+   */
+  private class LinkFile {
+    private String mTarget;
+    
+    private LinkFile(File linkFile, File target, File icon, int iconIndex) throws IOException {
+      RandomAccessFile write = new RandomAccessFile(linkFile, "rw");
+      
+      write.getChannel().truncate(0);
+      
+      write.writeBytes("[InternetShortcut]\r\n");
+      write.writeBytes("URL=" + target.getAbsoluteFile().toURI().toURL() + "\r\n");
+      write.writeBytes("WorkingDirectory=" + target.getParent());
+      
+      if(icon != null && icon.isFile()) {
+        write.writeBytes("\r\nIconFile=" + icon.getAbsolutePath() + "\r\n");
+        write.writeBytes("IconIndex=" + iconIndex);
+      }
+      
+      write.close();
+    }
+    
+    /**
+     * @param linkFile The file the link is stored in.
+     * @throws IOException Thrown if something went wrong.
+     */
+    public LinkFile(File linkFile) throws IOException {
+      RandomAccessFile read = new RandomAccessFile(linkFile,"r");
+      
+      String line = null;
+      
+      while((line = read.readLine()) != null) {
+        if(line.startsWith("URL")) {
+          mTarget = line.substring(line.indexOf(":/")+2);
+        }
+      }
+      
+      read.close();
+    }
+    
+    /**
+     * If the link target equals the given file.
+     * 
+     * @param file The file to check the target for.
+     * @return <code>True</code> if the target matches the link of the file.
+     */
+    public boolean hasTarget(File file) {
+      return new File(mTarget).equals(file);
+    }
   }
 }
