@@ -59,7 +59,7 @@ public class TvDataBase {
   private static TvDataBase mSingleton;
 
   /** The TV data cache. */
-  private ValueCache mTvDataHash;
+  private HashMap<String, OnDemandDayProgramFile> mTvDataHash;
 
   private ArrayList<TvDataBaseListener> mListenerList;
 
@@ -71,7 +71,7 @@ public class TvDataBase {
   private TvDataInventory mTvDataInventory;
 
   private TvDataBase() {
-    mTvDataHash = new ValueCache();
+    mTvDataHash = new HashMap<String, OnDemandDayProgramFile>();
     mListenerList = new ArrayList<TvDataBaseListener>();
     mAvailableDateSet = new HashSet<Date>();
     mNewDayProgramsAfterUpdate = new Hashtable<String, Object>();
