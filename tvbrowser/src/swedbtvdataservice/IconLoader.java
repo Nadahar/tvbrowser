@@ -26,10 +26,10 @@ class IconLoader {
   private String mGroup;
 
   private Properties mProperties;
-  private SweDBTvDataService mDataFoxTvDataService;
+  private SweDBTvDataService mDataHydraTvDataService;
 
-  public IconLoader(SweDBTvDataService dataFoxDataService, String group, File dir) throws IOException {
-    mDataFoxTvDataService = dataFoxDataService;
+  public IconLoader(SweDBTvDataService DataHydraDataService, String group, File dir) throws IOException {
+    mDataHydraTvDataService = DataHydraDataService;
     mGroup = group;
     mIconDir = new File(dir + "/icons_" + mGroup);
     if (!mIconDir.exists()) {
@@ -63,11 +63,11 @@ class IconLoader {
               + ". prevUrl=" + prevUrl + ". currentUrl=" + url);
     }
 
-    if (mDataFoxTvDataService.hasRightToDownloadIcons()) {
-      if (mDataFoxTvDataService.getIconCache().containsKey(url)) {
+    if (mDataHydraTvDataService.hasRightToDownloadIcons()) {
+      if (mDataHydraTvDataService.getIconCache().containsKey(url)) {
         try {
-          if (!mDataFoxTvDataService.getIconCache().get(url).equals(iconFile)) {
-            copyFile(mDataFoxTvDataService.getIconCache().get(url), iconFile);
+          if (!mDataHydraTvDataService.getIconCache().get(url).equals(iconFile)) {
+            copyFile(mDataHydraTvDataService.getIconCache().get(url), iconFile);
             icon = getIconFromFile(iconFile);
           }
         } catch (Exception e) {
@@ -82,7 +82,7 @@ class IconLoader {
       try {
         util.io.IOUtilities.download(new URL(url), iconFile);
         icon = getIconFromFile(iconFile);
-        mDataFoxTvDataService.getIconCache().put(url, iconFile);
+        mDataHydraTvDataService.getIconCache().put(url, iconFile);
       } catch (IOException e) {
         mLog.warning("channel " + channelId
                 + ": could not download icon from " + url);
