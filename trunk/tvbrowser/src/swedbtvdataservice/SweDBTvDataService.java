@@ -39,8 +39,6 @@ import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import javax.swing.Icon;
 
-import org.xml.sax.XMLReader;
-
 public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   /** The default plugins download url */
   public static final String DEFAULT_PLUGINS_DOWNLOAD_URL = "http://www.tvbrowser.org/mirrorlists";
@@ -60,9 +58,9 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
 
   private File mWorkingDirectory;
 
-  private HashMap<String, DataFoxChannelGroup> mChannelGroups;
+  private HashMap<String, DataHydraChannelGroup> mChannelGroups;
 
-  private HashMap<Channel, DataFoxChannelContainer> mInternalChannels = new HashMap<Channel, DataFoxChannelContainer>();
+  private HashMap<Channel, DataHydraChannelContainer> mInternalChannels = new HashMap<Channel, DataHydraChannelContainer>();
 
   private HashMap<ChannelGroup, Long> mLastGroupUpdate = new HashMap<ChannelGroup, Long>();
 
@@ -72,7 +70,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
 
   private boolean mHasRightToDownloadIcons;
 
-  private DataFoxFileParser mParser = new DataFoxFileParser();
+  private DataHydraFileParser mParser = new DataHydraFileParser();
   static final String SHOW_REGISTER_TEXT = "showRegisterText";
 
   /**
@@ -82,9 +80,10 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
     mHasRightToDownloadIcons = false;
     mProperties = new Properties();
 
-    mChannelGroups = new HashMap<String, DataFoxChannelGroup>();
-    mChannelGroups.put("SweDB", new DataFoxChannelGroup("SweDB", "SweDB.se", "(c) swedb.se", "http://tv.swedb.se", "swedb_channels.xml.gz", "se"));
-    mChannelGroups.put("MSPC", new DataFoxChannelGroup("MSPC", "mspc.no", "(c) mspc.no", "http://www.mspc.no", "mspc_channels.xml.gz", "no"));
+    mChannelGroups = new HashMap<String, DataHydraChannelGroup>();
+    mChannelGroups.put("SweDB", new DataHydraChannelGroup("SweDB", "SweDB.se", "(c) swedb.se", "http://tv.swedb.se", "swedb_channels.xml.gz", "se"));
+    mChannelGroups.put("MSPC", new DataHydraChannelGroup("MSPC", "mspc.no", "(c) mspc.no", "http://www.mspc.no", "mspc_channels.xml.gz", "no"));
+    mChannelGroups.put("gonix", new DataHydraChannelGroup("gonix", "gonix.net", "(c) gonix.net", "http://www.gonix.net", "hrv_channels.xml.gz", "hr", false));
   }
 
   public boolean supportsDynamicChannelList() {
@@ -100,11 +99,11 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   }
 
   public SettingsPanel getSettingsPanel() {
-    return new DataFoxSettingsPanel(mProperties);
+    return new DataHydraSettingsPanel(mProperties);
   }
 
   public void setWorkingDirectory(File dataDir) {
-    mLog.info("DataFoxTvDataService setting directory to " + dataDir.toString());
+    mLog.info("DataHydraTvDataService setting directory to " + dataDir.toString());
     mWorkingDirectory = dataDir;
   }
 
@@ -133,7 +132,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
                            ProgressMonitor monitor) throws TvBrowserException {
 
     mHasRightToDownloadIcons = true;
-    mLog.info("Starting update for DataFoxTvDataService from " + startDate.toString() + " for " + dateCount + " days");
+    mLog.info("Starting update for DataHydraTvDataService from " + startDate.toString() + " for " + dateCount + " days");
 
     monitor.setMaximum(channelArr.length);
     devplugin.Date testStart = new devplugin.Date(startDate);
@@ -152,7 +151,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
    * load your dataservices settings from the file system.
    */
   public void loadSettings(Properties settings) {
-    mLog.info("Loading settings in DataFoxTvDataService");
+    mLog.info("Loading settings in DataHydraTvDataService");
     mProperties = settings;
 
     for (ChannelGroup group : getAvailableGroups()) {
@@ -166,7 +165,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
     ArrayList<Channel> channels = new ArrayList<Channel>();
 
     for (int i = 0; i < numChannels; i++) {
-      DataFoxChannelContainer container = new DataFoxChannelContainer(mProperties.getProperty(
+      DataHydraChannelContainer container = new DataHydraChannelContainer(mProperties.getProperty(
               "ChannelId-" + i, ""), mProperties.getProperty("ChannelTitle-" + i,
               ""), mProperties.getProperty("ChannelBaseUrl-" + i, ""), mProperties
               .getProperty("ChannelIconUrl-" + i, ""), mProperties.getProperty(
@@ -184,7 +183,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
 
     mChannels = channels;
 
-    mLog.info("Finished loading settings for DataFoxTvDataService");
+    mLog.info("Finished loading settings for DataHydraTvDataService");
   }
 
   /**
@@ -192,7 +191,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
    * store your dataservices settings to the file system.
    */
   public Properties storeSettings() {
-    mLog.info("Storing settings for DataFoxTvDataService");
+    mLog.info("Storing settings for DataHydraTvDataService");
 
     for (ChannelGroup group : getAvailableGroups()) {
       String value = "0";
@@ -205,7 +204,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
     mProperties.setProperty("NumberOfChannels", Integer.toString(mChannels.size()));
 
     for (int i = 0; i < mChannels.size(); i++) {
-      DataFoxChannelContainer container = mInternalChannels.get(mChannels.get(i));
+      DataHydraChannelContainer container = mInternalChannels.get(mChannels.get(i));
       mProperties.setProperty("ChannelId-" + i, container.getId());
       mProperties.setProperty("ChannelTitle-" + i, container.getName());
       mProperties.setProperty("ChannelBaseUrl-" + i, container.getBaseUrl());
@@ -213,7 +212,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
       mProperties.setProperty("ChannelLastUpdate-" + i, container.getLastUpdateString());
       mProperties.setProperty("ChannelGroup-" + i, mChannels.get(i).getGroup().getId());
     }
-    mLog.info("Finished storing settings for DataFoxTvDataService. Returning properties...");
+    mLog.info("Finished storing settings for DataHydraTvDataService. Returning properties...");
     return mProperties;
   }
 
@@ -242,11 +241,11 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
                 "Getting messages"));
       }
 
-      mLog.log(Level.ALL, "Loading Channel file : " + ((DataFoxChannelGroup) group).getChannelFile());
+      mLog.log(Level.ALL, "Loading Channel file : " + ((DataHydraChannelGroup) group).getChannelFile());
 
       String urlMirror = getMirror().getUrl();
 
-      URL url = new URL(urlMirror + (urlMirror.endsWith("/") ? "" : "/") + ((DataFoxChannelGroup) group).getChannelFile());
+      URL url = new URL(urlMirror + (urlMirror.endsWith("/") ? "" : "/") + ((DataHydraChannelGroup) group).getChannelFile());
 
       // Download the mirror list for the next run
       try {
@@ -276,10 +275,10 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
           monitor.setMessage(mLocalizer.msg("Progressmessage.30",
                   "Parsing channel list"));
         }
-        DataFoxChannelContainer[] datafoxcontainers = DataFoxChannelParser.parse(new GZIPInputStream(con.getInputStream()));
+        DataHydraChannelContainer[] DataHydracontainers = DataHydraChannelParser.parse(new GZIPInputStream(con.getInputStream()));
 
         if (monitor != null) {
-          monitor.setMessage(mLocalizer.msg("Progressmessage.40", "Found {0} channels, downloading channel icons...", datafoxcontainers.length));
+          monitor.setMessage(mLocalizer.msg("Progressmessage.40", "Found {0} channels, downloading channel icons...", DataHydracontainers.length));
         }
 
         mLastGroupUpdate.put(group, con.getLastModified());
@@ -287,8 +286,8 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
 
         ArrayList<Channel> loadedChannels = new ArrayList<Channel>();
 
-        for (DataFoxChannelContainer container : datafoxcontainers) {
-          Channel ch = createTVBrowserChannel((DataFoxChannelGroup) group, container);
+        for (DataHydraChannelContainer container : DataHydracontainers) {
+          Channel ch = createTVBrowserChannel((DataHydraChannelGroup) group, container);
           mInternalChannels.put(ch, container);
           loadedChannels.add(ch);
         }
@@ -335,7 +334,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
     File file = new File(mWorkingDirectory , "main_" + Mirror.MIRROR_LIST_FILE_NAME);
 
     try {
-      return Mirror.chooseUpToDateMirror(Mirror.readMirrorListFromFile(file),null,"DataFox", "main", SweDBTvDataService.class, mLocalizer.msg("error.additional"," Please inform the TV-Browser team."));
+      return Mirror.chooseUpToDateMirror(Mirror.readMirrorListFromFile(file),null,"DataHydra", "main", SweDBTvDataService.class, mLocalizer.msg("error.additional"," Please inform the TV-Browser team."));
     } catch (Exception exc) {
       try {
         if(DEFAULT_MIRRORS.length > 0) {
@@ -344,7 +343,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
           for(int i = 0; i < DEFAULT_MIRRORS.length; i++)
             mirr[i] = new Mirror(DEFAULT_MIRRORS[i]);
 
-          return Mirror.chooseUpToDateMirror(mirr,null,"DataFox", "main", SweDBTvDataService.class, mLocalizer.msg("error.additional"," Please inform the TV-Browser team."));
+          return Mirror.chooseUpToDateMirror(mirr,null,"DataHydra", "main", SweDBTvDataService.class, mLocalizer.msg("error.additional"," Please inform the TV-Browser team."));
         }
         else
           throw exc;
@@ -355,7 +354,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   }
 
 
-  private Channel createTVBrowserChannel(DataFoxChannelGroup group, DataFoxChannelContainer container) {
+  private Channel createTVBrowserChannel(DataHydraChannelGroup group, DataHydraChannelContainer container) {
     if (mWorkingDirectory != null) {
       IconLoader iconLoader = null;
       try {
@@ -399,7 +398,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
 
       return channel;
     } else {
-      mLog.info("DataFoxTvDataService: Working directory has not been initialized yet. Icons not loaded");
+      mLog.info("DataHydraTvDataService: Working directory has not been initialized yet. Icons not loaded");
     }
 
     return null;
@@ -424,13 +423,13 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   }
 
   public static Version getVersion() {
-    return new Version(2, 61);
+    return new Version(2, 62);
   }
 
   public PluginInfo getInfo() {
     return new devplugin.PluginInfo(
             SweDBTvDataService.class,
-            mLocalizer.msg("PluginInfo.name", "DataFOx TV-Data Plugin"),
+            mLocalizer.msg("PluginInfo.name", "DataHydra TV-Data Plugin"),
             mLocalizer.msg("PluginInfo.description",
                     "A TV Data Service plugin which uses XMLTV-data from TV.SWEDB.SE and mspc.no"),
             "TV-Browser Team",
