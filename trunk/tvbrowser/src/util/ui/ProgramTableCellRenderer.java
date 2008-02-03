@@ -25,6 +25,7 @@
 package util.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.JLabel;
@@ -37,6 +38,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 
+import devplugin.Date;
 import devplugin.Program;
 
 /**
@@ -110,8 +112,17 @@ public class ProgramTableCellRenderer extends DefaultTableCellRenderer {
             });
             
             mProgramPanel.setTextColor(label.getForeground());
-            mHeaderLb.setText(program.getDate() + " - " + program.getChannel().getName());
-            mHeaderLb.setForeground(label.getForeground());            
+            
+            String dateString = program.getDate().equals(Date.getCurrentDate()) ? Localizer.getLocalization(Localizer.I18N_TODAY) : program.getDate().equals(Date.getCurrentDate().addDays(1)) ? Localizer.getLocalization(Localizer.I18N_TOMORROW) : program.getDate().toString();
+            
+            mHeaderLb.setText(dateString + " - " + program.getChannel().getName());
+            
+            if(program.isExpired() && !isSelected) {
+              mHeaderLb.setForeground(Color.gray);
+            }
+            else {
+              mHeaderLb.setForeground(label.getForeground());
+            }
 
             mMainPanel.setBackground(label.getBackground());
             mMainPanel.setForeground(label.getForeground());
