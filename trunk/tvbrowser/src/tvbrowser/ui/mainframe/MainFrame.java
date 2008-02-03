@@ -267,10 +267,24 @@ public class MainFrame extends JFrame implements DateListener {
     
     /* create structure */
     mRootNode = new Node(null);
-    mPluginsNode = new Node(mRootNode);
+
+    if(Settings.propPluginViewIsLeft.getBoolean()) {
+      mPluginsNode = new Node(mRootNode);
+    }
+    else {
+      mNavigationNode = new Node(mRootNode);
+    }
+    
     mMainframeNode = new Node(mRootNode);
     Node programtableNode = new Node(mMainframeNode);
-    mNavigationNode = new Node(mMainframeNode);
+    
+    if(Settings.propPluginViewIsLeft.getBoolean()) {
+      mNavigationNode = new Node(mMainframeNode);
+    }
+    else {
+      mPluginsNode = new Node(mMainframeNode);
+    }
+    
     mTimebuttonsNode = new Node(mNavigationNode);
     mDateChannelNode = new Node(mNavigationNode);
     mDateNode = new Node(mDateChannelNode);
@@ -472,12 +486,17 @@ public class MainFrame extends JFrame implements DateListener {
                       }
                     }
                     
-                    if(Settings.propShowPluginView.getBoolean()) {
-                      SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                          setShowPluginOverview(true, false);
-                        }
-                      });
+                    if(Settings.propPluginViewIsLeft.getBoolean()) {
+                      if(Settings.propShowPluginView.getBoolean())  {
+                        SwingUtilities.invokeLater(new Runnable() {
+                          public void run() {
+                            setShowPluginOverview(true, false);
+                          }
+                        });                        
+                      }
+                    }
+                    else {
+                      checkIfToShowTimeDateChannelList();
                     }
                   }
                   else {
@@ -487,38 +506,62 @@ public class MainFrame extends JFrame implements DateListener {
                       mToolBarPanel.setVisible(!isFullScreenMode());
                     }
                     
-                    if(Settings.propShowPluginView.getBoolean() && mPluginView != null && mPluginView.isVisible() && p.x > mPluginView.getWidth() + toolBarWidth + 25) {
+                    if(Settings.propPluginViewIsLeft.getBoolean()) {
+                      if(Settings.propShowPluginView.getBoolean() && mPluginView != null && mPluginView.isVisible() && p.x > mPluginView.getWidth() + toolBarWidth + 25) {
+                        SwingUtilities.invokeLater(new Runnable() {
+                          public void run() {
+                            setShowPluginOverview(!isFullScreenMode(), false);
+                          }
+                        });
+                      }
+                    }
+                    else if(Settings.propShowChannels.getBoolean() ||
+                        Settings.propShowDatelist.getBoolean() ||
+                        Settings.propShowTimeButtons.getBoolean()) {
                       SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
-                          setShowPluginOverview(!isFullScreenMode(), false);
+                          if(mChannelChooser != null && mChannelChooser.isVisible() && p.x > mChannelChooser.getWidth()) {
+                            setShowChannellist(!isFullScreenMode(), false);
+                          }
+                          
+                          if(mFinderPanel != null && mFinderPanel.isVisible() && p.x > mFinderPanel.getWidth()) {
+                            setShowDatelist(!isFullScreenMode(), false);
+                          }
+                          
+                          if(mTimeChooserPanel != null && mTimeChooserPanel.isVisible() && p.x > mTimeChooserPanel.getWidth()) {
+                            setShowTimeButtons(!isFullScreenMode(), false);
+                          }
                         }
                       });
                     }
                   }
                   
                   // mouse pointer is on the right side
-                  if(p.x >= screen.width - 1 &&
-                      (Settings.propShowTimeButtons.getBoolean() ||
-                       Settings.propShowDatelist.getBoolean() ||
-                       Settings.propShowChannels.getBoolean())) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                      public void run() {
-                        if(Settings.propShowTimeButtons.getBoolean() && !mTimeChooserPanel.isVisible()) {
-                          setShowTimeButtons(true, false);
-                        }
-                        
-                        if(Settings.propShowDatelist.getBoolean() && !mFinderPanel.isVisible()) {
-                          setShowDatelist(true, false);
-                        }
-                        
-                        if(Settings.propShowChannels.getBoolean() && !mChannelChooser.isVisible()) {
-                          setShowChannellist(true, false);
-                        }
+                  if(p.x >= screen.width - 1) {
+                    if(!Settings.propPluginViewIsLeft.getBoolean()) {
+                      if(Settings.propShowPluginView.getBoolean())  {
+                        SwingUtilities.invokeLater(new Runnable() {
+                          public void run() {
+                            setShowPluginOverview(true, false);
+                          }
+                        });                        
                       }
-                    });
+                    }
+                    else {
+                      checkIfToShowTimeDateChannelList();
+                    }
                   }
                   else {
-                    if(Settings.propShowChannels.getBoolean() ||
+                    if(!Settings.propPluginViewIsLeft.getBoolean()) {
+                      if(Settings.propShowPluginView.getBoolean() && mPluginView != null && mPluginView.isVisible() && p.x < screen.width - mPluginView.getWidth()) {
+                        SwingUtilities.invokeLater(new Runnable() {
+                          public void run() {
+                            setShowPluginOverview(!isFullScreenMode(), false);
+                          }
+                        });
+                      }
+                    }
+                    else if(Settings.propShowChannels.getBoolean() ||
                         Settings.propShowDatelist.getBoolean() ||
                         Settings.propShowTimeButtons.getBoolean()) {
                       SwingUtilities.invokeLater(new Runnable() {
@@ -548,6 +591,28 @@ public class MainFrame extends JFrame implements DateListener {
         }      
       }
     });
+  }
+  
+  private void checkIfToShowTimeDateChannelList() {
+    if(Settings.propShowTimeButtons.getBoolean() ||
+        Settings.propShowDatelist.getBoolean() ||
+        Settings.propShowChannels.getBoolean()) {
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          if(Settings.propShowTimeButtons.getBoolean() && !mTimeChooserPanel.isVisible()) {
+            setShowTimeButtons(true, false);
+          }
+         
+          if(Settings.propShowDatelist.getBoolean() && !mFinderPanel.isVisible()) {
+            setShowDatelist(true, false);
+          }
+         
+          if(Settings.propShowChannels.getBoolean() && !mChannelChooser.isVisible()) {
+            setShowChannellist(true, false);
+          }
+        }
+      });
+    }
   }
   
   /**

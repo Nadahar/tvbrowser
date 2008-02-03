@@ -1268,4 +1268,8 @@ public class Settings {
   /** If the internet connection should be checked before accessing internet */
   public static final BooleanProperty propInternetConnectionCheck = new BooleanProperty(
       mProp, "internetConnectionCheck", true);
+  
+  /** If the plugin view is on the left side and the channel list on the right side. */
+  public static final BooleanProperty propPluginViewIsLeft = new BooleanProperty(
+      mProp, "pluginViewIsLeft", true);
 }
