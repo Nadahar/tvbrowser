@@ -41,6 +41,7 @@ import javax.swing.event.ChangeListener;
 
 import util.settings.ProgramPanelSettings;
 
+import devplugin.Date;
 import devplugin.Program;
 
 /**
@@ -138,12 +139,16 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
           }
         }
       });
-      mHeaderLb.setText(program.getDate() + " - " + program.getChannel().getName());
       
-      if(program.isExpired() && !isSelected)
+      String dateString = program.getDate().equals(Date.getCurrentDate()) ? Localizer.getLocalization(Localizer.I18N_TODAY) : program.getDate().equals(Date.getCurrentDate().addDays(1)) ? Localizer.getLocalization(Localizer.I18N_TOMORROW) : program.getDate().toString();
+      
+      mHeaderLb.setText(dateString + " - " + program.getChannel().getName());
+      
+      if(program.isExpired() && !isSelected) {
         mHeaderLb.setForeground(Color.gray);
-      else
+      } else {
         mHeaderLb.setForeground(label.getForeground());
+      }
       
       mMainPanel.setBackground(label.getBackground());
       
