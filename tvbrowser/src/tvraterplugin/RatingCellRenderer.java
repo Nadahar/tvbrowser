@@ -59,11 +59,11 @@ public class RatingCellRenderer extends JLabel implements ListCellRenderer {
             int personaloverall = -1;
 
             if (personal != null) {
-                personaloverall = personal.getIntValue(Rating.OVERALL);
+                personaloverall = personal.getOverallRating();
             }
 
             if (rating != null) {
-                overall = rating.getIntValue(Rating.OVERALL);
+                overall = rating.getOverallRating();
             }
 
             CompositeIcon composite = new CompositeIcon(

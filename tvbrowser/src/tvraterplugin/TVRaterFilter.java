@@ -75,9 +75,9 @@ public class TVRaterFilter extends PluginsFilterComponent {
         if (rating == null)
             return false;
 
-        if (_best && (rating.getIntValue(Rating.OVERALL) >= _value)) {
+        if (_best && (rating.getOverallRating() >= _value)) {
             return true;
-        } else if (!_best && (rating.getIntValue(Rating.OVERALL) <= _value)) {
+        } else if (!_best && (rating.getOverallRating() <= _value)) {
             return true;
         }
 
@@ -130,8 +130,8 @@ public class TVRaterFilter extends PluginsFilterComponent {
         panel.add(new JLabel(mLocalizer.msg("thisRating", "this rating") + ":"), cc.xy(1,3));
 
         Rating rating = new Rating("");
-        rating.setValue(Rating.OVERALL, _value);
-        _ratingBox = new RatingComboBox(rating, Rating.OVERALL);
+        rating.setOverallRating(_value);
+        _ratingBox = new RatingComboBox(rating, Rating.OVERALL_RATING_KEY);
         panel.add(_ratingBox, cc.xy(3,3));
 
         return panel;

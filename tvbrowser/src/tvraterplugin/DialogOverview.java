@@ -108,13 +108,13 @@ public class DialogOverview extends JDialog implements WindowClosingIf {
 
       public void mousePressed(MouseEvent evt) {
         if (evt.isPopupTrigger()) {
-          showPopUpMen(evt);
+          showPopUpMenu(evt);
         }
       }
 
       public void mouseReleased(MouseEvent evt) {
         if (evt.isPopupTrigger()) {
-          showPopUpMen(evt);
+          showPopUpMenu(evt);
         }
       }
 
@@ -136,13 +136,13 @@ public class DialogOverview extends JDialog implements WindowClosingIf {
     _personal.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent evt) {
         if (evt.isPopupTrigger()) {
-          showPopUpMen(evt);
+          showPopUpMenu(evt);
         }
       }
 
       public void mouseReleased(MouseEvent evt) {
         if (evt.isPopupTrigger()) {
-          showPopUpMen(evt);
+          showPopUpMenu(evt);
         }
       }
       
@@ -217,7 +217,7 @@ public class DialogOverview extends JDialog implements WindowClosingIf {
    * 
    * @param e MouseEvent
    */
-  protected void showPopUpMen(MouseEvent e) {
+  protected void showPopUpMenu(MouseEvent e) {
     if (!(e.getSource() instanceof JList)) {
       return;
     }
@@ -241,7 +241,7 @@ public class DialogOverview extends JDialog implements WindowClosingIf {
 
     menu.add(item);
     menu.add(new ListAction(this, selRating.getTitle()));
-    menu.add(new ShowDetailsAction(selRating.getIntValue(Rating.ID)));
+    menu.add(new ShowDetailsAction(selRating.getRatingId()));
 
     menu.show(list, e.getX(), e.getY());
 

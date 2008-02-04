@@ -56,6 +56,6 @@ public class TVRaterProgramFilter extends PluginsProgramFilter {
      */
     public boolean accept(Program program) {
         Rating rating = TVRaterPlugin.getInstance().getRating(program);
-        return rating != null && rating.getIntValue(Rating.OVERALL) >= GOOD;
+        return rating != null && rating.getOverallRating() >= GOOD;
     }
 }

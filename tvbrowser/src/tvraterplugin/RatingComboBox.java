@@ -18,19 +18,33 @@ import javax.swing.ListCellRenderer;
  */
 public class RatingComboBox extends JComboBox implements ListCellRenderer {
    
+  /**
+   * Type to show
+   */
+  private int mRatingKey;
+  /**
+   * Rating to use
+   */
+  private Rating mRating;
+  
+  /**
+   * Selection
+   */
+  private static Integer[] values = { new Integer(0), new Integer(1), new Integer(2), new Integer(3), new Integer(4), new Integer(5) };
+
     /**
      * Creates the Rating
      * @param rating Rating to show
-     * @param type Type to show (Erotic etc)
+     * @param key Type to show (Erotic etc)
      */
-    public RatingComboBox(Rating rating, Object type) {
+    public RatingComboBox(Rating rating, int key) {
         super(values);
-        _rating = rating;
-        _type = type;
+        mRating = rating;
+        mRatingKey = key;
         
-        if ((_rating != null) && (_rating.getIntValue(type) >= 0)) {
+        if ((mRating != null) && (mRating.getIntValue(key) >= 0)) {
             
-            int num = _rating.getIntValue(type);
+            int num = mRating.getIntValue(key);
             
             if (num < getItemCount()) {
                 setSelectedIndex(num);
@@ -52,7 +66,7 @@ public class RatingComboBox extends JComboBox implements ListCellRenderer {
         label.setOpaque(true);
         if (obj instanceof Integer) {
             label.setIcon(RatingIconTextFactory.getImageIconForRating(((Integer)obj).intValue()));
-            label.setText(RatingIconTextFactory.getStringForRating(_type, ((Integer)obj).intValue()));
+            label.setText(RatingIconTextFactory.getStringForRating(mRatingKey, ((Integer)obj).intValue()));
         }
         
         if (isSelected || hasFocus) {
@@ -66,17 +80,4 @@ public class RatingComboBox extends JComboBox implements ListCellRenderer {
         return label;
     }
     
-    /**
-     * Type to show
-     */
-    private Object _type;
-    /**
-     * Rating to use
-     */
-    private Rating _rating;
-    
-    /**
-     * Selection
-     */
-	private static Integer[] values = { new Integer(0), new Integer(1), new Integer(2), new Integer(3), new Integer(4), new Integer(5) };
 }
