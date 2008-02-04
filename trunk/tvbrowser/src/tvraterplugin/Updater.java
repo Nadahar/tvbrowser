@@ -224,38 +224,38 @@ public class Updater implements Progress {
       if (nodename.equals("title")) {
         rating.setTitle(getNodeValue(child));
       } else if (nodename.equals("overall")) {
-        int value = new Double(Double.parseDouble(getNodeValue(child))).intValue();
-        rating.setValue(Rating.OVERALL, value);
+        int overall = new Double(Double.parseDouble(getNodeValue(child))).intValue();
+        rating.setOverallRating(overall);
       } else if (nodename.equals("action")) {
-        int value = new Double(Double.parseDouble(getNodeValue(child))).intValue();
-        rating.setValue(Rating.ACTION, value);
+        int action = new Double(Double.parseDouble(getNodeValue(child))).intValue();
+        rating.setActionRating(action);
       } else if (nodename.equals("entitlement")) {
-        int value = new Double(Double.parseDouble(getNodeValue(child))).intValue();
-        rating.setValue(Rating.ENTITLEMENT, value);
+        int entitlement = new Double(Double.parseDouble(getNodeValue(child))).intValue();
+        rating.setEntitlementRating(entitlement);
       } else if (nodename.equals("fun")) {
-        int value = new Double(Double.parseDouble(getNodeValue(child))).intValue();
-        rating.setValue(Rating.FUN, value);
+        int fun = new Double(Double.parseDouble(getNodeValue(child))).intValue();
+        rating.setFunRating(fun);
       } else if (nodename.equals("tension")) {
-        int value = new Double(Double.parseDouble(getNodeValue(child))).intValue();
-        rating.setValue(Rating.TENSION, value);
+        int tension = new Double(Double.parseDouble(getNodeValue(child))).intValue();
+        rating.setTensionRating(tension);
       } else if (nodename.equals("erotic")) {
-        int value = new Double(Double.parseDouble(getNodeValue(child))).intValue();
-        rating.setValue(Rating.EROTIC, value);
+        int erotic = new Double(Double.parseDouble(getNodeValue(child))).intValue();
+        rating.setEroticRating(erotic);
       } else if (nodename.equals("count")) {
-        int value = new Integer(Integer.parseInt(getNodeValue(child))).intValue();
-        rating.setValue(Rating.COUNT, value);
+        int userCount = new Integer(Integer.parseInt(getNodeValue(child))).intValue();
+        rating.setUserCount(userCount);
       } else if (nodename.equals("genre")) {
-        int value = new Integer(Integer.parseInt(getNodeValue(child))).intValue();
-        rating.setValue(Rating.GENRE, value);
+        int genre = new Integer(Integer.parseInt(getNodeValue(child))).intValue();
+        rating.setGenre(genre);
       } else if (nodename.equals("id")) {
-        int value = new Integer(Integer.parseInt(getNodeValue(child))).intValue();
-        rating.setValue(Rating.ID, value);
+        int onlineID = new Integer(Integer.parseInt(getNodeValue(child))).intValue();
+        rating.setOnlineID(onlineID);
 
         if (rating.getTitle() != null) {
           Rating personal = _tvraterPlugin.getDatabase().getPersonalRating(rating.getTitle());
 
           if (personal != null) {
-            personal.setValue(Rating.ID, value);
+            personal.setOnlineID(onlineID);
           }
         } else {
           System.out.println("No Title");
@@ -335,15 +335,15 @@ public class Updater implements Progress {
       Rating rating = list.get(i);
       ratingElement.appendChild(createNodeWithTextValue(document, "title", rating.getTitle()));
 
-      ratingElement.appendChild(createNodeWithTextValue(document, "overall", rating.getIntValue(Rating.OVERALL)));
-      ratingElement.appendChild(createNodeWithTextValue(document, "action", rating.getIntValue(Rating.ACTION)));
+      ratingElement.appendChild(createNodeWithTextValue(document, "overall", rating.getOverallRating()));
+      ratingElement.appendChild(createNodeWithTextValue(document, "action", rating.getActionRating()));
       ratingElement
-          .appendChild(createNodeWithTextValue(document, "entitlement", rating.getIntValue(Rating.ENTITLEMENT)));
-      ratingElement.appendChild(createNodeWithTextValue(document, "fun", rating.getIntValue(Rating.FUN)));
-      ratingElement.appendChild(createNodeWithTextValue(document, "tension", rating.getIntValue(Rating.TENSION)));
-      ratingElement.appendChild(createNodeWithTextValue(document, "erotic", rating.getIntValue(Rating.EROTIC)));
+          .appendChild(createNodeWithTextValue(document, "entitlement", rating.getEntitlementRating()));
+      ratingElement.appendChild(createNodeWithTextValue(document, "fun", rating.getFunRating()));
+      ratingElement.appendChild(createNodeWithTextValue(document, "tension", rating.getTensionRating()));
+      ratingElement.appendChild(createNodeWithTextValue(document, "erotic", rating.getEroticRating()));
 
-      ratingElement.appendChild(createNodeWithTextValue(document, "genre", rating.getIntValue(Rating.GENRE)));
+      ratingElement.appendChild(createNodeWithTextValue(document, "genre", rating.getGenre()));
 
     }
     _tvraterPlugin.getDatabase().clearChangedPersonal();

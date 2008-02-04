@@ -74,30 +74,30 @@ public class RatingIconTextFactory {
     /**
      * Returns the String for a specific Rating
      * @param type Type (Rating.OVERALL ...)
-     * @param rateing the actual Rating (0-5)
+     * @param rating the actual Rating (0-5)
      * @return String for the Rating
      */
-    public static String getStringForRating(Object type, int rateing) {
+    public static String getStringForRating(int type, int rating) {
         String ratingText = "-";
 
         String prefix = "";
         
-        if (type == Rating.OVERALL) {
+        if (type == Rating.OVERALL_RATING_KEY) {
             prefix = "Overall.";
-        } else if (type == Rating.ACTION) {
+        } else if (type == Rating.ACTION_RATING_KEY) {
             prefix = "Action.";
-        } else if (type == Rating.ENTITLEMENT) {
+        } else if (type == Rating.ENTITLEMENT_RATING_KEY) {
             prefix = "Entitlement.";
-        } else if (type == Rating.EROTIC) {
+        } else if (type == Rating.EROTIC_RATING_KEY) {
             prefix = "Erotic.";
-        } else if (type == Rating.FUN) {
+        } else if (type == Rating.FUN_RATING_KEY) {
             prefix = "Fun.";
-        } else if (type == Rating.TENSION) {
+        } else if (type == Rating.TENSION_RATING_KEY) {
             prefix = "Tension.";
         }
         
         
-        switch (rateing) {
+        switch (rating) {
         case 0:
             ratingText = _mLocalizer.msg(prefix+"crap", "crap");
             break;

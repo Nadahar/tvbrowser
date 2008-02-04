@@ -22,6 +22,7 @@ package tvraterplugin;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Representation of a Rating
@@ -32,36 +33,109 @@ public class Rating implements Serializable {
 	/** Used to serialize this Object */
 	static final long serialVersionUID = -6175532584789444451L;
 	
-	/** Overall-Rating */
-	public static final String OVERALL = "overall";
-	/** Action-Rating */
-	public static final String ACTION = "action";
-	/** Fun-Rating */
-	public static final String FUN = "fun";
-	/** Erotic-Rating */
-	public static final String EROTIC = "erotic";
-	/** Tension-Rating */
-	public static final String TENSION = "tension";
-	/** Entitlement-Rating */
-	public static final String ENTITLEMENT = "entitlement";
+	/**
+	 * overall rating
+	 * @deprecated 
+	 */
+	private static final String OVERALL = "overall";
+	/**
+	 * overall rating
+	 */
+	public static final byte OVERALL_RATING_KEY = 0;
 
-	/** ID of the rating in the online-database */
-	public static final String ID = "id";
-	/** The Genre */
-	public static final String GENRE = "genre";	
-	/** How many Users have rated this Entry */
-	public static final String COUNT = "count";	
-	
-	/** Title of the Program this rating is about */
+	/**
+	 * action rating
+	 * @deprecated
+	 */
+	private static final String ACTION = "action";
+  /**
+   * action rating
+   */
+  public static final byte ACTION_RATING_KEY = 1;
+
+	/**
+	 * fun rating
+	 * @deprecated
+	 */
+	private static final String FUN = "fun";
+  /**
+   * fun rating
+   */
+  public static final byte FUN_RATING_KEY = 2;
+
+	/**
+	 * erotic rating
+	 * @deprecated
+	 */
+	private static final String EROTIC = "erotic";
+  /**
+   * erotic rating
+   */
+  public static final byte EROTIC_RATING_KEY = 3;
+
+	/**
+	 * tension rating
+	 * @deprecated
+	 */
+	private static final String TENSION = "tension";
+  /**
+   * tension rating
+   */
+  public static final byte TENSION_RATING_KEY = 4;
+
+	/**
+	 * entitlement rating
+	 * @deprecated
+	 */
+	private static final String ENTITLEMENT = "entitlement";
+  /**
+   * entitlement rating
+   */
+  public static final byte ENTITLEMENT_RATING_KEY = 5;
+
+  private static final int RATING_ENTRY_COUNT = ENTITLEMENT_RATING_KEY + 1;
+
+  /**
+   * ID of the rating in the online database
+   * @deprecated
+   */
+	private static final String ID = "id";
+  /**
+   * ID of the rating in the online database
+   */
+  private int onlineID;
+
+  /**
+   * genre code
+   * @deprecated
+   */
+	private static final String GENRE = "genre";
+  /**
+   * genre code
+   */
+  private int genre;
+
+	/**
+	 * user count of online rating
+	 * @deprecated
+	 */
+	public static final String COUNT = "count";
+  /**
+   * number of users which rated this entry
+   */
+  private int userCount;
+
+  /** Title of the Program this rating is about */
 	private String _title;
+	
 	/** Values in this Rating-Element */
-	private HashMap<Object, Integer> _values;
+	private byte[] _values;
 
 	/**
 	 * Creates a empty Rating
 	 */
 	public Rating() {
-		_values = new HashMap<Object, Integer>();
+	  _values = new byte[RATING_ENTRY_COUNT];
 	}
 
 	/**
@@ -70,8 +144,8 @@ public class Rating implements Serializable {
 	 * @param title Title of the Program this rating is about
 	 */
 	public Rating(String title) {
+    this();
 		_title = title;
-		_values = new HashMap<Object, Integer>();
 	}
 
 	/**
@@ -80,12 +154,13 @@ public class Rating implements Serializable {
 	 * @param title Title of the Program this rating is about
 	 * @param values Values for the Rating
 	 */
-	public Rating(String title, HashMap<Object, Integer> values) {
-		_title = title;
-		_values = values;
-	}
 
-	/**
+  public Rating(String title, byte[] values) {
+    _title = title;
+    _values = values;
+  }
+
+  /**
 	 * Gets the Title
 	 * @return title
 	 */
@@ -113,28 +188,8 @@ public class Rating implements Serializable {
 	 * @param key Possible Keys are FUN, EROTIC...
 	 * @return Int-Value
 	 */
-	public int getIntValue(Object key) {
-	    
-		if (_values.get(key) == null) {
-		    
-			return -1;
-		}
-
-		Object value = _values.get(key);
-		if (value instanceof Integer) {
-			return ((Integer) value).intValue();
-		}
-
-		return -1;
-	}
-
-	/**
-	 * Sets an Int-Value in this Rating
-	 * @param key Possible Keys are FUN, EROTIC...
-	 * @param value Int-Value for this Key
-	 */
-	public void setValue(Object key, int value) {
-		_values.put(key, new Integer(value));
+	public int getIntValue(int key) {
+		return _values[key];
 	}
 
 	/**
@@ -143,8 +198,11 @@ public class Rating implements Serializable {
 	 * @throws IOException possible Error
 	 */
 	private synchronized void writeObject(java.io.ObjectOutputStream s) throws IOException {
-		s.writeInt(1);
+		s.writeInt(2);
 		s.writeObject(_title);
+		s.writeInt(onlineID);
+		s.writeInt(userCount);
+		s.writeInt(genre);
 		s.writeObject(_values);
 	}
 
@@ -156,8 +214,123 @@ public class Rating implements Serializable {
 	 * @throws ClassNotFoundException possible Error
 	 */
 	private synchronized void readObject(java.io.ObjectInputStream s) throws IOException, ClassNotFoundException {
-    s.readInt(); // read version, unused
+    int version = s.readInt();
 		_title = (String) s.readObject();
-		_values = (HashMap<Object, Integer>) s.readObject();
+		if (version == 1) {
+		  convertVersion1((HashMap<Object, Integer>) s.readObject());
+		}
+		else {
+	    onlineID = s.readInt();
+	    userCount = s.readInt();
+	    genre = s.readInt();
+		  _values = (byte[]) s.readObject();
+		}
 	}
+	
+	private void convertVersion1(HashMap<Object, Integer> oldMap) {
+	  _values = new byte[RATING_ENTRY_COUNT];
+	  for (Iterator iterator = oldMap.keySet().iterator(); iterator.hasNext();) {
+      Object key = iterator.next();
+      int oldValue = oldMap.get(key);
+      if (key.equals(OVERALL)) {
+        _values[OVERALL_RATING_KEY] = (byte) oldValue;
+      }
+      else if (key.equals(ACTION)) {
+        _values[ACTION_RATING_KEY] = (byte) oldValue;
+      }
+      else if (key.equals(FUN)) {
+        _values[FUN_RATING_KEY] = (byte) oldValue;
+      }
+      else if (key.equals(EROTIC)) {
+        _values[EROTIC_RATING_KEY] = (byte) oldValue;
+      }
+      else if (key.equals(TENSION)) {
+        _values[TENSION_RATING_KEY] = (byte) oldValue;
+      }
+      else if (key.equals(ENTITLEMENT)) {
+        _values[ENTITLEMENT_RATING_KEY] = (byte) oldValue;
+      }
+      else if (key.equals(ID)) {
+        onlineID = oldValue;
+      }
+      else if (key.equals(GENRE)) {
+        genre = oldValue;
+      }
+      else if (key.equals(COUNT)) {
+        userCount = oldValue;
+      }
+    }
+	}
+	
+	public int getRatingId() {
+	  return onlineID;
+	}
+
+  public int getRatingCount() {
+    return userCount;
+  }
+
+  public int getGenre() {
+    return genre;
+  }
+
+  public int getOverallRating() {
+    return _values[OVERALL_RATING_KEY];
+  }
+
+  public int getActionRating() {
+    return _values[ACTION_RATING_KEY];
+  }
+
+  public int getEntitlementRating() {
+    return _values[ENTITLEMENT_RATING_KEY];
+  }
+
+  public int getFunRating() {
+    return _values[FUN_RATING_KEY];
+  }
+
+  public int getTensionRating() {
+    return _values[TENSION_RATING_KEY];
+  }
+
+  public int getEroticRating() {
+    return _values[EROTIC_RATING_KEY];
+  }
+
+  public void setOverallRating(int overall) {
+    _values[OVERALL_RATING_KEY] = (byte) overall;
+  }
+
+  public void setActionRating(int action) {
+    _values[ACTION_RATING_KEY] = (byte) action;
+  }
+
+  public void setEntitlementRating(int entitlement) {
+    _values[ENTITLEMENT_RATING_KEY] = (byte) entitlement;
+  }
+
+  public void setFunRating(int fun) {
+    _values[FUN_RATING_KEY] = (byte) fun;
+  }
+
+  public void setTensionRating(int tension) {
+    _values[TENSION_RATING_KEY] = (byte) tension;
+  }
+
+  public void setEroticRating(int erotic) {
+    _values[EROTIC_RATING_KEY] = (byte) erotic;
+  }
+
+  public void setUserCount(int userCountArg) {
+    userCount = userCountArg;
+  }
+
+  public void setGenre(int genreArg) {
+    genre = genreArg;
+  }
+
+  public void setOnlineID(int onlineIDArg) {
+    onlineID = onlineIDArg;
+  }
 }

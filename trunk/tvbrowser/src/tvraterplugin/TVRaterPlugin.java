@@ -338,7 +338,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
         Rating  rating =getRating(program);
 
         if (rating != null) {
-            return new Icon[] { RatingIconTextFactory.getImageIconForRating(rating.getIntValue(Rating.OVERALL))};
+            return new Icon[] { RatingIconTextFactory.getImageIconForRating(rating.getOverallRating())};
         }
 
         return null;
@@ -476,6 +476,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
                 up.run();
             }
         };
+        updateThread.setPriority(Thread.MIN_PRIORITY);
         updateThread.start();
     }
     
