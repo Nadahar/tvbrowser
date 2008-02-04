@@ -57,7 +57,6 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, Ancestor
 
     
     private MainFrame mParent;
-    private JPanel mTimeBtnPanel;
     
     private JPanel mGridPn;
     
