@@ -34,7 +34,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -67,11 +66,11 @@ public class PluginTreeNode {
   private boolean mGroupWeekly;
 
   private PluginTreeNode(int type, Object o) {
-    mChildNodes = new ArrayList<PluginTreeNode>();
+    mChildNodes = null; // do not initialize to save memory
     mNodeType = type;
     mObject = o;
     mDefaultNode = new Node(type, mObject);
-    mNodeListeners = new ArrayList<PluginTreeListener>();
+    mNodeListeners = null; // do not initialize to save memory
     mGroupingByDate = true;
     mGroupWeekly = false;
   }
@@ -133,22 +132,35 @@ public class PluginTreeNode {
 
 
   public void addNodeListener(PluginTreeListener listener) {
+    if (mNodeListeners == null) {
+      mNodeListeners = new ArrayList<PluginTreeListener>(1);
+    }
     mNodeListeners.add(listener);
   }
 
   public boolean removeNodeListener(PluginTreeListener listener) {
+    if (mNodeListeners == null) {
+      return false;
+    }
     return mNodeListeners.remove(listener);
   }
 
   public void removeAllNodeListeners() {
+    if (mNodeListeners == null) {
+      return;
+    }
     mNodeListeners.clear();
+    mNodeListeners = null;
   }
 
   /**
    * Remove all programs from this node which are not available any more
    */
   private synchronized void refreshAllPrograms(RemovedProgramsHandler handler) {
-
+    // non initialized child collection, if it is empty
+    if (mChildNodes == null) {
+      return;
+    }
     for (int i=mChildNodes.size()-1; i>=0; i--) {
       PluginTreeNode node = mChildNodes.get(i);
       node.mMarker = mMarker;
@@ -173,6 +185,9 @@ public class PluginTreeNode {
   }
 
   private void fireProgramsRemoved(Program[] progArr) {
+    if (mNodeListeners == null) {
+      return;
+    }
     for (int i=0; i<mNodeListeners.size(); i++) {
       PluginTreeListener listener = mNodeListeners.get(i);
       listener.programsRemoved(progArr);
@@ -242,7 +257,10 @@ public class PluginTreeNode {
 
   private void createDefaultNodes() {
     mDefaultNode.removeAllChildren();
-
+    // non initialized child collection, if it is empty
+    if (mChildNodes == null) {
+      return;
+    }
     PluginTreeNode[] items = mChildNodes.toArray(new PluginTreeNode[mChildNodes.size()]);
     Arrays.sort(items, sPluginTreeNodeComparator);
     Date currentDate = null;
@@ -282,14 +300,14 @@ public class PluginTreeNode {
     /* We create new folders for each day and assign the program items
        to the appropriate folder */
 
-    Map<Date, ArrayList<PluginTreeNode>> dateMap = new HashMap<Date, ArrayList<PluginTreeNode>>();  // key: date; value: ArrayList of ProgramItem objects
     mDefaultNode.removeAllChildren();
 
     // return if no nodes available
-    if (mChildNodes.size() == 0) {
+    if (mChildNodes == null || mChildNodes.size() == 0) {
       return;
     }
 
+    Map<Date, ArrayList<PluginTreeNode>> dateMap = new HashMap<Date, ArrayList<PluginTreeNode>>();  // key: date; value: ArrayList of ProgramItem objects
     Iterator<PluginTreeNode> it = mChildNodes.iterator();
     Date currentDate = Date.getCurrentDate();
     while (it.hasNext()) {
@@ -425,12 +443,19 @@ public class PluginTreeNode {
         programs[i].unmark(mMarker);
       }
     }
-    mChildNodes.clear();
+    if (mChildNodes != null) {
+      mChildNodes.clear();
+      mChildNodes = null;
+    }
     mDefaultNode.removeAllChildren();
   }
 
 
   public synchronized void add(PluginTreeNode node) {
+    // create collection on demand only
+    if (mChildNodes == null) {
+      mChildNodes = new ArrayList<PluginTreeNode>(1);
+    }
     mChildNodes.add(node);    
     node.mMarker = mMarker;
   }
@@ -464,7 +489,7 @@ public class PluginTreeNode {
   public synchronized void addPrograms(List<Program> listNew) {
     Iterator<Program> newIt = listNew.iterator();
     // create sorted lists of current and new programs, but only if this node contains any children at all!
-    if (mChildNodes.size() > 0) {
+    if (mChildNodes != null && mChildNodes.size() > 0) {
       Program[] currentProgs = getPrograms();
       ArrayList<Program> listCurrent = new ArrayList<Program>(currentProgs.length);
       for (int i = 0; i < currentProgs.length; i++) {
@@ -573,21 +598,23 @@ public class PluginTreeNode {
   }
 
   private PluginTreeNode findProgramTreeNode(PluginTreeNode root, Program prog, boolean recursive) {
-    Iterator<PluginTreeNode> it = root.mChildNodes.iterator();
-    while (it.hasNext()) {
-      PluginTreeNode node = (PluginTreeNode)it.next();
-      if (!node.isLeaf()) {
-        if (recursive) {
-          PluginTreeNode n = findProgramTreeNode(node, prog, recursive);
-          if (n!=null) {
-            return n;
+    if (root.mChildNodes != null) {
+      Iterator<PluginTreeNode> it = root.mChildNodes.iterator();
+      while (it.hasNext()) {
+        PluginTreeNode node = (PluginTreeNode)it.next();
+        if (!node.isLeaf()) {
+          if (recursive) {
+            PluginTreeNode n = findProgramTreeNode(node, prog, recursive);
+            if (n!=null) {
+              return n;
+            }
           }
         }
-      }
-      else {
-        ProgramItem item = (ProgramItem)node.getUserObject();
-        if (item.getProgram().equals(prog)) {
-          return node;
+        else {
+          ProgramItem item = (ProgramItem)node.getUserObject();
+          if (item.getProgram().equals(prog)) {
+            return node;
+          }
         }
       }
     }
@@ -620,6 +647,12 @@ public class PluginTreeNode {
   }
 
   public ProgramItem[] getProgramItems() {
+    // return if there are no child nodes
+    if (mChildNodes == null) {
+      return new ProgramItem[0];
+    }
+    
+    // we have child nodes
     ArrayList<Object> list = new ArrayList<Object>();
     Iterator<PluginTreeNode> it = mChildNodes.iterator();
     while (it.hasNext()) {
@@ -635,6 +668,12 @@ public class PluginTreeNode {
   }
 
   public Program[] getPrograms() {
+    // return if there are no children
+    if (mChildNodes == null) {
+      return new Program[0];
+    }
+    
+    // we have child nodes
     ArrayList<Program> list = new ArrayList<Program>();
     Iterator<PluginTreeNode> it = mChildNodes.iterator();
     while (it.hasNext()) {
@@ -652,7 +691,10 @@ public class PluginTreeNode {
 
 
   public void store(ObjectOutputStream out) throws IOException {
-    int childrenCnt = mChildNodes.size();
+    int childrenCnt = 0;
+    if (mChildNodes != null) {
+      childrenCnt = mChildNodes.size();
+    }
     out.writeInt(childrenCnt);
 
     for (int i=0; i<childrenCnt; i++) {
@@ -708,15 +750,22 @@ public class PluginTreeNode {
    * @return number of child nodes
    */
   public int size() {
+    if (mChildNodes == null) {
+      return 0;
+    }
     return mChildNodes.size();
   }
 
   public synchronized void clear() {
+    if (mChildNodes == null) {
+      return;
+    }
     mChildNodes.clear();
+    mChildNodes = null;
   }
 
   public boolean isEmpty() {
-    return mChildNodes.isEmpty();
+    return (mChildNodes == null || mChildNodes.isEmpty());
   }
 
   public boolean isLeaf() {

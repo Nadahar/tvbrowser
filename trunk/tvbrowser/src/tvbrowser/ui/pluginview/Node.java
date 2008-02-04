@@ -83,7 +83,7 @@ public class Node extends DefaultMutableTreeNode {
   public Node(int type, Object o) {
     super(o);
     mType = type;
-    mActionMenuList = new ArrayList<ActionMenu>();
+    mActionMenuList = null; // defer initialization to save memory
     if(type == ROOT)
       mShowLeafCount = false;
     else
@@ -135,18 +135,31 @@ public class Node extends DefaultMutableTreeNode {
   }
 
   public void addActionMenu(ActionMenu menu) {
+    if (mActionMenuList == null) {
+      mActionMenuList = new ArrayList<ActionMenu>(1);
+    }
     mActionMenuList.add(menu);
   }
 
   public void removeActionMenu(ActionMenu menu) {
+    if (mActionMenuList == null) {
+      return;
+    }
     mActionMenuList.remove(menu);
   }
 
   public void removeAllActionMenus() {
+    if (mActionMenuList == null) {
+      return;
+    }
     mActionMenuList.clear();
+    mActionMenuList = null;
   }
 
   public ActionMenu[] getActionMenus() {
+    if (mActionMenuList == null) {
+      return new ActionMenu[0];
+    }
     ActionMenu[] result = new ActionMenu[mActionMenuList.size()];
     mActionMenuList.toArray(result);
     return result;
