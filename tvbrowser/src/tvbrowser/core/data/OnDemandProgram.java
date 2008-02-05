@@ -72,7 +72,7 @@ public class OnDemandProgram extends MutableProgram {
 
 
   public void setLargeField(ProgramFieldType type, long position) {
-    OnDemandValue onDemandValue = new OnDemandValue(type, position);
+    OnDemandValue onDemandValue = new OnDemandValue(position);
     
     super.setField(type, type.getFormat(), onDemandValue);
   }
@@ -84,7 +84,7 @@ public class OnDemandProgram extends MutableProgram {
     if (value instanceof OnDemandValue) {
       // If the value is from a large field then load it if needed
       OnDemandValue onDemandValue = (OnDemandValue) value;
-      return onDemandValue.getValue();
+      return onDemandValue.getValue(type);
     } else {
       return value;
     }
@@ -93,18 +93,16 @@ public class OnDemandProgram extends MutableProgram {
 
   private class OnDemandValue {
     
-    private ProgramFieldType mType;
     private long mPosition;
     private SoftReference<Object> mValue;
     
     
-    OnDemandValue(ProgramFieldType type, long position) {
-      mType = type;
+    OnDemandValue(long position) {
       mPosition = position;
     }
     
     
-    Object getValue() {
+    Object getValue(ProgramFieldType type) {
       // Try to load the cached value
       Object value = null;
       if (mValue != null) {
@@ -114,7 +112,7 @@ public class OnDemandProgram extends MutableProgram {
       // Load the value from disk if nessesary
       if (value == null) {
         try {
-          value = mOnDemandFile.loadFieldValue(mPosition, mType);
+          value = mOnDemandFile.loadFieldValue(mPosition, type);
           
           if (value == null) {
             value = NULL_VALUE;
@@ -124,12 +122,12 @@ public class OnDemandProgram extends MutableProgram {
           mValue = new SoftReference<Object>(value);
           
           if (mLog.isLoggable(Level.FINE)) {
-            mLog.fine("Loaded value on demand for field " + mType.getName());
+            mLog.fine("Loaded value on demand for field " + type.getName());
           }
         }
         catch (Exception exc) {
           mLog.log(Level.WARNING, "Loading value on demand for field "
-            + mType.getName() + " failed (channel: " + getChannel()
+            + type.getName() + " failed (channel: " + getChannel()
             + ", date: " + getDateString() + ")", exc);
         }
       }

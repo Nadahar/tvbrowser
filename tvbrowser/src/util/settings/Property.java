@@ -36,65 +36,75 @@ import javax.swing.event.ChangeListener;
  * @author Til Schneider, www.murfman.de
  */
 public abstract class Property {
-  
+
   private PropertyManager mManager;
+
   private String mKey;
+
   /** Vector for Change-Listeners */
   private Vector<ChangeListener> mChangeList;
-  
+
   public Property(PropertyManager manager, String key) {
     mManager = manager;
     mKey = key;
-    mChangeList = new Vector<ChangeListener>();
+    mChangeList = null; // defer initialization to save memory
     // Register this property
     mManager.addProperty(this);
   }
-
 
   protected void setProperty(String value) {
     mManager.setProperty(mKey, value);
     fireChangeEvent();
   }
-  
-  
+
   protected String getProperty() {
     return mManager.getProperty(mKey);
   }
-  
-  
+
   public String getKey() {
     return mKey;
   }
-  
+
   /**
-   * Add a ChangeListener to this Property.
-   * Everytime this Property is changed, a event will be
-   * fired
+   * Add a ChangeListener to this Property. Everytime this Property is changed,
+   * a event will be fired
    * 
-   * @param l Listener to add 
+   * @param l
+   *          Listener to add
    */
   public void addChangeListener(ChangeListener l) {
-      mChangeList.add(l);
+    if (mChangeList == null) {
+      mChangeList = new Vector<ChangeListener>(1);
+    }
+    mChangeList.add(l);
   }
-  
+
   /**
-   * Remove a ChangeListener from this Property 
-   * @param l Listener to remove
+   * Remove a ChangeListener from this Property
+   * 
+   * @param l
+   *          Listener to remove
    */
   public void removeChangeListener(ChangeListener l) {
-      mChangeList.remove(l);
+    if (mChangeList == null) {
+      return;
+    }
+    mChangeList.remove(l);
   }
 
   /**
    * Fire ChangeEvent and inform every Listener about changes in this Property
    */
   public void fireChangeEvent() {
-      for (int i = 0; i < mChangeList.size(); i++) {
-          ChangeListener l = mChangeList.get(i);
-          l.stateChanged(new ChangeEvent(this));
-      }
+    if (mChangeList == null) {
+      return;
+    }
+    for (int i = 0; i < mChangeList.size(); i++) {
+      ChangeListener l = mChangeList.get(i);
+      l.stateChanged(new ChangeEvent(this));
+    }
   }
-  
+
   protected abstract void clearCache();
 
 }

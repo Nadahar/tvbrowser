@@ -170,7 +170,7 @@ public class MutableProgram implements Program {
     }
     
     mFieldHash = new HashMap<ProgramFieldType,Object>();
-    mListenerList = new Vector<ChangeListener>();
+    mListenerList = null; // defer initialization until needed, to save memory
     mMarkerArr = EMPTY_MARKER_ARR;
     mIsLoading = isLoading;
 
@@ -216,6 +216,9 @@ public class MutableProgram implements Program {
    * @see #removeChangeListener
    */
   public void addChangeListener(ChangeListener listener) {
+    if (mListenerList == null) {
+      mListenerList = new Vector<ChangeListener>(1);
+    }
     if (!mListenerList.contains(listener)) {
       mListenerList.add(listener);
     }
@@ -231,6 +234,9 @@ public class MutableProgram implements Program {
    * @see #addChangeListener
    */
   public void removeChangeListener(ChangeListener listener) {
+    if (mListenerList == null) {
+      return;
+    }
     mListenerList.remove(listener);
   }
 
@@ -243,6 +249,9 @@ public class MutableProgram implements Program {
    * @see EventListenerList
    */
   protected void fireStateChanged() {
+    if (mListenerList == null) {
+      return;
+    }
     ChangeEvent changeEvent = new ChangeEvent(this);
 
     for (int i = 0; i < mListenerList.size(); i++) {
@@ -1024,12 +1033,16 @@ public class MutableProgram implements Program {
    * @since 2.2.1
    */
   protected void setMarkerArr(Marker[] marker) {
-    mMarkerArr = marker;
-
-    if(marker.length > 0) {
-      mTitle = getTitle();
+    if (marker.length == 0) {
+      mMarkerArr = EMPTY_MARKER_ARR;
     }
-
+    else {
+      mMarkerArr = marker;
+  
+      if(marker.length > 0) {
+        mTitle = getTitle();
+      }
+    }
     //fireStateChanged();
   }
 

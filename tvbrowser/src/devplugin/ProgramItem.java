@@ -45,7 +45,7 @@ public class ProgramItem {
   
   public ProgramItem(Program prog) {
     mProgram = prog;
-    mProperties = new Properties();
+    mProperties = null; // defer initialization until needed
   }
   
   public ProgramItem() {
@@ -59,6 +59,9 @@ public class ProgramItem {
     mProgram = Plugin.getPluginManager().getProgram(date, progId);
 
     int keyCnt = in.readInt();
+    if (keyCnt > 0) {
+      mProperties = new Properties();
+    }
     for (int i=0; i<keyCnt; i++) {
       String key = (String)in.readObject();
       String value = (String)in.readObject();
@@ -74,16 +77,20 @@ public class ProgramItem {
     String progId = mProgram.getID();
     out.writeObject(progId);
     
-    Set<Object> keys = mProperties.keySet();
-    out.writeInt(keys.size());
-    Iterator<Object> it = keys.iterator();
-    while (it.hasNext()) {
-      String key = (String)it.next();
-      String value = (String)mProperties.get(key);
-      out.writeObject(key);
-      out.writeObject(value);      
+    if (mProperties == null) {
+      out.writeInt(0);
     }
-    
+    else {
+      Set<Object> keys = mProperties.keySet();
+      out.writeInt(keys.size());
+      Iterator<Object> it = keys.iterator();
+      while (it.hasNext()) {
+        String key = (String)it.next();
+        String value = (String)mProperties.get(key);
+        out.writeObject(key);
+        out.writeObject(value);      
+      }
+    }
   }
   
   public void setProgram(Program prog) {
@@ -95,10 +102,16 @@ public class ProgramItem {
   }
   
   public void setProperty(String key, String value) {
+    if (mProperties == null) {
+      mProperties = new Properties();
+    }
     mProperties.put(key, value);  
   }
   
   public String getProperty(String key) {
+    if (mProperties == null) {
+      return null;
+    }
     return (String)mProperties.get(key);  
   }
   
