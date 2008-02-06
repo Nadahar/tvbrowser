@@ -169,7 +169,7 @@ public class MutableProgram implements Program {
       throw new NullPointerException("localDate is null");
     }
     
-    mFieldHash = new HashMap<ProgramFieldType,Object>();
+    mFieldHash = new HashMap<ProgramFieldType,Object>(8);
     mListenerList = null; // defer initialization until needed, to save memory
     mMarkerArr = EMPTY_MARKER_ARR;
     mIsLoading = isLoading;
