@@ -107,7 +107,7 @@ class CheckNetworkConnection {
 
         mCheckRunning = false;
       };
-    }).start();
+    }, "Check network connection").start();
 
     int num = 0;
     // Wait till second Thread is finished or Settings.propNetworkCheckTimeout is reached
