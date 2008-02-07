@@ -50,7 +50,26 @@ public class ImageUtilities {
   /** The helper label. */  
   private static final JLabel HELPER_LABEL = new JLabel();
 
+  private static Thread imageLoader;
+
   
+  /**
+   * Returns the image in the specified file.
+   * <p>
+   * If the file does not exist null is returned.
+   */
+  public static Image createImage(String fileName, boolean waitUntilLoaded) {
+    if (! new File(fileName).exists()) {
+      mLog.warning("File does not exist: '" + fileName + "'");
+      return null;
+    }
+    Image img = Toolkit.getDefaultToolkit().createImage(fileName);
+    if (waitUntilLoaded) {
+      waitForImageData(img, null);
+    }
+    
+    return img;
+  }
   
   /**
    * Returns the image in the specified file.
@@ -58,17 +77,12 @@ public class ImageUtilities {
    * If the file does not exist null is returned.
    */
   public static Image createImage(String fileName) {
-    if (! new File(fileName).exists()) {
-      mLog.warning("File does not exist: '" + fileName + "'");
-      return null;
-    }
-    Image img = Toolkit.getDefaultToolkit().createImage(fileName);
-    waitForImageData(img, null);
-    
-    return img;
+    return createImage(fileName, true);
   }
-  
 
+  public static Image createImageAsynchronous(String fileName) {
+    return createImage(fileName, false);
+  }
   
   /**
    * Lädt ein ImageIcon aus einem Jar-File und gibt es zurück.
@@ -152,5 +166,6 @@ public class ImageUtilities {
     catch (Exception ex) {
     }
   } // waitForImageData (Image, Component)
+  
   
 }

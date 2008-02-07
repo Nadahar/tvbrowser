@@ -73,6 +73,8 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   private DataHydraFileParser mParser = new DataHydraFileParser();
   static final String SHOW_REGISTER_TEXT = "showRegisterText";
 
+  private IconLoader iconLoader;
+
   /**
    * Creates a new instance of SweDBTvDataService
    */
@@ -164,21 +166,32 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
 
     ArrayList<Channel> channels = new ArrayList<Channel>();
 
-    for (int i = 0; i < numChannels; i++) {
-      DataHydraChannelContainer container = new DataHydraChannelContainer(mProperties.getProperty(
-              "ChannelId-" + i, ""), mProperties.getProperty("ChannelTitle-" + i,
-              ""), mProperties.getProperty("ChannelBaseUrl-" + i, ""), mProperties
-              .getProperty("ChannelIconUrl-" + i, ""), mProperties.getProperty(
-              "ChannelLastUpdate-" + i, ""));
-
-      String groupId = mProperties.getProperty("ChannelGroup-" + i);
-      if (groupId == null) {
-        groupId = "SweDB";
+    // create channels sorted by group to avoid recreation of icon loader
+    for (ChannelGroup group : getAvailableGroups()) {
+      String groupId = group.getId();
+      DataHydraChannelGroup dataHydraChannelGroup = mChannelGroups.get(groupId);
+      for (int i = 0; i < numChannels; i++) {
+        String channelGroupId = mProperties.getProperty("ChannelGroup-" + i);
+        if (channelGroupId == null) {
+          channelGroupId = "SweDB";
+        }
+        if (groupId.equals(channelGroupId)) {
+          // create the icon loader on demand to avoid disk access for non used groups
+          if (iconLoader == null) {
+            initializeIconLoader(dataHydraChannelGroup);
+          }
+          DataHydraChannelContainer container = new DataHydraChannelContainer(mProperties.getProperty(
+                  "ChannelId-" + i, ""), mProperties.getProperty("ChannelTitle-" + i,
+                  ""), mProperties.getProperty("ChannelBaseUrl-" + i, ""), mProperties
+                  .getProperty("ChannelIconUrl-" + i, ""), mProperties.getProperty(
+                  "ChannelLastUpdate-" + i, ""));
+    
+          Channel ch = createTVBrowserChannel(dataHydraChannelGroup, container);
+          mInternalChannels.put(ch, container);
+          channels.add(ch);
+        }
       }
-
-      Channel ch = createTVBrowserChannel(mChannelGroups.get(groupId), container);
-      mInternalChannels.put(ch, container);
-      channels.add(ch);
+      closeIconLoader(dataHydraChannelGroup);
     }
 
     mChannels = channels;
@@ -231,6 +244,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   }
 
   public Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException {
+    DataHydraChannelGroup hydraGroup = (DataHydraChannelGroup) group;
     mHasRightToDownloadIcons = true;
 
     Channel[] channels = new Channel[0];
@@ -241,11 +255,11 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
                 "Getting messages"));
       }
 
-      mLog.log(Level.ALL, "Loading Channel file : " + ((DataHydraChannelGroup) group).getChannelFile());
+      mLog.log(Level.ALL, "Loading Channel file : " + hydraGroup.getChannelFile());
 
       String urlMirror = getMirror().getUrl();
 
-      URL url = new URL(urlMirror + (urlMirror.endsWith("/") ? "" : "/") + ((DataHydraChannelGroup) group).getChannelFile());
+      URL url = new URL(urlMirror + (urlMirror.endsWith("/") ? "" : "/") + hydraGroup.getChannelFile());
 
       // Download the mirror list for the next run
       try {
@@ -255,12 +269,12 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
       if (monitor != null) {
         monitor.setMessage(mLocalizer.msg("Progressmessage.20",
                 "Getting channel list from")
-                + " " + group.getProviderName());
+                + " " + hydraGroup.getProviderName());
       }
 
       long lastUpdate = 0;
-      if (mLastGroupUpdate.get(group) != null) {
-        lastUpdate = mLastGroupUpdate.get(group);
+      if (mLastGroupUpdate.get(hydraGroup) != null) {
+        lastUpdate = mLastGroupUpdate.get(hydraGroup);
       }
 
       HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -281,13 +295,15 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
           monitor.setMessage(mLocalizer.msg("Progressmessage.40", "Found {0} channels, downloading channel icons...", DataHydracontainers.length));
         }
 
-        mLastGroupUpdate.put(group, con.getLastModified());
+        mLastGroupUpdate.put(hydraGroup, con.getLastModified());
         con.disconnect();
 
         ArrayList<Channel> loadedChannels = new ArrayList<Channel>();
 
         for (DataHydraChannelContainer container : DataHydracontainers) {
-          Channel ch = createTVBrowserChannel((DataHydraChannelGroup) group, container);
+          initializeIconLoader(hydraGroup);
+          Channel ch = createTVBrowserChannel(hydraGroup, container);
+          closeIconLoader(hydraGroup);
           mInternalChannels.put(ch, container);
           loadedChannels.add(ch);
         }
@@ -304,7 +320,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
          */
 
         // Remove all Channels of current Group
-        Channel[] chs = getAvailableChannels(group);
+        Channel[] chs = getAvailableChannels(hydraGroup);
         for (Channel ch : chs) {
           mChannels.remove(ch);
         }
@@ -312,7 +328,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
         // Add all Channels for current Group
         mChannels.addAll(loadedChannels);
       } else if (responseCode == 304) {
-        channels = getAvailableChannels(group);
+        channels = getAvailableChannels(hydraGroup);
       } else {
         throw new TvBrowserException(SweDBTvDataService.class,
                 "availableResponse",
@@ -356,15 +372,6 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
 
   private Channel createTVBrowserChannel(DataHydraChannelGroup group, DataHydraChannelContainer container) {
     if (mWorkingDirectory != null) {
-      IconLoader iconLoader = null;
-      try {
-        iconLoader = new IconLoader(this, group.getId(), mWorkingDirectory);
-      } catch (IOException e) {
-        mLog.severe("Unable to initialize IconLoader for group ID "
-                + group.getId() + " in working directory "
-                + this.mWorkingDirectory);
-      }
-
       int category = Channel.CATEGORY_TV;
 
       if (group.getId().equals("MSPC")) {
@@ -388,20 +395,36 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
                   + container.getIconUrl());
         }
       }
-      try {
-        iconLoader.close();
-      } catch (IOException e) {
-        mLog.severe("Unable to close IconLoader for group ID "
-                + group.getId() + " in working directory "
-                + this.mWorkingDirectory);
-      }
-
       return channel;
     } else {
       mLog.info("DataHydraTvDataService: Working directory has not been initialized yet. Icons not loaded");
     }
 
     return null;
+  }
+
+  private void closeIconLoader(DataHydraChannelGroup group) {
+    try {
+      if (iconLoader != null) {
+        iconLoader.close();
+      }
+    } catch (IOException e) {
+      mLog.severe("Unable to close IconLoader for group ID "
+              + group.getId() + " in working directory "
+              + this.mWorkingDirectory);
+    }
+    iconLoader = null;
+  }
+
+  private void initializeIconLoader(DataHydraChannelGroup group) {
+    iconLoader = null;
+    try {
+      iconLoader = new IconLoader(this, group.getId(), mWorkingDirectory);
+    } catch (IOException e) {
+      mLog.severe("Unable to initialize IconLoader for group ID "
+              + group.getId() + " in working directory "
+              + this.mWorkingDirectory);
+    }
   }
 
   public boolean hasRightToDownloadIcons() {
