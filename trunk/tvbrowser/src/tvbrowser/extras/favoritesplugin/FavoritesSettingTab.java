@@ -179,11 +179,7 @@ public class FavoritesSettingTab implements SettingsTab {
     FavoritesPlugin.getInstance().setAutoSelectingReminder(mAutoSelectRemider.isSelected());
     FavoritesPlugin.getInstance().setMarkPriority(mMarkingsPanel.getSelectedPriority());
     
-    new Thread("Save favorite settings") {
-      public void run() {
-        FavoritesPlugin.getInstance().store();
-      }
-    }.start();
+    FavoritesPlugin.getInstance().saveFavorites();
   }
   
   /**

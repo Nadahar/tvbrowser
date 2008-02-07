@@ -182,7 +182,7 @@ public class GoogleSettingsDialog extends JDialog  implements WindowClosingIf {
           ErrorHandler.handle(mErrorLocalizer.msg("commError", "Error while communicating with Google!"), e);
         }
       }
-    }).start();
+    }, "Fetch calendar list").start();
 
     setSize(Sizes.dialogUnitXAsPixel(240, this), Sizes.dialogUnitYAsPixel(200, this));
   }
