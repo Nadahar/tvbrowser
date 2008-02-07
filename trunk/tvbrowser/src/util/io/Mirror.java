@@ -471,7 +471,7 @@ public class Mirror {
         }
         mMirrorDownloadRunning = false;
       };
-    }).start();
+    }, "Load mirror date from "+url).start();
 
     int num = 0;
     // Wait till second Thread is finished or 15000 ms reached
