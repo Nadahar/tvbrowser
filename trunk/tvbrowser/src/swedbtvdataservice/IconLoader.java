@@ -55,7 +55,6 @@ class IconLoader {
 
     if (url.equals(prevUrl)) {
       // the url hasn't changed; we should have the icon locally
-      mLog.info("Found iconUrl in cache for channelId:" + channelId);
       icon = getIconFromFile(iconFile);
       return icon;
     } else {
@@ -123,7 +122,7 @@ class IconLoader {
   }
 
   private Icon getIconFromFile(File file) {
-    Image img = ImageUtilities.createImage(file.getAbsolutePath());
+    Image img = ImageUtilities.createImageAsynchronous(file.getAbsolutePath());
     if (img != null) {
       return new ImageIcon(img);
     }

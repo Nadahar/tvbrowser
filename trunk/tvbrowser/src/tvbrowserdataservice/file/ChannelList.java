@@ -344,7 +344,7 @@ public class ChannelList {
     }
 
     private Icon getIconFromFile(File file) {
-      Image img = ImageUtilities.createImage(file.getAbsolutePath());
+      Image img = ImageUtilities.createImageAsynchronous(file.getAbsolutePath());
       if (img != null) {
         return new ImageIcon(img);
       }
