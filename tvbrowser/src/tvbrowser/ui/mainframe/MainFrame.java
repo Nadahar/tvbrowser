@@ -1597,7 +1597,7 @@ public class MainFrame extends JFrame implements DateListener {
         });
         mSettingsWillBeOpened = false;
       }
-    }).start();
+    }, "Show settings dialog").start();
   }
 
   /*****************************************************************************

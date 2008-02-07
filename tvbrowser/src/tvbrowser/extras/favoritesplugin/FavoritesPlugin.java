@@ -180,11 +180,13 @@ public class FavoritesPlugin {
       if(!showInfoFavorites.isEmpty()) {
         mUpdateFavorites = showInfoFavorites.toArray(new Favorite[showInfoFavorites.size()]);
 
-        new Thread("Manage favorites") {
+        Thread thread = new Thread("Manage favorites") {
           public void run() {
             showManageFavoritesDialog(true, mUpdateFavorites);
           }
-        }.start();
+        };
+        thread.setPriority(Thread.MIN_PRIORITY);
+        thread.start();
       }
     }
   }
@@ -687,11 +689,17 @@ public class FavoritesPlugin {
       }
     }
     
-    new Thread("Save favorites") {
+    saveFavorites();
+  }
+
+  protected void saveFavorites() {
+    Thread thread = new Thread("Save favorites") {
       public void run() {
         store();
       }
-    }.start();
+    };
+    thread.setPriority(Thread.MIN_PRIORITY);
+    thread.start();
   }
 
 
@@ -716,11 +724,7 @@ public class FavoritesPlugin {
               JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
       FavoriteTreeModel.getInstance().deleteFavorite(fav);
       
-      new Thread("Save favorites") {
-        public void run() {
-          store();
-        }
-      }.start();
+      saveFavorites();
     }
   }
 
@@ -774,11 +778,7 @@ public class FavoritesPlugin {
     ReminderPlugin.getInstance().updateRootNode(mHasRightToSave);
     
     if(save && mHasRightToSave) {
-      new Thread("Save favorites") {
-        public void run() {
-          store();
-        }
-      }.start();
+      saveFavorites();
     }
   }
   
@@ -869,11 +869,7 @@ public class FavoritesPlugin {
     
     mSettings.setProperty("markPriority",String.valueOf(priority));
     
-    new Thread("Save favorites") {
-      public void run() {
-        store();
-      }
-    }.start();
+    saveFavorites();
   }
   
   public String toString() {

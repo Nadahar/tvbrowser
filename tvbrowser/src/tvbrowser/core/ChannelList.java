@@ -90,9 +90,10 @@ public class ChannelList {
       public void run() {
         mLog.info("Loading the not subscribed channels");
         create();
-        mLog.info("Loading off all channels complete");
+        mLog.info("Loading of all channels complete");
       }
     };
+    mCompleteChannelThread.setPriority(Thread.MIN_PRIORITY);
     mCompleteChannelThread.start();
   }
 

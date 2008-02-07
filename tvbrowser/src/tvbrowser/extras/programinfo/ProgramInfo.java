@@ -103,10 +103,10 @@ public class ProgramInfo {
   public void handleTvBrowserStartFinished() {
     mInitThread = new Thread("Program Info init thread") {
       public void run() {
-        setPriority(Thread.MIN_PRIORITY);
         ProgramInfoDialog.getInstance(Plugin.getPluginManager().getExampleProgram(), mLeftSplit, true);
       }
     };
+    mInitThread.setPriority(Thread.MIN_PRIORITY);
     mInitThread.start();
   }
 

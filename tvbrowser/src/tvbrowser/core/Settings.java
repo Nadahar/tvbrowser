@@ -367,7 +367,7 @@ public class Settings {
                 
                 final File srcDir = oldTvDataDir;
                 
-                new Thread() {
+                Thread copyDataThread = new Thread("Copy TV data directory") {
                   public void run() {
                     try {
                       IOUtilities.copy(srcDir.listFiles(), targetDir, true);
@@ -376,7 +376,8 @@ public class Settings {
                     mShowWaiting = false;
                     waiting.setVisible(false);
                   }
-                }.start();
+                };
+                copyDataThread.start();
                 
                 waiting.setVisible(mShowWaiting);
               }

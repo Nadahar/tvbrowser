@@ -146,7 +146,7 @@ public class SearchHelper {
           ErrorHandler.handle(exc);
         }
       }
-    }).start();
+    }, "Search programs").start();
 
   }
 

@@ -214,7 +214,7 @@ public class CalendarExportPlugin extends Plugin {
                             Program[] programArr = {program};
                             export.exportPrograms(programArr, mSettings,mConfigs[0]);
                         }
-                    }).start();
+                    }, "Export to calendar").start();
                 }
             };
 
@@ -255,7 +255,7 @@ public class CalendarExportPlugin extends Plugin {
                       Program[] programArr = {program};
                       export.exportPrograms(programArr, mSettings, mConfigs[count]);
                     }
-                  }).start();
+                  }, "Export to calendar").start();
                 }
               };
               actions[j].putValue(Action.NAME, mConfigs[j].getName());

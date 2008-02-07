@@ -501,11 +501,13 @@ public class ReminderSettingsTab implements SettingsTab {
     
     ReminderPlugin.getInstance().setMarkPriority(mMarkingsPanel.getSelectedPriority());
     
-    new Thread("Save reminders") {
+    Thread saveThread = new Thread("Save reminders") {
       public void run() {
         ReminderPlugin.getInstance().store();
       }
-    }.start();
+    };
+    saveThread.setPriority(Thread.MIN_PRIORITY);
+    saveThread.start();
   }
 
   /**
