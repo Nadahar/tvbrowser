@@ -25,9 +25,12 @@
 package tvbrowser.ui.update;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import util.exc.TvBrowserException;
 import util.misc.OperatingSystem;
 import devplugin.PluginAccess;
@@ -276,6 +279,11 @@ public abstract class SoftwareUpdateItem {
     for (PluginAccess plugin : PluginProxyManager.getInstance().getAllPlugins()) {
       if (plugin.getInfo().getName().equalsIgnoreCase(getName()) || plugin.getId().endsWith(getClassName())) {
         return plugin.getInfo().getVersion();
+      }
+    }
+    for (TvDataServiceProxy service : TvDataServiceProxyManager.getInstance().getDataServices()) {
+      if (service.getInfo().getName().equalsIgnoreCase(getName()) || service.getId().endsWith(getClassName())) {
+        return service.getInfo().getVersion();
       }
     }
     return null;
