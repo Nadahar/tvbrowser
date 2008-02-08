@@ -113,7 +113,20 @@ public class ProgramTableCellRenderer extends DefaultTableCellRenderer {
             
             mProgramPanel.setTextColor(label.getForeground());
             
-            String dateString = program.getDate().equals(Date.getCurrentDate()) ? Localizer.getLocalization(Localizer.I18N_TODAY) : program.getDate().equals(Date.getCurrentDate().addDays(1)) ? Localizer.getLocalization(Localizer.I18N_TOMORROW) : program.getDate().toString();
+            String dateString;
+            
+            if(program.getDate().equals(Date.getCurrentDate().addDays(-1))) {
+              dateString = Localizer.getLocalization(Localizer.I18N_YESTERDAY);
+            }
+            else if(program.getDate().equals(Date.getCurrentDate())) {
+              dateString = Localizer.getLocalization(Localizer.I18N_TODAY);
+            }
+            else if(program.getDate().equals(Date.getCurrentDate().addDays(1))) {
+              dateString = Localizer.getLocalization(Localizer.I18N_TOMORROW);
+            }
+            else {
+              dateString = program.getDate().toString();
+            }
             
             mHeaderLb.setText(dateString + " - " + program.getChannel().getName());
             

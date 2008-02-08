@@ -61,6 +61,7 @@ import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.extras.searchplugin.SearchPlugin;
 import tvbrowser.ui.filter.dlgs.SelectFilterPopup;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.ui.Localizer;
 import util.ui.ScrollableMenu;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
@@ -174,9 +175,9 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
             .getInstance().getIconFromTheme("actions", "go-to-previous-day", 16), IconLoader
             .getInstance().getIconFromTheme("actions", "go-to-previous-day", 22),
             ToolBar.BUTTON_ACTION, this);
-    mGoToTodayAction = createAction(TVBrowser.mLocalizer.msg(
-        "button.today", "Today"), "#goToToday", scrollTo
-        + TVBrowser.mLocalizer.msg("button.today", "Today"), IconLoader
+    mGoToTodayAction = createAction(Localizer.getLocalization(
+        Localizer.I18N_TODAY), "#goToToday", scrollTo
+        + Localizer.getLocalization(Localizer.I18N_TODAY), IconLoader
         .getInstance().getIconFromTheme("actions", "go-to-today", 16),
         IconLoader.getInstance().getIconFromTheme("actions", "go-to-today",
             22), ToolBar.BUTTON_ACTION, this);

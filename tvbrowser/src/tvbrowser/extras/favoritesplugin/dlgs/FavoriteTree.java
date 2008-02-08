@@ -717,7 +717,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
         if(count[1] < 1) {
           text.append(" [").append(count[0]).append("]");
         } else {
-          text.append(" [").append(count[0]).append(", ").append(mLocalizer.msg("today","today")).append(": ").append(count[1]).append("]");
+          text.append(" [").append(count[0]).append(", ").append(Localizer.getLocalization(Localizer.I18N_TODAY)).append(": ").append(count[1]).append("]");
         }
       }
     }

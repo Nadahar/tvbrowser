@@ -129,8 +129,8 @@ public class RepetitionDialog extends JDialog implements WindowClosingIf {
         panel.add(new JLabel(mLocalizer.msg("when", "when:")), cc.xy(1, 7));
 
         String[] dates = {
-                mLocalizer.msg("today", "today"),
-                mLocalizer.msg("tomorrow", "tomorrow"),
+                Localizer.getLocalization(Localizer.I18N_TODAY),
+                Localizer.getLocalization(Localizer.I18N_TOMORROW),
                 mLocalizer.msg("oneWeek", "one week"),
                 mLocalizer.msg("twoWeeks", "two weeks"),
                 mLocalizer.msg("threeWeeks", "three weeks"),

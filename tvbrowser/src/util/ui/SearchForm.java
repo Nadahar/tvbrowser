@@ -67,8 +67,8 @@ public class SearchForm extends JPanel {
   
   /** The messages for the time combo box. */  
   private static final String[] TIME_STRING_ARR = new String[] {
-    mLocalizer.msg("search.0", "Heute"),
-    mLocalizer.msg("search.1", "Morgen"),
+    Localizer.getLocalization(Localizer.I18N_TODAY),
+    Localizer.getLocalization(Localizer.I18N_TOMORROW),
     mLocalizer.msg("search.7", "Eine Woche"),
     mLocalizer.msg("search.14", "Naechste 14 Tagen"),
     mLocalizer.msg("search.21", "3 Wochen"),

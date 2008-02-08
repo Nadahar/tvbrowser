@@ -51,10 +51,6 @@ import devplugin.Program;
  * 
  */
 public class ProgramMenuItemUI extends BasicMenuItemUI {
-
-  private static Localizer mLocalizer = Localizer
-      .getLocalizerFor(ProgramMenuItemUI.class);
-
   private Program mProgram;
   private TextAreaIcon mChannelName;
   private Icon mIcon;
@@ -207,12 +203,16 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
     if (mShowDate) {
       g.setFont(menuItem.getFont().deriveFont(Font.BOLD));
       Date currentDate = Date.getCurrentDate();
-      if (currentDate.equals(mProgram.getDate()))
-        g.drawString(mLocalizer.msg("today", "today"), x, y);
-      else if (currentDate.addDays(1).equals(mProgram.getDate()))
-        g.drawString(mLocalizer.msg("tomorrow", "tomorrow"), x, y);
-      else
+      
+      if (currentDate.equals(mProgram.getDate().addDays(1))) {
+        g.drawString(Localizer.getLocalization(Localizer.I18N_YESTERDAY), x, y);
+      } else if (currentDate.equals(mProgram.getDate())) {
+        g.drawString(Localizer.getLocalization(Localizer.I18N_TODAY), x, y);
+      } else if (currentDate.addDays(1).equals(mProgram.getDate())) {
+        g.drawString(Localizer.getLocalization(Localizer.I18N_TOMORROW), x, y);
+      } else {
         g.drawString(mProgram.getDateString(), x, y);
+      }
       x += ProgramMenuItem.DATE_WIDTH;
     }
     if (mShowStartTime) {

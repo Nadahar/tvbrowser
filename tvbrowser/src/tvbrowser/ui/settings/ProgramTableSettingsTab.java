@@ -200,7 +200,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mStartOfDayTimeSp, Settings.getTimePattern());
     mStartOfDayTimeSp.setEditor(dateEditor);
     mSettingsPn.add(mStartOfDayTimeSp, cc.xy(4, 11));
-    mSettingsPn.add(new JLabel("(" + mLocalizer.msg("today", "today") + ")"), cc.xy(6, 11));    
+    mSettingsPn.add(new JLabel("(" + Localizer.getLocalization(Localizer.I18N_TODAY) + ")"), cc.xy(6, 11));    
     CaretPositionCorrector.createCorrector(dateEditor.getTextField(), new char[] {':'}, -1);
     
     mSettingsPn.add(new JLabel(mLocalizer.msg("endOfDay", "End of day")), cc.xy(2, 13));

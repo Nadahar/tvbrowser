@@ -37,6 +37,7 @@ import javax.swing.JProgressBar;
 import javax.swing.UIManager;
 
 import tvbrowser.core.DateListener;
+import util.ui.Localizer;
 import devplugin.Date;
 import devplugin.ProgressMonitor;
 
@@ -63,8 +64,14 @@ class FinderItem extends JComponent implements ProgressMonitor {
     mProgressBar.setBorder(null);
     
     mLabel=new JLabel();
-    if (date.equals(today)) {
-      mLabel.setText(mLocalizer.msg("today","today"));
+    
+    if(date.equals(today.addDays(-1))) {
+      mLabel.setText(Localizer.getLocalization(Localizer.I18N_YESTERDAY));
+    } else if (date.equals(today)) {
+      mLabel.setText(Localizer.getLocalization(Localizer.I18N_TODAY));
+    }
+    else if(date.equals(today.addDays(1))) {
+      mLabel.setText(Localizer.getLocalization(Localizer.I18N_TOMORROW));
     }
     else {
       mLabel.setText(date.getShortDayLongMonthString());
