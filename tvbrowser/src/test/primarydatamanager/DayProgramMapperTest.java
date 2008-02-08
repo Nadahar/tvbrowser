@@ -23,7 +23,7 @@
  *   $Author$
  * $Revision$
  */
-package test.primarydatamanager;
+package primarydatamanager;
 
 import junit.framework.TestCase;
 import primarydatamanager.DayProgramMapper;
