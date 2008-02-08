@@ -1,4 +1,4 @@
-package test.util.paramhandler;
+package util.paramhandler;
 
 import junit.framework.TestCase;
 import tvbrowser.core.plugin.PluginManagerImpl;

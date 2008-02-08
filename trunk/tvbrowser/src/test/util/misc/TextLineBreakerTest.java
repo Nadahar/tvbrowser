@@ -23,7 +23,7 @@
  *   $Author$
  * $Revision$
  */
-package test.util.misc;
+package util.misc;
 
 import java.awt.Font;
 import java.io.IOException;

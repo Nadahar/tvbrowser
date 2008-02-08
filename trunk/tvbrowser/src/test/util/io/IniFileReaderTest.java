@@ -23,7 +23,7 @@
  *   $Author$
  * $Revision$
  */
-package test.util.io;
+package util.io;
 
 import java.io.IOException;
 
