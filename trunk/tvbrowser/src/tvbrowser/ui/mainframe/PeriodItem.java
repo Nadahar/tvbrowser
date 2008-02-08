@@ -26,6 +26,8 @@
 
 package tvbrowser.ui.mainframe;
 
+import util.ui.Localizer;
+
 public class PeriodItem {
 
   private static final util.ui.Localizer mLocalizer
@@ -45,7 +47,7 @@ public class PeriodItem {
 
   public String toString() {
     switch (mDays) {
-      case 0 : return mLocalizer.msg("period.0", "Today");
+      case 0 : return Localizer.getLocalization(Localizer.I18N_TODAY);
       case 1 : return mLocalizer.msg("period.1", "Up to tomorrow");
       case 2 : return mLocalizer.msg("period.2", "Next 2 days");
       case 3 : return mLocalizer.msg("period.3", "Next 3 days");

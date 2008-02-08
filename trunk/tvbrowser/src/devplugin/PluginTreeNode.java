@@ -45,6 +45,7 @@ import tvbrowser.core.TvDataUpdater;
 import tvbrowser.ui.pluginview.Node;
 import tvbrowser.ui.pluginview.PluginTreeModel;
 import util.program.ProgramUtilities;
+import util.ui.Localizer;
 
 
 /**
@@ -355,13 +356,13 @@ public class PluginTreeNode {
     for (int i=0; i<dates.length; i++) {
       String dateStr;
       if (yesterDay.equals(dates[i])) {
-        dateStr = mLocalizer.msg("yesterday","yesterday");
+        dateStr = Localizer.getLocalization(Localizer.I18N_YESTERDAY);
       }
       else if (today.equals(dates[i])) {
-        dateStr = mLocalizer.msg("today","today");
+        dateStr = Localizer.getLocalization(Localizer.I18N_TODAY);
       }
       else if (nextDay.equals(dates[i])) {
-        dateStr = mLocalizer.msg("tomorrow","tomorrow");
+        dateStr = Localizer.getLocalization(Localizer.I18N_TOMORROW);;
       }
       else {
         if (createWeekNodes) {

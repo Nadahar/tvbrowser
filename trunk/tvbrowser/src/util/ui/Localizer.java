@@ -93,6 +93,7 @@ public class Localizer {
   public final static String I18N_ERROR = "i18n_error";
   public final static String I18N_DEFAULT = "i18n_default";
   public final static String I18N_STANDARD = "i18n_standard";
+  public final static String I18N_YESTERDAY = "i18n_yesterday";
   public final static String I18N_TODAY = "i18n_today";
   public final static String I18N_TOMORROW = "i18n_tomorrow";
   

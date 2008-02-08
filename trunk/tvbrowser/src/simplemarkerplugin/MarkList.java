@@ -308,13 +308,19 @@ public class MarkList extends Vector<Program> {
             String progdate;
 
             Date currentDate = Date.getCurrentDate();
-            if (progDate.equals(currentDate))
-              progdate = SimpleMarkerPlugin.mLocalizer.msg("today", "today");
-            else if (progDate.equals(currentDate.addDays(1)))
-              progdate = SimpleMarkerPlugin.mLocalizer.msg("tomorrow",
-                  "tomorrow");
-            else
+            
+            if (progDate.equals(currentDate.addDays(-1))) {
+              progdate = Localizer.getLocalization(Localizer.I18N_YESTERDAY);
+            }
+            else if (progDate.equals(currentDate)) {
+              progdate = Localizer.getLocalization(Localizer.I18N_TODAY);
+            } 
+            else if (progDate.equals(currentDate.addDays(1))) {
+              progdate = Localizer.getLocalization(Localizer.I18N_TOMORROW);
+            }
+            else {
               progdate = p.getDateString();
+            }
 
             return (progdate + "  " + p.getTimeString() + "  " + p.getChannel());
           }
