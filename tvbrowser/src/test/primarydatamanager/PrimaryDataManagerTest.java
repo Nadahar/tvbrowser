@@ -34,7 +34,7 @@ import junit.framework.TestCase;
 import primarydatamanager.PreparationException;
 import primarydatamanager.PrimaryDataManager;
 import primarydatamanager.primarydataservice.PrimaryDataService;
-import test.tvbrowserdataservice.DayProgramFileTest;
+import tvbrowserdataservice.DayProgramFileTest;
 import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.ProgramField;
 import tvbrowserdataservice.file.ProgramFrame;

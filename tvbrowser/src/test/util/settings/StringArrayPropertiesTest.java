@@ -1,4 +1,4 @@
-package test.util.settings;
+package util.settings;
 
 import java.io.File;
 import java.io.IOException;

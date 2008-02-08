@@ -1,4 +1,4 @@
-package test.tvbrowser.extras.favoritesplugin.core;
+package tvbrowser.extras.favoritesplugin.core;
 
 import tvbrowser.extras.favoritesplugin.core.ActorSearcher;
 import util.exc.TvBrowserException;

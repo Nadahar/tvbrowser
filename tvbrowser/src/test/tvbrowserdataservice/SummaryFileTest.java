@@ -23,7 +23,7 @@
  *   $Author$
  * $Revision$
  */
-package test.tvbrowserdataservice;
+package tvbrowserdataservice;
 
 import java.io.File;
 import java.io.IOException;
