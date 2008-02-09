@@ -70,16 +70,19 @@ public class TopicFavorite extends Favorite {
   }
 
 
+  @Override
   public String getTypeID() {
     return TYPE_ID;
   }
 
 
+  @Override
   protected void internalWriteData(ObjectOutputStream out) throws IOException {
     out.writeInt(1);  // version
     out.writeObject(mTopic);
   }
 
+  @Override
   protected Program[] internalSearchForPrograms(Channel[] channelArr) throws TvBrowserException {
 
     SearchFormSettings searchForm = mSearchFormSettings;
@@ -95,6 +98,7 @@ public class TopicFavorite extends Favorite {
   }
 
 
+  @Override
   public FavoriteConfigurator createConfigurator() {
     return new Configurator();
   }
@@ -118,6 +122,17 @@ public class TopicFavorite extends Favorite {
     public void save() {
       String searchText = mSearchTextTf.getText();
       mSearchFormSettings.setSearchText(searchText);
+    }
+
+    public boolean check() {
+      if (mSearchTextTf.getText().trim().equals("")) {
+        JOptionPane.showMessageDialog(mSearchTextTf,
+            mLocalizer.msg("missingTopic.message", "Please specify a topic for the favorite!"), 
+            mLocalizer.msg("missingTopic.title", "Invalid options"), 
+            JOptionPane.WARNING_MESSAGE);
+        return false;
+      }
+      return true;
     }
   }
 

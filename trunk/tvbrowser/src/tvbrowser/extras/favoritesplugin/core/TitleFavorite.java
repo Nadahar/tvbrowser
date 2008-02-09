@@ -68,6 +68,7 @@ public class TitleFavorite extends Favorite {
     mSearchFormSettings = new SearchFormSettings(mProgramTitle);
   }
 
+  @Override
   public String getTypeID() {
     return TYPE_ID;
   }
@@ -77,6 +78,7 @@ public class TitleFavorite extends Favorite {
   }
 
 
+  @Override
   public FavoriteConfigurator createConfigurator() {
     return new Configurator();
   }
@@ -84,12 +86,14 @@ public class TitleFavorite extends Favorite {
 
 
 
+  @Override
   protected void internalWriteData(ObjectOutputStream out) throws IOException {
     out.writeInt(1);  // version
     out.writeObject(mProgramTitle);
   }
 
 
+  @Override
   protected Program[] internalSearchForPrograms(Channel[] channelArr) throws TvBrowserException {
 
     SearchFormSettings searchForm = mSearchFormSettings;
@@ -124,6 +128,17 @@ public class TitleFavorite extends Favorite {
       String searchText = mSearchTextTf.getText();
       mProgramTitle = searchText;
       mSearchFormSettings.setSearchText(searchText);
+    }
+
+    public boolean check() {
+      if (mSearchTextTf.getText().trim().equals("")) {
+        JOptionPane.showMessageDialog(mSearchTextTf,
+            mLocalizer.msg("missingTitle.message", "Please specify a title for the favorite!"), 
+            mLocalizer.msg("missingTitle.title", "Invalid options"), 
+            JOptionPane.WARNING_MESSAGE);
+        return false;
+      }
+      return true;
     }
   }
 
