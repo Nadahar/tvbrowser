@@ -61,7 +61,7 @@ import java.util.Properties;
  * @author Bodo Tasche
  */
 public class TVRaterPlugin extends devplugin.Plugin {
-  private static final Version mVersion = new Version(2,60);
+  private static final Version mVersion = new Version(2,70);
     
     protected final static int MINLENGTH = 15;
     

@@ -47,7 +47,7 @@ public class TimeListPlugin extends Plugin {
   /**
    * plugin version
    */
-  private static final Version PLUGIN_VERSION = new Version(2, 62, false);
+  private static final Version PLUGIN_VERSION = new Version(2, 70, false);
 
   /**
    * localizer for this class
@@ -64,10 +64,6 @@ public class TimeListPlugin extends Plugin {
    * option key for showing expired programs
    */
   private static final String SHOW_EXPIRED = "showExpired";
-
-  private static final String WIDTH = "width";
-
-  private static final String HEIGHT = "height";
 
   /**
    * current instance of the plugin
@@ -114,12 +110,10 @@ public class TimeListPlugin extends Plugin {
 
   private void showDialog() {
     ProgramListDialog dialog = new ProgramListDialog(getParentFrame());
-    Dimension dimension = new Dimension(Integer.valueOf(mSettings.getProperty(WIDTH, "300")), Integer.valueOf(mSettings.getProperty(HEIGHT, "400")));
-    dialog.setSize(dimension);
-    util.ui.UiUtilities.centerAndShow(dialog);
-    dimension = dialog.getSize();
-    mSettings.setProperty(WIDTH, Integer.toString(dimension.width));
-    mSettings.setProperty(HEIGHT, Integer.toString(dimension.height));
+    
+    layoutWindow("programListDlg", dialog);
+    
+    dialog.setVisible(true);
   }
 
   @Override

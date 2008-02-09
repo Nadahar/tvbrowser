@@ -73,7 +73,7 @@ import java.util.Vector;
  * @author Andreas Hessel, Bodo Tasche
  */
 public class CapturePlugin extends devplugin.Plugin {
-  private static final Version mVersion = new Version(2,61);
+  private static final Version mVersion = new Version(2,70);
   
     /**
      * Translator

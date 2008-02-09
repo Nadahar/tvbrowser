@@ -56,7 +56,7 @@ import devplugin.Version;
  * @author Til Schneider, www.murfman.de
  */
 public class NewsPlugin extends Plugin {
-  private static final Version mVersion = new Version(2,62);
+  private static final Version mVersion = new Version(2,70);
 
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -108,7 +108,7 @@ public class NewsPlugin extends Plugin {
       public void actionPerformed(ActionEvent evt) {
         if(mNewsDialog == null || !mNewsDialog.isVisible()) {
           mNewsDialog = new NewsDialog(getParentFrame(), mNewsList.getList(), -1);
-          mNewsDialog.centerAndShow();
+          mNewsDialog.show();
         }
       }
     };
@@ -185,7 +185,7 @@ public class NewsPlugin extends Plugin {
                 public void run() {
                   NewsDialog dlg = new NewsDialog(getParentFrame(), mNewsList.getList(),
                       newNewsCount);
-                  dlg.centerAndShow();
+                  dlg.show();
                 }
               });
             }
