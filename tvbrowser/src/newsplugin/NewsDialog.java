@@ -152,7 +152,7 @@ public class NewsDialog implements WindowClosingIf {
     buttonPn.add(mCloseBn);
     mDialog.getRootPane().setDefaultButton(mCloseBn);
     
-    mDialog.pack();
+    NewsPlugin.getInstance().layoutWindow("newsDlg",mDialog);
 
     updateNewsPane();
   }
@@ -176,8 +176,8 @@ public class NewsDialog implements WindowClosingIf {
   /**
    * Centers the dialog to its parent and shows it.
    */
-  public void centerAndShow() {
-    UiUtilities.centerAndShow(mDialog);
+  public void show() {
+    mDialog.setVisible(true);
   }
 
 
