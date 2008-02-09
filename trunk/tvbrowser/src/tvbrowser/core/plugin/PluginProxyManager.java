@@ -417,15 +417,18 @@ public class PluginProxyManager {
     // Log this event
     mLog.info("Activating plugin " + item.getPlugin().getId());
 
+    // Set the plugin active
+    item.setState(ACTIVATED_STATE);
+    
     // Tell the plugin that we activate it now
     item.getPlugin().onActivation();
 
     // Get the user directory
     String userDirectoryName = Settings.getUserSettingsDirName();
     File userDirectory = new File(userDirectoryName);
-
-    // Set the plugin active
-    item.setState(ACTIVATED_STATE);
+    
+    // Load the window settings
+    item.getPlugin().loadWindowSettings();
     
     // Load the plugin settings
     item.getPlugin().loadSettings(userDirectory);
@@ -562,6 +565,7 @@ public class PluginProxyManager {
       userDirectory.mkdirs();
     }
     
+    item.getPlugin().saveWindowSettings(!MainFrame.isShuttingDown());
     item.getPlugin().saveSettings(userDirectory,!MainFrame.isShuttingDown());    
   }
 
