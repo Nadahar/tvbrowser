@@ -599,4 +599,14 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     // otherwise get the icon as always
     return super.getPluginIcon();
   }
+
+  @Override
+  protected void doLoadWindowSettings() throws TvBrowserException {
+    mPlugin.loadWindowSettings();
+  }
+
+  @Override
+  protected void doSaveWindowSettings(boolean log) throws TvBrowserException {
+    mPlugin.storeWindowSettings();
+  }
 }

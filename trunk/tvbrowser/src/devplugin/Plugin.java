@@ -29,6 +29,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxyManager;
 import util.exc.TvBrowserException;
+import util.settings.WindowSetting;
 import util.ui.FixedSizeIcon;
 import util.ui.ImageUtilities;
 
@@ -37,6 +38,7 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -46,7 +48,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
 import java.util.Properties;
+import java.util.Set;
 import java.util.jar.JarFile;
 
 /**
@@ -114,6 +118,56 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    */
   protected Frame parent;
 
+  private HashMap<String,WindowSetting> mWindowSettings;
+  
+  /**
+   * Loads the window settings for this plugin.
+   * 
+   */
+  final public void loadWindowSettings() {
+    mWindowSettings = new HashMap<String,WindowSetting>();
+    
+    try {
+      ObjectInputStream in = new ObjectInputStream(new FileInputStream(new File(Settings.getUserSettingsDirName(),getId() + ".window.setting")));
+      
+      if(in.available() > 0) {
+        in.readInt(); // read version
+        
+        int n = in.readInt(); // read number of window settings
+        
+        for(int i = 0; i < n; i++) {
+          mWindowSettings.put(in.readUTF(), new WindowSetting(in));
+        }
+      }
+      
+      in.close();
+    }catch(Exception e) {// Ignore
+    }
+  }
+  
+  /**
+   * Stores the window settings for this plugin
+   */
+  final public void storeWindowSettings() {
+    try {
+      ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(new File(Settings.getUserSettingsDirName(),getId() + ".window.setting")));
+      
+      out.writeInt(1); // write version
+      
+      out.writeInt(mWindowSettings.size());
+      
+      Set<String> keys = mWindowSettings.keySet();
+      
+      for(String key : keys) {
+        out.writeUTF(key);
+        mWindowSettings.get(key).saveSettings(out);
+      }
+      
+      out.close();
+    } catch (FileNotFoundException e) { // Ignore
+    } catch (IOException e) { // Ignore
+    }
+  }
 
   /**
    * Called by the host-application to provide access to the plugin manager.
@@ -998,5 +1052,25 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    */
   protected final boolean saveMe() {
     return PluginProxyManager.getInstance().saveSettings(PluginProxyManager.getInstance().getActivatedPluginForId(getId()));
+  }
+  
+  /**
+   * Sets the window position and size for the given window with the values of the given id.
+
+   * @param windowId The id of the values to set.
+   * @param window The window to layout.
+   * 
+   * @since 2.7
+   */
+  public final void layoutWindow(String windowId, Window window) {
+    WindowSetting setting = mWindowSettings.get(windowId);
+    
+    if(setting == null) {
+      setting = new WindowSetting();
+      
+      mWindowSettings.put(windowId, setting);
+    }
+    
+    setting.layout(window);
   }
 }

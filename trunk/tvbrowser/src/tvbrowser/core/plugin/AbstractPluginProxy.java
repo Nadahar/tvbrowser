@@ -114,6 +114,57 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   abstract void setParentFrame(Frame parent);
 
   /**
+   * Loads the window settings for this plugin.
+   * 
+   * @throws TvBrowserException If loading failed.
+   */
+  final void loadWindowSettings() throws TvBrowserException {
+    try {
+      doLoadWindowSettings();
+    } catch (RuntimeException exc) {
+      throw new TvBrowserException(AbstractPluginProxy.class,
+
+      "error.loading.runtimeException", "The plugin {0} caused an error when loading the plugin settings.", getInfo()
+          .getName(), exc);
+    }
+  }
+  
+  /**
+   * Really loads the window settings for this plugin.
+   * 
+   * @throws TvBrowserException If loading failed.
+   */
+  protected abstract void doLoadWindowSettings() throws TvBrowserException;
+
+  /**
+   * Saves the window settings for this plugin.
+   * 
+   * @throws TvBrowserException If saving failed.
+   */
+  final void saveWindowSettings(boolean log) throws TvBrowserException {
+    // Check whether the plugin is activated
+    if (!mIsActivated) {
+      throw new TvBrowserException(AbstractPluginProxy.class, "error.saving.notActivated",
+          "The plugin {0} can't save its settings, because it is not activated.", getInfo().getName());
+    }
+
+    // Try to save the settings
+    try {
+      doSaveWindowSettings(log);
+    } catch (Throwable t) {
+      throw new TvBrowserException(AbstractPluginProxy.class, "error.saving.runtimeException",
+          "The plugin {0} caused an error when saving the plugin settings.", getInfo().getName(), t);
+    }
+  }
+
+  /**
+   * Really saves the window settings for this plugin.
+   * 
+   * @throws TvBrowserException If saving failed.
+   */
+  protected abstract void doSaveWindowSettings(boolean log) throws TvBrowserException;
+  
+  /**
    * Loads the settings for this plugin.
    * 
    * @param userDirectory The directory where the user data is stored.
