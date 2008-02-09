@@ -127,8 +127,6 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    * 
    */
   final public void loadWindowSettings() {
-    mWindowSettings = new HashMap<String,WindowSetting>();
-    
     try {
       ObjectInputStream in = new ObjectInputStream(new FileInputStream(new File(Settings.getUserSettingsDirName(),getId() + ".window.setting")));
       
@@ -136,6 +134,8 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
         in.readInt(); // read version
         
         int n = in.readInt(); // read number of window settings
+        
+        mWindowSettings = new HashMap<String,WindowSetting>(n);
         
         for(int i = 0; i < n; i++) {
           mWindowSettings.put(in.readUTF(), new WindowSetting(in));
@@ -1078,6 +1078,10 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    * @since 2.7
    */
   public final void layoutWindow(String windowId, Window window, Dimension defaultSize) {
+    if(mWindowSettings == null) {
+      mWindowSettings = new HashMap<String,WindowSetting>(1);
+    }
+    
     WindowSetting setting = mWindowSettings.get(windowId);
     
     if(setting == null) {
