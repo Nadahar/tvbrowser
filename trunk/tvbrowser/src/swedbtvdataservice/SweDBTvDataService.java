@@ -289,44 +289,52 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
           monitor.setMessage(mLocalizer.msg("Progressmessage.30",
                   "Parsing channel list"));
         }
-        DataHydraChannelContainer[] DataHydracontainers = DataHydraChannelParser.parse(new GZIPInputStream(con.getInputStream()));
-
-        if (monitor != null) {
-          monitor.setMessage(mLocalizer.msg("Progressmessage.40", "Found {0} channels, downloading channel icons...", DataHydracontainers.length));
+        int fileSize = con.getContentLength(); 
+        if (fileSize == 0) {
+          throw new TvBrowserException(SweDBTvDataService.class,
+              "errorEmptyChannelList",
+              "Channel list file for group \"{0}\" is empty: {1}.", group.getName(), url);
         }
-
-        mLastGroupUpdate.put(hydraGroup, con.getLastModified());
-        con.disconnect();
-
-        ArrayList<Channel> loadedChannels = new ArrayList<Channel>();
-
-        for (DataHydraChannelContainer container : DataHydracontainers) {
-          initializeIconLoader(hydraGroup);
-          Channel ch = createTVBrowserChannel(hydraGroup, container);
-          closeIconLoader(hydraGroup);
-          mInternalChannels.put(ch, container);
-          loadedChannels.add(ch);
+        else {
+          DataHydraChannelContainer[] DataHydracontainers = DataHydraChannelParser.parse(new GZIPInputStream(con.getInputStream()));
+  
+          if (monitor != null) {
+            monitor.setMessage(mLocalizer.msg("Progressmessage.40", "Found {0} channels, downloading channel icons...", DataHydracontainers.length));
+          }
+  
+          mLastGroupUpdate.put(hydraGroup, con.getLastModified());
+          con.disconnect();
+  
+          ArrayList<Channel> loadedChannels = new ArrayList<Channel>();
+  
+          for (DataHydraChannelContainer container : DataHydracontainers) {
+            initializeIconLoader(hydraGroup);
+            Channel ch = createTVBrowserChannel(hydraGroup, container);
+            closeIconLoader(hydraGroup);
+            mInternalChannels.put(ch, container);
+            loadedChannels.add(ch);
+          }
+  
+          channels = loadedChannels.toArray(new Channel[loadedChannels.size()]);
+  
+          if (monitor != null) {
+            monitor.setMessage(mLocalizer.msg("Progressmessage.50",
+                    "All channels have been retrieved"));
+          }
+  
+          /**
+           * Update Channellist of the data plugin
+           */
+  
+          // Remove all Channels of current Group
+          Channel[] chs = getAvailableChannels(hydraGroup);
+          for (Channel ch : chs) {
+            mChannels.remove(ch);
+          }
+  
+          // Add all Channels for current Group
+          mChannels.addAll(loadedChannels);
         }
-
-        channels = loadedChannels.toArray(new Channel[loadedChannels.size()]);
-
-        if (monitor != null) {
-          monitor.setMessage(mLocalizer.msg("Progressmessage.50",
-                  "All channels have been retrieved"));
-        }
-
-        /**
-         * Update Channellist of the data plugin
-         */
-
-        // Remove all Channels of current Group
-        Channel[] chs = getAvailableChannels(hydraGroup);
-        for (Channel ch : chs) {
-          mChannels.remove(ch);
-        }
-
-        // Add all Channels for current Group
-        mChannels.addAll(loadedChannels);
       } else if (responseCode == 304) {
         channels = getAvailableChannels(hydraGroup);
       } else {
@@ -338,7 +346,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
       throw new TvBrowserException(SweDBTvDataService.class,
               "checkAvailableError",
               "Error checking for available channels in Swedb plugin: {0}", e
-              .getMessage());
+              .getLocalizedMessage());
     }
 
     mHasRightToDownloadIcons = false;
