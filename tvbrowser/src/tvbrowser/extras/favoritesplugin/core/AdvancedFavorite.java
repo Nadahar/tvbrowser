@@ -85,6 +85,7 @@ public class AdvancedFavorite extends Favorite {
    * @throws IOException
    * @throws ClassNotFoundException
    */
+  @Deprecated
   public AdvancedFavorite(Object obj, ObjectInputStream in) throws IOException, ClassNotFoundException {
     super();
     readOldFavorite(in);
@@ -95,10 +96,12 @@ public class AdvancedFavorite extends Favorite {
     mSearchFormSettings = new SearchFormSettings(searchText);
   }
 
+  @Override
   public String getTypeID() {
     return TYPE_ID;
   }
 
+  @Override
   public String getName() {
     if (super.getName() != null) {
       return super.getName();
@@ -106,10 +109,12 @@ public class AdvancedFavorite extends Favorite {
     return mSearchFormSettings.getSearchText();
   }
 
+  @Override
   public FavoriteConfigurator createConfigurator() {
     return new Configurator();
   }
 
+  @Override
   protected void internalWriteData(ObjectOutputStream out) throws IOException {
     out.writeInt(2); // version
     mSearchFormSettings.writeData(out);
@@ -221,10 +226,11 @@ public class AdvancedFavorite extends Favorite {
         boolean useFilter = in.readBoolean();  // useFilter
         mPendingFilterName = (String)in.readObject();
         
-        if(useFilter)
+        if(useFilter) {
           FavoritesPlugin.getInstance().addPendingFavorite(this);
-        else
+        } else {
           mPendingFilterName = null;
+        }
     } else {
         mFilter = null;
     }
@@ -269,6 +275,7 @@ public class AdvancedFavorite extends Favorite {
     return null;
   }
 
+  @Override
   protected Program[] internalSearchForPrograms(Channel[] channelArr) throws TvBrowserException {
 
     SearchFormSettings searchForm = mSearchFormSettings;
@@ -354,6 +361,17 @@ public class AdvancedFavorite extends Favorite {
       else {
         mFilter = null;
       }
+    }
+
+    public boolean check() {
+      if (mSearchForm.getSearchFormSettings().getSearchText().equals("")) {
+        JOptionPane.showMessageDialog(mSearchForm,
+            mLocalizer.msg("missingSearchText.message", "Please specify a search text for the favorite!"), 
+            mLocalizer.msg("missingSearchText.title", "Invalid search options"), 
+            JOptionPane.WARNING_MESSAGE);
+        return false;
+      }
+      return true;
     }
   }
 

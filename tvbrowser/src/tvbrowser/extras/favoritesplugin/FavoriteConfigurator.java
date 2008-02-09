@@ -33,5 +33,6 @@ public interface FavoriteConfigurator {
 
   public JPanel createConfigurationPanel();
   public void save();
+  public boolean check();
 
 }

@@ -32,6 +32,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -92,15 +93,18 @@ public class ActorsFavorite extends Favorite {
     return actorsArr;
   }
 
+  @Override
   public String getTypeID() {
     return TYPE_ID;
   }
 
+  @Override
   protected void internalWriteData(ObjectOutputStream out) throws IOException {
     out.writeInt(1); // version
     out.writeObject(mActors);
   }
 
+  @Override
   protected Program[] internalSearchForPrograms(Channel[] channelArr) throws TvBrowserException {
     SearchFormSettings searchForm = mSearchFormSettings;
     ProgramFieldType[] fields = searchForm.getFieldTypes();
@@ -109,6 +113,7 @@ public class ActorsFavorite extends Favorite {
     return foundPrograms;
   }
 
+  @Override
   public FavoriteConfigurator createConfigurator() {
     return new Configurator();
   }
@@ -132,6 +137,17 @@ public class ActorsFavorite extends Favorite {
     public void save() {
       String actors = mSearchTextTf.getText();
       mSearchFormSettings = createSearchFormSettings(actors);
+    }
+
+    public boolean check() {
+      if (mSearchTextTf.getText().trim().equals("")) {
+        JOptionPane.showMessageDialog(mSearchTextTf,
+            mLocalizer.msg("missingActor.message", "Please specify an actor for the favorite!"), 
+            mLocalizer.msg("missingActor.title", "Invalid options"), 
+            JOptionPane.WARNING_MESSAGE);
+        return false;
+      }
+      return true;
     }
   }
 

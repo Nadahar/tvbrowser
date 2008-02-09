@@ -196,9 +196,9 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     if(mFavorite.getName().length() < 1) {
       mName = new JLabel(mLocalizer.msg("defaultName","Is going to be created automatically"));
       mName.setEnabled(false);
-    }
-    else
-      mName = new JLabel(mFavorite.getName());    
+    } else {
+      mName = new JLabel(mFavorite.getName());
+    }    
     
     JPanel panel = new JPanel(new FormLayout("pref,3dlu,30dlu:grow,3dlu,pref","pref"));
     panel.add(new JLabel(mLocalizer.msg("name","Name:")), cc.xy(1,1));
@@ -222,13 +222,18 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     String newName = (String) JOptionPane.showInputDialog(this,
         mLocalizer.msg("name","Name:"), mLocalizer.msg("renameFav","Rename Favorite"), JOptionPane.PLAIN_MESSAGE, null, null,
         mName.getText());
-    if (newName != null && newName.length() > 0 && 
-        (newName.compareTo(mLocalizer.msg("defaultName","Is going to be created automatically")) != 0)) {
+    if (isValidName(newName)) {
       mName.setText(newName);
       mName.setEnabled(true);          
     }
-    else if(mName.getText().compareTo(mLocalizer.msg("defaultName","Is going to be created automatically")) == 0)
-      mName.setEnabled(false);    
+    else if(mName.getText().compareTo(mLocalizer.msg("defaultName","Is going to be created automatically")) == 0) {
+      mName.setEnabled(false);
+    }    
+  }
+
+  private boolean isValidName(String name) {
+    return name != null && name.length() > 0 && 
+        (name.compareTo(mLocalizer.msg("defaultName","Is going to be created automatically")) != 0);
   }
 
   private String getChannelString(Channel[] channelArr) {
@@ -247,15 +252,16 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
         result = result.substring(0, inx) + ", ...";
       }
 
-      if(mChannelLabel != null)
+      if(mChannelLabel != null) {
         mChannelLabel.setForeground((new JLabel()).getForeground());
+      }
       
       return result;
     } else if(!mLimitChannelCb.isSelected()){
       return mLocalizer.msg("allChannels", "All channels");
-    }
-    else
+    } else {
       return mLocalizer.msg("noChannels", "No channels");
+    }
   }
 
   private void setLimitChannelEnabled(boolean enabled) {
@@ -263,10 +269,11 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mChannelLabel.setEnabled(enabled);
     mChannelLabel.setText(getChannelString(mChannelArr));
     
-    if(mChannelArr == null || mChannelArr.length < 1)
+    if(mChannelArr == null || mChannelArr.length < 1) {
       mChannelLabel.setForeground(Color.red);
-    else
+    } else {
       mChannelLabel.setForeground((new JLabel()).getForeground());
+    }
   }
 
   private JPanel createLimitPanel() {
@@ -399,8 +406,9 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mExclusionsList.addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
         if(SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2
-            && mEditExclusionBtn.isEnabled())
+            && mEditExclusionBtn.isEnabled()) {
           mEditExclusionBtn.getActionListeners()[0].actionPerformed(null);
+        }
       }
     });
 
@@ -479,8 +487,9 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
       if(!plugins.contains(receiveTargetArr[i].getReceifeIfForIdOfTarget())) {
         ProgramReceiveIf target = receiveTargetArr[i].getReceifeIfForIdOfTarget();
         
-        if(target != null)
+        if(target != null) {
           plugins.add(target);
+        }
       }
     }
     
@@ -567,6 +576,9 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
   }
 
   private void saveAndClose() {
+    if (!mFavoriteConfigurator.check()) {
+      return;
+    }
     mFavoriteConfigurator.save();
 
     if (mLimitTimeCb.isSelected()) {
@@ -610,16 +622,18 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
       ErrorHandler.handle(mLocalizer.msg("error.updateFavoriteFailed", "Could not update favorite"), exc);
     }
 
-    for (int i = 0; i < mPassProgramPlugins.length; i++)
+    for (int i = 0; i < mPassProgramPlugins.length; i++) {
       mPassProgramPlugins[i].getReceifeIfForIdOfTarget().receivePrograms(mFavorite.getPrograms(),mPassProgramPlugins[i]);
+    }
 
     if (mUseReminderCb.isSelected() && !wasReminderEnabled) {
       ReminderPlugin.getInstance().addPrograms(mFavorite.getPrograms());
       ReminderPlugin.getInstance().updateRootNode(true);
     }
     
-    if(mName.getText().length() > 0 && mName.getText().compareTo(mLocalizer.msg("defaultName","Is going to be created automatically")) != 0)
+    if(mName.getText().length() > 0 && mName.getText().compareTo(mLocalizer.msg("defaultName","Is going to be created automatically")) != 0) {
       mFavorite.setName(mName.getText());
+    }
     
     mOkWasPressed = true;
     setVisible(false);
