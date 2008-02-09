@@ -26,6 +26,7 @@
 
 package printplugin;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -189,7 +190,11 @@ public class PrintPlugin extends Plugin {
       public void actionPerformed(ActionEvent evt) {
         if(getPluginManager().getFilterManager() != null) {
           MainPrintDialog mainDialog = new MainPrintDialog(getParentFrame());
-          UiUtilities.centerAndShow(mainDialog);
+          
+          layoutWindow("mainDlg", mainDialog, new Dimension(300,150)); 
+          
+          mainDialog.setVisible(true);
+          
           int result = mainDialog.getResult();
   
           if (result == MainPrintDialog.PRINT_DAYPROGRAMS) {

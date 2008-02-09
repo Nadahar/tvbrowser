@@ -27,6 +27,7 @@
 package printplugin.dlgs;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridLayout;
@@ -147,6 +148,9 @@ public class SettingsDialog extends JDialog implements WindowClosingIf {
         }
         else {
           PreviewDlg dlg = new PreviewDlg(parent, job.getPrintable(), mPageFormat, job.getNumOfPages());
+          
+          PrintPlugin.getInstance().layoutWindow("previewDlg",dlg);
+          
           dlg.setVisible(true);
         }
       }
@@ -267,7 +271,7 @@ public class SettingsDialog extends JDialog implements WindowClosingIf {
       mPageFormat = printerJob.defaultPage();
     }
 
-    UiUtilities.setSize(this, 450, 400);
+    PrintPlugin.getInstance().layoutWindow("settingsDlg",this,new Dimension(450, 400));
 
     mResult = CANCEL;
   }

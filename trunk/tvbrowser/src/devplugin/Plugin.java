@@ -37,6 +37,8 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -1063,10 +1065,23 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    * @since 2.7
    */
   public final void layoutWindow(String windowId, Window window) {
+    layoutWindow(windowId, window, null);
+  }
+  
+  /**
+   * Sets the window position and size for the given window with the values of the given id.
+
+   * @param windowId The id of the values to set.
+   * @param window The window to layout.
+   * @param defaultSize The default size for the window.
+   * 
+   * @since 2.7
+   */
+  public final void layoutWindow(String windowId, Window window, Dimension defaultSize) {
     WindowSetting setting = mWindowSettings.get(windowId);
     
     if(setting == null) {
-      setting = new WindowSetting();
+      setting = new WindowSetting(defaultSize);
       
       mWindowSettings.put(windowId, setting);
     }
