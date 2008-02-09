@@ -152,20 +152,22 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    */
   final public void storeWindowSettings() {
     try {
-      ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(new File(Settings.getUserSettingsDirName(),getId() + ".window.setting")));
-      
-      out.writeInt(1); // write version
-      
-      out.writeInt(mWindowSettings.size());
-      
-      Set<String> keys = mWindowSettings.keySet();
-      
-      for(String key : keys) {
-        out.writeUTF(key);
-        mWindowSettings.get(key).saveSettings(out);
+      if (mWindowSettings != null) {
+        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(new File(Settings.getUserSettingsDirName(),getId() + ".window.setting")));
+        
+        out.writeInt(1); // write version
+        
+        out.writeInt(mWindowSettings.size());
+        
+        Set<String> keys = mWindowSettings.keySet();
+        
+        for(String key : keys) {
+          out.writeUTF(key);
+          mWindowSettings.get(key).saveSettings(out);
+        }
+        
+        out.close();
       }
-      
-      out.close();
     } catch (FileNotFoundException e) { // Ignore
     } catch (IOException e) { // Ignore
     }
