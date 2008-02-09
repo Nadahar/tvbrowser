@@ -108,7 +108,6 @@ public class MainPrintDialog extends JDialog implements ActionListener, WindowCl
       mPrintDayProgramsRb.setSelected(true);
       mPrintDayProgramsRb.requestFocusInWindow();
     }
-    UiUtilities.setSize(this, 300,150);
   }
 
   public int getResult() {

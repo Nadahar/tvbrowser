@@ -365,6 +365,8 @@ public class CapturePlugin extends devplugin.Plugin {
     public void showDialog() {
         CapturePluginDialog dialog = new CapturePluginDialog(getParentFrame(), mConfig);
 
+        layoutWindow("captureDlg", dialog, new Dimension(500,450));
+        
         if (mConfig.getDevices().isEmpty()) {
             dialog.show(CapturePluginPanel.TAB_DEVICELIST);
         } else {

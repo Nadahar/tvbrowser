@@ -153,6 +153,9 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
         DocumentRenderer printJob = createPrintjob(program, fontChooser, printImage, printPluginIcons);
         
         PreviewDlg dlg = new PreviewDlg(mDialog, printJob, mPageFormat, printJob.getPageCount());
+        
+        PrintPlugin.getInstance().layoutWindow("previewDlg",dlg);
+        
         dlg.setVisible(true);
       }
     });
@@ -247,8 +250,9 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
     
     mDialog.getRootPane().setDefaultButton(print);
     mDialog.setContentPane(main);
-    mDialog.pack();    
-    mDialog.setLocationRelativeTo(parent);
+    
+    PrintPlugin.getInstance().layoutWindow("programInfoPrintDialog", mDialog);
+    
     mDialog.setVisible(true);
   }
 

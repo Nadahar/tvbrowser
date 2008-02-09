@@ -367,25 +367,10 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     
     mManagePanel = new ManagePanel(dialog, mMarkListVector);
-
-    try {
-      int x = Integer.parseInt(mProperties.getProperty("x"));
-      int y = Integer.parseInt(mProperties.getProperty("y"));
-      int width = Integer.parseInt(mProperties.getProperty("width"));
-      int height = Integer.parseInt(mProperties.getProperty("height"));
-
-      dialog.setBounds(x, y, width, height);
-      dialog.setVisible(true);
-
-    } catch (Exception ee) {
-      dialog.setSize(434, 330);
-      UiUtilities.centerAndShow(dialog);
-    }
-
-    mProperties.setProperty("x", String.valueOf(dialog.getX()));
-    mProperties.setProperty("y", String.valueOf(dialog.getY()));
-    mProperties.setProperty("width", String.valueOf(dialog.getWidth()));
-    mProperties.setProperty("height", String.valueOf(dialog.getHeight()));
+    
+    layoutWindow("manageDlg", dialog);
+    
+    dialog.setVisible(true);
   }
 
   public void actionPerformed(ActionEvent e) {

@@ -32,6 +32,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import tvbrowser.ui.mainframe.MainFrame;
+import util.ui.UiUtilities;
+
 /**
  * A class with the position and size settings for a window.
  * 
@@ -65,11 +68,18 @@ public final class WindowSetting {
   /**
    * Creates an instance of this class with the default setting -1 for all values.
    */
-  public WindowSetting() {
+  public WindowSetting(Dimension size) {
     mXPos = -1;
     mYPos = -1;
-    mWidth = -1;
-    mHeight = -1;
+    
+    if(size == null) {
+      mWidth = -1;
+      mHeight = -1;
+    }
+    else {
+      mWidth = size.width;
+      mHeight = size.width;
+    }
   }
   
   /**
