@@ -25,6 +25,7 @@
  */
 package tvbrowser.extras.reminderplugin;
 
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -82,6 +83,15 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
   private JButton mUndo, mDelete, mSend;
 
   public ReminderListDialog(Frame parent, ReminderList list) {
+    super(parent, true);
+    UiUtilities.registerForClosing(this);
+
+    reminderList = list;
+    setTitle(mLocalizer.msg("title", "Reminder"));
+    createGui();
+  }
+  
+  public ReminderListDialog(Dialog parent, ReminderList list) {
     super(parent, true);
     UiUtilities.registerForClosing(this);
 

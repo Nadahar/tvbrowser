@@ -606,10 +606,19 @@ public class ReminderPlugin {
   }
 
 
-  public ActionMenu getButtonAction(final Frame parentFrame) {
+  public ActionMenu getButtonAction() {
     AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent evt) {
-        ReminderListDialog dlg = new ReminderListDialog(parentFrame, mReminderList);
+        ReminderListDialog dlg;
+        
+        Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+        
+        if(w instanceof JFrame) {
+          dlg = new ReminderListDialog((JFrame)w, mReminderList);
+        }
+        else {
+          dlg = new ReminderListDialog((JDialog)w, mReminderList);
+        }
         
         int x = Integer.parseInt(mSettings.getProperty("dlgXPos","-1"));
         int y = Integer.parseInt(mSettings.getProperty("dlgYPos","-1"));
