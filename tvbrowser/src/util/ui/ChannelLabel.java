@@ -41,9 +41,14 @@ import devplugin.Channel;
 public class ChannelLabel extends JLabel {
 
   /** A Icon-Cache for Perfomance-Reasons*/
-  static private WeakHashMap<Icon,Icon> ICONCACHE = new WeakHashMap<Icon,Icon>();
+//  static private WeakHashMap<Icon,Icon> ICONCACHE = new WeakHashMap<Icon,Icon>();
+  static private WeakHashMap<Channel,Icon> ICONCACHE = new WeakHashMap<Channel,Icon>();
   
-  static Icon DEFAULT_ICON =  new ImageIcon("./imgs/tvbrowser16.png");
+  /**
+   * default channel icon, already prepared for right size
+   */
+  static Icon DEFAULT_ICON =  UiUtilities.createChannelIcon(new ImageIcon("./imgs/tvbrowser16.png"));
+  
   private boolean mChannelIconsVisible;
   private boolean mTextIsVisible;
   private boolean mShowDefaultValues;
@@ -147,26 +152,26 @@ public class ChannelLabel extends JLabel {
   /**
    * Sets the Channel to display
    *
-   * @param ch Channel to display
+   * @param channel Channel to display
    */
-  public void setChannel(Channel ch) {
+  public void setChannel(Channel channel) {
     if (mChannelIconsVisible) {
-      setIcon(mShowDefaultValues ? ch.getDefaultIcon() : ch.getIcon());
+      setChannelIcon(channel, mShowDefaultValues ? channel.getDefaultIcon() : channel.getIcon());
     }
     if (mTextIsVisible) {
-      StringBuilder text = new StringBuilder(mShowDefaultValues ? ch.getDefaultName() : ch.getName());
+      StringBuilder text = new StringBuilder(mShowDefaultValues ? channel.getDefaultName() : channel.getName());
 
       if (mShowCountry || mShowService) {
         text.append(" (");
       }
       if (mShowCountry) {
-        text.append(ch.getCountry());
+        text.append(channel.getCountry());
       }
       if (mShowService) {
         if (mShowCountry) {
           text.append(", ");
         }
-        text.append(ch.getDataServiceProxy().getInfo().getName());
+        text.append(channel.getDataServiceProxy().getInfo().getName());
       }
       if (mShowCountry || mShowService) {
         text.append(")");
@@ -175,7 +180,7 @@ public class ChannelLabel extends JLabel {
       setText(text.toString());
     }
     setMinimumSize(new Dimension(42,22));
-    setToolTipText(ch.getName());
+    setToolTipText(channel.getName());
   }
 
   /**
@@ -197,25 +202,35 @@ public class ChannelLabel extends JLabel {
   }
 
   /**
-   * Sets the Icon
-   * This method immediatly returns without any changes if the Settings.propShowChannelIcons is false
+   * do not call this method, use setChannel instead, which will
+   * set an icon matching all the current settings for the selected
+   * channel
    *
    * @param ic Icon
    */
   public void setIcon(Icon ic) {
-    Icon cached = ICONCACHE.get(ic); 
+    return;
+  }
+  
+  private void setChannelIcon(Channel channel, Icon icon) {
+    Icon cached = null;
+    if (icon != null) { // no hash lookup, if no icon to set
+      cached = ICONCACHE.get(channel);
+    }
     if (cached != null) {
       super.setIcon(cached);
     } else {
       if (!mChannelIconsVisible) {
         return;
       }
-      if (ic == null) {
-        ic = getDefaultIcon();
+      if (icon == null) { // do not cache the default icon
+        super.setIcon(getDefaultIcon());
       }
-      Icon icon =UiUtilities.createChannelIcon(ic); 
-      ICONCACHE.put(ic, icon);
-      super.setIcon(icon);
+      else {
+        Icon resizedIcon =UiUtilities.createChannelIcon(icon); 
+        ICONCACHE.put(channel, resizedIcon);
+        super.setIcon(resizedIcon);
+      }
     }
   }
 
@@ -243,5 +258,15 @@ public class ChannelLabel extends JLabel {
    */
   public void setShowService(boolean showService) {
     mShowService = showService;
+  }
+  
+  /**
+   * Clear the icon cache.<br/>
+   * This may be useful after lots of channel labels have been
+   * created (e.g. in the settings dialog).
+   * @since 2.7
+   */
+  public static void clearIconCache() {
+    ICONCACHE.clear();
   }
 }
