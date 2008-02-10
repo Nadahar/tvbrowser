@@ -116,7 +116,7 @@ public class I18NPlugin extends Plugin {
       dialog = new TranslationDialog((JFrame)wnd, mDevider);
     }
     
-    layoutWindow("i18nDlg", dialog, new Dimension(800,900));
+    layoutWindow("i18nDlg", dialog, new Dimension(800,750));
     
     dialog.setVisible(true);
     

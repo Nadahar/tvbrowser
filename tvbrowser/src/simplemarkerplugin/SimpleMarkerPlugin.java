@@ -23,6 +23,7 @@
 package simplemarkerplugin;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -368,7 +369,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     
     mManagePanel = new ManagePanel(dialog, mMarkListVector);
     
-    layoutWindow("manageDlg", dialog);
+    layoutWindow("manageDlg", dialog, new Dimension(434, 330));
     
     dialog.setVisible(true);
   }
