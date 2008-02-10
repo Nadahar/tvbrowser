@@ -128,21 +128,25 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    */
   final public void loadWindowSettings() {
     try {
-      ObjectInputStream in = new ObjectInputStream(new FileInputStream(new File(Settings.getUserSettingsDirName(),getId() + ".window.setting")));
+      File windowSettingsFile = new File(Settings.getUserSettingsDirName(),getId() + ".window.setting");
       
-      if(in.available() > 0) {
-        in.readInt(); // read version
+      if(windowSettingsFile.isFile()) {
+        ObjectInputStream in = new ObjectInputStream(new FileInputStream(windowSettingsFile));
         
-        int n = in.readInt(); // read number of window settings
-        
-        mWindowSettings = new HashMap<String,WindowSetting>(n);
-        
-        for(int i = 0; i < n; i++) {
-          mWindowSettings.put(in.readUTF(), new WindowSetting(in));
+        if(in.available() > 0) {
+          in.readInt(); // read version
+          
+          int n = in.readInt(); // read number of window settings
+          
+          mWindowSettings = new HashMap<String,WindowSetting>(n);
+          
+          for(int i = 0; i < n; i++) {
+            mWindowSettings.put(in.readUTF(), new WindowSetting(in));
+          }
         }
+        
+        in.close();
       }
-      
-      in.close();
     }catch(Exception e) {// Ignore
     }
   }
@@ -152,21 +156,26 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    */
   final public void storeWindowSettings() {
     try {
-      if (mWindowSettings != null) {
-        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(new File(Settings.getUserSettingsDirName(),getId() + ".window.setting")));
+      File windowSettingsFile = new File(Settings.getUserSettingsDirName(),getId() + ".window.setting");
+      
+      if(mWindowSettings != null && !mWindowSettings.isEmpty()) {
+        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(windowSettingsFile));
         
         out.writeInt(1); // write version
-        
+      
         out.writeInt(mWindowSettings.size());
-        
+      
         Set<String> keys = mWindowSettings.keySet();
-        
+      
         for(String key : keys) {
           out.writeUTF(key);
           mWindowSettings.get(key).saveSettings(out);
         }
         
         out.close();
+      }
+      else if(windowSettingsFile.isFile()) {
+        windowSettingsFile.delete();
       }
     } catch (FileNotFoundException e) { // Ignore
     } catch (IOException e) { // Ignore
