@@ -341,12 +341,6 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
     }
 
     @Override
-    protected void doLoadWindowSettings() throws TvBrowserException {
-      // TODO Auto-generated method stub
-      
-    }
-
-    @Override
     protected void doSaveWindowSettings(boolean log) throws TvBrowserException {
       // TODO Auto-generated method stub
       

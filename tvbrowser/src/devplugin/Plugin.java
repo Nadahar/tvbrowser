@@ -126,7 +126,7 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    * Loads the window settings for this plugin.
    * 
    */
-  final public void loadWindowSettings() {
+  final private void loadWindowSettings() {
     try {
       File windowSettingsFile = new File(Settings.getUserSettingsDirName(),getId() + ".window.setting");
       
@@ -148,6 +148,10 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
         in.close();
       }
     }catch(Exception e) {// Ignore
+    }
+    
+    if(mWindowSettings == null) {
+      mWindowSettings = new HashMap<String,WindowSetting>(1);
     }
   }
   
@@ -1090,7 +1094,7 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    */
   public final void layoutWindow(String windowId, Window window, Dimension defaultSize) {
     if(mWindowSettings == null) {
-      mWindowSettings = new HashMap<String,WindowSetting>(1);
+      loadWindowSettings();
     }
     
     WindowSetting setting = mWindowSettings.get(windowId);

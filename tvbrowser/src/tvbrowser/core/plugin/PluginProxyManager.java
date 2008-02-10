@@ -426,10 +426,7 @@ public class PluginProxyManager {
     // Get the user directory
     String userDirectoryName = Settings.getUserSettingsDirName();
     File userDirectory = new File(userDirectoryName);
-    
-    // Load the window settings
-    item.getPlugin().loadWindowSettings();
-    
+        
     // Load the plugin settings
     item.getPlugin().loadSettings(userDirectory);
 
