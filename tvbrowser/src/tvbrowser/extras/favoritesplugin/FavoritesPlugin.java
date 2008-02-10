@@ -35,6 +35,7 @@ import devplugin.ProgramReceiveTarget;
 import devplugin.ProgressMonitor;
 import devplugin.SettingsItem;
 import devplugin.ThemeIcon;
+import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataUpdateListener;
 import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.icontheme.IconLoader;
@@ -563,10 +564,7 @@ public class FavoritesPlugin {
   private void showManageFavoritesDialog(final boolean showNew, Favorite[] favoriteArr) {
     int splitPanePosition = getIntegerSetting(mSettings, "splitpanePosition",
             200);
-    int width = getIntegerSetting(mSettings, "width", 500);
-    int height = getIntegerSetting(mSettings, "height", 300);
     ManageFavoritesDialog dlg = new ManageFavoritesDialog(MainFrame.getInstance(), favoriteArr, splitPanePosition, showNew);
-    dlg.setSize(new Dimension(width, height));
         
     if(mShowInfoOnNewProgramsFound) {
       dlg.addComponentListener(new ComponentAdapter() {
@@ -587,12 +585,11 @@ public class FavoritesPlugin {
       });
     }
 
-    UiUtilities.centerAndShow(dlg);
-
+    Settings.layoutWindow("extras.manageFavoritesDlg",dlg,new Dimension(500,300));
+    dlg.setVisible(true);
+    
     splitPanePosition = dlg.getSplitpanePosition();
     mSettings.setProperty("splitpanePosition", "" + splitPanePosition);
-    mSettings.setProperty("width", "" + dlg.getWidth());
-    mSettings.setProperty("height", "" + dlg.getHeight());
     
     if (!showNew) {
       updateRootNode(true);

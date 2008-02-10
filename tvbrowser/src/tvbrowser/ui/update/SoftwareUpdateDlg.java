@@ -30,6 +30,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -85,6 +86,8 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
   private String mDownloadUrl;
   
   private JCheckBox mAutoUpdates;
+  
+  private JSplitPane mSplitPane;
 
   public SoftwareUpdateDlg(Dialog parent, String downloadUrl, boolean onlyUpdate) {
     super(parent, true);    
@@ -157,26 +160,15 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
     southPn.add(builder.getPanel(), BorderLayout.SOUTH);
 
-    JSplitPane splitPn = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, new JScrollPane(mList), new JScrollPane(
+    mSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, new JScrollPane(mList), new JScrollPane(
         mDescriptionPane));
-    splitPn.setDividerLocation(200);
+    mSplitPane.setDividerLocation(Settings.propPluginUpdateDialogDividerLocation.getInt());
 
     contentPane.add(northPn, BorderLayout.NORTH);
-    contentPane.add(splitPn, BorderLayout.CENTER);
+    contentPane.add(mSplitPane, BorderLayout.CENTER);
     contentPane.add(southPn, BorderLayout.SOUTH);
 
-    if (Settings.propUpdateDialogWidth.getInt() == -1 || Settings.propUpdateDialogHeight.getInt() == -1) {
-      setSize(500, 400);
-    } else {
-      pack();
-      
-      if(getWidth() < Settings.propUpdateDialogWidth.getInt()) {
-        setSize(Settings.propUpdateDialogWidth.getInt(), getHeight());
-      }
-      if(getHeight() < Settings.propUpdateDialogHeight.getInt()) {
-        setSize(getWidth(), Settings.propUpdateDialogHeight.getInt());
-      }
-    }
+    Settings.layoutWindow("softwareUpdateDlg", this, new Dimension(500,400));
 
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -304,9 +296,8 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
   }
 
   public void close() {
-    Settings.propUpdateDialogWidth.setInt(getWidth());
-    Settings.propUpdateDialogHeight.setInt(getHeight());
-
+    Settings.propPluginUpdateDialogDividerLocation.setInt(mSplitPane.getDividerLocation());
     setVisible(false);
+    dispose();
   }
 }

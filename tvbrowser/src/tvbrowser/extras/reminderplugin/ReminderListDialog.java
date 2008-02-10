@@ -44,6 +44,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 
+import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -231,14 +232,10 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
     builder.addFixed(ok);
 
     panel.add(builder.getPanel(), cc.xy(1, 3));
-    pack();
 
     getRootPane().setDefaultButton(ok);
-
-    int width = Integer.parseInt(ReminderPlugin.getInstance().getSettings().getProperty("dlgWidth","550"));
-    int height = Integer.parseInt(ReminderPlugin.getInstance().getSettings().getProperty("dlgHeight","350"));
     
-    setSize(new Dimension(width,height));
+    Settings.layoutWindow("extras.reminderListDlg", this, new Dimension(550,350)); 
   }
 
   private void installTableModel(ReminderTableModel model) {

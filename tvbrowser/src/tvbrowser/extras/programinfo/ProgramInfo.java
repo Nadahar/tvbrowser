@@ -67,13 +67,6 @@ public class ProgramInfo {
 
   private static String DATAFILE_PREFIX = "programinfo.ProgramInfo";
 
-  // private static java.util.logging.Logger mLog
-  // = java.util.logging.Logger.getLogger(ProgramInfo.class.getName());
-
-  private Point mLocation = null;
-
-  private Dimension mSize = null;
-
   private Dimension mLeftSplit = null;
 
   private Properties mSettings;
@@ -150,24 +143,6 @@ public class ProgramInfo {
       ErrorHandler.handle("Could not load programinfo settings.", e);
     }
 
-    String width = mSettings.getProperty("DialogSize.Width");
-    String height = mSettings.getProperty("DialogSize.Height");
-
-    if ((width != null) && (height != null)) {
-      int w = parseNumber(width);
-      int h = parseNumber(height);
-      mSize = new Dimension(w, h);
-    }
-
-    String x = mSettings.getProperty("DialogLocation.X");
-    String y = mSettings.getProperty("DialogLocation.Y");
-
-    if ((x != null) && (y != null)) {
-      int xv = parseNumber(x);
-      int yv = parseNumber(y);
-      mLocation = new Point(xv, yv);
-    }
-
     String splitWidht = mSettings.getProperty("LeftSplit.Width");
     String splitHeigt = mSettings.getProperty("LeftSplit.Height");
 
@@ -185,17 +160,6 @@ public class ProgramInfo {
    * Save settings.
    */
   public void store() {
-    if (mLocation != null) {
-      mSettings.setProperty("DialogLocation.X", Integer.toString(mLocation.x));
-      mSettings.setProperty("DialogLocation.Y", Integer.toString(mLocation.y));
-    }
-
-    if (mSize != null) {
-      mSettings.setProperty("DialogSize.Width", Integer.toString(mSize.width));
-      mSettings
-          .setProperty("DialogSize.Height", Integer.toString(mSize.height));
-    }
-
     if (mLeftSplit != null) {
       mSettings.setProperty("LeftSplit.Width", Integer
           .toString(mLeftSplit.width));
@@ -210,37 +174,6 @@ public class ProgramInfo {
     }
 
   }
-
-  /*
-   * public Properties storeSettings() { if (mLocation != null) {
-   * mSettings.setProperty("DialogLocation.X", Integer.toString(mLocation.x));
-   * mSettings.setProperty("DialogLocation.Y", Integer.toString(mLocation.y)); }
-   * 
-   * if (mSize != null) { mSettings.setProperty("DialogSize.Width",
-   * Integer.toString(mSize.width)); mSettings.setProperty("DialogSize.Height",
-   * Integer.toString(mSize.height)); }
-   * 
-   * return mSettings; }
-   */
-
-  /*
-   * public void loadSettings(Properties settings) { if (settings == null ) {
-   * settings = new Properties(); }
-   * 
-   * String width = settings.getProperty("DialogSize.Width"); String height =
-   * settings.getProperty("DialogSize.Height");
-   * 
-   * if ((width != null) && (height != null)) { int w = parseNumber(width); int
-   * h = parseNumber(height); mSize = new Dimension(w, h); }
-   * 
-   * String x = settings.getProperty("DialogLocation.X"); String y =
-   * settings.getProperty("DialogLocation.Y");
-   * 
-   * if ((x != null) && (y != null)) { int xv = parseNumber(x); int yv =
-   * parseNumber(y); mLocation = new Point(xv, yv); }
-   * 
-   * mSettings = settings; }
-   */
 
   /**
    * Parses a Number from a String.
@@ -286,10 +219,7 @@ public class ProgramInfo {
     mIsShowing = false;
   }
 
-  protected void setSettings(JDialog dialog, Dimension d) {
-    mSize = dialog.getSize();
-    mLocation = dialog.getLocation();
-    
+  protected void setSettings(Dimension d) {
     if(mShowFunctions) {
       mLeftSplit = d;
     }
@@ -391,20 +321,7 @@ public class ProgramInfo {
   protected PluginPictureSettings getPictureSettings() {
     return new PluginPictureSettings(Integer.parseInt(mSettings.getProperty("pictureSettings",String.valueOf(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE))));
   }
-  
-  protected void saveSizeAndLocation(Dimension size, Point location) {
-    mSize = size;
-    mLocation = location;
-  }
-  
-  protected Dimension getSize() {
-    return mSize;
-  }
-  
-  protected Point getLocation() {
-    return mLocation;
-  }
-  
+    
   /**
    * return whether the program info is currently shown or is to be shown immediately
    * @return

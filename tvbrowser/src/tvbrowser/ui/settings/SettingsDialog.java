@@ -31,11 +31,9 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -251,20 +249,6 @@ public class SettingsDialog implements WindowClosingIf {
       showSettingsPanelForSelectedNode();
     }
 
-    mDialog.addComponentListener(new java.awt.event.ComponentAdapter() {
-      public void componentMoved(ComponentEvent e) {
-        e.getComponent().getLocation(mLocation);
-        Settings.propSettingsWindowX.setInt(mLocation.x);
-        Settings.propSettingsWindowY.setInt(mLocation.y);
-      }
-
-      public void componentResized(ComponentEvent e) {
-        e.getComponent().getSize(mSize);
-        Settings.propSettingsWindowWidth.setInt(mSize.width);
-        Settings.propSettingsWindowHeight.setInt(mSize.height);
-      }
-    });
-
     mDialog.addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
         Settings.propSettingsDialogDividerLocation.setInt(splitPane
@@ -343,30 +327,8 @@ public class SettingsDialog implements WindowClosingIf {
   }
 
   public void centerAndShow() {
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-
-    if ((Settings.propSettingsWindowX.getInt() < 0)
-        || (Settings.propSettingsWindowX.getInt() > screen.width)
-        || (Settings.propSettingsWindowY.getInt() < 0)
-        || (Settings.propSettingsWindowY.getInt() > screen.height)) {
-      mDialog.setSize(750, 600);
-      UiUtilities.centerAndShow(mDialog);
-    } else if ((Settings.propSettingsWindowWidth.getInt() < 200)
-        || (Settings.propSettingsWindowWidth.getInt() < 200)) {
-      mDialog.setSize(750, 600);
-      mLocation = new Point(Settings.propSettingsWindowX.getInt(),
-          Settings.propSettingsWindowY.getInt());
-      mDialog.setLocation(mLocation);
-      mDialog.setVisible(true);
-    } else {
-      mLocation = new Point(Settings.propSettingsWindowX.getInt(),
-          Settings.propSettingsWindowY.getInt());
-      mSize = new Dimension(Settings.propSettingsWindowWidth.getInt(),
-          Settings.propSettingsWindowHeight.getInt());
-      mDialog.setLocation(mLocation);
-      mDialog.setSize(mSize);
-      mDialog.setVisible(true);
-    }
+    Settings.layoutWindow("main.settingsDialog", mDialog, new Dimension(750,600));
+    mDialog.setVisible(true);
   }
 
   private TreeNode createSelectionTree() {

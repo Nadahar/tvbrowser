@@ -53,6 +53,7 @@ import util.settings.PropertyManager;
 import util.settings.StringArrayProperty;
 import util.settings.StringProperty;
 import util.settings.VersionProperty;
+import util.settings.WindowSetting;
 import util.ui.Localizer;
 import util.ui.view.SplitViewProperty;
 
@@ -60,14 +61,22 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
+import java.awt.Window;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.HashMap;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -104,6 +113,8 @@ public class Settings {
   private static PropertyManager mProp = new PropertyManager();
 
   private static boolean mShowWaiting;
+  
+  private static HashMap<String,WindowSetting> mWindowSettings;
   
  /**
    * Returns the Default-Settings. These Settings are stored in the mac, windows
@@ -164,6 +175,39 @@ public class Settings {
       throw new TvBrowserException(Settings.class, "error.1",
           "Error when saving settings!\n({0})", settingsFile.getAbsolutePath(),
           exc);
+    }
+    
+    storeWindowSettings();
+  }
+  
+  /**
+   * Stores the window settings for this plugin
+   */
+  private static void storeWindowSettings() {
+    try {
+      File windowSettingsFile = new File(Settings.getUserSettingsDirName(),"kernel.window.setting");
+      
+      if(mWindowSettings != null && !mWindowSettings.isEmpty()) {
+        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(windowSettingsFile));
+        
+        out.writeInt(1); // write version
+      
+        out.writeInt(mWindowSettings.size());
+      
+        Set<String> keys = mWindowSettings.keySet();
+      
+        for(String key : keys) {
+          out.writeUTF(key);
+          mWindowSettings.get(key).saveSettings(out);
+        }
+        
+        out.close();
+      }
+      else if(windowSettingsFile.isFile()) {
+        windowSettingsFile.delete();
+      }
+    } catch (FileNotFoundException e) { // Ignore
+    } catch (IOException e) { // Ignore
     }
   }
 
@@ -428,6 +472,39 @@ public class Settings {
       mLog.info("Creating " + newDirectoryName);
       settingsDir.mkdir();
     }
+    
+    loadWindowSettings();
+  }
+  
+  private static void loadWindowSettings() {
+    try {
+      try {
+        File windowSettingsFile = new File(Settings.getUserSettingsDirName(),"kernel.window.setting");
+        
+        if(windowSettingsFile.isFile()) {
+          ObjectInputStream in = new ObjectInputStream(new FileInputStream(windowSettingsFile));
+          
+          if(in.available() > 0) {
+            in.readInt(); // read version
+            
+            int n = in.readInt(); // read number of window settings
+            
+            mWindowSettings = new HashMap<String,WindowSetting>(n);
+            
+            for(int i = 0; i < n; i++) {
+              mWindowSettings.put(in.readUTF(), new WindowSetting(in));
+            }
+          }
+          
+          in.close();
+        }
+      }catch(Exception e) {// Ignore
+      }
+      
+      if(mWindowSettings == null) {
+        mWindowSettings = new HashMap<String,WindowSetting>(1);
+      }
+    }catch(Exception e) {}
   }
 
   public static void handleChangedSettings() {
@@ -1015,37 +1092,12 @@ public class Settings {
 
   public static final IntProperty propWindowY = new IntProperty(mProp,
       "window.y", -1);
-  
-  public static final IntProperty propPluginChooserDlgWidth = new IntProperty(mProp,
-      "pluginChooserDlg.width", -1);
-
-  public static final IntProperty propPluginChooserDlgHeight = new IntProperty(mProp,
-      "pluginChooserDlg.height", -1);
 
   public static final IntProperty propSettingsDialogDividerLocation = new IntProperty(mProp,
       "settingsDialogDividerLocation", 200);
-  
-  /** Settings-Window Width */
-  public static final IntProperty propSettingsWindowWidth = new IntProperty(
-      mProp, "settingsWindow.width", -1);
-  /** Settings-Window Height */
-  public static final IntProperty propSettingsWindowHeight = new IntProperty(
-      mProp, "settingsWindow.height", -1);
-  /** Settings-Window X-Position */
-  public static final IntProperty propSettingsWindowX = new IntProperty(mProp,
-      "settingsWindow.x", -1);
-  /** Settings-Window Y-Position */
-  public static final IntProperty propSettingsWindowY = new IntProperty(mProp,
-      "settingsWindow.y", -1);
 
-  public static final IntProperty propUpdateDialogDividerLocation = new IntProperty(
-      mProp, "updateDialog.devider", -1);
-  /** Update-Dialog Width */
-  public static final IntProperty propUpdateDialogWidth = new IntProperty(
-      mProp, "updateDialog.width", -1);
-  /** Update-Dialog Height */
-  public static final IntProperty propUpdateDialogHeight = new IntProperty(
-      mProp, "updateDialog.height", -1);
+  public static final IntProperty propPluginUpdateDialogDividerLocation = new IntProperty(
+      mProp, "pluginUpdateDialog.devider", 200);
 
   public static final IntProperty propProgramTableStartOfDay = new IntProperty(
       mProp, "programtable.startofday", 0);
@@ -1273,4 +1325,41 @@ public class Settings {
   /** If the plugin view is on the left side and the channel list on the right side. */
   public static final BooleanProperty propPluginViewIsLeft = new BooleanProperty(
       mProp, "pluginViewIsLeft", true);
+  
+  /**
+   * Sets the window position and size for the given window with the values of the given id.
+
+   * @param windowId The id of the values to set.
+   * @param window The window to layout.
+   * 
+   * @since 2.7
+   */
+  public static final void layoutWindow(String windowId, Window window) {
+    layoutWindow(windowId, window, null);
+  }
+  
+  /**
+   * Sets the window position and size for the given window with the values of the given id.
+
+   * @param windowId The id of the values to set.
+   * @param window The window to layout.
+   * @param defaultSize The default size for the window.
+   * 
+   * @since 2.7
+   */
+  public static final void layoutWindow(String windowId, Window window, Dimension defaultSize) {
+    if(mWindowSettings == null) {
+      loadWindowSettings();
+    }
+    
+    WindowSetting setting = mWindowSettings.get(windowId);
+    
+    if(setting == null) {
+      setting = new WindowSetting(defaultSize);
+      
+      mWindowSettings.put(windowId, setting);
+    }
+    
+    setting.layout(window);
+  }
 }

@@ -332,12 +332,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
     layout.appendRow(new RowSpec("pref"));
     contentPane.add(builder.getPanel(), cc.xy(1,pos));
     
-    if(Settings.propPluginChooserDlgWidth.getInt() < 50 || Settings.propPluginChooserDlgHeight.getInt() < 50) {
-      pack();
-    }
-    else {
-      UiUtilities.setSize(this, Settings.propPluginChooserDlgWidth.getInt(),Settings.propPluginChooserDlgHeight.getInt());
-    }
+    Settings.layoutWindow("pluginChooserDlg", this);
     
     setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
     addWindowListener(new WindowAdapter() {
@@ -376,10 +371,8 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
   }
 
   public void close() {
-    Settings.propPluginChooserDlgWidth.setInt(getWidth());
-    Settings.propPluginChooserDlgHeight.setInt(getHeight());
-    
     setVisible(false);
+    dispose();
   }
 
 }

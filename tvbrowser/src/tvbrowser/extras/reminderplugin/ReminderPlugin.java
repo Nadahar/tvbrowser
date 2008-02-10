@@ -487,6 +487,8 @@ public class ReminderPlugin {
                 mSettings);
           }
           
+          Settings.layoutWindow("extras.remiderContext", dlg);
+          
           if(mSettings.getProperty("showTimeSelectionDialog","true").compareTo("true") == 0) {
             UiUtilities.centerAndShow(dlg);
             
