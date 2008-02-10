@@ -114,29 +114,6 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   abstract void setParentFrame(Frame parent);
 
   /**
-   * Loads the window settings for this plugin.
-   * 
-   * @throws TvBrowserException If loading failed.
-   */
-  final void loadWindowSettings() throws TvBrowserException {
-    try {
-      doLoadWindowSettings();
-    } catch (RuntimeException exc) {
-      throw new TvBrowserException(AbstractPluginProxy.class,
-
-      "error.loading.runtimeException", "The plugin {0} caused an error when loading the plugin settings.", getInfo()
-          .getName(), exc);
-    }
-  }
-  
-  /**
-   * Really loads the window settings for this plugin.
-   * 
-   * @throws TvBrowserException If loading failed.
-   */
-  protected abstract void doLoadWindowSettings() throws TvBrowserException;
-
-  /**
    * Saves the window settings for this plugin.
    * 
    * @throws TvBrowserException If saving failed.

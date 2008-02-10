@@ -601,11 +601,6 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   }
 
   @Override
-  protected void doLoadWindowSettings() throws TvBrowserException {
-    mPlugin.loadWindowSettings();
-  }
-
-  @Override
   protected void doSaveWindowSettings(boolean log) throws TvBrowserException {
     mPlugin.storeWindowSettings();
   }
