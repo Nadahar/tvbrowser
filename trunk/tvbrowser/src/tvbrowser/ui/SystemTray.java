@@ -46,6 +46,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
@@ -61,6 +63,7 @@ import tvdataservice.MarkedProgramsList;
 import util.io.IOUtilities;
 import util.misc.OperatingSystem;
 import util.ui.ScrollableMenu;
+import util.ui.UiUtilities;
 import util.ui.menu.MenuUtil;
 
 import com.gc.systray.SystemTrayFactory;
@@ -100,6 +103,8 @@ public class SystemTray {
   
   private JPopupMenu mTrayMenu;
   private Timer mClickTimer;
+  
+  private JMenu mPluginsMenu;
 
   /**
    * Creates the SystemTray
@@ -285,12 +290,22 @@ public class SystemTray {
     mTrayMenu.add(mOpenCloseMenuItem);
     mTrayMenu.addSeparator();
     
-    JMenu pluginsMenu = createPluginsMenu();
-    pluginsMenu.addSeparator();
-    pluginsMenu.add(mReminderItem);
+    mPluginsMenu = createPluginsMenu();
+    mPluginsMenu.addSeparator();
+    mPluginsMenu.add(mReminderItem);
 
-    mTrayMenu.add(pluginsMenu);
+    mTrayMenu.add(mPluginsMenu);
     mTrayMenu.addSeparator();
+    
+    mTrayMenu.addPopupMenuListener(new PopupMenuListener() {
+      public void popupMenuCanceled(PopupMenuEvent e) {}
+
+      public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
+
+      public void popupMenuWillBecomeVisible(PopupMenuEvent e) {        
+        mPluginsMenu.setEnabled(!UiUtilities.containsModalDialogChild(MainFrame.getInstance()));
+      }
+    });
 
     if (Settings.propTrayOnTimeProgramsEnabled.getBoolean()
         || Settings.propTrayNowProgramsEnabled.getBoolean()
@@ -874,9 +889,9 @@ public class SystemTray {
 
     });
 
-    ActionMenu action = FavoritesPlugin.getInstance().getButtonAction(null);
+    ActionMenu action = FavoritesPlugin.getInstance().getButtonAction();
     pluginsMenu.add(new JMenuItem(action.getAction()));
-    action = ReminderPlugin.getInstance().getButtonAction(null);
+    action = ReminderPlugin.getInstance().getButtonAction();
     pluginsMenu.add(new JMenuItem(action.getAction()));
     action = SearchPlugin.getInstance().getButtonAction();
     pluginsMenu.add(new JMenuItem(action.getAction()));

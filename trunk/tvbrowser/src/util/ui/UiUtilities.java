@@ -217,6 +217,26 @@ public class UiUtilities {
     // this is the last window
     return parent;
   }
+  
+  /**
+   * Gets if a dialog child of the given window is modal.
+   *  
+   * @param parent The window to check the childrens of.
+   * @return <code>True</code> if a child is modal, <code>false</code> otherwise.
+   * 
+   * @since 2.7
+   */
+  public static boolean containsModalDialogChild(Window parent) {
+    Window[] children = parent.getOwnedWindows();
+    
+    for(int i = 0; i < children.length; i++) {
+      if(containsModalDialogChild(children[i])) {
+        return true;
+      }
+    }
+    
+    return (parent instanceof JDialog && parent.isVisible() && ((JDialog)parent).isModal());
+  }
 
   
   

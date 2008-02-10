@@ -583,10 +583,10 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
       SearchPlugin.getInstance().getButtonAction()
           .getAction().actionPerformed(null);
     } else if (source == mReminderAction) {
-      ReminderPlugin.getInstance().getButtonAction(MainFrame.getInstance())
+      ReminderPlugin.getInstance().getButtonAction()
           .getAction().actionPerformed(null);
     } else if (source == mFavoriteAction) {
-      FavoritesPlugin.getInstance().getButtonAction(MainFrame.getInstance())
+      FavoritesPlugin.getInstance().getButtonAction()
           .getAction().actionPerformed(null);
     } else {
 

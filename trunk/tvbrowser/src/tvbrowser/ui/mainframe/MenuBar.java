@@ -297,8 +297,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mPluginHelpMenu.setIcon(urlHelpImg);
     updatePluginHelpMenuItems();
 
-    mFavoritesMI = new JMenuItem(FavoritesPlugin.getInstance().getButtonAction(mMainFrame).getAction());
-    mReminderMI = new JMenuItem(ReminderPlugin.getInstance().getButtonAction(mMainFrame).getAction());
+    mFavoritesMI = new JMenuItem(FavoritesPlugin.getInstance().getButtonAction().getAction());
+    mReminderMI = new JMenuItem(ReminderPlugin.getInstance().getButtonAction().getAction());
     mSearchMI = new JMenuItem(SearchPlugin.getInstance().getButtonAction().getAction());
     
     mFontSizeLargerMI = new JMenuItem(mLocalizer.msg("menuitem.fontSizeLarger", "Larger"));
