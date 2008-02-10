@@ -6,7 +6,6 @@ import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.Icon;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
@@ -30,20 +29,8 @@ public class ChannelLabel extends util.ui.ChannelLabel {
     mChannel = ch;
     
     setForeground(UIManager.getColor("List.selectionForeground"));
-    
-    if (Settings.propShowChannelIconsInProgramTable.getBoolean()) {
-      // Set Icon if it's available
-      setIcon(ch.getIcon());
-    }
-    
-    if (Settings.propShowChannelNamesInProgramTable.getBoolean()) {
-      // Set the channel name as text
-      String channelName = ch.getName();
-      if (channelName == null) {
-        channelName = mLocalizer.msg("unknown", "Unknown");
-      }
-      setText(channelName);
-    }
+
+    setChannel(mChannel);
 
     // Check whether the font was set
     if (channelNameFont == null) {
@@ -95,12 +82,6 @@ public class ChannelLabel extends util.ui.ChannelLabel {
     new ChannelContextMenu(e,mChannel,this);
   }
 
-  public void setIcon(Icon icon) {
-    if (Settings.propShowChannelIconsInProgramTable.getBoolean()) {
-      super.setIcon(icon);
-    }
-  }
-  
   public static void fontChanged() {
     boolean useDefaults = Settings.propUseDefaultFonts.getBoolean();
     if (useDefaults) {

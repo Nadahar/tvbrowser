@@ -30,7 +30,6 @@ import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -77,6 +76,7 @@ import util.exc.ErrorHandler;
 import util.ui.Localizer;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.waiting.dlgs.SettingsWaitingDialog;
+import util.ui.ChannelLabel;
 import util.ui.SingleAndDoubleClickTreeUI;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -107,14 +107,7 @@ public class SettingsDialog implements WindowClosingIf {
 
   private JPanel mSettingsPn;
 
-  // private JScrollPane mSettingsPane;
   private TreeNode mRootNode;
-
-  /** Location of this Dialog */
-  private Point mLocation = new Point();
-
-  /** Dimension of this Dialog */
-  private Dimension mSize = new Dimension();
 
   /** Node for PluginSettings */
   private SettingNode mPluginSettingsNode;
@@ -760,6 +753,7 @@ public class SettingsDialog implements WindowClosingIf {
 
   public void close() {
     mDialog.dispose();
+    ChannelLabel.clearIconCache();
   }
 
   public JRootPane getRootPane() {
