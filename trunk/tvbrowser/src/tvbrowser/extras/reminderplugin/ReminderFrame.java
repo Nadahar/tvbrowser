@@ -28,7 +28,6 @@ package tvbrowser.extras.reminderplugin;
 
 import devplugin.Date;
 import devplugin.Program;
-import tvbrowser.core.Settings;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -257,7 +256,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       mAutoCloseTimer.start();
     }
 
-    Settings.layoutWindow("extras.reminderFrame", mDialog);
+    mDialog.pack();
     
     mCloseBt.setText(mCloseBtText);
     mDialog.setAlwaysOnTop(ReminderPlugin.getInstance().getSettings().getProperty("alwaysOnTop","true").equalsIgnoreCase("true"));
