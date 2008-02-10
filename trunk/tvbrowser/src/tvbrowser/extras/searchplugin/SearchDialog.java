@@ -37,6 +37,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import tvbrowser.core.Settings;
 import util.settings.PluginPictureSettings;
 import util.ui.Localizer;
 import util.ui.SearchForm;
@@ -136,7 +137,7 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
 
     main.add(buttonPanel);
 
-    pack();
+    Settings.layoutWindow("extras.searchDialog", this);
   }
 
 

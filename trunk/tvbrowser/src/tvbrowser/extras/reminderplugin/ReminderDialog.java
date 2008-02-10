@@ -192,8 +192,6 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
     
     contentPane.add(northPn,BorderLayout.NORTH);
     contentPane.add(btnPn,BorderLayout.SOUTH);
-    
-    pack();
   }
 
   private void calculatePossibleReminders(Program program) {

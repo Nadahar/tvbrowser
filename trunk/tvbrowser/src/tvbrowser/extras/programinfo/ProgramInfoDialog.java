@@ -63,6 +63,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import tvbrowser.core.Settings;
 import tvbrowser.core.contextmenu.ConfigMenuItem;
 import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.contextmenu.SeparatorMenuItem;
@@ -447,9 +448,8 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
   }
 
   private void exit() {
-    ProgramInfo.getInstance().setSettings(mDialog, mActionsPane.getSize());
+    ProgramInfo.getInstance().setSettings(mActionsPane.getSize());
     ProgramInfo.getInstance().setExpanded("showSearch",mFindAsYouType.isAlwaysVisible());
-    ProgramInfo.getInstance().saveSizeAndLocation(mDialog.getSize(), mDialog.getLocation());
     mDialog.dispose();
   }
   
@@ -532,21 +532,7 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
     
     addActionsToRootPane();
     
-    mDialog.pack();
-    
-    Dimension size = ProgramInfo.getInstance().getSize();
-    Point location = ProgramInfo.getInstance().getLocation();
-    
-    if (size != null) {
-      mDialog.setSize(size);
-    }
-    
-    if (location != null) {
-      mDialog.setLocation(location);
-    } else {
-      mDialog.setLocationRelativeTo(w);
-    }
-    
+    Settings.layoutWindow("extras.programInfoDlg", mDialog);
     
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {

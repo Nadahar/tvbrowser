@@ -43,6 +43,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.*;
 
+import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ReminderConfiguration;
 import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
@@ -186,8 +187,6 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     rootPn.add(BorderLayout.SOUTH, buttons.getPanel());
         
     getRootPane().setDefaultButton(okBtn);
-    
-    pack();
   }
   
   private JPanel createTitleChangePanel() {

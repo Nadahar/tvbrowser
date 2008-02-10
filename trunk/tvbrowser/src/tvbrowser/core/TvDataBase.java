@@ -468,6 +468,8 @@ public class TvDataBase {
       }
     }
     
+    mTvDataHash.clear();
+    
     if(informPlugins && somethingDeleted) {
       TvDataUpdater.getInstance().fireTvDataUpdateFinished();
     }

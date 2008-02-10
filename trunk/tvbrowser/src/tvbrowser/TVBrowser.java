@@ -648,6 +648,7 @@ public class TVBrowser {
 
     // Set the right size
     mLog.info("Setting frame size and location");
+    
     int windowWidth = Settings.propWindowWidth.getInt();
     int windowHeight = Settings.propWindowHeight.getInt();
     mainFrame.setSize(windowWidth, windowHeight);
@@ -660,8 +661,10 @@ public class TVBrowser {
       UiUtilities.centerAndShow(mainFrame);
     } else {
       mainFrame.setLocation(windowX, windowY);
-      mainFrame.setVisible(true);
+      
     }
+    
+    mainFrame.setVisible(true);
     ErrorHandler.setFrame(mainFrame);
 
     splash.hideSplash();

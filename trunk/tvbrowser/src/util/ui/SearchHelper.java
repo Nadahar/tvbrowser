@@ -28,6 +28,7 @@ package util.ui;
 import devplugin.Program;
 import devplugin.ProgramSearcher;
 import devplugin.ProgressMonitor;
+import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -48,6 +49,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -231,8 +233,9 @@ public class SearchHelper {
     buttonPn.add(closeBt, BorderLayout.EAST);
 
     dlg.getRootPane().setDefaultButton(closeBt);
-
-    dlg.setSize(400, 400);
+    
+    Settings.layoutWindow("searchDlg", dlg, new Dimension(400, 400));
+    
     UiUtilities.centerAndShow(dlg);
   }
 

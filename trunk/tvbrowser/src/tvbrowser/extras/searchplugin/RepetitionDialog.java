@@ -32,6 +32,7 @@ import com.jgoodies.forms.layout.Sizes;
 import devplugin.Channel;
 import devplugin.PluginManager;
 import tvbrowser.core.ChannelList;
+import tvbrowser.core.Settings;
 import util.settings.PluginPictureSettings;
 import util.ui.ChannelListCellRenderer;
 import util.ui.Localizer;
@@ -47,6 +48,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -164,7 +166,7 @@ public class RepetitionDialog extends JDialog implements WindowClosingIf {
 
         panel.add(builder.getPanel(), cc.xyw(1, 9, 3));
 
-        setSize(Sizes.dialogUnitXAsPixel(220, this), Sizes.dialogUnitYAsPixel(125, this));
+        Settings.layoutWindow("extras.repetitionDialog", this, new Dimension(Sizes.dialogUnitXAsPixel(220, this),Sizes.dialogUnitYAsPixel(125, this)));
 
         UiUtilities.registerForClosing(this);
         getRootPane().setDefaultButton(go);
