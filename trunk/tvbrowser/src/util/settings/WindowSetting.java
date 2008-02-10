@@ -67,6 +67,7 @@ public final class WindowSetting {
   
   /**
    * Creates an instance of this class with the default setting -1 for all values.
+   * @param size The default size of the window.
    */
   public WindowSetting(Dimension size) {
     mXPos = -1;
@@ -78,7 +79,7 @@ public final class WindowSetting {
     }
     else {
       mWidth = size.width;
-      mHeight = size.width;
+      mHeight = size.height;
     }
   }
   
