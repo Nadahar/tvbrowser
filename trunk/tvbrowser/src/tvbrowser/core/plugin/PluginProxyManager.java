@@ -562,7 +562,6 @@ public class PluginProxyManager {
       userDirectory.mkdirs();
     }
     
-    item.getPlugin().saveWindowSettings(!MainFrame.isShuttingDown());
     item.getPlugin().saveSettings(userDirectory,!MainFrame.isShuttingDown());    
   }
 

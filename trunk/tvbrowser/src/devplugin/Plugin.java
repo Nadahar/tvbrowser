@@ -29,7 +29,6 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxyManager;
 import util.exc.TvBrowserException;
-import util.settings.WindowSetting;
 import util.ui.FixedSizeIcon;
 import util.ui.ImageUtilities;
 
@@ -50,9 +49,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.HashMap;
 import java.util.Properties;
-import java.util.Set;
 import java.util.jar.JarFile;
 
 /**
@@ -119,72 +116,6 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    * @deprecated Use method {@link #getParentFrame()} instead.
    */
   protected Frame parent;
-
-  private HashMap<String,WindowSetting> mWindowSettings;
-  
-  /**
-   * Loads the window settings for this plugin.
-   * 
-   */
-  final private void loadWindowSettings() {
-    try {
-      File windowSettingsFile = new File(Settings.getUserSettingsDirName(),getId() + ".window.setting");
-      
-      if(windowSettingsFile.isFile()) {
-        ObjectInputStream in = new ObjectInputStream(new FileInputStream(windowSettingsFile));
-        
-        if(in.available() > 0) {
-          in.readInt(); // read version
-          
-          int n = in.readInt(); // read number of window settings
-          
-          mWindowSettings = new HashMap<String,WindowSetting>(n);
-          
-          for(int i = 0; i < n; i++) {
-            mWindowSettings.put(in.readUTF(), new WindowSetting(in));
-          }
-        }
-        
-        in.close();
-      }
-    }catch(Exception e) {// Ignore
-    }
-    
-    if(mWindowSettings == null) {
-      mWindowSettings = new HashMap<String,WindowSetting>(1);
-    }
-  }
-  
-  /**
-   * Stores the window settings for this plugin
-   */
-  final public void storeWindowSettings() {
-    try {
-      File windowSettingsFile = new File(Settings.getUserSettingsDirName(),getId() + ".window.setting");
-      
-      if(mWindowSettings != null && !mWindowSettings.isEmpty()) {
-        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(windowSettingsFile));
-        
-        out.writeInt(1); // write version
-      
-        out.writeInt(mWindowSettings.size());
-      
-        Set<String> keys = mWindowSettings.keySet();
-      
-        for(String key : keys) {
-          out.writeUTF(key);
-          mWindowSettings.get(key).saveSettings(out);
-        }
-        
-        out.close();
-      }
-      else if(windowSettingsFile.isFile()) {
-        windowSettingsFile.delete();
-      }
-    } catch (FileNotFoundException e) { // Ignore
-    } catch (IOException e) { // Ignore
-    }
-  }
 
   /**
    * Called by the host-application to provide access to the plugin manager.
@@ -1093,18 +1024,6 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    * @since 2.7
    */
   public final void layoutWindow(String windowId, Window window, Dimension defaultSize) {
-    if(mWindowSettings == null) {
-      loadWindowSettings();
-    }
-    
-    WindowSetting setting = mWindowSettings.get(windowId);
-    
-    if(setting == null) {
-      setting = new WindowSetting(defaultSize);
-      
-      mWindowSettings.put(windowId, setting);
-    }
-    
-    setting.layout(window);
+    Settings.layoutWindow(getId() + "." + windowId, window, defaultSize);
   }
 }

@@ -104,6 +104,7 @@ public class Settings {
 
   private static final String SETTINGS_FILE = "settings.prop";
   private static final String DEFAULT_USER_DIR = ".tvbrowser";
+  private static final String WINDOW_SETTINGS_FILE = "window.settings.dat";
 
   private static final Font PROGRAMTITLEFONT = new Font("Dialog", Font.BOLD, 12);
   private static final Font PROGRAMINFOFONT = new Font("Dialog", Font.PLAIN, 10);
@@ -185,27 +186,23 @@ public class Settings {
    */
   private static void storeWindowSettings() {
     try {
-      File windowSettingsFile = new File(Settings.getUserSettingsDirName(),"kernel.window.setting");
+      File windowSettingsFile = new File(Settings.getUserSettingsDirName(),WINDOW_SETTINGS_FILE);
       
-      if(mWindowSettings != null && !mWindowSettings.isEmpty()) {
-        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(windowSettingsFile));
-        
-        out.writeInt(1); // write version
+      ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(windowSettingsFile));
       
-        out.writeInt(mWindowSettings.size());
-      
-        Set<String> keys = mWindowSettings.keySet();
-      
-        for(String key : keys) {
-          out.writeUTF(key);
-          mWindowSettings.get(key).saveSettings(out);
-        }
-        
-        out.close();
+      out.writeInt(1); // write version
+    
+      out.writeInt(mWindowSettings.size());
+    
+      Set<String> keys = mWindowSettings.keySet();
+    
+      for(String key : keys) {
+        out.writeUTF(key);
+        mWindowSettings.get(key).saveSettings(out);
       }
-      else if(windowSettingsFile.isFile()) {
-        windowSettingsFile.delete();
-      }
+      
+      out.close();
+      
     } catch (FileNotFoundException e) { // Ignore
     } catch (IOException e) { // Ignore
     }
@@ -479,7 +476,7 @@ public class Settings {
   private static void loadWindowSettings() {
     try {
       try {
-        File windowSettingsFile = new File(Settings.getUserSettingsDirName(),"kernel.window.setting");
+        File windowSettingsFile = new File(Settings.getUserSettingsDirName(),WINDOW_SETTINGS_FILE);
         
         if(windowSettingsFile.isFile()) {
           ObjectInputStream in = new ObjectInputStream(new FileInputStream(windowSettingsFile));
@@ -1347,11 +1344,7 @@ public class Settings {
    * 
    * @since 2.7
    */
-  public static final void layoutWindow(String windowId, Window window, Dimension defaultSize) {
-    if(mWindowSettings == null) {
-      loadWindowSettings();
-    }
-    
+  public static final void layoutWindow(String windowId, Window window, Dimension defaultSize) {    
     WindowSetting setting = mWindowSettings.get(windowId);
     
     if(setting == null) {
