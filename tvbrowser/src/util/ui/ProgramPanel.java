@@ -884,7 +884,8 @@ private static Font getDynamicFontSize(Font font, int offset) {
    */
   public void addPluginContextMenuMouseListener(final ContextMenuIf caller) {
     addMouseListener(new MouseAdapter() {
-
+      private Thread mLeftClickThread;
+      
       public void mousePressed(MouseEvent e) {
         if (e.isPopupTrigger()) {
           showPopup(e, caller);
@@ -897,8 +898,26 @@ private static Font getDynamicFontSize(Font font, int offset) {
         }
       }
 
-      public void mouseClicked(MouseEvent evt) {
+      public void mouseClicked(final MouseEvent evt) {
+        if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1)) {
+          mLeftClickThread = new Thread() {
+            public void run() {
+              try {
+                sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
+                
+                Plugin.getPluginManager().handleProgramSingleClick(mProgram, caller);
+              } catch (InterruptedException e) { // ignore
+              }
+            }
+          };
+          
+          mLeftClickThread.setPriority(Thread.MIN_PRIORITY);
+          mLeftClickThread.start();
+        }
         if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
+          if(mLeftClickThread != null && mLeftClickThread.isAlive()) {
+            mLeftClickThread.interrupt();
+          }
           Plugin.getPluginManager().handleProgramDoubleClick(mProgram, caller);
         }
         if (SwingUtilities.isMiddleMouseButton(evt)

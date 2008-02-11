@@ -127,6 +127,8 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
   /** Settings for this Plugin */
   private Properties mSettings;
   
+  private Thread mLeftClickThread;
+  
   /**
    * Creates the Dialog
    *
@@ -586,15 +588,32 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
    *
    * @param e Event
    */
-  private void mouseClickedOnTable(MouseEvent e) {
-
-    Program prg = getProgramByClick(e);
+  private void mouseClickedOnTable(final MouseEvent e) {
+    final Program prg = getProgramByClick(e);
 
     if (prg == null) {
       return;
     }
-
+    if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1)) {
+      
+      mLeftClickThread = new Thread() {
+        public void run() {
+          try {
+            sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
+            
+            Plugin.getPluginManager().handleProgramSingleClick(prg, mPlugin);
+          } catch (InterruptedException e) { // ignore
+          }
+        }
+      };
+      
+      mLeftClickThread.setPriority(Thread.MIN_PRIORITY);
+      mLeftClickThread.start();
+    }
     if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
+      if(mLeftClickThread != null && mLeftClickThread.isAlive()) {
+        mLeftClickThread.interrupt();
+      }
       devplugin.Plugin.getPluginManager().handleProgramDoubleClick(prg, mPlugin);
     }
     if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {

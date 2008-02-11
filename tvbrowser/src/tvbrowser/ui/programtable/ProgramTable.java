@@ -102,11 +102,13 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
   private Runnable mCallback;
 
   private Thread mClickThread;
+  
+  private Thread mLeftClickThread;
 
   /**
    * index of the panel underneath the mouse
    */
-  private Point mMouseMatrix = new Point(-1, -1);
+  private Point mMouseMatrix = new Point(-1, -1);  
 
   /**
    * Creates a new instance of ProgramTable.
@@ -516,11 +518,30 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
   private void handleMouseClicked(MouseEvent evt) {
     mMouse = evt.getPoint();
     repaint();
-    Program program = getProgramAt(evt.getX(), evt.getY());
+    final Program program = getProgramAt(evt.getX(), evt.getY());
 
+    if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1)) {
+      mLeftClickThread = new Thread() {
+        public void run() {
+          try {
+            sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
+            
+            Plugin.getPluginManager().handleProgramSingleClick(program);
+          } catch (InterruptedException e) {
+            // IGNORE
+          }
+        }
+      };
+      
+      mLeftClickThread.setPriority(Thread.MIN_PRIORITY);
+      mLeftClickThread.start();
+    }
     if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
       if(mClickThread != null && mClickThread.isAlive()) {
         mClickThread.interrupt();
+      }
+      if(mLeftClickThread != null && mLeftClickThread.isAlive()) {
+        mLeftClickThread.interrupt();
       }
 
       if (program != null) {

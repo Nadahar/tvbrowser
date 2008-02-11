@@ -460,6 +460,30 @@ public class PluginManagerImpl implements PluginManager {
 
     return mExampleProgram;
   }
+  
+  public void handleProgramSingleClick(Program program) {
+    handleProgramSingleClick(program, null);
+  }
+
+  public void handleProgramSingleClick(Program program, ContextMenuIf caller) {
+    if (program == null || !Settings.propLeftSingleClickEnabled.getBoolean()) {
+      // Nothing to do
+      return;
+    }
+    
+    ContextMenuIf leftSingleClickIf = 
+      ContextMenuManager.getInstance().getLeftSingleClickIf();
+    
+    if (leftSingleClickIf == null) {
+      return;
+    }
+
+    if ((caller != null)  && (leftSingleClickIf.getId().equals(caller.getId()))) {
+      return;
+    }
+
+    handleAction(program, leftSingleClickIf.getContextMenuActions(program));
+  }
 
   /**
    * Handles a double click on a program.
@@ -503,28 +527,7 @@ public class PluginManagerImpl implements PluginManager {
       return;
     }
 
-
-    ActionMenu menu = defaultContextMenuIf.getContextMenuActions(program);
-    while (menu != null && menu.hasSubItems()) {
-      ActionMenu[] subItems = menu.getSubItems();
-      if (subItems.length>0) {
-        menu = subItems[0];
-      }
-      else {
-        menu = null;
-      }
-    }
-    if (menu == null) {
-      return;
-    }
-
-    Action action = menu.getAction();
-
-    if (action != null) {
-      ActionEvent evt = new ActionEvent(program, 0, (String)action.
-          getValue(Action.ACTION_COMMAND_KEY));
-      action.actionPerformed(evt);
-    }
+    handleAction(program, defaultContextMenuIf.getContextMenuActions(program));
   }
 
 
@@ -571,7 +574,10 @@ public class PluginManagerImpl implements PluginManager {
       return;
     }
 
-    ActionMenu menu = middleClickIf.getContextMenuActions(program);
+    handleAction(program, middleClickIf.getContextMenuActions(program));
+  }
+  
+  private void handleAction(Program program, ActionMenu menu) {
     while (menu != null && menu.hasSubItems()) {
       ActionMenu[] subItems = menu.getSubItems();
       if (subItems.length>0) {
@@ -592,7 +598,6 @@ public class PluginManagerImpl implements PluginManager {
           getValue(Action.ACTION_COMMAND_KEY));
       action.actionPerformed(evt);
     }
-
   }
 
 

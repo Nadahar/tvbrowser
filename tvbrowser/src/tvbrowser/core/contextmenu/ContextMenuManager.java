@@ -27,6 +27,7 @@
 
 package tvbrowser.core.contextmenu;
 
+import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +58,13 @@ import devplugin.SettingsItem;
 public class ContextMenuManager {
 
   private static ContextMenuManager mInstance;
+
+  /**
+   * The context menu interface that should be executed by default when 
+   * left single clicking a program in the program table. It is shown with a dark
+   * green font in the context menu.
+   */
+  private ContextMenuIf mDefaultLeftSingleClickMenuIf;
   
   /**
    * The context menu interface that should be executed by default when 
@@ -77,9 +85,20 @@ public class ContextMenuManager {
   }
   
   private void init() {
-    // Get the default context menu action
-    String id = Settings.propDefaultContextMenuIf.getString();
+    // Get the left single click context menu action
+    String id = Settings.propLeftSingleClickIf.getString();
     ContextMenuIf menuIf = getContextMenuIfForId(id);
+    if (menuIf == null) {
+      menuIf = getContextMenuIfForId(Settings.propLeftSingleClickIf.getDefault());
+      if (menuIf != null) {
+        Settings.propLeftSingleClickIf.setString(menuIf.getId());
+      }
+    }
+    setLeftSingleClickIf(menuIf);
+    
+    // Get the default context menu action
+    id = Settings.propDefaultContextMenuIf.getString();
+    menuIf = getContextMenuIfForId(id);
     if (menuIf == null) {
       menuIf = getContextMenuIfForId(Settings.propDefaultContextMenuIf.getDefault());
       if (menuIf != null) {
@@ -138,6 +157,20 @@ public class ContextMenuManager {
   }
   
   /**
+   * Gets the left single click context menu interface.
+   * <p>
+   * This is context menu that should be executed by default when single left clicking
+   * a program in the program table. It is shown with a dark green font in the context
+   * menu.
+   *
+   * @return The default context menu action or <code>null</code> if there is no
+   *         default context menu interface.
+   */
+  public ContextMenuIf getLeftSingleClickIf() {
+    return mDefaultLeftSingleClickMenuIf;
+  }
+  
+  /**
    * Gets the default context menu interface.
    * <p>
    * This is context menu that should be executed by default when double-clicking
@@ -163,6 +196,15 @@ public class ContextMenuManager {
    */
   public ContextMenuIf getMiddleClickIf() {
     return mDefaultMiddleClickIf;
+  }
+  
+  /**
+   * Sets the left single click context menu interface.
+   *
+   * @param value The ContextMenuIf to set as left single click context menu interface.
+   */
+  public void setLeftSingleClickIf(ContextMenuIf value) {
+    mDefaultLeftSingleClickMenuIf = value;
   }
   
   /**
@@ -293,6 +335,7 @@ public class ContextMenuManager {
    */
   public JMenu createContextMenuItems(ContextMenuIf callerIf, Program program, boolean markDefaultIf) {
     ArrayList<JMenuItem> items = new ArrayList<JMenuItem>();
+    ContextMenuIf leftSingleClickIf = getInstance().getLeftSingleClickIf();
     ContextMenuIf defaultIf = getInstance().getDefaultContextMenuIf();
     ContextMenuIf middleClickIf = getInstance().getMiddleClickIf();
     ContextMenuIf[] menuIfArr = getInstance().getAvailableContextMenuIfs(false, true);
@@ -340,6 +383,9 @@ public class ContextMenuManager {
         if (actionMenu != null) {
           JMenuItem menuItem = MenuUtil.createMenuItem(actionMenu);
           items.add(menuItem);
+          if (menuIf == leftSingleClickIf && markDefaultIf && Settings.propLeftSingleClickEnabled.getBoolean()) {
+            menuItem.setForeground(new Color(0,90,0));
+          }
           if (menuIf == defaultIf && menuIf == middleClickIf && markDefaultIf) {
             if (!actionMenu.hasSubItems() && actionMenu.getAction() != null) {
               menuItem.setFont(MenuUtil.CONTEXT_MENU_BOLDITALICFONT);

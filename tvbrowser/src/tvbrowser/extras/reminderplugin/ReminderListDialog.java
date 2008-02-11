@@ -62,6 +62,7 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.SettingsItem;
 
@@ -120,7 +121,8 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
     });
 
     mTable.addMouseListener(new MouseAdapter() {
-
+      private Thread mLeftClickThread;
+      
       public void mousePressed(MouseEvent evt) {
         if (evt.isPopupTrigger()) {
           showPopup(evt);
@@ -133,7 +135,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
         }
       }
 
-      public void mouseClicked(MouseEvent e) {
+      public void mouseClicked(final MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1)) {
           int column = mTable.columnAtPoint(e.getPoint());
 
@@ -144,8 +146,38 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
             ((MinutesCellRenderer) mTable.getCellRenderer(row, column)).trackSingleClick(e.getPoint(), mTable, height,
                 row, column);
           }
+          
+          mLeftClickThread = new Thread() {
+            public void run() {
+              
+              
+              try {
+                sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
+                
+                int column = mTable.columnAtPoint(e.getPoint());
+
+                if (column == 1)
+                  return;
+
+                int row = mTable.rowAtPoint(e.getPoint());
+
+                mTable.changeSelection(row, 0, false, false);
+                Program p = (Program) mTable.getModel().getValueAt(row, 0);
+                
+                Plugin.getPluginManager().handleProgramSingleClick(p, ReminderPluginProxy.getInstance());      
+              } catch (InterruptedException e) { // ignore
+              }
+            }
+          };
+          
+          mLeftClickThread.setPriority(Thread.MIN_PRIORITY);
+          mLeftClickThread.start();
         }
         if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
+          if(mLeftClickThread != null && mLeftClickThread.isAlive()) {
+            mLeftClickThread.interrupt();
+          }
+          
           int column = mTable.columnAtPoint(e.getPoint());
 
           if (column == 1)

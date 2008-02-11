@@ -85,6 +85,12 @@ abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
    *  @since 2.6 */
   public static final String DISABLED_ON_TASK_MENU = "DISABLED_ON_TASK_MENU";
   
+  /**
+   * The waiting time for single click performing.
+   * @since 2.7
+   */
+  public static final int SINGLE_CLICK_WAITING_TIME = 200;
+  
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(Plugin.class );

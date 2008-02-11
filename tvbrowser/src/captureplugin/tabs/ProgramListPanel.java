@@ -28,6 +28,7 @@ import captureplugin.CapturePlugin;
 import captureplugin.CapturePluginData;
 import captureplugin.drivers.DeviceIf;
 import captureplugin.utils.ProgramTimeComparator;
+import devplugin.Plugin;
 import devplugin.Program;
 import util.settings.PluginPictureSettings;
 import util.ui.Localizer;
@@ -115,7 +116,9 @@ public class ProgramListPanel extends JPanel {
         mProgramTable.getColumnModel().getColumn(1).setCellRenderer(new ProgramTableCellRenderer(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE)));
 
         mProgramTable.addMouseListener(new MouseAdapter() {
-
+            final static private int SINGLE_CLICK_WAITING_TIME = 200;
+            private long mLastLeftClickTime;
+          
             public void mousePressed(MouseEvent evt) {
               if (evt.isPopupTrigger()) {
                 showPopup(evt);
@@ -128,12 +131,36 @@ public class ProgramListPanel extends JPanel {
               }
             }
 
-            public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(final MouseEvent e) {
                 int column = mProgramTable.columnAtPoint(e.getPoint());
                 if (column != 1) {
                     return;
                 }
+                if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1)) {
+                  mLastLeftClickTime = e.getWhen();
+                  
+                  new Thread() {
+                    public void run() {
+                      setPriority(Thread.MIN_PRIORITY);
+                      
+                      try {
+                        sleep(SINGLE_CLICK_WAITING_TIME);
+                      } catch (InterruptedException e) { // ignore
+                      }
+                     
+                      if(e.getWhen() == mLastLeftClickTime) {
+                        int row = mProgramTable.rowAtPoint(e.getPoint());
+                        mProgramTable.changeSelection(row, 0, false, false);
+                        Program p = (Program) mProgramTableModel.getValueAt(row, 1);
+
+                        devplugin.Plugin.getPluginManager().handleProgramDoubleClick(p, CapturePlugin.getInstance());
+                      }
+                    }
+                  }.start();
+                }
                 if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
+                    mLastLeftClickTime = e.getWhen();
+                    
                     int row = mProgramTable.rowAtPoint(e.getPoint());
                     mProgramTable.changeSelection(row, 0, false, false);
                     Program p = (Program) mProgramTableModel.getValueAt(row, 1);
