@@ -1168,16 +1168,16 @@ public class Settings {
       mProp, "show.filterbar", true);
 
   public static final SplitViewProperty propViewRoot = new SplitViewProperty(
-      mProp, "view.root", false, true, 50);
+      mProp, "view.root", false, true, 200);
 
   public static final SplitViewProperty propViewMainframe = new SplitViewProperty(
-      mProp, "view.mainframe", false, false, 100);
+      mProp, "view.mainframe", false, false, 150);
 
   public static final SplitViewProperty propViewNavigation = new SplitViewProperty(
-      mProp, "view.navigation", true, true, 100);
+      mProp, "view.navigation", true, true, 150);
 
   public static final SplitViewProperty propViewDateChannel = new SplitViewProperty(
-      mProp, "view.date_channel", true, true, 100);
+      mProp, "view.date_channel", true, true, 150);
 
   public static final BooleanProperty propSplashShow = new BooleanProperty(
       mProp, "splash.show", true);
