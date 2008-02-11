@@ -333,7 +333,8 @@ public class ProgramList extends JList implements ChangeListener,
    */
   public void addMouseListeners(final ContextMenuIf caller) {
     addMouseListener(new MouseAdapter() {
-
+      private Thread mLeftSingleClickThread;
+      
       public void mousePressed(MouseEvent e) {
         if (e.isPopupTrigger()) {
           showPopup(e, caller);
@@ -346,10 +347,33 @@ public class ProgramList extends JList implements ChangeListener,
         }
       }
 
-      public void mouseClicked(MouseEvent e) {
-        PluginManager mng = Plugin.getPluginManager();
+      public void mouseClicked(final MouseEvent e) {
+        final PluginManager mng = Plugin.getPluginManager();
 
+        if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1)) {
+          mLeftSingleClickThread = new Thread() {
+            public void run() {
+              try {
+                Thread.sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
+                
+                int inx = locationToIndex(e.getPoint());
+                Program prog = (Program) ProgramList.this.getModel()
+                    .getElementAt(inx);
+
+                mng.handleProgramSingleClick(prog, caller);                
+              } catch (InterruptedException e) {
+                // ignore
+              }              
+            }
+          };
+          mLeftSingleClickThread.setPriority(Thread.MIN_PRIORITY);
+          mLeftSingleClickThread.start();
+        }
         if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
+          if(mLeftSingleClickThread != null && mLeftSingleClickThread.isAlive()) {
+            mLeftSingleClickThread.interrupt();
+          }
+          
           int inx = locationToIndex(e.getPoint());
           Program prog = (Program) ProgramList.this.getModel()
               .getElementAt(inx);

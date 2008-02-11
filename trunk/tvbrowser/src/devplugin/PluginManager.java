@@ -221,7 +221,33 @@ public interface PluginManager {
    */
   public Program getExampleProgram();
 
+  /**
+   * Handles a single left click on a program.
+   * <p>
+   * Executes the single left click context menu function. Plugins should use
+   * handleProgramDoubleClick(Program program, Plugin caller). It prevents the
+   * Plugin to be activated a second time.
+   *
+   * @param program The program to pass to the single left click context menu function.
+   *
+   * @since 2.7
+   */
+  public void handleProgramSingleClick(Program program);
 
+
+  /**
+   * Handles a single left click on a program.
+   * <p>
+   * Executes the default context menu plugin.
+   *
+   * @param program The program to pass to the default context menu function.
+   * @param caller The ContextMenuIf that calls this. Prevents the ContextMenuIf
+   *        to be activated twice
+   *
+   * @since 2.7
+   */
+  public void handleProgramSingleClick(Program program, ContextMenuIf caller);
+  
   /**
    * Handles a double click on a program.
    * <p>

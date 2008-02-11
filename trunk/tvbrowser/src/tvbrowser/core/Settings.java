@@ -930,6 +930,12 @@ public class Settings {
   public static final StringProperty propToolbarLocation = new StringProperty(
       mProp, "toolbarLocation", "north");
 
+  public static final BooleanProperty propLeftSingleClickEnabled = new BooleanProperty(
+      mProp, "leftSingleClickEnabled", true);
+  
+  public static final StringProperty propLeftSingleClickIf = new StringProperty(
+      mProp, "leftSingleClickIf", "programinfo.ProgramInfo");
+  
   public static final StringProperty propDefaultContextMenuIf = new StringProperty(
       mProp, "contextmenudefaultplugin", "programinfo.ProgramInfo");
 
