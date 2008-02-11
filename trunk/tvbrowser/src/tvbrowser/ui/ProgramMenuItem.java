@@ -150,16 +150,19 @@ public class ProgramMenuItem extends JMenuItem {
 
     addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
-        if(SwingUtilities.isLeftMouseButton(e)) {
-          if(Settings.propLeftSingleClickEnabled.getBoolean()) {
-            Plugin.getPluginManager().handleProgramSingleClick(mProgram);
+        if(e.getModifiersEx() == 0) {
+          if(SwingUtilities.isLeftMouseButton(e)) {
+            if(Settings.propLeftSingleClickEnabled.getBoolean()) {
+              Plugin.getPluginManager().handleProgramSingleClick(mProgram);
+            }
+            else {
+              Plugin.getPluginManager().handleProgramDoubleClick(mProgram);
+            }
           }
-          else {
-            Plugin.getPluginManager().handleProgramDoubleClick(mProgram);
+          if(SwingUtilities.isMiddleMouseButton(e)) {
+            Plugin.getPluginManager().handleProgramMiddleClick(mProgram);
           }
         }
-        if(SwingUtilities.isMiddleMouseButton(e))
-          Plugin.getPluginManager().handleProgramMiddleClick(mProgram);
       }
     });
       

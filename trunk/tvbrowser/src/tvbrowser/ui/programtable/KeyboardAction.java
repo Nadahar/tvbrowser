@@ -21,6 +21,7 @@ public class KeyboardAction implements ActionListener {
   public static final int KEY_DESELECT = 5;
   public static final int KEY_MIDDLECLICK = 6;
   public static final int KEY_DOUBLECLICK = 7;
+  public static final int KEY_SINGLECLICK = 8;
 
   private ProgramTableScrollPane mScrollPane;
 
@@ -55,6 +56,8 @@ public class KeyboardAction implements ActionListener {
           mScrollPane.handleMiddleClick();
         if (mType == KEY_DOUBLECLICK)
           mScrollPane.handleDoubleClick();
+        if (mType == KEY_SINGLECLICK)
+          mScrollPane.handleLeftSingleClick();
       };
     });
   }

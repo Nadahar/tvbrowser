@@ -664,6 +664,11 @@ public class MainFrame extends JFrame implements DateListener {
             KeyboardAction.KEY_DESELECT), stroke,
             JComponent.WHEN_IN_FOCUSED_WINDOW);
 
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_L, 0, true);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_SINGLECLICK), stroke,
+        JComponent.WHEN_IN_FOCUSED_WINDOW);
+    
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, true);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
         KeyboardAction.KEY_DOUBLECLICK), stroke,
