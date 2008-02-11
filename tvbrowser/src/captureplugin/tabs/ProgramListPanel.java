@@ -116,8 +116,7 @@ public class ProgramListPanel extends JPanel {
         mProgramTable.getColumnModel().getColumn(1).setCellRenderer(new ProgramTableCellRenderer(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE)));
 
         mProgramTable.addMouseListener(new MouseAdapter() {
-            final static private int SINGLE_CLICK_WAITING_TIME = 200;
-            private long mLastLeftClickTime;
+            private Thread mLeftSingleClickThread;
           
             public void mousePressed(MouseEvent evt) {
               if (evt.isPopupTrigger()) {
@@ -137,29 +136,28 @@ public class ProgramListPanel extends JPanel {
                     return;
                 }
                 if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1)) {
-                  mLastLeftClickTime = e.getWhen();
-                  
-                  new Thread() {
+                  mLeftSingleClickThread = new Thread() {
                     public void run() {
-                      setPriority(Thread.MIN_PRIORITY);
-                      
                       try {
-                        sleep(SINGLE_CLICK_WAITING_TIME);
-                      } catch (InterruptedException e) { // ignore
-                      }
-                     
-                      if(e.getWhen() == mLastLeftClickTime) {
+                        sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
+
                         int row = mProgramTable.rowAtPoint(e.getPoint());
                         mProgramTable.changeSelection(row, 0, false, false);
                         Program p = (Program) mProgramTableModel.getValueAt(row, 1);
 
-                        devplugin.Plugin.getPluginManager().handleProgramDoubleClick(p, CapturePlugin.getInstance());
+                        devplugin.Plugin.getPluginManager().handleProgramSingleClick(p, CapturePlugin.getInstance());
+                      } catch (InterruptedException e) { // ignore
                       }
                     }
-                  }.start();
+                  };
+                  
+                  mLeftSingleClickThread.setPriority(Thread.MIN_PRIORITY);
+                  mLeftSingleClickThread.start();
                 }
                 if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
-                    mLastLeftClickTime = e.getWhen();
+                    if(mLeftSingleClickThread != null && mLeftSingleClickThread.isAlive()) {
+                      mLeftSingleClickThread.interrupt();
+                    }
                     
                     int row = mProgramTable.rowAtPoint(e.getPoint());
                     mProgramTable.changeSelection(row, 0, false, false);
