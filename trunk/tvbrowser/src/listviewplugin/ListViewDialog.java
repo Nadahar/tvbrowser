@@ -591,11 +591,10 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
   private void mouseClickedOnTable(final MouseEvent e) {
     final Program prg = getProgramByClick(e);
 
-    if (prg == null || e.getModifiersEx() != 0) {
+    if (prg == null) {
       return;
     }
-    if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1)) {
-      
+    if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && e.getModifiersEx() == 0) {
       mLeftClickThread = new Thread() {
         public void run() {
           try {
@@ -610,13 +609,13 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
       mLeftClickThread.setPriority(Thread.MIN_PRIORITY);
       mLeftClickThread.start();
     }
-    if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
+    else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2) && e.getModifiersEx() == 0) {
       if(mLeftClickThread != null && mLeftClickThread.isAlive()) {
         mLeftClickThread.interrupt();
       }
       devplugin.Plugin.getPluginManager().handleProgramDoubleClick(prg, mPlugin);
     }
-    if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
+    else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
       devplugin.Plugin.getPluginManager().handleProgramMiddleClick(prg, mPlugin);
     }
   }

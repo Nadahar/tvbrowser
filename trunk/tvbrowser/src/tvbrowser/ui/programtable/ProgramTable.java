@@ -573,12 +573,10 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
     else if (SwingUtilities.isMiddleMouseButton(evt) && (evt.getClickCount() == 1)) {
       if (program != null) {
         deSelectItem();
-
+        
         // This is a middle click
         // -> Execute the program using the user defined middle click plugin
-        if(evt.getModifiersEx() == 0) {
-          Plugin.getPluginManager().handleProgramMiddleClick(program);
-        }
+        Plugin.getPluginManager().handleProgramMiddleClick(program);
       }
     }
   }

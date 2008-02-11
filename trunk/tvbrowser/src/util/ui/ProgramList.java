@@ -350,44 +350,42 @@ public class ProgramList extends JList implements ChangeListener,
       public void mouseClicked(final MouseEvent e) {
         final PluginManager mng = Plugin.getPluginManager();
         
-        if (e.getModifiersEx() == 0) {
-          if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1)) {
-            mLeftSingleClickThread = new Thread() {
-              public void run() {
-                try {
-                  Thread.sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
-                  
-                  int inx = locationToIndex(e.getPoint());
-                  Program prog = (Program) ProgramList.this.getModel()
-                      .getElementAt(inx);
-  
-                  mng.handleProgramSingleClick(prog, caller);                
-                } catch (InterruptedException e) {
-                  // ignore
-                }              
-              }
-            };
-            mLeftSingleClickThread.setPriority(Thread.MIN_PRIORITY);
-            mLeftSingleClickThread.start();
-          }
-          if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
-            if(mLeftSingleClickThread != null && mLeftSingleClickThread.isAlive()) {
-              mLeftSingleClickThread.interrupt();
+        if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && e.getModifiersEx() == 0) {
+          mLeftSingleClickThread = new Thread() {
+            public void run() {
+              try {
+                Thread.sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
+                
+                int inx = locationToIndex(e.getPoint());
+                Program prog = (Program) ProgramList.this.getModel()
+                    .getElementAt(inx);
+
+                mng.handleProgramSingleClick(prog, caller);                
+              } catch (InterruptedException e) {
+                // ignore
+              }              
             }
-            
-            int inx = locationToIndex(e.getPoint());
-            Program prog = (Program) ProgramList.this.getModel()
-                .getElementAt(inx);
-  
-            mng.handleProgramDoubleClick(prog, caller);
+          };
+          mLeftSingleClickThread.setPriority(Thread.MIN_PRIORITY);
+          mLeftSingleClickThread.start();
+        }
+        else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2) && e.getModifiersEx() == 0) {
+          if(mLeftSingleClickThread != null && mLeftSingleClickThread.isAlive()) {
+            mLeftSingleClickThread.interrupt();
           }
-          if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
-            int inx = locationToIndex(e.getPoint());
-            Program prog = (Program) ProgramList.this.getModel()
-                .getElementAt(inx);
-  
-            mng.handleProgramMiddleClick(prog, caller);
-          }
+          
+          int inx = locationToIndex(e.getPoint());
+          Program prog = (Program) ProgramList.this.getModel()
+              .getElementAt(inx);
+
+          mng.handleProgramDoubleClick(prog, caller);
+        }
+        else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
+          int inx = locationToIndex(e.getPoint());
+          Program prog = (Program) ProgramList.this.getModel()
+              .getElementAt(inx);
+
+          mng.handleProgramMiddleClick(prog, caller);
         }
       }
     });
