@@ -1889,13 +1889,13 @@ public class MainFrame extends JFrame implements DateListener {
     updateViews();
   }
 
-  public void restoreViews() {
+ /* public void restoreViews() {
     mRootNode.setProperty(Settings.propViewRoot.getDefault());
     mMainframeNode.setProperty(Settings.propViewMainframe.getDefault());
     mNavigationNode.setProperty(Settings.propViewNavigation.getDefault());
     mDateChannelNode.setProperty(Settings.propViewDateChannel.getDefault());
     mRootNode.update();
-  }
+  }*/
 
   /**
    * Makes the StatusBar visible
