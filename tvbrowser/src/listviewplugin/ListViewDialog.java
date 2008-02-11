@@ -591,7 +591,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
   private void mouseClickedOnTable(final MouseEvent e) {
     final Program prg = getProgramByClick(e);
 
-    if (prg == null) {
+    if (prg == null || e.getModifiersEx() != 0) {
       return;
     }
     if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1)) {

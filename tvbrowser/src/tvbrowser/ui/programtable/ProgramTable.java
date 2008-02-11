@@ -519,14 +519,18 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
     mMouse = evt.getPoint();
     repaint();
     final Program program = getProgramAt(evt.getX(), evt.getY());
-
-    if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1)) {
+    
+    if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1) && evt.getModifiersEx() == 0) {
       mLeftClickThread = new Thread() {
         public void run() {
           try {
             sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
             
-            Plugin.getPluginManager().handleProgramSingleClick(program);
+            if(program != null) {
+              deSelectItem();
+              
+              Plugin.getPluginManager().handleProgramSingleClick(program);
+            }
           } catch (InterruptedException e) {
             // IGNORE
           }
@@ -549,7 +553,10 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
 
         // This is a left double click
         // -> Execute the program using the user defined default plugin
-        Plugin.getPluginManager().handleProgramDoubleClick(program);
+        
+        if(evt.getModifiersEx() == 0) {
+          Plugin.getPluginManager().handleProgramDoubleClick(program);
+        }
       }
     }
     else if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1) &&
@@ -569,7 +576,9 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
 
         // This is a middle click
         // -> Execute the program using the user defined middle click plugin
-        Plugin.getPluginManager().handleProgramMiddleClick(program);
+        if(evt.getModifiersEx() == 0) {
+          Plugin.getPluginManager().handleProgramMiddleClick(program);
+        }
       }
     }
   }
@@ -788,10 +797,23 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
   }
 
   /**
+   * Starts the left single click Plugin.
+   */
+  public void startLeftSingleClickPluginFromKeyboard() {
+    if(mCurrentCol == -1 || mCurrentRow == -1) {
+      return;
+    }   
+
+    Program program = mModel.getProgramPanel(mCurrentCol, mCurrentRow).getProgram();
+
+    Plugin.getPluginManager().handleProgramSingleClick(program);   
+  }
+  
+  /**
    * Starts the double click Plugin.
    */
   public void startDoubleClickPluginFromKeyboard() {
-    if(mCurrentCol == -1 || mCurrentRow == -1) {
+    if(mCurrentCol == -1 || mCurrentRow == -1 || !Settings.propLeftSingleClickEnabled.getBoolean()) {
       return;
     }   
 

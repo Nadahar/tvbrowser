@@ -270,6 +270,13 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
   /**
    * Starts the double click Plugin.
    */
+  public void handleLeftSingleClick() {
+    mProgramTable.startLeftSingleClickPluginFromKeyboard();
+  }
+  
+  /**
+   * Starts the double click Plugin.
+   */
   public void handleDoubleClick() {
     mProgramTable.startDoubleClickPluginFromKeyboard();
   }
