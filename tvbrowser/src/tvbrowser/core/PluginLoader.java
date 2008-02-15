@@ -505,6 +505,11 @@ public class PluginLoader {
         }catch(Throwable t) {}
       }
       
+      try {
+        Method preInstancing = pluginClass.getMethod("preInstancing",new Class[0]);
+        preInstancing.invoke(pluginClass,new Object[0]);
+      }catch(Throwable ti) {}
+      
       plugin = pluginClass.newInstance();
     }
     catch (Throwable thr) {
