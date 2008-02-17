@@ -123,12 +123,59 @@ public class PluginManagerImpl implements PluginManager {
    */
   public Program getProgram(Date date, String progID) {
     TvDataBase db = TvDataBase.getInstance();
-
+    
     Channel ch = getChannelFromProgId(progID);
     if (ch != null && ChannelList.isSubscribedChannel(ch)) {
-      if(!ch.getTimeZone().equals(TimeZone.getDefault())) {        
-        String[] id = progID.split("_");
-        String[] hourMinute = id[id.length-1].split(":");
+      String[] id = progID.split("_");
+      String[] hourMinute = id[id.length-1].split(":");
+
+      if(hourMinute.length > 2) {
+        int timeZoneOffset = Integer.parseInt(hourMinute[2]);
+        int currentTimeZoneOffset = TimeZone.getDefault().getRawOffset()/60000;
+        
+        if(timeZoneOffset != currentTimeZoneOffset) {
+          int timeZoneDiff = currentTimeZoneOffset - timeZoneOffset;
+          
+          int hour = Integer.parseInt(hourMinute[0]) + (timeZoneDiff/60);
+          int minute = Integer.parseInt(hourMinute[1]) + (timeZoneDiff%60);
+          
+          if(hour >= 24) {
+            hour -= 24;
+            date = date.addDays(1);
+          }
+          else if(hour < 0) {
+            hour += 24;
+            date = date.addDays(-1);
+          }
+          
+          hourMinute[0] = String.valueOf(hour);
+          hourMinute[1] = String.valueOf(minute);
+          hourMinute[2] = String.valueOf(currentTimeZoneOffset);
+          
+          StringBuilder newId = new StringBuilder();
+          
+          for(int i = 0; i < id.length-1; i++) {
+            newId.append(id[i]).append("_");
+          }
+          
+          newId.append(hourMinute[0]).append(":").append(hourMinute[1]).append(":").append(hourMinute[2]);
+          
+          progID = newId.toString();
+        }
+      }
+      else {
+        StringBuilder newId = new StringBuilder();
+        
+        for(int i = 0; i < id.length-1; i++) {
+          newId.append(id[i]).append("_");
+        }
+        
+        newId.append(hourMinute[0]).append(":").append(hourMinute[1]).append(":").append(TimeZone.getDefault().getRawOffset()/60000);
+        
+        progID = newId.toString();
+      }      
+      
+      if(!ch.getTimeZone().equals(TimeZone.getDefault())) {
         int milliSeconds = Integer.parseInt(hourMinute[0]) * 60 * 60 * 1000 + Integer.parseInt(hourMinute[1]) * 60 * 1000;
 
         int diff = Math.abs(ch.getTimeZone().getRawOffset() - TimeZone.getDefault().getRawOffset());

@@ -26,6 +26,7 @@ import devplugin.ProgramFieldType;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -420,5 +421,64 @@ public class ProgramUtilities {
       }
       return null;
     }
+  }
+  
+  /**
+   * Gets the time zone corrected program id of the given program id.
+   * If the current time zone is the same like the time zone of the given
+   * id the given id will be returned.
+   * <p> 
+   * @param progID The id to get the time zone corrected for.
+   * @return The time zone corrected program id.
+   */
+  public static String getTimeZoneCorrectedProgramId(String progID) {
+    String[] id = progID.split("_");
+    String[] hourMinute = id[id.length-1].split(":");
+    
+    if(hourMinute.length > 2) {
+      int timeZoneOffset = Integer.parseInt(hourMinute[2]);
+      int currentTimeZoneOffset = TimeZone.getDefault().getRawOffset()/60000;
+      
+      if(timeZoneOffset != currentTimeZoneOffset) {
+        int timeZoneDiff = currentTimeZoneOffset - timeZoneOffset;
+        
+        int hour = Integer.parseInt(hourMinute[0]) + (timeZoneDiff/60);
+        int minute = Integer.parseInt(hourMinute[1]) + (timeZoneDiff%60);
+        
+        if(hour >= 24) {
+          hour -= 24;
+        }
+        else if(hour < 0) {
+          hour += 24;
+        }
+        
+        hourMinute[0] = String.valueOf(hour);
+        hourMinute[1] = String.valueOf(minute);
+        hourMinute[2] = String.valueOf(currentTimeZoneOffset);
+        
+        StringBuilder newId = new StringBuilder();
+        
+        for(int i = 0; i < id.length-1; i++) {
+          newId.append(id[i]).append("_");
+        }
+        
+        newId.append(hourMinute[0]).append(":").append(hourMinute[1]).append(":").append(hourMinute[2]);
+        
+        return newId.toString();
+      }
+    }
+    else {
+      StringBuilder newId = new StringBuilder();
+      
+      for(int i = 0; i < id.length-1; i++) {
+        newId.append(id[i]).append("_");
+      }
+      
+      newId.append(hourMinute[0]).append(":").append(hourMinute[1]).append(":").append(TimeZone.getDefault().getRawOffset()/60000);
+      
+      return newId.toString();
+    }
+    
+    return progID;
   }
 }

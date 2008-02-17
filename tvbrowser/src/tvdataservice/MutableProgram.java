@@ -34,6 +34,7 @@ import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
+import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -468,7 +469,7 @@ public class MutableProgram implements Program {
         String channelId = mChannel.getId();
         String country = mChannel.getCountry();
 
-        mId = (new StringBuffer(dataServiceId).append("_").append(groupId).append("_").append(country).append("_").append(channelId).append("_").append(getHours()).append(":").append(getMinutes())).toString();
+        mId = (new StringBuffer(dataServiceId).append("_").append(groupId).append("_").append(country).append("_").append(channelId).append("_").append(getHours()).append(":").append(getMinutes()).append(":").append(TimeZone.getDefault().getRawOffset()/60000)).toString();
       }
     }
     return mId;
