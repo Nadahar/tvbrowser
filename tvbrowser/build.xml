@@ -59,6 +59,7 @@
   <property name="tvbrowser-win.runtime.dir" value="${runtime.dir}/tvbrowser_win"/>
   <property name="tvbrowser-linux.runtime.dir" value="${runtime.dir}/tvbrowser_linux"/>
   <property name="tvbrowser-transportable.runtime.dir" value="${runtime.dir}/tvbrowser_transportable"/>
+  <property name="tvbrowser-nightly.runtime.dir" value="${runtime.dir}/tvbrowser_nightly"/>
   <property name="tvbrowser-mac.runtime.dir" value="${runtime.dir}/tvbrowser_mac"/>
   <property name="tvdatatools.runtime.dir" value="${runtime.dir}/tvdatatools"/>
   <property name="tvdatakit.runtime.dir" value="${runtime.dir}/tvdatakit"/>
@@ -127,6 +128,7 @@
     <echo message="  public-mac            Creates binaries for the Mac OS X (requires Mac OS X)"/>
     <echo message="  public-linux          Creates binaries for linux platforms (requires Linux)"/>
   	<echo message="  public-transportable  Creates platform-independent binaries for transportable version of TV-Browser (requires Windows)"/>
+  	<echo message="  public-nightly        Creates platform-independent binaries for nightly transportable version of TV-Browser (without platform dependent starters)"/>
     <echo message="  public-src            Creates a .zip file containing the full source code of TV-Browser"/>
     <echo message="  public-tvdatakit      Creates a .zip file containing the TV-Browser TV data kit" />
     <echo message="  public-doc            Generates the JavaDoc documentation."/>
@@ -705,9 +707,24 @@
     </zip>
   </target>
 
+  <target name="public-nightly" depends="runtime-transportable">
+  	<mkdir dir="${public.dir}"/>
+  	
+    <tstamp>
+      <format property="TODAY" pattern="yyyy-MM-dd"/>
+    </tstamp>
+  	
+  	<echo file="${tvbrowser-transportable.runtime.dir}/NIGHTLY_VALUES" append="false">${TODAY}-nightly</echo>
+  	
+	<zip destfile="${public.dir}/tvbrowser-${tvbrowser.version}-${TODAY}-nightly-transportable-bin.zip">
+		<zipfileset prefix="tvbrowser-nightly-transportable" dir="${tvbrowser-transportable.runtime.dir}"/>		
+	</zip>
+  	
+  </target>
+	
   <!-- Creates the release binaries (.zip) for the platform independent transportable TV-Browser version -->
   <target name="public-transportable" depends="transportable-exe">
-    <mkdir dir="${public.dir}"/>
+  	<mkdir dir="${public.dir}"/>
 
    	<copy todir="${tvbrowser-transportable.runtime.dir}">
    	  <fileset dir="${linux.dir}" includes="tvbrowser.sh"/>
