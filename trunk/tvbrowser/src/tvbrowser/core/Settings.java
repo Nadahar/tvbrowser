@@ -137,8 +137,14 @@ public class Settings {
   }
 
   public static String getUserSettingsDirName() {
+    String version = TVBrowser.ALL_VERSIONS[0];
+    
+    if(version.toLowerCase().indexOf("nightly") != -1) {
+      version = version.substring(0,version.indexOf("-"));
+    }
+    
     return new StringBuffer(getUserDirectoryName())
-        .append(File.separator).append(TVBrowser.ALL_VERSIONS[0]).toString();
+        .append(File.separator).append(version).toString();
   }
 
   /**

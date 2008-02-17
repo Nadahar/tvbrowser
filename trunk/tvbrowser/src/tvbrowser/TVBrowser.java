@@ -31,6 +31,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -114,13 +115,33 @@ public class TVBrowser {
   private static String curLookAndFeel;
   
   private static boolean mIsTransportable;
+  
+  private static boolean mIsStable = false;
+  
+  private static String mVersionAppendix = "";
+  
+  static {
+    File nightlyValues = new File("NIGHTLY_VALUES");
+    
+    if(!mIsStable && nightlyValues.isFile()) {
+      try {
+        RandomAccessFile in = new RandomAccessFile(nightlyValues, "r");
+        
+        mVersionAppendix = "-" + in.readLine();
+        
+        in.close();
+      } catch (Exception e) {
+        // ignore
+      }
+    }
+  }
 
   /* If you want to change the version string, add it to the beginning of this array.
      We need the old version strings to import the settings.
   */
   /** The string array with the names of the earlier versions. */
   public static final String[] ALL_VERSIONS = new String[]{
-          "2.7 (SVN)",
+          "2.7 (SVN)" + mVersionAppendix,
           "2.6.3",
           "2.6.3beta",
           "2.6.2",
@@ -163,7 +184,7 @@ public class TVBrowser {
   };
   
   /** The current version. */
-  public static final devplugin.Version VERSION=new devplugin.Version(2,70,false,ALL_VERSIONS[0] + ((mIsTransportable = new File("settings").isDirectory()) ? " transportable" : ""));
+  public static final devplugin.Version VERSION=new devplugin.Version(2,70,mIsStable,ALL_VERSIONS[0] + ((mIsTransportable = new File("settings").isDirectory()) ? " transportable" : ""));
 
   /** The title bar string. */
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
