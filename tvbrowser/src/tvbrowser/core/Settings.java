@@ -516,7 +516,7 @@ public class Settings {
         propProgramPanelWithMarkingsShowingBoder, propProgramPanelUsedDefaultMarkPriority,
         propProgramPanelMarkedLowerMediumPriorityColor, propProgramPanelMarkedMinPriorityColor,
         propProgramPanelMarkedMediumPriorityColor, propProgramPanelMarkedMaxPriorityColor,
-        propProgramTableColorOnAirLight, propProgramTableColorOnAirDark};
+        propProgramTableColorOnAirLight, propProgramTableColorOnAirDark, propProgramPanelForegroundColor};
 
     if (mProp.hasChanged(propArr)) {
       util.ui.ProgramPanel.updateFonts();
@@ -1063,7 +1063,10 @@ public class Settings {
   /** Color for Programs marked with MAX_PRIORITY */
   public static final ColorProperty propProgramPanelMarkedMaxPriorityColor = new ColorProperty(
       mProp, "programpanel.ColorMarkedMax", new Color(255, 180, 0, 110));
-
+  /** Color of the foreground of a program pranel */
+  public static final ColorProperty propProgramPanelForegroundColor = new ColorProperty(
+      mProp, "programpanel.ColorForeground", Color.black);
+  
   public static final BooleanProperty propMouseOver = new BooleanProperty(
       mProp, "programpanel.MouseOver", false);
 

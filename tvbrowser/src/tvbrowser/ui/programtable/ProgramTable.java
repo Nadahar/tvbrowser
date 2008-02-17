@@ -405,6 +405,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
       int rowCount = mModel.getRowCount(col);
       for (int row = 0; row < rowCount; row++) {
         ProgramPanel panel = mModel.getProgramPanel(col, row);
+        panel.setTextColor(Settings.propProgramPanelForegroundColor.getColor());
         panel.setProgramPanelSettings(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPictureDuration.getInt(), Settings.propPicturePluginIds.getStringArray()));
         panel.forceRepaint();
       }

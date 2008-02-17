@@ -101,6 +101,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   private JCheckBox mMouseOverCb;
 
   private ColorLabel mMouseOverColorLb;
+  
+  private ColorLabel mForegroundColorLb;
 
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
@@ -271,18 +273,34 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     });
 
     mSettingsPn.add(mConfigBackgroundStyleBt, cc.xy(6, 17));
+        
+    // Foreground color    
+    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(new RowSpec("5dlu"));
+    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(new RowSpec("5dlu"));
+
+    mForegroundColorLb = new ColorLabel(Settings.propProgramPanelForegroundColor.getColor());
+    mForegroundColorLb.setStandardColor(Settings.propProgramPanelForegroundColor.getDefaultColor());
+    ColorButton programPanelForegroundColorChangeBtn = new ColorButton(mForegroundColorLb);
+
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("foreground", "Foreground")), cc.xyw(1,19,8));
+    
+    mSettingsPn.add(new JLabel(mLocalizer.msg("color", "Color:")), cc.xy(2,21));
+    mSettingsPn.add(mForegroundColorLb, cc.xy(4,21));
+    mSettingsPn.add(programPanelForegroundColorChangeBtn, cc.xy(6,21));
     
     // Miscellaneous *********************************************
     layout.appendRow(new RowSpec("pref"));
     layout.appendRow(new RowSpec("5dlu"));
     layout.appendRow(new RowSpec("pref"));
 
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("Miscellaneous", "Miscellaneous")), cc.xyw(1,19,8));
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("Miscellaneous", "Miscellaneous")), cc.xyw(1,23,8));
 
     mMouseOverCb = new JCheckBox(mLocalizer.msg("MouseOver", "Mouse-Over-Effect"));
     mMouseOverCb.setSelected(Settings.propMouseOver.getBoolean());
 
-    mSettingsPn.add(mMouseOverCb, cc.xy(2,21));
+    mSettingsPn.add(mMouseOverCb, cc.xy(2,25));
     
     mMouseOverColorLb = new ColorLabel(Settings.propMouseOverColor.getColor());
     mMouseOverColorLb.setStandardColor(Settings.propMouseOverColor.getDefaultColor());
@@ -305,7 +323,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     pn1.add(mMouseOverColorLb);
     pn1.add(mouseOverColorChangeBtn);
 
-    mSettingsPn.add(pn1, cc.xy(4, 21));
+    mSettingsPn.add(pn1, cc.xy(4, 25));
     
     updateBackgroundStyleConfigureButton();
 
@@ -362,6 +380,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     Settings.propTableBackgroundStyle.setString(backgroundStyle);
 
     Settings.propColumnWidth.setInt(mColWidthSl.getValue());
+    Settings.propProgramPanelForegroundColor.setColor(mForegroundColorLb.getColor());
 
     Calendar cal = Calendar.getInstance();
     cal.setTime((Date) mStartOfDayTimeSp.getValue());
