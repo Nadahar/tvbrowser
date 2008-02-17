@@ -27,6 +27,8 @@ package tvdataservice;
 
 import java.util.ArrayList;
 
+import util.program.ProgramUtilities;
+
 //import util.io.IOUtilities;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
@@ -105,7 +107,9 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
    * @return  the program object having the specified ID.
    */
   public Program getProgram(String progID) {
+    progID = ProgramUtilities.getTimeZoneCorrectedProgramId(progID);
     int idlength = progID.split("_").length;
+    
     for(Program prog : mProgramList) {
       String id = prog.getID();
       if(idlength < 4) {
