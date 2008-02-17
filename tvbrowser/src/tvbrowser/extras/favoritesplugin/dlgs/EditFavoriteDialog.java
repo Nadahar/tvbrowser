@@ -185,8 +185,9 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
     rootPn.add(BorderLayout.NORTH, content);
     rootPn.add(BorderLayout.SOUTH, buttons.getPanel());
-        
+    
     getRootPane().setDefaultButton(okBtn);
+    pack();
   }
   
   private JPanel createTitleChangePanel() {
