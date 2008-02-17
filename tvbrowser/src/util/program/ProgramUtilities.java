@@ -430,6 +430,7 @@ public class ProgramUtilities {
    * <p> 
    * @param progID The id to get the time zone corrected for.
    * @return The time zone corrected program id.
+   * @since 2.7
    */
   public static String getTimeZoneCorrectedProgramId(String progID) {
     String[] id = progID.split("_");
