@@ -128,7 +128,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   private Program mProgram;
 
   /** Color of the Text */
-  private Color mTextColor = Color.BLACK;
+  private Color mTextColor = Settings.propProgramPanelForegroundColor.getColor();
 
   /** Panel under a Mouse ? */
   private boolean mMouseOver = false;
@@ -745,8 +745,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
     }
     
     // Draw all the text
-    if (PAINT_EXPIRED_PROGRAMS_PALE && mProgram.isExpired()
-        && mTextColor.equals(Color.BLACK)) {
+    if (PAINT_EXPIRED_PROGRAMS_PALE && mProgram.isExpired()) {
       setForeground(Color.gray);
       grp.setColor(Color.gray);
     } else {
