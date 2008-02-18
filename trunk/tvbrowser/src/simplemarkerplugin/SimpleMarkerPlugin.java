@@ -355,10 +355,11 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     
     mHasRightToUpdate = true;
     updateTree();
-
     if (mHasToUpdate) {
       handleTvDataUpdateFinished();
     }
+    
+    
   }
   
   private void showProgramsList() {
@@ -458,6 +459,8 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
         list.createNodes(temp, false);
       }
     }
+    
+    node.update();
   }
 
   protected ImageIcon createIconForTree(int i) {
