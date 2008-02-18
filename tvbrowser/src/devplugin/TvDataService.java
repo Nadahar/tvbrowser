@@ -127,5 +127,13 @@ public interface TvDataService {
    * Gets information about this TvDataService
    */
   public PluginInfo getInfo();
+  
+  /**
+   * Gets if the data service supports auto upate of data.
+   * @return <code>True</code> if the data service supports the auto update,
+   * <code>false</code> otherwise.
+   * @since 2.7
+   */
+  public boolean supportsAutoUpdate();
 
 }

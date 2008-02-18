@@ -1338,6 +1338,10 @@ public class Settings {
   public static final BooleanProperty propPluginViewIsLeft = new BooleanProperty(
       mProp, "pluginViewIsLeft", true);
   
+  /** The time between auto updates of data services */
+  public static final IntProperty propDataServiceAutoUpdateTime = new IntProperty(
+      mProp, "dataServiceAutoUpdateTime", 30);
+  
   /**
    * Sets the window position and size for the given window with the values of the given id.
 

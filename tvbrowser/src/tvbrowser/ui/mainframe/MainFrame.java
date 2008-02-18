@@ -43,6 +43,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Locale;
@@ -199,12 +200,16 @@ public class MainFrame extends JFrame implements DateListener {
 
   private boolean mSettingsWillBeOpened;
   
+  private long mLastAutoUpdateRun;
+  
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
     mIsVisible = false;
     mSettingsWillBeOpened = false;
     
     mLastTimerMinutesAfterMidnight = -1;
+    mLastAutoUpdateRun = System.currentTimeMillis();
+    
     mChannelDateArr = null;
     mOnAirRowProgramsArr = null;
     mStatusBar = new StatusBar();
@@ -1045,6 +1050,21 @@ public class MainFrame extends JFrame implements DateListener {
     mStarting = false;
   }
   
+  private void runAutoUpdate() {
+    ArrayList<TvDataServiceProxy> dataServices = new ArrayList<TvDataServiceProxy>();
+    TvDataServiceProxy[] dataServicesArr = TvDataServiceProxyManager.getInstance().getTvDataServices(Settings.propDataServicesForUpdate.getStringArray());
+    
+    for(TvDataServiceProxy dataService : dataServicesArr) {
+      if(dataService.supportsAutoUpdate()) {
+        dataServices.add(dataService);
+      }
+    }
+    
+    if(!dataServices.isEmpty() && licenseForTvDataServicesWasAccepted(dataServices.toArray(new TvDataServiceProxy[dataServices.size()]))) {
+      runUpdateThread(14, dataServices.toArray(new TvDataServiceProxy[dataServices.size()]));
+    }
+  }
+  
   /**
    * Resets the arrays of on air programs for relaoding all.
    */
@@ -1143,6 +1163,10 @@ public class MainFrame extends JFrame implements DateListener {
     
     if (mPluginView != null) {
       mPluginView.repaint();
+    }
+    
+    if (mLastAutoUpdateRun + Settings.propDataServiceAutoUpdateTime.getInt() * 60000 >= System.currentTimeMillis() && !TvDataUpdater.getInstance().isDownloading()) {
+      runAutoUpdate();
     }
     
     if (date.equals(mCurrentDay)) {
@@ -1347,6 +1371,7 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   private void onDownloadStart() {
+    mLastAutoUpdateRun = System.currentTimeMillis();
     mToolBar.updateUpdateButton(true);
     mMenuBar.showStopMenuItem();
     Settings.propLastDownloadDate.setDate(Date.getCurrentDate());
