@@ -136,4 +136,14 @@ public class DefaultTvDataServiceProxy extends AbstractTvDataServiceProxy {
   public void handleTvBrowserStartFinished() {
     mTvDataService.handleTvBrowserStartFinished();
   }
+  
+  /**
+   * Gets if the data service supports auto upate of data.
+   * @return <code>True</code> if the data service supports the auto update,
+   * <code>false</code> otherwise.
+   * @since 2.7
+   */
+  public boolean supportsAutoUpdate() {
+    return mTvDataService.supportsAutoUpdate();
+  }
 }
