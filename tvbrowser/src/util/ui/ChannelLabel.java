@@ -41,7 +41,6 @@ import devplugin.Channel;
 public class ChannelLabel extends JLabel {
 
   /** A Icon-Cache for Perfomance-Reasons*/
-//  static private WeakHashMap<Icon,Icon> ICONCACHE = new WeakHashMap<Icon,Icon>();
   static private WeakHashMap<Channel,Icon> ICONCACHE = new WeakHashMap<Channel,Icon>();
   
   /**
