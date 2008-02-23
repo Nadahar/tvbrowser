@@ -513,7 +513,7 @@ public class PluginManagerImpl implements PluginManager {
   }
 
   public void handleProgramSingleClick(Program program, ContextMenuIf caller) {
-    if (program == null || !Settings.propLeftSingleClickEnabled.getBoolean()) {
+    if (program == null) {
       // Nothing to do
       return;
     }

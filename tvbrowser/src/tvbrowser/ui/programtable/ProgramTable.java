@@ -812,7 +812,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
    * Starts the double click Plugin.
    */
   public void startDoubleClickPluginFromKeyboard() {
-    if(mCurrentCol == -1 || mCurrentRow == -1 || !Settings.propLeftSingleClickEnabled.getBoolean()) {
+    if(mCurrentCol == -1 || mCurrentRow == -1) {
       return;
     }   
 
