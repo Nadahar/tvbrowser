@@ -27,13 +27,9 @@
 package tvbrowser.ui.settings;
 
 import java.awt.Component;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-
 import javax.swing.Action;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -42,6 +38,7 @@ import javax.swing.JPanel;
 import tvbrowser.core.Settings;
 import tvbrowser.core.contextmenu.ConfigMenuItem;
 import tvbrowser.core.contextmenu.ContextMenuManager;
+import tvbrowser.core.contextmenu.DoNothingContextMenuItem;
 import tvbrowser.core.contextmenu.LeaveFullScreenMenuItem;
 import tvbrowser.core.contextmenu.SeparatorMenuItem;
 import tvbrowser.core.icontheme.IconLoader;
@@ -68,8 +65,6 @@ public class MausSettingsTab implements devplugin.SettingsTab {
   private JComboBox mDoubleClickBox;
 
   private JComboBox mMiddleClickBox;
-  
-  private JCheckBox mLeftSingleClickEnabled;
 
   public JPanel createSettingsPanel() {
     mLeftSingleClickIf = ContextMenuManager.getInstance().getLeftSingleClickIf();
@@ -77,7 +72,7 @@ public class MausSettingsTab implements devplugin.SettingsTab {
     mMiddleClickIf = ContextMenuManager.getInstance().getMiddleClickIf();
 
     JPanel contentPanel = new JPanel(new FormLayout("5dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu",
-        "pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
+        "pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
     contentPanel.setBorder(Borders.DIALOG_BORDER);
 
     CellConstraints cc = new CellConstraints();
@@ -85,48 +80,32 @@ public class MausSettingsTab implements devplugin.SettingsTab {
         1, 6));    
     
     contentPanel.add(new JLabel(mLocalizer.msg("MouseButtons", "Mouse Buttons:")), cc.xyw(2, 3, 4));
-
-    mLeftSingleClickEnabled = new JCheckBox(mLocalizer.msg("leftClickEnabled","Left single click action enabled"), Settings.propLeftSingleClickEnabled.getBoolean());
-
-    contentPanel.add(mLeftSingleClickEnabled, cc.xyw(2,5,3));
     
-    final JLabel label = new JLabel(mLocalizer.msg("leftSingleClickLabel", "Left Single Click"));
-    
-    contentPanel.add(label, cc.xy(2, 7));
+    contentPanel.add(new JLabel(mLocalizer.msg("leftSingleClickLabel", "Left Single Click")), cc.xy(2, 5));
     
     mLeftSingleClickBox = new JComboBox();
     mLeftSingleClickBox.setSelectedItem(mLeftSingleClickIf);
     mLeftSingleClickBox.setMaximumRowCount(15);
     
     mLeftSingleClickBox.setRenderer(new ContextMenuCellRenderer());
-    contentPanel.add(mLeftSingleClickBox, cc.xy(4, 7));
+    contentPanel.add(mLeftSingleClickBox, cc.xy(4, 5));
     
-    label.setEnabled(mLeftSingleClickEnabled.isSelected());
-    mLeftSingleClickBox.setEnabled(mLeftSingleClickEnabled.isSelected());
-    
-    mLeftSingleClickEnabled.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        label.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-        mLeftSingleClickBox.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-      }
-    });
-    
-    contentPanel.add(new JLabel(mLocalizer.msg("doubleClickLabel", "Double Click")), cc.xy(2, 9));
+    contentPanel.add(new JLabel(mLocalizer.msg("doubleClickLabel", "Double Click")), cc.xy(2, 7));
     
     mDoubleClickBox = new JComboBox();
     mDoubleClickBox.setSelectedItem(mDefaultIf);
     mDoubleClickBox.setMaximumRowCount(15);
     
     mDoubleClickBox.setRenderer(new ContextMenuCellRenderer());
-    contentPanel.add(mDoubleClickBox, cc.xy(4, 9));
+    contentPanel.add(mDoubleClickBox, cc.xy(4, 7));
 
-    contentPanel.add(new JLabel(mLocalizer.msg("middleClickLabel", "Middle Click")), cc.xy(2, 11));
+    contentPanel.add(new JLabel(mLocalizer.msg("middleClickLabel", "Middle Click")), cc.xy(2, 9));
     mMiddleClickBox = new JComboBox();
     mMiddleClickBox.setSelectedItem(mMiddleClickIf);
     mMiddleClickBox.setMaximumRowCount(15);
     
     mMiddleClickBox.setRenderer(new ContextMenuCellRenderer());
-    contentPanel.add(mMiddleClickBox, cc.xy(4, 11));
+    contentPanel.add(mMiddleClickBox, cc.xy(4, 9));
 
     fillListbox();
 
@@ -138,6 +117,10 @@ public class MausSettingsTab implements devplugin.SettingsTab {
     mDoubleClickBox.removeAllItems();
     mMiddleClickBox.removeAllItems();
 
+    mLeftSingleClickBox.addItem(DoNothingContextMenuItem.getInstance());
+    mDoubleClickBox.addItem(DoNothingContextMenuItem.getInstance());
+    mMiddleClickBox.addItem(DoNothingContextMenuItem.getInstance());
+    
     ContextMenuIf[] menuIfList = ContextMenuManager.getInstance().getAvailableContextMenuIfs(true, false);
     Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
     for (int i = 0; i < menuIfList.length; i++) {
@@ -169,8 +152,6 @@ public class MausSettingsTab implements devplugin.SettingsTab {
     } else {
       Settings.propLeftSingleClickIf.setString(null);
     }
-    
-    Settings.propLeftSingleClickEnabled.setBoolean(mLeftSingleClickEnabled.isSelected());
     
     ContextMenuManager.getInstance().setDefaultContextMenuIf(mDefaultIf);
     if (mDefaultIf != null) {

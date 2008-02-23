@@ -151,6 +151,9 @@ public class ContextMenuManager {
         return ConfigMenuItem.getInstance();
       else if(id.compareTo(LeaveFullScreenMenuItem.LEAVEFULLSCREEN) == 0) 
         return LeaveFullScreenMenuItem.getInstance();
+      else if(id.compareTo(DoNothingContextMenuItem.DONOTHING) == 0) {
+        return DoNothingContextMenuItem.getInstance();
+      }
     }
     
     return null;
@@ -383,20 +386,20 @@ public class ContextMenuManager {
         if (actionMenu != null) {
           JMenuItem menuItem = MenuUtil.createMenuItem(actionMenu);
           items.add(menuItem);
-          if (menuIf == leftSingleClickIf && markDefaultIf && Settings.propLeftSingleClickEnabled.getBoolean()) {
+          if (menuIf == leftSingleClickIf && markDefaultIf && !menuIf.equals(DoNothingContextMenuItem.getInstance())) {
             menuItem.setForeground(new Color(0,90,0));
           }
-          if (menuIf == defaultIf && menuIf == middleClickIf && markDefaultIf) {
+          if (menuIf == defaultIf && menuIf == middleClickIf && markDefaultIf && !menuIf.equals(DoNothingContextMenuItem.getInstance())) {
             if (!actionMenu.hasSubItems() && actionMenu.getAction() != null) {
               menuItem.setFont(MenuUtil.CONTEXT_MENU_BOLDITALICFONT);
             }
           }
-          else if (menuIf == defaultIf && markDefaultIf) {
+          else if (menuIf == defaultIf && markDefaultIf && !menuIf.equals(DoNothingContextMenuItem.getInstance())) {
             if (!actionMenu.hasSubItems() && actionMenu.getAction() != null) {
               menuItem.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
             }
           }
-          else if (menuIf == middleClickIf && markDefaultIf) {
+          else if (menuIf == middleClickIf && markDefaultIf && !menuIf.equals(DoNothingContextMenuItem.getInstance())) {
             if (!actionMenu.hasSubItems() && actionMenu.getAction() != null) {
               menuItem.setFont(MenuUtil.CONTEXT_MENU_ITALICFONT);
             }

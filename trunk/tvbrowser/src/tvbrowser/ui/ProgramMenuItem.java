@@ -41,6 +41,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import tvbrowser.core.Settings;
+import tvbrowser.core.contextmenu.ContextMenuManager;
+import tvbrowser.core.contextmenu.DoNothingContextMenuItem;
 import util.ui.Localizer;
 import util.ui.TextAreaIcon;
 import util.ui.UiUtilities;
@@ -151,7 +153,7 @@ public class ProgramMenuItem extends JMenuItem {
     addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
         if(SwingUtilities.isLeftMouseButton(e)) {
-          if(Settings.propLeftSingleClickEnabled.getBoolean()) {
+          if(!ContextMenuManager.getInstance().getLeftSingleClickIf().equals(DoNothingContextMenuItem.getInstance())) {
             Plugin.getPluginManager().handleProgramSingleClick(mProgram);
           }
           else {
