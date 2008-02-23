@@ -42,7 +42,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.net.URL;
 
+import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.io.IOUtilities;
 
 /**
@@ -100,6 +102,8 @@ public class Localizer {
   /** The logger for this class. */  
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(Localizer.class.getName());
+  
+  private static HashMap<String, String> standardLocalizations;
 
   /**
    * To avoid the creation of to much object, this array is used for calls using
@@ -276,6 +280,7 @@ public class Localizer {
    */  
   public String msg(String key, String defaultMsg, Object[] args) {
     String msg = msg(key, defaultMsg);
+    checkMessage(key, msg);
     
     // Workaround: The MessageFormat uses the ' char for quoting strings.
     //             so the "{0}" in "AB '{0}' CD" will not be replaced.
@@ -319,6 +324,7 @@ public class Localizer {
     if (mBundle != null) {
       try {
         msg = mBundle.getString(key);
+        checkMessage(key, msg);
       }
       catch (MissingResourceException exc) {
         //Empty
@@ -508,6 +514,30 @@ public class Localizer {
     }
     
     return value;
+  }
+  
+  private void checkMessage(String key, String localizedMessage) {
+    if (TVBrowser.isStable()) {
+      return;
+    }
+    if (mKeyPrefix.equals("Localizer.")) {
+      return;
+    }
+    if (standardLocalizations == null) {
+      standardLocalizations = new HashMap<String, String>(20);
+      ResourceBundle standardBundle = Localizer.getLocalizerFor(Localizer.class).mBundle;
+      Enumeration<String> standardKeys = standardBundle.getKeys();
+      while (standardKeys.hasMoreElements()) {
+        String standardKey = standardKeys.nextElement();
+        if (standardKey.startsWith("Localizer.")) {
+          standardLocalizations.put(standardBundle.getString(standardKey).toLowerCase(), standardKey);
+        }
+      }
+    }
+    if (standardLocalizations.containsKey(localizedMessage.toLowerCase())) {
+      String standardKey = standardLocalizations.get(localizedMessage.toLowerCase());
+      mLog.warning("Localization of message '" + key + "' should be replaced by Localizer.getLocalization(" + standardKey.substring(0,10)+standardKey.substring(10).toUpperCase() +")");
+    }
   }
 
 }

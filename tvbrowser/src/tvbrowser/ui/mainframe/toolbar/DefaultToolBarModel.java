@@ -143,8 +143,8 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
             "system-software-update", 16), IconLoader.getInstance()
             .getIconFromTheme("apps", "system-software-update", 22),
         ToolBar.BUTTON_ACTION, this);
-    mSettingsAction = createAction(TVBrowser.mLocalizer.msg("button.settings",
-        "Settings"), "#settings", MainFrame.mLocalizer.msg("menuinfo.settings",
+    mSettingsAction = createAction(Localizer.getLocalization(Localizer.I18N_SETTINGS),
+        "#settings", MainFrame.mLocalizer.msg("menuinfo.settings",
         ""), IconLoader.getInstance().getIconFromTheme("category",
         "preferences-desktop", 16), IconLoader.getInstance().getIconFromTheme(
         "category", "preferences-desktop", 22), ToolBar.BUTTON_ACTION, this);

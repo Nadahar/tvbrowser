@@ -30,6 +30,8 @@ import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import util.ui.Localizer;
+
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -118,7 +120,7 @@ class PluginInfoPanel extends JPanel {
 
     if (mShowSettingsSeparator) {
       add(DefaultComponentFactory.getInstance().createSeparator(
-          mLocalizer.msg("settings", "Settings")), cc.xyw(1, ++mYCount, 5));
+          Localizer.getLocalization(Localizer.I18N_SETTINGS)), cc.xyw(1, ++mYCount, 5));
     }
   }
 
