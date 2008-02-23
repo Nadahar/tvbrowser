@@ -64,6 +64,7 @@ import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
 import util.ui.CaretPositionCorrector;
+import util.ui.Localizer;
 import util.ui.TimeFormatter;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -505,7 +506,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     buttonPn.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
     content.add(buttonPn, BorderLayout.SOUTH);
 
-    JButton closeButton = new JButton(mLocalizer.msg("close", "Close"));
+    JButton closeButton = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
     closeButton.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent evt) {

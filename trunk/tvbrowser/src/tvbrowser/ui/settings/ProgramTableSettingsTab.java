@@ -177,7 +177,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
 
     mSettingsPn.add(sliderPn, cc.xyw(2,7,3));
     
-    mDefaultBtn = new JButton(mLocalizer.msg("reset", "reset"));
+    mDefaultBtn = new JButton(Localizer.getLocalization(Localizer.I18N_DEFAULT));
     mDefaultBtn.addActionListener(this);
 
     mSettingsPn.add(mDefaultBtn, cc.xy(6,7));

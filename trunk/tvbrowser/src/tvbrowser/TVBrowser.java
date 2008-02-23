@@ -1042,7 +1042,17 @@ public class TVBrowser {
   public static boolean isTransportable() {
     return mIsTransportable;
   }
+
+  /**
+   * get whether this is a development version or a stable build
+   * @return if stable
+   * @since 2.7
+   */
+  public static boolean isStable() {
+    return mIsStable;
+  }
 }
+
   class FileLoggingHandler extends Handler {
 
     private Formatter mFormatter;

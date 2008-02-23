@@ -43,6 +43,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import util.browserlauncher.Launch;
 import util.ui.LinkButton;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.factories.Borders;
@@ -121,7 +122,7 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
     mFileTextField.setText(Settings.propUserDefinedWebbrowser.getString());
     mSettingsPn.add(mFileTextField, cc.xy(3, 13));
     
-    mChooseButton = new JButton(mLocalizer.msg("choose", "Choose"));
+    mChooseButton = new JButton(Localizer.getLocalization(Localizer.I18N_SELECT));
     mChooseButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
         if (mFileChooser==null) {
