@@ -28,6 +28,7 @@ package tvbrowser.core.tvdataservice;
 
 import java.io.File;
 import java.util.Properties;
+import java.util.logging.Logger;
 import java.awt.*;
 
 import tvdataservice.SettingsPanel;
@@ -39,8 +40,11 @@ import devplugin.Date;
 import devplugin.PluginInfo;
 import devplugin.ProgressMonitor;
 
-
 public class DefaultTvDataServiceProxy extends AbstractTvDataServiceProxy {
+
+  /** The logger for this class */
+  private static java.util.logging.Logger mLog = Logger
+      .getLogger(DefaultTvDataServiceProxy.class.getName());
 
   public devplugin.AbstractTvDataService mTvDataService;
 
@@ -48,102 +52,193 @@ public class DefaultTvDataServiceProxy extends AbstractTvDataServiceProxy {
     mTvDataService = service;
   }
 
+  private void logError(Throwable e, String action) {
+    mLog.severe("The TV data service '" + mTvDataService.getInfo().getName()
+        + "' has caused an error during " + action + ": "
+        + e.getLocalizedMessage());
+  }
 
   public void setWorkingDirectory(File dataDir) {
-    mTvDataService.setWorkingDirectory(dataDir);
+    try {
+      mTvDataService.setWorkingDirectory(dataDir);
+    } catch (Throwable e) {
+      logError(e, "set working directory");
+    }
   }
 
   public ChannelGroup[] getAvailableGroups() {
-    return mTvDataService.getAvailableGroups();
+    try {
+      return mTvDataService.getAvailableGroups();
+    } catch (Throwable t) {
+      logError(t, "get available groups");
+    }
+    return null;
   }
 
-  public void updateTvData(TvDataUpdateManager updateManager, Channel[] channelArr, Date startDate, int dateCount, ProgressMonitor monitor) throws TvBrowserException {
-    mTvDataService.updateTvData(updateManager,  channelArr, startDate, dateCount, monitor);
+  public void updateTvData(TvDataUpdateManager updateManager,
+      Channel[] channelArr, Date startDate, int dateCount,
+      ProgressMonitor monitor) throws TvBrowserException {
+    try {
+      mTvDataService.updateTvData(updateManager, channelArr, startDate,
+          dateCount, monitor);
+    } catch (Throwable t) {
+      logError(t, "update tv data");
+    }
   }
 
   public void loadSettings(Properties settings) {
-    mTvDataService.loadSettings(settings);
+    try {
+      mTvDataService.loadSettings(settings);
+    } catch (Throwable t) {
+      logError(t, "load settings");
+    }
   }
 
   public Properties storeSettings() {
-    return mTvDataService.storeSettings();
+    try {
+      return mTvDataService.storeSettings();
+    } catch (Throwable e) {
+      logError(e, "store settings");
+      return null;
+    }
   }
 
   public boolean hasSettingsPanel() {
-    return mTvDataService.hasSettingsPanel();
+    try {
+      return mTvDataService.hasSettingsPanel();
+    } catch (Throwable t) {
+      logError(t, "has settings panel");
+    }
+    return false;
   }
 
   public SettingsPanel getSettingsPanel() {
-    return mTvDataService.getSettingsPanel();
+    try {
+      return mTvDataService.getSettingsPanel();
+    } catch (Throwable t) {
+      logError(t, "get settings panel");
+    }
+    return null;
   }
 
   public Channel[] getAvailableChannels(ChannelGroup group) {
-    return mTvDataService.getAvailableChannels(group);
+    try {
+      return mTvDataService.getAvailableChannels(group);
+    } catch (Throwable t) {
+      logError(t, "get available channels");
+    }
+    return null;
   }
 
-  public Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException {
-    return mTvDataService.checkForAvailableChannels(group, monitor);
+  public Channel[] checkForAvailableChannels(ChannelGroup group,
+      ProgressMonitor monitor) throws TvBrowserException {
+    try {
+      return mTvDataService.checkForAvailableChannels(group, monitor);
+    } catch (Throwable t) {
+      logError(t, "check available channels");
+    }
+    return null;
   }
 
-  public ChannelGroup[] checkForAvailableGroups(ProgressMonitor monitor) throws TvBrowserException {
-    return mTvDataService.checkForAvailableChannelGroups(monitor);
+  public ChannelGroup[] checkForAvailableGroups(ProgressMonitor monitor)
+      throws TvBrowserException {
+    try {
+      return mTvDataService.checkForAvailableChannelGroups(monitor);
+    } catch (Throwable t) {
+      logError(t, "check available groups");
+    }
+    return null;
   }
 
   public boolean supportsDynamicChannelList() {
-    return mTvDataService.supportsDynamicChannelList();
+    try {
+      return mTvDataService.supportsDynamicChannelList();
+    } catch (Throwable t) {
+      logError(t, "supports dynamic channels");
+    }
+    return false;
   }
 
   public boolean supportsDynamicChannelGroups() {
-    return mTvDataService.supportsDynamicChannelGroups();
+    try {
+      return mTvDataService.supportsDynamicChannelGroups();
+    } catch (Throwable t) {
+      logError(t, "supports dynamic groups");
+    }
+    return false;
   }
 
   public PluginInfo getInfo() {
-    return mTvDataService.getInfo();
+    try {
+      return mTvDataService.getInfo();
+    } catch (Throwable t) {
+      logError(t, "get plugin info");
+    }
+    return null;
   }
 
   public String getId() {
     return mTvDataService.getClass().getName();
   }
 
-
   /**
    * Called by the host-application to provide the parent frame.
-   *
-   * @param parent The parent frame.
+   * 
+   * @param parent
+   *          The parent frame.
    * @since 2.7
    */
   final public void setParent(Frame parent) {
-    mTvDataService.setParent(parent);
+    try {
+      mTvDataService.setParent(parent);
+    } catch (Throwable t) {
+      logError(t, "set parent frame");
+    }
   }
-
 
   /**
    * Gets the parent frame.
    * <p>
    * The parent frame may be used for showing dialogs.
-   *
+   * 
    * @return The parent frame.
    * @since 2.7
    */
   final public Frame getParentFrame() {
-    return mTvDataService.getParentFrame();
+    try {
+      return mTvDataService.getParentFrame();
+    } catch (Throwable t) {
+      logError(t, "get parent frame");
+    }
+    return null;
   }
 
   /**
    * This method is called when the TV-Browser start is complete.
+   * 
    * @since 2.7
    */
   public void handleTvBrowserStartFinished() {
-    mTvDataService.handleTvBrowserStartFinished();
+    try {
+      mTvDataService.handleTvBrowserStartFinished();
+    } catch (Throwable t) {
+      logError(t, "handle start finished");
+    }
   }
-  
+
   /**
    * Gets if the data service supports auto upate of data.
+   * 
    * @return <code>True</code> if the data service supports the auto update,
-   * <code>false</code> otherwise.
+   *         <code>false</code> otherwise.
    * @since 2.7
    */
   public boolean supportsAutoUpdate() {
-    return mTvDataService.supportsAutoUpdate();
+    try {
+      return mTvDataService.supportsAutoUpdate();
+    } catch (Throwable t) {
+      logError(t, "supports auto update");
+    }
+    return false;
   }
 }
