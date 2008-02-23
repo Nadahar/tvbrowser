@@ -412,7 +412,11 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="webplugin/**"/>
     </jar>
-  	
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/WirSchauenPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="wirschauenplugin/**"/>
+    </jar>
+
     <!-- Pack the TV data service jars -->
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/TvBrowserDataService.jar"
          compress="false">
