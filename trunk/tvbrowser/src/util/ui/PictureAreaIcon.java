@@ -40,6 +40,9 @@ import devplugin.ProgramFieldType;
  */
 public class PictureAreaIcon implements Icon {
   
+  /**
+   * the description text icon will be null, if the string to be shown is empty
+   */
   private TextAreaIcon mDescriptionText;
   private TextAreaIcon mCopyrightText;  
   private ImageIcon mScaledIcon;
@@ -75,25 +78,35 @@ public class PictureAreaIcon implements Icon {
     if(picture != null) {
       ImageIcon imic = new ImageIcon(picture);
       
-      if(width == -1)        
+      if(width == -1) {
         width = imic.getIconWidth()+6;
+      }
       
-      if(imic.getIconWidth() > width-6 || (zoom && imic.getIconWidth() != width))
+      if(imic.getIconWidth() > width-6 || (zoom && imic.getIconWidth() != width)) {
         mScaledIcon = (ImageIcon)UiUtilities.scaleIcon(imic, width - 6);
-      else
+      } else {
         mScaledIcon = imic;
+      }
     }
     
     mCopyrightText = new TextAreaIcon(p.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE),f.deriveFont((float)(f.getSize() * 0.9)),width-6);
-    mDescriptionText = new TextAreaIcon(showDescription ? p.getTextField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE) : "",f,width-6);
-    mDescriptionText.setMaximumLineCount(8);
+    String pictureText = showDescription ? p.getTextField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE) : "";
+    if ((pictureText != null) && !(pictureText.equals(""))) {
+      mDescriptionText = new TextAreaIcon(pictureText,f,width-6);
+      mDescriptionText.setMaximumLineCount(8);
+    }
+    else {
+      // reset show description as the string is empty
+      mShowDescription = false;
+    }
   }
   
   public int getIconHeight() {
-    if(mScaledIcon == null)
+    if(mScaledIcon == null) {
       return 0;
-    else
+    } else {
       return mScaledIcon.getIconHeight() + mCopyrightText.getIconHeight() + (mShowDescription ? mDescriptionText.getIconHeight() : 0) + 10;
+    }
   }
 
   public int getIconWidth() {
@@ -101,8 +114,9 @@ public class PictureAreaIcon implements Icon {
   }
 
   public void paintIcon(Component c, Graphics g, int x, int y) {
-    if(mScaledIcon == null)
+    if(mScaledIcon == null) {
       return;
+    }
     
     y += 2;    
     
@@ -125,13 +139,16 @@ public class PictureAreaIcon implements Icon {
     
     mScaledIcon.paintIcon(c,g,x,y);
     
-    if(!mProgram.isExpired())
+    if(!mProgram.isExpired()) {
       g.setColor(Color.black);
-    else
+    } else {
       g.setColor(Color.gray);
+    }
     
     mCopyrightText.paintIcon(null,g,x,y + mScaledIcon.getIconHeight());
-    mDescriptionText.paintIcon(null,g,x,y + mScaledIcon.getIconHeight() + mCopyrightText.getIconHeight() + 1);
+    if (mShowDescription && mDescriptionText != null) {
+      mDescriptionText.paintIcon(null,g,x,y + mScaledIcon.getIconHeight() + mCopyrightText.getIconHeight() + 1);
+    }
     g.setColor(color);
   }
 }
