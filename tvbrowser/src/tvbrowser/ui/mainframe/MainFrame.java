@@ -1165,7 +1165,7 @@ public class MainFrame extends JFrame implements DateListener {
       mPluginView.repaint();
     }
     
-    if (mLastAutoUpdateRun + Settings.propDataServiceAutoUpdateTime.getInt() * 60000 >= System.currentTimeMillis() && !TvDataUpdater.getInstance().isDownloading()) {
+    if ((mLastAutoUpdateRun + Settings.propDataServiceAutoUpdateTime.getInt() * 60000) <= System.currentTimeMillis() && !TvDataUpdater.getInstance().isDownloading()) {
       runAutoUpdate();
     }
     
