@@ -279,8 +279,7 @@ public class PluginTreeNode {
       else {
         if (n.mNodeType == Node.PROGRAM) {
           ProgramItem progItem = (ProgramItem)n.getUserObject();
-          Node node = new Node(progItem);
-          node.setNodeFormatter(n.getNodeFormatter());
+          Node node = n.getMutableTreeNode();
           
           if (currentDate == null) {
             currentDate = Date.getCurrentDate();
@@ -289,9 +288,7 @@ public class PluginTreeNode {
             mDefaultNode.add(node);
         }
         else {
-          Node node = new Node(n.mNodeType,n.getUserObject());
-          node.setNodeFormatter(n.getNodeFormatter());
-          mDefaultNode.add(node);
+          mDefaultNode.add(n.getMutableTreeNode());
         }
       }
     }
