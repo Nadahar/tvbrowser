@@ -240,11 +240,6 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
     comp.addKeyListener(new KeyAdapter() {
 
       public void keyTyped(KeyEvent e) {
- 
-        if (e.getKeyChar() == 'f' && e.isControlDown()) {
-          setBlockAutoClosing(true);
-          actionPerformed(new ActionEvent(this, 0, "show"));
-        }
         if (Character.isLetterOrDigit(e.getKeyChar()) && 
             !(e.isControlDown()||e.isMetaDown())) {
           actionPerformed(new ActionEvent(this, 0, "show"));
@@ -253,6 +248,15 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
           start();
         }
       }
+
+      @Override
+      public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_F && e.isControlDown()) {
+          setBlockAutoClosing(true);
+          actionPerformed(new ActionEvent(this, 0, "show"));
+        }
+      }
+      
     });
   }
 }
