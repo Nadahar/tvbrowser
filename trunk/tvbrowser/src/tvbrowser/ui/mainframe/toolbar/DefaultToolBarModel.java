@@ -29,6 +29,7 @@ package tvbrowser.ui.mainframe.toolbar;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -729,10 +730,26 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
   }
 
   private JMenuItem createDateMenuItem(final Date date, final AbstractButton btn) {
-    JRadioButtonMenuItem item = new JRadioButtonMenuItem(
-        date.compareTo(Date.getCurrentDate()) == 0 ? mLocalizer.msg("today",
-            "Today") : date.toString(),
-            date.compareTo(MainFrame.getInstance().getCurrentSelectedDate()) == 0);
+    String buttonText;
+    
+    if(date.equals(Date.getCurrentDate().addDays(-1))) {
+      buttonText = Localizer.getLocalization(Localizer.I18N_YESTERDAY);
+    }
+    else if(date.equals(Date.getCurrentDate())) {
+      buttonText = Localizer.getLocalization(Localizer.I18N_TODAY);
+    }
+    else if(date.equals(Date.getCurrentDate().addDays(1))) {
+      buttonText = Localizer.getLocalization(Localizer.I18N_TOMORROW);
+    }
+    else {
+      buttonText = date.toString();
+    }
+    
+    JRadioButtonMenuItem item = new JRadioButtonMenuItem(buttonText);
+    
+    if(MainFrame.getInstance().getProgramTableModel().getDate().equals(date)) {
+      item.setFont(item.getFont().deriveFont(Font.BOLD));
+    }
     
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
