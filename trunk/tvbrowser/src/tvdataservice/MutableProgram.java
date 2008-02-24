@@ -26,6 +26,7 @@
 
 package tvdataservice;
 
+import util.misc.StringPool;
 import util.program.ProgramUtilities;
 import devplugin.Channel;
 import devplugin.Date;
@@ -34,7 +35,6 @@ import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
-import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -620,8 +620,13 @@ public class MutableProgram implements Program {
     if (type == ProgramFieldType.SHORT_DESCRIPTION_TYPE) {
       value = validateShortInfo(value);
     }
-
-    setField(type, ProgramFieldType.TEXT_FORMAT, value);
+    // filter all the duplicate origin fields
+    if (type == ProgramFieldType.ORIGIN_TYPE) {
+      setField(type, ProgramFieldType.TEXT_FORMAT, StringPool.getString(value));
+    }
+    else {
+      setField(type, ProgramFieldType.TEXT_FORMAT, value);
+    }
   }
 
 

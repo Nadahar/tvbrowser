@@ -10,6 +10,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
+import util.misc.StringPool;
+
 public class DataHydraChannelContainer {
 
   private String id;
@@ -25,7 +27,7 @@ public class DataHydraChannelContainer {
   public DataHydraChannelContainer(String id, String name, String baseUrl, String iconUrl, String timeString) {
     this.name = name;
     this.baseUrl = baseUrl;
-    this.iconUrl = iconUrl;
+    this.iconUrl = StringPool.getString(iconUrl);
     this.id = id;
     try {
       devplugin.Date now = new devplugin.Date();

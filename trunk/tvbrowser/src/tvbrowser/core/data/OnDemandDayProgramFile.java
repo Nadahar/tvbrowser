@@ -347,11 +347,16 @@ public class OnDemandDayProgramFile {
         } else if (type.getFormat() == ProgramFieldType.TEXT_FORMAT) {
           long position = dataFile.getFilePointer();
           String value = dataFile.readUTF();
-          if ((value != null) && (value.length() >= LARGE_FIELD_SIZE_LIMIT)) {
-            prog.setLargeField(type, position);
-          } else {
-            prog.setTextField(type, value);
-          }
+          if (value != null) {
+            if (value.length() >= LARGE_FIELD_SIZE_LIMIT) {
+              prog.setLargeField(type, position);
+            }
+            else {
+              if (value.length() > 0) {
+                prog.setTextField(type, value);
+              }
+            }
+          } 
         } else if (type.getFormat() == ProgramFieldType.INT_FORMAT) {
           prog.setIntField(type, dataFile.readInt());
         } else if (type.getFormat() == ProgramFieldType.TIME_FORMAT) {

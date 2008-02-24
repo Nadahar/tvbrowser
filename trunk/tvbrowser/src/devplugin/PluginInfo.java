@@ -35,6 +35,7 @@ package devplugin;
 import java.lang.reflect.Method;
 
 import tvbrowser.core.plugin.PluginProxyManager;
+import util.misc.StringPool;
 
 /**
  * This class provides information about a plugin.
@@ -235,7 +236,7 @@ public final class PluginInfo {
         mVersion = version;
       }
       
-      mLicense = license;
+      mLicense = StringPool.getString(license);
     }
     
     /**
