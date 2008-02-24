@@ -21,6 +21,8 @@
 
 package swedbtvdataservice;
 
+import util.misc.StringPool;
+
 /**
  * Each channel should belong to exactly one channel group. The ChannelGroup interface
  * represents a channel goup.
@@ -42,10 +44,10 @@ public class DataHydraChannelGroup implements devplugin.ChannelGroup {
   public DataHydraChannelGroup(String id, String provider, String copyright, String url, String channelFile, String country, boolean showRegister) {
     mId = id;
     mProvider = provider;
-    mCopyright = copyright;
+    mCopyright = StringPool.getString(copyright);
     mUrl = url;
     mChannelFile = channelFile;
-    mCountry = country;
+    mCountry = StringPool.getString(country);
     mShowRegister = showRegister;
   }
 

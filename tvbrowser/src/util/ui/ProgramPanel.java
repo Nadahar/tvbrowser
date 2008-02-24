@@ -35,6 +35,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import util.io.IOUtilities;
+import util.misc.StringPool;
 import util.program.ProgramUtilities;
 import util.settings.ProgramPanelSettings;
 
@@ -462,8 +463,8 @@ private static Font getDynamicFontSize(Font font, int offset) {
     
     boolean programChanged = (oldProgram != program);
     if (programChanged) {
-      // Get the start time
-      mProgramTimeAsString = program.getTimeString();
+      // Get the start time, filter duplicate strings
+      mProgramTimeAsString = StringPool.getString(program.getTimeString());
 
       // Set the new title
       mTitleIcon.setText(program.getTitle());

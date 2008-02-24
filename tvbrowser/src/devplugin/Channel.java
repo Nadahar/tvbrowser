@@ -42,6 +42,7 @@ import tvbrowser.core.ChannelUserSettings;
 import tvbrowser.core.tvdataservice.DeprecatedTvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvdataservice.TvDataService;
+import util.misc.StringPool;
 import util.ui.ImageUtilities;
 
 public class Channel implements Comparable<Channel> {
@@ -90,12 +91,13 @@ public class Channel implements Comparable<Channel> {
     mDataService = dataService;
     mName = name;
     mId = id;
-    mTimeZone=timeZone;
-    mCountry = country;
-    mCopyrightNotice=copyrightNotice;
-    mWebpage=webpage;
-    mGroup=group;
-    mDefaultIcon=icon;
+    mTimeZone = timeZone;
+    // country, webpage and copyright will often be the same, so filter duplicates
+    mCountry = StringPool.getString(country);
+    mCopyrightNotice = StringPool.getString(copyrightNotice);
+    mWebpage = StringPool.getString(webpage);
+    mGroup = group;
+    mDefaultIcon = icon;
     mCategories = categories;
   }
 
