@@ -34,9 +34,6 @@ import javax.swing.*;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.DocumentEvent;
 import java.util.Properties;
-import java.awt.event.KeyListener;
-import java.awt.event.KeyEvent;
-
 import util.ui.Localizer;
 import util.io.IOUtilities;
 

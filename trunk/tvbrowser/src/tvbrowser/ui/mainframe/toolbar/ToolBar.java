@@ -90,8 +90,8 @@ public class ToolBar extends JToolBar {
   public static final int STYLE_TEXT = 1, STYLE_ICON = 2;
   private static final int ICON_BIG = 1, ICON_SMALL = 2;
 
-  private static Insets NULL_INSETS = new Insets(0, 0, 0, 0);
-  protected static Font TEXT_FONT = new Font("Dialog", Font.PLAIN, 10);
+  private static final Insets NULL_INSETS = new Insets(0, 0, 0, 0);
+  protected static final Font TEXT_FONT = new Font("Dialog", Font.PLAIN, 10);
 
   private ToolBarModel mModel;
   private ContextMenu mContextMenu;

@@ -596,7 +596,7 @@ public class ProgramTextCreator {
     }
     for (String actor : actors) {
       actor = actor.trim();
-      if (actor != "") {
+      if (actor.length() > 0) {
         String part1 = actor;
         String part2 = "";
         if (actor.contains("\t")) {

@@ -61,13 +61,13 @@ public class Launch {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(Launch.class);
 
   /** Mac OS JVM */
-  public static int OS_MAC = 0;
+  public static final int OS_MAC = 0;
   /** Windows JVM */
-  public static int OS_WINDOWS = 1;
+  public static final int OS_WINDOWS = 1;
   /** Other OS JVM */
-  public static int OS_OTHER = 2;
+  public static final int OS_OTHER = 2;
   /** Linux OS JVM*/
-  public static int OS_LINUX = 3;
+  public static final int OS_LINUX = 3;
   
   /**
    * Opens an URL in a web-browser

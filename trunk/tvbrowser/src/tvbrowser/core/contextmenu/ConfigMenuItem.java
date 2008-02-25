@@ -8,7 +8,7 @@ import devplugin.Program;
 public class ConfigMenuItem implements ContextMenuIf {
   public static final Localizer mLocalizer = Localizer.getLocalizerFor(ConfigMenuItem.class);
 
-  public static String CONFIG = "######CONFIG######";
+  public static final String CONFIG = "######CONFIG######";
   
   private static ConfigMenuItem mInstance;
   

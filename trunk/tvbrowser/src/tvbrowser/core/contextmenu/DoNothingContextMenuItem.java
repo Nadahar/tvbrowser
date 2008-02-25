@@ -36,8 +36,8 @@ import devplugin.Program;
  * @author René Mach
  */
 public class DoNothingContextMenuItem implements ContextMenuIf  {
-  private static Localizer mLocalizer = Localizer.getLocalizerFor(DoNothingContextMenuItem.class);
-  protected static String DONOTHING = "######DONOTHING######";
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(DoNothingContextMenuItem.class);
+  protected static final String DONOTHING = "######DONOTHING######";
   private static DoNothingContextMenuItem mInstance;
   
   private DoNothingContextMenuItem() {

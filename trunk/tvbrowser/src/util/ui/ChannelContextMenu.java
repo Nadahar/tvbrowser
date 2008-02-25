@@ -37,7 +37,7 @@ public class ChannelContextMenu implements ActionListener {
   /**
    * The localizer for this class.
    */
-  public static Localizer mLocalizer = Localizer
+  public static final Localizer mLocalizer = Localizer
       .getLocalizerFor(ChannelContextMenu.class);
 
   private JPopupMenu mMenu;

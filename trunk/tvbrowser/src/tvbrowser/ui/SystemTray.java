@@ -89,7 +89,7 @@ public class SystemTray {
   = java.util.logging.Logger.getLogger(SystemTray.class.getName());
 
   /** The localizer for this class. */
-  public static util.ui.Localizer mLocalizer = util.ui.Localizer
+  public static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(SystemTray.class);
 
   /** State of the Window (max/normal) */

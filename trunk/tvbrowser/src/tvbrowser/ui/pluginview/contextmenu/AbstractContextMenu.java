@@ -254,10 +254,10 @@ public abstract class AbstractContextMenu implements ContextMenu {
       public void actionPerformed(ActionEvent e) {
         Program[] programs = collectProgramsFromNode(node);
         final ArrayList<Program> programList = new ArrayList<Program>();
-        for (int i = 0; i < programs.length; i++) {
-          programList.add(programs[i]);
-        }
         if (programs != null) {
+          for (int i = 0; i < programs.length; i++) {
+            programList.add(programs[i]);
+          }
           if (programs.length > 0) {
             ProgramFilter pluginFilter = new ProgramFilter() {
 

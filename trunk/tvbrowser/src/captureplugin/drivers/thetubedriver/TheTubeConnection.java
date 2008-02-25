@@ -13,7 +13,6 @@ import util.misc.AppleScriptRunner;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.logging.Logger;
 

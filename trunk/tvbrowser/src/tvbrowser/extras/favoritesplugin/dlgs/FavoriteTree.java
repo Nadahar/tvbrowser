@@ -620,13 +620,13 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
           path = getPathForRow(row);
         }
 
-        FavoriteNode last = (FavoriteNode)path.getLastPathComponent();
-        FavoriteNode pointed = last;   
-        int target = getTargetFor(pointed, e.getLocation(), row);
-        
         if(path == null) {
           path = new TreePath(mRootNode);
         }
+
+        FavoriteNode last = (FavoriteNode)path.getLastPathComponent();
+        FavoriteNode pointed = last;   
+        int target = getTargetFor(pointed, e.getLocation(), row);
         
         if(!new TreePath(node.getPath()).isDescendant(path)) {
           setSelectionPath(null);

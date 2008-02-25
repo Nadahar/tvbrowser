@@ -20,11 +20,11 @@ public class DataTableCellRenderer extends DefaultTableCellRenderer {
    */
   private static final long serialVersionUID = 1L;
 
-  protected static Color COMPLETE = new Color(128, 255, 128);
+  protected static final Color COMPLETE = new Color(128, 255, 128);
 
-  protected static Color UNCOMPLETE = new Color(255, 210, 0);
+  protected static final Color UNCOMPLETE = new Color(255, 210, 0);
 
-  protected static Color NODATA = new Color(255, 128, 128);
+  protected static final Color NODATA = new Color(255, 128, 128);
 
   public Component getTableCellRendererComponent(JTable table, Object value,
       boolean isSelected, boolean hasFocus, int row, int column) {

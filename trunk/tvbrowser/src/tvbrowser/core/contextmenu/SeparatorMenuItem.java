@@ -6,7 +6,7 @@ import devplugin.Program;
 
 public class SeparatorMenuItem implements ContextMenuIf {
 
-  public static String SEPARATOR = "######SEPARATOR######";
+  public static final String SEPARATOR = "######SEPARATOR######";
   
   public ActionMenu getContextMenuActions(Program program) {
     return null;

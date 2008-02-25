@@ -33,7 +33,7 @@ import devplugin.ProgramFieldType;
  */
 public class CompoundedProgramFieldType {
   /** The compounded field type for the episode formating */
-  public static CompoundedProgramFieldType EPISODE_COMPOSITION =
+  public static final CompoundedProgramFieldType EPISODE_COMPOSITION =
     new CompoundedProgramFieldType(-1, new ProgramFieldType[] {ProgramFieldType.EPISODE_NUMBER_TYPE,ProgramFieldType.EPISODE_TOTAL_NUMBER_TYPE,ProgramFieldType.SEASON_NUMBER_TYPE,ProgramFieldType.EPISODE_TYPE}, ProgramFieldType.EPISODE_TYPE.getLocalizedName(), new String[] {"/"," - ",", "});
   
   private int mId;

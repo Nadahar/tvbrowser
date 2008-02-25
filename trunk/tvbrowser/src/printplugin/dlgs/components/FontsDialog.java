@@ -54,8 +54,8 @@ public class FontsDialog extends JDialog implements WindowClosingIf {
          = util.ui.Localizer.getLocalizerFor(FontsDialog.class);
 
 
-  public static int CANCEL = 0;
-  public static int OK = 1;
+  public static final int CANCEL = 0;
+  public static final int OK = 1;
 
   private FontChooserPanel mTitleFontPanel;
   private FontChooserPanel mDescriptionFontPanel;

@@ -80,28 +80,28 @@ public class PluginProxyManager {
    * The name of the directory where the plugins are located in TV-Browser 2.01
    * and before
    */
-  public static String PLUGIN_DIRECTORY = "plugins";
+  public static final String PLUGIN_DIRECTORY = "plugins";
 
   /**
    * The plugin state 'shut down'.
    * <p>
    * An shut down plugin has been shut down and can't be used any more.
    */
-  public static int SHUT_DOWN_STATE = 1;
+  public static final int SHUT_DOWN_STATE = 1;
 
   /**
    * The plugin state 'loaded'.
    * <p>
    * A loaded plugin has an existing PluginProxy instance, but is not activated.
    */
-  public static int LOADED_STATE = 2;
+  public static final int LOADED_STATE = 2;
 
   /**
    * The plugin state 'activated'.
    * <p>
    * An activated plugin has loaded its settings and is ready to be used.
    */
-  public static int ACTIVATED_STATE = 3;
+  public static final int ACTIVATED_STATE = 3;
   
   /**
    * The list containing all plugins (PluginListItem objects) in the right

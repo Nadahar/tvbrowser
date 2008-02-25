@@ -28,7 +28,7 @@ public class ProgramInfoHelper {
     /**
      * The Bit-Array with all Posibilities
      */
-    public static int[] mInfoBitArr = new int[] {
+    public static final int[] mInfoBitArr = new int[] {
             Program.INFO_VISION_BLACK_AND_WHITE, Program.INFO_VISION_4_TO_3,
             Program.INFO_VISION_16_TO_9, Program.INFO_AUDIO_MONO,
             Program.INFO_AUDIO_STEREO, Program.INFO_AUDIO_DOLBY_SURROUND,
@@ -44,7 +44,7 @@ public class ProgramInfoHelper {
     /**
      * The Icons for the Bits
      */
-    public static Icon[] mInfoIconArr = new Icon[] {
+    public static final Icon[] mInfoIconArr = new Icon[] {
             createIcon("Info_BlackAndWhite.gif"), // INFO_VISION_BLACK_AND_WHITE
             null, // INFO_VISION_4_TO_3
             createIcon("Info_16to9.gif"), // INFO_VISION_16_TO_9
@@ -68,7 +68,7 @@ public class ProgramInfoHelper {
     /**
      * The String representation of the Bits 
      */
-    public static String[] mInfoMsgArr = new String[] {
+    public static final String[] mInfoMsgArr = new String[] {
             mLocalizer.msg("blackAndWhite", "Black and white"),
             // INFO_VISION_BLACK_AND_WHITE
             mLocalizer.msg("4to3", "4:3"),

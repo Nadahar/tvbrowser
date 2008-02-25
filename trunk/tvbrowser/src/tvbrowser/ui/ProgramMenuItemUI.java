@@ -197,7 +197,7 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
         + (menuItem.getFont().getSize() * (mChannelName.getLineCount() / 2 + 1));
 
     y = mShowName
-        && (mChannelName.getLineCount() % 2 == 1) ? temp : (menuItem
+        && ((mChannelName.getLineCount() & 1) == 1) ? temp : (menuItem
         .getHeight() - menuItem.getFont().getSize())
         / 2 - 1 + menuItem.getFont().getSize();
     if (mShowDate) {

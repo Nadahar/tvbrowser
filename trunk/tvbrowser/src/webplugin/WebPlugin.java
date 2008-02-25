@@ -385,7 +385,7 @@ public class WebPlugin extends Plugin {
         search = search.substring(0, leftBracket);
       }
       search = search.trim();
-      if (search != "") {
+      if (search.length() > 0) {
         list.add(search);
       }
     }

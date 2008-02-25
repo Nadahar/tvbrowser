@@ -229,7 +229,7 @@ public class IconLoader {
     WeakHashMap<Plugin, ImageIcon> pluginCache = mPluginIconCache.get(plugin); 
     
     if (pluginCache != null) {
-      imageIcon = pluginCache.get(icon);
+      imageIcon = pluginCache.get(plugin);
       if (imageIcon != null) {
         return imageIcon;
       }
