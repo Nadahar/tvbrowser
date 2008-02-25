@@ -277,7 +277,7 @@ public class RadioTimesFileParser {
         if (names.length == 2) {
           actors.append(names[1]).append("\t").append(names[0]).append("\n");
         } else {
-          actors.append(names).append("\n");
+          actors.append(names[0]).append("\n");
         }
       }
       
