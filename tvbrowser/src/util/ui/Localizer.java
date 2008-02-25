@@ -44,7 +44,6 @@ import java.net.URL;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
-import tvbrowser.ui.mainframe.MainFrame;
 import util.io.IOUtilities;
 
 /**

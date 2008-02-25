@@ -53,7 +53,7 @@ public class MatcherReuse implements Block, StringCompare {
 
 
   public boolean test(String s) {
-    if (lasttest != s) {
+    if (!lasttest.equals(s)) {
       lasttest = s;
       lastResult = s.indexOf(toTest) != -1;
     }

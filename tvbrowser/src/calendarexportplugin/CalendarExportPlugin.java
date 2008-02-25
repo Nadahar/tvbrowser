@@ -350,7 +350,7 @@ public class CalendarExportPlugin extends Plugin {
 
         mExporterFactory.setListOfActiveExporters(mSettings.getProperty(PROP_ACTIVE_EXPORTER));
         
-        if(settings != null && settings.containsKey("paramToUse")) {
+        if(settings.containsKey("paramToUse")) {
           mConfigs = new AbstractPluginProgramFormating[1];
           mConfigs[0] = new LocalPluginProgramFormating(mLocalizer.msg("defaultName","Calendar Export - Default"),"{channel_name} - {title}",settings.getProperty("paramToUse"),"UTF-8");
           mLocalFormatings = new LocalPluginProgramFormating[1];

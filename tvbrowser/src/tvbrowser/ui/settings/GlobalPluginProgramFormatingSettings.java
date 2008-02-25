@@ -58,7 +58,7 @@ import devplugin.SettingsTab;
  */
 public class GlobalPluginProgramFormatingSettings implements SettingsTab, ActionListener {
   /** The localizer for this class */
-  public static Localizer mLocalizer = Localizer.getLocalizerFor(GlobalPluginProgramFormatingSettings.class);
+  public static final Localizer mLocalizer = Localizer.getLocalizerFor(GlobalPluginProgramFormatingSettings.class);
   
   private SortableItemList mConfigurations;
   private JButton mAdd, mEdit, mDelete;

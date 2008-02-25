@@ -25,7 +25,6 @@
 package tvbrowser.ui.update;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Locale;
 
 import tvbrowser.core.plugin.PluginProxyManager;

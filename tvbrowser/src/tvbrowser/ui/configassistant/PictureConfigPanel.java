@@ -43,7 +43,7 @@ import util.ui.UiUtilities;
 public class PictureConfigPanel extends JPanel {
   private static final long serialVersionUID = 1L;
 
-  protected static Localizer mLocalizer = Localizer.getLocalizerFor(PictureConfigPanel.class);
+  protected static final Localizer mLocalizer = Localizer.getLocalizerFor(PictureConfigPanel.class);
   
   private JRadioButton mDownloadAll, mDownloadNoPictures, mDownloadEvening, mDownloadMorning;
   private SettingsPanel mTvBrowserDataServiceSettingsPanel;

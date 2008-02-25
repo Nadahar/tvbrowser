@@ -34,8 +34,6 @@ import tvdataservice.MutableProgram;
 import tvdataservice.TvDataUpdateManager;
 import util.io.IOUtilities;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;

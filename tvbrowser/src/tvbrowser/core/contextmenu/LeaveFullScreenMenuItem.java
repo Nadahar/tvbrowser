@@ -8,7 +8,7 @@ import devplugin.Program;
 public class LeaveFullScreenMenuItem implements ContextMenuIf {
   public static final Localizer mLocalizer = Localizer.getLocalizerFor(LeaveFullScreenMenuItem.class);
 
-  public static String LEAVEFULLSCREEN = "######LEAVEFULLSCREEN######";
+  public static final String LEAVEFULLSCREEN = "######LEAVEFULLSCREEN######";
   
   private static LeaveFullScreenMenuItem mInstance;
   

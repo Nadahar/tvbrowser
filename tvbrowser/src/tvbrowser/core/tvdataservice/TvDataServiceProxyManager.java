@@ -38,7 +38,6 @@ import devplugin.AbstractTvDataService;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginManagerImpl;
-import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 
 import javax.swing.*;

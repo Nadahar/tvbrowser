@@ -42,7 +42,6 @@ import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
 import javax.swing.tree.TreePath;
 import java.awt.Component;
 import java.awt.event.ActionEvent;

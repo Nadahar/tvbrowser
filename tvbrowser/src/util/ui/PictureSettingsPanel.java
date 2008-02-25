@@ -73,7 +73,7 @@ public class PictureSettingsPanel extends JPanel implements Scrollable {
   private static final long serialVersionUID = 1L;
 
   /** The localizer for this class */
-  public static Localizer mLocalizer = Localizer.getLocalizerFor(PictureSettingsPanel.class);
+  public static final Localizer mLocalizer = Localizer.getLocalizerFor(PictureSettingsPanel.class);
 
   /** Show the pictures never 
    * @deprecated since 2.6 Use {@link ProgramPanelSettings#SHOW_PICTURES_NEVER}*/

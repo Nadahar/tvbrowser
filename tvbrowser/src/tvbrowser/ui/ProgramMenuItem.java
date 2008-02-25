@@ -136,7 +136,7 @@ public class ProgramMenuItem extends JMenuItem {
         
     mChannelName = new TextAreaIcon(p.getChannel().getName(), mBoldFont, Settings.propTrayChannelWidth.getInt());
 
-    if(n % 2 == 1 && n != -1) {
+    if((n & 1) == 1 && n != -1) {
       Color temp = mBackground.darker();
       mFill = new Color(temp.getRed(),temp.getGreen(),temp.getBlue(),145);
       setBackground(mFill);
@@ -265,7 +265,7 @@ public class ProgramMenuItem extends JMenuItem {
   public void setBackground(int n) {
     if(n == -1)
       setBackground(mBackground);
-    else if(n % 2 == 1) {
+    else if((n & 1) == 1) {
         Color temp = mBackground.darker();
         mFill = new Color(temp.getRed(),temp.getGreen(),temp.getBlue(),145);
         setBackground(mFill);
