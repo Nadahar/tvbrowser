@@ -25,10 +25,10 @@
  */
 package tvbrowser.ui.programtable.background;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
+import tvbrowser.core.Settings;
 import tvbrowser.ui.programtable.ProgramTableLayout;
 import tvbrowser.ui.programtable.ProgramTableModel;
 
@@ -37,7 +37,7 @@ import tvbrowser.ui.programtable.ProgramTableModel;
  * 
  * @author Til Schneider, www.murfman.de
  */
-public class WhiteBackPainter extends AbstractBackPainter {
+public class SingleColorBackPainter extends AbstractBackPainter {
 
   /**
    * Paints the background.
@@ -53,7 +53,7 @@ public class WhiteBackPainter extends AbstractBackPainter {
     int minCol, int maxCol, Rectangle clipBounds, ProgramTableLayout layout,
     ProgramTableModel model)
   {
-    grp.setColor(Color.WHITE);
+    grp.setColor(Settings.propProgramTableBackgroundSingleColor.getColor());
     grp.fillRect(clipBounds.x, clipBounds.y, clipBounds.width, clipBounds.height);
   }
 

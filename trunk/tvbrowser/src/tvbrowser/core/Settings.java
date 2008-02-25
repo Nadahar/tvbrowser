@@ -522,7 +522,8 @@ public class Settings {
         propProgramPanelWithMarkingsShowingBoder, propProgramPanelUsedDefaultMarkPriority,
         propProgramPanelMarkedLowerMediumPriorityColor, propProgramPanelMarkedMinPriorityColor,
         propProgramPanelMarkedMediumPriorityColor, propProgramPanelMarkedMaxPriorityColor,
-        propProgramTableColorOnAirLight, propProgramTableColorOnAirDark, propProgramPanelForegroundColor};
+        propProgramTableColorOnAirLight, propProgramTableColorOnAirDark, propProgramPanelForegroundColor,
+        propProgramTableBackgroundSingleColor};
 
     if (mProp.hasChanged(propArr)) {
       util.ui.ProgramPanel.updateFonts();
@@ -703,7 +704,7 @@ public class Settings {
           "timeSynchronous", "compact", "realSynchronous" , "realCompact"});
 
   public static final ChoiceProperty propTableBackgroundStyle = new ChoiceProperty(
-      mProp, "tablebackground.style", "timeBlock", new String[] { "white",
+      mProp, "tablebackground.style", "timeBlock", new String[] { "singleColor",
           "oneImage", "timeBlock", "timeOfDay" });
 
   public static final StringProperty propOneImageBackground = new StringProperty(
@@ -749,6 +750,9 @@ public class Settings {
   public static final StringProperty propUserDefinedWebbrowser = new StringProperty(
       mProp, "webbrowser", null);
 
+  public static final ColorProperty propProgramTableBackgroundSingleColor = new ColorProperty(
+      mProp, "backgroundSingleColor", Color.white);  
+  
   /*
    * Basic tray settings
    */
@@ -801,7 +805,7 @@ public class Settings {
 
   public static final BooleanProperty propTrayOnTimeProgramsShowProgress = new BooleanProperty(
       mProp, "trayOnTimeProgramsShowProgress", true);
-
+  
   public static final ColorProperty propTrayOnTimeProgramsDarkBackground = new ColorProperty(
       mProp, "trayOnTimeProgramsDarkBackground", new Color(255, 150, 0, 80));
 
