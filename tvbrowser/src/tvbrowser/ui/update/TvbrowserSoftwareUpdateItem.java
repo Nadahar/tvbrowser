@@ -28,7 +28,6 @@ package tvbrowser.ui.update;
 
 import util.browserlauncher.Launch;
 import util.exc.TvBrowserException;
-import util.ui.BrowserLauncher;
 
 public class TvbrowserSoftwareUpdateItem extends SoftwareUpdateItem {
 
@@ -40,7 +39,7 @@ public class TvbrowserSoftwareUpdateItem extends SoftwareUpdateItem {
     try {
       Launch.openURL("http://www.tvbrowser.org");
     } catch (Exception exc) {
-      throw new TvBrowserException(BrowserLauncher.class, "error.1", "Could not open webbrowser", exc);
+      throw new TvBrowserException(Launch.class, "error.1", "Could not open webbrowser", exc);
     }
     
     return true;

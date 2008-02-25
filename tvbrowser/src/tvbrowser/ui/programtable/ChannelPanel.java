@@ -43,9 +43,6 @@ import devplugin.Channel;
  */
 public class ChannelPanel extends JPanel {
 
-  private static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(ChannelPanel.class);
-  
   private int mColumnWidth;
   private ChannelLabel[] mLabelArr;
   /** Height of Panel, if an Icon is > 15, it get adjusted to it's needs */

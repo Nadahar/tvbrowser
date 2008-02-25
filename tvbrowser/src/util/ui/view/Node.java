@@ -36,12 +36,9 @@ public class Node {
   private Component mLeafComponent;
   private Component mContent;
   private ArrayList<Node> mNodes;  
-  private String mName;
   private ViewProperty mProperty;
   private View mView;
   private boolean mIsValid;
-  
-  private String mTitle;
   
   public Node(Node parent) {
     mParent = parent;

@@ -50,9 +50,6 @@ public class ImageUtilities {
   /** The helper label. */  
   private static final JLabel HELPER_LABEL = new JLabel();
 
-  private static Thread imageLoader;
-
-  
   /**
    * Returns the image in the specified file.
    * <p>

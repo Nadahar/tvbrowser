@@ -48,8 +48,6 @@ import devplugin.Program;
  */
 public class MediaPanel {
 
-  private int mCount = 0;
-
   private MediaCenterFrame mParent;
 
   private BufferStrategy mStrategy;
@@ -64,12 +62,9 @@ public class MediaPanel {
 
   private MediaProgramPanel mProgramPanel;
 
-  private MediaCenterPlugin mPlugin;
-  
   public MediaPanel(MediaCenterPlugin plugin, MediaCenterFrame parent, int width, int height, BufferStrategy strategy) {
     mParent = parent;
     mStrategy = strategy;
-    mPlugin = plugin;
     
     mWidth = width;
     mHeight = height;
@@ -113,7 +108,6 @@ public class MediaPanel {
   }
 
   public void startLoop() {
-    Color box = new Color(180, 180, 180, 100);
     Font textFont = new Font("SansSerif", Font.BOLD, 18);
 
     while (!mStopLoop) {

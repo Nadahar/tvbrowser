@@ -163,7 +163,7 @@ public class ProgramTimeList {
      * @throws ClassNotFoundException class creation problems
      */
     public void readData(java.io.ObjectInputStream in)throws IOException, ClassNotFoundException {
-    
+        @SuppressWarnings("unused") // version not yet used
         int version = in.readInt();
         
         int size = in.readInt();

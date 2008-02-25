@@ -43,8 +43,6 @@ public class PluginIconFilterComponent implements FilterComponent {
 
     private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(PluginIconFilterComponent.class);
 
-    private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(PluginIconFilterComponent.class.getName());
-
     private JComboBox mBox;
 
     private PluginProxy mPlugin;

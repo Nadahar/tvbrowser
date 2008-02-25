@@ -40,6 +40,7 @@ public class ActorStringSearcherTest extends TestCase {
 
   private boolean actorInProgram(String actor, String programText) {
     try {
+      @SuppressWarnings("unused")
       ActorSearcher searcher = new ActorSearcher(actor);
       // currently not possible due to visibility issues
 //      return searcher.matches(programText);

@@ -51,6 +51,7 @@ public class Html2TxtConverter extends FilterReader {
   
   public Html2TxtConverter(int mode, Reader in, String encoding) throws IOException {
     super(in);  
+    @SuppressWarnings("unused")
     int ch=in.read();
     
     StringWriter out=new StringWriter();

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map.Entry;
 
 /**
  * Representation of a Rating
@@ -213,11 +214,13 @@ public class Rating implements Serializable {
 	 * @throws IOException possible Error
 	 * @throws ClassNotFoundException possible Error
 	 */
-	private synchronized void readObject(java.io.ObjectInputStream s) throws IOException, ClassNotFoundException {
+  private synchronized void readObject(java.io.ObjectInputStream s) throws IOException, ClassNotFoundException {
     int version = s.readInt();
 		_title = (String) s.readObject();
 		if (version == 1) {
-		  convertVersion1((HashMap<Object, Integer>) s.readObject());
+		  @SuppressWarnings("unchecked")
+		  HashMap<Object, Integer> map = (HashMap<Object, Integer>) s.readObject();
+      convertVersion1(map);
 		}
 		else {
 	    onlineID = s.readInt();
@@ -229,9 +232,10 @@ public class Rating implements Serializable {
 	
 	private void convertVersion1(HashMap<Object, Integer> oldMap) {
 	  _values = new byte[RATING_ENTRY_COUNT];
-	  for (Iterator iterator = oldMap.keySet().iterator(); iterator.hasNext();) {
-      Object key = iterator.next();
-      int oldValue = oldMap.get(key);
+	  for (Iterator<Entry<Object, Integer>> iterator = oldMap.entrySet().iterator(); iterator.hasNext();) {
+      Entry<Object, Integer> entry = iterator.next();
+      Object key = entry.getKey();
+      int oldValue = entry.getValue();
       if (key.equals(OVERALL)) {
         _values[OVERALL_RATING_KEY] = (byte) oldValue;
       }

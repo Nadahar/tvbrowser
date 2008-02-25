@@ -44,11 +44,6 @@ import devplugin.Program;
  */
 public class ProgramDispatcher {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(ProgramDispatcher.class.getName());
-
-
-
   /**
    * Contains for a Date (key) a hash containing for a Channel (key)
    * an MutableChannelDayProgram (value).
@@ -79,7 +74,7 @@ public class ProgramDispatcher {
     Channel channel = program.getChannel();
 
     MutableChannelDayProgram channelDayProg
-      = getChannelDayProgram(program.getDate(), program.getChannel(), true);
+      = getChannelDayProgram(date, channel, true);
 
     channelDayProg.addProgram(program);
   }

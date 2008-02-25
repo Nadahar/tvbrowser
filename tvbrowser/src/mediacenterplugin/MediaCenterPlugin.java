@@ -125,6 +125,7 @@ public class MediaCenterPlugin extends Plugin {
       new Runnable() {
 
         public void run() {
+          @SuppressWarnings("unused")
           MediaCenterFrame frame = new MediaCenterFrame(MediaCenterPlugin.this, 800, 600, false);
           mMediaCenterShowing = false;
         }

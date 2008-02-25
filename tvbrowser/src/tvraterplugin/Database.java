@@ -182,7 +182,8 @@ public class Database {
 	 * 
 	 * @see #writeData(ObjectOutputStream)
 	 */
-	public synchronized void readData(ObjectInputStream in) throws IOException,
+	@SuppressWarnings("unchecked")
+  public synchronized void readData(ObjectInputStream in) throws IOException,
 			ClassNotFoundException {
 		_personalrating = (HashMap<String, Rating>) in.readObject();
 		_overalrating = (HashMap<String, Rating>) in.readObject();

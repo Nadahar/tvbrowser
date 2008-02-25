@@ -143,14 +143,14 @@ public interface PluginProxy extends PluginAccess {
 
   /**
    * return the file name of the plugin contained in this proxy
-   * @return
+   * @return file name
    * @since 2.6
    */
   public String getPluginFileName();
   
   /**
    * get the icon to represent this plugin in the settings
-   * @return
+   * @return icon
    * @since 2.6
    */
   public Icon getPluginIcon();

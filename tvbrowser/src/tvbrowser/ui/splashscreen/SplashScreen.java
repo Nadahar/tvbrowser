@@ -17,8 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * CVS information:
- *  $RCSfile$
- *   $Source$
  *     $Date$
  *   $Author$
  * $Revision$
@@ -63,7 +61,7 @@ public class SplashScreen extends JWindow implements Splash {
   private int mDomainX, mDomainY;
   private Point mDraggingPoint;
 
-  private Color mBackground, mForeground;
+  private Color mForeground;
   
   public SplashScreen(String imgFileName, int msgX, int msgY,
     Color background, Color foreground)
@@ -89,7 +87,6 @@ public class SplashScreen extends JWindow implements Splash {
     mVersionX = getWidth()-UiUtilities.getStringWidth(VERSION_FONT, VERSION)-10;
     mVersionY = getHeight()-20;
 
-    mBackground = background;
     mForeground = foreground;
     
     this.addMouseListener(new MouseAdapter() {

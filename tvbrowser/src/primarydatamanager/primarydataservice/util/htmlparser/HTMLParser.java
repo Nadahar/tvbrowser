@@ -37,7 +37,6 @@ public class HTMLParser {
   private InputStream in;
   private int la;
   private int ch;
-  private Tag curTextTag, mCurTag;
   
   private HTMLParser(InputStream in) throws IOException {
     this.in=in;
@@ -118,7 +117,6 @@ public class HTMLParser {
     ArrayList<Tag> tags=new ArrayList<Tag>();
     Tag curTextTag=null;
     String txt;
-    Tag tag=null;
     do {
       txt=getText();
       if (txt!=null) {

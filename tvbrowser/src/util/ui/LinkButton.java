@@ -24,6 +24,7 @@ public class LinkButton extends JButton implements ActionListener{
     private String mUrl;
     
     /** Text of the Button */
+    @SuppressWarnings("unused")
     private String mText;
     
     /**

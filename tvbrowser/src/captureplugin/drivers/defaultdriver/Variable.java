@@ -46,6 +46,7 @@ public class Variable {
    * @throws ClassNotFoundException
    */
   public void readData(ObjectInputStream stream) throws IOException, ClassNotFoundException{
+    @SuppressWarnings("unused") // version not yet used
     int version = stream.readInt();
     mDescription = (String) stream.readObject();
     mValue = (String) stream.readObject();

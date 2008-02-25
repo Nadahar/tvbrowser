@@ -62,6 +62,7 @@ public class PrimaryDataManagerTest extends TestCase {
     // Create a new test environment
     testDir.mkdir();
     
+    @SuppressWarnings("unused")
     PrimaryDataManager manager = new PrimaryDataManager(new File("test"));
     
     // Create the prepared data

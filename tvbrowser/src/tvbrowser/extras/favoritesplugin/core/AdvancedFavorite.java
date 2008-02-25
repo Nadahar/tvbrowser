@@ -241,7 +241,9 @@ public class AdvancedFavorite extends Favorite {
         /* For compatibility reasons we read the programs here.
            Later we perform an complete refresh.
          */
+        @SuppressWarnings("unused")
         Date programDate = new Date(in);
+        @SuppressWarnings("unused")
         String programId = (String) in.readObject();
       }
     }

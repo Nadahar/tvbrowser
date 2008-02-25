@@ -270,7 +270,7 @@ public class ScrollableMenu extends JMenu {
    * @param component the <code>Component</code> to add
    * @param index the position at which to insert the component
    * @return the <code>Component</code> added
-   * @see #remove
+   * @see #remove(Component)
    * @see java.awt.Container#add(Component, int)
    */
   public Component add(Component component, int index) {
