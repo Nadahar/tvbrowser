@@ -68,7 +68,7 @@ public class IconLoader {
   /** Icon Cache */
   private WeakHashMap<ThemeIcon, ImageIcon> mIconCache;
   /** Icon Cache for Plugins */
-  private HashMap<Plugin, WeakHashMap<Plugin, ImageIcon>> mPluginIconCache;
+  private HashMap<Plugin, WeakHashMap<ThemeIcon, ImageIcon>> mPluginIconCache;
   
   /**
    * Private Constructor
@@ -84,7 +84,7 @@ public class IconLoader {
         loadIconTheme(new File(Settings.propIcontheme.getString()));
     else {
         mIconCache = new WeakHashMap<ThemeIcon, ImageIcon>();
-        mPluginIconCache = new HashMap<Plugin, WeakHashMap<Plugin, ImageIcon>>();
+        mPluginIconCache = new HashMap<Plugin, WeakHashMap<ThemeIcon, ImageIcon>>();
         mIconTheme = mDefaultIconTheme;
     }
   }
@@ -118,7 +118,7 @@ public class IconLoader {
    */
   private void loadIconTheme(File iconset) {
     mIconCache = new WeakHashMap<ThemeIcon, ImageIcon>();
-    mPluginIconCache = new HashMap<Plugin, WeakHashMap<Plugin, ImageIcon>>();
+    mPluginIconCache = new HashMap<Plugin, WeakHashMap<ThemeIcon, ImageIcon>>();
 
     if (!iconset.exists()) {
       iconset = mDefaultIconDir;
@@ -226,10 +226,10 @@ public class IconLoader {
     }
  
     // Third Try: Plugin Icon Cache
-    WeakHashMap<Plugin, ImageIcon> pluginCache = mPluginIconCache.get(plugin); 
+    WeakHashMap<ThemeIcon, ImageIcon> pluginCache = mPluginIconCache.get(plugin); 
     
     if (pluginCache != null) {
-      imageIcon = pluginCache.get(plugin);
+      imageIcon = pluginCache.get(icon);
       if (imageIcon != null) {
         return imageIcon;
       }
@@ -245,10 +245,10 @@ public class IconLoader {
           
           if (imageIcon != null){
             if (pluginCache == null) {
-              pluginCache = new WeakHashMap<Plugin, ImageIcon>();
+              pluginCache = new WeakHashMap<ThemeIcon, ImageIcon>();
               mPluginIconCache.put(plugin, pluginCache);
             }
-            pluginCache.put(plugin, imageIcon);
+            pluginCache.put(icon, imageIcon);
             return imageIcon;
           }
         } catch (Exception e) {
