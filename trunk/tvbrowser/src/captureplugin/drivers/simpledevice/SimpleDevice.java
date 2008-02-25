@@ -163,8 +163,6 @@ public class SimpleDevice implements DeviceIf {
 
     public boolean add(Window parent, Program program) {
         if (testConfig(parent, program.getChannel())) {
-            int length = program.getLength() * 60;
-
             ProgramTimeDialog dialog;
             ProgramTime time = new ProgramTime(program);
 

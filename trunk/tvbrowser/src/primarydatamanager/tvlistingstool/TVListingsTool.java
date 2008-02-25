@@ -49,7 +49,6 @@ public class TVListingsTool {
     
     String groupNameList=null;
     String mirrorUrlName=null;
-    boolean quiet=false;
     
     for (int i = 0; i < args.length; i++) {
       if (args[i].equalsIgnoreCase("-url")) {

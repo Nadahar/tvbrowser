@@ -92,7 +92,7 @@ public class HtmlMirrorVisualizer implements MirrorVisualizer {
       byte[] data;
       SummaryFile summary=null;
       ChannelList channelList=null;
-      String lastUpdate=null, groupId=null;
+      String groupId=null;
       String lastUpdateFileName=null;  
         
       groupId = mGroups[i];
@@ -126,7 +126,6 @@ public class HtmlMirrorVisualizer implements MirrorVisualizer {
       try {
         lastUpdateFileName = mGroups[i] + "_lastupdate";
         data = mSource.loadFile(lastUpdateFileName);
-        lastUpdate = new String(data);
       } catch (Exception e) {
         //printError("Could not load lastupdate file '"+lastUpdateFileName+"' for group '"+groupId+"'");
 

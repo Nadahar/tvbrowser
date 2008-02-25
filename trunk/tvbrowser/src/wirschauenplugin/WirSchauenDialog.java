@@ -36,7 +36,6 @@ import java.awt.Toolkit;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.util.logging.Logger;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -51,7 +50,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
 public class WirSchauenDialog extends JDialog implements WindowClosingIf {
-  private static Logger mLog = java.util.logging.Logger.getLogger(WirSchauenDialog.class.getName());
   /**
    * Localizer
    */

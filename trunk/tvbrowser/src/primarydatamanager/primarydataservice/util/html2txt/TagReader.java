@@ -35,7 +35,6 @@ import primarydatamanager.primarydataservice.util.Entities;
 public class TagReader {
   
   private Reader mIn;
-  private HTMLTag mCurTag;
   private String mEncoding;
  
   private boolean mExpectTag;
@@ -49,7 +48,7 @@ public class TagReader {
   }
   
   public void setEncoding(String encoding) throws UnsupportedEncodingException {
-     String test=new String("".toString().getBytes(),encoding);
+     new String("".toString().getBytes(),encoding); //create a string to test the encoding
      mEncoding=encoding; 
   }
   
@@ -162,7 +161,6 @@ class HTMLTag implements Tag {
   }
   
   public void append(char ch) {
-    char next;
     mIsConverted=false;
     if (Character.isWhitespace(ch)) {
       if (mPrevChar!=' ') {

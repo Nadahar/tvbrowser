@@ -45,8 +45,8 @@ public class BeanShellEditor extends JEditorPane {
       JViewport port = (JViewport) getParent();
       TextUI ui = getUI();
       int w = port.getWidth();
-      Dimension min = ui.getMinimumSize(this);
-      Dimension max = ui.getMaximumSize(this);
+      ui.getMinimumSize(this);
+      ui.getMaximumSize(this);
       Dimension pref = ui.getPreferredSize(this);
       
       if ((w >= pref.width)) {

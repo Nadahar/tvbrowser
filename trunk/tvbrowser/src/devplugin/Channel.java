@@ -231,7 +231,7 @@ public class Channel implements Comparable<Channel> {
    * 
    * @param in The file too read the Data from.
    * @param allowNull
-   * @return
+   * @return channel
    * @throws IOException
    * @throws ClassNotFoundException
    * 

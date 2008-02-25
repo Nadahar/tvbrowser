@@ -44,10 +44,6 @@ import devplugin.ProgressMonitor;
 
 class FinderItem extends JComponent implements ProgressMonitor {
   
-  private static final util.ui.Localizer mLocalizer
-     = util.ui.Localizer.getLocalizerFor(FinderItem.class);
-  
-  
   private devplugin.Date mDate;
   private JProgressBar mProgressBar;
   private JLabel mLabel;

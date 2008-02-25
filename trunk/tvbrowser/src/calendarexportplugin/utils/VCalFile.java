@@ -27,10 +27,6 @@ public class VCalFile {
   /** TimeFormat */
   private SimpleDateFormat mTime = new SimpleDateFormat("HHmmss");
 
-  /** TimeFormat */
-  private SimpleDateFormat mExtTime = new SimpleDateFormat("HH:mm");
-
-
   /**
    * Exports a list of Programs into a vCal-File
    * 

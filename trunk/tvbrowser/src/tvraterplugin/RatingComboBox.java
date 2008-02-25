@@ -30,7 +30,7 @@ public class RatingComboBox extends JComboBox implements ListCellRenderer {
   /**
    * Selection
    */
-  private static Integer[] values = { new Integer(0), new Integer(1), new Integer(2), new Integer(3), new Integer(4), new Integer(5) };
+  private static Integer[] values = { Integer.valueOf(0), Integer.valueOf(1), Integer.valueOf(2), Integer.valueOf(3), Integer.valueOf(4), Integer.valueOf(5) };
 
     /**
      * Creates the Rating

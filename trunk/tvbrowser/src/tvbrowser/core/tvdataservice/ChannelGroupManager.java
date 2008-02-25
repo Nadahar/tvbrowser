@@ -40,9 +40,6 @@ import devplugin.ProgressMonitor;
 
 public class ChannelGroupManager {
 
-  private static java.util.logging.Logger mLog
-           = java.util.logging.Logger.getLogger(ChannelGroupManager.class.getName());
-
   private static ChannelGroupManager mInstance;
 
   private HashMap<TvDataServiceProxy, ArrayList<ChannelGroup>> mServiceToGroupsMap; // key: TvDataServiceProxy;

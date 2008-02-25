@@ -44,8 +44,6 @@ public class DataServiceConfigDlg implements ActionListener {
 
   private JDialog mDialog;
 
-  private AbstractTvDataService dataService;
-
   private JButton cancelBtn, okBtn;
 
   private SettingsPanel configPanel;
@@ -57,8 +55,6 @@ public class DataServiceConfigDlg implements ActionListener {
     JPanel contentPane = (JPanel) mDialog.getContentPane();
 
     contentPane.setLayout(new BorderLayout());
-
-    this.dataService = dataService;
 
     configPanel = dataService.getSettingsPanel();
     if (configPanel != null) {

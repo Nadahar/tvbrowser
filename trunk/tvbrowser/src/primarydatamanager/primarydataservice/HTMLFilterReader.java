@@ -91,7 +91,6 @@ public class HTMLFilterReader extends FilterReader {
   
   private String[] readNextAttribute() throws IOException {
     StringBuffer keyStrBuf=new StringBuffer();
-    StringBuffer valueStrBuf;
     while (ch==' ') {
       ch=in.read();
     }

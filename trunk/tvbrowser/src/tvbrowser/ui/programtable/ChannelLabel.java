@@ -16,9 +16,6 @@ import devplugin.Channel;
 
 public class ChannelLabel extends util.ui.ChannelLabel {
 
-  private static final util.ui.Localizer mLocalizer
-  = util.ui.Localizer.getLocalizerFor(ChannelPanel.class);
-  
   private static Cursor linkCursor=new Cursor(Cursor.HAND_CURSOR);
   private static Font channelNameFont;
 

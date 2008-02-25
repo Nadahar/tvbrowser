@@ -101,10 +101,10 @@ public interface TvDataService {
   /**
    * Some TvDataServices may need to connect to the internet to know their
    * channels. If supportsDanymicChannelList() returns true, this method is
-   * called to check for availabel channels.
+   * called to check for available channels.
    * @param group
    * @param monitor
-   * @return
+   * @return array of all available channels (new and old)
    * @throws TvBrowserException
    */
   public Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException;

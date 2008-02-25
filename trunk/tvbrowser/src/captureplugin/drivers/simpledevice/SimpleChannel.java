@@ -138,6 +138,7 @@ public class SimpleChannel implements ExternalChannelIf {
      * @throws ClassNotFoundException
      */
     public void readData(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+      @SuppressWarnings("unused") // version not yet used
       int version = stream.readInt();
       mNumber = stream.readInt();
       mName = stream.readUTF();

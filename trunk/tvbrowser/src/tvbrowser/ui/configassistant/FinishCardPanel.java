@@ -42,8 +42,6 @@ class FinishCardPanel extends AbstractCardPanel {
 
   private JPanel mContent;
 
-  private CardPanel mPrev;
-
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(FinishCardPanel.class);
 
   public FinishCardPanel(PrevNextButtons btns) {

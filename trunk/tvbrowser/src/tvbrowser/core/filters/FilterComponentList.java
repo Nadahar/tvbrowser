@@ -77,6 +77,7 @@ public class FilterComponentList {
       if (filterCompFile.exists() && filterCompFile.isFile()) {
       
         in=new ObjectInputStream(new BufferedInputStream(new FileInputStream(filterCompFile), 0x1000));        
+        @SuppressWarnings("unused") // version not yet used
         int version=in.readInt();
         int compCnt=in.readInt();
         for (int i=0; i<compCnt; i++) {

@@ -75,8 +75,6 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ContextmenuSettingsTab.class);
 
-  private boolean mFillingList;
-
   private int mSelectionWidth;
 
   private ArrayList<ContextMenuIf> mDeactivatedItems;
@@ -183,7 +181,6 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
   }
   
   private void fillListbox() {
-    mFillingList = true;
     if (mList == null) {
       return;
     }
@@ -208,7 +205,6 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     }
     
     mDeactivatedItems = new ArrayList<ContextMenuIf>(ContextMenuManager.getInstance().getDisabledContextMenuIfs());
-    mFillingList = false;
   }
 
   public void saveSettings() {

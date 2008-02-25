@@ -85,7 +85,7 @@ public class UserFilter implements devplugin.ProgramFilter {
   private static char[] ruleLine;
   private static Token curToken;
     
-  private Node root, curNode;
+  private Node root;
   
   
   public UserFilter(String name) {
@@ -97,6 +97,7 @@ public class UserFilter implements devplugin.ProgramFilter {
          ObjectInputStream in=null;
          try {
              in=new ObjectInputStream(new BufferedInputStream(new FileInputStream(file), 0x1000));            
+             @SuppressWarnings("unused") // version not yet used
              int version=in.readInt();
              mName=(String)in.readObject();
              mRule=(String)in.readObject();        
