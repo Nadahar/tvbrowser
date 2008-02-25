@@ -59,7 +59,7 @@ import tvbrowser.ui.programtable.background.BackgroundPainter;
 import tvbrowser.ui.programtable.background.OneImageBackPainter;
 import tvbrowser.ui.programtable.background.TimeBlockBackPainter;
 import tvbrowser.ui.programtable.background.TimeOfDayBackPainter;
-import tvbrowser.ui.programtable.background.WhiteBackPainter;
+import tvbrowser.ui.programtable.background.SingleColorBackPainter;
 import util.settings.ProgramPanelSettings;
 import util.ui.ProgramPanel;
 import util.ui.TransferProgram;
@@ -232,8 +232,8 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
     String background = Settings.propTableBackgroundStyle.getString();
     if (background.equals("timeOfDay")) {
       mBackgroundPainter = new TimeOfDayBackPainter();
-    } else if (background.equals("white")) {
-      mBackgroundPainter = new WhiteBackPainter();
+    } else if (background.equals("singleColor")) {
+      mBackgroundPainter = new SingleColorBackPainter();
     } else if (background.equals("oneImage")) {
       mBackgroundPainter = new OneImageBackPainter();
     } else { // timeBlock

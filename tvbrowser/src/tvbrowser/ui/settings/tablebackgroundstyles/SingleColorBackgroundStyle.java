@@ -28,35 +28,57 @@ package tvbrowser.ui.settings.tablebackgroundstyles;
 
 import javax.swing.JPanel;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import tvbrowser.core.Settings;
+import tvbrowser.ui.settings.util.ColorButton;
+import tvbrowser.ui.settings.util.ColorLabel;
+
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
  * Date: 30.04.2005
  * Time: 17:47:39
  */
-public class BlankBackgroundStyle implements TableBackgroundStyle {
+public class SingleColorBackgroundStyle implements TableBackgroundStyle {
 
-   private static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(BlankBackgroundStyle.class);
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(SingleColorBackgroundStyle.class);
+  
+  private ColorLabel mColorLabel;
 
-  public BlankBackgroundStyle() {
+  public SingleColorBackgroundStyle() {
 
   }
 
   public boolean hasContent() {
-    return false;
+    return true;
   }
 
   public JPanel createSettingsContent() {
-    return null;
+    CellConstraints cc = new CellConstraints();
+    PanelBuilder pb = new PanelBuilder(new FormLayout("default,5dlu,default,5dlu,default","default"));
+    
+    mColorLabel = new ColorLabel(Settings.propProgramTableBackgroundSingleColor.getColor());
+    mColorLabel.setStandardColor(Settings.propProgramTableBackgroundSingleColor.getDefaultColor());
+    
+    ColorButton colorButton = new ColorButton(mColorLabel);
+    
+    pb.addLabel(mLocalizer.msg("text","Background color"), cc.xy(1,1));
+    pb.add(mColorLabel, cc.xy(3,1));
+    pb.add(colorButton, cc.xy(5,1));
+    
+    return pb.getPanel();
   }
 
   public void storeSettings() {
-
+    Settings.propProgramTableBackgroundSingleColor.setColor(mColorLabel.getColor());
   }
 
   public String getName() {
-    return mLocalizer.msg("style","White");
+    return mLocalizer.msg("style","Single color");
   }
 
 
@@ -65,7 +87,7 @@ public class BlankBackgroundStyle implements TableBackgroundStyle {
   }
 
   public String getSettingsString() {
-    return "white";
+    return "singleColor";
   }
 
 }

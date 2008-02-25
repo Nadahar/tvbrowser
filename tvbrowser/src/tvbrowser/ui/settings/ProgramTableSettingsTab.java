@@ -56,7 +56,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.Settings;
-import tvbrowser.ui.settings.tablebackgroundstyles.BlankBackgroundStyle;
+import tvbrowser.ui.settings.tablebackgroundstyles.SingleColorBackgroundStyle;
 import tvbrowser.ui.settings.tablebackgroundstyles.DayTimeBackgroundStyle;
 import tvbrowser.ui.settings.tablebackgroundstyles.SingleImageBackgroundStyle;
 import tvbrowser.ui.settings.tablebackgroundstyles.TableBackgroundStyle;
@@ -412,7 +412,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
 
   private TableBackgroundStyle[] getTableBackgroundStyles() {
 
-    return new TableBackgroundStyle[] { new BlankBackgroundStyle(), new SingleImageBackgroundStyle(),
+    return new TableBackgroundStyle[] { new SingleColorBackgroundStyle(), new SingleImageBackgroundStyle(),
         new TimeBlockBackgroundStyle(), new DayTimeBackgroundStyle() };
 
   }
