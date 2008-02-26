@@ -580,8 +580,9 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    * connect a lazy loaded plugin to its proxy
    * @param plugin
    */
-  public void setPlugin(Plugin plugin) {
+  public void setPlugin(Plugin plugin, String fileName) {
     mPlugin = plugin;
+    mPluginFileName = fileName;
   }
 
   @Override
