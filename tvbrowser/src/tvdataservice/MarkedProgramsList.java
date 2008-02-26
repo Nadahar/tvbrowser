@@ -136,10 +136,11 @@ public class MarkedProgramsList {
   /**
    * @param filter The filter to use for program filtering
    * @param markPriority The minimum mark priority of programs to find.
+   * @param numberOfPrograms The number of programs to show. Use a value of 0 or below for all important programs.
    * @return The time sorted programs for the tray.
    */
-  public Program[] getTimeSortedProgramsForTray(ProgramFilter filter, int markPriority) {
-    int n = mMarkedPrograms.size() > Settings.propTrayImportantProgramsSize.getInt() ? Settings.propTrayImportantProgramsSize.getInt() : mMarkedPrograms.size();
+  public Program[] getTimeSortedProgramsForTray(ProgramFilter filter, int markPriority, int numberOfPrograms) {
+    int n = (mMarkedPrograms.size() > numberOfPrograms && numberOfPrograms > 0) ? numberOfPrograms : mMarkedPrograms.size();
 
     ArrayList<Program> programs = new ArrayList<Program>();
 

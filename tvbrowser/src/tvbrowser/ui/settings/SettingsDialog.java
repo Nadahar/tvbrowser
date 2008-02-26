@@ -437,8 +437,10 @@ public class SettingsDialog implements WindowClosingIf {
     });
     
     for(InternalPluginProxyIf internalPluginProxy : internalPluginProxies) {
-      mPluginSettingsNode.add(new SettingNode(internalPluginProxy.getSettingsTab(),
-          internalPluginProxy.getSettingsId()));
+      if(internalPluginProxy.getSettingsTab() != null) {
+        mPluginSettingsNode.add(new SettingNode(internalPluginProxy.getSettingsTab(),
+            internalPluginProxy.getSettingsId()));
+      }
     }
     
     PluginProxy[] pluginArr = PluginProxyManager.getInstance().getAllPlugins();

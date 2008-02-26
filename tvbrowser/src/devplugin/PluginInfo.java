@@ -302,7 +302,7 @@ public final class PluginInfo {
      */
     public static String getHelpUrl(String id) {
       PluginAccess plugin = PluginProxyManager.getInstance().getPluginForId(id);
-      String url = "";
+      String url = null;
       if (plugin != null) {
         url = plugin.getInfo().getHelpUrl();
       }
