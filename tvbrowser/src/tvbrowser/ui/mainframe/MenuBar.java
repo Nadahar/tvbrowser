@@ -17,8 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * CVS information:
- *  $RCSfile$
- *   $Source$
  *     $Date$
  *   $Author$
  * $Revision$
@@ -45,6 +43,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
+import javax.swing.KeyStroke;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DateListener;
@@ -55,15 +54,13 @@ import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.core.plugin.ButtonActionIf;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
-import tvbrowser.extras.reminderplugin.ReminderPlugin;
-import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
-import tvbrowser.extras.searchplugin.SearchPlugin;
+import tvbrowser.extras.common.InternalPluginProxyIf;
+import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
 import tvbrowser.ui.filter.dlgs.FilterButtons;
 import tvbrowser.ui.licensebox.LicenseBox;
@@ -97,11 +94,10 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
                     mPluginManagerMI, mDonorMI, mFaqMI, mForumMI, mWebsiteMI, mHandbookMI,
                     mConfigAssistantMI, mAboutMI, mKeyboardShortcutsMI,
                     mPreviousDayMI, mNextDayMI, mGotoNowMenuItem, mEditTimeButtonsMenuItem,
-                    mToolbarCustomizeMI,
-                    mFavoritesMI, mReminderMI, mFullscreenMI, mSearchMI,
-                    mFontSizeLargerMI, mFontSizeSmallerMI, mFontSizeDefaultMI,
-                    mColumnWidthLargerMI, mColumnWidthSmallerMI, mColumnWidthDefaultMI;
-  protected JMenu mFiltersMenu, mPluginsViewMenu, mLicenseMenu, mGoMenu, mViewMenu, mToolbarMenu, mPluginHelpMenu;
+                    mToolbarCustomizeMI, mFullscreenMI, mFontSizeLargerMI, mFontSizeSmallerMI,
+                    mFontSizeDefaultMI, mColumnWidthLargerMI, mColumnWidthSmallerMI, 
+                    mColumnWidthDefaultMI;
+  protected JMenu mFiltersMenu, mLicenseMenu, mGoMenu, mViewMenu, mToolbarMenu, mPluginHelpMenu;
 
   private JMenu mGotoDateMenu, mGotoChannelMenu, mGotoTimeMenu, mFontSizeMenu, mColumnWidthMenu, mChannelGroupMenu;
   
@@ -296,10 +292,6 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mPluginHelpMenu = new JMenu(mLocalizer.msg("menu.plugins","Plugins"));
     mPluginHelpMenu.setIcon(urlHelpImg);
     updatePluginHelpMenuItems();
-
-    mFavoritesMI = new JMenuItem(FavoritesPlugin.getInstance().getButtonAction().getAction());
-    mReminderMI = new JMenuItem(ReminderPlugin.getInstance().getButtonAction().getAction());
-    mSearchMI = new JMenuItem(SearchPlugin.getInstance().getButtonAction().getAction());
     
     mFontSizeLargerMI = new JMenuItem(mLocalizer.msg("menuitem.fontSizeLarger", "Larger"));
     mFontSizeLargerMI.addActionListener(this);
@@ -567,33 +559,63 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
         result.setIcon(new FixedSizeIcon(16, 16, (Icon) menu.getAction().getValue(Action.SMALL_ICON)));
       }
     }
+    
+    if(menu.getAction().getValue(InternalPluginProxyIf.KEYBOARD_ACCELERATOR) != null) {
+      if(menu.getAction().getValue(InternalPluginProxyIf.KEYBOARD_ACCELERATOR) instanceof KeyStroke) {
+        result.setAccelerator((KeyStroke)menu.getAction().getValue(InternalPluginProxyIf.KEYBOARD_ACCELERATOR));
+      }
+    }
+    
     return result;
 
   }
 
+   protected JMenuItem[] createInternalPluginMenuItems() {
+     InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList.getInstance().getAvailableProxys();
+     
+     ArrayList<JMenuItem> list = new ArrayList<JMenuItem>();
+     for(InternalPluginProxyIf internalPlugin : internalPlugins) {
+       if(internalPlugin instanceof ButtonActionIf) {
+         fillButtonActionList(list, (ButtonActionIf)internalPlugin);
+       }
+     }
+     
+     return createSortedArrayFromList(list);
+   }
+   
    protected JMenuItem[] createPluginMenuItems() {
-		PluginProxy[] plugins = PluginProxyManager.getInstance()
-				.getActivatedPlugins();
-		ArrayList<JMenuItem> list = new ArrayList<JMenuItem>();
-		for (PluginProxy plugin : plugins) {
-			ActionMenu actionMenu = plugin.getButtonAction();
-			if (actionMenu != null) {
-				JMenuItem item = createMenuItem(actionMenu);
-				list.add(item);
-				new MenuHelpTextAdapter(item,
-						plugin.getInfo().getDescription(), mLabel);
-			}
-		}
-		JMenuItem[] result = list.toArray(new JMenuItem[list.size()]);
-		Arrays.sort(result, new Comparator<JMenuItem>() {
+     PluginProxy[] plugins = PluginProxyManager.getInstance()
+         .getActivatedPlugins();
 
-			public int compare(JMenuItem item1, JMenuItem item2) {
-				return item1.getText().compareTo(item2.getText());
-			}
-		});
+     ArrayList<JMenuItem> list = new ArrayList<JMenuItem>();
+     for (PluginProxy plugin : plugins) {
+       fillButtonActionList(list, plugin);
+     }
+     
+     return createSortedArrayFromList(list);
+   }
+   
+   private void fillButtonActionList(ArrayList<JMenuItem> list, ButtonActionIf buttonActionIf) {
+     ActionMenu actionMenu = buttonActionIf.getButtonAction();
+     if (actionMenu != null) {
+       JMenuItem item = createMenuItem(actionMenu);
+       list.add(item);
+       new MenuHelpTextAdapter(item,
+           buttonActionIf.getDescription(), mLabel);
+     }
+   }
+   
+   private JMenuItem[] createSortedArrayFromList(ArrayList<JMenuItem> itemList) {
+     JMenuItem[] result = itemList.toArray(new JMenuItem[itemList.size()]);
+     Arrays.sort(result, new Comparator<JMenuItem>() {
 
-		return result;
-	}
+       public int compare(JMenuItem item1, JMenuItem item2) {
+         return item1.getText().compareTo(item2.getText());
+       }
+     });
+     
+     return result;
+   }
 
   protected void updatePluginHelpMenuItems() {
      mPluginHelpMenu.removeAll();
@@ -619,15 +641,13 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
       }
     });
     
-    JMenuItem item = pluginHelpMenuItem(FavoritesPlugin.getInstance().toString(), mLocalizer.msg("menuitem.helpFavorites", "Favorites"));
-    item.setIcon(FavoritesPluginProxy.getInstance().getMarkIcon());
-    mPluginHelpMenu.add(item);
-    item = pluginHelpMenuItem(ReminderPlugin.getInstance().toString(), mLocalizer.msg("menuitem.helpReminder", "Reminder"));
-    item.setIcon(ReminderPluginProxy.getInstance().getMarkIcon());
-    mPluginHelpMenu.add(item);
-    item = pluginHelpMenuItem(SearchPlugin.getInstance().toString(), mLocalizer.msg("menuitem.helpSearch", "Search"));
-    item.setIcon((Icon) SearchPlugin.getInstance().getButtonAction().getAction().getValue(Action.SMALL_ICON));
-    mPluginHelpMenu.add(item);
+    InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList.getInstance().getAvailableProxys();
+    
+    for(InternalPluginProxyIf internalPlugin : internalPlugins) {
+      JMenuItem item = pluginHelpMenuItem(internalPlugin.toString(), internalPlugin.getId());
+      item.setIcon(internalPlugin.getIcon());
+      mPluginHelpMenu.add(item);
+    }
     
     if(result.length > 0) {
       mPluginHelpMenu.addSeparator();

@@ -606,7 +606,7 @@ public class ReminderPlugin {
   }
 
 
-  public ActionMenu getButtonAction() {
+  protected ActionMenu getButtonAction() {
     AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent evt) {
         ReminderListDialog dlg;
@@ -640,7 +640,7 @@ public class ReminderPlugin {
     action.putValue(Action.NAME, mLocalizer.msg("buttonText", "Reminder list"));
     action.putValue(Action.SMALL_ICON, IconLoader.getInstance()
         .getIconFromTheme("apps", "appointment", 16));
-    // action.putValue(BIG_ICON, createImageIcon("apps", "appointment", 22));
+    action.putValue(Plugin.BIG_ICON, IconLoader.getInstance().getIconFromTheme("apps", "appointment", 22));
     action.putValue(Action.SHORT_DESCRIPTION, mLocalizer.msg("description",
         "Eine einfache Implementierung einer Erinnerungsfunktion."));
 

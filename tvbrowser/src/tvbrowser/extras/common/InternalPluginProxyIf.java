@@ -24,8 +24,8 @@
 package tvbrowser.extras.common;
 
 import javax.swing.Icon;
-
 import devplugin.SettingsTab;
+
 
 /**
  * Have to be implemented by all internal
@@ -35,6 +35,12 @@ import devplugin.SettingsTab;
  * @since 2.6
  */
 public interface InternalPluginProxyIf {
+  /** This is the key for the keyboard accelerator for
+   * interal plugin button actions.
+   * @since 2.7
+   */
+  public static final String KEYBOARD_ACCELERATOR = "####KEYBOARD_ACCELERATOR####";
+  
   /** Gets the icon of this internal plugin. 
    * @return The icon for this internal plugin. */
   public Icon getIcon();

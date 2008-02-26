@@ -28,6 +28,7 @@ package tvbrowser.extras.favoritesplugin;
 import javax.swing.Icon;
 
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.core.plugin.ButtonActionIf;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 
 import devplugin.ActionMenu;
@@ -42,7 +43,7 @@ import devplugin.SettingsTab;
  *
  * @author René Mach
  */
-public class FavoritesPluginProxy implements ContextMenuIf, Marker, InternalPluginProxyIf {
+public class FavoritesPluginProxy implements ButtonActionIf, ContextMenuIf, Marker, InternalPluginProxyIf {
   
   private static FavoritesPluginProxy mInstance;
   private static FavoritesPlugin mFavoritesInstance;
@@ -109,5 +110,9 @@ public class FavoritesPluginProxy implements ContextMenuIf, Marker, InternalPlug
 
   public String getSettingsId() {
     return SettingsItem.FAVORITE;
+  }
+
+  public ActionMenu getButtonAction() {
+    return mFavoritesInstance.getButtonAction();
   }
 }

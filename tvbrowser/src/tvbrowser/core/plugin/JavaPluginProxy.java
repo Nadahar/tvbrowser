@@ -599,4 +599,8 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     // otherwise get the icon as always
     return super.getPluginIcon();
   }
+
+  public String getDescription() {
+    return mPlugin.getInfo().getDescription();
+  }
 }

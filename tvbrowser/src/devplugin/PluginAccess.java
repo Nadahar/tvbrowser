@@ -27,6 +27,8 @@ package devplugin;
 
 import javax.swing.Icon;
 
+import tvbrowser.core.plugin.ButtonActionIf;
+
 
 /**
  * An access to another plugin.
@@ -35,7 +37,7 @@ import javax.swing.Icon;
  *
  * @author Til Schneider, www.murfman.de
  */
-public interface PluginAccess extends Marker,ProgramReceiveIf,ContextMenuIf {
+public interface PluginAccess extends ButtonActionIf,Marker,ProgramReceiveIf,ContextMenuIf {
   
   /**
    * Gets the ID of this plugin.

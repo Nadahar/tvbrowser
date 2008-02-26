@@ -36,6 +36,7 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ConfigurationHandler;
 import tvbrowser.extras.common.DataDeserializer;
 import tvbrowser.extras.common.DataSerializer;
+import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.ui.SearchFormSettings;
@@ -46,9 +47,13 @@ import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+import javax.swing.KeyStroke;
 
 /**
  * Provides a dialog for searching programs.
@@ -184,7 +189,7 @@ public class SearchPlugin {
         out.writeInt(mRepetitionTimeSelect);
     }
 
-    public ActionMenu getButtonAction() {
+    protected ActionMenu getButtonAction() {
         ButtonAction action = new ButtonAction();
         action.setActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -205,6 +210,7 @@ public class SearchPlugin {
         action.setSmallIcon(IconLoader.getInstance().getIconFromTheme("actions", "system-search", 16));
         action.setShortDescription(mLocalizer.msg("description", "Allows searching programs containing a certain text."));
         action.setText(mLocalizer.msg("searchPrograms", "Search programs..."));
+        action.putValue(InternalPluginProxyIf.KEYBOARD_ACCELERATOR, KeyStroke.getKeyStroke(KeyEvent.VK_F,InputEvent.CTRL_MASK));
 
         return new ActionMenu(action);
     }

@@ -53,11 +53,12 @@ import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.core.plugin.ButtonActionIf;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.common.InternalPluginProxyIf;
+import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
-import tvbrowser.extras.searchplugin.SearchPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MarkedProgramsList;
 import util.io.IOUtilities;
@@ -889,16 +890,22 @@ public class SystemTray {
 
     });
 
-    ActionMenu action = FavoritesPlugin.getInstance().getButtonAction();
-    pluginsMenu.add(new JMenuItem(action.getAction()));
-    action = ReminderPlugin.getInstance().getButtonAction();
-    pluginsMenu.add(new JMenuItem(action.getAction()));
-    action = SearchPlugin.getInstance().getButtonAction();
-    pluginsMenu.add(new JMenuItem(action.getAction()));
+    InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList.getInstance().getAvailableProxys();
+    
+    for(InternalPluginProxyIf internalPlugin : internalPlugins) {
+      if(internalPlugin instanceof ButtonActionIf) {
+        ActionMenu action = ((ButtonActionIf)internalPlugin).getButtonAction();
+        
+        if (action != null) {
+          pluginsMenu.add(MenuUtil.createMenuItem(action,false));
+        }
+      }
+    }
+    
     pluginsMenu.addSeparator();
     
     for (PluginProxy plugin : plugins) {
-      action = plugin.getButtonAction();
+      ActionMenu action = plugin.getButtonAction();
       if (action != null) {
         pluginsMenu.add(MenuUtil.createMenuItem(action,false));
       }

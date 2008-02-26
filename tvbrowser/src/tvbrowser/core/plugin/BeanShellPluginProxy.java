@@ -339,4 +339,8 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
     public String getPluginFileName() {
       return mBshFile.getPath();
     }
+
+    public String getDescription() {
+      return mScript.getInfo().getDescription();
+    }
  }
