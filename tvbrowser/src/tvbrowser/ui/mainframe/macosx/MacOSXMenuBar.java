@@ -71,8 +71,11 @@ public class MacOSXMenuBar extends MenuBar {
     tvListingsMenu.add(mLicenseMenu);
 
     // "Plugins" menu
-    mPluginsMenu.add(mFavoritesMI);
-    mPluginsMenu.add(mReminderMI);
+    JMenuItem[] internalPluginItems = createInternalPluginMenuItems();
+    for (JMenuItem menuItem : internalPluginItems) {
+      mPluginsMenu.add(menuItem);
+    }
+    
     mPluginsMenu.addSeparator();
     
     JMenuItem[] pluginItems = createPluginMenuItems();
@@ -133,8 +136,12 @@ public class MacOSXMenuBar extends MenuBar {
 
   protected void setPluginMenuItems(JMenuItem[] items) {
       mPluginsMenu.removeAll();
-      mPluginsMenu.add(mFavoritesMI);
-      mPluginsMenu.add(mReminderMI);
+      
+      JMenuItem[] internalPluginItems = createInternalPluginMenuItems();
+      for (JMenuItem menuItem : internalPluginItems) {
+        mPluginsMenu.add(menuItem);
+      }
+      
       mPluginsMenu.addSeparator();
 
       JMenuItem[] pluginItems = createPluginMenuItems();
