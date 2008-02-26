@@ -366,7 +366,7 @@ public class ProgramIcon implements Icon {
   }
 
 
-  class ChannelIcon implements Icon {
+  private static class ChannelIcon implements Icon {
 
     private Channel mChannel;
     private Font mFont;

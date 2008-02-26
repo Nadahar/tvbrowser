@@ -251,7 +251,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
   }
   
   
-  class IconPlugin {
+  private static class IconPlugin {
     
     private PluginProxy mPlugin;
     private String mName;

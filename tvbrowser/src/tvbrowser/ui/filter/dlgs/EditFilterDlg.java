@@ -407,7 +407,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     mColLb.setText("pos: " + mFilterRuleTF.getCaretPosition());
   }
 
-  private class FilterTableModel extends AbstractTableModel {
+  private static class FilterTableModel extends AbstractTableModel {
 
     private Vector<FilterComponent> dataVector;
 

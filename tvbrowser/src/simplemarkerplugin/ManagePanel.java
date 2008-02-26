@@ -447,7 +447,7 @@ public class ManagePanel {
     return buttons;
   }
   
-  private class MarkListCellRenderer extends DefaultListCellRenderer {
+  private static class MarkListCellRenderer extends DefaultListCellRenderer {
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
       simplemarkerplugin.ManagePanel.MarkListCellRenderer c = (simplemarkerplugin.ManagePanel.MarkListCellRenderer) super.getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);      
       

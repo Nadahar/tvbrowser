@@ -89,7 +89,7 @@ public class TimeRangePanel extends JPanel {
   }
 
 
-  class TimeListCellRenderer extends DefaultListCellRenderer {
+  private static class TimeListCellRenderer extends DefaultListCellRenderer {
 
     public TimeListCellRenderer() {
 

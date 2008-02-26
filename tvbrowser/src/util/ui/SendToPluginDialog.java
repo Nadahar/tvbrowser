@@ -213,7 +213,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
   /**
    * Comperator needed to Sort List of Plugins
    */
-  private class ObjectComperator implements Comparator<ProgramReceiveIf> {
+  private static class ObjectComperator implements Comparator<ProgramReceiveIf> {
 
     public int compare(ProgramReceiveIf o1, ProgramReceiveIf o2) {
       return o1.toString().compareTo(o2.toString());

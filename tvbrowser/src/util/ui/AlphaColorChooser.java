@@ -386,7 +386,7 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
     /**
      * Inner Class for the Color-Preview
      */
-    private class PaintColor extends JPanel {
+    private static class PaintColor extends JPanel {
 
         /*
          * (non-Javadoc)

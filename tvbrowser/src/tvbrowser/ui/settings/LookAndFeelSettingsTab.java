@@ -86,7 +86,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
   
   private static boolean mSomethingChanged = false;
 
-  class LookAndFeelObj {
+  private static class LookAndFeelObj {
     private UIManager.LookAndFeelInfo info;
 
     public LookAndFeelObj(UIManager.LookAndFeelInfo info) {

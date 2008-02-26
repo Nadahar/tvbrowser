@@ -126,7 +126,7 @@ public class LayoutTab extends JPanel {
   }
 
 
-  class LayoutOption {
+  private static class LayoutOption {
 
     private int mChannelsPerPage, mChannelsPerColumn;
 

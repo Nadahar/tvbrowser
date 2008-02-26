@@ -567,7 +567,7 @@ public class SettingsDialog implements WindowClosingIf {
     mSettingsPn.repaint();
   }
 
-  private class DefaultSettingsTab implements devplugin.SettingsTab {
+  private static class DefaultSettingsTab implements devplugin.SettingsTab {
 
     private String mTitle;
 
@@ -731,7 +731,7 @@ public class SettingsDialog implements WindowClosingIf {
   /**
    * A cell renderer that sets the icon of the SettingNode it renders.
    */
-  public class SettingNodeCellRenderer extends DefaultTreeCellRenderer {
+  private static class SettingNodeCellRenderer extends DefaultTreeCellRenderer {
 
     public Component getTreeCellRendererComponent(JTree tree, Object value,
         boolean sel, boolean expanded, boolean leaf, int rowIndex,

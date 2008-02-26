@@ -227,7 +227,7 @@ public class TvDataBaseUpdater {
   // inner class UpdateJob
   
   
-  private class UpdateJob {
+  private static class UpdateJob {
     private Date mDate;
     private Channel mChannel;
     private String asString;

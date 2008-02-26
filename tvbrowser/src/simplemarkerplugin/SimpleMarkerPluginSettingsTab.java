@@ -330,7 +330,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     popupMenu.show(mListTable, p.x, p.y);
   }
 
-  private class TableRenderer extends DefaultTableCellRenderer {
+  private static class TableRenderer extends DefaultTableCellRenderer {
     private static final long serialVersionUID = 1L;
 
     public Component getTableCellRendererComponent(JTable table, Object value,
@@ -392,7 +392,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     }
   }
 
-  private class MarkListTableModel extends DefaultTableModel {
+  private static class MarkListTableModel extends DefaultTableModel {
 
     private static final long serialVersionUID = 1L;
 
@@ -413,7 +413,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     }
   }
 
-  private class MarkListItem {
+  private static class MarkListItem {
     private MarkList mList;
 
     private boolean mDelete = false;

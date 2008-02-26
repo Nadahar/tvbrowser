@@ -34,8 +34,7 @@ import java.util.Iterator;
 
 public class Tag {
   
-  
-  class DeepIterator implements Iterator<Tag> {
+  private static class DeepIterator implements Iterator<Tag> {
     
     private ArrayList<Tag> list;
     private Iterator<Tag> iterator;

@@ -176,7 +176,7 @@ public class MausSettingsTab implements devplugin.SettingsTab {
     return mLocalizer.msg("title", "context menu");
   }
   
-  class ContextMenuCellRenderer extends DefaultListCellRenderer {
+  private static class ContextMenuCellRenderer extends DefaultListCellRenderer {
     private JLabel mItemLabel;
     
     public ContextMenuCellRenderer() {

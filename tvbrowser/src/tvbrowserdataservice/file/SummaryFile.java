@@ -433,7 +433,7 @@ public class SummaryFile extends AbstractFile {
     /**
      * Gets the version array for a particular date.
      * <p>
-     * The returned array has a length of {@link mLevelCount}.
+     * The returned array has a length of {@link #mLevelCount}.
      * 
      * @param date The date to get the version array for.
      * @return The version array for a particular date.

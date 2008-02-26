@@ -138,7 +138,7 @@ class PluginInfoPanel extends JPanel {
     mDescriptionLabel.setText("<html>" + info.getDescription() + "</html>");
   }
 
-  class PluginLabel extends JLabel {
+  private static class PluginLabel extends JLabel {
     public PluginLabel(String name) {
       super(name);
       setFont(PLAIN);

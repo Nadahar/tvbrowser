@@ -214,7 +214,7 @@ public class ListTableModel extends AbstractTableModel {
     /**
      * The Data in a rows
      */
-    private class ListTableModelData {
+    private static class ListTableModelData {
         Channel mChannel;
         Program mFirst, mSecond;
         

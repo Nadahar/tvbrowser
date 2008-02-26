@@ -166,7 +166,6 @@ abstract public class IconTheme {
    * This Method tries to find an exact size match, if it wasn't found
    * it tries to find another Version of the Icon and rescales it.
    * 
-   * @param category Category of the Icon
    * @param icon Icon that should be loaded
    * @return Icon or Null if Icon was not found
    */

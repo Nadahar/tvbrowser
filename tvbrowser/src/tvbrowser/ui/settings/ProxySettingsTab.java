@@ -127,7 +127,7 @@ public class ProxySettingsTab implements devplugin.SettingsTab {
   // inner class ProxySettingsPanel
   
   
-  protected class ProxySettingsPanel extends JPanel {
+  protected static class ProxySettingsPanel extends JPanel {
 
     private JCheckBox mUseProxyChB, mAuthentifyAtProxyChB;
     private JTextField mHostTF, mPortTF, mUserTF;

@@ -385,7 +385,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
    * 
    * @author René Mach
    */
-  private class LinkFile {
+  private static class LinkFile {
     private String mTarget;
     
     private LinkFile(File linkFile, File target, File icon, int iconIndex) throws IOException {

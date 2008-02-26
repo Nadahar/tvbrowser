@@ -106,7 +106,7 @@ class ErrorWindow {
    * 
    * @param parent A component in the component tree the dialog should be
    *          created for.
-   * @param msg The localized error message.
+   * @param errorMsg The localized error message.
    * @param thr The throwable whichs details are shown by the dialog.
    */
   public ErrorWindow(Component parent, String errorMsg, Throwable thr) {
@@ -118,7 +118,7 @@ class ErrorWindow {
    * 
    * @param parent A component in the component tree the dialog should be
    *          created for.
-   * @param msg The localized error message.
+   * @param errorMsg The localized error message.
    * @param thr The throwable whichs details are shown by the dialog.
    * @param messageType The type of Window to Display: ErrorHandler.SHOW_OK, ErrorHandler.SHOW_YES_NO
    * 

@@ -66,7 +66,7 @@ public class MassFilterSettingsDialog extends JDialog {
 
   /**
    * Create the Dialog
-   * @param frame Parent-Frame
+   * @param dialog parent dialog
    * @param searchFormSettings Settings to use
    */
   public MassFilterSettingsDialog(JDialog dialog, SearchFormSettings searchFormSettings) {

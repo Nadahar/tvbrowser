@@ -101,25 +101,25 @@ public class GoogleSettingsDialog extends JDialog  implements WindowClosingIf {
     mReminderText = new JLabel(mLocalizer.msg("minutesBefore", "Remind how many minutes before?"));
     content.add(mReminderText, cc.xy(3,9));
 
-    Vector<GoogleComoboboxItem> v = new Vector<GoogleComoboboxItem>();
-    v.add(new GoogleComoboboxItem(    5, mLocalizer.msg("5_minutes", "5 minutes")));
-    v.add(new GoogleComoboboxItem(   10, mLocalizer.msg("10_minutes","10 minutes")));
-    v.add(new GoogleComoboboxItem(   15, mLocalizer.msg("15_minutes","15 minutes")));
-    v.add(new GoogleComoboboxItem(   20, mLocalizer.msg("20_minutes","20 minutes")));
-    v.add(new GoogleComoboboxItem(   25, mLocalizer.msg("25_minutes","25 minutes")));
-    v.add(new GoogleComoboboxItem(   30, mLocalizer.msg("30_minutes","30 minutes")));
-    v.add(new GoogleComoboboxItem(   45, mLocalizer.msg("45_minutes", "45 minutes")));
-    v.add(new GoogleComoboboxItem(   60, mLocalizer.msg("60_minutes","1 hour")));
-    v.add(new GoogleComoboboxItem(  120, mLocalizer.msg("120_minutes","2 hours")));
-    v.add(new GoogleComoboboxItem(  180, mLocalizer.msg("180_minutes","3 hours")));
-    v.add(new GoogleComoboboxItem(  720, mLocalizer.msg("720_minutes","12 hours")));
-    v.add(new GoogleComoboboxItem( 1440, mLocalizer.msg("1440_minutes","1 day")));
-    v.add(new GoogleComoboboxItem( 2880, mLocalizer.msg("2880_minutes","2 days")));
-    v.add(new GoogleComoboboxItem(10080, mLocalizer.msg("10080_minutes","1 week")));
+    Vector<GoogleComboboxItem> v = new Vector<GoogleComboboxItem>();
+    v.add(new GoogleComboboxItem(    5, mLocalizer.msg("5_minutes", "5 minutes")));
+    v.add(new GoogleComboboxItem(   10, mLocalizer.msg("10_minutes","10 minutes")));
+    v.add(new GoogleComboboxItem(   15, mLocalizer.msg("15_minutes","15 minutes")));
+    v.add(new GoogleComboboxItem(   20, mLocalizer.msg("20_minutes","20 minutes")));
+    v.add(new GoogleComboboxItem(   25, mLocalizer.msg("25_minutes","25 minutes")));
+    v.add(new GoogleComboboxItem(   30, mLocalizer.msg("30_minutes","30 minutes")));
+    v.add(new GoogleComboboxItem(   45, mLocalizer.msg("45_minutes", "45 minutes")));
+    v.add(new GoogleComboboxItem(   60, mLocalizer.msg("60_minutes","1 hour")));
+    v.add(new GoogleComboboxItem(  120, mLocalizer.msg("120_minutes","2 hours")));
+    v.add(new GoogleComboboxItem(  180, mLocalizer.msg("180_minutes","3 hours")));
+    v.add(new GoogleComboboxItem(  720, mLocalizer.msg("720_minutes","12 hours")));
+    v.add(new GoogleComboboxItem( 1440, mLocalizer.msg("1440_minutes","1 day")));
+    v.add(new GoogleComboboxItem( 2880, mLocalizer.msg("2880_minutes","2 days")));
+    v.add(new GoogleComboboxItem(10080, mLocalizer.msg("10080_minutes","1 week")));
     mRemindMinutes = new JComboBox(v);
     
     String minutes = settings.getProperty(GoogleExporter.REMINDERMINUTES);
-    for (GoogleComoboboxItem item : v) {
+    for (GoogleComboboxItem item : v) {
       if (item.getKey().equals(minutes)) {
         mRemindMinutes.setSelectedItem(item);
       }
@@ -200,12 +200,12 @@ public class GoogleSettingsDialog extends JDialog  implements WindowClosingIf {
     mReturnValue = JOptionPane.OK_OPTION;
     setVisible(false);
 
-    settings.setProperty(GoogleExporter.SELECTEDCALENDAR, ((GoogleComoboboxItem)mCalendarChooser.getSelectedItem()).getKey());
+    settings.setProperty(GoogleExporter.SELECTEDCALENDAR, ((GoogleComboboxItem)mCalendarChooser.getSelectedItem()).getKey());
     settings.setProperty(GoogleExporter.REMINDER, mReminderCheckBox.isSelected() ? "true" : "false");
     settings.setProperty(GoogleExporter.REMINDERALERT, mUseAlert.isSelected() ? "true" : "false");
     settings.setProperty(GoogleExporter.REMINDEREMAIL, mUseEMail.isSelected() ? "true" : "false");
     settings.setProperty(GoogleExporter.REMINDERSMS,   mUseSMS.isSelected() ? "true" : "false");
-    settings.setProperty(GoogleExporter.REMINDERMINUTES, ((GoogleComoboboxItem)mRemindMinutes.getSelectedItem()).getKey());
+    settings.setProperty(GoogleExporter.REMINDERMINUTES, ((GoogleComboboxItem)mRemindMinutes.getSelectedItem()).getKey());
 
     settings.setProperty(GoogleExporter.STORESETTINGS,   mReminderStore.isSelected() ? "true" : "false");
   }
@@ -241,7 +241,7 @@ public class GoogleSettingsDialog extends JDialog  implements WindowClosingIf {
       String id = entry.getId();
       id = id.substring(id.lastIndexOf('/') + 1);
 
-      model.addElement(new GoogleComoboboxItem(id, entry.getTitle().getPlainText()));
+      model.addElement(new GoogleComboboxItem(id, entry.getTitle().getPlainText()));
 
       if (id.equals(settings.getProperty(GoogleExporter.SELECTEDCALENDAR))) {
         mCalendarChooser.setSelectedIndex(model.getSize() - 1);
@@ -267,16 +267,16 @@ public class GoogleSettingsDialog extends JDialog  implements WindowClosingIf {
     setVisible(false);
   }
 
-  class GoogleComoboboxItem {
+  private static class GoogleComboboxItem {
     private String mKey;
     private String mText;
 
-    public GoogleComoboboxItem(String key, String text) {
+    public GoogleComboboxItem(String key, String text) {
       mKey = key;
       mText = text;
     }
 
-    public GoogleComoboboxItem(int key, String text) {
+    public GoogleComboboxItem(int key, String text) {
       mKey = Integer.toString(key);
       mText = text;
     }

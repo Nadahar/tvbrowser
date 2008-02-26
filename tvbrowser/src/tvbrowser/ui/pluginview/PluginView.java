@@ -242,7 +242,7 @@ public class PluginView extends JPanel implements MouseListener {
 
   }
 
-  private class PluginTreeCellRenderer extends DefaultTreeCellRenderer {
+  private static class PluginTreeCellRenderer extends DefaultTreeCellRenderer {
     public Component getTreeCellRendererComponent(JTree tree, Object value,
         boolean sel,
         boolean expanded,

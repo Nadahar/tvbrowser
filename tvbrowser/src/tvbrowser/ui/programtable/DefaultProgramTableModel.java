@@ -566,7 +566,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
 
 
-  class DateRange {
+  private static class DateRange {
 
     private int mCnt;
     private int mBegin;

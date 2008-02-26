@@ -30,8 +30,8 @@ public class RatingComparator implements Comparator<Rating> {
 	/**
 	 * Compares two Ratings
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-	 * @param o1 Object 1
-	 * @param o2 Object 2
+	 * @param r1 rating 1
+	 * @param r2 rating 2
 	 * @return Compare-Result
 	 */
 	public int compare(Rating r1, Rating r2) {

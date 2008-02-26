@@ -873,7 +873,7 @@ public class FavoritesPlugin {
     return mLocalizer.msg("manageFavorites","Favorites");
   }
   
-  private class ReceiveTargetItem {
+  private static class ReceiveTargetItem {
     private ProgramReceiveTarget mTarget;
     private ArrayList<Program> mProgramsList;
     

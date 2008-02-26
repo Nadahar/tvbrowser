@@ -109,7 +109,7 @@ public class DayProgramPrintJob extends AbstractPrintJob {
   /**
    * A Page with one column per channel
    */
-  class ChannelPage implements Page {
+  private static class ChannelPage implements Page {
 
 
     private ProgramTableIcon[] mProgramTableIcons;

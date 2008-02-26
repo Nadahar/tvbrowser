@@ -250,7 +250,7 @@ public class ChannelList {
     }
   }
 
-  class IconLoader {
+  private static class IconLoader {
     private File mIconDir;
 
     private File mIconIndexFile;
@@ -356,7 +356,7 @@ public class ChannelList {
     }
   }
 
-  class ChannelItem {
+  private static class ChannelItem {
     private Channel mChannel;
 
     private String mIconUrl;

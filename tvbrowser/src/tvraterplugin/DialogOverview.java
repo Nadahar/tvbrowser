@@ -75,7 +75,7 @@ public class DialogOverview extends JDialog implements WindowClosingIf {
    * Creates the Overview Dialog
    * 
    * @param parent Parent-Frame
-   * @param tvraterDB Database to use
+   * @param tvraterPlugin Database to use
    */
   public DialogOverview(Frame parent, TVRaterPlugin tvraterPlugin) {
     super(parent, true);

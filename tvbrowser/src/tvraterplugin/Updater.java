@@ -242,13 +242,13 @@ public class Updater implements Progress {
         int erotic = new Double(Double.parseDouble(getNodeValue(child))).intValue();
         rating.setEroticRating(erotic);
       } else if (nodename.equals("count")) {
-        int userCount = new Integer(Integer.parseInt(getNodeValue(child))).intValue();
+        int userCount = Integer.parseInt(getNodeValue(child));
         rating.setUserCount(userCount);
       } else if (nodename.equals("genre")) {
-        int genre = new Integer(Integer.parseInt(getNodeValue(child))).intValue();
+        int genre = Integer.parseInt(getNodeValue(child));
         rating.setGenre(genre);
       } else if (nodename.equals("id")) {
-        int onlineID = new Integer(Integer.parseInt(getNodeValue(child))).intValue();
+        int onlineID = Integer.parseInt(getNodeValue(child));
         rating.setOnlineID(onlineID);
 
         if (rating.getTitle() != null) {
