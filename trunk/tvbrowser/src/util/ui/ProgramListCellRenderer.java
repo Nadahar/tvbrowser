@@ -83,7 +83,7 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
    * @since 2.2.2
    */
   public ProgramListCellRenderer(ProgramPanelSettings settings) {
-	  this(settings, ProgramPanel.Y_AXIS);
+	  this(settings, settings.getAxis());
   }
 
   
