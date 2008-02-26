@@ -136,12 +136,16 @@ public class ProgramPanel extends JComponent implements ChangeListener {
 
   private boolean mIsSelected = false;
 
-  /** Orientation Progressbar in X_AXIS */
-  final public static int X_AXIS = 0;
-  /** Orientation Progressbar in Y_AXIS */
-  final public static int Y_AXIS = 1;
+  /** Orientation Progressbar in X_AXIS 
+   * @deprecated since 2.7 Use {@link ProgramPanelSettings#X_AXIS} instead
+   */
+  final public static int X_AXIS = ProgramPanelSettings.X_AXIS;
+  /** Orientation Progressbar in Y_AXIS
+   * @deprecated since 2.7 Use {@link ProgramPanelSettings#Y_AXIS} instead
+   */
+  final public static int Y_AXIS = ProgramPanelSettings.Y_AXIS;
   /** Orientation of Progressbar */
-  private int mAxis = Y_AXIS;
+  private int mAxis = ProgramPanelSettings.Y_AXIS;
   
   /** The vertical gap between the programs */
   private static int V_GAP = 5;

@@ -36,14 +36,35 @@ public class ProgramPanelSettings {
   /** Show the pictures for programs with selected duration */
   public static final int SHOW_PICTURES_FOR_DURATION = 4;
   
+  /** Orientation Progressbar in X_AXIS */
+  public static final int X_AXIS = 0;
+  /** Orientation Progressbar in Y_AXIS */
+  public static final int Y_AXIS = 1;
+  
   private int mType;
   private int mTimeRangeStart;
   private int mTimeRangeEnd;
   private int mDuration;
+  private int mAxis;
   private boolean mShowOnlyDateAndTitle; 
   private boolean mShowDescription;
   private String[] mPluginIds;
 
+  /**
+   * Creates an instance of this class with the given values.
+   * 
+   * @param settings The PluginPictureSettings to be used.
+   * @param showOnlyDateAndTitle If the program panel should only contain date and title.
+   * @param axis The axis for the ProgramPanel.
+   */
+  public ProgramPanelSettings(PluginPictureSettings settings, boolean showOnlyDateAndTitle, int axis) {
+    mType = settings.isShowingPictures() ? SHOW_PICTURES_EVER : SHOW_PICTURES_NEVER;
+    mShowDescription = settings.isShowingDescription();
+    
+    mShowOnlyDateAndTitle = showOnlyDateAndTitle;
+    mAxis = axis;
+  }
+  
   /**
    * Creates an instance of this class with the given values.
    * 
@@ -55,6 +76,7 @@ public class ProgramPanelSettings {
     mShowDescription = settings.isShowingDescription();
     
     mShowOnlyDateAndTitle = showOnlyDateAndTitle;
+    mAxis = Y_AXIS;
   }
   
   /**
@@ -90,6 +112,7 @@ public class ProgramPanelSettings {
     mShowDescription = showDescription;
     mPluginIds = pluginIds;
     mDuration = duration;
+    mAxis = Y_AXIS;
   }
   
   /**
@@ -213,5 +236,13 @@ public class ProgramPanelSettings {
         typeToCheck == SHOW_PICTURES_IN_TIME_RANGE + SHOW_PICTURES_FOR_PLUGINS;
     else 
       return typeToCheck == containingType;
+  }
+  
+  /**
+   * Gets the axis for the ProgramPanel.
+   * @return The axis for the ProgramPanel.
+   */
+  public int getAxis() {
+    return mAxis;
   }
 }
