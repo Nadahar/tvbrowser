@@ -521,7 +521,7 @@ public class FavoritesPlugin {
     return res;
   }
 
-  public ActionMenu getButtonAction() {
+  protected ActionMenu getButtonAction() {
     ButtonAction action = new ButtonAction();
     action.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

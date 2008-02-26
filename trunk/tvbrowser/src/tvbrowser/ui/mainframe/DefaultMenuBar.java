@@ -17,8 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * CVS information:
- *  $RCSfile$
- *   $Source$
  *     $Date$
  *   $Author$
  * $Revision$
@@ -82,15 +80,17 @@ public class DefaultMenuBar extends MenuBar {
     tvListingsMenu.addSeparator();
     tvListingsMenu.add(mLicenseMenu);
         
-    // "Plugins" menu
-    mPluginsMenu.add(mFavoritesMI);
-    mPluginsMenu.add(mReminderMI);
-    mPluginsMenu.add(mSearchMI);
+    // "Plugins" menu    
+    JMenuItem[] internalPluginItems = createInternalPluginMenuItems();
+    for (JMenuItem menuItem : internalPluginItems) {
+      mPluginsMenu.add(menuItem);
+    }
+    
     mPluginsMenu.addSeparator();
 
     JMenuItem[] pluginItems = createPluginMenuItems();
     for (JMenuItem menuItem : pluginItems) {
-      mPluginsMenu.add(menuItem);  
+      mPluginsMenu.add(menuItem);
     }
     mPluginsMenu.addSeparator();
     mPluginsMenu.add(mPluginManagerMI);
@@ -123,7 +123,6 @@ public class DefaultMenuBar extends MenuBar {
     mNextDayMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_MASK));
     mGotoNowMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F9,0));
     mFullscreenMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F11,0));
-    mSearchMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,InputEvent.CTRL_MASK));
     
     mFontSizeLargerMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, InputEvent.CTRL_MASK));
     mFontSizeSmallerMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, InputEvent.CTRL_MASK));
@@ -137,10 +136,12 @@ public class DefaultMenuBar extends MenuBar {
 
   protected void setPluginMenuItems(JMenuItem[] items) {
     mPluginsMenu.removeAll();
-
-    mPluginsMenu.add(mFavoritesMI);
-    mPluginsMenu.add(mReminderMI);
-    mPluginsMenu.add(mSearchMI);
+    
+    JMenuItem[] internalPluginItems = createInternalPluginMenuItems();
+    for (JMenuItem menuItem : internalPluginItems) {
+      mPluginsMenu.add(menuItem);
+    }
+    
     mPluginsMenu.addSeparator();
     
     JMenuItem[] pluginItems = createPluginMenuItems();

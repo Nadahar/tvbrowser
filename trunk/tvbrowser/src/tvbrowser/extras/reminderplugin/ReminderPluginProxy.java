@@ -28,6 +28,7 @@ package tvbrowser.extras.reminderplugin;
 import javax.swing.Icon;
 
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.core.plugin.ButtonActionIf;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 
 import devplugin.ActionMenu;
@@ -45,7 +46,7 @@ import devplugin.SettingsTab;
  * @author René Mach
  * @since 2.5
  */
-public class ReminderPluginProxy implements ContextMenuIf, ProgramReceiveIf, Marker, InternalPluginProxyIf {
+public class ReminderPluginProxy implements ButtonActionIf, ContextMenuIf, ProgramReceiveIf, Marker, InternalPluginProxyIf {
 
   private static ReminderPluginProxy mInstance;
   private static ReminderPlugin mReminderInstance;
@@ -135,5 +136,9 @@ public class ReminderPluginProxy implements ContextMenuIf, ProgramReceiveIf, Mar
 
   public String getSettingsId() {
     return SettingsItem.REMINDER;
+  }
+
+  public ActionMenu getButtonAction() {
+    return mReminderInstance.getButtonAction();
   }
 }

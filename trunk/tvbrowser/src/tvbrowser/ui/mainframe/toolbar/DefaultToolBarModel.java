@@ -55,11 +55,11 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.core.plugin.ButtonActionIf;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.reminderplugin.ReminderPlugin;
-import tvbrowser.extras.searchplugin.SearchPlugin;
+import tvbrowser.extras.common.InternalPluginProxyIf;
+import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.ui.filter.dlgs.SelectFilterPopup;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.Localizer;
@@ -70,7 +70,6 @@ import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.ProgressMonitor;
-import devplugin.SettingsItem;
 
 public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateListener {
 
@@ -83,9 +82,9 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
 
   private Action mUpdateAction, mSettingsAction, mFilterAction,
       mPluginViewAction, mSeparatorAction, mScrollToNowAction,
-      mGoToTodayAction, mGoToPreviousDayAction, mGoToNextDayAction, mFavoriteAction,
-      mReminderAction, mGoToDateAction, mScrollToChannelAction, mScrollToTimeAction,
-      mSearchAction, mGlueAction, mSpaceAction;
+      mGoToTodayAction, mGoToPreviousDayAction, mGoToNextDayAction,
+      mGoToDateAction, mScrollToChannelAction, mScrollToTimeAction,
+      mGlueAction, mSpaceAction;
 
   private static DefaultToolBarModel sInstance;
 
@@ -194,26 +193,6 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
                 "go-to-date-list", 16), IconLoader.getInstance()
                 .getIconFromTheme("actions", "go-to-date-list", 22),
             ToolBar.TOOGLE_BUTTON_ACTION, this);
-    mReminderAction = createAction(ReminderPlugin.mLocalizer.msg("toolbar",
-        "Reminder"), SettingsItem.REMINDER,
-        ReminderPlugin.mLocalizer.msg("description",
-            "Eine einfache Implementierung einer Erinnerungsfunktion."),
-        IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16),
-        IconLoader.getInstance().getIconFromTheme("apps", "appointment", 22),
-        ToolBar.BUTTON_ACTION, this);
-    mSearchAction = createAction(SearchPlugin.mLocalizer.msg("toolbar", "Search")
-        , SettingsItem.SEARCH,
-        SearchPlugin.mLocalizer.msg("description", "Allows searching programs containing a certain text."),
-        IconLoader.getInstance().getIconFromTheme("actions", "system-search", 16),
-        IconLoader.getInstance().getIconFromTheme("actions", "system-search", 22),
-    ToolBar.BUTTON_ACTION, this);
-    mFavoriteAction = createAction(FavoritesPlugin.mLocalizer.msg("toolbar",
-        "Favorites"), SettingsItem.FAVORITE,
-        FavoritesPlugin.mLocalizer.msg("favoritesManager",
-            "Manage favorite programs"), IconLoader.getInstance()
-            .getIconFromTheme("apps", "bookmark", 16), IconLoader.getInstance()
-            .getIconFromTheme("apps", "bookmark", 22), ToolBar.BUTTON_ACTION,
-        this);
     mScrollToChannelAction = createAction(mLocalizer.msg("scrollToChannel",
         "Scroll to channel"), "#scrollToChannel", mLocalizer.msg("scrollToChannelTooltip",
         "Scroll to a channel"), IconLoader.getInstance().getIconFromTheme(
@@ -228,15 +207,24 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
     updateTimeButtons();
 
     setPluginViewButtonSelected(Settings.propShowPluginView.getBoolean());
-
+    
+    InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList.getInstance().getAvailableProxys();
+    
+    for (InternalPluginProxyIf internalPlugin : internalPlugins) {
+      if(internalPlugin instanceof ButtonActionIf) {
+        createPluginAction((ButtonActionIf)internalPlugin);
+      }
+    }
+    
     PluginProxyManager pluginMng = PluginProxyManager.getInstance();
     PluginProxy[] pluginProxys = pluginMng.getActivatedPlugins();
     
-    for (int i = 0; i < pluginProxys.length; i++)
+    for (int i = 0; i < pluginProxys.length; i++) {
       createPluginAction(pluginProxys[i]);
+    }
   }
   
-  private void createPluginAction(PluginProxy plugin) {
+  private void createPluginAction(ButtonActionIf plugin) {
     ActionMenu actionMenu = plugin.getButtonAction();
     if (actionMenu != null) {
       if (!actionMenu.hasSubItems()) {
@@ -245,8 +233,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
         mAvailableActions.put(plugin.getId(), action);
         String tooltip = (String) action.getValue(Action.SHORT_DESCRIPTION);
         if (tooltip == null) {
-          action.putValue(Action.SHORT_DESCRIPTION, plugin.getInfo()
-              .getDescription());
+          action.putValue(Action.SHORT_DESCRIPTION, plugin.getDescription());
         }
       } else {
         createPluginAction(plugin, actionMenu.getSubItems());
@@ -254,7 +241,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
     }
   }
   
-  private void createPluginAction(PluginProxy plugin, ActionMenu[] subMenus) {
+  private void createPluginAction(ButtonActionIf plugin, ActionMenu[] subMenus) {
     for(ActionMenu menu : subMenus)
       if(menu.hasSubItems())
         createPluginAction(plugin, menu.getSubItems());
@@ -264,8 +251,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
         mAvailableActions.put(plugin.getId() + "##" + action.getValue(Action.NAME), action);
         String tooltip = (String) action.getValue(Action.SHORT_DESCRIPTION);
         if (tooltip == null) {
-          action.putValue(Action.SHORT_DESCRIPTION, plugin.getInfo()
-              .getDescription());
+          action.putValue(Action.SHORT_DESCRIPTION, plugin.getDescription());
         }
       }
   }
@@ -358,6 +344,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
     mVisibleActions = new ArrayList<Action>();
     for (int i = 0; i < buttonNames.length; i++) {
       Action action = mAvailableActions.get(buttonNames[i]);
+      
       if (action != null) {
         mVisibleActions.add(action);
       } else if ("#separator".equals(buttonNames[i])) {
@@ -366,12 +353,12 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
         mVisibleActions.add(mGlueAction);
       } else if ("#space".equals(buttonNames[i])) {
         mVisibleActions.add(mSpaceAction);
-      } else if (buttonNames[i].compareTo("java.searchplugin.SearchPlugin") == 0) {
-        mVisibleActions.add(mSearchAction);
-      } else if (buttonNames[i].compareTo("java.reminderplugin.ReminderPlugin") == 0) {
-        mVisibleActions.add(mReminderAction);
-      } else if (buttonNames[i].compareTo("java.favoritesplugin.FavoritesPlugin") == 0) {
-        mVisibleActions.add(mFavoriteAction);
+      } else if (buttonNames[i].equals("java.searchplugin.SearchPlugin") || buttonNames[i].equals("#search")) {
+        mVisibleActions.add(mAvailableActions.get("searchplugin.SearchPlugin"));
+      } else if (buttonNames[i].equals("java.reminderplugin.ReminderPlugin") || buttonNames[i].equals("#reminder")) {
+        mVisibleActions.add(mAvailableActions.get("reminderplugin.ReminderPlugin"));
+      } else if (buttonNames[i].equals("java.favoritesplugin.FavoritesPlugin") || buttonNames[i].equals("#favorite")) {
+        mVisibleActions.add(mAvailableActions.get("favoritesplugin.FavoritesPlugin"));
       } else { // if the buttonName is not valid, we try to add the
         // prefix '.java' - maybe it's a plugin from
         // TV-Browser 1.0
@@ -389,22 +376,31 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
     mVisibleActions.add(mPluginViewAction);
     mVisibleActions.add(mFilterAction);
     mVisibleActions.add(getSeparatorAction());
-    mVisibleActions.add(mFavoriteAction);
-    mVisibleActions.add(mReminderAction);
-    mVisibleActions.add(mSearchAction);
+    
+    InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList.getInstance().getAvailableProxys();
+    
+    for(InternalPluginProxyIf internalPlugin : internalPlugins) {
+      if(internalPlugin instanceof ButtonActionIf) {
+        addButtonActionIfToVisibleActions((ButtonActionIf)internalPlugin);
+      }
+    }
+    
     mVisibleActions.add(getSeparatorAction());
 
-    PluginProxyManager pluginMng = PluginProxyManager.getInstance();
-    PluginProxy[] pluginProxys = pluginMng.getActivatedPlugins();
+    PluginProxy[] pluginProxys = PluginProxyManager.getInstance().getActivatedPlugins();
+    
     for (int i = 0; i < pluginProxys.length; i++) {
-      ActionMenu actionMenu = pluginProxys[i].getButtonAction();
-      if (actionMenu != null) {
-        if (!actionMenu.hasSubItems()) {
-          Action action = mAvailableActions.get(pluginProxys[i]
-              .getId());
-          if (action != null) {
-            mVisibleActions.add(action);
-          }
+      addButtonActionIfToVisibleActions(pluginProxys[i]);
+    }
+  }
+  
+  private void addButtonActionIfToVisibleActions(ButtonActionIf buttonAction) {
+    ActionMenu actionMenu = buttonAction.getButtonAction();
+    if (actionMenu != null) {
+      if (!actionMenu.hasSubItems()) {
+        Action action = mAvailableActions.get(buttonAction.getId());
+        if (action != null) {
+          mVisibleActions.add(action);
         }
       }
     }
@@ -580,15 +576,6 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
       MainFrame.getInstance().goToNextDay();
     } else if (source == mGoToPreviousDayAction) {
       MainFrame.getInstance().goToPreviousDay();
-    } else if (source == mSearchAction) {
-      SearchPlugin.getInstance().getButtonAction()
-          .getAction().actionPerformed(null);
-    } else if (source == mReminderAction) {
-      ReminderPlugin.getInstance().getButtonAction()
-          .getAction().actionPerformed(null);
-    } else if (source == mFavoriteAction) {
-      FavoritesPlugin.getInstance().getButtonAction()
-          .getAction().actionPerformed(null);
     } else {
 
     }
