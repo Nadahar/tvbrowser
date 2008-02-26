@@ -503,7 +503,7 @@ public class SystemTray {
   private JComponent addToImportantMenu(JComponent menu) {
     Program[] p = MarkedProgramsList.getInstance()
         .getTimeSortedProgramsForTray(MainFrame.getInstance().getProgramFilter(),
-            Settings.propTrayImportantProgramsPriority.getInt());
+            Settings.propTrayImportantProgramsPriority.getInt(), Settings.propTrayImportantProgramsSize.getInt());
     
     boolean added = false;
 

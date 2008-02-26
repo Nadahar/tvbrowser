@@ -644,7 +644,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList.getInstance().getAvailableProxys();
     
     for(InternalPluginProxyIf internalPlugin : internalPlugins) {
-      JMenuItem item = pluginHelpMenuItem(internalPlugin.toString(), internalPlugin.getId());
+      JMenuItem item = pluginHelpMenuItem(internalPlugin.toString(), PluginInfo.getHelpUrl(internalPlugin.getId()));
       item.setIcon(internalPlugin.getIcon());
       mPluginHelpMenu.add(item);
     }

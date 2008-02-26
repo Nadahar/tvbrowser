@@ -62,7 +62,7 @@ public class ProgramInfo {
   protected static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ProgramInfo.class);
 
-  private static String DATAFILE_PREFIX = "programinfo.ProgramInfo";
+  private static final String DATAFILE_PREFIX = "programinfo.ProgramInfo";
 
   private Dimension mLeftSplit = null;
 

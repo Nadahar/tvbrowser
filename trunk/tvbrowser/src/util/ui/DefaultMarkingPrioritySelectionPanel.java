@@ -45,7 +45,7 @@ import devplugin.SettingsItem;
  * @since 2.5.3
  */
 public class DefaultMarkingPrioritySelectionPanel extends JPanel {
-  private static Localizer mLocalizer = Localizer.getLocalizerFor(DefaultMarkingPrioritySelectionPanel.class);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(DefaultMarkingPrioritySelectionPanel.class);
   private JComboBox mPrioritySelection;
   private JEditorPane mHelpLabel;
   
@@ -56,11 +56,7 @@ public class DefaultMarkingPrioritySelectionPanel extends JPanel {
     if(withDefaultDialogBorder)
       pb.setDefaultDialogBorder();
     
-    final Localizer localizer = MarkingsSettingsTab.mLocalizer;
-    
-    String[] colors = {localizer.msg("color.noPriority","Don't highlight"),localizer.msg("color.minPriority","1. Color (minimum priority)"),localizer.msg("color.lowerMediumPriority","2. Color (lower medium priority)"),localizer.msg("color.mediumPriority","3. Color (Medium priority)"),localizer.msg("color.higherMediumPriority","4. Color (higher medium priority)"),localizer.msg("color.maxPriority","5. Color (maximum priority)")};
-    
-    mPrioritySelection = new JComboBox(colors);
+    mPrioritySelection = new JComboBox(getMarkingColorNames(true));
     mPrioritySelection.setSelectedIndex(priority+1);
     mPrioritySelection.setRenderer(new MarkPriorityComboBoxRenderer());
     
@@ -112,5 +108,21 @@ public class DefaultMarkingPrioritySelectionPanel extends JPanel {
    */
   public static String getTitle() {
     return mLocalizer.msg("title","Highlighting");
+  }
+  
+  /**
+   * Gets the name of the marking colors in an array sorted from the lowest to the highest priority.
+   * <p>
+   * @param withNoMarkPriority If the array should contain the no mark priority name.
+   * @return The names of the marking colors in an array sorted from the lowest to the highest priority.
+   * @since 2.7
+   */
+  public static String[] getMarkingColorNames(boolean withNoMarkPriority) {
+    if(withNoMarkPriority) {
+      return new String[] {MarkingsSettingsTab.mLocalizer.msg("color.noPriority","Don't highlight"),MarkingsSettingsTab.mLocalizer.msg("color.minPriority","1. Color (minimum priority)"),MarkingsSettingsTab.mLocalizer.msg("color.lowerMediumPriority","2. Color (lower medium priority)"),MarkingsSettingsTab.mLocalizer.msg("color.mediumPriority","3. Color (Medium priority)"),MarkingsSettingsTab.mLocalizer.msg("color.higherMediumPriority","4. Color (higher medium priority)"),MarkingsSettingsTab.mLocalizer.msg("color.maxPriority","5. Color (maximum priority)")};
+    }
+    else {
+      return new String[] {MarkingsSettingsTab.mLocalizer.msg("color.minPriority","1. Color (minimum priority)"),MarkingsSettingsTab.mLocalizer.msg("color.lowerMediumPriority","2. Color (lower medium priority)"),MarkingsSettingsTab.mLocalizer.msg("color.mediumPriority","3. Color (Medium priority)"),MarkingsSettingsTab.mLocalizer.msg("color.higherMediumPriority","4. Color (higher medium priority)"),MarkingsSettingsTab.mLocalizer.msg("color.maxPriority","5. Color (maximum priority)")};
+    }
   }
 }

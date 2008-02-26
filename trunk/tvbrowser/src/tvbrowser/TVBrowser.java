@@ -66,6 +66,7 @@ import tvbrowser.core.plugin.programformating.GlobalPluginProgramFormatingManage
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.importantprogramsplugin.ImportantProgramsPlugin;
 import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.extras.searchplugin.SearchPlugin;
@@ -115,9 +116,11 @@ public class TVBrowser {
   
   private static boolean mIsTransportable;
   
-  private static boolean mIsStable = false;
-  
   private static String mVersionAppendix = "";
+  
+  private static final boolean mIsStable = false;
+  private static final int mMajorVersion = 2;
+  private static final int mMinorVersion = 70;
   
   static {
     File nightlyValues = new File("NIGHTLY_VALUES");
@@ -134,56 +137,31 @@ public class TVBrowser {
       }
     }
   }
-
+  
   /* If you want to change the version string, add it to the beginning of this array.
      We need the old version strings to import the settings.
   */
   /** The string array with the names of the earlier versions. */
   public static final String[] ALL_VERSIONS = new String[]{
           "2.7 (SVN)" + mVersionAppendix,
-          "2.6.3",
-          "2.6.3beta",
+          "2.6.3", "2.6.3beta",
           "2.6.2",
-          "2.6.1",
-          "2.6.1beta",
-          "2.6.1 (SVN)",
-          "2.6",
-          "2.6beta2",
-          "2.6beta1",
-          "2.6alpha3",
-          "2.6alpha2",
-          "2.6alpha1",
-          "2.6 (alpha)", 
-          "2.5.3",
-          "2.5.3beta3",
-          "2.5.3beta2",
-          "2.5.3beta1",
-          "2.5.3 (alpha)",
+          "2.6.1", "2.6.1beta", "2.6.1 (SVN)",
+          "2.6", "2.6beta2", "2.6beta1", "2.6alpha3", "2.6alpha2", "2.6alpha1", "2.6 (alpha)", 
+          "2.5.3", "2.5.3beta3", "2.5.3beta2", "2.5.3beta1", "2.5.3 (alpha)",
           "2.5.2",
-          "2.5.1",
-          "2.5.1beta3",
-          "2.5.1beta2",
-          "2.5.1beta1",
-          "2.5",
-          "2.5beta3",
-          "2.5beta2",
-          "2.5beta1",
-          "2.5 alpha",
+          "2.5.1", "2.5.1beta3", "2.5.1beta2", "2.5.1beta1",
+          "2.5", "2.5beta3", "2.5beta2", "2.5beta1", "2.5 alpha",
+          "2.2.5",
           "2.2.4",
           "2.2.3",
-          "2.2.2",
-          "2.2.2beta2",
-          "2.2.2beta1",
-          "2.2.1",
-          "2.2.1beta3",
-          "2.2",
-          "2.2beta2",
-          "2.2beta1",
-          "2.2 (SVN)"
+          "2.2.2", "2.2.2beta2", "2.2.2beta1",
+          "2.2.1", "2.2.1beta3",
+          "2.2", "2.2beta2", "2.2beta1", "2.2 (SVN)"
   };
   
   /** The current version. */
-  public static final devplugin.Version VERSION=new devplugin.Version(2,70,mIsStable,ALL_VERSIONS[0] + ((mIsTransportable = new File("settings").isDirectory()) ? " transportable" : ""));
+  public static final devplugin.Version VERSION=new devplugin.Version(mMajorVersion,mMinorVersion,mIsStable,ALL_VERSIONS[0] + ((mIsTransportable = new File("settings").isDirectory()) ? " transportable" : ""));
 
   /** The title bar string. */
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
@@ -751,6 +729,7 @@ public class TVBrowser {
 
     SearchPlugin.getInstance().store();
     ProgramInfo.getInstance().store();
+    ImportantProgramsPlugin.getInstance().store();
     mainFrame.storeSettings();
 
     if(log) {

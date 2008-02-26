@@ -26,6 +26,7 @@ package tvbrowser.extras.common;
 import java.util.ArrayList;
 
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
+import tvbrowser.extras.importantprogramsplugin.ImportantProgramsPluginProxy;
 import tvbrowser.extras.programinfo.ProgramInfoProxy;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.extras.searchplugin.SearchPluginProxy;
@@ -50,6 +51,7 @@ public class InternalPluginProxyList {
     mList.add(ReminderPluginProxy.getInstance());
     mList.add(ProgramInfoProxy.getInstance());
     mList.add(SearchPluginProxy.getInstance());
+    mList.add(ImportantProgramsPluginProxy.getInstance());
   }
   
   /**
