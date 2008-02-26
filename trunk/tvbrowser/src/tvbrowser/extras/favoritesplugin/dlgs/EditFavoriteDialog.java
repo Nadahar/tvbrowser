@@ -638,7 +638,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     setVisible(false);
   }
 
-  class ExclusionListCellRenderer extends DefaultListCellRenderer {
+  private static class ExclusionListCellRenderer extends DefaultListCellRenderer {
 
     private String createTimeMessage(int lowBnd, int upBnd, int dayOfWeek) {
       int mLow = lowBnd % 60;

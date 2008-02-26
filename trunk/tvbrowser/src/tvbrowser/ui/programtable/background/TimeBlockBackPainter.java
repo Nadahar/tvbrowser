@@ -235,7 +235,7 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
   }
   
   
-  class TimeBlock {
+  private static class TimeBlock {
     
     public TimeBlock(int startTime) {
       mStartTime = startTime;

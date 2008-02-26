@@ -675,7 +675,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
 
   public void dropActionChanged(DropTargetDragEvent e) {}
   
-  private class FavoriteTransferNode implements Transferable {    
+  private static class FavoriteTransferNode implements Transferable {    
     public Object getTransferData(DataFlavor df) throws UnsupportedFlavorException, IOException {
       return null;
     }
@@ -819,7 +819,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
     public void mouseExited(MouseEvent e) {}
   }
   
-  private class FavoriteTreeCellRenderer extends DefaultTreeCellRenderer {
+  private static class FavoriteTreeCellRenderer extends DefaultTreeCellRenderer {
     public Component getTreeCellRendererComponent(JTree tree, Object value,
         boolean sel,
         boolean expanded,

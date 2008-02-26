@@ -1004,7 +1004,7 @@ public class PluginProxyManager {
   /**
    * A plugin in the plugin list
    */
-  private class PluginListItem {
+  private static class PluginListItem {
 
     /** The plugin */
     private AbstractPluginProxy mPlugin;

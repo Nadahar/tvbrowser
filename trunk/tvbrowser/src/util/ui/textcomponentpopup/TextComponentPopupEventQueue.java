@@ -73,7 +73,7 @@ public class TextComponentPopupEventQueue extends EventQueue {
     menu.show(tc, pt.x, pt.y);
   }
 
-  class CutAction extends AbstractAction {
+  private static class CutAction extends AbstractAction {
     JTextComponent comp;
 
     public CutAction(JTextComponent comp) {
@@ -90,7 +90,7 @@ public class TextComponentPopupEventQueue extends EventQueue {
     }
   }
 
-  class PasteAction extends AbstractAction {
+  private static class PasteAction extends AbstractAction {
     JTextComponent comp;
 
     public PasteAction(JTextComponent comp) {
@@ -111,7 +111,7 @@ public class TextComponentPopupEventQueue extends EventQueue {
     }
   }
 
-  class DeleteAction extends AbstractAction {
+  private static class DeleteAction extends AbstractAction {
     JTextComponent comp;
 
     public DeleteAction(JTextComponent comp) {
@@ -128,7 +128,7 @@ public class TextComponentPopupEventQueue extends EventQueue {
     }
   }
 
-  class CopyAction extends AbstractAction {
+  private static class CopyAction extends AbstractAction {
     JTextComponent comp;
 
     public CopyAction(JTextComponent comp) {
@@ -145,7 +145,7 @@ public class TextComponentPopupEventQueue extends EventQueue {
     }
   }
 
-  class SelectAllAction extends AbstractAction {
+  private static class SelectAllAction extends AbstractAction {
     JTextComponent comp;
 
     public SelectAllAction(JTextComponent comp) {

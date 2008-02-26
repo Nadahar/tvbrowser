@@ -127,7 +127,7 @@ public class ProgramTableIcon implements Icon {
   }
 
 
-  class DateItem implements PositionedIcon {
+  private static class DateItem implements PositionedIcon {
     private int mX, mY;
     private TextAreaIcon mIcon;
     public DateItem(TextAreaIcon icon, int x, int y) {

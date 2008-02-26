@@ -121,7 +121,6 @@ public class DeviceImportAndExport {
   /**
    * Export a Device
    * 
-   * @param data CapturePlugin-Data 
    * @param panel Panel is needed for JDialogs
    * @param device the Device to Export
    * @param file File to Export

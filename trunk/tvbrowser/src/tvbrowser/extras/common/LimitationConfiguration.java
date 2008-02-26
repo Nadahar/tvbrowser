@@ -165,7 +165,7 @@ public class LimitationConfiguration {
     return mDayLimit;
   }
 
-  private class ChannelItem {
+  private static class ChannelItem {
     private String mChannelDataServiceId;
     private String mCertainChannelId;
     private String mGroupId;

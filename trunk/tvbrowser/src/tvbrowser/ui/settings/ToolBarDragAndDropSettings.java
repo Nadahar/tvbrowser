@@ -329,7 +329,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
    * 
    * @author René Mach
    */
-  class TransferAction implements Transferable {
+  private static class TransferAction implements Transferable {
     /** The Action.NAME */
     private String mName;
 

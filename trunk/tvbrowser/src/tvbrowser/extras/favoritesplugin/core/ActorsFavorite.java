@@ -79,20 +79,6 @@ public class ActorsFavorite extends Favorite {
     return formSettings;
   }
 
-  private String[] createActorsArr(String actors) {
-    String s = actors;
-    for (int i = 1; i < SEPERATOR_ARR.length; i++) {
-      s = actors.replaceAll(SEPERATOR_ARR[i], SEPERATOR_ARR[0]);
-    }
-
-    String[] actorsArr = s.split(SEPERATOR_ARR[0]);
-    String[] result = new String[actorsArr.length];
-    for (int i = 0; i < result.length; i++) {
-      actorsArr[i] = actorsArr[i].trim();
-    }
-    return actorsArr;
-  }
-
   @Override
   public String getTypeID() {
     return TYPE_ID;

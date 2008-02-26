@@ -568,7 +568,7 @@ public class SearchForm extends JPanel {
     return mFieldSelectionDlg != null && mFieldSelectionDlg.isVisible();
   }
   
-  private class FieldSelectionDialog {
+  private static class FieldSelectionDialog {
     
     private JDialog mDlg;
     

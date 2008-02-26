@@ -265,7 +265,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
   }
 
-  class SoftwareUpdateItemRenderer extends DefaultListCellRenderer {
+  private static class SoftwareUpdateItemRenderer extends DefaultListCellRenderer {
     
     private ImageIcon newVersionIcon = IconLoader.getInstance().getIconFromTheme("status", "software-update-available", 16);
 

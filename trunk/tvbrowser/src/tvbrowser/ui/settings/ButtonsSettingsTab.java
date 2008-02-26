@@ -140,7 +140,7 @@ public class ButtonsSettingsTab implements SettingsTab {
     return mLocalizer.msg("buttons", "Buttons");
   }
 
-  class TimePanel extends JPanel {
+  private static class TimePanel extends JPanel {
 
     private JSpinner mTimeSp;
 
@@ -177,7 +177,7 @@ public class ButtonsSettingsTab implements SettingsTab {
     }
   }
 
-  class TimesListPanel extends JPanel {
+  private static class TimesListPanel extends JPanel {
     private ArrayList<Row> mRows;
 
     private JPanel mListPn;
@@ -256,7 +256,7 @@ public class ButtonsSettingsTab implements SettingsTab {
     }
   }
 
-  class Row extends JPanel {
+  private static class Row extends JPanel {
 
     private JButton mRemoveBtn;
 
@@ -285,7 +285,7 @@ public class ButtonsSettingsTab implements SettingsTab {
 
   }
 
-  class ButtonItem {
+  private static class ButtonItem {
 
     private String mText, mId;
 

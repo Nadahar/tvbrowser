@@ -112,7 +112,6 @@ public class TvDataInventory {
    * 
    * @param date The day program's date
    * @param channel The day program's channel
-   * @param version The day program's version (e.g. file size)
    */  
   public synchronized void setUnknown(Date date, Channel channel) {
     String key = TvDataBase.getDayProgramKey(date, channel);

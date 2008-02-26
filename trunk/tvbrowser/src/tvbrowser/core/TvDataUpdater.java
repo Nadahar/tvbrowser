@@ -329,7 +329,7 @@ public class TvDataUpdater {
   // inner class UpdateJob
 
 
-  private class UpdateJob {
+  private static class UpdateJob {
 
     private TvDataServiceProxy mTvDataServiceProxy;
     private ArrayList<Channel> mChannelList;

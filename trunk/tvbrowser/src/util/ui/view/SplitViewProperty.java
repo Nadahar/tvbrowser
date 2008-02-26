@@ -137,7 +137,7 @@ public class SplitViewProperty extends ViewProperty {
       return createPropertyString(mCachedValue);
     }
     
-    class Property {
+    private static class Property {
       private boolean mVerticalSplit;
       private boolean mLeftComponentIsFixed;
       private int mFixedComponentWidth;

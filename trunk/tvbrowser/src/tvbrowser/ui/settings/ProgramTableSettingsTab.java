@@ -417,7 +417,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
 
   }
 
-  class ConfigureBackgroundStyleDialog {
+  private static class ConfigureBackgroundStyleDialog {
 
     private JDialog mDialog;
 

@@ -680,7 +680,12 @@ public class MutableProgram implements Program {
       if (value == null) {
         mFieldHash.remove(type);
       } else {
-        mFieldHash.put(type, value);
+        if (value.equals("")) {
+          mFieldHash.put(type, StringPool.getString(""));
+        }
+        else {
+          mFieldHash.put(type, value);
+        }
       }
     }
 

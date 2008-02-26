@@ -23,8 +23,8 @@ public class X11SystrayManager
     private boolean mLoaded = false;
     
     /**
-     * @param String path to the image that should be displayed in the tray
-     * @param String tool tip that should be display on mouseOver
+     * @param trayIcon path to the image that should be displayed in the tray
+     * @param toolTip tool tip that should be display on mouseOver
      */
     public X11SystrayManager(String trayIcon, String toolTip)
     {

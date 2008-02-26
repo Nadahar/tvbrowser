@@ -209,7 +209,7 @@ public class PluginTree extends JTree implements DragGestureListener,
     }
 	}
 
-  class TransferNode implements Transferable {
+  private static class TransferNode implements Transferable {
     private DataFlavor mDF;
 
     public TransferNode() {
@@ -756,7 +756,7 @@ public class PluginTree extends JTree implements DragGestureListener,
     }
   }
   
-  private class PluginTreeUI extends SingleAndDoubleClickTreeUI {
+  private static class PluginTreeUI extends SingleAndDoubleClickTreeUI {
     protected PluginTreeUI(int type, TreePath selectionPath) {
       super(type, selectionPath);
     }
