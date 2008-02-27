@@ -1052,13 +1052,21 @@ public class MainFrame extends JFrame implements DateListener {
   
   private void runAutoUpdate() {
     ArrayList<TvDataServiceProxy> dataServices = new ArrayList<TvDataServiceProxy>();
-    TvDataServiceProxy[] dataServicesArr = TvDataServiceProxyManager.getInstance().getTvDataServices(Settings.propDataServicesForUpdate.getStringArray());
+    ArrayList<TvDataServiceProxy> checkedServices = new ArrayList<TvDataServiceProxy>(0);
     
-    for(TvDataServiceProxy dataService : dataServicesArr) {
-      if(dataService.supportsAutoUpdate()) {
-        dataServices.add(dataService);
+    Channel[] channels = Settings.propSubscribedChannels.getChannelArray();
+    
+    for(Channel channel : channels) {
+      if(!checkedServices.contains(channel.getDataServiceProxy())) {
+        checkedServices.add(channel.getDataServiceProxy());
+        
+        if(channel.getDataServiceProxy().supportsAutoUpdate()) {
+          dataServices.add(channel.getDataServiceProxy());
+        }
       }
     }
+    
+    checkedServices.clear();
     
     if(!dataServices.isEmpty() && licenseForTvDataServicesWasAccepted(dataServices.toArray(new TvDataServiceProxy[dataServices.size()]))) {
       runUpdateThread(14, dataServices.toArray(new TvDataServiceProxy[dataServices.size()]));
