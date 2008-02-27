@@ -131,11 +131,16 @@ public class SoftwareUpdater {
       if(onlyUpdates) {
         // remove all not installed plugins
         String pluginId = "java." + className.toLowerCase() + "." + className;      
-        PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
+        PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);        
+        
         if (installedPlugin == null) {
-          it.remove();
-          continue;
-        }        
+          TvDataServiceProxy service = TvDataServiceProxyManager.getInstance().findDataServiceById(className.toLowerCase()+"."+className);
+          
+          if(service == null) {
+            it.remove();
+            continue;
+          }
+        }
       }
       
       // remove already installed plugins
