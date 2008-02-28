@@ -96,6 +96,7 @@ public class ImportantProgramsPlugin {
   private ProgramList mList;
   private ProgramPanelSettings mProgramPanelSettings;
   private JCheckBox mShowDescription;
+  private JComboBox mFilterBox;
     
   private static ImportantProgramsPlugin mInstance;
   
@@ -169,21 +170,13 @@ public class ImportantProgramsPlugin {
           mBox.setRenderer(new ChannelListCellRenderer());
           mBox.setSelectedIndex(Integer.parseInt(mSettings.getProperty("index",String.valueOf(0))));
 
-          final JComboBox mFilterBox = new JComboBox(Plugin.getPluginManager().getFilterManager().getAvailableFilters());
+          mFilterBox = new JComboBox();
           
           if(mSettings.getProperty("filter") == null) {
-            mFilter = Plugin.getPluginManager().getFilterManager().getAllFilter();
-            mFilterBox.setSelectedItem(mFilter);
+            mSettings.setProperty("filter", Plugin.getPluginManager().getFilterManager().getAllFilter().getName());
           }
-          else {
-            for(int i = 0; i < mFilterBox.getItemCount(); i++) {
-              if(((ProgramFilter)mFilterBox.getItemAt(i)).getName().equals(mSettings.getProperty("filter"))) {
-                mFilter = (ProgramFilter)mFilterBox.getItemAt(i);
-                mFilterBox.setSelectedItem(mFilterBox.getItemAt(i));
-                break;
-              }
-            }
-          }
+          
+          fillFilterBox();
           
           mFilterBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
@@ -239,6 +232,10 @@ public class ImportantProgramsPlugin {
           
           mBox.getItemListeners()[0].itemStateChanged(null);
         } else {
+          if(!mDialog.isVisible()) {
+            fillFilterBox();
+          }
+          
           mDialog.setVisible(!mDialog.isVisible());
           
           if(mDialog.isVisible()) {
@@ -252,6 +249,46 @@ public class ImportantProgramsPlugin {
     action.putValue(Plugin.BIG_ICON, IconLoader.getInstance().getIconFromTheme("emblems","emblem-important",22));
     
     return new ActionMenu(action);
+  }
+  
+  private void fillFilterBox() {
+    ProgramFilter[] filters = Plugin.getPluginManager().getFilterManager().getAvailableFilters();    
+    
+    for(ProgramFilter filter : filters) {
+      boolean found = false;
+      
+      for(int i = 0; i < mFilterBox.getItemCount(); i++) {
+        if(filter.equals(mFilterBox.getItemAt(i))) {
+          found = true;
+          break;
+        }
+      }
+      
+      if(!found) {
+        mFilterBox.addItem(filter);
+        
+        if(filter.getName().equals(mSettings.getProperty("filter"))) {
+          mFilter = filter;
+          mFilterBox.setSelectedItem(filter);
+        }
+      }
+    }
+    
+    for(int i = mFilterBox.getItemCount()-1; i >= 0 ; i--) {
+      boolean found = false;
+      
+      for(ProgramFilter filter : filters) {
+        if(filter.equals(mFilterBox.getItemAt(i))) {
+          found = true;
+          break;
+        }
+      }
+      
+      if(!found) {
+        mFilterBox.removeItemAt(i);
+      }
+    }
+    
   }
   
   private void showImportantPrograms() {
