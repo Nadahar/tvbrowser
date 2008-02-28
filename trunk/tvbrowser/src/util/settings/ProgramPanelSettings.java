@@ -245,4 +245,14 @@ public class ProgramPanelSettings {
   public int getAxis() {
     return mAxis;
   }
+  
+  /**
+   * Sets the value for the only date and title flag.
+   * <p>
+   * @param value The new value for the only date and tilte flag.
+   * @since 2.7
+   */
+  public void setShowOnlyDateAndTitle(boolean value) {
+    mShowOnlyDateAndTitle = value;
+  }
 }
