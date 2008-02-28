@@ -42,6 +42,7 @@ import javax.swing.Action;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -93,6 +94,8 @@ public class ImportantProgramsPlugin {
   private Properties mSettings;
   private DefaultListModel mModel;
   private ProgramList mList;
+  private ProgramPanelSettings mProgramPanelSettings;
+  private JCheckBox mShowDescription;
     
   private static ImportantProgramsPlugin mInstance;
   
@@ -155,7 +158,8 @@ public class ImportantProgramsPlugin {
           });
           
           mModel = new DefaultListModel();
-          mList = new ProgramList(mModel, new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE),false,ProgramPanelSettings.X_AXIS));
+          mProgramPanelSettings = new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), mSettings.getProperty("showDescription","true").equals("false"),ProgramPanelSettings.X_AXIS);
+          mList = new ProgramList(mModel, mProgramPanelSettings);
           
           mList.addMouseListeners(null);
           
@@ -163,7 +167,7 @@ public class ImportantProgramsPlugin {
               .getSubscribedChannels());
           mBox.insertItemAt(mLocalizer.msg("allChannels", "All channels"), 0);
           mBox.setRenderer(new ChannelListCellRenderer());
-          mBox.setSelectedIndex(Integer.parseInt(mSettings.getProperty("priority",String.valueOf(Program.MIN_MARK_PRIORITY))));
+          mBox.setSelectedIndex(Integer.parseInt(mSettings.getProperty("index",String.valueOf(0))));
 
           final JComboBox mFilterBox = new JComboBox(Plugin.getPluginManager().getFilterManager().getAvailableFilters());
           
@@ -192,7 +196,7 @@ public class ImportantProgramsPlugin {
           mBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
               showImportantPrograms();
-              mSettings.setProperty("priority", String.valueOf(mBox.getSelectedIndex()));
+              mSettings.setProperty("index", String.valueOf(mBox.getSelectedIndex()));
             }
           });
 
@@ -204,17 +208,30 @@ public class ImportantProgramsPlugin {
           panel.add(new JLabel(mLocalizer.msg("filter","Filter:")), cc.xy(2,3));
           panel.add(mFilterBox, cc.xy(4,3));
           
+          mShowDescription = new JCheckBox("Zeige Beschreibung", mSettings.getProperty("showDescription","true").equals("true"));
+          mShowDescription.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+              mProgramPanelSettings.setShowOnlyDateAndTitle(e.getStateChange() == ItemEvent.DESELECTED);
+              mSettings.setProperty("showDescription", String.valueOf(e.getStateChange() == ItemEvent.SELECTED));
+              mList.updateUI();
+            }
+          });
+          
           JButton close = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
           close.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
               mDialog.setVisible(false);
             }
           });
+          
+          JPanel southPanel = new JPanel(new FormLayout("default,0dlu:grow,default","default"));
+          southPanel.add(mShowDescription, cc.xy(1,1));
+          southPanel.add(close, cc.xy(3,1));
 
           mDialog.getContentPane().add(panel, BorderLayout.NORTH);
           mDialog.getContentPane().add(new JScrollPane(mList),
               BorderLayout.CENTER);
-          mDialog.getContentPane().add(close, BorderLayout.SOUTH);
+          mDialog.getContentPane().add(southPanel, BorderLayout.SOUTH);
           
           Settings.layoutWindow("extras.importantProgramsWindow", mDialog, new Dimension(500,500));          
           
@@ -248,11 +265,13 @@ public class ImportantProgramsPlugin {
         Vector<Program> programs = new Vector<Program>();
         Channel[] channels = mBox.getSelectedItem() instanceof String ? Plugin.getPluginManager().getSubscribedChannels() : new Channel[] {(Channel)mBox.getSelectedItem()};
 
-        Date date = Plugin.getPluginManager().getCurrentDate();
-       /* int startTime = Plugin.getPluginManager().getTvBrowserSettings()
+        Date date = channels.length > 1 && mFilter.equals(Plugin.getPluginManager().getFilterManager().getAllFilter())? Plugin.getPluginManager().getCurrentDate() : Date.getCurrentDate();
+        
+        int startTime = Plugin.getPluginManager().getTvBrowserSettings()
             .getProgramTableStartOfDay();
         int endTime = Plugin.getPluginManager().getTvBrowserSettings()
-            .getProgramTableEndOfDay();*/
+            .getProgramTableEndOfDay();
+        
         for (int d = 0; d < (channels.length > 1 && mFilter.equals(Plugin.getPluginManager().getFilterManager().getAllFilter()) ? 2 : 14); d++) {
 
           for (int i = 0; i < channels.length; i++) {
@@ -262,17 +281,25 @@ public class ImportantProgramsPlugin {
               while (it.hasNext()) {
                 Program program = it.next();
                 if ((showExpired || !program.isExpired()) && mFilter.accept(program)) {
-                 /*if ((d == 0 && program.getStartTime() >= startTime)
-                      || (d == 1 && program.getStartTime() <= endTime)) {*/
+                  if(mFilter.equals(Plugin.getPluginManager().getFilterManager().getAllFilter())) {
+                    if ((d == 0 && program.getStartTime() >= startTime)
+                        || (d == 1 && program.getStartTime() <= endTime)) {
+                      programs.add(program);
+                    }
+                  }
+                  else {
                     programs.add(program);
-                  //}
+                  }
                 }
               }
             }
           }
           date = date.addDays(1);
         }
-        Collections.sort(programs, ProgramUtilities.getProgramComparator());
+        
+        if(channels.length > 1) {
+          Collections.sort(programs, ProgramUtilities.getProgramComparator());
+        }
         
         int index = -1;
     
