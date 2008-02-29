@@ -180,7 +180,7 @@ public class DeprecatedTvDataServiceProxy extends AbstractTvDataServiceProxy {
    * @since 2.7
    */
   public boolean supportsAutoUpdate() {
-    return false;
+    return mDataService.supportsAutoUpdate();
   }
 
 }
