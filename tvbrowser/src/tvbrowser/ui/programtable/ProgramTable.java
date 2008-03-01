@@ -617,13 +617,17 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
    * @param cellIndex index of the program panel
    * @since 2.6
    */
-  private void repaintCell(Point cellIndex) {
-    if ((cellIndex.x >= 0 || cellIndex.y >= 0) && cellIndex.x < mModel.getColumnCount()) {
-      Rectangle cellRect = getCellRect(cellIndex.x, cellIndex.y);
-      if (cellRect != null) {
-        repaint(cellRect);
+  private void repaintCell(final Point cellIndex) {
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        if ((cellIndex.x >= 0 || cellIndex.y >= 0) && cellIndex.x < mModel.getColumnCount()) {
+          Rectangle cellRect = getCellRect(cellIndex.x, cellIndex.y);
+          if (cellRect != null) {
+            repaint(cellRect);
+          }
+        }        
       }
-    }
+    });
   }
 
   
