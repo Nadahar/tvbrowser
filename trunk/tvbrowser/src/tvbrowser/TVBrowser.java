@@ -199,6 +199,11 @@ public class TVBrowser {
    */
   private static boolean mMinimized = false;
 
+  /**
+   * avoid initializing the look and feel multiple times
+   */
+  private static boolean lookAndFeelInitialized = false;
+
 
   /**
    * Entry point of the application
@@ -240,12 +245,8 @@ public class TVBrowser {
     // Load the settings
     Settings.loadSettings();
 
-    boolean lookAndFeelInitialized = false;
-
     if (!createLockFile()) {
-      javax.swing.plaf.metal.MetalLookAndFeel.setCurrentTheme(new NotBoldMetalTheme());
       updateLookAndFeel();
-      lookAndFeelInitialized = true;
       showTVBrowserIsAlreadyRunningMessageBox();
     }
 
@@ -290,9 +291,7 @@ public class TVBrowser {
     
     if (currentVersion != null && currentVersion.compareTo(new Version(1,11))<0) {
       mLog.info("Running tvbrowser update assistant");
-      javax.swing.plaf.metal.MetalLookAndFeel.setCurrentTheme(new NotBoldMetalTheme());
       updateLookAndFeel();
-      lookAndFeelInitialized = true;
       showUpdateAssistant();
     }
     else if(currentVersion != null && currentVersion.compareTo(new Version(2,53,false)) < 0) {
@@ -336,11 +335,6 @@ public class TVBrowser {
       msg = mLocalizer.msg("splash.laf", "Loading look and feel...");
       splash.setMessage(msg);
 
-      // Set the NotBoldMetalTheme for the metal look and feel if Java < 1.5 is used
-      // (This won't effect other look and feels)
-      if (JavaVersion.getVersion() < JavaVersion.VERSION_1_5) {
-        javax.swing.plaf.metal.MetalLookAndFeel.setCurrentTheme(new NotBoldMetalTheme());
-      }
       updateLookAndFeel();
     }
 
@@ -877,6 +871,11 @@ public class TVBrowser {
 
   
   private static void updateLookAndFeel() {
+    // Set the NotBoldMetalTheme for the metal look and feel if Java < 1.5 is used
+    // (This won't effect other look and feels)
+    if (JavaVersion.getVersion() < JavaVersion.VERSION_1_5) {
+      javax.swing.plaf.metal.MetalLookAndFeel.setCurrentTheme(new NotBoldMetalTheme());
+    }
     if (OperatingSystem.isWindows()) {
       UIManager.installLookAndFeel("Extended Windows Look And Feel",  "com.jgoodies.looks.windows.WindowsLookAndFeel");
     }
@@ -927,6 +926,7 @@ public class TVBrowser {
       SwingUtilities.updateComponentTreeUI(mainFrame);
       mainFrame.validate();
     }
+    lookAndFeelInitialized = true;
   }
 
 
