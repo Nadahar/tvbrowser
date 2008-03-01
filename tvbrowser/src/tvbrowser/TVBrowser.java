@@ -81,11 +81,9 @@ import tvdataservice.MarkedProgramsList;
 import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
-import util.misc.JavaVersion;
 import util.misc.OperatingSystem;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
-import util.ui.NotBoldMetalTheme;
 import util.ui.UiUtilities;
 import util.ui.textcomponentpopup.TextComponentPopupEventQueue;
 
@@ -871,11 +869,6 @@ public class TVBrowser {
 
   
   private static void updateLookAndFeel() {
-    // Set the NotBoldMetalTheme for the metal look and feel if Java < 1.5 is used
-    // (This won't effect other look and feels)
-    if (JavaVersion.getVersion() < JavaVersion.VERSION_1_5) {
-      javax.swing.plaf.metal.MetalLookAndFeel.setCurrentTheme(new NotBoldMetalTheme());
-    }
     if (OperatingSystem.isWindows()) {
       UIManager.installLookAndFeel("Extended Windows Look And Feel",  "com.jgoodies.looks.windows.WindowsLookAndFeel");
     }
