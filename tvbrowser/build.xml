@@ -443,6 +443,19 @@
               <fileset dir="${classes.dir}" includes="dreamboxdataservice/**" /> 	 
       </jar>
 
+
+    <unjar src="${lib.dir}/stax-1.2.0.jar" dest="${unpacked.dir}/stax-1.2.0.jar" />
+    <unjar src="${lib.dir}/stax-api-1.0.1.jar" dest="${unpacked.dir}/stax-api-1.0.1.jar" />
+    <unjar src="${lib.dir}/xtvd-lib-2.0.jar" dest="${unpacked.dir}/xtvd-lib-2.0.jar" />
+    <!-- Pack Dreambox data service -->
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SchedulesDirectDataService.jar" compress="false">
+        <fileset dir="${classes.dir}" includes="schedulesdirectdataservice/**" />
+        <fileset dir="${unpacked.dir}/stax-1.2.0.jar" includes="com/**"/>
+        <fileset dir="${unpacked.dir}/stax-api-1.0.1.jar" includes="javax/**"/>
+        <fileset dir="${unpacked.dir}/xtvd-lib-2.0.jar" includes="net/**"/>
+    </jar>
+
+
     <!-- Copy the other stuff -->
     <echo message="Copying the images and all the other stuff ..."/>
     <mkdir dir="${tvbrowser-default.runtime.dir}/imgs"/>
