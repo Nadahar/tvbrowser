@@ -59,11 +59,6 @@ import java.util.TreeMap;
 
 public class SchedulesDirectDataService extends AbstractTvDataService {
     /**
-     * get list of bouquets
-     */
-    private final String BOUQUETLIST = "1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 195) || (type == 25)FROM BOUQUET \"bouquets.tv\" ORDER BY bouquet";
-
-    /**
      * Translator
      */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(SchedulesDirectDataService.class);
@@ -91,7 +86,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
             int max = channelArr.length;
 
             monitor.setMaximum(max);
-            monitor.setMessage(mLocalizer.msg("parsing", "Parsing Dreambox Data"));
+            monitor.setMessage(mLocalizer.msg("parsing", "Parsing SchedulesDirect Data"));
 
             // ToDo : Load Data
 
@@ -114,7 +109,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
         TimeZone timeZone = TimeZone.getTimeZone("GMT+1:00");
         for (int i = 0; i < numChannels; i++) {
             Channel ch = new Channel(this, settings.getProperty("ChannelTitle-" + i, ""), settings.getProperty("ChannelId-"
-                    + i, ""), timeZone, "de", "Imported from Dreambox", "", mChannelGroup, null, Channel.CATEGORY_TV);
+                    + i, ""), timeZone, "de", "Imported from SchedulesDirect", "", mChannelGroup, null, Channel.CATEGORY_TV);
 
             mChannels.add(ch);
         }
@@ -131,7 +126,6 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
       if (mProperties == null) {
         mProperties = new Properties();
       };
-      prop.setProperty("ip", mProperties.getProperty("ip",""));
       prop.setProperty("username", mProperties.getProperty("username", ""));
       prop.setProperty("password", mProperties.getProperty("password", ""));
 
@@ -164,8 +158,8 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
     }
 
     public Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException {
-        String ip = mProperties.getProperty("ip", "").trim();
-        if (ip.length() != 0) {
+        String username = mProperties.getProperty("username", "").trim();
+        if (username.length() != 0) {
             mChannels = getChannels();
         } else {
             mChannels = new ArrayList<Channel>();
@@ -201,7 +195,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
     }
 
     /**
-     * @return All channels available in the dreambox
+     * @return All channels available
      */
     public ArrayList<Channel> getChannels() {
         ArrayList<Channel> allChannels = new ArrayList<Channel>();
