@@ -118,7 +118,6 @@ public class SelectableItemRenderer implements ListCellRenderer {
         label.setIcon(NEW_VERSION_ICON);
         
         label3.setText("(" + mLocalizer.msg("installedVersion","Installed version: ") + installedVersion.toString()+")");
-        label3.setForeground(Color.gray);
         label3.setFont(label3.getFont().deriveFont((float)label3.getFont().getSize2D()+2));
         
         pb.add(label3, cc.xy(3,2));
@@ -129,8 +128,15 @@ public class SelectableItemRenderer implements ListCellRenderer {
         label2.setForeground(list.getSelectionForeground());
         label3.setForeground(list.getSelectionForeground());
       } else {
-       label.setForeground(list.getForeground());
-       label2.setForeground(list.getForeground());
+        if(!item.isStable()) {
+          label.setForeground(new Color(200, 0, 0));
+        }
+        else {
+          label.setForeground(list.getForeground());
+        }
+
+        label2.setForeground(list.getForeground());        
+        label3.setForeground(Color.gray);
       }
       
       p.add(pb.getPanel(), BorderLayout.CENTER);

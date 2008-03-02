@@ -27,7 +27,6 @@
 package tvbrowser.ui.update;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
@@ -41,8 +40,6 @@ import java.awt.event.WindowEvent;
 import java.net.URL;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -65,7 +62,6 @@ import devplugin.Channel;
 import devplugin.Version;
 
 import tvbrowser.core.Settings;
-import tvbrowser.core.icontheme.IconLoader;
 import util.browserlauncher.Launch;
 import util.exc.TvBrowserException;
 import util.ui.Localizer;
@@ -246,10 +242,6 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     }
   }
 
-  /*public void setSoftwareUpdateItems(SoftwareUpdateItem[] items) {
-    mList.setListData(items);
-  }*/
-
   public void valueChanged(ListSelectionEvent event) {
     try {
       if(event.getSource() instanceof JList) {
@@ -266,36 +258,6 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         mDownloadBtn.setEnabled(test.getSelection().length > 0);
       }
     }catch(Exception e) {e.printStackTrace();}
-  }
-
-  private static class SoftwareUpdateItemRenderer extends DefaultListCellRenderer {
-    
-    private ImageIcon newVersionIcon = IconLoader.getInstance().getIconFromTheme("status", "software-update-available", 16);
-
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-        boolean cellHasFocus) {
-
-      JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-System.out.println(value);
-      if (value instanceof SoftwareUpdateItem) {
-        SoftwareUpdateItem item = (SoftwareUpdateItem) value;
-        label.setText(item.getName());
-        Version installedVersion = item.getInstalledVersion(); 
-        if ((installedVersion != null) && (installedVersion.compareTo(item.getVersion()) < 0)) { 
-          label.setIcon(newVersionIcon);
-        }
-        
-        if(!item.isStable()) {
-          if(!isSelected) {
-            label.setForeground(new Color(200, 0, 0));
-          }
-          
-          label.setText(label.getText() + " (Beta)");
-        }
-      }
-      return label;
-    }
-
   }
 
   public void close() {

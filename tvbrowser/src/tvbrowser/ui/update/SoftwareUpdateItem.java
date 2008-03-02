@@ -105,7 +105,13 @@ public abstract class SoftwareUpdateItem {
     return new Version(major, minor, subMinor, stable, getProperty("version.name"));
   }
   
-  protected boolean isStable() {
+  /**
+   * Gets if this update item is a stable version.
+   * 
+   * @return <code>True</code> if this update item is a stable version,
+   * <code>false</code> otherwise.
+   */
+  public boolean isStable() {
     return "true".equalsIgnoreCase(getProperty("stable"));
   }
   
