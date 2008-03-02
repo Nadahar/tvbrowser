@@ -125,7 +125,7 @@ public class SelectableItemList extends JPanel {
       public void mousePressed(MouseEvent evt) {
         if (evt.getX() < mItemRenderer.getSelectionWidth() && mIsEnabled) {
           int index = mList.locationToIndex(evt.getPoint());
-          
+             
           if (index != -1) {
             if(mList.getCellBounds(index,index).contains(evt.getPoint())) {
               SelectableItem item = (SelectableItem) mListModel.elementAt(index);
@@ -150,6 +150,10 @@ public class SelectableItemList extends JPanel {
           handleItemSelectionChanged();
           mList.repaint();
         }
+      }
+      
+      public void keyReleased(KeyEvent e) {
+        calculateSize();
       }
     });
     
@@ -339,6 +343,8 @@ public class SelectableItemList extends JPanel {
       mList.setSize(mList.getPreferredSize());
       mList.ensureIndexIsVisible(mList.getSelectedIndex());
     }
+    
+    mList.repaint();
   }
   
   protected static class MyListUI extends javax.swing.plaf.basic.BasicListUI {
