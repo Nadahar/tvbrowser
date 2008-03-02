@@ -1344,6 +1344,11 @@ public class Settings {
       mProp, "dataServiceAutoUpdateTime", 30);
   
   /**
+   * list of hidden message boxes
+   */
+  public static final StringArrayProperty propHiddenMessageBoxes = new StringArrayProperty(mProp, "hideMessageBox", new String[] {});
+
+  /**
    * Sets the window position and size for the given window with the values of the given id.
 
    * @param windowId The id of the values to set.

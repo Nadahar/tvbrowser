@@ -46,6 +46,7 @@ import javax.swing.SwingUtilities;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.ui.DontShowAgainMessageBox;
 import devplugin.Channel;
 
 /**
@@ -59,6 +60,10 @@ public class ChannelList {
 
   private static java.util.logging.Logger mLog = java.util.logging.Logger
       .getLogger(ChannelList.class.getName());
+
+  /** The localizer for this class. */
+  public static final util.ui.Localizer mLocalizer
+      = util.ui.Localizer.getLocalizerFor(ChannelList.class);
 
   private static ArrayList<Channel> mAvailableChannels = new ArrayList<Channel>();
 
@@ -298,10 +303,14 @@ public class ChannelList {
    */
   public static void setSubscribeChannels(Channel[] channelArr, boolean update) {
     boolean channelsAdded = false;
+    boolean missingIconAdded = false;
     if (update) {
       for (Channel channel : channelArr) {
         if (!mSubscribedChannels.contains(channel)) {
           channelsAdded = true;
+          if (channel.getIcon() == null) {
+            missingIconAdded = true;
+          }
         }
       }
     }
@@ -316,12 +325,23 @@ public class ChannelList {
     
     calculateChannelPositions();
     
-    if (channelsAdded && update) {
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          MainFrame.getInstance().askForDataUpdateChannelsAdded();
+    final boolean missingIcon = missingIconAdded;
+    if (channelsAdded) {
+      if (update) {
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            if (missingIcon) {
+              showMissingIconMessage();
+            }
+            MainFrame.getInstance().askForDataUpdateChannelsAdded();
+          }
+        });
+      }
+      else {
+        if (missingIcon) {
+          showMissingIconMessage();
         }
-      });
+      }
     }
   }
 
@@ -816,5 +836,17 @@ public class ChannelList {
    */
   public static boolean hasCalledChannelValueChangeForChannel(Channel ch) {
     return mCurrentChangeChannel != null && ch != null && mCurrentChangeChannel.equals(ch);
+  }
+
+  private static void showMissingIconMessage() {
+    DontShowAgainMessageBox
+        .showMessageDialog(
+            "missingIcon",
+            MainFrame.getInstance(),
+            mLocalizer
+                .msg(
+                    "noIconAvailable.message",
+                    "You have added a channel without channel icon. Due to copyright reasons we cannot provide icons for each channel.\nFor better visual differentiation you can add your icon to the channel using the right mouse menu in the channel list."),
+            mLocalizer.msg("noIconAvailable.title", "No channel icon"));
   }
 }
