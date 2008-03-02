@@ -115,6 +115,8 @@ public class SelectableItemRenderer implements ListCellRenderer {
       else
         l.setForeground(list.getForeground());
     } else if(selectableItem.getItem() instanceof SoftwareUpdateItem) {
+      cb.setVerticalAlignment(JCheckBox.TOP);
+      cb.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,3,0,0),cb.getBorder()));
       
       CellConstraints cc = new CellConstraints();
       FormLayout layout = new FormLayout("5dlu,default,5dlu,default:grow","2dlu,default,2dlu,fill:pref:grow,2dlu");
