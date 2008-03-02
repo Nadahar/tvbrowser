@@ -105,7 +105,7 @@ public class HTMLTextHelper {
     html = IOUtilities.replace(html.trim(), "<u>", "");
     html = IOUtilities.replace(html.trim(), "</u>", "");
     
-    html = IOUtilities.replace(html.trim(), "quot;", "\"");
+    html = IOUtilities.replace(html.trim(), "&quot;", "\"");
     html = IOUtilities.replace(html.trim(), "\\'", "'");
     
     return html;
