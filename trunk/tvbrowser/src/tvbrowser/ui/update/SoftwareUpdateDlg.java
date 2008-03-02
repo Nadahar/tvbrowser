@@ -260,7 +260,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     contentPane.add(mSoftwareUpdateItemList, BorderLayout.CENTER);
     contentPane.add(southPn, BorderLayout.SOUTH);
 
-    Settings.layoutWindow("softwareUpdateDlg", this, new Dimension(800,600));
+    Settings.layoutWindow("softwareUpdateDlg", this, new Dimension(700,600));
     
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
