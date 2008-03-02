@@ -104,7 +104,7 @@ public class SelectableItemList extends JPanel {
       
       public void valueChanged(ListSelectionEvent e) {
         if(!e.getValueIsAdjusting()) {
-          if(mLastIndex != -1) {
+          if(mLastIndex != -1 && mList.getSelectedIndex() != mLastIndex) {
             ((MyListUI)mList.getUI()).setCellHeight(mLastIndex,mList.getCellRenderer().getListCellRendererComponent(mList, mList.getModel().getElementAt(mLastIndex),
                 mLastIndex, false, false).getPreferredSize().height);
           }
