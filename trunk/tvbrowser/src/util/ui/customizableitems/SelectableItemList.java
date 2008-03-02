@@ -27,8 +27,6 @@
 package util.ui.customizableitems;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -39,12 +37,12 @@ import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.plaf.ListUI;
 
 import util.ui.Localizer;
 
@@ -96,23 +94,8 @@ public class SelectableItemList extends JPanel {
     mListModel = new DefaultListModel();
     setEntries(currSelection,allItems);
     mList = new JList(mListModel);
-    mList.setUI(new MyListUI());
+    
     mList.setCellRenderer(mItemRenderer = new SelectableItemRenderer());
-
-    mList.addListSelectionListener(new ListSelectionListener() {
-      private int mLastIndex = -1;
-      
-      public void valueChanged(ListSelectionEvent e) {
-        if(!e.getValueIsAdjusting()) {
-          if(mLastIndex != -1 && mList.getSelectedIndex() != mLastIndex) {
-            ((MyListUI)mList.getUI()).setCellHeight(mLastIndex,mList.getCellRenderer().getListCellRendererComponent(mList, mList.getModel().getElementAt(mLastIndex),
-                mLastIndex, false, false).getPreferredSize().height);
-          }
-          
-          mLastIndex = mList.getSelectedIndex();
-        }
-      }
-    });
     
     mScrollPane = new JScrollPane(mList);
     
@@ -347,24 +330,25 @@ public class SelectableItemList extends JPanel {
     mList.repaint();
   }
   
-  protected static class MyListUI extends javax.swing.plaf.basic.BasicListUI {
-    protected synchronized void setCellHeight(int row, int height) {
-      cellHeights[row] = height;      
-    }
-    
-    public Dimension getPreferredSize(JComponent c) {
-      int width = super.getPreferredSize(c).width;
-      int height = 0;
-      
-      Insets i = c.getInsets();
-      
-      height += i.top + i.bottom;
-      
-      for(int cellHeight : cellHeights) {
-        height += cellHeight;
-      }
-      
-      return new Dimension(width,height);
-    }
+  /**
+   * Adds the render component that is to be used for the given class or it's super class.
+   * <p>
+   * @param clazz The class to use the render component for, the render component is also used for the super class of clazz.
+   * @param component The render component.
+   * @since 2.7
+   */
+
+  public void addCenterRendererComponent(Class clazz, SelectableItemRendererCenterComponentIf component) {
+    mItemRenderer.setCenterRendererComponent(clazz,component);
+  }
+  
+  /**
+   * Sets the UI to be used for the list.
+   * <p>
+   * @param ui The list ui that should be used for the list.
+   * @since 2.7
+   */
+  public void setListUI(ListUI ui) {
+    mList.setUI(ui);
   }
 }
