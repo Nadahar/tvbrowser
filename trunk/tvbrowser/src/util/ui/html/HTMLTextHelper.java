@@ -108,6 +108,8 @@ public class HTMLTextHelper {
     html = IOUtilities.replace(html.trim(), "&quot;", "\"");
     html = IOUtilities.replace(html.trim(), "\\'", "'");
     
+    html = IOUtilities.replace(html.trim(), "eacute;", "é");
+    
     return html;
   }
   

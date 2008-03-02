@@ -29,25 +29,38 @@ package util.ui.customizableitems;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+//import java.awt.Dimension;
 import java.awt.Font;
+//import java.awt.ScrollPane;
+//import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
+//import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+//import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.ListCellRenderer;
+//import javax.swing.event.HyperlinkEvent;
+//import javax.swing.event.HyperlinkListener;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.update.SoftwareUpdateItem;
+//import util.browserlauncher.Launch;
 import util.ui.Localizer;
+import util.ui.TextAreaIcon;
 import util.ui.UiUtilities;
+import util.ui.customizableitems.SelectableItemList.MyListUI;
+//import util.ui.html.ExtendedHTMLEditorKit;
 import util.ui.html.HTMLTextHelper;
 import devplugin.Channel;
 import devplugin.Version;
@@ -100,16 +113,16 @@ public class SelectableItemRenderer implements ListCellRenderer {
       else
         l.setForeground(list.getForeground());
     } else if(selectableItem.getItem() instanceof SoftwareUpdateItem) {
+      
       CellConstraints cc = new CellConstraints();
-      PanelBuilder pb = new PanelBuilder(new FormLayout("default,5dlu,default:grow","2dlu,default,2dlu,default,2dlu"));
+      FormLayout layout = new FormLayout("5dlu,default,5dlu,default:grow","2dlu,default,2dlu,fill:pref:grow,2dlu");
+      PanelBuilder pb = new PanelBuilder(layout);
       pb.getPanel().setOpaque(false);
       
       SoftwareUpdateItem item = (SoftwareUpdateItem)selectableItem.getItem();
       
-      JLabel label = pb.addLabel(item.getName() + " " + item.getVersion(), cc.xy(1,2));
+      JLabel label = pb.addLabel(item.getName() + " " + item.getVersion(), cc.xy(2,2));
       label.setFont(label.getFont().deriveFont(Font.BOLD, label.getFont().getSize2D()+2));
-      
-      JLabel label2 = pb.addLabel(HTMLTextHelper.convertHtmlToText(item.getDescription().length() > 100 ? item.getDescription().substring(0,100) + "..." : item.getDescription()), cc.xyw(1,4,3));
       
       JLabel label3 = new JLabel();
       
@@ -120,12 +133,83 @@ public class SelectableItemRenderer implements ListCellRenderer {
         label3.setText("(" + mLocalizer.msg("installedVersion","Installed version: ") + installedVersion.toString()+")");
         label3.setFont(label3.getFont().deriveFont((float)label3.getFont().getSize2D()+2));
         
-        pb.add(label3, cc.xy(3,2));
+        pb.add(label3, cc.xy(4,2));
       }
       
       if (isSelected && mIsEnabled) {
         label.setForeground(list.getSelectionForeground());
-        label2.setForeground(list.getSelectionForeground());
+        
+        JTextArea text = new JTextArea(HTMLTextHelper.convertHtmlToText(item.getDescription()));
+        text.setEditable(false);
+        text.setLineWrap(true);
+        
+        
+        
+        
+        /*JEditorPane mDescriptionPane = new JEditorPane();
+
+        mDescriptionPane.setEditorKit(new ExtendedHTMLEditorKit());
+        mDescriptionPane.setEditable(false);
+        
+        mDescriptionPane.addHyperlinkListener(new HyperlinkListener() {
+          public void hyperlinkUpdate(HyperlinkEvent evt) {
+            if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+              URL url = evt.getURL();
+              if (url != null) {
+                Launch.openURL(url.toString());
+              }
+            }
+          }
+        });
+        */
+       // StringBuffer content = new StringBuffer();
+        String author = item.getProperty("author");
+        String website = item.getWebsite();
+
+      /*  content.append(
+            "<html><div style=\"color:#").append(Integer.toHexString(list.getSelectionForeground().getRed())).append(Integer.toHexString(list.getSelectionForeground().getGreen())).append(Integer.toHexString(list.getSelectionForeground().getBlue())).append(";font-family:").append(new JLabel().getFont().getName()).append(";font-size:").append(new JLabel().getFont().getSize()).append(";\">").append("<p>").append(item.getDescription()).append("</p><html>");*/
+        
+        if (author != null) {
+          layout.appendRow(new RowSpec("2dlu"));
+          layout.appendRow(new RowSpec("default"));
+          layout.appendRow(new RowSpec("2dlu"));
+          
+          JLabel autor = pb.addLabel("Autor: ", cc.xy(2,7));
+          autor.setFont(autor.getFont().deriveFont(Font.BOLD));
+          autor.setForeground(list.getSelectionForeground());
+          
+          pb.addLabel(HTMLTextHelper.convertHtmlToText(author), cc.xy(4,7)).setForeground(list.getSelectionForeground());
+          
+          //content.append("<tr><th>").append(/*mLocalizer.msg("author", "Author")*/"Autor: ").append("</th><td>").append(author)
+            //  .append("</td></tr>");
+        }
+        
+        if (website != null) {
+          if(author == null) {
+            layout.appendRow(new RowSpec("2dlu"));
+          }
+          
+          layout.appendRow(new RowSpec("default"));
+          layout.appendRow(new RowSpec("2dlu"));
+          
+          JLabel webs = pb.addLabel("Website: ", cc.xy(2,author == null ? 7 : 9));
+          webs.setFont(webs.getFont().deriveFont(Font.BOLD));
+          webs.setForeground(list.getSelectionForeground());
+          
+          pb.addLabel(website, cc.xy(4,author == null ? 7 : 9)).setForeground(list.getSelectionForeground());
+         // content.append("<tr><th>").append(/*mLocalizer.msg("website", "Website")*/"Website: ").append("</th><td><a href=\"").append(
+         //     website).append("\">").append(website).append("</a></td></tr>");
+        }
+        
+        TextAreaIcon icon = new TextAreaIcon(HTMLTextHelper.convertHtmlToText(item.getDescription()), new JLabel().getFont(),list.getPreferredScrollableViewportSize().width - 15, 2);
+        
+        JLabel iconLabel = new JLabel("");
+        iconLabel.setForeground(list.getSelectionForeground());
+        iconLabel.setIcon(icon);
+        
+        pb.add(iconLabel, cc.xyw(2,4,3));
+        
+        
         label3.setForeground(list.getSelectionForeground());
       } else {
         if(!item.isStable()) {
@@ -135,6 +219,8 @@ public class SelectableItemRenderer implements ListCellRenderer {
           label.setForeground(list.getForeground());
         }
 
+        JLabel label2 = pb.addLabel(HTMLTextHelper.convertHtmlToText(item.getDescription().length() > 100 ? item.getDescription().substring(0,100) + "..." : item.getDescription()), cc.xyw(2,4,3));
+        
         label2.setForeground(list.getForeground());        
         label3.setForeground(Color.gray);
       }
@@ -143,6 +229,8 @@ public class SelectableItemRenderer implements ListCellRenderer {
     } else {
       cb.setText(selectableItem.getItem().toString());
     }
+    
+    ((MyListUI)list.getUI()).setCellHeight(index, p.getPreferredSize().height);
     
     if (isSelected && mIsEnabled) {
       p.setOpaque(true);

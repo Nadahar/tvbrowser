@@ -27,6 +27,8 @@
 package util.ui.customizableitems;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -37,6 +39,7 @@ import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -93,20 +96,43 @@ public class SelectableItemList extends JPanel {
     mListModel = new DefaultListModel();
     setEntries(currSelection,allItems);
     mList = new JList(mListModel);
+    mList.setUI(new MyListUI());
     mList.setCellRenderer(mItemRenderer = new SelectableItemRenderer());
+
+    mList.addListSelectionListener(new ListSelectionListener() {
+      private int mLastIndex = -1;
+      
+      public void valueChanged(ListSelectionEvent e) {
+        if(!e.getValueIsAdjusting()) {
+          if(mLastIndex != -1) {
+            ((MyListUI)mList.getUI()).setCellHeight(mLastIndex,mList.getCellRenderer().getListCellRendererComponent(mList, mList.getModel().getElementAt(mLastIndex),
+                mLastIndex, false, false).getPreferredSize().height);
+          }
+          
+          mLastIndex = mList.getSelectedIndex();
+        }
+      }
+    });
     
     mScrollPane = new JScrollPane(mList);
+    
+    mScrollPane.getVerticalScrollBar().setBlockIncrement(50);
+    mScrollPane.getVerticalScrollBar().setUnitIncrement(20);
+    
     add(mScrollPane, BorderLayout.CENTER);
     
     mList.addMouseListener(new MouseAdapter() {
-      public void mouseReleased(MouseEvent evt) {
+      public void mousePressed(MouseEvent evt) {
         if (evt.getX() < mItemRenderer.getSelectionWidth() && mIsEnabled) {
           int index = mList.locationToIndex(evt.getPoint());
+          
           if (index != -1) {
-            SelectableItem item = (SelectableItem) mListModel.elementAt(index);
-            item.setSelected(! item.isSelected());
-            handleItemSelectionChanged();
-            mList.repaint();
+            if(mList.getCellBounds(index,index).contains(evt.getPoint())) {
+              SelectableItem item = (SelectableItem) mListModel.elementAt(index);
+              item.setSelected(! item.isSelected());
+              handleItemSelectionChanged();
+              mList.repaint();
+            }
           }
         }
       }
@@ -304,5 +330,35 @@ public class SelectableItemList extends JPanel {
     mScrollPane.getVerticalScrollBar().setEnabled(value);
     mScrollPane.setWheelScrollingEnabled(value);
   }
-
+  
+  /**
+   * Calcualtes the size of the list.
+   */
+  public void calculateSize() {
+    if(mList != null) {
+      mList.setSize(mList.getPreferredSize());
+      mList.ensureIndexIsVisible(mList.getSelectedIndex());
+    }
+  }
+  
+  protected static class MyListUI extends javax.swing.plaf.basic.BasicListUI {
+    protected synchronized void setCellHeight(int row, int height) {
+      cellHeights[row] = height;      
+    }
+    
+    public Dimension getPreferredSize(JComponent c) {
+      int width = super.getPreferredSize(c).width;
+      int height = 0;
+      
+      Insets i = c.getInsets();
+      
+      height += i.top + i.bottom;
+      
+      for(int cellHeight : cellHeights) {
+        height += cellHeight;
+      }
+      
+      return new Dimension(width,height);
+    }
+  }
 }

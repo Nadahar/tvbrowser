@@ -52,7 +52,17 @@ public class TextAreaIcon implements Icon {
   private Font mFont;
   private int mMaxLineCount = -1;
   private String mText;
+  private int mLineSpace;
 
+  /**
+   * Creates a TextAreaIcon with the specified text, font and width.
+   */
+  public TextAreaIcon(String text, Font font, int width, int lineSpace) {
+    mWidth = width;
+    mFont = font;
+    mLineSpace = lineSpace;
+    setText(text);
+  }
 
   /**
    * Creates a TextAreaIcon with the specified text, font and width.
@@ -60,6 +70,7 @@ public class TextAreaIcon implements Icon {
   public TextAreaIcon(String text, Font font, int width) {
     mWidth = width;
     mFont = font;
+    mLineSpace = 0;
     setText(text);
   }
   
@@ -70,6 +81,7 @@ public class TextAreaIcon implements Icon {
     mWidth = width;
     mFont = font;
     mText = "";
+    mLineSpace = 0;
   }
     
   /**
@@ -142,7 +154,7 @@ public class TextAreaIcon implements Icon {
     if (mTextLineArr == null) {
       return 0;
     } else {
-      return mFont.getSize() * mTextLineArr.length;
+      return (mFont.getSize() + mLineSpace) * mTextLineArr.length;
     }
   }  
   
@@ -179,7 +191,7 @@ public class TextAreaIcon implements Icon {
       
       int fontSize = mFont.getSize();
       for (int i = 0; i < mTextLineArr.length; i++) {
-        y += fontSize;
+        y += fontSize + mLineSpace;
         grp.drawString(mTextLineArr[i], x, y);
       }
     }

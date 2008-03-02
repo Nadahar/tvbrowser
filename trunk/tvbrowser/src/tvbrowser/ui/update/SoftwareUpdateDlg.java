@@ -58,19 +58,19 @@ import javax.swing.event.ListSelectionListener;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 
-import devplugin.Channel;
-import devplugin.Version;
+/*import devplugin.Channel;
+import devplugin.Version;*/
 
 import tvbrowser.core.Settings;
-import util.browserlauncher.Launch;
+//import util.browserlauncher.Launch;
 import util.exc.TvBrowserException;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
-import util.ui.customizableitems.SelectableItem;
+//import util.ui.customizableitems.SelectableItem;
 import util.ui.customizableitems.SelectableItemList;
-import util.ui.customizableitems.SelectableItemRenderer;
-import util.ui.html.ExtendedHTMLEditorKit;
+/*import util.ui.customizableitems.SelectableItemRenderer;
+import util.ui.html.ExtendedHTMLEditorKit;*/
 
 public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSelectionListener, WindowClosingIf {
 
@@ -138,7 +138,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
     JPanel southPn = new JPanel(new BorderLayout());
 
-    mDescriptionPane = new JEditorPane();
+   /* mDescriptionPane = new JEditorPane();
 
     mDescriptionPane.setEditorKit(new ExtendedHTMLEditorKit());
     mDescriptionPane.setEditable(false);
@@ -152,23 +152,25 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
           }
         }
       }
-    });
+    });*/
 
     southPn.add(builder.getPanel(), BorderLayout.SOUTH);
 
     test = new SelectableItemList(new Object[0],itemArr);
     test.addListSelectionListener(this);
     
-    mSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, test, new JScrollPane(
+    /*mSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, test, new JScrollPane(
         mDescriptionPane));
-    mSplitPane.setDividerLocation(Settings.propPluginUpdateDialogDividerLocation.getInt());
+    mSplitPane.setDividerLocation(Settings.propPluginUpdateDialogDividerLocation.getInt());*/
     
     contentPane.add(northPn, BorderLayout.NORTH);
-    contentPane.add(mSplitPane, BorderLayout.CENTER);
+    contentPane.add(test, BorderLayout.CENTER);
     contentPane.add(southPn, BorderLayout.SOUTH);
 
-    Settings.layoutWindow("softwareUpdateDlg", this, new Dimension(600,700));
+    Settings.layoutWindow("softwareUpdateDlg", this, new Dimension(700,600));
 
+    
+    
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
     addWindowListener(new WindowAdapter() {
@@ -180,7 +182,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     UiUtilities.registerForClosing(this);
   }
 
-  private void updateDescription(SoftwareUpdateItem item) {
+ /* private void updateDescription(SoftwareUpdateItem item) {
     if (item == null) {
       mDescriptionPane.setText("");
     } else {
@@ -218,7 +220,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       mDescriptionPane.setText(content.toString());
       mDescriptionPane.setCaretPosition(0);
     }
-  }
+  }*/
 
   public void actionPerformed(ActionEvent event) {
     if (event.getSource() == mCloseBtn) {
@@ -244,7 +246,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
   public void valueChanged(ListSelectionEvent event) {
     try {
-      if(event.getSource() instanceof JList) {
+      /*if(event.getSource() instanceof JList) {
         JList list = (JList) event.getSource();
     
         Object[] items = list.getSelectedValues();
@@ -253,80 +255,18 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         } else {
           updateDescription(null);
         }
-      }
-      else {
+      }*/
+      if (!(event.getSource() instanceof JList)){
         mDownloadBtn.setEnabled(test.getSelection().length > 0);
       }
+      
+      test.calculateSize();
     }catch(Exception e) {e.printStackTrace();}
   }
 
   public void close() {
-    Settings.propPluginUpdateDialogDividerLocation.setInt(mSplitPane.getDividerLocation());
+   // Settings.propPluginUpdateDialogDividerLocation.setInt(mSplitPane.getDividerLocation());
     setVisible(false);
     dispose();
-  }
-  
-  private static class SoftwareUpdateItemListCellRenderer extends SelectableItemRenderer {
-    private int mSelectionWidth;
-    
-    public Component getListCellRendererComponent(JList list, Object value,
-    int index, boolean isSelected, boolean cellHasFocus) {
-      JPanel p = new JPanel(new BorderLayout(2,0));
-      p.setBorder(BorderFactory.createEmptyBorder(0,2,0,0));
-      
-      SelectableItem selectableItem = (SelectableItem) value;
-
-      JCheckBox cb = new JCheckBox("",selectableItem.isSelected());
-      mSelectionWidth = cb.getPreferredSize().width;
-      
-      cb.setOpaque(false);
-      
-      p.add(cb, BorderLayout.WEST);
-      
-      if(selectableItem.getItem() instanceof Channel) {
-        JLabel l = new JLabel();
-        
-        if(Settings.propShowChannelNamesInChannellist.getBoolean()) {
-          l.setText(selectableItem.getItem().toString());
-        }
-                
-        l.setOpaque(false);
-        
-        if(Settings.propShowChannelIconsInChannellist.getBoolean()) {
-          l.setIcon(UiUtilities.createChannelIcon(((Channel)selectableItem.getItem()).getIcon()));
-        }
-        
-        p.add(l, BorderLayout.CENTER);
-        
-        if(isSelected)
-          l.setForeground(list.getSelectionForeground());
-        else
-          l.setForeground(list.getForeground());
-      }
-      else
-        cb.setText(selectableItem.getItem().toString());
-      
-      if (isSelected) {
-        p.setOpaque(true);
-        p.setBackground(list.getSelectionBackground());
-        cb.setForeground(list.getSelectionForeground());
-        
-      } else {
-        p.setOpaque(false);
-        p.setForeground(list.getForeground());
-        cb.setForeground(list.getForeground());
-      }
-      cb.setEnabled(list.isEnabled());
-
-      return p;
-    }
-    
-    /**
-     * @return The selection width.
-     */
-    public int getSelectionWidth() {
-      return mSelectionWidth;
-    }
-    
   }
 }
