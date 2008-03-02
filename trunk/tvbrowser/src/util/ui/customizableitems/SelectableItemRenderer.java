@@ -31,6 +31,8 @@ import java.awt.Color;
 import java.awt.Component;
 //import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 //import java.awt.ScrollPane;
 //import java.net.URL;
 
@@ -42,7 +44,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 //import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+//import javax.swing.JTextArea;
 import javax.swing.ListCellRenderer;
 //import javax.swing.event.HyperlinkEvent;
 //import javax.swing.event.HyperlinkListener;
@@ -121,7 +123,7 @@ public class SelectableItemRenderer implements ListCellRenderer {
       
       SoftwareUpdateItem item = (SoftwareUpdateItem)selectableItem.getItem();
       
-      JLabel label = pb.addLabel(item.getName() + " " + item.getVersion(), cc.xy(2,2));
+      JLabel label = pb.addLabel(HTMLTextHelper.convertHtmlToText(item.getName()) + " " + item.getVersion(), cc.xy(2,2));
       label.setFont(label.getFont().deriveFont(Font.BOLD, label.getFont().getSize2D()+2));
       
       JLabel label3 = new JLabel();
@@ -139,9 +141,9 @@ public class SelectableItemRenderer implements ListCellRenderer {
       if (isSelected && mIsEnabled) {
         label.setForeground(list.getSelectionForeground());
         
-        JTextArea text = new JTextArea(HTMLTextHelper.convertHtmlToText(item.getDescription()));
+        /*JTextArea text = new JTextArea(HTMLTextHelper.convertHtmlToText(item.getDescription()));
         text.setEditable(false);
-        text.setLineWrap(true);
+        text.setLineWrap(true);*/
         
         
         
