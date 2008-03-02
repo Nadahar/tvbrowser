@@ -75,4 +75,40 @@ public class HTMLTextHelper {
     return text;
   }
   
+  /**
+   * Replaces html german Umlaute and the html formating tags with a Java String.
+   * 
+   * @param html The html text to replace.
+   * @return The text with the replaced Strings.
+   * @since 2.7
+   */
+  public static String convertHtmlToText(String html) {
+    html = IOUtilities.replace(html.trim(), "&auml;", "\u00e4");
+    html = IOUtilities.replace(html.trim(), "&Auml;", "\u00c4");
+
+    html = IOUtilities.replace(html.trim(), "&ouml;", "\u00f6");
+    html = IOUtilities.replace(html.trim(), "&Ouml;", "\u00d6");
+    
+    html = IOUtilities.replace(html.trim(), "&uuml;", "\u00fc");
+    html = IOUtilities.replace(html.trim(), "&Uuml;", "\u00dc");
+    
+    html = IOUtilities.replace(html.trim(), "&szlig;", "\u00df");
+    
+    html = IOUtilities.replace(html.trim(), "<br>", "\n");
+    
+    html = IOUtilities.replace(html.trim(), "<i>", "");
+    html = IOUtilities.replace(html.trim(), "</i>", "");
+    
+    html = IOUtilities.replace(html.trim(), "<b>", "");
+    html = IOUtilities.replace(html.trim(), "</b>", "");
+    
+    html = IOUtilities.replace(html.trim(), "<u>", "");
+    html = IOUtilities.replace(html.trim(), "</u>", "");
+    
+    html = IOUtilities.replace(html.trim(), "quot;", "\"");
+    html = IOUtilities.replace(html.trim(), "\\'", "'");
+    
+    return html;
+  }
+  
 }

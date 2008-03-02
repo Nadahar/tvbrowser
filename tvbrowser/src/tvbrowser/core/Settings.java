@@ -1110,7 +1110,7 @@ public class Settings {
       "settingsDialogDividerLocation", 200);
 
   public static final IntProperty propPluginUpdateDialogDividerLocation = new IntProperty(
-      mProp, "pluginUpdateDialog.devider", 200);
+      mProp, "pluginUpdateDialog.devider", 330);
 
   public static final IntProperty propProgramTableStartOfDay = new IntProperty(
       mProp, "programtable.startofday", 0);

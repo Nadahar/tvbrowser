@@ -27,18 +27,30 @@
 package util.ui.customizableitems;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.ui.update.SoftwareUpdateItem;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
+import util.ui.html.HTMLTextHelper;
 import devplugin.Channel;
+import devplugin.Version;
 
 /**
  * A ListCellRenderer for SelectableItems.
@@ -46,7 +58,8 @@ import devplugin.Channel;
  * @author René Mach
  */
 public class SelectableItemRenderer implements ListCellRenderer {
-  
+  private static final ImageIcon NEW_VERSION_ICON = IconLoader.getInstance().getIconFromTheme("status", "software-update-available", 16);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(SelectableItemRenderer.class);
   private int mSelectionWidth;
   private boolean mIsEnabled = true;
   
@@ -86,9 +99,44 @@ public class SelectableItemRenderer implements ListCellRenderer {
         l.setForeground(list.getSelectionForeground());
       else
         l.setForeground(list.getForeground());
-    }
-    else
+    } else if(selectableItem.getItem() instanceof SoftwareUpdateItem) {
+      CellConstraints cc = new CellConstraints();
+      PanelBuilder pb = new PanelBuilder(new FormLayout("default,5dlu,default:grow","2dlu,default,2dlu,default,2dlu"));
+      pb.getPanel().setOpaque(false);
+      
+      SoftwareUpdateItem item = (SoftwareUpdateItem)selectableItem.getItem();
+      
+      JLabel label = pb.addLabel(item.getName() + " " + item.getVersion(), cc.xy(1,2));
+      label.setFont(label.getFont().deriveFont(Font.BOLD, label.getFont().getSize2D()+2));
+      
+      JLabel label2 = pb.addLabel(HTMLTextHelper.convertHtmlToText(item.getDescription().length() > 100 ? item.getDescription().substring(0,100) + "..." : item.getDescription()), cc.xyw(1,4,3));
+      
+      JLabel label3 = new JLabel();
+      
+      Version installedVersion = item.getInstalledVersion();
+      if ((installedVersion != null) && (installedVersion.compareTo(item.getVersion()) < 0)) { 
+        label.setIcon(NEW_VERSION_ICON);
+        
+        label3.setText("(" + mLocalizer.msg("installedVersion","Installed version: ") + installedVersion.toString()+")");
+        label3.setForeground(Color.gray);
+        label3.setFont(label3.getFont().deriveFont((float)label3.getFont().getSize2D()+2));
+        
+        pb.add(label3, cc.xy(3,2));
+      }
+      
+      if (isSelected && mIsEnabled) {
+        label.setForeground(list.getSelectionForeground());
+        label2.setForeground(list.getSelectionForeground());
+        label3.setForeground(list.getSelectionForeground());
+      } else {
+       label.setForeground(list.getForeground());
+       label2.setForeground(list.getForeground());
+      }
+      
+      p.add(pb.getPanel(), BorderLayout.CENTER);
+    } else {
       cb.setText(selectableItem.getItem().toString());
+    }
     
     if (isSelected && mIsEnabled) {
       p.setOpaque(true);

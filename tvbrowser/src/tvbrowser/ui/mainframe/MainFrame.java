@@ -1705,12 +1705,12 @@ public class MainFrame extends JFrame implements DateListener {
           SoftwareUpdateDlg dlg = null;
     
           if(w instanceof JDialog) {
-            dlg = new SoftwareUpdateDlg((JDialog)w, baseUrl, showOnlyUpdates);
+            dlg = new SoftwareUpdateDlg((JDialog)w, baseUrl, showOnlyUpdates,mSoftwareUpdateItems);
           } else {
-            dlg = new SoftwareUpdateDlg((JFrame)w, baseUrl, showOnlyUpdates);
+            dlg = new SoftwareUpdateDlg((JFrame)w, baseUrl, showOnlyUpdates,mSoftwareUpdateItems);
           }
     
-          dlg.setSoftwareUpdateItems(mSoftwareUpdateItems);
+          //dlg.setSoftwareUpdateItems(mSoftwareUpdateItems);
           dlg.setLocationRelativeTo(w);
           dlg.setVisible(true);
         }

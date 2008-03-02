@@ -61,6 +61,7 @@ import javax.swing.event.ListSelectionListener;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 
+import devplugin.Channel;
 import devplugin.Version;
 
 import tvbrowser.core.Settings;
@@ -70,6 +71,9 @@ import util.exc.TvBrowserException;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+import util.ui.customizableitems.SelectableItem;
+import util.ui.customizableitems.SelectableItemList;
+import util.ui.customizableitems.SelectableItemRenderer;
 import util.ui.html.ExtendedHTMLEditorKit;
 
 public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSelectionListener, WindowClosingIf {
@@ -79,8 +83,6 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
   private JButton mCloseBtn, mDownloadBtn;
 
-  private JList mList;
-
   private JEditorPane mDescriptionPane;
   
   private String mDownloadUrl;
@@ -88,19 +90,21 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
   private JCheckBox mAutoUpdates;
   
   private JSplitPane mSplitPane;
+  
+  private SelectableItemList test;
 
-  public SoftwareUpdateDlg(Dialog parent, String downloadUrl, boolean onlyUpdate) {
+  public SoftwareUpdateDlg(Dialog parent, String downloadUrl, boolean onlyUpdate, SoftwareUpdateItem[] itemArr) {
     super(parent, true);    
-    createGui(downloadUrl,onlyUpdate);
+    createGui(downloadUrl,onlyUpdate, itemArr);
   }
 
   
-  public SoftwareUpdateDlg(Frame parent, String downloadUrl, boolean onlyUpdate) {
+  public SoftwareUpdateDlg(Frame parent, String downloadUrl, boolean onlyUpdate, SoftwareUpdateItem[] itemArr) {
     super(parent, true);
-    createGui(downloadUrl,onlyUpdate);
+    createGui(downloadUrl,onlyUpdate, itemArr);
   }
   
-  private void createGui(String downloadUrl, boolean onlyUpdate) {
+  private void createGui(String downloadUrl, boolean onlyUpdate, SoftwareUpdateItem[] itemArr) {
     mDownloadUrl = downloadUrl;
     setTitle(mLocalizer.msg("title", "Download plugins"));
 
@@ -132,10 +136,6 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     builder.addRelatedGap();
     builder.addFixed(mCloseBtn);
 
-    mList = new JList();
-    mList.setCellRenderer(new SoftwareUpdateItemRenderer());
-    mList.addListSelectionListener(this);
-
     JPanel northPn = new JPanel();
     northPn.add(new JLabel(onlyUpdate ?mLocalizer.msg("updateHeader","Updates for installed plugins were found.") : 
       mLocalizer.msg("header","Here you can download new plugins and updates for it.")));
@@ -160,15 +160,18 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
     southPn.add(builder.getPanel(), BorderLayout.SOUTH);
 
-    mSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, new JScrollPane(mList), new JScrollPane(
+    test = new SelectableItemList(new Object[0],itemArr);
+    test.addListSelectionListener(this);
+    
+    mSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, test, new JScrollPane(
         mDescriptionPane));
     mSplitPane.setDividerLocation(Settings.propPluginUpdateDialogDividerLocation.getInt());
-
+    
     contentPane.add(northPn, BorderLayout.NORTH);
     contentPane.add(mSplitPane, BorderLayout.CENTER);
     contentPane.add(southPn, BorderLayout.SOUTH);
 
-    Settings.layoutWindow("softwareUpdateDlg", this, new Dimension(500,400));
+    Settings.layoutWindow("softwareUpdateDlg", this, new Dimension(600,700));
 
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -225,7 +228,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     if (event.getSource() == mCloseBtn) {
       close();
     } else if (event.getSource() == mDownloadBtn) {
-      Object[] objects = mList.getSelectedValues();
+      Object[] objects = test.getSelection();
       int successfullyDownloadedItems = 0;
       for (Object object : objects) {
         SoftwareUpdateItem item = (SoftwareUpdateItem) object;
@@ -243,26 +246,26 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     }
   }
 
-  public void setSoftwareUpdateItems(SoftwareUpdateItem[] items) {
+  /*public void setSoftwareUpdateItems(SoftwareUpdateItem[] items) {
     mList.setListData(items);
-  }
+  }*/
 
   public void valueChanged(ListSelectionEvent event) {
-    JList list = (JList) event.getSource();
-
-    Object[] items = list.getSelectedValues();
-    if (items.length == 1) {
-      updateDescription((SoftwareUpdateItem) items[0]);
-    } else {
-      updateDescription(null);
-    }
-
-    if (items.length == 0) {
-      mDownloadBtn.setEnabled(false);
-    } else {
-      mDownloadBtn.setEnabled(true);
-    }
-
+    try {
+      if(event.getSource() instanceof JList) {
+        JList list = (JList) event.getSource();
+    
+        Object[] items = list.getSelectedValues();
+        if (items.length == 1) {
+          updateDescription((SoftwareUpdateItem) ((SelectableItem) items[0]).getItem());
+        } else {
+          updateDescription(null);
+        }
+      }
+      else {
+        mDownloadBtn.setEnabled(test.getSelection().length > 0);
+      }
+    }catch(Exception e) {e.printStackTrace();}
   }
 
   private static class SoftwareUpdateItemRenderer extends DefaultListCellRenderer {
@@ -273,7 +276,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         boolean cellHasFocus) {
 
       JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-
+System.out.println(value);
       if (value instanceof SoftwareUpdateItem) {
         SoftwareUpdateItem item = (SoftwareUpdateItem) value;
         label.setText(item.getName());
@@ -299,5 +302,69 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     Settings.propPluginUpdateDialogDividerLocation.setInt(mSplitPane.getDividerLocation());
     setVisible(false);
     dispose();
+  }
+  
+  private static class SoftwareUpdateItemListCellRenderer extends SelectableItemRenderer {
+    private int mSelectionWidth;
+    
+    public Component getListCellRendererComponent(JList list, Object value,
+    int index, boolean isSelected, boolean cellHasFocus) {
+      JPanel p = new JPanel(new BorderLayout(2,0));
+      p.setBorder(BorderFactory.createEmptyBorder(0,2,0,0));
+      
+      SelectableItem selectableItem = (SelectableItem) value;
+
+      JCheckBox cb = new JCheckBox("",selectableItem.isSelected());
+      mSelectionWidth = cb.getPreferredSize().width;
+      
+      cb.setOpaque(false);
+      
+      p.add(cb, BorderLayout.WEST);
+      
+      if(selectableItem.getItem() instanceof Channel) {
+        JLabel l = new JLabel();
+        
+        if(Settings.propShowChannelNamesInChannellist.getBoolean()) {
+          l.setText(selectableItem.getItem().toString());
+        }
+                
+        l.setOpaque(false);
+        
+        if(Settings.propShowChannelIconsInChannellist.getBoolean()) {
+          l.setIcon(UiUtilities.createChannelIcon(((Channel)selectableItem.getItem()).getIcon()));
+        }
+        
+        p.add(l, BorderLayout.CENTER);
+        
+        if(isSelected)
+          l.setForeground(list.getSelectionForeground());
+        else
+          l.setForeground(list.getForeground());
+      }
+      else
+        cb.setText(selectableItem.getItem().toString());
+      
+      if (isSelected) {
+        p.setOpaque(true);
+        p.setBackground(list.getSelectionBackground());
+        cb.setForeground(list.getSelectionForeground());
+        
+      } else {
+        p.setOpaque(false);
+        p.setForeground(list.getForeground());
+        cb.setForeground(list.getForeground());
+      }
+      cb.setEnabled(list.isEnabled());
+
+      return p;
+    }
+    
+    /**
+     * @return The selection width.
+     */
+    public int getSelectionWidth() {
+      return mSelectionWidth;
+    }
+    
   }
 }
