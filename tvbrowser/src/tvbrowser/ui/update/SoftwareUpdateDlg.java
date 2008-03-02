@@ -75,6 +75,10 @@ import util.ui.customizableitems.SelectableItemRendererCenterComponentIf;
 
 import util.ui.html.HTMLTextHelper;
 
+/**
+ * A dialog class that shows the plugin updates/new plugins.
+ * 
+ */
 public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSelectionListener, WindowClosingIf {
 
   /** The localizer for this class. */
@@ -90,12 +94,27 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
   
   private int mLastIndex;
 
+  /**
+   * Creates an instance of this class.
+   * <p>
+   * @param parent The parent dialog.
+   * @param downloadUrl The url to download the data from.
+   * @param onlyUpdate If this dialog should only show updates.
+   * @param itemArr The array with the available update items.
+   */
   public SoftwareUpdateDlg(Dialog parent, String downloadUrl, boolean onlyUpdate, SoftwareUpdateItem[] itemArr) {
     super(parent, true);    
     createGui(downloadUrl,onlyUpdate, itemArr);
   }
 
-  
+  /**
+   * Creates an instance of this class.
+   * <p>
+   * @param parent The parent frame.
+   * @param downloadUrl The url to download the data from.
+   * @param onlyUpdate If this dialog should only show updates.
+   * @param itemArr The array with the available update items.
+   */  
   public SoftwareUpdateDlg(Frame parent, String downloadUrl, boolean onlyUpdate, SoftwareUpdateItem[] itemArr) {
     super(parent, true);
     createGui(downloadUrl,onlyUpdate, itemArr);
@@ -279,9 +298,11 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
   public void valueChanged(ListSelectionEvent event) {
     if (!(event.getSource() instanceof JList)){
       mDownloadBtn.setEnabled(mSoftwareUpdateItemList.getSelection().length > 0);
-      
+    }
+    else {
       if(!event.getValueIsAdjusting()) {
         JList list = ((JList)event.getSource());
+        
         if(mLastIndex != -1 && list.getSelectedIndex() != mLastIndex) {
           ((MyListUI)list.getUI()).setCellHeight(mLastIndex,list.getCellRenderer().getListCellRendererComponent(list, list.getModel().getElementAt(mLastIndex),
               mLastIndex, false, false).getPreferredSize().height);
