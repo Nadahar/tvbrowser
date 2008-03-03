@@ -54,12 +54,14 @@ import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.JScrollPane;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.Sizes;
 
 import devplugin.Version;
 
@@ -168,7 +170,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     mSoftwareUpdateItemList.addCenterRendererComponent(SoftwareUpdateItem.class,new SelectableItemRendererCenterComponentIf() {
       private final ImageIcon NEW_VERSION_ICON = IconLoader.getInstance().getIconFromTheme("status", "software-update-available", 16);
       
-      public JPanel createCenterPanel(JList list, Object value, int index, boolean isSelected, boolean isEnabled) {
+      public JPanel createCenterPanel(JList list, Object value, int index, boolean isSelected, boolean isEnabled, JScrollPane parentScrollPane, int leftColumnWidth) {
         CellConstraints cc = new CellConstraints();
         FormLayout layout = new FormLayout("5dlu,default,5dlu,default:grow","2dlu,default,2dlu,fill:pref:grow,2dlu");
         PanelBuilder pb = new PanelBuilder(layout);
@@ -178,6 +180,13 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         
         JLabel label = pb.addLabel(HTMLTextHelper.convertHtmlToText(item.getName()) + " " + item.getVersion(), cc.xy(2,2));
         label.setFont(label.getFont().deriveFont(Font.BOLD, label.getFont().getSize2D()+2));
+        
+        TextAreaIcon icon = new TextAreaIcon(HTMLTextHelper.convertHtmlToText(item.getDescription()), new JLabel().getFont(),parentScrollPane.getSize().width - parentScrollPane.getVerticalScrollBar().getWidth() - leftColumnWidth - Sizes.dialogUnitXAsPixel(5,pb.getPanel()) * 4 - parentScrollPane.getInsets().left - parentScrollPane.getInsets().right, 2);
+
+        JLabel iconLabel = new JLabel("");
+        iconLabel.setIcon(icon);
+        
+        pb.add(iconLabel, cc.xyw(2,4,3));
         
         JLabel label3 = new JLabel();
         
@@ -197,42 +206,57 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
           String author = item.getProperty("author");
           String website = item.getWebsite();
 
+          FormLayout authorAndWebsiteLayout = new FormLayout("default,5dlu,default","default");
+          JPanel authorAndWebsite = new JPanel(authorAndWebsiteLayout);
+          authorAndWebsite.setOpaque(false);
+          
           if (author != null) {
             layout.appendRow(new RowSpec("2dlu"));
             layout.appendRow(new RowSpec("default"));
             layout.appendRow(new RowSpec("2dlu"));
             
-            JLabel autor = pb.addLabel(mLocalizer.msg("author", "Author"), cc.xy(2,7));
-            autor.setFont(autor.getFont().deriveFont(Font.BOLD));
-            autor.setForeground(list.getSelectionForeground());
+            pb.add(authorAndWebsite, cc.xyw(2,7,3));
             
-            pb.addLabel(HTMLTextHelper.convertHtmlToText(author), cc.xy(4,7)).setForeground(list.getSelectionForeground());
+            JLabel authorLabel = new JLabel(mLocalizer.msg("author", "Author"));
+            authorLabel.setFont(authorLabel.getFont().deriveFont(Font.BOLD));
+            authorLabel.setForeground(list.getSelectionForeground());
+            authorLabel.setHorizontalAlignment(JLabel.RIGHT);
+
+            JLabel authorName = new JLabel(HTMLTextHelper.convertHtmlToText(author));
+            authorName.setForeground(list.getSelectionForeground());
+            
+            authorAndWebsite.add(authorLabel, cc.xy(1,1));
+            authorAndWebsite.add(authorName, cc.xy(3,1));
           }
           
           if (website != null) {
             if(author == null) {
               layout.appendRow(new RowSpec("2dlu"));
+              layout.appendRow(new RowSpec("default"));
+              layout.appendRow(new RowSpec("2dlu"));
+              
+              pb.add(authorAndWebsite, cc.xyw(2,7,3));
+            }
+            else {
+              authorAndWebsiteLayout.appendRow(new RowSpec("1dlu"));
+              authorAndWebsiteLayout.appendRow(new RowSpec("default"));
             }
             
-            layout.appendRow(new RowSpec("default"));
-            layout.appendRow(new RowSpec("2dlu"));
+            JLabel webLabel = new JLabel(mLocalizer.msg("website", "Website"));
+            webLabel.setFont(webLabel.getFont().deriveFont(Font.BOLD));
+            webLabel.setForeground(list.getSelectionForeground());
+            webLabel.setHorizontalAlignment(JLabel.RIGHT);
             
-            JLabel webs = pb.addLabel(mLocalizer.msg("website", "Website"), cc.xy(2,author == null ? 7 : 9));
-            webs.setFont(webs.getFont().deriveFont(Font.BOLD));
-            webs.setForeground(list.getSelectionForeground());
+            JLabel webLink = new JLabel(HTMLTextHelper.convertHtmlToText(website));
+            webLink.setForeground(list.getSelectionForeground());
             
-            pb.addLabel(website, cc.xy(4,author == null ? 7 : 9)).setForeground(list.getSelectionForeground());
+            authorAndWebsite.add(webLabel, cc.xy(1,author == null ? 1 : 3));
+            authorAndWebsite.add(webLink, cc.xy(3,author == null ? 1 : 3));
           }
           
-          TextAreaIcon icon = new TextAreaIcon(HTMLTextHelper.convertHtmlToText(item.getDescription()), new JLabel().getFont(),list.getPreferredScrollableViewportSize().width - 15, 2);
-          
-          JLabel iconLabel = new JLabel("");
+          icon.setMaximumLineCount(-1);
           iconLabel.setForeground(list.getSelectionForeground());
-          iconLabel.setIcon(icon);
-          
-          pb.add(iconLabel, cc.xyw(2,4,3));
-          
-          
+                    
           label3.setForeground(list.getSelectionForeground());
         } else {
           if(!item.isStable()) {
@@ -241,10 +265,10 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
           else {
             label.setForeground(list.getForeground());
           }
-
-          JLabel label2 = pb.addLabel(HTMLTextHelper.convertHtmlToText(item.getDescription().length() > 100 ? item.getDescription().substring(0,100) + "..." : item.getDescription()), cc.xyw(2,4,3));
           
-          label2.setForeground(list.getForeground());        
+          icon.setMaximumLineCount(1);
+          iconLabel.setForeground(list.getSelectionForeground());
+          iconLabel.setForeground(list.getForeground());        
           label3.setForeground(Color.gray);
         }
         

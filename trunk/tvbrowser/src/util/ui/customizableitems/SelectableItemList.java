@@ -102,6 +102,8 @@ public class SelectableItemList extends JPanel {
     mScrollPane.getVerticalScrollBar().setBlockIncrement(50);
     mScrollPane.getVerticalScrollBar().setUnitIncrement(20);
     
+    mItemRenderer.setScrollPane(mScrollPane);
+    
     add(mScrollPane, BorderLayout.CENTER);
     
     mList.addMouseListener(new MouseAdapter() {

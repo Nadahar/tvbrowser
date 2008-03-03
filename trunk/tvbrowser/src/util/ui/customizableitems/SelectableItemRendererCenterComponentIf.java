@@ -25,6 +25,7 @@ package util.ui.customizableitems;
 
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 /**
  * An interface that supports to create an own center component as Renderer for the SelectableItemList.
@@ -41,9 +42,11 @@ public interface SelectableItemRendererCenterComponentIf {
    * @param index The index of the rendered item in the list.
    * @param isSelected <code>True</code> if the item is selected.
    * @param isEnabled <code>True</code> if the item is enabled.
+   * @param parentScrollPane The scroll pane in that the list is embedded.
+   * @param leftColumnWidth The width of the check box area until the text starts.
    * @return The JPanel with the rendered item.
    */
-  public JPanel createCenterPanel(JList list, Object value, int index, boolean isSelected, boolean isEnabled);
+  public JPanel createCenterPanel(JList list, Object value, int index, boolean isSelected, boolean isEnabled, JScrollPane parentScrollPane, int leftColumnWidth);
   
   /**
    * Calcualtes the size of the content pane used to paint the whole item.
