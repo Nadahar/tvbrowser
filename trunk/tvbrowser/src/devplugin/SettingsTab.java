@@ -58,6 +58,8 @@ public interface SettingsTab {
   
   /**
    * Returns the title of the tab-sheet.
+   * <br>
+   * For plugins the return value of this method is ignored since version 2.7
    */
   public String getTitle();
 
