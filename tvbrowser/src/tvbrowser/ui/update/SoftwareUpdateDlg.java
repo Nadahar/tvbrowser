@@ -343,10 +343,9 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
   }
 
   public void valueChanged(ListSelectionEvent event) {
-    if (!(event.getSource() instanceof JList)){
-      mDownloadBtn.setEnabled(mSoftwareUpdateItemList.getSelection().length > 0);
-    }
-    else {
+    mDownloadBtn.setEnabled(mSoftwareUpdateItemList.getSelection().length > 0);
+    
+    if(event.getSource() instanceof JList) {
       if(!event.getValueIsAdjusting()) {
         JList list = ((JList)event.getSource());
         
