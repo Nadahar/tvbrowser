@@ -43,6 +43,7 @@ import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import util.io.IOUtilities;
 import devplugin.Version;
 
 /**
@@ -59,10 +60,7 @@ public class SoftwareUpdater {
 	 * @throws IOException
 	 */
 	public SoftwareUpdater(URL url, boolean onlyUpdates) throws IOException {
-		URLConnection con=url.openConnection();
-		
-		InputStream in=con.getInputStream();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(IOUtilities.getStream(url, 300000),"ISO-8859-1"));
 		
 		mSoftwareUpdateItems=readSoftwareUpdateItems(reader,onlyUpdates);
 		
