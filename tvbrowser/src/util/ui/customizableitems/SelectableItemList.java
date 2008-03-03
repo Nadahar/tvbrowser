@@ -33,6 +33,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
@@ -362,5 +363,15 @@ public class SelectableItemList extends JPanel {
    */
   public void setHorizontalScrollBarPolicy(int value) {
     mScrollPane.setHorizontalScrollBarPolicy(value);
+  }
+  
+  /**
+   * Adds a mouse listener to the list.
+   * <p>
+   * @param listener The listener to add.
+   * @since 2.7
+   */
+  public void addMouseListener(MouseListener listener) {
+    mList.addMouseListener(listener);
   }
 }

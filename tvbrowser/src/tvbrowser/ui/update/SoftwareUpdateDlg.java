@@ -37,6 +37,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -48,10 +50,13 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -68,11 +73,13 @@ import devplugin.Version;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
+import util.browserlauncher.Launch;
 import util.exc.TvBrowserException;
 import util.ui.Localizer;
 import util.ui.TextAreaIcon;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+import util.ui.customizableitems.SelectableItem;
 import util.ui.customizableitems.SelectableItemList;
 import util.ui.customizableitems.SelectableItemRendererCenterComponentIf;
 
@@ -281,6 +288,20 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         ((MyListUI)list.getUI()).setCellHeight(index, contentPane.getPreferredSize().height);
       }
     });
+    
+    mSoftwareUpdateItemList.addMouseListener(new MouseAdapter() {
+      public void mousePressed(MouseEvent e) {
+        if(SwingUtilities.isRightMouseButton(e) && e.isPopupTrigger()) {
+          showPopupMenu(e);
+        }
+      }
+
+      public void mouseReleased(MouseEvent e) {
+        if(SwingUtilities.isRightMouseButton(e) && e.isPopupTrigger()) {
+          showPopupMenu(e);
+        }
+      }      
+    });
         
     contentPane.add(northPn, BorderLayout.NORTH);
     contentPane.add(mSoftwareUpdateItemList, BorderLayout.CENTER);
@@ -364,6 +385,35 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       }
       
       return new Dimension(width,height);
+    }
+  }
+  
+  private void showPopupMenu(MouseEvent e) {
+    if(e.getSource() instanceof JList) {
+      JList list = (JList)e.getSource();
+      
+      Object listItem = list.getModel().getElementAt(list.locationToIndex(e.getPoint()));
+      
+      if(listItem instanceof SelectableItem) {
+        final Object item = ((SelectableItem)listItem).getItem();
+        
+        if(item instanceof SoftwareUpdateItem) {
+          if(((SoftwareUpdateItem)item).getWebsite() != null) {
+            JPopupMenu menu = new JPopupMenu();
+            
+            JMenuItem menuItem = new JMenuItem(mLocalizer.msg("openWebsite","Open website"));
+            menuItem.addActionListener(new ActionListener() {
+              public void actionPerformed(ActionEvent e) {
+                Launch.openURL(((SoftwareUpdateItem)item).getWebsite());
+              }
+            });
+            
+            menu.add(menuItem);
+            
+            menu.show(e.getComponent(), e.getX(), e.getY());
+          }
+        }
+      }
     }
   }
 }
