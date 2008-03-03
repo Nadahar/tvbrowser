@@ -55,54 +55,54 @@ import com.jgoodies.forms.layout.FormLayout;
 public class PluginTableCellRenderer extends DefaultTableCellRenderer {
 
   /** Panel that shows the Information*/
-  private JPanel panel;
+  private JPanel mPanel;
   /** Description */
-  private JTextArea desc;
+  private JTextArea mDesc;
   /** Icon */
-  private JLabel icon;
+  private JLabel mIcon;
   /** Name */
-  private JLabel name;
+  private JLabel mName;
   /** Cell-Constraints*/
-  private CellConstraints cc = new CellConstraints();
-  private static final Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
+  private CellConstraints mCC = new CellConstraints();
+  private static final Border NO_FOCUS_BORDER = new EmptyBorder(1, 1, 1, 1);
   
   /**
    * checkBox to return for the first column (plugin active)
    */
-  private static JCheckBox checkBox;
+  private static JCheckBox mCheckBox;
   
   /**
    * singleton implementation
    */
-  private static PluginTableCellRenderer instance;
+  private static PluginTableCellRenderer mInstance;
   
   public Component getTableCellRendererComponent(JTable table, Object value,
       boolean isSelected, boolean hasFocus, int row, int column) {
     
     if (column == 0) {
-      if (checkBox == null) {
-        checkBox = new JCheckBox();
-        checkBox.setHorizontalAlignment(JLabel.CENTER);
-        checkBox.setBorderPainted(true);
+      if (mCheckBox == null) {
+        mCheckBox = new JCheckBox();
+        mCheckBox.setHorizontalAlignment(JLabel.CENTER);
+        mCheckBox.setBorderPainted(true);
       }
       if (isSelected ) {
-        checkBox.setForeground(table.getSelectionForeground());
-        checkBox.setBackground(table.getSelectionBackground());
+        mCheckBox.setForeground(table.getSelectionForeground());
+        mCheckBox.setBackground(table.getSelectionBackground());
       } else {
-        checkBox.setForeground(table.getForeground());
-        checkBox.setBackground(table.getBackground());
+        mCheckBox.setForeground(table.getForeground());
+        mCheckBox.setBackground(table.getBackground());
       }
-      checkBox.setSelected(((Boolean) value).booleanValue());
-      checkBox.setEnabled(row >= InternalPluginProxyList.getInstance().getAvailableProxys().length);
+      mCheckBox.setSelected(((Boolean) value).booleanValue());
+      mCheckBox.setEnabled(row >= InternalPluginProxyList.getInstance().getAvailableProxys().length);
 
       if (hasFocus) {
-        checkBox.setBorder(UIManager
+        mCheckBox.setBorder(UIManager
             .getBorder("Table.focusCellHighlightBorder"));
       } else {
-        checkBox.setBorder(noFocusBorder);
+        mCheckBox.setBorder(NO_FOCUS_BORDER);
       }
 
-      return checkBox;
+      return mCheckBox;
     }
 
     JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
@@ -135,49 +135,49 @@ public class PluginTableCellRenderer extends DefaultTableCellRenderer {
       }
       
       
-      if (panel == null) {
-        icon = new JLabel();
-        name = new JLabel();
-        name.setFont(label.getFont().deriveFont(Font.BOLD, label.getFont().getSize2D()+2));
+      if (mPanel == null) {
+        mIcon = new JLabel();
+        mName = new JLabel();
+        mName.setFont(label.getFont().deriveFont(Font.BOLD, label.getFont().getSize2D()+2));
         
-        panel = new JPanel(new FormLayout("default, 2dlu, fill:pref:grow","default, 2dlu, default"));
-        panel.setBorder(Borders.DLU2_BORDER);
+        mPanel = new JPanel(new FormLayout("default, 2dlu, fill:pref:grow","default, 2dlu, default"));
+        mPanel.setBorder(Borders.DLU2_BORDER);
         
-        panel.add(icon, cc.xy(1,1));
-        panel.add(name, cc.xy(3,1));
+        mPanel.add(mIcon, mCC.xy(1,1));
+        mPanel.add(mName, mCC.xy(3,1));
       }
 
-      icon.setOpaque(label.isOpaque());
-      icon.setBackground(label.getBackground());
-      icon.setIcon(iconValue);
+      mIcon.setOpaque(label.isOpaque());
+      mIcon.setBackground(label.getBackground());
+      mIcon.setIcon(iconValue);
 
-      if (desc != null)
-        panel.remove(desc);
-      desc = UiUtilities.createHelpTextArea(descValue);
-      desc.setMinimumSize(new Dimension(100, 10));
-      desc.setOpaque(false);
-      desc.setForeground(label.getForeground());
-      desc.setBackground(label.getBackground());
-      desc.setEnabled(isActivated);
-      panel.add(desc, cc.xy(3,3));
+      if (mDesc != null)
+        mPanel.remove(mDesc);
+      mDesc = UiUtilities.createHelpTextArea(descValue);
+      mDesc.setMinimumSize(new Dimension(100, 10));
+      mDesc.setOpaque(false);
+      mDesc.setForeground(label.getForeground());
+      mDesc.setBackground(label.getBackground());
+      mDesc.setEnabled(isActivated);
+      mPanel.add(mDesc, mCC.xy(3,3));
 
-      name.setOpaque(false);
-      name.setForeground(label.getForeground());
-      name.setBackground(label.getBackground());     
+      mName.setOpaque(false);
+      mName.setForeground(label.getForeground());
+      mName.setBackground(label.getBackground());     
       
-      name.setText(nameValue);
-      name.setEnabled(isActivated);        
+      mName.setText(nameValue);
+      mName.setEnabled(isActivated);        
       
-      panel.setOpaque(label.isOpaque());
-      panel.setBackground(label.getBackground());
+      mPanel.setOpaque(label.isOpaque());
+      mPanel.setBackground(label.getBackground());
       
-      panel.setToolTipText(descValue);
+      mPanel.setToolTipText(descValue);
      
-      int rowHeight = panel.getPreferredSize().height + table.getRowMargin();
+      int rowHeight = mPanel.getPreferredSize().height + table.getRowMargin();
       if (table.getRowHeight() < rowHeight) {
         table.setRowHeight(rowHeight);
       }
-      return panel;
+      return mPanel;
     }
 
     return label;
@@ -187,11 +187,16 @@ public class PluginTableCellRenderer extends DefaultTableCellRenderer {
     super();
   }
 
+  /**
+   * Gets the instance of this class.
+   * <p>
+   * @return The instance of this class.
+   */
   public static PluginTableCellRenderer getInstance() {
-    if (instance == null) {
-      instance = new PluginTableCellRenderer();
+    if (mInstance == null) {
+      mInstance = new PluginTableCellRenderer();
     }
-    return instance;
+    return mInstance;
   }
 
 
