@@ -33,6 +33,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 
 import tvbrowser.core.Settings;
@@ -49,6 +50,8 @@ public class SelectableItemRenderer implements ListCellRenderer {
   private boolean mIsEnabled = true;
   
   private HashMap<Class,SelectableItemRendererCenterComponentIf> mCenterComponentMap = new HashMap<Class,SelectableItemRendererCenterComponentIf>();
+  
+  private JScrollPane mParentScrollPane; 
   
   public Component getListCellRendererComponent(JList list, Object value,
   int index, boolean isSelected, boolean cellHasFocus) {
@@ -74,7 +77,7 @@ public class SelectableItemRenderer implements ListCellRenderer {
       cb.setVerticalAlignment(JCheckBox.TOP);
       cb.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,3,0,0),cb.getBorder()));
       
-      p.add(renderIf.createCenterPanel(list,selectableItem.getItem(),index,isSelected,mIsEnabled), BorderLayout.CENTER);
+      p.add(renderIf.createCenterPanel(list,selectableItem.getItem(),index,isSelected,mIsEnabled, mParentScrollPane, mSelectionWidth + 2), BorderLayout.CENTER);
       renderIf.calculateSize(list, index, p);
     }
     else if(selectableItem.getItem() instanceof Channel) {
@@ -143,4 +146,7 @@ public class SelectableItemRenderer implements ListCellRenderer {
     mCenterComponentMap.put(clazz,component);
   }
 
+  protected void setScrollPane(JScrollPane parentScrollPane) {
+    mParentScrollPane = parentScrollPane;
+  }
 }

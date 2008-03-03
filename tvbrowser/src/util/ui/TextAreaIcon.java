@@ -154,7 +154,7 @@ public class TextAreaIcon implements Icon {
     if (mTextLineArr == null) {
       return 0;
     } else {
-      return (mFont.getSize() + mLineSpace) * mTextLineArr.length;
+      return (mFont.getSize() + mLineSpace) * mTextLineArr.length + mLineSpace;
     }
   }  
   
