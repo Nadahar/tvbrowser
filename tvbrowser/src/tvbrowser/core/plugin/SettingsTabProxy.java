@@ -86,7 +86,7 @@ public class SettingsTabProxy {
     try {
       return mSettingsTab.getTitle();
     }catch(Throwable t) {
-      mLog.log(Level.WARNING, "Could not get settings panel titel", t);
+      mLog.log(Level.WARNING, "Could not get settings panel title", t);
       return "";
     }
   }

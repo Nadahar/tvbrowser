@@ -199,9 +199,6 @@ public class ConfigPluginSettingsTab implements SettingsTab {
    * Returns the title of the tab-sheet.
    */
   public String getTitle() {
-    if ((mSettingsTab != null) && (mSettingsTab.getTitle() != null)) {
-      return mSettingsTab.getTitle();
-    }
     return mPlugin.getInfo().getName();
   }
   

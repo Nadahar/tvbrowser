@@ -533,7 +533,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   /**
    * Gets the SettingsTab object, which is added to the settings-window.
    * <p>
-   * Override this method to provide a seetings tab. The settings tab will be
+   * Override this method to provide a settings tab. The settings tab will be
    * shown in the settings dialog in the plugin section.
    * 
    * @return the SettingsTab object or <code>null</code> if the plugin does not
