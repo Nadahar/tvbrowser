@@ -66,7 +66,6 @@ import tvbrowser.core.plugin.programformating.GlobalPluginProgramFormatingManage
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.importantprogramsplugin.ImportantProgramsPlugin;
 import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.extras.searchplugin.SearchPlugin;
@@ -721,7 +720,6 @@ public class TVBrowser {
 
     SearchPlugin.getInstance().store();
     ProgramInfo.getInstance().store();
-    ImportantProgramsPlugin.getInstance().store();
     mainFrame.storeSettings();
 
     if(log) {
