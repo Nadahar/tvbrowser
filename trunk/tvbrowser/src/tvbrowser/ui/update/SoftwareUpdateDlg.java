@@ -51,6 +51,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -166,6 +167,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     mSoftwareUpdateItemList.addListSelectionListener(this);
     mSoftwareUpdateItemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     mSoftwareUpdateItemList.setListUI(new MyListUI());
+    mSoftwareUpdateItemList.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     
     mSoftwareUpdateItemList.addCenterRendererComponent(SoftwareUpdateItem.class,new SelectableItemRendererCenterComponentIf() {
       private final ImageIcon NEW_VERSION_ICON = IconLoader.getInstance().getIconFromTheme("status", "software-update-available", 16);

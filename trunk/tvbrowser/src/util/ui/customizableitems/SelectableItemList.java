@@ -353,4 +353,14 @@ public class SelectableItemList extends JPanel {
   public void setListUI(ListUI ui) {
     mList.setUI(ui);
   }
+  
+  /**
+   * Sets if the horizontal scroll policy.
+   * <p>
+   * @param value The values from ScrollPaneConstants.
+   * @since 2.7
+   */
+  public void setHorizontalScrollBarPolicy(int value) {
+    mScrollPane.setHorizontalScrollBarPolicy(value);
+  }
 }
