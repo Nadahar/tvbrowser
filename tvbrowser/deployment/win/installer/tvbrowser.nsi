@@ -217,7 +217,7 @@ FunctionEnd
  LangString BLOGTHIS ${LANG_ENGLISH} "Blog this!"
  
  LangString CAPTURE ${LANG_GERMAN} "Aufnahmesteuerung"
- LangString CAPTURE ${LANG_ENGLISH} "Capture Plugin"
+ LangString CAPTURE ${LANG_ENGLISH} "Recording control"
 
  LangString CALENDAR ${LANG_GERMAN} "Kalender-Export"
  LangString CALENDAR ${LANG_ENGLISH} "Calendar export"
@@ -245,6 +245,9 @@ FunctionEnd
  
  LangString PRINT ${LANG_GERMAN} "Drucken"
  LangString PRINT ${LANG_ENGLISH} "Print"
+ 
+ LangString PROGRAMLIST ${LANG_GERMAN} "Sendungsliste"
+ LangString PROGRAMLIST ${LANG_ENGLISH} "Program list"
  
  LangString SHOWVIEW ${LANG_GERMAN} "Showviewnummern berechnen"
  LangString SHOWVIEW ${LANG_ENGLISH} "Calculate Showview numbers"
@@ -620,6 +623,12 @@ SubSection "Plugins" SEC_PLUGINS
     File "${RUNTIME_DIR}\plugins\GenrePlugin.jar"
   SectionEnd
 
+  Section "$(PROGRAMLIST)" SEC_PLUGIN_PROGRAM_LIST
+    SectionIn 1
+    SetOutPath "$INSTDIR\plugins"
+    File "${RUNTIME_DIR}\plugins\ProgramListPlugin.jar"
+  SectionEND
+
   Section "$(I18N)" SEC_PLUGIN_I18N
     SectionIn 1
 
@@ -748,6 +757,9 @@ LangString DESC_SEC_PLUGIN_LISTVIEW ${LANG_GERMAN} "Zeigt eine Liste von momenta
 LangString DESC_SEC_PLUGIN_NEWS ${LANG_ENGLISH} "Checks for news about the TV-Browser project."
 LangString DESC_SEC_PLUGIN_NEWS ${LANG_GERMAN} "Prüft automatisch nach Neuigkeiten rund um das TV-Browser-Projekt."
 
+LangString DESC_SEC_PLUGIN_PROGRAM_LIST ${LANG_ENGLISH} "This plugin shows filtered programs in a list."
+LangString DESC_SEC_PLUGIN_PROGRAM_LIST ${LANG_GERMAN} "Dieses Plugin zeigt gefilterte Sendungen in einer Liste an."
+
 LangString DESC_SEC_PLUGIN_PRINT ${LANG_ENGLISH} "This plugin allows to print the program."
 LangString DESC_SEC_PLUGIN_PRINT ${LANG_GERMAN} "Mit diesem Plugin kann die Programmvorschau ausgedruckt werden."
 
@@ -780,6 +792,7 @@ LangString DESC_SEC_PLUGIN_WEB ${LANG_GERMAN} "Sucht im Netz nach einer Sendung.
     !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_I18N} $(DESC_SEC_PLUGIN_I18N)
     !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_LISTVIEW} $(DESC_SEC_PLUGIN_LISTVIEW)
     !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_NEWS} $(DESC_SEC_PLUGIN_NEWS)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_PROGRAM_LIST} $(DESC_SEC_PLUGIN_PROGRAM_LIST)
     !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_PRINT} $(DESC_SEC_PLUGIN_PRINT)
     !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_SHOWVIEW} $(DESC_SEC_PLUGIN_SHOWVIEW)
     !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_SIMPLEMARKER} $(DESC_SEC_PLUGIN_SIMPLEMARKER)
