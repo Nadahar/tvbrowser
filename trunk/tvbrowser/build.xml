@@ -368,6 +368,11 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="genreplugin/**"/>
     </jar>
+  	
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/ProgramListPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="programlistplugin/**"/>
+    </jar>
 
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/I18NPlugin.jar"
          compress="false">
