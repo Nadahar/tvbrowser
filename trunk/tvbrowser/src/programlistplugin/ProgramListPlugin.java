@@ -21,7 +21,7 @@
  *   $Author$
  * $Revision$
  */
-package tvbrowser.extras.importantprogramsplugin;
+package programlistplugin;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -31,7 +31,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Properties;
@@ -56,11 +55,6 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-import tvbrowser.core.Settings;
-import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.extras.common.ConfigurationHandler;
-import tvbrowser.ui.mainframe.MainFrame;
-import util.exc.ErrorHandler;
 import util.program.ProgramUtilities;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
@@ -73,8 +67,10 @@ import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
+import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.ProgramFilter;
+import devplugin.Version;
 
 /**
  * Shows all important programs in a time sorted list.
@@ -82,11 +78,10 @@ import devplugin.ProgramFilter;
  * @author René Mach
  * @since 2.7
  */
-public class ImportantProgramsPlugin {
-  protected static final Localizer mLocalizer = Localizer.getLocalizerFor(ImportantProgramsPlugin.class);
+public class ProgramListPlugin extends Plugin {
+  protected static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramListPlugin.class);
   
-  protected static final String DATAFILE_PREFIX = "importantprogramsplugin.ImportantProgramsPlugin";
-  private ConfigurationHandler mConfigurationHandler;
+  private static Version mVersion = new Version(2,70);
   
   private JDialog mDialog;
   private JComboBox mBox;
@@ -98,13 +93,21 @@ public class ImportantProgramsPlugin {
   private JCheckBox mShowDescription;
   private JComboBox mFilterBox;
     
-  private static ImportantProgramsPlugin mInstance;
+  private static ProgramListPlugin mInstance;
   
-  private ImportantProgramsPlugin() {
+  /**
+   * Creates an instance of this class.
+   */
+  public ProgramListPlugin() {
     mInstance = this;
-    
-    mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
-    loadSettings();
+  }
+  
+  public static Version getVersion() {
+    return mVersion;
+  }
+  
+  public PluginInfo getInfo() {
+    return new PluginInfo(ProgramListPlugin.class,mLocalizer.msg("name","Program list"),mLocalizer.msg("description","Shows programs in a list."),"René Mach");
   }
   
   /**
@@ -112,38 +115,32 @@ public class ImportantProgramsPlugin {
    * 
    * @return The instance of this plugin.
    */
-  public static ImportantProgramsPlugin getInstance() {
+  public static ProgramListPlugin getInstance() {
     if(mInstance == null) {
-      new ImportantProgramsPlugin();
+      new ProgramListPlugin();
     }
     
     return mInstance;
   }
   
-  private void loadSettings() {
-    try {
-      mSettings = mConfigurationHandler.loadSettings();
-    } catch (IOException e) {
-      ErrorHandler.handle("Could not load important programs settings.", e);
+  public void loadSettings(Properties settings) {
+    if(settings == null) {
+      mSettings = new Properties();
+    }
+    else {
+      mSettings = settings;
     }
   }
   
-  /**
-   * Stores the settings of this plugin.
-   */
-  public void store() {
-    try {
-      mConfigurationHandler.storeSettings(mSettings);
-    } catch (IOException e) {
-      ErrorHandler.handle("Could not store settings for important programs.", e);
-    }
+  public Properties storeSettings() {
+    return mSettings;
   }
   
-  protected ActionMenu getButtonAction() {
+  public ActionMenu getButtonAction() {
     AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {try {
         if (mDialog == null) {
-          mDialog = new JDialog(MainFrame.getInstance());
+          mDialog = new JDialog(getParentFrame());
           mDialog.setTitle(mLocalizer.msg("name", "Important programs"));
           mDialog.getContentPane().setLayout(new BorderLayout(0,10));
           ((JPanel)mDialog.getContentPane()).setBorder(Borders.DIALOG_BORDER);
@@ -151,6 +148,7 @@ public class ImportantProgramsPlugin {
           UiUtilities.registerForClosing(new WindowClosingIf() {
             public void close() {
               mDialog.setVisible(false);
+              saveMe();
             }
 
             public JRootPane getRootPane() {
@@ -188,7 +186,7 @@ public class ImportantProgramsPlugin {
           
           mBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-              showImportantPrograms();
+              fillProgramList();
               mSettings.setProperty("index", String.valueOf(mBox.getSelectedIndex()));
             }
           });
@@ -201,7 +199,7 @@ public class ImportantProgramsPlugin {
           panel.add(new JLabel(mLocalizer.msg("filter","Filter:")), cc.xy(2,3));
           panel.add(mFilterBox, cc.xy(4,3));
           
-          mShowDescription = new JCheckBox("Zeige Beschreibung", mSettings.getProperty("showDescription","true").equals("true"));
+          mShowDescription = new JCheckBox(mLocalizer.msg("showProgramDescription","Show program description"), mSettings.getProperty("showDescription","true").equals("true"));
           mShowDescription.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
               mProgramPanelSettings.setShowOnlyDateAndTitle(e.getStateChange() == ItemEvent.DESELECTED);
@@ -214,6 +212,7 @@ public class ImportantProgramsPlugin {
           close.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
               mDialog.setVisible(false);
+              saveMe();
             }
           });
           
@@ -226,7 +225,7 @@ public class ImportantProgramsPlugin {
               BorderLayout.CENTER);
           mDialog.getContentPane().add(southPanel, BorderLayout.SOUTH);
           
-          Settings.layoutWindow("extras.importantProgramsWindow", mDialog, new Dimension(500,500));          
+          layoutWindow("programListWindow", mDialog, new Dimension(500,500));          
           
           mDialog.setVisible(true);
           
@@ -239,14 +238,17 @@ public class ImportantProgramsPlugin {
           mDialog.setVisible(!mDialog.isVisible());
           
           if(mDialog.isVisible()) {
-            showImportantPrograms();
+            fillProgramList();
+          }
+          else {
+            saveMe();
           }
         }}catch(Exception ee){ee.printStackTrace();}
       }
     };
     action.putValue(Action.NAME, mLocalizer.msg("name","Important programs"));
-    action.putValue(Action.SMALL_ICON, IconLoader.getInstance().getIconFromTheme("emblems","emblem-important",16));
-    action.putValue(Plugin.BIG_ICON, IconLoader.getInstance().getIconFromTheme("emblems","emblem-important",22));
+    action.putValue(Action.SMALL_ICON, createImageIcon("emblems","emblem-important",16));
+    action.putValue(Plugin.BIG_ICON, createImageIcon("emblems","emblem-important",22));
     
     return new ActionMenu(action);
   }
@@ -291,7 +293,7 @@ public class ImportantProgramsPlugin {
     
   }
   
-  private void showImportantPrograms() {
+  private void fillProgramList() {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {try {
         mDialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
