@@ -340,7 +340,7 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
       return mBshFile.getPath();
     }
 
-    public String getDescription() {
+    public String getButtonActionDescription() {
       return mScript.getInfo().getDescription();
     }
  }

@@ -130,7 +130,7 @@ public class PluginTableCellRenderer extends DefaultTableCellRenderer {
         InternalPluginProxyIf plugin = (InternalPluginProxyIf)value;
         
         nameValue = plugin.getName();
-        descValue = plugin.getDescription().replace('\n', ' ');
+        descValue = plugin.getButtonActionDescription().replace('\n', ' ');
         iconValue = plugin.getIcon();
       }
       

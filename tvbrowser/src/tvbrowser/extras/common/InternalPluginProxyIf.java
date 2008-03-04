@@ -51,7 +51,7 @@ public interface InternalPluginProxyIf {
   
   /** Gets the description of this internal plugin.
    * @return The description of this internal plugin. */
-  public String getDescription();
+  public String getButtonActionDescription();
   
   /** Gets the id of this internal plugin.
    * @return The id of this internal plugin. */

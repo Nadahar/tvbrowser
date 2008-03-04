@@ -70,7 +70,7 @@ public class ProgramInfoProxy implements ContextMenuIf, InternalPluginProxyIf {
     return ProgramInfo.getInstance().toString();
   }
 
-  public String getDescription() {
+  public String getButtonActionDescription() {
     return ProgramInfo.mLocalizer.msg("description","Shows details about a program.");
   }
 
