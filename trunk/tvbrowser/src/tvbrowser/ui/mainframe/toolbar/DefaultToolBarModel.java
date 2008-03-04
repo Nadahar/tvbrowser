@@ -58,6 +58,8 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.ButtonActionIf;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.ui.filter.dlgs.SelectFilterPopup;
@@ -216,11 +218,16 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
       }
     }
     
-    PluginProxyManager pluginMng = PluginProxyManager.getInstance();
-    PluginProxy[] pluginProxys = pluginMng.getActivatedPlugins();
+    PluginProxy[] pluginProxys = PluginProxyManager.getInstance().getActivatedPlugins();
     
     for (int i = 0; i < pluginProxys.length; i++) {
       createPluginAction(pluginProxys[i]);
+    }
+    
+    TvDataServiceProxy[] dataServiceProxys = TvDataServiceProxyManager.getInstance().getDataServices();
+    
+    for(TvDataServiceProxy dataServiceProxy : dataServiceProxys) {
+      createPluginAction(dataServiceProxy);
     }
   }
   
@@ -233,7 +240,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
         mAvailableActions.put(plugin.getId(), action);
         String tooltip = (String) action.getValue(Action.SHORT_DESCRIPTION);
         if (tooltip == null) {
-          action.putValue(Action.SHORT_DESCRIPTION, plugin.getDescription());
+          action.putValue(Action.SHORT_DESCRIPTION, plugin.getButtonActionDescription());
         }
       } else {
         createPluginAction(plugin, actionMenu.getSubItems());
@@ -251,7 +258,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
         mAvailableActions.put(plugin.getId() + "##" + action.getValue(Action.NAME), action);
         String tooltip = (String) action.getValue(Action.SHORT_DESCRIPTION);
         if (tooltip == null) {
-          action.putValue(Action.SHORT_DESCRIPTION, plugin.getDescription());
+          action.putValue(Action.SHORT_DESCRIPTION, plugin.getButtonActionDescription());
         }
       }
   }

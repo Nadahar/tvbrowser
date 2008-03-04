@@ -51,5 +51,5 @@ public interface ButtonActionIf {
    * Gets the description for this ButtonActionIf.
    * @return The description for this ButtonActionIf.
    */
-  public String getDescription();
+  public String getButtonActionDescription();
 }

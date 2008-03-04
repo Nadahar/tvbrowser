@@ -29,6 +29,7 @@ package devplugin;
 import java.io.File;
 import java.util.Properties;
 
+import tvbrowser.core.plugin.ButtonActionIf;
 import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
@@ -42,7 +43,7 @@ import util.exc.TvBrowserException;
  * You have to extend the class devplugin.AbstractTvDataService instead
  * to provide your data service.
  */
-public interface TvDataService {
+public interface TvDataService extends ContextMenuIf, ButtonActionIf {
 
   /**
    * This method is called by the host application to set the working folder.

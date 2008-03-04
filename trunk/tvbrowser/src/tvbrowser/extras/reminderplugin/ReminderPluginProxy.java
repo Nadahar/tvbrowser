@@ -118,7 +118,7 @@ public class ReminderPluginProxy implements ButtonActionIf, ContextMenuIf, Progr
     return mReminderInstance.getMarkPriority();
   }
 
-  public String getDescription() {
+  public String getButtonActionDescription() {
     return ReminderPlugin.mLocalizer.msg("description","The reminder function of TV-Browser.");
   }
 

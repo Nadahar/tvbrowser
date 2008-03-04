@@ -592,6 +592,12 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
        fillButtonActionList(list, plugin);
      }
      
+     TvDataServiceProxy[] dataServices = TvDataServiceProxyManager.getInstance().getDataServices();
+     
+     for(TvDataServiceProxy dataService : dataServices) {
+       fillButtonActionList(list, dataService);
+     }
+     
      return createSortedArrayFromList(list);
    }
    
@@ -601,7 +607,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
        JMenuItem item = createMenuItem(actionMenu);
        list.add(item);
        new MenuHelpTextAdapter(item,
-           buttonActionIf.getDescription(), mLabel);
+           buttonActionIf.getButtonActionDescription(), mLabel);
      }
    }
    

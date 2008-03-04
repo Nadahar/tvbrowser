@@ -601,7 +601,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     return super.getPluginIcon();
   }
 
-  public String getDescription() {
+  public String getButtonActionDescription() {
     return mPlugin.getInfo().getDescription();
   }
 }

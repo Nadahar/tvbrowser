@@ -69,7 +69,7 @@ public class SearchPluginProxy implements ButtonActionIf, ContextMenuIf, Interna
     return SearchPlugin.getInstance().toString();
   }
 
-  public String getDescription() {
+  public String getButtonActionDescription() {
     return SearchPlugin.mLocalizer.msg("description", "Allows searching programs containing a certain text.");
   }
 

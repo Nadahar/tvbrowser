@@ -100,7 +100,7 @@ public class FavoritesPluginProxy implements ButtonActionIf, ContextMenuIf, Mark
     return toString();
   }
   
-  public String getDescription() {
+  public String getButtonActionDescription() {
     return FavoritesPlugin.mLocalizer.msg("description","Automatically marks your favorite programs and passes them to other plugins.");
   }
 

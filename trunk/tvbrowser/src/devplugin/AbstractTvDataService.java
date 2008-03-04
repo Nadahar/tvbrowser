@@ -134,4 +134,40 @@ public abstract class AbstractTvDataService implements devplugin.TvDataService, 
   public boolean supportsAutoUpdate() {
     return false;
   }
+  
+  /** 
+   * Gets the action menu with the action supported for toolbar actions.
+   * @return The action menu with the supported toolbar actions 
+   */
+  public ActionMenu getButtonAction() {
+    return null;
+  }
+  
+  /**
+   * Gets the id of this ButtonActionIf.
+   * @return The id of this ButtonActionIf.
+   */
+  final public String getId() {
+    return this.getClass().toString();
+  }
+  
+  /**
+   * Gets the description for this ButtonActionIf.
+   * @return The description for this ButtonActionIf.
+   */
+  public String getButtonActionDescription() {
+    return getInfo().getDescription();
+  }
+  
+  
+  /**
+   * Gets the actions for the context menu of a program.
+   * 
+   * @param program The program the context menu will be shown for.
+   * @return the actions this plugin provides for the given program or
+   *         <code>null</code> if the plugin does not provide this feature.
+   */
+  public ActionMenu getContextMenuActions(Program program) {
+    return null;
+  }
 }

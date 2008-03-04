@@ -34,11 +34,13 @@ import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataService;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
+import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ChannelGroup;
 import devplugin.ChannelGroupImpl;
 import devplugin.Date;
 import devplugin.PluginInfo;
+import devplugin.Program;
 import devplugin.ProgressMonitor;
 
 
@@ -182,5 +184,32 @@ public class DeprecatedTvDataServiceProxy extends AbstractTvDataServiceProxy {
   public boolean supportsAutoUpdate() {
     return mDataService.supportsAutoUpdate();
   }
-
+  
+  /** 
+   * Gets the action menu with the action supported for toolbar actions.
+   * @return The action menu with the supported toolbar actions 
+   */
+  public ActionMenu getButtonAction() {
+    return null;
+  }
+  
+  /**
+   * Gets the description for this ButtonActionIf.
+   * @return The description for this ButtonActionIf.
+   */
+  public String getButtonActionDescription() {
+    return null;
+  }
+  
+  
+  /**
+   * Gets the actions for the context menu of a program.
+   * 
+   * @param program The program the context menu will be shown for.
+   * @return the actions this plugin provides for the given program or
+   *         <code>null</code> if the plugin does not provide this feature.
+   */
+  public ActionMenu getContextMenuActions(Program program) {
+    return null;
+  }
 }

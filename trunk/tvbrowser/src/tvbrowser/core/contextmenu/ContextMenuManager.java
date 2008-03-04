@@ -40,6 +40,8 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -140,9 +142,14 @@ public class ContextMenuManager {
    */
   public ContextMenuIf getContextMenuIfForId(String id) {
     PluginProxy plugin = PluginProxyManager.getInstance().getActivatedPluginForId(id);
-    if(plugin != null)
+    if(plugin != null) {
       return plugin;
-    else if (id != null){
+    }    
+    TvDataServiceProxy dataService = TvDataServiceProxyManager.getInstance().findDataServiceById(id);
+    
+    if(dataService != null) {
+      return dataService;
+    } else if (id != null){
       InternalPluginProxyIf internalPlugin = InternalPluginProxyList.getInstance().getProxyForId(id);
       if(internalPlugin != null && internalPlugin instanceof ContextMenuIf) {
         return (ContextMenuIf)internalPlugin;
@@ -238,6 +245,7 @@ public class ContextMenuManager {
   public ContextMenuIf[] getAvailableContextMenuIfs(boolean includingDisabledItems, boolean cleanSeparator) {
     InternalPluginProxyIf[] internalPluginProxies = InternalPluginProxyList.getInstance().getAvailableProxys();
     PluginProxy[] pluginArr = PluginProxyManager.getInstance().getActivatedPlugins();
+    TvDataServiceProxy[] dataServiceArr = TvDataServiceProxyManager.getInstance().getDataServices();
     String[] order = Settings.propContextMenuOrder.getStringArray();    
     List<ContextMenuIf> disabledList = getDisabledContextMenuIfs();
     
@@ -254,6 +262,10 @@ public class ContextMenuManager {
 
       for(int i = 0; i < pluginArr.length; i++) {
         ifList.add(pluginArr[i]);
+      }
+      
+      for(TvDataServiceProxy dataService : dataServiceArr) {
+        ifList.add(dataService);
       }
     }
     else {    
@@ -299,8 +311,15 @@ public class ContextMenuManager {
         if ((includingDisabledItems) || ((pluginArr[i] != null) && (!disabledList.contains(pluginArr[i])))) {
           ifList.add(pluginArr[i]);
         }
-    }    
-    
+    } 
+
+    for(int i = 0; i < dataServiceArr.length; i++) {
+      if(!ifList.contains(dataServiceArr[i]))
+        if ((includingDisabledItems) || ((dataServiceArr[i] != null) && (!disabledList.contains(dataServiceArr[i])))) {
+          ifList.add(dataServiceArr[i]);
+        }
+    } 
+
     if (!ifList.contains(LeaveFullScreenMenuItem.getInstance())) {
       if ((includingDisabledItems) || (!disabledList.contains(LeaveFullScreenMenuItem.getInstance()))) {
         ifList.add(LeaveFullScreenMenuItem.getInstance());
