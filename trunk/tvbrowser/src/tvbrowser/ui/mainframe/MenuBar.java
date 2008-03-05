@@ -93,7 +93,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
                     mChannellistMI, mPluginOverviewMI, mViewFilterBarMI, mUpdateMI,
                     mPluginManagerMI, mDonorMI, mFaqMI, mForumMI, mWebsiteMI, mHandbookMI,
                     mConfigAssistantMI, mAboutMI, mKeyboardShortcutsMI,
-                    mPreviousDayMI, mNextDayMI, mGotoNowMenuItem, mEditTimeButtonsMenuItem,
+                    mPreviousDayMI, mNextDayMI, mPreviousWeekMI, mNextWeekMI, mTodayMI,
+                    mGotoNowMenuItem, mEditTimeButtonsMenuItem,
                     mToolbarCustomizeMI, mFullscreenMI, mFontSizeLargerMI, mFontSizeSmallerMI,
                     mFontSizeDefaultMI, mColumnWidthLargerMI, mColumnWidthSmallerMI, 
                     mColumnWidthDefaultMI;
@@ -208,6 +209,21 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mNextDayMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-to-next-day", 16));
     new MenuHelpTextAdapter(mNextDayMI, mLocalizer.msg("menuinfo.nextDay",""), mLabel);
 
+    mPreviousWeekMI = new JMenuItem(mLocalizer.msg("menuitem.previousWeek","previous week"));
+    mPreviousWeekMI.addActionListener(this);
+    mPreviousWeekMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-to-previous-week", 16));
+    new MenuHelpTextAdapter(mPreviousWeekMI, mLocalizer.msg("menuinfo.previousWeek",""), mLabel);
+
+    mNextWeekMI = new JMenuItem(mLocalizer.msg("menuitem.nextWeek","next week"));
+    mNextWeekMI.addActionListener(this);
+    mNextWeekMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-to-next-week", 16));
+    new MenuHelpTextAdapter(mNextWeekMI, mLocalizer.msg("menuinfo.nextWeek",""), mLabel);
+
+    mTodayMI = new JMenuItem(mLocalizer.msg("menuitem.today","today"));
+    mTodayMI.addActionListener(this);
+    mTodayMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-to-today", 16));
+    new MenuHelpTextAdapter(mTodayMI, mLocalizer.msg("menuinfo.today",""), mLabel);
+
     mGotoNowMenuItem = new JMenuItem(mLocalizer.msg("menuitem.now","now"));
     mGotoNowMenuItem.addActionListener(this);
     mGotoNowMenuItem.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "scroll-to-now", 16));
@@ -224,6 +240,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mGotoTimeMenu.setIcon(IconLoader.getInstance().getIconFromTheme("apps", "scroll-to-time", 16));
     mGoMenu.add(mPreviousDayMI);
     mGoMenu.add(mNextDayMI);
+    mGoMenu.add(mPreviousWeekMI);
+    mGoMenu.add(mNextWeekMI);
+    mGoMenu.add(mTodayMI);
     mGoMenu.addSeparator();
     mGoMenu.add(mGotoDateMenu);
     mGoMenu.add(mGotoChannelMenu);
@@ -754,6 +773,15 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
      else if (source == mNextDayMI) {
        mMainFrame.goToNextDay();
      }
+     else if (source == mPreviousWeekMI) {
+       mMainFrame.goToPreviousWeek();
+     }
+     else if (source == mNextWeekMI) {
+       mMainFrame.goToNextWeek();
+     }
+     else if (source == mTodayMI) {
+       mMainFrame.goToToday();
+     }
      else if (source == mGotoNowMenuItem) {
        mMainFrame.scrollToNow();
      }
@@ -791,6 +819,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
 public void dateChanged(Date date, ProgressMonitor monitor, Runnable callback) {
     mPreviousDayMI.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(-1)));
     mNextDayMI.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(1)));
+    mPreviousWeekMI.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(-7)));
+    mNextWeekMI.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(7)));
 }
 
 public boolean isShowFilterPanelEnabled() {
