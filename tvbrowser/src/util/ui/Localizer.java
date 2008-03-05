@@ -529,12 +529,12 @@ public class Localizer {
       while (standardKeys.hasMoreElements()) {
         String standardKey = standardKeys.nextElement();
         if (standardKey.startsWith("Localizer.")) {
-          standardLocalizations.put(standardBundle.getString(standardKey).toLowerCase(), standardKey);
+          standardLocalizations.put(standardBundle.getString(standardKey), standardKey);
         }
       }
     }
-    if (standardLocalizations.containsKey(localizedMessage.toLowerCase())) {
-      String standardKey = standardLocalizations.get(localizedMessage.toLowerCase());
+    if (standardLocalizations.containsKey(localizedMessage)) {
+      String standardKey = standardLocalizations.get(localizedMessage);
       mLog.warning("Localization of message '" + key + "' should be replaced by Localizer.getLocalization(" + standardKey.substring(0,10)+standardKey.substring(10).toUpperCase() +")");
     }
   }

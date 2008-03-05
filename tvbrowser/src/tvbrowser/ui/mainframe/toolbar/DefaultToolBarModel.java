@@ -84,7 +84,8 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
 
   private Action mUpdateAction, mSettingsAction, mFilterAction,
       mPluginViewAction, mSeparatorAction, mScrollToNowAction,
-      mGoToTodayAction, mGoToPreviousDayAction, mGoToNextDayAction,
+      mGoToTodayAction, mGoToPreviousDayAction, mGoToNextDayAction, 
+      mGoToPreviousWeekAction, mGoToNextWeekAction, 
       mGoToDateAction, mScrollToChannelAction, mScrollToTimeAction,
       mGlueAction, mSpaceAction;
 
@@ -189,6 +190,18 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
         .getInstance().getIconFromTheme("actions", "go-to-next-day", 16), IconLoader
         .getInstance().getIconFromTheme("actions", "go-to-next-day", 22),
         ToolBar.BUTTON_ACTION, this);
+    mGoToPreviousWeekAction = createAction(mLocalizer.msg(
+        "goToPreviousWeek", "Previous week"), "#goToPreviousWeek", 
+        mLocalizer.msg("goToPreviousWeekToolTip", "Previous week"), IconLoader
+        .getInstance().getIconFromTheme("actions", "go-to-previous-week", 16), IconLoader
+        .getInstance().getIconFromTheme("actions", "go-to-previous-week", 22),
+        ToolBar.BUTTON_ACTION, this);
+    mGoToNextWeekAction = createAction(mLocalizer.msg(
+        "goToNextWeek", "Next week"), "#goToNextWeek", 
+        mLocalizer.msg("goToNextWeekToolTip", "Next week"), IconLoader
+        .getInstance().getIconFromTheme("actions", "go-to-next-week", 16), IconLoader
+        .getInstance().getIconFromTheme("actions", "go-to-next-week", 22),
+        ToolBar.BUTTON_ACTION, this);
     mGoToDateAction = createAction(mLocalizer.msg("goToDate", "Go to date"),
             "#goToDate", mLocalizer.msg("goToDateTooltip", "Go to a date"),
             IconLoader.getInstance().getIconFromTheme("actions",
@@ -249,10 +262,10 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
   }
   
   private void createPluginAction(ButtonActionIf plugin, ActionMenu[] subMenus) {
-    for(ActionMenu menu : subMenus)
-      if(menu.hasSubItems())
+    for(ActionMenu menu : subMenus) {
+      if(menu.hasSubItems()) {
         createPluginAction(plugin, menu.getSubItems());
-      else {
+      } else {
         Action action = menu.getAction();
         action.putValue(ToolBar.ACTION_ID_KEY, plugin.getId() + "##" + action.getValue(Action.NAME));
         mAvailableActions.put(plugin.getId() + "##" + action.getValue(Action.NAME), action);
@@ -261,12 +274,13 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
           action.putValue(Action.SHORT_DESCRIPTION, plugin.getButtonActionDescription());
         }
       }
+    }
   }
   
   protected void updatePluginButtons() {
     PluginProxy[] activatedPlugins = PluginProxyManager.getInstance().getActivatedPlugins();
     
-    for(int i = 0; i < activatedPlugins.length; i++)
+    for(int i = 0; i < activatedPlugins.length; i++) {
       if(!mAvailableActions.containsKey(activatedPlugins[i].getId())) {
         createPluginAction(activatedPlugins[i]);
         
@@ -285,12 +299,15 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
           }
         }
       }
+    }
     
     String[] deactivatedPlugins = PluginProxyManager.getInstance().getDeactivatedPluginIds();
     
-    for(int i = 0; i < deactivatedPlugins.length; i++)
-      if(mAvailableActions.containsKey(deactivatedPlugins[i]))
+    for(int i = 0; i < deactivatedPlugins.length; i++) {
+      if(mAvailableActions.containsKey(deactivatedPlugins[i])) {
         mVisibleActions.remove(mAvailableActions.remove(deactivatedPlugins[i]));
+      }
+    }
   }
   
   protected void updateTimeButtons() {
@@ -301,8 +318,9 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
       Action action = mAvailableActions.get(keys[i]);
       String test = action.getValue(Action.NAME).toString();
 
-      if (test.indexOf(":") != -1 && (test.length() == 4 || test.length() == 5))
+      if (test.indexOf(":") != -1 && (test.length() == 4 || test.length() == 5)) {
         availableTimeActions.add(keys[i].toString());
+      }
     }
 
     String scrollTo = MainFrame.mLocalizer
@@ -316,10 +334,11 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
       final int scrollTime = array[i];
       String time = String.valueOf(array[i] % 60);
 
-      if (time.length() == 1)
+      if (time.length() == 1) {
         time = hour + ":0" + time;
-      else
+      } else {
         time = hour + ":" + time;
+      }
 
       if (availableTimeActions.contains("#scrollTo" + time)) {
         availableTimeActions.remove("#scrollTo" + time);
@@ -342,8 +361,9 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
     while (it.hasNext()) {
       Action action = mAvailableActions.remove(it.next());
 
-      if (mVisibleActions.contains(action))
+      if (mVisibleActions.contains(action)) {
         mVisibleActions.remove(action);
+      }
     }
   }
 
@@ -494,8 +514,9 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
           g.fillPolygon(x1Values,yValues,3);
           g.fillPolygon(x2Values,yValues,3);
           
-          for(int i = 0; i < 4; i++)
+          for(int i = 0; i < 4; i++) {
             g.drawRect(xStart + 13 + 4*i,yMiddle,1,1);
+          }
         }        
       });
     }
@@ -577,12 +598,15 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
     } else if (source == mScrollToNowAction) {
       MainFrame.getInstance().scrollToNow();
     } else if (source == mGoToTodayAction) {
-      devplugin.Date d = devplugin.Date.getCurrentDate();
-      MainFrame.getInstance().goTo(d);
+      MainFrame.getInstance().goToToday();
     } else if (source == mGoToNextDayAction) {
       MainFrame.getInstance().goToNextDay();
     } else if (source == mGoToPreviousDayAction) {
       MainFrame.getInstance().goToPreviousDay();
+    } else if (source == mGoToPreviousWeekAction) {
+      MainFrame.getInstance().goToPreviousWeek();
+    } else if (source == mGoToNextWeekAction) {
+      MainFrame.getInstance().goToNextWeek();
     } else {
 
     }
@@ -651,14 +675,16 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
       
       Date curDate = Date.getCurrentDate().addDays(-1);
 
-      if(TvDataBase.getInstance().dataAvailable(curDate))
+      if(TvDataBase.getInstance().dataAvailable(curDate)) {
         popup.add(createDateMenuItem(curDate, btn));
+      }
       
       curDate = curDate.addDays(1);
       
       for (int i = 0; i < 21; i++) {
-        if(!TvDataBase.getInstance().dataAvailable(curDate))
+        if(!TvDataBase.getInstance().dataAvailable(curDate)) {
           break;
+        }
         
         popup.add(createDateMenuItem(curDate, btn));
         curDate = curDate.addDays(1);
@@ -669,18 +695,21 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
       popup = menu.getPopupMenu();
 
       Channel[] channels = Settings.propSubscribedChannels.getChannelArray();
-      for (int i = 0; i < channels.length; i++)
+      for (int i = 0; i < channels.length; i++) {
         menu.add(createChannelMenuItem(channels[i], btn));
+      }
     } else if (item == mScrollToTimeAction) {
       popup = new JPopupMenu();
 
       int[] array = Settings.propTimeButtons.getIntArray();
 
-      for (int i = 0; i < array.length; i++)
+      for (int i = 0; i < array.length; i++) {
         popup.add(createTimeMenuItem(array[i], btn));
+      }
 
-      if (popup.getComponentCount() > 0)
+      if (popup.getComponentCount() > 0) {
         popup.addSeparator();
+      }
 
       JMenuItem menuItem = new JMenuItem(TVBrowser.mLocalizer.msg("button.now",
           "Now"));
@@ -707,8 +736,9 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
             button.setSelected(!FilterManagerImpl.getInstance().getCurrentFilter().equals(FilterManagerImpl.getInstance().getDefaultFilter()));
             setFilterButtonSelected(button.isSelected());
           }
-          if (item == mGoToDateAction)
+          if (item == mGoToDateAction) {
             button.setSelected(false);
+          }
 
           MainFrame.getInstance().updateToolbar();
         }
@@ -783,10 +813,12 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
     String minute = String.valueOf(time % 60);
     String hour = String.valueOf(time / 60);
 
-    if (minute.length() == 1)
+    if (minute.length() == 1) {
       minute = "0" + minute;
-    if (hour.length() == 1)
+    }
+    if (hour.length() == 1) {
       hour = "0" + hour;
+    }
 
     JMenuItem item = new JMenuItem(hour + ":" + minute);
     item.setHorizontalTextPosition(JMenuItem.CENTER);
@@ -801,8 +833,10 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
     return item;
   }
 
-public void dateChanged(Date date, ProgressMonitor monitor, Runnable callback) {
+  public void dateChanged(Date date, ProgressMonitor monitor, Runnable callback) {
     mGoToPreviousDayAction.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(-1)));
     mGoToNextDayAction.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(1)));
-}
+    mGoToPreviousWeekAction.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(-7)));
+    mGoToNextWeekAction.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(7)));
+  }
 }

@@ -1448,6 +1448,31 @@ public class MainFrame extends JFrame implements DateListener {
     mFinderPanel.markPreviousDate();
   }
 
+  /**
+   * show same week day 7 days later
+   * @since 2.7
+   */
+  public void goToNextWeek() {
+    mProgramTableScrollPane.deSelectItem();
+    mFinderPanel.markNextWeek();
+  }
+  
+  /**
+   * show same week day 7 days earlier
+   * @since 2.7
+   */
+  public void goToPreviousWeek() {
+    mProgramTableScrollPane.deSelectItem();
+    mFinderPanel.markPreviousWeek();
+  }
+  
+  /**
+   * @since 2.7
+   */
+  public void goToToday() {
+    goTo(devplugin.Date.getCurrentDate());
+  }
+
   public Date getCurrentSelectedDate() {
     return mFinderPanel.getSelectedDate();
   }

@@ -196,6 +196,20 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
   }
   
   /**
+   * @since 2.7
+   */
+  public void markNextWeek() {
+    markDate(mCurChoosenDate.addDays(7));
+  }
+  
+  /**
+   * @since 2.7
+   */
+  public void markPreviousWeek() {
+    markDate(mCurChoosenDate.addDays(-7));
+    
+  }
+  /**
    * Updates the items after a data update.
    */
   public void updateItems() {
