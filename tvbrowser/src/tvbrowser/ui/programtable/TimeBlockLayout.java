@@ -59,8 +59,8 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
     int lastHeight = 0;
     
     int blockSize = Settings.propTimeBlockSize.getInt() * 60;
-    int blockCount = (Settings.propProgramTableEndOfDay.getInt() 
-        - Settings.propProgramTableStartOfDay.getInt() + 1441) / blockSize;
+    int blockCount = ((Settings.propProgramTableEndOfDay.getInt() 
+        - Settings.propProgramTableStartOfDay.getInt() + 1440) / blockSize) +1;
     
     for(int block = 0; block < blockCount; block++) {
       int maxHeight = 0;
