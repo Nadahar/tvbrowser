@@ -125,7 +125,7 @@ public class TextLineBreakerStringWidth {
     while ((lineList.size() < maxLines) && (! allProcessed));
     int lastInx = lineList.size()-1;
     String lastLine = lineList.get(lastInx);
-    if (lastLine.trim().length()==0) {
+    if (lastLine.trim().length()==0 || lineList.size() > maxLines) {
       lineList.remove(lastInx);
     }
     String[] lineArr = new String[lineList.size()];
