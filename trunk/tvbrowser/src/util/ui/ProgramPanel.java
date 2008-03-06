@@ -1024,6 +1024,6 @@ private static Font getDynamicFontSize(Font font, int offset) {
    * @return The smallest height possible.
    */
   public int getMinimumHeight() {
-    return mTitleIcon.getIconHeight() + 3 + (Settings.propProgramPanelUsesExtraSpaceForMarkIcons.getBoolean() && mProgram.getMarkerArr().length > 0 ? 16 : 0);
+    return mTitleIcon.getIconHeight() + mPictureAreaIcon.getIconHeight() + 3 + (Settings.propProgramPanelUsesExtraSpaceForMarkIcons.getBoolean() && mProgram.getMarkerArr().length > 0 ? 16 : 0);
   }
 }
