@@ -134,8 +134,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     String[] arrangementArr = { mLocalizer.msg("timeSynchronous", "Time synchronous"),
         mLocalizer.msg("realSynchronous", "Real time synchronous"), 
         mLocalizer.msg("compact", "Compact"),mLocalizer.msg("realCompact", "Real compact"),
-        mLocalizer.msg("timeBlock", "Compact time block"),
-        mLocalizer.msg("longTimeBlock", "Long time block")};
+        mLocalizer.msg("timeBlock", "Time block"),
+        mLocalizer.msg("compactTimeBlock", "Compact time block")};
     mProgramArrangementCB = new JComboBox(arrangementArr);
     if (Settings.propTableLayout.getString().equals("compact")) {
       mProgramArrangementCB.setSelectedIndex(2);
@@ -145,7 +145,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
       mProgramArrangementCB.setSelectedIndex(0);
     } else if (Settings.propTableLayout.getString().equals("timeBlock")) {
       mProgramArrangementCB.setSelectedIndex(4);
-    } else if (Settings.propTableLayout.getString().equals("longTimeBlock")) {
+    } else if (Settings.propTableLayout.getString().equals("compactTimeBlock")) {
       mProgramArrangementCB.setSelectedIndex(5);
     } else {
       mProgramArrangementCB.setSelectedIndex(1);
@@ -366,11 +366,29 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
 
     return bt;
   }
+  
+  private void setBackgroundStyleForTimeBlockLayout() {
+    Settings.propTableBackgroundStyle.setString("timeBlock");
+    
+    Settings.propTimeBlockBackground1.setString("imgs/columns_evening_gray.jpg");
+    Settings.propTimeBlockBackground2.setString(Settings.propTimeBlockBackground2.getDefault());
+    
+    Settings.propTimeBlockShowWest.setBoolean(true);
+    
+    Settings.propTimeBlockWestImage1.setString(Settings.propTimeBlockWestImage1.getDefault());
+    Settings.propTimeBlockWestImage2.setString(Settings.propTimeBlockWestImage2.getDefault());
+  }
 
   /**
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
+    String backgroundStyle = ((TableBackgroundStyle) mBackgroundStyleCB.getSelectedItem()).getSettingsString();
+
+    Settings.propTableBackgroundStyle.setString(backgroundStyle);
+    
+    String temp = Settings.propTableLayout.getString();
+    
     if (mProgramArrangementCB.getSelectedIndex() == 2) {
       Settings.propTableLayout.setString("compact");
     } else if (mProgramArrangementCB.getSelectedIndex() == 3) {
@@ -379,16 +397,20 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
       Settings.propTableLayout.setString("timeSynchronous");
     } else if (mProgramArrangementCB.getSelectedIndex() == 4) {
       Settings.propTableLayout.setString("timeBlock");
+      
+      if(!temp.equals("timeBlock") && !temp.equals("compactTimeBlock")) {
+        setBackgroundStyleForTimeBlockLayout();
+      }
     } else if (mProgramArrangementCB.getSelectedIndex() == 5) {
-      Settings.propTableLayout.setString("longTimeBlock");
+      Settings.propTableLayout.setString("compactTimeBlock");
+
+      if(!temp.equals("timeBlock") && !temp.equals("compactTimeBlock")) {
+        setBackgroundStyleForTimeBlockLayout();
+      }
     } else {
       Settings.propTableLayout.setString("realSynchronous");
     }
-
-    String backgroundStyle = ((TableBackgroundStyle) mBackgroundStyleCB.getSelectedItem()).getSettingsString();
-
-    Settings.propTableBackgroundStyle.setString(backgroundStyle);
-
+    
     Settings.propColumnWidth.setInt(mColWidthSl.getValue());
     Settings.propProgramPanelForegroundColor.setColor(mForegroundColorLb.getColor());
 

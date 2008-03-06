@@ -202,8 +202,8 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
         layout = new TimeSynchronousLayout();
       } else if(Settings.propTableLayout.getString().equals("timeBlock")) {
         layout = new TimeBlockLayout();
-      } else if(Settings.propTableLayout.getString().equals("longTimeBlock")) {
-        layout = new LongTimeBlockLayout();
+      } else if(Settings.propTableLayout.getString().equals("compactTimeBlock")) {
+        layout = new CompactTimeBlockLayout();
       } else {
         layout = new RealTimeSynchronousLayout();
       }
