@@ -24,17 +24,16 @@
 package tvbrowser.ui.programtable;
 
 /**
- * A class with the time block layout that uses the preferred size of
- * a program panel instead of minimum size.
+ * A class for layout the program table in compact time blocks.
  * 
  * @author René Mach
  * @since 2.7
  */
-public class LongTimeBlockLayout extends TimeBlockLayout {
+public class CompactTimeBlockLayout extends TimeBlockLayout {
   /**
-   * Creates an instance of this layout.
+   * Creates an instance of this class.
    */
-  public LongTimeBlockLayout() {
-    mCompactLayout = false;
+  public CompactTimeBlockLayout() {
+    mCompactLayout = true;
   }
 }

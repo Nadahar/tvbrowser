@@ -36,7 +36,7 @@ import util.ui.ProgramPanel;
  * @since 2.7
  */
 public class TimeBlockLayout extends AbstractProgramTableLayout {
-  protected boolean mCompactLayout = true;
+  protected boolean mCompactLayout = false;
   
   public void updateLayout(ProgramTableModel model) {
     int columnCount = model.getColumnCount();
