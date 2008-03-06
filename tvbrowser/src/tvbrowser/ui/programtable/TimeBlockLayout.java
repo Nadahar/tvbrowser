@@ -154,6 +154,9 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
       }
     }  
     
+    for(int col = 0; col < columnCount; col++) {
+      lastLayoutComponentList[col].getPanel().setHeight(currentHeight - lastLayoutComponentList[col].getPrePosition());
+    }
         
     setColumnStarts(columnStartArr);
   }
