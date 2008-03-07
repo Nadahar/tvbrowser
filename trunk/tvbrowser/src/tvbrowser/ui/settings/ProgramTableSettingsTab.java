@@ -370,13 +370,13 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   private void setBackgroundStyleForTimeBlockLayout() {
     Settings.propTableBackgroundStyle.setString("timeBlock");
     
-    Settings.propTimeBlockBackground1.setString("imgs/columns_evening_gray.jpg");
-    Settings.propTimeBlockBackground2.setString(Settings.propTimeBlockBackground2.getDefault());
+    Settings.propTimeBlockBackground1.setString("imgs/time_block_white.jpg");
+    Settings.propTimeBlockBackground2.setString("imgs/time_block_gray.jpg");
     
     Settings.propTimeBlockShowWest.setBoolean(true);
     
-    Settings.propTimeBlockWestImage1.setString(Settings.propTimeBlockWestImage1.getDefault());
-    Settings.propTimeBlockWestImage2.setString(Settings.propTimeBlockWestImage2.getDefault());
+    Settings.propTimeBlockWestImage1.setString(Settings.propTimeBlockBackground1.getString());
+    Settings.propTimeBlockWestImage2.setString(Settings.propTimeBlockBackground2.getString());
   }
 
   /**
