@@ -47,7 +47,7 @@ public class DataHydraFileParser {
       } catch (Exception e) {
         throw new TvBrowserException(SweDBTvDataService.class,
                 "An error occurred in updateTvData",
-                "Please report this to the developer");
+                "Please report this to the developer", e);
       }
     } // int b
     mLog.info("Number of modified days for channel " + internalChannel.getName() + ":" + modifiedDates.size());
@@ -133,10 +133,10 @@ public class DataHydraFileParser {
                       .getLastModified());
             }
           }
-        } catch (Exception E) {
+        } catch (Exception e) {
           throw new TvBrowserException(SweDBTvDataService.class,
                   "An error occurred in updateTvData",
-                  "Please report this to the developer");
+                  "Please report this to the developer", e);
         }
       }
       mLog.info("All of the files have been parsed");
