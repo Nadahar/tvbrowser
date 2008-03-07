@@ -87,6 +87,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
@@ -130,11 +131,14 @@ public class FavoritesPlugin {
   private ArrayList<AdvancedFavorite> mPendingFavorites;
   private int mMarkPriority = -2;
   
+  private Exclusion[] mExclusions;
+  
   /**
    * Creates a new instance of FavoritesPlugin.
    */
   private FavoritesPlugin() {
     mInstance = this;
+    mExclusions = new Exclusion[0];
     mPendingFavorites = new ArrayList<AdvancedFavorite>(); 
     mClientPluginTargets = new ProgramReceiveTarget[0];
     mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
@@ -360,6 +364,14 @@ public class FavoritesPlugin {
     if(version >= 4) {
       this.mShowInfoOnNewProgramsFound = in.readBoolean();
     }
+    
+    if(version >= 7) {
+      mExclusions = new Exclusion[in.readInt()];
+      
+      for(int i = 0; i < mExclusions.length; i++) {
+        mExclusions[i] = new Exclusion(in);
+      }
+    }
   }
 
 
@@ -373,7 +385,7 @@ public class FavoritesPlugin {
     if (favoriteArr.length > 5) {    // if we have more then 5 favorites, we show a progress bar
       try {
         monitor = MainFrame.getInstance().createProgressMonitor();
-      }catch(Exception e) {
+      }catch(Exception e) {e.printStackTrace();
         monitor = new NullProgressMonitor();
       }
     }
@@ -488,7 +500,7 @@ public class FavoritesPlugin {
   }
 
   private void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(6); // version
+    out.writeInt(7); // version
 
     FavoriteTreeModel.getInstance().storeData(out);
 
@@ -498,6 +510,12 @@ public class FavoritesPlugin {
     }
 
     out.writeBoolean(mShowInfoOnNewProgramsFound);
+    
+    out.writeInt(mExclusions.length);
+    
+    for (Exclusion exclusion : mExclusions) {
+      exclusion.writeData(out);
+    }
   }
 
   /**
@@ -702,13 +720,22 @@ public class FavoritesPlugin {
 
   public void showExcludeProgramsDialog(Favorite fav, Program program) {
     WizardHandler handler = new WizardHandler(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), new ExcludeWizardStep(fav, program));
-    Object exclusion = handler.show();    
+    Object exclusion = handler.show();
+    
     if (exclusion != null) {
-      if(exclusion instanceof Exclusion) {
-        fav.addExclusion((Exclusion)exclusion);
-      }
-      else if(exclusion instanceof String && exclusion.equals("blacklist")) {
-        fav.addToBlackList(program);
+      if(fav == null) {
+        Exclusion[] exclusionArr = new Exclusion[mExclusions.length + 1];
+        System.arraycopy(mExclusions,0,exclusionArr,0,mExclusions.length);
+        exclusionArr[mExclusions.length] = (Exclusion)exclusion;
+        
+        setGlobalExclusions(exclusionArr);
+      }else {
+        if(exclusion instanceof Exclusion) {
+          fav.addExclusion((Exclusion)exclusion);
+        }
+        else if(exclusion instanceof String && exclusion.equals("blacklist")) {
+          fav.addToBlackList(program);
+        }
       }
     }
   }
@@ -909,5 +936,25 @@ public class FavoritesPlugin {
     }
     
     return null;
+  }
+  
+  protected void setGlobalExclusions(Exclusion[] exclusions) {
+    mExclusions = exclusions;
+    
+    new Thread("globalFavoriteExclusionRefreshThread") {
+      public void run() {
+        setPriority(Thread.MIN_PRIORITY);
+        handleTvDataUpdateFinished();
+      }
+    }.start();
+  }
+  
+  /**
+   * Gets the global exclusions.
+   * <p>
+   * @return The global exclusions.
+   */
+  public Exclusion[] getGlobalExclusions() {
+    return mExclusions;
   }
 }

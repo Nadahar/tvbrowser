@@ -150,8 +150,14 @@ public class ExcludeWizardStep extends AbstractWizardStep {
       mTitleQuestion = mLocalizer.msg("titleQuestion.edit", "Sendungen mit diesem Titel:");
       mDayQuestion = mLocalizer.msg("dayOfWeekQuestion.edit","Sendungen an diesem Tag:");
     } else {
-      mMainQuestion = mLocalizer.msg("mainQuestion.create",
-          "Warum gehoert diese Sendung nicht zur Lieblingssendung '{0}'?", mFavorite.getName());
+      if(mFavorite != null) {
+        mMainQuestion = mLocalizer.msg("mainQuestion.create",
+            "Warum gehoert diese Sendung nicht zur Lieblingssendung '{0}'?", mFavorite.getName());
+      }
+      else {
+        mMainQuestion = mLocalizer.msg("mainQuestion.createGlobal","Why do you want exclude this program?");
+      }
+      
       mChannelQuestion = mLocalizer.msg("channelQuestion.create", "Falscher Sender:");
       mTopicQuestion = mLocalizer.msg("topicQuestion.create", "Falsches Stichwort:");
       mTimeQuestion = mLocalizer.msg("timeQuestion.create", "Falsche Beginnzeit:");
@@ -316,18 +322,19 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     mTopicTf.setEnabled(mTopicCb.isSelected());
     mTimePeriodChooser.setEnabled(mTimeCb.isSelected());
     mDayChooser.setEnabled(mDayCb.isSelected());
-
+    
     if(mMode == MODE_CREATE_DERIVED_FROM_PROGRAM && mProgram != null) {
-      if(allowNext)
+      if(allowNext || mFavorite == null)
         mDoneBtnText = mLocalizer.msg("doneButton.exclusion","Create exclusion criteria now");
       else
         mDoneBtnText = mLocalizer.msg("doneButton.toBlacklist","Only remove this program now");
         
       handler.changeDoneBtnText();
-      handler.allowFinish(true);
+      handler.allowFinish(allowNext || mFavorite != null);
     }
-    else
+    else {
       handler.allowFinish(allowNext);
+    }
   }
 
   public Object createDataObject(Object obj) {

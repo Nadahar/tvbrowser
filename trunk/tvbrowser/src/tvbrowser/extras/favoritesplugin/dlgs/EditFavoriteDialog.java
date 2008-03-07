@@ -28,28 +28,25 @@ package tvbrowser.extras.favoritesplugin.dlgs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.*;
 
-import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ReminderConfiguration;
 import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
-import tvbrowser.extras.favoritesplugin.core.Exclusion;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
-import tvbrowser.extras.favoritesplugin.wizards.ExcludeWizardStep;
-import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
 import tvbrowser.extras.common.LimitationConfiguration;
 import tvbrowser.extras.common.DayListCellRenderer;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
@@ -75,9 +72,12 @@ import devplugin.Channel;
 import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
 
+/**
+ * A class for editing favorites.
+ */
 public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
-  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(EditFavoriteDialog.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(EditFavoriteDialog.class);
 
   private Favorite mFavorite;
 
@@ -96,15 +96,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
   private Channel[] mChannelArr;
 
   private JComboBox mLimitDaysCB;
-
-  private JButton mNewExclusionBtn;
-
-  private JButton mEditExclusionBtn;
-
-  private JButton mDeleteExclusionBtn;
-
-  private JList mExclusionsList;
-
+  
   private TimePeriodChooser mTimePeriodChooser;
 
   private JCheckBox mPassProgramsCheckBox;
@@ -120,12 +112,26 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
   private FavoriteConfigurator mFavoriteConfigurator;
   
   private JLabel mName;
+  
+  private ExclusionPanel mExclusionPanel;
 
+  /**
+   * Creates an instance of this dialog.
+   * <p>
+   * @param parent The parent frame of this dialog.
+   * @param fav The favorite for this dialog.
+   */
   public EditFavoriteDialog(Frame parent, Favorite fav) {
     super(parent, true);
     init(fav);
   }
 
+  /**
+   * Creates an instance of this dialog.
+   * <p>
+   * @param parent The parent dialog of this dialog.
+   * @param fav The favorite for this dialog.
+   */
   public EditFavoriteDialog(Dialog parent, Favorite fav) {
     super(parent, true);
     init(fav);
@@ -155,7 +161,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
     content.add(DefaultComponentFactory.getInstance().createSeparator(
         mLocalizer.msg("section.exclusions", "Exclusion Criteria")));
-    content.add(createExclusionPanel());
+    content.add(mExclusionPanel = new ExclusionPanel(mFavorite.getExclusions(),this,mFavorite)/*createExclusionPanel()*/);
 
     content.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("section.reminder", "Reminder")));
     content.add(createReminderPanel());
@@ -378,7 +384,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     return panel;
   }
 
-  private JPanel createExclusionPanel() {
+ /* private JPanel createExclusionPanel() {
 
     JPanel content = new JPanel(new FormLayout("5dlu, fill:pref:grow, 3dlu, pref",
         "pref, 3dlu, pref, 3dlu, pref, 3dlu, fill:pref:grow"));
@@ -477,7 +483,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     Object selectedItem = mExclusionsList.getSelectedValue();
     mEditExclusionBtn.setEnabled(selectedItem != null);
     mDeleteExclusionBtn.setEnabled(selectedItem != null);
-  }
+  }*/
 
   private String getForwardPluginsLabelString(ProgramReceiveTarget[] receiveTargetArr) {
     ArrayList<ProgramReceiveIf> plugins = new ArrayList<ProgramReceiveIf>();
@@ -570,6 +576,11 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
   }
 
+  /**
+   * Gets if the ok button was pressed
+   * <p>
+   * @return <code>True</code> if the ok button was pressed, <code>false</code> otherwise.
+   */
   public boolean getOkWasPressed() {
     return mOkWasPressed;
   }
@@ -595,11 +606,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     }
 
     mFavorite.setForwardPlugins(mPassProgramPlugins);
-
-    int exclCnt = ((DefaultListModel) mExclusionsList.getModel()).size();
-    Exclusion[] exclArr = new Exclusion[exclCnt];
-    ((DefaultListModel) mExclusionsList.getModel()).copyInto(exclArr);
-    mFavorite.setExclusions(exclArr);
+    mFavorite.setExclusions(mExclusionPanel.getExclusions());
 
     mFavorite.setRemindAfterDownload(mReminderAfterDownloadCb.isSelected());
 
@@ -638,7 +645,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     setVisible(false);
   }
 
-  private static class ExclusionListCellRenderer extends DefaultListCellRenderer {
+  /*private static class ExclusionListCellRenderer extends DefaultListCellRenderer {
 
     private String createTimeMessage(int lowBnd, int upBnd, int dayOfWeek) {
       int mLow = lowBnd % 60;
@@ -756,7 +763,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
       }
       return defaultLabel;
     }
-  }
+  }*/
 
   /*
    * (non-Javadoc)

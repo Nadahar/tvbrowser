@@ -43,6 +43,7 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import tvbrowser.extras.favoritesplugin.dlgs.ExclusionPanel;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.DefaultMarkingPrioritySelectionPanel;
@@ -68,6 +69,8 @@ public class FavoritesSettingTab implements SettingsTab {
   private JCheckBox mExpertMode, mShowRepetitions, mAutoSelectRemider;
   
   private DefaultMarkingPrioritySelectionPanel mMarkingsPanel;
+  private ExclusionPanel mExclusionPanel;
+  
   /**
    * Creates the settings panel for this tab.
    */
@@ -76,7 +79,8 @@ public class FavoritesSettingTab implements SettingsTab {
     PanelBuilder builder = new PanelBuilder(new FormLayout(
         "5dlu,min(150dlu;pref):grow,5dlu,pref,5dlu",
         "pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu," +
-        "pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu,pref"));
+        "pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu," +
+        "pref,5dlu,pref"));
     builder.setDefaultDialogBorder();
     
     mPluginLabel = new JLabel();
@@ -131,10 +135,13 @@ public class FavoritesSettingTab implements SettingsTab {
     builder.add(mShowRepetitions, cc.xyw(2,11,3));
     builder.addSeparator(mLocalizer.msg("reminderSettings","Automatic reminder"), cc.xyw(1,13,4));
     builder.add(mAutoSelectRemider, cc.xyw(2,15,3));
-        
-    builder.addSeparator(DefaultMarkingPrioritySelectionPanel.getTitle(), cc.xyw(1,17,4));
-    builder.add(mMarkingsPanel = DefaultMarkingPrioritySelectionPanel.createPanel(FavoritesPlugin.getInstance().getMarkPriority(),false,false), cc.xyw(2,19,3));
 
+    builder.addSeparator(mLocalizer.msg("exclusions","Global exclusion criterions"), cc.xyw(1,17,4));
+    builder.add(mExclusionPanel = new ExclusionPanel(FavoritesPlugin.getInstance().getGlobalExclusions(), UiUtilities.getLastModalChildOf(MainFrame.getInstance()), null), cc.xyw(2,19,3));
+
+    builder.addSeparator(DefaultMarkingPrioritySelectionPanel.getTitle(), cc.xyw(1,21,4));
+    builder.add(mMarkingsPanel = DefaultMarkingPrioritySelectionPanel.createPanel(FavoritesPlugin.getInstance().getMarkPriority(),false,false), cc.xyw(2,23,3));
+    
     return builder.getPanel();
   }
 
@@ -178,6 +185,10 @@ public class FavoritesSettingTab implements SettingsTab {
     FavoritesPlugin.getInstance().setShowRepetitions(mShowRepetitions.isSelected());
     FavoritesPlugin.getInstance().setAutoSelectingReminder(mAutoSelectRemider.isSelected());
     FavoritesPlugin.getInstance().setMarkPriority(mMarkingsPanel.getSelectedPriority());
+    
+    if(mExclusionPanel.wasChanged()) {
+      FavoritesPlugin.getInstance().setGlobalExclusions(mExclusionPanel.getExclusions());
+    }
     
     FavoritesPlugin.getInstance().saveFavorites();
   }
