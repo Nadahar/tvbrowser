@@ -308,8 +308,12 @@ public abstract class Favorite {
 
 
   private Program[] filterByLimitations(Program[] progArr) {
-
-    Exclusion[] exclusions = getExclusions();
+    Exclusion[] globalExclusions = FavoritesPlugin.getInstance().getGlobalExclusions();
+    Exclusion[] exclusions = new Exclusion[getExclusions().length + globalExclusions.length];
+    
+    System.arraycopy(globalExclusions,0,exclusions,0,globalExclusions.length);
+    System.arraycopy(getExclusions(),0,exclusions,globalExclusions.length,exclusions.length - globalExclusions.length);    
+    
     ArrayList<Program> list = new ArrayList<Program>();
     
     int allowedDayOfWeek = getLimitationConfiguration().getDayLimit();

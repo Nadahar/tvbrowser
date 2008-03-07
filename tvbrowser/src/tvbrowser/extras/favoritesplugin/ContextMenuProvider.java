@@ -66,15 +66,18 @@ public class ContextMenuProvider {
         }
       }
 
+      Favorite[] favArr = favorites.toArray(new Favorite[favorites.size()]);
+      ContextMenuAction menu = new ContextMenuAction();
+      menu.setText(mLocalizer.msg("favorites", "Favorites"));
+      menu.setSmallIcon(FavoritesPlugin.getInstance().getIconFromTheme("apps", "bookmark", 16));
+
       if (favorites.isEmpty()) {
-        return createAddToFavoritesActionMenu(program);
+        return new ActionMenu(menu, new ActionMenu[] {
+          createAddToFavoritesActionMenu(program),
+            createGlobalExclusionMenu(program)
+            });
       }
       else {
-        Favorite[] favArr = favorites.toArray(new Favorite[favorites.size()]);
-        ContextMenuAction menu = new ContextMenuAction();
-        menu.setText(mLocalizer.msg("favorites", "Favorites"));
-        menu.setSmallIcon(FavoritesPlugin.getInstance().getIconFromTheme("apps", "bookmark", 16));
-
         ActionMenu blackListAction = createBlackListFavoriteMenuAction(favArr, program); 
         
         if(blackListAction == null) {
@@ -86,6 +89,7 @@ public class ContextMenuProvider {
               createEditFavoriteMenuAction(favArr),
               createDeleteFavoriteMenuAction(favArr),
               ContextMenuSeparatorAction.getInstance(),
+              createGlobalExclusionMenu(program),
               createAddToFavoritesActionMenu(program)
             });
           }
@@ -96,6 +100,7 @@ public class ContextMenuProvider {
               createDeleteFavoriteMenuAction(favArr),
               repetitions,
               ContextMenuSeparatorAction.getDisabledOnTaskMenuInstance(),
+              createGlobalExclusionMenu(program),
               createAddToFavoritesActionMenu(program)
             });            
           }
@@ -106,6 +111,7 @@ public class ContextMenuProvider {
               blackListAction,
               createEditFavoriteMenuAction(favArr),
               createDeleteFavoriteMenuAction(favArr),
+              createGlobalExclusionMenu(program),
               createAddToFavoritesActionMenu(program)
           });          
         }
@@ -116,6 +122,17 @@ public class ContextMenuProvider {
     return FavoritesPlugin.getInstance().getIconFromTheme(category, icon, size);
   }
 
+  private ActionMenu createGlobalExclusionMenu(final Program program) {
+    ContextMenuAction menu = new ContextMenuAction();
+    menu.setSmallIcon(getIconFromTheme("actions", "bookmark-new", 16));
+    menu.setText(mLocalizer.msg("createGlobalExclusion", "Create global exclusion..."));
+    menu.setActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent event) {
+        FavoritesPlugin.getInstance().showExcludeProgramsDialog(null,program);
+      }
+    });
+    return new ActionMenu(menu);    
+  }
 
   private ActionMenu createAddToFavoritesActionMenu(final Program program) {
     ContextMenuAction menu = new ContextMenuAction();

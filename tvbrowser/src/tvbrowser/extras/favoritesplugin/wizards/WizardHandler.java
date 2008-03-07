@@ -41,6 +41,9 @@ public class WizardHandler {
   private WizardDlg mWizardDialog;
   
   private static WizardHandler mInstance;
+  
+  private boolean mAllowNext;
+  private boolean mAllowFinish;
 
   public WizardHandler(Component parent, WizardStep initialStep) {
     mParent = parent;
@@ -60,6 +63,8 @@ public class WizardHandler {
     }
     
     changeDoneBtnText();
+    allowNext(mAllowNext);
+    allowFinish(mAllowFinish);
     
     UiUtilities.centerAndShow(mWizardDialog);
     result = mWizardDialog.getResult();
@@ -84,12 +89,16 @@ public class WizardHandler {
   }
 
   public void allowNext(boolean allow) {
+    mAllowNext = allow;
+    
     if (mWizardDialog != null) {
       mWizardDialog.allowNext(allow);
     }
   }
 
   public void allowFinish(boolean allow) {
+    mAllowFinish = allow;
+    
     if (mWizardDialog != null) {
       mWizardDialog.allowFinish(allow);
     }
