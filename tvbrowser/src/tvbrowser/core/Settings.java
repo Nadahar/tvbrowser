@@ -550,6 +550,7 @@ public class Settings {
     if (mProp.hasChanged(propTableLayout)) {
       ProgramTableScrollPane scrollPane = mainFrame.getProgramTableScrollPane();
       scrollPane.getProgramTable().setProgramTableLayout(null);
+      scrollPane.forceRepaintAll();
     }
 
     if (mProp.hasChanged(propDeactivatedPlugins)) {
@@ -567,6 +568,10 @@ public class Settings {
     if (mProp.hasChanged(propArr)) {
       ProgramTableScrollPane scrollPane = mainFrame.getProgramTableScrollPane();
       scrollPane.getProgramTable().updateBackground();
+    }
+    
+    if(mProp.hasChanged(propTimeBlockSize)) {
+      mainFrame.getProgramTableScrollPane().forceRepaintAll();
     }
 
     propArr = new Property[] { propToolbarButtonStyle, propToolbarButtons,
