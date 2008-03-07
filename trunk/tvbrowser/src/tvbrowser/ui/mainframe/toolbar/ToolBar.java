@@ -367,56 +367,56 @@ public class ToolBar extends JToolBar {
     JPopupMenu menu = new JPopupMenu();
     String label = mLocalizer.msg("configure", "Configure");
     String name = null;
-    boolean showall = false;
+    boolean configItemEnabled = false;
     
     if (e.getSource() instanceof AbstractButton) {
       name = ((AbstractButton) e.getSource()).getName();
       
       if (name.startsWith("#scrollTo") && name.indexOf("Channel") == -1) {
-        showall = true;
+        configItemEnabled = true;
         label = mLocalizer.msg("configureTime", "Configure time buttons");
       }
       else if(name.startsWith("#filter")) {
-        showall = true;
+        configItemEnabled = true;
         label = FilterButtons.mLocalizer.msg("createFilter", "Create filter...");
       }
       else if(name.startsWith("#scrollToChannel")) {
-        showall = true;
+        configItemEnabled = true;
         label = ChannelContextMenu.mLocalizer.msg("addChannels", "Add/Remove channels");
       }
       else if (PluginProxyManager.getInstance().getActivatedPluginForId(name) != null) {
-        showall = PluginProxyManager.getInstance().getActivatedPluginForId(name).getSettingsTab() != null;
+        configItemEnabled = PluginProxyManager.getInstance().getActivatedPluginForId(name).getSettingsTab() != null;
       }
       else if (InternalPluginProxyList.getInstance().getProxyForId(name) != null) {
-        showall = InternalPluginProxyList.getInstance().getProxyForId(name).getSettingsTab() != null;
+        configItemEnabled = InternalPluginProxyList.getInstance().getProxyForId(name).getSettingsTab() != null;
         name = InternalPluginProxyList.getInstance().getProxyForId(name).getSettingsId();
       }
     } else {
       return;
     }
 
-    if (showall) {
-      JMenuItem item = new JMenuItem(label);
-      item.setActionCommand(name);
+    
+    JMenuItem item = new JMenuItem(label);
+    item.setActionCommand(name);
+    item.setEnabled(configItemEnabled);
 
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          if (e.getActionCommand().startsWith("#scrollTo") && e.getActionCommand().indexOf("Channel") == -1) {
-            MainFrame.getInstance().showSettingsDialog("#timebuttons");
-          } else if (e.getActionCommand().startsWith("#filter")) {
-            MainFrame.getInstance().showFilterDialog();
-          } else if (e.getActionCommand().startsWith("#scrollToChannel")) {
-            MainFrame.getInstance().showSettingsDialog(SettingsItem.CHANNELS);
-          } else {
-            MainFrame.getInstance().showSettingsDialog(e.getActionCommand());
-          }
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        if (e.getActionCommand().startsWith("#scrollTo") && e.getActionCommand().indexOf("Channel") == -1) {
+          MainFrame.getInstance().showSettingsDialog("#timebuttons");
+        } else if (e.getActionCommand().startsWith("#filter")) {
+          MainFrame.getInstance().showFilterDialog();
+        } else if (e.getActionCommand().startsWith("#scrollToChannel")) {
+          MainFrame.getInstance().showSettingsDialog(SettingsItem.CHANNELS);
+        } else {
+          MainFrame.getInstance().showSettingsDialog(e.getActionCommand());
         }
-      });
-      menu.add(item);
-      menu.addSeparator();
-    }
+      }
+    });
+    menu.add(item);
+    menu.addSeparator();
 
-    JMenuItem item = new JMenuItem(mLocalizer.msg("removeButton", "Remove button"));
+    item = new JMenuItem(mLocalizer.msg("removeButton", "Remove button"));
     final String buttonName = name;
     item.addActionListener(new ActionListener() {
 
