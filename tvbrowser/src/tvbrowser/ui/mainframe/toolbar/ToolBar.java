@@ -61,6 +61,7 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.ui.filter.dlgs.FilterButtons;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
@@ -370,22 +371,10 @@ public class ToolBar extends JToolBar {
     
     if (e.getSource() instanceof AbstractButton) {
       name = ((AbstractButton) e.getSource()).getName();
-
+      
       if (name.startsWith("#scrollTo") && name.indexOf("Channel") == -1) {
         showall = true;
         label = mLocalizer.msg("configureTime", "Configure time buttons");
-      }
-      else if(name.startsWith(SettingsItem.SEARCH)) {
-        showall = true;
-        label = mLocalizer.msg("configureSearch", "Configure Search");
-      }
-      else if(name.startsWith(SettingsItem.REMINDER)) {
-        showall = true;
-        label = mLocalizer.msg("configureReminder", "Configure Reminder");
-      }
-      else if(name.startsWith(SettingsItem.FAVORITE)) {
-        showall = true;
-        label = mLocalizer.msg("configureFavorite", "Configure Favorites");
       }
       else if(name.startsWith("#filter")) {
         showall = true;
@@ -395,9 +384,12 @@ public class ToolBar extends JToolBar {
         showall = true;
         label = ChannelContextMenu.mLocalizer.msg("addChannels", "Add/Remove channels");
       }
-      else if (PluginProxyManager.getInstance().getActivatedPluginForId(name) != null && 
-          PluginProxyManager.getInstance().getActivatedPluginForId(name).getSettingsTab() != null) {
-        showall = true;
+      else if (PluginProxyManager.getInstance().getActivatedPluginForId(name) != null) {
+        showall = PluginProxyManager.getInstance().getActivatedPluginForId(name).getSettingsTab() != null;
+      }
+      else if (InternalPluginProxyList.getInstance().getProxyForId(name) != null) {
+        showall = InternalPluginProxyList.getInstance().getProxyForId(name).getSettingsTab() != null;
+        name = InternalPluginProxyList.getInstance().getProxyForId(name).getSettingsId();
       }
     } else {
       return;
