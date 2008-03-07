@@ -368,15 +368,33 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   }
   
   private void setBackgroundStyleForTimeBlockLayout() {
-    Settings.propTableBackgroundStyle.setString("timeBlock");
-    
-    Settings.propTimeBlockBackground1.setString("imgs/time_block_white.jpg");
-    Settings.propTimeBlockBackground2.setString("imgs/time_block_gray.jpg");
-    
-    Settings.propTimeBlockShowWest.setBoolean(true);
-    
-    Settings.propTimeBlockWestImage1.setString(Settings.propTimeBlockBackground1.getString());
-    Settings.propTimeBlockWestImage2.setString(Settings.propTimeBlockBackground2.getString());
+    if(!Settings.propTableLayout.getString().equals("timeBlock") && 
+        !Settings.propTableLayout.getString().equals("compactTimeBlock")) {
+      Settings.propTableBackgroundStyle.setString("timeBlock");
+      
+      Settings.propTimeBlockBackground1.setString("imgs/time_block_white.jpg");
+      Settings.propTimeBlockBackground2.setString("imgs/time_block_gray.jpg");
+      
+      Settings.propTimeBlockShowWest.setBoolean(true);
+      
+      Settings.propTimeBlockWestImage1.setString(Settings.propTimeBlockBackground1.getString());
+      Settings.propTimeBlockWestImage2.setString(Settings.propTimeBlockBackground2.getString());
+    }
+  }
+  
+  private void resetBackgroundStyle() {
+    if(Settings.propTableLayout.getString().equals("timeBlock") || 
+        Settings.propTableLayout.getString().equals("compactTimeBlock")) {
+      Settings.propTableBackgroundStyle.setString("timeBlock");
+      
+      Settings.propTimeBlockBackground1.setString(Settings.propTimeBlockBackground1.getDefault());
+      Settings.propTimeBlockBackground2.setString(Settings.propTimeBlockBackground2.getDefault());
+      
+      Settings.propTimeBlockShowWest.setBoolean(false);
+      
+      Settings.propTimeBlockWestImage1.setString(Settings.propTimeBlockBackground1.getString());
+      Settings.propTimeBlockWestImage2.setString(Settings.propTimeBlockBackground2.getString());
+    }
   }
 
   /**
@@ -387,27 +405,24 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
 
     Settings.propTableBackgroundStyle.setString(backgroundStyle);
     
-    String temp = Settings.propTableLayout.getString();
-    
     if (mProgramArrangementCB.getSelectedIndex() == 2) {
+      resetBackgroundStyle();
       Settings.propTableLayout.setString("compact");
     } else if (mProgramArrangementCB.getSelectedIndex() == 3) {
+      resetBackgroundStyle();
       Settings.propTableLayout.setString("realCompact");
     } else if (mProgramArrangementCB.getSelectedIndex() == 0) {
+      resetBackgroundStyle();
       Settings.propTableLayout.setString("timeSynchronous");
     } else if (mProgramArrangementCB.getSelectedIndex() == 4) {
+      setBackgroundStyleForTimeBlockLayout();
       Settings.propTableLayout.setString("timeBlock");
       
-      if(!temp.equals("timeBlock") && !temp.equals("compactTimeBlock")) {
-        setBackgroundStyleForTimeBlockLayout();
-      }
     } else if (mProgramArrangementCB.getSelectedIndex() == 5) {
+      setBackgroundStyleForTimeBlockLayout();
       Settings.propTableLayout.setString("compactTimeBlock");
-
-      if(!temp.equals("timeBlock") && !temp.equals("compactTimeBlock")) {
-        setBackgroundStyleForTimeBlockLayout();
-      }
     } else {
+      resetBackgroundStyle();
       Settings.propTableLayout.setString("realSynchronous");
     }
     
