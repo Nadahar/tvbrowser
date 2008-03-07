@@ -581,7 +581,7 @@ public class Settings {
     }
 
     if (mProp.hasChanged(propTimeButtons)) {
-      mainFrame.updateButtons();
+      mainFrame.updateTimeButtons();
     }
 
     if (mProp.hasChanged(propSubscribedChannels)) {
