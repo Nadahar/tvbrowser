@@ -198,7 +198,9 @@ public class ProgramInfo {
     }
     
     if (mIsShowing) {
-      ProgramInfoDialog.closeDialog();
+      if (!ProgramInfoDialog.closeDialog()) {
+        return;
+      }
     }
     mIsShowing = true;
     Window window = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
@@ -274,6 +276,9 @@ public class ProgramInfo {
 
   protected void setLook() {
     try {
+      if (mIsShowing) {
+        return;
+      }
       String lf = mSettings.getProperty("look", LookAndFeelAddons.getBestMatchAddonClassName());
       
       if (lf.length() > 0) {

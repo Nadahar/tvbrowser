@@ -134,7 +134,7 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
    *          
    * @return The instance of this ProgramInfoDialog
    */
-  public static ProgramInfoDialog getInstance(Program program, Dimension pluginsSize, boolean showSettings) {
+  public static synchronized ProgramInfoDialog getInstance(Program program, Dimension pluginsSize, boolean showSettings) {
 	  if (instance == null) {
 		  instance = new ProgramInfoDialog(pluginsSize, showSettings);
 	  }
@@ -561,13 +561,21 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
     mFindAsYouType.installKeyListener(mFunctionGroup);
   }
 
-  public static void closeDialog() {
+  public static boolean closeDialog() {
     if (instance != null) {
-      instance.closeDialogInternal();
+      return instance.closeDialogInternal();
     }
+    return false;
   }
 
-  private void closeDialogInternal() {
+  private boolean closeDialogInternal() {
+    if (mDialog == null) {
+      return false;
+    }
+    if (!mDialog.isVisible()) {
+      return false;
+    }
     mDialog.setVisible(false);
+    return true;
   }
 }
