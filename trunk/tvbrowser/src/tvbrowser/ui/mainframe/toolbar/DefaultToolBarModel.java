@@ -175,20 +175,20 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
     mGoToPreviousDayAction = createAction(mLocalizer.msg(
             "goToPreviousDay", "Previous day"), "#goToPreviousDay", 
             mLocalizer.msg("goToPreviousToolTip", "Previous day"), IconLoader
-            .getInstance().getIconFromTheme("actions", "go-to-previous-day", 16), IconLoader
-            .getInstance().getIconFromTheme("actions", "go-to-previous-day", 22),
+            .getInstance().getIconFromTheme("actions", "go-previous", 16), IconLoader
+            .getInstance().getIconFromTheme("actions", "go-previous", 22),
             ToolBar.BUTTON_ACTION, this);
     mGoToTodayAction = createAction(Localizer.getLocalization(
         Localizer.I18N_TODAY), "#goToToday", scrollTo
         + Localizer.getLocalization(Localizer.I18N_TODAY), IconLoader
-        .getInstance().getIconFromTheme("actions", "go-to-today", 16),
+        .getInstance().getIconFromTheme("actions", "go-down", 16),
         IconLoader.getInstance().getIconFromTheme("actions", "go-to-today",
             22), ToolBar.BUTTON_ACTION, this);
     mGoToNextDayAction = createAction(mLocalizer.msg(
         "goToNextDay", "Next day"), "#goToNextDay", 
         mLocalizer.msg("goToNextToolTip", "Next day"), IconLoader
-        .getInstance().getIconFromTheme("actions", "go-to-next-day", 16), IconLoader
-        .getInstance().getIconFromTheme("actions", "go-to-next-day", 22),
+        .getInstance().getIconFromTheme("actions", "go-next", 16), IconLoader
+        .getInstance().getIconFromTheme("actions", "go-next", 22),
         ToolBar.BUTTON_ACTION, this);
     mGoToPreviousWeekAction = createAction(mLocalizer.msg(
         "goToPreviousWeek", "Previous week"), "#goToPreviousWeek", 
