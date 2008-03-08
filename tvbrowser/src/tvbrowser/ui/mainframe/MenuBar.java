@@ -201,12 +201,12 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
 
     mPreviousDayMI = new JMenuItem(mLocalizer.msg("menuitem.previousDay","previous day"));
     mPreviousDayMI.addActionListener(this);
-    mPreviousDayMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-to-previous-day", 16));
+    mPreviousDayMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-previous", 16));
     new MenuHelpTextAdapter(mPreviousDayMI, mLocalizer.msg("menuinfo.previousDay",""), mLabel);
 
     mNextDayMI = new JMenuItem(mLocalizer.msg("menuitem.nextDay","next day"));
     mNextDayMI.addActionListener(this);
-    mNextDayMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-to-next-day", 16));
+    mNextDayMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-next", 16));
     new MenuHelpTextAdapter(mNextDayMI, mLocalizer.msg("menuinfo.nextDay",""), mLabel);
 
     mPreviousWeekMI = new JMenuItem(mLocalizer.msg("menuitem.previousWeek","previous week"));
@@ -221,7 +221,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
 
     mTodayMI = new JMenuItem(mLocalizer.msg("menuitem.today","today"));
     mTodayMI.addActionListener(this);
-    mTodayMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-to-today", 16));
+    mTodayMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-down", 16));
     new MenuHelpTextAdapter(mTodayMI, mLocalizer.msg("menuinfo.today",""), mLabel);
 
     mGotoNowMenuItem = new JMenuItem(mLocalizer.msg("menuitem.now","now"));
@@ -230,7 +230,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     new MenuHelpTextAdapter(mGotoNowMenuItem, mLocalizer.msg("menuinfo.now",""), mLabel);
 
     mGotoDateMenu = new JMenu(mLocalizer.msg("menuitem.date","date"));
-    mGotoDateMenu.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-to-date", 16));
+    mGotoDateMenu.setIcon(IconLoader.getInstance().getIconFromTheme("apps", "office-calendar", 16));
 
 
 
