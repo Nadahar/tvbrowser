@@ -75,8 +75,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   private static java.util.logging.Logger mLog = java.util.logging.Logger
       .getLogger(TextAreaIcon.class.getName());
 
-  private static final boolean USE_FULL_HEIGHT = true;
-  private static final boolean PAINT_EXPIRED_PROGRAMS_PALE = true;
+  private static final boolean USE_FULL_HEIGHT = true;  
 
   private static final Composite NORMAL_COMPOSITE = AlphaComposite.SrcOver;
   private static final Composite PALE_COMPOSITE = AlphaComposite.getInstance(
@@ -151,6 +150,8 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   private static int V_GAP = 5;
   
   private ProgramPanelSettings mSettings;
+  
+  private boolean mPaintExpiredProgramsPale = true;
 
   /**
    * Creates a new instance of ProgramPanel.
@@ -750,7 +751,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
     }
     
     // Draw all the text
-    if (PAINT_EXPIRED_PROGRAMS_PALE && mProgram.isExpired()) {
+    if (mPaintExpiredProgramsPale && mProgram.isExpired()) {
       setForeground(Color.gray);
       grp.setColor(Color.gray);
     } else {
@@ -771,7 +772,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
       }
 
       // Paint the icons pale if the program is expired
-      if (PAINT_EXPIRED_PROGRAMS_PALE && mProgram.isExpired()) {
+      if (mPaintExpiredProgramsPale && mProgram.isExpired()) {
         grp.setComposite(PALE_COMPOSITE);
       }
 
@@ -844,7 +845,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
       }
     }
     // Reset the old composite
-    if (PAINT_EXPIRED_PROGRAMS_PALE && mProgram.isExpired()) {
+    if (mPaintExpiredProgramsPale && mProgram.isExpired()) {
       grp.setComposite(NORMAL_COMPOSITE);
     }
   }
@@ -1025,5 +1026,16 @@ private static Font getDynamicFontSize(Font font, int offset) {
    */
   public int getMinimumHeight() {
     return mTitleIcon.getIconHeight() + mPictureAreaIcon.getIconHeight() + 3 + (Settings.propProgramPanelUsesExtraSpaceForMarkIcons.getBoolean() && mProgram.getMarkerArr().length > 0 ? 16 : 0);
+  }
+  
+  /**
+   * Sets if expired programs should be painted pale.
+   * <p>
+   * @param value <code>True</code> if expired programs should be painted pale,
+   * <code>false</code> otherwise.
+   * @since 2.7
+   */
+  public void setPaintExpiredProgramsPale(boolean value) {
+    mPaintExpiredProgramsPale = value;
   }
 }
