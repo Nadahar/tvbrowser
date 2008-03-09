@@ -48,6 +48,8 @@ public class WizardHandler {
   public WizardHandler(Component parent, WizardStep initialStep) {
     mParent = parent;
     mStep = initialStep;
+    mAllowNext = true;
+    mAllowFinish = true;
   }
 
   public Object show() {
