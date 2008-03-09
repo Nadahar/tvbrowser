@@ -27,7 +27,6 @@ package tvbrowser.extras.favoritesplugin;
 
 import javax.swing.Icon;
 
-import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.ButtonActionIf;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 
@@ -79,8 +78,7 @@ public class FavoritesPluginProxy implements ButtonActionIf, ContextMenuIf, Mark
 
   public Icon getMarkIcon() {
     if(mMarkIcon == null)
-      mMarkIcon = IconLoader.getInstance().getIconFromTheme("apps", "bookmark", 16);
-    
+      mMarkIcon = mFavoritesInstance.getFavoritesIcon(16);
     return mMarkIcon;
   }
 
