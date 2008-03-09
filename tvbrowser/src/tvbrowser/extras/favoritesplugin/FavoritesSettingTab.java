@@ -197,7 +197,7 @@ public class FavoritesSettingTab implements SettingsTab {
    * Returns the icon of the tab-sheet.
    */
   public Icon getIcon() {
-    return FavoritesPlugin.getInstance().getIconFromTheme("apps", "bookmark", 16);
+    return FavoritesPlugin.getInstance().getFavoritesIcon(16);
   }
   
   /**

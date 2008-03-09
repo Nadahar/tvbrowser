@@ -96,6 +96,16 @@ import javax.swing.event.HyperlinkListener;
  * @author Til Schneider, www.murfman.de
  */
 public class FavoritesPlugin {
+  
+  /**
+   * Tango category of the icon to be used in this plugin
+   */
+  private static final String ICON_CATEGORY = "emblems";
+
+  /**
+   * Tango name of the icon to be used in this plugin
+   */
+  private static final String ICON_NAME = "emblem-favorite";
 
   /** The localizer for this class. */
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -546,8 +556,8 @@ public class FavoritesPlugin {
       }
     });
 
-    action.setBigIcon(getIconFromTheme("apps", "bookmark", 22));
-    action.setSmallIcon(getIconFromTheme("apps", "bookmark", 16));
+    action.setBigIcon(getIconFromTheme(ICON_CATEGORY, ICON_NAME, 22));
+    action.setSmallIcon(getIconFromTheme(ICON_CATEGORY, ICON_NAME, 16));
     action.setShortDescription(mLocalizer.msg("favoritesManager",
             "Manage favorite programs"));
     action.setText(mLocalizer.msg("buttonText", "Manage Favorites"));
@@ -752,7 +762,7 @@ public class FavoritesPlugin {
   }
 
   public ThemeIcon getMarkIconFromTheme() {
-    return new ThemeIcon("apps", "bookmark", 16);
+    return new ThemeIcon(ICON_CATEGORY, ICON_NAME, 16);
   }
 
 
@@ -762,14 +772,14 @@ public class FavoritesPlugin {
 
   public void updateRootNode(boolean save) {
     mRootNode.removeAllActions();
-    mRootNode.getMutableTreeNode().setIcon(getIconFromTheme("action", "bookmark-new", 16));
+    mRootNode.getMutableTreeNode().setIcon(getFavoritesIcon(16));
 
     Action manageFavorite = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {
         showManageFavoritesDialog(false, null);
       }
     };
-    manageFavorite.putValue(Action.SMALL_ICON, getIconFromTheme("action", "bookmark-new", 16));
+    manageFavorite.putValue(Action.SMALL_ICON, getFavoritesIcon(16));
     manageFavorite.putValue(Action.NAME, mLocalizer.msg("favoritesManager", "Manage Favorites"));
 
 
@@ -804,7 +814,10 @@ public class FavoritesPlugin {
       saveFavorites();
     }
   }
-  
+
+  public ImageIcon getFavoritesIcon(int size) {
+    return getIconFromTheme(ICON_CATEGORY, ICON_NAME, size);
+  }
 
 	public ProgramReceiveTarget[] getClientPluginTargetIds() {
     return mClientPluginTargets;

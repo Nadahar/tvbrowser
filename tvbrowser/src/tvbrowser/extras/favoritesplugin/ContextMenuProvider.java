@@ -69,7 +69,7 @@ public class ContextMenuProvider {
       Favorite[] favArr = favorites.toArray(new Favorite[favorites.size()]);
       ContextMenuAction menu = new ContextMenuAction();
       menu.setText(mLocalizer.msg("favorites", "Favorites"));
-      menu.setSmallIcon(FavoritesPlugin.getInstance().getIconFromTheme("apps", "bookmark", 16));
+      menu.setSmallIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
 
       if (favorites.isEmpty()) {
         return new ActionMenu(menu, new ActionMenu[] {
@@ -124,7 +124,7 @@ public class ContextMenuProvider {
 
   private ActionMenu createGlobalExclusionMenu(final Program program) {
     ContextMenuAction menu = new ContextMenuAction();
-    menu.setSmallIcon(getIconFromTheme("actions", "bookmark-new", 16));
+    menu.setSmallIcon(getIconFromTheme("actions", "document-new", 16));
     menu.setText(mLocalizer.msg("createGlobalExclusion", "Create global exclusion..."));
     menu.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
@@ -136,7 +136,7 @@ public class ContextMenuProvider {
 
   private ActionMenu createAddToFavoritesActionMenu(final Program program) {
     ContextMenuAction menu = new ContextMenuAction();
-      menu.setSmallIcon(getIconFromTheme("actions", "bookmark-new", 16));
+      menu.setSmallIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
       menu.setText(mLocalizer.msg("addToFavorites", "Add to favorite programs"));
       menu.setActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent event) {
@@ -151,7 +151,7 @@ public class ContextMenuProvider {
 
     if (favArr.length == 1) {
       ContextMenuAction action = new ContextMenuAction();
-      action.setSmallIcon(getIconFromTheme("apps", "bookmark", 16));
+      action.setSmallIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
       action.setText(mLocalizer.msg("excludeFromFavorite","Exclude from '{0}'...", favArr[0].getName()));
       action.setActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
@@ -163,12 +163,12 @@ public class ContextMenuProvider {
     else {
       ContextMenuAction menu = new ContextMenuAction();
       menu.setText(mLocalizer.msg("excludeFrom","Exclude from"));
-      menu.setSmallIcon(getIconFromTheme("apps", "bookmark", 16));
+      menu.setSmallIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
       ContextMenuAction[] subItems = new ContextMenuAction[favArr.length];
       for (int i=0; i<subItems.length; i++) {
         final Favorite fav = favArr[i];
         subItems[i] = new ContextMenuAction(favArr[i].getName());
-        subItems[i].setSmallIcon(getIconFromTheme("apps", "bookmark", 16));
+        subItems[i].setSmallIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
         subItems[i].setActionListener(new ActionListener(){
           public void actionPerformed(ActionEvent e) {
             FavoritesPlugin.getInstance().showExcludeProgramsDialog(fav, program);
@@ -201,7 +201,7 @@ public class ContextMenuProvider {
       for (int i=0; i<subItems.length; i++) {
         final Favorite fav = favArr[i];
         subItems[i] = new ContextMenuAction(favArr[i].getName());
-        subItems[i].setSmallIcon(getIconFromTheme("apps", "bookmark", 16));
+        subItems[i].setSmallIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
         subItems[i].setActionListener(new ActionListener(){
           public void actionPerformed(ActionEvent e) {
             FavoritesPlugin.getInstance().editFavorite(fav);
@@ -293,7 +293,7 @@ public class ContextMenuProvider {
         for (int i=0; i<subItems.length; i++) {
           final Favorite fav = favArr[i];
           subItems[i] = new ContextMenuAction(favArr[i].getName());
-          subItems[i].setSmallIcon(getIconFromTheme("apps", "bookmark", 16));
+          subItems[i].setSmallIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
           subItems[i].setActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
               FavoritesPlugin.getInstance().askAndDeleteFavorite(fav);
@@ -342,7 +342,7 @@ public class ContextMenuProvider {
       for(int i = 0; i < fromList.size(); i++) {
         final Favorite fav = fromList.get(i);
         reactivateAction[i] = new ContextMenuAction(fav.getName());
-        reactivateAction[i].setSmallIcon(getIconFromTheme("apps", "bookmark", 16));
+        reactivateAction[i].setSmallIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
         reactivateAction[i].setActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {            
             fav.removeFromBlackList(program);
