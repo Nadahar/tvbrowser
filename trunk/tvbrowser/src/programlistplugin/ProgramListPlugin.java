@@ -260,7 +260,7 @@ public class ProgramListPlugin extends Plugin {
       boolean found = false;
       
       for(int i = 0; i < mFilterBox.getItemCount(); i++) {
-        if(filter.equals(mFilterBox.getItemAt(i))) {
+        if(filter != null && filter.equals(mFilterBox.getItemAt(i))) {
           found = true;
           break;
         }
