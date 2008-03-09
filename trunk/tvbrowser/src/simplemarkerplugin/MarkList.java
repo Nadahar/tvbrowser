@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -349,7 +350,7 @@ public class MarkList extends Vector<Program> {
       createNodes(mRootNode, true);
   }
 
-  protected void revalidateContainingPrograms() {
+  protected void revalidateContainingPrograms(ArrayList<Program> deletedPrograms) {
     for (int i = size() - 1; i >= 0; i--) {
       Program containingProgram = remove(i);
 
@@ -357,8 +358,12 @@ public class MarkList extends Vector<Program> {
         Program updatedProg = SimpleMarkerPlugin.getPluginManager().getProgram(
             containingProgram.getDate(), containingProgram.getID());
         addElement(updatedProg);
-      } else if (containingProgram.getProgramState() == Program.IS_VALID_STATE)
+      } else if (containingProgram.getProgramState() == Program.IS_VALID_STATE) {
         addElement(containingProgram);
+      }
+      else if(containingProgram.getDate().compareTo(Date.getCurrentDate()) >= 0 && containingProgram.getProgramState() == Program.WAS_DELETED_STATE && !deletedPrograms.contains(containingProgram)) {
+        deletedPrograms.add(containingProgram);
+      }
     }
     updateNode();
   }
