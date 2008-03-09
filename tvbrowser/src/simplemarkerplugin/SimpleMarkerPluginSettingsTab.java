@@ -45,6 +45,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
@@ -98,12 +99,17 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
   private DefaultTableModel mModel;
   private ArrayList<MarkListItem> mToDeleteItems;
   private JEditorPane mHelpLabel;
+  private JCheckBox mShowDeletedPrograms;
 
   public JPanel createSettingsPanel() {
     mToDeleteItems = new ArrayList<MarkListItem>();
     JPanel panel = new JPanel(new FormLayout("5dlu,default:grow,5dlu",
-        "5dlu,fill:default:grow,3dlu,pref,10dlu,pref,5dlu"));
+        "default,5dlu,fill:default:grow,3dlu,pref,10dlu,pref,5dlu"));
     CellConstraints cc = new CellConstraints();
+    
+    mShowDeletedPrograms = new JCheckBox(SimpleMarkerPlugin.mLocalizer.msg("settings.informAboutDeletedPrograms","Inform about program that were deleted during a data update"), SimpleMarkerPlugin.getInstance().getSettings().getProperty("showDeletedProgram","true").equals("true"));    
+    
+    panel.add(mShowDeletedPrograms, cc.xy(2,1));
     
     String[] column = {
         SimpleMarkerPlugin.mLocalizer.msg("settings.list",
@@ -151,7 +157,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
 
     JScrollPane pane = new JScrollPane(mListTable);
 
-    panel.add(pane, cc.xy(2, 2));
+    panel.add(pane, cc.xy(2, 3));
 
     JPanel south = new JPanel();
     south.setLayout(new BoxLayout(south, BoxLayout.X_AXIS));
@@ -174,7 +180,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     south.add(Box.createHorizontalGlue());
     south.add(mDelete);
 
-    panel.add(south, cc.xy(2, 4));
+    panel.add(south, cc.xy(2, 5));
     
     mHelpLabel = UiUtilities.createHtmlHelpTextArea(SimpleMarkerPlugin.mLocalizer.msg("settings.prioHelp","The mark priority is used for selecting the marking color. The marking colors of the priorities can be change in the <a href=\"#link\">program panel settings</a>. If a program is marked by more than one plugin/list the color with the highest priority given by the marking plugins/lists is used."), new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent e) {
@@ -184,7 +190,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
       }
     });
     
-    panel.add(mHelpLabel, cc.xy(2,6));
+    panel.add(mHelpLabel, cc.xy(2,7));
     
 
     JPanel p = new JPanel(new FormLayout("default:grow","5dlu,fill:default:grow"));
@@ -194,6 +200,8 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
   }
 
   public void saveSettings() { 
+    SimpleMarkerPlugin.getInstance().getSettings().setProperty("showDeletedProgram",String.valueOf(mShowDeletedPrograms.isSelected()));
+    
     if (mListTable.isEditing())
       mListTable.getCellEditor().stopCellEditing();
 
@@ -202,7 +210,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
 
     for (int i = 0; i < mListTable.getRowCount(); i++)
       ((MarkListItem) mListTable.getValueAt(i, 0)).doChanges();
-    
+        
     SimpleMarkerPlugin.getInstance().updateTree();
     
     if(mToDeleteItems.isEmpty()) {

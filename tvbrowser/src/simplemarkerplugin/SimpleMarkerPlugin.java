@@ -26,6 +26,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -38,12 +39,27 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRootPane;
+import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.ProgramTableModel;
+import util.settings.PluginPictureSettings;
+import util.settings.ProgramPanelSettings;
+import util.ui.Localizer;
+import util.ui.ProgramList;
 import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import devplugin.ActionMenu;
 
@@ -324,8 +340,70 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     if (mHasRightToUpdate) {
       mHasToUpdate = false;
 
+      ArrayList<Program> deletedPrograms = new ArrayList<Program>();
+      
       for (MarkList list : mMarkListVector) {
-        list.revalidateContainingPrograms();
+        list.revalidateContainingPrograms(deletedPrograms);
+      }
+      
+      if(!deletedPrograms.isEmpty() && mProperties.getProperty("showDeletedProgram","true").equals("true")) {
+        ProgramList deletedProgramList = new ProgramList(deletedPrograms.toArray(new Program[deletedPrograms.size()]), new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.NO_PICTURE_TYPE),true));
+        
+        JDialog deletedListDialog;
+        
+        Window w = UiUtilities.getLastModalChildOf(getParentFrame());
+        
+        if(w instanceof JFrame) {
+          deletedListDialog = new JDialog((JFrame)w);
+        }
+        else {
+          deletedListDialog = new JDialog((JDialog)w);
+        }
+        
+        deletedListDialog.setModal(false);
+        deletedListDialog.getContentPane().setLayout(new FormLayout("default:grow","default,5dlu,fill:default:grow,5dlu,default"));
+        deletedListDialog.setTitle(getInfo().getName() + " - " + mLocalizer.msg("deletedPrograms","Deleted programs"));
+        ((JPanel)deletedListDialog.getContentPane()).setBorder(Borders.DIALOG_BORDER);
+        
+        CellConstraints cc = new CellConstraints();
+        
+        deletedListDialog.getContentPane().add(new JLabel(mLocalizer.msg("deletedProgramsMsg","During the data update the following programs were deleted:")),cc.xy(1,1));
+        deletedListDialog.getContentPane().add(new JScrollPane(deletedProgramList), cc.xy(1,3));
+        
+        final JDialog dlg = deletedListDialog;
+        
+        JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
+        ok.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            dlg.dispose();
+          }
+        });
+        
+        deletedListDialog.getContentPane().add(ok, cc.xy(1,5));
+        
+        UiUtilities.registerForClosing(new WindowClosingIf() {
+          public void close() {
+            dlg.dispose();
+          }
+
+          public JRootPane getRootPane() {
+            return dlg.getRootPane();
+          }
+        });
+        
+        layoutWindow("deletedListDialog", deletedListDialog, new Dimension(400,300));
+        
+        new Thread("simpleMarkerShowDeletedListDlg") {
+          public void run() {
+            while(UiUtilities.containsModalDialogChild(getParentFrame())) {
+              try {
+                Thread.sleep(500);
+              } catch (InterruptedException e) {}
+            }
+            
+            dlg.setVisible(true);
+          }
+        }.start();
       }
     }
   }
