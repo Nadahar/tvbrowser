@@ -228,7 +228,21 @@ public class MarkedProgramsList {
       for(MutableProgram programInList : programs) {
         MutableProgram testProg = (MutableProgram)PluginManagerImpl.getInstance().getProgram(programInList.getDate(), programInList.getID());
 
-        if(testProg == null || programInList.getTitle().toLowerCase().compareTo(testProg.getTitle().toLowerCase()) != 0) {
+        boolean titleWasChangedToMuch = false;
+        
+        if(testProg != null && programInList.getTitle().toLowerCase().compareTo(testProg.getTitle().toLowerCase()) != 0) {
+          String[] titleParts = programInList.getTitle().toLowerCase().replaceAll("\\p{Punct}"," ").replaceAll("\\s+"," ").split(" ");
+          String compareTitle = testProg.getTitle().toLowerCase();
+          
+          for(String titlePart : titleParts) {
+            if(compareTitle.indexOf(titlePart) == -1) {
+              titleWasChangedToMuch = true;
+              break;
+            }
+          }
+        }
+        
+        if(testProg == null || titleWasChangedToMuch) {
           programInList.setMarkerArr(MutableProgram.EMPTY_MARKER_ARR);
           programInList.setProgramState(Program.WAS_DELETED_STATE);
         }
