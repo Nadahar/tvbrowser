@@ -182,7 +182,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
         Localizer.I18N_TODAY), "#goToToday", scrollTo
         + Localizer.getLocalization(Localizer.I18N_TODAY), IconLoader
         .getInstance().getIconFromTheme("actions", "go-down", 16),
-        IconLoader.getInstance().getIconFromTheme("actions", "go-to-today",
+        IconLoader.getInstance().getIconFromTheme("actions", "go-down",
             22), ToolBar.BUTTON_ACTION, this);
     mGoToNextDayAction = createAction(mLocalizer.msg(
         "goToNextDay", "Next day"), "#goToNextDay", 
