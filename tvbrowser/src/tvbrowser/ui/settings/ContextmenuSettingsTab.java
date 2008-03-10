@@ -274,7 +274,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
       } else if (value instanceof ConfigMenuItem) {
         mItemSelected.setSelected(!mDeactivatedItems.contains(value));
 
-        mItemLabel.setIcon(IconLoader.getInstance().getIconFromTheme("categories", "preferences-desktop", 16));
+        mItemLabel.setIcon(IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
         mItemLabel.setText(value.toString());
         mItemLabel.setForeground(label.getForeground());
 

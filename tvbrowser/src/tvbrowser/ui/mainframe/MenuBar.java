@@ -134,7 +134,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
   
   private void createMenuItems() {
       
-    mSettingsMI = new JMenuItem(mLocalizer.msg("menuitem.settings", "Settings..."), IconLoader.getInstance().getIconFromTheme("category", "preferences-desktop", 16));
+    mSettingsMI = new JMenuItem(mLocalizer.msg("menuitem.settings", "Settings..."), IconLoader.getInstance().getIconFromTheme("category", "preferences-system", 16));
     mSettingsMI.addActionListener(this);
     new MenuHelpTextAdapter(mSettingsMI, mLocalizer.msg("menuinfo.settings",""), mLabel); 
 
@@ -296,7 +296,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mWebsiteMI.addActionListener(this);
     new MenuHelpTextAdapter(mWebsiteMI,mLocalizer.msg("website.tvbrowser",""),mLabel); 
     
-    mConfigAssistantMI=new JMenuItem(mLocalizer.msg("menuitem.configAssistant","setup assistant"),IconLoader.getInstance().getIconFromTheme("category", "preferences-desktop", 16));
+    mConfigAssistantMI=new JMenuItem(mLocalizer.msg("menuitem.configAssistant","setup assistant"),IconLoader.getInstance().getIconFromTheme("category", "preferences-system", 16));
     mConfigAssistantMI.addActionListener(this);
     new MenuHelpTextAdapter(mConfigAssistantMI,mLocalizer.msg("menuinfo.configAssistant",""),mLabel);
     

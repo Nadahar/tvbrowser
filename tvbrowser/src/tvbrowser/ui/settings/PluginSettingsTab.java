@@ -284,7 +284,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     
     //configure
     JMenuItem configureMI;
-    configureMI = new JMenuItem(mLocalizer.msg("configure", ""),IconLoader.getInstance().getIconFromTheme("category", "preferences-desktop", 16));
+    configureMI = new JMenuItem(mLocalizer.msg("configure", ""),IconLoader.getInstance().getIconFromTheme("category", "preferences-system", 16));
     configureMI.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
           mSettingsDialog.showSettingsTab(plugin.getSettingsId());
@@ -320,7 +320,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
 
     //configure
     JMenuItem configureMI;
-   	configureMI = new JMenuItem(mLocalizer.msg("configure", ""),IconLoader.getInstance().getIconFromTheme("category", "preferences-desktop", 16));
+   	configureMI = new JMenuItem(mLocalizer.msg("configure", ""),IconLoader.getInstance().getIconFromTheme("category", "preferences-system", 16));
    	configureMI.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
           mSettingsDialog.showSettingsTab(plugin.getId());

@@ -96,7 +96,7 @@ public abstract class PluginContextMenu extends AbstractContextMenu {
     if (hasSettingsTab()) {
       menu.addSeparator();
       JMenuItem menuItem = MenuUtil.createMenuItem(Localizer.getLocalization(Localizer.I18N_SETTINGS)+"...");
-      menuItem.setIcon(IconLoader.getInstance().getIconFromTheme("categories", "preferences-desktop", 16));
+      menuItem.setIcon(IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
       menu.add(menuItem);
       menuItem.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {

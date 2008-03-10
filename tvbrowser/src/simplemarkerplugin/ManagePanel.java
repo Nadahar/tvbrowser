@@ -418,7 +418,7 @@ public class ManagePanel {
     JPanel p = new JPanel(new FormLayout("pref,5dlu,pref,5dlu,pref,5dlu,pref", "pref"));;
 
     mSettings = new JButton(SimpleMarkerPlugin.getInstance().createImageIcon("categories",
-        "preferences-desktop", 16));    
+        "preferences-system", 16));    
     mSend = new JButton(SimpleMarkerPlugin.getInstance().createImageIcon(
         "actions", "edit-copy", 16));
     mDelete = new JButton(SimpleMarkerPlugin.getInstance().createImageIcon(

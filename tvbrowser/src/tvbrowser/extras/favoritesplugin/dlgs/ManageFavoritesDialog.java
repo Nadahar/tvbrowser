@@ -321,7 +321,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     }
 
     msg = mLocalizer.msg("settings","Open settings");
-    icon = FavoritesPlugin.getInstance().getIconFromTheme("categories","preferences-desktop", 22);
+    icon = FavoritesPlugin.getInstance().getIconFromTheme("categories","preferences-system", 22);
     JButton settings = UiUtilities.createToolBarButton(msg, icon);
 
     settings.addActionListener(new ActionListener() {

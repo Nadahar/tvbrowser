@@ -205,7 +205,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
 
     ButtonBarBuilder builder = ButtonBarBuilder.createLeftToRightBuilder();
 
-    JButton config = new JButton(IconLoader.getInstance().getIconFromTheme("categories", "preferences-desktop", 16));
+    JButton config = new JButton(IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
 
     config.setToolTipText(mLocalizer.msg("config", "Configure Reminder"));
     

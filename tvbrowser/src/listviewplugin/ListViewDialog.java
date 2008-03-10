@@ -516,7 +516,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
     JPanel p = new JPanel(new FormLayout("pref,5dlu,pref,5dlu,pref", "pref"));;
     JButton settings = new JButton(mPlugin.createImageIcon("categories",
-        "preferences-desktop", 16));    
+        "preferences-system", 16));    
     settings.setToolTipText(mLocalizer.msg("settings","Open settings"));
 
     settings.addActionListener(new ActionListener() {
