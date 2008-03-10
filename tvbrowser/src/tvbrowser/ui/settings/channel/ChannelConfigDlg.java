@@ -139,13 +139,13 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
 
     panel.setBorder(Borders.DLU4_BORDER);
 
-    panel.add(new JLabel(mLocalizer.msg("channelName", "Channel Name") + ":"), cc.xy(1, 1));
+    panel.add(new JLabel(mLocalizer.msg("channelName", "Channel Name:")), cc.xy(1, 1));
 
     mChannelName = new JTextField(mChannel.getName());
     
     panel.add(mChannelName, cc.xy(3, 1));
 
-    panel.add(new JLabel(mLocalizer.msg("channelLogo", "Channel Logo") + ":"), cc.xy(1, 3));    
+    panel.add(new JLabel(mLocalizer.msg("channelLogo", "Channel Logo:")), cc.xy(1, 3));    
 
     if (mChannel.getUserIconFileName() != null)
       mIconFile = new File(mChannel.getUserIconFileName());
@@ -172,13 +172,13 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
 
     panel.add(mUseUserIcon, cc.xy(3, 3));
 
-    panel.add(new JLabel(mLocalizer.msg("webAddress", "Web Address") + ":"), cc.xy(1, 7));
+    panel.add(new JLabel(mLocalizer.msg("webAddress", "Web Address:")), cc.xy(1, 7));
 
     mWebPage =new JTextField(mChannel.getWebpage()); 
     
     panel.add(mWebPage, cc.xy(3, 7));
 
-    panel.add(new JLabel(mLocalizer.msg("time", "Time Correction") + ":"), cc.xy(1, 9));
+    panel.add(new JLabel(mLocalizer.msg("time", "Time Correction:")), cc.xy(1, 9));
 
     mCorrectionCB = new JComboBox(new String[] { "-1:00", "0:00", "+1:00" });
     mCorrectionCB.setSelectedIndex(mChannel.getDayLightSavingTimeCorrection() + 1);
@@ -194,7 +194,7 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
     
     ButtonBarBuilder builder = new ButtonBarBuilder();
     
-    JButton defaultButton = new JButton(mLocalizer.msg("default", "Default"));
+    JButton defaultButton = new JButton(Localizer.getLocalization(Localizer.I18N_DEFAULT));
     
     defaultButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
