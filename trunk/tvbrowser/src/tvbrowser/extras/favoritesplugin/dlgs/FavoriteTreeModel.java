@@ -67,11 +67,6 @@ public class FavoriteTreeModel extends DefaultTreeModel {
   private static FavoriteTreeModel mInstance;
 
   /**
-   * private cache for current date, used during plugin tree update
-   */
-  private Date mCurrentDate;
-
-  /**
    * Creates an instance of this class.
    * 
    * @param root The root node for this model. 
@@ -388,12 +383,18 @@ public class FavoriteTreeModel extends DefaultTreeModel {
             if(progArr.length <= 10) {
               newNode.setGroupingByDateEnabled(false);
             }
+            boolean episodeOnly = progArr.length > 1;
+            for (Program program : progArr) {
+              String episode = program.getTextField(ProgramFieldType.EPISODE_TYPE);
+              if (episode == null || episode.length() == 0 || episode.trim().length() == 0) {
+                episodeOnly = false;
+                break;
+              }
+            }
 
             for (Program program : progArr) {
               PluginTreeNode pNode = newNode.addProgramWithoutCheck(program);
-
-              int numberOfDays = program.getDate().getNumberOfDaysSince(mCurrentDate);
-              if ((progArr.length <= 10) || (numberOfDays > 1)) {
+              if (episodeOnly) {
                 pNode.setNodeFormatter(new NodeFormatter() {
                   public String format(ProgramItem pitem) {
                     Program p = pitem.getProgram();
@@ -508,7 +509,6 @@ public class FavoriteTreeModel extends DefaultTreeModel {
   }
 
   public void updatePluginTree(PluginTreeNode rootNode) {
-    mCurrentDate = Date.getCurrentDate();
     updatePluginTree(rootNode,null);
   }
     
