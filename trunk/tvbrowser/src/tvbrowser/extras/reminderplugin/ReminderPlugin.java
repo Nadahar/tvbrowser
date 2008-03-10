@@ -572,7 +572,7 @@ public class ReminderPlugin {
         MainFrame.getInstance().showSettingsDialog(SettingsItem.REMINDER);
       }
     };
-    openSettings.putValue(Action.SMALL_ICON, IconLoader.getInstance().getIconFromTheme("categories", "preferences-desktop", 16));
+    openSettings.putValue(Action.SMALL_ICON, IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
     openSettings.putValue(Action.NAME, Localizer.getLocalization(Localizer.I18N_SETTINGS));
     
     mRootNode.addAction(editReminders);

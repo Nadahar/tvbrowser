@@ -378,7 +378,7 @@ public class ContextMenuManager {
 	        rootMenu.addSeparator();
       } else if (menuIf instanceof ConfigMenuItem) {
         JMenuItem item = new JMenuItem(menuIf.toString());
-        item.setIcon(IconLoader.getInstance().getIconFromTheme("categories", "preferences-desktop", 16));
+        item.setIcon(IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
         item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
         item.addActionListener(new ActionListener() {
           public void actionPerformed(java.awt.event.ActionEvent e) {

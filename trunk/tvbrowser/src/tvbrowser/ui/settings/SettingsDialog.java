@@ -329,7 +329,7 @@ public class SettingsDialog implements WindowClosingIf {
     SettingNode node;
 
     icon = IconLoader.getInstance().getIconFromTheme("category",
-        "preferences-desktop", 16);
+        "preferences-system", 16);
     SettingNode root = new SettingNode(new DefaultSettingsTab(Localizer
         .getLocalization(Localizer.I18N_SETTINGS), icon));
 

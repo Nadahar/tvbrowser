@@ -171,7 +171,7 @@ public class ProgramListDialog extends JDialog implements WindowClosingIf {
     content.add(buttonPn, BorderLayout.SOUTH);
     
     JButton buttonSettings = new JButton(TimeListPlugin.getInstance().createImageIcon("categories",
-        "preferences-desktop", 16));    
+        "preferences-system", 16));    
     buttonSettings.setToolTipText(mLocalizer.msg("settings","Open settings"));
 
     buttonSettings.addActionListener(new ActionListener() {

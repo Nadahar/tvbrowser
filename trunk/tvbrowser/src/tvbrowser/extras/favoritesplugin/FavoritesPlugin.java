@@ -796,7 +796,7 @@ public class FavoritesPlugin {
         MainFrame.getInstance().showSettingsDialog(SettingsItem.FAVORITE);
       }
     };
-    openSettings.putValue(Action.SMALL_ICON, getIconFromTheme("categories", "preferences-desktop", 16));
+    openSettings.putValue(Action.SMALL_ICON, getIconFromTheme("categories", "preferences-system", 16));
     openSettings.putValue(Action.NAME, Localizer.getLocalization(Localizer.I18N_SETTINGS));
     
     mRootNode.addAction(manageFavorite);

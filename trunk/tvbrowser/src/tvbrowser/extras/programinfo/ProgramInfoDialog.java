@@ -237,7 +237,7 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
     
     mConfigBtn = new JButton(mLocalizer.msg("config","Configure view"));
     mConfigBtn.setIcon(IconLoader.getInstance().getIconFromTheme("categories",
-        "preferences-desktop", 16));
+        "preferences-system", 16));
     
     JPanel bottomLeft = new JPanel(new BorderLayout(3,0));    
     
@@ -407,7 +407,7 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
           }
         };
 
-        action.putValue(Action.SMALL_ICON,IconLoader.getInstance().getIconFromTheme("categories", "preferences-desktop", 16));
+        action.putValue(Action.SMALL_ICON,IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
         action.putValue(Action.NAME, ConfigMenuItem.getInstance().toString());
 
         ActionMenu configure = new ActionMenu(action);
