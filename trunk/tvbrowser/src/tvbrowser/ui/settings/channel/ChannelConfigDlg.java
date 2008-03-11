@@ -37,7 +37,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -49,8 +48,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.SwingConstants;
 
 import util.ui.CaretPositionCorrector;
 import util.ui.ImageUtilities;
@@ -89,9 +87,6 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
   /** Button to Change FileName */
   private JButton mChangeIcon;
 
-  /** use User-Icon */
-  private JCheckBox mUseUserIcon;
-
   /** Channel-Name */
   private JTextField mChannelName;
   /** Channel-WebPage*/
@@ -101,6 +96,7 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
   private JSpinner mStartTimeLimit;
   /** End time limit selection */
   private JSpinner mEndTimeLimit;
+  private JLabel mIconLabel;
   
   /**
    * Create the Dialog 
@@ -147,30 +143,20 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
 
     panel.add(new JLabel(mLocalizer.msg("channelLogo", "Channel Logo:")), cc.xy(1, 3));    
 
-    if (mChannel.getUserIconFileName() != null)
+    if (mChannel.getUserIconFileName() != null) {
       mIconFile = new File(mChannel.getUserIconFileName());
-
-    mChangeIcon = new JButton(createUserIcon());
-    mChangeIcon.setEnabled(mChannel.isUsingUserIcon());
-
+    }
+    
+    mIconLabel = new JLabel(createUserIcon());
+    mChangeIcon = new JButton(mLocalizer.msg("useIcon", "Select channel icon"));
     mChangeIcon.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         changeIcon();
       }
     });
 
+    panel.add(mIconLabel, cc.xy(3, 3));
     panel.add(mChangeIcon, cc.xy(3, 5));
-
-    mUseUserIcon = new JCheckBox(mLocalizer.msg("useIcon", "Use own channel-icon"));
-    mUseUserIcon.setSelected(mChannel.isUsingUserIcon());
-
-    mUseUserIcon.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-        mChangeIcon.setEnabled(mUseUserIcon.isSelected());
-      }
-    });
-
-    panel.add(mUseUserIcon, cc.xy(3, 3));
 
     panel.add(new JLabel(mLocalizer.msg("webAddress", "Web Address:")), cc.xy(1, 7));
 
@@ -233,8 +219,8 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
     ((JSpinner.DateEditor)mStartTimeLimit.getEditor()).getTextField().setBorder(BorderFactory.createEmptyBorder(0,2,0,0));
     ((JSpinner.DateEditor)mEndTimeLimit.getEditor()).getTextField().setBorder(BorderFactory.createEmptyBorder(0,2,0,0));
     
-    ((JSpinner.DateEditor)mStartTimeLimit.getEditor()).getTextField().setHorizontalAlignment(JTextField.LEFT);    
-    ((JSpinner.DateEditor)mEndTimeLimit.getEditor()).getTextField().setHorizontalAlignment(JTextField.LEFT);
+    ((JSpinner.DateEditor)mStartTimeLimit.getEditor()).getTextField().setHorizontalAlignment(SwingConstants.LEFT);    
+    ((JSpinner.DateEditor)mEndTimeLimit.getEditor()).getTextField().setHorizontalAlignment(SwingConstants.LEFT);
     
     CaretPositionCorrector.createCorrector(((JSpinner.DateEditor)mStartTimeLimit.getEditor()).getTextField(), new char[] {':'}, -1);
     CaretPositionCorrector.createCorrector(((JSpinner.DateEditor)mEndTimeLimit.getEditor()).getTextField(), new char[] {':'}, -1);
@@ -283,7 +269,8 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
   private void resetToDefaults() {
     mWebPage.setText(mChannel.getDefaultWebPage());
     mChannelName.setText(mChannel.getDefaultName());
-    mUseUserIcon.setSelected(false);
+    mIconFile = null;
+    mIconLabel.setIcon(createUserIcon());
     mCorrectionCB.setSelectedIndex(1);
     setTimeDate(mStartTimeLimit, 0);
     setTimeDate(mEndTimeLimit, 0);
@@ -303,7 +290,7 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
         icon = UiUtilities.createChannelIcon(mChannel.getIcon());
       }
     } else {
-      icon = UiUtilities.createChannelIcon(mChannel.getIcon());
+      icon = UiUtilities.createChannelIcon(mChannel.getDefaultIcon());
     }
 
     return icon;
@@ -315,12 +302,13 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
   private void changeIcon() {
     JFileChooser fileChooser = new JFileChooser(mIconFile);
     String[] extArr = { ".jpg", ".jpeg", ".gif", ".png" };
-    fileChooser.setFileFilter(new util.ui.ExtensionFileFilter(extArr, ".jpg, .gif, png"));
-    fileChooser.showOpenDialog(this);
-    File selection = fileChooser.getSelectedFile();
-    if (selection != null) {
-      mIconFile = selection;
-      mChangeIcon.setIcon(createUserIcon());
+    fileChooser.setFileFilter(new util.ui.ExtensionFileFilter(extArr, ".jpg, .gif, .png"));
+    if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+      File selection = fileChooser.getSelectedFile();
+      if (selection != null) {
+        mIconFile = selection;
+        mIconLabel.setIcon(createUserIcon());
+      }
     }
   }
 
@@ -336,7 +324,7 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
     if (o == mOKBt) {
       int correction = mCorrectionCB.getSelectedIndex() - 1;
       mChannel.setDayLightSavingTimeCorrection(correction);
-      mChannel.useUserIcon(mUseUserIcon.isSelected());
+      mChannel.useUserIcon(mIconFile != null);
       if (mIconFile != null) {
         mChannel.setUserIconFileName(mIconFile.getAbsolutePath());
       } else {
