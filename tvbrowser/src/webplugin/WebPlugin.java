@@ -60,7 +60,7 @@ import devplugin.Version;
  * A User can configure his favorite Search-Engines and search for the given Movie
  */
 public class WebPlugin extends Plugin {
-  private static final Version mVersion = new Version(2,60);
+  private static final Version mVersion = new Version(2,70);
 
   private static java.util.logging.Logger mLog = java.util.logging.Logger
   .getLogger(WebPlugin.class.getName());
