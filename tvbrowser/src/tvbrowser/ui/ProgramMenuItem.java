@@ -39,6 +39,7 @@ import javax.swing.Icon;
 import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.ToolTipManager;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.contextmenu.ContextMenuManager;
@@ -83,6 +84,9 @@ public class ProgramMenuItem extends JMenuItem {
   protected static final int SOON_TYPE = 1;
   protected static final int ON_TIME_TYPE = 2;
   protected static final int IMPORTANT_TYPE = 3;
+  
+  private boolean mShowToolTip = true;
+  private String mToolTipTextBuffer;
 
   /**
    * Creates the JMenuItem.
@@ -96,28 +100,28 @@ public class ProgramMenuItem extends JMenuItem {
   public ProgramMenuItem(Program p, int type, int time, int n) {
     mProgram = p;
     mBackground = getBackground();
-    boolean showToolTip = true, showIcon = true;
+    boolean showIcon = true;
     
     if(type == NOW_TYPE) {
       mShowStartTime = Settings.propTrayNowProgramsContainsTime.getBoolean();
       mShowDate = false;
       mShowName = Settings.propTrayNowProgramsContainsName.getBoolean();
       showIcon = Settings.propTrayNowProgramsContainsIcon.getBoolean();
-      showToolTip = Settings.propTrayNowProgramsContainsToolTip.getBoolean();
+      mShowToolTip = Settings.propTrayNowProgramsContainsToolTip.getBoolean();
     }
     else if(type == SOON_TYPE) {
       mShowStartTime = Settings.propTraySoonProgramsContainsTime.getBoolean();
       mShowDate = false;
       mShowName = Settings.propTraySoonProgramsContainsName.getBoolean();
       showIcon = Settings.propTraySoonProgramsContainsIcon.getBoolean();
-      showToolTip = Settings.propTraySoonProgramsContainsToolTip.getBoolean();      
+      mShowToolTip = Settings.propTraySoonProgramsContainsToolTip.getBoolean();      
     }
     else if(type == ON_TIME_TYPE) {
       mShowStartTime = Settings.propTrayOnTimeProgramsContainsTime.getBoolean();
       mShowDate = false;
       mShowName = Settings.propTrayOnTimeProgramsContainsName.getBoolean();
       showIcon = Settings.propTrayOnTimeProgramsContainsIcon.getBoolean();
-      showToolTip = Settings.propTrayOnTimeProgramsContainsToolTip.getBoolean();
+      mShowToolTip = Settings.propTrayOnTimeProgramsContainsToolTip.getBoolean();
       
       if(!Settings.propTrayOnTimeProgramsShowProgress.getBoolean())
         time = -1;
@@ -127,7 +131,7 @@ public class ProgramMenuItem extends JMenuItem {
       mShowDate = Settings.propTrayImportantProgramsContainsDate.getBoolean();
       mShowName = Settings.propTrayImportantProgramsContainsName.getBoolean();
       showIcon = Settings.propTrayImportantProgramsContainsIcon.getBoolean();
-      showToolTip = Settings.propTrayImportantProgramsContainsToolTip.getBoolean();
+      mShowToolTip = Settings.propTrayImportantProgramsContainsToolTip.getBoolean();
     }
     else {
       mShowStartTime = true;
@@ -136,6 +140,12 @@ public class ProgramMenuItem extends JMenuItem {
     }
         
     mChannelName = new TextAreaIcon(p.getChannel().getName(), mBoldFont, Settings.propTrayChannelWidth.getInt());
+    
+    if(mShowToolTip) {
+      ToolTipManager toolTipManager = ToolTipManager.sharedInstance();
+      
+      toolTipManager.registerComponent(this);
+    }
 
     if((n & 1) == 1 && n != -1) {
       Color temp = mBackground.darker();
@@ -169,68 +179,6 @@ public class ProgramMenuItem extends JMenuItem {
       
     mInsets = getMargin();
     setUI(new ProgramMenuItemUI(p, mChannelName,mIcon,mShowStartTime,mShowDate,showIcon,mShowName,time));
-    
-    if (showToolTip) {
-      int end = p.getStartTime() + p.getLength();
-
-      if (end > 1440)
-        end -= 1440;
-
-      String hour = String.valueOf(end / 60);
-      String minute = String.valueOf(end % 60);
-
-      String episodeText = CompoundedProgramFieldType.EPISODE_COMPOSITION.getFormatedValueForProgram(mProgram);
-      
-      StringBuffer episode = new StringBuffer(episodeText != null ? episodeText : "");
-      
-      for (int i = 20; i < episode.length(); i += 28) {
-        int index = episode.indexOf(" ", i);
-        if (index == -1)
-          index = episode.indexOf("\n", i);
-        if (index != -1) {
-          episode.deleteCharAt(index);
-          episode.insert(index, "<br>");
-          i += index - i;
-        }
-      }
-      
-      String desc = p.getDescription();
-      
-      if(desc != null) {
-        if(desc.length() > 197) {
-          desc = desc.substring(0,197) + "..."; 
-        }
-        else {
-          desc += "...";
-        }
-      }
-      else {
-        desc = "";
-      }
-      
-      StringBuffer info = new StringBuffer(p.getShortInfo() == null ? desc : p
-          .getShortInfo());
-      
-      if (minute.length() == 1)
-        minute = "0" + minute;
-      
-      for (int i = 20; i < info.length(); i += 28) {
-        int index = info.indexOf(" ", i);
-        if (index == -1)
-          index = info.indexOf("\n", i);
-        if (index != -1) {
-          info.deleteCharAt(index);
-          info.insert(index, "<br>");
-          i += index - i;
-        }
-      }
-
-      StringBuffer toolTip = new StringBuffer(episode.length() > 0 ? episode.insert(0,"<b>").append("</b><br>") : "").append(mLocalizer.msg("to", "To: "))
-          .append(hour).append(":").append(minute).append(
-              info.length() > 0 ? "<br>" : "").append(info);
-
-      setToolTipText("<html>" + toolTip + "</html>");
-    }
     
     mTimer = new Timer(10000, new ActionListener() {
 
@@ -316,4 +264,78 @@ public class ProgramMenuItem extends JMenuItem {
   protected Color getDefaultBackground() {
     return mBackground;
   }  
+  
+  public String getToolTipText() {
+    if (mShowToolTip) {
+      if(mToolTipTextBuffer == null) {
+        int end = mProgram.getStartTime() + mProgram.getLength();
+  
+        if (end > 1440)
+          end -= 1440;
+  
+        String hour = String.valueOf(end / 60);
+        String minute = String.valueOf(end % 60);
+  
+        String episodeText = CompoundedProgramFieldType.EPISODE_COMPOSITION.getFormatedValueForProgram(mProgram);
+        
+        StringBuffer episode = new StringBuffer(episodeText != null ? episodeText : "");
+        
+        for (int i = 20; i < episode.length(); i += 28) {
+          int index = episode.indexOf(" ", i);
+          if (index == -1)
+            index = episode.indexOf("\n", i);
+          if (index != -1) {
+            episode.deleteCharAt(index);
+            episode.insert(index, "<br>");
+            i += index - i;
+          }
+        }
+        
+        String desc = mProgram.getDescription();
+        
+        if(desc != null) {
+          if(desc.length() > 197) {
+            desc = desc.substring(0,197) + "..."; 
+          }
+          else {
+            desc += "...";
+          }
+        }
+        else {
+          desc = "";
+        }
+        
+        StringBuffer info = new StringBuffer(mProgram.getShortInfo() == null ? desc : mProgram
+            .getShortInfo());
+        
+        if (minute.length() == 1)
+          minute = "0" + minute;
+        
+        for (int i = 20; i < info.length(); i += 28) {
+          int index = info.indexOf(" ", i);
+          if (index == -1)
+            index = info.indexOf("\n", i);
+          if (index != -1) {
+            info.deleteCharAt(index);
+            info.insert(index, "<br>");
+            i += index - i;
+          }
+        }
+  
+        StringBuffer toolTip = new StringBuffer("<html>").append(episode.length() > 0 ? episode.insert(0,"<b>").append("</b><br>") : "").append(mLocalizer.msg("to", "To: "))
+            .append(hour).append(":").append(minute).append(
+                info.length() > 0 ? "<br>" : "").append(info).append("</html>");
+  
+        mToolTipTextBuffer = toolTip.toString();
+      }
+      
+      return mToolTipTextBuffer;
+    }
+    
+    return "";
+  }
+  
+  public String getToolTipText(MouseEvent e) {
+    return getToolTipText();
+  }
 }
