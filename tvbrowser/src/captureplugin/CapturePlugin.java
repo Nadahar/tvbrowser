@@ -622,34 +622,34 @@ public class CapturePlugin extends devplugin.Plugin {
               });
               
               chooser.setSelectedFile(new File("RemovedPrograms.txt"));
-              chooser.showSaveDialog(UiUtilities.getLastModalChildOf(getParentFrame()));
-              
-              if(chooser.getSelectedFile() != null) {
-                String file = chooser.getSelectedFile().getAbsolutePath();
-                
-                if(!file.toLowerCase().endsWith(".txt") && file.indexOf(".") == -1)
-                  file = file + ".txt";
-                
-                if(file.indexOf(".") != -1) {
-                  try {
-                    RandomAccessFile write = new RandomAccessFile(file,"rw");
-                    write.setLength(0);
-                    
-                    String eolStyle = File.separator.equals("/") ? "\n" : "\r\n";
-                    
-                    for(int i = 0; i < model.getRowCount(); i++) {
-                      StringBuffer line = new StringBuffer();
+              if (chooser.showSaveDialog(UiUtilities.getLastModalChildOf(getParentFrame())) == JFileChooser.APPROVE_OPTION) {
+                if(chooser.getSelectedFile() != null) {
+                  String file = chooser.getSelectedFile().getAbsolutePath();
+                  
+                  if(!file.toLowerCase().endsWith(".txt") && file.indexOf(".") == -1)
+                    file = file + ".txt";
+                  
+                  if(file.indexOf(".") != -1) {
+                    try {
+                      RandomAccessFile write = new RandomAccessFile(file,"rw");
+                      write.setLength(0);
                       
-                      for(int j = 0; j < model.getColumnCount(); j++)
-                        line.append(model.getValueAt(i,j)).append(" ");
+                      String eolStyle = File.separator.equals("/") ? "\n" : "\r\n";
                       
-                      line.append(eolStyle);
+                      for(int i = 0; i < model.getRowCount(); i++) {
+                        StringBuffer line = new StringBuffer();
+                        
+                        for(int j = 0; j < model.getColumnCount(); j++)
+                          line.append(model.getValueAt(i,j)).append(" ");
+                        
+                        line.append(eolStyle);
+                        
+                        write.writeBytes(line.toString());
+                      }
                       
-                      write.writeBytes(line.toString());
-                    }
-                    
-                    write.close();
-                  }catch(Exception ee) {}
+                      write.close();
+                    }catch(Exception ee) {}
+                  }
                 }
               }
             }
