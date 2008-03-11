@@ -921,89 +921,90 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     String[] extArr = { ".txt" };
     String msg = mLocalizer.msg("importFile.TVgenial", "Text file (from TVgenial) (.txt)");
     fileChooser.setFileFilter(new ExtensionFileFilter(extArr, msg));
-    fileChooser.showOpenDialog(this);
+    if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 
-    File file = fileChooser.getSelectedFile();
-    if (file != null) {
-      FileReader reader = null;
-      int importedFavoritesCount = 0;
-      try {
-        reader = new FileReader(file);
-        BufferedReader lineReader = new BufferedReader(reader);
-        String line;
-        while ((line = lineReader.readLine()) != null) {
-          line = line.trim();
-          if ((line.length() > 0) && (! line.startsWith("***"))) {
-            // This is a favorite -> Check whether we already have such a favorite
-            boolean alreadyKnown = false;
-            if (mFavoritesListModel != null) {
-                @SuppressWarnings("unchecked")
-                Enumeration<Favorite> en = (Enumeration<Favorite>) mFavoritesListModel.elements();
-                          while (en.hasMoreElements()) {
-                            Favorite fav = en.nextElement();
-                            String favName = fav.getName();
-                            if (line.equalsIgnoreCase(favName)) {
-                              alreadyKnown = true;
-                              break;
+      File file = fileChooser.getSelectedFile();
+      if (file != null) {
+        FileReader reader = null;
+        int importedFavoritesCount = 0;
+        try {
+          reader = new FileReader(file);
+          BufferedReader lineReader = new BufferedReader(reader);
+          String line;
+          while ((line = lineReader.readLine()) != null) {
+            line = line.trim();
+            if ((line.length() > 0) && (! line.startsWith("***"))) {
+              // This is a favorite -> Check whether we already have such a favorite
+              boolean alreadyKnown = false;
+              if (mFavoritesListModel != null) {
+                  @SuppressWarnings("unchecked")
+                  Enumeration<Favorite> en = (Enumeration<Favorite>) mFavoritesListModel.elements();
+                            while (en.hasMoreElements()) {
+                              Favorite fav = en.nextElement();
+                              String favName = fav.getName();
+                              if (line.equalsIgnoreCase(favName)) {
+                                alreadyKnown = true;
+                                break;
+                              }
                             }
-                          }
-
-                // Import the favorite if it is new
-                if (! alreadyKnown) {
-                  AdvancedFavorite fav = new AdvancedFavorite(line);
-                  fav.updatePrograms();
-
-                  mFavoritesListModel.addElement(fav);
-                  importedFavoritesCount++;
-                }
-            } else if (mFavoriteTree != null) {
-                for (final Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()){
-                    String favName = fav.getName();
-                    if (line.equalsIgnoreCase(favName)) {
-                      alreadyKnown = true;
-                      break;
-                    }
-                }
-
-                // Import the favorite if it is new
-                if (! alreadyKnown) {
-                  AdvancedFavorite fav = new AdvancedFavorite(line);
-                  fav.updatePrograms();
-                  FavoriteTreeModel.getInstance().addFavorite(fav);
-                  importedFavoritesCount++;
-                }
+  
+                  // Import the favorite if it is new
+                  if (! alreadyKnown) {
+                    AdvancedFavorite fav = new AdvancedFavorite(line);
+                    fav.updatePrograms();
+  
+                    mFavoritesListModel.addElement(fav);
+                    importedFavoritesCount++;
+                  }
+              } else if (mFavoriteTree != null) {
+                  for (final Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()){
+                      String favName = fav.getName();
+                      if (line.equalsIgnoreCase(favName)) {
+                        alreadyKnown = true;
+                        break;
+                      }
+                  }
+  
+                  // Import the favorite if it is new
+                  if (! alreadyKnown) {
+                    AdvancedFavorite fav = new AdvancedFavorite(line);
+                    fav.updatePrograms();
+                    FavoriteTreeModel.getInstance().addFavorite(fav);
+                    importedFavoritesCount++;
+                  }
+              }
             }
           }
         }
-      }
-      catch (Exception exc) {
-        msg = mLocalizer.msg("error.1", "Importing text file failed: {0}.",
-                             file.getAbsolutePath());
-        ErrorHandler.handle(msg, exc);
-      }
-      finally {
-        if (reader != null) {
-          try { reader.close(); } catch (IOException exc) {
-            // ignore
+        catch (Exception exc) {
+          msg = mLocalizer.msg("error.1", "Importing text file failed: {0}.",
+                               file.getAbsolutePath());
+          ErrorHandler.handle(msg, exc);
+        }
+        finally {
+          if (reader != null) {
+            try { reader.close(); } catch (IOException exc) {
+              // ignore
+            }
           }
         }
-      }
-
-      if (importedFavoritesCount == 0) {
-        msg = mLocalizer.msg("error.2", "There are no new favorites in {0}.",
-                             file.getAbsolutePath());
-        JOptionPane.showMessageDialog(this, msg);
-      } else {
-        // Scroll to the end
-        mFavoritesList.ensureIndexIsVisible(mFavoritesListModel.size() - 1);
-
-        // Select the first new fevorite
-        int firstNewIdx = mFavoritesListModel.size() - importedFavoritesCount;
-        mFavoritesList.setSelectedIndex(firstNewIdx);
-        mFavoritesList.ensureIndexIsVisible(firstNewIdx);
-
-        msg = mLocalizer.msg("importDone", "There were {0} new favorites imported.", importedFavoritesCount);
-        JOptionPane.showMessageDialog(this, msg);
+  
+        if (importedFavoritesCount == 0) {
+          msg = mLocalizer.msg("error.2", "There are no new favorites in {0}.",
+                               file.getAbsolutePath());
+          JOptionPane.showMessageDialog(this, msg);
+        } else {
+          // Scroll to the end
+          mFavoritesList.ensureIndexIsVisible(mFavoritesListModel.size() - 1);
+  
+          // Select the first new fevorite
+          int firstNewIdx = mFavoritesListModel.size() - importedFavoritesCount;
+          mFavoritesList.setSelectedIndex(firstNewIdx);
+          mFavoritesList.ensureIndexIsVisible(firstNewIdx);
+  
+          msg = mLocalizer.msg("importDone", "There were {0} new favorites imported.", importedFavoritesCount);
+          JOptionPane.showMessageDialog(this, msg);
+        }
       }
     }
   }

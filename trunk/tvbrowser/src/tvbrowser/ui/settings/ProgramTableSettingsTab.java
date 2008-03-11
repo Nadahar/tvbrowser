@@ -349,10 +349,11 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
         JFileChooser fileChooser = new JFileChooser(file.getParent());
         String[] extArr = { ".jpg", ".jpeg", ".gif", ".png" };
         fileChooser.setFileFilter(new util.ui.ExtensionFileFilter(extArr, ".jpg, .gif, png"));
-        fileChooser.showOpenDialog(parent);
-        File selection = fileChooser.getSelectedFile();
-        if (selection != null) {
-          tf.setText(selection.getAbsolutePath());
+        if (fileChooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION) {
+          File selection = fileChooser.getSelectedFile();
+          if (selection != null) {
+            tf.setText(selection.getAbsolutePath());
+          }
         }
       }
     });

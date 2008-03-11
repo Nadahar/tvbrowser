@@ -701,41 +701,41 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     Window w = UiUtilities.getLastModalChildOf(SimpleMarkerPlugin
         .getInstance().getSuperFrame());
 
-    chooser.showDialog(w, Localizer.getLocalization(Localizer.I18N_SELECT));
-
-    if (chooser.getSelectedFile() != null) {
-      File dir = new File(SimpleMarkerPlugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome(),"simplemarkericons");
-      
-      if(!dir.isDirectory())
-        dir.mkdir();
-
-      String ext =  chooser.getSelectedFile().getName();
-      ext = ext.substring(ext.lastIndexOf("."));
-      
-      Icon icon = SimpleMarkerPlugin.getInstance().getIconForFileName(
-          chooser.getSelectedFile().getAbsolutePath());
-
-      if (icon.getIconWidth() != 16 || icon.getIconHeight() != 16) {
-        JOptionPane.showMessageDialog(w, SimpleMarkerPlugin.mLocalizer.msg(
-            "iconSize", "The icon has to be 16x16 in size."));
-        return;
-      }
-      
-      if(!new File(dir, mListTable.getValueAt(row, 0).toString() + ext).equals(chooser.getSelectedFile())) {
-        try {
-          IOUtilities.copy(chooser.getSelectedFile(),new File(dir,mListTable.getValueAt(row, 0).toString() + ext));
-        } catch (IOException e1) {
-          e1.printStackTrace();
+    if (chooser.showDialog(w, Localizer.getLocalization(Localizer.I18N_SELECT)) == JFileChooser.APPROVE_OPTION) {
+      if (chooser.getSelectedFile() != null) {
+        File dir = new File(SimpleMarkerPlugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome(),"simplemarkericons");
+        
+        if(!dir.isDirectory())
+          dir.mkdir();
+  
+        String ext =  chooser.getSelectedFile().getName();
+        ext = ext.substring(ext.lastIndexOf("."));
+        
+        Icon icon = SimpleMarkerPlugin.getInstance().getIconForFileName(
+            chooser.getSelectedFile().getAbsolutePath());
+  
+        if (icon.getIconWidth() != 16 || icon.getIconHeight() != 16) {
+          JOptionPane.showMessageDialog(w, SimpleMarkerPlugin.mLocalizer.msg(
+              "iconSize", "The icon has to be 16x16 in size."));
+          return;
         }
+        
+        if(!new File(dir, mListTable.getValueAt(row, 0).toString() + ext).equals(chooser.getSelectedFile())) {
+          try {
+            IOUtilities.copy(chooser.getSelectedFile(),new File(dir,mListTable.getValueAt(row, 0).toString() + ext));
+          } catch (IOException e1) {
+            e1.printStackTrace();
+          }
+        }
+  
+        icon = SimpleMarkerPlugin.getInstance().getIconForFileName(
+               dir + "/" + mListTable.getValueAt(row, 0).toString() + ext);
+  
+        mListTable.setValueAt(icon, row, 1);
+  
+        ((MarkListItem) mListTable.getValueAt(row, 0))
+            .setMarkIconFileName(mListTable.getValueAt(row, 0).toString() + ext);
       }
-
-      icon = SimpleMarkerPlugin.getInstance().getIconForFileName(
-             dir + "/" + mListTable.getValueAt(row, 0).toString() + ext);
-
-      mListTable.setValueAt(icon, row, 1);
-
-      ((MarkListItem) mListTable.getValueAt(row, 0))
-          .setMarkIconFileName(mListTable.getValueAt(row, 0).toString() + ext);
     }
   }
 }
