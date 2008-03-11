@@ -104,6 +104,11 @@ public class WebPlugin extends Plugin {
   private PluginInfo mPluginInfo;
   
   /**
+   * show all available search items in menu, not only title search
+   */
+  private boolean mShowDetails = true;
+  
+  /**
    * Creates the Plugin
    */
   public WebPlugin() {
@@ -145,7 +150,7 @@ public class WebPlugin extends Plugin {
   public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
     mAddresses = new ArrayList<WebAddress>();
 
-    in.readInt(); // version number
+    int version = in.readInt();
 
     int size = in.readInt();
 
@@ -174,13 +179,17 @@ public class WebPlugin extends Plugin {
     for (int i = 0; i < defaults.size();i++) {
       mAddresses.add(defaults.get(i));
     }
+    
+    if (version >= 2) {
+      mShowDetails = in.readBoolean();
+    }
   }
 
   /**
    * Saves the Data
    */
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(1);
+    out.writeInt(2);
     if (mAddresses == null) {
       createDefaultSettings();
     }
@@ -191,6 +200,7 @@ public class WebPlugin extends Plugin {
       (mAddresses.get(i)).writeData(out);
     }
 
+    out.writeBoolean(mShowDetails);
   }
 
   /**
@@ -200,7 +210,7 @@ public class WebPlugin extends Plugin {
     if (mAddresses == null) {
       createDefaultSettings();
     }
-    return new WebSettingsTab((JFrame)getParentFrame(), mAddresses);
+    return new WebSettingsTab((JFrame)getParentFrame(), mAddresses, this);
   }
 
 
@@ -257,7 +267,7 @@ public class WebPlugin extends Plugin {
           if (address.getUrl().contains(WEBSEARCH_ALL) && listActors == null) {
             findSearchItems(program);
           }
-          if (address.getUrl().contains(WEBSEARCH_ALL) && (listActors.size() + listDirectors.size() + listScripts.size() > 0)) {
+          if (address.getUrl().contains(WEBSEARCH_ALL) && (listActors.size() + listDirectors.size() + listScripts.size() > 0) && mShowDetails) {
             ArrayList<Object> categoryList = new ArrayList<Object>();
             // title
             final WebAddress adrTitle = new WebAddress(address.getName(), address.getUrl().replace(WEBSEARCH_ALL, "\"" + program.getTitle() + "\""), null, false, true);
@@ -476,4 +486,11 @@ public class WebPlugin extends Plugin {
     }
   }
 
+  protected boolean getShowDetailMenus() {
+    return mShowDetails;
+  }
+
+  protected void setShowDetailMenus(boolean showDetails) {
+    mShowDetails = showDetails;
+  }
 }
