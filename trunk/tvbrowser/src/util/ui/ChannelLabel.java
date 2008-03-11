@@ -17,8 +17,6 @@
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 *
 * CVS information:
-*  $RCSfile$
-*   $Source$
 *     $Date$
 *   $Author$
 * $Revision$
@@ -31,6 +29,7 @@ import java.util.WeakHashMap;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JToolTip;
 
 import tvbrowser.core.Settings;
 import devplugin.Channel;
@@ -54,6 +53,8 @@ public class ChannelLabel extends JLabel {
   private boolean mShowCountry;
 
   private boolean mShowService;
+
+  private Channel mChannel;
   
   /**
    * Creates the ChannelLabel
@@ -154,6 +155,7 @@ public class ChannelLabel extends JLabel {
    * @param channel Channel to display
    */
   public void setChannel(Channel channel) {
+    mChannel = channel;
     if (mChannelIconsVisible) {
       setChannelIcon(channel, mShowDefaultValues ? channel.getDefaultIcon() : channel.getIcon());
     }
@@ -267,5 +269,17 @@ public class ChannelLabel extends JLabel {
    */
   public static void clearIconCache() {
     ICONCACHE.clear();
+  }
+
+  @Override
+  public JToolTip createToolTip() {
+    ToolTipWithIcon tip = null;
+    Icon icon = mChannel.getIcon();
+    if (icon instanceof ImageIcon) {
+      tip = new ToolTipWithIcon((ImageIcon) mChannel.getIcon());
+    } 
+    tip.setComponent(this);
+    tip.setTipText(mChannel.getName());
+    return tip ;
   }
 }
