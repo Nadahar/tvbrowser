@@ -43,6 +43,7 @@ import javax.swing.Timer;
 import tvbrowser.core.Settings;
 import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.contextmenu.DoNothingContextMenuItem;
+import util.program.CompoundedProgramFieldType;
 import util.ui.Localizer;
 import util.ui.TextAreaIcon;
 import util.ui.UiUtilities;
@@ -178,13 +179,42 @@ public class ProgramMenuItem extends JMenuItem {
       String hour = String.valueOf(end / 60);
       String minute = String.valueOf(end % 60);
 
-      StringBuffer info = new StringBuffer(p.getShortInfo() == null ? "" : p
+      String episodeText = CompoundedProgramFieldType.EPISODE_COMPOSITION.getFormatedValueForProgram(mProgram);
+      
+      StringBuffer episode = new StringBuffer(episodeText != null ? episodeText : "");
+      
+      for (int i = 20; i < episode.length(); i += 28) {
+        int index = episode.indexOf(" ", i);
+        if (index == -1)
+          index = episode.indexOf("\n", i);
+        if (index != -1) {
+          episode.deleteCharAt(index);
+          episode.insert(index, "<br>");
+          i += index - i;
+        }
+      }
+      
+      String desc = p.getDescription();
+      
+      if(desc != null) {
+        if(desc.length() > 197) {
+          desc = desc.substring(0,197) + "..."; 
+        }
+        else {
+          desc += "...";
+        }
+      }
+      else {
+        desc = "";
+      }
+      
+      StringBuffer info = new StringBuffer(p.getShortInfo() == null ? desc : p
           .getShortInfo());
-
+      
       if (minute.length() == 1)
         minute = "0" + minute;
-
-      for (int i = 20; i < info.length(); i += 24) {
+      
+      for (int i = 20; i < info.length(); i += 28) {
         int index = info.indexOf(" ", i);
         if (index == -1)
           index = info.indexOf("\n", i);
@@ -195,7 +225,7 @@ public class ProgramMenuItem extends JMenuItem {
         }
       }
 
-      StringBuffer toolTip = new StringBuffer(mLocalizer.msg("to", "To: "))
+      StringBuffer toolTip = new StringBuffer(episode.length() > 0 ? episode.insert(0,"<b>").append("</b><br>") : "").append(mLocalizer.msg("to", "To: "))
           .append(hour).append(":").append(minute).append(
               info.length() > 0 ? "<br>" : "").append(info);
 
