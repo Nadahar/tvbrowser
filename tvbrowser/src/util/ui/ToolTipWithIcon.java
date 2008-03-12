@@ -56,7 +56,10 @@ public class ToolTipWithIcon extends JToolTip {
         x += icon.getIconWidth() + 1;
       }
       g.setColor(c.getForeground());
-      g.drawString(((JToolTip) c).getTipText(), x, metrics.getHeight());
+      String text = ((JToolTip) c).getTipText();
+      if (text != null) {
+        g.drawString(text, x, metrics.getHeight());
+      }
     }
 
     public Dimension getPreferredSize(JComponent c) {
@@ -72,7 +75,11 @@ public class ToolTipWithIcon extends JToolTip {
         height = icon.getIconHeight() > height ? icon.getIconHeight()
             : height + 4;
       }
-      return new Dimension(width + 6, height);
+      // make some space between icon and text
+      if (icon != null && tipText.length() > 0) {
+        width += 6;
+      }
+      return new Dimension(width, height);
     }
   }
 }
