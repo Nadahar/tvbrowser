@@ -303,20 +303,20 @@ public class ProgramTextCreator {
 
       // Workaround: Without the &nbsp; the component are not put in one line.
       buffer.append("&nbsp;");
-      for (Marker marker : pluginArr) {
-        Icon[] icons = marker.getMarkIcons(prog);
+      for (int markerCount = pluginArr.length-1; markerCount >= 0; markerCount--) {
+        Icon[] icons = pluginArr[markerCount].getMarkIcons(prog);
 
         if (icons != null) {
-          for (Icon icon : icons) {
-            JLabel iconLabel = new JLabel(icon);
+          for(int i = icons.length - 1; i >= 0 ; i--) {
+            JLabel iconLabel = new JLabel(icons[i]);
             PluginAccess plugin = Plugin.getPluginManager()
-                .getActivatedPluginForId(marker.getId());
+                .getActivatedPluginForId(pluginArr[markerCount].getId());
 
             if (plugin != null) {
               iconLabel.setToolTipText(plugin.getInfo().getName());
             }
             else {
-            	iconLabel.setToolTipText(marker.toString());
+            	iconLabel.setToolTipText(pluginArr[markerCount].toString());
             }
 
             buffer.append(doc.createCompTag(iconLabel));
