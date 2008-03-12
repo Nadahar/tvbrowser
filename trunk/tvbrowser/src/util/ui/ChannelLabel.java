@@ -24,12 +24,16 @@
 package util.ui;
 
 import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
 import java.util.WeakHashMap;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JToolTip;
+import javax.swing.SwingUtilities;
 
 import tvbrowser.core.Settings;
 import devplugin.Channel;
@@ -181,7 +185,8 @@ public class ChannelLabel extends JLabel {
       setText(text.toString());
     }
     setMinimumSize(new Dimension(42,22));
-    setToolTipText(channel.getName());
+//    setToolTipText(channel.getName());
+    setToolTipText("");
   }
 
   /**
@@ -273,13 +278,52 @@ public class ChannelLabel extends JLabel {
 
   @Override
   public JToolTip createToolTip() {
-    ToolTipWithIcon tip = null;
-    Icon icon = mChannel.getIcon();
-    if (icon instanceof ImageIcon) {
+    boolean showIcon = false;
+    boolean showText = false;
+    JToolTip tip;
+    Icon channelIcon = mChannel.getIcon();
+    if (channelIcon != null && channelIcon instanceof ImageIcon) {
+      Icon shownIcon = this.getIcon();
+      if (shownIcon != null && (channelIcon.getIconHeight() > shownIcon.getIconHeight() || channelIcon.getIconWidth() > shownIcon.getIconWidth())) {
+        showIcon = true;
+      }
+    }
+    if (showIcon) {
       tip = new ToolTipWithIcon((ImageIcon) mChannel.getIcon());
-    } 
-    tip.setComponent(this);
-    tip.setTipText(mChannel.getName());
-    return tip ;
+      tip.setComponent(this);
+    }
+    else {
+      tip = super.createToolTip();
+    }
+    String text = "";
+    if (showText) {
+      text = mChannel.getName();
+    }
+    tip.setTipText(text);
+    this.setToolTipText(text);
+    // disable tooltip completely if nothing to show
+    if (!showText && !showIcon) {
+      this.setToolTipText(null);
+      tip.setToolTipText(null);
+    }
+    return tip;
   }
+
+  @Override
+  public Point getToolTipLocation(MouseEvent event) {
+    FontMetrics metrics = this.getFontMetrics(this.getFont());
+    int stringWidth = SwingUtilities.computeStringWidth(metrics, this.getText());
+    int x = 0;
+    Icon icon = this.getIcon();
+    if (icon != null) {
+      x = (this.getWidth() - stringWidth - this.getIconTextGap() - icon.getIconWidth()) / 2;
+      if (x < 0) {
+        x = 0;
+      }
+      x += (icon.getIconWidth() - mChannel.getIcon().getIconWidth()) / 2;
+    }
+    int y = (this.getHeight() - mChannel.getIcon().getIconHeight()) / 2;
+    return new Point(x, y);
+  }
+
 }
