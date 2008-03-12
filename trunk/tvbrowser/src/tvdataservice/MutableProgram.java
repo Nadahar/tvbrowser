@@ -44,6 +44,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TimeZone;
@@ -329,6 +331,12 @@ public class MutableProgram implements Program {
       System.arraycopy(mMarkerArr, 0, newArr, 0, oldCount);
       newArr[oldCount] = marker;
       mMarkerArr = newArr;
+      
+      Arrays.sort(mMarkerArr,new Comparator<Marker>() {
+        public int compare(Marker o1, Marker o2) {
+          return o1.getId().compareTo(o2.getId());
+        }
+      });
       
       mMarkPriority = Math.max(mMarkPriority,marker.getMarkPriorityForProgram(this));
 
