@@ -40,6 +40,11 @@ public class ToolTipWithIcon extends JToolTip {
     setUI(new IconToolTipUI());
   }
 
+  public ToolTipWithIcon(ImageIcon icon, String text) {
+    this(icon);
+    setTipText(text);
+  }
+
   public ToolTipWithIcon(MetalToolTipUI toolTipUI) {
     setUI(toolTipUI);
   }
@@ -57,14 +62,18 @@ public class ToolTipWithIcon extends JToolTip {
       }
       g.setColor(c.getForeground());
       String text = ((JToolTip) c).getTipText();
-      if (text != null) {
+      if (text != null && text.length() > 0) {
         g.drawString(text, x, metrics.getHeight());
       }
     }
 
     public Dimension getPreferredSize(JComponent c) {
-      FontMetrics metrics = c.getFontMetrics(c.getFont());
       String tipText = ((JToolTip) c).getTipText();
+      // avoid painting by returning empty dimension for no text and no icon
+      if (icon == null && (tipText == null || tipText.length() == 0)) {
+        return new Dimension(0, 0); 
+      }
+      FontMetrics metrics = c.getFontMetrics(c.getFont());
       if (tipText == null) {
         tipText = "";
       }

@@ -278,6 +278,10 @@ public class ChannelLabel extends JLabel {
 
   @Override
   public JToolTip createToolTip() {
+    // don't show tooltip, if disabled in settings
+    if (!Settings.propShowChannelTooltipInProgramTable.getBoolean()) {
+      return new ToolTipWithIcon(null, null);
+    }
     boolean showIcon = false;
     boolean showText = false;
     JToolTip tip;
@@ -290,22 +294,16 @@ public class ChannelLabel extends JLabel {
     }
     if (showIcon) {
       tip = new ToolTipWithIcon((ImageIcon) mChannel.getIcon());
-      tip.setComponent(this);
     }
     else {
-      tip = super.createToolTip();
+      tip = new ToolTipWithIcon((ImageIcon)null);
     }
-    String text = "";
+    tip.setComponent(this);
+    String text = null;
     if (showText) {
       text = mChannel.getName();
     }
     tip.setTipText(text);
-    this.setToolTipText(text);
-    // disable tooltip completely if nothing to show
-    if (!showText && !showIcon) {
-      this.setToolTipText(null);
-      tip.setToolTipText(null);
-    }
     return tip;
   }
 
