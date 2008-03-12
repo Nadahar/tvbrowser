@@ -1337,19 +1337,33 @@ public class Settings {
   public static final BooleanProperty propInternetConnectionCheck = new BooleanProperty(
       mProp, "internetConnectionCheck", true);
   
-  /** If the plugin view is on the left side and the channel list on the right side. */
+  /**
+   * If the plugin view is on the left side and the channel list on the right side.
+   * @since 2.7
+   */
   public static final BooleanProperty propPluginViewIsLeft = new BooleanProperty(
       mProp, "pluginViewIsLeft", true);
   
-  /** The time between auto updates of data services */
+  /** 
+   * The time between auto updates of data services
+   * @since 2.7 
+   */
   public static final IntProperty propDataServiceAutoUpdateTime = new IntProperty(
       mProp, "dataServiceAutoUpdateTime", 30);
   
   /**
    * list of hidden message boxes
+   * @since 2.7
    */
   public static final StringArrayProperty propHiddenMessageBoxes = new StringArrayProperty(mProp, "hideMessageBox", new String[] {});
 
+  /**
+   * show tooltip with large channel icon
+   * @since 2.7
+   */
+  public static final BooleanProperty propShowChannelTooltipInProgramTable = new BooleanProperty(
+      mProp, "showChannelTooltipInProgramtable", true);
+  
   /**
    * Sets the window position and size for the given window with the values of the given id.
 
