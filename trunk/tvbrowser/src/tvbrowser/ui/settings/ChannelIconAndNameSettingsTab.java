@@ -23,6 +23,9 @@
  */
 package tvbrowser.ui.settings;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
@@ -71,6 +74,14 @@ public class ChannelIconAndNameSettingsTab implements SettingsTab {
     pb.add(mShowOnlyNameInProgramTable = new JRadioButton(mLocalizer.msg("showOnlyName","Show channel name"), Settings.propShowChannelNamesInProgramTable.getBoolean() && !Settings.propShowChannelIconsInProgramTable.getBoolean()), cc.xy(2,5));
     pb.add(mShowTooltipInProgramTable = new JCheckBox(mLocalizer.msg("showToolTip","Show large channel icons in tooltip"), Settings.propShowChannelTooltipInProgramTable.getBoolean()), cc.xy(2,7));
 
+    mShowTooltipInProgramTable.setEnabled(!mShowOnlyNameInProgramTable.isSelected());
+    
+    mShowOnlyNameInProgramTable.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        mShowTooltipInProgramTable.setEnabled(e.getStateChange() == ItemEvent.DESELECTED);
+      }
+    });
+    
     ButtonGroup programTable = new ButtonGroup();
     programTable.add(mShowIconAndNameInProgramTable);
     programTable.add(mShowOnlyIconInProgramTable);
