@@ -91,7 +91,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
 
   protected JMenuItem mSettingsMI, mQuitMI, mToolbarMI, mStatusbarMI, mTimeBtnsMI, mDatelistMI,
                     mChannellistMI, mPluginOverviewMI, mViewFilterBarMI, mUpdateMI,
-                    mPluginManagerMI, mDonorMI, mFaqMI, mForumMI, mWebsiteMI, mHandbookMI,
+                    mPluginManagerMI, mDonorMI, mFaqMI, mForumMI, mWebsiteMI, mHandbookMI, mDownloadMI,
                     mConfigAssistantMI, mAboutMI, mKeyboardShortcutsMI,
                     mPreviousDayMI, mNextDayMI, mPreviousWeekMI, mNextWeekMI, mTodayMI,
                     mGotoNowMenuItem, mEditTimeButtonsMenuItem,
@@ -276,25 +276,29 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     Icon urlHelpImg = IconLoader.getInstance().getIconFromTheme("apps", "help-browser", 16);
     Icon urlBrowserImg = IconLoader.getInstance().getIconFromTheme("apps", "internet-web-browser", 16);
     
-    mDonorMI=new JMenuItem(mLocalizer.msg("menuitem.donors","Donors"), urlBrowserImg);
-    mDonorMI.addActionListener(this);
-    new MenuHelpTextAdapter(mDonorMI,mLocalizer.msg("website.donors",""),mLabel); 
-    
     mFaqMI=new JMenuItem("FAQ",urlHelpImg);   
     mFaqMI.addActionListener(this);
     new MenuHelpTextAdapter(mFaqMI,mLocalizer.msg("website.faq",""),mLabel); 
-    
-    mForumMI=new JMenuItem("Forum",urlBrowserImg); 
-    mForumMI.addActionListener(this);
-    new MenuHelpTextAdapter(mForumMI,mLocalizer.msg("website.forum",""),mLabel); 
     
     mHandbookMI=new JMenuItem(mLocalizer.msg("menuitem.handbook", "Handbook"),urlHelpImg); 
     mHandbookMI.addActionListener(this);
     new MenuHelpTextAdapter(mHandbookMI,mLocalizer.msg("website.handbook",""),mLabel); 
     
-    mWebsiteMI=new JMenuItem("Website",urlBrowserImg);
+    mWebsiteMI=new JMenuItem(mLocalizer.msg("menuitem.website","Website"),urlBrowserImg);
     mWebsiteMI.addActionListener(this);
     new MenuHelpTextAdapter(mWebsiteMI,mLocalizer.msg("website.tvbrowser",""),mLabel); 
+    
+    mForumMI=new JMenuItem(mLocalizer.msg("menuitem.forum","Bulletin board"),urlBrowserImg); 
+    mForumMI.addActionListener(this);
+    new MenuHelpTextAdapter(mForumMI,mLocalizer.msg("website.forum",""),mLabel); 
+    
+    mDownloadMI=new JMenuItem(mLocalizer.msg("menuitem.download","Download"),urlBrowserImg); 
+    mDownloadMI.addActionListener(this);
+    new MenuHelpTextAdapter(mForumMI,mLocalizer.msg("website.download",""),mLabel); 
+    
+    mDonorMI=new JMenuItem(mLocalizer.msg("menuitem.donors","Donors"), urlBrowserImg);
+    mDonorMI.addActionListener(this);
+    new MenuHelpTextAdapter(mDonorMI,mLocalizer.msg("website.donors",""),mLabel); 
     
     mConfigAssistantMI=new JMenuItem(mLocalizer.msg("menuitem.configAssistant","setup assistant"),IconLoader.getInstance().getIconFromTheme("category", "preferences-system", 16));
     mConfigAssistantMI.addActionListener(this);
@@ -743,23 +747,26 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
 //       mMainFrame.showUpdatePluginsDlg();
        mMainFrame.showSettingsDialog(SettingsItem.PLUGINS);
      }
-     else if (source == mDonorMI) {
-       Launch.openURL(mLocalizer.msg("website.donors",""));
-     }
      else if (source == mFaqMI) {
        Launch.openURL(mLocalizer.msg("website.faq",""));
      }
-     else if (source == mForumMI) {
-       Launch.openURL(mLocalizer.msg("website.forum",""));
-     }
-     else if (source == mWebsiteMI) {
-       Launch.openURL(mLocalizer.msg("website.tvbrowser",""));
-     } 
      else if (source == mHandbookMI) {
        Launch.openURL(mLocalizer.msg("website.handbook",""));
      }
      else if (source == mKeyboardShortcutsMI) {
        Launch.openURL(mLocalizer.msg("website.keyboardshortcuts",""));
+     }
+     else if (source == mWebsiteMI) {
+       Launch.openURL(mLocalizer.msg("website.tvbrowser",""));
+     } 
+     else if (source == mForumMI) {
+       Launch.openURL(mLocalizer.msg("website.forum",""));
+     }
+     else if (source == mDownloadMI) {
+       Launch.openURL(mLocalizer.msg("website.download",""));
+     } 
+     else if (source == mDonorMI) {
+       Launch.openURL(mLocalizer.msg("website.donors",""));
      }
      else if (source == mConfigAssistantMI) {
          mMainFrame.runSetupAssistant();

@@ -101,8 +101,9 @@ public class DefaultMenuBar extends MenuBar {
     helpMenu.add(mFaqMI);
     helpMenu.add(mPluginHelpMenu);
     helpMenu.addSeparator();
-    helpMenu.add(mForumMI);
     helpMenu.add(mWebsiteMI);
+    helpMenu.add(mForumMI);
+    helpMenu.add(mDownloadMI);
     helpMenu.add(mDonorMI);
     helpMenu.addSeparator();
     helpMenu.add(mConfigAssistantMI);
