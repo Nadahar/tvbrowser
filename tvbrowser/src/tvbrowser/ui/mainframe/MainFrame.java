@@ -935,6 +935,14 @@ public class MainFrame extends JFrame implements DateListener {
         }
       });
     }
+    else { // on switching filters go to now, but only if we are at current date
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          if (getCurrentSelectedDate().equals(Date.getCurrentDate())) {
+            scrollToNow();
+          }
+        }});
+    }
     
     mCurrentFilterName = filter.getName();
     mProgramTableScrollPane.requestFocusInWindow();
