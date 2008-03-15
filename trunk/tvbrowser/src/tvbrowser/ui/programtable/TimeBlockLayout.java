@@ -59,8 +59,8 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
     int lastHeight = 0;
     
     int blockSize = Settings.propTimeBlockSize.getInt() * 60;
-    int blockCount = (int) Math.ceil((double)((Settings.propProgramTableEndOfDay.getInt() 
-        - Settings.propProgramTableStartOfDay.getInt() + 24 * 60) / (double)blockSize));
+    int blockCount = ((Settings.propProgramTableEndOfDay.getInt() 
+        - Settings.propProgramTableStartOfDay.getInt() + 1440) / blockSize) +1;
     
     for(int block = 0; block < blockCount; block++) {
       int maxHeight = 0;
@@ -132,14 +132,14 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
               columnStartArr[col] = blockStart;
             }
             
-            if (lastLayoutComponentList[col] != null) {
+            if(lastLayoutComponentList[col] != null) {
               lastLayoutComponentList[col].getPanel().setHeight(blockStart - lastLayoutComponentList[col].getPrePosition());
             }
             
             int internHeight = blockStart;
             int internLastHeight = internHeight;
             
-            for (int i = 0; i < list.size(); i++) {
+            for(int i = 0; i < list.size(); i++) {
               ProgramPanel panel = (ProgramPanel)list.get(i);
               
               panel.setHeight(mCompactLayout ? panel.getMinimumHeight() : panel.getPreferredHeight());
@@ -154,8 +154,8 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
       }
     }  
     
-    for (int col = 0; col < columnCount; col++) {
-      if (lastLayoutComponentList[col] != null) {
+    for(int col = 0; col < columnCount; col++) {
+      if(lastLayoutComponentList[col] != null) {
         lastLayoutComponentList[col].getPanel().setHeight(currentHeight - lastLayoutComponentList[col].getPrePosition());
       }
     }
