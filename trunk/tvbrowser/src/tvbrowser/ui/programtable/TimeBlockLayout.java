@@ -41,6 +41,11 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
   public void updateLayout(ProgramTableModel model) {
     int columnCount = model.getColumnCount();
     
+    // nothing to show at all?
+    if (columnCount == 0) {
+      return;
+    }
+    
     int[] columnStartArr = new int[columnCount];
     Arrays.fill(columnStartArr,0);
     
