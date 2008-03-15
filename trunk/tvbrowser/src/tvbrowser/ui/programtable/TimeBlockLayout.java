@@ -54,23 +54,23 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
     
     LastLayoutComponent[] lastLayoutComponentList = new LastLayoutComponent[columnCount];
     
-    ArrayList[] blockProgramList = new ArrayList[columnCount];
+    ArrayList<ProgramPanel>[] blockProgramList = new ArrayList[columnCount];
     
     for(int i = 0; i < blockProgramList.length; i++) {
-      blockProgramList[i] = new ArrayList();
+      blockProgramList[i] = new ArrayList<ProgramPanel>();
     }
     
     int currentHeight = 0;
-    int lastHeight = 0;
     
     int blockSize = Settings.propTimeBlockSize.getInt() * 60;
     int blockCount = ((Settings.propProgramTableEndOfDay.getInt() 
         - Settings.propProgramTableStartOfDay.getInt() + 1440) / blockSize) +1;
-    
+
+    // calculate the hight of each block independently
     for(int block = 0; block < blockCount; block++) {
       int maxHeight = 0;
-      int maxIndex = 0;
       
+      // search for the largest column in this block
       for(int column = 0; column < columnCount; column++) {
         blockProgramList[column].clear();
         int height = 0;
@@ -90,81 +90,56 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
             height += mCompactLayout ? panel.getMinimumHeight() : panel.getPreferredHeight();
             
             if(height > maxHeight) {
-              maxIndex = column;
+              maxHeight = height;
             }
-            
-            maxHeight = Math.max(maxHeight,height);
           }
           else {
             break;
           }
         }
       }
-      
-    
-      ArrayList maxList = blockProgramList[maxIndex];
-      
-      int blockStart = currentHeight;
-      
-      if(!maxList.isEmpty()) {
-        if(maxList.get(0).equals(model.getProgramPanel(maxIndex,0))) {
-          columnStartArr[maxIndex] = blockStart;
-        }
-        
-        if(lastLayoutComponentList[maxIndex] != null) {
-          lastLayoutComponentList[maxIndex].getPanel().setHeight(blockStart - lastLayoutComponentList[maxIndex].getPrePosition());
-        }
 
-        
-        for(int i = 0; i < maxList.size(); i++) {
-          ProgramPanel panel = (ProgramPanel)maxList.get(i);
-          
-          panel.setHeight(mCompactLayout ? panel.getMinimumHeight() : panel.getPreferredHeight());
-          
-          lastHeight = currentHeight;
-          currentHeight += panel.getHeight();
-        }
-        
-        lastLayoutComponentList[maxIndex] = new LastLayoutComponent((ProgramPanel)maxList.get(maxList.size()-1),lastHeight);
-      }
+      // increase overall height by block hight
+      int blockStart = currentHeight;
+      currentHeight += maxHeight;
       
       for(int col = 0; col < columnCount; col++) {
-        if(col != maxIndex) {
-          ArrayList list = blockProgramList[col];
-          
-          if(!list.isEmpty()) {
-            if(list.get(0).equals(model.getProgramPanel(col,0))) {
-              columnStartArr[col] = blockStart;
-            }
-            
-            if(lastLayoutComponentList[col] != null) {
-              lastLayoutComponentList[col].getPanel().setHeight(blockStart - lastLayoutComponentList[col].getPrePosition());
-            }
-            
-            int internHeight = blockStart;
-            int internLastHeight = internHeight;
-            
-            for(int i = 0; i < list.size(); i++) {
-              ProgramPanel panel = (ProgramPanel)list.get(i);
-              
-              panel.setHeight(mCompactLayout ? panel.getMinimumHeight() : panel.getPreferredHeight());
-              
-              internLastHeight = internHeight;
-              internHeight += panel.getHeight();
-            }
-            
-            lastLayoutComponentList[col] = new LastLayoutComponent((ProgramPanel)list.get(list.size()-1),internLastHeight);
+        // first correct the last panel of this column to make it full size
+        if(lastLayoutComponentList[col] != null) {
+          lastLayoutComponentList[col].getPanel().setHeight(blockStart - lastLayoutComponentList[col].getPrePosition());
+        }
+        
+        // set all panels in this block to preferred size
+        ArrayList list = blockProgramList[col];
+        if(!list.isEmpty()) {
+          if(list.get(0).equals(model.getProgramPanel(col,0))) {
+            columnStartArr[col] = blockStart;
           }
+          
+          int internHeight = blockStart;
+          int internLastHeight = internHeight;
+          
+          for(int i = 0; i < list.size(); i++) {
+            ProgramPanel panel = (ProgramPanel)list.get(i);
+            
+            panel.setHeight(mCompactLayout ? panel.getMinimumHeight() : panel.getPreferredHeight());
+            
+            internLastHeight = internHeight;
+            internHeight += panel.getHeight();
+          }
+          
+          lastLayoutComponentList[col] = new LastLayoutComponent((ProgramPanel)list.get(list.size()-1),internLastHeight);
         }
       }
-    }  
+    }
     
+    // set all last panels in all columns to eat all available space
     for(int col = 0; col < columnCount; col++) {
       if(lastLayoutComponentList[col] != null) {
         lastLayoutComponentList[col].getPanel().setHeight(currentHeight - lastLayoutComponentList[col].getPrePosition());
       }
     }
-        
+
     setColumnStarts(columnStartArr);
   }
   
