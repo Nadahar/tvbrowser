@@ -141,8 +141,6 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
     PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,fill:default:grow", "5dlu,pref,2dlu,pref,2dlu,fill:default:grow"));
     CellConstraints cc = new CellConstraints();
 
-    JPanel panel = new JPanel(new GridBagLayout());
-
     mRbShowDetails = new JRadioButton(mLocalizer.msg("showDetails","Show search menu for title, actors, and other fields"), webPlugin.getShowDetailMenus());
     mRbShowTitle = new JRadioButton(mLocalizer.msg("showTitle","Show title search only"), !webPlugin.getShowDetailMenus());
     
@@ -190,6 +188,7 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
     c.weighty = 1.0;
     c.insets = new Insets(0, 0, 5, 5);
 
+    JPanel panel = new JPanel(new GridBagLayout());
     panel.add(new JScrollPane(mAddressList), c);
 
     c = new GridBagConstraints();
