@@ -87,6 +87,8 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
           
           if((startTime >= block * blockSize) && (startTime < (block+1) * blockSize)) {
             blockProgramList[column].add(panel);
+            // reset the preferred hight of the panel
+            panel.setHeight(-1);
             height += mCompactLayout ? panel.getMinimumHeight() : panel.getPreferredHeight();
             
             if(height > maxHeight) {
