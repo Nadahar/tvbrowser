@@ -37,7 +37,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -240,13 +239,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
 
     FilterComponent[] fc = FilterComponentList.getInstance().getAvailableFilterComponents();
 
-    Arrays.sort(fc, new Comparator<FilterComponent>() {
-
-      public int compare(FilterComponent arg0, FilterComponent arg1) {
-        return (arg0).getName().compareToIgnoreCase((arg1).getName());
-      }
-
-    });
+    Arrays.sort(fc, new FilterComponent.Comparator());
 
     for (int i = 0; i < fc.length; i++) {
       mComponentTableModel.addElement(fc[i]);

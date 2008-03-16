@@ -34,7 +34,6 @@ import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Iterator;
 
 import javax.swing.JComponent;
@@ -882,13 +881,7 @@ public class SystemTray {
   private static void updatePluginsMenu(JMenu pluginsMenu, PluginProxy[] plugins) {
     pluginsMenu.removeAll();
 
-    Arrays.sort(plugins, new Comparator<PluginProxy>() {
-
-      public int compare(PluginProxy o1, PluginProxy o2) {
-        return o1.toString().compareTo(o2.toString());
-      }
-
-    });
+    Arrays.sort(plugins, new PluginProxy.Comparator());
 
     InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList.getInstance().getAvailableProxys();
     
