@@ -30,8 +30,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
-import java.util.Comparator;
-
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -112,13 +110,7 @@ public class PluginFilterComponent implements FilterComponent {
     content.add(ta,BorderLayout.NORTH);
 
     PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
-    Arrays.sort(plugins, new Comparator<PluginProxy>() {
-
-      public int compare(PluginProxy o1, PluginProxy o2) {
-          return o1.toString().compareTo(o2.toString());
-      }
-      
-    });
+    Arrays.sort(plugins, new PluginProxy.Comparator());
     
     mBox=new JComboBox(plugins);
     if (mPlugin!=null) {

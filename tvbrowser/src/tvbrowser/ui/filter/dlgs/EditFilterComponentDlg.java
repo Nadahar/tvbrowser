@@ -70,7 +70,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -141,11 +140,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     mRuleCb.addItem(mLocalizer.msg("hint", "must choose one"));
     
     // The TreeSet sorts the Entries
-    TreeSet<FilterComponent> set = new TreeSet<FilterComponent>(new Comparator<FilterComponent>() {
-      public int compare(FilterComponent arg0, FilterComponent arg1) {
-        return arg0.toString().compareTo(arg1.toString());
-      }
-    });
+    TreeSet<FilterComponent> set = new TreeSet<FilterComponent>(new FilterComponent.Comparator());
     
     if (filterComponentClass == null) {
       set.add(new DayFilterComponent());

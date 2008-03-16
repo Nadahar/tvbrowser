@@ -34,7 +34,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
@@ -50,8 +49,6 @@ import javax.swing.event.HyperlinkListener;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.core.plugin.PluginProxy;
-import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.CaretPositionCorrector;
 import util.ui.Localizer;
 import util.ui.TabLayout;
@@ -171,6 +168,7 @@ public class ButtonsSettingsTab implements SettingsTab {
       return cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
     }
 
+    @Override
     public void setEnabled(boolean val) {
       mTimeSp.setEnabled(val);
     }
@@ -242,14 +240,16 @@ public class ButtonsSettingsTab implements SettingsTab {
       for (int i = 0; i < mRows.size(); i++) {
         int value = (mRows.get(i)).getTime();
 
-        if (!list.contains(new Integer(value)))
+        if (!list.contains(new Integer(value))) {
           list.add(new Integer(value));
+        }
       }
 
       int[] result = new int[list.size()];
 
-      for (int i = 0; i < result.length; i++)
+      for (int i = 0; i < result.length; i++) {
         result[i] = (list.get(i)).intValue();
+      }
 
       return result;
     }
@@ -283,27 +283,4 @@ public class ButtonsSettingsTab implements SettingsTab {
     }
 
   }
-
-  private static class ButtonItem {
-
-    private String mText, mId;
-
-    public ButtonItem(String id, String text) {
-      mText = text;
-      mId = id;
-    }
-
-    public ButtonItem(PluginProxy p) {
-      this(p.getId(), (String) p.getButtonAction().getAction().getValue(Action.NAME));
-    }
-
-    public String getId() {
-      return mId;
-    }
-
-    public String toString() {
-      return mText;
-    }
-  }
-
 }
