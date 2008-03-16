@@ -102,7 +102,7 @@ public interface TvDataServiceProxy extends ContextMenuIf, ButtonActionIf {
   /**
    * Some TvDataServices may need to connect to the internet to know their
    * channels. If supportsDanymicChannelList() returns true, this method is
-   * called to check for availabel channels.
+   * called to check for available channels.
    * @param monitor
    * @return
    * @throws TvBrowserException
@@ -172,4 +172,17 @@ public interface TvDataServiceProxy extends ContextMenuIf, ButtonActionIf {
    * @since 2.7
    */
   public boolean supportsAutoUpdate();
+
+  
+  /**
+   * comparator for data service proxies (sorting alphabetically by name)
+   * @since 2.7
+   * @author bananeweizen
+   */
+  public static class Comparator implements java.util.Comparator<TvDataServiceProxy> {
+
+    public int compare(TvDataServiceProxy proxy1, TvDataServiceProxy proxy2) {
+      return proxy1.getInfo().getName().compareTo(proxy2.getInfo().getName());
+    }
+  };
 }

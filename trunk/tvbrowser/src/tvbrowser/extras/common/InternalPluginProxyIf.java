@@ -64,4 +64,15 @@ public interface InternalPluginProxyIf {
   /** Gets the settings id of this internal plugin.
    * @return The settings id of this internal plugin. */
   public String getSettingsId();
+  
+  /**
+   * comparator for internal plugin proxies
+   * @author bananeweizen
+   * @since 2.7
+   */
+  public static class Comparator implements java.util.Comparator<InternalPluginProxyIf> {
+    public int compare(InternalPluginProxyIf o1, InternalPluginProxyIf o2) {
+      return o1.getName().compareToIgnoreCase(o2.getName());
+    }
+  }
 }
