@@ -160,4 +160,15 @@ public interface PluginProxy extends PluginAccess {
   public void addToArtificialPluginTree(MutableProgram program);
 
   public PluginTreeNode getArtificialRootNode();
+  
+  /**
+   * comparator for plugin proxy (sorting by name)
+   * @author bananeweizen
+   * @since 2.7
+   */
+  public static class Comparator implements java.util.Comparator<PluginProxy> {
+    public int compare(PluginProxy o1, PluginProxy o2) {
+      return o1.getInfo().getName().compareToIgnoreCase(o2.getInfo().getName());
+    }
+  }
 }

@@ -84,13 +84,13 @@ public class PluginLoader {
 
   private HashSet<String> mSuccessfullyLoadedPluginFiles;
 
-  private HashMap<AbstractPluginProxy, File> mDeleteablePlugin;
+  private HashMap<Object, File> mDeleteablePlugin;
 
   private ArrayList<PluginProxy> loadedProxies;
   
   private PluginLoader() {
     mSuccessfullyLoadedPluginFiles = new HashSet<String>();
-    mDeleteablePlugin = new HashMap<AbstractPluginProxy, File>();
+    mDeleteablePlugin = new HashMap<Object, File>();
   }
 
   public static PluginLoader getInstance() {
@@ -200,19 +200,24 @@ public class PluginLoader {
           PluginProxyManager.getInstance().registerPlugin(javaplugin);
         }
 
-        if (deleteable)
+        if (deleteable) {
           mDeleteablePlugin.put(javaplugin, pluginFile);
+        }
         
         saveProxyInfo(pluginFile, javaplugin);
       }
       else if (plugin instanceof AbstractPluginProxy) {
         PluginProxyManager.getInstance().registerPlugin((AbstractPluginProxy)plugin);
-        if (deleteable)
+        if (deleteable) {
           mDeleteablePlugin.put((AbstractPluginProxy)plugin, pluginFile);
+        }
       }
       else if (plugin instanceof devplugin.AbstractTvDataService) {
         TvDataServiceProxy proxy = new DefaultTvDataServiceProxy((devplugin.AbstractTvDataService)plugin);
         TvDataServiceProxyManager.getInstance().registerTvDataService(proxy);
+        if (deleteable) {
+          mDeleteablePlugin.put(proxy, pluginFile);
+        }
       }
       else if (plugin instanceof TvDataService) {
         TvDataServiceProxy proxy = new DeprecatedTvDataServiceProxy((TvDataService)plugin);
@@ -420,6 +425,7 @@ public class PluginLoader {
     if ((files != null) && (files.length > 0)) {
       for (int i=0;i<files.length;i++) {
         try {
+          mLog.info("Deleting " + files[i]);
           new File(files[i]).delete();
         } catch (Exception e) {
           e.printStackTrace();
@@ -532,21 +538,46 @@ public class PluginLoader {
   public boolean deletePlugin(PluginProxy proxy) {
     // mark plugin file for deletion
     File file = mDeleteablePlugin.get(proxy);
-    Settings.propDeleteFilesAtStart.addItem(file.toString());
-    
-    // mark proxy file for deletion
-    String proxyFile = getProxyFileName(file);
-    Settings.propDeleteFilesAtStart.addItem(proxyFile);
-    
-    try {
-        PluginProxyManager.getInstance().removePlugin(proxy);
-    } catch (TvBrowserException exc) {
-        ErrorHandler.handle(exc);
-        return false;
+    if (file != null) {
+      Settings.propDeleteFilesAtStart.addItem(file.toString());
+      
+      // mark proxy file for deletion
+      String proxyFile = getProxyFileName(file);
+      Settings.propDeleteFilesAtStart.addItem(proxyFile);
+      
+      try {
+          PluginProxyManager.getInstance().removePlugin(proxy);
+      } catch (TvBrowserException exc) {
+          ErrorHandler.handle(exc);
+          return false;
+      }
+  
+      mDeleteablePlugin.remove(proxy);
+      return true;
     }
+    return false;
+  }
 
-    mDeleteablePlugin.remove(proxy);
-    return true;
+  /**
+   * Delete a data service
+   * @param service Data service that should be deleted
+   * @return true if successful
+   * @since 2.7
+   */
+  public boolean deleteDataService(TvDataServiceProxy service) {
+    // mark plugin file for deletion
+    File file = mDeleteablePlugin.get(service);
+    if (file != null) {
+      Settings.propDeleteFilesAtStart.addItem(file.toString());
+      
+      // mark proxy file for deletion
+      String proxyFile = getProxyFileName(file);
+      Settings.propDeleteFilesAtStart.addItem(proxyFile);
+      
+      mDeleteablePlugin.remove(service);
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -556,6 +587,16 @@ public class PluginLoader {
    */
   public boolean isPluginDeletable(PluginProxy plugin) {
     return mDeleteablePlugin.containsKey(plugin);
+  }
+
+  /**
+   * Is a data service deleteable ?
+   * @param service Data service that should be deleted
+   * @return true if deleteable
+   * @since 2.7
+   */
+  public boolean isDataServiceDeletable(TvDataServiceProxy service) {
+    return mDeleteablePlugin.containsKey(service);
   }
 
   /**

@@ -28,20 +28,23 @@ import java.awt.Dimension;
 import java.awt.Font;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.extras.common.InternalPluginProxyIf;
-import tvbrowser.extras.common.InternalPluginProxyList;
 import util.ui.FixedSizeIcon;
 import util.ui.UiUtilities;
+import util.ui.html.HTMLTextHelper;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -67,6 +70,11 @@ public class PluginTableCellRenderer extends DefaultTableCellRenderer {
   private static final Border NO_FOCUS_BORDER = new EmptyBorder(1, 1, 1, 1);
   
   /**
+   * default icon for items without an own icon
+   */
+  private static final Icon DEFAULT_ICON = new ImageIcon("imgs/Jar16.gif");
+  
+  /**
    * checkBox to return for the first column (plugin active)
    */
   private static JCheckBox mCheckBox;
@@ -76,13 +84,14 @@ public class PluginTableCellRenderer extends DefaultTableCellRenderer {
    */
   private static PluginTableCellRenderer mInstance;
   
+  @Override
   public Component getTableCellRendererComponent(JTable table, Object value,
       boolean isSelected, boolean hasFocus, int row, int column) {
     
     if (column == 0) {
       if (mCheckBox == null) {
         mCheckBox = new JCheckBox();
-        mCheckBox.setHorizontalAlignment(JLabel.CENTER);
+        mCheckBox.setHorizontalAlignment(SwingConstants.CENTER);
         mCheckBox.setBorderPainted(true);
       }
       if (isSelected ) {
@@ -93,7 +102,7 @@ public class PluginTableCellRenderer extends DefaultTableCellRenderer {
         mCheckBox.setBackground(table.getBackground());
       }
       mCheckBox.setSelected(((Boolean) value).booleanValue());
-      mCheckBox.setEnabled(row >= InternalPluginProxyList.getInstance().getAvailableProxys().length);
+      mCheckBox.setEnabled(table.getModel().isCellEditable(row, column));
 
       if (hasFocus) {
         mCheckBox.setBorder(UIManager
@@ -107,7 +116,7 @@ public class PluginTableCellRenderer extends DefaultTableCellRenderer {
 
     JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
     
-    if (value instanceof PluginProxy || value instanceof InternalPluginProxyIf) {
+    if (value instanceof PluginProxy || value instanceof InternalPluginProxyIf || value instanceof TvDataServiceProxy) {
       Icon iconValue = null;
       String nameValue = null;
       String descValue = null;
@@ -126,14 +135,22 @@ public class PluginTableCellRenderer extends DefaultTableCellRenderer {
         
         nameValue = plugin.getInfo().getName() + " " + plugin.getInfo().getVersion();
       }
-      else {
+      else if (value instanceof InternalPluginProxyIf) {
         InternalPluginProxyIf plugin = (InternalPluginProxyIf)value;
         
         nameValue = plugin.getName();
         descValue = plugin.getButtonActionDescription().replace('\n', ' ');
         iconValue = plugin.getIcon();
       }
+      else if (value instanceof TvDataServiceProxy) {
+        TvDataServiceProxy service = (TvDataServiceProxy) value;
+        nameValue = service.getInfo().getName() + " " + service.getInfo().getVersion();
+        descValue = HTMLTextHelper.convertHtmlToText(service.getInfo().getDescription()).replace('\n', ' ');
+      }
       
+      if (iconValue == null) {
+        iconValue = DEFAULT_ICON;
+      }
       
       if (mPanel == null) {
         mIcon = new JLabel();
@@ -151,8 +168,9 @@ public class PluginTableCellRenderer extends DefaultTableCellRenderer {
       mIcon.setBackground(label.getBackground());
       mIcon.setIcon(iconValue);
 
-      if (mDesc != null)
+      if (mDesc != null) {
         mPanel.remove(mDesc);
+      }
       mDesc = UiUtilities.createHelpTextArea(descValue);
       mDesc.setMinimumSize(new Dimension(100, 10));
       mDesc.setOpaque(false);

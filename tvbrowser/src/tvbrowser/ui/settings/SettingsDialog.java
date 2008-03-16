@@ -37,7 +37,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Enumeration;
 
 import javax.swing.BorderFactory;
@@ -399,21 +398,15 @@ public class SettingsDialog implements WindowClosingIf {
     createPluginTreeItems(false);
 
     // TVDataServices
-    node = new SettingNode(new DataServiceSettingsTab(),
+    node = new SettingNode(new DataServiceSettingsTab(this),
         SettingsItem.TVDATASERVICES);
     root.add(node);
     
-    Comparator<TvDataServiceProxy> comp = new Comparator<TvDataServiceProxy>() {
-
-      public int compare(TvDataServiceProxy proxy1, TvDataServiceProxy proxy2) {
-        return proxy1.getInfo().getName().compareTo(proxy2.getInfo().getName());
-      }
-    };
     TvDataServiceProxy[] services = tvbrowser.core.tvdataservice.TvDataServiceProxyManager
         .getInstance().getDataServices();
-    Arrays.sort(services, comp);
+    Arrays.sort(services, new TvDataServiceProxy.Comparator());
     for (TvDataServiceProxy dataService : services) {
-      node.add(new SettingNode(new ConfigDataServiceSettingsTab(dataService)));
+      node.add(new SettingNode(new ConfigDataServiceSettingsTab(dataService), dataService.getId()));
     }
 
     return root;
@@ -430,11 +423,7 @@ public class SettingsDialog implements WindowClosingIf {
 
     /* Add base plugins */
     InternalPluginProxyIf[] internalPluginProxies = InternalPluginProxyList.getInstance().getAvailableProxys();
-    Arrays.sort(internalPluginProxies, new Comparator<InternalPluginProxyIf>() {
-      public int compare(InternalPluginProxyIf o1, InternalPluginProxyIf o2) {
-        return o1.getName().compareToIgnoreCase(o2.getName());
-      }
-    });
+    Arrays.sort(internalPluginProxies, new InternalPluginProxyIf.Comparator());
     
     for(InternalPluginProxyIf internalPluginProxy : internalPluginProxies) {
       if(internalPluginProxy.getSettingsTab() != null) {
@@ -453,13 +442,7 @@ public class SettingsDialog implements WindowClosingIf {
     }
     SettingNode[] nodes = new SettingNode[nodeList.size()];
     nodeList.toArray(nodes);
-    Arrays.sort(nodes, new Comparator<SettingNode>() {
-
-      public int compare(SettingNode o1, SettingNode o2) {
-        return o1.getSettingsTab().getTitle().compareToIgnoreCase(
-            o2.getSettingsTab().getTitle());
-      }
-    });
+    Arrays.sort(nodes, new SettingNode.Comparator());
     for (SettingNode node : nodes) {
       mPluginSettingsNode.add(node);
     }
@@ -612,7 +595,7 @@ public class SettingsDialog implements WindowClosingIf {
 
   // inner class SettingNode
 
-  private class SettingNode extends DefaultMutableTreeNode {
+  private static class SettingNode extends DefaultMutableTreeNode {
 
     private Icon mIcon;
 
@@ -722,6 +705,14 @@ public class SettingsDialog implements WindowClosingIf {
       }
 
       return url;
+    }
+    
+    public static class Comparator implements java.util.Comparator<SettingNode> {
+
+      public int compare(SettingNode o1, SettingNode o2) {
+        return o1.getSettingsTab().getTitle().compareToIgnoreCase(
+            o2.getSettingsTab().getTitle());
+      }
     }
 
   } // class SettingNode
