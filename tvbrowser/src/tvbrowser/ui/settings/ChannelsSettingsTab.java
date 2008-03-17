@@ -49,6 +49,7 @@ import util.ui.ListDragAndDropHandler;
 import util.ui.ListDropAction;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import util.ui.DontShowAgainMessageBox;
 import util.ui.customizableitems.SortableItemList;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
@@ -929,9 +930,31 @@ public class ChannelsSettingsTab implements
   private void moveChannelsToRight() {
     Object[] objects = UiUtilities.moveSelectedItems(mAllChannels,
         mSubscribedChannels);
+
+    boolean missingIcon = false;
+
     for (Object object : objects) {
       mChannelListModel.subscribeChannel((Channel) object);
+      if ((((Channel)object).getIcon() == null)) {
+        missingIcon = true;
+      }
     }
+
+
+
+
+    if (missingIcon) {
+      DontShowAgainMessageBox
+          .showMessageDialog(
+              "missingIcon",
+              MainFrame.getInstance(),
+              mLocalizer
+                  .msg(
+                      "noIconAvailable.message",
+                      "You have added a channel without channel icon. Due to copyright reasons we cannot provide icons for each channel.\nFor better visual differentiation you can add your icon to the channel using the right mouse menu in the channel list."),
+              mLocalizer.msg("noIconAvailable.title", "No channel icon"));
+    }
+
 
   }
 
