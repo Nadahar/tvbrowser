@@ -19,6 +19,7 @@ import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
+import tvbrowser.ui.mainframe.ChannelChooserPanel;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.ChannelsSettingsTab;
 import tvbrowser.ui.settings.channel.ChannelConfigDlg;
@@ -139,13 +140,27 @@ public class ChannelContextMenu implements ActionListener {
       layoutLogo.addActionListener(this);
       layoutName.addActionListener(this);
 
-      if (Settings.propShowChannelIconsInChannellist.getBoolean()
-          && Settings.propShowChannelNamesInChannellist.getBoolean()) {
-        layoutBoth.setSelected(true);
-      } else if (Settings.propShowChannelIconsInChannellist.getBoolean()) {
-        layoutLogo.setSelected(true);
-      } else {
-        layoutName.setSelected(true);
+      // is the layout configuration for the channel chooser
+      if (mSource instanceof ChannelChooserPanel) {
+        if (Settings.propShowChannelIconsInChannellist.getBoolean()
+            && Settings.propShowChannelNamesInChannellist.getBoolean()) {
+          layoutBoth.setSelected(true);
+        } else if (Settings.propShowChannelIconsInChannellist.getBoolean()) {
+          layoutLogo.setSelected(true);
+        } else {
+          layoutName.setSelected(true);
+        }
+      }
+      // or is it for the program table?
+      else if (mSource instanceof ChannelLabel) {
+        if (Settings.propShowChannelIconsInProgramTable.getBoolean()
+            && Settings.propShowChannelNamesInProgramTable.getBoolean()) {
+          layoutBoth.setSelected(true);
+        } else if (Settings.propShowChannelIconsInProgramTable.getBoolean()) {
+          layoutLogo.setSelected(true);
+        } else {
+          layoutName.setSelected(true);
+        }
       }
     }
     mMenu.show(e.getComponent(), e.getX(), e.getY());
@@ -187,13 +202,18 @@ public class ChannelContextMenu implements ActionListener {
       if (e.getSource() instanceof JRadioButtonMenuItem) {
         if (e.getSource() == layoutBoth || e.getSource() == layoutName
             || e.getSource() == layoutLogo) {
-          Settings.propShowChannelNamesInChannellist
-              .setBoolean(e.getSource() == layoutBoth
-                  || e.getSource() == layoutName);
-          Settings.propShowChannelIconsInChannellist
-              .setBoolean(e.getSource() == layoutBoth
-                  || e.getSource() == layoutLogo);
-          MainFrame.getInstance().updateChannelChooser();
+          boolean showNames = e.getSource() == layoutBoth || e.getSource() == layoutName;
+          boolean showIcons = e.getSource() == layoutBoth || e.getSource() == layoutLogo;
+          if (mSource instanceof ChannelChooserPanel) {
+            Settings.propShowChannelNamesInChannellist.setBoolean(showNames);
+            Settings.propShowChannelIconsInChannellist.setBoolean(showIcons);
+            MainFrame.getInstance().updateChannelChooser();
+          }
+          else {
+            Settings.propShowChannelNamesInProgramTable.setBoolean(showNames);
+            Settings.propShowChannelIconsInProgramTable.setBoolean(showIcons);
+            MainFrame.getInstance().getProgramTableScrollPane().updateChannelPanel();
+          }
         } else {
           JRadioButtonMenuItem filterItem = (JRadioButtonMenuItem) e
               .getSource();
