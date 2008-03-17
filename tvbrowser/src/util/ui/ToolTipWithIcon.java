@@ -57,7 +57,7 @@ public class ToolTipWithIcon extends JToolTip {
       g.fillRect(0, 0, size.width, size.height);
       int x = 3;
       if (icon != null) {
-        icon.paintIcon(c, g, 0, 0);
+        icon.paintIcon(c, g, 1, 1);
         x += icon.getIconWidth() + 1;
       }
       g.setColor(c.getForeground());
@@ -78,15 +78,26 @@ public class ToolTipWithIcon extends JToolTip {
         tipText = "";
       }
       int width = SwingUtilities.computeStringWidth(metrics, tipText);
-      int height = metrics.getHeight();
+      int height = metrics.getHeight() + 4;
       if (icon != null) {
-        width += icon.getIconWidth() + 1;
-        height = icon.getIconHeight() > height ? icon.getIconHeight()
-            : height + 4;
+        width += icon.getIconWidth() + 2;
+        int iconHeight = icon.getIconHeight() + 2;
+        if (iconHeight > height) {
+          height = iconHeight;
+        }
       }
       // make some space between icon and text
       if (icon != null && tipText.length() > 0) {
         width += 6;
+      }
+      if (ToolTipWithIcon.this.isMinimumSizeSet()) {
+        Dimension minSize = ToolTipWithIcon.this.getMinimumSize();
+        if (width < minSize.width) {
+          width = minSize.width;
+        }
+        if (height < minSize.height) {
+          height = minSize.height;
+        }
       }
       return new Dimension(width, height);
     }
