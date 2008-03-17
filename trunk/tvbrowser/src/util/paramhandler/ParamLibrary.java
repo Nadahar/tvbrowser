@@ -94,7 +94,7 @@ public class ParamLibrary {
     String[] str = { "title", "original_title", "start_day", "start_month", "start_year", "start_hour", "start_minute",
         "end_month", "end_year", "end_day", "end_hour", "end_minute", "length_minutes", "length_sec", "short_info",
         "description", "episode", "original_episode", "channel_name", "url", "start_day_of_week", "start_month_name",
-        "genre"};
+        "genre", "start_unix", "end_unix"};
     return str;
   }
 
@@ -195,6 +195,10 @@ public class ParamLibrary {
     } else if (key.equals("start_month_name")) {
       SimpleDateFormat format = new SimpleDateFormat("MMMM"); 
       return format.format(new java.util.Date(prg.getDate().getCalendar().getTimeInMillis()));
+    } else if (key.equals("start_unix")) {
+      return Long.toString(prg.getDate().getCalendar().getTimeInMillis() / 1000);
+    } else if (key.equals("end_unix")) {
+      return Long.toString(createEndTime(prg).getTimeInMillis() / 1000);
     } else if (key.equals("genre")) {
       return removeNull(prg.getTextField(ProgramFieldType.GENRE_TYPE));
     }
@@ -226,13 +230,24 @@ public class ParamLibrary {
    * @return int-Value
    */
   private int getEndTimeFieldInProgram(Program prg, int field) {
+    Calendar c = createEndTime(prg);
+    return c.get(field);
+  }
+
+  /**
+   * Creates a calendar instance containg the end time
+   *
+   * @param prg get End-Time of this Item
+   * @return End-Time
+   */
+  private Calendar createEndTime(Program prg) {
     Calendar c = (Calendar) prg.getDate().getCalendar().clone();
 
     c.set(Calendar.HOUR_OF_DAY, prg.getHours());
     c.set(Calendar.MINUTE, prg.getMinutes());
     c.add(Calendar.MINUTE, prg.getLength());
     c.set(Calendar.SECOND, 0);
-    return c.get(field);
+    return c;
   }
 
   /**
