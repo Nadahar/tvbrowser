@@ -118,7 +118,7 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
     JPanel panel = (JPanel) getContentPane();
     panel.setBorder(Borders.DLU4_BORDER);
     
-    panel.setLayout(new FormLayout("3dlu, left:pref, 3dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu", "pref, 5dlu, pref, 3dlu, pref, 5dlu, fill:pref:grow, 3dlu, pref"));
+    panel.setLayout(new FormLayout("3dlu, left:pref, 3dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu", "pref, 5dlu, pref, 3dlu, pref, 5dlu, fill:10dlu:grow, 3dlu, pref"));
     
     CellConstraints cc = new CellConstraints();
     
