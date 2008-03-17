@@ -23,6 +23,7 @@
 */
 package util.ui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Point;
@@ -293,11 +294,13 @@ public class ChannelLabel extends JLabel {
       }
     }
     if (showIcon) {
-      tip = new ToolTipWithIcon((ImageIcon) mChannel.getIcon());
+      tip = new ToolTipWithIcon((ImageIcon) channelIcon);
+//      tip.setMinimumSize(new Dimension(getIcon().getIconWidth() + 2,getIcon().getIconHeight() + 2));
     }
     else {
       tip = new ToolTipWithIcon((ImageIcon)null);
     }
+    tip.setBackground(Color.WHITE);
     tip.setComponent(this);
     String text = null;
     if (showText) {
@@ -320,7 +323,7 @@ public class ChannelLabel extends JLabel {
       }
       x += (icon.getIconWidth() - mChannel.getIcon().getIconWidth()) / 2;
     }
-    int y = (this.getHeight() - mChannel.getIcon().getIconHeight()) / 2;
+    int y = (this.getHeight() - mChannel.getIcon().getIconHeight() - 2) / 2;
     return new Point(x, y);
   }
 
