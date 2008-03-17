@@ -60,6 +60,7 @@ public class CaptureExecute {
     
     /** Success ? */
     private boolean mError = true;
+    private int mExitValue = 0;
     
     private static CaptureExecute mInstance = null;
 
@@ -176,7 +177,7 @@ public class CaptureExecute {
                 mError = false;
             }
             
-            if (mError) {
+            if (mError && mExitValue == 1) {
                 ResultDialog dialog;
                 
                 if (mParent instanceof JDialog) {
@@ -188,7 +189,7 @@ public class CaptureExecute {
                 return false;
             } 
             
-            if (!mData.getDialogOnlyOnError() || (mData.getDialogOnlyOnError() && mError)) {
+            if (!mData.getDialogOnlyOnError() || (mData.getDialogOnlyOnError() && mError && mExitValue == 1)) {
                 ResultDialog dialog;
 
                 if (mParent instanceof JDialog) {
@@ -206,7 +207,7 @@ public class CaptureExecute {
             return false;
         }
         
-        return true;
+        return mExitValue == 0;
     }
     
     /** 
@@ -292,6 +293,7 @@ public class CaptureExecute {
         }
 
         mError = executionHandler.exitValue() != 0;
+        mExitValue = executionHandler.exitValue();
 
         return output;
     }
@@ -324,6 +326,7 @@ public class CaptureExecute {
                   result.append(line);
                 }
                 mError = true;
+                mExitValue = 0;
                 return result.toString();
             }
         }
@@ -336,6 +339,7 @@ public class CaptureExecute {
         }
         
         mError = false;
+        mExitValue = 1;
         return result.toString();
     }
     
