@@ -303,14 +303,10 @@ public class ChannelList {
    */
   public static void setSubscribeChannels(Channel[] channelArr, boolean update) {
     boolean channelsAdded = false;
-    boolean missingIconAdded = false;
     if (update) {
       for (Channel channel : channelArr) {
         if (!mSubscribedChannels.contains(channel)) {
           channelsAdded = true;
-          if (channel.getIcon() == null) {
-            missingIconAdded = true;
-          }
         }
       }
     }
@@ -325,22 +321,13 @@ public class ChannelList {
     
     calculateChannelPositions();
     
-    final boolean missingIcon = missingIconAdded;
     if (channelsAdded) {
       if (update) {
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
-            if (missingIcon) {
-              showMissingIconMessage();
-            }
             MainFrame.getInstance().askForDataUpdateChannelsAdded();
           }
         });
-      }
-      else {
-        if (missingIcon) {
-          showMissingIconMessage();
-        }
       }
     }
   }
@@ -838,15 +825,4 @@ public class ChannelList {
     return mCurrentChangeChannel != null && ch != null && mCurrentChangeChannel.equals(ch);
   }
 
-  private static void showMissingIconMessage() {
-    DontShowAgainMessageBox
-        .showMessageDialog(
-            "missingIcon",
-            MainFrame.getInstance(),
-            mLocalizer
-                .msg(
-                    "noIconAvailable.message",
-                    "You have added a channel without channel icon. Due to copyright reasons we cannot provide icons for each channel.\nFor better visual differentiation you can add your icon to the channel using the right mouse menu in the channel list."),
-            mLocalizer.msg("noIconAvailable.title", "No channel icon"));
-  }
 }
