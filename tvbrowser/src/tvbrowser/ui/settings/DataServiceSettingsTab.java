@@ -45,6 +45,9 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import devplugin.Channel;
+
+import tvbrowser.core.ChannelList;
 import tvbrowser.core.PluginLoader;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
@@ -235,7 +238,20 @@ public class DataServiceSettingsTab implements devplugin.SettingsTab {
       return;
     }
     
-    String text = mLocalizer.msg("deleteService","Really delete the data service \"{0}\" ?",service.getInfo().getName());
+    // count the removed channels
+    int channelCount = 0;
+    Channel[] subscribed = ChannelList.getSubscribedChannels();
+    for (int i = 0; i < subscribed.length; i++) {
+      if (subscribed[i].getDataServiceProxy().equals(service)) {
+        channelCount++;
+      }
+    }
+    
+    // show message depending on whether channels will be removed
+    String text = mLocalizer.msg("deleteService","Really delete the data service \"{0}\"?",service.getInfo().getName());
+    if (channelCount > 0) {
+      text = mLocalizer.msg("deleteServiceCount","Really delete the data service \"{0}\"?\nThis will remove {1} of your subscribed channels.",service.getInfo().getName(), channelCount);
+    }
     int result = JOptionPane.showConfirmDialog(mSettingsDialog.getDialog(), text, Localizer.getLocalization(Localizer.I18N_DELETE)+"?", JOptionPane.YES_NO_OPTION);
       
     if (result == JOptionPane.YES_OPTION) {
