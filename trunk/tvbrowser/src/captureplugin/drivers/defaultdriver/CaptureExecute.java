@@ -177,7 +177,7 @@ public class CaptureExecute {
                 mError = false;
             }
             
-            if (mError && mExitValue == 1) {
+            if (mError && mExitValue != 249) {
                 ResultDialog dialog;
                 
                 if (mParent instanceof JDialog) {
@@ -189,7 +189,7 @@ public class CaptureExecute {
                 return false;
             } 
             
-            if (!mData.getDialogOnlyOnError() || (mData.getDialogOnlyOnError() && mError && mExitValue == 1)) {
+            if (!mData.getDialogOnlyOnError() || (mData.getDialogOnlyOnError() && mError && mExitValue != 249)) {
                 ResultDialog dialog;
 
                 if (mParent instanceof JDialog) {
