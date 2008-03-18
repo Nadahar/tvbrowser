@@ -109,13 +109,24 @@ public interface FilterComponent {
   public void setDescription(String desc);  
 
   /**
+   * comparator for filter components (comparing by name)
+   * @author bananeweizen
+   * @since 2.7
+   */
+  public static class NameComparator implements java.util.Comparator<FilterComponent> {
+    public int compare(FilterComponent arg0, FilterComponent arg1) {
+      return arg0.getName().compareToIgnoreCase(arg1.getName());
+    }
+  }
+
+  /**
    * comparator for filter components (comparing by string representation)
    * @author bananeweizen
    * @since 2.7
    */
-  public static class Comparator implements java.util.Comparator<FilterComponent> {
+  public static class TypeComparator implements java.util.Comparator<FilterComponent> {
     public int compare(FilterComponent arg0, FilterComponent arg1) {
-      return (arg0).getName().compareToIgnoreCase((arg1).getName());
+      return (arg0).toString().compareToIgnoreCase((arg1).toString());
     }
   }
 }

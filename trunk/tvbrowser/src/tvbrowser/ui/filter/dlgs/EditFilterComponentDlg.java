@@ -140,7 +140,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     mRuleCb.addItem(mLocalizer.msg("hint", "must choose one"));
     
     // The TreeSet sorts the Entries
-    TreeSet<FilterComponent> set = new TreeSet<FilterComponent>(new FilterComponent.Comparator());
+    TreeSet<FilterComponent> set = new TreeSet<FilterComponent>(new FilterComponent.TypeComparator());
     
     if (filterComponentClass == null) {
       set.add(new DayFilterComponent());

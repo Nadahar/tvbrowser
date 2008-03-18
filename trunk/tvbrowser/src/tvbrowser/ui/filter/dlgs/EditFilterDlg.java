@@ -239,7 +239,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
 
     FilterComponent[] fc = FilterComponentList.getInstance().getAvailableFilterComponents();
 
-    Arrays.sort(fc, new FilterComponent.Comparator());
+    Arrays.sort(fc, new FilterComponent.NameComparator());
 
     for (int i = 0; i < fc.length; i++) {
       mComponentTableModel.addElement(fc[i]);

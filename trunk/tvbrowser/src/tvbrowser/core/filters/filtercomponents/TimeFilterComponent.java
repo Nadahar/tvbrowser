@@ -32,6 +32,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -44,142 +45,162 @@ import util.ui.UiUtilities;
 import devplugin.Program;
 
 public class TimeFilterComponent implements FilterComponent {
-    
-    private static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(TimeFilterComponent.class);
-    
-    private JSpinner mFromTimeSp, mToTimeSp;
-    
-    private int mFromTime, mToTime;
 
-    private String mName, mDescription;
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(TimeFilterComponent.class);
 
-    public TimeFilterComponent() {
-        this("", "");
+  private JSpinner mFromTimeSp, mToTimeSp;
+
+  private int mFromTime, mToTime;
+
+  private String mName, mDescription;
+
+  /**
+   * show programs which are already running when the time span begins
+   */
+  private boolean mShowRunning;
+
+  private JCheckBox mIncludeBtn;
+
+  public TimeFilterComponent() {
+    this("", "");
+  }
+
+  public TimeFilterComponent(String name, String description) {
+    mFromTime = 16 * 60;
+    mToTime = 23 * 60;
+
+    mName = name;
+    mDescription = description;
+    
+    mShowRunning = false;
+  }
+
+  public void read(ObjectInputStream in, int version) throws IOException {
+
+    if (version == 1) {
+      mFromTime = in.readInt() * 60;
+      mToTime = (in.readInt() % 24) * 60;
+    } else {
+      mFromTime = in.readInt();
+      mToTime = in.readInt();
+      if (version == 3) {
+        mShowRunning = in.readBoolean();
+      }
     }
+  }
 
-    public TimeFilterComponent(String name, String description) {
+  @Override
+  public String toString() {
+    return mLocalizer.msg("Time", "Time");
+  }
 
-        mFromTime = 960; //16 * 60
-        mToTime = 1380;  //23*60
+  public void saveSettings() {
+    mFromTime = getTimeFromDate((Date) mFromTimeSp.getValue());
+    mToTime = getTimeFromDate((Date) mToTimeSp.getValue());
+    mShowRunning = mIncludeBtn.isSelected();
+  }
 
-        mName = name;
-        mDescription = description;
-    }
+  public void write(ObjectOutputStream out) throws IOException {
+    out.writeInt(mFromTime);
+    out.writeInt(mToTime);
+    out.writeBoolean(mShowRunning);
+  }
 
-    public void read(ObjectInputStream in, int version) throws IOException {
+  public JPanel getSettingsPanel() {
+    JPanel content = new JPanel(new BorderLayout());
 
-        if (version == 1) {
-            mFromTime = in.readInt()*60;
-            mToTime = (in.readInt() % 24)*60;
-        } else {
-            mFromTime = in.readInt();
-            mToTime = in.readInt();
+    mFromTimeSp = new JSpinner(new SpinnerDateModel());
+    JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mFromTimeSp,
+        Settings.getTimePattern());
+    mFromTimeSp.setEditor(dateEditor);
+    mFromTimeSp.setValue(setTimeToDate(mFromTime));
+    CaretPositionCorrector.createCorrector(dateEditor.getTextField(),
+        new char[] { ':' }, -1);
+
+    mToTimeSp = new JSpinner(new SpinnerDateModel());
+    dateEditor = new JSpinner.DateEditor(mToTimeSp, Settings.getTimePattern());
+    mToTimeSp.setEditor(dateEditor);
+    mToTimeSp.setValue(setTimeToDate(mToTime));
+    CaretPositionCorrector.createCorrector(dateEditor.getTextField(),
+        new char[] { ':' }, -1);
+
+    JPanel timePn = new JPanel(new GridLayout(2, 2));
+    timePn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg(
+        "TimeOfDay", "Uhrzeit")));
+    timePn.add(new JLabel(mLocalizer.msg("from", "from")));
+    timePn.add(mFromTimeSp);
+    timePn.add(new JLabel(mLocalizer.msg("till", "till")));
+    timePn.add(mToTimeSp);
+    
+    mIncludeBtn = new JCheckBox(mLocalizer.msg("includeRunning", "Include programs running at start time"));
+    mIncludeBtn.setSelected(mShowRunning);
+    content.add(UiUtilities.createHelpTextArea(mLocalizer.msg("desc", "")),
+        BorderLayout.NORTH);
+    content.add(timePn, BorderLayout.CENTER);
+    content.add(mIncludeBtn, BorderLayout.SOUTH);
+
+    JPanel centerPanel = new JPanel(new BorderLayout());
+    centerPanel.add(content, BorderLayout.NORTH);
+    return centerPanel;
+  }
+
+  public Date setTimeToDate(int minutes) {
+    Calendar cal = Calendar.getInstance();
+    cal.set(Calendar.HOUR_OF_DAY, minutes / 60);
+    cal.set(Calendar.MINUTE, minutes % 60);
+    return cal.getTime();
+  }
+
+  public int getTimeFromDate(Date time) {
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(time);
+    return cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
+  }
+
+  public boolean accept(Program program) {
+    int start = program.getStartTime();
+    int end = start + program.getLength();
+
+    // From-To spans over 2 Days
+    if (mToTime < mFromTime) {
+      if (start >= mFromTime) {
+        return true;
+      }
+
+      if (start < mToTime) {
+        return true;
+      }
+
+      if (mShowRunning) {
+        if (start < mFromTime && end > mFromTime) {
+          return true;
         }
+      }
     }
 
-    public String toString() {
-        return mLocalizer.msg("Time","Time");
-    }
+    // Normal-Mode
+    return (start >= mFromTime && start < mToTime) || (mShowRunning && start < mFromTime && end > mFromTime);
+  }
 
-    public void saveSettings() {
-        mFromTime = getTimeFromDate((Date)mFromTimeSp.getValue());
-        mToTime = getTimeFromDate((Date)mToTimeSp.getValue());
-    }
+  public int getVersion() {
+    return 3;
+  }
 
-    public void write(ObjectOutputStream out) throws IOException {
-        out.writeInt(mFromTime);
-        out.writeInt(mToTime);
-    }
+  public String getName() {
+    return mName;
+  }
 
-    public JPanel getSettingsPanel() {
-        JPanel content = new JPanel(new BorderLayout());
-        
-        mFromTimeSp = new JSpinner(new SpinnerDateModel());
-        JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mFromTimeSp, Settings.getTimePattern());
-        mFromTimeSp.setEditor(dateEditor);
-        mFromTimeSp.setValue(setTimeToDate(mFromTime));        
-        CaretPositionCorrector.createCorrector(dateEditor.getTextField(), new char[] {':'}, -1);
-        
-        mToTimeSp = new JSpinner(new SpinnerDateModel());
-        dateEditor = new JSpinner.DateEditor(mToTimeSp, Settings.getTimePattern());
-        mToTimeSp.setEditor(dateEditor);
-        mToTimeSp.setValue(setTimeToDate(mToTime));
-        CaretPositionCorrector.createCorrector(dateEditor.getTextField(), new char[] {':'}, -1);
-        
-        JPanel timePn = new JPanel(new GridLayout(2, 2));
-        timePn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("TimeOfDay","Uhrzeit")));
-        timePn.add(new JLabel(mLocalizer.msg("from", "from")));
-        timePn.add(mFromTimeSp);
-        timePn.add(new JLabel(mLocalizer.msg("till", "till")));
-        timePn.add(mToTimeSp);
+  public String getDescription() {
+    return mDescription;
+  }
 
-        content.add(UiUtilities.createHelpTextArea(mLocalizer.msg("desc", "")),
-                BorderLayout.NORTH);
-        content.add(timePn, BorderLayout.CENTER);
+  public void setName(String name) {
+    mName = name;
+  }
 
-        JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.add(content, BorderLayout.NORTH);
-        return centerPanel;
-    }
-    
-    public Date setTimeToDate(int minutes) {
-        Calendar cal=Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, minutes / 60);
-        cal.set(Calendar.MINUTE, minutes % 60);
-        return cal.getTime();
-    }
-
-    public int getTimeFromDate(Date time) {
-        Calendar cal=Calendar.getInstance();
-        cal.setTime(time);
-        return cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
-    }
-    
-    private Integer[] createIntegerArray(int from, int to, int step) {
-        Integer[] result = new Integer[(to - from) / step + 1];
-        int cur = from;
-        for (int i = 0; i < result.length; i++) {
-            result[i] = new Integer(cur);
-            cur += step;
-        }
-        return result;
-    }
-
-    public boolean accept(Program program) {
-        int start = program.getStartTime();
-
-        // From-To spans over 2 Days
-        if (mToTime  < mFromTime) {
-            if (start >= mFromTime) { return true; }
-
-            if (start < mToTime ) { return true; }
-
-        }
-
-        // Normal-Mode
-        return (start < mToTime && start >= mFromTime);
-    }
-
-
-    public int getVersion() {
-        return 2;
-    }
-
-    public String getName() {
-        return mName;
-    }
-
-    public String getDescription() {
-        return mDescription;
-    }
-
-    public void setName(String name) {
-        mName = name;
-    }
-
-    public void setDescription(String desc) {
-        mDescription = desc;
-    }
+  public void setDescription(String desc) {
+    mDescription = desc;
+  }
 
 }
