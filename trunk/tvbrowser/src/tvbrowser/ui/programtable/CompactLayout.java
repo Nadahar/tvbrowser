@@ -29,7 +29,16 @@ package tvbrowser.ui.programtable;
 import util.ui.ProgramPanel;
 
 /**
- *
+ * This layout has (nearly) the same height for each column.
+ * The height of all columns is defined by the height of the channel column with the largest
+ * sum of panel heights. In all other columns space is added after each program to "stretch"
+ * the column to the same height. 
+ * 
+ * algorithm:
+ * <li> find the column with the largest height (using preferred size of panels)</li>
+ * <li> make all columns equally high, do this by adding the same amount of empty space
+ * at the end of each panel in a column
+ * 
  * @author Til Schneider, www.murfman.de
  */
 public class CompactLayout extends AbstractProgramTableLayout {
