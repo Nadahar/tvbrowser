@@ -33,22 +33,24 @@ import devplugin.Channel;
 import devplugin.ChannelGroup;
 import devplugin.ProgressMonitor;
 
-
 public abstract class AbstractTvDataServiceProxy implements TvDataServiceProxy {
 
   protected AbstractTvDataServiceProxy() {
-
+    // empty
   }
 
-  public abstract Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException;
+  public abstract Channel[] checkForAvailableChannels(ChannelGroup group,
+      ProgressMonitor monitor) throws TvBrowserException;
 
-  public final Channel[] checkForAvailableChannels(ProgressMonitor monitor) throws TvBrowserException {
-    ChannelGroup[] groups = ChannelGroupManager.getInstance().getAvailableGroups(this);
+  public final Channel[] checkForAvailableChannels(ProgressMonitor monitor)
+      throws TvBrowserException {
+    ChannelGroup[] groups = ChannelGroupManager.getInstance()
+        .getAvailableGroups(this);
     monitor.setMaximum(groups.length);
     ArrayList<Channel> list = new ArrayList<Channel>();
-    for (int i=0; i<groups.length; i++) {
+    for (int i = 0; i < groups.length; i++) {
       Channel[] ch = checkForAvailableChannels(groups[i], monitor);
-      for (int k=0; k<ch.length; k++) {
+      for (int k = 0; k < ch.length; k++) {
         list.add(ch[k]);
       }
       monitor.setValue(i);
@@ -59,29 +61,33 @@ public abstract class AbstractTvDataServiceProxy implements TvDataServiceProxy {
 
   private Channel[] loadChannelsForGroups(ChannelGroup[] groups) {
     ArrayList<Channel> list = new ArrayList<Channel>();
-    for (int i=0; i<groups.length; i++) {
+    for (int i = 0; i < groups.length; i++) {
       Channel[] ch = getAvailableChannels(groups[i]);
       if (ch != null) {
-        for (int k=0; k<ch.length; k++) {
+        for (int k = 0; k < ch.length; k++) {
           list.add(ch[k]);
         }
       }
     }
-    return list.toArray(new Channel[list.size()]);    
+    return list.toArray(new Channel[list.size()]);
   }
-  
+
   public Channel[] getChannelsForTvBrowserStart() {
-    return loadChannelsForGroups(ChannelGroupManager.getInstance().getUsedGroups(this));
-  }  
-  
+    return loadChannelsForGroups(ChannelGroupManager.getInstance()
+        .getUsedGroups(this));
+  }
+
   public Channel[] getAvailableChannels() {
-    return loadChannelsForGroups(ChannelGroupManager.getInstance().getAvailableGroups(this));
+    return loadChannelsForGroups(ChannelGroupManager.getInstance()
+        .getAvailableGroups(this));
   }
 
   /*
    * (non-Javadoc)
+   * 
    * @see java.lang.Object#hashCode()
    */
+  @Override
   public int hashCode() {
     final int PRIME = 31;
     int result = 1;
@@ -91,23 +97,27 @@ public abstract class AbstractTvDataServiceProxy implements TvDataServiceProxy {
 
   /*
    * (non-Javadoc)
+   * 
    * @see java.lang.Object#equals(java.lang.Object)
    */
+  @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    final TvDataServiceProxy other = (TvDataServiceProxy) obj;
-    
-    if (!getId().equals(other.getId())) {
+    }
+    if (obj == null) {
       return false;
     }
-    
+    if (!(obj instanceof AbstractTvDataServiceProxy)) {
+      return false;
+    }
+    final TvDataServiceProxy otherProxy = (TvDataServiceProxy) obj;
+
+    if (!getId().equals(otherProxy.getId())) {
+      return false;
+    }
+
     return true;
   }
 
-  
 }
