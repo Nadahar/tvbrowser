@@ -31,6 +31,8 @@ import devplugin.Program;
 
 /**
  * Does a program panel layout that is real time synchronous.
+ * This means that equi distant time spans in the program table result
+ * in equi distant heights in the program table. 
  * 
  * @author René Mach
  * 

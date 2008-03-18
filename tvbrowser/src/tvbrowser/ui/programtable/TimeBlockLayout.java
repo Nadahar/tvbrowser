@@ -26,11 +26,15 @@ package tvbrowser.ui.programtable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import devplugin.Date;
+
 import tvbrowser.core.Settings;
 import util.ui.ProgramPanel;
 
 /**
- * A class for layout the program table in time blocks.
+ * Define blocks of <i>n</i> hours. Each of these blocks starts at the same height in all columns
+ * (so the borders of these time blocks are time synchronous). 
+ * The height of a certain block is calculated by the channel with the most programs in that block.
  * 
  * @author René Mach
  * @since 2.7
@@ -60,29 +64,31 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
       blockProgramList[i] = new ArrayList<ProgramPanel>();
     }
     
-    int currentHeight = 0;
+    int blockEnd = 0;
     
     int blockSize = Settings.propTimeBlockSize.getInt() * 60;
     int blockCount = ((Settings.propProgramTableEndOfDay.getInt() 
-        - Settings.propProgramTableStartOfDay.getInt() + 1440) / blockSize) +1;
+        - Settings.propProgramTableStartOfDay.getInt() + 24 * 60) / blockSize) +1;
+    int blockOffset = Settings.propProgramTableStartOfDay.getInt() / blockSize;
+    Date nextProgramTableDate = model.getDate().addDays(1);
 
     // calculate the hight of each block independently
-    for(int block = 0; block < blockCount; block++) {
+    for(int block = blockOffset; block < blockOffset + blockCount; block++) {
       int maxHeight = 0;
       
       // search for the largest column in this block
       for(int column = 0; column < columnCount; column++) {
         blockProgramList[column].clear();
         int height = 0;
-        for(int row = lastRow[column]; row < model.getRowCount(column); row++) {
+        int rowCount = model.getRowCount(column);
+        for(int row = lastRow[column]; row < rowCount; row++) {
           lastRow[column] = row;
           
           ProgramPanel panel = model.getProgramPanel(column,row);
           
           int startTime = panel.getProgram().getStartTime();
-          
-          if(panel.getProgram().getDate().addDays(-1).equals(model.getDate())) {
-            startTime += 1440;
+          if(panel.getProgram().getDate().equals(nextProgramTableDate)) {
+            startTime += 24 * 60;
           }         
           
           if((startTime >= block * blockSize) && (startTime < (block+1) * blockSize)) {
@@ -102,8 +108,8 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
       }
 
       // increase overall height by block hight
-      int blockStart = currentHeight;
-      currentHeight += maxHeight;
+      int blockStart = blockEnd;
+      blockEnd += maxHeight;
       
       for(int col = 0; col < columnCount; col++) {
         // first correct the last panel of this column to make it full size
@@ -117,10 +123,35 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
           if(list.get(0).equals(model.getProgramPanel(col,0))) {
             columnStartArr[col] = blockStart;
           }
+/*          
+          // calculate wanted full size of this block column
+          int sumLength = 0;
+          for (int i = 0; i < list.size(); i++) {
+            ProgramPanel panel = (ProgramPanel)list.get(i);
+            panel.setMaximumHeight();
+            sumLength += panel.getHeight();
+          }
+          
+          // now distribute evenly (excluding the last panel)
+          double factor = ((double)maxHeight)/(double)sumLength;
+          sumLength = 0;
+          for (int i = 0; i < list.size() - 2; i++) {
+            ProgramPanel panel = (ProgramPanel)list.get(i);
+            int height = (int) Math.floor(factor * panel.getHeight());
+            panel.setHeight(height);
+            sumLength += height;
+          }
+          
+          // set last panel to consume remaining space
+          ProgramPanel panel = (ProgramPanel) list.get(list.size()-1);
+          int lastHeight = maxHeight-sumLength;
+          panel.setHeight(lastHeight);
+          lastLayoutComponentList[col] = new LastLayoutComponent((ProgramPanel)list.get(list.size()-1), blockEnd - lastHeight);
+*/          
           
           int internHeight = blockStart;
           int internLastHeight = internHeight;
-          
+
           for(int i = 0; i < list.size(); i++) {
             ProgramPanel panel = (ProgramPanel)list.get(i);
             
@@ -131,6 +162,7 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
           }
           
           lastLayoutComponentList[col] = new LastLayoutComponent((ProgramPanel)list.get(list.size()-1),internLastHeight);
+
         }
       }
     }
@@ -138,7 +170,7 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
     // set all last panels in all columns to eat all available space
     for(int col = 0; col < columnCount; col++) {
       if(lastLayoutComponentList[col] != null) {
-        lastLayoutComponentList[col].getPanel().setHeight(currentHeight - lastLayoutComponentList[col].getPrePosition());
+        lastLayoutComponentList[col].getPanel().setHeight(blockEnd - lastLayoutComponentList[col].getPrePosition());
       }
     }
 
