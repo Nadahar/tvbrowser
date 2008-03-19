@@ -199,7 +199,7 @@ public class Updater implements Progress {
    * @param node Node to analyse
    */
   private void readRatingData(Node node) {
-    _tvraterPlugin.getDatabase().clearOverall();
+    _tvraterPlugin.getDatabase().clearServer();
     Node child = node.getFirstChild();
     while (child != null) {
       if (child.getNodeName().equals("rating")) {
@@ -265,7 +265,7 @@ public class Updater implements Progress {
       child = child.getNextSibling();
     }
 
-    _tvraterPlugin.getDatabase().setOverallRating(rating);
+    _tvraterPlugin.getDatabase().setServerRating(rating);
   }
 
   /**

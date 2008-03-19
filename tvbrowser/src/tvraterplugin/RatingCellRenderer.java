@@ -50,7 +50,7 @@ public class RatingCellRenderer extends JLabel implements ListCellRenderer {
         if (obj instanceof Rating) {
 
             Rating rating = TVRaterPlugin.getInstance().getDatabase()
-                    .getOverallRating(((Rating) obj).getTitle());
+                    .getServerRating(((Rating) obj).getTitle());
             
             Rating personal = TVRaterPlugin.getInstance().getDatabase()
                     .getPersonalRating(((Rating) obj).getTitle());
