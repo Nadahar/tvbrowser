@@ -26,11 +26,17 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 /**
- * Representation of a Rating
+ * Representation of a rating
+ * <p>
+ * all rating values are represented by integer values 0 to 5,
+ * where 0 means worst and 5 means best in the respective category
  * 
  * @author bodo tasche
  */
 public class Rating implements Serializable {
+  
+  public static final int BEST_RATING = 5;
+  
 	/** Used to serialize this Object */
 	static final long serialVersionUID = -6175532584789444451L;
 	
@@ -126,17 +132,17 @@ public class Rating implements Serializable {
    */
   private int userCount;
 
-  /** Title of the Program this rating is about */
-	private String _title;
+  /** Title of the program this rating is about */
+	private String mTitle;
 	
-	/** Values in this Rating-Element */
-	private byte[] _values;
+	/** Values in this rating-Element */
+	private byte[] mValues;
 
 	/**
-	 * Creates a empty Rating
+	 * Creates an empty rating
 	 */
 	public Rating() {
-	  _values = new byte[RATING_ENTRY_COUNT];
+	  mValues = new byte[RATING_ENTRY_COUNT];
 	}
 
 	/**
@@ -146,7 +152,7 @@ public class Rating implements Serializable {
 	 */
 	public Rating(String title) {
     this();
-		_title = title;
+		mTitle = title;
 	}
 
 	/**
@@ -157,8 +163,8 @@ public class Rating implements Serializable {
 	 */
 
   public Rating(String title, byte[] values) {
-    _title = title;
-    _values = values;
+    mTitle = title;
+    mValues = values;
   }
 
   /**
@@ -166,7 +172,7 @@ public class Rating implements Serializable {
 	 * @return title
 	 */
 	public String getTitle() {
-		return _title;
+		return mTitle;
 	}
 
 	/**
@@ -174,14 +180,14 @@ public class Rating implements Serializable {
 	 * @param string Title of the Program
 	 */
 	public void setTitle(String string) {
-		_title = string;
+		mTitle = string;
 	}
 	
 	/**
 	 * Returns a String-Representation of this Object 
 	 */
 	public String toString() {
-		return _title;
+		return mTitle;
 	}
 
 	/**
@@ -190,7 +196,7 @@ public class Rating implements Serializable {
 	 * @return Int-Value
 	 */
 	public int getIntValue(int key) {
-		return _values[key];
+		return mValues[key];
 	}
 
 	/**
@@ -200,11 +206,11 @@ public class Rating implements Serializable {
 	 */
 	private synchronized void writeObject(java.io.ObjectOutputStream s) throws IOException {
 		s.writeInt(2);
-		s.writeObject(_title);
+		s.writeObject(mTitle);
 		s.writeInt(onlineID);
 		s.writeInt(userCount);
 		s.writeInt(genre);
-		s.writeObject(_values);
+		s.writeObject(mValues);
 	}
 
 	/**
@@ -216,7 +222,7 @@ public class Rating implements Serializable {
 	 */
   private synchronized void readObject(java.io.ObjectInputStream s) throws IOException, ClassNotFoundException {
     int version = s.readInt();
-		_title = (String) s.readObject();
+		mTitle = (String) s.readObject();
 		if (version == 1) {
 		  @SuppressWarnings("unchecked")
 		  HashMap<Object, Integer> map = (HashMap<Object, Integer>) s.readObject();
@@ -226,33 +232,33 @@ public class Rating implements Serializable {
 	    onlineID = s.readInt();
 	    userCount = s.readInt();
 	    genre = s.readInt();
-		  _values = (byte[]) s.readObject();
+		  mValues = (byte[]) s.readObject();
 		}
 	}
 	
 	private void convertVersion1(HashMap<Object, Integer> oldMap) {
-	  _values = new byte[RATING_ENTRY_COUNT];
+	  mValues = new byte[RATING_ENTRY_COUNT];
 	  for (Iterator<Entry<Object, Integer>> iterator = oldMap.entrySet().iterator(); iterator.hasNext();) {
       Entry<Object, Integer> entry = iterator.next();
       Object key = entry.getKey();
       int oldValue = entry.getValue();
       if (key.equals(OVERALL)) {
-        _values[OVERALL_RATING_KEY] = (byte) oldValue;
+        mValues[OVERALL_RATING_KEY] = (byte) oldValue;
       }
       else if (key.equals(ACTION)) {
-        _values[ACTION_RATING_KEY] = (byte) oldValue;
+        mValues[ACTION_RATING_KEY] = (byte) oldValue;
       }
       else if (key.equals(FUN)) {
-        _values[FUN_RATING_KEY] = (byte) oldValue;
+        mValues[FUN_RATING_KEY] = (byte) oldValue;
       }
       else if (key.equals(EROTIC)) {
-        _values[EROTIC_RATING_KEY] = (byte) oldValue;
+        mValues[EROTIC_RATING_KEY] = (byte) oldValue;
       }
       else if (key.equals(TENSION)) {
-        _values[TENSION_RATING_KEY] = (byte) oldValue;
+        mValues[TENSION_RATING_KEY] = (byte) oldValue;
       }
       else if (key.equals(ENTITLEMENT)) {
-        _values[ENTITLEMENT_RATING_KEY] = (byte) oldValue;
+        mValues[ENTITLEMENT_RATING_KEY] = (byte) oldValue;
       }
       else if (key.equals(ID)) {
         onlineID = oldValue;
@@ -279,51 +285,51 @@ public class Rating implements Serializable {
   }
 
   public int getOverallRating() {
-    return _values[OVERALL_RATING_KEY];
+    return mValues[OVERALL_RATING_KEY];
   }
 
   public int getActionRating() {
-    return _values[ACTION_RATING_KEY];
+    return mValues[ACTION_RATING_KEY];
   }
 
   public int getEntitlementRating() {
-    return _values[ENTITLEMENT_RATING_KEY];
+    return mValues[ENTITLEMENT_RATING_KEY];
   }
 
   public int getFunRating() {
-    return _values[FUN_RATING_KEY];
+    return mValues[FUN_RATING_KEY];
   }
 
   public int getTensionRating() {
-    return _values[TENSION_RATING_KEY];
+    return mValues[TENSION_RATING_KEY];
   }
 
   public int getEroticRating() {
-    return _values[EROTIC_RATING_KEY];
+    return mValues[EROTIC_RATING_KEY];
   }
 
   public void setOverallRating(int overall) {
-    _values[OVERALL_RATING_KEY] = (byte) overall;
+    mValues[OVERALL_RATING_KEY] = (byte) overall;
   }
 
   public void setActionRating(int action) {
-    _values[ACTION_RATING_KEY] = (byte) action;
+    mValues[ACTION_RATING_KEY] = (byte) action;
   }
 
   public void setEntitlementRating(int entitlement) {
-    _values[ENTITLEMENT_RATING_KEY] = (byte) entitlement;
+    mValues[ENTITLEMENT_RATING_KEY] = (byte) entitlement;
   }
 
   public void setFunRating(int fun) {
-    _values[FUN_RATING_KEY] = (byte) fun;
+    mValues[FUN_RATING_KEY] = (byte) fun;
   }
 
   public void setTensionRating(int tension) {
-    _values[TENSION_RATING_KEY] = (byte) tension;
+    mValues[TENSION_RATING_KEY] = (byte) tension;
   }
 
   public void setEroticRating(int erotic) {
-    _values[EROTIC_RATING_KEY] = (byte) erotic;
+    mValues[EROTIC_RATING_KEY] = (byte) erotic;
   }
 
   public void setUserCount(int userCountArg) {

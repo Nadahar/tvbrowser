@@ -58,14 +58,14 @@ public class DialogRating extends JDialog implements WindowClosingIf {
     /** Localizer */
     private static final Localizer _mLocalizer = Localizer.getLocalizerFor(DialogRating.class);
 
-    /** Raiting-Boxes */
+    /** Rating-Boxes */
     private JComboBox[] _ratings = new JComboBox[6];
 
     /** Personal Rating */
-    private Rating _personalrating;
+    private Rating mPersonalRating;
 
     /** Overall Rating */
-    private Rating _overallrating;
+    private Rating mServerRating;
 
     /** Title of teh Program */
     private String _title;
@@ -101,12 +101,12 @@ public class DialogRating extends JDialog implements WindowClosingIf {
         setTitle(_mLocalizer.msg("title", "View Rating"));
 
         _rater = rater;
-        _overallrating = _rater.getDatabase().getOverallRating(programtitle);
-        _personalrating = _rater.getDatabase().getPersonalRating(programtitle);
+        mServerRating = _rater.getDatabase().getServerRating(programtitle);
+        mPersonalRating = _rater.getDatabase().getPersonalRating(programtitle);
 
-        if (_personalrating == null) {
+        if (mPersonalRating == null) {
             _emptyPersonal = true;
-            _personalrating = new Rating(programtitle);
+            mPersonalRating = new Rating(programtitle);
         }
 
         _title = programtitle;
@@ -127,12 +127,12 @@ public class DialogRating extends JDialog implements WindowClosingIf {
         setTitle(_mLocalizer.msg("title", "View Rating"));
 
         _rater = rater;
-        _overallrating = _rater.getDatabase().getOverallRating(program);
-        _personalrating = rater.getDatabase().getPersonalRating(program);
+        mServerRating = _rater.getDatabase().getServerRating(program);
+        mPersonalRating = rater.getDatabase().getPersonalRating(program);
 
-        if (_personalrating == null) {
+        if (mPersonalRating == null) {
             _emptyPersonal = true;
-            _personalrating = new Rating(program.getTitle());
+            mPersonalRating = new Rating(program.getTitle());
         }
 
         _title = program.getTitle();
@@ -181,10 +181,10 @@ public class DialogRating extends JDialog implements WindowClosingIf {
         c.weighty = 1.0;
         c.gridwidth = 1;
 
-        panel.add(createRatingPanel(_overallrating), c);
+        panel.add(createRatingPanel(mServerRating), c);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
-        panel.add(createVotingPanel(_personalrating), c);
+        panel.add(createVotingPanel(mPersonalRating), c);
 
         JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 3, 0));
 
@@ -226,21 +226,21 @@ public class DialogRating extends JDialog implements WindowClosingIf {
 
         int id = 0;
         
-        if (_overallrating != null) {
-            id = _overallrating.getRatingId();
+        if (mServerRating != null) {
+            id = mServerRating.getRatingId();
         }
         
-        if ((_personalrating != null) && (id <= 0)){
-            id = _personalrating.getRatingId();
+        if ((mPersonalRating != null) && (id <= 0)){
+            id = mPersonalRating.getRatingId();
         }
 
         JButton detailsButtons = new JButton(new ShowDetailsAction(id, true, false));
 
-        if ((_overallrating == null) || ( _overallrating.getRatingId() < 0)) {
+        if ((mServerRating == null) || ( mServerRating.getRatingId() < 0)) {
             detailsButtons.setEnabled(false);
         }
         
-        if ((_personalrating != null) && ( _personalrating.getRatingId() > 0)) {
+        if ((mPersonalRating != null) && ( mPersonalRating.getRatingId() > 0)) {
             detailsButtons.setEnabled(true);
         }
         
@@ -273,15 +273,15 @@ public class DialogRating extends JDialog implements WindowClosingIf {
             values[i] = _ratings[i].getSelectedIndex();
         }
 
-        _personalrating.setOverallRating(_ratings[0].getSelectedIndex());
-        _personalrating.setActionRating(_ratings[1].getSelectedIndex());
-        _personalrating.setFunRating(_ratings[2].getSelectedIndex());
-        _personalrating.setEroticRating(_ratings[3].getSelectedIndex());
-        _personalrating.setTensionRating(_ratings[4].getSelectedIndex());
-        _personalrating.setEntitlementRating(_ratings[5].getSelectedIndex());
-        _personalrating.setGenre(Integer.parseInt(_genre.getSelectedItem().toString()));
+        mPersonalRating.setOverallRating(_ratings[0].getSelectedIndex());
+        mPersonalRating.setActionRating(_ratings[1].getSelectedIndex());
+        mPersonalRating.setFunRating(_ratings[2].getSelectedIndex());
+        mPersonalRating.setEroticRating(_ratings[3].getSelectedIndex());
+        mPersonalRating.setTensionRating(_ratings[4].getSelectedIndex());
+        mPersonalRating.setEntitlementRating(_ratings[5].getSelectedIndex());
+        mPersonalRating.setGenre(Integer.parseInt(_genre.getSelectedItem().toString()));
         
-        _rater.getDatabase().setPersonalRating(_personalrating);
+        _rater.getDatabase().setPersonalRating(mPersonalRating);
         setVisible(false);
 
         if (Integer.parseInt(_rater.getSettings().getProperty("updateIntervall", "0")) == 1) {
@@ -451,26 +451,26 @@ public class DialogRating extends JDialog implements WindowClosingIf {
         labc.fill = GridBagConstraints.BOTH;
 
         voting.add(new JLabel(_mLocalizer.msg("overall", "Overall") + ":"), labc);
-        voting.add(createVotingBox(_personalrating, Rating.OVERALL_RATING_KEY, 0), c);
+        voting.add(createVotingBox(mPersonalRating, Rating.OVERALL_RATING_KEY, 0), c);
 
         voting.add(new JLabel(_mLocalizer.msg("action", "Action") + ":"), labc);
-        voting.add(createVotingBox(_personalrating, Rating.ACTION_RATING_KEY, 1), c);
+        voting.add(createVotingBox(mPersonalRating, Rating.ACTION_RATING_KEY, 1), c);
 
         voting.add(new JLabel(_mLocalizer.msg("fun", "Fun") + ":"), labc);
-        voting.add(createVotingBox(_personalrating, Rating.FUN_RATING_KEY, 2), c);
+        voting.add(createVotingBox(mPersonalRating, Rating.FUN_RATING_KEY, 2), c);
 
         voting.add(new JLabel(_mLocalizer.msg("erotic", "Erotic") + ":"), labc);
-        voting.add(createVotingBox(_personalrating, Rating.EROTIC_RATING_KEY, 3), c);
+        voting.add(createVotingBox(mPersonalRating, Rating.EROTIC_RATING_KEY, 3), c);
 
         voting.add(new JLabel(_mLocalizer.msg("tension", "Tension") + ":"), labc);
-        voting.add(createVotingBox(_personalrating, Rating.TENSION_RATING_KEY, 4), c);
+        voting.add(createVotingBox(mPersonalRating, Rating.TENSION_RATING_KEY, 4), c);
 
         voting.add(new JLabel(_mLocalizer.msg("entitlement", "Entitlement") + ":"), labc);
-        voting.add(createVotingBox(_personalrating, Rating.ENTITLEMENT_RATING_KEY, 5), c);
+        voting.add(createVotingBox(mPersonalRating, Rating.ENTITLEMENT_RATING_KEY, 5), c);
 
         voting.add(new JLabel(_mLocalizer.msg("genre", "Genre") + ":"), labc);
         
-        _genre = new GenreComboBox(_personalrating.getGenre());
+        _genre = new GenreComboBox(mPersonalRating.getGenre());
         voting.add(_genre, c);
 
         return voting;
