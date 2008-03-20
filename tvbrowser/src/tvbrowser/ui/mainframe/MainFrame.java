@@ -1043,7 +1043,7 @@ public class MainFrame extends JFrame implements DateListener {
   }
   
   /**
-   * Gets id TV-Browser is currently being started. 
+   * Gets whether TV-Browser is currently being started. 
    * @return True if TV-Browser is currently being started.
    * @since 2.5.3
    */
