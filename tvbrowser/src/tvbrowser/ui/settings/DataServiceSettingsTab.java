@@ -139,7 +139,7 @@ public class DataServiceSettingsTab implements devplugin.SettingsTab {
     });
 
     mConfigure = new JButton(mLocalizer.msg("configure", "Configure"), IconLoader
-        .getInstance().getIconFromTheme("category", "preferences-system", 16));
+        .getInstance().getIconFromTheme("categories", "preferences-system", 16));
     mConfigure.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         configureService(getSelection());

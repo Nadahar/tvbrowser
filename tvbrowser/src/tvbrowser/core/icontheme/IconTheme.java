@@ -170,8 +170,20 @@ abstract public class IconTheme {
    * @return Icon or Null if Icon was not found
    */
   public ImageIcon getIcon(ThemeIcon icon) {
-    // First Try, find exact size matching Icon
+    // a) best match, find right context and right size
     Iterator<Directory> it = mDirectories.iterator();
+    while (it.hasNext()) {
+      Directory dir = it.next();
+      if (dir.getName().toLowerCase().contains("/" + icon.getCategory().toLowerCase()) && sizeMatches(dir, icon.getSize())) {
+        StringBuffer iconFile = new StringBuffer(dir.getName()).append("/").append(icon.getName()).append(".png");
+        if (entryExists(iconFile.toString())) {
+          return getImageFromTheme(iconFile.toString());
+        }
+      }
+    }
+    
+    // b) find exact size matching Icon, independent of context
+    it = mDirectories.iterator();
     while (it.hasNext()) {
       Directory dir = it.next();
       if (sizeMatches(dir, icon.getSize())) {
@@ -182,7 +194,7 @@ abstract public class IconTheme {
       }
     }
     
-    // Second Try, find best fitting Icon
+    // c) find best fitting Icon
     int minSize = Integer.MAX_VALUE;
     String closestMatch = null;
     
@@ -196,7 +208,6 @@ abstract public class IconTheme {
           closestMatch = iconFile.toString();
           minSize = distance;
         }
-        
       }
     }
 
