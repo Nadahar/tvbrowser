@@ -107,6 +107,8 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   private ManagePanel mManagePanel = null;
 
   private PluginInfo mPluginInfo;
+
+  private boolean mStartFinished = false;
   
   /**
    * Standard contructor for this class.
@@ -117,6 +119,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   
   public void onActivation() {
     mMarkListVector = new MarkListsVector();
+    updateTree();
   }
   
   public static Version getVersion() {
@@ -427,6 +430,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   }
 
   public void handleTvBrowserStartFinished() {
+    mStartFinished  = true;
     if(mMarkListVector.isEmpty()) {
       mMarkListVector.addElement(new MarkList(mLocalizer.msg("default","default")));
     }
@@ -521,6 +525,9 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
    * Updates the plugin tree.
    */
   public void updateTree() {
+    if (!mStartFinished) {
+      return;
+    }
     PluginTreeNode node = getRootNode();
     node.removeAllActions();
     node.removeAllChildren();

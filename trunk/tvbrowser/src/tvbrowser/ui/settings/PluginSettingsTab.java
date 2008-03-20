@@ -522,6 +522,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
           PluginProxyManager.getInstance().deactivatePlugin(plugin);
         } else {
           PluginProxyManager.getInstance().activatePlugin(plugin, true);
+          PluginProxyManager.getInstance().fireTvBrowserStartFinished(plugin);
         }
       } catch (TvBrowserException exc) {
         ErrorHandler.handle(exc);

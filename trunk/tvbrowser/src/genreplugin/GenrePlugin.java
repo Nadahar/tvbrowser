@@ -72,6 +72,8 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
 
   private List<String> currentGenres;
 
+  private boolean mStartFinished = false;
+
   public GenrePlugin() {
     super();
     instance = this;
@@ -108,6 +110,9 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
   }
 
   protected void updateRootNode() {
+    if (!mStartFinished) {
+      return;
+    }
     PluginTreeNode root = getRootNode();
     root.removeAllActions();
     root.removeAllChildren();
@@ -193,6 +198,7 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
 
   @Override
   public void handleTvBrowserStartFinished() {
+    mStartFinished  = true;
     updateRootNode();
   }
 
@@ -239,6 +245,11 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
     for (int i = 0; i < hidden.length; i++) {
       mSettings.setProperty(FILTERED_GENRE+String.valueOf(i), (String) hidden[i]);
     }
+  }
+
+  @Override
+  public void onActivation() {
+    updateRootNode();
   }
 
 }
