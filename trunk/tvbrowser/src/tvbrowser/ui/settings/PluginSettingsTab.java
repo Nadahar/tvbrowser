@@ -243,7 +243,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     });
     
     mConfigure = new JButton(mLocalizer.msg("configure", "Configure"), IconLoader
-        .getInstance().getIconFromTheme("category", "preferences-system", 16));
+        .getInstance().getIconFromTheme("categories", "preferences-system", 16));
     mConfigure.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
@@ -295,7 +295,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     
     //configure
     JMenuItem configureMI;
-    configureMI = new JMenuItem(mLocalizer.msg("configure", ""),IconLoader.getInstance().getIconFromTheme("category", "preferences-system", 16));
+    configureMI = new JMenuItem(mLocalizer.msg("configure", ""),IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
     configureMI.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
           mSettingsDialog.showSettingsTab(plugin.getSettingsId());
@@ -331,7 +331,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
 
     //configure
     JMenuItem configureMI;
-   	configureMI = new JMenuItem(mLocalizer.msg("configure", ""),IconLoader.getInstance().getIconFromTheme("category", "preferences-system", 16));
+   	configureMI = new JMenuItem(mLocalizer.msg("configure", ""),IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
    	configureMI.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
           configurePlugin(plugin);

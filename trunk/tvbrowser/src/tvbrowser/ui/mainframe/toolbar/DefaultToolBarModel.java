@@ -148,9 +148,9 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
         ToolBar.BUTTON_ACTION, this);
     mSettingsAction = createAction(Localizer.getLocalization(Localizer.I18N_SETTINGS),
         "#settings", MainFrame.mLocalizer.msg("menuinfo.settings",
-        ""), IconLoader.getInstance().getIconFromTheme("category",
+        ""), IconLoader.getInstance().getIconFromTheme("categories",
         "preferences-system", 16), IconLoader.getInstance().getIconFromTheme(
-        "category", "preferences-system", 22), ToolBar.BUTTON_ACTION, this);
+        "categories", "preferences-system", 22), ToolBar.BUTTON_ACTION, this);
     mFilterAction = createAction(TVBrowser.mLocalizer.msg("button.filter",
         "Filter"), "#filter", MainFrame.mLocalizer.msg("menuinfo.filter", ""),
         IconLoader.getInstance().getIconFromTheme("actions","view-filter-list",16),

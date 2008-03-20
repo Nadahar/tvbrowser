@@ -134,7 +134,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
   
   private void createMenuItems() {
       
-    mSettingsMI = new JMenuItem(mLocalizer.msg("menuitem.settings", "Settings..."), IconLoader.getInstance().getIconFromTheme("category", "preferences-system", 16));
+    mSettingsMI = new JMenuItem(mLocalizer.msg("menuitem.settings", "Settings..."), IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
     mSettingsMI.addActionListener(this);
     new MenuHelpTextAdapter(mSettingsMI, mLocalizer.msg("menuinfo.settings",""), mLabel); 
 
@@ -237,7 +237,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mGotoChannelMenu = new ScrollableMenu(Localizer.getLocalization(Localizer.I18N_CHANNEL));
     mGotoChannelMenu.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "scroll-to-channel", 16));
     mGotoTimeMenu = new JMenu(mLocalizer.msg("menuitem.time","time"));
-    mGotoTimeMenu.setIcon(IconLoader.getInstance().getIconFromTheme("apps", "scroll-to-time", 16));
+    mGotoTimeMenu.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "scroll-to-time", 16));
     mGoMenu.add(mPreviousDayMI);
     mGoMenu.add(mNextDayMI);
     mGoMenu.add(mPreviousWeekMI);
@@ -300,7 +300,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mDonorMI.addActionListener(this);
     new MenuHelpTextAdapter(mDonorMI,mLocalizer.msg("website.donors",""),mLabel); 
     
-    mConfigAssistantMI=new JMenuItem(mLocalizer.msg("menuitem.configAssistant","setup assistant"),IconLoader.getInstance().getIconFromTheme("category", "preferences-system", 16));
+    mConfigAssistantMI=new JMenuItem(mLocalizer.msg("menuitem.configAssistant","setup assistant"),IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
     mConfigAssistantMI.addActionListener(this);
     new MenuHelpTextAdapter(mConfigAssistantMI,mLocalizer.msg("menuinfo.configAssistant",""),mLabel);
     

@@ -564,7 +564,7 @@ public class ReminderPlugin {
         UiUtilities.centerAndShow(dlg);
       }
     };
-    editReminders.putValue(Action.SMALL_ICON, IconLoader.getInstance().getIconFromTheme("action", "appointment", 16));
+    editReminders.putValue(Action.SMALL_ICON, IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16));
     editReminders.putValue(Action.NAME, mLocalizer.msg("buttonText", "Edit reminder list..."));
 
     Action openSettings = new AbstractAction() {
