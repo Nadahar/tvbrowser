@@ -52,6 +52,7 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
   /**
    * Creates the Component
    */
+  @Override
   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
       int row, int column) {
 
@@ -86,7 +87,7 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
     } else if (value instanceof Program) {
 
       if (mProgramPanel == null) {
-        mProgramPanel = new ProgramPanel((Program)value, ProgramPanel.X_AXIS, new ProgramPanelSettings(ListViewPlugin.getInstance().getPictureSettings(),false));
+        mProgramPanel = new ProgramPanel((Program)value, new ProgramPanelSettings(ListViewPlugin.getInstance().getPictureSettings(),false, ProgramPanelSettings.X_AXIS));
       }
 
       JPanel rpanel = new JPanel(new BorderLayout());
@@ -99,7 +100,12 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
       if (mProgramPanel.getHeight() > table.getRowHeight(row)) {
         table.setRowHeight(row, mProgramPanel.getHeight());
       } else if (mProgramPanel.getHeight() < table.getRowHeight(row)) {
-        mProgramPanel.setHeight(table.getRowHeight(row));
+        if (column == 1) {
+          table.setRowHeight(row, mProgramPanel.getHeight());
+        }
+        else {
+          mProgramPanel.setHeight(table.getRowHeight(row));
+        }
       }
 
       if (ListViewPlugin.PROGRAMTABLEWIDTH > table.getColumnModel().getColumn(column).getMinWidth()) {
@@ -108,7 +114,6 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
       }
 
       return rpanel;
-
     }
 
     return label;
