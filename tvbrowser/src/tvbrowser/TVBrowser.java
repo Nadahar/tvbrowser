@@ -373,6 +373,7 @@ public class TVBrowser {
           public void run() {
             new Thread("Start finished callbacks") {
               public void run() {
+                setPriority(Thread.MIN_PRIORITY);
                 GlobalPluginProgramFormatingManager.getInstance();
                 PluginProxyManager.getInstance().fireTvBrowserStartFinished();
                 TvDataServiceProxyManager.getInstance().fireTvBrowserStartFinished();
