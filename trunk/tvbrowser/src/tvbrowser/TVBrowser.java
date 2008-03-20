@@ -111,8 +111,6 @@ public class TVBrowser {
 
   private static String curLookAndFeel;
   
-  private static boolean mIsTransportable;
-  
   private static String mVersionAppendix = "";
   
   private static final boolean mIsStable = false;
@@ -158,7 +156,9 @@ public class TVBrowser {
   };
   
   /** The current version. */
-  public static final devplugin.Version VERSION=new devplugin.Version(mMajorVersion,mMinorVersion,mIsStable,ALL_VERSIONS[0] + ((mIsTransportable = new File("settings").isDirectory()) ? " transportable" : ""));
+  
+  private static boolean mIsTransportable = new File("settings").isDirectory();
+  public static final devplugin.Version VERSION=new devplugin.Version(mMajorVersion,mMinorVersion,mIsStable,ALL_VERSIONS[0] + (mIsTransportable ? " transportable" : ""));
 
   /** The title bar string. */
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
