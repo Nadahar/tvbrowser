@@ -118,6 +118,11 @@ public class PluginProxyManager {
 
   /** All plugins. This is only a cache, it might be null. */
   private PluginProxy[] mAllPluginCache;
+  
+  /**
+   * list of plugins which got a startFinished callback, to not call it twice
+   */
+  private ArrayList<PluginProxy> mStartFinishedPlugins = new ArrayList<PluginProxy>();
 
   /**
    * Creates a new instance of PluginProxyManager.
@@ -984,7 +989,7 @@ public class PluginProxyManager {
       for (PluginListItem item : mPluginList) {
         AbstractPluginProxy plugin = item.getPlugin();
         if (plugin.isActivated()) {
-          plugin.handleTvBrowserStartFinished();
+          fireTvBrowserStartFinished(plugin);
           if (plugin.hasArtificialPluginTree()) {
             int childCount = plugin.getArtificialRootNode().size();
             // update all children of the artificial tree or remove the tree completely
@@ -999,6 +1004,14 @@ public class PluginProxyManager {
         }
       }
     }
+  }
+
+  public void fireTvBrowserStartFinished(PluginProxy plugin) {
+    if (mStartFinishedPlugins.contains(plugin)) {
+      return;
+    }
+    mStartFinishedPlugins.add(plugin);
+    plugin.handleTvBrowserStartFinished();
   }
 
   /**

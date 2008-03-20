@@ -40,10 +40,7 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import javax.swing.Timer;
-
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -56,7 +53,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.Map.Entry;
 
 /**
  * This Plugin gives the User the possibility to rate a Movie
@@ -96,29 +92,9 @@ public class TVRaterPlugin extends devplugin.Plugin {
   private PluginInfo mPluginInfo;
 
   /**
-   * this class triggers an event when the main frame gets available, that is after
-   * activation of all plugins
-   * 
-   * @author bananeweizen
-   *
-   */
-  private class LateActivationAction implements ActionListener {
-    public void actionPerformed(ActionEvent e) {
-      if (null == getParentFrame()) {
-        return;
-      }
-      lateActivationSwingTimer.stop();
-      onLateActivation();
-    }
-  }
-
-  private final Timer lateActivationSwingTimer = new Timer(200,
-      new LateActivationAction());
-
-  /**
    * flag indicating that the host program has started
    */
-  private boolean startFinished;
+  private boolean mStartFinished;
 
   public TVRaterPlugin() {
     _tvRaterInstance = this;
@@ -375,7 +351,8 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
   public void handleTvBrowserStartFinished() {
     hasRightToDownload = true;
-    startFinished = true;
+    mStartFinished = true;
+    updateRootNode();
     if (Integer.parseInt(_settings.getProperty("updateIntervall", "0")) == 2) {
       updateDB();
     }
@@ -474,7 +451,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
    */
   public void updateCurrentDate() {
     // dont update the UI if the rating updater runs on TV-Browser start
-    if (!startFinished) {
+    if (!mStartFinished) {
       return;
     }
     Date currentDate = getPluginManager().getCurrentDate();
@@ -510,6 +487,9 @@ public class TVRaterPlugin extends devplugin.Plugin {
    * @since 2.6
    */
   protected void updateRootNode() {
+    if (!mStartFinished) {
+      return;
+    }
     mRootNode.removeAllChildren();
     mRootNode.getMutableTreeNode().setShowLeafCountEnabled(false);
 
@@ -638,13 +618,9 @@ public class TVRaterPlugin extends devplugin.Plugin {
     updateRootNode();
   }
 
-  public void onLateActivation() {
-    updateRootNode();
-  }
-
   @Override
   public void onActivation() {
-    // from now on check regularly for the existence of the main frame
-    lateActivationSwingTimer.start();
+    // the root node will only be update after the start-finished event
+    updateRootNode();
   }
 }
