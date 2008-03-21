@@ -28,6 +28,7 @@ package showviewplugin;
 import java.util.Iterator;
 
 import tvdataservice.MutableProgram;
+import util.exc.TvBrowserException;
 import devplugin.ChannelDayProgram;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
@@ -42,7 +43,7 @@ import devplugin.Version;
  * @author Til Schneider, www.murfman.de
  */
 public class ShowviewPlugin extends Plugin {
-  private static final Version mVersion = new Version(2,60);
+  private static final Version mVersion = new Version(2,70);
 
   /** The localizer for this class. */  
   private static final util.ui.Localizer mLocalizer
@@ -63,7 +64,7 @@ public class ShowviewPlugin extends Plugin {
    * @param newProg The new ChannelDayProgram.
    * @see #handleTvDataDeleted(ChannelDayProgram)
    */
-  public void handleTvDataAdded(ChannelDayProgram newProg) {  
+  public void handleTvDataAdded(ChannelDayProgram newProg) {
     Iterator<Program> iterator = newProg.getPrograms();
     while (iterator.hasNext()) {
       MutableProgram prog = (MutableProgram) iterator.next();
@@ -77,6 +78,9 @@ public class ShowviewPlugin extends Plugin {
             prog.setTextField(ProgramFieldType.SHOWVIEW_NR_TYPE, showview);
         }
         catch (Exception exc) {
+          if(exc instanceof TvBrowserException && ((TvBrowserException)exc).getCause() instanceof ShowviewEncoder.NoChannelNumberException) {
+            break;
+          }
           // We tried it...
         }
       }
