@@ -27,6 +27,7 @@ package util.misc;
 
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.util.HashMap;
 
 import javax.swing.JLabel;
 
@@ -36,6 +37,8 @@ import javax.swing.JLabel;
  * @author Til Schneider, www.murfman.de
  */
 public class TextLineBreakerFontWidth extends TextLineBreakerStringWidth{
+  
+  private static HashMap<Font, FontMetrics> FONT_METRICS_CACHE = new HashMap<Font, FontMetrics>();
 
   /** The helper label. */  
   private static final JLabel HELPER_LABEL = new JLabel();
@@ -56,7 +59,11 @@ public class TextLineBreakerFontWidth extends TextLineBreakerStringWidth{
    * @param font Font to use
    */
   public void setFont(Font font) {
-    mFontMetrics = HELPER_LABEL.getFontMetrics(font);
+    mFontMetrics = FONT_METRICS_CACHE.get(font);
+    if (mFontMetrics == null) {
+      mFontMetrics = HELPER_LABEL.getFontMetrics(font);
+      FONT_METRICS_CACHE.put(font, mFontMetrics);
+    }
     setSpaceWidth(mFontMetrics.charWidth(' '));
     setMinusWidth(mFontMetrics.charWidth('-'));
   }
@@ -66,6 +73,7 @@ public class TextLineBreakerFontWidth extends TextLineBreakerStringWidth{
    * @param str Calculate Width of this String
    * @return Width of String 
    */
+  @Override
   public int getStringWidth(String str) {
     return mFontMetrics.stringWidth(str);
   }

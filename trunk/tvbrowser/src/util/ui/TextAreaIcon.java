@@ -68,22 +68,9 @@ public class TextAreaIcon implements Icon {
    * Creates a TextAreaIcon with the specified text, font and width.
    */
   public TextAreaIcon(String text, Font font, int width) {
-    mWidth = width;
-    mFont = font;
-    mLineSpace = 0;
-    setText(text);
+    this(text, font, width, 0);
   }
   
-  /**
-   * Creates a TextAreaIcon with the specified font and width.
-   */
-  public TextAreaIcon(Font font, int width) {
-    mWidth = width;
-    mFont = font;
-    mText = "";
-    mLineSpace = 0;
-  }
-    
   /**
    * Sets the maximum Linecount
    * @param maxLineCount Max Count of Lines
@@ -184,15 +171,16 @@ public class TextAreaIcon implements Icon {
   public void paintIcon(Component comp, Graphics grp, int x, int y) {
     if (mTextLineArr != null) {
       /* For debugging of the marking problem after a data update */
-      if(comp != null)
+      if(comp != null) {
         grp.setColor(comp.getForeground());
+      }
       
       grp.setFont(mFont);
       
       int fontSize = mFont.getSize();
-      for (int i = 0; i < mTextLineArr.length; i++) {
+      for (String textLine : mTextLineArr) {
         y += fontSize + mLineSpace;
-        grp.drawString(mTextLineArr[i], x, y);
+        grp.drawString(textLine, x, y);
       }
     }
   }
