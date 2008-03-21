@@ -124,7 +124,7 @@ public class IconLoader {
       iconset = mDefaultIconDir;
     }
     
-    if (mDefaultIconDir != iconset) {
+    if (!mDefaultIconDir.getPath().equals(iconset.getPath())) {
       mIconTheme = getIconTheme(iconset);
       if (!mIconTheme.loadTheme()) {
         mIconTheme = mDefaultIconTheme;
