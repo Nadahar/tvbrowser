@@ -512,7 +512,7 @@ public class SearchForm extends JPanel {
   }
   
   
-  private void setPattern(String pattern) {
+  public void setPattern(String pattern) {
     if (mPatternCB != null) {
       mPatternCB.setSelectedItem(pattern);
     } else if (mPatternTF != null){
@@ -523,7 +523,7 @@ public class SearchForm extends JPanel {
   
   /**
    * Gets all the fields that can be used for searching. This are all fields,
-   * exept binaries. 
+   * except binaries. 
    * 
    * @return All searchable fields.
    */

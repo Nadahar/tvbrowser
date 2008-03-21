@@ -168,4 +168,8 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
     dispose();
   }
 
+  protected void setSearchText(String text) {
+    mSearchForm.setPattern(text);
+  }
+
 }
