@@ -225,7 +225,7 @@ public class RepetitionDialog extends JDialog implements WindowClosingIf {
 
     settings.setNrDays(days);
     settings.setSearchIn(SearchFormSettings.SEARCH_IN_TITLE);
-    settings.setSearcherType(PluginManager.SEARCHER_TYPE_KEYWORD);
+    settings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY);
     settings.setCaseSensitive(false);
 
     if (mChannelChooser.getSelectedIndex() > 0) {
