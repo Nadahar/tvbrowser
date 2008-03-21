@@ -196,7 +196,7 @@ public class ParamLibrary {
       SimpleDateFormat format = new SimpleDateFormat("MMMM"); 
       return format.format(new java.util.Date(prg.getDate().getCalendar().getTimeInMillis()));
     } else if (key.equals("start_unix")) {
-      return Long.toString(prg.getDate().getCalendar().getTimeInMillis() / 1000);
+      return Long.toString(createStartTime(prg).getTimeInMillis() / 1000);
     } else if (key.equals("end_unix")) {
       return Long.toString(createEndTime(prg).getTimeInMillis() / 1000);
     } else if (key.equals("genre")) {
@@ -232,6 +232,20 @@ public class ParamLibrary {
   private int getEndTimeFieldInProgram(Program prg, int field) {
     Calendar c = createEndTime(prg);
     return c.get(field);
+  }
+
+  /**
+   * Creates a calendar instance containg the start time
+   *
+   * @param prg get Start-Time of this Item
+   * @return Start-Time
+   */
+  private Calendar createStartTime(Program prg) {
+    Calendar c = (Calendar) prg.getDate().getCalendar().clone();
+    c.set(Calendar.HOUR_OF_DAY, prg.getHours());
+    c.set(Calendar.MINUTE, prg.getMinutes());
+    c.set(Calendar.SECOND, 0);
+    return c;
   }
 
   /**
