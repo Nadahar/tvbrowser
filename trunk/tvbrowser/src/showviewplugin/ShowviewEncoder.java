@@ -107,7 +107,7 @@ public class ShowviewEncoder {
     int channelNumber = ShowviewChannelTable.getChannelNumberFor(channel);
     if (channelNumber == -1) {
       throw new TvBrowserException(ShowviewEncoder.class, "error.1",
-        "Didn't find a showview channel number (Leitzahl) for {0}", channel);
+        "Didn't find a showview channel number (Leitzahl) for {0}", channel, new NoChannelNumberException());
     }
     
     // Leitzahl in k-Bits umrechnen
@@ -138,7 +138,7 @@ public class ShowviewEncoder {
     else if (channelNumber >= 19) {
       // Für diese Sender weiss ich die Umrechnung der Leitzahl noch nicht
       throw new TvBrowserException(ShowviewEncoder.class, "error.2",
-        "Calculation does not work for this program");
+        "Calculation does not work for this program", new NoChannelNumberException());
     }
     /*
     // Ergibt auch keine richtigen Sender...
@@ -393,4 +393,7 @@ public class ShowviewEncoder {
     return ((number % base) + base) % base;
   }
 
+  protected static class NoChannelNumberException extends Exception {
+    
+  }
 }
