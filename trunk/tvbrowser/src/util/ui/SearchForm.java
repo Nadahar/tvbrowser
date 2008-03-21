@@ -43,6 +43,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JRootPane;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -138,8 +139,8 @@ public class SearchForm extends JPanel {
     super();
 
     FormLayout layoutTop = new FormLayout("pref, 3dlu, fill:10dlu:grow", "");
-    FormLayout layoutSearchIn = new FormLayout("3dlu, pref:grow","pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");
-    FormLayout layoutOptions = new FormLayout("3dlu, pref, fill:pref:grow","pref, 3dlu, pref, 3dlu, pref,3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");
+    FormLayout layoutSearchIn = new FormLayout("3dlu, pref:grow","pref, 3dlu, pref, pref, pref");
+    FormLayout layoutOptions = new FormLayout("3dlu, pref, fill:pref:grow","pref, 3dlu, pref, pref, pref, pref, pref, 3dlu, pref");
 
     JPanel topPanel = new JPanel(layoutTop);
     JPanel searchInPanel = new JPanel(layoutSearchIn);
@@ -202,7 +203,7 @@ public class SearchForm extends JPanel {
     mSearchAllRB = new JRadioButton(msg);
     mSearchAllRB.addActionListener(updateEnabledListener);
     bg.add(mSearchAllRB);
-    searchInPanel.add(mSearchAllRB, cc.xy(2,5));
+    searchInPanel.add(mSearchAllRB, cc.xy(2,4));
 
     mSearchUserDefinedRB = new JRadioButton(mLocalizer.msg("certainFields", "Certain Fields"));
     mSearchUserDefinedRB.addActionListener(updateEnabledListener);
@@ -218,7 +219,7 @@ public class SearchForm extends JPanel {
     JPanel panel = new JPanel(new FormLayout("pref,1dlu:grow,pref","pref"));
     panel.add(mSearchUserDefinedRB, cc.xy(1,1));
     panel.add(mChangeSearchFieldsBt, cc.xy(3,1));
-    searchInPanel.add(panel, cc.xy(2,7));
+    searchInPanel.add(panel, cc.xy(2,5));
 
     optionsPanel.add(DefaultComponentFactory.getInstance().createSeparator(Localizer.getLocalization(Localizer.I18N_OPTIONS)), cc.xyw(1,1,3));
 
@@ -228,26 +229,26 @@ public class SearchForm extends JPanel {
     bg = new ButtonGroup();
     mSearcherTypeExactlyRB = new JRadioButton(mLocalizer.msg("matchExactly", "Match exactly"));
     bg.add(mSearcherTypeExactlyRB);
-    optionsPanel.add(mSearcherTypeExactlyRB, cc.xy(2,5));
+    optionsPanel.add(mSearcherTypeExactlyRB, cc.xy(2,4));
     
     mSearcherTypeKeywordRB = new JRadioButton(mLocalizer.msg("matchSubstring", "Term is a keyword"));
     mSearcherTypeKeywordRB.setSelected(true);
     bg.add(mSearcherTypeKeywordRB);
-    optionsPanel.add(mSearcherTypeKeywordRB, cc.xy(2,7));
+    optionsPanel.add(mSearcherTypeKeywordRB, cc.xy(2,5));
     
     mSearcherTypeBooleanRB = new JRadioButton(mLocalizer.msg("matchBoolean", "Term is a boolean (with AND, OR, a.s.o.)"));
     bg.add(mSearcherTypeBooleanRB);
-    optionsPanel.add(mSearcherTypeBooleanRB, cc.xy(2,9));
+    optionsPanel.add(mSearcherTypeBooleanRB, cc.xy(2,6));
 
     mSearcherTypeRegexRB = new JRadioButton(mLocalizer.msg("matchRegex", "Term is a regular expression"));
     bg.add(mSearcherTypeRegexRB);
-    optionsPanel.add(mSearcherTypeRegexRB, cc.xy(2,11));
+    optionsPanel.add(mSearcherTypeRegexRB, cc.xy(2,7));
     
     LinkButton b = new LinkButton(
             "("+mLocalizer.msg("regExHelp","Help for regular expressions")+")",
             mLocalizer.msg("regExUrl","http://wiki.tvbrowser.org/index.php/Regul%C3%A4re_Ausdr%C3%BCcke"));
-    b.setHorizontalAlignment(LinkButton.CENTER);
-    optionsPanel.add(b, cc.xy(2,13));
+    b.setHorizontalAlignment(SwingConstants.CENTER);
+    optionsPanel.add(b, cc.xy(2,9));
 
     
     // Set the default settings
@@ -306,6 +307,7 @@ public class SearchForm extends JPanel {
     }
   }
   
+  @Override
   public boolean hasFocus() {
     if(mPatternCB != null) {
       return mPatternCB.getEditor().getEditorComponent().hasFocus();
@@ -406,8 +408,8 @@ public class SearchForm extends JPanel {
     if (mPatternCB != null) {
       mPatternCBModel.removeAllElements();
       if (history != null) {
-        for (int i = 0; i < history.length; i++) {
-          mPatternCBModel.addElement(history[i]);
+        for (SearchFormSettings element : history) {
+          mPatternCBModel.addElement(element);
         }
       }
       
@@ -532,7 +534,7 @@ public class SearchForm extends JPanel {
       ArrayList<ProgramFieldType> list = new ArrayList<ProgramFieldType>();
       Iterator<ProgramFieldType> iter = ProgramFieldType.getTypeIterator();
       while (iter.hasNext()) {
-        ProgramFieldType type = (ProgramFieldType) iter.next();
+        ProgramFieldType type = iter.next();
         if (type.getFormat() != ProgramFieldType.BINARY_FORMAT
             && type != ProgramFieldType.PICTURE_COPYRIGHT_TYPE
             && type != ProgramFieldType.INFO_TYPE
@@ -554,8 +556,9 @@ public class SearchForm extends JPanel {
     mFieldSelectionDlg = new FieldSelectionDialog(this, mUserDefinedFieldTypeArr);
     mFieldSelectionDlg.centerAndShow(mParent);
     
-    if(mParent != null)
+    if(mParent != null) {
       mParent.requestFocus();
+    }
     
     mUserDefinedFieldTypeArr = mFieldSelectionDlg.getSelectedTypes();
   }
@@ -579,8 +582,9 @@ public class SearchForm extends JPanel {
     public FieldSelectionDialog(Component parent,
       ProgramFieldType[] selectedTypeArr)
     {
-      if(selectedTypeArr == null)
+      if(selectedTypeArr == null) {
         selectedTypeArr = new ProgramFieldType[0];
+      }
       
       mSelectedTypeArr = selectedTypeArr;
       
@@ -654,9 +658,9 @@ public class SearchForm extends JPanel {
       if(parent != null) {
         mDlg.setLocationRelativeTo(parent);
         mDlg.setVisible(true);
-      }
-      else
+      } else {
         centerAndShow();
+      }
     }
     
     public void centerAndShow() {
