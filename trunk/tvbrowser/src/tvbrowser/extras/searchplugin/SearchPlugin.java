@@ -57,235 +57,257 @@ import javax.swing.KeyStroke;
 
 /**
  * Provides a dialog for searching programs.
- *
+ * 
  * @author Til Schneider, www.murfman.de
  */
 public class SearchPlugin {
 
-    /**
-     * The localizer for this class.
-     */
-    public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SearchPlugin.class);
-    private static String DATAFILE_PREFIX = "searchplugin.SearchPlugin";
+  /**
+   * The localizer for this class.
+   */
+  public static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(SearchPlugin.class);
+  private static String DATAFILE_PREFIX = "searchplugin.SearchPlugin";
 
-    private static SearchPlugin mInstance;
+  private static SearchPlugin mInstance;
 
-    private ConfigurationHandler mConfigurationHandler;
+  private ConfigurationHandler mConfigurationHandler;
 
-    private static SearchFormSettings[] mSearchHistory;
+  private static SearchFormSettings[] mSearchHistory;
 
-    /**
-     * Select time in repetition-dialog
-     */
-    private int mRepetitionTimeSelect = 3;
+  /**
+   * Select time in repetition-dialog
+   */
+  private int mRepetitionTimeSelect = 3;
 
-    /**
-     * Creates a new instance of SearchPlugin.
-     */
-    private SearchPlugin() {
-        mInstance = this;
-        mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
-        load();
+  /**
+   * Creates a new instance of SearchPlugin.
+   */
+  private SearchPlugin() {
+    mInstance = this;
+    mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
+    load();
+  }
+
+  private void load() {
+    try {
+      mConfigurationHandler.loadData(new DataDeserializer() {
+        public void read(ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
+          readData(in);
+        }
+      });
+    } catch (IOException e) {
+      ErrorHandler.handle(mLocalizer.msg("couldNotLoadFavorites",
+          "Could not load favorites"), e);
     }
+  }
 
-    private void load() {
-        try {
-            mConfigurationHandler.loadData(new DataDeserializer() {
-                public void read(ObjectInputStream in) throws IOException, ClassNotFoundException {
-                    readData(in);
-                }
-            });
-        } catch (IOException e) {
-            ErrorHandler.handle(mLocalizer.msg("couldNotLoadFavorites", "Could not load favorites"), e);
+  public void store() {
+    try {
+      mConfigurationHandler.storeData(new DataSerializer() {
+        public void write(ObjectOutputStream out) throws IOException {
+          writeData(out);
         }
+      });
+    } catch (IOException e) {
+      ErrorHandler.handle(mLocalizer.msg("couldNotStoreFavorites",
+          "Could not store favorites"), e);
     }
+  }
 
-    public void store() {
-        try {
-            mConfigurationHandler.storeData(new DataSerializer() {
-                public void write(ObjectOutputStream out) throws IOException {
-                    writeData(out);
-                }
-            });
-        } catch (IOException e) {
-            ErrorHandler.handle(mLocalizer.msg("couldNotStoreFavorites", "Could not store favorites"), e);
-        }
-    }
+  private void readData(ObjectInputStream in) throws IOException,
+      ClassNotFoundException {
+    int version = in.readInt();
 
-    private void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        int version = in.readInt();
+    int historySize = in.readInt();
+    mSearchHistory = new SearchFormSettings[historySize];
+    for (int i = 0; i < historySize; i++) {
+      SearchFormSettings settings;
 
-        int historySize = in.readInt();
-        mSearchHistory = new SearchFormSettings[historySize];
-        for (int i = 0; i < historySize; i++) {
-            SearchFormSettings settings;
+      if (version > 1) {
+        // version 2
+        settings = new SearchFormSettings(in);
+      } else {
+        // version 1
+        String searchText = (String) in.readObject();
+        in.readBoolean(); // searchInTitle
+        boolean searchInInfoText = in.readBoolean();
+        boolean caseSensitive = in.readBoolean();
+        int option = in.readInt();
 
-            if (version > 1) {
-                // version 2
-                settings = new SearchFormSettings(in);
-            } else {
-                // version 1
-                String searchText = (String) in.readObject();
-                in.readBoolean(); // searchInTitle
-                boolean searchInInfoText = in.readBoolean();
-                boolean caseSensitive = in.readBoolean();
-                int option = in.readInt();
-
-                settings = new SearchFormSettings(searchText);
-                if (searchInInfoText) {
-                    settings.setSearchIn(SearchFormSettings.SEARCH_IN_ALL);
-                } else {
-                    settings.setSearchIn(SearchFormSettings.SEARCH_IN_TITLE);
-                }
-                settings.setCaseSensitive(caseSensitive);
-                switch (option) {
-                    case 0:
-                        settings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY);
-                        break;
-                    case 1:
-                        settings.setSearcherType(PluginManager.SEARCHER_TYPE_KEYWORD);
-                        break;
-                    case 2:
-                        settings.setSearcherType(PluginManager.SEARCHER_TYPE_REGULAR_EXPRESSION);
-                        break;
-                }
-            }
-
-            mSearchHistory[i] = settings;
-        }
-
-        if (version >= 3 && version <= 4) {
-            in.readInt();
-            in.readInt();
-            in.readInt();
-            in.readInt();
-            in.readBoolean();
-
-            int n = in.readInt();
-
-            for (int i = 0; i < n; i++) {
-                in.readUTF();
-            }
-        }
-        
-        if (version >= 4) {
-          mRepetitionTimeSelect = in.readInt();
-        }
-
-    }
-
-    private void writeData(ObjectOutputStream out) throws IOException {
-        out.writeInt(5); // version
-
-        if (mSearchHistory == null) {
-            out.writeInt(0); // length
+        settings = new SearchFormSettings(searchText);
+        if (searchInInfoText) {
+          settings.setSearchIn(SearchFormSettings.SEARCH_IN_ALL);
         } else {
-            out.writeInt(mSearchHistory.length);
-            for (int i = 0; i < mSearchHistory.length; i++) {
-                mSearchHistory[i].writeData(out);
-            }
+          settings.setSearchIn(SearchFormSettings.SEARCH_IN_TITLE);
+        }
+        settings.setCaseSensitive(caseSensitive);
+        switch (option) {
+        case 0:
+          settings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY);
+          break;
+        case 1:
+          settings.setSearcherType(PluginManager.SEARCHER_TYPE_KEYWORD);
+          break;
+        case 2:
+          settings
+              .setSearcherType(PluginManager.SEARCHER_TYPE_REGULAR_EXPRESSION);
+          break;
+        }
+      }
+
+      mSearchHistory[i] = settings;
+    }
+
+    if (version >= 3 && version <= 4) {
+      in.readInt();
+      in.readInt();
+      in.readInt();
+      in.readInt();
+      in.readBoolean();
+
+      int n = in.readInt();
+
+      for (int i = 0; i < n; i++) {
+        in.readUTF();
+      }
+    }
+
+    if (version >= 4) {
+      mRepetitionTimeSelect = in.readInt();
+    }
+
+  }
+
+  private void writeData(ObjectOutputStream out) throws IOException {
+    out.writeInt(5); // version
+
+    if (mSearchHistory == null) {
+      out.writeInt(0); // length
+    } else {
+      out.writeInt(mSearchHistory.length);
+      for (SearchFormSettings element : mSearchHistory) {
+        element.writeData(out);
+      }
+    }
+
+    out.writeInt(mRepetitionTimeSelect);
+  }
+
+  protected ActionMenu getButtonAction() {
+    ButtonAction action = new ButtonAction();
+    action.setActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        openSearchDialog("");
+      }
+    });
+
+    action.setBigIcon(IconLoader.getInstance().getIconFromTheme("actions",
+        "system-search", 22));
+    action.setSmallIcon(IconLoader.getInstance().getIconFromTheme("actions",
+        "system-search", 16));
+    action.setShortDescription(mLocalizer.msg("description",
+        "Allows searching programs containing a certain text."));
+    action.setText(mLocalizer.msg("searchPrograms", "Search programs..."));
+    action.putValue(InternalPluginProxyIf.KEYBOARD_ACCELERATOR, KeyStroke
+        .getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
+
+    return new ActionMenu(action);
+  }
+
+  protected ActionMenu getContextMenuActions(final Program program) {
+    ContextMenuAction action = new ContextMenuAction();
+    action.setText(mLocalizer.msg("searchRepetion", "Search repetition"));
+    action.setSmallIcon(IconLoader.getInstance().getIconFromTheme("actions",
+        "system-search", 16));
+    action.setActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent event) {
+        RepetitionDialog dlg;
+
+        Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+
+        if (w instanceof Dialog) {
+          dlg = new RepetitionDialog((Dialog) w);
+        } else {
+          dlg = new RepetitionDialog((Frame) w);
         }
 
-        out.writeInt(mRepetitionTimeSelect);
+        dlg.setPatternText(program.getTitle());
+        UiUtilities.centerAndShow(dlg);
+      }
+    });
+    return new ActionMenu(action);
+  }
+
+  public ThemeIcon getMarkIconFromTheme() {
+    return new ThemeIcon("actions", "system-search", 16);
+  }
+
+  public static synchronized SearchPlugin getInstance() {
+    if (mInstance == null) {
+      new SearchPlugin();
     }
 
-    protected ActionMenu getButtonAction() {
-        ButtonAction action = new ButtonAction();
-        action.setActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                SearchDialog dlg;
+    return mInstance;
+  }
 
-                Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+  public static SearchFormSettings[] getSearchHistory() {
+    return mSearchHistory;
+  }
 
-                if (w instanceof Dialog)
-                    dlg = new SearchDialog((Dialog) w);
-                else
-                    dlg = new SearchDialog((Frame) w);
+  public static void setSearchHistory(SearchFormSettings[] history) {
+    mSearchHistory = history;
+  }
 
-                UiUtilities.centerAndShow(dlg);
-            }
-        });
+  /*
+   * (non-Javadoc)
+   * 
+   * @see devplugin.Plugin#getSettingsTab()
+   */
+  public SettingsTab getSettingsTab() {
+    return new SearchSettingsTab();
+  }
 
-        action.setBigIcon(IconLoader.getInstance().getIconFromTheme("actions", "system-search", 22));
-        action.setSmallIcon(IconLoader.getInstance().getIconFromTheme("actions", "system-search", 16));
-        action.setShortDescription(mLocalizer.msg("description", "Allows searching programs containing a certain text."));
-        action.setText(mLocalizer.msg("searchPrograms", "Search programs..."));
-        action.putValue(InternalPluginProxyIf.KEYBOARD_ACCELERATOR, KeyStroke.getKeyStroke(KeyEvent.VK_F,InputEvent.CTRL_MASK));
+  public String getId() {
+    return DATAFILE_PREFIX;
+  }
 
-        return new ActionMenu(action);
+  @Override
+  public String toString() {
+    return mLocalizer.msg("title", "Search");
+  }
+
+  /**
+   * Select this entry in the RepetitionDialog
+   * 
+   * @return
+   */
+  public int getRepetitionTimeSelection() {
+    return mRepetitionTimeSelect;
+  }
+
+  /**
+   * Set the selected entry in the RepetitionDialog
+   * 
+   * @param selectedIndex
+   *          selected entry
+   */
+  public void setRepetitionTimeSelection(int selectedIndex) {
+    mRepetitionTimeSelect = selectedIndex;
+  }
+
+  protected void openSearchDialog(String text) {
+    SearchDialog dlg;
+
+    Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+
+    if (w instanceof Dialog) {
+      dlg = new SearchDialog((Dialog) w);
+    } else {
+      dlg = new SearchDialog((Frame) w);
     }
-
-    protected ActionMenu getContextMenuActions(final Program program) {
-        ContextMenuAction action = new ContextMenuAction();
-        action.setText(mLocalizer.msg("searchRepetion", "Search repetition"));
-        action.setSmallIcon(IconLoader.getInstance().getIconFromTheme("actions", "system-search", 16));
-        action.setActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                RepetitionDialog dlg;
-
-                Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-
-                if (w instanceof Dialog)
-                    dlg = new RepetitionDialog((Dialog) w);
-                else
-                    dlg = new RepetitionDialog((Frame) w);
-
-                dlg.setPatternText(program.getTitle());
-                UiUtilities.centerAndShow(dlg);
-            }
-        });
-        return new ActionMenu(action);
-    }
-
-    public ThemeIcon getMarkIconFromTheme() {
-        return new ThemeIcon("actions", "system-search", 16);
-    }
-
-    public static synchronized SearchPlugin getInstance() {
-        if (mInstance == null)
-            new SearchPlugin();
-
-        return mInstance;
-    }
-
-    public static SearchFormSettings[] getSearchHistory() {
-        return mSearchHistory;
-    }
-
-    public static void setSearchHistory(SearchFormSettings[] history) {
-        mSearchHistory = history;
-    }
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see devplugin.Plugin#getSettingsTab()
-    */
-    public SettingsTab getSettingsTab() {
-        return new SearchSettingsTab();
-    }
-
-    public String getId() {
-        return DATAFILE_PREFIX;
-    }
-
-    public String toString() {
-        return mLocalizer.msg("title", "Search");
-    }
-
-    /**
-     * Selec this entry in the RepetitionDialog
-     * @return
-     */
-    public int getRepetitionTimeSelection() {
-        return mRepetitionTimeSelect;
-    }
-
-    /**
-     * Set the selected entry in the RepetitionDialog
-     * @param selectedIndex selected entry
-     */
-    public void setRepetitionTimeSelection(int selectedIndex) {
-        mRepetitionTimeSelect = selectedIndex;
-    }
+    dlg.setSearchText(text);
+    UiUtilities.centerAndShow(dlg);
+  }
 }

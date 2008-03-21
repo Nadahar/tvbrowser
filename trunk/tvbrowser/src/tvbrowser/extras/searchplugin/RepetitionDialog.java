@@ -60,177 +60,197 @@ import java.util.Vector;
  * helps the User to focus on the Task.
  */
 public class RepetitionDialog extends JDialog implements WindowClosingIf {
-    /**
-     * The localizer of this class.
-     */
-    private static final util.ui.Localizer mLocalizer
-            = util.ui.Localizer.getLocalizerFor(RepetitionDialog.class);
+  /**
+   * The localizer of this class.
+   */
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(RepetitionDialog.class);
 
-    /**
-     * Search for this text
-     */
-    private JTextField mText;
-    /**
-     * Search in this channel
-     */
-    private JComboBox mChannelChooser;
-    /**
-     * Search in this timespan
-     */
-    private JComboBox mTimeChooser;
+  /**
+   * Search for this text
+   */
+  private JTextField mText;
+  /**
+   * Search in this channel
+   */
+  private JComboBox mChannelChooser;
+  /**
+   * Search in this timespan
+   */
+  private JComboBox mTimeChooser;
 
-    /**
-     * Create the dialog
-     *
-     * @param dialog Parent-Dialog
-     */
-    public RepetitionDialog(Dialog dialog) {
-        super(dialog, true);
-        createGui();
+  /**
+   * Create the dialog
+   * 
+   * @param dialog
+   *          Parent-Dialog
+   */
+  public RepetitionDialog(Dialog dialog) {
+    super(dialog, true);
+    createGui();
+  }
+
+  /**
+   * Create the dialog
+   * 
+   * @param frame
+   *          Parent-Frame
+   */
+  public RepetitionDialog(Frame frame) {
+    super(frame, true);
+    createGui();
+  }
+
+  /**
+   * Create the Gui
+   */
+  private void createGui() {
+    setTitle(mLocalizer.msg("title", "Search repetition"));
+
+    JPanel panel = (JPanel) getContentPane();
+    panel.setLayout(new FormLayout("right:pref, 3dlu, fill:pref:grow",
+        "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, fill:3dlu:grow, pref"));
+    panel.setBorder(Borders.DLU7_BORDER);
+
+    CellConstraints cc = new CellConstraints();
+
+    panel.add(DefaultComponentFactory.getInstance().createSeparator(
+        mLocalizer.msg("searchForRepetition", "Search for repetitions")), cc
+        .xyw(1, 1, 3));
+
+    panel.add(new JLabel(mLocalizer.msg("forProgram", "of:")), cc.xy(1, 3));
+    mText = new JTextField();
+    panel.add(mText, cc.xy(3, 3));
+
+    panel.add(new JLabel(mLocalizer.msg("on", "on:")), cc.xy(1, 5));
+
+    final Vector<Object> list = new Vector<Object>();
+    list.add(mLocalizer.msg("allChannels", "All channels"));
+    list.addAll(Arrays.asList(ChannelList.getSubscribedChannels()));
+
+    mChannelChooser = new JComboBox(list);
+    mChannelChooser.setRenderer(new ChannelListCellRenderer(true, true));
+
+    panel.add(mChannelChooser, cc.xy(3, 5));
+
+    panel.add(new JLabel(mLocalizer.msg("when", "when:")), cc.xy(1, 7));
+
+    String[] dates = { Localizer.getLocalization(Localizer.I18N_TODAY),
+        Localizer.getLocalization(Localizer.I18N_TOMORROW),
+        mLocalizer.msg("oneWeek", "one week"),
+        mLocalizer.msg("twoWeeks", "two weeks"),
+        mLocalizer.msg("threeWeeks", "three weeks"),
+        mLocalizer.msg("allData", "all data") };
+
+    mTimeChooser = new JComboBox(dates);
+    mTimeChooser.setSelectedIndex(SearchPlugin.getInstance()
+        .getRepetitionTimeSelection());
+
+    panel.add(mTimeChooser, cc.xy(3, 7));
+
+    JButton stdSearch = new JButton(mLocalizer.msg("more", "More..."));
+    stdSearch.setToolTipText(mLocalizer.msg("standardSearch",
+        "Open standard search"));
+
+    stdSearch.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        close();
+        SearchPlugin.getInstance().openSearchDialog(mText.getText());
+      }
+    });
+
+    ButtonBarBuilder builder = new ButtonBarBuilder();
+    builder.addGridded(stdSearch);
+    builder.addRelatedGap();
+    builder.addGlue();
+
+    JButton go = new JButton(mLocalizer.msg("go", "go"));
+    go.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent actionEvent) {
+        search();
+      }
+    });
+
+    JButton cancel = new JButton(Localizer
+        .getLocalization(Localizer.I18N_CANCEL));
+    cancel.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent actionEvent) {
+        close();
+      }
+    });
+
+    builder.addGriddedButtons(new JButton[] { go, cancel });
+    panel.add(builder.getPanel(), cc.xyw(1, 9, 3));
+
+    Settings.layoutWindow("extras.repetitionDialog", this, new Dimension(Sizes
+        .dialogUnitXAsPixel(220, this), Sizes.dialogUnitYAsPixel(125, this)));
+
+    UiUtilities.registerForClosing(this);
+    getRootPane().setDefaultButton(go);
+  }
+
+  /**
+   * do the search
+   */
+  private void search() {
+    setVisible(false);
+
+    SearchFormSettings settings = new SearchFormSettings(mText.getText());
+
+    int days = 1;
+
+    switch (mTimeChooser.getSelectedIndex()) {
+    case 0:
+      days = 0;
+      break;
+    case 1:
+      days = 1;
+      break;
+    case 2:
+      days = 7;
+      break;
+    case 3:
+      days = 14;
+      break;
+    case 4:
+      days = 21;
+      break;
+    case 5:
+      days = -1;
+      break;
     }
 
-    /**
-     * Create the dialog
-     *
-     * @param frame Parent-Frame
-     */
-    public RepetitionDialog(Frame frame) {
-        super(frame, true);
-        createGui();
+    SearchPlugin.getInstance().setRepetitionTimeSelection(
+        mTimeChooser.getSelectedIndex());
+
+    settings.setNrDays(days);
+    settings.setSearchIn(SearchFormSettings.SEARCH_IN_TITLE);
+    settings.setSearcherType(PluginManager.SEARCHER_TYPE_KEYWORD);
+    settings.setCaseSensitive(false);
+
+    if (mChannelChooser.getSelectedIndex() > 0) {
+      settings.setChannels(new Channel[] { (Channel) mChannelChooser
+          .getSelectedItem() });
     }
 
-    /**
-     * Create the Gui
-     */
-    private void createGui() {
-        setTitle(mLocalizer.msg("title", "Search repetition"));
+    SearchHelper.search(getParent(), new PluginPictureSettings(
+        PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), settings);
+  }
 
-        JPanel panel = (JPanel) getContentPane();
-        panel.setLayout(new FormLayout("right:pref, 3dlu, fill:pref:grow", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, fill:3dlu:grow, pref"));
-        panel.setBorder(Borders.DLU7_BORDER);
+  /**
+   * Set the text for the search
+   * 
+   * @param text
+   *          text to search
+   */
+  public void setPatternText(String text) {
+    mText.setText(text);
+  }
 
-        CellConstraints cc = new CellConstraints();
-
-        panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("searchForRepetition", "Search for repetitions")), cc.xyw(1, 1, 3));
-
-        panel.add(new JLabel(mLocalizer.msg("forProgram", "of:")), cc.xy(1, 3));
-        mText = new JTextField();
-        panel.add(mText, cc.xy(3, 3));
-
-        panel.add(new JLabel(mLocalizer.msg("on", "on:")), cc.xy(1, 5));
-
-        final Vector<Object> list = new Vector<Object>();
-        list.add(mLocalizer.msg("allChannels", "All channels"));
-        list.addAll(Arrays.asList(ChannelList.getSubscribedChannels()));
-
-        mChannelChooser = new JComboBox(list);
-        mChannelChooser.setRenderer(new ChannelListCellRenderer(true, true));
-
-        panel.add(mChannelChooser, cc.xy(3, 5));
-
-        panel.add(new JLabel(mLocalizer.msg("when", "when:")), cc.xy(1, 7));
-
-        String[] dates = {
-                Localizer.getLocalization(Localizer.I18N_TODAY),
-                Localizer.getLocalization(Localizer.I18N_TOMORROW),
-                mLocalizer.msg("oneWeek", "one week"),
-                mLocalizer.msg("twoWeeks", "two weeks"),
-                mLocalizer.msg("threeWeeks", "three weeks"),
-                mLocalizer.msg("allData", "all data")
-        };
-
-        mTimeChooser = new JComboBox(dates);
-        mTimeChooser.setSelectedIndex(SearchPlugin.getInstance().getRepetitionTimeSelection());
-
-        panel.add(mTimeChooser, cc.xy(3, 7));
-
-        ButtonBarBuilder builder = new ButtonBarBuilder();
-
-        builder.addGlue();
-
-        JButton go = new JButton(mLocalizer.msg("go", "go"));
-        go.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                search();
-            }
-        });
-
-        JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
-        cancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                close();
-            }
-        });
-
-        builder.addGriddedButtons(new JButton[]{go, cancel});
-
-        panel.add(builder.getPanel(), cc.xyw(1, 9, 3));
-
-        Settings.layoutWindow("extras.repetitionDialog", this, new Dimension(Sizes.dialogUnitXAsPixel(220, this),Sizes.dialogUnitYAsPixel(125, this)));
-
-        UiUtilities.registerForClosing(this);
-        getRootPane().setDefaultButton(go);
-    }
-
-    /**
-     * do the search
-     */
-    private void search() {
-        setVisible(false);
-
-        SearchFormSettings settings = new SearchFormSettings(mText.getText());
-
-        int days = 1;
-
-        switch (mTimeChooser.getSelectedIndex()) {
-            case 0:
-                days = 0;
-                break;
-            case 1:
-                days = 1;
-                break;
-            case 2:
-                days = 7;
-                break;
-            case 3:
-                days = 14;
-                break;
-            case 4:
-                days = 21;
-                break;
-            case 5:
-                days = -1;
-                break;
-        }
-
-        SearchPlugin.getInstance().setRepetitionTimeSelection(mTimeChooser.getSelectedIndex());
-
-        settings.setNrDays(days);
-        settings.setSearchIn(SearchFormSettings.SEARCH_IN_TITLE);
-        settings.setSearcherType(PluginManager.SEARCHER_TYPE_KEYWORD);
-        settings.setCaseSensitive(false);
-
-        if (mChannelChooser.getSelectedIndex() > 0) {
-            settings.setChannels(new Channel[]{(Channel) mChannelChooser.getSelectedItem()});
-        }
-
-
-        SearchHelper.search(getParent(), new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), settings);
-    }
-
-    /**
-     * Set the text for the search
-     *
-     * @param text text to search
-     */
-    public void setPatternText(String text) {
-        mText.setText(text);
-    }
-
-    /**
-     * Close the dialog
-     */
-    public void close() {
-        setVisible(false);
-    }
+  /**
+   * Close the dialog
+   */
+  public void close() {
+    setVisible(false);
+  }
 }
