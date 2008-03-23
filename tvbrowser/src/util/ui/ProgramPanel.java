@@ -181,6 +181,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    */
   public ProgramPanel(ProgramPanelSettings settings) {
     mSettings = settings;
+    mAxis = settings.getAxis();
     
     if (mTitleFont == null) {
       updateFonts();
