@@ -49,8 +49,8 @@ public class TimeListCellRenderer extends DefaultListCellRenderer {
 
   protected TimeListCellRenderer() {
     super();
-    ProgramPanelSettings settings = new ProgramPanelSettings(ProgramPanelSettings.SHOW_PICTURES_NEVER, 0, 0, !TimeListPlugin.getInstance().isShowDescriptions(), false, 1000);
-    mProgramPanel = new ProgramPanel(settings, ProgramPanel.X_AXIS);
+    ProgramPanelSettings settings = new ProgramPanelSettings(ProgramPanelSettings.SHOW_PICTURES_NEVER, 0, 0, !TimeListPlugin.getInstance().isShowDescriptions(), false, 1000, ProgramPanelSettings.X_AXIS);
+    mProgramPanel = new ProgramPanel(settings);
 
     mMainPanel = new JPanel(new BorderLayout());
     mMainPanel.setOpaque(true);

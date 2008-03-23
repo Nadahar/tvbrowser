@@ -86,7 +86,12 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
 	  this(settings, settings.getAxis());
   }
 
-  
+  /**
+   * Creates a new instance of ProgramListCellRenderer
+   * @param settings The settings for the program panel. 
+   * @param axis The axis of the progress bar of the program panel.
+   * @deprecated Since 2.7 User {@link #ProgramListCellRenderer(ProgramPanelSettings)} instead.
+   */
   public ProgramListCellRenderer(ProgramPanelSettings settings, int axis) {
 	    mMainPanel = new JPanel(new BorderLayout());
 	    mMainPanel.setOpaque(true);
@@ -95,9 +100,12 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
 	    mMainPanel.add(mHeaderLb, BorderLayout.NORTH);
 	    
 	    if(settings == null)
-	      settings = new ProgramPanelSettings(ProgramPanelSettings.SHOW_PICTURES_NEVER, 1080, 1380, false, true, 90);
+	      settings = new ProgramPanelSettings(ProgramPanelSettings.SHOW_PICTURES_NEVER, 1080, 1380, false, true, 90, axis);
+      else {
+        settings = new ProgramPanelSettings(settings.getPictureShowingType(),settings.getPictureTimeRangeStart(),settings.getPictureTimeRangeEnd(),settings.isShowingOnlyDateAndTitle(),settings.isShowingPictureDescription(),settings.getDuration(),axis);
+      }
 	    
-	    mProgramPanel = new ProgramPanel(settings, axis);
+	    mProgramPanel = new ProgramPanel(settings);
 	    mMainPanel.add(mProgramPanel, BorderLayout.CENTER);
 }
 

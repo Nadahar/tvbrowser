@@ -159,19 +159,6 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   public ProgramPanel() {
     this(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPictureDuration.getInt(), Settings.propPicturePluginIds.getStringArray()));
   }
-
-  /**
-   * Creates a new instance of ProgramPanel.
-   * 
-   * @param showOnlyDateAndTitle
-   *          If this panel should only show date time and title.
-   * @since 2.2.1
-   * @deprecated Since 2.2.2 Use {@link #ProgramPanel(ProgramPanelSettings)} instead.
-   */
-  public ProgramPanel(boolean showOnlyDateAndTitle) {
-    this(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), showOnlyDateAndTitle, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPictureDuration.getInt(), Settings.propPicturePluginIds.getStringArray()));
-  }
-
   
   /**
    * Creates a new instance of ProgramPanel.
@@ -219,55 +206,6 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     this();
     setProgram(prog);
   }
-
-  /**
-   * Creates a new instance of ProgramPanel.
-   * 
-   * @param prog
-   *          The program to show in this panel.
-   * @param axis
-   *          Orientation of ProgressBar (X_AXIS/Y_AXIS)
-   */
-  public ProgramPanel(Program prog, int axis) {
-    this();
-    mAxis = axis;
-    setProgram(prog);
-  }
-
-  /**
-   * Creates a new instance of ProgramPanel.
-   * 
-   * @param prog
-   *          The program to show in this panel.
-   * @param showOnlyDateAndTitle
-   *          If this panel should only show date time and title.
-   * 
-   * @since 2.2.1
-   * @deprecated Since 2.2.2 Use {@link #ProgramPanel(Program, ProgramPanelSettings)} instead.
-   */
-  public ProgramPanel(Program prog, boolean showOnlyDateAndTitle) {
-    this(showOnlyDateAndTitle);
-    setProgram(prog);
-  }
-  
-  /**
-   * Creates a new instance of ProgramPanel.
-   * 
-   * @param prog
-   *          The program to show in this panel.
-   * @param axis
-   *          Orientation of ProgressBar (X_AXIS/Y_AXIS)
-   * @param showOnlyDateAndTitle
-   *          If this panel should only show date time and title.
-   * 
-   * @since 2.2.1
-   * @deprecated Since 2.2.2 Use {@link #ProgramPanel(Program, int, ProgramPanelSettings)} instead.
-   */
-  public ProgramPanel(Program prog, int axis, boolean showOnlyDateAndTitle) {
-    this(showOnlyDateAndTitle);
-    mAxis = axis;
-    setProgram(prog);
-  }
   
   /**
    * Creates a new instance of ProgramPanel.
@@ -300,16 +238,11 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     setProgram(prog);
   }
 
-  public ProgramPanel(ProgramPanelSettings settings, int axis) {
-	  this(settings);
-	  mAxis = axis;
-}
-
-/**
- * Reloads the font settings and sets a dynamic font size
- * @param newOffset increase or decrease compared to standard font size
- * @since 2.6
- */
+  /**
+   * Reloads the font settings and sets a dynamic font size
+   * @param newOffset increase or decrease compared to standard font size
+   * @since 2.6
+   */
   public static boolean updateFonts(int newOffset) {
     Font oldTitleFont = mTitleFont;
     Font oldTimeFont = mTimeFont;
@@ -1038,5 +971,83 @@ private static Font getDynamicFontSize(Font font, int offset) {
    */
   public void setPaintExpiredProgramsPale(boolean value) {
     mPaintExpiredProgramsPale = value;
+  }
+  
+  
+  
+  /* Deprecated constructors from here */
+  
+  /**
+   * Creates a new instance of ProgramPanel.
+   * 
+   * @param showOnlyDateAndTitle
+   *          If this panel should only show date time and title.
+   * @since 2.2.1
+   * @deprecated Since 2.2.2 Use {@link #ProgramPanel(ProgramPanelSettings)} instead.
+   */
+  public ProgramPanel(boolean showOnlyDateAndTitle) {
+    this(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), showOnlyDateAndTitle, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPictureDuration.getInt(), Settings.propPicturePluginIds.getStringArray()));
+  }
+  
+  /**
+   * Creates a new instance of ProgramPanel.
+   * 
+   * @param prog
+   *          The program to show in this panel.
+   * @param axis
+   *          Orientation of ProgressBar (X_AXIS/Y_AXIS)
+   * @deprecated Since 2.7 Use {@link #ProgramPanel(Program, ProgramPanelSettings)} instead.
+   */
+  public ProgramPanel(Program prog, int axis) {
+    this();
+    mAxis = axis;
+    setProgram(prog);
+  }
+
+  /**
+   * Creates a new instance of ProgramPanel.
+   * 
+   * @param prog
+   *          The program to show in this panel.
+   * @param showOnlyDateAndTitle
+   *          If this panel should only show date time and title.
+   * 
+   * @since 2.2.1
+   * @deprecated Since 2.2.2 Use {@link #ProgramPanel(Program, ProgramPanelSettings)} instead.
+   */
+  public ProgramPanel(Program prog, boolean showOnlyDateAndTitle) {
+    this(showOnlyDateAndTitle);
+    setProgram(prog);
+  }
+  
+  /**
+   * Creates a new instance of ProgramPanel.
+   * 
+   * @param prog
+   *          The program to show in this panel.
+   * @param axis
+   *          Orientation of ProgressBar (X_AXIS/Y_AXIS)
+   * @param showOnlyDateAndTitle
+   *          If this panel should only show date time and title.
+   * 
+   * @since 2.2.1
+   * @deprecated Since 2.2.2 Use {@link #ProgramPanel(Program, int, ProgramPanelSettings)} instead.
+   */
+  public ProgramPanel(Program prog, int axis, boolean showOnlyDateAndTitle) {
+    this(showOnlyDateAndTitle);
+    mAxis = axis;
+    setProgram(prog);
+  }
+  
+  /**
+   * Creates a new instance of ProgramPanel.
+   * 
+   * @param settings The settings for this program panel.
+   * @param axis The axis of the progress bar.
+   * @deprecated Since 2.7 Use {@link #ProgramPanel(ProgramPanelSettings)} instead.
+   */
+  public ProgramPanel(ProgramPanelSettings settings, int axis) {
+    this(settings);
+    mAxis = axis;
   }
 }
