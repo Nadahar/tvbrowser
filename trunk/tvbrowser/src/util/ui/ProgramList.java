@@ -93,61 +93,7 @@ public class ProgramList extends JList implements ChangeListener,
         new PluginPictureSettings(
             PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false)));
   }
-
-  /**
-   * Creates the JList and adds the default MouseListeners (PopUpBox)
-   * 
-   * @param programArr
-   *          Array of Programs to show
-   * @param showOnlyDateAndTitle
-   *          If this panel should only show date time and title.
-   * 
-   * @since 2.2.1
-   * @deprecated Since 2.2.2 Use
-   *             {@link #ProgramList(Vector, ProgramPanelSettings)} instead.
-   */
-  public ProgramList(Vector<Program> programArr, boolean showOnlyDateAndTitle) {
-    this(programArr, new ProgramPanelSettings(
-        ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, showOnlyDateAndTitle,
-        true, 10));
-  }
-
-  /**
-   * Creates the JList and adds the default MouseListeners (PopUpBox)
-   * 
-   * @param programArr
-   *          Array of Programs to show
-   * @param showOnlyDateAndTitle
-   *          If this panel should only show date time and title.
-   * 
-   * @since 2.2.1
-   * @deprecated Since 2.2.2 Use
-   *             {@link #ProgramList(Program[], ProgramPanelSettings)} instead.
-   */
-  public ProgramList(Program[] programArr, boolean showOnlyDateAndTitle) {
-    this(programArr, new ProgramPanelSettings(
-        ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, showOnlyDateAndTitle,
-        true, 10));
-  }
-
-  /**
-   * Creates the JList and adds the default MouseListeners (PopUpBox)
-   * 
-   * @param programs
-   *          Model with Programs to show
-   * @param showOnlyDateAndTitle
-   *          If this panel should only show date time and title.
-   * 
-   * @since 2.2.1
-   * @deprecated Since 2.2.2 Use
-   *             {@link #ProgramList(ListModel, ProgramPanelSettings)} instead.
-   */
-  public ProgramList(ListModel programs, boolean showOnlyDateAndTitle) {
-    this(programs, new ProgramPanelSettings(
-        ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, showOnlyDateAndTitle,
-        true, 10));
-  }
-
+  
   /**
    * Creates the JList and adds the default MouseListeners (PopUpBox)
    * 
@@ -195,12 +141,6 @@ public class ProgramList extends JList implements ChangeListener,
     setCellRenderer(new ProgramListCellRenderer(settings));
   }
 
-  public ProgramList(ListModel programs, ProgramPanelSettings settings, int axis) {
-    super(programs);
-    programs.addListDataListener(this);
-    setCellRenderer(new ProgramListCellRenderer(settings, axis));
-  }
-
   /**
    * Creates the JList and adds the default MouseListeners (PopUpBox)
    * 
@@ -233,7 +173,7 @@ public class ProgramList extends JList implements ChangeListener,
     setCellRenderer(new ProgramListCellRenderer(new ProgramPanelSettings(
         settings, false)));
   }
-
+  
   /**
    * Creates the JList and adds the default MouseListeners (PopUpBox)
    * 
@@ -250,25 +190,7 @@ public class ProgramList extends JList implements ChangeListener,
     setCellRenderer(new ProgramListCellRenderer(new ProgramPanelSettings(
         settings, false)));
   }
-
-  /**
-   * Creates the JList and adds the default MouseListeners (PopUpBox)
-   * 
-   * @param programs
-   *          Model with Programs to show
-   * @param settings
-   *          The plugin picture settings for the program panel.
-   * @param axis
-   *          The orientation of the progress bar.
-   */
-  public ProgramList(ListModel programs, PluginPictureSettings settings,
-      int axis) {
-    super(programs);
-    programs.addListDataListener(this);
-    setCellRenderer(new ProgramListCellRenderer(new ProgramPanelSettings(
-        settings, false), axis));
-  }
-
+  
   /**
    * Add a ChangeListener to all Programs for repainting
    */
@@ -465,5 +387,94 @@ public class ProgramList extends JList implements ChangeListener,
     }
 
     return p;
+  }
+  
+  /* Deprecated constructors from here */
+  
+  /**
+   * Creates the JList and adds the default MouseListeners (PopUpBox)
+   * 
+   * @param programArr
+   *          Array of Programs to show
+   * @param showOnlyDateAndTitle
+   *          If this panel should only show date time and title.
+   * 
+   * @since 2.2.1
+   * @deprecated Since 2.2.2 Use
+   *             {@link #ProgramList(Vector, ProgramPanelSettings)} instead.
+   */
+  public ProgramList(Vector<Program> programArr, boolean showOnlyDateAndTitle) {
+    this(programArr, new ProgramPanelSettings(
+        ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, showOnlyDateAndTitle,
+        true, 10));
+  }
+
+  /**
+   * Creates the JList and adds the default MouseListeners (PopUpBox)
+   * 
+   * @param programArr
+   *          Array of Programs to show
+   * @param showOnlyDateAndTitle
+   *          If this panel should only show date time and title.
+   * 
+   * @since 2.2.1
+   * @deprecated Since 2.2.2 Use
+   *             {@link #ProgramList(Program[], ProgramPanelSettings)} instead.
+   */
+  public ProgramList(Program[] programArr, boolean showOnlyDateAndTitle) {
+    this(programArr, new ProgramPanelSettings(
+        ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, showOnlyDateAndTitle,
+        true, 10));
+  }
+
+  /**
+   * Creates the JList and adds the default MouseListeners (PopUpBox)
+   * 
+   * @param programs
+   *          Model with Programs to show
+   * @param showOnlyDateAndTitle
+   *          If this panel should only show date time and title.
+   * 
+   * @since 2.2.1
+   * @deprecated Since 2.2.2 Use
+   *             {@link #ProgramList(ListModel, ProgramPanelSettings)} instead.
+   */
+  public ProgramList(ListModel programs, boolean showOnlyDateAndTitle) {
+    this(programs, new ProgramPanelSettings(
+        ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, showOnlyDateAndTitle,
+        true, 10));
+  }
+
+  /**
+   * Creates the JList and adds the default MouseListeners (PopUpBox)
+   * 
+   * @param programs The program list.
+   * @param settings The program panel settings.
+   * @param axis The axis for the progress bar of the program table.
+   * @deprecated Since 2.7
+   */
+  public ProgramList(ListModel programs, ProgramPanelSettings settings, int axis) {
+    super(programs);
+    programs.addListDataListener(this);
+    setCellRenderer(new ProgramListCellRenderer(settings, axis));
+  }
+
+  /**
+   * Creates the JList and adds the default MouseListeners (PopUpBox)
+   * 
+   * @param programs
+   *          Model with Programs to show
+   * @param settings
+   *          The plugin picture settings for the program panel.
+   * @param axis
+   *          The orientation of the progress bar.
+   * @deprecated Since 2.7 Use {@link #ProgramList(ListModel, ProgramPanelSettings)} instead.
+   */
+  public ProgramList(ListModel programs, PluginPictureSettings settings,
+      int axis) {
+    super(programs);
+    programs.addListDataListener(this);
+    setCellRenderer(new ProgramListCellRenderer(new ProgramPanelSettings(
+        settings, false, axis)));
   }
 }
