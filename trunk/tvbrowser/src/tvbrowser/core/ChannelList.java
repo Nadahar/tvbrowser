@@ -362,9 +362,10 @@ public class ChannelList {
       }
     }
 
-    Iterator<Channel> iter = mAvailableChannels.iterator();
-    while (iter.hasNext()) {
-      Channel channel = iter.next();
+    int n = mAvailableChannels.size();
+    
+    for(int i = 0; i < n; i++) {
+      Channel channel = mAvailableChannels.get(i);
 
       if (channel.getId().compareTo(channelId) == 0
           && ((dataServiceId != null && channel.getDataServiceProxy().getId()
