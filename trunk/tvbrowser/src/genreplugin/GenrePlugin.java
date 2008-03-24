@@ -143,7 +143,7 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
                   genreNodes.put(genre, node);
                   currentGenres.add(genre);
                 }
-                node.addProgram(prog);
+                node.addProgramWithoutCheck(prog);
               }
             }
           }

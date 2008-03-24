@@ -539,7 +539,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
                 for (Iterator<PluginTreeNode> iterator = nodes.iterator(); iterator
                     .hasNext();) {
                   PluginTreeNode titleNode = iterator.next();
-                  titleNode.addProgram(program);
+                  titleNode.addProgramWithoutCheck(program);
                 }
               }
             }
