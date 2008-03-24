@@ -3,7 +3,7 @@ package com.gc.systray;
 import java.awt.Point;
 
 /**
- * This intreface should be implemented by a class that want to manage
+ * This interface should be implemented by a class that wants to manage
  * the icon events.
  *
  * @author <a href="mail:gciubotaru@yahoo.com">George Ciubotaru</a>

@@ -40,7 +40,7 @@ public class MatcherEx implements Block {
 
   private Pattern pattern;
 
-  /** Wird nur während dem Baumaufbau benutzt und danach entsorgt. */
+  /** Wird nur während des Baumaufbaus benutzt und danach entsorgt. */
   private Vector<String> vtemp = new Vector<String>();
 
   private boolean caseSensitive;

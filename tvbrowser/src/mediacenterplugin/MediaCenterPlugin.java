@@ -115,7 +115,7 @@ public class MediaCenterPlugin extends Plugin {
   }
 
   /**
-   * If the MediaPanel is not visible, it will be shown in a seperate Thread
+   * If the MediaPanel is not visible, it will be shown in a separate Thread
    */
   private void showMediaCenter() {
     if (!mMediaCenterShowing) {

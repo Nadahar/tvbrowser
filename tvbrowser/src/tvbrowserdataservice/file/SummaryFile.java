@@ -211,7 +211,7 @@ public class SummaryFile extends AbstractFile {
 
   /**
    * Generates a Date. 
-   * The Constructor of Date is deprecated, it has some troubles with Os/2, but in this
+   * The Constructor of Date is deprecated, it has some troubles with OS/2, but in this
    * class we only use it to compute the difference between two days. Only for this purpose
    * it's ok. 
    * 

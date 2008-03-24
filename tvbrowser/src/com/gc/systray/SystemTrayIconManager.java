@@ -22,8 +22,8 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 /**
- * This is the manager class. It may bee seen as a wrapper for the native code.
- * But also provides support for the rigth-click popup throught a JPoupupMenu.
+ * This is the manager class. It may be seen as a wrapper for the native code.
+ * But also provides support for the right click popup through a JPoupupMenu.
  *
  * @author <a href="mail:gciubotaru@yahoo.com">George Ciubotaru</a>
  * @version 1.0
@@ -254,7 +254,7 @@ public class SystemTrayIconManager {
     }
 
     /**
-     * This static methos is used to load an icon in the
+     * This static method is used to load an icon in the
      * native code and returns an identifier of this image
      *
      * @param filename the file that contains the icon (in ico file usualy)
@@ -270,9 +270,9 @@ public class SystemTrayIconManager {
     }
 
     /**
-     * Load an image form resource
+     * Load an image from resource
      *
-     * @param resourceNo rsource number
+     * @param resourceNo resource number
      * @return -1 in case of error
      */
     public static int loadImageFromResource(int resourceNo) {
@@ -285,9 +285,9 @@ public class SystemTrayIconManager {
     }
 
     /**
-     * Free the memore ocupied by the icon image
+     * Free the memory occupied by the icon image
      *
-     * @param image the image ot me removed
+     * @param image the image to be removed
      */
     public static void freeImage(int image) {
         try {
@@ -329,7 +329,7 @@ public class SystemTrayIconManager {
      * Change the icon and tooltip
      *
      * @param image the new image
-     * @param tooltip thenew tooltip
+     * @param tooltip the new tooltip
      */
     public void update(final int image,final String tooltip) {
       this.image = image;
@@ -433,7 +433,7 @@ public class SystemTrayIconManager {
     }
 
     /**
-     * finaalize method
+     * finalize method
      */
     public void finalize() {
         nativeDisable();

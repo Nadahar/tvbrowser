@@ -214,7 +214,7 @@ public class Growl {
    *          The Description of our Notification as Growl will display it
    * @param inExtraInfo -
    *          Growl is flexible and allows Display Plugins to do as they please
-   *          with thier own special keys and values, you may use them here.
+   *          with their own special keys and values, you may use them here.
    *          These may be ignored by either the user's preferences or the
    *          current Display Plugin. This can be null
    * @throws Exception
@@ -246,7 +246,7 @@ public class Growl {
   }
 
   /**
-   * Convenienve method that defers to notifyGrowlOf( String inNotificationName,
+   * Convenience method that defers to notifyGrowlOf( String inNotificationName,
    * NSData inIconData, String inTitle, String inDescription, NSDictionary
    * inExtraInfo ) with null passed for icon and extraInfo arguments
    * 
@@ -291,7 +291,7 @@ public class Growl {
   }
 
   /**
-   * Convenienve method that defers to notifyGrowlOf( String inNotificationName,
+   * Convenience method that defers to notifyGrowlOf( String inNotificationName,
    * NSData inIconData, String inTitle, String inDescription, NSDictionary
    * inExtraInfo ) with null passed for extraInfo
    * 
@@ -371,7 +371,7 @@ public class Growl {
   }
 
   /**
-   * Set the list of Default Notfiications
+   * Set the list of Default Notifications
    * 
    * @param inDefNotes -
    *          The default Notifications
@@ -392,7 +392,7 @@ public class Growl {
   }
 
   /**
-   * Set the list of Default Notfiications
+   * Set the list of Default Notifications
    * 
    * @param inDefNotes -
    *          The default Notifications

@@ -444,7 +444,7 @@ public abstract class Favorite {
         /* leave
          *         
          * check if the new found program is a new instance 
-         * of the program an mark it if it is so. */
+         * of the program and mark it if it is so. */
         if(p1[inx1].getProgramState() == Program.WAS_DELETED_STATE) {
           markProgram(p2[inx2]);
         }
@@ -517,7 +517,7 @@ public abstract class Favorite {
   }
   
   /**
-   * Checks if all programs on the black are valid.
+   * Checks if all programs on the black list are valid.
    */
   public void refreshBlackList() {
     if (mBlackList == null) {

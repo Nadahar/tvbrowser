@@ -432,7 +432,7 @@ class SyntaxDocument extends DefaultStyledDocument
   }
 
   /*
-   *  Assume the needle will the found at the start/end of the line
+   *  Assume the needle will be found at the start/end of the line
    */
   private int indexOf(String content, String needle, int offset)
   {
@@ -452,7 +452,7 @@ class SyntaxDocument extends DefaultStyledDocument
   }
 
   /*
-   *  Assume the needle will the found at the start/end of the line
+   *  Assume the needle will be found at the start/end of the line
    */
   private int lastIndexOf(String content, String needle, int offset)
   {

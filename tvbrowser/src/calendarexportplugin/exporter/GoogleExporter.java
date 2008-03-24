@@ -188,7 +188,7 @@ public class GoogleExporter extends AbstractExporter {
       JOptionPane.showMessageDialog(CalendarExportPlugin.getInstance().getBestParentFrame(), mLocalizer.msg("exportDone", "Google Export done."), mLocalizer.msg("export", "Export"), JOptionPane.INFORMATION_MESSAGE);
       return true;
     } catch (AuthenticationException e) {
-      ErrorHandler.handle(mLocalizer.msg("loginFailure", "Problems while Login to Service.\nMaybee bad Username/Password ?"), e);
+      ErrorHandler.handle(mLocalizer.msg("loginFailure", "Problems during login to Service.\nMaybe bad username or password?"), e);
       settings.setProperty(GoogleExporter.STOREPASSWORD, "false");
     } catch (Exception e) {
       ErrorHandler.handle(mLocalizer.msg("commError", "Error while communicating with Google!"), e);

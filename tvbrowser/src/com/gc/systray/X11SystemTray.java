@@ -128,7 +128,7 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
   }
 
   /**
-   * If a Mouse was pressed
+   * If a Mouse Button was pressed
    */
   public void mousePressed(final MouseEvent e) {
     if (e.isPopupTrigger() && mPopupMenu != null) {
