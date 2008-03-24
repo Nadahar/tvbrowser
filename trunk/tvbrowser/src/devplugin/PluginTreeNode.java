@@ -580,7 +580,7 @@ public class PluginTreeNode {
 
   /**
    * add a single program node to this tree node.
-   * It it not checked if the program is already contained in this sub tree,
+   * It is not checked if the program is already contained in this sub tree,
    * so you may only use this method with newly created tree nodes!
    * 
    * @param program
