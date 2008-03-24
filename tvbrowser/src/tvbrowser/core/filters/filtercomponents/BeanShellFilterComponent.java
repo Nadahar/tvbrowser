@@ -41,158 +41,156 @@ import tvbrowser.core.filters.FilterComponent;
 import util.exc.ErrorHandler;
 import util.ui.LineNumberHeader;
 import util.ui.beanshell.BeanShellEditor;
+import bsh.EvalError;
 import bsh.Interpreter;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.beanshell.BeanShellProgramFilterIf;
 
-
 /**
- * This Filter allows the User to create a small Script that Filters
- * the Programs
- *  
+ * This Filter allows the User to create a small Script that Filters the
+ * Programs
+ * 
  */
 public class BeanShellFilterComponent implements FilterComponent {
 
-    private static final util.ui.Localizer mLocalizer
-            = util.ui.Localizer.getLocalizerFor(BeanShellFilterComponent.class);
-    
-    private String mName, mDescription;
-    
-    private BeanShellEditor mScriptEditor;
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(BeanShellFilterComponent.class);
 
-    private String mScriptSource;
-    
-    private BeanShellProgramFilterIf mScript;    
-    
-    public BeanShellFilterComponent() {
-        this("", "");
+  private String mName, mDescription;
+
+  private BeanShellEditor mScriptEditor;
+
+  private String mScriptSource;
+
+  private BeanShellProgramFilterIf mScript;
+
+  public BeanShellFilterComponent() {
+    this("", "");
+  }
+
+  public BeanShellFilterComponent(String name, String description) {
+    mName = name;
+    mDescription = description;
+    mScriptSource = "import devplugin.beanshell.BeanShellProgramFilterIf;\n"
+        + "import devplugin.Program;\n"
+        + "import devplugin.ProgramFieldType;\n\n" + "accept(Program p) {\n\n"
+        + "	// " + mLocalizer.msg("addCodeHere", "Add Code here!") + "\n\n"
+        + "	return true;\n" + "}\n\n"
+        + "return (BeanShellProgramFilterIf) this;";
+  }
+
+  private void compileSource() throws EvalError {
+    if (mScriptSource != null && mScript == null) {
+      mScript = (BeanShellProgramFilterIf) new Interpreter()
+          .eval(mScriptSource);
+    }
+  }
+
+  public void read(ObjectInputStream in, int version) throws IOException,
+      ClassNotFoundException {
+    mScriptSource = (String) in.readObject();
+  }
+
+  public void write(ObjectOutputStream out) throws IOException {
+    out.writeObject(mScriptSource);
+  }
+
+  public String toString() {
+    return mLocalizer.msg("BeanShellFilter", "BeanShell-Filter");
+  }
+
+  public void saveSettings() {
+    mScriptSource = mScriptEditor.getText();
+    try {
+      compileSource();
+    } catch (Exception e) {
+      e.printStackTrace();
+      mScript = null;
+    }
+  }
+
+  public JPanel getSettingsPanel() {
+    JPanel content = new JPanel(new BorderLayout());
+
+    mScriptEditor = new BeanShellEditor();
+    mScriptEditor.setText(mScriptSource);
+
+    JScrollPane scrollPane = new JScrollPane(mScriptEditor);
+    scrollPane.setBackground(Color.WHITE);
+    LineNumberHeader header = new LineNumberHeader(mScriptEditor);
+    scrollPane.setRowHeaderView(header);
+
+    content.add(scrollPane, BorderLayout.CENTER);
+
+    JPanel buttonp = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+
+    JButton test = new JButton(mLocalizer.msg("testScript", "Test Script"));
+
+    test.addActionListener(new ActionListener() {
+
+      public void actionPerformed(ActionEvent arg0) {
+        testScript();
+      }
+
+    });
+
+    buttonp.add(test);
+
+    content.add(buttonp, BorderLayout.SOUTH);
+
+    return content;
+  }
+
+  protected void testScript() {
+    boolean error = false;
+    try {
+      BeanShellProgramFilterIf filter;
+      filter = (BeanShellProgramFilterIf) new Interpreter().eval(mScriptEditor
+          .getText());
+      filter.accept(Plugin.getPluginManager().getExampleProgram());
+    } catch (Exception e) {
+      ErrorHandler.handle(mLocalizer.msg("errorParsing",
+          "Error while parsing Script"), e);
+      error = true;
     }
 
-    public BeanShellFilterComponent(String name, String description) {
-        mName = name;
-        mDescription = description;
-        mScriptSource = "import devplugin.beanshell.BeanShellProgramFilterIf;\n"+
-            			"import devplugin.Program;\n" +
-            			"import devplugin.ProgramFieldType;\n\n" +
-            			"accept(Program p) {\n\n" +
-            			"	// "+ mLocalizer.msg("addCodeHere", "Add Code here!") + "\n\n"+
-            			"	return true;\n" +
-            			"}\n\n" +
-            			"return (BeanShellProgramFilterIf) this;";
-        try {
-            mScript = (BeanShellProgramFilterIf) new Interpreter().eval(mScriptSource);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
+    if (!error) {
+      JOptionPane.showMessageDialog(null, mLocalizer.msg("SyntaxOK",
+          "Syntax is OK."));
     }
+  }
 
-    public void read(ObjectInputStream in, int version) throws IOException, ClassNotFoundException {
-        mScriptSource = (String) in.readObject();
-        try {
-            mScript = (BeanShellProgramFilterIf) new Interpreter().eval(mScriptSource);
-        } catch (Exception e) {
-            mScript = null;
-        }
-        
-    }
-
-    public void write(ObjectOutputStream out) throws IOException {
-        out.writeObject(mScriptSource);
-    }
-
-    public String toString() {
-        return mLocalizer.msg("BeanShellFilter", "BeanShell-Filter");
-    }
-
-    public void saveSettings() {
-        mScriptSource = mScriptEditor.getText();
-        try {
-            mScript = (BeanShellProgramFilterIf) new Interpreter().eval(mScriptSource);
-        } catch (Exception e) {
-            e.printStackTrace();
-            mScript = null;
-        }
-    }
-
-    public JPanel getSettingsPanel() {
-        JPanel content = new JPanel(new BorderLayout());
-
-        mScriptEditor = new BeanShellEditor();
-        mScriptEditor.setText(mScriptSource);
-        
-        JScrollPane scrollPane = new JScrollPane(mScriptEditor);
-        scrollPane.setBackground(Color.WHITE);
-        LineNumberHeader header = new LineNumberHeader(mScriptEditor);
-        scrollPane.setRowHeaderView(header); 
-        
-        content.add(scrollPane, BorderLayout.CENTER);
-        
-        JPanel buttonp = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        
-        JButton test = new JButton(mLocalizer.msg("testScript", "Test Script"));
-        
-        test.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent arg0) {
-                testScript();
-            }
-            
-        });
-        
-        buttonp.add(test);
-        
-        content.add(buttonp, BorderLayout.SOUTH);
-        
-        return content;
-    }
-
-    protected void testScript() {
-        boolean error = false;
-        try {
-            BeanShellProgramFilterIf filter;
-            filter = (BeanShellProgramFilterIf) new Interpreter().eval(mScriptEditor.getText());
-            filter.accept(Plugin.getPluginManager().getExampleProgram());
-        } catch (Exception e) {
-            ErrorHandler.handle(mLocalizer.msg("errorParsing","Error while parsing Script"), e);
-            error = true;
-        }
-        
-        if (!error) {
-            JOptionPane.showMessageDialog(null, mLocalizer.msg("SyntaxOK","Syntax is OK."));
-        }
-    }
-
-    public boolean accept(Program program) {
-        if (mScript != null) {
-            try {
-                return mScript.accept(program);
-            } catch (Exception e) {
-                return false;
-            }
-        }
+  public boolean accept(Program program) {
+    if (mScript != null) {
+      try {
+        compileSource();
+        return mScript.accept(program);
+      } catch (Exception e) {
         return false;
+      }
     }
+    return false;
+  }
 
-    public int getVersion() {
-        return 1;
-    }
+  public int getVersion() {
+    return 1;
+  }
 
-    public String getName() {
-        return mName;
-    }
+  public String getName() {
+    return mName;
+  }
 
-    public String getDescription() {
-        return mDescription;
-    }
+  public String getDescription() {
+    return mDescription;
+  }
 
-    public void setName(String name) {
-        mName = name;
-    }
+  public void setName(String name) {
+    mName = name;
+  }
 
-    public void setDescription(String desc) {
-        mDescription = desc;
-    }
+  public void setDescription(String desc) {
+    mDescription = desc;
+  }
 
 }
