@@ -37,6 +37,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.util.Calendar;
+import java.util.HashMap;
 
 public class Date implements Comparable<Date> {
 
@@ -67,6 +68,8 @@ public class Date implements Comparable<Date> {
   private final int mMonth;
 
   private final int mDay;
+  
+  private static final HashMap<Integer, String> LONG_DATE_MAP = new HashMap<Integer, String>(28);
 
   /**
    * Constructs a new Date object, initialized with the current date.
@@ -307,7 +310,13 @@ public class Date implements Comparable<Date> {
    * @return date string
    */
   public String getLongDateString() {
-    return getFormattedString(LONG_DAY_MSG_ARR, LONG_MONTH_MSG_ARR);
+    int hashCode = hashCode();
+    String result = LONG_DATE_MAP.get(hashCode);
+    if (result == null) {
+      result = getFormattedString(LONG_DAY_MSG_ARR, LONG_MONTH_MSG_ARR);
+      LONG_DATE_MAP.put(hashCode, result);
+    }
+    return result;
   }
 
   /**
