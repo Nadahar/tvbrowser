@@ -32,6 +32,7 @@ import javax.swing.JList;
 import tvbrowser.extras.common.DayListCellRenderer;
 import tvbrowser.extras.favoritesplugin.core.Exclusion;
 import devplugin.Channel;
+import devplugin.ProgramFilter;
 
 /**
  * A renderer class for rendering the exclusion list. 
@@ -82,75 +83,52 @@ public class ExclusionListCellRenderer extends DefaultListCellRenderer {
 
       String title = excl.getTitle();
       String topic = excl.getTopic();
+      ProgramFilter filter = excl.getFilter();
       Channel channel = excl.getChannel();
       String timeMsg = createTimeMessage(excl.getTimeLowerBound(), excl.getTimeUpperBound(), excl.getDayOfWeek());
-
-      String text;
-      if (title == null) {
-        if (topic == null) {
-          if (channel == null) {
-            if (timeMsg == null) {
-              text = "<invalid>";
-            } else { // timeMsg != null
-              text = mLocalizer.msg("exclude.time", "", timeMsg);
-            }
-          } else { // channel != null
-            if (timeMsg == null) {
-              text = mLocalizer.msg("exclude.channel", "", channel.getName());
-            } else { // timeMsg != null
-              text = mLocalizer.msg("exclude.channel-time", "", channel.getName(), timeMsg);
-            }
-          }
-
-        } else { // topic != null
-          if (channel == null) {
-            if (timeMsg == null) {
-              text = mLocalizer.msg("exclude.topic", "", topic);
-            } else { // timeMsg != null
-              text = mLocalizer.msg("exclude.topic-time", "", topic, timeMsg);
-            }
-          } else { // channel != null
-            if (timeMsg == null) {
-              text = mLocalizer.msg("exclude.topic-channel", "", topic, channel.getName());
-            } else { // timeMsg != null
-              text = mLocalizer.msg("exclude.topic-channel-time", "", topic, channel.getName(), timeMsg);
-            }
-          }
-        }
-
-      } else { // title != null
-        if (topic == null) {
-          if (channel == null) {
-            if (timeMsg == null) {
-              text = mLocalizer.msg("exclude.title", "", title);
-            } else { // timeMsg != null
-              text = mLocalizer.msg("exclude.title-time", "", title, timeMsg);
-            }
-          } else { // channel != null
-            if (timeMsg == null) {
-              text = mLocalizer.msg("exclude.title-channel", "", title, channel.getName());
-            } else {
-              text = mLocalizer.msg("exclude.title-channel-time", "", title, channel.getName(), timeMsg);
-            }
-          }
-        } else { // topic != null
-          if (channel == null) {
-            if (timeMsg == null) {
-              text = mLocalizer.msg("exclude.title-topic", "", title, topic);
-            } else { // timeMsg != null
-              text = mLocalizer.msg("exclude.title-topic-time", "", title, topic, timeMsg);
-            }
-          } else { // channel != null
-            if (timeMsg == null) {
-              text = mLocalizer.msg("exclude.title-topic-channel", "", title, topic, channel.getName());
-            } else { // timeMsg != null
-              text = mLocalizer.msg("exclude.title-topic-channel-time", "", new Object[] { title, topic,
-                  channel.getName(), timeMsg });
-            }
-          }
-        }
+      
+      StringBuilder textValue = new StringBuilder();
+      
+      if(title != null) {
+        textValue.append(mLocalizer.msg("exclude.title","Exclude all programs with title '")).append(title).append("'");
       }
-      defaultLabel.setText(text);
+      if(topic != null && title != null) {
+        textValue.append(" ").append(mLocalizer.msg("appendTopic","with topic '")).append(topic).append("'");
+      }
+      else if (topic != null) {
+        textValue.append(mLocalizer.msg("exclude.topic","Exclude all programs with topic '")).append(topic).append("'");
+      }
+      if(filter != null && (title != null || topic != null)) {
+        textValue.append(" ").append(mLocalizer.msg("appendFilter","of the filter '")).append(filter.getName()).append("'");
+      }
+      else if(filter != null) {
+        textValue.append(mLocalizer.msg("exclude.filter","Exclude all programs of the filter '")).append(filter.getName()).append("'");
+      }
+      if(channel != null && (title != null || topic != null || filter != null)) {
+        textValue.append(" ").append(mLocalizer.msg("exclude.appendChannel","on channel '")).append(channel.getName()).append("'");
+      }
+      else if(channel != null) {
+        textValue.append(mLocalizer.msg("exclude.channel","Exclude all programs on channel '")).append(channel.getName()).append("'");
+      }
+      if(timeMsg != null && (title != null || topic != null || filter != null || channel != null)) {
+        textValue.append(" ").append(timeMsg);
+      }
+      else if(timeMsg != null) {
+        textValue.append(mLocalizer.msg("exclude.time","Exclude all programs ")).append(timeMsg);
+      }
+      
+      if(textValue.length() < 1) {
+        textValue.append(mLocalizer.msg("exclude.invalid","<invalid>"));
+      }
+      else {
+        if(mLocalizer.msg("exclude.appendix",".").length() > 1) {
+          textValue.append(" ");
+        }
+        
+        textValue.append(mLocalizer.msg("exclude.appendix","."));
+      }
+      
+      defaultLabel.setText(textValue.toString());
 
     }
     return defaultLabel;

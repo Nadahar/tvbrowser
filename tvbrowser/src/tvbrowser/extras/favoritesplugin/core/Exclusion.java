@@ -29,6 +29,7 @@ package tvbrowser.extras.favoritesplugin.core;
 import devplugin.Channel;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
+import devplugin.ProgramFilter;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -36,6 +37,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Iterator;
 
+import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.extras.common.LimitationConfiguration;
 
 public class Exclusion {
@@ -57,6 +59,7 @@ public class Exclusion {
   private int mTimeFrom;
   private int mTimeTo;
   private int mDayOfWeek;
+  private String mFilterName;
 
   /**
    * Creates a new exclusion criteria.
@@ -65,14 +68,17 @@ public class Exclusion {
    * @param channel null, if any channel is allowed
    * @param timeFrom lower time limit (or -1, if no lower limit exists)
    * @param timeTo upper time limit (or -1, if no upper limit exists)
+   * @param dayOfWeek The day of week to use.
+   * @param filterName The name of the filter to use; 
    */
-  public Exclusion(String title, String topic, Channel channel, int timeFrom, int timeTo, int dayOfWeek) {
+  public Exclusion(String title, String topic, Channel channel, int timeFrom, int timeTo, int dayOfWeek, String filterName) {
     mTitle = title;
     mTopic = topic;
     mChannel =channel;
     mTimeFrom = timeFrom;
     mTimeTo = timeTo;
     mDayOfWeek = dayOfWeek;
+    mFilterName = filterName;
   }
 
   public Exclusion(ObjectInputStream in) throws ClassNotFoundException, IOException {
@@ -104,6 +110,12 @@ public class Exclusion {
     if (hasTopic) {
       mTopic = (String)in.readObject();
     }
+    
+    if(version > 3) {
+      if(in.readBoolean()) {
+        mFilterName = (String)in.readObject();
+      }
+    }
 
     mTimeFrom = in.readInt();
     mTimeTo = in.readInt();
@@ -113,7 +125,7 @@ public class Exclusion {
 
 
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(3);  // version
+    out.writeInt(4);  // version
     out.writeBoolean(mChannel != null);
     if (mChannel != null) {
       mChannel.writeData(out);
@@ -128,11 +140,15 @@ public class Exclusion {
     if (mTopic != null) {
       out.writeObject(mTopic);
     }
+    
+    out.writeBoolean(mFilterName != null);
+    if(mFilterName != null) {
+      out.writeObject(mFilterName);
+    }
 
     out.writeInt(mTimeFrom);
     out.writeInt(mTimeTo);
     out.writeInt(mDayOfWeek);
-
   }
 
 
@@ -142,6 +158,18 @@ public class Exclusion {
 
   public String getTopic() {
     return mTopic;
+  }
+  
+  public ProgramFilter getFilter() {
+    ProgramFilter[] filters = FilterManagerImpl.getInstance().getAvailableFilters();
+    
+    for(ProgramFilter filter : filters) {
+      if(filter.getName().equals(mFilterName)) {
+        return filter;
+      }
+    }
+    
+    return null;
   }
 
   public Channel getChannel() {
@@ -167,6 +195,7 @@ public class Exclusion {
     boolean topicExcl = false;
     boolean timeExcl = false;
     boolean dayExcl = false;
+    boolean filterExclusion = false;
     
     if(isInvalid())
       return false;
@@ -206,6 +235,20 @@ public class Exclusion {
     }
     else
       topicExcl = true;
+    
+    if(mFilterName != null) {
+      ProgramFilter filter = getFilter();
+      
+      if(filter != null) {
+        filterExclusion = filter.accept(prog);
+      }
+      else {
+        filterExclusion = true;
+      }
+    }
+    else {
+      filterExclusion = true;
+    }
 
     int timeFromParsed = mTimeFrom;
     int progTime = prog.getHours()*60 + prog.getMinutes();
@@ -251,7 +294,7 @@ public class Exclusion {
       dayExcl = true;
     }
 
-    return channelExcl && titleExcl && topicExcl && timeExcl && dayExcl;
+    return channelExcl && titleExcl && topicExcl && timeExcl && dayExcl && filterExclusion;
   }
   
   /**
@@ -260,6 +303,6 @@ public class Exclusion {
    * @return <code>True</code> if this Exclusion is invalid, <code>false</code> otherwise.
    */
   public boolean isInvalid() {
-    return mTitle == null && mTopic == null && mChannel == null && mTimeFrom == -1 &&mTimeTo == -1 && mDayOfWeek == Exclusion.DAYLIMIT_DAILY;
+    return mTitle == null && mTopic == null && mFilterName == null && mChannel == null && mTimeFrom == -1 &&mTimeTo == -1 && mDayOfWeek == Exclusion.DAYLIMIT_DAILY;
   }
 }
