@@ -82,7 +82,7 @@ public class FavoriteNode extends DefaultMutableTreeNode implements Comparable<F
       setAllowsChildren(false);
       if (version <= 2) {
         /* read favorites from older TV-Browser versions
-         * this should be stay at least until version 3.0
+         * this should stay at least until version 3.0
          * of TV-Browser */
         userObject = new AdvancedFavorite(null, in);
       }
@@ -195,11 +195,11 @@ public class FavoriteNode extends DefaultMutableTreeNode implements Comparable<F
   }
   
   /**
-   * Gets all programs contains in this node and all children of it.
+   * Gets all programs contained in this node and all children of it.
    * 
    * @param onlyNotExpiredPrograms <code>true</code> if only not expired
    * programs should be returned, <code>false</code> otherwise.
-   * @return All programs contains in this node and all children of it.
+   * @return All programs contained in this node and all children of it.
    */
   public Program[] getAllPrograms(boolean onlyNotExpiredPrograms) {
     try{

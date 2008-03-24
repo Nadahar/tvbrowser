@@ -175,7 +175,7 @@ public class GoogleSettingsDialog extends JDialog  implements WindowClosingIf {
           fetchCalendarList(settings, password);
         } catch (AuthenticationException e) {
           loadingFailed();
-          ErrorHandler.handle(mErrorLocalizer.msg("loginFailure", "Problems while Login to Service.\nMaybee bad Username/Password ?"), e);
+          ErrorHandler.handle(mErrorLocalizer.msg("loginFailure", "Problems during login to service.\nMaybe bad username or password?"), e);
           settings.setProperty(GoogleExporter.STOREPASSWORD, "false");
         } catch (Exception e) {
           loadingFailed();

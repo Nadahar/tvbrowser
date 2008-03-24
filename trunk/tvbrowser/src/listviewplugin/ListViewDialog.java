@@ -487,7 +487,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
     });
     
-    // Dispache the KeyEvent to the RootPane for Closing the Dialog.
+    // Dispatch the KeyEvent to the RootPane for Closing the Dialog.
     // Needed for Java 1.4.
     mProgramTable.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {

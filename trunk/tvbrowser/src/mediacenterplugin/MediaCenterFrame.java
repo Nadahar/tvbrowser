@@ -47,7 +47,7 @@ import util.ui.ImageUtilities;
 /**
  * This class represents the Frame.
  * 
- * It handels the Fullscreen/Windowed switching
+ * It handles the Fullscreen/Windowed switching
  * 
  * @author bodum
  */

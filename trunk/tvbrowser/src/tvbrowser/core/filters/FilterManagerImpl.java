@@ -40,7 +40,7 @@ public class FilterManagerImpl implements FilterManager {
   }
   
   /**
-   * Creates an instance of this clas if
+   * Creates an instance of this class if
    * there is no one and returns it.
    * 
    * @return The instance of this class.

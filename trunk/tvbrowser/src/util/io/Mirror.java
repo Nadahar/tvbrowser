@@ -158,7 +158,7 @@ public class Mirror {
         try {
           weight = Integer.parseInt(weightAsString);
         } catch (Exception exc) {
-          throw new FileFormatException("Syntax error in mirror file line " + lineCount + ": wieght is not a number: '"
+          throw new FileFormatException("Syntax error in mirror file line " + lineCount + ": weight is not a number: '"
               + weightAsString + "'");
         }
 

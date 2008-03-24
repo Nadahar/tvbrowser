@@ -82,7 +82,7 @@ public class FavIconFetcher {
           ICOFile ico = new ICOFile(new FileInputStream(temp));
           img = getBestIcon(ico, 16,16);
         } catch (Exception e) {
-          // Couldn't parse Icon-File. Maybee it's an Image
+          // Couldn't parse Icon-File. Maybe it's an Image
           img = ImageIO.read(temp);
         }
         
