@@ -39,14 +39,11 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-
 import javax.swing.SwingUtilities;
 
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
-import util.ui.DontShowAgainMessageBox;
 import devplugin.Channel;
 
 /**
@@ -114,7 +111,7 @@ public class ChannelList {
     TvDataServiceProxy[] dataServiceArr = TvDataServiceProxyManager
         .getInstance().getDataServices();
 
-    ArrayList<Channel> availableChannels = new ArrayList<Channel>();
+    HashMap<Channel, Channel> availableChannels = new HashMap<Channel, Channel>(mAvailableChannelsMap.size());
     
     for (TvDataServiceProxy proxy : dataServiceArr) {
       addDataServiceChannels(proxy,availableChannels);
@@ -125,7 +122,7 @@ public class ChannelList {
     for(int i = mAvailableChannels.size()-1; i >= 0; i--) {
       Channel ch = (Channel)mAvailableChannels.get(i);
       
-      if(!availableChannels.contains(ch)) {
+      if(!availableChannels.containsKey(ch)) {
         mAvailableChannels.remove(i);
         mAvailableChannelsMap.remove(getChannelKey(ch));
         
@@ -176,7 +173,7 @@ public class ChannelList {
   }
 
   private static void addDataServiceChannels(TvDataServiceProxy dataService,
-      ArrayList<Channel> availableChannels) {
+      HashMap<Channel, Channel> availableChannels) {
     Channel[] channelArr = dataService.getAvailableChannels();
     
     for (Channel channel : channelArr) {
@@ -189,15 +186,15 @@ public class ChannelList {
     Channel[] channelArr = dataService.getChannelsForTvBrowserStart();
 
     for (Channel channel : channelArr) {
-      addChannelToAvailableChannels(channel, new ArrayList<Channel>());
+      addChannelToAvailableChannels(channel, new HashMap<Channel, Channel>());
     }
   }
 
-  private static void addChannelToAvailableChannels(Channel channel, ArrayList<Channel> availableChannels) {
+  private static void addChannelToAvailableChannels(Channel channel, HashMap<Channel, Channel> availableChannels) {
     mCurrentChangeChannel = mAvailableChannelsMap.get(getChannelKey(channel));
     
     if (mCurrentChangeChannel == null) {
-      availableChannels.add(channel);
+      availableChannels.put(channel, channel);
       mAvailableChannels.add(channel);
       mAvailableChannelsMap.put(getChannelKey(channel), channel);
 
@@ -223,7 +220,7 @@ public class ChannelList {
       mCurrentChangeChannel.setChannelCopyrightNotice(channel.getCopyrightNotice());
       mCurrentChangeChannel.setChannelWebpage(channel.getDefaultWebPage());
       
-      availableChannels.add(mCurrentChangeChannel);
+      availableChannels.put(mCurrentChangeChannel, mCurrentChangeChannel);
     }
     
     mCurrentChangeChannel = null;
