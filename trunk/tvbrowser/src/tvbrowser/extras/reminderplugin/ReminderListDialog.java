@@ -38,7 +38,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -72,16 +74,15 @@ import devplugin.SettingsItem;
  * @author Martin Oberhauser
  */
 public class ReminderListDialog extends JDialog implements WindowClosingIf {
-
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ReminderListDialog.class);
-
+  
   private ReminderList reminderList;
-
   private JTable mTable;
   
   private ReminderTableModel mModel;
   private ReminderListItem[] mDeletedItems;
   private JButton mUndo, mDelete, mSend;
+  private JComboBox mTitleSelection;
 
   public ReminderListDialog(Frame parent, ReminderList list) {
     super(parent, true);
@@ -104,13 +105,15 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
   private void createGui() {
     JPanel panel = (JPanel) getContentPane();
 
-    panel.setLayout(new FormLayout("fill:default:grow", "fill:default:grow, 3dlu, default"));
+    panel.setLayout(new FormLayout("default,5dlu,fill:default:grow", "default,5dlu,fill:default:grow, 3dlu, default"));
 
     panel.setBorder(Borders.DLU4_BORDER);
 
     CellConstraints cc = new CellConstraints();
 
-    mModel = new ReminderTableModel(reminderList);
+    
+    
+    mModel = new ReminderTableModel(reminderList, mTitleSelection = new JComboBox());
 
     mTable = new JTable();
     mTable.addKeyListener(new KeyAdapter() {
@@ -201,7 +204,10 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
 
     installTableModel(mModel);
 
-    panel.add(new JScrollPane(mTable), cc.xy(1, 1));
+    panel.add(new JLabel(mLocalizer.msg("titleFilterText","Show only programs with the following title:")), cc.xy(1,1));
+    panel.add(mTitleSelection, cc.xy(3,1));
+    
+    panel.add(new JScrollPane(mTable), cc.xyw(1, 3, 3));
 
     ButtonBarBuilder builder = ButtonBarBuilder.createLeftToRightBuilder();
 
@@ -271,13 +277,13 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
     builder.addGlue();
     builder.addFixed(ok);
 
-    panel.add(builder.getPanel(), cc.xy(1, 3));
+    panel.add(builder.getPanel(), cc.xyw(1, 5, 3));
 
     getRootPane().setDefaultButton(ok);
     
     Settings.layoutWindow("extras.reminderListDlg", this, new Dimension(550,350)); 
   }
-
+  
   private void installTableModel(ReminderTableModel model) {
     mTable.setModel(model);
     mTable.getColumnModel().getColumn(0).setCellRenderer(new ProgramTableCellRenderer(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE)));
@@ -311,7 +317,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
 
       final int row = selected[0] - 1;
 
-      installTableModel(new ReminderTableModel(reminderList));
+      installTableModel(new ReminderTableModel(reminderList, mTitleSelection));
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
           mTable.scrollRectToVisible(mTable.getCellRect(row, 0, true));
@@ -335,7 +341,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
     mDeletedItems = null;
     mUndo.setEnabled(false);
    
-    installTableModel(new ReminderTableModel(reminderList));
+    installTableModel(new ReminderTableModel(reminderList, mTitleSelection));
     ReminderPlugin.getInstance().updateRootNode(true);
     
     mDelete.setEnabled(mTable.getRowCount() > 0);
