@@ -105,7 +105,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
   private void createGui() {
     JPanel panel = (JPanel) getContentPane();
 
-    panel.setLayout(new FormLayout("default,5dlu,fill:default:grow", "default,5dlu,fill:default:grow, 3dlu, default"));
+    panel.setLayout(new FormLayout("default,5dlu,50dlu:grow", "default,5dlu,fill:default:grow, 3dlu, default"));
 
     panel.setBorder(Borders.DLU4_BORDER);
 

@@ -60,11 +60,16 @@ public class ReminderTableModel extends AbstractTableModel {
     ReminderListItem[] allItems = mList.getReminderItems();
     
     mTitleFilterBox.addItem(mLocalizer.msg("all","All"));
-        
+    
     for(ReminderListItem item : allItems) {
       boolean found = false;
+      int index = 0;
       
       for(int i = 0; i < mTitleFilterBox.getItemCount(); i++) {
+        if (mTitleFilterBox.getItemAt(i).toString().compareToIgnoreCase(item.getProgram().getTitle()) < 0) {
+          index = i;
+        }
+        
         if(mTitleFilterBox.getItemAt(i).equals(item.getProgram().getTitle())) {
           found = true;
           break;
@@ -72,7 +77,7 @@ public class ReminderTableModel extends AbstractTableModel {
       }
       
       if(!found) {
-        mTitleFilterBox.addItem(item.getProgram().getTitle());
+        mTitleFilterBox.insertItemAt(item.getProgram().getTitle(),index+1);
       }
     }
     
