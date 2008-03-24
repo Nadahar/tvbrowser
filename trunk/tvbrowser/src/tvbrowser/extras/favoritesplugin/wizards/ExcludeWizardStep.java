@@ -38,6 +38,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import tvbrowser.core.ChannelList;
+import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.extras.common.DayListCellRenderer;
 import tvbrowser.extras.common.LimitationConfiguration;
 import tvbrowser.extras.favoritesplugin.core.Exclusion;
@@ -47,9 +48,11 @@ import util.ui.TimePeriodChooser;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 
 import devplugin.Channel;
 import devplugin.Program;
+import devplugin.ProgramFilter;
 
 public class ExcludeWizardStep extends AbstractWizardStep {
 
@@ -68,42 +71,33 @@ public class ExcludeWizardStep extends AbstractWizardStep {
   private Exclusion mExclusion;
 
   private JCheckBox mTitleCb;
-
   private JCheckBox mTopicCb;
-
+  private JCheckBox mFilterCb;
   private JCheckBox mChannelCb;
-
   private JCheckBox mTimeCb;
-
   private JCheckBox mDayCb;
 
   private JTextField mTitleTf;
-
   private JTextField mTopicTf;
 
+  private JComboBox mFilterChooser;
   private JComboBox mChannelCB;
-
+  private JComboBox mDayChooser;
+  
   private TimePeriodChooser mTimePeriodChooser;
 
-  private JComboBox mDayChooser;
-
   private String mMainQuestion;
-
   private String mChannelQuestion;
-
   private String mTopicQuestion;
-
+  private String mFilterQuestion;
   private String mTimeQuestion;
-
   private String mTitleQuestion;
-
   private String mDayQuestion;
+  private String mDoneBtnText;
 
   private int mMode;
 
   private JPanel mContentPanel;
-  
-  private String mDoneBtnText;
   
   /**
    * Creates a new Wizard Step instance to create a new exclusion
@@ -149,6 +143,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
       mTimeQuestion = mLocalizer.msg("timeQuestion.edit", "Sendungen in diesem Zeitraum:");
       mTitleQuestion = mLocalizer.msg("titleQuestion.edit", "Sendungen mit diesem Titel:");
       mDayQuestion = mLocalizer.msg("dayOfWeekQuestion.edit","Sendungen an diesem Tag:");
+      mFilterQuestion = mLocalizer.msg("filterQuestion.edit","Sendungen des Filters:");
     } else {
       if(mFavorite != null) {
         mMainQuestion = mLocalizer.msg("mainQuestion.create",
@@ -174,6 +169,9 @@ public class ExcludeWizardStep extends AbstractWizardStep {
   public JPanel createContent(final WizardHandler handler) {
     mTitleCb = new JCheckBox(mTitleQuestion);
     mTitleTf = new JTextField();
+    mFilterCb = new JCheckBox(mFilterQuestion);
+    mFilterChooser = new JComboBox(FilterManagerImpl.getInstance().getAvailableFilters());
+    
     mDayChooser = new JComboBox(new Object[] { new Integer(LimitationConfiguration.DAYLIMIT_WEEKDAY),
         new Integer(LimitationConfiguration.DAYLIMIT_WEEKEND), new Integer(LimitationConfiguration.DAYLIMIT_MONDAY),
         new Integer(LimitationConfiguration.DAYLIMIT_TUESDAY), new Integer(LimitationConfiguration.DAYLIMIT_WEDNESDAY),
@@ -181,8 +179,9 @@ public class ExcludeWizardStep extends AbstractWizardStep {
         new Integer(LimitationConfiguration.DAYLIMIT_SATURDAY), new Integer(LimitationConfiguration.DAYLIMIT_SUNDAY), });
     mDayChooser.setRenderer(new DayListCellRenderer());
     CellConstraints cc = new CellConstraints();
-    PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("5dlu, pref, default:grow",
-        "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
+    FormLayout layout = new FormLayout("5dlu, pref, default:grow",
+    "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref");
+    PanelBuilder panelBuilder = new PanelBuilder(layout);
 
     mChannelCB = new JComboBox(ChannelList.getSubscribedChannels());
 
@@ -198,10 +197,11 @@ public class ExcludeWizardStep extends AbstractWizardStep {
 
     rowInx += 2;
 
+    int filterIndex = rowInx;
+    
     panelBuilder.add(mChannelCb = new JCheckBox(mChannelQuestion), cc.xy(2, rowInx));
     panelBuilder.add(mChannelCB, cc.xy(3, rowInx));
     rowInx += 2;
-
 
     panelBuilder.add(mDayCb = new JCheckBox(mDayQuestion), cc.xy(2, rowInx));
     panelBuilder.add(mDayChooser, cc.xy(3, rowInx));
@@ -210,6 +210,14 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     panelBuilder.add(mTimeCb = new JCheckBox(mTimeQuestion), cc.xy(2, rowInx));
     panelBuilder.add(mTimePeriodChooser = new TimePeriodChooser(TimePeriodChooser.ALIGN_LEFT), cc.xy(3, rowInx));
 
+    if(mMode == MODE_EDIT_EXCLUSION || mMode == MODE_CREATE_EXCLUSION) {
+      layout.insertRow(filterIndex, new RowSpec("pref"));
+      layout.insertRow(filterIndex+1, new RowSpec("5dlu"));
+      
+      panelBuilder.add(mFilterCb, cc.xy(2, filterIndex));
+      panelBuilder.add(mFilterChooser, cc.xy(3, filterIndex));
+    }
+    
     if (mMode == MODE_CREATE_DERIVED_FROM_PROGRAM && mProgram != null) {
       mTitleCb.setSelected(false);
       
@@ -228,9 +236,10 @@ public class ExcludeWizardStep extends AbstractWizardStep {
       mTimePeriodChooser.setFromTime(timeFrom);
       mTimePeriodChooser.setToTime(timeTo);
       mDayChooser.setSelectedItem(new Integer(mProgram.getDate().getCalendar().get(Calendar.DAY_OF_WEEK)));
-    } else if (mMode == MODE_EDIT_EXCLUSION) {
+    } else if (mMode == MODE_EDIT_EXCLUSION) {      
       String title = mExclusion.getTitle();
       String topic = mExclusion.getTopic();
+      ProgramFilter filter = mExclusion.getFilter();
       Channel channel = mExclusion.getChannel();
       int timeFrom = mExclusion.getTimeLowerBound();
       int timeTo = mExclusion.getTimeUpperBound();
@@ -242,6 +251,10 @@ public class ExcludeWizardStep extends AbstractWizardStep {
       if (topic != null) {
         mTopicCb.setSelected(true);
         mTopicTf.setText(topic);
+      }
+      if (filter != null) {
+        mFilterCb.setSelected(true);
+        mFilterChooser.setSelectedItem(filter);
       }
       if (channel != null) {
         mChannelCb.setSelected(true);
@@ -278,6 +291,12 @@ public class ExcludeWizardStep extends AbstractWizardStep {
         updateButtons(handler);
       }
     });
+    
+    mFilterCb.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        updateButtons(handler);
+      }
+    });
 
     mTimeCb.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
@@ -304,6 +323,9 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     if (mTopicCb.isSelected()) {
       allowNext = true;
     }
+    if (mFilterCb.isSelected()) {
+      allowNext = true;
+    }
 
     if (mTimeCb.isSelected()) {
       allowNext = true;
@@ -320,6 +342,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
 
     mChannelCB.setEnabled(mChannelCb.isSelected());
     mTopicTf.setEnabled(mTopicCb.isSelected());
+    mFilterChooser.setEnabled(mFilterCb.isSelected());
     mTimePeriodChooser.setEnabled(mTimeCb.isSelected());
     mDayChooser.setEnabled(mDayCb.isSelected());
     
@@ -340,6 +363,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
   public Object createDataObject(Object obj) {
     String title = null;
     String topic = null;
+    String filterName = null;
     Channel channel = null;
     int timeFrom = -1;
     int timeTo = -1;
@@ -351,6 +375,10 @@ public class ExcludeWizardStep extends AbstractWizardStep {
 
     if (mTopicCb.isSelected()) {
       topic = mTopicTf.getText();
+    }
+    
+    if(mFilterCb.isSelected()) {
+      filterName = ((ProgramFilter)mFilterChooser.getSelectedItem()).getName();
     }
 
     if (mChannelCb.isSelected()) {
@@ -369,7 +397,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     if (mDoneBtnText.compareTo(mLocalizer.msg("doneButton.toBlacklist","Remove this program now")) == 0)
       return "blacklist";
     else
-      return new Exclusion(title, topic, channel, timeFrom, timeTo, weekOfDay);
+      return new Exclusion(title, topic, channel, timeFrom, timeTo, weekOfDay, filterName);
 
   }
 
