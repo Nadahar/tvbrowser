@@ -279,8 +279,7 @@ public class MutableProgram implements Program {
         + ", NO DATE : '" + getTitle() + "'");
       return "";
     }
-    return getDate().toString();
-
+    return d.toString();
   }
 
 
