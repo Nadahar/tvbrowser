@@ -21,7 +21,6 @@ package tvraterplugin;
 
 import devplugin.ActionMenu;
 import devplugin.Channel;
-import devplugin.ChannelDayProgram;
 import devplugin.Date;
 import devplugin.Marker;
 import devplugin.Plugin;
@@ -370,6 +369,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
         updateDB();
       }
     }
+    updateRootNode();
   }
 
   /**
@@ -611,11 +611,6 @@ public class TVRaterPlugin extends devplugin.Plugin {
       }
       nodes.add(titleNode);
     }
-  }
-
-  @Override
-  public void handleTvDataDeleted(ChannelDayProgram oldProg) {
-    updateRootNode();
   }
 
   @Override
