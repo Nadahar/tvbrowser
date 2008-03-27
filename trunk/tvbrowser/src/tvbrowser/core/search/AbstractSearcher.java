@@ -107,7 +107,15 @@ public abstract class AbstractSearcher implements ProgramSearcher {
           value = prog.getIntFieldAsString(fieldType);
         }
         else if (fieldType.getFormat() == ProgramFieldType.TIME_FORMAT) {
-          value = prog.getTimeFieldAsString(fieldType);
+          if (fieldType == ProgramFieldType.START_TIME_TYPE) {
+            value = prog.getTimeString();
+          }
+          else if (fieldType == ProgramFieldType.END_TIME_TYPE) {
+            value = prog.getEndTimeString();
+          }
+          else {
+            value = prog.getTimeFieldAsString(fieldType);
+          }
         }
       }
 
