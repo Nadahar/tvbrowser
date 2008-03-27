@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -41,7 +40,6 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
 import tvbrowser.core.filters.FilterComponent;
-import util.ui.ImageUtilities;
 import devplugin.Program;
 import devplugin.ProgramInfoHelper;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
@@ -212,15 +210,6 @@ public class ProgramInfoFilterComponent implements FilterComponent {
      */
     private boolean bitSet(int num, int pattern) {
         return (num & pattern) == pattern;
-    }
-
-    /**
-     * Erzeugt ein Icon
-     * @param fileName Name der Datei
-     * @return Icon
-     */
-    private Icon createIcon(String fileName) {
-        return ImageUtilities.createImageIconFromJar("imgs/" + fileName, getClass());
     }
 
     /**

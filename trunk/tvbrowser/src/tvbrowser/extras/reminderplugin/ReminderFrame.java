@@ -209,7 +209,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     channelPanel.add(channelLabel, BorderLayout.CENTER);
     progPanel.add(channelPanel,BorderLayout.EAST);
     
-    ProgramPanel panel = new ProgramPanel(mProgram, ProgramPanel.X_AXIS, new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE),false));
+    ProgramPanel panel = new ProgramPanel(mProgram, new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE),false,ProgramPanelSettings.X_AXIS));
     panel.addPluginContextMenuMouseListener(ReminderPluginProxy.getInstance());
     progPanel.add(panel, BorderLayout.CENTER);
     

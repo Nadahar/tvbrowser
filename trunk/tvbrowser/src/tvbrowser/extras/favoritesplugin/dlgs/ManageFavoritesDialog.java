@@ -85,7 +85,6 @@ import util.ui.ListDragAndDropHandler;
 import util.ui.ListDropAction;
 import util.ui.Localizer;
 import util.ui.ProgramList;
-import util.ui.ProgramPanel;
 import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;

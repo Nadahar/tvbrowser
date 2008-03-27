@@ -789,7 +789,7 @@ public class PluginTreeNode {
     return super.toString();
   }
 
-  class RemovedProgramsHandler {
+  public static class RemovedProgramsHandler {
     private ArrayList<Program> mProgArr;
     public RemovedProgramsHandler() {
       mProgArr = new ArrayList<Program>();

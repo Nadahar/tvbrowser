@@ -58,9 +58,9 @@ import devplugin.Plugin;
 import devplugin.Program;
 
 import util.settings.PluginPictureSettings;
+import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
 import util.ui.ProgramList;
-import util.ui.ProgramPanel;
 import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -122,7 +122,7 @@ public class ManagePanel {
     mMarkListsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     mMarkListsList.setCellRenderer(new MarkListCellRenderer());
     
-    mProgramsList = new ProgramList(mProgramListModel,new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), ProgramPanel.X_AXIS);
+    mProgramsList = new ProgramList(mProgramListModel,new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false, ProgramPanelSettings.X_AXIS));
     mProgramsList.addMouseListeners(null);    
 
     mMarkListsScrolPane = new JScrollPane(mMarkListsList);
