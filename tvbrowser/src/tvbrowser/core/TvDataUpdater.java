@@ -206,6 +206,9 @@ public class TvDataUpdater {
     
     // Inform the listeners
     fireTvDataUpdateFinished();
+    
+    // reset flag to avoid unnecessary favorite updates
+    mTvDataWasChanged = false;
   }
 
   private void checkLocalTime() {
@@ -263,6 +266,7 @@ public class TvDataUpdater {
           mLog.log(Level.WARNING, "Fireing event 'TV data update finished' failed", thr);
         }
       }
+      
     }
   }
 
