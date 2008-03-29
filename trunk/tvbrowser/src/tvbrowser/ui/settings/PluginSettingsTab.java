@@ -258,7 +258,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     builder.addGlue();
     builder.addRelatedGap();
     
-    mRemove = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16));
+    mRemove = new JButton(Localizer.getLocalization(Localizer.I18N_DELETE),IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16));
     mRemove.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         removePlugin(getSelection());
