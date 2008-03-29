@@ -153,7 +153,7 @@ public class DataServiceSettingsTab implements devplugin.SettingsTab {
     builder.addGlue();
     builder.addRelatedGap();
 
-    mRemove = new JButton(IconLoader.getInstance().getIconFromTheme("actions",
+    mRemove = new JButton(Localizer.getLocalization(Localizer.I18N_DELETE),IconLoader.getInstance().getIconFromTheme("actions",
         "edit-delete", 16));
     mRemove.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
