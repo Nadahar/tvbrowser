@@ -41,7 +41,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.net.URLEncoder;
 import java.net.URL;
-import java.net.URLConnection;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JDialog;
@@ -51,7 +50,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 /**
- * With this Plugin it is possible to add informations about a program and send it to wirschauen.de
+ * With this plugin it is possible to add information about a program and send it to wirschauen.de
  */
 public class WirSchauenPlugin extends Plugin {
   private static final Version mVersion = new Version(1, 0);
@@ -107,7 +106,7 @@ public class WirSchauenPlugin extends Plugin {
   public PluginInfo getInfo() {
     if (mPluginInfo == null) {
       mPluginInfo = new PluginInfo(WirSchauenPlugin.class, mLocalizer.msg("name", "WirSchauenPlugin"),
-              mLocalizer.msg("desc", "Makes it possbile to add descriptions to programs"), "TV-Browser Team");
+              mLocalizer.msg("desc", "Makes it possible to add descriptions to programs"), "TV-Browser Team");
     }
 
     return mPluginInfo;
@@ -134,14 +133,14 @@ public class WirSchauenPlugin extends Plugin {
         }
       };
 
-      action.putValue(Action.NAME, mLocalizer.msg("contextMenu", "Recommend Text for this program"));
+      action.putValue(Action.NAME, mLocalizer.msg("contextMenu", "Recommend text for this program"));
 
       action.putValue(Action.SMALL_ICON, mIcon);
 
       return new ActionMenu(action);
 
     } else {
-      mLog.log(Level.INFO, "Channel not allowed : " + name);
+      mLog.log(Level.INFO, "Channel not allowed: " + name);
     }
 
     return null;
