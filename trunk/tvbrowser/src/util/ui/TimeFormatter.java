@@ -51,6 +51,12 @@ public class TimeFormatter {
    */
   public TimeFormatter(String format) {
     mFormat = new SimpleDateFormat(format);
+    
+    mCal.set(Calendar.HOUR_OF_DAY, 2);
+    
+    if(mCal.get(Calendar.HOUR_OF_DAY) == 3) {
+      mCal.add(Calendar.DAY_OF_MONTH, 1);
+    }
   }
 
   /**
