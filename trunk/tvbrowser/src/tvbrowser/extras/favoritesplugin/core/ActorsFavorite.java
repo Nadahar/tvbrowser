@@ -23,7 +23,6 @@
  *   $Author$
  * $Revision$
  */
-
 package tvbrowser.extras.favoritesplugin.core;
 
 import java.awt.GridLayout;
@@ -39,7 +38,6 @@ import javax.swing.JTextField;
 import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
 import util.exc.TvBrowserException;
 import util.ui.SearchFormSettings;
-import devplugin.Channel;
 import devplugin.PluginManager;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
@@ -51,8 +49,6 @@ public class ActorsFavorite extends Favorite {
   public static final String TYPE_ID = "actors";
 
   public static final String[] SEPERATOR_ARR = new String[] { ",", ";" };
-
-  private SearchFormSettings mSearchFormSettings;
 
   private String mActors;
 
@@ -91,11 +87,11 @@ public class ActorsFavorite extends Favorite {
   }
 
   @Override
-  protected Program[] internalSearchForPrograms(Channel[] channelArr) throws TvBrowserException {
+  protected Program[] internalSearchForPrograms() throws TvBrowserException {
     SearchFormSettings searchForm = mSearchFormSettings;
     ProgramFieldType[] fields = searchForm.getFieldTypes();
     ActorSearcher searcher = new ActorSearcher(mActors);
-    Program[] foundPrograms = searcher.search(fields, new devplugin.Date().addDays(-1), 1000, channelArr, false);
+    Program[] foundPrograms = searcher.search(fields, new devplugin.Date().addDays(-1), 1000, getChannels(), false);
     return foundPrograms;
   }
 

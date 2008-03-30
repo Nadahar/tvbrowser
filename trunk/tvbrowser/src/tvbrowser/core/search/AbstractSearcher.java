@@ -55,9 +55,9 @@ public abstract class AbstractSearcher implements ProgramSearcher {
 
 
   /**
-   * Gets or creates the start time comperator.
+   * Gets or creates the start time comparator.
    * 
-   * @return The start time comperator
+   * @return The start time comparator
    */
   private static Comparator<Program> getStartTimeComparator() {
     if (mStartTimeComparator == null) {
@@ -94,6 +94,23 @@ public abstract class AbstractSearcher implements ProgramSearcher {
     }
 
     /* Concatenate all fields into one string and do the match */
+    String s = getProgramFieldsText(prog, fieldArr);
+    
+    if(s.length() == 0) {
+      return false;
+    } else {
+      return matches(s);
+    }
+  }
+
+
+  /**
+   * get the searchable text for all given program fields contained in this program
+   * @param prog
+   * @param fieldArr
+   * @return concatened string for use in regex search
+   */
+  private String getProgramFieldsText(Program prog, ProgramFieldType[] fieldArr) {
     StringBuffer buf = new StringBuffer();
 
     for (ProgramFieldType fieldType : fieldArr) {
@@ -144,12 +161,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
       }
     }
     s = res.toString().trim();
-    
-    if(s.length() == 0) {
-      return false;
-    } else {
-      return matches(s);
-    }
+    return s;
   }
   
   /**
@@ -178,7 +190,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
     }
 
     if (nrDays < 0) {
-      // Search complete Data, beginning yesteray to 4 weeks into the future
+      // Search complete data, beginning yesterday to 4 weeks into the future
       startDate = startDate.addDays(-1);
       nrDays = 4*7;
     }
@@ -192,13 +204,13 @@ public abstract class AbstractSearcher implements ProgramSearcher {
     for (int day = 0; day <= nrDays; day++) {
       for (int channelIdx = 0; channelIdx < channels.length; channelIdx++) {
         if (progress != null) {
-          progress.setValue(day*channels.length + channelIdx);
+          progress.setValue(day * channels.length + channelIdx);
         }
         Channel channel = channels[channelIdx];
         if (channel != null) {
             ChannelDayProgram dayProg = TvDataBase.getInstance().getDayProgram(startDate, channel);
             if (dayProg != null) {
-              // This day has data -> Remember it
+              // This day has data -> remember it
               lastDayWithData = day;
 
               // Search this day program
@@ -229,10 +241,12 @@ public abstract class AbstractSearcher implements ProgramSearcher {
     if (sortByStartTime) {
       Arrays.sort(hitArr, getStartTimeComparator());
     }
+/*
     if (progress != null) {
       progress.setValue(0);
       progress.setMessage("");
     }
+*/    
     // return the result
     return hitArr;
   }

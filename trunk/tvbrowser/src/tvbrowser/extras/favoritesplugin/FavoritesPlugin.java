@@ -284,7 +284,7 @@ public class FavoritesPlugin {
       for (int i = 0; i < size; i++) {
         if (version <= 2) {
           /* read favorites from older TV-Browser versions
-           * this should be stay at least until version 3.0
+           * this should stay at least until version 3.0
            * of TV-Browser */
           newFavoriteArr[i] = new AdvancedFavorite(null, in);
         }
