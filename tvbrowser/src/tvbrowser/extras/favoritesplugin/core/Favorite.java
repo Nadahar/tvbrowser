@@ -31,6 +31,7 @@ import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
+import devplugin.ProgramSearcher;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.extras.common.LimitationConfiguration;
 import tvbrowser.extras.common.ReminderConfiguration;
@@ -43,6 +44,7 @@ import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.program.ProgramUtilities;
+import util.ui.SearchFormSettings;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -63,6 +65,7 @@ public abstract class Favorite {
   private boolean mRemindAfterDownload;
   private ArrayList<Exclusion> mExclusionList;
   private ProgramReceiveTarget[] mForwardPluginArr;
+  protected SearchFormSettings mSearchFormSettings;
 
   /**
    * unsorted list of blacklisted (non-favorite) programs
@@ -378,19 +381,11 @@ public abstract class Favorite {
   /**
    * Performs a new search, and refreshes the program marks
    * @param dataUpdate The update was started after a data update.
-   * @param send If the new found programs should be send to plugins.
+   * @param sendToPlugins If the new found programs should be send to plugins.
    * @throws TvBrowserException
    */
-  public void updatePrograms(boolean dataUpdate, boolean send) throws TvBrowserException {
-    Channel[] channelArr;
-    if (getLimitationConfiguration().isLimitedByChannel()) {
-      channelArr = getLimitationConfiguration().getChannels();
-    }
-    else {
-      channelArr = Plugin.getPluginManager().getSubscribedChannels();
-    }
-
-    updatePrograms(internalSearchForPrograms(channelArr), dataUpdate, send);
+  public void updatePrograms(boolean dataUpdate, boolean sendToPlugins) throws TvBrowserException {
+    updatePrograms(internalSearchForPrograms(), dataUpdate, sendToPlugins);
   }
   
   /**
@@ -517,7 +512,7 @@ public abstract class Favorite {
   }
   
   /**
-   * Checks if all programs on the black list are valid.
+   * Checks if all programs on the blacklist are valid.
    */
   public void refreshBlackList() {
     if (mBlackList == null) {
@@ -534,10 +529,10 @@ public abstract class Favorite {
   }
   
   /**
-   * Checks if a program is on the black list.
+   * Checks if a program is on the blacklist.
    * 
    * @param program The program to check.
-   * @return If the program in on the black list.
+   * @return If the program in on the blacklist.
    */
   public boolean isOnBlackList(Program program) {
     if (mBlackList == null) {
@@ -547,9 +542,9 @@ public abstract class Favorite {
   }
   
   /**
-   * Add a program to the black list
+   * Add a program to the blacklist
    * 
-   * @param program The program to put on the black list.
+   * @param program The program to put on the blacklist.
    */
   public void addToBlackList(Program program) {
     if (mBlackList == null) {
@@ -565,10 +560,10 @@ public abstract class Favorite {
   }
   
   /**
-   * Removes the program from the black list,
+   * Removes the program from the blacklist,
    * if it is in it.
    * 
-   * @param program The program to remove from the black list.
+   * @param program The program to remove from the blacklist.
    */
   public void removeFromBlackList(Program program) {
     if (mBlackList == null) {
@@ -588,7 +583,7 @@ public abstract class Favorite {
   }
   
   /**
-  * @return The programs that are not on the black list.
+  * @return The programs that are not on the blacklist.
   */
   public Program[] getWhiteListPrograms() {
     return getWhiteListPrograms(false);
@@ -597,7 +592,7 @@ public abstract class Favorite {
   /**
    * @param onlyNotExpiredPrograms <code>true</code> if only not expired
    * programs should be returned, <code>false</code> otherwise.
-   * @return The programs that are not on the black list.
+   * @return The programs that are not on the blacklist.
    */
   public Program[] getWhiteListPrograms(boolean onlyNotExpiredPrograms) {
     ArrayList<Program> tempProgramArr = new ArrayList<Program>();
@@ -613,7 +608,7 @@ public abstract class Favorite {
   
   /**
    * 
-   * @return The programs that are on the black list.
+   * @return The programs that are on the blacklist.
    */
   public Program[] getBlackListPrograms() {
     if (mBlackList == null) {
@@ -626,7 +621,18 @@ public abstract class Favorite {
 
   protected abstract void internalWriteData(ObjectOutputStream out) throws IOException;
 
-  protected abstract Program[] internalSearchForPrograms(Channel[] channelArr) throws TvBrowserException;
+  protected Program[] internalSearchForPrograms() throws TvBrowserException {
+
+    SearchFormSettings searchForm = mSearchFormSettings;
+
+    ProgramSearcher searcher = searchForm.createSearcher();
+    return searcher.search(searchForm.getFieldTypes(),
+                                                new devplugin.Date().addDays(-1),
+                                                1000,
+                                                getChannels(),
+                                                false
+                                                );
+  }
 
   /**
    * Gets if this Favorite contains the given receive target.
@@ -645,5 +651,20 @@ public abstract class Favorite {
     }
     
     return false;
+  }
+
+  /**
+   * get the channels this favorite is searched on
+   * @return channel array
+   */
+  protected Channel[] getChannels() {
+    Channel[] channelArr;
+    if (getLimitationConfiguration().isLimitedByChannel()) {
+      channelArr = getLimitationConfiguration().getChannels();
+    }
+    else {
+      channelArr = Plugin.getPluginManager().getSubscribedChannels();
+    }
+    return channelArr;
   }
 }

@@ -54,9 +54,6 @@ public class AdvancedFavorite extends Favorite {
   public static final util.ui.Localizer mLocalizer
         = util.ui.Localizer.getLocalizerFor(AdvancedFavorite.class);
 
-
-  private SearchFormSettings mSearchFormSettings;
-
   public static final String TYPE_ID = "advanced";
 
   private ProgramFilter mFilter;
@@ -278,17 +275,8 @@ public class AdvancedFavorite extends Favorite {
   }
 
   @Override
-  protected Program[] internalSearchForPrograms(Channel[] channelArr) throws TvBrowserException {
-
-    SearchFormSettings searchForm = mSearchFormSettings;
-
-    ProgramSearcher searcher = searchForm.createSearcher();
-    Program[] progArr = searcher.search(searchForm.getFieldTypes(),
-                                                new devplugin.Date().addDays(-1),
-                                                1000,
-                                                channelArr,
-                                                false
-                                                );
+  protected Program[] internalSearchForPrograms() throws TvBrowserException {
+    Program[] progArr = super.internalSearchForPrograms();
 
     if (mFilter != null) {
       ArrayList<Program> list = new ArrayList<Program>();
@@ -302,7 +290,6 @@ public class AdvancedFavorite extends Favorite {
     else {
       return progArr;
     }
-
   }
 
 

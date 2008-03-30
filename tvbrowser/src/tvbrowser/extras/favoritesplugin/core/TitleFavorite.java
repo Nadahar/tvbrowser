@@ -23,10 +23,7 @@
  *   $Author$
  * $Revision$
  */
-
 package tvbrowser.extras.favoritesplugin.core;
-
-
 
 import java.io.ObjectOutputStream;
 import java.io.IOException;
@@ -34,14 +31,9 @@ import java.io.ObjectInputStream;
 import java.awt.*;
 
 import util.ui.SearchFormSettings;
-import util.exc.TvBrowserException;
 import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
 
 import javax.swing.*;
-
-import devplugin.Program;
-import devplugin.Channel;
-import devplugin.ProgramSearcher;
 
 public class TitleFavorite extends Favorite {
 
@@ -50,9 +42,7 @@ public class TitleFavorite extends Favorite {
 
   public static final String TYPE_ID = "title";
 
-
   private String mProgramTitle;
-  private SearchFormSettings mSearchFormSettings;
 
   public TitleFavorite(ObjectInputStream in) throws IOException, ClassNotFoundException {
     super(in);
@@ -91,22 +81,6 @@ public class TitleFavorite extends Favorite {
     out.writeInt(1);  // version
     out.writeObject(mProgramTitle);
   }
-
-
-  @Override
-  protected Program[] internalSearchForPrograms(Channel[] channelArr) throws TvBrowserException {
-
-    SearchFormSettings searchForm = mSearchFormSettings;
-
-    ProgramSearcher searcher = searchForm.createSearcher();
-    return searcher.search(searchForm.getFieldTypes(),
-                                                new devplugin.Date().addDays(-1),
-                                                1000,
-                                                channelArr,
-                                                false
-                                                );
-  }
-
 
   class Configurator implements FavoriteConfigurator {
 
