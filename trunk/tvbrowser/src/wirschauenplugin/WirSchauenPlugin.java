@@ -32,16 +32,23 @@ import devplugin.Program;
 import devplugin.Version;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import util.io.IOUtilities;
 
 import java.awt.event.ActionEvent;
 import java.awt.Window;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.net.URLEncoder;
+import java.net.URL;
+import java.net.URLConnection;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 /**
  * With this Plugin it is possible to add informations about a program and send it to wirschauen.de
@@ -62,6 +69,8 @@ public class WirSchauenPlugin extends Plugin {
 
   private PluginInfo mPluginInfo;
 
+  private Icon mIcon;
+
   /**
    * Creates the Plugin
    */
@@ -69,15 +78,14 @@ public class WirSchauenPlugin extends Plugin {
     INSTANCE = this;
 
     mAllowedChannels = new ArrayList<String>(5);
-    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:RTLLIVING");
-    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:RTLCRIME");
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:rtl");
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:rtl2");
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:superrtl");
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:pro7");
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:sat1");
-    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:sat1comedy");
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:vox");
+
+    mIcon = new ImageIcon(getClass().getResource("wirschauen.png"));
   }
 
   /**
@@ -128,6 +136,8 @@ public class WirSchauenPlugin extends Plugin {
 
       action.putValue(Action.NAME, mLocalizer.msg("contextMenu", "Recommend Text for this program"));
 
+      action.putValue(Action.SMALL_ICON, mIcon);
+
       return new ActionMenu(action);
 
     } else {
@@ -149,6 +159,37 @@ public class WirSchauenPlugin extends Plugin {
     }
 
     UiUtilities.centerAndShow(dialog);
+
+    if (dialog.getButtonPressed() == JOptionPane.OK_OPTION) {
+
+      StringBuilder url = new StringBuilder();
+      try {
+        url = url.append("channel=").append(URLEncoder.encode(program.getChannel().getId(), "UTF-8"));
+        url = url.append("&day=").append(program.getDate().getDayOfMonth());
+        url = url.append("&month=").append(program.getDate().getMonth());
+        url = url.append("&year=").append(program.getDate().getYear());
+        url = url.append("&hour=").append(program.getHours());
+        url = url.append("&minute=").append(program.getMinutes());
+        url = url.append("&title=").append(URLEncoder.encode(program.getTitle(), "UTF-8"));
+        if (dialog.getUrl().length() > 0) {
+          url = url.append("&url=").append(URLEncoder.encode(dialog.getUrl(), "UTF-8"));
+        }
+        if (dialog.getGenre().length() > 0) {
+          url = url.append("&genre=").append(URLEncoder.encode(dialog.getGenre(), "UTF-8"));
+        }
+        if (dialog.getDescription().length() > 0) {
+          url = url.append("&description=").append(URLEncoder.encode(dialog.getDescription(), "UTF-8"));
+        }
+        url = url.append("&subtitle=").append(URLEncoder.encode(dialog.getSubtitle(), "UTF-8"));
+        url = url.append("&omu=").append(URLEncoder.encode(dialog.getOmu(), "UTF-8"));
+        url = url.append("&premiere=").append(URLEncoder.encode(dialog.getPremiere(), "UTF-8"));
+
+        URL u = new URL("http://www.wirschauen.de/events/addTVBrowserEvent/?"+ url);
+        IOUtilities.loadFileFromHttpServer(u);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
   }
 
 }
