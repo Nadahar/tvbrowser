@@ -65,12 +65,15 @@ public class ProgramUtilities {
     return false;
   }
 
+  /**
+   * comparator to sort programs by date, time and position in channel list 
+   */
   public static Comparator<Program> getProgramComparator() {
     return sProgramComparator;
   }
 
   /**
-   * Comparator to sort programs by date, time and channel 
+   * Comparator to sort programs by date, time and position in channel list
    */
   private static Comparator<Program> sProgramComparator = new Comparator<Program>(){
     public int compare(Program p1, Program p2) {

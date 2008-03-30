@@ -30,13 +30,14 @@ import java.awt.Graphics;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import printplugin.printer.dayprogramprinter.DayProgramPrintJob;
 import printplugin.printer.queueprinter.QueuePrintJob;
 import printplugin.settings.DayProgramPrinterSettings;
 import printplugin.settings.QueuePrinterSettings;
-import printplugin.util.Util;
+import util.program.ProgramUtilities;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
@@ -57,7 +58,7 @@ public class JobFactory {
   }
 
   private static PageModel createPage(Program[] programs) {
-    Util.sortProgramsByDateAndChannel(programs);
+    Arrays.sort(programs, ProgramUtilities.getProgramComparator());
 
     DefaultPageModel pageModel = new DefaultPageModel();
     DefaultColumnModel colModel = new DefaultColumnModel("Spalte");
