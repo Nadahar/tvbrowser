@@ -86,16 +86,16 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
 
     CellConstraints cc = new CellConstraints();
 
-    panel.add(new JLabel(mLocalizer.msg("URL","omdb.org-URL") + " :"), cc.xy(1, 1));
+    panel.add(new JLabel(mLocalizer.msg("URL","omdb.org-URL") + ": "), cc.xy(1, 1));
     panel.add(new JLabel("http://www.omdb.org/movie/"), cc.xy(3, 1));
     mOmdb = new JTextField();
     panel.add(mOmdb, cc.xy(4, 1));
 
-    panel.add(new JLabel(mLocalizer.msg("genre","Genre")+" :"), cc.xy(1, 3));
+    panel.add(new JLabel(mLocalizer.msg("genre","Genre")+": "), cc.xy(1, 3));
     mGenre = new JTextField();
     panel.add(mGenre, cc.xyw(3, 3, 2));
 
-    panel.add(new JLabel(mLocalizer.msg("text","Text")+" :"), cc.xy(1, 5));
+    panel.add(new JLabel(mLocalizer.msg("text","Text")+": "), cc.xy(1, 5));
     panel.add(new JLabel(mLocalizer.msg("maxChars","(max. 200 characters)")), cc.xy(3, 5));
 
     mDescription = new JTextArea();
