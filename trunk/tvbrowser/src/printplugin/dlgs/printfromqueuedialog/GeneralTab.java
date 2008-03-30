@@ -31,6 +31,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
@@ -47,7 +48,7 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import printplugin.EmptyQueueAction;
 import printplugin.PrintPlugin;
-import printplugin.util.Util;
+import util.program.ProgramUtilities;
 import util.ui.UiUtilities;
 import devplugin.Channel;
 import devplugin.Date;
@@ -101,7 +102,7 @@ public class GeneralTab extends JPanel {
 
     Program[] progs = mRootNode.getPrograms();
 
-    Util.sortProgramsByDateAndChannel(progs);
+    Arrays.sort(progs, ProgramUtilities.getProgramComparator());
     Date curDate=null;
 
     for (int i=0; i<progs.length; i++) {
