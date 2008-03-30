@@ -45,6 +45,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
@@ -54,6 +55,14 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
    * Localizer
    */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(WirSchauenDialog.class);
+
+  private int mButtonpressed = JOptionPane.CANCEL_OPTION;
+  private JTextField mOmdb;
+  private JTextField mGenre;
+  private JTextArea mDescription;
+  private JCheckBox mSubtitle;
+  private JCheckBox mOwS;
+  private JCheckBox mPremiere;
 
   public WirSchauenDialog(JDialog jDialog, Program program) {
     super(jDialog, true);
@@ -79,16 +88,18 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
 
     panel.add(new JLabel(mLocalizer.msg("URL","omdb.org-URL") + " :"), cc.xy(1, 1));
     panel.add(new JLabel("http://www.omdb.org/movie/"), cc.xy(3, 1));
-    panel.add(new JTextField(), cc.xy(4, 1));
+    mOmdb = new JTextField();
+    panel.add(mOmdb, cc.xy(4, 1));
 
     panel.add(new JLabel(mLocalizer.msg("genre","Genre")+" :"), cc.xy(1, 3));
-    panel.add(new JTextField(), cc.xyw(3, 3, 2));
+    mGenre = new JTextField();
+    panel.add(mGenre, cc.xyw(3, 3, 2));
 
     panel.add(new JLabel(mLocalizer.msg("text","Text")+" :"), cc.xy(1, 5));
     panel.add(new JLabel(mLocalizer.msg("maxChars","(max. 200 characters)")), cc.xy(3, 5));
 
-    final JTextArea description = new JTextArea();
-    description.setDocument(new PlainDocument() {
+    mDescription = new JTextArea();
+    mDescription.setDocument(new PlainDocument() {
       @Override
       public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
         if (getLength() + str.length() > 200) {
@@ -100,12 +111,17 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
       }
     });
 
-    panel.add(new JScrollPane(description), cc.xyw(3, 7, 2));
+    panel.add(new JScrollPane(mDescription), cc.xyw(3, 7, 2));
+
+    mSubtitle = new JCheckBox(mLocalizer.msg("subtitle","Untertitel"));
+    mOwS = new JCheckBox(mLocalizer.msg("OwS", "OwS"));
+    mPremiere = new JCheckBox(mLocalizer.msg("premiere","Television Premiere"));
 
     JPanel panelItems = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panelItems.add(new JCheckBox(mLocalizer.msg("subtitle","Untertitel")));
-    panelItems.add(new JCheckBox(mLocalizer.msg("OwS", "OwS")));
-    panelItems.add(new JCheckBox(mLocalizer.msg("premiere","Television Premiere")));
+
+    panelItems.add(mSubtitle);
+    panelItems.add(mOwS);
+    panelItems.add(mPremiere);
 
     panel.add(panelItems, cc.xyw(3,9,2));
 
@@ -139,9 +155,41 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
 
   private void ok() {
     setVisible(false);
+    mButtonpressed = JOptionPane.OK_OPTION;
   }
 
   public void close() {
     setVisible(false);
+  }
+
+  public int getButtonPressed() {
+    return mButtonpressed;
+  }
+
+  public String getUrl() {
+    if (mOmdb.getText().length() > 0) {
+      return "http://www.omdb.org/movie/" + mOmdb.getText();
+    }
+    return "";
+  }
+
+  public String getGenre() {
+    return mGenre.getText();
+  }
+
+  public String getDescription() {
+    return mDescription.getText();
+  }
+
+  public String getPremiere() {
+    return mPremiere.isSelected() ? "true": "false";
+  }
+
+  public String getOmu() {
+    return mOwS.isSelected()? "true":"false";
+  }
+
+  public String getSubtitle() {
+    return mSubtitle.isSelected()? "true":"false";
   }
 }
