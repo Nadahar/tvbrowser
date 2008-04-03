@@ -169,6 +169,7 @@ public class WirSchauenPlugin extends Plugin {
         url = url.append("&year=").append(program.getDate().getYear());
         url = url.append("&hour=").append(program.getHours());
         url = url.append("&minute=").append(program.getMinutes());
+        url = url.append("&length=").append(program.getLength());
         url = url.append("&title=").append(URLEncoder.encode(program.getTitle(), "UTF-8"));
         if (dialog.getUrl().length() > 0) {
           url = url.append("&url=").append(URLEncoder.encode(dialog.getUrl(), "UTF-8"));
