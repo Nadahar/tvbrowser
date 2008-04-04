@@ -226,6 +226,8 @@ public class TvDataBase {
     mTvDataHash.clear();
     
     mTvDataHash = keepValues;
+    
+    MarkedProgramsList.getInstance().revalidatePrograms();
   }
 
   public void close() throws IOException {

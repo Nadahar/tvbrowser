@@ -320,41 +320,49 @@ public class MutableProgram implements Program {
    * @param marker The plugin to mark the program for.
    */
   public final void mark(Marker marker) {
-
-    boolean alreadyMarked = getMarkedByPluginIndex(marker) != -1;
-    int oldCount = mMarkerArr.length;
-
-    if (! alreadyMarked) {
-      // Append the new plugin
-      Marker[] newArr = new Marker[oldCount + 1];
-      System.arraycopy(mMarkerArr, 0, newArr, 0, oldCount);
-      newArr[oldCount] = marker;
-      mMarkerArr = newArr;
-      
-      Arrays.sort(mMarkerArr,new Comparator<Marker>() {
-        public int compare(Marker o1, Marker o2) {
-          return o1.getId().compareTo(o2.getId());
-        }
-      });
-      
-      mMarkPriority = Math.max(mMarkPriority,marker.getMarkPriorityForProgram(this));
-
-      // add program to artificial plugin tree
-      if (marker instanceof PluginProxy) {
-        PluginProxy proxy = (PluginProxy) marker;
-        if (! proxy.canUseProgramTree() || proxy.hasArtificialPluginTree() ) {
-          if (proxy.getArtificialRootNode() == null || proxy.getArtificialRootNode().size() < 100) {
-            proxy.addToArtificialPluginTree(this);
+    if(mState == Program.IS_VALID_STATE) {
+      boolean alreadyMarked = getMarkedByPluginIndex(marker) != -1;
+      int oldCount = mMarkerArr.length;
+  
+      if (! alreadyMarked) {
+        // Append the new plugin
+        Marker[] newArr = new Marker[oldCount + 1];
+        System.arraycopy(mMarkerArr, 0, newArr, 0, oldCount);
+        newArr[oldCount] = marker;
+        mMarkerArr = newArr;
+        
+        Arrays.sort(mMarkerArr,new Comparator<Marker>() {
+          public int compare(Marker o1, Marker o2) {
+            return o1.getId().compareTo(o2.getId());
+          }
+        });
+        
+        mMarkPriority = Math.max(mMarkPriority,marker.getMarkPriorityForProgram(this));
+  
+        // add program to artificial plugin tree
+        if (marker instanceof PluginProxy) {
+          PluginProxy proxy = (PluginProxy) marker;
+          if (! proxy.canUseProgramTree() || proxy.hasArtificialPluginTree() ) {
+            if (proxy.getArtificialRootNode() == null || proxy.getArtificialRootNode().size() < 100) {
+              proxy.addToArtificialPluginTree(this);
+            }
           }
         }
+  
+        fireStateChanged();
       }
-
-      fireStateChanged();
+  
+      if(oldCount < 1) {
+        mTitle = getTitle();
+        MarkedProgramsList.getInstance().addProgram(this);
+      }
     }
-
-    if(oldCount < 1) {
-      mTitle = getTitle();
-      MarkedProgramsList.getInstance().addProgram(this);
+    else if(mState == Program.WAS_UPDATED_STATE) {
+      Program p = Plugin.getPluginManager().getProgram(getDate(), getID());
+      
+      if(p != null) {
+        p.mark(marker);
+      }
     }
   }
 
@@ -366,43 +374,51 @@ public class MutableProgram implements Program {
    * @param marker The plugin to remove the mark for.
    */
   public final void unmark(Marker marker) {
-
-    int idx = getMarkedByPluginIndex(marker);
-    if (idx != -1) {
-      if (mMarkerArr.length == 1) {
-        // This was the only plugin
-        mMarkerArr = EMPTY_MARKER_ARR;
-        mMarkPriority = Program.NO_MARK_PRIORITY;
-      }
-      else {
-        int oldCount = mMarkerArr.length;
-        Marker[] newArr = new Marker[oldCount - 1];
-        System.arraycopy(mMarkerArr, 0, newArr, 0, idx);
-        System.arraycopy(mMarkerArr, idx + 1, newArr, idx, oldCount - idx - 1);
-        
-        mMarkPriority = Program.NO_MARK_PRIORITY;
-        
-        for(Marker mark : newArr) {
-          mMarkPriority = Math.max(mMarkPriority,mark.getMarkPriorityForProgram(this));
+    if(mState == Program.IS_VALID_STATE) {
+      int idx = getMarkedByPluginIndex(marker);
+      if (idx != -1) {
+        if (mMarkerArr.length == 1) {
+          // This was the only plugin
+          mMarkerArr = EMPTY_MARKER_ARR;
+          mMarkPriority = Program.NO_MARK_PRIORITY;
         }
-        
-        mMarkerArr = newArr;
-      }
-
-      // remove from artificial plugin tree
-      if (marker instanceof PluginProxy) {
-        PluginProxy proxy = (PluginProxy) marker;
-        if (proxy.hasArtificialPluginTree() && proxy.getArtificialRootNode().size() < 100) {
-          proxy.getArtificialRootNode().removeProgram(this);
+        else {
+          int oldCount = mMarkerArr.length;
+          Marker[] newArr = new Marker[oldCount - 1];
+          System.arraycopy(mMarkerArr, 0, newArr, 0, idx);
+          System.arraycopy(mMarkerArr, idx + 1, newArr, idx, oldCount - idx - 1);
+          
+          mMarkPriority = Program.NO_MARK_PRIORITY;
+          
+          for(Marker mark : newArr) {
+            mMarkPriority = Math.max(mMarkPriority,mark.getMarkPriorityForProgram(this));
+          }
+          
+          mMarkerArr = newArr;
         }
+  
+        // remove from artificial plugin tree
+        if (marker instanceof PluginProxy) {
+          PluginProxy proxy = (PluginProxy) marker;
+          if (proxy.hasArtificialPluginTree() && proxy.getArtificialRootNode().size() < 100) {
+            proxy.getArtificialRootNode().removeProgram(this);
+          }
+        }
+  
+        fireStateChanged();
       }
-
-      fireStateChanged();
+  
+      if(mMarkerArr.length < 1) {
+        mTitle = null;
+        MarkedProgramsList.getInstance().removeProgram(this);
+      }
     }
-
-    if(mMarkerArr.length < 1) {
-      mTitle = null;
-      MarkedProgramsList.getInstance().removeProgram(this);
+    else if(mState == Program.WAS_UPDATED_STATE) {
+      Program p = Plugin.getPluginManager().getProgram(getDate(), getID());
+      
+      if(p != null) {
+        p.unmark(marker);
+      }
     }
   }
 

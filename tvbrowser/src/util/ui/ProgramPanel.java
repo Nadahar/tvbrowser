@@ -415,8 +415,10 @@ private static Font getDynamicFontSize(Font font, int offset) {
     /* This is for debugging of the marking problem after a data update */
     else if(program.getProgramState() == Program.WAS_DELETED_STATE) {
       setForeground(Color.red);
+      mTextColor = Color.red;
     } else if(program.getProgramState() == Program.WAS_UPDATED_STATE) {
       setForeground(Color.blue);
+      mTextColor = Color.blue;
     }
     
     boolean dontShow = true;
