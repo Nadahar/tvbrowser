@@ -35,6 +35,7 @@ import java.util.Hashtable;
 import java.util.logging.Level;
 
 import tvbrowser.core.data.OnDemandDayProgramFile;
+import tvdataservice.MarkedProgramsList;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
 import devplugin.Channel;
@@ -206,6 +207,25 @@ public class TvDataBase {
     if (somethingChanged) {
       TvDataUpdater.getInstance().fireTvDataUpdateFinished();
     }
+  }
+  
+  public void intelligentCacheClearance() {
+    Program[] programs = MarkedProgramsList.getInstance().getMarkedPrograms();
+    
+    HashMap<String, OnDemandDayProgramFile> keepValues = new HashMap<String, OnDemandDayProgramFile>();
+    
+    for(Program prog : programs) {
+      String key = getDayProgramKey(prog.getDate(), prog.getChannel());
+      OnDemandDayProgramFile dayProgram = mTvDataHash.get(key);
+      
+      if(dayProgram != null) {
+        keepValues.put(key, dayProgram);
+      }
+    }
+    
+    mTvDataHash.clear();
+    
+    mTvDataHash = keepValues;
   }
 
   public void close() throws IOException {
