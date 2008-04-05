@@ -60,6 +60,8 @@ public class ProgramTextCreator {
       .getLocalizerFor(ProgramTextCreator.class);
 
   private static String mBodyFontSize;
+  
+  public static final String TVBROWSER_URL_PROTOCOL = "tvbrowser://";
 
 
   /**
@@ -618,31 +620,35 @@ public class ProgramTextCreator {
     return result;
   }
 
-  private static String addWikiLink(String topic, String displayText) {
-    try {
-      String url = URLEncoder.encode(topic, "UTF-8").replace("+", "%20");
+  private static String addSearchLink(String topic, String displayText) {
+//    try {
+//      String url = URLEncoder.encode(topic, "UTF-8").replace("+", "%20");
+      String url = topic;
       String style = " style=\"color:black; border-bottom: 1px dashed;\"";
       StringBuffer buffer = new StringBuffer();
       buffer.append("<a href=\"");
-      buffer.append(mLocalizer.msg("wikipediaLink", "http://en.wikipedia.org/wiki/{0}", url));
+//      buffer.append(mLocalizer.msg("wikipediaLink", "http://en.wikipedia.org/wiki/{0}", url));
+      buffer.append(TVBROWSER_URL_PROTOCOL);
+      buffer.append(url);
+      
       buffer.append("\" ");
       buffer.append(style);
       buffer.append(">");
       buffer.append(displayText);
       buffer.append("</a>");
       return buffer.toString();
-    } catch (UnsupportedEncodingException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    return displayText; // only reached in case of exception
+//    } catch (UnsupportedEncodingException e) {
+//      // TODO Auto-generated catch block
+//      e.printStackTrace();
+//    }
+//    return displayText; // only reached in case of exception
   }
 
   private static String addWikiLink(String topic) {
     String[] parts = topic.split(" und ");
     String result = "";
     for (int i = 0; i < parts.length; i++) {
-      result = result + addWikiLink(parts[i], parts[i]);
+      result = result + addSearchLink(parts[i], parts[i]);
       if (i < parts.length - 1) {
         result = result + " und ";
       }
@@ -748,7 +754,7 @@ public class ProgramTextCreator {
         String topic = persons[i];
         if (persons[i].contains("(")) {
           topic = persons[i].substring(0, persons[i].indexOf("("));
-          persons[i] = addWikiLink(topic, persons[i]);
+          persons[i] = addSearchLink(topic, persons[i]);
         } else {
           persons[i] = addWikiLink(persons[i]);
         }

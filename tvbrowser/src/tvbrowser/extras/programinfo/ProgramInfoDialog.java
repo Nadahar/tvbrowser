@@ -72,6 +72,8 @@ import tvbrowser.ui.mainframe.MainFrame;
 import util.browserlauncher.Launch;
 import util.program.ProgramTextCreator;
 import util.ui.Localizer;
+import util.ui.SearchFormSettings;
+import util.ui.SearchHelper;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import util.ui.findasyoutype.TextComponentFindAction;
@@ -190,6 +192,15 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
           URL url = evt.getURL();
           if (url != null) {
             Launch.openURL(url.toString());
+          }
+          else {
+            String desc = evt.getDescription();
+            if (desc != null && desc.startsWith(ProgramTextCreator.TVBROWSER_URL_PROTOCOL)) {
+              desc = desc.substring(ProgramTextCreator.TVBROWSER_URL_PROTOCOL.length());
+              SearchFormSettings settings = new SearchFormSettings(desc);
+              settings.setSearchIn(SearchFormSettings.SEARCH_IN_ALL);
+              SearchHelper.search(mInfoEP, settings);
+            }
           }
         }
       }
