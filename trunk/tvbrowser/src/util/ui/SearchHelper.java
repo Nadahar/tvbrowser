@@ -83,7 +83,9 @@ public class SearchHelper {
     if (mInstance == null) {
       mInstance = new SearchHelper();
     }
-
+    if (pictureSettings == null) {
+      pictureSettings = new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE),false);
+    }
     mInstance.doSearch(comp, settings, pictureSettings);
   }
   
