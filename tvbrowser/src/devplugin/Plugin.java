@@ -895,7 +895,9 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
     File f = new File(Settings.getUserSettingsDirName(),getId()+".node");
     try {
       out = new ObjectOutputStream(new FileOutputStream(f));
-      mRootNode.store(out);
+      if (mRootNode != null) {
+        mRootNode.store(out);
+      }
       out.close();
     } catch (IOException e) {
       util.exc.ErrorHandler.handle(mLocalizer.msg("error.couldNotWriteFile","Storing file '{0}' failed.", f.getAbsolutePath()), e);
