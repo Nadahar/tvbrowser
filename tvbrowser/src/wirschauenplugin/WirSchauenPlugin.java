@@ -30,9 +30,12 @@ import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.Version;
+import devplugin.ThemeIcon;
+import devplugin.PluginTreeNode;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.io.IOUtilities;
+import util.exc.ErrorHandler;
 
 import java.awt.event.ActionEvent;
 import java.awt.Window;
@@ -41,6 +44,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.net.URLEncoder;
 import java.net.URL;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JDialog;
@@ -83,8 +88,15 @@ public class WirSchauenPlugin extends Plugin {
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:pro7");
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:sat1");
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:vox");
-
-    mIcon = new ImageIcon(getClass().getResource("wirschauen.png"));
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:COMEDYCENTRAL");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:dsf");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:kabel1");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:MTV");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:n24");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:NICK");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:NTV");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:VIVA");
+    mIcon = new ImageIcon(getClass().getResource("icons/16x16/apps/wirschauen.png"));
   }
 
   /**
@@ -146,6 +158,11 @@ public class WirSchauenPlugin extends Plugin {
     return null;
   }
 
+  @Override
+  public ThemeIcon getMarkIconFromTheme() {
+    return new ThemeIcon("apps", "wirschauen", 16);
+  }
+
   private void showDescribeDialog(Program program) {
     final Window parent = UiUtilities.getLastModalChildOf(getParentFrame());
 
@@ -186,10 +203,25 @@ public class WirSchauenPlugin extends Plugin {
 
         URL u = new URL("http://www.wirschauen.de/events/addTVBrowserEvent/?"+ url);
         IOUtilities.loadFileFromHttpServer(u);
+
+        getRootNode().addProgram(program);
+        getRootNode().update();
+
+        JOptionPane.showMessageDialog(getParentFrame(), mLocalizer.msg("success", "Thank you for submitting a description!"), mLocalizer.msg("successTitle", "Thank you"), JOptionPane.INFORMATION_MESSAGE);
       } catch (Exception e) {
+        ErrorHandler.handle(mLocalizer.msg("problem", "Sorry, a problem occured during the upload"), e);
         e.printStackTrace();
       }
     }
   }
 
+  @Override
+  public boolean canUseProgramTree() {
+    return true;
+  }
+
+  @Override
+  public void writeData(ObjectOutputStream out) throws IOException {
+    storeRootNode();
+  }
 }

@@ -34,6 +34,7 @@ import util.ui.UiUtilities;
 
 import java.awt.Toolkit;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JDialog;
@@ -82,21 +83,30 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     panel.setBorder(Borders.DLU4_BORDER);
 
     panel.setLayout(new FormLayout("right:pref,3dlu, pref, fill:10dlu:grow",
-            "pref, 3dlu, pref, 3dlu, pref, 3dlu, fill:50dlu, 3dlu, pref,fill:pref:grow, pref"));
+            "pref, 3dlu, pref, 3dlu,  fill:50dlu, 3dlu, pref, 3dlu, pref,fill:pref:grow, pref"));
 
     CellConstraints cc = new CellConstraints();
 
-    panel.add(new JLabel(mLocalizer.msg("URL","omdb.org-URL") + ": "), cc.xy(1, 1));
+    JLabel url = new JLabel(mLocalizer.msg("URL", "omdb.org-URL") + ": ");
+    url.setFont(url.getFont().deriveFont(Font.BOLD));
+    panel.add(url, cc.xy(1, 1));
     panel.add(new JLabel("http://www.omdb.org/movie/"), cc.xy(3, 1));
     mOmdb = new JTextField();
     panel.add(mOmdb, cc.xy(4, 1));
 
-    panel.add(new JLabel(mLocalizer.msg("genre","Genre")+": "), cc.xy(1, 3));
+    JLabel genre = new JLabel(mLocalizer.msg("genre","Genre")+": ");
+    genre.setFont(genre.getFont().deriveFont(Font.BOLD));
+
+    panel.add(genre, cc.xy(1, 3));
     mGenre = new JTextField();
     panel.add(mGenre, cc.xyw(3, 3, 2));
 
-    panel.add(new JLabel(mLocalizer.msg("text","Text")+": "), cc.xy(1, 5));
-    panel.add(new JLabel(mLocalizer.msg("maxChars","(max. 200 characters)")), cc.xy(3, 5));
+    JLabel text = new JLabel(mLocalizer.msg("text","Text")+": ");
+    text.setVerticalAlignment(JLabel.TOP);
+    text.setFont(text.getFont().deriveFont(Font.BOLD));
+
+    panel.add(text, cc.xy(1, 5));
+    panel.add(new JLabel(mLocalizer.msg("maxChars","(max. 200 characters)")), cc.xy(3, 7));
 
     mDescription = new JTextArea();
     mDescription.setDocument(new PlainDocument() {
@@ -111,7 +121,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
       }
     });
 
-    panel.add(new JScrollPane(mDescription), cc.xyw(3, 7, 2));
+    panel.add(new JScrollPane(mDescription), cc.xyw(3, 5, 2));
 
     mSubtitle = new JCheckBox(mLocalizer.msg("subtitle","Untertitel"));
     mOwS = new JCheckBox(mLocalizer.msg("OwS", "OwS"));
