@@ -26,7 +26,7 @@ public class ProgramInfoHelper {
     private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(ProgramInfoHelper.class.getName());
     
     /**
-     * The Bit-Array with all Posibilities
+     * The Bit-Array with all possibilities
      */
     public static final int[] mInfoBitArr = new int[] {
             Program.INFO_VISION_BLACK_AND_WHITE, Program.INFO_VISION_4_TO_3,
