@@ -241,12 +241,12 @@ public abstract class AbstractSearcher implements ProgramSearcher {
     if (sortByStartTime) {
       Arrays.sort(hitArr, getStartTimeComparator());
     }
-/*
+
     if (progress != null) {
       progress.setValue(0);
       progress.setMessage("");
     }
-*/    
+    
     // return the result
     return hitArr;
   }
