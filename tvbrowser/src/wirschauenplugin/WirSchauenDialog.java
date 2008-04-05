@@ -123,6 +123,11 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
 
     panel.add(new JScrollPane(mDescription), cc.xyw(3, 5, 2));
 
+    JLabel format = new JLabel(mLocalizer.msg("format","Format")+": ");
+    format.setFont(format.getFont().deriveFont(Font.BOLD));
+    panel.add(format, cc.xy(1, 9));
+
+    
     mSubtitle = new JCheckBox(mLocalizer.msg("subtitle","Untertitel"));
     mOwS = new JCheckBox(mLocalizer.msg("OwS", "OwS"));
     mPremiere = new JCheckBox(mLocalizer.msg("premiere","Television Premiere"));

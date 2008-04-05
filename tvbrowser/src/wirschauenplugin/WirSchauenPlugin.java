@@ -217,7 +217,7 @@ public class WirSchauenPlugin extends Plugin {
 
   @Override
   public boolean canUseProgramTree() {
-    return true;
+    return false;
   }
 
   @Override
