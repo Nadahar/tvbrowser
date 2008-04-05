@@ -191,7 +191,7 @@ public class ProgramPanelSettings {
   }
    
   /**
-   * @return If the program panel should only containg date and title.
+   * @return If the program panel should only contain date and title.
    */
   public boolean isShowingOnlyDateAndTitle() {
     return mShowOnlyDateAndTitle;

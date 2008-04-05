@@ -79,6 +79,10 @@ import devplugin.Version;
  * @since 2.7
  */
 public class ProgramListPlugin extends Plugin {
+  private static final String SETTING_FILTER = "filter";
+
+  private static final String SETTING_SHOW_DESCRIPTION = "showDescription";
+
   protected static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramListPlugin.class);
   
   private static Version mVersion = new Version(2,70);
@@ -157,7 +161,8 @@ public class ProgramListPlugin extends Plugin {
           });
           
           mModel = new DefaultListModel();
-          mProgramPanelSettings = new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), mSettings.getProperty("showDescription","true").equals("false"),ProgramPanelSettings.X_AXIS);
+          boolean showDescription = mSettings.getProperty(SETTING_SHOW_DESCRIPTION,"true").equals("true");
+          mProgramPanelSettings = new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), !showDescription,ProgramPanelSettings.X_AXIS);
           mList = new ProgramList(mModel, mProgramPanelSettings);
           
           mList.addMouseListeners(null);
@@ -170,8 +175,8 @@ public class ProgramListPlugin extends Plugin {
 
           mFilterBox = new JComboBox();
           
-          if(mSettings.getProperty("filter") == null) {
-            mSettings.setProperty("filter", Plugin.getPluginManager().getFilterManager().getAllFilter().getName());
+          if(mSettings.getProperty(SETTING_FILTER) == null) {
+            mSettings.setProperty(SETTING_FILTER, Plugin.getPluginManager().getFilterManager().getAllFilter().getName());
           }
           
           fillFilterBox();
@@ -179,7 +184,7 @@ public class ProgramListPlugin extends Plugin {
           mFilterBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
               mFilter = (ProgramFilter)mFilterBox.getSelectedItem();
-              mSettings.setProperty("filter",mFilter.getName());
+              mSettings.setProperty(SETTING_FILTER,mFilter.getName());
               mBox.getItemListeners()[0].itemStateChanged(null);
             }
           });
@@ -196,14 +201,14 @@ public class ProgramListPlugin extends Plugin {
           JPanel panel = new JPanel(new FormLayout("1dlu,default,3dlu,default:grow","pref,2dlu,pref,2dlu"));
           panel.add(new JLabel(Localizer.getLocalization(Localizer.I18N_CHANNELS) + ":"), cc.xy(2,1));
           panel.add(mBox, cc.xy(4,1));
-          panel.add(new JLabel(mLocalizer.msg("filter","Filter:")), cc.xy(2,3));
+          panel.add(new JLabel(mLocalizer.msg(SETTING_FILTER,"Filter:")), cc.xy(2,3));
           panel.add(mFilterBox, cc.xy(4,3));
           
-          mShowDescription = new JCheckBox(mLocalizer.msg("showProgramDescription","Show program description"), mSettings.getProperty("showDescription","true").equals("true"));
+          mShowDescription = new JCheckBox(mLocalizer.msg("showProgramDescription","Show program description"), showDescription);
           mShowDescription.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
               mProgramPanelSettings.setShowOnlyDateAndTitle(e.getStateChange() == ItemEvent.DESELECTED);
-              mSettings.setProperty("showDescription", String.valueOf(e.getStateChange() == ItemEvent.SELECTED));
+              mSettings.setProperty(SETTING_SHOW_DESCRIPTION, String.valueOf(e.getStateChange() == ItemEvent.SELECTED));
               mList.updateUI();
             }
           });
@@ -269,7 +274,7 @@ public class ProgramListPlugin extends Plugin {
       if(!found) {
         mFilterBox.addItem(filter);
         
-        if(filter.getName().equals(mSettings.getProperty("filter"))) {
+        if(filter.getName().equals(mSettings.getProperty(SETTING_FILTER))) {
           mFilter = filter;
           mFilterBox.setSelectedItem(filter);
         }
