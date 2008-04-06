@@ -28,6 +28,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import devplugin.Program;
+import util.browserlauncher.Launch;
 import util.ui.Localizer;
 import util.ui.WindowClosingIf;
 import util.ui.UiUtilities;
@@ -54,10 +55,14 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
 public class WirSchauenDialog extends JDialog implements WindowClosingIf {
+  private static final String OMDB_MOVIE_URL = "http://www.omdb.org/movie/";
+
   /**
    * Localizer
    */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(WirSchauenDialog.class);
+
+  protected static final String OMDB_MAIN_URL = "http://www.omdb.org";
 
   private int mButtonpressed = JOptionPane.CANCEL_OPTION;
   private JTextField mOmdb;
@@ -84,8 +89,8 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
 
     panel.setBorder(Borders.DLU4_BORDER);
 
-    panel.setLayout(new FormLayout("right:pref,3dlu, pref, fill:10dlu:grow",
-            "pref, 3dlu, pref, 3dlu, pref, 3dlu,  fill:50dlu, 3dlu, pref, 3dlu, pref,fill:pref:grow, pref"));
+    panel.setLayout(new FormLayout("right:pref,3dlu, pref, fill:10dlu:grow, pref",
+            "pref, 2dlu, pref, 2dlu, pref, 3dlu,  fill:50dlu, 3dlu, pref, 3dlu, pref,fill:pref:grow, pref"));
 
     CellConstraints cc = new CellConstraints();
 
@@ -100,21 +105,37 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
         title.selectAll();
       }
     });
-    panel.add(title, cc.xyw(3, 1, 2));
+    panel.add(title, cc.xyw(3, 1, 3));
     
     JLabel url = new JLabel(mLocalizer.msg("URL", "omdb.org-URL") + ": ");
     url.setFont(url.getFont().deriveFont(Font.BOLD));
     panel.add(url, cc.xy(1, 3));
-    panel.add(new JLabel("http://www.omdb.org/movie/"), cc.xy(3, 3));
+    panel.add(new JLabel(OMDB_MOVIE_URL), cc.xy(3, 3));
     mOmdb = new JTextField();
     panel.add(mOmdb, cc.xy(4, 3));
+    
+    JButton openOmdb = new JButton(WirSchauenPlugin.getInstance().createImageIcon("apps", "internet-web-browser", 16));
+    openOmdb.setToolTipText(mLocalizer.msg("openURL","Open URL"));
+    panel.add(openOmdb, cc.xy(5, 3));
+    
+    openOmdb.addActionListener(new ActionListener() {
+
+      public void actionPerformed(ActionEvent e) {
+        String movieId = mOmdb.getText().trim();
+        if (movieId.length() == 0) {
+          Launch.openURL(OMDB_MAIN_URL);
+        }
+        else {
+          Launch.openURL(OMDB_MOVIE_URL + movieId);
+        }
+      }});
 
     JLabel genre = new JLabel(mLocalizer.msg("genre","Genre")+": ");
     genre.setFont(genre.getFont().deriveFont(Font.BOLD));
 
     panel.add(genre, cc.xy(1, 5));
     mGenre = new JTextField();
-    panel.add(mGenre, cc.xyw(3, 5, 2));
+    panel.add(mGenre, cc.xyw(3, 5, 3));
 
     JLabel text = new JLabel(mLocalizer.msg("text","Text")+": ");
     text.setVerticalAlignment(JLabel.TOP);
@@ -136,7 +157,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
       }
     });
 
-    panel.add(new JScrollPane(mDescription), cc.xyw(3, 7, 2));
+    panel.add(new JScrollPane(mDescription), cc.xyw(3, 7, 3));
 
     JLabel format = new JLabel(mLocalizer.msg("format","Format")+": ");
     format.setFont(format.getFont().deriveFont(Font.BOLD));
@@ -153,7 +174,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     panelItems.add(mOwS);
     panelItems.add(mPremiere);
 
-    panel.add(panelItems, cc.xyw(3,11,2));
+    panel.add(panelItems, cc.xyw(3,11,3));
 
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     ok.addActionListener(new ActionListener() {
@@ -175,7 +196,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     builder.addGlue();
     builder.addGriddedButtons(new JButton[]{ok, cancel});
 
-    panel.add(builder.getPanel(), cc.xyw(1,13,4));
+    panel.add(builder.getPanel(), cc.xyw(1,13,5));
 
     setSize(Sizes.dialogUnitXAsPixel(300, this),
             Sizes.dialogUnitYAsPixel(180, this));
@@ -198,7 +219,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
 
   public String getUrl() {
     if (mOmdb.getText().length() > 0) {
-      return "http://www.omdb.org/movie/" + mOmdb.getText();
+      return OMDB_MOVIE_URL + mOmdb.getText();
     }
     return "";
   }
