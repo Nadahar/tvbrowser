@@ -37,6 +37,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -83,30 +85,43 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     panel.setBorder(Borders.DLU4_BORDER);
 
     panel.setLayout(new FormLayout("right:pref,3dlu, pref, fill:10dlu:grow",
-            "pref, 3dlu, pref, 3dlu,  fill:50dlu, 3dlu, pref, 3dlu, pref,fill:pref:grow, pref"));
+            "pref, 3dlu, pref, 3dlu, pref, 3dlu,  fill:50dlu, 3dlu, pref, 3dlu, pref,fill:pref:grow, pref"));
 
     CellConstraints cc = new CellConstraints();
 
+    JLabel titleLabel = new JLabel(mLocalizer.msg("titleLabel", "Title") + ": ");
+    titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD));
+    panel.add(titleLabel, cc.xy(1, 1));
+    final JTextField title = new JTextField(program.getTitle());
+    title.setEditable(false);
+    title.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        title.selectAll();
+      }
+    });
+    panel.add(title, cc.xyw(3, 1, 2));
+    
     JLabel url = new JLabel(mLocalizer.msg("URL", "omdb.org-URL") + ": ");
     url.setFont(url.getFont().deriveFont(Font.BOLD));
-    panel.add(url, cc.xy(1, 1));
-    panel.add(new JLabel("http://www.omdb.org/movie/"), cc.xy(3, 1));
+    panel.add(url, cc.xy(1, 3));
+    panel.add(new JLabel("http://www.omdb.org/movie/"), cc.xy(3, 3));
     mOmdb = new JTextField();
-    panel.add(mOmdb, cc.xy(4, 1));
+    panel.add(mOmdb, cc.xy(4, 3));
 
     JLabel genre = new JLabel(mLocalizer.msg("genre","Genre")+": ");
     genre.setFont(genre.getFont().deriveFont(Font.BOLD));
 
-    panel.add(genre, cc.xy(1, 3));
+    panel.add(genre, cc.xy(1, 5));
     mGenre = new JTextField();
-    panel.add(mGenre, cc.xyw(3, 3, 2));
+    panel.add(mGenre, cc.xyw(3, 5, 2));
 
     JLabel text = new JLabel(mLocalizer.msg("text","Text")+": ");
     text.setVerticalAlignment(JLabel.TOP);
     text.setFont(text.getFont().deriveFont(Font.BOLD));
 
-    panel.add(text, cc.xy(1, 5));
-    panel.add(new JLabel(mLocalizer.msg("maxChars","(max. 200 characters)")), cc.xy(3, 7));
+    panel.add(text, cc.xy(1, 7));
+    panel.add(new JLabel(mLocalizer.msg("maxChars","(max. 200 characters)")), cc.xy(3, 9));
 
     mDescription = new JTextArea();
     mDescription.setDocument(new PlainDocument() {
@@ -121,11 +136,11 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
       }
     });
 
-    panel.add(new JScrollPane(mDescription), cc.xyw(3, 5, 2));
+    panel.add(new JScrollPane(mDescription), cc.xyw(3, 7, 2));
 
     JLabel format = new JLabel(mLocalizer.msg("format","Format")+": ");
     format.setFont(format.getFont().deriveFont(Font.BOLD));
-    panel.add(format, cc.xy(1, 9));
+    panel.add(format, cc.xy(1, 11));
 
     
     mSubtitle = new JCheckBox(mLocalizer.msg("subtitle","Untertitel"));
@@ -138,7 +153,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     panelItems.add(mOwS);
     panelItems.add(mPremiere);
 
-    panel.add(panelItems, cc.xyw(3,9,2));
+    panel.add(panelItems, cc.xyw(3,11,2));
 
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     ok.addActionListener(new ActionListener() {
@@ -160,7 +175,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     builder.addGlue();
     builder.addGriddedButtons(new JButton[]{ok, cancel});
 
-    panel.add(builder.getPanel(), cc.xyw(1,11,4));
+    panel.add(builder.getPanel(), cc.xyw(1,13,4));
 
     setSize(Sizes.dialogUnitXAsPixel(300, this),
             Sizes.dialogUnitYAsPixel(180, this));
