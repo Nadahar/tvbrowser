@@ -27,11 +27,14 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
 import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.debug.FormDebugPanel;
 import devplugin.Program;
 import util.browserlauncher.Launch;
 import util.ui.Localizer;
 import util.ui.WindowClosingIf;
 import util.ui.UiUtilities;
+import util.io.IOUtilities;
+import util.exc.ErrorHandler;
 
 import java.awt.Toolkit;
 import java.awt.FlowLayout;
@@ -40,6 +43,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URLEncoder;
+import java.net.URL;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -50,6 +55,7 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
@@ -82,15 +88,15 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     createGui(program);
   }
 
-  private void createGui(Program program) {
+  private void createGui(final Program program) {
     setTitle(mLocalizer.msg("title", "WirSchauen.de suggestion"));
 
     JPanel panel = (JPanel) getContentPane();
 
     panel.setBorder(Borders.DLU4_BORDER);
 
-    panel.setLayout(new FormLayout("right:pref,3dlu, pref, fill:10dlu:grow, pref",
-            "pref, 2dlu, pref, 2dlu, pref, 3dlu,  fill:50dlu, 3dlu, pref, 3dlu, pref,fill:pref:grow, pref"));
+    panel.setLayout(new FormLayout("right:pref,3dlu, pref, fill:10dlu:grow, 3dlu, pref",
+            "pref, 3dlu, pref, 3dlu,pref, 3dlu, pref, 3dlu,  fill:50dlu, 3dlu, pref, 3dlu, pref,fill:pref:grow, pref"));
 
     CellConstraints cc = new CellConstraints();
 
@@ -105,18 +111,23 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
         title.selectAll();
       }
     });
-    panel.add(title, cc.xyw(3, 1, 3));
-    
+    panel.add(title, cc.xyw(3, 1, 4));
+
+    final JLabel countLabel = new JLabel(mLocalizer.msg("countLoading", "Reading data from Server..."));
+    countLabel.setEnabled(false);
+    countLabel.setFont(countLabel.getFont().deriveFont(Font.ITALIC));
+    panel.add(countLabel, cc.xyw(3,3,4));
+
     JLabel url = new JLabel(mLocalizer.msg("URL", "omdb.org-URL") + ": ");
     url.setFont(url.getFont().deriveFont(Font.BOLD));
-    panel.add(url, cc.xy(1, 3));
-    panel.add(new JLabel(OMDB_MOVIE_URL), cc.xy(3, 3));
+    panel.add(url, cc.xy(1, 5));
+    panel.add(new JLabel(OMDB_MOVIE_URL), cc.xy(3, 5));
     mOmdb = new JTextField();
-    panel.add(mOmdb, cc.xy(4, 3));
+    panel.add(mOmdb, cc.xy(4, 5));
     
     JButton openOmdb = new JButton(WirSchauenPlugin.getInstance().createImageIcon("apps", "internet-web-browser", 16));
     openOmdb.setToolTipText(mLocalizer.msg("openURL","Open URL"));
-    panel.add(openOmdb, cc.xy(5, 3));
+    panel.add(openOmdb, cc.xy(6, 5));
     
     openOmdb.addActionListener(new ActionListener() {
 
@@ -133,16 +144,15 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     JLabel genre = new JLabel(mLocalizer.msg("genre","Genre")+": ");
     genre.setFont(genre.getFont().deriveFont(Font.BOLD));
 
-    panel.add(genre, cc.xy(1, 5));
+    panel.add(genre, cc.xy(1, 7));
     mGenre = new JTextField();
-    panel.add(mGenre, cc.xyw(3, 5, 3));
+    panel.add(mGenre, cc.xyw(3, 7, 4));
 
     JLabel text = new JLabel(mLocalizer.msg("text","Text")+": ");
     text.setVerticalAlignment(JLabel.TOP);
     text.setFont(text.getFont().deriveFont(Font.BOLD));
 
-    panel.add(text, cc.xy(1, 7));
-    panel.add(new JLabel(mLocalizer.msg("maxChars","(max. 200 characters)")), cc.xy(3, 9));
+    panel.add(text, cc.xy(1, 9));
 
     mDescription = new JTextArea();
     mDescription.setDocument(new PlainDocument() {
@@ -157,11 +167,12 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
       }
     });
 
-    panel.add(new JScrollPane(mDescription), cc.xyw(3, 7, 3));
+    panel.add(new JScrollPane(mDescription), cc.xyw(3, 9, 4));
+    panel.add(new JLabel(mLocalizer.msg("maxChars","(max. 200 characters)")), cc.xy(3, 11));
 
     JLabel format = new JLabel(mLocalizer.msg("format","Format")+": ");
     format.setFont(format.getFont().deriveFont(Font.BOLD));
-    panel.add(format, cc.xy(1, 11));
+    panel.add(format, cc.xy(1, 13));
 
     
     mSubtitle = new JCheckBox(mLocalizer.msg("subtitle","Untertitel"));
@@ -174,7 +185,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     panelItems.add(mOwS);
     panelItems.add(mPremiere);
 
-    panel.add(panelItems, cc.xyw(3,11,3));
+    panel.add(panelItems, cc.xyw(3,13,4));
 
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     ok.addActionListener(new ActionListener() {
@@ -196,12 +207,30 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     builder.addGlue();
     builder.addGriddedButtons(new JButton[]{ok, cancel});
 
-    panel.add(builder.getPanel(), cc.xyw(1,13,5));
+    panel.add(builder.getPanel(), cc.xyw(1,15,6));
 
     setSize(Sizes.dialogUnitXAsPixel(300, this),
-            Sizes.dialogUnitYAsPixel(180, this));
+            Sizes.dialogUnitYAsPixel(220, this));
 
     UiUtilities.registerForClosing(this);
+
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        int count = getCountForProgram(program);
+
+        if (count == -1) {
+          countLabel.setText(mLocalizer.msg("countError", "Could not load data from server..."));
+        } else if (count == 0) {
+          countLabel.setText(mLocalizer.msg("countNone", "No description available on the server."));
+        } else if (count == 1) {
+          countLabel.setText(mLocalizer.msg("countOne", "One description available on the server. But you could add a better one."));
+        } else {
+          countLabel.setText(mLocalizer.msg("countMultiple", "{0} descriptions available on the server. But you could add a better one.", count));
+        }
+
+        countLabel.setFont(countLabel.getFont().deriveFont(Font.PLAIN));
+      }
+    });
   }
 
   private void ok() {
@@ -242,5 +271,29 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
 
   public String getSubtitle() {
     return mSubtitle.isSelected()? "true":"false";
+  }
+
+  public int getCountForProgram(Program program) {
+    int count = -1;
+    StringBuilder url = new StringBuilder();
+    try {
+      url = url.append("channel=").append(URLEncoder.encode(program.getChannel().getId(), "UTF-8"));
+      url = url.append("&day=").append(program.getDate().getDayOfMonth());
+      url = url.append("&month=").append(program.getDate().getMonth());
+      url = url.append("&year=").append(program.getDate().getYear());
+      url = url.append("&hour=").append(program.getHours());
+      url = url.append("&minute=").append(program.getMinutes());
+      url = url.append("&length=").append(program.getLength());
+      url = url.append("&title=").append(URLEncoder.encode(program.getTitle(), "UTF-8"));
+
+      URL u = new URL(WirSchauenPlugin.BASE_URL + "countTVBrowserDescriptions/?"+ url);
+      count = Integer.parseInt(new String(IOUtilities.loadFileFromHttpServer(u)));
+    } catch (NumberFormatException e) {
+      e.printStackTrace();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    return count;
   }
 }

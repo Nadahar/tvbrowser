@@ -58,7 +58,7 @@ import javax.swing.ImageIcon;
  * With this plugin it is possible to add information about a program and send it to wirschauen.de
  */
 public class WirSchauenPlugin extends Plugin {
-  private static final Version mVersion = new Version(0, 2, 0, false);
+  private static final Version mVersion = new Version(0, 3, 0, false);
 
   private static Logger mLog = Logger.getLogger(WirSchauenPlugin.class.getName());
 
@@ -74,6 +74,7 @@ public class WirSchauenPlugin extends Plugin {
   private PluginInfo mPluginInfo;
 
   private Icon mIcon;
+  public static final String BASE_URL = "http://www.wirschauen.de/events/";
 
   /**
    * Creates the Plugin
@@ -201,7 +202,7 @@ public class WirSchauenPlugin extends Plugin {
         url = url.append("&omu=").append(URLEncoder.encode(dialog.getOmu(), "UTF-8"));
         url = url.append("&premiere=").append(URLEncoder.encode(dialog.getPremiere(), "UTF-8"));
 
-        URL u = new URL("http://www.wirschauen.de/events/addTVBrowserEvent/?"+ url);
+        URL u = new URL(BASE_URL + "addTVBrowserEvent/?"+ url);
         IOUtilities.loadFileFromHttpServer(u);
 
         getRootNode().addProgram(program);
