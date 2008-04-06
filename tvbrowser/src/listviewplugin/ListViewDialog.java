@@ -53,10 +53,12 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.TableColumn;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterComponent;
@@ -108,7 +110,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
   /** Text for mRuns */
   final static String[] TIMETEXT = { mLocalizer.msg("now", "Now"), mLocalizer.msg("15min", "in 15 minutes"),
-      mLocalizer.msg("30min", "in 30 minutes") };
+    mLocalizer.msg("30min", "in 30 minutes") };
 
   /** Select for mRuns */
   private JComboBox mBox;
@@ -124,12 +126,12 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
   /** Timer for Updates */
   private Timer mTimer;
-  
+
   /** Settings for this Plugin */
   private Properties mSettings;
-  
+
   private Thread mLeftClickThread;
-  
+
   /**
    * Creates the Dialog
    *
@@ -158,13 +160,14 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     int delay = 2000;   // delay for 2 sec.
     int period = 2000;  // repeat every 2 secs.
     mTimer = new Timer();
-    
+
     mTimer.scheduleAtFixedRate(new TimerTask() {
-       public void run() {
-         if (mRuns.isSelected()) {
-           refreshView();
-         }
-       }
+      @Override
+      public void run() {
+        if (mRuns.isSelected()) {
+          refreshView();
+        }
+      }
     }, delay, period);
   }
 
@@ -187,12 +190,12 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
       date = date.addDays(1);
       time -= 60 * 24;
     }
-    
+
     Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
     if ((mChannels != null) && (mChannels.getSelectedIndex() > 0)) {
       FilterComponent component = FilterComponentList.getInstance().getFilterComponentByName(mChannels.getSelectedItem().toString());
       if (component instanceof ChannelFilterComponent) {
-        channels = ((ChannelFilterComponent) component).getChannels(); 
+        channels = ((ChannelFilterComponent) component).getChannels();
       }
     }
 
@@ -324,7 +327,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     data.add(TIMETEXT[2]);
 
     TimeFormatter formatter = new TimeFormatter();
-    
+
     for (int time : mTimes) {
       int h = time / 60;
       int m = time % 60;
@@ -345,7 +348,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
       public void actionPerformed(ActionEvent e) {
         if (mBox.getSelectedIndex() == mBox.getItemCount()-1) {
           mBox.setSelectedIndex(lastSelected);
-          ListViewPlugin.getPluginManager().showSettings(SettingsItem.TIMEBUTTONS);
+          Plugin.getPluginManager().showSettings(SettingsItem.TIMEBUTTONS);
         } else {
           lastSelected = mDate.getSelectedIndex();
           int time = calcTimeForSelection(mBox.getSelectedIndex());
@@ -367,7 +370,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     for (int i = 0; i < 14; i++) {
       dates.add(currentDate.addDays(i));
     }
-    
+
     mDate = new JComboBox(dates);
 
     datetimeselect.add(mDate);
@@ -375,9 +378,9 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     datetimeselect.add(new JLabel(" " + mLocalizer.msg("at", "at") + " "));
 
     JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mTimeSpinner, Settings.getTimePattern());
-    
+
     mTimeSpinner.setEditor(dateEditor);
-    
+
     CaretPositionCorrector.createCorrector(dateEditor.getTextField(), new char[] {':'}, -1);
 
     datetimeselect.add(mTimeSpinner);
@@ -391,7 +394,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     mChannels = new JComboBox(filters);
     datetimeselect.add(new JLabel("    "));
     datetimeselect.add(mChannels);
-    
+
     // Event-Handler
 
     mRuns.addActionListener(new ActionListener() {
@@ -417,7 +420,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
         refreshView();
       }
     });
-    
+
     mChannels.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         // user defined selection
@@ -453,9 +456,9 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     // Upper Panel
 
     JPanel topPanel = new JPanel(new FormLayout("pref, 3dlu, pref, 15dlu, pref, 3dlu, pref, 3dlu, pref", "pref, 3dlu"));
-    
+
     CellConstraints cc = new CellConstraints();
-    
+
     topPanel.add(mRuns, cc.xy(1, 1));
     topPanel.add(mBox, cc.xy(3,1));
     topPanel.add(mOn, cc.xy(5,1));
@@ -469,27 +472,31 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     mProgramTable.getTableHeader().setResizingAllowed(false);
 
     mProgramTable.addMouseListener(new MouseAdapter() {
+      @Override
       public void mousePressed(MouseEvent evt) {
         if (evt.isPopupTrigger()) {
           showPopup(evt);
         }
       }
 
+      @Override
       public void mouseReleased(MouseEvent evt) {
         if (evt.isPopupTrigger()) {
           showPopup(evt);
         }
       }
 
+      @Override
       public void mouseClicked(MouseEvent e) {
         mouseClickedOnTable(e);
       }
 
     });
-    
+
     // Dispatch the KeyEvent to the RootPane for Closing the Dialog.
     // Needed for Java 1.4.
     mProgramTable.addKeyListener(new KeyAdapter() {
+      @Override
       public void keyPressed(KeyEvent e) {
         mProgramTable.getRootPane().dispatchEvent(e);
       }
@@ -497,8 +504,8 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
     setTableColumProperties();
 
-    JScrollPane scroll = new JScrollPane(mProgramTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    JScrollPane scroll = new JScrollPane(mProgramTable, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
     content.add(scroll, BorderLayout.CENTER);
 
@@ -516,20 +523,20 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
     JPanel p = new JPanel(new FormLayout("pref,5dlu,pref,5dlu,pref", "pref"));
     JButton settings = new JButton(mPlugin.createImageIcon("categories",
-        "preferences-system", 16));    
+        "preferences-system", 16));
     settings.setToolTipText(mLocalizer.msg("settings","Open settings"));
 
     settings.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          close();
-          Plugin.getPluginManager()
-              .showSettings(ListViewPlugin.getInstance());
-        }
-      });
-    
-    final JCheckBox showAtStartup = new JCheckBox(mLocalizer.msg("showAtStart", "Show at start")); 
+      public void actionPerformed(ActionEvent e) {
+        close();
+        Plugin.getPluginManager()
+        .showSettings(ListViewPlugin.getInstance());
+      }
+    });
+
+    final JCheckBox showAtStartup = new JCheckBox(mLocalizer.msg("showAtStart", "Show at start"));
     showAtStartup.setSelected(mSettings.getProperty("showAtStartup", "false").equals("true"));
-    
+
     showAtStartup.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
         if (showAtStartup.isSelected()) {
@@ -554,14 +561,15 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
    * Sets the Table-Properties
    */
   private void setTableColumProperties() {
-    mProgramTable.getColumnModel().getColumn(0).setCellRenderer(new ListTableCellRenderer());
-    mProgramTable.getColumnModel().getColumn(1).setCellRenderer(new ListTableCellRenderer());
-    mProgramTable.getColumnModel().getColumn(2).setCellRenderer(new ListTableCellRenderer());
+    ListTableCellRenderer renderer = new ListTableCellRenderer();
     int width = ListViewPlugin.PROGRAMTABLEWIDTH;
-    mProgramTable.getColumnModel().getColumn(2).setMinWidth(width);
-    mProgramTable.getColumnModel().getColumn(2).setMinWidth(width);
-    mProgramTable.getColumnModel().getColumn(2).setMinWidth(width);
-
+    for (int i = 0; i <= 2; i++) {
+      TableColumn column = mProgramTable.getColumnModel().getColumn(i);
+      column.setCellRenderer(renderer);
+      if (i > 0) {
+        column.setMinWidth(width);
+      }
+    }
   }
 
   /**
@@ -597,16 +605,17 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     }
     if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && e.getModifiersEx() == 0) {
       mLeftClickThread = new Thread() {
+        @Override
         public void run() {
           try {
             sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
-            
+
             Plugin.getPluginManager().handleProgramSingleClick(prg, mPlugin);
           } catch (InterruptedException e) { // ignore
           }
         }
       };
-      
+
       mLeftClickThread.setPriority(Thread.MIN_PRIORITY);
       mLeftClickThread.start();
     }
@@ -656,7 +665,8 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     JPopupMenu menu = devplugin.Plugin.getPluginManager().createPluginContextMenu(prg, mPlugin);
     menu.show(mProgramTable, e.getX() - 15, e.getY() - 15);
   }
-  
+
+  @Override
   public void setVisible(boolean b) {
     super.setVisible(b);
     mTimer.cancel();
