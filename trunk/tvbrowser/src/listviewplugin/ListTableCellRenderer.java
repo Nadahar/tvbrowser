@@ -47,7 +47,7 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
 
   private ChannelLabel mChannelLabel;
 
-  private ProgramPanel mProgramPanel;
+  private ProgramPanel[] mProgramPanel = new ProgramPanel[2];
 
   /**
    * Creates the Component
@@ -56,6 +56,7 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
       int row, int column) {
 
+    Dimension gaps = table.getIntercellSpacing();
     JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
     if (value instanceof Channel) {
@@ -79,34 +80,35 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
         }
       }
 
-      if (mChannelLabel.getHeight()+2 > table.getRowHeight(row)) {
-        table.setRowHeight(row, mChannelLabel.getHeight()+2);
+      // do all height calculation for the complete row
+      int height = mChannelLabel.getHeight();
+      for (int i = 0; i < 2; i++) {
+        Program program = (Program) table.getValueAt(row, 1 + i);
+        if (mProgramPanel[i] == null) {
+          mProgramPanel[i] = new ProgramPanel(program, new ProgramPanelSettings(ListViewPlugin.getInstance().getPictureSettings(),false, ProgramPanelSettings.X_AXIS));
+        }
+        mProgramPanel[i].setProgram(program);
+        height = Math.max(height, mProgramPanel[i].getHeight());
+      }
+      for (int i = 0; i < 2; i++) {
+        mProgramPanel[i].setHeight(height);
+      }
+      height += gaps.height;
+
+      if (height != table.getRowHeight(row)) {
+        table.setRowHeight(row, height);
       }
 
-      label = mChannelLabel;
+      return mChannelLabel;
     } else if (value instanceof Program) {
 
-      if (mProgramPanel == null) {
-        mProgramPanel = new ProgramPanel((Program)value, new ProgramPanelSettings(ListViewPlugin.getInstance().getPictureSettings(),false, ProgramPanelSettings.X_AXIS));
-      }
+      int index = column - 1;
 
       JPanel rpanel = new JPanel(new BorderLayout());
-      rpanel.add(mProgramPanel, BorderLayout.CENTER);
+      rpanel.add(mProgramPanel[index], BorderLayout.CENTER);
       rpanel.setBackground(label.getBackground());
 
-      mProgramPanel.setProgram((Program) value);
-      mProgramPanel.setTextColor(label.getForeground());
-
-      if (mProgramPanel.getHeight() > table.getRowHeight(row)) {
-        table.setRowHeight(row, mProgramPanel.getHeight());
-      } else if (mProgramPanel.getHeight() < table.getRowHeight(row)) {
-        if (column == 1) {
-          table.setRowHeight(row, mProgramPanel.getHeight());
-        }
-        else {
-          mProgramPanel.setHeight(table.getRowHeight(row));
-        }
-      }
+      mProgramPanel[index].setTextColor(label.getForeground());
 
       if (ListViewPlugin.PROGRAMTABLEWIDTH > table.getColumnModel().getColumn(column).getMinWidth()) {
         int width = ListViewPlugin.PROGRAMTABLEWIDTH;
