@@ -629,7 +629,7 @@ public class ProgramTextCreator {
       buffer.append("<a href=\"");
 //      buffer.append(mLocalizer.msg("wikipediaLink", "http://en.wikipedia.org/wiki/{0}", url));
       buffer.append(TVBROWSER_URL_PROTOCOL);
-      buffer.append(url);
+      buffer.append(url.replaceAll("\"", "").replaceAll("'", ""));
       
       buffer.append("\" ");
       buffer.append(style);
