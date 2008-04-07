@@ -823,17 +823,37 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
      
    }
 
-public void dateChanged(Date date, ProgressMonitor monitor, Runnable callback) {
-    mPreviousDayMI.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(-1)));
-    mNextDayMI.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(1)));
-    mPreviousWeekMI.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(-7)));
-    mNextWeekMI.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(7)));
-}
+  public void dateChanged(Date date, ProgressMonitor monitor, Runnable callback) {
+    mPreviousDayMI.setEnabled(TvDataBase.getInstance().dataAvailable(
+        date.addDays(-1)));
+    mNextDayMI.setEnabled(TvDataBase.getInstance().dataAvailable(
+        date.addDays(1)));
+    mPreviousWeekMI.setEnabled(TvDataBase.getInstance().dataAvailable(
+        date.addDays(-7)));
+    mNextWeekMI.setEnabled(TvDataBase.getInstance().dataAvailable(
+        date.addDays(7)));
+  }
 
-public boolean isShowFilterPanelEnabled() {
-  return mViewFilterBarMI.isSelected();
-}
+  public boolean isShowFilterPanelEnabled() {
+    return mViewFilterBarMI.isSelected();
+  }
 
-
+  protected void createHelpMenu(JMenu helpMenu, boolean showAbout) {
+    helpMenu.add(mHandbookMI);
+    helpMenu.add(mKeyboardShortcutsMI);
+    helpMenu.add(mFaqMI);
+    helpMenu.add(mPluginHelpMenu);
+    helpMenu.addSeparator();
+    helpMenu.add(mWebsiteMI);
+    helpMenu.add(mForumMI);
+    helpMenu.add(mDownloadMI);
+    helpMenu.add(mDonorMI);
+    helpMenu.addSeparator();
+    helpMenu.add(mConfigAssistantMI);
+    if (showAbout) {
+      helpMenu.addSeparator();
+      helpMenu.add(mAboutMI);
+    }
+  }
 
 }

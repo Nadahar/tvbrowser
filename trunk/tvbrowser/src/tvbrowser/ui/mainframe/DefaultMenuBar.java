@@ -95,20 +95,8 @@ public class DefaultMenuBar extends MenuBar {
     mPluginsMenu.addSeparator();
     mPluginsMenu.add(mPluginManagerMI);
     
-    // "Help" menu
-    helpMenu.add(mHandbookMI);
-    helpMenu.add(mKeyboardShortcutsMI);
-    helpMenu.add(mFaqMI);
-    helpMenu.add(mPluginHelpMenu);
-    helpMenu.addSeparator();
-    helpMenu.add(mWebsiteMI);
-    helpMenu.add(mForumMI);
-    helpMenu.add(mDownloadMI);
-    helpMenu.add(mDonorMI);
-    helpMenu.addSeparator();
-    helpMenu.add(mConfigAssistantMI);
-    helpMenu.addSeparator();
-    helpMenu.add(mAboutMI);
+    // Help menu
+    createHelpMenu(helpMenu, true);
     
     mSettingsMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, keyModifier));
     mQuitMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, keyModifier));
