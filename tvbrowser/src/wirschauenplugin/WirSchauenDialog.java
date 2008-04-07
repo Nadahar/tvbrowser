@@ -27,15 +27,12 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
 import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.debug.FormDebugPanel;
 import devplugin.Program;
 import util.browserlauncher.Launch;
 import util.ui.Localizer;
 import util.ui.WindowClosingIf;
 import util.ui.UiUtilities;
 import util.io.IOUtilities;
-import util.exc.ErrorHandler;
-
 import java.awt.Toolkit;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -56,6 +53,8 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
@@ -77,6 +76,8 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
   private JCheckBox mSubtitle;
   private JCheckBox mOwS;
   private JCheckBox mPremiere;
+
+  private JLabel mCounter;
 
   public WirSchauenDialog(JDialog jDialog, Program program) {
     super(jDialog, true);
@@ -123,10 +124,11 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     panel.add(url, cc.xy(1, 5));
     panel.add(new JLabel(OMDB_MOVIE_URL), cc.xy(3, 5));
     mOmdb = new JTextField();
+    mOmdb.setToolTipText(mLocalizer.msg("tooltip.omdbId","Numerical ID of the program"));
     panel.add(mOmdb, cc.xy(4, 5));
     
     JButton openOmdb = new JButton(WirSchauenPlugin.getInstance().createImageIcon("apps", "internet-web-browser", 16));
-    openOmdb.setToolTipText(mLocalizer.msg("openURL","Open URL"));
+    openOmdb.setToolTipText(mLocalizer.msg("tooltip.openURL","Open URL"));
     panel.add(openOmdb, cc.xy(6, 5));
     
     openOmdb.addActionListener(new ActionListener() {
@@ -162,13 +164,31 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
           Toolkit.getDefaultToolkit().beep();
         } else {
           super.insertString(offs, str, a);
-
         }
       }
     });
 
+    mDescription.getDocument().addDocumentListener(new DocumentListener() {
+      private void updateRemaining() {
+        int remaining = 200 - mDescription.getDocument().getLength();
+        mCounter.setText(mLocalizer.msg("remaining", "({0} characters remaining)", remaining));
+      }
+
+      public void changedUpdate(DocumentEvent e) {
+        updateRemaining();
+      }
+
+      public void insertUpdate(DocumentEvent e) {
+        updateRemaining();
+      }
+
+      public void removeUpdate(DocumentEvent e) {
+        updateRemaining();
+      }});
+
     panel.add(new JScrollPane(mDescription), cc.xyw(3, 9, 4));
-    panel.add(new JLabel(mLocalizer.msg("maxChars","(max. 200 characters)")), cc.xy(3, 11));
+    mCounter = new JLabel(mLocalizer.msg("maxChars","(max. 200 characters)"));
+    panel.add(mCounter, cc.xy(3, 11));
 
     JLabel format = new JLabel(mLocalizer.msg("format","Format")+": ");
     format.setFont(format.getFont().deriveFont(Font.BOLD));
