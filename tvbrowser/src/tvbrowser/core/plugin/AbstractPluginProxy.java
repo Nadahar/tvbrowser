@@ -591,7 +591,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    */
   public void handlePluginException(Throwable t) {
     String msg = mLocalizer.msg("error.runtimeExceptionAskDeactivation",
-        "The plugin {0} caused an error. Should it be deactivaded?", getInfo().getName());
+        "The plugin {0} caused an error. Should it be deactivated?", getInfo().getName());
 
     if (ErrorHandler.handle(msg, t, ErrorHandler.SHOW_YES_NO) == ErrorHandler.YES_PRESSED) {
       try {
