@@ -112,7 +112,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * @param parent The parent frame to set.
    */
   abstract void setParentFrame(Frame parent);
-  
+
   /**
    * Loads the settings for this plugin.
    * 
@@ -125,7 +125,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
     } catch (RuntimeException exc) {
       throw new TvBrowserException(AbstractPluginProxy.class,
 
-      "error.loading.runtimeException", "The plugin {0} caused an error when loading the plugin settings.", getInfo()
+          "error.loading.runtimeException", "The plugin {0} caused an error when loading the plugin settings.", getInfo()
           .getName(), exc);
     }
   }
@@ -202,10 +202,11 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * @see #receivePrograms(Program[])
    * @deprecated Since 2.5
    */
+  @Deprecated
   public final boolean canReceivePrograms() {
     try {
       return doCanReceivePrograms();
-    } catch (RuntimeException exc) {
+    } catch (Throwable exc) {
       handlePluginException(exc);
       return false;
     }
@@ -219,6 +220,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * @see #receivePrograms(Program[])
    * @deprecated Since 2.5
    */
+  @Deprecated
   protected abstract boolean doCanReceivePrograms();
 
   /**
@@ -228,11 +230,12 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * @see #canReceivePrograms()
    * @deprecated Since 2.5
    */
+  @Deprecated
   public final void receivePrograms(Program[] programArr) {
     try {
       assertActivatedState();
       doReceivePrograms(programArr);
-    } catch (Exception exc) {
+    } catch (Throwable exc) {
       handlePluginException(exc);
     }
   }
@@ -244,6 +247,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * @see #canReceivePrograms()
    * @deprecated Since 2.5
    */
+  @Deprecated
   protected abstract void doReceivePrograms(Program[] programArr);
 
   /**
@@ -286,7 +290,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
       } else {
         return null;
       }
-    } catch (RuntimeException exc) {
+    } catch (Throwable exc) {
       handlePluginException(exc);
       return null;
     }
@@ -318,7 +322,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
       } else {
         return null;
       }
-    } catch (RuntimeException exc) {
+    } catch (Throwable exc) {
       handlePluginException(exc);
       return null;
     }
@@ -333,19 +337,19 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * @see #getButtonAction()
    */
   protected abstract ActionMenu doGetButtonAction();
-  
+
   /**
    * Gets the icons to use for marking programs in the program table.
    */
   public Icon[] getMarkIcons(Program p) {
     try {
       return doGetMarkIcons(p);
-    } catch (RuntimeException exc) {
+    } catch (Throwable exc) {
       handlePluginException(exc);
       return null;
     }
   }
-  
+
   /**
    * Gets the icon to use for marking programs in the program table.
    * 
@@ -353,7 +357,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    */
   public Icon getMarkIcon() {
     Icon[] icon = getMarkIcons(null);
-    
+
     if(icon != null && icon.length > 0) {
       return icon[0];
     } else {
@@ -382,7 +386,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   public final String getProgramTableIconText() {
     try {
       return doGetProgramTableIconText();
-    } catch (RuntimeException exc) {
+    } catch (Throwable exc) {
       handlePluginException(exc);
       return null;
     }
@@ -503,7 +507,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
     try {
       assertActivatedState();
       doHandleTvDataDeleted(oldProg);
-    } catch (Exception exc) {
+    } catch (Throwable exc) {
       handlePluginException(exc);
     }
   }
@@ -521,7 +525,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   public void onActivation() {
     try {
       doOnActivation();
-    } catch (RuntimeException exc) {
+    } catch (Throwable exc) {
       handlePluginException(exc);
     }
   }
@@ -531,7 +535,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   public void onDeactivation() {
     try {
       doOnDeactivation();
-    } catch (RuntimeException exc) {
+    } catch (Throwable exc) {
       handlePluginException(exc);
     }
   }
@@ -546,22 +550,26 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
         mArtificialRootNode = null;
       }
       return canUse || (mArtificialRootNode != null && mArtificialRootNode.size() < 100);
-    } catch (RuntimeException exc) {
+    } catch (Throwable exc) {
       handlePluginException(exc);
       return false;
     }
   }
-  
+
   /**
    * This method is called when the TV-Browser start is complete.
    * @since 2.2
    */
   public void handleTvBrowserStartFinished() {
-    doHandleTvBrowserStartFinished();
+    try {
+      doHandleTvBrowserStartFinished();
+    } catch (Throwable exc) {
+      handlePluginException(exc);
+    }
   }
 
   protected abstract void doHandleTvBrowserStartFinished();
-  
+
   protected abstract boolean doCanUseProgramTree();
 
   /**
@@ -571,6 +579,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * 
    * @return the name of the plugin.
    */
+  @Override
   final public String toString() {
     return getInfo().getName();
   }
@@ -596,7 +605,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
       Settings.propDeactivatedPlugins.setStringArray(deactivatedPlugins);
     }
   }
-  
+
   /**
    * Gets whether the plugin supports receiving programs from other plugins with target.
    * 
@@ -607,7 +616,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   public final boolean canReceiveProgramsWithTarget() {
     try {
       return doCanReceiveProgramsWithTarget();
-    } catch (RuntimeException exc) {
+    } catch (Throwable exc) {
       handlePluginException(exc);
       return false;
     }
@@ -635,10 +644,10 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
     try {
       assertActivatedState();
       return doReceivePrograms(programArr,receiveTarget);
-    } catch (Exception exc) {
+    } catch (Throwable exc) {
       handlePluginException(exc);
     }
-    
+
     return false;
   }
 
@@ -664,13 +673,13 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
     try {
       assertActivatedState();
       return doGetProgramReceiveTargets();
-    } catch (Exception exc) {
+    } catch (Throwable exc) {
       handlePluginException(exc);
     }
-    
+
     return null;
   }
-  
+
   /**
    * Really return an array of receive target or <code>null</code> if there is no target
    * 
@@ -680,7 +689,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * @since 2.5
    */
   protected abstract ProgramReceiveTarget[] doGetProgramReceiveTargets();
-    
+
   /**
    * Returns the available program filters that the plugin supports.
    * 
@@ -691,13 +700,13 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
     try {
       assertActivatedState();
       return doGetAvailableFilter();
-    } catch (Exception exc) {
+    } catch (Throwable exc) {
       handlePluginException(exc);
     }
-    
+
     return null;
   }
-  
+
   /**
    * Really returns the available program filters that the plugin supports.
    * 
@@ -705,7 +714,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * @since 2.5
    */
   protected abstract PluginsProgramFilter[] doGetAvailableFilter();
-  
+
   /**
    * Is used to track if a program filter be deleted.
    * Should be make sure only the plugin itself can delete program filters.
@@ -718,13 +727,13 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
     try {
       assertActivatedState();
       return doIsAllowedToDeleteProgramFilter(programFilter);
-    } catch (Exception exc) {
+    } catch (Throwable exc) {
       handlePluginException(exc);
     }
-    
+
     return false;
   }
-  
+
   /**
    * Really return if a program filter can be deleted.
    * 
@@ -747,13 +756,13 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
     try {
       assertActivatedState();
       return doGetAvailableFilterComponentClasses();
-    } catch (Exception exc) {
+    } catch (Throwable exc) {
       handlePluginException(exc);
     }
-    
+
     return null;
   }
-  
+
   /**
    * Really gets the available filter component classes.
    * 
@@ -761,14 +770,14 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * @since 2.5
    */
   protected abstract  Class<? extends PluginsFilterComponent>[]  doGetAvailableFilterComponentClasses();
-  
+
   /**
    * Gets the mark priority for the given program that this Plugin uses.
    * <p>
    * The mark priority can be {@link Program#NO_MARK_PRIORITY}, {@link Program#MIN_MARK_PRIORITY}, {@link Program#LOWER_MEDIUM_MARK_PRIORITY},
    * {@link Program#MEDIUM_MARK_PRIORITY}, {@link Program#HIGHER_MEDIUM_MARK_PRIORITY} or
    * {@link Program#MAX_MARK_PRIORITY}.
-   * <p>  
+   * <p>
    * @param p The program to get the mark prioriy for.
    * @return The mark priority for the given program for this plugin.
    * @since 2.5.1
@@ -777,13 +786,13 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
     try {
       assertActivatedState();
       return doGetMarkPriorityForProgram(p);
-    } catch (Exception exc) {
+    } catch (Throwable exc) {
       handlePluginException(exc);
     }
-    
+
     return Program.MIN_MARK_PRIORITY;
   }
-  
+
   /**
    * Really gets the mark priority for the given Program.
    * <p>
@@ -791,7 +800,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * @return The mark priority for the given program.
    */
   protected abstract int doGetMarkPriorityForProgram(Program p);
-  
+
   /**
    * Checks whether the plugin is activated. If it is not an error message is
    * shown.
@@ -802,7 +811,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
     if (!isActivated()) {
       throw new TvBrowserException(AbstractPluginProxy.class, "error.notActive",
           "It was attempted to call an operation of the inactive plugin {0} that "
-              + "may only be called on activated plugins.", getInfo().getName());
+          + "may only be called on activated plugins.", getInfo().getName());
     }
   }
 
@@ -815,13 +824,13 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
     if (action != null) {
       return (Icon) action.getValue(Action.SMALL_ICON);
     }
-    
+
     // The plugin has no button icon -> Try the mark icon
     Icon ico = getMarkIcon();
     if (ico != null) {
       return ico;
     }
-    
+
     return new ImageIcon("imgs/Jar16.gif");
   }
 
@@ -834,11 +843,11 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
       mArtificialRootNode.addProgram(program);
     }
   }
-  
+
   final public PluginTreeNode getArtificialRootNode() {
     return mArtificialRootNode;
   }
-  
+
   final public void removeArtificialPluginTree() {
     mArtificialRootNode = null;
   }
