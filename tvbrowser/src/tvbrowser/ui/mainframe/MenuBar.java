@@ -91,7 +91,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
 
   protected JMenuItem mSettingsMI, mQuitMI, mToolbarMI, mStatusbarMI, mTimeBtnsMI, mDatelistMI,
                     mChannellistMI, mPluginOverviewMI, mViewFilterBarMI, mUpdateMI,
-                    mPluginManagerMI, mDonorMI, mFaqMI, mForumMI, mWebsiteMI, mHandbookMI, mDownloadMI,
+                    mPluginManagerMI, mDonorMI, mFaqMI, mBackupMI, mForumMI, mWebsiteMI, mHandbookMI, mDownloadMI,
                     mConfigAssistantMI, mAboutMI, mKeyboardShortcutsMI,
                     mPreviousDayMI, mNextDayMI, mPreviousWeekMI, mNextWeekMI, mTodayMI,
                     mGotoNowMenuItem, mEditTimeButtonsMenuItem,
@@ -276,13 +276,21 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     Icon urlHelpImg = IconLoader.getInstance().getIconFromTheme("apps", "help-browser", 16);
     Icon urlBrowserImg = IconLoader.getInstance().getIconFromTheme("apps", "internet-web-browser", 16);
     
-    mFaqMI=new JMenuItem("FAQ",urlHelpImg);   
-    mFaqMI.addActionListener(this);
-    new MenuHelpTextAdapter(mFaqMI,mLocalizer.msg("website.faq",""),mLabel); 
-    
     mHandbookMI=new JMenuItem(mLocalizer.msg("menuitem.handbook", "Handbook"),urlHelpImg); 
     mHandbookMI.addActionListener(this);
     new MenuHelpTextAdapter(mHandbookMI,mLocalizer.msg("website.handbook",""),mLabel); 
+    
+    mKeyboardShortcutsMI = new JMenuItem(mLocalizer.msg("menuitem.keyboardshortcuts","Keyboard shortcuts"),urlHelpImg);
+    mKeyboardShortcutsMI.addActionListener(this);
+    new MenuHelpTextAdapter(mKeyboardShortcutsMI,mLocalizer.msg("website.keyboardshortcuts",""),mLabel);
+
+    mFaqMI=new JMenuItem(mLocalizer.msg("menuitem.faq", "FAQ"),urlHelpImg);   
+    mFaqMI.addActionListener(this);
+    new MenuHelpTextAdapter(mFaqMI,mLocalizer.msg("website.faq",""),mLabel); 
+    
+    mBackupMI=new JMenuItem(mLocalizer.msg("menuitem.backup", "Backup"),urlHelpImg);   
+    mBackupMI.addActionListener(this);
+    new MenuHelpTextAdapter(mBackupMI,mLocalizer.msg("website.backup",""),mLabel); 
     
     mWebsiteMI=new JMenuItem(mLocalizer.msg("menuitem.website","Website"),urlBrowserImg);
     mWebsiteMI.addActionListener(this);
@@ -308,11 +316,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mAboutMI.addActionListener(this);
     new MenuHelpTextAdapter(mAboutMI, mLocalizer.msg("menuinfo.about",""), mLabel);
     
-    mKeyboardShortcutsMI = new JMenuItem(mLocalizer.msg("menuitem.keyboardshortcuts","Keyboard shortcuts"),urlHelpImg);
-    mKeyboardShortcutsMI.addActionListener(this);
-    new MenuHelpTextAdapter(mKeyboardShortcutsMI,mLocalizer.msg("website.keyboardshortcuts",""),mLabel);
-
-    mPluginHelpMenu = new JMenu(mLocalizer.msg("menu.plugins","Plugins"));
+    mPluginHelpMenu = new JMenu(mLocalizer.msg("menuitem.pluginHelp","Plugin help"));
     mPluginHelpMenu.setIcon(urlHelpImg);
     updatePluginHelpMenuItems();
     
@@ -747,14 +751,17 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
 //       mMainFrame.showUpdatePluginsDlg();
        mMainFrame.showSettingsDialog(SettingsItem.PLUGINS);
      }
-     else if (source == mFaqMI) {
-       Launch.openURL(mLocalizer.msg("website.faq",""));
-     }
      else if (source == mHandbookMI) {
        Launch.openURL(mLocalizer.msg("website.handbook",""));
      }
      else if (source == mKeyboardShortcutsMI) {
        Launch.openURL(mLocalizer.msg("website.keyboardshortcuts",""));
+     }
+     else if (source == mFaqMI) {
+       Launch.openURL(mLocalizer.msg("website.faq",""));
+     }
+     else if (source == mBackupMI) {
+       Launch.openURL(mLocalizer.msg("website.backup",""));
      }
      else if (source == mWebsiteMI) {
        Launch.openURL(mLocalizer.msg("website.tvbrowser",""));
@@ -838,10 +845,11 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     return mViewFilterBarMI.isSelected();
   }
 
-  protected void createHelpMenu(JMenu helpMenu, boolean showAbout) {
+  protected void createHelpMenuItems(JMenu helpMenu, boolean showAbout) {
     helpMenu.add(mHandbookMI);
     helpMenu.add(mKeyboardShortcutsMI);
     helpMenu.add(mFaqMI);
+    helpMenu.add(mBackupMI);
     helpMenu.add(mPluginHelpMenu);
     helpMenu.addSeparator();
     helpMenu.add(mWebsiteMI);

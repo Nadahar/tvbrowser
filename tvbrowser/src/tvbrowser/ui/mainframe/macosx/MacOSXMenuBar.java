@@ -86,7 +86,7 @@ public class MacOSXMenuBar extends MenuBar {
     mPluginsMenu.add(mPluginManagerMI);
 
     // "Help" menu
-    createHelpMenu(helpMenu, false);
+    createHelpMenuItems(helpMenu, false);
   }
 
   private void createTVBrowserMenuItem() {

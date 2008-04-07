@@ -96,7 +96,7 @@ public class DefaultMenuBar extends MenuBar {
     mPluginsMenu.add(mPluginManagerMI);
     
     // Help menu
-    createHelpMenu(helpMenu, true);
+    createHelpMenuItems(helpMenu, true);
     
     mSettingsMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, keyModifier));
     mQuitMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, keyModifier));
