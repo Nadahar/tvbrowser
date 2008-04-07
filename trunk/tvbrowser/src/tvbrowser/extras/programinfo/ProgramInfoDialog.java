@@ -87,6 +87,7 @@ import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Program;
 import devplugin.SettingsItem;
+import devplugin.PluginManager;
 
 /**
  * TV-Browser
@@ -197,8 +198,10 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
             String desc = evt.getDescription();
             if (desc != null && desc.startsWith(ProgramTextCreator.TVBROWSER_URL_PROTOCOL)) {
               desc = desc.substring(ProgramTextCreator.TVBROWSER_URL_PROTOCOL.length());
+              desc = desc.replaceAll("  ", " ").replaceAll(" ", " AND ");
               SearchFormSettings settings = new SearchFormSettings(desc);
               settings.setSearchIn(SearchFormSettings.SEARCH_IN_ALL);
+              settings.setSearcherType(PluginManager.SEARCHER_TYPE_BOOLEAN);
               SearchHelper.search(mInfoEP, settings);
             }
           }
