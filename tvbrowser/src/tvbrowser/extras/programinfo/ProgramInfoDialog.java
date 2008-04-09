@@ -202,6 +202,7 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
               SearchFormSettings settings = new SearchFormSettings(desc);
               settings.setSearchIn(SearchFormSettings.SEARCH_IN_ALL);
               settings.setSearcherType(PluginManager.SEARCHER_TYPE_BOOLEAN);
+              settings.setNrDays(-1);
               SearchHelper.search(mInfoEP, settings);
             }
           }

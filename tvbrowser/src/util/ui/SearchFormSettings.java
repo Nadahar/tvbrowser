@@ -46,7 +46,7 @@ import java.io.ObjectOutputStream;
 public class SearchFormSettings {
 
   /**
-   * Specifies, that the search term has to match exacly.
+   * Specifies, that the search term has to match exactly.
    * @deprecated Since 1.1. Use {@link PluginManager#SEARCHER_TYPE_EXACTLY} instead.
    */
   public static final int MATCH_EXACTLY = PluginManager.SEARCHER_TYPE_EXACTLY;
@@ -382,25 +382,25 @@ public class SearchFormSettings {
   }
 
   /**
-   * Gets the Nr of Days
+   * Gets the number of days
    *
-   * If this value is negativ, it searches all data (incl. yesterday)
+   * If this value is negative, it searches all data (including yesterday)
    *
-   * @return Nr of Days to search 
+   * @return number of days to search 
    */
   public int getNrDays() {
-      return mNrDays;
+    return mNrDays;
   }
   
   /**
-   * Sets the Nr of Days
+   * Sets the number of days
    *
-   * If this value is negativ, it searches all data (incl. yesterday)
+   * If this value is negative, it searches all data (including yesterday)
    *
-   * @param nr Nr of Days to search
+   * @param nr number of days to search
    */
   public void setNrDays(int nr) {
-      mNrDays = nr;
+    mNrDays = nr;
   }
 
   /**
