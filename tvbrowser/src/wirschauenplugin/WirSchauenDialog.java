@@ -27,6 +27,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
 import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.debug.FormDebugPanel;
 import devplugin.Program;
 import util.browserlauncher.Launch;
 import util.ui.Localizer;
@@ -188,7 +189,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
 
     panel.add(new JScrollPane(mDescription), cc.xyw(3, 9, 4));
     mCounter = new JLabel(mLocalizer.msg("maxChars","(max. 200 characters)"));
-    panel.add(mCounter, cc.xy(3, 11));
+    panel.add(mCounter, cc.xyw(3, 11, 2));
 
     JLabel format = new JLabel(mLocalizer.msg("format","Format")+": ");
     format.setFont(format.getFont().deriveFont(Font.BOLD));
