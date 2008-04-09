@@ -191,7 +191,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
 
     if (nrDays < 0) {
       // Search complete data, beginning yesterday to 4 weeks into the future
-      startDate = startDate.addDays(-1);
+      startDate = Date.getCurrentDate().addDays(-1);
       nrDays = 4*7;
     }
 
