@@ -40,6 +40,7 @@ import util.exc.ErrorHandler;
 import java.awt.event.ActionEvent;
 import java.awt.Window;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.net.URLEncoder;
@@ -138,7 +139,14 @@ public class WirSchauenPlugin extends Plugin {
 
     name = name + program.getChannel().getId();
 
-    if (getPluginManager().getExampleProgram().equals(program) || mAllowedChannels.contains(name)) {
+    Calendar tomorrow = Calendar.getInstance();
+    tomorrow.set(Calendar.HOUR_OF_DAY, 0);
+    tomorrow.set(Calendar.MINUTE, 0);
+    tomorrow.set(Calendar.SECOND, 0);
+    tomorrow.add(Calendar.DAY_OF_MONTH, 1);
+
+    if (getPluginManager().getExampleProgram().equals(program) ||
+        (mAllowedChannels.contains(name) && (program.getDate().getCalendar().compareTo(tomorrow) > 0))) {
 
       AbstractAction action = new AbstractAction() {
         public void actionPerformed(ActionEvent evt) {
