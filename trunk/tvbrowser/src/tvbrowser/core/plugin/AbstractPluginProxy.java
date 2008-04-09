@@ -31,6 +31,7 @@ import java.io.File;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
 
 import tvbrowser.core.Settings;
 import tvdataservice.MutableProgram;
@@ -589,21 +590,26 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * 
    * @param t The exception to handle
    */
-  public void handlePluginException(Throwable t) {
-    String msg = mLocalizer.msg("error.runtimeExceptionAskDeactivation",
+  public void handlePluginException(final Throwable t) {
+    final String msg = mLocalizer.msg("error.runtimeExceptionAskDeactivation",
         "The plugin {0} caused an error. Should it be deactivated?", getInfo().getName());
+    final PluginProxy proxy = this;
 
-    if (ErrorHandler.handle(msg, t, ErrorHandler.SHOW_YES_NO) == ErrorHandler.YES_PRESSED) {
-      try {
-        // Deactivate Plugin
-        PluginProxyManager.getInstance().deactivatePlugin(this);
-      } catch (Throwable e) {
-      }
+    // run the error handler in UI thread as the exception may occur in any thread
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        if (ErrorHandler.handle(msg, t, ErrorHandler.SHOW_YES_NO) == ErrorHandler.YES_PRESSED) {
+          try {
+            // deactivate Plugin
+            PluginProxyManager.getInstance().deactivatePlugin(proxy);
+          } catch (Throwable e) {
+          }
 
-      // Update the settings
-      String[] deactivatedPlugins = PluginProxyManager.getInstance().getDeactivatedPluginIds();
-      Settings.propDeactivatedPlugins.setStringArray(deactivatedPlugins);
-    }
+          // Update the settings
+          String[] deactivatedPlugins = PluginProxyManager.getInstance().getDeactivatedPluginIds();
+          Settings.propDeactivatedPlugins.setStringArray(deactivatedPlugins);
+        }
+      }});
   }
 
   /**

@@ -55,20 +55,20 @@ public class ErrorHandler {
   public static final int YES_PRESSED = 2;
 
   /** No was pressed */
-  public static final int NO_PRESSED = 3;  
+  public static final int NO_PRESSED = 3;
   
-  /** The logger for this class. */  
+  /** The logger for this class. */
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(ErrorHandler.class.getName());
 
-  /** The localizer of this class. */  
+  /** The localizer of this class. */
   static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ErrorHandler.class);
 
-  /** The icon to use for error messages. */  
+  /** The icon to use for error messages. */
   static final Icon ERROR_ICON = UIManager.getIcon("OptionPane.errorIcon");
   
-  /** The parent frame to use for error messages. */  
+  /** The parent frame to use for error messages. */
   static JFrame mParent;
   
   
@@ -77,7 +77,7 @@ public class ErrorHandler {
    * Sets the parent frame to use for error messages.
    *
    * @param parentFrame the parent frame to use for error messages.
-   */  
+   */
   public static void setFrame(JFrame parentFrame) {
     mParent = parentFrame;
   }
@@ -85,10 +85,10 @@ public class ErrorHandler {
   
   
   /**
-   * Handles a TvBrowserException (Shows and loggs it).
+   * Handles a TvBrowserException (Shows and logs it).
    *
    * @param tvExc The exception to handle.
-   */  
+   */
   public static void handle(TvBrowserException tvExc) {
     handle(tvExc.getLocalizedMessage(), tvExc);
   }
@@ -96,11 +96,11 @@ public class ErrorHandler {
   
   
   /**
-   * Handles a Throwable (Shows and loggs it).
+   * Handles a Throwable (Shows and logs it).
    *
    * @param msg The localized error message to show to the user.
    * @param thr The exception to handle.
-   */  
+   */
   public static void handle(String msg, Throwable thr) {
     mLog.log(Level.SEVERE, msg, thr);
     
@@ -109,7 +109,7 @@ public class ErrorHandler {
   
 
   /**
-   * Handles a Throwable (Shows and loggs it).
+   * Handles a Throwable (Shows and logs it).
    *
    * @param msg The localized error message to show to the user.
    * @param thr The exception to handle.
@@ -117,7 +117,7 @@ public class ErrorHandler {
    * @return Value of Button that was pressed: ErrorHandler.YES_PRESSED, ErrorHandler.NO_PRESSED, ErrorHandler.OK_PRESSED
    * 
    * @since 2.1
-   */  
+   */
   public static int handle(String msg, Throwable thr, int messageType) {
     mLog.log(Level.SEVERE, msg, thr);
     

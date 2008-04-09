@@ -51,7 +51,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 
 import tvbrowser.core.icontheme.IconLoader;
 import util.io.IOUtilities;
@@ -240,10 +239,7 @@ class ErrorWindow {
    * Centers and shows the error dialog.
    */
   public void centerAndShow() {
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        UiUtilities.centerAndShow(getWindow());
-      }});
+    UiUtilities.centerAndShow(getWindow());
   }
 
   /**
