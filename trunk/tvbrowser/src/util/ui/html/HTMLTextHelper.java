@@ -76,7 +76,7 @@ public class HTMLTextHelper {
   }
   
   /**
-   * Replaces html german Umlaute and the html formating tags with a Java String.
+   * Replaces html German umlauts and the html formatting tags with a Java String.
    * 
    * @param html The html text to replace.
    * @return The text with the replaced Strings.

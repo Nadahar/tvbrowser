@@ -116,8 +116,9 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
     mSearchBt = new JButton(msg);
     mSearchBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-    	if(!mSearchForm.hasFocus())
-          search();
+    	if(!mSearchForm.hasFocus()) {
+        search();
+      }
       }
     });
     getRootPane().setDefaultButton(mSearchBt);
@@ -153,6 +154,10 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
     settings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY);
     settings.setCaseSensitive(true);
 
+    setSearchSettings(settings);
+  }
+  
+  public void setSearchSettings(SearchFormSettings settings) {
     mSearchForm.setSearchFormSettings(settings);
   }
 

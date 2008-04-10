@@ -25,26 +25,6 @@
  */
 package util.ui;
 
-import devplugin.Program;
-import devplugin.ProgramSearcher;
-import devplugin.ProgressMonitor;
-import tvbrowser.core.Settings;
-import tvbrowser.core.TvDataUpdater;
-import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.ui.mainframe.MainFrame;
-import util.exc.ErrorHandler;
-import util.exc.TvBrowserException;
-import util.settings.PluginPictureSettings;
-import util.settings.ProgramPanelSettings;
-
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRootPane;
-import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -55,8 +35,34 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRootPane;
+import javax.swing.JScrollPane;
+
+import tvbrowser.core.Settings;
+import tvbrowser.core.TvDataUpdater;
+import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.extras.searchplugin.SearchDialog;
+import tvbrowser.ui.mainframe.MainFrame;
+import util.exc.ErrorHandler;
+import util.exc.TvBrowserException;
+import util.settings.PluginPictureSettings;
+import util.settings.ProgramPanelSettings;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+
+import devplugin.Program;
+import devplugin.ProgramSearcher;
+import devplugin.ProgressMonitor;
+
 /**
- * This Class helps to search for a Program. 
+ * This Class helps to search for a Program.
  * 
  * It creates a new Thread, searches with a SearchFormSettings and Displays the Result
  * @author bodum
@@ -69,7 +75,7 @@ public class SearchHelper {
   private static SearchHelper mInstance;
 
   /** Private Constructor */
-  private SearchHelper() {}  
+  private SearchHelper() {}
 
   /**
    * Search for Programs and Display a Result-Dialog.
@@ -143,7 +149,7 @@ public class SearchHelper {
             JOptionPane.showMessageDialog(MainFrame.getInstance(), msg);
           } else {
             String title = mLocalizer.msg("hitsTitle", "Sendungen mit {0}", searcherSettings.getSearchText());
-            showHitsDialog(comp, programArr, title, pictureSettings);
+            showHitsDialog(comp, programArr, title, searcherSettings, pictureSettings);
           }
         } catch (TvBrowserException exc) {
           comp.setCursor(cursor);
@@ -160,17 +166,19 @@ public class SearchHelper {
    * @param comp Parent Component
    * @param programArr The hits.
    * @param title The dialog's title.
+   * @param searchSettings
    * @param pictureSettings Picture Settings
    */
-  private void showHitsDialog(Component comp, final Program[] programArr, String title, ProgramPanelSettings pictureSettings) {
+  private void showHitsDialog(Component comp, final Program[] programArr, String title, final SearchFormSettings searchSettings, ProgramPanelSettings pictureSettings) {
     final JDialog dlg;
     
-    Window w = UiUtilities.getBestDialogParent(comp);
+    final Window parentWindow = UiUtilities.getBestDialogParent(comp);
     
-    if (w instanceof Frame)
-      dlg = new JDialog((Frame)w, title, true);
-    else
-      dlg = new JDialog((Dialog)w, title, true);
+    if (parentWindow instanceof Frame) {
+      dlg = new JDialog((Frame)parentWindow, title, true);
+    } else {
+      dlg = new JDialog((Dialog)parentWindow, title, true);
+    }
 
     UiUtilities.registerForClosing(new WindowClosingIf() {
 
@@ -185,7 +193,7 @@ public class SearchHelper {
     });
 
     JPanel main = new JPanel(new BorderLayout());
-    main.setBorder(UiUtilities.DIALOG_BORDER);
+    main.setBorder(Borders.DLU4_BORDER);
     dlg.setContentPane(main);
 
 
@@ -194,8 +202,9 @@ public class SearchHelper {
 
     int i = 0;
     while (i < programArr.length && curPos == -1) {
-        if (!programArr[i].isExpired())
-            curPos = i;
+        if (!programArr[i].isExpired()) {
+          curPos = i;
+        }
         i++;
     }
 
@@ -203,36 +212,65 @@ public class SearchHelper {
     list.addMouseListeners(null);
 
     main.add(new JScrollPane(list), BorderLayout.CENTER);
-    if (curPos >= 0)
-        list.setSelectedValue(programArr[curPos], true);
+    if (curPos >= 0) {
+      list.setSelectedValue(programArr[curPos], true);
+    }
 
-    JPanel buttonPn = new JPanel(new BorderLayout());
-    buttonPn.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
-    main.add(buttonPn, BorderLayout.SOUTH);
+    ButtonBarBuilder builder = ButtonBarBuilder.createLeftToRightBuilder();
+    builder.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
 
+    // send to plugins
     Icon icon = IconLoader.getInstance().getIconFromTheme("actions", "edit-copy", 16);
     JButton sendBt = new JButton(icon);
-    sendBt.setToolTipText(mLocalizer.msg("send", "send Programs to another Plugin"));
+    sendBt.setToolTipText(mLocalizer.msg("send", "Send Programs to another Plugin"));
     sendBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         Program[] program = list.getSelectedPrograms();
 
-        if (program == null)
+        if (program == null) {
           program = programArr;
+        }
 
         SendToPluginDialog send = new SendToPluginDialog(null, MainFrame.getInstance(), program);
         send.setVisible(true);
       }
     });
-    buttonPn.add(sendBt, BorderLayout.WEST);
+    builder.addFixed(sendBt);
 
+    // change search button
+    if (!(comp instanceof SearchDialog)) {
+      icon = IconLoader.getInstance().getIconFromTheme("actions", "document-edit", 16);
+      JButton changeBt = new JButton(icon);
+      changeBt.setToolTipText(mLocalizer.msg("edit", "Change search parameters"));
+      changeBt.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent evt) {
+          dlg.dispose();
+          SearchDialog searchDialog;
+          if (parentWindow instanceof Frame) {
+            searchDialog = new SearchDialog((Frame) parentWindow);
+          }
+          else {
+            searchDialog = new SearchDialog((Dialog) parentWindow);
+          }
+          searchDialog.setSearchSettings(searchSettings);
+          UiUtilities.centerAndShow(searchDialog);
+        }
+      });
+      builder.addRelatedGap();
+      builder.addFixed(changeBt);
+    }
+
+    // close button
     JButton closeBt = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
     closeBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         dlg.dispose();
       }
     });
-    buttonPn.add(closeBt, BorderLayout.EAST);
+    
+    builder.addGlue();
+    builder.addFixed(closeBt);
+    main.add(builder.getPanel(), BorderLayout.SOUTH);
 
     dlg.getRootPane().setDefaultButton(closeBt);
     
