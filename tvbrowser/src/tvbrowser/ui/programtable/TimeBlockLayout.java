@@ -108,7 +108,7 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
         }
       }
 
-      // increase overall height by block hight
+      // increase overall height by block height
       int blockStart = blockEnd;
       blockEnd += maxHeight;
       
@@ -117,28 +117,37 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
         if(lastLayoutComponentList[col] != null) {
           lastLayoutComponentList[col].getPanel().setHeight(blockStart - lastLayoutComponentList[col].getPrePosition());
         }
-        
+
         // set all panels in this block to preferred size
-        ArrayList list = blockProgramList[col];
+        ArrayList<ProgramPanel> list = blockProgramList[col];
         if(!list.isEmpty()) {
           if(list.get(0).equals(model.getProgramPanel(col,0))) {
             columnStartArr[col] = blockStart;
           }
-/*          
+
+/*        
           // calculate wanted full size of this block column
           int sumLength = 0;
+          int sumMinLength = 0;
           for (int i = 0; i < list.size(); i++) {
             ProgramPanel panel = (ProgramPanel)list.get(i);
+            sumMinLength += (mCompactLayout ? panel.getMinimumHeight() : panel.getPreferredHeight());
             panel.setMaximumHeight();
             sumLength += panel.getHeight();
           }
           
-          // now distribute evenly (excluding the last panel)
-          double factor = ((double)maxHeight)/(double)sumLength;
+          double factor = 1;
+          // now distribute programs evenly in available space (excluding the last panel)
+          // but do not stretch programs longer than they want to be
+          if (sumLength > maxHeight) {
+            factor = ((double)(maxHeight - sumMinLength))/(double)(sumLength - sumMinLength);
+          }
+          
           sumLength = 0;
-          for (int i = 0; i < list.size() - 2; i++) {
+          for (int i = 0; i < list.size() - 1; i++) {
             ProgramPanel panel = (ProgramPanel)list.get(i);
             int height = (int) Math.floor(factor * panel.getHeight());
+            height = Math.max(height, panel.getMinimumHeight());
             panel.setHeight(height);
             sumLength += height;
           }

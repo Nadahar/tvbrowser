@@ -366,6 +366,10 @@ private static Font getDynamicFontSize(Font font, int offset) {
     }
   }
 
+  public void setMaximumHeight() {
+    setProgram(getProgram(), 10000);
+  }
+
   /**
    * Gets the height.
    * 
