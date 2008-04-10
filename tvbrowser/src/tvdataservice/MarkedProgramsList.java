@@ -89,10 +89,22 @@ public class MarkedProgramsList {
   }
 
   protected void addProgram(MutableProgram p) {
-    if(p!= null && !mMarkedPrograms.contains(p) && p.getMarkerArr().length > 0) {
+    if(p!= null && !contains(p) && p.getMarkerArr().length > 0) {
       mMarkedPrograms.add(p);
       handleFilterMarking(p);
     }
+  }
+  
+  private boolean contains(MutableProgram p) {
+    if(p != null) {
+      for(MutableProgram prog : mMarkedPrograms) {
+        if(p.getID().equals(prog.getID())) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
   }
 
   protected void removeProgram(MutableProgram p) {
