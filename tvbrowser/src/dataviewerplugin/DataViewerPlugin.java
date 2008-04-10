@@ -13,7 +13,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
@@ -42,17 +41,14 @@ import javax.swing.table.TableColumn;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
-
-import devplugin.Channel;
-
 import devplugin.ActionMenu;
+import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.SettingsTab;
-
 import devplugin.Version;
 
 /**
@@ -64,7 +60,7 @@ import devplugin.Version;
 public class DataViewerPlugin extends Plugin implements Runnable {
 
   protected static Localizer mLocalizer = util.ui.Localizer
-      .getLocalizerFor(DataViewerPlugin.class);
+  .getLocalizerFor(DataViewerPlugin.class);
 
   private Object[][] mDataTable;
   private Channel[] mChannels;
@@ -74,23 +70,23 @@ public class DataViewerPlugin extends Plugin implements Runnable {
   private Thread mThread;
   private Properties mProperties;
   private JDialog mDialog;
-  private Vector[][] mErrData;
+  private Vector<Program>[][] mErrData;
   private JProgressBar mProgress;
   private Date mToday = Date.getCurrentDate();
   private boolean mReactOnDataUpdate = false;
   private int mMinChannelWidth = 0;
 
   private static final Version mVersion = new Version(1,05);
-  
+
   private static DataViewerPlugin mInstance;
-  
+
   /**
    * Creates an instance of this class.
    */
   public DataViewerPlugin() {
     mInstance = this;
   }
-  
+
   /**
    * Gets the instance of this plugin.
    * 
@@ -99,36 +95,40 @@ public class DataViewerPlugin extends Plugin implements Runnable {
   public static DataViewerPlugin getInstance() {
     return mInstance;
   }
-  
+
   public static Version getVersion() {
     return mVersion;
   }
-  
+
   /** Plugin Info */
+  @Override
   public PluginInfo getInfo() {
     Class pluginInfo = PluginInfo.class;
-    
+
     try {
       Constructor constructor = pluginInfo.getConstructor(new Class[] {Class.class,String.class,String.class,String.class,String.class});
-      
+
       return (PluginInfo)constructor.newInstance(new Object[] {DataViewerPlugin.class,"DataViewerPlugin",mLocalizer.msg("info",
       "Lists the available program data."),"René Mach","GPL"});
     } catch (Exception e) {
       try {
         Constructor constructor = pluginInfo.getConstructor(new Class[] {String.class,String.class,String.class,Version.class,String.class});
-        
+
         return (PluginInfo)constructor.newInstance(new Object[] {"DataViewerPlugin",mLocalizer.msg("info",
-        "Lists the available program data."),"René Mach",mVersion,"GPL"});        
+        "Lists the available program data."),"René Mach",mVersion,"GPL"});
       }catch(Exception ee) {};
-    } 
+    }
     return new PluginInfo();
   }
 
+  @Override
   public void onDeactivation() {
-    if (mDialog != null && mDialog.isVisible())
+    if (mDialog != null && mDialog.isVisible()) {
       mDialog.dispose();
+    }
   }
-  
+
+  @Override
   public void handleTvBrowserStartFinished() {
     mReactOnDataUpdate = true;
     mThread = new Thread(this);
@@ -137,8 +137,9 @@ public class DataViewerPlugin extends Plugin implements Runnable {
   }
 
   private void showTable() {
-    if (mDialog != null && mDialog.isVisible())
+    if (mDialog != null && mDialog.isVisible()) {
       mDialog.dispose();
+    }
 
     final JTable table = new JTable(new DataTableModel(mDataTable, mDateString));
     table.setDefaultRenderer(Object.class, new DataTableCellRenderer());
@@ -155,6 +156,7 @@ public class DataViewerPlugin extends Plugin implements Runnable {
     }
 
     table.addKeyListener(new KeyAdapter() {
+      @Override
       public void keyPressed(KeyEvent e) {
         table.getRootPane().dispatchEvent(e);
       }
@@ -167,14 +169,15 @@ public class DataViewerPlugin extends Plugin implements Runnable {
     channels.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     channels.setGridColor(Color.WHITE);
     channels.setIntercellSpacing(new Dimension(0, 2));
-    
+
     mMinChannelWidth = Math.max(channels.getPreferredSize().width-5, mMinChannelWidth);
-    
+
     channels.setPreferredSize(new Dimension(mMinChannelWidth+5,channels.getPreferredSize().height));
     channels.setMaximumSize(channels.getPreferredSize());
     channels.setFocusable(false);
 
     channels.addKeyListener(new KeyAdapter() {
+      @Override
       public void keyPressed(KeyEvent e) {
         channels.getRootPane().dispatchEvent(e);
       }
@@ -183,22 +186,22 @@ public class DataViewerPlugin extends Plugin implements Runnable {
     JScrollPane pane = new JScrollPane();
     pane.setViewportView(table);
     pane.setRowHeaderView(channels);
-    
+
     pane.getRowHeader().setPreferredSize(
         new Dimension(mMinChannelWidth+5, pane.getPreferredSize().height));
     pane.getRowHeader().setMaximumSize(pane.getRowHeader().getPreferredSize());
     pane.getRowHeader().setSize(pane.getRowHeader().getPreferredSize());
     pane.getRowHeader().setBackground(Color.WHITE);
-    
+
     pane.getViewport().setBackground(table.getBackground());
 
     JLabel green = new JLabel(mLocalizer.msg("green", "Green: "));
     JLabel orange = new JLabel(mLocalizer.msg("orange", "Orange: "));
     JLabel red = new JLabel(mLocalizer.msg("red", "Red: "));
     JLabel lastDownload = new JLabel(mLocalizer.msg("last",
-        "Last data download was: ")
-        + mProperties.getProperty("last", mLocalizer.msg("noLast",
-            "no date available")));
+    "Last data download was: ")
+    + mProperties.getProperty("last", mLocalizer.msg("noLast",
+    "no date available")));
     lastDownload.setBorder(BorderFactory.createEmptyBorder(0, 2, 5, 0));
 
     green.setOpaque(true);
@@ -228,16 +231,17 @@ public class DataViewerPlugin extends Plugin implements Runnable {
     colors.add(red1);
 
     table.addMouseMotionListener(new MouseMotionAdapter() {
+      @Override
       public void mouseMoved(MouseEvent e) {
         String toolTip = "<html>" + mDates[table.columnAtPoint(e.getPoint())]
-            + " " + channels.getValueAt(table.rowAtPoint(e.getPoint()), 0);
+                                           + " " + channels.getValueAt(table.rowAtPoint(e.getPoint()), 0);
 
-        Vector vec = mErrData[table.rowAtPoint(e.getPoint())][table
-            .columnAtPoint(e.getPoint())];
+        Vector<Program> vec = mErrData[table.rowAtPoint(e.getPoint())][table
+                                                              .columnAtPoint(e.getPoint())];
 
         if (vec != null) {
           for (int i = 0; i < vec.size(); i++) {
-            Program p = (Program) vec.elementAt(i);
+            Program p = vec.elementAt(i);
 
             toolTip += "<br>" + p.getTimeString() + " " + p.getTitle();
           }
@@ -249,6 +253,7 @@ public class DataViewerPlugin extends Plugin implements Runnable {
       }
     });
     table.addMouseListener(new MouseAdapter() {
+      @Override
       public void mousePressed(final MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2) {
           String value = (String) table.getValueAt(table.rowAtPoint(e
@@ -256,18 +261,18 @@ public class DataViewerPlugin extends Plugin implements Runnable {
           if (value.compareToIgnoreCase("false") != 0) {
             SwingUtilities.invokeLater(new Runnable() {
               public void run() {
-                Vector vec = mErrData[table.rowAtPoint(e.getPoint())][table
-                    .columnAtPoint(e.getPoint())];
+                Vector<Program> vec = mErrData[table.rowAtPoint(e.getPoint())][table
+                                                                      .columnAtPoint(e.getPoint())];
 
                 if (vec != null) {
                   MainFrame.getInstance().scrollToProgram(
-                      (Program) vec.elementAt(0));
+                      vec.elementAt(0));
                 } else {
                   MainFrame.getInstance().goTo(
                       mDates[table.columnAtPoint(e.getPoint())]);
                   MainFrame.getInstance().getProgramTableScrollPane()
-                      .scrollToChannel(
-                          mChannels[table.rowAtPoint(e.getPoint())]);
+                  .scrollToChannel(
+                      mChannels[table.rowAtPoint(e.getPoint())]);
                 }
               }
             });
@@ -289,7 +294,7 @@ public class DataViewerPlugin extends Plugin implements Runnable {
     jp.setMessage(l);
 
     mDialog = jp.createDialog(getParentFrame(), mLocalizer.msg("data",
-        "Data viewer"));
+    "Data viewer"));
     mDialog.setResizable(true);
     mDialog.setModal(false);
 
@@ -309,18 +314,21 @@ public class DataViewerPlugin extends Plugin implements Runnable {
 
     mDialog.setVisible(true);
     mDialog.addComponentListener(new ComponentAdapter() {
+      @Override
       public void componentHidden(ComponentEvent e) {
         savePosition();
       }
     });
 
     mDialog.addWindowListener(new WindowAdapter() {
+      @Override
       public void windowClosing(WindowEvent e) {
         savePosition();
       }
     });
   }
 
+  @Override
   public ActionMenu getButtonAction() {
     AbstractAction action = new AbstractAction() {
 
@@ -328,30 +336,32 @@ public class DataViewerPlugin extends Plugin implements Runnable {
 
       public void actionPerformed(ActionEvent e) {
         if (mThread == null || mThread != null && mThread.isAlive() || mToday.compareTo(Date.getCurrentDate()) != 0) {
-          if (mProgress == null)
+          if (mProgress == null) {
             mProgress = new JProgressBar();
+          }
           mProgress.setIndeterminate(true);
-          
+
           JOptionPane jp = new JOptionPane();
           jp.setMessageType(JOptionPane.PLAIN_MESSAGE);
 
           JLabel label = new JLabel(mLocalizer.msg("nodata",
-              "Data is being listed. Please wait or retry in 10 seconds."));
+          "Data is being listed. Please wait or retry in 10 seconds."));
 
           Object[] msg = { mProgress, label };
 
           jp.setMessage(msg);
           mDialog = jp.createDialog(getParentFrame(), mLocalizer.msg("data",
-              "Data viewer"));
+          "Data viewer"));
           mDialog.setResizable(false);
           mDialog.setModal(false);
 
           mDialog.setLocationRelativeTo(getParentFrame());
-          
+
           mDialog.setVisible(true);
-          
-          if(mThread == null || mToday.compareTo(Date.getCurrentDate()) != 0)
+
+          if(mThread == null || mToday.compareTo(Date.getCurrentDate()) != 0) {
             handleTvBrowserStartFinished();
+          }
 
           return;
         }
@@ -376,53 +386,60 @@ public class DataViewerPlugin extends Plugin implements Runnable {
     mProperties.setProperty("height", String.valueOf(mDialog.getHeight()));
   }
 
+  @Override
   public void handleTvDataUpdateFinished() {
     if(mReactOnDataUpdate) {
       mProperties.setProperty("last", DateFormat.getDateTimeInstance(
-        DateFormat.FULL, DateFormat.SHORT).format(
-        new java.util.Date(System.currentTimeMillis())));
+          DateFormat.FULL, DateFormat.SHORT).format(
+              new java.util.Date(System.currentTimeMillis())));
       handleTvBrowserStartFinished();
     }
   }
 
+  @Override
   public Properties storeSettings() {
     return mProperties;
   }
 
+  @Override
   public void loadSettings(Properties settings) {
-    if (settings == null)
+    if (settings == null) {
       mProperties = new Properties();
-    else
+    } else {
       mProperties = settings;
+    }
   }
 
   public void run() {
     int acceptableGap = getAcceptableGap();
-    
+
     Channel[] temp = getPluginManager().getSubscribedChannels();
-    ArrayList ch = new ArrayList();
-    
-    for(int i = 0; i < temp.length; i++)
-      if((temp[i].getCategories() & (Channel.CATEGORY_CINEMA | Channel.CATEGORY_EVENTS)) == 0) {
-        ch.add(temp[i]);
-        mMinChannelWidth = Math.max(mMinChannelWidth,UiUtilities.getStringWidth(new JTable().getFont(),temp[i].getName()));
+    ArrayList<Channel> ch = new ArrayList<Channel>();
+
+    for (Channel element : temp) {
+      if((element.getCategories() & (Channel.CATEGORY_CINEMA | Channel.CATEGORY_EVENTS)) == 0) {
+        ch.add(element);
+        mMinChannelWidth = Math.max(mMinChannelWidth,UiUtilities.getStringWidth(new JTable().getFont(),element.getName()));
       }
-    
-    mChannels = (Channel[])ch.toArray(new Channel[ch.size()]);
+    }
+
+    mChannels = ch.toArray(new Channel[ch.size()]);
     mToday = Date.getCurrentDate();
 
-    Vector[] channels = new Vector[mChannels.length];
-    HashMap err = new HashMap();
+    Vector<String>[] channels = new Vector[mChannels.length];
+    HashMap<Channel, HashMap<Integer, Vector<Program>>> err = new HashMap<Channel, HashMap<Integer, Vector<Program>>>();
 
-    if (channels.length < 1)
+    if (channels.length < 1) {
       return;
+    }
 
     {
       int j = -1;
       boolean found = false;
-      
-      for (int i = 0; i < mChannels.length; i++)
-        channels[i] = new Vector();
+
+      for (int i = 0; i < mChannels.length; i++) {
+        channels[i] = new Vector<String>();
+      }
 
       Program[] last = new Program[mChannels.length];
 
@@ -430,15 +447,15 @@ public class DataViewerPlugin extends Plugin implements Runnable {
         found = false;
 
         for (int i = 0; i < mChannels.length; i++) {
-          Iterator it = getPluginManager().getChannelDayProgram(
+          Iterator<Program> it = getPluginManager().getChannelDayProgram(
               Date.getCurrentDate().addDays(j), mChannels[i]);
-          
+
           boolean complete = true;
           boolean picture = false;
-          
+
           short startTimeLimit = 0;
           short endTimeLimit = 0;
-          
+
           try {
             Method method = mChannels[i].getClass().getMethod("getStartTimeLimit", new Class[0]);
             startTimeLimit = ((Integer)method.invoke(mChannels[i],new Object[0])).shortValue();
@@ -446,23 +463,24 @@ public class DataViewerPlugin extends Plugin implements Runnable {
             method = mChannels[i].getClass().getMethod("getEndTimeLimit", new Class[0]);
             endTimeLimit = ((Integer)method.invoke(mChannels[i],new Object[0])).shortValue();
           } catch (Exception e) {}
-          
+
           if (it != null && it.hasNext()) {
             found = true;
 
-            if (last[i] == null)
-              last[i] = (Program) it.next();            
-            
+            if (last[i] == null) {
+              last[i] = it.next();
+            }
+
             while (it.hasNext()) {
-              Program p1 = (Program) it.next();
+              Program p1 = it.next();
               picture = picture || p1.getBinaryField(ProgramFieldType.PICTURE_TYPE) != null;
-              
+
               if (j != -1) {
                 int length = last[i].getStartTime() + last[i].getLength();
-                
+
                 if(endTimeLimit - startTimeLimit < 0) {
                   length = length >= 1439 ? length - 1439 : length;
-                  
+
                   if(length >= endTimeLimit && length < startTimeLimit) {
                     length = p1.getStartTime();
                   }
@@ -472,27 +490,28 @@ public class DataViewerPlugin extends Plugin implements Runnable {
                     length = p1.getStartTime();
                   }
                 }
-                
+
                 length = length >= 1439 ? length - 1439 : length;
-                
+
                 if (p1.getStartTime() - acceptableGap > length || p1.getStartTime() + acceptableGap < length) {
                   putInHashMap(err,p1,mChannels[i],new Integer(channels[i].size()));
                   complete = false;
                 }
               }
-                            
-              last[i] = p1;              
+
+              last[i] = p1;
             }
-            
+
             if (endTimeLimit == startTimeLimit && (last[i].getStartTime() + last[i].getLength() <= last[i].getStartTime() && j != -1)) {
               putInHashMap(err,last[i],mChannels[i],new Integer(channels[i].size()));
               complete = false;
             }
 
-            if (complete && j != -1)
+            if (complete && j != -1) {
               channels[i].addElement("true" + (picture ? "pict" : ""));
-            else if (j != -1)
+            } else if (j != -1) {
               channels[i].addElement("uncomplete" + (picture ? "pict" : ""));
+            }
           } else if (j != -1) {
             channels[i].addElement("false");
             last[i] = null;
@@ -515,79 +534,84 @@ public class DataViewerPlugin extends Plugin implements Runnable {
         if (i == 0) {
           mDates[j] = Date.getCurrentDate().addDays(j);
           mDateString[j] = Date.getCurrentDate().addDays(j).getDayOfMonth()
-              + ".";
+          + ".";
         }
         if (err.containsKey(mChannels[i])) {
 
-          HashMap dates = (HashMap) err.get(mChannels[i]);
+          HashMap<Integer, Vector<Program>> dates = err.get(mChannels[i]);
 
-          if (dates.containsKey(new Integer(j)))
-            mErrData[i][j] = (Vector) dates.get(new Integer(j));
-          else
+          if (dates.containsKey(new Integer(j))) {
+            mErrData[i][j] = dates.get(new Integer(j));
+          } else {
             mErrData[i][j] = null;
-        } else
+          }
+        } else {
           mErrData[i][j] = null;
-        mDataTable[i][j] = (String) channels[i].elementAt(j);
+        }
+        mDataTable[i][j] = channels[i].elementAt(j);
       }
     }
 
     if (mProgress != null) {
       mProgress.setIndeterminate(false);
-      if (mDialog != null && mDialog.isVisible())
+      if (mDialog != null && mDialog.isVisible()) {
         showTable();
+      }
     }
   }
 
-  private void putInHashMap(HashMap map, Program p, Channel channel, Integer n) {
+  private void putInHashMap(HashMap<Channel, HashMap<Integer, Vector<Program>>> map, Program p, Channel channel, Integer n) {
 
     if (map.containsKey(channel)) {
-      HashMap dates = (HashMap) map.get(channel);
+      HashMap<Integer, Vector<Program>> dates = map.get(channel);
 
       if (dates.containsKey(n)) {
-        Vector vec = (Vector) dates.get(n);
+        Vector<Program> vec = dates.get(n);
         vec.addElement(p);
       } else {
-        Vector vec = new Vector();
+        Vector<Program> vec = new Vector<Program>();
         vec.addElement(p);
         dates.put(n, vec);
       }
     } else {
-      HashMap dates = new HashMap();
-      Vector vec = new Vector();
+      HashMap<Integer, Vector<Program>> dates = new HashMap<Integer, Vector<Program>>();
+      Vector<Program> vec = new Vector<Program>();
       vec.addElement(p);
       dates.put(n, vec);
       map.put(channel, dates);
     }
   }
-  
+
   protected int getAcceptableGap() {
     return Integer.parseInt(mProperties.getProperty("acceptableGap","1"));
   }
-  
+
   protected void setAcceptableGap(int gap) {
     if(Integer.parseInt(mProperties.getProperty("acceptableGap","1")) != gap) {
       mProperties.setProperty("acceptableGap", String.valueOf(gap));
-      
+
       new Thread("Wait for table") {
+        @Override
         public void run() {
           while(mThread == null || mThread.isAlive()) {
             try {
               Thread.sleep(200);
             }catch(Exception e) {}
           }
-          
+
           handleTvBrowserStartFinished();
         }
       }.start();
-      
+
     }
   }
-  
+
   protected Icon getIcon() {
     return createImageIcon("actions",
         "format-justify-fill",16);
   }
-  
+
+  @Override
   public SettingsTab getSettingsTab() {
     return new DataViewerPluginSettingsTab();
   }
