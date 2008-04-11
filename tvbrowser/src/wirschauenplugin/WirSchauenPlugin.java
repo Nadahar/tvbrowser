@@ -31,7 +31,6 @@ import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.Version;
 import devplugin.ThemeIcon;
-import devplugin.PluginTreeNode;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.io.IOUtilities;
