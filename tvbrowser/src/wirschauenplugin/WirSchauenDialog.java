@@ -43,6 +43,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URLEncoder;
 import java.net.URL;
+import java.util.HashMap;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -59,6 +60,10 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import dreamboxdataservice.DreamboxHandler;
 
 public class WirSchauenDialog extends JDialog implements WindowClosingIf {
   private static final String OMDB_MOVIE_URL = "http://www.omdb.org/movie/";
@@ -168,7 +173,8 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
         }
       }
     });
-
+    mDescription.setLineWrap(true);
+    mDescription.setWrapStyleWord(true);
     mDescription.getDocument().addDocumentListener(new DocumentListener() {
       private void updateRemaining() {
         int remaining = 200 - mDescription.getDocument().getLength();
@@ -187,7 +193,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
         updateRemaining();
       }});
 
-    panel.add(new JScrollPane(mDescription), cc.xyw(3, 9, 4));
+    panel.add(new JScrollPane(mDescription, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), cc.xyw(3, 9, 4));
     mCounter = new JLabel(mLocalizer.msg("maxChars","(max. 200 characters)"));
     panel.add(mCounter, cc.xyw(3, 11, 2));
 
@@ -245,8 +251,6 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
           countLabel.setText(mLocalizer.msg("countNone", "No description available on the server."));
         } else if (count == 1) {
           countLabel.setText(mLocalizer.msg("countOne", "One description available on the server. But you could add a better one."));
-        } else {
-          countLabel.setText(mLocalizer.msg("countMultiple", "{0} descriptions available on the server. But you could add a better one.", count));
         }
 
         countLabel.setFont(countLabel.getFont().deriveFont(Font.PLAIN));
@@ -307,8 +311,52 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
       url = url.append("&length=").append(program.getLength());
       url = url.append("&title=").append(URLEncoder.encode(program.getTitle(), "UTF-8"));
 
-      URL u = new URL(WirSchauenPlugin.BASE_URL + "countTVBrowserDescriptions/?"+ url);
-      count = Integer.parseInt(new String(IOUtilities.loadFileFromHttpServer(u)));
+      URL u = new URL(WirSchauenPlugin.BASE_URL + "findDescription/?"+ url);
+
+      WirSchauenHandler handler = new WirSchauenHandler();
+      SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
+      saxParser.parse(u.openStream(), handler);
+
+      if (handler.getData().get("desc_id") != null) {
+        count = 1;
+
+        HashMap<String, String> data = handler.getData();
+
+        if (data.get("url").startsWith("http://www.omdb.org/movie/")) {
+          mOmdb.setText(data.get("url").substring(26));
+        }
+
+        if (data.get("desc") != null) {
+          mDescription.setText(data.get("desc"));
+        }
+
+        if (data.get("genre") != null) {
+          mGenre.setText(data.get("genre"));
+        }
+        if (data.get("premiere") != null) {
+          if (data.get("premiere").equalsIgnoreCase("true")) {
+            mPremiere.setSelected(true);
+          } else {
+            mPremiere.setSelected(false);
+          }
+        }
+        if (data.get("subtitle") != null) {
+          if (data.get("subtitle").equalsIgnoreCase("true")) {
+            mSubtitle.setSelected(true);
+          } else {
+            mSubtitle.setSelected(false);
+          }
+        }
+        if (data.get("omu") != null) {
+          if (data.get("omu").equalsIgnoreCase("true")) {
+            mOwS.setSelected(true);
+          } else {
+            mOwS.setSelected(false);
+          }
+        }
+      } else {
+        count = 0;
+      }
     } catch (NumberFormatException e) {
       e.printStackTrace();
     } catch (Exception e) {
