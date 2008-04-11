@@ -59,7 +59,7 @@ import javax.swing.ImageIcon;
  * With this plugin it is possible to add information about a program and send it to wirschauen.de
  */
 public class WirSchauenPlugin extends Plugin {
-  private static final Version mVersion = new Version(0, 4, 0, false);
+  private static final Version mVersion = new Version(0, 5, 0, false);
 
   private static Logger mLog = Logger.getLogger(WirSchauenPlugin.class.getName());
 
