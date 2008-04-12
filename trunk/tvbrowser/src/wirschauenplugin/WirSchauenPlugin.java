@@ -185,6 +185,18 @@ public class WirSchauenPlugin extends Plugin {
     UiUtilities.centerAndShow(dialog);
 
     if (dialog.getButtonPressed() == JOptionPane.OK_OPTION) {
+      // check whether we got any input at all
+      if (!dialog.hasChanged()) {
+        return;
+      };
+      
+      // we have new input, so store it on the server
+      String genre = dialog.getGenre();
+      String description = dialog.getDescription();
+      String flagSubtitle = dialog.getSubtitle();
+      String flagOws = dialog.getOws();
+      String flagPremiere = dialog.getPremiere();
+      String omdbUrl = dialog.getUrl();
 
       StringBuilder url = new StringBuilder();
       try {
@@ -196,18 +208,18 @@ public class WirSchauenPlugin extends Plugin {
         url = url.append("&minute=").append(program.getMinutes());
         url = url.append("&length=").append(program.getLength());
         url = url.append("&title=").append(URLEncoder.encode(program.getTitle(), "UTF-8"));
-        if (dialog.getUrl().length() > 0) {
-          url = url.append("&url=").append(URLEncoder.encode(dialog.getUrl(), "UTF-8"));
+        if (omdbUrl.length() > 0) {
+          url = url.append("&url=").append(URLEncoder.encode(omdbUrl, "UTF-8"));
         }
-        if (dialog.getGenre().length() > 0) {
-          url = url.append("&genre=").append(URLEncoder.encode(dialog.getGenre(), "UTF-8"));
+        if (genre.length() > 0) {
+          url = url.append("&genre=").append(URLEncoder.encode(genre, "UTF-8"));
         }
-        if (dialog.getDescription().length() > 0) {
-          url = url.append("&description=").append(URLEncoder.encode(dialog.getDescription(), "UTF-8"));
+        if (description.length() > 0) {
+          url = url.append("&description=").append(URLEncoder.encode(description, "UTF-8"));
         }
-        url = url.append("&subtitle=").append(URLEncoder.encode(dialog.getSubtitle(), "UTF-8"));
-        url = url.append("&omu=").append(URLEncoder.encode(dialog.getOmu(), "UTF-8"));
-        url = url.append("&premiere=").append(URLEncoder.encode(dialog.getPremiere(), "UTF-8"));
+        url = url.append("&subtitle=").append(URLEncoder.encode(flagSubtitle, "UTF-8"));
+        url = url.append("&omu=").append(URLEncoder.encode(flagOws, "UTF-8"));
+        url = url.append("&premiere=").append(URLEncoder.encode(flagPremiere, "UTF-8"));
 
         URL u = new URL(BASE_URL + "addTVBrowserEvent/?"+ url);
         IOUtilities.loadFileFromHttpServer(u);

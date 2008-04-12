@@ -3,19 +3,7 @@ package wirschauenplugin;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import tvdataservice.MutableChannelDayProgram;
-import tvdataservice.TvDataUpdateManager;
-import tvdataservice.MutableProgram;
-import devplugin.Date;
-import devplugin.Channel;
-import devplugin.Program;
-
 import java.util.HashMap;
-import java.util.Calendar;
-import java.util.Iterator;
-import java.util.Collection;
-
-import dreamboxdataservice.DreamboxDataService;
 
 /**
  * This Class implements a Sax Handler that parses the Data from

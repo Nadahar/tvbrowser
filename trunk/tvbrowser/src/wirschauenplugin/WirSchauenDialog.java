@@ -13,12 +13,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * CVS information:
- *  $RCSfile$
- *   $Source$
- *     $Date: 2007-09-21 08:08:54 +0200 (Fr, 21 Sep 2007) $
- *   $Author: troggan $
- * $Revision: 3897 $
+ * VCS information:
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package wirschauenplugin;
 
@@ -50,7 +48,6 @@ import java.util.HashMap;
 
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -75,8 +72,14 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
    */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(WirSchauenDialog.class);
 
+  /**
+   * main OMDB url, opened if the movie ID is not yet known
+   */
   protected static final String OMDB_MAIN_URL = "http://www.omdb.org";
 
+  /**
+   * prefix of any movie url from OMDB, this gets stripped for editing
+   */
   private static final String OMDB_MOVIE_URL = "http://www.omdb.org/movie/";
 
   /**
@@ -95,6 +98,11 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
   private JLabel mCounter;
 
   private JButton mOpenOmdb;
+  
+  /**
+   * old properties from the server, so we can compare whether anything was changed at all
+   */
+  private String mOldUrl, mOldGenre, mOldDescription, mOldSubtitle, mOldOws, mOldPremiere;
 
   public WirSchauenDialog(JDialog parent, Program program) {
     super(parent, true);
@@ -188,7 +196,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     panel.add(countLabel, cc.xyw(3,5,4));
 
     // URL
-    JLabel url = new JLabel(mLocalizer.msg("URL", "omdb.org-URL") + ": ");
+    JLabel url = new JLabel(mLocalizer.msg("URL", "URL") + ": ");
     url.setFont(url.getFont().deriveFont(Font.BOLD));
     panel.add(url, cc.xy(1, 7));
     panel.add(new JLabel(OMDB_MOVIE_URL), cc.xy(3, 7));
@@ -196,10 +204,22 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     NumberFormat integerFormat = NumberFormat.getIntegerInstance();
     integerFormat.setGroupingUsed(false);
     integerFormat.setParseIntegerOnly(true);
-    mOmdb = new JFormattedTextField(integerFormat);
+//    mOmdb = new JFormattedTextField(integerFormat);
+    mOmdb = new JTextField();
     mOmdb.setToolTipText(mLocalizer.msg("tooltip.omdbId","Numerical ID of the program"));
     panel.add(mOmdb, cc.xy(4, 7));
-    
+
+    mOmdb.setDocument(new PlainDocument() {
+      @Override
+      public void insertString(int offset, String input, AttributeSet a) throws BadLocationException {
+        String filtered = input.replaceAll("\\D", "");
+        if (!filtered.equals(input)) {
+          Toolkit.getDefaultToolkit().beep();
+        }
+        super.insertString(offset, filtered, a);
+      }
+    });
+
     mOpenOmdb = new JButton(WirSchauenPlugin.getInstance().createImageIcon("apps", "internet-web-browser", 16));
     mOpenOmdb.setToolTipText(mLocalizer.msg("tooltip.openURL","Open URL"));
     panel.add(mOpenOmdb, cc.xy(6, 7));
@@ -242,6 +262,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     mDescription.setDocument(new PlainDocument() {
       @Override
       public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
+        str = str.replaceAll("\t|\n", "");
         if (getLength() + str.length() > 200) {
           Toolkit.getDefaultToolkit().beep();
         } else {
@@ -270,8 +291,10 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
       }});
 
     panel.add(new JScrollPane(mDescription, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), cc.xyw(3, 11, 4));
+
+    // character count
     mCounter = new JLabel(mLocalizer.msg("maxChars","(max. 200 characters)"));
-    panel.add(mCounter, cc.xyw(3, 13, 2));
+    panel.add(mCounter, cc.xyw(3, 13, 4));
 
     // format information
     JLabel format = new JLabel(mLocalizer.msg("format","Format")+": ");
@@ -310,7 +333,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     panel.add(builder.getPanel(), cc.xyw(1,19,6));
 
     // TODO: change to 2.7 size storage mechanism after 2.7 release
-    setSize(Sizes.dialogUnitXAsPixel(310, this),
+    setSize(Sizes.dialogUnitXAsPixel(300, this),
             Sizes.dialogUnitYAsPixel(240, this));
 
     UiUtilities.registerForClosing(this);
@@ -355,7 +378,11 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
   }
 
   public String getGenre() {
-    return mGenre.getSelectedItem().toString().trim();
+    Object selectedItem = mGenre.getSelectedItem();
+    if (selectedItem == null) {
+      return "";
+    }
+    return selectedItem.toString().trim();
   }
 
   public String getDescription() {
@@ -366,7 +393,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     return mPremiere.isSelected() ? "true": "false";
   }
 
-  public String getOmu() {
+  public String getOws() {
     return mOwS.isSelected()? "true":"false";
   }
 
@@ -375,6 +402,15 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
   }
 
   public int getCountForProgram(Program program) {
+    // reset all old values
+    mOldUrl = "";
+    mOldGenre = "";
+    mOldDescription = "";
+    mOldSubtitle = "false";
+    mOldOws = "false";
+    mOldPremiere = "false";
+    
+    // now ask the server
     int count = -1;
     StringBuilder url = new StringBuilder();
     try {
@@ -398,29 +434,32 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
 
         HashMap<String, String> data = handler.getData();
 
-        String urlData = data.get("url");
-        if (urlData != null && urlData.startsWith(OMDB_MOVIE_URL)) {
-          mOmdb.setText(urlData.substring(OMDB_MOVIE_URL.length()));
-          // if an URL is available, make the browser button the default control
+        mOldUrl = getServerValue(data, "url");
+        String urlText = mOldUrl;
+        if (urlText.startsWith(OMDB_MOVIE_URL)) {
+          urlText = urlText.substring(OMDB_MOVIE_URL.length()).trim();
+        }
+        mOmdb.setText(urlText);
+
+        // if an URL is available, make the browser button the default control
+        if (urlText.length() > 0) {
           mOpenOmdb.requestFocusInWindow();
         }
 
-        if (data.get("desc") != null) {
-          mDescription.setText(data.get("desc"));
-        }
+        mOldDescription = getServerValue(data, "desc");
+        mDescription.setText(mOldDescription);
 
-        if (data.get("genre") != null) {
-          mGenre.setSelectedItem(data.get("genre"));
-        }
-        if (data.get("premiere") != null) {
-          mPremiere.setSelected(data.get("premiere").equalsIgnoreCase("true"));
-        }
-        if (data.get("subtitle") != null) {
-          mSubtitle.setSelected(data.get("subtitle").equalsIgnoreCase("true"));
-        }
-        if (data.get("omu") != null) {
-          mOwS.setSelected(data.get("omu").equalsIgnoreCase("true"));
-        }
+        mOldGenre = getServerValue(data, "genre");
+        mGenre.setSelectedItem(mOldGenre);
+        
+        mOldPremiere = getServerValue(data, "premiere");
+        mPremiere.setSelected(mOldPremiere.equalsIgnoreCase("true"));
+        
+        mOldSubtitle = getServerValue(data, "subtitle");
+        mSubtitle.setSelected(mOldSubtitle.equalsIgnoreCase("true"));
+
+        mOldOws = getServerValue(data, "omu");
+        mOwS.setSelected(mOldOws.equalsIgnoreCase("true"));
       } else {
         count = 0;
       }
@@ -431,5 +470,24 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     }
 
     return count;
+  }
+
+  private String getServerValue(HashMap<String, String> data, String key) {
+    String text = data.get(key);
+    if (text != null) {
+      text = text.trim();
+    }
+    else {
+      text = "";
+    }
+    return text;
+  }
+  
+  protected boolean hasChanged() {
+    return !mOldUrl.equals(getUrl()) || !mOldGenre.equals(getGenre())
+        || !mOldDescription.equals(getDescription())
+        || !mOldSubtitle.equalsIgnoreCase(getSubtitle())
+        || !mOldOws.equalsIgnoreCase(getOws())
+        || !mOldPremiere.equalsIgnoreCase(getPremiere());
   }
 }
