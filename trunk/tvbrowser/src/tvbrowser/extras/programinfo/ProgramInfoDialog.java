@@ -184,7 +184,7 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
       public void hyperlinkUpdate(HyperlinkEvent evt) {
         if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {
           mTooltip = mInfoEP.getToolTipText();
-          mInfoEP.setToolTipText(evt.getURL().toExternalForm());
+          mInfoEP.setToolTipText(getLinkTooltip(evt));
         }
         if (evt.getEventType() == HyperlinkEvent.EventType.EXITED) {
           mInfoEP.setToolTipText(mTooltip);
@@ -592,5 +592,14 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
     }
     mDialog.setVisible(false);
     return true;
+  }
+
+  private String getLinkTooltip(HyperlinkEvent evt) {
+    String link = evt.getDescription();
+    if (link != null && link.startsWith(ProgramTextCreator.TVBROWSER_URL_PROTOCOL)) {
+      link = link.substring(ProgramTextCreator.TVBROWSER_URL_PROTOCOL.length());
+      return mLocalizer.msg("searchFor", "Search for \"{0}\"",link);
+    }
+    return evt.getURL().toExternalForm();
   }
 }
