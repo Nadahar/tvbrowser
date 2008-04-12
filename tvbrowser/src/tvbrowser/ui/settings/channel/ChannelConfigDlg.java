@@ -50,6 +50,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SwingConstants;
 
+import tvbrowser.core.Settings;
 import util.ui.CaretPositionCorrector;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
@@ -66,7 +67,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import devplugin.Channel;
 
 /**
- * This Dialog enables the User to change every Setting in the Channel Apperance
+ * This dialog enables the user to change every setting in the channel appearance
  * 
  * @author bodum
  * @since 2.1
@@ -99,7 +100,7 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
   private JLabel mIconLabel;
   
   /**
-   * Create the Dialog 
+   * Create the Dialog
    * @param parent Parent
    * @param channel Channel to show
    */
@@ -129,20 +130,23 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
     UiUtilities.registerForClosing(this);
     
     panel.setLayout(new FormLayout("default, 3dlu, fill:default:grow",
-    "default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default, 5dlu, default, 3dlu, default, 3dlu:grow, default, 5dlu, default"));
+    "default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default, 5dlu, default, 3dlu, default, 3dlu:grow, default, 5dlu, default"));
 
     CellConstraints cc = new CellConstraints();
 
     panel.setBorder(Borders.DLU4_BORDER);
 
+    // name
     panel.add(new JLabel(mLocalizer.msg("channelName", "Channel Name:")), cc.xy(1, 1));
-
     mChannelName = new JTextField(mChannel.getName());
-    
     panel.add(mChannelName, cc.xy(3, 1));
 
-    panel.add(new JLabel(mLocalizer.msg("channelLogo", "Channel Logo:")), cc.xy(1, 3));    
+    // provider
+    panel.add(new JLabel(mLocalizer.msg("provider", "Provided by:")), cc.xy(1, 3));
+    panel.add(new JLabel(ChannelUtil.getProviderName(mChannel)), cc.xy(3, 3));
 
+    // logo
+    panel.add(new JLabel(mLocalizer.msg("channelLogo", "Channel Logo:")), cc.xy(1, 5));
     if (mChannel.getUserIconFileName() != null) {
       mIconFile = new File(mChannel.getUserIconFileName());
     }
@@ -155,31 +159,63 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
       }
     });
 
-    panel.add(mIconLabel, cc.xy(3, 3));
-    panel.add(mChangeIcon, cc.xy(3, 5));
+    panel.add(mIconLabel, cc.xy(3, 5));
+    panel.add(mChangeIcon, cc.xy(3, 7));
 
-    panel.add(new JLabel(mLocalizer.msg("webAddress", "Web Address:")), cc.xy(1, 7));
+    // URL
+    panel.add(new JLabel(mLocalizer.msg("webAddress", "Web Address:")), cc.xy(1, 9));
+    mWebPage =new JTextField(mChannel.getWebpage());
+    panel.add(mWebPage, cc.xy(3, 9));
 
-    mWebPage =new JTextField(mChannel.getWebpage()); 
-    
-    panel.add(mWebPage, cc.xy(3, 7));
-
-    panel.add(new JLabel(mLocalizer.msg("time", "Time Correction:")), cc.xy(1, 9));
-
+    // time correction
+    panel.add(new JLabel(mLocalizer.msg("time", "Time Correction:")), cc.xy(1, 11));
     mCorrectionCB = new JComboBox(new String[] { "-1:00", "0:00", "+1:00" });
     mCorrectionCB.setSelectedIndex(mChannel.getDayLightSavingTimeCorrection() + 1);
-
-    panel.add(mCorrectionCB, cc.xy(3, 9));
+    panel.add(mCorrectionCB, cc.xy(3, 11));
 
     JTextArea txt = UiUtilities.createHelpTextArea(mLocalizer.msg("DLSTNote", ""));
     // Hack because of growing JTextArea in FormLayout
-    txt.setMinimumSize(new Dimension(200, 20));
-    panel.add(txt, cc.xy(3, 11));
+    txt.setMinimumSize(new Dimension(150, 20));
+    panel.add(txt, cc.xy(3, 13));
 
-    panel.add(DefaultComponentFactory.getInstance().createLabel(mLocalizer.msg("timeLimits","Time limits:")), cc.xy(1,13));
+    // time limitation
+    panel.add(DefaultComponentFactory.getInstance().createLabel(mLocalizer.msg("timeLimits","Time limits:")), cc.xy(1,15));
     
+    String timePattern = mLocalizer.msg("timePattern", "hh:mm a");
+        
+    mStartTimeLimit = new JSpinner(new SpinnerDateModel());
+    mStartTimeLimit.setEditor(new JSpinner.DateEditor(mStartTimeLimit, timePattern));
+    setTimeDate(mStartTimeLimit, mChannel.getStartTimeLimit());
+
+    mEndTimeLimit = new JSpinner(new SpinnerDateModel());
+    mEndTimeLimit.setEditor(new JSpinner.DateEditor(mEndTimeLimit, timePattern));
+    setTimeDate(mEndTimeLimit, mChannel.getEndTimeLimit());
+    
+    ((JSpinner.DateEditor)mStartTimeLimit.getEditor()).getTextField().setBorder(BorderFactory.createEmptyBorder(0,2,0,0));
+    ((JSpinner.DateEditor)mEndTimeLimit.getEditor()).getTextField().setBorder(BorderFactory.createEmptyBorder(0,2,0,0));
+    
+    ((JSpinner.DateEditor)mStartTimeLimit.getEditor()).getTextField().setHorizontalAlignment(SwingConstants.LEFT);
+    ((JSpinner.DateEditor)mEndTimeLimit.getEditor()).getTextField().setHorizontalAlignment(SwingConstants.LEFT);
+    
+    CaretPositionCorrector.createCorrector(((JSpinner.DateEditor)mStartTimeLimit.getEditor()).getTextField(), new char[] {':'}, -1);
+    CaretPositionCorrector.createCorrector(((JSpinner.DateEditor)mEndTimeLimit.getEditor()).getTextField(), new char[] {':'}, -1);
+    
+    PanelBuilder timeLimitPanel = new PanelBuilder(new FormLayout("default:grow,10dlu,default:grow","default,2dlu,default"));
+    
+    timeLimitPanel.addLabel(mLocalizer.msg("startTime","Start time:"), cc.xy(1,1));
+    timeLimitPanel.addLabel(mLocalizer.msg("endTime","End time:"), cc.xy(3,1));
+    timeLimitPanel.add(mStartTimeLimit, cc.xy(1,3));
+    timeLimitPanel.add(mEndTimeLimit, cc.xy(3,3));
+    
+    panel.add(timeLimitPanel.getPanel(), cc.xy(3,15));
+    
+    JTextArea txt2 = UiUtilities.createHelpTextArea(mLocalizer.msg("DLSTNote", ""));
+    // Hack because of growing JTextArea in FormLayout
+    txt2.setMinimumSize(new Dimension(150, 20));
+    panel.add(txt2, cc.xy(3, 17));
+    
+    // buttons
     ButtonBarBuilder builder = new ButtonBarBuilder();
-    
     JButton defaultButton = new JButton(Localizer.getLocalization(Localizer.I18N_DEFAULT));
     
     defaultButton.addActionListener(new ActionListener() {
@@ -203,49 +239,11 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
 
     builder.addGriddedButtons(new JButton[] { mOKBt, mCloseBt });
 
-    panel.add(new JSeparator(), cc.xyw(1,17,3));
-    panel.add(builder.getPanel(), cc.xyw(1, 19, 3));
-    
-    String timePattern = mLocalizer.msg("timePattern", "hh:mm a");
-        
-    mStartTimeLimit = new JSpinner(new SpinnerDateModel());
-    mStartTimeLimit.setEditor(new JSpinner.DateEditor(mStartTimeLimit, timePattern));    
-    setTimeDate(mStartTimeLimit, mChannel.getStartTimeLimit());
-
-    mEndTimeLimit = new JSpinner(new SpinnerDateModel());
-    mEndTimeLimit.setEditor(new JSpinner.DateEditor(mEndTimeLimit, timePattern));
-    setTimeDate(mEndTimeLimit, mChannel.getEndTimeLimit());
-    
-    ((JSpinner.DateEditor)mStartTimeLimit.getEditor()).getTextField().setBorder(BorderFactory.createEmptyBorder(0,2,0,0));
-    ((JSpinner.DateEditor)mEndTimeLimit.getEditor()).getTextField().setBorder(BorderFactory.createEmptyBorder(0,2,0,0));
-    
-    ((JSpinner.DateEditor)mStartTimeLimit.getEditor()).getTextField().setHorizontalAlignment(SwingConstants.LEFT);    
-    ((JSpinner.DateEditor)mEndTimeLimit.getEditor()).getTextField().setHorizontalAlignment(SwingConstants.LEFT);
-    
-    CaretPositionCorrector.createCorrector(((JSpinner.DateEditor)mStartTimeLimit.getEditor()).getTextField(), new char[] {':'}, -1);
-    CaretPositionCorrector.createCorrector(((JSpinner.DateEditor)mEndTimeLimit.getEditor()).getTextField(), new char[] {':'}, -1);
-    
-    PanelBuilder timeLimitPanel = new PanelBuilder(new FormLayout("default:grow,10dlu,default:grow","default,2dlu,default"));
-    
-    timeLimitPanel.addLabel(mLocalizer.msg("startTime","Start time:"), cc.xy(1,1));
-    timeLimitPanel.addLabel(mLocalizer.msg("endTime","End time:"), cc.xy(3,1));
-    timeLimitPanel.add(mStartTimeLimit, cc.xy(1,3));
-    timeLimitPanel.add(mEndTimeLimit, cc.xy(3,3));
-    
-    panel.add(timeLimitPanel.getPanel(), cc.xy(3,13));
-    
-    JTextArea txt2 = UiUtilities.createHelpTextArea(mLocalizer.msg("DLSTNote", ""));
-    // Hack because of growing JTextArea in FormLayout
-    txt2.setMinimumSize(new Dimension(200, 20));
-    panel.add(txt2, cc.xy(3, 15));
+    panel.add(new JSeparator(), cc.xyw(1, 19, 3));
+    panel.add(builder.getPanel(), cc.xyw(1, 21, 3));
     
     pack();
-
-    if (getWidth() < 500) {
-      setSize(500, getHeight());
-    }
-
-    setSize(getWidth(), getHeight() + 30);
+    Settings.layoutWindow("channelConfig", this, new Dimension(420,350));
   }
   
   private void setTimeDate(JSpinner toSet, int time) {
