@@ -104,6 +104,8 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
    */
   private String mOldUrl, mOldGenre, mOldDescription, mOldSubtitle, mOldOws, mOldPremiere;
 
+  private JButton mOk;
+
   public WirSchauenDialog(JDialog parent, Program program) {
     super(parent, true);
     createGui(program);
@@ -219,6 +221,19 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
         super.insertString(offset, filtered, a);
       }
     });
+    
+    mOmdb.getDocument().addDocumentListener(new DocumentListener() {
+      public void changedUpdate(DocumentEvent e) {
+        updateOkButton();
+      }
+
+      public void insertUpdate(DocumentEvent e) {
+        updateOkButton();
+      }
+
+      public void removeUpdate(DocumentEvent e) {
+        updateOkButton();
+      }});
 
     mOpenOmdb = new JButton(WirSchauenPlugin.getInstance().createImageIcon("apps", "internet-web-browser", 16));
     mOpenOmdb.setToolTipText(mLocalizer.msg("tooltip.openURL","Open URL"));
@@ -262,7 +277,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     mDescription.setDocument(new PlainDocument() {
       @Override
       public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
-        str = str.replaceAll("\t|\n", "");
+        str = str.replaceAll("\t", "");
         if (getLength() + str.length() > 200) {
           Toolkit.getDefaultToolkit().beep();
         } else {
@@ -276,6 +291,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
       private void updateRemaining() {
         int remaining = 200 - mDescription.getDocument().getLength();
         mCounter.setText(mLocalizer.msg("remaining", "({0} characters remaining)", remaining));
+        updateOkButton();
       }
 
       public void changedUpdate(DocumentEvent e) {
@@ -310,8 +326,8 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     panel.add(mOwS, cc.xyw(3, 16, 2));
     panel.add(mPremiere, cc.xyw(3, 17, 2));
 
-    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
-    ok.addActionListener(new ActionListener() {
+    mOk = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
+    mOk.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         ok();
       }
@@ -324,11 +340,11 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
       }
     });
 
-    getRootPane().setDefaultButton(ok);
+    getRootPane().setDefaultButton(mOk);
 
     ButtonBarBuilder builder = new ButtonBarBuilder();
     builder.addGlue();
-    builder.addGriddedButtons(new JButton[]{ok, cancel});
+    builder.addGriddedButtons(new JButton[]{mOk, cancel});
 
     panel.add(builder.getPanel(), cc.xyw(1,19,6));
 
@@ -338,6 +354,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
 
     UiUtilities.registerForClosing(this);
 
+    mOk.setEnabled(false);
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         mOmdb.requestFocusInWindow();
@@ -354,6 +371,10 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
         countLabel.setFont(countLabel.getFont().deriveFont(Font.PLAIN));
       }
     });
+  }
+
+  protected void updateOkButton() {
+    mOk.setEnabled((getDescription().length() > 0) || (getUrl().length() > 0));
   }
 
   private void ok() {
