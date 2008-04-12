@@ -31,6 +31,7 @@ import devplugin.SettingsTab;
 import devplugin.Version;
 import devplugin.PluginsFilterComponent;
 import devplugin.PluginsProgramFilter;
+import util.io.IOUtilities;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
 
@@ -364,7 +365,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
   public void handleTvDataUpdateFinished() {
     if (!((_settings.getProperty("name", "").length() == 0) || (_settings
         .getProperty("password", "").length() == 0))
-        && hasRightToDownload) {
+        && hasRightToDownload && IOUtilities.getMinutesAfterMidnight() > 1) {
       if (Integer.parseInt(_settings.getProperty("updateIntervall", "0")) < 3) {
         updateDB();
       }
