@@ -29,12 +29,19 @@ public class AutoCompletion extends PlainDocument {
   boolean hidePopupOnFocusLoss;
   boolean hitBackspace = false;
   boolean hitBackspaceOnSelection;
+  
+  boolean firstUpper = false;
 
   KeyListener editorKeyListener;
   FocusListener editorFocusListener;
-
+  
   public AutoCompletion(final JComboBox comboBox) {
+    this(comboBox, false);
+  }
+
+  public AutoCompletion(final JComboBox comboBox, boolean firstLetterUppercase) {
     this.comboBox = comboBox;
+    this.firstUpper = firstLetterUppercase;
     model = comboBox.getModel();
     comboBox.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -103,13 +110,6 @@ public class AutoCompletion extends PlainDocument {
     highlightCompletedText(0);
   }
 
-  public static void enable(JComboBox comboBox) {
-    // has to be editable
-    comboBox.setEditable(true);
-    // change the editor's document
-    new AutoCompletion(comboBox);
-  }
-
   void configureEditor(ComboBoxEditor newEditor) {
     if (editor != null) {
       editor.removeKeyListener(editorKeyListener);
@@ -155,6 +155,10 @@ public class AutoCompletion extends PlainDocument {
     if (selecting) {
       return;
     }
+    // make first letter upper case
+    if (offs == 0 && firstUpper) {
+      str = str.substring(0,1).toUpperCase() + str.substring(1);
+    }
     // insert the string into the document
     super.insertString(offs, str, a);
     // lookup and select a matching item
@@ -162,15 +166,15 @@ public class AutoCompletion extends PlainDocument {
     boolean listContainsSelectedItem = true;
     if (item == null) {
       // no item matches => use the current input as selected item
-      item=getText(0, getLength());
-      listContainsSelectedItem=false;
+      item = getText(0, getLength());
+      listContainsSelectedItem = false;
     }
     setText(item.toString());
     // select the completed part
     if (listContainsSelectedItem) {
-      highlightCompletedText(offs+str.length());
+      highlightCompletedText(offs + str.length());
     }
-}
+  }
 
   private void setText(String text) {
     try {
