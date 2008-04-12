@@ -29,10 +29,11 @@ package tvbrowser.ui.pluginview;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.FontMetrics;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -757,6 +758,9 @@ public class PluginTree extends JTree implements DragGestureListener,
   }
   
   private static class PluginTreeUI extends SingleAndDoubleClickTreeUI {
+    private GraphicsConfiguration mGC;
+    private JLabel mProgramLabel = new JLabel();
+
     protected PluginTreeUI(int type, TreePath selectionPath) {
       super(type, selectionPath);
     }
@@ -823,11 +827,16 @@ public class PluginTree extends JTree implements DragGestureListener,
           }
           
           String text = node.getNodeFormatter().format((ProgramItem)node.getUserObject());          
-          FontMetrics fm = g.getFontMetrics();
-          
-          int fontPos = (int)(bounds.height/2 + fm.getHeight()/2) - fm.getDescent();
-          
-          g.drawString(text, bounds.x, bounds.y + fontPos);
+
+          // use an image to be able to display HTML content on the node
+          BufferedImage textImage = getImage(bounds);
+          Graphics lg = textImage.getGraphics();
+          mProgramLabel.setText(text);
+          mProgramLabel.setOpaque(false);
+          mProgramLabel.setBounds(0, 0, bounds.width, bounds.height);
+          mProgramLabel.paint(lg);
+          g.drawImage(textImage, bounds.x, bounds.y, mProgramLabel);
+          lg.dispose();
         }
         else {
           super.paintRow(g,clipBounds,insets,bounds,path,row,isExpanded,hasBeenExpanded,isLeaf);
@@ -836,6 +845,33 @@ public class PluginTree extends JTree implements DragGestureListener,
       else {
         super.paintRow(g,clipBounds,insets,bounds,path,row,isExpanded,hasBeenExpanded,isLeaf);
       }
+    }
+
+    /**
+     * Returns a new image with size of the defined bounds.<p>
+     * This is used as target image to render the HTML label.
+     * 
+     * @param bounds
+     * @return BufferedImage
+     */
+    private BufferedImage getImage(Rectangle bounds) {
+      GraphicsConfiguration gc = getGraphicsConfiguration();
+      BufferedImage textImage = gc.createCompatibleImage(bounds.width, bounds.height, BufferedImage.TRANSLUCENT);
+      return textImage;
+    }
+
+    /**
+     * Returns the default GraphicsConfiguration.
+     * 
+     * @return
+     */
+    private GraphicsConfiguration getGraphicsConfiguration() {
+      if (mGC == null) {
+        // Caching of the GraphicsConfiguration
+        mGC = GraphicsEnvironment.getLocalGraphicsEnvironment()
+            .getDefaultScreenDevice().getDefaultConfiguration();
+      }
+      return mGC;
     }
   }
 }
