@@ -98,7 +98,7 @@ public class MarkedProgramsList {
   private boolean contains(MutableProgram p) {
     if(p != null) {
       for(MutableProgram prog : mMarkedPrograms) {
-        if(p.getID().equals(prog.getID())) {
+        if(p.getDate().equals(prog.getDate()) && p.getID().equals(prog.getID())) {
           return true;
         }
       }
