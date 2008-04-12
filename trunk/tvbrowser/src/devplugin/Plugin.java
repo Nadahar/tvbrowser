@@ -1011,9 +1011,9 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   }
   
   /**
-   * Sets the window position and size for the given window with the values of the given id.
+   * Sets the window position and size for the given window from remembered values for that id.
 
-   * @param windowId The id of the values to set.
+   * @param windowId The relative id of the window. The ID only needs to unique for this plugin.
    * @param window The window to layout.
    * 
    * @since 2.7
@@ -1023,9 +1023,9 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   }
   
   /**
-   * Sets the window position and size for the given window with the values of the given id.
+   * Sets the window position and size for the given window from remembered values for that id.
 
-   * @param windowId The id of the values to set.
+   * @param windowId The relative id of the window. The ID only needs to unique for this plugin. 
    * @param window The window to layout.
    * @param defaultSize The default size for the window.
    * 
