@@ -25,16 +25,18 @@ package wirschauenplugin;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import devplugin.Program;
+import devplugin.ProgramFieldType;
 import util.browserlauncher.Launch;
 import util.ui.AutoCompletion;
 import util.ui.Localizer;
 import util.ui.WindowClosingIf;
 import util.ui.UiUtilities;
+
 import java.awt.Toolkit;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -94,13 +96,13 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
 
   private JButton mOpenOmdb;
 
-  public WirSchauenDialog(JDialog jDialog, Program program) {
-    super(jDialog, true);
+  public WirSchauenDialog(JDialog parent, Program program) {
+    super(parent, true);
     createGui(program);
   }
 
-  public WirSchauenDialog(JFrame jFrame, Program program) {
-    super(jFrame, true);
+  public WirSchauenDialog(JFrame parent, Program program) {
+    super(parent, true);
     createGui(program);
   }
 
@@ -111,8 +113,27 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
 
     panel.setBorder(Borders.DLU4_BORDER);
 
-    panel.setLayout(new FormLayout("right:pref,3dlu, pref, fill:10dlu:grow, 3dlu, pref",
-            "pref, 3dlu, pref, 3dlu,pref, 3dlu, pref, 3dlu,  fill:50dlu, 3dlu, pref, 3dlu, pref,fill:pref:grow, pref"));
+    FormLayout layout = new FormLayout("right:pref,3dlu, pref, fill:10dlu:grow, 3dlu, pref",
+        "pref," // title
+        +"3dlu,"
+        +"pref," // episode
+        +"3dlu,"
+        +"pref," // status
+        +"3dlu,"
+        +"pref," // omdb URL
+        +"3dlu,"
+        +"pref," // genre
+        +"3dlu,"
+        +"fill:50dlu," // description 
+        +"3dlu,"
+        +"pref," // character count
+        +"3dlu,"
+        +"pref," // format information
+        +"pref," // format information
+        +"pref," // format information
+        +"fill:pref:grow,"
+        +"pref");
+    panel.setLayout(layout); // dialog buttons
 
     CellConstraints cc = new CellConstraints();
 
@@ -130,7 +151,32 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     });
     panel.add(title, cc.xyw(3, 1, 4));
 
-    // server message
+    // episode
+    String text = program.getTextField(ProgramFieldType.EPISODE_TYPE);
+    if (text == null || text.length() == 0) {
+      text = program.getIntFieldAsString(ProgramFieldType.EPISODE_NUMBER_TYPE);
+    }
+    if (text != null && text.length() > 0) { 
+      JLabel episodeLabel = new JLabel(ProgramFieldType.EPISODE_TYPE.getLocalizedName() + ": ");
+      episodeLabel.setFont(episodeLabel.getFont().deriveFont(Font.BOLD));
+      panel.add(episodeLabel, cc.xy(1, 3));
+      final JTextField episode = new JTextField(text);
+      episode.setEditable(false);
+      episode.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+          episode.selectAll();
+        }
+      });
+      panel.add(episode, cc.xyw(3, 3, 4));
+    }
+    else {
+      // hide the rows for the episode
+      layout.setRowSpec(3, new RowSpec("0"));
+      layout.setRowSpec(2, new RowSpec("0"));
+    }
+
+    // server status message
     String labelText = mLocalizer.msg("countLoading", "Reading data from server...");
     String description = program.getDescription();
     if (description != null && description.contains(OMDB_DESCRIPTION_TAG)) {
@@ -139,24 +185,24 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     final JLabel countLabel = new JLabel(labelText);
     countLabel.setEnabled(false);
     countLabel.setFont(countLabel.getFont().deriveFont(Font.ITALIC));
-    panel.add(countLabel, cc.xyw(3,3,4));
+    panel.add(countLabel, cc.xyw(3,5,4));
 
     // URL
     JLabel url = new JLabel(mLocalizer.msg("URL", "omdb.org-URL") + ": ");
     url.setFont(url.getFont().deriveFont(Font.BOLD));
-    panel.add(url, cc.xy(1, 5));
-    panel.add(new JLabel(OMDB_MOVIE_URL), cc.xy(3, 5));
+    panel.add(url, cc.xy(1, 7));
+    panel.add(new JLabel(OMDB_MOVIE_URL), cc.xy(3, 7));
 
     NumberFormat integerFormat = NumberFormat.getIntegerInstance();
     integerFormat.setGroupingUsed(false);
     integerFormat.setParseIntegerOnly(true);
     mOmdb = new JFormattedTextField(integerFormat);
     mOmdb.setToolTipText(mLocalizer.msg("tooltip.omdbId","Numerical ID of the program"));
-    panel.add(mOmdb, cc.xy(4, 5));
+    panel.add(mOmdb, cc.xy(4, 7));
     
     mOpenOmdb = new JButton(WirSchauenPlugin.getInstance().createImageIcon("apps", "internet-web-browser", 16));
     mOpenOmdb.setToolTipText(mLocalizer.msg("tooltip.openURL","Open URL"));
-    panel.add(mOpenOmdb, cc.xy(6, 5));
+    panel.add(mOpenOmdb, cc.xy(6, 7));
     
     mOpenOmdb.addActionListener(new ActionListener() {
 
@@ -174,23 +220,23 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     JLabel genre = new JLabel(mLocalizer.msg("genre","Genre")+": ");
     genre.setFont(genre.getFont().deriveFont(Font.BOLD));
 
-    panel.add(genre, cc.xy(1, 7));
+    panel.add(genre, cc.xy(1, 9));
     String[] genres = mLocalizer.msg("genreDefaults","Action,Adventure,Animation").split(",");
     Arrays.sort(genres);
     mGenre = new JComboBox(genres);
     mGenre.setEditable(true);
     mGenre.setMaximumRowCount(8);
     mGenre.setSelectedIndex(-1);
-    AutoCompletion.enable(mGenre);
+    new AutoCompletion(mGenre, true);
 
-    panel.add(mGenre, cc.xyw(3, 7, 4));
+    panel.add(mGenre, cc.xyw(3, 9, 4));
 
     // description
-    JLabel text = new JLabel(mLocalizer.msg("text","Text")+": ");
-    text.setVerticalAlignment(JLabel.TOP);
-    text.setFont(text.getFont().deriveFont(Font.BOLD));
+    JLabel descLabel = new JLabel(mLocalizer.msg("text","Text")+": ");
+    descLabel.setVerticalAlignment(JLabel.TOP);
+    descLabel.setFont(descLabel.getFont().deriveFont(Font.BOLD));
 
-    panel.add(text, cc.xy(1, 9));
+    panel.add(descLabel, cc.xy(1, 11));
 
     mDescription = new JTextArea();
     mDescription.setDocument(new PlainDocument() {
@@ -223,27 +269,23 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
         updateRemaining();
       }});
 
-    panel.add(new JScrollPane(mDescription, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), cc.xyw(3, 9, 4));
+    panel.add(new JScrollPane(mDescription, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), cc.xyw(3, 11, 4));
     mCounter = new JLabel(mLocalizer.msg("maxChars","(max. 200 characters)"));
-    panel.add(mCounter, cc.xyw(3, 11, 2));
+    panel.add(mCounter, cc.xyw(3, 13, 2));
 
     // format information
     JLabel format = new JLabel(mLocalizer.msg("format","Format")+": ");
     format.setFont(format.getFont().deriveFont(Font.BOLD));
-    panel.add(format, cc.xy(1, 13));
+    panel.add(format, cc.xy(1, 15));
 
     
-    mSubtitle = new JCheckBox(mLocalizer.msg("subtitle","Untertitel"));
-    mOwS = new JCheckBox(mLocalizer.msg("OwS", "OwS"));
-    mPremiere = new JCheckBox(mLocalizer.msg("premiere","Television Premiere"));
+    mSubtitle = new JCheckBox(mLocalizer.msg("subtitle", "Untertitel"));
+    mOwS = new JCheckBox(mLocalizer.msg("OwS", "Original with subtitle"));
+    mPremiere = new JCheckBox(mLocalizer.msg("premiere", "Television premiere"));
 
-    JPanel panelItems = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-    panelItems.add(mSubtitle);
-    panelItems.add(mOwS);
-    panelItems.add(mPremiere);
-
-    panel.add(panelItems, cc.xyw(3,13,4));
+    panel.add(mSubtitle, cc.xyw(3, 15, 2));
+    panel.add(mOwS, cc.xyw(3, 16, 2));
+    panel.add(mPremiere, cc.xyw(3, 17, 2));
 
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     ok.addActionListener(new ActionListener() {
@@ -265,10 +307,11 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     builder.addGlue();
     builder.addGriddedButtons(new JButton[]{ok, cancel});
 
-    panel.add(builder.getPanel(), cc.xyw(1,15,6));
+    panel.add(builder.getPanel(), cc.xyw(1,19,6));
 
-    setSize(Sizes.dialogUnitXAsPixel(300, this),
-            Sizes.dialogUnitYAsPixel(220, this));
+    // TODO: change to 2.7 size storage mechanism after 2.7 release
+    setSize(Sizes.dialogUnitXAsPixel(310, this),
+            Sizes.dialogUnitYAsPixel(240, this));
 
     UiUtilities.registerForClosing(this);
 
