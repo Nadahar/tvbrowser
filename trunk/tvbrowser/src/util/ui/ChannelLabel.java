@@ -316,14 +316,25 @@ public class ChannelLabel extends JLabel {
     int stringWidth = SwingUtilities.computeStringWidth(metrics, this.getText());
     int x = 0;
     Icon icon = this.getIcon();
+
+    int iconWidth = getIcon().getIconWidth();
+    if (mChannel.getIcon() != null) {
+      iconWidth = mChannel.getIcon().getIconWidth();
+    }
+
+    int iconHeight = getIcon().getIconHeight();
+    if (mChannel.getIcon() != null) {
+      iconHeight = mChannel.getIcon().getIconHeight();
+    }
+
     if (icon != null) {
       x = (this.getWidth() - stringWidth - this.getIconTextGap() - icon.getIconWidth()) / 2;
       if (x < 0) {
         x = 0;
       }
-      x += (icon.getIconWidth() - mChannel.getIcon().getIconWidth()) / 2;
+      x += (icon.getIconWidth() - iconWidth) / 2;
     }
-    int y = (this.getHeight() - mChannel.getIcon().getIconHeight() - 2) / 2;
+    int y = (this.getHeight() - iconHeight - 2) / 2;
     return new Point(x, y);
   }
 
