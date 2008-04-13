@@ -59,8 +59,6 @@ public class CreditsScrollerPanel extends JScrollPane implements ActionListener 
     locationY -= scrollOffset;
     component.setLocation(0, locationY);
 
-    System.out.println("Hallo");
-
     if (component.getPreferredSize().height + locationY < 0) {
       locationY = getViewport().getExtentSize().height;
       component.setVisible(true);
