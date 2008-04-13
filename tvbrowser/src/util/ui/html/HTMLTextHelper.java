@@ -63,6 +63,9 @@ public class HTMLTextHelper {
         if (linkText.startsWith("http://")) {
           linkText = linkText.substring(7); // remove http:// from shown link text
         }
+        if (linkText.endsWith("/")) { // remove trailing slash from display
+          linkText = linkText.substring(0, linkText.length() - 1);
+        }
         result.append(linkText.length() > 40 ? linkText.substring(0,40) + "..." : linkText);
         result.append("</a>");
       }
