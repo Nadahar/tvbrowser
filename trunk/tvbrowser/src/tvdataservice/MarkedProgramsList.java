@@ -87,7 +87,7 @@ public class MarkedProgramsList {
     };
   }
 
-  protected void addProgram(MutableProgram p) {
+  protected synchronized void addProgram(MutableProgram p) {
     if(p!= null && !contains(p) && p.getMarkerArr().length > 0) {
       mMarkedPrograms.add(p);
       handleFilterMarking(p);
@@ -96,9 +96,11 @@ public class MarkedProgramsList {
   
   private boolean contains(MutableProgram p) {
     if(p != null) {
-      for(MutableProgram prog : mMarkedPrograms) {
-        if(p.getDate().equals(prog.getDate()) && p.getID().equals(prog.getID())) {
-          return true;
+      synchronized(mMarkedPrograms) {
+        for(MutableProgram prog : mMarkedPrograms) {
+          if(p.getDate().equals(prog.getDate()) && p.getID().equals(prog.getID())) {
+            return true;
+          }
         }
       }
     }
