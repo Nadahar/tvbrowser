@@ -29,7 +29,6 @@ import com.jgoodies.forms.builder.ButtonBarBuilder;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import util.browserlauncher.Launch;
-import util.ui.AutoCompletion;
 import util.ui.Localizer;
 import util.ui.WindowClosingIf;
 import util.ui.UiUtilities;
@@ -66,6 +65,10 @@ import javax.swing.text.PlainDocument;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+/**
+ * @deprecated Copy from util.ui to support TV-Browser 2.6.3 at the moment to.
+ * Have to be removed when new TV-Browser version is available. 
+ */
 public class WirSchauenDialog extends JDialog implements WindowClosingIf {
   /**
    * Localizer
