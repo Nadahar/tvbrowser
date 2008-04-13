@@ -143,7 +143,8 @@ public interface Program {
   public static final int INFO_CATEGORIE_MAGAZINE_INFOTAINMENT = 1 << 18;
 
   /**
-   * video high definition quality
+   * video high definition quality 
+   * @since 2.7
    */
   public static final int INFO_VISION_HD          = 1 << 19;  
 
