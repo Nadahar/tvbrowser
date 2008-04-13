@@ -588,6 +588,7 @@
       <fileset dir="${x11.dir}/src" includes="libDesktopIndicator.so"/>
       <fileset dir="${deployment.dir}" includes="linux.properties"/>
       <fileset dir="${linux.dir}" includes="tvbrowser.sh"/>
+      <fileset dir="${linux.dir}" includes="tvbrowser.desktop"/>
     </copy>
    	<chmod perm="u+x" file="${tvbrowser-linux.runtime.dir}/tvbrowser.sh"/>
 
