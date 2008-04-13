@@ -94,7 +94,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
       int max = channelArr.length;
 
       monitor.setMaximum(max);
-      monitor.setMessage("## Loading SchedulesDirect Data ##");
+      monitor.setMessage(mLocalizer.msg("loading","Loading SchedulesDirect data"));
 
       try {
         SOAPRequest soapRequest = new SOAPRequest(
@@ -262,6 +262,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
         }
         storeDayPrograms(updateManager);
       } catch (DataDirectException e) {
+        ErrorHandler.handle(mLocalizer.msg("problems","Problems loading the data, maybee Username/Passwort wrong or Communication Error"), e);
         e.printStackTrace();
       }
 
@@ -383,9 +384,9 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
   public Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException {
     String username = mProperties.getProperty("username", "").trim();
     if (username.length() != 0) {
-      monitor.setMessage("##Loading SchedulesDirect-Channels##");
+      monitor.setMessage(mLocalizer.msg("loadingChannels","Loading SchedulesDirect-Channels"));
       mChannels = getChannels();
-      monitor.setMessage("##Done loading SchedulesDirect-Channels##");
+      monitor.setMessage(mLocalizer.msg("loadingChannelsDone","Done loading SchedulesDirect-Channels"));
     } else {
       mChannels = new ArrayList<Channel>();
     }
@@ -447,7 +448,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
 
     } catch (DataDirectException e) {
       e.printStackTrace();
-      ErrorHandler.handle("##Problems loading the data, maybee Username/Passwort wrong or Communication Error##", e);
+      ErrorHandler.handle(mLocalizer.msg("problems","Problems loading the data, maybee Username/Passwort wrong or Communication Error"), e);
     }
 
     return allChannels;
