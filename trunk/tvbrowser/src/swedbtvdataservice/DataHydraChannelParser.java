@@ -53,9 +53,11 @@ public class DataHydraChannelParser extends org.xml.sax.helpers.DefaultHandler {
       case (STATUS_CONSTRUCTION): {
         if ("display-name".equals(qName)) {
           state = STATUS_CONSTRUCTION_NAME;
+          name= "";
         }
         if ("base-url".equals(qName)) {
           state = STATUS_CONSTRUCTION_URL;
+          url = "";
         }
         if ("icon".equals(qName)) {
           iconUrl = attributes.getValue("src");

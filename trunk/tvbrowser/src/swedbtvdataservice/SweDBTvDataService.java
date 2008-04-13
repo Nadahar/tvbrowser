@@ -86,6 +86,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
     mChannelGroups.put("SweDB", new DataHydraChannelGroup("SweDB", "SweDB.se", "(c) swedb.se", "http://tv.swedb.se", "swedb_channels.xml.gz", "se"));
     mChannelGroups.put("MSPC", new DataHydraChannelGroup("MSPC", "mspc.no", "(c) mspc.no", "http://www.mspc.no", "mspc_channels.xml.gz", "no"));
     mChannelGroups.put("gonix", new DataHydraChannelGroup("gonix", "gonix.net", "(c) gonix.net", "http://www.gonix.net", "hrv_channels.xml.gz", "hr", false));
+    mChannelGroups.put("oztivo.net", new DataHydraChannelGroup("oztivo", "oztivo.net", "(c) oztivo.net", "http://minnie.tuhs.org/twiki/bin/view/TVGuide", "au_channels.xml.gz", "au"));
   }
 
   public boolean supportsDynamicChannelList() {
@@ -277,6 +278,8 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
         lastUpdate = mLastGroupUpdate.get(hydraGroup);
       }
 
+      mLog.log(Level.ALL, "Loading URL : " + url.toString());
+
       HttpURLConnection con = (HttpURLConnection) url.openConnection();
       con.setReadTimeout(Plugin.getPluginManager().getTvBrowserSettings()
               .getDefaultNetworkConnectionTimeout());
@@ -343,6 +346,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
                 "Unknown response during check for available channels in Swedb plugin: {0}", responseCode);
       }
     } catch (Exception e) {
+      e.printStackTrace();;
       throw new TvBrowserException(SweDBTvDataService.class,
               "checkAvailableError",
               "Error checking for available channels in Swedb plugin: {0}", e
