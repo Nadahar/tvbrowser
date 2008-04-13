@@ -19,6 +19,10 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.PlainDocument;
 
+/**
+ * @deprecated Copy from util.ui to support TV-Browser 2.6.3 at the moment to.
+ * Have to be removed when new TV-Browser version is available. 
+ */
 public class AutoCompletion extends PlainDocument {
   JComboBox comboBox;
   ComboBoxModel model;

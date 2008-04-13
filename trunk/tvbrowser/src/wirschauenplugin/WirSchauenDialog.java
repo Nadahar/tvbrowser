@@ -65,10 +65,7 @@ import javax.swing.text.PlainDocument;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-/**
- * @deprecated Copy from util.ui to support TV-Browser 2.6.3 at the moment to.
- * Have to be removed when new TV-Browser version is available. 
- */
+
 public class WirSchauenDialog extends JDialog implements WindowClosingIf {
   /**
    * Localizer
@@ -265,6 +262,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     mGenre.setEditable(true);
     mGenre.setMaximumRowCount(8);
     mGenre.setSelectedIndex(-1);
+    //TODO: Use util.ui class after 2.7 release
     new AutoCompletion(mGenre, true);
 
     panel.add(mGenre, cc.xyw(3, 9, 4));
