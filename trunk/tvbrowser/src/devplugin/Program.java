@@ -75,20 +75,6 @@ public interface Program {
    */
   public static final int INFO_AUDIO_TWO_CHANNEL_TONE  = 1 << 8;
 
-  public static final int IS_VALID_STATE = 0;
-  public static final int WAS_UPDATED_STATE = 1;
-  public static final int WAS_DELETED_STATE = 2;
-  
-  public static final int NO_MARK_PRIORITY = -1;
-  public static final int MIN_MARK_PRIORITY = 0;
-  public static final int LOWER_MEDIUM_MARK_PRIORITY = 1;
-  public static final int MEDIUM_MARK_PRIORITY = 2;
-  public static final int HIGHER_MEDIUM_MARK_PRIORITY = 3;
-  public static final int MAX_MARK_PRIORITY = 4;
-  
-  /** @deprecated since 2.5.3 use MIN_MARK_PRIORITY instead */
-  public static final int DEFAULT_MARK_PRIORITY = 0;
-  
   /**
    * A subtitle for aurally handicapped. The subtitle is in the same language as
    * the audio.
@@ -155,6 +141,25 @@ public interface Program {
    * @since 2.6/2.2.4
    */
   public static final int INFO_CATEGORIE_MAGAZINE_INFOTAINMENT = 1 << 18;
+
+  /**
+   * video high definition quality
+   */
+  public static final int INFO_VISION_HD          = 1 << 19;  
+
+  public static final int IS_VALID_STATE = 0;
+  public static final int WAS_UPDATED_STATE = 1;
+  public static final int WAS_DELETED_STATE = 2;
+
+  public static final int NO_MARK_PRIORITY = -1;
+  public static final int MIN_MARK_PRIORITY = 0;
+  public static final int LOWER_MEDIUM_MARK_PRIORITY = 1;
+  public static final int MEDIUM_MARK_PRIORITY = 2;
+  public static final int HIGHER_MEDIUM_MARK_PRIORITY = 3;
+  public static final int MAX_MARK_PRIORITY = 4;
+
+  /** @deprecated since 2.5.3 use MIN_MARK_PRIORITY instead */
+  public static final int DEFAULT_MARK_PRIORITY = 0;
 
   /** The key for the value of an action, to put the mark priority in 
    * @since 2.6 */
