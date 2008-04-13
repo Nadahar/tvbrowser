@@ -229,7 +229,7 @@
   <target name="make-default" depends="copy-resources">
     <echo message="Compiling the source code ... "/>
     <mkdir dir="${classes.dir}"/>
-    <javac destdir="${classes.dir}" debug="${debug}" deprecation="false" encoding="iso-8859-15" target="1.5" source="1.5">
+    <javac destdir="${classes.dir}" debug="${debug}" deprecation="true" encoding="iso-8859-15" target="1.5" source="1.5">
       <src>
         <path refid="sourcepath"/>
       </src>
@@ -265,7 +265,7 @@
   <target name="make-mac" depends="copy-resources">
     <echo message="Compiling the source code ..."/>
     <mkdir dir="${classes.dir}"/>
-    <javac destdir="${classes.dir}" debug="${debug}" deprecation="false" encoding="iso-8859-15" target="1.5" source="1.5">
+    <javac destdir="${classes.dir}" debug="${debug}" deprecation="true" encoding="iso-8859-15" target="1.5" source="1.5">
       <src>
         <path refid="sourcepath"/>
       </src>
