@@ -34,7 +34,6 @@ import javax.swing.SwingUtilities;
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.ui.mainframe.MainFrame;
-import util.program.ProgramUtilities;
 
 import devplugin.Date;
 import devplugin.Program;
@@ -149,9 +148,10 @@ public class MarkedProgramsList {
    * @param filter The filter to use for program filtering
    * @param markPriority The minimum mark priority of programs to find.
    * @param numberOfPrograms The number of programs to show. Use a value of 0 or below for all important programs.
+   * @param includeOnAirPrograms If the marked programs array should contain running programs.
    * @return The time sorted programs for the tray.
    */
-  public Program[] getTimeSortedProgramsForTray(ProgramFilter filter, int markPriority, int numberOfPrograms) {
+  public Program[] getTimeSortedProgramsForTray(ProgramFilter filter, int markPriority, int numberOfPrograms, boolean includeOnAirPrograms) {
     int n = (mMarkedPrograms.size() > numberOfPrograms && numberOfPrograms > 0) ? numberOfPrograms : mMarkedPrograms.size();
 
     ArrayList<Program> programs = new ArrayList<Program>();
@@ -168,7 +168,7 @@ public class MarkedProgramsList {
       }
 
       MutableProgram p = it.next();
-      if(ProgramUtilities.isOnAir(p) || p.isExpired() || !filter.accept(p) || p.getMarkPriority() < markPriority) {
+      if((p.isOnAir() && !includeOnAirPrograms) || p.isExpired() || !filter.accept(p) || p.getMarkPriority() < markPriority) {
         k++;
         continue;
       }
@@ -197,7 +197,7 @@ public class MarkedProgramsList {
     for(i = k; i < mMarkedPrograms.size(); i++) {
       Program p = it.next();
 
-      if(ProgramUtilities.isOnAir(p) || p.isExpired() || p.getMarkPriority() < markPriority) {
+      if((p.isOnAir() && !includeOnAirPrograms) || p.isExpired() || p.getMarkPriority() < markPriority) {
         continue;
       }
 
