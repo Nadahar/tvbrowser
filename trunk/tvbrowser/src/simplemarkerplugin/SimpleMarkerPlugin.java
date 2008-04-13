@@ -305,9 +305,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     }
     
     for (Program p : programs) {
-      if (targetList.contains(p)) {
-        continue;
-      } else {
+      if (!targetList.contains(p)) {
         targetList.addElement(p);
         p.mark(this);
         p.validateMarking();
