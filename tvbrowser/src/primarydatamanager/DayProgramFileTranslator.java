@@ -209,6 +209,9 @@ public class DayProgramFileTranslator {
     if (bitSet(info, Program.INFO_VISION_16_TO_9)) {
       buf.append("16:9  ");
     }
+      if (bitSet(info, Program.INFO_VISION_HD)) {
+      buf.append("HD  ");
+    }
     if (bitSet(info, Program.INFO_AUDIO_MONO)) {
       buf.append("Mono  ");
     }

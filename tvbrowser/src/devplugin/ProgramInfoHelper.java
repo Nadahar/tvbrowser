@@ -38,7 +38,8 @@ public class ProgramInfoHelper {
             Program.INFO_ORIGINAL_WITH_SUBTITLE,
             Program.INFO_CATEGORIE_MOVIE, Program.INFO_CATEGORIE_SERIES, Program.INFO_NEW,
             Program.INFO_AUDIO_DESCRIPTION, Program.INFO_CATEGORIE_NEWS,
-            Program.INFO_CATEGORIE_SHOW, Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT
+            Program.INFO_CATEGORIE_SHOW, Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT,
+            Program.INFO_VISION_HD
     };
 
     /**
@@ -63,6 +64,7 @@ public class ProgramInfoHelper {
             createIcon("Info_News.png"), // News
             createIcon("Info_Show.png"), // Show
             createIcon("Info_Infotainment.png"), // Magazine/Infotainment
+            createIcon("Info_HD.png"), // High Definition Video
     };
 
     /**
@@ -96,6 +98,7 @@ public class ProgramInfoHelper {
             mLocalizer.msg("categorie_news", "news"),
             mLocalizer.msg("categorie_show", "show"),
             mLocalizer.msg("categorie_magazine_infotainment", "magazine/infotainment"),
+            mLocalizer.msg("hd", "high definition"),
     };
 
 
@@ -105,7 +108,7 @@ public class ProgramInfoHelper {
      * @return created Icon
      */
     private static Icon createIcon(String fileName) {
-        ImageIcon icon = new ImageIcon("imgs/" + fileName);
+        ImageIcon icon = new ImageIcon("imgs/" + fileName.trim());
         if (icon.getImageLoadStatus() == MediaTracker.ERRORED) {
           mLog.warning("Missing program info icon " + fileName);
         }

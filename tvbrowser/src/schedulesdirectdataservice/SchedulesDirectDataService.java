@@ -139,6 +139,9 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
             if (s.getSubtitled()) {
               info |= Program.INFO_ORIGINAL_WITH_SUBTITLE;
             }
+            if (s.getHdtv()) {
+              info |= Program.INFO_VISION_HD;
+            }
 
             prog.setInfo(info);
 
