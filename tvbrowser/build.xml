@@ -298,7 +298,7 @@
     <mkdir dir="${unpacked.dir}/skinlf.jar"/>
     <unjar src="${lib.dir}/skinlf.jar" dest="${unpacked.dir}/skinlf.jar"/>
     <unjar src="${lib.dir}/bsh-2.0b4.jar" dest="${unpacked.dir}/bsh-2.0b4.jar"/>
-    <unjar src="${lib.dir}/forms-1.1.0.jar" dest="${unpacked.dir}/forms-1.1.0.jar"/>
+    <unjar src="${lib.dir}/forms-1.2.0.jar" dest="${unpacked.dir}/forms-1.2.0.jar"/>
     <unjar src="${lib.dir}/looks-2.1.4.jar" dest="${unpacked.dir}/looks-2.1.4.jar"/>
     <unjar src="${lib.dir}/l2fprod-common-tasks.jar" dest="${unpacked.dir}/l2fprod-common-tasks.jar"/>
     <unjar src="${lib.dir}/jRegistryKey.jar" dest="${unpacked.dir}/jRegistryKey.jar" /> 	 
@@ -326,7 +326,7 @@
       <fileset dir="${unpacked.dir}/skinlf.jar" includes="com/**"/>
    	  <fileset dir="${unpacked.dir}/skinlf.jar" includes="org/**"/>
       <fileset dir="${unpacked.dir}/bsh-2.0b4.jar" includes="bsh/**"/>
-      <fileset dir="${unpacked.dir}/forms-1.1.0.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/forms-1.2.0.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/looks-2.1.4.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/l2fprod-common-tasks.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/jRegistryKey.jar" includes="ca/**" />
@@ -408,6 +408,12 @@
       <fileset dir="${classes.dir}" includes="showviewplugin/**"/>
     </jar>
 
+<!--
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SpeechPluginSAPI.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="speechpluginsapi/**"/>
+    </jar>
+-->
   	<jar jarfile="${tvbrowser-default.runtime.dir}/plugins/TVRaterPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="tvraterplugin/**"/>
