@@ -26,6 +26,9 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 import com.jgoodies.forms.builder.ButtonBarBuilder;
+
+import devplugin.Date;
+import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import util.browserlauncher.Launch;
@@ -57,6 +60,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.AttributeSet;
@@ -106,6 +110,12 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
 
   private JButton mOk;
 
+  private FormLayout mLayout;
+
+  private JLabel mIcon;
+
+  private String mDefaultCounterText;
+
   public WirSchauenDialog(JDialog parent, Program program) {
     super(parent, true);
     createGui(program);
@@ -123,7 +133,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
 
     panel.setBorder(Borders.DLU4_BORDER);
 
-    FormLayout layout = new FormLayout("right:pref,3dlu, pref, fill:10dlu:grow, 3dlu, pref",
+    mLayout = new FormLayout("right:pref,3dlu, pref, fill:10dlu:grow, 3dlu, pref",
         "pref," // title
         +"3dlu,"
         +"pref," // episode
@@ -143,7 +153,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
         +"pref," // format information
         +"fill:pref:grow,"
         +"pref");
-    panel.setLayout(layout); // dialog buttons
+    panel.setLayout(mLayout); // dialog buttons
 
     CellConstraints cc = new CellConstraints();
 
@@ -182,8 +192,8 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     }
     else {
       // hide the rows for the episode
-      layout.setRowSpec(3, new RowSpec("0"));
-      layout.setRowSpec(2, new RowSpec("0"));
+      mLayout.setRowSpec(3, new RowSpec("0"));
+      mLayout.setRowSpec(2, new RowSpec("0"));
     }
 
     // server status message
@@ -192,6 +202,10 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     if (description != null && description.contains(OMDB_DESCRIPTION_TAG)) {
       labelText = mLocalizer.msg("countLoadingTagged", "One description available on the server. Updating data...");
     }
+    
+    mIcon = new JLabel("");
+    panel.add(mIcon,cc.xy(1,5));
+    
     final JLabel countLabel = new JLabel(labelText);
     countLabel.setEnabled(false);
     countLabel.setFont(countLabel.getFont().deriveFont(Font.ITALIC));
@@ -327,7 +341,16 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     panel.add(mOwS, cc.xyw(3, 16, 2));
     panel.add(mPremiere, cc.xyw(3, 17, 2));
 
+    // buttons
+    JButton help = new JButton(Localizer.getLocalization(Localizer.I18N_HELP));
+    help.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        Launch.openURL(PluginInfo.getHelpUrl(WirSchauenPlugin.getInstance().getId()));
+      }
+    });
+
     mOk = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
+    mOk.setEnabled(false);
     mOk.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         ok();
@@ -341,21 +364,27 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
       }
     });
 
-    getRootPane().setDefaultButton(mOk);
-
     ButtonBarBuilder builder = new ButtonBarBuilder();
+    builder.addGridded(help);
     builder.addGlue();
     builder.addGriddedButtons(new JButton[]{mOk, cancel});
 
     panel.add(builder.getPanel(), cc.xyw(1,19,6));
 
     // TODO: change to 2.7 size storage mechanism after 2.7 release
+    int dialogHeight = 240;
+    if (checkCurrentDate(program)) {
+      dialogHeight = 130;
+      getRootPane().setDefaultButton(cancel);
+    }
+    else {
+      getRootPane().setDefaultButton(mOk);
+    }
     setSize(Sizes.dialogUnitXAsPixel(300, this),
-            Sizes.dialogUnitYAsPixel(240, this));
+        Sizes.dialogUnitYAsPixel(dialogHeight, this));
 
     UiUtilities.registerForClosing(this);
-
-    mOk.setEnabled(false);
+    
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         mOmdb.requestFocusInWindow();
@@ -370,12 +399,35 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
         }
 
         countLabel.setFont(countLabel.getFont().deriveFont(Font.PLAIN));
+        if (mDefaultCounterText != null) {
+          countLabel.setText("<html>"+mDefaultCounterText+"</html>");
+          countLabel.setEnabled(true);
+        }
       }
     });
   }
 
+  private boolean checkCurrentDate(Program program) {
+    if (program.getDate().compareTo(Date.getCurrentDate()) <= 0) {
+      mOmdb.setEnabled(false);
+      mDescription.setEnabled(false);
+      mGenre.setEnabled(false);
+      mSubtitle.setEnabled(false);
+      mOwS.setEnabled(false);
+      mPremiere.setEnabled(false);
+      mOk.setEnabled(false);
+      for (int i = 8; i < 18; i++) {
+        mLayout.setRowSpec(i, new RowSpec("0"));
+      }
+      mIcon.setIcon(UiUtilities.scaleIcon(UIManager.getIcon("OptionPane.warningIcon"),16));
+      mDefaultCounterText = mLocalizer.msg("editToday", "Programs earlier than tomorrow can only be edited on omdb.org");
+      return true;
+    }
+    return false;
+  }
+
   protected void updateOkButton() {
-    mOk.setEnabled((getDescription().length() > 0) || (getUrl().length() > 0));
+    mOk.setEnabled(mDescription.isEnabled() && ((getDescription().length() > 0) || (getUrl().length() > 0)));
   }
 
   private void ok() {
