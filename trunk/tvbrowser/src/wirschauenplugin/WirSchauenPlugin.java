@@ -26,7 +26,6 @@
 package wirschauenplugin;
 
 import devplugin.ActionMenu;
-import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
@@ -139,7 +138,7 @@ public class WirSchauenPlugin extends Plugin {
     name = name + program.getChannel().getId();
     
     if (getPluginManager().getExampleProgram().equals(program) ||
-        (mAllowedChannels.contains(name) && (program.getDate().compareTo(Date.getCurrentDate()) > 0))) {
+        mAllowedChannels.contains(name)) {
 
       AbstractAction action = new AbstractAction() {
         public void actionPerformed(ActionEvent evt) {
