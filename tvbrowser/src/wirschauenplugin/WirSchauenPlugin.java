@@ -58,7 +58,7 @@ import javax.swing.ImageIcon;
  * With this plugin it is possible to add information about a program and send it to wirschauen.de
  */
 public class WirSchauenPlugin extends Plugin {
-  private static final Version mVersion = new Version(0, 6, 0, false);
+  private static final Version mVersion = new Version(0, 7, 0, false);
 
   private static Logger mLog = Logger.getLogger(WirSchauenPlugin.class.getName());
 
@@ -139,7 +139,7 @@ public class WirSchauenPlugin extends Plugin {
     name = name + program.getChannel().getId();
     
     if (getPluginManager().getExampleProgram().equals(program) ||
-        (mAllowedChannels.contains(name) && (program.getDate().compareTo(Date.getCurrentDate().addDays(1)) > 0))) {
+        (mAllowedChannels.contains(name) && (program.getDate().compareTo(Date.getCurrentDate()) > 0))) {
 
       AbstractAction action = new AbstractAction() {
         public void actionPerformed(ActionEvent evt) {
