@@ -299,6 +299,7 @@ public final class PluginInfo {
      * 
      * @param id plugin id
      * @return generic help URL
+     * @since 2.6.1
      */
     public static String getHelpUrl(String id) {
       PluginAccess plugin = PluginProxyManager.getInstance().getPluginForId(id);
