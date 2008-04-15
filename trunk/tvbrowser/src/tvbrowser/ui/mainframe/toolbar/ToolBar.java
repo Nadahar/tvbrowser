@@ -37,6 +37,8 @@ import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragSource;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -165,28 +167,7 @@ public class ToolBar extends JToolBar {
       if (type == TOOGLE_BUTTON_ACTION) {
         addToggleButton(action);
       } else if (type == SEPARATOR) {
-        JPanel separatorPanel = new JPanel(new FormLayout("0dlu:grow,default,0dlu:grow","fill:default:grow"));
-        
-        if(mLocation.equals(BorderLayout.WEST))
-          separatorPanel.setLayout(new FormLayout("default:grow","0dlu:grow,default,0dlu:grow"));
-          
-        separatorPanel.setOpaque(false);
-        separatorPanel.setBorder(BorderFactory.createEmptyBorder());
-        separatorPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        if(mLocation.equals(BorderLayout.NORTH))
-          separatorPanel.add(new JSeparator(JSeparator.VERTICAL), new CellConstraints().xy(2,1));
-        else
-          separatorPanel.add(new JSeparator(JSeparator.HORIZONTAL), new CellConstraints().xy(1,2));
-
-        int height = (int)((mLocation.equals(BorderLayout.NORTH) ? getPreferredSize().height : 20) * 0.85);
-        int width = mLocation.equals(BorderLayout.NORTH) ? 10 : 18;
-        
-        separatorPanel.setPreferredSize(new Dimension(width,height));
-        separatorPanel.setMaximumSize(new Dimension(width,height));
-        separatorPanel.setMinimumSize(new Dimension(width,height));        
-        
-        add(separatorPanel);
+        add(new ToolBarSeparatorPanel());
       } else if (type == GLUE) {
         JPanel gluePanel = new JPanel();
         gluePanel.setOpaque(false);
@@ -575,7 +556,80 @@ public class ToolBar extends JToolBar {
     return mIconSize == ICON_BIG;
   }
 
-public void dateChanged(Date date, ProgressMonitor monitor, Runnable callback) {
-	mModel.dateChanged(date, monitor, callback);
-}
+  public void dateChanged(Date date, ProgressMonitor monitor, Runnable callback) {
+    mModel.dateChanged(date, monitor, callback);
+  }
+  
+  /**
+   * This ToolBarSeparatorPanel tracks component changes 
+   * to dynamically adjust it's size.
+   * 
+   * @author Torsten Keil
+   * @since 2.7
+   */
+  private class ToolBarSeparatorPanel extends JPanel implements ContainerListener {
+    
+    public ToolBarSeparatorPanel() {
+      super();
+      initUI();
+    }
+    
+    /**
+     * Use this method to easily change access to the tool bar.
+     * 
+     * @return
+     */
+    private ToolBar getToolBar() {
+      return ToolBar.this;
+    }
+
+    private void initUI() {
+      String toolbarLocation = getToolBar().getToolbarLocation();
+      if(BorderLayout.NORTH.equals(toolbarLocation)) {
+        setLayout(new FormLayout("0dlu:grow,default,0dlu:grow","fill:default:grow"));
+      } else {
+        setLayout(new FormLayout("default:grow","0dlu:grow,default,0dlu:grow"));
+      }
+        
+      setOpaque(false);
+      setBorder(BorderFactory.createEmptyBorder());
+      setAlignmentX(Component.CENTER_ALIGNMENT);
+      
+      if(BorderLayout.NORTH.equals(toolbarLocation)) {
+        add(new JSeparator(JSeparator.VERTICAL), new CellConstraints().xy(2,1));
+      } else {
+        add(new JSeparator(JSeparator.HORIZONTAL), new CellConstraints().xy(1,2));
+      }
+
+      adjustSize();
+      
+      ToolBar.this.addContainerListener(this);
+    }
+    
+    public void componentRemoved(ContainerEvent e) {
+      adjustSize();
+    }
+
+    public void componentAdded(ContainerEvent e) {
+      adjustSize();
+    }
+      
+    /**
+     * Adjust the size if changed.
+     */
+    private void adjustSize() {
+      ToolBar toolBar = getToolBar();
+      String toolbarLocation = toolBar.getToolbarLocation();
+      Dimension preferredSize = toolBar.getPreferredSize();
+      int height = (int)((BorderLayout.NORTH.equals(toolbarLocation) ? preferredSize.height : 20) * 0.85);
+      int width = (int)((BorderLayout.NORTH.equals(toolbarLocation) ? 10 : preferredSize.width) * 0.85);
+      Dimension actualSize = getSize();
+      Dimension newSize = new Dimension(width,height);
+      if (!actualSize.equals(newSize)) {
+        setPreferredSize(newSize);
+        setMaximumSize(newSize);
+        setMinimumSize(newSize);
+      }
+    }
+  }
 }
