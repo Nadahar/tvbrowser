@@ -34,7 +34,6 @@ import devplugin.Program;
 import devplugin.ProgressMonitor;
 import devplugin.Version;
 import devplugin.ProgramFieldType;
-import dreamboxdataservice.DreamboxDataService;
 import net.sf.xtvdclient.xtvd.DataDirectException;
 import net.sf.xtvdclient.xtvd.SOAPRequest;
 import net.sf.xtvdclient.xtvd.datatypes.Schedule;
@@ -298,7 +297,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
         // compare new and existing programs to avoid unnecessary updates
         boolean update = true;
 
-        Iterator<Program> itCurrProg = DreamboxDataService.getPluginManager().getChannelDayProgram(newDayProg.getDate(), ch);
+        Iterator<Program> itCurrProg = SchedulesDirectDataService.getPluginManager().getChannelDayProgram(newDayProg.getDate(), ch);
         Iterator<Program> itNewProg = newDayProg.getPrograms();
         if (itCurrProg != null && itNewProg != null) {
           update = false;
