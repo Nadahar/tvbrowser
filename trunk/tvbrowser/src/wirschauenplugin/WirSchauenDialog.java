@@ -91,6 +91,26 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
    */
   private static final CharSequence OMDB_DESCRIPTION_TAG = " omdb.org";
 
+  /**
+   * warning status indication, used to display warning icon
+   */
+  protected static final String STATUS_WARNING = "warning";
+
+  /**
+   * error status indication, used to display error icon 
+   */
+  protected static final String STATUS_ERROR = "error";
+
+  /**
+   * information status indication, used to display information icon 
+   */
+  private static final String STATUS_INFO = "information";
+
+  /**
+   * no status indication, used to display no icon 
+   */
+  private static final String STATUS_NONE = "";
+
   private int mButtonpressed = JOptionPane.CANCEL_OPTION;
   private JTextField mOmdb;
   private JComboBox mGenre;
@@ -114,7 +134,11 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
 
   private JLabel mIcon;
 
-  private String mDefaultCounterText;
+  private JLabel mStatusLabel;
+  
+  private String mCurrentStatus = STATUS_NONE;
+
+  private String mDefaultMessage = "";
 
   public WirSchauenDialog(JDialog parent, Program program) {
     super(parent, true);
@@ -206,10 +230,10 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     mIcon = new JLabel("");
     panel.add(mIcon,cc.xy(1,5));
     
-    final JLabel countLabel = new JLabel(labelText);
-    countLabel.setEnabled(false);
-    countLabel.setFont(countLabel.getFont().deriveFont(Font.ITALIC));
-    panel.add(countLabel, cc.xyw(3,5,4));
+    mStatusLabel = new JLabel(labelText);
+    mStatusLabel.setEnabled(false);
+    mStatusLabel.setFont(mStatusLabel.getFont().deriveFont(Font.ITALIC));
+    panel.add(mStatusLabel, cc.xyw(3,5,4));
 
     // URL
     JLabel url = new JLabel(mLocalizer.msg("URL", "URL") + ": ");
@@ -220,7 +244,6 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     NumberFormat integerFormat = NumberFormat.getIntegerInstance();
     integerFormat.setGroupingUsed(false);
     integerFormat.setParseIntegerOnly(true);
-//    mOmdb = new JFormattedTextField(integerFormat);
     mOmdb = new JTextField();
     mOmdb.setToolTipText(mLocalizer.msg("tooltip.omdbId","Numerical ID of the program"));
     panel.add(mOmdb, cc.xy(4, 7));
@@ -238,14 +261,19 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     
     mOmdb.getDocument().addDocumentListener(new DocumentListener() {
       public void changedUpdate(DocumentEvent e) {
-        updateOkButton();
+        updateOmdb();
       }
 
       public void insertUpdate(DocumentEvent e) {
-        updateOkButton();
+        updateOmdb();
       }
 
       public void removeUpdate(DocumentEvent e) {
+        updateOmdb();
+      }
+
+      private void updateOmdb() {
+        enableWirSchauenInput(mOmdb.getText().trim().length() == 0);
         updateOkButton();
       }});
 
@@ -372,7 +400,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     panel.add(builder.getPanel(), cc.xyw(1,19,6));
 
     // TODO: change to 2.7 size storage mechanism after 2.7 release
-    int dialogHeight = 240;
+    int dialogHeight = 250;
     if (checkCurrentDate(program)) {
       dialogHeight = 130;
       getRootPane().setDefaultButton(cancel);
@@ -391,18 +419,13 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
         int count = getCountForProgram(program);
 
         if (count == -1) {
-          countLabel.setText(mLocalizer.msg("countError", "Could not load data from server..."));
+          showDefaultStatus(STATUS_ERROR, mLocalizer.msg("countError", "Could not load data from server..."));
         } else if (count == 0) {
-          countLabel.setText(mLocalizer.msg("countNone", "No description available on the server."));
+          showDefaultStatus(STATUS_INFO, mLocalizer.msg("countNone", "No description available on the server."));
         } else if (count == 1) {
-          countLabel.setText(mLocalizer.msg("countOne", "One description available on the server. But you could add a better one."));
+          showDefaultStatus(STATUS_INFO, mLocalizer.msg("countOne", "One description available on the server. But you could add a better one."));
         }
 
-        countLabel.setFont(countLabel.getFont().deriveFont(Font.PLAIN));
-        if (mDefaultCounterText != null) {
-          countLabel.setText("<html>"+mDefaultCounterText+"</html>");
-          countLabel.setEnabled(true);
-        }
       }
     });
   }
@@ -410,24 +433,34 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
   private boolean checkCurrentDate(Program program) {
     if (program.getDate().compareTo(Date.getCurrentDate()) <= 0) {
       mOmdb.setEnabled(false);
-      mDescription.setEnabled(false);
-      mGenre.setEnabled(false);
-      mSubtitle.setEnabled(false);
-      mOwS.setEnabled(false);
-      mPremiere.setEnabled(false);
-      mOk.setEnabled(false);
+      enableWirSchauenInput(false);
       for (int i = 8; i < 18; i++) {
         mLayout.setRowSpec(i, new RowSpec("0"));
       }
-      mIcon.setIcon(UiUtilities.scaleIcon(UIManager.getIcon("OptionPane.warningIcon"),16));
-      mDefaultCounterText = mLocalizer.msg("editToday", "Programs earlier than tomorrow can only be edited on omdb.org");
+      showStatus(STATUS_WARNING, mLocalizer.msg("editToday", "Programs earlier than tomorrow can only be edited on omdb.org"));
       return true;
     }
     return false;
   }
 
+  private void enableWirSchauenInput(boolean enable) {
+    mDescription.setEnabled(enable);
+    mGenre.setEnabled(enable);
+    mSubtitle.setEnabled(enable);
+    mOwS.setEnabled(enable);
+    mPremiere.setEnabled(enable);
+    mOk.setEnabled(enable);
+    mCounter.setEnabled(enable);
+    if (enable) {
+      showStatus(STATUS_NONE,"");
+    }
+    else {
+      showStatus(STATUS_INFO,mLocalizer.msg("editOmdb", "If an omdb.org link exists, WirSchauen.de will not be used."));
+    }
+  }
+
   protected void updateOkButton() {
-    mOk.setEnabled(mDescription.isEnabled() && ((getDescription().length() > 0) || (getUrl().length() > 0)));
+    mOk.setEnabled(mOmdb.isEnabled() && ((getDescription().length() > 0) || (getUrl().length() > 0)));
   }
 
   private void ok() {
@@ -563,5 +596,27 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
         || !mOldSubtitle.equalsIgnoreCase(getSubtitle())
         || !mOldOws.equalsIgnoreCase(getOws())
         || !mOldPremiere.equalsIgnoreCase(getPremiere());
+  }
+
+  private void showStatus(String status, String message) {
+    if (STATUS_NONE.equals(mCurrentStatus) || STATUS_INFO.equals(mCurrentStatus) || STATUS_ERROR.equals(status) || STATUS_WARNING.equals(status)) {
+      if (STATUS_NONE.equals(status)) {
+        mIcon.setVisible(false);
+        mStatusLabel.setText("<html>" + mDefaultMessage + "</html>");
+      }
+      else {
+        mIcon.setIcon(UiUtilities.scaleIcon(UIManager.getIcon("OptionPane." + status + "Icon"),16));
+        mIcon.setVisible(true);
+        mStatusLabel.setFont(mStatusLabel.getFont().deriveFont(Font.PLAIN));
+        mStatusLabel.setText("<html>" + message + "</html>");
+        mStatusLabel.setEnabled(true);
+      }
+      mCurrentStatus = status;
+    }
+  }
+
+  private void showDefaultStatus(String status, String message) {
+    mDefaultMessage = message;
+    showStatus(status, message);
   }
 }
