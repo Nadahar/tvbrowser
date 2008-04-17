@@ -115,7 +115,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
    * Creates the settings panel for this tab.
    */
   public JPanel createSettingsPanel() {
-    FormLayout layout = new FormLayout("5dlu, pref, 3dlu, pref, 3dlu, pref, fill:pref:grow 3dlu", "");
+    FormLayout layout = new FormLayout("5dlu, pref, 3dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu", "");
     mSettingsPn = new JPanel(layout);
     mSettingsPn.setBorder(Borders.DIALOG_BORDER);
 
