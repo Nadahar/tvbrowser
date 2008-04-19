@@ -57,7 +57,7 @@ public class PictureConfigPanel extends JPanel {
     CellConstraints cc = new CellConstraints();
     PanelBuilder pb = new PanelBuilder(new FormLayout(
         "fill:pref:grow, 10dlu, fill:300dlu:grow, fill:pref:grow",
-        "fill:0dlu:grow, pref, 15dlu, pref, pref, pref, pref 15dlu, pref, fill:0dlu:grow"), this);    
+        "fill:0dlu:grow, pref, 15dlu, pref, pref, pref, pref, 15dlu, pref, fill:0dlu:grow"), this);    
     
     mDownloadAll = new JRadioButton(mLocalizer.msg("allPictures","Download pictures for all programs"));
     mDownloadNoPictures = new JRadioButton(mLocalizer.msg("noPictures","Don't download pictures"));

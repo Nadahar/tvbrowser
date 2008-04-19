@@ -1364,6 +1364,13 @@ public class Settings {
   public static final BooleanProperty propShowChannelTooltipInProgramTable = new BooleanProperty(
       mProp, "showChannelTooltipInProgramtable", true);
   
+  /** Saves the date of the very first TV-Browser start */
+  public static final DateProperty propFirstStartDate = new DateProperty(
+      mProp, "firstStartDate", null);
+  
+  /** Saves if the plugin info dialog was allready shown */
+  public static final BooleanProperty propPluginInfoDialogWasShown = new BooleanProperty(
+      mProp, "pluginInfoDialogWasShown", false);
   /**
    * Sets the window position and size for the given window with the values of the given id.
 
