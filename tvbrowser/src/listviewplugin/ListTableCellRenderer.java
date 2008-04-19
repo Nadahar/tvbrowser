@@ -58,7 +58,7 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
 
     Dimension gaps = table.getIntercellSpacing();
     JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
+    
     if (value instanceof Channel) {
 
       Channel channel = (Channel) value;
@@ -82,17 +82,26 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
 
       // do all height calculation for the complete row
       int height = mChannelLabel.getHeight();
+      
       for (int i = 0; i < 2; i++) {
         Program program = (Program) table.getValueAt(row, 1 + i);
-        if (mProgramPanel[i] == null) {
-          mProgramPanel[i] = new ProgramPanel(program, new ProgramPanelSettings(ListViewPlugin.getInstance().getPictureSettings(),false, ProgramPanelSettings.X_AXIS));
+        
+        if(program != null) {
+          if (mProgramPanel[i] == null) {
+            mProgramPanel[i] = new ProgramPanel(program, new ProgramPanelSettings(ListViewPlugin.getInstance().getPictureSettings(),false, ProgramPanelSettings.X_AXIS));
+          }
+
+          mProgramPanel[i].setProgram(program);
+          height = Math.max(height, mProgramPanel[i].getHeight());
         }
-        mProgramPanel[i].setProgram(program);
-        height = Math.max(height, mProgramPanel[i].getHeight());
       }
+      
       for (int i = 0; i < 2; i++) {
-        mProgramPanel[i].setHeight(height);
+        if (mProgramPanel[i] != null) { 
+          mProgramPanel[i].setHeight(height);
+        }
       }
+      
       height += gaps.height;
 
       if (height != table.getRowHeight(row)) {
@@ -117,7 +126,7 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
 
       return rpanel;
     }
-
+    
     return label;
   }
 
