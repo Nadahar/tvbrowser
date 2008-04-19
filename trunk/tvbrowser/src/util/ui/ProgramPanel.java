@@ -715,75 +715,75 @@ private static Font getDynamicFontSize(Font font, int offset) {
       if (mPaintExpiredProgramsPale && mProgram.isExpired()) {
         grp.setComposite(PALE_COMPOSITE);
       }
-
-
-      // paint the icons of the plugins that have marked the program
-      int x = width - 1;
-      int y = mTitleIcon.getIconHeight() + mDescriptionIcon.getIconHeight()
-          + mPictureAreaIcon.getIconHeight() + 18;
-      y = Math.min(y, height - 1);
-      for (Marker marker: markedByPluginArr) {
-        Icon[] icons = marker.getMarkIcons(mProgram);
-        if (icons != null) {
-          for(int i = icons.length - 1; i >= 0 ; i--) {
-            x -= icons[i].getIconWidth();
-            icons[i].paintIcon(this, grp, x, y - icons[i].getIconHeight());
-          }
-        }
-      }
-
-      // Paint the icons on the left side
-      if (mIconArr != null) {
-        x = 2;
-        y = mTimeFont.getSize() + 3;
-
-        // calculate height with double column layout
-        int sumHeights = -2;
-        int maxWidth = 0;
-        int rowWidth = 0;
-        for (int i = 0; i < mIconArr.length; i++) {
-          sumHeights += mIconArr[i].getIconHeight() + 2;
-          if (i % 2 == 0) {
-            rowWidth = mIconArr[i].getIconWidth();
-          }
-          else {
-            rowWidth += mIconArr[i].getIconWidth();
-          }
-          if (rowWidth > maxWidth) {
-            maxWidth = rowWidth;
-          }
-        }
-
-        // single column of icons
-        int colCount = 1;
-        // layout icons in pairs
-        if ((y + sumHeights >= mHeight) && (maxWidth < WIDTH_LEFT)) {
-          colCount = 2;
-        }
-        int iconHeight = 0;
-        int currentX = x;
-        for (int i = 0; i < mIconArr.length; i++) {
-          Icon icon = mIconArr[i];
-          boolean nextColumn = (colCount == 1) || (i % 2 == 0);
-          if (nextColumn) {
-            currentX = x;
-            iconHeight = icon.getIconHeight();
-          }
-          else {
-            iconHeight = Math.max(iconHeight, icon.getIconHeight());
-          }
-          if ((y + iconHeight) < mHeight) {
-            icon.paintIcon(this, grp, currentX, y);
-          }
-          if (nextColumn) {
-            currentX += icon.getIconWidth() + 2;
-          }
-          if (!nextColumn || (colCount == 1)) {
-            y += iconHeight + 2;
-          }
+    }
+    
+    // paint the icons of the plugins that have marked the program
+    int x = width - 1;
+    int y = mTitleIcon.getIconHeight() + mDescriptionIcon.getIconHeight()
+        + mPictureAreaIcon.getIconHeight() + 18;
+    y = Math.min(y, height - 1);
+    for (Marker marker: markedByPluginArr) {
+      Icon[] icons = marker.getMarkIcons(mProgram);
+      if (icons != null) {
+        for(int i = icons.length - 1; i >= 0 ; i--) {
+          x -= icons[i].getIconWidth();
+          icons[i].paintIcon(this, grp, x, y - icons[i].getIconHeight());
         }
       }
     }
+
+    // Paint the icons on the left side
+    if (mIconArr != null) {
+      x = 2;
+      y = mTimeFont.getSize() + 3;
+
+      // calculate height with double column layout
+      int sumHeights = -2;
+      int maxWidth = 0;
+      int rowWidth = 0;
+      for (int i = 0; i < mIconArr.length; i++) {
+        sumHeights += mIconArr[i].getIconHeight() + 2;
+        if (i % 2 == 0) {
+          rowWidth = mIconArr[i].getIconWidth();
+        }
+        else {
+          rowWidth += mIconArr[i].getIconWidth();
+        }
+        if (rowWidth > maxWidth) {
+          maxWidth = rowWidth;
+        }
+      }
+
+      // single column of icons
+      int colCount = 1;
+      // layout icons in pairs
+      if ((y + sumHeights >= mHeight) && (maxWidth < WIDTH_LEFT)) {
+        colCount = 2;
+      }
+      int iconHeight = 0;
+      int currentX = x;
+      for (int i = 0; i < mIconArr.length; i++) {
+        Icon icon = mIconArr[i];
+        boolean nextColumn = (colCount == 1) || (i % 2 == 0);
+        if (nextColumn) {
+          currentX = x;
+          iconHeight = icon.getIconHeight();
+        }
+        else {
+          iconHeight = Math.max(iconHeight, icon.getIconHeight());
+        }
+        if ((y + iconHeight) < mHeight) {
+          icon.paintIcon(this, grp, currentX, y);
+        }
+        if (nextColumn) {
+          currentX += icon.getIconWidth() + 2;
+        }
+        if (!nextColumn || (colCount == 1)) {
+          y += iconHeight + 2;
+        }
+      }
+    }
+    
     // Reset the old composite
     if (mPaintExpiredProgramsPale && mProgram.isExpired()) {
       grp.setComposite(NORMAL_COMPOSITE);
