@@ -1401,7 +1401,7 @@ public class MainFrame extends JFrame implements DateListener {
       dlg = new PluginInformationDialog((JDialog)w);
     }
     
-    Settings.layoutWindow("main.pluginInfoDlg",dlg, new Dimension(710,370));
+    Settings.layoutWindow("main.pluginInfoDlg",dlg, new Dimension(710,380));
     
     dlg.setVisible(true);
   }
