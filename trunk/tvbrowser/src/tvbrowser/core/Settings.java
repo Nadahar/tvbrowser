@@ -37,6 +37,7 @@ import tvbrowser.ui.waiting.dlgs.TvDataCopyWaitingDlg;
 import util.exc.TvBrowserException;
 import util.io.IOUtilities;
 import util.settings.BooleanProperty;
+import util.settings.ByteProperty;
 import util.settings.ChannelArrayProperty;
 import util.settings.ChoiceProperty;
 import util.settings.ColorProperty;
@@ -50,6 +51,7 @@ import util.settings.ProgramFieldTypeArrayProperty;
 import util.settings.ProgramPanelSettings;
 import util.settings.Property;
 import util.settings.PropertyManager;
+import util.settings.ShortProperty;
 import util.settings.StringArrayProperty;
 import util.settings.StringProperty;
 import util.settings.VersionProperty;
@@ -1371,6 +1373,13 @@ public class Settings {
   /** Saves if the plugin info dialog was allready shown */
   public static final BooleanProperty propPluginInfoDialogWasShown = new BooleanProperty(
       mProp, "pluginInfoDialogWasShown", false);
+  
+  public static final ByteProperty propSelectedChannelCategoryIndex = new ByteProperty(
+      mProp, "selectedChannelCategoryIndex", (byte)1);
+
+  public static final ShortProperty propSelectedChannelCountryIndex = new ShortProperty(
+      mProp, "selectedChannelCountryIndex", (short)0);
+
   /**
    * Sets the window position and size for the given window with the values of the given id.
 
