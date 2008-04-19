@@ -412,7 +412,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
       // Set the new title
       mTitleIcon.setText(program.getTitle());
 
-      if(!mSettings.isShowingOnlyDateAndTitle() && mProgram.getProgramState() != Program.WAS_DELETED_STATE) {
+      if(mProgram.getProgramState() == Program.IS_VALID_STATE) {
         programHasChanged();
       }
     }
@@ -515,7 +515,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
     String[] iconPluginArr = Settings.propProgramTableIconPlugins
         .getStringArray();
 
-    if (mSettings.isShowingOnlyDateAndTitle() || (iconPluginArr == null) || (iconPluginArr.length == 0)) {
+    if (program.getProgramState() != Program.IS_VALID_STATE || (iconPluginArr == null) || (iconPluginArr.length == 0)) {
       return new Icon[0];
     } else {
       PluginProxyManager mng = PluginProxyManager.getInstance();
@@ -717,6 +717,9 @@ private static Font getDynamicFontSize(Font font, int offset) {
       }
     }
     
+    
+    
+    
     // paint the icons of the plugins that have marked the program
     int x = width - 1;
     int y = mTitleIcon.getIconHeight() + mDescriptionIcon.getIconHeight()
@@ -731,7 +734,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
         }
       }
     }
-
+    
     // Paint the icons on the left side
     if (mIconArr != null) {
       x = 2;
