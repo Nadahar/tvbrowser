@@ -68,6 +68,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -357,7 +359,18 @@ public class ChannelsSettingsTab implements
     fillSubscribedChannelsListBox();
     fillAvailableChannelsListBox();
     mListUpdating = false;
+    
+    panel.addAncestorListener(new AncestorListener() {
+      public void ancestorRemoved(AncestorEvent event) {
+        Settings.propSelectedChannelCategoryIndex.setByte((byte)mCategoryCB.getSelectedIndex());
+        Settings.propSelectedChannelCountryIndex.setShort((short)mCountryCB.getSelectedIndex());
+      }
 
+      public void ancestorAdded(AncestorEvent event) {}
+
+      public void ancestorMoved(AncestorEvent event) {}
+    });
+    
     result.setBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9));
     return result;
   }
@@ -540,7 +553,7 @@ public class ChannelsSettingsTab implements
           "Not categorized"), Channel.CATEGORY_NONE));
     }
 
-    mCategoryCB.setSelectedIndex(1);
+    mCategoryCB.setSelectedIndex(Settings.propSelectedChannelCategoryIndex.getByte());
 
     HashSet<String> countries = new HashSet<String>();
 
@@ -564,6 +577,10 @@ public class ChannelsSettingsTab implements
     Arrays.sort(items);
     for (FilterItem item : items) {
       mCountryCB.addItem(item);
+    }
+    
+    if(Settings.propSelectedChannelCountryIndex.getShort() < mCountryCB.getItemCount()) {
+      mCountryCB.setSelectedIndex(Settings.propSelectedChannelCountryIndex.getShort());
     }
   }
 
