@@ -47,7 +47,17 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
 
   private ChannelLabel mChannelLabel;
 
-  private ProgramPanel[] mProgramPanel = new ProgramPanel[2];
+  private ProgramPanel[][] mProgramPanel;
+  
+  /**
+   * Creates an instance of this class.
+   * <p>
+   * @param rowCount The number of rows.
+   */
+  public ListTableCellRenderer(int rowCount) {
+    mProgramPanel = new ProgramPanel[rowCount][2];
+  }
+  
 
   /**
    * Creates the Component
@@ -87,18 +97,18 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
         Program program = (Program) table.getValueAt(row, 1 + i);
         
         if(program != null) {
-          if (mProgramPanel[i] == null) {
-            mProgramPanel[i] = new ProgramPanel(program, new ProgramPanelSettings(ListViewPlugin.getInstance().getPictureSettings(),false, ProgramPanelSettings.X_AXIS));
+          if (mProgramPanel[row][i] == null) {
+            mProgramPanel[row][i] = new ProgramPanel(program, new ProgramPanelSettings(ListViewPlugin.getInstance().getPictureSettings(),false, ProgramPanelSettings.X_AXIS));
           }
 
-          mProgramPanel[i].setProgram(program);
-          height = Math.max(height, mProgramPanel[i].getHeight());
+          mProgramPanel[row][i].setProgram(program);
+          height = Math.max(height, mProgramPanel[row][i].getHeight());
         }
       }
       
       for (int i = 0; i < 2; i++) {
         if (mProgramPanel[i] != null) { 
-          mProgramPanel[i].setHeight(height);
+          mProgramPanel[row][i].setHeight(height);
         }
       }
       
@@ -114,10 +124,10 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
       int index = column - 1;
 
       JPanel rpanel = new JPanel(new BorderLayout());
-      rpanel.add(mProgramPanel[index], BorderLayout.CENTER);
+      rpanel.add(mProgramPanel[row][index], BorderLayout.CENTER);
       rpanel.setBackground(label.getBackground());
 
-      mProgramPanel[index].setTextColor(label.getForeground());
+      mProgramPanel[row][index].setTextColor(label.getForeground());
 
       if (ListViewPlugin.PROGRAMTABLEWIDTH > table.getColumnModel().getColumn(column).getMinWidth()) {
         int width = ListViewPlugin.PROGRAMTABLEWIDTH;
