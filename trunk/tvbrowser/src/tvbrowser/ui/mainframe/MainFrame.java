@@ -1408,10 +1408,9 @@ public class MainFrame extends JFrame implements DateListener {
 
   private void onDownloadStart() {
     if(!Settings.propPluginInfoDialogWasShown.getBoolean()) {
-      Date compareDate = Date.getCurrentDate().addDays((int)(Math.random() * 4 + 3));
-      System.out.println(compareDate);
+      Date compareDate = Settings.propFirstStartDate.getDate().addDays((int)(Math.random() * 4 + 3));
       
-      if(compareDate.compareTo(Settings.propFirstStartDate.getDate()) <= 0) {
+      if(compareDate.compareTo(Date.getCurrentDate()) <= 0) {
         showPluginInfoDlg();
         Settings.propPluginInfoDialogWasShown.setBoolean(true);
       }
