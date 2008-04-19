@@ -239,8 +239,12 @@ public class TVBrowser {
     // Use a even simpler Formatter for console logging
     mainLogger.getHandlers()[0].setFormatter(createFormatter());
 
-    // Load the settings
+    // Load the settings    
     Settings.loadSettings();
+    
+    if (Settings.propFirstStartDate.getDate() == null) {
+      Settings.propFirstStartDate.setDate(Date.getCurrentDate());
+    }
 
     if (!createLockFile()) {
       updateLookAndFeel();

@@ -91,13 +91,13 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
 
   protected JMenuItem mSettingsMI, mQuitMI, mToolbarMI, mStatusbarMI, mTimeBtnsMI, mDatelistMI,
                     mChannellistMI, mPluginOverviewMI, mViewFilterBarMI, mUpdateMI,
-                    mPluginManagerMI, mDonorMI, mFaqMI, mBackupMI, mForumMI, mWebsiteMI, mHandbookMI, mDownloadMI,
+                    mPluginManagerMI, mInstallPluginsMI, mDonorMI, mFaqMI, mBackupMI, mForumMI, mWebsiteMI, mHandbookMI, mDownloadMI,
                     mConfigAssistantMI, mAboutMI, mKeyboardShortcutsMI,
                     mPreviousDayMI, mNextDayMI, mPreviousWeekMI, mNextWeekMI, mTodayMI,
                     mGotoNowMenuItem, mEditTimeButtonsMenuItem,
                     mToolbarCustomizeMI, mFullscreenMI, mFontSizeLargerMI, mFontSizeSmallerMI,
                     mFontSizeDefaultMI, mColumnWidthLargerMI, mColumnWidthSmallerMI, 
-                    mColumnWidthDefaultMI;
+                    mColumnWidthDefaultMI, mPluginInfoDlgMI;
   protected JMenu mFiltersMenu, mLicenseMenu, mGoMenu, mViewMenu, mToolbarMenu, mPluginHelpMenu;
 
   private JMenu mGotoDateMenu, mGotoChannelMenu, mGotoTimeMenu, mFontSizeMenu, mColumnWidthMenu, mChannelGroupMenu;
@@ -267,15 +267,19 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     new MenuHelpTextAdapter(mUpdateMI, mLocalizer.msg("menuinfo.update",""), mLabel);
     
     mLicenseMenu = createLicenseMenuItems();
+
+    Icon urlHelpImg = IconLoader.getInstance().getIconFromTheme("apps", "help-browser", 16);
+    Icon urlBrowserImg = IconLoader.getInstance().getIconFromTheme("apps", "internet-web-browser", 16);
+    
+    mInstallPluginsMI = new JMenuItem(mLocalizer.msg("menuitem.installPlugins","Install/Update Plugins..."),urlBrowserImg);
+    mInstallPluginsMI.addActionListener(this);
+    new MenuHelpTextAdapter(mInstallPluginsMI, mLocalizer.msg("menuinfo.installPlugins","Add additonal functions to TV-Browser/search for updates for installed Plugins"), mLabel);
     
     mPluginManagerMI = new JMenuItem(mLocalizer.msg("menuitem.managePlugins", "Manage Plugins"));
     mPluginManagerMI.addActionListener(this);
     mPluginManagerMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-plugins", 16));
     new MenuHelpTextAdapter(mPluginManagerMI, mLocalizer.msg("menuinfo.findplugins",""), mLabel);
-    
-    Icon urlHelpImg = IconLoader.getInstance().getIconFromTheme("apps", "help-browser", 16);
-    Icon urlBrowserImg = IconLoader.getInstance().getIconFromTheme("apps", "internet-web-browser", 16);
-    
+        
     mHandbookMI=new JMenuItem(mLocalizer.msg("menuitem.handbook", "Handbook"),urlHelpImg); 
     mHandbookMI.addActionListener(this);
     new MenuHelpTextAdapter(mHandbookMI,mLocalizer.msg("website.handbook",""),mLabel); 
@@ -311,6 +315,10 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mConfigAssistantMI=new JMenuItem(mLocalizer.msg("menuitem.configAssistant","setup assistant"),IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
     mConfigAssistantMI.addActionListener(this);
     new MenuHelpTextAdapter(mConfigAssistantMI,mLocalizer.msg("menuinfo.configAssistant",""),mLabel);
+    
+    mPluginInfoDlgMI=new JMenuItem(mLocalizer.msg("menuitem.pluginInfoDlg","What are Plugins?"),urlHelpImg);
+    mPluginInfoDlgMI.addActionListener(this);
+    new MenuHelpTextAdapter(mPluginInfoDlgMI,mLocalizer.msg("menuinfo.pluginInfoDlg","Describes the Plugin functionality of TV-Browser."),mLabel);
     
     mAboutMI = new JMenuItem(mLocalizer.msg("menuitem.about", "About..."), new ImageIcon("imgs/tvbrowser16.png"));
     mAboutMI.addActionListener(this);
@@ -748,8 +756,10 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
        mMainFrame.updateTvData();
      }
      else if (source == mPluginManagerMI) {
-//       mMainFrame.showUpdatePluginsDlg();
        mMainFrame.showSettingsDialog(SettingsItem.PLUGINS);
+     }
+     else if (source == mInstallPluginsMI) {
+       mMainFrame.showUpdatePluginsDlg(true);
      }
      else if (source == mHandbookMI) {
        Launch.openURL(mLocalizer.msg("website.handbook",""));
@@ -778,6 +788,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
      else if (source == mConfigAssistantMI) {
          mMainFrame.runSetupAssistant();
      }
+     else if (source == mPluginInfoDlgMI) {
+       mMainFrame.showPluginInfoDlg();
+     } 
      else if (source == mAboutMI) {
        mMainFrame.showAboutBox();
      }
@@ -851,6 +864,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     helpMenu.add(mFaqMI);
     helpMenu.add(mBackupMI);
     helpMenu.add(mPluginHelpMenu);
+    helpMenu.add(mPluginInfoDlgMI);
     helpMenu.addSeparator();
     helpMenu.add(mWebsiteMI);
     helpMenu.add(mForumMI);

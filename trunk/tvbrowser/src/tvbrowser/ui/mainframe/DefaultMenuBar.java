@@ -93,6 +93,7 @@ public class DefaultMenuBar extends MenuBar {
       mPluginsMenu.add(menuItem);
     }
     mPluginsMenu.addSeparator();
+    mPluginsMenu.add(mInstallPluginsMI);
     mPluginsMenu.add(mPluginManagerMI);
     
     // Help menu
@@ -138,6 +139,7 @@ public class DefaultMenuBar extends MenuBar {
       mPluginsMenu.add(menuItem);  
     }
     mPluginsMenu.addSeparator();
+    mPluginsMenu.add(mInstallPluginsMI);
     mPluginsMenu.add(mPluginManagerMI);
   }
 

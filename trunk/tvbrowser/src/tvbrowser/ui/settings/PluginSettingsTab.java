@@ -118,7 +118,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     
     update.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        MainFrame.getInstance().showUpdatePluginsDlg();
+        MainFrame.getInstance().showUpdatePluginsDlg(false);
       }
     });
 
@@ -383,7 +383,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     JMenuItem refreshMI = new JMenuItem(mLocalizer.msg("updateInstallPlugin", "Update/Install Plugins"), IconLoader.getInstance().getIconFromTheme("actions", "web-search", 16));
     refreshMI.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
-        MainFrame.getInstance().showUpdatePluginsDlg();
+        MainFrame.getInstance().showUpdatePluginsDlg(false);
       }
     });
     menu.add(refreshMI);

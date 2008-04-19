@@ -1388,8 +1388,35 @@ public class MainFrame extends JFrame implements DateListener {
       Settings.propLastUsedChannelGroup.setString(null);
     }
   }
+  
+  protected void showPluginInfoDlg() {
+    Window w = UiUtilities.getLastModalChildOf(this);
+    
+    PluginInformationDialog dlg;
+    
+    if(w instanceof JFrame) {
+      dlg = new PluginInformationDialog((JFrame)w);
+    }
+    else {
+      dlg = new PluginInformationDialog((JDialog)w);
+    }
+    
+    Settings.layoutWindow("main.pluginInfoDlg",dlg, new Dimension(710,370));
+    
+    dlg.setVisible(true);
+  }
 
   private void onDownloadStart() {
+    if(!Settings.propPluginInfoDialogWasShown.getBoolean()) {
+      Date compareDate = Date.getCurrentDate().addDays((int)(Math.random() * 4 + 3));
+      System.out.println(compareDate);
+      
+      if(compareDate.compareTo(Settings.propFirstStartDate.getDate()) <= 0) {
+        showPluginInfoDlg();
+        Settings.propPluginInfoDialogWasShown.setBoolean(true);
+      }
+    }
+    
     mLastAutoUpdateRun = System.currentTimeMillis();
     mToolBar.updateUpdateButton(true);
     mMenuBar.showStopMenuItem();
@@ -1694,14 +1721,18 @@ public class MainFrame extends JFrame implements DateListener {
     box.dispose();
   }
 
-  public void showUpdatePluginsDlg() {
-    Object[] options = { mLocalizer.msg("checknow", "Check now"),
-        Localizer.getLocalization(Localizer.I18N_CANCEL) };
-    String msg = mLocalizer.msg("question.1",
-        "do you want to check for new plugins");
-    int answer = JOptionPane.showOptionDialog(this, msg, mLocalizer.msg(
-        "title.1", "update plugins"), JOptionPane.YES_NO_OPTION,
-        JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+  public void showUpdatePluginsDlg(boolean noQuestion) {
+    int answer = JOptionPane.YES_OPTION;
+  
+    if(!noQuestion) {
+      Object[] options = { mLocalizer.msg("checknow", "Check now"),
+          Localizer.getLocalization(Localizer.I18N_CANCEL) };
+      String msg = mLocalizer.msg("question.1",
+          "do you want to check for new plugins");
+      answer = JOptionPane.showOptionDialog(this, msg, mLocalizer.msg(
+          "title.1", "update plugins"), JOptionPane.YES_NO_OPTION,
+          JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+    }
 
     if (answer == JOptionPane.YES_OPTION) {
       updatePlugins(PluginAutoUpdater.DEFAULT_PLUGINS_DOWNLOAD_URL, false, mStatusBar.getLabel());
