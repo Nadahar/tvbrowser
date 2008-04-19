@@ -561,7 +561,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
    * Sets the Table-Properties
    */
   private void setTableColumProperties() {
-    ListTableCellRenderer renderer = new ListTableCellRenderer();
+    ListTableCellRenderer renderer = new ListTableCellRenderer(mModel.getRowCount());
     int width = ListViewPlugin.PROGRAMTABLEWIDTH;
     for (int i = 0; i <= 2; i++) {
       TableColumn column = mProgramTable.getColumnModel().getColumn(i);
