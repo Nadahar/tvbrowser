@@ -107,7 +107,7 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
       }
       
       for (int i = 0; i < 2; i++) {
-        if (mProgramPanel[i] != null) { 
+        if (mProgramPanel[row][i] != null) { 
           mProgramPanel[row][i].setHeight(height);
         }
       }
