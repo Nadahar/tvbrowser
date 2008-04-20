@@ -81,10 +81,12 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     mLocalizer.msg("autoDownload.daily", "Once a day"),
     mLocalizer.msg("autoDownload.every3days", "Every three days"), mLocalizer.msg("autoDownload.weekly", "Weekly")
   };
+
+  private JRadioButton mNoAutoDownload;
+  private JRadioButton mStartDownload;
+  private JRadioButton mAutoDownload;
   
   private JComboBox mAutoDownloadCombo;
-
-  private JCheckBox mAutoDownloadCheck;
 
   private JComboBox mAutoDownloadPeriodCB;
 
@@ -249,7 +251,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     /* Refresh settings*/
     int inx = mAutoDownloadCombo.getSelectedIndex();
 
-    if (!mAutoDownloadCheck.isSelected()) {
+    if (mNoAutoDownload.isSelected()) {
       Settings.propAutoDownloadType.setString("never");
     } else if (inx == 0) {
       Settings.propAutoDownloadType.setString("daily");
@@ -259,6 +261,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
       Settings.propAutoDownloadType.setString("weekly");
     }
 
+    Settings.propAutoDataDownloadEnabled.setBoolean(mAutoDownload.isSelected());
     Settings.propAskForAutoDownload.setBoolean(mAskBeforeDownloadRadio.isSelected());
 
     PeriodItem periodItem = (PeriodItem) mAutoDownloadPeriodCB.getSelectedItem();
@@ -289,16 +292,26 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
   
   private JPanel createRefreshPanel() {
     JPanel refreshSettings = new JPanel(new FormLayout("5dlu, pref, 3dlu, pref, fill:3dlu:grow, 3dlu",
-    "pref, 5dlu, pref, 3dlu, pref, 5dlu, pref"));
+    "pref, 5dlu, pref, pref, pref, 3dlu, pref, 5dlu, pref"));
     
     CellConstraints cc = new CellConstraints();
     
     refreshSettings.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("titleRefresh", "Startup")), cc.xyw(
         1, 1, 5));
     
-    mAutoDownloadCheck = new JCheckBox(mLocalizer.msg("onStartUp", "On startup"));
+    mNoAutoDownload = new JRadioButton(mLocalizer.msg("never","Never update TV listings automatically"));
+    mStartDownload = new JRadioButton(mLocalizer.msg("onStartUp", "Update TV listings only on start up of TV-Browser"));
+    mAutoDownload = new JRadioButton(mLocalizer.msg("autoUpdate","Update TV listings automatically"));
     
-    refreshSettings.add(mAutoDownloadCheck, cc.xy(2, 3));
+    ButtonGroup bg = new ButtonGroup();
+    
+    bg.add(mNoAutoDownload);
+    bg.add(mStartDownload);
+    bg.add(mAutoDownload);
+    
+    refreshSettings.add(mNoAutoDownload, cc.xy(2, 3));
+    refreshSettings.add(mStartDownload, cc.xy(2, 4));
+    refreshSettings.add(mAutoDownload, cc.xy(2, 5));
     
     mAutoDownloadCombo = new JComboBox(AUTO_DOWNLOAD_MSG_ARR);
     String dlType = Settings.propAutoDownloadType.getString();
@@ -312,7 +325,9 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     
     JPanel panel = new JPanel(new FormLayout("10dlu, pref, 3dlu, pref", "pref, 3dlu, pref, 3dlu, pref"));
     
-    mAutoDownloadCheck.setSelected(!dlType.equals("never"));
+    mStartDownload.setSelected(!dlType.equals("never") && !Settings.propAutoDataDownloadEnabled.getBoolean());
+    mAutoDownload.setSelected(Settings.propAutoDataDownloadEnabled.getBoolean());
+    mNoAutoDownload.setSelected(!mStartDownload.isSelected() && !mAutoDownload.isSelected());
     
     mHowOften = new JLabel(mLocalizer.msg("autoDownload.howOften", "How often?"));
     panel.add(mHowOften, cc.xy(2, 1));
@@ -325,15 +340,27 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     PeriodItem pi = new PeriodItem(autoDLPeriod);
     mAutoDownloadPeriodCB.setSelectedItem(pi);
     
-    mAutoDownloadCheck.addActionListener(new ActionListener() {
+    mNoAutoDownload.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        setAutoDownloadEnabled(mAutoDownloadCheck.isSelected());
+        setAutoDownloadEnabled(mStartDownload.isSelected() || mAutoDownload.isSelected());
+      }
+    });
+    
+    mStartDownload.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent event) {
+        setAutoDownloadEnabled(mStartDownload.isSelected() || mAutoDownload.isSelected());
+      }
+    });
+
+    mAutoDownload.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent event) {
+        setAutoDownloadEnabled(mStartDownload.isSelected() || mAutoDownload.isSelected());
       }
     });
     
     mAskBeforeDownloadRadio.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        setAutoDownloadEnabled(mAutoDownloadCheck.isSelected());
+        setAutoDownloadEnabled(mStartDownload.isSelected() || mAutoDownload.isSelected());
       };
     });
     
@@ -356,14 +383,14 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     mAskBeforeDownloadRadio.setSelected(Settings.propAskForAutoDownload.getBoolean());
     mAskTimeRadio.setSelected(!Settings.propAskForAutoDownload.getBoolean());
     
-    refreshSettings.add(panel, cc.xy(2, 5));
+    refreshSettings.add(panel, cc.xy(2, 7));
     
-    setAutoDownloadEnabled(mAutoDownloadCheck.isSelected());
+    setAutoDownloadEnabled(mStartDownload.isSelected() || mAutoDownload.isSelected());
     
     mDateCheck = new JCheckBox(mLocalizer.msg("checkDate", "Check date via NTP if data download fails"));
     mDateCheck.setSelected(Settings.propNTPTimeCheck.getBoolean());
 
-    refreshSettings.add(mDateCheck, cc.xy(2, 7));
+    refreshSettings.add(mDateCheck, cc.xy(2, 9));
     
     return refreshSettings;
   }
