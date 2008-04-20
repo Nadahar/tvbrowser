@@ -1006,6 +1006,10 @@ public class MainFrame extends JFrame implements DateListener {
     }
     mShuttingDown = true;
 
+    if(log) {
+      FavoritesPlugin.getInstance().handleTvBrowserIsShuttingDown();
+    }
+    
     if (log) {
       mLog.info("Finishing plugins");
     }

@@ -85,6 +85,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.event.HyperlinkEvent;
@@ -131,8 +132,7 @@ public class FavoritesPlugin {
    * do not save the favorite tree during TV data updates because it might not be consistent 
    */
   private boolean mHasRightToSave = true;
-
-  private Favorite[] mUpdateFavorites;
+  private boolean mIsShuttingDown = false;
 
   private Hashtable<String,ReceiveTargetItem> mSendPluginsTable = new Hashtable<String,ReceiveTargetItem>();
   private ProgramReceiveTarget[] mClientPluginTargets;
@@ -141,6 +141,7 @@ public class FavoritesPlugin {
   private int mMarkPriority = -2;
   
   private Exclusion[] mExclusions;
+  private ArrayList<UpdateInfoThread> mUpdateInfoThreads;
   
   /**
    * Creates a new instance of FavoritesPlugin.
@@ -151,6 +152,7 @@ public class FavoritesPlugin {
     mPendingFavorites = new ArrayList<AdvancedFavorite>(); 
     mClientPluginTargets = new ProgramReceiveTarget[0];
     mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
+    mUpdateInfoThreads = new ArrayList<UpdateInfoThread>();
     load();
     mRootNode = new PluginTreeNode(mLocalizer.msg("manageFavorites","Favorites"));
 //    updateRootNode(false);
@@ -192,16 +194,29 @@ public class FavoritesPlugin {
       }
 
       if(!showInfoFavorites.isEmpty()) {
-        mUpdateFavorites = showInfoFavorites.toArray(new Favorite[showInfoFavorites.size()]);
-
-        Thread thread = new Thread("Manage favorites") {
-          public void run() {
-            showManageFavoritesDialog(true, mUpdateFavorites);
-          }
-        };
+        UpdateInfoThread thread = new UpdateInfoThread(showInfoFavorites.toArray(new Favorite[showInfoFavorites.size()]));
         thread.setPriority(Thread.MIN_PRIORITY);
+        
+        mUpdateInfoThreads.add(thread);
         thread.start();
       }
+    }
+  }
+  
+  public void handleTvBrowserIsShuttingDown() {
+    mIsShuttingDown = true;
+    
+    try {
+      if(!mUpdateInfoThreads.isEmpty()) {
+        for(int i = mUpdateInfoThreads.size() - 1; i >= 0; i--) {
+          UpdateInfoThread thread = mUpdateInfoThreads.get(i);
+          
+          thread.interrupt();
+          thread.showDialog();
+        }
+      }
+    }catch(Throwable t) {
+      ErrorHandler.handle("Error during showing new Favorites on TV-Browser shutting down.",t);  
     }
   }
   
@@ -968,5 +983,33 @@ public class FavoritesPlugin {
    */
   public Exclusion[] getGlobalExclusions() {
     return mExclusions;
+  }
+  
+  private class UpdateInfoThread extends Thread {
+    private Favorite[] mFavoriteArr;
+    
+    protected UpdateInfoThread(Favorite[] favArr) {
+      super("Manage favorites");
+      mFavoriteArr = favArr;
+    }
+    
+    public void run() {
+      while((!MainFrame.getInstance().isVisible() || MainFrame.getInstance().getExtendedState() == JFrame.ICONIFIED) && !mIsShuttingDown) {
+        try {
+          sleep(5000);
+        }catch(Exception e) {
+          mUpdateInfoThreads.remove(this);
+          return;
+        }
+      }
+      
+      showDialog();
+      
+      mUpdateInfoThreads.remove(this);
+    }
+    
+    protected void showDialog() {
+      showManageFavoritesDialog(true, mFavoriteArr);
+    }
   }
 }
