@@ -34,7 +34,6 @@ import devplugin.ProgramInfoHelper;
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
-import tvbrowser.core.plugin.PluginStateAdapter;
 import util.io.IOUtilities;
 import util.misc.StringPool;
 import util.program.ProgramUtilities;
@@ -182,29 +181,6 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     mDescriptionIcon.setMaximumLineCount(3);
     
     setBackground(UIManager.getColor("programPanel.background"));
-    
-    // Fix for [TVB-50]
-    PluginProxyManager.getInstance().addPluginStateListener(new PluginStateAdapter() {
-
-      @Override
-      public void pluginActivated(PluginProxy plugin) {
-        updatePrograms();
-      }
-
-      @Override
-      public void pluginDeactivated(PluginProxy plugin) {
-        updatePrograms();
-      }
-      
-      /**
-       * update program icons (after plugin (de)activation)
-       */
-      private void updatePrograms() {
-        programHasChanged();
-        repaint();
-      }
-    });
-
   }
 
   private void calculateWidth() {
