@@ -115,7 +115,7 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener, Wi
 
     ButtonBarBuilder builder = new ButtonBarBuilder();
     
-    JButton defaultButton = new JButton(mLocalizer.msg("default", "Default"));
+    JButton defaultButton = new JButton(Localizer.getLocalization(Localizer.I18N_DEFAULT));
     
     defaultButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
