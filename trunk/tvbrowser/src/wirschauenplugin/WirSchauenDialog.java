@@ -28,18 +28,24 @@ import com.jgoodies.forms.layout.Sizes;
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 
 import devplugin.Date;
+import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import util.browserlauncher.Launch;
 import util.ui.Localizer;
+import util.ui.MarkPriorityComboBoxRenderer;
 import util.ui.WindowClosingIf;
 import util.ui.UiUtilities;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URLEncoder;
@@ -48,10 +54,12 @@ import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -70,7 +78,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 
-public class WirSchauenDialog extends JDialog implements WindowClosingIf {
+public class WirSchauenDialog extends JDialog implements WindowClosingIf, ItemListener {
   /**
    * Localizer
    */
@@ -113,6 +121,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
 
   private int mButtonpressed = JOptionPane.CANCEL_OPTION;
   private JTextField mOmdb;
+  private JComboBox mCategory;
   private JComboBox mGenre;
   private JTextArea mDescription;
   private JCheckBox mSubtitle;
@@ -126,7 +135,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
   /**
    * old properties from the server, so we can compare whether anything was changed at all
    */
-  private String mOldUrl, mOldGenre, mOldDescription, mOldSubtitle, mOldOws, mOldPremiere;
+  private String mOldUrl, mOldGenre, mOldDescription, mOldSubtitle, mOldOws, mOldPremiere, mOldCategory;
 
   private JButton mOk;
 
@@ -139,6 +148,8 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
   private String mCurrentStatus = STATUS_NONE;
 
   private String mDefaultMessage = "";
+  
+  private static final Color mNeededBg = new Color(255,0,0);
 
   public WirSchauenDialog(JDialog parent, Program program) {
     super(parent, true);
@@ -165,6 +176,8 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
         +"pref," // status
         +"3dlu,"
         +"pref," // omdb URL
+        +"3dlu,"
+        +"pref," // category
         +"3dlu,"
         +"pref," // genre
         +"3dlu,"
@@ -274,7 +287,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
 
       private void updateOmdb() {
         enableWirSchauenInput(mOmdb.getText().trim().length() == 0);
-        updateOkButton();
+        calculateOkButtonStatus();
       }});
 
     mOpenOmdb = new JButton(WirSchauenPlugin.getInstance().createImageIcon("apps", "internet-web-browser", 16));
@@ -293,11 +306,53 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
         }
       }});
 
+    
+    // category
+    JLabel category = new JLabel(mLocalizer.msg("category","Category")+": ");
+    category.setFont(category.getFont().deriveFont(Font.BOLD));
+    
+    panel.add(category, cc.xy(1, 9));
+    String[] categories = mLocalizer.msg("categories","Film,Series,Other").split(",");
+    
+    mCategory = new JComboBox(categories);
+    mCategory.setRenderer(new DefaultListCellRenderer() {
+      public Component getListCellRendererComponent(JList list,Object value,
+          int index,boolean isSelected,boolean cellHasFocus) {
+        Component c = super.getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);
+        
+        if(!isSelected) {
+          JPanel colorPanel = new JPanel(new FormLayout("default:grow","fill:default:grow"));
+          ((JLabel)c).setOpaque(true);
+          
+          if((index == -1 && list.getSelectedIndex() == 0) || index == 0) {
+            c.setForeground(Color.white);
+            c.setBackground(mNeededBg);
+          }
+          
+          colorPanel.setOpaque(false);        
+          colorPanel.add(c, new CellConstraints().xy(1,1));
+          
+          c = colorPanel;
+        }
+        
+        return c;
+      }
+    });
+    
+    mCategory.insertItemAt(mLocalizer.msg("dontSet","Don't set yet"),0);
+    
+    mCategory.setEditable(false);
+    mCategory.setMaximumRowCount(8);
+    mCategory.setSelectedIndex(0);
+    mCategory.addItemListener(this);
+    
+    panel.add(mCategory, cc.xyw(3, 9, 4));
+    
     // genre
     JLabel genre = new JLabel(mLocalizer.msg("genre","Genre")+": ");
     genre.setFont(genre.getFont().deriveFont(Font.BOLD));
-
-    panel.add(genre, cc.xy(1, 9));
+    
+    panel.add(genre, cc.xy(1, 11));
     String[] genres = mLocalizer.msg("genreDefaults","Action,Adventure,Animation").split(",");
     Arrays.sort(genres);
     mGenre = new JComboBox(genres);
@@ -307,14 +362,14 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     //TODO: Use util.ui class after 2.7 release
     new AutoCompletion(mGenre, true);
 
-    panel.add(mGenre, cc.xyw(3, 9, 4));
+    panel.add(mGenre, cc.xyw(3, 11, 4));
 
     // description
     JLabel descLabel = new JLabel(mLocalizer.msg("text","Text")+": ");
     descLabel.setVerticalAlignment(JLabel.TOP);
     descLabel.setFont(descLabel.getFont().deriveFont(Font.BOLD));
 
-    panel.add(descLabel, cc.xy(1, 11));
+    panel.add(descLabel, cc.xy(1, 13));
 
     mDescription = new JTextArea();
     mDescription.setDocument(new PlainDocument() {
@@ -334,7 +389,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
       private void updateRemaining() {
         int remaining = 200 - mDescription.getDocument().getLength();
         mCounter.setText(mLocalizer.msg("remaining", "({0} characters remaining)", remaining));
-        updateOkButton();
+        calculateOkButtonStatus();
       }
 
       public void changedUpdate(DocumentEvent e) {
@@ -349,25 +404,28 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
         updateRemaining();
       }});
 
-    panel.add(new JScrollPane(mDescription, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), cc.xyw(3, 11, 4));
+    panel.add(new JScrollPane(mDescription, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), cc.xyw(3, 13, 4));
 
     // character count
     mCounter = new JLabel(mLocalizer.msg("maxChars","(max. 200 characters)"));
-    panel.add(mCounter, cc.xyw(3, 13, 4));
+    panel.add(mCounter, cc.xyw(3, 15, 4));
 
     // format information
     JLabel format = new JLabel(mLocalizer.msg("format","Format")+": ");
     format.setFont(format.getFont().deriveFont(Font.BOLD));
-    panel.add(format, cc.xy(1, 15));
-
+    panel.add(format, cc.xy(1, 17));
     
     mSubtitle = new JCheckBox(mLocalizer.msg("subtitle", "Untertitel"));
     mOwS = new JCheckBox(mLocalizer.msg("OwS", "Original with subtitle"));
     mPremiere = new JCheckBox(mLocalizer.msg("premiere", "Television premiere"));
 
-    panel.add(mSubtitle, cc.xyw(3, 15, 2));
-    panel.add(mOwS, cc.xyw(3, 16, 2));
-    panel.add(mPremiere, cc.xyw(3, 17, 2));
+    mSubtitle.addItemListener(this);
+    mOwS.addItemListener(this);
+    mPremiere.addItemListener(this);
+    
+    panel.add(mSubtitle, cc.xyw(3, 17, 2));
+    panel.add(mOwS, cc.xyw(3, 18, 2));
+    panel.add(mPremiere, cc.xyw(3, 19, 2));
 
     // buttons
     JButton help = new JButton(Localizer.getLocalization(Localizer.I18N_HELP));
@@ -397,12 +455,12 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     builder.addGlue();
     builder.addGriddedButtons(new JButton[]{mOk, cancel});
 
-    panel.add(builder.getPanel(), cc.xyw(1,19,6));
+    panel.add(builder.getPanel(), cc.xyw(1,21,6));
 
     // TODO: change to 2.7 size storage mechanism after 2.7 release
-    int dialogHeight = 250;
+    int dialogHeight = 280;
     if (checkCurrentDate(program)) {
-      dialogHeight = 130;
+      dialogHeight = 150;
       getRootPane().setDefaultButton(cancel);
     }
     else {
@@ -428,8 +486,43 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
 
       }
     });
+    
+    calculateOkButtonStatus();
   }
 
+  private void calculateOkButtonStatus() {
+    mOk.setEnabled(mOmdb.isEnabled() && mCategory.getSelectedIndex() != 0
+        && (mOmdb.getText().trim().length() > 0 ||
+            mDescription.getText().trim().length() > 0
+            || mSubtitle.isSelected() || mOwS.isSelected() ||
+            mPremiere.isSelected()));
+    
+    if(mOk.isEnabled()) {
+      mOmdb.setForeground(UIManager.getColor("TextField.foreground"));
+      mDescription.setForeground(UIManager.getColor("TextField.foreground"));
+      mOmdb.setBackground(UIManager.getColor("TextField.background"));
+      mDescription.setBackground(mOmdb.getBackground());      
+    }
+    else {
+      if(mOmdb.getText().trim().length() < 1 && mOmdb.isEnabled() && mDescription.getText().trim().length() < 1) {
+        mOmdb.setForeground(Color.white);
+        mOmdb.setBackground(mNeededBg);
+      }
+      else {
+        mOmdb.setForeground(UIManager.getColor("TextField.foreground"));
+        mOmdb.setBackground(UIManager.getColor("TextField.background"));
+      }
+      if(mDescription.getText().trim().length() < 1 && mDescription.isEnabled()) {
+        mDescription.setForeground(UIManager.getColor("TextField.foreground"));
+        mDescription.setBackground(mNeededBg);
+      }
+      else {
+        mDescription.setForeground(UIManager.getColor("TextField.foreground"));
+        mDescription.setBackground(UIManager.getColor("TextField.background"));
+      }
+    }
+  }
+  
   private boolean checkCurrentDate(Program program) {
     if (program.getDate().compareTo(Date.getCurrentDate()) <= 0) {
       mOmdb.setEnabled(false);
@@ -446,23 +539,21 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
   private void enableWirSchauenInput(boolean enable) {
     mDescription.setEnabled(enable);
     mGenre.setEnabled(enable);
-    mSubtitle.setEnabled(enable);
-    mOwS.setEnabled(enable);
-    mPremiere.setEnabled(enable);
-    mOk.setEnabled(enable);
     mCounter.setEnabled(enable);
+    
+    mOwS.setEnabled(mOmdb.isEnabled());
+    mPremiere.setEnabled(mOmdb.isEnabled());
+    
     if (enable) {
       showStatus(STATUS_NONE,"");
     }
     else {
       showStatus(STATUS_INFO,mLocalizer.msg("editOmdb", "If an omdb.org link exists, WirSchauen.de will not be used."));
     }
+    
+    calculateOkButtonStatus();
   }
-
-  protected void updateOkButton() {
-    mOk.setEnabled(mOmdb.isEnabled() && ((getDescription().length() > 0) || (getUrl().length() > 0)));
-  }
-
+  
   private void ok() {
     setVisible(false);
     mButtonpressed = JOptionPane.OK_OPTION;
@@ -507,6 +598,10 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
   public String getSubtitle() {
     return mSubtitle.isSelected()? "true":"false";
   }
+  
+  public String getCategory() {
+    return String.valueOf(mCategory.getSelectedIndex());
+  }
 
   public int getCountForProgram(Program program) {
     // reset all old values
@@ -516,19 +611,20 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
     mOldSubtitle = "false";
     mOldOws = "false";
     mOldPremiere = "false";
+    mOldCategory = "0";
     
     // now ask the server
     int count = -1;
     StringBuilder url = new StringBuilder();
     try {
-      url = url.append("channel=").append(URLEncoder.encode(program.getChannel().getId(), "UTF-8"));
-      url = url.append("&day=").append(program.getDate().getDayOfMonth());
-      url = url.append("&month=").append(program.getDate().getMonth());
-      url = url.append("&year=").append(program.getDate().getYear());
-      url = url.append("&hour=").append(program.getHours());
-      url = url.append("&minute=").append(program.getMinutes());
-      url = url.append("&length=").append(program.getLength());
-      url = url.append("&title=").append(URLEncoder.encode(program.getTitle(), "UTF-8"));
+      url.append("channel=").append(URLEncoder.encode(program.getChannel().getId(), "UTF-8"));
+      url.append("&day=").append(program.getDate().getDayOfMonth());
+      url.append("&month=").append(program.getDate().getMonth());
+      url.append("&year=").append(program.getDate().getYear());
+      url.append("&hour=").append(program.getHours());
+      url.append("&minute=").append(program.getMinutes());
+      url.append("&length=").append(program.getLength());
+      url.append("&title=").append(URLEncoder.encode(program.getTitle(), "UTF-8"));
 
       URL scriptUrl = new URL(WirSchauenPlugin.BASE_URL + "findDescription/?"+ url);
 
@@ -567,6 +663,15 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
 
         mOldOws = getServerValue(data, "omu");
         mOwS.setSelected(mOldOws.equalsIgnoreCase("true"));
+        
+        mOldCategory = getServerValue(data, "category");
+        
+        if(mOldCategory != null && mOldCategory.trim().length() > 0) {
+          mCategory.setSelectedIndex(Integer.parseInt(mOldCategory));
+        }
+        else {
+          mOldCategory = "0";
+        }
       } else {
         count = 0;
       }
@@ -595,7 +700,8 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
         || !mOldDescription.equals(getDescription())
         || !mOldSubtitle.equalsIgnoreCase(getSubtitle())
         || !mOldOws.equalsIgnoreCase(getOws())
-        || !mOldPremiere.equalsIgnoreCase(getPremiere());
+        || !mOldPremiere.equalsIgnoreCase(getPremiere())
+        || Integer.parseInt(mOldCategory) != mCategory.getSelectedIndex();
   }
 
   private void showStatus(String status, String message) {
@@ -618,5 +724,9 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf {
   private void showDefaultStatus(String status, String message) {
     mDefaultMessage = message;
     showStatus(status, message);
+  }
+
+  public void itemStateChanged(ItemEvent e) {
+    calculateOkButtonStatus();
   }
 }

@@ -29,6 +29,7 @@ import devplugin.ActionMenu;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
+import devplugin.ProgramFieldType;
 import devplugin.Version;
 import devplugin.ThemeIcon;
 import util.ui.Localizer;
@@ -57,7 +58,7 @@ import javax.swing.ImageIcon;
  * With this plugin it is possible to add information about a program and send it to wirschauen.de
  */
 public class WirSchauenPlugin extends Plugin {
-  private static final Version mVersion = new Version(0, 8, 0, false);
+  private static final Version mVersion = new Version(0, 9, 0, false);
 
   private static Logger mLog = Logger.getLogger(WirSchauenPlugin.class.getName());
 
@@ -184,6 +185,7 @@ public class WirSchauenPlugin extends Plugin {
       };
       
       // we have new input, so store it on the server
+      String category = dialog.getCategory();
       String genre = dialog.getGenre();
       String description = dialog.getDescription();
       String flagSubtitle = dialog.getSubtitle();
@@ -193,26 +195,31 @@ public class WirSchauenPlugin extends Plugin {
 
       StringBuilder url = new StringBuilder();
       try {
-        url = url.append("channel=").append(URLEncoder.encode(program.getChannel().getId(), "UTF-8"));
-        url = url.append("&day=").append(program.getDate().getDayOfMonth());
-        url = url.append("&month=").append(program.getDate().getMonth());
-        url = url.append("&year=").append(program.getDate().getYear());
-        url = url.append("&hour=").append(program.getHours());
-        url = url.append("&minute=").append(program.getMinutes());
-        url = url.append("&length=").append(program.getLength());
-        url = url.append("&title=").append(URLEncoder.encode(program.getTitle(), "UTF-8"));
+        url.append("channel=").append(URLEncoder.encode(program.getChannel().getId(), "UTF-8"));
+        url.append("&day=").append(program.getDate().getDayOfMonth());
+        url.append("&month=").append(program.getDate().getMonth());
+        url.append("&year=").append(program.getDate().getYear());
+        url.append("&hour=").append(program.getHours());
+        url.append("&minute=").append(program.getMinutes());
+        url.append("&length=").append(program.getLength());
+        url.append("&title=").append(URLEncoder.encode(program.getTitle(), "UTF-8"));
+        url.append("&category=").append(category);
+        
+        if(program.getTextField(ProgramFieldType.EPISODE_TYPE) != null) {
+          url.append("&episode=").append(URLEncoder.encode(program.getTextField(ProgramFieldType.EPISODE_TYPE), "UTF-8"));
+        }
         if (omdbUrl.length() > 0) {
-          url = url.append("&url=").append(URLEncoder.encode(omdbUrl, "UTF-8"));
+          url.append("&url=").append(URLEncoder.encode(omdbUrl, "UTF-8"));
         }
         if (genre.length() > 0) {
-          url = url.append("&genre=").append(URLEncoder.encode(genre, "UTF-8"));
+          url.append("&genre=").append(URLEncoder.encode(genre, "UTF-8"));
         }
         if (description.length() > 0) {
-          url = url.append("&description=").append(URLEncoder.encode(description, "UTF-8"));
+          url.append("&description=").append(URLEncoder.encode(description, "UTF-8"));
         }
-        url = url.append("&subtitle=").append(URLEncoder.encode(flagSubtitle, "UTF-8"));
-        url = url.append("&omu=").append(URLEncoder.encode(flagOws, "UTF-8"));
-        url = url.append("&premiere=").append(URLEncoder.encode(flagPremiere, "UTF-8"));
+        url.append("&subtitle=").append(URLEncoder.encode(flagSubtitle, "UTF-8"));
+        url.append("&omu=").append(URLEncoder.encode(flagOws, "UTF-8"));
+        url.append("&premiere=").append(URLEncoder.encode(flagPremiere, "UTF-8"));
 
         URL u = new URL(BASE_URL + "addTVBrowserEvent/?"+ url);
         IOUtilities.loadFileFromHttpServer(u);
