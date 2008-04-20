@@ -54,7 +54,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import tvbrowser.core.Settings;
+import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.plugin.PluginStateListener;
 import tvbrowser.ui.programtable.background.BackgroundPainter;
 import tvbrowser.ui.programtable.background.OneImageBackPainter;
 import tvbrowser.ui.programtable.background.TimeBlockBackPainter;
@@ -77,7 +79,7 @@ import devplugin.Program;
  *
  */
 public class ProgramTable extends JPanel
-implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
+implements ProgramTableModelListener, DragGestureListener, DragSourceListener, PluginStateListener {
 
   private int mColumnWidth;
   private int mHeight;
@@ -1141,5 +1143,48 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
         }
       }
     }
+  }
+  
+  // Fix for [TVB-50]
+  
+  @Override
+  public void addNotify() {
+    super.addNotify();
+    PluginProxyManager.getInstance().addPluginStateListener(this);
+  }
+  
+  @Override
+  public void removeNotify() {
+    super.removeNotify();
+    PluginProxyManager.getInstance().removePluginStateListener(this);
+  }
+
+  public void pluginActivated(PluginProxy plugin) {
+    updatePrograms();
+  }
+
+  public void pluginDeactivated(PluginProxy plugin) {
+    updatePrograms();
+  }
+
+  private void updatePrograms() {
+    ProgramTableModel model = getModel();
+    int cols = model.getColumnCount();
+    for (int c = 0; c < cols; c++) {
+      int rows = model.getRowCount(c);
+      for (int r = 0; r < rows; r++) {
+        ProgramPanel programPanel = model.getProgramPanel(c, r);
+        programPanel.programHasChanged();
+      }
+    }
+    repaint();
+  }
+
+  public void pluginLoaded(PluginProxy plugin) {
+    // noop
+  }
+
+  public void pluginUnloaded(PluginProxy plugin) {
+    // noop
   }
 }
