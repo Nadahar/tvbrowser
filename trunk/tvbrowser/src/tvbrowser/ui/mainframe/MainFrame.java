@@ -202,11 +202,14 @@ public class MainFrame extends JFrame implements DateListener {
   
   private long mLastAutoUpdateRun;
   
+  private int mAutoDownloadTimer;
+  
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
     mIsVisible = false;
     mSettingsWillBeOpened = false;
     
+    mAutoDownloadTimer = -1;
     mLastTimerMinutesAfterMidnight = -1;
     mLastAutoUpdateRun = System.currentTimeMillis();
     
@@ -1097,6 +1100,7 @@ public class MainFrame extends JFrame implements DateListener {
     
     if(mLastTimerMinutesAfterMidnight == -1) {
       resetOnAirArrays();
+      mAutoDownloadTimer = (int)(Math.random() * 1430);
     }
       
     // Avoid a repaint 6 times a minute (Once a minute is enough)
@@ -1186,6 +1190,11 @@ public class MainFrame extends JFrame implements DateListener {
     
     if ((mLastAutoUpdateRun + Settings.propDataServiceAutoUpdateTime.getInt() * 60000) <= System.currentTimeMillis() && !TvDataUpdater.getInstance().isDownloading()) {
       runAutoUpdate();
+    }
+    
+    if(Settings.propAutoDataDownloadEnabled.getBoolean() && mAutoDownloadTimer < IOUtilities.getMinutesAfterMidnight() && mAutoDownloadTimer != -1) {
+      TVBrowser.handleAutomaticDownload();
+      mAutoDownloadTimer = -1;
     }
     
     if (date.equals(mCurrentDay)) {
@@ -1407,6 +1416,8 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   private void onDownloadStart() {
+    mAutoDownloadTimer = -1;
+    
     if(!Settings.propPluginInfoDialogWasShown.getBoolean()) {
       Date compareDate = Settings.propFirstStartDate.getDate().addDays((int)(Math.random() * 4 + 3));
       
@@ -1431,6 +1442,7 @@ public class MainFrame extends JFrame implements DateListener {
 
     mFinderPanel.updateItems();
     resetOnAirArrays();
+    mAutoDownloadTimer = -1;
   }
   
   /**

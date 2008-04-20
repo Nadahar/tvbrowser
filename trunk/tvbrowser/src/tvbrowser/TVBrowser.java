@@ -815,7 +815,7 @@ public class TVBrowser {
    * Starts an automatic download if required
    * @return false, if no download got started
    */
-  private static boolean handleAutomaticDownload() {
+  public static boolean handleAutomaticDownload() {
     String autoDLType = Settings.propAutoDownloadType.getString();
 
     if ((ChannelList.getNumberOfSubscribedChannels() == 0)
@@ -824,7 +824,7 @@ public class TVBrowser {
       // Nothing to do
       return false;
     }
-
+    
     devplugin.Date lastDownloadDate=Settings.propLastDownloadDate.getDate();
     if (lastDownloadDate==null) {
       lastDownloadDate=devplugin.Date.getCurrentDate().addDays(-100);

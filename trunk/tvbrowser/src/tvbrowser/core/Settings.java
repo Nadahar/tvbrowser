@@ -1374,12 +1374,17 @@ public class Settings {
   public static final BooleanProperty propPluginInfoDialogWasShown = new BooleanProperty(
       mProp, "pluginInfoDialogWasShown", false);
   
+  /** Saves the selected channel category filter index */
   public static final ByteProperty propSelectedChannelCategoryIndex = new ByteProperty(
       mProp, "selectedChannelCategoryIndex", (byte)1);
 
+  /** Saves the selected channel country filter index */
   public static final ShortProperty propSelectedChannelCountryIndex = new ShortProperty(
       mProp, "selectedChannelCountryIndex", (short)0);
 
+  public static final BooleanProperty propAutoDataDownloadEnabled = new BooleanProperty(
+      mProp, "autoDataDownloadEnabled", false);
+  
   /**
    * Sets the window position and size for the given window with the values of the given id.
 
