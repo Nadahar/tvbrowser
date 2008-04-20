@@ -422,10 +422,6 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf, ItemLi
     mSubtitle.addItemListener(this);
     mOwS.addItemListener(this);
     mPremiere.addItemListener(this);
-    
-    panel.add(mSubtitle, cc.xyw(3, 17, 2));
-    panel.add(mOwS, cc.xyw(3, 18, 2));
-    panel.add(mPremiere, cc.xyw(3, 19, 2));
 
     // buttons
     JButton help = new JButton(Localizer.getLocalization(Localizer.I18N_HELP));
@@ -460,10 +456,14 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf, ItemLi
     // TODO: change to 2.7 size storage mechanism after 2.7 release
     int dialogHeight = 280;
     if (checkCurrentDate(program)) {
-      dialogHeight = 150;
+      dialogHeight = 130;
       getRootPane().setDefaultButton(cancel);
     }
     else {
+      panel.add(mSubtitle, cc.xyw(3, 17, 2));
+      panel.add(mOwS, cc.xyw(3, 18, 2));
+      panel.add(mPremiere, cc.xyw(3, 19, 2));
+      
       getRootPane().setDefaultButton(mOk);
     }
     setSize(Sizes.dialogUnitXAsPixel(300, this),
@@ -498,9 +498,16 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf, ItemLi
             mPremiere.isSelected()));
     
     if(mOk.isEnabled()) {
-      mOmdb.setForeground(UIManager.getColor("TextField.foreground"));
+      if(mOmdb.isEnabled()) {
+        mOmdb.setForeground(UIManager.getColor("TextField.foreground"));
+        mOmdb.setBackground(UIManager.getColor("TextField.background"));
+      }
+      else {
+        mOmdb.setBackground(UIManager.getColor("TextField.disabledBackground"));
+        mOmdb.setBackground(UIManager.getColor("TextField.disabledBackground"));
+      }
+      
       mDescription.setForeground(UIManager.getColor("TextField.foreground"));
-      mOmdb.setBackground(UIManager.getColor("TextField.background"));
       mDescription.setBackground(mOmdb.getBackground());      
     }
     else {
@@ -509,8 +516,14 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf, ItemLi
         mOmdb.setBackground(mNeededBg);
       }
       else {
-        mOmdb.setForeground(UIManager.getColor("TextField.foreground"));
-        mOmdb.setBackground(UIManager.getColor("TextField.background"));
+        if(mOmdb.isEnabled()) {
+          mOmdb.setForeground(UIManager.getColor("TextField.foreground"));
+          mOmdb.setBackground(UIManager.getColor("TextField.background"));
+        }
+        else {
+          mOmdb.setBackground(UIManager.getColor("TextField.disabledBackground"));
+          mOmdb.setBackground(UIManager.getColor("TextField.disabledBackground"));
+        }
       }
       if(mDescription.getText().trim().length() < 1 && mDescription.isEnabled()) {
         mDescription.setForeground(UIManager.getColor("TextField.foreground"));
