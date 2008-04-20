@@ -538,9 +538,9 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf, ItemLi
 
   private void enableWirSchauenInput(boolean enable) {
     mDescription.setEnabled(enable);
-    mGenre.setEnabled(enable);
     mCounter.setEnabled(enable);
     
+    mGenre.setEnabled(mOmdb.isEnabled());
     mOwS.setEnabled(mOmdb.isEnabled());
     mPremiere.setEnabled(mOmdb.isEnabled());
     
