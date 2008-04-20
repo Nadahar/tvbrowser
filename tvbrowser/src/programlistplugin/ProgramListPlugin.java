@@ -362,6 +362,12 @@ public class ProgramListPlugin extends Plugin {
     });
   }
   
+  public void onDeactivation() {
+    if(mDialog != null) {
+      mDialog.setVisible(false);
+    }
+  }
+  
   private static class ChannelListCellRenderer extends DefaultListCellRenderer {
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
       Component c = super.getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);
