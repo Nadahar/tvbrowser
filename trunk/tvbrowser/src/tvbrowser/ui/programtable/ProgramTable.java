@@ -1160,7 +1160,9 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener, P
   }
 
   public void pluginActivated(PluginProxy plugin) {
-    updatePrograms();
+    if (plugin.getProgramTableIcons(Plugin.getPluginManager().getExampleProgram()) != null) {
+      updatePrograms();
+    }
   }
 
   public void pluginDeactivated(PluginProxy plugin) {

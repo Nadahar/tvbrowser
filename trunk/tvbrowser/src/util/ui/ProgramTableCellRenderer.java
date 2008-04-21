@@ -42,7 +42,11 @@ import devplugin.Date;
 import devplugin.Program;
 
 /**
- * CellRenderer for Program in Table
+ * CellRenderer for Program in Table<p>
+ * <i>Keep in mind:</i> This Renderer internally uses "static" data for 
+ * each displayed program. If program data changes the container 
+ * using this renderer should be repainted to display the changed
+ * data.
  * 
  * @since 2.2
  */

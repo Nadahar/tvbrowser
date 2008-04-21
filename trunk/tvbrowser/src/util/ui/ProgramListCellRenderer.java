@@ -45,7 +45,11 @@ import devplugin.Date;
 import devplugin.Program;
 
 /**
- * A list cell renderer that renders Programs.
+ * A list cell renderer that renders Programs.<p>
+ * <i>Keep in mind:</i> This Renderer internally uses "static" data for 
+ * each displayed program. If program data changes the container 
+ * using this renderer should be repainted to display the changed
+ * data.
  *
  * @author  Til Schneider, www.murfman.de
  */

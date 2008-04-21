@@ -34,6 +34,7 @@ import devplugin.ProgramInfoHelper;
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.plugin.PluginStateListener;
 import util.io.IOUtilities;
 import util.misc.StringPool;
 import util.program.ProgramUtilities;
@@ -70,7 +71,7 @@ import java.util.logging.Level;
  * @author Martin Oberhauser
  * @author Til Schneider, www.murfman.de
  */
-public class ProgramPanel extends JComponent implements ChangeListener {
+public class ProgramPanel extends JComponent implements ChangeListener, PluginStateListener {
 
   private static java.util.logging.Logger mLog = java.util.logging.Logger
       .getLogger(TextAreaIcon.class.getName());
@@ -801,6 +802,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
   public void addNotify() {
     super.addNotify();
     mProgram.addChangeListener(this);
+    PluginProxyManager.getInstance().addPluginStateListener(this);
   }
 
   /**
@@ -811,6 +813,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
   public void removeNotify() {
     super.removeNotify();
     mProgram.removeChangeListener(this);
+    PluginProxyManager.getInstance().removePluginStateListener(this);
   }
 
   /**
@@ -982,7 +985,28 @@ private static Font getDynamicFontSize(Font font, int offset) {
     mPaintExpiredProgramsPale = value;
   }
   
-  
+  public void pluginActivated(PluginProxy plugin) {
+    if (plugin.getProgramTableIcons(Plugin.getPluginManager().getExampleProgram()) != null) {
+      updatePrograms();
+    }
+  }
+
+  public void pluginDeactivated(PluginProxy plugin) {
+    updatePrograms();
+  }
+
+  private void updatePrograms() {
+    programHasChanged();
+    repaint();
+  }
+
+  public void pluginLoaded(PluginProxy plugin) {
+    // noop
+  }
+
+  public void pluginUnloaded(PluginProxy plugin) {
+    // noop
+  }
   
   /* Deprecated constructors from here */
   
