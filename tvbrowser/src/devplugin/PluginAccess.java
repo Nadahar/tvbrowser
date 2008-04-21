@@ -104,19 +104,6 @@ public interface PluginAccess extends ButtonActionIf,Marker,ProgramReceiveIf,Con
    * @return The available program filters that the plugin supports or <code>null</code> if it supports no filter.
    */
   public PluginsProgramFilter[] getAvailableFilter();
-
-  /**
-   * Is used to track if a program filter be deleted.
-   * Should be make sure only the plugin itself can delete program filters.
-   * 
-   * @param programFilter The program filter to delete.
-   * @return True if the program filter component can be deleted.
-   */
-  public boolean isAllowedToDeleteProgramFilter(PluginsProgramFilter programFilter);
-    
-  public boolean canUseProgramTree();
-
-  public PluginTreeNode getRootNode();
   
   /**
    * Returns the available plugins filter component classes.

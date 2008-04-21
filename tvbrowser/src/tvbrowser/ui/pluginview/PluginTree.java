@@ -74,6 +74,8 @@ import javax.swing.tree.TreePath;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterManagerImpl;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
@@ -83,7 +85,6 @@ import util.ui.OverlayListener;
 import util.ui.SingleAndDoubleClickTreeUI;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
-import devplugin.PluginAccess;
 import devplugin.Program;
 import devplugin.ProgramItem;
 import devplugin.ProgramReceiveTarget;
@@ -367,10 +368,9 @@ public class PluginTree extends JTree implements DragGestureListener,
                   temp = ReminderPlugin.getInstance();
                   rejected = false;
                 } else if(target.getProgramReceiveTarget() == null) {
-                  PluginAccess[] pluginAccessArray = Plugin.getPluginManager()
-                      .getActivatedPlugins();
+                  PluginProxy[] pluginAccessArray = PluginProxyManager.getInstance().getActivatedPlugins();
   
-                  for (PluginAccess pluginAccess : pluginAccessArray) {
+                  for (PluginProxy pluginAccess : pluginAccessArray) {
                     if (pluginAccess.getRootNode() != null) {
                       if (pluginAccess.getRootNode().getMutableTreeNode().equals(target)) {
                         if ((pluginAccess.canReceivePrograms() || pluginAccess.canReceiveProgramsWithTarget())) {
@@ -410,10 +410,9 @@ public class PluginTree extends JTree implements DragGestureListener,
                   reject = false;
                   temp = ReminderPlugin.getInstance();
                 } else {
-                  PluginAccess[] pa = Plugin.getPluginManager()
-                      .getActivatedPlugins();
+                  PluginProxy[] pa = PluginProxyManager.getInstance().getActivatedPlugins();
   
-                  for (PluginAccess pluginAccess : pa) {
+                  for (PluginProxy pluginAccess : pa) {
                     if (pluginAccess.getRootNode() != null) {
                       if (pluginAccess.getRootNode().getMutableTreeNode().equals(target)) {
     
@@ -613,10 +612,9 @@ public class PluginTree extends JTree implements DragGestureListener,
                       .getMutableTreeNode())) {
                       ReminderPlugin.getInstance().addPrograms(p);
                   } else if(target.getProgramReceiveTarget() == null) {
-                    PluginAccess[] pa = Plugin.getPluginManager()
-                        .getActivatedPlugins();
+                    PluginProxy[] pa = PluginProxyManager.getInstance().getActivatedPlugins();
   
-                    for (PluginAccess pluginAccess : pa) {
+                    for (PluginProxy pluginAccess : pa) {
                       if (pluginAccess.getRootNode() != null) {
                         if (pluginAccess.getRootNode().getMutableTreeNode().equals(target)) {
                           if ((pluginAccess.canReceivePrograms() || pluginAccess.canReceiveProgramsWithTarget()) && pluginAccess.getProgramReceiveTargets() != null && pluginAccess.getProgramReceiveTargets().length > 0) {
@@ -635,13 +633,12 @@ public class PluginTree extends JTree implements DragGestureListener,
                 }
               }
             } else if (flavors[0].getHumanPresentableName().equals("Program")) {
-              PluginAccess[] pa = Plugin.getPluginManager()
-                  .getActivatedPlugins();
+              PluginProxy[] pa = PluginProxyManager.getInstance().getActivatedPlugins();
 
               boolean found = false;
               Program program = (Program) tr.getTransferData(flavors[0]);
 
-              for (PluginAccess pluginAccess : pa) {
+              for (PluginProxy pluginAccess : pa) {
                 if (pluginAccess.getRootNode().getMutableTreeNode().equals(target)) {
                   Action action = getAction(pluginAccess
                       .getContextMenuActions(program));

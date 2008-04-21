@@ -32,6 +32,7 @@ import devplugin.ActionMenu;
 import devplugin.ChannelDayProgram;
 import devplugin.PluginAccess;
 import devplugin.PluginTreeNode;
+import devplugin.PluginsProgramFilter;
 
 /**
  * Encapsulates a plugin and manages the access to it.
@@ -171,4 +172,6 @@ public interface PluginProxy extends PluginAccess {
       return o1.getInfo().getName().compareToIgnoreCase(o2.getInfo().getName());
     }
   }
+  
+  public boolean isAllowedToDeleteProgramFilter(PluginsProgramFilter programFilter);
 }

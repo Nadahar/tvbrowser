@@ -20,7 +20,9 @@ package tvbrowser.core.filters;
 
 import java.util.ArrayList;
 
+import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.settings.PluginPictureSettings;
 
 import devplugin.FilterManager;
 import devplugin.PluginsProgramFilter;
@@ -111,7 +113,7 @@ public class FilterManagerImpl implements FilterManager {
    * @return True if the filter could be deleted.
    */
   public boolean deleteFilter(PluginsProgramFilter filter) {
-    if(filter.getPluginAccessOfFilter().isAllowedToDeleteProgramFilter(filter)) {
+    if(PluginProxyManager.getInstance().getActivatedPluginForId(filter.getPluginAccessOfFilter().getId()).isAllowedToDeleteProgramFilter(filter)) {
       if(getCurrentFilter() == filter)
         setCurrentFilter(FilterList.getInstance().getDefaultFilter());
       
