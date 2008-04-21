@@ -38,6 +38,9 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.plugin.PluginStateListener;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 
@@ -50,7 +53,7 @@ import devplugin.Program;
  * This Class extends a JList for showing Programs
  */
 public class ProgramList extends JList implements ChangeListener,
-    ListDataListener {
+    ListDataListener, PluginStateListener {
 
   private Vector<Program> mPrograms = new Vector<Program>();
 
@@ -198,6 +201,7 @@ public class ProgramList extends JList implements ChangeListener,
     super.addNotify();
     removeFromPrograms();
     addToPrograms();
+    PluginProxyManager.getInstance().addPluginStateListener(this);
   }
 
   /**
@@ -206,6 +210,7 @@ public class ProgramList extends JList implements ChangeListener,
   public void removeNotify() {
     super.removeNotify();
     removeFromPrograms();
+    PluginProxyManager.getInstance().removePluginStateListener(this);
   }
 
   private void removeFromPrograms() {
@@ -387,6 +392,28 @@ public class ProgramList extends JList implements ChangeListener,
     }
 
     return p;
+  }
+  
+  public void pluginActivated(PluginProxy plugin) {
+    if (plugin.getProgramTableIcons(Plugin.getPluginManager().getExampleProgram()) != null) {
+      updatePrograms();
+    }
+  }
+
+  public void pluginDeactivated(PluginProxy plugin) {
+    updatePrograms();
+  }
+
+  private void updatePrograms() {
+    repaint();
+  }
+
+  public void pluginLoaded(PluginProxy plugin) {
+    // noop
+  }
+
+  public void pluginUnloaded(PluginProxy plugin) {
+    // noop
   }
   
   /* Deprecated constructors from here */

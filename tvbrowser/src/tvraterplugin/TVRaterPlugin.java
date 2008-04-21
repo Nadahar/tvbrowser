@@ -265,7 +265,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
           .getOverallRating()) };
     }
 
-    return null;
+    return new Icon[0];
   }
 
   /**
