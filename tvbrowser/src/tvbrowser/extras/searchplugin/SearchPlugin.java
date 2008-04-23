@@ -27,6 +27,7 @@ package tvbrowser.extras.searchplugin;
 
 import devplugin.ActionMenu;
 import devplugin.ButtonAction;
+import devplugin.Channel;
 import devplugin.ContextMenuAction;
 import devplugin.PluginManager;
 import devplugin.Program;
@@ -227,10 +228,11 @@ public class SearchPlugin {
 
         Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
 
+        Channel channel = program != null ? program.getChannel() : null;
         if (w instanceof Dialog) {
-          dlg = new RepetitionDialog((Dialog) w);
+          dlg = new RepetitionDialog((Dialog) w, channel);
         } else {
-          dlg = new RepetitionDialog((Frame) w);
+          dlg = new RepetitionDialog((Frame) w, channel);
         }
 
         dlg.setPatternText(program.getTitle());

@@ -52,7 +52,9 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -86,8 +88,20 @@ public class RepetitionDialog extends JDialog implements WindowClosingIf {
    *          Parent-Dialog
    */
   public RepetitionDialog(Dialog dialog) {
+    this(dialog, null);
+  }
+
+  /**
+   * Create the dialog
+   * 
+   * @param dialog
+   *          Parent-Dialog
+   * @param channel
+   *          defines the first channel of the channel list
+   */
+  public RepetitionDialog(Dialog dialog, Channel channel) {
     super(dialog, true);
-    createGui();
+    createGui(channel);
   }
 
   /**
@@ -97,14 +111,28 @@ public class RepetitionDialog extends JDialog implements WindowClosingIf {
    *          Parent-Frame
    */
   public RepetitionDialog(Frame frame) {
+    this(frame, null);
+  }
+
+  /**
+   * Create the dialog
+   * 
+   * @param frame
+   *          Parent-Frame
+   * @param channel
+   *          defines the first channel of the channel list
+   */
+  public RepetitionDialog(Frame frame, Channel channel) {
     super(frame, true);
-    createGui();
+    createGui(channel);
   }
 
   /**
    * Create the Gui
+   * @param channel
+   *          defines the first channel of the channel list
    */
-  private void createGui() {
+  private void createGui(Channel channel) {
     setTitle(mLocalizer.msg("title", "Search repetition"));
 
     JPanel panel = (JPanel) getContentPane();
@@ -126,7 +154,14 @@ public class RepetitionDialog extends JDialog implements WindowClosingIf {
 
     final Vector<Object> list = new Vector<Object>();
     list.add(mLocalizer.msg("allChannels", "All channels"));
-    list.addAll(Arrays.asList(ChannelList.getSubscribedChannels()));
+    // We need a modify-able list here
+    List<Channel> channelList = new ArrayList<Channel>(Arrays.asList(ChannelList.getSubscribedChannels()));
+    if (channel != null) {
+      // bring the defined channel on the first position
+      list.add(channel);
+      channelList.remove(channel);
+    }
+    list.addAll(channelList);
 
     mChannelChooser = new JComboBox(list);
     mChannelChooser.setRenderer(new ChannelListCellRenderer(true, true));
