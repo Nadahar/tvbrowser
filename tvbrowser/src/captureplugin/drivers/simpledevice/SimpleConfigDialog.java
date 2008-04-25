@@ -108,12 +108,11 @@ public class SimpleConfigDialog extends JDialog implements WindowClosingIf {
    * Create the Gui
    */
   private void createGui() {
-    mConfig.getAllExternalChannels(mConnection);
     JPanel panel = (JPanel) getContentPane();
     
     setTitle(mLocalizer.msg("title","Device Settings"));
     
-    panel.setLayout(new FormLayout("3dlu, pref, 3dlu, fill:pref:grow, 3dlu, pref, 3dlu", "pref, 5dlu, pref, 3dlu pref, 5dlu, fill:min:grow, 3dlu, pref, 3dlu, pref"));
+    panel.setLayout(new FormLayout("3dlu, pref, 3dlu, fill:pref:grow, 3dlu, pref, 3dlu", "pref, 5dlu, pref, 3dlu, pref, 5dlu, fill:min:grow, 3dlu, pref, 3dlu, pref"));
     panel.setBorder(Borders.DIALOG_BORDER);
     
     CellConstraints cc = new CellConstraints();
@@ -170,14 +169,14 @@ public class SimpleConfigDialog extends JDialog implements WindowClosingIf {
         }
         mReturn = JOptionPane.OK_OPTION;
         setVisible(false);
-      };
+      }
     });
 
     JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     cancel.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         setVisible(false);
-      };
+      }
     });
     
     builder.addGriddedButtons(new JButton[] {ok, cancel});

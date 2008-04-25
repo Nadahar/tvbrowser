@@ -39,7 +39,7 @@ public class TheTubeConnection implements SimpleConnectionIf {
           "\tend repeat\n" +
           "end tell\n" +
           "\n" +
-          "set text item delimiters to \"¥\"\n" +
+          "set text item delimiters to \"-TRENNER-\"\n" +
           "set outString to chList as text\n" +
           "outString";
 
@@ -77,7 +77,7 @@ public class TheTubeConnection implements SimpleConnectionIf {
           "\t\tset end of chList to rollOut interval of contents of r\n" +
           "\tend repeat\n" +
           "end tell\n" +
-          "set text item delimiters to \"¥\"\n" +
+          "set text item delimiters to \"-TRENNER-\"\n" +
           "set outString to chList as text\n" +
           "outString";
 
@@ -120,6 +120,48 @@ public class TheTubeConnection implements SimpleConnectionIf {
           "\tmake new scheduled recording with properties {name:\"{5}\", description:\"{6}\", rollIn interval:120.0, rollOut interval:300.0, startDate:a, endDate:b, channel id:{7}}\n" +
           "end tell";
 
+  private final String DELETERECORDING = "on stringToList from theString for myDelimiters\n" +
+      "\ttell AppleScript\n" +
+      "\t\tset theSavedDelimiters to AppleScript's text item delimiters\n" +
+      "\t\tset text item delimiters to myDelimiters\n" +
+      "\t\t\n" +
+      "\t\tset outList to text items of theString\n" +
+      "\t\tset text item delimiters to theSavedDelimiters\n" +
+      "\t\t\n" +
+      "\t\treturn outList\n" +
+      "\tend tell\n" +
+      "end stringToList\n" +
+      "\n" +
+      "\n" +
+      "on getDateForISOdate(theISODate, theISOTime)\n" +
+      "\tlocal myDate\n" +
+      "\tset monthConstants to {January, February, March, April, May, June, July, August, September, October, November, December}\n" +
+      "\t\n" +
+      "\tset theISODate to (stringToList from (theISODate) for \"-\")\n" +
+      "\t\n" +
+      "\tset myDate to date theISOTime\n" +
+      "\t\n" +
+      "\ttell theISODate\n" +
+      "\t\tset year of myDate to item 1\n" +
+      "\t\tset month of myDate to item (item 2) of monthConstants\n" +
+      "\t\tset day of myDate to item 3\n" +
+      "\tend tell\n" +
+      "\t\n" +
+      "\treturn myDate\n" +
+      "end getDateForISOdate\n" +
+      "\n" +
+      "set mystartdate to getDateForISOdate(\"{1}\", \"{2}\")\n" +
+      "\n" +
+      "tell application \"TheTube\"\n" +
+      "\tset counter to 0\n" +
+      "\trepeat with r in scheduled recordings\n" +
+      "\t\tset counter to counter + 1\n" +
+      "\t\tif channel id of contents of r is {3} and startDate of contents of r is mystartdate then\n" +
+      "\t\t\tdelete scheduled recording counter\n" +
+      "\t\tend if\n" +
+      "\tend repeat\n" +
+      "end tell";
+
 
   public SimpleChannel[] getAvailableChannels() {
     ArrayList<SimpleChannel> lists = new ArrayList<SimpleChannel>();
@@ -135,7 +177,7 @@ public class TheTubeConnection implements SimpleConnectionIf {
       return new SimpleChannel[0];
     }
 
-    String[] result = res.split("¥");
+    String[] result = res.split("-TRENNER-");
 
     for (int i = 0; i < result.length; i += 2) {
       try {
@@ -165,7 +207,7 @@ public class TheTubeConnection implements SimpleConnectionIf {
         return new Program[0];
     }
 
-    String[] result = res.split("¥");
+    String[] result = res.split("-TRENNER-");
 
     for (int i = 0; i < result.length; i += 7) {
         try {
@@ -244,8 +286,20 @@ public class TheTubeConnection implements SimpleConnectionIf {
       return res != null;
   }
 
-  public void removeRecording(Program prg) {
-    //To change body of implemented methods use File | Settings | File Templates.
+  public void removeRecording(SimpleConfig conf, Program prg) {
+    SimpleDateFormat dateformater = new SimpleDateFormat("yyyy-MM-dd");
+
+    String call = DELETERECORDING.replaceAll("\\{1\\}", dateformater.format(prg.getDate().getCalendar().getTime()));
+
+    call = call.replaceAll("\\{2\\}", prg.getHours() + ":" + prg.getMinutes());
+    call = call.replaceAll("\\{3\\}", Integer.toString(((SimpleChannel)conf.getExternalChannel(prg.getChannel())).getNumber()));
+
+    try {
+        mAppleScript.executeScript(call);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
   }
 
   public void switchToChannel(SimpleConfig conf, Channel channel) {

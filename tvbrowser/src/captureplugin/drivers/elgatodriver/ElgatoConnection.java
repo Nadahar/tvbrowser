@@ -61,7 +61,7 @@ public class ElgatoConnection implements SimpleConnectionIf {
             + "    set end of chList to channel number of contents of ch\n"
             + "    set end of chList to name of contents of ch\n"
             + "  end repeat\n" + "end tell\n"
-            + "set text item delimiters to \"¥\"\n"
+            + "set text item delimiters to \"-TRENNER-\"\n"
             + "set outString to chList as text\n" + "outString";
 
     /** Script for switching of Channels */
@@ -128,7 +128,7 @@ public class ElgatoConnection implements SimpleConnectionIf {
             + "    set end of recList to duration of prog\n"
             + "    set end of recList to unique ID of prog\n"
             + "    set end of recList to title of prog\n" + "  end repeat\n"
-            + "end tell\n" + "\n" + "set text item delimiters to \"¥\"\n"
+            + "end tell\n" + "\n" + "set text item delimiters to \"-TRENNER-\"\n"
             + "set outString to reclist as text\n" + "outString";
 
     /** Remove a specific Recording */
@@ -160,7 +160,7 @@ public class ElgatoConnection implements SimpleConnectionIf {
             return new SimpleChannel[0];
         }
 
-        String[] result = res.split("¥");
+        String[] result = res.split("-TRENNER-");
 
         for (int i = 0; i < result.length; i += 2) {
             try {
@@ -196,7 +196,7 @@ public class ElgatoConnection implements SimpleConnectionIf {
             return new Program[0];
         }
 
-        String[] result = res.split("¥");
+        String[] result = res.split("-TRENNER-");
 
         for (int i = 0; i < result.length; i += 6) {
             try {
@@ -279,9 +279,10 @@ public class ElgatoConnection implements SimpleConnectionIf {
     /**
      * Remove Recording
      * 
+     * @param conf
      * @param prg Remove recording of this Program
      */
-    public void removeRecording(Program prg) {
+    public void removeRecording(SimpleConfig conf, Program prg) {
         String id = mProgramMapping.get(prg);
         try {
             mAppleScript.executeScript(REMOVERECORDING
