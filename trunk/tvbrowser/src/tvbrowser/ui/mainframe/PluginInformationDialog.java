@@ -92,10 +92,10 @@ public class PluginInformationDialog extends JDialog implements WindowClosingIf 
     
     JLabel l = pb.addLabel(mLocalizer.msg("header","Important informations about TV-Browser functionality!"), cc.xy(2,1));
     l.setForeground(new Color(200,0,0));
-    l.setFont(l.getFont().deriveFont(Font.BOLD,24));
+    l.setFont(l.getFont().deriveFont(Font.BOLD,20));
     l.setBorder(Borders.createEmptyBorder("10dlu,0dlu,5dlu,0dlu"));
     
-    JEditorPane pane = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("text","<div style=\"font-size:large;text-align:justify\"><p>TV-Browser can be extended with additional functions (Plugins), for instance to control hardware, other data sources, to load ratings from ImdB and much more.</p><p>You also can find more Plugins <a href=\"http://www.tvbrowser.org/downloads-mainmenu-5/plugins-mainmenu-24.html\">on our website</a>, that are currently not available to download from TV-Browser, but are mostly already usable.</p><p>Do you want to see the list with the Plugins available through download from TV-Browser?<br>(You also can always open that list over the Plugins menu.)</p></div>"),
+    JEditorPane pane = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("text","<div style=\"font-size:medium;text-align:justify\"><p>TV-Browser can be extended with additional functions (Plugins), for instance to control hardware, other data sources, to load ratings from ImdB and much more.</p><p>You also can find more Plugins <a href=\"http://www.tvbrowser.org/downloads-mainmenu-5/plugins-mainmenu-24.html\">on our website</a>, that are currently not available to download from TV-Browser, but are mostly already usable.</p><p>Do you want to see the list with the Plugins available through download from TV-Browser?<br>(You also can always open that list over the Plugins menu.)</p></div>"),
         new HyperlinkListener() {
           public void hyperlinkUpdate(HyperlinkEvent e) {
             if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -127,8 +127,8 @@ public class PluginInformationDialog extends JDialog implements WindowClosingIf 
       }
     });
     
-    buttons[0].setFont(buttons[0].getFont().deriveFont(Font.BOLD,(float)14));
-    buttons[1].setFont(buttons[1].getFont().deriveFont(Font.BOLD,(float)14));
+    buttons[0].setFont(buttons[0].getFont().deriveFont(Font.BOLD,(float)13));
+    buttons[1].setFont(buttons[1].getFont().deriveFont(Font.BOLD,(float)13));
     
     getRootPane().setDefaultButton(buttons[0]);
     

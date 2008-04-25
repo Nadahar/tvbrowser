@@ -63,6 +63,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
 
+import com.jgoodies.forms.layout.Sizes;
+
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DateListener;
@@ -1414,7 +1416,7 @@ public class MainFrame extends JFrame implements DateListener {
       dlg = new PluginInformationDialog((JDialog)w);
     }
     
-    Settings.layoutWindow("main.pluginInfoDlg",dlg, new Dimension(710,380));
+    Settings.layoutWindow("main.pluginInfoDlg",dlg, new Dimension(Sizes.dialogUnitXAsPixel(420,dlg),Sizes.dialogUnitYAsPixel(215,dlg)));
     
     dlg.setVisible(true);
   }
