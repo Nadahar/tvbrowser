@@ -25,6 +25,8 @@ package util.misc;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.FileOutputStream;
 
 import util.io.ExecutionHandler;
 
@@ -62,7 +64,7 @@ public class AppleScriptRunner {
     public String executeScript(String script) throws IOException {
             File file = File.createTempFile("osascript", "temp");
             
-            FileWriter writer = new FileWriter(file);
+            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file),"UTF-8");
             writer.write(script);
             writer.close();
             

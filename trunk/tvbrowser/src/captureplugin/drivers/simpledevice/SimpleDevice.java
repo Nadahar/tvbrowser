@@ -182,7 +182,7 @@ public class SimpleDevice implements DeviceIf {
     }
 
     public boolean remove(Window parent, Program program) {
-        mConnection.removeRecording(program);
+        mConnection.removeRecording(mConfig, program);
         return true;
     }
 
@@ -261,7 +261,7 @@ public class SimpleDevice implements DeviceIf {
      * @since 2.11
      */
     public void removeProgramWithoutExecution(Program p) {
-        mConnection.removeRecording(p);
+        mConnection.removeRecording(mConfig, p);
     }
 
     /**

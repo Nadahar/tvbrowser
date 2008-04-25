@@ -34,9 +34,10 @@ public interface SimpleConnectionIf {
     /**
      * Remove a recording
      *
+     * @param conf Configuration
      * @param prg Program to remove
      */
-    void removeRecording(Program prg);
+    void removeRecording(SimpleConfig conf, Program prg);
 
     /**
      * Switch to channel
