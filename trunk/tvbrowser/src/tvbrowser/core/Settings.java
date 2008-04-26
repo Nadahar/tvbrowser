@@ -928,7 +928,7 @@ public class Settings {
       "columnwidth", 200);
 
   public static final IntArrayProperty propTimeButtons = new IntArrayProperty(
-      mProp, "timeButtons", new int[] { 6 * 60, 12 * 60, 18 * 60, 20 * 60 });
+      mProp, "timeButtons", new int[] { 6 * 60, 12 * 60, 18 * 60, 20 * 60 + 15 });
 
   /**
    * @deprecated
