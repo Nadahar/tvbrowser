@@ -471,7 +471,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     }
     
     public String toString() {
-      return mLocalizer.msg(mType,"Unknown");
+      return mLocalizer.msg(mType,mType);
     }
     
     public boolean equals(Object o) {
@@ -503,7 +503,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
           return toString().compareToIgnoreCase(((FilterItem)o).toString());
         }
         else if(o instanceof String) {
-          return toString().compareToIgnoreCase(mLocalizer.msg((String)o,"Unknown"));
+          return toString().compareToIgnoreCase(mLocalizer.msg((String)o,(String)o));
         }
       }
       
