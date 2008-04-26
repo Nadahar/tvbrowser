@@ -96,7 +96,7 @@ public class SoftwareUpdater {
         
         if (matcher.find()) { // new plugin 
           String value = matcher.group(2);
-          value = value.replaceAll("\\\\&", "&"); // fix wrong HTML encoding in plugin descriptions
+          value = value.replaceAll("\\\\", ""); // fix wrong HTML encoding in plugin descriptions
           
           if(curItem != null) {
             curItem.addProperty(matcher.group(1), value);
