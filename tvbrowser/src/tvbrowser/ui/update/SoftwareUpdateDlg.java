@@ -41,11 +41,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -79,6 +81,7 @@ import util.ui.Localizer;
 import util.ui.TextAreaIcon;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+import util.ui.customizableitems.ItemFilter;
 import util.ui.customizableitems.SelectableItem;
 import util.ui.customizableitems.SelectableItemList;
 import util.ui.customizableitems.SelectableItemRendererCenterComponentIf;
@@ -162,10 +165,14 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     builder.addRelatedGap();
     builder.addFixed(mCloseBtn);
 
-    JPanel northPn = new JPanel();
+    final CellConstraints cc = new CellConstraints();
+    
+    FormLayout layout = new FormLayout("default,5dlu,0dlu:grow","default");
+    
+    JPanel northPn = new JPanel(layout);
     northPn.add(new JLabel(onlyUpdate ?mLocalizer.msg("updateHeader","Updates for installed plugins were found.") : 
-      mLocalizer.msg("header","Here you can download new plugins and updates for it.")));
-
+      mLocalizer.msg("header","Here you can download new plugins and updates for it.")), cc.xyw(1,1,3));
+    
     JPanel southPn = new JPanel(new BorderLayout());
 
     southPn.add(builder.getPanel(), BorderLayout.SOUTH);
@@ -180,7 +187,6 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       private final ImageIcon NEW_VERSION_ICON = IconLoader.getInstance().getIconFromTheme("status", "software-update-available", 16);
       
       public JPanel createCenterPanel(JList list, Object value, int index, boolean isSelected, boolean isEnabled, JScrollPane parentScrollPane, int leftColumnWidth) {
-        CellConstraints cc = new CellConstraints();
         FormLayout layout = new FormLayout("5dlu,default,5dlu,default:grow","2dlu,default,2dlu,fill:pref:grow,2dlu");
         PanelBuilder pb = new PanelBuilder(layout);
         pb.getPanel().setOpaque(false);
@@ -285,7 +291,9 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       }
 
       public void calculateSize(JList list, int index, JPanel contentPane) {
-        ((MyListUI)list.getUI()).setCellHeight(index, contentPane.getPreferredSize().height);
+        if(list.getUI() instanceof MyListUI) {
+          ((MyListUI)list.getUI()).setCellHeight(index, contentPane.getPreferredSize().height);
+        }
       }
     });
     
@@ -302,6 +310,45 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         }
       }      
     });
+    
+    if(!onlyUpdate) {
+      layout.appendRow(RowSpec.decode("5dlu"));
+      layout.appendRow(RowSpec.decode("default"));
+      
+      JLabel filterLabel = new JLabel(mLocalizer.msg("filterLabel","Show only Plugins with the following category:"));
+      
+      northPn.add(filterLabel, cc.xy(1,3));
+      
+      ArrayList<FilterItem> filterList = new ArrayList<FilterItem>(0);
+      
+      for(SoftwareUpdateItem item : itemArr) {        
+        int index = 0;
+        
+        for(int i = 0; i < filterList.size(); i++) {
+          int compareValue = filterList.get(i).compareTo(item.getCategory());
+          
+          if(compareValue == 0) {
+            index = -1;
+            break;
+          }
+          else if(compareValue < 0) {
+            index = i+1;
+          }
+        }
+        
+        if(index != -1) {
+          filterList.add(index,new FilterItem(item.getCategory()));
+        }
+      }
+      
+      filterList.add(0, new FilterItem("all"));
+      
+      JComboBox filterBox = new JComboBox(filterList.toArray());
+      
+      mSoftwareUpdateItemList.setFilterComboBox(filterBox);
+      
+      northPn.add(filterBox, cc.xy(3,3));
+    }
         
     contentPane.add(northPn, BorderLayout.NORTH);
     contentPane.add(mSoftwareUpdateItemList, BorderLayout.CENTER);
@@ -349,7 +396,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       if(!event.getValueIsAdjusting()) {
         JList list = ((JList)event.getSource());
         
-        if(mLastIndex != -1 && list.getSelectedIndex() != mLastIndex) {
+        if(mLastIndex != -1 && list.getSelectedIndex() != mLastIndex && list.getModel().getSize()-1 >= mLastIndex) {
           ((MyListUI)list.getUI()).setCellHeight(mLastIndex,list.getCellRenderer().getListCellRendererComponent(list, list.getModel().getElementAt(mLastIndex),
               mLastIndex, false, false).getPreferredSize().height);
         }
@@ -413,6 +460,66 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
           }
         }
       }
+    }
+  }
+  
+  private class FilterItem implements ItemFilter {
+    private String mType;
+    
+    protected FilterItem(String type) {
+      mType = type;
+    }
+    
+    public String toString() {
+      return mLocalizer.msg(mType,"Unknown");
+    }
+    
+    public boolean equals(Object o) {
+      if(o != null) {
+        if(o instanceof FilterItem) {
+          return mType.equals(((FilterItem)o).mType);
+        }
+        else if(o instanceof String) {
+          return mType.equals(o);
+        }
+      }
+      
+      return false;
+    }
+    
+    /**
+     * Compares the names of this filter item and
+     * the given Object if it is a filter item or
+     * if the given Object is a String with it's
+     * internalisation.
+     * <p>
+     * @param o The Object to compare with
+     * @return < 0 if the name of this item is alphabetical smaller as the given String
+     * 0 if they are equal and > 0 if this name is greater.
+     */
+    public int compareTo(Object o) {
+      if(o != null) {
+        if(o instanceof FilterItem) {
+          return toString().compareToIgnoreCase(((FilterItem)o).toString());
+        }
+        else if(o instanceof String) {
+          return toString().compareToIgnoreCase(mLocalizer.msg((String)o,"Unknown"));
+        }
+      }
+      
+      return 0;
+    }
+
+    public boolean accept(Object o) {
+      if(o instanceof SoftwareUpdateItem) {
+        if(mType.equals("all")) {
+          return true;
+        }
+        
+        return equals(((SoftwareUpdateItem)o).getCategory());
+      }
+      
+      return false;
     }
   }
 }
