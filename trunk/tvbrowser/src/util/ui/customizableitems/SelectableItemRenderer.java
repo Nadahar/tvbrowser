@@ -56,7 +56,7 @@ public class SelectableItemRenderer implements ListCellRenderer {
   public Component getListCellRendererComponent(JList list, Object value,
   int index, boolean isSelected, boolean cellHasFocus) {
     JPanel p = new JPanel(new BorderLayout(2,0));
-    p.setBorder(BorderFactory.createEmptyBorder(0,2,0,0));
+    try { p.setBorder(BorderFactory.createEmptyBorder(0,2,0,0));
     
     SelectableItem selectableItem = (SelectableItem) value;
 
@@ -117,7 +117,7 @@ public class SelectableItemRenderer implements ListCellRenderer {
       cb.setForeground(list.getForeground());
     }
     cb.setEnabled(list.isEnabled());
-
+    }catch(Throwable t){t.printStackTrace();}
     return p;
   }
   

@@ -29,6 +29,8 @@ package util.ui.customizableitems;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -36,8 +38,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
-import javax.swing.DefaultListModel;
+import javax.swing.AbstractListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -62,7 +65,7 @@ public class SelectableItemList extends JPanel {
 
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(SelectableItemList.class);
   
-  private DefaultListModel mListModel;
+  private SelectableItemListModel mListModel;
   private SelectableItemRenderer mItemRenderer;
   
   private JButton mSelectAllBt;
@@ -92,10 +95,10 @@ public class SelectableItemList extends JPanel {
   public SelectableItemList(Object[] currSelection, Object[] allItems, boolean showSelectionButtons) {
     setLayout(new BorderLayout(0,3));
     
-    mListModel = new DefaultListModel();
+    mListModel = new SelectableItemListModel();
     setEntries(currSelection,allItems);
-    mList = new JList(mListModel);
     
+    mList = new JList(mListModel);
     mList.setCellRenderer(mItemRenderer = new SelectableItemRenderer());
     
     mScrollPane = new JScrollPane(mList);
@@ -114,7 +117,7 @@ public class SelectableItemList extends JPanel {
              
           if (index != -1) {
             if(mList.getCellBounds(index,index).contains(evt.getPoint())) {
-              SelectableItem item = (SelectableItem) mListModel.elementAt(index);
+              SelectableItem item = (SelectableItem) mListModel.getElementAt(index);
               item.setSelected(! item.isSelected());
               handleItemSelectionChanged();
               mList.repaint();
@@ -250,18 +253,7 @@ public class SelectableItemList extends JPanel {
    * @return The selected Objects
    */
   public Object[] getSelection() {
-    ArrayList<Object> objList = new ArrayList<Object>();
-    for (int i = 0; i < mListModel.size(); i++) {
-      SelectableItem item = (SelectableItem) mListModel.elementAt(i);
-      if (item.isSelected()) {
-        objList.add(item.getItem());
-      }
-    }
-
-    Object[] asArr = new Object[objList.size()];
-    objList.toArray(asArr);
-
-    return asArr;
+    return mListModel.getSelection();
   }
   
   /**
@@ -277,10 +269,7 @@ public class SelectableItemList extends JPanel {
    */
   public void invertSelection() {
     if(mIsEnabled) {
-      for (int i = 0; i < mListModel.size(); i++) {
-        SelectableItem item = (SelectableItem) mListModel.elementAt(i);
-        item.setSelected(!item.isSelected());
-      }
+      mListModel.invertSelection();
       mList.repaint();
     }
   }
@@ -290,10 +279,7 @@ public class SelectableItemList extends JPanel {
    */
   public void selectAll() {
     if(mIsEnabled) {
-      for (int i = 0; i < mListModel.size(); i++) {
-        SelectableItem item = (SelectableItem) mListModel.elementAt(i);
-        item.setSelected(true);
-      }
+      mListModel.selectAll();
       mList.repaint();
     }
   }
@@ -303,10 +289,7 @@ public class SelectableItemList extends JPanel {
    */
   public void clearSelection() {
     if(mIsEnabled) {
-      for (int i = 0; i < mListModel.size(); i++) {
-        SelectableItem item = (SelectableItem) mListModel.elementAt(i);
-        item.setSelected(false);
-      }
+      mListModel.clearSelection();
       mList.repaint();
     }
   }
@@ -373,5 +356,125 @@ public class SelectableItemList extends JPanel {
    */
   public void addMouseListener(MouseListener listener) {
     mList.addMouseListener(listener);
+  }
+  
+  /**
+   * Sets the combo box that contains ItemFilters to filter
+   * the shown values of the list.
+   * <p>
+   * @param filterBox The combo box with the ItemFilters.
+   * @since 2.7
+   */
+  public void setFilterComboBox(JComboBox filterBox) {
+    mListModel.setComboBox(filterBox);
+  }
+  
+  private class SelectableItemListModel extends AbstractListModel {
+    private JComboBox mFilterBox;
+    
+    private ArrayList<Object> mFullList = new ArrayList<Object>();
+    private ArrayList<Object> mFilteredList = new ArrayList<Object>();
+    
+    protected void setComboBox(JComboBox filterBox) {
+      mFilterBox = filterBox;
+      
+      mFilterBox.addItemListener(new ItemListener() {
+        public void itemStateChanged(ItemEvent e) {
+          if(e.getStateChange() == ItemEvent.SELECTED) {
+            mFilteredList.clear();
+            
+            Object filter = mFilterBox.getSelectedItem();
+            
+            for(Object o : mFullList) {
+              if(filter instanceof ItemFilter) {
+                if((((ItemFilter)filter).accept(((SelectableItem)o).getItem()))) {
+                  mFilteredList.add(o);
+                }
+              }
+              else {
+                mFilteredList.add(o);
+              }
+            }
+            
+            fireIntervalRemoved(this,0,mFullList.size());
+            fireIntervalAdded(this,0,mFilteredList.size());
+          }
+        }
+
+      });
+    }
+
+    protected void addElement(Object o) {
+      mFullList.add(o);
+      
+      if(mFilterBox != null) {
+        Object filter = mFilterBox.getSelectedItem();
+        
+        if(filter instanceof ItemFilter) {
+          if((((ItemFilter)filter).accept(((SelectableItem)o).getItem()))) {
+            mFilteredList.add(o);
+          }
+        }
+        else {
+          mFilteredList.add(o);
+        }
+      }
+      else {
+        mFilteredList.add(o);
+      }
+    }
+
+    public Object getElementAt(int index) {
+      return mFilteredList.get(index);
+    }
+
+    public int getSize() {
+      return mFilteredList.size();
+    }
+    
+    protected int size() {
+      return getSize();
+    }
+    
+    protected void removeAllElements() {
+      mFullList.clear();
+      mFilteredList.clear();
+    }
+    
+    protected Object[] getSelection() {
+      ArrayList<Object> objList = new ArrayList<Object>();
+      for (int i = 0; i < mFullList.size(); i++) {
+        SelectableItem item = (SelectableItem) mFullList.get(i);
+        if (item.isSelected()) {
+          objList.add(item.getItem());
+        }
+      }
+
+      Object[] asArr = new Object[objList.size()];
+      objList.toArray(asArr);
+
+      return asArr;
+    }
+    
+    protected void selectAll() {
+      for (int i = 0; i < mFullList.size(); i++) {
+        SelectableItem item = (SelectableItem) mFullList.get(i);
+        item.setSelected(true);
+      }
+    }
+    
+    protected void clearSelection() {
+      for (int i = 0; i < mFullList.size(); i++) {
+        SelectableItem item = (SelectableItem) mFullList.get(i);
+        item.setSelected(false);
+      }
+    }
+    
+    protected void invertSelection() {
+      for (int i = 0; i < mFullList.size(); i++) {
+        SelectableItem item = (SelectableItem) mFullList.get(i);
+        item.setSelected(!item.isSelected());
+      }
+    }
   }
 }

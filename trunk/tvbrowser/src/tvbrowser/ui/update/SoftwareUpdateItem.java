@@ -293,4 +293,14 @@ public abstract class SoftwareUpdateItem {
     }
     return null;
   }
+	
+	/**
+	 * Gets the category of this update item.
+	 * <p>
+	 * @since 2.7
+	 * @return The category of this update item.
+	 */
+	public String getCategory() {
+	  return mPropertyMap.get("category");
+	}
 }
