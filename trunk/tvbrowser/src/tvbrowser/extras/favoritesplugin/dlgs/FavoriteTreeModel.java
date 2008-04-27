@@ -511,5 +511,25 @@ public class FavoriteTreeModel extends DefaultTreeModel {
   public void updatePluginTree(PluginTreeNode rootNode) {
     updatePluginTree(rootNode,null);
   }
+  
+  /**
+   * get an array of all favorites containing the given program
+   * @param program program to search for
+   * @return array of favorites
+   * @since 2.7
+   */
+  public Favorite[] getFavoritesContainingProgram(Program program) {
+    ArrayList<Favorite> containing = new ArrayList<Favorite>();
+    
+    for (Favorite favorite : getFavoriteArr()) {
+      for (Program favProgram : favorite.getPrograms()) {
+        if (favProgram.equals(program)) {
+          containing.add(favorite);
+          break;
+        }
+      }
+    }
+    return containing.toArray(new Favorite[containing.size()]);
+  }
     
 }
