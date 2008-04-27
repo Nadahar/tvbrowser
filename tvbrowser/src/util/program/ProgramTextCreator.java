@@ -35,6 +35,11 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+import tvbrowser.extras.common.InternalPluginProxyIf;
+import tvbrowser.extras.common.InternalPluginProxyList;
+import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
+import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 import util.ui.UiUtilities;
@@ -313,12 +318,30 @@ public class ProgramTextCreator {
             JLabel iconLabel = new JLabel(icons[i]);
             PluginAccess plugin = Plugin.getPluginManager()
                 .getActivatedPluginForId(pluginArr[markerCount].getId());
-
             if (plugin != null) {
               iconLabel.setToolTipText(plugin.getInfo().getName());
             }
             else {
-            	iconLabel.setToolTipText(pluginArr[markerCount].toString());
+              InternalPluginProxyIf internalPlugin = InternalPluginProxyList.getInstance().getProxyForId(pluginArr[markerCount].getId());
+              if (internalPlugin != null) {
+                iconLabel.setToolTipText(internalPlugin.getName());
+                if (internalPlugin.equals(FavoritesPluginProxy.getInstance())) {
+                  // if this is a favorite, add the names of the favorite
+                  String favTitles = "";
+                  for (Favorite favorite : FavoriteTreeModel.getInstance().getFavoritesContainingProgram(prog)) {
+                    if (favTitles.length() > 0) {
+                      favTitles = favTitles + ", ";
+                    }
+                    favTitles = favTitles + favorite.getName();
+                  }
+                  if (favTitles.length() > 0) {
+                    iconLabel.setToolTipText(iconLabel.getToolTipText() + " (" + favTitles + ")");
+                  }
+                }
+              }
+              else {
+                iconLabel.setToolTipText(pluginArr[markerCount].toString());
+              }
             }
 
             buffer.append(doc.createCompTag(iconLabel));
