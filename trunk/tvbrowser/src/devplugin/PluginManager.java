@@ -36,14 +36,14 @@ import javax.swing.JPopupMenu;
 import java.util.Iterator;
 
 /**
- * The PluginManager provides some usefull methods for a plugin.
+ * The PluginManager provides some useful methods for a plugin.
  * More methods may follow in future versions.
  *
  * @author Martin Oberhauser
  */
 public interface PluginManager {
 
-  /** Specifies, that the search term has to match exacly. */
+  /** Specifies, that the search term has to match exactly. */
   public static final int SEARCHER_TYPE_EXACTLY = 1;
   /** Specifies, that the search term is a keyword (= substring). */
   public static final int SEARCHER_TYPE_KEYWORD = 2;
@@ -85,7 +85,7 @@ public interface PluginManager {
    *
    * @param regex The regular expression programs must match to.
    * @param inTitle Should be searched in the title?
-   * @param inText Should be searched in the desription?
+   * @param inText Should be searched in the description?
    * @param caseSensitive Should the search be case sensitive?
    * @param channels The channels to search in.
    * @param startDate The date to start the search.
