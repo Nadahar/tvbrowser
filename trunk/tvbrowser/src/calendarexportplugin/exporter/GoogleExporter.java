@@ -25,8 +25,12 @@ package calendarexportplugin.exporter;
 import calendarexportplugin.CalendarExportPlugin;
 import calendarexportplugin.utils.CalendarToolbox;
 import com.google.gdata.client.GoogleService;
+import com.google.gdata.client.Query;
+import com.google.gdata.client.calendar.CalendarService;
 import com.google.gdata.data.DateTime;
 import com.google.gdata.data.PlainTextConstruct;
+import com.google.gdata.data.calendar.CalendarEventFeed;
+import com.google.gdata.data.calendar.CalendarEventEntry;
 import com.google.gdata.data.extensions.EventEntry;
 import com.google.gdata.data.extensions.Reminder;
 import com.google.gdata.data.extensions.When;
@@ -89,6 +93,7 @@ public class GoogleExporter extends AbstractExporter {
    */
   public boolean exportPrograms(Program[] programs, Properties settings, AbstractPluginProgramFormating formating) {
     try {
+      boolean uploadedItems = false;
       mPassword = IOUtilities.xorDecode(settings.getProperty(PASSWORD, ""), 345903).trim();
 
       if (!settings.getProperty(STOREPASSWORD, "false").equals("true")) {
@@ -103,7 +108,7 @@ public class GoogleExporter extends AbstractExporter {
         }
       }
 
-      GoogleService myService = new GoogleService("cl", "tvbrowser-tvbrowsercalenderplugin-" + CalendarExportPlugin.getInstance().getInfo().getVersion().toString());
+      CalendarService myService = new CalendarService("tvbrowser-tvbrowsercalenderplugin-" + CalendarExportPlugin.getInstance().getInfo().getVersion().toString());
       myService.setUserCredentials(settings.getProperty(USERNAME, "").trim(), mPassword);
 
       URL postUrl =
@@ -114,78 +119,98 @@ public class GoogleExporter extends AbstractExporter {
       SimpleDateFormat formatTime = new SimpleDateFormat("HH:mm:ss");
       formatTime.setTimeZone(TimeZone.getTimeZone("GMT"));
 
+      ParamParser parser = new ParamParser();
       for (Program program : programs) {
-        EventEntry myEntry = new EventEntry();
+        final String title = parser.analyse(formating.getTitleValue(), program);
 
-        ParamParser parser = new ParamParser();
-        String title = parser.analyse(formating.getTitleValue(), program);
+        // First step: search for event in calendar
+        boolean createEvent = true;
 
-        myEntry.setTitle(new PlainTextConstruct(title));
+        CalendarEventEntry entry = findEntryForProgram(myService, postUrl, title, program);
 
-        String desc = parser.analyse(formating.getContentValue(), program);
-        myEntry.setContent(new PlainTextConstruct(desc));
+        if (entry != null) {
+          int ret = JOptionPane.showConfirmDialog(null, mLocalizer.msg("alreadyAvailable", "already available", program.getTitle()), mLocalizer.msg("title", "Add event?"),  JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+          
+          if (ret != JOptionPane.YES_OPTION) {
+            createEvent = false;
+          }
+        }
 
-        Calendar c = CalendarToolbox.getStartAsCalendar(program);
+        // add event to calendar
+        if (createEvent) {
+          EventEntry myEntry = new EventEntry();
 
-        DateTime startTime = new DateTime(c.getTime(), c.getTimeZone());
+          myEntry.setTitle(new PlainTextConstruct(title));
 
-        c = CalendarToolbox.getEndAsCalendar(program);
+          String desc = parser.analyse(formating.getContentValue(), program);
+          myEntry.setContent(new PlainTextConstruct(desc));
 
-        DateTime endTime = new DateTime(c.getTime(), c.getTimeZone());
+          Calendar c = CalendarToolbox.getStartAsCalendar(program);
 
-        When eventTimes = new When();
+          DateTime startTime = new DateTime(c.getTime(), c.getTimeZone());
 
-        eventTimes.setStartTime(startTime);
-        eventTimes.setEndTime(endTime);
+          c = CalendarToolbox.getEndAsCalendar(program);
 
-        myEntry.addTime(eventTimes);
+          DateTime endTime = new DateTime(c.getTime(), c.getTimeZone());
 
-        if (settings.getProperty(REMINDER, "false").equals("true")) {
-          int reminderMinutes = 0;
+          When eventTimes = new When();
+
+          eventTimes.setStartTime(startTime);
+          eventTimes.setEndTime(endTime);
+
+          myEntry.addTime(eventTimes);
+
+          if (settings.getProperty(REMINDER, "false").equals("true")) {
+            int reminderMinutes = 0;
+
+            try {
+              reminderMinutes = Integer.parseInt(settings.getProperty(REMINDERMINUTES, "0"));
+            } catch (NumberFormatException e) {
+              e.printStackTrace();
+            }
+
+            if (settings.getProperty(REMINDERALERT, "false").equals("true")) {
+              addReminder(myEntry, reminderMinutes, Reminder.Method.ALERT);
+            }
+
+            if (settings.getProperty(REMINDEREMAIL, "false").equals("true")) {
+              addReminder(myEntry, reminderMinutes, Reminder.Method.EMAIL);
+            }
+
+            if (settings.getProperty(REMINDERSMS, "false").equals("true")) {
+              addReminder(myEntry, reminderMinutes, Reminder.Method.SMS);
+            }
+
+          }
+
+          int showtime = 0;
 
           try {
-            reminderMinutes = Integer.parseInt(settings.getProperty(REMINDERMINUTES, "0"));
-          } catch (NumberFormatException e) {
-            e.printStackTrace();
+            showtime = Integer.parseInt(settings.getProperty(CalendarExportPlugin.PROP_SHOWTIME, "0"));
+          } catch (Exception e) {
+            // Empty
           }
 
-          if (settings.getProperty(REMINDERALERT, "false").equals("true")) {
-            addReminder(myEntry, reminderMinutes, Reminder.Method.ALERT);
+          switch (showtime) {
+            case 0:
+              myEntry.setTransparency(BaseEventEntry.Transparency.OPAQUE);
+              break;
+            case 1:
+              myEntry.setTransparency(BaseEventEntry.Transparency.TRANSPARENT);
+              break;
+            default:
+              break;
           }
-
-          if (settings.getProperty(REMINDEREMAIL, "false").equals("true")) {
-            addReminder(myEntry, reminderMinutes, Reminder.Method.EMAIL);
-          }
-
-          if (settings.getProperty(REMINDERSMS, "false").equals("true")) {
-            addReminder(myEntry, reminderMinutes, Reminder.Method.SMS);
-          }
-
+          // Send the request and receive the response:
+          myService.insert(postUrl, myEntry);
+          uploadedItems = true;
         }
-
-        int showtime = 0;
-
-        try {
-          showtime = Integer.parseInt(settings.getProperty(CalendarExportPlugin.PROP_SHOWTIME, "0"));
-        } catch (Exception e) {
-          // Empty
-        }
-
-        switch (showtime) {
-          case 0:
-            myEntry.setTransparency(BaseEventEntry.Transparency.OPAQUE);
-            break;
-          case 1:
-            myEntry.setTransparency(BaseEventEntry.Transparency.TRANSPARENT);
-            break;
-          default:
-            break;
-        }
-        // Send the request and receive the response:
-        myService.insert(postUrl, myEntry);
       }
 
-      JOptionPane.showMessageDialog(CalendarExportPlugin.getInstance().getBestParentFrame(), mLocalizer.msg("exportDone", "Google Export done."), mLocalizer.msg("export", "Export"), JOptionPane.INFORMATION_MESSAGE);
+      if (uploadedItems) {
+        JOptionPane.showMessageDialog(CalendarExportPlugin.getInstance().getBestParentFrame(), mLocalizer.msg("exportDone", "Google Export done."), mLocalizer.msg("export", "Export"), JOptionPane.INFORMATION_MESSAGE);
+      }
+
       return true;
     } catch (AuthenticationException e) {
       ErrorHandler.handle(mLocalizer.msg("loginFailure", "Problems during login to Service.\nMaybe bad username or password?"), e);
@@ -195,6 +220,23 @@ public class GoogleExporter extends AbstractExporter {
     }
 
     return false;
+  }
+
+  private CalendarEventEntry findEntryForProgram(GoogleService myService, URL postUrl, String title, Program program) throws IOException, ServiceException {
+    Calendar c = CalendarToolbox.getStartAsCalendar(program);
+    DateTime startTime = new DateTime(c.getTime(), c.getTimeZone());
+
+    Query myQuery = new Query(postUrl);
+    myQuery.setFullTextQuery(title);
+    CalendarEventFeed myResultsFeed = myService.query(myQuery, CalendarEventFeed.class);
+
+    for (CalendarEventEntry entry : myResultsFeed.getEntries()) {
+      if ((entry.getTimes().size() > 0) && (entry.getTimes().get(0).getStartTime().getValue() == startTime.getValue())) {
+        return entry;
+      }
+    }
+
+    return null;
   }
 
   /**
