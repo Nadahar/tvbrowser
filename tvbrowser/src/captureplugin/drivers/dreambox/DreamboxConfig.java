@@ -69,7 +69,10 @@ public class DreamboxConfig implements ConfigIf {
     
     /** Path to a Mediaplayer typically vlc */
     private String mMediaplayer = "vlc";
-
+    
+    /** Timeout for connection to the dreambox */
+    private int mTimeout = 1000;
+    
     /**
      * Constructor
      */
@@ -89,6 +92,7 @@ public class DreamboxConfig implements ConfigIf {
         mDChannels = dreamboxConfig.getDreamChannels();
         mBefore = dreamboxConfig.getPreTime();
         mAfter = dreamboxConfig.getAfterTime();
+        mTimeout = dreamboxConfig.getTimeout();
         mTimeZone = dreamboxConfig.getTimeZoneAsString();
         mUsername = dreamboxConfig.getUserName();
         mPassword = dreamboxConfig.getPassword();
@@ -152,6 +156,7 @@ public class DreamboxConfig implements ConfigIf {
 
         stream.writeInt(mBefore);
         stream.writeInt(mAfter);
+        stream.writeInt(mTimeout);
 
         if (mTimeZone == null) {
             stream.writeUTF(TimeZone.getDefault().getID());
@@ -200,6 +205,7 @@ public class DreamboxConfig implements ConfigIf {
 
         mBefore = stream.readInt();
         mAfter = stream.readInt();
+        mTimeout = stream.readInt();
 
         if (version < 3) {
             resetTimeZone();
@@ -408,5 +414,13 @@ public class DreamboxConfig implements ConfigIf {
 
     public void setMediaplayer(String mediaplayer) {
       mMediaplayer = mediaplayer;
+    }
+
+    public int getTimeout() {
+      return mTimeout;
+    }
+
+    public void setTimeout(int timeout) {
+      mTimeout = timeout;
     }
 }
