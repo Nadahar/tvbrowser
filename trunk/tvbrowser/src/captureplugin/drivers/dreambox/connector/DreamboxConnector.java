@@ -62,7 +62,7 @@ import java.util.regex.Pattern;
 public class DreamboxConnector {
   /** get list of bouquets */
   private final String BOUQUETLIST = "1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 195) || (type == 25)FROM BOUQUET \"bouquets.tv\" ORDER BY bouquet";
-  /** Config of the dreambox */
+  /** Config of the Dreambox */
   private DreamboxConfig mConfig;
 
   private static final int WEBIFMINIMUMVERSION = 20070701;
@@ -89,7 +89,7 @@ public class DreamboxConnector {
             String encoded = new String(Base64.encodeBase64(userpassword.getBytes()));
             connection.setRequestProperty  ("Authorization", "Basic " + encoded);
 
-            connection.setConnectTimeout(10);
+            connection.setConnectTimeout(mConfig.getTimeout());
             InputStream stream = connection.getInputStream();
 
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
@@ -126,7 +126,7 @@ public class DreamboxConnector {
             String encoded = new String(Base64.encodeBase64(userpassword.getBytes()));
             connection.setRequestProperty  ("Authorization", "Basic " + encoded);
 
-            connection.setConnectTimeout(10);
+            connection.setConnectTimeout(mConfig.getTimeout());
             InputStream stream = connection.getInputStream();
 
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
@@ -188,7 +188,7 @@ public class DreamboxConnector {
             String encoded = new String(Base64.encodeBase64(userpassword.getBytes()));
             connection.setRequestProperty  ("Authorization", "Basic " + encoded);
 
-            connection.setConnectTimeout(10);
+            connection.setConnectTimeout(mConfig.getTimeout());
             InputStream stream = connection.getInputStream();
             stream.close();
         } catch (MalformedURLException e) {
@@ -210,7 +210,7 @@ public class DreamboxConnector {
             String encoded = new String(Base64.encodeBase64(userpassword.getBytes()));
             connection.setRequestProperty  ("Authorization", "Basic " + encoded);
 
-            connection.setConnectTimeout(10);
+            connection.setConnectTimeout(mConfig.getTimeout());
             InputStream stream = connection.getInputStream();
 
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
@@ -373,7 +373,7 @@ public class DreamboxConnector {
             String encoded = new String(Base64.encodeBase64(userpassword.getBytes()));
             connection.setRequestProperty  ("Authorization", "Basic " + encoded);
 
-            connection.setConnectTimeout(10);
+            connection.setConnectTimeout(mConfig.getTimeout());
             InputStream stream = connection.getInputStream();
 
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
@@ -443,7 +443,7 @@ public class DreamboxConnector {
             String encoded = new String(Base64.encodeBase64(userpassword.getBytes()));
             connection.setRequestProperty  ("Authorization", "Basic " + encoded);
 
-            connection.setConnectTimeout(10);
+            connection.setConnectTimeout(mConfig.getTimeout());
             InputStream stream = connection.getInputStream();
 
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
@@ -473,14 +473,14 @@ public class DreamboxConnector {
      */
     public void sendMessage(String message) {
         try {
-            final URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/web/message?type=2&timeout=10&text=" + URLEncoder.encode(message, "UTF8"));
+            final URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/web/message?type=2&timeout=" + mConfig.getTimeout() + "&text=" + URLEncoder.encode(message, "UTF8"));
             URLConnection connection = url.openConnection();
 
             String userpassword = mConfig.getUserName() + ":" + mConfig.getPassword();
             String encoded = new String(Base64.encodeBase64(userpassword.getBytes()));
             connection.setRequestProperty  ("Authorization", "Basic " + encoded);
 
-            connection.setConnectTimeout(10);
+            connection.setConnectTimeout(mConfig.getTimeout());
             final InputStream stream = connection.getInputStream();
             stream.close();
         } catch (MalformedURLException e) {
@@ -499,7 +499,7 @@ public class DreamboxConnector {
     String encoded = new String(Base64.encodeBase64(userpassword.getBytes()));
     connection.setRequestProperty  ("Authorization", "Basic " + encoded);
 
-    connection.setConnectTimeout(10);
+    connection.setConnectTimeout(mConfig.getTimeout());
     InputStream stream = connection.getInputStream();
 
     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
