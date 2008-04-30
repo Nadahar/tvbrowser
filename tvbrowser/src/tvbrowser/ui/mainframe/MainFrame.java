@@ -1198,7 +1198,7 @@ public class MainFrame extends JFrame implements DateListener {
       runAutoUpdate();
     }
     
-    if(Settings.propAutoDataDownloadEnabled.getBoolean() && (mAutoDownloadTimer < IOUtilities.getMinutesAfterMidnight() || !date.equals(mCurrentDay)) && mAutoDownloadTimer != -1) {
+    if(Settings.propAutoDataDownloadEnabled.getBoolean() && (mAutoDownloadTimer < IOUtilities.getMinutesAfterMidnight() || !date.equals(mCurrentDay)) && mAutoDownloadTimer != -1 && (downloadingThread == null || !downloadingThread.isAlive())) {
       TVBrowser.handleAutomaticDownload();
       mAutoDownloadTimer = -1;
     }
