@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.net.URL;
@@ -57,8 +58,8 @@ import util.io.IOUtilities;
  * <ul>
  * <li>The <CODE>key</CODE> is a String that identifies the message. Each class
  *     has its own namespace.</li>
- * <li>The defaultValue is the value you would expect on an english system. (But
- *     note: Even on an english system you may get a different String!)</li>
+ * <li>The defaultValue is the value you would expect on an English system. (But
+ *     note: Even on an English system you may get a different String!)</li>
  * <li>The optional <CODE>args</CODE> are arguments that will be parsed into the
  *     message. See {@link java.text.MessageFormat} for details.
  * </li>
@@ -105,19 +106,19 @@ public class Localizer {
   private static HashMap<String, String> standardLocalizations;
 
   /**
-   * To avoid the creation of to much object, this array is used for calls using
+   * To avoid the creation of to many objects, this array is used for calls using
    * one argument.
    */  
   private static final Object[] ONE_ARG_ARR = new Object[1];
   
   /**
-   * To avoid the creation of to much object, this array is used for calls using
+   * To avoid the creation of to many objects, this array is used for calls using
    * two arguments.
    */  
   private static final Object[] TWO_ARGS_ARR = new Object[2];
   
   /**
-   * To avoid the creation of to much object, this array is used for calls using
+   * To avoid the creation of to many objects, this array is used for calls using
    * three arguments.
    */  
   private static final Object[] THREE_ARGS_ARR = new Object[3];
@@ -129,7 +130,9 @@ public class Localizer {
   private String mBaseName;
   
   /** The ResourceBundle used by this Localizer. */  
-  private ResourceBundle mBundle;
+//  private ResourceBundle mBundle;
+  
+  private HashMap<String, String> mResource;
   
   /**
    * Because one ResourceBundle is used by all the Localizers of classes from the
@@ -168,12 +171,21 @@ public class Localizer {
     
     mClassLoader = new LocalizerClassloader(clazz.getClassLoader());
     
-    loadResouceBundle();
+    loadResourceBundle();
   }
   
-  private void loadResouceBundle() {  
+  private void loadResourceBundle() {  
     try {
-      mBundle = ResourceBundle.getBundle(mBaseName, Locale.getDefault(), mClassLoader);
+      // load the resource bundle including all parents
+      ResourceBundle bundle = ResourceBundle.getBundle(mBaseName, Locale.getDefault(), mClassLoader);
+      if (bundle != null) {
+        // now merge the bundle and all parents into one hash map to save memory
+        mResource = new HashMap<String, String>();
+        for (Enumeration<String> enumKeys = bundle.getKeys(); enumKeys.hasMoreElements();) {
+          String key = enumKeys.nextElement();
+          mResource.put(key, bundle.getString(key));
+        }
+      }
     }
     catch (MissingResourceException exc) {
       mLog.warning("ResourceBundle not found: '" + mBaseName + "'");
@@ -210,7 +222,7 @@ public class Localizer {
    * Gets a localized message.
    *
    * @param key The key of the message.
-   * @param defaultMsg The default message. (english)
+   * @param defaultMsg The default message (English)
    * @param arg1 The argument that should replace <CODE>{0}</CODE>.
    * @return a localized message.
    */  
@@ -228,7 +240,7 @@ public class Localizer {
    * Gets a localized message.
    *
    * @param key The key of the message.
-   * @param defaultMsg The default message. (english)
+   * @param defaultMsg The default message. (English)
    * @param arg1 The argument that should replace <CODE>{0}</CODE>.
    * @param arg2 The argument that should replace <CODE>{1}</CODE>.
    * @return a localized message.
@@ -248,7 +260,7 @@ public class Localizer {
    * Gets a localized message.
    *
    * @param key The key of the message.
-   * @param defaultMsg The default message. (english)
+   * @param defaultMsg The default message. (English)
    * @param arg1 The argument that should replace <CODE>{0}</CODE>.
    * @param arg2 The argument that should replace <CODE>{1}</CODE>.
    * @param arg3 The argument that should replace <CODE>{2}</CODE>.
@@ -272,7 +284,7 @@ public class Localizer {
    * Gets a localized message.
    *
    * @param key The key of the message.
-   * @param defaultMsg The default message. (english)
+   * @param defaultMsg The default message. (English)
    * @param args The arguments that should replace the appropriate place holder.
    *        See {@link java.text.MessageFormat} for details.
    * @return a localized message.
@@ -284,7 +296,7 @@ public class Localizer {
     // Workaround: The MessageFormat uses the ' char for quoting strings.
     //             so the "{0}" in "AB '{0}' CD" will not be replaced.
     //             In order to avoid this we quote every ' with '', so
-    //             everthing will be replaced as expected.
+    //             everything will be replaced as expected.
     msg = IOUtilities.replace(msg, "'", "''");
     
     return MessageFormat.format(msg, args);    
@@ -296,7 +308,7 @@ public class Localizer {
    * Gets a localized message.
    *
    * @param key The key of the message.
-   * @param defaultMsg The default message. (english)
+   * @param defaultMsg The default message (English)
    * @return a localized message.
    */  
   public String msg(String key, String defaultMsg) {
@@ -307,22 +319,18 @@ public class Localizer {
    * Gets a localized message.
    *
    * @param key The key of the message.
-   * @param defaultMsg The default message. (english)
+   * @param defaultMsg The default message (English)
    * @param warn If warnings should be logged if key is not found.
    * @return a localized message.
    * @since 2.5.1
    */
   public String msg(String key, String defaultMsg, boolean warn) {
-    if(mBundle != null && (mBundle.getLocale() != Locale.getDefault())) {
-      loadResouceBundle();
-    }
-    
     key = mKeyPrefix + key;
     
     String msg = null;
-    if (mBundle != null) {
+    if (mResource != null) {
       try {
-        msg = mBundle.getString(key);
+        msg = mResource.get(key);
         checkMessage(key, msg);
       }
       catch (MissingResourceException exc) {
@@ -331,7 +339,7 @@ public class Localizer {
     }
     
     if (msg == null) {
-      if (mBundle != null && warn) {
+      if (mResource != null && warn) {
         // Workaround: There is a bug in the logging mechanism of Java.
         //             When someone tries to log an exception which uses
         //             localization then the logging stucks in a deadlock,
@@ -361,12 +369,12 @@ public class Localizer {
   /**
    * Scans all Language-Directories for different Versions of tvbrowser/tvbrowser.properties.
    * 
-   * This is faster than analysing all Files
+   * This is faster than analyzing all Files
    *  
    * @return all available Locales
    * @since 2.3
    */
-  public Locale[] getAllAvailabelLocales() {
+  public Locale[] getAllAvailableLocales() {
 	// always have English locale available
     ArrayList<Locale> langArray = new ArrayList<Locale>();
     langArray.add(Locale.ENGLISH);
@@ -524,12 +532,11 @@ public class Localizer {
     }
     if (standardLocalizations == null) {
       standardLocalizations = new HashMap<String, String>(20);
-      ResourceBundle standardBundle = Localizer.getLocalizerFor(Localizer.class).mBundle;
-      Enumeration<String> standardKeys = standardBundle.getKeys();
-      while (standardKeys.hasMoreElements()) {
-        String standardKey = standardKeys.nextElement();
+      HashMap<String, String> standardResource = Localizer.getLocalizerFor(Localizer.class).mResource;
+      Set<String> standardKeys = standardResource.keySet();
+      for (String standardKey : standardKeys) {
         if (standardKey.startsWith("Localizer.")) {
-          standardLocalizations.put(standardBundle.getString(standardKey), standardKey);
+          standardLocalizations.put(standardResource.get(standardKey), standardKey);
         }
       }
     }
