@@ -82,8 +82,8 @@ public class GrowlContainer {
           "\t--\tSend a Notification...\n" +
           "\tnotify with name ¬\n" +
           "\t\t\"TVBrowserSendProgram\" title ¬\n" +
-          "\t\t\""+ title +"\" description ¬\n" +
-          "\t\t\""+ desc + "\" application name \"TV-Browser\"\n" +
+          "\t\t\""+ runner.formatTextAsParam(title) +"\" description ¬\n" +
+          "\t\t\""+ runner.formatTextAsParam(desc) + "\" application name \"TV-Browser\"\n" +
           "\t\n" +
           "end tell");
     } catch (IOException e) {
