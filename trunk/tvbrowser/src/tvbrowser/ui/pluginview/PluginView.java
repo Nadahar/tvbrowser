@@ -249,23 +249,25 @@ public class PluginView extends JPanel implements MouseListener {
         boolean leaf, int row,
         boolean hasFocus) {
       JLabel label = (JLabel)super.getTreeCellRendererComponent(tree,value,sel,expanded,leaf,row,hasFocus);
-      
-      if (leaf && value instanceof Node) {
-        Node node = (Node)value; 
-        if(node.isDirectoryNode()) {
-          label.setIcon(getClosedIcon());
-        }
-      }
-      
-      // get icon from node
-      if (value instanceof Node) {
-        Icon icon = ((Node)value).getIcon();
 
-        if (icon != null) {
-          label.setIcon(icon);
+      if (label != null) {
+        if (leaf && value instanceof Node) {
+          Node node = (Node)value;
+          if(node.isDirectoryNode()) {
+            label.setIcon(getClosedIcon());
+          }
+        }
+
+        // get icon from node
+        if (value instanceof Node) {
+          Icon icon = ((Node)value).getIcon();
+
+          if (icon != null) {
+            label.setIcon(icon);
+          }
         }
       }
-      
+
       return label;
     }
   }
