@@ -25,38 +25,29 @@
 package growlplugin;
 
 import java.util.Properties;
+import java.util.logging.Logger;
+import java.util.logging.Level;
+import java.io.IOException;
 
 import util.exc.ErrorHandler;
 import util.paramhandler.ParamParser;
 import util.ui.Localizer;
-
-import com.apple.cocoa.application.NSImage;
-import com.apple.cocoa.foundation.NSDictionary;
+import util.misc.AppleScriptRunner;
 
 import devplugin.Program;
 
 /**
  * This is the Container-Class for Growl
  * 
- * It gets a Program and sends it to Growl using the Growl-Class from
- * the SDK of Growl
+ * It uses AppleScript to call Growl.
  * 
  * @author bodum
  *
  */
 public class GrowlContainer {
-  /** Translator */
-  private static final Localizer mLocalizer = Localizer.getLocalizerFor(GrowlPlugin.class);
 
-  /** Nofiction-Name */
-  private final static String NOTIFICATION = "TVBrowserSendProgram";
-  
-  /** Growl-Instance */
-  private Growl mGrowl;
-  
-  /** Image for Notification */
-  private NSImage mNotifyImg;
-  
+  private static Logger mLog = Logger.getLogger(GrowlContainer.class.getName());
+
   /** Parser for Text */
   private ParamParser mParser;
   
@@ -66,17 +57,6 @@ public class GrowlContainer {
    * @throws Exception
    */
   public GrowlContainer() throws Exception {
-    
-    mNotifyImg = new NSImage("./imgs/tvbrowser32.png", false);
-    
-    mGrowl = new Growl("TV-Browser", mNotifyImg);
-    
-    String[] notes = {NOTIFICATION};
-    
-    mGrowl.setAllowedNotifications(notes);
-    mGrowl.setDefaultNotifications(notes);
-    mGrowl.register();
-
     mParser = new ParamParser();
   }
   
@@ -87,15 +67,29 @@ public class GrowlContainer {
    * @param prg Program to use
    */
   public void notifyGrowl(Properties settings, Program prg) {
+    String title = mParser.analyse(settings.getProperty("title"), prg);
+    String desc = mParser.analyse(settings.getProperty("description"), prg);
+    AppleScriptRunner runner = new AppleScriptRunner();
     try {
-      
-      String title = mParser.analyse(settings.getProperty("title"), prg);
-      String desc = mParser.analyse(settings.getProperty("description"), prg);
-      
-      mGrowl.notifyGrowlOf(NOTIFICATION, mNotifyImg, title, desc, (NSDictionary)null);
-    } catch (Exception e) {
-      ErrorHandler.handle("Error while Sending Program to Growl", e);
+      runner.executeScript("tell application \"GrowlHelperApp\"\n" +
+          "\tset the allNotificationsList to {\"TVBrowserSendProgram\"}\n" +
+          "\t\n" +
+          "\tregister as application ¬\n" +
+          "\t\t\"TV-Browser\" all notifications allNotificationsList ¬\n" +
+          "\t\tdefault notifications allNotificationsList ¬\n" +
+          "\t\ticon of application \"TV-Browser\"\n" +
+          "\t\n" +
+          "\t--\tSend a Notification...\n" +
+          "\tnotify with name ¬\n" +
+          "\t\t\"TVBrowserSendProgram\" title ¬\n" +
+          "\t\t\""+ title +"\" description ¬\n" +
+          "\t\t\""+ desc + "\" application name \"TV-Browser\"\n" +
+          "\t\n" +
+          "end tell");
+    } catch (IOException e) {
+      mLog.log(Level.SEVERE, "Can't execute AppleScript", e);
     }
+
   }
   
 }
