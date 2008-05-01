@@ -129,9 +129,9 @@ public class Localizer {
   /** The base name of the ResourceBundle used by this Localizer. */  
   private String mBaseName;
   
-  /** The ResourceBundle used by this Localizer. */  
-//  private ResourceBundle mBundle;
-  
+  /**
+   * map of localized strings of this localizer (merged translated and default strings)
+   */
   private HashMap<String, String> mResource;
   
   /**
