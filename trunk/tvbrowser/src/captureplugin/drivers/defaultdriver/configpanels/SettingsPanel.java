@@ -99,7 +99,7 @@ public class SettingsPanel extends JPanel implements ActionListener, ChangeListe
       PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,12dlu,pref:grow,5dlu,pref:grow,5dlu",
       "pref,5dlu,pref,1dlu,pref,10dlu,pref,5dlu,pref,1dlu,"+
       "pref,10dlu,pref,5dlu,pref,1dlu,pref,7dlu,pref,pref," +
-      "pref,,pref,pref,7dlu,pref,pref"),this);
+      "pref,pref,pref,7dlu,pref,pref"),this);
       pb.setDefaultDialogBorder();      
       
       mPreTimeSpinner = new JSpinner(new SpinnerNumberModel(mData.getPreTime(), 0, null, 1));
