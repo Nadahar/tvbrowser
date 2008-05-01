@@ -127,7 +127,7 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
     panel.add(new JLabel(mLocalizer.msg("language", "Language:")), cc.xy(2,3));
 
     mCurrentLocales = new Vector<Locale>();
-    Locale[] locales = mLocalizer.getAllAvailabelLocales();
+    Locale[] locales = mLocalizer.getAllAvailableLocales();
     
     for (Locale locale : locales) {
       if (!locale.getLanguage().equals("en"))

@@ -98,7 +98,7 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("titleLanguage", "Locale")), cc.xyw(1,1,5));
     
     mSettingsPn.add(new JLabel(mLocalizer.msg("language", "Language:")), cc.xy(2,3));
-    mSettingsPn.add(mLanguageCB = new JComboBox(mLocalizer.getAllAvailabelLocales()), cc.xy(4,3));
+    mSettingsPn.add(mLanguageCB = new JComboBox(mLocalizer.getAllAvailableLocales()), cc.xy(4,3));
     
     mLanguageCB.setRenderer(new DefaultListCellRenderer() {
       @Override
