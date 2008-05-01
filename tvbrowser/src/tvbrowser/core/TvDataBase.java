@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.WeakHashMap;
 import java.util.logging.Level;
 
 import tvbrowser.core.data.OnDemandDayProgramFile;
@@ -42,6 +43,7 @@ import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.Date;
 import devplugin.Program;
+import util.misc.SoftReferenceCache;
 
 /**
  * 
@@ -60,7 +62,7 @@ public class TvDataBase {
   private static TvDataBase mSingleton;
 
   /** The TV data cache. */
-  private HashMap<String, OnDemandDayProgramFile> mTvDataHash;
+  private SoftReferenceCache<String, OnDemandDayProgramFile> mTvDataHash;
 
   private ArrayList<TvDataBaseListener> mListenerList;
 
@@ -72,7 +74,7 @@ public class TvDataBase {
   private TvDataInventory mTvDataInventory;
 
   private TvDataBase() {
-    mTvDataHash = new HashMap<String, OnDemandDayProgramFile>();
+    mTvDataHash = new SoftReferenceCache<String, OnDemandDayProgramFile>();
     mListenerList = new ArrayList<TvDataBaseListener>();
     mAvailableDateSet = new HashSet<Date>();
     mNewDayProgramsAfterUpdate = new Hashtable<String, Object>();
@@ -212,7 +214,7 @@ public class TvDataBase {
   public void intelligentCacheClearance() {
     Program[] programs = MarkedProgramsList.getInstance().getMarkedPrograms();
     
-    HashMap<String, OnDemandDayProgramFile> keepValues = new HashMap<String, OnDemandDayProgramFile>();
+    SoftReferenceCache<String, OnDemandDayProgramFile> keepValues = new SoftReferenceCache<String, OnDemandDayProgramFile>();
     
     for(Program prog : programs) {
       String key = getDayProgramKey(prog.getDate(), prog.getChannel());
@@ -373,8 +375,7 @@ public class TvDataBase {
     String key = getDayProgramKey(date, channel);
 
     // Try to get the program from the cache
-    OnDemandDayProgramFile progFile = (OnDemandDayProgramFile) mTvDataHash
-        .get(key);
+    OnDemandDayProgramFile progFile =  mTvDataHash.get(key);
 
     // Try to load the program from disk
     if (loadFromDisk && (progFile == null || (update && progFile.isTimeLimitationData()))) {
