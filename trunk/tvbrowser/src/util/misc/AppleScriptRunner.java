@@ -32,108 +32,114 @@ import util.io.ExecutionHandler;
 
 /**
  * This class is the Interface to the AppleScript-System. It runs the Scripts
- * 
- * @since 2.2.1
+ *
  * @author bodum
+ * @since 2.2.1
  */
 public class AppleScriptRunner {
-    /** Default TimeOut in Seconds */
-    private int mTimeOut = 60;
+  /**
+   * Default TimeOut in Seconds
+   */
+  private int mTimeOut = 60;
+
+  /**
+   * Creates the Runner with a default Timeout of 30 secs
+   */
+  public AppleScriptRunner() {
+  }
+
+  /**
+   * Create the Runner
+   *
+   * @param timeout Timeout in Seconds for the execution of the Scripts
+   */
+  public AppleScriptRunner(int timeout) {
+    mTimeOut = timeout;
+  }
+
+  /**
+   * Executes the AppleScripts
+   *
+   * @param script Script to execute
+   * @return Output if exec was successfull, null if Error occured
+   * @throws IOException
+   */
+  public String executeScript(String script) throws IOException {
+    File file = File.createTempFile("osascript", "temp");
+    file.deleteOnExit();
     
-    /**
-     * Creates the Runner with a default Timeout of 30 secs
-     */
-    public AppleScriptRunner() {
+    OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+    writer.write(script);
+    writer.close();
+
+    ExecutionHandler executionHandler = new ExecutionHandler(file.getAbsolutePath(), "osascript");
+    executionHandler.execute(true, "UTF-8");
+
+    int time = 0;
+
+    // wait until the process has exited, max MaxTimouts
+
+    if (mTimeOut > 0) {
+      while (time < mTimeOut * 1000) {
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException e1) {
+        }
+        time += 100;
+        try {
+          executionHandler.exitValue();
+          break;
+        } catch (IllegalThreadStateException e) {
+        }
+      }
+    } else {
+      while (true) {
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException e1) {
+        }
+        try {
+          executionHandler.exitValue();
+          break;
+        } catch (IllegalThreadStateException e) {
+        }
+      }
     }
 
-    /**
-     * Create the Runner
-     * @param timeout Timeout in Seconds for the execution of the Scripts
-     */
-    public AppleScriptRunner(int timeout) {
-        mTimeOut = timeout;
+    while (time < mTimeOut * 1000) {
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException e1) {
+      }
+      time += 100;
+      try {
+        executionHandler.exitValue();
+        break;
+      } catch (IllegalThreadStateException e) {
+      }
     }
 
-    /**
-     * Executes the AppleScripts
-     * 
-     * @param script Script to execute
-     * @return Output if exec was successfull, null if Error occured
-     * @throws IOException 
-     */
-    public String executeScript(String script) throws IOException {
-            File file = File.createTempFile("osascript", "temp");
-            
-            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file),"UTF-8");
-            writer.write(script);
-            writer.close();
-            
-            ExecutionHandler executionHandler = new ExecutionHandler(file.getAbsolutePath(),"osascript");
-            executionHandler.execute(true,"UTF-8");
+    // get the process output
+    String output = "";
 
-            int time = 0;
-                        
-            // wait until the process has exited, max MaxTimouts
-            
-            if (mTimeOut > 0 ){
-                while (time < mTimeOut * 1000) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e1) {
-                    }
-                    time += 100;
-                    try {
-                        executionHandler.exitValue();
-                        break;
-                    } catch (IllegalThreadStateException e) {
-                    }
-                }
-            } else {
-                while (true) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e1) {
-                    }
-                    try {
-                        executionHandler.exitValue();
-                        break;
-                    } catch (IllegalThreadStateException e) {
-                    }
-                }
-            }
-            
-            while (time < mTimeOut * 1000) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e1) {
-                }
-                time += 100;
-                try {
-                    executionHandler.exitValue();
-                    break;
-                } catch (IllegalThreadStateException e) {
-                }
-            }
+    if (!executionHandler.getInputStreamReaderThread().isAlive())
+      output = executionHandler.getInputStreamReaderThread().getOutput();
 
-            // get the process output
-            String output = "";
-            
-            if(!executionHandler.getInputStreamReaderThread().isAlive())
-              output = executionHandler.getInputStreamReaderThread().getOutput();
+    if (executionHandler.exitValue() >= 0)
+      return output;
 
-            if (executionHandler.exitValue() >= 0)
-                return output;
-            
-        return null;
-    }
+    file.delete();
 
-    /**
-     * Formats a string and escapes all problematic characters
-     *
-     * @param string Input-String
-     * @return string with escaped characters
-     */
-    public String formatTextAsParam(String string) {
-        return string.replaceAll("\"", "\\\\\\\\\"").replace('\n', ' ');
-    }
+    return null;
+  }
+
+  /**
+   * Formats a string and escapes all problematic characters
+   *
+   * @param string Input-String
+   * @return string with escaped characters
+   */
+  public String formatTextAsParam(String string) {
+    return string.replaceAll("\"", "\\\\\\\\\"").replace('\n', ' ');
+  }
 }
