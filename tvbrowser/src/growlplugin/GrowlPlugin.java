@@ -33,6 +33,7 @@ import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.SettingsTab;
 import devplugin.Version;
+import devplugin.ProgramReceiveTarget;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -90,27 +91,25 @@ public class GrowlPlugin extends Plugin {
     return mVersion;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.Plugin#canReceivePrograms()
-   */
-  public boolean canReceivePrograms() {
+
+  @Override
+  public boolean canReceiveProgramsWithTarget() {
       return mInitialized;
   }    
-  
-  /**
-   * This method is invoked for multiple program execution.
-   * 
-   * @see #canReceivePrograms()
-   */
-  public void receivePrograms(Program[] programArr) {
-    
-    if (mInitialized) {
+
+  @Override
+  public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
+    if (mInitialized && receiveTarget.getTargetId().equals("growlnotify")) {
       for (Program program : programArr)
         mContainer.notifyGrowl(mSettings, program);
+      return true;
     }
-     
+    return false;
+  }
+
+  @Override
+  public ProgramReceiveTarget[] getProgramReceiveTargets() {
+    return new ProgramReceiveTarget[] { new ProgramReceiveTarget(this, mLocalizer.msg("pluginName", "Growl Notification"), "growlnotify")};
   }
 
   /**
