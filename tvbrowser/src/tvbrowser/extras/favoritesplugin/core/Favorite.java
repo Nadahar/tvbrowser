@@ -54,6 +54,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 public abstract class Favorite {
 
@@ -361,6 +362,32 @@ public abstract class Favorite {
 
   }
 
+
+  /**
+   * Search in a list of Programs to find new Items
+   *
+   * @param programs list of programs to check
+   * @param dataUpdate
+   * @param sendToPlugins
+   * @throws util.exc.TvBrowserException Problems during search
+   */
+  public void searchNewPrograms(Program[] programs, boolean dataUpdate, boolean sendToPlugins) throws TvBrowserException {
+    SearchFormSettings searchForm = mSearchFormSettings;
+
+    final ProgramSearcher searcher = searchForm.createSearcher();
+
+    List<Program> resultList = new ArrayList<Program>();
+
+    for (Program p:programs) {
+      if (searcher.matches(p, searchForm.getFieldTypes())) {
+        resultList.add(p);
+      }
+    }
+
+    updatePrograms(resultList.toArray(new Program[resultList.size()]), dataUpdate, sendToPlugins);
+  }
+
+
   /**
    * Performs a new search, and refreshes the program marks
    * @throws TvBrowserException
@@ -667,4 +694,5 @@ public abstract class Favorite {
     }
     return channelArr;
   }
+
 }
