@@ -34,6 +34,7 @@ import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -67,7 +68,8 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
   private JComboBox mComboBox;
   private TvDataServiceCheckBox[] mDataServiceCbArr;
   private TvDataServiceProxy[] mSelectedTvDataServiceArr;
-  private JCheckBox mCheckBox; 
+  private JCheckBox mStartUpdate;
+  private JCheckBox mAutoUpdate;
 
   public UpdateDlg(JFrame parent, boolean modal) {
     super(parent, modal);
@@ -143,8 +145,17 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
       p = new JPanel(new BorderLayout());
       p.setBorder(BorderFactory.createTitledBorder(mLocalizer
           .msg("autoUpdateTitle", "Automatic update")));
-      mCheckBox = new JCheckBox(mLocalizer.msg("autoUpdateMessage", "Update data on TV-Browser startup"));
-      p.add(mCheckBox, BorderLayout.CENTER);
+      mStartUpdate = new JCheckBox(mLocalizer.msg("startUpdateMessage", "Update data on TV-Browser startup"));
+      p.add(mStartUpdate, BorderLayout.CENTER);
+      
+      mAutoUpdate = new JCheckBox(mLocalizer.msg("autoUpdateMessage", "Update data automatically"));
+      p.add(mAutoUpdate, BorderLayout.SOUTH);
+      
+      ButtonGroup bg = new ButtonGroup();
+      
+      bg.add(mStartUpdate);
+      bg.add(mAutoUpdate);
+      
       northPanel.add(p);
     }
 
@@ -223,11 +234,12 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
       }
       Settings.propDataServicesForUpdate.setStringArray(dataServiceArr);
       
-      if (mCheckBox != null) {
-        if (mCheckBox.isSelected()) {
+      if (mStartUpdate != null) {
+        if (mStartUpdate.isSelected() || mAutoUpdate.isSelected()) {
           Settings.propAutoDownloadType.setString("daily");
           Settings.propAutoDownloadPeriod.setInt(mResult);
-        } 
+          Settings.propAutoDataDownloadEnabled.setBoolean(mAutoUpdate.isSelected());
+        }
       }
       setVisible(false);
     }
