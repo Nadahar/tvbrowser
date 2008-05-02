@@ -162,6 +162,7 @@ public class FavoritesPlugin {
     mRootNode = new PluginTreeNode(mLocalizer.msg("manageFavorites","Favorites"));
 
     final List<Program> newPrograms = new ArrayList<Program>();
+    final List<Program> removedPrograms = new ArrayList<Program>();
 
     TvDataBase.getInstance().addTvDataListener(new TvDataBaseListener() {
       public void dayProgramAdded(ChannelDayProgram prog) {
@@ -172,7 +173,10 @@ public class FavoritesPlugin {
       }
 
       public void dayProgramDeleted(ChannelDayProgram prog) {
-        //handleTvDataDeleted(prog);
+        Iterator it = prog.getPrograms();
+        while (it.hasNext()) {
+          removedPrograms.add((Program)it.next());
+        }
       }
     });
 
@@ -184,7 +188,7 @@ public class FavoritesPlugin {
       public void tvDataUpdateFinished() {
         // only update the favorites if new data was downloaded
         if (TvDataUpdater.getInstance().tvDataWasChanged()) {
-          handleTvDataUpdateFinished(newPrograms);
+          handleTvDataUpdateFinished(newPrograms, removedPrograms);
         }
       }
     });
@@ -222,13 +226,13 @@ public class FavoritesPlugin {
     }
   }
 
-  private void handleTvDataUpdateFinished(List<Program> programs) {
+  private void handleTvDataUpdateFinished(List<Program> programs, List<Program> removedPrograms) {
     mHasToUpdate = true;
 
     if(mHasRightToUpdate) {
       mHasToUpdate = false;
       
-      updateAllFavorites(programs);
+      updateAllFavorites(programs, removedPrograms);
       FavoriteTreeModel.getInstance().reload();
 
       mHasRightToSave = true;      
@@ -489,7 +493,7 @@ public class FavoritesPlugin {
   }
 
 
-  private void updateAllFavorites(List<Program> programs) {
+  private void updateAllFavorites(List<Program> programs, List<Program> removedPrograms) {
     mSendPluginsTable.clear();
     
     ProgressMonitor monitor;
@@ -514,7 +518,7 @@ public class FavoritesPlugin {
 
       try {
         favoriteArr[i].refreshBlackList();
-        favoriteArr[i].searchNewPrograms(programs.toArray(new Program[0]), true,true);
+        favoriteArr[i].searchNewPrograms(programs.toArray(new Program[programs.size()]), removedPrograms.toArray(new Program[removedPrograms.size()]), true,true);
       } catch (TvBrowserException e) {
         ErrorHandler.handle(e);
       }

@@ -366,25 +366,32 @@ public abstract class Favorite {
   /**
    * Search in a list of Programs to find new Items
    *
-   * @param programs list of programs to check
+   * @param added list of programs to check
+   * @param removed
    * @param dataUpdate
-   * @param sendToPlugins
-   * @throws util.exc.TvBrowserException Problems during search
+   * @param sendToPlugins @throws util.exc.TvBrowserException Problems during search
    */
-  public void searchNewPrograms(Program[] programs, boolean dataUpdate, boolean sendToPlugins) throws TvBrowserException {
+  public void searchNewPrograms(Program[] added, Program[] removed, boolean dataUpdate, boolean sendToPlugins) throws TvBrowserException {
     SearchFormSettings searchForm = mSearchFormSettings;
+
+    final ArrayList<Program> currentList = new ArrayList(Arrays.asList(mPrograms));
 
     final ProgramSearcher searcher = searchForm.createSearcher();
 
-    List<Program> resultList = new ArrayList<Program>();
-
-    for (Program p:programs) {
-      if (searcher.matches(p, searchForm.getFieldTypes())) {
-        resultList.add(p);
+    for (Program p:added) {
+      if (searcher.matches(p, searchForm.getFieldTypes()) && !currentList.contains(p)) {
+        currentList.add(p);
       }
     }
 
-    updatePrograms(resultList.toArray(new Program[resultList.size()]), dataUpdate, sendToPlugins);
+    for (Program p:removed) {
+      if (currentList.contains(p)) {
+        currentList.remove(p);
+      }
+    }
+
+
+    updatePrograms(currentList.toArray(new Program[currentList.size()]), dataUpdate, sendToPlugins);
   }
 
 
