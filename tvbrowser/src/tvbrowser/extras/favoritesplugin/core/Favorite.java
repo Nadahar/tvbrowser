@@ -367,9 +367,11 @@ public abstract class Favorite {
    * Search in a list of Programs to find new Items
    *
    * @param added list of programs to check
-   * @param removed
-   * @param dataUpdate
-   * @param sendToPlugins @throws util.exc.TvBrowserException Problems during search
+   * @param removed list of removed programs
+   * @param dataUpdate is a data update running at the moment
+   * @param sendToPlugins send data to otheer plugins
+   * @throws util.exc.TvBrowserException Problems during search
+   * @since 2.7
    */
   public void searchNewPrograms(Program[] added, Program[] removed, boolean dataUpdate, boolean sendToPlugins) throws TvBrowserException {
     SearchFormSettings searchForm = mSearchFormSettings;
