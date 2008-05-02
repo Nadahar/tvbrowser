@@ -104,6 +104,7 @@ import tvbrowser.ui.update.SoftwareUpdateDlg;
 import tvbrowser.ui.update.SoftwareUpdateItem;
 import tvbrowser.ui.update.SoftwareUpdater;
 import util.browserlauncher.Launch;
+import util.exc.ErrorHandler;
 import util.io.IOUtilities;
 import util.misc.OperatingSystem;
 import util.ui.Localizer;
@@ -1565,23 +1566,29 @@ public class MainFrame extends JFrame implements DateListener {
         onDownloadStart();
         
         final boolean scroll = !TvDataBase.getInstance().dataAvailable(Date.getCurrentDate())
+        && getProgramTableModel().getDate() != null 
         && getProgramTableModel().getDate().compareTo(Date.getCurrentDate()) == 0;
         
         JProgressBar progressBar = mStatusBar.getProgressBar();
-        TvDataUpdater.getInstance().downloadTvData(daysToDownload, services,
-            progressBar, mStatusBar.getLabel());
-
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            onDownloadDone();
-            newTvDataAvailable(scroll);
-            
-            if(Settings.propAutoUpdatePlugins.getBoolean() && (Settings.propLastPluginsUpdate.getDate() == null || Settings.propLastPluginsUpdate.getDate().addDays(7).compareTo(Date.getCurrentDate()) <= 0)) {
-              PluginAutoUpdater.searchForPluginUpdates(mStatusBar.getLabel());
-            }
-          }          
-        });
-
+        try {
+          TvDataUpdater.getInstance().downloadTvData(daysToDownload, services,
+              progressBar, mStatusBar.getLabel());
+        } catch (Throwable t) {
+          String msg = mLocalizer.msg("error.3", "An unexpected error occurred during update.");
+          ErrorHandler.handle(msg, t);
+        } finally {
+          SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+              onDownloadDone();
+              newTvDataAvailable(scroll);
+              
+              if(Settings.propAutoUpdatePlugins.getBoolean() && (Settings.propLastPluginsUpdate.getDate() == null || Settings.propLastPluginsUpdate.getDate().addDays(7).compareTo(Date.getCurrentDate()) <= 0)) {
+                PluginAutoUpdater.searchForPluginUpdates(mStatusBar.getLabel());
+              }
+            }          
+          });
+        }
+        
       }
     };
     downloadingThread.setPriority(Thread.MIN_PRIORITY);
