@@ -29,9 +29,7 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 import java.io.IOException;
 
-import util.exc.ErrorHandler;
 import util.paramhandler.ParamParser;
-import util.ui.Localizer;
 import util.misc.AppleScriptRunner;
 
 import devplugin.Program;
@@ -52,11 +50,9 @@ public class GrowlContainer {
   private ParamParser mParser;
   
   /**
-   * Create the Growl-Container and register the NOTIFICATION
-   * 
-   * @throws Exception
+   * Create the Growl-Container
    */
-  public GrowlContainer() throws Exception {
+  public GrowlContainer() {
     mParser = new ParamParser();
   }
   
