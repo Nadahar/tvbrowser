@@ -130,7 +130,7 @@ public class ProgramFieldType {
                            "ageLimit", "Age limit");
 
   public static final ProgramFieldType URL_TYPE
-    = new ProgramFieldType(15, TEXT_FORMAT, true, "film url",
+    = new ProgramFieldType(15, TEXT_FORMAT, true, "film URL",
                            "filmUrl", "Website");
                            
   public static final ProgramFieldType GENRE_TYPE

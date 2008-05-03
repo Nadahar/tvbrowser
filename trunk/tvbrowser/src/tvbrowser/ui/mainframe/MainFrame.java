@@ -1029,7 +1029,7 @@ public class MainFrame extends JFrame implements DateListener {
     TVBrowser.shutdown(log);
 
     if (log) {
-      mLog.info("Closing tv data base");
+      mLog.info("Closing TV data base");
     }
 
     try {
@@ -1836,7 +1836,7 @@ public class MainFrame extends JFrame implements DateListener {
 	    String msg2 = mLocalizer.msg("askforupdatedlg.2", "later");
 	    String msg4 = mLocalizer.msg("askforupdatedlg.4",
 	        "Do you want to update now?");
-	    String msg5 = mLocalizer.msg("askforupdatedlg.5", "Update tv data");
+	    String msg5 = mLocalizer.msg("askforupdatedlg.5", "Update TV data");
 
 	    Object[] options = { msg1, msg2 };
 	    int result = JOptionPane.showOptionDialog(this, reason + "\n\n" + msg4, msg5,
@@ -1851,7 +1851,7 @@ public class MainFrame extends JFrame implements DateListener {
 
   public int askForDataUpdateNoDataAvailable() {
 	  return askForDataUpdate(mLocalizer.msg("askforupdatedlg.3",
-        "No tv data for todays program available."));
+        "No TV data for todays program available."));
   }
   
   public int askForDataUpdateChannelsAdded() {

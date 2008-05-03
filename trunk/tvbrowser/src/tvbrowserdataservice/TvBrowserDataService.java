@@ -506,9 +506,9 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
 
   /**
-   * Sets the level of the tv data.
+   * Sets the level of the TV data.
    *
-   * @param levelArr The array with the tv data levels.
+   * @param levelArr The array with the TV data levels.
    */
   public void setTvDataLevel(TvDataLevel[] levelArr) {
     mSubscribedLevelArr = levelArr;

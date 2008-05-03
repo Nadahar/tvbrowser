@@ -81,7 +81,7 @@ public class DirectoriesSettingsTab implements SettingsTab {
     
     mainPanel.add(UiUtilities.createHelpTextArea(mLocalizer.msg("chooseFolder", "choose folder")), cc.xy(2,3));
     
-    msg = mLocalizer.msg("tvdatadir", "tv data folder")+":";
+    msg = mLocalizer.msg("tvdatadir", "TV data folder")+":";
     mCurrentTvDataDir = Settings.propTVDataDirectory.getString();
     mTVDataFolderPanel = new DirectoryChooserPanel(msg, mCurrentTvDataDir, false);
     mainPanel.add(mTVDataFolderPanel, cc.xy(2,5));

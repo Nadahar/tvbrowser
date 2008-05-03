@@ -87,7 +87,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   private static final int MAX_META_DATA_AGE = 2;
 
   /**
-   * Creates a new ChannelGroup 
+   * Creates a new ChannelGroup
    * 
    * @param dataservice The data service of the group.
    * @param id The id of the group.
@@ -241,6 +241,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     }
   }
 
+  @Override
   public String toString() {
     return getName();
   }
@@ -251,7 +252,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     Mirror[] mirrorArr = Mirror.loadMirrorList(new File(mDataDir, mID + "_" + Mirror.MIRROR_LIST_FILE_NAME), mMirrorUrlArr, serverDefindeMirros);
 
     // Get a random Mirror that is up to date
-    mCurMirror = Mirror.chooseUpToDateMirror(mirrorArr, null, getName(), mID, ChannelGroup.class, " Please contact the tv data provider for help.");
+    mCurMirror = Mirror.chooseUpToDateMirror(mirrorArr, null, getName(), mID, ChannelGroup.class, " Please contact the TV data provider for help.");
 
     mLog.info("Using mirror " + mCurMirror.getUrl());
     // monitor.setMessage(mLocalizer.msg("info.1","Downloading from mirror
@@ -315,9 +316,9 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     File groupFile = new File(mDataDir, TvBrowserDataService.CHANNEL_GROUPS_FILENAME);
     Mirror[] mirrorArr = null;
 
-    if (!groupFile.exists())
+    if (!groupFile.exists()) {
       mLog.info("Group file '"+TvBrowserDataService.CHANNEL_GROUPS_FILENAME+"' does not exist");
-    else {
+    } else {
       BufferedReader in = null;
 
       try {
@@ -330,8 +331,9 @@ public class ChannelGroup implements devplugin.ChannelGroup {
             int n = s.length-4;
             mirrorArr = new Mirror[n];
             
-            for(int i = 0; i < n; i++)
+            for(int i = 0; i < n; i++) {
               mirrorArr[i] = new Mirror(s[i+4], 1);
+            }
             
             break;
           }
@@ -343,10 +345,11 @@ public class ChannelGroup implements devplugin.ChannelGroup {
         mLog.log(Level.SEVERE, "Could not read group list "+TvBrowserDataService.CHANNEL_GROUPS_FILENAME, e);
       }
       finally {
-        if(in != null)
+        if(in != null) {
           try {
             in.close();
           }catch(Exception ee) {}
+        }
       }
     }
 
@@ -368,7 +371,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     // Download the new file if needed
     if (needsUpdate(file)) {
       String url = serverUrl + "/" + metaFileName;
-      mLog.fine("Updateing Metafile " + url);
+      mLog.fine("Updating Metafile " + url);
       try {
         IOUtilities.download(new URL(url), file);
       } catch (IOException exc) {
@@ -420,7 +423,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     Mirror[] mirrorArr = Mirror.loadMirrorList(new File(mDataDir, mID + "_" + Mirror.MIRROR_LIST_FILE_NAME), mMirrorUrlArr, serverDefindeMirros);
 
     // Get a random Mirror that is up to date
-    Mirror mirror = Mirror.chooseUpToDateMirror(mirrorArr, monitor, getName(), mID, ChannelGroup.class, " Please contact the tv data provider for help.");
+    Mirror mirror = Mirror.chooseUpToDateMirror(mirrorArr, monitor, getName(), mID, ChannelGroup.class, " Please contact the TV data provider for help.");
     mLog.info("Using mirror " + mirror.getUrl());
 
     // Update the mirrorlist (for the next time)
@@ -468,6 +471,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     return mID;
   }
 
+  @Override
   public boolean equals(Object obj) {
 
     if (obj instanceof devplugin.ChannelGroup) {
@@ -478,6 +482,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
   }
 
+  @Override
   public int hashCode() {
     return mID.toLowerCase().hashCode();
   }
