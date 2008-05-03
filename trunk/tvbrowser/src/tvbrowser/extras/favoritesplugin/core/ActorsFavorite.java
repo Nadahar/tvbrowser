@@ -95,6 +95,7 @@ public class ActorsFavorite extends Favorite {
     return foundPrograms;
   }
 
+  @Override
   public boolean matches(Program p) throws TvBrowserException {
     SearchFormSettings searchForm = mSearchFormSettings;
     ProgramFieldType[] fields = searchForm.getFieldTypes();
