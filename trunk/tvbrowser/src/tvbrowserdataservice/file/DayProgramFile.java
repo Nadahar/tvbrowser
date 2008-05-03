@@ -271,11 +271,11 @@ public class DayProgramFile extends AbstractFile {
         int index = getProgramFrameIndexForId(frame.getId());
         ProgramFrame targetFrame;
         if (index == -1) {
-          // This is a insert
+          // This is an insert
           targetFrame = new ProgramFrame(frame.getId());
           addProgramFrame(targetFrame);
         } else {
-          // This is a update
+          // This is an update
           targetFrame = getProgramFrameAt(index);
         }
 
@@ -296,6 +296,16 @@ public class DayProgramFile extends AbstractFile {
             // This field should be updated -> Add a copy of the field
             ProgramField copy = (ProgramField) field.clone();
             targetFrame.addProgramField(copy);
+          }
+        }
+        
+        /* If the frame now is empty we have to remove it to prevent
+         * it is misinterpreted as a to deleting program frame */
+        if(frame.getProgramFieldCount() < 1) {
+          index = getProgramFrameIndexForId(frame.getId());
+          
+          if(index != -1) {
+            removeProgramFrameAt(index);
           }
         }
       }
