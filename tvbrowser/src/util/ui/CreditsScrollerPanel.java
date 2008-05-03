@@ -36,7 +36,7 @@ public class CreditsScrollerPanel extends JScrollPane implements ActionListener 
   }
 
   /**
-   * Start the scrolling. Please don't forgett to call stopScrolling 
+   * Start the scrolling. Please don't forget to call stopScrolling 
    * at the end
    */
   public void startScrolling() {

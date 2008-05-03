@@ -192,7 +192,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
 
             if (xtvdProgram.getRunTime() != null) {
               try {
-                int lenght = Integer.parseInt(xtvdProgram.getRunTime().getHours())*60 + Integer.parseInt(xtvdProgram.getRunTime().getMinutes());
+                int length = Integer.parseInt(xtvdProgram.getRunTime().getHours())*60 + Integer.parseInt(xtvdProgram.getRunTime().getMinutes());
               } catch (NumberFormatException e) {
                 e.printStackTrace();
               }
