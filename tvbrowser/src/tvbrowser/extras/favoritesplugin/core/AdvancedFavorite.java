@@ -294,7 +294,7 @@ public class AdvancedFavorite extends Favorite {
 
   @Override
   public boolean matches(Program p) throws TvBrowserException {
-    return super.matches(p) && (mFilter != null && mFilter.accept(p));
+    return super.matches(p) && (mFilter == null || mFilter.accept(p));
   }
 
   class Configurator implements FavoriteConfigurator {

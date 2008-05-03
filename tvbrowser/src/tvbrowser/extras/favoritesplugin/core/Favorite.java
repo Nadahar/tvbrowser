@@ -736,10 +736,7 @@ public abstract class Favorite {
    */
   public boolean matches(Program p) throws TvBrowserException {
     SearchFormSettings searchForm = mSearchFormSettings;
-
-    System.out.println(getName());
     ProgramSearcher searcher = searchForm.createSearcher();
-
     return mSearchFormSettings.createSearcher().matches(p, searchForm.getFieldTypes());
   }
 
