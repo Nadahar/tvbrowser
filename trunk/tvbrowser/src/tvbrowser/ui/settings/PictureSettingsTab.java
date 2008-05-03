@@ -18,26 +18,15 @@
  */
 package tvbrowser.ui.settings;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
-import devplugin.Marker;
-import devplugin.Plugin;
-import devplugin.PluginAccess;
-import devplugin.SettingsItem;
-import tvbrowser.core.Settings;
-import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
-import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
-import tvbrowser.ui.mainframe.MainFrame;
-import util.settings.PluginPictureSettings;
-import util.settings.ProgramPanelSettings;
-import util.ui.CaretPositionCorrector;
-import util.ui.Localizer;
-import util.ui.MarkerChooserDlg;
-import util.ui.PluginsPictureSettingsPanel;
-import util.ui.ScrollableJPanel;
-import util.ui.UiUtilities;
+import java.awt.BorderLayout;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
@@ -55,16 +44,29 @@ import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import java.awt.BorderLayout;
 
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+import tvbrowser.core.Settings;
+import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
+import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
+import tvbrowser.ui.mainframe.MainFrame;
+import util.settings.PluginPictureSettings;
+import util.settings.ProgramPanelSettings;
+import util.ui.CaretPositionCorrector;
+import util.ui.Localizer;
+import util.ui.MarkerChooserDlg;
+import util.ui.PluginsPictureSettingsPanel;
+import util.ui.ScrollableJPanel;
+import util.ui.UiUtilities;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+
+import devplugin.Marker;
+import devplugin.Plugin;
+import devplugin.PluginAccess;
+import devplugin.SettingsItem;
 
 /**
  * The settings tab for the program panel picture settings.
@@ -177,10 +179,11 @@ public class PictureSettingsTab extends AbstractSettingsTab {
           public void actionPerformed(ActionEvent e) {
             Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
             MarkerChooserDlg chooser;
-            if (w instanceof JDialog)
+            if (w instanceof JDialog) {
               chooser = new MarkerChooserDlg((JDialog) w, mClientPlugins, null);
-            else
+            } else {
               chooser = new MarkerChooserDlg((JFrame) w, mClientPlugins, null);
+            }
 
             chooser.setLocationRelativeTo(w);
             chooser.setVisible(true);
@@ -205,12 +208,13 @@ public class PictureSettingsTab extends AbstractSettingsTab {
 
         for (String arr : clientPluginIdArr) {
           PluginAccess plugin = Plugin.getPluginManager().getActivatedPluginForId(arr);
-          if (plugin != null)
+          if (plugin != null) {
             clientPlugins.add(plugin);
-          else if (ReminderPluginProxy.getInstance().getId().compareTo(arr) == 0)
+          } else if (ReminderPluginProxy.getInstance().getId().compareTo(arr) == 0) {
             clientPlugins.add(ReminderPluginProxy.getInstance());
-          else if (FavoritesPluginProxy.getInstance().getId().compareTo(arr) == 0)
+          } else if (FavoritesPluginProxy.getInstance().getId().compareTo(arr) == 0) {
             clientPlugins.add(FavoritesPluginProxy.getInstance());
+          }
         }
 
         mClientPlugins = clientPlugins.toArray(new Marker[clientPlugins.size()]);
@@ -221,10 +225,10 @@ public class PictureSettingsTab extends AbstractSettingsTab {
         mSubPanel.add(mPluginLabel, cc.xy(2, 3));
         mSubPanel.add(choose, cc.xy(4, 3));
 
-        layout.insertRow(y, new RowSpec("2dlu"));
-        layout.insertRow(++y, new RowSpec("pref"));
+        layout.insertRow(y, RowSpec.decode("2dlu"));
+        layout.insertRow(++y, RowSpec.decode("pref"));
         pb.add(mSubPanel, cc.xyw(3, y, 6));
-        layout.insertRow(++y, new RowSpec("2dlu"));
+        layout.insertRow(++y, RowSpec.decode("2dlu"));
         y++;
       }
 
@@ -268,12 +272,15 @@ public class PictureSettingsTab extends AbstractSettingsTab {
           mPictureEndTime.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesInTimeRange.isSelected());
           mDuration.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesForDuration.isSelected());
 
-          if (mShowPicturesForPlugins != null)
+          if (mShowPicturesForPlugins != null) {
             mShowPicturesForPlugins.setEnabled(mShowPicturesForSelection.isSelected());
-          if (mPluginLabel != null)
+          }
+          if (mPluginLabel != null) {
             mPluginLabel.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesForPlugins.isSelected());
-          if (choose != null)
+          }
+          if (choose != null) {
             choose.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesForPlugins.isSelected());
+          }
         }
       });
 
@@ -299,6 +306,7 @@ public class PictureSettingsTab extends AbstractSettingsTab {
     return null;
   }
 
+  @Override
   public Icon getIcon() {
     return getPictureIcon();
   }
@@ -337,8 +345,9 @@ public class PictureSettingsTab extends AbstractSettingsTab {
       mPluginLabel.setText(mPluginLabel.getText() + ", " + mClientPlugins[i]);
     }
 
-    if (mClientPlugins.length > 4)
+    if (mClientPlugins.length > 4) {
       mPluginLabel.setText(mPluginLabel.getText() + " (" + (mClientPlugins.length - 3) + " " + mLocalizer.msg("otherPlugins", "others...") + ")");
+    }
   }
 
   /**
@@ -348,15 +357,18 @@ public class PictureSettingsTab extends AbstractSettingsTab {
   private int getPictureShowingType() {
     int value = ProgramPanelSettings.SHOW_PICTURES_NEVER;
 
-    if (mShowPicturesEver.isSelected())
+    if (mShowPicturesEver.isSelected()) {
       value = ProgramPanelSettings.SHOW_PICTURES_EVER;
-    else if (mShowPicturesForSelection.isSelected()) {
-      if (mShowPicturesForDuration.isSelected())
+    } else if (mShowPicturesForSelection.isSelected()) {
+      if (mShowPicturesForDuration.isSelected()) {
         value += ProgramPanelSettings.SHOW_PICTURES_FOR_DURATION;
-      if (mShowPicturesForPlugins != null && mShowPicturesForPlugins.isSelected() && mClientPlugins != null && mClientPlugins.length > 0)
+      }
+      if (mShowPicturesForPlugins != null && mShowPicturesForPlugins.isSelected() && mClientPlugins != null && mClientPlugins.length > 0) {
         value += ProgramPanelSettings.SHOW_PICTURES_FOR_PLUGINS;
-      if (mShowPicturesInTimeRange.isSelected())
+      }
+      if (mShowPicturesInTimeRange.isSelected()) {
         value += ProgramPanelSettings.SHOW_PICTURES_IN_TIME_RANGE;
+      }
     }
 
     return value;
@@ -392,8 +404,9 @@ public class PictureSettingsTab extends AbstractSettingsTab {
     if (mShowPicturesForPlugins != null) {
       String[] clientPluginIdArr = new String[mClientPlugins.length];
 
-      for (int i = 0; i < mClientPlugins.length; i++)
+      for (int i = 0; i < mClientPlugins.length; i++) {
         clientPluginIdArr[i] = mClientPlugins[i].getId();
+      }
 
       return clientPluginIdArr;
     }

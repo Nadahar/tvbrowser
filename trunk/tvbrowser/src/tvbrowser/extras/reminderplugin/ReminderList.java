@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 import util.io.IOUtilities;
@@ -213,9 +212,9 @@ public class ReminderList implements ActionListener {
   public void remove(Program[] programs) {
     ArrayList<ReminderListItem> localItems = (ArrayList<ReminderListItem>) mList
         .clone();
-    for (int i = 0; i < programs.length; i++) {
+    for (Program program : programs) {
       for (ReminderListItem item : localItems) {
-        if (item.getProgram().equals(programs[i])) {
+        if (item.getProgram().equals(program)) {
           remove(item);
           break;
         }

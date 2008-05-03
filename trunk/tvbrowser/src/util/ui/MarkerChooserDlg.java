@@ -127,16 +127,16 @@ public class MarkerChooserDlg extends JDialog implements WindowClosingIf {
     mPluginItemList = new SelectableItemList(mResultPluginArr, list.toArray());
 
     int pos = 1;
-    layout.appendRow(new RowSpec("fill:default:grow"));
-    layout.appendRow(new RowSpec("3dlu"));
-    contentPane.add(mPluginItemList, cc.xy(1,pos));   
+    layout.appendRow(RowSpec.decode("fill:default:grow"));
+    layout.appendRow(RowSpec.decode("3dlu"));
+    contentPane.add(mPluginItemList, cc.xy(1,pos));
 
     pos += 2;
     
     if (description != null) {
       JLabel lb = new JLabel(description);
-      layout.appendRow(new RowSpec("pref"));
-      layout.appendRow(new RowSpec("3dlu"));
+      layout.appendRow(RowSpec.decode("pref"));
+      layout.appendRow(RowSpec.decode("3dlu"));
       contentPane.add(lb, cc.xy(1,pos));
       pos += 2;
     }
@@ -166,7 +166,7 @@ public class MarkerChooserDlg extends JDialog implements WindowClosingIf {
     builder.addGlue();
     builder.addGriddedButtons(new JButton[] {okBt, cancelBt});
     
-    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(RowSpec.decode("pref"));
     contentPane.add(builder.getPanel(), cc.xy(1,pos));
     
     pack();
@@ -174,7 +174,7 @@ public class MarkerChooserDlg extends JDialog implements WindowClosingIf {
 
   /**
    *
-   * @return an array of the selected plugins. If the user cancelled the dialog,
+   * @return an array of the selected plugins. If the user canceled the dialog,
    * the array from the constructor call is returned.
    */
   public Marker[] getMarker() {

@@ -56,22 +56,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.JScrollPane;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
-import com.jgoodies.forms.layout.Sizes;
-
-import devplugin.Version;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
@@ -85,8 +77,16 @@ import util.ui.customizableitems.ItemFilter;
 import util.ui.customizableitems.SelectableItem;
 import util.ui.customizableitems.SelectableItemList;
 import util.ui.customizableitems.SelectableItemRendererCenterComponentIf;
-
 import util.ui.html.HTMLTextHelper;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.Sizes;
+
+import devplugin.Version;
 
 /**
  * A dialog class that shows the plugin updates/new plugins.
@@ -116,7 +116,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
    * @param itemArr The array with the available update items.
    */
   public SoftwareUpdateDlg(Dialog parent, String downloadUrl, boolean onlyUpdate, SoftwareUpdateItem[] itemArr) {
-    super(parent, true);    
+    super(parent, true);
     createGui(downloadUrl,onlyUpdate, itemArr);
   }
 
@@ -127,7 +127,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
    * @param downloadUrl The url to download the data from.
    * @param onlyUpdate If this dialog should only show updates.
    * @param itemArr The array with the available update items.
-   */  
+   */
   public SoftwareUpdateDlg(Frame parent, String downloadUrl, boolean onlyUpdate, SoftwareUpdateItem[] itemArr) {
     super(parent, true);
     createGui(downloadUrl,onlyUpdate, itemArr);
@@ -170,7 +170,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     FormLayout layout = new FormLayout("default,5dlu,0dlu:grow","default");
     
     JPanel northPn = new JPanel(layout);
-    northPn.add(new JLabel(onlyUpdate ?mLocalizer.msg("updateHeader","Updates for installed plugins were found.") : 
+    northPn.add(new JLabel(onlyUpdate ?mLocalizer.msg("updateHeader","Updates for installed plugins were found.") :
       mLocalizer.msg("header","Here you can download new plugins and updates for it.")), cc.xyw(1,1,3));
     
     JPanel southPn = new JPanel(new BorderLayout());
@@ -206,11 +206,11 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         JLabel label3 = new JLabel();
         
         Version installedVersion = item.getInstalledVersion();
-        if ((installedVersion != null) && (installedVersion.compareTo(item.getVersion()) < 0)) { 
+        if ((installedVersion != null) && (installedVersion.compareTo(item.getVersion()) < 0)) {
           label.setIcon(NEW_VERSION_ICON);
           
           label3.setText("(" + mLocalizer.msg("installed","Installed version: ") + installedVersion.toString()+")");
-          label3.setFont(label3.getFont().deriveFont((float)label3.getFont().getSize2D()+2));
+          label3.setFont(label3.getFont().deriveFont(label3.getFont().getSize2D()+2));
           
           pb.add(label3, cc.xy(4,2));
         }
@@ -226,16 +226,16 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
           authorAndWebsite.setOpaque(false);
           
           if (author != null) {
-            layout.appendRow(new RowSpec("2dlu"));
-            layout.appendRow(new RowSpec("default"));
-            layout.appendRow(new RowSpec("2dlu"));
+            layout.appendRow(RowSpec.decode("2dlu"));
+            layout.appendRow(RowSpec.decode("default"));
+            layout.appendRow(RowSpec.decode("2dlu"));
             
             pb.add(authorAndWebsite, cc.xyw(2,7,3));
             
             JLabel authorLabel = new JLabel(mLocalizer.msg("author", "Author"));
             authorLabel.setFont(authorLabel.getFont().deriveFont(Font.BOLD));
             authorLabel.setForeground(list.getSelectionForeground());
-            authorLabel.setHorizontalAlignment(JLabel.RIGHT);
+            authorLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 
             JLabel authorName = new JLabel(HTMLTextHelper.convertHtmlToText(author));
             authorName.setForeground(list.getSelectionForeground());
@@ -246,21 +246,21 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
           
           if (website != null) {
             if(author == null) {
-              layout.appendRow(new RowSpec("2dlu"));
-              layout.appendRow(new RowSpec("default"));
-              layout.appendRow(new RowSpec("2dlu"));
+              layout.appendRow(RowSpec.decode("2dlu"));
+              layout.appendRow(RowSpec.decode("default"));
+              layout.appendRow(RowSpec.decode("2dlu"));
               
               pb.add(authorAndWebsite, cc.xyw(2,7,3));
             }
             else {
-              authorAndWebsiteLayout.appendRow(new RowSpec("1dlu"));
-              authorAndWebsiteLayout.appendRow(new RowSpec("default"));
+              authorAndWebsiteLayout.appendRow(RowSpec.decode("1dlu"));
+              authorAndWebsiteLayout.appendRow(RowSpec.decode("default"));
             }
             
             JLabel webLabel = new JLabel(mLocalizer.msg("website", "Website"));
             webLabel.setFont(webLabel.getFont().deriveFont(Font.BOLD));
             webLabel.setForeground(list.getSelectionForeground());
-            webLabel.setHorizontalAlignment(JLabel.RIGHT);
+            webLabel.setHorizontalAlignment(SwingConstants.RIGHT);
             
             JLabel webLink = new JLabel(HTMLTextHelper.convertHtmlToText(website));
             webLink.setForeground(list.getSelectionForeground());
@@ -283,7 +283,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
           
           icon.setMaximumLineCount(1);
           iconLabel.setForeground(list.getSelectionForeground());
-          iconLabel.setForeground(list.getForeground());        
+          iconLabel.setForeground(list.getForeground());
           label3.setForeground(Color.gray);
         }
         
@@ -298,17 +298,19 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     });
     
     mSoftwareUpdateItemList.addMouseListener(new MouseAdapter() {
+      @Override
       public void mousePressed(MouseEvent e) {
         if(SwingUtilities.isRightMouseButton(e) && e.isPopupTrigger()) {
           showPopupMenu(e);
         }
       }
 
+      @Override
       public void mouseReleased(MouseEvent e) {
         if(SwingUtilities.isRightMouseButton(e) && e.isPopupTrigger()) {
           showPopupMenu(e);
         }
-      }      
+      }
     });
     
     if(!onlyUpdate) {
@@ -321,7 +323,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       
       ArrayList<FilterItem> filterList = new ArrayList<FilterItem>(0);
       
-      for(SoftwareUpdateItem item : itemArr) {        
+      for(SoftwareUpdateItem item : itemArr) {
         int index = 0;
         
         for(int i = 0; i < filterList.size(); i++) {
@@ -359,6 +361,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
     addWindowListener(new WindowAdapter() {
+      @Override
       public void windowClosing(WindowEvent e) {
         close();
       }
@@ -415,9 +418,10 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
   
   private static class MyListUI extends javax.swing.plaf.basic.BasicListUI {
     protected synchronized void setCellHeight(int row, int height) {
-      cellHeights[row] = height;      
+      cellHeights[row] = height;
     }
     
+    @Override
     public Dimension getPreferredSize(JComponent c) {
       int width = super.getPreferredSize(c).width;
       int height = 0;
@@ -470,10 +474,12 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       mType = type;
     }
     
+    @Override
     public String toString() {
       return mLocalizer.msg(mType,mType);
     }
     
+    @Override
     public boolean equals(Object o) {
       if(o != null) {
         if(o instanceof FilterItem) {

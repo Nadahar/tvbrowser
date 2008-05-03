@@ -47,7 +47,6 @@ import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.PeriodItem;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
-
 import ca.beq.util.win32.registry.RegistryKey;
 import ca.beq.util.win32.registry.RootKey;
 
@@ -154,15 +153,16 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     mSettingsPn.add(mShowSplashChB, cc.xy(2, ++y));
 
     if (System.getProperty("os.name").toLowerCase().startsWith("windows") && !TVBrowser.isTransportable()) {
-      layout.insertRow(++y,new RowSpec("1dlu"));
-      layout.insertRow(++y,new RowSpec("pref"));
+      layout.insertRow(++y, RowSpec.decode("1dlu"));
+      layout.insertRow(++y, RowSpec.decode("pref"));
       
       try {
         RegistryKey shellFolders = new RegistryKey(RootKey.HKEY_CURRENT_USER, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders");
         String path = shellFolders.getValue("Startup").getData().toString();
         
-        if(path == null || path.length() < 1 || !(new File(path)).isDirectory())
+        if(path == null || path.length() < 1 || !(new File(path)).isDirectory()) {
           throw new Exception();
+        }
         
         mLinkFileFile = new File(path,"TV-Browser.url");
         
@@ -196,7 +196,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     String msg = mLocalizer.msg("onlyMinimizeWhenWindowClosing",
     "When closing the main window only minimize TV-Browser, don't quit.");
     
-    mOnlyMinimizeWhenWindowClosingChB = new JCheckBox(msg, Settings.propOnlyMinimizeWhenWindowClosing.getBoolean());     
+    mOnlyMinimizeWhenWindowClosingChB = new JCheckBox(msg, Settings.propOnlyMinimizeWhenWindowClosing.getBoolean());
 
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("closing","Closing")), cc.xyw(1,++y,5));
     
@@ -224,7 +224,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     Settings.propSplashShow.setBoolean(mShowSplashChB.isSelected());
     Settings.propIsUsingFullscreen.setBoolean(mStartFullscreen.isSelected());
     
-    if(mAutostartWithWindows != null) {        
+    if(mAutostartWithWindows != null) {
         if (mAutostartWithWindows.isSelected()) {
           if(!mLinkFileFile.isFile()) {
             try {

@@ -89,8 +89,8 @@ public class FontsDialog extends JDialog implements WindowClosingIf {
     pb.add(mDescriptionFontPanel, cc.xy(2,++y));
     
     if(dateFont != null) {
-      layout.insertRow(++y,new RowSpec("2dlu"));
-      layout.insertRow(++y,new RowSpec("pref"));
+      layout.insertRow(++y, RowSpec.decode("2dlu"));
+      layout.insertRow(++y, RowSpec.decode("pref"));
       
       content.add(mDateFontPanel, cc.xy(2,y));
     }

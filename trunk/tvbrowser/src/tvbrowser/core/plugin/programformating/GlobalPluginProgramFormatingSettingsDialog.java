@@ -27,7 +27,6 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.charset.Charset;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -45,6 +44,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import util.paramhandler.ParamHelpDialog;
+import util.paramhandler.ParamLibrary;
+import util.paramhandler.ParamParser;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
@@ -54,13 +59,6 @@ import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
 import devplugin.Plugin;
-
-import util.paramhandler.ParamHelpDialog;
-import util.paramhandler.ParamLibrary;
-import util.paramhandler.ParamParser;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
 
 /**
  * A settings dialog for the program configuration.
@@ -88,10 +86,11 @@ public class GlobalPluginProgramFormatingSettingsDialog extends JDialog implemen
    * @param showEncodingSetting If the settings dialog should contain the encoding setting.
    */
   public static void createInstance(Window parent, GlobalPluginProgramFormating config, GlobalPluginProgramFormating defaultConfig, boolean showTitleSetting, boolean showEncodingSetting) {
-    if(parent instanceof JDialog)
+    if(parent instanceof JDialog) {
       new GlobalPluginProgramFormatingSettingsDialog((JDialog)parent, config, defaultConfig, showTitleSetting, showEncodingSetting);
-    else
+    } else {
       new GlobalPluginProgramFormatingSettingsDialog((JFrame)parent, config, defaultConfig, showTitleSetting, showEncodingSetting);
+    }
   }
   
   private GlobalPluginProgramFormatingSettingsDialog(JDialog parent, GlobalPluginProgramFormating config, GlobalPluginProgramFormating defaultConfig, boolean showTitleSetting, boolean showEncodingSetting) {
@@ -108,7 +107,7 @@ public class GlobalPluginProgramFormatingSettingsDialog extends JDialog implemen
     mConfig = config;
     mDefaultConfig = defaultConfig;
     
-    setTitle(mLocalizer.msg("settingsFor","Settings for ") + config.getName());    
+    setTitle(mLocalizer.msg("settingsFor","Settings for ") + config.getName());
     UiUtilities.registerForClosing(this);
     
     CellConstraints cc = new CellConstraints();
@@ -125,13 +124,13 @@ public class GlobalPluginProgramFormatingSettingsDialog extends JDialog implemen
     panel.add(mSetName, cc.xy(3,1));
         
     mTitle = new JTextField(config.getTitleValue());
-    mContentArea = new JTextArea(config.getContentValue());    
+    mContentArea = new JTextArea(config.getContentValue());
     
     Vector<String> encodings = new Vector<String>();
     Map<String, Charset> availcs = Charset.availableCharsets();
     Set<String> keys = availcs.keySet();
-    for (Iterator<String> iter = keys.iterator();iter.hasNext();) {
-       encodings.add(iter.next());
+    for (String string : keys) {
+       encodings.add(string);
     }
     
     mEncoding = new JComboBox(encodings);
@@ -162,7 +161,7 @@ public class GlobalPluginProgramFormatingSettingsDialog extends JDialog implemen
     buttonPanel.add(mSetBack, cc.xy(3,1));
     buttonPanel.add(mHelp, cc.xy(5,1));
     buttonPanel.add(mOk, cc.xy(7,1));
-    buttonPanel.add(mCancel, cc.xy(9,1));    
+    buttonPanel.add(mCancel, cc.xy(9,1));
     
     int y = 1;
     
@@ -170,8 +169,8 @@ public class GlobalPluginProgramFormatingSettingsDialog extends JDialog implemen
     pb.add(panel, cc.xy(3,y++));
     
     if(showTitleSetting) {
-      baseLayout.insertRow(y++,new RowSpec("2dlu"));
-      baseLayout.insertRow(y,new RowSpec("pref"));
+      baseLayout.insertRow(y++, RowSpec.decode("2dlu"));
+      baseLayout.insertRow(y, RowSpec.decode("pref"));
       
       pb.addLabel(mLocalizer.msg("title","Titel") + ":", cc.xy(1,y));
       pb.add(mTitle, cc.xy(3,y++));
@@ -183,8 +182,8 @@ public class GlobalPluginProgramFormatingSettingsDialog extends JDialog implemen
     y++;
     
     if(showEncodingSetting) {
-      baseLayout.insertRow(y++,new RowSpec("5dlu"));
-      baseLayout.insertRow(y,new RowSpec("pref"));
+      baseLayout.insertRow(y++, RowSpec.decode("5dlu"));
+      baseLayout.insertRow(y, RowSpec.decode("pref"));
       
       pb.addLabel(mLocalizer.msg("encoding","Encoding") + ":", cc.xy(1,y));
       pb.add(mEncoding, cc.xy(3,y++));
@@ -203,21 +202,22 @@ public class GlobalPluginProgramFormatingSettingsDialog extends JDialog implemen
   }
 
   public void actionPerformed(ActionEvent e) {
-    if(e.getSource() == mCancel)
+    if(e.getSource() == mCancel) {
       close();
-    else if(e.getSource() == mPreview)
+    } else if(e.getSource() == mPreview) {
       showPreview();
-    else if(e.getSource() == mSetBack)
+    } else if(e.getSource() == mSetBack) {
       defaultPressed();
-    else if(e.getSource() == mHelp) {
+    } else if(e.getSource() == mHelp) {
       ParamHelpDialog dialog = new ParamHelpDialog(this, new ParamLibrary());
       dialog.setVisible(true);
     }
     else if(e.getSource() == mSetName) {
       String value = JOptionPane.showInputDialog(this,mLocalizer.msg("changeName","Change name") + ":",mName.getText());
       
-      if(value != null)
+      if(value != null) {
         mName.setText(value);
+      }
     }
     else if(e.getSource() == mOk) {
       mConfig.setName(mName.getText());
@@ -278,10 +278,10 @@ public class GlobalPluginProgramFormatingSettingsDialog extends JDialog implemen
    * The Settings will be set to default-values after a confirm dialog
    */
   protected void defaultPressed() {
-    int ret = JOptionPane.showConfirmDialog(this, 
-        mLocalizer.msg("reset", "Reset to default Settings?"), 
+    int ret = JOptionPane.showConfirmDialog(this,
+        mLocalizer.msg("reset", "Reset to default Settings?"),
         Localizer.getLocalization(Localizer.I18N_DEFAULT)+"?", JOptionPane.YES_NO_OPTION);
-    if (ret == JOptionPane.YES_OPTION) {      
+    if (ret == JOptionPane.YES_OPTION) {
       mTitle.setText(mDefaultConfig.getTitleValue());
       mContentArea.setText(mDefaultConfig.getContentValue());
       mEncoding.setSelectedItem(mDefaultConfig.getEncodingValue());

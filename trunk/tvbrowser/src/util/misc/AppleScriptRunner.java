@@ -23,10 +23,9 @@
 package util.misc;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.FileOutputStream;
 
 import util.io.ExecutionHandler;
 
@@ -43,7 +42,7 @@ public class AppleScriptRunner {
   private int mTimeOut = 60;
 
   /**
-   * Creates the Runner with a default Timeout of 30 secs
+   * Creates the Runner with a default Timeout of 60 seconds
    */
   public AppleScriptRunner() {
   }
@@ -61,7 +60,7 @@ public class AppleScriptRunner {
    * Executes the AppleScripts
    *
    * @param script Script to execute
-   * @return Output if exec was successfull, null if Error occured
+   * @return Output if exec was successful, null if Error occurred
    * @throws IOException
    */
   public String executeScript(String script) throws IOException {
@@ -122,11 +121,13 @@ public class AppleScriptRunner {
     // get the process output
     String output = "";
 
-    if (!executionHandler.getInputStreamReaderThread().isAlive())
+    if (!executionHandler.getInputStreamReaderThread().isAlive()) {
       output = executionHandler.getInputStreamReaderThread().getOutput();
+    }
 
-    if (executionHandler.exitValue() >= 0)
+    if (executionHandler.exitValue() >= 0) {
       return output;
+    }
 
     file.delete();
 

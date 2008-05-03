@@ -73,7 +73,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
   
   private JComboBox mPluginViewPosition;
 
-  private JTextArea mInfoArea; 
+  private JTextArea mInfoArea;
   
   private static int mStartLookAndIndex;
   private static int mStartIconIndex;
@@ -93,6 +93,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
       this.info = info;
     }
 
+    @Override
     public String toString() {
       return info.getName();
     }
@@ -119,15 +120,15 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     mSettingsPn = new JPanel(layout);
     mSettingsPn.setBorder(Borders.DIALOG_BORDER);
 
-    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(RowSpec.decode("pref"));
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("lookAndFeel", "Look and Feel")), cc.xyw(1, 1, 7));
 
-    layout.appendRow(new RowSpec("5dlu"));
-    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(RowSpec.decode("5dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
 
     mSettingsPn.add(new JLabel(mLocalizer.msg("channelPosition", "Channel list position") +":"), cc.xy(2, 3));
     
-    mPluginViewPosition = new JComboBox(new String[] {Localizer.getLocalization(Localizer.I18N_LEFT),Localizer.getLocalization(Localizer.I18N_RIGHT)});    
+    mPluginViewPosition = new JComboBox(new String[] {Localizer.getLocalization(Localizer.I18N_LEFT),Localizer.getLocalization(Localizer.I18N_RIGHT)});
     
     if(Settings.propPluginViewIsLeft.getBoolean()) {
       mPluginViewPosition.setSelectedIndex(1);
@@ -144,18 +145,18 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     
     mSettingsPn.add(mPluginViewPosition, cc.xy(4,3));
     
-    layout.appendRow(new RowSpec("5dlu"));
-    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(RowSpec.decode("5dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
 
     mSettingsPn.add(new JLabel(mLocalizer.msg("theme", "Theme") +":"), cc.xy(2, 5));
 
-    LookAndFeelObj[] obj = getLookAndFeelObjs();
-    mLfComboBox = new JComboBox(obj);
+    LookAndFeelObj[] lfObjects = getLookAndFeelObjs();
+    mLfComboBox = new JComboBox(lfObjects);
 
-    String lf = Settings.propLookAndFeel.getString();
-    for (int i = 0; i < obj.length; i++) {
-      if (obj[i].getLFClassName().equals(lf)) {
-        mLfComboBox.setSelectedItem(obj[i]);
+    String lfName = Settings.propLookAndFeel.getString();
+    for (LookAndFeelObj lfObject : lfObjects) {
+      if (lfObject.getLFClassName().equals(lfName)) {
+        mLfComboBox.setSelectedItem(lfObject);
       }
     }
     
@@ -176,13 +177,14 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     
     mSettingsPn.add(mConfigBtn, cc.xy(6, 5));
 
-    layout.appendRow(new RowSpec("3dlu"));
-    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(RowSpec.decode("3dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
 
     mSettingsPn.add(new JLabel(mLocalizer.msg("icons", "Icons") + ":"), cc.xy(2, 7));
     
     mIconThemes = new JComboBox(IconLoader.getInstance().getAvailableThemes());
     mIconThemes.setRenderer(new DefaultListCellRenderer() {
+      @Override
       public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         JLabel label = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         if (value != null) {
@@ -195,24 +197,25 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     
     if (Settings.propIcontheme.getString() != null) {
       IconTheme theme = IconLoader.getInstance().getIconTheme(new File(Settings.propIcontheme.getString().replace('/',File.separatorChar)));
-      if (theme.loadTheme())
+      if (theme.loadTheme()) {
         mIconThemes.setSelectedItem(theme);
-      else
+      } else {
         mIconThemes.setSelectedItem(IconLoader.getInstance().getDefaultTheme());
+      }
     } else {
       mIconThemes.setSelectedItem(IconLoader.getInstance().getDefaultTheme());
     }
     
     mSettingsPn.add(mIconThemes, cc.xy(4, 7));
 
-    layout.appendRow(new RowSpec("3dlu"));
-    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(RowSpec.decode("3dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
 
     mSettingsPn.add(new LinkButton(mLocalizer.msg("findMoreIcons","You can find more Icons on our Web-Page."),
         "http://www.tvbrowser.org/iconthemes.php"), cc.xy(4, 9));
     
-    layout.appendRow(new RowSpec("fill:3dlu:grow"));
-    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(RowSpec.decode("fill:3dlu:grow"));
+    layout.appendRow(RowSpec.decode("pref"));
 
     mInfoArea = UiUtilities.createHelpTextArea(mLocalizer.msg("restartNote", "Please Restart"));
     mInfoArea.setForeground(Color.RED);
@@ -235,7 +238,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
       }
     });
     
-    lookChanged();    
+    lookChanged();
     
     return mSettingsPn;
   }
