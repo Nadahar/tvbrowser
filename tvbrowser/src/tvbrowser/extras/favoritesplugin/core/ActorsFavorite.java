@@ -95,6 +95,13 @@ public class ActorsFavorite extends Favorite {
     return foundPrograms;
   }
 
+  public boolean matches(Program p) throws TvBrowserException {
+    SearchFormSettings searchForm = mSearchFormSettings;
+    ProgramFieldType[] fields = searchForm.getFieldTypes();
+    ActorSearcher searcher = new ActorSearcher(mActors);
+    return searcher.matches(p, fields);
+  }
+
   @Override
   public FavoriteConfigurator createConfigurator() {
     return new Configurator();
