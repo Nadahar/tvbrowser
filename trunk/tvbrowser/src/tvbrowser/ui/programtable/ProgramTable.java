@@ -340,6 +340,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener, P
 
 
     // Paint the copyright notices
+    grp.setColor(Settings.propProgramPanelForegroundColor.getColor());
     Channel[] channelArr = mModel.getShownChannels();
     FontMetrics metric = grp.getFontMetrics();
     for (Channel channel : channelArr) {
