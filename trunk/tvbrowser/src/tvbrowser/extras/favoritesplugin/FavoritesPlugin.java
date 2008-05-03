@@ -163,9 +163,9 @@ public class FavoritesPlugin {
 
     TvDataBase.getInstance().addTvDataListener(new TvDataBaseListener() {
       public void dayProgramAdded(ChannelDayProgram prog) {
-        Iterator it = prog.getPrograms();
+        Iterator<Program> it = prog.getPrograms();
         while (it.hasNext()) {
-          final Program p = (Program)it.next();
+          final Program p = it.next();
 
           for (Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()) {
             try {
@@ -178,9 +178,9 @@ public class FavoritesPlugin {
       }
 
       public void dayProgramDeleted(ChannelDayProgram prog) {
-        Iterator it = prog.getPrograms();
+        Iterator<Program> it = prog.getPrograms();
         while (it.hasNext()) {
-          final Program p = (Program)it.next();
+          final Program p = it.next();
           for (Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()) {
             if (fav.contains(p)) {
               fav.removeProgram(p);
