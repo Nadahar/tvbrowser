@@ -110,7 +110,7 @@ public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
   * @param parent
   * @param channelArr The initially selected channels
   * @param description A description text below the channel list.
-  * @param type The type of this ChannelChooser 
+  * @param type The type of this ChannelChooser
   */
  public ChannelChooserDlg(Frame parent, Channel[] channelArr, String description, int type) {
    super(parent,true);
@@ -146,20 +146,21 @@ public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
     }
 
     int pos = 1;
-    layout.appendRow(new RowSpec("fill:default:grow"));
-    layout.appendRow(new RowSpec("3dlu"));
+    layout.appendRow(RowSpec.decode("fill:default:grow"));
+    layout.appendRow(RowSpec.decode("3dlu"));
     
-    if(mChannelOrderChooser != null)
+    if(mChannelOrderChooser != null) {
       contentPane.add(mChannelOrderChooser, cc.xy(1,pos));
-    else
+    } else {
       contentPane.add(mChannelItemList, cc.xy(1,pos));
+    }
       
     pos += 2;
     
     if (description != null) {
       JLabel lb = new JLabel(description);
-      layout.appendRow(new RowSpec("pref"));
-      layout.appendRow(new RowSpec("3dlu"));
+      layout.appendRow(RowSpec.decode("pref"));
+      layout.appendRow(RowSpec.decode("3dlu"));
       contentPane.add(lb, cc.xy(1,pos));
       pos += 2;
     }
@@ -189,7 +190,7 @@ public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
     builder.addGlue();
     builder.addGriddedButtons(new JButton[] {okBt, cancelBt});
     
-    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(RowSpec.decode("pref"));
     contentPane.add(builder.getPanel(), cc.xy(1,pos));
     
     pack();

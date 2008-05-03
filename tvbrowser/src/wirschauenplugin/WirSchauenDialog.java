@@ -20,53 +20,35 @@
  */
 package wirschauenplugin;
 
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
-import com.jgoodies.forms.layout.Sizes;
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-
-import devplugin.Date;
-import devplugin.Plugin;
-import devplugin.PluginInfo;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
-import util.browserlauncher.Launch;
-import util.ui.Localizer;
-import util.ui.MarkPriorityComboBoxRenderer;
-import util.ui.WindowClosingIf;
-import util.ui.UiUtilities;
-
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Toolkit;
 import java.awt.Font;
-import java.awt.event.ActionListener;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.net.URLEncoder;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
@@ -76,6 +58,23 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
+import util.browserlauncher.Launch;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.Sizes;
+
+import devplugin.Date;
+import devplugin.PluginInfo;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
 
 
 public class WirSchauenDialog extends JDialog implements WindowClosingIf, ItemListener {
@@ -95,7 +94,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf, ItemLi
   private static final String OMDB_MOVIE_URL = "http://www.omdb.org/movie/";
 
   /**
-   * tag for recognizing program descriptions which are already from OMDB, language independent 
+   * tag for recognizing program descriptions which are already from OMDB, language independent
    */
   private static final CharSequence OMDB_DESCRIPTION_TAG = " omdb.org";
 
@@ -105,17 +104,17 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf, ItemLi
   protected static final String STATUS_WARNING = "warning";
 
   /**
-   * error status indication, used to display error icon 
+   * error status indication, used to display error icon
    */
   protected static final String STATUS_ERROR = "error";
 
   /**
-   * information status indication, used to display information icon 
+   * information status indication, used to display information icon
    */
   private static final String STATUS_INFO = "information";
 
   /**
-   * no status indication, used to display no icon 
+   * no status indication, used to display no icon
    */
   private static final String STATUS_NONE = "";
 
@@ -181,7 +180,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf, ItemLi
         +"3dlu,"
         +"pref," // genre
         +"3dlu,"
-        +"fill:50dlu," // description 
+        +"fill:50dlu," // description
         +"3dlu,"
         +"pref," // character count
         +"3dlu,"
@@ -213,7 +212,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf, ItemLi
     if (text == null || text.length() == 0) {
       text = program.getIntFieldAsString(ProgramFieldType.EPISODE_NUMBER_TYPE);
     }
-    if (text != null && text.length() > 0) { 
+    if (text != null && text.length() > 0) {
       JLabel episodeLabel = new JLabel(ProgramFieldType.EPISODE_TYPE.getLocalizedName() + ": ");
       episodeLabel.setFont(episodeLabel.getFont().deriveFont(Font.BOLD));
       panel.add(episodeLabel, cc.xy(1, 3));
@@ -229,8 +228,8 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf, ItemLi
     }
     else {
       // hide the rows for the episode
-      mLayout.setRowSpec(3, new RowSpec("0"));
-      mLayout.setRowSpec(2, new RowSpec("0"));
+      mLayout.setRowSpec(3, RowSpec.decode("0"));
+      mLayout.setRowSpec(2, RowSpec.decode("0"));
     }
 
     // server status message
@@ -329,7 +328,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf, ItemLi
             c.setBackground(mNeededBg);
           }
           
-          colorPanel.setOpaque(false);        
+          colorPanel.setOpaque(false);
           colorPanel.add(c, new CellConstraints().xy(1,1));
           
           c = colorPanel;
@@ -508,7 +507,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf, ItemLi
       }
       
       mDescription.setForeground(UIManager.getColor("TextField.foreground"));
-      mDescription.setBackground(mOmdb.getBackground());      
+      mDescription.setBackground(mOmdb.getBackground());
     }
     else {
       if(mOmdb.getText().trim().length() < 1 && mOmdb.isEnabled() && mDescription.getText().trim().length() < 1) {

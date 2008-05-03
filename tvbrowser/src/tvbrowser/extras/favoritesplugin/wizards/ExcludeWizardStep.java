@@ -166,6 +166,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     return mLocalizer.msg("title", "Exclude Programs");
   }
 
+  @Override
   public JPanel createContent(final WizardHandler handler) {
     mTitleCb = new JCheckBox(mTitleQuestion);
     mTitleTf = new JTextField();
@@ -211,8 +212,8 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     panelBuilder.add(mTimePeriodChooser = new TimePeriodChooser(TimePeriodChooser.ALIGN_LEFT), cc.xy(3, rowInx));
 
     if(mMode == MODE_EDIT_EXCLUSION || mMode == MODE_CREATE_EXCLUSION) {
-      layout.insertRow(filterIndex, new RowSpec("pref"));
-      layout.insertRow(filterIndex+1, new RowSpec("5dlu"));
+      layout.insertRow(filterIndex, RowSpec.decode("pref"));
+      layout.insertRow(filterIndex+1, RowSpec.decode("5dlu"));
       
       panelBuilder.add(mFilterCb, cc.xy(2, filterIndex));
       panelBuilder.add(mFilterChooser, cc.xy(3, filterIndex));
@@ -236,7 +237,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
       mTimePeriodChooser.setFromTime(timeFrom);
       mTimePeriodChooser.setToTime(timeTo);
       mDayChooser.setSelectedItem(new Integer(mProgram.getDate().getCalendar().get(Calendar.DAY_OF_WEEK)));
-    } else if (mMode == MODE_EDIT_EXCLUSION) {      
+    } else if (mMode == MODE_EDIT_EXCLUSION) {
       String title = mExclusion.getTitle();
       String topic = mExclusion.getTopic();
       ProgramFilter filter = mExclusion.getFilter();
@@ -347,10 +348,11 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     mDayChooser.setEnabled(mDayCb.isSelected());
     
     if(mMode == MODE_CREATE_DERIVED_FROM_PROGRAM && mProgram != null) {
-      if(allowNext || mFavorite == null)
+      if(allowNext || mFavorite == null) {
         mDoneBtnText = mLocalizer.msg("doneButton.exclusion","Create exclusion criteria now");
-      else
+      } else {
         mDoneBtnText = mLocalizer.msg("doneButton.toBlacklist","Only remove this program now");
+      }
         
       handler.changeDoneBtnText();
       handler.allowFinish(allowNext || mFavorite != null);
@@ -394,10 +396,11 @@ public class ExcludeWizardStep extends AbstractWizardStep {
       weekOfDay = ((Integer) mDayChooser.getSelectedItem()).intValue();
     }
 
-    if (mDoneBtnText.compareTo(mLocalizer.msg("doneButton.toBlacklist","Remove this program now")) == 0)
+    if (mDoneBtnText.compareTo(mLocalizer.msg("doneButton.toBlacklist","Remove this program now")) == 0) {
       return "blacklist";
-    else
+    } else {
       return new Exclusion(title, topic, channel, timeFrom, timeTo, weekOfDay, filterName);
+    }
 
   }
 
@@ -416,15 +419,15 @@ public class ExcludeWizardStep extends AbstractWizardStep {
   public boolean isValid() {
     if (mTitleCb.isSelected() && (mTitleTf.getText() == null || mTitleTf.getText().trim().length() == 0)) {
       JOptionPane.showMessageDialog(mContentPanel,
-          mLocalizer.msg("invalidInput.noTitle", "Please enter a title."), 
-          mLocalizer.msg("invalidInput.noTitleTitle", "Enter Topic"), 
+          mLocalizer.msg("invalidInput.noTitle", "Please enter a title."),
+          mLocalizer.msg("invalidInput.noTitleTitle", "Enter Topic"),
           JOptionPane.WARNING_MESSAGE);
       return false;
     }
     if (mTopicCb.isSelected() && (mTopicTf.getText() == null || mTopicTf.getText().trim().length() == 0)) {
       JOptionPane.showMessageDialog(mContentPanel,
-          mLocalizer.msg("invalidInput.noTopic", "Please enter a topic."), 
-          mLocalizer.msg("invalidInput.noTopicTitle", "Enter Topic"), 
+          mLocalizer.msg("invalidInput.noTopic", "Please enter a topic."),
+          mLocalizer.msg("invalidInput.noTopicTitle", "Enter Topic"),
           JOptionPane.WARNING_MESSAGE);
       return false;
     }
@@ -435,10 +438,12 @@ public class ExcludeWizardStep extends AbstractWizardStep {
    * (non-Javadoc)
    * @see tvbrowser.extras.favoritesplugin.wizards.AbstractWizardStep#isSingleStep()
    */
+  @Override
   public boolean isSingleStep() {
     return true;
   }
   
+  @Override
   public String getDoneBtnText() {
     return mDoneBtnText;
   }

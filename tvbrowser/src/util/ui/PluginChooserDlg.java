@@ -48,6 +48,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -166,7 +167,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
     }
     else {
       mPluginArr = pluginArr;
-      mResultPluginArr = pluginArr;      
+      mResultPluginArr = pluginArr;
       mReceiveTargetTable = targetTable;
     }
     
@@ -183,20 +184,21 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
       ArrayList<ProgramReceiveIf> list = new ArrayList<ProgramReceiveIf>();
     
       for(ProgramReceiveIf tempIf : tempProgramReceiveIf) {
-        if(tempIf.getId().compareTo(caller.getId()) != 0)
+        if(tempIf.getId().compareTo(caller.getId()) != 0) {
           list.add(tempIf);
+        }
       }
 
       mPluginItemList = new SelectableItemList(mResultPluginArr, list.toArray());
-    }
-    else
+    } else {
       mPluginItemList = new SelectableItemList(mResultPluginArr, tempProgramReceiveIf);
+    }
 
     mPluginItemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     
     int pos = 1;
-    layout.appendRow(new RowSpec("fill:default:grow"));
-    layout.appendRow(new RowSpec("3dlu"));
+    layout.appendRow(RowSpec.decode("fill:default:grow"));
+    layout.appendRow(RowSpec.decode("3dlu"));
     
     if(targetTable != null) {
     JSplitPane splitPane = new JSplitPane();
@@ -236,7 +238,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
                 final int j = i;
                 targetBoxes[i].addItemListener(new ItemListener() {
                   public void itemStateChanged(ItemEvent e) {
-                    ArrayList<ProgramReceiveTarget> targetList = mReceiveTargetTable.get(((ProgramReceiveIf)((SelectableItem)mPluginItemList.getSelectedValue()).getItem()));
+                    ArrayList<ProgramReceiveTarget> targetList = mReceiveTargetTable.get((((SelectableItem)mPluginItemList.getSelectedValue()).getItem()));
                                         
                     if(e.getStateChange() == ItemEvent.SELECTED) {
                       if(targetList == null) {
@@ -250,7 +252,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
                       targetList.remove(mCurrentTargets[j]);
                       
                       if(targetList.isEmpty()) {
-                        mReceiveTargetTable.remove(((ProgramReceiveIf)((SelectableItem)mPluginItemList.getSelectedValue()).getItem()));
+                        mReceiveTargetTable.remove((((SelectableItem)mPluginItemList.getSelectedValue()).getItem()));
                       }
                     }
                   }
@@ -262,11 +264,11 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
               if(!hasSelection && targetBoxes.length > 0) {
                 targetBoxes[0].setSelected(true);
                 
-                ArrayList<ProgramReceiveTarget> targetList = mReceiveTargetTable.get(((ProgramReceiveIf)((SelectableItem)mPluginItemList.getSelectedValue()).getItem()));
+                ArrayList<ProgramReceiveTarget> targetList = mReceiveTargetTable.get((((SelectableItem)mPluginItemList.getSelectedValue()).getItem()));
                 
                 if(targetList == null) {
                   targetList = new ArrayList<ProgramReceiveTarget>();
-                  mReceiveTargetTable.put(((ProgramReceiveIf)((SelectableItem)mPluginItemList.getSelectedValue()).getItem()),targetList);  
+                  mReceiveTargetTable.put(((ProgramReceiveIf)((SelectableItem)mPluginItemList.getSelectedValue()).getItem()),targetList);
                 }
                 else {
                   targetList.clear();
@@ -277,10 +279,11 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
             }
           }
           
-          mTargetPanel.updateUI();          
+          mTargetPanel.updateUI();
 
-          if(!((SelectableItem)mPluginItemList.getSelectedValue()).isSelected())
+          if(!((SelectableItem)mPluginItemList.getSelectedValue()).isSelected()) {
             mReceiveTargetTable.remove(((SelectableItem)mPluginItemList.getSelectedValue()).getItem());
+          }
         }
       }catch(Exception e1) {e1.printStackTrace();}
       }
@@ -289,15 +292,16 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
     splitPane.setRightComponent(targetScrollPane);
     contentPane.add(splitPane, cc.xy(1,pos));
     
-    } else
+    } else {
       contentPane.add(mPluginItemList, cc.xy(1,pos));
+    }
 
     pos += 2;
     
     if (description != null) {
       JLabel lb = new JLabel(description);
-      layout.appendRow(new RowSpec("pref"));
-      layout.appendRow(new RowSpec("3dlu"));
+      layout.appendRow(RowSpec.decode("pref"));
+      layout.appendRow(RowSpec.decode("3dlu"));
       contentPane.add(lb, cc.xy(1,pos));
       pos += 2;
     }
@@ -329,13 +333,14 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
     builder.addGlue();
     builder.addGriddedButtons(new JButton[] {okBt, cancelBt});
     
-    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(RowSpec.decode("pref"));
     contentPane.add(builder.getPanel(), cc.xy(1,pos));
     
     Settings.layoutWindow("pluginChooserDlg", this);
     
-    setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+    setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     addWindowListener(new WindowAdapter() {
+      @Override
       public void windowClosing(WindowEvent e) {
         close();
       }
@@ -365,9 +370,9 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
       }
       
       return targetList.toArray(new ProgramReceiveTarget[targetList.size()]);
-    }
-    else
+    } else {
       return null;
+    }
   }
 
   public void close() {

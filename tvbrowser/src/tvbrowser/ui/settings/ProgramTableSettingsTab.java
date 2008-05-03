@@ -56,8 +56,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.Settings;
-import tvbrowser.ui.settings.tablebackgroundstyles.SingleColorBackgroundStyle;
 import tvbrowser.ui.settings.tablebackgroundstyles.DayTimeBackgroundStyle;
+import tvbrowser.ui.settings.tablebackgroundstyles.SingleColorBackgroundStyle;
 import tvbrowser.ui.settings.tablebackgroundstyles.SingleImageBackgroundStyle;
 import tvbrowser.ui.settings.tablebackgroundstyles.TableBackgroundStyle;
 import tvbrowser.ui.settings.tablebackgroundstyles.TimeBlockBackgroundStyle;
@@ -122,17 +122,17 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     CellConstraints cc = new CellConstraints();
     
     // Layout-Rows ****************************************
-    layout.appendRow(new RowSpec("pref"));
-    layout.appendRow(new RowSpec("5dlu"));
-    layout.appendRow(new RowSpec("pref"));
-    layout.appendRow(new RowSpec("10dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
+    layout.appendRow(RowSpec.decode("5dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
+    layout.appendRow(RowSpec.decode("10dlu"));
     
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("layout", "Layout")), cc.xyw(1,1,8));
     mSettingsPn.add(new JLabel(mLocalizer.msg("programArrangement", "Program arrangement")), cc.xy(2,3));
     
     // program table layout
     String[] arrangementArr = { mLocalizer.msg("timeSynchronous", "Time synchronous"),
-        mLocalizer.msg("realSynchronous", "Real time synchronous"), 
+        mLocalizer.msg("realSynchronous", "Real time synchronous"),
         mLocalizer.msg("compact", "Compact"),mLocalizer.msg("realCompact", "Real compact"),
         mLocalizer.msg("timeBlock", "Time block"),
         mLocalizer.msg("compactTimeBlock", "Compact time block")};
@@ -154,10 +154,10 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mSettingsPn.add(mProgramArrangementCB, cc.xy(4, 3));
 
     // Column Rows ***************************************
-    layout.appendRow(new RowSpec("pref"));
-    layout.appendRow(new RowSpec("5dlu"));
-    layout.appendRow(new RowSpec("pref"));
-    layout.appendRow(new RowSpec("10dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
+    layout.appendRow(RowSpec.decode("5dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
+    layout.appendRow(RowSpec.decode("10dlu"));
     
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("columnwidth", "column width")), cc.xyw(1,5,8));
     
@@ -189,12 +189,12 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mSettingsPn.add(mDefaultBtn, cc.xy(6,7));
     
     // Column Rows ***************************************
-    layout.appendRow(new RowSpec("pref"));
-    layout.appendRow(new RowSpec("5dlu"));
-    layout.appendRow(new RowSpec("pref"));
-    layout.appendRow(new RowSpec("3dlu"));
-    layout.appendRow(new RowSpec("pref"));
-    layout.appendRow(new RowSpec("10dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
+    layout.appendRow(RowSpec.decode("5dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
+    layout.appendRow(RowSpec.decode("3dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
+    layout.appendRow(RowSpec.decode("10dlu"));
     
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("range", "Range")), cc.xyw(1,9,8));
     
@@ -208,7 +208,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mStartOfDayTimeSp, Settings.getTimePattern());
     mStartOfDayTimeSp.setEditor(dateEditor);
     mSettingsPn.add(mStartOfDayTimeSp, cc.xy(4, 11));
-    mSettingsPn.add(new JLabel("(" + Localizer.getLocalization(Localizer.I18N_TODAY) + ")"), cc.xy(6, 11));    
+    mSettingsPn.add(new JLabel("(" + Localizer.getLocalization(Localizer.I18N_TODAY) + ")"), cc.xy(6, 11));
     CaretPositionCorrector.createCorrector(dateEditor.getTextField(), new char[] {':'}, -1);
     
     mSettingsPn.add(new JLabel(mLocalizer.msg("endOfDay", "End of day")), cc.xy(2, 13));
@@ -221,7 +221,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     dateEditor = new JSpinner.DateEditor(mEndOfDayTimeSp, Settings.getTimePattern());
     mEndOfDayTimeSp.setEditor(dateEditor);
     mSettingsPn.add(mEndOfDayTimeSp, cc.xy(4, 13));
-    mSettingsPn.add(new JLabel("(" + mLocalizer.msg("nextDay", "next day") + ")"), cc.xy(6, 13));    
+    mSettingsPn.add(new JLabel("(" + mLocalizer.msg("nextDay", "next day") + ")"), cc.xy(6, 13));
     CaretPositionCorrector.createCorrector(dateEditor.getTextField(), new char[] {':'}, -1);
     
     int minutes;
@@ -240,10 +240,10 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     
     
     // Table Background ***************************************
-    layout.appendRow(new RowSpec("pref"));
-    layout.appendRow(new RowSpec("5dlu"));
-    layout.appendRow(new RowSpec("pref"));
-    layout.appendRow(new RowSpec("10dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
+    layout.appendRow(RowSpec.decode("5dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
+    layout.appendRow(RowSpec.decode("10dlu"));
 
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("tableBackground", "Table background")), cc.xyw(1,15,8));
 
@@ -280,11 +280,11 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
 
     mSettingsPn.add(mConfigBackgroundStyleBt, cc.xy(6, 17));
         
-    // Foreground color    
-    layout.appendRow(new RowSpec("pref"));
-    layout.appendRow(new RowSpec("5dlu"));
-    layout.appendRow(new RowSpec("pref"));
-    layout.appendRow(new RowSpec("5dlu"));
+    // Foreground color
+    layout.appendRow(RowSpec.decode("pref"));
+    layout.appendRow(RowSpec.decode("5dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
+    layout.appendRow(RowSpec.decode("5dlu"));
 
     mForegroundColorLb = new ColorLabel(Settings.propProgramPanelForegroundColor.getColor());
     mForegroundColorLb.setStandardColor(Settings.propProgramPanelForegroundColor.getDefaultColor());
@@ -297,9 +297,9 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mSettingsPn.add(programPanelForegroundColorChangeBtn, cc.xy(6,21));
     
     // Miscellaneous *********************************************
-    layout.appendRow(new RowSpec("pref"));
-    layout.appendRow(new RowSpec("5dlu"));
-    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(RowSpec.decode("pref"));
+    layout.appendRow(RowSpec.decode("5dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
 
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("Miscellaneous", "Miscellaneous")), cc.xyw(1,23,8));
 
@@ -369,7 +369,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   }
   
   private void setBackgroundStyleForTimeBlockLayout() {
-    if(!Settings.propTableLayout.getString().equals("timeBlock") && 
+    if(!Settings.propTableLayout.getString().equals("timeBlock") &&
         !Settings.propTableLayout.getString().equals("compactTimeBlock")) {
       Settings.propTableBackgroundStyle.setString("timeBlock");
       
@@ -384,7 +384,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   }
   
   private void resetBackgroundStyle() {
-    if(Settings.propTableLayout.getString().equals("timeBlock") || 
+    if(Settings.propTableLayout.getString().equals("timeBlock") ||
         Settings.propTableLayout.getString().equals("compactTimeBlock")) {
       Settings.propTableBackgroundStyle.setString("timeBlock");
       
@@ -544,7 +544,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     
     public Object getNextValue() {
       Date d = (Date)super.getNextValue();
-      correctValues(d);      
+      correctValues(d);
       
       return d;
     }
@@ -558,7 +558,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
           cal.setTime((Date)mEndOfDayTimeSp.getValue());
           endTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);;
           
-          cal.setTime(d);        
+          cal.setTime(d);
           startTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
           
           if(endTime - startTime < -1) {
@@ -569,7 +569,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
           cal.setTime(d);
           endTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);;
           
-          cal.setTime((Date)mStartOfDayTimeSp.getValue());        
+          cal.setTime((Date)mStartOfDayTimeSp.getValue());
           startTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
           
           if(endTime - startTime < -1) {

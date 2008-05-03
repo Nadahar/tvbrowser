@@ -22,8 +22,6 @@ import java.util.ArrayList;
 
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
-import util.settings.PluginPictureSettings;
-
 import devplugin.FilterManager;
 import devplugin.PluginsProgramFilter;
 import devplugin.ProgramFilter;
@@ -34,7 +32,7 @@ import devplugin.ProgramFilter;
  * @author René Mach
  * @since 2.5
  */
-public class FilterManagerImpl implements FilterManager {  
+public class FilterManagerImpl implements FilterManager {
   private static FilterManagerImpl mInstance;
   
   private FilterManagerImpl() {
@@ -48,8 +46,9 @@ public class FilterManagerImpl implements FilterManager {
    * @return The instance of this class.
    */
   public static FilterManager getInstance() {
-    if(mInstance == null)
+    if(mInstance == null) {
       new FilterManagerImpl();
+    }
     
     return mInstance;
   }
@@ -114,8 +113,9 @@ public class FilterManagerImpl implements FilterManager {
    */
   public boolean deleteFilter(PluginsProgramFilter filter) {
     if(PluginProxyManager.getInstance().getActivatedPluginForId(filter.getPluginAccessOfFilter().getId()).isAllowedToDeleteProgramFilter(filter)) {
-      if(getCurrentFilter() == filter)
+      if(getCurrentFilter() == filter) {
         setCurrentFilter(FilterList.getInstance().getDefaultFilter());
+      }
       
       FilterList.getInstance().remove(filter);
       FilterList.getInstance().store();
