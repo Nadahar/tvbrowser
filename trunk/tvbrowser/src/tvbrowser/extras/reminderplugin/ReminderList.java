@@ -33,8 +33,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.Collections;
 
 import util.io.IOUtilities;
 import devplugin.Date;
@@ -57,6 +56,11 @@ public class ReminderList implements ActionListener {
 
   /** List of Blocked Programs. These Programs don't trigger a reminder anymore */
   private ArrayList<Program> mBlockedPrograms = new ArrayList<Program>();
+  
+  /**
+   * only sort the list if necessary
+   */
+  private boolean needsSort = false;
 
   public ReminderList() {
     mList = new ArrayList<ReminderListItem>();
@@ -125,6 +129,7 @@ public class ReminderList implements ActionListener {
         item = new ReminderListItem(program, minutes);
         item.setReferenceCount(referenceCount);
         mList.add(item);
+        needsSort = true;
         program.mark(ReminderPluginProxy.getInstance());
       }
     }
@@ -144,6 +149,7 @@ public class ReminderList implements ActionListener {
           && (!programs[i].isExpired())) {
         ReminderListItem item = new ReminderListItem(programs[i], minutes);
         mList.add(item);
+        needsSort = true;
         programs[i].mark(ReminderPluginProxy.getInstance());
       } else if (contains(programs[i])) {
         getReminderItem(programs[i]).incReferenceCount();
@@ -182,6 +188,7 @@ public class ReminderList implements ActionListener {
     item.decReferenceCount();
     if (item.getReferenceCount() < 1) {
       mList.remove(item);
+      needsSort = true;
       item.getProgram().unmark(ReminderPluginProxy.getInstance());
     }
   }
@@ -224,6 +231,7 @@ public class ReminderList implements ActionListener {
     for (ReminderListItem item : mList) {
       if (item.getProgram().equals(program)) {
         mList.remove(item);
+        needsSort = true;
         item.getProgram().unmark(ReminderPluginProxy.getInstance());
         return item;
       }
@@ -234,6 +242,7 @@ public class ReminderList implements ActionListener {
 
   public void addWithoutChecking(ReminderListItem item) {
     mList.add(item);
+    needsSort = true;
   }
 
   public ReminderListItem getReminderItem(Program program) {
@@ -246,9 +255,13 @@ public class ReminderList implements ActionListener {
   }
 
   public ReminderListItem[] getReminderItems() {
+    // avoid sorting the reminder list with every timer call
+    if (needsSort) {
+      Collections.sort(mList);
+      needsSort = false;
+    }
     ReminderListItem[] items = mList
         .toArray(new ReminderListItem[mList.size()]);
-    Arrays.sort(items);
     return items;
   }
 
@@ -271,6 +284,7 @@ public class ReminderList implements ActionListener {
             item.getMinutes(), item.getReferenceCount());
       } else {
         mList.add(item);
+        needsSort = true;
       }
     }
 
@@ -283,19 +297,18 @@ public class ReminderList implements ActionListener {
       return;
     }
 
-    Calendar cal = new GregorianCalendar();
-    cal.setTime(new java.util.Date());
-
+    // calculate today only once for the complete list
+    devplugin.Date today = Date.getCurrentDate();
     ReminderListItem[] items = getReminderItems();
     for (ReminderListItem item : items) {
-      if (isRemindEventRequired(item.getProgram(), item.getMinutes())) {
+      if (isRemindEventRequired(item.getProgram(), item.getMinutes(), today)) {
         mListener.timeEvent(item);
       }
     }
 
   }
 
-  private boolean isRemindEventRequired(Program prog, int remindMinutes) {
+  private boolean isRemindEventRequired(Program prog, int remindMinutes, Date today) {
 
     if (remindMinutes < 0) {
       return false;
@@ -310,7 +323,6 @@ public class ReminderList implements ActionListener {
       remindTime = 1440 - (remindTime % 1440);
       remindDate = remindDate.addDays(-days);
     }
-    devplugin.Date today = new devplugin.Date();
     int diff = today.compareTo(remindDate);
 
     return (diff > 0 || (diff == 0 && IOUtilities.getMinutesAfterMidnight() >= remindTime))
