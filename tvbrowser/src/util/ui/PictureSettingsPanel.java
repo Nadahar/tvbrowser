@@ -177,7 +177,7 @@ public class PictureSettingsPanel extends JPanel implements Scrollable {
         
     mShowDescription = new JCheckBox(mLocalizer.msg("showDescription","Show description for pictures"), showDescription);
     
-    mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","These settings affect only the showing of the pictures. The pictures can only be shown if the download of pictures in enabled. To enable the picture download look at the <a href=\"#link\">settings of the tv dataservices</a>."), new HyperlinkListener() {
+    mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","These settings affect only the showing of the pictures. The pictures can only be shown if the download of pictures in enabled. To enable the picture download look at the <a href=\"#link\">settings of the TV dataservices</a>."), new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent e) {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           SettingsDialog.getInstance().showSettingsTab(SettingsItem.TVDATASERVICES);

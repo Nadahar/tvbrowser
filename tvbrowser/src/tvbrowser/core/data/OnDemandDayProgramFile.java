@@ -91,7 +91,7 @@ public class OnDemandDayProgramFile {
   /**
    * Loads the day program for on demand access.
    * 
-   * @param update <code>True</code> if this is called from tv-data update,
+   * @param update <code>True</code> if this is called from TV data update,
    *        <code>false</code> otherwise.
    * @throws IOException
    * @throws ClassNotFoundException

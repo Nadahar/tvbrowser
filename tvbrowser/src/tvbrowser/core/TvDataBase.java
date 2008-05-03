@@ -66,7 +66,7 @@ public class TvDataBase {
 
   private ArrayList<TvDataBaseListener> mListenerList;
 
-  /** Contains date objects for each date for which we have a tv listing */
+  /** Contains date objects for each date for which we have a TV listing */
   private HashSet<Date> mAvailableDateSet;
 
   private Hashtable<String, Object> mNewDayProgramsAfterUpdate;
@@ -102,7 +102,7 @@ public class TvDataBase {
       try {
         mTvDataInventory.readData(file);
       } catch (Exception exc) {
-        mLog.log(Level.WARNING, "Loading tv data inventory failed", exc);
+        mLog.log(Level.WARNING, "Loading TV data inventory failed", exc);
       }
     }
   }
@@ -116,7 +116,7 @@ public class TvDataBase {
   }
   
   /**
-   * Updates the tv data base.
+   * Updates the TV data base.
    *
    * @since 2.2.2/2.5.1
    */
@@ -645,7 +645,7 @@ public class TvDataBase {
   }
 
   /**
-   * Returns true, if tv data is available on disk for the given date.
+   * Returns true, if TV data is available on disk for the given date.
    * 
    * @param date
    *          The date to check.

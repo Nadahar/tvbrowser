@@ -111,7 +111,7 @@ public class TvBrowserUpdateAssistant extends JDialog implements ActionListener,
           else {
             ImportHandler importHandler = new ImportHandler(f);
             if (importHandler.getChannelCount()==0) {
-              JOptionPane.showMessageDialog(this, mLocalizer.msg("error.2","The selected directory doesn't contain valid tv listings."), mLocalizer.msg("error.2.title","Invalid directory"), JOptionPane.WARNING_MESSAGE);
+              JOptionPane.showMessageDialog(this, mLocalizer.msg("error.2","The selected directory doesn't contain valid TV listings."), mLocalizer.msg("error.2.title","Invalid directory"), JOptionPane.WARNING_MESSAGE);
             }
             else {
               String[] options = new String[]{mLocalizer.msg("import","Importieren"),Localizer.getLocalization(Localizer.I18N_CANCEL)};

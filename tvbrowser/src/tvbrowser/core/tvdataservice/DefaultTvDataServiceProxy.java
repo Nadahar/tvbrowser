@@ -84,7 +84,7 @@ public class DefaultTvDataServiceProxy extends AbstractTvDataServiceProxy {
       mTvDataService.updateTvData(updateManager, channelArr, startDate,
           dateCount, monitor);
     } catch (Throwable t) {
-      logError(t, "update tv data");
+      logError(t, "update TV data");
     }
   }
 

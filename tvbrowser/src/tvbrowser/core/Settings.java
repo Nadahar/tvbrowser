@@ -1293,7 +1293,7 @@ public class Settings {
     }
   
     
-  /** An array with the ids of the tv data service which license was accepted. */
+  /** An array with the ids of the TV data service which license was accepted. */
   public static final StringArrayProperty propAcceptedLicenseArrForServiceIds = new StringArrayProperty(
       mProp, "licnseIds", new String[] {});
 

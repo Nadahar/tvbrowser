@@ -86,7 +86,7 @@ public class PluginTreeNode {
 
   /**
    * Creates a new root PluginTreeNode
-   * On tv listings updates, the {@link PluginTreeListener} gets informed.
+   * On TV listings updates, the {@link PluginTreeListener} gets informed.
    * @param marker
    */
   public PluginTreeNode(Marker marker) {
@@ -97,7 +97,7 @@ public class PluginTreeNode {
    * Creates a new root PluginTreeNode
    * @param marker
    * @param handleTvDataUpdate specifies, if the {@link PluginTreeListener}
-   * should get called on tv listings updates
+   * should get called on TV listings updates
    */
   public PluginTreeNode(Marker marker, boolean handleTvDataUpdate) {
     this(Node.PLUGIN_ROOT, marker);
