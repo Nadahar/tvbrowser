@@ -54,7 +54,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 public abstract class Favorite {
 
@@ -187,11 +186,19 @@ public abstract class Favorite {
   }
 
   public Program[] getPrograms() {
-    return mPrograms.toArray(new Program[mPrograms.size()]);
+    Program[] programs = mPrograms.toArray(new Program[mPrograms.size()]);
+    if (programs.length > 0) {
+      Arrays.sort(programs, ProgramUtilities.getProgramComparator());
+    }
+    return programs;
   }
 
   public Program[] getNewPrograms() {
-    return mNewPrograms.toArray(new Program[mNewPrograms.size()]);
+    Program[] programs = mNewPrograms.toArray(new Program[mNewPrograms.size()]);
+    if (programs.length > 0) {
+      Arrays.sort(programs, ProgramUtilities.getProgramComparator());
+    }
+    return programs;
   }
 
 
@@ -215,14 +222,14 @@ public abstract class Favorite {
     }
     else {
       out.writeInt(mExclusionList.size());
-      for (int i=0; i<mExclusionList.size(); i++) {
-        (mExclusionList.get(i)).writeData(out);
+      for (Exclusion exclusion : mExclusionList) {
+        exclusion.writeData(out);
       }
     }
 
     out.writeInt(mForwardPluginArr.length);
-    for (int i=0; i<mForwardPluginArr.length; i++) {
-      mForwardPluginArr[i].writeData(out);
+    for (ProgramReceiveTarget receiveTarget : mForwardPluginArr) {
+      receiveTarget.writeData(out);
     }
 
     // Don't save the programs but only their date and id
@@ -238,8 +245,7 @@ public abstract class Favorite {
     }
     else {
       out.writeInt(mBlackList.size());
-      for(int i = 0; i < mBlackList.size(); i++) {
-        Program p = mBlackList.get(i);
+      for (Program p : mBlackList) {
         p.getDate().writeData(out);
         out.writeObject(p.getID());
       }
@@ -285,17 +291,12 @@ public abstract class Favorite {
     else {
       mExclusionList.clear();
     }
-    for (int i=0; i<exclusionArr.length; i++) {
-      mExclusionList.add(exclusionArr[i]);
-    }
+    mExclusionList.addAll(Arrays.asList(exclusionArr));
   }
 
 
   public boolean contains(Program prog) {
-    if(mBlackList != null && mBlackList.contains(prog)) {
-      return false;
-    }
-    return mPrograms.contains(prog);
+    return !(mBlackList != null && mBlackList.contains(prog)) && mPrograms.contains(prog);
   }
 
 
@@ -309,32 +310,30 @@ public abstract class Favorite {
     ArrayList<Program> list = new ArrayList<Program>();
     
     int allowedDayOfWeek = getLimitationConfiguration().getDayLimit();
-    for (int i=0; i<progArr.length; i++) {
+    for (Program program : progArr) {
       boolean isExcluded = false;
-      for (int j=0; j<exclusions.length; j++) {
-        if (exclusions[j].isProgramExcluded(progArr[i])) {
+      for (Exclusion exclusion : exclusions) {
+        if (exclusion.isProgramExcluded(program)) {
           isExcluded = true;
           break;
         }
       }
-      if (!isExcluded && getLimitationConfiguration().isLimitedByTime()) {        
-        if (ProgramUtilities.isNotInTimeRange(getLimitationConfiguration().getTimeFrom(),getLimitationConfiguration().getTimeTo(),progArr[i])) {
+      if (!isExcluded && getLimitationConfiguration().isLimitedByTime()) {
+        if (ProgramUtilities.isNotInTimeRange(getLimitationConfiguration().getTimeFrom(), getLimitationConfiguration().getTimeTo(), program)) {
           isExcluded = true;
         } else {
           if (allowedDayOfWeek != LimitationConfiguration.DAYLIMIT_DAILY) {
-            Calendar cal = progArr[i].getDate().getCalendar();
+            Calendar cal = program.getDate().getCalendar();
             int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
             if (allowedDayOfWeek == LimitationConfiguration.DAYLIMIT_WEEKEND) {
               if (dayOfWeek != 1 && dayOfWeek != 7) {
                 isExcluded = true;
               }
-            }
-            else if (allowedDayOfWeek == LimitationConfiguration.DAYLIMIT_WEEKDAY) {
+            } else if (allowedDayOfWeek == LimitationConfiguration.DAYLIMIT_WEEKDAY) {
               if (dayOfWeek == 1 || dayOfWeek == 7) {
                 isExcluded = true;
               }
-            }
-            else if (allowedDayOfWeek != dayOfWeek) {
+            } else if (allowedDayOfWeek != dayOfWeek) {
               isExcluded = true;
             }
           }
@@ -342,7 +341,7 @@ public abstract class Favorite {
       }
 
       if (!isExcluded) {
-        list.add(progArr[i]);
+        list.add(program);
       }
     }
 
@@ -387,7 +386,7 @@ public abstract class Favorite {
 
   /**
    * Performs a new search, and refreshes the program marks
-   * @throws TvBrowserException
+   * @throws TvBrowserException Exception during search
    */
   public void updatePrograms() throws TvBrowserException {
     updatePrograms(false, true);
@@ -396,7 +395,7 @@ public abstract class Favorite {
   /**
    * Performs a new search, and refreshes the program marks
    * @param send If the new found programs should be send to plugins.
-   * @throws TvBrowserException
+   * @throws TvBrowserException Exception during search
    */
   public void updatePrograms(boolean send) throws TvBrowserException {
     updatePrograms(false, send);
@@ -406,7 +405,7 @@ public abstract class Favorite {
    * Performs a new search, and refreshes the program marks
    * @param dataUpdate The update was started after a data update.
    * @param sendToPlugins If the new found programs should be send to plugins.
-   * @throws TvBrowserException
+   * @throws TvBrowserException Exception during search
    */
   public void updatePrograms(boolean dataUpdate, boolean sendToPlugins) throws TvBrowserException {
     updatePrograms(internalSearchForPrograms(), dataUpdate, sendToPlugins);
@@ -415,7 +414,7 @@ public abstract class Favorite {
   /**
    * Checks all current programs if they are not excluded,
    * and refreshes the program marks.
-   * @throws TvBrowserException
+   * @throws TvBrowserException Exception during search
    */
   public void refreshPrograms() throws TvBrowserException {
     updatePrograms(mPrograms.toArray(new Program[mPrograms.size()]), false, false);
@@ -440,24 +439,22 @@ public abstract class Favorite {
     Program[] p1 = mPrograms.toArray(new Program[mPrograms.size()]);
     Arrays.sort(p1, comparator);
 
-    Program[] p2 = newProgList;
-
     ArrayList<Program> resultList = new ArrayList<Program>();
     ArrayList<Program> newPrograms = new ArrayList<Program>();
 
     int inx1 = 0;
     int inx2 = 0;
-    while (inx1 < p1.length && inx2 < p2.length) {
-      if (comparator.compare(p1[inx1], p2[inx2]) < 0) {
+    while (inx1 < p1.length && inx2 < newProgList.length) {
+      if (comparator.compare(p1[inx1], newProgList[inx2]) < 0) {
         // remove p1[inx1]
         unmarkProgram(p1[inx1]);
         inx1++;
       }
-      else if (comparator.compare(p1[inx1], p2[inx2]) > 0) {
+      else if (comparator.compare(p1[inx1], newProgList[inx2]) > 0) {
         // add (p2[inx2]
-        markProgram(p2[inx2]);
-        newPrograms.add(p2[inx2]);
-        resultList.add(p2[inx2]);
+        markProgram(newProgList[inx2]);
+        newPrograms.add(newProgList[inx2]);
+        resultList.add(newProgList[inx2]);
         inx2++;
       }
       else {
@@ -466,21 +463,21 @@ public abstract class Favorite {
          * check if the new found program is a new instance 
          * of the program and mark it if it is so. */
         if(p1[inx1].getProgramState() == Program.WAS_DELETED_STATE) {
-          markProgram(p2[inx2]);
+          markProgram(newProgList[inx2]);
         }
           
-        resultList.add(p2[inx2]);
+        resultList.add(newProgList[inx2]);
         inx1++;
         inx2++;
       }
     }
 
-    if (inx2 < p2.length) {
+    if (inx2 < newProgList.length) {
       // add (p2[inx2]..p2[p2.length-1])
-      for (int i=inx2; i<p2.length; i++) {
-        markProgram(p2[i]);
-        newPrograms.add(p2[i]);
-        resultList.add(p2[i]);
+      for (int i=inx2; i< newProgList.length; i++) {
+        markProgram(newProgList[i]);
+        newPrograms.add(newProgList[i]);
+        resultList.add(newProgList[i]);
       }
     }
     if (inx1 < p1.length) {
@@ -496,9 +493,9 @@ public abstract class Favorite {
     
     if(mNewPrograms.size() > 0 && send) {
       if(!dataUpdate) {
-        for (int i=0; i<pluginArr.length; i++) {
-          if(pluginArr[i] != null && pluginArr[i].getReceifeIfForIdOfTarget() != null) {
-            pluginArr[i].getReceifeIfForIdOfTarget().receivePrograms(mNewPrograms.toArray(new Program[mNewPrograms.size()]),pluginArr[i]);
+        for (ProgramReceiveTarget receiveTarget : pluginArr) {
+          if (receiveTarget != null && receiveTarget.getReceifeIfForIdOfTarget() != null) {
+            receiveTarget.getReceifeIfForIdOfTarget().receivePrograms(mNewPrograms.toArray(new Program[mNewPrograms.size()]), receiveTarget);
           }
         }
       } else {
@@ -514,8 +511,8 @@ public abstract class Favorite {
     if(mBlackList == null || !mBlackList.contains(p)) {
       p.mark(FavoritesPluginProxy.getInstance());
       String[] reminderServices = getReminderConfiguration().getReminderServices();
-      for (int i=0; i<reminderServices.length; i++) {
-        if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderServices[i])) {
+      for (String reminderService : reminderServices) {
+        if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderService)) {
           ReminderPlugin.getInstance().addProgram(p);
         }
       }
@@ -528,8 +525,8 @@ public abstract class Favorite {
     }
       
     String[] reminderServices = getReminderConfiguration().getReminderServices();
-    for (int i=0; i<reminderServices.length; i++) {
-      if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderServices[i])) {
+    for (String reminderService : reminderServices) {
+      if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderService)) {
         ReminderPlugin.getInstance().removeProgram(p);
       }
     }
@@ -560,10 +557,7 @@ public abstract class Favorite {
    * @return If the program in on the blacklist.
    */
   public boolean isOnBlackList(Program program) {
-    if (mBlackList == null) {
-      return false;
-    }
-    return mBlackList.contains(program);
+    return mBlackList != null && mBlackList.contains(program);
   }
   
   /**
@@ -628,7 +622,10 @@ public abstract class Favorite {
       }
     }
 
-    return tempProgramArr.toArray(new Program[tempProgramArr.size()]);
+    Program[] retArray = tempProgramArr.toArray(new Program[tempProgramArr.size()]);
+    Arrays.sort(retArray, ProgramUtilities.getProgramComparator());
+    
+    return retArray;
   }
   
   /**
@@ -701,13 +698,24 @@ public abstract class Favorite {
    * @param dataUpdate is this method called during a data update?
    * @param send should the program be sended to other plugins
    * @since 2.7
+   * @throws TvBrowserException Exception during search
    */
   public void tryToMatch(Program p, boolean dataUpdate, boolean send) throws TvBrowserException {
     if (matches(p) && filterByLimitations(new Program[] {p}).length > 0) {
-      mPrograms.add(p);
-      mNewPrograms.add(p);
-      markProgram(p);
-      if (send) {
+      boolean newFound = false;
+      int pos = mPrograms.indexOf(p);
+      if (pos >= 0) {
+        // Item was in list, remove old item, add new one
+        mPrograms.remove(pos);
+        mPrograms.add(p);
+        markProgram(p);
+      } else {
+        mPrograms.add(p);
+        markProgram(p);
+        mNewPrograms.add(p);
+        newFound = true;
+      }
+      if (send && newFound) {
         ProgramReceiveTarget[] pluginArr = getForwardPlugins();
         if(!dataUpdate) {
           for (ProgramReceiveTarget receiveTarget : pluginArr) {
