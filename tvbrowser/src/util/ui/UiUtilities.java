@@ -222,7 +222,7 @@ public class UiUtilities {
    * Gets if a dialog child of the given window is modal.
    * 
    * @param parent
-   *          The window to check the childrens of.
+   *          The window to check the children of.
    * @return <code>True</code> if a child is modal, <code>false</code>
    *         otherwise.
    * 

@@ -148,7 +148,7 @@ public class SearchHelper {
                 .msg("nothingFound", "No programs found with {0}!", searcherSettings.getSearchText());
             JOptionPane.showMessageDialog(MainFrame.getInstance(), msg);
           } else {
-            String title = mLocalizer.msg("hitsTitle", "Sendungen mit {0}", searcherSettings.getSearchText());
+            String title = mLocalizer.msg("hitsTitle", "Programs with {0}", searcherSettings.getSearchText());
             showHitsDialog(comp, programArr, title, searcherSettings, pictureSettings);
           }
         } catch (TvBrowserException exc) {
