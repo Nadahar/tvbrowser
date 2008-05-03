@@ -82,7 +82,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Properties;
-import java.util.List;
 import java.util.Iterator;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -161,21 +160,32 @@ public class FavoritesPlugin {
     load();
     mRootNode = new PluginTreeNode(mLocalizer.msg("manageFavorites","Favorites"));
 
-    final List<Program> newPrograms = new ArrayList<Program>();
-    final List<Program> removedPrograms = new ArrayList<Program>();
 
     TvDataBase.getInstance().addTvDataListener(new TvDataBaseListener() {
       public void dayProgramAdded(ChannelDayProgram prog) {
         Iterator it = prog.getPrograms();
         while (it.hasNext()) {
-          newPrograms.add((Program)it.next());
+          final Program p = (Program)it.next();
+
+          for (Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()) {
+            try {
+              fav.tryToMatch(p, true, true);
+            } catch (TvBrowserException e) {
+              ErrorHandler.handle(e);
+            }
+          }
         }
       }
 
       public void dayProgramDeleted(ChannelDayProgram prog) {
         Iterator it = prog.getPrograms();
         while (it.hasNext()) {
-          removedPrograms.add((Program)it.next());
+          final Program p = (Program)it.next();
+          for (Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()) {
+            if (fav.contains(p)) {
+              fav.removeProgram(p);
+            }
+          }
         }
       }
     });
@@ -183,12 +193,19 @@ public class FavoritesPlugin {
     TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
       public void tvDataUpdateStarted() {
         mHasRightToSave = false;
+        mSendPluginsTable.clear();
+        for (Favorite favorite : FavoriteTreeModel.getInstance().getFavoriteArr()) {
+          favorite.clearNewPrograms();
+        }
       }
 
       public void tvDataUpdateFinished() {
         // only update the favorites if new data was downloaded
         if (TvDataUpdater.getInstance().tvDataWasChanged()) {
-          handleTvDataUpdateFinished(newPrograms, removedPrograms);
+          if(!mSendPluginsTable.isEmpty()) {
+            sendToPlugins();
+          }
+          handleTvDataUpdateFinished();
         }
       }
     });
@@ -200,8 +217,7 @@ public class FavoritesPlugin {
     if(mHasRightToUpdate) {
       mHasToUpdate = false;
 
-      updateAllFavorites();
-      FavoriteTreeModel.getInstance().reload();
+      //FavoriteTreeModel.getInstance().reload();
 
       mHasRightToSave = true;
       updateRootNode(true);
@@ -226,37 +242,6 @@ public class FavoritesPlugin {
     }
   }
 
-  private void handleTvDataUpdateFinished(List<Program> programs, List<Program> removedPrograms) {
-    mHasToUpdate = true;
-
-    if(mHasRightToUpdate) {
-      mHasToUpdate = false;
-      
-      updateAllFavorites(programs, removedPrograms);
-      FavoriteTreeModel.getInstance().reload();
-
-      mHasRightToSave = true;      
-      updateRootNode(true);
-
-      ArrayList<Favorite> showInfoFavorites = new ArrayList<Favorite>();
-
-      Favorite[] favoriteArr = FavoriteTreeModel.getInstance().getFavoriteArr();
-      
-      for (Favorite favorite : favoriteArr) {
-        if (favorite.isRemindAfterDownload() && favorite.getNewPrograms().length > 0) {
-          showInfoFavorites.add(favorite);
-        }
-      }
-
-      if(!showInfoFavorites.isEmpty()) {
-        UpdateInfoThread thread = new UpdateInfoThread(showInfoFavorites.toArray(new Favorite[showInfoFavorites.size()]));
-        thread.setPriority(Thread.MIN_PRIORITY);
-        
-        mUpdateInfoThreads.add(thread);
-        thread.start();
-      }
-    }
-  }
   
   public void handleTvBrowserIsShuttingDown() {
     mIsShuttingDown = true;
@@ -492,45 +477,6 @@ public class FavoritesPlugin {
     }
   }
 
-
-  private void updateAllFavorites(List<Program> programs, List<Program> removedPrograms) {
-    mSendPluginsTable.clear();
-    
-    ProgressMonitor monitor;
-    
-    Favorite[] favoriteArr = FavoriteTreeModel.getInstance().getFavoriteArr();
-    
-    if (favoriteArr.length > 5) {    // if we have more then 5 favorites, we show a progress bar
-      try {
-        monitor = MainFrame.getInstance().createProgressMonitor();
-      }catch(Exception e) {e.printStackTrace();
-        monitor = new NullProgressMonitor();
-      }
-    }
-    else {
-      monitor = new NullProgressMonitor();
-    }
-    monitor.setMaximum(favoriteArr.length);
-    monitor.setMessage(mLocalizer.msg("updatingFavorites","Updating favorites"));
-
-    for (int i=0;i<favoriteArr.length; i++) {
-      monitor.setValue(i);
-
-      try {
-        favoriteArr[i].refreshBlackList();
-        favoriteArr[i].searchNewPrograms(programs.toArray(new Program[programs.size()]), removedPrograms.toArray(new Program[removedPrograms.size()]), true,true);
-      } catch (TvBrowserException e) {
-        ErrorHandler.handle(e);
-      }
-    }
-    monitor.setMessage("");
-    monitor.setValue(0);
-    
-    if(!mSendPluginsTable.isEmpty()) {
-      sendToPlugins();
-    }
-  }
-  
   private void sendToPlugins() {
     Collection<ReceiveTargetItem> targets = mSendPluginsTable.values();
     StringBuffer buffer = new StringBuffer();

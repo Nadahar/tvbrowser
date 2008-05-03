@@ -58,8 +58,8 @@ import java.util.List;
 
 public abstract class Favorite {
 
-  private Program[] mPrograms;
-  private Program[] mNewProgramsArr;
+  private ArrayList<Program> mPrograms;
+  private ArrayList<Program> mNewPrograms;
   private String mName;
   private ReminderConfiguration mReminderConfiguration;
   private LimitationConfiguration mLimitationConfiguration;
@@ -76,8 +76,8 @@ public abstract class Favorite {
   public Favorite() {
     mReminderConfiguration = new ReminderConfiguration(FavoritesPlugin.getInstance().isAutoSelectingRemider() ? new String[] {ReminderConfiguration.REMINDER_DEFAULT} : new String[0]);
     mLimitationConfiguration = new LimitationConfiguration();
-    mPrograms = new Program[]{};
-    mNewProgramsArr = new Program[]{};
+    mPrograms = new ArrayList<Program>();
+    mNewPrograms = new ArrayList<Program>();
     mExclusionList = null; // defer initialisation until needed, save memory
     mBlackList = null; // defer initialization until needed
 
@@ -134,9 +134,9 @@ public abstract class Favorite {
       Collections.sort(mBlackList, ProgramUtilities.getProgramComparator());
     }
     
-    mPrograms = programList.toArray(new Program[programList.size()]);
+    mPrograms = programList;
     
-    mNewProgramsArr = new Program[]{};
+    mNewPrograms = new ArrayList<Program>();
   }
 
   private void readProgramsToList(ArrayList<Program> list, int size, ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -187,26 +187,21 @@ public abstract class Favorite {
   }
 
   public Program[] getPrograms() {
-    return mPrograms;
+    return mPrograms.toArray(new Program[mPrograms.size()]);
   }
 
   public Program[] getNewPrograms() {
-    return mNewProgramsArr;
+    return mNewPrograms.toArray(new Program[mNewPrograms.size()]);
   }
 
 
   public void handleContainingPrograms(Program[] progs) {
-    for(int i = 0; i < mPrograms.length; i++) {
-      for(int j = 0; j < progs.length; j++) {
-        if(mPrograms[i].equals(progs[j])) {
-          progs[j].mark(FavoritesPluginProxy.getInstance());
-        }
+    for (Program p : progs) {
+      if (mPrograms.contains(p)) {
+        p.mark(FavoritesPluginProxy.getInstance());
       }
     }
   }
-
-
-
 
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(3);  // version
@@ -231,12 +226,12 @@ public abstract class Favorite {
     }
 
     // Don't save the programs but only their date and id
-    out.writeInt(mPrograms.length);
-    for (int i = 0; i < mPrograms.length; i++) {
-      mPrograms[i].getDate().writeData(out);
-      out.writeObject(mPrograms[i].getID());
+    out.writeInt(mPrograms.size());
+    for (Program p : mPrograms) {
+      p.getDate().writeData(out);
+      out.writeObject(p.getID());
     }
-    
+
     // Save the programs on BlackList
     if (mBlackList == null) {
       out.writeInt(0);
@@ -300,14 +295,7 @@ public abstract class Favorite {
     if(mBlackList != null && mBlackList.contains(prog)) {
       return false;
     }
-    
-    for(int i = 0; i < mPrograms.length; i++) {
-      if(mPrograms[i].equals(prog)) {
-        return true;
-      }
-    }
-
-    return false;
+    return mPrograms.contains(prog);
   }
 
 
@@ -376,7 +364,7 @@ public abstract class Favorite {
   public void searchNewPrograms(Program[] added, Program[] removed, boolean dataUpdate, boolean sendToPlugins) throws TvBrowserException {
     SearchFormSettings searchForm = mSearchFormSettings;
 
-    final ArrayList<Program> currentList = new ArrayList(Arrays.asList(mPrograms));
+    final ArrayList<Program> currentList = new ArrayList<Program>(mPrograms);
 
     final ProgramSearcher searcher = searchForm.createSearcher();
 
@@ -430,7 +418,7 @@ public abstract class Favorite {
    * @throws TvBrowserException
    */
   public void refreshPrograms() throws TvBrowserException {
-    updatePrograms(mPrograms, false, false);
+    updatePrograms(mPrograms.toArray(new Program[mPrograms.size()]), false, false);
   }
   
   private void updatePrograms(Program[] progs, boolean dataUpdate, boolean send) throws TvBrowserException {
@@ -448,9 +436,10 @@ public abstract class Favorite {
      */
     Comparator<Program> comparator = ProgramUtilities.getProgramComparator();
     Arrays.sort(newProgList, comparator);
-    Arrays.sort(mPrograms, comparator);
 
-    Program[] p1 = mPrograms;
+    Program[] p1 = mPrograms.toArray(new Program[mPrograms.size()]);
+    Arrays.sort(p1, comparator);
+
     Program[] p2 = newProgList;
 
     ArrayList<Program> resultList = new ArrayList<Program>();
@@ -502,22 +491,22 @@ public abstract class Favorite {
     }
 
     // pass programs to plugins
-    mNewProgramsArr = newPrograms.toArray(new Program[newPrograms.size()]);
+    mNewPrograms = newPrograms;
     ProgramReceiveTarget[] pluginArr = getForwardPlugins();
     
-    if(mNewProgramsArr.length > 0 && send) {
+    if(mNewPrograms.size() > 0 && send) {
       if(!dataUpdate) {
         for (int i=0; i<pluginArr.length; i++) {
           if(pluginArr[i] != null && pluginArr[i].getReceifeIfForIdOfTarget() != null) {
-            pluginArr[i].getReceifeIfForIdOfTarget().receivePrograms(mNewProgramsArr,pluginArr[i]);
+            pluginArr[i].getReceifeIfForIdOfTarget().receivePrograms(mNewPrograms.toArray(new Program[mNewPrograms.size()]),pluginArr[i]);
           }
         }
       } else {
-        FavoritesPlugin.getInstance().addProgramsForSending(pluginArr, mNewProgramsArr);
+        FavoritesPlugin.getInstance().addProgramsForSending(pluginArr, mNewPrograms.toArray(new Program[mNewPrograms.size()]));
       }
     }
 
-    mPrograms = resultList.toArray(new Program[resultList.size()]);
+    mPrograms = resultList;
   }
 
 
@@ -632,13 +621,13 @@ public abstract class Favorite {
    */
   public Program[] getWhiteListPrograms(boolean onlyNotExpiredPrograms) {
     ArrayList<Program> tempProgramArr = new ArrayList<Program>();
-    
-    for(int i = 0; i < mPrograms.length; i++) {
-      if((mBlackList == null || !mBlackList.contains(mPrograms[i])) && (!onlyNotExpiredPrograms || !mPrograms[i].isExpired())) {
-        tempProgramArr.add(mPrograms[i]);
+
+    for (final Program p : mPrograms) {
+      if((mBlackList == null || !mBlackList.contains(p)) && (!onlyNotExpiredPrograms || !p.isExpired())) {
+        tempProgramArr.add(p);
       }
     }
-        
+
     return tempProgramArr.toArray(new Program[tempProgramArr.size()]);
   }
   
@@ -704,4 +693,52 @@ public abstract class Favorite {
     return channelArr;
   }
 
+  /**
+   * Checks if this program matches the favorite.
+   * if it does, it will be added to the favorite.
+   *
+   * @param p new Program
+   * @param dataUpdate is this method called during a data update?
+   * @param send should the program be sended to other plugins
+   * @since 2.7
+   */
+  public void tryToMatch(Program p, boolean dataUpdate, boolean send) throws TvBrowserException {
+    SearchFormSettings searchForm = mSearchFormSettings;
+
+    ProgramSearcher searcher = searchForm.createSearcher();
+    if (searcher.matches(p, searchForm.getFieldTypes())) {
+      mPrograms.add(p);
+      mNewPrograms.add(p);
+      markProgram(p);
+      if (send) {
+        ProgramReceiveTarget[] pluginArr = getForwardPlugins();
+        if(!dataUpdate) {
+          for (ProgramReceiveTarget receiveTarget : pluginArr) {
+            if (receiveTarget != null && receiveTarget.getReceifeIfForIdOfTarget() != null) {
+              receiveTarget.getReceifeIfForIdOfTarget().receivePrograms(mNewPrograms.toArray(new Program[mNewPrograms.size()]), receiveTarget);
+            }
+          }
+        } else {
+          FavoritesPlugin.getInstance().addProgramsForSending(pluginArr, mNewPrograms.toArray(new Program[mNewPrograms.size()]));
+        }
+      }
+    }
+  }
+
+  /**
+   * Checks if the program is marked by this favorite and remove it if it does.
+   * @param p Program to remove
+   * @since 2.7
+   */
+  public void removeProgram(Program p) {
+    unmarkProgram(p);
+  }
+
+  /**
+   * Clears the list of new programs
+   * @since 2.7
+   */
+  public void clearNewPrograms() {
+    mNewPrograms = new ArrayList<Program>();
+  }
 }
