@@ -56,8 +56,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.google.gdata.client.http.GoogleGDataRequest;
-
 public abstract class Favorite {
 
   private ArrayList<Program> mPrograms;
@@ -705,9 +703,7 @@ public abstract class Favorite {
    * @since 2.7
    */
   public void tryToMatch(Program p, boolean dataUpdate, boolean send) throws TvBrowserException {
-    if (matches(p)) {
-
-      // ToDo: Filter By Limitations
+    if (matches(p) && filterByLimitations(new Program[] {p}).length > 0) {
       mPrograms.add(p);
       mNewPrograms.add(p);
       markProgram(p);
@@ -733,11 +729,10 @@ public abstract class Favorite {
    * @return <code>true</code> if the program matches
    *
    * @throws TvBrowserException exception during matching
+   * @since 2.7
    */
   public boolean matches(Program p) throws TvBrowserException {
-    SearchFormSettings searchForm = mSearchFormSettings;
-    ProgramSearcher searcher = searchForm.createSearcher();
-    return mSearchFormSettings.createSearcher().matches(p, searchForm.getFieldTypes());
+    return mSearchFormSettings.createSearcher().matches(p, mSearchFormSettings.getFieldTypes());
   }
 
   /**
