@@ -2,26 +2,26 @@ package imdbplugin;
 
 import devplugin.Plugin;
 import devplugin.PluginInfo;
-import devplugin.Version;
 import devplugin.Program;
-
-import java.util.zip.GZIPInputStream;
-import java.io.FileInputStream;
-import java.io.File;
-import java.io.IOException;
-
-import util.ui.Localizer;
+import devplugin.Version;
 import util.misc.SoftReferenceCache;
+import util.ui.Localizer;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.zip.GZIPInputStream;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 public class ImdbPlugin extends Plugin {
 
-  /** Translator */
+  /**
+   * Translator
+   */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ImdbPlugin.class);
 
-  private static final Version mVersion = new Version(1,0);
+  private static final Version mVersion = new Version(1, 0);
   private static final Icon DUMMY_ICON = new ImageIcon();
 
   private PluginInfo mPluginInfo;
@@ -35,7 +35,7 @@ public class ImdbPlugin extends Plugin {
 
   @Override
   public PluginInfo getInfo() {
-    if(mPluginInfo == null) {
+    if (mPluginInfo == null) {
       String name = mLocalizer.msg("pluginName", "Imdb Ratings");
       String desc = mLocalizer.msg("description", "Display Imdb ratings in programs");
       String author = "TV-Browser Team";
@@ -55,12 +55,11 @@ public class ImdbPlugin extends Plugin {
     Icon icon = mRatingCache.get(program);
     if (icon == null) {
       icon = DUMMY_ICON;
-      String movieId = mImdbDatabase.getMovieId(program.getTitle(),"", -1);
-
-      if (movieId != null) {
-        int rating = mImdbDatabase.getRatingForId(movieId);
-        System.out.println(rating);
-        if (rating >= 50) {
+      String movieId = mImdbDatabase.getMovieId(program.getTitle(), "", -1);
+      ImdbRating rating = mImdbDatabase.getRatingForId(movieId);
+      if (rating != null) {
+        System.out.println(rating.getRating());
+        if (rating.getRating() >= 50) {
           icon = getPluginManager().getIconFromTheme(this, "actions", "view-refresh", 16);
         }
       }
@@ -72,7 +71,7 @@ public class ImdbPlugin extends Plugin {
       return null;
     }
 
-    return new Icon[] {icon};
+    return new Icon[]{icon};
   }
 
   @Override
@@ -109,18 +108,18 @@ public class ImdbPlugin extends Plugin {
       e.printStackTrace();
     }
 
-    String  id;
+    String id;
 
     id = db.getMovieId("Enterprise", "Babel One", 1983);
     if (id != null) {
-      System.out.println(db.getRatingForId(id));
+      System.out.println(db.getRatingForId(id).getRating());
     } else {
       System.out.println("Not found!");
     }
 
     id = db.getMovieId("Star Trek: Enterprise", "Babel One", 1983);
     if (id != null) {
-      System.out.println(db.getRatingForId(id));
+      System.out.println(db.getRatingForId(id).getRating());
     } else {
       System.out.println("Not found!");
     }

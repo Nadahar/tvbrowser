@@ -261,7 +261,10 @@ public class ImdbDatabase {
     System.out.println(" : " + document.getField(MOVIE_YEAR).stringValue() + " : " + document.getField(MOVIE_ID).stringValue());
   }
 
-  public int getRatingForId(String id) {
+  public ImdbRating getRatingForId(String id) {
+    if (id == null) {
+      return null;
+    }
     try {
       BooleanQuery bQuery = new BooleanQuery();
       bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_RATING)),BooleanClause.Occur.MUST);
@@ -274,12 +277,16 @@ public class ImdbDatabase {
         Hit hit = (Hit) it.next();
         Document document = hit.getDocument();
 
-        return Integer.parseInt(document.getField(MOVIE_RATING).stringValue());
+        return new ImdbRating(
+                Integer.parseInt(document.getField(MOVIE_RATING).stringValue()),
+                Integer.parseInt(document.getField(MOVIE_VOTES).stringValue()),
+                document.getField(MOVIE_DISTRIBUTION).stringValue()
+        );
       }
     } catch (IOException e) {
       e.printStackTrace();
     }
 
-    return -1;
+    return null;
   }
 }
