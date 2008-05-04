@@ -93,4 +93,13 @@ public class SoftReferenceCache<T,K> {
     }
   }
 
+  /**
+   * Checks if the cache contains a specific key
+   *
+   * @param key search for this key
+   * @return <code>true</code> if this cache contains this key
+   */
+  public boolean containsKey(T key) {
+    return mCacheHashMap.containsKey(key);
+  }
 }

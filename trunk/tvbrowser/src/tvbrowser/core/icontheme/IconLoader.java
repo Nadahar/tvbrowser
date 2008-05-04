@@ -28,8 +28,6 @@ package tvbrowser.core.icontheme;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.WeakHashMap;
-
 import javax.swing.ImageIcon;
 
 import tvbrowser.core.Settings;
@@ -69,7 +67,7 @@ public class IconLoader {
   /** Icon Cache */
   private SoftReferenceCache<ThemeIcon, ImageIcon> mIconCache;
   /** Icon Cache for Plugins */
-  private HashMap<Plugin, WeakHashMap<ThemeIcon, ImageIcon>> mPluginIconCache;
+  private HashMap<Plugin, SoftReferenceCache<ThemeIcon, ImageIcon>> mPluginIconCache;
   
   /**
    * Private Constructor
@@ -85,7 +83,7 @@ public class IconLoader {
         loadIconTheme(new File(Settings.propIcontheme.getString()));
     else {
         mIconCache = new SoftReferenceCache<ThemeIcon, ImageIcon>();
-        mPluginIconCache = new HashMap<Plugin, WeakHashMap<ThemeIcon, ImageIcon>>();
+        mPluginIconCache = new HashMap<Plugin, SoftReferenceCache<ThemeIcon, ImageIcon>>();
         mIconTheme = mDefaultIconTheme;
     }
   }
@@ -119,7 +117,7 @@ public class IconLoader {
    */
   private void loadIconTheme(File iconset) {
     mIconCache = new SoftReferenceCache<ThemeIcon, ImageIcon>();
-    mPluginIconCache = new HashMap<Plugin, WeakHashMap<ThemeIcon, ImageIcon>>();
+    mPluginIconCache = new HashMap<Plugin, SoftReferenceCache<ThemeIcon, ImageIcon>>();
 
     if (!iconset.exists()) {
       iconset = mDefaultIconDir;
@@ -227,7 +225,7 @@ public class IconLoader {
     }
  
     // Third Try: Plugin Icon Cache
-    WeakHashMap<ThemeIcon, ImageIcon> pluginCache = mPluginIconCache.get(plugin); 
+    SoftReferenceCache<ThemeIcon, ImageIcon> pluginCache = mPluginIconCache.get(plugin);
     
     if (pluginCache != null) {
       imageIcon = pluginCache.get(icon);
@@ -246,7 +244,7 @@ public class IconLoader {
           
           if (imageIcon != null){
             if (pluginCache == null) {
-              pluginCache = new WeakHashMap<ThemeIcon, ImageIcon>();
+              pluginCache = new SoftReferenceCache<ThemeIcon, ImageIcon>();
               mPluginIconCache.put(plugin, pluginCache);
             }
             pluginCache.put(icon, imageIcon);

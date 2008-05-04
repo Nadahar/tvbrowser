@@ -23,6 +23,7 @@ import util.exc.TvBrowserException;
 import util.ui.Localizer;
 import util.io.IOUtilities;
 import util.io.Mirror;
+import util.misc.SoftReferenceCache;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,7 +67,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
 
   private ArrayList<Channel> mChannels;
 
-  private WeakHashMap<String, File> mIconCache = new WeakHashMap<String, File>();
+  private SoftReferenceCache<String, File> mIconCache = new SoftReferenceCache<String, File>();
 
   private boolean mHasRightToDownloadIcons;
 
@@ -447,7 +448,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
     return mHasRightToDownloadIcons;
   }
 
-  public WeakHashMap<String, File> getIconCache() {
+  public SoftReferenceCache<String, File> getIconCache() {
     return mIconCache;
   }
 

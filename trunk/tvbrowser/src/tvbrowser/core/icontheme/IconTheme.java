@@ -314,7 +314,7 @@ abstract public class IconTheme {
 
   /**
    * Get an InputStream from the Icon-Theme.
-   * @param string File/Entry to load
+   * @param entry File/Entry to load
    * @return InputStream of specific Entry
    */
   protected abstract InputStream getInputStream(String entry);
