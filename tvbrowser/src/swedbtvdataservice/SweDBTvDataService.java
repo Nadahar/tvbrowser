@@ -40,10 +40,10 @@ import java.util.zip.GZIPInputStream;
 import javax.swing.Icon;
 
 public class SweDBTvDataService extends devplugin.AbstractTvDataService {
-  /** The default plugins download url */
+  /** The default plugins download URL */
   public static final String DEFAULT_PLUGINS_DOWNLOAD_URL = "http://www.tvbrowser.org/mirrorlists";
 
-  /** Contains the mirror urls useable for receiving the channellist.xml.gz from. */
+  /** Contains the mirror URLs usable for receiving the channellist.xml.gz from. */
   private static final String[] DEFAULT_MIRRORS = {
     "http://tvbrowser.dyndns.tv",
     "http://hdtv-online.org/TVB",
@@ -83,10 +83,14 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
     mProperties = new Properties();
 
     mChannelGroups = new HashMap<String, DataHydraChannelGroup>();
-    mChannelGroups.put("SweDB", new DataHydraChannelGroup("SweDB", "SweDB.se", "(c) swedb.se", "http://tv.swedb.se", "swedb_channels.xml.gz", "se"));
-    mChannelGroups.put("MSPC", new DataHydraChannelGroup("MSPC", "mspc.no", "(c) mspc.no", "http://www.mspc.no", "mspc_channels.xml.gz", "no"));
-    mChannelGroups.put("gonix", new DataHydraChannelGroup("gonix", "gonix.net", "(c) gonix.net", "http://www.gonix.net", "hrv_channels.xml.gz", "hr", false));
-    mChannelGroups.put("oztivo.net", new DataHydraChannelGroup("oztivo", "oztivo.net", "(c) oztivo.net", "http://minnie.tuhs.org/twiki/bin/view/TVGuide", "au_channels.xml.gz", "au"));
+    addGroup(new DataHydraChannelGroup("SweDB", "SweDB.se", "(c) swedb.se", "http://tv.swedb.se", "swedb_channels.xml.gz", "se"));
+    addGroup(new DataHydraChannelGroup("MSPC", "mspc.no", "(c) mspc.no", "http://www.mspc.no", "mspc_channels.xml.gz", "no"));
+    addGroup(new DataHydraChannelGroup("gonix", "gonix.net", "(c) gonix.net", "http://www.gonix.net", "hrv_channels.xml.gz", "hr", false));
+    addGroup(new DataHydraChannelGroup("oztivo", "oztivo.net", "(c) oztivo.net", "http://minnie.tuhs.org/twiki/bin/view/TVGuide", "au_channels.xml.gz", "au"));
+  }
+
+  private void addGroup(DataHydraChannelGroup dataHydraChannelGroup) {
+    mChannelGroups.put(dataHydraChannelGroup.getId(), dataHydraChannelGroup); 
   }
 
   public boolean supportsDynamicChannelList() {
@@ -151,7 +155,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
 
   /**
    * Called by the host-application during start-up. Implement this method to
-   * load your dataservices settings from the file system.
+   * load your data services settings from the file system.
    */
   public void loadSettings(Properties settings) {
     mLog.info("Loading settings in DataHydraTvDataService");
