@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.WeakHashMap;
 import java.util.logging.Level;
 
 import tvbrowser.core.data.OnDemandDayProgramFile;
@@ -143,8 +142,8 @@ public class TvDataBase {
     //store all files in a map for faster lookup
     HashMap<String,File> tvDataFiles=new HashMap<String,File>();
     for (File file : tvDataArr) {
-		tvDataFiles.put(file.getName(), file);
-	}
+		  tvDataFiles.put(file.getName(), file);
+	  }
 
     // Check whether day programs were removed
     String[] knownProgArr = mTvDataInventory.getKnownDayPrograms();
