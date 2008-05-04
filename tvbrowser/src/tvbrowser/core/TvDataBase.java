@@ -573,7 +573,7 @@ public class TvDataBase {
         
         // Inform the listeners about adding the new program
         if(oldProg != null || somethingChanged) {
-          fireDayProgramAdded(progFile.getDayProgram());
+          fireDayProgramAdded((ChannelDayProgram )progFile.getDayProgram());
         }
       } else if(oldProgFile != null) {
         oldProgFile.calculateTimeLimits();
