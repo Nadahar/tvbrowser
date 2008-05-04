@@ -100,6 +100,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
   
   /* Close settings */
   private JCheckBox mOnlyMinimizeWhenWindowClosingChB;
+  private JCheckBox mShowFinishDialog;
 
   /**
    * Creates the settings panel for this tab.
@@ -262,6 +263,12 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
       Settings.propAutoDownloadType.setString("weekly");
     }
 
+    if (mShowFinishDialog.isSelected()) {
+      Settings.propHiddenMessageBoxes.removeItem("downloadDone");
+    } else if (!Settings.propHiddenMessageBoxes.containsItem("downloadDone")) {
+      Settings.propHiddenMessageBoxes.addItem("downloadDone");
+    }
+
     Settings.propAutoDataDownloadEnabled.setBoolean(mRecurrentDownload.isSelected() && mAutoDownload.isSelected());
     Settings.propAskForAutoDownload.setBoolean(mAskBeforeDownloadRadio.isSelected());
 
@@ -293,7 +300,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
   
   private JPanel createRefreshPanel() {
     JPanel refreshSettings = new JPanel(new FormLayout("5dlu, 9dlu, pref, 3dlu, pref, fill:3dlu:grow, 3dlu",
-    "pref, 5dlu, pref, 3dlu, pref, pref, 3dlu, pref, 5dlu, pref"));
+    "pref, 5dlu, pref, 3dlu, pref, pref, 3dlu, pref, 5dlu, pref, 3dlu, pref"));
     
     CellConstraints cc = new CellConstraints();
     
@@ -386,7 +393,12 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     mDateCheck.setSelected(Settings.propNTPTimeCheck.getBoolean());
 
     refreshSettings.add(mDateCheck, cc.xyw(2, 10, 5));
-    
+
+    mShowFinishDialog = new JCheckBox(mLocalizer.msg("showFinishDialog", "Show dialog when update is done"));
+    mShowFinishDialog.setSelected(!Settings.propHiddenMessageBoxes.containsItem("downloadDone"));
+
+    refreshSettings.add(mShowFinishDialog, cc.xyw(2, 12, 5));
+
     return refreshSettings;
   }
   
