@@ -384,11 +384,6 @@
       <fileset dir="${classes.dir}" includes="listviewplugin/**"/>
     </jar>
 
-  	<!--   <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/MediaCenterPlugin.jar"
-         compress="false">
-      <fileset dir="${classes.dir}" includes="mediacenterplugin/**"/>
-    </jar>  -->
-
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/NewsPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="newsplugin/**"/>
