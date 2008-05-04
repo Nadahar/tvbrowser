@@ -25,6 +25,7 @@
  */
 package tvbrowser.core;
 
+import tvdataservice.MutableChannelDayProgram;
 import devplugin.ChannelDayProgram;
 
 /**
@@ -35,8 +36,25 @@ import devplugin.ChannelDayProgram;
 public interface TvDataBaseListener {
 
   /**
+   * Is called when a day program has been added to the
+   * TV data base but not has been saved, so changes are
+   * currently possible. Use this if your plugin wants
+   * to change/add some data.
+   * <p>
+   * ATTENTION: Don't use it to mark or do something other
+   * than data changing to the program.
+   * @param prog The added day program.
+   * @since 2.7
+   */
+  public void dayProgramAdded(MutableChannelDayProgram prog);
+
+  /**
    * Is called when a day program has been added to the TV data base.
-   * 
+   * Use this if you want to mark programs or something else than
+   * data chaging.
+   * <p>
+   * ATTENTION: If you change data of programs in here the changes
+   * wont be kept because they will not be saved.
    * @param prog The added day program.
    */
   public void dayProgramAdded(ChannelDayProgram prog);

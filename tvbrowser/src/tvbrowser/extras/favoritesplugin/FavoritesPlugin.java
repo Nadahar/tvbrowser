@@ -60,6 +60,7 @@ import tvbrowser.extras.favoritesplugin.wizards.TypeWizardStep;
 import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvdataservice.MutableChannelDayProgram;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.Localizer;
@@ -187,6 +188,10 @@ public class FavoritesPlugin {
             }
           }
         }
+      }
+
+      public void dayProgramAdded(MutableChannelDayProgram prog) {
+        // ignore
       }
     });
 

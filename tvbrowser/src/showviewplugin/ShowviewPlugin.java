@@ -35,7 +35,7 @@ import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.Version;
-
+import tvdataservice.MutableChannelDayProgram;
 
 /**
  * Plugin that tries to calculate the Showview numbers for new TV data. 
@@ -64,7 +64,7 @@ public class ShowviewPlugin extends Plugin {
    * @param newProg The new ChannelDayProgram.
    * @see #handleTvDataDeleted(ChannelDayProgram)
    */
-  public void handleTvDataAdded(ChannelDayProgram newProg) {
+  public void handleTvDataAdded(MutableChannelDayProgram newProg) {
     Iterator<Program> iterator = newProg.getPrograms();
     while (iterator.hasNext()) {
       MutableProgram prog = (MutableProgram) iterator.next();

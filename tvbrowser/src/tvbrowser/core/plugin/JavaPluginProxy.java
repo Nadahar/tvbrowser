@@ -43,6 +43,7 @@ import javax.swing.JOptionPane;
 import tvbrowser.core.PluginLoader;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvdataservice.MutableChannelDayProgram;
 import util.exc.TvBrowserException;
 import util.io.IOUtilities;
 import util.ui.Localizer;
@@ -603,5 +604,10 @@ public class JavaPluginProxy extends AbstractPluginProxy {
 
   public String getButtonActionDescription() {
     return mPlugin.getInfo().getDescription();
+  }
+
+  @Override
+  protected void doHandleTvDataAdded(MutableChannelDayProgram newProg) {
+    mPlugin.handleTvDataAdded(newProg);
   }
 }

@@ -28,6 +28,7 @@ package devplugin;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvdataservice.MutableChannelDayProgram;
 import util.exc.TvBrowserException;
 import util.ui.FixedSizeIcon;
 import util.ui.ImageUtilities;
@@ -659,15 +660,34 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
     handleTvDataChanged();
   }
 
+  /**
+   * This method is automatically called, when TV data was added.
+   * (E.g. after an update).
+   * <p>
+   * The TV data can be modified by the plugin!
+   * <p>
+   * Override this method if you want to change/add data.
+   * Don't do other things than changing/adding data, 
+   * use {@link #handleTvDataAdded(ChannelDayProgram)} istead.
+   * 
+   * @param newProg The new ChannelDayProgram.
+   * @see #handleTvDataDeleted(ChannelDayProgram)
+   * @see #handleTvDataChanged()
+   */
+  public void handleTvDataAdded(MutableChannelDayProgram newProg) {
+    
+  }
 
   /**
    * This method is automatically called, when TV data was added.
    * (E.g. after an update).
    * <p>
-   * The TV data may be modified by the plugin!
+   * The TV data cannot be changed in here because the saving of
+   * the data was allready done.
    * <p>
-   * Override this method to react on this event. You may change the TV data
-   * before it will be saved.
+   * So use this method if you want to mark or do something else
+   * than changing with the program. If you want to change/add data
+   * use {@link #handleTvDataAdded(MutableChannelDayProgram)} instead.
    * 
    * @param newProg The new ChannelDayProgram.
    * @see #handleTvDataDeleted(ChannelDayProgram)
