@@ -516,17 +516,12 @@ public class TvDataBase {
           
       Object oldProg = null;
       if((oldProg = mNewDayProgramsAfterUpdate.remove(key)) != null) {
-        // Inform the listeners about adding the new program
-        fireDayProgramAdded(checkProg);
-          
         // Inform the listeners about deleting the old program
         if (oldProg instanceof ChannelDayProgram) {
           fireDayProgramDeleted((ChannelDayProgram)oldProg);
         }
-      } else if(somethingChanged) {
-        fireDayProgramAdded(checkProg);
       }
-        
+      
       if (somethingChanged || checkProg.getAndResetChangedByPluginState()) {
         // Some missing lengths could now be calculated
         // -> Try to save the changes
@@ -570,6 +565,11 @@ public class TvDataBase {
           
         // Put the new program file in the cache
         addCacheEntry(key, progFile);
+        
+        // Inform the listeners about adding the new program
+        if(oldProg != null || somethingChanged) {
+          fireDayProgramAdded(progFile.getDayProgram());
+        }
       } else if(oldProgFile != null) {
         oldProgFile.calculateTimeLimits();
       }
