@@ -28,7 +28,6 @@ import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
-import java.util.WeakHashMap;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -38,6 +37,7 @@ import javax.swing.SwingUtilities;
 
 import tvbrowser.core.Settings;
 import devplugin.Channel;
+import util.misc.SoftReferenceCache;
 
 /**
  * A Label for Channels. It shows the Icon and/or the Channel-Name
@@ -45,7 +45,7 @@ import devplugin.Channel;
 public class ChannelLabel extends JLabel {
 
   /** A Icon-Cache for Perfomance-Reasons*/
-  static private WeakHashMap<Channel,Icon> ICONCACHE = new WeakHashMap<Channel,Icon>();
+  static private SoftReferenceCache<Channel,Icon> ICONCACHE = new SoftReferenceCache<Channel,Icon>();
   
   /**
    * default channel icon, already prepared for right size

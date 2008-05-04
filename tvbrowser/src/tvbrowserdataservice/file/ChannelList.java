@@ -41,7 +41,6 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.TimeZone;
-import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -53,6 +52,7 @@ import tvbrowserdataservice.TvBrowserDataService;
 import tvdataservice.TvDataService;
 import util.io.FileFormatException;
 import util.ui.ImageUtilities;
+import util.misc.SoftReferenceCache;
 import devplugin.Channel;
 import devplugin.ChannelGroup;
 import devplugin.ChannelGroupImpl;
@@ -75,7 +75,7 @@ public class ChannelList {
   /**
    * Icon Cache
    */
-  private static WeakHashMap<String, File> ICON_CACHE = new WeakHashMap<String, File>();
+  private static SoftReferenceCache<String, File> ICON_CACHE = new SoftReferenceCache<String, File>();
 
   public ChannelList(final String groupName) {
     mChannelList = new ArrayList<ChannelItem>();
