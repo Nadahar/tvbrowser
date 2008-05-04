@@ -887,6 +887,7 @@ public class MainFrame extends JFrame implements DateListener {
   public void updateTimeButtons() {
     mToolBar.updateTimeButtons();
     mTimeChooserPanel.updateButtons();
+    mMenuBar.updateTimeItems();
   }
   
   public boolean isShowAllFilterActivated() {
