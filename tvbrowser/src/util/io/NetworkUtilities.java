@@ -72,6 +72,10 @@ public class NetworkUtilities {
    * @since 2.6
    */
   public static int getTimeDifferenceSeconds(String serverName) {
+    // don't access the net if there is no connection
+    if (!checkConnection()) {
+      return 0;
+    }
     // Send request
     try {
       DatagramSocket socket = new DatagramSocket();
