@@ -6,7 +6,6 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.DateTools;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Hits;
@@ -280,7 +279,8 @@ public class ImdbDatabase {
         return new ImdbRating(
                 Integer.parseInt(document.getField(MOVIE_RATING).stringValue()),
                 Integer.parseInt(document.getField(MOVIE_VOTES).stringValue()),
-                document.getField(MOVIE_DISTRIBUTION).stringValue()
+                document.getField(MOVIE_DISTRIBUTION).stringValue(),
+                id
         );
       }
     } catch (IOException e) {

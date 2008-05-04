@@ -4,6 +4,7 @@ import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.Version;
+import devplugin.ActionMenu;
 import util.misc.SoftReferenceCache;
 import util.ui.Localizer;
 
@@ -11,11 +12,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.zip.GZIPInputStream;
+import java.awt.event.ActionEvent;
+import java.text.DecimalFormat;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 
 public class ImdbPlugin extends Plugin {
-
   /**
    * Translator
    */
@@ -55,13 +59,9 @@ public class ImdbPlugin extends Plugin {
     Icon icon = mRatingCache.get(program);
     if (icon == null) {
       icon = DUMMY_ICON;
-      String movieId = mImdbDatabase.getMovieId(program.getTitle(), "", -1);
-      ImdbRating rating = mImdbDatabase.getRatingForId(movieId);
+      ImdbRating rating = mImdbDatabase.getRatingForId(mImdbDatabase.getMovieId(program.getTitle(), "", -1));
       if (rating != null) {
-        System.out.println(rating.getRating());
-        if (rating.getRating() >= 50) {
-          icon = getPluginManager().getIconFromTheme(this, "actions", "view-refresh", 16);
-        }
+        icon = new ImdbIcon(rating);
       }
 
       mRatingCache.put(program, icon);
@@ -72,6 +72,21 @@ public class ImdbPlugin extends Plugin {
     }
 
     return new Icon[]{icon};
+  }
+
+  @Override
+  public ActionMenu getContextMenuActions(Program program) {
+    ImdbRating rating = mImdbDatabase.getRatingForId(mImdbDatabase.getMovieId(program.getTitle(), "", -1));
+    if (rating != null) {
+      AbstractAction action = new AbstractAction() {
+        public void actionPerformed(ActionEvent evt) {
+        }
+      };
+      action.putValue(Action.NAME, mLocalizer.msg("contextMenuDetails", "Details zur Imdb-Bewertung ({0})",  new DecimalFormat("##.#").format((double)rating.getRating() / 10)));
+      action.putValue(Action.SMALL_ICON, mRatingCache.get(program));
+      return new ActionMenu(action);
+    }
+    return null;
   }
 
   @Override
