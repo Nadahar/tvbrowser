@@ -109,6 +109,7 @@ import util.io.IOUtilities;
 import util.misc.OperatingSystem;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import util.ui.DontShowAgainMessageBox;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 import util.ui.view.Node;
@@ -1450,6 +1451,17 @@ public class MainFrame extends JFrame implements DateListener {
     mFinderPanel.updateItems();
     resetOnAirArrays();
     mAutoDownloadTimer = -1;
+
+    DontShowAgainMessageBox
+        .showMessageDialog(
+            "downloadDone",
+            MainFrame.getInstance(),
+            mLocalizer
+                .msg(
+                    "downloaddone.message",
+                    "The download is done."),
+            mLocalizer.msg("downloaddone.title", "Done"));
+
   }
   
   /**
