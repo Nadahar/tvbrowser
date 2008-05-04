@@ -41,6 +41,7 @@ import tvbrowser.ui.settings.channel.ChannelListModel;
 import tvbrowser.ui.settings.channel.FilterItem;
 import tvbrowser.ui.settings.channel.FilteredChannelListCellRenderer;
 import tvbrowser.ui.settings.channel.MultiChannelConfigDlg;
+import util.io.NetworkUtilities;
 import util.ui.ChannelContextMenu;
 import util.ui.ChannelListCellRenderer;
 import util.ui.DragAndDropMouseListener;
@@ -64,6 +65,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -211,7 +213,7 @@ public class ChannelsSettingsTab implements
     mAllChannels.setCellRenderer(new ChannelListCellRenderer(true, true, true, true));
 
     listBoxPnLeft.add(new JScrollPane(mAllChannels), BorderLayout.CENTER);
-
+/*
     mAllChannels.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
         if ((mAllChannels.getModel().getSize() == 1)
@@ -221,7 +223,7 @@ public class ChannelsSettingsTab implements
         }
       }
     });
-
+*/
     centerPn.add(listBoxPnLeft);
 
     // Buttons in the Middle
@@ -865,6 +867,13 @@ public class ChannelsSettingsTab implements
    * Refresh the ChannelList
    */
   private void refreshChannelList() {
+    if (!NetworkUtilities.checkConnection()) {
+      JOptionPane.showMessageDialog(null,
+          mLocalizer.msg("noConnection.message", "No connection to the Internet established.\n\nThe channel list can only be updated if a connection\nto the Internet is available."),
+          mLocalizer.msg("noConnection.title", "No connection!"),
+          JOptionPane.ERROR_MESSAGE);
+      return;
+    }
     final ProgressWindow win = new ProgressWindow(
         tvbrowser.ui.mainframe.MainFrame.getInstance());
 
