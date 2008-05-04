@@ -34,6 +34,7 @@ import javax.swing.ImageIcon;
 
 import tvbrowser.core.Settings;
 import util.ui.ImageUtilities;
+import util.misc.SoftReferenceCache;
 import devplugin.Plugin;
 import devplugin.ThemeIcon;
 
@@ -66,7 +67,7 @@ public class IconLoader {
   /** Default Directory */
   private File mDefaultIconDir;
   /** Icon Cache */
-  private WeakHashMap<ThemeIcon, ImageIcon> mIconCache;
+  private SoftReferenceCache<ThemeIcon, ImageIcon> mIconCache;
   /** Icon Cache for Plugins */
   private HashMap<Plugin, WeakHashMap<ThemeIcon, ImageIcon>> mPluginIconCache;
   
@@ -83,7 +84,7 @@ public class IconLoader {
     if (Settings.propIcontheme.getString() != null)
         loadIconTheme(new File(Settings.propIcontheme.getString()));
     else {
-        mIconCache = new WeakHashMap<ThemeIcon, ImageIcon>();
+        mIconCache = new SoftReferenceCache<ThemeIcon, ImageIcon>();
         mPluginIconCache = new HashMap<Plugin, WeakHashMap<ThemeIcon, ImageIcon>>();
         mIconTheme = mDefaultIconTheme;
     }
@@ -117,7 +118,7 @@ public class IconLoader {
    * @param iconset Directory with IconTheme
    */
   private void loadIconTheme(File iconset) {
-    mIconCache = new WeakHashMap<ThemeIcon, ImageIcon>();
+    mIconCache = new SoftReferenceCache<ThemeIcon, ImageIcon>();
     mPluginIconCache = new HashMap<Plugin, WeakHashMap<ThemeIcon, ImageIcon>>();
 
     if (!iconset.exists()) {
