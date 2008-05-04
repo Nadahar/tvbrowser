@@ -34,6 +34,7 @@ import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
 import tvbrowser.core.Settings;
+import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
@@ -464,6 +465,46 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   protected abstract void doHandleTvDataUpdateFinished();
 
   /**
+   * This method is automatically called, when TV data was added.
+   * (E.g. after an update).
+   * <p>
+   * The TV data can be modified by the plugin!
+   * <p>
+   * Override this method if you want to change/add data.
+   * Don't do other things than changing/adding data, 
+   * use {@link #handleTvDataAdded(ChannelDayProgram)} istead.
+   * 
+   * @param newProg The new ChannelDayProgram.
+   * @see #handleTvDataDeleted(ChannelDayProgram)
+   * @see #handleTvDataChanged()
+   */
+  public void handleTvDataAdded(MutableChannelDayProgram newProg) {
+    try {
+      assertActivatedState();
+      doHandleTvDataAdded(newProg);
+    } catch (Throwable t) {
+      handlePluginException(t);
+    }
+  }
+  
+  /**
+   * This method is automatically called, when TV data was added.
+   * (E.g. after an update).
+   * <p>
+   * The TV data can be modified by the plugin!
+   * <p>
+   * Override this method if you want to change/add data.
+   * Don't do other things than changing/adding data, 
+   * use {@link #handleTvDataAdded(ChannelDayProgram)} istead.
+   * 
+   * @param newProg The new ChannelDayProgram.
+   * @see #handleTvDataDeleted(ChannelDayProgram)
+   * @see #handleTvDataChanged()
+   */
+  protected abstract void doHandleTvDataAdded(MutableChannelDayProgram newProg);
+
+  
+  /**
    * This method is automatically called, when TV data was added. (E.g. after an
    * update).
    * <p>
@@ -495,7 +536,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * @see #handleTvDataUpdateFinished()
    */
   protected abstract void doHandleTvDataAdded(ChannelDayProgram newProg);
-
+  
   /**
    * This method is automatically called, when TV data was deleted. (E.g. after
    * an update).

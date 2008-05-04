@@ -519,6 +519,12 @@ public class TvDataBase {
         if (oldProg instanceof ChannelDayProgram) {
           fireDayProgramDeleted((ChannelDayProgram)oldProg);
         }
+        
+        // Inform the listeners about adding the new program
+        fireDayProgramAdded(checkProg);
+      }
+      else if(somethingChanged){
+        fireDayProgramAdded(checkProg);
       }
       
       if (somethingChanged || checkProg.getAndResetChangedByPluginState()) {
@@ -700,6 +706,15 @@ public class TvDataBase {
       }
     }
 
+  }
+  
+  private void fireDayProgramAdded(MutableChannelDayProgram prog) {
+    synchronized (mListenerList) {
+      for (int i = 0; i < mListenerList.size(); i++) {
+        TvDataBaseListener lst = mListenerList.get(i);
+        lst.dayProgramAdded(prog);
+      }
+    }
   }
 
   private void fireDayProgramAdded(ChannelDayProgram prog) {

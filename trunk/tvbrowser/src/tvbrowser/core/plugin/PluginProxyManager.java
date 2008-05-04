@@ -46,6 +46,7 @@ import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MarkedProgramsList;
+import tvdataservice.MutableChannelDayProgram;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import devplugin.ChannelDayProgram;
@@ -139,6 +140,10 @@ public class PluginProxyManager {
 
       public void dayProgramDeleted(ChannelDayProgram prog) {
         fireTvDataDeleted(prog);
+      }
+
+      public void dayProgramAdded(MutableChannelDayProgram prog) {
+        fireTvDataAdded(prog);
       }
     });
 
@@ -926,6 +931,23 @@ public class PluginProxyManager {
     }
   }
 
+  /**
+   * Calls for every active plugin the handleTvDataAdded(...) method, so the
+   * plugin can react on the new data.
+   * 
+   * @param newProg The added program
+   * @see PluginProxy#handleTvDataAdded(ChannelDayProgram)
+   */
+  private void fireTvDataAdded(MutableChannelDayProgram newProg) {
+    synchronized (mPluginList) {
+      for (PluginListItem item : mPluginList) {
+        if (item.getPlugin().isActivated()) {
+          item.getPlugin().handleTvDataAdded(newProg);
+        }
+      }
+    }
+  }
+  
   /**
    * Calls for every active plugin the handleTvDataAdded(...) method, so the
    * plugin can react on the new data.

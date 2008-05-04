@@ -10,6 +10,7 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import tvdataservice.MutableChannelDayProgram;
 import util.exc.TvBrowserException;
 import bsh.Interpreter;
 import devplugin.ActionMenu;
@@ -342,5 +343,11 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
 
     public String getButtonActionDescription() {
       return mScript.getInfo().getDescription();
+    }
+
+    @Override
+    protected void doHandleTvDataAdded(MutableChannelDayProgram newProg) {
+      // TODO Auto-generated method stub
+      
     }
  }
