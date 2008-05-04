@@ -31,9 +31,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.logging.Level;
 
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
+import javax.swing.*;
 
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
@@ -124,7 +122,7 @@ public class TvDataUpdater {
    * @param daysToDownload The number of days until today to download the
    *        program for.
    */
-  public void downloadTvData(int daysToDownload, TvDataServiceProxy[] services, JProgressBar progressBar, JLabel label) {
+  public void downloadTvData(int daysToDownload, TvDataServiceProxy[] services, final JProgressBar progressBar, final JLabel label) {
     if (! TvDataServiceProxyManager.getInstance().licensesAccepted(services)) {
       return;
     }
@@ -171,7 +169,7 @@ public class TvDataUpdater {
 
     // Create the ProgressMonitorGroup
     ProgressMonitorGroup monitorGroup
-      = new ProgressMonitorGroup(progressBar, label, subscribedChannels.length);
+      = new ProgressMonitorGroup(progressBar, label, subscribedChannels.length + 1);
 
     // Work on the job list
     Throwable downloadException = null;
@@ -201,12 +199,15 @@ public class TvDataUpdater {
     mIsDownloading = false;
     
     checkLocalTime();
-    
-    TvDataBase.getInstance().reCalculateTvData(daysToDownload);
+
+    ProgressMonitor monitor = monitorGroup.getNextProgressMonitor(subscribedChannels.length+1);
+    monitor.setMessage(mLocalizer.msg("calculateEntries","Calculating new entries in the database"));
+    TvDataBase.getInstance().reCalculateTvData(daysToDownload, monitor);
     
     // Inform the listeners
     fireTvDataUpdateFinished();
-    
+    monitor.setMessage("");
+
     // reset flag to avoid unnecessary favorite updates
     mTvDataWasChanged = false;
   }
