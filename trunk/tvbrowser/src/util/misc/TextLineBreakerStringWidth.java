@@ -79,10 +79,10 @@ public class TextLineBreakerStringWidth {
   }
   
   /**
-   * Break a Text into seperate Lines
-   * @param textReader Text to seperate
+   * Break a Text into separate Lines
+   * @param textReader Text to separate
    * @param width Max-Width of each Line
-   * @return Text splitted in seperate Lines
+   * @return Text split in separate Lines
    * @throws IOException
    */
   public String[] breakLines(Reader textReader, int width) throws IOException {
@@ -90,11 +90,11 @@ public class TextLineBreakerStringWidth {
   }
   
   /**
-   * Break a Text into seperate Lines
-   * @param textReader Text to seperate
+   * Break a Text into separate Lines
+   * @param textReader Text to separate
    * @param width Max-Width of each Line
    * @param maxLines Max. amount of Lines
-   * @return Text splitted in seperate Lines
+   * @return Text split in separate Lines
    * @throws IOException
    */
   public String[] breakLines(Reader textReader, int width,
@@ -204,7 +204,9 @@ public class TextLineBreakerStringWidth {
       } else {
         if (lineWidth != 0) {
           // Add a space
-          mCurrLineBuffer.append(' ');
+          if (mCurrLineBuffer.charAt(mCurrLineBuffer.length() - 1) != '/') {
+            mCurrLineBuffer.append(' ');
+          }
           lineWidth += mSpaceWidth;
         }
 
@@ -239,7 +241,10 @@ public class TextLineBreakerStringWidth {
       
       mCurrChar = textReader.read();
     }
-    while ((! Character.isWhitespace((char) mCurrChar)) && (! isEndOfLine(mCurrChar)));
+    while ((! Character.isWhitespace((char) mCurrChar)) && (! isEndOfLine(mCurrChar)) && (mCurrChar != '/'));
+    if (mCurrChar == '/') {
+      mCurrWordBuffer.append((char) mCurrChar);
+    }
 
     return mCurrWordBuffer.toString();
   }
@@ -261,7 +266,7 @@ public class TextLineBreakerStringWidth {
     int left = 0;
     int right = word.length() - 1;
     while (left < right) {
-      int middle = (left + right + 1) / 2; // +1 to enforce taking the ceil
+      int middle = (left + right + 1) / 2; // +1 to enforce taking the ceiling
       
       // Check whether this substring fits
       String subWord = word.substring(0, middle);
@@ -301,7 +306,7 @@ public class TextLineBreakerStringWidth {
   }
   
   /**
-   * Test if the Charater is is a EOL-Char 
+   * Test if the Character is is a EOL-Char 
    * @param ch test this Char
    * @return true if ch is a EOL Char
    */
