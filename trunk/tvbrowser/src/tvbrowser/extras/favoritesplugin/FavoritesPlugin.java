@@ -813,7 +813,7 @@ public class FavoritesPlugin {
   public void askAndDeleteFavorite(Favorite fav) {
     if (JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()),
               mLocalizer.msg("reallyDelete", "Really delete favorite '{0}'?",fav.getName()),
-              mLocalizer.msg("delete", "Delete selected favorite..."),
+              Localizer.I18N_DELETE,
               JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
       FavoriteTreeModel.getInstance().deleteFavorite(fav);
       

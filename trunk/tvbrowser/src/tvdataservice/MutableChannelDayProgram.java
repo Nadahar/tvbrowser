@@ -206,7 +206,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
 
 
   /**
-   * Returns an iterator containing all programms. Each iterator item is a
+   * Returns an iterator containing all programs. Each iterator item is a
    * devplugin.Program object.
    *
    * @return An iterator through the program list.
@@ -221,7 +221,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
   /**
    * Returns whether this channel day program is complete.
    * <p>
-   * Return true if the last program ends afer midnight. Future implementations
+   * Return true if the last program ends after midnight. Future implementations
    * may check for gaps too.
    */
   public boolean isComplete() {
@@ -309,7 +309,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
         }
       }
       else {
-        return false; // no mutable programs, we cant compare
+        return false; // no mutable programs, we can't compare
       }
     }
     return true; // everything checked, so they are the same

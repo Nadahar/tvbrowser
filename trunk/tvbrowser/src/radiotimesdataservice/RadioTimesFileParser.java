@@ -262,7 +262,7 @@ public class RadioTimesFileParser {
   }
 
   /**
-   * @param string Analyse this String
+   * @param string Analyze this String
    * @return Create Actor List from String
    */
   private String createCast(String string) {
