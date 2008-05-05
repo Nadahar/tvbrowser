@@ -63,6 +63,14 @@ public class TextLineBreakerTest extends TestCase {
     lineArr = breaker.breakLines(reader, 100, 4);
     assertEquals(lineArr.length, 4);
     
+    // Word break at slash
+    text = "Das sind die Varianten Eins/Zwei/Drei/Vier/Fuenf/Sechs/Sieben";
+    reader = new StringReader(text);
+    lineArr = breaker.breakLines(reader, 100, 4);
+    assertEquals(lineArr.length, 4);
+    assert(lineArr[1].equals("Varianten Eins/"));
+    assert(lineArr[2].equals("Zwei/Drei/Vier/"));
+    
     /*
     for (int i = 0; i < lineArr.length; i++) {
       System.out.println(lineArr[i]);
