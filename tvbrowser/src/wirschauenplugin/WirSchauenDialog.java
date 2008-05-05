@@ -540,7 +540,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf, ItemLi
       mOmdb.setEnabled(false);
       enableWirSchauenInput(false);
       for (int i = 8; i < 18; i++) {
-        mLayout.setRowSpec(i, new RowSpec("0"));
+        mLayout.setRowSpec(i, RowSpec.decode("0"));
       }
       showStatus(STATUS_WARNING, mLocalizer.msg("editToday", "Programs earlier than tomorrow can only be edited on omdb.org"));
       return true;
