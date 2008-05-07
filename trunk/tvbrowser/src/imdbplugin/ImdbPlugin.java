@@ -26,11 +26,10 @@ public class ImdbPlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ImdbPlugin.class);
 
   private static final Version mVersion = new Version(1, 0);
-  private static final Icon DUMMY_ICON = new ImageIcon();
 
   private PluginInfo mPluginInfo;
   private ImdbDatabase mImdbDatabase;
-  private SoftReferenceCache<Program, Icon> mRatingCache = new SoftReferenceCache<Program, Icon>();
+  private SoftReferenceCache<Program, ImdbRating> mRatingCache = new SoftReferenceCache<Program, ImdbRating>();
 
   public ImdbPlugin() {
     mImdbDatabase = new ImdbDatabase(new File(Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome(), "imdbDatabase"));
@@ -56,22 +55,17 @@ public class ImdbPlugin extends Plugin {
 
   @Override
   public Icon[] getProgramTableIcons(Program program) {
-    Icon icon = mRatingCache.get(program);
-    if (icon == null) {
-      icon = DUMMY_ICON;
-      ImdbRating rating = mImdbDatabase.getRatingForId(mImdbDatabase.getMovieId(program.getTitle(), "", -1));
-      if (rating != null) {
-        icon = new ImdbIcon(rating);
-      }
-
-      mRatingCache.put(program, icon);
+    ImdbRating rating = mRatingCache.get(program);
+    if (rating == null) {
+      rating = mImdbDatabase.getRatingForId(mImdbDatabase.getMovieId(program.getTitle(), "", -1));
+      mRatingCache.put(program, rating);
     }
 
-    if (icon == DUMMY_ICON) {
+    if (rating == null) {
       return null;
     }
 
-    return new Icon[]{icon};
+    return new Icon[]{new ImdbIcon(rating)};
   }
 
   @Override
@@ -83,7 +77,7 @@ public class ImdbPlugin extends Plugin {
         }
       };
       action.putValue(Action.NAME, mLocalizer.msg("contextMenuDetails", "Details zur Imdb-Bewertung ({0})",  new DecimalFormat("##.#").format((double)rating.getRating() / 10)));
-      action.putValue(Action.SMALL_ICON, mRatingCache.get(program));
+      action.putValue(Action.SMALL_ICON, new ImdbIcon(mRatingCache.get(program)));
       return new ActionMenu(action);
     }
     return null;
