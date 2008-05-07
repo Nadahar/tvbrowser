@@ -28,7 +28,7 @@ import java.util.Locale;
 
 /**
  * This interface is important for the treecellrenderer. All TreeNodes that implement
- * this will be colored acording the result of the method allTranslationsAvailableFor 
+ * this will be colored according the result of the method allTranslationsAvailableFor 
  * 
  * @author bodum
  */
@@ -36,6 +36,9 @@ public interface LanguageNodeIf {
   
   int STATE_MISSING_TRANSLATION = 0;
   int STATE_NON_WELLFORMED = 1;
+  int STATE_NON_WELLFORMED_ARG_COUNT = STATE_NON_WELLFORMED + 1;
+  int STATE_NON_WELLFORMED_ARG_FORMAT = STATE_NON_WELLFORMED + 2;
+  int STATE_NON_WELLFORMED_PUNCTUATION_END = STATE_NON_WELLFORMED + 3;
   int STATE_OK = 10;
 
   /**

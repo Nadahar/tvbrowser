@@ -23,7 +23,6 @@
  */
 package i18nplugin;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.util.Locale;
 
@@ -56,12 +55,7 @@ public class PropertiesTreeCellRenderer extends DefaultTreeCellRenderer {
       if (!sel) {
         LanguageNodeIf entry = (LanguageNodeIf) value;
         int state = entry.translationStateFor(mLocale);
-        if (state == LanguageNodeIf.STATE_MISSING_TRANSLATION) {
-          label.setForeground(Color.RED);
-        }
-        else if (state == LanguageNodeIf.STATE_NON_WELLFORMED) {
-          label.setForeground(Color.BLUE);
-        }
+        label.setForeground(I18NPlugin.getInstance().getTranslationColor(state));
       }
     }
     
