@@ -80,7 +80,7 @@ public class PathNode extends DefaultMutableTreeNode implements LanguageNodeIf {
       if (state == STATE_MISSING_TRANSLATION) {
         return STATE_MISSING_TRANSLATION;
       }
-      if (state == STATE_NON_WELLFORMED) {
+      if (state >= STATE_NON_WELLFORMED && state != STATE_OK) {
         result = STATE_NON_WELLFORMED;
       }
     }

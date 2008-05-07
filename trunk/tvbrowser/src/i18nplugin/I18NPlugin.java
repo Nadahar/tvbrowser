@@ -36,6 +36,7 @@ import javax.swing.Action;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -63,7 +64,7 @@ public class I18NPlugin extends Plugin {
   private PluginInfo mPluginInfo;
   
   /**
-   * Contructor, stores current instance in static field
+   * Constructor, stores current instance in static field
    */
   public I18NPlugin() {
     mInstance = this;
@@ -136,7 +137,7 @@ public class I18NPlugin extends Plugin {
    * 
    * @param str
    *          Number in String to Parse
-   * @return Number if successfull. Default is 0
+   * @return Number if successful. Default is 0
    */
   public int parseNumber(String str) {
 
@@ -168,6 +169,19 @@ public class I18NPlugin extends Plugin {
   @Override
   public ThemeIcon getMarkIconFromTheme() {
     return new ThemeIcon("apps", "preferences-desktop-locale", 16);
+  }
+  
+  protected Color getTranslationColor(int state) {
+    if (state == LanguageNodeIf.STATE_MISSING_TRANSLATION) {
+      return Color.RED;
+    }
+    else if (state >= LanguageNodeIf.STATE_NON_WELLFORMED && state != LanguageNodeIf.STATE_OK) {
+      return Color.ORANGE;
+    }
+    else {
+      return Color.BLACK;
+    }
+    
   }
 
 }

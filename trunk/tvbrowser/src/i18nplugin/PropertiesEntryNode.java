@@ -65,23 +65,31 @@ public class PropertiesEntryNode extends DefaultMutableTreeNode implements Langu
       return STATE_MISSING_TRANSLATION;
     }
     String translated = ((PropertiesNode)getParent()).getPropertyValue(locale, getPropertyName());
+    String original = ((PropertiesNode) getParent()).getPropertyValue(getPropertyName());
+    return getTranslationState(original, translated);
+  }
+
+  protected int getTranslationState(String original, String translated) {
+    // if no original is available, we don't need a translation, too
+    if (original.length() == 0 && translated.length() == 0) {
+      return STATE_OK;
+    }
     // check existence of translation
     if (translated.length() == 0) {
       return STATE_MISSING_TRANSLATION;
     }
     // check same number of arguments
-    String original = ((PropertiesNode) getParent()).getPropertyValue(getPropertyName());
     List<String> originalArgs = getArgumentList(original);
     List<String> translatedArgs = getArgumentList(translated);
     if (originalArgs.size() != translatedArgs.size()) {
-      return STATE_NON_WELLFORMED;
+      return STATE_NON_WELLFORMED_ARG_COUNT;
     }
     // check same arguments
     for (int i = 0; i < originalArgs.size(); i++) {
       if (!originalArgs.get(i).equals(translatedArgs.get(i))) {
-        return STATE_NON_WELLFORMED;
+        return STATE_NON_WELLFORMED_ARG_FORMAT;
       }
-      // now remove args to be to compare punctuaction afterwards
+      // now remove format arguments to compare punctuation afterwards
       String arg = originalArgs.get(i);
       while (original.indexOf(arg) >= 0) {
         original = original.replace(arg, "");
@@ -99,7 +107,7 @@ public class PropertiesEntryNode extends DefaultMutableTreeNode implements Langu
       if (matcher.matches()) {
         String endTranslated = matcher.group(1);
         if (!endOriginal.equals(endTranslated)) {
-          return STATE_NON_WELLFORMED;
+          return STATE_NON_WELLFORMED_PUNCTUATION_END;
         }
       }
     }
