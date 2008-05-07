@@ -11,7 +11,8 @@ import java.util.regex.Pattern;
 public class ImdbParser {
   private ImdbDatabase mDatabase;
 
-  Pattern epsiodePattern = Pattern.compile("^(.*?)(?:\\W\\(\\#.*\\))?$");
+  private final Pattern epsiodePattern = Pattern.compile("^(.*?)(?:\\W\\(\\#.*\\))?$");
+  private final Pattern moviePrefixPattern = Pattern.compile("(.*), ([A-Z][a-z']{0,2})");
 
   public ImdbParser(ImdbDatabase db) {
     mDatabase = db;
@@ -140,6 +141,12 @@ public class ImdbParser {
     if (movieTitle.startsWith("\"") && movieTitle.endsWith("\"")) {
       movieTitle = movieTitle.substring(1, movieTitle.length() - 1);
     }
+
+    final Matcher matcher = moviePrefixPattern.matcher(movieTitle);
+    if (matcher.matches()) {
+      movieTitle = matcher.group(2) + " " + matcher.group(1);
+    }
+
     return movieTitle;
   }
 }
