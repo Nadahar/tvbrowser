@@ -23,12 +23,6 @@
  */
 package i18nplugin;
 
-import tvbrowser.core.Settings;
-
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,29 +31,39 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
+
+import tvbrowser.core.Settings;
+
 /**
  * A Properties-File
  * 
  * @author bodum
  */
-public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNodeIf {
+public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNodeIf, FilterNodeIf {
   private Properties mProp;
   private JarFile mJarFile;
   private String mPropertiesFile;
   private HashMap<Locale, Properties> mOriginalPropertyMap;
   private HashMap<Locale, Properties> mUserPropertyMap;
+  private String filter;
+  private List<TreeNode> filteredChildren = new ArrayList<TreeNode>();
   
   /**
    * Create the Properties-File
@@ -501,4 +505,109 @@ public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNo
   /** A table of hex digits */
   private static final char[] hexDigit = { '0', '1', '2', '3', '4', '5', '6',
       '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+
+  @Override
+  public boolean isLeaf() {
+    return false;
+  }
+  
+  public int getMatchCount() {
+    return filteredChildren.size();
+  }
+
+  public boolean matches() {
+    return filter != null && !filteredChildren.isEmpty();
+  }
+
+  public void setFilter(Locale locale, String filter) {
+    this.filter = null;
+    filteredChildren.clear();
+    for (int i = 0; i < super.getChildCount(); i++) {
+      TreeNode childAt = super.getChildAt(i);
+      if (childAt instanceof FilterNodeIf) {
+        FilterNodeIf node = (FilterNodeIf) childAt;
+        node.setFilter(locale, filter);
+        if (filter != null && node.matches()) {
+          filteredChildren.add(childAt);
+        }
+      } else {
+        System.err.println("PropN: " + childAt.getClass());
+      }
+    }
+    this.filter = filter;
+  }
+  
+  @Override
+  public int getChildCount() {
+    if (filter == null) {
+      return super.getChildCount();
+    } else {
+      return filteredChildren.size();
+    }
+  }
+  
+  @Override
+  public TreeNode getChildAt(int index) {
+    if (filter == null) {
+      return super.getChildAt(index);
+    } else {
+      return filteredChildren.get(index);
+    }
+  }
+  
+  @Override
+  public int getIndex(TreeNode child) {
+    if (filter == null) {
+      return super.getIndex(child);
+    } else {
+      return filteredChildren.indexOf(child);
+    }
+  }
+  
+  @Override
+  public TreeNode getChildAfter(TreeNode child) {
+    if (filter == null) {
+      return super.getChildAfter(child);
+    } else {
+      if (child == null) {
+        throw new IllegalArgumentException("argument is null");
+      }
+
+      int index = getIndex(child);   // linear search
+
+      if (index == -1) {
+        throw new IllegalArgumentException("node is not a child");
+      }
+
+      if (index < getChildCount() - 1) {
+        return getChildAt(index + 1);
+      } else {
+        return null;
+      }
+    }
+  }
+  
+  @Override
+  public TreeNode getChildBefore(TreeNode child) {
+    if (filter == null) {
+      return super.getChildBefore(child);
+    } else {
+      if (child == null) {
+        throw new IllegalArgumentException("argument is null");
+      }
+
+      int index = getIndex(child);   // linear search
+
+      if (index == -1) {
+        throw new IllegalArgumentException("argument is not a child");
+      }
+
+      if (index > 0) {
+        return getChildAt(index - 1);
+      } else {
+        return null;
+      }
+    }
+  }
+  
 }

@@ -58,6 +58,16 @@ public class PropertiesTreeCellRenderer extends DefaultTreeCellRenderer {
         label.setForeground(I18NPlugin.getInstance().getTranslationColor(state));
       }
     }
+    if (value instanceof FilterNodeIf && !(value instanceof PropertiesEntryNode)) {
+      FilterNodeIf node = (FilterNodeIf) value;
+      if (node.getMatchCount() > 0) {
+        String labelText = label.getText();
+        if (labelText != null && !labelText.startsWith("<html>")) {
+          labelText = "<html>" + labelText + " <b>(" + node.getMatchCount() + ")</b></html>";
+          label.setText(labelText);
+        }
+      }
+    }
     
     return label;
   }
