@@ -701,7 +701,7 @@ public abstract class Favorite {
    * @throws TvBrowserException Exception during search
    */
   public void tryToMatch(Program p, boolean dataUpdate, boolean send) throws TvBrowserException {
-    if (matches(p) && filterByLimitations(new Program[] {p}).length > 0) {
+    if (matches(p) && filterByLimitations(new Program[] {p}).length > 0 && (!getLimitationConfiguration().isLimitedByChannel() || Arrays.asList(getChannels()).contains(p.getChannel()))) {
       boolean newFound = false;
       int pos = mPrograms.indexOf(p);
       if (pos >= 0) {
