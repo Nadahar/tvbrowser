@@ -25,11 +25,15 @@ package i18nplugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.Locale;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 /**
  * This Node creates a Tree of all Properties in a certain Jar-File
@@ -37,6 +41,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
  * @author bodum
  */
 public class TranslationNode extends PathNode {
+  
+  private String filter;
+  private List<TreeNode> filteredChildren = new ArrayList<TreeNode>();
 
   /**
    * Create Tree
@@ -134,6 +141,117 @@ public class TranslationNode extends PathNode {
     
     return child;
   }
+  
+  @Override
+  public boolean isLeaf() {
+    return false;
+  }
 
+  public int getMatchCount() {
+    if (filter == null) {
+      return 0;
+    }
+    int count = 0;
+    for (TreeNode node : filteredChildren) {
+      if (node instanceof FilterNodeIf) {
+        count += ((FilterNodeIf) node).getMatchCount();
+      }
+    }
+    return count;
+  }
+
+  public boolean matches() {
+    return filter != null && !filteredChildren.isEmpty();
+  }
+
+  public void setFilter(Locale locale, String filter) {
+    this.filter = null;
+    filteredChildren.clear();
+    for (int i = 0; i < super.getChildCount(); i++) {
+      TreeNode childAt = super.getChildAt(i);
+      if (childAt instanceof FilterNodeIf) {
+        FilterNodeIf node = (FilterNodeIf) childAt;
+        node.setFilter(locale, filter);
+        if (filter != null && node.matches()) {
+          filteredChildren.add(childAt);
+        }
+      }
+    }
+    this.filter = filter;
+  }
+  
+  @Override
+  public int getChildCount() {
+    if (filter == null) {
+      return super.getChildCount();
+    } else {
+      return filteredChildren.size();
+    }
+  }
+  
+  @Override
+  public TreeNode getChildAt(int index) {
+    if (filter == null) {
+      return super.getChildAt(index);
+    } else {
+      return filteredChildren.get(index);
+    }
+  }
+  
+  @Override
+  public int getIndex(TreeNode child) {
+    if (filter == null) {
+      return super.getIndex(child);
+    } else {
+      return filteredChildren.indexOf(child);
+    }
+  }
+  
+  @Override
+  public TreeNode getChildAfter(TreeNode child) {
+    if (filter == null) {
+      return super.getChildAfter(child);
+    } else {
+      if (child == null) {
+        throw new IllegalArgumentException("argument is null");
+      }
+
+      int index = getIndex(child);   // linear search
+
+      if (index == -1) {
+        throw new IllegalArgumentException("node is not a child");
+      }
+
+      if (index < getChildCount() - 1) {
+        return getChildAt(index + 1);
+      } else {
+        return null;
+      }
+    }
+  }
+  
+  @Override
+  public TreeNode getChildBefore(TreeNode child) {
+    if (filter == null) {
+      return super.getChildBefore(child);
+    } else {
+      if (child == null) {
+        throw new IllegalArgumentException("argument is null");
+      }
+
+      int index = getIndex(child);   // linear search
+
+      if (index == -1) {
+        throw new IllegalArgumentException("argument is not a child");
+      }
+
+      if (index > 0) {
+        return getChildAt(index - 1);
+      } else {
+        return null;
+      }
+    }
+  }
+ 
 
 }

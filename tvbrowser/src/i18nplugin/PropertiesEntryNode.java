@@ -23,8 +23,6 @@
  */
 package i18nplugin;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,18 +30,24 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.tree.DefaultMutableTreeNode;
+
 /**
  * Entry for a Property
  * 
  * @author bodum
  */
-public class PropertiesEntryNode extends DefaultMutableTreeNode implements LanguageNodeIf {
+public class PropertiesEntryNode extends DefaultMutableTreeNode implements LanguageNodeIf, FilterNodeIf {
+  
+  private String filter;
+  
+  private boolean matches;
 
   /**
    * @param name Name of this Entry
    */
   public PropertiesEntryNode(String name) {
-    super(name);
+    super(name, false);
   }
 
   /**
@@ -136,4 +140,43 @@ public class PropertiesEntryNode extends DefaultMutableTreeNode implements Langu
   public void save() {
   }
   
+  @Override
+  public boolean isLeaf() {
+    return true;
+  }
+
+  public int getMatchCount() {
+    return matches ? 1 : 0;
+  }
+
+  public boolean matches() {
+    return matches;
+  }
+
+  public void setFilter(Locale locale, String filter) {
+    this.filter = filter;
+    matches = false;
+    if (filter != null) {
+      if (getParent() == null) {
+        return;
+      }
+      if (!(getParent() instanceof PropertiesNode)) {
+        return;
+      }
+      
+      String text = null;
+      String translated = ((PropertiesNode)getParent()).getPropertyValue(locale, getPropertyName());
+      // check existence of translation
+      if (translated.length() != 0) {
+        text = translated;
+      } else {
+        // check original
+        text = ((PropertiesNode) getParent()).getPropertyValue(getPropertyName());
+      }
+      
+      if (text != null && text.indexOf(filter) != -1) {
+        matches = true;
+      }
+    }
+  }
 }

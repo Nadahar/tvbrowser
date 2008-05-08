@@ -23,24 +23,18 @@
  */
 package i18nplugin;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.Sizes;
-import devplugin.Channel;
-import tvbrowser.core.Settings;
-import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.core.plugin.PluginProxyManager;
-import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
-import util.exc.ErrorHandler;
-import util.io.ZipUtil;
-import util.ui.LinkButton;
-import util.ui.Localizer;
-import util.ui.SingleAndDoubleClickTreeUI;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
+import java.awt.CardLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.Locale;
+import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
@@ -55,23 +49,37 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-import java.awt.CardLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Locale;
-import java.util.Vector;
+
+import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import util.exc.ErrorHandler;
+import util.io.ZipUtil;
+import util.ui.LinkButton;
+import util.ui.Localizer;
+import util.ui.SingleAndDoubleClickTreeUI;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
+
+import devplugin.Channel;
 
 /**
  * The Dialog for the Translation-Tool
@@ -102,6 +110,10 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
 
   private JSplitPane mSplitpane; 
   
+  private JTextField mFilterTF;
+  
+  private JButton mClearFilterB;
+  
   public TranslationDialog(JDialog owner, int splitPos) {
     super(owner, true);
     createGui(splitPos);
@@ -118,7 +130,7 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
     JPanel panel = (JPanel) getContentPane();
     panel.setBorder(Borders.DLU4_BORDER);
     
-    panel.setLayout(new FormLayout("3dlu, left:pref, 3dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu", "pref, 5dlu, pref, 3dlu, pref, 5dlu, fill:10dlu:grow, 3dlu, pref"));
+    panel.setLayout(new FormLayout("3dlu, left:pref, 3dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu", "pref, 5dlu, pref, 3dlu, pref, 5dlu, pref, 5dlu, fill:10dlu:grow, 3dlu, pref"));
     
     CellConstraints cc = new CellConstraints();
     
@@ -166,7 +178,21 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
     panel.add(newButton, cc.xy(6,3));
     
     panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("translate", "Translate")), cc.xyw(1,5,8));
+    
+    panel.add(new JLabel(mLocalizer.msg("search", "Search:")), cc.xy(2,7));
 
+    mFilterTF = new JTextField();
+    panel.add(mFilterTF, cc.xy(4,7));
+    
+    mClearFilterB = new JButton(mLocalizer.msg("clear", "Clear:"));
+    mClearFilterB.setEnabled(false);
+    mClearFilterB.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        mFilterTF.setText(null);
+      }
+    });
+    panel.add(mClearFilterB, cc.xy(6,7));
+    
     DefaultMutableTreeNode root = createRootNode();
     
     mTree = new JTree(root) {
@@ -182,7 +208,7 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
     mSplitpane = new JSplitPane();
     mSplitpane.setLeftComponent(new JScrollPane(mTree));
     
-    panel.add(mSplitpane, cc.xyw(2,7,6));
+    panel.add(mSplitpane, cc.xyw(2,9,6));
     
     mEditor = new TranslatorEditor(Locale.GERMAN);
     final JPanel cardPanel = new JPanel(new CardLayout());
@@ -259,7 +285,7 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
     buttonbar.addGlue();
     buttonbar.addGriddedButtons(new JButton[] {save, cancel});
     
-    panel.add(buttonbar.getPanel(), cc.xyw(2,9,6));
+    panel.add(buttonbar.getPanel(), cc.xyw(2,11,6));
 
     getRootPane().setDefaultButton(cancel);
     UiUtilities.registerForClosing(this);
@@ -267,6 +293,19 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
     setSize(Sizes.dialogUnitXAsPixel(500, this), Sizes.dialogUnitYAsPixel(410, this));
     
     mLanguageCB.setSelectedIndex(0);
+    
+    mFilterTF.getDocument().addDocumentListener(new DocumentListener() {
+      public void removeUpdate(DocumentEvent e) {
+        filterChanged(mFilterTF.getText());
+      }
+      public void insertUpdate(DocumentEvent e) {
+        filterChanged(mFilterTF.getText());
+      }
+      public void changedUpdate(DocumentEvent e) {
+        filterChanged(mFilterTF.getText());
+      }
+    });
+
   }
 
   /**
@@ -428,6 +467,39 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
    */
   public int getDeviderLocation() {
     return mSplitpane.getDividerLocation();
+  }
+  
+  /**
+   * Triggers the filtering of the tree.
+   * 
+   * @param filterText
+   */
+  private void filterChanged(final String filterText) {
+    SwingUtilities.invokeLater(new Runnable() {
+    
+      public void run() {
+        String filter = filterText;
+        if (filter.trim().length() == 0) {
+          filter = null;
+        }
+        mClearFilterB.setEnabled(filter != null);
+        if (mRoot != null && mLanguageCB != null) {
+          DefaultTreeModel model = (DefaultTreeModel) mTree.getModel();
+
+          TreePath[] selectionPaths = mTree.getSelectionPaths();
+          Enumeration<TreePath> expandedDescendants = mTree.getExpandedDescendants(new TreePath(model.getRoot()));
+
+          mRoot.setFilter((Locale) mLanguageCB.getSelectedItem(), filter);
+          model.reload();
+
+          while (expandedDescendants.hasMoreElements()) {
+            mTree.expandPath(expandedDescendants.nextElement());
+          } // while
+
+          mTree.setSelectionPaths(selectionPaths);
+        }
+      }
+    });
   }
 
 }
