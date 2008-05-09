@@ -174,7 +174,7 @@ public class PropertiesEntryNode extends DefaultMutableTreeNode implements Langu
         text = ((PropertiesNode) getParent()).getPropertyValue(getPropertyName());
       }
       
-      if (text != null && text.indexOf(filter) != -1) {
+      if (text != null && text.toLowerCase().indexOf(filter.toLowerCase()) != -1) {
         matches = true;
       }
     }
