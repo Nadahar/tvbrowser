@@ -175,6 +175,11 @@ public class ProgramUtilities {
           listFirst.add(nameFrom(actor.substring(0, actor.indexOf("\t"))));
           listSecond.add(nameFrom(actor.substring(actor.indexOf("\t")+1)));
         }
+        // actor and role separated by colon
+        else if (actor.contains(":")) {
+          listFirst.add(nameFrom(actor.substring(0, actor.indexOf(":"))));
+          listSecond.add(nameFrom(actor.substring(actor.indexOf(":")+1)));
+        }
         // actor and role separated by brackets
         else if (actor.contains("(") || actor.contains(")")) {
           // maybe the splitting went wrong because of commata inside brackets
