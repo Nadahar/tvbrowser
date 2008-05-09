@@ -553,10 +553,23 @@ public class ProgramTextCreator {
                   parts[1] = addWikiLink(parts[1]);
                   actorIndex = 1;
                 }
-                buffer.append("<tr><td>");
+                buffer.append("<tr><td valign=\"top\">&bull;&nbsp;</td><td valign=\"top\">");
                 buffer.append(parts[actorIndex]);
-                buffer.append("</td><td width=\"10\">&nbsp;</td><td>");
-                buffer.append(parts[1-actorIndex]);
+                buffer.append("</td><td width=\"10\">&nbsp;</td>");
+
+                if (parts[1-actorIndex].length() > 0) {
+                  buffer.append("<td valign=\"top\">");
+                  buffer.append(parts[1-actorIndex]);
+                  buffer.append("</td>");
+                } else {
+                  // if roles are missing add next actor in the same line
+                   if (i+1 < lists[0].size() && lists[1].size() == 0) {
+                    i++;
+                    buffer.append("<td valign=\"top\">&bull;&nbsp;</td><td valign=\"top\">");
+                    buffer.append(addWikiLink(lists[0].get(i)));
+                    buffer.append("</td>");
+                  }
+                }
                 buffer.append("</td></tr>");
               }
               buffer.append("</table>");
