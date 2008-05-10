@@ -4,21 +4,52 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.FileInputStream;
+import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
+import java.net.URL;
 
 
 public class ImdbParser {
+  private static final Pattern epsiodePattern = Pattern.compile("^(.*?)(?:\\W\\(\\#.*\\))?$");
+  private static final Pattern moviePrefixPattern = Pattern.compile("(.*), ([A-Z][a-z']{0,2})");
+
   private ImdbDatabase mDatabase;
+  private String mServer;
+  private boolean mRunParser = true;
 
-  private final Pattern epsiodePattern = Pattern.compile("^(.*?)(?:\\W\\(\\#.*\\))?$");
-  private final Pattern moviePrefixPattern = Pattern.compile("(.*), ([A-Z][a-z']{0,2})");
-
-  public ImdbParser(ImdbDatabase db) {
+  public ImdbParser(ImdbDatabase db, String server) {
     mDatabase = db;
+    mServer = server;
   }
 
-  public void parseAkaTitles(InputStream inputStream) throws IOException {
+  public void startParsing() throws IOException {
+    mRunParser = true;
+    parseAkaTitles(new GZIPInputStream(new URL(mServer + "aka-titles.list.gz").openStream()));
+    mDatabase.close();
+    mDatabase.reOpen();
+    mDatabase.optimizeIndex();
+    if (mRunParser) {
+      parseRatings(new GZIPInputStream(new URL(mServer + "ratings.list.gz").openStream()));
+    }
+
+    if (!mRunParser) {
+      // Cancel was pressed, all Files have to be deleted
+      mDatabase.deleteDatabase();
+    } else {
+      mDatabase.close();
+      mDatabase.reOpen();
+      mDatabase.optimizeIndex();
+    }
+  }
+
+  public void stopParsing() {
+    mRunParser = false;
+  }
+
+  private void parseAkaTitles(InputStream inputStream) throws IOException {
     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "ISO-8859-15"));
     String line = reader.readLine();
 
@@ -28,7 +59,7 @@ public class ImdbParser {
     String movieId = null;
     boolean startFound = false;
     int num = 0;
-    while (line != null) {
+    while (line != null && mRunParser) {
       line = line.trim();
       num++;
       if (num % 5000 == 0) {
@@ -71,9 +102,10 @@ public class ImdbParser {
 
       line = reader.readLine();
     }
+    reader.close();
   }
 
-  public void parseRatings(InputStream inputStream) throws IOException {
+  private void parseRatings(InputStream inputStream) throws IOException {
     Pattern ratingPattern = Pattern.compile("^(.*?)(?:\\W\\((\\d{4,4}|\\?\\?\\?\\?).*?\\))?(?:\\W\\((.*)\\))?(?:\\W\\{(.*)\\})?$");
 
     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "ISO-8859-15"));
@@ -81,7 +113,7 @@ public class ImdbParser {
 
     int num = 0;
     boolean startFound = false;
-    while (line != null) {
+    while (line != null && mRunParser) {
       line = line.trim();
       num++;
       if (num % 5000 == 0) {
@@ -124,6 +156,7 @@ public class ImdbParser {
       line = reader.readLine();
     }
 
+    reader.close();
   }
 
   private String cleanEpsiodeTitle(String episode) {

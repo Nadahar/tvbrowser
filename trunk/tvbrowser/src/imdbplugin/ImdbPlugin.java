@@ -7,17 +7,25 @@ import devplugin.Version;
 import devplugin.ActionMenu;
 import util.misc.SoftReferenceCache;
 import util.ui.Localizer;
+import util.ui.UiUtilities;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.zip.GZIPInputStream;
+import java.util.Properties;
 import java.awt.event.ActionEvent;
+import java.awt.Window;
 import java.text.DecimalFormat;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JOptionPane;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.SwingUtilities;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 
 public class ImdbPlugin extends Plugin {
   /**
@@ -30,6 +38,8 @@ public class ImdbPlugin extends Plugin {
   private PluginInfo mPluginInfo;
   private ImdbDatabase mImdbDatabase;
   private SoftReferenceCache<Program, ImdbRating> mRatingCache = new SoftReferenceCache<Program, ImdbRating>();
+  private Properties mProperties;
+
 
   public ImdbPlugin() {
     mImdbDatabase = new ImdbDatabase(new File(Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome(), "imdbDatabase"));
@@ -88,52 +98,70 @@ public class ImdbPlugin extends Plugin {
     return mLocalizer.msg("iconText", "Imdb Rating");
   }
 
-  public static void main(String[] args) {
-    System.out.println("INIT DB");
+  @Override
+  public void handleTvBrowserStartFinished() {
+    if (!mProperties.getProperty("dontAskCreateDatabase", "false").equals("true") && !mImdbDatabase.isInitialised()) {
+      SwingUtilities.invokeLater(new Runnable(){
+        public void run() {
+          JCheckBox askAgain = new JCheckBox(mLocalizer.msg("dontShowAgain", "Don't show this message again"));
+          Object[] shownObjects = new Object[2];
+          shownObjects[0] = mLocalizer.msg("downloadData", "No IMDB-Database available, should I download the ImDB-Data now (aprox. 10MB) ?");
+          shownObjects[1] = askAgain;
 
-    ImdbDatabase db = new ImdbDatabase(new File("testDb"));
-    db.init();
+          int ret = JOptionPane.showConfirmDialog(getParentFrame(), shownObjects, mLocalizer.msg("downloadDataTitle","No data available"), JOptionPane.YES_NO_OPTION);
 
-    db.deleteDatabase();
-    db.init();
+          if (askAgain.isSelected()) {
+            mProperties.setProperty("dontAskCreateDatabase", "true");
+          }
 
-    System.out.println("Parsing");
-
-    ImdbParser parser = new ImdbParser(db);
-
-    try {
-      parser.parseAkaTitles(new GZIPInputStream(new FileInputStream(new File("/home/bodum/tmp/aka-titles.list.gz"))));
-      db.close();
-      db.reOpen();
-      db.optimizeIndex();
-      parser.parseRatings(new GZIPInputStream(new FileInputStream(new File("/home/bodum/tmp/ratings.list.gz"))));
-    } catch (IOException e) {
-      e.printStackTrace();
+          if (ret == JOptionPane.YES_OPTION) {
+            showUpdateDialog();
+          }
+        }
+      });
     }
-
-    try {
-      db.optimizeIndex();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    String id;
-
-    id = db.getMovieId("Enterprise", "Babel One", 1983);
-    if (id != null) {
-      System.out.println(db.getRatingForId(id).getRating());
-    } else {
-      System.out.println("Not found!");
-    }
-
-    id = db.getMovieId("Star Trek: Enterprise", "Babel One", 1983);
-    if (id != null) {
-      System.out.println(db.getRatingForId(id).getRating());
-    } else {
-      System.out.println("Not found!");
-    }
-
-    db.close();
   }
 
+  private void showUpdateDialog() {
+    JComboBox box = new JComboBox(new String[] {"ftp.fu-berlin.de", "ftp.funet.fi", "ftp.sunet.se", "TEMP TEST"});
+    Object[] shownObjects = new Object[2];
+    shownObjects[0] = "Bitte den Server wählen:";
+    shownObjects[1] = box;
+
+    int ret = JOptionPane.showConfirmDialog(getParentFrame(), shownObjects, mLocalizer.msg("downloadDataTitle","No data available"), JOptionPane.OK_CANCEL_OPTION);
+
+    if (ret == JOptionPane.OK_OPTION) {
+      String server = null;
+      switch (box.getSelectedIndex()) {
+        case 0 : server = "ftp://ftp.fu-berlin.de/pub/misc/movies/database/";
+                 break;
+        case 1 : server = "ftp://ftp.funet.fi/pub/mirrors/ftp.imdb.com/pub/";
+                 break;
+        case 2 : server = "ftp://ftp.sunet.se/pub/tv+movies/imdb/";
+                 break;
+        case 3 : server = "file:///home/bodum/tmp/";
+                 break;
+      }
+      Window w = UiUtilities.getBestDialogParent(getParentFrame());
+
+      ImdbUpdateDialog dialog = null;
+      if (w instanceof JFrame) {
+        dialog = new ImdbUpdateDialog((JFrame) UiUtilities.getBestDialogParent(getParentFrame()), server, mImdbDatabase);
+      } else {
+        dialog = new ImdbUpdateDialog((JDialog) UiUtilities.getBestDialogParent(getParentFrame()), server, mImdbDatabase);
+      }
+
+      UiUtilities.centerAndShow(dialog);
+    }
+  }
+
+  @Override
+  public void loadSettings(Properties settings) {
+    mProperties = settings;
+  }
+
+  @Override
+  public Properties storeSettings() {
+    return mProperties;
+  }
 }

@@ -44,13 +44,28 @@ public class ImdbDatabase {
   }
 
   public void deleteDatabase() {
+    close();
     for (File f : mCurrentPath.listFiles()) {
       f.delete();
     }
+    reOpen();
   }
 
   public void init() {
     reOpen();
+  }
+
+  public boolean isInitialised() {
+    boolean ret = false;
+
+    try {
+      if ((mSearcher != null) && (mSearcher.maxDoc() > 1)) {
+        ret = true;
+      }
+    } catch (IOException e) {
+    }
+
+    return ret;
   }
 
   public String addTitle(String movieTitle, String episode, int year, String type) {
@@ -116,6 +131,9 @@ public class ImdbDatabase {
   }
 
   public void reOpen() {
+    mSearcher = null;
+    mWriter = null;
+
     if (!mCurrentPath.exists() || mCurrentPath.listFiles().length == 0) {
       try {
         mWriter = new IndexWriter(mCurrentPath, new SimpleAnalyzer());
@@ -156,6 +174,11 @@ public class ImdbDatabase {
     try {
       if (mWriter != null) {
         mWriter.close();
+        mWriter = null;
+      }
+      if (mSearcher != null) {
+        mSearcher.close();
+        mSearcher = null;
       }
     } catch (IOException e) {
       e.printStackTrace();
@@ -251,13 +274,14 @@ public class ImdbDatabase {
   }
 
   private void printDocument(Document document) {
-    System.out.print(document.getField(MOVIE_TITLE).stringValue());
+/*    System.out.print(document.getField(MOVIE_TITLE).stringValue());
 
     if (document.getField(EPISODE_TITLE) != null) {
       System.out.print(" : " + document.getField(EPISODE_TITLE).stringValue());
     }
 
     System.out.println(" : " + document.getField(MOVIE_YEAR).stringValue() + " : " + document.getField(MOVIE_ID).stringValue());
+  */
   }
 
   public ImdbRating getRatingForId(String id) {
@@ -289,4 +313,5 @@ public class ImdbDatabase {
 
     return null;
   }
+
 }
