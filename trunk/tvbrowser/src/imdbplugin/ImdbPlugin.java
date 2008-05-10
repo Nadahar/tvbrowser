@@ -65,12 +65,7 @@ public class ImdbPlugin extends Plugin {
 
   @Override
   public Icon[] getProgramTableIcons(Program program) {
-    ImdbRating rating = mRatingCache.get(program);
-    if (rating == null) {
-      rating = mImdbDatabase.getRatingForId(mImdbDatabase.getMovieId(program.getTitle(), "", -1));
-      mRatingCache.put(program, rating);
-    }
-
+    ImdbRating rating = getRatingFor(program);
     if (rating == null) {
       return null;
     }
@@ -78,16 +73,25 @@ public class ImdbPlugin extends Plugin {
     return new Icon[]{new ImdbIcon(rating)};
   }
 
+  private ImdbRating getRatingFor(Program program) {
+    ImdbRating rating = mRatingCache.get(program);
+    if (rating == null) {
+      rating = mImdbDatabase.getRatingForId(mImdbDatabase.getMovieId(program.getTitle(), "", -1));
+      mRatingCache.put(program, rating);
+    }
+    return rating;
+  }
+
   @Override
   public ActionMenu getContextMenuActions(Program program) {
-    ImdbRating rating = mImdbDatabase.getRatingForId(mImdbDatabase.getMovieId(program.getTitle(), "", -1));
+    ImdbRating rating = getRatingFor(program);
     if (rating != null) {
       AbstractAction action = new AbstractAction() {
         public void actionPerformed(ActionEvent evt) {
         }
       };
       action.putValue(Action.NAME, mLocalizer.msg("contextMenuDetails", "Details zur Imdb-Bewertung ({0})",  new DecimalFormat("##.#").format((double)rating.getRating() / 10)));
-      action.putValue(Action.SMALL_ICON, new ImdbIcon(mRatingCache.get(program)));
+      action.putValue(Action.SMALL_ICON, new ImdbIcon(rating));
       return new ActionMenu(action);
     }
     return null;
