@@ -96,6 +96,9 @@ public class ImdbPlugin extends Plugin {
   @Override
   public ActionMenu getContextMenuActions(Program program) {
     ImdbRating rating = getRatingFor(program);
+    if (getPluginManager().getExampleProgram().equals(program)) {
+    	rating = new ImdbRating(75, 1000, "", "");
+    }
     if (rating != null) {
       AbstractAction action = new AbstractAction() {
         public void actionPerformed(ActionEvent evt) {

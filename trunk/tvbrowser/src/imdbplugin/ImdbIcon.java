@@ -29,7 +29,9 @@ public class ImdbIcon implements Icon {
       mImdbIcon = new ImageIcon(getClass().getResource("rating.png"));
     }
     mImdbIcon.paintIcon(c, g, x, y);
+    Color oc = g.getColor();
     g.setColor(Color.yellow);
     g.fill3DRect(x, y+7, mLength, 5, true);
+    g.setColor(oc);
   }
 }
