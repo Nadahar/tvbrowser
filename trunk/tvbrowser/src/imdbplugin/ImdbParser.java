@@ -26,6 +26,8 @@ public class ImdbParser {
   }
 
   public void startParsing() throws IOException {
+    mDatabase.deleteDatabase();
+
     mRunParser = true;
     parseAkaTitles(new GZIPInputStream(new URL(mServer + "aka-titles.list.gz").openStream()));
     mDatabase.close();
