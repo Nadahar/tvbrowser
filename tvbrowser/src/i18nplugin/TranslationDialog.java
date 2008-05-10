@@ -184,7 +184,7 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
     mFilterTF = new JTextField();
     panel.add(mFilterTF, cc.xy(4,7));
     
-    mClearFilterB = new JButton(mLocalizer.msg("clear", "Clear:"));
+    mClearFilterB = new JButton(IconLoader.getInstance().getIconFromTheme("action", "process-stop", 16));
     mClearFilterB.setEnabled(false);
     mClearFilterB.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
