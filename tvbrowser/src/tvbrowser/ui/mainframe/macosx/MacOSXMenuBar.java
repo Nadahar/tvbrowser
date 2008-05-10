@@ -79,10 +79,11 @@ public class MacOSXMenuBar extends MenuBar {
     mPluginsMenu.addSeparator();
     
     JMenuItem[] pluginItems = createPluginMenuItems();
-    for (int i=0; i<pluginItems.length; i++) {
-      mPluginsMenu.add(pluginItems[i]);  
+    for (JMenuItem pluginItem : pluginItems) {
+      mPluginsMenu.add(pluginItem);
     }
     mPluginsMenu.addSeparator();
+    mPluginsMenu.add(mInstallPluginsMI);
     mPluginsMenu.add(mPluginManagerMI);
 
     // "Help" menu
@@ -135,10 +136,11 @@ public class MacOSXMenuBar extends MenuBar {
       mPluginsMenu.addSeparator();
 
       JMenuItem[] pluginItems = createPluginMenuItems();
-      for (int i=0; i<pluginItems.length; i++) {
-        mPluginsMenu.add(pluginItems[i]);  
+      for (JMenuItem pluginItem : pluginItems) {
+        mPluginsMenu.add(pluginItem);
       }
       mPluginsMenu.addSeparator();
+      mPluginsMenu.add(mInstallPluginsMI);
       mPluginsMenu.add(mPluginManagerMI);
   }
 
