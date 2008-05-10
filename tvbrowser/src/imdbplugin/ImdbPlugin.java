@@ -35,11 +35,13 @@ public class ImdbPlugin extends Plugin {
 
   private static final Version mVersion = new Version(1, 0);
 
+  // Empty Rating for Cache
+  private static final ImdbRating DUMMY_RATING = new ImdbRating(0, 0, "", "");
+
   private PluginInfo mPluginInfo;
   private ImdbDatabase mImdbDatabase;
-  private SoftReferenceCache<Program, ImdbRating> mRatingCache = new SoftReferenceCache<Program, ImdbRating>();
+  private SoftReferenceCache<String, ImdbRating> mRatingCache = new SoftReferenceCache<String, ImdbRating>();
   private Properties mProperties;
-
 
   public ImdbPlugin() {
     mImdbDatabase = new ImdbDatabase(new File(Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome(), "imdbDatabase"));
@@ -74,11 +76,20 @@ public class ImdbPlugin extends Plugin {
   }
 
   private ImdbRating getRatingFor(Program program) {
-    ImdbRating rating = mRatingCache.get(program);
+    ImdbRating rating = mRatingCache.get(program.getID());
     if (rating == null) {
       rating = mImdbDatabase.getRatingForId(mImdbDatabase.getMovieId(program.getTitle(), "", -1));
-      mRatingCache.put(program, rating);
+      if (rating != null) {
+        mRatingCache.put(program.getID(), rating);
+      } else {
+        mRatingCache.put(program.getID(), DUMMY_RATING);
+      }
     }
+
+    if (rating == DUMMY_RATING) {
+      rating = null;
+    }
+
     return rating;
   }
 
@@ -127,7 +138,7 @@ public class ImdbPlugin extends Plugin {
   }
 
   private void showUpdateDialog() {
-    JComboBox box = new JComboBox(new String[] {"ftp.fu-berlin.de", "ftp.funet.fi", "ftp.sunet.se", "TEMP TEST"});
+    JComboBox box = new JComboBox(new String[] {"ftp.fu-berlin.de", "ftp.funet.fi", "ftp.sunet.se"});
     Object[] shownObjects = new Object[2];
     shownObjects[0] = "Bitte den Server wählen:";
     shownObjects[1] = box;
@@ -142,8 +153,6 @@ public class ImdbPlugin extends Plugin {
         case 1 : server = "ftp://ftp.funet.fi/pub/mirrors/ftp.imdb.com/pub/";
                  break;
         case 2 : server = "ftp://ftp.sunet.se/pub/tv+movies/imdb/";
-                 break;
-        case 3 : server = "file:///home/bodum/tmp/";
                  break;
       }
       Window w = UiUtilities.getBestDialogParent(getParentFrame());
