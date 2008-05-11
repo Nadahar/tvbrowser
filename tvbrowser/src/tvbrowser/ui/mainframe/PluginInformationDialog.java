@@ -84,6 +84,8 @@ public class PluginInformationDialog extends JDialog implements WindowClosingIf 
   private void init() {
     setTitle(mLocalizer.msg("title","TV-Browser is able to do much more"));
     
+    UiUtilities.registerForClosing(this);
+    
     CellConstraints cc = new CellConstraints();
     PanelBuilder pb = new PanelBuilder(
         new FormLayout("default:grow,default,default:grow",
