@@ -231,8 +231,16 @@ public class LocalPluginProgramFormatingSettingsDialog extends JDialog implement
    */
   protected void showPreview() {
     ParamParser parser = new ParamParser();
-    String content = parser.analyse(mContentArea.getText(), Plugin.getPluginManager().getExampleProgram()).trim();
+    String content = parser.analyse(mContentArea.getText(), Plugin.getPluginManager().getExampleProgram());
+
+    if (parser.hasErrors()) {
+      content = parser.getErrorString();
+    }
     
+    if (content == null) {
+      content = "";
+    }
+
     final JDialog dialog = new JDialog(this, mLocalizer.msg("preview", "Preview"), true);
     JPanel contentPanel = (JPanel) dialog.getContentPane();
     
