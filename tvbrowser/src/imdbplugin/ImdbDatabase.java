@@ -186,6 +186,9 @@ public class ImdbDatabase {
   }
 
   public String getOrCreateMovieId(String movieTitle, String episode, int year, String type) {
+    if (mSearcher == null) {
+      return null;
+    }
     try {
       BooleanQuery bQuery = new BooleanQuery();
       bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_MOVIE)),BooleanClause.Occur.MUST);
@@ -199,6 +202,11 @@ public class ImdbDatabase {
       }
 
       Hits hits = mSearcher.search(bQuery);
+      
+      if (hits == null) {
+        return null;
+      }
+     
       Iterator it = hits.iterator();
 
       if (it.hasNext()) {
