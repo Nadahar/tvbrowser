@@ -43,7 +43,7 @@ public class ActorStringSearcherTest extends TestCase {
       @SuppressWarnings("unused")
       ActorSearcher searcher = new ActorSearcher(actor);
       // currently not possible due to visibility issues
-//      return searcher.matches(programText);
+      return searcher.matches(programText);
     } catch (TvBrowserException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();

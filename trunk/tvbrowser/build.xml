@@ -45,6 +45,8 @@
   <property name="lib.dir" value="lib"/>
   <property name="txt.dir" value="txt"/>
   <property name="src.dir" value="src"/>
+  <property name="test.src.dir" value="test/src"/>
+  <property name="test.classes.dir" value="test/classes"/>
   <property name="doc.dir" value="doc"/>
   <property name="doc.header" value="${programname} ${tvbrowser.version} API"/>
   <property name="doc.title" value="API documentation for ${programname} ${tvbrowser.version}"/>
@@ -892,16 +894,38 @@
     | in your ANT_HOME/lib directory. (ANT_HOME/lib is on my machine "/usr/share/ant/lib")
     +-->
   <target name="test" depends="make-default">
+
+    <mkdir dir="${test.classes.dir}"/>
+    <javac destdir="${test.classes.dir}" debug="${debug}" deprecation="true" encoding="iso-8859-15" target="1.5" source="1.5">
+      <src>
+        <path path="${test.src.dir}"/>
+      </src>
+      <classpath>
+        <path refid="classpath"/>
+      </classpath>
+    </javac>
+
+    <copy todir="${test.classes.dir}">
+      <fileset dir="${test.src.dir}" includes="**/*.gif"/>
+      <fileset dir="${test.src.dir}" includes="**/*.jpg"/>
+      <fileset dir="${test.src.dir}" includes="**/*.png"/>
+      <fileset dir="${test.src.dir}" includes="**/*.dtd"/>
+      <fileset dir="${test.src.dir}" includes="**/*.properties"/>
+      <fileset dir="${test.src.dir}" includes="**/*.theme"/>
+    </copy>
+
+
     <junit haltonfailure="yes" fork="yes">
       <classpath>
         <path refid="classpath"/>
+        <path path="${test.classes.dir}"/>
       </classpath>
 
       <formatter type="plain" usefile="false"/>
 
       <batchtest>
-        <fileset dir="${src.dir}">
-          <include name="test/**/*Test.java"/>
+        <fileset dir="${test.src.dir}">
+          <include name="**/*Test.java"/>
         </fileset>
       </batchtest>
     </junit>

@@ -113,7 +113,7 @@ public class DayProgramFileTest extends TestCase {
   public void testSaveAndLoad() throws IOException, FileFormatException {
     File file = null;
     try {
-      file = File.createTempFile("tvbrowser", ".test.gz");
+      file = File.createTempFile("tvbrowser", ".test.prog.gz");
 
       DayProgramFile origProgFile = createTestDayProgramFile();
       origProgFile.writeToFile(file);
