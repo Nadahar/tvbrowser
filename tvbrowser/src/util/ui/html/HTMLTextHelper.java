@@ -26,13 +26,9 @@ public class HTMLTextHelper {
    */
   public static String convertTextToHtml(String text, boolean createLinks) {
     // remove Javascript
-    int script = text.toLowerCase().indexOf("<script");
-    while (script >= 0) {
-      int scriptEnd = text.toLowerCase().indexOf("</script");
-      text = text.substring(0,script) + text.substring(scriptEnd + 9);
-      script = text.toLowerCase().indexOf("<script");
-    }
-    
+
+    text = text.replaceAll("(?i)<script.*?(>.*?</script>|/>)", "");
+
     // Disarm HTML entities
     text = IOUtilities.replace(text.trim(), "<", "&lt;");
     text = IOUtilities.replace(text.trim(), ">", "&gt;");
