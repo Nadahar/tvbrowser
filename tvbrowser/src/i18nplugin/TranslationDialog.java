@@ -154,6 +154,7 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
         mTreeRenderer.setCurrentLocale(loc);
         mEditor.save();
         mEditor.setCurrentLocale(loc);
+        filterChanged(mFilterTF.getText());
         mTree.repaint();
       }
     });
