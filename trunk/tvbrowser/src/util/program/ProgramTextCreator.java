@@ -80,7 +80,7 @@ public class ProgramTextCreator {
    * @param bFont The body Font.
    * @param showImage If the image should be shown if it is available.
    * @param showHelpLinks Show the Help-Links (Quality of Data, ShowView)
-   * @return The html String.
+   * @return The HTML String.
    */
   public static String createInfoText(Program prog, ExtendedHTMLDocument doc, 
       Object[] fieldArr, Font tFont, Font bFont, boolean showImage, boolean showHelpLinks) {
@@ -104,7 +104,7 @@ public class ProgramTextCreator {
    * @param showHelpLinks
    *          Show the Help-Links (Quality of Data, ShowView)
    * @param zoom The zoom value for the picture.
-   * @return The html String.
+   * @return The HTML String.
    * @since 2.2.2
    */
   public static String createInfoText(Program prog, ExtendedHTMLDocument doc, 
@@ -130,7 +130,7 @@ public class ProgramTextCreator {
    * @param showHelpLinks
    *          Show the Help-Links (Quality of Data, ShowView)
    * @param zoom The zoom value for the picture.
-   * @return The html String.
+   * @return The HTML String.
    * @since 2.6
    */
   public static String createInfoText(Program prog, ExtendedHTMLDocument doc, 
@@ -157,7 +157,7 @@ public class ProgramTextCreator {
    *          Show the Help-Links (Quality of Data, ShowView)
    * @param zoom The zoom value for the picture.
    * @param showPluginIcons If the plugin icons should be shown.
-   * @return The html String.
+   * @return The HTML String.
    * @since 2.5.3
    */
   public static String createInfoText(Program prog, ExtendedHTMLDocument doc, 
@@ -553,9 +553,7 @@ public class ProgramTextCreator {
                   parts[1] = addWikiLink(parts[1]);
                   actorIndex = 1;
                 }
-                buffer.append("<tr><td valign=\"top\">");
-                buffer.append('\u2022');
-                buffer.append("&nbsp;</td><td valign=\"top\">");
+                buffer.append("<tr><td valign=\"top\">&#8226;&nbsp;</td><td valign=\"top\">");
                 buffer.append(parts[actorIndex]);
                 buffer.append("</td><td width=\"10\">&nbsp;</td>");
 
@@ -567,9 +565,7 @@ public class ProgramTextCreator {
                   // if roles are missing add next actor in the same line
                    if (i+1 < lists[0].size() && lists[1].size() == 0) {
                     i++;
-                    buffer.append("<td valign=\"top\">");
-                    buffer.append('\u2022');
-                    buffer.append("&nbsp;</td><td valign=\"top\">");
+                    buffer.append("<td valign=\"top\">&#8226;&nbsp;</td><td valign=\"top\">");
                     buffer.append(addWikiLink(lists[0].get(i)));
                     buffer.append("</td>");
                   }
