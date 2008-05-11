@@ -16,7 +16,9 @@ public class HTMLTextHelperTest extends TestCase {
     assertEquals("test  Script",
             HTMLTextHelper.convertTextToHtml("test <script>blalbla</script> Script", true));
     assertEquals("test  Script",
-            HTMLTextHelper.convertTextToHtml("test <script src=\"hallo.js\"> Script", true));
+            HTMLTextHelper.convertTextToHtml("test <script src=\"hallo.js\"/> Script", true));
+    assertEquals("test  Script",
+            HTMLTextHelper.convertTextToHtml("test <ScRipT src=\"hallo.js\"/> Script", true));
   }
   
 }
