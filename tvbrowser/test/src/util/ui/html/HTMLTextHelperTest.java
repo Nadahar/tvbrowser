@@ -12,6 +12,11 @@ public class HTMLTextHelperTest extends TestCase {
     assertEquals("asfssdf lkasf <a href=\"http://www.heise.de\">www.heise.de</a> kjshd slkas fj�sldkfas", 
                 HTMLTextHelper.convertTextToHtml("asfssdf lkasf www.heise.de kjshd slkas fj�sldkfas", true));
     
+
+    assertEquals("test  Script",
+            HTMLTextHelper.convertTextToHtml("test <script>blalbla</script> Script", true));
+    assertEquals("test  Script",
+            HTMLTextHelper.convertTextToHtml("test <script src=\"hallo.js\"> Script", true));
   }
   
 }

@@ -53,7 +53,7 @@ public class PrimaryDataManagerTest extends TestCase {
   public void testUpdate()
     throws IOException, FileFormatException, PreparationException
   {
-    File testDir = new File("test");
+    File testDir = new File("testdata");
     File prepDir = new File(testDir, "prepared");
     
     // Delete the old test environment
@@ -83,7 +83,7 @@ public class PrimaryDataManagerTest extends TestCase {
     prepProg1.addProgramFrame(createProgramFrame(1, 20, 30, "Otto 1"));
     prepProg1.addProgramFrame(createProgramFrame(2, 31, 50, "Karlson vom Dach"));
     prepProg1.addProgramFrame(createProgramFrame(3, 51, 80, "Nixf�rungut"));
-    prepProg1.writeToFile(new File(prepDir, "2010-01-01_de_test_base_full.gz"));
+    prepProg1.writeToFile(new File(prepDir, "2010-01-01_de_test_base_full.prog.gz"));
     
     DayProgramFile prepProg3 = new DayProgramFile();
     prepProg3.setVersion(1);
@@ -92,7 +92,7 @@ public class PrimaryDataManagerTest extends TestCase {
     frame.addProgramField(ProgramField.create(ProgramFieldType.DESCRIPTION_TYPE, "Bla bla"));
     prepProg3.addProgramFrame(frame);
     prepProg3.addProgramFrame(createProgramFrame(3, 51, 60, "Danach"));
-    prepProg3.writeToFile(new File(prepDir, "2010-01-03_de_test_base_full.gz"));
+    prepProg3.writeToFile(new File(prepDir, "2010-01-03_de_test_base_full.prog.gz"));
     
     // Start the update
     //manager.setGroupNames(new String[]{"testgroup"});
