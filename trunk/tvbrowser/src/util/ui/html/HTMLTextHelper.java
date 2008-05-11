@@ -15,7 +15,7 @@ import util.io.IOUtilities;
 public class HTMLTextHelper {
 
   /**
-   * Convert Text to HTML. > and < will be convertet to &lt; and &gt;
+   * Convert Text to HTML. > and < will be converted to &lt; and &gt;
    * \n will be &gt;br&lt;
    * 
    * If createLinks is true, it will try to find Links and create a href-Elements
@@ -25,11 +25,19 @@ public class HTMLTextHelper {
    * @return Result
    */
   public static String convertTextToHtml(String text, boolean createLinks) {
-    // Disarm html entities
+    // remove Javascript
+    int script = text.toLowerCase().indexOf("<script");
+    while (script >= 0) {
+      int scriptEnd = text.toLowerCase().indexOf("</script");
+      text = text.substring(0,script) + text.substring(scriptEnd + 9);
+      script = text.toLowerCase().indexOf("<script");
+    }
+    
+    // Disarm HTML entities
     text = IOUtilities.replace(text.trim(), "<", "&lt;");
     text = IOUtilities.replace(text.trim(), ">", "&gt;");
 
-    // Translate line breaks to html breaks
+    // Translate line breaks to HTML breaks
     text = IOUtilities.replace(text.trim(), "\n", "<br>");
 
     // Create links for URLs
@@ -79,25 +87,28 @@ public class HTMLTextHelper {
   }
   
   /**
-   * Replaces html German umlauts and the html formatting tags with a Java String.
+   * Replaces HTML German umlauts and the HTML formatting tags with a Java String.
    * 
-   * @param html The html text to replace.
+   * @param html The HTML text to replace.
    * @return The text with the replaced Strings.
    * @since 2.7
    */
   public static String convertHtmlToText(String html) {
-    html = IOUtilities.replace(html.trim(), "&auml;", "\u00e4");
-    html = IOUtilities.replace(html.trim(), "&Auml;", "\u00c4");
+    html = html.trim();
+    html = IOUtilities.replace(html, "&auml;", "\u00e4");
+    html = IOUtilities.replace(html, "&Auml;", "\u00c4");
 
-    html = IOUtilities.replace(html.trim(), "&ouml;", "\u00f6");
-    html = IOUtilities.replace(html.trim(), "&Ouml;", "\u00d6");
+    html = IOUtilities.replace(html, "&ouml;", "\u00f6");
+    html = IOUtilities.replace(html, "&Ouml;", "\u00d6");
     
-    html = IOUtilities.replace(html.trim(), "&uuml;", "\u00fc");
-    html = IOUtilities.replace(html.trim(), "&Uuml;", "\u00dc");
+    html = IOUtilities.replace(html, "&uuml;", "\u00fc");
+    html = IOUtilities.replace(html, "&Uuml;", "\u00dc");
     
-    html = IOUtilities.replace(html.trim(), "&szlig;", "\u00df");
+    html = IOUtilities.replace(html, "&szlig;", "\u00df");
     
-    html = IOUtilities.replace(html.trim(), "<br>", "\n");
+    html = IOUtilities.replace(html, "&eacute;", "\u00E9");
+
+    html = IOUtilities.replace(html, "<br>", "\n");
     
     html = IOUtilities.replace(html.trim(), "<i>", "");
     html = IOUtilities.replace(html.trim(), "</i>", "");
@@ -108,10 +119,10 @@ public class HTMLTextHelper {
     html = IOUtilities.replace(html.trim(), "<u>", "");
     html = IOUtilities.replace(html.trim(), "</u>", "");
     
-    html = IOUtilities.replace(html.trim(), "&quot;", "\"");
-    html = IOUtilities.replace(html.trim(), "\\'", "'");
+    html = html.trim();
     
-    html = IOUtilities.replace(html.trim(), "&eacute;", "\u00E9");
+    html = IOUtilities.replace(html, "&quot;", "\"");
+    html = IOUtilities.replace(html, "\\'", "'");
     
     return html;
   }
