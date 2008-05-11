@@ -93,7 +93,7 @@ public class ParamLibrary {
   public String[] getPossibleKeys() {
     String[] str = { "title", "original_title", "start_day", "start_month", "start_year", "start_hour", "start_minute",
         "end_month", "end_year", "end_day", "end_hour", "end_minute", "length_minutes", "length_sec", "short_info",
-        "description", "episode", "original_episode", "channel_name", "url", "start_day_of_week", "start_month_name",
+        "description", "episode", "original_episode", "episode_number", "channel_name", "url", "start_day_of_week", "start_month_name",
         "genre", "start_unix", "end_unix"};
     return str;
   }
@@ -177,7 +177,7 @@ public class ParamLibrary {
     } else if (key.equals("description")) {
       String res = removeNull(prg.getDescription());
       String copyright = prg.getChannel().getCopyrightNotice();
-	  if (copyright != null) {
+	    if (copyright != null) {
         return new StringBuffer(res).append('\n').append(copyright).toString();
       }
       return res;
@@ -201,6 +201,12 @@ public class ParamLibrary {
       return Long.toString(createEndTime(prg).getTimeInMillis() / 1000);
     } else if (key.equals("genre")) {
       return removeNull(prg.getTextField(ProgramFieldType.GENRE_TYPE));
+    } else if (key.equals("episode_number")) {
+      int epNum = prg.getIntField(ProgramFieldType.EPISODE_NUMBER_TYPE);
+      if (epNum == -1) {
+        return "";
+      }
+      return Integer.toString(epNum);
     }
     
     mError = true;
