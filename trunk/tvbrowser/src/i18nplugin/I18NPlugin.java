@@ -176,7 +176,7 @@ public class I18NPlugin extends Plugin {
       return Color.RED;
     }
     else if (state >= LanguageNodeIf.STATE_NON_WELLFORMED && state != LanguageNodeIf.STATE_OK) {
-      return Color.ORANGE.darker().darker();
+      return Color.ORANGE.darker();
     }
     else {
       return Color.BLACK;
