@@ -1,15 +1,19 @@
 package imdbplugin;
 
+import devplugin.ProgressMonitor;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.FileInputStream;
-import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
+import java.util.Calendar;
 import java.net.URL;
+
+import util.io.IOUtilities;
+import util.ui.progress.ProgressInputStream;
 
 
 public class ImdbParser {
@@ -25,17 +29,30 @@ public class ImdbParser {
     mServer = server;
   }
 
-  public void startParsing() throws IOException {
+  public void startParsing(ProgressMonitor monitor) throws IOException {
     mDatabase.deleteDatabase();
 
+    monitor.setMaximum(getFileSize(mServer));
+
     mRunParser = true;
-    parseAkaTitles(new GZIPInputStream(new URL(mServer + "aka-titles.list.gz").openStream()));
+
+    ProgressInputStream progressInputStream = new ProgressInputStream(new URL(mServer + "aka-titles.list.gz").openStream(), monitor);
+
+    System.out.println("AKA TITLES");
+
+    parseAkaTitles(new GZIPInputStream(progressInputStream));
+
+    System.out.println("AKA TITLES DONE");
+
     mDatabase.close();
     mDatabase.reOpen();
     mDatabase.optimizeIndex();
+    System.out.println("RATINGS");
     if (mRunParser) {
-      parseRatings(new GZIPInputStream(new URL(mServer + "ratings.list.gz").openStream()));
+      progressInputStream = new ProgressInputStream(new URL(mServer + "ratings.list.gz").openStream(), monitor, progressInputStream.getCurrentPosition());
+      parseRatings(new GZIPInputStream(progressInputStream));
     }
+    System.out.println("RATINGS DONE");
 
     if (!mRunParser) {
       // Cancel was pressed, all Files have to be deleted
@@ -45,6 +62,37 @@ public class ImdbParser {
       mDatabase.reOpen();
       mDatabase.optimizeIndex();
     }
+
+    System.out.println("PARSING DONE");
+  }
+
+  private int getFileSize(String mServer) {
+    try {
+      int size = 0;
+      String filesizes = new String(IOUtilities.loadFileFromHttpServer(new URL(mServer + "filesizes")));
+
+      Matcher m = Pattern.compile("^aka-titles\\.list\\W(\\d*)$", Pattern.MULTILINE).matcher(filesizes);
+
+      if (m.find()) {
+        size += Integer.parseInt(m.group(1));
+      } else {
+        size += 5622441;
+      }
+
+      m = Pattern.compile("^ratings\\.list\\W(\\d*)$", Pattern.MULTILINE).matcher(filesizes);
+
+      if (m.find()) {
+        size += Integer.parseInt(m.group(1));
+      } else {
+        size += 4512076;
+      }
+
+      return size;
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    return 5622441 + 4512076;
   }
 
   public void stopParsing() {
@@ -60,13 +108,8 @@ public class ImdbParser {
 
     String movieId = null;
     boolean startFound = false;
-    int num = 0;
     while (line != null && mRunParser) {
       line = line.trim();
-      num++;
-      if (num % 5000 == 0) {
-        System.out.println((int)(num / (517128d / 100d)) + "%");
-      }
       if (!startFound && line.startsWith("==========")) {
         startFound = true;
       } else if (startFound) {
@@ -113,14 +156,9 @@ public class ImdbParser {
     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "ISO-8859-15"));
     String line = reader.readLine();
 
-    int num = 0;
     boolean startFound = false;
     while (line != null && mRunParser) {
       line = line.trim();
-      num++;
-      if (num % 5000 == 0) {
-        System.out.println((int)(num / (239597 / 100d)) + "%");
-      }
       if (!startFound && line.startsWith("MOVIE RATINGS REPORT")) {
         startFound = true;
       } else if (startFound && line.startsWith("-------------")) {
@@ -149,8 +187,6 @@ public class ImdbParser {
           String episode = cleanEpsiodeTitle(matcher.group(4));
 
           mDatabase.addRating(mDatabase.getOrCreateMovieId(movieTitle, episode, year, type), rating, votes, distribution);
-        } else {
-          System.out.println(line);
         }
       }
 
