@@ -16,4 +16,8 @@ public class ImdbRating {
   public int getRating() {
     return mRating;
   }
+
+  public int getVotes() {
+    return mVotes;
+  }
 }

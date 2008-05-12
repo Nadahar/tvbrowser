@@ -5,6 +5,9 @@ import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.Version;
 import devplugin.ActionMenu;
+import devplugin.SettingsTab;
+import devplugin.Date;
+import devplugin.Channel;
 import util.misc.SoftReferenceCache;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -12,8 +15,13 @@ import util.ui.UiUtilities;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.Properties;
+import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.awt.event.ActionEvent;
 import java.awt.Window;
 import java.text.DecimalFormat;
@@ -42,6 +50,8 @@ public class ImdbPlugin extends Plugin {
   private ImdbDatabase mImdbDatabase;
   private SoftReferenceCache<String, ImdbRating> mRatingCache = new SoftReferenceCache<String, ImdbRating>();
   private Properties mProperties;
+  private boolean mStartFinished = false;
+  private ArrayList<Channel> mExcludedChannels = new ArrayList<Channel>();
 
   public ImdbPlugin() {
     mImdbDatabase = new ImdbDatabase(new File(Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome(), "imdbDatabase"));
@@ -76,25 +86,28 @@ public class ImdbPlugin extends Plugin {
   }
 
   private ImdbRating getRatingFor(Program program) {
-    ImdbRating rating = mRatingCache.get(program.getID());
-    if (rating == null) {
-      rating = mImdbDatabase.getRatingForId(mImdbDatabase.getMovieId(program.getTitle(), "", -1));
-      if (rating != null) {
-        mRatingCache.put(program.getID(), rating);
-      } else {
-        mRatingCache.put(program.getID(), DUMMY_RATING);
+    ImdbRating rating = null;
+    if (!mExcludedChannels.contains(program.getChannel())) {
+      rating = mRatingCache.get(program.getID());
+      if (rating == null) {
+        rating = mImdbDatabase.getRatingForId(mImdbDatabase.getMovieId(program.getTitle(), "", -1));
+        if (rating != null) {
+          mRatingCache.put(program.getID(), rating);
+        } else {
+          mRatingCache.put(program.getID(), DUMMY_RATING);
+        }
       }
-    }
 
-    if (rating == DUMMY_RATING) {
-      rating = null;
+      if (rating == DUMMY_RATING) {
+        rating = null;
+      }
     }
 
     return rating;
   }
 
   @Override
-  public ActionMenu getContextMenuActions(Program program) {
+  public ActionMenu getContextMenuActions(final Program program) {
     ImdbRating rating = getRatingFor(program);
     if (getPluginManager().getExampleProgram().equals(program)) {
     	rating = new ImdbRating(75, 1000, "", "");
@@ -102,6 +115,7 @@ public class ImdbPlugin extends Plugin {
     if (rating != null) {
       AbstractAction action = new AbstractAction() {
         public void actionPerformed(ActionEvent evt) {
+          showRatingDialog(program);
         }
       };
       action.putValue(Action.NAME, mLocalizer.msg("contextMenuDetails", "Details zur Imdb-Bewertung ({0})",  new DecimalFormat("##.#").format((double)rating.getRating() / 10)));
@@ -109,6 +123,15 @@ public class ImdbPlugin extends Plugin {
       return new ActionMenu(action);
     }
     return null;
+  }
+
+  private void showRatingDialog(Program prg) {
+    ImdbRating rating = getRatingFor(prg);
+    JOptionPane.showMessageDialog(UiUtilities.getBestDialogParent(getParentFrame()),
+            "Rating for " + prg.getTitle() + ":\n" +
+            "Rating : " +  new DecimalFormat("##.#").format((double)rating.getRating() / 10) + "\n" +
+            "Votes : " + rating.getVotes()
+    );
   }
 
   @Override
@@ -138,15 +161,16 @@ public class ImdbPlugin extends Plugin {
         }
       });
     }
+    mStartFinished = true;
   }
 
-  private void showUpdateDialog() {
+  public void showUpdateDialog() {
     JComboBox box = new JComboBox(new String[] {"ftp.fu-berlin.de", "ftp.funet.fi", "ftp.sunet.se"});
     Object[] shownObjects = new Object[2];
-    shownObjects[0] = "Bitte den Server wählen:";
+    shownObjects[0] = mLocalizer.msg("serverMsg", "Choose server:");
     shownObjects[1] = box;
 
-    int ret = JOptionPane.showConfirmDialog(getParentFrame(), shownObjects, mLocalizer.msg("downloadDataTitle","No data available"), JOptionPane.OK_CANCEL_OPTION);
+    int ret = JOptionPane.showConfirmDialog(getParentFrame(), shownObjects, mLocalizer.msg("serverTitle","Choose Server"), JOptionPane.OK_CANCEL_OPTION);
 
     if (ret == JOptionPane.OK_OPTION) {
       String server = null;
@@ -162,9 +186,9 @@ public class ImdbPlugin extends Plugin {
 
       ImdbUpdateDialog dialog = null;
       if (w instanceof JFrame) {
-        dialog = new ImdbUpdateDialog((JFrame) UiUtilities.getBestDialogParent(getParentFrame()), server, mImdbDatabase);
+        dialog = new ImdbUpdateDialog(this, (JFrame) UiUtilities.getBestDialogParent(getParentFrame()), server, mImdbDatabase);
       } else {
-        dialog = new ImdbUpdateDialog((JDialog) UiUtilities.getBestDialogParent(getParentFrame()), server, mImdbDatabase);
+        dialog = new ImdbUpdateDialog(this, (JDialog) UiUtilities.getBestDialogParent(getParentFrame()), server, mImdbDatabase);
       }
 
       UiUtilities.centerAndShow(dialog);
@@ -179,5 +203,70 @@ public class ImdbPlugin extends Plugin {
   @Override
   public Properties storeSettings() {
     return mProperties;
+  }
+
+  @Override
+  public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    int version = in.readInt();
+
+    int count = in.readInt();
+
+    mExcludedChannels.clear();
+    for (int i = 0;i< count;i++) {
+      Channel ch = Channel.readData(in, true);
+      if (ch != null) {
+        mExcludedChannels.add(ch);
+      }
+    }
+  }
+
+  @Override
+  public void writeData(ObjectOutputStream out) throws IOException {
+    out.writeInt(1);
+
+    out.writeInt(mExcludedChannels.size());
+    for (Channel ch : mExcludedChannels) {
+      ch.writeData(out);
+    }
+
+  }
+
+  @Override
+  public SettingsTab getSettingsTab() {
+    return new ImdbSettings((JFrame)getParentFrame(), this);
+  }
+
+  /**
+   * Force an update of the currently shown programs in the program table
+   * where we need to add/update a rating.
+   *
+   * Internally called after a successful update of the imdb ratings database.
+   */
+  public void updateCurrentDateAndClearCache() {
+    // dont update the UI if the rating updater runs on TV-Browser start
+    if (!mStartFinished) {
+      return;
+    }
+    mRatingCache.clear();
+    Date currentDate = getPluginManager().getCurrentDate();
+    final Channel[] channels = getPluginManager().getSubscribedChannels();
+    int i = 0;
+    for (Channel channel : channels) {
+      final Iterator<Program> iter = getPluginManager().getChannelDayProgram(currentDate, channel);
+      if (null != iter) {
+        while (iter.hasNext()) {
+          Program prog = iter.next();
+          prog.validateMarking();
+        }
+      }
+    }
+  }
+
+  public Channel[] getExcludedChannels() {
+    return mExcludedChannels.toArray(new Channel[mExcludedChannels.size()]);
+  }
+
+  public void setExcludedChannels(Channel[] excludedChannels) {
+    mExcludedChannels = new ArrayList<Channel>(Arrays.asList(excludedChannels));
   }
 }

@@ -12,13 +12,17 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.JButton;
+import javax.swing.SwingUtilities;
 
 import util.ui.Localizer;
+import util.ui.progress.ProgressBarProgressMonitor;
 import util.exc.ErrorHandler;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+
+import devplugin.ProgressMonitor;
 
 public class ImdbUpdateDialog extends JDialog {
   /**
@@ -28,18 +32,22 @@ public class ImdbUpdateDialog extends JDialog {
   private String mServer;
   private ImdbDatabase mDatabase;
   private ImdbParser mParser;
+  private ProgressMonitor mMonitor;
+  private ImdbPlugin mPlugin;
 
-  public ImdbUpdateDialog(JFrame frame, String server, ImdbDatabase db) {
+  public ImdbUpdateDialog(ImdbPlugin plugin, JFrame frame, String server, ImdbDatabase db) {
     super(frame, true);
     mServer = server;
     mDatabase = db;
+    mPlugin = plugin;
     createGui();
   }
 
-  public ImdbUpdateDialog(JDialog dialog, String server, ImdbDatabase db) {
+  public ImdbUpdateDialog(ImdbPlugin plugin, JDialog dialog, String server, ImdbDatabase db) {
     super(dialog, true);
     mServer = server;
     mDatabase = db;
+    mPlugin = plugin;
     createGui();
   }
 
@@ -52,8 +60,10 @@ public class ImdbUpdateDialog extends JDialog {
 
     CellConstraints cc = new CellConstraints();
 
-    panel.add(new JLabel(mLocalizer.msg("downloadingMsg","Processing Imdb Data...")), cc.xy(1,1));
-    panel.add(new JProgressBar(), cc.xy(1,3));
+    JLabel label = new JLabel(mLocalizer.msg("downloadingMsg", "Processing Imdb Data..."));
+    panel.add(label, cc.xy(1,1));
+    JProgressBar progressBar = new JProgressBar();
+    panel.add(progressBar, cc.xy(1,3));
 
     JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     cancel.addActionListener(new ActionListener() {
@@ -66,6 +76,7 @@ public class ImdbUpdateDialog extends JDialog {
     builder.addGriddedButtons(new JButton[] {cancel});
     panel.add(builder.getPanel(), cc.xy(1,5));
 
+    mMonitor = new ProgressBarProgressMonitor(progressBar, label);
     setSize(Sizes.dialogUnitXAsPixel(200, this), Sizes.dialogUnitYAsPixel(100, this));
   }
 
@@ -88,11 +99,16 @@ public class ImdbUpdateDialog extends JDialog {
       public void run() {
         mParser = new ImdbParser(mDatabase, mServer);
         try {
-          mParser.startParsing();
+          mParser.startParsing(mMonitor);
         } catch (IOException e) {
           ErrorHandler.handle("Problems during processing of IMDb Data", e);
         }
-        setVisible(false);
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            setVisible(false);
+            mPlugin.updateCurrentDateAndClearCache();
+          }
+        });
       }
     }).start();
   }

@@ -25,6 +25,7 @@ public class ImdbDatabase {
   private static final String TYPE_RATING = "TYPE_RATING";
 
   private static final String MOVIE_TITLE = "MOVIE_TITLE";
+  private static final String MOVIE_TITLE_NORMALISED = "MOVIE_TITLE_NORMALISED";
   private static final String MOVIE_YEAR = "MOVIE_YEAR";
   private static final String MOVIE_TYPE = "MOVIE_TYPE";
   private static final String MOVIE_ID = "MOVIE_ID";
@@ -33,6 +34,7 @@ public class ImdbDatabase {
   private static final String MOVIE_DISTRIBUTION = "MOVIE_DISTRIBUTION";
 
   private static final String EPISODE_TITLE = "EPISODE_TITLE";
+  private static final String EPISODE_TITLE_NORMALISED = "EPISODE_TITLE_NORMALISED";
 
   private File mCurrentPath;
 
@@ -63,6 +65,7 @@ public class ImdbDatabase {
         ret = true;
       }
     } catch (IOException e) {
+      // Empty catch Block
     }
 
     return ret;
@@ -74,14 +77,16 @@ public class ImdbDatabase {
       Document doc = new Document();
       movieID = UUID.randomUUID().toString();
       doc.add(new Field(MOVIE_ID, movieID, Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
-      doc.add(new Field(ITEM_TYPE, TYPE_MOVIE, Field.Store.YES, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_TITLE, movieTitle, Field.Store.YES, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_YEAR, Integer.toString(year), Field.Store.YES, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+      doc.add(new Field(ITEM_TYPE, TYPE_MOVIE, Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_TITLE, movieTitle, Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_TITLE_NORMALISED, normalise(movieTitle), Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_YEAR, Integer.toString(year), Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
       if (type != null) {
         doc.add(new Field(MOVIE_TYPE, type, Field.Store.YES, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
       }
       if (episode != null) {
-        doc.add(new Field(EPISODE_TITLE, episode, Field.Store.YES, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+        doc.add(new Field(EPISODE_TITLE, episode, Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+        doc.add(new Field(EPISODE_TITLE_NORMALISED, normalise(episode), Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
       }
       mWriter.addDocument(doc);
     } catch (IOException e) {
@@ -94,15 +99,17 @@ public class ImdbDatabase {
   public void addAkaTitle(String movieId, String title, String episode, int year, String type) {
     try {
       Document doc = new Document();
-      doc.add(new Field(MOVIE_ID, movieId, Field.Store.YES, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
-      doc.add(new Field(ITEM_TYPE, TYPE_AKA, Field.Store.YES, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_TITLE, title, Field.Store.YES, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_YEAR, Integer.toString(year), Field.Store.YES, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_ID, movieId, Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+      doc.add(new Field(ITEM_TYPE, TYPE_AKA, Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_TITLE, title, Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_TITLE_NORMALISED, normalise(title), Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_YEAR, Integer.toString(year), Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
       if (type != null) {
         doc.add(new Field(MOVIE_TYPE, type, Field.Store.YES, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
       }
       if (episode != null) {
-        doc.add(new Field(EPISODE_TITLE, episode, Field.Store.YES, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+        doc.add(new Field(EPISODE_TITLE, episode, Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+        doc.add(new Field(EPISODE_TITLE_NORMALISED, normalise(episode), Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
       }
       mWriter.addDocument(doc);
     } catch (IOException e) {
@@ -110,14 +117,26 @@ public class ImdbDatabase {
     }
   }
 
+  private String normalise(String str) {
+    // ToDo: replace this with better normaliser
+    str = str.replaceAll("ä", "ae");
+    str = str.replaceAll("ü", "ue");
+    str = str.replaceAll("ö", "oe");
+    str = str.replaceAll("ß", "ss");
+    str = str.replaceAll("Ä", "Ae");
+    str = str.replaceAll("Ü", "Ue");
+    str = str.replaceAll("Ö", "Oe");
+    return str;
+  }
+
   public void addRating(String movieId, int rating, int votes, String distribution) {
     try {
       Document doc = new Document();
-      doc.add(new Field(MOVIE_ID, movieId, Field.Store.YES, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
-      doc.add(new Field(ITEM_TYPE, TYPE_RATING, Field.Store.YES, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_ID, movieId, Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+      doc.add(new Field(ITEM_TYPE, TYPE_RATING, Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
       doc.add(new Field(MOVIE_RATING, Integer.toString(rating), Field.Store.YES, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
       doc.add(new Field(MOVIE_VOTES, Integer.toString(votes), Field.Store.YES, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_DISTRIBUTION, distribution, Field.Store.YES, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_DISTRIBUTION, distribution, Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
       mWriter.addDocument(doc);
     } catch (IOException e) {
       e.printStackTrace();
