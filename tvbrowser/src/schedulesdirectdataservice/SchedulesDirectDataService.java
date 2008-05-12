@@ -44,6 +44,7 @@ import net.sf.xtvdclient.xtvd.datatypes.Crew;
 import net.sf.xtvdclient.xtvd.datatypes.ProgramGenre;
 import net.sf.xtvdclient.xtvd.datatypes.CrewMember;
 import net.sf.xtvdclient.xtvd.datatypes.Genre;
+import net.sf.xtvdclient.xtvd.datatypes.StarRating;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
 import tvdataservice.SettingsPanel;
@@ -177,7 +178,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
               desc.append(xtvdProgram.getDescription()).append("\n");
             }
             if (xtvdProgram.getStarRating() != null) {
-              desc.append("\nStarRating : ").append(xtvdProgram.getStarRating());
+              prog.setIntField(ProgramFieldType.RATING_TYPE, parseStarRating(xtvdProgram.getStarRating()));
             }
             if (xtvdProgram.getMpaaRating() != null) {
               desc.append("\nMPAA Rating: ").append(xtvdProgram.getMpaaRating());
@@ -270,6 +271,40 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
 
       monitor.setMessage("");
     }
+  }
+
+  private int parseStarRating(StarRating starRating) {
+    String value = starRating.toString();
+
+    int ret = -1;
+
+    if (value.equals("")) {
+      ret = 0;
+    } else if (value.equals("+")) {
+      ret = 10;
+    } else if (value.equals("*")) {
+      ret = 20;
+    } else if (value.equals("*+")) {
+      ret = 30;
+    } else if (value.equals("**")) {
+      ret = 40;
+    } else if (value.equals("**+")) {
+      ret = 50;
+    } else if (value.equals("***")) {
+      ret = 60;
+    } else if (value.equals("***+")) {
+      ret = 70;
+    } else if (value.equals("****")) {
+      ret = 80;
+    } else if (value.equals("****+")) {
+      ret = 90;
+    } else if (value.equals("*****")) {
+      ret = 100;
+    } else {
+      System.out.println(value);
+    }
+
+    return ret;
   }
 
   private MutableChannelDayProgram getMutableDayProgram(Channel ch, devplugin.Date date) {
