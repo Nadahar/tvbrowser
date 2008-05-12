@@ -307,7 +307,7 @@ public class Channel implements Comparable<Channel> {
    * @throws IOException 
    */
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(4); // version
+    out.writeInt(5); // version
     out.writeUTF(getDataServiceProxy().getId());
     out.writeUTF(getGroup().getId());
     out.writeUTF(getCountry());
