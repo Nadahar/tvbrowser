@@ -263,6 +263,15 @@ public class ProgramFieldType {
        = new ProgramFieldType(35, TEXT_FORMAT, true, "additional persons",
                               "additionalPersons", "additional persons");
 
+  /**
+   * Rating for program. Must be between 0-100
+   *
+   * @since 2.7
+   */
+  public static final ProgramFieldType RATING_TYPE
+       = new ProgramFieldType(36, INT_FORMAT, true, "rating",
+                              "rating", "Rating");
+
   private int mTypeId;
 
   private String mName;

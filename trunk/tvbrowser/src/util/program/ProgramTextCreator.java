@@ -30,6 +30,8 @@ import java.awt.Font;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.text.DecimalFormat;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -383,8 +385,8 @@ public class ProgramTextCreator {
       // Workaround: Without the &nbsp; the component are not put in one line.
       buffer.append("&nbsp;");
 
-      for (int i = 0; i < iconLabels.size(); i++) {
-        buffer.append(doc.createCompTag(iconLabels.get(i)));
+      for (JLabel iconLabel : iconLabels) {
+        buffer.append(doc.createCompTag(iconLabel));
         buffer.append("&nbsp;&nbsp;");
       }
 
@@ -394,9 +396,7 @@ public class ProgramTextCreator {
 
     addSeparator(doc, buffer);
 
-    Object[] ids = fieldArr;
-
-    for (Object id : ids) {
+    for (Object id : fieldArr) {
       ProgramFieldType type = null;
 
       if (id instanceof String) {
@@ -405,7 +405,7 @@ public class ProgramTextCreator {
             type = ProgramFieldType
                 .getTypeForId(Integer.parseInt((String) id, 10));
           } catch (Exception e) {
-            
+            // Emtpy Catch
           }
         }
         
@@ -429,16 +429,14 @@ public class ProgramTextCreator {
 
             openPara(buffer, "time");
 
-            String msg = mLocalizer.msg("minutes", "{0} min", new Integer(
-                length));
+            String msg = mLocalizer.msg("minutes", "{0} min", length);
             buffer.append(msg).append(" (");
             buffer.append(mLocalizer.msg("until", "until {0}", prog.getEndTimeString()));
 
             int netLength = prog
                 .getIntField(ProgramFieldType.NET_PLAYING_TIME_TYPE);
             if (netLength != -1) {
-              msg = mLocalizer.msg("netMinuted", "{0} min net", new Integer(
-                  netLength));
+              msg = mLocalizer.msg("netMinuted", "{0} min net", netLength);
               buffer.append(" - ").append(msg);
             }
             buffer.append(")");
@@ -523,9 +521,7 @@ public class ProgramTextCreator {
           ArrayList<String> knownNames = new ArrayList<String>();
           String[] recognizedActors = ProgramUtilities.getActorNames(prog);
           if (recognizedActors != null) {
-            for (String actorName : recognizedActors) {
-              knownNames.add(actorName);
-            }
+            knownNames.addAll(Arrays.asList(recognizedActors));
           }
           String actorField = prog.getTextField(type);
           if (actorField != null) {
@@ -613,7 +609,7 @@ public class ProgramTextCreator {
     @SuppressWarnings("unchecked")
     ArrayList<String> list2 = new ArrayList();
     String actorField = prog.getTextField(ProgramFieldType.ACTOR_LIST_TYPE).trim();
-    String[] actors = new String[0];
+    String[] actors;
     // don't try any parsing if newlines and commas are available
     // this must be recognized by the more advanced actors parsing
     if (actorField.contains("\n")) {
@@ -657,15 +653,11 @@ public class ProgramTextCreator {
   }
 
   private static String addSearchLink(String topic, String displayText) {
-//    try {
-//      String url = URLEncoder.encode(topic, "UTF-8").replace("+", "%20");
-      String url = topic;
       String style = " style=\"color:black; border-bottom: 1px dashed;\"";
       StringBuffer buffer = new StringBuffer();
       buffer.append("<a href=\"");
-//      buffer.append(mLocalizer.msg("wikipediaLink", "http://en.wikipedia.org/wiki/{0}", url));
       buffer.append(TVBROWSER_URL_PROTOCOL);
-      buffer.append(url.replaceAll("\"", "").replaceAll("'", ""));
+      buffer.append(topic.replaceAll("\"", "").replaceAll("'", ""));
       
       buffer.append("\" ");
       buffer.append(style);
@@ -673,11 +665,6 @@ public class ProgramTextCreator {
       buffer.append(displayText);
       buffer.append("</a>");
       return buffer.toString();
-//    } catch (UnsupportedEncodingException e) {
-//      // TODO Auto-generated catch block
-//      e.printStackTrace();
-//    }
-//    return displayText; // only reached in case of exception
   }
 
   private static String addWikiLink(String topic) {
@@ -750,7 +737,14 @@ public class ProgramTextCreator {
     } else if (fieldType.getFormat() == ProgramFieldType.TIME_FORMAT) {
       text = prog.getTimeFieldAsString(fieldType);
     } else if (fieldType.getFormat() == ProgramFieldType.INT_FORMAT) {
-      text = prog.getIntFieldAsString(fieldType);
+      if (fieldType == ProgramFieldType.RATING_TYPE) {
+        int value = prog.getIntField(fieldType);
+        if (value > -1) {
+          text = new DecimalFormat("##.#").format((double)prog.getIntField(fieldType) / 10) + "/10";
+        }
+      } else {
+        text = prog.getIntFieldAsString(fieldType);
+      }
     }
 
     if (fieldType == ProgramFieldType.ORIGIN_TYPE) {
@@ -787,7 +781,7 @@ public class ProgramTextCreator {
         || ProgramFieldType.MODERATION_TYPE == fieldType) {
       String[] persons = splitList(text);
       for (int i = 0; i < persons.length; i++) {
-        String topic = persons[i];
+        String topic;
         if (persons[i].contains("(")) {
           topic = persons[i].substring(0, persons[i].indexOf("("));
           persons[i] = addSearchLink(topic, persons[i]);
@@ -856,6 +850,7 @@ public class ProgramTextCreator {
     return new Object[] {
         ProgramFieldType.GENRE_TYPE,
         ProgramFieldType.DESCRIPTION_TYPE,        
+        ProgramFieldType.RATING_TYPE,
         ProgramFieldType.ORIGIN_TYPE,
         ProgramFieldType.DIRECTOR_TYPE,
         ProgramFieldType.SCRIPT_TYPE,

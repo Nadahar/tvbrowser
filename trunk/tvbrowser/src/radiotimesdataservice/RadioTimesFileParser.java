@@ -137,7 +137,7 @@ public class RadioTimesFileParser {
         }
 
         if (items[RT_STAR_RATING].length() != 0) {
-            items[RT_DESCRIPTION] = "[" + items[RT_STAR_RATING] + "/5] " + items[RT_DESCRIPTION];
+            prog.setIntField(ProgramFieldType.RATING_TYPE, translateRating(items[RT_STAR_RATING]));
         }
 
         desc.append(items[RT_DESCRIPTION]);
@@ -232,6 +232,25 @@ public class RadioTimesFileParser {
     }
 
     storeDayPrograms(updateManager);
+  }
+
+  private int translateRating(String rating) {
+    if (rating.equals("1")) {
+      return 20;
+    } else if (rating.equals("2")) {
+      return 40;
+    } else if (rating.equals("3")) {
+      return 60;
+    } else if (rating.equals("4")) {
+      return 80;
+    } else if (rating.equals("5")) {
+      return 100;
+    }
+
+    if (rating.length() > 0)
+      System.out.println(rating);
+
+    return 0;
   }
 
   private void storeDayPrograms(TvDataUpdateManager updateManager) {
