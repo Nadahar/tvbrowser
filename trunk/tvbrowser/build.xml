@@ -517,11 +517,11 @@
 
 
   <!-- Creates the default runtime folder (platform independent) -->
-  <target name="runtime-default" depends="clean-default, make-default, runtime">
+  <target name="runtime-default" depends="clean-default, make-default, runtime, test">
   </target>
 
   <!-- Creates the runtime folder for the transportable version -->
-  <target name="runtime-transportable" depends="clean-transportable, make-transportable, runtime">  	
+  <target name="runtime-transportable" depends="clean-transportable, make-transportable, runtime, test">  	
 	<echo message="deployment dir is ${deployment.dir}, win is ${win.dir}" />
 	<mkdir dir="${tvbrowser-transportable.runtime.dir}"/>
   	<mkdir dir="${tvbrowser-transportable.runtime.dir}/settings"/>
@@ -535,7 +535,7 @@
   </target>
 	
   <!-- Creates the runtime folder for the windows platform -->
-  <target name="runtime-win" depends="clean-win, make-win, runtime">
+  <target name="runtime-win" depends="clean-win, make-win, runtime, test">
     <echo message="deployment dir is ${deployment.dir}, win is ${win.dir}" />
     <mkdir dir="${tvbrowser-win.runtime.dir}"/>
     <copy todir="${tvbrowser-win.runtime.dir}">
@@ -551,7 +551,7 @@
 
 
   <!-- Creates the runtime folder for the windows platform -->
-  <target name="runtime-mac" depends="clean-mac, make-mac, runtime">
+  <target name="runtime-mac" depends="clean-mac, make-mac, runtime, test">
 
     <delete dir="${tvbrowser-mac.runtime.dir}"/>
     <mkdir dir="${tvbrowser-mac.runtime.dir}"/>
@@ -591,7 +591,7 @@
   </target>
 
   <!-- Creates the runtime folder for linux platforms -->
-  <target name="runtime-linux" depends="clean-linux, make-linux, runtime">
+  <target name="runtime-linux" depends="clean-linux, make-linux, runtime, test">
     <delete dir="${tvbrowser-linux.runtime.dir}"/>
     <mkdir dir="${tvbrowser-linux.runtime.dir}"/>
     <copy todir="${tvbrowser-linux.runtime.dir}">
@@ -611,7 +611,7 @@
   </target>
 
 
-  <target name="runtime-tools" depends="clean-tools, make-default">
+  <target name="runtime-tools" depends="clean-tools, make-default, test">
     <echo message="Creating the jars ..." />
 
     <mkdir dir="${tvdatatools.runtime.dir}"/>
@@ -696,7 +696,7 @@
   <!--
   | Creates the runtime for the TV data starter kit
   +-->
-  <target name="runtime-tvdatakit" depends="clean-tvdatakit, runtime-tools">
+  <target name="runtime-tvdatakit" depends="clean-tvdatakit, runtime-tools, test">
     <!-- Compile the example PDSs -->
     <mkdir dir="${tvdatakit.runtime.dir}/workspace/java"/>
     <mkdir dir="${tvdatakit.runtime.dir}/workspace/classes"/>
