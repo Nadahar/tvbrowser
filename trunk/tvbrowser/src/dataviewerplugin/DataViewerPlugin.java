@@ -13,14 +13,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -70,13 +68,13 @@ public class DataViewerPlugin extends Plugin implements Runnable {
   private Thread mThread;
   private Properties mProperties;
   private JDialog mDialog;
-  private Vector<Program>[][] mErrData;
+  private ArrayList<Program>[][] mErrData;
   private JProgressBar mProgress;
   private Date mToday = Date.getCurrentDate();
   private boolean mReactOnDataUpdate = false;
   private int mMinChannelWidth = 0;
 
-  private static final Version mVersion = new Version(1,05);
+  private static final Version mVersion = new Version(1,06);
 
   private static DataViewerPlugin mInstance;
 
@@ -103,22 +101,8 @@ public class DataViewerPlugin extends Plugin implements Runnable {
   /** Plugin Info */
   @Override
   public PluginInfo getInfo() {
-    Class pluginInfo = PluginInfo.class;
-
-    try {
-      Constructor constructor = pluginInfo.getConstructor(new Class[] {Class.class,String.class,String.class,String.class,String.class});
-
-      return (PluginInfo)constructor.newInstance(new Object[] {DataViewerPlugin.class,"DataViewerPlugin",mLocalizer.msg("info",
-      "Lists the available program data."),"René Mach","GPL"});
-    } catch (Exception e) {
-      try {
-        Constructor constructor = pluginInfo.getConstructor(new Class[] {String.class,String.class,String.class,Version.class,String.class});
-
-        return (PluginInfo)constructor.newInstance(new Object[] {"DataViewerPlugin",mLocalizer.msg("info",
-        "Lists the available program data."),"René Mach",mVersion,"GPL"});
-      }catch(Exception ee) {};
-    }
-    return new PluginInfo();
+    return new PluginInfo(DataViewerPlugin.class,mLocalizer.msg("data","DataViewerPlugin"),mLocalizer.msg("info",
+    "Lists the available program data."),"René Mach","GPL");
   }
 
   @Override
@@ -236,12 +220,12 @@ public class DataViewerPlugin extends Plugin implements Runnable {
         String toolTip = "<html>" + mDates[table.columnAtPoint(e.getPoint())]
                                            + " " + channels.getValueAt(table.rowAtPoint(e.getPoint()), 0);
 
-        Vector<Program> vec = mErrData[table.rowAtPoint(e.getPoint())][table
+        ArrayList<Program> list = mErrData[table.rowAtPoint(e.getPoint())][table
                                                               .columnAtPoint(e.getPoint())];
 
-        if (vec != null) {
-          for (int i = 0; i < vec.size(); i++) {
-            Program p = vec.elementAt(i);
+        if (list != null) {
+          for (int i = 0; i < list.size(); i++) {
+            Program p = list.get(i);
 
             toolTip += "<br>" + p.getTimeString() + " " + p.getTitle();
           }
@@ -261,12 +245,12 @@ public class DataViewerPlugin extends Plugin implements Runnable {
           if (value.compareToIgnoreCase("false") != 0) {
             SwingUtilities.invokeLater(new Runnable() {
               public void run() {
-                Vector<Program> vec = mErrData[table.rowAtPoint(e.getPoint())][table
+                ArrayList<Program> list = mErrData[table.rowAtPoint(e.getPoint())][table
                                                                       .columnAtPoint(e.getPoint())];
 
-                if (vec != null) {
+                if (list != null) {
                   MainFrame.getInstance().scrollToProgram(
-                      vec.elementAt(0));
+                      list.get(0));
                 } else {
                   MainFrame.getInstance().goTo(
                       mDates[table.columnAtPoint(e.getPoint())]);
@@ -426,8 +410,8 @@ public class DataViewerPlugin extends Plugin implements Runnable {
     mChannels = ch.toArray(new Channel[ch.size()]);
     mToday = Date.getCurrentDate();
 
-    Vector<String>[] channels = new Vector[mChannels.length];
-    HashMap<Channel, HashMap<Integer, Vector<Program>>> err = new HashMap<Channel, HashMap<Integer, Vector<Program>>>();
+    ArrayList<String>[] channels = new ArrayList[mChannels.length];
+    HashMap<Channel, HashMap<Integer, ArrayList<Program>>> err = new HashMap<Channel, HashMap<Integer, ArrayList<Program>>>();
 
     if (channels.length < 1) {
       return;
@@ -438,7 +422,7 @@ public class DataViewerPlugin extends Plugin implements Runnable {
       boolean found = false;
 
       for (int i = 0; i < mChannels.length; i++) {
-        channels[i] = new Vector<String>();
+        channels[i] = new ArrayList<String>();
       }
 
       Program[] last = new Program[mChannels.length];
@@ -508,12 +492,12 @@ public class DataViewerPlugin extends Plugin implements Runnable {
             }
 
             if (complete && j != -1) {
-              channels[i].addElement("true" + (picture ? "pict" : ""));
+              channels[i].add("true" + (picture ? "pict" : ""));
             } else if (j != -1) {
-              channels[i].addElement("uncomplete" + (picture ? "pict" : ""));
+              channels[i].add("uncomplete" + (picture ? "pict" : ""));
             }
           } else if (j != -1) {
-            channels[i].addElement("false");
+            channels[i].add("false");
             last[i] = null;
           }
         }
@@ -523,7 +507,7 @@ public class DataViewerPlugin extends Plugin implements Runnable {
     }
     mDataTable = new Object[mChannels.length][channels[0].size() - 1];
     mChannelTable = new Channel[mChannels.length][1];
-    mErrData = new Vector[mChannels.length][channels[0].size() - 1];
+    mErrData = new ArrayList[mChannels.length][channels[0].size() - 1];
     mDateString = new String[channels[0].size() - 1];
     mDates = new Date[channels[0].size() - 1];
 
@@ -538,7 +522,7 @@ public class DataViewerPlugin extends Plugin implements Runnable {
         }
         if (err.containsKey(mChannels[i])) {
 
-          HashMap<Integer, Vector<Program>> dates = err.get(mChannels[i]);
+          HashMap<Integer, ArrayList<Program>> dates = err.get(mChannels[i]);
 
           if (dates.containsKey(new Integer(j))) {
             mErrData[i][j] = dates.get(new Integer(j));
@@ -548,7 +532,7 @@ public class DataViewerPlugin extends Plugin implements Runnable {
         } else {
           mErrData[i][j] = null;
         }
-        mDataTable[i][j] = channels[i].elementAt(j);
+        mDataTable[i][j] = channels[i].get(j);
       }
     }
 
@@ -560,24 +544,24 @@ public class DataViewerPlugin extends Plugin implements Runnable {
     }
   }
 
-  private void putInHashMap(HashMap<Channel, HashMap<Integer, Vector<Program>>> map, Program p, Channel channel, Integer n) {
+  private void putInHashMap(HashMap<Channel, HashMap<Integer, ArrayList<Program>>> map, Program p, Channel channel, Integer n) {
 
     if (map.containsKey(channel)) {
-      HashMap<Integer, Vector<Program>> dates = map.get(channel);
+      HashMap<Integer, ArrayList<Program>> dates = map.get(channel);
 
       if (dates.containsKey(n)) {
-        Vector<Program> vec = dates.get(n);
-        vec.addElement(p);
+        ArrayList<Program> list = dates.get(n);
+        list.add(p);
       } else {
-        Vector<Program> vec = new Vector<Program>();
-        vec.addElement(p);
-        dates.put(n, vec);
+        ArrayList<Program> list = new ArrayList<Program>();
+        list.add(p);
+        dates.put(n, list);
       }
     } else {
-      HashMap<Integer, Vector<Program>> dates = new HashMap<Integer, Vector<Program>>();
-      Vector<Program> vec = new Vector<Program>();
-      vec.addElement(p);
-      dates.put(n, vec);
+      HashMap<Integer, ArrayList<Program>> dates = new HashMap<Integer, ArrayList<Program>>();
+      ArrayList<Program> list = new ArrayList<Program>();
+      list.add(p);
+      dates.put(n, list);
       map.put(channel, dates);
     }
   }
