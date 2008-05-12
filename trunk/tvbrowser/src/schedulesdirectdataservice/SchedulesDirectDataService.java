@@ -370,7 +370,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
     TimeZone timeZone = TimeZone.getTimeZone("GMT+1:00");
     for (int i = 0; i < numChannels; i++) {
       Channel ch = new Channel(this, settings.getProperty("ChannelTitle-" + i, ""), settings.getProperty("ChannelId-"
-              + i, ""), timeZone, "de", "(c) SchedulesDirect", "", mChannelGroup, null, Channel.CATEGORY_TV);
+              + i, ""),  TimeZone.getTimeZone("UTC"), "US", "(c) SchedulesDirect", "", mChannelGroup, null, Channel.CATEGORY_TV);
 
       mChannels.add(ch);
     }
