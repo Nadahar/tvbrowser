@@ -660,6 +660,12 @@ public class MutableProgram implements Program {
    * @param value The int value to set.
    */
   public void setIntField(ProgramFieldType type, int value) {
+    if (type == ProgramFieldType.RATING_TYPE && (value < 0 || (value > 100))) {
+      mLog.warning("The value for field " + type.getName()
+        + " must be between in [0..100], but it was set to " + value+"; program: "+toString());
+      value = -1;
+    }
+
     Integer obj = null;
     if (value != -1) {
       obj = new Integer(value);
