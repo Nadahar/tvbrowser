@@ -179,7 +179,7 @@ public class RadioTimesFileParser {
         }
         
         field = items[RT_GENRE].trim();
-        if (field.length() > 0) {
+        if ((field.length() > 0)&& (!field.equals("No Genre"))) {
           prog.setTextField(ProgramFieldType.GENRE_TYPE, field);
         }
 
