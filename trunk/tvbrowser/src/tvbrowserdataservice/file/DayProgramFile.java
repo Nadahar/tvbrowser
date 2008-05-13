@@ -308,7 +308,7 @@ public class DayProgramFile extends AbstractFile {
         
         /* If the frame now is empty we have to remove it to prevent
          * it is misinterpreted as a to deleting program frame */
-        if(thisIsUpdateFile && frame.getProgramFieldCount() == 0) {
+        if(frame.getProgramFieldCount() == 0) {
           index = getProgramFrameIndexForId(frame.getId());
           
           if(index != -1) {
