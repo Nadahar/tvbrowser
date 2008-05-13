@@ -493,7 +493,6 @@
       <!--    <fileset dir="${txt.dir}" includes="osx.properties"/>       -->
       <!--    <fileset dir="${txt.dir}" includes="windows.properties"/>   -->
       <!--    <fileset dir="${txt.dir}" includes="tvbrowser.sh"/>         -->
-      <!--    <fileset dir="x11/src/" includes="libDesktopIndicator.so"/> -->
     </copy>
 
     <!-- Themepacks -->
@@ -527,10 +526,8 @@
   	<mkdir dir="${tvbrowser-transportable.runtime.dir}/settings"/>
 	<copy todir="${tvbrowser-transportable.runtime.dir}">
   	  <fileset dir="${tvbrowser-default.runtime.dir}"/>
-	  <fileset dir="${win.dir}/desktopindicator" includes="DesktopIndicator.dll"/>
       <fileset dir="${win.dir}/jRegistryKey" includes="jRegistryKey.dll" />
 	  <fileset dir="${win.dir}/jcom" includes="jcom.dll" />
-	  <fileset dir="${x11.dir}/src" includes="libDesktopIndicator.so"/>
 	</copy>
   </target>
 	
@@ -540,7 +537,6 @@
     <mkdir dir="${tvbrowser-win.runtime.dir}"/>
     <copy todir="${tvbrowser-win.runtime.dir}">
       <fileset dir="${tvbrowser-default.runtime.dir}"/>
-      <fileset dir="${win.dir}/desktopindicator" includes="DesktopIndicator.dll"/>
       <fileset dir="${win.dir}/jRegistryKey" includes="jRegistryKey.dll" />
         <fileset dir="${win.dir}/jcom" includes="jcom.dll" />
       <fileset dir="${deployment.dir}" includes="windows.properties"/>
@@ -596,7 +592,6 @@
     <mkdir dir="${tvbrowser-linux.runtime.dir}"/>
     <copy todir="${tvbrowser-linux.runtime.dir}">
       <fileset dir="${tvbrowser-default.runtime.dir}"/>
-      <fileset dir="${x11.dir}/src" includes="libDesktopIndicator.so"/>
       <fileset dir="${deployment.dir}" includes="linux.properties"/>
       <fileset dir="${linux.dir}" includes="tvbrowser.sh"/>
       <fileset dir="${linux.dir}" includes="tvbrowser.desktop"/>
