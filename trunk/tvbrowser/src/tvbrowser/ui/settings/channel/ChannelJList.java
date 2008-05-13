@@ -25,14 +25,16 @@
  */
 package tvbrowser.ui.settings.channel;
 
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.util.Locale;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 import util.ui.Localizer;
-
 import devplugin.Channel;
 
 /**
@@ -82,4 +84,29 @@ public class ChannelJList extends JList {
     // Return the tool tip text
     return null;
   }
+  
+  /*
+   * Fix for [TVB-250] cursor down key in channel settings leads to unwanted scrolling:
+   * Workaround for http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6510999
+   * 
+   * This workaround should be removed in the future (after release of JDK 7).
+   */
+  @Override
+  public void scrollRectToVisible(Rectangle rect) {
+    JScrollPane jScrollPane = (JScrollPane) SwingUtilities.getAncestorOfClass(
+        JScrollPane.class, this);
+    if (jScrollPane != null) {
+      int willScrollTo;
+      if (jScrollPane.getViewport().getHeight() == rect.height) {
+        willScrollTo = this.getSelectedIndex() + 1;
+      } else {
+        willScrollTo = this.getSelectedIndex() - 1;
+      }
+      Rectangle cellBounds = getCellBounds(willScrollTo, willScrollTo);
+      if (cellBounds != null) {
+        super.scrollRectToVisible(cellBounds);
+      }
+    }
+  }
+ 
 }

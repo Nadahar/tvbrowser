@@ -27,6 +27,7 @@
 package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
+import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -72,7 +73,31 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
 
     mChannelChooserModel = new DefaultListModel();
 
-    mList = new JList(mChannelChooserModel);
+    mList = new JList(mChannelChooserModel) {
+      /*
+       * Fix for [TVB-250] cursor down key in channel settings leads to unwanted scrolling:
+       * Workaround for http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6510999
+       * 
+       * This workaround should be removed in the future (after release of JDK 7).
+       */
+      @Override
+      public void scrollRectToVisible(Rectangle rect) {
+        JScrollPane jScrollPane = (JScrollPane) SwingUtilities.getAncestorOfClass(
+            JScrollPane.class, this);
+        if (jScrollPane != null) {
+          int willScrollTo;
+          if (jScrollPane.getViewport().getHeight() == rect.height) {
+            willScrollTo = this.getSelectedIndex() + 1;
+          } else {
+            willScrollTo = this.getSelectedIndex() - 1;
+          }
+          Rectangle cellBounds = getCellBounds(willScrollTo, willScrollTo);
+          if (cellBounds != null) {
+            super.scrollRectToVisible(cellBounds);
+          }
+        }
+      }
+    };
     updateChannelChooser();
     setLayout(new BorderLayout());
     add(new JScrollPane(mList));
