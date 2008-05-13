@@ -23,7 +23,7 @@
  *   $Author$
  * $Revision$
  */
-package tvbrowser.ui;
+package tvbrowser.ui.tray;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -66,10 +66,6 @@ import util.ui.ScrollableMenu;
 import util.ui.UiUtilities;
 import util.ui.menu.MenuUtil;
 
-import com.gc.systray.SystemTrayFactory;
-import com.gc.systray.SystemTrayIf;
-import com.gc.systray.WinSystemTray;
-
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
@@ -97,7 +93,7 @@ public class SystemTray {
   private boolean mMenuCreated;
   private boolean mTime24 = !Settings.propTwelveHourFormat.getBoolean();
 
-  private SystemTrayIf mSystemTray;
+  private Java6Tray mSystemTray;
 
   private JMenuItem mOpenCloseMenuItem, mQuitMenuItem, mConfigure, mReminderItem;
   
@@ -121,19 +117,12 @@ public class SystemTray {
 
     mUseSystemTray = false;
 
-    mSystemTray = SystemTrayFactory.createSystemTray();
+    mSystemTray = Java6Tray.create();
     
     if (mSystemTray != null) {
-
-      if (mSystemTray instanceof WinSystemTray) {
-        mUseSystemTray = mSystemTray.init(MainFrame.getInstance(),
-            "imgs/systray.ico", TVBrowser.MAINWINDOW_TITLE);
-        mLog.info("using windows system tray");
-      } else {
-        mUseSystemTray = mSystemTray.init(MainFrame.getInstance(),
-            "imgs/tvbrowser16.png", TVBrowser.MAINWINDOW_TITLE);
-        mLog.info("using default system tray");
-      }
+      mUseSystemTray = mSystemTray.init(MainFrame.getInstance(),
+          "imgs/tvbrowser16.png", TVBrowser.MAINWINDOW_TITLE);
+      mLog.info("using default system tray");
     } else {
       mUseSystemTray = false;
       Settings.propTrayIsEnabled.setBoolean(false);

@@ -23,7 +23,7 @@
  *   $Author$
  * $Revision$
  */
-package tvbrowser.ui;
+package tvbrowser.ui.tray;
 
 import java.awt.Color;
 import java.awt.Font;

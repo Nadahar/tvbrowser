@@ -1,1 +1,0 @@
-You will find the needed Includes in JAVA_HOME/include
