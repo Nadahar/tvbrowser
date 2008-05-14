@@ -175,7 +175,7 @@ public class TextLineBreakerStringWidth {
         newLineWidth += mSpaceWidth;
       }
       
-      if (newLineWidth > maxWidth) {
+      if (newLineWidth - mSpaceWidth > maxWidth) {
         // The next word does not fit
         if (lineWidth == 0) {
           // The line is empty -> Break the word
