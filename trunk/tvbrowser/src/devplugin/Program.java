@@ -148,6 +148,36 @@ public interface Program {
    */
   public static final int INFO_VISION_HD          = 1 << 19;  
 
+  /**
+   * This program is a documentary or a feature
+   * @since 2.7
+   */
+  public static final int INFO_CATEGORIE_DOCUMENTARY = 1 << 20;
+  
+  /**
+   * This program is arts, theater, music
+   * @since 2.7
+   */
+  public static final int INFO_CATEGORIE_ARTS = 1 << 21;
+  
+  /**
+   * This program is sports
+   * @since 2.7
+   */
+  public static final int INFO_CATEGORIE_SPORTS = 1 << 22;
+  
+  /**
+   * This program is especially suitable for children
+   * @since 2.7
+   */
+  public static final int INFO_CATEGORIE_CHILDRENS = 1 << 23;
+  
+  /**
+   * This program does not fit in any of the other categories
+   * @since 2.7
+   */ 
+  public static final int INFO_CATEGORIE_OTHERS = 1 << 24;
+  
   public static final int IS_VALID_STATE = 0;
   public static final int WAS_UPDATED_STATE = 1;
   public static final int WAS_DELETED_STATE = 2;

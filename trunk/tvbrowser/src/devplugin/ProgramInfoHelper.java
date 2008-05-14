@@ -35,11 +35,14 @@ public class ProgramInfoHelper {
             Program.INFO_AUDIO_DOLBY_DIGITAL_5_1,
             Program.INFO_AUDIO_TWO_CHANNEL_TONE,
             Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED, Program.INFO_LIVE,
-            Program.INFO_ORIGINAL_WITH_SUBTITLE,
-            Program.INFO_CATEGORIE_MOVIE, Program.INFO_CATEGORIE_SERIES, Program.INFO_NEW,
-            Program.INFO_AUDIO_DESCRIPTION, Program.INFO_CATEGORIE_NEWS,
+            Program.INFO_ORIGINAL_WITH_SUBTITLE, Program.INFO_NEW,
+            Program.INFO_AUDIO_DESCRIPTION, Program.INFO_VISION_HD,
+            Program.INFO_CATEGORIE_MOVIE, Program.INFO_CATEGORIE_SERIES, 
+            Program.INFO_CATEGORIE_NEWS,
             Program.INFO_CATEGORIE_SHOW, Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT,
-            Program.INFO_VISION_HD
+            Program.INFO_CATEGORIE_DOCUMENTARY, Program.INFO_CATEGORIE_ARTS,
+            Program.INFO_CATEGORIE_SPORTS, Program.INFO_CATEGORIE_CHILDRENS,
+            Program.INFO_CATEGORIE_OTHERS
     };
 
     /**
@@ -57,14 +60,19 @@ public class ProgramInfoHelper {
             createIcon(mLocalizer.msg("subtitleForAurallyHandicappedImage","Info_SubtitleForAurallyHandicapped.gif")), // INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED
             createIcon("Info_Live.png"), // INFO_LIVE
             createIcon(mLocalizer.msg("originalWithSubtitleImage","Info_OriginalWithSubtitle_EN.gif")), // INFO_ORIGINAL_WITH_SUBTITLE
-            createIcon("Info_Movie.png"), // INFO_CATEGORIE_MOVIE
-            createIcon("Info_Series.png"), // INFO_CATEGORIE_SERIES
             createIcon("Info_New.png"),  // INFO_NEW
             createIcon("Info_AudioDescription.png"),  // INFO_AUDIO_DESCRIPTION
+            createIcon("Info_HD.png"), // High Definition Video
+            createIcon("Info_Movie.png"), // INFO_CATEGORIE_MOVIE
+            createIcon("Info_Series.png"), // INFO_CATEGORIE_SERIES
             createIcon("Info_News.png"), // News
             createIcon("Info_Show.png"), // Show
             createIcon("Info_Infotainment.png"), // Magazine/Infotainment
-            createIcon("Info_HD.png"), // High Definition Video
+            null, //createIcon("Info_Documentary.png"), // Documentary
+            null, //createIcon("Info_Arts.png"), // Arts
+            null, //createIcon("Info_Sports.png"), // Sports
+            null, //createIcon("Info_Childrens.png"), // Childrens
+            null, //createIcon("Info_Others.png"), // Others
     };
 
     /**
@@ -91,14 +99,19 @@ public class ProgramInfoHelper {
                     "Subtitle for aurally handicapped"), // INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED
             mLocalizer.msg("live", "Live"), // INFO_LIVE
             mLocalizer.msg("originalWithSubtitle", "Original with subtitle"), // INFO_ORIGINAL_WITH_SUBTITLE
-            mLocalizer.msg("categorie_movie", "Movie"), // INFO_CATEGORIE_MOVIE
-            mLocalizer.msg("categorie_series", "Series"),
             mLocalizer.msg("new", "New"),
             mLocalizer.msg("audioDescription", "Audio Description"),
-            mLocalizer.msg("categorie_news", "news"),
-            mLocalizer.msg("categorie_show", "show"),
-            mLocalizer.msg("categorie_magazine_infotainment", "magazine/infotainment"),
             mLocalizer.msg("hd", "high definition"),
+            mLocalizer.msg("categorie_movie", "Movie"), // INFO_CATEGORIE_MOVIE
+            mLocalizer.msg("categorie_series", "Series"),
+            mLocalizer.msg("categorie_news", "News"),
+            mLocalizer.msg("categorie_show", "Show"),
+            mLocalizer.msg("categorie_magazine_infotainment", "Magazine/Infotainment"),
+            mLocalizer.msg("categorie_documentary", "Documentary"),
+            mLocalizer.msg("categorie_arts", "Arts/Music"),
+            mLocalizer.msg("categorie_sports", "Sports"),
+            mLocalizer.msg("categorie_childrens", "Children's Programming"),
+            mLocalizer.msg("categorie_others", "Miscellaneous"),
     };
 
 
