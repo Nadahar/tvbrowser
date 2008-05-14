@@ -8,16 +8,15 @@ import devplugin.ActionMenu;
 import devplugin.SettingsTab;
 import devplugin.Date;
 import devplugin.Channel;
+import devplugin.ProgramRatingIf;
 import util.misc.SoftReferenceCache;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.zip.GZIPInputStream;
 import java.util.Properties;
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -127,11 +126,15 @@ public class ImdbPlugin extends Plugin {
 
   private void showRatingDialog(Program prg) {
     ImdbRating rating = getRatingFor(prg);
-    JOptionPane.showMessageDialog(UiUtilities.getBestDialogParent(getParentFrame()),
-            "Rating for " + prg.getTitle() + ":\n" +
-            "Rating : " +  new DecimalFormat("##.#").format((double)rating.getRating() / 10) + "\n" +
-            "Votes : " + rating.getVotes()
-    );
+    if (rating != null) {
+      JOptionPane.showMessageDialog(UiUtilities.getBestDialogParent(getParentFrame()),
+              "Rating for " + prg.getTitle() + ":\n" +
+              "Rating : " +  new DecimalFormat("##.#").format((double)rating.getRating() / 10) + "\n" +
+              "Votes : " + rating.getVotes()
+      );
+    } else {
+      JOptionPane.showMessageDialog(UiUtilities.getBestDialogParent(getParentFrame()), "No rating found!");
+    }
   }
 
   @Override
@@ -268,5 +271,43 @@ public class ImdbPlugin extends Plugin {
 
   public void setExcludedChannels(Channel[] excludedChannels) {
     mExcludedChannels = new ArrayList<Channel>(Arrays.asList(excludedChannels));
+  }
+
+  public ProgramRatingIf[] getRatingInterfaces() {
+    return new ProgramRatingIf[] {new ProgramRatingIf() {
+
+      public String getName() {
+        return mLocalizer.msg("pluginName", "Imdb Ratings");
+      }
+
+      public Icon getIcon() {
+        return new ImdbIcon(new ImdbRating(75, 100, "", ""));
+      }
+
+      public int getRatingForProgram(Program p) {
+        ImdbRating rating = getRatingFor(p);
+        if (rating != null) {
+          return rating.getRating();
+        }
+
+        return -1;
+      }
+
+      public Icon getIconForProgram(Program p) {
+        ImdbRating rating = getRatingFor(p);
+        if (rating != null) {
+          return new ImdbIcon(rating);
+        }
+        return null;
+      }
+
+      public boolean hasDetailsDialog() {
+        return true;
+      }
+
+      public void showDetailsFor(Program p) {
+        showRatingDialog(p);
+      }
+    }};
   }
 }
