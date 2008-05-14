@@ -272,6 +272,15 @@ public class ProgramFieldType {
        = new ProgramFieldType(36, INT_FORMAT, true, "rating",
                               "rating", "Rating");
 
+  /**
+   * Production Company
+   *
+   * @since 2.7
+   */
+  public static final ProgramFieldType PROCUCTION_COMPANY_TYPE
+       = new ProgramFieldType(37, TEXT_FORMAT, true, "production company",
+                              "productionCompany", "Production company");  
+
   private int mTypeId;
 
   private String mName;
