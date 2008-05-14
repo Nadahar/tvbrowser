@@ -115,4 +115,17 @@ public interface PluginAccess extends ButtonActionIf,Marker,ProgramReceiveIf,Con
    * @since 2.5
    */
   public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses();
+
+
+  /**
+   * If this plugin can rate programs, this interface makes it possible to offer this ratings
+   * to other plugins. You can get all ProgramRatingIfs of all plugins using {@link devplugin.PluginManager#getAllProgramRatingIfs()}
+   *
+   * The plugin can return more than one ratingif, e.g. average ratings, user rating ...
+   *
+   * @return the RatingIfs of this plugin
+   * @since 2.7
+   */
+  public ProgramRatingIf[] getProgramRatingIfs();
+
 }

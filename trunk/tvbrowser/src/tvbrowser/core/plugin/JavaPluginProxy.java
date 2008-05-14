@@ -58,6 +58,7 @@ import devplugin.PluginsProgramFilter;
 import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
+import devplugin.ProgramRatingIf;
 
 /**
  * A plugin proxy for Java plugins.
@@ -600,6 +601,10 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     }
     // otherwise get the icon as always
     return super.getPluginIcon();
+  }
+
+  public ProgramRatingIf[] getProgramRatingIfs() {
+    return mPlugin.getRatingInterfaces();
   }
 
   public String getButtonActionDescription() {

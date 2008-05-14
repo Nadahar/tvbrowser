@@ -31,6 +31,7 @@ import devplugin.SettingsTab;
 import devplugin.Version;
 import devplugin.PluginsFilterComponent;
 import devplugin.PluginsProgramFilter;
+import devplugin.ProgramRatingIf;
 import util.io.IOUtilities;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
@@ -457,9 +458,9 @@ public class TVRaterPlugin extends devplugin.Plugin {
     }
     Date currentDate = getPluginManager().getCurrentDate();
     final Channel[] channels = getPluginManager().getSubscribedChannels();
-    for (int i = 0; i < channels.length; ++i) {
+    for (Channel channel : channels) {
       final Iterator<Program> iter = getPluginManager().getChannelDayProgram(
-          currentDate, channels[i]);
+          currentDate, channel);
       if (null == iter) {
         continue;
       }
@@ -513,8 +514,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
     ArrayList<PluginTreeNode> listErotic = new ArrayList<PluginTreeNode>();
     ArrayList<PluginTreeNode> listTension = new ArrayList<PluginTreeNode>();
     ArrayList<PluginTreeNode> listEntitlement = new ArrayList<PluginTreeNode>();
-    for (int i=0; i < ratingsArr.length; i++) {
-      Rating rating = ratingsArr[i];
+    for (Rating rating : ratingsArr) {
       addTitle(titles, listOverall, rating, rating.getOverallRating());
       addTitle(titles, listAction, rating, rating.getActionRating());
       addTitle(titles, listFun, rating, rating.getFunRating());
@@ -527,9 +527,9 @@ public class TVRaterPlugin extends devplugin.Plugin {
     Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
     Date date = Date.getCurrentDate();
     for (int d = 0; d < 31; d++) {
-      for (int i = 0; i < channels.length; i++) {
+      for (Channel channel : channels) {
         Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(
-            date, channels[i]);
+            date, channel);
         while ((it != null) && (it.hasNext())) {
           Program program = it.next();
           if (program != null) {
@@ -537,9 +537,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
             if (title != null) {
               HashSet<PluginTreeNode> nodes = titles.get(title);
               if (nodes != null) {
-                for (Iterator<PluginTreeNode> iterator = nodes.iterator(); iterator
-                    .hasNext();) {
-                  PluginTreeNode titleNode = iterator.next();
+                for (PluginTreeNode titleNode : nodes) {
                   titleNode.addProgramWithoutCheck(program);
                 }
               }
@@ -572,12 +570,11 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
     // search all unrated favorites
     List<Program> unratedFavs = new ArrayList<Program>();
-    for (int progIndex = 0; progIndex < programs.length; progIndex++) {
-      Program program = programs[progIndex];
+    for (Program program : programs) {
       if (program.isExpired()) {
         Marker[] markers = program.getMarkerArr();
-        for (int markerIndex = 0; markerIndex < markers.length; markerIndex++) {
-          if (markers[markerIndex].getId()
+        for (Marker marker : markers) {
+          if (marker.getId()
               .equalsIgnoreCase(FAVORITES_PLUGIN_ID)) {
             if (getPersonalRating(program) == null) {
               unratedFavs.add(program);
@@ -618,5 +615,45 @@ public class TVRaterPlugin extends devplugin.Plugin {
   public void onActivation() {
     // the root node will only be update after the start-finished event
     updateRootNode();
+  }
+
+
+  public ProgramRatingIf[] getRatingInterfaces() {
+    return new ProgramRatingIf[] {new ProgramRatingIf() {
+
+      public String getName() {
+        return mLocalizer.msg("pluginName", "TV Rater");
+      }
+
+      public Icon getIcon() {
+        String iconName = "tvraterplugin/imgs/tvrater.png";
+        return ImageUtilities.createImageIconFromJar(iconName, getClass());
+      }
+
+      public int getRatingForProgram(Program p) {
+        Rating rating = getRating(p);
+        if (rating != null) {
+          return rating.getOverallRating() * 20;
+        }
+
+        return -1;
+      }
+
+      public Icon getIconForProgram(Program p) {
+        Rating rating = getRating(p);
+        if (rating != null) {
+          return RatingIconTextFactory.getImageIconForRating(rating.getOverallRating());
+        }
+        return null;
+      }
+
+      public boolean hasDetailsDialog() {
+        return true;
+      }
+
+      public void showDetailsFor(Program p) {
+        showRatingDialog(p);
+      }
+    }};
   }
 }

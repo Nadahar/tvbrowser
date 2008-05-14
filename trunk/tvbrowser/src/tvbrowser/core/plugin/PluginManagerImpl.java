@@ -30,6 +30,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TimeZone;
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 import javax.swing.Action;
@@ -72,6 +73,7 @@ import devplugin.ProgramReceiveTarget;
 import devplugin.ProgramSearcher;
 import devplugin.ThemeIcon;
 import devplugin.TvBrowserSettings;
+import devplugin.ProgramRatingIf;
 
 /**
  * The implementation of the PluginManager interface. This class is the
@@ -941,5 +943,24 @@ public class PluginManagerImpl implements PluginManager {
 
   public Date getCurrentDate() {
     return MainFrame.getInstance().getCurrentSelectedDate();
+  }
+
+  /**
+   * Gets all ProgramRatingIfs of all plugins. You can get all available ratings for                  ~
+   * one program.
+   *
+   * @return all ProgramRatingIfs of all plugins
+   * @since 2.7
+   */
+  public ProgramRatingIf[] getAllProgramRatingIfs() {
+    ArrayList<ProgramRatingIf> ratingArray = new ArrayList<ProgramRatingIf>();
+    for (PluginAccess access :getActivatedPlugins()){
+      ProgramRatingIf[] ratings = access.getProgramRatingIfs();
+      if (ratings != null) {
+        ratingArray.addAll(Arrays.asList(ratings));
+      }
+    }
+
+    return ratingArray.toArray(new ProgramRatingIf[ratingArray.size()]);
   }
 }
