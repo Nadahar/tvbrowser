@@ -1054,4 +1054,17 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   public final void layoutWindow(String windowId, Window window, Dimension defaultSize) {
     Settings.layoutWindow(getId() + "." + windowId, window, defaultSize);
   }
+
+  /**
+   * If this plugin can rate programs, this interface makes it possible to offer this ratings
+   * to other plugins. You can get all ProgramRatingIfs of all plugins using {@link PluginManager#getAllProgramRatingIfs()}
+   *
+   * The plugin can return more than one ratingif, e.g. average ratings, user rating ...
+   *
+   * @return the RatingIfs of this plugin
+   * @since 2.7
+   */
+  public ProgramRatingIf[] getRatingInterfaces() {
+    return null;
+  }
 }

@@ -468,4 +468,13 @@ public interface PluginManager {
    * @since 2.6
    */
   public Date getCurrentDate();
+
+  /**
+   * Gets all ProgramRatingIfs of all plugins. You can get all available ratings for                  ~
+   * one program.
+   *
+   * @return all ProgramRatingIfs of all plugins
+   * @since 2.7
+   */
+  public ProgramRatingIf[] getAllProgramRatingIfs();
 }

@@ -21,6 +21,7 @@ import devplugin.PluginsFilterComponent;
 import devplugin.PluginsProgramFilter;
 import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
+import devplugin.ProgramRatingIf;
 import devplugin.beanshell.BeanShellScriptIf;
 
 
@@ -341,7 +342,11 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
       return mBshFile.getPath();
     }
 
-    public String getButtonActionDescription() {
+  public ProgramRatingIf[] getProgramRatingIfs() {
+    return null;
+  }
+
+  public String getButtonActionDescription() {
       return mScript.getInfo().getDescription();
     }
 
