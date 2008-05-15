@@ -92,7 +92,7 @@ public class FtpDataTarget implements DataTarget {
        try {
          mFTPClient.connect(mServerUrl, mPort);
          mLog.fine("Connected to " + mServerUrl + ":" + mPort);
-         mFTPClient.setSoTimeout(15000);
+         mFTPClient.setSoTimeout(30000);
          checkReplyCode();
        }
        catch(Exception exc) {
