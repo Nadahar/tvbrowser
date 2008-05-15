@@ -1,8 +1,0 @@
-MIDlet-1: NanoTvBrowser, NanoTvBrowser.png, tv
-MIDlet-Jar-Size: 80405
-MIDlet-Jar-URL: NanoTvBrowser.jar
-MIDlet-Name: NanoTvBrowser
-MIDlet-Vendor: Unknown
-MIDlet-Version: 1.0
-MicroEdition-Configuration: CLDC-1.0
-MicroEdition-Profile: MIDP-1.0

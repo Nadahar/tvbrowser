@@ -1,4 +1,0 @@
--libraryjars /home/pumpkin/WTK2.1/lib/midpapi10.jar:/home/pumpkin/WTK2.1/lib/cldcapi10.jar
--injars /home/pumpkin/WTK2.1/apps/MicroTvBrowser/bin/MicroTvBrowser.jar
--outjar /tmp/MicroTvBrowser.jar
--keep public class * extends javax.microedition.midlet.MIDlet 
