@@ -1,6 +1,0 @@
-MIDlet-1: NanoTvBrowser, NanoTvBrowser.png, tv
-MIDlet-Name: NanoTvBrowser
-MIDlet-Vendor: Unknown
-MIDlet-Version: 1.0
-MicroEdition-Configuration: CLDC-1.0
-MicroEdition-Profile: MIDP-1.0

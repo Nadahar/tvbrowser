@@ -239,7 +239,6 @@
         <path refid="classpath"/>
       </classpath>
       <exclude name="**/macosx/*"/>
-      <exclude name="microtvbrowserplugin/**"/>
       <exclude name="growlplugin/**"/>
     </javac>
 
@@ -275,7 +274,6 @@
         <path refid="classpath"/>
         <path location="/System/Library/Java"/>
       </classpath>
-      <exclude name="microtvbrowserplugin/**"/>
     </javac>
 
   </target>

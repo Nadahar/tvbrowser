@@ -1,8 +1,0 @@
-MIDlet-1: MicroTvBrowser, MicroTvBrowser.png, tv
-MIDlet-Jar-Size: 228681
-MIDlet-Jar-URL: MicroTvBrowser.jar
-MIDlet-Name: MicroTvBrowser
-MIDlet-Vendor: Gilson Laurent
-MIDlet-Version: 0.84
-MicroEdition-Configuration: CLDC-1.0
-MicroEdition-Profile: MIDP-1.0
