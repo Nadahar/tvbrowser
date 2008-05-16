@@ -57,12 +57,12 @@ public class ChannelGroupManager {
     mGroupToService = new HashMap<ChannelGroup, TvDataServiceProxy>();
     TvDataServiceProxy[] proxies = TvDataServiceProxyManager.getInstance().getDataServices();
 
-    for (int i=0; i<proxies.length; i++) {
-      ChannelGroup[] groups = proxies[i].getAvailableGroups();
-      for (int j=0; j<groups.length; j++) {
-        addGroup(proxies[i], groups[j]);
+      for (TvDataServiceProxy proxy : proxies) {
+          ChannelGroup[] groups = proxy.getAvailableGroups();
+          for (ChannelGroup group : groups) {
+              addGroup(proxy, group);
+          }
       }
-    }
   }
   
 
@@ -96,8 +96,9 @@ public class ChannelGroupManager {
     return mGroupToService.get(group);
   }
 
-   /**
+  /**
    * Refresh the list of available groups and refresh the lists of available channels
+   * @param monitor Progessmonitor that shows the current status of the refresh
    */
   public void checkForAvailableGroupsAndChannels(ProgressMonitor monitor) {
     
@@ -121,9 +122,9 @@ public class ChannelGroupManager {
         groupArr = services[i].getAvailableGroups();
       }
       if (groupArr != null) {
-        for (int j=0; j<groupArr.length; j++) {
-          addGroup(services[i], groupArr[j]);
-        }
+          for (ChannelGroup aGroupArr : groupArr) {
+              addGroup(services[i], aGroupArr);
+          }
       }
       curMon.setValue(i+1);
     }
@@ -133,21 +134,21 @@ public class ChannelGroupManager {
 
     /* Call 'checkForAvailableChannels' for all groups to fetch the most recent channel lists */
     TvDataServiceProxy[] proxies = TvDataServiceProxyManager.getInstance().getDataServices();
-    for (int i=0; i<proxies.length; i++) {
-      if (proxies[i].supportsDynamicChannelList()) {
-        ChannelGroup[] groups = proxies[i].getAvailableGroups();
+    for (TvDataServiceProxy proxy : proxies) {
+      if (proxy.supportsDynamicChannelList()) {
+        ChannelGroup[] groups = proxy.getAvailableGroups();
         int max = groups.length;
         curMon.setMaximum(max);
-        for (int j=0; j<max; j++) {
+        for (int j = 0; j < max; j++) {
           try {
-            proxies[i].checkForAvailableChannels(groups[j], curMon);
+            proxy.checkForAvailableChannels(groups[j], curMon);
             curMon.setValue(j);
-          }catch(TvBrowserException e) {
+          } catch (TvBrowserException e) {
             ErrorHandler.handle(e);
           }
-          
+
           /* ATTENTION: This is only for the 2-2-x branch*/
-          if(monitor != null)
+          if (monitor != null)
             monitor.setMaximum(-1);
         }
       }
@@ -170,6 +171,9 @@ public class ChannelGroupManager {
    */
   public ChannelGroup[] getAvailableGroups(AbstractTvDataServiceProxy proxy) {
     Collection<ChannelGroup> groups = mServiceToGroupsMap.get(proxy);
+    if (groups == null) {
+        return new ChannelGroup[0];
+    }
     return groups.toArray(new ChannelGroup[groups.size()]);
   }
   
@@ -190,12 +194,12 @@ public class ChannelGroupManager {
     
     for(ChannelGroup group : list) {      
       String id = createId(proxy, group);
-      for(int i = 0; i < subscribedGroupIds.length; i++) {
-        if(id.compareTo(subscribedGroupIds[i]) == 0) {
-          list2.add(group);
-          break;
+        for (String subscribedGroupId : subscribedGroupIds) {
+            if (id.compareTo(subscribedGroupId) == 0) {
+                list2.add(group);
+                break;
+            }
         }
-      }
     }
     
     return list2.toArray(new ChannelGroup[list2.size()]);
@@ -206,8 +210,6 @@ public class ChannelGroupManager {
    *  @since 2.3
    */
   private String[] getUsedGroupIds() {
-    String[] groupIds = Settings.propUsedChannelGroups.getStringArray();
-    
-    return groupIds;
+      return Settings.propUsedChannelGroups.getStringArray();
   }
 }
