@@ -290,17 +290,12 @@ public class DayProgramFile extends AbstractFile {
           }
 
           // Check whether to update or delete the field
-          if (field.getBinaryData() == null) {
-            // This field should be deleted -> If this is an update file add an empty field
-            if(thisIsUpdateFile) {
-              ProgramField empty = new ProgramField();
-              empty.setBinaryData(null);
-              empty.setType(field.getType());
-              
-              targetFrame.addProgramField(empty);
-            }
+          if (field.getBinaryData() == null && !thisIsUpdateFile) {
+            // This field should be deleted -> Ignore if this is no update file
           } else {
-            // This field should be updated -> Add a copy of the field
+            /* This field should be updated or deleted in an update file ->
+             * Add a copy of the field
+             */
             ProgramField copy = (ProgramField) field.clone();
             targetFrame.addProgramField(copy);
           }
