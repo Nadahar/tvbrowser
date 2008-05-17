@@ -474,6 +474,7 @@
 
     <copy todir="${tvbrowser-default.runtime.dir}">
       <fileset dir="${txt.dir}" includes="LICENSE.txt"/>
+      <fileset dir="${txt.dir}" includes="COPYRIGHT.txt"/>
       <fileset dir="${deployment.dir}/common" includes="*.url" />
       <!--    <fileset dir="${txt.dir}" includes="website.url"/>          -->
       <!--    <fileset dir="${txt.dir}" includes="default.properties"/>   -->
@@ -765,7 +766,7 @@
    	</copy>
    	<move file="${tvbrowser-transportable.runtime.dir}/tvbrowser.sh" tofile="${tvbrowser-transportable.runtime.dir}/tvbrowser-transportable.sh"/>  	
   	
-	<zip destfile="${public.dir}/tvbrowser-${tvbrowser.version}-transportable-bin.zip">
+	  <zip destfile="${public.dir}/tvbrowser-${tvbrowser.version}-transportable-bin.zip">
       <zipfileset prefix="tvbrowser-transportable"
                   dir="${tvbrowser-transportable.runtime.dir}"
 				excludes="**/tvbrowser-transportable.sh"/>
