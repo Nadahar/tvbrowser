@@ -31,6 +31,35 @@ License: other
 
  3. This notice may not be removed or altered from any source distribution.
 
+Files: deployment/win/launch4j/*
+Copyright: Copyright (c) 2004, 2008 Grzegorz Kowal
+License: other
+  All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without modification,
+  are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice,
+      this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice,
+      this list of conditions and the following disclaimer in the documentation
+      and/or other materials provided with the distribution.
+    * Neither the name of the Launch4j nor the names of its contributors
+      may be used to endorse or promote products derived from this software without
+      specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 Files: images/themes/tango/*
 Copyright:
 License: other
@@ -188,6 +217,67 @@ License: other
  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Files: lib/bsh-*.jar
+Copyright: © 2007 Pat Niemeyer pat@pat.net
+License: LGPL-2.1+
+
+Files: lib/forms-*.jar, lib/looks-*.jar
+Copyright: Copyright (c) 2001-2008 JGoodies Karsten Lentzsch
+License: other
+   Redistribution and use in source and binary forms, with or without
+   modification, are permitted provided that the following conditions are met:
+
+    o Redistributions of source code must retain the above copyright notice,
+      this list of conditions and the following disclaimer.
+
+    o Redistributions in binary form must reproduce the above copyright notice,
+      this list of conditions and the following disclaimer in the documentation
+      and/or other materials provided with the distribution.
+
+    o Neither the name of JGoodies Karsten Lentzsch nor the names of
+      its contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+   THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+   PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+   CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+   EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+   PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+   OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+   WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+   OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+   EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Files: lib/jRegistryKey.jar, deployment/win/jRegistryKey/*
+Copyright: jregistry team (http://sourceforge.net/projects/jregistrykey/)
+License: LGPL 2.1+
+
+Files: lib/xtvd-lib-*.jar
+Copyright: © 2003 Tribune Media Services
+License: GPL 2+
+
+Files: lib/TVAnytimeAPI.jar
+Copyright: © 2005 BBC Research and Development
+License: LGPL 2.1+
+
+Files: lib/stax-*.jar
+Copyright: © Chris Fry, Aleksander Slominski (http://stax.codehaus.org/) 
+License: see below
+
+Files: lib/lucene-core-*.jar
+Copyright: © 2006 The Apache Software Foundation
+License: see below
+
+Files: lib/gdata-*.jar
+Copyright: © google.com
+License: see below
+
+Files: lib/l2fprod-common-tasks.jar
+Copyright: © 2005-2007 L2FProd.com
+License: see below
 
 Files: tvdatakit/workspace/lib/poi-*.jar
 Copyright: © 2002-2007 The Apache Software Foundation
@@ -405,6 +495,10 @@ License: other
  copyright notice and this permission notice appear in supporting
  documentation. This software is provided "as is" without express
  or implied warranty.
+
+Files: lib/jcom.jar, deployment/win/jcom/*
+Copyright: ????
+License: ???
 
 Files: *
 Copyright: TV-Browser Team <dev@tvbrowser.org>
