@@ -109,7 +109,7 @@ import util.io.IOUtilities;
 import util.misc.OperatingSystem;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
-import util.ui.DontShowAgainMessageBox;
+import tvbrowser.ui.DontShowAgainMessageBox;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 import util.ui.view.Node;
