@@ -69,7 +69,7 @@ public class BlogThisPlugin extends Plugin {
     /** Default URLs */
     public static final String URL_WORDPRESS = "http://yoursite.com/wordpress/wp-admin/bookmarklet.php";
 
-    public static final String URL_B2EVOLUTION = "http://yourblog.com/admin/b2bookmarklet.php";
+    public static final String URL_B2EVOLUTION = "http://yourblog.com/admin.php";
 
     /** Service Names */
     public static final String BLOGGER = "BLOGGER";
@@ -229,8 +229,9 @@ public class BlogThisPlugin extends Plugin {
         return toUrl.toString();
       } else if (mSettings.getProperty("BlogService", "").equals(B2EVOLUTION)) {        
         StringBuffer toUrl = new StringBuffer(mSettings.getProperty("BlogUrl", URL_B2EVOLUTION));
-        
-        toUrl.append("?post_title=").append(URLEncoder.encode(title, "ISO-8859-1"));
+        toUrl.append("?ctrl=items&action=new&mode=bookmarklet");
+
+        toUrl.append("&post_title=").append(URLEncoder.encode(title, "ISO-8859-1"));
         toUrl.append("&content=").append(URLEncoder.encode(content, "ISO-8859-1"));
         toUrl.append("&post_url=").append(URLEncoder.encode(url, "ISO-8859-1"));
         toUrl.append("&sourceid=").append(URLEncoder.encode("TV-Browser", "ISO-8859-1"));
