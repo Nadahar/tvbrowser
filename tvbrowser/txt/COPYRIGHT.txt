@@ -2,6 +2,10 @@ Files: deployment/maxosx/jarbundler-1.4.jar
 Copyright: © 2003, Seth J. Morabito <sethm@loomcom.com>
 License GPL-2+
 
+Files: "deployment/win/launcher/*
+Copyright: © 2007 René Mach
+License: GPL-2+
+
 Files: "deployment/win/installer/Contrib/Modern UI/System.nsh"
 Copyright: © 2002-2007 Joost Verburg
 License: see below
@@ -497,8 +501,8 @@ License: other
  or implied warranty.
 
 Files: lib/jcom.jar, deployment/win/jcom/*
-Copyright: ????
-License: ???
+Copyright:  © Yoshinori Watanabe 1999-2004
+License: LGPL 2.1+
 
 Files: *
 Copyright: TV-Browser Team <dev@tvbrowser.org>
