@@ -63,6 +63,7 @@
   <property name="tvbrowser-transportable.runtime.dir" value="${runtime.dir}/tvbrowser_transportable"/>
   <property name="tvbrowser-nightly.runtime.dir" value="${runtime.dir}/tvbrowser_nightly"/>
   <property name="tvbrowser-mac.runtime.dir" value="${runtime.dir}/tvbrowser_mac"/>
+  <property name="tvbrowser-optional.runtime.dir" value="${runtime.dir}/tvbrowser_optional"/>
   <property name="tvdatatools.runtime.dir" value="${runtime.dir}/tvdatatools"/>
   <property name="tvdatakit.runtime.dir" value="${runtime.dir}/tvdatakit"/>
   <property name="themepacks.dir" value="themepacks"/>
@@ -150,9 +151,8 @@
     <echo message="  runtime-mac           Creates a runtime directory for Mac OS X" />
     <echo message="  runtime-win           Creates a runtime directory for MS Windows" />
     <echo message="  runtime-tvdatakit     Creates a runtime directory for the TV-Browser TV data kit" />
+    <echo message="  runtime-optional      Optional plugins that are not delivered in the installation of tvbrowser" />
     <echo message="  test                  Does the JUnit tests."/>
-
-
   </target>
 
 
@@ -419,17 +419,6 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="webplugin/**"/>
     </jar>
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/WirSchauenPlugin.jar"
-         compress="false">
-      <fileset dir="${classes.dir}" includes="wirschauenplugin/**"/>
-    </jar>
-
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/ImdbPlugin.jar"
-         compress="false">
-      <fileset dir="${unpacked.dir}/lucene-core-2.3.1.jar" includes="**/*"/>
-      <fileset dir="${classes.dir}" includes="imdbplugin/**"/>
-    </jar>
-
 
     <!-- Pack the TV data service jars -->
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/TvBrowserDataService.jar"
@@ -516,6 +505,24 @@
   <!-- Creates the default runtime folder (platform independent) -->
   <target name="runtime-default" depends="clean-default, make-default, runtime, test">
   </target>
+
+  <!-- Creates the optional plugins -->
+  <target name="runtime-optional" depends="clean-default, make-default, runtime, test">
+    <mkdir dir="${tvbrowser-optional.runtime.dir}"/>
+    <mkdir dir="${tvbrowser-optional.runtime.dir}/plugins"/>
+
+    <jar jarfile="${tvbrowser-optional.runtime.dir}/plugins/WirSchauenPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="wirschauenplugin/**"/>
+    </jar>
+
+    <jar jarfile="${tvbrowser-optional.runtime.dir}/plugins/ImdbPlugin.jar"
+         compress="false">
+      <fileset dir="${unpacked.dir}/lucene-core-2.3.1.jar" includes="**/*"/>
+      <fileset dir="${classes.dir}" includes="imdbplugin/**"/>
+    </jar>
+  </target>
+
 
   <!-- Creates the runtime folder for the transportable version -->
   <target name="runtime-transportable" depends="clean-transportable, make-transportable, runtime, test">  	
