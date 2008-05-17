@@ -35,7 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
@@ -203,7 +203,7 @@ public class ChannelList {
   public void writeToStream(OutputStream stream) throws IOException, FileFormatException {
     GZIPOutputStream gOut = new GZIPOutputStream(stream);
 
-    PrintWriter writer = new PrintWriter(gOut);
+    OutputStreamWriter writer = new OutputStreamWriter(gOut, "ISO-8859-15");
     for (int i = 0; i < getChannelCount(); i++) {
       ChannelItem channelItem = mChannelList.get(i);
       Channel channel = channelItem.getChannel();
@@ -215,7 +215,8 @@ public class ChannelList {
       line.append(";").append(channel.getWebpage() == null ? "http://tvbrowser.org" : channel.getWebpage());
       line.append(";").append(channelItem.getIconUrl() == null ? "" : channelItem.getIconUrl());
       line.append(";").append(channel.getCategories());
-      writer.println(line.toString());
+      writer.write(line.toString());
+      writer.write("\n");
     }
     writer.close();
 
@@ -287,21 +288,20 @@ public class ChannelList {
         return icon;
       }
 
-      if (icon == null) {
-        if (ICON_CACHE.containsKey(url)) {
-          try {
-            if (!ICON_CACHE.get(url).equals(iconFile)) {
-              copyFile(ICON_CACHE.get(url), iconFile);
-              icon = getIconFromFile(iconFile);
-            }
-          } catch (Exception e) {
-            mLog.log(Level.SEVERE, "Problem while copying File from Cache", e);
+      if (ICON_CACHE.containsKey(url)) {
+        try {
+          File iconCacheFile = ICON_CACHE.get(url);
+          if (iconCacheFile != null && !iconCacheFile.equals(iconFile)) {
+            copyFile(ICON_CACHE.get(url), iconFile);
+            icon = getIconFromFile(iconFile);
           }
-
+          return icon;
+        } catch (Exception e) {
+          mLog.log(Level.SEVERE, "Problem while copying File from Cache", e);
         }
       }
 
-      if (icon == null && TvBrowserDataService.getInstance().hasRightToDownloadIcons()) {
+      if (TvBrowserDataService.getInstance().hasRightToDownloadIcons()) {
         // download the icon
         try {
           util.io.IOUtilities.download(new URL(url), iconFile);
