@@ -48,7 +48,7 @@ public class DontShowAgainMessageBox {
    * @param messageType MessageType, values are {#javax.swing.JOptionPane.ERROR_MESSAGE}, {#javax.swing.JOptionPane.INFORMATION_MESSAGE}, {#javax.swing.JOptionPane.WARNING_MESSAGE}
    * @since 2.7
    */
-  public void dontShowAgainMessageBox(Plugin plugin, String messageBoxId, Component parent, String message, String title, int messageType) {
+  public static void dontShowAgainMessageBox(Plugin plugin, String messageBoxId, Component parent, String message, String title, int messageType) {
     tvbrowser.ui.DontShowAgainMessageBox.showMessageDialog(plugin.getId() + "."+ messageBoxId, parent, message, title, messageType);
   }
 
@@ -66,7 +66,7 @@ public class DontShowAgainMessageBox {
    * @param title title for the box
    * @since 2.7
    */
-  public void dontShowAgainMessageBox(Plugin plugin, String messageBoxId, Component parentComponent, String message, String title) {
+  public static void dontShowAgainMessageBox(Plugin plugin, String messageBoxId, Component parentComponent, String message, String title) {
     tvbrowser.ui.DontShowAgainMessageBox.showMessageDialog(plugin.getId() + "."+ messageBoxId, parentComponent, message, title);
   }
 
@@ -83,7 +83,7 @@ public class DontShowAgainMessageBox {
    * @param message message for the box
    * @since 2.7
    */
-  public void dontShowAgainMessageBox(Plugin plugin, String messageBoxId, Component parentComponent, String message) {
+  public static void dontShowAgainMessageBox(Plugin plugin, String messageBoxId, Component parentComponent, String message) {
     tvbrowser.ui.DontShowAgainMessageBox.showMessageDialog(plugin.getId() + "."+ messageBoxId, parentComponent, message);
   }
 
@@ -93,7 +93,7 @@ public class DontShowAgainMessageBox {
    * @return true, if the messageboxid is set and no dialog will be shown if {#dontShowAgainMessageBox} is called
    * @since 2.7
    */
-  public boolean isMessageBoxIdSet(Plugin plugin, String messageBoxId) {
+  public static boolean isMessageBoxIdSet(Plugin plugin, String messageBoxId) {
     return Settings.propHiddenMessageBoxes.containsItem(plugin.getId() + "."+ messageBoxId);
   }
 
@@ -105,7 +105,7 @@ public class DontShowAgainMessageBox {
    * @param value new value, <code>true</code> to disable the dialog, <code>false</code>, to enable the dialog
    * @since 2.7
    */
-  public void setMessageBoxId(Plugin plugin, String messageBoxId, boolean value) {
+  public static void setMessageBoxId(Plugin plugin, String messageBoxId, boolean value) {
     if (value) {
       Settings.propHiddenMessageBoxes.removeItem(plugin.getId() + "."+ messageBoxId);
     } else {
