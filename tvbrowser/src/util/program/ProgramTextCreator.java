@@ -27,8 +27,6 @@
 package util.program;
 
 import java.awt.Font;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.text.DecimalFormat;
@@ -44,10 +42,12 @@ import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.HTMLTextHelper;
 import util.ui.html.HorizontalLine;
+import devplugin.Date;
 import devplugin.Marker;
 import devplugin.Plugin;
 import devplugin.PluginAccess;
@@ -205,7 +205,20 @@ public class ProgramTextCreator {
     buffer.append(mBodyFontSize);
 
     buffer.append(";\"><b>");
-    buffer.append(prog.getDateString());
+    
+    if(prog.getDate().equals(Date.getCurrentDate().addDays(-1))) {
+      buffer.append(Localizer.getLocalization(Localizer.I18N_YESTERDAY));
+    }
+    else if(prog.getDate().equals(Date.getCurrentDate())){
+      buffer.append(Localizer.getLocalization(Localizer.I18N_TODAY));
+    }
+    else if(prog.getDate().equals(Date.getCurrentDate().addDays(1))){
+      buffer.append(Localizer.getLocalization(Localizer.I18N_TOMORROW));
+    }
+    else {
+      buffer.append(prog.getDateString());
+    }
+    
     buffer.append(" · ");
     buffer.append(prog.getTimeString());
     if (prog.getLength() > 0) {
