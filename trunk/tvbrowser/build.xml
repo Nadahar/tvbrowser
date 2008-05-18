@@ -311,6 +311,7 @@
     <unjar src="${lib.dir}/jcom.jar" dest="${unpacked.dir}/jcom.jar" />
     <unjar src="${lib.dir}/lucene-core-2.3.1.jar" dest="${unpacked.dir}/lucene-core-2.3.1.jar"/>
     <unjar src="${lib.dir}/jakarta-oro-2.0.8.jar" dest="${unpacked.dir}/jakarta-oro-2.0.8.jar" /> 
+    <unjar src="${lib.dir}/libidn-1.8.jar" dest="${unpacked.dir}/libidn-1.8.jar" />
 
     <!-- Pack the tvbrowser.jar -->
     <jar jarfile="${tvbrowser-default.runtime.dir}/tvbrowser.jar"
@@ -332,6 +333,7 @@
       <fileset dir="${unpacked.dir}/l2fprod-common-tasks.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/jRegistryKey.jar" includes="ca/**" />
       <fileset dir="${unpacked.dir}/commons-codec-1.3.jar" includes="org/**" />
+      <fileset dir="${unpacked.dir}/libidn-1.8.jar" includes="gnu/**" />
     </jar>
 
     <!-- Pack the plugin jars -->
@@ -913,6 +915,7 @@
       <fileset dir="${test.src.dir}" includes="**/*.dtd"/>
       <fileset dir="${test.src.dir}" includes="**/*.properties"/>
       <fileset dir="${test.src.dir}" includes="**/*.theme"/>
+      <fileset dir="${test.src.dir}" includes="**/*.gz"/>
     </copy>
 
 
