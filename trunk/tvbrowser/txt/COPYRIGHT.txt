@@ -139,7 +139,7 @@ License: other
 
  Creative Commons may be contacted at http://creativecommons.org/.
 
-Files: lib/commons-* src/primarydatamanager/primarydataservice/util/Entities.java
+Files: lib/commons-*
 Copyright: © 2001 The Apache Software Foundation
 License: other
  Redistribution and use in source and binary forms, with or without
