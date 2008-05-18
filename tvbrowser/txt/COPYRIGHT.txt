@@ -498,10 +498,6 @@ Files: src/util/io/NtpMessage.java
 Copyright: © 2004 Adam Buckley
 License: GPL-2+
 
-Files: src/util/io/UrlFile.java:
-Copyright: © 2003 ROXES Technologies (www.roxes.com)
-License: GPL-2+
-
 Files: src/webplugin/aclib/*
 Copyright: © 2000 by Lee Benfield - lee@recoil.org
 License: other
