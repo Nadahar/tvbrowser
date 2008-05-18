@@ -26,11 +26,12 @@
 
 package primarydatamanager.primarydataservice.util.html2txt;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 
-import primarydatamanager.primarydataservice.util.Entities;
 
 public class TagReader {
   
@@ -176,21 +177,6 @@ class HTMLTag implements Tag {
     
   }
 
-  private void replaceEntity(StringBuffer line, int from, int to) {
-    String entity=line.substring(from,to+1);
-     
-    String replace=null;
-    if (mEncoding!=null) {       
-      try {  
-        replace=new String(Entities.decode(entity).getBytes("ISO-8859-1"),"ISO-8859-1");
- 			} catch (UnsupportedEncodingException e) {
-			  e.printStackTrace();
-		  }       
-    }else{
-      replace=Entities.decode(entity);
-    }
-    line.replace(from,to+1,replace);     
-   }
   
    private StringBuffer convert(StringBuffer line) {
      int from=0;
@@ -205,23 +191,8 @@ class HTMLTag implements Tag {
      else {
        result=new StringBuffer(line.toString());
      }
-     
-     while (from<result.length()) {      
-       if (result.charAt(from)=='&') {
-         int to=from+1;
-         while (to<result.length()) {
-           if (result.charAt(to)==';') {
-             replaceEntity(result,from,to);
-             break;
-           }
-           to++;
-         }        
-       }
-       from++;
-      
-     }
-     
-     return result;
+
+      return new StringBuffer(StringEscapeUtils.unescapeHtml(result.toString()));
     }
 
 

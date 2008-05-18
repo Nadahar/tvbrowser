@@ -340,56 +340,14 @@ public class PrimaryDataManager {
     ChannelList result = new ChannelList((ChannelGroup)null);
       
     File fromFile = new File(mConfigDir, fileName);
-    BufferedInputStream stream = null;
     try {
-      stream = new BufferedInputStream(new FileInputStream(fromFile), 0x4000);
-      BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-            
-      String line;
-      while ((line = reader.readLine()) != null) {
-        if (line.trim().length()==0) {  // ignore empty lines
-          continue;
-        }
+      result.readFromStream(new FileInputStream(fromFile), null, false);
+    } catch (IOException e) {
+      throw new PreparationException("Loading "+fileName+" failed", e);
+    } catch (FileFormatException e) {
+      throw new PreparationException("Loading "+fileName+" failed", e);
+    }
 
-        String[] tokens = line.split(";");
-        if (tokens.length < 4) {
-          throw new PreparationException("invalid line in '"+fileName+"': "+line);
-        }
-
-        String country=null, timezone=null, id=null, name=null, copyright=null, webpage=null, iconUrl=null, categoryStr=null;
-        try {
-          country = tokens[0];
-          timezone = tokens[1];
-          id = tokens[2];
-          name = tokens[3];
-          copyright = tokens[4];
-          webpage = tokens[5];
-          iconUrl = tokens[6];
-          categoryStr = tokens[7];
-        } catch(ArrayIndexOutOfBoundsException e) {
-          // ignore, we don't need these fields
-        }
-        int categories = Channel.CATEGORY_NONE;
-        if (categoryStr != null) {
-          try {
-            categories = Integer.parseInt(categoryStr);
-          }catch(NumberFormatException e) {
-            categories = Channel.CATEGORY_NONE;
-          }
-        }
-        Channel channel = new Channel(null, name, id, TimeZone.getTimeZone(timezone), country, copyright,webpage, null, null, categories);
-        result.addChannel(channel, iconUrl);
-      }
-    }
-    catch (Exception exc) {
-      throw new PreparationException("Loading "+fileName+" failed", exc);
-    }
-    finally {
-      if (stream != null) {
-        try { stream.close(); } catch (IOException exc) {}
-      } 
-    }
-       
     return result;
     
   }

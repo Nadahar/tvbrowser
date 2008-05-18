@@ -56,7 +56,8 @@ import util.misc.SoftReferenceCache;
 import devplugin.Channel;
 import devplugin.ChannelGroup;
 import devplugin.ChannelGroupImpl;
-import gnu.inet.encoding.IDNA;
+import org.apache.commons.lang.StringEscapeUtils;
+import au.com.bytecode.opencsv.CSVReader;
 
 /**
  * 
@@ -114,10 +115,19 @@ public class ChannelList {
   }
 
   public void readFromStream(InputStream stream, TvDataService dataService) throws IOException, FileFormatException {
-    GZIPInputStream gIn = new GZIPInputStream(stream);
-    BufferedReader reader = new BufferedReader(new InputStreamReader(gIn, "ISO-8859-15"));
+    readFromStream(stream, dataService, true);
+  }
 
-    String line;
+  public void readFromStream(InputStream stream, TvDataService dataService, boolean compressed) throws IOException, FileFormatException {
+    CSVReader reader;
+
+    if (compressed) {
+      GZIPInputStream gIn = new GZIPInputStream(stream);
+      reader = new CSVReader(new InputStreamReader(gIn, "ISO-8859-15"), ';');
+    } else {
+      reader = new CSVReader(new InputStreamReader(stream, "ISO-8859-15"), ';');
+    }
+
     int lineCount = 1;
 
     /**
@@ -131,60 +141,53 @@ public class ChannelList {
       iconLoader = new IconLoader(mGroup.getId(), dataDir);
     }
 
-    while ((line = reader.readLine()) != null) {
-      line = line.trim();
-      if (line.length() > 0) {
-        // This is not an empty line -> read it
-        /*
-         * Instead of StringTokenizer (previous implementation) we use
-         * String#split(), because StringTokenizer ignores empty tokens.
-         */
-        String[] tokens = line.split(";");
-        if (tokens.length < 4) {
-          throw new FileFormatException("Syntax error in mirror file line " + lineCount + ": '" + line + "'");
-        }
-
-        String country = null, timezone = null, id = null, name = null, copyright = null, webpage = null, iconUrl = null, categoryStr = null;
-        try {
-          country = tokens[0];
-          timezone = tokens[1];
-          id = tokens[2];
-          name = tokens[3];
-          copyright = tokens[4];
-          webpage = tokens[5];
-          iconUrl = tokens[6];
-          categoryStr = tokens[7];
-
-          if (tokens.length > 8) {
-            name = IDNA.toUnicode(tokens[8]);
-          }
-
-        } catch (ArrayIndexOutOfBoundsException e) {
-          // ignore
-        }
-
-        int categories = Channel.CATEGORY_NONE;
-        if (categoryStr != null) {
-          try {
-            categories = Integer.parseInt(categoryStr);
-          } catch (NumberFormatException e) {
-            categories = Channel.CATEGORY_NONE;
-          }
-        }
-        Channel channel = new Channel(dataService, name, id, TimeZone.getTimeZone(timezone), country, copyright,
-            webpage, mGroup, null, categories);
-        if (iconLoader != null && iconUrl != null && iconUrl.length() > 0) {
-          Icon icon = iconLoader.getIcon(id, iconUrl);
-          if (icon != null) {
-            channel.setDefaultIcon(icon);
-          }
-        }
-        addChannel(channel);
+    String[] tokens;
+    while ((tokens = reader.readNext()) != null) {
+      if (tokens.length < 4) {
+        throw new FileFormatException("Syntax error in mirror file line " + lineCount + ": column count is '" + tokens.length + " < 4' : " + tokens[0]);
       }
+
+      String country = null, timezone = null, id = null, name = null, copyright = null, webpage = null, iconUrl = null, categoryStr = null, unescapedname = null;
+      try {
+        country = tokens[0];
+        timezone = tokens[1];
+        id = tokens[2];
+        name = tokens[3];
+        copyright = tokens[4];
+        webpage = tokens[5];
+        iconUrl = tokens[6];
+        categoryStr = tokens[7];
+
+        if (tokens.length > 8) {
+          unescapedname = name;
+          name = StringEscapeUtils.unescapeHtml(tokens[8]);
+        }
+
+      } catch (ArrayIndexOutOfBoundsException e) {
+        // ignore
+      }
+
+      int categories = Channel.CATEGORY_NONE;
+      if (categoryStr != null) {
+        try {
+          categories = Integer.parseInt(categoryStr);
+        } catch (NumberFormatException e) {
+          categories = Channel.CATEGORY_NONE;
+        }
+      }
+      Channel channel = new Channel(dataService, name, id, TimeZone.getTimeZone(timezone), country, copyright,
+          webpage, mGroup, null, categories, unescapedname);
+      if (iconLoader != null && iconUrl != null && iconUrl.length() > 0) {
+        Icon icon = iconLoader.getIcon(id, iconUrl);
+        if (icon != null) {
+          channel.setDefaultIcon(icon);
+        }
+      }
+      addChannel(channel, iconUrl);
       lineCount++;
     }
 
-    gIn.close();
+    reader.close();
     if (iconLoader != null) {
       iconLoader.close();
     }
@@ -216,11 +219,12 @@ public class ChannelList {
       StringBuffer line = new StringBuffer();
       line.append(channel.getCountry()).append(";").append(channel.getTimeZone().getID());
       line.append(";").append(channel.getId());
-      line.append(";").append(channel.getName());
+      line.append(";").append(channel.getUnescapedName());
       line.append(";").append(channel.getCopyrightNotice());
       line.append(";").append(channel.getWebpage() == null ? "http://tvbrowser.org" : channel.getWebpage());
       line.append(";").append(channelItem.getIconUrl() == null ? "" : channelItem.getIconUrl());
       line.append(";").append(channel.getCategories());
+      line.append(";\"").append(StringEscapeUtils.escapeHtml(channel.getName())).append("\"");
       writer.write(line.toString());
       writer.write("\n");
     }

@@ -66,6 +66,7 @@ public class Channel implements Comparable<Channel> {
   private TvDataService mDataService;
 
   private String mName;
+  private String mUnescapedName;
   private String mId;
   private TimeZone mTimeZone;
   private String mCountry;
@@ -80,7 +81,7 @@ public class Channel implements Comparable<Channel> {
 
 
   public Channel(TvDataService dataService, String name, String id,
-    TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group, Icon icon, int categories)
+    TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group, Icon icon, int categories, String unescapedName)
   {
     if (country.length() != 2) {
       throw new IllegalArgumentException("country must be a two character "
@@ -99,6 +100,13 @@ public class Channel implements Comparable<Channel> {
     mGroup = group;
     mDefaultIcon = icon;
     mCategories = categories;
+    mUnescapedName = unescapedName;
+  }
+
+  public Channel(TvDataService dataService, String name, String id,
+    TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group, Icon icon, int categories)
+  {
+    this(dataService, name, id, timeZone, country, copyrightNotice, webpage, group, icon, CATEGORY_NONE, null);
   }
 
   public Channel(TvDataService dataService, String name, String id,
@@ -718,5 +726,12 @@ public class Channel implements Comparable<Channel> {
     if(ChannelList.hasCalledChannelValueChangeForChannel(this)) {
       mWebpage = webpage;
     }
+  }
+
+  public String getUnescapedName() {
+    if (mUnescapedName != null) {
+      return mUnescapedName;
+    }
+    return mName;
   }
 }

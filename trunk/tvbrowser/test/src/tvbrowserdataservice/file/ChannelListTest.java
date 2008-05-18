@@ -28,27 +28,64 @@ package tvbrowserdataservice.file;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.util.zip.GZIPInputStream;
 
 import util.io.FileFormatException;
+import util.io.IOUtilities;
 import static junit.framework.Assert.assertEquals;
 
 public class ChannelListTest {
 
   @Test
-  public void testReadPunyCode() throws FileFormatException, IOException, URISyntaxException {
+  public void testEscapedChannelNames() throws FileFormatException, IOException, URISyntaxException {
     ChannelList list = new ChannelList("testGroup");
 
-    list.readFromStream(getClass().getResourceAsStream("test_channellist.gz"), null);
+    list.readFromStream(getClass().getResourceAsStream("test_channellist.txt"), null, false);
 
     assertEquals(6, list.getChannelCount());
 
     assertEquals("DMAX", list.getChannelAt(0).getName());
     assertEquals("Eurosport", list.getChannelAt(1).getName());
     assertEquals("AXN", list.getChannelAt(2).getName());
-    assertEquals("w\u00f6hnungss\u00fcche", list.getChannelAt(3).getName());
-    assertEquals("k\u00fcchendissteln", list.getChannelAt(4).getName());
-    assertEquals("\u00e4lbertstrasse", list.getChannelAt(5).getName());
+    assertEquals("W\u00f6hnungss\u00fcche", list.getChannelAt(3).getName());
+    assertEquals("K\u00fcchendi\u00dfteln", list.getChannelAt(4).getName());
+    assertEquals("\u00c4lbert \u7360", list.getChannelAt(5).getName());
+
+    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+    list.writeToStream(stream);
+
+    assertEquals("de;GMT+01:00;DMAX;DMAX;(c) by DMAX;http://www.dmaxtv.de/;http://sender.wannawork.de/logos/DMAX.png;257;\"DMAX\"\n" +
+        "de;GMT+01:00;EUROSPORT;Eurosport;(c) by Eurosport;;;0;\"Eurosport\"\n" +
+        "de;GMT+01:00;AXN;AXN;(c) by AXN;http://www.axntv.de;;273;\"AXN\"\n" +
+        "de;GMT+01:00;DMAXPUNNY;DMAX PUNNY;(c) by DMAX;http://www.dmaxtv.de/;http://sender.wannawork.de/logos/DMAX.png;257;\"W&ouml;hnungss&uuml;che\"\n" +
+        "de;GMT+01:00;EUROSPORTPUNNY;Eurosport PUNNY;(c) by Eurosport;;;0;\"K&uuml;chendi&szlig;teln\"\n" +
+        "de;GMT+01:00;AXNPUNNY;AXN PUNNY;(c) by AXN;http://www.axntv.de;;273;\"&Auml;lbert &#29536;\"",
+        toString(new GZIPInputStream(new ByteArrayInputStream(stream.toByteArray()))));
   }
-  
+
+
+  /**
+   * Writes the content of the input stream to a <code>String<code>.
+   */
+  private String toString(InputStream inputStream) throws IOException {
+    String string;
+    StringBuilder outputBuilder = new StringBuilder();
+    if (inputStream != null) {
+      BufferedReader reader =
+          new BufferedReader(new InputStreamReader(inputStream));
+      while (null != (string = reader.readLine())) {
+        outputBuilder.append(string).append('\n');
+      }
+    }
+    return outputBuilder.toString().trim();
+  }
+
 }
