@@ -1,0 +1,6 @@
+de;GMT+1:00;DMAX;DMAX;(c) by DMAX;http://www.dmaxtv.de/;http://sender.wannawork.de/logos/DMAX.png;257
+de;GMT+1:00;EUROSPORT;Eurosport;(c) by Eurosport;
+de;GMT+1:00;AXN;AXN;(c) by AXN;http://www.axntv.de;;273
+de;GMT+1:00;DMAXPUNNY;DMAX PUNNY;(c) by DMAX;http://www.dmaxtv.de/;http://sender.wannawork.de/logos/DMAX.png;257;"W&ouml;hnungss&uuml;che"
+de;GMT+1:00;EUROSPORTPUNNY;Eurosport PUNNY;(c) by Eurosport;;;;"K&#x00fc;chendi&szlig;teln"
+de;GMT+1:00;AXNPUNNY;AXN PUNNY;(c) by AXN;http://www.axntv.de;;273;"&#x00c4;lbert &#29536;"

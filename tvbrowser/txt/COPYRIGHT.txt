@@ -291,6 +291,10 @@ Files: lib/gdata-*.jar
 Copyright: © google.com
 License: see below
 
+Files: lib/opencsv-*.jar
+Copyright: © 2005 Bytecode Pty Ltd.
+License: see below
+
 Files: lib/l2fprod-common-tasks.jar
 Copyright: © 2005-2007 L2FProd.com
 License: see below
