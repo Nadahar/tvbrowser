@@ -138,7 +138,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mSettingsMI.addActionListener(this);
     new MenuHelpTextAdapter(mSettingsMI, mLocalizer.msg("menuinfo.settings",""), mLabel); 
 
-    mQuitMI = new JMenuItem(mLocalizer.msg("menuitem.exit", "Exit..."));
+    mQuitMI = new JMenuItem(mLocalizer.msg("menuitem.exit", "Exit..."), IconLoader.getInstance().getIconFromTheme("actions", "system-log-out", 16));
     mQuitMI.addActionListener(this);
     new MenuHelpTextAdapter(mQuitMI, mLocalizer.msg("menuinfo.quit",""), mLabel);
     
