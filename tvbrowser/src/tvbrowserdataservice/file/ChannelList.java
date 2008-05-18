@@ -56,6 +56,7 @@ import util.misc.SoftReferenceCache;
 import devplugin.Channel;
 import devplugin.ChannelGroup;
 import devplugin.ChannelGroupImpl;
+import gnu.inet.encoding.IDNA;
 
 /**
  * 
@@ -153,6 +154,11 @@ public class ChannelList {
           webpage = tokens[5];
           iconUrl = tokens[6];
           categoryStr = tokens[7];
+
+          if (tokens.length > 8) {
+            name = IDNA.toUnicode(tokens[8]);
+          }
+
         } catch (ArrayIndexOutOfBoundsException e) {
           // ignore
         }

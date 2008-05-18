@@ -267,6 +267,10 @@ Files: lib/xtvd-lib-*.jar
 Copyright: © 2003 Tribune Media Services
 License: GPL 2+
 
+Files: lib/libidn-*.jar
+Copyright: © 2004 - 2007  Free Software Foundation, Inc.
+License: LGPL 2.1+
+
 Files: lib/TVAnytimeAPI.jar
 Copyright: © 2005 BBC Research and Development
 License: LGPL 2.1+
