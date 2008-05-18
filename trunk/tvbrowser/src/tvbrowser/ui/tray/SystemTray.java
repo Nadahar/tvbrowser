@@ -146,8 +146,8 @@ public class SystemTray {
       Font f = mOpenCloseMenuItem.getFont();
       
       mOpenCloseMenuItem.setFont(f.deriveFont(Font.BOLD));
-      mQuitMenuItem = new JMenuItem(mLocalizer.msg("menu.quit", "Quit"));
-      mConfigure = new JMenuItem(mLocalizer.msg("menu.configure", "Configure"));      
+      mQuitMenuItem = new JMenuItem(mLocalizer.msg("menu.quit", "Quit"),IconLoader.getInstance().getIconFromTheme("actions", "system-log-out", 16));
+      mConfigure = new JMenuItem(mLocalizer.msg("menu.configure", "Configure"),IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));      
       
       mConfigure.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
