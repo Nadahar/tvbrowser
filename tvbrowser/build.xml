@@ -915,7 +915,7 @@
       <fileset dir="${test.src.dir}" includes="**/*.dtd"/>
       <fileset dir="${test.src.dir}" includes="**/*.properties"/>
       <fileset dir="${test.src.dir}" includes="**/*.theme"/>
-      <fileset dir="${test.src.dir}" includes="**/*.gz"/>
+      <fileset dir="${test.src.dir}" includes="**/*.txt"/>
     </copy>
 
 
