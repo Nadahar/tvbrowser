@@ -26,8 +26,11 @@
 package tvbrowser.ui.licensebox;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -37,10 +40,20 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.Timer;
+import javax.swing.JEditorPane;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.event.HyperlinkEvent;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+import util.ui.SearchFormSettings;
+import util.ui.SearchHelper;
+import util.ui.html.HTMLTextHelper;
+import util.ui.html.ExtendedHTMLEditorKit;
+import util.browserlauncher.Launch;
+import util.program.ProgramTextCreator;
+import devplugin.PluginManager;
 
 public class LicenseBox extends JDialog implements ActionListener,WindowClosingIf {
   
@@ -63,15 +76,43 @@ public class LicenseBox extends JDialog implements ActionListener,WindowClosingI
     
     JPanel contentPane=(JPanel)getContentPane();
     contentPane.setLayout(new BorderLayout());
- 
-    JTextArea ta=new JTextArea(licenseTxt);
-    ta.setLineWrap(true);
-    ta.setWrapStyleWord(true);
+
+    if (!licenseTxt.startsWith("<html")) {
+      licenseTxt = HTMLTextHelper.convertTextToHtml(licenseTxt, true);
+    }
+
+    final JEditorPane ta = new JEditorPane();
+
+    ExtendedHTMLEditorKit kit = new ExtendedHTMLEditorKit();
+    kit.setLinkCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    ta.setEditorKit(kit);
+
+    Color c =  ta.getBackground();
     ta.setEditable(false);
+    ta.setBackground(c);
     ta.setOpaque(true);
     ta.setFocusable(true);
-    
-    
+    ta.setText(licenseTxt);
+
+    ta.addHyperlinkListener(new HyperlinkListener() {
+      private String mTooltip;
+      public void hyperlinkUpdate(HyperlinkEvent evt) {
+        if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {
+          mTooltip = ta.getToolTipText();
+          ta.setToolTipText(evt.getURL().toString());
+        }
+        if (evt.getEventType() == HyperlinkEvent.EventType.EXITED) {
+          ta.setToolTipText(mTooltip);
+        }
+        if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          URL url = evt.getURL();
+          if (url != null) {
+            Launch.openURL(url.toString());
+          }
+        }
+      }
+    });
+
     JPanel btnPanel=new JPanel();
     
     mAgreeBt=new JButton(mLocalizer.msg("agree","I agree"));
