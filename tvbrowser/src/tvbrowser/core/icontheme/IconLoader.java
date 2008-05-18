@@ -76,6 +76,18 @@ public class IconLoader {
    */
   private IconLoader() {
     mDefaultIconDir = new File(Settings.getDefaultSettings().getProperty("icontheme", "icons/tango"));
+
+    if (!mDefaultIconDir.exists()) {
+      // If the default directory does not exist, try to find another icon theme in the icontheme directory
+      File iconDir = new File("icons");
+      if (iconDir.exists()) {
+        File[] list = iconDir.listFiles();
+        if (list.length > 0) {
+          mDefaultIconDir = list[0]; // get the first directory
+        }
+      }
+    }
+
     mDefaultIconTheme = getIconTheme(mDefaultIconDir);
     mDefaultIconTheme.loadTheme();
 
