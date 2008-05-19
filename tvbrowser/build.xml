@@ -312,8 +312,7 @@
     <unjar src="${lib.dir}/jcom.jar" dest="${unpacked.dir}/jcom.jar" />
     <unjar src="${lib.dir}/lucene-core-2.3.1.jar" dest="${unpacked.dir}/lucene-core-2.3.1.jar"/>
     <unjar src="${lib.dir}/jakarta-oro-2.0.8.jar" dest="${unpacked.dir}/jakarta-oro-2.0.8.jar" /> 
-    <unjar src="${lib.dir}/opencsv-1.8.jar"
-      dest="${unpacked.dir}/opencsv-1.8.jar" />
+    <unjar src="${lib.dir}/opencsv-1.8.jar" dest="${unpacked.dir}/opencsv-1.8.jar" />
 
     <!-- Pack the tvbrowser.jar -->
     <jar jarfile="${tvbrowser-default.runtime.dir}/tvbrowser.jar"
@@ -628,6 +627,7 @@
     <unjar src="${lib.dir}/commons-net-1.4.1.jar" dest="${unpacked.dir}/commons-net-1.4.1.jar"/>
     <unjar src="${lib.dir}/looks-2.1.4.jar" dest="${unpacked.dir}/looks-2.1.4.jar"/>
     <unjar src="${lib.dir}/jakarta-oro-2.0.8.jar" dest="${unpacked.dir}/jakarta-oro-2.0.8.jar"/>
+	<unjar src="${lib.dir}/opencsv-1.8.jar" dest="${unpacked.dir}/opencsv-1.8.jar" />
 
     <!-- Pack the MirrorUpdater.jar -->
     <jar jarfile="${tvdatatools.runtime.dir}/MirrorUpdater.jar"
@@ -650,6 +650,7 @@
       <fileset dir="${unpacked.dir}/commons-net-1.4.1.jar" includes="org/**"/>
       <fileset dir="${unpacked.dir}/looks-2.1.4.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/jakarta-oro-2.0.8.jar" includes="org/**"/>
+      <fileset dir="${unpacked.dir}/opencsv-1.8.jar" includes="au/**"/>
     </jar>
 
     <!-- Pack the PrimaryDataManager.jar -->
@@ -668,6 +669,7 @@
       <fileset dir="${classes.dir}" includes="util/**"/>
       <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
       <fileset dir="${unpacked.dir}/looks-2.1.4.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/opencsv-1.8.jar" includes="au/**"/>
     </jar>
 
     <!-- Pack the PDSRunner.jar -->
@@ -686,6 +688,7 @@
       <fileset dir="${classes.dir}" includes="util/**"/>
       <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
       <fileset dir="${unpacked.dir}/looks-2.1.4.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/opencsv-1.8.jar" includes="au/**"/>
     </jar>
 
     <!-- Copy the file(s) -->
