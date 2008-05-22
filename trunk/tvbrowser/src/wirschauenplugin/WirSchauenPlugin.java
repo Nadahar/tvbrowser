@@ -97,6 +97,7 @@ public class WirSchauenPlugin extends Plugin {
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:NICK");
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:NTV");
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:VIVA");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:puls4");
     mIcon = new ImageIcon(getClass().getResource("icons/16x16/apps/wirschauen.png"));
   }
 
@@ -182,7 +183,7 @@ public class WirSchauenPlugin extends Plugin {
       // check whether we got any input at all
       if (!dialog.hasChanged()) {
         return;
-      };
+      }
       
       // we have new input, so store it on the server
       String category = dialog.getCategory();
