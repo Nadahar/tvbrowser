@@ -90,7 +90,7 @@ public class FilterManagerImpl implements FilterManager {
       }
     }
 
-    return filters.toArray(new ProgramFilter[filter.length]);
+    return filters.toArray(new ProgramFilter[filters.size()]);
   }
   
   /**
