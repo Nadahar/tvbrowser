@@ -72,15 +72,12 @@ public class TvDataBase {
   private Hashtable<String, Object> mNewDayProgramsAfterUpdate;
   
   private TvDataInventory mTvDataInventory;
-
-  private ArrayList<String> mUpdatedPrograms;
   
   private TvDataBase() {
     mTvDataHash = new SoftReferenceCache<String, OnDemandDayProgramFile>();
     mListenerList = new ArrayList<TvDataBaseListener>();
     mAvailableDateSet = new HashSet<Date>();
     mNewDayProgramsAfterUpdate = new Hashtable<String, Object>();
-    mUpdatedPrograms = new ArrayList<String>(0);
     updateAvailableDateSet();
 
 /* Uncommend testwise.
@@ -286,7 +283,6 @@ public class TvDataBase {
       }
     }
     mNewDayProgramsAfterUpdate.clear();
-    mUpdatedPrograms.clear();
   }
 
   public synchronized void setDayProgram(MutableChannelDayProgram prog) {
@@ -348,7 +344,6 @@ public class TvDataBase {
       // Set the new program to 'known'
       int version = (int) file.length();
       mTvDataInventory.setKnown(date, channel, version);
-      mUpdatedPrograms.add(key);
     } catch (IOException exc) {
       // Remove the new program from the cache
       removeCacheEntry(key);
@@ -533,7 +528,7 @@ public class TvDataBase {
         // Inform the listeners about adding the new program
         fireDayProgramAdded(checkProg);
       }
-      else if(somethingChanged || mUpdatedPrograms.contains(key)){
+      else if(somethingChanged){
         fireDayProgramAdded(checkProg);
       }
       
@@ -582,7 +577,7 @@ public class TvDataBase {
         addCacheEntry(key, progFile);
         
         // Inform the listeners about adding the new program
-        if(mUpdatedPrograms.remove(key) || oldProg != null || somethingChanged) {
+        if(oldProg != null || somethingChanged) {
           fireDayProgramAdded((ChannelDayProgram)progFile.getDayProgram());
         }
       } else if(oldProgFile != null) {
