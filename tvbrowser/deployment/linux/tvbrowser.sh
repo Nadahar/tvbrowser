@@ -105,7 +105,7 @@ echo $MSG0
 
 cd ${PROGRAM_DIR}
 
-echo "${JAVA_PROGRAM_DIR}java -Xms16m -Xmx128m  -Djava.library.path=\"${PROGRAM_DIR}\" -Dpropertiesfile=linux.properties -jar tvbrowser.jar '$@'"
+echo "${JAVA_PROGRAM_DIR}java -Xms16m -Xmx256m  -Djava.library.path=\"${PROGRAM_DIR}\" -Dpropertiesfile=linux.properties -jar tvbrowser.jar '$@'"
 ${JAVA_PROGRAM_DIR}java -Xms16m -Xmx128m -Djava.library.path="${PROGRAM_DIR}" -Dpropertiesfile=linux.properties -jar tvbrowser.jar "$@"
 
 echo "TV-Browser TERMINATED."
