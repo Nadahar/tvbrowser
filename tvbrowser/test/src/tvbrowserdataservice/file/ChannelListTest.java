@@ -26,7 +26,7 @@
 package tvbrowserdataservice.file;
 
 import org.junit.Test;
-import junit.framework.TestCase;
+
 import java.io.IOException;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
@@ -42,7 +42,7 @@ import util.io.FileFormatException;
 import util.io.IOUtilities;
 import static junit.framework.Assert.assertEquals;
 
-public class ChannelListTest extends TestCase {
+public class ChannelListTest {
 
   @Test
   public void testEscapedChannelNames() throws FileFormatException, IOException, URISyntaxException {
