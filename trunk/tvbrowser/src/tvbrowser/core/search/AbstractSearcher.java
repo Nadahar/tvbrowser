@@ -34,10 +34,13 @@ import devplugin.ProgramSearcher;
 import devplugin.ProgressMonitor;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
+import util.program.ProgramUtilities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+
+import javax.swing.DefaultListModel;
 
 /**
  * An abstract searcher implementation that reduces the checks on String checks.
@@ -183,6 +186,29 @@ public abstract class AbstractSearcher implements ProgramSearcher {
   public synchronized Program[] search(ProgramFieldType[] fieldArr, Date startDate,
                           int nrDays, Channel[] channels, boolean sortByStartTime, ProgressMonitor progress)
   {
+    return search(fieldArr, startDate, nrDays, channels, sortByStartTime, progress, null);
+  }
+  
+  /**
+   * Searches the TV database for programs that match the criteria of this
+   * searcher.
+   * 
+   * @param fieldArr The fields to search in
+   * @param startDate The date to start the search.
+   * @param nrDays The number of days to include after the start date. If
+   *        negative every day get's searched (from yesterday to 4 weeks into the
+   *        future)
+   * @param channels The channels to search in.
+   * @param sortByStartTime Should the results be sorted by the start time?
+   *        If not, the results will be grouped by date and channel and the
+   *        search will be faster.
+   * @param progress progress monitor for monitoring the status of the search
+   * @param listModel The list model the found programs should be stored in.
+   * @return The matching programs.
+   */
+  public synchronized Program[] search(ProgramFieldType[] fieldArr, Date startDate,
+                          int nrDays, Channel[] channels, boolean sortByStartTime, ProgressMonitor progress, DefaultListModel listModel)
+  {
 
     // Should we search in all channels?
     if (channels == null) {
@@ -217,6 +243,20 @@ public abstract class AbstractSearcher implements ProgramSearcher {
               for (int i = 0; i < dayProg.getProgramCount(); i++) {
                 Program prog = dayProg.getProgramAt(i);
                 if (matches(prog, fieldArr)) {
+                  if(listModel != null) {
+                    int insertIndex = 0;
+                    
+                    for(int index = 0; index < listModel.getSize(); index++) {
+                      Program p = (Program)listModel.get(index);
+                      
+                      if(ProgramUtilities.getProgramComparator().compare(p,prog) < 0) {
+                        insertIndex = index+1;
+                      }
+                    }
+                    
+                    listModel.add(insertIndex,prog);
+                  }
+                  
                   hitList.add(prog);
                 }
               }
