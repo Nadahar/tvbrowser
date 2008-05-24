@@ -29,6 +29,7 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,9 +39,12 @@ import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -51,6 +55,7 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRootPane;
@@ -61,12 +66,18 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.Document;
+import javax.swing.text.Element;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLDocument;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.contextmenu.ConfigMenuItem;
 import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.contextmenu.SeparatorMenuItem;
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.browserlauncher.Launch;
@@ -85,7 +96,9 @@ import com.l2fprod.common.swing.JTaskPaneGroup;
 
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
+import devplugin.PluginAccess;
 import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsItem;
 import devplugin.PluginManager;
 
@@ -171,7 +184,7 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
 
     mInfoEP = new ProgramEditorPane();
     
-    ExtendedHTMLEditorKit kit = new ExtendedHTMLEditorKit();
+    final ExtendedHTMLEditorKit kit = new ExtendedHTMLEditorKit();
     kit.setLinkCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     
     mInfoEP.setEditorKit(kit);
@@ -179,6 +192,130 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
     mDoc = (ExtendedHTMLDocument) mInfoEP.getDocument();
 
     mInfoEP.setEditable(false);
+    
+    mInfoEP.addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
+        if(SwingUtilities.isLeftMouseButton(e)) {
+          handleEvent(e);
+        }
+      }
+
+      public void mousePressed(MouseEvent e) {
+        if(e.isPopupTrigger()) {
+          handleEvent(e);
+        }
+      }
+
+      public void mouseReleased(MouseEvent e) {
+        if(e.isPopupTrigger()) {
+          handleEvent(e);
+        }
+      }
+      
+      private void handleEvent(MouseEvent e) {
+        // Copied from HTMLEditorKit of Sun Java 6 and changed for TV-Browser
+        JEditorPane editor = (JEditorPane) e.getSource();
+        
+        Point pt = new Point(e.getX(), e.getY());
+        int pos = editor.viewToModel(pt);
+        if (pos >= 0) {
+          String link = getLink(pos, editor, e.getX(), e.getY());
+          
+          
+          if (link.startsWith(ProgramTextCreator.TVBROWSER_URL_PROTOCOL)) {
+            final String desc = link.substring(ProgramTextCreator.TVBROWSER_URL_PROTOCOL.length());
+            
+            if(e.isPopupTrigger()) {
+              JPopupMenu popupMenu = new JPopupMenu();
+              
+              JMenuItem item = new JMenuItem(mLocalizer.msg("searchTvBrowser","Search in TV-Browser"));
+              item.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                  internalSearch(desc);
+                }
+              });
+              
+              popupMenu.add(item);
+              
+              item = new JMenuItem(mLocalizer.msg("searchWikipedia","Search in Wikipedia"));
+              item.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                  searchWikipedia(desc);
+                }
+              });
+              
+              popupMenu.add(item);
+              
+              //String url = URLEncoder.encode(topic, "UTF-8").replace("+", "%20");
+              //
+              
+              final PluginAccess webPlugin = PluginManagerImpl.getInstance().getActivatedPluginForId("java.webplugin.WebPlugin");
+              
+              if(webPlugin != null && webPlugin.canReceiveProgramsWithTarget()) {
+                ProgramReceiveTarget[] targets = webPlugin.getProgramReceiveTargets();
+                
+                if(targets != null && targets.length > 0) {
+                  popupMenu.addSeparator();
+                  
+                  for(ProgramReceiveTarget target : targets) {
+                    item = new JMenuItem(target.toString());
+                    item.addActionListener(new ActionListener() {
+                      public void actionPerformed(ActionEvent e) {
+                        // TODO Auto-generated method stub
+                        //webPlugin.receivePrograms(mProgram)
+                      }     
+                    });
+                    
+                    popupMenu.add(item);
+                  }
+                }
+              }
+              
+              popupMenu.show(e.getComponent(),e.getX(),e.getY());
+            }
+            else {
+              internalSearch(desc);
+            }
+          }
+        }
+      }
+      
+      private void searchWikipedia(String desc) {
+        try {
+          String url = URLEncoder.encode(desc, "UTF-8").replace("+", "%20");
+          url = mLocalizer.msg("wikipediaLink", "http://en.wikipedia.org/wiki/{0}", url);
+          Launch.openURL(url);
+        } catch (UnsupportedEncodingException e1) {
+          e1.printStackTrace();
+        }
+      }
+      
+      private void internalSearch(String desc) {
+        desc = desc.replaceAll("  ", " ").replaceAll(" ", " AND ");
+        SearchFormSettings settings = new SearchFormSettings(desc);
+        settings.setSearchIn(SearchFormSettings.SEARCH_IN_ALL);
+        settings.setSearcherType(PluginManager.SEARCHER_TYPE_BOOLEAN);
+        settings.setNrDays(-1);
+        SearchHelper.search(mInfoEP, settings, null, true);
+      }
+      
+      private String getLink(int pos, JEditorPane html, int x, int y) {
+        Document doc = html.getDocument();
+        if (doc instanceof HTMLDocument) {
+          HTMLDocument hdoc = (HTMLDocument) doc;
+          Element e = hdoc.getCharacterElement(pos);
+          AttributeSet a = e.getAttributes();
+          AttributeSet anchor = (AttributeSet)a.getAttribute(HTML.Tag.A);
+
+          if (anchor != null) {
+            return (String)anchor.getAttribute(HTML.Attribute.HREF);
+          }
+        }
+        
+        return null;
+      }
+    });
+    
     mInfoEP.addHyperlinkListener(new HyperlinkListener() {
       private String mTooltip;
       public void hyperlinkUpdate(HyperlinkEvent evt) {
@@ -193,18 +330,6 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
           URL url = evt.getURL();
           if (url != null) {
             Launch.openURL(url.toString());
-          }
-          else {
-            String desc = evt.getDescription();
-            if (desc != null && desc.startsWith(ProgramTextCreator.TVBROWSER_URL_PROTOCOL)) {
-              desc = desc.substring(ProgramTextCreator.TVBROWSER_URL_PROTOCOL.length());
-              desc = desc.replaceAll("  ", " ").replaceAll(" ", " AND ");
-              SearchFormSettings settings = new SearchFormSettings(desc);
-              settings.setSearchIn(SearchFormSettings.SEARCH_IN_ALL);
-              settings.setSearcherType(PluginManager.SEARCHER_TYPE_BOOLEAN);
-              settings.setNrDays(-1);
-              SearchHelper.search(mInfoEP, settings);
-            }
           }
         }
       }
@@ -602,4 +727,6 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
     }
     return evt.getURL().toExternalForm();
   }
+  
+  
 }

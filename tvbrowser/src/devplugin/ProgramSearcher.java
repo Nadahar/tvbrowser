@@ -25,6 +25,9 @@
  */
 package devplugin;
 
+import javax.swing.DefaultListModel;
+
+
 /**
  * A searcher that searches for a programs.
  * 
@@ -77,6 +80,26 @@ public interface ProgramSearcher {
    */
   public Program[] search(ProgramFieldType[] fieldArr, Date startDate,
       int nrDays, Channel[] channels, boolean sortByStartTime, ProgressMonitor progress);
+
+  /**
+   * Searches the TV data base for programs that match the criteria of this
+   * searcher.
+   * 
+   * @param fieldArr The fields to search in
+   * @param startDate The date to start the search.
+   * @param nrDays The number of days to include after the start date. If
+   *        negative the days before the start date are used.
+   * @param channels The channels to search in.
+   * @param sortByStartTime Should the results be sorted by the start time?
+   *        If not, the results will be grouped by date and channel and the
+   *        search will be faster.
+   * @param progress progressMonitor for showing the search progress
+   * @param listModel The list model the found programs should be stored in.
+   * @return The matching programs.
+   * @since 2.7
+   */
+  public Program[] search(ProgramFieldType[] fieldArr, Date startDate,
+      int nrDays, Channel[] channels, boolean sortByStartTime, ProgressMonitor progress, DefaultListModel listModel);
 
 }
 
