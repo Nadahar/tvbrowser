@@ -582,6 +582,10 @@ public class TvDataBase {
         }
       } else if(oldProgFile != null) {
         oldProgFile.calculateTimeLimits();
+        
+        if(oldProg != null) {
+          fireDayProgramAdded((ChannelDayProgram)oldProgFile.getDayProgram());
+        }
       }
     } catch (Exception exc) {
       mLog.log(Level.WARNING, "Loading program for " + channel + " from "
