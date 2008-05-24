@@ -243,8 +243,6 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
       return;
     }
     
-    TvDataBase.getInstance().intelligentCacheClearance();
-
     Object[] objects = mModel.toArray();
     for (Object object : objects) {
       final FinderItem item = (FinderItem) object;
