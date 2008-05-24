@@ -4,7 +4,7 @@
   <jar>..\launcher\bin\JarWinJavaExeLauncher.jar</jar>
   <outfile>..\..\..\runtime\tvbrowser_win\tvbrowser_noDD.exe</outfile>
   <errTitle></errTitle>
-  <cmdLine>/start tvbrowser.jar -Dpropertiesfile=windows.properties -Dsun.java2d.noddraw=true</cmdLine>
+  <cmdLine>/start tvbrowser.jar -Dpropertiesfile=windows.properties -Dsun.java2d.noddraw=true -Xmx256m</cmdLine>
   <chdir>.</chdir>
   <priority>normal</priority>
   <downloadUrl>http://java.com/download</downloadUrl>
