@@ -35,7 +35,6 @@ import java.util.Hashtable;
 import java.util.logging.Level;
 
 import tvbrowser.core.data.OnDemandDayProgramFile;
-import tvdataservice.MarkedProgramsList;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
 import devplugin.Channel;
@@ -209,27 +208,6 @@ public class TvDataBase {
     if (somethingChanged) {
       TvDataUpdater.getInstance().fireTvDataUpdateFinished();
     }
-  }
-  
-  public void intelligentCacheClearance() {
-    Program[] programs = MarkedProgramsList.getInstance().getMarkedPrograms();
-    
-    SoftReferenceCache<String, OnDemandDayProgramFile> keepValues = new SoftReferenceCache<String, OnDemandDayProgramFile>();
-    
-    for(Program prog : programs) {
-      String key = getDayProgramKey(prog.getDate(), prog.getChannel());
-      OnDemandDayProgramFile dayProgram = mTvDataHash.get(key);
-      
-      if(dayProgram != null) {
-        keepValues.put(key, dayProgram);
-      }
-    }
-    
-    mTvDataHash.clear();
-    
-    mTvDataHash = keepValues;
-    
-    MarkedProgramsList.getInstance().revalidatePrograms();
   }
 
   public void close() throws IOException {
@@ -517,7 +495,7 @@ public class TvDataBase {
       MutableChannelDayProgram checkProg = (MutableChannelDayProgram)getDayProgram(date,channel,true);
 
       boolean somethingChanged = calculateMissingLengths(checkProg);
-          
+      
       Object oldProg = null;
       if((oldProg = mNewDayProgramsAfterUpdate.remove(key)) != null) {
         // Inform the listeners about deleting the old program
@@ -532,7 +510,7 @@ public class TvDataBase {
         fireDayProgramAdded(checkProg);
       }
       
-      if (somethingChanged || checkProg.getAndResetChangedByPluginState()) {
+      if (checkProg.getAndResetChangedByPluginState() || somethingChanged) {
         // Some missing lengths could now be calculated
         // -> Try to save the changes
           
@@ -575,17 +553,13 @@ public class TvDataBase {
           
         // Put the new program file in the cache
         addCacheEntry(key, progFile);
-        
-        // Inform the listeners about adding the new program
-        if(oldProg != null || somethingChanged) {
-          fireDayProgramAdded((ChannelDayProgram)progFile.getDayProgram());
-        }
       } else if(oldProgFile != null) {
         oldProgFile.calculateTimeLimits();
-        
-        if(oldProg != null) {
-          fireDayProgramAdded((ChannelDayProgram)oldProgFile.getDayProgram());
-        }
+      }
+
+      // Inform the listeners about adding the new program
+      if(oldProg != null || somethingChanged) {
+        fireDayProgramAdded((ChannelDayProgram)getCacheEntry(date, channel, true, false).getDayProgram());
       }
     } catch (Exception exc) {
       mLog.log(Level.WARNING, "Loading program for " + channel + " from "
