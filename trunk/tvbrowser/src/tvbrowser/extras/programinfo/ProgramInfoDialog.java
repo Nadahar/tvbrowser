@@ -313,11 +313,11 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
               }
               
               if(!found) {
-                if(value.equals("internalWikipedia")) {
-                  searchWikipedia(desc);
+                if(value.equals("internalSearch")) {
+                  internalSearch(desc);
                 }
                 else {
-                  internalSearch(desc);
+                  searchWikipedia(desc);
                 }
               }
             }
