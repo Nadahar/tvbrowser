@@ -195,24 +195,24 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
     
     mInfoEP.addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
-        if(SwingUtilities.isLeftMouseButton(e)) {
-          handleEvent(e);
+        if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && e.getModifiersEx() == 0) {
+          handleEvent(e, false);
         }
       }
 
       public void mousePressed(MouseEvent e) {
         if(e.isPopupTrigger()) {
-          handleEvent(e);
+          handleEvent(e, true);
         }
       }
 
       public void mouseReleased(MouseEvent e) {
         if(e.isPopupTrigger()) {
-          handleEvent(e);
+          handleEvent(e, true);
         }
       }
-      
-      private void handleEvent(MouseEvent e) {
+
+      private void handleEvent(MouseEvent e, boolean popupEvent) {
         // Copied from HTMLEditorKit of Sun Java 6 and changed for TV-Browser
         JEditorPane editor = (JEditorPane) e.getSource();
         
@@ -225,7 +225,7 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
           if (link.startsWith(ProgramTextCreator.TVBROWSER_URL_PROTOCOL)) {
             final String desc = link.substring(ProgramTextCreator.TVBROWSER_URL_PROTOCOL.length());
             
-            if(e.isPopupTrigger()) {
+            if(popupEvent) {
               JPopupMenu popupMenu = new JPopupMenu();
               
               String value = ProgramInfo.getInstance().getSettings().getProperty("actorSearchDefault","internalWikipedia");
