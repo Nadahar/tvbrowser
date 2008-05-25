@@ -25,15 +25,24 @@
  */
 package tvdataservice;
 
+import devplugin.Marker;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Vector;
 
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginManagerImpl;
+import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.program.ProgramUtilities;
 
 import devplugin.Date;
 import devplugin.Program;
@@ -51,9 +60,13 @@ public class MarkedProgramsList {
   private HashSet<MutableProgram> mMarkedPrograms;
   private Thread mProgramTableRefreshThread;
   private int mProgramTableRefreshThreadWaitTime;
+  private MarkerHashMap<String,Marker[]> mProgramMarkingsMap;
+  private HashMap<String,Vector<ChangeListener>> mProgramChangeListenerMap;
 
   private MarkedProgramsList() {
     mMarkedPrograms = new HashSet<MutableProgram>();
+    mProgramMarkingsMap = new MarkerHashMap<String,Marker[]>();
+    mProgramChangeListenerMap = new HashMap<String,Vector<ChangeListener>>();
     mInstance = this;
   }
 
@@ -87,11 +100,108 @@ public class MarkedProgramsList {
     };
   }
 
-  protected synchronized void addProgram(MutableProgram p) {
-    if(p!= null && !contains(p) && p.getMarkerArr().length > 0) {
+  protected synchronized void addProgram(MutableProgram p, Marker marker) {
+    if(p!= null && !contains(p) &&  mProgramMarkingsMap.get(getIdFor(p)).length > 0) {
       mMarkedPrograms.add(p);
+      mark(marker,p);
       handleFilterMarking(p);
     }
+    else {
+      mark(marker,p);
+    }
+  }
+  
+  private void mark(Marker marker, MutableProgram p) {
+    boolean alreadyMarked = getMarkedByPluginIndex(marker,p) != -1;
+    
+    int oldCount = mProgramMarkingsMap.get(getIdFor(p)).length;
+
+    if (! alreadyMarked) {
+      // Append the new plugin
+      Marker[] newArr = new Marker[oldCount + 1];
+      System.arraycopy(mProgramMarkingsMap.get(getIdFor(p)), 0, newArr, 0, oldCount);
+      newArr[oldCount] = marker;
+      
+      Arrays.sort(newArr,new Comparator<Marker>() {
+        public int compare(Marker o1, Marker o2) {
+          return o1.getId().compareTo(o2.getId());
+        }
+      });
+      
+      mProgramMarkingsMap.put(getIdFor(p),newArr);
+      
+      p.setMarkPriority(Math.max(p.getMarkPriority(),marker.getMarkPriorityForProgram(p)));
+        
+      // add program to artificial plugin tree
+      if (marker instanceof PluginProxy) {
+        PluginProxy proxy = (PluginProxy) marker;
+        if (! proxy.canUseProgramTree() || proxy.hasArtificialPluginTree() ) {
+          if (proxy.getArtificialRootNode() == null || proxy.getArtificialRootNode().size() < 100) {
+            proxy.addToArtificialPluginTree(p);
+          }
+        }
+      }
+      
+      p.fireStateChanged();
+    }
+
+    if(oldCount < 1) {
+      p.cacheTitle();
+    }
+  }
+  
+  private void unmark(Marker marker, MutableProgram p) {
+    int idx = getMarkedByPluginIndex(marker,p);
+    if (idx != -1) {
+      Marker[] markerArr = mProgramMarkingsMap.get(getIdFor(p));
+      
+      if (markerArr.length == 1) {
+        // This was the only plugin
+        mProgramMarkingsMap.remove(getIdFor(p));
+        p.setMarkPriority(Program.NO_MARK_PRIORITY);
+      }
+      else {
+        int oldCount = markerArr.length;
+        Marker[] newArr = new Marker[oldCount - 1];
+        System.arraycopy(markerArr, 0, newArr, 0, idx);
+        System.arraycopy(markerArr, idx + 1, newArr, idx, oldCount - idx - 1);
+        
+        p.setMarkPriority(Program.NO_MARK_PRIORITY);
+        
+        for(Marker mark : newArr) {
+          p.setMarkPriority(Math.max(p.getMarkPriority(),mark.getMarkPriorityForProgram(p)));
+        }
+        
+        mProgramMarkingsMap.put(getIdFor(p), newArr);
+      }
+
+      // remove from artificial plugin tree
+      if (marker instanceof PluginProxy) {
+        PluginProxy proxy = (PluginProxy) marker;
+        if (proxy.hasArtificialPluginTree() && proxy.getArtificialRootNode().size() < 100) {
+          proxy.getArtificialRootNode().removeProgram(p);
+        }
+      }
+
+      p.fireStateChanged();
+      
+      if(mProgramMarkingsMap.get(getIdFor(p)).length < 1) {
+        p.clearTitleCache();
+        removeProgram(p,marker);
+      }
+    }
+  }
+  
+  private int getMarkedByPluginIndex(Marker plugin, Program p) {
+    Marker[] markerArr = mProgramMarkingsMap.get(getIdFor(p));
+    
+    for (int i = 0; i < markerArr.length; i++) {
+      if (markerArr[i].getId().compareTo(plugin.getId()) == 0) {
+        return i;
+      }
+    }
+
+    return -1;
   }
   
   private boolean contains(MutableProgram p) {
@@ -108,10 +218,14 @@ public class MarkedProgramsList {
     return false;
   }
 
-  protected void removeProgram(MutableProgram p) {
-    if(p!= null && p.getMarkerArr().length < 1) {
+  protected void removeProgram(MutableProgram p, Marker marker) {
+    if(p!= null && mProgramMarkingsMap.get(getIdFor(p)).length < 1) {
       mMarkedPrograms.remove(p);
+      mProgramMarkingsMap.remove(getIdFor(p));
       handleFilterMarking(p);
+    }
+    else {
+      unmark(marker,p);
     }
   }
   
@@ -257,14 +371,10 @@ public class MarkedProgramsList {
         }
         
         if(testProg == null || titleWasChangedToMuch) {
-          programInList.setMarkerArr(MutableProgram.EMPTY_MARKER_ARR);
+          mProgramMarkingsMap.remove(programInList.getID());
           programInList.setProgramState(Program.WAS_DELETED_STATE);
         }
         else if(testProg != programInList) {
-          testProg.setMarkerArr(programInList.getMarkerArr());
-          testProg.setMarkPriority(programInList.getMarkPriority());
-          programInList.setMarkerArr(MutableProgram.EMPTY_MARKER_ARR);
-          programInList.setMarkPriority(-1);
           programInList.setProgramState(Program.WAS_UPDATED_STATE);
           mMarkedPrograms.add(testProg);
         } else {
@@ -272,5 +382,63 @@ public class MarkedProgramsList {
         }
       }
     }
+  }
+  
+  private static class MarkerHashMap<K,V> extends HashMap<K,V> {
+    public V get(Object o) {
+      V value = super.get(o);
+      
+      if(value != null) {
+        return value;
+      }
+      
+      return (V)MutableProgram.EMPTY_MARKER_ARR;
+    }
+  }
+  
+  protected Marker[] getMarkerForProgram(Program p) {
+    return mProgramMarkingsMap.get(getIdFor(p));
+  }
+  
+  private String getIdFor(Program p) {
+    if(p == null || p.getDate() == null) {
+      return null;
+    }
+    else if(p.getID() == null) {
+      return "exampleProgramId";
+    }
+    else {
+      return p.getDate().getValue() + " " + ProgramUtilities.getTimeZoneCorrectedProgramId(p.getID());
+    }
+  }
+  
+  protected void addChangeListener(ChangeListener listener, Program p) {
+    Vector<ChangeListener> listenerVec = mProgramChangeListenerMap.get(getIdFor(p));
+    
+    if(listenerVec == null) {
+      listenerVec = new Vector<ChangeListener>();
+      listenerVec.add(listener);
+      
+      mProgramChangeListenerMap.put(getIdFor(p), listenerVec);
+    }
+    else {
+      listenerVec.add(listener);
+    }
+  }
+  
+  protected void removeChangeListener(ChangeListener listener, Program p) {
+    Vector<ChangeListener> listenerVec = mProgramChangeListenerMap.get(getIdFor(p));
+    
+    if(listenerVec != null) {
+      listenerVec.remove(listener);
+      
+      if(listenerVec.isEmpty()) {
+        mProgramChangeListenerMap.remove(getIdFor(p));
+      }
+    }
+  }
+  
+  protected Vector<ChangeListener> getListenerFor(Program p) {
+    return mProgramChangeListenerMap.get(getIdFor(p));
   }
 }

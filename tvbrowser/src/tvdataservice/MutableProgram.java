@@ -36,7 +36,6 @@ import devplugin.PluginAccess;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import tvbrowser.core.TvDataBase;
-import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import util.io.IOUtilities;
 
@@ -44,8 +43,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TimeZone;
@@ -73,13 +70,6 @@ public class MutableProgram implements Program {
   /** A plugin array that can be shared by all the programs that are not marked
    * by any plugin. */
   protected static final Marker[] EMPTY_MARKER_ARR = new Marker[0];
-
-  /** Contains all listeners that listen for events from this program. */
-  private Vector<ChangeListener> mListenerList;
-
-  /** Containes all Plugins that mark this program. We use a simple array,
-   * because it takes less memory. */
-  private Marker[] mMarkerArr;
   
   /** Tracks if the program is current loading/ being created. */
   private boolean mIsLoading;
@@ -173,8 +163,6 @@ public class MutableProgram implements Program {
     }
     
     mFieldHash = new HashMap<ProgramFieldType,Object>(8);
-    mListenerList = null; // defer initialization until needed, to save memory
-    mMarkerArr = EMPTY_MARKER_ARR;
     mIsLoading = isLoading;
 
     mTitle = null;
@@ -185,8 +173,7 @@ public class MutableProgram implements Program {
 
     // The title is not-null.
     setTextField(ProgramFieldType.TITLE_TYPE, "");
-
-    mMarkerArr = EMPTY_MARKER_ARR;
+    
     mState = IS_VALID_STATE;
   }
 
@@ -219,12 +206,7 @@ public class MutableProgram implements Program {
    * @see #removeChangeListener
    */
   public void addChangeListener(ChangeListener listener) {
-    if (mListenerList == null) {
-      mListenerList = new Vector<ChangeListener>(1);
-    }
-    if (!mListenerList.contains(listener)) {
-      mListenerList.add(listener);
-    }
+    MarkedProgramsList.getInstance().addChangeListener(listener,this);
   }
 
 
@@ -237,10 +219,7 @@ public class MutableProgram implements Program {
    * @see #addChangeListener
    */
   public void removeChangeListener(ChangeListener listener) {
-    if (mListenerList == null) {
-      return;
-    }
-    mListenerList.remove(listener);
+    MarkedProgramsList.getInstance().removeChangeListener(listener, this);
   }
 
 
@@ -252,13 +231,15 @@ public class MutableProgram implements Program {
    * @see EventListenerList
    */
   protected void fireStateChanged() {
-    if (mListenerList == null) {
+    Vector<ChangeListener> listenerList = MarkedProgramsList.getInstance().getListenerFor(this);
+    
+    if (listenerList == null) {
       return;
     }
     ChangeEvent changeEvent = new ChangeEvent(this);
 
-    for (int i = 0; i < mListenerList.size(); i++) {
-      mListenerList.get(i).stateChanged(changeEvent);
+    for (int i = 0; i < listenerList.size(); i++) {
+      listenerList.get(i).stateChanged(changeEvent);
     }
   }
 
@@ -320,50 +301,7 @@ public class MutableProgram implements Program {
    * @param marker The plugin to mark the program for.
    */
   public final void mark(Marker marker) {
-    if(mState == Program.IS_VALID_STATE) {
-      boolean alreadyMarked = getMarkedByPluginIndex(marker) != -1;
-      int oldCount = mMarkerArr.length;
-  
-      if (! alreadyMarked) {
-        // Append the new plugin
-        Marker[] newArr = new Marker[oldCount + 1];
-        System.arraycopy(mMarkerArr, 0, newArr, 0, oldCount);
-        newArr[oldCount] = marker;
-        mMarkerArr = newArr;
-        
-        Arrays.sort(mMarkerArr,new Comparator<Marker>() {
-          public int compare(Marker o1, Marker o2) {
-            return o1.getId().compareTo(o2.getId());
-          }
-        });
-        
-        mMarkPriority = Math.max(mMarkPriority,marker.getMarkPriorityForProgram(this));
-  
-        // add program to artificial plugin tree
-        if (marker instanceof PluginProxy) {
-          PluginProxy proxy = (PluginProxy) marker;
-          if (! proxy.canUseProgramTree() || proxy.hasArtificialPluginTree() ) {
-            if (proxy.getArtificialRootNode() == null || proxy.getArtificialRootNode().size() < 100) {
-              proxy.addToArtificialPluginTree(this);
-            }
-          }
-        }
-  
-        fireStateChanged();
-      }
-  
-      if(oldCount < 1) {
-        mTitle = getTitle();
-        MarkedProgramsList.getInstance().addProgram(this);
-      }
-    }
-    else if(mState == Program.WAS_UPDATED_STATE) {
-      Program p = Plugin.getPluginManager().getProgram(getDate(), getID());
-      
-      if(p != null) {
-        p.mark(marker);
-      }
-    }
+    MarkedProgramsList.getInstance().addProgram(this,marker);
   }
 
   /**
@@ -374,66 +312,8 @@ public class MutableProgram implements Program {
    * @param marker The plugin to remove the mark for.
    */
   public final void unmark(Marker marker) {
-    if(mState == Program.IS_VALID_STATE) {
-      int idx = getMarkedByPluginIndex(marker);
-      if (idx != -1) {
-        if (mMarkerArr.length == 1) {
-          // This was the only plugin
-          mMarkerArr = EMPTY_MARKER_ARR;
-          mMarkPriority = Program.NO_MARK_PRIORITY;
-        }
-        else {
-          int oldCount = mMarkerArr.length;
-          Marker[] newArr = new Marker[oldCount - 1];
-          System.arraycopy(mMarkerArr, 0, newArr, 0, idx);
-          System.arraycopy(mMarkerArr, idx + 1, newArr, idx, oldCount - idx - 1);
-          
-          mMarkPriority = Program.NO_MARK_PRIORITY;
-          
-          for(Marker mark : newArr) {
-            mMarkPriority = Math.max(mMarkPriority,mark.getMarkPriorityForProgram(this));
-          }
-          
-          mMarkerArr = newArr;
-        }
-  
-        // remove from artificial plugin tree
-        if (marker instanceof PluginProxy) {
-          PluginProxy proxy = (PluginProxy) marker;
-          if (proxy.hasArtificialPluginTree() && proxy.getArtificialRootNode().size() < 100) {
-            proxy.getArtificialRootNode().removeProgram(this);
-          }
-        }
-  
-        fireStateChanged();
-      }
-  
-      if(mMarkerArr.length < 1) {
-        mTitle = null;
-        MarkedProgramsList.getInstance().removeProgram(this);
-      }
-    }
-    else if(mState == Program.WAS_UPDATED_STATE) {
-      Program p = Plugin.getPluginManager().getProgram(getDate(), getID());
-      
-      if(p != null) {
-        p.unmark(marker);
-      }
-    }
+    MarkedProgramsList.getInstance().removeProgram(this,marker);
   }
-
-
-
-  private int getMarkedByPluginIndex(Marker plugin) {
-    for (int i = 0; i < mMarkerArr.length; i++) {
-      if (mMarkerArr[i].getId().compareTo(plugin.getId()) == 0) {
-        return i;
-      }
-    }
-
-    return -1;
-  }
-
 
   /**
    * Gets all {@link devplugin.Plugin}s that have marked this program.
@@ -442,7 +322,10 @@ public class MutableProgram implements Program {
   public PluginAccess[] getMarkedByPlugins() {
     PluginAccess plugin;
     ArrayList<PluginAccess> list = new ArrayList<PluginAccess>();
-    for (Marker marker : mMarkerArr) {
+    
+    Marker[] markerArr = MarkedProgramsList.getInstance().getMarkerForProgram(this);
+    
+    for (Marker marker : markerArr) {
       plugin = PluginProxyManager.getInstance().getPluginForId(marker.getId());
       if (plugin != null) {
         list.add(plugin);
@@ -452,7 +335,7 @@ public class MutableProgram implements Program {
   }
 
   public Marker[] getMarkerArr() {
-    return mMarkerArr;
+    return MarkedProgramsList.getInstance().getMarkerForProgram(this);
   }
 
 
@@ -1059,31 +942,13 @@ public class MutableProgram implements Program {
   public final void validateMarking() {
     mMarkPriority = Program.NO_MARK_PRIORITY;
     
-    for(Marker mark : mMarkerArr) {
+    Marker[] markerArr = MarkedProgramsList.getInstance().getMarkerForProgram(this);
+    
+    for(Marker mark : markerArr) {
       mMarkPriority = Math.max(mMarkPriority,mark.getMarkPriorityForProgram(this));
     }
     
     fireStateChanged();
-  }
-
-  /**
-   * Sets the marker array of this program.
-   *
-   * @param marker The marker array.
-   * @since 2.2.1
-   */
-  protected void setMarkerArr(Marker[] marker) {
-    if (marker.length == 0) {
-      mMarkerArr = EMPTY_MARKER_ARR;
-    }
-    else {
-      mMarkerArr = marker;
-  
-      if(marker.length > 0) {
-        mTitle = getTitle();
-      }
-    }
-    //fireStateChanged();
   }
 
   /**
@@ -1113,5 +978,13 @@ public class MutableProgram implements Program {
    */
   protected void setMarkPriority(int markPriority) {
     mMarkPriority = markPriority;
+  }
+  
+  protected void cacheTitle() {
+    mTitle = getTitle();
+  }
+  
+  protected void clearTitleCache() {
+    mTitle = null;
   }
 }
