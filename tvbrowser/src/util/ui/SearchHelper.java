@@ -82,6 +82,10 @@ public class SearchHelper {
   
   private JProgressBar mProgressBar;
   
+  private ProgramList mProgramList;
+  
+  private JDialog mDialog = null;
+  
   /** Private Constructor */
   private SearchHelper() {
     mListModel = null;
@@ -106,6 +110,7 @@ public class SearchHelper {
    * @param comp Parent-Component
    * @param settings Settings for the Search.
    * @param pictureSettings Settings for the pictures
+   * @param showDialog Show the search results instantly when found something.
    */
   public static void search(Component comp, SearchFormSettings settings, ProgramPanelSettings pictureSettings, boolean showDialog) {
     if (mInstance == null) {
@@ -115,6 +120,20 @@ public class SearchHelper {
       pictureSettings = new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE),false);
     }
     mInstance.doSearch(comp, settings, pictureSettings, showDialog);
+  }
+  
+  /**
+   * Search for Programs and Display a Result-Dialog.
+   * This function creates a new Thread.
+   * 
+   * @param comp Parent-Component
+   * @param pictureSettings Settings for the pictures
+   * @param settings Settings for the Search.
+   * @param showDialog Show the search results instantly when found something. 
+   * @since 2.7
+   */
+  public static void search(Component comp, PluginPictureSettings pictureSettings, SearchFormSettings settings, boolean showDialog) {
+    search(comp,settings,new ProgramPanelSettings(pictureSettings,false),showDialog);
   }
   
   /**
@@ -148,10 +167,8 @@ public class SearchHelper {
    * @param pictureSettings Settings for Pictures
    */
   private void doSearch(final Component comp,final SearchFormSettings searcherSettings, final ProgramPanelSettings pictureSettings, final boolean showDialog) {
-    JDialog dlg = null;
-    
     if(showDialog) {
-      dlg = createHitsDialog(comp, new Program[0], mLocalizer.msg("search","Search"), searcherSettings, pictureSettings);
+      mDialog = createHitsDialog(comp, new Program[0], mLocalizer.msg("search","Search"), searcherSettings, pictureSettings);
     }
     
     new Thread(new Runnable() {
@@ -176,14 +193,21 @@ public class SearchHelper {
             String msg = mLocalizer
                 .msg("nothingFound", "No programs found with {0}!", searcherSettings.getSearchText());
             JOptionPane.showMessageDialog(MainFrame.getInstance(), msg);
+            
+            if(mDialog != null) {
+              mDialog.setVisible(false);
+              mDialog = null;
+            }
           } else {
             if(!showDialog) {
               String title = mLocalizer.msg("hitsTitle", "Programs with {0}", searcherSettings.getSearchText());
               
               UiUtilities.centerAndShow(createHitsDialog(comp, programArr, title, searcherSettings, pictureSettings));
+              mDialog = null;
             }
             else if(mProgressBar != null) {
               mProgressBar.setVisible(false);
+              mProgramList.updateUI();
             }
           }
         } catch (TvBrowserException exc) {
@@ -193,8 +217,9 @@ public class SearchHelper {
       }
     }, "Search programs").start();
     
-    if(dlg != null) {
-      UiUtilities.centerAndShow(dlg);
+    if(mDialog != null) {
+      UiUtilities.centerAndShow(mDialog);
+      mDialog = null;
     }
   }
 
@@ -275,13 +300,13 @@ public class SearchHelper {
       main.add(mProgressBar, BorderLayout.NORTH);
     }
     
-    final ProgramList list = new ProgramList(mListModel, pictureSettings);
+    mProgramList = new ProgramList(mListModel, pictureSettings);
     
-    list.addMouseListeners(null);
+    mProgramList.addMouseListeners(null);
 
-    main.add(new JScrollPane(list), BorderLayout.CENTER);
+    main.add(new JScrollPane(mProgramList), BorderLayout.CENTER);
     if (curPos >= 0) {
-      list.setSelectedValue(programArr[curPos], true);
+      mProgramList.setSelectedValue(programArr[curPos], true);
     }
 
     ButtonBarBuilder builder = ButtonBarBuilder.createLeftToRightBuilder();
@@ -293,7 +318,7 @@ public class SearchHelper {
     sendBt.setToolTipText(mLocalizer.msg("send", "Send Programs to another Plugin"));
     sendBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-        Program[] program = list.getSelectedPrograms();
+        Program[] program = mProgramList.getSelectedPrograms();
 
         if (program == null) {
           program = programArr;

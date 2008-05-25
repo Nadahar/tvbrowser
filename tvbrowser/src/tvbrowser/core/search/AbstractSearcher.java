@@ -41,6 +41,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import javax.swing.DefaultListModel;
+import javax.swing.SwingUtilities;
 
 /**
  * An abstract searcher implementation that reduces the checks on String checks.
@@ -207,7 +208,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
    * @return The matching programs.
    */
   public synchronized Program[] search(ProgramFieldType[] fieldArr, Date startDate,
-                          int nrDays, Channel[] channels, boolean sortByStartTime, ProgressMonitor progress, DefaultListModel listModel)
+                          int nrDays, Channel[] channels, boolean sortByStartTime, ProgressMonitor progress, final DefaultListModel listModel)
   {
 
     // Should we search in all channels?
@@ -241,20 +242,24 @@ public abstract class AbstractSearcher implements ProgramSearcher {
 
               // Search this day program
               for (int i = 0; i < dayProg.getProgramCount(); i++) {
-                Program prog = dayProg.getProgramAt(i);
+                final Program prog = dayProg.getProgramAt(i);
                 if (matches(prog, fieldArr)) {
                   if(listModel != null) {
-                    int insertIndex = 0;
-                    
-                    for(int index = 0; index < listModel.getSize(); index++) {
-                      Program p = (Program)listModel.get(index);
-                      
-                      if(ProgramUtilities.getProgramComparator().compare(p,prog) < 0) {
-                        insertIndex = index+1;
+                    SwingUtilities.invokeLater(new Runnable() {
+                      public void run() {
+                        int insertIndex = 0;
+                        
+                        for(int index = 0; index < listModel.getSize(); index++) {
+                          Program p = (Program)listModel.get(index);
+                          
+                          if(ProgramUtilities.getProgramComparator().compare(p,prog) < 0) {
+                            insertIndex = index+1;
+                          }
+                        }
+
+                        listModel.add(insertIndex,prog);                        
                       }
-                    }
-                    
-                    listModel.add(insertIndex,prog);
+                    });
                   }
                   
                   hitList.add(prog);

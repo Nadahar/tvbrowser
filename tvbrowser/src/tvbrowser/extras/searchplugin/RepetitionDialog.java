@@ -269,7 +269,7 @@ public class RepetitionDialog extends JDialog implements WindowClosingIf {
     }
 
     SearchHelper.search(getParent(), new PluginPictureSettings(
-        PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), settings);
+        PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), settings, true);
   }
 
   /**

@@ -171,7 +171,7 @@ public class SearchField extends JPanel {
               mCancelButton.setVisible(false);
             }
           } else {
-            SearchHelper.search(mText, mSearchFormSettings, new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE),false));
+            SearchHelper.search(mText, mSearchFormSettings, new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE),false),true);
           }
         }
       }
