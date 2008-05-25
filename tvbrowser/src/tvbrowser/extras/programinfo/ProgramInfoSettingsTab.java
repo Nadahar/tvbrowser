@@ -300,7 +300,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
       if(currentValue.equals("internalSearch")) {
         selectedIndex = 0;
       }
-      else if (currentValue.equals("internalWikipedia")) {
+      else {
         selectedIndex = 1;
       }
     }
