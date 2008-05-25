@@ -213,7 +213,7 @@ public class SearchHelper {
               mProgressBar.setVisible(false);
               mProgramList.updateUI();
               
-              if(mProgramList.getSelectedIndex() == -1) {
+              if(mProgramList.getSelectedIndex() == -1 && mProgramListScrollPane.getVerticalScrollBar().getValue() == 0) {
                 for(int i = 0; i < mProgramList.getModel().getSize(); i++) {
                   Object value = mProgramList.getModel().getElementAt(i);
                   
