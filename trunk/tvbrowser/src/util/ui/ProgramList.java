@@ -246,12 +246,6 @@ public class ProgramList extends JList implements ChangeListener,
         mPrograms.add(prg);
       }
     }
-    
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        updateUI();
-      }
-    });
   }
 
   /**

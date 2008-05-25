@@ -321,10 +321,16 @@ public class ManagePanel {
     
     if (mShowPrograms.isSelected()) {
       for (int i = 0; i < list.size(); i++) {
-        mProgramListModel.addElement(list.get(i));
+        Program prog = list.get(i);
         
-        if(!list.get(i).isExpired() && index == -1) {
-          index = i;
+        System.err.println(prog + " " + mProgramListModel);
+        
+        if(prog != null) {
+          mProgramListModel.addElement(prog);
+          
+          if(!list.get(i).isExpired() && index == -1) {
+            index = i;
+          }
         }
       }
     } else {
