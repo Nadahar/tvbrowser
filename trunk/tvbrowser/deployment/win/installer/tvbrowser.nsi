@@ -190,10 +190,12 @@ FunctionEnd
    LangString DATA_TVB_SUBSECTION_NAME ${LANG_German} "TV-Browser-Datenservice"
    LangString DATA_RADIOTIMES_SUBSECTION_NAME ${LANG_German} "Radio-Times-Datenservice"
    LangString DATA_SWEDB_SUBSECTION_NAME ${LANG_German} "SweDB TV-Datenservice"
+   LangString DATA_SCHEDULESDIRECT_SUBSECTION_NAME ${LANG_German} "SchedulesDirect-Datenservice"
  LangString DATA_SECTION_NAME ${LANG_ENGLISH} "Data service"
    LangString DATA_TVB_SUBSECTION_NAME ${LANG_ENGLISH} "TV-Browser data service"
    LangString DATA_RADIOTIMES_SUBSECTION_NAME ${LANG_ENGLISH} "Radio Times data service"
    LangString DATA_SWEDB_SUBSECTION_NAME ${LANG_ENGLISH} "SweDB TV data service"
+   LangString DATA_SCHEDULESDIRECT_SUBSECTION_NAME ${LANG_ENGLISH} "SchedulesDirect data service"
  
  LangString MISC_DIR ${LANG_GERMAN} "Sonstiges"
  LangString MISC_DIR ${LANG_ENGLISH} "Misc"
@@ -526,6 +528,13 @@ SubSection "$(DATA_SECTION_NAME)" SEC_DATASERVICES
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\SweDBTvDataService.jar"
   SectionEnd
+  
+  Section "$(DATA_SCHEDULESDIRECT_SUBSECTION_NAME)" SEC_SERVICE_SCHEDULESDIRECT
+    SectionIn 1 2
+
+    SetOutPath "$INSTDIR\plugins"
+    File "${RUNTIME_DIR}\plugins\SchedulesDirectDataService.jar"
+  SectionEnd  
 SubSectionEnd # data services section
 
 
@@ -723,8 +732,11 @@ LangString DESC_SEC_SERVICE_TVB ${LANG_GERMAN} "TV-Browser-Standarddienst für Se
 LangString DESC_SEC_SERVICE_RADIOTIMES ${LANG_ENGLISH} "RadioTimes data service for English channels"
 LangString DESC_SEC_SERVICE_RADIOTIMES ${LANG_GERMAN} "RadioTimes-Datenquelle für englische Sender"
 
-LangString DESC_SEC_SERVICE_SWEDB ${LANG_ENGLISH} "SweDB data service for Swedish channels"
-LangString DESC_SEC_SERVICE_SWEDB ${LANG_GERMAN} "SweDB-Datenquelle für schwedische Sender"
+LangString DESC_SEC_SERVICE_SWEDB ${LANG_ENGLISH} "DataHydra data service for different XMLTV sources"
+LangString DESC_SEC_SERVICE_SWEDB ${LANG_GERMAN} "DataHydra-Datenquelle für verschiedene XMLTV-Quellen"
+
+LangString DESC_SEC_SERVICE_SCHEDULESDIRECT ${LANG_ENGLISH} "SchedulesDirect data service for channels from SchedulesDirect.org"
+LangString DESC_SEC_SERVICE_SCHEDULESDIRECT ${LANG_GERMAN} "SchedulesDirect-Datenquelle für Sender von SchedulesDirect.org"
 
 LangString DESC_SEC_PLUGINS ${LANG_ENGLISH} "Plugins can provide additional features."
 LangString DESC_SEC_PLUGINS ${LANG_GERMAN} "Mit Plugins können zusätzliche Funktionen bereitgestellt werden."
@@ -782,6 +794,7 @@ LangString DESC_SEC_PLUGIN_WEB ${LANG_GERMAN} "Sucht im Netz nach einer Sendung.
     !insertmacro MUI_DESCRIPTION_TEXT ${SEC_SERVICE_TVB} $(DESC_SEC_SERVICE_TVB)
     !insertmacro MUI_DESCRIPTION_TEXT ${SEC_SERVICE_RADIOTIMES} $(DESC_SEC_SERVICE_RADIOTIMES)
     !insertmacro MUI_DESCRIPTION_TEXT ${SEC_SERVICE_SWEDB} $(DESC_SEC_SERVICE_SWEDB)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_SERVICE_SCHEDULESDIRECT} $(DESC_SEC_SERVICE_SCHEDULESDIRECT)
     !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_BLOGTHIS} $(DESC_SEC_PLUGIN_BLOGTHIS)
     !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_CALENDAR} $(DESC_SEC_PLUGIN_CALENDAR)
     !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_CAPTURE} $(DESC_SEC_PLUGIN_CAPTURE)
