@@ -956,6 +956,21 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   }
   
   /**
+   * Receives a list of Strings from another plugin with a target.
+   * 
+   * @param values The value array passed from the other plugin.
+   * @param receiveTarget The receive target of the programs.
+   * @return <code>True</code> if the value array was handled correct, 
+   * </code>false</code> otherwise.
+   * 
+   * @see #canReceiveProgramsWithTarget()
+   * @since 2.7
+   */
+  public boolean receiveValues(String[] values, ProgramReceiveTarget receiveTarget) {
+    return false;
+  }
+  
+  /**
    * Returns an array of receive target or <code>null</code> if there is no target
    * 
    * @return The supported receive targets.

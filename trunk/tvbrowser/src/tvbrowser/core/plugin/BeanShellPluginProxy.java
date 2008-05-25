@@ -355,4 +355,11 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
       // TODO Auto-generated method stub
       
     }
+
+    @Override
+    protected boolean doReceiveValues(String[] values,
+        ProgramReceiveTarget receiveTarget) {
+      // TODO Auto-generated method stub
+      return false;
+    }
  }

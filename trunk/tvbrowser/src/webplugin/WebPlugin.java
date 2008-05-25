@@ -29,6 +29,8 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
@@ -417,6 +419,28 @@ public class WebPlugin extends Plugin {
     }
     
     return list.toArray(new ProgramReceiveTarget[list.size()]);
+  }
+  
+  public boolean receiveValues(String[] values, ProgramReceiveTarget target) {
+    for (int i = 0; i < mAddresses.size(); i++) {
+      final WebAddress adr = mAddresses.get(i);
+      
+      if (adr.isActive() && target.isReceiveTargetWithIdOfProgramReceiveIf(this,adr.getName() + "." + adr.getUrl())) {
+        for(String value : values) {
+          try {
+            String url = adr.getUrl().replaceAll("[{].*[}]",URLEncoder.encode(value, "UTF-8").replace("+", "%20"));
+            
+            if(url.startsWith("http://")) {
+              Launch.openURL(url);
+            }
+          } catch (UnsupportedEncodingException e) {}
+        }
+        
+        return true;
+      }
+    }
+    
+    return false;
   }
   
   public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget target) {

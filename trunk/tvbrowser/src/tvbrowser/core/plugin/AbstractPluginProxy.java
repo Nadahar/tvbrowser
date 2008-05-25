@@ -709,6 +709,41 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   protected abstract boolean doReceivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget);
 
   /**
+   * Receives a list of Strings from another plugin with a target.
+   * 
+   * @param values The value array passed from the other plugin.
+   * @param target The receive target of the programs.
+   * @return <code>True</code> if the value array was handled correct, 
+   * </code>false</code> otherwise.
+   * 
+   * @see #canReceiveProgramsWithTarget()
+   * @since 2.7
+   */
+  public final boolean receiveValues(String[] values, ProgramReceiveTarget receiveTarget) {
+    try {
+      assertActivatedState();
+      return doReceiveValues(values,receiveTarget);
+    } catch (Throwable exc) {
+      handlePluginException(exc);
+    }
+
+    return false;
+  }
+  
+  /**
+   * Really receives a list of Strings from another plugin with a target.
+   * 
+   * @param values The value array passed from the other plugin.
+   * @param target The receive target of the programs.
+   * @return <code>True</code> if the value array was handled correct, 
+   * </code>false</code> otherwise.
+   * 
+   * @see #canReceiveProgramsWithTarget()
+   * @since 2.7
+   */
+  protected abstract boolean doReceiveValues(String[] values, ProgramReceiveTarget receiveTarget);
+  
+  /**
    * Returns an array of receive target or <code>null</code> if there is no target
    * 
    * @return The supported receive targets.
