@@ -220,9 +220,8 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
         int pos = editor.viewToModel(pt);
         if (pos >= 0) {
           String link = getLink(pos, editor, e.getX(), e.getY());
-          
-          
-          if (link.startsWith(ProgramTextCreator.TVBROWSER_URL_PROTOCOL)) {
+
+          if (link != null && link.startsWith(ProgramTextCreator.TVBROWSER_URL_PROTOCOL)) {
             final String desc = link.substring(ProgramTextCreator.TVBROWSER_URL_PROTOCOL.length());
             
             if(popupEvent) {
