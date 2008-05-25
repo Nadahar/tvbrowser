@@ -293,7 +293,6 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
   File "${RUNTIME_DIR}\enwiki.url"
   File "${RUNTIME_DIR}\tvbrowser.jar"
   File "${RUNTIME_DIR}\windows.properties"
-  File "${RUNTIME_DIR}\DesktopIndicator.dll"
   File "${RUNTIME_DIR}\jRegistryKey.dll"
   File "${RUNTIME_DIR}\jcom.dll"
 
