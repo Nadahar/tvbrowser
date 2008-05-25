@@ -25,6 +25,7 @@
  */
 package util.ui;
 
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Vector;
@@ -275,18 +276,18 @@ public class ProgramList extends JList implements ChangeListener,
 
       public void mouseClicked(final MouseEvent e) {
         final PluginManager mng = Plugin.getPluginManager();
-        
+        final Point point = e.getPoint();
         if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && e.getModifiersEx() == 0) {
           mLeftSingleClickThread = new Thread() {
             public void run() {
               try {
                 Thread.sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
                 
-                int inx = locationToIndex(e.getPoint());
+                int inx = locationToIndex(point);
                 Program prog = (Program) ProgramList.this.getModel()
                     .getElementAt(inx);
 
-                mng.handleProgramSingleClick(prog, caller);                
+                mng.handleProgramSingleClick(prog, caller);
               } catch (InterruptedException e) {
                 // ignore
               }              

@@ -323,8 +323,6 @@ public class ManagePanel {
       for (int i = 0; i < list.size(); i++) {
         Program prog = list.get(i);
         
-        System.err.println(prog + " " + mProgramListModel);
-        
         if(prog != null) {
           mProgramListModel.addElement(prog);
           

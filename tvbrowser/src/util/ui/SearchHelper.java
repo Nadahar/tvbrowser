@@ -31,6 +31,7 @@ import java.awt.Cursor;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -45,6 +46,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataUpdater;
@@ -85,6 +87,8 @@ public class SearchHelper {
   private ProgramList mProgramList;
   
   private JDialog mDialog = null;
+  
+  private JScrollPane mProgramListScrollPane;
   
   /** Private Constructor */
   private SearchHelper() {
@@ -208,6 +212,32 @@ public class SearchHelper {
             else if(mProgressBar != null) {
               mProgressBar.setVisible(false);
               mProgramList.updateUI();
+              
+              if(mProgramList.getSelectedIndex() == -1) {
+                for(int i = 0; i < mProgramList.getModel().getSize(); i++) {
+                  Object value = mProgramList.getModel().getElementAt(i);
+                  
+                  if(value instanceof Program && !((Program)value).isExpired()) {
+                    final int scrollIndex = i;
+                    
+                    SwingUtilities.invokeLater(new Runnable() {
+                      public void run() {
+                        mProgramListScrollPane.getVerticalScrollBar().setValue(0);
+                        mProgramListScrollPane.getHorizontalScrollBar().setValue(0);
+                        
+                        if(scrollIndex != -1) {            
+                          Rectangle cellBounds = mProgramList.getCellBounds(scrollIndex,scrollIndex);
+                          cellBounds.setLocation(cellBounds.x, cellBounds.y - mProgramListScrollPane.getBorder().getBorderInsets(mProgramListScrollPane).top - mProgramListScrollPane.getInsets().top + mProgramListScrollPane.getHeight() - cellBounds.height);
+                          
+                          mProgramList.scrollRectToVisible(cellBounds);
+                        }
+                      }
+                    });
+
+                    break;
+                  }
+                }
+              }
             }
           }
         } catch (TvBrowserException exc) {
@@ -304,7 +334,9 @@ public class SearchHelper {
     
     mProgramList.addMouseListeners(null);
 
-    main.add(new JScrollPane(mProgramList), BorderLayout.CENTER);
+    mProgramListScrollPane = new JScrollPane(mProgramList);
+    
+    main.add(mProgramListScrollPane, BorderLayout.CENTER);
     if (curPos >= 0) {
       mProgramList.setSelectedValue(programArr[curPos], true);
     }
