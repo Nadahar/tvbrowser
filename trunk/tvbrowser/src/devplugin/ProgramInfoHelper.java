@@ -68,10 +68,10 @@ public class ProgramInfoHelper {
             createIcon("Info_News.png"), // News
             createIcon("Info_Show.png"), // Show
             createIcon("Info_Infotainment.png"), // Magazine/Infotainment
-            null, //createIcon("Info_Documentary.png"), // Documentary
-            null, //createIcon("Info_Arts.png"), // Arts
-            null, //createIcon("Info_Sports.png"), // Sports
-            null, //createIcon("Info_Childrens.png"), // Childrens
+            createIcon("Info_Docu.png"), // Documentary
+            createIcon("Info_Arts.png"), // Arts
+            createIcon("Info_Sports.png"), // Sports
+            createIcon("Info_Children.png"), // Childrens
             null, //createIcon("Info_Others.png"), // Others
     };
 
