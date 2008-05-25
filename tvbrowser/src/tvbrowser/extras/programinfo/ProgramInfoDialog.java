@@ -108,8 +108,7 @@ import devplugin.PluginManager;
  * @author Martin Oberhauser
  */
 
-public class ProgramInfoDialog /*implements SwingConstants*/ {
-
+public class ProgramInfoDialog {
   private static final long serialVersionUID = 1L;
 
   protected static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -213,13 +212,12 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
       }
 
       private void handleEvent(MouseEvent e, boolean popupEvent) {
-        // Copied from HTMLEditorKit of Sun Java 6 and changed for TV-Browser
         JEditorPane editor = (JEditorPane) e.getSource();
         
         Point pt = new Point(e.getX(), e.getY());
         int pos = editor.viewToModel(pt);
         if (pos >= 0) {
-          String link = getLink(pos, editor, e.getX(), e.getY());
+          String link = getLink(pos, editor);
 
           if (link != null && link.startsWith(ProgramTextCreator.TVBROWSER_URL_PROTOCOL)) {
             final String desc = link.substring(ProgramTextCreator.TVBROWSER_URL_PROTOCOL.length());
@@ -254,9 +252,6 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
               }
               
               popupMenu.add(item);
-              
-              //String url = URLEncoder.encode(topic, "UTF-8").replace("+", "%20");
-              //
               
               final PluginAccess webPlugin = PluginManagerImpl.getInstance().getActivatedPluginForId("java.webplugin.WebPlugin");
               
@@ -349,7 +344,7 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
         SearchHelper.search(mInfoEP, settings, null, true);
       }
       
-      private String getLink(int pos, JEditorPane html, int x, int y) {
+      private String getLink(int pos, JEditorPane html) {
         Document doc = html.getDocument();
         if (doc instanceof HTMLDocument) {
           HTMLDocument hdoc = (HTMLDocument) doc;
@@ -387,22 +382,9 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
     
     mFindAsYouType = new TextComponentFindAction(mInfoEP, true);
     
-    /*
-     * mInfoEP.addMouseListener(new MouseAdapter(){ public void
-     * mousePressed(MouseEvent evt) { if (evt.isPopupTrigger()) { showPopup(evt,
-     * program); } }
-     * 
-     * public void mouseReleased(MouseEvent evt) { if (evt.isPopupTrigger()) {
-     * showPopup(evt, program); } }
-     * 
-     * public void mouseClicked(MouseEvent e) { handleMouseClicked(e, program); }
-     * });
-     */
-
     final JScrollPane scrollPane = new JScrollPane(mInfoEP);
     scrollPane.getVerticalScrollBar().setUnitIncrement(30);
 
-    
     // ScrollActions
     mUpAction = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {
@@ -752,10 +734,7 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
   }
 
   public static boolean closeDialog() {
-    if (instance != null) {
-      return instance.closeDialogInternal();
-    }
-    return false;
+    return instance != null && instance.closeDialogInternal();
   }
 
   private boolean closeDialogInternal() {
@@ -777,6 +756,5 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
     }
     return evt.getURL().toExternalForm();
   }
-  
-  
+
 }
