@@ -85,5 +85,18 @@ public interface ProgramReceiveIf {
    */
   public ProgramReceiveTarget[] getProgramReceiveTargets();
   
+  /**
+   * Receives a list of Strings from another plugin with a target.
+   * 
+   * @param values The value array passed from the other plugin.
+   * @param receiveTarget The receive target of the programs.
+   * @return <code>True</code> if the value array was handled correct, 
+   * </code>false</code> otherwise.
+   * 
+   * @see #canReceiveProgramsWithTarget()
+   * @since 2.7
+   */
+  public boolean receiveValues(String[] values, ProgramReceiveTarget receiveTarget);
+  
   public String getId();
 }

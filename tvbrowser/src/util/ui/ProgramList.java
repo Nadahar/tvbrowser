@@ -246,6 +246,7 @@ public class ProgramList extends JList implements ChangeListener,
         mPrograms.add(prg);
       }
     }
+    updateUI();
   }
 
   /**

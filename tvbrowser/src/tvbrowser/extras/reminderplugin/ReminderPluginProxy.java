@@ -141,4 +141,9 @@ public class ReminderPluginProxy implements ButtonActionIf, ContextMenuIf, Progr
   public ActionMenu getButtonAction() {
     return mReminderInstance.getButtonAction();
   }
+
+  public boolean receiveValues(String[] values,
+      ProgramReceiveTarget receiveTarget) {
+    return false;
+  }
 }

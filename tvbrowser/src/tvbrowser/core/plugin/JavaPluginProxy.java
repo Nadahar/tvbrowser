@@ -615,4 +615,11 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   protected void doHandleTvDataAdded(MutableChannelDayProgram newProg) {
     mPlugin.handleTvDataAdded(newProg);
   }
+
+  @Override
+  protected boolean doReceiveValues(String[] values,
+      ProgramReceiveTarget receiveTarget) {
+
+    return mPlugin.receiveValues(values,receiveTarget);
+  }
 }

@@ -5,17 +5,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.Enumeration;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -26,15 +34,19 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.l2fprod.common.swing.plaf.LookAndFeelAddons;
 
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.core.plugin.PluginManagerImpl;
 import util.program.CompoundedProgramFieldType;
 import util.program.ProgramTextCreator;
 import util.ui.FontChooserPanel;
 import util.ui.Localizer;
 import util.ui.OrderChooser;
 import util.ui.PluginsPictureSettingsPanel;
+import util.ui.ScrollableJPanel;
 
 import devplugin.Plugin;
+import devplugin.PluginAccess;
 import devplugin.ProgramFieldType;
+import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 
 /**
@@ -76,6 +88,8 @@ public class ProgramInfoSettingsTab implements SettingsTab {
   };
   
   private JCheckBox mShowFunctions, mShowTextSearchButton;
+  
+  private ButtonGroup mAvailableTargetGroup;
   
   public JPanel createSettingsPanel() {
     mOldAntiAliasingSelected = ProgramInfo.getInstance().getSettings().getProperty("antialiasing", "false");
@@ -251,10 +265,70 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     
     builder.addSeparator(ProgramInfo.mLocalizer.msg("order","Info choosing/ordering"), cc.xyw(1,7,3));
     builder.add(mList, cc.xy(2,9));
+        
+    PluginAccess webPlugin = PluginManagerImpl.getInstance().getActivatedPluginForId("java.webplugin.WebPlugin");
+
+    mAvailableTargetGroup = new ButtonGroup();
+    
+    ArrayList<InternalRadioButton<?>> availableDefaultTargets = new ArrayList<InternalRadioButton<?>>();
+    
+    availableDefaultTargets.add(new InternalRadioButton<String>(ProgramInfoDialog.mLocalizer.msg("searchTvBrowser","Search in TV-Browser")));
+    mAvailableTargetGroup.add(availableDefaultTargets.get(0));
+    availableDefaultTargets.add(new InternalRadioButton<String>(ProgramInfoDialog.mLocalizer.msg("searchWikipedia","Search in Wikipedia")));
+    mAvailableTargetGroup.add(availableDefaultTargets.get(1));
+    
+    Object currentValue = ProgramInfo.getInstance().getSettings().getProperty("actorSearchDefault","internalWikipedia");
+    
+    int selectedIndex = -1;
+    
+    if(webPlugin != null && webPlugin.canReceiveProgramsWithTarget()) {
+      ProgramReceiveTarget[] targets = webPlugin.getProgramReceiveTargets();
+      
+      if(targets != null) {
+        for(ProgramReceiveTarget target : targets) {
+          availableDefaultTargets.add(new InternalRadioButton<ProgramReceiveTarget>(target));
+          mAvailableTargetGroup.add(availableDefaultTargets.get(availableDefaultTargets.size()-1));
+          
+          if(currentValue.equals(target.getReceiveIfId() + "#_#_#" + target.getTargetId())) {
+            selectedIndex = availableDefaultTargets.size()-1;
+          }
+        }
+      }
+    }
+    
+    if(selectedIndex == -1) {
+      if(currentValue.equals("internalSearch")) {
+        selectedIndex = 0;
+      }
+      else if (currentValue.equals("internalWikipedia")) {
+        selectedIndex = 1;
+      }
+    }
+    
+    availableDefaultTargets.get(selectedIndex).setSelected(true);
+    
+    ScrollableJPanel buttonPanel = new ScrollableJPanel();
+    buttonPanel.setLayout(new BoxLayout(buttonPanel,BoxLayout.Y_AXIS));
+    buttonPanel.setOpaque(false);
+    
+    for(InternalRadioButton<?> button : availableDefaultTargets) {
+      buttonPanel.add(button);
+    }
+    
+    JScrollPane scrollPane = new JScrollPane(buttonPanel);
+    scrollPane.setBackground(UIManager.getDefaults().getColor("List.background"));
+    scrollPane.getViewport().setBackground(UIManager.getDefaults().getColor("List.background"));
+    PanelBuilder actorSearchPanelBuilder = new PanelBuilder(
+        new FormLayout("default:grow","default,1dlu,fill:default:grow"));
+    actorSearchPanelBuilder.setDefaultDialogBorder();
+    
+    actorSearchPanelBuilder.addLabel(ProgramInfo.mLocalizer.msg("defaultActorSearchMethod","Default search method:"), cc.xy(1,1));
+    actorSearchPanelBuilder.add(scrollPane, cc.xy(1,3));
     
     final JTabbedPane tabbedPane = new JTabbedPane();
     tabbedPane.add(ProgramInfo.mLocalizer.msg("pictureOrder","Pictures/order"), builder.getPanel());
     tabbedPane.add(ProgramInfo.mLocalizer.msg("formating","Formating"), formatPanelBuilder.getPanel());
+    tabbedPane.add(ProgramInfo.mLocalizer.msg("actorSearch","Actor search"), actorSearchPanelBuilder.getPanel());
     tabbedPane.setSelectedIndex(mSelectedTab);
     
     tabbedPane.addChangeListener(new ChangeListener() {
@@ -344,6 +418,17 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     if(mShowTextSearchButton != null) {
       ProgramInfo.getInstance().setShowTextSearchButton(mShowTextSearchButton.isSelected());
     }
+    
+    Enumeration<AbstractButton> actorSearchDefault = mAvailableTargetGroup.getElements();
+
+    while(actorSearchDefault.hasMoreElements()) {
+      AbstractButton button = actorSearchDefault.nextElement();
+      
+      if(button.isSelected()) {
+        ProgramInfo.getInstance().getSettings().setProperty("actorSearchDefault",((InternalRadioButton<?>)button).getValue());
+        break;
+      }
+    }
   }catch(Exception e) {e.printStackTrace();}
   }
 
@@ -374,5 +459,32 @@ public class ProgramInfoSettingsTab implements SettingsTab {
   public String getTitle() {
     return ProgramInfo.getInstance().toString();
   }
-
+  
+  private static class InternalRadioButton<T> extends JRadioButton {
+    private T mValue; 
+    
+    protected InternalRadioButton(T value) {
+      super(value.toString());
+      
+      mValue = value;
+      setOpaque(false);
+    }
+    
+    protected String getValue() {
+      if(mValue instanceof String) {
+        if(mValue.equals(ProgramInfoDialog.mLocalizer.msg("searchTvBrowser","Search in TV-Browser"))) {
+          return "internalSearch";
+        }
+        else {
+          return "internalWikipedia";
+        }
+      }
+      else if (mValue instanceof ProgramReceiveTarget) {
+        ProgramReceiveTarget target = (ProgramReceiveTarget)mValue;
+        return target.getReceiveIfId() + "#_#_#" + target.getTargetId();
+      }
+      
+      return "internalWikipedia";
+    }
+  }
 }

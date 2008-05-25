@@ -39,7 +39,6 @@ import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.UnsupportedEncodingException;
@@ -79,6 +78,7 @@ import tvbrowser.core.contextmenu.SeparatorMenuItem;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.ui.DontShowAgainMessageBox;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.browserlauncher.Launch;
 import util.program.ProgramTextCreator;
@@ -228,12 +228,18 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
             if(e.isPopupTrigger()) {
               JPopupMenu popupMenu = new JPopupMenu();
               
+              String value = ProgramInfo.getInstance().getSettings().getProperty("actorSearchDefault","internalWikipedia");
+              
               JMenuItem item = new JMenuItem(mLocalizer.msg("searchTvBrowser","Search in TV-Browser"));
               item.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                   internalSearch(desc);
                 }
               });
+              
+              if(value.equals("internalSearch")) {
+                item.setFont(item.getFont().deriveFont(Font.BOLD));
+              }
               
               popupMenu.add(item);
               
@@ -243,6 +249,10 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
                   searchWikipedia(desc);
                 }
               });
+
+              if(value.equals("internalWikipedia")) {
+                item.setFont(item.getFont().deriveFont(Font.BOLD));
+              }
               
               popupMenu.add(item);
               
@@ -257,14 +267,17 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
                 if(targets != null && targets.length > 0) {
                   popupMenu.addSeparator();
                   
-                  for(ProgramReceiveTarget target : targets) {
+                  for(final ProgramReceiveTarget target : targets) {
                     item = new JMenuItem(target.toString());
                     item.addActionListener(new ActionListener() {
                       public void actionPerformed(ActionEvent e) {
-                        // TODO Auto-generated method stub
-                        //webPlugin.receivePrograms(mProgram)
+                        searchWebPlugin(desc, target);
                       }     
                     });
+                    
+                    if(value.endsWith(target.getTargetId())) {
+                      item.setFont(item.getFont().deriveFont(Font.BOLD));
+                    }
                     
                     popupMenu.add(item);
                   }
@@ -274,13 +287,51 @@ public class ProgramInfoDialog /*implements SwingConstants*/ {
               popupMenu.show(e.getComponent(),e.getX(),e.getY());
             }
             else {
-              internalSearch(desc);
+              String value = ProgramInfo.getInstance().getSettings().getProperty("actorSearchDefault","internalWikipedia");
+              
+              boolean found = false;
+              
+              if(value.contains("#_#_#")) {
+                String[] keys = value.split("#_#_#");
+                
+                PluginAccess webPlugin = PluginManagerImpl.getInstance().getActivatedPluginForId(keys[0]);
+                
+                if(webPlugin != null && webPlugin.canReceiveProgramsWithTarget()) {
+                  ProgramReceiveTarget[] targets = webPlugin.getProgramReceiveTargets();
+                  
+                  if(targets != null) {
+                    
+                    
+                    for(ProgramReceiveTarget target : targets) {
+                      if(target.getTargetId().equals(keys[1])) {
+                        searchWebPlugin(desc, target);
+                        found = true;
+                      }
+                    }
+                  }
+                }
+              }
+              
+              if(!found) {
+                if(value.equals("internalWikipedia")) {
+                  searchWikipedia(desc);
+                }
+                else {
+                  internalSearch(desc);
+                }
+              }
             }
           }
         }
       }
       
+      private void searchWebPlugin(String desc, ProgramReceiveTarget target) {
+        target.getReceifeIfForIdOfTarget().receiveValues(new String[]{desc},target);
+      }
+      
       private void searchWikipedia(String desc) {
+        DontShowAgainMessageBox.showMessageDialog("programInfoDialog.newActorSearch",mDialog,ProgramInfo.mLocalizer.msg("newActorSearchText","This function was changed for TV-Browser 2.7. The search type is now\nchangeable in the settings of the Program details, additional now available\nis a context menu for the actor search."),ProgramInfo.mLocalizer.msg("newActorSearch","New actor search"));
+        
         try {
           String url = URLEncoder.encode(desc, "UTF-8").replace("+", "%20");
           url = mLocalizer.msg("wikipediaLink", "http://en.wikipedia.org/wiki/{0}", url);
