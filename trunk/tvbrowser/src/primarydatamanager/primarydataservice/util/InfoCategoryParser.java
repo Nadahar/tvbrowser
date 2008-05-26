@@ -16,7 +16,7 @@ public class InfoCategoryParser {
   private final String[] MOVIES = { "abenteuerfilm", "actiondrama",
       "actionfilm", "actionkomödie", "actionthriller", "agentenfilm",
       "alienaction", "alltags/familienfilm", "animationsfilm",
-      "beziehungskomödie", "bikerfilm", "biographischerfilm", "dokumentarfilm",
+      "beziehungskomödie", "bikerfilm", "biographischerfilm", 
       "drama", "episodenfilm", "erotikfilm", "erotikthriller",
       "experimentalfilm", "familiendrama", "familienfilm", "fantasyabenteuer",
       "fantasykomödie", "fernsehfilm", "gangsterkomödie", "gaunerkomödie",
@@ -40,36 +40,51 @@ public class InfoCategoryParser {
   private final String[] SERIES = { "abenteuer/mysteryserie", "abenteuerserie",
       "action/abenteuerserie", "actionserie", "agentenserie",
       "animationsserie", "animeserie", "anwaltsserie", "arztserie",
-      "comedyserie", "dokumentarserie", "dramaserie", "erotikserie",
+      "comedyserie", "dramaserie", "erotikserie",
       "familienserie", "fernsehserie", "horrorserie", "kinderserie",
       "krankenhausserie", "kriegsserie", "krimiserie", "monumentalserie",
       "mysteryserie", "polizeiserie", "puppentrickserie",
       "sciencefictionserie", "scifiserie", "serie", "serienspecial", "sitcom",
       "soap", "thrillerserie", "westernserie", "zeichentrickserie",
-      "zoodokusoap" };
+  "zoodokusoap" };
 
   private final String[] NEWS = { "nachrichten", "nachrichtenmagazin",
-      "regionalnachrichten" };
+  "regionalnachrichten" };
 
   private final String[] SHOW = { "musik", "show", "talkshow" };
 
   private final String[] MAGAZINE = { "auslandsmagazin", "automagazin",
-      "boulevardmagazin", "buchjournal", "diskussion", "doku", "dokumentation",
-      "erfindermagazin", "erotikmagazin", "erotikmagazin", "filmmagazin",
+      "boulevardmagazin", "buchjournal", "diskussion", 
+      "erfindermagazin", "erotikmagazin", "filmmagazin",
       "freizeitmagazin", "fußballmagazin", "geschichtsmagazin", "gespräch",
       "gesundheitsmagazin", "interview", "kindermagazin", "kinomagazin",
       "kulturmagazin", "ländermagazin", "lifestylemagazin", "literaturmagazin",
       "magazin", "medienmagazin", "motorsportmagazin", "news+sportnachrichten",
       "newsmagazin", "politikmagazin", "politmagazin", "ratgebermagazin",
-      "regionalmagazin", "reisedokumentation", "reisemagazin",
-      "reiseundreportagemagazin", "reisereportage", "reportage",
+      "regionalmagazin", "reisemagazin", "reiseundreportagemagazin", 
       "reportageundreisemagazin", "servicemagazin", "societymagazin",
       "sozialmagazin", "technikmagazin", "umweltmagazin", "verbrauchermagazin",
       "wetter", "wirtschaftsmagazin", "wissenschaftsmagazin", "wissensmagazin",
-      "zeitgeschichte" };
+   };
 
-  private ArrayList<String> mMovies, mSeries, mNews, mShows, mMagazines,
-      mUnknown;
+  private final String[] DOCUMENTARY = { "dokumentarfilm", "doku", "dokumentation", 
+      "reisedokumentation",  "reisereportage", "reportage", "dokumentarserie",
+      "zeitgeschichte"
+  };
+  
+  private final String[] ARTS = { "theater", "konzert", "oper", "musikkonzert",
+      "ballett", "schauspiel" ,"tanz", "musical", "operette", "tanztheater", "volkstheater"
+  };
+  
+  private final String[] SPORTS = { "sport"
+  };
+  
+  private final String[] OTHERS = { "werbung", "werbesendung", "dauerwerbesendung",
+      "tvshop", "teleshopping", "teleshop", "infomercials"
+  };
+
+  private ArrayList<String> mMovies, mSeries, mNews, mShows, mMagazines, mDocumentary, mArts,
+  mSports, mOthers, mUnknown;
 
   /**
    * Constructor
@@ -80,6 +95,10 @@ public class InfoCategoryParser {
     mNews = new ArrayList<String>(Arrays.asList(NEWS));
     mShows = new ArrayList<String>(Arrays.asList(SHOW));
     mMagazines = new ArrayList<String>(Arrays.asList(MAGAZINE));
+    mDocumentary = new ArrayList<String>(Arrays.asList(DOCUMENTARY));
+    mArts = new ArrayList<String>(Arrays.asList(ARTS));
+    mSports = new ArrayList<String>(Arrays.asList(SPORTS));
+    mOthers = new ArrayList<String>(Arrays.asList(OTHERS));
 
     mUnknown = new ArrayList<String>();
   }
@@ -108,6 +127,26 @@ public class InfoCategoryParser {
     s = s.replaceAll("(-| )", "");
     return mMagazines.contains(s);
   }
+  
+  public boolean isDocumentary(String s) {
+    s = s.replaceAll("(-| )", "");
+    return mDocumentary.contains(s);
+  }
+  
+  public boolean isArts(String s) {
+    s = s.replaceAll("(-| )", "");
+    return mArts.contains(s);
+  }
+  
+  public boolean isSports(String s) {
+    s = s.replaceAll("(-| )", "");
+    return mSports.contains(s);
+  }
+  
+  public boolean isOthers(String s) {
+    s = s.replaceAll("(-| )", "");
+    return mOthers.contains(s);
+  }
 
   public int getCategory(String s) {
     s = s.trim().toLowerCase();
@@ -124,6 +163,14 @@ public class InfoCategoryParser {
       return Program.INFO_CATEGORIE_SHOW;
     } else if (isMagazineOrInfotainment(s)) {
       return Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
+    } else if (isDocumentary(s)) {
+      return Program.INFO_CATEGORIE_DOCUMENTARY;
+    } else if (isArts(s)) {
+      return Program.INFO_CATEGORIE_ARTS;
+    } else if (isSports(s)) {
+      return Program.INFO_CATEGORIE_SPORTS;
+    } else if (isOthers(s)) {
+      return Program.INFO_CATEGORIE_OTHERS;
     }
 
     if (!mUnknown.contains(s)) {
