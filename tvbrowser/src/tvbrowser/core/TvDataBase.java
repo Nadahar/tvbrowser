@@ -72,9 +72,12 @@ public class TvDataBase {
   
   private TvDataInventory mTvDataInventory;
   
+  private ArrayList<OnDemandDayProgramFile> mTempCache;
+  
   private TvDataBase() {
     mTvDataHash = new SoftReferenceCache<String, OnDemandDayProgramFile>();
     mListenerList = new ArrayList<TvDataBaseListener>();
+    mTempCache = new ArrayList<OnDemandDayProgramFile>(0);
     mAvailableDateSet = new HashSet<Date>();
     mNewDayProgramsAfterUpdate = new Hashtable<String, Object>();
     updateAvailableDateSet();
@@ -261,6 +264,8 @@ public class TvDataBase {
       }
     }
     mNewDayProgramsAfterUpdate.clear();
+    mTempCache.clear();
+    mTempCache = new ArrayList<OnDemandDayProgramFile>(0);
   }
 
   public synchronized void setDayProgram(MutableChannelDayProgram prog) {
@@ -559,7 +564,12 @@ public class TvDataBase {
 
       // Inform the listeners about adding the new program
       if(oldProg != null || somethingChanged) {
-        fireDayProgramAdded((ChannelDayProgram)getCacheEntry(date, channel, true, false).getDayProgram());
+        OnDemandDayProgramFile dayProgramFile = getCacheEntry(date, channel, true, false);
+        
+        //cache file temporary to avoid clearance from real cache
+        mTempCache.add(dayProgramFile);
+        
+        fireDayProgramAdded((ChannelDayProgram)dayProgramFile.getDayProgram());
       }
     } catch (Exception exc) {
       mLog.log(Level.WARNING, "Loading program for " + channel + " from "
