@@ -169,8 +169,11 @@ public class PDSRunner {
         }
       }
       else {
-        pdsRunner.addPDS(PrimaryDataManager.createPrimaryDataService(args[i]));
-      }       
+        String[] classes = args[i].split(",");
+        for (final String clas:classes) {
+          pdsRunner.addPDS(PrimaryDataManager.createPrimaryDataService(clas));
+        }
+      }
     }
     
     

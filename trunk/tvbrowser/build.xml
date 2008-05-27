@@ -625,9 +625,13 @@
     <!-- Extract the libraries for the jars into the temp.dir -->
     <mkdir dir="${unpacked.dir}/commons-net-1.4.1.jar"/>
     <unjar src="${lib.dir}/commons-net-1.4.1.jar" dest="${unpacked.dir}/commons-net-1.4.1.jar"/>
+
+    <mkdir dir="${unpacked.dir}/commons-lang-2.4.jar"/>
+    <unjar src="${lib.dir}/commons-lang-2.4.jar" dest="${unpacked.dir}/commons-net-1.4.1.jar"/>
+
     <unjar src="${lib.dir}/looks-2.1.4.jar" dest="${unpacked.dir}/looks-2.1.4.jar"/>
     <unjar src="${lib.dir}/jakarta-oro-2.0.8.jar" dest="${unpacked.dir}/jakarta-oro-2.0.8.jar"/>
-	<unjar src="${lib.dir}/opencsv-1.8.jar" dest="${unpacked.dir}/opencsv-1.8.jar" />
+	  <unjar src="${lib.dir}/opencsv-1.8.jar" dest="${unpacked.dir}/opencsv-1.8.jar" />
 
     <!-- Pack the MirrorUpdater.jar -->
     <jar jarfile="${tvdatatools.runtime.dir}/MirrorUpdater.jar"
@@ -648,6 +652,7 @@
       <fileset dir="${classes.dir}" includes="tvbrowser/core/plugin/DefaultSettings*"/>-->
       <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
       <fileset dir="${unpacked.dir}/commons-net-1.4.1.jar" includes="org/**"/>
+      <fileset dir="${unpacked.dir}/commons-lang-2.4.jar" includes="org/**"/>
       <fileset dir="${unpacked.dir}/looks-2.1.4.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/jakarta-oro-2.0.8.jar" includes="org/**"/>
       <fileset dir="${unpacked.dir}/opencsv-1.8.jar" includes="au/**"/>
@@ -670,6 +675,7 @@
       <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
       <fileset dir="${unpacked.dir}/looks-2.1.4.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/opencsv-1.8.jar" includes="au/**"/>
+      <fileset dir="${unpacked.dir}/commons-lang-2.4.jar" includes="org/**"/>
     </jar>
 
     <!-- Pack the PDSRunner.jar -->
@@ -689,6 +695,7 @@
       <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
       <fileset dir="${unpacked.dir}/looks-2.1.4.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/opencsv-1.8.jar" includes="au/**"/>
+      <fileset dir="${unpacked.dir}/commons-lang-2.4.jar" includes="org/**"/>
     </jar>
 
     <!-- Copy the file(s) -->
