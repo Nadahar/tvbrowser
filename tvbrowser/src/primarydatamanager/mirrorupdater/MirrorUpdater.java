@@ -427,7 +427,7 @@ public class MirrorUpdater {
       configFileName=args[0];
     }
     else {
-      configFileName="MirrorUpdater.ini";
+      configFileName="config/MirrorUpdater.ini";
     }
     
     // setup logging

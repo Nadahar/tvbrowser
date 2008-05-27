@@ -442,7 +442,12 @@ public class PrimaryDataManager {
               }
             }
           } else {
-            groupNames.add(args[i]);
+            final String[] groups = args[i].split(",");
+
+            for (final String group:groups) {
+              groupNames.add(group);
+            }
+
           }
         }
         
