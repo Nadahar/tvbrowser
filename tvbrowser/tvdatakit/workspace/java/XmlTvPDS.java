@@ -57,7 +57,7 @@ public class XmlTvPDS extends AbstractPrimaryDataService {
     /**
      * The file where the TV data is stored.
      */
-    private static final String TV_DATA_FILE_NAME = "TvData.xml";
+    private static final String TV_DATA_FILE_NAME = "input/TvData.xml";
 
     /**
      * Gets the list of the channels that are available by this data service.
