@@ -204,7 +204,7 @@ public abstract class SoftwareUpdateItem {
   public String getName() {
     String n = getProperty("name_de");
     
-    if(!Locale.getDefault().equals(Locale.GERMAN))
+    if(!isLocaleGerman())
       n = getProperty("name_en");
     
     if(n != null)
@@ -221,7 +221,7 @@ public abstract class SoftwareUpdateItem {
   public String getDescription() {
     String d = getProperty("description");
     
-    if(!Locale.getDefault().equals(Locale.GERMAN))
+    if(!isLocaleGerman())
       d = getProperty("description_en");
     
     if(d != null)
@@ -238,12 +238,19 @@ public abstract class SoftwareUpdateItem {
   public String getWebsite() {
     String w = getProperty("website");
     
-    if(!Locale.getDefault().equals(Locale.GERMAN))
+    if(!isLocaleGerman())
       w = getProperty("website_en");
     
     return w;
   }
-  
+
+  /**
+   * @return true if current locale language is german 
+   */
+  private boolean isLocaleGerman() {
+    return Locale.getDefault().getLanguage().equals(Locale.GERMAN.getLanguage());
+  }
+
   /**
    * Gets the class name of this update item.
    * 
