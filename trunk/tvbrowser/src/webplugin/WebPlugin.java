@@ -79,7 +79,7 @@ public class WebPlugin extends Plugin {
 
   /** Default-Addresses */
   final static WebAddress[] DEFAULT_ADRESSES = {
-      new WebAddress("OFDb", "http://www.ofdb.de/view.php?page=suchergebnis&Kat=All&SText={urlencode(" + WEBSEARCH_ALL + ", \"ISO-8859-1\")}", null, false, true),
+      new WebAddress("OFDb", "http://www.ofdb.de/view.php?page=suchergebnis&Kat=All&SText={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}", null, false, true),
       new WebAddress("IMDb", "http://akas.imdb.com/find?q={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}", null, false, true),
       new WebAddress("Zelluloid", "http://zelluloid.de/suche/index.php3?qstring={urlencode(" + WEBSEARCH_ALL + ", \"ISO-8859-1\")}", null, false, true),
       new WebAddress("Google", "http://www.google.com/search?q=%22{urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}%22", null, false, true),
