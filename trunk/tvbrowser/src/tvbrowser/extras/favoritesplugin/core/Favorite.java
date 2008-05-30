@@ -708,7 +708,7 @@ public abstract class Favorite {
    */
   public void tryToMatch(Program p, boolean dataUpdate, boolean send) throws TvBrowserException {
     if (matches(p) && filterByLimitations(new Program[] {p}).length > 0 && (!getLimitationConfiguration().isLimitedByChannel() || Arrays.asList(getChannels()).contains(p.getChannel()))) {
-      int blackListPos = mBlackList.indexOf(p);
+      int blackListPos = mBlackList == null ? -1 : mBlackList.indexOf(p);
       
       if(mRemovedBlacklistPrograms.remove(p) || blackListPos >= 0) {
         /* Program was in black list so we have to remove it
@@ -780,7 +780,7 @@ public abstract class Favorite {
     
     if(mPrograms.remove(p)) {
       mRemovedPrograms.add(p);
-    } else if(mBlackList.remove(p)) {
+    } else if(mBlackList != null && mBlackList.remove(p)) {
       mRemovedBlacklistPrograms.add(p);
     }
   }

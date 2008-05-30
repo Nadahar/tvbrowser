@@ -329,7 +329,6 @@ public class FavoritesPlugin {
     } catch (IOException e) {
       ErrorHandler.handle(mLocalizer.msg("couldNotStoreFavoritesSettings","Could not store settings for favorites"), e);
     }
-
   }
 
   public ImageIcon getIconFromTheme(String category, String Icon, int size) {
