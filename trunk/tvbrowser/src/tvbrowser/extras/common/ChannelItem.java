@@ -50,7 +50,7 @@ public class ChannelItem {
    * <p>
    * @param channel The channel to keep in this ChannelItem.
    */
-  public ChannelItem(Channel channel) {System.out.println(channel);
+  public ChannelItem(Channel channel) {
     if(channel != null) {
       mChannelDataServiceId = channel.getDataServiceProxy().getId();
       mGroupId = channel.getGroup().getId();
