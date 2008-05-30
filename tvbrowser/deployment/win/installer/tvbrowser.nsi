@@ -662,7 +662,55 @@ Section "Uninstall"
  # StrCmp $INI_VALUE "1" "" +2
  #   RMDir /r "$PROFILE\TV-Browser"
 
-  RMDir /r "$INSTDIR"
+  Delete "$INSTDIR\COPYRIGHT.txt"
+  Delete "$INSTDIR\enwiki"
+  Delete "$INSTDIR\forum"
+  Delete "$INSTDIR\jcom.dll"
+  Delete "$INSTDIR\jRegistryKey.dll"
+  Delete "$INSTDIR\LICENSE.txt"
+  Delete "$INSTDIR\tvbrowser.exe"
+  Delete "$INSTDIR\tvbrowser.jar"
+  Delete "$INSTDIR\tvbrowser_noDD.exe"
+  Delete "$INSTDIR\tvbrowser_noDD.txt"
+  Delete "$INSTDIR\website"
+  Delete "$INSTDIR\wiki"
+  Delete "$INSTDIR\windows.properties"
+  
+  RMDir /r "$INSTDIR\icons\CrystalClear"
+  RMDir /r "$INSTDIR\icons\tango"
+  RMDir "$INSTDIR\icons"
+  
+  IfFileExists "$INSTDIR\imgs\tvbrowser128.png" +1 nodelimgs
+  RMDir /r "$INSTDIR\imgs"
+  nodelimgs:  
+
+  Delete "$INSTDIR\plugins\BbcBackstageDataService.jar"
+  Delete "$INSTDIR\plugins\BlogThisPlugin.jar"
+  Delete "$INSTDIR\plugins\CalendarExportPlugin.jar"
+  Delete "$INSTDIR\plugins\CapturePlugin.jar"
+  Delete "$INSTDIR\plugins\ClipboardPlugin.jar"
+  Delete "$INSTDIR\plugins\DreamboxDataService.jar"
+  Delete "$INSTDIR\plugins\EMailPlugin.jar"
+  Delete "$INSTDIR\plugins\GenrePlugin.jar"
+  Delete "$INSTDIR\plugins\I18NPlugin.jar"
+  Delete "$INSTDIR\plugins\ListViewPlugin.jar"
+  Delete "$INSTDIR\plugins\NewsPlugin.jar"
+  Delete "$INSTDIR\plugins\PrintPlugin.jar"
+  Delete "$INSTDIR\plugins\ProgramListPlugin.jar"
+  Delete "$INSTDIR\plugins\RadioTimesDataService.jar"
+  Delete "$INSTDIR\plugins\SchedulesDirectDataService.jar"
+  Delete "$INSTDIR\plugins\ShowviewPlugin.jar"
+  Delete "$INSTDIR\plugins\SimpleMarkerPlugin.jar"
+  Delete "$INSTDIR\plugins\SweDBTvDataService.jar"  
+  Delete "$INSTDIR\plugins\TvBrowserDataService.jar"
+  Delete "$INSTDIR\plugins\TVRaterPlugin.jar"
+  Delete "$INSTDIR\plugins\WebPlugin.jar"
+  RMDir "$INSTDIR\plugins"
+  
+  Delete "$INSTDIR\themepacks\themepack.zip"
+  RMDir "$INSTDIR\themepacks"
+   
+  RMDir "$INSTDIR"
 
   ClearErrors
   ReadEnvStr $1 "WINDIR"
