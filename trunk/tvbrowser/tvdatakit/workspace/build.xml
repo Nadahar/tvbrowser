@@ -36,6 +36,7 @@
   <property name="log" value="pdslog"/>
   <property name="groups" value="myfirstgroup"/>
   <property name="config" value="config/MirrorUpdater.ini"/>
+  <property name="pdsclasses" value="SimplePDS,XmlTvPDS"/>
 
   <path id="classpath">
     <pathelement location="${classes.dir}"/>
@@ -54,7 +55,7 @@
     <echo message=""/>
     <echo message="main targets:"/>
     <echo message="============="/>
-    <echo message="  pdsrunner -Dclasses=SimplePDS,XmlTvPDS      Run the conveter java classes"/>
+    <echo message="  pdsrunner -Dpdsclasses=SimplePDS,XmlTvPDS      Run the conveter java classes"/>
     <echo message="  dayprogramfiletranslator                    Convert the data to text files"/>
     <echo message="  primarydatamanager -Dgroups=myfirstgroup    Create the data that is uploaded to the server"/>
     <echo message="  mirrorupdater -Dgroups=myfirstgroup         Upload the groups to the ftp servers"/>
@@ -77,7 +78,7 @@
       <classpath>
         <path refid="classpath"/>
       </classpath>
-      <arg value="${args}"/>
+      <arg value="${pdsclasses}"/>
       <arg value="-raw"/>
       <arg value="${raw}"/>
       <arg value="-log"/>
