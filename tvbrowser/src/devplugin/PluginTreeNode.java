@@ -253,7 +253,6 @@ public class PluginTreeNode {
   }
 
   private NodeFormatter getNodeFormatter(boolean isWeekNodesEnabled) {
-    System.out.println("   " + isWeekNodesEnabled);
     return mDefaultNode.getNodeFormatter(isWeekNodesEnabled);
   }
 
