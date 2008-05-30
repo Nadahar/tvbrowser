@@ -75,7 +75,11 @@ public class Exclusion {
   public Exclusion(String title, String topic, Channel channel, int timeFrom, int timeTo, int dayOfWeek, String filterName) {
     mTitle = title;
     mTopic = topic;
-    mChannel = new ChannelItem(channel);
+    
+    if(channel != null) {
+      mChannel = new ChannelItem(channel);
+    }
+    
     mTimeFrom = timeFrom;
     mTimeTo = timeTo;
     mDayOfWeek = dayOfWeek;
@@ -185,7 +189,7 @@ public class Exclusion {
   }
 
   public Channel getChannel() {
-    return mChannel.getChannel();
+    return mChannel != null ? mChannel.getChannel() : null;
   }
 
   public int getTimeLowerBound() {
@@ -214,7 +218,7 @@ public class Exclusion {
     
     if (mChannel != null) {
       Channel ch = prog.getChannel();
-      if (ch.equals(mChannel)) {
+      if (ch.equals(mChannel.getChannel())) {
         channelExcl = true;
       }
     }
