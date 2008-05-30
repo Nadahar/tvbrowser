@@ -707,7 +707,7 @@ public class Settings {
       "timebutton.evening", 20 * 60);
 
   public static final ChoiceProperty propTableLayout = new ChoiceProperty(
-      mProp, "table.layout", "timeSynchronous", new String[] {
+      mProp, "table.layout", "compactTimeBlock", new String[] {
           "timeSynchronous", "compact", "realSynchronous" , "realCompact", "timeBlock", "compactTimeBlock"});
 
   public static final ChoiceProperty propTableBackgroundStyle = new ChoiceProperty(
