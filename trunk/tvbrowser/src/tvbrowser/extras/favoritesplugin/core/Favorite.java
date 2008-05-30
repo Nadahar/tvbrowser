@@ -66,6 +66,9 @@ public abstract class Favorite {
   private ArrayList<Exclusion> mExclusionList;
   private ProgramReceiveTarget[] mForwardPluginArr;
   protected SearchFormSettings mSearchFormSettings;
+  
+  private ArrayList<Program> mRemovedPrograms;
+  private ArrayList<Program> mRemovedBlacklistPrograms;
 
   /**
    * unsorted list of blacklisted (non-favorite) programs
@@ -75,8 +78,10 @@ public abstract class Favorite {
   public Favorite() {
     mReminderConfiguration = new ReminderConfiguration(FavoritesPlugin.getInstance().isAutoSelectingRemider() ? new String[] {ReminderConfiguration.REMINDER_DEFAULT} : new String[0]);
     mLimitationConfiguration = new LimitationConfiguration();
-    mPrograms = new ArrayList<Program>();
-    mNewPrograms = new ArrayList<Program>();
+    mPrograms = new ArrayList<Program>(0);
+    mNewPrograms = new ArrayList<Program>(0);
+    mRemovedPrograms = new ArrayList<Program>(0);
+    mRemovedBlacklistPrograms = new ArrayList<Program>(0);
     mExclusionList = null; // defer initialisation until needed, save memory
     mBlackList = null; // defer initialization until needed
 
@@ -135,7 +140,8 @@ public abstract class Favorite {
     
     mPrograms = programList;
     
-    mNewPrograms = new ArrayList<Program>();
+    mNewPrograms = new ArrayList<Program>(0);
+    mRemovedPrograms = new ArrayList<Program>(0);
   }
 
   private void readProgramsToList(ArrayList<Program> list, int size, ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -702,29 +708,48 @@ public abstract class Favorite {
    */
   public void tryToMatch(Program p, boolean dataUpdate, boolean send) throws TvBrowserException {
     if (matches(p) && filterByLimitations(new Program[] {p}).length > 0 && (!getLimitationConfiguration().isLimitedByChannel() || Arrays.asList(getChannels()).contains(p.getChannel()))) {
-      boolean newFound = false;
-      int pos = mPrograms.indexOf(p);
-      if (pos >= 0) {
-        // Item was in list, remove old item, add new one
-        mPrograms.remove(pos);
-        mPrograms.add(p);
-        markProgram(p);
-      } else {
-        mPrograms.add(p);
-        markProgram(p);
-        mNewPrograms.add(p);
-        newFound = true;
+      int blackListPos = mBlackList.indexOf(p);
+      
+      if(mRemovedBlacklistPrograms.remove(p) || blackListPos >= 0) {
+        /* Program was in black list so we have to remove it
+         * and add the new instance to the black list */
+        if(blackListPos >= 0) {
+          mBlackList.remove(blackListPos);
+        }
+        
+        mBlackList.add(p);
       }
-      if (send && newFound) {
-        ProgramReceiveTarget[] pluginArr = getForwardPlugins();
-        if(!dataUpdate) {
-          for (ProgramReceiveTarget receiveTarget : pluginArr) {
-            if (receiveTarget != null && receiveTarget.getReceifeIfForIdOfTarget() != null) {
-              receiveTarget.getReceifeIfForIdOfTarget().receivePrograms(mNewPrograms.toArray(new Program[mNewPrograms.size()]), receiveTarget);
-            }
-          }
+      else {
+        boolean newFound = false;
+        int pos = mPrograms.indexOf(p);
+        
+        if (pos >= 0) {
+          // Item was in list, remove old item, add new one
+          mPrograms.remove(pos);
+          mPrograms.add(p);
+          markProgram(p);
+        } else if(mRemovedPrograms.remove(p)){
+          // Item was in list, but was already removed before
+          mPrograms.add(p);
+          markProgram(p);
         } else {
-          FavoritesPlugin.getInstance().addProgramsForSending(pluginArr, mNewPrograms.toArray(new Program[mNewPrograms.size()]));
+          mPrograms.add(p);
+          markProgram(p);
+          mNewPrograms.add(p);
+          newFound = true;
+        }
+        
+        if (send && newFound) {
+          ProgramReceiveTarget[] pluginArr = getForwardPlugins();
+          if(!dataUpdate) {
+            for (ProgramReceiveTarget receiveTarget : pluginArr) {
+              if (receiveTarget != null && receiveTarget.getReceifeIfForIdOfTarget() != null) {
+                receiveTarget.getReceifeIfForIdOfTarget().receivePrograms(mNewPrograms.toArray(new Program[mNewPrograms.size()]), receiveTarget);
+              }
+            }
+          } else {
+            FavoritesPlugin.getInstance().addProgramsForSending(pluginArr, mNewPrograms.toArray(new Program[mNewPrograms.size()]));
+          }
         }
       }
     }
@@ -750,6 +775,16 @@ public abstract class Favorite {
    */
   public void removeProgram(Program p) {
     unmarkProgram(p);
+    
+    /* Remove programs from the lists */
+    
+    if(mPrograms.remove(p)) {
+      mRemovedPrograms.add(p);
+    }
+    
+    if(mBlackList.remove(p)) {
+      mRemovedBlacklistPrograms.add(p);
+    }
   }
 
   /**
@@ -757,7 +792,15 @@ public abstract class Favorite {
    * @since 2.7
    */
   public void clearNewPrograms() {
-    mNewPrograms = new ArrayList<Program>();
+    mNewPrograms = new ArrayList<Program>(0);
   }
 
+  /**
+   * Clears the list of removed programs
+   * @since 2.7
+   */
+  public void clearRemovedPrograms() {
+    mRemovedPrograms = new ArrayList<Program>(0);
+    mRemovedBlacklistPrograms = new ArrayList<Program>(0);
+  }
 }

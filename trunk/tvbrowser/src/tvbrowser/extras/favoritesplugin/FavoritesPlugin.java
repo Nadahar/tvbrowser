@@ -203,6 +203,7 @@ public class FavoritesPlugin {
         mSendPluginsTable.clear();
         for (Favorite favorite : FavoriteTreeModel.getInstance().getFavoriteArr()) {
           favorite.clearNewPrograms();
+          favorite.clearRemovedPrograms();
         }
       }
 
@@ -234,6 +235,8 @@ public class FavoritesPlugin {
       Favorite[] favoriteArr = FavoriteTreeModel.getInstance().getFavoriteArr();
 
       for (Favorite favorite : favoriteArr) {
+        favorite.clearRemovedPrograms();
+        
         if (favorite.isRemindAfterDownload() && favorite.getNewPrograms().length > 0) {
           showInfoFavorites.add(favorite);
         }
