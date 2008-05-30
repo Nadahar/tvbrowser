@@ -83,7 +83,7 @@ public class Exclusion {
   }
 
   public Exclusion(ObjectInputStream in) throws ClassNotFoundException, IOException {
-    try{int version = in.readInt();  // version
+    int version = in.readInt();  // version
     
     boolean hasChannel = in.readBoolean();
     if (hasChannel) {
@@ -126,7 +126,11 @@ public class Exclusion {
 
     mTimeFrom = in.readInt();
     mTimeTo = in.readInt();
-    mDayOfWeek = in.readInt();}catch(Throwable t) {t.printStackTrace();}
+    mDayOfWeek = in.readInt();
+    
+    if(mChannel == null) {
+      mChannel = new ChannelItem(null);
+    }
   }
 
 
