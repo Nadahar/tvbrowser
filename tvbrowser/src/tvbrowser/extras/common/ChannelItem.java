@@ -43,17 +43,25 @@ public class ChannelItem {
   private String mCountry;
   private Channel mChannel;
   
+  private boolean mNullChannel;
+  
   /**
    * Creates an instance of this class.
    * <p>
    * @param channel The channel to keep in this ChannelItem.
    */
-  public ChannelItem(Channel channel) {
-    mChannelDataServiceId = channel.getDataServiceProxy().getId();
-    mGroupId = channel.getGroup().getId();
-    mCertainChannelId = channel.getId();
-    mCountry = channel.getCountry();
-    mChannel = channel;
+  public ChannelItem(Channel channel) {System.out.println(channel);
+    if(channel != null) {
+      mChannelDataServiceId = channel.getDataServiceProxy().getId();
+      mGroupId = channel.getGroup().getId();
+      mCertainChannelId = channel.getId();
+      mCountry = channel.getCountry();
+      mChannel = channel;
+      mNullChannel = false;
+    }
+    else {
+      mNullChannel = true;
+    }
   }
   
   /**
@@ -76,11 +84,15 @@ public class ChannelItem {
         mCountry = mChannel.getCountry();
       }
     }
-    else {
+    else {      
       mChannelDataServiceId = in.readUTF();
       mGroupId = in.readUTF();
       mCountry = in.readUTF();
       mCertainChannelId = in.readUTF();
+      
+      if(version == 3) {
+        mNullChannel = in.readBoolean();
+      }
       
       mChannel = Channel.getChannel(mChannelDataServiceId, mGroupId, mCountry, mCertainChannelId);
     }
@@ -94,6 +106,16 @@ public class ChannelItem {
    */
   public boolean isValid() {
     return mChannelDataServiceId != null && mGroupId != null && mCountry != null && mCertainChannelId != null; 
+  }
+  
+  /**
+   * Gets if this channel ist available or is a null channel
+   * <p>
+   * @return <code>True</code> if this channel is available or a null
+   * channel, <code>false</code> otherwise.
+   */
+  public boolean isAvailableOrNullChannel() {
+    return mChannel != null || mNullChannel;
   }
   
   /**
@@ -117,5 +139,6 @@ public class ChannelItem {
     out.writeUTF(mGroupId);
     out.writeUTF(mCountry);
     out.writeUTF(mCertainChannelId);
+    out.writeBoolean(mNullChannel);
   }
 }

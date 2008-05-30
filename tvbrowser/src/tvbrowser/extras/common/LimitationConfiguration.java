@@ -94,7 +94,7 @@ public class LimitationConfiguration {
   }
 
   public void store(ObjectOutputStream out) throws IOException {
-    out.writeInt(2); // version
+    out.writeInt(3); // version
 
     out.writeBoolean(mIsLimitedByTime);
     if (mIsLimitedByTime) {
