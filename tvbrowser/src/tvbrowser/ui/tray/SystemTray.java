@@ -57,6 +57,7 @@ import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MarkedProgramsList;
@@ -289,7 +290,9 @@ public class SystemTray {
     mTrayMenu.addPopupMenuListener(new PopupMenuListener() {
       public void popupMenuCanceled(PopupMenuEvent e) {}
 
-      public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
+      public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+        FavoritesPlugin.getInstance().showInfoDialog();
+      }
 
       public void popupMenuWillBecomeVisible(PopupMenuEvent e) {        
         mPluginsMenu.setEnabled(!UiUtilities.containsModalDialogChild(MainFrame.getInstance()));
