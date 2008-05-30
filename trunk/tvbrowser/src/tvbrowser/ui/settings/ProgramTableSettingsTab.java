@@ -373,8 +373,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
         !Settings.propTableLayout.getString().equals("compactTimeBlock")) {
       Settings.propTableBackgroundStyle.setString("timeBlock");
       
-      Settings.propTimeBlockBackground1.setString("imgs/time_block_white.jpg");
-      Settings.propTimeBlockBackground2.setString("imgs/time_block_gray.jpg");
+      Settings.propTimeBlockBackground1.setString(Settings.propTimeBlockBackground1.getDefault());
+      Settings.propTimeBlockBackground2.setString(Settings.propTimeBlockBackground2.getDefault());
       
       Settings.propTimeBlockShowWest.setBoolean(true);
       
@@ -388,8 +388,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
         Settings.propTableLayout.getString().equals("compactTimeBlock")) {
       Settings.propTableBackgroundStyle.setString("timeBlock");
       
-      Settings.propTimeBlockBackground1.setString(Settings.propTimeBlockBackground1.getDefault());
-      Settings.propTimeBlockBackground2.setString(Settings.propTimeBlockBackground2.getDefault());
+      Settings.propTimeBlockBackground1.setString("imgs/columns_evening.jpg");
+      Settings.propTimeBlockBackground2.setString("imgs/columns_afternoon.jpg");
       
       Settings.propTimeBlockShowWest.setBoolean(false);
       
