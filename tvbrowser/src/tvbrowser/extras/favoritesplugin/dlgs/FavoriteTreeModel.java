@@ -394,7 +394,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
 
             for (Program program : progArr) {
               PluginTreeNode pNode = newNode.addProgramWithoutCheck(program);
-              if (episodeOnly) {
+              if (episodeOnly || progArr.length <= 10) {
                 pNode.setNodeFormatter(new NodeFormatter() {
                   public String format(ProgramItem pitem) {
                     Program p = pitem.getProgram();
