@@ -252,8 +252,9 @@ public class PluginTreeNode {
     mGroupWeekly = enable;
   }
 
-  private NodeFormatter getNodeFormatter() {
-    return mDefaultNode.getNodeFormatter();
+  private NodeFormatter getNodeFormatter(boolean isWeekNodesEnabled) {
+    System.out.println("   " + isWeekNodesEnabled);
+    return mDefaultNode.getNodeFormatter(isWeekNodesEnabled);
   }
 
   private void createDefaultNodes() {
@@ -350,16 +351,21 @@ public class PluginTreeNode {
     }
     // show week nodes if there are less than 2 programs per day on average
     boolean createWeekNodes = mGroupWeekly && (numPrograms <= dates.length * 2);
+    boolean isShowingWeekNodes = createWeekNodes;
+    
     for (int i=0; i<dates.length; i++) {
       String dateStr;
       if (yesterDay.equals(dates[i])) {
         dateStr = Localizer.getLocalization(Localizer.I18N_YESTERDAY);
+        isShowingWeekNodes = false;
       }
       else if (today.equals(dates[i])) {
         dateStr = Localizer.getLocalization(Localizer.I18N_TODAY);
+        isShowingWeekNodes = false;
       }
       else if (nextDay.equals(dates[i])) {
-        dateStr = Localizer.getLocalization(Localizer.I18N_TOMORROW);;
+        dateStr = Localizer.getLocalization(Localizer.I18N_TOMORROW);
+        isShowingWeekNodes = false;
       }
       else {
         if (createWeekNodes) {
@@ -386,9 +392,11 @@ public class PluginTreeNode {
       Arrays.sort(nodeArr, sPluginTreeNodeComparator);
       for (int k=0; k<nodeArr.length; k++) {
       	Node newNode = new Node((ProgramItem)nodeArr[k].getUserObject());
-        newNode.setNodeFormatter(nodeArr[k].getNodeFormatter());
+        newNode.setNodeFormatter(nodeArr[k].getNodeFormatter(createWeekNodes && isShowingWeekNodes));
         node.add(newNode);
       }
+      
+      isShowingWeekNodes = createWeekNodes;
     }
   }
 
