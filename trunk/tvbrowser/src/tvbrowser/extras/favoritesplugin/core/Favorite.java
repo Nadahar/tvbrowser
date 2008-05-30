@@ -780,9 +780,7 @@ public abstract class Favorite {
     
     if(mPrograms.remove(p)) {
       mRemovedPrograms.add(p);
-    }
-    
-    if(mBlackList.remove(p)) {
+    } else if(mBlackList.remove(p)) {
       mRemovedBlacklistPrograms.add(p);
     }
   }
