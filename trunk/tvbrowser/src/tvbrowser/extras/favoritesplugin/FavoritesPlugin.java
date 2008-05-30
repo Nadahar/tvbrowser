@@ -148,6 +148,8 @@ public class FavoritesPlugin {
   private Exclusion[] mExclusions;
   private ArrayList<UpdateInfoThread> mUpdateInfoThreads;
   
+  private boolean mShowInfoDialog = false;
+  
   /**
    * Creates a new instance of FavoritesPlugin.
    */
@@ -1039,11 +1041,16 @@ public class FavoritesPlugin {
     }
     
     public void run() {
-      while((!MainFrame.getInstance().isVisible() || MainFrame.getInstance().getExtendedState() == JFrame.ICONIFIED) && !mIsShuttingDown) {
+      while((!MainFrame.getInstance().isVisible() || MainFrame.getInstance().getExtendedState() == JFrame.ICONIFIED) && !mIsShuttingDown && !mShowInfoDialog) {
         try {
           sleep(5000);
         }catch(Exception e) {
           mUpdateInfoThreads.remove(this);
+          
+          if(mUpdateInfoThreads.isEmpty()) {
+            mShowInfoDialog = false;
+          }
+          
           return;
         }
       }
@@ -1051,10 +1058,18 @@ public class FavoritesPlugin {
       showDialog();
       
       mUpdateInfoThreads.remove(this);
+      
+      if(mUpdateInfoThreads.isEmpty()) {
+        mShowInfoDialog = false;
+      }
     }
     
     protected void showDialog() {
       showManageFavoritesDialog(true, mFavoriteArr);
     }
+  }
+  
+  public void showInfoDialog() {
+    mShowInfoDialog = true;
   }
 }
