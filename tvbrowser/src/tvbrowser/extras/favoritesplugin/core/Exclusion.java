@@ -38,6 +38,7 @@ import java.util.Calendar;
 import java.util.Iterator;
 
 import tvbrowser.core.filters.FilterManagerImpl;
+import tvbrowser.extras.common.ChannelItem;
 import tvbrowser.extras.common.LimitationConfiguration;
 
 public class Exclusion {
@@ -53,7 +54,7 @@ public class Exclusion {
   public static final int DAYLIMIT_FRIDAY = LimitationConfiguration.DAYLIMIT_FRIDAY;
   public static final int DAYLIMIT_SATURDAY = LimitationConfiguration.DAYLIMIT_SATURDAY;
 
-  private Channel mChannel;
+  private ChannelItem mChannel;
   private String mTopic;
   private String mTitle;
   private int mTimeFrom;
@@ -74,7 +75,7 @@ public class Exclusion {
   public Exclusion(String title, String topic, Channel channel, int timeFrom, int timeTo, int dayOfWeek, String filterName) {
     mTitle = title;
     mTopic = topic;
-    mChannel =channel;
+    mChannel = new ChannelItem(channel);
     mTimeFrom = timeFrom;
     mTimeTo = timeTo;
     mDayOfWeek = dayOfWeek;
@@ -94,10 +95,21 @@ public class Exclusion {
           channelGroupId = (String) in.readObject();
       
         String channelId=(String)in.readObject();
-        mChannel = Channel.getChannel(channelServiceClassName, channelGroupId, null, channelId);
+        Channel ch = Channel.getChannel(channelServiceClassName, channelGroupId, null, channelId);
+        
+        if(ch != null) {
+          mChannel = new ChannelItem(ch);
+        }
+      }
+      else if (version < 5) {
+        Channel ch = Channel.readData(in, true);
+        
+        if(ch != null) {
+          mChannel = new ChannelItem(ch);
+        }
       }
       else {
-        mChannel = Channel.readData(in, true);
+        mChannel = new ChannelItem(in,2);
       }
     }
 
@@ -125,10 +137,10 @@ public class Exclusion {
 
 
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(4);  // version
+    out.writeInt(5);  // version
     out.writeBoolean(mChannel != null);
     if (mChannel != null) {
-      mChannel.writeData(out);
+      mChannel.saveItem(out);
     }
 
     out.writeBoolean(mTitle != null);
@@ -173,7 +185,7 @@ public class Exclusion {
   }
 
   public Channel getChannel() {
-    return mChannel;
+    return mChannel.getChannel();
   }
 
   public int getTimeLowerBound() {
@@ -303,6 +315,6 @@ public class Exclusion {
    * @return <code>True</code> if this Exclusion is invalid, <code>false</code> otherwise.
    */
   public boolean isInvalid() {
-    return mTitle == null && mTopic == null && mFilterName == null && mChannel == null && mTimeFrom == -1 &&mTimeTo == -1 && mDayOfWeek == Exclusion.DAYLIMIT_DAILY;
+    return (mTitle == null && mTopic == null && mFilterName == null && mChannel == null && mTimeFrom == -1 &&mTimeTo == -1 && mDayOfWeek == Exclusion.DAYLIMIT_DAILY) || !mChannel.isValid();
   }
 }
