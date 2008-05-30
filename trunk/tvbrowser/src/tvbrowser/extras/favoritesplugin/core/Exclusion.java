@@ -75,11 +75,7 @@ public class Exclusion {
   public Exclusion(String title, String topic, Channel channel, int timeFrom, int timeTo, int dayOfWeek, String filterName) {
     mTitle = title;
     mTopic = topic;
-    
-    if(channel != null) {
-      mChannel = new ChannelItem(channel);
-    }
-    
+    mChannel = new ChannelItem(channel);
     mTimeFrom = timeFrom;
     mTimeTo = timeTo;
     mDayOfWeek = dayOfWeek;
@@ -87,7 +83,7 @@ public class Exclusion {
   }
 
   public Exclusion(ObjectInputStream in) throws ClassNotFoundException, IOException {
-    int version = in.readInt();  // version
+    try{int version = in.readInt();  // version
     
     boolean hasChannel = in.readBoolean();
     if (hasChannel) {
@@ -101,19 +97,14 @@ public class Exclusion {
         String channelId=(String)in.readObject();
         Channel ch = Channel.getChannel(channelServiceClassName, channelGroupId, null, channelId);
         
-        if(ch != null) {
-          mChannel = new ChannelItem(ch);
-        }
+        mChannel = new ChannelItem(ch);
       }
       else if (version < 5) {
         Channel ch = Channel.readData(in, true);
-        
-        if(ch != null) {
-          mChannel = new ChannelItem(ch);
-        }
+        mChannel = new ChannelItem(ch);
       }
       else {
-        mChannel = new ChannelItem(in,2);
+        mChannel = new ChannelItem(in,3);
       }
     }
 
@@ -135,8 +126,7 @@ public class Exclusion {
 
     mTimeFrom = in.readInt();
     mTimeTo = in.readInt();
-    mDayOfWeek = in.readInt();
-
+    mDayOfWeek = in.readInt();}catch(Throwable t) {t.printStackTrace();}
   }
 
 
@@ -189,7 +179,7 @@ public class Exclusion {
   }
 
   public Channel getChannel() {
-    return mChannel != null ? mChannel.getChannel() : null;
+    return mChannel.getChannel();
   }
 
   public int getTimeLowerBound() {
@@ -319,6 +309,6 @@ public class Exclusion {
    * @return <code>True</code> if this Exclusion is invalid, <code>false</code> otherwise.
    */
   public boolean isInvalid() {
-    return (mTitle == null && mTopic == null && mFilterName == null && mChannel == null && mTimeFrom == -1 &&mTimeTo == -1 && mDayOfWeek == Exclusion.DAYLIMIT_DAILY) || !mChannel.isValid();
+    return (mTitle == null && mTopic == null && !mChannel.isAvailableOrNullChannel() && mFilterName == null && mTimeFrom == -1 &&mTimeTo == -1 && mDayOfWeek == Exclusion.DAYLIMIT_DAILY) || !mChannel.isAvailableOrNullChannel();
   }
 }
