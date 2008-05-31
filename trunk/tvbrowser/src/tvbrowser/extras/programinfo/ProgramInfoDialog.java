@@ -714,6 +714,9 @@ public class ProgramInfoDialog {
     mDialog.setVisible(true);
   }
   
+  /**
+   * Reset the function group.
+   */
   public static void resetFunctionGroup() {
     if (instance != null) {
       instance.resetFunctionGroupInternal();
@@ -731,8 +734,16 @@ public class ProgramInfoDialog {
     
     mFindAsYouType.installKeyListener(mPluginsPane);    
     mFindAsYouType.installKeyListener(mFunctionGroup);
+    
+    mPluginsPane.updateUI();
   }
 
+  /**
+   * Clise this dialog.
+   * <p>
+   * @return <code>True</code> if the dialog was visible,
+   * <code>false</code> otherwise.
+   */
   public static boolean closeDialog() {
     return instance != null && instance.closeDialogInternal();
   }
