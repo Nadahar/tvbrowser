@@ -31,30 +31,56 @@ import devplugin.Program;
 import devplugin.ProgramItem;
 import util.program.ProgramUtilities;
 
-
+/**
+ * A class that contains the program for
+ * which a reminder should be shown at some time.
+ */
 public class ReminderListItem implements Comparable<ReminderListItem> {
-
-
   private ProgramItem mProgramItem;
 
+  /**
+   * Creates an instance of this class.
+   * <p>
+   * @param item The item for this list item.
+   */
   public ReminderListItem(ProgramItem item) {
     mProgramItem = item;
   }
 
+  /**
+   * Creates an instance of this class.
+   * <p>
+   * @param prog The program for this item.
+   * @param minutes The remider time for this item.
+   */
   public ReminderListItem(Program prog, int minutes) {
     mProgramItem = new ProgramItem(prog);
     setMinutes(minutes);
   }
 
+  /**
+   * Sets the number of reminders set for this item.
+   * <p>
+   * @param refCnt The number of reminders for this item.
+   */
   public void setReferenceCount(int refCnt) {
     mProgramItem.setProperty("refCnt",""+ refCnt);
   }
 
+  /**
+   * Gets the program item of this list item.
+   * <p>
+   * @return The program item.
+   */
   public ProgramItem getProgramItem() {
     return mProgramItem;
   }
 
-
+  /**
+   * Gets the number of set reminders of this item.
+   * <p>
+   * @return The number of set reminders of this item.
+   */
   public int getReferenceCount() {
     String cnt = mProgramItem.getProperty("refCnt");
     if (cnt != null) {
@@ -67,11 +93,17 @@ public class ReminderListItem implements Comparable<ReminderListItem> {
     return 1;
   }
 
+  /**
+   * Increase the number of set reminders of this item about 1.
+   */
   public void incReferenceCount() {
     int cnt = getReferenceCount() + 1;
     mProgramItem.setProperty("refCnt",""+ cnt);
   }
 
+  /**
+   * Decrease the number of set reminders of this item about 1.
+   */
   public void decReferenceCount() {
     int cnt = getReferenceCount() - 1;
     if (cnt >= 0) {
@@ -79,6 +111,11 @@ public class ReminderListItem implements Comparable<ReminderListItem> {
     }
   }
 
+  /**
+   * Gets the reminder mintutes of this list item.
+   * <p>
+   * @return The reminder mintutes of this list item.
+   */
   public int getMinutes() {
     String m = mProgramItem.getProperty("minutes");
     if (m!=null) {
@@ -91,10 +128,24 @@ public class ReminderListItem implements Comparable<ReminderListItem> {
     return 10;
   }
 
+  /**
+   * Sets the minutes of this list item.
+   * <p>
+   * @param minutes The minutes of this list item.
+   */
   public void setMinutes(int minutes) {
-      mProgramItem.setProperty("minutes",""+minutes);
+    if(minutes < 0) {
+      minutes = ReminderPlugin.getInstance().getDefaultReminderTime();
+    }
+    
+    mProgramItem.setProperty("minutes",""+minutes);
   }
 
+  /**
+   * Gets the program of this list item.
+   * <p>
+   * @return The program of this list item.
+   */
   public Program getProgram() {
     return mProgramItem.getProgram();
   }
