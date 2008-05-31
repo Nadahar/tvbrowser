@@ -79,6 +79,7 @@ import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import util.io.IOUtilities;
 import util.ui.Localizer;
 import util.ui.OverlayListener;
@@ -661,7 +662,7 @@ public class PluginTree extends JTree implements DragGestureListener,
                       .getContextMenuActions(program));
                 } else if (ReminderPlugin.getInstance().getRootNode()
                     .getMutableTreeNode().equals(target)) {
-                  action = getAction(ReminderPlugin.getInstance()
+                  action = getAction(ReminderPluginProxy.getInstance()
                       .getContextMenuActions(program));
                 }
 

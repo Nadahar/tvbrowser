@@ -363,6 +363,12 @@ public class ReminderPlugin {
     }
   }
 
+  /**
+   * Save the data of this plugin in the given stream.
+   * <p>
+   * @param out The stream to write the data in.
+   * @throws IOException
+   */
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(3);
     mReminderList.writeData(out);
@@ -512,7 +518,12 @@ public class ReminderPlugin {
     }
   }
 
-  private int getDefaultReminderTime() {
+  /**
+   * Gets the default reminder time.
+   * <p>
+   * @return The default reminder time in minutes.
+   */
+  public int getDefaultReminderTime() {
     String defaultReminderEntryStr = (String) mSettings
         .get("defaultReminderEntry");
     int minutes = 10;
@@ -529,31 +540,86 @@ public class ReminderPlugin {
     return minutes;
   }
 
-
+  /**
+   * Add the given programs to the reminder list.
+   * <p>
+   * @param programArr The programs to add.
+   */
   public void addPrograms(Program[] programArr) {
     mReminderList.addAndCheckBlocked(programArr, getDefaultReminderTime());
     updateRootNode(true);
   }
-
-
-
-  public void removeProgram(Program prog) {
+  
+  /**
+   * Removes the given program from the reminder list.
+   * <p>
+   * @param prog The program to remove.
+   * @return The reminder minutes of the program
+   * or -1 if the program was not in the list.
+   */
+  public int removeProgram(Program prog) {
+    ReminderListItem item = mReminderList.getReminderItem(prog);
+    
     mReminderList.remove(prog);
+    
+    if(item != null) {
+      return item.getMinutes();
+    }
+    
+    return -1;
   }
 
+  /**
+   * Remove the given programs from the reminder list.
+   * <p>
+   * @param progArr The programs to remove.
+   */
   public void removePrograms(Program[] progArr) {
     mReminderList.remove(progArr);
   }
 
-  public void addProgram(Program prog) {
-    mReminderList.add(prog, getDefaultReminderTime());
+  /**
+   * Adds a program to the reminder list.
+   * <p>
+   * @param prog The program to add.
+   * @param reminderMinutes The reminder minutes for the program.
+   */
+  public void addProgram(Program prog, int reminderMinutes) {
+    mReminderList.add(prog, reminderMinutes);
+  }
+  
+  /**
+   * Gets the reminder minutes for the given program.
+   * <p>
+   * @param prog The program to get the reminder minutes for.
+   * @return The reminder minutes of the program or -1 if the
+   * program is not in the reminder list
+   * @since 2.7
+   */
+  public int getReminderMinutesForProgram(Program prog) {
+    ReminderListItem item = mReminderList.getReminderItem(prog);
+    
+    if(item != null) {
+      return item.getMinutes();
+    }
+    
+    return -1;
   }
 
-
-   public PluginTreeNode getRootNode() {
+  /**
+   * Gets the root node for the plugin tree.
+   * <p> 
+   * @return The root node for the plugin tree.
+   */
+  public PluginTreeNode getRootNode() {
     return mRootNode;
   }
 
+  /**
+   * Updates the plugin tree entry for this plugin.
+   * <p>
+   * @param save <code>True</code> if the remider entries should be saved.
+   */
   public void updateRootNode(boolean save) {
     mRootNode.removeAllActions();
     mRootNode.getMutableTreeNode().setIcon(IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16));
@@ -768,10 +834,15 @@ public class ReminderPlugin {
     return null;
   }
 
-  public ActionMenu getContextMenuActions(Program program) {
+  protected ActionMenu getContextMenuActions(Program program) {
     return getContextMenuActions(null, program);
   }
 
+  /**
+   * Gets the id of this plugin.
+   * <p>
+   * @return The id of this plugin.
+   */
   public String getId() {
     return DATAFILE_PREFIX;
   }

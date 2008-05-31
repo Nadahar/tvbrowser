@@ -40,6 +40,7 @@ import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
+import tvbrowser.extras.reminderplugin.ReminderList;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
@@ -54,6 +55,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 
 public abstract class Favorite {
 
@@ -67,7 +69,7 @@ public abstract class Favorite {
   private ProgramReceiveTarget[] mForwardPluginArr;
   protected SearchFormSettings mSearchFormSettings;
   
-  private ArrayList<Program> mRemovedPrograms;
+  private HashMap<Program,Integer> mRemovedPrograms;
   private ArrayList<Program> mRemovedBlacklistPrograms;
 
   /**
@@ -80,7 +82,7 @@ public abstract class Favorite {
     mLimitationConfiguration = new LimitationConfiguration();
     mPrograms = new ArrayList<Program>(0);
     mNewPrograms = new ArrayList<Program>(0);
-    mRemovedPrograms = new ArrayList<Program>(0);
+    mRemovedPrograms = new HashMap<Program,Integer>(0);
     mRemovedBlacklistPrograms = new ArrayList<Program>(0);
     mExclusionList = null; // defer initialisation until needed, save memory
     mBlackList = null; // defer initialization until needed
@@ -141,7 +143,7 @@ public abstract class Favorite {
     mPrograms = programList;
     
     mNewPrograms = new ArrayList<Program>(0);
-    mRemovedPrograms = new ArrayList<Program>(0);
+    mRemovedPrograms = new HashMap<Program,Integer>(0);
   }
 
   private void readProgramsToList(ArrayList<Program> list, int size, ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -458,7 +460,7 @@ public abstract class Favorite {
       }
       else if (comparator.compare(p1[inx1], newProgList[inx2]) > 0) {
         // add (p2[inx2]
-        markProgram(newProgList[inx2]);
+        markProgram(newProgList[inx2],-1);
         newPrograms.add(newProgList[inx2]);
         resultList.add(newProgList[inx2]);
         inx2++;
@@ -469,7 +471,8 @@ public abstract class Favorite {
          * check if the new found program is a new instance 
          * of the program and mark it if it is so. */
         if(p1[inx1].getProgramState() == Program.WAS_DELETED_STATE) {
-          markProgram(newProgList[inx2]);
+          int minutes = ReminderPlugin.getInstance().getReminderMinutesForProgram(p1[inx1]);
+          markProgram(newProgList[inx2], minutes);
         }
           
         resultList.add(newProgList[inx2]);
@@ -481,7 +484,7 @@ public abstract class Favorite {
     if (inx2 < newProgList.length) {
       // add (p2[inx2]..p2[p2.length-1])
       for (int i=inx2; i< newProgList.length; i++) {
-        markProgram(newProgList[i]);
+        markProgram(newProgList[i],-1);
         newPrograms.add(newProgList[i]);
         resultList.add(newProgList[i]);
       }
@@ -513,30 +516,33 @@ public abstract class Favorite {
   }
 
 
-  private void markProgram(Program p) {
+  private void markProgram(Program p, int reminderMinutes) {
     if(mBlackList == null || !mBlackList.contains(p)) {
       p.mark(FavoritesPluginProxy.getInstance());
       String[] reminderServices = getReminderConfiguration().getReminderServices();
       for (String reminderService : reminderServices) {
         if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderService)) {
-          ReminderPlugin.getInstance().addProgram(p);
+          ReminderPlugin.getInstance().addProgram(p,reminderMinutes);
         }
       }
     }
   }
 
-  private void unmarkProgram(Program p) {
+  private int unmarkProgram(Program p) {
     if(!FavoriteTreeModel.getInstance().isContainedByOtherFavorites(this,p)) {
       p.unmark(FavoritesPluginProxy.getInstance());
     }
-      
+    
+    int reminderMinutes = -1;
+    
     String[] reminderServices = getReminderConfiguration().getReminderServices();
     for (String reminderService : reminderServices) {
       if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderService)) {
-        ReminderPlugin.getInstance().removeProgram(p);
+        reminderMinutes = ReminderPlugin.getInstance().removeProgram(p);
       }
     }
 
+    return reminderMinutes;
   }
   
   /**
@@ -595,7 +601,7 @@ public abstract class Favorite {
       return;
     }
     if(mBlackList.remove(program)) {
-      markProgram(program);
+      markProgram(program,-1);
       FavoritesPlugin.getInstance().updateRootNode(true);
       updateManageDialog();
     }
@@ -723,18 +729,21 @@ public abstract class Favorite {
         boolean newFound = false;
         int pos = mPrograms.indexOf(p);
         
+        Integer listMinutes = null;
+        
         if (pos >= 0) {
           // Item was in list, remove old item, add new one
           mPrograms.remove(pos);
           mPrograms.add(p);
-          markProgram(p);
-        } else if(mRemovedPrograms.remove(p)){
+          /* We don't need to mark the program,
+           * that will be done by the MarkedProgramsList */
+        } else if((listMinutes = mRemovedPrograms.remove(p)) != null){
           // Item was in list, but was already removed before
           mPrograms.add(p);
-          markProgram(p);
+          markProgram(p,listMinutes);
         } else {
           mPrograms.add(p);
-          markProgram(p);
+          markProgram(p,-1);
           mNewPrograms.add(p);
           newFound = true;
         }
@@ -774,12 +783,12 @@ public abstract class Favorite {
    * @since 2.7
    */
   public void removeProgram(Program p) {
-    unmarkProgram(p);
+    int reminderMinutes = unmarkProgram(p);
     
     /* Remove programs from the lists */
     
     if(mPrograms.remove(p)) {
-      mRemovedPrograms.add(p);
+      mRemovedPrograms.put(p,reminderMinutes);
     } else if(mBlackList != null && mBlackList.remove(p)) {
       mRemovedBlacklistPrograms.add(p);
     }
@@ -798,7 +807,7 @@ public abstract class Favorite {
    * @since 2.7
    */
   public void clearRemovedPrograms() {
-    mRemovedPrograms = new ArrayList<Program>(0);
+    mRemovedPrograms = new HashMap<Program,Integer>(0);
     mRemovedBlacklistPrograms = new ArrayList<Program>(0);
   }
 }
