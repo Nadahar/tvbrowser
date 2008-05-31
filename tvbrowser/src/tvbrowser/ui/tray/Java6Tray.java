@@ -39,6 +39,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
+import util.misc.JavaVersion;
+
 /**
  * Tray for TV-Browser on systems
  * with Java 6 and tray support.
@@ -109,33 +111,39 @@ public class Java6Tray {
    * @return true, if successfull
    */
   public boolean init(JFrame parent, String image, String tooltip) {
-    try {
-      mClass = Class.forName("java.awt.SystemTray");
-      
-      Class<?> clazz = Class.forName("java.awt.SystemTray");
-      boolean value = (Boolean)clazz.getMethod("isSupported",new Class[] {}).invoke(clazz,new Object[] {});
-      
-      if(value) {
-        mTrayIcon = new TrayIcon(ImageIO.read(new File(image)), tooltip);
-       
-        mTrayParent = new JDialog();
-        mTrayParent.setTitle("Tray-Menu");
-
-        mTrayParent.setSize(0, 0);
-        mTrayParent.setUndecorated(true);
-        mTrayParent.setAlwaysOnTop(true);
-        mTrayParent.setVisible(false);
+    if(JavaVersion.getVersion() >= JavaVersion.VERSION_1_6) {
+      try {
+        mClass = Class.forName("java.awt.SystemTray");
         
-        mLog.info("Java 6 Tray inited.");
+        Class<?> clazz = Class.forName("java.awt.SystemTray");
+        boolean value = (Boolean)clazz.getMethod("isSupported",new Class[] {}).invoke(clazz,new Object[] {});
+        
+        if(value) {
+          mTrayIcon = new TrayIcon(ImageIO.read(new File(image)), tooltip);
+         
+          mTrayParent = new JDialog();
+          mTrayParent.setTitle("Tray-Menu");
+  
+          mTrayParent.setSize(0, 0);
+          mTrayParent.setUndecorated(true);
+          mTrayParent.setAlwaysOnTop(true);
+          mTrayParent.setVisible(false);
+          
+          mLog.info("Java 6 Tray inited.");
+        }
+        else {
+          mLog.info("Java 6 Tray is not supported on current platform.");
+        }
+        
+        return value;
+      }catch(Exception e) {
+        mLog.log(Level.SEVERE, "Java 6 Tray could not be inited.", e);
+        mClass = null;
+        return false;
       }
-      else {
-        mLog.info("Java 6 Tray is not supported on current platform.");
-      }
-      
-      return value;
-    }catch(Exception e) {
-      mLog.log(Level.SEVERE, "Java 6 Tray could not be inited.", e);
-      mClass = null;
+    }
+    else {
+      mLog.info("Tray not supported: At least Java 6 is needed to get tray support.");
       return false;
     }
   }
