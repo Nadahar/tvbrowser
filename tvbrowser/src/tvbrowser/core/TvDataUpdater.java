@@ -135,8 +135,8 @@ public class TvDataUpdater {
     // Inform the listeners
     fireTvDataUpdateStarted();
 
-    // Add a day to the daysToDownload for today
-    daysToDownload ++;
+    // Add two day to the daysToDownload for yesterday and today
+    daysToDownload += 2;
 
     // Ensure that the tvdata directory exists
     File tvdataDir = new File(Settings.propTVDataDirectory.getString());
@@ -161,7 +161,7 @@ public class TvDataUpdater {
     };
 
     // Get the start date
-    devplugin.Date startDate = new Date();
+    devplugin.Date startDate = new Date().addDays(-1);
 
     // Split the subsribed channels by data service
     Channel[] subscribedChannels = ChannelList.getSubscribedChannels();
