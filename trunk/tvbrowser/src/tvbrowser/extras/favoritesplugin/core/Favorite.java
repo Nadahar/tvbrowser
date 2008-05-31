@@ -744,8 +744,11 @@ public abstract class Favorite {
         } else {
           mPrograms.add(p);
           markProgram(p,-1);
-          mNewPrograms.add(p);
-          newFound = true;
+          
+          if(!p.isExpired()) {
+            mNewPrograms.add(p);
+            newFound = true;
+          }
         }
         
         if (send && newFound) {
