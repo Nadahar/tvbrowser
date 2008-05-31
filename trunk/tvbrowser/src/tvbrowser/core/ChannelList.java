@@ -39,6 +39,8 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
+
 import javax.swing.SwingUtilities;
 
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
@@ -142,7 +144,6 @@ public class ChannelList {
       calculateChannelPositions();
     }
     
-    clearChannelMaps();
     MainFrame.resetOnAirArrays();
   }
 
@@ -164,12 +165,12 @@ public class ChannelList {
   /**
    * Stores all settings used for the Channels
    */
-  public static void storeAllSettings() {
+  public static void storeAllSettings() {try {
     storeDayLightSavingTimeCorrections();
     storeChannelIcons();
     storeChannelNames();
     storeChannelWebPages();
-    storeChannelTimeLimits();
+    storeChannelTimeLimits();}catch(Throwable t) {t.printStackTrace();}
   }
 
   private static void addDataServiceChannels(TvDataServiceProxy dataService,
@@ -235,13 +236,6 @@ public class ChannelList {
         "channel_webpages.txt"));
     mChannelDayLightCorrectionMap = createMap(new File(Settings
         .getUserSettingsDirName(), "daylight_correction.txt"));
-  }
-
-  private static void clearChannelMaps() {
-    mChannelIconMap = null;
-    mChannelNameMap = null;
-    mChannelWebpagesMap = null;
-    mChannelDayLightCorrectionMap = null;
   }
 
   /**
@@ -580,6 +574,18 @@ public class ChannelList {
               + ";" + filename.trim()));
         }
       }
+      
+      if(mChannelIconMap != null) {
+        Set<String> keys = mChannelIconMap.keySet();
+        
+        for(String key : keys) {
+          if(!isSubscribedChannel(getChannelForKey(key))) {
+            out.print(key);
+            out.print("=");
+            out.println(mChannelIconMap.get(key));
+          }
+        }
+      }
     } catch (IOException e) {
       // ignore
     }
@@ -603,9 +609,21 @@ public class ChannelList {
       Channel[] channels = getSubscribedChannels();
       for (Channel channel : channels) {
         String userChannelName = channel.getUserChannelName();
-        if ((userChannelName != null) && (userChannelName.trim().length() > 0)) {
+        if ((userChannelName != null) && (userChannelName.trim().length() > 0) && (channel.getDefaultName() == null || !channel.getDefaultName().equalsIgnoreCase(userChannelName))) {
           out
               .println(createPropertyForChannel(channel, userChannelName.trim()));
+        }
+      }
+      
+      if(mChannelNameMap != null) {
+        Set<String> keys = mChannelNameMap.keySet();
+        
+        for(String key : keys) {
+          if(!isSubscribedChannel(getChannelForKey(key))) {
+            out.print(key);
+            out.print("=");
+            out.println(mChannelNameMap.get(key));
+          }
         }
       }
     } catch (IOException e) {
@@ -632,8 +650,20 @@ public class ChannelList {
       Channel[] channels = getSubscribedChannels();
       for (Channel channel : channels) {
         String userWebPage = channel.getUserWebPage();
-        if ((userWebPage != null) && (userWebPage.trim().length() > 0)) {
+        if ((userWebPage != null) && (userWebPage.trim().length() > 0) && (channel.getDefaultWebPage() == null || !channel.getDefaultWebPage().equalsIgnoreCase(userWebPage))) {
           out.println(createPropertyForChannel(channel, userWebPage.trim()));
+        }
+      }
+      
+      if(mChannelWebpagesMap != null) {
+        Set<String> keys = mChannelWebpagesMap.keySet();
+        
+        for(String key : keys) {
+          if(!isSubscribedChannel(getChannelForKey(key))) {
+            out.print(key);
+            out.print("=");
+            out.println(mChannelWebpagesMap.get(key));
+          }
         }
       }
     } catch (IOException e) {
@@ -789,13 +819,13 @@ public class ChannelList {
       Channel[] channels = getSubscribedChannels();
 
       out.writeShort(channels.length); // write number of channels
-
+      
       for (int i = 0; i < channels.length; i++) {
         channels[i].writeData(out);
         out.writeShort(channels[i].getStartTimeLimit());
         out.writeShort(channels[i].getEndTimeLimit());
       }
-
+      
       out.close();
       out = null;
     } catch (IOException e) {
@@ -807,6 +837,26 @@ public class ChannelList {
       } catch (Exception e) {
       }
     }
+  }
+  
+  private static Channel getChannelForKey(String key) {
+    Channel ch = null;
+    
+    if(key != null) {
+      String[] keyParts = key.split(":");
+      
+      if(keyParts.length == 4) {
+        ch = getChannel(keyParts[0],keyParts[1],keyParts[2],keyParts[3]);
+      }
+      else if(keyParts.length == 3) {
+        ch = getChannel(keyParts[0],keyParts[1],null,keyParts[2]);
+      }
+      else {
+        ch = getChannel(keyParts[0],null,null,keyParts[1]);
+      }
+    }
+    
+    return ch;
   }
   
   private static String getChannelKey(Channel ch) {
