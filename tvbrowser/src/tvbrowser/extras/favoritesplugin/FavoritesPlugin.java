@@ -677,7 +677,7 @@ public class FavoritesPlugin {
       });
     }
 
-    Settings.layoutWindow("extras.manageFavoritesDlg",dlg,new Dimension(500,300));
+    Settings.layoutWindow("extras.manageFavoritesDlg",dlg,new Dimension(650,450));
     dlg.setVisible(true);
     
     splitPanePosition = dlg.getSplitpanePosition();
