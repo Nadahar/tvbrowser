@@ -84,7 +84,13 @@ public class ToolBar extends JToolBar {
   public static final String ACTION_ID_KEY = "ActionId";
   public static final String ACTION_IS_SELECTED = "ActionIsSelected";
 
+  /**
+   * toolbar button with standard click behavior
+   */
   public static final int BUTTON_ACTION = 0;
+  /**
+   * toolbar button with toggle behavior (i.e. on/off state)
+   */
   public static final int TOOGLE_BUTTON_ACTION = 1;
   public static final int SEPARATOR = 2;
   public static final int SPACE = 3;

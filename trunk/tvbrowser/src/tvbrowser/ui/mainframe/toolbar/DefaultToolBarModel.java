@@ -87,7 +87,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
       mGoToTodayAction, mGoToPreviousDayAction, mGoToNextDayAction, 
       mGoToPreviousWeekAction, mGoToNextWeekAction, 
       mGoToDateAction, mScrollToChannelAction, mScrollToTimeAction,
-      mGlueAction, mSpaceAction;
+      mGlueAction, mSpaceAction, mFontSizeSmallerAction, mFontSizeLargerAction;
 
   private static DefaultToolBarModel sInstance;
 
@@ -218,6 +218,16 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
         IconLoader.getInstance().getIconFromTheme("actions", "scroll-to-time-list", 16),
         IconLoader.getInstance().getIconFromTheme("actions", "scroll-to-time-list", 22),
         ToolBar.TOOGLE_BUTTON_ACTION, this);
+    mFontSizeSmallerAction = createAction(mLocalizer.msg("fontSizeSmaller", "Smaller fonts"),
+        "#fontSizeSmaller", mLocalizer.msg("fontSizeSmallerToolTip", "Smaller font size in program table"),
+        IconLoader.getInstance().getIconFromTheme("actions", "zoom-out", 16),
+        IconLoader.getInstance().getIconFromTheme("actions", "zoom-out", 22),
+        ToolBar.BUTTON_ACTION, this);
+    mFontSizeLargerAction = createAction(mLocalizer.msg("fontSizeLarger", "Larger fonts"),
+        "#fontSizeLarger", mLocalizer.msg("fontSizeLargerToolTip", "Larger font size in program table"),
+        IconLoader.getInstance().getIconFromTheme("actions", "zoom-in", 16),
+        IconLoader.getInstance().getIconFromTheme("actions", "zoom-in", 22),
+        ToolBar.BUTTON_ACTION, this);
 
     updateTimeButtons();
 
@@ -607,8 +617,10 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
       MainFrame.getInstance().goToPreviousWeek();
     } else if (source == mGoToNextWeekAction) {
       MainFrame.getInstance().goToNextWeek();
-    } else {
-
+    } else if (source == mFontSizeLargerAction) {
+      MainFrame.getInstance().changeFontSize(+1);
+    } else if (source == mFontSizeSmallerAction) {
+      MainFrame.getInstance().changeFontSize(-1);
     }
   }
 
