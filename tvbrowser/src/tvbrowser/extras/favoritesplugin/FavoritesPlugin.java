@@ -156,10 +156,10 @@ public class FavoritesPlugin {
   private FavoritesPlugin() {
     mInstance = this;
     mExclusions = new Exclusion[0];
-    mPendingFavorites = new ArrayList<AdvancedFavorite>(); 
+    mPendingFavorites = new ArrayList<AdvancedFavorite>(0); 
     mClientPluginTargets = new ProgramReceiveTarget[0];
     mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
-    mUpdateInfoThreads = new ArrayList<UpdateInfoThread>();
+    mUpdateInfoThreads = new ArrayList<UpdateInfoThread>(0);
     load();
     mRootNode = new PluginTreeNode(mLocalizer.msg("manageFavorites","Favorites"));
 
@@ -230,7 +230,7 @@ public class FavoritesPlugin {
       mHasRightToSave = true;
       updateRootNode(true);
 
-      ArrayList<Favorite> showInfoFavorites = new ArrayList<Favorite>();
+      ArrayList<Favorite> showInfoFavorites = new ArrayList<Favorite>(0);
 
       Favorite[] favoriteArr = FavoriteTreeModel.getInstance().getFavoriteArr();
 
@@ -285,6 +285,7 @@ public class FavoritesPlugin {
       }
       
       mPendingFavorites.clear();
+      mPendingFavorites = null;
     }
     
     mHasRightToUpdate = true;
@@ -388,7 +389,7 @@ public class FavoritesPlugin {
     // Get the client plugins
     if(version <= 4) {
       int size = in.readInt();
-      ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>(); 
+      ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>(0); 
       for (int i = 0; i < size; i++) {
         String id = null;
         
@@ -489,7 +490,7 @@ public class FavoritesPlugin {
   private void sendToPlugins() {
     Collection<ReceiveTargetItem> targets = mSendPluginsTable.values();
     StringBuffer buffer = new StringBuffer();
-    ArrayList<Favorite> errorFavorites = new ArrayList<Favorite>();
+    ArrayList<Favorite> errorFavorites = new ArrayList<Favorite>(0);
     
     for(ReceiveTargetItem target : targets) {
       if(!target.getReceiveTarget().getReceifeIfForIdOfTarget().receivePrograms(target.getPrograms(), target.getReceiveTarget())) {
@@ -892,7 +893,7 @@ public class FavoritesPlugin {
   }
 
   public ProgramReceiveTarget[] getDefaultClientPluginsTargets() {
-    ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>();
+    ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>(0);
     for (ProgramReceiveTarget target : mClientPluginTargets) {
       ProgramReceiveIf plugin = target.getReceifeIfForIdOfTarget();
       if (plugin != null && (plugin.canReceivePrograms() || plugin.canReceiveProgramsWithTarget())) {
@@ -982,7 +983,7 @@ public class FavoritesPlugin {
     
     protected ReceiveTargetItem(ProgramReceiveTarget target) {
       mTarget = target;
-      mProgramsList = new ArrayList<Program>();
+      mProgramsList = new ArrayList<Program>(0);
     }
     
     protected void addPrograms(Program[] programs) {
@@ -1043,7 +1044,7 @@ public class FavoritesPlugin {
     }
     
     public void run() {
-      while((!MainFrame.getInstance().isVisible() || MainFrame.getInstance().getExtendedState() == JFrame.ICONIFIED) && !mIsShuttingDown && !mShowInfoDialog) {
+      while(Settings.propAutoDataDownloadEnabled.getBoolean() && (!MainFrame.getInstance().isVisible() || MainFrame.getInstance().getExtendedState() == JFrame.ICONIFIED) && !mIsShuttingDown && !mShowInfoDialog) {
         try {
           sleep(5000);
         }catch(Exception e) {
