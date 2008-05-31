@@ -52,6 +52,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -730,6 +731,13 @@ public class SettingsDialog implements WindowClosingIf {
       JLabel label = (JLabel) super.getTreeCellRendererComponent(tree, value,
           sel, expanded, leaf, rowIndex, hasFocus);
 
+      if(label != null) {
+        if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
+          label.setBackground(tree.getBackground());
+          label.setOpaque(!sel && !hasFocus);
+        }
+      }
+      
       if (value instanceof SettingNode) {
         SettingNode node = (SettingNode) value;
         Icon icon = node.getIcon();

@@ -141,8 +141,13 @@ public class SearchField extends JPanel {
     
     mText = new SearchTextField(15);
     
-    if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel"))
+    if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
       mText.setBackground(Color.white);
+      mText.setBorder(BorderFactory.createLineBorder(mText.getBackground(), 3));
+    }
+    else {
+      mText.setBorder(BorderFactory.createLineBorder(mText.getBackground()));
+    }
     
     mText.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
@@ -176,7 +181,7 @@ public class SearchField extends JPanel {
         }
       }
     });
-    mText.setBorder(BorderFactory.createLineBorder(mText.getBackground()));
+    
     panel.setBackground(mText.getBackground());
 
     mSearchButton = new JButton(IconLoader.getInstance().getIconFromTheme("action", "system-search", 16)); 
