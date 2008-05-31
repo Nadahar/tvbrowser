@@ -354,7 +354,7 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
   }
 
   /**
-   * Saves the current Editorfield and saves the changes by the user to his user-directory
+   * Saves the current editor field and stores the changes of the user to his user directory
    */
   protected void save() {
     mEditor.save();
