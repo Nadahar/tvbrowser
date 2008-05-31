@@ -35,6 +35,7 @@ import java.awt.Rectangle;
 import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
+import javax.swing.UIManager;
 import javax.swing.plaf.basic.BasicMenuItemUI;
 import javax.swing.plaf.basic.BasicMenuUI;
 
@@ -113,7 +114,7 @@ public class MenuUtil {
     }
     Object o = action.getValue(Program.MARK_PRIORITY);
     
-    if(o != null && o instanceof Integer) {
+    if(o != null && o instanceof Integer && !UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
       Color color = Plugin.getPluginManager().getTvBrowserSettings().getColorForMarkingPriority((Integer)o);
       
       if(color == null) {

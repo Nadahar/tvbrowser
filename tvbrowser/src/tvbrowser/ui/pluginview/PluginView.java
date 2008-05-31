@@ -40,6 +40,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
@@ -251,6 +252,11 @@ public class PluginView extends JPanel implements MouseListener {
       JLabel label = (JLabel)super.getTreeCellRendererComponent(tree,value,sel,expanded,leaf,row,hasFocus);
 
       if (label != null) {
+        if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
+          label.setBackground(tree.getBackground());
+          label.setOpaque(!sel && !hasFocus);
+        }
+        
         if (leaf && value instanceof Node) {
           Node node = (Node)value;
           if(node.isDirectoryNode()) {

@@ -40,7 +40,12 @@ public class OverlayListener extends MouseInputAdapter{
           boolean selected = mTree.isRowSelected(mRow); 
           Component renderer = mTree.getCellRenderer().getTreeCellRendererComponent(mTree, mPath.getLastPathComponent(), 
                   mTree.isRowSelected(mRow), mTree.isExpanded(mRow), mTree.getModel().isLeaf(mPath.getLastPathComponent()), mRow, 
-                  selected); 
+                  selected);
+          
+          if(renderer instanceof JComponent) {
+            ((JComponent)renderer).setOpaque(false);
+          }
+          
           c.setFont(mTree.getFont()); 
           Rectangle paintBounds = SwingUtilities.convertRectangle(mTree, mBounds, this); 
           SwingUtilities.paintComponent(g, renderer, this, paintBounds); 
