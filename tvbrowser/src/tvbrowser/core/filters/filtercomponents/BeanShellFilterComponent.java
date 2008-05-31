@@ -162,15 +162,14 @@ public class BeanShellFilterComponent implements FilterComponent {
   }
 
   public boolean accept(Program program) {
-    if (mScript != null) {
-      try {
+    try {
+      if (mScript == null) {
         compileSource();
-        return mScript.accept(program);
-      } catch (Exception e) {
-        return false;
       }
+      return mScript.accept(program);
+    } catch (Exception e) {
+      return false;
     }
-    return false;
   }
 
   public int getVersion() {
