@@ -61,6 +61,11 @@ public class ChannelItem {
     }
     else {
       mNullChannel = true;
+      mChannelDataServiceId = "";
+      mGroupId = "";
+      mCertainChannelId = "";
+      mCountry = "";
+      mChannel = null;
     }
   }
   
