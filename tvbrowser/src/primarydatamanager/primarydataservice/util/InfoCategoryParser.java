@@ -46,7 +46,7 @@ public class InfoCategoryParser {
       "mysteryserie", "polizeiserie", "puppentrickserie",
       "sciencefictionserie", "scifiserie", "serie", "serienspecial", "sitcom",
       "soap", "thrillerserie", "westernserie", "zeichentrickserie",
-  "zoodokusoap" };
+      "zoodokusoap", "justizserie", "polit-/drama-serie", "mafia-serie"  };
 
   private final String[] NEWS = { "nachrichten", "nachrichtenmagazin",
   "regionalnachrichten" };
