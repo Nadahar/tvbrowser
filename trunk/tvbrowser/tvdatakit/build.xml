@@ -39,7 +39,7 @@
   <property name="pdsclasses" value="SimplePDS,XmlTvPDS"/>
 
   <path id="classpath">
-    <pathelement location="${classes.dir}"/>
+    <pathelement location="classes"/>
     <fileset dir="${lib.dir}">
       <include name="*.jar"/>
       <exclude name="ant.jar"/>
@@ -62,7 +62,7 @@
   </target>
 
   <target name="compile">
-    <javac destdir="${classes.dir}" deprecation="true" encoding="iso-8859-15" target="1.5" source="1.5">
+    <javac destdir="classes" deprecation="true" encoding="iso-8859-15" target="1.5" source="1.5">
       <src>
         <path refid="sourcepath"/>
       </src>
