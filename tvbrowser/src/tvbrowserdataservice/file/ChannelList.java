@@ -305,13 +305,12 @@ public class ChannelList {
             copyFile(ICON_CACHE.get(url), iconFile);
             icon = getIconFromFile(iconFile);
           }
-          return icon;
         } catch (Exception e) {
           mLog.log(Level.SEVERE, "Problem while copying File from Cache", e);
         }
       }
 
-      if (TvBrowserDataService.getInstance().hasRightToDownloadIcons()) {
+      if (icon == null && TvBrowserDataService.getInstance().hasRightToDownloadIcons()) {
         // download the icon
         try {
           util.io.IOUtilities.download(new URL(url), iconFile);
