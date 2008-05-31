@@ -14,11 +14,14 @@ public class HTMLTextHelperTest extends TestCase {
     
 
     assertEquals("test  Script",
-            HTMLTextHelper.convertTextToHtml("test <script>blalbla</script> Script", true));
+            HTMLTextHelper.convertTextToHtml("test <script>blalbla</script> Script"));
     assertEquals("test  Script",
-            HTMLTextHelper.convertTextToHtml("test <script src=\"hallo.js\"/> Script", true));
+            HTMLTextHelper.convertTextToHtml("test <script src=\"hallo.js\"/> Script"));
     assertEquals("test  Script",
-            HTMLTextHelper.convertTextToHtml("test <ScRipT src=\"hallo.js\"/> Script", true));
+            HTMLTextHelper.convertTextToHtml("test <ScRipT src=\"hallo.js\"/> Script"));
+    
+    assertEquals("", HTMLTextHelper.convertTextToHtml("<script>source</script>"));
+    assertEquals("Author Script Director", HTMLTextHelper.convertTextToHtml("Author Script Director"));
   }
   
 }

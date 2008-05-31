@@ -15,13 +15,27 @@ import util.io.IOUtilities;
 public class HTMLTextHelper {
 
   /**
-   * Convert Text to HTML. > and < will be converted to &lt; and &gt;
-   * \n will be &gt;br&lt;
+   * Convert Text to HTML. > and < will be converted to &gt; and &lt;
+   * \n will be <code>&lt;br&gt;</code>
    * 
-   * If createLinks is true, it will try to find Links and create a href-Elements
+   * Links in the text will be made clickable.
    * 
-   * @param text Text-Files
-   * @param createLinks if true, it will create Links
+   * @param text text to display
+   * @return Result
+   * @since 2.7
+   */
+  public static String convertTextToHtml(String text) {
+    return convertTextToHtml(text, true);
+  }
+
+  /**
+   * Convert Text to HTML. > and < will be converted to &gt; and &lt;
+   * \n will be <code>&lt;br&gt;</code>
+   * 
+   * If createLinks is true, it will try to find links and make them clickable
+   * 
+   * @param text text to display
+   * @param createLinks if true, it will create links
    * @return Result
    */
   public static String convertTextToHtml(String text, boolean createLinks) {
