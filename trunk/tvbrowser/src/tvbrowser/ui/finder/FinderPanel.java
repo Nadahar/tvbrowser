@@ -215,7 +215,7 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
   public void updateItems() {
     Object[] o = mModel.toArray();
     
-    for (int i = 1; i < o.length; i++) {
+    for (int i = 0; i < o.length; i++) {
       FinderItem item = (FinderItem) o[i];
       
       if(!item.isEnabled()) {

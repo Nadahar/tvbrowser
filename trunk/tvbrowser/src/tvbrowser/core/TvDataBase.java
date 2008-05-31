@@ -259,7 +259,7 @@ public class TvDataBase {
     Date currentDate = Date.getCurrentDate();
     for (Channel channel : channels) {
       progressMonitor.setValue(value++);
-      for (int i = 0; i < days; i++) {
+      for (int i = -1; i < days; i++) {
         correctDayProgramFile(currentDate.addDays(i), channel);
       }
     }
