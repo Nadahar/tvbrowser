@@ -146,7 +146,7 @@ all these tags are not required you don't have to use them.
     </audio>
 
     <!-- (TV-Browser only) Picture for Programm -->
-    <picture>test.jpg</picture>
+    <picture>input/images/test.jpg</picture>
       <!-- (TV-Browser only) Copyright for Picture -->
     <picture-copyright>(c) By Test 24</picture-copyright>
       <!-- (TV-Browser only) Description of Picture -->

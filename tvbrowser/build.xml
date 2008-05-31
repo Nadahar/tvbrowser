@@ -224,6 +224,7 @@
       <fileset dir="${src.dir}" includes="**/*.dtd"/>
       <fileset dir="${src.dir}" includes="**/*.properties"/>
       <fileset dir="${src.dir}" includes="**/*.theme"/>
+      <fileset dir="${src.dir}" includes="**/*.csv"/>
     </copy>
   </target>
 
@@ -526,6 +527,11 @@
       <fileset dir="${unpacked.dir}/lucene-core-2.3.1.jar" includes="**/*"/>
       <fileset dir="${classes.dir}" includes="imdbplugin/**"/>
     </jar>
+
+    <jar jarfile="${tvbrowser-optional.runtime.dir}/plugins/MovieAwardPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="movieawardplugin/**"/>
+    </jar>
   </target>
 
 
@@ -714,12 +720,13 @@
   +-->
   <target name="runtime-tvdatakit" depends="clean-tvdatakit, runtime-tools, test">
     <!-- Compile the example PDSs -->
-    <mkdir dir="${tvdatakit.runtime.dir}/workspace/java"/>
-    <mkdir dir="${tvdatakit.runtime.dir}/workspace/classes"/>
-    <javac destdir="${tvdatakit.runtime.dir}/workspace/classes"
+    <mkdir dir="${tvdatakit.runtime.dir}/java"/>
+    <mkdir dir="${tvdatakit.runtime.dir}/classes"/>
+    <mkdir dir="${tvdatakit.runtime.dir}/lib"/>
+    <javac destdir="${tvdatakit.runtime.dir}/classes"
            debug="${debug}"
            deprecation="true"
-           srcdir="tvdatakit/workspace/java"
+           srcdir="tvdatakit/java"
     	     encoding="iso-8859-15"
            target="1.5"
            source="1.5">
@@ -727,7 +734,7 @@
         <fileset dir="${tvdatatools.runtime.dir}">
           <include name="PrimaryDataManager.jar"/>
         </fileset>
-        <fileset dir="tvdatakit/workspace/lib">
+        <fileset dir="tvdatakit/lib">
           <include name="*.jar"/>
         </fileset>
       </classpath>
@@ -737,7 +744,7 @@
     <copy todir="${tvdatakit.runtime.dir}">
       <fileset dir="tvdatakit" excludes="**/CVS/**"/>
     </copy>
-    <copy todir="${tvdatakit.runtime.dir}/workspace/lib">
+    <copy todir="${tvdatakit.runtime.dir}/lib">
       <fileset dir="${tvdatatools.runtime.dir}" includes="*.jar"/>
       <fileset dir="${txt.dir}" includes="LICENSE.txt"/>
     </copy>
