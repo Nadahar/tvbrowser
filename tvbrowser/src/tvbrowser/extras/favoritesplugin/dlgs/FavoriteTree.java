@@ -57,6 +57,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -826,6 +827,13 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
         boolean leaf, int row,
         boolean hasFocus) {
       JLabel label = (JLabel)super.getTreeCellRendererComponent(tree,value,sel,expanded,leaf,row,hasFocus);
+      
+      if(label != null) {
+        if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
+          label.setBackground(tree.getBackground());
+          label.setOpaque(!sel && !hasFocus);
+        }
+      }
       
       if(leaf && value instanceof FavoriteNode && ((FavoriteNode)value).isDirectoryNode()) {
         label.setIcon(getClosedIcon());
