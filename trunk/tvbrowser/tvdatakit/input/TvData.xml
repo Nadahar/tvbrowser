@@ -32,9 +32,9 @@ all these tags are not required you don't have to use them.
    |   showview:  The showview number
    +-->
   <programme channel="test24"
-             start="200407101030"
-             stop="200407101100"
-             vps-start="200407101045"
+             start="200809101030"
+             stop="200809101100"
+             vps-start="200809101045"
              showview="563 123">
 
     <!--
@@ -75,6 +75,8 @@ all these tags are not required you don't have to use them.
     <!-- The origin -->
     <country>USA</country>
 
+    <episode-num system="xmltv_ns">2 . 9 . 0/1</episode-num>
+    
     <!--
      | "subtitles for aurally handicapped" or "original with subtitle".
      |
@@ -99,7 +101,10 @@ all these tags are not required you don't have to use them.
     <length units="minutes">25</length>
 
     <credits>
-      <!-- The actor list. More actors can be specified by multiple tags -->
+      <!--
+      The actor list. More actors can be specified by multiple tags
+      Please use Role (Actor) for the text.
+       -->
       <actor>Bart (Sandra Schwittau)</actor>
       <actor>Lisa (Sabine Bohlmann)</actor>
 
@@ -111,6 +116,9 @@ all these tags are not required you don't have to use them.
 
       <!-- The moderation -->
       <presenter>Lutz Mackensy</presenter>
+
+      <!-- The producer -->
+      <producer>Matt Groening</producer>
 
       <!-- (TV-Browser only) The music -->
       <music>Peter Palaber</music>
@@ -129,6 +137,12 @@ all these tags are not required you don't have to use them.
        |   16:9
        +-->
       <aspect>4:3</aspect>
+
+      <!--
+       | information on the quality, eg 'HDTV'
+       -->
+      <quality>HDTV</quality>
+
     </video>
 
     <audio>
@@ -141,6 +155,7 @@ all these tags are not required you don't have to use them.
        |   surround
        |   5.1              (TV-Browser only)
        |   two channel tone (TV-Browser only)
+       |   audio description (TV-Browser only, audio information for blind people)
        +-->
       <stereo>stereo</stereo>
     </audio>
@@ -151,27 +166,58 @@ all these tags are not required you don't have to use them.
     <picture-copyright>(c) By Test 24</picture-copyright>
       <!-- (TV-Browser only) Description of Picture -->
     <picture-description>Bart Simpson</picture-description>
+
+    <!-- 'Star rating' - many listings guides award a programme a score as
+    a quick guide to how good it is.  The value of this element should be
+    'N / M', for example one star out of a possible five stars would be
+    '1 / 5'.  Zero stars is also a possible score (and not the same as
+    'unrated').  You should try to map whatever wacky system your listings
+    source uses to a number of stars: so for example if they have thumbs
+    up, thumbs sideways and thumbs down, you could map that to two, one or
+    zero stars out of two.  If a programme is marked as recommended in a
+    listings guide you could map this to '1 / 1'. Because there could be many
+    ways to provide star-ratings or recommendations for a programme, you can
+    specify multiple star-ratings. You can specify the star-rating system
+    used, or the provider of the recommendation, with the system attribute.
+    Whitespace between the numbers and slash is ignored.
+    -->
+    <star-rating>
+      <value>2/3</value>
+    </star-rating>
+
+    <!-- New.  This is the first screened programme from a new show that
+    has never been shown on television before - if not worldwide then at
+    least never before in this country.  After the first episode or
+    programme has been shown, subsequent ones are no longer 'new'.
+    Similarly the second series of an established programme is not 'new'.
+
+    Note that this does not mean 'new season' or 'new episode' of an
+    existing show.  You can express part of that using the episode-num
+    stuff.
+    -->
+    <new/>    
+
   </programme>
 
 
   <!-- A minium program. -->
-  <programme channel="test24" start="200407101100">
+  <programme channel="test24" start="200809101100">
     <title>Nachrichten</title>
   </programme>
 
 
   <!-- Some other programs -->
-  <programme channel="test24" start="200407101115">
+  <programme channel="test24" start="200809101115">
     <title>Rambo</title>
     <desc>Ein Mann wird ramponiert</desc>
   </programme>
 
-  <programme channel="test24" start="200407101500">
+  <programme channel="test24" start="200809101500">
     <title>Nachmittags-Report</title>
     <desc>News from all over the world</desc>
   </programme>
 
-  <programme channel="test24" start="200407101600">
+  <programme channel="test24" start="200809101600">
     <title>Bla bla</title>
     <desc>News from all over the world</desc>
   </programme>
