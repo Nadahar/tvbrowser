@@ -326,7 +326,7 @@ public class CaptureExecute {
                   result.append(line);
                 }
                 mError = true;
-                mExitValue = 0;
+                mExitValue = 1;
                 return result.toString();
             }
         }
@@ -339,7 +339,7 @@ public class CaptureExecute {
         }
         
         mError = false;
-        mExitValue = 1;
+        mExitValue = 0;
         return result.toString();
     }
     
