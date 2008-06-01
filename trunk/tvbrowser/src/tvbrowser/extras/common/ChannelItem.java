@@ -146,4 +146,14 @@ public class ChannelItem {
     out.writeUTF(mCertainChannelId);
     out.writeBoolean(mNullChannel);
   }
+  
+  /**
+   * Gets if this channel is a null channel.
+   * <p>
+   * @return <code>True</code> if the channel is a null channel,
+   * <code>false</code> otherwise.
+   */
+  public boolean isNullChannel() {
+    return mNullChannel;
+  }
 }
