@@ -398,6 +398,13 @@ public class PrimaryDataManager {
     return mirrorArr;
   }
 
+  /**
+   * @return <code>true</code>, if the prepared directory exists
+   */
+  private boolean doesPreparedExist() {
+     return mPreparedDir.exists() && mPreparedDir.isDirectory();
+  }
+
   public static void main(String[] args) {
     // setup logging
     try {
@@ -456,6 +463,12 @@ public class PrimaryDataManager {
           System.exit(-1);
         }
 
+        if (!manager.doesPreparedExist()) {
+          System.out.println("The prepared directory is missing, this directory is very important and shouldn't " +
+              "be deleted, because this leeds to massiv problems.");
+          System.exit(-1);
+        }
+
         String[] groupNamesArr = new String[groupNames.size()];
 				groupNames.toArray(groupNamesArr);
         manager.setGroupNames(groupNamesArr);
@@ -473,5 +486,6 @@ public class PrimaryDataManager {
       }
     }
   }
+
 
 }
