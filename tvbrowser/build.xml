@@ -723,6 +723,7 @@
     <mkdir dir="${tvdatakit.runtime.dir}/java"/>
     <mkdir dir="${tvdatakit.runtime.dir}/classes"/>
     <mkdir dir="${tvdatakit.runtime.dir}/lib"/>
+    <mkdir dir="${tvdatakit.runtime.dir}/prepared"/>
     <javac destdir="${tvdatakit.runtime.dir}/classes"
            debug="${debug}"
            deprecation="true"
