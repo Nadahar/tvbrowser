@@ -25,7 +25,7 @@ public class DuplicateChannelNameCounter {
 
     for (Channel ch:channels) {
       // names only
-      String key = ch.getDefaultName().toLowerCase();
+      String key = normalizeName(ch.getDefaultName());
       Integer count = mChannelNames.get(key);
 
       if (count == null) {
@@ -36,7 +36,7 @@ public class DuplicateChannelNameCounter {
       }
       
       // names and country
-      key = ch.getDefaultName().toLowerCase()+ch.getCountry().toLowerCase();
+      key = normalizeName(ch.getDefaultName())+ch.getCountry().toLowerCase();
       count = mChannelCountryNames.get(key);
 
       if (count == null) {
@@ -49,6 +49,18 @@ public class DuplicateChannelNameCounter {
   }
 
   /**
+   * Normalize the name:
+   *  - toLowerCase
+   *  - Remove Spaces
+   *
+   * @param name text that has to be normalized
+   * @return normalize name
+   */
+  private String normalizeName(String name) {
+    return name.toLowerCase().replaceAll(" ", "");
+  }
+
+  /**
    * Check if a channel is a duplicate
    * @param channel Channel to check
    * @return true, if name is a duplicate
@@ -57,7 +69,7 @@ public class DuplicateChannelNameCounter {
     if (channel == null) {
       return false;
     }
-    Integer count = mChannelNames.get(channel.getDefaultName().toLowerCase());
+    Integer count = mChannelNames.get(normalizeName(channel.getDefaultName()));
     return (count != null) && (count != 0);
   }
 
@@ -70,7 +82,7 @@ public class DuplicateChannelNameCounter {
     if (channel == null) {
       return false;
     }
-    Integer count = mChannelCountryNames.get(channel.getDefaultName().toLowerCase()+channel.getCountry().toLowerCase());
+    Integer count = mChannelCountryNames.get(normalizeName(channel.getDefaultName())+channel.getCountry().toLowerCase());
     return (count != null) && (count != 0);
   }
 
