@@ -79,14 +79,18 @@ public class ChannelList {
    */
   private static SoftReferenceCache<String, File> ICON_CACHE = new SoftReferenceCache<String, File>();
 
+  private static ArrayList<String> BLOCKED_SERVERS = new ArrayList<String>(0);
+  
   public ChannelList(final String groupName) {
     mChannelList = new ArrayList<ChannelItem>();
     mGroup = new ChannelGroupImpl(groupName, groupName, "");
+    BLOCKED_SERVERS = new ArrayList<String>(0);
   }
 
   public ChannelList(ChannelGroup group) {
     mChannelList = new ArrayList<ChannelItem>();
     mGroup = group;
+    BLOCKED_SERVERS = new ArrayList<String>(0);
   }
 
   public void addChannel(Channel channel) {
@@ -310,13 +314,15 @@ public class ChannelList {
         }
       }
 
-      if (icon == null && TvBrowserDataService.getInstance().hasRightToDownloadIcons()) {
+      if (icon == null && TvBrowserDataService.getInstance().hasRightToDownloadIcons()
+          && !BLOCKED_SERVERS.contains(url)) {
         // download the icon
         try {
           util.io.IOUtilities.download(new URL(url), iconFile);
           icon = getIconFromFile(iconFile);
           ICON_CACHE.put(url, iconFile);
         } catch (IOException e) {
+          BLOCKED_SERVERS.add(url);
           mLog.warning("channel " + channelId + ": could not download icon from " + url);
         } catch (Exception e) {
           mLog.severe("Could not extract icon file");
