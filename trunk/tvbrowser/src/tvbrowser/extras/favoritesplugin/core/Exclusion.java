@@ -210,7 +210,7 @@ public class Exclusion {
     if(isInvalid())
       return false;
     
-    if (mChannel != null) {
+    if (mChannel != null && !mChannel.isNullChannel()) {
       Channel ch = prog.getChannel();
       if (ch.equals(mChannel.getChannel())) {
         channelExcl = true;
@@ -219,7 +219,7 @@ public class Exclusion {
     else {
       channelExcl = true;
     }
-
+    
     if (mTitle != null) {
       if (mTitle.equalsIgnoreCase(prog.getTitle())) {
         titleExcl = true;
@@ -303,7 +303,7 @@ public class Exclusion {
     else {
       dayExcl = true;
     }
-
+    
     return channelExcl && titleExcl && topicExcl && timeExcl && dayExcl && filterExclusion;
   }
   
