@@ -139,7 +139,7 @@ public class TvDataServiceProxyManager {
    * Loads and initializes all available TvDataServices
    */
   public void init() {
-
+try {
     String tvdataRoot= Settings.propTVDataDirectory.getString();
     File rootDir=new File(tvdataRoot);
     if (!rootDir.exists()) {
@@ -151,7 +151,7 @@ public class TvDataServiceProxyManager {
     for (TvDataServiceProxy proxy : proxies) {
       loadServiceSettings(proxy);
     }
-
+}catch(Throwable t) {t.printStackTrace();}
 
   }
 
