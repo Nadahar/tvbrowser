@@ -946,7 +946,7 @@ public class MainFrame extends JFrame implements DateListener {
     else { // on switching filters go to now, but only if we are at current date
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
-          if (getCurrentSelectedDate().equals(Date.getCurrentDate())) {
+          if (getCurrentSelectedDate().equals(Date.getCurrentDate()) && !isStarting()) {
             scrollToNow();
           }
         }});
@@ -1863,8 +1863,12 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   public int askForDataUpdateNoDataAvailable() {
-	  return askForDataUpdate(mLocalizer.msg("askforupdatedlg.3",
+    if(mProgramTableModel.getColumnCount() > 0) {
+      return askForDataUpdate(mLocalizer.msg("askforupdatedlg.3",
         "No TV data for todays program available."));
+    }
+    
+    return JOptionPane.NO_OPTION;
   }
   
   public int askForDataUpdateChannelsAdded() {
