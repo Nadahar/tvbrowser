@@ -25,7 +25,6 @@
  */
 package primarydatamanager;
 
-import devplugin.Channel;
 import devplugin.ChannelGroup;
 import devplugin.Date;
 import primarydatamanager.primarydataservice.PrimaryDataService;
@@ -45,7 +44,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-import java.util.TimeZone;
+import java.util.Arrays;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -99,15 +98,15 @@ public class PrimaryDataManager {
    
     /* A groupname file contains the name of the group in
      * an internationalized form */
-		for (int i=0; i<mGroupNameArr.length; i++) {
-      File fromFile=new File(mConfigDir,mGroupNameArr[i]+".txt");
-      File toFile=new File(mWorkDir,mGroupNameArr[i]+"_info");
+    for (String group : mGroupNameArr) {
+      File fromFile = new File(mConfigDir, group + ".txt");
+      File toFile = new File(mWorkDir, group + "_info");
       try {
-		    util.io.IOUtilities.copy(fromFile,toFile);
+        IOUtilities.copy(fromFile, toFile);
       } catch (IOException exc) {
-		    throw new PreparationException("Could not copy file from "+fromFile.getAbsolutePath()+" to "+toFile.getAbsolutePath(),exc);
-		  }
-		}
+        throw new PreparationException("Could not copy file from " + fromFile.getAbsolutePath() + " to " + toFile.getAbsolutePath(), exc);
+      }
+    }
     
   }
   
@@ -271,9 +270,9 @@ public class PrimaryDataManager {
       // Create the file
       SummaryFile summary = new SummaryFile();
       File[] fileArr = mWorkDir.listFiles();
-		  for (int fileIdx = 0; fileIdx < fileArr.length; fileIdx++) {
-        String fileName = fileArr[fileIdx].getName();
-			  if (fileName.endsWith("_full.prog.gz")) {
+      for (File file : fileArr) {
+        String fileName = file.getName();
+        if (fileName.endsWith("_full.prog.gz")) {
           // This is a complete file -> Put its version to the summary
           try {
             Date date = DayProgramFile.getDateFromFileName(fileName);
@@ -281,21 +280,21 @@ public class PrimaryDataManager {
             String channelId = DayProgramFile.getChannelNameFromFileName(fileName);
             String levelName = DayProgramFile.getLevelFromFileName(fileName);
 
-					  //if (channelBelongsToGroup(channelId, country)) {
+            //if (channelBelongsToGroup(channelId, country)) {
             if (RawDataProcessor.channelBelongsToGroup(mChannelListArr[i], channelId, country)) {
-						  int level = DayProgramFile.getLevelIndexForId(levelName);
+              int level = DayProgramFile.getLevelIndexForId(levelName);
               if (level == -1) {
                 throw new PreparationException("Day program file has unknown level '"
-                  + levelName + "': " + fileArr[fileIdx].getAbsolutePath());
+                    + levelName + "': " + file.getAbsolutePath());
               }
-              int version = DayProgramFile.readVersionFromFile(fileArr[fileIdx]);
-          
+              int version = DayProgramFile.readVersionFromFile(file);
+
               summary.setDayProgramVersion(date, country, channelId, level, version);
-					  }
+            }
           }
           catch (Exception exc) {
             throw new PreparationException("Adding day program file to summary " +
-              "failed: " + fileArr[fileIdx].getAbsolutePath(), exc);
+                "failed: " + file.getAbsolutePath(), exc);
           }
         }
       }
@@ -320,19 +319,19 @@ public class PrimaryDataManager {
   private void updateMirrorList() throws PreparationException {
     mLog.fine("Updating the mirror list");
 
-		for (int i=0; i<mGroupNameArr.length; i++) {
+    for (String groupNameArr : mGroupNameArr) {
       // Load the mirrorlist.txt
-      Mirror[] mirrorArr = loadMirrorListTxt(mGroupNameArr[i]+"_mirrorlist.txt");
+      Mirror[] mirrorArr = loadMirrorListTxt(groupNameArr + "_mirrorlist.txt");
 
-		  // Save the mirrorlist.gz
-      File toFile = new File(mWorkDir, mGroupNameArr[i]+"_"+Mirror.MIRROR_LIST_FILE_NAME);
+      // Save the mirrorlist.gz
+      File toFile = new File(mWorkDir, groupNameArr + "_" + Mirror.MIRROR_LIST_FILE_NAME);
       try {
         Mirror.writeMirrorListToFile(toFile, mirrorArr);
       }
       catch (IOException exc) {
-        throw new PreparationException("Writing mirror list for group "+mGroupNameArr[i]+" failed", exc);
+        throw new PreparationException("Writing mirror list for group " + groupNameArr + " failed", exc);
       }
-		}
+    }
   }
  
 
@@ -387,7 +386,9 @@ public class PrimaryDataManager {
     }
     finally {
       if (stream != null) {
-        try { stream.close(); } catch (IOException exc) {}
+        try { stream.close(); } catch (IOException exc) {
+          //Empty
+        }
       } 
     }
         
@@ -450,11 +451,7 @@ public class PrimaryDataManager {
             }
           } else {
             final String[] groups = args[i].split(",");
-
-            for (final String group:groups) {
-              groupNames.add(group);
-            }
-
+            groupNames.addAll(Arrays.asList(groups));
           }
         }
         
