@@ -87,7 +87,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
     addGroup(new DataHydraChannelGroup("SweDB", "SweDB.se", "(c) swedb.se", "http://tv.swedb.se", "swedb_channels.xml.gz", "se"));
     addGroup(new DataHydraChannelGroup("MSPC", "mspc.no", "(c) mspc.no", "http://www.mspc.no", "mspc_channels.xml.gz", "no"));
     addGroup(new DataHydraChannelGroup("gonix", "gonix.net", "(c) gonix.net", "http://www.gonix.net", "hrv_channels.xml.gz", "hr", false));
-    addGroup(new DataHydraChannelGroup("oztivo", "oztivo.net", "(c) oztivo.net", "http://minnie.tuhs.org/twiki/bin/view/TVGuide", "au_channels.xml.gz", "au"));
+    addGroup(new DataHydraChannelGroup("oztivo", "oztivo.net", "(c) oztivo.net", "http://www.oztivo.net/", "au_channels.xml.gz", "au"));
   }
 
   private void addGroup(DataHydraChannelGroup dataHydraChannelGroup) {
