@@ -61,6 +61,8 @@ public class TimeSynchronousLayout extends AbstractProgramTableLayout {
 
     int minY = 0;
     int maxY = 0;
+    int minSameTimeY = -1;
+    long lastStartTime = 0;
     
     Program minProgram;
     ProgramPanel minPanel;
@@ -79,6 +81,7 @@ public class TimeSynchronousLayout extends AbstractProgramTableLayout {
                 + program.getStartTime();
             
             if (startTime < minStartTime) {
+              // found earliest by now
               minStartTime = startTime;
               minProgram = program;
               minPanel = panel;
@@ -95,6 +98,9 @@ public class TimeSynchronousLayout extends AbstractProgramTableLayout {
 
         // Get the y position for the program
         int y = Math.max(minY, colYArr[programCol]);
+        if (minStartTime == lastStartTime) {
+          y = Math.max(minSameTimeY, colYArr[programCol]);
+        }
 
         // Ensure that the start of the program is at the specified y
         if (programRow == 0) {
@@ -119,7 +125,12 @@ public class TimeSynchronousLayout extends AbstractProgramTableLayout {
         }
 
         // Prepare the next iteration
-        minY = y;
+        if (minStartTime != lastStartTime) {
+          //minimum y for programs with same start time
+          minSameTimeY = y;
+        }
+        minY = Math.max(y, minY);
+        lastStartTime = minStartTime;
         colYArr[programCol] = y + preferredHeight;
         maxY = Math.max(maxY,colYArr[programCol]);
         rowIdxArr[programCol]++;
