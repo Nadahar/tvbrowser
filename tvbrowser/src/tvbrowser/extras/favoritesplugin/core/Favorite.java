@@ -40,7 +40,6 @@ import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
-import tvbrowser.extras.reminderplugin.ReminderList;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
@@ -69,7 +68,7 @@ public abstract class Favorite {
   private ProgramReceiveTarget[] mForwardPluginArr;
   protected SearchFormSettings mSearchFormSettings;
   
-  private HashMap<Program,Integer> mRemovedPrograms;
+  private HashMap<String,Integer> mRemovedPrograms;
   private ArrayList<Program> mRemovedBlacklistPrograms;
 
   /**
@@ -82,7 +81,7 @@ public abstract class Favorite {
     mLimitationConfiguration = new LimitationConfiguration();
     mPrograms = new ArrayList<Program>(0);
     mNewPrograms = new ArrayList<Program>(0);
-    mRemovedPrograms = new HashMap<Program,Integer>(0);
+    mRemovedPrograms = new HashMap<String,Integer>(0);
     mRemovedBlacklistPrograms = new ArrayList<Program>(0);
     mExclusionList = null; // defer initialisation until needed, save memory
     mBlackList = null; // defer initialization until needed
@@ -143,7 +142,7 @@ public abstract class Favorite {
     mPrograms = programList;
     
     mNewPrograms = new ArrayList<Program>(0);
-    mRemovedPrograms = new HashMap<Program,Integer>(0);
+    mRemovedPrograms = new HashMap<String,Integer>(0);
   }
 
   private void readProgramsToList(ArrayList<Program> list, int size, ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -737,7 +736,7 @@ public abstract class Favorite {
           mPrograms.add(p);
           /* We don't need to mark the program,
            * that will be done by the MarkedProgramsList */
-        } else if((listMinutes = mRemovedPrograms.remove(p)) != null){
+        } else if((listMinutes = mRemovedPrograms.remove(getProgramKeyFor(p))) != null){
           // Item was in list, but was already removed before
           mPrograms.add(p);
           markProgram(p,listMinutes);
@@ -791,7 +790,7 @@ public abstract class Favorite {
     /* Remove programs from the lists */
     
     if(mPrograms.remove(p)) {
-      mRemovedPrograms.put(p,reminderMinutes);
+      mRemovedPrograms.put(getProgramKeyFor(p),reminderMinutes);
     } else if(mBlackList != null && mBlackList.remove(p)) {
       mRemovedBlacklistPrograms.add(p);
     }
@@ -810,7 +809,11 @@ public abstract class Favorite {
    * @since 2.7
    */
   public void clearRemovedPrograms() {
-    mRemovedPrograms = new HashMap<Program,Integer>(0);
+    mRemovedPrograms = new HashMap<String,Integer>(0);
     mRemovedBlacklistPrograms = new ArrayList<Program>(0);
+  }
+  
+  private String getProgramKeyFor(Program p) {
+    return new StringBuilder(String.valueOf(p.getDate().getValue())).append("_").append(p.getStartTime()).append("_").append(p.getTitle()).toString();
   }
 }
