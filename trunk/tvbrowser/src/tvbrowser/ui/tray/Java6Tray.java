@@ -28,6 +28,7 @@ import java.awt.Point;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.logging.Level;
 
@@ -40,6 +41,7 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import util.misc.JavaVersion;
+import util.ui.UiUtilities;
 
 /**
  * Tray for TV-Browser on systems
@@ -106,11 +108,10 @@ public class Java6Tray {
    * Init the System-Tray
    * 
    * @param parent Parent-Frame
-   * @param image Image-File for Tray-Icon
    * @param tooltip Tooltip
    * @return true, if successfull
    */
-  public boolean init(JFrame parent, String image, String tooltip) {
+  public boolean init(JFrame parent, String tooltip) {
     if(JavaVersion.getVersion() >= JavaVersion.VERSION_1_6) {
       try {
         mClass = Class.forName("java.awt.SystemTray");
@@ -119,8 +120,38 @@ public class Java6Tray {
         boolean value = (Boolean)clazz.getMethod("isSupported",new Class[] {}).invoke(clazz,new Object[] {});
         
         if(value) {
-          mTrayIcon = new TrayIcon(ImageIO.read(new File(image)), tooltip);
-         
+          String trayIconFile = "imgs/TrayIcon.png";
+          
+          if(new File(trayIconFile).isFile()) {
+            mTrayIcon = new TrayIcon(ImageIO.read(new File(trayIconFile)), tooltip);
+          }
+          else {
+            try {
+              Dimension trayIconSize = getTrayIconSize();
+              BufferedImage trayIconImage = null;
+              
+              if(trayIconSize.height > 16 && trayIconSize.height <= 32) {                
+                trayIconImage = UiUtilities.scaleIconToBufferedImage(ImageIO.read(new File("imgs/tvbrowser32.png")),
+                    trayIconSize.width-1, trayIconSize.height-1, BufferedImage.TYPE_INT_ARGB);
+              }
+              else if(trayIconSize.height > 32 && trayIconSize.height <= 48) {
+                trayIconImage = UiUtilities.scaleIconToBufferedImage(ImageIO.read(new File("imgs/tvbrowser48.png")),
+                    trayIconSize.width-1, trayIconSize.height-1, BufferedImage.TYPE_INT_ARGB);                
+              }
+              else if(trayIconSize.height > 48) {
+                trayIconImage = UiUtilities.scaleIconToBufferedImage(ImageIO.read(new File("imgs/tvbrowser128.png")),
+                    trayIconSize.width-1, trayIconSize.height-1, BufferedImage.TYPE_INT_ARGB);
+              }
+              else {
+                trayIconImage = ImageIO.read(new File("imgs/tvbrowser16.png"));
+              }
+              
+              mTrayIcon = new TrayIcon(trayIconImage, tooltip);
+            }catch(Exception sizeFault) {sizeFault.printStackTrace();
+              mTrayIcon = new TrayIcon(ImageIO.read(new File("imgs/tvbrowser16.png")), tooltip);
+            }
+          }
+          
           mTrayParent = new JDialog();
           mTrayParent.setTitle("Tray-Menu");
   
@@ -236,5 +267,18 @@ public class Java6Tray {
         mClass.getMethod("remove", new Class[] {mTrayIcon.getTrayIcon().getClass()}).invoke(o,mTrayIcon.getTrayIcon());      
       }catch(Exception e) {}      
     }
+  }
+  
+  public Dimension getTrayIconSize() {
+    try {
+      Class<?> clazz = Class.forName("java.awt.SystemTray");
+      
+      if(clazz != null) {
+        Object o = clazz.getMethod("getSystemTray",new Class[] {}).invoke(clazz,new Object[] {});
+        return (Dimension)clazz.getMethod("getTrayIconSize", new Class[] {}).invoke(o, new Object[] {});
+      }
+    }catch(Exception e) {e.printStackTrace();}
+    
+    return null;
   }
 }

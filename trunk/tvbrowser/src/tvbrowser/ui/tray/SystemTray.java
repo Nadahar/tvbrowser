@@ -121,8 +121,7 @@ public class SystemTray {
     mSystemTray = Java6Tray.create();
     
     if (mSystemTray != null) {
-      mUseSystemTray = mSystemTray.init(MainFrame.getInstance(),
-          "imgs/tvbrowser16.png", TVBrowser.MAINWINDOW_TITLE);
+      mUseSystemTray = mSystemTray.init(MainFrame.getInstance(), TVBrowser.MAINWINDOW_TITLE);      
       mLog.info("using default system tray");
     } else {
       mUseSystemTray = false;
