@@ -862,7 +862,7 @@ public class TVBrowser {
           proxies = TvDataServiceProxyManager.getInstance().getTvDataServices(dataServiceIDs);
         }
         if(mainFrame.licenseForTvDataServicesWasAccepted(proxies)) {
-          mainFrame.runUpdateThread(Settings.propAutoDownloadPeriod.getInt(), proxies);
+          mainFrame.runUpdateThread(Settings.propAutoDownloadPeriod.getInt(), proxies, true);
         }
       }
       return true;

@@ -933,23 +933,26 @@ public class MainFrame extends JFrame implements DateListener {
       mPluginView.repaint();
     }
 
-    if ((mStoredViewPosition != null) && (isDefaultFilter)) {
-      // Recreate last Position
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          if (mStoredViewPosition != null) {
-            mProgramTableScrollPane.getViewport().setViewPosition(mStoredViewPosition);
+    if(mCurrentFilterName == null || !mCurrentFilterName.equals(filter.getName())) {
+      if ((mStoredViewPosition != null) && (isDefaultFilter)) {
+        // Recreate last Position
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            if (mStoredViewPosition != null) {
+              mProgramTableScrollPane.getViewport().setViewPosition(mStoredViewPosition);
+            }
           }
-        }
-      });
-    }
-    else { // on switching filters go to now, but only if we are at current date
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          if (getCurrentSelectedDate().equals(Date.getCurrentDate()) && !isStarting()) {
-            scrollToNow();
+        });
+      }
+      else { // on switching filters go to now, but only if we are at current date
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            if (getCurrentSelectedDate().equals(Date.getCurrentDate()) && !isStarting()) {
+              scrollToNow();
+            }
           }
-        }});
+        });
+      }
     }
     
     mCurrentFilterName = filter.getName();
@@ -1092,7 +1095,7 @@ public class MainFrame extends JFrame implements DateListener {
     checkedServices.clear();
     
     if(!dataServices.isEmpty() && licenseForTvDataServicesWasAccepted(dataServices.toArray(new TvDataServiceProxy[dataServices.size()]))) {
-      runUpdateThread(14, dataServices.toArray(new TvDataServiceProxy[dataServices.size()]));
+      runUpdateThread(14, dataServices.toArray(new TvDataServiceProxy[dataServices.size()]), true);
     }
   }
   
@@ -1573,12 +1576,12 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   public void runUpdateThread(final int daysToDownload,
-      final TvDataServiceProxy[] services) {
+      final TvDataServiceProxy[] services, final boolean autoUpdate) {
     downloadingThread = new Thread("TV data update") {
       public void run() {
         onDownloadStart();
         
-        final boolean scroll = !TvDataBase.getInstance().dataAvailable(Date.getCurrentDate())
+        final boolean scroll = !autoUpdate && !TvDataBase.getInstance().dataAvailable(Date.getCurrentDate())
         && getProgramTableModel().getDate() != null 
         && getProgramTableModel().getDate().compareTo(Date.getCurrentDate()) == 0;
         
@@ -1641,7 +1644,7 @@ public class MainFrame extends JFrame implements DateListener {
           
         int daysToDownload = dlg.getResult();
         if(daysToDownload != UpdateDlg.CANCEL && licenseForTvDataServicesWasAccepted(dlg.getSelectedTvDataServices())) {
-          runUpdateThread(daysToDownload, dlg.getSelectedTvDataServices());
+          runUpdateThread(daysToDownload, dlg.getSelectedTvDataServices(),false);
         }        
       }
     }
