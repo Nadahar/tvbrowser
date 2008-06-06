@@ -701,10 +701,29 @@ public class UiUtilities {
    */
   public static BufferedImage scaleIconToBufferedImage(BufferedImage img,
       int x, int y) {
+    return scaleIconToBufferedImage(img, x, y, img.getType());
+  }
+  
+  /**
+   * Scales an image to a specific size and returns an BufferedImage
+   * 
+   * @param img
+   *          Scale this IMage
+   * @param x
+   *          new X-Value
+   * @param y
+   *          new Y-Value
+   * @param type The type of the image.
+   * @return Scaled BufferedImage
+   * 
+   * @since 2.7
+   */
+  public static BufferedImage scaleIconToBufferedImage(BufferedImage img,
+      int x, int y, int type) {
     // Scale Image
     Image image = img.getScaledInstance(x, y, Image.SCALE_SMOOTH);
 
-    BufferedImage im = new BufferedImage(x, y, img.getType());
+    BufferedImage im = new BufferedImage(x, y, type);
 
     Graphics2D g2 = im.createGraphics();
     g2.drawImage(image, null, null);
