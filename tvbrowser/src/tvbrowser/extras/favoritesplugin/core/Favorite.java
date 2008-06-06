@@ -520,7 +520,7 @@ public abstract class Favorite {
       p.mark(FavoritesPluginProxy.getInstance());
       String[] reminderServices = getReminderConfiguration().getReminderServices();
       for (String reminderService : reminderServices) {
-        if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderService)) {
+        if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderService) && reminderMinutes != -2) {
           ReminderPlugin.getInstance().addProgram(p,reminderMinutes);
         }
       }
@@ -532,7 +532,7 @@ public abstract class Favorite {
       p.unmark(FavoritesPluginProxy.getInstance());
     }
     
-    int reminderMinutes = -1;
+    int reminderMinutes = -2;
     
     String[] reminderServices = getReminderConfiguration().getReminderServices();
     for (String reminderService : reminderServices) {
