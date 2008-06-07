@@ -61,7 +61,7 @@ public class MirrorUpdater {
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(MirrorUpdater.class.getName());
   
-  private static final int MAX_DAYS_WITHOUT_DATA = 7;
+  private static final int MAX_DAYS_WITHOUT_DATA = 14;
 
   private DataSource mDataSource;
   private DataTarget mDataTarget;
@@ -195,7 +195,7 @@ public class MirrorUpdater {
   public void updateDayProgramsFor(Channel channel, String level)
     throws UpdateException
   {
-    Date date = new Date();
+    Date date = new Date().addDays(-1);
     int daysWithNoData = 0;
     
     while (daysWithNoData < MAX_DAYS_WITHOUT_DATA) {
