@@ -126,13 +126,13 @@ public class ChannelList {
       
       if(!availableChannels.containsKey(ch)) {
         mAvailableChannels.remove(i);
-        mAvailableChannelsMap.remove(getChannelKey(ch));
+        mAvailableChannelsMap.remove(ch.getUniqueId());
         
         /* remove subscribed channels which are not available any more */
         if(mSubscribedChannels.contains(ch)) {
           mLog.warning(ch+" is not available any more");
           mSubscribedChannels.remove(ch);
-          mSubscribedChannelPosition.remove(getChannelKey(ch));
+          mSubscribedChannelPosition.remove(ch.getUniqueId());
           
           removed = true;
         }
@@ -192,12 +192,12 @@ public class ChannelList {
   }
 
   private static void addChannelToAvailableChannels(Channel channel, HashMap<Channel, Channel> availableChannels) {
-    mCurrentChangeChannel = mAvailableChannelsMap.get(getChannelKey(channel));
+    mCurrentChangeChannel = mAvailableChannelsMap.get(channel.getUniqueId());
     
     if (mCurrentChangeChannel == null) {
       availableChannels.put(channel, channel);
       mAvailableChannels.add(channel);
-      mAvailableChannelsMap.put(getChannelKey(channel), channel);
+      mAvailableChannelsMap.put(channel.getUniqueId(), channel);
 
       if (!mChannelDayLightCorrectionMap.isEmpty()) {
         setDayLightSavingTimeCorrectionsForChannel(channel);
@@ -270,7 +270,7 @@ public class ChannelList {
       Channel ch = mSubscribedChannels.get(i);
       
       if (ch != null) {
-        mSubscribedChannelPosition.put(getChannelKey(ch), i);
+        mSubscribedChannelPosition.put(ch.getUniqueId(), i);
       }
     }
   }
@@ -400,7 +400,7 @@ public class ChannelList {
    */
   public static int getPos(Channel channel) {
     if(channel != null) {
-      Integer pos = mSubscribedChannelPosition.get(getChannelKey(channel));
+      Integer pos = mSubscribedChannelPosition.get(channel.getUniqueId());
       if (pos == null) {
         return -1;
       }
@@ -858,11 +858,7 @@ public class ChannelList {
     
     return ch;
   }
-  
-  private static String getChannelKey(Channel ch) {
-    return new StringBuilder(ch.getDataServiceProxy().getId()).append("_").append(ch.getGroup().getId()).append("_").append(ch.getCountry()).append("_").append(ch.getId()).toString();
-  }
-  
+    
   /**
    * Gets if the channel values are allowed to be changed for the given channel.
    * 

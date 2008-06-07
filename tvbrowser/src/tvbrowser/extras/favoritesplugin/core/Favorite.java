@@ -540,7 +540,7 @@ public abstract class Favorite {
         reminderMinutes = ReminderPlugin.getInstance().removeProgram(p);
       }
     }
-
+System.out.println(p + " " + reminderMinutes);
     return reminderMinutes;
   }
   
@@ -814,6 +814,6 @@ public abstract class Favorite {
   }
   
   private String getProgramKeyFor(Program p) {
-    return new StringBuilder(String.valueOf(p.getDate().getValue())).append("_").append(p.getStartTime()).append("_").append(p.getTitle()).toString();
+    return new StringBuilder(p.getChannel().getUniqueId()).append(p.getDate().getValue()).append("_").append(p.getStartTime()).append("_").append(p.getTitle()).toString();
   }
 }
