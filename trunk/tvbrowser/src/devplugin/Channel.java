@@ -45,19 +45,33 @@ import tvdataservice.TvDataService;
 import util.misc.StringPool;
 import util.ui.ImageUtilities;
 
+/**
+ * A class that definies a TV-Browser channel
+ */
 public class Channel implements Comparable<Channel> {
-
+  /** The identifier for a channel that fits in no other category */
   public static final int CATEGORY_NONE = 0;
+  /** The identifier for a channel that is in the category TV */
   public static final int CATEGORY_TV = 1;
+  /** The identifier for a channel that is in the category radio */
   public static final int CATEGORY_RADIO = 1 << 1;
+  /** The identifier for a channel that is in the category cinema */
   public static final int CATEGORY_CINEMA = 1 << 2;
+  /** The identifier for a channel that is in the category events */
   public static final int CATEGORY_EVENTS = 1 << 3;
+  /** The identifier for a channel that is in the category digital */
   public static final int CATEGORY_DIGITAL = 1 << 4;
+  /** The identifier for a channel that is in the category music */
   public static final int CATEGORY_SPECIAL_MUSIC = 1 << 5;
+  /** The identifier for a channel that is in the category sport */
   public static final int CATEGORY_SPECIAL_SPORT = 1 << 6;
+  /** The identifier for a channel that is in the category news */
   public static final int CATEGORY_SPECIAL_NEWS = 1 << 7;
+  /** The identifier for a channel that is in the category other */
   public static final int CATEGORY_SPECIAL_OTHER = 1 << 8;
+  /** The identifier for a channel that is in the category pay TV */
   public static final int CATEGORY_PAY_TV = 1 << 9;
+  /** The identifier for a channel that is in the category payed data TV */
   public static final int CATEGORY_PAYED_DATA_TV = 1 << 10;
 
   /**
@@ -80,6 +94,21 @@ public class Channel implements Comparable<Channel> {
   private Icon mDefaultIcon;
 
 
+  /**
+   * Creates an instance of this class.
+   * <p>
+   * @param dataService The data service of this channel.
+   * @param name The name of this channel.
+   * @param id The id of this channel.
+   * @param timeZone The time zone of this channel.
+   * @param country The country of this channel.
+   * @param copyrightNotice The copyright notice for this channel.
+   * @param webpage The webpage of this channel.
+   * @param group The group of this channel.
+   * @param icon The icon for this channel.
+   * @param categories The categories for this channel.
+   * @param unescapedName The unescaped name for this channel.
+   */
   public Channel(TvDataService dataService, String name, String id,
     TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group, Icon icon, int categories, String unescapedName)
   {
@@ -103,35 +132,103 @@ public class Channel implements Comparable<Channel> {
     mUnescapedName = unescapedName;
   }
 
+  /**
+   * Creates an instance of this class.
+   * <p>
+   * @param dataService The data service of this channel.
+   * @param name The name of this channel.
+   * @param id The id of this channel.
+   * @param timeZone The time zone of this channel.
+   * @param country The country of this channel.
+   * @param copyrightNotice The copyright notice for this channel.
+   * @param webpage The webpage of this channel.
+   * @param group The group of this channel.
+   * @param icon The icon for this channel.
+   * @param categories The categories for this channel.
+   */
   public Channel(TvDataService dataService, String name, String id,
     TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group, Icon icon, int categories)
   {
     this(dataService, name, id, timeZone, country, copyrightNotice, webpage, group, icon, CATEGORY_NONE, null);
   }
 
+  /**
+   * Creates an instance of this class.
+   * <p>
+   * @param dataService The data service of this channel.
+   * @param name The name of this channel.
+   * @param id The id of this channel.
+   * @param timeZone The time zone of this channel.
+   * @param country The country of this channel.
+   * @param copyrightNotice The copyright notice for this channel.
+   * @param webpage The webpage of this channel.
+   * @param group The group of this channel.
+   * @param icon The icon for this channel.
+   */
   public Channel(TvDataService dataService, String name, String id,
     TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group, Icon icon)
   {
     this(dataService, name, id, timeZone, country, copyrightNotice, webpage, group, icon, CATEGORY_NONE);
   }
 
+  /**
+   * Creates an instance of this class.
+   * <p>
+   * @param dataService The data service of this channel.
+   * @param name The name of this channel.
+   * @param id The id of this channel.
+   * @param timeZone The time zone of this channel.
+   * @param country The country of this channel.
+   * @param copyrightNotice The copyright notice for this channel.
+   * @param webpage The webpage of this channel.
+   * @param group The group of this channel.
+   */
   public Channel(TvDataService dataService, String name, String id, TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group) {
      this(dataService,name,id,timeZone,country,copyrightNotice,webpage,group,null);  
   }
   
+  /**
+   * Creates an instance of this class.
+   * <p>
+   * @param dataService The data service of this channel.
+   * @param name The name of this channel.
+   * @param id The id of this channel.
+   * @param timeZone The time zone of this channel.
+   * @param country The country of this channel.
+   * @param copyrightNotice The copyright notice for this channel.
+   * @param webpage The webpage of this channel.
+   */
   public Channel(TvDataService dataService, String name, String id,
       TimeZone timeZone, String country, String copyrightNotice, String webpage) {
         
     this(dataService,name,id,timeZone,country,copyrightNotice,webpage,null);     
   }
   
-  
+  /**
+   * Creates an instance of this class.
+   * <p>
+   * @param dataService The data service of this channel.
+   * @param name The name of this channel.
+   * @param id The id of this channel.
+   * @param timeZone The time zone of this channel.
+   * @param country The country of this channel.
+   * @param copyrightNotice The copyright notice for this channel.
+   */
   public Channel(TvDataService dataService, String name, String id,
       TimeZone timeZone, String country, String copyrightNotice)
   {
       this(dataService,name,id,timeZone,country, copyrightNotice,null);
   }
 
+  /**
+   * Creates an instance of this class.
+   * <p>
+   * @param dataService The data service of this channel.
+   * @param name The name of this channel.
+   * @param timeZone The time zone of this channel.
+   * @param country The country of this channel.
+   * @param copyrightNotice The copyright notice for this channel.
+   */
   public Channel(TvDataService dataService, String name, TimeZone timeZone,
     String country, String copyrightNotice)
   {
@@ -140,6 +237,13 @@ public class Channel implements Comparable<Channel> {
 
 
   /**
+   * Creates an instance of this class.
+   * <p>
+   * @param dataService The data service of this channel.
+   * @param name The name of this channel.
+   * @param id The id of this channel.
+   * @param timeZone The time zone of this channel.
+   * @param country The country of this channel.
    * @deprecated
    */
   public Channel(TvDataService dataService, String name, String id,
@@ -149,8 +253,14 @@ public class Channel implements Comparable<Channel> {
    }
   
   /**
-    * @deprecated
-    */
+   * Creates an instance of this class.
+   * <p>
+   * @param dataService The data service of this channel.
+   * @param name The name of this channel.
+   * @param timeZone The time zone of this channel.
+   * @param country The country of this channel.
+   * @deprecated
+   */
   public Channel(TvDataService dataService, String name, TimeZone timeZone,
       String country)
     {
@@ -158,6 +268,12 @@ public class Channel implements Comparable<Channel> {
     }
   
   /**
+   * Creates an instance of this class.
+   * <p>
+   * @param dataService The data service of this channel.
+   * @param name The name of this channel.
+   * @param id The id of this channel.
+   * @param timeZone The time zone of this channel.
    * @deprecated
    */
   public Channel(TvDataService dataService, String name, String id,
@@ -167,6 +283,11 @@ public class Channel implements Comparable<Channel> {
   }
   
   /**
+   * Creates an instance of this class.
+   * <p>
+   * @param dataService The data service of this channel.
+   * @param name The name of this channel.
+   * @param timeZone The time zone of this channel.
    * @deprecated
    */
   public Channel(TvDataService dataService, String name, TimeZone timeZone) {
@@ -174,6 +295,11 @@ public class Channel implements Comparable<Channel> {
   }
   
   /**
+   * Creates an instance of this class.
+   * <p>
+   * @param dataService The data service of this channel.
+   * @param name The name of this channel.
+   * @param id The id of this channel.
    * @deprecated
    */
   public Channel(TvDataService dataService, String name, String id) {
@@ -181,20 +307,45 @@ public class Channel implements Comparable<Channel> {
   }
 
   /**
+   * Creates an instance of this class.
+   * <p>
+   * @param dataService The data service of this channel.
+   * @param name The name of this channel.
    * @deprecated
    */
   public Channel(TvDataService dataService, String name) {
     this(dataService, name, name);
   }
 
+  /**
+   * Creates an instance of this class.
+   * <p>
+   * @param id The id of this channel.
+   * @param country The country of this channel.
+   */
   public Channel(String id, String country) {
     this(null, id, id, null, country);
   }
 
+  /**
+   * Creates an instance of this class.
+   * <p>
+   * @param id The id of this channel.
+   */
   public Channel(String id) {
     this(null, null, id);
   }
 
+  /**
+   * Creates an instance of this class from a stream.
+   * <p>
+   * @param in The stream to load the data from.
+   * @param allowNull <code>True</code> if the method is allowed to return <code>null</code>.
+   * @return The load channel or <code>null</code> if <code>allowNull</code> is <code>true</code>
+   * and the channel could not be load.
+   * @throws IOException
+   * @throws ClassNotFoundException
+   */
   public static Channel readData(ObjectInputStream in, boolean allowNull)
   throws IOException, ClassNotFoundException
   {
@@ -312,6 +463,7 @@ public class Channel implements Comparable<Channel> {
   
   /**
    * Serialized this object.
+   * @param out The stream to write the values of this channel to.
    * @throws IOException 
    */
   public void writeData(ObjectOutputStream out) throws IOException {
@@ -322,10 +474,20 @@ public class Channel implements Comparable<Channel> {
     out.writeUTF(mId);
   }
   
+  /**
+   * Gets the copyright notice for this channel.
+   * <p>
+   * @return The copyright notice for this channel.
+   */
   public String getCopyrightNotice() {
     return mCopyrightNotice!=null?mCopyrightNotice:"";
   }
   
+  /**
+   * Gets the webpage for this channel.
+   * <p>
+   * @return The webpage for this channel.
+   */
   public String getWebpage() {
     if (getUserWebPage() != null) {
       return getUserWebPage();
@@ -333,10 +495,20 @@ public class Channel implements Comparable<Channel> {
     return mWebpage;
   }
   
+  /**
+   * Gets the channel group of this channel.
+   * <p>
+   * @return The channel group of this channel.
+   */
   public ChannelGroup getGroup() {
     return mGroup;
   }
 
+  /**
+   * Gets the categories of this channel.
+   * <p>
+   * @return The categories of this channel.
+   */
   public int getCategories() {
     return mCategories;
   }
@@ -374,29 +546,56 @@ public class Channel implements Comparable<Channel> {
     return null;
   }
   
+  /**
+   * Gets the time zone of this channel.
+   * <p>
+   * @return The time zone of this channel.
+   */
   public TimeZone getTimeZone() {
     return mTimeZone;
   }
   
+  /**
+   * Gets the country of this channel.
+   * <p>
+   * @return The country of this channel.
+   */
   public String getCountry() {
     return mCountry;
   }
   
+  /**
+   * Sets the day light saving time correction.
+   * <p>
+   * @param correction The new day light saving time correction.
+   */
   public void setDayLightSavingTimeCorrection(int correction) {
     ChannelUserSettings.getSettings(this).setDaylightSavingTimeCorrection(correction);
   }
   
+  /**
+   * Gets the day light saving time correction of this channel.
+   * <p>
+   * @return The day light saving time correction of this channel.
+   */
   public int getDayLightSavingTimeCorrection() {
     return ChannelUserSettings.getSettings(this).getDaylightSavingTimeCorrection();
   }
 
   /**
+   * Gets the data service of this channel
+   * @return The deprecated data service of this channel
    * @deprecated
    */
   public TvDataService getDataService() {
     return mDataService;
   }
 
+  /**
+   * Gets the data service proxy of this channel
+   * <p>
+   * @return The data service proxy of this channel
+   */
   public TvDataServiceProxy getDataServiceProxy() {
     if(mDataService != null) {
       return new DeprecatedTvDataServiceProxy(mDataService);
@@ -427,6 +626,11 @@ public class Channel implements Comparable<Channel> {
     return getName();
   }
 
+  /**
+   * Gets the name of this channel.
+   * <p>
+   * @return The name of this channel.
+   */
   public String getName() {
     if (getUserChannelName() != null) {
       return getUserChannelName();
@@ -434,6 +638,11 @@ public class Channel implements Comparable<Channel> {
     return mName;
   }
 
+  /**
+   * Gets the id of this channel.
+   * <p>
+   * @return The id of this channel.
+   */
   public String getId() {
     return mId;
   }
@@ -465,6 +674,12 @@ public class Channel implements Comparable<Channel> {
     return mIcon;
   }
 
+  /**
+   * Gets if this channel has an icon.
+   * <p>
+   * @return <code>True</code> if this channel has an icon,
+   * <code>false</code> otherwise.
+   */
   public boolean hasIcon() {
     if ((isUsingUserIcon()) && (mIcon == null) && (getUserIconFileName() != null)) {
       getIcon();
@@ -492,6 +707,11 @@ public class Channel implements Comparable<Channel> {
     setUserIconFileName(filename);
   }
 
+  /**
+   * Sets the user icon file name.
+   * <p>
+   * @param filename The file name of ths user icon file.
+   */
   public void setUserIconFileName(String filename) {
     ChannelUserSettings.getSettings(this).setIconFileName(filename);
     mIcon = null;
@@ -728,10 +948,25 @@ public class Channel implements Comparable<Channel> {
     }
   }
 
+  /**
+   * Gets the unescaped name of this channel.
+   * <p>
+   * @return The unescaped name of this channel.
+   */
   public String getUnescapedName() {
     if (mUnescapedName != null) {
       return mUnescapedName;
     }
     return mName;
+  }
+  
+  /**
+   * Gets a unique identifier of this channel.
+   * <p>
+   * @return The unique identifier of this channel.
+   * @since 2.7
+   */
+  public String getUniqueId() {
+    return new StringBuilder(getDataServiceProxy().getId()).append("_").append(getGroup().getId()).append("_").append(getCountry()).append("_").append(getId()).toString();
   }
 }
