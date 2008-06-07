@@ -120,25 +120,23 @@ public class Java6Tray {
         boolean value = (Boolean)clazz.getMethod("isSupported",new Class[] {}).invoke(clazz,new Object[] {});
         
         if(value) {
-          String trayIconFile = "imgs/TrayIcon.png";
-          
-          if(new File(trayIconFile).isFile()) {
-            mTrayIcon = new TrayIcon(ImageIO.read(new File(trayIconFile)), tooltip);
-          }
-          else {
-            try {
+          try {
+            if(new File("imgs/TrayIcon.png").isFile()) {
+              mTrayIcon = new TrayIcon(ImageIO.read(new File("imgs/TrayIcon.png")), tooltip);
+            }
+            else {            
               Dimension trayIconSize = getTrayIconSize();
               BufferedImage trayIconImage = null;
               
-              if(trayIconSize.height > 16 && trayIconSize.height <= 32) {                
+              if(trayIconSize.height > 16 && trayIconSize.height <= 32 && new File("imgs/tvbrowser32.png").isFile()) {
                 trayIconImage = UiUtilities.scaleIconToBufferedImage(ImageIO.read(new File("imgs/tvbrowser32.png")),
                     trayIconSize.width-1, trayIconSize.height-1, BufferedImage.TYPE_INT_ARGB);
               }
-              else if(trayIconSize.height > 32 && trayIconSize.height <= 48) {
+              else if(trayIconSize.height > 32 && trayIconSize.height <= 48 && new File("imgs/tvbrowser48.png").isFile()) {
                 trayIconImage = UiUtilities.scaleIconToBufferedImage(ImageIO.read(new File("imgs/tvbrowser48.png")),
                     trayIconSize.width-1, trayIconSize.height-1, BufferedImage.TYPE_INT_ARGB);                
               }
-              else if(trayIconSize.height > 48) {
+              else if(trayIconSize.height > 48 && new File("imgs/tvbrowser128.png").isFile()) {
                 trayIconImage = UiUtilities.scaleIconToBufferedImage(ImageIO.read(new File("imgs/tvbrowser128.png")),
                     trayIconSize.width-1, trayIconSize.height-1, BufferedImage.TYPE_INT_ARGB);
               }
@@ -147,9 +145,9 @@ public class Java6Tray {
               }
               
               mTrayIcon = new TrayIcon(trayIconImage, tooltip);
-            }catch(Exception sizeFault) {sizeFault.printStackTrace();
-              mTrayIcon = new TrayIcon(ImageIO.read(new File("imgs/tvbrowser16.png")), tooltip);
             }
+          }catch(Throwable sizeFault) {
+            mTrayIcon = new TrayIcon(ImageIO.read(new File("imgs/tvbrowser16.png")), tooltip);
           }
           
           mTrayParent = new JDialog();
@@ -269,6 +267,11 @@ public class Java6Tray {
     }
   }
   
+  /**
+   * Gets the useable size for tray icon.
+   * <p>
+   * @return The useable size for tray icon.
+   */
   public Dimension getTrayIconSize() {
     try {
       Class<?> clazz = Class.forName("java.awt.SystemTray");
