@@ -566,7 +566,7 @@ public class ReminderPlugin {
       return item.getMinutes();
     }
     
-    return -1;
+    return -2;
   }
 
   /**
