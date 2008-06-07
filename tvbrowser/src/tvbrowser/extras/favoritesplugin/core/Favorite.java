@@ -540,7 +540,7 @@ public abstract class Favorite {
         reminderMinutes = ReminderPlugin.getInstance().removeProgram(p);
       }
     }
-System.out.println(p + " " + reminderMinutes);
+    
     return reminderMinutes;
   }
   
