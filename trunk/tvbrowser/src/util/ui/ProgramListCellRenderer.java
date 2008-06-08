@@ -162,19 +162,22 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
         }
       });
       
-      String dateString;
+      StringBuilder dateString = new StringBuilder();
       
       if(program.getDate().equals(Date.getCurrentDate().addDays(-1))) {
-        dateString = Localizer.getLocalization(Localizer.I18N_YESTERDAY);
+        dateString.append(Localizer.getLocalization(Localizer.I18N_YESTERDAY));
+        dateString.append(", ").append(program.getDateString());
       }
       else if(program.getDate().equals(Date.getCurrentDate())) {
-        dateString = Localizer.getLocalization(Localizer.I18N_TODAY);
+        dateString.append(Localizer.getLocalization(Localizer.I18N_TODAY));
+        dateString.append(", ").append(program.getDateString());
       }
       else if(program.getDate().equals(Date.getCurrentDate().addDays(1))) {
-        dateString = Localizer.getLocalization(Localizer.I18N_TOMORROW);
+        dateString.append(Localizer.getLocalization(Localizer.I18N_TOMORROW));
+        dateString.append(", ").append(program.getDateString());
       }
       else {
-        dateString = program.getDate().toString();
+        dateString.append(program.getDate().toString());
       }
       
       mHeaderLb.setText(dateString + " - " + program.getChannel().getName());
