@@ -149,7 +149,7 @@ public class Channel implements Comparable<Channel> {
   public Channel(TvDataService dataService, String name, String id,
     TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group, Icon icon, int categories)
   {
-    this(dataService, name, id, timeZone, country, copyrightNotice, webpage, group, icon, CATEGORY_NONE, null);
+    this(dataService, name, id, timeZone, country, copyrightNotice, webpage, group, icon, categories, null);
   }
 
   /**
