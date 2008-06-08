@@ -126,16 +126,29 @@ Function .onInit
   isadmin:
   StrCpy $8 "HKLM"
   # Get installation folder from registry if available
+  ClearErrors
   ReadRegStr $0 HKLM "Software\${PROG_NAME}${VERSION}" "Install directory"
+  IfErrors +1 +2
+  ReadRegStr $0 HKLM "Software\TV-Browser" "Install directory"
   # Get the default start menu folder from registry if available
+  ClearErrors
   ReadRegStr $7 HKLM "Software\${PROG_NAME}${VERSION}" "Start Menu Folder"
+  IfErrors +1 +2
+  ReadRegStr $7 HKLM "Software\TV-Browser" "Start Menu Folder"
   goto goon
   isnotpower:
   StrCpy $8 "HKCU"
   # Get installation folder from registry if available
+  ClearErrors
   ReadRegStr $0 HKCU "Software\${PROG_NAME}${VERSION}" "Install directory"
+  IfErrors +1 +2
+  ReadRegStr $0 HKCU "Software\TV-Browser" "Install directory"
   # Get the default start menu folder from registry if available
+  ClearErrors
   ReadRegStr $7 HKCU "Software\${PROG_NAME}${VERSION}" "Start Menu Folder"
+  IfErrors +1 +2
+  ReadRegStr $7 HKCU "Software\TV-Browser" "Start Menu Folder"
+
   goon:
   IfErrors errors
   StrCpy $INSTDIR "$0"
@@ -284,8 +297,9 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
 
   # Set output path to the installation directory.
   SetOutPath "$INSTDIR"
-  # File "${RUNTIME_DIR}\LICENSE.txt"
-  # the license is already copied by the license page
+  File "${RUNTIME_DIR}\COPYRIGHT.txt"
+  File "${RUNTIME_DIR}\LICENSE.txt"
+  # the license is already copied by the license page: No it's not
   File "${RUNTIME_DIR}\tvbrowser.exe"
   File "${RUNTIME_DIR}\tvbrowser_noDD.exe"
   File "${RUNTIME_DIR}\tvbrowser_noDD.txt"
@@ -362,8 +376,10 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
   user:
     SetShellVarContext current
     # Store installation folder in registry
+    WriteRegStr HKCU "Software\TV-Browser" "Install directory" $INSTDIR
     WriteRegStr HKCU "Software\${PROG_NAME}${VERSION}" "Install directory" $INSTDIR
     # Remember the selected start menu folder in registry
+    WriteRegStr HKCU "Software\TV-Browser" "Start Menu Folder" $STARTMENU_FOLDER
     WriteRegStr HKCU "Software\${PROG_NAME}${VERSION}" "Start Menu Folder" $STARTMENU_FOLDER
     WriteRegExpandStr \
       HKCU \
@@ -401,8 +417,10 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
     # Sets the context of $SMPROGRAMS and other shell folders. If set to 'all', the 'all users' shell folder is used.
     SetShellVarContext all
     # Store installation folder in registry
+    WriteRegStr HKLM "Software\TV-Browser" "Install directory" $INSTDIR
     WriteRegStr HKLM "Software\${PROG_NAME}${VERSION}" "Install directory" $INSTDIR
     # Remember the selected start menu folder in registry
+    WriteRegStr HKLM "Software\TV-Browser" "Start Menu Folder" $STARTMENU_FOLDER
     WriteRegStr HKLM "Software\${PROG_NAME}${VERSION}" "Start Menu Folder" $STARTMENU_FOLDER
 
     WriteRegExpandStr \
