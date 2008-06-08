@@ -68,6 +68,7 @@ public class ProgramTextCreator {
 
   private static String mBodyFontSize;
   
+  /** The used link protocol for actor links */
   public static final String TVBROWSER_URL_PROTOCOL = "tvbrowser://";
 
 
@@ -208,12 +209,15 @@ public class ProgramTextCreator {
     
     if(prog.getDate().equals(Date.getCurrentDate().addDays(-1))) {
       buffer.append(Localizer.getLocalization(Localizer.I18N_YESTERDAY));
+      buffer.append(" · ").append(prog.getDateString());
     }
     else if(prog.getDate().equals(Date.getCurrentDate())){
       buffer.append(Localizer.getLocalization(Localizer.I18N_TODAY));
+      buffer.append(" · ").append(prog.getDateString());
     }
     else if(prog.getDate().equals(Date.getCurrentDate().addDays(1))){
       buffer.append(Localizer.getLocalization(Localizer.I18N_TOMORROW));
+      buffer.append(" · ").append(prog.getDateString());
     }
     else {
       buffer.append(prog.getDateString());
