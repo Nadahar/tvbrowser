@@ -99,7 +99,7 @@ public class SystemTray {
   private JMenuItem mOpenCloseMenuItem, mQuitMenuItem, mConfigure, mReminderItem;
   
   private JPopupMenu mTrayMenu;
-  private Timer mClickTimer;
+  private Thread mClickTimer;
   
   private JMenu mPluginsMenu;
 
@@ -180,7 +180,7 @@ public class SystemTray {
 
       mSystemTray.addLeftClickAction(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          if (mClickTimer == null || !mClickTimer.isRunning()) {
+          if (mClickTimer == null || !mClickTimer.isAlive()) {
             toggleShowHide();
           }
         }
@@ -190,9 +190,10 @@ public class SystemTray {
 
         public void componentResized(ComponentEvent e) {
           int state = MainFrame.getInstance().getExtendedState();
+          
           if ((state & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH) {
             mState = JFrame.MAXIMIZED_BOTH;
-          } else {
+          } else if((state & JFrame.ICONIFIED) != JFrame.ICONIFIED) {
             mState = JFrame.NORMAL;
           }
         }
@@ -807,15 +808,18 @@ public class SystemTray {
    * Toggle Hide/Show of the MainFrame
    */
   private void toggleShowHide() {
-    mClickTimer = new Timer(200, new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        mClickTimer.stop();
+    mClickTimer = new Thread("Click timer thread") {
+      public void run() {
+        try {
+          sleep(200);
+        }catch(InterruptedException e) {}
       }
-    });
+    };
     mClickTimer.start();
 
     if (!MainFrame.getInstance().isVisible()
-        || (MainFrame.getInstance().getExtendedState() == JFrame.ICONIFIED)) {
+        || ((MainFrame.getInstance().getExtendedState() & JFrame.ICONIFIED) 
+            == JFrame.ICONIFIED)) {
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
           MainFrame.getInstance().showFromTray(mState);
