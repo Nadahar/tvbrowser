@@ -529,7 +529,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener, P
     final Program program = getProgramAt(evt.getX(), evt.getY());
     
     if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1) && evt.getModifiersEx() == 0) {
-      mLeftClickThread = new Thread() {
+      mLeftClickThread = new Thread("Program table single click thread") {
         public void run() {
           try {
             sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
