@@ -172,7 +172,7 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
       }
     });
 
-    if(mNextBtn.isEnabled())
+    if(mNextBtn.isEnabled() && !mStep.isSingleStep())
       getRootPane().setDefaultButton(mNextBtn);
     else
       getRootPane().setDefaultButton(mDoneBtn);
@@ -236,7 +236,7 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
   public void allowNext(boolean allow) {
     mNextBtn.setEnabled(allow);
     
-    if(allow)
+    if(allow && !mStep.isSingleStep())
       getRootPane().setDefaultButton(mNextBtn);
     else
       getRootPane().setDefaultButton(mDoneBtn);
