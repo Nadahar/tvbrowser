@@ -136,7 +136,7 @@ public class RepetitionDialog extends JDialog implements WindowClosingIf {
     setTitle(mLocalizer.msg("title", "Search repetition"));
 
     JPanel panel = (JPanel) getContentPane();
-    panel.setLayout(new FormLayout("right:pref, 3dlu, fill:pref:grow",
+    panel.setLayout(new FormLayout("right:pref, 3dlu, 0dlu:grow",
         "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, fill:3dlu:grow, pref"));
     panel.setBorder(Borders.DLU7_BORDER);
 
