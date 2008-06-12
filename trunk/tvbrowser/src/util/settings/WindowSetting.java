@@ -106,12 +106,12 @@ public final class WindowSetting {
     int width = mWidth;
     int height = mHeight;
     
-    if(width < 20 || width + 10 > d.width) {
+    if(width < 20 || width > d.width + 10) {
       window.pack();
       width = window.getWidth();
     }
     
-    if(height < 20 || height + 10 > d.height) {
+    if(height < 20 || height > d.height + 10) {
       window.pack();
       height = window.getHeight();
     }
