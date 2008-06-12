@@ -190,14 +190,14 @@ public class ProgramInfo {
     return 0;
   }
 
-  protected void showProgramInformation(Program program, boolean showSettings) {
+  protected synchronized void showProgramInformation(Program program, boolean showSettings) {
     if(mInitThread != null && mInitThread.isAlive()) {
       try {
         mInitThread.join();
       }catch(InterruptedException e) {}
     }
     
-    if (mIsShowing) {
+    if (mIsShowing || ProgramInfoDialog.isShowing()) {
       if (!ProgramInfoDialog.closeDialog()) {
         return;
       }
@@ -206,15 +206,12 @@ public class ProgramInfo {
     Window window = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
     // show busy cursor
     ProgramTable programTable = MainFrame.getInstance().getProgramTableScrollPane().getProgramTable();
-    Cursor oldWindowCursor = window.getCursor();
-    Cursor oldTableCursor = programTable.getCursor();
     window.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     programTable.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     // open dialog
     ProgramInfoDialog.getInstance(program, mLeftSplit, showSettings).show();
-    // restore cursors
-    programTable.setCursor(oldTableCursor);
-    window.setCursor(oldWindowCursor);
+    window.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    programTable.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     mIsShowing = false;
   }
 
@@ -329,7 +326,7 @@ public class ProgramInfo {
    * @return
    */
   public static boolean isShowing() {
-    return mIsShowing;
+    return ProgramInfoDialog.isShowing() || mIsShowing;
   }
 
   public void showProgramInformation(Program program) {

@@ -114,7 +114,7 @@ public class ProgramInfoDialog {
   protected static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ProgramInfoDialog.class);
 
-  private JDialog mDialog;
+  private static JDialog mDialog;
   private JPanel mMainPanel;
   
   private JEditorPane mInfoEP;
@@ -707,11 +707,15 @@ public class ProgramInfoDialog {
     
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        mMainPanel.repaint();
+        mDialog.setVisible(true);
+        
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            mMainPanel.repaint();
+          }
+        });
       }
     });
-
-    mDialog.setVisible(true);
   }
   
   /**
@@ -768,4 +772,7 @@ public class ProgramInfoDialog {
     return evt.getURL().toExternalForm();
   }
 
+  protected static boolean isShowing() {
+    return mDialog != null && mDialog.isVisible();
+  }
 }
