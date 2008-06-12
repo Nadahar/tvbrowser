@@ -96,6 +96,7 @@ public class BooleanSearcher extends AbstractSearcher {
     caseSensitive = CaseSensitive;
     mReplaceSpCh = true;
     
+    pattern = pattern.trim();
     pattern = pattern.replaceAll("\\\"", " ");
     pattern = pattern.replaceAll("\\(", " ( ");
     pattern = pattern.replaceAll("\\)", " ) ");
