@@ -555,7 +555,9 @@ public class ChannelsSettingsTab implements
           "Not categorized"), Channel.CATEGORY_NONE));
     }
 
-    mCategoryCB.setSelectedIndex(Settings.propSelectedChannelCategoryIndex.getByte());
+    if(mCategoryCB.getItemCount() > Settings.propSelectedChannelCategoryIndex.getByte()) {
+      mCategoryCB.setSelectedIndex(Settings.propSelectedChannelCategoryIndex.getByte());
+    }
 
     HashSet<String> countries = new HashSet<String>();
 
