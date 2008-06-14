@@ -18,7 +18,11 @@ import tvdataservice.MutableProgram;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Hashtable;
+import java.util.TimeZone;
+
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -28,7 +32,7 @@ import util.ui.Localizer;
  * @author Inforama
  */
 public class DataHydraDayParser extends org.xml.sax.helpers.DefaultHandler {
-  public static final Localizer mLocalizer = Localizer.getLocalizerFor(DataHydraDayParser.class);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(DataHydraDayParser.class);
 
   private static java.util.logging.Logger mLog
           = java.util.logging.Logger.getLogger(DataHydraDayParser.class.getName());
@@ -190,15 +194,18 @@ public class DataHydraDayParser extends org.xml.sax.helpers.DefaultHandler {
           multipleDirectors = false;
           try {
             String time = attributes.getValue("start");
-            String year = time.substring(0, 4);
-            String month = time.substring(4, 6);
-            String day = time.substring(6, 8);
-            String hourString = time.substring(8, 10);
-            String minString = time.substring(10, 12);
-            startHour = Integer.parseInt(hourString);
-            startMin = Integer.parseInt(minString);
-            start = new devplugin.Date(Integer.parseInt(year), Integer
-                    .parseInt(month), Integer.parseInt(day));
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddkkmmss ZZZZ");
+            
+            Calendar cal = Calendar.getInstance();            
+            cal.setTime(format.parse(time.substring(0,20)));
+            cal.setTimeInMillis(cal.getTimeInMillis() - cal.getTimeZone().getRawOffset());
+            
+            start = new devplugin.Date(cal.get(Calendar.YEAR), 
+                cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH));
+
+            startHour = cal.get(Calendar.HOUR_OF_DAY);
+            startMin = cal.get(Calendar.MINUTE);
+            
             state = STATUS_PROG;
           } catch (Exception E) {
             System.out.println("invalid start time format: "
@@ -207,16 +214,17 @@ public class DataHydraDayParser extends org.xml.sax.helpers.DefaultHandler {
           try {
             String time = attributes.getValue("stop");
             if (time.length() > 0) {
-              /*
-              * String year = time.substring(0,4); String month =
-              * time.substring(4,6); String day = time.substring(6,8);
-              */
-              String hourString = time.substring(8, 10);
-              String minString = time.substring(10, 12);
-              endHour = Integer.parseInt(hourString);
-              endMin = Integer.parseInt(minString);
+              SimpleDateFormat format = new SimpleDateFormat("yyyyMMddkkmmss ZZZZ");
+              
+              Calendar cal = Calendar.getInstance();
+              
+              cal.setTime(format.parse(time.substring(0,20)));
+              cal.setTimeInMillis(cal.getTimeInMillis() - cal.getTimeZone().getRawOffset());              
+
+              endHour = cal.get(Calendar.HOUR_OF_DAY);
+              endMin = cal.get(Calendar.MINUTE);
             }
-          } catch (Exception E) {
+          } catch (Exception E) {E.printStackTrace();
             // System.out.println("invalid stop time format:
             // "+attributes.getValue("stop"));
           }
@@ -364,16 +372,7 @@ public class DataHydraDayParser extends org.xml.sax.helpers.DefaultHandler {
           // Since we don't have a field for sub titles, we add it to description
           desc = (subTitle + "\n" + desc).trim();
 
-          String shortDesc = desc;
-
-          if (shortDesc.length() > 200) {
-            shortDesc = shortDesc.substring(0, 197) + "...";
-          }
-          /*
-            ToDo: Change this to the new System for 2.7 release !
-
-            shortDesc = MutableProgram.generateShortInfoFromDescription(desc);
-           */
+          String shortDesc = MutableProgram.generateShortInfoFromDescription(desc);           
           prog.setShortInfo(shortDesc);
                     
           if (((DataHydraChannelGroup)mChannel.getGroup()).isShowRegister() && "true".equals(mDataService.getProperties().getProperty(SweDBTvDataService.SHOW_REGISTER_TEXT, "true"))) {
@@ -470,7 +469,7 @@ public class DataHydraDayParser extends org.xml.sax.helpers.DefaultHandler {
   public void warning(SAXParseException e) {
   }
 
-  public static void parseNew(InputStream in, Channel ch, devplugin.Date day,
+  protected static void parseNew(InputStream in, Channel ch, devplugin.Date day,
                               Hashtable<String, MutableChannelDayProgram> ht, SweDBTvDataService dataService) throws Exception {
     SAXParserFactory fac = SAXParserFactory.newInstance();
     fac.setValidating(false);

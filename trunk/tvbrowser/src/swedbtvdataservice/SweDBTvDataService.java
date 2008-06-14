@@ -34,7 +34,6 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TimeZone;
-import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
@@ -399,7 +398,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
       }
 
       Channel channel = new Channel(this, container.getName(),
-              container.getId(), TimeZone.getTimeZone("CET"), group.getCountry(),
+              container.getId(), TimeZone.getTimeZone("UTC"), group.getCountry(),
               group.getCopyright(), group.getUrl(), group, null, category);
 
       if (!container.getIconUrl().equals("")) {

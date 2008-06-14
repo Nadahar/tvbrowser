@@ -19,14 +19,15 @@ import java.util.zip.GZIPInputStream;
 
 public class DataHydraFileParser {
 
-  public static final Localizer mLocalizer = Localizer.getLocalizerFor(DataHydraFileParser.class);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(DataHydraFileParser.class);
   private static Logger mLog = Logger.getLogger(DataHydraFileParser.class.getName());
 
-  public void loadDataForChannel(SweDBTvDataService service, TvDataUpdateManager updateManager, Date startDate, int dateCount, ProgressMonitor monitor, Date testStart, DataHydraChannelContainer internalChannel, Channel channel) throws TvBrowserException {
+  protected void loadDataForChannel(SweDBTvDataService service, TvDataUpdateManager updateManager, Date startDate, int dateCount, ProgressMonitor monitor, Date testStart, DataHydraChannelContainer internalChannel, Channel channel) throws TvBrowserException {
     ArrayList<Date> modifiedDates = new ArrayList<Date>();
     monitor.setMessage(mLocalizer.msg("updateTvData.progressmessage.10",
             "{2}: Searching for updated/new programs on {0} for {1} days",
             startDate.toString(), "" + dateCount, channel.getName()));
+    
     for (int b = 0; b < dateCount; b++) {
       Date testDay = testStart.addDays(b);
       String fileDate = createFileName(testDay);
