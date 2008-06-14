@@ -194,10 +194,10 @@ public class MutableProgram implements Program {
   private void normalizeTimeZone(Date localDate, int localStartTime) {
     TimeZone channelTimeZone=mChannel.getTimeZone();
 
-    int timeZoneOffset=(localTimeZone.getRawOffset()-channelTimeZone.getRawOffset())/3600000;
-    timeZoneOffset+=mChannel.getDayLightSavingTimeCorrection();
+    int timeZoneOffset=(localTimeZone.getRawOffset()-channelTimeZone.getRawOffset())/60000;
+    timeZoneOffset+=mChannel.getDayLightSavingTimeCorrection()*60;
 
-    mNormalizedStartTime = localStartTime + timeZoneOffset * 60;
+    mNormalizedStartTime = localStartTime + timeZoneOffset;
     mNormalizedDate=localDate;
 
     if (mNormalizedStartTime >= (24 * 60)) {
