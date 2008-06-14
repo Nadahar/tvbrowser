@@ -110,35 +110,34 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
   private DateRange getDateRangeForChannel(Channel ch) {
 
-    int channelTime = ch.getTimeZone().getRawOffset()/1000/60/60;
-
+    int channelTime = ch.getTimeZone().getRawOffset()/60000;
     if (ch.getTimeZone().useDaylightTime()) {
-      channelTime+=1;
+      channelTime+=60;
     }
-    int localTime = TimeZone.getDefault().getRawOffset()/1000/60/60;
+    
+    int localTime = TimeZone.getDefault().getRawOffset()/60000;
     if (ch.getTimeZone().useDaylightTime()) {
-      localTime+=1;
+      localTime+=60;
     }
-    int timeDiff = channelTime - localTime;  // e.g -4h
+    int timeDiff = channelTime - localTime;  // e.g -240min
 
-    int startTimeForChannelLocale = mTodayEarliestTime/60+timeDiff;
-    int endTimeForChannelLocale = (mTomorrowLatestTime+59)/60+timeDiff+24;
-
+    int startTimeForChannelLocale = mTodayEarliestTime+timeDiff;
+    int endTimeForChannelLocale = (mTomorrowLatestTime+(59*60))/3600+timeDiff+1440;
 
     int fromDate;
      if (startTimeForChannelLocale>=0) {
-      fromDate = startTimeForChannelLocale/24;
+      fromDate = startTimeForChannelLocale/24/60;
     }
     else {
-      fromDate = (startTimeForChannelLocale/24)-1;
+      fromDate = (startTimeForChannelLocale/24/60)-1;
     }
 
     int toDate;
     if (endTimeForChannelLocale>0) {
-      toDate = endTimeForChannelLocale/24 +1;
+      toDate = endTimeForChannelLocale/24/60 +1;
     }
     else {
-      toDate = (endTimeForChannelLocale/24)-1+1;
+      toDate = (endTimeForChannelLocale/24/60)-1+1;
     }
 
     if(!TvDataBase.getInstance().isDayProgramAvailable(mMainDay.addDays(fromDate),ch)) {
