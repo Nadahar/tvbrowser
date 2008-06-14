@@ -75,7 +75,7 @@ public class DataViewerPlugin extends Plugin implements Runnable {
   private boolean mReactOnDataUpdate = false;
   private int mMinChannelWidth = 0;
 
-  private static final Version mVersion = new Version(1,07);
+  private static final Version mVersion = new Version(1,8);
 
   private static DataViewerPlugin mInstance;
 
@@ -373,7 +373,7 @@ public class DataViewerPlugin extends Plugin implements Runnable {
 
   @Override
   public void handleTvDataUpdateFinished() {
-    if(mReactOnDataUpdate && IOUtilities.getMinutesAfterMidnight() >= 1) {
+    if(mReactOnDataUpdate && IOUtilities.getMinutesAfterMidnight() >= 1 && IOUtilities.getMinutesAfterMidnight() < 1440) {
       mProperties.setProperty("last", DateFormat.getDateTimeInstance(
           DateFormat.FULL, DateFormat.SHORT).format(
               new java.util.Date(System.currentTimeMillis())));
