@@ -107,11 +107,11 @@ public class ProgramInfoHelper {
             mLocalizer.msg("categorie_news", "News"),
             mLocalizer.msg("categorie_show", "Show"),
             mLocalizer.msg("categorie_magazine_infotainment", "Magazine/Infotainment"),
-            mLocalizer.msg("categorie_documentary", "Documentary"),
-            mLocalizer.msg("categorie_arts", "Arts/Music"),
+            mLocalizer.msg("categorie_documentary", "Documentary/Reportage"),
+            mLocalizer.msg("categorie_arts", "Theater/Concert"),
             mLocalizer.msg("categorie_sports", "Sports"),
             mLocalizer.msg("categorie_childrens", "Children's Programming"),
-            mLocalizer.msg("categorie_others", "Miscellaneous"),
+            mLocalizer.msg("categorie_others", "Other Program"),
     };
 
 
