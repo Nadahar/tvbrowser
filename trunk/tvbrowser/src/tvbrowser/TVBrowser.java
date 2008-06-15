@@ -111,34 +111,16 @@ public class TVBrowser {
 
   private static String curLookAndFeel;
   
-  private static String mVersionAppendix = "";
-  
   private static final boolean mIsStable = false;
   private static final int mMajorVersion = 3;
   private static final int mMinorVersion = 0;
-  
-  static {
-    File nightlyValues = new File("NIGHTLY_VALUES");
-    
-    if(!mIsStable && nightlyValues.isFile()) {
-      try {
-        RandomAccessFile in = new RandomAccessFile(nightlyValues, "r");
-        
-        mVersionAppendix = "-" + in.readLine();
-        
-        in.close();
-      } catch (Exception e) {
-        // ignore
-      }
-    }
-  }
   
   /* If you want to change the version string, add it to the beginning of this array.
      We need the old version strings to import the settings.
   */
   /** The string array with the names of the earlier versions. */
   public static final String[] ALL_VERSIONS = new String[]{
-          "3.0 (SVN)" + mVersionAppendix,
+          "3.0 (SVN)",
           "2.7",
           "2.7 RC2",
           "2.7 RC1",
@@ -160,6 +142,23 @@ public class TVBrowser {
           "2.2.1", "2.2.1beta3",
           "2.2", "2.2beta2", "2.2beta1", "2.2 (SVN)"
   };
+  
+  static {
+    File nightlyValues = new File("NIGHTLY_VALUES");
+    
+    if(!mIsStable && nightlyValues.isFile()) {
+      try {
+        RandomAccessFile in = new RandomAccessFile(nightlyValues, "r");
+        
+        String versionAppendix = "-" + in.readLine();
+        ALL_VERSIONS[0] += versionAppendix;
+        
+        in.close();
+      } catch (Exception e) {
+        // ignore
+      }
+    }
+  }
   
   /** The current version. */
   
