@@ -113,9 +113,9 @@ public class TVBrowser {
   
   private static String mVersionAppendix = "";
   
-  private static final boolean mIsStable = true;
-  private static final int mMajorVersion = 2;
-  private static final int mMinorVersion = 70;
+  private static final boolean mIsStable = false;
+  private static final int mMajorVersion = 3;
+  private static final int mMinorVersion = 0;
   
   static {
     File nightlyValues = new File("NIGHTLY_VALUES");
@@ -138,7 +138,8 @@ public class TVBrowser {
   */
   /** The string array with the names of the earlier versions. */
   public static final String[] ALL_VERSIONS = new String[]{
-          "2.7" + mVersionAppendix,
+          "3.0 (SVN)" + mVersionAppendix,
+          "2.7",
           "2.7 RC2",
           "2.7 RC1",
           "2.7beta2",
