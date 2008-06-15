@@ -113,7 +113,7 @@ public class TVBrowser {
   
   private static String mVersionAppendix = "";
   
-  private static final boolean mIsStable = false;
+  private static final boolean mIsStable = true;
   private static final int mMajorVersion = 2;
   private static final int mMinorVersion = 70;
   
@@ -138,7 +138,8 @@ public class TVBrowser {
   */
   /** The string array with the names of the earlier versions. */
   public static final String[] ALL_VERSIONS = new String[]{
-          "2.7 RC2" + mVersionAppendix,
+          "2.7" + mVersionAppendix,
+          "2.7 RC2",
           "2.7 RC1",
           "2.7beta2",
           "2.7beta1",
@@ -161,7 +162,7 @@ public class TVBrowser {
   
   /** The current version. */
   
-  private static boolean mIsTransportable = new File("settings").isDirectory();
+  private static final boolean mIsTransportable = new File("settings").isDirectory();
   public static final devplugin.Version VERSION=new devplugin.Version(mMajorVersion,mMinorVersion,mIsStable,ALL_VERSIONS[0] + (mIsTransportable ? " transportable" : ""));
 
   /** The title bar string. */
