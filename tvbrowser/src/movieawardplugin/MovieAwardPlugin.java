@@ -42,10 +42,9 @@ public class MovieAwardPlugin extends Plugin {
    */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(MovieAwardPlugin.class);
 
-  private static final Version mVersion = new Version(1, 0);
+  private static final Version mVersion = new Version(0, 1);
   private PluginInfo mPluginInfo;
   private ArrayList<MovieAward> mMovieAwards = new ArrayList<MovieAward>();
-
 
   public MovieAwardPlugin() {
     initDatabase();
@@ -64,23 +63,14 @@ public class MovieAwardPlugin extends Plugin {
     return mPluginInfo;
   }
 
-  private void initDatabase() {
-    try {
-      CSVReader reader = new CSVReader(new InputStreamReader(getClass().getResourceAsStream("data/index.csv"), "ISO-8859-15"), ';');
-
-      mMovieAwards = new ArrayList<MovieAward>();
-
-      String[] tokens;
-      while ((tokens = reader.readNext()) != null) {
-        mMovieAwards.add(new MovieAward(tokens[0], tokens[1], tokens[2]));
-      }
-    } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
+  public static Version getVersion() {
+    return mVersion;
   }
 
+  private void initDatabase() {
+    mMovieAwards = new ArrayList<MovieAward>();
+    mMovieAwards.add(new MovieAward(getClass().getResourceAsStream("./data/oscars.xml")));
+    
+  }
 
 }

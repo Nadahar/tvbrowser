@@ -25,5 +25,32 @@
  */
 package movieawardplugin;
 
+import javax.swing.UIManager;
+import java.util.HashMap;
+
 public class Movie {
+  private String mId;
+  private int mYear;
+  private String mDirector;
+  private HashMap<String, String> mTitle = new HashMap<String, String>();
+
+  public Movie(String id) {
+    mId = id;
+  }
+
+  public void setProductionYear(int year) {
+    mYear = year;
+  }
+
+  public void setDirector(String director) {
+    mDirector = director;
+  }
+
+  public String getId() {
+    return mId;
+  }
+
+  public void addTitle(String lang, String title) {
+    mTitle.put(lang, title);
+  }
 }
