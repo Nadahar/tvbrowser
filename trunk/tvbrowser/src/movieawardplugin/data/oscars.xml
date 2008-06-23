@@ -1,0 +1,25 @@
+<awarddata>
+<name lang="de">Oscar</name>
+<name lang="en">Oscar</name>
+
+<categories>
+  <categorie id="best_movie">
+    <name lang="de">Bester Film</name>
+    <name lang="en">Best Movie</name>
+  </categorie>
+</categories>
+
+
+<movies>
+  <movie id="movie_1" year="1998" director="tom tykwer">
+    <title lang="de">Lola rennt</title>
+    <title lang="en">Lola Runs</title>
+  </movie>
+</movies>
+
+<awards>
+  <award categorie="best_movie" status="nominated" movie="movie_1" year="1999" />
+  <award categorie="best_actor" status="winner" movie="movie_1" year="1999" />
+</awards>
+
+</awarddata>

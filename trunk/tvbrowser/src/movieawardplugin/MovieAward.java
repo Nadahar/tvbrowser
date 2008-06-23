@@ -31,41 +31,79 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.io.IOException;
+import java.io.BufferedReader;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.HashMap;
+
+import org.apache.xerces.parsers.SAXParser;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
+import org.xml.sax.SAXException;
+
+import javax.swing.UIManager;
 
 public class MovieAward {
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(MovieAward.class.getName());
+  private static Logger mLog = Logger.getLogger(MovieAward.class.getName());
 
-  private String mNameGerman;
-  private String mNameEnglish;
+  private HashMap<String, String> mNames = new HashMap<String, String>();
+  private HashMap<String, MovieAwardCategorie> mCategorie = new HashMap<String, MovieAwardCategorie>();
+  private HashMap<String, Movie> mMovies = new HashMap<String, Movie>();
+  private HashMap<String, Award> mAwards = new HashMap<String, Award>();
 
-  public MovieAward(String file, String nameEnglish, String nameGerman) {
-    mNameEnglish = nameEnglish;
-    mNameGerman = nameGerman;
-
-    loadFromFile(file);
+  public MovieAward() {
   }
 
-  private void loadFromFile(String file) {
-    InputStream stream = getClass().getResourceAsStream("data/" +  file);
+  public MovieAward(final InputStream stream) {
+    loadFromStream(stream);
+  }
 
-    if (stream != null) {
-      try {
-        CSVReader reader = new CSVReader(new InputStreamReader(stream, "ISO-8859-15"), ';');
+  private void loadFromStream(final InputStream stream) {
+    try {
+      SAXParser parser = new SAXParser();
+      parser.setContentHandler(new MovieAwardHandler(this));
 
-        String[] tokens;
-        while ((tokens = reader.readNext()) != null) {
-          System.out.println(tokens[0]);
-        }
+      // Complete list of features of the xerces parser:
+      // http://xml.apache.org/xerces2-j/features.html
+      parser.setFeature("http://xml.org/sax/features/validation", false);
+      parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 
-      } catch (UnsupportedEncodingException e) {
-        mLog.log(Level.SEVERE, "Could not load data from " + file, e);
-      } catch (IOException e) {
-        mLog.log(Level.SEVERE, "Could not load data from " + file, e);
-      }
-
-    } else {
-      mLog.warning("Could not load data from " + file);
+      parser.parse(new InputSource(stream));
+    } catch (SAXNotRecognizedException e) {
+      mLog.log(Level.SEVERE, "Could not parse Movie Award", e);
+    } catch (SAXNotSupportedException e) {
+      mLog.log(Level.SEVERE, "Could not parse Movie Award", e);
+    } catch (IOException e) {
+      mLog.log(Level.SEVERE, "Could not parse Movie Award", e);
+    } catch (SAXException e) {
+      mLog.log(Level.SEVERE, "Could not parse Movie Award", e);
     }
+  }
+
+  /**
+   * Add a name for the award
+   * @param language Language (e.g. en, de, de-at)
+   * @param name Name of the Award
+   */
+  public void addName(String language, String name) {
+    System.out.println(language + "_---" + name);
+    mNames.put(language, name);
+  }
+
+  /**
+   * Add a Categorie for the award
+   * @param categorie categorie
+   */
+  public void addCategorie(MovieAwardCategorie categorie) {
+    mCategorie.put(categorie.getId(), categorie);
+  }
+
+  public void addMovie(Movie movie) {
+    mMovies.put(movie.getId(), movie);
+  }
+
+  public void addAward(Award award) {
+    mAwards.put(award.getMovieId(), award);
   }
 }
