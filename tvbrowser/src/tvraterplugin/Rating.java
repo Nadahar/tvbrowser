@@ -143,7 +143,10 @@ public class Rating implements Serializable {
 	 */
 	public Rating() {
 	  mValues = new byte[RATING_ENTRY_COUNT];
-	}
+    for (int i = 0; i < RATING_ENTRY_COUNT; i++) {
+       mValues[i] = -1;
+    }
+  }
 
 	/**
 	 * Creates a empty Rating
@@ -153,7 +156,7 @@ public class Rating implements Serializable {
 	public Rating(String title) {
     this();
 		mTitle = title;
-	}
+  }
 
 	/**
 	 * Creates a Rating
