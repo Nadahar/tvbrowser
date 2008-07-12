@@ -120,7 +120,7 @@ public class Rating implements Serializable {
   /**
    * genre code
    */
-  private int genre;
+  private int genre = -1;
 
 	/**
 	 * user count of online rating
