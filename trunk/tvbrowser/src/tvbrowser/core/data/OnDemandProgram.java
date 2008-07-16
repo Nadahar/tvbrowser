@@ -49,7 +49,7 @@ public class OnDemandProgram extends MutableProgram {
    */  
   private Object NULL_VALUE = "<null>";
 
-  /** The file to load values from, when they are damanded */  
+  /** The file to load values from, when they are demanded */  
   private OnDemandDayProgramFile mOnDemandFile;
   
 
@@ -109,7 +109,7 @@ public class OnDemandProgram extends MutableProgram {
         value = mValue.get();
       }
       
-      // Load the value from disk if nessesary
+      // Load the value from disk if necessary
       if (value == null) {
         try {
           value = mOnDemandFile.loadFieldValue(mPosition, type);
