@@ -60,7 +60,7 @@ public class ImdbUpdateDialog extends JDialog {
 
     CellConstraints cc = new CellConstraints();
 
-    JLabel label = new JLabel(mLocalizer.msg("downloadingMsg", "Processing Imdb Data..."));
+    JLabel label = new JLabel(mLocalizer.msg("downloadingMsg", "Processing IMDb data..."));
     panel.add(label, cc.xy(1,1));
     JProgressBar progressBar = new JProgressBar();
     panel.add(progressBar, cc.xy(1,3));
@@ -95,8 +95,9 @@ public class ImdbUpdateDialog extends JDialog {
   }
 
   private void startThread() {
-    new Thread(new Runnable() {
+    Thread thread = new Thread(new Runnable() {
       public void run() {
+        
         mParser = new ImdbParser(mDatabase, mServer);
         try {
           mParser.startParsing(mMonitor);
@@ -110,7 +111,9 @@ public class ImdbUpdateDialog extends JDialog {
           }
         });
       }
-    }).start();
+    }, "IMDb import");
+    thread.setPriority(Thread.MIN_PRIORITY);
+    thread.start();
   }
 
   private void stopThread() {
