@@ -103,7 +103,7 @@ public class ProgramFieldType {
                            "image", "Image");
 
   /**
-   * Actor-List. Shoud be in this Format:
+   * Actor-List. Should be in this Format:
    *
    * ActorName\t\t-\t\tRole,\n
    * ActorName2\t\t-\t\tRole2\n
@@ -250,7 +250,7 @@ public class ProgramFieldType {
                               "cutter", "Cutter");
 
   /**
-   * Additional persons (Stuntmen etc)
+   * Additional persons (Stunt men etc.)
    *
    * Should be in this format:
    *

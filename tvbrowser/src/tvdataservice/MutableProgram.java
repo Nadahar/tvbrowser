@@ -77,7 +77,7 @@ public class MutableProgram implements Program {
   /** Contains all listeners that listen for events from this program. */
   private Vector<ChangeListener> mListenerList;
 
-  /** Containes all Plugins that mark this program. We use a simple array,
+  /** Contains all Plugins that mark this program. We use a simple array,
    * because it takes less memory. */
   private Marker[] mMarkerArr;
   
@@ -161,7 +161,7 @@ public class MutableProgram implements Program {
    *
    * @param channel The channel object of this program.
    * @param localDate The date of this program.
-   * @param isLoading If the program is curently loading.
+   * @param isLoading If the program is currently loading.
    * @see #setProgramLoadingIsComplete()
    */
   public MutableProgram(Channel channel, devplugin.Date localDate, boolean isLoading) {
@@ -728,13 +728,13 @@ public class MutableProgram implements Program {
   }
 
   /**
-   * Trimm text for shortinfo-field
+   * Trim text for shortinfo-field
    * @param shortInfo generate Text from this field
    * @return Text that fits into shortInfo
    * @since 2.7
    */
   public static String generateShortInfoFromDescription(String shortInfo) {
-    // Get the end of the last fitting sentense
+    // Get the end of the last fitting sentence
     int lastDot = shortInfo.lastIndexOf('.', MAX_SHORT_INFO_LENGTH);
 
     int n = shortInfo.lastIndexOf('!', MAX_SHORT_INFO_LENGTH);
@@ -804,7 +804,7 @@ public class MutableProgram implements Program {
   /**
    * Sets a short information about the program (about three lines). May be null.
    * <p>
-   * If the legth of the short info exceeds 100 characters it will be cut using
+   * If the length of the short info exceeds 100 characters it will be cut using
    * a smart algorithm.
    *
    * @param shortInfo The new short info.

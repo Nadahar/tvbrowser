@@ -361,10 +361,10 @@ public class Settings {
               }
             }), newDir);
 
-            mLog.info("settings form previous version copied successfully");
+            mLog.info("settings from previous version copied successfully");
             File newSettingsFile = new File(newDir, SETTINGS_FILE);
             mProp.readFromFile(newSettingsFile);
-            mLog.info("settings form previous version read succesfully");
+            mLog.info("settings from previous version read succesfully");
 
             /*
              * This is the .tvbrowser dir, if there are settings form version
