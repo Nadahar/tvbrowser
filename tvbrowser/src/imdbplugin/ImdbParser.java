@@ -9,14 +9,16 @@ import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
-import java.util.Calendar;
 import java.net.URL;
 
 import util.io.IOUtilities;
+import util.ui.Localizer;
 import util.ui.progress.ProgressInputStream;
 
 
 public class ImdbParser {
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(ImdbParser.class);
+
   private static final Pattern epsiodePattern = Pattern.compile("^(.*?)(?:\\W\\(\\#.*\\))?$");
   private static final Pattern moviePrefixPattern = Pattern.compile("(.*), ([A-Z][a-z']{0,2})");
 
@@ -33,6 +35,7 @@ public class ImdbParser {
     mDatabase.deleteDatabase();
 
     monitor.setMaximum(getFileSize(mServer));
+    monitor.setMessage(mLocalizer.msg("download", "Downloading files"));
 
     mRunParser = true;
 
@@ -40,17 +43,15 @@ public class ImdbParser {
 
     System.out.println("AKA TITLES");
 
-    parseAkaTitles(new GZIPInputStream(progressInputStream));
+    parseAkaTitles(new GZIPInputStream(progressInputStream), monitor);
 
     System.out.println("AKA TITLES DONE");
 
-    mDatabase.close();
-    mDatabase.reOpen();
-    mDatabase.optimizeIndex();
+    optimizeDatabase(monitor);
     System.out.println("RATINGS");
     if (mRunParser) {
       progressInputStream = new ProgressInputStream(new URL(mServer + "ratings.list.gz").openStream(), monitor, progressInputStream.getCurrentPosition());
-      parseRatings(new GZIPInputStream(progressInputStream));
+      parseRatings(new GZIPInputStream(progressInputStream), monitor);
     }
     System.out.println("RATINGS DONE");
 
@@ -58,12 +59,17 @@ public class ImdbParser {
       // Cancel was pressed, all Files have to be deleted
       mDatabase.deleteDatabase();
     } else {
-      mDatabase.close();
-      mDatabase.reOpen();
-      mDatabase.optimizeIndex();
+      optimizeDatabase(monitor);
     }
 
     System.out.println("PARSING DONE");
+  }
+
+  private void optimizeDatabase(ProgressMonitor monitor) throws IOException {
+    monitor.setMessage(mLocalizer.msg("optimize", "Optimizing database"));
+    mDatabase.close();
+    mDatabase.reOpen();
+    mDatabase.optimizeIndex();
   }
 
   private int getFileSize(String mServer) {
@@ -99,7 +105,7 @@ public class ImdbParser {
     mRunParser = false;
   }
 
-  private void parseAkaTitles(InputStream inputStream) throws IOException {
+  private void parseAkaTitles(InputStream inputStream, ProgressMonitor monitor) throws IOException {
     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "ISO-8859-15"));
     String line = reader.readLine();
 
@@ -108,6 +114,7 @@ public class ImdbParser {
 
     String movieId = null;
     boolean startFound = false;
+    int count = 0;
     while (line != null && mRunParser) {
       line = line.trim();
       if (!startFound && line.startsWith("==========")) {
@@ -127,6 +134,9 @@ public class ImdbParser {
               String episode = cleanEpsiodeTitle(matcher.group(4));
 
               mDatabase.addAkaTitle(movieId, title, episode, year, type);
+              if (++count % 100 == 0) {
+                monitor.setMessage(mLocalizer.msg("akaTitles", "Alternative title {0}",count));
+              }
             }
           } else {
             Matcher matcher = moviePattern.matcher(line);
@@ -150,13 +160,14 @@ public class ImdbParser {
     reader.close();
   }
 
-  private void parseRatings(InputStream inputStream) throws IOException {
+  private void parseRatings(InputStream inputStream, ProgressMonitor monitor) throws IOException {
     Pattern ratingPattern = Pattern.compile("^(.*?)(?:\\W\\((\\d{4,4}|\\?\\?\\?\\?).*?\\))?(?:\\W\\((.*)\\))?(?:\\W\\{(.*)\\})?$");
 
     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "ISO-8859-15"));
     String line = reader.readLine();
 
     boolean startFound = false;
+    int count = 0;
     while (line != null && mRunParser) {
       line = line.trim();
       if (!startFound && line.startsWith("MOVIE RATINGS REPORT")) {
@@ -187,6 +198,9 @@ public class ImdbParser {
           String episode = cleanEpsiodeTitle(matcher.group(4));
 
           mDatabase.addRating(mDatabase.getOrCreateMovieId(movieTitle, episode, year, type), rating, votes, distribution);
+          if (++count % 100 == 0) {
+            monitor.setMessage(mLocalizer.msg("ratings", "Rating {0}", count));
+          }
         }
       }
 
