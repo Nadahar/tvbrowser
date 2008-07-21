@@ -23,7 +23,7 @@
  *   $Author$
  * $Revision$
  */
-package tvbrowser.extras.reminderplugin;
+package util.ui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -40,9 +40,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import util.paramhandler.ParamInputField;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
 
 /**
  * The Dialog for the Settings of the executable
@@ -65,7 +62,7 @@ public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
    * 
    * @param parent Parent
    * @param execFile File to execute
-   * @param execParam Params for the File
+   * @param execParam parameters for the File
    */
   public ExecuteSettingsDialog(JDialog parent, String execFile, String execParam) {
     super(parent, true);
@@ -79,7 +76,7 @@ public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
    * 
    * @param parent Parent
    * @param execFile File to execute
-   * @param execParam Params for the File
+   * @param execParam parameters for the File
    */
   public ExecuteSettingsDialog(JFrame parent, String execFile, String execParam) {
     super(parent, true);
@@ -106,15 +103,15 @@ public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
     
     filePanel.add(mFile, BorderLayout.CENTER);
     
-    JButton chsFile = new JButton("...");
+    JButton chooseFile = new JButton("...");
     
-    chsFile.addActionListener(new ActionListener() {
+    chooseFile.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         changeFile();
       }
     });
     
-    filePanel.add(chsFile, BorderLayout.EAST);
+    filePanel.add(chooseFile, BorderLayout.EAST);
     
     panel.add(filePanel, BorderLayout.NORTH);
     
@@ -159,8 +156,7 @@ public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
    */
   private void changeFile() {
     JFileChooser chooser = new JFileChooser(new File(mFile.getText()));
-    int returnVal = chooser.showOpenDialog(this);
-    if (returnVal == JFileChooser.APPROVE_OPTION) {
+    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
       mFile.setText(chooser.getSelectedFile().getAbsolutePath());
     }
   }

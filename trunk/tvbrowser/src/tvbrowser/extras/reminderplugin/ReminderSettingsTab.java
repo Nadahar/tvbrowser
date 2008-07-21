@@ -65,6 +65,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.DefaultMarkingPrioritySelectionPanel;
+import util.ui.ExecuteSettingsDialog;
 import util.ui.ExtensionFileFilter;
 import util.ui.FileCheckBox;
 import util.ui.PluginChooserDlg;
