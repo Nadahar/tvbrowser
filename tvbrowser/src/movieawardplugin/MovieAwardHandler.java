@@ -1,3 +1,26 @@
+/*
+ * TV-Browser
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * VCS information:
+ *     $Date: 2007-10-02 10:19:08 +0200 (Di, 02 Okt 2007) $
+ *   $Author: Bananeweizen $
+ * $Revision: 3966 $
+ */
 package movieawardplugin;
 
 import org.xml.sax.helpers.DefaultHandler;
@@ -25,7 +48,7 @@ public class MovieAwardHandler extends DefaultHandler {
    * The current movie award to fill with data
    */
   private MovieAward mAward;
-  private MovieAwardCategorie mCategorie;
+  private MovieAwardCategory mCategorie;
   private Movie mMovie;
 
   public MovieAwardHandler(MovieAward movieAward) {
@@ -34,7 +57,7 @@ public class MovieAwardHandler extends DefaultHandler {
   }
 
   /**
-   * Handles the occurence of tag text.
+   * Handles the occurrence of tag text.
    */
   @Override
   public void characters(char ch[], int start, int length)
@@ -44,7 +67,7 @@ public class MovieAwardHandler extends DefaultHandler {
   }
 
   /**
-   * Handles the occurence of a start tag.
+   * Handles the occurrence of a start tag.
    */
   @Override
   public void startElement(String uri, String localName, String qName,
@@ -58,7 +81,7 @@ public class MovieAwardHandler extends DefaultHandler {
     mAttributes = attributes;
 
     if ("categorie".equals(qName)) {
-      mCategorie = new MovieAwardCategorie(attributes.getValue("id"));
+      mCategorie = new MovieAwardCategory(attributes.getValue("id"));
     } else if ("movie".equals(qName)) {
       mMovie = new Movie(attributes.getValue("id"));
 
@@ -89,7 +112,7 @@ public class MovieAwardHandler extends DefaultHandler {
   }
 
   /**
-   * Handles the occurence of an end tag.
+   * Handles the occurrence of an end tag.
    */
   @Override
   public void endElement(String uri, String localName, String qName)
