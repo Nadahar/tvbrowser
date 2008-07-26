@@ -17,8 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * CVS information:
- *  $RCSfile$
- *   $Source$
  *     $Date: 2007-10-02 10:19:08 +0200 (Di, 02 Okt 2007) $
  *   $Author: Bananeweizen $
  * $Revision: 3966 $
@@ -29,11 +27,6 @@ import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Version;
 import util.ui.Localizer;
-import au.com.bytecode.opencsv.CSVReader;
-
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class MovieAwardPlugin extends Plugin {
@@ -47,7 +40,6 @@ public class MovieAwardPlugin extends Plugin {
   private ArrayList<MovieAward> mMovieAwards = new ArrayList<MovieAward>();
 
   public MovieAwardPlugin() {
-    initDatabase();
   }
 
   @Override
@@ -68,9 +60,16 @@ public class MovieAwardPlugin extends Plugin {
   }
 
   private void initDatabase() {
-    mMovieAwards = new ArrayList<MovieAward>();
-    mMovieAwards.add(new MovieAward(getClass().getResourceAsStream("./data/oscars.xml")));
-    
+    // might be called multiple times
+    if (mMovieAwards == null) {
+      mMovieAwards = new ArrayList<MovieAward>();
+      mMovieAwards.add(new MovieAward(getClass().getResourceAsStream("./data/oscars.xml")));
+    }
+  }
+
+  @Override
+  public void onActivation() {
+    initDatabase();
   }
 
 }
