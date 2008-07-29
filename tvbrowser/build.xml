@@ -75,7 +75,6 @@
   <property name="win.dir" value="${deployment.dir}/win"/>
   <property name="linux.dir" value="${deployment.dir}/linux"/>
   <property name="x11.dir" value="${deployment.dir}/x11"/>
-  <property name="jsmooth.dir" value="${win.dir}/jsmooth"/>
   <property name="installer.dir" value="${win.dir}/installer"/>
   <property name="package-lists.dir" value="${txt.dir}/package-lists"/>
   <property name="public.dir" value="public"/>
@@ -225,6 +224,7 @@
       <fileset dir="${src.dir}" includes="**/*.properties"/>
       <fileset dir="${src.dir}" includes="**/*.theme"/>
       <fileset dir="${src.dir}" includes="**/*.csv"/>
+      <fileset dir="${src.dir}" includes="**/*.dll"/> <!-- needed by speechplugin -->
     </copy>
   </target>
 
@@ -314,6 +314,7 @@
     <unjar src="${lib.dir}/lucene-core-2.3.1.jar" dest="${unpacked.dir}/lucene-core-2.3.1.jar"/>
     <unjar src="${lib.dir}/jakarta-oro-2.0.8.jar" dest="${unpacked.dir}/jakarta-oro-2.0.8.jar" /> 
     <unjar src="${lib.dir}/opencsv-1.8.jar" dest="${unpacked.dir}/opencsv-1.8.jar" />
+    <unjar src="${lib.dir}/jsapi.jar" dest="${unpacked.dir}/jsapi.jar" />
 
     <!-- Pack the tvbrowser.jar -->
     <jar jarfile="${tvbrowser-default.runtime.dir}/tvbrowser.jar"
@@ -513,13 +514,13 @@
   </target>
 
   <!-- Creates the optional plugins -->
-  <target name="runtime-optional" depends="clean-default, make-default, runtime, test">
+  <target name="runtime-optional" depends="clean-default, make-default, runtime">
     <mkdir dir="${tvbrowser-optional.runtime.dir}"/>
     <mkdir dir="${tvbrowser-optional.runtime.dir}/plugins"/>
 
-    <jar jarfile="${tvbrowser-optional.runtime.dir}/plugins/WirSchauenPlugin.jar"
+    <jar jarfile="${tvbrowser-optional.runtime.dir}/plugins/CountryCodePlugin.jar"
          compress="false">
-      <fileset dir="${classes.dir}" includes="wirschauenplugin/**"/>
+      <fileset dir="${classes.dir}" includes="countrycodeplugin/**"/>
     </jar>
 
     <jar jarfile="${tvbrowser-optional.runtime.dir}/plugins/ImdbPlugin.jar"
@@ -532,6 +533,18 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="movieawardplugin/**"/>
     </jar>
+
+  	<jar jarfile="${tvbrowser-optional.runtime.dir}/plugins/SpeechPlugin.jar"
+         compress="false">
+      <fileset dir="${unpacked.dir}/jsapi.jar" includes="**/*"/>
+      <fileset dir="${classes.dir}" includes="speechplugin/**"/>
+    </jar>
+
+  	<jar jarfile="${tvbrowser-optional.runtime.dir}/plugins/WirSchauenPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="wirschauenplugin/**"/>
+    </jar>
+
   </target>
 
 
@@ -548,7 +561,7 @@
   </target>
 	
   <!-- Creates the runtime folder for the windows platform -->
-  <target name="runtime-win" depends="clean-win, make-win, runtime, test">
+  <target name="runtime-win" depends="clean-win, make-win, runtime">
     <echo message="deployment dir is ${deployment.dir}, win is ${win.dir}" />
     <mkdir dir="${tvbrowser-win.runtime.dir}"/>
     <copy todir="${tvbrowser-win.runtime.dir}">
