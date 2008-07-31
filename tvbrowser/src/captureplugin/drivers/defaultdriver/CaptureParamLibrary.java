@@ -174,7 +174,7 @@ public class CaptureParamLibrary extends ParamLibrary {
   public String getStringForKey(Program prg, String key) {
     
     if (key.equals("title")) {
-      return ""+mPrgTime.getTitle();
+      return mPrgTime.getTitle();
     } else if (key.equals("start_day")) {
       return ""+mStartTime.get(Calendar.DAY_OF_MONTH);
     } else if (key.equals("start_month")) {
@@ -265,10 +265,10 @@ public class CaptureParamLibrary extends ParamLibrary {
   }
   
   /**
-   * Concats two String-Arrays
+   * concatenates two String-Arrays
    * @param ar1 Array One 
    * @param ar2 Array Two
-   * @return concated Version of the two Arrays
+   * @return concatenated Version of the two Arrays
    */
   private String[] concat(String[] ar1, String[] ar2) {
     String[] ar3 = new String[ar1.length+ar2.length];

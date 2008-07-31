@@ -35,9 +35,9 @@ import devplugin.Program;
 import devplugin.ProgramFieldType;
 
 /**
- * The Default-ParamLibrary. If you want to add new Params or Functions for your
- * Plugin, extend this Plugin and overwrite the public Methods. For an example
- * see the Code in the CapturePlugin
+ * The default ParamLibrary. If you want to add new parameters or functions for your
+ * plugin, extend this class and overwrite the public methods. For an example
+ * see the code in the CapturePlugin
  * 
  * @author bodum
  */
@@ -45,16 +45,16 @@ public class ParamLibrary {
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ParamLibrary.class);
 
-  /** True if an Error occured */
+  /** True if an Error occurred */
   private boolean mError = false;
 
   /** The Error */
   private String mErrorString = new String();
 
   /**
-   * Has an Error occured ?
+   * Has an Error occurred ?
    * 
-   * @return true if an error occured
+   * @return true if an error occurred
    */
   public boolean hasErrors() {
     return mError;
@@ -63,14 +63,14 @@ public class ParamLibrary {
   /**
    * Set the Error-Boolean
    * 
-   * @param errors True, if an error occured
+   * @param errors True, if an error occurred
    */
   public void setErrors(boolean errors) {
     mError = errors;
   }
 
   /**
-   * Returns the Error, empty if none occured
+   * Returns the Error, empty if none occurred
    */
   public String getErrorString() {
     return mErrorString;
@@ -122,7 +122,7 @@ public class ParamLibrary {
   }
 
   /**
-   * Get the description for a specific Funtion
+   * Get the description for a specific Function
    * 
    * @return
    */
@@ -141,7 +141,7 @@ public class ParamLibrary {
    * 
    * @param prg Program to use
    * @param key Key to use
-   * @return Value of key in prg
+   * @return Value of key in program
    */
   public String getStringForKey(Program prg, String key) {
     if (key.equals("title")) {
@@ -241,7 +241,7 @@ public class ParamLibrary {
   }
 
   /**
-   * Creates a calendar instance containg the start time
+   * Creates a calendar instance containing the start time
    *
    * @param prg get Start-Time of this Item
    * @return Start-Time
@@ -255,7 +255,7 @@ public class ParamLibrary {
   }
 
   /**
-   * Creates a calendar instance containg the end time
+   * Creates a calendar instance containing the end time
    *
    * @param prg get End-Time of this Item
    * @return End-Time

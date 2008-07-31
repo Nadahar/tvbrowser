@@ -31,10 +31,10 @@ import devplugin.Program;
 
 
 /**
- *  The ParamParser analyses a String and calls a ParamLibrary for each
+ *  The ParamParser analyzes a String and calls a ParamLibrary for each
  *  Key/Function it finds.
  *  
- *  This System is easily extendable. For an example look into the CapturePlugin-Code
+ *  This System is easily extendible. For an example look into the CapturePlugin code
  *   
  *  @author bodum
  */
@@ -43,7 +43,7 @@ public class ParamParser {
   private ParamLibrary mLibrary;
   /** The ErrorString */
   private String mErrorString = "";
-  /** This is true, if an error occured*/
+  /** This is true, if an error occurred*/
   private boolean mErrors = false;
   
   /**
@@ -62,7 +62,7 @@ public class ParamParser {
   }
 
   /**
-   * Returns True if an error occured
+   * Returns True if an error occurred
    * @return True if Error
    */
   public boolean hasErrors() {
@@ -70,7 +70,7 @@ public class ParamParser {
   }
   
   /**
-   * The Error-String for Details aobut an Error
+   * The Error-String for Details about an Error
    * @return Error-String
    */
   public String getErrorString() {
@@ -94,13 +94,13 @@ public class ParamParser {
   }
   
   /**
-   * Analyse a String and return the parsed String.
+   * Analyze a String and return the parsed String.
    * 
-   * If an error occured, the Return-Value is null. 
+   * If an error occurred, the return value is null. 
    * 
    * @param command String to parse
    * @param prg Program to use while parsing
-   * @return parsed String, null if an error occured
+   * @return parsed String, null if an error occurred
    */
   public String analyse(String command, Program prg) {
     boolean escapemode = false;
@@ -155,10 +155,10 @@ public class ParamParser {
   }
   
   /**
-   * Analyse a command and calls the Functions in the ParamLibrary
+   * Analyze a command and calls the Functions in the ParamLibrary
    * 
    * @param prg Program to use
-   * @param newCommand Command to analyse
+   * @param newCommand Command to analyze
    * @param pos Pos of Command in String
    * @return null if error, otherwise result
    */
@@ -193,7 +193,7 @@ public class ParamParser {
   }
   
   /**
-   * This Function analalyses Functions
+   * This Function analyzes Functions
    * 
    * @param prg Program to use
    * @param function found Function
@@ -243,10 +243,10 @@ public class ParamParser {
   } 
   
   /**
-   * Splits a String into the seperate parameters
+   * Splits a String into the separate parameters
    * @param params String to split
    * @param strpos Pos in String (used for Error-Display)
-   * @return Splitted String
+   * @return split String
    */
   private String[] splitParams(String params, int strpos) {
     int infunction = 0;
