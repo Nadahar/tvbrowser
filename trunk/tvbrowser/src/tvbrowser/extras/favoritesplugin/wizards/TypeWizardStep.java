@@ -85,6 +85,11 @@ public class TypeWizardStep extends AbstractWizardStep {
 
   private String mMainQuestion;
   
+  /**
+   * preselected actor
+   */
+  private String mActor;
+  
   private FavoriteNode mParentNode;
 
   public TypeWizardStep() {
@@ -101,11 +106,24 @@ public class TypeWizardStep extends AbstractWizardStep {
     
     if (mProgram == null) {
       mMainQuestion = mLocalizer.msg("mainQuestion.create",
-          "Waehlen Sie eine Bedingung die die Lieblingssendung erfüllen muß:");
+          "Choose the condition that your favorite program needs to match:");
     } else {
       mMainQuestion = mLocalizer.msg("mainQuestion.edit",
-          "Warum moechten Sie diese Sendung als Lieblingssendung markieren?");
+          "Why is this program a favorite of yours?");
     }
+  }
+
+  public TypeWizardStep(Program program, String actor) {
+    this(program, (FavoriteNode) FavoriteTreeModel.getInstance().getRoot(), actor);
+  }
+  
+  public TypeWizardStep(Program program, FavoriteNode parent, String actor) {
+    mProgram = program;
+    mParentNode = parent;
+    mActor = actor;
+    
+    mMainQuestion = mLocalizer.msg("mainQuestion.create",
+          "Choose the condition that your favorite program needs to match:");
   }
 
   public String getTitle() {
@@ -114,7 +132,7 @@ public class TypeWizardStep extends AbstractWizardStep {
 
   public JPanel createContent(final WizardHandler handler) {
 
-    LinkButton expertBtn = new LinkButton(mLocalizer.msg("advancedView", "Switch to Classic View"), null);
+    LinkButton expertBtn = new LinkButton(mLocalizer.msg("advancedView", "Switch to expert view"), null);
 
     CellConstraints cc = new CellConstraints();
     PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("5dlu, pref, default:grow",
@@ -122,9 +140,9 @@ public class TypeWizardStep extends AbstractWizardStep {
 
     panelBuilder.add(new JLabel(mMainQuestion), cc.xyw(1, 1, 3));
     panelBuilder
-        .add(mTitleRb = new JRadioButton(mLocalizer.msg("option.title", "Ich mag diese Sendung:")), cc.xy(2, 3));
+        .add(mTitleRb = new JRadioButton(mLocalizer.msg("option.title", "I like this program:")), cc.xy(2, 3));
     panelBuilder.add(mProgramNameTf = new JTextField(), cc.xy(3, 3));
-    panelBuilder.add(mTopicRb = new JRadioButton(mLocalizer.msg("option.topic", "Mich interessiert das Thema:")), cc.xy(2, 5));
+    panelBuilder.add(mTopicRb = new JRadioButton(mLocalizer.msg("option.topic", "I like this subject:")), cc.xy(2, 5));
     panelBuilder.add(mTopicTf = new JTextField(), cc.xy(3, 5));
 
     panelBuilder.add(mActorsRb = new JRadioButton(mLocalizer.msg("option.actors","I like these actors:")), cc.xy(2,7));
@@ -212,6 +230,12 @@ public class TypeWizardStep extends AbstractWizardStep {
         handleFocusEvent();
       }
     });
+    
+    if (mActor != null) {
+      mActorsRb.setSelected(true);
+      updateTextfields();
+      mActorsCb.setSelectedItem(mActor);
+    }
     
     return mContent;
   }

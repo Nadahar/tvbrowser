@@ -78,6 +78,7 @@ import tvbrowser.core.contextmenu.SeparatorMenuItem;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.ui.DontShowAgainMessageBox;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.browserlauncher.Launch;
@@ -278,6 +279,15 @@ public class ProgramInfoDialog {
                 }
               }
               
+              popupMenu.addSeparator();
+              item = new JMenuItem(mLocalizer.msg("addFavorite","Create favorite..."));
+              item.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                  addFavorite(desc);
+                }
+              });
+              popupMenu.add(item);
+              
               popupMenu.show(e.getComponent(),e.getX(),e.getY());
             }
             else {
@@ -343,7 +353,11 @@ public class ProgramInfoDialog {
         settings.setNrDays(-1);
         SearchHelper.search(mInfoEP, settings, null, true);
       }
-      
+
+      private void addFavorite(String desc) {
+        FavoritesPlugin.getInstance().showCreateActorFavoriteWizard(mProgram, desc);
+      }
+
       private String getLink(int pos, JEditorPane html) {
         Document doc = html.getDocument();
         if (doc instanceof HTMLDocument) {
