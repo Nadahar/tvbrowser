@@ -707,9 +707,16 @@ public class FavoritesPlugin {
   public void showCreateFavoriteWizard(Program program) {
     showCreateFavoriteWizard(program, null);
   }
-  
-  public void showCreateFavoriteWizard(Program program, String path) {
 
+  public void showCreateFavoriteWizard(Program program, String path) {
+    showCreateFavoriteWizardInternal(program, null);
+  }
+  
+  public void showCreateActorFavoriteWizard(Program program, String actor) {
+    showCreateFavoriteWizardInternal(program, actor);
+  }
+  
+  private void showCreateFavoriteWizardInternal(Program program, String actor) {
     Component parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
     Favorite favorite;
     if (isUsingExpertMode()) {
@@ -727,7 +734,13 @@ public class FavoritesPlugin {
       }
 
     } else {
-      WizardHandler handler = new WizardHandler(parent, new TypeWizardStep(program));
+      WizardHandler handler; 
+      if (actor == null) {
+        handler = new WizardHandler(parent, new TypeWizardStep(program));
+      }
+      else {
+        handler = new WizardHandler(parent, new TypeWizardStep(program, actor));
+      }
       favorite = (tvbrowser.extras.favoritesplugin.core.Favorite)handler.show();
     }
 

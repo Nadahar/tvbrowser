@@ -48,7 +48,7 @@ public class ActorsFavorite extends Favorite {
 
   public static final String TYPE_ID = "actors";
 
-  public static final String[] SEPERATOR_ARR = new String[] { ",", ";" };
+  public static final String[] SEPARATOR_ARR = new String[] { ",", ";" };
 
   private String mActors;
 
@@ -67,7 +67,7 @@ public class ActorsFavorite extends Favorite {
 
   private SearchFormSettings createSearchFormSettings(String actors) {
     mActors = actors;
-    SearchFormSettings formSettings = new SearchFormSettings(""); // No Seach-String, the Searcher is created directly
+    SearchFormSettings formSettings = new SearchFormSettings(""); // No search string, the Searcher is created directly
     formSettings.setSearchIn(SearchFormSettings.SEARCH_IN_USER_DEFINED);
     formSettings.setSearcherType(PluginManager.SEARCHER_TYPE_BOOLEAN);
     formSettings.setUserDefinedFieldTypes(new ProgramFieldType[] { ProgramFieldType.ACTOR_LIST_TYPE,
