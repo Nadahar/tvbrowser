@@ -422,7 +422,7 @@ public class ProgramTextCreator {
             type = ProgramFieldType
                 .getTypeForId(Integer.parseInt((String) id, 10));
           } catch (Exception e) {
-            // Emtpy Catch
+            // Empty Catch
           }
         }
         
@@ -497,10 +497,7 @@ public class ProgramTextCreator {
   
             buffer.append("\"><b>");
             buffer
-                .append(type.getLocalizedName()/*
-                                                 * mLocalizer.msg("attributes",
-                                                 * "Program attributes")
-                                                 */);
+                .append(type.getLocalizedName());
             buffer
                 .append("</b></td><td valign=\"middle\" style=\"font-size:5\">");
   

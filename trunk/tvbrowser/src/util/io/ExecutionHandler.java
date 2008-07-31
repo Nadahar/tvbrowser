@@ -44,7 +44,7 @@ public class ExecutionHandler {
   /**
    * Creates an instance of this class.
    * 
-   * @param parameter The parameter to parse to the application.
+   * @param parameter The parameter to pass to the application.
    * @param programPath The path to the application.
    */
   public ExecutionHandler(String parameter, String programPath) {
@@ -196,14 +196,14 @@ public class ExecutionHandler {
   /**
    * Gets the started process.
    * 
-   * @return The started proccess or <code>null</code> if the process wasn't started.
+   * @return The started process or <code>null</code> if the process wasn't started.
    */
   public Process getProcess() {
     return mProcess;
   }
   
   /**
-   * The exit vaule of the process.
+   * The exit value of the process.
    * 
    * @return The exit value of the process.
    * @throws IllegalThreadStateException Thrown if the process wasn't started or is not finished.

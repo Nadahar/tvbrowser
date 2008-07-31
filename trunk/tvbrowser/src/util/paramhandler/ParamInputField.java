@@ -67,8 +67,7 @@ public class ParamInputField extends JPanel {
    * @param text Text to show in the InputField
    */
   public ParamInputField(String text) {
-    mParamLibrary = new ParamLibrary();
-    createGui(text, false);
+    this(text, false);
   }
   
   /**
@@ -77,28 +76,29 @@ public class ParamInputField extends JPanel {
    * @param singleLine set True, if Input-Field should be a Single-Line
    */
   public ParamInputField(String text, boolean singleLine) {
-    mParamLibrary = new ParamLibrary();
-    createGui(text, singleLine);
+    this(new ParamLibrary(), text, singleLine);
   }  
   
   /**
    * Create the InputField
-   * @param library Library to use in the Check/Help Diaogs
+   * @param library Library to use in the Check/Help Dialogs
    * @param text Text to show in the InputField
    */
   public ParamInputField(ParamLibrary library, String text) {
-    mParamLibrary = library;
-    createGui(text, false);
+    this(library, text, false);
   }
   
   /**
    * Create the InputField
-   * @param library Library to use in the Check/Help Diaogs
+   * @param library Library to use in the Check/Help Dialogs
    * @param text Text to show in the InputField
    * @param singleLine set True, if Input-Field should be a Single-Line
    */
   public ParamInputField(ParamLibrary library, String text, boolean singleLine) {
     mParamLibrary = library;
+    if (mParamLibrary == null) {
+      mParamLibrary = new ParamLibrary();
+    }
     createGui(text, singleLine);
   }  
   /**
