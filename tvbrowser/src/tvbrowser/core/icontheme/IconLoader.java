@@ -28,11 +28,12 @@ package tvbrowser.core.icontheme;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import javax.swing.ImageIcon;
 
 import tvbrowser.core.Settings;
-import util.ui.ImageUtilities;
 import util.misc.SoftReferenceCache;
+import util.ui.ImageUtilities;
 import devplugin.Plugin;
 import devplugin.ThemeIcon;
 
@@ -75,7 +76,8 @@ public class IconLoader {
    * It creates the IconThemes
    */
   private IconLoader() {
-    mDefaultIconDir = new File(Settings.getDefaultSettings().getProperty("icontheme", "icons/tango"));
+    mDefaultIconDir = new File(Settings.getDefaultSettings().getProperty(
+        "icontheme", "icons/tango.zip"));
 
     if (!mDefaultIconDir.exists()) {
       // If the default directory does not exist, try to find another icon theme in the icontheme directory

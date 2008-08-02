@@ -47,7 +47,7 @@ import util.ui.ImageUtilities;
  */
 public class ZipIconTheme extends IconTheme {
   /** All Entries in the Zip-File */
-  private HashMap<String, ZipEntry> mZipFileEnties;
+  private HashMap<String, ZipEntry> mZipFileEntries;
 
   /**
    * Create the Zip Icon Theme
@@ -63,7 +63,7 @@ public class ZipIconTheme extends IconTheme {
    * Load all Entries in the Zipfile
    */
   private void loadEntries() {
-    mZipFileEnties = new HashMap<String, ZipEntry>();
+    mZipFileEntries = new HashMap<String, ZipEntry>();
     try {
       // Open the ZIP file
       JarFile zf = new JarFile(getBase());
@@ -71,11 +71,11 @@ public class ZipIconTheme extends IconTheme {
       // Enumerate each entry
       for (Enumeration<JarEntry> entries = zf.entries(); entries.hasMoreElements();) {
         ZipEntry entry = entries.nextElement();
-        mZipFileEnties.put(entry.getName(), entry);
+        mZipFileEntries.put(entry.getName(), entry);
       }
     } catch (IOException e) {
       // If something goes wrong, reset Theme
-      mZipFileEnties = new HashMap<String, ZipEntry>();
+      mZipFileEntries = new HashMap<String, ZipEntry>();
     }
 
   }
@@ -87,7 +87,7 @@ public class ZipIconTheme extends IconTheme {
    * @return InputStream of specific Entry
    */
   protected InputStream getInputStream(String entry) {
-    ZipEntry zipEntry = mZipFileEnties.get(entry);
+    ZipEntry zipEntry = mZipFileEntries.get(entry);
     try {
       return new JarFile(getBase()).getInputStream(zipEntry);
     } catch (IOException e) {
@@ -103,7 +103,7 @@ public class ZipIconTheme extends IconTheme {
    * @return True, if the Entry exists
    */
   protected boolean entryExists(String entry) {
-    return mZipFileEnties.containsKey(entry);
+    return mZipFileEntries.containsKey(entry);
   }
 
   /**
@@ -114,7 +114,7 @@ public class ZipIconTheme extends IconTheme {
    */
   protected ImageIcon getImageFromTheme(String image) {
     try {
-      ZipEntry zipEntry = mZipFileEnties.get(image);
+      ZipEntry zipEntry = mZipFileEntries.get(image);
       InputStream in = new JarFile(getBase()).getInputStream(zipEntry);
 
       //  Create the byte array to hold the data

@@ -498,9 +498,12 @@
     <!-- Icon-Themes -->
     <mkdir dir="${tvbrowser-default.runtime.dir}/icons"/>
 
-    <copy todir="${tvbrowser-default.runtime.dir}/icons">
-	    <fileset dir="images/themes" includes="**/*"/>
-    </copy>
+  	<zip destfile="${tvbrowser-default.runtime.dir}/icons/Tango.zip">
+  		<zipfileset dir="images/themes/tango"></zipfileset>
+  	</zip>
+  	<zip destfile="${tvbrowser-default.runtime.dir}/icons/CrystalClear.zip">
+  		<zipfileset dir="images/themes/CrystalClear"></zipfileset>
+  	</zip>
 
     <!-- Extract the libraries for the tvbrowser.jar into the temp.dir -->
     <mkdir dir="${unpacked.dir}/commons-net-1.4.1.jar"/>
@@ -538,6 +541,11 @@
          compress="false">
       <fileset dir="${unpacked.dir}/jsapi.jar" includes="**/*"/>
       <fileset dir="${classes.dir}" includes="speechplugin/**"/>
+    </jar>
+
+  	<jar jarfile="${tvbrowser-optional.runtime.dir}/plugins/TeleTextPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="teletextplugin/**"/>
     </jar>
 
   	<jar jarfile="${tvbrowser-optional.runtime.dir}/plugins/WirSchauenPlugin.jar"
