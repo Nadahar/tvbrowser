@@ -31,9 +31,9 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
 
-import devplugin.Channel;
-import tvbrowser.core.DuplicateChannelNameCounter;
 import tvbrowser.core.ChannelList;
+import tvbrowser.core.DuplicateChannelNameCounter;
+import devplugin.Channel;
 
 /**
  * A ListCellRenderer for Channel-Lists
@@ -72,11 +72,15 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
 
   /**
    * Create Renderer
-   *
-   * @param channelIconsVisible show Channel Icon?
-   * @param textVisible show Channel Name?
-   * @param defaultValues show Default Channel Name?
-   * @param showCountry show Country Information if channel name is a dublicate?
+   * 
+   * @param channelIconsVisible
+   *          show Channel Icon?
+   * @param textVisible
+   *          show Channel Name?
+   * @param defaultValues
+   *          show Default Channel Name?
+   * @param showCountry
+   *          show Country Information if channel name is a duplicate?
    * @since 2.6
    */
   public ChannelListCellRenderer(boolean channelIconsVisible, boolean textVisible, boolean defaultValues, boolean showCountry, Channel[] channels) {

@@ -36,15 +36,15 @@ import javax.swing.JToolTip;
 import javax.swing.SwingUtilities;
 
 import tvbrowser.core.Settings;
-import devplugin.Channel;
 import util.misc.SoftReferenceCache;
+import devplugin.Channel;
 
 /**
  * A Label for Channels. It shows the Icon and/or the Channel-Name
  */
 public class ChannelLabel extends JLabel {
 
-  /** A Icon-Cache for Perfomance-Reasons*/
+  /** A Icon-Cache for Performance-Reasons */
   static private SoftReferenceCache<Channel,Icon> ICONCACHE = new SoftReferenceCache<Channel,Icon>();
   
   /**
@@ -100,12 +100,16 @@ public class ChannelLabel extends JLabel {
 
   /**
    * Creates the ChanelLabel
-   *
-   * @param channelIconsVisible Should the Icon be visible
-   * @param textIsVisible Should Text be visible ?
-   * @param showDefaultValues Show the default channel icon and name.
-   * @param showCountry Show infomation about the country
-   *
+   * 
+   * @param channelIconsVisible
+   *          Should the Icon be visible
+   * @param textIsVisible
+   *          Should Text be visible ?
+   * @param showDefaultValues
+   *          Show the default channel icon and name.
+   * @param showCountry
+   *          Show information about the country
+   * 
    * @since 2.6
    */
   public ChannelLabel(boolean channelIconsVisible, boolean textIsVisible, boolean showDefaultValues, boolean showCountry) {
