@@ -470,11 +470,18 @@ public interface PluginManager {
   public Date getCurrentDate();
 
   /**
-   * Gets all ProgramRatingIfs of all plugins. You can get all available ratings for                  ~
+   * Gets all ProgramRatingIfs of all plugins. You can get all available ratings for
    * one program.
    *
    * @return all ProgramRatingIfs of all plugins
    * @since 2.7
    */
   public ProgramRatingIf[] getAllProgramRatingIfs();
+
+  /**
+   * adds a file name to the list of files to be deleted on next TV-Browser start
+   * @param path full file path
+   * @since 3.0
+   */
+  public void deleteFileOnNextStart(String path);
 }

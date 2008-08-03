@@ -946,7 +946,7 @@ public class PluginManagerImpl implements PluginManager {
   }
 
   /**
-   * Gets all ProgramRatingIfs of all plugins. You can get all available ratings for                  ~
+   * Gets all ProgramRatingIfs of all plugins. You can get all available ratings for
    * one program.
    *
    * @return all ProgramRatingIfs of all plugins
@@ -962,5 +962,9 @@ public class PluginManagerImpl implements PluginManager {
     }
 
     return ratingArray.toArray(new ProgramRatingIf[ratingArray.size()]);
+  }
+
+  public void deleteFileOnNextStart(String path) {
+    Settings.propDeleteFilesAtStart.addItem(path);
   }
 }

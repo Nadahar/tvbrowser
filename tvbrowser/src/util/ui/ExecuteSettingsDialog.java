@@ -40,6 +40,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import util.paramhandler.ParamInputField;
+import util.paramhandler.ParamLibrary;
 
 /**
  * The Dialog for the Settings of the executable
@@ -56,6 +57,8 @@ public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
   private JTextField mFile;
   
   private boolean mOkPressed = false;
+
+  private ParamLibrary mParamLibrary;
   
   /**
    * Create the Dialog
@@ -65,9 +68,21 @@ public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
    * @param execParam parameters for the File
    */
   public ExecuteSettingsDialog(JDialog parent, String execFile, String execParam) {
+    this(parent, execFile, execParam, null);
+  }
+
+  /**
+   * Create the Dialog
+   * 
+   * @param parent Parent
+   * @param execFile File to execute
+   * @param execParam parameters for the File
+   */
+  public ExecuteSettingsDialog(JDialog parent, String execFile, String execParam, ParamLibrary library) {
     super(parent, true);
     mExecFile = execFile;
     mExecParam =execParam;
+    mParamLibrary = library;
     createGui();
   }
 
@@ -79,9 +94,21 @@ public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
    * @param execParam parameters for the File
    */
   public ExecuteSettingsDialog(JFrame parent, String execFile, String execParam) {
+    this(parent, execFile, execParam, null);
+  }
+
+  /**
+   * Create the Dialog
+   * 
+   * @param parent Parent
+   * @param execFile File to execute
+   * @param execParam parameters for the File
+   */
+  public ExecuteSettingsDialog(JFrame parent, String execFile, String execParam, ParamLibrary library) {
     super(parent, true);
     mExecFile = execFile;
     mExecParam =execParam;
+    mParamLibrary = library;
     createGui();
   }
 
@@ -117,7 +144,10 @@ public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
     
     filePanel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("executionApp","Application")));
     
-    mParam = new ParamInputField(mExecParam, true);
+    if (mParamLibrary == null) {
+      mParamLibrary = new ParamLibrary();
+    }
+    mParam = new ParamInputField(mParamLibrary, mExecParam, true);
     
     mParam.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("parameters", "Parameters")));
     

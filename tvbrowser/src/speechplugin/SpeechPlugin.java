@@ -1,6 +1,6 @@
 /*
- * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * SpeechPlugin for TV-Browser
+ * Copyright Michael Keppler
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,28 +16,33 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * CVS information:
- *     $Date: 2008-04-05 21:36:41 +0200 (Sa, 05 Apr 2008) $
- *   $Author: Bananeweizen $
- * $Revision: 4469 $
+ * VCS information:
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package speechplugin;
 
 import java.awt.event.ActionEvent;
-import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import javax.speech.Central;
-import javax.speech.EngineException;
-import javax.speech.EngineList;
-import javax.speech.EngineStateError;
-import javax.speech.synthesis.Synthesizer;
-import javax.speech.synthesis.SynthesizerModeDesc;
-import javax.speech.synthesis.Voice;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JOptionPane;
 
+import speechplugin.engine.AbstractSpeechEngine;
+import speechplugin.engine.CommandLineSpeechEngine;
+import speechplugin.engine.JSAPISpeechEngine;
+import speechplugin.engine.MacSpeechEngine;
+import speechplugin.engine.SAPISpeechEngine;
+import util.paramhandler.ParamParser;
+import util.program.AbstractPluginProgramFormating;
+import util.program.LocalPluginProgramFormating;
 import util.ui.Localizer;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
@@ -45,6 +50,7 @@ import devplugin.ContextMenuSeparatorAction;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
+import devplugin.ProgramFieldType;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.Version;
@@ -60,9 +66,6 @@ public class SpeechPlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer
       .getLocalizerFor(SpeechPlugin.class);
 
-  private static final java.util.logging.Logger mLog = java.util.logging.Logger
-  .getLogger(SpeechPlugin.class.getName());
-
   private static final String TARGET_SPEAK_TITLE = "speakTitle";
 
   private static final String TARGET_SPEAK_DESCRIPTION = "speakDescription";
@@ -73,12 +76,24 @@ public class SpeechPlugin extends Plugin {
 
   private static SpeechPlugin mInstance;
 
-  private Synthesizer mSynthesizer;
-
   private SpeechPluginSettings mSettings;
 
-  private Thread mThread;
-  
+  private AbstractSpeechEngine mEngine;
+
+  private String mVoice = null;
+
+  private LocalPluginProgramFormating[] mLocalFormatings;
+
+  private AbstractPluginProgramFormating[] mConfigs;
+
+  private static LocalPluginProgramFormating FORMATTING_TITLE = new LocalPluginProgramFormating(
+      mLocalizer.msg("format.title", "SpeechPlugin - Title"),
+      ProgramFieldType.TITLE_TYPE.getLocalizedName(), "{title}", "UTF-8");
+  private static LocalPluginProgramFormating FORMATTING_DESCRIPTION = new LocalPluginProgramFormating(
+      mLocalizer.msg("format.description", "SpeechPlugin - Short description"),
+      ProgramFieldType.SHORT_DESCRIPTION_TYPE.getLocalizedName(),
+      "{short_info}", "UTF-8");
+
   public PluginInfo getInfo() {
     return new PluginInfo(SpeechPlugin.class, mLocalizer.msg("name", "Speech"),
         mLocalizer.msg("description", "Speaks program text"), "Michael Keppler");
@@ -89,6 +104,8 @@ public class SpeechPlugin extends Plugin {
    */
   public SpeechPlugin() {
     mInstance = this;
+    createDefaultConfig();
+    createDefaultAvailable();
   }
 
   /**
@@ -116,149 +133,12 @@ public class SpeechPlugin extends Plugin {
     return mSettings.storeSettings();
   }
 
-  /**
-   * Returns a "no synthesizer" message, and asks the user to check if the
-   * "speech.properties" file is at <code>user.home</code> or
-   * <code>java.home/lib</code>.
-   * 
-   * @return a no synthesizer message
-   */
-  static private String noSynthesizerMessage() {
-    String message = "No synthesizer created.  This may be the result of any\n"
-        + "number of problems.  It's typically due to a missing\n"
-        + "\"speech.properties\" file that should be at either of\n"
-        + "these locations: \n\n";
-    message += "user.home    : " + System.getProperty("user.home") + "\n";
-    message += "java.home/lib: " + System.getProperty("java.home")
-        + File.separator + "lib\n\n"
-        + "Another cause of this problem might be corrupt or missing\n"
-        + "voice jar files in the freetts lib directory.  This problem\n"
-        + "also sometimes arises when the freetts.jar file is corrupt\n"
-        + "or missing.  Sorry about that.  Please check for these\n"
-        + "various conditions and then try again.\n";
-    return message;
-  }
-
-  /**
-   * Example of how to list all the known voices for a specific mode using just
-   * JSAPI. FreeTTS maps the domain name to the JSAPI mode name. The currently
-   * supported domains are "general," which means general purpose synthesis for
-   * tasks such as reading e-mail, and "time" which means a domain that's only
-   * good for speaking the time of day.
-   */
-  public static List<String> getAvailableVoices(String modeName) {
-    ArrayList<String> result = new ArrayList<String>();
-    
-    // get all synthesizers without any restrictions (locale, domain, voice etc.)
-    SynthesizerModeDesc unspecifiedSynthesizer = new SynthesizerModeDesc();
-    EngineList engineList = Central.availableSynthesizers(unspecifiedSynthesizer);
-    
-    // get all voices
-    for (int i = 0; i < engineList.size(); i++) {
-      SynthesizerModeDesc desc = (SynthesizerModeDesc) engineList.get(i);
-      if (desc.getModeName().equals(modeName)) {
-        Voice[] voices = desc.getVoices();
-        for (Voice voice : voices) {
-          result.add(voice.getName());
-        }
-      }
-    }
-    return result;
-  }
-  
-  private void startSynthesizer(String voiceName) {
-    if (mSynthesizer != null) {
-      return;
-    }
-    try {
-      Voice selectedVoice = null;
-      SynthesizerModeDesc unspecifiedSynthesizer = new SynthesizerModeDesc();
-      EngineList engineList = Central.availableSynthesizers(unspecifiedSynthesizer);
-      for (int i = 0; i < engineList.size(); i++) {
-        SynthesizerModeDesc desc = (SynthesizerModeDesc) engineList.get(i);
-        Voice[] voices = desc.getVoices();
-        for (Voice voice : voices) {
-          if (voice.getName().equals(voiceName)) {
-            mSynthesizer = Central.createSynthesizer(desc);
-            selectedVoice = voice;
-            break;
-          }
-        }
-      }
-
-      /*
-       * Just an informational message to guide users that didn't set up their
-       * speech.properties file.
-       */
-      if (mSynthesizer == null) {
-        mLog.severe(noSynthesizerMessage());
-        return;
-      }
-
-      // get synthesizer in ready state
-      mSynthesizer.allocate();
-      mSynthesizer.resume();
-
-      if (selectedVoice == null) {
-        System.err.println("Synthesizer does not have a voice named "
-            + voiceName + ".");
-      }
-      mSynthesizer.getSynthesizerProperties().setVoice(selectedVoice);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-  
-  private void deallocateSynthesizer() {
-    if (mSynthesizer == null) {
-      return;
-    }
-    stopSpeech();
-    try {
-      mSynthesizer.deallocate();
-    } catch (EngineException e) {
-      e.printStackTrace();
-    } catch (EngineStateError e) {
-      e.printStackTrace();
-    }
-  }
-  
-  private void speak(final String text) {
-    if (text == null) {
-      return;
-    }
-    
-    // if synthesizer is still running, stop it first
-    if (mThread != null) {
-      mThread.interrupt();
-    }
-    final String voice = mSettings.getVoice();
-    if (voice == null) {
-      return;
-    }
-    
-    // run synthesizer in new thread to avoid GUI blocking
-    mThread = new Thread("Speech") {
-      @Override
-      public void run() {
-        startSynthesizer(voice);
-        mSynthesizer.speakPlainText(text, null);
-        try {
-          mSynthesizer.waitEngineState(Synthesizer.QUEUE_EMPTY);
-        } catch (IllegalArgumentException e) {
-          e.printStackTrace();
-        } catch (InterruptedException e) {
-          mSynthesizer.cancel();
-        }
-        mThread = null;
-      }
-    };
-    mThread.start();
-  }
-
   @Override
   public void onDeactivation() {
-    deallocateSynthesizer();
+    if (mEngine != null) {
+      mEngine.stopSpeaking();
+      mEngine.shutdown();
+    }
   }
 
   @Override
@@ -283,9 +163,10 @@ public class SpeechPlugin extends Plugin {
   @Override
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
     return new ProgramReceiveTarget[] {
-        new ProgramReceiveTarget(this, mLocalizer.msg("speakTitle", "Speak title"), TARGET_SPEAK_TITLE),
-        new ProgramReceiveTarget(this, mLocalizer.msg("speakDescription", "Speak description"), TARGET_SPEAK_DESCRIPTION)
-    };
+        new ProgramReceiveTarget(this, mLocalizer.msg("speakTitle",
+            "Speak title"), TARGET_SPEAK_TITLE),
+        new ProgramReceiveTarget(this, mLocalizer.msg("speakDescription",
+            "Speak description"), TARGET_SPEAK_DESCRIPTION) };
   }
 
   @Override
@@ -294,44 +175,251 @@ public class SpeechPlugin extends Plugin {
   }
 
   @Override
-  public ActionMenu getButtonAction() {
-    // TODO Auto-generated method stub
-    return super.getButtonAction();
-  }
-
-  @Override
   public ActionMenu getContextMenuActions(final Program program) {
-    Action contextMenuAction = new ContextMenuAction(mLocalizer.msg("contextMenu", "Speak"));
     ArrayList<Action> actions = new ArrayList<Action>();
-    actions.add(new AbstractAction(mLocalizer.msg("speakTitle", "Speak title")) {
-      public void actionPerformed(ActionEvent e) {
-        speak(program.getTitle());
-      }});
 
-    final String description = program.getDescription();
-    if (description != null && description.length() > 0) {
-    actions.add(new AbstractAction(mLocalizer.msg("speakDescription", "Speak description")) {
-      public void actionPerformed(ActionEvent e) {
-        speak(description);
-      }});
+    ParamParser parser = new ParamParser();
+
+    // add all selected formattings
+    AbstractPluginProgramFormating[] formattings = SpeechPlugin.getInstance()
+        .getSelectedPluginProgramFormattings();
+    for (AbstractPluginProgramFormating formatting : formattings) {
+      final String content = parser.analyse(formatting.getContentValue(),
+          program);
+      if (content != null && content.length() > 0) {
+        actions.add(new AbstractAction(formatting.getTitleValue()) {
+          public void actionPerformed(ActionEvent e) {
+            speak(content);
+          }
+        });
+      }
     }
-    
-    if (mThread != null) {
+
+    // if the engine supports state awareness, we can also stop speaking
+    if (mEngine != null && mEngine.isSpeaking()) {
       actions.add(ContextMenuSeparatorAction.getInstance());
       actions.add(new AbstractAction(mLocalizer.msg("stop", "Stop speech")) {
         public void actionPerformed(ActionEvent e) {
-          stopSpeech();
-        }});
+          stopSpeaking();
+        }
+      });
     }
+    
+    // no cascaded menu for single action
+    if (actions.size() == 1) {
+      Action action = actions.get(0);
+      action.putValue(Action.NAME, mLocalizer.msg("contextMenu", "Speak"));
+      return new ActionMenu(action);
+    }
+
+    // build cascaded menu
     Action[] result = new Action[actions.size()];
-    actions.toArray(result );
+    actions.toArray(result);
+    Action contextMenuAction = new ContextMenuAction(mLocalizer.msg(
+        "contextMenu", "Speak"));
     return new ActionMenu(contextMenuAction, result);
   }
 
-  protected void stopSpeech() {
-    if (mThread != null) {
-      mThread.interrupt();
+  protected List<String> getAvailableVoices() {
+    if (mEngine != null) {
+      List<String> result = mEngine.getVoices();
+      if (result != null) {
+        return result;
+      }
+    }
+    return new ArrayList<String>();
+  }
+
+  protected void speak(String text) {
+    startEngine();
+    if (mEngine != null) {
+      // switch voice after changed settings
+      String voice = mSettings.getVoice();
+      if (mVoice == null || (mVoice != voice && voice != null)) {
+        mVoice = voice;
+        mEngine.setVoice(mVoice);
+      }
+      mEngine.speak(text);
     }
   }
 
+  private void startEngine() {
+    startEngine(mSettings.getEngine());
+  }
+
+  void startEngine(int engine) {
+    AbstractSpeechEngine oldEngine = mEngine;
+    if (engine == SpeechPluginSettings.ENGINE_JAVA
+        && !(mEngine instanceof JSAPISpeechEngine)) {
+      mEngine = new JSAPISpeechEngine();
+    } else if (engine == SpeechPluginSettings.ENGINE_MICROSOFT
+        && !(mEngine instanceof SAPISpeechEngine)) {
+      mEngine = new SAPISpeechEngine();
+    } else if (engine == SpeechPluginSettings.ENGINE_MAC
+        && !(mEngine instanceof MacSpeechEngine)) {
+      mEngine = new MacSpeechEngine();
+    } else if (engine == SpeechPluginSettings.ENGINE_OTHER
+        && !(mEngine instanceof CommandLineSpeechEngine)) {
+      String executable = mSettings.getOtherEngineExecutable();
+      String parameters = mSettings.getOtherEngineParameters();
+      if (executable != null && executable.length() > 0) {
+        mEngine = new CommandLineSpeechEngine(executable, parameters);
+      }
+    }
+    if (mEngine == null) {
+      notConfigured();
+    } else {
+      // switch engine after changed settings
+      if (oldEngine != mEngine) {
+        if (oldEngine != null) {
+          oldEngine.shutdown();
+        }
+        mEngine.initialize();
+        mVoice = null;
+      }
+    }
+  }
+
+  private void notConfigured() {
+    if (JOptionPane
+        .showConfirmDialog(
+            null,
+            mLocalizer
+                .msg(
+                    "configure.message",
+                    "The speech plugin is not yet configured correctly.\nDo you want to open the settings dialog?"),
+            mLocalizer.msg("configure.title", "Not configured"),
+            JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+      getPluginManager().showSettings(this);
+    }
+  }
+
+  protected void stopSpeaking() {
+    if (mEngine != null) {
+      mEngine.stopSpeaking();
+    }
+  }
+
+  protected static LocalPluginProgramFormating getDefaultFormatting() {
+    return new LocalPluginProgramFormating(mLocalizer.msg("defaultFormatName",
+        "SpeechPlugin - Default"), ProgramFieldType.TITLE_TYPE
+        .getLocalizedName(), "{title}", "UTF-8");
+  }
+
+  public void writeData(ObjectOutputStream out) throws IOException {
+    out.writeInt(1); // write version
+
+    if (mConfigs != null) {
+      ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
+
+      for (AbstractPluginProgramFormating config : mConfigs)
+        if (config != null)
+          list.add(config);
+
+      out.writeInt(list.size());
+
+      for (AbstractPluginProgramFormating config : list)
+        config.writeData(out);
+    } else
+      out.writeInt(0);
+
+    if (mLocalFormatings != null) {
+      ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
+
+      for (AbstractPluginProgramFormating config : mLocalFormatings)
+        if (config != null)
+          list.add(config);
+
+      out.writeInt(list.size());
+
+      for (AbstractPluginProgramFormating config : list)
+        config.writeData(out);
+    }
+
+  }
+
+  public void readData(ObjectInputStream in) throws IOException,
+      ClassNotFoundException {
+    try {
+      in.readInt();
+
+      int n = in.readInt();
+
+      ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
+
+      for (int i = 0; i < n; i++) {
+        AbstractPluginProgramFormating value = AbstractPluginProgramFormating
+            .readData(in);
+
+        if (value != null) {
+          if (value.equals(FORMATTING_TITLE))
+            FORMATTING_TITLE = (LocalPluginProgramFormating) value;
+
+          list.add(value);
+        }
+      }
+
+      mConfigs = list.toArray(new AbstractPluginProgramFormating[list.size()]);
+
+      mLocalFormatings = new LocalPluginProgramFormating[in.readInt()];
+
+      for (int i = 0; i < mLocalFormatings.length; i++) {
+        LocalPluginProgramFormating value = (LocalPluginProgramFormating) LocalPluginProgramFormating
+            .readData(in);
+        LocalPluginProgramFormating loadedInstance = getInstanceOfFormattingFromSelected(value);
+
+        mLocalFormatings[i] = loadedInstance == null ? value : loadedInstance;
+      }
+    } catch (Exception e) {
+      // Empty
+    }
+  }
+
+  private LocalPluginProgramFormating getInstanceOfFormattingFromSelected(
+      LocalPluginProgramFormating value) {
+    for (AbstractPluginProgramFormating config : mConfigs)
+      if (config.equals(value))
+        return (LocalPluginProgramFormating) config;
+
+    return null;
+  }
+
+  protected static LocalPluginProgramFormating getDefaultFormating() {
+    return FORMATTING_TITLE;
+  }
+
+  protected LocalPluginProgramFormating[] getAvailableLocalPluginProgramFormattings() {
+    return mLocalFormatings;
+  }
+
+  protected void setAvailableLocalPluginProgramFormatings(
+      LocalPluginProgramFormating[] value) {
+    if (value == null || value.length < 1)
+      createDefaultAvailable();
+    else
+      mLocalFormatings = value;
+  }
+
+  protected AbstractPluginProgramFormating[] getSelectedPluginProgramFormattings() {
+    return mConfigs;
+  }
+
+  protected void setSelectedPluginProgramFormatings(
+      AbstractPluginProgramFormating[] value) {
+    if (value == null || value.length < 1)
+      createDefaultConfig();
+    else
+      mConfigs = value;
+  }
+
+  private void createDefaultConfig() {
+    mConfigs = new AbstractPluginProgramFormating[1];
+    mConfigs[0] = FORMATTING_TITLE;
+  }
+
+  private void createDefaultAvailable() {
+    mLocalFormatings = new LocalPluginProgramFormating[2];
+    mLocalFormatings[0] = FORMATTING_TITLE;
+    mLocalFormatings[1] = FORMATTING_DESCRIPTION;
+  }
 }
