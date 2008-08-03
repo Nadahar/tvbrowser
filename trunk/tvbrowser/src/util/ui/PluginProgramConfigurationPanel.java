@@ -51,13 +51,13 @@ public class PluginProgramConfigurationPanel extends JPanel implements ActionLis
   /**
    * Creates an instance of this settings panel.
    * 
-   * @param slectedValues The selected formating for showing in program context menu.
-   * @param availableLocalFormatings The available formatings provided by the plugin itself.
-   * @param defaultLocalFormating The default formating used by the plugin.
+   * @param selectedValues The selected formatting for showing in program context menu.
+   * @param availableLocalFormatings The available formattings provided by the plugin itself.
+   * @param defaultLocalFormating The default formatting used by the plugin.
    * @param showTitleSetting Show the title setting part of this dialog.
    * @param showEncodingSetting Show the encoding setting part of this dialog.
    */
-  public PluginProgramConfigurationPanel(AbstractPluginProgramFormating[] slectedValues, LocalPluginProgramFormating[] availableLocalFormatings, LocalPluginProgramFormating defaultLocalFormating, boolean showTitleSetting, boolean showEncodingSetting) {
+  public PluginProgramConfigurationPanel(AbstractPluginProgramFormating[] selectedValues, LocalPluginProgramFormating[] availableLocalFormatings, LocalPluginProgramFormating defaultLocalFormating, boolean showTitleSetting, boolean showEncodingSetting) {
     CellConstraints cc = new CellConstraints();
     PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default:grow,5dlu","pref,fill:default:grow,5dlu,pref,10dlu,pref"), this);
     
@@ -107,7 +107,7 @@ public class PluginProgramConfigurationPanel extends JPanel implements ActionLis
     buttonPanel.add(mEdit, cc.xy(3,1));
     buttonPanel.add(mDelete, cc.xy(5,1));    
     
-    mOrder = new OrderChooser(slectedValues == null ? allArr : slectedValues, allArr);
+    mOrder = new OrderChooser(selectedValues == null ? allArr : selectedValues, allArr);
     mOrder.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     mOrder.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
