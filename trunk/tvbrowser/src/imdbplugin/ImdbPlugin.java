@@ -1,38 +1,39 @@
 package imdbplugin;
 
-import devplugin.Plugin;
-import devplugin.PluginInfo;
-import devplugin.Program;
-import devplugin.Version;
-import devplugin.ActionMenu;
-import devplugin.SettingsTab;
-import devplugin.Date;
-import devplugin.Channel;
-import devplugin.ProgramRatingIf;
-import util.misc.SoftReferenceCache;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-
+import java.awt.Window;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Properties;
-import java.util.Iterator;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.awt.event.ActionEvent;
-import java.awt.Window;
-import java.text.DecimalFormat;
-import javax.swing.Icon;
+import java.util.Iterator;
+import java.util.Properties;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JOptionPane;
+import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.SwingUtilities;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
+import util.misc.SoftReferenceCache;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import devplugin.ActionMenu;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.Program;
+import devplugin.ProgramRatingIf;
+import devplugin.SettingsTab;
+import devplugin.Version;
 
 public class ImdbPlugin extends Plugin {
   /**
@@ -51,11 +52,6 @@ public class ImdbPlugin extends Plugin {
   private Properties mProperties;
   private boolean mStartFinished = false;
   private ArrayList<Channel> mExcludedChannels = new ArrayList<Channel>();
-
-  public ImdbPlugin() {
-    mImdbDatabase = new ImdbDatabase(new File(Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome(), "imdbDatabase"));
-    mImdbDatabase.init();
-  }
 
   @Override
   public PluginInfo getInfo() {
@@ -144,6 +140,9 @@ public class ImdbPlugin extends Plugin {
 
   @Override
   public void handleTvBrowserStartFinished() {
+    mImdbDatabase = new ImdbDatabase(new File(Plugin.getPluginManager()
+        .getTvBrowserSettings().getTvBrowserUserHome(), "imdbDatabase"));
+    mImdbDatabase.init();
     if (!mProperties.getProperty("dontAskCreateDatabase", "false").equals("true") && !mImdbDatabase.isInitialised()) {
       SwingUtilities.invokeLater(new Runnable(){
         public void run() {
