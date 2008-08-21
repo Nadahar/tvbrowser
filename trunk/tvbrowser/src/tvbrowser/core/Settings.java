@@ -707,8 +707,9 @@ public class Settings {
       "timebutton.evening", 20 * 60);
 
   public static final ChoiceProperty propTableLayout = new ChoiceProperty(
-      mProp, "table.layout", "compactTimeBlock", new String[] {
-          "timeSynchronous", "compact", "realSynchronous" , "realCompact", "timeBlock", "compactTimeBlock"});
+      mProp, "table.layout", "optimizedCompactTimeBlock", new String[] {
+          "timeSynchronous", "compact", "realSynchronous" , "realCompact",
+          "timeBlock", "compactTimeBlock", "optimizedCompactTimeBlock"});
 
   public static final ChoiceProperty propTableBackgroundStyle = new ChoiceProperty(
       mProp, "tablebackground.style", "timeBlock", new String[] { "singleColor",
@@ -1131,7 +1132,7 @@ public class Settings {
       mProp, "network.checkTimeout", 10000);
 
   public static final IntProperty propPictureType = new IntProperty(
-      mProp, "pictures.type", ProgramPanelSettings.SHOW_PICTURES_IN_TIME_RANGE);
+      mProp, "pictures.type", ProgramPanelSettings.SHOW_PICTURES_FOR_DURATION);
   
   public static final StringArrayProperty propPicturePluginIds = new StringArrayProperty(
       mProp, "pictures.pluginIds", new String[0]);
@@ -1143,7 +1144,7 @@ public class Settings {
       mProp, "pictures.endTime", 23 * 60);
 
   public static final IntProperty propPictureDuration = new IntProperty(
-      mProp, "pictures.duration", 10);
+      mProp, "pictures.duration", 90);
 
   public static final BooleanProperty propIsPictureShowingDescription = new BooleanProperty(
       mProp, "pictures.showDescription", true);
@@ -1384,6 +1385,9 @@ public class Settings {
 
   public static final BooleanProperty propAutoDataDownloadEnabled = new BooleanProperty(
       mProp, "autoDataDownloadEnabled", false);
+  
+  public static final ShortProperty propAutoDownloadWaitingTime = new ShortProperty(
+      mProp, "autoDownloadWaitingTime", (short)0);
   
   /**
    * Sets the window position and size for the given window with the values of the given id.

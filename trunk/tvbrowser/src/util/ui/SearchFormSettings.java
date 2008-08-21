@@ -25,17 +25,17 @@
  */
 package util.ui;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+import tvbrowser.core.search.regexsearch.RegexSearcher;
+import util.exc.TvBrowserException;
+import devplugin.Channel;
 import devplugin.Plugin;
 import devplugin.PluginManager;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramSearcher;
-import devplugin.Channel;
-import tvbrowser.core.search.regexsearch.RegexSearcher;
-import util.exc.TvBrowserException;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 /**
  * Settings for the SearchForm
@@ -94,6 +94,11 @@ public class SearchFormSettings {
   private int mNrDays;
   /** Search in this channels */
   private Channel[] mChannels = null;
+  
+  /**
+   * cached program searcher due to performance reasons
+   */
+  private ProgramSearcher mSearcher;
 
   /**
    * Creates a new SearchFormSettings instance.
@@ -199,20 +204,25 @@ public class SearchFormSettings {
    */
   public void setSearchText(String searchText) {
     mSearchText = searchText;
+    mSearcher = null;
   }
-  
-  
+
   /**
-   * Creates a searcher from this settings
+   * Creates a searcher from these settings
    * 
    * @return A searcher that satisfies these settings.
-   * @throws TvBrowserException If creating the searcher failed.
+   * @throws TvBrowserException
+   *           If creating the searcher failed.
    */
   public ProgramSearcher createSearcher()
     throws TvBrowserException
   {
-    return Plugin.getPluginManager().createProgramSearcher(mSearcherType,
+    if (mSearcher == null) {
+      mSearcher = Plugin.getPluginManager().createProgramSearcher(
+          mSearcherType,
         mSearchText, mCaseSensitive);
+    }
+    return mSearcher;
   }
 
   /**
@@ -288,6 +298,7 @@ public class SearchFormSettings {
    */
   public void setUserDefinedFieldTypes(ProgramFieldType[] typeArr) {
     mUserDefinedFieldTypes = typeArr;
+    mSearcher = null;
   }
 
 
@@ -310,6 +321,7 @@ public class SearchFormSettings {
    */
   public void setSearchIn(int searchIn) {
     mSearchIn = searchIn;
+    mSearcher = null;
   }
 
   
@@ -334,6 +346,7 @@ public class SearchFormSettings {
    */
   public void setSearcherType(int searcherType) {
     mSearcherType = searcherType;
+    mSearcher = null;
   }
 
   
@@ -359,6 +372,7 @@ public class SearchFormSettings {
    */
   public void setMatch(int match) {
     setSearcherType(match);
+    mSearcher = null;
   }
 
 
@@ -379,6 +393,7 @@ public class SearchFormSettings {
    */
   public void setCaseSensitive(boolean caseSensitive) {
     mCaseSensitive = caseSensitive;
+    mSearcher = null;
   }
 
   /**
@@ -401,6 +416,7 @@ public class SearchFormSettings {
    */
   public void setNrDays(int nr) {
     mNrDays = nr;
+    mSearcher = null;
   }
 
   /**
@@ -416,6 +432,7 @@ public class SearchFormSettings {
 
   public void setChannels(Channel[] channel) {
     mChannels = channel;
+    mSearcher = null;
   }
 
 }

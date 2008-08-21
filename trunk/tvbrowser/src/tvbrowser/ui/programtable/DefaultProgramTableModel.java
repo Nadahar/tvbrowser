@@ -120,10 +120,10 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       localTime+=60;
     }
     int timeDiff = channelTime - localTime;  // e.g -240min
-
+    
     int startTimeForChannelLocale = mTodayEarliestTime+timeDiff;
-    int endTimeForChannelLocale = (mTomorrowLatestTime+(59*60))/3600+timeDiff+1440;
-
+    int endTimeForChannelLocale = mTomorrowLatestTime+59+timeDiff+1440;
+    
     int fromDate;
      if (startTimeForChannelLocale>=0) {
       fromDate = startTimeForChannelLocale/24/60;

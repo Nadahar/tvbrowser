@@ -1190,9 +1190,16 @@ public class MainFrame extends JFrame implements DateListener {
           }
         }
       }
-      // update filtered view if the "on air" condition changed for any program
-      if (onAirChanged && !getProgramFilter().equals(FilterManagerImpl.getInstance().getDefaultFilter())) {
-        setProgramFilter(getProgramFilter());
+      
+      if (onAirChanged) {
+        if(Settings.propTableLayout.getString().equals("optimizedCompactTimeBlock")) {
+          mProgramTableScrollPane.getProgramTable().updateLayout();
+        }
+        
+        // update filtered view if the "on air" condition changed for any program
+        if(!getProgramFilter().equals(FilterManagerImpl.getInstance().getDefaultFilter())) {
+          setProgramFilter(getProgramFilter());
+        }
       }
     }catch(Exception e) {}
     

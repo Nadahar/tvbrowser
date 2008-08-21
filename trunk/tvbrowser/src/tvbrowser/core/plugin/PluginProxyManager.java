@@ -387,7 +387,7 @@ public class PluginProxyManager {
    * @throws TvBrowserException If activating failed
    */
   public void activatePlugin(PluginProxy plugin) throws TvBrowserException {
-    activatePlugin(plugin, false);
+    activatePlugin(plugin, true);
   }
 
   /**

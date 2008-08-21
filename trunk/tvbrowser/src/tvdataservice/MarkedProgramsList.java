@@ -242,7 +242,8 @@ public class MarkedProgramsList {
 
         boolean titleWasChangedToMuch = false;
         
-        if(testProg != null && programInList.getTitle().toLowerCase().compareTo(testProg.getTitle().toLowerCase()) != 0) {
+        if(testProg != null && testProg.getTitle() != null && programInList.getTitle() != null
+            && programInList.getTitle().toLowerCase().compareTo(testProg.getTitle().toLowerCase()) != 0) {
           String[] titleParts = programInList.getTitle().toLowerCase().replaceAll("\\p{Punct}"," ").replaceAll("\\s+"," ").split(" ");
           String compareTitle = testProg.getTitle().toLowerCase();
           

@@ -261,6 +261,7 @@ public class ProgramList extends JList implements ChangeListener,
   public void addMouseListeners(final ContextMenuIf caller) {
     addMouseListener(new MouseAdapter() {
       private Thread mLeftSingleClickThread;
+      private boolean mPerformingSingleClick = false;
       
       public void mousePressed(MouseEvent e) {
         if (e.isPopupTrigger()) {
@@ -281,13 +282,18 @@ public class ProgramList extends JList implements ChangeListener,
           mLeftSingleClickThread = new Thread() {
             public void run() {
               try {
+                mPerformingSingleClick = false;
                 Thread.sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
+                mPerformingSingleClick = true;
                 
                 int inx = locationToIndex(point);
-                Program prog = (Program) ProgramList.this.getModel()
-                    .getElementAt(inx);
-
-                mng.handleProgramSingleClick(prog, caller);
+                if (inx >= 0) {
+                  Program prog = (Program) ProgramList.this.getModel()
+                      .getElementAt(inx);
+  
+                  mng.handleProgramSingleClick(prog, caller);
+                }
+                mPerformingSingleClick = false;
               } catch (InterruptedException e) {
                 // ignore
               }              
@@ -297,22 +303,28 @@ public class ProgramList extends JList implements ChangeListener,
           mLeftSingleClickThread.start();
         }
         else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2) && e.getModifiersEx() == 0) {
-          if(mLeftSingleClickThread != null && mLeftSingleClickThread.isAlive()) {
+          if(!mPerformingSingleClick && mLeftSingleClickThread != null && mLeftSingleClickThread.isAlive()) {
             mLeftSingleClickThread.interrupt();
           }
           
-          int inx = locationToIndex(e.getPoint());
-          Program prog = (Program) ProgramList.this.getModel()
-              .getElementAt(inx);
-
-          mng.handleProgramDoubleClick(prog, caller);
+          if(!mPerformingSingleClick) {
+            int inx = locationToIndex(e.getPoint());
+            if (inx >= 0) {
+              Program prog = (Program) ProgramList.this.getModel()
+                  .getElementAt(inx);
+    
+              mng.handleProgramDoubleClick(prog, caller);
+            }
+          }
         }
         else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
           int inx = locationToIndex(e.getPoint());
-          Program prog = (Program) ProgramList.this.getModel()
-              .getElementAt(inx);
-
-          mng.handleProgramMiddleClick(prog, caller);
+          if (inx >= 0) {
+            Program prog = (Program) ProgramList.this.getModel()
+                .getElementAt(inx);
+  
+            mng.handleProgramMiddleClick(prog, caller);
+          }
         }
       }
     });

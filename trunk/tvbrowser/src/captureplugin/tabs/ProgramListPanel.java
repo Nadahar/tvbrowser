@@ -117,6 +117,7 @@ public class ProgramListPanel extends JPanel {
 
         mProgramTable.addMouseListener(new MouseAdapter() {
             private Thread mLeftSingleClickThread;
+            private boolean mPerformingSingleClick = false;
           
             public void mousePressed(MouseEvent evt) {
               if (evt.isPopupTrigger()) {
@@ -140,13 +141,16 @@ public class ProgramListPanel extends JPanel {
                   mLeftSingleClickThread = new Thread() {
                     public void run() {
                       try {
+                        mPerformingSingleClick = false;
                         sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
+                        mPerformingSingleClick = true;
 
                         int row = mProgramTable.rowAtPoint(e.getPoint());
                         mProgramTable.changeSelection(row, 0, false, false);
                         Program p = (Program) mProgramTableModel.getValueAt(row, 1);
 
                         devplugin.Plugin.getPluginManager().handleProgramSingleClick(p, CapturePlugin.getInstance());
+                        mPerformingSingleClick = false;
                       } catch (InterruptedException e) { // ignore
                       }
                     }
@@ -156,15 +160,17 @@ public class ProgramListPanel extends JPanel {
                   mLeftSingleClickThread.start();
                 }
                 else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2) && e.getModifiersEx() == 0) {
-                    if(mLeftSingleClickThread != null && mLeftSingleClickThread.isAlive()) {
+                    if(!mPerformingSingleClick && mLeftSingleClickThread != null && mLeftSingleClickThread.isAlive()) {
                       mLeftSingleClickThread.interrupt();
                     }
                     
-                    int row = mProgramTable.rowAtPoint(e.getPoint());
-                    mProgramTable.changeSelection(row, 0, false, false);
-                    Program p = (Program) mProgramTableModel.getValueAt(row, 1);
-
-                    devplugin.Plugin.getPluginManager().handleProgramDoubleClick(p, CapturePlugin.getInstance());
+                    if(!mPerformingSingleClick) {
+                      int row = mProgramTable.rowAtPoint(e.getPoint());
+                      mProgramTable.changeSelection(row, 0, false, false);
+                      Program p = (Program) mProgramTableModel.getValueAt(row, 1);
+  
+                      devplugin.Plugin.getPluginManager().handleProgramDoubleClick(p, CapturePlugin.getInstance());
+                    }
                 }
                 else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
                     int row = mProgramTable.rowAtPoint(e.getPoint());

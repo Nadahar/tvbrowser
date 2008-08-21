@@ -131,6 +131,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
   private Properties mSettings;
 
   private Thread mLeftClickThread;
+  private boolean mPerformingSingleClick;
 
   /**
    * Creates the Dialog
@@ -146,7 +147,8 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     mSettings = settings;
     mTimes = Plugin.getPluginManager().getTvBrowserSettings().getTimeButtonTimes();
     mModel = new ListTableModel();
-
+    mPerformingSingleClick = false;
+    
     generateList(new Date(), getCurrentTime());
     createGUI();
     addChangeTimer();
@@ -608,9 +610,12 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
         @Override
         public void run() {
           try {
+            mPerformingSingleClick = false;
             sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
+            mPerformingSingleClick = true;
 
             Plugin.getPluginManager().handleProgramSingleClick(prg, mPlugin);
+            mPerformingSingleClick = false;
           } catch (InterruptedException e) { // ignore
           }
         }
@@ -620,10 +625,13 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
       mLeftClickThread.start();
     }
     else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2) && e.getModifiersEx() == 0) {
-      if(mLeftClickThread != null && mLeftClickThread.isAlive()) {
+      if(!mPerformingSingleClick && mLeftClickThread != null && mLeftClickThread.isAlive()) {
         mLeftClickThread.interrupt();
       }
-      devplugin.Plugin.getPluginManager().handleProgramDoubleClick(prg, mPlugin);
+      
+      if(!mPerformingSingleClick) {
+        devplugin.Plugin.getPluginManager().handleProgramDoubleClick(prg, mPlugin);
+      }
     }
     else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
       devplugin.Plugin.getPluginManager().handleProgramMiddleClick(prg, mPlugin);

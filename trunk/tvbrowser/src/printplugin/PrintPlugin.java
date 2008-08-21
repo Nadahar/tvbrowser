@@ -39,6 +39,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import javax.swing.AbstractAction;
@@ -64,6 +65,7 @@ import printplugin.settings.Scheme;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
+import devplugin.ContextMenuSeparatorAction;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
@@ -76,7 +78,7 @@ import devplugin.Version;
 
 
 public class PrintPlugin extends Plugin {
-  private static final Version mVersion = new Version(2,70);
+  private static final Version mVersion = new Version(2,71);
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer
@@ -145,31 +147,33 @@ public class PrintPlugin extends Plugin {
     menu.setSmallIcon(createImageIcon("devices", "printer", 16));
     menu.setText(mLocalizer.msg("printProgram","Print"));
     
-    Action[] action = new AbstractAction[2];
+    ArrayList<AbstractAction> actions = new ArrayList<AbstractAction>();
     
     if (getRootNode().contains(program)) {
-      action[0] = new AbstractAction() {
+      AbstractAction action = new AbstractAction() {
         public void actionPerformed(ActionEvent e) {
           getRootNode().removeProgram(program);
           getRootNode().update();
           program.unmark(thisPlugin);
         }
       };
-      action[0].putValue(Action.NAME,mLocalizer.msg("removeFromPrinterQueue","Aus der Druckerwarteschlange loeschen"));
-      action[0].putValue(Action.SMALL_ICON, createImageIcon("devices", "printer", 16));
+      action.putValue(Action.NAME,mLocalizer.msg("removeFromPrinterQueue","Aus der Druckerwarteschlange loeschen"));
+      action.putValue(Action.SMALL_ICON, createImageIcon("devices", "printer", 16));
+      actions.add(action);
     }
     else {
-      action[0] = new AbstractAction() {
+      AbstractAction action = new AbstractAction() {
         public void actionPerformed(ActionEvent event) {
           getRootNode().addProgram(program);
           getRootNode().update();
           program.mark(thisPlugin);
         }
       };
-      action[0].putValue(Action.NAME,mLocalizer.msg("addToPrinterQueue","Zur Druckerwarteschlange hinzufuegen"));
-      action[0].putValue(Action.SMALL_ICON, createImageIcon("devices", "printer", 16));
+      action.putValue(Action.NAME,mLocalizer.msg("addToPrinterQueue","Zur Druckerwarteschlange hinzufuegen"));
+      action.putValue(Action.SMALL_ICON, createImageIcon("devices", "printer", 16));
+      actions.add(action);
     }
-    action[1] = new AbstractAction() {
+    AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {
         Window w = UiUtilities.getLastModalChildOf(getParentFrame());
         if(w instanceof JDialog) {
@@ -179,10 +183,29 @@ public class PrintPlugin extends Plugin {
         }
       }
     };
-    action[1].putValue(Action.NAME, mLocalizer.msg("printProgramInfo","Print program info"));
-    action[1].putValue(Action.SMALL_ICON, createImageIcon("devices", "printer", 16));
+    action.putValue(Action.NAME, mLocalizer.msg("printProgramInfo","Print program info"));
+    action.putValue(Action.SMALL_ICON, createImageIcon("devices", "printer", 16));
+    actions.add(action);
     
-    return new ActionMenu(menu,action);
+    if (canPrintQueue()) {
+      actions.add(ContextMenuSeparatorAction.getInstance());
+      actions.add(new AbstractAction(mLocalizer
+          .msg("printQueue", "Print queue"), createImageIcon("devices",
+          "printer", 16)) {
+        public void actionPerformed(ActionEvent e) {
+          printQueue();
+        }
+      });
+    }
+    
+    AbstractAction[] actionArray = new AbstractAction[actions.size()];
+    actions.toArray(actionArray);
+    
+    return new ActionMenu(menu,actionArray);
+  }
+
+  public boolean canPrintQueue() {
+    return !getRootNode().isEmpty();
   }
 
   public ActionMenu getButtonAction() {
@@ -202,8 +225,7 @@ public class PrintPlugin extends Plugin {
             storeDayProgramSchemes(dlg.getSchemes());
           }
           else if (result == MainPrintDialog.PRINT_QUEUE) {
-            SettingsDialog dlg = showPrintDialog(new PrintFromQueueDialogContent(getRootNode(), getParentFrame()), loadQueueSchemes());
-            storeQueueSchemes(dlg.getSchemes());
+            printQueue();
           }
         }
       }
@@ -429,5 +451,10 @@ public class PrintPlugin extends Plugin {
     mSettings.setProperty("markPriority",String.valueOf(priority));
     
     handleTvBrowserStartFinished();
+  }
+
+  private void printQueue() {
+    SettingsDialog dlg = showPrintDialog(new PrintFromQueueDialogContent(getRootNode(), getParentFrame()), loadQueueSchemes());
+    storeQueueSchemes(dlg.getSchemes());
   }
 }

@@ -38,8 +38,6 @@ import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -49,7 +47,7 @@ import util.ui.TimeFormatter;
 import devplugin.SettingsItem;
 
 
-public class TimeChooserPanel extends JPanel implements ChangeListener, AncestorListener, MouseListener {
+public class TimeChooserPanel extends JPanel implements ChangeListener, MouseListener {
     
     /** The localizer for this class. */
     public static final util.ui.Localizer mLocalizer
@@ -68,8 +66,6 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, Ancestor
       
       mGridPn = new JPanel(new GridFlowLayout(5,5,GridFlowLayout.TOP, GridFlowLayout.CENTER));
       add(mGridPn,BorderLayout.CENTER);
-
-      addAncestorListener(this);
       
       createContent();
       
@@ -92,10 +88,10 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, Ancestor
 
     public void updateButtons() {
       createContent();
-      repaint();
+      mGridPn.updateUI();
     }
     
-    private void createContent() {
+    private void createContent() {try {
       mGridPn.removeAll();
       
       TimeFormatter formatter = new TimeFormatter();
@@ -114,28 +110,7 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, Ancestor
           }
         });
         btn.addMouseListener(this);
-      }
-    }
-
-    /* (non-Javadoc)
-     * @see javax.swing.event.AncestorListener#ancestorAdded(javax.swing.event.AncestorEvent)
-     */
-    public void ancestorAdded(AncestorEvent event) {
-        Settings.propTimeButtons.addChangeListener(this);        
-    }
-
-    /* (non-Javadoc)
-     * @see javax.swing.event.AncestorListener#ancestorMoved(javax.swing.event.AncestorEvent)
-     */
-    public void ancestorMoved(AncestorEvent event) {
-        // TODO Auto-generated method stub
-    }
-
-    /* (non-Javadoc)
-     * @see javax.swing.event.AncestorListener#ancestorRemoved(javax.swing.event.AncestorEvent)
-     */
-    public void ancestorRemoved(AncestorEvent event) {
-        Settings.propTimeButtons.removeChangeListener(this);        
+      }}catch(Throwable t  ){t.printStackTrace();}
     }
     
     public void mousePressed(MouseEvent e) {

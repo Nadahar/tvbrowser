@@ -191,10 +191,16 @@ public class ProgramInfo {
   }
 
   protected synchronized void showProgramInformation(Program program, boolean showSettings) {
+    if(program.equals(Plugin.getPluginManager().getExampleProgram())) {
+      return;
+    }
+    
     if(mInitThread != null && mInitThread.isAlive()) {
       try {
         mInitThread.join();
-      }catch(InterruptedException e) {}
+      }catch(InterruptedException e) {
+        e.printStackTrace();
+      }
     }
     
     if (mIsShowing || ProgramInfoDialog.isShowing()) {

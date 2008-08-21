@@ -97,7 +97,7 @@ public class MainPrintDialog extends JDialog implements ActionListener, WindowCl
     mOkBtn.addActionListener(this);
     mCancelBtn.addActionListener(this);
 
-    boolean queueHasElements = !PrintPlugin.getInstance().getRootNode().isEmpty();
+    boolean queueHasElements = PrintPlugin.getInstance().canPrintQueue();
     mPrintQueueRb.setEnabled(queueHasElements);
 
     if (queueHasElements) {

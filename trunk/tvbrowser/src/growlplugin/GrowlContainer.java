@@ -1,6 +1,6 @@
 /*
  * GrowlPlugin by Bodo Tasche
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -36,9 +36,9 @@ import devplugin.Program;
 
 /**
  * This is the Container-Class for Growl
- * 
+ *
  * It uses AppleScript to call Growl.
- * 
+ *
  * @author bodum
  *
  */
@@ -48,17 +48,17 @@ public class GrowlContainer {
 
   /** Parser for Text */
   private ParamParser mParser;
-  
+
   /**
    * Create the Growl-Container
    */
   public GrowlContainer() {
     mParser = new ParamParser();
   }
-  
+
   /**
    * Notifies Growl
-   * 
+   *
    * @param settings Settings to use
    * @param prg Program to use
    */
@@ -66,24 +66,15 @@ public class GrowlContainer {
     String title = mParser.analyse(settings.getProperty("title"), prg);
     String desc = mParser.analyse(settings.getProperty("description"), prg);
     AppleScriptRunner runner = new AppleScriptRunner();
+    String script = "tell application \"GrowlHelperApp\"\n"+
+    "   set the allNotificationsList to {\"TVBrowserSendProgram\"}\n"+
+    "   register as application \"TV-Browser\" all notifications allNotificationsList default notifications allNotificationsList icon of application \"TV-Browser\"\n"+
+    "   notify with name \"TVBrowserSendProgram\" title \""+runner.formatTextAsParam(title)+"\" description \""+runner.formatTextAsParam(desc) + "\" application name \"TV-Browser\"\n"+
+    "end tell";
     try {
-      runner.executeScript("tell application \"GrowlHelperApp\"\n" +
-          "\tset the allNotificationsList to {\"TVBrowserSendProgram\"}\n" +
-          "\t\n" +
-          "\tregister as application ¬\n" +
-          "\t\t\"TV-Browser\" all notifications allNotificationsList ¬\n" +
-          "\t\tdefault notifications allNotificationsList ¬\n" +
-          "\t\ticon of application \"TV-Browser\"\n" +
-          "\t\n" +
-          "\t--\tSend a Notification...\n" +
-          "\tnotify with name ¬\n" +
-          "\t\t\"TVBrowserSendProgram\" title ¬\n" +
-          "\t\t\""+ runner.formatTextAsParam(title) +"\" description ¬\n" +
-          "\t\t\""+ runner.formatTextAsParam(desc) + "\" application name \"TV-Browser\"\n" +
-          "\t\n" +
-          "end tell");
+      runner.executeScript(script);
     } catch (IOException e) {
-      mLog.log(Level.SEVERE, "Can't execute AppleScript", e);
+      mLog.log(Level.SEVERE, "Can't execute AppleScript\n\n" + script, e);
     }
 
   }

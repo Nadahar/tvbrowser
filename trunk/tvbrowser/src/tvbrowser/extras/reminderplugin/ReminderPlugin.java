@@ -558,9 +558,13 @@ public class ReminderPlugin {
    * or -1 if the program was not in the list.
    */
   public int removeProgram(Program prog) {
-    ReminderListItem item = mReminderList.getReminderItem(prog);
+    ReminderListItem item = null;
     
-    mReminderList.remove(prog);
+    synchronized(mReminderList) {
+      item = mReminderList.getReminderItem(prog);
+      
+      mReminderList.remove(prog);
+    }
     
     if(item != null) {
       return item.getMinutes();
@@ -575,7 +579,9 @@ public class ReminderPlugin {
    * @param progArr The programs to remove.
    */
   public void removePrograms(Program[] progArr) {
-    mReminderList.remove(progArr);
+    synchronized(mReminderList) {
+      mReminderList.remove(progArr);
+    }
   }
 
   /**
@@ -597,7 +603,11 @@ public class ReminderPlugin {
    * @since 2.7
    */
   public int getReminderMinutesForProgram(Program prog) {
-    ReminderListItem item = mReminderList.getReminderItem(prog);
+    ReminderListItem item = null;
+    
+    synchronized(mReminderList) {
+      item = mReminderList.getReminderItem(prog);
+    }
     
     if(item != null) {
       return item.getMinutes();
@@ -703,7 +713,7 @@ public class ReminderPlugin {
       }
     };
 
-    action.putValue(Action.NAME, mLocalizer.msg("buttonText", "Reminder list"));
+    action.putValue(Action.NAME, mLocalizer.msg("pluginName", "Reminder"));
     action.putValue(Action.SMALL_ICON, IconLoader.getInstance()
         .getIconFromTheme("apps", "appointment", 16));
     action.putValue(Plugin.BIG_ICON, IconLoader.getInstance().getIconFromTheme("apps", "appointment", 22));
@@ -893,6 +903,10 @@ public class ReminderPlugin {
     int remainingMinutes = progMinutesAfterMidnight - IOUtilities.getMinutesAfterMidnight();
     if ((remainingMinutes < 0) || (Date.getCurrentDate().compareTo(program.getDate()) < 0)) {
       remainingMinutes += 24 * 60;
+      
+      if(Date.getCurrentDate().addDays(1).compareTo(program.getDate()) < 0) {
+        remainingMinutes += 24 * 60;
+      }
     }
     return remainingMinutes;
   }

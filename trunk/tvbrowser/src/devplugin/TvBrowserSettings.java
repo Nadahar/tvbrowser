@@ -114,4 +114,12 @@ public interface TvBrowserSettings {
    * @since 2.6
    */
   public boolean isUsingExtraSpaceForMarkIcons();
+  
+  /**
+   * Gets the time to wait for data automatically update.
+   * 
+   * @return The time to wait before performing data update in seconds.
+   * @since 2.7.1
+   */
+  public short getAutoDownloadWaitingTime();
 }

@@ -135,7 +135,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
         mLocalizer.msg("realSynchronous", "Real time synchronous"),
         mLocalizer.msg("compact", "Compact"),mLocalizer.msg("realCompact", "Real compact"),
         mLocalizer.msg("timeBlock", "Time block"),
-        mLocalizer.msg("compactTimeBlock", "Compact time block")};
+        mLocalizer.msg("compactTimeBlock", "Compact time block"),
+        mLocalizer.msg("optimizedCompactTimeBlock", "Optimized compact time block")};
     mProgramArrangementCB = new JComboBox(arrangementArr);
     if (Settings.propTableLayout.getString().equals("compact")) {
       mProgramArrangementCB.setSelectedIndex(2);
@@ -147,6 +148,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
       mProgramArrangementCB.setSelectedIndex(4);
     } else if (Settings.propTableLayout.getString().equals("compactTimeBlock")) {
       mProgramArrangementCB.setSelectedIndex(5);
+    } else if (Settings.propTableLayout.getString().equals("optimizedCompactTimeBlock")) {
+      mProgramArrangementCB.setSelectedIndex(6);
     } else {
       mProgramArrangementCB.setSelectedIndex(1);
     }
@@ -385,7 +388,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   
   private void resetBackgroundStyle() {
     if(Settings.propTableLayout.getString().equals("timeBlock") ||
-        Settings.propTableLayout.getString().equals("compactTimeBlock")) {
+        Settings.propTableLayout.getString().equals("compactTimeBlock") ||
+        Settings.propTableLayout.getString().equals("optimizedCompactTimeBlock")) {
       Settings.propTableBackgroundStyle.setString("timeBlock");
       
       Settings.propTimeBlockBackground1.setString("imgs/columns_evening.jpg");
@@ -418,10 +422,12 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     } else if (mProgramArrangementCB.getSelectedIndex() == 4) {
       setBackgroundStyleForTimeBlockLayout();
       Settings.propTableLayout.setString("timeBlock");
-      
     } else if (mProgramArrangementCB.getSelectedIndex() == 5) {
       setBackgroundStyleForTimeBlockLayout();
       Settings.propTableLayout.setString("compactTimeBlock");
+    } else if (mProgramArrangementCB.getSelectedIndex() == 6) {
+      setBackgroundStyleForTimeBlockLayout();
+      Settings.propTableLayout.setString("optimizedCompactTimeBlock");
     } else {
       resetBackgroundStyle();
       Settings.propTableLayout.setString("realSynchronous");

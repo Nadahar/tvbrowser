@@ -820,8 +820,8 @@ public class TvDataBase {
 
       if ((startTime + first.getLength()) != endTime) {
         int length = endTime - startTime;
-        // Only allow a maximum length of 12 hours
-        if (length < 12 * 60) {
+        // Only allow a maximum length of 15 hours
+        if (length < 15 * 60) {
           first.setLength(length);
           return (true);
         }

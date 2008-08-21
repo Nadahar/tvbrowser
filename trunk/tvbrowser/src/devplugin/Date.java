@@ -36,32 +36,13 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 
 public class Date implements Comparable<Date> {
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(Date.class);
-
-  private static final String[] DAY_MSG_ARR = { mLocalizer.msg("day.0", "So"), mLocalizer.msg("day.1", "Mo"),
-      mLocalizer.msg("day.2", "Tu"), mLocalizer.msg("day.3", "We"), mLocalizer.msg("day.4", "Th"),
-      mLocalizer.msg("day.5", "Fr"), mLocalizer.msg("day.6", "Sa") };
-
-  private static final String[] MONTH_MSG_ARR = { mLocalizer.msg("month.1", "Jan"), mLocalizer.msg("month.2", "Feb"),
-      mLocalizer.msg("month.3", "Mar"), mLocalizer.msg("month.4", "Apr"), mLocalizer.msg("month.5", "May"),
-      mLocalizer.msg("month.6", "Jun"), mLocalizer.msg("month.7", "Jul"), mLocalizer.msg("month.8", "Aug"),
-      mLocalizer.msg("month.9", "Sep"), mLocalizer.msg("month.10", "Oct"), mLocalizer.msg("month.11", "Nov"),
-      mLocalizer.msg("month.12", "Dec") };
-
-  private static final String[] LONG_DAY_MSG_ARR = { mLocalizer.msg("day.0_long", "So"), mLocalizer.msg("day.1_long", "Mo"),
-      mLocalizer.msg("day.2_long", "Tu"), mLocalizer.msg("day.3_long", "We"), mLocalizer.msg("day.4_long", "Th"),
-      mLocalizer.msg("day.5_long", "Fr"), mLocalizer.msg("day.6_long", "Sa") };
-
-  private static final String[] LONG_MONTH_MSG_ARR = { mLocalizer.msg("month.1_long", "Jan"), mLocalizer.msg("month.2_long", "Feb"),
-      mLocalizer.msg("month.3_long", "Mar"), mLocalizer.msg("month.4_long", "Apr"), mLocalizer.msg("month.5_long", "May"),
-      mLocalizer.msg("month.6_long", "Jun"), mLocalizer.msg("month.7_long", "Jul"), mLocalizer.msg("month.8_long", "Aug"),
-      mLocalizer.msg("month.9_long", "Sep"), mLocalizer.msg("month.10_long", "Oct"), mLocalizer.msg("month.11_long", "Nov"),
-      mLocalizer.msg("month.12_long", "Dec") };
 
   private final int mYear;
 
@@ -293,13 +274,17 @@ public class Date implements Comparable<Date> {
     return String.valueOf(getValue());
   }
   
-  private String getFormattedString(String[] dayArray, String[] monthArray) {
+  private String getFormattedString(boolean longDay, boolean longMonth) {
     Calendar cal = getCalendar();
-    int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK) - 1;
+    
+    SimpleDateFormat day = new SimpleDateFormat(longDay ? "EEEEEE" : "E");
+    SimpleDateFormat month = new SimpleDateFormat(longMonth ? "MMMMMM" : "MMM");    
+    
     int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
-    int month = cal.get(Calendar.MONTH);
 
-    return mLocalizer.msg("datePattern", "{0}, {1} {2}", dayArray[dayOfWeek], monthArray[month], Integer
+    java.util.Date javaDate = new java.util.Date(getCalendar().getTimeInMillis());
+    
+    return mLocalizer.msg("datePattern", "{0}, {1} {2}", day.format(javaDate), month.format(javaDate), Integer
         .toString(dayOfMonth));
   }
 
@@ -313,7 +298,7 @@ public class Date implements Comparable<Date> {
     int hashCode = hashCode();
     String result = LONG_DATE_MAP.get(hashCode);
     if (result == null) {
-      result = getFormattedString(LONG_DAY_MSG_ARR, LONG_MONTH_MSG_ARR);
+      result = getFormattedString(true,true);
       LONG_DATE_MAP.put(hashCode, result);
     }
     return result;
@@ -324,7 +309,7 @@ public class Date implements Comparable<Date> {
    * @return date as string
    */
   public String getShortDayLongMonthString() {
-    return getFormattedString(DAY_MSG_ARR, LONG_MONTH_MSG_ARR);
+    return getFormattedString(false,true);
   }
 
   public long getValue() {
@@ -359,7 +344,7 @@ public class Date implements Comparable<Date> {
   }
 
   public String toString() {
-    return getFormattedString(DAY_MSG_ARR, MONTH_MSG_ARR);
+    return getFormattedString(false,false);
   }
 
   /**

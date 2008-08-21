@@ -25,17 +25,9 @@ package calendarexportplugin.exporter;
 import java.io.File;
 import java.util.Properties;
 
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-
-import calendarexportplugin.CalendarExportPlugin;
-import calendarexportplugin.utils.VCalFile;
-import calendarexportplugin.utils.CalendarToolbox;
-
 import util.program.AbstractPluginProgramFormating;
-import util.ui.ExtensionFileFilter;
 import util.ui.Localizer;
-
+import calendarexportplugin.utils.VCalFile;
 import devplugin.Program;
 
 /**
@@ -43,104 +35,32 @@ import devplugin.Program;
  *  
  * @author bodum
  */
-public class VCalExporter extends AbstractExporter {
+public class VCalExporter extends CalExporter {
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(VCalExporter.class);
   /** Property for Path for File */
   public static final String SAVE_PATH = "VCAL_SAVE_PATH";
-  /** Path for File*/
-  private String mSavePath;
 
-  /*
-   * (non-Javadoc)
-   * @see calendarexportplugin.exporter.ExporterIf#getName()
-   */
   public String getName() {
     return mLocalizer.msg("name","vCal File");
   }
 
-  /*
-   * (non-Javadoc)
-   * @see calendarexportplugin.exporter.ExporterIf#exportPrograms(devplugin.Program[], java.util.Properties)
-   */
-  public boolean exportPrograms(Program[] programs, Properties settings, AbstractPluginProgramFormating formating) {
-    mSavePath = settings.getProperty(SAVE_PATH);
-    
-    File file = chooseFile(programs);
-    
-    if (file == null) {
-      return false;
-    }
-    
-    if (file.exists()) {
-      int result = JOptionPane.showConfirmDialog(CalendarExportPlugin.getInstance().getBestParentFrame(), mLocalizer.msg("overwriteMessage",
-          "The File \n{0}\nalready exists. Overwrite it?", file.getAbsolutePath()), mLocalizer.msg("overwriteTitle",
-          "Overwrite?"), JOptionPane.YES_NO_OPTION);
-      if (result != JOptionPane.YES_OPTION) {
-        return false;
-      }
-    }
-
-    mSavePath = file.getAbsolutePath();
-    
-    settings.setProperty(SAVE_PATH, mSavePath);
-    
-    new VCalFile().exportVCal(file, programs, settings, formating);
-
-    return true;
+  protected String getSavePath(Properties settings) {
+    return settings.getProperty(SAVE_PATH);
   }
 
-  /**
-   * Shows a Filechooser for vCal Files.
-   * 
-   * @return selected File
-   * @param programs programs that are exported
-   */
-  private File chooseFile(Program[] programs) {
-    JFileChooser select = new JFileChooser();
+  protected void setSavePath(Properties settings, String path) {
+    settings.setProperty(SAVE_PATH, path);
+  }
 
-    ExtensionFileFilter vCal = new ExtensionFileFilter("vcs", "vCal (*.vcs)");
-    select.addChoosableFileFilter(vCal);
-    String ext= ".ics";
+  public VCalExporter() {
+    super("vcs", "vCal (*.vcs)");
+  }
 
-    if (mSavePath != null) {
-      select.setSelectedFile(new File(mSavePath));
-      select.setFileFilter(vCal);
-    }
-
-    // check if all programs have same title. if so, use as filename
-    String fileName = programs[0].getTitle();
-    for (int i=1; i<programs.length;i++) {
-      if (! programs[i].getTitle().equals(fileName)) {
-          fileName="";
-      }
-    }
-
-    fileName = CalendarToolbox.cleanFilename(fileName);
-
-    if (!fileName.equals("")) {
-      if (mSavePath == null)
-          mSavePath = "";
-      select.setSelectedFile(new File((new File(mSavePath).getParent()) + File.separator + fileName + ext));
-    }
-
-    if (select.showSaveDialog(CalendarExportPlugin.getInstance().getBestParentFrame()) == JFileChooser.APPROVE_OPTION) {
-
-      String filename = select.getSelectedFile().getAbsolutePath();
-
-      if (!filename.toLowerCase().endsWith(ext)) {
-
-        if (filename.endsWith(".")) {
-          filename = filename.substring(0, filename.length() - 1);
-        }
-
-        filename = filename + ext;
-      }
-
-      return new File(filename);
-    }
-
-    return null;
+  @Override
+  protected void export(File file, Program[] programs, Properties settings,
+      AbstractPluginProgramFormating formating) {
+    new VCalFile().exportVCal(file, programs, settings, formating);
   }
 
 }

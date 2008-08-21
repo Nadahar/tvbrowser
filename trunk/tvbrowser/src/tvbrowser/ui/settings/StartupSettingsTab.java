@@ -40,6 +40,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
@@ -98,9 +100,13 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
   
   private JCheckBox mDateCheck;
   
+  private JCheckBox mAutoDownloadWaitingTime;
+  private JSpinner mAutoDownloadWaitingTimeSp;
+  
   /* Close settings */
   private JCheckBox mOnlyMinimizeWhenWindowClosingChB;
   private JCheckBox mShowFinishDialog;
+  private JLabel mSecondsLabel;
 
   /**
    * Creates the settings panel for this tab.
@@ -274,6 +280,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
 
     PeriodItem periodItem = (PeriodItem) mAutoDownloadPeriodCB.getSelectedItem();
     Settings.propAutoDownloadPeriod.setInt(periodItem.getDays());
+    Settings.propAutoDownloadWaitingTime.setShort(((Integer)mAutoDownloadWaitingTimeSp.getValue()).shortValue());
     
     Settings.propNTPTimeCheck.setBoolean(mDateCheck.isSelected());
     
@@ -332,7 +339,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
       mAutoDownloadCombo.setSelectedIndex(2);
     }
     
-    JPanel panel = new JPanel(new FormLayout("10dlu, pref, 3dlu, pref", "pref, 3dlu, pref, 3dlu, pref"));
+    JPanel panel = new JPanel(new FormLayout("10dlu, pref, 3dlu, pref", "pref, 3dlu, pref, 3dlu, pref, 5dlu, pref"));
     
     mStartDownload.setSelected(!dlType.equals("never") && !Settings.propAutoDataDownloadEnabled.getBoolean());
     mRecurrentDownload.setSelected(Settings.propAutoDataDownloadEnabled.getBoolean());
@@ -385,9 +392,26 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     mAskBeforeDownloadRadio.setSelected(Settings.propAskForAutoDownload.getBoolean());
     mAskTimeRadio.setSelected(!Settings.propAskForAutoDownload.getBoolean());
     
-    refreshSettings.add(panel, cc.xyw(3, 8, 4));
     
-    setAutoDownloadEnabled(mAutoDownload.isSelected());
+    mAutoDownloadWaitingTime = new JCheckBox(mLocalizer.msg("autoDownload.waiting","Delay auto update for"),Settings.propAutoDownloadWaitingTime.getShort() > 0);
+    mAutoDownloadWaitingTimeSp = new JSpinner(new SpinnerNumberModel(Settings.propAutoDownloadWaitingTime.getShort(),0,60,1));
+    mSecondsLabel = new JLabel(mLocalizer.msg("autoDownload.seconds","seconds"));
+    
+    mAutoDownloadWaitingTime.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        mAutoDownloadWaitingTimeSp.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+      }
+    });
+    
+    JPanel waitingPanel = new JPanel(new FormLayout("pref,2dlu,pref,2dlu,pref","pref"));
+    
+    waitingPanel.add(mAutoDownloadWaitingTime, cc.xy(1, 1));
+    waitingPanel.add(mAutoDownloadWaitingTimeSp, cc.xy(3, 1));
+    waitingPanel.add(mSecondsLabel, cc.xy(5,1));
+    
+    panel.add(waitingPanel, cc.xyw(1,7,4));
+    
+    refreshSettings.add(panel, cc.xyw(3, 8, 4));
     
     mDateCheck = new JCheckBox(mLocalizer.msg("checkDate", "Check date via NTP if data download fails"));
     mDateCheck.setSelected(Settings.propNTPTimeCheck.getBoolean());
@@ -399,6 +423,8 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
 
     refreshSettings.add(mShowFinishDialog, cc.xyw(2, 12, 5));
 
+    setAutoDownloadEnabled(mAutoDownload.isSelected());
+    
     return refreshSettings;
   }
   
@@ -412,6 +438,10 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     mAutoDownloadCombo.setEnabled(enabled);
     mAskTimeRadio.setEnabled(enabled);
 
+    mAutoDownloadWaitingTime.setEnabled(enabled);
+    mAutoDownloadWaitingTimeSp.setEnabled(enabled && mAutoDownloadWaitingTime.isSelected());
+    mSecondsLabel.setEnabled(enabled);
+    
     enabled = !(mAskBeforeDownloadRadio.isSelected() || !enabled);
     
     mAutoDownloadPeriodCB.setEnabled(enabled);

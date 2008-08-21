@@ -48,9 +48,9 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.ActionMenu;
-import devplugin.SettingsTab;
+import devplugin.CancelableSettingsTab;
 
-public class ConfigPluginSettingsTab implements SettingsTab {
+public class ConfigPluginSettingsTab implements CancelableSettingsTab {
  
   private static final util.ui.Localizer mLocalizer
      = util.ui.Localizer.getLocalizerFor(ConfigPluginSettingsTab.class);
@@ -202,4 +202,10 @@ public class ConfigPluginSettingsTab implements SettingsTab {
     return mPlugin.getInfo().getName();
   }
   
+
+  public void cancel() {
+    if (mSettingsTab != null) {
+      mSettingsTab.cancel();
+    }
+  }
 }
