@@ -22,10 +22,30 @@
  */
 package calendarexportplugin;
 
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+
+import util.program.AbstractPluginProgramFormating;
+import util.program.LocalPluginProgramFormating;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
 import calendarexportplugin.exporter.ExporterFactory;
 import calendarexportplugin.exporter.ExporterIf;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
+import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
@@ -34,25 +54,6 @@ import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.ThemeIcon;
 import devplugin.Version;
-import devplugin.Date;
-import util.program.AbstractPluginProgramFormating;
-import util.program.LocalPluginProgramFormating;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Properties;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 
 /**
  * This Plugin exports the Calendar to a external Application or File
@@ -60,7 +61,7 @@ import javax.swing.Action;
  * @author bodo
  */
 public class CalendarExportPlugin extends Plugin {
-  private static final Version mVersion = new Version(2, 7);
+  private static final Version mVersion = new Version(2, 71);
 
   /**
    * Translator

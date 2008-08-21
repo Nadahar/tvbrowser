@@ -720,6 +720,10 @@ public class PluginManagerImpl implements PluginManager {
       public boolean isUsingExtraSpaceForMarkIcons() {
         return Settings.propProgramPanelUsesExtraSpaceForMarkIcons.getBoolean();
       }
+
+      public short getAutoDownloadWaitingTime() {
+        return Settings.propAutoDownloadWaitingTime.getShort();
+      }
     };
   }
 

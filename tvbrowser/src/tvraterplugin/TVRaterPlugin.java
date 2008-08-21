@@ -382,6 +382,12 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
     Thread updateThread = new Thread("TV Rater update") {
       public void run() {
+        try {
+          sleep(getPluginManager().getTvBrowserSettings().getAutoDownloadWaitingTime() * 1000);
+        } catch (InterruptedException e) {
+          // Igonore
+        }
+        
         Updater up = new Updater(tvrater);
         up.run();
       }

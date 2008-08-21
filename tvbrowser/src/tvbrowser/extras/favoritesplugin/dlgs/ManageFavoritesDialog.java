@@ -631,13 +631,12 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
               // don't list programs twice, if they are marked by different favorites
               if (! mProgramListModel.contains(p[i])) {
                 mProgramListModel.addElement(p[i]);
-              }
-              
-              if(firstNotExpiredIndex == -1 && !p[i].isExpired()) {
-                firstNotExpiredIndex = i;
+                
+                if(firstNotExpiredIndex == -1 && !p[i].isExpired()) {
+                  firstNotExpiredIndex = mProgramListModel.size()-1;
+                }
               }
             }
-
             scrollInProgramListToIndex(firstNotExpiredIndex);
             
             mSendBt.setEnabled(true);
@@ -670,7 +669,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     if (index < 0) {
       return;
     }
-
+    
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         mProgramScrollPane.getVerticalScrollBar().setValue(0);
@@ -936,42 +935,32 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
             if ((line.length() > 0) && (! line.startsWith("***"))) {
               // This is a favorite -> Check whether we already have such a favorite
               boolean alreadyKnown = false;
+              Favorite[] favs = null;
               if (mFavoritesListModel != null) {
-                  @SuppressWarnings("unchecked")
-                  Enumeration<Favorite> en = (Enumeration<Favorite>) mFavoritesListModel.elements();
-                            while (en.hasMoreElements()) {
-                              Favorite fav = en.nextElement();
-                              String favName = fav.getName();
-                              if (line.equalsIgnoreCase(favName)) {
-                                alreadyKnown = true;
-                                break;
-                              }
-                            }
-  
-                  // Import the favorite if it is new
-                  if (! alreadyKnown) {
-                    AdvancedFavorite fav = new AdvancedFavorite(line);
-                    fav.updatePrograms();
-  
-                    mFavoritesListModel.addElement(fav);
-                    importedFavoritesCount++;
-                  }
+                favs = (Favorite[]) mFavoritesListModel.toArray();
               } else if (mFavoriteTree != null) {
-                  for (final Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()){
-                      String favName = fav.getName();
-                      if (line.equalsIgnoreCase(favName)) {
-                        alreadyKnown = true;
-                        break;
-                      }
+                favs = FavoriteTreeModel.getInstance().getFavoriteArr();
+              }
+              if (favs != null) {
+                for (Favorite favorite : favs) {
+                  String favName = favorite.getName();
+                  if (line.equalsIgnoreCase(favName)) {
+                    alreadyKnown = true;
+                    break;
                   }
-  
-                  // Import the favorite if it is new
-                  if (! alreadyKnown) {
-                    AdvancedFavorite fav = new AdvancedFavorite(line);
-                    fav.updatePrograms();
+                }
+                // Import the favorite if it is new
+                if (! alreadyKnown) {
+                  AdvancedFavorite fav = new AdvancedFavorite(line);
+                  fav.updatePrograms();
+                  if (mFavoritesListModel != null) {
+                    mFavoritesListModel.addElement(fav);
+                  }
+                  else {
                     FavoriteTreeModel.getInstance().addFavorite(fav);
-                    importedFavoritesCount++;
                   }
+                  importedFavoritesCount++;
+                }
               }
             }
           }
@@ -995,13 +984,13 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
           JOptionPane.showMessageDialog(this, msg);
         } else {
           // Scroll to the end
-          mFavoritesList.ensureIndexIsVisible(mFavoritesListModel.size() - 1);
-  
-          // Select the first new fevorite
-          int firstNewIdx = mFavoritesListModel.size() - importedFavoritesCount;
-          mFavoritesList.setSelectedIndex(firstNewIdx);
-          mFavoritesList.ensureIndexIsVisible(firstNewIdx);
-  
+          if (mFavoritesListModel != null) {
+            mFavoritesList.ensureIndexIsVisible(mFavoritesListModel.size() - 1);
+            // Select the first new favorite
+            int firstNewIdx = mFavoritesListModel.size() - importedFavoritesCount;
+            mFavoritesList.setSelectedIndex(firstNewIdx);
+            mFavoritesList.ensureIndexIsVisible(firstNewIdx);
+          }
           msg = mLocalizer.msg("importDone", "There were {0} new favorites imported.", importedFavoritesCount);
           JOptionPane.showMessageDialog(this, msg);
         }

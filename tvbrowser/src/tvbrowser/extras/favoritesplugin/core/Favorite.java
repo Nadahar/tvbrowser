@@ -706,59 +706,87 @@ public abstract class Favorite {
    * if it does, it will be added to the favorite.
    *
    * @param p new Program
-   * @param dataUpdate is this method called during a data update?
-   * @param send should the program be sended to other plugins
    * @since 2.7
    * @throws TvBrowserException Exception during search
    */
-  public void tryToMatch(Program p, boolean dataUpdate, boolean send) throws TvBrowserException {
+  public void tryToMatch(Program p) throws TvBrowserException {
     if (matches(p) && filterByLimitations(new Program[] {p}).length > 0 && (!getLimitationConfiguration().isLimitedByChannel() || Arrays.asList(getChannels()).contains(p.getChannel()))) {
-      int blackListPos = mBlackList == null ? -1 : mBlackList.indexOf(p);
+      boolean wasOnBlackList = false;
       
-      if(mRemovedBlacklistPrograms.remove(p) || blackListPos >= 0) {
-        /* Program was in black list so we have to remove it
-         * and add the new instance to the black list */
-        if(blackListPos >= 0) {
-          mBlackList.remove(blackListPos);
-        }
-        
-        mBlackList.add(p);
-      }
-      else {
-        boolean newFound = false;
-        int pos = mPrograms.indexOf(p);
-        
-        Integer listMinutes = null;
-        
-        if (pos >= 0) {
-          // Item was in list, remove old item, add new one
-          mPrograms.remove(pos);
-          mPrograms.add(p);
-          /* We don't need to mark the program,
-           * that will be done by the MarkedProgramsList */
-        } else if((listMinutes = mRemovedPrograms.remove(getProgramKeyFor(p))) != null){
-          // Item was in list, but was already removed before
-          mPrograms.add(p);
-          markProgram(p,listMinutes);
-        } else {
-          mPrograms.add(p);
-          markProgram(p,-1);
-          
-          if(!p.isExpired()) {
-            mNewPrograms.add(p);
-            newFound = true;
+      if(mBlackList == null) {
+        synchronized(mRemovedBlacklistPrograms) {
+          if(mRemovedBlacklistPrograms.remove(p)) {
+            mBlackList = new ArrayList<Program>();
+            
+            synchronized(mBlackList) {
+              mBlackList.add(p);
+            }
+            
+            wasOnBlackList = true;
           }
         }
-        
-        if (send && newFound) {
-          ProgramReceiveTarget[] pluginArr = getForwardPlugins();
-          if(!dataUpdate) {
-            for (ProgramReceiveTarget receiveTarget : pluginArr) {
-              if (receiveTarget != null && receiveTarget.getReceifeIfForIdOfTarget() != null) {
-                receiveTarget.getReceifeIfForIdOfTarget().receivePrograms(mNewPrograms.toArray(new Program[mNewPrograms.size()]), receiveTarget);
+      }
+      else {
+        synchronized(mBlackList) {
+          int blackListPos = mBlackList.indexOf(p);
+          
+          synchronized(mRemovedBlacklistPrograms) {
+            if(mRemovedBlacklistPrograms.remove(p) || blackListPos >= 0) {
+              /* Program was in black list so we have to remove it
+               * and add the new instance to the black list */          
+              if(blackListPos >= 0) {
+                mBlackList.remove(blackListPos);
               }
+              
+              mBlackList.add(p);
+              
+              wasOnBlackList = true;
             }
-          } else {
+          }
+        }
+      }
+
+      if(!wasOnBlackList) {
+        synchronized(mPrograms) {
+          boolean newFound = false;
+          
+          int pos = mPrograms.indexOf(p);
+          
+          Integer listMinutes = null;
+          
+          if (pos >= 0) {
+            // Item was in list, remove old item, add new one
+            mPrograms.remove(pos);
+            mPrograms.add(p);
+            /* We don't need to mark the program,
+             * that will be done by the MarkedProgramsList */
+          } 
+          
+          boolean wasOnList = false;
+          
+          synchronized(mRemovedPrograms) {
+            if((listMinutes = mRemovedPrograms.remove(getProgramKeyFor(p))) != null){
+              // Item was in list, but was already removed before
+              mPrograms.add(p);
+              markProgram(p,listMinutes);
+              wasOnList = true;
+            }
+          }
+          
+          if(pos < 0 && !wasOnList) {
+            mPrograms.add(p);
+            markProgram(p,-1);
+            
+            if(!p.isExpired()) {
+              synchronized(mNewPrograms) {
+                mNewPrograms.add(p);
+              }
+              newFound = true;
+            }
+          }
+          
+          if (newFound) {
+            ProgramReceiveTarget[] pluginArr = getForwardPlugins();
             FavoritesPlugin.getInstance().addProgramsForSending(pluginArr, mNewPrograms.toArray(new Program[mNewPrograms.size()]));
           }
         }
@@ -788,11 +816,26 @@ public abstract class Favorite {
     int reminderMinutes = unmarkProgram(p);
     
     /* Remove programs from the lists */
+    boolean wasInList = false;
     
-    if(mPrograms.remove(p)) {
-      mRemovedPrograms.put(getProgramKeyFor(p),reminderMinutes);
-    } else if(mBlackList != null && mBlackList.remove(p)) {
-      mRemovedBlacklistPrograms.add(p);
+    synchronized(mPrograms) {
+      if(mPrograms.remove(p)) {
+        wasInList = true;
+        
+        synchronized(mRemovedPrograms) {
+          mRemovedPrograms.put(getProgramKeyFor(p),reminderMinutes);
+        }
+      }
+    }
+    
+    if(!wasInList) {
+      synchronized(mBlackList) {
+        if(mBlackList != null && mBlackList.remove(p)) {
+          synchronized(mRemovedBlacklistPrograms) {
+            mRemovedBlacklistPrograms.add(p);
+          }
+        }
+      }
     }
   }
 

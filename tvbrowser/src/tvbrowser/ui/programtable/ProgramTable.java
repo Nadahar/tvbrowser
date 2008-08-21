@@ -106,6 +106,8 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener, P
   private Thread mClickThread;
   
   private Thread mLeftClickThread;
+  
+  private boolean mPerformingSingleClick;
 
   /**
    * index of the panel underneath the mouse
@@ -122,6 +124,8 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener, P
     mCurrentCol = -1;
     mCurrentRow = -1;
     mCurrentY = 0;
+    
+    mPerformingSingleClick = false;
 
     setColumnWidth(Settings.propColumnWidth.getInt());
     setModel(model);
@@ -206,10 +210,11 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener, P
         layout = new TimeBlockLayout();
       } else if(Settings.propTableLayout.getString().equals("compactTimeBlock")) {
         layout = new CompactTimeBlockLayout();
+      } else if(Settings.propTableLayout.getString().equals("optimizedCompactTimeBlock")) {
+        layout = new OptimizedCompactTimeBlockLayout();
       } else {
         layout = new RealTimeSynchronousLayout();
       }
-
     }
 
     mLayout = layout;
@@ -501,21 +506,19 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener, P
   private void handleMousePressed(MouseEvent evt) {
     requestFocus();
 
-    if(mClickThread != null && mClickThread.isAlive()) {
-      mClickThread.interrupt();
-    }
+    if(mClickThread == null || !mClickThread.isAlive()) {
+      mClickThread = new Thread() {
+        public void run() {
+          try {
+            Thread.sleep(Plugin.SINGLE_CLICK_WAITING_TIME + 50);
+            setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+          } catch (InterruptedException e) {}
+        }
+      };
 
-    mClickThread = new Thread() {
-      public void run() {
-        try {
-          Thread.sleep(200);
-          setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-        } catch (InterruptedException e) {}
+      if(!evt.isShiftDown() && SwingUtilities.isLeftMouseButton(evt)) {
+        mClickThread.start();
       }
-    };
-
-    if(!evt.isShiftDown() && SwingUtilities.isLeftMouseButton(evt)) {
-      mClickThread.start();
     }
 
     mDraggingPoint = evt.getPoint();
@@ -524,6 +527,10 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener, P
 
 
   private void handleMouseClicked(MouseEvent evt) {
+    if(mClickThread != null && mClickThread.isAlive()) {
+      mClickThread.interrupt();
+    }
+    
     mMouse = evt.getPoint();
     repaint();
     final Program program = getProgramAt(evt.getX(), evt.getY());
@@ -532,13 +539,21 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener, P
       mLeftClickThread = new Thread("Program table single click thread") {
         public void run() {
           try {
+            mPerformingSingleClick = false;
             sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
+            mPerformingSingleClick = true;
             
             if(program != null) {
               deSelectItem();
-              
               Plugin.getPluginManager().handleProgramSingleClick(program);
             }
+            
+            if(mClickThread != null && mClickThread.isAlive()) {
+              mClickThread.interrupt();
+            }
+            
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            mPerformingSingleClick = false;
           } catch (InterruptedException e) {
             // IGNORE
           }
@@ -549,16 +564,13 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener, P
       mLeftClickThread.start();
     }
     if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
-      if(mClickThread != null && mClickThread.isAlive()) {
-        mClickThread.interrupt();
-      }
-      if(mLeftClickThread != null && mLeftClickThread.isAlive()) {
+      if(!mPerformingSingleClick && mLeftClickThread != null && mLeftClickThread.isAlive()) {
         mLeftClickThread.interrupt();
       }
-
-      if (program != null) {
+      
+      if (program != null && !mPerformingSingleClick) {
         deSelectItem();
-
+        
         // This is a left double click
         // -> Execute the program using the user defined default plugin
         
@@ -566,6 +578,8 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener, P
           Plugin.getPluginManager().handleProgramDoubleClick(program);
         }
       }
+      
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
     else if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1) &&
         (evt.isShiftDown())) {      
@@ -702,7 +716,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener, P
       if (startTime > minutesAfterMidnight || row == rowCount-1) {
         // It was the last program
         if(lastCellHeight != 0 && lastDuration > 0 && lastDuration < 360) {
-          timeY += lastCellHeight / 2; // Hit the center of the program
+          timeY += getVisibleRect().height / 2 > lastCellHeight ? lastCellHeight / 2 : 0; // Hit the center of the program
         } else {
           timeY = -1;
         }

@@ -29,6 +29,8 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -54,6 +56,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 
 import tvbrowser.core.ChannelList;
@@ -178,8 +181,6 @@ public class TVBrowser {
 
   private static WindowAdapter mMainWindowAdapter;
 
-
-
   /**
    * Specifies whether the save thread should stop. The save thread saves every
    * 5 minutes the settings.
@@ -205,8 +206,9 @@ public class TVBrowser {
    * avoid initializing the look and feel multiple times
    */
   private static boolean lookAndFeelInitialized = false;
-
-
+  
+  private static Timer mAutoDownloadWaitingTimer;
+  
   /**
    * Entry point of the application
    * @param args The arguments given in the command line.
@@ -243,9 +245,10 @@ public class TVBrowser {
 
     // Use a even simpler Formatter for console logging
     mainLogger.getHandlers()[0].setFormatter(createFormatter());
-
+    
     // Load the settings    
     Settings.loadSettings();
+    Locale.setDefault(new Locale(Settings.propLanguage.getString(), Settings.propCountry.getString()));
     
     if (Settings.propFirstStartDate.getDate() == null) {
       Settings.propFirstStartDate.setDate(Date.getCurrentDate());
@@ -270,8 +273,6 @@ public class TVBrowser {
 
     // Capture unhandled exceptions
     //System.setErr(new PrintStream(new MonitoringErrorStream()));
-
-    Locale.setDefault(new Locale(Settings.propLanguage.getString(), Settings.propCountry.getString()));
 
     String timezone = Settings.propTimezone.getString();
     if (timezone != null) {
@@ -821,7 +822,7 @@ public class TVBrowser {
    * @return false, if no download got started
    */
   public static boolean handleAutomaticDownload() {
-    String autoDLType = Settings.propAutoDownloadType.getString();
+    final String autoDLType = Settings.propAutoDownloadType.getString();
 
     if ((ChannelList.getNumberOfSubscribedChannels() == 0)
       || autoDLType.equals("never"))
@@ -830,6 +831,35 @@ public class TVBrowser {
       return false;
     }
     
+    if((mAutoDownloadWaitingTimer != null 
+          && mAutoDownloadWaitingTimer.isRunning())) {
+      return true;
+    }
+    
+    if(Settings.propAutoDownloadWaitingTime.getShort() > 0) {
+      if(mAutoDownloadWaitingTimer == null) {
+        mAutoDownloadWaitingTimer = new Timer(Settings.propAutoDownloadWaitingTime.getShort() * 1000 + 1000,
+          new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+              performAutomaticDownload(autoDLType);
+            }
+          }
+        );
+        mAutoDownloadWaitingTimer.setRepeats(false);
+        mAutoDownloadWaitingTimer.start();
+      }
+      else {
+        mAutoDownloadWaitingTimer.restart();
+      }
+    }
+    else {
+      return performAutomaticDownload(autoDLType);
+    }
+    
+    return true;
+  }
+  
+  private static boolean performAutomaticDownload(String autoDLType) {
     devplugin.Date lastDownloadDate=Settings.propLastDownloadDate.getDate();
     if (lastDownloadDate==null) {
       lastDownloadDate=devplugin.Date.getCurrentDate().addDays(-100);

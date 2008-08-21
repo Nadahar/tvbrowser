@@ -417,14 +417,6 @@ private static Font getDynamicFontSize(Font font, int offset) {
         programHasChanged();
       }
     }
-    /* This is for debugging of the marking problem after a data update */
-    else if(program.getProgramState() == Program.WAS_DELETED_STATE) {
-      setForeground(Color.red);
-      mTextColor = Color.red;
-    } else if(program.getProgramState() == Program.WAS_UPDATED_STATE) {
-      setForeground(Color.blue);
-      mTextColor = Color.blue;
-    }
     
     boolean dontShow = true;
     
@@ -582,6 +574,15 @@ private static Font getDynamicFontSize(Font font, int offset) {
    *          The graphics context to paint to.
    */
   public void paintComponent(Graphics g) {
+    /* This is for debugging of the marking problem after an data update */
+    if(mProgram.getProgramState() == Program.WAS_DELETED_STATE) {
+      setForeground(Color.red);
+      mTextColor = Color.red;
+    } else if(mProgram.getProgramState() == Program.WAS_UPDATED_STATE) {
+      setForeground(Color.blue);
+      mTextColor = Color.blue;
+    }
+    
     int width = getWidth();
     int height = USE_FULL_HEIGHT ? getHeight() : mHeight;
     Graphics2D grp = (Graphics2D) g;
@@ -836,6 +837,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
   public void addPluginContextMenuMouseListener(final ContextMenuIf caller) {
     addMouseListener(new MouseAdapter() {
       private Thread mLeftClickThread;
+      private boolean mPerformingSingleClick = false;
       
       public void mousePressed(MouseEvent e) {
         if (e.isPopupTrigger()) {
@@ -854,9 +856,12 @@ private static Font getDynamicFontSize(Font font, int offset) {
           mLeftClickThread = new Thread() {
             public void run() {
               try {
+                mPerformingSingleClick = false;
                 sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
+                mPerformingSingleClick = true;
                 
                 Plugin.getPluginManager().handleProgramSingleClick(mProgram, caller);
+                mPerformingSingleClick = false;
               } catch (InterruptedException e) { // ignore
               }
             }
@@ -866,10 +871,13 @@ private static Font getDynamicFontSize(Font font, int offset) {
           mLeftClickThread.start();
         }
         else if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2) && evt.getModifiersEx() == 0) {
-          if(mLeftClickThread != null && mLeftClickThread.isAlive()) {
+          if(!mPerformingSingleClick && mLeftClickThread != null && mLeftClickThread.isAlive()) {
             mLeftClickThread.interrupt();
           }
-          Plugin.getPluginManager().handleProgramDoubleClick(mProgram, caller);
+          
+          if(!mPerformingSingleClick) {
+            Plugin.getPluginManager().handleProgramDoubleClick(mProgram, caller);
+          }
         }
         else if (SwingUtilities.isMiddleMouseButton(evt)
             && (evt.getClickCount() == 1)) {
@@ -925,7 +933,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
    *          The event describing the change.
    */
   public void stateChanged(ChangeEvent evt) {
-    if (evt.getSource() == mProgram) {
+    if (mProgram.equals(evt.getSource())) {
       programHasChanged();
       repaint();
     }

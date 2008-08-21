@@ -41,6 +41,7 @@ import util.ui.ProgramPanel;
  */
 public class TimeBlockLayout extends AbstractProgramTableLayout {
   protected boolean mCompactLayout = false;
+  protected boolean mOptimizedCompactLayout = false;
   
   public void updateLayout(ProgramTableModel model) {
     int columnCount = model.getColumnCount();
@@ -56,6 +57,8 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
     int[] lastRow = new int[columnCount];
     Arrays.fill(lastRow,0);
     
+    int[] minimumBlockHeight = new int[columnCount];
+    
     LastLayoutComponent[] lastLayoutComponentList = new LastLayoutComponent[columnCount];
     
     ArrayList<ProgramPanel>[] blockProgramList = new ArrayList[columnCount];
@@ -70,12 +73,13 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
     // programs before the beginOfDay time
     int blockSize = Settings.propTimeBlockSize.getInt() * 60;
     int blockCount = ((Settings.propProgramTableEndOfDay.getInt() + 24 * 60) / blockSize) +1;
-    int blockOffset = 0;
+    
     Date nextProgramTableDate = model.getDate().addDays(1);
 
     // calculate the hight of each block independently
-    for(int block = blockOffset; block < blockOffset + blockCount; block++) {
+    for(int block = 0; block <  blockCount; block++) {
       int maxHeight = 0;
+      Arrays.fill(minimumBlockHeight,0);
       
       // search for the largest column in this block
       for(int column = 0; column < columnCount; column++) {
@@ -96,7 +100,8 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
             blockProgramList[column].add(panel);
             // reset the preferred hight of the panel
             panel.setHeight(-1);
-            height += mCompactLayout ? panel.getMinimumHeight() : panel.getPreferredHeight();
+            
+            height += mCompactLayout && (!mOptimizedCompactLayout || !panel.getProgram().isOnAir()) ? panel.getMinimumHeight() : panel.getPreferredHeight();
             
             if(height > maxHeight) {
               maxHeight = height;
@@ -106,6 +111,8 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
             break;
           }
         }
+        
+        minimumBlockHeight[column] = height;
       }
 
       // increase overall height by block height
@@ -123,56 +130,56 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
         if(!list.isEmpty()) {
           if(list.get(0).equals(model.getProgramPanel(col,0))) {
             columnStartArr[col] = blockStart;
-          }
-
-/*        
-          // calculate wanted full size of this block column
-          int sumLength = 0;
-          int sumMinLength = 0;
-          for (int i = 0; i < list.size(); i++) {
-            ProgramPanel panel = (ProgramPanel)list.get(i);
-            sumMinLength += (mCompactLayout ? panel.getMinimumHeight() : panel.getPreferredHeight());
-            panel.setMaximumHeight();
-            sumLength += panel.getHeight();
-          }
-          
-          double factor = 1;
-          // now distribute programs evenly in available space (excluding the last panel)
-          // but do not stretch programs longer than they want to be
-          if (sumLength > maxHeight) {
-            factor = ((double)(maxHeight - sumMinLength))/(double)(sumLength - sumMinLength);
-          }
-          
-          sumLength = 0;
-          for (int i = 0; i < list.size() - 1; i++) {
-            ProgramPanel panel = (ProgramPanel)list.get(i);
-            int height = (int) Math.floor(factor * panel.getHeight());
-            height = Math.max(height, panel.getMinimumHeight());
-            panel.setHeight(height);
-            sumLength += height;
-          }
-          
-          // set last panel to consume remaining space
-          ProgramPanel panel = (ProgramPanel) list.get(list.size()-1);
-          int lastHeight = maxHeight-sumLength;
-          panel.setHeight(lastHeight);
-          lastLayoutComponentList[col] = new LastLayoutComponent((ProgramPanel)list.get(list.size()-1), blockEnd - lastHeight);
-*/          
+          }    
           
           int internHeight = blockStart;
           int internLastHeight = internHeight;
 
+          int additionalHeight = 0;
+          int additionalHeight2 = 0;
+          
+          if(mOptimizedCompactLayout) {            
+            additionalHeight = (blockEnd - blockStart - minimumBlockHeight[col]) / list.size();
+            
+            int additionalCount = 0;
+            int preferredSizeHeights = 0;
+            int minimumSizeHeights = 0;
+            
+            for(int i = 0; i < list.size(); i++) {
+              ProgramPanel panel = (ProgramPanel)list.get(i);
+              
+              if(panel.getPreferredHeight() < (panel.getMinimumHeight() + additionalHeight) || panel.getProgram().isOnAir()) {
+                preferredSizeHeights += panel.getPreferredHeight();
+              }
+              else {
+                additionalCount++;
+                minimumSizeHeights += panel.getMinimumHeight();
+              }
+            }
+            
+            if(additionalCount != 0) {
+              additionalHeight2 = (blockEnd - blockStart - preferredSizeHeights - minimumSizeHeights) / additionalCount;
+            }            
+          }
+          
           for(int i = 0; i < list.size(); i++) {
             ProgramPanel panel = (ProgramPanel)list.get(i);
             
-            panel.setHeight(mCompactLayout ? panel.getMinimumHeight() : panel.getPreferredHeight());
+            if(mCompactLayout && !mOptimizedCompactLayout) {
+              panel.setHeight(panel.getMinimumHeight());
+            }
+            else if(!mOptimizedCompactLayout || (panel.getMinimumHeight() + additionalHeight > panel.getPreferredHeight() || panel.getProgram().isOnAir())) {
+              panel.setHeight(panel.getPreferredHeight());
+            }
+            else {
+              panel.setHeight(panel.getMinimumHeight() + additionalHeight2);
+            }
             
             internLastHeight = internHeight;
             internHeight += panel.getHeight();
           }
           
           lastLayoutComponentList[col] = new LastLayoutComponent((ProgramPanel)list.get(list.size()-1),internLastHeight);
-
         }
       }
     }

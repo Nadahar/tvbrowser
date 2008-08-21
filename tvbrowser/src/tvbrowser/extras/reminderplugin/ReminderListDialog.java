@@ -125,6 +125,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
 
     mTable.addMouseListener(new MouseAdapter() {
       private Thread mLeftClickThread;
+      private boolean mPerformingSingleClick = false;
       
       public void mousePressed(MouseEvent evt) {
         if (evt.isPopupTrigger()) {
@@ -153,7 +154,9 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
           mLeftClickThread = new Thread() {
             public void run() {
               try {
+                mPerformingSingleClick = false;
                 sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
+                mPerformingSingleClick = true;
                 
                 int column = mTable.columnAtPoint(e.getPoint());
 
@@ -165,7 +168,8 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
                 mTable.changeSelection(row, 0, false, false);
                 Program p = (Program) mTable.getModel().getValueAt(row, 0);
                 
-                Plugin.getPluginManager().handleProgramSingleClick(p, ReminderPluginProxy.getInstance());      
+                Plugin.getPluginManager().handleProgramSingleClick(p, ReminderPluginProxy.getInstance());
+                mPerformingSingleClick = false;
               } catch (InterruptedException e) { // ignore
               }
             }
@@ -175,21 +179,23 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
           mLeftClickThread.start();
         }
         else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2) && e.getModifiersEx() == 0) {
-          if(mLeftClickThread != null && mLeftClickThread.isAlive()) {
+          if(!mPerformingSingleClick && mLeftClickThread != null && mLeftClickThread.isAlive()) {
             mLeftClickThread.interrupt();
           }
           
-          int column = mTable.columnAtPoint(e.getPoint());
-
-          if (column == 1)
-            return;
-
-          int row = mTable.rowAtPoint(e.getPoint());
-
-          mTable.changeSelection(row, 0, false, false);
-          Program p = (Program) mTable.getModel().getValueAt(row, 0);
-
-          PluginManagerImpl.getInstance().handleProgramDoubleClick(p, ReminderPluginProxy.getInstance());
+          if(!mPerformingSingleClick) {
+            int column = mTable.columnAtPoint(e.getPoint());
+  
+            if (column == 1)
+              return;
+  
+            int row = mTable.rowAtPoint(e.getPoint());
+  
+            mTable.changeSelection(row, 0, false, false);
+            Program p = (Program) mTable.getModel().getValueAt(row, 0);
+  
+            PluginManagerImpl.getInstance().handleProgramDoubleClick(p, ReminderPluginProxy.getInstance());
+          }
         }
         else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
           int row = mTable.rowAtPoint(e.getPoint());

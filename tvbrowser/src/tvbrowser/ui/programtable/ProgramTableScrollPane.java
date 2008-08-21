@@ -200,6 +200,9 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
 
   public void tableDataChanged(Runnable callback) {
     mChannelPanel.setShownChannels(mProgramTable.getModel().getShownChannels());
+    if (Settings.propTimeBlockShowWest.getBoolean()) {
+      getRowHeader().getView().repaint();
+    }
   }
 
   public void tableCellUpdated(int col, int row) {

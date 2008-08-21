@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 
 import util.ui.FixedSizeIcon;
 
+import devplugin.CancelableSettingsTab;
 import devplugin.SettingsTab;
 
 
@@ -88,6 +89,16 @@ public class SettingsTabProxy {
     }catch(Throwable t) {
       mLog.log(Level.WARNING, "Could not get settings panel title", t);
       return "";
+    }
+  }
+  
+  public void cancel() {
+    try {
+      if(mSettingsTab instanceof CancelableSettingsTab) {
+        ((CancelableSettingsTab)mSettingsTab).cancel();
+      }
+    }catch(Throwable t) {
+      mLog.log(Level.WARNING, "Could not inform about closing", t);
     }
   }
 }

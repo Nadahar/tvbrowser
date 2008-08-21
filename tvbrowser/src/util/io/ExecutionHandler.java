@@ -256,7 +256,10 @@ public class ExecutionHandler {
           args.add(lastString.toString());
           lastString = null;
         }
-      } else {
+      // Add parameter only if it isn't just whitespace. Use quotes
+      // to add empty or whitespace only parameters!
+      // FSCHAECK - 2008-12-06
+      } else if (part.trim().length() > 0) {
         args.add(part);
       }
     }

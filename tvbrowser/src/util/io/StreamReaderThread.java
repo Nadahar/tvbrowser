@@ -1,5 +1,6 @@
 /*
- * CapturePlugin by Andreas Hessel (Vidrec@gmx.de), Bodo Tasche
+ * TV-Browser
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,7 +34,7 @@ import java.io.InputStreamReader;
 /**
  * A class that reads from InputStreams in a Thread.
  *
- * @author Renï¿½ Mach
+ * @author René Mach
  *
  */
 public class StreamReaderThread extends Thread {

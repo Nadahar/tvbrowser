@@ -721,13 +721,18 @@ public class ProgramInfoDialog {
     
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        mDialog.setVisible(true);
-        
-        SwingUtilities.invokeLater(new Runnable() {
+        new Thread() {
           public void run() {
+            try {
+              Thread.sleep(100);
+            } catch (InterruptedException e) {
+              // IGNORE
+            }
             mMainPanel.repaint();
           }
-        });
+        }.start();
+        
+        mDialog.setVisible(true);
       }
     });
   }

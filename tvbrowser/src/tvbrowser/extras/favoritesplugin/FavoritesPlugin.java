@@ -149,7 +149,10 @@ public class FavoritesPlugin {
   private ArrayList<UpdateInfoThread> mUpdateInfoThreads;
   
   private boolean mShowInfoDialog = false;
-  
+  private ArrayList<Thread> mMatchThreads;
+  private Hashtable<String,Thread> mRemoveThreads;
+  private int rCount = 0;
+  private int sCount = 0;
   /**
    * Creates a new instance of FavoritesPlugin.
    */
@@ -162,34 +165,70 @@ public class FavoritesPlugin {
     mUpdateInfoThreads = new ArrayList<UpdateInfoThread>(0);
     load();
     mRootNode = new PluginTreeNode(mLocalizer.msg("manageFavorites","Favorites"));
-
+    mMatchThreads = new ArrayList<Thread>(0);
+    mRemoveThreads = new Hashtable<String,Thread>(0); 
 
     TvDataBase.getInstance().addTvDataListener(new TvDataBaseListener() {
-      public void dayProgramAdded(ChannelDayProgram prog) {
-        Iterator<Program> it = prog.getPrograms();
-        while (it.hasNext()) {
-          final Program p = it.next();
-
-          for (Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()) {
-            try {
-              fav.tryToMatch(p, true, true);
-            } catch (TvBrowserException e) {
-              ErrorHandler.handle(e);
+      public void dayProgramAdded(final ChannelDayProgram prog) {
+        Thread update = new Thread("match favorites thread") {
+          public void run() {
+            final String dayProgramKey = getDayProgramKey(prog);
+            
+            Thread removeThread = null;
+            
+            while((removeThread = mRemoveThreads.get(dayProgramKey)) != null 
+                && removeThread.isAlive()) {
+              try {
+                sleep(20);
+              } catch (InterruptedException e) {
+                //ignore
+              }
             }
+            
+            Iterator<Program> it = prog.getPrograms();
+            while (it.hasNext()) {
+              final Program p = it.next();
+    
+              for (Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()) {                
+                try {
+                  fav.tryToMatch(p);
+                } catch (TvBrowserException e) {
+                  ErrorHandler.handle(e);
+                }                
+              }
+            }
+            
+            mMatchThreads.remove(this);
           }
-        }
+        };
+        mMatchThreads.add(update);
+        update.start();
       }
 
-      public void dayProgramDeleted(ChannelDayProgram prog) {
-        Iterator<Program> it = prog.getPrograms();
-        while (it.hasNext()) {
-          final Program p = it.next();
-          for (Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()) {
-            if (fav.contains(p)) {
-              fav.removeProgram(p);
+      public void dayProgramDeleted(final ChannelDayProgram prog) {
+        final String dayProgramKey = getDayProgramKey(prog);
+        
+        Thread removeThread = new Thread("favorite remove thread") {
+          public void run() {
+            Iterator<Program> it = prog.getPrograms();
+            while (it.hasNext()) {
+              final Program p = it.next();
+                        
+              for (final Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()) {
+                if (fav.contains(p)) {
+                  fav.removeProgram(p);
+                }
+              }
+            }
+        
+            synchronized(mRemoveThreads) {
+              mRemoveThreads.remove(dayProgramKey);
             }
           }
-        }
+        };
+        
+        mRemoveThreads.put(dayProgramKey,removeThread);
+        removeThread.start();
       }
 
       public void dayProgramAdded(MutableChannelDayProgram prog) {
@@ -201,6 +240,7 @@ public class FavoritesPlugin {
       public void tvDataUpdateStarted() {
         mHasRightToSave = false;
         mSendPluginsTable.clear();
+        mMatchThreads.clear();
         for (Favorite favorite : FavoriteTreeModel.getInstance().getFavoriteArr()) {
           favorite.clearNewPrograms();
           favorite.clearRemovedPrograms();
@@ -223,31 +263,87 @@ public class FavoritesPlugin {
     mHasToUpdate = true;
 
     if(mHasRightToUpdate) {
-      mHasToUpdate = false;
-
-      //FavoriteTreeModel.getInstance().reload();
-
-      mHasRightToSave = true;
-      updateRootNode(true);
-
-      ArrayList<Favorite> showInfoFavorites = new ArrayList<Favorite>(0);
-
-      Favorite[] favoriteArr = FavoriteTreeModel.getInstance().getFavoriteArr();
-
-      for (Favorite favorite : favoriteArr) {
-        favorite.clearRemovedPrograms();
-        
-        if (favorite.isRemindAfterDownload() && favorite.getNewPrograms().length > 0) {
-          showInfoFavorites.add(favorite);
+      Thread update = new Thread("Favorites: handle update finished") {
+        public void run() {
+          
+          int monitorMaximum = mMatchThreads.size();
+          ProgressMonitor monitor;
+          
+          if (monitorMaximum > 5) {    // if we have more then 5 favorites, we show a progress bar
+            try {
+              monitor = MainFrame.getInstance().createProgressMonitor();
+            }catch(Exception e) {e.printStackTrace();
+              monitor = new NullProgressMonitor();
+            }
+          }
+          else {
+            monitor = new NullProgressMonitor();
+          }
+          
+          monitor.setMaximum(monitorMaximum);
+          monitor.setMessage(mLocalizer.msg("updatingFavorites","Updating favorites"));
+          
+          int oldMatchThreadSize = 0;
+          int waitCount = 0;
+          
+          while(!mMatchThreads.isEmpty() && (mMatchThreads.size() != oldMatchThreadSize || waitCount++ < 100)) {
+            if(oldMatchThreadSize != mMatchThreads.size()) {
+              waitCount = 0;
+            }
+            
+            oldMatchThreadSize = mMatchThreads.size();
+            
+            try {
+              Thread.sleep(100);
+            } catch (InterruptedException e) {
+              e.printStackTrace();
+            }
+            monitor.setValue(monitorMaximum - mMatchThreads.size());
+          }
+    
+          mMatchThreads.clear();
+          mRemoveThreads.clear();
+          
+          mMatchThreads = new ArrayList<Thread>(0);
+          mRemoveThreads = new Hashtable<String,Thread>(0);
+          
+          monitor.setMessage("");
+          monitor.setValue(0);
+          
+          mHasToUpdate = false;
+    
+          //FavoriteTreeModel.getInstance().reload();
+    
+          mHasRightToSave = true;
+          updateRootNode(true);
+    
+          ArrayList<Favorite> showInfoFavorites = new ArrayList<Favorite>(0);
+    
+          Favorite[] favoriteArr = FavoriteTreeModel.getInstance().getFavoriteArr();
+    
+          for (Favorite favorite : favoriteArr) {
+            favorite.clearRemovedPrograms();
+            
+            if (favorite.isRemindAfterDownload() && favorite.getNewPrograms().length > 0) {
+              showInfoFavorites.add(favorite);
+            }
+          }
+    
+          if(!showInfoFavorites.isEmpty()) {
+            UpdateInfoThread thread = new UpdateInfoThread(showInfoFavorites.toArray(new Favorite[showInfoFavorites.size()]));
+            thread.setPriority(Thread.MIN_PRIORITY);
+    
+            mUpdateInfoThreads.add(thread);
+            thread.start();
+          }
         }
-      }
-
-      if(!showInfoFavorites.isEmpty()) {
-        UpdateInfoThread thread = new UpdateInfoThread(showInfoFavorites.toArray(new Favorite[showInfoFavorites.size()]));
-        thread.setPriority(Thread.MIN_PRIORITY);
-
-        mUpdateInfoThreads.add(thread);
-        thread.start();
+      };
+      update.start();
+      
+      try {
+        update.join();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
       }
     }
   }
@@ -543,14 +639,16 @@ public class FavoritesPlugin {
   public void addProgramsForSending(ProgramReceiveTarget[] targets, Program[] programs) {
     for(ProgramReceiveTarget target : targets) {
       if(target != null && target.getReceifeIfForIdOfTarget() != null) {
-        ReceiveTargetItem item = mSendPluginsTable.get(getKeyForReceiveTarget(target));
-        
-        if(item == null) {
-          item = new ReceiveTargetItem(target);
-          mSendPluginsTable.put(getKeyForReceiveTarget(target), item);
+        synchronized(mSendPluginsTable) {
+          ReceiveTargetItem item = mSendPluginsTable.get(getKeyForReceiveTarget(target));
+          
+          if(item == null) {
+            item = new ReceiveTargetItem(target);
+            mSendPluginsTable.put(getKeyForReceiveTarget(target), item);
+          }
+          
+          item.addPrograms(programs);
         }
-        
-        item.addPrograms(programs);
       }
     }
   }
@@ -625,7 +723,7 @@ public class FavoritesPlugin {
     action.setSmallIcon(getIconFromTheme(ICON_CATEGORY, ICON_NAME, 16));
     action.setShortDescription(mLocalizer.msg("favoritesManager",
             "Manage favorite programs"));
-    action.setText(mLocalizer.msg("buttonText", "Manage Favorites"));
+    action.setText(mLocalizer.msg("manageFavorites", "Favorites"));
 
     return new ActionMenu(action);
   }
@@ -1087,5 +1185,9 @@ public class FavoritesPlugin {
   
   public void showInfoDialog() {
     mShowInfoDialog = true;
+  }
+  
+  private String getDayProgramKey(ChannelDayProgram prog) {
+    return new StringBuilder(prog.getChannel().getUniqueId()).append("_").append(prog.getDate().getDateString()).toString();
   }
 }

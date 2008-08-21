@@ -15,6 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
+ * Change History:
+ *
+ *    2008-06-13 Frank Schaeckermann (FSCHAECK)
+ *      Added the capture of STDERR output to method executeApplication for
+ *      easier troubleshooting of capture driver problems.
+ *
  * CVS information:
  *  $RCSfile$
  *   $Source$
@@ -240,7 +246,7 @@ public class CaptureExecute {
         
         try {
             executionHandler = new ExecutionHandler(params, mData.getProgramPath());
-            executionHandler.execute(true);
+            executionHandler.execute(true,true);
         } catch (Exception e) {
             ErrorHandler.handle(mLocalizer.msg("ProblemAtStart", "Problems while starting Application."), e);
             return null;
@@ -287,9 +293,22 @@ public class CaptureExecute {
 
         // get the process output
         String output = "";
+        String errors = ""; // also capture STDERR output FSCHAECK - 2008-06-13
         
         if(!executionHandler.getInputStreamReaderThread().isAlive()) {
           output = executionHandler.getInputStreamReaderThread().getOutput();
+        }
+
+        // read STDERR output and add to return value if necessary - FSCHAECK - 2008-06-13
+        if(!executionHandler.getErrorStreamReaderThread().isAlive()) {
+          errors = executionHandler.getErrorStreamReaderThread().getOutput();
+          if (errors.length()>0) {
+            if (output.length()>0) {
+              output = output+"\n\n"+errors;
+            } else {
+              output = errors;
+            }
+          }
         }
 
         mError = executionHandler.exitValue() != 0;
