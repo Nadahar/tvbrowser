@@ -102,11 +102,11 @@
 |
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
-  <!-- Creates an .app file for Mac OS X  -->
-  <taskdef name="jarbundler"
-           classpath="deployment/macosx/jarbundler-1.4.jar"
-           classname="com.loomcom.ant.tasks.jarbundler.JarBundler"/>
-  
+  <!-- Creates an .app file for Mac OS X (http://informagen.com/JarBundler/)  -->
+  <taskdef name="jarbundler" 
+           classpath="deployment/macosx/jarbundler-2.0.0.jar"
+           classname="net.sourceforge.jarbundler.JarBundler" />
+
   <!-- Creates a Windows Executable using launch4j (http://launch4j.sf.net) -->
 	<taskdef name="launch4j"
 	    classname="net.sf.launch4j.ant.Launch4jTask"
@@ -616,6 +616,7 @@
                 growboxintrudes="false"
                 screenmenu="true"
                 developmentregion="Global"
+                version="${tvbrowser.version}"
                 workingdirectory="/Library/Application Support/TV-Browser"
                 jars="${tvbrowser-mac.runtime.dir}/tvbrowser.jar">
     </jarbundler>
