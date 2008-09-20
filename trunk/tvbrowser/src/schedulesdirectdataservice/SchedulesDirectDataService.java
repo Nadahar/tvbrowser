@@ -122,8 +122,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
           Channel ch = channelMap.get(Integer.toString(s.getStation()));
           if (ch != null) {
             Calendar cal = Calendar.getInstance();
-            cal.setTimeZone(TimeZone.getTimeZone("UTC"));
-            cal.setTime(s.getTime().getDate());
+            cal.setTime(s.getTime().getLocalDate());
             devplugin.Date programDate = new Date(cal);
             MutableChannelDayProgram chDayProgram = getMutableDayProgram(ch, programDate);
 
@@ -194,6 +193,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
             if (xtvdProgram.getRunTime() != null) {
               try {
                 int length = Integer.parseInt(xtvdProgram.getRunTime().getHours())*60 + Integer.parseInt(xtvdProgram.getRunTime().getMinutes());
+                prog.setIntField(ProgramFieldType.NET_PLAYING_TIME_TYPE, length);
               } catch (NumberFormatException e) {
                 e.printStackTrace();
               }
@@ -308,7 +308,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
   }
 
   private MutableChannelDayProgram getMutableDayProgram(Channel ch, devplugin.Date date) {
-    MutableChannelDayProgram dayProgram = null;
+    MutableChannelDayProgram dayProgram;
     if (mChannelMap.get(ch) != null) {
       dayProgram = mChannelMap.get(ch).get(date);
 
@@ -367,10 +367,9 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
 
     mChannels = new ArrayList<Channel>();
 
-    TimeZone timeZone = TimeZone.getTimeZone("GMT+1:00");
     for (int i = 0; i < numChannels; i++) {
       Channel ch = new Channel(this, settings.getProperty("ChannelTitle-" + i, ""), settings.getProperty("ChannelId-"
-              + i, ""),  TimeZone.getTimeZone("UTC"), "US", "(c) SchedulesDirect", "", mChannelGroup, null, Channel.CATEGORY_TV);
+              + i, ""),  TimeZone.getDefault(), "US", "(c) SchedulesDirect", "", mChannelGroup, null, Channel.CATEGORY_TV);
 
       mChannels.add(ch);
     }
