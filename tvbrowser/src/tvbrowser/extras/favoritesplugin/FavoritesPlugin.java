@@ -53,6 +53,7 @@ import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.core.TitleFavorite;
 import tvbrowser.extras.favoritesplugin.core.TopicFavorite;
 import tvbrowser.extras.favoritesplugin.dlgs.EditFavoriteDialog;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTree;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
 import tvbrowser.extras.favoritesplugin.wizards.ExcludeWizardStep;
@@ -84,6 +85,7 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Iterator;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -151,8 +153,7 @@ public class FavoritesPlugin {
   private boolean mShowInfoDialog = false;
   private ArrayList<Thread> mMatchThreads;
   private Hashtable<String,Thread> mRemoveThreads;
-  private int rCount = 0;
-  private int sCount = 0;
+  
   /**
    * Creates a new instance of FavoritesPlugin.
    */
@@ -172,30 +173,37 @@ public class FavoritesPlugin {
       public void dayProgramAdded(final ChannelDayProgram prog) {
         Thread update = new Thread("match favorites thread") {
           public void run() {
-            final String dayProgramKey = getDayProgramKey(prog);
-            
-            Thread removeThread = null;
-            
-            while((removeThread = mRemoveThreads.get(dayProgramKey)) != null 
-                && removeThread.isAlive()) {
-              try {
-                sleep(20);
-              } catch (InterruptedException e) {
-                //ignore
+            try {
+              final String dayProgramKey = getDayProgramKey(prog);
+              
+              Thread removeThread = null;
+              
+              synchronized(mRemoveThreads) {
+                removeThread = mRemoveThreads.get(dayProgramKey);
               }
-            }
-            
-            Iterator<Program> it = prog.getPrograms();
-            while (it.hasNext()) {
-              final Program p = it.next();
-    
-              for (Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()) {                
+              
+              if(removeThread != null && removeThread.isAlive()) {
                 try {
-                  fav.tryToMatch(p);
-                } catch (TvBrowserException e) {
-                  ErrorHandler.handle(e);
-                }                
+                  removeThread.join();
+                } catch (InterruptedException e) {
+                  // Ignore
+                }
               }
+              
+              Iterator<Program> it = prog.getPrograms();
+              while (it.hasNext()) {
+                final Program p = it.next();
+      
+                for (Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()) {                
+                  try {
+                    fav.tryToMatch(p);
+                  } catch (TvBrowserException e) {
+                    ErrorHandler.handle(e);
+                  }                
+                }
+              }
+            }catch(Throwable t) {
+              ErrorHandler.handle("Error during finding new Favoite programs ",t);
             }
             
             mMatchThreads.remove(this);
@@ -212,12 +220,14 @@ public class FavoritesPlugin {
           public void run() {
             Iterator<Program> it = prog.getPrograms();
             while (it.hasNext()) {
-              final Program p = it.next();
-                        
-              for (final Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()) {
-                if (fav.contains(p)) {
+              try {
+                Program p = it.next();
+                
+                for (Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()) {
                   fav.removeProgram(p);
                 }
+              }catch(Throwable t) {
+                ErrorHandler.handle("Error in removing program from Favorites",t);
               }
             }
         
@@ -300,6 +310,10 @@ public class FavoritesPlugin {
             }
             monitor.setValue(monitorMaximum - mMatchThreads.size());
           }
+          
+          if(!mMatchThreads.isEmpty()) {
+            System.out.println("Max wait count for Favorite update was reached. Number of currently not finished Threads: " + mMatchThreads.size());
+          }
     
           mMatchThreads.clear();
           mRemoveThreads.clear();
@@ -335,6 +349,12 @@ public class FavoritesPlugin {
     
             mUpdateInfoThreads.add(thread);
             thread.start();
+          }
+          
+          Favorite[] favorites = FavoriteTreeModel.getInstance().getFavoriteArr();
+          
+          for(Favorite fav : favorites) {
+            fav.revalidatePrograms();
           }
         }
       };
@@ -755,7 +775,8 @@ public class FavoritesPlugin {
     int splitPanePosition = getIntegerSetting(mSettings, "splitpanePosition",
             200);
     ManageFavoritesDialog dlg = new ManageFavoritesDialog(MainFrame.getInstance(), favoriteArr, splitPanePosition, showNew);
-        
+    dlg.setModal(!showNew);
+    
     if(mShowInfoOnNewProgramsFound) {
       dlg.addComponentListener(new ComponentAdapter() {
         public void componentShown(ComponentEvent e) {

@@ -238,7 +238,14 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     mInfo = new JButton(mLocalizer.msg("info","Info"), IconLoader.getInstance().getIconFromTheme("status", "dialog-information", 16));
     mInfo.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        showInfoDialog(getSelection());
+        Object selection = getSelection();
+        
+        if(selection instanceof PluginProxy) {
+          showInfoDialog((PluginProxy)selection);
+        }
+        else {
+          showInfoDialog((InternalPluginProxyIf)selection);
+        }
       }
     });
     
@@ -247,7 +254,14 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     mConfigure.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
-        configurePlugin(getSelection());
+        Object selection = getSelection();
+        
+        if(selection instanceof PluginProxy) {
+          configurePlugin((PluginProxy)selection);
+        }
+        else {
+          mSettingsDialog.showSettingsTab(((InternalPluginProxyIf)selection).getSettingsId());;
+        }
       }
     });
     
@@ -261,7 +275,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     mRemove = new JButton(Localizer.getLocalization(Localizer.I18N_DELETE),IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16));
     mRemove.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        removePlugin(getSelection());
+        removePlugin((PluginProxy)getSelection());
       }
     });
     
@@ -280,10 +294,10 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     return contentPanel;
   }
 
-  private PluginProxy getSelection() {
+  private Object getSelection() {
     int rowIndex = mTable.getSelectedRow();
     if (rowIndex >= 0) {
-      PluginProxy proxy = (PluginProxy)mTableModel.getValueAt(rowIndex, 1);
+      Object proxy = mTableModel.getValueAt(rowIndex, 1);
       mTable.scrollRectToVisible(mTable.getCellRect(rowIndex, 0, true));
       return proxy;
     }
@@ -465,6 +479,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     if (plugin == null) {
       return;
     }
+    
     mSettingsDialog.showSettingsTab(plugin.getId());
   }
   
@@ -507,7 +522,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
 
     mInfo.setEnabled(plugin != null && plugin instanceof PluginProxy);
     mRemove.setEnabled(plugin != null && plugin instanceof PluginProxy && PluginLoader.getInstance().isPluginDeletable((PluginProxy)plugin));
-    mConfigure.setEnabled(plugin != null && plugin instanceof PluginProxy);
+    mConfigure.setEnabled(plugin != null);
   }
 
   /**

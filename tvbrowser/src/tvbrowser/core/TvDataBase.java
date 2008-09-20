@@ -72,12 +72,9 @@ public class TvDataBase {
   
   private TvDataInventory mTvDataInventory;
   
-  private ArrayList<OnDemandDayProgramFile> mTempCache;
-  
   private TvDataBase() {
     mTvDataHash = new SoftReferenceCache<String, OnDemandDayProgramFile>();
     mListenerList = new ArrayList<TvDataBaseListener>();
-    mTempCache = new ArrayList<OnDemandDayProgramFile>(0);
     mAvailableDateSet = new HashSet<Date>();
     mNewDayProgramsAfterUpdate = new Hashtable<String, Object>();
     updateAvailableDateSet();
@@ -197,7 +194,7 @@ public class TvDataBase {
           // Inform the listeners
           mLog.info("Day program was changed by third party: " + date + " on "
               + channel.getName());
-          ChannelDayProgram newDayProg = getDayProgram(date, channel, true);
+          ChannelDayProgram newDayProg = getDayProgram(date, channel, false);
           if (newDayProg != null) {
             handleKnownStatus(knownStatus, newDayProg, version);
           }
@@ -264,8 +261,6 @@ public class TvDataBase {
       }
     }
     mNewDayProgramsAfterUpdate.clear();
-    mTempCache.clear();
-    mTempCache = new ArrayList<OnDemandDayProgramFile>(0);
   }
 
   public synchronized void setDayProgram(MutableChannelDayProgram prog) {
@@ -555,8 +550,8 @@ public class TvDataBase {
           // Remove the old entry from the cache (if it exists)
           removeCacheEntry(key);
         }
-          
-        // Put the new program file in the cache
+        
+        // Put the new program file in the real cache
         addCacheEntry(key, progFile);
       } else if(oldProgFile != null) {
         oldProgFile.calculateTimeLimits();
@@ -565,10 +560,6 @@ public class TvDataBase {
       // Inform the listeners about adding the new program
       if(oldProg != null || somethingChanged) {
         OnDemandDayProgramFile dayProgramFile = getCacheEntry(date, channel, true, false);
-        
-        //cache file temporary to avoid clearance from real cache
-        mTempCache.add(dayProgramFile);
-        
         fireDayProgramAdded((ChannelDayProgram)dayProgramFile.getDayProgram());
       }
     } catch (Exception exc) {
@@ -733,7 +724,7 @@ public class TvDataBase {
     if (knownStatus != TvDataInventory.KNOWN) {
       Date date = newDayProg.getDate();
       Channel channel = newDayProg.getChannel();
-
+      
       if (knownStatus == TvDataInventory.OTHER_VERSION) {
         // The day program was replaced -> fire a deleted event
         // (And later an added event)
@@ -747,8 +738,9 @@ public class TvDataBase {
       mTvDataInventory.setKnown(date, channel, version);
 
       // The day program is new -> fire an added event
+      // save the value for informing the listeners later
+      
       fireDayProgramAdded(newDayProg);
-
     }
   }
 

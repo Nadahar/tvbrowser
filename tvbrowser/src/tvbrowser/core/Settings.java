@@ -1065,19 +1065,19 @@ public class Settings {
       mProp, "programpanel.defaultMarkPriority", 0);  
   /** Color for Programs marked with MIN_PRIORITY */
   public static final ColorProperty propProgramPanelMarkedMinPriorityColor = new ColorProperty(
-      mProp, "programpanel.ColorMarked", new Color(255, 0, 0, 30));
+      mProp, "programpanel.ColorMarked", new Color(140, 255, 0, 60));
   /** Color for Programs marked with LOWER_MEDIUM_PRIORITY */
   public static final ColorProperty propProgramPanelMarkedLowerMediumPriorityColor = new ColorProperty(
       mProp, "programpanel.ColorMarkedLowerMedium", new Color(0, 255, 255, 50));
   /** Color for Programs marked with MEDIUM_PRIORITY */
   public static final ColorProperty propProgramPanelMarkedMediumPriorityColor = new ColorProperty(
-      mProp, "programpanel.ColorMarkedMedium", new Color(140, 255, 0, 60));
+      mProp, "programpanel.ColorMarkedMedium", new Color(255, 255, 0, 60));
   /** Color for Programs marked with HIGHER_MEDIUM_PRIORITY */
   public static final ColorProperty propProgramPanelMarkedHigherMediumPriorityColor = new ColorProperty(
-      mProp, "programpanel.ColorMarkedHigherMedium", new Color(255, 255, 0, 60));
+      mProp, "programpanel.ColorMarkedHigherMedium", new Color(255, 180, 0, 110));
   /** Color for Programs marked with MAX_PRIORITY */
   public static final ColorProperty propProgramPanelMarkedMaxPriorityColor = new ColorProperty(
-      mProp, "programpanel.ColorMarkedMax", new Color(255, 180, 0, 110));
+      mProp, "programpanel.ColorMarkedMax", new Color(255, 0, 0, 30));
   /** Color of the foreground of a program pranel */
   public static final ColorProperty propProgramPanelForegroundColor = new ColorProperty(
       mProp, "programpanel.ColorForeground", Color.black);

@@ -30,6 +30,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -687,6 +688,15 @@ public class ProgramInfoDialog {
       public void windowClosing(WindowEvent e) {
         exit();
       }
+      
+      public void windowOpened(WindowEvent e) {
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            mMainPanel.repaint();
+            mInfoEP.scrollRectToVisible(new Rectangle(0,0));
+          }
+        });
+      }
     });
   }
   
@@ -721,17 +731,6 @@ public class ProgramInfoDialog {
     
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        new Thread() {
-          public void run() {
-            try {
-              Thread.sleep(100);
-            } catch (InterruptedException e) {
-              // IGNORE
-            }
-            mMainPanel.repaint();
-          }
-        }.start();
-        
         mDialog.setVisible(true);
       }
     });

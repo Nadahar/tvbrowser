@@ -26,6 +26,7 @@
 package tvdataservice;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -36,6 +37,7 @@ import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.ui.mainframe.MainFrame;
 
 import devplugin.Date;
+import devplugin.Marker;
 import devplugin.Program;
 import devplugin.ProgramFilter;
 
@@ -89,16 +91,21 @@ public class MarkedProgramsList {
 
   protected void addProgram(MutableProgram p) {
     if(p!= null && !contains(p) && p.getMarkerArr().length > 0) {
-      mMarkedPrograms.add(p);
+      synchronized(mMarkedPrograms) {
+        mMarkedPrograms.add(p);
+      }
+      
       handleFilterMarking(p);
     }
   }
   
   private boolean contains(MutableProgram p) {
     if(p != null) {
-      for(MutableProgram prog : mMarkedPrograms) {
-        if(p.getDate().equals(prog.getDate()) && p.getID().equals(prog.getID())) {
-          return true;
+      synchronized(mMarkedPrograms) {
+        for(MutableProgram prog : mMarkedPrograms) {
+          if(p.getDate().equals(prog.getDate()) && p.getID().equals(prog.getID())) {
+            return true;
+          }
         }
       }
     }
@@ -108,7 +115,10 @@ public class MarkedProgramsList {
 
   protected void removeProgram(MutableProgram p) {
     if(p!= null && p.getMarkerArr().length < 1) {
-      mMarkedPrograms.remove(p);
+      synchronized(mMarkedPrograms) {
+        mMarkedPrograms.remove(p);
+      }
+      
       handleFilterMarking(p);
     }
   }
@@ -138,8 +148,12 @@ public class MarkedProgramsList {
    * @return The marked programs.
    */
   public Program[] getMarkedPrograms() {
-    Program[] p = new Program[mMarkedPrograms.size()];
-    mMarkedPrograms.toArray(p);
+    Program[] p = null;
+    
+    synchronized(mMarkedPrograms) {
+      p = new Program[mMarkedPrograms.size()];
+      mMarkedPrograms.toArray(p);
+    }
 
     return p;
   }
@@ -152,79 +166,82 @@ public class MarkedProgramsList {
    * @return The time sorted programs for the tray.
    */
   public Program[] getTimeSortedProgramsForTray(ProgramFilter filter, int markPriority, int numberOfPrograms, boolean includeOnAirPrograms) {
-    int n = (mMarkedPrograms.size() > numberOfPrograms && numberOfPrograms > 0) ? numberOfPrograms : mMarkedPrograms.size();
-
-    ArrayList<Program> programs = new ArrayList<Program>();
-
-    int k = 0;
-    int i = 0;
+    Program[] trayPrograms = new Program[0];
     
-    Iterator<MutableProgram> it = mMarkedPrograms.iterator();
-
-    long currentDateValue = Date.getCurrentDate().getValue();
-    while(i < n) {
-      if(k >= mMarkedPrograms.size()) {
-        break;
-      }
-
-      MutableProgram p = it.next();
-      if((p.isOnAir() && !includeOnAirPrograms) || p.isExpired() || !filter.accept(p) || p.getMarkPriority() < markPriority) {
-        k++;
-        continue;
-      }
-      long value1 = (p.getDate().getValue() - currentDateValue) * 24 * 60 + p.getStartTime();
-      boolean found = false;
-
-      for(int j = 0; j < programs.size(); j++) {
-        Program p1 = programs.get(j);
-        long value2 = (p1.getDate().getValue() - currentDateValue) * 24 * 60 + p1.getStartTime();
-
-        if(value2 > value1) {
-          programs.add(j,p);
-          found = true;
+    synchronized(mMarkedPrograms) {
+      int n = (mMarkedPrograms.size() > numberOfPrograms && numberOfPrograms > 0) ? numberOfPrograms : mMarkedPrograms.size();
+  
+      ArrayList<Program> programs = new ArrayList<Program>();
+  
+      int k = 0;
+      int i = 0;
+      
+      Iterator<MutableProgram> it = mMarkedPrograms.iterator();
+  
+      long currentDateValue = Date.getCurrentDate().getValue();
+      while(i < n) {
+        if(k >= mMarkedPrograms.size()) {
           break;
         }
-      }
-
-      if(!found && filter.accept(p)) {
-        programs.add(p);
-      }
-
-      k++;
-      i++;
-    }
-
-    for(i = k; i < mMarkedPrograms.size(); i++) {
-      Program p = it.next();
-
-      if((p.isOnAir() && !includeOnAirPrograms) || p.isExpired() || p.getMarkPriority() < markPriority) {
-        continue;
-      }
-
-      long valueNew = (p.getDate().getValue() - currentDateValue) * 24 * 60 + p.getStartTime();
-      Program p1 = programs.get(programs.size() - 1);
-
-      long valueOld = (p1.getDate().getValue() - currentDateValue) * 24 * 60 + p1.getStartTime();
-      if(valueOld > valueNew) {
+  
+        MutableProgram p = it.next();
+        if((p.isOnAir() && !includeOnAirPrograms) || p.isExpired() || !filter.accept(p) || p.getMarkPriority() < markPriority) {
+          k++;
+          continue;
+        }
+        long value1 = (p.getDate().getValue() - currentDateValue) * 24 * 60 + p.getStartTime();
+        boolean found = false;
+  
         for(int j = 0; j < programs.size(); j++) {
-          p1 = programs.get(j);
-          valueOld = (p1.getDate().getValue() - currentDateValue) * 24 * 60 + p1.getStartTime();
-
-          if(valueOld > valueNew) {
+          Program p1 = programs.get(j);
+          long value2 = (p1.getDate().getValue() - currentDateValue) * 24 * 60 + p1.getStartTime();
+  
+          if(value2 > value1) {
             programs.add(j,p);
+            found = true;
             break;
           }
         }
+  
+        if(!found && filter.accept(p)) {
+          programs.add(p);
+        }
+  
+        k++;
+        i++;
       }
-
-      if(programs.size() > Settings.propTrayImportantProgramsSize.getInt()) {
-        programs.remove(Settings.propTrayImportantProgramsSize.getInt());
+  
+      for(i = k; i < mMarkedPrograms.size(); i++) {
+        Program p = it.next();
+  
+        if((p.isOnAir() && !includeOnAirPrograms) || p.isExpired() || p.getMarkPriority() < markPriority) {
+          continue;
+        }
+  
+        long valueNew = (p.getDate().getValue() - currentDateValue) * 24 * 60 + p.getStartTime();
+        Program p1 = programs.get(programs.size() - 1);
+  
+        long valueOld = (p1.getDate().getValue() - currentDateValue) * 24 * 60 + p1.getStartTime();
+        if(valueOld > valueNew) {
+          for(int j = 0; j < programs.size(); j++) {
+            p1 = programs.get(j);
+            valueOld = (p1.getDate().getValue() - currentDateValue) * 24 * 60 + p1.getStartTime();
+  
+            if(valueOld > valueNew) {
+              programs.add(j,p);
+              break;
+            }
+          }
+        }
+  
+        if(programs.size() > Settings.propTrayImportantProgramsSize.getInt()) {
+          programs.remove(Settings.propTrayImportantProgramsSize.getInt());
+        }
       }
+  
+      trayPrograms = new Program[programs.size()];
+      programs.toArray(trayPrograms);
     }
-
-    Program[] trayPrograms = new Program[programs.size()];
-    programs.toArray(trayPrograms);
-
 
     return trayPrograms;
   }
@@ -260,8 +277,36 @@ public class MarkedProgramsList {
           programInList.setProgramState(Program.WAS_DELETED_STATE);
         }
         else if(testProg != programInList) {
-          testProg.setMarkerArr(programInList.getMarkerArr());
-          testProg.setMarkPriority(programInList.getMarkPriority());
+          Marker[] testMarkerArr = testProg.getMarkerArr();
+          Marker[] currentMarkerArr = programInList.getMarkerArr();
+          
+          if(testMarkerArr == MutableProgram.EMPTY_MARKER_ARR) {
+            testProg.setMarkerArr(currentMarkerArr);
+            testProg.setMarkPriority(programInList.getMarkPriority());
+          }
+          else if(currentMarkerArr != MutableProgram.EMPTY_MARKER_ARR) {
+            ArrayList<Marker> newMarkerList = new ArrayList<Marker>();
+
+            for(Marker marker : testMarkerArr) {
+              newMarkerList.add(marker);
+            }
+
+            for(Marker marker : currentMarkerArr) {
+              if(!newMarkerList.contains(marker)) {
+                newMarkerList.add(marker);
+              }
+            }
+            
+            java.util.Collections.sort(newMarkerList,new Comparator<Marker>() {
+              public int compare(Marker o1, Marker o2) {
+                return o1.getId().compareTo(o2.getId());
+              }
+            });
+            
+            testProg.setMarkerArr(newMarkerList.toArray(new Marker[newMarkerList.size()]));
+            testProg.setMarkPriority(Math.max(testProg.getMarkPriority(),programInList.getMarkPriority()));
+          }
+          
           programInList.setMarkerArr(MutableProgram.EMPTY_MARKER_ARR);
           programInList.setMarkPriority(-1);
           programInList.setProgramState(Program.WAS_UPDATED_STATE);
