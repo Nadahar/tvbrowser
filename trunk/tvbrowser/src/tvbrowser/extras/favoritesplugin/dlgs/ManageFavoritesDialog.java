@@ -41,7 +41,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Enumeration;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -1056,6 +1055,14 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
   
   protected boolean programListIsEmpty() {
     return mProgramListModel.isEmpty();
+  }
+  
+  /**
+   * Gets if this dialog shows the new found programs after data update.
+   * @return <code>True</code> if this dialog shows the new found programs after data update.
+   */
+  public boolean isShowingNewFoundPrograms() {
+    return mShowNew;
   }
 }
 

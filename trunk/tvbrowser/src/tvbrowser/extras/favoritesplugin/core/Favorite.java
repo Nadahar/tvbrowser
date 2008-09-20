@@ -28,6 +28,7 @@ package tvbrowser.extras.favoritesplugin.core;
 
 import devplugin.Channel;
 import devplugin.Date;
+import devplugin.Marker;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
@@ -55,9 +56,9 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 public abstract class Favorite {
-
   private ArrayList<Program> mPrograms;
   private ArrayList<Program> mNewPrograms;
   private String mName;
@@ -276,7 +277,8 @@ public abstract class Favorite {
     }
     mExclusionList.add(exclusion);
     try {
-      refreshPrograms();
+      refreshPrograms(ManageFavoritesDialog.getInstance() != null &&
+          ManageFavoritesDialog.getInstance().isShowingNewFoundPrograms());
       FavoritesPlugin.getInstance().updateRootNode(true);
     } catch (TvBrowserException exc) {
       ErrorHandler.handle("Could not update favorites.", exc);
@@ -305,8 +307,7 @@ public abstract class Favorite {
   public boolean contains(Program prog) {
     return !(mBlackList != null && mBlackList.contains(prog)) && mPrograms.contains(prog);
   }
-
-
+  
   private Program[] filterByLimitations(Program[] progArr) {
     Exclusion[] globalExclusions = FavoritesPlugin.getInstance().getGlobalExclusions();
     Exclusion[] exclusions = new Exclusion[getExclusions().length + globalExclusions.length];
@@ -421,13 +422,18 @@ public abstract class Favorite {
   /**
    * Checks all current programs if they are not excluded,
    * and refreshes the program marks.
+   * @param noNewProgramsUpdate If the list with the new programs should not be updated.
    * @throws TvBrowserException Exception during search
    */
-  public void refreshPrograms() throws TvBrowserException {
-    updatePrograms(mPrograms.toArray(new Program[mPrograms.size()]), false, false);
+  public void refreshPrograms(boolean noNewProgramsUpdate) throws TvBrowserException {
+    updatePrograms(mPrograms.toArray(new Program[mPrograms.size()]), false, false, noNewProgramsUpdate);
   }
   
   private void updatePrograms(Program[] progs, boolean dataUpdate, boolean send) throws TvBrowserException {
+    updatePrograms(progs,dataUpdate,send,false);
+  }
+  
+  private void updatePrograms(Program[] progs, boolean dataUpdate, boolean send, boolean noNewProgramsUpdate) throws TvBrowserException {
     Program[] newProgList = filterByLimitations(progs);
 
 
@@ -495,11 +501,21 @@ public abstract class Favorite {
       }
     }
 
-    // pass programs to plugins
-    mNewPrograms = newPrograms;
+    if(!noNewProgramsUpdate) {
+      // pass programs to plugins
+      mNewPrograms = newPrograms;
+    }
+    else {
+      for(int i = mNewPrograms.size()-1; i >= 0; i--) {
+        if(!resultList.contains(mNewPrograms.get(i))) {
+          mNewPrograms.remove(i);
+        }
+      }
+    }
+    
     ProgramReceiveTarget[] pluginArr = getForwardPlugins();
     
-    if(mNewPrograms.size() > 0 && send) {
+    if(mNewPrograms.size() > 0 && send && !noNewProgramsUpdate) {
       if(!dataUpdate) {
         for (ProgramReceiveTarget receiveTarget : pluginArr) {
           if (receiveTarget != null && receiveTarget.getReceifeIfForIdOfTarget() != null) {
@@ -709,7 +725,7 @@ public abstract class Favorite {
    * @since 2.7
    * @throws TvBrowserException Exception during search
    */
-  public void tryToMatch(Program p) throws TvBrowserException {
+  public void tryToMatch(Program p) throws TvBrowserException {try {
     if (matches(p) && filterByLimitations(new Program[] {p}).length > 0 && (!getLimitationConfiguration().isLimitedByChannel() || Arrays.asList(getChannels()).contains(p.getChannel()))) {
       boolean wasOnBlackList = false;
       
@@ -792,6 +808,7 @@ public abstract class Favorite {
         }
       }
     }
+  }catch(Throwable t) {t.printStackTrace();}
   }
 
   /**
@@ -813,13 +830,12 @@ public abstract class Favorite {
    * @since 2.7
    */
   public void removeProgram(Program p) {
-    int reminderMinutes = unmarkProgram(p);
-    
     /* Remove programs from the lists */
     boolean wasInList = false;
     
     synchronized(mPrograms) {
       if(mPrograms.remove(p)) {
+        int reminderMinutes = unmarkProgram(p);
         wasInList = true;
         
         synchronized(mRemovedPrograms) {
@@ -828,7 +844,7 @@ public abstract class Favorite {
       }
     }
     
-    if(!wasInList) {
+    if(!wasInList && mBlackList != null) {
       synchronized(mBlackList) {
         if(mBlackList != null && mBlackList.remove(p)) {
           synchronized(mRemovedBlacklistPrograms) {
@@ -858,5 +874,33 @@ public abstract class Favorite {
   
   private String getProgramKeyFor(Program p) {
     return new StringBuilder(p.getChannel().getUniqueId()).append(p.getDate().getValue()).append("_").append(p.getStartTime()).append("_").append(p.getTitle()).toString();
+  }
+  
+  public void revalidatePrograms() {
+    new Thread("revaildate favorites") {
+      public void run() {
+        setPriority(Thread.MIN_PRIORITY);
+        
+        synchronized(mPrograms) {
+          for(int i = mPrograms.size()-1; i >= 0; i--) {
+            if(mPrograms.get(i).getProgramState() == Program.WAS_UPDATED_STATE) {
+              Program prog = mPrograms.remove(i);
+              mPrograms.add(i,Plugin.getPluginManager().getProgram(prog.getDate(),prog.getID()));
+            }
+          }
+        }
+        
+        if(mBlackList != null) {
+          synchronized(mBlackList) {
+            for(int i = mBlackList.size()-1; i >= 0; i--) {
+              if(mBlackList.get(i).getProgramState() == Program.WAS_UPDATED_STATE) {
+                Program prog = mBlackList.remove(i);
+                mBlackList.add(i,Plugin.getPluginManager().getProgram(prog.getDate(),prog.getID()));
+              }
+            }
+          }          
+        }
+      }
+    }.start();
   }
 }

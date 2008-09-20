@@ -71,7 +71,7 @@ public class ActorSearcher extends RegexSearcher {
         + "|(" + actorStr[actorMax] + "\\s*,\\s*"+ actorStr[0]+")"
         // _J._Doe_
         // _Jon_M._Doe_
-        + "|(" + actorStr[0].substring(0,1) + "(" + ".|" + actorStr[0].substring(1) + ")\\s*\\w*.?\\s*"+ actorStr[actorMax]+")";
+        + "|(" + actorStr[0].substring(0,1) + "(\\.|" + actorStr[0].substring(1) + ")\\s*\\w*.?\\s*"+ actorStr[actorMax]+")";
     }
     regEx = regEx + ")\\b.*";
     return regEx;

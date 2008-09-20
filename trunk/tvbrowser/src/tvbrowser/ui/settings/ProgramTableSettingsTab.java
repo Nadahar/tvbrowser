@@ -103,6 +103,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   private ColorLabel mMouseOverColorLb;
   
   private ColorLabel mForegroundColorLb;
+  
+  private short mLastSelectedLayoutIndex;
 
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
@@ -153,6 +155,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     } else {
       mProgramArrangementCB.setSelectedIndex(1);
     }
+    
+    mLastSelectedLayoutIndex = (short)mProgramArrangementCB.getSelectedIndex();
 
     mSettingsPn.add(mProgramArrangementCB, cc.xy(4, 3));
 
@@ -410,25 +414,25 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
 
     Settings.propTableBackgroundStyle.setString(backgroundStyle);
     
-    if (mProgramArrangementCB.getSelectedIndex() == 2) {
+    if (mProgramArrangementCB.getSelectedIndex() == 2 && mLastSelectedLayoutIndex != 2) {
       resetBackgroundStyle();
       Settings.propTableLayout.setString("compact");
-    } else if (mProgramArrangementCB.getSelectedIndex() == 3) {
+    } else if (mProgramArrangementCB.getSelectedIndex() == 3 && mLastSelectedLayoutIndex != 3) {
       resetBackgroundStyle();
       Settings.propTableLayout.setString("realCompact");
-    } else if (mProgramArrangementCB.getSelectedIndex() == 0) {
+    } else if (mProgramArrangementCB.getSelectedIndex() == 0 && mLastSelectedLayoutIndex != 0) {
       resetBackgroundStyle();
       Settings.propTableLayout.setString("timeSynchronous");
-    } else if (mProgramArrangementCB.getSelectedIndex() == 4) {
+    } else if (mProgramArrangementCB.getSelectedIndex() == 4 && mLastSelectedLayoutIndex != 4) {
       setBackgroundStyleForTimeBlockLayout();
       Settings.propTableLayout.setString("timeBlock");
-    } else if (mProgramArrangementCB.getSelectedIndex() == 5) {
+    } else if (mProgramArrangementCB.getSelectedIndex() == 5 && mLastSelectedLayoutIndex != 5) {
       setBackgroundStyleForTimeBlockLayout();
       Settings.propTableLayout.setString("compactTimeBlock");
-    } else if (mProgramArrangementCB.getSelectedIndex() == 6) {
+    } else if (mProgramArrangementCB.getSelectedIndex() == 6 && mLastSelectedLayoutIndex != 6) {
       setBackgroundStyleForTimeBlockLayout();
       Settings.propTableLayout.setString("optimizedCompactTimeBlock");
-    } else {
+    } else if (mProgramArrangementCB.getSelectedIndex() == 1 && mLastSelectedLayoutIndex != 1){
       resetBackgroundStyle();
       Settings.propTableLayout.setString("realSynchronous");
     }

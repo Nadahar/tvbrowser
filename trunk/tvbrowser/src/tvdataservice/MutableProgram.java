@@ -319,7 +319,7 @@ public class MutableProgram implements Program {
    *
    * @param marker The plugin to mark the program for.
    */
-  public final void mark(Marker marker) {
+  public final synchronized void mark(Marker marker) {
     if(mState == Program.IS_VALID_STATE) {
       boolean alreadyMarked = getMarkedByPluginIndex(marker) != -1;
       int oldCount = mMarkerArr.length;
@@ -373,7 +373,7 @@ public class MutableProgram implements Program {
    *
    * @param marker The plugin to remove the mark for.
    */
-  public final void unmark(Marker marker) {
+  public final synchronized void unmark(Marker marker) {
     if(mState == Program.IS_VALID_STATE) {
       int idx = getMarkedByPluginIndex(marker);
       if (idx != -1) {

@@ -190,7 +190,7 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
     
     if (mShowName) {
       mChannelName.paintIcon(null, g, x, y);
-      x += Settings.propTrayChannelWidth.getInt();
+      x += Settings.propTrayChannelWidth.getInt() + menuItem.getIconTextGap();
     }
 
     int temp = y

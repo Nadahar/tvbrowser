@@ -210,7 +210,7 @@ public class ProgramMenuItem extends JMenuItem {
       width += 30;
     
     if(mShowName)
-      width += Settings.propTrayChannelWidth.getInt();
+      width += Settings.propTrayChannelWidth.getInt() + getIconTextGap();
     if(mShowStartTime)
       width += TIME_WIDTH;
     if(mShowDate)

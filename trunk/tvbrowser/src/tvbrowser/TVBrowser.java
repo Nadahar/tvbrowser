@@ -25,6 +25,7 @@
  */
 package tvbrowser;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Image;
@@ -442,6 +443,21 @@ public class TVBrowser {
                   }
                 }
               }catch(Throwable registry) {}
+            }
+            
+            if(currentVersion != null && currentVersion.compareTo(new Version(2,71,false))<0) {
+              if(Settings.propProgramPanelMarkedMinPriorityColor.getColor().equals(Settings.propProgramPanelMarkedMinPriorityColor.getDefaultColor())) {
+                Settings.propProgramPanelMarkedMinPriorityColor.setColor(new Color(255, 0, 0, 30));
+              }
+              if(Settings.propProgramPanelMarkedMediumPriorityColor.getColor().equals(Settings.propProgramPanelMarkedMediumPriorityColor.getDefaultColor())) {
+                Settings.propProgramPanelMarkedMediumPriorityColor.setColor(new Color(140, 255, 0, 60));
+              }
+              if(Settings.propProgramPanelMarkedHigherMediumPriorityColor.getColor().equals(Settings.propProgramPanelMarkedHigherMediumPriorityColor.getDefaultColor())) {
+                Settings.propProgramPanelMarkedHigherMediumPriorityColor.setColor(new Color(255, 255, 0, 60));
+              }
+              if(Settings.propProgramPanelMarkedMaxPriorityColor.getColor().equals(Settings.propProgramPanelMarkedMaxPriorityColor.getDefaultColor())) {
+                Settings.propProgramPanelMarkedMaxPriorityColor.setColor(new Color(255, 180, 0, 110));
+              }
             }
             
             // check if user should select picture settings

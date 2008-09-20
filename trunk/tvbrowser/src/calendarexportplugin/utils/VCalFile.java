@@ -33,7 +33,7 @@ public class VCalFile {
    * @param intothis into this File
    * @param list List to export
    * @param settings The settings to use
-   * @param formating The formating value for the progam
+   * @param formating The formating value for the program
    */
   public void exportVCal(File intothis, Program[] list, Properties settings, AbstractPluginProgramFormating formating) {
     try {
@@ -58,7 +58,7 @@ public class VCalFile {
         Calendar c = Calendar.getInstance();
 
         out.println("DCREATED:" + mDate.format(c.getTime()) + "T" + mTime.format(c.getTime()));
-        out.println("SEQUENZ:" + i);
+        out.println("SEQUENCE:" + i);
 
         int classification = 0;
 

@@ -203,6 +203,8 @@ public class TvDataUpdater {
     ProgressMonitor monitor = monitorGroup.getNextProgressMonitor(subscribedChannels.length+1);
     monitor.setMessage(mLocalizer.msg("calculateEntries","Calculating new entries in the database"));
     TvDataBase.getInstance().reCalculateTvData(daysToDownload, monitor);
+    TvDataBase.getInstance().updateTvDataBase();
+    MarkedProgramsList.getInstance().revalidatePrograms();
     
     // Inform the listeners
     fireTvDataUpdateFinished();
@@ -256,9 +258,6 @@ public class TvDataUpdater {
 
   void fireTvDataUpdateFinished() {
     synchronized(mListenerList) {
-      TvDataBase.getInstance().updateTvDataBase();
-      MarkedProgramsList.getInstance().revalidatePrograms();
-      
       for (int i = 0; i < mListenerList.size(); i++) {
         TvDataUpdateListener lst = mListenerList.get(i);
         try {
