@@ -25,6 +25,7 @@ package calendarexportplugin.exporter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Properties;
+import java.util.Calendar;
 
 import util.exc.ErrorHandler;
 import util.misc.AppleScriptRunner;
@@ -63,9 +64,43 @@ public class AppleiCalExporter extends AbstractExporter {
 
         StringBuilder script = new StringBuilder();
         
-        SimpleDateFormat formatDay = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-        
+        SimpleDateFormat formatDay = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat formatHour = new SimpleDateFormat("HH:mm");
+
         script.append("property myTVCalendar : \"TV-Browser\"\n");
+
+        script.append("on stringToList from theString for myDelimiters\n" +
+          "\ttell AppleScript\n" +
+          "\t\tset theSavedDelimiters to AppleScript's text item delimiters\n" +
+          "\t\tset text item delimiters to myDelimiters\n" +
+          "\t\t\n" +
+          "\t\tset outList to text items of theString\n" +
+          "\t\tset text item delimiters to theSavedDelimiters\n" +
+          "\t\t\n" +
+          "\t\treturn outList\n" +
+          "\tend tell\n" +
+          "end stringToList\n" +
+          "\n" +
+          "\n" +
+          "on getDateForISOdate(theISODate, theISOTime)\n" +
+          "\tlocal myDate\n" +
+          "\t-- converts an ISO format (YYYY-MM-DD) and time to a date object\n" +
+          "\tset monthConstants to {January, February, March, April, May, June, July, August, September, October, November, December}\n" +
+          "\t\n" +
+          "\tset theISODate to (stringToList from (theISODate) for \"-\")\n" +
+          "\t\n" +
+          "\tset myDate to date theISOTime\n" +
+          "\t\n" +
+          "\ttell theISODate\n" +
+          "\t\tset year of myDate to item 1\n" +
+          "\t\tset month of myDate to item (item 2) of monthConstants\n" +
+          "\t\tset day of myDate to item 3\n" +
+          "\tend tell\n" +
+          "\t\n" +
+          "\treturn myDate\n" +
+          "end getDateForISOdate\n" +
+          "\n");
+
         script.append("\n");
         script.append("tell application \"iCal\"\n");
         script.append("  if (exists (calendars whose title is myTVCalendar)) then\n");
@@ -76,8 +111,11 @@ public class AppleiCalExporter extends AbstractExporter {
         script.append("\n");
         
         for (Program program : programs) {
-            script.append("  set startDate to date \"").append(formatDay.format(CalendarToolbox.getStartAsCalendar(program).getTime())).append("\"\n");
-            script.append("  set endDate to date \"").append(formatDay.format(CalendarToolbox.getEndAsCalendar(program).getTime())).append("\"\n");
+            final Calendar start = CalendarToolbox.getStartAsCalendar(program);
+            final Calendar end   = CalendarToolbox.getEndAsCalendar(program);
+
+            script.append("  set startDate to my getDateForISOdate(\"").append(formatDay.format(start.getTime())).append("\", \"").append(formatHour.format(start.getTime())).append("\")\n");
+            script.append("  set endDate to my getDateForISOdate(\"").append(formatDay.format(end.getTime())).append("\", \"").append(formatHour.format(end.getTime())).append("\")\n");
             script.append("\n");
             script.append("  set props to {start date:startDate, end date:endDate, summary:\"");
             
