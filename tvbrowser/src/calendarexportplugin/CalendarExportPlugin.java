@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -36,6 +38,7 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.ImageIcon;
 
 import util.program.AbstractPluginProgramFormating;
 import util.program.LocalPluginProgramFormating;
@@ -268,7 +271,7 @@ public class CalendarExportPlugin extends Plugin {
             name.append(mLocalizer.msg("contextMenuText", "Export to")).append(' ');
           }
           
-          action.putValue(Action.SMALL_ICON, createImageIcon("apps", "office-calendar", 16));
+          action.putValue(Action.SMALL_ICON, getExporterIcon(export));
         }
 
         name.append(activeExporter[i].getName());
@@ -337,6 +340,15 @@ public class CalendarExportPlugin extends Plugin {
     }
   }
 
+  private ImageIcon getExporterIcon(final ExporterIf export) {
+    String iconName = export.getIconName();
+    if (iconName != null) {
+      return new ImageIcon(getClass().getResource(
+          "icons/16x16/apps/" + iconName));
+    }
+    return createImageIcon("apps", "office-calendar", 16);
+  }
+
   @Override
   public boolean canReceiveProgramsWithTarget() {
     return true;
@@ -379,10 +391,11 @@ public class CalendarExportPlugin extends Plugin {
   }
 
   private PluginTreeNode getNodeForExporter(ExporterIf export) {
-   PluginTreeNode node = mTreeNodes.get(export);
+    PluginTreeNode node = mTreeNodes.get(export);
     
     if (node == null) {
       node = new PluginTreeNode(export.getName());
+      node.getMutableTreeNode().setIcon(getExporterIcon(export));
       
       createNodeActionForNode(node);
       
@@ -590,15 +603,16 @@ public class CalendarExportPlugin extends Plugin {
 
         if (version >= 4) {
           int treeNodeCount = in.readInt();
+          ArrayList<PluginTreeNode> nodes = new ArrayList<PluginTreeNode>();
           for (int i = 0; i < treeNodeCount; i++) {
             final ExporterIf exporter = findExporter((String)in.readObject());
             PluginTreeNode node = null;
             if (exporter != null) {
               node = new PluginTreeNode(exporter.getName());
+              node.getMutableTreeNode().setIcon(getExporterIcon(exporter));
               
               createNodeActionForNode(node);
-              
-              getRootNode().add(node);
+              nodes.add(node);
               mTreeNodes.put(exporter, node);
             }
 
@@ -611,6 +625,15 @@ public class CalendarExportPlugin extends Plugin {
                 node.addProgram(program);
               }
             }
+          }
+          Collections.sort(nodes, new Comparator<PluginTreeNode>() {
+            public int compare(PluginTreeNode o1, PluginTreeNode o2) {
+              return ((String) o1.getUserObject())
+                  .compareToIgnoreCase((String) o2.getUserObject());
+            }
+          });
+          for (PluginTreeNode pluginTreeNode : nodes) {
+            getRootNode().add(pluginTreeNode);
           }
         }
         

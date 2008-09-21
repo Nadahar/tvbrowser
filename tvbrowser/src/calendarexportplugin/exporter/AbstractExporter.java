@@ -50,5 +50,9 @@ public abstract class AbstractExporter implements ExporterIf {
   public String toString() {
     return getName();
   }
-  
+
+  public String getIconName() {
+    // no icon
+    return null;
+  }
 }

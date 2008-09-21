@@ -22,38 +22,41 @@
  */
 package calendarexportplugin.exporter;
 
-import calendarexportplugin.CalendarExportPlugin;
-import calendarexportplugin.utils.CalendarToolbox;
-import com.google.gdata.client.GoogleService;
-import com.google.gdata.client.Query;
-import com.google.gdata.client.calendar.CalendarService;
-import com.google.gdata.data.DateTime;
-import com.google.gdata.data.PlainTextConstruct;
-import com.google.gdata.data.calendar.CalendarEventFeed;
-import com.google.gdata.data.calendar.CalendarEventEntry;
-import com.google.gdata.data.extensions.EventEntry;
-import com.google.gdata.data.extensions.Reminder;
-import com.google.gdata.data.extensions.When;
-import com.google.gdata.data.extensions.BaseEventEntry;
-import com.google.gdata.util.AuthenticationException;
-import com.google.gdata.util.ServiceException;
-import devplugin.Program;
-import util.exc.ErrorHandler;
-import util.io.IOUtilities;
-import util.paramhandler.ParamParser;
-import util.program.AbstractPluginProgramFormating;
-import util.ui.Localizer;
-
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import java.awt.Window;
+import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Properties;
 import java.util.TimeZone;
-import java.io.IOException;
+
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+import util.exc.ErrorHandler;
+import util.io.IOUtilities;
+import util.paramhandler.ParamParser;
+import util.program.AbstractPluginProgramFormating;
+import util.ui.Localizer;
+import calendarexportplugin.CalendarExportPlugin;
+import calendarexportplugin.utils.CalendarToolbox;
+
+import com.google.gdata.client.GoogleService;
+import com.google.gdata.client.Query;
+import com.google.gdata.client.calendar.CalendarService;
+import com.google.gdata.data.DateTime;
+import com.google.gdata.data.PlainTextConstruct;
+import com.google.gdata.data.calendar.CalendarEventEntry;
+import com.google.gdata.data.calendar.CalendarEventFeed;
+import com.google.gdata.data.extensions.BaseEventEntry;
+import com.google.gdata.data.extensions.EventEntry;
+import com.google.gdata.data.extensions.Reminder;
+import com.google.gdata.data.extensions.When;
+import com.google.gdata.util.AuthenticationException;
+import com.google.gdata.util.ServiceException;
+
+import devplugin.Program;
 
 /**
  * Exporter for Google Calendar API
@@ -347,5 +350,9 @@ public class GoogleExporter extends AbstractExporter {
         ErrorHandler.handle(mLocalizer.msg("commError", "Error while communicating with Google!"), e);
       }
     }
+  }
+
+  public String getIconName() {
+    return "google.png";
   }
 }

@@ -22,11 +22,10 @@
  */
 package calendarexportplugin.exporter;
 
-import devplugin.Program;
-
 import java.util.Properties;
 
 import util.program.AbstractPluginProgramFormating;
+import devplugin.Program;
 
 /**
  * This interface must be implemented for all export-methods 
@@ -58,5 +57,10 @@ public interface ExporterIf {
   /**
    * @return Name of Exporter
    */
-  public String getName();  
+  public String getName();
+
+  /**
+   * @return name of the icon to display for this exporter
+   */
+  public String getIconName();  
 }
