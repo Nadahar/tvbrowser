@@ -1,7 +1,5 @@
 package swedbtvdataservice;
 
-import util.ui.ImageUtilities;
-
 import java.awt.Image;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -13,8 +11,11 @@ import java.nio.channels.FileChannel;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+
+import util.ui.ImageUtilities;
 
 class IconLoader {
   private static Logger mLog = Logger.getLogger(IconLoader.class.getName());
@@ -45,13 +46,13 @@ class IconLoader {
       // System.exit(-1);
     }
   }
-
+  
   public Icon getIcon(String channelId, String url) throws IOException {
     String key = new StringBuffer("icons_").append(mGroup).append("_")
             .append(channelId).toString();
     String prevUrl = (String) mProperties.get(key);
     Icon icon = null;
-    File iconFile = new File(mIconDir, channelId);
+    File iconFile = new File(mIconDir, escapedName(channelId));
 
     if (url.equals(prevUrl)) {
       // the url hasn't changed; we should have the icon locally
@@ -96,6 +97,14 @@ class IconLoader {
     return icon;
   }
 
+  private String escapedName(String channelId) {
+    return channelId.replaceAll("\\.", "_");
+  }
+
+  private String unescape(String name) {
+    return name.replaceAll("_", "\\.");
+  }
+
   /**
    * Fast Copy of a File
    *
@@ -122,6 +131,18 @@ class IconLoader {
   }
 
   private Icon getIconFromFile(File file) {
+    // rename old icon files on the fly to avoid file names ending in
+    // ".com" which is reserved on Microsoft platforms
+    if (!file.exists()) {
+      String namePart = file.getName();
+      String unescapedPath = file.getAbsolutePath().replace(namePart,
+          unescape(namePart));
+      File unescapedFile = new File(unescapedPath);
+      if (unescapedFile.exists()) {
+        unescapedFile.renameTo(file);
+      }
+    }
+    // now load the (renamed) image
     Image img = ImageUtilities.createImageAsynchronous(file.getAbsolutePath());
     if (img != null) {
       return new ImageIcon(img);
