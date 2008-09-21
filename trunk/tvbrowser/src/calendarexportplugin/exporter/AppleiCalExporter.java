@@ -114,4 +114,8 @@ public class AppleiCalExporter extends AbstractExporter {
         return true;
     }
 
+  public String getIconName() {
+    return "apple_ical.png";
+  }
+
 }

@@ -22,12 +22,12 @@
  */
 package calendarexportplugin.exporter;
 
-import util.misc.OperatingSystem;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+
+import util.misc.OperatingSystem;
 
 /**
  * Factory for the ExporterIf
@@ -58,13 +58,17 @@ public class ExporterFactory {
       mExporterList.add(new OutlookExporter());
     }
 
-    Collections.sort(mExporterList, new Comparator<ExporterIf>() {
-      public int compare(ExporterIf o1, ExporterIf o2) {
-        return o1.getName().compareTo(o2.getName());
-      }
-    });
+    sortList(mExporterList);
 
     mActiveExporter = new ArrayList<ExporterIf>(mExporterList);
+  }
+
+  private void sortList(ArrayList<ExporterIf> list) {
+    Collections.sort(list, new Comparator<ExporterIf>() {
+      public int compare(ExporterIf o1, ExporterIf o2) {
+        return o1.getName().compareToIgnoreCase(o2.getName());
+      }
+    });
   }
 
   /**
@@ -73,6 +77,7 @@ public class ExporterFactory {
    */
   public void setActiveExporters(ExporterIf[] exporters) {
     mActiveExporter = new ArrayList<ExporterIf>(Arrays.asList(exporters));
+    sortList(mActiveExporter);
   }
 
   /**
@@ -131,6 +136,7 @@ public class ExporterFactory {
         }
       }
     }
+    sortList(mActiveExporter);
   }
 
 }

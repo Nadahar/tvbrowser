@@ -68,4 +68,8 @@ public class KOrganizerExporter extends AbstractExporter {
     
     return false;
   }
+
+  public String getIconName() {
+    return "korganizer.png";
+  }
 }

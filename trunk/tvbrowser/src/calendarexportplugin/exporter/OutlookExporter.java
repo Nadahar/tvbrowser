@@ -16,19 +16,20 @@
  */
 package calendarexportplugin.exporter;
 
-import calendarexportplugin.CalendarExportPlugin;
-import calendarexportplugin.utils.CalendarToolbox;
-import devplugin.Program;
+import java.util.Date;
+import java.util.Properties;
+
+import javax.swing.JOptionPane;
+
 import jp.ne.so_net.ga2.no_ji.jcom.IDispatch;
 import jp.ne.so_net.ga2.no_ji.jcom.ReleaseManager;
 import util.exc.ErrorHandler;
 import util.paramhandler.ParamParser;
 import util.program.AbstractPluginProgramFormating;
 import util.ui.Localizer;
-
-import javax.swing.JOptionPane;
-import java.util.Date;
-import java.util.Properties;
+import calendarexportplugin.CalendarExportPlugin;
+import calendarexportplugin.utils.CalendarToolbox;
+import devplugin.Program;
 
 /**
  * Exporter for MS Outlook
@@ -189,5 +190,9 @@ public class OutlookExporter extends AbstractExporter {
         }
         return true;
     }
+
+  public String getIconName() {
+    return "outlook.png";
+  }
 
 }
