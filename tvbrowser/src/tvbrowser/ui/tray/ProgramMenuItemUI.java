@@ -112,14 +112,9 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
 
     int width = menuItem.getWidth() - x;
     int height = menuItem.getHeight();
-    int top = i.top + 1;
-    int bottom = height - i.bottom - i.top - 1;
+    int top = i.top;
+    int bottom = height - i.bottom;
 
-    if (mIcon != null) {
-      top += 1;
-      bottom -= (i.bottom + i.top);
-    }    
-    
     if(!menuItem.isArmed() && (isMarked || isOnAir || mTime != -1)) {
       g.setColor(Color.white);
       g.fillRect(x, top, menuItem.getWidth(), bottom);
