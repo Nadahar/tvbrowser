@@ -25,8 +25,29 @@
  */
 package tvbrowser.core;
 
-import com.jgoodies.looks.plastic.PlasticLookAndFeel;
-import devplugin.ProgramFieldType;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+import java.awt.Window;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import java.util.Properties;
+import java.util.Set;
+import java.util.logging.Level;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+
 import tvbrowser.TVBrowser;
 import tvbrowser.core.plugin.DefaultSettings;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
@@ -59,27 +80,9 @@ import util.settings.WindowSetting;
 import util.ui.Localizer;
 import util.ui.view.SplitViewProperty;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.awt.Window;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.Set;
-import java.util.logging.Level;
+import com.jgoodies.looks.plastic.PlasticLookAndFeel;
+
+import devplugin.ProgramFieldType;
 
 /**
  * The Settings class provides access to the settings of the whole application
@@ -1384,10 +1387,10 @@ public class Settings {
       mProp, "selectedChannelCountryIndex", (short)0);
 
   public static final BooleanProperty propAutoDataDownloadEnabled = new BooleanProperty(
-      mProp, "autoDataDownloadEnabled", false);
+      mProp, "autoDataDownloadEnabled", true);
   
   public static final ShortProperty propAutoDownloadWaitingTime = new ShortProperty(
-      mProp, "autoDownloadWaitingTime", (short)0);
+      mProp, "autoDownloadWaitingTime", (short) 5);
   
   /**
    * Sets the window position and size for the given window with the values of the given id.

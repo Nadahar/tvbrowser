@@ -43,6 +43,7 @@ import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.nio.channels.FileLock;
 import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.logging.Formatter;
@@ -89,7 +90,6 @@ import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.textcomponentpopup.TextComponentPopupEventQueue;
-
 import ca.beq.util.win32.registry.RegistryKey;
 import ca.beq.util.win32.registry.RegistryValue;
 import ca.beq.util.win32.registry.RootKey;
@@ -838,30 +838,44 @@ public class TVBrowser {
    * @return false, if no download got started
    */
   public static boolean handleAutomaticDownload() {
-    final String autoDLType = Settings.propAutoDownloadType.getString();
-
+    String autoDLType = Settings.propAutoDownloadType.getString();
     if ((ChannelList.getNumberOfSubscribedChannels() == 0)
       || autoDLType.equals("never"))
     {
       // Nothing to do
       return false;
     }
-    
+
+    if (!isAutomaticDownloadDateReached()) { // dont update yet
+      return false;
+    }
+
     if((mAutoDownloadWaitingTimer != null 
           && mAutoDownloadWaitingTimer.isRunning())) {
       return true;
     }
     
     if(Settings.propAutoDownloadWaitingTime.getShort() > 0) {
+      final long timerStart = Calendar.getInstance().getTimeInMillis();
       if(mAutoDownloadWaitingTimer == null) {
-        mAutoDownloadWaitingTimer = new Timer(Settings.propAutoDownloadWaitingTime.getShort() * 1000 + 1000,
+        mAutoDownloadWaitingTimer = new Timer(1000,
           new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-              performAutomaticDownload(autoDLType);
+              int seconds = (int) ((Calendar.getInstance().getTimeInMillis() - timerStart) / 1000.0);
+              seconds = Settings.propAutoDownloadWaitingTime.getShort() - seconds;
+              if (seconds <= 0) {
+                mAutoDownloadWaitingTimer.stop();
+                mainFrame.getStatusBarLabel().setText("");
+                performAutomaticDownload();
+            } else {
+              mainFrame.getStatusBarLabel().setText(
+                  mLocalizer.msg("downloadwait",
+                      "Automatic download starts in {0} seconds.", seconds));
+            }
             }
           }
         );
-        mAutoDownloadWaitingTimer.setRepeats(false);
+        mAutoDownloadWaitingTimer.setRepeats(true);
         mAutoDownloadWaitingTimer.start();
       }
       else {
@@ -869,18 +883,19 @@ public class TVBrowser {
       }
     }
     else {
-      return performAutomaticDownload(autoDLType);
+      return performAutomaticDownload();
     }
     
     return true;
   }
   
-  private static boolean performAutomaticDownload(String autoDLType) {
-    devplugin.Date lastDownloadDate=Settings.propLastDownloadDate.getDate();
+  private static boolean isAutomaticDownloadDateReached() {
+    String autoDLType = Settings.propAutoDownloadType.getString();
+    Date lastDownloadDate = Settings.propLastDownloadDate.getDate();
     if (lastDownloadDate==null) {
-      lastDownloadDate=devplugin.Date.getCurrentDate().addDays(-100);
+      lastDownloadDate = Date.getCurrentDate().addDays(-100);
     }
-    devplugin.Date today=devplugin.Date.getCurrentDate();
+    Date today = Date.getCurrentDate();
 
     Date nextDownloadDate;
 
@@ -896,8 +911,11 @@ public class TVBrowser {
     else { // "daily"
       nextDownloadDate=lastDownloadDate;
     }
-    
-    if (nextDownloadDate.getNumberOfDaysSince(today)<=0) {
+    return nextDownloadDate.getNumberOfDaysSince(today) <= 0;
+  }
+
+  private static boolean performAutomaticDownload() {
+    if (isAutomaticDownloadDateReached()) {
       if (Settings.propAskForAutoDownload.getBoolean()) {
         mainFrame.updateTvData();
       }
