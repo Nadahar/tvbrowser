@@ -50,6 +50,8 @@ import java.awt.event.MouseMotionAdapter;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JViewport;
+import javax.swing.Scrollable;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -59,9 +61,9 @@ import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateListener;
 import tvbrowser.ui.programtable.background.BackgroundPainter;
 import tvbrowser.ui.programtable.background.OneImageBackPainter;
+import tvbrowser.ui.programtable.background.SingleColorBackPainter;
 import tvbrowser.ui.programtable.background.TimeBlockBackPainter;
 import tvbrowser.ui.programtable.background.TimeOfDayBackPainter;
-import tvbrowser.ui.programtable.background.SingleColorBackPainter;
 import util.settings.ProgramPanelSettings;
 import util.ui.ProgramPanel;
 import util.ui.TransferProgram;
@@ -79,7 +81,8 @@ import devplugin.Program;
  *
  */
 public class ProgramTable extends JPanel
-implements ProgramTableModelListener, DragGestureListener, DragSourceListener, PluginStateListener {
+ implements ProgramTableModelListener,
+    DragGestureListener, DragSourceListener, PluginStateListener, Scrollable {
 
   private int mColumnWidth;
   private int mHeight;
@@ -1203,5 +1206,45 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener, P
 
   public void pluginUnloaded(PluginProxy plugin) {
     // noop
+  }
+
+  public Dimension getPreferredScrollableViewportSize() {
+    // not implemented
+    return getPreferredSize();
+  }
+
+  public int getScrollableBlockIncrement(Rectangle visibleRect,
+      int orientation, int direction) {
+    if (orientation == SwingConstants.VERTICAL) {
+      // scroll full page when page up/down is used
+      return visibleRect.height;
+    } else {
+      // force block scrolling to always align the columns as before
+      int fullColumns = (int) ((visibleRect.getWidth() + 8) / mColumnWidth);
+      if (fullColumns < 1) {
+        fullColumns = 1;
+      }
+      return fullColumns * mColumnWidth;
+    }
+  }
+
+  public boolean getScrollableTracksViewportHeight() {
+    // not implemented
+    return false;
+  }
+
+  public boolean getScrollableTracksViewportWidth() {
+    // not implemented
+    return false;
+  }
+
+  public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation,
+      int direction) {
+    // scroll by full column width, when cursor left/right is used
+    if (orientation == SwingConstants.HORIZONTAL) {
+      return mColumnWidth;
+    }
+    // scroll 50 pixels when cursor up/down is used
+    return 50;
   }
 }
