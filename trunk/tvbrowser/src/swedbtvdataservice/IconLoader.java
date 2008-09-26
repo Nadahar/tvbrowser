@@ -8,7 +8,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.channels.FileChannel;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,7 +25,7 @@ class IconLoader {
 
   private String mGroup;
 
-  private Properties mProperties;
+  private ChangeTrackingProperties mProperties;
   private SweDBTvDataService mDataHydraTvDataService;
 
   public IconLoader(SweDBTvDataService DataHydraDataService, String group, File dir) throws IOException {
@@ -37,7 +36,7 @@ class IconLoader {
       mIconDir.mkdirs();
     }
     mIconIndexFile = new File(mIconDir, "index.txt");
-    mProperties = new Properties();
+    mProperties = new ChangeTrackingProperties();
     if (mIconIndexFile.exists()) {
       mProperties.load(new BufferedInputStream(new FileInputStream(
               mIconIndexFile), 0x1000));
@@ -151,6 +150,8 @@ class IconLoader {
   }
 
   public void close() throws IOException {
-    mProperties.store(new FileOutputStream(mIconIndexFile), null);
+    if (mProperties.changed()) {
+      mProperties.store(new FileOutputStream(mIconIndexFile), null);
+    }
   }
 }
