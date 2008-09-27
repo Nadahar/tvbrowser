@@ -26,13 +26,16 @@
 
 package tvbrowser.extras.favoritesplugin.core;
 
-import devplugin.Channel;
-import devplugin.Date;
-import devplugin.Marker;
-import devplugin.Plugin;
-import devplugin.Program;
-import devplugin.ProgramReceiveTarget;
-import devplugin.ProgramSearcher;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.extras.common.LimitationConfiguration;
 import tvbrowser.extras.common.ReminderConfiguration;
@@ -46,17 +49,12 @@ import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.program.ProgramUtilities;
 import util.ui.SearchFormSettings;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.logging.Logger;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
+import devplugin.ProgramSearcher;
 
 public abstract class Favorite {
   private ArrayList<Program> mPrograms;

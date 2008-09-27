@@ -25,19 +25,19 @@
  */
 package radiotimesdataservice;
 
-import devplugin.Channel;
-import devplugin.Date;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
-import tvdataservice.MutableChannelDayProgram;
-import tvdataservice.MutableProgram;
-import tvdataservice.TvDataUpdateManager;
-import util.io.IOUtilities;
-
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import tvdataservice.MutableChannelDayProgram;
+import tvdataservice.MutableProgram;
+import tvdataservice.TvDataUpdateManager;
+import util.io.IOUtilities;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
 
 /**
  * Parses the RadioTimes Data
@@ -79,7 +79,6 @@ public class RadioTimesFileParser {
   private static final int RT_NEW_SERIES = 11;
   private static final int RT_SUBTITLES_FOR_AURALLY_HANDICAPPED = 12;
   private static final int RT_BLACK_WHITE = 13;
-  @SuppressWarnings("unused")
   private static final int RT_STAR_RATING = 14; // 1 to 5 stars
   private static final int RT_AGE_LIMIT = 15;
   private static final int RT_GENRE = 16;

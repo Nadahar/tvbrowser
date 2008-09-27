@@ -536,23 +536,13 @@ public class PluginLoader {
    * @return true if successful
    */
   public boolean deletePlugin(PluginProxy proxy) {
-    // mark plugin file for deletion
-    File file = mDeleteablePlugin.get(proxy);
-    if (file != null) {
-      Settings.propDeleteFilesAtStart.addItem(file.toString());
-      
-      // mark proxy file for deletion
-      String proxyFile = getProxyFileName(file);
-      Settings.propDeleteFilesAtStart.addItem(proxyFile);
-      
+    if (deletePluginOrService(proxy)) {
       try {
           PluginProxyManager.getInstance().removePlugin(proxy);
       } catch (TvBrowserException exc) {
           ErrorHandler.handle(exc);
           return false;
       }
-  
-      mDeleteablePlugin.remove(proxy);
       return true;
     }
     return false;
@@ -565,8 +555,12 @@ public class PluginLoader {
    * @since 2.7
    */
   public boolean deleteDataService(TvDataServiceProxy service) {
+    return deletePluginOrService(service);
+  }
+
+  private boolean deletePluginOrService(Object plugin) {
     // mark plugin file for deletion
-    File file = mDeleteablePlugin.get(service);
+    File file = mDeleteablePlugin.get(plugin);
     if (file != null) {
       Settings.propDeleteFilesAtStart.addItem(file.toString());
       
@@ -574,7 +568,7 @@ public class PluginLoader {
       String proxyFile = getProxyFileName(file);
       Settings.propDeleteFilesAtStart.addItem(proxyFile);
       
-      mDeleteablePlugin.remove(service);
+      mDeleteablePlugin.remove(plugin);
       return true;
     }
     return false;
