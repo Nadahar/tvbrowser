@@ -25,29 +25,6 @@
  */
 package util.ui;
 
-import devplugin.ContextMenuIf;
-import devplugin.Marker;
-import devplugin.Plugin;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
-import devplugin.ProgramInfoHelper;
-import tvbrowser.core.Settings;
-import tvbrowser.core.plugin.PluginProxy;
-import tvbrowser.core.plugin.PluginProxyManager;
-import tvbrowser.core.plugin.PluginStateListener;
-import util.io.IOUtilities;
-import util.misc.StringPool;
-import util.program.ProgramUtilities;
-import util.settings.ProgramPanelSettings;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -64,6 +41,30 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.logging.Level;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import tvbrowser.core.Settings;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.plugin.PluginStateListener;
+import util.io.IOUtilities;
+import util.misc.StringPool;
+import util.program.ProgramUtilities;
+import util.settings.ProgramPanelSettings;
+import devplugin.ContextMenuIf;
+import devplugin.Marker;
+import devplugin.Plugin;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
+import devplugin.ProgramInfoHelper;
 
 /**
  * A ProgramPanel is a JComponent representing a single program.
@@ -135,6 +136,11 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
   private boolean mMouseOver = false;
 
   private boolean mIsSelected = false;
+  
+  /**
+   * this panel has been changed by third party, needs update before painting
+   */
+  private boolean mHasChanged = false;
 
   /** Orientation Progressbar in X_AXIS 
    * @deprecated since 2.7 Use {@link ProgramPanelSettings#X_AXIS} instead
@@ -437,7 +443,9 @@ private static Font getDynamicFontSize(Font font, int offset) {
     }
     
     // Create the picture area icon
-    if(!mSettings.isShowingOnlyDateAndTitle() && mProgram.getBinaryField(ProgramFieldType.PICTURE_TYPE) != null && ( 
+    if (!mSettings.isShowingOnlyDateAndTitle()
+        && mProgram.hasFieldValue(ProgramFieldType.PICTURE_TYPE)
+        && ( 
         mSettings.isShowingPictureEver() || !dontShow || 
         (mSettings.isShowingPictureInTimeRange() && 
          !ProgramUtilities.isNotInTimeRange(mSettings.getPictureTimeRangeStart(),mSettings.getPictureTimeRangeEnd(),program)) ||
@@ -529,7 +537,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
             }
           }
         } else if (iconPluginArr[pluginIdx].compareTo(Settings.PICTURE_ID) == 0) {
-          if(mProgram.getBinaryField(ProgramFieldType.PICTURE_TYPE) != null) {
+          if (mProgram.hasFieldValue(ProgramFieldType.PICTURE_TYPE)) {
             iconList.add(new ImageIcon("imgs/Info_HasPicture.png"));
           }
         } else {
@@ -737,6 +745,12 @@ private static Font getDynamicFontSize(Font font, int offset) {
       }
     }
     
+    // lazy update of plugin icons
+    if (mHasChanged) {
+      mIconArr = getPluginIcons(mProgram);
+      mHasChanged = false;
+    }
+    
     // Paint the icons on the left side
     if (mIconArr != null) {
       x = 2;
@@ -918,8 +932,9 @@ private static Font getDynamicFontSize(Font font, int offset) {
    * @see Program#addChangeListener(ChangeListener)
    */
   public void programHasChanged() {
-    // Get the icons from the plugins
-    mIconArr = getPluginIcons(mProgram);
+    // we need to remember changed state so we can update the plugin icons
+    // before painting
+    mHasChanged = true;
   }
 
   // implements ChangeListener

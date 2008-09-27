@@ -76,9 +76,11 @@ public class TextAreaIcon implements Icon {
    * @param maxLineCount Max Count of Lines
    */
   public void setMaximumLineCount(int maxLineCount) {
-    mMaxLineCount = maxLineCount;
-    if ((mTextLineArr != null) && (mTextLineArr.length >= mMaxLineCount)) {
-      setText(mText);
+    if (mMaxLineCount != maxLineCount) {
+      mMaxLineCount = maxLineCount;
+      if ((mTextLineArr != null) && (mTextLineArr.length >= mMaxLineCount)) {
+        setText(mText);
+      }
     }
   }
   
