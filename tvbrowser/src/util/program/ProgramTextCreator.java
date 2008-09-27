@@ -27,9 +27,9 @@
 package util.program;
 
 import java.awt.Font;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.text.DecimalFormat;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -290,12 +290,17 @@ public class ProgramTextCreator {
           
           StringBuffer value = new StringBuffer();
             
-          if(prog.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE) != null) {
-            value.append(prog.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE));
+          String textField = prog.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE);
+          if (textField != null) {
+            value.append(textField);
           }
           
-          if(settings.isShowingPictureDescription() &&  prog.getTextField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE) != null) {
-            value.append("<br>").append(prog.getTextField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE));
+          if (settings.isShowingPictureDescription()) {
+              textField = prog
+                  .getTextField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE);
+              if (textField != null) {
+                value.append("<br>").append(textField);
+              }
           }
                     
           buffer.append(doc.createCompTag(new JLabel(imageIcon)));
