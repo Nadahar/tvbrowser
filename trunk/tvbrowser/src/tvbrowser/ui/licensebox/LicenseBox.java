@@ -35,25 +35,20 @@ import java.net.URL;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.Timer;
-import javax.swing.JEditorPane;
-import javax.swing.event.HyperlinkListener;
 import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
+import util.browserlauncher.Launch;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
-import util.ui.SearchFormSettings;
-import util.ui.SearchHelper;
-import util.ui.html.HTMLTextHelper;
 import util.ui.html.ExtendedHTMLEditorKit;
-import util.browserlauncher.Launch;
-import util.program.ProgramTextCreator;
-import devplugin.PluginManager;
+import util.ui.html.HTMLTextHelper;
 
 public class LicenseBox extends JDialog implements ActionListener,WindowClosingIf {
   

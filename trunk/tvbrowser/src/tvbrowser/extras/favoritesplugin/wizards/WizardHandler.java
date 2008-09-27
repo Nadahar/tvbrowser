@@ -40,8 +40,6 @@ public class WizardHandler {
 
   private WizardDlg mWizardDialog;
   
-  private static WizardHandler mInstance;
-  
   private boolean mAllowNext;
   private boolean mAllowFinish;
 
@@ -53,7 +51,6 @@ public class WizardHandler {
   }
 
   public Object show() {
-    mInstance = this;
     WizardStep currentStep = mStep;
     int result;
     Object obj = null;
@@ -70,7 +67,6 @@ public class WizardHandler {
     
     UiUtilities.centerAndShow(mWizardDialog);
     result = mWizardDialog.getResult();
-    mInstance = null;
     if (result == WizardDlg.FINISH) {
       obj = mWizardDialog.getDataObject();
     }

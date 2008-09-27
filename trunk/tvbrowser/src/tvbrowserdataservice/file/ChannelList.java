@@ -27,7 +27,6 @@ package tvbrowserdataservice.file;
 
 import java.awt.Image;
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -48,16 +47,17 @@ import java.util.zip.GZIPOutputStream;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import tvbrowserdataservice.TvBrowserDataService;
 import tvdataservice.TvDataService;
 import util.io.FileFormatException;
-import util.ui.ImageUtilities;
 import util.misc.SoftReferenceCache;
+import util.ui.ImageUtilities;
+import au.com.bytecode.opencsv.CSVReader;
 import devplugin.Channel;
 import devplugin.ChannelGroup;
 import devplugin.ChannelGroupImpl;
-import org.apache.commons.lang.StringEscapeUtils;
-import au.com.bytecode.opencsv.CSVReader;
 
 /**
  * 
