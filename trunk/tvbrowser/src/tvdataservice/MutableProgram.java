@@ -26,6 +26,22 @@
 
 package tvdataservice;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.TimeZone;
+import java.util.Vector;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.EventListenerList;
+
+import tvbrowser.core.TvDataBase;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
+import util.io.IOUtilities;
 import util.misc.StringPool;
 import util.program.ProgramUtilities;
 import devplugin.Channel;
@@ -35,21 +51,6 @@ import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
-import tvbrowser.core.TvDataBase;
-import tvbrowser.core.plugin.PluginProxy;
-import tvbrowser.core.plugin.PluginProxyManager;
-import util.io.IOUtilities;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.EventListenerList;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.TimeZone;
-import java.util.Vector;
 
 /**
  * One program. Consists of the Channel, the time, the title and some extra
@@ -1113,5 +1114,11 @@ public class MutableProgram implements Program {
    */
   protected void setMarkPriority(int markPriority) {
     mMarkPriority = markPriority;
+  }
+
+  public boolean hasFieldValue(ProgramFieldType type) {
+    synchronized (mFieldHash) {
+      return mFieldHash.get(type) != null;
+    }
   }
 }

@@ -25,8 +25,9 @@
  */
 package devplugin;
 
-import javax.swing.event.ChangeListener;
 import java.util.Iterator;
+
+import javax.swing.event.ChangeListener;
 
 /**
  * This interface provides a view of the program object in the host-application.
@@ -436,4 +437,16 @@ public interface Program {
    * @since 2.5.1
    */
   public int getMarkPriority();
+  
+  /**
+   * checks if the given field has a non-<code>null</code> value. use this
+   * method if you don't need the value of the field, but only the knowledge
+   * about existence
+   * 
+   * @param type
+   *          field type
+   * @return field is set
+   * @since 3.0
+   */
+  public boolean hasFieldValue(ProgramFieldType type);
 }
