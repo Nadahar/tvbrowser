@@ -57,20 +57,21 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.Sizes;
-
 import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.TvDataLevel;
 import tvdataservice.PictureSettingsIf;
 import tvdataservice.SettingsPanel;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
-import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.Sizes;
+
+import devplugin.AbstractTvDataService;
 
 /**
  * A class that implements the SettingsPanel for the TvBrowserDataService.
@@ -152,13 +153,16 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
     JPanel btnPn = new JPanel();
     btnPn.setLayout(new GridLayout(0, 1, 0, 4));
 
-    mAddBtn = new JButton(Localizer.getLocalization(Localizer.I18N_ADD), ImageUtilities.createImageIconFromJar("tvbrowserdataservice/Add24.gif",
-            getClass()));
-    mRemoveBtn = new JButton(mLocalizer.msg("remove", "Remove"), ImageUtilities.createImageIconFromJar(
-            "tvbrowserdataservice/Remove24.gif", getClass()));
+    mAddBtn = new JButton(Localizer.getLocalization(Localizer.I18N_ADD),
+        AbstractTvDataService.getPluginManager().getIconFromTheme(null,
+            "actions", "document-new", 16));
+    mRemoveBtn = new JButton(mLocalizer.msg("remove", "Remove"),
+        AbstractTvDataService.getPluginManager().getIconFromTheme(null,
+            "actions", "edit-delete", 16));
 
-    mInfoBtn =  new JButton("Information", ImageUtilities.createImageIconFromJar(
-            "tvbrowserdataservice/Information24.gif", getClass()));
+    mInfoBtn = new JButton("Information", AbstractTvDataService
+        .getPluginManager().getIconFromTheme(null, "actions", "help-browser",
+            16));
 
     mAddBtn.setHorizontalAlignment(JButton.LEFT);
     mRemoveBtn.setHorizontalAlignment(JButton.LEFT);
@@ -231,7 +235,9 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
   /**
    * Get the settings panel of the TvBrowserDataService.
    * 
-   * @param settings The properties of the TvBrowserDataService.
+   * @param settings
+   *          The properties of the TvBrowserDataService.
+   * @param dataService
    * @return The settings panel for TvBrowserDataService.
    */
   public static SettingsPanel getInstance(Properties settings) {
