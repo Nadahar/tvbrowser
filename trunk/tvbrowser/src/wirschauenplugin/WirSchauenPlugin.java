@@ -25,34 +25,35 @@
 */
 package wirschauenplugin;
 
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+import util.exc.ErrorHandler;
+import util.io.IOUtilities;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
-import devplugin.Version;
 import devplugin.ThemeIcon;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.io.IOUtilities;
-import util.exc.ErrorHandler;
-
-import java.awt.event.ActionEvent;
-import java.awt.Window;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.net.URLEncoder;
-import java.net.URL;
-import java.io.ObjectOutputStream;
-import java.io.IOException;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
+import devplugin.Version;
 
 /**
  * With this plugin it is possible to add information about a program and send it to wirschauen.de
@@ -206,8 +207,9 @@ public class WirSchauenPlugin extends Plugin {
         url.append("&title=").append(URLEncoder.encode(program.getTitle(), "UTF-8"));
         url.append("&category=").append(category);
         
-        if(program.getTextField(ProgramFieldType.EPISODE_TYPE) != null) {
-          url.append("&episode=").append(URLEncoder.encode(program.getTextField(ProgramFieldType.EPISODE_TYPE), "UTF-8"));
+        String episodeField = program.getTextField(ProgramFieldType.EPISODE_TYPE);
+        if (episodeField != null) {
+          url.append("&episode=").append(URLEncoder.encode(episodeField, "UTF-8"));
         }
         if (omdbUrl.length() > 0) {
           url.append("&url=").append(URLEncoder.encode(omdbUrl, "UTF-8"));
