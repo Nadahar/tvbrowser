@@ -194,8 +194,8 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
       }
     });
     
-    boolean hasImage = program.getBinaryField(ProgramFieldType.IMAGE_TYPE) != null
-                    || program.getBinaryField(ProgramFieldType.PICTURE_TYPE) != null;
+    boolean hasImage = program.hasFieldValue(ProgramFieldType.IMAGE_TYPE)
+        || program.hasFieldValue(ProgramFieldType.PICTURE_TYPE);
     
     boolean hasIcons = program.getMarkerArr().length > 0;
     

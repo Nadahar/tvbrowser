@@ -458,7 +458,8 @@ public class DataViewerPlugin extends Plugin implements Runnable {
 
             while (it.hasNext()) {
               Program p1 = it.next();
-              picture = picture || p1.getBinaryField(ProgramFieldType.PICTURE_TYPE) != null;
+              picture = picture
+                  || p1.hasFieldValue(ProgramFieldType.PICTURE_TYPE);
 
               if (j != -1) {
                 int length = last[i].getStartTime() + last[i].getLength();
