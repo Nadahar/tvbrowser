@@ -19,28 +19,6 @@
 
 package tvraterplugin;
 
-import devplugin.ActionMenu;
-import devplugin.Channel;
-import devplugin.Date;
-import devplugin.Marker;
-import devplugin.Plugin;
-import devplugin.PluginInfo;
-import devplugin.PluginTreeNode;
-import devplugin.Program;
-import devplugin.SettingsTab;
-import devplugin.Version;
-import devplugin.PluginsFilterComponent;
-import devplugin.PluginsProgramFilter;
-import devplugin.ProgramRatingIf;
-import util.io.IOUtilities;
-import util.ui.ImageUtilities;
-import util.ui.Localizer;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -54,6 +32,29 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+
+import util.io.IOUtilities;
+import util.ui.ImageUtilities;
+import util.ui.Localizer;
+import devplugin.ActionMenu;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.Marker;
+import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.PluginTreeNode;
+import devplugin.PluginsFilterComponent;
+import devplugin.PluginsProgramFilter;
+import devplugin.Program;
+import devplugin.ProgramRatingIf;
+import devplugin.SettingsTab;
+import devplugin.Version;
 
 /**
  * This Plugin gives the User the possibility to rate a Movie
@@ -73,7 +74,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
   /**
    * Root-Node for the Program-Tree
    */
-  private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
+  private PluginTreeNode mRootNode;
 
   private static final Localizer mLocalizer = Localizer
       .getLocalizerFor(TVRaterPlugin.class);
@@ -99,9 +100,6 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
   public TVRaterPlugin() {
     _tvRaterInstance = this;
-    mRootNode.getMutableTreeNode().setIcon(
-        new ImageIcon(ImageUtilities.createImageFromJar(
-            "tvraterplugin/imgs/missingrating.png", TVRaterPlugin.class)));
   }
 
   public static Version getVersion() {
@@ -353,7 +351,10 @@ public class TVRaterPlugin extends devplugin.Plugin {
   public void handleTvBrowserStartFinished() {
     hasRightToDownload = true;
     mStartFinished = true;
-    updateRootNode();
+    // update tree only if it is already shown
+    if (mRootNode != null) {
+      updateRootNode();
+    }
     if (Integer.parseInt(_settings.getProperty("updateIntervall", "0")) == 2) {
       updateDB();
     }
@@ -486,6 +487,17 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
   @Override
   public PluginTreeNode getRootNode() {
+    if (mRootNode == null) {
+      mRootNode = new PluginTreeNode(this, false);
+      mRootNode.getMutableTreeNode().setIcon(
+          new ImageIcon(ImageUtilities.createImageFromJar(
+              "tvraterplugin/imgs/missingrating.png", TVRaterPlugin.class)));
+      if (mStartFinished) {
+        // update the tree as the plugin view has been switched on for the first
+        // time after start
+        updateRootNode();
+      }
+    }
     return mRootNode;
   }
 

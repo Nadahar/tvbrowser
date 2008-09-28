@@ -62,7 +62,7 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
   /**
    * root node of the plugin tree
    */
-  private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
+  private PluginTreeNode mRootNode;
 
   private static GenrePlugin instance;
 
@@ -101,6 +101,14 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
 
   @Override
   public PluginTreeNode getRootNode() {
+    if (mRootNode == null) {
+      mRootNode = new PluginTreeNode(this, false);
+      if (mStartFinished) {
+        // update the tree as the plugin view has been switched on for the first
+        // time after start
+        updateRootNode();
+      }
+    }
     return mRootNode;
   }
   
@@ -199,7 +207,10 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
   @Override
   public void handleTvBrowserStartFinished() {
     mStartFinished  = true;
-    updateRootNode();
+    // update tree, but only if it is shown at all
+    if (mRootNode != null) {
+      updateRootNode();
+    }
   }
 
   public ThemeIcon getMarkIconFromTheme() {

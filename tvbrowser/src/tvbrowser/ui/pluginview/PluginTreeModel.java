@@ -29,6 +29,7 @@ package tvbrowser.ui.pluginview;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
@@ -68,7 +69,7 @@ public class PluginTreeModel extends DefaultTreeModel {
   }
 
   /**
-   * Refresh all plugin nodes. This method sould be called continuously to
+   * Refresh all plugin nodes. This method should be called continuously to
    * remove expired programs from the tree.
    */
   public void update() {
