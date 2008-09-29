@@ -219,7 +219,9 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
 
   @Override
   public void handleTvDataUpdateFinished() {
-    updateRootNode();
+    if (mRootNode != null) {
+      updateRootNode();
+    }
   }
 
   @Override
@@ -260,7 +262,9 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
 
   @Override
   public void onActivation() {
-    updateRootNode();
+    if (mRootNode != null) {
+      updateRootNode();
+    }
   }
 
 }

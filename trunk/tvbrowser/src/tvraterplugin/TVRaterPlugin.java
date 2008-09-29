@@ -372,7 +372,9 @@ public class TVRaterPlugin extends devplugin.Plugin {
         updateDB();
       }
     }
-    updateRootNode();
+    if (mRootNode != null) {
+      updateRootNode();
+    }
   }
 
   /**
@@ -632,7 +634,9 @@ public class TVRaterPlugin extends devplugin.Plugin {
   @Override
   public void onActivation() {
     // the root node will only be update after the start-finished event
-    updateRootNode();
+    if (mRootNode != null) {
+      updateRootNode();
+    }
   }
 
 
