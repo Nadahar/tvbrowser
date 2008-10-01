@@ -26,49 +26,6 @@
 
 package tvbrowser.extras.favoritesplugin;
 
-import devplugin.ActionMenu;
-import devplugin.ButtonAction;
-import devplugin.PluginTreeNode;
-import devplugin.Program;
-import devplugin.ProgramReceiveIf;
-import devplugin.ProgramReceiveTarget;
-import devplugin.ProgressMonitor;
-import devplugin.SettingsItem;
-import devplugin.ThemeIcon;
-import devplugin.ChannelDayProgram;
-import tvbrowser.core.Settings;
-import tvbrowser.core.TvDataUpdateListener;
-import tvbrowser.core.TvDataUpdater;
-import tvbrowser.core.TvDataBase;
-import tvbrowser.core.TvDataBaseListener;
-import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.extras.common.ConfigurationHandler;
-import tvbrowser.extras.common.DataDeserializer;
-import tvbrowser.extras.common.DataSerializer;
-import tvbrowser.extras.common.ReminderConfiguration;
-import tvbrowser.extras.favoritesplugin.core.ActorsFavorite;
-import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
-import tvbrowser.extras.favoritesplugin.core.Exclusion;
-import tvbrowser.extras.favoritesplugin.core.Favorite;
-import tvbrowser.extras.favoritesplugin.core.TitleFavorite;
-import tvbrowser.extras.favoritesplugin.core.TopicFavorite;
-import tvbrowser.extras.favoritesplugin.dlgs.EditFavoriteDialog;
-import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTree;
-import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
-import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
-import tvbrowser.extras.favoritesplugin.wizards.ExcludeWizardStep;
-import tvbrowser.extras.favoritesplugin.wizards.TypeWizardStep;
-import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
-import tvbrowser.extras.reminderplugin.ReminderPlugin;
-import tvbrowser.ui.mainframe.MainFrame;
-import tvdataservice.MutableChannelDayProgram;
-import util.exc.ErrorHandler;
-import util.exc.TvBrowserException;
-import util.ui.Localizer;
-import util.ui.NullProgressMonitor;
-import util.ui.ScrollableJPanel;
-import util.ui.UiUtilities;
-
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
@@ -83,8 +40,8 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
-import java.util.Properties;
 import java.util.Iterator;
+import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -97,6 +54,48 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+
+import tvbrowser.core.Settings;
+import tvbrowser.core.TvDataBase;
+import tvbrowser.core.TvDataBaseListener;
+import tvbrowser.core.TvDataUpdateListener;
+import tvbrowser.core.TvDataUpdater;
+import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.extras.common.ConfigurationHandler;
+import tvbrowser.extras.common.DataDeserializer;
+import tvbrowser.extras.common.DataSerializer;
+import tvbrowser.extras.common.ReminderConfiguration;
+import tvbrowser.extras.favoritesplugin.core.ActorsFavorite;
+import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
+import tvbrowser.extras.favoritesplugin.core.Exclusion;
+import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.favoritesplugin.core.TitleFavorite;
+import tvbrowser.extras.favoritesplugin.core.TopicFavorite;
+import tvbrowser.extras.favoritesplugin.dlgs.EditFavoriteDialog;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
+import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
+import tvbrowser.extras.favoritesplugin.wizards.ExcludeWizardStep;
+import tvbrowser.extras.favoritesplugin.wizards.TypeWizardStep;
+import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.ui.mainframe.MainFrame;
+import tvdataservice.MutableChannelDayProgram;
+import util.exc.ErrorHandler;
+import util.exc.TvBrowserException;
+import util.ui.Localizer;
+import util.ui.NullProgressMonitor;
+import util.ui.ScrollableJPanel;
+import util.ui.UiUtilities;
+import devplugin.ActionMenu;
+import devplugin.ButtonAction;
+import devplugin.ChannelDayProgram;
+import devplugin.PluginTreeNode;
+import devplugin.Program;
+import devplugin.ProgramReceiveIf;
+import devplugin.ProgramReceiveTarget;
+import devplugin.ProgressMonitor;
+import devplugin.SettingsItem;
+import devplugin.ThemeIcon;
 
 /**
  * Plugin for managing the favorite programs.
@@ -828,14 +827,19 @@ public class FavoritesPlugin {
   }
 
   public void showCreateFavoriteWizard(Program program, String path) {
-    showCreateFavoriteWizardInternal(program, null);
+    showCreateFavoriteWizardInternal(program, null, null);
   }
   
   public void showCreateActorFavoriteWizard(Program program, String actor) {
-    showCreateFavoriteWizardInternal(program, actor);
+    showCreateFavoriteWizardInternal(program, actor, null);
+  }
+
+  public void showCreateTopicFavoriteWizard(Program program, String topic) {
+    showCreateFavoriteWizardInternal(program, null, topic);
   }
   
-  private void showCreateFavoriteWizardInternal(Program program, String actor) {
+  private void showCreateFavoriteWizardInternal(Program program, String actor,
+      String topic) {
     Component parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
     Favorite favorite;
     if (isUsingExpertMode()) {
@@ -854,12 +858,13 @@ public class FavoritesPlugin {
 
     } else {
       WizardHandler handler; 
-      if (actor == null) {
-        handler = new WizardHandler(parent, new TypeWizardStep(program));
+      TypeWizardStep initialStep = new TypeWizardStep(program);
+      if (topic != null) {
+        initialStep.setTopic(topic);
+      } else if (actor != null) {
+        initialStep.setActor(actor);
       }
-      else {
-        handler = new WizardHandler(parent, new TypeWizardStep(program, actor));
-      }
+      handler = new WizardHandler(parent, initialStep);
       favorite = (tvbrowser.extras.favoritesplugin.core.Favorite)handler.show();
     }
 
