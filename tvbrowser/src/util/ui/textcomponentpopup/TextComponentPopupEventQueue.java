@@ -17,6 +17,7 @@ import javax.swing.MenuSelectionManager;
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 
+import tvbrowser.core.icontheme.IconLoader;
 import util.ui.Localizer;
 
 /**
@@ -102,7 +103,8 @@ public class TextComponentPopupEventQueue extends EventQueue {
     JTextComponent comp;
 
     public PasteAction(JTextComponent comp) {
-      super(mLocalizer.msg("paste", "Paste"));
+      super(mLocalizer.msg("paste", "Paste"), IconLoader.getInstance()
+          .getIconFromTheme("actions", "edit-paste"));
       this.comp = comp;
     }
 
@@ -123,7 +125,8 @@ public class TextComponentPopupEventQueue extends EventQueue {
     JTextComponent comp;
 
     public DeleteAction(JTextComponent comp) {
-      super(Localizer.getLocalization(Localizer.I18N_DELETE));
+      super(Localizer.getLocalization(Localizer.I18N_DELETE), IconLoader
+          .getInstance().getIconFromTheme("actions", "edit-delete"));
       this.comp = comp;
     }
 
@@ -140,7 +143,8 @@ public class TextComponentPopupEventQueue extends EventQueue {
     JTextComponent comp;
 
     public CopyAction(JTextComponent comp) {
-      super(mLocalizer.msg("copy", "Copy"));
+      super(mLocalizer.msg("copy", "Copy"), IconLoader.getInstance()
+          .getIconFromTheme("actions", "edit-copy"));
       this.comp = comp;
     }
 
