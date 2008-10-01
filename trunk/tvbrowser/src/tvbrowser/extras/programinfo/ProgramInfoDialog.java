@@ -337,7 +337,9 @@ public class ProgramInfoDialog {
       }
 
       private JMenuItem searchTextMenuItem(final String desc) {
-        JMenuItem item = new JMenuItem(mLocalizer.msg("searchTvBrowser","Search in TV-Browser"));
+        JMenuItem item = new JMenuItem(mLocalizer.msg("searchTvBrowser",
+            "Search in TV-Browser"), IconLoader.getInstance().getIconFromTheme(
+            "actions", "edit-find"));
         item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             internalSearch(desc);
@@ -350,7 +352,8 @@ public class ProgramInfoDialog {
           final boolean actor) {
         JMenuItem item;
         item = new JMenuItem(mLocalizer
-            .msg("addFavorite", "Create favorite..."));
+            .msg("addFavorite", "Create favorite..."), IconLoader.getInstance()
+            .getIconFromTheme("emblems", "emblem-favorite"));
         item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             if (actor) {

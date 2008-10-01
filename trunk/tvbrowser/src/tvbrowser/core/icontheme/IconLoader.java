@@ -205,12 +205,27 @@ public class IconLoader {
   public ImageIcon getIconFromTheme(String category, String icon, int size) {
     return getIconFromTheme(null, new ThemeIcon(category, icon, size));
   }
-  
+
+  /**
+   * Load a specific Icon in default size (16 pixels)
+   * 
+   * @param category
+   *          Category of the Icon
+   * @param icon
+   *          Name of the Icon without File-Extension
+   * @return Icon if found, null if no Icon was found
+   */
+  public ImageIcon getIconFromTheme(String category, String icon) {
+    return getIconFromTheme(null, new ThemeIcon(category, icon, 16));
+  }
+
   /**
    * Load a specific Icon
-   *
-   * @param plugin Plugin that wants to use the Icon
-   * @param icon Icon that should be loaded
+   * 
+   * @param plugin
+   *          Plugin that wants to use the Icon
+   * @param icon
+   *          Icon that should be loaded
    * @return Icon if found, null if no Icon was found
    */
   public ImageIcon getIconFromTheme(Plugin plugin, ThemeIcon icon) {
