@@ -47,7 +47,7 @@ public class TextComponentPopupEventQueue extends EventQueue {
     if (!me.isPopupTrigger() || me.getComponent() == null)
       return;
 
-    // me.getComponent(...) retunrs the heavy weight component on which event
+    // me.getComponent(...) returns the heavy weight component on which event
     // occured
     Component comp = SwingUtilities.getDeepestComponentAt(me.getComponent(), me.getX(), me.getY());
 
@@ -62,15 +62,23 @@ public class TextComponentPopupEventQueue extends EventQueue {
     // create popup menu and show
     JTextComponent tc = (JTextComponent) comp;
     JPopupMenu menu = new JPopupMenu();
+    addStandardContextMenu(tc, menu);
+
+    Point pt = SwingUtilities
+        .convertPoint(me.getComponent(), me.getPoint(), tc);
+    menu.show(tc, pt.x, pt.y);
+  }
+
+  public static void addStandardContextMenu(JTextComponent tc, JPopupMenu menu) {
+    if (menu.getSubElements().length > 0) {
+      menu.addSeparator();
+    }
     menu.add(new CutAction(tc));
     menu.add(new CopyAction(tc));
     menu.add(new PasteAction(tc));
     menu.add(new DeleteAction(tc));
     menu.addSeparator();
     menu.add(new SelectAllAction(tc));
-
-    Point pt = SwingUtilities.convertPoint(me.getComponent(), me.getPoint(), tc);
-    menu.show(tc, pt.x, pt.y);
   }
 
   private static class CutAction extends AbstractAction {

@@ -26,11 +26,24 @@
 
 package tvbrowser.extras.favoritesplugin.wizards;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import devplugin.Program;
+import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.ActorsFavorite;
 import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
@@ -46,22 +59,12 @@ import util.program.ProgramUtilities;
 import util.ui.LinkButton;
 import util.ui.UiUtilities;
 
-import java.awt.Component;
-import java.awt.Dialog;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import javax.swing.ButtonGroup;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.Program;
 
 public class TypeWizardStep extends AbstractWizardStep {
 
@@ -84,13 +87,18 @@ public class TypeWizardStep extends AbstractWizardStep {
   private Program mProgram;
 
   private String mMainQuestion;
-  
+
   /**
-   * preselected actor
+   * preselected actor in type step
    */
   private String mActor;
   
   private FavoriteNode mParentNode;
+
+  /**
+   * preselected topic in type step
+   */
+  private String mTopic;
 
   public TypeWizardStep() {
     this(null);
@@ -111,19 +119,6 @@ public class TypeWizardStep extends AbstractWizardStep {
       mMainQuestion = mLocalizer.msg("mainQuestion.edit",
           "Why is this program a favorite of yours?");
     }
-  }
-
-  public TypeWizardStep(Program program, String actor) {
-    this(program, (FavoriteNode) FavoriteTreeModel.getInstance().getRoot(), actor);
-  }
-  
-  public TypeWizardStep(Program program, FavoriteNode parent, String actor) {
-    mProgram = program;
-    mParentNode = parent;
-    mActor = actor;
-    
-    mMainQuestion = mLocalizer.msg("mainQuestion.create",
-          "Choose the condition that your favorite program needs to match:");
   }
 
   public String getTitle() {
@@ -231,7 +226,11 @@ public class TypeWizardStep extends AbstractWizardStep {
       }
     });
     
-    if (mActor != null) {
+    if (mTopic != null) {
+      mTopicRb.setSelected(true);
+      updateTextfields();
+      mTopicTf.setText(mTopic);
+    } else if (mActor != null) {
       mActorsRb.setSelected(true);
       updateTextfields();
       mActorsCb.setSelectedItem(mActor);
@@ -336,6 +335,20 @@ public class TypeWizardStep extends AbstractWizardStep {
 
   public int[] getButtons() {
     return new int[] { WizardStep.BUTTON_DONE, WizardStep.BUTTON_CANCEL, WizardStep.BUTTON_NEXT };
+  }
+  
+  public void setActor(String actor) {
+    if (actor == null || actor.length() == 0) {
+      return;
+    }
+    mActor = actor;
+  }
+
+  public void setTopic(String topic) {
+    if (topic == null || topic.length() == 0) {
+      return;
+    }
+    mTopic = topic;
   }
 
 }

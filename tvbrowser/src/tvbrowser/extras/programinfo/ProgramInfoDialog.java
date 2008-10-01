@@ -67,6 +67,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Caret;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.html.HTML;
@@ -92,6 +94,7 @@ import util.ui.WindowClosingIf;
 import util.ui.findasyoutype.TextComponentFindAction;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
+import util.ui.textcomponentpopup.TextComponentPopupEventQueue;
 
 import com.l2fprod.common.swing.JTaskPane;
 import com.l2fprod.common.swing.JTaskPaneGroup;
@@ -99,10 +102,10 @@ import com.l2fprod.common.swing.JTaskPaneGroup;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.PluginAccess;
+import devplugin.PluginManager;
 import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsItem;
-import devplugin.PluginManager;
 
 /**
  * TV-Browser
@@ -229,12 +232,7 @@ public class ProgramInfoDialog {
               
               String value = ProgramInfo.getInstance().getSettings().getProperty("actorSearchDefault","internalWikipedia");
               
-              JMenuItem item = new JMenuItem(mLocalizer.msg("searchTvBrowser","Search in TV-Browser"));
-              item.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                  internalSearch(desc);
-                }
-              });
+              JMenuItem item = searchTextMenuItem(desc);
               
               if(value.equals("internalSearch")) {
                 item.setFont(item.getFont().deriveFont(Font.BOLD));
@@ -281,13 +279,7 @@ public class ProgramInfoDialog {
               }
               
               popupMenu.addSeparator();
-              item = new JMenuItem(mLocalizer.msg("addFavorite","Create favorite..."));
-              item.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                  addFavorite(desc);
-                }
-              });
-              popupMenu.add(item);
+              popupMenu.add(addFavoriteMenuItem(desc, true));
               
               popupMenu.show(e.getComponent(),e.getX(),e.getY());
             }
@@ -327,7 +319,50 @@ public class ProgramInfoDialog {
               }
             }
           }
+          else {
+            String selection = getSelection(pos, editor);
+            if (selection != null) {
+              selection = selection.trim();
+              if (selection.length() > 0) {
+                JPopupMenu popupMenu = new JPopupMenu();
+                popupMenu.add(searchTextMenuItem(selection));
+                popupMenu.add(addFavoriteMenuItem(selection, false));
+                TextComponentPopupEventQueue.addStandardContextMenu(mInfoEP,
+                    popupMenu);
+                popupMenu.show(e.getComponent(), e.getX(), e.getY());
+              }
+            }
+          }
         }
+      }
+
+      private JMenuItem searchTextMenuItem(final String desc) {
+        JMenuItem item = new JMenuItem(mLocalizer.msg("searchTvBrowser","Search in TV-Browser"));
+        item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            internalSearch(desc);
+          }
+        });
+        return item;
+      }
+
+      private JMenuItem addFavoriteMenuItem(final String desc,
+          final boolean actor) {
+        JMenuItem item;
+        item = new JMenuItem(mLocalizer
+            .msg("addFavorite", "Create favorite..."));
+        item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            if (actor) {
+              FavoritesPlugin.getInstance().showCreateActorFavoriteWizard(
+                  mProgram, desc);
+            } else {
+              FavoritesPlugin.getInstance().showCreateTopicFavoriteWizard(
+                  mProgram, desc);
+            }
+          }
+        });
+        return item;
       }
       
       private void searchWebPlugin(String desc, ProgramReceiveTarget target) {
@@ -355,10 +390,6 @@ public class ProgramInfoDialog {
         SearchHelper.search(mInfoEP, settings, null, true);
       }
 
-      private void addFavorite(String desc) {
-        FavoritesPlugin.getInstance().showCreateActorFavoriteWizard(mProgram, desc);
-      }
-
       private String getLink(int pos, JEditorPane html) {
         Document doc = html.getDocument();
         if (doc instanceof HTMLDocument) {
@@ -371,9 +402,24 @@ public class ProgramInfoDialog {
             return (String)anchor.getAttribute(HTML.Attribute.HREF);
           }
         }
-        
         return null;
       }
+      
+      private String getSelection(int pos, JEditorPane html) {
+        Caret caret = html.getCaret();
+        if (caret != null) {
+          try {
+            int start = Math.min(caret.getDot(), caret.getMark());
+            int length = Math.abs(caret.getDot() - caret.getMark());
+            return html.getDocument().getText(start, length);
+          } catch (BadLocationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+        }
+        return null;
+      }
+      
     });
     
     mInfoEP.addHyperlinkListener(new HyperlinkListener() {
