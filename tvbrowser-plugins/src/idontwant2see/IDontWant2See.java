@@ -82,7 +82,7 @@ public class IDontWant2See extends Plugin {
   private boolean mSimpleMenu;
   
   public static Version getVersion() {
-    return new Version(0,5,1,false);
+    return new Version(0,5,2,false);
   }
   
   /**
