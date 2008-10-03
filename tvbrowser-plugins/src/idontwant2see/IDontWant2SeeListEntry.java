@@ -67,7 +67,7 @@ public class IDontWant2SeeListEntry {
     if(preSearchValue.indexOf(mPreSearchPart) != -1) {
       Matcher match = mSearchPattern.matcher(p.getTitle());
       
-      return match.lookingAt();
+      return match.matches();
     }
     
     return false;
