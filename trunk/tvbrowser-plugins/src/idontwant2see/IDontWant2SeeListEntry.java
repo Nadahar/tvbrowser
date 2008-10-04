@@ -120,7 +120,11 @@ public class IDontWant2SeeListEntry {
       flags |= Pattern.UNICODE_CASE;
     }
     
-    return Pattern.compile(searchText.replace("*",".*"),flags);
+    // Comment copied from tvbrowser.core.search.regexsearch.RegexSearcher.java:
+    // NOTE: All words are quoted with "\Q" and "\E". This way regex code will
+    //       be ignored within the search text. (A search for "C++" will not
+    //       result in an syntax error)
+    return Pattern.compile("\\Q" + searchText.replace("*","\\E.*\\Q") + "\\E",flags);
   }
     
   protected void writeData(ObjectOutputStream out) throws IOException {
