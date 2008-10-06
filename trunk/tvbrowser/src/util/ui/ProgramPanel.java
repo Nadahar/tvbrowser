@@ -33,6 +33,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.MouseAdapter;
@@ -55,6 +57,11 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateListener;
+import tvbrowser.extras.common.InternalPluginProxyIf;
+import tvbrowser.extras.common.InternalPluginProxyList;
+import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
+import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import util.io.IOUtilities;
 import util.misc.StringPool;
 import util.program.ProgramUtilities;
@@ -62,6 +69,7 @@ import util.settings.ProgramPanelSettings;
 import devplugin.ContextMenuIf;
 import devplugin.Marker;
 import devplugin.Plugin;
+import devplugin.PluginAccess;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramInfoHelper;
@@ -159,6 +167,8 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
   private ProgramPanelSettings mSettings;
   
   private boolean mPaintExpiredProgramsPale = true;
+
+  private Rectangle mInfoIconRect;
 
   /**
    * Creates a new instance of ProgramPanel.
@@ -755,6 +765,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
     if (mIconArr != null) {
       x = 2;
       y = mTimeFont.getSize() + 3;
+      Point iconsTopLeft = new Point(x, y);
 
       // calculate height with double column layout
       int sumHeights = -2;
@@ -800,6 +811,14 @@ private static Font getDynamicFontSize(Font font, int offset) {
         if (!nextColumn || (colCount == 1)) {
           y += iconHeight + 2;
         }
+      }
+      // remember the size of this area for tooltip
+      if (colCount == 1) {
+        mInfoIconRect = new Rectangle(iconsTopLeft.x, iconsTopLeft.y, currentX
+            - iconsTopLeft.x, y - iconsTopLeft.y);
+      } else {
+        mInfoIconRect = new Rectangle(iconsTopLeft.x, iconsTopLeft.y, maxWidth,
+            y - iconsTopLeft.y + iconHeight);
       }
     }
     
@@ -1105,5 +1124,92 @@ private static Font getDynamicFontSize(Font font, int offset) {
   public ProgramPanel(ProgramPanelSettings settings, int axis) {
     this(settings);
     mAxis = axis;
+  }
+
+  /**
+   * get the tooltip text for the local mouse coordinates x and y
+   * 
+   * @param x
+   * @param y
+   * @return
+   */
+  public String getToolTipText(int x, int y) {
+    StringBuffer buffer = new StringBuffer("");
+    if (mInfoIconRect != null && mInfoIconRect.contains(x, y)) { 
+      int info = mProgram.getInfo();
+      if (info > 0) {
+        int[] infoBitArr = ProgramInfoHelper.mInfoBitArr;
+        Icon[] infoIconArr = ProgramInfoHelper.mInfoIconArr;
+        String[] infoMsgArr = ProgramInfoHelper.mInfoMsgArr;
+
+        for (int i = 0; i < infoBitArr.length; i++) {
+          if (ProgramInfoHelper.bitSet(info, infoBitArr[i])) {
+            if (infoIconArr[i] != null) {
+              buffer.append("<tr><td>").append(infoMsgArr[i]).append(
+                  "</td></tr>");
+            }
+          }
+        }
+        if (buffer.length() > 0) {
+          buffer.insert(0, "<table>");
+          buffer.append("</table>");
+        }
+      }
+    } else {
+      Marker[] markers = mProgram.getMarkerArr();
+      if (markers != null && markers.length > 0
+          && x >= WIDTH - markers.length * 16 - 2) {
+        int markerY = mTitleIcon.getIconHeight()
+            + mDescriptionIcon.getIconHeight()
+            + mPictureAreaIcon.getIconHeight() + 2;
+        if ((y >= markerY) && (y <= markerY + 16)) {
+          for (Marker marker : markers) {
+            String text = "";
+            PluginAccess plugin = Plugin.getPluginManager()
+                .getActivatedPluginForId(marker.getId());
+            if (plugin != null) {
+              text = plugin.getInfo().getName();
+            } else {
+              InternalPluginProxyIf internalPlugin = InternalPluginProxyList
+                  .getInstance().getProxyForId(marker.getId());
+              if (internalPlugin != null) {
+                text = internalPlugin.getName();
+                if (internalPlugin.equals(FavoritesPluginProxy.getInstance())) {
+                  // if this is a favorite, add the names of the favorite
+                  String favTitles = "";
+                  for (Favorite favorite : FavoriteTreeModel.getInstance()
+                      .getFavoritesContainingProgram(mProgram)) {
+                    if (favTitles.length() > 0) {
+                      favTitles = favTitles + ", ";
+                    }
+                    favTitles = favTitles + favorite.getName();
+                  }
+                  if (favTitles.length() > 0) {
+                    text = text + " (" + favTitles + ")";
+                  }
+                }
+              }
+            }
+            if (text.length() > 0) {
+              buffer.append("<li>");
+              buffer.append(text);
+              buffer.append("</li>");
+            }
+          }
+          if (buffer.length() > 0) {
+            buffer.insert(0, "<b>Markiert von</b><br/><ul>");
+            buffer.append("</ul>");
+          }
+        }
+      }
+    }
+
+    if (buffer.length() == 0) {
+      return null;
+    }
+
+    buffer.insert(0, "<html>");
+    buffer.append("</html>");
+    return buffer.toString();
   }
 }

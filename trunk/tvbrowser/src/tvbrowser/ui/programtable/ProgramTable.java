@@ -76,10 +76,6 @@ import devplugin.Program;
  *
  * @author Til Schneider, www.murfman.de
  */
-/**
- * @author bananeweizen
- *
- */
 public class ProgramTable extends JPanel
  implements ProgramTableModelListener,
     DragGestureListener, DragSourceListener, PluginStateListener, Scrollable {
@@ -122,6 +118,7 @@ public class ProgramTable extends JPanel
    * @param model program table model to use in the program table
    */
   public ProgramTable(ProgramTableModel model) {
+    setToolTipText("");
     setProgramTableLayout(null);
 
     mCurrentCol = -1;
@@ -1246,5 +1243,23 @@ public class ProgramTable extends JPanel
     }
     // scroll 50 pixels when cursor up/down is used
     return 50;
+  }
+
+  @Override
+  public String getToolTipText(MouseEvent event) {
+    if (mMouseMatrix.x != -1) {
+      Point mousePoint = event.getPoint();
+      ProgramPanel panel = mModel.getProgramPanel(mMouseMatrix.x,
+          mMouseMatrix.y);
+
+      // calculate relative mouse coordinates
+      int currY = mLayout.getColumnStart(mMouseMatrix.x);
+      for (int row = 0; row <= mMouseMatrix.y; row++) {
+        currY += mModel.getProgramPanel(mMouseMatrix.x, row).getHeight();
+      }
+      return panel.getToolTipText(mousePoint.x - mMouseMatrix.x * mColumnWidth,
+          mousePoint.y - (currY - panel.getHeight()));
+    }
+    return null;
   }
 }
