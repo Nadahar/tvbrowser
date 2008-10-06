@@ -1247,17 +1247,17 @@ public class ProgramTable extends JPanel
 
   @Override
   public String getToolTipText(MouseEvent event) {
-    if (mMouseMatrix.x != -1) {
-      Point mousePoint = event.getPoint();
-      ProgramPanel panel = mModel.getProgramPanel(mMouseMatrix.x,
-          mMouseMatrix.y);
+    Point mousePoint = event.getPoint();
+    Point panelIndex = getMatrix(mousePoint.x, mousePoint.y);
+    if (panelIndex.x != -1) {
+      ProgramPanel panel = mModel.getProgramPanel(panelIndex.x, panelIndex.y);
 
       // calculate relative mouse coordinates
-      int currY = mLayout.getColumnStart(mMouseMatrix.x);
-      for (int row = 0; row <= mMouseMatrix.y; row++) {
-        currY += mModel.getProgramPanel(mMouseMatrix.x, row).getHeight();
+      int currY = mLayout.getColumnStart(panelIndex.x);
+      for (int row = 0; row <= panelIndex.y; row++) {
+        currY += mModel.getProgramPanel(panelIndex.x, row).getHeight();
       }
-      return panel.getToolTipText(mousePoint.x - mMouseMatrix.x * mColumnWidth,
+      return panel.getToolTipText(mousePoint.x - panelIndex.x * mColumnWidth,
           mousePoint.y - (currY - panel.getHeight()));
     }
     return null;
