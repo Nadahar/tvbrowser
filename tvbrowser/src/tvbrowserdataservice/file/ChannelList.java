@@ -38,7 +38,6 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.Properties;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
@@ -52,6 +51,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import tvbrowserdataservice.TvBrowserDataService;
 import tvdataservice.TvDataService;
 import util.io.FileFormatException;
+import util.misc.ChangeTrackingProperties;
 import util.misc.SoftReferenceCache;
 import util.ui.ImageUtilities;
 import au.com.bytecode.opencsv.CSVReader;
@@ -272,7 +272,7 @@ public class ChannelList {
 
     private String mGroup;
 
-    private Properties mProperties;
+    private ChangeTrackingProperties mProperties;
 
     public IconLoader(String group, File dir) throws IOException {
       mGroup = group;
@@ -281,7 +281,7 @@ public class ChannelList {
         mIconDir.mkdirs();
       }
       mIconIndexFile = new File(mIconDir, "index.txt");
-      mProperties = new Properties();
+      mProperties = new ChangeTrackingProperties();
       if (mIconIndexFile.exists()) {
         mProperties.load(new BufferedInputStream(new FileInputStream(mIconIndexFile), 0x1000));
       } else {
@@ -367,7 +367,7 @@ public class ChannelList {
     }
 
     private void close() throws IOException {
-      mProperties.store(new FileOutputStream(mIconIndexFile), null);
+      mProperties.store(mIconIndexFile);
     }
   }
 

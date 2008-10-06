@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import util.misc.ChangeTrackingProperties;
 import util.ui.ImageUtilities;
 
 class IconLoader {
@@ -150,8 +151,6 @@ class IconLoader {
   }
 
   public void close() throws IOException {
-    if (mProperties.changed()) {
-      mProperties.store(new FileOutputStream(mIconIndexFile), null);
-    }
+    mProperties.store(mIconIndexFile);
   }
 }
