@@ -38,11 +38,13 @@ import java.util.Locale;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -53,6 +55,7 @@ import javax.swing.event.ListSelectionListener;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 
+import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
@@ -80,9 +83,10 @@ public class IDontWant2See extends Plugin {
   private PluginsProgramFilter mFilter;
   private static IDontWant2See mInstance;
   private boolean mSimpleMenu;
+  private boolean mSwitchToMyFilter;
   
   public static Version getVersion() {
-    return new Version(0,5,3,false);
+    return new Version(0,6,0,false);
   }
   
   /**
@@ -92,6 +96,7 @@ public class IDontWant2See extends Plugin {
     mInstance = this;
     mSearchList = new ArrayList<IDontWant2SeeListEntry>();
     mSimpleMenu = true;
+    mSwitchToMyFilter = true;
     
     mFilter = new PluginsProgramFilter(this) {
       public String getSubName() {
@@ -143,27 +148,29 @@ public class IDontWant2See extends Plugin {
     if(p == null || p.equals(getPluginManager().getExampleProgram()) || index == -1) {
       AbstractAction action1 = new AbstractAction(mLocalizer.msg("menu.userEntered","User entered value")) {
         public void actionPerformed(ActionEvent e) {
-          JCheckBox caseSensitive = new JCheckBox(mLocalizer.msg("caseSensitive","case-sensitive"));
-          JTextField input = new JTextField(p.getTitle());
-                    
-          if(JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(getParentFrame()),
-              new Object[] {mLocalizer.msg("exclusionText","What should be excluded? (You can use the wildcard *)"),input,caseSensitive},
-              mLocalizer.msg("exclusionTitle","Exclusion value entering"),
-              JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-            String test = "";
-            
-            if(input.getText() != null) {
-              test = input.getText().replaceAll("\\*+","\\*").trim();
+          if(p != null) {
+            JCheckBox caseSensitive = new JCheckBox(mLocalizer.msg("caseSensitive","case-sensitive"));
+            JTextField input = new JTextField(p.getTitle());
+                      
+            if(JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(getParentFrame()),
+                new Object[] {mLocalizer.msg("exclusionText","What should be excluded? (You can use the wildcard *)"),input,caseSensitive},
+                mLocalizer.msg("exclusionTitle","Exclusion value entering"),
+                JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+              String test = "";
               
-              if(test.length() >= 0 && !test.equals("*")) {
-                mSearchList.add(new IDontWant2SeeListEntry(input.getText(),caseSensitive.isSelected()));
-                updateFilter();
+              if(input.getText() != null) {
+                test = input.getText().replaceAll("\\*+","\\*").trim();
+                
+                if(test.length() >= 0 && !test.equals("*")) {
+                  mSearchList.add(new IDontWant2SeeListEntry(input.getText(),caseSensitive.isSelected()));
+                  updateFilter(!mSwitchToMyFilter);
+                }
               }
-            }
-            
-            if(test.trim().length() <= 1) {
-              JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(getParentFrame()),mLocalizer.msg("notValid","The entered text is not valid."),
-                  Localizer.getLocalization(Localizer.I18N_ERROR),JOptionPane.ERROR_MESSAGE);
+              
+              if(test.trim().length() <= 1) {
+                JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(getParentFrame()),mLocalizer.msg("notValid","The entered text is not valid."),
+                    Localizer.getLocalization(Localizer.I18N_ERROR),JOptionPane.ERROR_MESSAGE);
+              }
             }
           }
         }
@@ -172,7 +179,7 @@ public class IDontWant2See extends Plugin {
       AbstractAction action2 = new AbstractAction(mLocalizer.msg("menu.completeCaseSensitive","Complete title case-sensitive")) {
         public void actionPerformed(ActionEvent e) {
           mSearchList.add(new IDontWant2SeeListEntry(p.getTitle(),true));
-          updateFilter();
+          updateFilter(!mSwitchToMyFilter);
         }
       };
       
@@ -195,7 +202,7 @@ public class IDontWant2See extends Plugin {
       baseAction.setActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           mSearchList.remove(index);
-          updateFilter();
+          updateFilter(!mSwitchToMyFilter);
         }
       });
       
@@ -205,10 +212,15 @@ public class IDontWant2See extends Plugin {
     return null;
   }
   
-  private void updateFilter() {
+  private void updateFilter(final boolean update) {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        getPluginManager().getFilterManager().setCurrentFilter(mFilter);
+        if(!update) {
+          getPluginManager().getFilterManager().setCurrentFilter(mFilter);
+        }
+        else {
+          getPluginManager().getFilterManager().setCurrentFilter(getPluginManager().getFilterManager().getCurrentFilter());
+        }
       }
     });
   }
@@ -246,11 +258,15 @@ public class IDontWant2See extends Plugin {
       }
       
       mSimpleMenu = in.readBoolean();
+      
+      if(version >= 4) {
+        mSwitchToMyFilter = in.readBoolean();
+      }
     }
   }
   
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(3); //version
+    out.writeInt(4); //version
     out.writeInt(mSearchList.size());
     
     for(IDontWant2SeeListEntry entry : mSearchList) {
@@ -258,27 +274,51 @@ public class IDontWant2See extends Plugin {
     }
     
     out.writeBoolean(mSimpleMenu);
+    out.writeBoolean(mSwitchToMyFilter);
   }
   
   public SettingsTab getSettingsTab() {
     return new SettingsTab() {
       private IDontWant2SeeSettingsTableModel mTableModel;
-      private JCheckBox mSimpleMenuBox;
+      private JCheckBox mAutoSwitchToMyFilter;
       private JTable mTable;
+      private JRadioButton mSimpleContextMenu;
+      private JRadioButton mCascadedContextMenu;
       
       public JPanel createSettingsPanel() {
         CellConstraints cc = new CellConstraints();
-        JPanel pb = new JPanel(new FormLayout("default,0dlu:grow,default",
-            "default,5dlu,pref,2dlu,fill:default:grow,5dlu,pref"));        
+        PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default,0dlu:grow,default",
+            "default,10dlu,default,5dlu,default,5dlu,default,5dlu,fill:default:grow,4dlu,default,5dlu,pref"));        
         
-        mSimpleMenuBox = new JCheckBox(mLocalizer.msg("settings.oneMenuOnly",
-            "Show only one menu entry to remove complete titles"),mSimpleMenu);
+        PanelBuilder pb2 = new PanelBuilder(new FormLayout("default,2dlu,default",
+            "default,1dlu,default,default"));
+        
+        mSimpleContextMenu = new JRadioButton(mLocalizer.msg("settings.menu.simple","Direct in the context menu:"),mSimpleMenu);
+        mSimpleContextMenu.setHorizontalTextPosition(JRadioButton.RIGHT);
+        
+        mCascadedContextMenu = new JRadioButton(mLocalizer.msg("settings.menu.cascaded","In a sub menu:"),!mSimpleMenu);
+        mCascadedContextMenu.setHorizontalTextPosition(JRadioButton.RIGHT);
+        mCascadedContextMenu.setVerticalAlignment(JRadioButton.TOP);
+        
+        ButtonGroup bg = new ButtonGroup();
+        
+        bg.add(mSimpleContextMenu);
+        bg.add(mCascadedContextMenu);
+        
+        pb2.add(mSimpleContextMenu, cc.xy(1,1));
+        pb2.addLabel("-" + mLocalizer.msg("name","I don't want to see!") + " (" + mLocalizer.msg("menu.completeCaseSensitive","Instant exclusion with title") + ")", cc.xy(3,1));
+        
+        pb2.add(mCascadedContextMenu, cc.xy(1,3));
+        pb2.addLabel("-" + mLocalizer.msg("menu.completeCaseSensitive","Instant exclusion with title"), cc.xy(3,3));
+        pb2.addLabel("-" + mLocalizer.msg("menu.userEntered","User entered value"), cc.xy(3,4));
+        
+        mAutoSwitchToMyFilter = new JCheckBox(mLocalizer.msg("settings.autoFilter","Automatically activate filter on adding/removing"),mSwitchToMyFilter);
         mTableModel = new IDontWant2SeeSettingsTableModel(mSearchList);
         
         final IDontWant2SeeSettingsTableRenderer renderer = new IDontWant2SeeSettingsTableRenderer();        
         mTable = new JTable(mTableModel);
         mTable.setRowHeight(25);
-        mTable.setPreferredScrollableViewportSize(new Dimension(200,200));
+        mTable.setPreferredScrollableViewportSize(new Dimension(200,150));
         mTable.getColumnModel().getColumn(0).setCellRenderer(renderer);
         mTable.getColumnModel().getColumn(1).setCellRenderer(renderer);
         mTable.getColumnModel().getColumn(1).setMaxWidth(Locale.getDefault().getLanguage().equals("de") ? Sizes.dialogUnitXAsPixel(80,mTable) : Sizes.dialogUnitXAsPixel(55,mTable));
@@ -353,15 +393,19 @@ public class IDontWant2See extends Plugin {
           }
         });
                 
-        pb.add(mSimpleMenuBox, cc.xyw(1,1,3));
-        pb.add(UiUtilities.createHelpTextArea(mLocalizer.msg("settings.help",
-            "To edit a value double click a cell. You can use wildcard * to search for any text.")), cc.xyw(1,3,3));
-        pb.add(new JScrollPane(mTable), cc.xyw(1,5,3));
-        pb.add(add, cc.xy(1,7));
-        pb.add(delete, cc.xy(3,7));
+        pb.add(mAutoSwitchToMyFilter, cc.xyw(2,1,3));
+        pb.addSeparator(mLocalizer.msg("settings.contextMenu","Context menu"), cc.xyw(1,3,4));
+        pb.add(pb2.getPanel(), cc.xyw(2,5,3));
+        pb.addSeparator(mLocalizer.msg("settings.search","Search"), cc.xyw(1,7,4));
+        pb.add(new JScrollPane(mTable), cc.xyw(2,9,3));
+        pb.add(add, cc.xy(2,11));
+        pb.add(delete, cc.xy(4,11));
         
-        JPanel p = new JPanel(new FormLayout("5dlu,0dlu:grow","5dlu,fill:default:grow"));
-        p.add(pb, cc.xy(2,2));
+        pb.add(UiUtilities.createHelpTextArea(mLocalizer.msg("settings.help",
+        "To edit a value double click a cell. You can use wildcard * to search for any text.")), cc.xyw(2,13,3));
+        
+        JPanel p = new JPanel(new FormLayout("0dlu,0dlu:grow","5dlu,fill:default:grow"));
+        p.add(pb.getPanel(), cc.xy(2,2));
         
         return p;
       }
@@ -379,11 +423,12 @@ public class IDontWant2See extends Plugin {
           mTable.getCellEditor().stopCellEditing();
         }
         
-        mSimpleMenu = mSimpleMenuBox.isSelected();
+        mSimpleMenu = mSimpleContextMenu.isSelected();
+        mSwitchToMyFilter = mAutoSwitchToMyFilter.isSelected();
         
         mSearchList = mTableModel.getChangedList();
         
-        updateFilter();
+        updateFilter(true);
       }      
     };
   }
