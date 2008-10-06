@@ -49,30 +49,32 @@ public class ProgramInfoHelper {
      * The Icons for the Bits
      */
     public static final Icon[] mInfoIconArr = new Icon[] {
-            createIcon("Info_BlackAndWhite.gif"), // INFO_VISION_BLACK_AND_WHITE
-            null, // INFO_VISION_4_TO_3
-            createIcon("Info_16to9.gif"), // INFO_VISION_16_TO_9
-            createIcon("Info_Mono.gif"), // INFO_AUDIO_MONO
-            createIcon("Info_Stereo.gif"), // INFO_AUDIO_STEREO
-            createIcon("Info_DolbySurround.gif"), // INFO_AUDIO_DOLBY_SURROUND
-            createIcon("Info_DolbyDigital51.gif"), // INFO_AUDIO_DOLBY_DIGITAL_5_1
-            createIcon("Info_TwoChannelTone.gif"), // INFO_AUDIO_TWO_CHANNEL_TONE
-            createIcon(mLocalizer.msg("subtitleForAurallyHandicappedImage","Info_SubtitleForAurallyHandicapped.gif")), // INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED
-            createIcon("Info_Live.png"), // INFO_LIVE
-            createIcon(mLocalizer.msg("originalWithSubtitleImage","Info_OriginalWithSubtitle_EN.gif")), // INFO_ORIGINAL_WITH_SUBTITLE
-            createIcon("Info_New.png"),  // INFO_NEW
-            createIcon("Info_AudioDescription.png"),  // INFO_AUDIO_DESCRIPTION
-            createIcon("Info_HD.png"), // High Definition Video
-            createIcon("Info_Movie.png"), // INFO_CATEGORIE_MOVIE
-            createIcon("Info_Series.png"), // INFO_CATEGORIE_SERIES
-            createIcon("Info_News.png"), // News
-            createIcon("Info_Show.png"), // Show
-            createIcon("Info_Infotainment.png"), // Magazine/Infotainment
-            createIcon("Info_Docu.png"), // Documentary
-            createIcon("Info_Arts.png"), // Arts
-            createIcon("Info_Sports.png"), // Sports
-            createIcon("Info_Children.png"), // Childrens
-            null, //createIcon("Info_Others.png"), // Others
+      createIcon("Info_BlackAndWhite.gif"), // INFO_VISION_BLACK_AND_WHITE
+      null, // INFO_VISION_4_TO_3
+      createIcon("Info_16to9.gif"), // INFO_VISION_16_TO_9
+      createIcon("Info_Mono.gif"), // INFO_AUDIO_MONO
+      createIcon("Info_Stereo.gif"), // INFO_AUDIO_STEREO
+      createIcon("Info_DolbySurround.gif"), // INFO_AUDIO_DOLBY_SURROUND
+      createIcon("Info_DolbyDigital51.gif"), // INFO_AUDIO_DOLBY_DIGITAL_5_1
+      createIcon("Info_TwoChannelTone.gif"), // INFO_AUDIO_TWO_CHANNEL_TONE
+      createIcon(mLocalizer.msg("subtitleForAurallyHandicappedImage",
+          "Info_SubtitleForAurallyHandicapped.gif")), // INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED
+      createIcon("Info_Live.png"), // INFO_LIVE
+      createIcon(mLocalizer.msg("originalWithSubtitleImage",
+          "Info_OriginalWithSubtitle_EN.gif")), // INFO_ORIGINAL_WITH_SUBTITLE
+      createIcon("Info_New.png"), // INFO_NEW
+      createIcon("Info_AudioDescription.png"), // INFO_AUDIO_DESCRIPTION
+      createIcon("Info_HD.png"), // High Definition Video
+      createIcon("Info_Movie.png"), // INFO_CATEGORIE_MOVIE
+      createIcon("Info_Series.png"), // INFO_CATEGORIE_SERIES
+      createIcon("Info_News.png"), // News
+      createIcon("Info_Show.png"), // Show
+      createIcon("Info_Infotainment.png"), // Magazine/Infotainment
+      createIcon("Info_Docu.png"), // Documentary
+      createIcon("Info_Arts.png"), // Arts
+      createIcon("Info_Sports.png"), // Sports
+      createIcon("Info_Children.png"), // Children
+      null // Others
     };
 
     /**

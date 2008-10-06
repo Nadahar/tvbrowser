@@ -26,10 +26,9 @@ package tvbrowser.ui.programtable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import devplugin.Date;
-
 import tvbrowser.core.Settings;
 import util.ui.ProgramPanel;
+import devplugin.Date;
 
 /**
  * Define blocks of <i>n</i> hours. Each of these blocks starts at the same height in all columns
@@ -76,7 +75,7 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
     
     Date nextProgramTableDate = model.getDate().addDays(1);
 
-    // calculate the hight of each block independently
+    // calculate the height of each block independently
     for(int block = 0; block <  blockCount; block++) {
       int maxHeight = 0;
       Arrays.fill(minimumBlockHeight,0);
@@ -98,7 +97,7 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
           
           if((startTime >= block * blockSize) && (startTime < (block+1) * blockSize)) {
             blockProgramList[column].add(panel);
-            // reset the preferred hight of the panel
+            // reset the preferred height of the panel
             panel.setHeight(-1);
             
             height += mCompactLayout && (!mOptimizedCompactLayout || !panel.getProgram().isOnAir()) ? panel.getMinimumHeight() : panel.getPreferredHeight();
