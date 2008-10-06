@@ -63,8 +63,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
 
-import com.jgoodies.forms.layout.Sizes;
-
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DateListener;
@@ -82,6 +80,7 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.ui.DontShowAgainMessageBox;
 import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
 import tvbrowser.ui.finder.FinderPanel;
@@ -109,10 +108,12 @@ import util.io.IOUtilities;
 import util.misc.OperatingSystem;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
-import tvbrowser.ui.DontShowAgainMessageBox;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 import util.ui.view.Node;
+
+import com.jgoodies.forms.layout.Sizes;
+
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.Date;
@@ -370,8 +371,9 @@ public class MainFrame extends JFrame implements DateListener {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        
+
         if(isFullScreenMode()) {
+          // switch back from fullscreen
           device.setFullScreenWindow(null);
           setUndecorated(false);
           setBounds(mXPos, mYPos, mWidth, mHeight);          
@@ -405,6 +407,7 @@ public class MainFrame extends JFrame implements DateListener {
           setShowChannellist(Settings.propShowChannels.getBoolean(), false);
         }
         else {
+          // switch into fullscreen
           mXPos = getX();
           mYPos = getY();
           mWidth = getWidth();
@@ -448,6 +451,7 @@ public class MainFrame extends JFrame implements DateListener {
           }
           
           setVisible(true);
+          mProgramTableScrollPane.requestFocusInWindow();
           
           new Thread("Fullscreen border detection") {
             public void run() {
