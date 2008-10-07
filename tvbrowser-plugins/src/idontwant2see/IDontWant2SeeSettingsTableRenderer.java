@@ -35,6 +35,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import devplugin.Date;
+
 /**
  * The renderer class for the settings table.
  * 
@@ -44,10 +46,15 @@ public class IDontWant2SeeSettingsTableRenderer extends
     DefaultTableCellRenderer {
   private final static Color NOT_VALID_COLOR = new Color(220,0,0,60);
   private final static Color LAST_CHANGED_COLOR = new Color(72,116,241,100);
-  private String mLastEnteredExclusionString;
+  private final static Color LONG_LAST_USAGE_COLOR = new Color(255,255,0,60);
   
-  protected IDontWant2SeeSettingsTableRenderer(String lastEnteredExclusionString) {
+  private String mLastEnteredExclusionString;
+  private Date mLastUsedDate;
+  
+  protected IDontWant2SeeSettingsTableRenderer(String lastEnteredExclusionString,
+      Date lastUsedDate) {
     mLastEnteredExclusionString = lastEnteredExclusionString;
+    mLastUsedDate = lastUsedDate;
   }
   
   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)  {
@@ -62,6 +69,9 @@ public class IDontWant2SeeSettingsTableRenderer extends
       }
       else if(label.getText().equals(mLastEnteredExclusionString) && !isSelected) {
         background.setBackground(LAST_CHANGED_COLOR);
+      }
+      else if(((IDontWant2SeeSettingsTableModel)table.getModel()).isRowOutdated(row,mLastUsedDate)) {
+        background.setBackground(LONG_LAST_USAGE_COLOR);
       }
       else if(!isSelected) {
         background.setBackground(table.getBackground());
