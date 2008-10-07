@@ -77,9 +77,41 @@ public class ProgramInfoHelper {
       null // Others
     };
 
-    /**
-     * The String representation of the Bits 
-     */
+  /**
+   * The Icons for the Bits
+   */
+  public static final String[] mInfoIconFileName = new String[] {
+      "Info_BlackAndWhite.gif", // INFO_VISION_BLACK_AND_WHITE
+      null, // INFO_VISION_4_TO_3
+      "Info_16to9.gif", // INFO_VISION_16_TO_9
+      "Info_Mono.gif", // INFO_AUDIO_MONO
+      "Info_Stereo.gif", // INFO_AUDIO_STEREO
+      "Info_DolbySurround.gif", // INFO_AUDIO_DOLBY_SURROUND
+      "Info_DolbyDigital51.gif", // INFO_AUDIO_DOLBY_DIGITAL_5_1
+      "Info_TwoChannelTone.gif", // INFO_AUDIO_TWO_CHANNEL_TONE
+      mLocalizer.msg("subtitleForAurallyHandicappedImage",
+          "Info_SubtitleForAurallyHandicapped.gif"), // INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED
+      "Info_Live.png", // INFO_LIVE
+      mLocalizer.msg("originalWithSubtitleImage",
+          "Info_OriginalWithSubtitle_EN.gif"), // INFO_ORIGINAL_WITH_SUBTITLE
+      "Info_New.png", // INFO_NEW
+      "Info_AudioDescription.png", // INFO_AUDIO_DESCRIPTION
+      "Info_HD.png", // High Definition Video
+      "Info_Movie.png", // INFO_CATEGORIE_MOVIE
+      "Info_Series.png", // INFO_CATEGORIE_SERIES
+      "Info_News.png", // News
+      "Info_Show.png", // Show
+      "Info_Infotainment.png", // Magazine/Infotainment
+      "Info_Docu.png", // Documentary
+      "Info_Arts.png", // Arts
+      "Info_Sports.png", // Sports
+      "Info_Children.png", // Children
+      null // Others
+  };
+
+  /**
+   * The String representation of the Bits
+   */
     public static final String[] mInfoMsgArr = new String[] {
             mLocalizer.msg("blackAndWhite", "Black and white"),
             // INFO_VISION_BLACK_AND_WHITE
