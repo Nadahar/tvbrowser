@@ -34,6 +34,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
   private ArrayList<IDontWant2SeeSettingsTableEntry> mData = new ArrayList<IDontWant2SeeSettingsTableEntry>();
+  private String mLastChangedValue;
   
   protected IDontWant2SeeSettingsTableModel(ArrayList<IDontWant2SeeListEntry> entries) {
     for(IDontWant2SeeListEntry entry : entries) {
@@ -108,6 +109,7 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
     IDontWant2SeeSettingsTableEntry entry = mData.get(rowIndex);
     
     if(columnIndex == 0) {
+      mLastChangedValue = (String)aValue;
       entry.setSearchText((String)aValue);
     }
     else {
@@ -125,6 +127,10 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
     }
     
     return newList;
+  }
+  
+  protected String getLastChangedValue() {
+    return mLastChangedValue;
   }
   
   /**

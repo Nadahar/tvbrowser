@@ -43,26 +43,41 @@ import com.jgoodies.forms.layout.FormLayout;
 public class IDontWant2SeeSettingsTableRenderer extends
     DefaultTableCellRenderer {
   private final static Color NOT_VALID_COLOR = new Color(220,0,0,60);
+  private final static Color LAST_CHANGED_COLOR = new Color(72,116,241,100);
+  private String mLastEnteredExclusionString;
+  
+  protected IDontWant2SeeSettingsTableRenderer(String lastEnteredExclusionString) {
+    mLastEnteredExclusionString = lastEnteredExclusionString;
+  }
   
   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)  {
-    Component c = super.getTableCellRendererComponent(table,value,isSelected,hasFocus,row,column);
-    
     if(column == 0) {
+      JPanel background = new JPanel(new FormLayout("fill:0dlu:grow","fill:default:grow"));
+      background.setOpaque(true);
+      
+      JLabel label = new JLabel((String)value);
+      
       if(!((IDontWant2SeeSettingsTableModel)table.getModel()).rowIsValid(row) && !isSelected) {
-        ((JLabel)c).setOpaque(true);
-        c.setBackground(NOT_VALID_COLOR);
+        background.setBackground(NOT_VALID_COLOR);
       }
-      else if (isSelected){
-        c.setBackground(table.getSelectionBackground());
+      else if(label.getText().equals(mLastEnteredExclusionString) && !isSelected) {
+        background.setBackground(LAST_CHANGED_COLOR);
+      }
+      else if(!isSelected) {
+        background.setBackground(table.getBackground());
+        label.setForeground(table.getForeground());
       }
       else {
-        c.setBackground(table.getBackground());
+        background.setBackground(table.getSelectionBackground());
+        label.setForeground(table.getSelectionForeground());
       }
       
-      return c;
+      background.add(label, new CellConstraints().xy(1,1));
+      
+      return background;
     }
     else {
-      JPanel background = new JPanel(new FormLayout("0dlu:grow,default,0dlu:grow","default"));
+      JPanel background = new JPanel(new FormLayout("0dlu:grow,default,0dlu:grow","0dlu:grow,default,0dlu:grow"));
       background.setOpaque(true);
       
       if(!isSelected) {
@@ -81,7 +96,7 @@ public class IDontWant2SeeSettingsTableRenderer extends
         background.setBackground(NOT_VALID_COLOR);
       }
       
-      background.add(checkBox, new CellConstraints().xy(2,1));
+      background.add(checkBox, new CellConstraints().xy(2,2));
       
       return background;
     }
