@@ -85,6 +85,9 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
   private static java.util.logging.Logger mLog = java.util.logging.Logger
       .getLogger(TextAreaIcon.class.getName());
 
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(ProgramPanel.class);
+  
   private static final boolean USE_FULL_HEIGHT = true;  
 
   private static final Composite NORMAL_COMPOSITE = AlphaComposite.SrcOver;
@@ -1134,82 +1137,97 @@ private static Font getDynamicFontSize(Font font, int offset) {
    * @return
    */
   public String getToolTipText(int x, int y) {
+    // tooltip for info icon area (on the left)
+    if (mInfoIconRect != null && mInfoIconRect.contains(x, y)) {
+      return getProgramInfoTooltip();
+    }
+
+    // tooltip for all marker icons
+    Marker[] markers = mProgram.getMarkerArr();
+    if (markers != null && markers.length > 0
+        && x >= WIDTH - markers.length * 16 - 2) {
+      int markerY = mTitleIcon.getIconHeight()
+          + mDescriptionIcon.getIconHeight() + mPictureAreaIcon.getIconHeight()
+          + 2;
+      if ((y >= markerY) && (y <= markerY + 16)) {
+        return getMarkedByTooltip();
+      }
+    }
+    
+    return null;
+  }
+
+  private String getMarkedByTooltip() {
     StringBuffer buffer = new StringBuffer("");
-    if (mInfoIconRect != null && mInfoIconRect.contains(x, y)) { 
-      int info = mProgram.getInfo();
-      if (info > 0) {
-        int[] infoBitArr = ProgramInfoHelper.mInfoBitArr;
-        Icon[] infoIconArr = ProgramInfoHelper.mInfoIconArr;
-        String[] infoMsgArr = ProgramInfoHelper.mInfoMsgArr;
-
-        for (int i = 0; i < infoBitArr.length; i++) {
-          if (ProgramInfoHelper.bitSet(info, infoBitArr[i])) {
-            if (infoIconArr[i] != null) {
-              buffer.append("<tr><td>").append(infoMsgArr[i]).append(
-                  "</td></tr>");
-            }
-          }
-        }
-        if (buffer.length() > 0) {
-          buffer.insert(0, "<table>");
-          buffer.append("</table>");
-        }
-      }
-    } else {
-      Marker[] markers = mProgram.getMarkerArr();
-      if (markers != null && markers.length > 0
-          && x >= WIDTH - markers.length * 16 - 2) {
-        int markerY = mTitleIcon.getIconHeight()
-            + mDescriptionIcon.getIconHeight()
-            + mPictureAreaIcon.getIconHeight() + 2;
-        if ((y >= markerY) && (y <= markerY + 16)) {
-          for (Marker marker : markers) {
-            String text = "";
-            PluginAccess plugin = Plugin.getPluginManager()
-                .getActivatedPluginForId(marker.getId());
-            if (plugin != null) {
-              text = plugin.getInfo().getName();
-            } else {
-              InternalPluginProxyIf internalPlugin = InternalPluginProxyList
-                  .getInstance().getProxyForId(marker.getId());
-              if (internalPlugin != null) {
-                text = internalPlugin.getName();
-                if (internalPlugin.equals(FavoritesPluginProxy.getInstance())) {
-                  // if this is a favorite, add the names of the favorite
-                  String favTitles = "";
-                  for (Favorite favorite : FavoriteTreeModel.getInstance()
-                      .getFavoritesContainingProgram(mProgram)) {
-                    if (favTitles.length() > 0) {
-                      favTitles = favTitles + ", ";
-                    }
-                    favTitles = favTitles + favorite.getName();
-                  }
-                  if (favTitles.length() > 0) {
-                    text = text + " (" + favTitles + ")";
-                  }
-                }
+    Marker[] markers = mProgram.getMarkerArr();
+    for (int i = markers.length - 1; i >= 0; i--) {
+      Marker marker = markers[i];
+      String text = "";
+      PluginAccess plugin = Plugin.getPluginManager()
+          .getActivatedPluginForId(marker.getId());
+      if (plugin != null) {
+        text = plugin.getInfo().getName();
+      } else {
+        InternalPluginProxyIf internalPlugin = InternalPluginProxyList
+            .getInstance().getProxyForId(marker.getId());
+        if (internalPlugin != null) {
+          text = internalPlugin.getName();
+          if (internalPlugin.equals(FavoritesPluginProxy.getInstance())) {
+            // if this is a favorite, add the names of the favorite
+            String favTitles = "";
+            for (Favorite favorite : FavoriteTreeModel.getInstance()
+                .getFavoritesContainingProgram(mProgram)) {
+              if (favTitles.length() > 0) {
+                favTitles = favTitles + ", ";
               }
+              favTitles = favTitles + favorite.getName();
             }
-            if (text.length() > 0) {
-              buffer.append("<li>");
-              buffer.append(text);
-              buffer.append("</li>");
+            if (favTitles.length() > 0) {
+              text = text + " (" + favTitles + ")";
             }
-          }
-          if (buffer.length() > 0) {
-            buffer.insert(0, "<b>Markiert von</b><br/><ul>");
-            buffer.append("</ul>");
           }
         }
       }
+      if (text.length() > 0) {
+        buffer.append(text);
+        buffer.append("<br/>");
+      }
     }
-
-    if (buffer.length() == 0) {
-      return null;
+    if (buffer.length() > 0) {
+      buffer.insert(0, "<html><b>" + mLocalizer.msg("markedBy", "Marked by")
+          + "</b><br/>");
+      buffer.append("</html>");
+      return buffer.toString();
     }
+    return null;
+  }
 
-    buffer.insert(0, "<html>");
-    buffer.append("</html>");
-    return buffer.toString();
+  private String getProgramInfoTooltip() {
+    int info = mProgram.getInfo();
+    if (info > 0) {
+      StringBuffer buffer = new StringBuffer("");
+      int[] infoBitArr = ProgramInfoHelper.mInfoBitArr;
+      String[] infoIconFileName = ProgramInfoHelper.mInfoIconFileName;
+      String[] infoMsgArr = ProgramInfoHelper.mInfoMsgArr;
+
+      for (int i = 0; i < infoBitArr.length; i++) {
+        if (ProgramInfoHelper.bitSet(info, infoBitArr[i])) {
+          if (infoIconFileName[i] != null) {
+            buffer.append(
+                "<tr><td valign=\"middle\" align=\"center\"><img src=\"")
+                .append(
+                    ProgramPanel.class.getResource("../../imgs/"
+                        + infoIconFileName[i])).append("\"></td><td>&nbsp;")
+                .append(infoMsgArr[i]).append("</td></tr>");
+          }
+        }
+      }
+      if (buffer.length() > 0) {
+        buffer.insert(0, "<html><table cellpadding=\"1\">");
+        buffer.append("</table></html>");
+        return buffer.toString();
+      }
+    }
+    return null;
   }
 }
