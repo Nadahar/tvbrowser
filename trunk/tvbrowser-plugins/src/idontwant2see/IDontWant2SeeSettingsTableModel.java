@@ -27,6 +27,8 @@ import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
+import devplugin.Date;
+
 /**
  * The settings table for the value settings.
  * 
@@ -75,6 +77,10 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
   
   protected boolean rowIsValid(int row) {
     return mData.get(row).isValid();
+  }
+  
+  protected boolean isRowOutdated(int row, Date compareValue) {
+    return mData.get(row).isOutdated(compareValue);
   }
   
   public String getColumnName(int column) {
@@ -197,7 +203,11 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
       
       return mListEntry;
     }
-
+    
+    protected boolean isOutdated(Date compareValue) {
+      return mListEntry.isOutdated(compareValue);
+    }
+    
     public int compareTo(Object o) {
       if(o instanceof String) {
         return mNewSearchText.compareToIgnoreCase((String)o);

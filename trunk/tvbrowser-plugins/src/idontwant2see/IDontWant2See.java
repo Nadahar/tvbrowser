@@ -67,6 +67,7 @@ import com.jgoodies.forms.layout.Sizes;
 
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
+import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.PluginsFilterComponent;
@@ -83,16 +84,19 @@ import devplugin.Version;
  */
 public class IDontWant2See extends Plugin {
   protected static final Localizer mLocalizer = Localizer.getLocalizerFor(IDontWant2See.class); 
+  protected static final short OUTDATED_DAY_COUNT = 7;
   
   private ArrayList<IDontWant2SeeListEntry> mSearchList;
   private PluginsProgramFilter mFilter;
   private static IDontWant2See mInstance;
   private boolean mSimpleMenu;
   private boolean mSwitchToMyFilter;
+  private boolean mDateWasSet;
   private String mLastEnteredExclusionString;
+  private Date mLastUsedDate;
   
   public static Version getVersion() {
-    return new Version(0,7,0,false);
+    return new Version(0,8,0,false);
   }
   
   /**
@@ -104,6 +108,8 @@ public class IDontWant2See extends Plugin {
     mSimpleMenu = true;
     mSwitchToMyFilter = true;
     mLastEnteredExclusionString = "";
+    mLastUsedDate = Date.getCurrentDate();
+    mDateWasSet = false;
     
     mFilter = new PluginsProgramFilter(this) {
       public String getSubName() {
@@ -120,7 +126,16 @@ public class IDontWant2See extends Plugin {
     return mInstance;
   }
   
+  public void handleTvDataUpdateFinished() {
+    mDateWasSet = false;
+  }
+  
   protected boolean acceptInternal(Program prog) {
+    if(!mDateWasSet) {
+      mLastUsedDate = Date.getCurrentDate();
+      mDateWasSet = true;
+    }
+    
     for(IDontWant2SeeListEntry entry : mSearchList) {
       if(entry.matches(prog)) {
         return false;
@@ -324,7 +339,7 @@ public class IDontWant2See extends Plugin {
     return new PluginsProgramFilter[] {mFilter};
   }
   
-  public void readData(ObjectInputStream in) throws IOException {
+  public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
     int version = in.readInt(); //read Version
     
     int n = in.readInt();
@@ -360,11 +375,14 @@ public class IDontWant2See extends Plugin {
       if(version >= 5) {
         mLastEnteredExclusionString = in.readUTF();
       }
+      if(version >= 6) {
+        mLastUsedDate = new Date(in);
+      }
     }
   }
   
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(5); //version
+    out.writeInt(6); //version
     out.writeInt(mSearchList.size());
     
     for(IDontWant2SeeListEntry entry : mSearchList) {
@@ -375,6 +393,8 @@ public class IDontWant2See extends Plugin {
     out.writeBoolean(mSwitchToMyFilter);
     
     out.writeUTF(mLastEnteredExclusionString);
+    
+    mLastUsedDate.writeData(out);
   }
   
   public SettingsTab getSettingsTab() {
@@ -454,7 +474,7 @@ public class IDontWant2See extends Plugin {
     protected ExclusionTablePanel() {
       mTableModel = new IDontWant2SeeSettingsTableModel(mSearchList);
       
-      final IDontWant2SeeSettingsTableRenderer renderer = new IDontWant2SeeSettingsTableRenderer(mLastEnteredExclusionString);        
+      final IDontWant2SeeSettingsTableRenderer renderer = new IDontWant2SeeSettingsTableRenderer(mLastEnteredExclusionString,mLastUsedDate);        
       mTable = new JTable(mTableModel);
       mTable.setRowHeight(25);
       mTable.setPreferredScrollableViewportSize(new Dimension(200,150));
