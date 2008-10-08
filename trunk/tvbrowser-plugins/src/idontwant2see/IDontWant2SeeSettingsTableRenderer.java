@@ -105,6 +105,9 @@ public class IDontWant2SeeSettingsTableRenderer extends
       if(!((IDontWant2SeeSettingsTableModel)table.getModel()).rowIsValid(row) && !isSelected) {
         background.setBackground(NOT_VALID_COLOR);
       }
+      else if(((IDontWant2SeeSettingsTableModel)table.getModel()).isRowOutdated(row,mLastUsedDate)) {
+        background.setBackground(LONG_LAST_USAGE_COLOR);
+      }
       
       background.add(checkBox, new CellConstraints().xy(2,2));
       
