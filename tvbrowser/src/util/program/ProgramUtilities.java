@@ -18,11 +18,6 @@
  */
 package util.program;
 
-import util.io.IOUtilities;
-import devplugin.Date;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -31,6 +26,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import tvbrowser.core.ChannelList;
+import util.io.IOUtilities;
+import devplugin.Date;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
 
 /**
  * Provides utilities for program stuff.
@@ -423,6 +422,19 @@ public class ProgramUtilities {
             }
             else {
               return list[1-i]; // "Indiana Jones 2"
+            }
+          }
+        }
+      }
+      // search for role part in program title
+      String[] titleParts = lowerTitle.split(" ");
+      for (String part : titleParts) {
+        if (part.length() >= 4) {
+          for (int i = 0; i < list.length; i++) {
+            for (int j = 0; j < list[i].size(); j++) {
+              if (list[i].get(j).toLowerCase().contains(part)) {
+                return list[1 - i]; // "Edel & Starck"
+              }
             }
           }
         }
