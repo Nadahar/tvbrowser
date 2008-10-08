@@ -83,8 +83,7 @@ import devplugin.Version;
  * @author René Mach
  */
 public class IDontWant2See extends Plugin {
-  protected static final Localizer mLocalizer = Localizer.getLocalizerFor(IDontWant2See.class); 
-  protected static final short OUTDATED_DAY_COUNT = 7;
+  protected static final Localizer mLocalizer = Localizer.getLocalizerFor(IDontWant2See.class);
   
   private static Date mCurrentDate = Date.getCurrentDate();
   private ArrayList<IDontWant2SeeListEntry> mSearchList;
@@ -97,7 +96,7 @@ public class IDontWant2See extends Plugin {
   private Date mLastUsedDate;
   
   public static Version getVersion() {
-    return new Version(0,8,2,false);
+    return new Version(0,8,3,false);
   }
   
   /**
@@ -482,9 +481,9 @@ public class IDontWant2See extends Plugin {
     private IDontWant2SeeSettingsTableModel mTableModel;
     
     protected ExclusionTablePanel() {
-      mTableModel = new IDontWant2SeeSettingsTableModel(mSearchList);
+      mTableModel = new IDontWant2SeeSettingsTableModel(mSearchList,mLastEnteredExclusionString);
       
-      final IDontWant2SeeSettingsTableRenderer renderer = new IDontWant2SeeSettingsTableRenderer(mLastEnteredExclusionString,mLastUsedDate);        
+      final IDontWant2SeeSettingsTableRenderer renderer = new IDontWant2SeeSettingsTableRenderer(mLastUsedDate);        
       mTable = new JTable(mTableModel);
       mTable.setRowHeight(25);
       mTable.setPreferredScrollableViewportSize(new Dimension(200,150));

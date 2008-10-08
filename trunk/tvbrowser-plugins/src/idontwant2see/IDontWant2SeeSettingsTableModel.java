@@ -37,8 +37,12 @@ import devplugin.Date;
 public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
   private ArrayList<IDontWant2SeeSettingsTableEntry> mData = new ArrayList<IDontWant2SeeSettingsTableEntry>();
   private String mLastChangedValue;
+  private int mLastChangedRow;
   
-  protected IDontWant2SeeSettingsTableModel(ArrayList<IDontWant2SeeListEntry> entries) {
+  protected IDontWant2SeeSettingsTableModel(ArrayList<IDontWant2SeeListEntry> entries,
+      String lastEnteredExclusionString) {
+    mLastChangedValue = lastEnteredExclusionString;
+    
     for(IDontWant2SeeListEntry entry : entries) {
       int index = mData.size();
       
@@ -79,8 +83,18 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
     return mData.get(row).isValid();
   }
   
-  protected boolean isRowOutdated(int row, Date compareValue) {
-    return mData.get(row).isOutdated(compareValue);
+  protected boolean isRowOutdated(int row, Date compareValue, int outdatedDayCount) {
+    return mData.get(row).isOutdated(compareValue,outdatedDayCount);
+  }
+  
+  protected boolean isLastChangedRow(int row) {
+    boolean value = mData.get(row).isLastChanged(mLastChangedValue);
+    
+    if(value) {
+      mLastChangedRow = row;
+    }
+    
+    return value;
   }
   
   public String getColumnName(int column) {
@@ -114,7 +128,10 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
   public void setValueAt(Object aValue, int rowIndex, int columnIndex) { 
     IDontWant2SeeSettingsTableEntry entry = mData.get(rowIndex);
     
+    fireTableCellUpdated(mLastChangedRow, columnIndex);
+    
     if(columnIndex == 0) {
+      mLastChangedRow = rowIndex;
       mLastChangedValue = (String)aValue;
       entry.setSearchText((String)aValue);
     }
@@ -204,8 +221,12 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
       return mListEntry;
     }
     
-    protected boolean isOutdated(Date compareValue) {
-      return mListEntry.isOutdated(compareValue);
+    protected boolean isOutdated(Date compareValue, int outdatedDayCount) {
+      return mListEntry.isOutdated(compareValue,outdatedDayCount);
+    }
+    
+    protected boolean isLastChanged(String lastChangedText) {
+      return mNewSearchText.equals(lastChangedText);
     }
     
     public int compareTo(Object o) {
