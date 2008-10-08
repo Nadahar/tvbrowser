@@ -33,7 +33,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
@@ -43,7 +42,6 @@ import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 import util.ui.FixedSizeIcon;
-import util.ui.UiUtilities;
 import util.ui.html.HTMLTextHelper;
 
 import com.jgoodies.forms.factories.Borders;
@@ -59,8 +57,9 @@ public class PluginTableCellRenderer extends DefaultTableCellRenderer {
 
   /** Panel that shows the Information*/
   private JPanel mPanel;
+  private JPanel mCheckBoxPanel;
   /** Description */
-  private JTextArea mDesc;
+  private JLabel mDesc;
   /** Icon */
   private JLabel mIcon;
   /** Name */
@@ -88,18 +87,25 @@ public class PluginTableCellRenderer extends DefaultTableCellRenderer {
   public Component getTableCellRendererComponent(JTable table, Object value,
       boolean isSelected, boolean hasFocus, int row, int column) {
     
-    if (column == 0) {
+    if (column == 0) {try {
+      if(mCheckBoxPanel == null) {
+        mCheckBoxPanel = new JPanel(new FormLayout("0dlu:grow,default,0dlu:grow",
+            "fill:0dlu:grow,default,fill:0dlu:grow"));
+      }
+      
       if (mCheckBox == null) {
         mCheckBox = new JCheckBox();
+        mCheckBox.setOpaque(false);
+        mCheckBox.setContentAreaFilled(false);
         mCheckBox.setHorizontalAlignment(SwingConstants.CENTER);
         mCheckBox.setBorderPainted(true);
       }
       if (isSelected ) {
-        mCheckBox.setForeground(table.getSelectionForeground());
-        mCheckBox.setBackground(table.getSelectionBackground());
+        mCheckBoxPanel.setForeground(table.getSelectionForeground());
+        mCheckBoxPanel.setBackground(table.getSelectionBackground());
       } else {
-        mCheckBox.setForeground(table.getForeground());
-        mCheckBox.setBackground(table.getBackground());
+        mCheckBoxPanel.setForeground(table.getForeground());
+        mCheckBoxPanel.setBackground(table.getBackground());
       }
       mCheckBox.setSelected(((Boolean) value).booleanValue());
       mCheckBox.setEnabled(table.getModel().isCellEditable(row, column));
@@ -111,7 +117,10 @@ public class PluginTableCellRenderer extends DefaultTableCellRenderer {
         mCheckBox.setBorder(NO_FOCUS_BORDER);
       }
 
-      return mCheckBox;
+      mCheckBoxPanel.add(mCheckBox, mCC.xy(2,2));
+      
+      return mCheckBoxPanel;
+    }catch(Throwable t) {t.printStackTrace();}
     }
 
     JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
@@ -155,42 +164,47 @@ public class PluginTableCellRenderer extends DefaultTableCellRenderer {
       if (mPanel == null) {
         mIcon = new JLabel();
         mName = new JLabel();
-        mName.setFont(label.getFont().deriveFont(Font.BOLD, label.getFont().getSize2D()+2));
+        mName.setFont(table.getFont().deriveFont(Font.BOLD, table.getFont().getSize2D()+2));
         
-        mPanel = new JPanel(new FormLayout("default, 2dlu, fill:pref:grow","default, 2dlu, default"));
+        mPanel = new JPanel(new FormLayout("default, 2dlu, fill:0dlu:grow","default, 2dlu, default"));
         mPanel.setBorder(Borders.DLU2_BORDER);
         
         mPanel.add(mIcon, mCC.xy(1,1));
         mPanel.add(mName, mCC.xy(3,1));
       }
 
-      mIcon.setOpaque(label.isOpaque());
-      mIcon.setBackground(label.getBackground());
+      mIcon.setOpaque(false);
       mIcon.setIcon(iconValue);
 
       if (mDesc != null) {
         mPanel.remove(mDesc);
       }
-      mDesc = UiUtilities.createHelpTextArea(descValue);
+      mDesc = new JLabel(HTMLTextHelper.convertHtmlToText(descValue));
       mDesc.setMinimumSize(new Dimension(100, 10));
       mDesc.setOpaque(false);
-      mDesc.setForeground(label.getForeground());
-      mDesc.setBackground(label.getBackground());
       mDesc.setEnabled(isActivated);
       mPanel.add(mDesc, mCC.xy(3,3));
 
       mName.setOpaque(false);
-      mName.setForeground(label.getForeground());
-      mName.setBackground(label.getBackground());     
-      
+      mName.setForeground(table.getForeground());
       mName.setText(nameValue);
       mName.setEnabled(isActivated);        
       
-      mPanel.setOpaque(label.isOpaque());
-      mPanel.setBackground(label.getBackground());
+      mPanel.setOpaque(true);
+      
+      if(isSelected) {
+        mName.setForeground(table.getSelectionForeground());
+        mDesc.setForeground(table.getSelectionForeground());
+        mPanel.setBackground(table.getSelectionBackground());
+      }
+      else {
+        mName.setForeground(table.getForeground());
+        mDesc.setForeground(table.getForeground());
+        mPanel.setBackground(table.getBackground());
+      }
       
       mPanel.setToolTipText(descValue);
-     
+      
       int rowHeight = mPanel.getPreferredSize().height + table.getRowMargin();
       if (table.getRowHeight() < rowHeight) {
         table.setRowHeight(rowHeight);

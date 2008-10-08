@@ -93,7 +93,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
    */
   public PluginChooserDlg(Dialog parent, ProgramReceiveIf[] pluginArr, String description, ProgramReceiveIf caller) {
     super(parent,true);
-    init(pluginArr, description, caller,null);
+    init(pluginArr, description, caller,null,null);
   }
   
   /**
@@ -108,8 +108,25 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
    
    Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>> table = createReceiveTable(pluginArr);
    
-   init(table.keySet().toArray(new ProgramReceiveIf[table.keySet().size()]), description, caller, table);
+   init(table.keySet().toArray(new ProgramReceiveIf[table.keySet().size()]), description, caller, table, null);
  }
+ 
+   /**
+   *
+   * @param parent
+   * @param pluginArr The initially selected ProgramReceiveIfs.
+   * @param description A description text below the ProgramReceiveIf list.
+   * @param caller The caller ProgramReceiveIf.
+   * @param disabledTargets Targets that cannot be selected/deselected
+   * @since 2.7.2
+   */
+  public PluginChooserDlg(Dialog parent, ProgramReceiveTarget[] pluginArr, String description, ProgramReceiveIf caller, ProgramReceiveTarget[] disabledTargets) {
+    super(parent,true);
+    
+    Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>> table = createReceiveTable(pluginArr);
+    
+    init(table.keySet().toArray(new ProgramReceiveIf[table.keySet().size()]), description, caller, table, disabledTargets);
+  }
 
   /**
    *
@@ -120,7 +137,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
    */
   public PluginChooserDlg(Frame parent, ProgramReceiveIf[] pluginArr, String description, ProgramReceiveIf caller) {
     super(parent,true);
-    init(pluginArr, description, caller,null);
+    init(pluginArr, description, caller,null,null);
   }
   
   public PluginChooserDlg(Frame parent, ProgramReceiveTarget[] targets, String description, ProgramReceiveIf caller) {
@@ -128,7 +145,24 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
 
     Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>> table = createReceiveTable(targets);
     
-    init(table.keySet().toArray(new ProgramReceiveIf[table.keySet().size()]), description, caller, table);
+    init(table.keySet().toArray(new ProgramReceiveIf[table.keySet().size()]), description, caller, table, null);
+  }
+  
+  /**
+  *
+  * @param parent
+  * @param targets The initially selected ProgramReceiveTargets.
+  * @param description A description text below the ProgramReceiveIf list.
+  * @param caller The caller ProgramReceiveIf.
+  * @param disabledTargets Targets that cannot be selected/deselected
+  * @since 2.7.2
+  */
+  public PluginChooserDlg(Frame parent, ProgramReceiveTarget[] targets, String description, ProgramReceiveIf caller, ProgramReceiveTarget[] disabledTargets) {
+    super(parent,true);
+
+    Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>> table = createReceiveTable(targets);
+    
+    init(table.keySet().toArray(new ProgramReceiveIf[table.keySet().size()]), description, caller, table, disabledTargets);
   }
   
   private Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>> createReceiveTable(ProgramReceiveTarget[] targets) {
@@ -155,7 +189,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
     return table;
   }
   
-  private void init(ProgramReceiveIf[] pluginArr, String description, ProgramReceiveIf caller, Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>> targetTable) {
+  private void init(ProgramReceiveIf[] pluginArr, String description, ProgramReceiveIf caller, Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>> targetTable, final ProgramReceiveTarget[] disabledReceiveTargets) {
     mOkWasPressed = false;
     setTitle(mLocalizer.msg("title","Choose Plugins"));
     UiUtilities.registerForClosing(this);
@@ -179,6 +213,14 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
     CellConstraints cc = new CellConstraints();
     
     ProgramReceiveIf[] tempProgramReceiveIf = Plugin.getPluginManager().getReceiveIfs(caller,null);
+        
+    ArrayList<ProgramReceiveIf> disabledList = new ArrayList<ProgramReceiveIf>(disabledReceiveTargets != null ? disabledReceiveTargets.length : 0);
+
+    if(disabledReceiveTargets != null) {
+      for(ProgramReceiveTarget target : disabledReceiveTargets) {
+        disabledList.add(target.getReceifeIfForIdOfTarget());
+      }
+    }
     
     if(caller != null) {
       ArrayList<ProgramReceiveIf> list = new ArrayList<ProgramReceiveIf>();
@@ -188,10 +230,10 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
           list.add(tempIf);
         }
       }
-
-      mPluginItemList = new SelectableItemList(mResultPluginArr, list.toArray());
+            
+      mPluginItemList = new SelectableItemList(mResultPluginArr, list.toArray(), disabledList.toArray());
     } else {
-      mPluginItemList = new SelectableItemList(mResultPluginArr, tempProgramReceiveIf);
+      mPluginItemList = new SelectableItemList(mResultPluginArr, tempProgramReceiveIf, disabledList.toArray());
     }
 
     mPluginItemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -228,6 +270,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
               
               for(int i = 0; i < targetBoxes.length; i++) {
                 targetBoxes[i] = new JCheckBox(mCurrentTargets[i].toString());
+                targetBoxes[i].setEnabled(!arrayContainsValue(disabledReceiveTargets,mCurrentTargets[i]));
                 
                 if(targets != null && targets.contains(mCurrentTargets[i])) {
                   targetBoxes[i].setSelected(true);
@@ -344,6 +387,18 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
         close();
       }
     });
+  }
+  
+  private boolean arrayContainsValue(ProgramReceiveTarget[] targetArr, ProgramReceiveTarget target) {
+    if(targetArr != null && target != null) {
+      for(ProgramReceiveTarget arrayEntry : targetArr) {        
+        if(arrayEntry.getReceiveIfId().equals(target.getReceiveIfId()) && arrayEntry.getTargetId().equals(target.getTargetId())) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
   }
 
   /**

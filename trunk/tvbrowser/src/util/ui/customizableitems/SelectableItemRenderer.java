@@ -116,7 +116,7 @@ public class SelectableItemRenderer implements ListCellRenderer {
       p.setForeground(list.getForeground());
       cb.setForeground(list.getForeground());
     }
-    cb.setEnabled(list.isEnabled());
+    cb.setEnabled(list.isEnabled() && selectableItem.isSelectable());
     }catch(Throwable t){t.printStackTrace();}
     return p;
   }

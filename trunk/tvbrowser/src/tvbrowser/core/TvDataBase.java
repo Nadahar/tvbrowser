@@ -29,12 +29,14 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.logging.Level;
 
 import tvbrowser.core.data.OnDemandDayProgramFile;
+import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
 import devplugin.Channel;
@@ -71,8 +73,10 @@ public class TvDataBase {
   private Hashtable<String, Object> mNewDayProgramsAfterUpdate;
   
   private TvDataInventory mTvDataInventory;
+  private boolean mPendingPluginInformationAboutChangedData;
   
   private TvDataBase() {
+    mPendingPluginInformationAboutChangedData = false;
     mTvDataHash = new SoftReferenceCache<String, OnDemandDayProgramFile>();
     mListenerList = new ArrayList<TvDataBaseListener>();
     mAvailableDateSet = new HashSet<Date>();
@@ -206,10 +210,39 @@ public class TvDataBase {
 
     // fire update finished
     if (somethingChanged) {
-      TvDataUpdater.getInstance().fireTvDataUpdateFinished();
+      if(!MainFrame.isStarting()) {
+        TvDataUpdater.getInstance().fireTvDataUpdateFinished();
+      }
+      else {
+        mPendingPluginInformationAboutChangedData = true;
+      }
     }
   }
 
+  /**
+   * Handles the pending plugin information if it is to do
+   * after TV-Browser start is finished.
+   * <p>
+   * @since 2.7.2
+   */
+  public void handleTvBrowserStartFinished() {
+    if(mPendingPluginInformationAboutChangedData) {
+      mPendingPluginInformationAboutChangedData = false;
+      
+      Collection<Object> dayPrograms = mNewDayProgramsAfterUpdate.values();
+      
+      for(Object dayProgram : dayPrograms) {
+        if(dayProgram instanceof ChannelDayProgram) {
+          fireDayProgramAdded((ChannelDayProgram)dayProgram);
+        }
+      }
+      
+      mNewDayProgramsAfterUpdate.clear();
+      
+      TvDataUpdater.getInstance().fireTvDataUpdateFinished();
+    }
+  }
+  
   public void close() throws IOException {
     File file = new File(Settings.getUserSettingsDirName(), INVENTORY_FILE);
     mTvDataInventory.writeData(file);
@@ -739,8 +772,7 @@ public class TvDataBase {
 
       // The day program is new -> fire an added event
       // save the value for informing the listeners later
-      
-      fireDayProgramAdded(newDayProg);
+      mNewDayProgramsAfterUpdate.put(getDayProgramKey(date,channel),newDayProg);
     }
   }
 

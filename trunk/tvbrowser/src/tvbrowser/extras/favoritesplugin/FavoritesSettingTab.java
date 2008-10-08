@@ -43,7 +43,9 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.dlgs.ExclusionPanel;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.DefaultMarkingPrioritySelectionPanel;
@@ -64,7 +66,7 @@ public class FavoritesSettingTab implements SettingsTab {
   public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(FavoritesSettingTab.class);
   
-  private ProgramReceiveTarget[] mClientPluginTargets;
+  private ProgramReceiveTarget[] mClientPluginTargets, mCurrentCientPluginTargets;
   private JLabel mPluginLabel;
   private JCheckBox mExpertMode, mShowRepetitions, mAutoSelectRemider;
   
@@ -101,7 +103,7 @@ public class FavoritesSettingTab implements SettingsTab {
       }
     }
     
-    mClientPluginTargets = clientPlugins.toArray(new ProgramReceiveTarget[clientPlugins.size()]);
+    mCurrentCientPluginTargets = mClientPluginTargets = clientPlugins.toArray(new ProgramReceiveTarget[clientPlugins.size()]);
     
     handlePluginSelection();
     
@@ -179,8 +181,16 @@ public class FavoritesSettingTab implements SettingsTab {
   /**
    * Called by the host-application, if the user wants to save the settings.
    */
-  public void saveSettings() {    
-    FavoritesPlugin.getInstance().setClientPluginTargets(mClientPluginTargets);
+  public void saveSettings() {
+    if(mCurrentCientPluginTargets != mClientPluginTargets) {
+      FavoritesPlugin.getInstance().setClientPluginTargets(mClientPluginTargets);
+      
+      Favorite[] favoriteArr = FavoriteTreeModel.getInstance().getFavoriteArr();
+      
+      for(Favorite favorite : favoriteArr) {
+        favorite.handleNewGlobalReceiveTargets(mCurrentCientPluginTargets);
+      }
+    }
     FavoritesPlugin.getInstance().setIsUsingExpertMode(mExpertMode.isSelected());    
     FavoritesPlugin.getInstance().setShowRepetitions(mShowRepetitions.isSelected());
     FavoritesPlugin.getInstance().setAutoSelectingReminder(mAutoSelectRemider.isSelected());

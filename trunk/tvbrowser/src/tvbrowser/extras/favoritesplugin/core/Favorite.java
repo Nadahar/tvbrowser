@@ -85,7 +85,8 @@ public abstract class Favorite {
     mExclusionList = null; // defer initialisation until needed, save memory
     mBlackList = null; // defer initialization until needed
 
-    mForwardPluginArr = FavoritesPlugin.getInstance().getDefaultClientPluginsTargets();
+    mForwardPluginArr = new ProgramReceiveTarget[0];
+    handleNewGlobalReceiveTargets(new ProgramReceiveTarget[0]);
   }
 
   public Favorite(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -117,6 +118,10 @@ public abstract class Favorite {
       } else {
         mForwardPluginArr[i] = new ProgramReceiveTarget(in);
       }
+    }
+    
+    if(version < 4) {
+      handleNewGlobalReceiveTargets(new ProgramReceiveTarget[0]);
     }
         
     // Don't save the programs but only their date and id
@@ -190,6 +195,42 @@ public abstract class Favorite {
   public ProgramReceiveTarget[] getForwardPlugins() {
     return mForwardPluginArr;
   }
+  
+  private String getReceiveTargetId(ProgramReceiveTarget target) {
+    return new StringBuilder(target.getReceiveIfId()).append("_").append(target.getTargetId()).toString();
+  }
+  
+  public void handleNewGlobalReceiveTargets(ProgramReceiveTarget[] oldDefaultTargets) {
+    ProgramReceiveTarget[] defaultTargets = FavoritesPlugin.getInstance().getDefaultClientPluginsTargets();
+    
+    ArrayList<ProgramReceiveTarget> newTargets = new ArrayList<ProgramReceiveTarget>(defaultTargets.length);
+    
+    for(ProgramReceiveTarget target : defaultTargets) {
+      newTargets.add(target);
+    }
+    
+    for(ProgramReceiveTarget target : mForwardPluginArr) {
+      if(!arrayContains(oldDefaultTargets,target) && !arrayContains(defaultTargets,target)) {
+        newTargets.add(target);
+      }
+    }
+    
+    mForwardPluginArr = newTargets.toArray(new ProgramReceiveTarget[newTargets.size()]);
+  }
+  
+  private boolean arrayContains(ProgramReceiveTarget[] targetArr, ProgramReceiveTarget target) {
+    if(targetArr != null && target != null) {
+      for(ProgramReceiveTarget arrayEntry : targetArr) {
+        if(arrayEntry != null && arrayEntry.getReceiveIfId().equals(target.getReceiveIfId()) 
+            && arrayEntry.getTargetId().equals(target.getTargetId())) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
+  }
+  
 
   public Program[] getPrograms() {
     Program[] programs = mPrograms.toArray(new Program[mPrograms.size()]);
@@ -217,7 +258,7 @@ public abstract class Favorite {
   }
 
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(3);  // version
+    out.writeInt(4);  // version
     out.writeObject(mName);
     mReminderConfiguration.store(out);
     mLimitationConfiguration.store(out);
