@@ -74,7 +74,7 @@ public class SelectableItemList extends JPanel {
   private JList mList;
   private boolean mIsEnabled = true;
   private JScrollPane mScrollPane;
-  
+
   /**
    * Creates the SelectableItemList without the selection buttons.
    * 
@@ -82,7 +82,21 @@ public class SelectableItemList extends JPanel {
    * @param allItems All Objects of the list.
    */
   public SelectableItemList(Object[] currSelection, Object[] allItems) {
-    this(currSelection, allItems, false);
+    this(currSelection,allItems,null);
+  }
+
+  
+  /**
+   * Creates the SelectableItemList without the selection buttons.
+   * 
+   * @param currSelection The currently selected Objects.
+   * @param allItems All Objects of the list.
+   * @param notSelectableItems All Objects that could not be selected/deselected
+   * 
+   * @since 2.7.2
+   */
+  public SelectableItemList(Object[] currSelection, Object[] allItems, Object[] notSelectableItems) {
+    this(currSelection, allItems, false, notSelectableItems);
   } 
   
   /**
@@ -93,10 +107,24 @@ public class SelectableItemList extends JPanel {
    * @param showSelectionButtons If the selection buttons should be shown.
    */
   public SelectableItemList(Object[] currSelection, Object[] allItems, boolean showSelectionButtons) {
+    this(currSelection,allItems,showSelectionButtons,null);
+  }
+  
+  /**
+   * Creates the SelectableItemList.
+   * 
+   * @param currSelection The currently selected Objects.
+   * @param allItems All Objects of the list.
+   * @param showSelectionButtons If the selection buttons should be shown.
+   * @param notSelectableItems All Objects that could not be selected/deselected
+   * 
+   * @since 2.7.2
+   */
+  public SelectableItemList(Object[] currSelection, Object[] allItems, boolean showSelectionButtons, Object[] notSelectableItems) {
     setLayout(new BorderLayout(0,3));
     
     mListModel = new SelectableItemListModel();
-    setEntries(currSelection,allItems);
+    setEntries(currSelection,allItems,notSelectableItems);
     
     mList = new JList(mListModel);
     mList.setCellRenderer(mItemRenderer = new SelectableItemRenderer());
@@ -118,9 +146,11 @@ public class SelectableItemList extends JPanel {
           if (index != -1) {
             if(mList.getCellBounds(index,index).contains(evt.getPoint())) {
               SelectableItem item = (SelectableItem) mListModel.getElementAt(index);
-              item.setSelected(! item.isSelected());
-              handleItemSelectionChanged();
-              mList.repaint();
+              if(item.isSelectable()) {
+                item.setSelected(! item.isSelected());
+                handleItemSelectionChanged();
+                mList.repaint();
+              }
             }
           }
         }
@@ -232,7 +262,7 @@ public class SelectableItemList extends JPanel {
     return items;
   }
   
-  private void setEntries(Object[] currSelection, Object[] allItems) {
+  private void setEntries(Object[] currSelection, Object[] allItems, Object[] disabledItems) {
     mListModel.removeAllElements();
     
     ArrayList<Object> selectionList = new ArrayList<Object>();
@@ -241,9 +271,21 @@ public class SelectableItemList extends JPanel {
       selectionList.add(currSelection[i]);
     
     for (int i = 0; i < allItems.length; i++) {
-      SelectableItem item = new SelectableItem(allItems[i], selectionList.remove(allItems[i]));
+      SelectableItem item = new SelectableItem(allItems[i], selectionList.remove(allItems[i]),!arrayContainsItem(disabledItems,allItems[i]));
       mListModel.addElement(item);
     }
+  }
+  
+  private boolean arrayContainsItem(Object[] itemArr, Object item) {
+    if(item != null && itemArr != null) {
+      for(Object arrayItem : itemArr) {
+        if(arrayItem != null && arrayItem.equals(item)) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
   }
   
   /**

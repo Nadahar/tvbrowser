@@ -148,7 +148,7 @@ public class PluginInfoDialog extends JDialog implements WindowClosingIf {
 
     if (mPluginInfo.getLicense() != null && !mPluginInfo.getLicense().equals("")) {
       html.append("<h1>").append(mLocalizer.msg("licence", "Licence")).append("</h1>");
-      html.append(HTMLTextHelper.convertTextToHtml(mPluginInfo.getLicense(), true));
+      html.append(mPluginInfo.getLicense().toLowerCase().startsWith("<html>") ? mPluginInfo.getLicense() : HTMLTextHelper.convertTextToHtml(mPluginInfo.getLicense(), true));
     }
 
     html.append("<h1>").append(mLocalizer.msg("description", "Description")).append("</h1>");

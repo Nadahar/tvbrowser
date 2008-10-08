@@ -364,7 +364,7 @@ public class TVBrowser {
     /* Initialize the FavoritesPlugin to let it react on
      * tvdata changes.
      */
-    FavoritesPlugin.getInstance();
+    //FavoritesPlugin.getInstance();
     
     mLog.info("Checking TV listings inventory...");
     TvDataBase.getInstance().checkTvDataInventory();
@@ -394,6 +394,8 @@ public class TVBrowser {
                 mainFrame.handleTvBrowserStartFinished();
                 
                 ProgramInfo.getInstance().handleTvBrowserStartFinished();
+                
+                TvDataBase.getInstance().handleTvBrowserStartFinished();
               }
             }.start();
             ChannelList.completeChannelLoading();
@@ -986,7 +988,14 @@ public class TVBrowser {
 
     // set colors for action pane at UIManager
     UIManager.put("TaskPane.foreGround",(new JButton()).getForeground());
-
+    
+    if(UIManager.getColor("List.selectionBackground") == null) {
+      UIManager.put("List.selectionBackground",UIManager.getColor("Tree.selectionBackground"));
+    }
+    if(UIManager.getColor("List.selectionForeground") == null) {
+      UIManager.put("List.selectionForeground",UIManager.getColor("Tree.selectionForeground"));
+    }
+    
     if (mainFrame != null) {
       SwingUtilities.updateComponentTreeUI(mainFrame);
       mainFrame.validate();

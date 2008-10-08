@@ -361,6 +361,23 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     PeriodItem pi = new PeriodItem(autoDLPeriod);
     mAutoDownloadPeriodCB.setSelectedItem(pi);
     
+    panel.add(mAskBeforeDownloadRadio, cc.xyw(2, 3, 3));
+    
+    mAskTimeRadio = new JRadioButton(mLocalizer.msg("autoDownload.duration", "Automatically refresh for"));
+    panel.add(mAskTimeRadio, cc.xy(2, 5));
+    panel.add(mAutoDownloadPeriodCB, cc.xy(4, 5));
+    
+    ButtonGroup group = new ButtonGroup();
+    group.add(mAskBeforeDownloadRadio);
+    group.add(mAskTimeRadio);
+    
+    mAskBeforeDownloadRadio.setSelected(Settings.propAskForAutoDownload.getBoolean());
+    mAskTimeRadio.setSelected(!Settings.propAskForAutoDownload.getBoolean());
+    
+    mAutoDownloadWaitingTime = new JCheckBox(mLocalizer.msg("autoDownload.waiting","Delay auto update for"),Settings.propAutoDownloadWaitingTime.getShort() > 0);
+    mAutoDownloadWaitingTimeSp = new JSpinner(new SpinnerNumberModel(Settings.propAutoDownloadWaitingTime.getShort(),0,60,1));
+    mSecondsLabel = new JLabel(mLocalizer.msg("autoDownload.seconds","seconds"));
+    
     mAutoDownload.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
         setAutoDownloadEnabled(e.getStateChange() == ItemEvent.SELECTED);
@@ -372,31 +389,12 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
         setAutoDownloadEnabled(mAutoDownload.isSelected());
       }
     });
-        
-    panel.add(mAskBeforeDownloadRadio, cc.xyw(2, 3, 3));
-    
-    mAskTimeRadio = new JRadioButton(mLocalizer.msg("autoDownload.duration", "Automatically refresh for"));
-    panel.add(mAskTimeRadio, cc.xy(2, 5));
-    panel.add(mAutoDownloadPeriodCB, cc.xy(4, 5));
     
     mAskTimeRadio.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         setAutoDownloadEnabled(mAskTimeRadio.isSelected());
       };
     });
-    
-    ButtonGroup group = new ButtonGroup();
-    group.add(mAskBeforeDownloadRadio);
-    group.add(mAskTimeRadio);
-    
-    mAskBeforeDownloadRadio.setSelected(Settings.propAskForAutoDownload.getBoolean());
-    mAskTimeRadio.setSelected(!Settings.propAskForAutoDownload.getBoolean());
-    
-    
-    mAutoDownloadWaitingTime = new JCheckBox(mLocalizer.msg("autoDownload.waiting","Delay auto update for"),Settings.propAutoDownloadWaitingTime.getShort() > 0);
-    mAutoDownloadWaitingTimeSp = new JSpinner(new SpinnerNumberModel(
-        Settings.propAutoDownloadWaitingTime.getShort(), 1, 60, 1));
-    mSecondsLabel = new JLabel(mLocalizer.msg("autoDownload.seconds","seconds"));
     
     mAutoDownloadWaitingTime.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {

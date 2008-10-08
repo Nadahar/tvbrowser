@@ -191,7 +191,7 @@ public class ProgramInfo {
   }
 
   protected synchronized void showProgramInformation(Program program, boolean showSettings) {
-    if(program.equals(Plugin.getPluginManager().getExampleProgram())) {
+    if(program.equals(Plugin.getPluginManager().getExampleProgram()) && showSettings) {
       return;
     }
     

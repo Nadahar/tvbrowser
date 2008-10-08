@@ -497,6 +497,15 @@ public class FavoriteTreeModel extends DefaultTreeModel {
    */
   public Favorite[] getFavoritesContainingReceiveTarget(ProgramReceiveTarget target) {
     Favorite[] favorites = getFavoriteArr();
+    
+    ProgramReceiveTarget[] defaultTargets = FavoritesPlugin.getInstance().getDefaultClientPluginsTargets();
+
+    for(ProgramReceiveTarget defaultTarget : defaultTargets) {
+      if(defaultTarget.equals(target)) {
+        return favorites;
+      }
+    }
+    
     ArrayList<Favorite> receiveFavorites = new ArrayList<Favorite>();
     
     for(Favorite fav : favorites) {

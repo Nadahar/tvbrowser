@@ -43,6 +43,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.border.Border;
@@ -343,6 +344,10 @@ public class UiUtilities {
     descTA.setWrapStyleWord(true);
     descTA.setLineWrap(true);
     descTA.setFocusable(false);
+    
+    Color bg = new JPanel().getBackground();
+    
+    descTA.setBackground(new Color(bg.getRed(),bg.getGreen(),bg.getBlue()));
 
     return descTA;
   }
@@ -405,9 +410,11 @@ public class UiUtilities {
           .substring(html.indexOf("<html>") + 6, html.indexOf("</html>"));
     }
     Font font = new JLabel().getFont();
+    Color bg = new JPanel().getBackground();
+    
     html = "<html><div style=\"color:#000000;font-family:" + font.getName()
-        + "; font-size:" + font.getSize() + ";\">" + html + "</div></html>";
-
+        + "; font-size:" + font.getSize() +";background-color:rgb(" + bg.getRed() + "," + bg.getGreen() + "," + bg.getBlue() + ");\">" + html + "</div></html>";
+    
     final JEditorPane pane = new JEditorPane("text/html", html);
     pane.setBorder(BorderFactory.createEmptyBorder());
     pane.setEditable(false);

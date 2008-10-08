@@ -46,6 +46,7 @@ import javax.swing.border.EmptyBorder;
 
 import tvbrowser.extras.common.ReminderConfiguration;
 import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.common.LimitationConfiguration;
 import tvbrowser.extras.common.DayListCellRenderer;
@@ -532,7 +533,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mChangePassProgramsBtn = new JButton(mLocalizer.msg("change", "Change"));
     mChangePassProgramsBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        PluginChooserDlg dlg = new PluginChooserDlg(EditFavoriteDialog.this, mPassProgramPlugins, null, ReminderPluginProxy.getInstance());
+        PluginChooserDlg dlg = new PluginChooserDlg(EditFavoriteDialog.this, mPassProgramPlugins, null, ReminderPluginProxy.getInstance(), FavoritesPlugin.getInstance().getClientPluginTargetIds());
         UiUtilities.centerAndShow(dlg);
         ProgramReceiveTarget[] pluginArr = dlg.getReceiveTargets();
         if (pluginArr != null) {
@@ -555,7 +556,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mReminderAfterDownloadCb.setSelected(mFavorite.isRemindAfterDownload());
 
     mPassProgramsCheckBox.setSelected(mPassProgramPlugins != null && mPassProgramPlugins.length > 0 && !mPassProgramsLb.getText().equals(mLocalizer.msg("dontpass", "don't pass programs")));
-
+    mPassProgramsCheckBox.setEnabled(FavoritesPlugin.getInstance().getClientPluginTargetIds().length == 0);
     mPassProgramsCheckBox.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         updatePassProgramsPanel();
@@ -627,9 +628,9 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     } catch (TvBrowserException exc) {
       ErrorHandler.handle(mLocalizer.msg("error.updateFavoriteFailed", "Could not update favorite"), exc);
     }
-
-    for (int i = 0; i < mPassProgramPlugins.length; i++) {
-      mPassProgramPlugins[i].getReceifeIfForIdOfTarget().receivePrograms(mFavorite.getPrograms(),mPassProgramPlugins[i]);
+    
+    for (ProgramReceiveTarget target : mPassProgramPlugins) {
+      target.getReceifeIfForIdOfTarget().receivePrograms(mFavorite.getPrograms(),target);
     }
 
     if (mUseReminderCb.isSelected() && !wasReminderEnabled) {
@@ -643,6 +644,16 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     
     mOkWasPressed = true;
     setVisible(false);
+  }
+  
+  private boolean arrayContains(ProgramReceiveTarget[] targetArr, ProgramReceiveTarget target) {
+    for(ProgramReceiveTarget arrayEntry : targetArr) {
+      if(arrayEntry.getReceiveIfId().equals(target.getReceiveIfId()) && arrayEntry.getTargetId().equals(target.getTargetId())) {
+        return true;
+      }
+    }
+    
+    return false;
   }
   
   public void close() {

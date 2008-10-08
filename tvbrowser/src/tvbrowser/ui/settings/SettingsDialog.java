@@ -746,6 +746,16 @@ public class SettingsDialog implements WindowClosingIf {
           label.setIcon(icon);
         }
       }
+      
+      if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel")) {
+        if(sel) {
+          label.setOpaque(true);
+          label.setBackground(UIManager.getColor("Tree.selectionBackground"));
+        }
+        else {
+          label.setOpaque(false);
+        }
+      }
 
       return label;
     }

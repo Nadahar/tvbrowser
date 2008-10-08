@@ -42,6 +42,7 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -103,7 +104,7 @@ import devplugin.ThemeIcon;
  * @author Til Schneider, www.murfman.de
  */
 public class FavoritesPlugin {
-  
+  public static final Logger mLog = Logger.getLogger(FavoritesPlugin.class.getName());
   /**
    * Tango category of the icon to be used in this plugin
    */

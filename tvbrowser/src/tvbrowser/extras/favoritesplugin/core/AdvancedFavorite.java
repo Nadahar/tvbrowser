@@ -35,6 +35,7 @@ import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.logging.Level;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -115,9 +116,13 @@ public class AdvancedFavorite extends Favorite {
   protected void internalWriteData(ObjectOutputStream out) throws IOException {
     out.writeInt(2); // version
     mSearchFormSettings.writeData(out);
-    out.writeBoolean(mFilter != null);
+    out.writeBoolean(mFilter != null || mPendingFilterName != null);
+    
     if (mFilter != null) {
       out.writeObject(mFilter.getName());
+    }
+    else if (mPendingFilterName != null) {
+      out.writeObject(mPendingFilterName);
     }
   }
 
@@ -264,10 +269,10 @@ public class AdvancedFavorite extends Favorite {
    */
   private ProgramFilter getFilterByName(String name ){
     ProgramFilter[] flist = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
-
-    for (int i=0; i<flist.length;i++) {
-      if (flist[i].getName().equals(name)) {
-        return flist[i];
+    
+    for (ProgramFilter filter : flist) {
+      if (filter != null && filter.getName().equals(name)) {
+        return filter;
       }
     }
 
@@ -317,7 +322,7 @@ public class AdvancedFavorite extends Favorite {
       panelBuilder.add(mSearchForm, cc.xyw(1, 1, 3));
       panelBuilder.add(mFilterCheckbox = new JCheckBox(mLocalizer.msg("useFilter","Use filter:")), cc.xy(1, 3));
       panelBuilder.add(mFilterCombo = new JComboBox(Plugin.getPluginManager().getFilterManager().getAvailableFilters()), cc.xy(3, 3));
-
+      
       if (mFilter != null) {
         mFilterCheckbox.setSelected(true);
         mFilterCombo.setSelectedItem(mFilter);
@@ -373,10 +378,20 @@ public class AdvancedFavorite extends Favorite {
    * 
    * @since 2.5.1
    */
-  public void loadPendingFilter() {
+  public void loadPendingFilter() {    
     if(mPendingFilterName != null) {
-      mFilter = getFilterByName(mPendingFilterName);
-      mPendingFilterName = null;
+      try {
+        mFilter = getFilterByName(mPendingFilterName);
+        
+        if(mFilter != null) {
+          mPendingFilterName = null;
+        }
+        else {
+          FavoritesPlugin.mLog.severe("Error on loading pending filter '" + mPendingFilterName + "' for Favorite: '" + getName() + "'. Filter was not found.");
+        }
+      }catch(Exception e) {
+        ErrorHandler.handle("Error on loading pending filter '" + mPendingFilterName + "' for Favorite: '" + getName() + "'",e);
+      }
     }
   }
 }
