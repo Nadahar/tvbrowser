@@ -128,7 +128,8 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
   public void setValueAt(Object aValue, int rowIndex, int columnIndex) { 
     IDontWant2SeeSettingsTableEntry entry = mData.get(rowIndex);
     
-    fireTableCellUpdated(mLastChangedRow, columnIndex);
+    fireTableCellUpdated(mLastChangedRow, 0);
+    fireTableCellUpdated(mLastChangedRow, 1);
     
     if(columnIndex == 0) {
       mLastChangedRow = rowIndex;
