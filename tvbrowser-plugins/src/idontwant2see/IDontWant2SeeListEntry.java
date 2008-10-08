@@ -173,9 +173,9 @@ public class IDontWant2SeeListEntry {
     mLastMatchedDate.writeData(out);
   }
   
-  protected boolean isOutdated(Date compareValue) {
+  protected boolean isOutdated(Date compareValue, int outdatedDayCount) {
     if(compareValue != null) {
-      return mLastMatchedDate.addDays(IDontWant2See.OUTDATED_DAY_COUNT).compareTo(compareValue) < 0;
+      return mLastMatchedDate.addDays(outdatedDayCount).compareTo(compareValue) < 0;
     }
     
     return false;
