@@ -86,6 +86,7 @@ public class IDontWant2See extends Plugin {
   protected static final Localizer mLocalizer = Localizer.getLocalizerFor(IDontWant2See.class); 
   protected static final short OUTDATED_DAY_COUNT = 7;
   
+  private static Date mCurrentDate = Date.getCurrentDate();
   private ArrayList<IDontWant2SeeListEntry> mSearchList;
   private PluginsProgramFilter mFilter;
   private static IDontWant2See mInstance;
@@ -96,7 +97,7 @@ public class IDontWant2See extends Plugin {
   private Date mLastUsedDate;
   
   public static Version getVersion() {
-    return new Version(0,8,0,false);
+    return new Version(0,8,2,false);
   }
   
   /**
@@ -108,7 +109,7 @@ public class IDontWant2See extends Plugin {
     mSimpleMenu = true;
     mSwitchToMyFilter = true;
     mLastEnteredExclusionString = "";
-    mLastUsedDate = Date.getCurrentDate();
+    mLastUsedDate = getCurrentDate();
     mDateWasSet = false;
     
     mFilter = new PluginsProgramFilter(this) {
@@ -127,12 +128,17 @@ public class IDontWant2See extends Plugin {
   }
   
   public void handleTvDataUpdateFinished() {
+    mCurrentDate = Date.getCurrentDate();
     mDateWasSet = false;
+    
+    for(IDontWant2SeeListEntry entry : mSearchList) {
+      entry.resetDateWasSetFlag();
+    }
   }
   
   protected boolean acceptInternal(Program prog) {
     if(!mDateWasSet) {
-      mLastUsedDate = Date.getCurrentDate();
+      mLastUsedDate = getCurrentDate();
       mDateWasSet = true;
     }
     
@@ -460,6 +466,10 @@ public class IDontWant2See extends Plugin {
         mExclusionPanel.saveSettings();
       }      
     };
+  }
+  
+  protected static Date getCurrentDate() {
+    return mCurrentDate;
   }
   
   @SuppressWarnings("unchecked")

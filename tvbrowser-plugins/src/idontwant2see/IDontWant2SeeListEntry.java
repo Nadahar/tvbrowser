@@ -43,11 +43,13 @@ public class IDontWant2SeeListEntry {
   private String mPreSearchPart;
   private Pattern mSearchPattern;
   private boolean mCaseSensitive;
+  private boolean mDateWasSet;
   private Date mLastMatchedDate;
   
   protected IDontWant2SeeListEntry(String searchText, boolean caseSensitive) {
     setValues(searchText,caseSensitive);
-    mLastMatchedDate = Date.getCurrentDate();
+    mLastMatchedDate = IDontWant2See.getCurrentDate();
+    mDateWasSet = true;
   }
   
   protected IDontWant2SeeListEntry(ObjectInputStream in, int version) throws IOException, ClassNotFoundException {
@@ -63,16 +65,19 @@ public class IDontWant2SeeListEntry {
       mLastMatchedDate = new Date(in);
     }
     else {
-      mLastMatchedDate = Date.getCurrentDate();
+      mLastMatchedDate = IDontWant2See.getCurrentDate();
     }
+    
+    mDateWasSet = false;
   }
   
   protected boolean matches(Program p) {
     if(mPreSearchPart == null) {
       boolean matches = mCaseSensitive ? p.getTitle().equals(mSearchText) : p.getTitle().equalsIgnoreCase(mSearchText);
       
-      if(matches) {
-        mLastMatchedDate = Date.getCurrentDate();
+      if(!mDateWasSet && matches) {
+        mLastMatchedDate = IDontWant2See.getCurrentDate();
+        mDateWasSet = false;
       }
       
       return matches;
@@ -85,14 +90,19 @@ public class IDontWant2SeeListEntry {
       
       boolean matches = match.matches();
       
-      if(matches) {
-        mLastMatchedDate = Date.getCurrentDate();
+      if(!mDateWasSet && matches) {
+        mLastMatchedDate = IDontWant2See.getCurrentDate();
+        mDateWasSet = false;
       }
       
       return matches;
     }
     
     return false;
+  }
+  
+  protected void resetDateWasSetFlag() {
+    mDateWasSet = false;
   }
   
   protected String getSearchText() {
