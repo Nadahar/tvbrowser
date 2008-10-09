@@ -297,6 +297,15 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
   private void updateTableContent(ProgressMonitor monitor, final Runnable callback)
   {
+    // if this is the initial update, skip every UI related operation, just set
+    // necessary members. the UI update will be forced when setting the initial
+    // filter
+    if (mProgramFilter == null) {
+      mShownProgramColumn = mProgramColumn.clone();
+      mShownChannelArr = mChannelArr.clone();
+      return;
+    }
+    
     checkThread();
     mOnAirRows = null;
     deregisterFromPrograms(mProgramColumn);
