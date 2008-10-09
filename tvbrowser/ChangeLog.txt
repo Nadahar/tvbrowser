@@ -1,5 +1,9 @@
 Changelog TVBrowser
 
+Attention: Since Version 2.6beta1 all changes can be found in our Jira:
+
+http://www.tvbrowser.org:8080/jira/browse/TVB?report=com.atlassian.jira.plugin.system.project:changelog-panel
+
 2.6alpha3
 =========
 -Bugs
