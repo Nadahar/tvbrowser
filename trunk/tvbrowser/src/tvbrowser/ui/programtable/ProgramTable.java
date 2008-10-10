@@ -106,12 +106,18 @@ public class ProgramTable extends JPanel
   
   private Thread mLeftClickThread;
   
+  private Thread mAutoScrollThread;
+  
   private boolean mPerformingSingleClick;
 
   /**
    * index of the panel underneath the mouse
    */
-  private Point mMouseMatrix = new Point(-1, -1);  
+  private Point mMouseMatrix = new Point(-1, -1);
+  private long mLastDragTime;
+  private int mLastDragDeltaX;
+  private int mLastDragDeltaY;
+  protected Point mAutoScroll;  
 
   /**
    * Creates a new instance of ProgramTable.
@@ -154,6 +160,49 @@ public class ProgramTable extends JPanel
         }
       }
       public void mouseReleased(MouseEvent evt) {
+        // recognize auto scroll
+        if (mDraggingPoint != null
+            && (System.currentTimeMillis() - mLastDragTime < 50)) {
+          if (Math.abs(mLastDragDeltaX) >= 3 || Math.abs(mLastDragDeltaY) >= 3) {
+            // stop last scroll, if it is still active
+            stopAutoScroll();
+            mAutoScroll = new Point(0, 0);
+            // scale the delta
+            if (Math.abs(mLastDragDeltaX) > 1) {
+              mLastDragDeltaX = mLastDragDeltaX / 2;
+            }
+            if (Math.abs(mLastDragDeltaY) > 1) {
+              mLastDragDeltaY = mLastDragDeltaY / 2;
+            }
+            // decide which direction to scroll
+            if (Math.abs(mLastDragDeltaX) > Math.abs(mLastDragDeltaY)) {
+              mAutoScroll.x = mLastDragDeltaX;
+            } else {
+              mAutoScroll.y = mLastDragDeltaY;
+            }
+            mAutoScrollThread = new Thread("Autoscrolling") {
+              @Override
+              public void run() {
+                while (mAutoScrollThread != null) {
+                  SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                      scrollBy(mAutoScroll.x, mAutoScroll.y);
+                    }
+                  });
+                  try {
+                    sleep(30); // speed of scrolling
+                  } catch (InterruptedException e) {
+                    mAutoScrollThread = null;
+                  }
+                }
+                mAutoScrollThread = null;
+              }
+            };
+            mAutoScrollThread.start();
+          }
+        }
+
+        // disable dragging
         mDraggingPoint = null;
 
         if(mClickThread != null && mClickThread.isAlive()) {
@@ -459,8 +508,8 @@ public class ProgramTable extends JPanel
   public void scrollBy(int deltaX, int deltaY) {
     if (getParent() instanceof JViewport) {
       JViewport viewport = (JViewport) getParent();
-      Point viewPos = viewport.getViewPosition();
-
+      Point oldViewPos = viewport.getViewPosition();
+      Point viewPos = new Point(oldViewPos.x, oldViewPos.y);
       if (deltaX!=0){
         viewPos.x += deltaX;
         int maxX = getWidth() - viewport.getWidth();
@@ -475,16 +524,31 @@ public class ProgramTable extends JPanel
         viewPos.y = Math.min(viewPos.y, maxY);
         viewPos.y = Math.max(viewPos.y, 0);
       }
-      viewport.setViewPosition(viewPos);
+      if (viewPos.equals(oldViewPos)) {
+        stopAutoScroll();
+      } else {
+        viewport.setViewPosition(viewPos);
+      }
     }
   }
 
+  private boolean stopAutoScroll() {
+    if (mAutoScrollThread != null && mAutoScrollThread.isAlive()) {
+      mAutoScrollThread.interrupt();
+      mAutoScrollThread = null;
+      return true;
+    }
+    return false;
+  }
+
+
 
   /**
-   * Creates a context menu containg all subscribed plugins that support context
-   * menues.
-   *
-   * @param program The program to create the context menu for.
+   * Creates a context menu containing all subscribed plugins that support
+   * context menus.
+   * 
+   * @param program
+   *          The program to create the context menu for.
    * @return a plugin context menu.
    */
   private JPopupMenu createPluginContextMenu(Program program) {
@@ -505,7 +569,7 @@ public class ProgramTable extends JPanel
 
   private void handleMousePressed(MouseEvent evt) {
     requestFocus();
-
+    
     if(mClickThread == null || !mClickThread.isAlive()) {
       mClickThread = new Thread() {
         public void run() {
@@ -527,6 +591,11 @@ public class ProgramTable extends JPanel
 
 
   private void handleMouseClicked(MouseEvent evt) {
+    // disable normal click handling if we only want to stop auto scrolling
+    if (stopAutoScroll()) {
+      return;
+    }
+
     if(mClickThread != null && mClickThread.isAlive()) {
       mClickThread.interrupt();
     }
@@ -606,10 +675,12 @@ public class ProgramTable extends JPanel
 
 
   private void handleMouseDragged(MouseEvent evt) {
+    stopAutoScroll();
     if (mDraggingPoint != null && !evt.isShiftDown()) {
-      int deltaX = mDraggingPoint.x - evt.getX();
-      int deltaY = mDraggingPoint.y - evt.getY();
-      scrollBy(deltaX, deltaY);
+      mLastDragDeltaX = mDraggingPoint.x - evt.getX();
+      mLastDragDeltaY = mDraggingPoint.y - evt.getY();
+      scrollBy(mLastDragDeltaX, mLastDragDeltaY);
+      mLastDragTime = System.currentTimeMillis();
     }
   }
 
