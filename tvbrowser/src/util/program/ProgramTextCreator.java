@@ -562,10 +562,10 @@ public class ProgramTextCreator {
                 }
                 int actorIndex = 0;
                 if (knownNames.contains(parts[0])) {
-                  parts[0] = addWikiLink(parts[0]);
+                  parts[0] = addSearchLink(parts[0]);
                 }
                 else if (knownNames.contains(parts[1])) {
-                  parts[1] = addWikiLink(parts[1]);
+                  parts[1] = addSearchLink(parts[1]);
                   actorIndex = 1;
                 }
                 buffer.append("<tr><td valign=\"top\">&#8226;&nbsp;</td><td valign=\"top\">");
@@ -581,7 +581,7 @@ public class ProgramTextCreator {
                    if (i+1 < lists[0].size() && lists[1].size() == 0) {
                     i++;
                     buffer.append("<td valign=\"top\">&#8226;&nbsp;</td><td valign=\"top\">");
-                    buffer.append(addWikiLink(lists[0].get(i)));
+                    buffer.append(addSearchLink(lists[0].get(i)));
                     buffer.append("</td>");
                   }
                 }
@@ -686,25 +686,23 @@ public class ProgramTextCreator {
       return buffer.toString();
   }
 
-  private static String addWikiLink(String topic) {
-    String[] parts = topic.split(" und ");
-    String result = "";
-    for (int i = 0; i < parts.length; i++) {
-      result = result + addSearchLink(parts[i], parts[i]);
-      if (i < parts.length - 1) {
-        result = result + " und ";
-      }
-    }
-    return result;
+  private static String addSearchLink(String topic) {
+    return addSearchLink(topic, topic);
   }
   
-  private static String[] splitList(String field) {
+  /**
+   * extract a list of person names out of the given string
+   * 
+   * @param field
+   * @return
+   */
+  private static String[] splitPersons(String field) {
     String[] items;
     if (field.contains("\n")) {
-      items = field.split("\n");
+      items = field.split("\n|( und )");
     }
     else if (field.contains(",")) {
-      items = field.split(",");
+      items = field.split(",|( und )");
     }
     else {
       items = new String[1];
@@ -712,7 +710,7 @@ public class ProgramTextCreator {
     }
     for (int i = 0; i < items.length; i++) {
       items[i] = items[i].trim();
-      if (items[i].endsWith(",")) {
+      if (items[i].endsWith(",") || items[i].endsWith(".")) {
         items[i] = items[i].substring(0, items[i].length() - 1);
       }
     }
@@ -791,24 +789,29 @@ public class ProgramTextCreator {
     
     startInfoSection(buffer, name);
 
-    // add wikipedia links
+    // add person links
     if (ProgramFieldType.DIRECTOR_TYPE == fieldType
         || ProgramFieldType.SCRIPT_TYPE == fieldType
         || ProgramFieldType.CAMERA_TYPE == fieldType
         || ProgramFieldType.CUTTER_TYPE == fieldType
         || ProgramFieldType.MUSIC_TYPE == fieldType
         || ProgramFieldType.MODERATION_TYPE == fieldType) {
-      String[] persons = splitList(text);
+      String[] persons = splitPersons(text);
       for (int i = 0; i < persons.length; i++) {
-        String topic;
-        if (persons[i].contains("(")) {
-          topic = persons[i].substring(0, persons[i].indexOf("("));
-          persons[i] = addSearchLink(topic, persons[i]);
-        } else {
-          persons[i] = addWikiLink(persons[i]);
+        // a name shall not have more name parts
+        if (persons[i].trim().split(" ").length <= 3) {
+          String link;
+          if (persons[i].contains("(")) {
+            String topic = persons[i].substring(0, persons[i].indexOf("("))
+                .trim();
+            link = addSearchLink(topic, persons[i]);
+          } else {
+            link = addSearchLink(persons[i]);
+          }
+          text = text.replace(persons[i], link);
         }
       }
-      buffer.append(concatList(persons));
+      buffer.append(text);
     }
     else {
       buffer.append(HTMLTextHelper.convertTextToHtml(text, createLinks));
@@ -824,17 +827,6 @@ public class ProgramTextCreator {
     buffer.append("</td></tr>");
 
     addSeparator(doc, buffer);
-  }
-
-  private static String concatList(String[] strings) {
-    String result = "";
-    for (int i = 0; i < strings.length; i++) {
-      if (i > 0) {
-        result = result + ", ";
-      }
-      result = result + strings[i];
-    }
-    return result;
   }
 
   private static void startInfoSection(StringBuffer buffer, String section) {
