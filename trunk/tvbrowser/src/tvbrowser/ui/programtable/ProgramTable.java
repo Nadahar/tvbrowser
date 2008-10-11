@@ -556,6 +556,7 @@ public class ProgramTable extends JPanel
   }
 
   private void showPopup(MouseEvent evt) {
+    stopAutoScroll();
     mMouse = evt.getPoint();
     repaint();
 
