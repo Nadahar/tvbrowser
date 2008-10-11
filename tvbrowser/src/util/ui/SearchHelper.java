@@ -47,6 +47,8 @@ import javax.swing.JProgressBar;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataUpdater;
@@ -346,14 +348,19 @@ public class SearchHelper {
 
     // send to plugins
     Icon icon = IconLoader.getInstance().getIconFromTheme("actions", "edit-copy", 16);
-    JButton sendBt = new JButton(icon);
+    final JButton sendBt = new JButton(icon);
+    sendBt.setEnabled(false);
     sendBt.setToolTipText(mLocalizer.msg("send", "Send Programs to another Plugin"));
     sendBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         Program[] program = mProgramList.getSelectedPrograms();
 
         if (program == null) {
-          program = programArr;
+          program = new Program[mListModel.size()];
+          for (int programIndex = 0; programIndex < mListModel.size(); programIndex++) {
+            program[programIndex] = (Program) mListModel
+                .getElementAt(programIndex);
+          }
         }
 
         SendToPluginDialog send = new SendToPluginDialog(null, MainFrame.getInstance(), program);
@@ -361,6 +368,21 @@ public class SearchHelper {
       }
     });
     builder.addFixed(sendBt);
+    
+    mListModel.addListDataListener(new ListDataListener() {
+
+      public void contentsChanged(ListDataEvent e) {
+        // not needed
+      }
+
+      public void intervalAdded(ListDataEvent e) {
+        sendBt.setEnabled(true);
+      }
+
+      public void intervalRemoved(ListDataEvent e) {
+        // not needed
+      }
+    });
 
     // change search button
     if (!(comp instanceof SearchDialog)) {
