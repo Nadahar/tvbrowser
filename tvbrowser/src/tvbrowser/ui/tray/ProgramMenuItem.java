@@ -30,20 +30,26 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.Icon;
+import javax.swing.JDialog;
 import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.ToolTipManager;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.contextmenu.DoNothingContextMenuItem;
+import tvbrowser.core.plugin.PluginProxyManager;
 import util.program.CompoundedProgramFieldType;
 import util.ui.Localizer;
 import util.ui.TextAreaIcon;
@@ -87,7 +93,7 @@ public class ProgramMenuItem extends JMenuItem {
   
   private boolean mShowToolTip = true;
   private String mToolTipTextBuffer;
-
+  
   /**
    * Creates the JMenuItem.
    * 
@@ -140,7 +146,7 @@ public class ProgramMenuItem extends JMenuItem {
     }
         
     mChannelName = new TextAreaIcon(p.getChannel().getName(), mBoldFont, Settings.propTrayChannelWidth.getInt());
-    
+
     if(mShowToolTip) {
       ToolTipManager toolTipManager = ToolTipManager.sharedInstance();
       
@@ -160,7 +166,7 @@ public class ProgramMenuItem extends JMenuItem {
     }
     
     mSelected = false;
-
+    
     addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
         if(SwingUtilities.isLeftMouseButton(e)) {
@@ -173,7 +179,12 @@ public class ProgramMenuItem extends JMenuItem {
         }
         else if(SwingUtilities.isMiddleMouseButton(e)) {
           Plugin.getPluginManager().handleProgramMiddleClick(mProgram);
-        }        
+        } else if (SwingUtilities.isRightMouseButton(e)) {
+          Point p = e.getPoint();
+          SwingUtilities.convertPointToScreen(p,e.getComponent());
+          showPopup(p,PluginProxyManager.createPluginContextMenu(mProgram));
+          e.consume();
+        }
       }
     });
       
@@ -337,5 +348,27 @@ public class ProgramMenuItem extends JMenuItem {
   
   public String getToolTipText(MouseEvent e) {
     return getToolTipText();
+  }
+  
+  private void showPopup(final Point p, final JPopupMenu menu) {
+    final JDialog popupParent = SystemTray.getProgamPopupParent();
+    menu.addPopupMenuListener(new PopupMenuListener() {
+      public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
+
+      public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+        popupParent.setVisible(false);
+      }
+
+      public void popupMenuCanceled(PopupMenuEvent e) {}
+    });
+    
+    popupParent.setVisible(true);
+    popupParent.toFront();
+    
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        menu.show(popupParent,p.x - popupParent.getLocation().x,p.y - popupParent.getLocation().y);
+      };
+    });
   }
 }
