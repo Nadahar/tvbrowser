@@ -432,6 +432,15 @@ public class ContextMenuManager {
     while (rootMenu.getMenuComponent(rootMenu.getMenuComponentCount()-1) instanceof JPopupMenu.Separator) {
       rootMenu.remove(rootMenu.getMenuComponentCount()-1);
     }
+    
+    // remove duplicate separators
+    for (int i = rootMenu.getMenuComponentCount() - 2; i > 0; i--) {
+      if (rootMenu.getMenuComponent(i) instanceof JPopupMenu.Separator
+          && rootMenu.getMenuComponent(i + 1) instanceof JPopupMenu.Separator) {
+        rootMenu.remove(i + 1);
+      }
+    }
+    
     return rootMenu;
   }
 
