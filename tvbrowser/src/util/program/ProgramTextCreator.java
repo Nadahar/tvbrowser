@@ -795,7 +795,9 @@ public class ProgramTextCreator {
         || ProgramFieldType.CAMERA_TYPE == fieldType
         || ProgramFieldType.CUTTER_TYPE == fieldType
         || ProgramFieldType.MUSIC_TYPE == fieldType
-        || ProgramFieldType.MODERATION_TYPE == fieldType) {
+        || ProgramFieldType.MODERATION_TYPE == fieldType
+        || ProgramFieldType.ADDITIONAL_PERSONS_TYPE == fieldType
+        || ProgramFieldType.PRODUCER_TYPE == fieldType) {
       String[] persons = splitPersons(text);
       for (int i = 0; i < persons.length; i++) {
         // a name shall not have more name parts
