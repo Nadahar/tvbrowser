@@ -173,6 +173,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
     });
 
     buttonPanel.add(sendButton);
+    sendButton.setEnabled(mPrograms.length > 0);
 
     JButton cancelButton = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
 
@@ -211,7 +212,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
   }
 
   /**
-   * Comperator needed to Sort List of Plugins
+   * Comparator needed to Sort List of Plugins
    */
   private static class ObjectComperator implements Comparator<ProgramReceiveIf> {
 
