@@ -28,9 +28,9 @@ package tvbrowser.core.plugin;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.TimeZone;
-import java.util.Arrays;
 import java.util.logging.Logger;
 
 import javax.swing.Action;
@@ -68,12 +68,12 @@ import devplugin.PluginManager;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramFilter;
+import devplugin.ProgramRatingIf;
 import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
 import devplugin.ProgramSearcher;
 import devplugin.ThemeIcon;
 import devplugin.TvBrowserSettings;
-import devplugin.ProgramRatingIf;
 
 /**
  * The implementation of the PluginManager interface. This class is the
@@ -501,7 +501,8 @@ public class PluginManagerImpl implements PluginManager {
       prog.setIntField(ProgramFieldType.EPISODE_NUMBER_TYPE, 13);
       prog.setIntField(ProgramFieldType.EPISODE_TOTAL_NUMBER_TYPE, 24);
       prog.setIntField(ProgramFieldType.SEASON_NUMBER_TYPE, 2);
-      prog.setTextField(ProgramFieldType.PRODUCER_TYPE, "Lorimar Television");
+      prog.setTextField(ProgramFieldType.PRODUCTION_COMPANY_TYPE,
+          "Lorimar Television");
       prog.setTextField(ProgramFieldType.CAMERA_TYPE, "Jon Doe");
       prog.setTextField(ProgramFieldType.CUTTER_TYPE, "Jon Doe");
       mExampleProgram = prog;
