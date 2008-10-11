@@ -223,9 +223,10 @@ public class ProgramFieldType {
                               "seasonNumber", "Number of Season");
 
   /**
-   * Producer
+   * Producer, <b>this is not the producing company</b>
    * 
    * @since 2.6/2.2.4
+   * @see devplugin.ProgramFieldType.PRODUCTION_COMPANY_TYPE
    */
   public static final ProgramFieldType PRODUCER_TYPE
        = new ProgramFieldType(32, TEXT_FORMAT, true, "producer",
@@ -273,11 +274,12 @@ public class ProgramFieldType {
                               "rating", "Rating");
 
   /**
-   * Production Company
-   *
+   * Production Company, <b>this is not the producer name</b>
+   * 
    * @since 2.7
+   * @see PRODUCER_TYPE
    */
-  public static final ProgramFieldType PROCUCTION_COMPANY_TYPE
+  public static final ProgramFieldType PRODUCTION_COMPANY_TYPE
        = new ProgramFieldType(37, TEXT_FORMAT, true, "production company",
                               "productionCompany", "Production company");  
 

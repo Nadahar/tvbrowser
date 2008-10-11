@@ -877,7 +877,7 @@ public class ProgramTextCreator {
         ProgramFieldType.URL_TYPE,
         ProgramFieldType.ORIGINAL_TITLE_TYPE,
         ProgramFieldType.ORIGINAL_EPISODE_TYPE,
-        ProgramFieldType.PROCUCTION_COMPANY_TYPE,
+        ProgramFieldType.PRODUCTION_COMPANY_TYPE,
         ProgramFieldType.REPETITION_OF_TYPE,
         ProgramFieldType.REPETITION_ON_TYPE, ProgramFieldType.AGE_LIMIT_TYPE,
         ProgramFieldType.INFO_TYPE, ProgramFieldType.VPS_TYPE,
