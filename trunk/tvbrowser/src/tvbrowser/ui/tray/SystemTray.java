@@ -37,6 +37,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -102,6 +103,7 @@ public class SystemTray {
   private Thread mClickTimer;
   
   private JMenu mPluginsMenu;
+  private static JDialog mTrayParent;
 
   /**
    * Creates the SystemTray
@@ -128,6 +130,16 @@ public class SystemTray {
       Settings.propTrayIsEnabled.setBoolean(false);
     }
 
+    if(mUseSystemTray) {
+      mTrayParent = new JDialog();
+      mTrayParent.setTitle("Tray-Menu-Program-Popup");
+
+      mTrayParent.setSize(0, 0);
+      mTrayParent.setUndecorated(true);
+      mTrayParent.setAlwaysOnTop(true);
+      mTrayParent.setVisible(false);
+    }
+    
     return mUseSystemTray;
   }
 
@@ -909,5 +921,8 @@ public class SystemTray {
   public boolean isTrayUsed() {
     return mUseSystemTray;
   }
-
+  
+  protected static JDialog getProgamPopupParent() {
+    return mTrayParent;
+  }
 }
