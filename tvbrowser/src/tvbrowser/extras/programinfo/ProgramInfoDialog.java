@@ -627,13 +627,17 @@ public class ProgramInfoDialog {
         this, "id_sea", mFindAsYouType);
     }
     
-    ContextMenuIf[] p = ContextMenuManager.getInstance().getAvailableContextMenuIfs(false, true);
-
-    for (ContextMenuIf contextMenuIf : p) {
+    ContextMenuIf lastEntry = null;
+    for (ContextMenuIf contextMenuIf : ContextMenuManager.getInstance().getAvailableContextMenuIfs(false, true)) {
       if(contextMenuIf.getId().compareTo(SeparatorMenuItem.SEPARATOR) == 0) {
-        mFunctionGroup.add(Box.createRigidArea(new Dimension(0,2)));
-        mFunctionGroup.add(new JSeparator());
-        mFunctionGroup.add(Box.createRigidArea(new Dimension(0,2)));
+        // avoid duplicate separators
+        if (lastEntry == null
+            || lastEntry.getId().compareTo(SeparatorMenuItem.SEPARATOR) != 0) {
+          mFunctionGroup.add(Box.createRigidArea(new Dimension(0, 2)));
+          mFunctionGroup.add(new JSeparator());
+          mFunctionGroup.add(Box.createRigidArea(new Dimension(0, 2)));
+          lastEntry = contextMenuIf;
+        }
       } else if(contextMenuIf.getId().compareTo(ConfigMenuItem.CONFIG) == 0 && mShowSettings) {
         Action action = new AbstractAction() {
           private static final long serialVersionUID = 1L;
@@ -649,6 +653,7 @@ public class ProgramInfoDialog {
         ActionMenu configure = new ActionMenu(action);
         new TaskMenuAction(mFunctionGroup, mProgram, configure, this,
             "id_configure", mFindAsYouType);
+        lastEntry = contextMenuIf;
       }
       else if(contextMenuIf.getId().compareTo(ProgramInfo.getInstance().getId()) == 0) {
     	  // don't show the program info action in the program info dialog
@@ -658,6 +663,7 @@ public class ProgramInfoDialog {
         if (menu != null) {
           new TaskMenuAction(mFunctionGroup, mProgram, menu, this,
               contextMenuIf.getId(), mFindAsYouType);
+          lastEntry = contextMenuIf;
         }
       }
     }
