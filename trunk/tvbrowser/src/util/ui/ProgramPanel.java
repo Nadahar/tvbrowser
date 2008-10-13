@@ -421,7 +421,12 @@ private static Font getDynamicFontSize(Font font, int offset) {
     Program oldProgram = mProgram;
     mProgram = program;
     
-    mTitleIcon.setMaximumLineCount(-1);
+    if (Settings.propProgramTableCutTitle.getBoolean()) {
+      mTitleIcon.setMaximumLineCount(Settings.propProgramTableCutTitleLines
+          .getInt());
+    } else {
+      mTitleIcon.setMaximumLineCount(-1);
+    }
     mDescriptionIcon.setMaximumLineCount(-1);    
     
     boolean programChanged = (oldProgram != program);
@@ -1152,6 +1157,11 @@ private static Font getDynamicFontSize(Font font, int offset) {
       if ((y >= markerY) && (y <= markerY + 16)) {
         return getMarkedByTooltip();
       }
+    }
+    
+    // show full title if the title has been shortened
+    if (mTitleIcon.isTextCut()) {
+      return mProgram.getTitle();
     }
     
     return null;

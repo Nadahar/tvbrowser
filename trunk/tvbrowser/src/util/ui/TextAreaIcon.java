@@ -186,5 +186,15 @@ public class TextAreaIcon implements Icon {
       }
     }
   }
+
+  /**
+   * has the text in this icon been cut because it was longer than maxLines?
+   * 
+   * @return <code>true</code> if the text was cut
+   * @since 3.0
+   */
+  public boolean isTextCut() {
+    return mMaxLineCount > 0 && mTextLineArr[mMaxLineCount - 1].endsWith("...");
+  }
   
 }

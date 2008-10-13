@@ -106,6 +106,10 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   
   private short mLastSelectedLayoutIndex;
 
+  private JCheckBox mCutLongTitlesCB;
+
+  private JComboBox mCutLongTitlesSelection;
+
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
     if (source == mDefaultBtn) {
@@ -122,15 +126,20 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mSettingsPn.setBorder(Borders.DIALOG_BORDER);
 
     CellConstraints cc = new CellConstraints();
+    int currentRow = 1;
     
     // Layout-Rows ****************************************
     layout.appendRow(RowSpec.decode("pref"));
     layout.appendRow(RowSpec.decode("5dlu"));
     layout.appendRow(RowSpec.decode("pref"));
+    layout.appendRow(RowSpec.decode("3dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
     layout.appendRow(RowSpec.decode("10dlu"));
     
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("layout", "Layout")), cc.xyw(1,1,8));
-    mSettingsPn.add(new JLabel(mLocalizer.msg("programArrangement", "Program arrangement")), cc.xy(2,3));
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(
+        mLocalizer.msg("layout", "Layout")), cc.xyw(1, currentRow, 8));
+    mSettingsPn.add(new JLabel(mLocalizer.msg("programArrangement",
+        "Program arrangement")), cc.xy(2, (currentRow += 2)));
     
     // program table layout
     String[] arrangementArr = { mLocalizer.msg("timeSynchronous", "Time synchronous"),
@@ -158,15 +167,39 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     
     mLastSelectedLayoutIndex = (short)mProgramArrangementCB.getSelectedIndex();
 
-    mSettingsPn.add(mProgramArrangementCB, cc.xy(4, 3));
+    mSettingsPn.add(mProgramArrangementCB, cc.xy(4, currentRow));
 
+    mCutLongTitlesCB = new JCheckBox(mLocalizer.msg("cutTitle",
+        "Cut long titles"));
+    mSettingsPn.add(mCutLongTitlesCB, cc.xyw(2, (currentRow += 2), 2));
+    mCutLongTitlesSelection = new JComboBox();
+    for (int i = 1; i <= 3; i++) {
+      mCutLongTitlesSelection.addItem(i);
+    }
+    mSettingsPn.add(mCutLongTitlesSelection, cc.xy(4, currentRow));
+    mCutLongTitlesCB.addActionListener(new ActionListener() {
+
+      public void actionPerformed(ActionEvent e) {
+        mCutLongTitlesSelection.setEnabled(mCutLongTitlesCB.isSelected());
+      }
+    });
+    mCutLongTitlesSelection
+        .setSelectedIndex(Settings.propProgramTableCutTitleLines.getInt() - 1);
+    mSettingsPn.add(new JLabel(mLocalizer.msg("lines", "Lines")), cc.xy(6,
+        currentRow));
+    mCutLongTitlesCB
+        .setSelected(Settings.propProgramTableCutTitle.getBoolean());
+    mCutLongTitlesSelection.setEnabled(mCutLongTitlesCB.isSelected());
+    
     // Column Rows ***************************************
     layout.appendRow(RowSpec.decode("pref"));
     layout.appendRow(RowSpec.decode("5dlu"));
     layout.appendRow(RowSpec.decode("pref"));
     layout.appendRow(RowSpec.decode("10dlu"));
     
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("columnwidth", "column width")), cc.xyw(1,5,8));
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(
+        mLocalizer.msg("columnwidth", "column width")), cc.xyw(1,
+        (currentRow += 2), 8));
     
     // column width
     JPanel sliderPn = new JPanel(new BorderLayout());
@@ -188,12 +221,12 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     sliderPn.add(mColWidthSl, BorderLayout.CENTER);
     sliderPn.add(colWidthLb, BorderLayout.EAST);
 
-    mSettingsPn.add(sliderPn, cc.xyw(2,7,3));
+    mSettingsPn.add(sliderPn, cc.xyw(2, (currentRow += 2), 3));
     
     mDefaultBtn = new JButton(Localizer.getLocalization(Localizer.I18N_DEFAULT));
     mDefaultBtn.addActionListener(this);
 
-    mSettingsPn.add(mDefaultBtn, cc.xy(6,7));
+    mSettingsPn.add(mDefaultBtn, cc.xy(6, currentRow));
     
     // Column Rows ***************************************
     layout.appendRow(RowSpec.decode("pref"));
@@ -203,9 +236,11 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     layout.appendRow(RowSpec.decode("pref"));
     layout.appendRow(RowSpec.decode("10dlu"));
     
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("range", "Range")), cc.xyw(1,9,8));
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(
+        mLocalizer.msg("range", "Range")), cc.xyw(1, (currentRow += 2), 8));
     
-    mSettingsPn.add(new JLabel(mLocalizer.msg("startOfDay", "Start of day")), cc.xy(2, 11));
+    mSettingsPn.add(new JLabel(mLocalizer.msg("startOfDay", "Start of day")),
+        cc.xy(2, (currentRow += 2)));
     
     TwoSpinnerDateModel startModel = new TwoSpinnerDateModel();
     
@@ -214,11 +249,14 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     
     JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mStartOfDayTimeSp, Settings.getTimePattern());
     mStartOfDayTimeSp.setEditor(dateEditor);
-    mSettingsPn.add(mStartOfDayTimeSp, cc.xy(4, 11));
-    mSettingsPn.add(new JLabel("(" + Localizer.getLocalization(Localizer.I18N_TODAY) + ")"), cc.xy(6, 11));
+    mSettingsPn.add(mStartOfDayTimeSp, cc.xy(4, currentRow));
+    mSettingsPn.add(new JLabel("("
+        + Localizer.getLocalization(Localizer.I18N_TODAY) + ")"), cc.xy(6,
+        currentRow));
     CaretPositionCorrector.createCorrector(dateEditor.getTextField(), new char[] {':'}, -1);
     
-    mSettingsPn.add(new JLabel(mLocalizer.msg("endOfDay", "End of day")), cc.xy(2, 13));
+    mSettingsPn.add(new JLabel(mLocalizer.msg("endOfDay", "End of day")), cc
+        .xy(2, (currentRow += 2)));
     
     TwoSpinnerDateModel endModel = new TwoSpinnerDateModel();
     
@@ -227,8 +265,9 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     
     dateEditor = new JSpinner.DateEditor(mEndOfDayTimeSp, Settings.getTimePattern());
     mEndOfDayTimeSp.setEditor(dateEditor);
-    mSettingsPn.add(mEndOfDayTimeSp, cc.xy(4, 13));
-    mSettingsPn.add(new JLabel("(" + mLocalizer.msg("nextDay", "next day") + ")"), cc.xy(6, 13));
+    mSettingsPn.add(mEndOfDayTimeSp, cc.xy(4, currentRow));
+    mSettingsPn.add(new JLabel("(" + mLocalizer.msg("nextDay", "next day")
+        + ")"), cc.xy(6, currentRow));
     CaretPositionCorrector.createCorrector(dateEditor.getTextField(), new char[] {':'}, -1);
     
     int minutes;
@@ -252,9 +291,12 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     layout.appendRow(RowSpec.decode("pref"));
     layout.appendRow(RowSpec.decode("10dlu"));
 
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("tableBackground", "Table background")), cc.xyw(1,15,8));
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(
+        mLocalizer.msg("tableBackground", "Table background")), cc.xyw(1,
+        (currentRow += 2), 8));
 
-    mSettingsPn.add(new JLabel(mLocalizer.msg("tableBackgroundStyle", "Table background style")), cc.xy(2,17));
+    mSettingsPn.add(new JLabel(mLocalizer.msg("tableBackgroundStyle",
+        "Table background style")), cc.xy(2, (currentRow += 2)));
     
     TableBackgroundStyle[] styles = getTableBackgroundStyles();
     mBackgroundStyleCB = new JComboBox(styles);
@@ -273,7 +315,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
       }
     });
 
-    mSettingsPn.add(mBackgroundStyleCB, cc.xy(4, 17));
+    mSettingsPn.add(mBackgroundStyleCB, cc.xy(4, currentRow));
     
     mConfigBackgroundStyleBt = new JButton(mLocalizer.msg("configure", "Configure..."));
 
@@ -285,7 +327,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
       }
     });
 
-    mSettingsPn.add(mConfigBackgroundStyleBt, cc.xy(6, 17));
+    mSettingsPn.add(mConfigBackgroundStyleBt, cc.xy(6, currentRow));
         
     // Foreground color
     layout.appendRow(RowSpec.decode("pref"));
@@ -297,23 +339,28 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mForegroundColorLb.setStandardColor(Settings.propProgramPanelForegroundColor.getDefaultColor());
     ColorButton programPanelForegroundColorChangeBtn = new ColorButton(mForegroundColorLb);
 
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("foreground", "Foreground")), cc.xyw(1,19,8));
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(
+        mLocalizer.msg("foreground", "Foreground")), cc.xyw(1,
+        (currentRow += 2), 8));
     
-    mSettingsPn.add(new JLabel(mLocalizer.msg("color", "Color:")), cc.xy(2,21));
-    mSettingsPn.add(mForegroundColorLb, cc.xy(4,21));
-    mSettingsPn.add(programPanelForegroundColorChangeBtn, cc.xy(6,21));
+    mSettingsPn.add(new JLabel(mLocalizer.msg("color", "Color:")), cc.xy(2,
+        (currentRow += 2)));
+    mSettingsPn.add(mForegroundColorLb, cc.xy(4, currentRow));
+    mSettingsPn.add(programPanelForegroundColorChangeBtn, cc.xy(6, currentRow));
     
     // Miscellaneous *********************************************
     layout.appendRow(RowSpec.decode("pref"));
     layout.appendRow(RowSpec.decode("5dlu"));
     layout.appendRow(RowSpec.decode("pref"));
 
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("Miscellaneous", "Miscellaneous")), cc.xyw(1,23,8));
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(
+        mLocalizer.msg("Miscellaneous", "Miscellaneous")), cc.xyw(1,
+        (currentRow += 2), 8));
 
     mMouseOverCb = new JCheckBox(mLocalizer.msg("MouseOver", "Mouse-Over-Effect"));
     mMouseOverCb.setSelected(Settings.propMouseOver.getBoolean());
 
-    mSettingsPn.add(mMouseOverCb, cc.xy(2,25));
+    mSettingsPn.add(mMouseOverCb, cc.xy(2, (currentRow += 2)));
     
     mMouseOverColorLb = new ColorLabel(Settings.propMouseOverColor.getColor());
     mMouseOverColorLb.setStandardColor(Settings.propMouseOverColor.getDefaultColor());
@@ -336,7 +383,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     pn1.add(mMouseOverColorLb);
     pn1.add(mouseOverColorChangeBtn);
 
-    mSettingsPn.add(pn1, cc.xy(4, 25));
+    mSettingsPn.add(pn1, cc.xy(4, currentRow));
     
     updateBackgroundStyleConfigureButton();
 
@@ -452,6 +499,9 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     Settings.propMouseOver.setBoolean(mMouseOverCb.isSelected());
 
     Settings.propMouseOverColor.setColor(mMouseOverColorLb.getColor());
+    Settings.propProgramTableCutTitle.setBoolean(mCutLongTitlesCB.isSelected());
+    Settings.propProgramTableCutTitleLines.setInt(mCutLongTitlesSelection
+        .getSelectedIndex() + 1);
   }
 
   /**

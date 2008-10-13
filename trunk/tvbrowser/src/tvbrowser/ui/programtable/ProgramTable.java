@@ -162,7 +162,7 @@ public class ProgramTable extends JPanel
       public void mouseReleased(MouseEvent evt) {
         // recognize auto scroll
         if (mDraggingPoint != null
-            && (System.currentTimeMillis() - mLastDragTime < 50)) {
+            && (System.currentTimeMillis() - mLastDragTime < 20)) {
           if (Math.abs(mLastDragDeltaX) >= 3 || Math.abs(mLastDragDeltaY) >= 3) {
             // stop last scroll, if it is still active
             stopAutoScroll();
