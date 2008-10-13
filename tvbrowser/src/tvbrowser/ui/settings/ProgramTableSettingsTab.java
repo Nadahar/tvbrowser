@@ -110,6 +110,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
 
   private JComboBox mCutLongTitlesSelection;
 
+  private JCheckBox mAutoScrollCb;
+
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
     if (source == mDefaultBtn) {
@@ -352,14 +354,15 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     layout.appendRow(RowSpec.decode("pref"));
     layout.appendRow(RowSpec.decode("5dlu"));
     layout.appendRow(RowSpec.decode("pref"));
+    layout.appendRow(RowSpec.decode("3dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
 
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(
-        mLocalizer.msg("Miscellaneous", "Miscellaneous")), cc.xyw(1,
+        mLocalizer.msg("mouse", "Mouse")), cc.xyw(1,
         (currentRow += 2), 8));
 
     mMouseOverCb = new JCheckBox(mLocalizer.msg("MouseOver", "Mouse-Over-Effect"));
     mMouseOverCb.setSelected(Settings.propMouseOver.getBoolean());
-
     mSettingsPn.add(mMouseOverCb, cc.xy(2, (currentRow += 2)));
     
     mMouseOverColorLb = new ColorLabel(Settings.propMouseOverColor.getColor());
@@ -385,6 +388,13 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
 
     mSettingsPn.add(pn1, cc.xy(4, currentRow));
     
+    // auto scrolling
+    mAutoScrollCb = new JCheckBox(mLocalizer.msg("mouseAutoScroll",
+        "Throw'n scroll"));
+    mAutoScrollCb.setSelected(Settings.propProgramTableMouseAutoScroll
+        .getBoolean());
+    mSettingsPn.add(mAutoScrollCb, cc.xyw(2, (currentRow += 2), 6));
+
     updateBackgroundStyleConfigureButton();
 
     return mSettingsPn;
@@ -502,6 +512,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     Settings.propProgramTableCutTitle.setBoolean(mCutLongTitlesCB.isSelected());
     Settings.propProgramTableCutTitleLines.setInt(mCutLongTitlesSelection
         .getSelectedIndex() + 1);
+    Settings.propProgramTableMouseAutoScroll.setBoolean(mAutoScrollCb
+        .isSelected());
   }
 
   /**
