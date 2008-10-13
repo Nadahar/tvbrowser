@@ -345,7 +345,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
         mLocalizer.msg("foreground", "Foreground")), cc.xyw(1,
         (currentRow += 2), 8));
     
-    mSettingsPn.add(new JLabel(mLocalizer.msg("color", "Color:")), cc.xy(2,
+    mSettingsPn.add(new JLabel(mLocalizer.msg("fontColor", "Font color")), cc
+        .xy(2,
         (currentRow += 2)));
     mSettingsPn.add(mForegroundColorLb, cc.xy(4, currentRow));
     mSettingsPn.add(programPanelForegroundColorChangeBtn, cc.xy(6, currentRow));
@@ -369,24 +370,17 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mMouseOverColorLb.setStandardColor(Settings.propMouseOverColor.getDefaultColor());
     mMouseOverColorLb.setEnabled(Settings.propMouseOver.getBoolean());
     final ColorButton mouseOverColorChangeBtn = new ColorButton(mMouseOverColorLb);
-    final JLabel colorLb = new JLabel(mLocalizer.msg("color", "Color:"));
     mouseOverColorChangeBtn.setEnabled(Settings.propMouseOver.getBoolean());
-    colorLb.setEnabled(Settings.propMouseOver.getBoolean());
     mMouseOverCb.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         boolean enabled = mMouseOverCb.isSelected();
         mMouseOverColorLb.setEnabled(enabled);
         mouseOverColorChangeBtn.setEnabled(enabled);
-        colorLb.setEnabled(enabled);
       }
     });
 
-    JPanel pn1 = new JPanel();
-    pn1.add(colorLb);
-    pn1.add(mMouseOverColorLb);
-    pn1.add(mouseOverColorChangeBtn);
-
-    mSettingsPn.add(pn1, cc.xy(4, currentRow));
+    mSettingsPn.add(mMouseOverColorLb, cc.xy(4, currentRow));
+    mSettingsPn.add(mouseOverColorChangeBtn, cc.xy(6, currentRow));
     
     // auto scrolling
     mAutoScrollCb = new JCheckBox(mLocalizer.msg("mouseAutoScroll",
