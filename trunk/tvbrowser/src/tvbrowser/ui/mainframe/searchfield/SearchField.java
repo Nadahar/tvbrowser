@@ -31,6 +31,8 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -48,6 +50,9 @@ import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
 
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.icontheme.IconLoader;
@@ -82,9 +87,10 @@ public class SearchField extends JPanel {
   /** Settings for the Search */
   private SearchFormSettings mSearchFormSettings;
   /** Button for the Settings-Popup*/
-  private JButton mSearchButton, mCancelButton;
+  private JButton mSearchButton, mGoOrCancelButton;
   
   private static final String SETTINGS_FILE = "searchfield.SearchField.dat";
+  private boolean mGoButton;
   
   /**
    * Create SearchField
@@ -92,6 +98,7 @@ public class SearchField extends JPanel {
   public SearchField() { 
     readSearchFormSettings();
     createGui();
+    mGoButton = true;
   }
   
   /**
@@ -137,10 +144,13 @@ public class SearchField extends JPanel {
    */
   private void createGui() {
     final JPanel panel = new JPanel(new BorderLayout(3,0));
-    panel.setBorder(BorderFactory.createCompoundBorder(UIManager.getBorder("TextField.border"),BorderFactory.createEmptyBorder(2,2,1,2)));
-    
+    panel.setBorder(BorderFactory.createCompoundBorder(UIManager.getBorder("TextField.border"),BorderFactory.createEmptyBorder(2,2,1,2)));    
     mText = new SearchTextField(15);
-    
+    if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel")) {
+      mText.setBackground(Color.white);
+      mText.setBorder(BorderFactory.createLineBorder(mText.getBackground(), 2));
+      panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(),BorderFactory.createEmptyBorder(2,2,1,2)));
+    }
     if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
       mText.setBackground(Color.white);
       mText.setBorder(BorderFactory.createLineBorder(mText.getBackground(), 3));
@@ -149,35 +159,36 @@ public class SearchField extends JPanel {
       mText.setBorder(BorderFactory.createLineBorder(mText.getBackground()));
     }
     
+    mText.addFocusListener(new FocusAdapter() {
+      public void focusLost(FocusEvent e) {
+        mGoOrCancelButton.setVisible(mText.getText().length() != 0 && !mText.getText().equals(SearchTextField.mLocalizer.msg("search","Search...")));
+      }
+    });
+    
+    mText.getDocument().addDocumentListener(new DocumentListener() {
+      public void changedUpdate(DocumentEvent e) {}
+
+      public void insertUpdate(DocumentEvent e) {
+        try {
+          mGoOrCancelButton.setVisible(e.getDocument().getLength() > 0 && !e.getDocument().getText(0,e.getDocument().getLength()-1).equals(SearchTextField.mLocalizer.msg("search","Search...")));
+        } catch (BadLocationException e1) {
+          // Ignore
+        }
+      }
+
+      public void removeUpdate(DocumentEvent e) {
+        try {
+          mGoOrCancelButton.setVisible(e.getDocument().getLength() > 0 && !e.getDocument().getText(0,e.getDocument().getLength()-1).equals(SearchTextField.mLocalizer.msg("search","Search...")));
+        } catch (BadLocationException e1) {
+          // Ignore
+        }
+      }
+    });
+    
     mText.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-          mSearchFormSettings.setSearchText(mText.getText());
-          
-          if (mSearchFormSettings.getNrDays() == 0) {
-            if (mText.getText().length() > 0) {
-              try {
-                SearchFilter filter = SearchFilter.getInstance();
-                filter.setSearch(mSearchFormSettings);
-                MainFrame.getInstance().setProgramFilter(filter);
-                mCancelButton.setVisible(true);
-                
-                SwingUtilities.invokeLater(new Runnable() {
-                  public void run() {
-                    mText.setCaretPosition(mText.getText().length());    
-                  }
-                });
-              } catch (TvBrowserException e1) {
-                e1.printStackTrace();
-              }
-            } else {
-              SearchFilter.getInstance().deactivateSearch();
-              MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getDefaultFilter());
-              mCancelButton.setVisible(false);
-            }
-          } else {
-            SearchHelper.search(mText, mSearchFormSettings, new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE),false),true);
-          }
+          startSearch();
         }
       }
     });
@@ -195,15 +206,20 @@ public class SearchField extends JPanel {
       };
     });
     
-    mCancelButton = new JButton(IconLoader.getInstance().getIconFromTheme("action", "process-stop", 16)); 
-    mCancelButton.setBorder(BorderFactory.createEmptyBorder());
-    mCancelButton.setContentAreaFilled(false);
-    mCancelButton.setMargin(new Insets(0, 0, 0, 0));
-    mCancelButton.setFocusPainted(false);
-    mCancelButton.setVisible(false);
-    mCancelButton.addActionListener(new ActionListener() {
+    mGoOrCancelButton = new JButton(IconLoader.getInstance().getIconFromTheme("action", "media-playback-start", 16)); 
+    mGoOrCancelButton.setBorder(BorderFactory.createEmptyBorder());
+    mGoOrCancelButton.setContentAreaFilled(false);
+    mGoOrCancelButton.setMargin(new Insets(0, 0, 0, 0));
+    mGoOrCancelButton.setFocusPainted(false);
+    mGoOrCancelButton.setVisible(false);
+    mGoOrCancelButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        cancelPressed();
+        if(mGoButton) {
+          startSearch();
+        }
+        else {
+          cancelPressed();
+        }
       };
     });mText.setEditable(true);
     
@@ -211,10 +227,43 @@ public class SearchField extends JPanel {
     
     panel.add(mSearchButton, BorderLayout.WEST);
     panel.add(mText, BorderLayout.CENTER);
-    panel.add(mCancelButton, BorderLayout.EAST);
+    panel.add(mGoOrCancelButton, BorderLayout.EAST);
     
-    setLayout(new FormLayout("70dlu, 2dlu", "fill:pref:grow, pref, fill:pref:grow"));
+    setLayout(new FormLayout("80dlu, 2dlu", "fill:pref:grow, pref, fill:pref:grow"));
     add(panel, new CellConstraints().xy(1, 2));
+  }
+  
+  /**
+   * Start search.
+   */
+  private void startSearch() {
+    mSearchFormSettings.setSearchText(mText.getText());
+    
+    if (mSearchFormSettings.getNrDays() == 0) {
+      if (mText.getText().length() > 0) {
+        try {
+          SearchFilter filter = SearchFilter.getInstance();
+          filter.setSearch(mSearchFormSettings);
+          MainFrame.getInstance().setProgramFilter(filter);
+          mGoButton = false;
+          mGoOrCancelButton.setIcon(IconLoader.getInstance().getIconFromTheme("action", "process-stop", 16));
+          
+          SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+              mText.setCaretPosition(mText.getText().length());    
+            }
+          });
+        } catch (TvBrowserException e1) {
+          e1.printStackTrace();
+        }
+      } else {
+        SearchFilter.getInstance().deactivateSearch();
+        MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getDefaultFilter());
+        mGoOrCancelButton.setIcon(IconLoader.getInstance().getIconFromTheme("action", "media-playback-start", 16));
+      }
+    } else {
+      SearchHelper.search(mText, mSearchFormSettings, new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE),false),true);
+    }
   }
 
   /**
@@ -224,7 +273,9 @@ public class SearchField extends JPanel {
     mText.setText("");
     SearchFilter.getInstance().deactivateSearch();
     MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getDefaultFilter());
-    mCancelButton.setVisible(false);
+    mGoButton = true;
+    mGoOrCancelButton.setIcon(IconLoader.getInstance().getIconFromTheme("action", "media-playback-start", 16));
+    mGoOrCancelButton.setVisible(false);
     mText.focusLost(null);
   }
 
@@ -299,8 +350,10 @@ public class SearchField extends JPanel {
    * SearchFilter was deactivated
    */
   public void deactivateSearch() {
-    mCancelButton.setVisible(false);
+    mText.setText("");
+    mGoButton = true;
+    mGoOrCancelButton.setIcon(IconLoader.getInstance().getIconFromTheme("action", "media-playback-start", 16));
+    mGoOrCancelButton.setVisible(false);
+    mText.focusLost(null);
   }
-
-  
 }

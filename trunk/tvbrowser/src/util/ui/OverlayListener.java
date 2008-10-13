@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.JComponent;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.tree.TreePath;
 
@@ -47,8 +48,26 @@ public class OverlayListener extends MouseInputAdapter{
           }
           
           c.setFont(mTree.getFont()); 
-          Rectangle paintBounds = SwingUtilities.convertRectangle(mTree, mBounds, this); 
+          Rectangle paintBounds = SwingUtilities.convertRectangle(mTree, mBounds, this);
+          
+          
+          if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel")) {
+            Color current = g.getColor();
+            
+            if(selected) {
+              g.setColor(UIManager.getColor("Tree.selectionBackground"));
+            }
+            else {
+              g.setColor(mTree.getBackground());
+            }
+            
+            g.fillRect(paintBounds.x,paintBounds.y,paintBounds.width,paintBounds.height);
+            
+            g.setColor(current);
+          }
+          
           SwingUtilities.paintComponent(g, renderer, this, paintBounds); 
+          
           if(selected) 
               return; 
 

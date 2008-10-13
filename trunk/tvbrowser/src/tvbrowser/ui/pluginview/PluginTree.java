@@ -770,6 +770,10 @@ public class PluginTree extends JTree implements DragGestureListener,
         if(node.getType() == Node.PROGRAM) {
           Program program = ((ProgramItem)node.getUserObject()).getProgram();
           
+          if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel")) {
+            bounds.setBounds(bounds.x,bounds.y+1,bounds.width,bounds.height);
+          }
+          
           boolean cleaned = false;
           
           /*if(program.getMarkerArr().length > 0 && program.getMarkPriority() >= Program.MIN_MARK_PRIORITY) {
@@ -825,10 +829,12 @@ public class PluginTree extends JTree implements DragGestureListener,
           }
           
           String text = node.getNodeFormatter().format((ProgramItem)node.getUserObject());          
-
+          
           // use an image to be able to display HTML content on the node
           BufferedImage textImage = getImage(bounds);
           Graphics lg = textImage.getGraphics();
+          
+          mProgramLabel.setFont(tree.getFont());
           mProgramLabel.setText(text);
           mProgramLabel.setOpaque(false);
           mProgramLabel.setBounds(0, 0, bounds.width, bounds.height);
