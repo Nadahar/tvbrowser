@@ -53,6 +53,9 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.toolbar.ContextMenu;
@@ -164,14 +167,12 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     tVisPanel.add(mShowSearchFieldCb);
 
     // Initialize the panel for the ToolBar settings
-    JPanel tSetPanel = new JPanel();
+    JPanel tSetPanel = new JPanel(new FormLayout("default,5dlu,default,0dlu:grow,default,5dlu,default,5dlu,default","default"));
     tSetPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
-    tSetPanel.setLayout(new BoxLayout(tSetPanel, BoxLayout.X_AXIS));
-
+    
     mLocationCB = new JComboBox(new String[] { mLocalizer.msg("top", "top"),
         Localizer.getLocalization(Localizer.I18N_LEFT), });
-    mLocationCB.setMaximumSize(mLocationCB.getPreferredSize());
-
+    
     if ("west".equals(Settings.propToolbarLocation.getString())) {
       mLocationCB.setSelectedIndex(1);
       mWest = true;
@@ -196,16 +197,13 @@ public class ToolBarDragAndDropSettings extends JDialog implements
         "Use big icons"));
     mUseBigIconsCb.setSelected(Settings.propToolbarUseBigIcons.getBoolean());
 
-    // add the components to the settingsPanel
-    tSetPanel.add(new JLabel(mLocalizer.msg("location", "Location")));
-    tSetPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-    tSetPanel.add(mLocationCB);
-    tSetPanel.add(Box.createHorizontalGlue());
-    tSetPanel.add(new JLabel(mLocalizer.msg("icons", "Icons")));
-    tSetPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-    tSetPanel.add(mShowCB);
-    tSetPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-    tSetPanel.add(mUseBigIconsCb);
+    CellConstraints cc = new CellConstraints();
+    
+    tSetPanel.add(new JLabel(mLocalizer.msg("location", "Location")),cc.xy(1,1));
+    tSetPanel.add(mLocationCB,cc.xy(3,1));
+    tSetPanel.add(new JLabel(mLocalizer.msg("icons", "Icons")),cc.xy(5,1));
+    tSetPanel.add(mShowCB,cc.xy(7,1));
+    tSetPanel.add(mUseBigIconsCb,cc.xy(9,1));
 
     tSetPanel.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(1,
         0, 1, 0, Color.GRAY), BorderFactory.createEmptyBorder(10, 5, 9, 5)));
@@ -279,18 +277,20 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     for (Action a : mAvailableActions) {
       // <html> is needed to have a black color of the letters of a button,
       // because the Buttons have to be disabled for Drag'n'Drop
-      JButton b = new JButton("<html>" + (String) a.getValue(Action.NAME)
-          + "</html>");
+      JButton b = new JButton("<html><div style=\"text-align:center\">" + (String) a.getValue(Action.NAME)
+          + "</div></html>");
       b.setBorder(new CompoundBorder(BorderFactory
           .createEmptyBorder(1, 1, 1, 1), BorderFactory.createEmptyBorder(1, 1,
           1, 1)));
       b.setIcon((Icon) a.getValue(Plugin.BIG_ICON));
+      
       b.setDisabledIcon((Icon) a.getValue(Plugin.BIG_ICON));
       b.setVerticalTextPosition(JButton.BOTTOM);
       b.setHorizontalTextPosition(JButton.CENTER);
       b.setFont(new Font("Dialog", Font.PLAIN, 10));
       b.addMouseListener(this);
       addMouseAdapterForHandCursorToComponent(b);
+      b.setContentAreaFilled(false);
       
       // Set up the available ActionButtons for dragging
       DragSource d = new DragSource();
@@ -510,7 +510,6 @@ public class ToolBarDragAndDropSettings extends JDialog implements
   }
 
   public void dragGestureRecognized(DragGestureEvent e) {
-
     /* Start drag of an ActionButton */
     Action separator = DefaultToolBarModel.getInstance().getSeparatorAction();
     Action glue = DefaultToolBarModel.getInstance().getGlueAction();
@@ -528,11 +527,12 @@ public class ToolBarDragAndDropSettings extends JDialog implements
       else {
         if (((AbstractButton) c).getText() == null)
           text = "notext";
-        else if (!((AbstractButton) c).getText().startsWith("<html>"))
+        else if (!((AbstractButton) c).getText().startsWith("<html>")) {
           text = ((AbstractButton) c).getText();
-        else
-          text = ((AbstractButton) c).getText().substring(6,
-              ((AbstractButton) c).getText().length() - 7);
+        } else {
+          text = ((AbstractButton) c).getText().substring(37,
+              ((AbstractButton) c).getText().length() - 13);
+        }
       }
       if (a[i].getValue(Action.NAME).equals(text)
           || separator.getValue(Action.NAME).equals(text) 
@@ -697,7 +697,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
           mAvailableActions.addElement(a);
       } else {
         String name = ((AbstractButton) e.getComponent()).getText().substring(
-            6, ((AbstractButton) e.getComponent()).getText().length() - 7);
+            37, ((AbstractButton) e.getComponent()).getText().length() - 13);
 
         for (int i = 0; i < mAvailableActions.size(); i++) {
           Action a = mAvailableActions.elementAt(i);
