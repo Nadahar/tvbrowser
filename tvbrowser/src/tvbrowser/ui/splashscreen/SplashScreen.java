@@ -127,9 +127,8 @@ public class SplashScreen extends JWindow implements Splash {
 
     // enable anti-aliasing for progress texts
     Graphics2D graphics = (Graphics2D) grp;
-    if (null != grp) {
-      graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,  RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-    }
+    graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     
     grp.setFont(MESSAGE_FONT);
 
@@ -152,7 +151,7 @@ public class SplashScreen extends JWindow implements Splash {
 
       public void run() {
         mMessage = msg;
-        repaint();
+        repaint(0, getHeight() - 40, getWidth(), 40);
       }
       
     });
