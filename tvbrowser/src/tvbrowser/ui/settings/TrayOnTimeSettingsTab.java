@@ -102,7 +102,7 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
       }
     });
     
-    mInfo = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("trayProgressInfo","The progress bar simulates the progress of the program if the time would be reached."),null);
+    mInfo = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("trayProgressInfo","The progress bar simulates the progress of the program if the time would be reached."));
     
     mLight = new ColorButton(mLightColorLb);
     mDark = new ColorButton(mDarkColorLb);
