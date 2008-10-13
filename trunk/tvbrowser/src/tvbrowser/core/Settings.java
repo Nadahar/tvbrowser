@@ -1396,15 +1396,27 @@ public class Settings {
   /**
    * if a long program title is to be shown in the program table, shall it be
    * cut?
+   * 
+   * @since 3.0
    */
   public static final BooleanProperty propProgramTableCutTitle = new BooleanProperty(
       mProp, "programTableCutTitle", false);
 
   /**
    * how many lines of the title shall be shown if it is cut
+   * 
+   * @since 3.0
    */
   public static final IntProperty propProgramTableCutTitleLines = new IntProperty(
       mProp, "programTableCutTitleLines", 1);
+
+  /**
+   * auto scroll table after panning?
+   * 
+   * @since 3.0
+   */
+  public static final BooleanProperty propProgramTableMouseAutoScroll = new BooleanProperty(
+      mProp, "programTableMouseAutoScroll", true);
 
   /**
    * Sets the window position and size for the given window with the values of
