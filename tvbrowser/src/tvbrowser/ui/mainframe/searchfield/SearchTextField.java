@@ -28,21 +28,21 @@ package tvbrowser.ui.mainframe.searchfield;
 import java.awt.Color;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JTextField;
-
+import javax.swing.SwingUtilities;
 /**
  * The TextField for the Search in the Toolbar 
  * @author bodum
  */
 public class SearchTextField extends JTextField implements FocusListener{
   /** The localizer of this class. */  
-  private static final util.ui.Localizer mLocalizer
+  protected static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SearchTextField.class);
   /** Color */
   private Color mTextColor, mNoTextColor;
-  /** Is Text available ?*/
-  private boolean mHasText = false;
   
   /**
    * Create the Search-Field
@@ -50,7 +50,15 @@ public class SearchTextField extends JTextField implements FocusListener{
    */
   public SearchTextField(int len) {
     super(len);
+    
     addFocusListener(this);
+    addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
+        if(SwingUtilities.isRightMouseButton(e)) {
+          requestFocus();
+        }
+      }
+    });
     
     int r = (getForeground().getRed()   + getBackground().getRed())   >> 1;
     int g = (getForeground().getGreen() + getBackground().getGreen()) >> 1;
@@ -68,10 +76,11 @@ public class SearchTextField extends JTextField implements FocusListener{
    * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent)
    */
   public void focusGained(FocusEvent e) {
-    if (!mHasText) {
+    if (getText().equals(mLocalizer.msg("search","Search..."))) {
       setText("");
-      setForeground(mTextColor);
     }
+    
+    setForeground(mTextColor);
   }
 
   /*
@@ -80,11 +89,8 @@ public class SearchTextField extends JTextField implements FocusListener{
    */
   public void focusLost(FocusEvent e) {
     if (getText().length() == 0) {
-      mHasText = false;
       setText(mLocalizer.msg("search","Search..."));
       setForeground(mNoTextColor);
-    } else {
-      mHasText = true;
     }
       
     repaint();

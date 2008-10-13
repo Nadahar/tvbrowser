@@ -363,6 +363,21 @@ public class UiUtilities {
    * @since 2.2
    */
   public static JEditorPane createHtmlHelpTextArea(String html) {
+    return createHtmlHelpTextArea(html, new JPanel().getBackground());
+  }
+  
+  /**
+   * Creates a Html EditorPane that holds a HTML-Help Text
+   * 
+   * Links will be displayed and are clickable
+   * 
+   * @param html
+   *          HTML-Text to display
+   * @param background The color for the background.
+   * @return EditorPane that holds a Help Text
+   * @since 2.7.2
+   */
+  public static JEditorPane createHtmlHelpTextArea(String html, Color background) {
     return createHtmlHelpTextArea(html, new HyperlinkListener() {
       private String mTooltip;
 
@@ -386,7 +401,7 @@ public class UiUtilities {
           }
         }
       }
-    });
+    },background);
   }
 
   /**
@@ -403,6 +418,24 @@ public class UiUtilities {
    */
   public static JEditorPane createHtmlHelpTextArea(String html,
       HyperlinkListener listener) {
+    return createHtmlHelpTextArea(html,listener,new JPanel().getBackground());
+  }
+  
+  /**
+   * Creates a Html EditorPane that holds a HTML-Help Text.
+   * 
+   * Add a Listener if you want to have clickable Links
+   * 
+   * @param html
+   *          HTML-Text to display
+   * @param listener
+   *          Link-Listener for this HelpText
+   * @param background The color for the background.
+   * @return EditorPane that holds a Help Text
+   * @since 2.7.2
+   */
+  public static JEditorPane createHtmlHelpTextArea(String html,
+      HyperlinkListener listener, Color background) {
     // Quick "hack". Remove HTML-Code and replace it with Code that includes the
     // correct Font
     if (html.indexOf("<html>") >= 0) {
@@ -410,10 +443,9 @@ public class UiUtilities {
           .substring(html.indexOf("<html>") + 6, html.indexOf("</html>"));
     }
     Font font = new JLabel().getFont();
-    Color bg = new JPanel().getBackground();
     
     html = "<html><div style=\"color:#000000;font-family:" + font.getName()
-        + "; font-size:" + font.getSize() +";background-color:rgb(" + bg.getRed() + "," + bg.getGreen() + "," + bg.getBlue() + ");\">" + html + "</div></html>";
+        + "; font-size:" + font.getSize() +";background-color:rgb(" + background.getRed() + "," + background.getGreen() + "," + background.getBlue() + ");\">" + html + "</div></html>";
     
     final JEditorPane pane = new JEditorPane("text/html", html);
     pane.setBorder(BorderFactory.createEmptyBorder());

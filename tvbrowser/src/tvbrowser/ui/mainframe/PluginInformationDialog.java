@@ -104,7 +104,7 @@ public class PluginInformationDialog extends JDialog implements WindowClosingIf 
               Launch.openURL(e.getURL().toString());
             }
           }
-        });
+        },Color.white);
     
     pane.setPreferredSize(new Dimension(400,300));
     

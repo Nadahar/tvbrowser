@@ -68,7 +68,7 @@ class WelcomeCardPanel extends AbstractCardPanel {
     iconPanel.setOpaque(false);
     
     mContent.add(iconPanel, cc.xywh(1, 2, 1, 2));
-    mContent.add(UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("welcome","Welcome",tvbrowser.TVBrowser.VERSION.toString().replaceAll("\\s", "&nbsp;"))), cc.xy(3, 2));
+    mContent.add(UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("welcome","Welcome",tvbrowser.TVBrowser.VERSION.toString().replaceAll("\\s", "&nbsp;")),textfield.getBackground()), cc.xy(3, 2));
   }
   
   public JPanel getPanel() {
