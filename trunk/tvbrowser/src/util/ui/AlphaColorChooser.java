@@ -56,7 +56,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
- * A Colorchooser with Alpha-Selection
+ * A Color chooser with Alpha-Selection
  */
 public class AlphaColorChooser extends JDialog implements ChangeListener {
     /** The localizer for this class. */
@@ -227,7 +227,8 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
         CellConstraints cc = new CellConstraints();
         
         if(mStandardColor != null) {
-          JButton def = new JButton("Default");
+          JButton def = new JButton(Localizer
+          .getLocalization(Localizer.I18N_DEFAULT));
           def.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
               setColor(mStandardColor);
