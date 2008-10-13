@@ -539,7 +539,8 @@ public class Settings {
     
     propArr = new Property[] {propPictureType, propPictureStartTime,
         propPictureEndTime, propIsPictureShowingDescription, propPicturePluginIds,
-        propPictureDuration};
+        propPictureDuration, propProgramTableCutTitle,
+        propProgramTableCutTitleLines };
     
     if(mProp.hasChanged(propArr)) {
       mainFrame.getProgramTableScrollPane().forceRepaintAll();
@@ -1374,7 +1375,7 @@ public class Settings {
   public static final DateProperty propFirstStartDate = new DateProperty(
       mProp, "firstStartDate", null);
   
-  /** Saves if the plugin info dialog was allready shown */
+  /** Saves if the plugin info dialog was already shown */
   public static final BooleanProperty propPluginInfoDialogWasShown = new BooleanProperty(
       mProp, "pluginInfoDialogWasShown", false);
   
@@ -1391,12 +1392,28 @@ public class Settings {
   
   public static final ShortProperty propAutoDownloadWaitingTime = new ShortProperty(
       mProp, "autoDownloadWaitingTime", (short) 5);
-  
-  /**
-   * Sets the window position and size for the given window with the values of the given id.
 
-   * @param windowId The id of the values to set.
-   * @param window The window to layout.
+  /**
+   * if a long program title is to be shown in the program table, shall it be
+   * cut?
+   */
+  public static final BooleanProperty propProgramTableCutTitle = new BooleanProperty(
+      mProp, "programTableCutTitle", false);
+
+  /**
+   * how many lines of the title shall be shown if it is cut
+   */
+  public static final IntProperty propProgramTableCutTitleLines = new IntProperty(
+      mProp, "programTableCutTitleLines", 1);
+
+  /**
+   * Sets the window position and size for the given window with the values of
+   * the given id.
+   * 
+   * @param windowId
+   *          The id of the values to set.
+   * @param window
+   *          The window to layout.
    * 
    * @since 2.7
    */
