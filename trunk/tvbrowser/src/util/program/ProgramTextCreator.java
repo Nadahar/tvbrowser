@@ -733,6 +733,9 @@ public class ProgramTextCreator {
       name = name.substring(0, blank) + "<br>" + name.substring(blank +1);
     }
     if (fieldType.getFormat() == ProgramFieldType.TEXT_FORMAT) {
+      text = prog.getTextField(fieldType);
+
+      // lazyly add short description, but only if it differs from description
       if (fieldType == ProgramFieldType.DESCRIPTION_TYPE) {
         String description = prog.getDescription().trim();
 
@@ -748,9 +751,31 @@ public class ProgramTextCreator {
                 ProgramFieldType.SHORT_DESCRIPTION_TYPE, true, showHelpLinks);
           }
         }
-      }
 
-      text = prog.getTextField(fieldType);
+        text = HTMLTextHelper.convertTextToHtml(text, createLinks);
+        // scan for moderation in beginning of description
+        String[] lines = text.split("<br>");
+        String[] tags = { "von und mit", "präsentiert von", "mit", "film von" };
+        for (int i = 0; i < 2; i++) {
+          if (lines.length > i && lines[i].length() < 60) {
+            for (String tag : tags) {
+              if (lines[i].toLowerCase().startsWith(tag)) {
+                String person = lines[i].substring(tag.length(),
+                    lines[i].length())
+                    .trim();
+                if (person.endsWith(".")) {
+                  person = person.substring(0, person.length() - 1);
+                }
+                int partCount = person.split(" ").length;
+                if (partCount >= 2 && partCount < 4) {
+                  text = text.replaceFirst(person, addSearchLink(person));
+                }
+              }
+            }
+          }
+        }
+      }
+      
     } else if (fieldType.getFormat() == ProgramFieldType.TIME_FORMAT) {
       text = prog.getTimeFieldAsString(fieldType);
     } else if (fieldType.getFormat() == ProgramFieldType.INT_FORMAT) {
@@ -816,7 +841,11 @@ public class ProgramTextCreator {
       buffer.append(text);
     }
     else {
-      buffer.append(HTMLTextHelper.convertTextToHtml(text, createLinks));
+      if (ProgramFieldType.DESCRIPTION_TYPE == fieldType) {
+        buffer.append(text);
+      } else {
+        buffer.append(HTMLTextHelper.convertTextToHtml(text, createLinks));
+      }
     }
     
     if ((ProgramFieldType.SHOWVIEW_NR_TYPE == fieldType) && (showHelpLinks)) {
