@@ -60,6 +60,7 @@ import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.PluginLoader;
@@ -977,8 +978,35 @@ public class TVBrowser {
     if (curLookAndFeel == null || !curLookAndFeel.equals(Settings.propLookAndFeel.getString())) {
       try {
         curLookAndFeel = Settings.propLookAndFeel.getString();
-        UIManager.setLookAndFeel(curLookAndFeel);
-        mLog.info("setting look and feel to "+curLookAndFeel);
+        // check if LnF is still available
+        boolean foundCurrent = false;
+        for (LookAndFeelInfo lnfInfo : UIManager.getInstalledLookAndFeels()) {
+          if (lnfInfo.getClassName().equals(curLookAndFeel)) {
+            foundCurrent = true;
+            break;
+          }
+        }
+        // reset look and feel?
+        if (!foundCurrent) {
+          if (JOptionPane
+              .showConfirmDialog(
+                  null,
+                  mLocalizer
+                      .msg(
+                          "lnfMissing",
+                          "The look and feel '{0}' is no longer available,\nso the default look and feel will be used.\n\nDo you want to set the look and feel option to the default look and feel?",
+                          curLookAndFeel),
+                  mLocalizer.msg("lnfMissing.title", "Look and feel missing"),
+                  JOptionPane.WARNING_MESSAGE | JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            Settings.propLookAndFeel.resetToDefault();
+            curLookAndFeel = Settings.propLookAndFeel.getString();
+            foundCurrent = true;
+          }
+        }
+        if (foundCurrent) {
+          UIManager.setLookAndFeel(curLookAndFeel);
+          mLog.info("setting look and feel to " + curLookAndFeel);
+        }
       } catch (Exception exc) {
         String msg =
           mLocalizer.msg("error.1", "Unable to set look and feel.", exc);
