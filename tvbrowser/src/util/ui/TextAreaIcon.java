@@ -194,7 +194,8 @@ public class TextAreaIcon implements Icon {
    * @since 3.0
    */
   public boolean isTextCut() {
-    return mMaxLineCount > 0 && mTextLineArr[mMaxLineCount - 1].endsWith("...");
+    return mMaxLineCount > 0 && mMaxLineCount == mTextLineArr.length
+        && mTextLineArr[mMaxLineCount - 1].endsWith("...");
   }
   
 }

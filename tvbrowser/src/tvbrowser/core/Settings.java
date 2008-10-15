@@ -1400,7 +1400,7 @@ public class Settings {
    * @since 3.0
    */
   public static final BooleanProperty propProgramTableCutTitle = new BooleanProperty(
-      mProp, "programTableCutTitle", false);
+      mProp, "programTableCutTitle", true);
 
   /**
    * how many lines of the title shall be shown if it is cut
@@ -1408,7 +1408,7 @@ public class Settings {
    * @since 3.0
    */
   public static final IntProperty propProgramTableCutTitleLines = new IntProperty(
-      mProp, "programTableCutTitleLines", 1);
+      mProp, "programTableCutTitleLines", 2);
 
   /**
    * auto scroll table after panning?
