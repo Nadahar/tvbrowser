@@ -107,4 +107,13 @@ public class StringProperty extends Property {
   public void setDefault(String defaultValue) {
         mDefaultValue = defaultValue;
   }
+  
+  /**
+   * reset this option to the default value
+   * 
+   * @since 3.0
+   */
+  public void resetToDefault() {
+    setString(getDefault());
+  }
 }
