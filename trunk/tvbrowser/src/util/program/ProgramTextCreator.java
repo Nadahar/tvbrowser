@@ -704,6 +704,9 @@ public class ProgramTextCreator {
     else if (field.contains(",")) {
       items = field.split(",|( und )");
     }
+    else if (field.contains(" und ")) {
+      items = field.split(" und ");
+    }
     else {
       items = new String[1];
       items[0] = field;
@@ -755,20 +758,27 @@ public class ProgramTextCreator {
         text = HTMLTextHelper.convertTextToHtml(text, createLinks);
         // scan for moderation in beginning of description
         String[] lines = text.split("<br>");
-        String[] tags = { "von und mit", "präsentiert von", "mit", "film von" };
+        String[] tags = { "von und mit", "präsentiert von", "mit", "film von",
+            "moderation", "zu gast" };
         for (int i = 0; i < 2; i++) {
           if (lines.length > i && lines[i].length() < 60) {
+            String line = lines[i];
             for (String tag : tags) {
-              if (lines[i].toLowerCase().startsWith(tag)) {
-                String person = lines[i].substring(tag.length(),
-                    lines[i].length())
+              if (line.toLowerCase().startsWith(tag)
+                  || line.toLowerCase().startsWith(tag + ":")) {
+                String persons = line.substring(tag.length(), line.length())
                     .trim();
-                if (person.endsWith(".")) {
-                  person = person.substring(0, person.length() - 1);
+                if (persons.startsWith(":")) {
+                  persons = persons.substring(1).trim();
                 }
-                int partCount = person.split(" ").length;
-                if (partCount >= 2 && partCount < 4) {
-                  text = text.replaceFirst(person, addSearchLink(person));
+                if (persons.endsWith(".")) {
+                  persons = persons.substring(0, persons.length() - 1).trim();
+                }
+                for (String person : persons.split(" und ")) {
+                  int partCount = person.split(" ").length;
+                  if (partCount >= 2 && partCount < 4) {
+                    text = text.replaceFirst(person, addSearchLink(person));
+                  }
                 }
               }
             }
