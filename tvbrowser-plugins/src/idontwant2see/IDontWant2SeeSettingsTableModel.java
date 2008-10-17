@@ -25,6 +25,7 @@ package idontwant2see;
 
 import java.util.ArrayList;
 
+import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import devplugin.Date;
@@ -37,6 +38,7 @@ import devplugin.Date;
 public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
   private ArrayList<IDontWant2SeeSettingsTableEntry> mData = new ArrayList<IDontWant2SeeSettingsTableEntry>();
   private String mLastChangedValue;
+  private JTable mTable;
   
   protected IDontWant2SeeSettingsTableModel(ArrayList<IDontWant2SeeListEntry> entries,
       String lastEnteredExclusionString) {
@@ -130,6 +132,14 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
     }
     
     fireTableDataChanged();
+    
+    if(mTable != null) {
+      mTable.getSelectionModel().setSelectionInterval(rowIndex,rowIndex);
+    }
+  }
+  
+  protected void setTable(JTable table) {
+    mTable = table;
   }
   
   protected ArrayList<IDontWant2SeeListEntry> getChangedList() {

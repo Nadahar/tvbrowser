@@ -1,6 +1,6 @@
 /*
  * IDontWant2See - Plugin for TV-Browser
- * Copyright (C) 2008 Renï¿½ Mach
+ * Copyright (C) 2008 René Mach
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -80,7 +80,7 @@ import devplugin.Version;
  * A very simple filter plugin to easily get
  * rid of stupid programs in the program table.
  * 
- * @author Renï¿½ Mach
+ * @author René Mach
  */
 public class IDontWant2See extends Plugin {
   protected static final Localizer mLocalizer = Localizer.getLocalizerFor(IDontWant2See.class);
@@ -96,7 +96,7 @@ public class IDontWant2See extends Plugin {
   private Date mLastUsedDate;
   
   public static Version getVersion() {
-    return new Version(0,8,6,false);
+    return new Version(0,8,7,false);
   }
   
   /**
@@ -485,6 +485,7 @@ public class IDontWant2See extends Plugin {
       
       final IDontWant2SeeSettingsTableRenderer renderer = new IDontWant2SeeSettingsTableRenderer(mLastUsedDate);        
       mTable = new JTable(mTableModel);
+      mTableModel.setTable(mTable);
       mTable.setRowHeight(25);
       mTable.setPreferredScrollableViewportSize(new Dimension(200,150));
       mTable.getColumnModel().getColumn(0).setCellRenderer(renderer);
