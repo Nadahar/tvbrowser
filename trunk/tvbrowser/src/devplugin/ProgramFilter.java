@@ -27,7 +27,7 @@
 package devplugin;
 
 /**
- * Defines the filtering behaviour.
+ * Defines the filtering behavior.
  */
 public interface ProgramFilter {
 
