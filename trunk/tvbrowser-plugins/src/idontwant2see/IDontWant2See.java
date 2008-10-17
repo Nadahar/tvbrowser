@@ -508,8 +508,12 @@ public class IDontWant2See extends Plugin {
       });
       
       mTable.addKeyListener(new KeyAdapter() {
-        public void keyReleased(KeyEvent e) {
-          if(mTable.getSelectedColumn() == 1 && 
+        public void keyPressed(KeyEvent e) {
+          if(e.getKeyCode() == KeyEvent.VK_DELETE) {
+            deleteSelectedRows();
+            e.consume();
+          }
+          else if(mTable.getSelectedColumn() == 1 && 
               (e.getKeyCode() == KeyEvent.VK_F2 || e.getKeyCode() == KeyEvent.VK_SPACE)) {
             mTable.getModel().setValueAt(!((Boolean)mTable.getValueAt(mTable.getSelectedRow(),1)),
                 mTable.getSelectedRow(),1);
@@ -542,14 +546,6 @@ public class IDontWant2See extends Plugin {
             delete.setEnabled(e.getFirstIndex() >= 0);
           }
         }
-      });
-      
-      mTable.addKeyListener(new KeyAdapter() {
-        public void keyReleased(KeyEvent e) {
-          if(e.getKeyCode() == KeyEvent.VK_DELETE) {
-            deleteSelectedRows();
-          }
-        }        
       });
       
       FormLayout layout = new FormLayout("default,0dlu:grow,default",
