@@ -39,12 +39,17 @@ public abstract class PluginsProgramFilter implements ProgramFilter {
    * @return The name part that the plugin sets.
    */
   public abstract String getSubName();
-  
+
   /**
-   * @return The name of this filter compoent.
+   * @return The name of this filter component.
    */
-  public final String getName() {    
-    return getPluginAccessOfFilter().getInfo().getName() + ": " + getSubName();
+  public final String getName() {
+    String subName = getSubName();
+    if (subName != null && subName.length() > 0) {
+      return getPluginAccessOfFilter().getInfo().getName() + ": " + subName;
+    } else {
+      return getPluginAccessOfFilter().getInfo().getName();
+    }
   }
   
   /**
