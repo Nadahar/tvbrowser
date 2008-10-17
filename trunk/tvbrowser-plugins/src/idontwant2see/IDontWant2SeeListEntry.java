@@ -72,33 +72,29 @@ public class IDontWant2SeeListEntry {
   }
   
   protected boolean matches(Program p) {
+    boolean matches = false;
+    
     if(mPreSearchPart == null) {
-      boolean matches = mCaseSensitive ? p.getTitle().equals(mSearchText) : p.getTitle().equalsIgnoreCase(mSearchText);
-      
-      if(!mDateWasSet && matches) {
-        mLastMatchedDate = IDontWant2See.getCurrentDate();
-        mDateWasSet = false;
+      // match full title
+      matches = mCaseSensitive ? p.getTitle().equals(mSearchText) : p
+          .getTitle().equalsIgnoreCase(mSearchText);
+    } else {
+      // or match with wild card
+      String preSearchValue = mCaseSensitive ? p.getTitle() : p.getTitle()
+          .toLowerCase();
+      if (preSearchValue.indexOf(mPreSearchPart) != -1) {
+        Matcher match = mSearchPattern.matcher(p.getTitle());
+        matches = match.matches();
       }
-      
-      return matches;
     }
     
-    String preSearchValue = mCaseSensitive ? p.getTitle() : p.getTitle().toLowerCase();
-    
-    if(preSearchValue.indexOf(mPreSearchPart) != -1) {
-      Matcher match = mSearchPattern.matcher(p.getTitle());
-      
-      boolean matches = match.matches();
-      
-      if(!mDateWasSet && matches) {
-        mLastMatchedDate = IDontWant2See.getCurrentDate();
-        mDateWasSet = false;
-      }
-      
-      return matches;
+    // update the "last found" date
+    if (!mDateWasSet && matches) {
+      mLastMatchedDate = IDontWant2See.getCurrentDate();
+      mDateWasSet = false;
     }
     
-    return false;
+    return matches;
   }
   
   protected void resetDateWasSetFlag() {
@@ -114,6 +110,8 @@ public class IDontWant2SeeListEntry {
   }
 
   protected void setValues(String searchText, boolean caseSensitive) {
+    mPreSearchPart = null;
+    mSearchPattern = null;
     mSearchText = searchText;
     mCaseSensitive = caseSensitive;
     
@@ -134,14 +132,6 @@ public class IDontWant2SeeListEntry {
         
         mSearchPattern = createSearchPattern(searchText,caseSensitive);
       }
-      else {
-        mPreSearchPart = null;
-        mSearchPattern = null;
-      }
-    }
-    else {
-      mPreSearchPart = null;
-      mSearchPattern = null;
     }
   }
   
