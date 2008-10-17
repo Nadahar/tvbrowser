@@ -37,7 +37,6 @@ import devplugin.Date;
 public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
   private ArrayList<IDontWant2SeeSettingsTableEntry> mData = new ArrayList<IDontWant2SeeSettingsTableEntry>();
   private String mLastChangedValue;
-  private int mLastChangedRow;
   
   protected IDontWant2SeeSettingsTableModel(ArrayList<IDontWant2SeeListEntry> entries,
       String lastEnteredExclusionString) {
@@ -88,13 +87,7 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
   }
   
   protected boolean isLastChangedRow(int row) {
-    boolean value = mData.get(row).isLastChanged(mLastChangedValue);
-    
-    if(value) {
-      mLastChangedRow = row;
-    }
-    
-    return value;
+    return mData.get(row).isLastChanged(mLastChangedValue);
   }
   
   public String getColumnName(int column) {
@@ -128,17 +121,15 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
   public void setValueAt(Object aValue, int rowIndex, int columnIndex) { 
     IDontWant2SeeSettingsTableEntry entry = mData.get(rowIndex);
     
-    fireTableCellUpdated(mLastChangedRow, 0);
-    fireTableCellUpdated(mLastChangedRow, 1);
-    
     if(columnIndex == 0) {
-      mLastChangedRow = rowIndex;
       mLastChangedValue = (String)aValue;
       entry.setSearchText((String)aValue);
     }
     else {
       entry.setIsCaseSensitive((Boolean)aValue);
     }
+    
+    fireTableDataChanged();
   }
   
   protected ArrayList<IDontWant2SeeListEntry> getChangedList() {
