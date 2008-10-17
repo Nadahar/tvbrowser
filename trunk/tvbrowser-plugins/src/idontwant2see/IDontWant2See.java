@@ -1,6 +1,6 @@
 /*
  * IDontWant2See - Plugin for TV-Browser
- * Copyright (C) 2008 René Mach
+ * Copyright (C) 2008 Renï¿½ Mach
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -80,7 +80,7 @@ import devplugin.Version;
  * A very simple filter plugin to easily get
  * rid of stupid programs in the program table.
  * 
- * @author René Mach
+ * @author Renï¿½ Mach
  */
 public class IDontWant2See extends Plugin {
   protected static final Localizer mLocalizer = Localizer.getLocalizerFor(IDontWant2See.class);
@@ -96,7 +96,7 @@ public class IDontWant2See extends Plugin {
   private Date mLastUsedDate;
   
   public static Version getVersion() {
-    return new Version(0,8,5,false);
+    return new Version(0,8,6,false);
   }
   
   /**
@@ -154,7 +154,7 @@ public class IDontWant2See extends Plugin {
     return new PluginInfo(IDontWant2See.class,
         mLocalizer.msg("name","I don't want to see!"),
         mLocalizer.msg("desc","Removes all programs with an entered search text in the title from the program table."),
-        "René Mach","GPL");
+        "Renï¿½ Mach","GPL");
   }
   
   private int getSearchTextIndexForProgram(Program p) {
@@ -532,24 +532,7 @@ public class IDontWant2See extends Plugin {
       delete.setEnabled(false);
       delete.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          int selectedIndex = mTable.getSelectedRow();
-          int[] selection = mTable.getSelectedRows();
-          
-          for(int i = selection.length-1; i >= 0; i--) {
-            mTableModel.deleteRow(selection[i]);
-          }
-          
-          if ((selectedIndex > 0) && (selectedIndex<mTable.getRowCount())) {
-            mTable.setRowSelectionInterval(selectedIndex,selectedIndex);
-          }
-          else if(mTable.getRowCount() > 0) {
-            if(mTable.getRowCount() - selectedIndex > 0) {
-              mTable.setRowSelectionInterval(0,0);
-            }
-            else {
-              mTable.setRowSelectionInterval(mTable.getRowCount()-1,mTable.getRowCount()-1);
-            }
-          }
+          deleteSelectedRows();
         }
       });
       
@@ -559,6 +542,14 @@ public class IDontWant2See extends Plugin {
             delete.setEnabled(e.getFirstIndex() >= 0);
           }
         }
+      });
+      
+      mTable.addKeyListener(new KeyAdapter() {
+        public void keyReleased(KeyEvent e) {
+          if(e.getKeyCode() == KeyEvent.VK_DELETE) {
+            deleteSelectedRows();
+          }
+        }        
       });
       
       FormLayout layout = new FormLayout("default,0dlu:grow,default",
@@ -571,6 +562,27 @@ public class IDontWant2See extends Plugin {
       pb.add(delete, cc.xy(3,3));
       pb.add(UiUtilities.createHelpTextArea(mLocalizer.msg("settings.help",
       "To edit a value double click a cell. You can use wildcard * to search for any text.")), cc.xyw(1,5,3));
+    }
+    
+    private void deleteSelectedRows() {
+      int selectedIndex = mTable.getSelectedRow();
+      int[] selection = mTable.getSelectedRows();
+      
+      for(int i = selection.length-1; i >= 0; i--) {
+        mTableModel.deleteRow(selection[i]);
+      }
+      
+      if ((selectedIndex > 0) && (selectedIndex<mTable.getRowCount())) {
+        mTable.setRowSelectionInterval(selectedIndex,selectedIndex);
+      }
+      else if(mTable.getRowCount() > 0) {
+        if(mTable.getRowCount() - selectedIndex > 0) {
+          mTable.setRowSelectionInterval(0,0);
+        }
+        else {
+          mTable.setRowSelectionInterval(mTable.getRowCount()-1,mTable.getRowCount()-1);
+        }
+      }
     }
     
     protected void saveSettings() {
