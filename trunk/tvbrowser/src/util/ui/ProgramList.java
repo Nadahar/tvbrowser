@@ -25,7 +25,6 @@
  */
 package util.ui;
 
-import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Vector;
@@ -44,7 +43,6 @@ import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateListener;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
-
 import devplugin.ContextMenuIf;
 import devplugin.Plugin;
 import devplugin.PluginManager;
@@ -262,6 +260,9 @@ public class ProgramList extends JList implements ChangeListener,
     addMouseListener(new MouseAdapter() {
       private Thread mLeftSingleClickThread;
       private boolean mPerformingSingleClick = false;
+      private static final byte LEFT_SINGLE_CLICK = 1;
+      private static final byte LEFT_DOUBLE_CLICK = 2;
+      private static final byte MIDDLE_CLICK = 3;
       
       public void mousePressed(MouseEvent e) {
         if (e.isPopupTrigger()) {
@@ -276,8 +277,6 @@ public class ProgramList extends JList implements ChangeListener,
       }
 
       public void mouseClicked(final MouseEvent e) {
-        final PluginManager mng = Plugin.getPluginManager();
-        final Point point = e.getPoint();
         if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && e.getModifiersEx() == 0) {
           mLeftSingleClickThread = new Thread() {
             public void run() {
@@ -286,13 +285,8 @@ public class ProgramList extends JList implements ChangeListener,
                 Thread.sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
                 mPerformingSingleClick = true;
                 
-                int inx = locationToIndex(point);
-                if (inx >= 0) {
-                  Program prog = (Program) ProgramList.this.getModel()
-                      .getElementAt(inx);
-  
-                  mng.handleProgramSingleClick(prog, caller);
-                }
+                handleClick(LEFT_SINGLE_CLICK, e);
+                
                 mPerformingSingleClick = false;
               } catch (InterruptedException e) {
                 // ignore
@@ -308,22 +302,30 @@ public class ProgramList extends JList implements ChangeListener,
           }
           
           if(!mPerformingSingleClick) {
-            int inx = locationToIndex(e.getPoint());
-            if (inx >= 0) {
-              Program prog = (Program) ProgramList.this.getModel()
-                  .getElementAt(inx);
-    
-              mng.handleProgramDoubleClick(prog, caller);
-            }
+            handleClick(LEFT_DOUBLE_CLICK, e);
           }
         }
         else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
-          int inx = locationToIndex(e.getPoint());
-          if (inx >= 0) {
-            Program prog = (Program) ProgramList.this.getModel()
-                .getElementAt(inx);
-  
-            mng.handleProgramMiddleClick(prog, caller);
+          handleClick(MIDDLE_CLICK, e);
+        }
+      }
+      
+      private void handleClick(byte type, MouseEvent e) {
+        int inx = locationToIndex(e.getPoint());
+        if (inx >= 0) {
+          Object prog = ProgramList.this.getModel()
+          .getElementAt(inx);
+
+          if(prog instanceof Program) {
+            if(type == LEFT_SINGLE_CLICK) {
+              Plugin.getPluginManager().handleProgramSingleClick((Program)prog, caller);
+            }
+            else if(type == LEFT_DOUBLE_CLICK) {
+              Plugin.getPluginManager().handleProgramDoubleClick((Program)prog, caller);
+            }
+            else if(type == MIDDLE_CLICK) {
+              Plugin.getPluginManager().handleProgramMiddleClick((Program)prog, caller);
+            }
           }
         }
       }
@@ -431,60 +433,6 @@ public class ProgramList extends JList implements ChangeListener,
   
   /* Deprecated constructors from here */
   
-  /**
-   * Creates the JList and adds the default MouseListeners (PopUpBox)
-   * 
-   * @param programArr
-   *          Array of Programs to show
-   * @param showOnlyDateAndTitle
-   *          If this panel should only show date time and title.
-   * 
-   * @since 2.2.1
-   * @deprecated Since 2.2.2 Use
-   *             {@link #ProgramList(Vector, ProgramPanelSettings)} instead.
-   */
-  public ProgramList(Vector<Program> programArr, boolean showOnlyDateAndTitle) {
-    this(programArr, new ProgramPanelSettings(
-        ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, showOnlyDateAndTitle,
-        true, 10));
-  }
-
-  /**
-   * Creates the JList and adds the default MouseListeners (PopUpBox)
-   * 
-   * @param programArr
-   *          Array of Programs to show
-   * @param showOnlyDateAndTitle
-   *          If this panel should only show date time and title.
-   * 
-   * @since 2.2.1
-   * @deprecated Since 2.2.2 Use
-   *             {@link #ProgramList(Program[], ProgramPanelSettings)} instead.
-   */
-  public ProgramList(Program[] programArr, boolean showOnlyDateAndTitle) {
-    this(programArr, new ProgramPanelSettings(
-        ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, showOnlyDateAndTitle,
-        true, 10));
-  }
-
-  /**
-   * Creates the JList and adds the default MouseListeners (PopUpBox)
-   * 
-   * @param programs
-   *          Model with Programs to show
-   * @param showOnlyDateAndTitle
-   *          If this panel should only show date time and title.
-   * 
-   * @since 2.2.1
-   * @deprecated Since 2.2.2 Use
-   *             {@link #ProgramList(ListModel, ProgramPanelSettings)} instead.
-   */
-  public ProgramList(ListModel programs, boolean showOnlyDateAndTitle) {
-    this(programs, new ProgramPanelSettings(
-        ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, showOnlyDateAndTitle,
-        true, 10));
-  }
-
   /**
    * Creates the JList and adds the default MouseListeners (PopUpBox)
    * 

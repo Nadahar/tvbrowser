@@ -26,9 +26,6 @@
 
 package util.io;
 
-import tvbrowser.core.Settings;
-import util.ui.TimeFormatter;
-
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
@@ -55,6 +52,9 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import org.apache.commons.codec.binary.Base64;
+
+import tvbrowser.core.Settings;
+import util.ui.TimeFormatter;
 
 /**
  * A utilities class for I/O stuff. It constists of serveral static
@@ -729,30 +729,7 @@ public class IOUtilities {
     return TIME_FORMATTER.formatTime(hours, minutes);
   }
   
-  /**
-   * Gets the number of days since 1st Jan 1970.
-   * <p>
-   * This method does not create any objects.
-   * 
-   * @deprecated
-   */
-  public static int getDaysSince1970() {
-    synchronized(CALENDAR) {
-      // System.currentTimeMillis() deliveres the GMT, so we have to add the
-      // time zone offset.
-      int zoneOffset = CALENDAR.get(Calendar.ZONE_OFFSET);
-      int daylight = CALENDAR.get(Calendar.DST_OFFSET);
-      long millis = System.currentTimeMillis() + zoneOffset + daylight;
-      return (int) (millis / 1000L / 60L / 60L / 24L);
-      
-      
-      
-	 //return (int)(System.currentTimeMillis()/86400000L); 
-    }
-  }
-
-  
-     
+    
   /**
    * Encodes the specified String using a simple XOR encryption.
    *

@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import tvbrowser.core.search.regexsearch.RegexSearcher;
 import util.exc.TvBrowserException;
 import devplugin.Channel;
 import devplugin.Plugin;
@@ -44,23 +43,6 @@ import devplugin.ProgramSearcher;
  * @author Til Schneider, www.murfman.de
  */
 public class SearchFormSettings {
-
-  /**
-   * Specifies, that the search term has to match exactly.
-   * @deprecated Since 1.1. Use {@link PluginManager#SEARCHER_TYPE_EXACTLY} instead.
-   */
-  public static final int MATCH_EXACTLY = PluginManager.SEARCHER_TYPE_EXACTLY;
-  /**
-   * Specifies, that the search term is a keyword (= substring).
-   * @deprecated Since 1.1. Use {@link PluginManager#SEARCHER_TYPE_KEYWORD} instead.
-   */
-  public static final int MATCH_KEYWORD = PluginManager.SEARCHER_TYPE_KEYWORD;
-  /**
-   * Specifies, that the search term is a regular expression.
-   * @deprecated Since 1.1. Use {@link PluginManager#SEARCHER_TYPE_REGULAR_EXPRESSION} instead.
-   */
-  public static final int MATCH_REGULAR_EXPRESSION = PluginManager.SEARCHER_TYPE_REGULAR_EXPRESSION;
-
 
   /** Specifies, that only titles should be searched. */
   public static final int SEARCH_IN_TITLE = 1;
@@ -241,25 +223,6 @@ public class SearchFormSettings {
   }
 
 
-  /**
-   * Gets the search text as regular expression.
-   * 
-   * @return The search text as regular expression.
-   * 
-   * @deprecated Since 1.1. Use {@link #createSearcher()} instead.
-   */
-  public String getSearchTextAsRegex() {
-    boolean matchExactly = (mSearcherType == PluginManager.SEARCHER_TYPE_EXACTLY);
-    boolean matchKeyword = (mSearcherType == PluginManager.SEARCHER_TYPE_KEYWORD);
-    
-    if (matchExactly || matchKeyword) {
-      return RegexSearcher.searchTextToRegex(mSearchText, matchKeyword);
-    } else {
-      // The search text already is a regex
-      return mSearchText;
-    }
-  }
-
 
   /**
    * Gets the field types to search for.
@@ -350,32 +313,6 @@ public class SearchFormSettings {
   }
 
   
-
-  /**
-   * Gets what how the search text has to match.
-   * 
-   * @return How the search text has to match.
-   * 
-   * @deprecated Since 1.1. Use {@link #getSearcherType()} instead.
-   */
-  public int getMatch() {
-    return getSearcherType();
-  }
-
-
-  /**
-   * Sets what how the search text has to match.
-   * 
-   * @param match How the search text has to match.
-   * 
-   * @deprecated Since 1.1. Use {@link #getSearcherType()} instead.
-   */
-  public void setMatch(int match) {
-    setSearcherType(match);
-    mSearcher = null;
-  }
-
-
   /**
    * Gets whether to search case sensitive.
    * 

@@ -26,14 +26,15 @@
 
 package devplugin;
 
+import java.util.Iterator;
+
+import javax.swing.ImageIcon;
+import javax.swing.JPopupMenu;
+
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvdataservice.TvDataService;
 import util.exc.TvBrowserException;
 import util.program.AbstractPluginProgramFormating;
-
-import javax.swing.ImageIcon;
-import javax.swing.JPopupMenu;
-import java.util.Iterator;
 
 /**
  * The PluginManager provides some useful methods for a plugin.
@@ -102,30 +103,6 @@ public interface PluginManager {
                           int nrDays)
     throws TvBrowserException;
 
-  /**
-   * Searches the TV data base for programs that match a regular expression.
-   *
-   * @param regex The regular expression programs must match to.
-   * @param caseSensitive Should the search be case sensitive?
-   * @param fieldArr The fields to search in
-   * @param startDate The date to start the search.
-   * @param nrDays The number of days to include after the start date. If
-   *        negative the days before the start date are used.
-   * @param channels The channels to search in.
-   * @param sortByStartTime Should the results be sorted by the start time?
-   *        If not, the results will be grouped by date and channel and the
-   *        search will be faster.
-   * @return The matching programs.
-   *
-   * @deprecated Since 1.1. Use {@link #createProgramSearcher(int, String, boolean)}
-   *             instead.
-   * @throws util.exc.TvBrowserException Error while searching
-   */
-  public Program[] search(String regex, boolean caseSensitive,
-                          ProgramFieldType[] fieldArr, Date startDate, int nrDays, Channel[] channels,
-                          boolean sortByStartTime)
-    throws TvBrowserException;
-
 
   /**
    * Creates a ProgramSearcher.
@@ -168,18 +145,6 @@ public interface PluginManager {
    *         exists or if the plugin is not activated.
    */
   public PluginAccess getActivatedPluginForId(String pluginId);
-
-  /**
-   * Returns a list of all installed Plugins.
-   * <p>
-   * This method always returns an empty array! Use
-   * {@link #getActivatedPlugins()} instead!
-   *
-   * @return An empty array!
-   *
-   * @deprecated Since 1.1. Use {@link #getActivatedPlugins()} instead.
-   */
-  public Plugin[] getInstalledPlugins();
 
   /**
    * Gets a TvDataService for a class name.
