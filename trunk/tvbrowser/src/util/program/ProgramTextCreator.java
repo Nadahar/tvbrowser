@@ -165,7 +165,39 @@ public class ProgramTextCreator {
    */
   public static String createInfoText(Program prog, ExtendedHTMLDocument doc, 
       Object[] fieldArr, Font tFont, Font bFont, ProgramPanelSettings settings, 
-      boolean showHelpLinks, int zoom, boolean showPluginIcons) {try {
+      boolean showHelpLinks, int zoom, boolean showPluginIcons) {
+    return createInfoText(prog, doc, fieldArr, tFont, bFont, settings,
+        showHelpLinks, zoom, showPluginIcons, true);
+  }
+
+  /**
+   * 
+   * @param prog
+   *          The Program to show
+   * @param doc
+   *          The HTMLDocument.
+   * @param fieldArr
+   *          The object array with the field types.
+   * @param tFont
+   *          The title Font.
+   * @param bFont
+   *          The body Font.
+   * @param settings
+   *          Settings of the ProgramPanel
+   * @param showHelpLinks
+   *          Show the Help-Links (Quality of Data, ShowView)
+   * @param zoom
+   *          The zoom value for the picture.
+   * @param showPluginIcons
+   *          If the plugin icons should be shown.
+   * @return The HTML String.
+   * @since 3.0
+   */
+  public static String createInfoText(Program prog, ExtendedHTMLDocument doc,
+      Object[] fieldArr, Font tFont, Font bFont, ProgramPanelSettings settings,
+      boolean showHelpLinks, int zoom, boolean showPluginIcons,
+      boolean showPersonLinks) {
+    try {
     // NOTE: All field types are included until type 25 (REPETITION_ON_TYPE)
     StringBuffer buffer = new StringBuffer();
 
@@ -487,10 +519,11 @@ public class ProgramTextCreator {
           if (prog.getDescription() != null
               && prog.getDescription().trim().length() > 0) {
             addEntry(doc, buffer, prog, ProgramFieldType.DESCRIPTION_TYPE, true,
-                showHelpLinks);
+                showHelpLinks, showPersonLinks);
           } else {
             addEntry(doc, buffer, prog, ProgramFieldType.SHORT_DESCRIPTION_TYPE,
-                true, showHelpLinks);
+                true, showHelpLinks,
+                  showPersonLinks);
           }
         } else if (type == ProgramFieldType.INFO_TYPE) {
           int info = prog.getInfo();
@@ -535,7 +568,7 @@ public class ProgramTextCreator {
           }
         } else if (type == ProgramFieldType.URL_TYPE) {
           addEntry(doc, buffer, prog, ProgramFieldType.URL_TYPE, true,
-              showHelpLinks);
+              showHelpLinks, showPersonLinks);
         } else if (type == ProgramFieldType.ACTOR_LIST_TYPE) {
           ArrayList<String> knownNames = new ArrayList<String>();
           String[] recognizedActors = ProgramUtilities.getActorNames(prog);
@@ -561,12 +594,13 @@ public class ProgramTextCreator {
                   parts[1] = lists[1].get(i);
                 }
                 int actorIndex = 0;
-                if (knownNames.contains(parts[0])) {
-                  parts[0] = addSearchLink(parts[0]);
-                }
-                else if (knownNames.contains(parts[1])) {
-                  parts[1] = addSearchLink(parts[1]);
-                  actorIndex = 1;
+                if (showPersonLinks) {
+                    if (knownNames.contains(parts[0])) {
+                      parts[0] = addSearchLink(parts[0]);
+                    } else if (knownNames.contains(parts[1])) {
+                      parts[1] = addSearchLink(parts[1]);
+                      actorIndex = 1;
+                    }
                 }
                 buffer.append("<tr><td valign=\"top\">&#8226;&nbsp;</td><td valign=\"top\">");
                 buffer.append(parts[actorIndex]);
@@ -581,7 +615,11 @@ public class ProgramTextCreator {
                    if (i+1 < lists[0].size() && lists[1].size() == 0) {
                     i++;
                     buffer.append("<td valign=\"top\">&#8226;&nbsp;</td><td valign=\"top\">");
-                    buffer.append(addSearchLink(lists[0].get(i)));
+                    if (showPersonLinks) {
+                        buffer.append(addSearchLink(lists[0].get(i)));
+                      } else {
+                        buffer.append(lists[0].get(i));
+                      }
                     buffer.append("</td>");
                   }
                 }
@@ -592,12 +630,13 @@ public class ProgramTextCreator {
               addSeparator(doc, buffer);
             }
             else {
-              addEntry(doc, buffer, prog, type, showHelpLinks);
+              addEntry(doc, buffer, prog, type, showHelpLinks,
+                    showPersonLinks);
             }
           }
         }
         else {
-          addEntry(doc, buffer, prog, type, showHelpLinks);
+          addEntry(doc, buffer, prog, type, showHelpLinks, showPersonLinks);
         }
       }
     }
@@ -721,13 +760,15 @@ public class ProgramTextCreator {
   }
 
   private static void addEntry(ExtendedHTMLDocument doc, StringBuffer buffer,
-      Program prog, ProgramFieldType fieldType, boolean showHelpLinks) {
-    addEntry(doc, buffer, prog, fieldType, false, showHelpLinks);
+      Program prog, ProgramFieldType fieldType, boolean showHelpLinks,
+      boolean showPersonLinks) {
+    addEntry(doc, buffer, prog, fieldType, false, showHelpLinks,
+        showPersonLinks);
   }
 
   private static void addEntry(ExtendedHTMLDocument doc, StringBuffer buffer,
       Program prog, ProgramFieldType fieldType, boolean createLinks,
-      boolean showHelpLinks) {
+      boolean showHelpLinks, boolean showPersonLinks) {
 
     String text = null;
     String name = fieldType.getLocalizedName();
@@ -833,19 +874,21 @@ public class ProgramTextCreator {
         || ProgramFieldType.MODERATION_TYPE == fieldType
         || ProgramFieldType.ADDITIONAL_PERSONS_TYPE == fieldType
         || ProgramFieldType.PRODUCER_TYPE == fieldType) {
-      String[] persons = splitPersons(text);
-      for (int i = 0; i < persons.length; i++) {
-        // a name shall not have more name parts
-        if (persons[i].trim().split(" ").length <= 3) {
-          String link;
-          if (persons[i].contains("(")) {
-            String topic = persons[i].substring(0, persons[i].indexOf("("))
-                .trim();
-            link = addSearchLink(topic, persons[i]);
-          } else {
-            link = addSearchLink(persons[i]);
+      if (showPersonLinks) {
+        String[] persons = splitPersons(text);
+        for (int i = 0; i < persons.length; i++) {
+          // a name shall not have more name parts
+          if (persons[i].trim().split(" ").length <= 3) {
+            String link;
+            if (persons[i].contains("(")) {
+              String topic = persons[i].substring(0, persons[i].indexOf("("))
+                  .trim();
+              link = addSearchLink(topic, persons[i]);
+            } else {
+              link = addSearchLink(persons[i]);
+            }
+            text = text.replace(persons[i], link);
           }
-          text = text.replace(persons[i], link);
         }
       }
       buffer.append(text);

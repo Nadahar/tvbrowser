@@ -86,6 +86,7 @@ import tvbrowser.ui.DontShowAgainMessageBox;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.browserlauncher.Launch;
 import util.program.ProgramTextCreator;
+import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
 import util.ui.SearchFormSettings;
 import util.ui.SearchHelper;
@@ -165,16 +166,28 @@ public class ProgramInfoDialog {
   private void setProgram(Program program, boolean showSettings) {
 	  mProgram = program;
 	  addPluginActions(false);
-	  mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc,/* new ProgramFieldType[] {ProgramFieldType.DESCRIPTION_TYPE}*/ProgramInfo.getInstance().getOrder(), getFont(true), getFont(false), ProgramInfo.getInstance().getPictureSettings(), true, ProgramInfo.getInstance().getProperty("zoom","false").compareTo("true") == 0 ? Integer.parseInt(ProgramInfo.getInstance().getProperty("zoomValue","100")):100));
-      SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            mInfoEP.setCaretPosition(0);
-            if (mFindAsYouType.getSearchBar().isVisible()) {
-              mFindAsYouType.next();
-            }
-          }
-      });
+	  setProgramText();
+	  SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        mInfoEP.setCaretPosition(0);
+        if (mFindAsYouType.getSearchBar().isVisible()) {
+          mFindAsYouType.next();
+        }
+      }
+    });
     mConfigBtn.setVisible(showSettings);
+  }
+
+  private void setProgramText() {
+    mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc,
+        ProgramInfo.getInstance().getOrder(), getFont(true), getFont(false),
+        new ProgramPanelSettings(
+            ProgramInfo.getInstance().getPictureSettings(), false), true,
+        ProgramInfo.getInstance().getProperty("zoom", "false")
+            .compareTo("true") == 0 ? Integer.parseInt(ProgramInfo
+            .getInstance().getProperty("zoomValue", "100")) : 100, true,
+        ProgramInfo.getInstance().getProperty("enableSearch", "true")
+            .equalsIgnoreCase("true")));
   }
   
   private void init(Dimension pluginsSize, boolean showSettings) {
@@ -669,7 +682,7 @@ public class ProgramInfoDialog {
     }
 
     if (rebuild) {
-      mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc, ProgramInfo.getInstance().getOrder(), getFont(true), getFont(false), ProgramInfo.getInstance().getPictureSettings(), true, ProgramInfo.getInstance().getProperty("zoom","false").compareTo("true") == 0 ? Integer.parseInt(ProgramInfo.getInstance().getProperty("zoomValue","100")):100));
+      setProgramText();
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
           mInfoEP.setCaretPosition(0);
