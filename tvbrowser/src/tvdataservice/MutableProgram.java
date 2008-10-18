@@ -111,37 +111,23 @@ public class MutableProgram implements Program {
   
   /** Contains the current mark priority of this program */
   private int mMarkPriority = Program.NO_MARK_PRIORITY;
-  
+
   /**
    * Creates a new instance of MutableProgram.
    * <p>
-   * The parameters channel, date, hours and minutes build the ID. That's why they
-   * are not mutable.
-   *
-   * @param channel The channel object of this program.
-   * @param localDate The date of this program.
-   * @param localHours The hour-component of the start time of the program.
-   * @param localMinutes The minute-component of the start time of the program.
+   * The parameters channel, date, hours and minutes build the ID. That's why
+   * they are not mutable.
    * 
-   * @deprecated Since 2.2.2. Use {@link #MutableProgram(Channel, devplugin.Date, int, int, boolean)} instead.
-   */
-  public MutableProgram(Channel channel, devplugin.Date localDate,
-    int localHours, int localMinutes)
-  {
-    this (channel, localDate, localHours, localMinutes, false);
-  }
-  
-  /**
-   * Creates a new instance of MutableProgram.
-   * <p>
-   * The parameters channel, date, hours and minutes build the ID. That's why they
-   * are not mutable.
-   *
-   * @param channel The channel object of this program.
-   * @param localDate The date of this program.
-   * @param localHours The hour-component of the start time of the program.
-   * @param localMinutes The minute-component of the start time of the program.
-   * @param isLoading If the program is curently being created.
+   * @param channel
+   *          The channel object of this program.
+   * @param localDate
+   *          The date of this program.
+   * @param localHours
+   *          The hour-component of the start time of the program.
+   * @param localMinutes
+   *          The minute-component of the start time of the program.
+   * @param isLoading
+   *          If the program is currently being created.
    * 
    * @see #setProgramLoadingIsComplete()
    */

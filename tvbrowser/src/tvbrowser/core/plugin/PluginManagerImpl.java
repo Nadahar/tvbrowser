@@ -254,21 +254,28 @@ public class PluginManagerImpl implements PluginManager {
     return channelDayProgram.getPrograms();
   }
 
-
   /**
    * Searches the TV data for programs which match a regular expression.
-   *
-   * @param regex The regular expression programs must match to.
-   * @param inTitle Should be searched in the title?
-   * @param inText Should be searched in the desription?
-   * @param caseSensitive Should the search be case sensitive?
-   * @param channels The channels to search in.
-   * @param startDate The date to start the search.
-   * @param nrDays The number of days to include after the start date. If
-   *        negative the days before the start date are used.
-   * @throws TvBrowserException If there is a syntax error in the regular expression.
+   * 
+   * @param regex
+   *          The regular expression programs must match to.
+   * @param inTitle
+   *          Should be searched in the title?
+   * @param inText
+   *          Should be searched in the description?
+   * @param caseSensitive
+   *          Should the search be case sensitive?
+   * @param channels
+   *          The channels to search in.
+   * @param startDate
+   *          The date to start the search.
+   * @param nrDays
+   *          The number of days to include after the start date. If negative
+   *          the days before the start date are used.
+   * @throws TvBrowserException
+   *           If there is a syntax error in the regular expression.
    * @return The matching programs.
-   *
+   * 
    * @deprecated Use {@link #createProgramSearcher(int, String, boolean)}
    *             instead.
    */
@@ -297,37 +304,10 @@ public class PluginManagerImpl implements PluginManager {
       fieldArr = new ProgramFieldType[0];
     }
 
-    return search(regex, caseSensitive, fieldArr, startDate, nrDays, channels, false);
-  }
+    ProgramSearcher searcher = createProgramSearcher(
+        SEARCHER_TYPE_REGULAR_EXPRESSION, regex, caseSensitive);
 
-
-  /**
-   * Searches the TV data base for programs that match a regular expression.
-   *
-   * @param regex The regular expression programs must match to.
-   * @param caseSensitive Should the search be case sensitive?
-   * @param fieldArr The fields to search in
-   * @param startDate The date to start the search.
-   * @param nrDays The number of days to include after the start date. If
-   *        negative the days before the start date are used.
-   * @param channels The channels to search in.
-   * @param sortByStartTime Should the results be sorted by the start time?
-   *        If not, the results will be grouped by date and channel and the
-   *        search will be faster.
-   * @return The matching programs.
-   * @throws TvBrowserException If there is a syntax error in the regular expression.
-   *
-   * @deprecated Since 1.1. Use {@link #createProgramSearcher(int, String, boolean)}
-   *             instead.
-   */
-  public Program[] search(String regex, boolean caseSensitive,
-    ProgramFieldType[] fieldArr, devplugin.Date startDate, int nrDays,
-    Channel[] channels, boolean sortByStartTime) throws TvBrowserException
-  {
-    ProgramSearcher searcher = createProgramSearcher(SEARCHER_TYPE_REGULAR_EXPRESSION,
-        regex, caseSensitive);
-
-    return searcher.search(fieldArr, startDate, nrDays, channels, sortByStartTime);
+    return searcher.search(fieldArr, startDate, nrDays, channels, false);
   }
 
 
@@ -400,21 +380,6 @@ public class PluginManagerImpl implements PluginManager {
    */
   public PluginAccess getActivatedPluginForId(String pluginId) {
     return PluginProxyManager.getInstance().getActivatedPluginForId(pluginId);
-  }
-
-
-  /**
-   * Returns a list of all installed Plugins.
-   * <p>
-   * This method always returns an empty array! Use
-   * {@link #getActivatedPlugins()} instead!
-   *
-   * @return An empty array!
-   *
-   * @deprecated Since 1.1. Use {@link #getActivatedPlugins()} instead.
-   */
-  public Plugin[] getInstalledPlugins() {
-    return new Plugin[0];
   }
 
 

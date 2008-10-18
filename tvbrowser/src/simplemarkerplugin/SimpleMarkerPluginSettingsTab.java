@@ -260,21 +260,25 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     }
     if (e.getActionCommand().equals(SimpleMarkerPlugin.mLocalizer.msg("settings.delete",
     "Delete selected list"))) {
-      int selectedIndex = mListTable.getSelectedRow();
-      int[] rows = mListTable.getSelectedRows();
-      for (int i = rows.length - 1; i >= 0; i--) {
-        MarkListItem item = ((MarkListItem) mListTable.getValueAt(rows[i], 0));
-        item.setIsToDelete();
-        mToDeleteItems.add(item);
-
-        mModel.removeRow(rows[i]);
-      }
-      if ((selectedIndex > 0) && (selectedIndex<mListTable.getRowCount())) {
-    	  mListTable.setRowSelectionInterval(selectedIndex,selectedIndex);
-      }
-
-      mDelete.setEnabled(mListTable.getSelectedRowCount() > 0);
+      deleteSelectedRows();
     }
+  }
+  
+  private void deleteSelectedRows() {
+    int selectedIndex = mListTable.getSelectedRow();
+    int[] rows = mListTable.getSelectedRows();
+    for (int i = rows.length - 1; i >= 0; i--) {
+      MarkListItem item = ((MarkListItem) mListTable.getValueAt(rows[i], 0));
+      item.setIsToDelete();
+      mToDeleteItems.add(item);
+
+      mModel.removeRow(rows[i]);
+    }
+    if ((selectedIndex > 0) && (selectedIndex<mListTable.getRowCount())) {
+      mListTable.setRowSelectionInterval(selectedIndex,selectedIndex);
+    }
+
+    mDelete.setEnabled(mListTable.getSelectedRowCount() > 0);
   }
 
   public void keyPressed(KeyEvent e) {
@@ -283,8 +287,13 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     if (mListTable.getSelectionModel().getMinSelectionIndex() > 0)
       mDelete.setEnabled(true);
     
-    if(e.getKeyCode() == KeyEvent.VK_F2 && mListTable.getSelectedColumn() == 1)
+    if(e.getKeyCode() == KeyEvent.VK_DELETE) {
+      deleteSelectedRows();
+      e.consume();
+    }
+    if(e.getKeyCode() == KeyEvent.VK_F2 && mListTable.getSelectedColumn() == 1) {
       chooseIcon(mListTable.getSelectedRow());
+    }
   }
 
   public void keyReleased(KeyEvent e) {}

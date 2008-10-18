@@ -99,23 +99,6 @@ public class Date implements Comparable<Date> {
   }
 
   /**
-   * Attention: DO NOT USE THIS!
-   * Under Os/2 it has some problems with calculating the real Date!
-   * 
-   * @deprecated
-   */
-  public Date(int daysSince1970) {
-
-    long l = (long) daysSince1970 * 24 * 60 * 60 * 1000;
-    java.util.Date d = new java.util.Date(l);
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(d);
-    mYear = cal.get(Calendar.YEAR);
-    mMonth = cal.get(Calendar.MONTH) + 1;
-    mDay = cal.get(Calendar.DAY_OF_MONTH);
-  }
-
-  /**
    * @param d The date to check for days since.
    * @return The days since the given date.
    * @since 0.9.7.4 This method may not return the exactly number of days since
@@ -345,18 +328,6 @@ public class Date implements Comparable<Date> {
 
   public String toString() {
     return getFormattedString(false,false);
-  }
-
-  /**
-   * @deprecated
-   */
-  public int getDaysSince1970() {
-    Calendar cal = getCalendar();
-    int zoneOffset = cal.get(Calendar.ZONE_OFFSET);
-    int daylight = cal.get(Calendar.DST_OFFSET);
-    java.util.Date utilDate = cal.getTime();
-    long millis = utilDate.getTime() + zoneOffset + daylight;
-    return (int) (millis / 1000L / 60L / 60L / 24L);
   }
 
   public Date addDays(int days) {

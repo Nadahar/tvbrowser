@@ -40,7 +40,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import util.settings.ProgramPanelSettings;
-
 import devplugin.Date;
 import devplugin.Program;
 
@@ -67,17 +66,6 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
    */
   public ProgramListCellRenderer() {
     this(new ProgramPanelSettings(ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, false, true, 10)); 
-  }
-  
-  /**
-   * Creates a new instance of ProgramListCellRenderer
-   * @param showOnlyDateAndTitle If the programs should only show date and title.
-   * 
-   * @since 2.2.1
-   * @deprecated Since 2.2.2 User {@link #ProgramListCellRenderer(ProgramPanelSettings)} instead.
-   */
-  public ProgramListCellRenderer(boolean showOnlyDateAndTitle) {
-    this(new ProgramPanelSettings(ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, showOnlyDateAndTitle, true, 10));
   }
   
   /**

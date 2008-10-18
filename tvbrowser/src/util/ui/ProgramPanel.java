@@ -1063,18 +1063,6 @@ private static Font getDynamicFontSize(Font font, int offset) {
   /**
    * Creates a new instance of ProgramPanel.
    * 
-   * @param showOnlyDateAndTitle
-   *          If this panel should only show date time and title.
-   * @since 2.2.1
-   * @deprecated Since 2.2.2 Use {@link #ProgramPanel(ProgramPanelSettings)} instead.
-   */
-  public ProgramPanel(boolean showOnlyDateAndTitle) {
-    this(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), showOnlyDateAndTitle, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPictureDuration.getInt(), Settings.propPicturePluginIds.getStringArray()));
-  }
-  
-  /**
-   * Creates a new instance of ProgramPanel.
-   * 
    * @param prog
    *          The program to show in this panel.
    * @param axis
@@ -1087,41 +1075,6 @@ private static Font getDynamicFontSize(Font font, int offset) {
     setProgram(prog);
   }
 
-  /**
-   * Creates a new instance of ProgramPanel.
-   * 
-   * @param prog
-   *          The program to show in this panel.
-   * @param showOnlyDateAndTitle
-   *          If this panel should only show date time and title.
-   * 
-   * @since 2.2.1
-   * @deprecated Since 2.2.2 Use {@link #ProgramPanel(Program, ProgramPanelSettings)} instead.
-   */
-  public ProgramPanel(Program prog, boolean showOnlyDateAndTitle) {
-    this(showOnlyDateAndTitle);
-    setProgram(prog);
-  }
-  
-  /**
-   * Creates a new instance of ProgramPanel.
-   * 
-   * @param prog
-   *          The program to show in this panel.
-   * @param axis
-   *          Orientation of ProgressBar (X_AXIS/Y_AXIS)
-   * @param showOnlyDateAndTitle
-   *          If this panel should only show date time and title.
-   * 
-   * @since 2.2.1
-   * @deprecated Since 2.2.2 Use {@link #ProgramPanel(Program, int, ProgramPanelSettings)} instead.
-   */
-  public ProgramPanel(Program prog, int axis, boolean showOnlyDateAndTitle) {
-    this(showOnlyDateAndTitle);
-    mAxis = axis;
-    setProgram(prog);
-  }
-  
   /**
    * Creates a new instance of ProgramPanel.
    * 
