@@ -24,6 +24,8 @@
  */
 package captureplugin.drivers.defaultdriver.configpanels;
 
+import java.awt.Component;
+
 import captureplugin.drivers.defaultdriver.DeviceConfig;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -31,12 +33,14 @@ import com.jgoodies.forms.layout.FormLayout;
 import util.ui.ChannelTableCellRenderer;
 import util.ui.Localizer;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 
 /**
@@ -74,7 +78,26 @@ public class ChannelPanel extends JPanel {
       mChannelTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       mChannelTable.getTableHeader().setReorderingAllowed(false);
       mChannelTable.getColumnModel().getColumn(0).setCellRenderer(new ChannelTableCellRenderer());
-        
+      mChannelTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+          JPanel background = new JPanel(new FormLayout("default:grow","fill:default:grow"));
+          JLabel label = new JLabel(value.toString());
+          label.setOpaque(false);
+          
+          if(isSelected) {
+            background.setBackground(table.getSelectionBackground());
+            label.setForeground(table.getSelectionForeground());
+          }
+          else {
+            background.setBackground(table.getBackground());
+          }
+          
+          background.add(label, new CellConstraints().xy(1,1));
+          
+          return background;
+        }
+      });
+      
       JScrollPane sp = new JScrollPane(mChannelTable);
 
       addAncestorListener(new AncestorListener() {

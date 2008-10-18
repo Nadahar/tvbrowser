@@ -24,18 +24,22 @@
  */
 package captureplugin.drivers.defaultdriver.configpanels;
 
+import java.awt.Component;
+
 import captureplugin.drivers.defaultdriver.DeviceConfig;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import util.ui.Localizer;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 
 /**
@@ -70,12 +74,35 @@ public class VariablePanel extends JPanel {
     CellConstraints cc = new CellConstraints();
     PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref:grow,5dlu","pref,5dlu,fill:default:grow"),this);
     pb.setDefaultDialogBorder();
-      
+    
+    DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
+      public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        JPanel background = new JPanel(new FormLayout("default:grow","fill:default:grow"));
+        JLabel label = new JLabel(value.toString());
+        label.setOpaque(false);
+        
+        if(isSelected) {
+          background.setBackground(table.getSelectionBackground());
+          label.setForeground(table.getSelectionForeground());
+        }
+        else {
+          background.setBackground(table.getBackground());
+        }
+        
+        background.add(label, new CellConstraints().xy(1,1));
+        
+        return background;
+      }
+    };
+    
     VariableTableModel variableTableModel = new VariableTableModel(mData);
     mVariableTable.setModel(variableTableModel);
     mVariableTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     mVariableTable.getTableHeader().setReorderingAllowed(false);
     mVariableTable.getColumnModel().getColumn(0).setPreferredWidth(40);
+    mVariableTable.getColumnModel().getColumn(0).setCellRenderer(renderer);
+    mVariableTable.getColumnModel().getColumn(1).setCellRenderer(renderer);
+    mVariableTable.getColumnModel().getColumn(2).setCellRenderer(renderer);
     
     JScrollPane sp = new JScrollPane(mVariableTable);
 
