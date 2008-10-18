@@ -99,6 +99,10 @@ public class WirSchauenPlugin extends Plugin {
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:NTV");
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:VIVA");
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:puls4");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:RTLPASSION");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:RTLLIVING");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:RTLCIME");
+  
     mIcon = new ImageIcon(getClass().getResource("icons/16x16/apps/wirschauen.png"));
   }
 
