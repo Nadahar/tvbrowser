@@ -7,6 +7,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Properties;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -27,12 +28,6 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.l2fprod.common.swing.plaf.LookAndFeelAddons;
-
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import util.program.CompoundedProgramFieldType;
@@ -42,6 +37,12 @@ import util.ui.Localizer;
 import util.ui.OrderChooser;
 import util.ui.PluginsPictureSettingsPanel;
 import util.ui.ScrollableJPanel;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.l2fprod.common.swing.plaf.LookAndFeelAddons;
 
 import devplugin.Plugin;
 import devplugin.PluginAccess;
@@ -90,14 +91,16 @@ public class ProgramInfoSettingsTab implements SettingsTab {
   private JCheckBox mShowFunctions, mShowTextSearchButton;
   
   private ButtonGroup mAvailableTargetGroup;
+  private JCheckBox mPersonSearchCB;
   
   public JPanel createSettingsPanel() {
-    mOldAntiAliasingSelected = ProgramInfo.getInstance().getSettings().getProperty("antialiasing", "false");
-    mOldUserFontSelected = ProgramInfo.getInstance().getSettings().getProperty("userfont", "false");
-    mOldTitleFontSize = ProgramInfo.getInstance().getSettings().getProperty("title", "18");
-    mOldBodyFontSize = ProgramInfo.getInstance().getSettings().getProperty("small", "11");
-    mOldTitleFont = ProgramInfo.getInstance().getSettings().getProperty("titlefont", "Verdana");
-    mOldBodyFont = ProgramInfo.getInstance().getSettings().getProperty("bodyfont", "Verdana");  
+    final Properties settings = ProgramInfo.getInstance().getSettings();
+    mOldAntiAliasingSelected = settings.getProperty("antialiasing", "false");
+    mOldUserFontSelected = settings.getProperty("userfont", "false");
+    mOldTitleFontSize = settings.getProperty("title", "18");
+    mOldBodyFontSize = settings.getProperty("small", "11");
+    mOldTitleFont = settings.getProperty("titlefont", "Verdana");
+    mOldBodyFont = settings.getProperty("bodyfont", "Verdana");  
     
     mAntiAliasing = new JCheckBox(ProgramInfo.mLocalizer
         .msg("antialiasing", "Antialiasing"));
@@ -270,14 +273,14 @@ public class ProgramInfoSettingsTab implements SettingsTab {
 
     mAvailableTargetGroup = new ButtonGroup();
     
-    ArrayList<InternalRadioButton<?>> availableDefaultTargets = new ArrayList<InternalRadioButton<?>>();
+    final ArrayList<InternalRadioButton<?>> availableDefaultTargets = new ArrayList<InternalRadioButton<?>>();
     
     availableDefaultTargets.add(new InternalRadioButton<String>(ProgramInfoDialog.mLocalizer.msg("searchTvBrowser","Search in TV-Browser")));
     mAvailableTargetGroup.add(availableDefaultTargets.get(0));
     availableDefaultTargets.add(new InternalRadioButton<String>(ProgramInfoDialog.mLocalizer.msg("searchWikipedia","Search in Wikipedia")));
     mAvailableTargetGroup.add(availableDefaultTargets.get(1));
     
-    Object currentValue = ProgramInfo.getInstance().getSettings().getProperty("actorSearchDefault","internalWikipedia");
+    Object currentValue = settings.getProperty("actorSearchDefault","internalWikipedia");
     
     int selectedIndex = -1;
     
@@ -315,15 +318,35 @@ public class ProgramInfoSettingsTab implements SettingsTab {
       buttonPanel.add(button);
     }
     
-    JScrollPane scrollPane = new JScrollPane(buttonPanel);
+    final JScrollPane scrollPane = new JScrollPane(buttonPanel);
     scrollPane.setBackground(UIManager.getDefaults().getColor("List.background"));
     scrollPane.getViewport().setBackground(UIManager.getDefaults().getColor("List.background"));
     PanelBuilder actorSearchPanelBuilder = new PanelBuilder(
-        new FormLayout("default:grow","default,1dlu,fill:default:grow"));
+        new FormLayout(
+        "default:grow", "pref,3dlu,default,1dlu,fill:default:grow"));
     actorSearchPanelBuilder.setDefaultDialogBorder();
+
+    mPersonSearchCB = new JCheckBox(ProgramInfo.mLocalizer.msg("enableSearch",
+        "Show person names as links to person search"));
+    actorSearchPanelBuilder.add(mPersonSearchCB, cc.xy(1, 1));
+    final JLabel searchLabel = new JLabel(ProgramInfo.mLocalizer.msg(
+        "defaultActorSearchMethod", "Default search method:"));
+    actorSearchPanelBuilder.add(searchLabel, cc.xy(1, 3));
+    actorSearchPanelBuilder.add(scrollPane, cc.xy(1, 5));
     
-    actorSearchPanelBuilder.addLabel(ProgramInfo.mLocalizer.msg("defaultActorSearchMethod","Default search method:"), cc.xy(1,1));
-    actorSearchPanelBuilder.add(scrollPane, cc.xy(1,3));
+    mPersonSearchCB.addActionListener(new ActionListener() {
+
+      public void actionPerformed(ActionEvent e) {
+        scrollPane.setEnabled(mPersonSearchCB.isSelected());
+        searchLabel.setEnabled(mPersonSearchCB.isSelected());
+        for (InternalRadioButton<?> button : availableDefaultTargets) {
+          button.setEnabled(mPersonSearchCB.isSelected());
+        }
+      }
+    });
+    mPersonSearchCB.setSelected(settings
+        .getProperty("enableSearch", "true").equalsIgnoreCase("true"));
+    mPersonSearchCB.getActionListeners()[0].actionPerformed(null);
     
     final JTabbedPane tabbedPane = new JTabbedPane();
     tabbedPane.add(ProgramInfo.mLocalizer.msg("pictureOrder","Pictures/order"), builder.getPanel());
@@ -385,27 +408,28 @@ public class ProgramInfoSettingsTab implements SettingsTab {
       }
     }
     
-    ProgramInfo.getInstance().getSettings().setProperty("zoom", String.valueOf(mZoomEnabled.isSelected()));
-    ProgramInfo.getInstance().getSettings().setProperty("zoomValue", String.valueOf(mZoomValue.getValue()));
+    final Properties settings = ProgramInfo.getInstance().getSettings();
+    settings.setProperty("zoom", String.valueOf(mZoomEnabled.isSelected()));
+    settings.setProperty("zoomValue", String.valueOf(mZoomValue.getValue()));
     
-    ProgramInfo.getInstance().getSettings().setProperty("order", temp);
-    ProgramInfo.getInstance().getSettings().setProperty("setupwasdone", "true");
-    ProgramInfo.getInstance().getSettings().setProperty("pictureSettings", String.valueOf(mPictureSettings.getSettings().getType()));
+    settings.setProperty("order", temp);
+    settings.setProperty("setupwasdone", "true");
+    settings.setProperty("pictureSettings", String.valueOf(mPictureSettings.getSettings().getType()));
     ProgramInfo.getInstance().setOrder();
     
-    ProgramInfo.getInstance().getSettings().setProperty("antialiasing", String.valueOf(mAntiAliasing
+    settings.setProperty("antialiasing", String.valueOf(mAntiAliasing
         .isSelected()));
-    ProgramInfo.getInstance().getSettings().setProperty("userfont", String.valueOf(mUserFont.isSelected()));
+    settings.setProperty("userfont", String.valueOf(mUserFont.isSelected()));
 
     Font f = mTitleFont.getChosenFont();
-    ProgramInfo.getInstance().getSettings().setProperty("titlefont", f.getFamily());
-    ProgramInfo.getInstance().getSettings().setProperty("title", String.valueOf(f.getSize()));
+    settings.setProperty("titlefont", f.getFamily());
+    settings.setProperty("title", String.valueOf(f.getSize()));
 
     f = mBodyFont.getChosenFont();
-    ProgramInfo.getInstance().getSettings().setProperty("bodyfont", f.getFamily());
-    ProgramInfo.getInstance().getSettings().setProperty("small", String.valueOf(f.getSize()));
+    settings.setProperty("bodyfont", f.getFamily());
+    settings.setProperty("small", String.valueOf(f.getSize()));
     
-    ProgramInfo.getInstance().getSettings().setProperty("look", mLf[mLook.getSelectedIndex()]);
+    settings.setProperty("look", mLf[mLook.getSelectedIndex()]);
     ProgramInfo.getInstance().setLook();
     
     if(mShowFunctions != null) {
@@ -425,26 +449,29 @@ public class ProgramInfoSettingsTab implements SettingsTab {
       AbstractButton button = actorSearchDefault.nextElement();
       
       if(button.isSelected()) {
-        ProgramInfo.getInstance().getSettings().setProperty("actorSearchDefault",((InternalRadioButton<?>)button).getValue());
+        settings.setProperty("actorSearchDefault",((InternalRadioButton<?>)button).getValue());
         break;
       }
     }
+    settings.setProperty("enableSearch",
+          String.valueOf(mPersonSearchCB.isSelected()));
   }catch(Exception e) {e.printStackTrace();}
   }
 
   private void restoreSettings() {
-    ProgramInfo.getInstance().getSettings().setProperty("setupwasdone", mOldSetupState);
-    ProgramInfo.getInstance().getSettings().setProperty("order", mOldOrder);
+    final Properties settings = ProgramInfo.getInstance().getSettings();
+    settings.setProperty("setupwasdone", mOldSetupState);
+    settings.setProperty("order", mOldOrder);
     ProgramInfo.getInstance().setOrder();
     
-    ProgramInfo.getInstance().getSettings().setProperty("antialiasing", mOldAntiAliasingSelected);
-    ProgramInfo.getInstance().getSettings().setProperty("userfont", mOldUserFontSelected);
-    ProgramInfo.getInstance().getSettings().setProperty("titlefont", mOldTitleFont);
-    ProgramInfo.getInstance().getSettings().setProperty("title", mOldTitleFontSize);
-    ProgramInfo.getInstance().getSettings().setProperty("bodyfont", mOldBodyFont);
-    ProgramInfo.getInstance().getSettings().setProperty("small", mOldBodyFontSize);
+    settings.setProperty("antialiasing", mOldAntiAliasingSelected);
+    settings.setProperty("userfont", mOldUserFontSelected);
+    settings.setProperty("titlefont", mOldTitleFont);
+    settings.setProperty("title", mOldTitleFontSize);
+    settings.setProperty("bodyfont", mOldBodyFont);
+    settings.setProperty("small", mOldBodyFontSize);
     
-    ProgramInfo.getInstance().getSettings().setProperty("look", mOldLook);
+    settings.setProperty("look", mOldLook);
     ProgramInfo.getInstance().setLook();
     
     ProgramInfo.getInstance().setShowFunctions(mOldShowFunctions);
