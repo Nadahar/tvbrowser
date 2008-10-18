@@ -24,6 +24,7 @@
  */
 package captureplugin.drivers.defaultdriver;
 
+import captureplugin.CapturePlugin;
 import captureplugin.drivers.defaultdriver.configpanels.ApplicationPanel;
 import captureplugin.drivers.defaultdriver.configpanels.ChannelPanel;
 import captureplugin.drivers.defaultdriver.configpanels.ParameterPanel;
@@ -42,9 +43,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -124,7 +127,12 @@ public class DefaultKonfigurator extends JDialog implements WindowClosingIf {
         mTab.add(mLocalizer.msg("Parameter", "Parameter"), new ParameterPanel(this, mConfig));
         mTab.add(Localizer.getLocalization(Localizer.I18N_CHANNELS), new ChannelPanel(mConfig));
         mTab.add(mLocalizer.msg("Variables", "Variables"), new VariablePanel(mConfig));
-        mTab.add(Localizer.getLocalization(Localizer.I18N_SETTINGS), new SettingsPanel(mConfig));
+        
+        JScrollPane scrollPane = new JScrollPane(new SettingsPanel(mConfig));
+        scrollPane.setBorder(null);
+        scrollPane.getViewport().setBorder(null);
+        
+        mTab.add(Localizer.getLocalization(Localizer.I18N_SETTINGS), scrollPane);
         
         panel.add(mTab, BorderLayout.CENTER);
      
@@ -153,7 +161,7 @@ public class DefaultKonfigurator extends JDialog implements WindowClosingIf {
         
         panel.add(builder.getPanel(), BorderLayout.SOUTH);
         
-        setSize(600, 550);
+        CapturePlugin.getInstance().layoutWindow("defaultConfigDlg",this,new Dimension(600, 550));
     }
 
     /**

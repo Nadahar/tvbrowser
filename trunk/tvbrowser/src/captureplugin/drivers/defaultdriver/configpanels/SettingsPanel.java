@@ -29,6 +29,7 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import util.ui.Localizer;
+import util.ui.ScrollableJPanel;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -55,7 +56,7 @@ import java.util.TimeZone;
  * 
  * @author bodum
  */
-public class SettingsPanel extends JPanel implements ActionListener, ChangeListener {
+public class SettingsPanel extends ScrollableJPanel implements ActionListener, ChangeListener {
 
     /** Translator */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(SettingsPanel.class);
