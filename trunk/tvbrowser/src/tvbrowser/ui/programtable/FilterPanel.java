@@ -15,7 +15,6 @@ import javax.swing.UIManager;
 
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.ui.mainframe.MainFrame;
-
 import devplugin.ProgramFilter;
 
 /**
@@ -28,6 +27,11 @@ import devplugin.ProgramFilter;
 public class FilterPanel extends JPanel {
   /** Label that is used */
   private JLabel mFilterLabel;
+
+  /**
+   * remember current filter name to avoid repeated UI updates
+   */
+  private String mCurrentName;
   
   private static final util.ui.Localizer mLocalizer
   = util.ui.Localizer.getLocalizerFor(FilterPanel.class);
@@ -61,6 +65,11 @@ public class FilterPanel extends JPanel {
    * @param name Name of the Filter
    */
   private void setFilterLabel(String name) {
+    // avoid repainting during repeated filter updates
+    if (name.equals(mCurrentName)) {
+      return;
+    }
+    mCurrentName = name;
     mFilterLabel.setText("<html><body><b>" + mLocalizer.msg("filterActive", "Active Filter:")+ ":</b> "+name+"</body></html>"); 
   }
   
