@@ -75,7 +75,7 @@ public class ProgramMenuItem extends JMenuItem {
   private Color mBackground, mFill = null;
   private Insets mInsets;
   boolean mSelected;
-  private Timer mTimer; 
+  private Timer mTimer;
   private static Font mPlainFont = (new JMenuItem()).getFont();
   private static Font mBoldFont = mPlainFont.deriveFont(Font.BOLD);
   private int mIconHeight = 0;
@@ -120,7 +120,7 @@ public class ProgramMenuItem extends JMenuItem {
       mShowDate = false;
       mShowName = Settings.propTraySoonProgramsContainsName.getBoolean();
       showIcon = Settings.propTraySoonProgramsContainsIcon.getBoolean();
-      mShowToolTip = Settings.propTraySoonProgramsContainsToolTip.getBoolean();      
+      mShowToolTip = Settings.propTraySoonProgramsContainsToolTip.getBoolean();
     }
     else if(type == ON_TIME_TYPE) {
       mShowStartTime = Settings.propTrayOnTimeProgramsContainsTime.getBoolean();
@@ -129,8 +129,9 @@ public class ProgramMenuItem extends JMenuItem {
       showIcon = Settings.propTrayOnTimeProgramsContainsIcon.getBoolean();
       mShowToolTip = Settings.propTrayOnTimeProgramsContainsToolTip.getBoolean();
       
-      if(!Settings.propTrayOnTimeProgramsShowProgress.getBoolean())
+      if(!Settings.propTrayOnTimeProgramsShowProgress.getBoolean()) {
         time = -1;
+      }
     }
     else if (type == IMPORTANT_TYPE) {
       mShowStartTime = Settings.propTrayImportantProgramsContainsTime.getBoolean();
@@ -168,6 +169,7 @@ public class ProgramMenuItem extends JMenuItem {
     mSelected = false;
     
     addMouseListener(new MouseAdapter() {
+      @Override
       public void mousePressed(MouseEvent e) {
         if(SwingUtilities.isLeftMouseButton(e)) {
           if(!ContextMenuManager.getInstance().getLeftSingleClickIf().equals(DoNothingContextMenuItem.getInstance())) {
@@ -201,13 +203,16 @@ public class ProgramMenuItem extends JMenuItem {
     startTimer();
   }
   
+  @Override
   public void setPreferredSize(Dimension dim) {
     mPreferredSize = dim;
   }
   
+  @Override
   public Dimension getPreferredSize() {
-    if(mPreferredSize != null)
+    if(mPreferredSize != null) {
       return mPreferredSize;
+    }
     
     FontMetrics fmBold = getFontMetrics(mBoldFont);
     FontMetrics fmPlain = getFontMetrics(mPlainFont);
@@ -215,46 +220,52 @@ public class ProgramMenuItem extends JMenuItem {
     int height = mIconHeight;
     int width = fmPlain.stringWidth(mProgram.getTitle().length() > 70 ? mProgram.getTitle().substring(0,67) + "..." : mProgram.getTitle()) + mInsets.left + mInsets.right + 10;
     
-    if(height != 0)
+    if(height != 0) {
       width += mIcon.getIconWidth() + getIconTextGap();
-    else
+    } else {
       width += 30;
+    }
     
-    if(mShowName)
+    if(mShowName) {
       width += Settings.propTrayChannelWidth.getInt() + getIconTextGap();
-    if(mShowStartTime)
+    }
+    if(mShowStartTime) {
       width += TIME_WIDTH;
-    if(mShowDate)
+    }
+    if(mShowDate) {
       width += DATE_WIDTH;
+    }
     
     if(height == 0) {
-      if(mShowStartTime || mShowDate)
+      if(mShowStartTime || mShowDate) {
         height = fmBold.getHeight();
-      else
+      } else {
         height = fmPlain.getHeight();
+      }
       
       height += mInsets.top + mInsets.bottom;
-    }
-    else    
+    } else {
       height += 2;
+    }
 
-    if(mChannelName.getIconHeight() > height && mShowName)
+    if(mChannelName.getIconHeight() > height && mShowName) {
       height = mChannelName.getIconHeight() + mInsets.top + mInsets.bottom + 2;
+    }
 
     return new Dimension(width,height);
-  }  
-  
+  }
+
   /**
-   * Sets the backgound:
-   * n == -1 The default background
-   * n % 2 == 1 The default background a little brighter
+   * Sets the background: n == -1 The default background n % 2 == 1 The default
+   * background a little brighter
    * 
-   * @param n The Background color flag.
+   * @param n
+   *          The Background color flag.
    */
   public void setBackground(int n) {
-    if(n == -1)
+    if(n == -1) {
       setBackground(mBackground);
-    else if((n & 1) == 1) {
+    } else if((n & 1) == 1) {
         Color temp = mBackground.darker();
         mFill = new Color(temp.getRed(),temp.getGreen(),temp.getBlue(),145);
         setBackground(mFill);
@@ -262,80 +273,60 @@ public class ProgramMenuItem extends JMenuItem {
   }
   
   private void startTimer() {
-    if(!mTimer.isRunning())
+    if(!mTimer.isRunning()) {
       mTimer.start();
+    }
   }
   
   protected void stopTimer() {
-    if(mTimer.isRunning())
+    if(mTimer.isRunning()) {
       mTimer.stop();
+    }
     setForeground(Color.gray);
   }
   
   protected Color getDefaultBackground() {
     return mBackground;
-  }  
+  }
   
+  @Override
   public String getToolTipText() {
     if (mShowToolTip) {
       if(mToolTipTextBuffer == null) {
-        int end = mProgram.getStartTime() + mProgram.getLength();
-  
-        if (end > 1440)
-          end -= 1440;
-  
-        String hour = String.valueOf(end / 60);
-        String minute = String.valueOf(end % 60);
-  
         String episodeText = CompoundedProgramFieldType.EPISODE_COMPOSITION.getFormatedValueForProgram(mProgram);
         
         StringBuffer episode = new StringBuffer(episodeText != null ? episodeText : "");
+        breakLines(episode);
         
-        for (int i = 20; i < episode.length(); i += 28) {
-          int index = episode.indexOf(" ", i);
-          if (index == -1)
-            index = episode.indexOf("\n", i);
-          if (index != -1) {
-            episode.deleteCharAt(index);
-            episode.insert(index, "<br>");
-            i += index - i;
-          }
-        }
-        
-        String desc = mProgram.getDescription();
-        
-        if(desc != null) {
-          if(desc.length() > 197) {
-            desc = desc.substring(0,197) + "..."; 
+        StringBuffer info;
+        if (mProgram.getShortInfo() == null) {
+          String desc = mProgram.getDescription();
+
+          if (desc != null) {
+            if (desc.length() > 197) {
+              desc = desc.substring(0, 197) + "...";
+            }
+            info = new StringBuffer(desc);
           }
           else {
-            desc += "...";
+            info = new StringBuffer("");
           }
         }
         else {
-          desc = "";
+          info = new StringBuffer(mProgram.getShortInfo());
         }
-        
-        StringBuffer info = new StringBuffer(mProgram.getShortInfo() == null ? desc : mProgram
-            .getShortInfo());
-        
-        if (minute.length() == 1)
-          minute = "0" + minute;
-        
-        for (int i = 20; i < info.length(); i += 28) {
-          int index = info.indexOf(" ", i);
-          if (index == -1)
-            index = info.indexOf("\n", i);
-          if (index != -1) {
-            info.deleteCharAt(index);
-            info.insert(index, "<br>");
-            i += index - i;
-          }
-        }
+        breakLines(info);
   
-        StringBuffer toolTip = new StringBuffer("<html>").append(episode.length() > 0 ? episode.insert(0,"<b>").append("</b><br>") : "").append(mLocalizer.msg("to", "To: "))
-            .append(hour).append(":").append(minute).append(
-                info.length() > 0 ? "<br>" : "").append(info).append("</html>");
+        StringBuffer toolTip = new StringBuffer("<html>");
+        if (episode.length() > 0) {
+          toolTip.append(episode.insert(0, "<b>").append("</b><br>"));
+        }
+        toolTip.append(mLocalizer.msg("to", "To ")).append(
+            mProgram.getEndTimeString());
+        if (info.length() > 0) {
+          toolTip.append("<br>").append(info);
+        }
+        toolTip.append("</html>");
   
         mToolTipTextBuffer = toolTip.toString();
       }
@@ -345,7 +336,22 @@ public class ProgramMenuItem extends JMenuItem {
     
     return "";
   }
+
+  private void breakLines(StringBuffer info) {
+    for (int i = 38; i < info.length(); i += 38) {
+      int index = info.indexOf(" ", i);
+      if (index == -1) {
+        index = info.indexOf("\n", i);
+      }
+      if (index != -1) {
+        info.deleteCharAt(index);
+        info.insert(index, "<br>");
+        i += index - i;
+      }
+    }
+  }
   
+  @Override
   public String getToolTipText(MouseEvent e) {
     return getToolTipText();
   }
