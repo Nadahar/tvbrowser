@@ -299,8 +299,8 @@
     <mkdir dir="${unpacked.dir}/skinlf.jar"/>
     <unjar src="${lib.dir}/skinlf.jar" dest="${unpacked.dir}/skinlf.jar"/>
     <unjar src="${lib.dir}/bsh-2.0b4.jar" dest="${unpacked.dir}/bsh-2.0b4.jar"/>
-    <unjar src="${lib.dir}/forms-1.2.0.jar" dest="${unpacked.dir}/forms-1.2.0.jar"/>
-    <unjar src="${lib.dir}/looks-2.1.4.jar" dest="${unpacked.dir}/looks-2.1.4.jar"/>
+    <unjar src="${lib.dir}/forms-1.2.1.jar" dest="${unpacked.dir}/forms-1.2.1.jar"/>
+    <unjar src="${lib.dir}/looks-2.2.1.jar" dest="${unpacked.dir}/looks-2.2.1.jar"/>
     <unjar src="${lib.dir}/l2fprod-common-tasks.jar" dest="${unpacked.dir}/l2fprod-common-tasks.jar"/>
     <unjar src="${lib.dir}/jRegistryKey.jar" dest="${unpacked.dir}/jRegistryKey.jar" /> 	 
     <unjar src="${lib.dir}/TVAnytimeAPI.jar" dest="${unpacked.dir}/TVAnytimeAPI.jar" /> 	 
@@ -311,8 +311,7 @@
     <unjar src="${lib.dir}/gdata-client-1.0.jar" dest="${unpacked.dir}/gdata-client-1.0.jar" /> 	   	
     <unjar src="${lib.dir}/gdata-core-1.0.jar" dest="${unpacked.dir}/gdata-core-1.0.jar" />
     <unjar src="${lib.dir}/jcom.jar" dest="${unpacked.dir}/jcom.jar" />
-    <unjar src="${lib.dir}/lucene-core-2.3.1.jar" dest="${unpacked.dir}/lucene-core-2.3.1.jar"/>
-    <unjar src="${lib.dir}/jakarta-oro-2.0.8.jar" dest="${unpacked.dir}/jakarta-oro-2.0.8.jar" /> 
+    <unjar src="${lib.dir}/lucene-core-2.4.0.jar" dest="${unpacked.dir}/lucene-core-2.4.0.jar"/>
     <unjar src="${lib.dir}/opencsv-1.8.jar" dest="${unpacked.dir}/opencsv-1.8.jar" />
     <unjar src="${lib.dir}/jsapi.jar" dest="${unpacked.dir}/jsapi.jar" />
 
@@ -331,8 +330,8 @@
       <fileset dir="${unpacked.dir}/skinlf.jar" includes="com/**"/>
    	  <fileset dir="${unpacked.dir}/skinlf.jar" includes="org/**"/>
       <fileset dir="${unpacked.dir}/bsh-2.0b4.jar" includes="bsh/**"/>
-      <fileset dir="${unpacked.dir}/forms-1.2.0.jar" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/looks-2.1.4.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/forms-1.2.1.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/looks-2.2.1.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/l2fprod-common-tasks.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/jRegistryKey.jar" includes="ca/**" />
       <fileset dir="${unpacked.dir}/commons-codec-1.3.jar" includes="org/**" />
@@ -528,7 +527,7 @@
 
     <jar jarfile="${tvbrowser-optional.runtime.dir}/plugins/ImdbPlugin.jar"
          compress="false">
-      <fileset dir="${unpacked.dir}/lucene-core-2.3.1.jar" includes="**/*"/>
+      <fileset dir="${unpacked.dir}/lucene-core-2.4.0.jar" includes="**/*"/>
       <fileset dir="${classes.dir}" includes="imdbplugin/**"/>
     </jar>
 
@@ -542,12 +541,12 @@
       <fileset dir="${unpacked.dir}/jsapi.jar" includes="**/*"/>
       <fileset dir="${classes.dir}" includes="speechplugin/**"/>
     </jar>
-
+<!--
   	<jar jarfile="${tvbrowser-optional.runtime.dir}/plugins/TeleTextPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="teletextplugin/**"/>
     </jar>
-
+-->
   	<jar jarfile="${tvbrowser-optional.runtime.dir}/plugins/WirSchauenPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="wirschauenplugin/**"/>
@@ -657,7 +656,7 @@
     <mkdir dir="${unpacked.dir}/commons-lang-2.4.jar"/>
     <unjar src="${lib.dir}/commons-lang-2.4.jar" dest="${unpacked.dir}/commons-net-1.4.1.jar"/>
 
-    <unjar src="${lib.dir}/looks-2.1.4.jar" dest="${unpacked.dir}/looks-2.1.4.jar"/>
+    <unjar src="${lib.dir}/looks-2.2.1.jar" dest="${unpacked.dir}/looks-2.2.1.jar"/>
     <unjar src="${lib.dir}/jakarta-oro-2.0.8.jar" dest="${unpacked.dir}/jakarta-oro-2.0.8.jar"/>
 	  <unjar src="${lib.dir}/opencsv-1.8.jar" dest="${unpacked.dir}/opencsv-1.8.jar" />
 
@@ -681,7 +680,7 @@
       <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
       <fileset dir="${unpacked.dir}/commons-net-1.4.1.jar" includes="org/**"/>
       <fileset dir="${unpacked.dir}/commons-lang-2.4.jar" includes="org/**"/>
-      <fileset dir="${unpacked.dir}/looks-2.1.4.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/looks-2.2.1.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/jakarta-oro-2.0.8.jar" includes="org/**"/>
       <fileset dir="${unpacked.dir}/opencsv-1.8.jar" includes="au/**"/>
     </jar>
@@ -701,7 +700,7 @@
       <fileset dir="${classes.dir}" includes="devplugin/**"/>
       <fileset dir="${classes.dir}" includes="util/**"/>
       <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
-      <fileset dir="${unpacked.dir}/looks-2.1.4.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/looks-2.2.1.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/opencsv-1.8.jar" includes="au/**"/>
       <fileset dir="${unpacked.dir}/commons-lang-2.4.jar" includes="org/**"/>
     </jar>
@@ -721,7 +720,7 @@
       <fileset dir="${classes.dir}" includes="devplugin/**"/>
       <fileset dir="${classes.dir}" includes="util/**"/>
       <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
-      <fileset dir="${unpacked.dir}/looks-2.1.4.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/looks-2.2.1.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/opencsv-1.8.jar" includes="au/**"/>
       <fileset dir="${unpacked.dir}/commons-lang-2.4.jar" includes="org/**"/>
     </jar>
