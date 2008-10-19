@@ -779,7 +779,7 @@ public class ProgramTextCreator {
     if (fieldType.getFormat() == ProgramFieldType.TEXT_FORMAT) {
       text = prog.getTextField(fieldType);
 
-      // lazyly add short description, but only if it differs from description
+      // Lazily add short description, but only if it differs from description
       if (fieldType == ProgramFieldType.DESCRIPTION_TYPE) {
         String description = prog.getDescription().trim();
 
@@ -795,7 +795,7 @@ public class ProgramTextCreator {
                 ProgramFieldType.SHORT_DESCRIPTION_TYPE, true, showHelpLinks);
           }
         }
-
+        text = removeArtificialLineBreaks(text);
         text = HTMLTextHelper.convertTextToHtml(text, createLinks);
         // scan for moderation in beginning of description
         String[] lines = text.split("<br>");
@@ -911,6 +911,33 @@ public class ProgramTextCreator {
     buffer.append("</td></tr>");
 
     addSeparator(doc, buffer);
+  }
+
+  /**
+   * remove line breaks from description texts which are formatted as block text
+   * with lines up to around 80 characters
+   * 
+   * @param text
+   * @return floating text
+   */
+  private static String removeArtificialLineBreaks(String text) {
+    String[] lines = text.split("\n");
+    if (lines.length > 5) {
+      int avg = (text.length() - lines.length + 1) / lines.length;
+      if (avg < 100 && avg > 50) {
+        StringBuffer result = new StringBuffer();
+        for (int i = 0; i < lines.length; i++) {
+          result.append(lines[i]);
+          if (lines[i].length() < avg - 10) {
+            result.append("\n");
+          } else {
+            result.append(" ");
+          }
+        }
+        return result.toString();
+      }
+    }
+    return text;
   }
 
   private static void startInfoSection(StringBuffer buffer, String section) {
