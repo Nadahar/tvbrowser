@@ -45,7 +45,6 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
@@ -56,7 +55,8 @@ import tvbrowser.core.Settings;
  * 
  * @author bodum
  */
-public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNodeIf, FilterNodeIf {
+public class PropertiesNode extends AbstractHierarchicalNode implements
+    LanguageNodeIf, FilterNodeIf {
   private Properties mProp;
   private JarFile mJarFile;
   private String mPropertiesFile;
@@ -267,27 +267,6 @@ public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNo
   public boolean containsKey(Locale locale, String key) {
     return ((getOriginalProperty(locale).getProperty(key) != null)||(getUserProperty(locale).getProperty(key) != null));
   }
-
-  /*
-   * (non-Javadoc)
-   * @see i18nplugin.LanguageNodeIf#allTranslationsAvailableFor(java.util.Locale)
-   */
-  public int translationStateFor(Locale locale) {
-    int max = getChildCount();
-    int result = STATE_OK;
-    
-    for (int i=0;i<max;i++) {
-      int state = ((LanguageNodeIf)getChildAt(i)).translationStateFor(locale);
-      if (state == STATE_MISSING_TRANSLATION) {
-        return STATE_MISSING_TRANSLATION;
-      }
-      if (state >= STATE_NON_WELLFORMED && state != STATE_OK) {
-        result = STATE_NON_WELLFORMED;
-      }
-    }
-    
-    return result;
-  }  
 
   /*
    * (non-Javadoc)
@@ -506,108 +485,8 @@ public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNo
   private static final char[] hexDigit = { '0', '1', '2', '3', '4', '5', '6',
       '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
-  @Override
-  public boolean isLeaf() {
-    return false;
-  }
-  
   public int getMatchCount() {
     return filteredChildren.size();
   }
 
-  public boolean matches() {
-    return filter != null && !filteredChildren.isEmpty();
-  }
-
-  public void setFilter(Locale locale, String filter) {
-    this.filter = null;
-    filteredChildren.clear();
-    for (int i = 0; i < super.getChildCount(); i++) {
-      TreeNode childAt = super.getChildAt(i);
-      if (childAt instanceof FilterNodeIf) {
-        FilterNodeIf node = (FilterNodeIf) childAt;
-        node.setFilter(locale, filter);
-        if (filter != null && node.matches()) {
-          filteredChildren.add(childAt);
-        }
-      } else {
-        System.err.println("PropN: " + childAt.getClass());
-      }
-    }
-    this.filter = filter;
-  }
-  
-  @Override
-  public int getChildCount() {
-    if (filter == null) {
-      return super.getChildCount();
-    } else {
-      return filteredChildren.size();
-    }
-  }
-  
-  @Override
-  public TreeNode getChildAt(int index) {
-    if (filter == null) {
-      return super.getChildAt(index);
-    } else {
-      return filteredChildren.get(index);
-    }
-  }
-  
-  @Override
-  public int getIndex(TreeNode child) {
-    if (filter == null) {
-      return super.getIndex(child);
-    } else {
-      return filteredChildren.indexOf(child);
-    }
-  }
-  
-  @Override
-  public TreeNode getChildAfter(TreeNode child) {
-    if (filter == null) {
-      return super.getChildAfter(child);
-    } else {
-      if (child == null) {
-        throw new IllegalArgumentException("argument is null");
-      }
-
-      int index = getIndex(child);   // linear search
-
-      if (index == -1) {
-        throw new IllegalArgumentException("node is not a child");
-      }
-
-      if (index < getChildCount() - 1) {
-        return getChildAt(index + 1);
-      } else {
-        return null;
-      }
-    }
-  }
-  
-  @Override
-  public TreeNode getChildBefore(TreeNode child) {
-    if (filter == null) {
-      return super.getChildBefore(child);
-    } else {
-      if (child == null) {
-        throw new IllegalArgumentException("argument is null");
-      }
-
-      int index = getIndex(child);   // linear search
-
-      if (index == -1) {
-        throw new IllegalArgumentException("argument is not a child");
-      }
-
-      if (index > 0) {
-        return getChildAt(index - 1);
-      } else {
-        return null;
-      }
-    }
-  }
-  
 }
