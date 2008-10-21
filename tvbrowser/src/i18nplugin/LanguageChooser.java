@@ -17,9 +17,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * SVN information:
- *     $Date: 2006-06-05 21:02:43 +0200 (Mo, 05 Jun 2006) $
- *   $Author: darras $
- * $Revision: 2466 $
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package i18nplugin;
 
