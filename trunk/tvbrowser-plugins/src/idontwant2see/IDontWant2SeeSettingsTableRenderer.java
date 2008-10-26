@@ -44,12 +44,12 @@ import devplugin.Date;
  */
 public class IDontWant2SeeSettingsTableRenderer extends
     DefaultTableCellRenderer {
-  private final static Color NOT_VALID_COLOR = new Color(220,0,0,60);
-  private final static Color LAST_CHANGED_COLOR = new Color(72,116,241,100);
-  private final static Color LAST_USAGE_7_COLOR = new Color(255,255,0,60);
-  private final static Color LAST_USAGE_30_COLOR = new Color(255,176,39,80);
-  private final static short OUTDATED_7_DAY_COUNT = 7;
-  private final static short OUTDATED_30_DAY_COUNT = 30;
+  protected final static Color NOT_VALID_COLOR = new Color(220,0,0,60);
+  protected final static Color LAST_CHANGED_COLOR = new Color(72,116,241,100);
+  protected final static Color LAST_USAGE_7_COLOR = new Color(255,255,0,60);
+  protected final static Color LAST_USAGE_30_COLOR = new Color(255,176,39,80);
+  protected final static short OUTDATED_7_DAY_COUNT = 7;
+  protected final static short OUTDATED_30_DAY_COUNT = 30;
   
   private Date mLastUsedDate;
   

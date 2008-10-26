@@ -45,6 +45,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -53,6 +54,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -96,7 +99,7 @@ public class IDontWant2See extends Plugin {
   private Date mLastUsedDate;
   
   public static Version getVersion() {
-    return new Version(0,8,7,false);
+    return new Version(0,9,0,false);
   }
   
   /**
@@ -523,6 +526,20 @@ public class IDontWant2See extends Plugin {
         }
       });
       
+      addAncestorListener(new AncestorListener() {
+        public void ancestorAdded(AncestorEvent event) {
+          for(int row = 0; row < mTableModel.getRowCount(); row++) {
+            if(mTableModel.isLastChangedRow(row)) {
+              mTable.scrollRectToVisible(mTable.getCellRect(row,0,true));
+              break;
+            }
+          }
+        }
+
+        public void ancestorMoved(AncestorEvent event) {}
+        public void ancestorRemoved(AncestorEvent event) {}
+      });
+      
       JButton add = new JButton(mLocalizer.msg("settings.add","Add entry"),
           createImageIcon("actions","document-new",16));
       add.addActionListener(new ActionListener() {
@@ -550,15 +567,40 @@ public class IDontWant2See extends Plugin {
       });
       
       FormLayout layout = new FormLayout("default,0dlu:grow,default",
-          "fill:default:grow,4dlu,default,5dlu,pref");
+          "fill:default:grow,1dlu,default,4dlu,default,5dlu,pref");
       PanelBuilder pb = new PanelBuilder(layout,this);
       CellConstraints cc = new CellConstraints();
       
-      pb.add(new JScrollPane(mTable), cc.xyw(1,1,3));
-      pb.add(add, cc.xy(1,3));
-      pb.add(delete, cc.xy(3,3));
+      int y = 1;
+      
+      pb.add(new JScrollPane(mTable), cc.xyw(1,y++,3));
+      
+      PanelBuilder pb2 = new PanelBuilder(
+          new FormLayout("default,3dlu,default,0dlu:grow,default,3dlu,default,0dlu:grow,default,3dlu,default",
+              "default"));
+      
+      JLabel blue = pb2.addLabel(mLocalizer.msg("blue","Blue:"), cc.xy(1,1));
+      blue.setOpaque(true);
+      blue.setBackground(IDontWant2SeeSettingsTableRenderer.LAST_CHANGED_COLOR);
+      pb2.addLabel(mLocalizer.msg("changed","Last change"), cc.xy(3,1));
+      
+      JLabel yellow = pb2.addLabel(mLocalizer.msg("yellow","Yellow:"), cc.xy(5,1));
+      yellow.setOpaque(true);
+      yellow.setBackground(IDontWant2SeeSettingsTableRenderer.LAST_USAGE_7_COLOR);
+      pb2.addLabel(mLocalizer.msg("unusedSince","Not used since {0} days",IDontWant2SeeSettingsTableRenderer.OUTDATED_7_DAY_COUNT), cc.xy(7,1));
+      
+      JLabel orange = pb2.addLabel(mLocalizer.msg("orange","Orange:"), cc.xy(9,1));
+      orange.setOpaque(true);
+      orange.setBackground(IDontWant2SeeSettingsTableRenderer.LAST_USAGE_30_COLOR);
+      pb2.addLabel(mLocalizer.msg("unusedSince","Not used since {0} days",IDontWant2SeeSettingsTableRenderer.OUTDATED_30_DAY_COUNT), cc.xy(11,1));
+      
+      pb.add(pb2.getPanel(), cc.xyw(1,++y,3));
+      
+      y++;
+      pb.add(add, cc.xy(1,++y));
+      pb.add(delete, cc.xy(3,y++));
       pb.add(UiUtilities.createHelpTextArea(mLocalizer.msg("settings.help",
-      "To edit a value double click a cell. You can use wildcard * to search for any text.")), cc.xyw(1,5,3));
+      "To edit a value double click a cell. You can use wildcard * to search for any text.")), cc.xyw(1,++y,3));
     }
     
     private void deleteSelectedRows() {
