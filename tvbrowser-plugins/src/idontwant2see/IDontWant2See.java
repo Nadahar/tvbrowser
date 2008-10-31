@@ -45,7 +45,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -59,6 +58,7 @@ import javax.swing.event.AncestorListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import tvbrowser.ui.settings.util.ColorLabel;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -99,7 +99,7 @@ public class IDontWant2See extends Plugin {
   private Date mLastUsedDate;
   
   public static Version getVersion() {
-    return new Version(0,9,0,false);
+    return new Version(0,9,1,true);
   }
   
   /**
@@ -576,23 +576,24 @@ public class IDontWant2See extends Plugin {
       pb.add(new JScrollPane(mTable), cc.xyw(1,y++,3));
       
       PanelBuilder pb2 = new PanelBuilder(
-          new FormLayout("default,3dlu,default,0dlu:grow,default,3dlu,default,0dlu:grow,default,3dlu,default",
+          new FormLayout("default,3dlu:grow,default,3dlu:grow,default,3dlu:grow,default",
               "default"));
       
-      JLabel blue = pb2.addLabel(mLocalizer.msg("blue","Blue:"), cc.xy(1,1));
-      blue.setOpaque(true);
-      blue.setBackground(IDontWant2SeeSettingsTableRenderer.LAST_CHANGED_COLOR);
-      pb2.addLabel(mLocalizer.msg("changed","Last change"), cc.xy(3,1));
+      ColorLabel blueLabel = new ColorLabel(IDontWant2SeeSettingsTableRenderer.LAST_CHANGED_COLOR);
+      blueLabel.setText(mLocalizer.msg("changed","Last change"));
+      pb2.add(blueLabel, cc.xy(1,1));
       
-      JLabel yellow = pb2.addLabel(mLocalizer.msg("yellow","Yellow:"), cc.xy(5,1));
-      yellow.setOpaque(true);
-      yellow.setBackground(IDontWant2SeeSettingsTableRenderer.LAST_USAGE_7_COLOR);
-      pb2.addLabel(mLocalizer.msg("unusedSince","Not used since {0} days",IDontWant2SeeSettingsTableRenderer.OUTDATED_7_DAY_COUNT), cc.xy(7,1));
+      ColorLabel yellowLabel = new ColorLabel(IDontWant2SeeSettingsTableRenderer.LAST_USAGE_7_COLOR);
+      yellowLabel.setText(mLocalizer.msg("unusedSince","Not used for {0} days",IDontWant2SeeSettingsTableRenderer.OUTDATED_7_DAY_COUNT));
+      pb2.add(yellowLabel, cc.xy(3,1));
       
-      JLabel orange = pb2.addLabel(mLocalizer.msg("orange","Orange:"), cc.xy(9,1));
-      orange.setOpaque(true);
-      orange.setBackground(IDontWant2SeeSettingsTableRenderer.LAST_USAGE_30_COLOR);
-      pb2.addLabel(mLocalizer.msg("unusedSince","Not used since {0} days",IDontWant2SeeSettingsTableRenderer.OUTDATED_30_DAY_COUNT), cc.xy(11,1));
+      ColorLabel orangeLabel = new ColorLabel(IDontWant2SeeSettingsTableRenderer.LAST_USAGE_30_COLOR);
+      orangeLabel.setText(mLocalizer.msg("unusedSince","Not used for {0} days",IDontWant2SeeSettingsTableRenderer.OUTDATED_30_DAY_COUNT));
+      pb2.add(orangeLabel, cc.xy(5,1));
+      
+      ColorLabel redLabel = new ColorLabel(IDontWant2SeeSettingsTableRenderer.NOT_VALID_COLOR);
+      redLabel.setText(mLocalizer.msg("invalid","Invalid"));
+      pb2.add(redLabel, cc.xy(7,1));
       
       pb.add(pb2.getPanel(), cc.xyw(1,++y,3));
       
