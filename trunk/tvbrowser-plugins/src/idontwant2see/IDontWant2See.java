@@ -157,7 +157,7 @@ public class IDontWant2See extends Plugin {
     return new PluginInfo(IDontWant2See.class,
         mLocalizer.msg("name","I don't want to see!"),
         mLocalizer.msg("desc","Removes all programs with an entered search text in the title from the program table."),
-        "Renï¿½ Mach","GPL");
+        "René Mach","GPL");
   }
   
   private int getSearchTextIndexForProgram(Program p) {
