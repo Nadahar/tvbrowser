@@ -30,6 +30,8 @@ import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -78,6 +80,7 @@ import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.Program;
+import devplugin.ProgramFilter;
 import devplugin.SettingsItem;
 
 /**
@@ -132,7 +135,10 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
   private Thread mLeftClickThread;
   private boolean mPerformingSingleClick;
-
+  
+  private JComboBox mFilterBox;
+  private ProgramFilter mCurrentFilter;
+  
   /**
    * Creates the Dialog
    *
@@ -148,6 +154,8 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     mTimes = Plugin.getPluginManager().getTvBrowserSettings().getTimeButtonTimes();
     mModel = new ListTableModel();
     mPerformingSingleClick = false;
+    
+    mCurrentFilter = ListViewPlugin.getPluginManager().getFilterManager().getCurrentFilter();
     
     generateList(new Date(), getCurrentTime());
     createGUI();
@@ -228,7 +236,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
         }
 
       }
-
+      
       mModel.updateRow(channel, prg, nprg);
     }
   }
@@ -249,7 +257,14 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
       Program p = it.next();
 
       if (prg.equals(p) && it.hasNext()) {
-        return it.next();
+        Program test = it.next();
+        
+        if(mCurrentFilter.accept(test)) {
+          return test;
+        }
+        else {
+          return null;
+        }
       } else if (prg.equals(p) && !it.hasNext()) {
         last = true;
       }
@@ -260,8 +275,10 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
       if ((it != null) && (it.hasNext())) {
         Program p = it.next();
-
-        return p;
+        
+        if(mCurrentFilter.accept(p)) {
+          return p;
+        }
       }
 
     }
@@ -284,8 +301,8 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
       int start = program.getStartTime();
       int ende = program.getStartTime() + program.getLength();
-
-      if ((start <= time) && (ende > time)) {
+      
+      if ((start <= time) && (ende > time) && mCurrentFilter.accept(program)) {
         return program;
       }
     }
@@ -455,16 +472,33 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     mDate.setEnabled(false);
     mTimeSpinner.setEnabled(false);
 
+    JLabel filterLabel = new JLabel("Filter:");
+    filterLabel.setHorizontalAlignment(JLabel.RIGHT);
+
+    mFilterBox = new JComboBox(ListViewPlugin.getPluginManager().getFilterManager().getAvailableFilters());
+    mFilterBox.setSelectedItem(ListViewPlugin.getPluginManager().getFilterManager().getCurrentFilter());
+    mFilterBox.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        if(e.getStateChange() == ItemEvent.SELECTED) {
+          mCurrentFilter = (ProgramFilter)e.getItem();
+          refreshView();
+        }
+      }      
+    });
+    
     // Upper Panel
 
-    JPanel topPanel = new JPanel(new FormLayout("pref, 3dlu, pref, 15dlu, pref, 3dlu, pref, 3dlu, pref", "pref, 3dlu"));
+    JPanel topPanel = new JPanel(new FormLayout("pref, 3dlu, pref, 15dlu, pref, 3dlu, pref, 3dlu, pref", "pref, 1dlu, pref, 3dlu"));
 
     CellConstraints cc = new CellConstraints();
-
+    
     topPanel.add(mRuns, cc.xy(1, 1));
     topPanel.add(mBox, cc.xy(3,1));
     topPanel.add(mOn, cc.xy(5,1));
     topPanel.add(datetimeselect, cc.xy(7,1));
+    
+    topPanel.add(filterLabel, cc.xy(1,3));
+    topPanel.add(mFilterBox, cc.xyw(3,3,5));
 
     content.add(topPanel, BorderLayout.NORTH);
 
