@@ -1,6 +1,6 @@
 /*
  * IDontWant2See - Plugin for TV-Browser
- * Copyright (C) 2008 René Mach
+ * Copyright (C) 2008 RenÃ© Mach
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 package idontwant2see;
 
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -83,7 +84,7 @@ import devplugin.Version;
  * A very simple filter plugin to easily get
  * rid of stupid programs in the program table.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class IDontWant2See extends Plugin {
   protected static final Localizer mLocalizer = Localizer.getLocalizerFor(IDontWant2See.class);
@@ -99,7 +100,7 @@ public class IDontWant2See extends Plugin {
   private Date mLastUsedDate;
   
   public static Version getVersion() {
-    return new Version(0,9,1,true);
+    return new Version(0,9,2,true);
   }
   
   /**
@@ -157,7 +158,7 @@ public class IDontWant2See extends Plugin {
     return new PluginInfo(IDontWant2See.class,
         mLocalizer.msg("name","I don't want to see!"),
         mLocalizer.msg("desc","Removes all programs with an entered search text in the title from the program table."),
-        "René Mach","GPL");
+        "RenÃ© Mach","GPL");
   }
   
   private int getSearchTextIndexForProgram(Program p) {
@@ -498,6 +499,8 @@ public class IDontWant2See extends Plugin {
       mTable.getTableHeader().setReorderingAllowed(false);
       mTable.getTableHeader().setResizingAllowed(false);
       
+      final JScrollPane scrollPane = new JScrollPane(mTable);
+      
       mTable.addMouseListener(new MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
           int column = mTable.columnAtPoint(e.getPoint());
@@ -530,7 +533,10 @@ public class IDontWant2See extends Plugin {
         public void ancestorAdded(AncestorEvent event) {
           for(int row = 0; row < mTableModel.getRowCount(); row++) {
             if(mTableModel.isLastChangedRow(row)) {
-              mTable.scrollRectToVisible(mTable.getCellRect(row,0,true));
+            	Rectangle rect = mTable.getCellRect(row,0,true);
+            	rect.setBounds(0,scrollPane.getVisibleRect().height + rect.y - rect.height,0,0);
+            	
+              mTable.scrollRectToVisible(rect);
               break;
             }
           }
@@ -573,7 +579,7 @@ public class IDontWant2See extends Plugin {
       
       int y = 1;
       
-      pb.add(new JScrollPane(mTable), cc.xyw(1,y++,3));
+      pb.add(scrollPane, cc.xyw(1,y++,3));
       
       PanelBuilder pb2 = new PanelBuilder(
           new FormLayout("default,3dlu:grow,default,3dlu:grow,default,3dlu:grow,default",

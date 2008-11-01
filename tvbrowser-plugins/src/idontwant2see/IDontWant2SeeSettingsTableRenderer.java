@@ -1,6 +1,6 @@
 /*
  * IDontWant2See - Plugin for TV-Browser
- * Copyright (C) 2008 René Mach
+ * Copyright (C) 2008 RenÃ© Mach
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,7 +40,7 @@ import devplugin.Date;
 /**
  * The renderer class for the settings table.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class IDontWant2SeeSettingsTableRenderer extends
     DefaultTableCellRenderer {

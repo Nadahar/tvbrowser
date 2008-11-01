@@ -1,6 +1,6 @@
 /*
  * IDontWant2See - Plugin for TV-Browser
- * Copyright (C) 2008 René Mach
+ * Copyright (C) 2008 RenÃ© Mach
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,7 +33,7 @@ import devplugin.Program;
 /**
  * Filter component class of this plugin.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class IDontWant2SeeFilterComponent extends PluginsFilterComponent {
   public String getUserPresentableClassName() {
