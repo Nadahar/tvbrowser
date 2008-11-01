@@ -1,6 +1,6 @@
 /*
  * IDontWant2See - Plugin for TV-Browser
- * Copyright (C) 2008 René Mach
+ * Copyright (C) 2008 RenÃ© Mach
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,7 +33,7 @@ import devplugin.Date;
 /**
  * The settings table for the value settings.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
   private ArrayList<IDontWant2SeeSettingsTableEntry> mData = new ArrayList<IDontWant2SeeSettingsTableEntry>();
