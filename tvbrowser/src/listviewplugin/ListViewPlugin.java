@@ -45,7 +45,7 @@ import devplugin.Version;
  * @author bodo
  */
 public class ListViewPlugin extends Plugin {
-  private static final Version mVersion = new Version(2,71);
+  private static final Version mVersion = new Version(3,0);
 
     protected static final int PROGRAMTABLEWIDTH = 200;
   
