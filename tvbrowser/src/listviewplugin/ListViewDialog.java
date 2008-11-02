@@ -236,6 +236,17 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
           nprg = findProgram(date, time + 60, channel, true);
         }
 
+        if(nprg == null) {
+          it = Plugin.getPluginManager().getChannelDayProgram(date.addDays(1), channel);
+          
+          while((it != null) && (it.hasNext()) && nprg == null) {
+            Program p = it.next();
+            
+            if(mCurrentFilter.accept(p)) {
+              nprg = p;
+            }
+          }
+        }
       }
       
       mModel.updateRow(channel, prg, nprg);
