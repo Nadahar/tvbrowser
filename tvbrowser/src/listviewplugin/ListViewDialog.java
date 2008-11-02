@@ -257,13 +257,13 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
       Program p = it.next();
 
       if (prg.equals(p) && it.hasNext()) {
-        //while((it != null) && it.hasNext()) {
+        while((it != null) && it.hasNext()) {
           Program test = it.next();
           
           if(mCurrentFilter.accept(test)) {
             return test;
           }
-        //}
+        }
       } else if (prg.equals(p) && !it.hasNext()) {
         last = true;
       }
