@@ -48,7 +48,6 @@ public class IDontWant2SeeListEntry {
   
   protected IDontWant2SeeListEntry(String searchText, boolean caseSensitive) {
     setValues(searchText,caseSensitive);
-    mLastMatchedDate = IDontWant2See.getCurrentDate();
     mDateWasSet = true;
   }
   
@@ -112,6 +111,11 @@ public class IDontWant2SeeListEntry {
   protected void setValues(String searchText, boolean caseSensitive) {
     mPreSearchPart = null;
     mSearchPattern = null;
+    
+    if((mSearchText == null || !mSearchText.equals(searchText)) || mCaseSensitive != caseSensitive) {
+      mLastMatchedDate = IDontWant2See.getCurrentDate();
+    }
+    
     mSearchText = searchText;
     mCaseSensitive = caseSensitive;
     
@@ -163,11 +167,7 @@ public class IDontWant2SeeListEntry {
     mLastMatchedDate.writeData(out);
   }
   
-  protected boolean isOutdated(Date compareValue, int outdatedDayCount) {
-    if(compareValue != null) {
-      return mLastMatchedDate.addDays(outdatedDayCount).compareTo(compareValue) < 0;
-    }
-    
-    return false;
+  protected Date getLastMatchedDate() {
+    return mLastMatchedDate;
   }
 }
