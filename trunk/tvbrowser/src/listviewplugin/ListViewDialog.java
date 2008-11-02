@@ -264,6 +264,8 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
             return test;
           }
         }
+        
+        last = true;
       } else if (prg.equals(p) && !it.hasNext()) {
         last = true;
       }
