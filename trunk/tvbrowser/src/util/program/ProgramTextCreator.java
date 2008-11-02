@@ -874,7 +874,8 @@ public class ProgramTextCreator {
         || ProgramFieldType.MODERATION_TYPE == fieldType
         || ProgramFieldType.ADDITIONAL_PERSONS_TYPE == fieldType
         || ProgramFieldType.PRODUCER_TYPE == fieldType) {
-      if (showPersonLinks) {
+      if (showPersonLinks && text.length() < 100) {
+        // if field is longer than 100 characters, this is not a list of names
         String[] persons = splitPersons(text);
         for (int i = 0; i < persons.length; i++) {
           // a name shall not have more name parts
