@@ -51,10 +51,6 @@ import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
 import util.program.ProgramUtilities;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
@@ -62,6 +58,10 @@ import util.ui.Localizer;
 import util.ui.ProgramList;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.ActionMenu;
 import devplugin.Channel;
@@ -142,119 +142,146 @@ public class ProgramListPlugin extends Plugin {
   
   public ActionMenu getButtonAction() {
     AbstractAction action = new AbstractAction() {
-      public void actionPerformed(ActionEvent e) {try {
-        if (mDialog == null) {
-          mDialog = new JDialog(getParentFrame());
-          mDialog.setTitle(mLocalizer.msg("name", "Important programs"));
-          mDialog.getContentPane().setLayout(new BorderLayout(0,10));
-          ((JPanel)mDialog.getContentPane()).setBorder(Borders.DIALOG_BORDER);
-          
-          UiUtilities.registerForClosing(new WindowClosingIf() {
-            public void close() {
-              mDialog.setVisible(false);
-              saveMe();
+      public void actionPerformed(ActionEvent e) {
+        try {
+          if (mDialog == null) {
+            mDialog = new JDialog(getParentFrame());
+            mDialog.setTitle(mLocalizer.msg("name", "Important programs"));
+            mDialog.getContentPane().setLayout(new BorderLayout(0, 10));
+            ((JPanel) mDialog.getContentPane())
+                .setBorder(Borders.DIALOG_BORDER);
+
+            UiUtilities.registerForClosing(new WindowClosingIf() {
+              public void close() {
+                mDialog.setVisible(false);
+                saveMe();
+              }
+
+              public JRootPane getRootPane() {
+                return mDialog.getRootPane();
+              }
+            });
+
+            mModel = new DefaultListModel();
+            boolean showDescription = mSettings.getProperty(
+                SETTING_SHOW_DESCRIPTION, "true").equals("true");
+            mProgramPanelSettings = new ProgramPanelSettings(
+                new PluginPictureSettings(
+                    PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE),
+                !showDescription, ProgramPanelSettings.X_AXIS);
+            mList = new ProgramList(mModel, mProgramPanelSettings);
+
+            mList.addMouseListeners(null);
+
+            mBox = new JComboBox(Plugin.getPluginManager()
+                .getSubscribedChannels());
+            mBox.insertItemAt(mLocalizer.msg("allChannels", "All channels"), 0);
+            mBox.setRenderer(new ChannelListCellRenderer());
+            mBox.setSelectedIndex(Integer.parseInt(mSettings.getProperty(
+                "index", String.valueOf(0))));
+
+            mFilterBox = new JComboBox();
+
+            if (mSettings.getProperty(SETTING_FILTER) == null) {
+              mSettings.setProperty(SETTING_FILTER, Plugin.getPluginManager()
+                  .getFilterManager().getAllFilter().getName());
             }
 
-            public JRootPane getRootPane() {
-              return mDialog.getRootPane();
-            }
-          });
-          
-          mModel = new DefaultListModel();
-          boolean showDescription = mSettings.getProperty(SETTING_SHOW_DESCRIPTION,"true").equals("true");
-          mProgramPanelSettings = new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), !showDescription,ProgramPanelSettings.X_AXIS);
-          mList = new ProgramList(mModel, mProgramPanelSettings);
-          
-          mList.addMouseListeners(null);
-          
-          mBox = new JComboBox(Plugin.getPluginManager()
-              .getSubscribedChannels());
-          mBox.insertItemAt(mLocalizer.msg("allChannels", "All channels"), 0);
-          mBox.setRenderer(new ChannelListCellRenderer());
-          mBox.setSelectedIndex(Integer.parseInt(mSettings.getProperty("index",String.valueOf(0))));
-
-          mFilterBox = new JComboBox();
-          
-          if(mSettings.getProperty(SETTING_FILTER) == null) {
-            mSettings.setProperty(SETTING_FILTER, Plugin.getPluginManager().getFilterManager().getAllFilter().getName());
-          }
-          
-          fillFilterBox();
-          
-          mFilterBox.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-              mFilter = (ProgramFilter)mFilterBox.getSelectedItem();
-              mSettings.setProperty(SETTING_FILTER,mFilter.getName());
-              mBox.getItemListeners()[0].itemStateChanged(null);
-            }
-          });
-          
-          mBox.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-              fillProgramList();
-              mSettings.setProperty("index", String.valueOf(mBox.getSelectedIndex()));
-            }
-          });
-
-          CellConstraints cc = new CellConstraints();
-          
-          JPanel panel = new JPanel(new FormLayout("1dlu,default,3dlu,default:grow","pref,2dlu,pref,2dlu"));
-          panel.add(new JLabel(Localizer.getLocalization(Localizer.I18N_CHANNELS) + ":"), cc.xy(2,1));
-          panel.add(mBox, cc.xy(4,1));
-          panel.add(new JLabel(mLocalizer.msg(SETTING_FILTER,"Filter:")), cc.xy(2,3));
-          panel.add(mFilterBox, cc.xy(4,3));
-          
-          mShowDescription = new JCheckBox(mLocalizer.msg("showProgramDescription","Show program description"), showDescription);
-          mShowDescription.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-              mProgramPanelSettings.setShowOnlyDateAndTitle(e.getStateChange() == ItemEvent.DESELECTED);
-              mSettings.setProperty(SETTING_SHOW_DESCRIPTION, String.valueOf(e.getStateChange() == ItemEvent.SELECTED));
-              mList.updateUI();
-            }
-          });
-          
-          JButton close = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
-          close.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              mDialog.setVisible(false);
-              saveMe();
-            }
-          });
-          
-          JPanel southPanel = new JPanel(new FormLayout("default,0dlu:grow,default","default"));
-          southPanel.add(mShowDescription, cc.xy(1,1));
-          southPanel.add(close, cc.xy(3,1));
-
-          mDialog.getContentPane().add(panel, BorderLayout.NORTH);
-          mDialog.getContentPane().add(new JScrollPane(mList),
-              BorderLayout.CENTER);
-          mDialog.getContentPane().add(southPanel, BorderLayout.SOUTH);
-          
-          layoutWindow("programListWindow", mDialog, new Dimension(500,500));          
-          
-          mDialog.setVisible(true);
-          
-          mBox.getItemListeners()[0].itemStateChanged(null);
-        } else {
-          if(!mDialog.isVisible()) {
             fillFilterBox();
+
+            mFilterBox.addItemListener(new ItemListener() {
+              public void itemStateChanged(ItemEvent e) {
+                mFilter = (ProgramFilter) mFilterBox.getSelectedItem();
+                mSettings.setProperty(SETTING_FILTER, mFilter.getName());
+                mBox.getItemListeners()[0].itemStateChanged(null);
+              }
+            });
+
+            mBox.addItemListener(new ItemListener() {
+              public void itemStateChanged(ItemEvent e) {
+                fillProgramList();
+                mSettings.setProperty("index", String.valueOf(mBox
+                    .getSelectedIndex()));
+              }
+            });
+
+            CellConstraints cc = new CellConstraints();
+
+            JPanel panel = new JPanel(new FormLayout(
+                "1dlu,default,3dlu,default:grow", "pref,2dlu,pref,2dlu"));
+            panel.add(new JLabel(Localizer
+                .getLocalization(Localizer.I18N_CHANNELS)
+                + ":"), cc.xy(2, 1));
+            panel.add(mBox, cc.xy(4, 1));
+            panel.add(new JLabel(mLocalizer.msg(SETTING_FILTER, "Filter:")), cc
+                .xy(2, 3));
+            panel.add(mFilterBox, cc.xy(4, 3));
+
+            mShowDescription = new JCheckBox(mLocalizer.msg(
+                "showProgramDescription", "Show program description"),
+                showDescription);
+            mShowDescription.addItemListener(new ItemListener() {
+              public void itemStateChanged(ItemEvent e) {
+                int topRow = mList.getFirstVisibleIndex();
+                mProgramPanelSettings.setShowOnlyDateAndTitle(e
+                    .getStateChange() == ItemEvent.DESELECTED);
+                mSettings.setProperty(SETTING_SHOW_DESCRIPTION, String
+                    .valueOf(e.getStateChange() == ItemEvent.SELECTED));
+                mList.updateUI();
+                if (topRow != -1) {
+                  mList.ensureIndexIsVisible(topRow);
+                }
+              }
+            });
+
+            JButton close = new JButton(Localizer
+                .getLocalization(Localizer.I18N_CLOSE));
+            close.addActionListener(new ActionListener() {
+              public void actionPerformed(ActionEvent e) {
+                mDialog.setVisible(false);
+                saveMe();
+              }
+            });
+
+            JPanel southPanel = new JPanel(new FormLayout(
+                "default,0dlu:grow,default", "default"));
+            southPanel.add(mShowDescription, cc.xy(1, 1));
+            southPanel.add(close, cc.xy(3, 1));
+
+            mDialog.getContentPane().add(panel, BorderLayout.NORTH);
+            mDialog.getContentPane().add(new JScrollPane(mList),
+                BorderLayout.CENTER);
+            mDialog.getContentPane().add(southPanel, BorderLayout.SOUTH);
+
+            layoutWindow("programListWindow", mDialog, new Dimension(500, 500));
+
+            mDialog.setVisible(true);
+
+            mBox.getItemListeners()[0].itemStateChanged(null);
+          } else {
+            if (!mDialog.isVisible()) {
+              fillFilterBox();
+            }
+
+            mDialog.setVisible(!mDialog.isVisible());
+
+            if (mDialog.isVisible()) {
+              fillProgramList();
+            } else {
+              saveMe();
+            }
           }
-          
-          mDialog.setVisible(!mDialog.isVisible());
-          
-          if(mDialog.isVisible()) {
-            fillProgramList();
-          }
-          else {
-            saveMe();
-          }
-        }}catch(Exception ee){ee.printStackTrace();}
+        } catch (Exception ee) {
+          ee.printStackTrace();
+        }
       }
     };
-    action.putValue(Action.NAME, mLocalizer.msg("name","Important programs"));
-    action.putValue(Action.SMALL_ICON, createImageIcon("emblems","emblem-important",16));
-    action.putValue(Plugin.BIG_ICON, createImageIcon("emblems","emblem-important",22));
-    
+    action.putValue(Action.NAME, mLocalizer.msg("name", "Important programs"));
+    action.putValue(Action.SMALL_ICON, createImageIcon("emblems",
+        "emblem-important", 16));
+    action.putValue(Plugin.BIG_ICON, createImageIcon("emblems",
+        "emblem-important", 22));
+
     return new ActionMenu(action);
   }
   
