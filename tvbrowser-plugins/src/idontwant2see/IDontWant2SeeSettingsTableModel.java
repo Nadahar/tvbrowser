@@ -120,7 +120,7 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
     }
   }
   
-  public void setValueAt(Object aValue, int rowIndex, int columnIndex) { 
+  public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
     IDontWant2SeeSettingsTableEntry entry = mData.get(rowIndex);
     
     if(columnIndex == 0) {
@@ -128,6 +128,7 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
       entry.setSearchText((String)aValue);
     }
     else {
+      mLastChangedValue = (String)getValueAt(rowIndex,0);
       entry.setIsCaseSensitive((Boolean)aValue);
     }
     
@@ -168,12 +169,14 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
     
     private boolean mNewCaseSensitve;
     private String mNewSearchText;
+    private Date mLastMatchedDate;
     
     protected IDontWant2SeeSettingsTableEntry(IDontWant2SeeListEntry entry) {
       mListEntry = entry;
       mWasChanged = false;
       mNewCaseSensitve = entry.isCaseSensitive();
       mNewSearchText = entry.getSearchText();
+      mLastMatchedDate = entry.getLastMatchedDate();
     }
     
     /**
@@ -182,8 +185,15 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
      * @param value The new value for the case-sensitive flag.
      */
     protected void setIsCaseSensitive(boolean value) {
-      mWasChanged = true;
+      mWasChanged = !mNewSearchText.equals(mListEntry.getSearchText()) || mListEntry.isCaseSensitive() != value;
       mNewCaseSensitve = value;
+      
+      if(mWasChanged) {
+        mLastMatchedDate = null;
+      }
+      else {
+        mLastMatchedDate = mListEntry.getLastMatchedDate();
+      }
     }
     
     /**
@@ -192,8 +202,15 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
      * @param text The new search text.
      */
     protected void setSearchText(String text) {
-      mWasChanged = true;
+      mWasChanged = !mListEntry.getSearchText().equals(text) || mListEntry.isCaseSensitive() != mNewCaseSensitve;
       mNewSearchText = text;
+      
+      if(mWasChanged) {
+        mLastMatchedDate = null;
+      }
+      else {
+        mLastMatchedDate = mListEntry.getLastMatchedDate();
+      }
     }
     
     /**
@@ -224,7 +241,11 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
     }
     
     protected boolean isOutdated(Date compareValue, int outdatedDayCount) {
-      return mListEntry.isOutdated(compareValue,outdatedDayCount);
+      if(mLastMatchedDate != null && compareValue != null) {
+        return mLastMatchedDate.addDays(outdatedDayCount).compareTo(compareValue) < 0;
+      }
+      
+      return false;
     }
     
     protected boolean isLastChanged(String lastChangedText) {

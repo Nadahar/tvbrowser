@@ -100,7 +100,7 @@ public class IDontWant2See extends Plugin {
   private Date mLastUsedDate;
   
   public static Version getVersion() {
-    return new Version(0,9,2,true);
+    return new Version(0,9,5,true);
   }
   
   /**
