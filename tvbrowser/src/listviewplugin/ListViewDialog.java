@@ -67,6 +67,7 @@ import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
+import util.io.IOUtilities;
 import util.ui.CaretPositionCorrector;
 import util.ui.Localizer;
 import util.ui.TimeFormatter;
@@ -211,11 +212,11 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
     for (Channel channel : channels) {
 
-      Program prg = findProgram(date, time, channel);
+      Program prg = findProgram(date, time, channel, false);
       Program nprg = null;
 
       if (prg == null) {
-        prg = findProgram(date.addDays(-1), time + 60 * 24, channel);
+        prg = findProgram(date.addDays(-1), time + 60 * 24, channel, false);
       }
 
       if (prg != null) {
@@ -225,14 +226,14 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
         if ((it != null) && (it.hasNext())) {
           Program p = it.next();
-          if (p.getStartTime() > time) {
+          
+          if (p.getStartTime() > time && mCurrentFilter.accept(p)) {
             nprg = p;
           } else {
-            nprg = findProgram(date, time + 60, channel);
+            nprg = findProgram(date, time + 60, channel, true);
           }
         } else {
-
-          nprg = findProgram(date, time + 60, channel);
+          nprg = findProgram(date, time + 60, channel, true);
         }
 
       }
@@ -274,7 +275,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     if (last) {
       it = Plugin.getPluginManager().getChannelDayProgram(prg.getDate().addDays(1), prg.getChannel());
 
-      if ((it != null) && (it.hasNext())) {
+      while ((it != null) && (it.hasNext())) {
         Program p = it.next();
         
         if(mCurrentFilter.accept(p)) {
@@ -295,7 +296,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
    * @param channel Channel
    * @return added a Program
    */
-  private Program findProgram(Date date, int time, Channel channel) {
+  private Program findProgram(Date date, int time, Channel channel, boolean next) {
     Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channel);
     while ((it != null) && (it.hasNext())) {
       Program program = it.next();
@@ -303,7 +304,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
       int start = program.getStartTime();
       int ende = program.getStartTime() + program.getLength();
       
-      if ((start <= time) && (ende > time) && mCurrentFilter.accept(program)) {
+      if (((!next && (start <= time) && (ende > time)) || (next && start > IOUtilities.getMinutesAfterMidnight())) && mCurrentFilter.accept(program)) {
         return program;
       }
     }
