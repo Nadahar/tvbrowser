@@ -31,6 +31,7 @@
     <module>plugin-idontwant2see</module>
     <module>plugin-teletext</module>
     <module>plugin-tooltipcontrol</module>
+    <module>plugin-twitter</module>
   </modules>
   <dependencyManagement>
     <dependencies>
@@ -38,17 +39,13 @@
         <groupId>org.tvbrowser</groupId>
         <artifactId>tvbrowser</artifactId>
         <version>2.7.2beta</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
         <version>1.2.15</version>
-      </dependency>
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>3.8.1</version>
-        <scope>test</scope>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>junit</groupId>
