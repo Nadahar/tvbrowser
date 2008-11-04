@@ -62,6 +62,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import tvbrowser.core.Settings;
+import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.ui.filter.dlgs.FilterButtons;
@@ -371,6 +372,10 @@ public class ToolBar extends JToolBar {
         configItemEnabled = true;
         label = ChannelContextMenu.mLocalizer.msg("addChannels", "Add/Remove channels");
       }
+      else if (name.indexOf("##") != -1) {
+        PluginProxy plugin = PluginProxyManager.getInstance().getActivatedPluginForId(name.substring(0,name.indexOf("##")));
+        configItemEnabled = plugin != null && plugin.getSettingsTab() != null;
+      }
       else if (PluginProxyManager.getInstance().getActivatedPluginForId(name) != null) {
         configItemEnabled = PluginProxyManager.getInstance().getActivatedPluginForId(name).getSettingsTab() != null;
       }
@@ -395,6 +400,8 @@ public class ToolBar extends JToolBar {
           MainFrame.getInstance().showFilterDialog();
         } else if (e.getActionCommand().startsWith("#scrollToChannel")) {
           MainFrame.getInstance().showSettingsDialog(SettingsItem.CHANNELS);
+        } else if (e.getActionCommand().indexOf("##") != -1){
+          MainFrame.getInstance().showSettingsDialog(e.getActionCommand().substring(0,e.getActionCommand().indexOf("##")));
         } else {
           MainFrame.getInstance().showSettingsDialog(e.getActionCommand());
         }

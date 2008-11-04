@@ -137,7 +137,11 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
       return rpanel;
     }
     
-    return label;
+    JPanel panel = new JPanel(new BorderLayout());
+    panel.add(label, BorderLayout.CENTER);
+    panel.setBackground(label.getBackground());
+    
+    return panel;
   }
 
 }

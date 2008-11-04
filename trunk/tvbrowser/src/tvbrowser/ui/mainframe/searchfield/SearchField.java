@@ -353,7 +353,7 @@ public class SearchField extends JPanel {
     mText.setText("");
     mGoButton = true;
     mGoOrCancelButton.setIcon(IconLoader.getInstance().getIconFromTheme("action", "media-playback-start", 16));
-    mGoOrCancelButton.setVisible(false);
     mText.focusLost(null);
+    mGoOrCancelButton.setVisible(false);
   }
 }

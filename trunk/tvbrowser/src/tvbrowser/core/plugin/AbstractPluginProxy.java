@@ -146,7 +146,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * @param userDirectory The directory where the user data is stored.
    * @throws TvBrowserException If saving failed.
    */
-  final void saveSettings(File userDirectory, boolean log) throws TvBrowserException {
+  final synchronized void saveSettings(File userDirectory, boolean log) throws TvBrowserException {
     // Check whether the plugin is activated
     if (!mIsActivated) {
       throw new TvBrowserException(AbstractPluginProxy.class, "error.saving.notActivated",
