@@ -1,0 +1,65 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>org.tvbrowser</groupId>
+    <artifactId>tvbrowser-plugins</artifactId>
+    <version>0.1-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.tvbrowser</groupId>
+  <artifactId>tvbrowser-plugins-twitter</artifactId>
+  <name>Twitter Plugin</name>
+  <developers>
+    <developer>
+      <id>bodo</id>
+      <email>bodo@tvbrowser.org</email>
+    </developer>
+  </developers>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+          <encoding>ISO-8859-1</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+            <descriptors>
+                <descriptor>src/main/assembly/src.xml</descriptor>
+            </descriptors>
+            <finalName>TwitterPlugin</finalName>
+            <appendAssemblyId>false</appendAssemblyId>
+            <attach>false</attach>
+        </configuration>
+        <executions>
+         <execution>
+                <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                <phase>package</phase> <!-- append to the packaging phase. -->
+                <goals>
+                    <goal>single</goal> <!-- goals == mojos -->
+                </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.tvbrowser</groupId>
+      <artifactId>tvbrowser</artifactId>
+    </dependency>
+    <dependency>
+       <groupId>net.homeip.yusuke</groupId>
+       <artifactId>twitter4j</artifactId>
+       <version>1.1.0</version>
+    </dependency>
+  </dependencies>
+</project>
