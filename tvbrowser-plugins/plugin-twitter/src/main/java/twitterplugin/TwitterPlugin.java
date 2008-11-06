@@ -12,11 +12,15 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.Icon;
+import javax.swing.SwingUtilities;
 import java.util.Properties;
 import java.awt.event.ActionEvent;
+import java.awt.Frame;
 
 public class TwitterPlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(TwitterPlugin.class);
+  public static final String DEFAULT_FORMAT = "{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")} {channel_name} - {title}";
+
   private Properties mSettings;
   private ImageIcon mIcon;
   protected static TwitterPlugin mInstance;
@@ -49,9 +53,14 @@ public class TwitterPlugin extends Plugin {
     return null; //new TwitterPlugin(mSettings);
   }
 
-  public ActionMenu getContextMenuActions(Program program) {
+  public ActionMenu getContextMenuActions(final Program program) {
       AbstractAction action = new AbstractAction() {
         public void actionPerformed(ActionEvent evt) {
+          SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+              new TwitterSender().send(getParentFrame(), program);
+            }
+          });
         }
       };
       action.putValue(Action.NAME, mLocalizer.msg("contextMenuTweet", "Tweet this"));
@@ -69,5 +78,13 @@ public class TwitterPlugin extends Plugin {
 
   public Properties storeSettings() {
     return mSettings;
+  }
+
+  public Properties getSettings() {
+    return mSettings;
+  }
+
+  public static TwitterPlugin getInstance() {
+    return mInstance;
   }
 }
