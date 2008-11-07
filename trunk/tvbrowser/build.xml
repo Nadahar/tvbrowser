@@ -62,7 +62,6 @@
   <property name="tvbrowser-transportable.runtime.dir" value="${runtime.dir}/tvbrowser_transportable"/>
   <property name="tvbrowser-nightly.runtime.dir" value="${runtime.dir}/tvbrowser_nightly"/>
   <property name="tvbrowser-mac.runtime.dir" value="${runtime.dir}/tvbrowser_mac"/>
-  <property name="tvbrowser-optional.runtime.dir" value="${runtime.dir}/tvbrowser_optional"/>
   <property name="tvdatatools.runtime.dir" value="${runtime.dir}/tvdatatools"/>
   <property name="tvdatakit.runtime.dir" value="${runtime.dir}/tvdatakit"/>
   <property name="themepacks.dir" value="themepacks"/>
@@ -146,7 +145,6 @@
     <echo message="  runtime-mac           Creates a runtime directory for Mac OS X" />
     <echo message="  runtime-win           Creates a runtime directory for MS Windows" />
     <echo message="  runtime-tvdatakit     Creates a runtime directory for the TV-Browser TV data kit" />
-    <echo message="  runtime-optional      Optional plugins that are not delivered in the installation of tvbrowser" />
     <echo message="  test                  Does the JUnit tests."/>
   </target>
 
@@ -220,7 +218,6 @@
       <fileset dir="${src.dir}" includes="**/*.properties"/>
       <fileset dir="${src.dir}" includes="**/*.theme"/>
       <fileset dir="${src.dir}" includes="**/*.csv"/>
-      <fileset dir="${src.dir}" includes="**/*.dll"/> <!-- needed by speechplugin -->
     </copy>
   </target>
 
@@ -404,12 +401,6 @@
       <fileset dir="${classes.dir}" includes="showviewplugin/**"/>
     </jar>
 
-<!--
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SpeechPluginSAPI.jar"
-         compress="false">
-      <fileset dir="${classes.dir}" includes="speechpluginsapi/**"/>
-    </jar>
--->
   	<jar jarfile="${tvbrowser-default.runtime.dir}/plugins/TVRaterPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="tvraterplugin/**"/>
@@ -508,18 +499,6 @@
 
   <!-- Creates the default runtime folder (platform independent) -->
   <target name="runtime-default" depends="clean-default, make-default, runtime, test">
-  </target>
-
-  <!-- Creates the optional plugins -->
-  <target name="runtime-optional" depends="clean-default, make-default, runtime">
-    <mkdir dir="${tvbrowser-optional.runtime.dir}"/>
-    <mkdir dir="${tvbrowser-optional.runtime.dir}/plugins"/>
-
-  	<jar jarfile="${tvbrowser-optional.runtime.dir}/plugins/SpeechPlugin.jar"
-         compress="false">
-      <fileset dir="${unpacked.dir}/jsapi.jar" includes="**/*"/>
-      <fileset dir="${classes.dir}" includes="speechplugin/**"/>
-    </jar>
   </target>
 
 
