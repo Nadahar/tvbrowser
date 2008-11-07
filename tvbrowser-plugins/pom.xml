@@ -37,6 +37,7 @@
     <module>plugin-imdb</module>
     <module>plugin-movieaward</module>
     <module>plugin-dataviewer</module>
+    <module>plugin-timelist</module>
   </modules>
   <dependencyManagement>
     <dependencies>
