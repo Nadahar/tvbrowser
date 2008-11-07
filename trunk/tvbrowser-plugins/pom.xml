@@ -32,6 +32,7 @@
     <module>plugin-teletext</module>
     <module>plugin-tooltipcontrol</module>
     <module>plugin-twitter</module>
+    <module>plugin-wirschauen</module>
   </modules>
   <dependencyManagement>
     <dependencies>
