@@ -25,6 +25,7 @@ public class TwitterPlugin extends Plugin {
   public static final String STORE_PASSWORD = "STOREPASSWORD";
   public static final String USERNAME = "USERNAME";
   public static final String PASSWORD = "PASSWORD";
+  protected static final String FORMAT = "paramForProgram";
 
   private Properties mSettings;
   private ImageIcon mIcon;
@@ -47,7 +48,7 @@ public class TwitterPlugin extends Plugin {
         "Bodo Tasche", "GPL");
   }
 
-  private Icon getPluginIcon() {
+  public Icon getPluginIcon() {
     if (mIcon == null) {
       mIcon = new ImageIcon(getClass().getResource("twitter.png"));
     }
@@ -55,7 +56,7 @@ public class TwitterPlugin extends Plugin {
   }
 
   public SettingsTab getSettingsTab() {
-    return null; //new TwitterPlugin(mSettings);
+    return new TwitterSettingsTab();
   }
 
   public ActionMenu getContextMenuActions(final Program program) {

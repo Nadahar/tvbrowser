@@ -120,7 +120,7 @@ public class TwitterDialog extends JDialog implements WindowClosingIf {
 
     });
 
-    mMessage.setText(new ParamParser().analyse(TwitterPlugin.getInstance().getSettings().getProperty("paramForProgram", TwitterPlugin.DEFAULT_FORMAT), program));
+    mMessage.setText(new ParamParser().analyse(TwitterPlugin.getInstance().getSettings().getProperty(TwitterPlugin.FORMAT, TwitterPlugin.DEFAULT_FORMAT), program));
   }
 
   private void okPressed() {
