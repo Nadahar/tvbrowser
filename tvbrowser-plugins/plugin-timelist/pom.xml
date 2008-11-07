@@ -7,7 +7,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.tvbrowser</groupId>
-  <artifactId>tvbrowser-plugins-countrycode</artifactId>
+  <artifactId>tvbrowser-plugins-timelist</artifactId>
   <name>TimeList Plugin</name>
   <developers>
     <developer>
