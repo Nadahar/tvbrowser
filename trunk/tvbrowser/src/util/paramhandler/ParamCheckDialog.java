@@ -109,6 +109,7 @@ public class ParamCheckDialog extends JDialog implements WindowClosingIf {
 		super(frame, true);
 		setLocationRelativeTo(frame);
 		mParamLib = lib;
+    mCheckString = check;
 		createGui();
 		setLocationRelativeTo(frame);
 	}
