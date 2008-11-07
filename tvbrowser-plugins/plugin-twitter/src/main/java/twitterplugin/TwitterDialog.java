@@ -42,7 +42,7 @@ public class TwitterDialog extends JDialog implements WindowClosingIf {
   private void createGui(Program program) {
     final JPanel panel = (JPanel) getContentPane();
     panel.setBorder(Borders.DLU4_BORDER);
-    final FormLayout layout = new FormLayout("3dlu, fill:min:grow, 3dlu", "");
+    final FormLayout layout = new FormLayout("3dlu, fill:min:grow, 3dlu");
     panel.setLayout(layout);
 
     int currentRow = 1;

@@ -13,6 +13,7 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.Icon;
 import javax.swing.SwingUtilities;
+import javax.swing.JFrame;
 import java.util.Properties;
 import java.awt.event.ActionEvent;
 import java.awt.Frame;
@@ -20,6 +21,10 @@ import java.awt.Frame;
 public class TwitterPlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(TwitterPlugin.class);
   public static final String DEFAULT_FORMAT = "{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")} {channel_name} - {title}";
+
+  public static final String STORE_PASSWORD = "STOREPASSWORD";
+  public static final String USERNAME = "USERNAME";
+  public static final String PASSWORD = "PASSWORD";
 
   private Properties mSettings;
   private ImageIcon mIcon;
@@ -58,7 +63,7 @@ public class TwitterPlugin extends Plugin {
         public void actionPerformed(ActionEvent evt) {
           SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-              new TwitterSender().send(getParentFrame(), program);
+              new TwitterSender().send((JFrame)getParentFrame(), program);
             }
           });
         }
@@ -87,4 +92,5 @@ public class TwitterPlugin extends Plugin {
   public static TwitterPlugin getInstance() {
     return mInstance;
   }
+
 }
