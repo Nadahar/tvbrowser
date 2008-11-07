@@ -38,6 +38,7 @@
     <module>plugin-movieaward</module>
     <module>plugin-dataviewer</module>
     <module>plugin-timelist</module>
+    <module>plugin-speech</module>
   </modules>
   <dependencyManagement>
     <dependencies>
