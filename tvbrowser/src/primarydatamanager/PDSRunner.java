@@ -171,7 +171,11 @@ public class PDSRunner {
       else {
         String[] classes = args[i].split(",");
         for (final String clas:classes) {
-          pdsRunner.addPDS(PrimaryDataManager.createPrimaryDataService(clas));
+            try {
+                pdsRunner.addPDS(PrimaryDataManager.createPrimaryDataService(clas));
+            } catch (PreparationException e) {
+                mLog.log(Level.SEVERE, "A PDS Class with the name " + clas + " could not be initialised ", e);
+            }
         }
       }
     }
