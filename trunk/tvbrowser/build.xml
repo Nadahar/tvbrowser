@@ -515,11 +515,6 @@
     <mkdir dir="${tvbrowser-optional.runtime.dir}"/>
     <mkdir dir="${tvbrowser-optional.runtime.dir}/plugins"/>
 
-    <jar jarfile="${tvbrowser-optional.runtime.dir}/plugins/MovieAwardPlugin.jar"
-         compress="false">
-      <fileset dir="${classes.dir}" includes="movieawardplugin/**"/>
-    </jar>
-
   	<jar jarfile="${tvbrowser-optional.runtime.dir}/plugins/SpeechPlugin.jar"
          compress="false">
       <fileset dir="${unpacked.dir}/jsapi.jar" includes="**/*"/>

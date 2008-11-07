@@ -35,6 +35,7 @@
     <module>plugin-wirschauen</module>
     <module>plugin-countrycode</module>
     <module>plugin-imdb</module>
+    <module>plugin-movieaward</module>
   </modules>
   <dependencyManagement>
     <dependencies>
