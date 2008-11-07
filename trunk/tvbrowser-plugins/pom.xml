@@ -33,6 +33,7 @@
     <module>plugin-tooltipcontrol</module>
     <module>plugin-twitter</module>
     <module>plugin-wirschauen</module>
+    <module>plugin-countrycode</module>
   </modules>
   <dependencyManagement>
     <dependencies>
