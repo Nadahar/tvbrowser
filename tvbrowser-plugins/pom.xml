@@ -36,6 +36,7 @@
     <module>plugin-countrycode</module>
     <module>plugin-imdb</module>
     <module>plugin-movieaward</module>
+    <module>plugin-dataviewer</module>
   </modules>
   <dependencyManagement>
     <dependencies>
