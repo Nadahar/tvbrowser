@@ -34,6 +34,7 @@
     <module>plugin-twitter</module>
     <module>plugin-wirschauen</module>
     <module>plugin-countrycode</module>
+    <module>plugin-imdb</module>
   </modules>
   <dependencyManagement>
     <dependencies>

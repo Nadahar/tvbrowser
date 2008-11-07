@@ -307,7 +307,6 @@
     <unjar src="${lib.dir}/gdata-client-1.0.jar" dest="${unpacked.dir}/gdata-client-1.0.jar" /> 	   	
     <unjar src="${lib.dir}/gdata-core-1.0.jar" dest="${unpacked.dir}/gdata-core-1.0.jar" />
     <unjar src="${lib.dir}/jcom.jar" dest="${unpacked.dir}/jcom.jar" />
-    <unjar src="${lib.dir}/lucene-core-2.4.0.jar" dest="${unpacked.dir}/lucene-core-2.4.0.jar"/>
     <unjar src="${lib.dir}/opencsv-1.8.jar" dest="${unpacked.dir}/opencsv-1.8.jar" />
     <unjar src="${lib.dir}/jsapi.jar" dest="${unpacked.dir}/jsapi.jar" />
 
@@ -515,12 +514,6 @@
   <target name="runtime-optional" depends="clean-default, make-default, runtime">
     <mkdir dir="${tvbrowser-optional.runtime.dir}"/>
     <mkdir dir="${tvbrowser-optional.runtime.dir}/plugins"/>
-
-    <jar jarfile="${tvbrowser-optional.runtime.dir}/plugins/ImdbPlugin.jar"
-         compress="false">
-      <fileset dir="${unpacked.dir}/lucene-core-2.4.0.jar" includes="**/*"/>
-      <fileset dir="${classes.dir}" includes="imdbplugin/**"/>
-    </jar>
 
     <jar jarfile="${tvbrowser-optional.runtime.dir}/plugins/MovieAwardPlugin.jar"
          compress="false">
