@@ -6,6 +6,7 @@ import devplugin.PluginInfo;
 import devplugin.ActionMenu;
 import devplugin.Program;
 import devplugin.Channel;
+import devplugin.SettingsTab;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.misc.OperatingSystem;
@@ -59,13 +60,14 @@ public class ZattooPlugin extends Plugin {
     changeCountry(mSettings.getProperty(COUNTRY, "de"));
   }
 
-  private void changeCountry(String country) {
+  public void changeCountry(final String country) {
     mChannelMapping = new Properties();
 
     final InputStream stream = ZattooPlugin.class.getResourceAsStream("channelid_" + country + ".properties");
     if (stream != null) {
       try {
         mChannelMapping.load(stream);
+        mSettings.setProperty(COUNTRY, country);
       } catch (IOException e) {
         mLog.log(Level.WARNING, "Could not load File for Country " + country + ".", e);
       }
@@ -74,10 +76,19 @@ public class ZattooPlugin extends Plugin {
     }
   }
 
+  public String getCurrentCountry() {
+    return mSettings.getProperty(COUNTRY, "de");
+  }
+
   public PluginInfo getInfo() {
     return new PluginInfo(ZattooPlugin.class, mLocalizer.msg("pluginName", "Zattoo Plugin"),
         mLocalizer.msg("description", "Switches channels in Zattoo"),
         "Bodo Tasche", "GPL");
+  }
+
+  @Override
+  public SettingsTab getSettingsTab() {
+    return new ZattooSettingsTab();
   }
 
   public Icon getPluginIcon() {
