@@ -19,18 +19,21 @@ import javax.swing.SwingUtilities;
 import javax.swing.Action;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class ZattooPlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ZattooPlugin.class);
+  private static Logger mLog = Logger.getLogger(ZattooPlugin.class.getName());
+
+  private static final String COUNTRY = "COUNTRY";
 
   private ImageIcon mIcon;
   protected static ZattooPlugin mInstance;
   private Properties mChannelMapping;
-
-  public static Version getVersion() {
-    return new Version(0, 1, false);
-  }
+  private Properties mSettings;
 
   /**
    * Creates an instance of this plugin.
@@ -38,7 +41,37 @@ public class ZattooPlugin extends Plugin {
   public ZattooPlugin() throws IOException {
     mInstance = this;
     mChannelMapping = new Properties();
-    mChannelMapping.load(ZattooPlugin.class.getResourceAsStream("channelid.properties"));
+  }
+
+  public static Version getVersion() {
+    return new Version(0, 1, false);
+  }
+
+  @Override
+  public Properties storeSettings() {
+    return mSettings;
+  }
+
+  @Override
+  public void loadSettings(Properties properties) {
+    mSettings = properties;
+
+    changeCountry(mSettings.getProperty(COUNTRY, "de"));
+  }
+
+  private void changeCountry(String country) {
+    mChannelMapping = new Properties();
+
+    final InputStream stream = ZattooPlugin.class.getResourceAsStream("channelid_" + country + ".properties");
+    if (stream != null) {
+      try {
+        mChannelMapping.load(stream);
+      } catch (IOException e) {
+        mLog.log(Level.WARNING, "Could not load File for Country " + country + ".", e);
+      }
+    } else {
+      mLog.log(Level.WARNING, "Could not find File for Country " + country + ".");
+    }
   }
 
   public PluginInfo getInfo() {
@@ -94,8 +127,11 @@ public class ZattooPlugin extends Plugin {
   }
 
   private String getChannelId(final Channel channel) {
-    System.out.println("Channel : " + channel.getUniqueId() + " Mapping : " + mChannelMapping.getProperty(channel.getUniqueId()));
-    return mChannelMapping.getProperty(channel.getUniqueId());
+    final String ret = mChannelMapping.getProperty(channel.getUniqueId());
+    if (ret == null) {
+      mLog.log(Level.INFO, "No channelmapping found for " + channel.getUniqueId());
+    }
+    return ret;
   }
 
   public static ZattooPlugin getInstance() {
