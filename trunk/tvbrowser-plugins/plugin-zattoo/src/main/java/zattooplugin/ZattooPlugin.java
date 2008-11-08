@@ -93,7 +93,7 @@ public class ZattooPlugin extends Plugin {
 
   public Icon getPluginIcon() {
     if (mIcon == null) {
-      //mIcon = new ImageIcon(getClass().getResource("zattoo.png"));
+      mIcon = new ImageIcon(getClass().getResource("zattoo.png"));
     }
     return mIcon;
   }
