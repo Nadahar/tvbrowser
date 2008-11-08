@@ -125,7 +125,7 @@ public class ZattooPlugin extends Plugin {
       } else if (OperatingSystem.isMacOs()) {
         executionHandler = new ExecutionHandler("zattoo://channel/" + id, "open");
       } else {
-        executionHandler = new ExecutionHandler(new String[] {"url.dll,FileProtocolHandler", "zattoo://channel/" + id}, "rundll32.exe");
+        executionHandler = new ExecutionHandler(new String[] {"rundll32.exe", "url.dll,FileProtocolHandler", "zattoo://channel/" + id});
       }
       
       try {
