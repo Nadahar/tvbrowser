@@ -39,6 +39,7 @@
     <module>plugin-dataviewer</module>
     <module>plugin-timelist</module>
     <module>plugin-speech</module>
+    <module>plugin-zattoo</module>
   </modules>
   <dependencyManagement>
     <dependencies>
