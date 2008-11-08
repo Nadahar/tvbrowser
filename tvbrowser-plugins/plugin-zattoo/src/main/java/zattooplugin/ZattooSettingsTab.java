@@ -46,7 +46,7 @@ public class ZattooSettingsTab implements SettingsTab {
   }
 
   public Icon getIcon() {
-    return null;
+    return ZattooPlugin.getInstance().getPluginIcon();
   }
 
   public String getTitle() {
