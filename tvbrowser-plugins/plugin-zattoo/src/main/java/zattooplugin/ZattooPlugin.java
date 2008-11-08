@@ -55,7 +55,7 @@ public class ZattooPlugin extends Plugin {
   }
 
   public ActionMenu getContextMenuActions(final Program program) {
-    if (getChannelId(program.getChannel()) != null) {
+    if (getPluginManager().getExampleProgram().equals(program) || getChannelId(program.getChannel()) != null) {
       AbstractAction action = new AbstractAction() {
         public void actionPerformed(ActionEvent evt) {
           SwingUtilities.invokeLater(new Runnable() {
