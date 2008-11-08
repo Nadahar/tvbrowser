@@ -1,6 +1,7 @@
 <awarddata>
 <name lang="de">Oscar</name>
 <name lang="en">Oscar</name>
+<url>http://www.oscar.com/</url>
 
 <categories>
   <categorie id="best_movie">
@@ -9,11 +10,11 @@
   </categorie>
 </categories>
 
-
 <movies>
   <movie id="movie_1" year="1998" director="tom tykwer">
     <title lang="de">Lola rennt</title>
     <title lang="en">Lola Runs</title>
+    <alternativetitle lang="en">Run, Lola, Run</alternativetitle>
   </movie>
 </movies>
 
