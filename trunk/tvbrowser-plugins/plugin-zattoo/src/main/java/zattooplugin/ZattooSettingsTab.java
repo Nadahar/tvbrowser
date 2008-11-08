@@ -31,7 +31,6 @@ public class ZattooSettingsTab implements SettingsTab {
     data.add(new ZattooCountry("de", mLocalizer.msg("country_de", "Germany")));
     data.add(new ZattooCountry("at", mLocalizer.msg("country_at", "Austria")));
     data.add(new ZattooCountry("ch", mLocalizer.msg("country_ch", "Switzerland")));
-    data.add(new ZattooCountry("fr", mLocalizer.msg("country_fr", "France")));
 
     mCountry = new JComboBox(data);
     mCountry.setSelectedItem(new ZattooCountry(ZattooPlugin.getInstance().getCurrentCountry(), ""));
