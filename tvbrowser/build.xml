@@ -528,27 +528,16 @@
   </target>
 
 
-  <!-- Creates the runtime folder for the windows platform -->
+  <!-- Creates the runtime folder for the windows platform  !!clean-mac!! -->
   <target name="runtime-mac" depends="clean-mac, make-mac, runtime, test">
 
     <delete dir="${tvbrowser-mac.runtime.dir}"/>
     <mkdir dir="${tvbrowser-mac.runtime.dir}"/>
 
-    <copy todir="${tvbrowser-mac.runtime.dir}">
-      <fileset dir="${tvbrowser-default.runtime.dir}"/>
-      <fileset dir="${deployment.dir}" includes="osx.properties"/>
-    </copy>
-
-    <jar jarfile="${tvbrowser-mac.runtime.dir}/plugins/GrowlPlugin.jar"
-         compress="false">
-      <fileset dir="${classes.dir}" includes="growlplugin/**"/>
-    </jar>
-
-
     <jarbundler dir="${tvbrowser-mac.runtime.dir}"
                 verbose="false"
                 name="TV-Browser"
-		            icon="./images/additional/tvbrowser.icns"
+		        icon="./images/additional/tvbrowser.icns"
                 mainclass="tvbrowser.TVBrowser"
                 extraclasspath="/System/Library/Java"
                 jvmversion="1.5+"
@@ -562,10 +551,21 @@
                 screenmenu="true"
                 developmentregion="Global"
                 version="${tvbrowser.version}"
-                workingdirectory="/Library/Application Support/TV-Browser"
-                jars="${tvbrowser-mac.runtime.dir}/tvbrowser.jar">
+                workingdirectory="$APP_PACKAGE/Contents/Resources"
+                jars="${tvbrowser-default.runtime.dir}/tvbrowser.jar">
+        <resourcefileset dir="${tvbrowser-default.runtime.dir}">
+             <exclude name="tvbrowser.jar"/>
+        </resourcefileset>                            
     </jarbundler>
 
+    <copy todir="${tvbrowser-mac.runtime.dir}/TV-Browser.app/Contents/Resources">
+      <fileset dir="${deployment.dir}" includes="osx.properties"/>
+    </copy>
+
+    <jar jarfile="${tvbrowser-mac.runtime.dir}/TV-Browser.app/Contents/Resources/plugins/GrowlPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="growlplugin/**"/>
+    </jar>
 
   </target>
 
@@ -828,20 +828,8 @@
   <!-- Creates the release binaries (.dmg) for mac os x -->
   <target name="public-mac" depends="runtime-mac">
     <mkdir dir="${public.dir}"/>
-
-    <copy todir="${tvbrowser-mac.runtime.dir}">
-      <fileset file="${deployment.dir}/macosx/tvbrowser.packproj"/>
-    </copy>
-
-    <echo message="running freeze..."/>
-    <echo message="'freeze' is the command line tool included in 'Iceberg'"/>
-    <echo message="(http://s.sudre.free.fr/Software/Iceberg.html)" />
-    <exec executable="freeze" os="Mac OS X">
-      <arg value="${deployment.dir}/macosx/tvbrowser.packproj"/>
-    </exec>
-
-    <delete file="${tvbrowser-mac.runtime.dir}/tvbrowser.packproj"/>
-    <copy todir="${deployment.dir}/macosx/build">
+   
+    <copy todir="${tvbrowser-mac.runtime.dir}/">
       <fileset file="${deployment.dir}/macosx/readme.rtf"/>
     </copy>
 
@@ -849,17 +837,13 @@
     <exec executable="hdiutil" os="Mac OS X">
       <arg value="create"/>
       <arg value="-srcfolder"/>
-      <arg value="${deployment.dir}/macosx/build"/>
+      <arg value="${tvbrowser-mac.runtime.dir}"/>
       <arg value="-ov"/>
       <arg value="${public.dir}/tvbrowser-${tvbrowser.version}.dmg"/>
       <arg value="-volname" />
       <arg value="tvbrowser-${tvbrowser.version}" />
     </exec>
-
-    <delete dir="${deployment.dir}/macosx/build" />
-
   </target>
-
 
   <!--
     | Packs the TV data starter kit
