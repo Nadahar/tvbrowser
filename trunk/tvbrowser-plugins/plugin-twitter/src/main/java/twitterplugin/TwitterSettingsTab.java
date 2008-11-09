@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 public class TwitterSettingsTab implements SettingsTab {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(TwitterSettingsTab.class);
   private boolean mUserStored = "true".equalsIgnoreCase(TwitterPlugin.getInstance().getSettings().getProperty(TwitterPlugin.STORE_PASSWORD, "false"));
+  private ParamInputField mFormat;
 
   public JPanel createSettingsPanel() {
     final FormLayout layout = new FormLayout("3dlu,fill:min:grow,3dlu");
@@ -73,9 +74,9 @@ public class TwitterSettingsTab implements SettingsTab {
     layout.appendRow(RowSpec.decode("fill:min:grow"));
     layout.appendRow(RowSpec.decode("3dlu"));
 
-    ParamInputField field = new ParamInputField(TwitterPlugin.getInstance().getSettings().getProperty(TwitterPlugin.FORMAT, TwitterPlugin.DEFAULT_FORMAT));
+    mFormat = new ParamInputField(TwitterPlugin.getInstance().getSettings().getProperty(TwitterPlugin.FORMAT, TwitterPlugin.DEFAULT_FORMAT));
 
-    panel.add(field, cc.xy(2, line += 2));
+    panel.add(mFormat, cc.xy(2, line += 2));
 
     return panel;
   }
@@ -84,6 +85,7 @@ public class TwitterSettingsTab implements SettingsTab {
     if (!mUserStored) {
       TwitterPlugin.getInstance().getSettings().setProperty(TwitterPlugin.STORE_PASSWORD, "false");
     }
+    TwitterPlugin.getInstance().getSettings().setProperty(TwitterPlugin.FORMAT, mFormat.getText());
   }
 
   public Icon getIcon() {

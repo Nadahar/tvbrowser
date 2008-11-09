@@ -32,7 +32,7 @@ public class TwitterPlugin extends Plugin {
   protected static TwitterPlugin mInstance;
 
   public static Version getVersion() {
-    return new Version(0, 2, false);
+    return new Version(0, 3, false);
   }
 
   /**
