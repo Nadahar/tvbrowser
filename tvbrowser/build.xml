@@ -528,7 +528,7 @@
   </target>
 
 
-  <!-- Creates the runtime folder for the windows platform  !!clean-mac!! -->
+  <!-- Creates the runtime folder for the windows platform -->
   <target name="runtime-mac" depends="clean-mac, make-mac, runtime, test">
 
     <delete dir="${tvbrowser-mac.runtime.dir}"/>
@@ -829,10 +829,6 @@
   <target name="public-mac" depends="runtime-mac">
     <mkdir dir="${public.dir}"/>
    
-    <copy todir="${tvbrowser-mac.runtime.dir}/">
-      <fileset file="${deployment.dir}/macosx/readme.rtf"/>
-    </copy>
-
     <copy todir="${tvbrowser-mac.runtime.dir}/">
       <fileset file="${deployment.dir}/macosx/readme.rtf"/>
       <fileset dir="${txt.dir}" includes="LICENSE.txt"/>
