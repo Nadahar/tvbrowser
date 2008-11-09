@@ -1,29 +1,29 @@
 package zattooplugin;
 
-import devplugin.Plugin;
-import devplugin.Version;
-import devplugin.PluginInfo;
-import devplugin.ActionMenu;
-import devplugin.Program;
-import devplugin.Channel;
-import devplugin.SettingsTab;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.misc.OperatingSystem;
-import util.io.ExecutionHandler;
-import util.exc.ErrorHandler;
-
-import javax.swing.ImageIcon;
-import javax.swing.Icon;
-import javax.swing.AbstractAction;
-import javax.swing.SwingUtilities;
-import javax.swing.Action;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.logging.Logger;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
+
+import util.exc.ErrorHandler;
+import util.io.ExecutionHandler;
+import util.misc.OperatingSystem;
+import util.ui.Localizer;
+import devplugin.ActionMenu;
+import devplugin.Channel;
+import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.Program;
+import devplugin.SettingsTab;
+import devplugin.Version;
 
 public class ZattooPlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ZattooPlugin.class);
@@ -81,7 +81,8 @@ public class ZattooPlugin extends Plugin {
   }
 
   public PluginInfo getInfo() {
-    return new PluginInfo(ZattooPlugin.class, mLocalizer.msg("pluginName", "Zattoo Plugin"),
+    return new PluginInfo(ZattooPlugin.class, mLocalizer.msg("pluginName",
+        "Zattoo"),
         mLocalizer.msg("description", "Switches channels in Zattoo"),
         "Bodo Tasche", "GPL");
   }
@@ -120,12 +121,13 @@ public class ZattooPlugin extends Plugin {
     final String id = getChannelId(channel);
     if (id != null && !OperatingSystem.isOther()) {
       ExecutionHandler executionHandler;
+      final String zattooURI = "zattoo://channel/" + id;
       if (OperatingSystem.isLinux()) {
-        executionHandler = new ExecutionHandler("zattoo://channel/" + id, "zattoo-uri-handler");
+        executionHandler = new ExecutionHandler(zattooURI, "zattoo-uri-handler");
       } else if (OperatingSystem.isMacOs()) {
-        executionHandler = new ExecutionHandler("zattoo://channel/" + id, "open");
+        executionHandler = new ExecutionHandler(zattooURI, "open");
       } else {
-        executionHandler = new ExecutionHandler(new String[] {"rundll32.exe", "url.dll,FileProtocolHandler", "zattoo://channel/" + id});
+        executionHandler = new ExecutionHandler(new String[] {"rundll32.exe", "url.dll,FileProtocolHandler", zattooURI});
       }
       
       try {
@@ -140,7 +142,8 @@ public class ZattooPlugin extends Plugin {
   private String getChannelId(final Channel channel) {
     final String ret = mChannelMapping.getProperty(channel.getUniqueId());
     if (ret == null) {
-      mLog.log(Level.INFO, "No channelmapping found for " + channel.getUniqueId());
+      mLog.log(Level.INFO, "No channel mapping found for "
+          + channel.getUniqueId());
     }
     return ret;
   }
