@@ -52,7 +52,7 @@ public class TwitterSender {
 
       final Twitter twitter = new Twitter(username, password);
       try {
-        twitter.setSource("TV-Browser");
+        twitter.setSource("tvbrowserorg");
         twitter.update(dialog.getMessage());
         JOptionPane.showMessageDialog(parentFrame, mLocalizer.msg("tweetSend", "The tweet was send."));
       } catch (TwitterException e) {
