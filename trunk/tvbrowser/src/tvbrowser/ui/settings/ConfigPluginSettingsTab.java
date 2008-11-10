@@ -29,13 +29,14 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.Action;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import tvbrowser.core.Settings;
+import tvbrowser.core.plugin.AbstractPluginProxy;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.SettingsTabProxy;
@@ -47,7 +48,6 @@ import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-import devplugin.ActionMenu;
 import devplugin.CancelableSettingsTab;
 
 public class ConfigPluginSettingsTab implements CancelableSettingsTab {
@@ -175,25 +175,15 @@ public class ConfigPluginSettingsTab implements CancelableSettingsTab {
       return mSettingsTab.getIcon();
     }
 
-    
-    ActionMenu actionMenu = mPlugin.getButtonAction();
-    Action action = null;
-    if (actionMenu !=null) {
-      action = actionMenu.getAction();
+    Icon icon = mPlugin.getPluginIcon();
+    if (icon != null
+        && icon instanceof ImageIcon
+        && ((ImageIcon) icon).toString().equals(
+            AbstractPluginProxy.DEFAULT_PLUGIN_ICON_NAME)) {
+      return null;
     }
-    Icon icon = null;
-    if (action != null) {
-      icon = (Icon) action.getValue(Action.SMALL_ICON);
-    }
-    
-    if (icon == null) {
-      // The plugin has no button icon -> Try the mark icon
-      icon = mPlugin.getMarkIcon();
-    }
-    
     return icon;
   }
-
 
   /**
    * Returns the title of the tab-sheet.
