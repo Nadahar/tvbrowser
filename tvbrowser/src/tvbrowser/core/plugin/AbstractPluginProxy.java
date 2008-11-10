@@ -63,6 +63,8 @@ import devplugin.ProgramReceiveTarget;
  */
 public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf {
 
+  public static final String DEFAULT_PLUGIN_ICON_NAME = "imgs/Jar16.gif";
+
   /** The localizer for this class. */
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(AbstractPluginProxy.class);
 
@@ -898,22 +900,38 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   }
 
   public Icon getPluginIcon() {
+    // first try button icon
     ActionMenu actionMenu = getButtonAction();
-    Action action = null;
-    if (actionMenu !=null) {
+    Icon icon = getMenuIcon(actionMenu);
+
+    // then try the mark icon
+    if (icon == null) {
+      icon = getMarkIcon();
+    }
+    
+    // and then the context menu
+    if (icon == null && isActivated()) {
+      actionMenu = getContextMenuActions(PluginManagerImpl.getInstance()
+          .getExampleProgram());
+      icon = getMenuIcon(actionMenu);
+    }
+    
+    if (icon != null) {
+      return icon;
+    }
+    
+    return new ImageIcon(DEFAULT_PLUGIN_ICON_NAME);
+  }
+
+  private Icon getMenuIcon(ActionMenu actionMenu) {
+    Action action;
+    if (actionMenu != null) {
       action = actionMenu.getAction();
+      if (action != null) {
+        return (Icon) action.getValue(Action.SMALL_ICON);
+      }
     }
-    if (action != null) {
-      return (Icon) action.getValue(Action.SMALL_ICON);
-    }
-
-    // The plugin has no button icon -> Try the mark icon
-    Icon ico = getMarkIcon();
-    if (ico != null) {
-      return ico;
-    }
-
-    return new ImageIcon("imgs/Jar16.gif");
+    return null;
   }
 
   final public boolean hasArtificialPluginTree() {
