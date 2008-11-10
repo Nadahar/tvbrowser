@@ -255,11 +255,11 @@ public interface Program {
    * @return the minute-component of the start time.
    */
   public int getMinutes();
-  
+
   /**
    * Gets the length of this program in minutes.
-   *
-   * @return the length.
+   * 
+   * @return the length in minutes or -1, if the length is unknown.
    */
   public int getLength();
   
