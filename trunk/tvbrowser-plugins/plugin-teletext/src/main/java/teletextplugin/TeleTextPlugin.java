@@ -78,7 +78,7 @@ public class TeleTextPlugin extends Plugin {
         || program.equals(getPluginManager().getExampleProgram())
         || getPluginManager().getFilterManager() == null) {
       return new ActionMenu(new ContextMenuAction(mLocalizer.msg("contextMenu",
-          "Teletext")));
+          "Teletext"), getPluginIcon()));
     }
 
     Channel channel = program.getChannel();
