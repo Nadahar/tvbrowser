@@ -746,6 +746,13 @@ public class ProgramTable extends JPanel
   }
 
   
+  /**
+   * get the average Y coordinate of the center of the program panels of all
+   * columns where the program is running at the given time
+   * 
+   * @param minutesAfterMidnight
+   * @return
+   */
   public int getTimeY(int minutesAfterMidnight) {
     // Get the total time y
     int totalTimeY = 0;
@@ -759,7 +766,7 @@ public class ProgramTable extends JPanel
       }
     }
 
-    // Return the avarage time y
+    // Return the average time y
     if (parts == 0) {
       // avoid division by zero
       return 0;
@@ -770,6 +777,14 @@ public class ProgramTable extends JPanel
 
 
 
+  /**
+   * get the Y coordinate of the center of the program panel in this column
+   * where the program is running at the given time
+   * 
+   * @param col
+   * @param minutesAfterMidnight
+   * @return
+   */
   private int getTimeYOfColumn(int col, int minutesAfterMidnight) {
     int timeY = mLayout.getColumnStart(col);
     Date mainDate = mModel.getDate();

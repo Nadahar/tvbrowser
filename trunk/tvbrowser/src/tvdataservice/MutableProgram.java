@@ -883,11 +883,6 @@ public class MutableProgram implements Program {
     setTimeField(ProgramFieldType.END_TIME_TYPE, endTime);
   }
 
-  /**
-   * Gets the length of this program in minutes.
-   *
-   * @return the length.
-   */
   public int getLength() {
     int endTime = getTimeField(ProgramFieldType.END_TIME_TYPE);
     if (endTime == -1) {
