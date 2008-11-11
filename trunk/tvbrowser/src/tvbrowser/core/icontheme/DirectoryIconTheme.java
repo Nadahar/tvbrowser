@@ -52,7 +52,7 @@ public class DirectoryIconTheme extends IconTheme {
   
   /**
    * Get an InputStream from the Icon-Theme.
-   * @param string File/Entry to load
+   * @param entry File/Entry to load
    * @return InputStream of specific Entry
    */
   protected InputStream getInputStream(String entry) {

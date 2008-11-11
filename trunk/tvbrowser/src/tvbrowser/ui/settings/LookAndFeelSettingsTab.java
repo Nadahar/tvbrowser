@@ -29,7 +29,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
@@ -140,7 +139,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     mPluginViewPosition.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         checkIfAreaIsToMakeVisible();
-      };
+      }
     });
     
     mSettingsPn.add(mPluginViewPosition, cc.xy(4,3));
@@ -163,7 +162,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     mLfComboBox.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         lookChanged();
-      };
+      }
     });
     
     mSettingsPn.add(mLfComboBox, cc.xy(4, 5));
@@ -196,7 +195,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     });
     
     if (Settings.propIcontheme.getString() != null) {
-      IconTheme theme = IconLoader.getInstance().getIconTheme(new File(Settings.propIcontheme.getString().replace('/',File.separatorChar)));
+      IconTheme theme = IconLoader.getInstance().getIconTheme(IconLoader.getInstance().getIconThemeFile(Settings.propIcontheme.getString()));
       if (theme.loadTheme()) {
         mIconThemes.setSelectedItem(theme);
       } else {
@@ -284,7 +283,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     Settings.propLookAndFeel.setString(obj.getLFClassName());
     
     IconTheme theme = (IconTheme) mIconThemes.getSelectedItem();
-    Settings.propIcontheme.setString(theme.getBase().getAbsolutePath().substring(System.getProperty("user.dir").length()+1).replace(File.separatorChar,'/'));
+    Settings.propIcontheme.setString("icons/" + theme.getBase().getName());
     
     mSomethingChanged = mInfoArea.isVisible();
     

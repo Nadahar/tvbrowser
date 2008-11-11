@@ -33,6 +33,7 @@ import javax.swing.ImageIcon;
 
 import tvbrowser.core.Settings;
 import util.misc.SoftReferenceCache;
+import util.misc.OperatingSystem;
 import util.ui.ImageUtilities;
 import devplugin.Plugin;
 import devplugin.ThemeIcon;
@@ -69,7 +70,7 @@ public class IconLoader {
   private SoftReferenceCache<ThemeIcon, ImageIcon> mIconCache;
   /** Icon Cache for Plugins */
   private HashMap<Plugin, SoftReferenceCache<ThemeIcon, ImageIcon>> mPluginIconCache;
-  
+
   /**
    * Private Constructor
    * 
@@ -93,35 +94,72 @@ public class IconLoader {
     mDefaultIconTheme = getIconTheme(mDefaultIconDir);
     mDefaultIconTheme.loadTheme();
 
-    if (Settings.propIcontheme.getString() != null)
-        loadIconTheme(new File(Settings.propIcontheme.getString()));
-    else {
+    if (Settings.propIcontheme.getString() != null) {
+      File themeFile = getIconThemeFile(Settings.propIcontheme.getString());
+
+      mLog.info("Loading Icon from " + themeFile.getAbsolutePath());
+
+      loadIconTheme(themeFile);
+    } else {
         mIconCache = new SoftReferenceCache<ThemeIcon, ImageIcon>();
         mPluginIconCache = new HashMap<Plugin, SoftReferenceCache<ThemeIcon, ImageIcon>>();
         mIconTheme = mDefaultIconTheme;
     }
   }
-  
+
+  /**
+   * Trys to find the Icon Theme File. This method searches in the application directory, the user home and
+   * the Directory Library - Application Support - TV-Browser if used on a mac.
+   *
+   * @param theme name of the theme file
+   * @return best file that contains the theme. Attention! The file could not exist!
+   * @since 2.7.2
+   */
+  public File getIconThemeFile(String theme) {
+    File themeFile = new File(theme);
+
+    if (!themeFile.exists()) {
+      themeFile = new File(Settings.getUserDirectoryName(), theme);
+    }
+
+    if (!themeFile.exists() && OperatingSystem.isMacOs()) {
+      themeFile = new File("/Library/Application Support/TV-Browser/", theme);
+    }
+
+    return themeFile;
+  }
+
   /**
    * Return all available Themes
    * @return all available themes
    */
   public IconTheme[] getAvailableThemes() {
-    ArrayList<IconTheme> list = new ArrayList<IconTheme>(); 
+    ArrayList<IconTheme> list = new ArrayList<IconTheme>();
     
-    File root = new File("icons");
-    
-    File[] files = root.listFiles();
-    if (files != null) {
-      for (int i=0;i<files.length;i++) {
-        IconTheme theme = getIconTheme(files[i]);
-        if (theme.loadTheme()) {
-          list.add(theme);
+    list.addAll(getThemesInDirectory(new File("icons")));
+    list.addAll(getThemesInDirectory(new File(Settings.getUserDirectoryName(), "icons")));
+
+    if (OperatingSystem.isMacOs()) {
+      list.addAll(getThemesInDirectory(new File("/Library/Application Support/TV-Browser/icons")));
+    }
+
+    return list.toArray(new IconTheme[list.size()]);
+  }
+
+  private ArrayList<IconTheme> getThemesInDirectory(final File directory) {
+    final ArrayList<IconTheme> list = new ArrayList<IconTheme>();
+    if (directory != null && directory.isDirectory()) {
+      File[] files = directory.listFiles();
+      if (files != null) {
+        for (File file : files) {
+          IconTheme theme = getIconTheme(file);
+          if (theme.loadTheme()) {
+            list.add(theme);
+          }
         }
       }
     }
-    
-    return list.toArray(new IconTheme[0]);
+    return list;
   }
 
   /**
