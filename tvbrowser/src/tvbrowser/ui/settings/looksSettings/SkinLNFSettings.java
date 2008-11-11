@@ -30,6 +30,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.Arrays;
+import java.util.TreeSet;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -40,6 +42,7 @@ import tvbrowser.core.Settings;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+import util.misc.OperatingSystem;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
@@ -86,11 +89,7 @@ public class SkinLNFSettings extends JDialog implements WindowClosingIf {
     String temp = Settings.propSkinLFThemepack.getString();    
     temp = temp.substring(temp.lastIndexOf(File.separator)+1);
     
-    String[] skins = new File("themepacks").list(new FilenameFilter() {
-      public boolean accept(File dir, String name) {
-        return name.toLowerCase().endsWith(".zip");
-      }
-    });
+    String[] skins = getThemePacks();
     
     mThemePack = new JComboBox(skins);
     mThemePack.setSelectedItem(temp);
@@ -122,6 +121,31 @@ public class SkinLNFSettings extends JDialog implements WindowClosingIf {
     UiUtilities.registerForClosing(this);
     
     setSize(Sizes.dialogUnitXAsPixel(270, this), Sizes.dialogUnitYAsPixel(145, this));
+  }
+
+  private String[] getThemePacks() {
+    final TreeSet<String> themepacks = new TreeSet<String>();
+
+    themepacks.addAll(Arrays.asList(getThemePacks(new File("themepacks"))));
+    themepacks.addAll(Arrays.asList(getThemePacks(new File(Settings.getUserDirectoryName(), "themepacks"))));
+
+    if (OperatingSystem.isMacOs()) {
+      themepacks.addAll(Arrays.asList(getThemePacks(new File("/Library/Application Support/TV-Browser/themepacks"))));
+    }
+
+    return themepacks.toArray(new String[themepacks.size()]);
+  }
+
+  private String[] getThemePacks(File directory) {
+    if (directory == null || !directory.exists()) {
+      return new String[0];
+    }
+
+    return directory.list(new FilenameFilter() {
+       public boolean accept(File dir, String name) {
+         return name.toLowerCase().endsWith(".zip");
+       }
+     });
   }
 
   /**

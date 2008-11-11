@@ -956,7 +956,16 @@ public class TVBrowser {
       Settings.propLookAndFeel.setString("com.l2fprod.gui.plaf.skin.SkinLookAndFeel");
       String themepack = Settings.propSkinLFThemepack.getString();
       try {
-        SkinLookAndFeel.setSkin(SkinLookAndFeel.loadThemePack(themepack));
+        File themepackFile = new File(themepack);
+        if (!themepackFile.exists()) {
+          themepackFile = new File(Settings.getUserDirectoryName(), themepack);
+        }
+
+        if (!themepackFile.exists() && OperatingSystem.isMacOs()) {
+          themepackFile = new File("/Library/Application Support/TV-Browser/", themepack);
+        }
+
+        SkinLookAndFeel.setSkin(SkinLookAndFeel.loadThemePack(themepackFile.getAbsolutePath()));
       } catch (Exception exc) {
         ErrorHandler.handle(
           "Could not load themepack.\nSkinLF is disabled now",
