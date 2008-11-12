@@ -825,26 +825,63 @@
 
   </target>
 
-  <!-- Creates the release binaries (.dmg) for mac os x -->
-  <target name="public-mac" depends="runtime-mac">
-    <mkdir dir="${public.dir}"/>
-   
-    <copy todir="${tvbrowser-mac.runtime.dir}/">
-      <fileset file="${deployment.dir}/macosx/readme.rtf"/>
-      <fileset dir="${txt.dir}" includes="LICENSE.txt"/>
-    </copy>
+   <!-- Creates the release binaries (.dmg) for mac os x !!runtime-mac!! -->
+    <target name="public-mac" depends="">
+      <mkdir dir="${public.dir}"/>
 
-    <echo message="running hdiutil..."/>
-    <exec executable="hdiutil" os="Mac OS X">
-      <arg value="create"/>
-      <arg value="-srcfolder"/>
-      <arg value="${tvbrowser-mac.runtime.dir}"/>
-      <arg value="-ov"/>
-      <arg value="${public.dir}/tvbrowser-${tvbrowser.version}.dmg"/>
-      <arg value="-volname" />
-      <arg value="tvbrowser-${tvbrowser.version}" />
-    </exec>
-  </target>
+      <echo message="creating disk image..."/>
+
+      <!-- Create .sparseimage-File -->
+      <exec executable="hdiutil" os="Mac OS X">
+          <arg value="convert"/>
+          <arg value="deployment/macosx/tvbrowser.dmg"/>
+          <arg value="-format"/>
+          <arg value="UDSP"/>
+          <arg value="-o"/>
+          <arg value="tvbrowser"/>
+      </exec>
+
+      <!-- Mount .sparseimage -->
+      <exec executable="hdiutil" os="Mac OS X">
+          <arg value="mount"/>
+          <arg value="tvbrowser.sparseimage"/>
+      </exec>    
+
+      <!-- Copy Contents of .app-File with command line tool. Only this way the +x is copied-->
+      <exec executable="cp" os="Mac OS X">
+          <arg value="-r"/>
+          <arg value="${tvbrowser-mac.runtime.dir}/TV-Browser.app/Contents"/>
+          <arg value="/Volumes/TV-Browser/TV-Browser.app"/>
+      </exec>    
+
+      <!-- Copy additional files into .spareseimage -->
+      <copy todir="/Volumes/TV-Browser/">
+        <fileset file="${tvbrowser-mac.runtime.dir}/LICENSE.txt"/>
+        <fileset file="${tvbrowser-mac.runtime.dir}/readme.rtf"/>
+      </copy>
+
+      <!-- Ejecte .sparseimage -->
+      <exec executable="hdiutil" os="Mac OS X">
+           <arg value="eject"/>
+           <arg value="/Volumes/TV-Browser/"/>
+      </exec>    
+
+      <!-- Delete existing Files -->
+      <delete file="${public.dir}/tvbrowser-${tvbrowser.version}.dmg" />
+
+      <!-- Convert .sparseimage to dmg -->    
+      <exec executable="hdiutil" os="Mac OS X">
+        <arg value="convert"/>
+        <arg value="tvbrowser.sparseimage"/>
+        <arg value="-format"/>
+        <arg value="UDBZ"/>
+        <arg value="-o" />
+        <arg value="${public.dir}/tvbrowser-${tvbrowser.version}.dmg"/>
+      </exec>
+
+      <!-- Delete Files -->
+      <delete file="tvbrowser.sparseimage" />
+    </target>
 
   <!--
     | Packs the TV data starter kit
