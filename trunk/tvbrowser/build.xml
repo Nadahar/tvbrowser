@@ -825,8 +825,8 @@
 
   </target>
 
-   <!-- Creates the release binaries (.dmg) for mac os x !!runtime-mac!! -->
-    <target name="public-mac" depends="">
+   <!-- Creates the release binaries (.dmg) for mac os x -->
+    <target name="public-mac" depends="runtime-mac">
       <mkdir dir="${public.dir}"/>
 
       <echo message="creating disk image..."/>
