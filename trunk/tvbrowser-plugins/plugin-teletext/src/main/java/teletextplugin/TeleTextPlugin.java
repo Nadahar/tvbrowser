@@ -106,13 +106,14 @@ public class TeleTextPlugin extends Plugin {
 
   private String getTextUrl(Channel channel) {
     initializeProperties();
-    String url = mPages.getProperty(channel.getId().toLowerCase());
+    String url = mPages.getProperty(channel.getId().toLowerCase().replaceAll(
+        " ", "_"));
     if (url != null && url.length() > 0) {
       // is this a mapping only?
       if (!url.startsWith("http")) {
         url = mPages.getProperty(url);
       }
-      if (url != null && url.length() > 0) {
+      if (url != null && url.length() > 0 && url.startsWith("http")) {
         return url;
       }
     }
