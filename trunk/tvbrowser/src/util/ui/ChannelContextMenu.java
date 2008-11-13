@@ -13,11 +13,13 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
+
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
 import tvbrowser.ui.mainframe.ChannelChooserPanel;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -74,8 +76,11 @@ public class ChannelContextMenu implements ActionListener {
 
     mMenu = new JPopupMenu();
     mChAdd = new JMenuItem(mLocalizer.msg("addChannels", "Add/Remove channels"));
-    mChConf = new JMenuItem(mLocalizer.msg("configChannel", "Setup channel"));
-    mChGoToURL = new JMenuItem(mLocalizer.msg("openURL", "Open internet page"));
+    mChConf = new JMenuItem(mLocalizer.msg("configChannel", "Setup channel"),
+        IconLoader.getInstance().getIconFromTheme("actions", "document-edit"));
+    mChGoToURL = new JMenuItem(mLocalizer.msg("openURL", "Open internet page"),
+        IconLoader.getInstance().getIconFromTheme("apps",
+            "internet-web-browser"));
 
     // dynamically create filters from available channel filter components
     String channelFilterName = Settings.propLastUsedChannelGroup.getString();
@@ -119,7 +124,9 @@ public class ChannelContextMenu implements ActionListener {
     mChGoToURL.addActionListener(this);
 
     mMenu.add(mChGoToURL);
-    mMenu.add(mChConf);
+    if (ChannelList.isSubscribedChannel(ch)) {
+      mMenu.add(mChConf);
+    }
     if (!(mSource instanceof ChannelsSettingsTab)) {
       mMenu.add(mFilterChannels);
       mMenu.addSeparator();

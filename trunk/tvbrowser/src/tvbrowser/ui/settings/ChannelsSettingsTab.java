@@ -24,36 +24,26 @@
 
 package tvbrowser.ui.settings;
 
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.Sizes;
-import devplugin.Channel;
-import tvbrowser.core.ChannelList;
-import tvbrowser.core.Settings;
-import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.core.tvdataservice.ChannelGroupManager;
-import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.settings.channel.ChannelConfigDlg;
-import tvbrowser.ui.settings.channel.ChannelFilter;
-import tvbrowser.ui.settings.channel.ChannelJList;
-import tvbrowser.ui.settings.channel.ChannelListModel;
-import tvbrowser.ui.settings.channel.FilterItem;
-import tvbrowser.ui.settings.channel.FilteredChannelListCellRenderer;
-import tvbrowser.ui.settings.channel.MultiChannelConfigDlg;
-import util.io.NetworkUtilities;
-import util.ui.ChannelContextMenu;
-import util.ui.ChannelListCellRenderer;
-import util.ui.DragAndDropMouseListener;
-import util.ui.LinkButton;
-import util.ui.ListDragAndDropHandler;
-import util.ui.ListDropAction;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import tvbrowser.ui.DontShowAgainMessageBox;
-import util.ui.customizableitems.SortableItemList;
-import util.ui.progress.Progress;
-import util.ui.progress.ProgressWindow;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -76,26 +66,39 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
+
+import tvbrowser.core.ChannelList;
+import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.core.tvdataservice.ChannelGroupManager;
+import tvbrowser.ui.DontShowAgainMessageBox;
+import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.settings.channel.ChannelConfigDlg;
+import tvbrowser.ui.settings.channel.ChannelFilter;
+import tvbrowser.ui.settings.channel.ChannelJList;
+import tvbrowser.ui.settings.channel.ChannelListModel;
+import tvbrowser.ui.settings.channel.FilterItem;
+import tvbrowser.ui.settings.channel.FilteredChannelListCellRenderer;
+import tvbrowser.ui.settings.channel.MultiChannelConfigDlg;
+import util.io.NetworkUtilities;
+import util.ui.ChannelContextMenu;
+import util.ui.ChannelListCellRenderer;
+import util.ui.DragAndDropMouseListener;
+import util.ui.LinkButton;
+import util.ui.ListDragAndDropHandler;
+import util.ui.ListDropAction;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.customizableitems.SortableItemList;
+import util.ui.progress.Progress;
+import util.ui.progress.ProgressWindow;
+
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
+
+import devplugin.Channel;
 
 /**
  * This Class represents the Channel-Settings-Tab
@@ -610,13 +613,14 @@ public class ChannelsSettingsTab implements
   }
 
   /**
-   * Adds a Mouselistener to the Subscribed Channels List
+   * Adds a mouse listener to the channel list
    */
   private void restoreForPopup() {
-    mSubscribedChannels.addMouseListener(new MouseAdapter() {
+    final MouseAdapter listener = new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
         if (SwingUtilities.isRightMouseButton(e)) {
-          mSubscribedChannels.setSelectedIndex(mSubscribedChannels
+          final ChannelJList channelJList = (ChannelJList) e.getSource();
+          channelJList.setSelectedIndex(channelJList
               .locationToIndex(e.getPoint()));
         }
         showPopup(e);
@@ -625,19 +629,22 @@ public class ChannelsSettingsTab implements
       public void mouseReleased(MouseEvent e) {
         showPopup(e);
       }
-    });
+    };
+    mSubscribedChannels.addMouseListener(listener);
+    mAllChannels.addMouseListener(listener);
   }
 
   /**
-   * Show the Popup for the subscribed Channel
+   * Show the context menu for the channel list
    * 
    * @param e
    *          Mouse Event
    */
   private void showPopup(MouseEvent e) {
     if (e.isPopupTrigger()) {
-      new ChannelContextMenu(e, (Channel) mSubscribedChannels.getModel()
-          .getElementAt(mSubscribedChannels.locationToIndex(e.getPoint())),
+      final ChannelJList channelJList = (ChannelJList) e.getSource();
+      new ChannelContextMenu(e, (Channel) channelJList.getModel().getElementAt(
+          channelJList.locationToIndex(e.getPoint())),
           this);
     }
   }
