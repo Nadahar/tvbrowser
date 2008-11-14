@@ -28,6 +28,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.Attributes;
 
 import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.util.ArrayList;
 
 
@@ -107,6 +108,8 @@ public class MovieAwardHandler extends DefaultHandler {
                                 attributes.getValue("movie"),
                                 year
           ));
+    } else {
+      mLog.log(Level.INFO, "Unknown Element : " + qName);
     }
 
   }
