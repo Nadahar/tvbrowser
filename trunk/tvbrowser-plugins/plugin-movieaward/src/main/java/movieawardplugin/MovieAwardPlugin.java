@@ -26,18 +26,25 @@ package movieawardplugin;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Version;
+import devplugin.Program;
+import devplugin.ThemeIcon;
 import util.ui.Localizer;
+
+import javax.swing.Icon;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 public class MovieAwardPlugin extends Plugin {
   /**
    * Translator
    */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(MovieAwardPlugin.class);
+  private static Logger mLog = Logger.getLogger(MovieAwardPlugin.class.getName());
 
   private static final Version mVersion = new Version(0, 1);
   private PluginInfo mPluginInfo;
-  private ArrayList<MovieAward> mMovieAwards = new ArrayList<MovieAward>();
+  private ArrayList<MovieAward> mMovieAwards;
+  private Icon mIcon;
 
   public MovieAwardPlugin() {
   }
@@ -63,13 +70,46 @@ public class MovieAwardPlugin extends Plugin {
     // might be called multiple times
     if (mMovieAwards == null) {
       mMovieAwards = new ArrayList<MovieAward>();
-      mMovieAwards.add(new MovieAward(getClass().getResourceAsStream("./data/oscars.xml")));
+      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass().getResourceAsStream("./data/oscars.xml")));
     }
+
+    mLog.info("loaded movie award. " + mMovieAwards.size());
   }
 
   @Override
   public void onActivation() {
     initDatabase();
+  }
+
+  @Override
+  public Icon[] getProgramTableIcons(Program program) {
+    if (hasAwards(program)) {
+      return new Icon[] {getPluginIcon()};
+    }
+
+    return new Icon[0];
+  }
+
+  public String getProgramTableIconText() {
+    return mLocalizer.msg("pluginName", "Movie Awards");
+  }
+
+  private boolean hasAwards(final Program program) {
+    for (MovieAward award : mMovieAwards) {
+      if (award.containsAwardFor(program)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  public Icon getPluginIcon() {
+    if (mIcon == null) {
+      mIcon = getPluginManager().getIconFromTheme(this, new ThemeIcon("actions", "folder-new", 16));
+    }
+
+    return mIcon;
   }
 
 }

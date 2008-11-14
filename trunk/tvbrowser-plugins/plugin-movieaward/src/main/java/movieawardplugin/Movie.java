@@ -34,20 +34,31 @@ public class Movie {
   public Movie(String id) {
     mId = id;
   }
-
-  public void setProductionYear(int year) {
-    mYear = year;
-  }
-
-  public void setDirector(String director) {
-    mDirector = director;
-  }
-
   public String getId() {
     return mId;
   }
 
   public void addTitle(String lang, String title) {
     mTitle.put(lang, title);
+  }
+
+  public void setProductionYear(int year) {
+    mYear = year;
+  }
+
+  public int getProductionYear() {
+    return mYear;
+  }
+
+  public void setYear(int year) {
+    mYear = year;
+  }
+
+  public String getDirector() {
+    return mDirector;
+  }
+
+  public void setDirector(String director) {
+    mDirector = director;
   }
 }
