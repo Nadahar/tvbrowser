@@ -1165,10 +1165,10 @@ private static Font getDynamicFontSize(Font font, int offset) {
     return null;
   }
 
-  private String getProgramInfoTooltip() {
+  private String  getProgramInfoTooltip() {
     int info = mProgram.getInfo();
     if (info > 0) {
-      StringBuffer buffer = new StringBuffer("");
+      StringBuilder buffer = new StringBuilder("");
       int[] infoBitArr = ProgramInfoHelper.mInfoBitArr;
       String[] infoIconFileName = ProgramInfoHelper.mInfoIconFileName;
       String[] infoMsgArr = ProgramInfoHelper.mInfoMsgArr;
@@ -1177,10 +1177,8 @@ private static Font getDynamicFontSize(Font font, int offset) {
         if (ProgramInfoHelper.bitSet(info, infoBitArr[i])) {
           if (infoIconFileName[i] != null) {
             buffer.append(
-                "<tr><td valign=\"middle\" align=\"center\"><img src=\"")
-                .append(
-                    ProgramPanel.class.getResource("../../imgs/"
-                        + infoIconFileName[i])).append("\"></td><td>&nbsp;")
+                "<tr><td valign=\"middle\" align=\"center\"><img src=\"file:imgs/")
+                .append(infoIconFileName[i]).append("\"></td><td>&nbsp;")
                 .append(infoMsgArr[i]).append("</td></tr>");
           }
         }
