@@ -53,7 +53,7 @@ import devplugin.Version;
 /**
  * DataViewer for TV-Browser.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * 
  */
 public class DataViewerPlugin extends Plugin implements Runnable {
@@ -103,7 +103,7 @@ public class DataViewerPlugin extends Plugin implements Runnable {
   @Override
   public PluginInfo getInfo() {
     return new PluginInfo(DataViewerPlugin.class,mLocalizer.msg("data","DataViewerPlugin"),mLocalizer.msg("info",
-    "Lists the available program data."),"René Mach","GPL");
+    "Lists the available program data."),"RenÃ© Mach","GPL");
   }
 
   @Override

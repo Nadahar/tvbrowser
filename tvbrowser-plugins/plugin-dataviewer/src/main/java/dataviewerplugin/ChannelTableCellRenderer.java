@@ -10,7 +10,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 /**
  * DataViewer for TV-Browser.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * 
  */
 public class ChannelTableCellRenderer extends DefaultTableCellRenderer {
