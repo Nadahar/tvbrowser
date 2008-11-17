@@ -5,7 +5,7 @@ import javax.swing.table.DefaultTableModel;
 /**
  * DataViewer for TV-Browser.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * 
  */
 public class DataTableModel extends DefaultTableModel {
