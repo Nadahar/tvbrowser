@@ -23,6 +23,9 @@
  */
 package movieawardplugin;
 
+import devplugin.Program;
+import devplugin.ProgramFieldType;
+
 import java.util.HashMap;
 
 public class Movie {
@@ -60,5 +63,22 @@ public class Movie {
 
   public void setDirector(String director) {
     mDirector = director;
+  }
+
+  public boolean matchesProgram(Program program) {
+    if (program.getTitle().equals(mTitle.get(program.getChannel().getCountry()))) {
+      int year = program.getIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE);
+
+      if (year != 0) {
+        if ((year == mYear)|| (year - 1==mYear) || (year + 1 == mYear)){
+          return true;  
+        }
+      } else {
+        // No year present
+        return true;
+      }
+    }
+
+    return false;
   }
 }

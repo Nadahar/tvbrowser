@@ -26,6 +26,7 @@ package movieawardplugin;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,7 +42,7 @@ public class MovieAward {
 
   private HashMap<String, String> mNames = new HashMap<String, String>();
   private HashMap<String, MovieAwardCategory> mCategorie = new HashMap<String, MovieAwardCategory>();
-  private HashMap<String, Movie> mMovies = new HashMap<String, Movie>();
+  private ArrayList<Movie> mMovies = new ArrayList<Movie>();
   private HashMap<String, Award> mAwards = new HashMap<String, Award>();
 
   public MovieAward() {
@@ -66,7 +67,7 @@ public class MovieAward {
   }
 
   public void addMovie(Movie movie) {
-    mMovies.put(movie.getId(), movie);
+    mMovies.add(movie);
   }
 
   public void addAward(Award award) {
@@ -74,6 +75,11 @@ public class MovieAward {
   }
 
   public boolean containsAwardFor(final Program program) {
+    for (Movie movie:mMovies) {
+      if (movie.matchesProgram(program) && mAwards.containsKey(movie.getId())) {
+        return true;
+      }
+    }
     return false;
   }
 }
