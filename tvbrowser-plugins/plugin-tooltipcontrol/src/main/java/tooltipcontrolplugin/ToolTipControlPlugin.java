@@ -1,6 +1,6 @@
 /*
  * ToolTipControlPlugin
- * Copyright (C) 12-2007 René Mach
+ * Copyright (C) 12-2007 RenÃ© Mach
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +24,6 @@ import java.util.Properties;
 import javax.swing.ToolTipManager;
 
 import util.ui.Localizer;
-
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.SettingsTab;
@@ -33,7 +32,7 @@ import devplugin.Version;
 /**
  * A plugin class for TV-Browser to control the tooltip settings.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class ToolTipControlPlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ToolTipControlPlugin.class);
@@ -53,7 +52,7 @@ public class ToolTipControlPlugin extends Plugin {
   }
   
   public PluginInfo getInfo() {
-    return new PluginInfo(ToolTipControlPlugin.class,mLocalizer.msg("pluginName","Tooltip control"),mLocalizer.msg("description","Controls the function of all tooltips."),"René Mach","GPL");
+    return new PluginInfo(ToolTipControlPlugin.class,mLocalizer.msg("pluginName","Tooltip control"),mLocalizer.msg("description","Controls the function of all tooltips."),"RenÃ© Mach","GPL");
   }
     
   public SettingsTab getSettingsTab() {
