@@ -12,7 +12,7 @@ import devplugin.PluginInfo;
 import devplugin.SettingsTab;
 import devplugin.Version;
 
-public class WidgetPlugin extends Plugin implements IWidgetSettings {
+public class WidgetPlugin extends Plugin {
 
 	private static final Version PLUGIN_VERSION = new Version(2, 70, false);
 
@@ -28,7 +28,7 @@ public class WidgetPlugin extends Plugin implements IWidgetSettings {
    */
   private WidgetServer server;
 
-  private Properties mSettings;
+  private WidgetSettings mSettings;
 	private boolean mStartFinished;
 
   private static WidgetPlugin mInstance;
@@ -64,15 +64,11 @@ public class WidgetPlugin extends Plugin implements IWidgetSettings {
 
 	private void startServer() {
 		try {
-			server = new WidgetServer(getPortNumber());
+			server = new WidgetServer(mSettings);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	private int getPortNumber() {
-		return Integer.valueOf(mSettings.getProperty(SETTING_PORT_NUMBER, IWidgetSettings.SETTING_PORT_NUMBER_DEFAULT));
 	}
 
 	private void stopServer() {
@@ -86,15 +82,15 @@ public class WidgetPlugin extends Plugin implements IWidgetSettings {
 
 	@Override
 	public void loadSettings(Properties settings) {
-    mSettings = settings;
-    if (mSettings == null) {
-      mSettings = new Properties();
+    if (settings == null) {
+      settings = new Properties();
     }
+    mSettings = new WidgetSettings(settings);
 	}
 
 	@Override
 	public Properties storeSettings() {
-		return mSettings;
+		return mSettings.storeSettings();
 	}
 
 	@Override

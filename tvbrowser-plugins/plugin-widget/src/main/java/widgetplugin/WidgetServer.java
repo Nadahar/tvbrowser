@@ -27,8 +27,11 @@ public class WidgetServer extends NanoHTTPD {
 	private static final Localizer mLocalizer = Localizer
 	.getLocalizerFor(WidgetServer.class);
 
-	protected WidgetServer(int port) throws IOException {
-		super(port);
+  private WidgetSettings mSettings;
+
+  protected WidgetServer(WidgetSettings settings) throws IOException {
+    super(settings.getPortNumber());
+    mSettings = settings;
 	}
 
 	@Override
@@ -98,7 +101,9 @@ public class WidgetServer extends NanoHTTPD {
 			return mLocalizer.msg("noOnAir", "No programs on air");
 		}
 		result.insert(0, "</head><body>");
-		result.insert(0, "<meta http-equiv=\"refresh\" content=\"60\"/>");
+		if (mSettings.getRefresh()) {
+      result.insert(0, "<meta http-equiv=\"refresh\" content=\"60\"/>");
+    }
 		result
 				.insert(
 						0,

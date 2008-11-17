@@ -1,7 +1,5 @@
 package widgetplugin;
 
-import java.util.Properties;
-
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -18,7 +16,7 @@ import com.jgoodies.forms.layout.RowSpec;
 
 import devplugin.SettingsTab;
 
-public class WidgetSettingsTab implements SettingsTab, IWidgetSettings {
+public class WidgetSettingsTab implements SettingsTab {
 
 	private static final Localizer mLocalizer = Localizer
 			.getLocalizerFor(WidgetSettingsTab.class);
@@ -27,11 +25,11 @@ public class WidgetSettingsTab implements SettingsTab, IWidgetSettings {
 
 	private JSpinner mSpinner;
 
-	private Properties mSettings;
+	private WidgetSettings mSettings;
 
 	private JCheckBox mRefresh;
 
-	protected WidgetSettingsTab(WidgetPlugin plugin, Properties settings) {
+	protected WidgetSettingsTab(WidgetPlugin plugin, WidgetSettings settings) {
 		super();
 		mPlugin = plugin;
 		mSettings = settings;
@@ -40,7 +38,7 @@ public class WidgetSettingsTab implements SettingsTab, IWidgetSettings {
 	public JPanel createSettingsPanel() {
 		int currentRow = 1;
 		final FormLayout layout = new FormLayout(
-				"5dlu, pref, 3dlu, pref, 3dlu, pref, fill:default:grow",
+				"5dlu, pref, 3dlu, pref, fill:default:grow",
 				"");
 		PanelBuilder panelBuilder = new PanelBuilder(layout);
 		CellConstraints cc = new CellConstraints();
@@ -57,13 +55,13 @@ public class WidgetSettingsTab implements SettingsTab, IWidgetSettings {
 
 		SpinnerNumberModel model = new SpinnerNumberModel(34567, 1, 65535, 1);
 		mSpinner = new JSpinner(model);
-		mSpinner.setValue(Integer
-				.valueOf(mSettings.getProperty(SETTING_PORT_NUMBER, SETTING_PORT_NUMBER_DEFAULT)));
+		mSpinner.setValue(mSettings.getPortNumber());
 		panelBuilder.add(mSpinner, cc.xy(4, currentRow));
 
 		// refresh
 		mRefresh = new JCheckBox(mLocalizer.msg("refresh", "Automatic refresh"));
-		panelBuilder.add(mRefresh, cc.xy(2, (currentRow += 2)));
+		mRefresh.setSelected(mSettings.getRefresh());
+		panelBuilder.add(mRefresh, cc.xyw(2, (currentRow += 2), 4));
 		
 		// layout settings
 		layout.appendRow(RowSpec.decode("pref"));
@@ -87,7 +85,8 @@ public class WidgetSettingsTab implements SettingsTab, IWidgetSettings {
 	}
 
 	public void saveSettings() {
-		mSettings.setProperty(SETTING_PORT_NUMBER, mSpinner.getValue().toString());
+	  mSettings.setPortNumber((Integer) mSpinner.getValue());
+    mSettings.setRefresh(mRefresh.isSelected());
 		mPlugin.storeSettings();
 		mPlugin.restartServer();
 	}
