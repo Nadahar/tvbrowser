@@ -27,12 +27,15 @@ import devplugin.Program;
 import devplugin.ProgramFieldType;
 
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Movie {
   private String mId;
   private int mYear;
   private String mDirector;
   private HashMap<String, String> mTitle = new HashMap<String, String>();
+  private HashMap<String, ArrayList<String>> mAlternativeTitle = new HashMap<String, ArrayList<String>>();
 
   public Movie(String id) {
     mId = id;
@@ -65,8 +68,25 @@ public class Movie {
     mDirector = director;
   }
 
+  public void addAlternativeTitle(String lang, String title) {
+    List<String> list = getAlternativeTitles(lang);
+    list.add(title);
+  }
+
+  private List<String> getAlternativeTitles(String lang) {
+    ArrayList<String> list = mAlternativeTitle.get(lang);
+
+    if (list == null) {
+      list = new ArrayList<String>();
+      mAlternativeTitle.put(lang, list);
+    }
+
+    return list;
+  }
+
   public boolean matchesProgram(Program program) {
-    if (program.getTitle().equals(mTitle.get(program.getChannel().getCountry()))) {
+    if (program.getTitle().equals(mTitle.get(program.getChannel().getCountry())) ||
+        getAlternativeTitles(program.getChannel().getCountry()).contains(program.getTitle())) {
       int year = program.getIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE);
 
       if (year != 0) {
@@ -81,4 +101,5 @@ public class Movie {
 
     return false;
   }
+
 }

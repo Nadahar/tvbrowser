@@ -44,6 +44,7 @@ public class MovieAward {
   private HashMap<String, MovieAwardCategory> mCategorie = new HashMap<String, MovieAwardCategory>();
   private ArrayList<Movie> mMovies = new ArrayList<Movie>();
   private HashMap<String, Award> mAwards = new HashMap<String, Award>();
+  private String mUrl;
 
   public MovieAward() {
   }
@@ -74,6 +75,14 @@ public class MovieAward {
     mAwards.put(award.getMovieId(), award);
   }
 
+  public void setUrl(String url) {
+    mUrl = url;
+  }
+
+  public String getUrl() {
+    return mUrl;
+  }
+
   public boolean containsAwardFor(final Program program) {
     for (Movie movie:mMovies) {
       if (movie.matchesProgram(program) && mAwards.containsKey(movie.getId())) {
@@ -82,4 +91,5 @@ public class MovieAward {
     }
     return false;
   }
+
 }
