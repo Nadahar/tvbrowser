@@ -1,6 +1,6 @@
 /*
  * ToolTipControlPlugin
- * Copyright (C) 12-2007 René Mach
+ * Copyright (C) 12-2007 RenÃ© Mach
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,7 +41,7 @@ import devplugin.SettingsTab;
 /**
  * Settings for the ToolTipControlPlugin.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class ToolTipControlPluginSettingsTab implements SettingsTab {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ToolTipControlPluginSettingsTab.class);
