@@ -11,10 +11,10 @@
 </categories>
 
 <movies>
-  <movie id="movie_1" year="1998" director="tom tykwer">
-    <title lang="de">Lola rennt</title>
+  <movie id="movie_1" year="1999" director="tom tykwer">
+    <title lang="de">Red Planet2</title>
     <title lang="en">Lola Runs</title>
-    <alternativetitle lang="en">Run, Lola, Run</alternativetitle>
+    <alternativetitle lang="de">Red Planet</alternativetitle>
   </movie>
 </movies>
 

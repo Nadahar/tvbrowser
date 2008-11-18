@@ -1,0 +1,54 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>org.tvbrowser</groupId>
+    <artifactId>tvbrowser-plugins</artifactId>
+    <version>0.1-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.tvbrowser</groupId>
+  <artifactId>tvbrowser-plugins-tvpearl</artifactId>
+  <name>TV Pearl Plugin</name>
+  <developers>
+    <developer>
+      <id>nildog</id>
+      <name>Reinhard Lehrbaum</name>
+    </developer>
+  </developers>
+  <licenses>
+     <license>
+      <name>GPL v2.0</name>
+      <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+      <distribution>manual</distribution>
+     </license>
+  </licenses>   
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <finalName>TVPearlPlugin</finalName>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.tvbrowser</groupId>
+      <artifactId>tvbrowser</artifactId>
+    </dependency>
+  </dependencies>
+</project>

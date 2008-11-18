@@ -41,6 +41,8 @@
     <module>plugin-wirschauen</module>
     <module>plugin-widget</module>
     <module>plugin-zattoo</module>
+    <module>plugin-tvpearl</module>
+    <module>plugin-timeline</module>
   </modules>
   <dependencyManagement>
     <dependencies>
