@@ -17,16 +17,34 @@
  */
 package tvpearlplugin;
 
-import devplugin.*;
-
-import javax.swing.*;
-import util.ui.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Properties;
+import java.util.Vector;
 import java.util.logging.Logger;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
+import util.ui.UiUtilities;
+import devplugin.ActionMenu;
+import devplugin.ContextMenuAction;
+import devplugin.PluginInfo;
+import devplugin.Program;
+import devplugin.SettingsTab;
+import devplugin.Version;
 
 public class TVPearlPlugin extends devplugin.Plugin implements ActionListener, Runnable
 {
@@ -67,7 +85,8 @@ public class TVPearlPlugin extends devplugin.Plugin implements ActionListener, R
 	public PluginInfo getInfo()
 	{
 		String name = mLocalizer.msg("name", "TV Pearl");
-		String desc = mLocalizer.msg("description", "Shows the TV Perls from the TV-Browser forum.");
+		String desc = mLocalizer.msg("description",
+        "Shows the TV Pearls from the TV-Browser forum.");
 		String author = "Reinhard Lehrbaum";
 
 		return new PluginInfo(TVPearlPlugin.class, name, desc, author);
