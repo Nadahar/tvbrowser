@@ -29,6 +29,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
@@ -85,7 +86,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
   
   private static boolean mSomethingChanged = false;
 
-  private static class LookAndFeelObj {
+  private static class LookAndFeelObj implements Comparable<LookAndFeelObj> {
     private UIManager.LookAndFeelInfo info;
 
     public LookAndFeelObj(UIManager.LookAndFeelInfo info) {
@@ -99,6 +100,10 @@ public class LookAndFeelSettingsTab implements SettingsTab {
 
     public String getLFClassName() {
       return info.getClassName();
+    }
+
+    public int compareTo(LookAndFeelObj other) {
+      return this.toString().compareTo(other.toString());
     }
   }
 
@@ -150,6 +155,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     mSettingsPn.add(new JLabel(mLocalizer.msg("theme", "Theme") +":"), cc.xy(2, 5));
 
     LookAndFeelObj[] lfObjects = getLookAndFeelObjs();
+    Arrays.sort(lfObjects);
     mLfComboBox = new JComboBox(lfObjects);
 
     String lfName = Settings.propLookAndFeel.getString();
