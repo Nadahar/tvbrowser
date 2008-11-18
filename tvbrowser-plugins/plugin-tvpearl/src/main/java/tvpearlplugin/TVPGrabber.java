@@ -17,16 +17,48 @@
  */
 package tvpearlplugin;
 
-import java.net.*;
-import java.io.*;
-import java.text.*;
-import java.util.*;
-import java.util.regex.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TVPGrabber
 {
-	private Boolean mRecusiveGrab = true;
-	private Boolean mOnlyProgrammInFuture = true;
+  /**
+   * German three letter abbreviation of the month names
+   */
+  private static String[] MONTH_ABBREVIATION = { "Jan", "Feb", "Mrz", "Apr",
+      "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez" };
+  
+  /**
+   * German weekday names
+   */
+  private static String[] WEEKDAY_NAME = { "Montag", "Dienstag", "Mittwoch",
+      "Donnerstag", "Freitag", "Samstag", "Sonntag" };
+
+  /**
+   * regular expression to grab the content of a TV pearl
+   */
+  private static Pattern PATTERN_CONTENT = Pattern
+      .compile("<p class=\"author\"><a href=\"([^\"]*)\">.*?<a href=\"./memberlist.php?[^\"]*\"[^>]*>(.*?)</a></strong> am (.*?)</p>[\\r\\n\\t ]*?<div class=\"content\">([\\w\\W]*?)(<dl class=\"postprofile\"|<div[^>]*class=\"signature\">|<div class=\"notice\")");
+
+  /**
+   * regular expression to grab the URL of the next forum page
+   */
+  private static Pattern PATTERN_NEXT_URL = Pattern
+      .compile("<a href=\"([^\"]*?)\"[^>]*>Nächste</a>");
+
+  private boolean mRecursiveGrab = true;
+  private boolean mOnlyProgrammInFuture = true;
 	private String lastUrl = "";
 	private HTTPConverter mConverter;
 
@@ -35,24 +67,24 @@ public class TVPGrabber
 		mConverter = new HTTPConverter();
 	}
 
-	public Boolean getOnlyProgrammInFuture()
+	public boolean getOnlyProgrammInFuture()
 	{
 		return mOnlyProgrammInFuture;
 	}
 
-	public void setOnlyProgrammInFuture(Boolean onlyProgrammInFuture)
+	public void setOnlyProgrammInFuture(boolean onlyProgrammInFuture)
 	{
 		mOnlyProgrammInFuture = onlyProgrammInFuture;
 	}
 
-	public Boolean getRecusiveGrab()
+	public boolean getRecusiveGrab()
 	{
-		return mRecusiveGrab;
+		return mRecursiveGrab;
 	}
 
-	public void setRecusiveGrab(Boolean recusive)
+	public void setRecusiveGrab(boolean recursive)
 	{
-		mRecusiveGrab = recusive;
+		mRecursiveGrab = recursive;
 	}
 
 	public String getLastUrl()
@@ -78,7 +110,7 @@ public class TVPGrabber
 				workingUrl = extentUrl(getNextUrl(webContent), url);
 				parseContent(webContent, programList, url);
 			}
-			while (workingUrl.length() > 0 && mRecusiveGrab);
+			while (workingUrl.length() > 0 && mRecursiveGrab);
 
 			if (workingUrl.length() > 0)
 			{
@@ -115,8 +147,7 @@ public class TVPGrabber
 	private String getNextUrl(String content)
 	{
 		//Pattern pattern = Pattern.compile("<a href=\"([^\"]*?)\">Weiter</a></b><br />");
-		Pattern pattern = Pattern.compile("<a href=\"([^\"]*?)\"[^>]*>Nächste</a>");
-		Matcher matcher = pattern.matcher(content);
+    Matcher matcher = PATTERN_NEXT_URL.matcher(content);
 
 		String resultUrl = "";
 
@@ -149,8 +180,7 @@ public class TVPGrabber
 	private void parseContent(String content, List<TVPProgram> programList, String originalUrl)
 	{
 		//Pattern pattern = Pattern.compile("<td.*?class=\"ro[\\w\\W]*?<b>(.*?)</b>.*?</td>[\\w\\W]*?<a href=\"([^\"]*?)\"><img src=\"templates/subSilver/images/icon_minipost.gif\".*?<span class=\"postdetails\">[^:]*:(.*?)<[\\w\\W]*?<span class=\"postbody\">([\\w\\W]*?)</td>[\\n\\t\\r ]+</tr>[\\n\\t\\r ]+</table>");
-		Pattern pattern = Pattern.compile("<p class=\"author\"><a href=\"([^\"]*)\">.*?<a href=\"./memberlist.php?[^\"]*\"[^>]*>(.*?)</a></strong> am (.*?)</p>[\\r\\n\\t ]*?<div class=\"content\">([\\w\\W]*?)(<dl class=\"postprofile\"|<div[^>]*class=\"signature\">|<div class=\"notice\")");
-		Matcher matcher = pattern.matcher(content);
+    Matcher matcher = PATTERN_CONTENT.matcher(content);
 
 		while (matcher.find())
 		{
@@ -172,12 +202,13 @@ public class TVPGrabber
 
 			if (createDate != null)
 			{
-				conatinsInfo(itemContent, author, contentUrl, createDate, programList);
+				containsInfo(itemContent, author, contentUrl, createDate, programList);
 			}
 		}
 	}
 
-	private void conatinsInfo(String value, String author, String contentUrl, Date createDate, List<TVPProgram> programList)
+	private void containsInfo(String value, String author, String contentUrl,
+      Date createDate, List<TVPProgram> programList)
 	{
 		Calendar today = Calendar.getInstance();
 		String programName = "";
@@ -187,11 +218,11 @@ public class TVPGrabber
 
 		String newChannel = "";
 		Calendar newStart = null;
-		Boolean foundProgram = false;
+		boolean foundProgram = false;
 
 		for (String line : value.split("\n"))
 		{
-			Boolean isHeader = false;
+			boolean isHeader = false;
 
 			String[] items = line.split("[,|·]");
 			if (items.length == 4)
@@ -261,15 +292,16 @@ public class TVPGrabber
 		return program;
 	}
 
-	private Boolean isWeekday(String value)
+	private boolean isWeekday(String value)
 	{
-		Boolean result = false;
-
-		if (value.equalsIgnoreCase("Montag") || value.equalsIgnoreCase("Dienstag") || value.equalsIgnoreCase("Mittwoch") || value.equalsIgnoreCase("Donnerstag") || value.equalsIgnoreCase("Freitag") || value.equalsIgnoreCase("Samstag") || value.equalsIgnoreCase("Sonntag") || value.equalsIgnoreCase("Mo") || value.equalsIgnoreCase("Di") || value.equalsIgnoreCase("Mi") || value.equalsIgnoreCase("Do") || value.equalsIgnoreCase("Fr") || value.equalsIgnoreCase("Sa") || value.equalsIgnoreCase("So"))
-		{
-			result = true;
-		}
-		return result;
+	  value = value.trim();
+	  for (String weekDay : WEEKDAY_NAME) {
+      if (value.equalsIgnoreCase(weekDay)
+          || value.equalsIgnoreCase(weekDay.substring(0, 2))) {
+        return true;
+      }
+    }
+    return false;
 	}
 
 	private Calendar parseStart(String date, String time, Date createDate)
@@ -372,55 +404,12 @@ public class TVPGrabber
 
 	private int getMonth(String value)
 	{
-		int result = -1;
-		if (value.equalsIgnoreCase("Jan"))
-		{
-			result = 0;
-		}
-		else if (value.equalsIgnoreCase("Feb"))
-		{
-			result = 1;
-		}
-		else if (value.equalsIgnoreCase("Mrz"))
-		{
-			result = 2;
-		}
-		else if (value.equalsIgnoreCase("Apr"))
-		{
-			result = 3;
-		}
-		else if (value.equalsIgnoreCase("Mai"))
-		{
-			result = 4;
-		}
-		else if (value.equalsIgnoreCase("Jun"))
-		{
-			result = 5;
-		}
-		else if (value.equalsIgnoreCase("Jul"))
-		{
-			result = 6;
-		}
-		else if (value.equalsIgnoreCase("Aug"))
-		{
-			result = 7;
-		}
-		else if (value.equalsIgnoreCase("Sep"))
-		{
-			result = 8;
-		}
-		else if (value.equalsIgnoreCase("Okt"))
-		{
-			result = 9;
-		}
-		else if (value.equalsIgnoreCase("Nov"))
-		{
-			result = 10;
-		}
-		else if (value.equalsIgnoreCase("Dez"))
-		{
-			result = 11;
-		}
-		return result;
+    value = value.trim();
+    for (int i = 0; i < MONTH_ABBREVIATION.length; i++) {
+      if (value.equalsIgnoreCase(MONTH_ABBREVIATION[i])) {
+        return i;
+      }
+    }
+    return -1;
 	}
 }
