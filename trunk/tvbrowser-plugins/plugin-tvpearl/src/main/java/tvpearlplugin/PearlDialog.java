@@ -87,13 +87,12 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 			public void mouseClicked(MouseEvent e)
 			{
         PluginManager mng = Plugin.getPluginManager();
-        Program prog = null;
         int index = mDataList.locationToIndex(e.getPoint());
 
         if (mDataList.getModel().getElementAt(index) instanceof TVPProgram) {
           TVPProgram p = (TVPProgram) mDataList.getModel().getElementAt(index);
           if (p.getProgramID().length() > 0) {
-            prog = mng.getProgram(new Date(p.getStart()), p.getProgramID());
+            Program prog = mng.getProgram(new Date(p.getStart()), p.getProgramID());
 
             if (prog != null) {
               if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
