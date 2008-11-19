@@ -86,36 +86,25 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 		{
 			public void mouseClicked(MouseEvent e)
 			{
-				PluginManager mng = Plugin.getPluginManager();
-				Program prog = null;
-				int index = mDataList.locationToIndex(e.getPoint());
+        PluginManager mng = Plugin.getPluginManager();
+        Program prog = null;
+        int index = mDataList.locationToIndex(e.getPoint());
 
-				if (mDataList.getModel().getElementAt(index) instanceof TVPProgram)
-				{
-					TVPProgram p = (TVPProgram) mDataList.getModel().getElementAt(index);
-					if (p.getProgramID().length() > 0)
-					{
-						prog = mng.getProgram(new Date(p.getStart()), p.getProgramID());
+        if (mDataList.getModel().getElementAt(index) instanceof TVPProgram) {
+          TVPProgram p = (TVPProgram) mDataList.getModel().getElementAt(index);
+          if (p.getProgramID().length() > 0) {
+            prog = mng.getProgram(new Date(p.getStart()), p.getProgramID());
 
-						if (prog != null)
-						{
-							if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2)
-							{
-								mng.handleProgramDoubleClick(prog, TVPearlPlugin.getInstance());
-							}
-							else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1))
-							{
-								mng.handleProgramMiddleClick(prog);
-							}
-						}
-					}
-					if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1 && e.isControlDown())
-					{
-						TVPearlPlugin.getInstance().showPearlInfo(p);
-					}
-					checkPopup(e);
-				}
-			}
+            if (prog != null) {
+              if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
+                mng.handleProgramDoubleClick(prog, TVPearlPlugin.getInstance());
+              } else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
+                mng.handleProgramMiddleClick(prog);
+              }
+            }
+          }
+        }
+      }
 
 			public void mouseReleased(MouseEvent e)
 			{
@@ -176,12 +165,12 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 		updateProgramList();
 	}
 
-	private void checkPopup(MouseEvent e)
+	private void checkPopup(final MouseEvent e)
 	{
 		if (e.isPopupTrigger())
 		{
 			PluginManager manager = Plugin.getPluginManager();
-			Program program = null;
+			Program program;
 			JPopupMenu popup = null;
 			int index = mDataList.locationToIndex(e.getPoint());
 
@@ -215,7 +204,13 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 					});
 					popup.add(item);
 				}
-				popup.show(mDataList, e.getX() - 15, e.getY() - 15);
+
+        final JPopupMenu openPopup = popup;
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            openPopup.show(mDataList, e.getX() - 15, e.getY() - 15);
+          }
+        });
 			}
 		}
 	}
