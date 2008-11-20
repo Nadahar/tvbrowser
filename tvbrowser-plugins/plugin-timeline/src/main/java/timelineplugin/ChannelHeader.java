@@ -17,15 +17,25 @@
  */
 package timelineplugin;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.*;
-import devplugin.*;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
+
 import util.browserlauncher.Launch;
-import util.ui.*;
+import util.ui.UiUtilities;
+import devplugin.Channel;
+import devplugin.Plugin;
 
 public class ChannelHeader extends JComponent
 {
@@ -104,7 +114,7 @@ public class ChannelHeader extends JComponent
 			}
 		});
 
-		addMouseListener(new MouseListener()
+		addMouseListener(new MouseAdapter()
 		{
 			public void mouseClicked(MouseEvent e)
 			{
@@ -114,12 +124,6 @@ public class ChannelHeader extends JComponent
 					Launch.openURL(mChannels[index].getWebpage());
 				}
 			}
-
-			public void mouseEntered(MouseEvent e)
-			{}
-
-			public void mouseExited(MouseEvent e)
-			{}
 
 			public void mousePressed(MouseEvent e)
 			{

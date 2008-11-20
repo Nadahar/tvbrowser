@@ -17,17 +17,44 @@
  */
 package timelineplugin;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.Timer;
-import javax.swing.*;
+import java.util.TimerTask;
+import java.util.Vector;
 
-import util.ui.*;
-import com.jgoodies.forms.builder.*;
-import com.jgoodies.forms.layout.*;
-import devplugin.*;
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRootPane;
+import javax.swing.JScrollBar;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+
+import util.ui.Localizer;
+import util.ui.TimeFormatter;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.ProgramFilter;
 
 public class TimelineDialog extends JDialog implements WindowClosingIf
 {
@@ -212,7 +239,8 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 		JPanel fp = new JPanel(new BorderLayout());
 		fp.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
-		JButton settingsBtn = new JButton(TimelinePlugin.getInstance().createImageIcon("categories", "preferences-desktop", 16));
+		JButton settingsBtn = new JButton(TimelinePlugin.getInstance()
+        .createImageIcon("categories", "preferences-system", 16));
 		settingsBtn.setToolTipText(mLocalizer.msg("settings", "Open settings"));
 		settingsBtn.addActionListener(new ActionListener()
 		{
@@ -224,7 +252,8 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 		});
 		fp.add(settingsBtn, BorderLayout.WEST);
 
-		JButton closeBtn = new JButton(mLocalizer.msg("close", "Close"));
+		JButton closeBtn = new JButton(Localizer
+        .getLocalization(Localizer.I18N_CLOSE));
 		closeBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -253,7 +282,6 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 				return "width=" + d.width + ", height=" + d.height;
 			}
 
-			@SuppressWarnings("deprecation")
 			public void actionPerformed(ActionEvent e)
 			{
 				String info = "Viewport: " + formatDim(mMainPane.getViewport().getSize()) + "\n";

@@ -17,14 +17,25 @@
  */
 package timelineplugin;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.awt.geom.*;
-import javax.swing.*;
+import java.awt.geom.Line2D;
 
-import devplugin.*;
+import javax.swing.JPanel;
+import javax.swing.JViewport;
+
+import devplugin.Date;
+import devplugin.Plugin;
 
 public class ProgramPanel extends JPanel
 {
@@ -64,9 +75,6 @@ public class ProgramPanel extends JPanel
 					scrollBy(deltaX, deltaY);
 				}
 			}
-
-			public void mouseMoved(MouseEvent evt)
-			{}
 		});
 
 		addMouseListener(new MouseAdapter()
@@ -80,12 +88,6 @@ public class ProgramPanel extends JPanel
 			{
 				mDraggingPoint = null;
 			}
-
-			public void mouseClicked(MouseEvent evt)
-			{}
-
-			public void mouseExited(MouseEvent evt)
-			{}
 		});
 	}
 
