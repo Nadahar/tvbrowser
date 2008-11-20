@@ -32,7 +32,6 @@ import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
@@ -160,7 +159,7 @@ public class WirSchauenPlugin extends Plugin {
       return new ActionMenu(action);
 
     } else {
-      mLog.log(Level.INFO, "Channel not allowed: " + name);
+      // mLog.log(Level.INFO, "Channel not allowed for WirSchauen: " + name);
     }
 
     return null;
