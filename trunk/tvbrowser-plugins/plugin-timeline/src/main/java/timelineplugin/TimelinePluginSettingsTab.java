@@ -17,22 +17,44 @@
  */
 package timelineplugin;
 
-import devplugin.*;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.plaf.basic.*;
-import timelineplugin.format.*;
-import util.paramhandler.*;
-import util.ui.*;
-import com.jgoodies.forms.builder.*;
-import com.jgoodies.forms.layout.*;
+import java.text.NumberFormat;
+import java.util.Vector;
+
+import javax.swing.ButtonGroup;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSlider;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
+
+import timelineplugin.format.TextFormatter;
+import util.paramhandler.ParamLibrary;
+import util.ui.FontChooserPanel;
+import util.ui.Localizer;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.Plugin;
+import devplugin.SettingsTab;
 
 public class TimelinePluginSettingsTab implements SettingsTab
 {
@@ -123,7 +145,8 @@ public class TimelinePluginSettingsTab implements SettingsTab
 		mChannelHeight.setText(Integer.toString(TimelinePlugin.getInstance().getChannelHeight()));
 		mChannelHeight.setColumns(10);
 
-		JButton resetHour = new JButton(mLocalizer.msg("reset", "Reset"));
+		JButton resetHour = new JButton(Localizer
+        .getLocalization(Localizer.I18N_DEFAULT));
 		resetHour.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent arg0)
@@ -131,7 +154,8 @@ public class TimelinePluginSettingsTab implements SettingsTab
 				mHourWidth.setText("120");
 			}
 		});
-		JButton resetChannel = new JButton(mLocalizer.msg("reset", "Reset"));
+		JButton resetChannel = new JButton(Localizer
+        .getLocalization(Localizer.I18N_DEFAULT));
 		resetChannel.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent arg0)
@@ -199,7 +223,8 @@ public class TimelinePluginSettingsTab implements SettingsTab
 		mFormat.setText(TimelinePlugin.getInstance().getFormat());
 		JScrollPane scrollFormat = new JScrollPane(mFormat);
 		mFontPanel = new FontChooserPanel(TimelinePlugin.getInstance().getFont());
-		JButton addFontBtn = new JButton(mLocalizer.msg("add", "Add"));
+		JButton addFontBtn = new JButton(Localizer
+        .getLocalization(Localizer.I18N_ADD));
 		addFontBtn.setToolTipText(mLocalizer.msg("addHint", "Add font"));
 		addFontBtn.addActionListener(new ActionListener()
 		{
@@ -214,8 +239,9 @@ public class TimelinePluginSettingsTab implements SettingsTab
 				mFormat.setText(pre + choosenFont + post);
 			}
 		});
-		JButton resetBtn = new JButton(mLocalizer.msg("reset", "Reset"));
-		resetBtn.setToolTipText(mLocalizer.msg("resetHint", "Reset formating"));
+		JButton resetBtn = new JButton(Localizer
+        .getLocalization(Localizer.I18N_DEFAULT));
+    resetBtn.setToolTipText(mLocalizer.msg("resetHint", "Reset formatting"));
 		resetBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -232,7 +258,8 @@ public class TimelinePluginSettingsTab implements SettingsTab
 		{
 			mKeyList.addItem(mParamLibrary.getDescriptionForKey(key));
 		}
-		JButton addKeyBtn = new JButton(mLocalizer.msg("add", "Add"));
+		JButton addKeyBtn = new JButton(Localizer
+        .getLocalization(Localizer.I18N_ADD));
 		addKeyBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -281,7 +308,8 @@ public class TimelinePluginSettingsTab implements SettingsTab
 				return this;
 			}
 		});
-		JButton addFunctionBtn = new JButton(mLocalizer.msg("add", "Add"));
+		JButton addFunctionBtn = new JButton(Localizer
+        .getLocalization(Localizer.I18N_ADD));
 		addFunctionBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -327,7 +355,8 @@ public class TimelinePluginSettingsTab implements SettingsTab
 		});
 
 		int row = 2;
-		builder.addLabel(mLocalizer.msg("title", "Formatings:"), cc.xyw(3, row, 5));
+		builder
+        .addLabel(mLocalizer.msg("title", "Formattings:"), cc.xyw(3, row, 5));
 		row += 2;
 		builder.add(scrollFormat, cc.xyw(3, row, 5));
 		row += 2;
