@@ -62,17 +62,14 @@ public class WidgetSettingsTab implements SettingsTab {
 		mRefresh = new JCheckBox(mLocalizer.msg("refresh", "Automatic refresh"));
 		mRefresh.setSelected(mSettings.getRefresh());
 		panelBuilder.add(mRefresh, cc.xyw(2, (currentRow += 2), 4));
-		
-		// layout settings
-		layout.appendRow(RowSpec.decode("pref"));
-    layout.appendRow(RowSpec.decode("2dlu"));
-		layout.appendRow(RowSpec.decode("fill:default:grow"));
-
-		// layout
-		panelBuilder.addSeparator(mLocalizer.msg("layout",
-				"Layout"), cc.xyw(1,
-				(currentRow += 2), 5));
-
+    /*
+     * // layout settings layout.appendRow(RowSpec.decode("pref"));
+     * layout.appendRow(RowSpec.decode("2dlu"));
+     * layout.appendRow(RowSpec.decode("fill:default:grow"));
+     * 
+     * // layout panelBuilder.addSeparator(mLocalizer.msg("layout", "Layout"),
+     * cc.xyw(1, (currentRow += 2), 5));
+     */
 		return panelBuilder.getPanel();
 	}
 
