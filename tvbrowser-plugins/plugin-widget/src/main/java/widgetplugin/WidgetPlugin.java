@@ -14,7 +14,7 @@ import devplugin.Version;
 
 public class WidgetPlugin extends Plugin {
 
-	private static final Version PLUGIN_VERSION = new Version(2, 70, false);
+	private static final Version PLUGIN_VERSION = new Version(2, 70, 0, true);
 
 	/**
 	 * Localizer

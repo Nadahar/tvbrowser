@@ -100,7 +100,9 @@ public class WidgetServer extends NanoHTTPD {
 		if (result.length() == 0) {
 			return mLocalizer.msg("noOnAir", "No programs on air");
 		}
-		result.insert(0, "</head><body>");
+		result
+        .insert(0,
+            "</head><body><span style=\"font-family:sans-serif; font-size:x-small\">");
 		if (mSettings.getRefresh()) {
       result.insert(0, "<meta http-equiv=\"refresh\" content=\"60\"/>");
     }
@@ -108,7 +110,7 @@ public class WidgetServer extends NanoHTTPD {
 				.insert(
 						0,
 						"<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />");
-		result.append("</body></html>");
+		result.append("</span></body></html>");
 		return result.toString();
 	}
 
