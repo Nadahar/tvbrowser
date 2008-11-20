@@ -22,8 +22,8 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -133,11 +133,8 @@ public class TVPearlPlugin extends devplugin.Plugin implements ActionListener, R
 		{
 			mDialog = new PearlDialog(getParentFrame());
 
-			mDialog.addWindowListener(new WindowListener()
+			mDialog.addWindowListener(new WindowAdapter()
 			{
-				public void windowActivated(WindowEvent e)
-				{}
-
 				public void windowClosed(WindowEvent e)
 				{
 					closeInfoDialog();
@@ -147,18 +144,6 @@ public class TVPearlPlugin extends devplugin.Plugin implements ActionListener, R
 				{
 					closeInfoDialog();
 				}
-
-				public void windowDeactivated(WindowEvent e)
-				{}
-
-				public void windowDeiconified(WindowEvent e)
-				{}
-
-				public void windowIconified(WindowEvent e)
-				{}
-
-				public void windowOpened(WindowEvent e)
-				{}
 			});
 
 			mDialog.pack();
