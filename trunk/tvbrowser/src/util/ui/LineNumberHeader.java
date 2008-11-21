@@ -105,7 +105,8 @@ public class LineNumberHeader extends JComponent {
     Document doc = this.textComponent.getDocument();
     if(doc instanceof DefaultStyledDocument) {
         DefaultStyledDocument myDoc = (DefaultStyledDocument)doc;
-        refFont = myDoc.getFont(myDoc.getDefaultRootElement().getAttributes());
+        refFont = myDoc.getFont(myDoc.getDefaultRootElement().getElement(0)
+          .getAttributes());
     } else {
         refFont = this.textComponent.getFont();
     }
