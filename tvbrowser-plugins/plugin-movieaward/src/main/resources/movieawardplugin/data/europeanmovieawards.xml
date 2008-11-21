@@ -1,0 +1,171 @@
+<awarddata>
+<name lang="de">Europäischer Filmpreis</name>
+<name lang="en">European Film Awards</name>
+
+<categories>
+  <categorie id="best_movie">
+    <name lang="de">Bester europäischer Film</name>
+    <name lang="en">Best European Film</name>
+  </categorie>
+  <categorie id="best_director">
+    <name lang="de">Bester europäischer Regisseur</name>
+    <name lang="en">Best European Director</name>
+  </categorie>
+</categories>
+
+
+<movies>
+  <movie id="movie_1" year="1988" director="Krzysztof Kieslowski">
+    <title lang="pl">Krótki film o zabijaniu</title>
+    <title lang="en">A Short Film About Killing</title>
+   <title lang="de">Ein kurzer Film über das Töten</title>
+  </movie>
+  <movie id="movie_2" year="1988" director="Theo Angelopoulos">
+    <title lang="gr">Topio stin omichli</title>
+    <title lang="en">Landscape in the Mist</title>
+   <title lang="de">Landschaft im Nebel</title>
+  </movie>
+  <movie id="movie_3" year="1990" director="Gianni Amelio">
+    <title lang="it">Porte aperte</title>
+    <title lang="en">Open Doors</title>
+   <title lang="de">Offene Türen</title>
+  </movie>
+  <movie id="movie_4" year="1990" director="Ken Loach">
+    <title lang="en">Riff-Raff</title>
+   <title lang="de">Riff-Raff</title>
+  </movie>
+  <movie id="movie_5" year="1992" director="Ken Loach">
+    <title lang="it">Il ladro di bambini</title>
+   <title lang="en">The Stolen Children</title>
+   <title lang="de">Gestohlene Kinder</title>
+  </movie>
+  <movie id="movie_6" year="1991" director="Nikita Mikhalkov">
+    <title lang="ru">Урга</title>
+   <title lang="en">Urga</title>
+   <title lang="de">Urga</title>
+  </movie>
+  <movie id="movie_7" year="1994" director="Gianni Amelio">
+    <title lang="it">Lamerica</title>
+   <title lang="en">Lamerica</title>
+   <title lang="de">Lamerica</title>
+  </movie>
+  <movie id="movie_8" year="1995" director="Ken Loach">
+    <title lang="en">Land and Freedom</title>
+   <title lang="de">Land and Freedom</title>
+  </movie>
+  <movie id="movie_9" year="1996" director="Lars von Trier">
+    <title lang="dk">Breaking the Waves</title>
+    <title lang="en">Breaking the Waves</title>
+   <title lang="de">Breaking the Waves</title>
+  </movie>
+  <movie id="movie_10" year="1997" director="Peter Cattaneo">
+    <title lang="en">The Full Monty</title>
+   <title lang="de">Ganz oder gar nicht</title>
+  </movie>
+  <movie id="movie_11" year="1997" director="Roberto Benigni">
+    <title lang="it">La vita è bella</title>
+   <title lang="en">Life Is Beautiful</title>
+   <title lang="de">Das Leben ist schön</title>
+  </movie>
+  <movie id="movie_12" year="1999" director="Pedro Almodóvar">
+    <title lang="es">Todo sobre mi madre</title>
+   <title lang="en">All About My Mother</title>
+   <title lang="de">Alles über meine Mutter</title>
+  </movie>
+  <movie id="movie_13" year="2000" director="Lars von Trier">
+    <title lang="dk">Dancer in the Dark</title>
+   <title lang="en">Dancer in the Dark</title>
+   <title lang="de">Dancer in the Dark</title>
+  </movie>
+  <movie id="movie_14" year="2001" director="Jean-Pierre Jeunet">
+    <title lang="fr">Le fabuleux destin d'Amélie Poulain</title>
+   <title lang="en">Amélie</title>
+   <title lang="de">Die fabelhafte Welt der Amélie</title>
+  </movie>
+  <movie id="movie_15" year="2002" director="Pedro Almodóvar">
+    <title lang="es">Hable con ella</title>
+   <title lang="en">Talk to Her</title>
+   <title lang="de">Sprich mit ihr</title>
+  </movie>
+  <movie id="movie_16" year="2003" director="Wolfgang Becker">
+    <title lang="de">Good Bye, Lenin!</title>
+   <title lang="en">Good Bye Lenin!</title>
+  </movie>
+  <movie id="movie_17" year="2004" director="Fatih Akın">
+    <title lang="de">Gegen die Wand</title>
+   <title lang="en">Head-On</title>
+  </movie>
+  <movie id="movie_18" year="2005" director="Michael Haneke">
+    <title lang="fr">Caché</title>
+   <title lang="en">Hidden</title>
+   <title lang="de">Caché</title>
+  </movie>
+  <movie id="movie_19" year="2006" director="Florian Henckel von Donnersmarck">
+    <title lang="de">Das Leben der Anderen</title>
+   <title lang="en">The Lives of Others</title>
+  </movie>
+  <movie id="movie_20" year="2007" director="Cristian Mungiu">
+    <title lang="ro">4 luni, 3 săptămâni şi 2 zile</title>
+   <title lang="en">4 Months, 3 Weeks and 2 Days</title>
+   <title lang="de">4 Monate, 3 Wochen und 2 Tage</title>
+  </movie>
+  <movie id="movie_101" year="1987" director="Wim Wenders">
+    <title lang="de">Der Himmel über Berlin</title>
+   <title lang="en">Wings of Desire</title>
+  </movie>
+  <movie id="movie_102" year="1988" director="Géza Bereményi">
+   <title lang="it">Eldorado</title>
+   <title lang="en">Eldorado</title>
+    <title lang="de">Eldorado</title>
+  </movie>
+  <movie id="movie_103" year="2003" director="Lars von Trier">
+   <title lang="dk">Dogville</title>
+   <title lang="en">Dogville</title>
+    <title lang="de">Dogville</title>
+  </movie>
+  <movie id="movie_104" year="2004" director="Alejandro Amenábar">
+   <title lang="es">Mar adentro</title>
+   <title lang="en">The Sea Inside</title>
+    <title lang="de">Das Meer in mir</title>
+  </movie>
+  <movie id="movie_105" year="2006" director="Pedro Almodóvar">
+   <title lang="es">Volver</title>
+   <title lang="en">Volver</title>
+    <title lang="de">Volver – Zurückkehren</title>
+  </movie>
+</movies>
+
+<awards>
+  <award categorie="best_movie" status="winner" movie="movie_1" year="1988" />
+  <award categorie="best_movie" status="winner" movie="movie_2" year="1989" />
+  <award categorie="best_movie" status="winner" movie="movie_3" year="1990" />
+  <award categorie="best_movie" status="winner" movie="movie_4" year="1991" />
+  <award categorie="best_movie" status="winner" movie="movie_5" year="1992" />
+  <award categorie="best_movie" status="winner" movie="movie_6" year="1993" />
+  <award categorie="best_movie" status="winner" movie="movie_7" year="1994" />
+  <award categorie="best_movie" status="winner" movie="movie_8" year="1995" />
+  <award categorie="best_movie" status="winner" movie="movie_9" year="1996" />
+  <award categorie="best_movie" status="winner" movie="movie_10" year="1997" />
+  <award categorie="best_movie" status="winner" movie="movie_11" year="1998" />
+  <award categorie="best_movie" status="winner" movie="movie_12" year="1999" />
+  <award categorie="best_movie" status="winner" movie="movie_13" year="2000" />
+  <award categorie="best_movie" status="winner" movie="movie_14" year="2001" />
+  <award categorie="best_movie" status="winner" movie="movie_15" year="2002" />
+  <award categorie="best_movie" status="winner" movie="movie_16" year="2003" />
+  <award categorie="best_movie" status="winner" movie="movie_17" year="2004" />
+  <award categorie="best_movie" status="winner" movie="movie_18" year="2005" />
+  <award categorie="best_movie" status="winner" movie="movie_19" year="2006" />
+  <award categorie="best_movie" status="winner" movie="movie_20" year="2007" />
+  <award categorie="best_director" status="winner" movie="movie_101" year="1988" />
+  <award categorie="best_director" status="winner" movie="movie_102" year="1989" />
+  <award categorie="best_director" status="winner" movie="movie_14" year="2001" />
+  <award categorie="best_director" status="winner" movie="movie_15" year="2002" />
+  <award categorie="best_director" status="winner" movie="movie_103" year="2003" />
+  <award categorie="best_director" status="winner" movie="movie_104" year="2004" />
+  <award categorie="best_director" status="winner" movie="movie_18" year="2005" />
+  <award categorie="best_director" status="winner" movie="movie_105" year="2006" />
+  <award categorie="best_director" status="winner" movie="movie_20" year="2007" />
+
+</awards>
+
+</awarddata>
