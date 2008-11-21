@@ -17,13 +17,26 @@
  */
 package timelineplugin;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JPopupMenu;
+import javax.swing.JToolTip;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import timelineplugin.format.TextFormatter;
-import devplugin.*;
+import devplugin.Plugin;
+import devplugin.PluginManager;
+import devplugin.Program;
 
 public class ProgramLabel extends JComponent implements ChangeListener, MouseListener
 {
@@ -47,8 +60,8 @@ public class ProgramLabel extends JComponent implements ChangeListener, MouseLis
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("<html>");
-		sb.append(mProgram.getDateString()).append(" · ");
-		sb.append(mProgram.getTimeString()).append(" · ");
+		sb.append(mProgram.getDateString()).append(" ï¿½ ");
+    sb.append(mProgram.getTimeString()).append(" ï¿½ ");
 		sb.append(mProgram.getChannel().getName()).append("<br>");
 		sb.append("<b>").append(mProgram.getTitle()).append("</b><br>");
 		String shortInfo = mProgram.getShortInfo();
@@ -104,6 +117,9 @@ public class ProgramLabel extends JComponent implements ChangeListener, MouseLis
 		{
 			mng.handleProgramDoubleClick(mProgram, TimelinePlugin.getInstance());
 		}
+    else if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
+      mng.handleProgramSingleClick(mProgram, TimelinePlugin.getInstance());
+    }
 		else
 		{
 			mProgram.removeChangeListener(this);
