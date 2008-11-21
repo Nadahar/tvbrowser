@@ -33,7 +33,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Calendar;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -190,10 +189,7 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
     mEndTimeLimit = new JSpinner(new SpinnerDateModel());
     mEndTimeLimit.setEditor(new JSpinner.DateEditor(mEndTimeLimit, timePattern));
     setTimeDate(mEndTimeLimit, mChannel.getEndTimeLimit());
-    
-    ((JSpinner.DateEditor)mStartTimeLimit.getEditor()).getTextField().setBorder(BorderFactory.createEmptyBorder(0,2,0,0));
-    ((JSpinner.DateEditor)mEndTimeLimit.getEditor()).getTextField().setBorder(BorderFactory.createEmptyBorder(0,2,0,0));
-    
+        
     ((JSpinner.DateEditor)mStartTimeLimit.getEditor()).getTextField().setHorizontalAlignment(SwingConstants.LEFT);
     ((JSpinner.DateEditor)mEndTimeLimit.getEditor()).getTextField().setHorizontalAlignment(SwingConstants.LEFT);
     
