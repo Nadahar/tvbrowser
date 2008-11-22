@@ -37,6 +37,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -81,8 +83,8 @@ import devplugin.SettingsTab;
 import devplugin.Version;
 
 /**
- * A very simple filter plugin to easily get
- * rid of stupid programs in the program table.
+ * A very simple filter plugin to easily get rid of stupid programs in the
+ * program table.
  * 
  * @author René Mach
  */
@@ -98,6 +100,11 @@ public class IDontWant2See extends Plugin {
   private boolean mDateWasSet;
   private String mLastEnteredExclusionString;
   private Date mLastUsedDate;
+
+  private static final Pattern PATTERN_TITLE_PART = Pattern.compile("(.*)\\((" + "(Teil \\d+)" + "|"
+      + "(Teil \\d+/\\d+)" + "|" + "(Teil \\d+ von \\d+)" + "|"
+      + "(\\d+)" + "|" + "(\\d+/\\d+)" + "|" + "(Fortsetzung)"
+      + ")\\)$");
   
   public static Version getVersion() {
     return new Version(0,9,5,true);
@@ -158,7 +165,7 @@ public class IDontWant2See extends Plugin {
     return new PluginInfo(IDontWant2See.class,
         mLocalizer.msg("name","I don't want to see!"),
         mLocalizer.msg("desc","Removes all programs with an entered search text in the title from the program table."),
-        "René Mach","GPL");
+        "René Mach", "GPL");
   }
   
   private int getSearchTextIndexForProgram(Program p) {
@@ -260,75 +267,99 @@ public class IDontWant2See extends Plugin {
   }
   
   public ActionMenu getContextMenuActions(final Program p) {
+    if (p == null) {
+      return null;
+    }
+    // check if this program is already hidden
     final int index = getSearchTextIndexForProgram(p);
     
-    if(p == null || p.equals(getPluginManager().getExampleProgram()) || index == -1) {
-      AbstractAction action1 = new AbstractAction(mLocalizer.msg("menu.userEntered","User entered value")) {
-        public void actionPerformed(ActionEvent e) {
-          if(p != null) {
-            JCheckBox caseSensitive = new JCheckBox(mLocalizer.msg("caseSensitive","case sensitive"));
-            JTextField input = new JTextField(p.getTitle());
-                      
-            if(JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(getParentFrame()),
-                new Object[] {mLocalizer.msg("exclusionText","What should be excluded? (You can use the wildcard *)"),input,caseSensitive},
-                mLocalizer.msg("exclusionTitle","Exclusion value entering"),
-                JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-              String test = "";
-              
-              if(input.getText() != null) {
-                test = input.getText().replaceAll("\\*+","\\*").trim();
-                
-                if(test.length() >= 0 && !test.equals("*")) {
-                  mSearchList.add(new IDontWant2SeeListEntry(input.getText(),caseSensitive.isSelected()));
-                  mLastEnteredExclusionString = input.getText();
-                  updateFilter(!mSwitchToMyFilter);
-                }
-              }
-              
-              if(test.trim().length() <= 1) {
-                JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(getParentFrame()),mLocalizer.msg("notValid","The entered text is not valid."),
-                    Localizer.getLocalization(Localizer.I18N_ERROR),JOptionPane.ERROR_MESSAGE);
-              }
-            }
-          }
+    // return menu to hide the program
+    if (index == -1 || p.equals(getPluginManager().getExampleProgram())) {
+      AbstractAction actionDontWant = getActionDontWantToSee(p);
+
+      if (mSimpleMenu) {
+        Matcher matcher = PATTERN_TITLE_PART.matcher(p.getTitle());
+        if (matcher.matches()) {
+          actionDontWant = getActionInputTitle(p);
         }
-      };
-      
-      AbstractAction action2 = new AbstractAction(mLocalizer.msg("menu.completeCaseSensitive","Complete title case-sensitive")) {
-        public void actionPerformed(ActionEvent e) {
-          mSearchList.add(new IDontWant2SeeListEntry(p.getTitle(),true));
-          mLastEnteredExclusionString = p.getTitle();
-          updateFilter(!mSwitchToMyFilter);
-        }
-      };
-      
-      if(mSimpleMenu) {
-        action2.putValue(Action.NAME,mLocalizer.msg("name","I don't want to see!"));
-        action2.putValue(Action.SMALL_ICON,createImageIcon("actions","edit-delete",16));
+        actionDontWant.putValue(Action.NAME,mLocalizer.msg("name","I don't want to see!"));
+        actionDontWant.putValue(Action.SMALL_ICON,createImageIcon("actions","edit-delete",16));
         
-        return new ActionMenu(action2);
+        return new ActionMenu(actionDontWant);
       }
       else {
+        AbstractAction actionInput = getActionInputTitle(p);
         ContextMenuAction baseAction = new ContextMenuAction(mLocalizer.msg("name","I don't want to see!"),
             createImageIcon("actions","edit-delete",16));
         
-        return new ActionMenu(baseAction, new Action[] {action2,action1});
+        return new ActionMenu(baseAction, new Action[] {actionDontWant,actionInput});
       }
     }
-    else if(index != -1) {
-      ContextMenuAction baseAction = new ContextMenuAction(mLocalizer.msg("menu.reshow","I want to see!"),
-          createImageIcon("actions","edit-paste",16));
-      baseAction.setActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          mSearchList.remove(index);
-          updateFilter(!mSwitchToMyFilter);
+
+    // return menu to show the program
+    return new ActionMenu(getActionShowAgain(p));
+  }
+
+  private ContextMenuAction getActionShowAgain(final Program p) {
+    return new ContextMenuAction(mLocalizer
+        .msg("menu.reshow", "I want to see!"), createImageIcon("actions",
+        "edit-paste", 16)) {
+      public void actionPerformed(ActionEvent e) {
+        final int index = getSearchTextIndexForProgram(p);
+        mSearchList.remove(index);
+        updateFilter(!mSwitchToMyFilter);
+      }
+    };
+  }
+
+  private AbstractAction getActionInputTitle(final Program p) {
+    return new AbstractAction(mLocalizer.msg("menu.userEntered",
+        "User entered value")) {
+      public void actionPerformed(ActionEvent e) {
+        JCheckBox caseSensitive = new JCheckBox(mLocalizer.msg("caseSensitive",
+            "case sensitive"));
+        JTextField input = new JTextField(p.getTitle());
+
+        if (JOptionPane.showConfirmDialog(UiUtilities
+            .getLastModalChildOf(getParentFrame()), new Object[] {
+            mLocalizer.msg("exclusionText",
+                "What should be excluded? (You can use the wildcard *)"),
+            input, caseSensitive }, mLocalizer.msg("exclusionTitle",
+            "Exclusion value entering"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+          String test = "";
+
+          if (input.getText() != null) {
+            test = input.getText().replaceAll("\\*+", "\\*").trim();
+
+            if (test.length() >= 0 && !test.equals("*")) {
+              mSearchList.add(new IDontWant2SeeListEntry(input.getText(),
+                  caseSensitive.isSelected()));
+              mLastEnteredExclusionString = input.getText();
+              updateFilter(!mSwitchToMyFilter);
+            }
+          }
+
+          if (test.trim().length() <= 1) {
+            JOptionPane.showMessageDialog(UiUtilities
+                .getLastModalChildOf(getParentFrame()), mLocalizer.msg(
+                "notValid", "The entered text is not valid."), Localizer
+                .getLocalization(Localizer.I18N_ERROR),
+                JOptionPane.ERROR_MESSAGE);
+          }
         }
-      });
-      
-      return new ActionMenu(baseAction);
-    }
-    
-    return null;
+      }
+    };
+  }
+
+  private AbstractAction getActionDontWantToSee(final Program p) {
+    return new AbstractAction(mLocalizer.msg("menu.completeCaseSensitive",
+        "Complete title case-sensitive")) {
+      public void actionPerformed(ActionEvent e) {
+        mSearchList.add(new IDontWant2SeeListEntry(p.getTitle(), true));
+        mLastEnteredExclusionString = p.getTitle();
+        updateFilter(!mSwitchToMyFilter);
+      }
+    };
   }
   
   private void updateFilter(final boolean update) {
