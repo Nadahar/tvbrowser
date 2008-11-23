@@ -177,9 +177,9 @@ public class TimelinePluginSettingsTab implements SettingsTab
 		builder.addLabel(mLocalizer.msg("progressView", "Progress view"), cc.xy(3, row));
 		builder.add(mProgressBar, cc.xyw(5, row, 3));
 		row += 2;
-		builder.addLabel("Focus", cc.xy(3, row));
-		builder.add(mFocusDelta, cc.xy(5, row));
-		builder.add(mFocusDeltaLabel, cc.xy(7, row));
+//		builder.addLabel("Focus", cc.xy(3, row));
+//		builder.add(mFocusDelta, cc.xy(5, row));
+//		builder.add(mFocusDeltaLabel, cc.xy(7, row));
 		row += 2;
 		builder.addSeparator(mLocalizer.msg("start", "Start"), cc.xyw(2, row, 6));
 		row += 2;
