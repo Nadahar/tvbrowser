@@ -12,6 +12,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.DocumentEvent;
 import java.awt.Frame;
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -31,6 +32,13 @@ public class TwitterDialog extends JDialog implements WindowClosingIf {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(TwitterDialog.class);
   private JEditorPane mMessage = new JEditorPane();
   private boolean mOkWasPressed = false;
+
+  public TwitterDialog(Dialog parentDialog, Program program) {
+    super(parentDialog, true);
+    setTitle(mLocalizer.msg("title", "Enter Twitter Message"));
+    createGui(program);
+    setLocationRelativeTo(parentDialog);
+  }
 
   public TwitterDialog(Frame parentFrame, Program program) {
     super(parentFrame, true);
