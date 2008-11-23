@@ -3,6 +3,7 @@ package twitterplugin;
 import devplugin.Program;
 
 import java.awt.Frame;
+import java.awt.Window;
 import java.util.Properties;
 
 import twitter4j.Twitter;
@@ -14,6 +15,7 @@ import util.io.IOUtilities;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JDialog;
 
 public class TwitterSender {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(TwitterSender.class);
@@ -21,9 +23,14 @@ public class TwitterSender {
   public TwitterSender() {
   }
 
-  public void send(JFrame parentFrame, Program program) {
-    TwitterDialog dialog = new TwitterDialog(parentFrame, program);
-    dialog.setLocationRelativeTo(parentFrame);
+  public void send(Window parentWindow, Program program) {
+    TwitterDialog dialog;
+    if (parentWindow instanceof JDialog) {
+      dialog = new TwitterDialog((JDialog) parentWindow, program);
+    } else {
+      dialog = new TwitterDialog((JFrame) parentWindow, program);
+    }
+    dialog.setLocationRelativeTo(parentWindow);
     dialog.setVisible(true);
 
     if (dialog.wasOkPressed()) {
@@ -32,9 +39,13 @@ public class TwitterSender {
       String username = settings.getProperty(TwitterPlugin.USERNAME, "");
       String password;
       if ("false".equalsIgnoreCase(settings.getProperty(TwitterPlugin.STORE_PASSWORD, "false"))) {
-        final TwitterLoginDialog login = new TwitterLoginDialog(parentFrame,
-            username,
-            "", false);
+        final TwitterLoginDialog login;
+        if (parentWindow instanceof JDialog) {
+          login = new TwitterLoginDialog((JDialog)parentWindow, username, "", false);
+        } else {
+          login = new TwitterLoginDialog((JFrame)parentWindow, username, "", false);
+        }
+        
         if (!(login.askLogin() == JOptionPane.OK_OPTION)) {
           return;
         }
@@ -54,7 +65,7 @@ public class TwitterSender {
       try {
         twitter.setSource("tvbrowserorg");
         twitter.update(dialog.getMessage());
-        JOptionPane.showMessageDialog(parentFrame, mLocalizer.msg("tweetSend", "The tweet was send."));
+        JOptionPane.showMessageDialog(parentWindow, mLocalizer.msg("tweetSend", "The tweet was send."));
       } catch (TwitterException e) {
         e.printStackTrace();
         ErrorHandler.handle(mLocalizer.msg("error", "Could not send tweet..."), e);

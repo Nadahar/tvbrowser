@@ -17,6 +17,7 @@ import java.awt.Frame;
 import java.awt.Dialog;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Window;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -44,12 +45,27 @@ public class TwitterLoginDialog extends JDialog implements WindowClosingIf {
 
   /**
    * Create Dialog
+   * @param owner Parent-Frame
+   * @param username Username
+   * @param password Password
+   * @param storePassword store password ?
+   */
+  public TwitterLoginDialog(JFrame owner, String username, String password, boolean storePassword) {
+    super(owner, true);
+    mUsername = username;
+    mPassword = password;
+    mStore = storePassword;
+    createGui();
+  }
+
+  /**
+   * Create Dialog
    * @param owner Parent-Dialog
    * @param username Username
    * @param password Password
    * @param storePassword store password ?
    */
-  public TwitterLoginDialog(Dialog owner, String username, String password, boolean storePassword) {
+  public TwitterLoginDialog(JDialog owner, String username, String password, boolean storePassword) {
     super(owner, true);
     mUsername = username;
     mPassword = password;

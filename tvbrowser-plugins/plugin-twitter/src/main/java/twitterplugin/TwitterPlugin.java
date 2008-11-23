@@ -7,6 +7,7 @@ import devplugin.Version;
 import devplugin.ActionMenu;
 import devplugin.Program;
 import util.ui.Localizer;
+import util.ui.UiUtilities;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -14,9 +15,11 @@ import javax.swing.ImageIcon;
 import javax.swing.Icon;
 import javax.swing.SwingUtilities;
 import javax.swing.JFrame;
+import javax.swing.JDialog;
 import java.util.Properties;
 import java.awt.event.ActionEvent;
 import java.awt.Frame;
+import java.awt.Window;
 
 public class TwitterPlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(TwitterPlugin.class);
@@ -32,7 +35,7 @@ public class TwitterPlugin extends Plugin {
   protected static TwitterPlugin mInstance;
 
   public static Version getVersion() {
-    return new Version(0, 3, false);
+    return new Version(0, 4, false);
   }
 
   /**
@@ -64,7 +67,7 @@ public class TwitterPlugin extends Plugin {
         public void actionPerformed(ActionEvent evt) {
           SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-              new TwitterSender().send((JFrame)getParentFrame(), program);
+              new TwitterSender().send(UiUtilities.getLastModalChildOf(getParentFrame()), program);
             }
           });
         }
