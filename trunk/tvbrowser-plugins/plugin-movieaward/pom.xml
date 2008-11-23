@@ -33,11 +33,24 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
+        <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
-          <finalName>MovieAwardPlugin</finalName>
+            <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+            </descriptorRefs>
+            <finalName>MovieAwardPlugin</finalName>
+            <appendAssemblyId>false</appendAssemblyId>
+            <attach>false</attach>
         </configuration>
+        <executions>
+         <execution>
+                <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                <phase>package</phase> <!-- append to the packaging phase. -->
+                <goals>
+                    <goal>single</goal> <!-- goals == mojos -->
+                </goals>
+          </execution>
+        </executions>
       </plugin>
 
     </plugins>
@@ -50,12 +63,6 @@
     <dependency>
       <groupId>org.tvbrowser</groupId>
       <artifactId>tvbrowser</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>xerces</groupId>
-      <artifactId>xercesImpl</artifactId>
-      <version>2.9.1</version>
-      <scope>provided</scope>
     </dependency>
   </dependencies>
 </project>
