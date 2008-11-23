@@ -1,6 +1,8 @@
 package movieawardplugin;
 
-import org.apache.xerces.parsers.SAXParser;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
@@ -21,15 +23,8 @@ public class MovieDataFactory {
     final MovieAward award = new MovieAward();
 
     try {
-      SAXParser parser = new SAXParser();
-      parser.setContentHandler(new MovieAwardHandler(award));
-
-      // Complete list of features of the xerces parser:
-      // http://xml.apache.org/xerces2-j/features.html
-      parser.setFeature("http://xml.org/sax/features/validation", false);
-      parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-
-      parser.parse(new InputSource(stream));
+      SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+      parser.parse(new InputSource(stream), new MovieAwardHandler(award));
     } catch (SAXNotRecognizedException e) {
       mLog.log(Level.SEVERE, "Could not parse Movie Award", e);
     } catch (SAXNotSupportedException e) {
@@ -37,6 +32,8 @@ public class MovieDataFactory {
     } catch (IOException e) {
       mLog.log(Level.SEVERE, "Could not parse Movie Award", e);
     } catch (SAXException e) {
+      mLog.log(Level.SEVERE, "Could not parse Movie Award", e);
+    } catch (ParserConfigurationException e) {
       mLog.log(Level.SEVERE, "Could not parse Movie Award", e);
     }
 
