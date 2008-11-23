@@ -86,24 +86,35 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 		{
 			public void mouseClicked(MouseEvent e)
 			{
-        PluginManager mng = Plugin.getPluginManager();
-        int index = mDataList.locationToIndex(e.getPoint());
+				PluginManager mng = Plugin.getPluginManager();
+				int index = mDataList.locationToIndex(e.getPoint());
 
-        if (mDataList.getModel().getElementAt(index) instanceof TVPProgram) {
-          TVPProgram p = (TVPProgram) mDataList.getModel().getElementAt(index);
-          if (p.getProgramID().length() > 0) {
-            Program prog = mng.getProgram(new Date(p.getStart()), p.getProgramID());
+				if (mDataList.getModel().getElementAt(index) instanceof TVPProgram)
+				{
+					
+					TVPProgram p = (TVPProgram) mDataList.getModel().getElementAt(index);
+					if (p.getProgramID().length() > 0)
+					{
+						Program prog = mng.getProgram(new Date(p.getStart()), p.getProgramID());
 
-            if (prog != null) {
-              if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
-                mng.handleProgramDoubleClick(prog, TVPearlPlugin.getInstance());
-              } else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
-                mng.handleProgramMiddleClick(prog);
-              }
-            }
-          }
-        }
-      }
+						if (prog != null)
+						{
+							if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2)
+							{
+								mng.handleProgramDoubleClick(prog, TVPearlPlugin.getInstance());
+							}
+							else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1))
+							{
+								mng.handleProgramMiddleClick(prog);
+							}
+						}
+					}
+					if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1 && e.isShiftDown())
+					{
+						TVPearlPlugin.getInstance().showPearlInfo(p);
+					}
+				}
+			}
 
 			public void mouseReleased(MouseEvent e)
 			{
@@ -175,6 +186,7 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 
 			if (mDataList.getModel().getElementAt(index) instanceof TVPProgram)
 			{
+				mDataList.setSelectedIndex(index);
 				TVPProgram p = (TVPProgram) mDataList.getModel().getElementAt(index);
 				if (p.getProgramID().length() > 0)
 				{
@@ -204,12 +216,14 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 					popup.add(item);
 				}
 
-        final JPopupMenu openPopup = popup;
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            openPopup.show(mDataList, e.getX() - 15, e.getY() - 15);
-          }
-        });
+				final JPopupMenu openPopup = popup;
+				SwingUtilities.invokeLater(new Runnable()
+				{
+					public void run()
+					{
+						openPopup.show(mDataList, e.getX() - 15, e.getY() - 15);
+					}
+				});
 			}
 		}
 	}
@@ -239,7 +253,7 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 			mDataList.setSelectedIndex(0);
 			if (mProgramList.getSize() > index)
 			{
-				mDataList.setSelectedIndex(index);	
+				mDataList.setSelectedIndex(index);
 				mDataList.ensureIndexIsVisible(index);
 			}
 		}

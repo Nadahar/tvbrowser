@@ -94,7 +94,7 @@ public class TVPearlPlugin extends devplugin.Plugin implements ActionListener, R
 
 	public static Version getVersion()
 	{
-		return new Version(0, 17, 0);
+		return new Version(0, 18, 0);
 	}
 
 	public SettingsTab getSettingsTab()
