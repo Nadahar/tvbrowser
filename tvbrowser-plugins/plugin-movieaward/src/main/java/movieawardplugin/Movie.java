@@ -36,6 +36,7 @@ public class Movie {
   private String mDirector;
   private HashMap<String, String> mTitle = new HashMap<String, String>();
   private HashMap<String, ArrayList<String>> mAlternativeTitle = new HashMap<String, ArrayList<String>>();
+  private String mOriginalTitle;
 
   public Movie(String id) {
     mId = id;
@@ -44,7 +45,10 @@ public class Movie {
     return mId;
   }
 
-  public void addTitle(String lang, String title) {
+  public void addTitle(String lang, String title, boolean original) {
+    if (original) {
+      mOriginalTitle = title;
+    }
     mTitle.put(lang, title);
   }
 
@@ -86,7 +90,8 @@ public class Movie {
 
   public boolean matchesProgram(Program program) {
     if (program.getTitle().equals(mTitle.get(program.getChannel().getCountry())) ||
-        getAlternativeTitles(program.getChannel().getCountry()).contains(program.getTitle())) {
+        getAlternativeTitles(program.getChannel().getCountry()).contains(program.getTitle()) ||
+        (mOriginalTitle != null && program.getTitle().equals(mOriginalTitle))) {
       int year = program.getIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE);
 
       if (year != 0) {

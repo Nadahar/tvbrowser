@@ -8,19 +8,23 @@
     <name lang="de">Bester Film</name>
     <name lang="en">Best Movie</name>
   </categorie>
+  <categorie id="best_actor">
+    <name lang="de">Bester Schauspieler</name>
+    <name lang="en">Best Actor</name>
+  </categorie>
 </categories>
 
 <movies>
-  <movie id="movie_1" year="1999" director="tom tykwer">
+  <movie id="movie_1" year="2006" director="tom tykwer">
     <title lang="de">Red Planet2</title>
-    <title lang="en">Lola Runs</title>
+    <title lang="en" original="yes">Miami Vice</title>
     <alternativetitle lang="de">Red Planet</alternativetitle>
   </movie>
 </movies>
 
 <awards>
   <award categorie="best_movie" status="nominated" movie="movie_1" year="1999" />
-  <award categorie="best_actor" status="winner" movie="movie_1" year="1999" />
+  <award categorie="best_actor" status="winner" movie="movie_1" year="1999" recipient="Heinz Strunk"/>
 </awards>
 
 </awarddata>

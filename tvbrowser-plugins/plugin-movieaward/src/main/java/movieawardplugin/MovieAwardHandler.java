@@ -111,7 +111,8 @@ public class MovieAwardHandler extends DefaultHandler {
       mAward.addAward(new Award(attributes.getValue("categorie"),
                                 attributes.getValue("status"),
                                 attributes.getValue("movie"),
-                                year
+                                year,
+                                attributes.getValue("recipient")
           ));
     } else if ("url".equals(qName) && ("awarddata".equals(parent))){
       mAward.setUrl(mText.toString());
@@ -145,7 +146,8 @@ public class MovieAwardHandler extends DefaultHandler {
     } else if ("categorie".equals(qName)) {
       mAward.addCategorie(mCategorie);
     } else if ("title".equals(qName) && "movie".equals(parent)) {
-      mMovie.addTitle(mAttributes.getValue("lang"), mText.toString());
+      boolean original = "yes".equalsIgnoreCase(mAttributes.getValue("original"));
+      mMovie.addTitle(mAttributes.getValue("lang"), mText.toString(), original);
     } else if ("movie".equals(qName)) {
       mAward.addMovie(mMovie);
     } else if ("alternativetitle".equals(qName) && "movie".equals(parent)) {

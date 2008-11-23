@@ -38,6 +38,10 @@ public class MovieAwardCategory {
   }
 
   public void addName(String lang, String name) {
-    mNames.put(lang, name);  
+    mNames.put(lang.toLowerCase(), name);
+  }
+
+  public String getName(String lang) {
+    return mNames.get(lang.toLowerCase());
   }
 }
