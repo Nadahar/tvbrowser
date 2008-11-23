@@ -52,7 +52,7 @@ public class MovieAwardPlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(MovieAwardPlugin.class);
   private static Logger mLog = Logger.getLogger(MovieAwardPlugin.class.getName());
 
-  private static final Version mVersion = new Version(0, 1);
+  private static final Version mVersion = new Version(0, 2);
   private PluginInfo mPluginInfo;
   private ArrayList<MovieAward> mMovieAwards;
   private Icon mIcon;
@@ -83,8 +83,8 @@ public class MovieAwardPlugin extends Plugin {
     // might be called multiple times
     if (mMovieAwards == null) {
       mMovieAwards = new ArrayList<MovieAward>();
-      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass().getResourceAsStream("./data/oscars.xml")));
-      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass().getResourceAsStream("./data/europeanmovieawards.xml")));
+      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass().getResourceAsStream("data/oscars.xml")));
+      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass().getResourceAsStream("data/europeanmovieawards.xml")));
     }
 
     mLog.info("loaded movie award. " + mMovieAwards.size());
