@@ -28,11 +28,22 @@ import devplugin.PluginInfo;
 import devplugin.Version;
 import devplugin.Program;
 import devplugin.ThemeIcon;
+import devplugin.ActionMenu;
 import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.misc.SoftReferenceCache;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.AbstractAction;
+import javax.swing.SwingUtilities;
+import javax.swing.JFrame;
+import javax.swing.Action;
+import javax.swing.JDialog;
 import java.util.ArrayList;
 import java.util.logging.Logger;
+import java.awt.event.ActionEvent;
+import java.awt.Window;
 
 public class MovieAwardPlugin extends Plugin {
   /**
@@ -45,6 +56,8 @@ public class MovieAwardPlugin extends Plugin {
   private PluginInfo mPluginInfo;
   private ArrayList<MovieAward> mMovieAwards;
   private Icon mIcon;
+  /** Small Cache to speed up comparison of programs */
+  private SoftReferenceCache<Program, Boolean> mAwardCache = new SoftReferenceCache<Program, Boolean>();
 
   public MovieAwardPlugin() {
   }
@@ -95,21 +108,58 @@ public class MovieAwardPlugin extends Plugin {
     return mLocalizer.msg("pluginName", "Movie Awards");
   }
 
+  public ActionMenu getContextMenuActions(final Program program) {
+    if (getPluginManager().getExampleProgram().equals(program) || hasAwards(program)) {
+      AbstractAction action = new AbstractAction() {
+        public void actionPerformed(ActionEvent evt) {
+          SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+              showAwardDialog(program);
+            }
+          });
+        }
+      };
+      action.putValue(Action.NAME, mLocalizer.msg("contextMenuShowAwards", "Show Awards"));
+      action.putValue(Action.SMALL_ICON, getPluginIcon());
+      return new ActionMenu(action);
+    }
+    return null;
+  }
+
+  private void showAwardDialog(Program program) {
+    final Window window = UiUtilities.getLastModalChildOf(getParentFrame());
+
+    final MovieAwardDialog dialog;
+
+    if (window instanceof JDialog) {
+      dialog = new MovieAwardDialog((JDialog)window, mMovieAwards, program);
+    } else {
+      dialog = new MovieAwardDialog((JFrame)window, mMovieAwards, program);
+    }
+    UiUtilities.registerForClosing(dialog);
+    UiUtilities.centerAndShow(dialog);
+  }
+
   private boolean hasAwards(final Program program) {
+    if (mAwardCache.containsKey(program)) {
+      return mAwardCache.get(program);
+    }
+
     for (MovieAward award : mMovieAwards) {
       if (award.containsAwardFor(program)) {
+        mAwardCache.put(program, true);
         return true;
       }
     }
 
+    mAwardCache.put(program, false);
     return false;
   }
 
   public Icon getPluginIcon() {
     if (mIcon == null) {
-      mIcon = getPluginManager().getIconFromTheme(this, new ThemeIcon("actions", "folder-new", 16));
+      mIcon = new ImageIcon(getClass().getResource("movieaward.png"));
     }
-
     return mIcon;
   }
 

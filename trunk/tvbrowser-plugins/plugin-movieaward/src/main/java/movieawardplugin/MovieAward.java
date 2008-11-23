@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,7 +44,7 @@ public class MovieAward {
   private HashMap<String, String> mNames = new HashMap<String, String>();
   private HashMap<String, MovieAwardCategory> mCategorie = new HashMap<String, MovieAwardCategory>();
   private ArrayList<Movie> mMovies = new ArrayList<Movie>();
-  private HashMap<String, Award> mAwards = new HashMap<String, Award>();
+  private HashMap<String, ArrayList<Award>> mAwards = new HashMap<String, ArrayList<Award>>();
   private String mUrl;
 
   public MovieAward() {
@@ -56,7 +57,7 @@ public class MovieAward {
    */
   public void addName(String language, String name) {
     mLog.info("Added movie award " + language + "_---" + name);
-    mNames.put(language, name);
+    mNames.put(language.toLowerCase(), name);
   }
 
   /**
@@ -72,7 +73,13 @@ public class MovieAward {
   }
 
   public void addAward(Award award) {
-    mAwards.put(award.getMovieId(), award);
+    ArrayList<Award> awardList = mAwards.get(award.getMovieId());
+
+    if (awardList == null) {
+      awardList = new ArrayList<Award>();
+      mAwards.put(award.getMovieId(), awardList);
+    }
+    awardList.add(award);
   }
 
   public void setUrl(String url) {
@@ -92,4 +99,39 @@ public class MovieAward {
     return false;
   }
 
+  public Award[] getAwardsFor(final Program program) {
+    final ArrayList<Award> list = new ArrayList<Award>();
+    for (Movie movie:mMovies) {
+      if (movie.matchesProgram(program) && mAwards.containsKey(movie.getId())) {
+        for (Award award:mAwards.get(movie.getId())) {
+          list.add(award);
+        }
+      }
+    }
+    return list.toArray(new Award[list.size()]);
+  }
+
+  public String getName() {
+    String name = mNames.get(Locale.getDefault().getCountry());
+    if (name== null) {
+      name = mNames.get("en");
+    }
+    return name;
+  }
+
+  public String getCategoryName(String categorie) {
+    MovieAwardCategory cat = mCategorie.get(categorie);
+
+    if (cat == null) {
+      return categorie;
+    }
+    
+    String name = cat.getName(Locale.getDefault().getCountry());
+
+    if (name == null) {
+      name = cat.getName("en");
+    }
+
+    return name;
+  }
 }

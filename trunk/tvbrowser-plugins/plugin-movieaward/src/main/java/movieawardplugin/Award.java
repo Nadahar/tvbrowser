@@ -24,19 +24,67 @@
 package movieawardplugin;
 
 public class Award {
-  private int mProductionYear;
-  private String mCategorie;
-  private String mStatus;
-  private String mMovieId;
+  public static enum Status {
+    NOMINATED, WINNER
+  }
 
-  public Award(String categorie, String status, String movieId, int productionYear) {
+  private int mAwardYear;
+  private String mCategorie;
+  private Status mStatus;
+  private String mMovieId;
+  private String mRecipient;
+
+  public Award(String categorie, String status, String movieId, int awardYear, String recipient) {
     mCategorie = categorie;
-    mStatus = status;
+    if (status.equalsIgnoreCase("winner")) {
+      mStatus = Status.WINNER;
+    } else if (status.equalsIgnoreCase("nominated")) {
+      mStatus = Status.NOMINATED;
+    }
     mMovieId = movieId;
-    mProductionYear = productionYear;
+    mAwardYear = awardYear;
+    mRecipient = recipient;
   }
 
   public String getMovieId() {
     return mMovieId;
   }
+
+  public int getAwardYear() {
+    return mAwardYear;
+  }
+
+  public void setAwardYear(int awardYear) {
+    mAwardYear = awardYear;
+  }
+
+  public String getCategorie() {
+    return mCategorie;
+  }
+
+  public void setCategorie(String categorie) {
+    mCategorie = categorie;
+  }
+
+  public Status getStatus() {
+    return mStatus;
+  }
+
+  public void setStatus(Status status) {
+    mStatus = status;
+  }
+
+  public void setMovieId(String movieId) {
+    mMovieId = movieId;
+  }
+
+  public String getRecipient() {
+    return mRecipient;
+  }
+
+  public void setRecipient(String recipient) {
+    mRecipient = recipient;
+  }
+
+
 }
