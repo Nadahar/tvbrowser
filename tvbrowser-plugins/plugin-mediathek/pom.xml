@@ -7,7 +7,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.tvbrowser</groupId>
-  <artifactId>tvbrowser-plugins-teletext</artifactId>
+  <artifactId>tvbrowser-plugins-mediathek</artifactId>
   <name>Mediathek Plugin</name>
   <developers>
     <developer>
