@@ -25,19 +25,6 @@
 */
 package devplugin;
 
-import tvbrowser.core.Settings;
-import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.core.plugin.PluginProxyManager;
-import tvdataservice.MutableChannelDayProgram;
-import util.exc.TvBrowserException;
-import util.ui.FixedSizeIcon;
-import util.ui.ImageUtilities;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Window;
@@ -52,6 +39,19 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Properties;
 import java.util.jar.JarFile;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
+import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.core.plugin.PluginProxyManager;
+import tvdataservice.MutableChannelDayProgram;
+import util.exc.TvBrowserException;
+import util.ui.FixedSizeIcon;
+import util.ui.ImageUtilities;
 
 /**
  * Superclass for all Java-TV-Browser plugins.
@@ -74,7 +74,7 @@ import java.util.jar.JarFile;
 abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf {
 
   /**
-   * The name to use for the big icon (the 24x24 one for the toolbar) of the
+   * The name to use for the big icon (the 22x22 one for the toolbar) of the
    * button action.
    * 
    * @see #getButtonAction()
@@ -96,7 +96,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(Plugin.class );
 
-  /** The jar file of this plugin. May be used to load ressources. */
+  /** The jar file of this plugin. May be used to load resources. */
   private JarFile mJarFile;
 
   private PluginTreeNode mRootNode;
