@@ -134,6 +134,9 @@ public class HTMLTextHelper {
     html = IOUtilities.replace(html, "&quot;", "\"");
     html = IOUtilities.replace(html, "\\'", "'");
     
+    // &amp; must be last, otherwise new wrong encodings may be created
+    html = IOUtilities.replace(html, "&amp;", "&");
+
     return html;
   }
   
