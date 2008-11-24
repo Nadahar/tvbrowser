@@ -107,7 +107,7 @@ public class MovieAward {
   }
 
   public String getName() {
-    String name = mNames.get(Locale.getDefault().getCountry());
+    String name = mNames.get(Locale.getDefault().getLanguage());
     if (name== null) {
       name = mNames.get("en");
     }
