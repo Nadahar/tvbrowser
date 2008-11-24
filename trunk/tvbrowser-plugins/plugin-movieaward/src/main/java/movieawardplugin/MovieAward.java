@@ -121,7 +121,7 @@ public class MovieAward {
       return categorie;
     }
     
-    String name = cat.getName(Locale.getDefault().getCountry());
+    String name = cat.getName(Locale.getDefault().getLanguage());
 
     if (name == null) {
       name = cat.getName("en");
