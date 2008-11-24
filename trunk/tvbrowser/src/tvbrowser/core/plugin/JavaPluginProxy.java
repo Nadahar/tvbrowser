@@ -50,15 +50,16 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.ChannelDayProgram;
+import devplugin.ContextMenuAction;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.PluginsFilterComponent;
 import devplugin.PluginsProgramFilter;
 import devplugin.Program;
+import devplugin.ProgramRatingIf;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
-import devplugin.ProgramRatingIf;
 
 /**
  * A plugin proxy for Java plugins.
@@ -356,12 +357,16 @@ public class JavaPluginProxy extends AbstractPluginProxy {
       ActionMenu actMenu = mPlugin.getButtonAction();
       if (actMenu != null) {
         Action action = actMenu.getAction();
-        if (action != null) {
+        if (action != null && !(action instanceof ContextMenuAction)) {
           if (action.getValue(Action.SMALL_ICON) == null) {
+            mLog.warning("Small icon missing for button action "
+                + action.getValue(Action.NAME));
             action.putValue(Action.SMALL_ICON, IconLoader.getInstance()
                 .getIconFromTheme("status", "dialog-warning", 16));
           }
           if (action.getValue(Plugin.BIG_ICON) == null) {
+            mLog.warning("Big icon missing for button action "
+                + action.getValue(Action.NAME));
             action.putValue(Plugin.BIG_ICON, IconLoader.getInstance()
                 .getIconFromTheme("status", "dialog-warning", 22));
           }
