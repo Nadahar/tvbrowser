@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
+import javax.swing.SwingUtilities;
 
 import util.io.IOUtilities;
 import util.ui.UiUtilities;
@@ -69,7 +70,8 @@ public class MediathekPlugin extends Plugin {
   private boolean sorted = false;
   
   private Icon markIcon, contextIcon, pluginIconSmall,
-      pluginIconLarge;
+      pluginIconLarge,
+      mIconWeb;
 
   /** location of the dialog */
   private Point mLocation = null;
@@ -107,6 +109,7 @@ public class MediathekPlugin extends Plugin {
     pluginIconLarge = createImageIcon("actions", "web-search", 22);
     contextIcon = createImageIcon("actions", "web-search", 16);
     markIcon = contextIcon;
+    mIconWeb = createImageIcon("apps", "internet-web-browser", 16);
     rootNode.setGroupingByDateEnabled(false);
   }
 
@@ -150,8 +153,9 @@ public class MediathekPlugin extends Plugin {
   }
 
   private ActionMenu actionMenuReadEpisodes(final MediathekProgram mediaProgram) {
-    AbstractAction actionSeries = new AbstractAction(
-        "Beiträge in der Mediathek suchen", getContextMenuIcon()) {
+    AbstractAction actionSeries = new AbstractAction(mLocalizer.msg(
+        "context.readEpisodes", "Search items in the Mediathek"),
+        getContextMenuIcon()) {
 
       public void actionPerformed(ActionEvent event) {
         mediaProgram.readEpisodes();
@@ -160,13 +164,9 @@ public class MediathekPlugin extends Plugin {
     return new ActionMenu(actionSeries);
   }
 
-  void updateProgramNode(MediathekProgram program) {
-    updatePluginTree();
-  }
-
   private ActionMenu actionMenuReadMediathekContents() {
     AbstractAction searchMedia = new AbstractAction(mLocalizer.msg(
-        "contextMenuContents", "Read all Mediathek programs"),
+        "context.readContents", "Read all Mediathek programs"),
         getContextMenuIcon()) {
 
       public void actionPerformed(ActionEvent event) {
@@ -330,8 +330,13 @@ public class MediathekPlugin extends Plugin {
       addProgram(title, relativeUrl);
       count++;
     }
-    logger.info("Read " + count + " programs from the ZDF Mediathek");
-    updatePluginTree();
+    final String msg = "Read " + count + " programs from the ZDF Mediathek";
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        logger.info(msg);
+        updatePluginTree();
+      }
+    });
   }
 
   protected String convertHTML(String html) {
@@ -359,10 +364,7 @@ public class MediathekPlugin extends Plugin {
     node.removeAllChildren();
     node.getMutableTreeNode().setShowLeafCountEnabled(false);
     for (MediathekProgram program : getSortedPrograms()) {
-      PluginTreeNode progNode = node.addNode(program.getTitle());
-      progNode.setGroupingByDateEnabled(false);
-      progNode.getMutableTreeNode().setShowLeafCountEnabled(false);
-      updateProgramNode(progNode, program);
+      program.updatePluginTree(false);
     }
     node.update();
   }
@@ -377,21 +379,6 @@ public class MediathekPlugin extends Plugin {
     return sortedPrograms;
   }
 
-  /**
-   * updates the plugin tree node with the new series
-   * 
-   * @param progNode
-   * @param program
-   */
-  private void updateProgramNode(PluginTreeNode progNode,
-      MediathekProgram program) {
-    progNode.removeAllChildren();
-    for (MediathekProgramItem episode : program.getItems()) {
-      PluginTreeNode episodeNode = new EpisodeNode(episode.getTitle());
-      progNode.add(episodeNode);
-    }
-  }
-
   public Logger getLogger() {
     return logger;
   }
@@ -400,4 +387,7 @@ public class MediathekPlugin extends Plugin {
     return pluginIconSmall;
   }
 
+  public Icon getWebIcon() {
+    return mIconWeb;
+  }
 }

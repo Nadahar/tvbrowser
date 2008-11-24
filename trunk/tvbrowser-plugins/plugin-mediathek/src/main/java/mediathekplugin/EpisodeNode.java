@@ -16,13 +16,56 @@
  */
 package mediathekplugin;
 
+import tvbrowser.ui.pluginview.Node;
+import devplugin.ActionMenu;
 import devplugin.PluginTreeNode;
+import devplugin.Program;
+import devplugin.ProgramItem;
 
 public class EpisodeNode extends PluginTreeNode {
 
+  @Override
+  public ActionMenu[] getActionMenus() {
+    // TODO Auto-generated method stub
+    return super.getActionMenus();
+  }
+
+  @Override
+  public boolean contains(Program prog, boolean recursive) {
+    return false;
+  }
+
+  @Override
+  public boolean contains(Program prog) {
+    return false;
+  }
+
+  @Override
+  public ProgramItem[] getProgramItems() {
+    return new ProgramItem[0];
+  }
+
+  @Override
+  public Program[] getPrograms() {
+    return new Program[0];
+  }
+
+  @Override
+  public boolean isEmpty() {
+    return true;
+  }
+
+  @Override
+  public int size() {
+    return 0;
+  }
+
   public EpisodeNode(String title) {
     super(title);
-    getMutableTreeNode().setAllowsChildren(false);
+    final Node treeNode = getMutableTreeNode();
+    treeNode.setAllowsChildren(false);
+    treeNode.setIcon(MediathekPlugin.getInstance().getWebIcon());
+    removeAllActions();
   }
 
   @Override

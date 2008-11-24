@@ -28,6 +28,7 @@ import javax.swing.Action;
 import util.browserlauncher.Launch;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
+import devplugin.PluginTreeNode;
 
 public class MediathekProgram implements Comparable<MediathekProgram> {
   /** The localizer used by this class. */
@@ -42,6 +43,8 @@ public class MediathekProgram implements Comparable<MediathekProgram> {
   private static MediathekPlugin plugin = MediathekPlugin.getInstance();
 
   private String rssFeedUrl = null;
+
+  private PluginTreeNode mPluginTreeNode;
 
   public MediathekProgram(String title, String url) {
     this.mTitle = title;
@@ -60,7 +63,6 @@ public class MediathekProgram implements Comparable<MediathekProgram> {
 
   public void addItem(MediathekProgramItem item) {
     mItems.add(item);
-    update();
   }
 
   public int getItemCount() {
@@ -69,10 +71,6 @@ public class MediathekProgram implements Comparable<MediathekProgram> {
 
   public ArrayList<MediathekProgramItem> getItems() {
     return mItems;
-  }
-
-  public void update() {
-
   }
 
   private void readRSS() {
@@ -96,7 +94,23 @@ public class MediathekProgram implements Comparable<MediathekProgram> {
     }
     logInfo("Read " + count + " episodes for " + getTitle());
     mLastUpdate = new Date();
-    plugin.updateProgramNode(this);
+    updatePluginTree(true);
+  }
+
+  protected void updatePluginTree(boolean refreshUI) {
+    if (mPluginTreeNode == null) {
+      mPluginTreeNode = new MediathekProgramNode(getTitle());
+      plugin.getRootNode().add(mPluginTreeNode);
+    }
+    if (mItems.size() > 0) {
+      for (MediathekProgramItem episode : getItems()) {
+        PluginTreeNode episodeNode = new EpisodeNode(episode.getTitle());
+        mPluginTreeNode.add(episodeNode);
+      }
+      if (refreshUI) {
+        mPluginTreeNode.update();
+      }
+    }
   }
 
   private void logInfo(String string) {
