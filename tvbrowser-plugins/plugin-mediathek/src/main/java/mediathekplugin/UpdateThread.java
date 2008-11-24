@@ -24,7 +24,7 @@ public class UpdateThread extends Thread {
   private ArrayList<MediathekProgram> updatePrograms;
 
   private UpdateThread() {
-    super();
+    super("Fetch Mediathek contents");
     updatePrograms = new ArrayList<MediathekProgram>();
   }
 
