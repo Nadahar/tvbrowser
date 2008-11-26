@@ -39,6 +39,15 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 	private DefaultListModel mProgramList;
 	private TVPProgram mPopupProgram = null;
 
+  public PearlDialog(Dialog dialog)
+  {
+    super(dialog, true);
+
+    setTitle(mLocalizer.msg("name", "TV Pearl"));
+    createGUI();
+    UiUtilities.registerForClosing(this);
+  }
+
 	public PearlDialog(Frame frame)
 	{
 		super(frame, true);

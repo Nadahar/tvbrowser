@@ -19,6 +19,7 @@ package tvpearlplugin;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -37,6 +38,8 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JDialog;
 
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
@@ -46,7 +49,7 @@ import devplugin.Program;
 import devplugin.SettingsTab;
 import devplugin.Version;
 
-public class TVPearlPlugin extends devplugin.Plugin implements ActionListener, Runnable
+public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 {
 	private static final String DEFAULT_URL = "http://hilfe.tvbrowser.org/viewtopic.php?t=1470";
 
@@ -54,7 +57,6 @@ public class TVPearlPlugin extends devplugin.Plugin implements ActionListener, R
 	private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(TVPearlPlugin.class.getName());
 
 	private static TVPearlPlugin mInstance;
-	private Program mProg = null;
 	private Properties mProperties;
 	private Thread mThread;
 	private TVPearl mTVPearls;
@@ -131,7 +133,14 @@ public class TVPearlPlugin extends devplugin.Plugin implements ActionListener, R
 	{
 		if (mDialog == null)
 		{
-			mDialog = new PearlDialog(getParentFrame());
+      Window w = UiUtilities.getBestDialogParent(getParentFrame());
+
+      if (w instanceof JDialog) {
+        mDialog = new PearlDialog((JDialog)w);
+      } else {
+        mDialog = new PearlDialog((JFrame)w);
+      }
+
 
 			mDialog.addWindowListener(new WindowAdapter()
 			{
@@ -184,10 +193,8 @@ public class TVPearlPlugin extends devplugin.Plugin implements ActionListener, R
 		}
 	}
 
-	public ActionMenu getContextMenuActions(Program program)
+	public ActionMenu getContextMenuActions(final Program program)
 	{
-		mProg = program;
-
 		TVPProgram p = mTVPearls.getPerle(program);
 
 		if (p != null || program.getID() == null)
@@ -196,7 +203,11 @@ public class TVPearlPlugin extends devplugin.Plugin implements ActionListener, R
 			menu.setText(mLocalizer.msg("comment", "TV Pearl comment"));
 			menu.putValue(Action.ACTION_COMMAND_KEY, menu.getValue(Action.NAME));
 			menu.setSmallIcon(getSmallIcon());
-			menu.setActionListener(this);
+			menu.setActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent event) {
+          showPearlInfo(mTVPearls.getPerle(program));
+        }
+      });
 
 			return new ActionMenu(menu);
 		}
@@ -209,11 +220,6 @@ public class TVPearlPlugin extends devplugin.Plugin implements ActionListener, R
 	public Icon[] getMarkIconsForProgram(Program p)
 	{
 		return new Icon[] { getSmallIcon() };
-	}
-
-	public void actionPerformed(ActionEvent e)
-	{
-		showPearlInfo(mTVPearls.getPerle(mProg));
 	}
 
 	public void loadSettings(Properties prop)
@@ -265,7 +271,7 @@ public class TVPearlPlugin extends devplugin.Plugin implements ActionListener, R
 	private String getUrl()
 	{
 		String url = mProperties.getProperty("Url");
-		if (url == null || url == "")
+		if (url == null || url.length() == 0)
 		{
 			url = DEFAULT_URL;
 		}
@@ -492,7 +498,15 @@ public class TVPearlPlugin extends devplugin.Plugin implements ActionListener, R
 			{
 				mInfoDialog.dispose();
 			}
-			mInfoDialog = new PearlInfoDialog(getParentFrame(), p);
+
+      Window w = UiUtilities.getLastModalChildOf(getParentFrame());
+
+      if (w instanceof JDialog) {
+        mInfoDialog = new PearlInfoDialog((JDialog) w, p);
+      } else {
+        mInfoDialog = new PearlInfoDialog((JFrame) w, p);
+      }
+
 
 			mInfoDialog.pack();
 			mInfoDialog.setModal(getPropertyBoolean("ShowInfoModal"));
