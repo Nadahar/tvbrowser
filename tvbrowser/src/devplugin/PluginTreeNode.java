@@ -617,7 +617,7 @@ public class PluginTreeNode {
         }
         else {
           ProgramItem item = (ProgramItem)node.getUserObject();
-          if (item.getProgram().equals(prog)) {
+          if (item != null && prog.equals(item.getProgram())) {
             return node;
           }
         }
