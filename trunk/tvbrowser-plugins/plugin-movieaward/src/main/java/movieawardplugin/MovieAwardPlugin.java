@@ -101,7 +101,7 @@ public class MovieAwardPlugin extends Plugin {
       return new Icon[] {getPluginIcon()};
     }
 
-    return new Icon[0];
+    return null;
   }
 
   public String getProgramTableIconText() {
