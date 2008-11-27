@@ -3,22 +3,22 @@
 <name lang="en">European Film Awards</name>
 
 <categories>
-  <categorie id="best_movie">
+  <category id="best_movie">
     <name lang="de">Bester europäischer Film</name>
     <name lang="en">Best European Film</name>
-  </categorie>
-  <categorie id="best_director">
+  </category>
+  <category id="best_director">
     <name lang="de">Bester europäischer Regisseur</name>
     <name lang="en">Best European Director</name>
-  </categorie>
-  <categorie id="best_actor">
+  </category>
+  <category id="best_actor">
     <name lang="de">Bester europäischer Darsteller</name>
     <name lang="en">Best European Actor</name>
-  </categorie>
-  <categorie id="best_actress">
+  </category>
+  <category id="best_actress">
     <name lang="de">Beste europäische Darstellerin</name>
     <name lang="en">Best European Actress</name>
-  </categorie>
+  </category>
 </categories>
 
 
@@ -273,72 +273,72 @@
 </movies>
 
 <awards>
-  <award categorie="best_movie" status="winner" movie="movie_1" year="1988" />
-  <award categorie="best_movie" status="winner" movie="movie_2" year="1989" />
-  <award categorie="best_movie" status="winner" movie="movie_3" year="1990" />
-  <award categorie="best_movie" status="winner" movie="movie_4" year="1991" />
-  <award categorie="best_movie" status="winner" movie="movie_5" year="1992" />
-  <award categorie="best_movie" status="winner" movie="movie_6" year="1993" />
-  <award categorie="best_movie" status="winner" movie="movie_7" year="1994" />
-  <award categorie="best_movie" status="winner" movie="movie_8" year="1995" />
-  <award categorie="best_movie" status="winner" movie="movie_9" year="1996" />
-  <award categorie="best_movie" status="winner" movie="movie_10" year="1997" />
-  <award categorie="best_movie" status="winner" movie="movie_11" year="1998" />
-  <award categorie="best_movie" status="winner" movie="movie_12" year="1999" />
-  <award categorie="best_movie" status="winner" movie="movie_13" year="2000" />
-  <award categorie="best_movie" status="winner" movie="movie_14" year="2001" />
-  <award categorie="best_movie" status="winner" movie="movie_15" year="2002" />
-  <award categorie="best_movie" status="winner" movie="movie_16" year="2003" />
-  <award categorie="best_movie" status="winner" movie="movie_17" year="2004" />
-  <award categorie="best_movie" status="winner" movie="movie_18" year="2005" />
-  <award categorie="best_movie" status="winner" movie="movie_19" year="2006" />
-  <award categorie="best_movie" status="winner" movie="movie_20" year="2007" />
-  <award categorie="best_director" status="winner" movie="movie_101" year="1988" />
-  <award categorie="best_director" status="winner" movie="movie_102" year="1989" />
-  <award categorie="best_director" status="winner" movie="movie_14" year="2001" />
-  <award categorie="best_director" status="winner" movie="movie_15" year="2002" />
-  <award categorie="best_director" status="winner" movie="movie_103" year="2003" />
-  <award categorie="best_director" status="winner" movie="movie_104" year="2004" />
-  <award categorie="best_director" status="winner" movie="movie_18" year="2005" />
-  <award categorie="best_director" status="winner" movie="movie_105" year="2006" />
-  <award categorie="best_director" status="winner" movie="movie_20" year="2007" />
-  <award categorie="best_actor" recipient="Max von Sydow" status="winner" movie="movie_106" year="1988" />
-  <award categorie="best_actor" recipient="Philippe Noiret" status="winner" movie="movie_107" year="1989" />
-  <award categorie="best_actor" recipient="Kenneth Branagh" status="winner" movie="movie_108" year="1990" />
-  <award categorie="best_actor" recipient="Michel Bouquet" status="winner" movie="movie_109" year="1991" />
-  <award categorie="best_actor" recipient="Matti Pellonpää" status="winner" movie="movie_110" year="1992" />
-  <award categorie="best_actor" recipient="Daniel Auteuil" status="winner" movie="movie_111" year="1993" />
-  <award categorie="best_actor" recipient="Ian McKellen" status="winner" movie="movie_112" year="1996" />
-  <award categorie="best_actor" recipient="Bob Hoskins" status="winner" movie="movie_113" year="1997" />
-  <award categorie="best_actor" recipient="Roberto Benigni" status="winner" movie="movie_11" year="1998" />
-  <award categorie="best_actor" recipient="Ralph Fiennes" status="winner" movie="movie_114" year="1999" />
-  <award categorie="best_actor" recipient="Sergi López" status="winner" movie="movie_115" year="2000" />
-  <award categorie="best_actor" recipient="Ben Kingsley" status="winner" movie="movie_116" year="2001" />
-  <award categorie="best_actor" recipient="Sergio Castellitto" status="winner" movie="movie_117" year="2002" />
-  <award categorie="best_actor" recipient="Sergio Castellitto" status="winner" movie="movie_118" year="2002" />
-  <award categorie="best_actor" recipient="Daniel Brühl" status="winner" movie="movie_16" year="2003" />
-  <award categorie="best_actor" recipient="Javier Bardem" status="winner" movie="movie_104" year="2004" />
-  <award categorie="best_actor" recipient="Daniel Auteuil" status="winner" movie="movie_18" year="2005" />
-  <award categorie="best_actor" recipient="Ulrich Mühe" status="winner" movie="movie_19" year="2006" />
-  <award categorie="best_actor" recipient="Sasson Gabai" status="winner" movie="movie_119" year="2007" />
-  <award categorie="best_actress" recipient="Carmen Maura" status="winner" movie="movie_120" year="1988" />
-  <award categorie="best_actress" recipient="Ruth Sheen" status="winner" movie="movie_121" year="1989" />
-  <award categorie="best_actress" recipient="Carmen Maura" status="winner" movie="movie_122" year="1990" />
-  <award categorie="best_actress" recipient="Clotilde Courau" status="winner" movie="movie_123" year="1991" />
-  <award categorie="best_actress" recipient="Juliette Binoche" status="winner" movie="movie_124" year="1992" />
-  <award categorie="best_actress" recipient="Maia Morgenstern" status="winner" movie="movie_125" year="1993" />
-  <award categorie="best_actress" recipient="Emily Watson" status="winner" movie="movie_9" year="1996" />
-  <award categorie="best_actress" recipient="Juliette Binoche" status="winner" movie="movie_126" year="1997" />
-  <award categorie="best_actress" recipient="Élodie Bouchez, Natacha Régnier" status="winner" movie="movie_127" year="1998" />
-  <award categorie="best_actress" recipient="Cecilia Roth" status="winner" movie="movie_12" year="1999" />
-  <award categorie="best_actress" recipient="Björk" status="winner" movie="movie_13" year="2000" />
-  <award categorie="best_actress" recipient="Isabelle Huppert" status="winner" movie="movie_128" year="2001" />
-  <award categorie="best_actress" recipient="Catherine Deneuve, Isabelle Huppert, Emmanuelle Béart, Fanny Ardant, Virginie Ledoyen, Danielle Darrieux, Ludivine Sagnier, Firmine Richard" status="winner" movie="movie_129" year="2002" />
-  <award categorie="best_actress" recipient="Charlotte Rampling" status="winner" movie="movie_130" year="2003" />
-  <award categorie="best_actress" recipient="Imelda Staunton" status="winner" movie="movie_131" year="2004" />
-  <award categorie="best_actress" recipient="Julia Jentsch" status="winner" movie="movie_132" year="2005" />
-  <award categorie="best_actress" recipient="Penelope Cruz" status="winner" movie="movie_105" year="2006" />
-  <award categorie="best_actress" recipient="Helen Mirren" status="winner" movie="movie_133" year="2007" />
+  <award category="best_movie" status="winner" movie="movie_1" year="1988" />
+  <award category="best_movie" status="winner" movie="movie_2" year="1989" />
+  <award category="best_movie" status="winner" movie="movie_3" year="1990" />
+  <award category="best_movie" status="winner" movie="movie_4" year="1991" />
+  <award category="best_movie" status="winner" movie="movie_5" year="1992" />
+  <award category="best_movie" status="winner" movie="movie_6" year="1993" />
+  <award category="best_movie" status="winner" movie="movie_7" year="1994" />
+  <award category="best_movie" status="winner" movie="movie_8" year="1995" />
+  <award category="best_movie" status="winner" movie="movie_9" year="1996" />
+  <award category="best_movie" status="winner" movie="movie_10" year="1997" />
+  <award category="best_movie" status="winner" movie="movie_11" year="1998" />
+  <award category="best_movie" status="winner" movie="movie_12" year="1999" />
+  <award category="best_movie" status="winner" movie="movie_13" year="2000" />
+  <award category="best_movie" status="winner" movie="movie_14" year="2001" />
+  <award category="best_movie" status="winner" movie="movie_15" year="2002" />
+  <award category="best_movie" status="winner" movie="movie_16" year="2003" />
+  <award category="best_movie" status="winner" movie="movie_17" year="2004" />
+  <award category="best_movie" status="winner" movie="movie_18" year="2005" />
+  <award category="best_movie" status="winner" movie="movie_19" year="2006" />
+  <award category="best_movie" status="winner" movie="movie_20" year="2007" />
+  <award category="best_director" status="winner" movie="movie_101" year="1988" />
+  <award category="best_director" status="winner" movie="movie_102" year="1989" />
+  <award category="best_director" status="winner" movie="movie_14" year="2001" />
+  <award category="best_director" status="winner" movie="movie_15" year="2002" />
+  <award category="best_director" status="winner" movie="movie_103" year="2003" />
+  <award category="best_director" status="winner" movie="movie_104" year="2004" />
+  <award category="best_director" status="winner" movie="movie_18" year="2005" />
+  <award category="best_director" status="winner" movie="movie_105" year="2006" />
+  <award category="best_director" status="winner" movie="movie_20" year="2007" />
+  <award category="best_actor" recipient="Max von Sydow" status="winner" movie="movie_106" year="1988" />
+  <award category="best_actor" recipient="Philippe Noiret" status="winner" movie="movie_107" year="1989" />
+  <award category="best_actor" recipient="Kenneth Branagh" status="winner" movie="movie_108" year="1990" />
+  <award category="best_actor" recipient="Michel Bouquet" status="winner" movie="movie_109" year="1991" />
+  <award category="best_actor" recipient="Matti Pellonpää" status="winner" movie="movie_110" year="1992" />
+  <award category="best_actor" recipient="Daniel Auteuil" status="winner" movie="movie_111" year="1993" />
+  <award category="best_actor" recipient="Ian McKellen" status="winner" movie="movie_112" year="1996" />
+  <award category="best_actor" recipient="Bob Hoskins" status="winner" movie="movie_113" year="1997" />
+  <award category="best_actor" recipient="Roberto Benigni" status="winner" movie="movie_11" year="1998" />
+  <award category="best_actor" recipient="Ralph Fiennes" status="winner" movie="movie_114" year="1999" />
+  <award category="best_actor" recipient="Sergi López" status="winner" movie="movie_115" year="2000" />
+  <award category="best_actor" recipient="Ben Kingsley" status="winner" movie="movie_116" year="2001" />
+  <award category="best_actor" recipient="Sergio Castellitto" status="winner" movie="movie_117" year="2002" />
+  <award category="best_actor" recipient="Sergio Castellitto" status="winner" movie="movie_118" year="2002" />
+  <award category="best_actor" recipient="Daniel Brühl" status="winner" movie="movie_16" year="2003" />
+  <award category="best_actor" recipient="Javier Bardem" status="winner" movie="movie_104" year="2004" />
+  <award category="best_actor" recipient="Daniel Auteuil" status="winner" movie="movie_18" year="2005" />
+  <award category="best_actor" recipient="Ulrich Mühe" status="winner" movie="movie_19" year="2006" />
+  <award category="best_actor" recipient="Sasson Gabai" status="winner" movie="movie_119" year="2007" />
+  <award category="best_actress" recipient="Carmen Maura" status="winner" movie="movie_120" year="1988" />
+  <award category="best_actress" recipient="Ruth Sheen" status="winner" movie="movie_121" year="1989" />
+  <award category="best_actress" recipient="Carmen Maura" status="winner" movie="movie_122" year="1990" />
+  <award category="best_actress" recipient="Clotilde Courau" status="winner" movie="movie_123" year="1991" />
+  <award category="best_actress" recipient="Juliette Binoche" status="winner" movie="movie_124" year="1992" />
+  <award category="best_actress" recipient="Maia Morgenstern" status="winner" movie="movie_125" year="1993" />
+  <award category="best_actress" recipient="Emily Watson" status="winner" movie="movie_9" year="1996" />
+  <award category="best_actress" recipient="Juliette Binoche" status="winner" movie="movie_126" year="1997" />
+  <award category="best_actress" recipient="Élodie Bouchez, Natacha Régnier" status="winner" movie="movie_127" year="1998" />
+  <award category="best_actress" recipient="Cecilia Roth" status="winner" movie="movie_12" year="1999" />
+  <award category="best_actress" recipient="Björk" status="winner" movie="movie_13" year="2000" />
+  <award category="best_actress" recipient="Isabelle Huppert" status="winner" movie="movie_128" year="2001" />
+  <award category="best_actress" recipient="Catherine Deneuve, Isabelle Huppert, Emmanuelle Béart, Fanny Ardant, Virginie Ledoyen, Danielle Darrieux, Ludivine Sagnier, Firmine Richard" status="winner" movie="movie_129" year="2002" />
+  <award category="best_actress" recipient="Charlotte Rampling" status="winner" movie="movie_130" year="2003" />
+  <award category="best_actress" recipient="Imelda Staunton" status="winner" movie="movie_131" year="2004" />
+  <award category="best_actress" recipient="Julia Jentsch" status="winner" movie="movie_132" year="2005" />
+  <award category="best_actress" recipient="Penelope Cruz" status="winner" movie="movie_105" year="2006" />
+  <award category="best_actress" recipient="Helen Mirren" status="winner" movie="movie_133" year="2007" />
 
 </awards>
 

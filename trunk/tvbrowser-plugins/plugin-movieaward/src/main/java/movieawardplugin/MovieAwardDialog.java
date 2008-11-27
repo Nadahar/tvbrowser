@@ -19,7 +19,6 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.Sizes;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.builder.ButtonBarBuilder;
-import static movieawardplugin.Award.Status.NOMINATED;
 
 public class MovieAwardDialog extends JDialog implements WindowClosingIf {
   /**
@@ -54,7 +53,7 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
     for (MovieAward maward : mMovieAwards) {
       for (Award award : maward.getAwardsFor(program)) {
         text.append("<li>").append(maward.getName()).append(" ").append(award.getAwardYear()).append(" - ");
-        text.append(maward.getCategoryName(award.getCategorie()));
+        text.append(maward.getCategoryName(award.getCategory()));
 
         switch(award.getStatus()) {
           case NOMINATED: text.append(" (").append(mLocalizer.msg("nominated", "nominated")).append(") "); break;

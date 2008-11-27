@@ -86,7 +86,7 @@ public class MovieAwardHandler extends DefaultHandler {
 
     mAttributes = attributes;
 
-    if ("categorie".equals(qName)) {
+    if ("category".equals(qName)) {
       mCategorie = new MovieAwardCategory(attributes.getValue("id"));
     } else if ("movie".equals(qName)) {
       mMovie = new Movie(attributes.getValue("id"));
@@ -108,7 +108,7 @@ public class MovieAwardHandler extends DefaultHandler {
         year = -1;
       }
 
-      mAward.addAward(new Award(attributes.getValue("categorie"),
+      mAward.addAward(new Award(attributes.getValue("category"),
                                 attributes.getValue("status"),
                                 attributes.getValue("movie"),
                                 year,
@@ -118,7 +118,7 @@ public class MovieAwardHandler extends DefaultHandler {
       mAward.setUrl(mText.toString());
     } else if ("awarddata".equals(qName)||"name".equals(qName)
         ||"movies".equals(qName)||"awards".equals(qName)||"alternativetitle".equals(qName)
-        ||"categories".equals(qName)||"categorie".equals(qName)||"title".equals(qName)){
+        ||"categories".equals(qName)||"category".equals(qName)||"title".equals(qName)){
       // Do nothing
     } else {
       mLog.log(Level.INFO, "Unknown Element : " + qName);
@@ -140,10 +140,10 @@ public class MovieAwardHandler extends DefaultHandler {
     if ("name".equals(qName)) {
       if ("awarddata".equals(parent)) {
         mAward.addName(mAttributes.getValue("lang"), mText.toString());
-      } else if ("categorie".equals(parent)) {
+      } else if ("category".equals(parent)) {
         mCategorie.addName(mAttributes.getValue("lang"), mText.toString());
       }
-    } else if ("categorie".equals(qName)) {
+    } else if ("category".equals(qName)) {
       mAward.addCategorie(mCategorie);
     } else if ("title".equals(qName) && "movie".equals(parent)) {
       boolean original = "yes".equalsIgnoreCase(mAttributes.getValue("original"));

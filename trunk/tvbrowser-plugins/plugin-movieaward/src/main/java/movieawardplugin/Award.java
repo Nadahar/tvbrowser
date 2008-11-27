@@ -29,13 +29,13 @@ public class Award {
   }
 
   private int mAwardYear;
-  private String mCategorie;
+  private String mCategory;
   private Status mStatus;
   private String mMovieId;
   private String mRecipient;
 
-  public Award(String categorie, String status, String movieId, int awardYear, String recipient) {
-    mCategorie = categorie;
+  public Award(String category, String status, String movieId, int awardYear, String recipient) {
+    mCategory = category;
     if (status.equalsIgnoreCase("winner")) {
       mStatus = Status.WINNER;
     } else if (status.equalsIgnoreCase("nominated")) {
@@ -58,12 +58,12 @@ public class Award {
     mAwardYear = awardYear;
   }
 
-  public String getCategorie() {
-    return mCategorie;
+  public String getCategory() {
+    return mCategory;
   }
 
-  public void setCategorie(String categorie) {
-    mCategorie = categorie;
+  public void setCategorie(String category) {
+    mCategory = category;
   }
 
   public Status getStatus() {
