@@ -4,14 +4,14 @@
 <url>http://www.oscar.com/</url>
 
 <categories>
-  <categorie id="best_movie">
+  <category id="best_movie">
     <name lang="de">Bester Film</name>
     <name lang="en">Best Movie</name>
-  </categorie>
-  <categorie id="best_actor">
+  </category>
+  <category id="best_actor">
     <name lang="de">Bester Schauspieler</name>
     <name lang="en">Best Actor</name>
-  </categorie>
+  </category>
 </categories>
 
 <movies>
@@ -23,8 +23,8 @@
 </movies>
 
 <awards>
-  <award categorie="best_movie" status="nominated" movie="movie_1" year="1999" />
-  <award categorie="best_actor" status="winner" movie="movie_1" year="1999" recipient="Heinz Strunk"/>
+  <award category="best_movie" status="nominated" movie="movie_1" year="1999" />
+  <award category="best_actor" status="winner" movie="movie_1" year="1999" recipient="Heinz Strunk"/>
 </awards>
 
 </awarddata>

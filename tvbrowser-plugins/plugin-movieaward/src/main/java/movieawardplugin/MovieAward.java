@@ -23,12 +23,9 @@
  */
 package movieawardplugin;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import devplugin.Program;
@@ -37,7 +34,7 @@ public class MovieAward {
   private static Logger mLog = Logger.getLogger(MovieAward.class.getName());
 
   private HashMap<String, String> mNames = new HashMap<String, String>();
-  private HashMap<String, MovieAwardCategory> mCategorie = new HashMap<String, MovieAwardCategory>();
+  private HashMap<String, MovieAwardCategory> mCategory = new HashMap<String, MovieAwardCategory>();
   private ArrayList<Movie> mMovies = new ArrayList<Movie>();
   private HashMap<String, ArrayList<Award>> mAwards = new HashMap<String, ArrayList<Award>>();
   private String mUrl;
@@ -60,7 +57,7 @@ public class MovieAward {
    * @param category category
    */
   public void addCategorie(MovieAwardCategory category) {
-    mCategorie.put(category.getId(), category);
+    mCategory.put(category.getId(), category);
   }
 
   public void addMovie(Movie movie) {
@@ -114,11 +111,11 @@ public class MovieAward {
     return name;
   }
 
-  public String getCategoryName(String categorie) {
-    MovieAwardCategory cat = mCategorie.get(categorie);
+  public String getCategoryName(String category) {
+    MovieAwardCategory cat = mCategory.get(category);
 
     if (cat == null) {
-      return categorie;
+      return category;
     }
     
     String name = cat.getName(Locale.getDefault().getLanguage());
