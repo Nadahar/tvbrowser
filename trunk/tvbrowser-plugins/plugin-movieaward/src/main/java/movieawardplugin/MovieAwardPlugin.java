@@ -85,6 +85,8 @@ public class MovieAwardPlugin extends Plugin {
       mMovieAwards = new ArrayList<MovieAward>();
       mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass().getResourceAsStream("data/oscars.xml")));
       mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass().getResourceAsStream("data/europeanmovieawards.xml")));
+      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass().getResourceAsStream("data/cannes.xml")));
+      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass().getResourceAsStream("data/grimme.xml")));
     }
 
     mLog.info("loaded movie award. " + mMovieAwards.size());
