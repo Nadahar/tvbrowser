@@ -10,6 +10,12 @@
   <category id="fiktion_film">
     <name lang="de">Adolf-Grimme-Preis im Bereich Fiktion (ab 2000, beschränkt auf Filme und Mehrteiler)</name>
   </category>
+    <category id="information_gold">
+    <name lang="de">Adolf-Grimme-Preis mit Gold im Wettbewerb "Information & Kultur" (ab 2000, beschränkt auf Filme und Mehrteiler)</name>
+  </category>
+  <category id="information">
+    <name lang="de">Adolf-Grimme-Preis im Wettbewerb "Information & Kultur" (ab 2000, beschränkt auf Filme und Mehrteiler)</name>
+  </category>
 </categories>
 
 <movies>
@@ -142,6 +148,131 @@
   <movie id="movie_43" year="2007" director="Urs Egger">
     <title lang="de" original="yes">An die Grenze</title>
   </movie>
+  <movie id="movie_44" year="1999" director="Eyal Sivan">
+    <title lang="de" original="yes">Ein Spezialist</title>
+  </movie>
+  <movie id="movie_45" year="2000" director="Thomas Giefer">
+    <title lang="de" original="yes">Politische Morde: Mord im Kolonialstil</title>
+  </movie>
+  <movie id="movie_46" year="2001" director="Nino Kirtadze">
+    <title lang="fr" original="yes">Il était une fois la Tchétchénie</title>
+    <title lang="de">Es war einmal in Tschetschenien</title>
+  </movie>
+  <movie id="movie_47" year="2003" director="Lutz Hachmeister">
+    <title lang="de" original="yes">Schleyer. Eine deutsche Geschichte</title>
+  </movie>
+  <movie id="movie_48" year="1998" director="Mischka Popp, Thomas Bergmann">
+    <title lang="de" original="yes">Kopfleuchten</title>
+  </movie>
+  <movie id="movie_49" year="1998" director="Dariusz Jablonski">
+    <title lang="de" original="yes">Der Fotograf</title>
+    <title lang="fr">Chronique couleur du ghetto de Lodz</title>
+    <title lang="pl">Fotoamator</title>
+  </movie>
+  <movie id="movie_50" year="1999" director="Marcus Vetter">
+    <title lang="de" original="yes">Der Tunnel</title>
+  </movie>
+  <movie id="movie_51" year="1999" director="Jerzy Sladkowski">
+    <title lang="de" original="yes">Schwedischer Tango</title>
+    <title lang="en">Swedish Tango</title>
+  </movie>
+  <movie id="movie_52" year="2000" director="Marcus Vetter">
+    <title lang="de" original="yes">Wo das Geld wächst!</title>
+  </movie>
+  <movie id="movie_53" year="2000" director="Klaus Scherer">
+    <title lang="de" original="yes">Kamikaze - Todesbefehl für Japans Jugend</title>
+  </movie>
+  <movie id="movie_54" year="2001" director="Thomas Berndt">
+    <title lang="de" original="yes">Die Todespiloten</title>
+  </movie>
+  <movie id="movie_55" year="2001" director="Jan Lorenzen">
+    <title lang="de" original="yes">Roter Stern über Deutschland</title>
+  </movie>
+  <movie id="movie_56" year="2001" director="Jens Schanze">
+    <title lang="de" original="yes">Otzenrather Sprung</title>
+  </movie>
+  <movie id="movie_57" year="2001" director="Marion Kainz">
+    <title lang="de" original="yes">Der Tag, der in der Handtasche verschwand</title>
+  </movie>
+  <movie id="movie_58" year="2001" director="Stanislaw Mucha">
+    <title lang="de" original="yes">Absolut Warhola</title>
+  </movie>
+  <movie id="movie_59" year="2001" director="">
+    <title lang="de" original="yes">Schwarzwaldhaus 1902</title>
+  </movie>
+  <movie id="movie_60" year="2002" director="Judith Keil, Antje Kruska">
+    <title lang="de" original="yes">Der Glanz von Berlin</title>
+  </movie>
+  <movie id="movie_61" year="2002" director="William Karel">
+    <title lang="fr" original="yes">Opération lune</title>
+    <title lang="de">Kubrick, Nixon und der Mann im Mond</title>
+  </movie>
+  <movie id="movie_62" year="2002" director="Michael Busse">
+    <title lang="de" original="yes">die story: Gipfelstürmer</title>
+  </movie>
+  <movie id="movie_63" year="2003" director="Thomas Irmer, Matthias Schmidt">
+    <title lang="de" original="yes">Die Bühnenrepublik: Theater in der DDR</title>
+  </movie>
+  <movie id="movie_64" year="2003" director="Johann Feindt">
+    <title lang="de" original="yes">Reporter vermisst</title>
+  </movie>
+  <movie id="movie_65" year="2003" director="Karin Jurschick">
+    <title lang="de" original="yes">Die Helfer und die Frauen</title>
+  </movie>
+  <movie id="movie_66" year="2003" director="Andreas Pichler">
+    <title lang="de" original="yes">Call me Babylon</title>
+  </movie>
+  <movie id="movie_67" year="2004" director="Britta Wauer, Sissi Hüetlin">
+    <title lang="de" original="yes">Die Rapoports - Unsere drei Leben</title>
+  </movie>
+  <movie id="movie_68" year="2004" director="Oliver Axer, Susanne Benze">
+    <title lang="de" original="yes">Hitlers Hitparade</title>
+  </movie>
+  <movie id="movie_69" year="2004" director="Ciro Cappellari">
+    <title lang="de" original="yes">Abdullah Ibrahim</title>
+  </movie>
+  <movie id="movie_70" year="2005" director="Annette Dittert">
+    <title lang="de" original="yes">Abenteuer Glück</title>
+  </movie>
+  <movie id="movie_71" year="2005" director="Klaus Stern">
+    <title lang="de" original="yes">Weltmarktführer - Die Geschichte des Tan Siekmann</title>
+  </movie>
+  <movie id="movie_72" year="2005" director="Eugene Jarecki">
+    <title lang="de" original="yes">Why we fight - Die guten Kriege der USA</title>
+  </movie>
+  <movie id="movie_73" year="2005" director="Michael Richter">
+    <title lang="de" original="yes">Abschiebung im Morgengrauen</title>
+  </movie>
+  <movie id="movie_74" year="2005" director="Loretta Walz">
+    <title lang="de" original="yes">Die Frauen von Ravensbrück</title>
+  </movie>
+  <movie id="movie_75" year="2007" director="Artem Demenok">
+    <title lang="de" original="yes">Deutsche Lebensläufe: Fritz Lang</title>
+  </movie>
+  <movie id="movie_76" year="2006" director="Katrin Rothe">
+    <title lang="de" original="yes">Stellmichein!</title>
+  </movie>
+  <movie id="movie_77" year="2006" director="Johann Feindt, Tamara Trampe ">
+    <title lang="de" original="yes">Weiße Raben - Alptraum Tschetschenien</title>
+  </movie>
+  <movie id="movie_78" year="2006" director="Sönke Wortmann">
+    <title lang="de" original="yes">Deutschland. Ein Sommermärchen</title>
+  </movie>
+  <movie id="movie_79" year="2007" director="Nikolaus Geyrhalter">
+    <title lang="de" original="yes">Unser täglich Brot</title>
+  </movie>
+  <movie id="movie_80" year="2007" director="Heidi Specogna">
+    <title lang="de" original="yes">Das kurze Leben des José Antonio Gutierrez</title>
+  </movie>
+  <movie id="movie_81" year="2007" director="Dietmar Post, Lucía Palacios">
+    <title lang="de" original="yes">monks – the transatlantic feedback</title>
+  </movie>
+  <movie id="movie_82" year="2007" director="Christian Beetz">
+    <title lang="de" original="yes">Zwischen Wahnsinn und Kunst</title>
+  </movie>
+  <movie id="movie_83" year="2007" director="Beatrix Schwehm">
+    <title lang="de" original="yes">Luise - eine deutsche Muslima </title>
+  </movie>
 </movies>
 
 <awards>
@@ -188,6 +319,46 @@
   <award category="fiktion_film" status="winner" movie="movie_41" year="2008" />
   <award category="fiktion_film" status="winner" movie="movie_42" year="2008" />
   <award category="fiktion_film" status="winner" movie="movie_43" year="2008" />
+  <award category="information_gold" status="winner" movie="movie_44" year="2001" />
+  <award category="information_gold" status="winner" movie="movie_45" year="2001" />
+  <award category="information_gold" status="winner" movie="movie_46" year="2002" />
+  <award category="information_gold" status="winner" movie="movie_47" year="2004" />
+  <award category="information" status="winner" movie="movie_48" year="2000" />
+  <award category="information" status="winner" movie="movie_49" year="2000" />
+  <award category="information" status="winner" movie="movie_50" year="2000" />
+  <award category="information" status="winner" movie="movie_51" year="2000" />
+  <award category="information" status="winner" movie="movie_52" year="2001" />
+  <award category="information" status="winner" movie="movie_53" year="2001" />
+  <award category="information" status="winner" movie="movie_54" year="2002" />
+  <award category="information" status="winner" movie="movie_55" year="2002" />
+  <award category="information" status="winner" movie="movie_56" year="2002" />
+  <award category="information" status="winner" movie="movie_57" year="2002" />
+  <award category="information" status="winner" movie="movie_58" year="2003" />
+  <award category="information" status="winner" movie="movie_59" year="2003" />
+  <award category="information" status="winner" movie="movie_60" year="2003" />
+  <award category="information" status="winner" movie="movie_61" year="2003" />
+  <award category="information" status="winner" movie="movie_62" year="2003" />
+  <award category="information" status="winner" movie="movie_63" year="2004" />
+  <award category="information" status="winner" movie="movie_64" year="2004" />
+  <award category="information" status="winner" movie="movie_65" year="2004" />
+  <award category="information" status="winner" movie="movie_66" year="2004" />
+  <award category="information" status="winner" movie="movie_67" year="2005" />
+  <award category="information" status="winner" movie="movie_68" year="2005" />
+  <award category="information" status="winner" movie="movie_69" year="2005" />
+  <award category="information" status="winner" movie="movie_70" year="2006" />
+  <award category="information" status="winner" movie="movie_71" year="2006" />
+  <award category="information" status="winner" movie="movie_72" year="2006" />
+  <award category="information" status="winner" movie="movie_73" year="2006" />
+  <award category="information" status="winner" movie="movie_74" year="2006" />
+  <award category="information" status="winner" movie="movie_75" year="2007" />
+  <award category="information" status="winner" movie="movie_76" year="2007" />
+  <award category="information" status="winner" movie="movie_77" year="2007" />
+  <award category="information" status="winner" movie="movie_78" year="2007" />
+  <award category="information" status="winner" movie="movie_79" year="2008" />
+  <award category="information" status="winner" movie="movie_80" year="2008" />
+  <award category="information" status="winner" movie="movie_81" year="2008" />
+  <award category="information" status="winner" movie="movie_82" year="2008" />
+  <award category="information" status="winner" movie="movie_83" year="2008" />
 
 </awards>
 
