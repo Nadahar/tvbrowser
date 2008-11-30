@@ -59,6 +59,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateListener;
+import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.background.BackgroundPainter;
 import tvbrowser.ui.programtable.background.OneImageBackPainter;
 import tvbrowser.ui.programtable.background.SingleColorBackPainter;
@@ -1342,11 +1343,21 @@ public class ProgramTable extends JPanel
 
       // calculate relative mouse coordinates
       int currY = mLayout.getColumnStart(panelIndex.x);
-      for (int row = 0; row <= panelIndex.y; row++) {
+      for (int row = 0; row < panelIndex.y; row++) {
         currY += mModel.getProgramPanel(panelIndex.x, row).getHeight();
       }
-      return panel.getToolTipText(mousePoint.x - panelIndex.x * mColumnWidth,
-          mousePoint.y - (currY - panel.getHeight()));
+      String tooltip = panel.getToolTipText(mousePoint.x - panelIndex.x
+          * mColumnWidth,
+          mousePoint.y - currY);
+      if (tooltip == null) {
+        Point viewPos = MainFrame.getInstance().getProgramTableScrollPane()
+            .getViewport().getViewPosition();
+        // this program is partially not visible
+        if (currY < viewPos.y) {
+          return panel.getProgram().getTitle();
+        }
+      }
+      return tooltip;
     }
     return null;
   }
