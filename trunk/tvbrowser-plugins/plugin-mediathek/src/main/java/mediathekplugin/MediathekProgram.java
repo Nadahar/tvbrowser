@@ -107,6 +107,7 @@ public class MediathekProgram implements Comparable<MediathekProgram> {
         PluginTreeNode episodeNode = new EpisodeNode(episode.getTitle());
         mPluginTreeNode.add(episodeNode);
       }
+      mPluginTreeNode.getMutableTreeNode().setShowLeafCountEnabled(true);
       if (refreshUI) {
         mPluginTreeNode.update();
       }

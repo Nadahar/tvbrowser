@@ -84,6 +84,8 @@ public class MediathekPlugin extends Plugin {
   private PluginTreeNode rootNode = new PluginTreeNode(this, false);
 
   private static MediathekPlugin instance = null;
+  
+  private static String[] SUPPORTED_CHANNELS = { "zdf", "3sat" }; 
 
   /** The logger for this class */
   private static java.util.logging.Logger logger = Logger
@@ -133,7 +135,7 @@ public class MediathekPlugin extends Plugin {
       return actionMenuReadMediathekContents();
     }
     // this is the interesting part
-    MediathekProgram mediaProgram = programs.get(program.getTitle());
+    MediathekProgram mediaProgram = findProgram(program);
     if (mediaProgram != null) {
       if (mediaProgram.getItemCount() == 0) {
         return actionMenuReadEpisodes(mediaProgram);
@@ -145,7 +147,14 @@ public class MediathekPlugin extends Plugin {
   }
 
   private boolean isSupportedChannel(Program program) {
-    return program.getChannel().getName().contains("ZDF");
+    final String name = program.getChannel().getName().toLowerCase();
+    final String id = program.getChannel().getId().toLowerCase();
+    for (String supported : SUPPORTED_CHANNELS) {
+      if (name.contains(supported) || id.contains(supported)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   protected Icon getContextMenuIcon() {
@@ -229,7 +238,7 @@ public class MediathekPlugin extends Plugin {
     if (!isSupportedChannel(program)) {
       return null;
     }
-    MediathekProgram mediaProgram = programs.get(program.getTitle());
+    MediathekProgram mediaProgram = findProgram(program);
     if (mediaProgram != null) {
       if (mediaProgram.getItemCount() == 0) {
         UpdateThread.getInstance().addProgram(mediaProgram);
@@ -237,6 +246,21 @@ public class MediathekPlugin extends Plugin {
       return new Icon[] { markIcon };
     }
     return null;
+  }
+
+  private MediathekProgram findProgram(Program program) {
+    if (programs == null) {
+      return null;
+    }
+    String title = program.getTitle();
+    MediathekProgram mediathekProgram = programs.get(title);
+    if (mediathekProgram == null) {
+      if (title.endsWith(")") && title.contains("(")) {
+        title = title.substring(0, title.lastIndexOf("(") - 1);
+        mediathekProgram = programs.get(title);
+      }
+    }
+    return mediathekProgram;
   }
 
   @Override
