@@ -94,7 +94,7 @@ public class Movie {
         (mOriginalTitle != null && program.getTitle().equalsIgnoreCase(mOriginalTitle))) {
       int year = program.getIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE);
 
-      if (year != 0) {
+      if (year > 0) {
         if ((year == mYear)|| (year - 1==mYear) || (year + 1 == mYear)){
           return true;  
         }
