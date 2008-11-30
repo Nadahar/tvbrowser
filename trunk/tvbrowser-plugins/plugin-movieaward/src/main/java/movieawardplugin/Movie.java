@@ -74,7 +74,7 @@ public class Movie {
 
   public void addAlternativeTitle(String lang, String title) {
     List<String> list = getAlternativeTitles(lang);
-    list.add(title);
+    list.add(title.toLowerCase());
   }
 
   private List<String> getAlternativeTitles(String lang) {
@@ -89,9 +89,9 @@ public class Movie {
   }
 
   public boolean matchesProgram(Program program) {
-    if (program.getTitle().equals(mTitle.get(program.getChannel().getCountry())) ||
-        getAlternativeTitles(program.getChannel().getCountry()).contains(program.getTitle()) ||
-        (mOriginalTitle != null && program.getTitle().equals(mOriginalTitle))) {
+    if (program.getTitle().equalsIgnoreCase(mTitle.get(program.getChannel().getCountry())) ||
+        getAlternativeTitles(program.getChannel().getCountry()).contains(program.getTitle().toLowerCase()) ||
+        (mOriginalTitle != null && program.getTitle().equalsIgnoreCase(mOriginalTitle))) {
       int year = program.getIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE);
 
       if (year != 0) {
