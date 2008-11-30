@@ -33,6 +33,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.TreePath;
 
+import tvbrowser.ui.pluginview.Node;
 import tvbrowser.ui.pluginview.PluginTree;
 import util.ui.menu.MenuUtil;
 import devplugin.ActionMenu;
@@ -64,10 +65,12 @@ public class CustomNodeContextMenu extends AbstractContextMenu {
     menu.add(defaultMI);
     defaultMI.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
 
-    menu.add(getExpandAllMenuItem(mPath));
-    menu.add(getCollapseAllMenuItem(mPath));
-    menu.add(getFilterMenuItem(mPath));
-    menu.add(getExportMenu( mPath));
+    if (((Node) mPath.getLastPathComponent()).getAllowsChildren()) {
+      menu.add(getExpandAllMenuItem(mPath));
+      menu.add(getCollapseAllMenuItem(mPath));
+      menu.add(getFilterMenuItem(mPath));
+      menu.add(getExportMenu(mPath));
+    }
 
     if (mActionMenus.length>0) {
       menu.addSeparator();
