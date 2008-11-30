@@ -51,6 +51,8 @@ import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.Version;
 import devplugin.SettingsTab;
+import devplugin.PluginsProgramFilter;
+import devplugin.PluginsFilterComponent;
 
 public class MovieAwardPlugin extends Plugin {
   /**
@@ -58,7 +60,7 @@ public class MovieAwardPlugin extends Plugin {
    */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(MovieAwardPlugin.class);
   private static Logger mLog = Logger.getLogger(MovieAwardPlugin.class.getName());
-  private static final Version mVersion = new Version(0, 2);
+  private static final Version mVersion = new Version(0, 3);
 
   private PluginInfo mPluginInfo;
   private ArrayList<MovieAward> mMovieAwards;
@@ -86,7 +88,21 @@ public class MovieAwardPlugin extends Plugin {
    */
   private boolean mStartFinished;
 
+  private static MovieAwardPlugin mInstance;
+  private PluginsProgramFilter mFilter;
+
   public MovieAwardPlugin() {
+    mInstance = this;
+
+  mFilter = new PluginsProgramFilter(this) {
+      public String getSubName() {
+        return "";
+      }
+
+      public boolean accept(Program prog) {
+        return hasAwards(prog);
+      }
+    };
   }
 
   @Override
@@ -174,7 +190,7 @@ public class MovieAwardPlugin extends Plugin {
     UiUtilities.centerAndShow(dialog);
   }
 
-  private boolean hasAwards(final Program program) {
+  public boolean hasAwards(final Program program) {
     if (mAwardCache.containsKey(program)) {
       return mAwardCache.get(program);
     }
@@ -277,5 +293,19 @@ public class MovieAwardPlugin extends Plugin {
 
   public List<MovieAward> getMovieAwards() {
     return mMovieAwards;
+  }
+
+  @SuppressWarnings("unchecked")
+  public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
+    return (Class<? extends PluginsFilterComponent>[]) new Class[] {MovieAwardFilterComponent.class};
+  }
+
+  @Override
+  public PluginsProgramFilter[] getAvailableFilter() {
+    return new PluginsProgramFilter[] {mFilter};
+  }
+
+  public static MovieAwardPlugin getInstance() {
+    return mInstance;
   }
 }
