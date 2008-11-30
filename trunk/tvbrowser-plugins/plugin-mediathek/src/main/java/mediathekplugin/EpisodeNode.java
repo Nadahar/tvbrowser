@@ -16,13 +16,22 @@
  */
 package mediathekplugin;
 
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
+
 import tvbrowser.ui.pluginview.Node;
+import util.browserlauncher.Launch;
 import devplugin.ActionMenu;
+import devplugin.Plugin;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.ProgramItem;
 
 public class EpisodeNode extends PluginTreeNode {
+
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(EpisodeNode.class);
 
   @Override
   public ActionMenu[] getActionMenus() {
@@ -60,12 +69,22 @@ public class EpisodeNode extends PluginTreeNode {
     return 0;
   }
 
-  public EpisodeNode(String title) {
-    super(title);
+  public EpisodeNode(final MediathekProgramItem episode) {
+    super(episode.getTitle());
     final Node treeNode = getMutableTreeNode();
     treeNode.setAllowsChildren(false);
-    treeNode.setIcon(MediathekPlugin.getInstance().getWebIcon());
+    final MediathekPlugin plugin = MediathekPlugin.getInstance();
+    treeNode.setIcon(plugin.getWebIcon());
+    // add web action
     removeAllActions();
+    addAction(new AbstractAction(mLocalizer.msg("action.openMedia",
+        "Open in browser"), Plugin.getPluginManager().getIconFromTheme(plugin,
+        "apps", "internet-web-browser", 16)) {
+
+      public void actionPerformed(ActionEvent e) {
+        Launch.openURL(episode.getUrl());
+      }
+    });
   }
 
   @Override
