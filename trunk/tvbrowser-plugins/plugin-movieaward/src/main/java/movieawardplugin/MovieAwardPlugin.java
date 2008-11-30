@@ -28,6 +28,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
@@ -49,6 +50,7 @@ import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.Version;
+import devplugin.SettingsTab;
 
 public class MovieAwardPlugin extends Plugin {
   /**
@@ -56,8 +58,8 @@ public class MovieAwardPlugin extends Plugin {
    */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(MovieAwardPlugin.class);
   private static Logger mLog = Logger.getLogger(MovieAwardPlugin.class.getName());
-
   private static final Version mVersion = new Version(0, 2);
+
   private PluginInfo mPluginInfo;
   private ArrayList<MovieAward> mMovieAwards;
   private Icon mIcon;
@@ -253,9 +255,9 @@ public class MovieAwardPlugin extends Plugin {
         .getSubscribedChannels();
     Date date = Date.getCurrentDate();
     for (int days = 0; days < 30; days++) {
-      for (int i = 0; i < channels.length; ++i) {
-        Iterator<Program> iter = devplugin.Plugin.getPluginManager()
-            .getChannelDayProgram(date, channels[i]);
+      for (Channel channel : channels) {
+        Iterator<Program> iter = Plugin.getPluginManager()
+            .getChannelDayProgram(date, channel);
         if (iter != null) {
           while (iter.hasNext()) {
             Program program = iter.next();
@@ -268,4 +270,12 @@ public class MovieAwardPlugin extends Plugin {
     }
   }
 
+  @Override
+  public SettingsTab getSettingsTab() {
+    return new MovieAwardSettingsTab(this);
+  }
+
+  public List<MovieAward> getMovieAwards() {
+    return mMovieAwards;
+  }
 }
