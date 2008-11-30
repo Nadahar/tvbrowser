@@ -45,7 +45,7 @@ public class ZattooPlugin extends Plugin {
   }
 
   public static Version getVersion() {
-    return new Version(0, 3, false);
+    return new Version(0, 4, false);
   }
 
   @Override
