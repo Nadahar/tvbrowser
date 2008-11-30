@@ -100,7 +100,7 @@ public class WirSchauenPlugin extends Plugin {
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:puls4");
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:RTLPASSION");
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:RTLLIVING");
-    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:RTLCIME");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:RTLCRIME");
   
     mIcon = new ImageIcon(getClass().getResource("icons/16x16/apps/wirschauen.png"));
   }
