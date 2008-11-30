@@ -25,250 +25,250 @@
 
 <movies>
   <movie id="movie_1" year="1988" director="Krzysztof Kieslowski">
-    <title lang="pl">Krótki film o zabijaniu</title>
+    <title lang="pl" original="yes">Krótki film o zabijaniu</title>
     <title lang="en">A Short Film About Killing</title>
    <title lang="de">Ein kurzer Film über das Töten</title>
   </movie>
   <movie id="movie_2" year="1988" director="Theo Angelopoulos">
-    <title lang="gr">Topio stin omichli</title>
+    <title lang="gr" original="yes">Topio stin omichli</title>
     <title lang="en">Landscape in the Mist</title>
    <title lang="de">Landschaft im Nebel</title>
   </movie>
   <movie id="movie_3" year="1990" director="Gianni Amelio">
-    <title lang="it">Porte aperte</title>
+    <title lang="it" original="yes">Porte aperte</title>
     <title lang="en">Open Doors</title>
    <title lang="de">Offene Türen</title>
   </movie>
   <movie id="movie_4" year="1990" director="Ken Loach">
-    <title lang="en">Riff-Raff</title>
+    <title lang="en" original="yes">Riff-Raff</title>
    <title lang="de">Riff-Raff</title>
   </movie>
   <movie id="movie_5" year="1992" director="Ken Loach">
-    <title lang="it">Il ladro di bambini</title>
+    <title lang="it" original="yes">Il ladro di bambini</title>
    <title lang="en">The Stolen Children</title>
    <title lang="de">Gestohlene Kinder</title>
   </movie>
   <movie id="movie_6" year="1991" director="Nikita Mikhalkov">
-    <title lang="ru">Урга</title>
+    <title lang="ru" original="yes">Урга</title>
    <title lang="en">Urga</title>
    <title lang="de">Urga</title>
   </movie>
   <movie id="movie_7" year="1994" director="Gianni Amelio">
-    <title lang="it">Lamerica</title>
+    <title lang="it" original="yes">Lamerica</title>
    <title lang="en">Lamerica</title>
    <title lang="de">Lamerica</title>
   </movie>
   <movie id="movie_8" year="1995" director="Ken Loach">
-    <title lang="en">Land and Freedom</title>
+    <title lang="en" original="yes">Land and Freedom</title>
    <title lang="de">Land and Freedom</title>
   </movie>
   <movie id="movie_9" year="1996" director="Lars von Trier">
-    <title lang="dk">Breaking the Waves</title>
+    <title lang="da" original="yes">Breaking the Waves</title>
     <title lang="en">Breaking the Waves</title>
    <title lang="de">Breaking the Waves</title>
   </movie>
   <movie id="movie_10" year="1997" director="Peter Cattaneo">
-    <title lang="en">The Full Monty</title>
+    <title lang="en" original="yes">The Full Monty</title>
    <title lang="de">Ganz oder gar nicht</title>
   </movie>
   <movie id="movie_11" year="1997" director="Roberto Benigni">
-    <title lang="it">La vita è bella</title>
+    <title lang="it" original="yes">La vita è bella</title>
    <title lang="en">Life Is Beautiful</title>
    <title lang="de">Das Leben ist schön</title>
   </movie>
   <movie id="movie_12" year="1999" director="Pedro Almodóvar">
-    <title lang="es">Todo sobre mi madre</title>
+    <title lang="es" original="yes">Todo sobre mi madre</title>
    <title lang="en">All About My Mother</title>
    <title lang="de">Alles über meine Mutter</title>
   </movie>
   <movie id="movie_13" year="2000" director="Lars von Trier">
-    <title lang="dk">Dancer in the Dark</title>
+    <title lang="da" original="yes">Dancer in the Dark</title>
    <title lang="en">Dancer in the Dark</title>
    <title lang="de">Dancer in the Dark</title>
   </movie>
   <movie id="movie_14" year="2001" director="Jean-Pierre Jeunet">
-    <title lang="fr">Le fabuleux destin d'Amélie Poulain</title>
+    <title lang="fr" original="yes">Le fabuleux destin d'Amélie Poulain</title>
    <title lang="en">Amélie</title>
    <title lang="de">Die fabelhafte Welt der Amélie</title>
   </movie>
   <movie id="movie_15" year="2002" director="Pedro Almodóvar">
-    <title lang="es">Hable con ella</title>
+    <title lang="es" original="yes">Hable con ella</title>
    <title lang="en">Talk to Her</title>
    <title lang="de">Sprich mit ihr</title>
   </movie>
   <movie id="movie_16" year="2003" director="Wolfgang Becker">
-    <title lang="de">Good Bye, Lenin!</title>
+    <title lang="de" original="yes">Good Bye, Lenin!</title>
    <title lang="en">Good Bye Lenin!</title>
   </movie>
   <movie id="movie_17" year="2004" director="Fatih Akın">
-    <title lang="de">Gegen die Wand</title>
+    <title lang="de" original="yes">Gegen die Wand</title>
    <title lang="en">Head-On</title>
   </movie>
   <movie id="movie_18" year="2005" director="Michael Haneke">
-    <title lang="fr">Caché</title>
+    <title lang="fr" original="yes">Caché</title>
    <title lang="en">Hidden</title>
    <title lang="de">Caché</title>
   </movie>
   <movie id="movie_19" year="2006" director="Florian Henckel von Donnersmarck">
-    <title lang="de">Das Leben der Anderen</title>
+    <title lang="de" original="yes">Das Leben der Anderen</title>
    <title lang="en">The Lives of Others</title>
   </movie>
   <movie id="movie_20" year="2007" director="Cristian Mungiu">
-    <title lang="ro">4 luni, 3 săptămâni şi 2 zile</title>
+    <title lang="ro" original="yes">4 luni, 3 săptămâni şi 2 zile</title>
    <title lang="en">4 Months, 3 Weeks and 2 Days</title>
    <title lang="de">4 Monate, 3 Wochen und 2 Tage</title>
   </movie>
   <movie id="movie_101" year="1987" director="Wim Wenders">
-    <title lang="de">Der Himmel über Berlin</title>
+    <title lang="de" original="yes">Der Himmel über Berlin</title>
    <title lang="en">Wings of Desire</title>
   </movie>
   <movie id="movie_102" year="1988" director="Géza Bereményi">
-   <title lang="it">Eldorado</title>
+   <title lang="it" original="yes">Eldorado</title>
    <title lang="en">Eldorado</title>
     <title lang="de">Eldorado</title>
   </movie>
   <movie id="movie_103" year="2003" director="Lars von Trier">
-   <title lang="dk">Dogville</title>
+   <title lang="da" original="yes">Dogville</title>
    <title lang="en">Dogville</title>
     <title lang="de">Dogville</title>
   </movie>
   <movie id="movie_104" year="2004" director="Alejandro Amenábar">
-   <title lang="es">Mar adentro</title>
+   <title lang="es" original="yes">Mar adentro</title>
    <title lang="en">The Sea Inside</title>
     <title lang="de">Das Meer in mir</title>
   </movie>
   <movie id="movie_105" year="2006" director="Pedro Almodóvar">
-   <title lang="es">Volver</title>
+   <title lang="es" original="yes">Volver</title>
    <title lang="en">Volver</title>
     <title lang="de">Volver – Zurückkehren</title>
   </movie>
   <movie id="movie_106" year="1987" director="Bille August">
-   <title lang="se">Pelle Eroberen</title>
+   <title lang="se" original="yes">Pelle Eroberen</title>
    <title lang="en">Pelle the Conqueror</title>
     <title lang="de">Pelle, der Eroberer</title>
   </movie>
   <movie id="movie_107" year="1988" director="Giuseppe Tornatore">
-   <title lang="it">Nuovo Cinema Paradiso </title>
+   <title lang="it" original="yes">Nuovo Cinema Paradiso </title>
    <title lang="en">Cinema Paradiso</title>
     <title lang="de">Cinema Paradiso</title>
   </movie>
   <movie id="movie_108" year="1989" director="Kenneth Branagh">
-   <title lang="en">Henry V</title>
+   <title lang="en" original="yes">Henry V</title>
     <title lang="de">Henry V.</title>
   </movie>
   <movie id="movie_109" year="1991" director="Jaco Van Dormael">
-   <title lang="be">Toto le Héros</title>
+   <title lang="fr" original="yes">Toto le Héros</title>
    <title lang="en">Toto the Hero</title>
     <title lang="de">Toto der Held</title>
   </movie>
   <movie id="movie_110" year="1992" director="Aki Kaurismäki">
-   <title lang="fi">La vie de bohème</title>
+   <title lang="fi" original="yes">La vie de bohème</title>
    <title lang="en">La vie de boheme</title>
     <title lang="de">Das Leben der Bohème</title>
   </movie>
   <movie id="movie_111" year="1992" director="Claude Sautet">
-   <title lang="fr">Un coeur en hiver</title>
+   <title lang="fr" original="yes">Un coeur en hiver</title>
    <title lang="en">A Heart in Winter</title>
     <title lang="de">Ein Herz im Winter</title>
   </movie>
   <movie id="movie_112" year="1995" director="Richard Loncraine">
-   <title lang="en">Richard III</title>
+   <title lang="en" original="yes">Richard III</title>
     <title lang="de">Richard III.</title>
   </movie>
   <movie id="movie_113" year="1997" director="Shane Meadows">
-   <title lang="en">Twenty Four Seven </title>
+   <title lang="en" original="yes">Twenty Four Seven </title>
     <title lang="de">TwentyFourSeven</title>
   </movie>
   <movie id="movie_114" year="1999" director="István Szabó">
-   <title lang="en">Sunshine</title>
+   <title lang="en" original="yes">Sunshine</title>
     <title lang="de">Ein Hauch von Sonnenschein</title>
   </movie>
   <movie id="movie_115" year="2000" director="Dominik Moll">
-   <title lang="fr">Harry, un ami qui vous veut du bien</title>
+   <title lang="fr" original="yes">Harry, un ami qui vous veut du bien</title>
    <title lang="en">Harry, He's Here to Help</title>
     <title lang="de">Harry meint es gut mit dir</title>
   </movie>
   <movie id="movie_116" year="2000" director="Jonathan Glazer">
-   <title lang="en">Sexy Beast</title>
+   <title lang="en" original="yes">Sexy Beast</title>
     <title lang="de">Sexy Beast</title>
   </movie>
   <movie id="movie_117" year="2001" director="Sandra Nettelbeck">
-    <title lang="de">Bella Martha</title>
+    <title lang="de" original="yes">Bella Martha</title>
    <title lang="en">Mostly Martha </title>
   </movie>
   <movie id="movie_118" year="2002" director="Marco Bellocchio">
-   <title lang="it">L'ora di religione</title>
+   <title lang="it" original="yes">L'ora di religione</title>
    <title lang="en">My Mother's Smile</title>
     <title lang="de">Das Lächeln meiner Mutter</title>
   </movie>
   <movie id="movie_119" year="2007" director="Eran Kolirin">
-   <title lang="he">Bikur Ha-Tizmoret</title>
+   <title lang="he" original="yes">Bikur Ha-Tizmoret</title>
    <title lang="en">The Band's Visit</title>
     <title lang="de">Die Band von Nebenan</title>
   </movie>
   <movie id="movie_120" year="1988" director="Pedro Almodóvar">
-   <title lang="es">Mujeres al borde de un ataque de nervios</title>
+   <title lang="es" original="yes">Mujeres al borde de un ataque de nervios</title>
    <title lang="en">Women on the Verge of a Nervous Breakdown</title>
     <title lang="de">Frauen am Rande des Nervenzusammenbruchs</title>
   </movie>
   <movie id="movie_121" year="1988" director="Mike Leigh">
-   <title lang="en">High Hopes</title>
+   <title lang="en" original="yes">High Hopes</title>
     <title lang="de">Hohe Erwartungen</title>
   </movie>
   <movie id="movie_122" year="1990" director="Carlos Saura">
-   <title lang="es">¡Ay, Carmela!</title>
+   <title lang="es" original="yes">¡Ay, Carmela!</title>
    <title lang="en">Ay Carmela</title>
     <title lang="de">Ay, Carmela!</title>
   </movie>
   <movie id="movie_123" year="1990" director="Jacques Doillon">
-   <title lang="fr">Le petit criminel</title>
+   <title lang="fr" original="yes">Le petit criminel</title>
    <title lang="en">Le petit criminel</title>
     <title lang="de">Der kleine Gangster</title>
   </movie>
   <movie id="movie_124" year="1991" director="Leos Carax">
-   <title lang="fr">Les Amants du Pont-Neuf</title>
+   <title lang="fr" original="yes">Les Amants du Pont-Neuf</title>
    <title lang="en">The Lovers on the Bridge</title>
     <title lang="de">Die Liebenden von Pont-Neuf</title>
   </movie>
   <movie id="movie_125" year="1992" director="Lucian Pintilie">
-   <title lang="ro">Balanta</title>
+   <title lang="ro" original="yes">Balanta</title>
    <title lang="en">The Oak</title>
     <title lang="de">Baum der Hoffnung</title>
   </movie>
   <movie id="movie_126" year="1996" director="Anthony Minghella">
-   <title lang="en">The English Patient</title>
+   <title lang="en" original="yes">The English Patient</title>
     <title lang="de">Der englische Patient </title>
   </movie>
   <movie id="movie_127" year="1998" director="Erick Zonca">
-   <title lang="fr">La Vie rêvée des anges</title>
+   <title lang="fr" original="yes">La Vie rêvée des anges</title>
    <title lang="en">The Dreamlife of Angels</title>
     <title lang="de">Liebe das Leben</title>
   </movie>
   <movie id="movie_128" year="2001" director="Michael Haneke">
-   <title lang="fr">La Pianiste</title>
+   <title lang="fr" original="yes">La Pianiste</title>
    <title lang="en">The Piano Teacher</title>
     <title lang="de">Die Klavierspielerin</title>
   </movie>
   <movie id="movie_129" year="2002" director="François Ozon">
-   <title lang="fr">8 femmes</title>
+   <title lang="fr" original="yes">8 femmes</title>
    <title lang="en">8 Women</title>
     <title lang="de">8 Frauen</title>
   </movie>
   <movie id="movie_130" year="2003" director="François Ozon">
-   <title lang="fr">Swimming Pool</title>
+   <title lang="fr" original="yes">Swimming Pool</title>
    <title lang="en">Swimming Pool</title>
     <title lang="de">Swimming Pool</title>
   </movie>
   <movie id="movie_131" year="2004" director="Mike Leigh">
-   <title lang="en">Vera Drake</title>
+   <title lang="en" original="yes">Vera Drake</title>
     <title lang="de">Vera Drake</title>
   </movie>
   <movie id="movie_132" year="2005" director="Marc Rothemund">
-    <title lang="de">Sophie Scholl - Die letzten Tage</title>
+    <title lang="de" original="yes">Sophie Scholl - Die letzten Tage</title>
    <title lang="en">Sophie Scholl - The Final Days</title>
   </movie>
   <movie id="movie_133" year="2006" director="Stephen Frears">
-   <title lang="en">The Queen</title>
+   <title lang="en" original="yes">The Queen</title>
     <title lang="de">Die Queen </title>
   </movie>
 </movies>
