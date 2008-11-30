@@ -1191,4 +1191,13 @@ private static Font getDynamicFontSize(Font font, int offset) {
     }
     return null;
   }
+  
+  /**
+   * get the X offset of the title in pixels
+   * 
+   * @return
+   */
+  public int getTitleX() {
+    return WIDTH_LEFT;
+  }
 }
