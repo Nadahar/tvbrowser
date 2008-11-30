@@ -60,7 +60,7 @@ public class MovieAwardPlugin extends Plugin {
    */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(MovieAwardPlugin.class);
   private static Logger mLog = Logger.getLogger(MovieAwardPlugin.class.getName());
-  private static final Version mVersion = new Version(0, 3);
+  private static final Version mVersion = new Version(0, 4);
 
   private PluginInfo mPluginInfo;
   private ArrayList<MovieAward> mMovieAwards;
