@@ -120,6 +120,11 @@ public class MovieAwardPlugin extends Plugin {
   @Override
   public void onActivation() {
     initDatabase();
+    // initialize sub nodes to be able to store entries
+    // but do not initialize root node, to avoid updates
+    mDateNode = new PluginTreeNode(mLocalizer.msg("dateNode", "Datum"));
+    mAwardNode = new PluginTreeNode(mLocalizer.msg("awardNode", "Award"));
+    mAwardNode.setGroupingByDateEnabled(false);
   }
 
   @Override
@@ -220,7 +225,10 @@ public class MovieAwardPlugin extends Plugin {
       mAwardNode.add(node);
     }
     node.addProgram(program);
-    mRootNode.update();
+    // defer update until tree is initialized
+    if (mRootNode != null) {
+      mRootNode.update();
+    }
   }
 
   @Override
@@ -236,9 +244,7 @@ public class MovieAwardPlugin extends Plugin {
     if (!mStartFinished) {
       return;
     }
-    mDateNode = new PluginTreeNode(mLocalizer.msg("dateNode", "Datum"));
-    mAwardNode = new PluginTreeNode(mLocalizer.msg("awardNode", "Award"));
-    mAwardNode.setGroupingByDateEnabled(false);
+    // now insert the dangling sub nodes
     mRootNode.add(mAwardNode);
     mRootNode.add(mDateNode);
     
