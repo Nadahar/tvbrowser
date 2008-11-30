@@ -1357,7 +1357,8 @@ public class ProgramTable extends JPanel
         Dimension viewSize = viewport.getSize();
         if ((currY < viewPos.y)
             || (panelIndex.x * mColumnWidth + panel.getTitleX() < viewPos.x)
-            || ((panelIndex.x + 1) * mColumnWidth > viewPos.x + viewSize.width)) {
+            || ((panelIndex.x + 1) * mColumnWidth - 1 > viewPos.x
+                + viewSize.width)) {
           return panel.getProgram().getTitle();
         }
       }
