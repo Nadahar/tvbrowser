@@ -17,6 +17,7 @@
 package mediathekplugin;
 
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
@@ -27,6 +28,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.logging.Logger;
@@ -42,6 +44,8 @@ import util.io.IOUtilities;
 import util.ui.UiUtilities;
 import util.ui.html.HTMLTextHelper;
 import devplugin.ActionMenu;
+import devplugin.Channel;
+import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
@@ -127,7 +131,7 @@ public class MediathekPlugin extends Plugin {
       });
     }
     // only support ZDF
-    if (!isSupportedChannel(program)) {
+    if (!isSupportedChannel(program.getChannel())) {
       return null;
     }
     // get mediathek contents, if not yet loaded
@@ -137,7 +141,7 @@ public class MediathekPlugin extends Plugin {
     // this is the interesting part
     MediathekProgram mediaProgram = findProgram(program);
     if (mediaProgram != null) {
-      if (mediaProgram.getItemCount() == 0) {
+      if (mediaProgram.getItemCount() == -1) {
         return actionMenuReadEpisodes(mediaProgram);
       } else {
         return mediaProgram.actionMenuShowEpisodes();
@@ -146,9 +150,9 @@ public class MediathekPlugin extends Plugin {
     return null;
   }
 
-  private boolean isSupportedChannel(Program program) {
-    final String name = program.getChannel().getName().toLowerCase();
-    final String id = program.getChannel().getId().toLowerCase();
+  public boolean isSupportedChannel(Channel channel) {
+    final String name = channel.getName().toLowerCase();
+    final String id = channel.getId().toLowerCase();
     for (String supported : SUPPORTED_CHANNELS) {
       if (name.contains(supported) || id.contains(supported)) {
         return true;
@@ -235,12 +239,12 @@ public class MediathekPlugin extends Plugin {
     if (programs.isEmpty()) {
       return null;
     }
-    if (!isSupportedChannel(program)) {
+    if (!isSupportedChannel(program.getChannel())) {
       return null;
     }
     MediathekProgram mediaProgram = findProgram(program);
     if (mediaProgram != null) {
-      if (mediaProgram.getItemCount() == 0) {
+      if (mediaProgram.getItemCount() == -1) {
         UpdateThread.getInstance().addProgram(mediaProgram);
       }
       return new Icon[] { markIcon };
@@ -248,6 +252,13 @@ public class MediathekPlugin extends Plugin {
     return null;
   }
 
+  /**
+   * finds a program in the list of online programs which matches the given
+   * TV-Browser program
+   * 
+   * @param program
+   * @return
+   */
   private MediathekProgram findProgram(Program program) {
     if (programs == null) {
       return null;
@@ -361,6 +372,26 @@ public class MediathekPlugin extends Plugin {
         updatePluginTree();
       }
     });
+    // update programs of current day to force their icons to show
+    Date date = getPluginManager().getCurrentDate();
+    for (Channel channel : getPluginManager().getSubscribedChannels()) {
+      if (isSupportedChannel(channel)) {
+        for (int days = 0; days < 30; days++) {
+          Iterator<Program> iter = Plugin.getPluginManager()
+              .getChannelDayProgram(date, channel);
+          if (iter != null) {
+            while (iter.hasNext()) {
+              Program program = iter.next();
+              MediathekProgram mediaProgram = findProgram(program);
+              if (mediaProgram != null) {
+                UpdateThread.getInstance().addProgram(mediaProgram);
+                program.validateMarking();
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   protected String convertHTML(String html) {
@@ -387,6 +418,17 @@ public class MediathekPlugin extends Plugin {
     node.removeAllActions();
     node.removeAllChildren();
     node.getMutableTreeNode().setShowLeafCountEnabled(false);
+    node.addAction(new AbstractAction(mLocalizer.msg("action.readAll",
+        "Read all episodes")) {
+
+      public void actionPerformed(ActionEvent e) {
+        for (MediathekProgram program : getSortedPrograms()) {
+          if (program.getItemCount() == -1) {
+            UpdateThread.getInstance().addProgram(program);
+          }
+        }
+      }
+    });
     for (MediathekProgram program : getSortedPrograms()) {
       program.updatePluginTree(false);
     }
@@ -413,5 +455,9 @@ public class MediathekPlugin extends Plugin {
 
   public Icon getWebIcon() {
     return mIconWeb;
+  }
+
+  protected Frame getFrame() {
+    return this.getParentFrame();
   }
 }

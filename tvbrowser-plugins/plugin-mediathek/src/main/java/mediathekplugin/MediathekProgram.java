@@ -50,7 +50,9 @@ public class MediathekProgram implements Comparable<MediathekProgram> {
     this.mTitle = title;
     this.mTitleLower = title.toLowerCase();
     this.mUrl = url;
-    this.mItems = new ArrayList<MediathekProgramItem>();
+    // initialize with null to be able to differentiate between (yet) unknown
+    // and empty programs
+    this.mItems = null;
   }
 
   public String getTitle() {
@@ -66,6 +68,9 @@ public class MediathekProgram implements Comparable<MediathekProgram> {
   }
 
   public int getItemCount() {
+    if (mItems == null) {
+      return -1;
+    }
     return mItems.size();
   }
 
@@ -102,9 +107,9 @@ public class MediathekProgram implements Comparable<MediathekProgram> {
       mPluginTreeNode = new MediathekProgramNode(getTitle());
       plugin.getRootNode().add(mPluginTreeNode);
     }
-    if (mItems.size() > 0) {
+    if (mItems != null && mItems.size() > 0) {
       for (MediathekProgramItem episode : getItems()) {
-        PluginTreeNode episodeNode = new EpisodeNode(episode.getTitle());
+        PluginTreeNode episodeNode = new EpisodeNode(episode);
         mPluginTreeNode.add(episodeNode);
       }
       mPluginTreeNode.getMutableTreeNode().setShowLeafCountEnabled(true);
@@ -118,11 +123,8 @@ public class MediathekProgram implements Comparable<MediathekProgram> {
     MediathekPlugin.getInstance().getLogger().info(string);
   }
 
-  private void logWarning(String string) {
-    MediathekPlugin.getInstance().getLogger().warning(string);
-  }
-
   protected void readEpisodes() {
+    initializeItems();
     if (rssFeedUrl == null) {
       int num = Integer.parseInt(mUrl.substring(mUrl.indexOf("/") + 1));
       rssFeedUrl = "http://www.zdf.de/ZDFMediathek/content/"
@@ -153,5 +155,11 @@ public class MediathekProgram implements Comparable<MediathekProgram> {
 
   public int compareTo(MediathekProgram other) {
     return mTitleLower.compareTo(other.mTitleLower);
+  }
+
+  protected void initializeItems() {
+    if (mItems == null) {
+      mItems = new ArrayList<MediathekProgramItem>();
+    }
   }
 }
