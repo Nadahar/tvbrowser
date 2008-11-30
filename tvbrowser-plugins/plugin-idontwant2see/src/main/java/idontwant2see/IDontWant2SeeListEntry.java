@@ -33,8 +33,7 @@ import devplugin.Date;
 import devplugin.Program;
 
 /**
- * A class that contains the search settings
- * for the not to show values.
+ * A class that contains the search settings for the not to show values.
  * 
  * @author René Mach
  */
@@ -70,19 +69,18 @@ public class IDontWant2SeeListEntry {
     mDateWasSet = false;
   }
   
-  protected boolean matches(Program p) {
+  private boolean matchesTitle(String title) {
     boolean matches = false;
     
     if(mPreSearchPart == null) {
       // match full title
-      matches = mCaseSensitive ? p.getTitle().equals(mSearchText) : p
-          .getTitle().equalsIgnoreCase(mSearchText);
+      matches = mCaseSensitive ? title.equals(mSearchText) : title
+          .equalsIgnoreCase(mSearchText);
     } else {
       // or match with wild card
-      String preSearchValue = mCaseSensitive ? p.getTitle() : p.getTitle()
-          .toLowerCase();
+      String preSearchValue = mCaseSensitive ? title : title.toLowerCase();
       if (preSearchValue.indexOf(mPreSearchPart) != -1) {
-        Matcher match = mSearchPattern.matcher(p.getTitle());
+        Matcher match = mSearchPattern.matcher(title);
         matches = match.matches();
       }
     }
@@ -94,6 +92,16 @@ public class IDontWant2SeeListEntry {
     }
     
     return matches;
+  }
+  
+  protected boolean matches(Program p) {
+    String title = p.getTitle();
+    boolean found = matchesTitle(title);
+    final String suffix = " (Fortsetzung)";
+    if ((!found) && title.endsWith(suffix)) {
+      found = matchesTitle(title.substring(0, title.length() - suffix.length()));
+    }
+    return found;
   }
   
   protected void resetDateWasSetFlag() {
