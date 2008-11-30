@@ -23,27 +23,32 @@
  */
 package movieawardplugin;
 
-import devplugin.Plugin;
-import devplugin.PluginInfo;
-import devplugin.Version;
-import devplugin.Program;
-import devplugin.ThemeIcon;
-import devplugin.ActionMenu;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.misc.SoftReferenceCache;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.logging.Logger;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.AbstractAction;
-import javax.swing.SwingUtilities;
-import javax.swing.JFrame;
-import javax.swing.Action;
 import javax.swing.JDialog;
-import java.util.ArrayList;
-import java.util.logging.Logger;
-import java.awt.event.ActionEvent;
-import java.awt.Window;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+
+import util.misc.SoftReferenceCache;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import devplugin.ActionMenu;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.PluginTreeNode;
+import devplugin.Program;
+import devplugin.Version;
 
 public class MovieAwardPlugin extends Plugin {
   /**
@@ -58,6 +63,26 @@ public class MovieAwardPlugin extends Plugin {
   private Icon mIcon;
   /** Small Cache to speed up comparison of programs */
   private SoftReferenceCache<Program, Boolean> mAwardCache = new SoftReferenceCache<Program, Boolean>();
+  /**
+   * root node of the plugin tree
+   */
+  private PluginTreeNode mRootNode;
+  /**
+   * sub node containing all award movies by date
+   */
+  private PluginTreeNode mDateNode;
+  /**
+   * sub node containing all award movies by award
+   */
+  private PluginTreeNode mAwardNode;
+  /**
+   * hash to remember which awards are currently shown in plugin tree
+   */
+  private HashMap<MovieAward, PluginTreeNode> mAwardNodes = new HashMap<MovieAward, PluginTreeNode>();
+  /**
+   * remember start finished state of main program
+   */
+  private boolean mStartFinished;
 
   public MovieAwardPlugin() {
   }
@@ -150,6 +175,7 @@ public class MovieAwardPlugin extends Plugin {
     for (MovieAward award : mMovieAwards) {
       if (award.containsAwardFor(program)) {
         mAwardCache.put(program, true);
+        addToPluginTree(program, award);
         return true;
       }
     }
@@ -163,6 +189,77 @@ public class MovieAwardPlugin extends Plugin {
       mIcon = new ImageIcon(getClass().getResource("movieaward.png"));
     }
     return mIcon;
+  }
+
+  @Override
+  public boolean canUseProgramTree() {
+    return true;
+  }
+
+  @Override
+  public PluginTreeNode getRootNode() {
+    if (mRootNode == null) {
+      mRootNode = new PluginTreeNode(this, false);
+      mRootNode.getMutableTreeNode().setShowLeafCountEnabled(false);
+      if (mStartFinished) {
+        // update the tree as the plugin view has been switched on for the first
+        // time after start
+        updateRootNode();
+      }
+    }
+    return mRootNode;
+  }
+
+  private void addToPluginTree(Program program, MovieAward award) {
+    mDateNode.addProgram(program);
+    PluginTreeNode node = mAwardNodes.get(award);
+    if (node == null) {
+      node = new PluginTreeNode(award.getName());
+      node.setGroupingByDateEnabled(false);
+      mAwardNodes.put(award, node);
+      mAwardNode.add(node);
+    }
+    node.addProgram(program);
+    mRootNode.update();
+  }
+
+  @Override
+  public void handleTvBrowserStartFinished() {
+    mStartFinished = true;
+    // update tree, but only if it is shown at all
+    if (mRootNode != null) {
+      updateRootNode();
+    }
+  }
+
+  private void updateRootNode() {
+    if (!mStartFinished) {
+      return;
+    }
+    mDateNode = new PluginTreeNode(mLocalizer.msg("dateNode", "Datum"));
+    mAwardNode = new PluginTreeNode(mLocalizer.msg("awardNode", "Award"));
+    mAwardNode.setGroupingByDateEnabled(false);
+    mRootNode.add(mAwardNode);
+    mRootNode.add(mDateNode);
+    
+    // search all awards
+    Channel[] channels = devplugin.Plugin.getPluginManager()
+        .getSubscribedChannels();
+    Date date = Date.getCurrentDate();
+    for (int days = 0; days < 30; days++) {
+      for (int i = 0; i < channels.length; ++i) {
+        Iterator<Program> iter = devplugin.Plugin.getPluginManager()
+            .getChannelDayProgram(date, channels[i]);
+        if (iter != null) {
+          while (iter.hasNext()) {
+            Program program = iter.next();
+            // checking the program automatically leads to adding new awards
+            hasAwards(program);
+          }
+        }
+      }
+      date = date.addDays(1);
+    }
   }
 
 }
