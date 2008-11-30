@@ -1,5 +1,6 @@
 <awarddata>
 <name lang="de">Adolf-Grimme-Preis</name>
+<name lang="en">Adolf Grimme Awards</name>
 <url>http://www.grimme-institut.de/html/index.php?id=8</url>
 
 <categories>
@@ -13,133 +14,133 @@
 
 <movies>
   <movie id="movie_1" year="2000" director="Andreas Dresen">
-    <title lang="de">Die Polizistin</title>
+    <title lang="de" original="yes">Die Polizistin</title>
   </movie>
   <movie id="movie_2" year="2001" director="Heinrich Breloer">
-    <title lang="de">Die Manns - Ein Jahrhundertroman</title>
+    <title lang="de" original="yes">Die Manns - Ein Jahrhundertroman</title>
   </movie>
   <movie id="movie_3" year="2001" director="Stefan Krohmer">
-    <title lang="de">Ende der Saison</title>
+    <title lang="de" original="yes">Ende der Saison</title>
   </movie>
   <movie id="movie_4" year="2001" director="Marc Rothemund">
-    <title lang="de">Die Hoffnung stirbt zuletzt</title>
+    <title lang="de" original="yes">Die Hoffnung stirbt zuletzt</title>
   </movie>
   <movie id="movie_5" year="2002" director="Olli Dittrich, Anke Engelke">
-    <title lang="de">Blind Date: Taxi nach Schweinau</title>
+    <title lang="de" original="yes">Blind Date: Taxi nach Schweinau</title>
   </movie>
   <movie id="movie_6" year="2003" director="Stefan Krohmer">
-    <title lang="de">Familienkreise</title>
+    <title lang="de" original="yes">Familienkreise</title>
   </movie>
   <movie id="movie_7" year="2003" director="Christian Petzold">
-    <title lang="de">Wolfsburg</title>
+    <title lang="de" original="yes">Wolfsburg</title>
   </movie>
   <movie id="movie_8" year="2004" director="Hans Steinbichler">
-    <title lang="de">Hierankl</title>
+    <title lang="de" original="yes">Hierankl</title>
   </movie>
   <movie id="movie_9" year="2005" director="Rainer Kaufmann">
-    <title lang="de">Marias letzte Reise</title>
+    <title lang="de" original="yes">Marias letzte Reise</title>
   </movie>
   <movie id="movie_10" year="2005" director="Dominik Graf">
-    <title lang="de">Polizeiruf 110: Der scharlachrote Engel</title>
+    <title lang="de" original="yes">Polizeiruf 110: Der scharlachrote Engel</title>
   </movie>
   <movie id="movie_11" year="1999" director="Lars Kraume">
-    <title lang="de">Dunckel</title>
+    <title lang="de" original="yes">Dunckel</title>
   </movie>
   <movie id="movie_12" year="1999" director="Hartmut Schoen">
-    <title lang="de">Warten ist der Tod</title>
+    <title lang="de" original="yes">Warten ist der Tod</title>
   </movie>
   <movie id="movie_13" year="1998" director="Hussi Kutlucan">
-    <title lang="de">Ich Chef, Du Turnschuh</title>
+    <title lang="de" original="yes">Ich Chef, Du Turnschuh</title>
   </movie>
   <movie id="movie_14" year="2000" director="Vivian Naefe">
-    <title lang="de">Einer geht noch</title>
+    <title lang="de" original="yes">Einer geht noch</title>
   </movie>
   <movie id="movie_15" year="2000" director="Dennis Gansel">
-    <title lang="de">Das Phantom</title>
+    <title lang="de" original="yes">Das Phantom</title>
   </movie>
   <movie id="movie_16" year="1999" director="Andreas Kleinert">
-    <title lang="de">Wege in die Nacht </title>
+    <title lang="de" original="yes">Wege in die Nacht </title>
   </movie>
   <movie id="movie_17" year="1998" director="Fatih Akin">
-    <title lang="de">Kurz und schmerzlos</title>
+    <title lang="de" original="yes">Kurz und schmerzlos</title>
   </movie>
   <movie id="movie_18" year="2000" director="Hendrik Handloegten">
-    <title lang="de">Paul Is Dead</title>
+    <title lang="de" original="yes">Paul Is Dead</title>
   </movie>
   <movie id="movie_19" year="2001" director="Jobst Oetzmann">
-    <title lang="de">Tatort: Im freien Fall</title>
+    <title lang="de" original="yes">Tatort: Im freien Fall</title>
   </movie>
   <movie id="movie_20" year="2001" director="Hermine Huntgeburth">
-    <title lang="de">Romeo</title>
+    <title lang="de" original="yes">Romeo</title>
   </movie>
   <movie id="movie_21" year="2001" director="Jo Baier">
-    <title lang="de">Wambo</title>
+    <title lang="de" original="yes">Wambo</title>
   </movie>
   <movie id="movie_22" year="2001" director="Peter Keglevic">
-    <title lang="de">Der Tanz mit dem Teufel</title>
+    <title lang="de" original="yes">Der Tanz mit dem Teufel</title>
   </movie>
   <movie id="movie_23" year="2002" director="Friedemann Fromm">
-    <title lang="de">Unter Verdacht: Verdecktes Spiel</title>
+    <title lang="de" original="yes">Unter Verdacht: Verdecktes Spiel</title>
   </movie>
   <movie id="movie_24" year="2002" director="Dominik Graf">
-    <title lang="de">Die Freunde der Freunde</title>
+    <title lang="de" original="yes">Die Freunde der Freunde</title>
   </movie>
   <movie id="movie_25" year="2002" director="Christian Petzold">
-    <title lang="de">Toter Mann</title>
+    <title lang="de" original="yes">Toter Mann</title>
   </movie>
   <movie id="movie_26" year="2003" director="Hartmut Schoen">
-    <title lang="de">Zuckerbrot</title>
+    <title lang="de" original="yes">Zuckerbrot</title>
   </movie>
   <movie id="movie_27" year="2003" director="Kaspar Heidelbach">
-    <title lang="de">Das Wunder von Lengede</title>
+    <title lang="de" original="yes">Das Wunder von Lengede</title>
   </movie>
   <movie id="movie_28" year="2003" director="Stephan Wagner">
-    <title lang="de">Dienstreise - Was für eine Nacht</title>
+    <title lang="de" original="yes">Dienstreise - Was für eine Nacht</title>
   </movie>
   <movie id="movie_29" year="2003" director="Kai Wessel">
-    <title lang="de">Leben wäre schön</title>
+    <title lang="de" original="yes">Leben wäre schön</title>
   </movie>
   <movie id="movie_30" year="2004" director="Thomas Freundner">
-    <title lang="de">Tatort: Herzversagen </title>
+    <title lang="de" original="yes">Tatort: Herzversagen </title>
   </movie>
   <movie id="movie_31" year="2004" director="Annette Ernst">
-    <title lang="de">kiss and run</title>
+    <title lang="de" original="yes">kiss and run</title>
   </movie>
   <movie id="movie_32" year="2004" director="Miguel Alexandre">
-    <title lang="de">Grüße aus Kaschmir</title>
+    <title lang="de" original="yes">Grüße aus Kaschmir</title>
   </movie>
   <movie id="movie_33" year="2006" director="Andreas Kleinert">
-    <title lang="de">Polizeiruf 110: Kleine Frau</title>
+    <title lang="de" original="yes">Polizeiruf 110: Kleine Frau</title>
   </movie>
   <movie id="movie_34" year="2005" director="Matti Geschonneck">
-    <title lang="de">Die Nachrichten</title>
+    <title lang="de" original="yes">Die Nachrichten</title>
   </movie>
   <movie id="movie_35" year="2006" director="Stefan Holtz">
-    <title lang="de">Meine verrückte türkische Hochzeit</title>
+    <title lang="de" original="yes">Meine verrückte türkische Hochzeit</title>
   </movie>
   <movie id="movie_36" year="2006" director="Züli Aladag">
-    <title lang="de">Wut</title>
+    <title lang="de" original="yes">Wut</title>
   </movie>
   <movie id="movie_37" year="2006" director="Aelrun Goette">
-    <title lang="de">Unter dem Eis</title>
+    <title lang="de" original="yes">Unter dem Eis</title>
   </movie>
   <movie id="movie_38" year="2006" director="Isabel Kleefeld">
-    <title lang="de">Arnies Welt</title>
+    <title lang="de" original="yes">Arnies Welt</title>
   </movie>
   <movie id="movie_39" year="2006" director="Dominik Graf">
-    <title lang="de">Polizeiruf 110: Er sollte tot</title>
+    <title lang="de" original="yes">Polizeiruf 110: Er sollte tot</title>
   </movie>
   <movie id="movie_40" year="2007" director="Buket Alakus">
-    <title lang="de">Eine andere Liga </title>
+    <title lang="de" original="yes">Eine andere Liga </title>
   </movie>
   <movie id="movie_41" year="2008" director="Dominik Graf">
-    <title lang="de">Eine Stadt wird erpresst</title>
+    <title lang="de" original="yes">Eine Stadt wird erpresst</title>
   </movie>
   <movie id="movie_42" year="2007" director="Lars Kraume">
-    <title lang="de">Guten Morgen, Herr Grothe </title>
+    <title lang="de" original="yes">Guten Morgen, Herr Grothe </title>
   </movie>
   <movie id="movie_43" year="2007" director="Urs Egger">
-    <title lang="de">An die Grenze</title>
+    <title lang="de" original="yes">An die Grenze</title>
   </movie>
 </movies>
 
