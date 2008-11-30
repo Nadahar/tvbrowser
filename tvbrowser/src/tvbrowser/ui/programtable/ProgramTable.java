@@ -1346,14 +1346,18 @@ public class ProgramTable extends JPanel
       for (int row = 0; row < panelIndex.y; row++) {
         currY += mModel.getProgramPanel(panelIndex.x, row).getHeight();
       }
-      String tooltip = panel.getToolTipText(mousePoint.x - panelIndex.x
-          * mColumnWidth,
-          mousePoint.y - currY);
+      final int panelX = mousePoint.x - panelIndex.x * mColumnWidth;
+      final int panelY = mousePoint.y - currY;
+      String tooltip = panel.getToolTipText(panelX, panelY);
       if (tooltip == null) {
-        Point viewPos = MainFrame.getInstance().getProgramTableScrollPane()
-            .getViewport().getViewPosition();
-        // this program is partially not visible
-        if (currY < viewPos.y) {
+        // if program is partially not visible then show the title as tooltip
+        final JViewport viewport = MainFrame.getInstance()
+            .getProgramTableScrollPane().getViewport();
+        Point viewPos = viewport.getViewPosition();
+        Dimension viewSize = viewport.getSize();
+        if ((currY < viewPos.y)
+            || (panelIndex.x * mColumnWidth + panel.getTitleX() < viewPos.x)
+            || ((panelIndex.x + 1) * mColumnWidth > viewPos.x + viewSize.width)) {
           return panel.getProgram().getTitle();
         }
       }
