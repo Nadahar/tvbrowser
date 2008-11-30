@@ -13,228 +13,228 @@
 
 <movies>
   <movie id="movie_1" year="1955" director="Delbert Mann">
-    <title lang="en">Marty</title>
+    <title lang="en" original="yes">Marty</title>
     <title lang="de">Marty</title>
   </movie>
   <movie id="movie_2" year="1956" director="Jacques-Yves Cousteau">
-    <title lang="fr">Le Monde du silence</title>
+    <title lang="fr" original="yes">Le Monde du silence</title>
     <title lang="en">The Silent World</title>
     <title lang="de">Die schweigende Welt</title>
   </movie>
   <movie id="movie_3" year="1956" director="William Wyler">
-    <title lang="en">Friendly Persuasion</title>
+    <title lang="en" original="yes">Friendly Persuasion</title>
     <title lang="de">Lockende Versuchung</title>
   </movie>
   <movie id="movie_4" year="1957" director="Mikhail Kalatozov">
-    <title lang="ru">Letyat zhuravli</title>
+    <title lang="ru" original="yes">Letyat zhuravli</title>
     <title lang="en">The Cranes are Flying</title>
     <title lang="de">Wenn die Kraniche ziehen</title>
   </movie>
   <movie id="movie_5" year="1959" director="Marcel Camus">
-    <title lang="pt">Orfeu Negro</title>
+    <title lang="pt" original="yes">Orfeu Negro</title>
     <title lang="en">Black Orpheus</title>
     <title lang="de">Orfeu Negro</title>
   </movie>
   <movie id="movie_6" year="1960" director="Federico Fellini">
-    <title lang="it">La dolce vita</title>
+    <title lang="it" original="yes">La dolce vita</title>
     <title lang="en">La dolce vita</title>
   <title lang="de">Das süße Leben</title>
   </movie>
   <movie id="movie_7" year="1961" director="Henri Colpi">
-    <title lang="fr">Une aussi longue absence</title>
+    <title lang="fr" original="yes">Une aussi longue absence</title>
     <title lang="en">The Long Absence</title>
     <title lang="de">Noch nach Jahr und Tag</title>
   </movie>
   <movie id="movie_8" year="1961" director="Luis Buñuel">
-   <title lang="es">Viridiana</title>
+   <title lang="es" original="yes">Viridiana</title>
    <title lang="en">Viridiana</title>
     <title lang="de">Viridiana</title>
   </movie>
   <movie id="movie_9" year="1962" director="Anselmo Duarte">
-    <title lang="pt">O Pagador de Promessas</title>
+    <title lang="pt" original="yes">O Pagador de Promessas</title>
     <title lang="en">Keeper of Promises</title>
     <title lang="de">Fünfzig Stufen zur Gerechtigkeit</title>
   </movie>
   <movie id="movie_10" year="1963" director="Luchino Visconti">
-    <title lang="it">Il Gattopardo</title>
+    <title lang="it" original="yes">Il Gattopardo</title>
     <title lang="en">The Leopard</title>
     <title lang="de">Der Leopard</title>
   </movie>
   <movie id="movie_11" year="1975" director="Mohammed Lakhdar-Hamina">
-    <title lang="fr">Chronique des Années de Braise</title>
+    <title lang="fr" original="yes">Chronique des Années de Braise</title>
     <title lang="en">Chronicle of the Years of Fire</title>
     <title lang="de">Chronik der Jahre der Glut</title>
   </movie>
   <movie id="movie_12" year="1976" director="Martin Scorsese">
-    <title lang="en">Taxi Driver</title>
+    <title lang="en" original="yes">Taxi Driver</title>
     <title lang="de">Taxi Driver</title>
   </movie>
   <movie id="movie_13" year="1977" director="Paolo Taviani, Vittorio Taviani">
-    <title lang="it">Padre Padrone</title>
+    <title lang="it" original="yes">Padre Padrone</title>
     <title lang="en">Father and Master</title>
     <title lang="de">Padre Padrone - Mein Vater, mein Herr</title>
   </movie>
   <movie id="movie_14" year="1978" director="Ermanno Olmi">
-    <title lang="it">L'Albero degli zoccoli</title>
+    <title lang="it" original="yes">L'Albero degli zoccoli</title>
     <title lang="en">The Tree of Wooden Clogs</title>
     <title lang="de">Der Holzschuhbaum</title>
   </movie>
   <movie id="movie_15" year="1979" director="Francis Ford Coppola">
-    <title lang="en">Apocalypse Now</title>
+    <title lang="en" original="yes">Apocalypse Now</title>
     <title lang="de">Apocalypse Now</title>
   </movie>
   <movie id="movie_16" year="1979" director="Volker Schlöndorff">
-    <title lang="de">Die Blechtrommel</title>
+    <title lang="de" original="yes">Die Blechtrommel</title>
     <title lang="en">The Tin Drum</title>
   </movie>
   <movie id="movie_17" year="1979" director="Bob Fosse">
-    <title lang="en">All That Jazz</title>
+    <title lang="en" original="yes">All That Jazz</title>
     <title lang="de">Hinter dem Rampenlicht</title>
   </movie>
   <movie id="movie_18" year="1980" director="Akira Kurosawa">
-    <title lang="jp">Kagemusha</title>
+    <title lang="ja" original="yes">Kagemusha</title>
     <title lang="en">Kagemusha</title>
     <title lang="de">Kagemusha - Der Schatten des Kriegers</title>
   </movie>
   <movie id="movie_19" year="1981" director="Andrzej Wajda">
-    <title lang="pl">Człowiek z żelaza</title>
+    <title lang="pl" original="yes">Człowiek z żelaza</title>
     <title lang="en">Man of Iron</title>
     <title lang="de">Der Mann aus Eisen</title>
   </movie>
   <movie id="movie_20" year="1982" director="Constantin Costa-Gavras">
-    <title lang="en">Missing</title>
+    <title lang="en" original="yes">Missing</title>
     <title lang="de">Vermißt</title>
   </movie>
   <movie id="movie_21" year="1982" director="Şerif Gören">
-    <title lang="tr">Yol</title>
+    <title lang="tr" original="yes">Yol</title>
     <title lang="en">Yol</title>
     <title lang="de">Yol - Der Weg</title>
   </movie>
   <movie id="movie_22" year="1983" director="Shohei Imamura">
-    <title lang="jp">Narayama Bushiko</title>
+    <title lang="ja" original="yes">Narayama Bushiko</title>
     <title lang="en">The Ballad of Narayama</title>
     <title lang="de">Die Ballade von Narayama</title>
   </movie>
   <movie id="movie_23" year="1984" director="Wim Wenders">
-    <title lang="de">Paris, Texas</title>
+    <title lang="de" original="yes">Paris, Texas</title>
     <title lang="en">Paris, Texas</title>
   </movie>
   <movie id="movie_24" year="1985" director="Emir Kusturica">
-    <title lang="sh">Otac na službenom putu</title>
+    <title lang="sh" original="yes">Otac na službenom putu</title>
     <title lang="en">When Father Was Away on Business</title>
     <title lang="de">Papa ist auf Dienstreise</title>
   </movie>
   <movie id="movie_25" year="1986" director="Roland Joffé">
-    <title lang="en">The Mission</title>
+    <title lang="en" original="yes">The Mission</title>
     <title lang="de">Mission</title>
   </movie>
   <movie id="movie_26" year="1987" director="Maurice Pialat">
-    <title lang="fr">Sous le Soleil de Satan</title>
+    <title lang="fr" original="yes">Sous le Soleil de Satan</title>
     <title lang="en">Under the Sun of Satan</title>
     <title lang="de">Die Sonne Satans</title>
   </movie>
   <movie id="movie_27" year="1987" director="Bille August">
-    <title lang="da">Pelle Erobreren</title>
+    <title lang="da" original="yes">Pelle Erobreren</title>
     <title lang="en">Pelle the Conqueror</title>
     <title lang="de">Pelle, der Eroberer</title>
   </movie>
   <movie id="movie_28" year="1989" director="Steven Soderbergh">
-    <title lang="en">Sex, Lies, and Videotape</title>
+    <title lang="en" original="yes">Sex, Lies, and Videotape</title>
     <title lang="de">Sex, Lügen und Video</title>
   </movie>
   <movie id="movie_29" year="1990" director="David Lynch">
-    <title lang="en">Wild at Heart</title>
+    <title lang="en" original="yes">Wild at Heart</title>
     <title lang="de">Wild at Heart - Die Geschichte von Sailor und Lula</title>
   </movie>
   <movie id="movie_30" year="1991" director="Joel Coen">
-    <title lang="en">Barton Fink</title>
+    <title lang="en" original="yes">Barton Fink</title>
     <title lang="de">Barton Fink</title>
   </movie>
   <movie id="movie_31" year="1992" director="Bille August">
-    <title lang="sv">Den goda viljan</title>
+    <title lang="sv" original="yes">Den goda viljan</title>
     <title lang="en">The Best Intentions</title>
     <title lang="de">Die besten Absichten</title>
   </movie>
   <movie id="movie_32" year="1993" director="Chen Kaige">
-    <title lang="zh">Bàwáng Bié Jī</title>
+    <title lang="zh" original="yes">Bàwáng Bié Jī</title>
     <title lang="en">Farewell My Concubine</title>
     <title lang="de">Lebewohl, meine Konkubine</title>
   </movie>
   <movie id="movie_33" year="1993" director="Jane Campion">
-    <title lang="en">The Piano</title>
+    <title lang="en" original="yes">The Piano</title>
     <title lang="de">Das Piano</title>
   </movie>
   <movie id="movie_34" year="1994" director="Quentin Tarantino">
-    <title lang="en">Pulp Fiction</title>
+    <title lang="en" original="yes">Pulp Fiction</title>
     <title lang="de">Pulp Fiction</title>
   </movie>
   <movie id="movie_35" year="1995" director="Emir Kusturica">
-    <title lang="sr">Podzemlje</title>
+    <title lang="sr" original="yes">Podzemlje</title>
     <title lang="en">Underground</title>
     <title lang="de">Underground</title>
   </movie>
   <movie id="movie_36" year="1996" director="Mike Leigh">
-    <title lang="en">Secrets &amp; Lies</title>
+    <title lang="en" original="yes">Secrets &amp; Lies</title>
     <title lang="de">Lügen und Geheimnisse</title>
   </movie>
   <movie id="movie_37" year="1997" director="Abbas Kiarostami">
-    <title lang="fa">Ta'm-e gīlās</title>
+    <title lang="fa" original="yes">Ta'm-e gīlās</title>
     <title lang="en">Taste of Cherry</title>
     <title lang="de">Der Geschmack der Kirsche</title>
   </movie>
   <movie id="movie_38" year="1997" director="Shohei Imamura">
-    <title lang="ja">Unagi</title>
+    <title lang="ja" original="yes">Unagi</title>
     <title lang="en">The Eel</title>
     <title lang="de">Der Aal</title>
   </movie>
   <movie id="movie_39" year="1998" director="Theo Angelopoulos">
-    <title lang="el">Mia aioniotita kai mia mera</title>
+    <title lang="el" original="yes">Mia aioniotita kai mia mera</title>
     <title lang="en">Eternity and a Day</title>
     <title lang="de">Die Ewigkeit und ein Tag</title>
   </movie>
   <movie id="movie_40" year="1999" director="Jean-Pierre Dardenne, Luc Dardenne">
-    <title lang="fr">Rosetta</title>
+    <title lang="fr" original="yes">Rosetta</title>
     <title lang="en">Rosetta</title>
     <title lang="de">Rosetta</title>
   </movie>
     <movie id="movie_41" year="2000" director="Lars von Trier">
-    <title lang="da">Dancer in the Dark</title>
+    <title lang="da" original="yes">Dancer in the Dark</title>
   <title lang="en">Dancer in the Dark</title>
   <title lang="de">Dancer in the Dark</title>
   </movie>
   <movie id="movie_42" year="2001" director="Nanni Moretti">
-    <title lang="it">La stanza del figlio</title>
+    <title lang="it" original="yes">La stanza del figlio</title>
     <title lang="en">The Son's Room</title>
     <title lang="de">Das Zimmer meines Sohnes</title>
   </movie>
   <movie id="movie_43" year="2002" director="Roman Polanski">
-    <title lang="en">The Pianist</title>
+    <title lang="en" original="yes">The Pianist</title>
     <title lang="de">Der Pianist</title>
   </movie>
   <movie id="movie_44" year="2003" director="Gus Van Sant">
-    <title lang="en">Elephant</title>
+    <title lang="en" original="yes">Elephant</title>
     <title lang="de">Elephant</title>
   </movie>
   <movie id="movie_45" year="2004" director="Michael Moore">
-    <title lang="en">Fahrenheit 9/11</title>
+    <title lang="en" original="yes">Fahrenheit 9/11</title>
     <title lang="de">Fahrenheit 9/11</title>
   </movie>
   <movie id="movie_46" year="2005" director="Jean-Pierre Dardenne, Luc Dardenne">
-    <title lang="fr">L'Enfant</title>
+    <title lang="fr" original="yes">L'Enfant</title>
     <title lang="en">The Child</title>
     <title lang="de">Das Kind</title>
   </movie>
   <movie id="movie_47" year="2006" director="Ken Loach">
-    <title lang="en">The Wind That Shakes the Barley</title>
+    <title lang="en" original="yes">The Wind That Shakes the Barley</title>
     <title lang="de">The Wind That Shakes the Barley</title>
   </movie>
   <movie id="movie_48" year="2007" director="Cristian Mungiu">
-    <title lang="ro">4 luni, 3 săptămâni şi 2 zile</title>
+    <title lang="ro" original="yes">4 luni, 3 săptămâni şi 2 zile</title>
   <title lang="en">4 Months, 3 Weeks and 2 Days</title>
   <title lang="de">4 Monate, 3 Wochen und 2 Tage</title>
   </movie>
   <movie id="movie_49" year="2008" director="Laurent Cantet">
-    <title lang="fr">Entre les murs</title>
+    <title lang="fr" original="yes">Entre les murs</title>
     <title lang="en">The Class</title>
     <title lang="de">Die Klasse</title>
   </movie>
