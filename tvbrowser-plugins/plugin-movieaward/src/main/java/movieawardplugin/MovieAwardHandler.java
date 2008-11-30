@@ -114,8 +114,10 @@ public class MovieAwardHandler extends DefaultHandler {
                                 year,
                                 attributes.getValue("recipient")
           ));
-    } else if ("url".equals(qName) && ("awarddata".equals(parent))){
-      mAward.setUrl(mText.toString());
+    } else if ("provided_by".equals(qName)) {
+      if (attributes.getValue("url") != null) {
+        mAward.setProviderUrl(attributes.getValue("url"));
+      }
     } else if ("awarddata".equals(qName)||"name".equals(qName)
         ||"movies".equals(qName)||"awards".equals(qName)||"alternativetitle".equals(qName)
         ||"categories".equals(qName)||"category".equals(qName)||"title".equals(qName)){
@@ -150,6 +152,10 @@ public class MovieAwardHandler extends DefaultHandler {
       mMovie.addTitle(mAttributes.getValue("lang"), mText.toString(), original);
     } else if ("movie".equals(qName)) {
       mAward.addMovie(mMovie);
+    } else if ("url".equals(qName) && ("awarddata".equals(parent))){
+      mAward.setUrl(mText.toString());
+    } else if ("provided_by".equals(qName)) {
+      mAward.setProviderName(mText.toString());
     } else if ("alternativetitle".equals(qName) && "movie".equals(parent)) {
       mMovie.addAlternativeTitle(mAttributes.getValue("lang"), mText.toString());
     }

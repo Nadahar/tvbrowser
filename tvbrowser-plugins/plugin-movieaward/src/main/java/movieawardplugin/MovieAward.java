@@ -38,6 +38,8 @@ public class MovieAward {
   private ArrayList<Movie> mMovies = new ArrayList<Movie>();
   private HashMap<String, ArrayList<Award>> mAwards = new HashMap<String, ArrayList<Award>>();
   private String mUrl;
+  private String mProviderName;
+  private String mProviderUrl;
 
   public MovieAward() {
   }
@@ -125,5 +127,21 @@ public class MovieAward {
     }
 
     return name;
+  }
+
+  public void setProviderName(String providerName) {
+    mProviderName = providerName;
+  }
+
+  public void setProviderUrl(String providerUrl) {
+    mProviderUrl = providerUrl;
+  }
+
+  public String getProviderUrl() {
+    return mProviderUrl;
+  }
+
+  public String getProviderName() {
+    return mProviderName;
   }
 }
