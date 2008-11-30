@@ -1,24 +1,26 @@
 package movieawardplugin;
 
-import devplugin.Program;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
+import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
-import java.util.ArrayList;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
-import util.ui.WindowClosingIf;
 import util.ui.Localizer;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.Sizes;
-import com.jgoodies.forms.factories.Borders;
+import util.ui.WindowClosingIf;
+
 import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
+
+import devplugin.Program;
 
 public class MovieAwardDialog extends JDialog implements WindowClosingIf {
   /**
@@ -92,6 +94,7 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
             Sizes.dialogUnitYAsPixel(200, this));
 
     getRootPane().setDefaultButton(ok);
+    ok.requestFocusInWindow();
   }
 
   public void close() {
