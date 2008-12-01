@@ -1381,14 +1381,14 @@ public class MainFrame extends JFrame implements DateListener {
     mConfigAssistantDialog.setVisible(false);
     mConfigAssistantDialog.dispose();
     mConfigAssistantDialog = null;
-
+    
+    Settings.handleChangedSettings();
+    
     boolean dataAvailable = TvDataBase.getInstance().dataAvailable(new Date());
+    
     if (!dataAvailable) {
       askForDataUpdateNoDataAvailable();
     }
-
-    Settings.handleChangedSettings();
-
   }
 
   // public void runTvBrowserUpdateAssistant() {
@@ -1877,7 +1877,7 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   public int askForDataUpdateNoDataAvailable() {
-    if(mProgramTableModel.getColumnCount() > 0) {
+    if(mProgramTableModel.getAvailableChannelCount() > 0) {
       return askForDataUpdate(mLocalizer.msg("askforupdatedlg.3",
         "No TV data for todays program available."));
     }

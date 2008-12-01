@@ -40,6 +40,7 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
 import tvbrowser.core.filters.FilterComponent;
+import util.ui.ScrollableJPanel;
 import devplugin.Program;
 import devplugin.ProgramInfoHelper;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
@@ -114,7 +115,7 @@ public class ProgramInfoFilterComponent implements FilterComponent {
      */
     public JPanel getSettingsPanel() {
         FormLayout layout = new FormLayout("pref, 3dlu, pref", "");
-        DefaultFormBuilder builder = new DefaultFormBuilder(layout);
+        DefaultFormBuilder builder = new DefaultFormBuilder(layout, new ScrollableJPanel());
         builder.setDefaultDialogBorder();
         builder.setBorder(Borders.EMPTY_BORDER);
 
