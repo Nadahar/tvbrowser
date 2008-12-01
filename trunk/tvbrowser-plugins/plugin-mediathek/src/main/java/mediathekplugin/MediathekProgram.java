@@ -18,16 +18,15 @@ package mediathekplugin;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
+import mediathekplugin.parser.IParser;
 import util.browserlauncher.Launch;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
+import devplugin.ContextMenuSeparatorAction;
 import devplugin.PluginTreeNode;
 
 public class MediathekProgram implements Comparable<MediathekProgram> {
@@ -39,15 +38,15 @@ public class MediathekProgram implements Comparable<MediathekProgram> {
   private String mTitleLower;
   private String mUrl;
   private ArrayList<MediathekProgramItem> mItems;
-  private Date mLastUpdate = null;
   private static MediathekPlugin plugin = MediathekPlugin.getInstance();
 
-  private String rssFeedUrl = null;
-
   private PluginTreeNode mPluginTreeNode;
+  
+  private IParser mParser;
 
-  public MediathekProgram(String title, String url) {
-    this.mTitle = title;
+  public MediathekProgram(IParser parser, String title, String url) {
+    this.mParser = parser;
+    this.mTitle = parser.fixTitle(title);
     this.mTitleLower = title.toLowerCase();
     this.mUrl = url;
     // initialize with null to be able to differentiate between (yet) unknown
@@ -78,33 +77,9 @@ public class MediathekProgram implements Comparable<MediathekProgram> {
     return mItems;
   }
 
-  private void readRSS() {
-    if ((mLastUpdate != null)
-        && (new Date()).getTime() - mLastUpdate.getTime() < 10000) {
-      return;
-    }
-    String rss = plugin.readUrl(rssFeedUrl);
-    int count = 0;
-    if (rss.indexOf("item") > 0) {
-      Pattern pattern = Pattern.compile(
-          "<title>([^<]+)</title>(.*?)<link>([^<]+)</link>", Pattern.DOTALL);
-      Matcher matcher = pattern.matcher(rss);
-      matcher.region(rss.indexOf("item"), rss.length());
-      while (matcher.find()) {
-        String title = plugin.convertHTML(matcher.group(1));
-        String link = matcher.group(3);
-        addItem(new MediathekProgramItem(title, link));
-        count++;
-      }
-    }
-    logInfo("Read " + count + " episodes for " + getTitle());
-    mLastUpdate = new Date();
-    updatePluginTree(true);
-  }
-
-  protected void updatePluginTree(boolean refreshUI) {
+  public void updatePluginTree(boolean refreshUI) {
     if (mPluginTreeNode == null) {
-      mPluginTreeNode = new MediathekProgramNode(getTitle());
+      mPluginTreeNode = new MediathekProgramNode(this);
       plugin.getRootNode().add(mPluginTreeNode);
     }
     if (mItems != null && mItems.size() > 0) {
@@ -119,25 +94,20 @@ public class MediathekProgram implements Comparable<MediathekProgram> {
     }
   }
 
-  private void logInfo(String string) {
-    MediathekPlugin.getInstance().getLogger().info(string);
+  protected void readEpisodes() {
+    if ((getItemCount() == -1) && mParser.canReadEpisodes()) {
+      UpdateThread.getInstance().addProgram(this);
+    }
   }
 
-  protected void readEpisodes() {
+  protected void parseEpisodes(UpdateThread thread) {
     initializeItems();
-    if (rssFeedUrl == null) {
-      int num = Integer.parseInt(mUrl.substring(mUrl.indexOf("/") + 1));
-      rssFeedUrl = "http://www.zdf.de/ZDFMediathek/content/"
-          + Integer.toString(num) + "?view=rss";
-    }
-    if (rssFeedUrl != null) {
-      readRSS();
-    }
+    mParser.parseEpisodes(this);
   }
 
   protected ActionMenu actionMenuShowEpisodes() {
     Action mainAction = new ContextMenuAction(mLocalizer.msg(
-        "contextMenuEpisodes", "Episodes in the Mediathek"), plugin
+        "context.episodes", "Episodes in the Mediathek"), plugin
         .getContextMenuIcon());
     ArrayList<Action> actionList = new ArrayList<Action>();
     for (final MediathekProgramItem item : getItems()) {
@@ -148,6 +118,9 @@ public class MediathekProgram implements Comparable<MediathekProgram> {
         }
       });
     }
+    actionList.add(ContextMenuSeparatorAction.getInstance());
+    actionList.add(new LaunchBrowserAction(getUrl(), mLocalizer.msg(
+        "context.open", "Show Mediathek")));
     Action[] subActions = new Action[actionList.size()];
     actionList.toArray(subActions);
     return new ActionMenu(mainAction, subActions);
@@ -161,5 +134,9 @@ public class MediathekProgram implements Comparable<MediathekProgram> {
     if (mItems == null) {
       mItems = new ArrayList<MediathekProgramItem>();
     }
+  }
+
+  public boolean canReadEpisodes() {
+    return mParser.canReadEpisodes();
   }
 }

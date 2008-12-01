@@ -21,25 +21,21 @@ import java.awt.Frame;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.SwingUtilities;
 
+import mediathekplugin.parser.ARDParser;
+import mediathekplugin.parser.IParser;
+import mediathekplugin.parser.ZDFParser;
 import util.io.IOUtilities;
 import util.ui.UiUtilities;
 import util.ui.html.HTMLTextHelper;
@@ -89,8 +85,6 @@ public class MediathekPlugin extends Plugin {
 
   private static MediathekPlugin instance = null;
   
-  private static String[] SUPPORTED_CHANNELS = { "zdf", "3sat" }; 
-
   /** The logger for this class */
   private static java.util.logging.Logger logger = Logger
       .getLogger(MediathekPlugin.class.getName());
@@ -98,6 +92,8 @@ public class MediathekPlugin extends Plugin {
   public static Version getVersion() {
     return PLUGIN_VERSION;
   }
+  
+  private IParser[] mParsers;
 
   @Override
   public PluginInfo getInfo() {
@@ -130,7 +126,7 @@ public class MediathekPlugin extends Plugin {
         }
       });
     }
-    // only support ZDF
+    // do we support the channel at all?
     if (!isSupportedChannel(program.getChannel())) {
       return null;
     }
@@ -138,23 +134,28 @@ public class MediathekPlugin extends Plugin {
     if (programs.isEmpty()) {
       return actionMenuReadMediathekContents();
     }
-    // this is the interesting part
+    // do we have any media?
     MediathekProgram mediaProgram = findProgram(program);
-    if (mediaProgram != null) {
+    if (mediaProgram == null) {
+      return null;
+    }
+    // now create a menu
+    if (mediaProgram.canReadEpisodes()) {
       if (mediaProgram.getItemCount() == -1) {
         return actionMenuReadEpisodes(mediaProgram);
       } else {
         return mediaProgram.actionMenuShowEpisodes();
       }
     }
-    return null;
+    else {
+      return new ActionMenu(new LaunchBrowserAction(mediaProgram.getUrl(),
+          mLocalizer.msg("action.browseProgram", "Show Mediathek")));
+    }
   }
 
   public boolean isSupportedChannel(Channel channel) {
-    final String name = channel.getName().toLowerCase();
-    final String id = channel.getId().toLowerCase();
-    for (String supported : SUPPORTED_CHANNELS) {
-      if (name.contains(supported) || id.contains(supported)) {
+    for (IParser parser : mParsers) {
+      if (parser.isSupportedChannel(channel)) {
         return true;
       }
     }
@@ -167,7 +168,7 @@ public class MediathekPlugin extends Plugin {
 
   private ActionMenu actionMenuReadEpisodes(final MediathekProgram mediaProgram) {
     AbstractAction actionSeries = new AbstractAction(mLocalizer.msg(
-        "context.readEpisodes", "Search items in the Mediathek"),
+        "action.readEpisodes", "Search items in the Mediathek"),
         getContextMenuIcon()) {
 
       public void actionPerformed(ActionEvent event) {
@@ -179,7 +180,7 @@ public class MediathekPlugin extends Plugin {
 
   private ActionMenu actionMenuReadMediathekContents() {
     AbstractAction searchMedia = new AbstractAction(mLocalizer.msg(
-        "context.readContents", "Read all Mediathek programs"),
+        "action.readContents", "Read all Mediathek programs"),
         getContextMenuIcon()) {
 
       public void actionPerformed(ActionEvent event) {
@@ -189,39 +190,13 @@ public class MediathekPlugin extends Plugin {
     return new ActionMenu(searchMedia);
   }
 
-  private void addProgram(String title, String relativeUrl) {
-    addProgram(new MediathekProgram(title, relativeUrl));
+  public void addProgram(IParser parser, String title, String url) {
+    addProgram(new MediathekProgram(parser, title, url));
   }
 
   private void addProgram(MediathekProgram program) {
     programs.put(program.getTitle(), program);
     sorted = false;
-  }
-
-  protected String readUrl(String urlString) {
-    URL url;
-    if (!urlString.startsWith("http")) {
-      urlString = "http://www.zdf.de" + urlString;
-    }
-    try {
-      url = new URL(urlString);
-      BufferedReader reader = new BufferedReader(new InputStreamReader(url
-          .openStream(), "utf-8"));
-      String inputLine;
-      StringBuffer buffer = new StringBuffer();
-      while ((inputLine = reader.readLine()) != null) {
-        buffer.append(inputLine);
-      }
-      reader.close();
-      return buffer.toString();
-    } catch (MalformedURLException e1) {
-      // TODO Auto-generated catch block
-      e1.printStackTrace();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    return "";
   }
 
   @Override
@@ -244,9 +219,7 @@ public class MediathekPlugin extends Plugin {
     }
     MediathekProgram mediaProgram = findProgram(program);
     if (mediaProgram != null) {
-      if (mediaProgram.getItemCount() == -1) {
-        UpdateThread.getInstance().addProgram(mediaProgram);
-      }
+      mediaProgram.readEpisodes();
       return new Icon[] { markIcon };
     }
     return null;
@@ -350,25 +323,11 @@ public class MediathekPlugin extends Plugin {
   }
 
   private void readMediathekContents() {
-    String startPage = readUrl("http://www.zdf.de/ZDFmediathek/inhalt?inPopup=true");
-    Pattern pattern = Pattern.compile(Pattern
-        .quote("<a href=\"/ZDFmediathek/content/")
-        + "([^?]+)"
-        + Pattern.quote("?reset=true\">")
-        + "([^<]+)"
-        + Pattern.quote("</a>"));
-    Matcher matcher = pattern.matcher(startPage);
-    int count = 0;
-    while (matcher.find()) {
-      String relativeUrl = matcher.group(1);
-      String title = convertHTML(matcher.group(2));
-      addProgram(title, relativeUrl);
-      count++;
+    for (IParser reader : mParsers) {
+      reader.readContents();
     }
-    final String msg = "Read " + count + " programs from the ZDF Mediathek";
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        logger.info(msg);
         updatePluginTree();
       }
     });
@@ -384,7 +343,7 @@ public class MediathekPlugin extends Plugin {
               Program program = iter.next();
               MediathekProgram mediaProgram = findProgram(program);
               if (mediaProgram != null) {
-                UpdateThread.getInstance().addProgram(mediaProgram);
+                mediaProgram.readEpisodes();
                 program.validateMarking();
               }
             }
@@ -394,7 +353,7 @@ public class MediathekPlugin extends Plugin {
     }
   }
 
-  protected String convertHTML(String html) {
+  public String convertHTML(String html) {
     html = HTMLTextHelper.convertHtmlToText(html);
     html = IOUtilities.replace(html, "&amp;", "&");
     return html;
@@ -423,9 +382,7 @@ public class MediathekPlugin extends Plugin {
 
       public void actionPerformed(ActionEvent e) {
         for (MediathekProgram program : getSortedPrograms()) {
-          if (program.getItemCount() == -1) {
-            UpdateThread.getInstance().addProgram(program);
-          }
+          program.readEpisodes();
         }
       }
     });
@@ -460,4 +417,10 @@ public class MediathekPlugin extends Plugin {
   protected Frame getFrame() {
     return this.getParentFrame();
   }
+  
+  @Override
+  public void onActivation() {
+    mParsers = new IParser[] { new ZDFParser(), new ARDParser() };
+  }
+
 }

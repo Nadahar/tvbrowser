@@ -1,3 +1,19 @@
+/*
+ * Copyright Michael Keppler
+ * 
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package mediathekplugin;
 
 import java.awt.event.ActionEvent;
@@ -38,8 +54,8 @@ public class MediathekProgramNode extends PluginTreeNode {
     return new Program[0];
   }
 
-  public MediathekProgramNode(final String title) {
-    super(title);
+  public MediathekProgramNode(final MediathekProgram mediathekProgram) {
+    super(mediathekProgram.getTitle());
     setGroupingByDateEnabled(false);
     getMutableTreeNode().setShowLeafCountEnabled(false);
     final MediathekPlugin plugin = MediathekPlugin.getInstance();
@@ -49,20 +65,22 @@ public class MediathekProgramNode extends PluginTreeNode {
 
       public void actionPerformed(ActionEvent e) {
         ArrayList<Channel> channels = new ArrayList<Channel>();
-        
+
         for (Channel channel : Plugin.getPluginManager()
             .getSubscribedChannels()) {
           if (plugin.isSupportedChannel(channel)) {
             channels.add(channel);
           }
         }
-        final SearchFormSettings searchSettings = new SearchFormSettings(title);
+        final SearchFormSettings searchSettings = new SearchFormSettings(
+            mediathekProgram.getTitle());
         Channel[] array = new Channel[channels.size()];
         channels.toArray(array);
         searchSettings.setChannels(array);
         SearchHelper.search(plugin.getFrame(), searchSettings);
       }
     });
+    addAction(new LaunchBrowserAction(mediathekProgram.getUrl()));
   }
 
 }
