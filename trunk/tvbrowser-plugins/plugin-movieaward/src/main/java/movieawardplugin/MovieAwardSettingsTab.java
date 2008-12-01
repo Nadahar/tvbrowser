@@ -1,19 +1,20 @@
 package movieawardplugin;
 
-import devplugin.SettingsTab;
+import java.awt.Color;
 
-import javax.swing.JPanel;
 import javax.swing.Icon;
 import javax.swing.JEditorPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.factories.Borders;
 
-import java.awt.Color;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.SettingsTab;
 
 public class MovieAwardSettingsTab implements SettingsTab {
   /**
@@ -36,7 +37,10 @@ public class MovieAwardSettingsTab implements SettingsTab {
 
     builder.append("<html><body>");
 
-    builder.append(mLocalizer.msg("description", "Ths Plugin contains a list of winners for this awards :")).append("<br>");
+    builder.append(
+        mLocalizer.msg("description",
+            "This plugin contains a list of winners for these awards:"))
+        .append("<br>");
 
     builder.append("<ul>");
 
@@ -69,8 +73,6 @@ public class MovieAwardSettingsTab implements SettingsTab {
 
     builder.append("</body></html>");
 
-    System.out.println(builder);
-
     JEditorPane editor = UiUtilities.createHtmlHelpTextArea(builder.toString(), Color.WHITE);
     editor.setBackground(Color.WHITE);
     editor.setOpaque(true);
@@ -82,6 +84,7 @@ public class MovieAwardSettingsTab implements SettingsTab {
   }
 
   public void saveSettings() {
+    // nothing to save
   }
 
   public Icon getIcon() {
