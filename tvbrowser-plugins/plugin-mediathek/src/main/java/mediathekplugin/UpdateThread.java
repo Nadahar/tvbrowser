@@ -40,6 +40,9 @@ public class UpdateThread extends Thread {
     if (program.getItemCount() >= 0) {
       return;
     }
+    if (!program.canReadEpisodes()) {
+      return;
+    }
     updatePrograms.add(program);
     program.initializeItems();
     if (!isAlive()) {
@@ -52,7 +55,7 @@ public class UpdateThread extends Thread {
     while (!isInterrupted()) {
       if (!updatePrograms.isEmpty()) {
         MediathekProgram program = updatePrograms.remove(0);
-        program.readEpisodes();
+        program.parseEpisodes(this);
       }
       try {
         Thread.sleep(1000);
