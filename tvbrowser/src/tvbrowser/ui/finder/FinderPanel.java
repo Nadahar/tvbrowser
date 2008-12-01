@@ -50,6 +50,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 
 import tvbrowser.core.DateListener;
 import tvbrowser.core.TvDataBase;
@@ -262,13 +263,7 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
     }
   }
 
-  public void mouseClicked(MouseEvent event) {
-    if (event.getButton() == MouseEvent.BUTTON1) {
-      int index = mList.locationToIndex(event.getPoint());
-      markDate(((FinderItem) mModel.getElementAt(index)).getDate());
-      MainFrame.getInstance().addKeyboardAction();
-    }
-  }
+  public void mouseClicked(MouseEvent event) {}
 
   public void mouseEntered(MouseEvent arg0) {
   }
@@ -278,15 +273,20 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
     mCurMouseItemInx = -1;
   }
 
-  public void mousePressed(MouseEvent arg0) {
-    if (arg0.isPopupTrigger()) {
-      showPopup(arg0);
+  public void mousePressed(MouseEvent e) {
+    if (e.isPopupTrigger()) {
+      showPopup(e);
     }
   }
 
-  public void mouseReleased(MouseEvent arg0) {
-    if (arg0.isPopupTrigger()) {
-      showPopup(arg0);
+  public void mouseReleased(MouseEvent e) {
+    if (e.isPopupTrigger()) {
+      showPopup(e);
+    }
+    else if (SwingUtilities.isLeftMouseButton(e)) {
+      int index = mList.locationToIndex(e.getPoint());
+      markDate(((FinderItem) mModel.getElementAt(index)).getDate());
+      MainFrame.getInstance().addKeyboardAction();
     }
   }
 

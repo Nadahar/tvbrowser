@@ -100,7 +100,8 @@ public class ChannelJList extends JList {
   public void scrollRectToVisible(Rectangle rect) {
     JScrollPane jScrollPane = (JScrollPane) SwingUtilities.getAncestorOfClass(
         JScrollPane.class, this);
-    if (jScrollPane != null) {
+    
+    if (jScrollPane != null && rect != null && rect.height != 1) {      
       int willScrollTo;
       if (jScrollPane.getViewport().getHeight() == rect.height) {
         willScrollTo = this.getSelectedIndex() + 1;
@@ -111,6 +112,9 @@ public class ChannelJList extends JList {
       if (cellBounds != null) {
         super.scrollRectToVisible(cellBounds);
       }
+    }
+    else if(rect != null) {
+      super.scrollRectToVisible(rect);
     }
   }
  

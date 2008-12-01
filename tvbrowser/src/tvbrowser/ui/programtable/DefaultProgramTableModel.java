@@ -372,7 +372,13 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     return mShownChannelArr;
   }
   
-  
+  /**
+   * @return The number of available channels.
+   */
+  public int getAvailableChannelCount() {
+    checkThread();
+    return mChannelArr.length;
+  }
 
   public int getColumnCount() {
     checkThread();

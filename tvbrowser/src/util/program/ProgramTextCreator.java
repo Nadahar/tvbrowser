@@ -550,13 +550,18 @@ public class ProgramTextCreator {
   
             for (int i = 0; i < infoBitArr.length; i++) {
               if (ProgramInfoHelper.bitSet(info, infoBitArr[i])) {
-                if (infoIconArr[i] != null) {
-                  JLabel iconLabel = new JLabel(infoIconArr[i]);
-                  iconLabel.setToolTipText(infoMsgArr[i]);
-                  buffer.append(doc.createCompTag(iconLabel));
-                } else {
-                  buffer.append(infoMsgArr[i]);
+                JLabel iconLabel;
+                
+                if (infoIconArr[i] != null) {  
+                  iconLabel = new JLabel(infoIconArr[i]);
                 }
+                else {
+                  iconLabel = new JLabel(infoMsgArr[i]);
+                }
+                
+                iconLabel.setToolTipText(infoMsgArr[i]);
+                buffer.append(doc.createCompTag(iconLabel));
+
                 buffer.append("&nbsp;&nbsp;");
               }
             }
