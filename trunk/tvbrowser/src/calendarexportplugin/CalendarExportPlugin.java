@@ -562,8 +562,10 @@ public class CalendarExportPlugin extends Plugin {
         final PluginTreeNode node = mTreeNodes.get(exp);
         out.writeInt(node.getPrograms().length);
         for (final Program p:node.getPrograms()) {
-          p.getDate().writeData(out);
-          out.writeObject(p.getID());
+          if (p != null) {
+              p.getDate().writeData(out);
+              out.writeObject(p.getID());
+          }
         }
       }
     }
