@@ -23,19 +23,20 @@
  */
 package movieawardplugin;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import devplugin.Program;
 import devplugin.ProgramFieldType;
-
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Movie {
   private String mId;
   private int mYear;
   private String mDirector;
-  private HashMap<String, String> mTitle = new HashMap<String, String>();
-  private HashMap<String, ArrayList<String>> mAlternativeTitle = new HashMap<String, ArrayList<String>>();
+  private HashMap<String, String> mTitle = new HashMap<String, String>(4);
+  private HashMap<String, ArrayList<String>> mAlternativeTitle = new HashMap<String, ArrayList<String>>(
+      4);
   private String mOriginalTitle;
 
   public Movie(String id) {
@@ -73,34 +74,39 @@ public class Movie {
   }
 
   public void addAlternativeTitle(String lang, String title) {
-    List<String> list = getAlternativeTitles(lang);
-    list.add(title.toLowerCase());
-  }
-
-  private List<String> getAlternativeTitles(String lang) {
     ArrayList<String> list = mAlternativeTitle.get(lang);
-
+    
     if (list == null) {
       list = new ArrayList<String>();
       mAlternativeTitle.put(lang, list);
     }
-
-    return list;
+    list.add(title.toLowerCase());
   }
 
   public boolean matchesProgram(Program program) {
-    if (program.getTitle().equalsIgnoreCase(mTitle.get(program.getChannel().getCountry())) ||
-        getAlternativeTitles(program.getChannel().getCountry()).contains(program.getTitle().toLowerCase()) ||
-        (mOriginalTitle != null && program.getTitle().equalsIgnoreCase(mOriginalTitle))) {
-      int year = program.getIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE);
-
-      if (year > 0) {
-        if ((year == mYear)|| (year - 1==mYear) || (year + 1 == mYear)){
-          return true;  
+    // avoid String comparison by filtering for year first
+    int year = program.getIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE);
+    if (year > 0) {
+      if (!(year >= mYear - 1 && year <= mYear + 1)) {
+        return false;
+      }
+    }
+    // store all multiple used variables to avoid re-getting
+    final String country = program.getChannel().getCountry();
+    final String localizedTitle = mTitle.get(country);
+    final String programTitle = program.getTitle();
+    if (programTitle.equalsIgnoreCase(localizedTitle)
+        || (mOriginalTitle != null && programTitle.equalsIgnoreCase(
+            mOriginalTitle))) {
+      return true;
+    }
+    // do not use toLowerCase on each program repeatedly
+    final List<String> alternativeTitles = mAlternativeTitle.get(country);
+    if (alternativeTitles != null) {
+      for (String alternateTitle : alternativeTitles) {
+        if (programTitle.equalsIgnoreCase(alternateTitle)) {
+          return true;
         }
-      } else {
-        // No year present
-        return true;
       }
     }
 
