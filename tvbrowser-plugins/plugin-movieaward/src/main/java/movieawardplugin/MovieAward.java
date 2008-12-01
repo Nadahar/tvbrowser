@@ -23,8 +23,8 @@
  */
 package movieawardplugin;
 
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.logging.Logger;
 
@@ -41,16 +41,13 @@ public class MovieAward {
   private String mProviderName;
   private String mProviderUrl;
 
-  public MovieAward() {
-  }
-
   /**
    * Add a name for the award
    * @param language Language (e.g. en, de, de-at)
    * @param name Name of the Award
    */
   public void addName(String language, String name) {
-    mLog.info("Added movie award " + language + "_---" + name);
+    mLog.info("Added movie award " + name + " (" + language + ")");
     mNames.put(language.toLowerCase(), name);
   }
 
