@@ -51,7 +51,9 @@ public class CustomNodeContextMenu extends AbstractContextMenu {
   
   public CustomNodeContextMenu(PluginTree tree, TreePath path, ActionMenu[] menus) {
     super(tree);
-    mDefaultAction = getCollapseExpandAction(path);
+    if (((Node) path.getLastPathComponent()).getAllowsChildren()) {
+      mDefaultAction = getCollapseExpandAction(path);
+    }
     mActionMenus = menus;
     mPath = path;
     if (mActionMenus == null) {
@@ -61,9 +63,11 @@ public class CustomNodeContextMenu extends AbstractContextMenu {
 
   public JPopupMenu getPopupMenu() {
     JPopupMenu menu = new JPopupMenu();
-    JMenuItem defaultMI = new JMenuItem(mDefaultAction);
-    menu.add(defaultMI);
-    defaultMI.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
+    if (mDefaultAction != null) {
+      JMenuItem defaultMI = new JMenuItem(mDefaultAction);
+      menu.add(defaultMI);
+      defaultMI.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
+    }
 
     if (((Node) mPath.getLastPathComponent()).getAllowsChildren()) {
       menu.add(getExpandAllMenuItem(mPath));
@@ -73,14 +77,17 @@ public class CustomNodeContextMenu extends AbstractContextMenu {
     }
 
     if (mActionMenus.length>0) {
-      menu.addSeparator();
-      for (int i=0; i<mActionMenus.length; i++) {
-        JMenuItem menuItem = MenuUtil.createMenuItem(mActionMenus[i]);
-        if (menuItem == null) {
-          menu.addSeparator();
-        }
-        else {
-          menu.add(menuItem);
+      if (mDefaultAction != null) {
+        menu.addSeparator();
+      }
+      for (ActionMenu actionMenu : mActionMenus) {
+        if (actionMenu.getAction() != mDefaultAction) {
+          JMenuItem menuItem = MenuUtil.createMenuItem(actionMenu);
+          if (menuItem == null) {
+            menu.addSeparator();
+          } else {
+            menu.add(menuItem);
+          }
         }
       }
     }
