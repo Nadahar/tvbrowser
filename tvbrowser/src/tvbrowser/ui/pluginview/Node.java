@@ -32,7 +32,6 @@ import javax.swing.Icon;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import util.ui.Localizer;
-
 import devplugin.ActionMenu;
 import devplugin.Date;
 import devplugin.NodeFormatter;
@@ -68,8 +67,6 @@ public class Node extends DefaultMutableTreeNode {
   
   private ProgramReceiveTarget mReceiveTarget;
   
-  private static boolean mIsWeekNodesEnabled = false;
-
   private static NodeFormatter mDefaultNodeFormatter = new NodeFormatter(){
     public String format(ProgramItem item) {
       if (item == null) {
@@ -79,10 +76,9 @@ public class Node extends DefaultMutableTreeNode {
       if (program == null) {
         return "<null>";
       }
-      int h = program.getHours();
-      int m = program.getMinutes();
-      
-      StringBuilder builder = new StringBuilder().append(h).append(':').append(m < 10 ? "0" : "").append(m).append("  ").append(program.getTitle()).append(" (").append(program.getChannel().getName()).append(')');
+      StringBuilder builder = new StringBuilder().append(
+          program.getTimeString()).append("  ").append(program.getTitle())
+          .append(" (").append(program.getChannel().getName()).append(')');
 
       /*if(program.getDate().equals(Date.getCurrentDate().addDays(-1))) {
         builder.insert(0," ").insert(0,Localizer.getLocalization(Localizer.I18N_YESTERDAY));
