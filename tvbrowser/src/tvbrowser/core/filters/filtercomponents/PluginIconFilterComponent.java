@@ -31,7 +31,6 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import devplugin.Program;
@@ -39,96 +38,83 @@ import devplugin.Program;
 /**
  * Accepts Programs that get a Icon from a Plugin
  */
-public class PluginIconFilterComponent implements FilterComponent {
+public class PluginIconFilterComponent extends AbstractFilterComponent {
 
-    private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(PluginIconFilterComponent.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(PluginIconFilterComponent.class);
 
-    private JComboBox mBox;
+  private JComboBox mBox;
 
-    private PluginProxy mPlugin;
+  private PluginProxy mPlugin;
 
-    private String mDescription, mName;
+  public PluginIconFilterComponent(String name, String desc) {
+    super(name, desc);
+  }
 
-    public PluginIconFilterComponent(String name, String desc) {
-        mName = name;
-        mDescription = desc;
+  public PluginIconFilterComponent() {
+    this("", "");
+  }
+
+  public void read(ObjectInputStream in, int version) throws IOException,
+      ClassNotFoundException {
+    String pluginId;
+    pluginId = (String) in.readObject();
+
+    mPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
+  }
+
+  public void write(ObjectOutputStream out) throws IOException {
+    if (mPlugin == null) {
+      out.writeObject("[invalid]");
+    } else {
+      out.writeObject(mPlugin.getId());
     }
+  }
 
-    public PluginIconFilterComponent() {
-        this("", "");
+  public boolean accept(Program program) {
+    if (mPlugin != null && mPlugin.isActivated()
+        && mPlugin.getProgramTableIcons(program) != null) {
+      return true;
     }
+    return false;
+  }
 
-    public void read(ObjectInputStream in, int version) throws IOException, ClassNotFoundException {
-        String pluginId;
-        pluginId = (String) in.readObject();
+  public JPanel getSettingsPanel() {
 
-        mPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
+    JPanel content = new JPanel(new BorderLayout(0, 7));
+    JTextArea ta = new JTextArea(mLocalizer.msg("desc",
+        "Accept all programs marked by plugin:"));
+    ta.setLineWrap(true);
+    ta.setWrapStyleWord(true);
+    ta.setOpaque(false);
+    ta.setEditable(false);
+    ta.setFocusable(false);
+    content.add(ta, BorderLayout.NORTH);
+
+    PluginProxy[] plugins = PluginProxyManager.getInstance()
+        .getActivatedPlugins();
+    mBox = new JComboBox(plugins);
+    if (mPlugin != null) {
+      mBox.setSelectedItem(mPlugin);
     }
+    content.add(mBox, BorderLayout.CENTER);
 
-    public void write(ObjectOutputStream out) throws IOException {
-        if (mPlugin == null) {
-            out.writeObject("[invalid]");
-        } else {
-            out.writeObject(mPlugin.getId());
-        }
-    }
+    JPanel centerPanel = new JPanel(new BorderLayout());
+    centerPanel.add(content, BorderLayout.NORTH);
+    return centerPanel;
+  }
 
-    public boolean accept(Program program) {
-        if (mPlugin != null && mPlugin.isActivated() && mPlugin.getProgramTableIcons(program) != null) {
-            return true;
-        }
-        return false;
-    }
+  @Override
+  public String toString() {
+    return mLocalizer.msg("PluginIcon", "PluginIcon");
+  }
 
-    public JPanel getSettingsPanel() {
+  public void saveSettings() {
+    mPlugin = (PluginProxy) mBox.getSelectedItem();
+  }
 
-        JPanel content = new JPanel(new BorderLayout(0, 7));
-        JTextArea ta = new JTextArea(mLocalizer.msg("desc", "Accept all programs marked by plugin:"));
-        ta.setLineWrap(true);
-        ta.setWrapStyleWord(true);
-        ta.setOpaque(false);
-        ta.setEditable(false);
-        ta.setFocusable(false);
-        content.add(ta, BorderLayout.NORTH);
-
-        PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
-        mBox = new JComboBox(plugins);
-        if (mPlugin != null) {
-            mBox.setSelectedItem(mPlugin);
-        }
-        content.add(mBox, BorderLayout.CENTER);
-        
-        JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.add(content, BorderLayout.NORTH);
-        return centerPanel;
-    }
-
-    public String toString() {
-        return mLocalizer.msg("PluginIcon", "PluginIcon");
-    }
-
-    public void saveSettings() {
-        mPlugin = (PluginProxy) mBox.getSelectedItem();
-    }
-
-    public int getVersion() {
-        return 1;
-    }
-
-    public String getName() {
-        return mName;
-    }
-
-    public String getDescription() {
-        return mDescription;
-    }
-
-    public void setName(String name) {
-        mName = name;
-    }
-
-    public void setDescription(String desc) {
-        mDescription = desc;
-    }
+  public int getVersion() {
+    return 1;
+  }
 
 }

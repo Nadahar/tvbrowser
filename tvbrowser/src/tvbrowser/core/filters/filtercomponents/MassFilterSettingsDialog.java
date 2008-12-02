@@ -46,18 +46,23 @@ import com.jgoodies.forms.factories.Borders;
 public class MassFilterSettingsDialog extends JDialog {
 
   /** Translation */
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(MassFilterSettingsDialog.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(MassFilterSettingsDialog.class);
   /** Show Search-Form */
   private SearchForm mForm;
   /** Search-Settings */
   private SearchFormSettings mSearchFormSettings;
-  
+
   /**
    * Create the Dialog
-   * @param frame Parent-Frame
-   * @param searchFormSettings Settings to use
+   * 
+   * @param frame
+   *          Parent-Frame
+   * @param searchFormSettings
+   *          Settings to use
    */
-  public MassFilterSettingsDialog(JFrame frame, SearchFormSettings searchFormSettings) { 
+  public MassFilterSettingsDialog(JFrame frame,
+      SearchFormSettings searchFormSettings) {
     super(frame, true);
     mSearchFormSettings = searchFormSettings;
     createGui();
@@ -66,10 +71,14 @@ public class MassFilterSettingsDialog extends JDialog {
 
   /**
    * Create the Dialog
-   * @param dialog parent dialog
-   * @param searchFormSettings Settings to use
+   * 
+   * @param dialog
+   *          parent dialog
+   * @param searchFormSettings
+   *          Settings to use
    */
-  public MassFilterSettingsDialog(JDialog dialog, SearchFormSettings searchFormSettings) {
+  public MassFilterSettingsDialog(JDialog dialog,
+      SearchFormSettings searchFormSettings) {
     super(dialog, true);
     mSearchFormSettings = searchFormSettings;
     createGui();
@@ -81,17 +90,17 @@ public class MassFilterSettingsDialog extends JDialog {
    */
   private void createGui() {
     setTitle(mLocalizer.msg("title", "Mass-Filter Settings"));
-    
+
     mForm = new SearchForm(false, false, false);
     mForm.setSearchFormSettings(mSearchFormSettings);
-    
+
     JPanel content = (JPanel) getContentPane();
-    
+
     content.setLayout(new BorderLayout());
     content.setBorder(Borders.DLU4_BORDER);
-    
+
     content.add(mForm, BorderLayout.NORTH);
-    
+
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     ok.addActionListener(new ActionListener() {
 
@@ -99,23 +108,24 @@ public class MassFilterSettingsDialog extends JDialog {
         okPressed();
         setVisible(false);
       }
-      
+
     });
-    
-    JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
+
+    JButton cancel = new JButton(Localizer
+        .getLocalization(Localizer.I18N_CANCEL));
     cancel.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
         setVisible(false);
       }
-      
+
     });
-    
+
     JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     buttons.add(ok);
     buttons.add(cancel);
     content.add(buttons, BorderLayout.SOUTH);
-    
+
     pack();
   }
 
@@ -128,6 +138,7 @@ public class MassFilterSettingsDialog extends JDialog {
 
   /**
    * Get Settings from Dialog
+   * 
    * @return new Settings
    */
   public SearchFormSettings getSearchFormSettings() {

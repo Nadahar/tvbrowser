@@ -34,7 +34,6 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
-import tvbrowser.core.filters.FilterComponent;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.SearchForm;
@@ -44,34 +43,29 @@ import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramSearcher;
 
-public class KeywordFilterComponent implements FilterComponent {
+public class KeywordFilterComponent extends AbstractFilterComponent {
 
-  private static final util.ui.Localizer mLocalizer =
-    util.ui.Localizer.getLocalizerFor(KeywordFilterComponent.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(KeywordFilterComponent.class);
 
   private SearchForm mSearchForm;
-  
+
   private ProgramSearcher mSearcher;
   private ProgramFieldType[] mSearchFieldArr;
 
-  private String mDescription, mName;
-
   private SearchFormSettings mSearchFormSettings;
 
-
   public KeywordFilterComponent(String name, String desc) {
+    super(name, desc);
     setSearchFormSettings(new SearchFormSettings(""));
-    mName = name;
-    mDescription = desc;
   }
 
   public KeywordFilterComponent() {
     this("", "");
   }
 
-  public void read(ObjectInputStream in, int version)
-    throws IOException, ClassNotFoundException
-  {
+  public void read(ObjectInputStream in, int version) throws IOException,
+      ClassNotFoundException {
     setSearchFormSettings(new SearchFormSettings(in));
   }
 
@@ -79,8 +73,6 @@ public class KeywordFilterComponent implements FilterComponent {
     mSearchFormSettings.writeData(out);
   }
 
-  
-  
   private void setSearchFormSettings(SearchFormSettings settings) {
     mSearchFormSettings = settings;
     try {
@@ -88,10 +80,9 @@ public class KeywordFilterComponent implements FilterComponent {
     } catch (TvBrowserException exc) {
       ErrorHandler.handle(exc);
     }
-      
+
     mSearchFieldArr = mSearchFormSettings.getFieldTypes();
   }
-
 
   public void saveSettings() {
     mSearchFormSettings = mSearchForm.getSearchFormSettings();
@@ -104,16 +95,17 @@ public class KeywordFilterComponent implements FilterComponent {
 
   public JPanel getSettingsPanel() {
     String msg;
-    
+
     JPanel content = new JPanel();
     content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 
     JPanel pn = new JPanel(new BorderLayout());
     pn.setBorder(BorderFactory.createEmptyBorder(3, 0, 5, 0));
-    msg = mLocalizer.msg("description", "Accept all programs containing the following keyword:");
+    msg = mLocalizer.msg("description",
+        "Accept all programs containing the following keyword:");
     pn.add(UiUtilities.createHelpTextArea(msg));
     content.add(pn);
-    
+
     mSearchForm = new SearchForm(false, false);
     mSearchForm.setSearchFormSettings(mSearchFormSettings);
     content.add(mSearchForm);
@@ -121,28 +113,13 @@ public class KeywordFilterComponent implements FilterComponent {
     return content;
   }
 
+  @Override
   public String toString() {
     return mLocalizer.msg("keyword", "keyword");
   }
 
   public int getVersion() {
     return 1;
-  }
-
-  public String getName() {
-    return mName;
-  }
-
-  public String getDescription() {
-    return mDescription;
-  }
-
-  public void setName(String name) {
-    mName = name;
-  }
-
-  public void setDescription(String desc) {
-    mDescription = desc;
   }
 
 }

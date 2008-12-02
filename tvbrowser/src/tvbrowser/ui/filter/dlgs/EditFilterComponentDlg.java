@@ -26,11 +26,35 @@
 
 package tvbrowser.ui.filter.dlgs;
 
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import devplugin.PluginAccess;
-import devplugin.PluginsFilterComponent;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Iterator;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
+
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
+import tvbrowser.core.filters.filtercomponents.AgeLimitFilterComponent;
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.filters.filtercomponents.DayFilterComponent;
@@ -50,30 +74,10 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.PlainDocument;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Iterator;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+
+import devplugin.PluginAccess;
+import devplugin.PluginsFilterComponent;
 
 public class EditFilterComponentDlg extends JDialog implements ActionListener, DocumentListener, WindowClosingIf {
 
@@ -143,20 +147,21 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     TreeSet<FilterComponent> set = new TreeSet<FilterComponent>(new FilterComponent.TypeComparator());
     
     if (filterComponentClass == null) {
+      set.add(new AgeLimitFilterComponent());
+      set.add(new BeanShellFilterComponent());
+      set.add(new ChannelFilterComponent());
       set.add(new DayFilterComponent());
-      set.add(new KeywordFilterComponent());
       set.add(new FavoritesFilterComponent());
-      set.add(new ReminderFilterComponent());
+      set.add(new KeywordFilterComponent());
+      set.add(new MassFilterComponent());
       set.add(new PluginFilterComponent());
       set.add(new PluginIconFilterComponent());
-      set.add(new ChannelFilterComponent());
-      set.add(new TimeFilterComponent());
       set.add(new ProgramInfoFilterComponent());
       set.add(new ProgramLengthFilterComponent());
-      set.add(new ProgramRunningFilterComponent());
-      set.add(new BeanShellFilterComponent());
-      set.add(new MassFilterComponent());
       set.add(new ProgramMarkingPriorityFilterComponent());
+      set.add(new ProgramRunningFilterComponent());
+      set.add(new ReminderFilterComponent());
+      set.add(new TimeFilterComponent());
   
       PluginAccess[] plugins = PluginManagerImpl.getInstance().getActivatedPlugins();
       

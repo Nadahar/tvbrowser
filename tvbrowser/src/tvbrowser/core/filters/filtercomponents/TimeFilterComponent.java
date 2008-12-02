@@ -39,12 +39,11 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
 
 import tvbrowser.core.Settings;
-import tvbrowser.core.filters.FilterComponent;
 import util.ui.CaretPositionCorrector;
 import util.ui.UiUtilities;
 import devplugin.Program;
 
-public class TimeFilterComponent implements FilterComponent {
+public class TimeFilterComponent extends AbstractFilterComponent {
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(TimeFilterComponent.class);
@@ -52,8 +51,6 @@ public class TimeFilterComponent implements FilterComponent {
   private JSpinner mFromTimeSp, mToTimeSp;
 
   private int mFromTime, mToTime;
-
-  private String mName, mDescription;
 
   /**
    * show programs which are already running when the time span begins
@@ -67,12 +64,10 @@ public class TimeFilterComponent implements FilterComponent {
   }
 
   public TimeFilterComponent(String name, String description) {
+    super(name, description);
     mFromTime = 16 * 60;
     mToTime = 23 * 60;
 
-    mName = name;
-    mDescription = description;
-    
     mShowRunning = false;
   }
 
@@ -132,8 +127,9 @@ public class TimeFilterComponent implements FilterComponent {
     timePn.add(mFromTimeSp);
     timePn.add(new JLabel(mLocalizer.msg("till", "till")));
     timePn.add(mToTimeSp);
-    
-    mIncludeBtn = new JCheckBox(mLocalizer.msg("includeRunning", "Include programs running at start time"));
+
+    mIncludeBtn = new JCheckBox(mLocalizer.msg("includeRunning",
+        "Include programs running at start time"));
     mIncludeBtn.setSelected(mShowRunning);
     content.add(UiUtilities.createHelpTextArea(mLocalizer.msg("desc", "")),
         BorderLayout.NORTH);
@@ -180,27 +176,12 @@ public class TimeFilterComponent implements FilterComponent {
     }
 
     // Normal-Mode
-    return (start >= mFromTime && start < mToTime) || (mShowRunning && start < mFromTime && end > mFromTime);
+    return (start >= mFromTime && start < mToTime)
+        || (mShowRunning && start < mFromTime && end > mFromTime);
   }
 
   public int getVersion() {
     return 3;
-  }
-
-  public String getName() {
-    return mName;
-  }
-
-  public String getDescription() {
-    return mDescription;
-  }
-
-  public void setName(String name) {
-    mName = name;
-  }
-
-  public void setDescription(String desc) {
-    mDescription = desc;
   }
 
 }
