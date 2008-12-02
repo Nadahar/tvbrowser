@@ -39,7 +39,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import tvbrowser.core.filters.FilterComponent;
 import util.exc.TvBrowserException;
 import util.ui.LineNumberHeader;
 import util.ui.SearchFormSettings;
@@ -52,19 +51,20 @@ import devplugin.ProgramSearcher;
  * 
  * @author bodum
  */
-public class MassFilterComponent implements FilterComponent {
+public class MassFilterComponent extends AbstractFilterComponent {
 
   /** Translation */
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(MassFilterComponent.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(MassFilterComponent.class);
 
-  private String mName, mDescription, mText;
+  private String mText;
 
   private SearchFormSettings mSearchFormSettings, mNewSearchFormSettings;
 
   private ProgramSearcher[] mSearcher;
-  
+
   private JTextArea mTextInput;
-  
+
   private JPanel mSettingsPanel;
 
   /**
@@ -77,12 +77,11 @@ public class MassFilterComponent implements FilterComponent {
   /**
    * Create the Filter
    * 
-   * @param name 
-   * @param description 
+   * @param name
+   * @param description
    */
   public MassFilterComponent(String name, String description) {
-    mName = name;
-    mDescription = description;
+    super(name, description);
     mText = "";
     mSearchFormSettings = new SearchFormSettings("");
     generateSearcher();
@@ -94,15 +93,15 @@ public class MassFilterComponent implements FilterComponent {
   private void generateSearcher() {
     ArrayList<ProgramSearcher> array = new ArrayList<ProgramSearcher>();
     String[] keys = mText.split("\\n");
-    
-    for (int i=0;i<keys.length;i++) {
+
+    for (String key : keys) {
       try {
-        array.add(mSearchFormSettings.createSearcher(keys[i]));
+        array.add(mSearchFormSettings.createSearcher(key));
       } catch (TvBrowserException ex) {
         ex.printStackTrace();
       }
     }
-    
+
     mSearcher = array.toArray(new ProgramSearcher[0]);
   }
 
@@ -111,21 +110,22 @@ public class MassFilterComponent implements FilterComponent {
   }
 
   public boolean accept(Program program) {
-    
+
     if (mSearcher != null) {
-      
-      for (int i=0;i<mSearcher.length;i++) {
-        if (mSearcher[i].matches(program, mSearchFormSettings.getFieldTypes())) {
+
+      for (ProgramSearcher element : mSearcher) {
+        if (element.matches(program, mSearchFormSettings.getFieldTypes())) {
           return true;
         }
       }
-      
+
     }
-    
+
     return false;
   }
 
-  public void read(ObjectInputStream in, int version) throws IOException, ClassNotFoundException {
+  public void read(ObjectInputStream in, int version) throws IOException,
+      ClassNotFoundException {
     mText = (String) in.readObject();
     mSearchFormSettings = new SearchFormSettings(in);
     generateSearcher();
@@ -138,10 +138,11 @@ public class MassFilterComponent implements FilterComponent {
 
   public JPanel getSettingsPanel() {
     mNewSearchFormSettings = mSearchFormSettings;
-    
+
     mSettingsPanel = new JPanel(new BorderLayout());
 
-    mSettingsPanel.add(UiUtilities.createHelpTextArea(mLocalizer.msg("desc", "help-text")), BorderLayout.NORTH);
+    mSettingsPanel.add(UiUtilities.createHelpTextArea(mLocalizer.msg("desc",
+        "help-text")), BorderLayout.NORTH);
 
     mTextInput = new JTextArea(mText);
     JScrollPane scrollPane = new JScrollPane(mTextInput);
@@ -159,9 +160,9 @@ public class MassFilterComponent implements FilterComponent {
       public void actionPerformed(ActionEvent e) {
         showConfigDialog();
       }
-      
+
     });
-    
+
     buttonPanel.add(config);
 
     mSettingsPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -174,43 +175,28 @@ public class MassFilterComponent implements FilterComponent {
    */
   private void showConfigDialog() {
     Window w = UiUtilities.getBestDialogParent(mSettingsPanel);
-    
+
     MassFilterSettingsDialog dialog;
-    
+
     if (w instanceof JFrame) {
       dialog = new MassFilterSettingsDialog((JFrame) w, mNewSearchFormSettings);
     } else {
       dialog = new MassFilterSettingsDialog((JDialog) w, mNewSearchFormSettings);
     }
     dialog.setVisible(true);
-    
+
     mNewSearchFormSettings = dialog.getSearchFormSettings();
   }
-  
+
   public void saveSettings() {
     mText = mTextInput.getText();
     mSearchFormSettings = mNewSearchFormSettings;
     generateSearcher();
   }
 
+  @Override
   public String toString() {
     return mLocalizer.msg("name", "Mass-Filter");
-  }
-
-  public String getName() {
-    return mName;
-  }
-
-  public String getDescription() {
-    return mDescription;
-  }
-
-  public void setName(String name) {
-    mName = name;
-  }
-
-  public void setDescription(String desc) {
-    mDescription = desc;
   }
 
 }

@@ -36,7 +36,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import tvbrowser.core.filters.FilterComponent;
 import util.ui.TabLayout;
 import devplugin.Program;
 
@@ -44,27 +43,28 @@ import devplugin.Program;
  * This Filter Filters for certain Days of the Week
  * 
  * @author bodum
- *
+ * 
  */
-public class DayFilterComponent implements FilterComponent {
+public class DayFilterComponent extends AbstractFilterComponent {
 
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(DayFilterComponent.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(DayFilterComponent.class);
 
   private int mSelectedDays;
-  private String mName, mDescription;
-  JCheckBox mMonday, mTuesday, mWednesday, mThursday, mFriday, mSaturday, mSunday; 
+  JCheckBox mMonday, mTuesday, mWednesday, mThursday, mFriday, mSaturday,
+      mSunday;
 
-  public DayFilterComponent(String name, String desc) {
+  public DayFilterComponent(String name, String description) {
+    super(name, description);
     mSelectedDays = 0;
-    mName = name;
-    mDescription = desc;
   }
 
   public DayFilterComponent() {
     this("", "");
   }
 
-  public void read(ObjectInputStream in, int version) throws IOException, ClassNotFoundException {
+  public void read(ObjectInputStream in, int version) throws IOException,
+      ClassNotFoundException {
     mSelectedDays = in.readInt();
   }
 
@@ -72,13 +72,14 @@ public class DayFilterComponent implements FilterComponent {
     out.writeInt(mSelectedDays);
   }
 
+  @Override
   public String toString() {
     return mLocalizer.msg("day", "Day");
   }
 
   public void saveSettings() {
     mSelectedDays = 0;
-    
+
     if (mMonday.isSelected()) {
       mSelectedDays = mSelectedDays | 1;
     }
@@ -105,63 +106,64 @@ public class DayFilterComponent implements FilterComponent {
   public JPanel getSettingsPanel() {
     JPanel content = new JPanel(new TabLayout(1, 0, 5));
     content.add(new JLabel(mLocalizer.msg("description",
-        "This filter accepts programs belonging to the following channels:")), BorderLayout.NORTH);
+        "This filter accepts programs belonging to the following channels:")),
+        BorderLayout.NORTH);
 
-    mMonday = new JCheckBox(mLocalizer.msg("monday","Monday"));
+    mMonday = new JCheckBox(mLocalizer.msg("monday", "Monday"));
     content.add(mMonday);
-    
+
     if ((mSelectedDays & 1) > 0) {
       mMonday.setSelected(true);
     }
-    
-    mTuesday = new JCheckBox(mLocalizer.msg("tuesday","Tuesday"));
+
+    mTuesday = new JCheckBox(mLocalizer.msg("tuesday", "Tuesday"));
     content.add(mTuesday);
 
     if ((mSelectedDays & 2) > 0) {
       mTuesday.setSelected(true);
     }
 
-    mWednesday = new JCheckBox(mLocalizer.msg("wednesday","Wednesday"));
+    mWednesday = new JCheckBox(mLocalizer.msg("wednesday", "Wednesday"));
     content.add(mWednesday);
 
     if ((mSelectedDays & 4) > 0) {
       mWednesday.setSelected(true);
     }
 
-    mThursday = new JCheckBox(mLocalizer.msg("thursday","Thursday"));
+    mThursday = new JCheckBox(mLocalizer.msg("thursday", "Thursday"));
     content.add(mThursday);
 
     if ((mSelectedDays & 8) > 0) {
       mThursday.setSelected(true);
     }
 
-    mFriday = new JCheckBox(mLocalizer.msg("friday","Friday"));
+    mFriday = new JCheckBox(mLocalizer.msg("friday", "Friday"));
     content.add(mFriday);
 
     if ((mSelectedDays & 16) > 0) {
       mFriday.setSelected(true);
     }
 
-    mSaturday = new JCheckBox(mLocalizer.msg("saturday","Saturday"));
+    mSaturday = new JCheckBox(mLocalizer.msg("saturday", "Saturday"));
     content.add(mSaturday);
 
     if ((mSelectedDays & 32) > 0) {
       mSaturday.setSelected(true);
     }
 
-    mSunday = new JCheckBox(mLocalizer.msg("sunday","Sunday"));
+    mSunday = new JCheckBox(mLocalizer.msg("sunday", "Sunday"));
     content.add(mSunday);
 
     if ((mSelectedDays & 64) > 0) {
       mSunday.setSelected(true);
     }
-    
+
     return content;
   }
 
   public boolean accept(Program program) {
     int day = program.getDate().getCalendar().get(Calendar.DAY_OF_WEEK);
-    
+
     if ((day == Calendar.MONDAY) && ((mSelectedDays & 1) > 0)) {
       return true;
     }
@@ -183,28 +185,11 @@ public class DayFilterComponent implements FilterComponent {
     if ((day == Calendar.SUNDAY) && ((mSelectedDays & 64) > 0)) {
       return true;
     }
-    
+
     return false;
   }
 
   public int getVersion() {
     return 1;
   }
-
-  public String getName() {
-    return mName;
-  }
-
-  public String getDescription() {
-    return mDescription;
-  }
-
-  public void setName(String name) {
-    mName = name;
-  }
-
-  public void setDescription(String desc) {
-    mDescription = desc;
-  }
-
 }

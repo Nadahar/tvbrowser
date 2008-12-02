@@ -37,7 +37,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import tvbrowser.core.filters.FilterComponent;
 import util.exc.ErrorHandler;
 import util.ui.LineNumberHeader;
 import util.ui.beanshell.BeanShellEditor;
@@ -52,12 +51,10 @@ import devplugin.beanshell.BeanShellProgramFilterIf;
  * Programs
  * 
  */
-public class BeanShellFilterComponent implements FilterComponent {
+public class BeanShellFilterComponent extends AbstractFilterComponent {
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(BeanShellFilterComponent.class);
-
-  private String mName, mDescription;
 
   private BeanShellEditor mScriptEditor;
 
@@ -70,8 +67,7 @@ public class BeanShellFilterComponent implements FilterComponent {
   }
 
   public BeanShellFilterComponent(String name, String description) {
-    mName = name;
-    mDescription = description;
+    super(name, description);
     mScriptSource = "import devplugin.beanshell.BeanShellProgramFilterIf;\n"
         + "import devplugin.Program;\n"
         + "import devplugin.ProgramFieldType;\n\n" + "accept(Program p) {\n\n"
@@ -96,6 +92,7 @@ public class BeanShellFilterComponent implements FilterComponent {
     out.writeObject(mScriptSource);
   }
 
+  @Override
   public String toString() {
     return mLocalizer.msg("BeanShellFilter", "BeanShell-Filter");
   }
@@ -174,22 +171,6 @@ public class BeanShellFilterComponent implements FilterComponent {
 
   public int getVersion() {
     return 1;
-  }
-
-  public String getName() {
-    return mName;
-  }
-
-  public String getDescription() {
-    return mDescription;
-  }
-
-  public void setName(String name) {
-    mName = name;
-  }
-
-  public void setDescription(String desc) {
-    mDescription = desc;
   }
 
 }

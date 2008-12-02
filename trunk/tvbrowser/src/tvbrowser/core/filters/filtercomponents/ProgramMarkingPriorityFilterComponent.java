@@ -30,14 +30,14 @@ import java.io.ObjectOutputStream;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
+import tvbrowser.ui.settings.MarkingsSettingsTab;
+import util.ui.Localizer;
+import util.ui.MarkPriorityComboBoxRenderer;
+
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Program;
-import tvbrowser.core.filters.FilterComponent;
-import tvbrowser.ui.settings.MarkingsSettingsTab;
-import util.ui.Localizer;
-import util.ui.MarkPriorityComboBoxRenderer;
 
 /**
  * A filter component for tracking programs that have a selected mark priority.
@@ -45,63 +45,59 @@ import util.ui.MarkPriorityComboBoxRenderer;
  * @author René Mach
  * @since 2.5.1
  */
-public class ProgramMarkingPriorityFilterComponent implements FilterComponent {
+public class ProgramMarkingPriorityFilterComponent extends
+    AbstractFilterComponent {
 
-  private static Localizer mLocalizer = Localizer.getLocalizerFor(ProgramMarkingPriorityFilterComponent.class);
-  private String mName, mDescription;
-  
+  private static Localizer mLocalizer = Localizer
+      .getLocalizerFor(ProgramMarkingPriorityFilterComponent.class);
+
   private int mMarkPriority = Program.MIN_MARK_PRIORITY;
   private JComboBox mValueSelection;
-  
+
   /**
    * Creates an new instance of this filter component.
    */
   public ProgramMarkingPriorityFilterComponent() {
-    this("","");
+    this("", "");
   }
-  
+
   /**
-   * Creates an instance of this filter component
-   * with given name and given description.
+   * Creates an instance of this filter component with given name and given
+   * description.
    * 
-   * @param name The name of this filter component.
-   * @param desc The description for this filter component.
+   * @param name
+   *          The name of this filter component.
+   * @param desc
+   *          The description for this filter component.
    */
   public ProgramMarkingPriorityFilterComponent(String name, String desc) {
-    mName = name;
-    mDescription = desc;
+    super(name, desc);
   }
-  
+
   public boolean accept(Program program) {
     return program.getMarkPriority() == mMarkPriority;
   }
 
-  public String getDescription() {
-    return mDescription;
-  }
-
-  public String getName() {
-    return mName;
-  }
-
   public JPanel getSettingsPanel() {
     CellConstraints cc = new CellConstraints();
-    JPanel p = new JPanel(new FormLayout("default","pref"));
-    
+    JPanel p = new JPanel(new FormLayout("default", "pref"));
+
     Localizer localizer = MarkingsSettingsTab.mLocalizer;
     String[] values = {
-        localizer.msg("color.minPriority","1. Color (minimum priority)"),
-        localizer.msg("color.lowerMediumPriority","2. Color (lower medium priority)"),
-        localizer.msg("color.mediumPriority","3. Color (Medium priority)"),
-        localizer.msg("color.higherMediumPriority","4. Color (higher medium priority)"),
-        localizer.msg("color.maxPriority","5. Color (maximum priority)")};
-    
+        localizer.msg("color.minPriority", "1. Color (minimum priority)"),
+        localizer.msg("color.lowerMediumPriority",
+            "2. Color (lower medium priority)"),
+        localizer.msg("color.mediumPriority", "3. Color (Medium priority)"),
+        localizer.msg("color.higherMediumPriority",
+            "4. Color (higher medium priority)"),
+        localizer.msg("color.maxPriority", "5. Color (maximum priority)") };
+
     mValueSelection = new JComboBox(values);
     mValueSelection.setSelectedIndex(mMarkPriority);
     mValueSelection.setRenderer(new MarkPriorityComboBoxRenderer());
-    
-    p.add(mValueSelection, cc.xy(1,1));
-    
+
+    p.add(mValueSelection, cc.xy(1, 1));
+
     return p;
   }
 
@@ -115,23 +111,17 @@ public class ProgramMarkingPriorityFilterComponent implements FilterComponent {
   }
 
   public void saveSettings() {
-    if(mValueSelection != null)
+    if (mValueSelection != null) {
       mMarkPriority = mValueSelection.getSelectedIndex();
-  }
-
-  public void setDescription(String desc) {
-    mDescription = desc;
-  }
-
-  public void setName(String name) {
-    mName = name;
+    }
   }
 
   public void write(ObjectOutputStream out) throws IOException {
     out.writeInt(mMarkPriority);
   }
-  
+
+  @Override
   public String toString() {
-    return mLocalizer.msg("name","Marking priority");
+    return mLocalizer.msg("name", "Marking priority");
   }
 }
