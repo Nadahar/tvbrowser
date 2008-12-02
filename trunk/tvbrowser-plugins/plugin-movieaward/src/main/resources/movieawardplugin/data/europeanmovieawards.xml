@@ -20,6 +20,10 @@
     <name lang="de">Beste europäische Darstellerin</name>
     <name lang="en">Best European Actress</name>
   </category>
+  <category id="best_screenwriter">
+    <name lang="de">Bestes europäisches Drehbuch</name>
+    <name lang="en">Best European Screenwriter</name>
+  </category>
 </categories>
 
 
@@ -271,6 +275,64 @@
    <title lang="en" original="yes">The Queen</title>
     <title lang="de">Die Queen </title>
   </movie>
+  <movie id="movie_134" year="1987" director="Louis Malle">
+   <title lang="fr" original="yes">Au revoir, les enfants</title>
+    <title lang="en">Au revoir, les enfants</title>
+    <title lang="de">Auf Wiedersehen, Kinder</title>
+  </movie>
+  <movie id="movie_135" year="1988" director="Vasili Pichul">
+   <title lang="ru" original="yes">Malenkaja Vera</title>
+    <title lang="en">Malenkaja Vera</title>
+    <title lang="de">Kleine Vera</title>
+  </movie>
+  <movie id="movie_136" year="1989" director="Vitali Kanevsky">
+   <title lang="ru" original="yes">Zamri, oumri, voskresni!</title>
+    <title lang="en">Zamri, umri, voskresni</title>
+    <title lang="de">Halte still - stirb - erwache</title>
+  </movie>
+  <movie id="movie_137" year="1992" director="István Szabó">
+   <title lang="hu" original="yes">Édes Emma, drága Böbe</title>
+   <alternativetitle lang="hu">Édes Emma, drága Böbe - vázlatok, aktok</alternativetitle>
+   <title lang="en">Sweet Emma, Dear Böbe</title>
+   <title lang="de">Süße Emma, liebe Böbe</title>
+  </movie>
+  <movie id="movie_138" year="1996" director=" Sergei Bodrov">
+   <title lang="ru" original="yes">Kavkazskiy plennik</title>
+   <title lang="en">Prisoner of the Mountains</title>
+   <title lang="de">Gefangen im Kaukasus</title>
+  </movie>
+  <movie id="movie_139" year="1997" director="Alain Berliner">
+   <title lang="fr" original="yes">Ma vie en rose</title>
+   <title lang="en">Ma vie en rose</title>
+   <title lang="de">Mein Leben in Rosarot</title>
+  </movie>
+  <movie id="movie_140" year="1998" director="Peter Howitt">
+   <title lang="en" original="yes">Sliding Doors</title>
+   <title lang="de">Sie liebt ihn - Sie liebt ihn nicht</title>
+  </movie>
+  <movie id="movie_141" year="2000" director="Agnès Jaoui">
+   <title lang="fr" original="yes">Le goût des autres</title>
+   <title lang="en">The Taste of Others</title>
+   <title lang="de">Lust auf anderes</title>
+  </movie>
+  <movie id="movie_142" year="2001" director="Danis Tanović">
+   <title lang="bs" original="yes">Ničija zemlja</title>
+   <title lang="en">No Man's Land</title>
+   <title lang="de">No Man's Land</title>
+  </movie>
+  <movie id="movie_143" year="2004" director="Agnès Jaoui">
+   <title lang="fr" original="yes">Comme une image</title>
+   <title lang="en">Look at Me</title>
+   <title lang="de">Schau mich an!</title>
+  </movie>
+  <movie id="movie_144" year="2005" director="Hany Abu-Assad">
+   <title lang="en" original="yes">Paradise Now</title>
+   <title lang="de">Paradise Now</title>
+  </movie>
+  <movie id="movie_145" year="2007" director="Fatih Akın">
+   <title lang="de" original="yes">Auf der anderen Seite</title>
+   <title lang="en">The Edge of Heaven</title>
+  </movie>
 </movies>
 
 <awards>
@@ -340,6 +402,23 @@
   <award category="best_actress" recipient="Julia Jentsch" status="winner" movie="movie_132" year="2005" />
   <award category="best_actress" recipient="Penelope Cruz" status="winner" movie="movie_105" year="2006" />
   <award category="best_actress" recipient="Helen Mirren" status="winner" movie="movie_133" year="2007" />
+  <award category="best_screenwriter" recipient="Louis Malle" status="winner" movie="movie_134" year="1988" />
+  <award category="best_screenwriter" recipient="Maria Khmelik" status="winner" movie="movie_135" year="1989" />
+  <award category="best_screenwriter" recipient="Vitali Kanewski" status="winner" movie="movie_136" year="1990" />
+  <award category="best_screenwriter" recipient="Jaco Van Dormael" status="winner" movie="movie_109" year="1991" />
+  <award category="best_screenwriter" recipient="István Szabó" status="winner" movie="movie_137" year="1992" />
+  <award category="best_screenwriter" recipient="Arif Aliev, Sergei Bodrov, Boris Giller" status="winner" movie="movie_138" year="1996" />
+  <award category="best_screenwriter" recipient="Alain Berliner, Cris Vander Stappen" status="winner" movie="movie_139" year="1997" />
+  <award category="best_screenwriter" recipient="Peter Howitt" status="winner" movie="movie_140" year="1998" />
+  <award category="best_screenwriter" recipient="István Szabó, Israel Horovitz" status="winner" movie="movie_114" year="1999" />
+  <award category="best_screenwriter" recipient="Jean-Pierre Bacri, Agnès Jaoui" status="winner" movie="movie_141" year="2000" />
+  <award category="best_screenwriter" recipient="Danis Tanovic" status="winner" movie="movie_142" year="2001" />
+  <award category="best_screenwriter" recipient="Pedro Almodóvar" status="winner" movie="movie_15" year="2002" />
+  <award category="best_screenwriter" recipient="Bernd Lichtenberg" status="winner" movie="movie_16" year="2003" />
+  <award category="best_screenwriter" recipient="Jean-Pierre Bacri, Agnès Jaoui" status="winner" movie="movie_143" year="2004" />
+  <award category="best_screenwriter" recipient="Hany Abu-Assad, Bero Beyer" status="winner" movie="movie_144" year="2005" />
+  <award category="best_screenwriter" recipient="Florian Henckel von Donnersmarck" status="winner" movie="movie_19" year="2006" />
+  <award category="best_screenwriter" recipient="Fatih Akın" status="winner" movie="movie_145" year="2007" />
 
 </awards>
 
