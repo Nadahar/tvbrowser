@@ -55,7 +55,7 @@ public class TVPGrabber
    * regular expression to grab the URL of the next forum page
    */
   private static Pattern PATTERN_NEXT_URL = Pattern
-      .compile("<a href=\"([^\"]*?)\"[^>]*>Nächste</a>");
+      .compile("<a href=\"([^\"]*?)\"[^>]*>NÃ¤chste</a>");
 
   private boolean mRecursiveGrab = true;
   private boolean mOnlyProgrammInFuture = true;
@@ -92,7 +92,7 @@ public class TVPGrabber
 		return lastUrl;
 	}
 
-	public List<TVPProgram> Parse(String url)
+	public List<TVPProgram> parse(String url)
 	{
 		List<TVPProgram> programList = new ArrayList<TVPProgram>();
 
@@ -224,7 +224,7 @@ public class TVPGrabber
 		{
 			boolean isHeader = false;
 
-			String[] items = line.split("[,|·]");
+			String[] items = line.split("[,|ï¿½]");
 			if (items.length == 4)
 			{
 
