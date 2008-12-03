@@ -37,8 +37,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import devplugin.PluginAccess;
-import devplugin.PluginsFilterComponent;
 
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
@@ -55,28 +53,31 @@ import tvbrowser.core.filters.filtercomponents.ProgramRunningFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ReminderFilterComponent;
 import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
 import tvbrowser.core.plugin.PluginManagerImpl;
+import devplugin.PluginAccess;
+import devplugin.PluginsFilterComponent;
 
 public class FilterComponentList {
-  
+
   private static FilterComponentList mInstance;
 
-  private static ArrayList<FilterComponent> mComponentList;  
-  
+  private static ArrayList<FilterComponent> mComponentList;
+
   private static java.util.logging.Logger mLog
-      = java.util.logging.Logger.getLogger(FilterComponentList.class.getName());
+  = java.util.logging.Logger
+      .getLogger(FilterComponentList.class.getName());
 
   private FilterComponentList() {
     ObjectInputStream in=null;
-    mComponentList = new ArrayList<FilterComponent>();    
-    
+    mComponentList = new ArrayList<FilterComponent>();
+
     try {
-    
-    
+
+
       File filterCompFile=new File(tvbrowser.core.filters.FilterList.FILTER_DIRECTORY,"filter.comp");
-      
+
       if (filterCompFile.exists() && filterCompFile.isFile()) {
-      
-        in=new ObjectInputStream(new BufferedInputStream(new FileInputStream(filterCompFile), 0x1000));        
+
+        in=new ObjectInputStream(new BufferedInputStream(new FileInputStream(filterCompFile), 0x1000));
         @SuppressWarnings("unused") // version not yet used
         int version=in.readInt();
         int compCnt=in.readInt();
@@ -92,7 +93,7 @@ public class FilterComponentList {
           }
         }
         in.close();
-      }      
+      }
     }catch (FileNotFoundException e) {
       e.printStackTrace();
     }catch(IOException e) {
@@ -101,20 +102,21 @@ public class FilterComponentList {
       e.printStackTrace();
     }finally {
       if (in!=null) {
-        try { in.close(); } catch(IOException exc) {}      
+        try { in.close(); } catch(IOException exc) {}
       }
-    }     
+    }
   }
-  
-  
+
+
   public void store() {
     File filterCompFile=new File(tvbrowser.core.filters.FilterList.FILTER_DIRECTORY,"filter.comp");
     try {
-			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filterCompFile));
-		  out.writeInt(1);
-      
-      
-      
+      ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(
+          filterCompFile));
+      out.writeInt(1);
+
+
+
       out.writeInt(mComponentList.size());
       Iterator<FilterComponent> it = mComponentList.iterator();
       while (it.hasNext()) {
@@ -122,15 +124,15 @@ public class FilterComponentList {
         writeComponent(out,comp);
       }
       out.close();
-    
-    
-    
+
+
+
     } catch (IOException e) {
-			e.printStackTrace();
-		}
-    
+      e.printStackTrace();
+    }
+
   }
-  
+
   private void writeComponent(ObjectOutputStream out, FilterComponent comp) throws IOException {
     out.writeObject(comp.getClass().getName());
     out.writeInt(comp.getVersion());
@@ -138,64 +140,52 @@ public class FilterComponentList {
     out.writeObject(comp.getDescription());
     comp.write(out);
   }
-  
+
   private FilterComponent readComponent(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        
-    
     String className=(String)in.readObject();
     int version = in.readInt();
     String name = (String)in.readObject();
     String description = (String)in.readObject();
     FilterComponent filterComponent = null;
-    if (className.endsWith(".KeywordFilterComponent")) {
-      filterComponent = new KeywordFilterComponent(name, description);
-    }
-    else if (className.endsWith(".PluginFilterComponent")) {
-        filterComponent = new PluginFilterComponent(name, description);
-    }
-    else if (className.endsWith(".PluginIconFilterComponent")) {
-        filterComponent = new PluginIconFilterComponent(name, description);
-    }
-    else if (className.endsWith(".ChannelFilterComponent")) {
+    if (className.endsWith(".AgeLimitFilterComponent")) {
+      filterComponent = new BeanShellFilterComponent(name, description);
+    } else if (className.endsWith(".BeanShellFilterComponent")) {
+      filterComponent = new BeanShellFilterComponent(name, description);
+    } else if (className.endsWith(".ChannelFilterComponent")) {
       filterComponent = new ChannelFilterComponent(name, description);
-    }
-    else if (className.endsWith(".TimeFilterComponent")) {
-        filterComponent = new TimeFilterComponent(name, description);
-    }
-    else if (className.endsWith(".ProgramInfoFilterComponent")) {
-        filterComponent = new ProgramInfoFilterComponent(name, description);
-    }
-    else if (className.endsWith(".ProgramLengthFilterComponent")) {
-        filterComponent = new ProgramLengthFilterComponent(name, description);
-    }
-    else if (className.endsWith(".ProgramRunningFilterComponent")) {
-        filterComponent = new ProgramRunningFilterComponent(name, description);
-    }
-    else if (className.endsWith(".BeanShellFilterComponent")) {
-        filterComponent = new BeanShellFilterComponent(name, description);
-    }
-    else if (className.endsWith(".MassFilterComponent")) {
-      filterComponent = new MassFilterComponent(name, description);
-    } 
-    else if (className.endsWith(".DayFilterComponent")) {
+    } else if (className.endsWith(".DayFilterComponent")) {
       filterComponent = new DayFilterComponent(name, description);
-    }
-    else if (className.endsWith(".FavoritesFilterComponent")) {
+    } else if (className.endsWith(".FavoritesFilterComponent")) {
       filterComponent = new FavoritesFilterComponent(name, description);
-    }
-    else if (className.endsWith(".ReminderFilterComponent")) {
+    } else if (className.endsWith(".KeywordFilterComponent")) {
+      filterComponent = new KeywordFilterComponent(name, description);
+    } else if (className.endsWith(".MassFilterComponent")) {
+      filterComponent = new MassFilterComponent(name, description);
+    } else if (className.endsWith(".PluginFilterComponent")) {
+      filterComponent = new PluginFilterComponent(name, description);
+    } else if (className.endsWith(".PluginIconFilterComponent")) {
+      filterComponent = new PluginIconFilterComponent(name, description);
+    } else if (className.endsWith(".ProgramInfoFilterComponent")) {
+      filterComponent = new ProgramInfoFilterComponent(name, description);
+    } else if (className.endsWith(".ProgramLengthFilterComponent")) {
+      filterComponent = new ProgramLengthFilterComponent(name, description);
+    } else if (className.endsWith(".ProgramMarkingPriorityFilterComponent")) {
+      filterComponent = new ProgramMarkingPriorityFilterComponent(name,
+          description);
+    } else if (className.endsWith(".ProgramRunningFilterComponent")) {
+      filterComponent = new ProgramRunningFilterComponent(name, description);
+    } else if (className.endsWith(".ReminderFilterComponent")) {
       filterComponent = new ReminderFilterComponent(name, description);
+    } else if (className.endsWith(".TimeFilterComponent")) {
+      filterComponent = new TimeFilterComponent(name, description);
     }
-    else if (className.endsWith(".ProgramMarkingPriorityFilterComponent")) {
-      filterComponent = new ProgramMarkingPriorityFilterComponent(name, description);
-    }    
     else {
       try {
         PluginAccess[] plugins = PluginManagerImpl.getInstance().getActivatedPlugins();
-        
+
         for(PluginAccess plugin : plugins) {
           Class<? extends PluginsFilterComponent>[] clazzes = plugin.getAvailableFilterComponentClasses();
-          
+
           if(clazzes != null) {
             for(Class<? extends PluginsFilterComponent> clazz : clazzes) {
               if(clazz.getName().compareTo(className) == 0) {
@@ -205,7 +195,7 @@ public class FilterComponentList {
             }
           }
         }
-        
+
         filterComponent.setName(name);
         filterComponent.setDescription(description);
       }catch(Exception e) {
@@ -214,10 +204,10 @@ public class FilterComponentList {
         return null;
       }
     }
-   
+
     if (filterComponent!=null) {
       filterComponent.read(in, version);
-      
+
       /*
        * If the FilterComponent is for a Plugin we have to check
        * if it was a Plugin that is in the core now. If it is so
@@ -225,53 +215,55 @@ public class FilterComponentList {
        */
       if(filterComponent instanceof PluginFilterComponent) {
         String pluginId = ((PluginFilterComponent)filterComponent).getPluginId();
-        
-        if(pluginId.compareTo("java.reminderplugin.ReminderPlugin") == 0)
+
+        if(pluginId.compareTo("java.reminderplugin.ReminderPlugin") == 0) {
           filterComponent = new ReminderFilterComponent(name, description);
-        else if(pluginId.compareTo("java.favoritesplugin.FavoritesPlugin") == 0)
+        } else if(pluginId.compareTo("java.favoritesplugin.FavoritesPlugin") == 0) {
           filterComponent = new FavoritesFilterComponent(name, description);
+        }
       }
-    } 
-    return filterComponent; 
+    }
+    return filterComponent;
   }
-  
-  
+
+
   public FilterComponent[] getAvailableFilterComponents() {
     return mComponentList.toArray(new FilterComponent[mComponentList.size()]);
   }
-  
-  
+
+
   public FilterComponent getFilterComponentByName(String name) {
     for(FilterComponent c : mComponentList) {
-      if(c.getName().compareTo(name) == 0)
+      if(c.getName().compareTo(name) == 0) {
         return c;
+      }
     }
-    
+
     return null;
   }
-  
-  
+
+
   public static FilterComponentList getInstance() {
     if (mInstance == null) {
       mInstance = new FilterComponentList();
     }
     return mInstance;
   }
-  
+
   public void add(FilterComponent comp) {
     mComponentList.add(comp);
-    //mComponentMap.put(comp.getName().toUpperCase(), comp); 
+    //mComponentMap.put(comp.getName().toUpperCase(), comp);
   }
-    
+
   public boolean exists(String name) {
     return getFilterComponentByName(name) != null;
-    //return mComponentMap.containsKey(name.toUpperCase());  
+    //return mComponentMap.containsKey(name.toUpperCase());
   }
   public void remove(String filterCompName) {
     mComponentList.remove(getFilterComponentByName(filterCompName));
     //mComponentMap.remove(filterCompName.toUpperCase());
   }
-  
+
   public String[] getChannelFilterNames() {
     ArrayList<String> channelFilters = new ArrayList<String>();
     for (FilterComponent component : getAvailableFilterComponents()) {
