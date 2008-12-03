@@ -38,8 +38,8 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
@@ -60,7 +60,7 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	private Properties mProperties;
 	private Thread mThread;
 	private TVPearl mTVPearls;
-	private Boolean mHasRightToDownload = false;
+	private boolean mHasRightToDownload = false;
 	private Point mPearlDialogLocation = null;
 	private Dimension mPearlDialogSize = null;
 	private Point mPearlInfoDialogLocation = null;
@@ -410,7 +410,7 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		return createImageIcon("actions", "program_unknown", 16);
 	}
 
-	String getDayName(Calendar cal, Boolean showToday)
+	String getDayName(Calendar cal, boolean showToday)
 	{
 		SimpleDateFormat df = new SimpleDateFormat("E");
 		String day = df.format(cal.getTime());
@@ -456,9 +456,9 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		return mProperties;
 	}
 
-	Boolean getPropertyBoolean(String property)
+	boolean getPropertyBoolean(String property)
 	{
-		Boolean result = false;
+		boolean result = false;
 		try
 		{
 			result = Integer.parseInt(mProperties.getProperty(property)) == 1;
@@ -468,7 +468,7 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		return result;
 	}
 
-	void setProperty(String property, Boolean value)
+	void setProperty(String property, boolean value)
 	{
 		mProperties.setProperty(property, value ? "1" : "0");
 	}
