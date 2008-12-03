@@ -17,13 +17,22 @@
  */
 package tvpearlplugin;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import devplugin.*;
+import devplugin.Channel;
+import devplugin.Plugin;
+import devplugin.Program;
 
 public class TVPearl
 {
@@ -34,7 +43,7 @@ public class TVPearl
 	private String mUrl;
 	private List<TVPProgram> mProgramList;
 	private Calendar mLastUpdate;
-	private Boolean mReindexAll = true;
+	private boolean mReindexAll = true;
 
 	public TVPearl()
 	{
@@ -43,12 +52,12 @@ public class TVPearl
 		mLastUpdate.set(Calendar.HOUR_OF_DAY, mLastUpdate.get(Calendar.HOUR_OF_DAY) - 13);
 	}
 
-	public Boolean getReindexAll()
+	public boolean getReindexAll()
 	{
 		return mReindexAll;
 	}
 
-	public void setReindexAll(Boolean reindexAll)
+	public void setReindexAll(boolean reindexAll)
 	{
 		mReindexAll = reindexAll;
 	}
@@ -70,7 +79,7 @@ public class TVPearl
 			mLastUpdate = Calendar.getInstance();
 
 			TVPGrabber grabber = new TVPGrabber();
-			List<TVPProgram> programList = grabber.Parse(mUrl);
+			List<TVPProgram> programList = grabber.parse(mUrl);
 			mUrl = grabber.getLastUrl();
 
 			for (TVPProgram program : programList)
@@ -103,9 +112,9 @@ public class TVPearl
 		}
 	}
 
-	private void setProgramID(TVPProgram program, Boolean reindex)
+	private void setProgramID(TVPProgram program, boolean reindex)
 	{
-		Boolean found = false;
+		boolean found = false;
 		if (program.getProgramID().length() == 0 || reindex)
 		{
 			program.resetStatus();
@@ -140,7 +149,7 @@ public class TVPearl
 		}
 	}
 
-	private Boolean compareTitle(String title1, String title2)
+	private boolean compareTitle(String title1, String title2)
 	{
 		String t1 = title1.toLowerCase();
 		String t2 = title2.toLowerCase();
@@ -186,13 +195,14 @@ public class TVPearl
 		return result;
 	}
 
-	private Boolean canUpdate()
+	private boolean canUpdate()
 	{
 		Calendar now = Calendar.getInstance();
 
 		long hours = Math.round((double) (now.getTimeInMillis() - mLastUpdate.getTimeInMillis()) / MILLIS_PER_HOUR);
 
-		return hours > 12;
+    // return hours > 12;
+    return true;
 	}
 
 	public TVPProgram getPerle(Program program)

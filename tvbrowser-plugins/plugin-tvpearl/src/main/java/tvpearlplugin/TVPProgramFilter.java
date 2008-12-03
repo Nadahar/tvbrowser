@@ -19,7 +19,7 @@ package tvpearlplugin;
 
 public class TVPProgramFilter
 {
-	static private Boolean isInList(String author)
+	static private boolean isInList(String author)
 	{
 		for (String item : TVPearlPlugin.getInstance().getComposers())
 		{
@@ -31,11 +31,11 @@ public class TVPProgramFilter
 		return false;
 	}
 
-	static public Boolean showProgram(TVPProgram program)
+	static public boolean showProgram(TVPProgram program)
 	{
 		if (TVPearlPlugin.getInstance().getPropertyBoolean("ShowEnableFilter"))
 		{
-			Boolean exists = isInList(program.getAuthor().toLowerCase());
+			boolean exists = isInList(program.getAuthor().toLowerCase());
 			int filter = TVPearlPlugin.getInstance().getPropertyInteger("ShowFilter");
 
 			return (exists && filter == 0) || (!exists && filter == 1);
