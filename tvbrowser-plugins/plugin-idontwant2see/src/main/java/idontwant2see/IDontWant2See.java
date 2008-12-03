@@ -101,10 +101,16 @@ public class IDontWant2See extends Plugin {
   private String mLastEnteredExclusionString;
   private Date mLastUsedDate;
 
-  private static final Pattern PATTERN_TITLE_PART = Pattern.compile("(.*)\\((" + "(Teil \\d+)" + "|"
-      + "(Teil \\d+/\\d+)" + "|" + "(Teil \\d+ von \\d+)" + "|"
-      + "(\\d+)" + "|" + "(\\d+/\\d+)" + "|" + "(Fortsetzung)"
-      + ")\\)$");
+  private static final Pattern PATTERN_TITLE_PART = Pattern.compile("(.*)"
+      + "((" // one of two alternatives
+      + "\\(?(" // optional brackets
+      + "(Teil \\d+)" + "|"
+      + "(Teil \\d+/\\d+)" + "|"
+      + "(Teil \\d+ von \\d+)" + "|"
+      + "(\\d+/\\d+)" + ")\\)?" + ")|(" // or
+      + "\\((" // mandatory brackets
+      + "(Fortsetzung)" + "|" + "(\\d+)" + ")\\)" + "))" + "$"); // at the end
+                                                                 // only
   
   public static Version getVersion() {
     return new Version(0,9,5,true);
