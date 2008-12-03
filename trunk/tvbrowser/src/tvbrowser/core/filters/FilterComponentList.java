@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import tvbrowser.core.filters.filtercomponents.AgeLimitFilterComponent;
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.filters.filtercomponents.DayFilterComponent;
@@ -148,7 +149,7 @@ public class FilterComponentList {
     String description = (String)in.readObject();
     FilterComponent filterComponent = null;
     if (className.endsWith(".AgeLimitFilterComponent")) {
-      filterComponent = new BeanShellFilterComponent(name, description);
+      filterComponent = new AgeLimitFilterComponent(name, description);
     } else if (className.endsWith(".BeanShellFilterComponent")) {
       filterComponent = new BeanShellFilterComponent(name, description);
     } else if (className.endsWith(".ChannelFilterComponent")) {
