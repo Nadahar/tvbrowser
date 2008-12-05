@@ -201,8 +201,7 @@ public class TVPearl
 
 		long hours = Math.round((double) (now.getTimeInMillis() - mLastUpdate.getTimeInMillis()) / MILLIS_PER_HOUR);
 
-    // return hours > 12;
-    return true;
+    return hours > 12;
 	}
 
 	public TVPProgram getPerle(Program program)
