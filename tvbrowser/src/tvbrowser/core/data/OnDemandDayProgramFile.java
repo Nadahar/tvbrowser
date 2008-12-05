@@ -442,20 +442,20 @@ public class OnDemandDayProgramFile {
           + "replaced.");
     }
   }
-  
+
   /**
-   * Gets if this file data file is loaden for data base.
-   *  
+   * Gets if this file data file is loaded for data base.
+   * 
    * @return <code>True</code> if this data is used in program table,
-   * <code>false</code> if this data is used for data updae.
+   *         <code>false</code> if this data is used for data update.
    * @since 2.2.4/2.6
    */
   public boolean isTimeLimitationData() {
     return mTimeLimitationlData;
   }
-  
+
   /**
-   * Calcualtes the time limits of this file.
+   * Calculates the time limits of this file.
    * 
    * @since 2.2.4/2.6
    */
