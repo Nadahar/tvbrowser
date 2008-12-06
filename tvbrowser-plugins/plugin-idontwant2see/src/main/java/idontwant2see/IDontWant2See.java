@@ -113,7 +113,7 @@ public class IDontWant2See extends Plugin {
                                                                  // only
   
   public static Version getVersion() {
-    return new Version(0,9,5,true);
+    return new Version(0,10,0,true);
   }
   
   /**
@@ -325,6 +325,16 @@ public class IDontWant2See extends Plugin {
         JCheckBox caseSensitive = new JCheckBox(mLocalizer.msg("caseSensitive",
             "case sensitive"));
         JTextField input = new JTextField(p.getTitle());
+        
+        input.addAncestorListener(new AncestorListener() {
+          public void ancestorAdded(AncestorEvent event) {
+            event.getComponent().requestFocus();
+          }
+
+          public void ancestorMoved(AncestorEvent event) {}
+
+          public void ancestorRemoved(AncestorEvent event) {}
+        });
 
         if (JOptionPane.showConfirmDialog(UiUtilities
             .getLastModalChildOf(getParentFrame()), new Object[] {
