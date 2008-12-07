@@ -183,7 +183,8 @@ public class TVPearl
 	{
 		Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
 		List<Channel> result = new ArrayList<Channel>();
-		Pattern pattern = Pattern.compile("^(.*[ ()])?" + channelName + "([ ()].*)?$");
+		Pattern pattern = Pattern.compile("^(.*[ ()])?"
+        + Pattern.quote(channelName.trim()) + "([ ()].*)?$");
 		for (Channel channel : channels)
 		{
 			Matcher matcher = pattern.matcher(channel.getDefaultName());
