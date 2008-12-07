@@ -10,6 +10,7 @@ public class MovieDatabase {
 
   private SoftReferenceCache<Program, Movie> mProgramCache = new SoftReferenceCache<Program, Movie>();
   private ArrayList<Movie> mMovies = new ArrayList<Movie>();
+  private static final Movie EMPTY_MOVIE = new Movie("##EMPTYMOVIE##");
 
   public void addMovie(final Movie movie) {
     mMovies.add(movie);
@@ -17,6 +18,10 @@ public class MovieDatabase {
 
   public Movie getMovieFor(final Program program) {
     if (mProgramCache.containsKey(program)) {
+      final Movie movie = mProgramCache.get(program);
+      if (movie == EMPTY_MOVIE) {
+        return null;
+      }
       return mProgramCache.get(program);
     }
 
@@ -27,7 +32,7 @@ public class MovieDatabase {
       }
     }
 
-    mProgramCache.put(program, null);
+    mProgramCache.put(program, EMPTY_MOVIE);
     return null;
   }
 
