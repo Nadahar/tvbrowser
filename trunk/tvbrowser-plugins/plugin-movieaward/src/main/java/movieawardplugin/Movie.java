@@ -113,7 +113,7 @@ public class Movie {
     // No title for a specific country was found, now try to find a title that matches that includes the director
     final String director = program.getTextField(ProgramFieldType.DIRECTOR_TYPE);
 
-    if (director.equalsIgnoreCase(mDirector)) {
+    if (director != null && director.equalsIgnoreCase(mDirector)) {
       // Okay, the director fits, try to find a title
       for (final String title : mTitle.values()) {
         if (title.equalsIgnoreCase(programTitle)) {
