@@ -89,7 +89,10 @@
   <path id="docpath">
     <path refid="sourcepath"/>
   </path>
-
+	
+  <path id="ant-deb.classpath">
+	 <fileset dir="${deployment.dir}/linux/ant-deb-task" includes="*.jar"/>
+  </path>
 
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 |
@@ -106,6 +109,17 @@
 	<taskdef name="launch4j"
 	    classname="net.sf.launch4j.ant.Launch4jTask"
 	    classpath="${deployment.dir}/win/launch4j/launch4j.jar:${deployment.dir}/win/launch4j/lib/xstream.jar" />
+
+  <!-- Creates a linux desktopEntry-->
+	<taskdef name="desktopEntry" 
+		classname="com.googlecode.ant_deb_task.DesktopEntry" 
+		classpathref="ant-deb.classpath"/>
+	
+  <!-- Creates an Ubuntu package-->
+	<taskdef name="deb" 
+		classname="com.googlecode.ant_deb_task.Deb"
+		classpathref="ant-deb.classpath"/>
+
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 |
 |  Display all targets
@@ -123,7 +137,8 @@
     <echo message="  public-default        Creates platform-independent binaries"/>
     <echo message="  public-win            Creates binaries for the Microsoft Windows Platforms (requires Windows)"/>
     <echo message="  public-mac            Creates binaries for the Mac OS X (requires Mac OS X)"/>
-    <echo message="  public-linux          Creates binaries for linux platforms (requires Linux)"/>
+  	<echo message="  public-linux          Creates binaries for Linux platforms"/>
+  	<echo message="  public-ubuntu         Creates binaries for Ubuntu platforms"/>
   	<echo message="  public-transportable  Creates platform-independent binaries for transportable version of TV-Browser (requires Windows)"/>
   	<echo message="  public-nightly        Creates platform-independent binaries for nightly transportable version of TV-Browser (without platform dependent starters)"/>
     <echo message="  public-src            Creates a .zip file containing the full source code of TV-Browser"/>
@@ -569,6 +584,44 @@
 
   </target>
 
+  <!-- Creates the desktop entry file for Linux platforms -->
+  <target name="tvbrowser-desktop-entry"> 	
+  	<desktopEntry
+        toFile="${tvbrowser-linux.runtime.dir}/tvbrowser.desktop"
+        name="TV-Browser"
+        icon="imgs/tvbrowser128.png"
+        exec="tvbrowser.sh"
+  		tryExec="tvbrowser.sh"
+        categories="Video;AudioVideo;TV;"
+    	type="Application"
+    >
+    	<name lang="de" value="TV-Bowser"/>
+    	<genericName value="Digital TV Guide"/>
+    	<genericName lang="de" value="Digitale TV-Zeitschrift"/>
+    	<comment value="Themeable and easy to use TV Guide - written in Java"/>
+    	<comment lang="de" value="Anpassbare und einfach zu benutzende TV-Zeitschrift - geschrieben in Java"/>
+   	</desktopEntry>
+  </target>
+	
+  <!-- Creates the desktop entry file for Ubuntu platform -->
+  <target name="tvbrowser-desktop-entry-deb"> 	
+  	<desktopEntry
+        toFile="${tvbrowser-linux.runtime.dir}/tvbrowser.desktop"
+        name="TV-Browser"
+        icon="/usr/share/tvbrowser/imgs/tvbrowser128.png"
+        exec="tvbrowser"
+        categories="Video;AudioVideo;TV;"
+    	type="Application"
+    >
+    	<name lang="de" value="TV-Bowser"/>
+    	<genericName value="Digital TV Guide"/>
+    	<genericName lang="de" value="Digitale TV-Zeitschrift"/>
+    	<comment value="Themeable and easy to use TV Guide - written in Java"/>
+    	<comment lang="de" value="Anpassbare und einfach zu benutzende TV-Zeitschrift - geschrieben in Java"/>
+    	
+   	</desktopEntry>
+  </target>
+	
   <!-- Creates the runtime folder for linux platforms -->
   <target name="runtime-linux" depends="clean-linux, make-linux, runtime, test">
     <delete dir="${tvbrowser-linux.runtime.dir}"/>
@@ -577,7 +630,7 @@
       <fileset dir="${tvbrowser-default.runtime.dir}"/>
       <fileset dir="${deployment.dir}" includes="linux.properties"/>
       <fileset dir="${linux.dir}" includes="tvbrowser.sh"/>
-      <fileset dir="${linux.dir}" includes="tvbrowser.desktop"/>
+     <!-- <fileset dir="${linux.dir}" includes="tvbrowser.desktop"/>-->
     </copy>
    	<chmod perm="u+x" file="${tvbrowser-linux.runtime.dir}/tvbrowser.sh"/>
 
@@ -747,6 +800,59 @@
   	
   </target>
 	
+  <target name="public-ubuntu" depends="runtime-linux, tvbrowser-desktop-entry-deb">
+  	<mkdir dir="${public.dir}"/>
+  	
+  	<deb
+        todir="${public.dir}"
+        package="tvbrowser"
+        section="utils"
+        depends="${depends}">
+  		
+        <version upstream="${tvbrowser.version}"/>
+        <maintainer name="TV-Browser team" email="dev@tvbrowser.org"/>
+        <description synopsis="Digital TV Guide">
+        	Themeable and easy to use TV Guide - written in Java.
+        </description>
+  	   	  		
+  	    <tarfileset dir="${tvbrowser-linux.runtime.dir}" prefix="usr/share/tvbrowser">
+  	    	<include name="imgs/**"/>
+  	    	<include name="plugins/**"/>
+  	    	<include name="themepacks/**"/>
+  	    	<exclude name="tvbrowser.sh"/>
+  	    	<exclude name="tvbrowser.desktop"/>
+  	    	<include name="*"/>
+  	    </tarfileset>
+  		<tarfileset dir="${tvbrowser-linux.runtime.dir}/icons" prefix="usr/share/tvbrowser/icons">
+  			<include name="*"/>
+  		</tarfileset>
+  		<tarfileset dir="${tvbrowser-linux.runtime.dir}/icons/CrystalClear" prefix="usr/share/tvbrowser/icons/CrystalClear">
+  			<include name="*"/>
+  		</tarfileset>
+  	  	<tarfileset dir="${tvbrowser-linux.runtime.dir}/icons/CrystalClear/16x16" prefix="usr/share/tvbrowser/icons/CrystalClear/16x16">
+  	  		<include name="**"/>
+  	  	</tarfileset>
+  	  	<tarfileset dir="${tvbrowser-linux.runtime.dir}/icons/CrystalClear/22x22" prefix="usr/share/tvbrowser/icons/CrystalClear/22x22">
+  	  		<include name="**"/>
+  	  	</tarfileset>
+  		<tarfileset dir="${tvbrowser-linux.runtime.dir}/icons/tango" prefix="usr/share/tvbrowser/icons/tango">
+  			<include name="*"/>
+  		</tarfileset>
+  	  	<tarfileset dir="${tvbrowser-linux.runtime.dir}/icons/tango/16x16" prefix="usr/share/tvbrowser/icons/tango/16x16">
+  	  		<include name="**"/>
+  	  	</tarfileset>
+  	  	<tarfileset dir="${tvbrowser-linux.runtime.dir}/icons/tango/22x22" prefix="usr/share/tvbrowser/icons/tango/22x22">
+  	  		<include name="**"/>
+  	  	</tarfileset>
+  	  		
+  		<tarfileset dir="${tvbrowser-linux.runtime.dir}" prefix="usr/share/tvbrowser" filemode="755" includes="**/tvbrowser.sh" />
+  		<tarfileset dir="${tvbrowser-linux.runtime.dir}" prefix="usr/share/applications" includes="**/tvbrowser.desktop"/>
+  	   	<tarfileset dir="${deployment.dir}/linux"
+  	                 prefix="usr/sbin"
+  	   	   filemode="755" includes="**/tvbrowser" />	
+  	</deb>
+  </target>
+	
   <!-- Creates the release binaries (.zip) for the platform independent transportable TV-Browser version -->
   <target name="public-transportable" depends="transportable-exe">
   	<mkdir dir="${public.dir}"/>
@@ -767,7 +873,7 @@
   </target>
 
   <!-- Creates the release binaries (.tar.gz) for linux platforms -->
-  <target name="public-linux" depends="runtime-linux">
+  <target name="public-linux" depends="runtime-linux, tvbrowser-desktop-entry">
     <mkdir dir="${public.dir}"/>
 
     <tar tarfile="${public.dir}/tvbrowser-${tvbrowser.version}.tar.gz" compression="gzip">

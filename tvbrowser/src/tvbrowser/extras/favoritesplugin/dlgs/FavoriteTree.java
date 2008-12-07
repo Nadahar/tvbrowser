@@ -854,15 +854,21 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
   }
   
   protected void moveSelectedFavorite(int rowCount) {
+    FavoriteNode src = (FavoriteNode)getSelectionPath().getLastPathComponent();
+    
+    if(src.isDirectoryNode()) {
+      collapseAll(src);
+    }
+    
     int row = getRowForPath(getSelectionPath());
     
     if(row != -1) {
       TreePath path = getPathForRow(row+rowCount);
       
       if(path != null) {
-        FavoriteNode src = (FavoriteNode)getSelectionPath().getLastPathComponent();
         FavoriteNode srcParent = (FavoriteNode)src.getParent();
-          
+        
+        
         FavoriteNode target = (FavoriteNode)path.getLastPathComponent();
         FavoriteNode tarParent = target.equals(mRootNode) ? mRootNode : ((FavoriteNode)target.getParent());
         

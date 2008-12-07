@@ -103,22 +103,24 @@ public class TvDataBaseUpdater {
 
 
   protected void updateTvDataBase(ProgressMonitor monitor) {
-    monitor.setMaximum(mUpdateJobSet.size());
-    int i=0;
-    for (Iterator<UpdateJob> iter = mUpdateJobSet.iterator(); iter.hasNext();) {
-      monitor.setValue(i++);
-      UpdateJob updateJob = iter.next();
-      
-      try {
-        MutableChannelDayProgram prog
-          = createChannelDayProgram(updateJob.getDate(), updateJob.getChannel());
-          
-        mDataBase.updateDayProgram(prog);
-      }
-      catch (TvBrowserException exc) {
-        mLog.log(Level.WARNING, "Updating day program of "
-          + updateJob.getChannel() + " for " + updateJob.getDate() + " failed",
-          exc);
+    synchronized(mUpdateJobSet) {
+      monitor.setMaximum(mUpdateJobSet.size());
+      int i=0;
+      for (Iterator<UpdateJob> iter = mUpdateJobSet.iterator(); iter.hasNext();) {
+        monitor.setValue(i++);
+        UpdateJob updateJob = iter.next();
+        
+        try {
+          MutableChannelDayProgram prog
+            = createChannelDayProgram(updateJob.getDate(), updateJob.getChannel());
+            
+          mDataBase.updateDayProgram(prog);
+        }
+        catch (TvBrowserException exc) {
+          mLog.log(Level.WARNING, "Updating day program of "
+            + updateJob.getChannel() + " for " + updateJob.getDate() + " failed",
+            exc);
+        }
       }
     }
   }
