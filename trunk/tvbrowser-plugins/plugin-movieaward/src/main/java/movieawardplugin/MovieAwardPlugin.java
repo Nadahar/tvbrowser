@@ -39,20 +39,22 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import tvdataservice.MutableChannelDayProgram;
 import util.misc.SoftReferenceCache;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Channel;
+import devplugin.ChannelDayProgram;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
-import devplugin.Program;
-import devplugin.Version;
-import devplugin.SettingsTab;
-import devplugin.PluginsProgramFilter;
 import devplugin.PluginsFilterComponent;
+import devplugin.PluginsProgramFilter;
+import devplugin.Program;
+import devplugin.SettingsTab;
+import devplugin.Version;
 
 public class MovieAwardPlugin extends Plugin {
   /**
@@ -191,6 +193,12 @@ public class MovieAwardPlugin extends Plugin {
   }
 
   public boolean hasAwards(final Program program) {
+    // no awards for very short programs
+    final int length = program.getLength();
+    if (length > 0 && length < 5) {
+      return false;
+    }
+    // did we already check this program ?
     if (mAwardCache.containsKey(program)) {
       return mAwardCache.get(program);
     }
@@ -251,6 +259,13 @@ public class MovieAwardPlugin extends Plugin {
 
   @Override
   public void handleTvBrowserStartFinished() {
+    updateRootNodeIfVisible();
+  }
+
+  /**
+   * trigger an update of the plugin tree, but only if it is visible at all
+   */
+  private void updateRootNodeIfVisible() {
     mStartFinished = true;
     // update tree, but only if it is shown at all
     if (mRootNode != null) {
@@ -259,13 +274,16 @@ public class MovieAwardPlugin extends Plugin {
   }
 
   private void updateRootNode() {
+    // do nothing if the tree is not visible or the main program still has work
+    // to do
     if (!mStartFinished) {
       return;
     }
     // now insert the dangling sub nodes
-    mRootNode.add(mAwardNode);
-    mRootNode.add(mDateNode);
-    
+    if (mRootNode.isEmpty()) {
+      mRootNode.add(mAwardNode);
+      mRootNode.add(mDateNode);
+    }
     // search all awards
     Channel[] channels = devplugin.Plugin.getPluginManager()
         .getSubscribedChannels();
@@ -307,5 +325,47 @@ public class MovieAwardPlugin extends Plugin {
 
   public static MovieAwardPlugin getInstance() {
     return mInstance;
+  }
+
+  @Override
+  public void handleTvDataAdded(MutableChannelDayProgram newProg) {
+    // do nothing, we use handleTvDataUpdateFinished instead
+  }
+
+  @Override
+  public void handleTvDataDeleted(ChannelDayProgram oldProg) {
+    // handle deletion independent of updateFinished as this may be called
+    // outside data update
+    boolean updateNeeded = false;
+    Iterator<Program> iter = oldProg.getPrograms();
+    if (iter != null) {
+      while (iter.hasNext()) {
+        Program program = iter.next();
+        // do not use program.getTitle() as the title field in the ondemand file
+        // can already be deleted at this time
+        if (mAwardCache.containsKey(program)) {
+          if (mDateNode.contains(program)) {
+            mDateNode.removeProgram(program);
+            updateNeeded = true;
+            for (MovieAward award : mMovieAwards) {
+              PluginTreeNode node = mAwardNodes.get(award);
+              if (node != null) {
+                node.removeProgram(program);
+              }
+            }
+            mAwardCache.remove(program);
+          }
+        }
+      }
+    }
+    // now refresh the tree
+    if (updateNeeded) {
+      mRootNode.update();
+    }
+  }
+
+  @Override
+  public void handleTvDataUpdateFinished() {
+    updateRootNodeIfVisible();
   }
 }
