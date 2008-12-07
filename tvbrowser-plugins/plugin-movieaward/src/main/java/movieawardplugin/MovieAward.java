@@ -41,6 +41,12 @@ public class MovieAward {
   private String mProviderName;
   private String mProviderUrl;
 
+  private MovieDatabase mMovieDatabase;
+
+  public MovieAward(MovieDatabase database) {
+    mMovieDatabase = database;
+  }
+
   /**
    * Add a name for the award
    * @param language Language (e.g. en, de, de-at)
@@ -82,23 +88,45 @@ public class MovieAward {
   }
 
   public boolean containsAwardFor(final Program program) {
+    // At first try to find movies in the award-data
+
     for (Movie movie:mMovies) {
       if (movie.matchesProgram(program) && mAwards.containsKey(movie.getId())) {
         return true;
       }
     }
-    return false;
+
+    // No movie found, try to find a movie-id in the global movie database
+    final Movie movie = mMovieDatabase.getMovieFor(program);
+    return (movie != null) && (mAwards.containsKey(movie.getId()));
   }
 
   public Award[] getAwardsFor(final Program program) {
     final ArrayList<Award> list = new ArrayList<Award>();
+
     for (Movie movie:mMovies) {
-      if (movie.matchesProgram(program) && mAwards.containsKey(movie.getId())) {
+      if (movie.matchesProgram(program)) {
+        if (mAwards.containsKey(movie.getId())) {
+          for (Award award:mAwards.get(movie.getId())) {
+            list.add(award);
+          }
+        }
+      }
+    }
+
+    // If no Movie was found, try to get the id from the MovieDatabase
+    final Movie movie = mMovieDatabase.getMovieFor(program);
+
+    if (movie != null) {
+      final ArrayList<Award> awards = mAwards.get(movie.getId());
+      if (awards != null) {
         for (Award award:mAwards.get(movie.getId())) {
           list.add(award);
         }
       }
     }
+
+
     return list.toArray(new Award[list.size()]);
   }
 

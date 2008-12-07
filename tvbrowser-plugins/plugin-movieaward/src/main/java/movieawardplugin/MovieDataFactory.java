@@ -19,8 +19,8 @@ import java.util.logging.Logger;
 public class MovieDataFactory {
   private static Logger mLog = Logger.getLogger(MovieDataFactory.class.getName());
 
-  public static MovieAward loadMovieDataFromStream(final InputStream stream) {
-    final MovieAward award = new MovieAward();
+  public static MovieAward loadMovieDataFromStream(final InputStream stream, final MovieDatabase database) {
+    final MovieAward award = new MovieAward(database);
 
     try {
       SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
@@ -41,4 +41,25 @@ public class MovieDataFactory {
   }
 
 
+  public static void loadMovieDatabase(final MovieDatabase movieDatabase, final InputStream stream) {
+    movieDatabase.clear();
+
+    try {
+      SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+      parser.parse(new InputSource(stream), new MovieDatabaseHandler(movieDatabase));
+    } catch (SAXNotRecognizedException e) {
+      mLog.log(Level.SEVERE, "Could not parse Movie Award", e);
+    } catch (SAXNotSupportedException e) {
+      mLog.log(Level.SEVERE, "Could not parse Movie Award", e);
+    } catch (IOException e) {
+      mLog.log(Level.SEVERE, "Could not parse Movie Award", e);
+    } catch (SAXException e) {
+      mLog.log(Level.SEVERE, "Could not parse Movie Award", e);
+    } catch (ParserConfigurationException e) {
+      mLog.log(Level.SEVERE, "Could not parse Movie Award", e);
+    }
+
+    mLog.fine("Es wurden daten geladen!");
+
+  }
 }
