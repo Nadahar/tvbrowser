@@ -35,7 +35,7 @@ import devplugin.ProgramFieldType;
 import devplugin.Version;
 
 public class CountryCodePlugin extends Plugin {
-  private static final Version mVersion = new Version(2, 70, 1);
+  private static final Version mVersion = new Version(2, 70, 2);
 
   private PluginInfo mPluginInfo;
 
