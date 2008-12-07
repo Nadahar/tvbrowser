@@ -776,7 +776,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
 
   public static Version getVersion() {
-    return new Version(2,60);
+    return new Version(2,72);
   }
   
 
