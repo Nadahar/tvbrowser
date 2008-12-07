@@ -28,16 +28,24 @@ package tvbrowser.extras.reminderplugin;
 
 import java.applet.Applet;
 import java.applet.AudioClip;
-import java.awt.*;
+import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
-
 
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequencer;
@@ -54,18 +62,27 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataUpdateListener;
 import tvbrowser.core.TvDataUpdater;
-import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ConfigurationHandler;
-
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.io.IOUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
-import devplugin.*;
+import devplugin.ActionMenu;
+import devplugin.ContextMenuAction;
+import devplugin.ContextMenuSeparatorAction;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.PluginTreeNode;
+import devplugin.Program;
+import devplugin.ProgramItem;
+import devplugin.ProgramReceiveIf;
+import devplugin.ProgramReceiveTarget;
+import devplugin.SettingsItem;
 
 /**
  * TV-Browser
@@ -441,37 +458,26 @@ public class ReminderPlugin {
       }
       final ReminderListItem item = mReminderList.getReminderItem(program);
       String[] entries = ReminderFrame.REMIND_MSG_ARR;
-      ActionMenu[] actions = new ActionMenu[maxIndex];
-      ActionMenu[] sub = new ActionMenu[2];
-      
-      for (int i = 0; i <= maxIndex; i++) {
-        final int minutes = ReminderFrame.REMIND_VALUE_ARR[i];
-        ContextMenuAction a = new ContextMenuAction();
-        a.setText(entries[i]);
-        a.setActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            if (minutes == -1) {
-              mReminderList.removeWithoutChecking(program);
-              updateRootNode(true);
-            } else {
-              item.setMinutes(minutes);
-            }
-          }
-        });
-        
-        if(i == 0) {
-          sub[0] = new ActionMenu(a);
-        } else {
-          actions[i - 1] = new ActionMenu(a, minutes == item.getMinutes());
-        }
-      }
-      
-      ContextMenuAction times = new ContextMenuAction();
-      times.setText(mLocalizer.msg("timeMenu", "Reminder time"));
-      
-      sub[1] = new ActionMenu(times,actions);
+      ActionMenu[] actions = new ActionMenu[maxIndex + 2];
 
-      return new ActionMenu(action, sub);
+      actions[0] = new ActionMenu(new AbstractAction(entries[0]) {
+        public void actionPerformed(ActionEvent e) {
+          mReminderList.removeWithoutChecking(program);
+          updateRootNode(true);
+        }
+      });
+      actions[1] = new ActionMenu(ContextMenuSeparatorAction.getInstance());
+      
+      for (int i = 1; i <= maxIndex; i++) {
+        final int minutes = ReminderFrame.REMIND_VALUE_ARR[i];
+        actions[i + 1] = new ActionMenu(new AbstractAction(entries[i]) {
+          public void actionPerformed(ActionEvent e) {
+            item.setMinutes(minutes);
+          }
+        }, minutes == item.getMinutes());
+      }
+
+      return new ActionMenu(action, actions);
     } else if ((program.isExpired() || program.isOnAir())
         && (!program.equals(Plugin.getPluginManager().getExampleProgram()))) {
       return null;
