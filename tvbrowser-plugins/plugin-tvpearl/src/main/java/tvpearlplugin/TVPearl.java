@@ -114,7 +114,6 @@ public class TVPearl
 
 	private void setProgramID(TVPProgram program, boolean reindex)
 	{
-		boolean found = false;
 		if (program.getProgramID().length() == 0 || reindex)
 		{
 			program.resetStatus();
@@ -132,18 +131,13 @@ public class TVPearl
 						if (compareTitle(p.getTitle(), program.getTitle()) && p.getHours() == program.getStart().get(Calendar.HOUR_OF_DAY) && p.getMinutes() == program.getStart().get(Calendar.MINUTE))
 						{
 							program.setProgramID(p.getID());
-							found = true;
-							break;
+							return;
 						}
-					}
-					if (found)
-					{
-						break;
 					}
 				}
 				else
 				{
-					break;
+					return;
 				}
 			}
 		}
@@ -166,17 +160,15 @@ public class TVPearl
 
 	private Integer indexOf(TVPProgram program)
 	{
-		Integer index = -1;
 		for (int i = 0; i < mProgramList.size(); i++)
 		{
 			TVPProgram p = mProgramList.get(i);
 			if (p.getAuthor().equals(program.getAuthor()) && p.getStart().equals(program.getStart()) && p.getChannel().equals(program.getChannel()) && p.getTitle().equals(program.getTitle()))
 			{
-				index = i;
-				break;
+				return i;
 			}
 		}
-		return index;
+		return -1;
 	}
 
 	private List<Channel> getChannelFromName(String channelName)
@@ -207,17 +199,15 @@ public class TVPearl
 
 	public TVPProgram getPerle(Program program)
 	{
-		TVPProgram result = null;
 		for (TVPProgram p : mProgramList)
 		{
 			if (p.getProgramID().equalsIgnoreCase(program.getID()) && program.getDate().equals(new devplugin.Date(p.getStart())))
 
 			{
-				result = p;
-				break;
+				return p;
 			}
 		}
-		return result;
+		return null;
 	}
 
 	public TVPProgram[] getPerlenList()
