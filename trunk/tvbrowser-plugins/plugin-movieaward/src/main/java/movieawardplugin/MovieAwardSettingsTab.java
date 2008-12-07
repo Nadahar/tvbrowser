@@ -71,6 +71,7 @@ public class MovieAwardSettingsTab implements SettingsTab {
 
     builder.append("</ul>");
 
+    builder.append(mLocalizer.msg("footer", "footer"));
     builder.append("</body></html>");
 
     JEditorPane editor = UiUtilities.createHtmlHelpTextArea(builder.toString(), Color.WHITE);
