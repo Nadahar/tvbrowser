@@ -93,10 +93,15 @@ public class MovieAwardPlugin extends Plugin {
   private static MovieAwardPlugin mInstance;
   private PluginsProgramFilter mFilter;
 
+  /**
+   * Database of movies to reduce duplication
+   */
+  private MovieDatabase mMovieDatabase = new MovieDatabase();
+
   public MovieAwardPlugin() {
     mInstance = this;
 
-  mFilter = new PluginsProgramFilter(this) {
+    mFilter = new PluginsProgramFilter(this) {
       public String getSubName() {
         return "";
       }
@@ -127,11 +132,12 @@ public class MovieAwardPlugin extends Plugin {
   private void initDatabase() {
     // might be called multiple times
     if (mMovieAwards == null) {
+      MovieDataFactory.loadMovieDatabase(mMovieDatabase, getClass().getResourceAsStream("data/moviedatabase.xml"));
       mMovieAwards = new ArrayList<MovieAward>();
-      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass().getResourceAsStream("data/oscars.xml")));
-      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass().getResourceAsStream("data/europeanmovieawards.xml")));
-      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass().getResourceAsStream("data/cannes.xml")));
-      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass().getResourceAsStream("data/grimme.xml")));
+      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass().getResourceAsStream("data/oscars.xml"), mMovieDatabase));
+      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass().getResourceAsStream("data/europeanmovieawards.xml"), mMovieDatabase));
+      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass().getResourceAsStream("data/cannes.xml"), mMovieDatabase));
+      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass().getResourceAsStream("data/grimme.xml"), mMovieDatabase));
     }
 
     mLog.info("loaded movie award. " + mMovieAwards.size());
