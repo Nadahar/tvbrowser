@@ -60,6 +60,7 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
         switch(award.getStatus()) {
           case NOMINATED: text.append(" (").append(mLocalizer.msg("nominated", "nominated")).append(") "); break;
           case WINNER: text.append(" (").append(mLocalizer.msg("winner", "winner")).append(") "); break;
+          case HONORED: text.append(" (").append(mLocalizer.msg("honored", "honored")).append(") "); break;
         }
 
         if (award.getRecipient() != null) {

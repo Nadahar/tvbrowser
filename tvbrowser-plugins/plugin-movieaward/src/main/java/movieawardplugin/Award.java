@@ -25,7 +25,7 @@ package movieawardplugin;
 
 public class Award {
   public static enum Status {
-    NOMINATED, WINNER
+    NOMINATED, WINNER, HONORED
   }
 
   private int mAwardYear;
@@ -40,6 +40,8 @@ public class Award {
       mStatus = Status.WINNER;
     } else if (status.equalsIgnoreCase("nominated")) {
       mStatus = Status.NOMINATED;
+    } else if (status.equalsIgnoreCase("honored")) {
+      mStatus = Status.HONORED;
     }
     mMovieId = movieId;
     mAwardYear = awardYear;
