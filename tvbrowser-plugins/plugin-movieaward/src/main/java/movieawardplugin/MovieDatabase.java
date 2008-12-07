@@ -22,7 +22,7 @@ public class MovieDatabase {
       if (movie == EMPTY_MOVIE) {
         return null;
       }
-      return mProgramCache.get(program);
+      return movie;
     }
 
     for (final Movie movie : mMovies) {
