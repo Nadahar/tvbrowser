@@ -241,7 +241,11 @@ public class MovieAwardPlugin extends Plugin {
       if (mStartFinished) {
         // update the tree as the plugin view has been switched on for the first
         // time after start
-        updateRootNode();
+        new Thread(new Runnable() {
+            public void run() {
+                updateRootNode();
+            }
+        }).start();
       }
     }
     return mRootNode;
