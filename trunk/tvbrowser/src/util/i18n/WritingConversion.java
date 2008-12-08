@@ -1,5 +1,7 @@
 package util.i18n;
 
+import java.text.Normalizer;
+
 /**
  * @author Jo
  *
@@ -8,13 +10,15 @@ public class WritingConversion {
 
   /**
    * Remove any diacritical marks (accents like ç, ñ, é, etc) from the given string.
+   *
+   * from http://balusc.blogspot.com/2006/10/stringutil.html
+   * no copyright since it's too simple ;-)
+   *
    * @param string The string to remove diacritical marks from.
    * @return The string with removed diacritical marks, if any.
    */
-  // from http://balusc.blogspot.com/2006/10/stringutil.html
-  // no copyright since it's too simple ;-)
   public static String removeDiacriticalMarks(String string) {
-    return java.text.Normalizer.normalize(string, java.text.Normalizer.Form.NFD)
+    return Normalizer.normalize(string, Normalizer.Form.NFD)
     .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
   }
 
