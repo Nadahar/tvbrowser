@@ -369,7 +369,7 @@ public class MovieAwardPlugin extends Plugin {
       }
     }
     // now refresh the tree
-    if (updateNeeded) {
+    if (updateNeeded && mRootNode != null) {
       mRootNode.update();
     }
   }
