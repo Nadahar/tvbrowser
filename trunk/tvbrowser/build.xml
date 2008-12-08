@@ -555,7 +555,7 @@
 		        icon="./images/additional/tvbrowser.icns"
                 mainclass="tvbrowser.TVBrowser"
                 extraclasspath="/System/Library/Java"
-                jvmversion="1.5+"
+                jvmversion="1.6+"
                 vmoptions="-Dpropertiesfile=osx.properties -Xmx256m"
                 bundleid="org.tvbrowser"
                 smalltabs="true"
