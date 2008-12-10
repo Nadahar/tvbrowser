@@ -256,7 +256,6 @@ public class MovieAwardPlugin extends Plugin {
     PluginTreeNode node = mAwardNodes.get(award);
     if (node == null) {
       node = new PluginTreeNode(award.getName());
-      node.setGroupingByDateEnabled(false);
       mAwardNodes.put(award, node);
       mAwardNode.add(node);
     }
