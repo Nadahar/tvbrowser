@@ -44,6 +44,7 @@
     <module>plugin-wirschauen</module>
     <module>plugin-widget</module>
     <module>plugin-zattoo</module>
+    <module>plugin-recommendation</module>
   </modules>
   <dependencyManagement>
     <dependencies>
