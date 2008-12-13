@@ -153,15 +153,19 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
    */
   private boolean mHasChanged = false;
 
-  /** Orientation Progressbar in X_AXIS 
+  /**
+   * Orientation of progress bar is X_AXIS
+   * 
    * @deprecated since 2.7 Use {@link ProgramPanelSettings#X_AXIS} instead
    */
   final public static int X_AXIS = ProgramPanelSettings.X_AXIS;
-  /** Orientation Progressbar in Y_AXIS
+  /**
+   * Orientation of progress bar is Y_AXIS
+   * 
    * @deprecated since 2.7 Use {@link ProgramPanelSettings#Y_AXIS} instead
    */
   final public static int Y_AXIS = ProgramPanelSettings.Y_AXIS;
-  /** Orientation of Progressbar */
+  /** Orientation of progress bar */
   private int mAxis = ProgramPanelSettings.Y_AXIS;
   
   /** The vertical gap between the programs */
@@ -187,6 +191,7 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
    * @since 2.2.2
    */
   public ProgramPanel(ProgramPanelSettings settings) {
+    setToolTipText("");
     mSettings = settings;
     mAxis = settings.getAxis();
     
@@ -201,19 +206,6 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
     mDescriptionIcon.setMaximumLineCount(3);
     
     setBackground(UIManager.getColor("programPanel.background"));
-  }
-
-  private void calculateWidth() {
-    if (WIDTH_LEFT == -1) {
-      // distance between time and title shall match title font settings, but at most n pixels
-      int distance = getFontMetrics(mTitleFont).stringWidth("n");
-      if (distance > 7) {
-        distance = 7;
-      }
-      WIDTH_LEFT = getFontMetrics(mTimeFont).stringWidth(TIME_FORMATTER.formatTime(23, 59)) + distance;
-      WIDTH_RIGHT = Settings.propColumnWidth.getInt() + columnWidthOffset - WIDTH_LEFT;
-      WIDTH = WIDTH_LEFT + WIDTH_RIGHT;
-    }
   }
 
   /**
@@ -256,6 +248,23 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
     this(settings);
     mAxis = axis;
     setProgram(prog);
+  }
+
+  private void calculateWidth() {
+    if (WIDTH_LEFT == -1) {
+      // distance between time and title shall match title font settings, but at
+      // most n pixels
+      int distance = getFontMetrics(mTitleFont).stringWidth("n");
+      if (distance > 7) {
+        distance = 7;
+      }
+      WIDTH_LEFT = getFontMetrics(mTimeFont).stringWidth(
+          TIME_FORMATTER.formatTime(23, 59))
+          + distance;
+      WIDTH_RIGHT = Settings.propColumnWidth.getInt() + columnWidthOffset
+          - WIDTH_LEFT;
+      WIDTH = WIDTH_LEFT + WIDTH_RIGHT;
+    }
   }
 
   /**
@@ -626,49 +635,42 @@ private static Font getDynamicFontSize(Font font, int offset) {
       int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
       int progLength = mProgram.getLength();
       int startTime = mProgram.getStartTime();
-      int elapsedMinutes;
+      int elapsedMinutes = minutesAfterMidnight - startTime;
       if (minutesAfterMidnight < startTime) {
         // The next day has begun -> we have to add 24 * 60 minutes
         // Example: Start time was 23:50 = 1430 minutes after midnight
         // now it is 0:03 = 3 minutes after midnight
         // elapsedMinutes = (24 * 60) + 3 - 1430 = 13 minutes
         elapsedMinutes = (24 * 60) + minutesAfterMidnight - startTime;
-      } else {
-        elapsedMinutes = minutesAfterMidnight - startTime;
       }
 
-      if (mAxis == X_AXIS) {
+      int borderWidth = Settings.propProgramTableOnAirProgramsShowingBorder
+          .getBoolean() ? 1 : 0;
+      if (mAxis == ProgramPanelSettings.X_AXIS) {
         int progressX = 0;
         if (progLength > 0) {
           progressX = elapsedMinutes * width / progLength;
         }
 
-        int pos = Settings.propProgramTableOnAirProgramsShowingBorder.getBoolean() ? 1 : 0;
-        
         grp.setColor(Settings.propProgramTableColorOnAirDark.getColor());
-        grp.fillRect(pos, pos, progressX - pos, height - pos);
+        grp.fillRect(borderWidth, borderWidth, progressX - borderWidth, height - borderWidth);
         grp.setColor(Settings.propProgramTableColorOnAirLight.getColor());
-        grp.fillRect(progressX, pos, width - progressX - pos * 2, height - pos);
+        grp.fillRect(progressX, borderWidth, width - progressX - borderWidth * 2, height - borderWidth);
 
-        if(Settings.propProgramTableOnAirProgramsShowingBorder.getBoolean()) {
-          grp.draw3DRect(0, 0, width - 1, height - 1, true);
-        }
       } else {
         int progressY = 0;
         if (progLength > 0) {
           progressY = elapsedMinutes * height / progLength;
         }
 
-        int pos = Settings.propProgramTableOnAirProgramsShowingBorder.getBoolean() ? 1 : 0;
-        
         grp.setColor(Settings.propProgramTableColorOnAirDark.getColor());
-        grp.fillRect(pos, pos, width - pos * 2, progressY - pos);
+        grp.fillRect(borderWidth, borderWidth, width - borderWidth * 2, progressY - borderWidth);
         grp.setColor(Settings.propProgramTableColorOnAirLight.getColor());
-        grp.fillRect(pos, progressY, width - pos * 2, height - progressY - pos);
+        grp.fillRect(borderWidth, progressY, width - borderWidth * 2, height - progressY - borderWidth);
         
-        if(Settings.propProgramTableOnAirProgramsShowingBorder.getBoolean()) {
-          grp.draw3DRect(0, 0, width - 1, height - 1, true);
-        }
+      }
+      if (Settings.propProgramTableOnAirProgramsShowingBorder.getBoolean()) {
+        grp.draw3DRect(0, 0, width - 1, height - 1, true);
       }
     }
 
@@ -1200,4 +1202,11 @@ private static Font getDynamicFontSize(Font font, int offset) {
   public int getTitleX() {
     return WIDTH_LEFT;
   }
+
+  @Override
+  public String getToolTipText(MouseEvent event) {
+    return getToolTipText(event.getX(), event.getY());
+  }
+  
+  
 }
