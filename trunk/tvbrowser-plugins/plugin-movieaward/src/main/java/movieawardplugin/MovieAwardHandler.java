@@ -23,13 +23,13 @@
  */
 package movieawardplugin;
 
-import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.Attributes;
-
-import java.util.logging.Logger;
-import java.util.logging.Level;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 
 public class MovieAwardHandler extends DefaultHandler {
@@ -120,7 +120,9 @@ public class MovieAwardHandler extends DefaultHandler {
       }
     } else if ("awarddata".equals(qName)||"name".equals(qName)
         ||"movies".equals(qName)||"awards".equals(qName)||"alternativetitle".equals(qName)
-        ||"categories".equals(qName)||"category".equals(qName)||"title".equals(qName)){
+        || "categories".equals(qName)
+        || "category".equals(qName) || "title".equals(qName)
+        || "url".equals(qName)) {
       // Do nothing
     } else {
       mLog.log(Level.INFO, "Unknown Element : " + qName);

@@ -134,10 +134,15 @@ public class MovieAwardPlugin extends Plugin {
     if (mMovieAwards == null) {
       MovieDataFactory.loadMovieDatabase(mMovieDatabase, getClass().getResourceAsStream("data/moviedatabase.xml"));
       mMovieAwards = new ArrayList<MovieAward>();
-      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass().getResourceAsStream("data/oscars.xml"), mMovieDatabase));
+      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
+          .getResourceAsStream("data/cannes.xml"), mMovieDatabase));
       mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass().getResourceAsStream("data/europeanmovieawards.xml"), mMovieDatabase));
-      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass().getResourceAsStream("data/cannes.xml"), mMovieDatabase));
       mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass().getResourceAsStream("data/grimme.xml"), mMovieDatabase));
+      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
+          .getResourceAsStream("data/menschenrechtsfilmpreis.xml"),
+          mMovieDatabase));
+      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
+          .getResourceAsStream("data/oscars.xml"), mMovieDatabase));
     }
 
     mLog.info("loaded movie award. " + mMovieAwards.size());
