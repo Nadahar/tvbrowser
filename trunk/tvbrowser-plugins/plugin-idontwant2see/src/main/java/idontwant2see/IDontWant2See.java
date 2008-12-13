@@ -189,8 +189,8 @@ public class IDontWant2See extends Plugin {
   public ActionMenu getButtonAction() {
     ContextMenuAction baseAction = new ContextMenuAction(mLocalizer.msg("name","I don't want to see!"));
     
-    ContextMenuAction openExclusionList = new ContextMenuAction(mLocalizer.msg("editExclusionList","Edit exclusion list"),createImageIcon("status","dialog-information",16));
-    openExclusionList.putValue(Plugin.BIG_ICON, createImageIcon("status","dialog-information",22));
+    ContextMenuAction openExclusionList = new ContextMenuAction(mLocalizer.msg("editExclusionList","Edit exclusion list"),createImageIcon("apps","idontwant2see",16));
+    openExclusionList.putValue(Plugin.BIG_ICON, createImageIcon("apps","idontwant2see",22));
     openExclusionList.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         Window w = UiUtilities.getLastModalChildOf(getParentFrame());
@@ -289,14 +289,14 @@ public class IDontWant2See extends Plugin {
           actionDontWant = getActionInputTitle(p);
         }
         actionDontWant.putValue(Action.NAME,mLocalizer.msg("name","I don't want to see!"));
-        actionDontWant.putValue(Action.SMALL_ICON,createImageIcon("actions","edit-delete",16));
+        actionDontWant.putValue(Action.SMALL_ICON,createImageIcon("apps","idontwant2see",16));
         
         return new ActionMenu(actionDontWant);
       }
       else {
         AbstractAction actionInput = getActionInputTitle(p);
         ContextMenuAction baseAction = new ContextMenuAction(mLocalizer.msg("name","I don't want to see!"),
-            createImageIcon("actions","edit-delete",16));
+            createImageIcon("apps","idontwant2see",16));
         
         return new ActionMenu(baseAction, new Action[] {actionDontWant,actionInput});
       }
@@ -502,7 +502,7 @@ public class IDontWant2See extends Plugin {
       }
 
       public Icon getIcon() {
-        return null;
+        return createImageIcon("apps","idontwant2see",16);
       }
 
       public String getTitle() {
