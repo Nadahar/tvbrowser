@@ -187,7 +187,7 @@ public class IDontWant2See extends Plugin {
   }
   
   public ActionMenu getButtonAction() {
-    ContextMenuAction baseAction = new ContextMenuAction(mLocalizer.msg("name","I don't want to see!"));
+    ContextMenuAction baseAction = new ContextMenuAction(mLocalizer.msg("name","I don't want to see!"),createImageIcon("apps","idontwant2see",16));
     
     ContextMenuAction openExclusionList = new ContextMenuAction(mLocalizer.msg("editExclusionList","Edit exclusion list"),createImageIcon("apps","idontwant2see",16));
     openExclusionList.putValue(Plugin.BIG_ICON, createImageIcon("apps","idontwant2see",22));
