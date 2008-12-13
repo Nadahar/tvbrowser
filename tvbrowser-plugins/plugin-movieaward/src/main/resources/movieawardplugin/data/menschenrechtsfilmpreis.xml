@@ -1,0 +1,94 @@
+<awarddata>
+<name lang="de">Deutscher Menschenrechts-Filmpreis</name>
+<url>http://menschenrechts-filmpreis.de</url>
+
+<categories>
+  <category id="profi">
+    <name lang="de">Profi</name>
+  </category>
+  <category id="highschool">
+    <name lang="de">Hochschule</name>
+  </category>
+    <category id="amateur">
+    <name lang="de">Amateur</name>
+  </category>
+  <category id="short">
+    <name lang="de">Kurzfilm/Magazin</name>
+  </category>
+  <category id="education">
+    <name lang="de">Bildungspreis</name>
+  </category>
+</categories>
+
+<movies>
+  <movie id="Im Schatten des Bösen" director="Susanne Babila" year="2007">
+    <title lang="de" original="yes">Im Schatten des Bösen</title>
+  </movie>
+  <movie id="comme tout autre humain" director="Christiane Schmidt" year="2008">
+    <title lang="fr">comme tout autre humain</title>
+    <title lang="de">Wie jeder andere Mensch</title>
+  </movie>
+  <movie id="Oury Jalloh" director="Simon Jaikiriuma Paetau" year="2008">
+    <title lang="de">Oury Jalloh</title>
+  </movie>
+  <movie id="Italiens harte Hand" director="Clemens Riha, Alessandro Allaria" year="2008">
+    <title lang="de">Italiens harte Hand</title>
+  </movie>
+  <movie id="Kindersklaven" director="Rebecca Gudisch, Timo Gummel" year="2008">
+    <title lang="de">Kindersklaven</title>
+  </movie>
+  <movie id="Tod in der Zelle - Warum starb Oury Jalloh?" director="Marcel Kolvenbach, Pagonis Pagonakis" year="2006">
+    <title lang="de">Tod in der Zelle - Warum starb Oury Jalloh?</title>
+  </movie>
+  <movie id="Banffy Castle" director="Tobias Müller" year="2005">
+    <title lang="de">Banffy Castle</title>
+  </movie>
+  <movie id="Akhona" director="Michael Spengler" year="2006">
+    <title lang="de">Akhona</title>
+  </movie>
+  <movie id="Gott segne unseren Überfall" director="Martin Buchholz" year="2003">
+    <title lang="de">Gott segne unseren Überfall</title>
+  </movie>
+  <movie id="Edwins Welt" director="Daniela Perathoner" year="2004">
+    <title lang="de">Edwins Welt</title>
+  </movie>
+  <movie id="Gipfelstürmer" year="2002">
+    <title lang="de">Gipfelstürmer</title>
+  </movie>
+  <movie id="Spiel mit dem Tod" year="2002">
+    <title lang="de">Spiel mit dem Tod</title>
+  </movie>
+  <movie id="Die Farbe der Wahrheit" year="1998">
+    <title lang="de">Die Farbe der Wahrheit</title>
+  </movie>
+  <movie id="Commercial Presentation" year="1998">
+    <title lang="de">Commercial Presentation</title>
+  </movie>
+  <movie id="Eine Blume für die Frauen in Kabul" year="1998">
+    <title lang="de">Eine Blume für die Frauen in Kabul</title>
+  </movie>
+  <movie id="Vögelköpfe" year="1997">
+    <title lang="de">Vögelköpfe</title>
+  </movie>
+</movies>
+
+<awards>
+  <award category="profi" status="winner" movie="Im Schatten des Bösen" year="2008" />
+  <award category="highschool" status="winner" movie="comme tout autre humain" year="2008"></award>
+  <award category="amateur" status="winner" movie="Oury Jalloh" year="2008"></award>
+  <award category="short" status="winner" movie="Italiens harte Hand" year="2008"></award>
+  <award category="education" status="winner" movie="Kindersklaven" year="2008"></award>
+  <award category="profi" status="winner" movie="Tod in der Zelle - Warum starb Oury Jalloh?" year="2006"></award>
+  <award category="highschool" status="winner" movie="Banffy Castle" year="2006"></award>
+  <award category="amateur" status="winner" movie="Akhona" year="2006"></award>
+  <award category="profi" status="winner" movie="Gott segne unseren Überfall" year="2004"></award>
+  <award category="amateur" status="winner" movie="Edwins Welt" year="2004"></award>
+  <award category="profi" status="winner" movie="Gipfelstürmer" year="2002"></award>
+  <award category="amateur" status="winner" movie="Spiel mit dem Tod" year="2002"></award>
+  <award category="profi" status="winner" movie="Die Farbe der Wahrheit" year="2000"></award>
+  <award category="amateur" status="winner" movie="Commercial Presentation" year="2000"/>
+  <award category="profi" status="winner" movie="Eine Blume für die Frauen in Kabul" year="1998"></award>
+  <award category="amateur" status="winner" movie="Vögelköpfe" year="1998"></award>
+</awards>
+
+</awarddata>
