@@ -958,11 +958,16 @@ public class MutableProgram implements Program {
   }
 
 
-  public boolean equals(Object o) {
-    if (o instanceof devplugin.Program) {
-      devplugin.Program program = (devplugin.Program)o;
-      return program!=null
-      	&& getStartTime() == program.getStartTime()
+  public boolean equals(Object other) {
+    if (other == null) {
+      return false;
+    }
+    if (this == other) {
+      return true;
+    }
+    if (other instanceof devplugin.Program) {
+      devplugin.Program program = (devplugin.Program) other;
+      return getStartTime() == program.getStartTime()
         && equals(mChannel, program.getChannel())
         && equals(getDate(), program.getDate())
         && getTitle().compareTo(program.getTitle()) == 0;
