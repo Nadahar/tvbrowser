@@ -26,19 +26,6 @@
 
 package tvbrowser.extras.reminderplugin;
 
-import devplugin.Date;
-import devplugin.Program;
-import tvbrowser.extras.favoritesplugin.core.Favorite;
-import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
-import tvbrowser.ui.mainframe.MainFrame;
-import util.io.IOUtilities;
-import util.settings.PluginPictureSettings;
-import util.settings.ProgramPanelSettings;
-import util.ui.Localizer;
-import util.ui.ProgramPanel;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-
 import java.awt.BorderLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -46,6 +33,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -59,6 +47,19 @@ import javax.swing.Timer;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
+import tvbrowser.ui.mainframe.MainFrame;
+import util.io.IOUtilities;
+import util.settings.PluginPictureSettings;
+import util.settings.ProgramPanelSettings;
+import util.ui.Localizer;
+import util.ui.ProgramPanel;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
+import devplugin.Date;
+import devplugin.Program;
 
 /**
  * TV-Browser
@@ -210,6 +211,8 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     progPanel.add(channelPanel,BorderLayout.EAST);
     
     ProgramPanel panel = new ProgramPanel(mProgram, new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE),false,ProgramPanelSettings.X_AXIS));
+    // register panel with tooltip manager
+    panel.setToolTipText("");
     panel.addPluginContextMenuMouseListener(ReminderPluginProxy.getInstance());
     progPanel.add(panel, BorderLayout.CENTER);
     
