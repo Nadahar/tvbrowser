@@ -81,6 +81,9 @@ public class ProgramTable extends JPanel
  implements ProgramTableModelListener,
     DragGestureListener, DragSourceListener, PluginStateListener, Scrollable {
 
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(ProgramTable.class);
+
   private int mColumnWidth;
   private int mHeight;
 
@@ -1355,11 +1358,29 @@ public class ProgramTable extends JPanel
             .getProgramTableScrollPane().getViewport();
         Point viewPos = viewport.getViewPosition();
         Dimension viewSize = viewport.getSize();
+        final Program program = panel.getProgram();
         if ((currY < viewPos.y)
             || (panelIndex.x * mColumnWidth + panel.getTitleX() < viewPos.x)
             || ((panelIndex.x + 1) * mColumnWidth - 1 > viewPos.x
                 + viewSize.width)) {
-          return panel.getProgram().getTitle();
+          return program.getTitle();
+        }
+        ProgramPanel nextPanel = mModel.getProgramPanel(panelIndex.x,
+            panelIndex.y + 1);
+        
+        // show end time if next panel is not visible (and start time of next
+        // shown program is not end of current program)
+        if (nextPanel != null) {
+          int length = program.getLength();
+          int nextStartTime = nextPanel.getProgram().getStartTime();
+          if (nextStartTime < program.getStartTime()) {
+            nextStartTime += 24 * 60;
+          }
+          if ((length > 0)
+              && (program.getStartTime() + length + 1 < nextStartTime)) {
+            return mLocalizer.msg("until", "until {0}", program
+                .getEndTimeString());
+          }
         }
       }
       return tooltip;

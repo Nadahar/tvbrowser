@@ -24,9 +24,13 @@
  */
 package captureplugin.drivers.utils;
 
-import captureplugin.CapturePlugin;
-import util.ui.Localizer;
-import util.ui.ProgramPanel;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -35,13 +39,10 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
+import util.ui.Localizer;
+import util.ui.ProgramPanel;
+import captureplugin.CapturePlugin;
 
 
 /**
@@ -146,6 +147,7 @@ public class ProgramTimeDialog extends JDialog {
         namePanel.setLayout(new BorderLayout());
 
         ProgramPanel p = new ProgramPanel(mPrgTime.getProgram());
+        p.setToolTipText("");
         p.addPluginContextMenuMouseListener(CapturePlugin.getInstance());
         
         namePanel.add(p);
