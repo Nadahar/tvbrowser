@@ -149,10 +149,14 @@ public class ReminderPlugin {
 	              }
 	              util.ui.UiUtilities.centerAndShow(dlg);
 	            }
+        	  } else {
+        	    mReminderList.updatePrograms();
         	  }
             
             mHasRightToSave = true;
             saveReminders();
+            
+            ReminderListDialog.updateReminderList();
           }
         });
 

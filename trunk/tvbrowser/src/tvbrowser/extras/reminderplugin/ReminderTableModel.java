@@ -44,14 +44,22 @@ public class ReminderTableModel extends AbstractTableModel {
     mTitleFilterBox.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
         if(e.getStateChange() == ItemEvent.SELECTED && mHandleBoxSelection) {
-          mProgramItems = getItemsForTitleSelection();
           mLastSelectedTitle = e.getItem().toString();
-          fireTableDataChanged();
+          updateTableEntries();
         }
       }
     });
     
     mProgramItems = getItemsForTitleSelection();
+  }
+  
+  /**
+   * Updates the entries of the reminder list table.
+   * @since 2.7.2
+   */
+  public synchronized void updateTableEntries() {
+    mProgramItems = getItemsForTitleSelection();
+    fireTableDataChanged();
   }
   
   private void insertAvailableTitles() {

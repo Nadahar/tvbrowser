@@ -569,7 +569,7 @@ public class ProgramTable extends JPanel
     if (program != null) {
       deSelectItem();
       mPopupMenu = createPluginContextMenu(program);
-      mPopupMenu.show(this, evt.getX() - 15, evt.getY() - 15);
+      mPopupMenu.show(this, evt.getX(), evt.getY());
     }
   }
 

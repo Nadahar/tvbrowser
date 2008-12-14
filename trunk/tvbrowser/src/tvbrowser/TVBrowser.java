@@ -1035,6 +1035,9 @@ public class TVBrowser {
     if(UIManager.getColor("MenuItem.selectionForeground") == null) {
       UIManager.put("MenuItem.selectionForeground",UIManager.getColor("Tree.selectionForeground"));
     }
+    if(UIManager.getColor("ComboBox.disabledForeground") == null) {
+      UIManager.put("ComboBox.disabledForeground", Color.gray);
+    }
     
     if (mainFrame != null) {
       SwingUtilities.updateComponentTreeUI(mainFrame);

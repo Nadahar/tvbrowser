@@ -292,6 +292,7 @@ public class ReminderList implements ActionListener {
    * 
    * @return all removed programs
    */
+  @SuppressWarnings("unchecked")
   public Program[] updatePrograms() {
     ArrayList<ReminderListItem> localItems = new ArrayList<ReminderListItem>(0);
     
