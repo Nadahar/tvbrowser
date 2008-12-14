@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 
 import devplugin.Program;
 
-public class MovieAward {
+public class MovieAward implements Comparable<MovieAward> {
   private static Logger mLog = Logger.getLogger(MovieAward.class.getName());
 
   private HashMap<String, String> mNames = new HashMap<String, String>();
@@ -168,5 +168,9 @@ public class MovieAward {
 
   public String getProviderName() {
     return mProviderName;
+  }
+
+  public int compareTo(MovieAward other) {
+    return getName().compareTo(other.getName());
   }
 }
