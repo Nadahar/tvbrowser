@@ -88,7 +88,7 @@ public class MovieAwardHandler extends DefaultHandler {
     mAttributes = new Properties();
 
     for (int i = 0; i < attributes.getLength(); i++) {
-      mAttributes.setProperty(attributes.getLocalName(i), attributes.getValue(i));
+      mAttributes.setProperty(attributes.getQName(i), attributes.getValue(i));
     }
 
     if ("category".equals(qName)) {
