@@ -1,19 +1,18 @@
 package movieawardplugin;
 
-import util.misc.SoftReferenceCache;
-
 import java.util.ArrayList;
 
+import util.misc.SoftReferenceCache;
 import devplugin.Program;
 
 public class MovieDatabase {
 
   private SoftReferenceCache<Program, Movie> mProgramCache = new SoftReferenceCache<Program, Movie>();
-  private ArrayList<Movie> mMovies = new ArrayList<Movie>();
   private static final Movie EMPTY_MOVIE = new Movie("##EMPTYMOVIE##");
+  private MovieHashMap mMovies = new MovieHashMap();
 
   public void addMovie(final Movie movie) {
-    mMovies.add(movie);
+    mMovies.addMovie(movie);
   }
 
   public Movie getMovieFor(final Program program) {
@@ -25,10 +24,13 @@ public class MovieDatabase {
       return movie;
     }
 
-    for (final Movie movie : mMovies) {
-      if (movie.matchesProgram(program)) {
-        mProgramCache.put(program, movie);
-        return movie;
+    ArrayList<Movie> movies = mMovies.getMovies(program);
+    if (movies != null) {
+      for (Movie movie : movies) {
+        if (movie.matchesProgram(program)) {
+          mProgramCache.put(program, movie);
+          return movie;
+        }
       }
     }
 
@@ -38,6 +40,6 @@ public class MovieDatabase {
 
   public void clear() {
     mProgramCache = new SoftReferenceCache<Program, Movie>();
-    mMovies = new ArrayList<Movie>();
+    mMovies = new MovieHashMap();
   }
 }
