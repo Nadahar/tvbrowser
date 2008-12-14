@@ -53,7 +53,7 @@ public class MovieAward {
    * @param name Name of the Award
    */
   public void addName(String language, String name) {
-    mLog.info("Added movie award " + name + " (" + language + ")");
+    mLog.info("Added movie name " + name + " (" + language + ")");
     mNames.put(language.toLowerCase(), name);
   }
 
