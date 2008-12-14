@@ -24,6 +24,7 @@
 package movieawardplugin;
 
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,7 +40,7 @@ public class MovieAwardHandler extends DefaultHandler {
    * Holds the text of the current tag.
    */
   private StringBuffer mText;
-  private Attributes mAttributes;
+  private Properties mAttributes;
 
   /**
    * Name of the Parent-Node
@@ -84,7 +85,11 @@ public class MovieAwardHandler extends DefaultHandler {
       parent = mNodeNames.get(mNodeNames.size() - 2);
     }
 
-    mAttributes = attributes;
+    mAttributes = new Properties();
+
+    for (int i = 0; i < attributes.getLength(); i++) {
+      mAttributes.setProperty(attributes.getLocalName(i), attributes.getValue(i));
+    }
 
     if ("category".equals(qName)) {
       mCategorie = new MovieAwardCategory(attributes.getValue("id"));
@@ -143,15 +148,15 @@ public class MovieAwardHandler extends DefaultHandler {
 
     if ("name".equals(qName)) {
       if ("awarddata".equals(parent)) {
-        mAward.addName(mAttributes.getValue("lang"), mText.toString());
+        mAward.addName(mAttributes.getProperty("lang"), mText.toString());
       } else if ("category".equals(parent)) {
-        mCategorie.addName(mAttributes.getValue("lang"), mText.toString());
+        mCategorie.addName(mAttributes.getProperty("lang"), mText.toString());
       }
     } else if ("category".equals(qName)) {
       mAward.addCategorie(mCategorie);
     } else if ("title".equals(qName) && "movie".equals(parent)) {
-      boolean original = "yes".equalsIgnoreCase(mAttributes.getValue("original"));
-      mMovie.addTitle(mAttributes.getValue("lang"), mText.toString(), original);
+      boolean original = "yes".equalsIgnoreCase(mAttributes.getProperty("original"));
+      mMovie.addTitle(mAttributes.getProperty("lang"), mText.toString(), original);
     } else if ("movie".equals(qName)) {
       mAward.addMovie(mMovie);
     } else if ("url".equals(qName) && ("awarddata".equals(parent))){
@@ -159,7 +164,7 @@ public class MovieAwardHandler extends DefaultHandler {
     } else if ("provided_by".equals(qName)) {
       mAward.setProviderName(mText.toString());
     } else if ("alternativetitle".equals(qName) && "movie".equals(parent)) {
-      mMovie.addAlternativeTitle(mAttributes.getValue("lang"), mText.toString());
+      mMovie.addAlternativeTitle(mAttributes.getProperty("lang"), mText.toString());
     }
 
     mNodeNames.remove(mNodeNames.size() -1);

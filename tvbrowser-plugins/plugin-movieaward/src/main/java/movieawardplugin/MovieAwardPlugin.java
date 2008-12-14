@@ -100,16 +100,6 @@ public class MovieAwardPlugin extends Plugin {
 
   public MovieAwardPlugin() {
     mInstance = this;
-
-    mFilter = new PluginsProgramFilter(this) {
-      public String getSubName() {
-        return "";
-      }
-
-      public boolean accept(Program prog) {
-        return hasAwards(prog);
-      }
-    };
   }
 
   @Override
@@ -334,6 +324,18 @@ public class MovieAwardPlugin extends Plugin {
 
   @Override
   public PluginsProgramFilter[] getAvailableFilter() {
+    if (mFilter == null) {
+      mFilter = new PluginsProgramFilter(this) {
+        public String getSubName() {
+          return "";
+        }
+
+        public boolean accept(Program prog) {
+         return hasAwards(prog);
+        }
+      };      
+    }
+
     return new PluginsProgramFilter[] {mFilter};
   }
 
