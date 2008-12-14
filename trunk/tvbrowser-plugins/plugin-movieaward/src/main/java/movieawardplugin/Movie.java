@@ -34,8 +34,8 @@ public class Movie {
   private String mId;
   private int mYear;
   private String mDirector;
-  private HashMap<String, String> mTitle = new HashMap<String, String>(4);
-  private HashMap<String, ArrayList<String>> mAlternativeTitle = new HashMap<String, ArrayList<String>>(
+  private HashMap<String, String> mTitles = new HashMap<String, String>(4);
+  private HashMap<String, ArrayList<String>> mAlternativeTitles = new HashMap<String, ArrayList<String>>(
       4);
   private String mOriginalTitle;
 
@@ -50,7 +50,7 @@ public class Movie {
     if (original) {
       mOriginalTitle = title;
     }
-    mTitle.put(lang, title);
+    mTitles.put(lang, title);
   }
 
   public void setProductionYear(int year) {
@@ -74,11 +74,11 @@ public class Movie {
   }
 
   public void addAlternativeTitle(String lang, String title) {
-    ArrayList<String> list = mAlternativeTitle.get(lang);
+    ArrayList<String> list = mAlternativeTitles.get(lang);
     
     if (list == null) {
       list = new ArrayList<String>();
-      mAlternativeTitle.put(lang, list);
+      mAlternativeTitles.put(lang, list);
     }
     list.add(title.toLowerCase());
   }
@@ -93,7 +93,7 @@ public class Movie {
     }
     // store all multiple used variables to avoid re-getting
     final String country = program.getChannel().getCountry();
-    final String localizedTitle = mTitle.get(country);
+    final String localizedTitle = mTitles.get(country);
     final String programTitle = program.getTitle();
     if (programTitle.equalsIgnoreCase(localizedTitle)
         || (mOriginalTitle != null && programTitle.equalsIgnoreCase(
@@ -101,7 +101,7 @@ public class Movie {
       return true;
     }
     // do not use toLowerCase on each program repeatedly
-    final List<String> alternativeTitles = mAlternativeTitle.get(country);
+    final List<String> alternativeTitles = mAlternativeTitles.get(country);
     if (alternativeTitles != null) {
       for (String alternateTitle : alternativeTitles) {
         if (programTitle.equalsIgnoreCase(alternateTitle)) {
@@ -115,12 +115,12 @@ public class Movie {
 
     if (director != null && director.equalsIgnoreCase(mDirector)) {
       // Okay, the director fits, try to find a title
-      for (final String title : mTitle.values()) {
+      for (final String title : mTitles.values()) {
         if (title.equalsIgnoreCase(programTitle)) {
           return true;
         }
       }
-      for (final ArrayList<String> alternatives : mAlternativeTitle.values()) {
+      for (final ArrayList<String> alternatives : mAlternativeTitles.values()) {
         for (final String title : alternatives) {
           if (title.equalsIgnoreCase(programTitle)) {
             return true;
@@ -130,6 +130,14 @@ public class Movie {
     }
 
     return false;
+  }
+  
+  public final HashMap<String, String> getTitles() {
+    return mTitles;
+  }
+
+  public final HashMap<String, ArrayList<String>> getAlternativeTitles() {
+    return mAlternativeTitles;
   }
 
 }
