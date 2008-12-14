@@ -1123,7 +1123,7 @@ public class MainFrame extends JFrame implements DateListener {
     try {
       int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
       boolean onAirChanged = false;
-      if (minutesAfterMidnight != mLastTimerMinutesAfterMidnight) {
+      if (minutesAfterMidnight != mLastTimerMinutesAfterMidnight && (downloadingThread == null || !downloadingThread.isAlive())) {
         mLastTimerMinutesAfterMidnight = minutesAfterMidnight;
         Channel[] ch = ChannelList.getSubscribedChannels();
       

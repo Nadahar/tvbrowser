@@ -835,10 +835,12 @@ public class PluginTree extends JTree implements DragGestureListener,
           Graphics lg = textImage.getGraphics();
           
           mProgramLabel.setFont(tree.getFont());
+          mProgramLabel.setForeground(g.getColor());
           mProgramLabel.setText(text);
           mProgramLabel.setOpaque(false);
           mProgramLabel.setBounds(0, 0, bounds.width, bounds.height);
           mProgramLabel.paint(lg);
+          
           g.drawImage(textImage, bounds.x, bounds.y, mProgramLabel);
           lg.dispose();
         }

@@ -120,8 +120,6 @@ public class ReminderTimerListener {
         }.start();
       }
     });
-    
-
   }
 
 

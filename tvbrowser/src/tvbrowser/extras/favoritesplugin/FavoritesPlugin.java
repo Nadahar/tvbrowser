@@ -268,6 +268,78 @@ public class FavoritesPlugin {
       }
     });
   }
+  
+  /**
+   * Waits for finishing the update threads.
+   * @since 2.7.2
+   */
+  public void waitForFinishingUpdateThreads() {
+    Thread waitThread = new Thread("Favorites wait for update threads finished") {
+      public void run() {
+        mLog.info("Favorites: Wait for update threads too finish");
+        
+        int monitorMaximum = mMatchThreads.size();
+        ProgressMonitor monitor;
+        
+        if (monitorMaximum > 5) {    // if we have more then 5 favorites, we show a progress bar
+          try {
+            monitor = MainFrame.getInstance().createProgressMonitor();
+          }catch(Exception e) {e.printStackTrace();
+            monitor = new NullProgressMonitor();
+          }
+        }
+        else {
+          monitor = new NullProgressMonitor();
+        }
+        
+        monitor.setMaximum(monitorMaximum);
+        monitor.setMessage(mLocalizer.msg("updatingFavorites","Updating favorites"));
+        
+        int oldMatchThreadSize = 0;
+        int waitCount = 0;
+        
+        while(!mMatchThreads.isEmpty() && (mMatchThreads.size() != oldMatchThreadSize || waitCount++ < 100)) {
+          if(oldMatchThreadSize != mMatchThreads.size()) {
+            waitCount = 0;
+          }
+          
+          oldMatchThreadSize = mMatchThreads.size();
+          
+          try {
+            Thread.sleep(100);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+          monitor.setValue(monitorMaximum - mMatchThreads.size());
+        }
+        
+        if(!mMatchThreads.isEmpty()) {
+          mLog.info("Max wait count for Favorite update was reached. Number of currently not finished Threads: " + mMatchThreads.size());
+        }
+        else {
+          mLog.info("Favorites: Update threads were finished");
+        }
+
+        mMatchThreads.clear();
+        mRemoveThreads.clear();
+        
+        mMatchThreads = new ArrayList<Thread>(0);
+        mRemoveThreads = new Hashtable<String,Thread>(0);
+        
+        monitor.setMessage("");
+        monitor.setValue(0);
+      }
+    };
+    waitThread.start();
+    
+    while(waitThread.isAlive()) {
+      try {
+        waitThread.join();
+      } catch (InterruptedException e1) {
+        //ignore
+      }
+    }
+  }
 
   private void handleTvDataUpdateFinished() {
     mHasToUpdate = true;
@@ -275,57 +347,14 @@ public class FavoritesPlugin {
     if(mHasRightToUpdate) {
       Thread update = new Thread("Favorites: handle update finished") {
         public void run() {
-          
-          int monitorMaximum = mMatchThreads.size();
-          ProgressMonitor monitor;
-          
-          if (monitorMaximum > 5) {    // if we have more then 5 favorites, we show a progress bar
-            try {
-              monitor = MainFrame.getInstance().createProgressMonitor();
-            }catch(Exception e) {e.printStackTrace();
-              monitor = new NullProgressMonitor();
-            }
-          }
-          else {
-            monitor = new NullProgressMonitor();
-          }
-          
-          monitor.setMaximum(monitorMaximum);
-          monitor.setMessage(mLocalizer.msg("updatingFavorites","Updating favorites"));
-          
-          int oldMatchThreadSize = 0;
-          int waitCount = 0;
-          
-          while(!mMatchThreads.isEmpty() && (mMatchThreads.size() != oldMatchThreadSize || waitCount++ < 100)) {
-            if(oldMatchThreadSize != mMatchThreads.size()) {
-              waitCount = 0;
-            }
-            
-            oldMatchThreadSize = mMatchThreads.size();
-            
-            try {
-              Thread.sleep(100);
-            } catch (InterruptedException e) {
-              e.printStackTrace();
-            }
-            monitor.setValue(monitorMaximum - mMatchThreads.size());
-          }
-          
-          if(!mMatchThreads.isEmpty()) {
-            System.out.println("Max wait count for Favorite update was reached. Number of currently not finished Threads: " + mMatchThreads.size());
-          }
-    
-          mMatchThreads.clear();
-          mRemoveThreads.clear();
-          
-          mMatchThreads = new ArrayList<Thread>(0);
-          mRemoveThreads = new Hashtable<String,Thread>(0);
-          
-          monitor.setMessage("");
-          monitor.setValue(0);
-          
           mHasToUpdate = false;
     
+          ManageFavoritesDialog dlg = ManageFavoritesDialog.getInstance();
+          
+          if(dlg != null) {
+            dlg.favoriteSelectionChanged();
+          }
+          
           //FavoriteTreeModel.getInstance().reload();
     
           mHasRightToSave = true;

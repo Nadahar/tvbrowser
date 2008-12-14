@@ -34,6 +34,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -83,6 +85,8 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
   private ReminderListItem[] mDeletedItems;
   private JButton mUndo, mDelete, mSend;
   private JComboBox mTitleSelection;
+  
+  private static ReminderListDialog mInstance; 
 
   public ReminderListDialog(Frame parent, ReminderList list) {
     super(parent, true);
@@ -103,6 +107,14 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
   }
 
   private void createGui() {
+    mInstance = this;
+    
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e) {
+        mInstance = null;
+      }
+    });
+    
     JPanel panel = (JPanel) getContentPane();
 
     panel.setLayout(new FormLayout("default,5dlu,50dlu:grow", "default,5dlu,fill:default:grow, 3dlu, default"));
@@ -398,5 +410,17 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
   public void close() {
     dispose();
   }
-
+  
+  /**
+   * Updates the list of the dialog with the new list.
+   * 
+   * @since 2.7.2
+   */
+  public static void updateReminderList() {
+    ReminderListDialog dlg = mInstance;
+    
+    if(dlg != null) {
+      dlg.mModel.updateTableEntries();
+    }
+  }
 }

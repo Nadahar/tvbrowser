@@ -381,6 +381,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     }
 
     mDialog.dispose();
+    ReminderListDialog.updateReminderList();
   }
 
   public JRootPane getRootPane() {

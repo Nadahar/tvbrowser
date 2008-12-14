@@ -36,6 +36,7 @@ import java.util.Hashtable;
 import java.util.logging.Level;
 
 import tvbrowser.core.data.OnDemandDayProgramFile;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
@@ -294,6 +295,8 @@ public class TvDataBase {
       }
     }
     mNewDayProgramsAfterUpdate.clear();
+    
+    FavoritesPlugin.getInstance().waitForFinishingUpdateThreads();
   }
 
   public synchronized void setDayProgram(MutableChannelDayProgram prog) {
