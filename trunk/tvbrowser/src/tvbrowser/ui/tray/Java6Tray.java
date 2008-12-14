@@ -41,6 +41,7 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import util.misc.JavaVersion;
+import util.misc.OperatingSystem;
 import util.ui.UiUtilities;
 
 /**
@@ -112,7 +113,7 @@ public class Java6Tray {
    * @return true, if successfull
    */
   public boolean init(JFrame parent, String tooltip) {
-    if(JavaVersion.getVersion() >= JavaVersion.VERSION_1_6) {
+    if(JavaVersion.getVersion() >= JavaVersion.VERSION_1_6 && !OperatingSystem.isMacOs()) {
       try {
         mClass = Class.forName("java.awt.SystemTray");
         
@@ -235,7 +236,7 @@ public class Java6Tray {
         Point p2 = computeDisplayPoint(p.x,p.y,mPopupMenu.getPreferredSize());
         
         mPopupMenu.show(mTrayParent,p2.x - mTrayParent.getLocation().x,p2.y - mTrayParent.getLocation().y);
-      };
+      }
     });
   }
   
