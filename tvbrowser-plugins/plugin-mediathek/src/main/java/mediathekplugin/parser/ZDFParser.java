@@ -16,7 +16,10 @@
  */
 package mediathekplugin.parser;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.swing.SwingUtilities;
 
 import mediathekplugin.MediathekPlugin;
 import mediathekplugin.MediathekProgram;
@@ -66,6 +69,31 @@ public class ZDFParser extends AbstractParser {
     if (rssUrl != null) {
       readRSS(mediathekProgram, rssUrl);
     }
+  }
+
+  protected void readContents(String webPage, Pattern pattern, String name) {
+    final MediathekPlugin plugin = MediathekPlugin.getInstance();
+    String startPage = readUrl(webPage);
+    Matcher matcher = pattern.matcher(startPage);
+    int count = 0;
+    int endPos = Integer.MAX_VALUE;
+    while (matcher.find() && matcher.start() < endPos) {
+      // dynamically find the end of the first column in the 3 column layout
+      if (count == 0) {
+        endPos = startPage.indexOf("</ul>", matcher.start());
+      }
+      String relativeUrl = matcher.group(1);
+      String title = plugin.convertHTML(matcher.group(2));
+      addProgram(title, relativeUrl);
+      count++;
+    }
+    final String msg = "Read " + count + " programs from " + name
+        + " Mediathek";
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        plugin.getLogger().info(msg);
+      }
+    });
   }
 
 }
