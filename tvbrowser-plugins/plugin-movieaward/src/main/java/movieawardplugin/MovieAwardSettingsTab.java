@@ -1,10 +1,8 @@
 package movieawardplugin;
 
 import java.awt.Color;
-import java.util.List;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JEditorPane;
@@ -49,11 +47,7 @@ public class MovieAwardSettingsTab implements SettingsTab {
     builder.append("<ul>");
 
     List<MovieAward> awards = mPlugin.getMovieAwards();
-    Collections.sort(awards, new Comparator<MovieAward>(){
-      public int compare(MovieAward movieAward, MovieAward movieAward1) {
-        return movieAward.getName().compareTo(movieAward1.getName());
-      }
-    });
+    Collections.sort(awards);
 
     for (MovieAward award : awards) {
       builder.append("<li>");
