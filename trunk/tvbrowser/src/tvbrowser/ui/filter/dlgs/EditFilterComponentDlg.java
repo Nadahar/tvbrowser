@@ -57,6 +57,7 @@ import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.filtercomponents.AgeLimitFilterComponent;
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
+import tvbrowser.core.filters.filtercomponents.DateFilterComponent;
 import tvbrowser.core.filters.filtercomponents.DayFilterComponent;
 import tvbrowser.core.filters.filtercomponents.FavoritesFilterComponent;
 import tvbrowser.core.filters.filtercomponents.KeywordFilterComponent;
@@ -151,6 +152,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
       set.add(new BeanShellFilterComponent());
       set.add(new ChannelFilterComponent());
       set.add(new DayFilterComponent());
+      set.add(new DateFilterComponent());
       set.add(new FavoritesFilterComponent());
       set.add(new KeywordFilterComponent());
       set.add(new MassFilterComponent());

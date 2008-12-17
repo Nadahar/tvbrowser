@@ -41,6 +41,7 @@ import java.util.Iterator;
 import tvbrowser.core.filters.filtercomponents.AgeLimitFilterComponent;
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
+import tvbrowser.core.filters.filtercomponents.DateFilterComponent;
 import tvbrowser.core.filters.filtercomponents.DayFilterComponent;
 import tvbrowser.core.filters.filtercomponents.FavoritesFilterComponent;
 import tvbrowser.core.filters.filtercomponents.KeywordFilterComponent;
@@ -156,6 +157,8 @@ public class FilterComponentList {
       filterComponent = new ChannelFilterComponent(name, description);
     } else if (className.endsWith(".DayFilterComponent")) {
       filterComponent = new DayFilterComponent(name, description);
+    } else if (className.endsWith(".DateFilterComponent")) {
+      filterComponent = new DateFilterComponent(name, description);
     } else if (className.endsWith(".FavoritesFilterComponent")) {
       filterComponent = new FavoritesFilterComponent(name, description);
     } else if (className.endsWith(".KeywordFilterComponent")) {
