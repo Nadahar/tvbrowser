@@ -405,7 +405,7 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		return createImageIcon("actions", "program_found", 16);
 	}
 
-	ImageIcon getProgramUnkownIcon()
+	ImageIcon getProgramUnknownIcon()
 	{
 		return createImageIcon("actions", "program_unknown", 16);
 	}

@@ -17,14 +17,35 @@
  */
 package tvpearlplugin;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dialog;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Calendar;
 
-import javax.swing.*;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JList;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JToolTip;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 
-import devplugin.*;
-import util.ui.*;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
+import devplugin.Plugin;
+import devplugin.PluginManager;
+import devplugin.Program;
 
 public class PearlDialog extends JDialog implements WindowClosingIf
 {
@@ -102,10 +123,7 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 				{
 					
 					TVPProgram p = (TVPProgram) mDataList.getModel().getElementAt(index);
-					if (p.getProgramID().length() > 0)
-					{
-						Program prog = mng.getProgram(new Date(p.getStart()), p.getProgramID());
-
+						Program prog = p.getProgram();
 						if (prog != null)
 						{
 							if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2)
@@ -117,7 +135,6 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 								mng.handleProgramMiddleClick(prog);
 							}
 						}
-					}
 					if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1 && e.isShiftDown())
 					{
 						TVPearlPlugin.getInstance().showPearlInfo(p);
@@ -197,14 +214,10 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 			{
 				mDataList.setSelectedIndex(index);
 				TVPProgram p = (TVPProgram) mDataList.getModel().getElementAt(index);
-				if (p.getProgramID().length() > 0)
+				program = p.getProgram();
+        if (program != null)
 				{
-					program = manager.getProgram(new Date(p.getStart()), p.getProgramID());
-
-					if (program != null)
-					{
-						popup = manager.createPluginContextMenu(program, null);
-					}
+					popup = manager.createPluginContextMenu(program, null);
 				}
 				if (popup == null)
 				{
@@ -237,36 +250,35 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 		}
 	}
 
-	public void updateProgramList()
-	{
-		Calendar now = Calendar.getInstance();
-		int index = 0;
+	public void updateProgramList() {
+    Calendar now = Calendar.getInstance();
+    int index = -1;
 
-		mProgramList.clear();
-		for (TVPProgram item : TVPearlPlugin.getInstance().getProgramList())
-		{
-			mProgramList.addElement(item);
-			if (now.compareTo(item.getStart()) > 0)
-			{
-				index++;
-			}
-		}
-		if (mUpdateBn != null)
-		{
-			mUpdateBn.setEnabled(true);
-		}
-		mDataList.revalidate();
-		mDataList.repaint();
-		if (mProgramList.getSize() > 0)
-		{
-			mDataList.setSelectedIndex(0);
-			if (mProgramList.getSize() > index)
-			{
-				mDataList.setSelectedIndex(index);
-				mDataList.ensureIndexIsVisible(index);
-			}
-		}
-	}
+    mProgramList.clear();
+    for (TVPProgram item : TVPearlPlugin.getInstance().getProgramList()) {
+      mProgramList.addElement(item);
+      if (index == -1) {
+        final Program program = item.getProgram();
+        // find next pearl or first still running program
+        if ((now.compareTo(item.getStart()) < 0)
+            || (program != null && !program.isExpired())) {
+          index = mProgramList.size() - 1;
+        }
+      }
+    }
+    if (mUpdateBn != null) {
+      mUpdateBn.setEnabled(true);
+    }
+    mDataList.revalidate();
+    mDataList.repaint();
+    if (mProgramList.getSize() > 0) {
+      mDataList.setSelectedIndex(0);
+      if (mProgramList.getSize() > index) {
+        mDataList.setSelectedIndex(index);
+        mDataList.ensureIndexIsVisible(index);
+      }
+    }
+  }
 
 	public void close()
 	{

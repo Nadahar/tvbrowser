@@ -17,7 +17,8 @@
  */
 package tvpearlplugin;
 
-import java.util.*;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 public class HTTPConverter
 {
@@ -295,7 +296,7 @@ public class HTTPConverter
 
         while ((it != null) && (it.hasNext()))
         {
-            String key = (String) it.next();
+            String key = it.next();
             result = result.replaceAll(key, Character.toString(characterTable.get(key)));
         }
 
