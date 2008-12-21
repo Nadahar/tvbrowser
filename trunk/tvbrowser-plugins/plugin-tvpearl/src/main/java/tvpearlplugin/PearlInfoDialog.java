@@ -17,16 +17,33 @@
  */
 package tvpearlplugin;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.net.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import devplugin.*;
-import util.browserlauncher.*;
-import util.ui.*;
-import util.ui.html.*;
-import java.text.*;
+import java.awt.BorderLayout;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.net.URL;
+import java.text.DateFormat;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+
+import util.browserlauncher.Launch;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
+import util.ui.html.ExtendedHTMLDocument;
+import util.ui.html.ExtendedHTMLEditorKit;
+import util.ui.html.HorizontalLine;
+import devplugin.Plugin;
 
 public class PearlInfoDialog extends JDialog implements WindowClosingIf
 {
@@ -97,9 +114,7 @@ public class PearlInfoDialog extends JDialog implements WindowClosingIf
             {
                 public void actionPerformed(ActionEvent evt)
                 {
-                    Program p = Plugin.getPluginManager().getProgram(new devplugin.Date(mProgram.getStart()),
-                            mProgram.getProgramID());
-                    Plugin.getPluginManager().scrollToProgram(p);
+                    Plugin.getPluginManager().scrollToProgram(mProgram.getProgram());
                 }
             });
             buttonPn.add(GotoBn);
@@ -153,9 +168,9 @@ public class PearlInfoDialog extends JDialog implements WindowClosingIf
         buffer.append(bodyFontSize).append(";\"><b>");
         buffer.append(TVPearlPlugin.getInstance().getDayName(program.getStart(), false)).append(", ");
         buffer.append(DateFormat.getDateInstance().format(program.getStart().getTime()));
-        buffer.append(" · ");
+        buffer.append(" ï¿½ ");
         buffer.append(DateFormat.getTimeInstance(DateFormat.SHORT).format(program.getStart().getTime()));
-        buffer.append(" · ");
+        buffer.append(" ï¿½ ");
         buffer.append(program.getChannel());
         buffer.append("</b></div><div style=\"color:#003366; font-size:");
         buffer.append(titleSize);

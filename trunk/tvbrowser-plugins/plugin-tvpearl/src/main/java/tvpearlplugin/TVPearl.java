@@ -30,349 +30,351 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import tvbrowser.TVBrowser;
 import devplugin.Channel;
 import devplugin.Plugin;
 import devplugin.Program;
 
-public class TVPearl
-{
-	static final int MILLIS_PER_HOUR = 60 * 60 * 1000;
+public class TVPearl {
+  /**
+   * minimum time in hours before the next online update can be done
+   */
+  private static final int UPDATE_WAIT_HOURS = 12;
 
-	private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(TVPearlPlugin.class.getName());
+  private static java.util.logging.Logger mLog = java.util.logging.Logger
+      .getLogger(TVPearlPlugin.class.getName());
 
-	private String mUrl;
-	private List<TVPProgram> mProgramList;
-	private Calendar mLastUpdate;
-	private boolean mReindexAll = true;
+  private String mUrl;
+  private List<TVPProgram> mProgramList;
+  private Calendar mLastUpdate;
+  private boolean mReindexAll = true;
 
-	public TVPearl()
-	{
-		mProgramList = new ArrayList<TVPProgram>();
-		mLastUpdate = Calendar.getInstance();
-		mLastUpdate.set(Calendar.HOUR_OF_DAY, mLastUpdate.get(Calendar.HOUR_OF_DAY) - 13);
-	}
+  public TVPearl() {
+    mProgramList = new ArrayList<TVPProgram>();
+    mLastUpdate = Calendar.getInstance();
+    mLastUpdate.set(Calendar.HOUR_OF_DAY,
+        mLastUpdate.get(Calendar.HOUR_OF_DAY) - 13);
+  }
 
-	public boolean getReindexAll()
-	{
-		return mReindexAll;
-	}
+  public boolean getReindexAll() {
+    return mReindexAll;
+  }
 
-	public void setReindexAll(boolean reindexAll)
-	{
-		mReindexAll = reindexAll;
-	}
+  public void setReindexAll(boolean reindexAll) {
+    mReindexAll = reindexAll;
+  }
 
-	public void setUrl(String url)
-	{
-		mUrl = url;
-	}
+  public void setUrl(String url) {
+    mUrl = url;
+  }
 
-	public String getUrl()
-	{
-		return mUrl;
-	}
+  public String getUrl() {
+    return mUrl;
+  }
 
-	public void update()
-	{
-		if (canUpdate())
-		{
-			mLastUpdate = Calendar.getInstance();
+  public void update() {
+    if (canUpdate()) {
+      mLastUpdate = Calendar.getInstance();
 
-			TVPGrabber grabber = new TVPGrabber();
-			List<TVPProgram> programList = grabber.parse(mUrl);
-			mUrl = grabber.getLastUrl();
+      TVPGrabber grabber = new TVPGrabber();
+      List<TVPProgram> programList = grabber.parse(mUrl);
+      mUrl = grabber.getLastUrl();
 
-			for (TVPProgram program : programList)
-			{
-				addProgram(program);
-			}
-			Calendar limit = getViewLimit();
-			int i = 0;
-			while (i < mProgramList.size())
-			{
-				TVPProgram p = mProgramList.get(i);
-				if (p.getStart().compareTo(limit) < 0)
-				{
-					mProgramList.remove(i);
-					i--;
-				}
-				i++;
-			}
-			Collections.sort(mProgramList);
-			updateProgramMark();
-		}
-	}
+      for (TVPProgram program : programList) {
+        addProgram(program);
+      }
+      Calendar limit = getViewLimit();
+      int i = 0;
+      while (i < mProgramList.size()) {
+        TVPProgram p = mProgramList.get(i);
+        if (p.getStart().compareTo(limit) < 0) {
+          mProgramList.remove(i);
+          i--;
+        }
+        i++;
+      }
+      Collections.sort(mProgramList);
+      updateProgramMark();
+    }
+  }
 
-	private void addProgram(TVPProgram program)
-	{
-		if (indexOf(program) == -1)
-		{
-			setProgramID(program, false);
-			mProgramList.add(program);
-		}
-	}
+  private void addProgram(TVPProgram program) {
+    if (indexOf(program) == -1) {
+      setProgramID(program, false);
+      mProgramList.add(program);
+    }
+  }
 
-	private void setProgramID(TVPProgram program, boolean reindex)
-	{
-		if (program.getProgramID().length() == 0 || reindex)
-		{
-			program.resetStatus();
+  private void setProgramID(TVPProgram program, boolean reindex) {
+    if (program.getProgramID().length() == 0 || reindex) {
+      program.resetStatus();
 
-			List<Channel> channelList = getChannelFromName(program.getChannel());
-			for (Channel channel : channelList)
-			{
-				program.setStatus(1);
-				if (program.getStart().compareTo(getViewLimit()) > 0)
-				{
-					Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(new devplugin.Date(program.getStart()), channel);
-					while ((it != null) && (it.hasNext()))
-					{
-						Program p = (Program) it.next();
-						if (compareTitle(p.getTitle(), program.getTitle()) && p.getHours() == program.getStart().get(Calendar.HOUR_OF_DAY) && p.getMinutes() == program.getStart().get(Calendar.MINUTE))
-						{
-							program.setProgramID(p.getID());
-							return;
-						}
-					}
-				}
-				else
-				{
-					return;
-				}
-			}
-		}
-	}
+      List<Channel> channelList = getChannelsFromName(program.getChannel());
+      if (!channelList.isEmpty()) {
+        program.setStatus(IProgramStatus.STATUS_FOUND_CHANNEL);
+      }
+      for (Channel channel : channelList) {
+        if (program.getStart().compareTo(getViewLimit()) > 0) {
+          Iterator<Program> it = Plugin.getPluginManager()
+              .getChannelDayProgram(program.getDate(), channel);
+          while ((it != null) && (it.hasNext())) {
+            Program p = it.next();
+            if (compareTitle(p.getTitle(), program.getTitle())
+                && p.getHours() == program.getStart().get(Calendar.HOUR_OF_DAY)
+                && p.getMinutes() == program.getStart().get(Calendar.MINUTE)) {
+              program.setProgram(p);
+              return;
+            }
+          }
+        } else {
+          return;
+        }
+      }
+    }
+  }
 
-	private boolean compareTitle(String title1, String title2)
-	{
-		String t1 = title1.toLowerCase();
-		String t2 = title2.toLowerCase();
+  private boolean compareTitle(String title1, String title2) {
+    String t1 = title1.toLowerCase();
+    String t2 = title2.toLowerCase();
 
-		return t1.equals(t2) || t1.indexOf(t2) >= 0 || t2.indexOf(t1) >= 0;
-	}
+    return t1.equals(t2) || t1.indexOf(t2) >= 0 || t2.indexOf(t1) >= 0;
+  }
 
-	private Calendar getViewLimit()
-	{
-		Calendar limit = Calendar.getInstance();
-		limit.set(Calendar.DAY_OF_MONTH, limit.get(Calendar.DAY_OF_MONTH) - 1);
-		return limit;
-	}
+  private Calendar getViewLimit() {
+    Calendar limit = Calendar.getInstance();
+    limit.set(Calendar.DAY_OF_MONTH, limit.get(Calendar.DAY_OF_MONTH) - 1);
+    return limit;
+  }
 
-	private Integer indexOf(TVPProgram program)
-	{
-		for (int i = 0; i < mProgramList.size(); i++)
-		{
-			TVPProgram p = mProgramList.get(i);
-			if (p.getAuthor().equals(program.getAuthor()) && p.getStart().equals(program.getStart()) && p.getChannel().equals(program.getChannel()) && p.getTitle().equals(program.getTitle()))
-			{
-				return i;
-			}
-		}
-		return -1;
-	}
+  private Integer indexOf(TVPProgram program) {
+    for (int i = 0; i < mProgramList.size(); i++) {
+      TVPProgram p = mProgramList.get(i);
+      if (p.getAuthor().equals(program.getAuthor())
+          && p.getStart().equals(program.getStart())
+          && p.getChannel().equals(program.getChannel())
+          && p.getTitle().equals(program.getTitle())) {
+        return i;
+      }
+    }
+    return -1;
+  }
 
-	private List<Channel> getChannelFromName(String channelName)
-	{
-		Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
-		List<Channel> result = new ArrayList<Channel>();
-		Pattern pattern = Pattern.compile("^(.*[ ()])?"
+  /**
+   * get all subscribed channels which match the given channel name
+   * 
+   * @param channelName
+   * @return
+   */
+  private List<Channel> getChannelsFromName(String channelName) {
+    List<Channel> result = new ArrayList<Channel>();
+    Pattern pattern = Pattern.compile("^(.*[ ()])?"
         + Pattern.quote(channelName.trim()) + "([ ()].*)?$");
-		for (Channel channel : channels)
-		{
-			Matcher matcher = pattern.matcher(channel.getDefaultName());
-			if (matcher.find())
-			{
-				result.add(channel);
-			}
-		}
-		return result;
-	}
+    for (Channel channel : Plugin.getPluginManager().getSubscribedChannels()) {
+      // first search default name
+      Matcher matcher = pattern.matcher(channel.getDefaultName());
+      if (matcher.find()) {
+        result.add(channel);
+      } else {
+        // afterwards search user defined name
+        matcher = pattern.matcher(channel.getName());
+        if (matcher.find()) {
+          result.add(channel);
+        }
+      }
+    }
+    return result;
+  }
 
-	private boolean canUpdate()
-	{
-		Calendar now = Calendar.getInstance();
+  private boolean canUpdate() {
+    Calendar now = Calendar.getInstance();
 
-		long hours = Math.round((double) (now.getTimeInMillis() - mLastUpdate.getTimeInMillis()) / MILLIS_PER_HOUR);
+    long hours = Math.round((double) (now.getTimeInMillis() - mLastUpdate
+        .getTimeInMillis())
+        / (60 * 60 * 1000));
 
-    return hours > 12;
-	}
+    // always allow update in developer version
+    return hours > UPDATE_WAIT_HOURS || !TVBrowser.isStable();
+  }
 
-	public TVPProgram getPerle(Program program)
-	{
-		for (TVPProgram p : mProgramList)
-		{
-			if (p.getProgramID().equalsIgnoreCase(program.getID()) && program.getDate().equals(new devplugin.Date(p.getStart())))
+  public TVPProgram getPerle(Program program) {
+    for (TVPProgram p : mProgramList) {
+      if (p.getProgramID().equalsIgnoreCase(program.getID())
+          && program.getDate().equals(p.getStart()))
 
-			{
-				return p;
-			}
-		}
-		return null;
-	}
+      {
+        return p;
+      }
+    }
+    return null;
+  }
 
-	public TVPProgram[] getPerlenList()
-	{
-		List<TVPProgram> result = new ArrayList<TVPProgram>();
-		result.addAll(mProgramList);
+  public TVPProgram[] getPerlenList() {
+    List<TVPProgram> result = new ArrayList<TVPProgram>();
+    result.addAll(mProgramList);
 
-		switch (TVPearlPlugin.getInstance().getPropertyInteger("ViewOption"))
-		{
-			case 2:
-			case 3:
-				Integer threshold = TVPearlPlugin.getInstance().getPropertyInteger("ViewOption") - 1;
-				int i = 0;
-				while (i < result.size())
-				{
-					if (result.get(i).getStatus() < threshold)
-					{
-						result.remove(i);
-					}
-					else
-					{
-						i++;
-					}
-				}
-				break;
-			default:
-				break;
-		}
-		Calendar limit = getViewLimit();
-		int i = 0;
-		while (i < result.size())
-		{
-			if (result.get(i).getStart().compareTo(limit) < 0)
-			{
-				result.remove(i);
-				i--;
-			}
-			i++;
-		}
-		if (TVPearlPlugin.getInstance().getPropertyBoolean("ShowEnableFilter"))
-		{
-			i = 0;
-			while (i < result.size())
-			{
-				if (!TVPProgramFilter.showProgram(result.get(i)))
-				{
-					result.remove(i);
-					i--;
-				}
-				i++;
-			}
-		}
+    switch (TVPearlPlugin.getInstance().getPropertyInteger("ViewOption")) {
+    case 2:
+    case 3:
+      Integer threshold = TVPearlPlugin.getInstance().getPropertyInteger(
+          "ViewOption") - 1;
+      int i = 0;
+      while (i < result.size()) {
+        if (result.get(i).getStatus() < threshold) {
+          result.remove(i);
+        } else {
+          i++;
+        }
+      }
+      break;
+    default:
+      break;
+    }
+    Calendar limit = getViewLimit();
+    int i = 0;
+    while (i < result.size()) {
+      if (result.get(i).getStart().compareTo(limit) < 0) {
+        result.remove(i);
+        i--;
+      }
+      i++;
+    }
+    if (TVPearlPlugin.getInstance().getPropertyBoolean("ShowEnableFilter")) {
+      i = 0;
+      while (i < result.size()) {
+        if (!TVPProgramFilter.showProgram(result.get(i))) {
+          result.remove(i);
+          i--;
+        }
+        i++;
+      }
+    }
 
-		return result.toArray(new TVPProgram[result.size()]);
-	}
+    return result.toArray(new TVPProgram[result.size()]);
+  }
 
-	public void recheckProgramID()
-	{
-		for (int i = 0; i < mProgramList.size(); i++)
-		{
-			TVPProgram program = mProgramList.get(i);
-			setProgramID(program, mReindexAll);
-		}
-	}
+  public void recheckProgramID() {
+    for (TVPProgram program : mProgramList) {
+      setProgramID(program, mReindexAll);
+    }
+  }
 
-	@SuppressWarnings("unchecked")
-	public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException
-	{
-		Calendar limit = getViewLimit();
+  @SuppressWarnings("unchecked")
+  public void readData(ObjectInputStream in) throws IOException,
+      ClassNotFoundException {
+    Calendar limit = getViewLimit();
 
-		int version = in.readInt();
+    int version = in.readInt();
 
-		if (version >= 1)
-		{
-			mLastUpdate = Calendar.getInstance();
-			mLastUpdate.setTime((Date) in.readObject());
+    if (version >= 1) {
+      mLastUpdate = Calendar.getInstance();
+      mLastUpdate.setTime((Date) in.readObject());
 
-			int size = in.readInt();
-			for (int i = 0; i < size; i++)
-			{
-				TVPProgram p = new TVPProgram();
-				p.setAuthor((String) in.readObject());
-				Calendar cal = Calendar.getInstance();
-				cal.setTime((Date) in.readObject());
-				p.setCreateDate(cal);
-				p.setContentUrl((String) in.readObject());
-				p.setChannel((String) in.readObject());
-				cal.setTime((Date) in.readObject());
-				p.setStart(cal);
-				p.setTitle((String) in.readObject());
-				p.setInfo((String) in.readObject());
-				p.setProgramID((String) in.readObject());
-				if (p.getStart().compareTo(limit) > 0)
-				{
-					addProgram(p);
-				}
-			}
-			if (version == 2)
-			{
-				TVPearlPlugin.getInstance().setComposers((Vector<String>) in.readObject());
-			}
-		}
+      int size = in.readInt();
+      for (int i = 0; i < size; i++) {
+        TVPProgram p = new TVPProgram();
+        p.setAuthor((String) in.readObject());
+        Calendar cal = Calendar.getInstance();
+        cal.setTime((Date) in.readObject());
+        p.setCreateDate(cal);
+        p.setContentUrl((String) in.readObject());
+        p.setChannel((String) in.readObject());
+        cal.setTime((Date) in.readObject());
+        p.setStart(cal);
+        p.setTitle((String) in.readObject());
+        p.setInfo((String) in.readObject());
+        p.setProgramID((String) in.readObject());
+        if (p.getStart().compareTo(limit) > 0) {
+          addProgram(p);
+        }
+      }
+      if (version == 2) {
+        TVPearlPlugin.getInstance().setComposers(
+            (Vector<String>) in.readObject());
+      }
+    }
 
-		//updateProgramMark();
-	}
+    // updateProgramMark();
+  }
 
-	public void writeData(ObjectOutputStream out) throws IOException
-	{
-		out.writeInt(2); // version
-		out.writeObject(mLastUpdate.getTime());
-		out.writeInt(mProgramList.size());
-		for (TVPProgram program : mProgramList)
-		{
-			out.writeObject(program.getAuthor());
-			out.writeObject(program.getCreateDate().getTime());
-			out.writeObject(program.getContentUrl());
-			out.writeObject(program.getChannel());
-			out.writeObject(program.getStart().getTime());
-			out.writeObject(program.getTitle());
-			out.writeObject(program.getInfo());
-			out.writeObject(program.getProgramID());
-		}
-		out.writeObject(TVPearlPlugin.getInstance().getComposers());
-	}
+  public void writeData(ObjectOutputStream out) throws IOException {
+    out.writeInt(2); // version
+    out.writeObject(mLastUpdate.getTime());
+    out.writeInt(mProgramList.size());
+    for (TVPProgram program : mProgramList) {
+      out.writeObject(program.getAuthor());
+      out.writeObject(program.getCreateDate().getTime());
+      out.writeObject(program.getContentUrl());
+      out.writeObject(program.getChannel());
+      out.writeObject(program.getStart().getTime());
+      out.writeObject(program.getTitle());
+      out.writeObject(program.getInfo());
+      out.writeObject(program.getProgramID());
+    }
+    out.writeObject(TVPearlPlugin.getInstance().getComposers());
+  }
 
-	public void updateProgramMark()
-	{
-		try
-		{
-			for (TVPProgram program : mProgramList)
-			{
-				if (program.getStatus() == 2)
-				{
-					Program p = Plugin.getPluginManager().getProgram(new devplugin.Date(program.getStart()), program.getProgramID());
-					if (p != null)
-					{
-						if (TVPearlPlugin.getInstance().getPropertyBoolean("MarkPearl") && TVPProgramFilter.showProgram(program))
-						{
-							p.mark(TVPearlPlugin.getInstance());
-						}
-						else
-						{
-							p.unmark(TVPearlPlugin.getInstance());
-						}
-						p.validateMarking();
-					}
-				}
-			}
-		}
-		catch (Exception ex)
-		{
-			mLog.warning(ex.getMessage());
-			mLog.warning("Additional Info:\nProgram list:" + (mProgramList != null ? mProgramList.size() : "null"));
-		}
-	}
+  public void updateProgramMark() {
+    try {
+      for (TVPProgram program : mProgramList) {
+        if (program.wasFound()) {
+          Program p = program.getProgram();
+          if (p != null) {
+            markProgram(p, TVPearlPlugin.getInstance().getPropertyBoolean(
+                "MarkPearl")
+                && TVPProgramFilter.showProgram(program));
+          }
+        }
+      }
+    } catch (Exception ex) {
+      mLog.warning(ex.getMessage());
+      mLog.warning("Additional Info:\nProgram list:"
+          + (mProgramList != null ? mProgramList.size() : "null"));
+    }
+  }
 
-	public String getInfo()
-	{
-		String msg = "";
-		msg += "Url: " + mUrl + "\n";
-		msg += "Program count: " + mProgramList.size() + "\n";
-		if (mLastUpdate != null)
-		{
-			msg += "Last update: " + mLastUpdate.getTime().toString() + "\n";
-		}
-		return msg.trim();
-	}
+  /**
+   * mark or unmark the program (and repetitions or continuations)
+   * 
+   * @param program
+   * @param setMark
+   *          whether to mark or unmark the program
+   */
+  private void markProgram(Program program, boolean setMark) {
+    // set or remove mark
+    if (setMark) {
+      program.mark(TVPearlPlugin.getInstance());
+    } else {
+      program.unmark(TVPearlPlugin.getInstance());
+    }
+    program.validateMarking();
+    // now find repetitions or continuations
+    Iterator<Program> dayProg = Plugin.getPluginManager().getChannelDayProgram(
+        program.getDate(), program.getChannel());
+    if (dayProg != null) {
+      while (dayProg.hasNext()) {
+        Program nextProg = dayProg.next();
+        if (nextProg.getStartTime() > program.getStartTime()
+            && nextProg.getTitle().length() >= program.getTitle().length()
+            && nextProg.getTitle().substring(0, program.getTitle().length())
+                .equalsIgnoreCase(program.getTitle())) {
+          if (setMark) {
+            nextProg.mark(TVPearlPlugin.getInstance());
+          } else {
+            nextProg.unmark(TVPearlPlugin.getInstance());
+          }
+          nextProg.validateMarking();
+        }
+      }
+    }
+  }
+
+  public String getInfo() {
+    String msg = "";
+    msg += "Url: " + mUrl + "\n";
+    msg += "Program count: " + mProgramList.size() + "\n";
+    if (mLastUpdate != null) {
+      msg += "Last update: " + mLastUpdate.getTime().toString() + "\n";
+    }
+    return msg.trim();
+  }
 }

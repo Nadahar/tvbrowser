@@ -58,7 +58,7 @@ public class TVPGrabber
       .compile("<a href=\"([^\"]*?)\"[^>]*>Nächste</a>");
 
   private boolean mRecursiveGrab = true;
-  private boolean mOnlyProgrammInFuture = true;
+  private boolean mOnlyProgramInFuture = true;
 	private String lastUrl = "";
 	private HTTPConverter mConverter;
 
@@ -67,14 +67,14 @@ public class TVPGrabber
 		mConverter = new HTTPConverter();
 	}
 
-	public boolean getOnlyProgrammInFuture()
+	public boolean getOnlyProgramInFuture()
 	{
-		return mOnlyProgrammInFuture;
+		return mOnlyProgramInFuture;
 	}
 
 	public void setOnlyProgrammInFuture(boolean onlyProgrammInFuture)
 	{
-		mOnlyProgrammInFuture = onlyProgrammInFuture;
+		mOnlyProgramInFuture = onlyProgrammInFuture;
 	}
 
 	public boolean getRecusiveGrab()
@@ -264,7 +264,7 @@ public class TVPGrabber
 		}
 		if (programName.length() > 0)
 		{
-			if ((mOnlyProgrammInFuture && today.compareTo(start) < 0) || !mOnlyProgrammInFuture)
+			if ((mOnlyProgramInFuture && today.compareTo(start) < 0) || !mOnlyProgramInFuture)
 			{
 				programList.add(createProgram(author, contentUrl, createDate, programName, channel, start, programInfo));
 			}

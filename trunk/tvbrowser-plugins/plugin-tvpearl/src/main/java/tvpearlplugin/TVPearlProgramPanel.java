@@ -17,13 +17,24 @@
  */
 package tvpearlplugin;
 
-import java.awt.*;
-import java.text.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import devplugin.*;
-import devplugin.Date;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import devplugin.Marker;
+import devplugin.Program;
 
 public class TVPearlProgramPanel extends JComponent implements ChangeListener
 {
@@ -41,14 +52,7 @@ public class TVPearlProgramPanel extends JComponent implements ChangeListener
 	public TVPearlProgramPanel(TVPProgram p)
 	{
 		mPearlProgram = p;
-		if (mPearlProgram.getProgramID().length() > 0)
-		{
-			mProgram = Plugin.getPluginManager().getProgram(new Date(mPearlProgram.getStart()), mPearlProgram.getProgramID());
-		}
-		else
-		{
-			mProgram = null;
-		}
+		mProgram = p.getProgram();
 		mHeaderFont = new Font("Dialog", Font.PLAIN, 12);
 		mBodyFont = new Font("Dialog", Font.BOLD, 12);
 		fillIconList();
@@ -87,7 +91,7 @@ public class TVPearlProgramPanel extends JComponent implements ChangeListener
 		}
 		else
 		{
-			programStatus = TVPearlPlugin.getInstance().getProgramUnkownIcon();
+			programStatus = TVPearlPlugin.getInstance().getProgramUnknownIcon();
 		}
 		programStatus.paintIcon(this, grp, ICON_SPACE / 2 - 8, getSize().height / 2 - 8);
 
