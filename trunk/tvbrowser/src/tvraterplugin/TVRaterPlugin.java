@@ -86,8 +86,6 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
   private Database _tvraterDB = new Database();
 
-  private boolean hasRightToDownload = false;
-
   /** Instance of this Plugin */
   private static TVRaterPlugin _tvRaterInstance;
 
@@ -349,7 +347,6 @@ public class TVRaterPlugin extends devplugin.Plugin {
   }
 
   public void handleTvBrowserStartFinished() {
-    hasRightToDownload = true;
     mStartFinished = true;
     // update tree only if it is already shown
     if (mRootNode != null) {
@@ -367,7 +364,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
   public void handleTvDataUpdateFinished() {
     if (!((_settings.getProperty("name", "").length() == 0) || (_settings
         .getProperty("password", "").length() == 0))
-        && hasRightToDownload && IOUtilities.getMinutesAfterMidnight() > 1) {
+        && mStartFinished && IOUtilities.getMinutesAfterMidnight() > 1) {
       if (Integer.parseInt(_settings.getProperty("updateIntervall", "0")) < 3) {
         updateDB();
       }
