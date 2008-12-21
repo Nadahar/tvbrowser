@@ -120,6 +120,7 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
     root.removeAllChildren();
     root.getMutableTreeNode().setShowLeafCountEnabled(true);
     
+    int progCount = 0;
     HashMap<String, PluginTreeNode> genreNodes = new HashMap<String, PluginTreeNode>();
     currentGenres = new ArrayList<String>();
     Channel[] channels = devplugin.Plugin.getPluginManager().getSubscribedChannels();
@@ -134,6 +135,10 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
             Program prog = iter.next();
             String genreField = prog.getTextField(ProgramFieldType.GENRE_TYPE);
             if (genreField != null) {
+              // some programs have buggy fields with brackets
+              if (genreField.startsWith("(") && genreField.endsWith(")")) {
+                genreField = genreField.substring(1, genreField.length() - 1);
+              }
               // some programs have multiple genres in the field
               String[] genres = genreField.split(",");
               for (String g : genres) {
@@ -150,6 +155,7 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
                       currentGenres.add(genre);
                     }
                     node.addProgramWithoutCheck(prog);
+                    progCount++;
                   }
                 }
               }
@@ -158,6 +164,10 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
         }
       }
       date = date.addDays(1);
+      // stop if there are to many nodes for the tree
+      if (progCount > 10000) {
+        break;
+      }
     }
     Collections.sort(currentGenres, String.CASE_INSENSITIVE_ORDER);
     mergeSimilarGenres(genreNodes);
