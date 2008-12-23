@@ -1105,7 +1105,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
     // tooltip for all marker icons
     Marker[] markers = mProgram.getMarkerArr();
     if (markers != null && markers.length > 0
-        && x >= WIDTH - markers.length * 16 - 2) {
+        && x >= getWidth() - markers.length * 16 - 2) {
       int markerY = mTitleIcon.getIconHeight()
           + mDescriptionIcon.getIconHeight() + mPictureAreaIcon.getIconHeight()
           + 2;

@@ -25,6 +25,10 @@
  */
 package util.ui;
 
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Vector;
@@ -63,10 +67,8 @@ public class ProgramList extends JList implements ChangeListener,
    *          Array of Programs to show
    */
   public ProgramList(Vector<Program> programArr) {
-    super(programArr);
-    setCellRenderer(new ProgramListCellRenderer(new ProgramPanelSettings(
-        new PluginPictureSettings(
-            PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false)));
+    this(programArr, new PluginPictureSettings(
+        PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE));
   }
 
   /**
@@ -76,10 +78,8 @@ public class ProgramList extends JList implements ChangeListener,
    *          Array of Programs to show
    */
   public ProgramList(Program[] programArr) {
-    super(programArr);
-    setCellRenderer(new ProgramListCellRenderer(new ProgramPanelSettings(
-        new PluginPictureSettings(
-            PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false)));
+    this(programArr, new PluginPictureSettings(
+        PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE));
   }
 
   /**
@@ -89,11 +89,8 @@ public class ProgramList extends JList implements ChangeListener,
    *          Model with Programs to show
    */
   public ProgramList(ListModel programs) {
-    super(programs);
-    programs.addListDataListener(this);
-    setCellRenderer(new ProgramListCellRenderer(new ProgramPanelSettings(
-        new PluginPictureSettings(
-            PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false)));
+    this(programs, new PluginPictureSettings(
+        PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE));
   }
   
   /**
@@ -109,7 +106,12 @@ public class ProgramList extends JList implements ChangeListener,
   public ProgramList(Vector<Program> programVector,
       ProgramPanelSettings settings) {
     super(programVector);
+    initialize(settings);
+  }
+
+  private void initialize(ProgramPanelSettings settings) {
     setCellRenderer(new ProgramListCellRenderer(settings));
+    setToolTipText("");
   }
 
   /**
@@ -124,7 +126,7 @@ public class ProgramList extends JList implements ChangeListener,
    */
   public ProgramList(Program[] programArr, ProgramPanelSettings settings) {
     super(programArr);
-    setCellRenderer(new ProgramListCellRenderer(settings));
+    initialize(settings);
   }
 
   /**
@@ -140,7 +142,7 @@ public class ProgramList extends JList implements ChangeListener,
   public ProgramList(ListModel programs, ProgramPanelSettings settings) {
     super(programs);
     programs.addListDataListener(this);
-    setCellRenderer(new ProgramListCellRenderer(settings));
+    initialize(settings);
   }
 
   /**
@@ -155,9 +157,7 @@ public class ProgramList extends JList implements ChangeListener,
    */
   public ProgramList(Vector<Program> programVector,
       PluginPictureSettings settings) {
-    super(programVector);
-    setCellRenderer(new ProgramListCellRenderer(new ProgramPanelSettings(
-        settings, false)));
+    this(programVector, new ProgramPanelSettings(settings, false));
   }
 
   /**
@@ -171,9 +171,7 @@ public class ProgramList extends JList implements ChangeListener,
    * @since 2.6
    */
   public ProgramList(Program[] programArr, PluginPictureSettings settings) {
-    super(programArr);
-    setCellRenderer(new ProgramListCellRenderer(new ProgramPanelSettings(
-        settings, false)));
+    this(programArr, new ProgramPanelSettings(settings, false));
   }
   
   /**
@@ -187,10 +185,7 @@ public class ProgramList extends JList implements ChangeListener,
    * @since 2.6
    */
   public ProgramList(ListModel programs, PluginPictureSettings settings) {
-    super(programs);
-    programs.addListDataListener(this);
-    setCellRenderer(new ProgramListCellRenderer(new ProgramPanelSettings(
-        settings, false)));
+    this(programs, new ProgramPanelSettings(settings, false));
   }
   
   /**
@@ -460,9 +455,34 @@ public class ProgramList extends JList implements ChangeListener,
    */
   public ProgramList(ListModel programs, PluginPictureSettings settings,
       int axis) {
-    super(programs);
-    programs.addListDataListener(this);
-    setCellRenderer(new ProgramListCellRenderer(new ProgramPanelSettings(
-        settings, false, axis)));
+    this(programs, new ProgramPanelSettings(settings, false, axis), axis);
   }
+
+  @Override
+  public String getToolTipText(MouseEvent event) {
+    final Point point = event.getPoint();
+    int index = locationToIndex(point);
+    if (index >= 0) {
+      Rectangle bounds = getCellBounds(index, index);
+      if (bounds != null) {
+        int x = point.x - bounds.x;
+        int y = point.y - bounds.y;
+        Component component = getCellRenderer()
+            .getListCellRendererComponent(this, mPrograms.elementAt(index),
+                index, false, false);
+        if (component != null && component instanceof Container) {
+          Container container = (Container) component;
+          component = container.getComponent(1);
+          if (component != null && component instanceof ProgramPanel) {
+            ProgramPanel panel = (ProgramPanel) component;
+            x -= panel.getX();
+            y -= panel.getY();
+            return panel.getToolTipText(x, y);
+          }
+        }
+      }
+    }
+    return super.getToolTipText(event);
+  }
+
 }
