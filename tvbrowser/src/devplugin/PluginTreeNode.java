@@ -475,8 +475,8 @@ public class PluginTreeNode {
   }
 
   /**
-   * Refreshs the tree. Call this method after you have added/removed/changed nodes
-   * of the (sub-)tree
+   * Refreshes the tree. Call this method after you have added/removed/changed
+   * nodes of the (sub-)tree
    */
   public synchronized void update() {
 
