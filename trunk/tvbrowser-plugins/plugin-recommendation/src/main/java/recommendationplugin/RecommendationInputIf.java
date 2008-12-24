@@ -4,6 +4,10 @@ import devplugin.Program;
 
 public interface RecommendationInputIf {
   public String getName();
+
   public int getWeight();
-  int calculate(Program p);
+
+  public void setWeight(int integer);
+
+  public int calculate(Program p);
 }

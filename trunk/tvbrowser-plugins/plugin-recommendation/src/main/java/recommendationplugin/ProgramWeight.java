@@ -2,7 +2,7 @@ package recommendationplugin;
 
 import devplugin.Program;
 
-public class ProgramWeight implements Comparable<ProgramWeight>{
+public class ProgramWeight implements Comparable<ProgramWeight> {
   private Program mProgram;
   private int mWeight;
 

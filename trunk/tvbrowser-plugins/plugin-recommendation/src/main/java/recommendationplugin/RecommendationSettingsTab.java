@@ -1,15 +1,15 @@
 package recommendationplugin;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 import devplugin.SettingsTab;
 
-import javax.swing.JPanel;
 import javax.swing.Icon;
-import javax.swing.JTable;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.RowSpec;
+import javax.swing.JTable;
+import javax.swing.JSlider;
 
 public class RecommendationSettingsTab implements SettingsTab {
 
@@ -32,9 +32,10 @@ public class RecommendationSettingsTab implements SettingsTab {
 
     final RecommendationTableModel model = new RecommendationTableModel(mPlugin.getEnabledInput());
     final JTable table = new JTable(model);
-
-    panel.add(new JScrollPane(table), cc.xy(2,line));
-    
+    table.getColumnModel().getColumn(1).setCellRenderer(new TableSliderRenderer());
+    table.getColumnModel().getColumn(1).setCellEditor(new TableSliderEditor());
+    table.getTableHeader().setReorderingAllowed(false);
+    panel.add(new JScrollPane(table), cc.xy(2, line));
 
     return panel;
   }
