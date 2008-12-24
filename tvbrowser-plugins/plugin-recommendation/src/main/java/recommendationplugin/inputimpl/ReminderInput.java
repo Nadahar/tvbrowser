@@ -1,12 +1,11 @@
 package recommendationplugin.inputimpl;
 
-import recommendationplugin.RecommendationInputIf;
-import devplugin.Program;
 import devplugin.Marker;
+import devplugin.Program;
+import recommendationplugin.RecommendationInputIf;
 
 
 public class ReminderInput implements RecommendationInputIf {
-
   private int mWeight;
 
   public ReminderInput(final int weight) {
@@ -19,6 +18,10 @@ public class ReminderInput implements RecommendationInputIf {
 
   public int getWeight() {
     return mWeight;
+  }
+
+  public void setWeight(int weight) {
+    mWeight = weight;
   }
 
   public int calculate(Program p) {

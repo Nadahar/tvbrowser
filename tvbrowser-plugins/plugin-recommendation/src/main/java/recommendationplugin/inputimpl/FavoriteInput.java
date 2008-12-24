@@ -1,8 +1,8 @@
 package recommendationplugin.inputimpl;
 
-import recommendationplugin.RecommendationInputIf;
-import devplugin.Program;
 import devplugin.Marker;
+import devplugin.Program;
+import recommendationplugin.RecommendationInputIf;
 
 public class FavoriteInput implements RecommendationInputIf {
   private int mWeight;
@@ -17,6 +17,10 @@ public class FavoriteInput implements RecommendationInputIf {
 
   public int getWeight() {
     return mWeight;
+  }
+
+  public void setWeight(int weight) {
+    mWeight = weight;
   }
 
   public int calculate(Program p) {

@@ -1,7 +1,7 @@
 package recommendationplugin.inputimpl;
 
-import devplugin.ProgramRatingIf;
 import devplugin.Program;
+import devplugin.ProgramRatingIf;
 import recommendationplugin.RecommendationInputIf;
 
 public class RatingInput implements RecommendationInputIf {
@@ -20,6 +20,10 @@ public class RatingInput implements RecommendationInputIf {
 
   public int getWeight() {
     return mWeight;
+  }
+
+  public void setWeight(int weight) {
+    mWeight = weight;
   }
 
   public int calculate(Program p) {

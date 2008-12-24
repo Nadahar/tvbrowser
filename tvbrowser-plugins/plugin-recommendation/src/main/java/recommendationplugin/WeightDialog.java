@@ -1,29 +1,24 @@
 package recommendationplugin;
 
-import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import util.ui.Localizer;
+import util.ui.ProgramList;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.DefaultListModel;
 import javax.swing.JScrollPane;
-import javax.swing.JButton;
-
-import util.ui.ProgramList;
-import util.ui.Localizer;
-import util.ui.WindowClosingIf;
-import util.ui.UiUtilities;
-
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
-import devplugin.Program;
 
 public class WeightDialog extends JDialog implements WindowClosingIf {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(RecommendationPlugin.class);
@@ -54,7 +49,7 @@ public class WeightDialog extends JDialog implements WindowClosingIf {
 
     ProgramList list = new ProgramList(mModel);
 
-    panel.add(new JScrollPane(list), cc.xy(1,line));
+    panel.add(new JScrollPane(list), cc.xy(1, line));
 
     line += 2;
     layout.appendRow(RowSpec.decode("pref"));
@@ -63,7 +58,7 @@ public class WeightDialog extends JDialog implements WindowClosingIf {
     builder.addGlue();
 
     final JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
-    ok.addActionListener(new ActionListener(){
+    ok.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         setVisible(false);
       }
@@ -74,7 +69,7 @@ public class WeightDialog extends JDialog implements WindowClosingIf {
     panel.add(builder.getPanel(), cc.xy(1, line));
 
     setSize(Sizes.dialogUnitXAsPixel(200, this),
-            Sizes.dialogUnitYAsPixel(300, this));
+        Sizes.dialogUnitYAsPixel(300, this));
 
     UiUtilities.registerForClosing(this);
   }

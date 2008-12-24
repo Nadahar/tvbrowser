@@ -1,8 +1,5 @@
 package recommendationplugin;
 
-import devplugin.Program;
-
-import javax.swing.DefaultListModel;
 import javax.swing.AbstractListModel;
 import java.util.ArrayList;
 
