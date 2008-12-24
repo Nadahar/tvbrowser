@@ -1,0 +1,32 @@
+package recommendationplugin.inputimpl;
+
+import recommendationplugin.RecommendationInputIf;
+import devplugin.Program;
+import devplugin.Marker;
+
+
+public class ReminderInput implements RecommendationInputIf {
+
+  private int mWeight;
+
+  public ReminderInput(final int weight) {
+    mWeight = weight;
+  }
+
+  public String getName() {
+    return "[Reminder]";
+  }
+
+  public int getWeight() {
+    return mWeight;
+  }
+
+  public int calculate(Program p) {
+    for (Marker m : p.getMarkerArr()) {
+      if (m.getId().equals("reminderplugin.ReminderPlugin")) {
+        return mWeight;
+      }
+    }
+    return 0;
+  }
+}
