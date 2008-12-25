@@ -117,6 +117,16 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
   /** Formatter for the Time-String */
   private static final TimeFormatter TIME_FORMATTER = new TimeFormatter(); 
   
+  /**
+   * horizontal distance between format icons
+   */
+  private static final int ICON_DISTANCE_X = 2;
+
+  /**
+   * vertical distance between format icons
+   */
+  private static final int ICON_DISTANCE_Y = 2;
+  
   /** The height. */
   private int mHeight = 0;
   /**
@@ -165,6 +175,7 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
    * @deprecated since 2.7 Use {@link ProgramPanelSettings#Y_AXIS} instead
    */
   final public static int Y_AXIS = ProgramPanelSettings.Y_AXIS;
+
   /** Orientation of progress bar */
   private int mAxis = ProgramPanelSettings.Y_AXIS;
   
@@ -175,6 +186,9 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
   
   private boolean mPaintExpiredProgramsPale = true;
 
+  /**
+   * rectangle of the format icon area, used for tooltip calculation
+   */
   private Rectangle mInfoIconRect;
 
   /**
@@ -773,16 +787,16 @@ private static Font getDynamicFontSize(Font font, int offset) {
     
     // Paint the icons on the left side
     if (mIconArr != null) {
-      x = 2;
+      x = ICON_DISTANCE_X;
       y = mTimeFont.getSize() + 3;
       Point iconsTopLeft = new Point(x, y);
 
       // calculate height with double column layout
-      int sumHeights = -2;
+      int sumHeights = -ICON_DISTANCE_Y;
       int maxWidth = 0;
       int rowWidth = 0;
       for (int i = 0; i < mIconArr.length; i++) {
-        sumHeights += mIconArr[i].getIconHeight() + 2;
+        sumHeights += mIconArr[i].getIconHeight() + ICON_DISTANCE_Y;
         if (i % 2 == 0) {
           rowWidth = mIconArr[i].getIconWidth();
         }
@@ -797,7 +811,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
       // single column of icons
       int colCount = 1;
       // layout icons in pairs
-      if ((y + sumHeights >= mHeight) && (maxWidth < WIDTH_LEFT)) {
+      if ((y + sumHeights >= mHeight) && (maxWidth + 3 * ICON_DISTANCE_X < WIDTH_LEFT)) {
         colCount = 2;
       }
       int iconHeight = 0;
@@ -816,10 +830,10 @@ private static Font getDynamicFontSize(Font font, int offset) {
           icon.paintIcon(this, grp, currentX, y);
         }
         if (nextColumn) {
-          currentX += icon.getIconWidth() + 2;
+          currentX += icon.getIconWidth() + ICON_DISTANCE_X;
         }
         if (!nextColumn || (colCount == 1)) {
-          y += iconHeight + 2;
+          y += iconHeight + ICON_DISTANCE_Y;
         }
       }
       // remember the size of this area for tooltip
