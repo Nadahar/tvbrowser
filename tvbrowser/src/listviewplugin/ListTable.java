@@ -25,11 +25,16 @@
  */
 package listviewplugin;
 
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
 import java.util.Vector;
 
 import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import util.ui.ProgramPanel;
 
 import devplugin.Program;
 
@@ -38,7 +43,7 @@ import devplugin.Program;
  */
 public class ListTable extends JTable implements ChangeListener {
     /** List of all Programs */
-    private Vector<Program> mPrograms = new Vector<Program>();;
+    private Vector<Program> mPrograms = new Vector<Program>();
 
     /**
      * Creates the ListTable
@@ -113,5 +118,28 @@ public class ListTable extends JTable implements ChangeListener {
      */
     public void stateChanged(ChangeEvent e) {
         repaint();
+    }
+    
+    @Override
+    public String getToolTipText(MouseEvent event) {
+      int column = columnAtPoint(event.getPoint());
+      int row = rowAtPoint(event.getPoint());
+      if (column >= 1 && column <= 2 && row >= 0) {
+        Object value = getValueAt(row, column);
+        if (value != null) {
+          Component renderComp = getCellRenderer(row, column).getTableCellRendererComponent(this, value, false, false, row, column);
+          if (renderComp instanceof Container) {
+            Container container = (Container) renderComp;
+            if (container.getComponentCount() > 0 && container.getComponent(0) instanceof ProgramPanel) {
+              ProgramPanel panel = (ProgramPanel) container.getComponent(0);
+              Rectangle cellRect = getCellRect(row, column, true);
+              int x = event.getX() - cellRect.x - panel.getX();
+              int y = event.getY() - cellRect.y - panel.getY();
+              return panel.getToolTipText(x, y);
+            }
+          }
+        }
+      }
+      return null;
     }
 }
