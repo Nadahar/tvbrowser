@@ -193,7 +193,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
   }
 
   /**
-   * Genereates the List of Programs
+   * Generates the List of Programs
    */
   private void generateList(Date date, int time) {
     // If Time > 24 try next Day
@@ -519,6 +519,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     mProgramTable = new ListTable(mModel);
     mProgramTable.getTableHeader().setReorderingAllowed(false);
     mProgramTable.getTableHeader().setResizingAllowed(false);
+    mProgramTable.setToolTipText("");
 
     mProgramTable.addMouseListener(new MouseAdapter() {
       @Override
