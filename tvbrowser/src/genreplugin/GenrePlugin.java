@@ -184,7 +184,7 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
   private void mergeSimilarGenres(HashMap<String, PluginTreeNode> genreNodes) {
     for (String genre : currentGenres) {
       int index = genre.indexOf('-');
-      if (index > 0) {
+      if (index > 0 && index + 2 <= genre.length()) {
         String shortened = genre.replace("-", "");
         if (Character.isUpperCase(shortened.charAt(index))) {
           shortened = shortened.substring(0, index) + shortened.substring(index, index + 1).toLowerCase() + shortened.substring(index + 1);
