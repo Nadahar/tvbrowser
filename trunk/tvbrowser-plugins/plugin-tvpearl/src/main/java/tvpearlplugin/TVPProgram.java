@@ -42,11 +42,11 @@ public class TVPProgram implements Comparable<TVPProgram> {
   public String toString() {
     StringBuffer buffer = new StringBuffer();
     buffer.append(DateFormat.getDateInstance().format(mStart.getTime()));
-    buffer.append(" � ");
+    buffer.append(" · ");
     buffer.append(DateFormat.getTimeInstance().format(mStart.getTime()));
-    buffer.append(" � ");
+    buffer.append(" · ");
     buffer.append(mChannel);
-    buffer.append(" � ");
+    buffer.append(" · ");
     buffer.append(mTitle);
 
     return buffer.toString();
