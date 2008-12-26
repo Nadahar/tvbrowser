@@ -224,7 +224,7 @@ public class TVPGrabber
 		{
 			boolean isHeader = false;
 
-			String[] items = line.split("[,|�]");
+			String[] items = line.split("[,|·]");
 			if (items.length == 4)
 			{
 
