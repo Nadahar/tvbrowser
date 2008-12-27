@@ -24,154 +24,194 @@ import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.Program;
 
-public class TVPProgram implements Comparable<TVPProgram> {
-  private String mAuthor;
-  private Calendar mCreateDate;
-  private String mContentUrl;
-  private String mTitle;
-  private String mChannel;
-  private Calendar mStart;
-  private String mInfo;
-  private String mProgramID;
-  private int mStatus = IProgramStatus.STATUS_NOT_FOUND;
+public class TVPProgram implements Comparable<TVPProgram>
+{
+	private String mAuthor;
+	private Calendar mCreateDate;
+	private String mContentUrl;
+	private String mTitle;
+	private String mChannel;
+	private Calendar mStart;
+	private String mInfo;
+	private String mProgramID;
+	private boolean mSendTo = false;
+	private int mStatus = IProgramStatus.STATUS_NOT_FOUND;
 
-  public int compareTo(TVPProgram o) {
-    return mStart.compareTo(o.getStart());
-  }
+	public int compareTo(TVPProgram o)
+	{
+		return mStart.compareTo(o.getStart());
+	}
 
-  public String toString() {
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(DateFormat.getDateInstance().format(mStart.getTime()));
-    buffer.append(" · ");
-    buffer.append(DateFormat.getTimeInstance().format(mStart.getTime()));
-    buffer.append(" · ");
-    buffer.append(mChannel);
-    buffer.append(" · ");
-    buffer.append(mTitle);
+	public String toString()
+	{
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(DateFormat.getDateInstance().format(mStart.getTime()));
+		buffer.append(" · ");
+		buffer.append(DateFormat.getTimeInstance().format(mStart.getTime()));
+		buffer.append(" · ");
+		buffer.append(mChannel);
+		buffer.append(" · ");
+		buffer.append(mTitle);
 
-    return buffer.toString();
-  }
+		return buffer.toString();
+	}
 
-  public String getAuthor() {
-    return mAuthor;
-  }
+	public String getAuthor()
+	{
+		return mAuthor;
+	}
 
-  public void setAuthor(String author) {
-    this.mAuthor = author;
-  }
+	public void setAuthor(String author)
+	{
+		this.mAuthor = author;
+	}
 
-  public String getChannel() {
-    return mChannel;
-  }
+	public String getChannel()
+	{
+		return mChannel;
+	}
 
-  public void setChannel(String channel) {
-    this.mChannel = channel;
-  }
+	public void setChannel(String channel)
+	{
+		this.mChannel = channel;
+	}
 
-  public String getContentUrl() {
-    return mContentUrl;
-  }
+	public String getContentUrl()
+	{
+		return mContentUrl;
+	}
 
-  public void setContentUrl(String contentUrl) {
-    this.mContentUrl = contentUrl;
-  }
+	public void setContentUrl(String contentUrl)
+	{
+		this.mContentUrl = contentUrl;
+	}
 
-  public Calendar getCreateDate() {
-    return mCreateDate;
-  }
+	public Calendar getCreateDate()
+	{
+		return mCreateDate;
+	}
 
-  public void setCreateDate(Calendar createDate) {
-    this.mCreateDate = createDate;
-  }
+	public void setCreateDate(Calendar createDate)
+	{
+		this.mCreateDate = createDate;
+	}
 
-  public String getInfo() {
-    return mInfo;
-  }
+	public String getInfo()
+	{
+		return mInfo;
+	}
 
-  public void setInfo(String info) {
-    this.mInfo = info;
-  }
+	public void setInfo(String info)
+	{
+		this.mInfo = info;
+	}
 
-  public String getProgramID() {
-    return mProgramID;
-  }
+	public String getProgramID()
+	{
+		return mProgramID;
+	}
 
-  public void setProgramID(String programID) {
-    this.mProgramID = programID.trim();
-    if (this.mProgramID != null && this.mProgramID.trim().length() > 0) {
-      setStatus(IProgramStatus.STATUS_FOUND_PROGRAM);
-    }
-  }
+	public void setProgramID(String programID)
+	{
+		this.mProgramID = programID.trim();
+		if (this.mProgramID != null && this.mProgramID.length() > 0)
+		{
+			setStatus(IProgramStatus.STATUS_FOUND_PROGRAM);
+		}
+	}
 
-  public Calendar getStart() {
-    return mStart;
-  }
+	public Calendar getStart()
+	{
+		return mStart;
+	}
 
-  public void setStart(Calendar start) {
-    this.mStart = start;
-  }
+	public void setStart(Calendar start)
+	{
+		this.mStart = start;
+	}
 
-  public String getTitle() {
-    return mTitle;
-  }
+	public String getTitle()
+	{
+		return mTitle;
+	}
 
-  public void setTitle(String title) {
-    this.mTitle = title;
-  }
+	public void setTitle(String title)
+	{
+		this.mTitle = title;
+	}
 
-  public int getStatus() {
-    return mStatus;
-  }
+	public boolean getSendTo()
+	{
+		return mSendTo;
+	}
 
-  public void setStatus(Integer status) {
-    if (this.mStatus < status) {
-      this.mStatus = status;
-    }
-  }
+	public void setSendTo(boolean sendTo)
+	{
+		mSendTo = sendTo;
+	}
 
-  public void resetStatus() {
-    mProgramID = "";
-    mStatus = IProgramStatus.STATUS_NOT_FOUND;
-  }
+	public int getStatus()
+	{
+		return mStatus;
+	}
 
-  /**
-   * was program pearl found in TV-Browser?
-   * 
-   * @return
-   */
-  public boolean wasFound() {
-    return getStatus() == IProgramStatus.STATUS_FOUND_PROGRAM;
-  }
+	public void setStatus(Integer status)
+	{
+		if (this.mStatus < status)
+		{
+			this.mStatus = status;
+		}
+	}
 
-  /**
-   * get date of this program pearl
-   * 
-   * @return
-   */
-  public Date getDate() {
-    return new Date(getStart());
-  }
+	public void resetStatus()
+	{
+		mProgramID = "";
+		mStatus = IProgramStatus.STATUS_NOT_FOUND;
+	}
 
-  /**
-   * get the TV-Browser program for this pearl or null, if no program exists
-   * with the given date and program ID
-   * 
-   * @return
-   */
-  public Program getProgram() {
-    final String id = getProgramID();
-    if (id != null && id.length() > 0) {
-      return Plugin.getPluginManager().getProgram(getDate(), id);
-    }
-    return null;
-  }
+	/**
+	 * was program pearl found in TV-Browser?
+	 * 
+	 * @return
+	 */
+	public boolean wasFound()
+	{
+		return getStatus() == IProgramStatus.STATUS_FOUND_PROGRAM;
+	}
 
-  /**
-   * connect the TV pearl program to the given TV-Browser program
-   * 
-   * @param program
-   */
-  public void setProgram(Program program) {
-    setProgramID(program.getID());
-  }
+	/**
+	 * get date of this program pearl
+	 * 
+	 * @return
+	 */
+	public Date getDate()
+	{
+		return new Date(getStart());
+	}
+
+	/**
+	 * get the TV-Browser program for this pearl or null, if no program exists
+	 * with the given date and program ID
+	 * 
+	 * @return
+	 */
+	public Program getProgram()
+	{
+		final String id = getProgramID();
+		if (id != null && id.length() > 0)
+		{
+			return Plugin.getPluginManager().getProgram(getDate(), id);
+		}
+		return null;
+	}
+
+	/**
+	 * connect the TV pearl program to the given TV-Browser program
+	 * 
+	 * @param program
+	 */
+	public void setProgram(Program program)
+	{
+		setProgramID(program.getID());
+	}
 }

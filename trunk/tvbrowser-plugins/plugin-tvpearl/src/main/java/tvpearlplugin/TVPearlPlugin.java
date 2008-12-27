@@ -29,11 +29,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.logging.Logger;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -41,11 +41,15 @@ import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.PluginInfo;
+import devplugin.PluginTreeNode;
 import devplugin.Program;
+import devplugin.ProgramReceiveIf;
+import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.Version;
 
@@ -68,10 +72,13 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	private PearlDialog mDialog = null;
 	private PearlInfoDialog mInfoDialog = null;
 	private Vector<String> mComposerFilter;
+	private ProgramReceiveTarget[] mClientPluginTargets;
+	private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
 
 	public TVPearlPlugin()
 	{
 		mInstance = this;
+		mClientPluginTargets = new ProgramReceiveTarget[0];
 	}
 
 	public static TVPearlPlugin getInstance()
@@ -87,8 +94,7 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	public PluginInfo getInfo()
 	{
 		String name = mLocalizer.msg("name", "TV Pearl");
-		String desc = mLocalizer.msg("description",
-        "Shows the TV Pearls from the TV-Browser forum.");
+		String desc = mLocalizer.msg("description", "Shows the TV Pearls from the TV-Browser forum.");
 		String author = "Reinhard Lehrbaum";
 
 		return new PluginInfo(TVPearlPlugin.class, name, desc, author);
@@ -133,14 +139,16 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	{
 		if (mDialog == null)
 		{
-      Window w = UiUtilities.getBestDialogParent(getParentFrame());
+			Window w = UiUtilities.getBestDialogParent(getParentFrame());
 
-      if (w instanceof JDialog) {
-        mDialog = new PearlDialog((JDialog)w);
-      } else {
-        mDialog = new PearlDialog((JFrame)w);
-      }
-
+			if (w instanceof JDialog)
+			{
+				mDialog = new PearlDialog((JDialog) w);
+			}
+			else
+			{
+				mDialog = new PearlDialog((JFrame) w);
+			}
 
 			mDialog.addWindowListener(new WindowAdapter()
 			{
@@ -195,7 +203,7 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 
 	public ActionMenu getContextMenuActions(final Program program)
 	{
-		TVPProgram p = mTVPearls.getPerle(program);
+		TVPProgram p = mTVPearls.getPearl(program);
 
 		if (p != null || program.getID() == null)
 		{
@@ -203,11 +211,13 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 			menu.setText(mLocalizer.msg("comment", "TV Pearl comment"));
 			menu.putValue(Action.ACTION_COMMAND_KEY, menu.getValue(Action.NAME));
 			menu.setSmallIcon(getSmallIcon());
-			menu.setActionListener(new ActionListener(){
-        public void actionPerformed(ActionEvent event) {
-          showPearlInfo(mTVPearls.getPerle(program));
-        }
-      });
+			menu.setActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent event)
+				{
+					showPearlInfo(mTVPearls.getPearl(program));
+				}
+			});
 
 			return new ActionMenu(menu);
 		}
@@ -220,6 +230,16 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	public Icon[] getMarkIconsForProgram(Program p)
 	{
 		return new Icon[] { getSmallIcon() };
+	}
+
+	public PluginTreeNode getRootNode()
+	{
+		return mRootNode;
+	}
+
+	public boolean canUseProgramTree()
+	{
+		return true;
 	}
 
 	public void loadSettings(Properties prop)
@@ -392,7 +412,7 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 
 	void updateChanges()
 	{
-		mTVPearls.updateProgramMark();
+		mTVPearls.updateTVB();
 	}
 
 	ImageIcon getSmallIcon()
@@ -421,15 +441,15 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 			{
 				if (cal.get(Calendar.DAY_OF_MONTH) == c.get(Calendar.DAY_OF_MONTH))
 				{
-					day = mLocalizer.msg("today", "Today");
+					day = Localizer.getLocalization(Localizer.I18N_TODAY);
 				}
 				else if (cal.get(Calendar.DAY_OF_MONTH) == c.get(Calendar.DAY_OF_MONTH) + 1)
 				{
-					day = mLocalizer.msg("tomorrow", "Tomorrow");
+					day = Localizer.getLocalization(Localizer.I18N_TOMORROW);
 				}
 				else if (cal.get(Calendar.DAY_OF_MONTH) == c.get(Calendar.DAY_OF_MONTH) - 1)
 				{
-					day = mLocalizer.msg("yesterday", "Yesterday");
+					day = Localizer.getLocalization(Localizer.I18N_YESTERDAY);
 				}
 			}
 		}
@@ -438,7 +458,7 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 
 	TVPProgram[] getProgramList()
 	{
-		return mTVPearls.getPerlenList();
+		return mTVPearls.getPearlList();
 	}
 
 	Vector<String> getComposers()
@@ -499,14 +519,16 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 				mInfoDialog.dispose();
 			}
 
-      Window w = UiUtilities.getLastModalChildOf(getParentFrame());
+			Window w = UiUtilities.getLastModalChildOf(getParentFrame());
 
-      if (w instanceof JDialog) {
-        mInfoDialog = new PearlInfoDialog((JDialog) w, p);
-      } else {
-        mInfoDialog = new PearlInfoDialog((JFrame) w, p);
-      }
-
+			if (w instanceof JDialog)
+			{
+				mInfoDialog = new PearlInfoDialog((JDialog) w, p);
+			}
+			else
+			{
+				mInfoDialog = new PearlInfoDialog((JFrame) w, p);
+			}
 
 			mInfoDialog.pack();
 			mInfoDialog.setModal(getPropertyBoolean("ShowInfoModal"));
@@ -571,5 +593,36 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	public int getMarkPriorityForProgram(Program p)
 	{
 		return getPropertyInteger("MarkPriority");
+	}
+
+	public boolean hasPluginTarget()
+	{
+		return mClientPluginTargets.length > 0;
+	}
+
+	public ProgramReceiveTarget[] getClientPluginsTargets()
+	{
+		ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>();
+		for (ProgramReceiveTarget target : mClientPluginTargets)
+		{
+			ProgramReceiveIf plugin = target.getReceifeIfForIdOfTarget();
+			if (plugin != null && plugin.canReceiveProgramsWithTarget())
+			{
+				list.add(target);
+			}
+		}
+		return list.toArray(new ProgramReceiveTarget[list.size()]);
+	}
+
+	public void setClientPluginsTargets(ProgramReceiveTarget[] targets)
+	{
+		if (targets != null)
+		{
+			mClientPluginTargets = targets;
+		}
+		else
+		{
+			mClientPluginTargets = new ProgramReceiveTarget[0];
+		}
 	}
 }
