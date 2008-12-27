@@ -20,14 +20,13 @@ package tvpearlplugin;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dialog;
-import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Calendar;
-
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -39,8 +38,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolTip;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import tvbrowser.core.icontheme.IconLoader;
 import util.ui.Localizer;
+import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import devplugin.Plugin;
@@ -55,19 +58,20 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 
 	private JScrollPane mScrollPane;
 	private JList mDataList;
+	private JButton mSendBn;
 	private JButton mCloseBn;
 	private JButton mUpdateBn;
 	private DefaultListModel mProgramList;
 	private TVPProgram mPopupProgram = null;
 
-  public PearlDialog(Dialog dialog)
-  {
-    super(dialog, true);
+	public PearlDialog(Dialog dialog)
+	{
+		super(dialog, true);
 
-    setTitle(mLocalizer.msg("name", "TV Pearl"));
-    createGUI();
-    UiUtilities.registerForClosing(this);
-  }
+		setTitle(mLocalizer.msg("name", "TV Pearl"));
+		createGUI();
+		UiUtilities.registerForClosing(this);
+	}
 
 	public PearlDialog(Frame frame)
 	{
@@ -121,20 +125,20 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 
 				if (mDataList.getModel().getElementAt(index) instanceof TVPProgram)
 				{
-					
+
 					TVPProgram p = (TVPProgram) mDataList.getModel().getElementAt(index);
-						Program prog = p.getProgram();
-						if (prog != null)
+					Program prog = p.getProgram();
+					if (prog != null)
+					{
+						if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2)
 						{
-							if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2)
-							{
-								mng.handleProgramDoubleClick(prog, TVPearlPlugin.getInstance());
-							}
-							else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1))
-							{
-								mng.handleProgramMiddleClick(prog);
-							}
+							mng.handleProgramDoubleClick(prog, TVPearlPlugin.getInstance());
 						}
+						else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1))
+						{
+							mng.handleProgramMiddleClick(prog);
+						}
+					}
 					if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1 && e.isShiftDown())
 					{
 						TVPearlPlugin.getInstance().showPearlInfo(p);
@@ -152,12 +156,62 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 				checkPopup(e);
 			}
 		});
+		mDataList.addListSelectionListener(new ListSelectionListener()
+		{
+			public void valueChanged(ListSelectionEvent e)
+			{
+				if (!mDataList.getValueIsAdjusting())
+				{
+					boolean isEnable = false;
+					Object selectedValues[] = mDataList.getSelectedValues();
+					if (selectedValues.length == 1)
+					{
+						if (selectedValues[0] instanceof TVPProgram)
+						{
+							TVPProgram p = (TVPProgram) selectedValues[0];
+							if (p.wasFound())
+							{
+								isEnable = true;
+							}
+						}
+					}
+					mSendBn.setEnabled(isEnable);
+				}
+			}
+		});
 
 		mScrollPane = new JScrollPane(mDataList);
 		main.add(mScrollPane, BorderLayout.CENTER);
 
-		JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
-		main.add(buttonPn, BorderLayout.SOUTH);
+		ButtonBarBuilder builderButton = ButtonBarBuilder.createLeftToRightBuilder();
+		builderButton.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+
+		JButton configBn = new JButton(IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
+		configBn.setToolTipText(mLocalizer.msg("config", "Configure TV Pearl"));
+		configBn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				close();
+				Plugin.getPluginManager().showSettings(TVPearlPlugin.getInstance());
+			}
+		});
+		builderButton.addFixed(configBn);
+		builderButton.addRelatedGap();
+
+		mSendBn = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "edit-copy", 16));
+		mSendBn.setToolTipText(mLocalizer.msg("send", "Send to other Plugins"));
+		mSendBn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				showSendDialog();
+			}
+		});
+		builderButton.addFixed(mSendBn);
+		builderButton.addRelatedGap();
+
+		builderButton.addGlue();
 
 		mUpdateBn = new JButton(mLocalizer.msg("update", "Update"));
 		mUpdateBn.addActionListener(new ActionListener()
@@ -182,7 +236,8 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 			}
 		});
 		mUpdateBn.setVisible(TVPearlPlugin.getInstance().getPropertyBoolean("UpdateManual"));
-		buttonPn.add(mUpdateBn);
+		builderButton.addFixed(mUpdateBn);
+		builderButton.addRelatedGap();
 
 		mCloseBn = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
 		mCloseBn.addActionListener(new ActionListener()
@@ -192,7 +247,9 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 				dispose();
 			}
 		});
-		buttonPn.add(mCloseBn);
+		builderButton.addFixed(mCloseBn);
+
+		main.add(builderButton.getPanel(), BorderLayout.SOUTH);
 
 		getRootPane().setDefaultButton(mCloseBn);
 
@@ -215,7 +272,7 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 				mDataList.setSelectedIndex(index);
 				TVPProgram p = (TVPProgram) mDataList.getModel().getElementAt(index);
 				program = p.getProgram();
-        if (program != null)
+				if (program != null)
 				{
 					popup = manager.createPluginContextMenu(program, null);
 				}
@@ -250,35 +307,63 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 		}
 	}
 
-	public void updateProgramList() {
-    Calendar now = Calendar.getInstance();
-    int index = -1;
+	/**
+	 * show send to plugin dialog
+	 */
+	private void showSendDialog()
+	{
+		Object selectedValues[] = mDataList.getSelectedValues();
+		if (selectedValues.length == 1)
+		{
+			if (selectedValues[0] instanceof TVPProgram)
+			{
+				TVPProgram p = (TVPProgram) selectedValues[0];
+				if (p.wasFound())
+				{
+					Program[] programArr = { p.getProgram() };
 
-    mProgramList.clear();
-    for (TVPProgram item : TVPearlPlugin.getInstance().getProgramList()) {
-      mProgramList.addElement(item);
-      if (index == -1) {
-        final Program program = item.getProgram();
-        // find next pearl or first still running program
-        if ((now.compareTo(item.getStart()) < 0)
-            || (program != null && !program.isExpired())) {
-          index = mProgramList.size() - 1;
-        }
-      }
-    }
-    if (mUpdateBn != null) {
-      mUpdateBn.setEnabled(true);
-    }
-    mDataList.revalidate();
-    mDataList.repaint();
-    if (mProgramList.getSize() > 0) {
-      mDataList.setSelectedIndex(0);
-      if (mProgramList.getSize() > index) {
-        mDataList.setSelectedIndex(index);
-        mDataList.ensureIndexIsVisible(index);
-      }
-    }
-  }
+					SendToPluginDialog send = new SendToPluginDialog(TVPearlPlugin.getInstance(), this, programArr);
+					send.setVisible(true);
+				}
+			}
+		}
+	}
+
+	public void updateProgramList()
+	{
+		Calendar now = Calendar.getInstance();
+		int index = -1;
+
+		mProgramList.clear();
+		for (TVPProgram item : TVPearlPlugin.getInstance().getProgramList())
+		{
+			mProgramList.addElement(item);
+			if (index == -1)
+			{
+				final Program program = item.getProgram();
+				// find next pearl or first still running program
+				if ((now.compareTo(item.getStart()) < 0) || (program != null && !program.isExpired()))
+				{
+					index = mProgramList.size() - 1;
+				}
+			}
+		}
+		if (mUpdateBn != null)
+		{
+			mUpdateBn.setEnabled(true);
+		}
+		mDataList.revalidate();
+		mDataList.repaint();
+		if (mProgramList.getSize() > 0)
+		{
+			mDataList.setSelectedIndex(0);
+			if (mProgramList.getSize() > index)
+			{
+				mDataList.setSelectedIndex(index);
+				mDataList.ensureIndexIsVisible(index);
+			}
+		}
+	}
 
 	public void close()
 	{

@@ -18,11 +18,11 @@
 package tvpearlplugin;
 
 import devplugin.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.*;
 import javax.swing.*;
-
 import util.ui.*;
-
 import com.jgoodies.forms.builder.*;
 import com.jgoodies.forms.layout.*;
 
@@ -41,10 +41,13 @@ public class TVPearlPluginSettingsTab implements SettingsTab
 	private JRadioButton mFilterShowOnly;
 	private JRadioButton mFilterShowNot;
 	private JTextArea mFilterComposer;
+	private JLabel mPluginLabel;
+
+	private ProgramReceiveTarget[] mClientPluginTargets;
 
 	public JPanel createSettingsPanel()
 	{
-		FormLayout layout = new FormLayout("5dlu, pref, 3dlu, fill:pref:grow, 5dlu", "5dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref");
+		FormLayout layout = new FormLayout("5dlu, pref, 3dlu, fill:pref:grow, 5dlu", "5dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref");
 
 		PanelBuilder builder = new PanelBuilder(layout, new ScrollableJPanel());
 		// builder.setDefaultDialogBorder();
@@ -66,6 +69,38 @@ public class TVPearlPluginSettingsTab implements SettingsTab
 		mMarkPriority.setRenderer(new MarkPriorityComboBoxRenderer());
 		mMarkPriority.setSelectedIndex(TVPearlPlugin.getInstance().getPropertyInteger("MarkPriority") + 1);
 		mShowInfoModal = new JCheckBox(mLocalizer.msg("modal", "modal Info dialog"), TVPearlPlugin.getInstance().getPropertyBoolean("ShowInfoModal"));
+
+		mClientPluginTargets = TVPearlPlugin.getInstance().getClientPluginsTargets();
+		mPluginLabel = new JLabel();
+		handlePluginSelection();
+
+		JButton choose = new JButton(mLocalizer.msg("selectPlugins", "Choose Plugins"));
+		choose.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				try
+				{
+					PluginChooserDlg chooser = new PluginChooserDlg((JFrame) null, mClientPluginTargets, null, TVPearlPlugin.getInstance());
+					chooser.setVisible(true);
+
+					if (chooser.getReceiveTargets() != null)
+					{
+						mClientPluginTargets = chooser.getReceiveTargets();
+					}
+
+					handlePluginSelection();
+				}
+				catch (Exception ee)
+				{
+					ee.printStackTrace();
+				}
+			}
+		});
+
+		JPanel pluginPanel = new JPanel(new FormLayout("fill:pref:grow, 3dlu, pref", "default"));
+		pluginPanel.add(mPluginLabel, cc.xy(1, 1));
+		pluginPanel.add(choose, cc.xy(3, 1));
 
 		mEnableFilter = new JCheckBox(mLocalizer.msg("enableFilter", "enable filter"), TVPearlPlugin.getInstance().getPropertyBoolean("ShowEnableFilter"));
 		mFilterShowOnly = new JRadioButton(mLocalizer.msg("filterShowOnly", "show only"), TVPearlPlugin.getInstance().getPropertyInteger("ShowFilter") == 0);
@@ -89,6 +124,10 @@ public class TVPearlPluginSettingsTab implements SettingsTab
 		row += 2;
 		builder.addLabel(mLocalizer.msg("markPriority", "Mark priority"), cc.xy(2, row));
 		builder.add(mMarkPriority, cc.xy(4, row));
+		row += 2;
+		builder.addSeparator(mLocalizer.msg("sendToPlugin", "Send reminded program to"), cc.xyw(1, row, 5));
+		row += 2;
+		builder.add(pluginPanel, cc.xyw(2, row, 3));
 		row += 2;
 		builder.addSeparator(mLocalizer.msg("updateOption", "Update options"), cc.xyw(1, row, 5));
 		row += 2;
@@ -141,7 +180,9 @@ public class TVPearlPluginSettingsTab implements SettingsTab
 		TVPearlPlugin.getInstance().setProperty("ShowInfoModal", mShowInfoModal.isSelected());
 		TVPearlPlugin.getInstance().setProperty("ShowEnableFilter", mEnableFilter.isSelected());
 		TVPearlPlugin.getInstance().setProperty("ShowFilter", mFilterShowOnly.isSelected() ? 0 : 1);
-
+		
+		TVPearlPlugin.getInstance().setClientPluginsTargets(mClientPluginTargets);
+		
 		Vector<String> composers = new Vector<String>();
 		for (String item : mFilterComposer.getText().split("\n"))
 		{
@@ -189,5 +230,44 @@ public class TVPearlPluginSettingsTab implements SettingsTab
 			result += item + "\n";
 		}
 		return result.trim();
+	}
+
+	private void handlePluginSelection()
+	{
+		ArrayList<ProgramReceiveIf> plugins = new ArrayList<ProgramReceiveIf>();
+
+		if (mClientPluginTargets != null)
+		{
+			for (ProgramReceiveTarget target : mClientPluginTargets)
+			{
+				if (!plugins.contains(target.getReceifeIfForIdOfTarget()))
+				{
+					plugins.add(target.getReceifeIfForIdOfTarget());
+				}
+			}
+
+			ProgramReceiveIf[] mClientPlugins = plugins.toArray(new ProgramReceiveIf[plugins.size()]);
+
+			if (mClientPlugins.length > 0)
+			{
+				mPluginLabel.setText(mClientPlugins[0].toString());
+				mPluginLabel.setEnabled(true);
+			}
+			else
+			{
+				mPluginLabel.setText(mLocalizer.msg("noPlugins", "No Plugins choosen"));
+				mPluginLabel.setEnabled(false);
+			}
+
+			for (int i = 1; i < (mClientPlugins.length > 4 ? 3 : mClientPlugins.length); i++)
+			{
+				mPluginLabel.setText(mPluginLabel.getText() + ", " + mClientPlugins[i]);
+			}
+
+			if (mClientPlugins.length > 4)
+			{
+				mPluginLabel.setText(mPluginLabel.getText() + " (" + (mClientPlugins.length - 3) + " " + mLocalizer.msg("otherPlugins", "others...") + ")");
+			}
+		}
 	}
 }
