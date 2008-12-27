@@ -1221,6 +1221,34 @@ private static Font getDynamicFontSize(Font font, int offset) {
   public String getToolTipText(MouseEvent event) {
     return getToolTipText(event.getX(), event.getY());
   }
+
+  @Override
+  public void setSize(Dimension d) {
+    super.setSize(d);
+    setWidth(d.width);
+  }
+
+  @Override
+  public void setSize(int width, int height) {
+    super.setSize(width, height);
+    setWidth(width);
+  }
+
+  public void setWidth(int newWidth) {
+    int oldWidth = getWidth();
+    if (oldWidth != newWidth && newWidth > 0) {
+      int widthRight = newWidth - WIDTH_LEFT;
+      mTitleIcon = new TextAreaIcon(null, mTitleFont, widthRight - 5);
+      mDescriptionIcon = new TextAreaIcon(null, mNormalFont, widthRight - 5);
+      mDescriptionIcon.setMaximumLineCount(3);
+      if (mProgram != null) {
+        mProgram.validateMarking();
+        Program p = mProgram;
+        mProgram = null;
+        setProgram(p);
+      }
+    }
+  }
   
   
 }

@@ -28,6 +28,7 @@ package listviewplugin;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -95,13 +96,14 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
       
       for (int i = 0; i < 2; i++) {
         Program program = (Program) table.getValueAt(row, 1 + i);
-        
+        Rectangle rect = table.getCellRect(row, i + 1, true);
         if(program != null) {
           if (mProgramPanel[row][i] == null) {
             mProgramPanel[row][i] = new ProgramPanel(program, new ProgramPanelSettings(ListViewPlugin.getInstance().getPictureSettings(),false, ProgramPanelSettings.X_AXIS));
           }
 
           mProgramPanel[row][i].setProgram(program);
+          mProgramPanel[row][i].setWidth(rect.width);
           height = Math.max(height, mProgramPanel[row][i].getHeight());
         }
       }

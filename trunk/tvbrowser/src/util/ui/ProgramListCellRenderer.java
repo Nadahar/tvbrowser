@@ -29,6 +29,7 @@ package util.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Insets;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
@@ -137,7 +138,8 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
 
     if (value instanceof Program) {
       Program program = (Program) value;
-      
+      Insets borderInsets = label.getBorder().getBorderInsets(label);
+      mProgramPanel.setWidth(list.getWidth() - borderInsets.left - borderInsets.right);
       mProgramPanel.setProgram(program);
       mProgramPanel.setPaintExpiredProgramsPale(!isSelected);
       mProgramPanel.setTextColor(label.getForeground());
