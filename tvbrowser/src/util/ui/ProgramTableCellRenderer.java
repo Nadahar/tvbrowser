@@ -27,6 +27,7 @@ package util.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Insets;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -106,7 +107,8 @@ public class ProgramTableCellRenderer extends DefaultTableCellRenderer {
         
         if (value instanceof Program) {
             Program program = (Program) value;
-
+            Insets borderInsets = label.getBorder().getBorderInsets(label);
+            mProgramPanel.setWidth(table.getCellRect(row, column, false).width - borderInsets.left - borderInsets.right);
             mProgramPanel.setProgram(program);
             
             program.addChangeListener(new ChangeListener() {
