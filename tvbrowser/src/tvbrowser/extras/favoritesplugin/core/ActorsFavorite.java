@@ -90,7 +90,7 @@ public class ActorsFavorite extends Favorite {
   protected Program[] internalSearchForPrograms() throws TvBrowserException {
     SearchFormSettings searchForm = mSearchFormSettings;
     ProgramFieldType[] fields = searchForm.getFieldTypes();
-    ActorSearcher searcher = new ActorSearcher(mActors);
+    ActorSearcher searcher = getSearcher();
     Program[] foundPrograms = searcher.search(fields, new devplugin.Date().addDays(-1), 1000, getChannels(), false);
     return foundPrograms;
   }
@@ -99,8 +99,11 @@ public class ActorsFavorite extends Favorite {
   public boolean matches(Program p) throws TvBrowserException {
     SearchFormSettings searchForm = mSearchFormSettings;
     ProgramFieldType[] fields = searchForm.getFieldTypes();
-    ActorSearcher searcher = new ActorSearcher(mActors);
-    return searcher.matches(p, fields);
+    return getSearcher().matches(p, fields);
+  }
+
+  public ActorSearcher getSearcher() throws TvBrowserException {
+    return new ActorSearcher(mActors);
   }
 
   @Override

@@ -90,9 +90,9 @@ public class RegexSearcher extends AbstractSearcher {
     // use largest word part for a first pass filter
     String[] parts = searchTerm.split("\\s");
     preFilter = parts[0];
-    for (int i = 1; i < parts.length; i++) {
-      if (parts[i].length() > preFilter.length()) {
-        preFilter = parts[i];
+    for (String part : parts) {
+      if (part.length() > preFilter.length()) {
+        preFilter = part;
       }
     }
     preFilter = preFilter.toLowerCase();
@@ -191,6 +191,16 @@ public class RegexSearcher extends AbstractSearcher {
       Matcher matcher = mPattern.matcher(value);
       return matcher.matches();
     }
+  }
+
+
+  /**
+   * get the pattern used by this searcher
+   * @return the pattern
+   * @since 3.0
+   */
+  public Pattern getPattern() {
+    return mPattern;
   }
 
 }
