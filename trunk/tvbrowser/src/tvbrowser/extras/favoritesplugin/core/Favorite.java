@@ -860,7 +860,18 @@ public abstract class Favorite {
    * @since 2.7
    */
   public boolean matches(Program p) throws TvBrowserException {
-    return mSearchFormSettings.createSearcher().matches(p, mSearchFormSettings.getFieldTypes());
+    return getSearcher().matches(p, mSearchFormSettings.getFieldTypes());
+  }
+
+  /**
+   * get the program searcher used by this favorite
+   * 
+   * @return the program searcher
+   * @throws TvBrowserException
+   * @since 3.0
+   */
+  public ProgramSearcher getSearcher() throws TvBrowserException {
+    return mSearchFormSettings.createSearcher();
   }
 
   /**

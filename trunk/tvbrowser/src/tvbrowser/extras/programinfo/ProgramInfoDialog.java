@@ -26,6 +26,7 @@
 package tvbrowser.extras.programinfo;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -45,6 +46,8 @@ import java.awt.event.WindowEvent;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -71,6 +74,8 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Caret;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
+import javax.swing.text.Highlighter;
+import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 
@@ -81,10 +86,14 @@ import tvbrowser.core.contextmenu.SeparatorMenuItem;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.search.regexsearch.RegexSearcher;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import tvbrowser.ui.DontShowAgainMessageBox;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.browserlauncher.Launch;
+import util.exc.TvBrowserException;
 import util.program.ProgramTextCreator;
 import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
@@ -106,6 +115,7 @@ import devplugin.PluginAccess;
 import devplugin.PluginManager;
 import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
+import devplugin.ProgramSearcher;
 import devplugin.SettingsItem;
 
 /**
@@ -170,12 +180,59 @@ public class ProgramInfoDialog {
 	  SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         mInfoEP.setCaretPosition(0);
+        highlightFavorites();
         if (mFindAsYouType.getSearchBar().isVisible()) {
           mFindAsYouType.next();
         }
       }
     });
     mConfigBtn.setVisible(showSettings);
+  }
+
+  protected void highlightFavorites() {
+    Favorite[] favorites = FavoriteTreeModel.getInstance().getFavoritesContainingProgram(mProgram);
+    if (favorites == null || favorites.length == 0) {
+      return;
+    }
+    
+    DefaultHighlightPainter painter = new DefaultHighlightPainter(Color.MAGENTA);
+    Highlighter highlighter = mInfoEP.getHighlighter();
+    HTMLDocument document = (HTMLDocument) mInfoEP.getDocument();
+
+    for (Favorite favorite : favorites) {
+      ProgramSearcher searcher = null;
+      try {
+        searcher = favorite.getSearcher();
+      } catch (TvBrowserException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      if (searcher instanceof RegexSearcher) {
+        Pattern pattern = ((RegexSearcher) searcher).getPattern();
+        if (pattern != null) {
+          if (pattern.pattern().startsWith(".*")) {
+            pattern = Pattern.compile(pattern.pattern().substring(2));
+          }
+          if (pattern.pattern().endsWith(".*")) {
+            pattern = Pattern.compile(pattern.pattern().substring(0, pattern.pattern().length() - 2));
+          }
+          for (HTMLDocument.Iterator it = document
+              .getIterator(HTML.Tag.CONTENT); it.isValid(); it.next()) {
+            try {
+              String fragment = document.getText(it.getStartOffset(), it
+                  .getEndOffset()
+                  - it.getStartOffset());
+              Matcher matcher = pattern.matcher(fragment);
+              while (matcher.find()) {
+                highlighter.addHighlight(it.getStartOffset() + matcher.start(),
+                    it.getStartOffset() + matcher.end(), painter);
+              }
+            } catch (BadLocationException ex) {
+            }
+          }
+        }
+      }
+    }
   }
 
   private void setProgramText() {
