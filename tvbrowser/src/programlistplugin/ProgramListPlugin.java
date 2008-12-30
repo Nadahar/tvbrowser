@@ -31,8 +31,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -70,6 +73,7 @@ import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.ProgramFilter;
+import devplugin.ProgramReceiveTarget;
 import devplugin.Version;
 
 /**
@@ -96,6 +100,8 @@ public class ProgramListPlugin extends Plugin {
   private ProgramPanelSettings mProgramPanelSettings;
   private JCheckBox mShowDescription;
   private JComboBox mFilterBox;
+
+  private ProgramFilter mRecieveFilter;
     
   private static ProgramListPlugin mInstance;
   
@@ -143,137 +149,8 @@ public class ProgramListPlugin extends Plugin {
   public ActionMenu getButtonAction() {
     AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {
-        try {
-          if (mDialog == null) {
-            mDialog = new JDialog(getParentFrame());
-            mDialog.setTitle(mLocalizer.msg("name", "Important programs"));
-            mDialog.getContentPane().setLayout(new BorderLayout(0, 10));
-            ((JPanel) mDialog.getContentPane())
-                .setBorder(Borders.DIALOG_BORDER);
-
-            UiUtilities.registerForClosing(new WindowClosingIf() {
-              public void close() {
-                mDialog.setVisible(false);
-                saveMe();
-              }
-
-              public JRootPane getRootPane() {
-                return mDialog.getRootPane();
-              }
-            });
-
-            mModel = new DefaultListModel();
-            boolean showDescription = mSettings.getProperty(
-                SETTING_SHOW_DESCRIPTION, "true").equals("true");
-            mProgramPanelSettings = new ProgramPanelSettings(
-                new PluginPictureSettings(
-                    PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE),
-                !showDescription, ProgramPanelSettings.X_AXIS);
-            mList = new ProgramList(mModel, mProgramPanelSettings);
-
-            mList.addMouseListeners(null);
-
-            mBox = new JComboBox(Plugin.getPluginManager()
-                .getSubscribedChannels());
-            mBox.insertItemAt(mLocalizer.msg("allChannels", "All channels"), 0);
-            mBox.setRenderer(new ChannelListCellRenderer());
-            mBox.setSelectedIndex(Integer.parseInt(mSettings.getProperty(
-                "index", String.valueOf(0))));
-
-            mFilterBox = new JComboBox();
-
-            if (mSettings.getProperty(SETTING_FILTER) == null) {
-              mSettings.setProperty(SETTING_FILTER, Plugin.getPluginManager()
-                  .getFilterManager().getAllFilter().getName());
-            }
-
-            fillFilterBox();
-
-            mFilterBox.addItemListener(new ItemListener() {
-              public void itemStateChanged(ItemEvent e) {
-                mFilter = (ProgramFilter) mFilterBox.getSelectedItem();
-                mSettings.setProperty(SETTING_FILTER, mFilter.getName());
-                mBox.getItemListeners()[0].itemStateChanged(null);
-              }
-            });
-
-            mBox.addItemListener(new ItemListener() {
-              public void itemStateChanged(ItemEvent e) {
-                fillProgramList();
-                mSettings.setProperty("index", String.valueOf(mBox
-                    .getSelectedIndex()));
-              }
-            });
-
-            CellConstraints cc = new CellConstraints();
-
-            JPanel panel = new JPanel(new FormLayout(
-                "1dlu,default,3dlu,default:grow", "pref,2dlu,pref,2dlu"));
-            panel.add(new JLabel(Localizer
-                .getLocalization(Localizer.I18N_CHANNELS)
-                + ":"), cc.xy(2, 1));
-            panel.add(mBox, cc.xy(4, 1));
-            panel.add(new JLabel(mLocalizer.msg(SETTING_FILTER, "Filter:")), cc
-                .xy(2, 3));
-            panel.add(mFilterBox, cc.xy(4, 3));
-
-            mShowDescription = new JCheckBox(mLocalizer.msg(
-                "showProgramDescription", "Show program description"),
-                showDescription);
-            mShowDescription.addItemListener(new ItemListener() {
-              public void itemStateChanged(ItemEvent e) {
-                int topRow = mList.getFirstVisibleIndex();
-                mProgramPanelSettings.setShowOnlyDateAndTitle(e
-                    .getStateChange() == ItemEvent.DESELECTED);
-                mSettings.setProperty(SETTING_SHOW_DESCRIPTION, String
-                    .valueOf(e.getStateChange() == ItemEvent.SELECTED));
-                mList.updateUI();
-                if (topRow != -1) {
-                  mList.ensureIndexIsVisible(topRow);
-                }
-              }
-            });
-
-            JButton close = new JButton(Localizer
-                .getLocalization(Localizer.I18N_CLOSE));
-            close.addActionListener(new ActionListener() {
-              public void actionPerformed(ActionEvent e) {
-                mDialog.setVisible(false);
-                saveMe();
-              }
-            });
-
-            JPanel southPanel = new JPanel(new FormLayout(
-                "default,0dlu:grow,default", "default"));
-            southPanel.add(mShowDescription, cc.xy(1, 1));
-            southPanel.add(close, cc.xy(3, 1));
-
-            mDialog.getContentPane().add(panel, BorderLayout.NORTH);
-            mDialog.getContentPane().add(new JScrollPane(mList),
-                BorderLayout.CENTER);
-            mDialog.getContentPane().add(southPanel, BorderLayout.SOUTH);
-
-            layoutWindow("programListWindow", mDialog, new Dimension(500, 500));
-
-            mDialog.setVisible(true);
-
-            mBox.getItemListeners()[0].itemStateChanged(null);
-          } else {
-            if (!mDialog.isVisible()) {
-              fillFilterBox();
-            }
-
-            mDialog.setVisible(!mDialog.isVisible());
-
-            if (mDialog.isVisible()) {
-              fillProgramList();
-            } else {
-              saveMe();
-            }
-          }
-        } catch (Exception ee) {
-          ee.printStackTrace();
-        }
+        mRecieveFilter = null;
+        showProgramList();
       }
     };
     action.putValue(Action.NAME, mLocalizer.msg("name", "Important programs"));
@@ -286,7 +163,14 @@ public class ProgramListPlugin extends Plugin {
   }
   
   private void fillFilterBox() {
-    ProgramFilter[] filters = Plugin.getPluginManager().getFilterManager().getAvailableFilters();    
+    ArrayList<ProgramFilter> filters = new ArrayList<ProgramFilter>();
+    for (ProgramFilter filter : Plugin.getPluginManager().getFilterManager()
+        .getAvailableFilters()) {
+      filters.add(filter);
+    } 
+    if (mRecieveFilter != null) {
+      filters.add(mRecieveFilter);
+    }
     
     for(ProgramFilter filter : filters) {
       boolean found = false;
@@ -301,7 +185,10 @@ public class ProgramListPlugin extends Plugin {
       if(!found) {
         mFilterBox.addItem(filter);
         
-        if(filter.getName().equals(mSettings.getProperty(SETTING_FILTER))) {
+        if ((mRecieveFilter == null && filter.getName().equals(
+            mSettings.getProperty(SETTING_FILTER)))
+            || (mRecieveFilter != null && filter.getName().equals(
+                mRecieveFilter.getName()))) {
           mFilter = filter;
           mFilterBox.setSelectedItem(filter);
         }
@@ -406,4 +293,178 @@ public class ProgramListPlugin extends Plugin {
       return c;
     }
   }
+
+  @Override
+  public boolean canReceiveProgramsWithTarget() {
+    return true;
+  }
+
+  @Override
+  public ProgramReceiveTarget[] getProgramReceiveTargets() {
+    return new ProgramReceiveTarget[] { new ProgramReceiveTarget(this,
+        mLocalizer.msg("programTarget", "Program list"), "program list") };
+  }
+
+  @Override
+  public boolean receivePrograms(Program[] programArr,
+      ProgramReceiveTarget receiveTarget) {
+    final List<Program> programs = Arrays.asList(programArr);
+    mRecieveFilter = new ProgramFilter() {
+      @Override
+      public boolean accept(Program prog) {
+        return programs.contains(prog);
+      }
+
+      @Override
+      public String getName() {
+        return mLocalizer.msg("filterName", "Received programs");
+      }
+      
+      @Override
+      public String toString() {
+        return mLocalizer.msg("filterName", "Received programs");
+      }
+    };
+    showProgramList();
+    return true;
+  }
+
+  private void showProgramList() {
+    try {
+      if (mDialog == null) {
+        mDialog = new JDialog(getParentFrame());
+        mDialog.setTitle(mLocalizer.msg("name", "Important programs"));
+        mDialog.getContentPane().setLayout(new BorderLayout(0, 10));
+        ((JPanel) mDialog.getContentPane()).setBorder(Borders.DIALOG_BORDER);
+
+        UiUtilities.registerForClosing(new WindowClosingIf() {
+
+          public void close() {
+            closeDialog();
+          }
+
+          public JRootPane getRootPane() {
+            return mDialog.getRootPane();
+          }
+        });
+
+        mModel = new DefaultListModel();
+        boolean showDescription = mSettings.getProperty(
+            SETTING_SHOW_DESCRIPTION, "true").equals("true");
+        mProgramPanelSettings = new ProgramPanelSettings(
+            new PluginPictureSettings(
+                PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE),
+            !showDescription, ProgramPanelSettings.X_AXIS);
+        mList = new ProgramList(mModel, mProgramPanelSettings);
+
+        mList.addMouseListeners(null);
+
+        mBox = new JComboBox(Plugin.getPluginManager().getSubscribedChannels());
+        mBox.insertItemAt(mLocalizer.msg("allChannels", "All channels"), 0);
+        mBox.setRenderer(new ChannelListCellRenderer());
+        mBox.setSelectedIndex(Integer.parseInt(mSettings.getProperty("index",
+            String.valueOf(0))));
+
+        mFilterBox = new JComboBox();
+
+        if (mSettings.getProperty(SETTING_FILTER) == null) {
+          mSettings.setProperty(SETTING_FILTER, Plugin.getPluginManager()
+              .getFilterManager().getAllFilter().getName());
+        }
+
+        fillFilterBox();
+
+        mFilterBox.addItemListener(new ItemListener() {
+          public void itemStateChanged(ItemEvent e) {
+            mFilter = (ProgramFilter) mFilterBox.getSelectedItem();
+            if (mFilter != mRecieveFilter) {
+              mSettings.setProperty(SETTING_FILTER, mFilter.getName());
+            }
+            mBox.getItemListeners()[0].itemStateChanged(null);
+          }
+        });
+
+        mBox.addItemListener(new ItemListener() {
+          public void itemStateChanged(ItemEvent e) {
+            fillProgramList();
+            mSettings.setProperty("index", String.valueOf(mBox
+                .getSelectedIndex()));
+          }
+        });
+
+        CellConstraints cc = new CellConstraints();
+
+        JPanel panel = new JPanel(new FormLayout(
+            "1dlu,default,3dlu,default:grow", "pref,2dlu,pref,2dlu"));
+        panel.add(new JLabel(Localizer.getLocalization(Localizer.I18N_CHANNELS)
+            + ":"), cc.xy(2, 1));
+        panel.add(mBox, cc.xy(4, 1));
+        panel.add(new JLabel(mLocalizer.msg(SETTING_FILTER, "Filter:")), cc.xy(
+            2, 3));
+        panel.add(mFilterBox, cc.xy(4, 3));
+
+        mShowDescription = new JCheckBox(mLocalizer.msg(
+            "showProgramDescription", "Show program description"),
+            showDescription);
+        mShowDescription.addItemListener(new ItemListener() {
+          public void itemStateChanged(ItemEvent e) {
+            int topRow = mList.getFirstVisibleIndex();
+            mProgramPanelSettings
+                .setShowOnlyDateAndTitle(e.getStateChange() == ItemEvent.DESELECTED);
+            mSettings.setProperty(SETTING_SHOW_DESCRIPTION, String.valueOf(e
+                .getStateChange() == ItemEvent.SELECTED));
+            mList.updateUI();
+            if (topRow != -1) {
+              mList.ensureIndexIsVisible(topRow);
+            }
+          }
+        });
+
+        JButton close = new JButton(Localizer
+            .getLocalization(Localizer.I18N_CLOSE));
+        close.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            closeDialog();
+          }
+        });
+
+        JPanel southPanel = new JPanel(new FormLayout(
+            "default,0dlu:grow,default", "default"));
+        southPanel.add(mShowDescription, cc.xy(1, 1));
+        southPanel.add(close, cc.xy(3, 1));
+
+        mDialog.getContentPane().add(panel, BorderLayout.NORTH);
+        mDialog.getContentPane().add(new JScrollPane(mList),
+            BorderLayout.CENTER);
+        mDialog.getContentPane().add(southPanel, BorderLayout.SOUTH);
+
+        layoutWindow("programListWindow", mDialog, new Dimension(500, 500));
+
+        mDialog.setVisible(true);
+
+        mBox.getItemListeners()[0].itemStateChanged(null);
+      } else {
+        if (!mDialog.isVisible()) {
+          fillFilterBox();
+        }
+        
+        mDialog.setVisible(!mDialog.isVisible());
+
+        if (mDialog.isVisible()) {
+          fillProgramList();
+        } else {
+          saveMe();
+        }
+      }
+    } catch (Exception ee) {
+      ee.printStackTrace();
+    }
+  }
+
+  private void closeDialog() {
+    mDialog.setVisible(false);
+    saveMe();
+  }
+  
+
 }
