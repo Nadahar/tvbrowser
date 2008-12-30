@@ -17,14 +17,38 @@
  */
 package tvpearlplugin;
 
-import devplugin.*;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
-import javax.swing.*;
-import util.ui.*;
-import com.jgoodies.forms.builder.*;
-import com.jgoodies.forms.layout.*;
+import java.util.ArrayList;
+import java.util.Vector;
+
+import javax.swing.ButtonGroup;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import tvbrowser.ui.mainframe.MainFrame;
+import util.ui.MarkPriorityComboBoxRenderer;
+import util.ui.PluginChooserDlg;
+import util.ui.ScrollableJPanel;
+import util.ui.UiUtilities;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.ProgramReceiveIf;
+import devplugin.ProgramReceiveTarget;
+import devplugin.SettingsTab;
 
 public class TVPearlPluginSettingsTab implements SettingsTab
 {
@@ -81,7 +105,15 @@ public class TVPearlPluginSettingsTab implements SettingsTab
 			{
 				try
 				{
-					PluginChooserDlg chooser = new PluginChooserDlg((JFrame) null, mClientPluginTargets, null, TVPearlPlugin.getInstance());
+	        Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+          PluginChooserDlg chooser = null;
+          if (w instanceof JDialog) {
+            chooser = new PluginChooserDlg((JDialog) w, mClientPluginTargets,
+                null, TVPearlPlugin.getInstance());
+          } else {
+            chooser = new PluginChooserDlg((JFrame) w, mClientPluginTargets,
+                null, TVPearlPlugin.getInstance());
+          }
 					chooser.setVisible(true);
 
 					if (chooser.getReceiveTargets() != null)
@@ -102,7 +134,9 @@ public class TVPearlPluginSettingsTab implements SettingsTab
 		pluginPanel.add(mPluginLabel, cc.xy(1, 1));
 		pluginPanel.add(choose, cc.xy(3, 1));
 
-		mEnableFilter = new JCheckBox(mLocalizer.msg("enableFilter", "enable filter"), TVPearlPlugin.getInstance().getPropertyBoolean("ShowEnableFilter"));
+		mEnableFilter = new JCheckBox(mLocalizer.msg("enableFilter",
+        "enable filter"), TVPearlPlugin.getInstance().getPropertyBoolean(
+        "ShowEnableFilter"));
 		mFilterShowOnly = new JRadioButton(mLocalizer.msg("filterShowOnly", "show only"), TVPearlPlugin.getInstance().getPropertyInteger("ShowFilter") == 0);
 		mFilterShowNot = new JRadioButton(mLocalizer.msg("filterShowNot", "show not"), TVPearlPlugin.getInstance().getPropertyInteger("ShowFilter") == 1);
 		ButtonGroup group = new ButtonGroup();
@@ -111,6 +145,14 @@ public class TVPearlPluginSettingsTab implements SettingsTab
 		mFilterComposer = new JTextArea(3, 10);
 		mFilterComposer.setText(getComposers());
 		JScrollPane scrollComposer = new JScrollPane(mFilterComposer);
+		
+		mEnableFilter.addActionListener(new ActionListener() {
+
+      public void actionPerformed(ActionEvent e) {
+        updateFilterEnabled();
+      }
+    });
+		updateFilterEnabled();
 
 		int row = 2;
 		builder.addLabel(mLocalizer.msg("view", "View"), cc.xy(2, row));
@@ -270,4 +312,14 @@ public class TVPearlPluginSettingsTab implements SettingsTab
 			}
 		}
 	}
+
+  /**
+   * enable or disable the author filter controls, depending on the checkbox
+   * value
+   */
+  private void updateFilterEnabled() {
+    mFilterShowOnly.setEnabled(mEnableFilter.isSelected());
+    mFilterShowNot.setEnabled(mEnableFilter.isSelected());
+    mFilterComposer.setEnabled(mEnableFilter.isSelected());
+  }
 }
