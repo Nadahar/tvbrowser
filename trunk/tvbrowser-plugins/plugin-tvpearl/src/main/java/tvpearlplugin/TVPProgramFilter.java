@@ -33,12 +33,11 @@ public class TVPProgramFilter
 
 	static public boolean showProgram(TVPProgram program)
 	{
-		if (TVPearlPlugin.getInstance().getPropertyBoolean("ShowEnableFilter"))
+		if (TVPearlPlugin.getSettings().getFilterEnabled())
 		{
 			boolean exists = isInList(program.getAuthor().toLowerCase());
-			int filter = TVPearlPlugin.getInstance().getPropertyInteger("ShowFilter");
-
-			return (exists && filter == 0) || (!exists && filter == 1);
+			return (exists && TVPearlPlugin.getSettings().getFilterIncluding())
+          || (!exists && TVPearlPlugin.getSettings().getFilterExcluding());
 		}
 		return true;
 	}

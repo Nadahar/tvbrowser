@@ -214,4 +214,8 @@ public class TVPProgram implements Comparable<TVPProgram>
 	{
 		setProgramID(program.getID());
 	}
+
+  public boolean isSubscribedChannel() {
+    return getStatus() == IProgramStatus.STATUS_FOUND_CHANNEL || wasFound();
+  }
 }

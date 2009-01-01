@@ -34,6 +34,7 @@ import java.util.Calendar;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.logging.Logger;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -55,13 +56,11 @@ import devplugin.Version;
 
 public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 {
-	private static final String DEFAULT_URL = "http://hilfe.tvbrowser.org/viewtopic.php?t=1470";
 
 	private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(TVPearlPlugin.class);
 	private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(TVPearlPlugin.class.getName());
 
 	private static TVPearlPlugin mInstance;
-	private Properties mProperties;
 	private Thread mThread;
 	private TVPearl mTVPearls;
 	private boolean mHasRightToDownload = false;
@@ -74,6 +73,8 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	private Vector<String> mComposerFilter;
 	private ProgramReceiveTarget[] mClientPluginTargets;
 	private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
+
+  private TVPearlSettings mSettings;
 
 	public TVPearlPlugin()
 	{
@@ -107,7 +108,7 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 
 	public SettingsTab getSettingsTab()
 	{
-		return (new TVPearlPluginSettingsTab());
+		return (new TVPearlPluginSettingsTab(mSettings));
 	}
 
 	public void onActivation()
@@ -242,130 +243,35 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		return true;
 	}
 
-	public void loadSettings(Properties prop)
-	{
-		if (prop == null)
-		{
-			mProperties = new Properties();
-		}
-		else
-		{
-			mProperties = prop;
-		}
-		checkProperties();
-		setDialogBounds();
-		mTVPearls.setUrl(getUrl());
-	}
+	public void loadSettings(Properties prop) {
+    // settings are handled in another class, so do not store a reference to the
+    // properties parameter!
+    if (prop == null) {
+      mSettings = new TVPearlSettings(new Properties());
+    } else {
+      mSettings = new TVPearlSettings(prop);
+    }
+    setDialogBounds();
+    mTVPearls.setUrl(mSettings.getUrl());
+  }
 
 	public Properties storeSettings()
 	{
-		mProperties.setProperty("Url", mTVPearls.getUrl());
+		mSettings.setUrl(mTVPearls.getUrl());
 
-		if (mPearlDialogLocation != null)
-		{
-			mProperties.setProperty("Dialog.X", Integer.toString(mPearlDialogLocation.x));
-			mProperties.setProperty("Dialog.Y", Integer.toString(mPearlDialogLocation.y));
-		}
+		mSettings.storeDialog("Dialog", mPearlDialogLocation, mPearlDialogSize);
+    mSettings.storeDialog("InfoDialog", mPearlInfoDialogLocation,
+        mPearlInfoDialogSize);
 
-		if (mPearlDialogSize != null)
-		{
-			mProperties.setProperty("Dialog.Width", Integer.toString(mPearlDialogSize.width));
-			mProperties.setProperty("Dialog.Height", Integer.toString(mPearlDialogSize.height));
-		}
-
-		if (mPearlInfoDialogLocation != null)
-		{
-			mProperties.setProperty("InfoDialog.X", Integer.toString(mPearlInfoDialogLocation.x));
-			mProperties.setProperty("InfoDialog.Y", Integer.toString(mPearlInfoDialogLocation.y));
-		}
-
-		if (mPearlInfoDialogSize != null)
-		{
-			mProperties.setProperty("InfoDialog.Width", Integer.toString(mPearlInfoDialogSize.width));
-			mProperties.setProperty("InfoDialog.Height", Integer.toString(mPearlInfoDialogSize.height));
-		}
-
-		return mProperties;
-	}
-
-	private String getUrl()
-	{
-		String url = mProperties.getProperty("Url");
-		if (url == null || url.length() == 0)
-		{
-			url = DEFAULT_URL;
-		}
-		return url;
-	}
-
-	private void checkProperties()
-	{
-		String prop;
-
-		prop = mProperties.getProperty("UpdateAtStart");
-		if (prop == null)
-		{
-			mProperties.setProperty("UpdateAtStart", "0");
-		}
-
-		prop = mProperties.getProperty("UpdateAfterUpdateFinished");
-		if (prop == null)
-		{
-			mProperties.setProperty("UpdateAfterUpdateFinished", "1");
-		}
-
-		prop = mProperties.getProperty("UpdateManual");
-		if (prop == null)
-		{
-			mProperties.setProperty("UpdateManual", "1");
-		}
-
-		prop = mProperties.getProperty("ViewOption");
-		if (prop == null)
-		{
-			mProperties.setProperty("ViewOption", "1");
-		}
-
-		prop = mProperties.getProperty("MarkPearl");
-		if (prop == null)
-		{
-			mProperties.setProperty("MarkPearl", "1");
-		}
-
-		prop = mProperties.getProperty("MarkPriority");
-		if (prop == null)
-		{
-			mProperties.setProperty("MarkPriority", Integer.toString(Program.MIN_MARK_PRIORITY));
-		}
+		return mSettings.storeSettings();
 	}
 
 	private void setDialogBounds()
 	{
-		try
-		{
-			mPearlDialogSize = new Dimension(Integer.parseInt(mProperties.getProperty("Dialog.Width")), Integer.parseInt(mProperties.getProperty("Dialog.Height")));
-		}
-		catch (Exception e)
-		{}
-		try
-		{
-			mPearlDialogLocation = new Point(Integer.parseInt(mProperties.getProperty("Dialog.X")), Integer.parseInt(mProperties.getProperty("Dialog.Y")));
-		}
-		catch (Exception e)
-		{}
-
-		try
-		{
-			mPearlInfoDialogSize = new Dimension(Integer.parseInt(mProperties.getProperty("InfoDialog.Width")), Integer.parseInt(mProperties.getProperty("InfoDialog.Height")));
-		}
-		catch (Exception e)
-		{}
-		try
-		{
-			mPearlInfoDialogLocation = new Point(Integer.parseInt(mProperties.getProperty("InfoDialog.X")), Integer.parseInt(mProperties.getProperty("InfoDialog.Y")));
-		}
-		catch (Exception e)
-		{}
+	  mPearlDialogSize = mSettings.getDialogSize("Dialog");
+    mPearlDialogLocation = mSettings.getDialogDimension("Dialog");
+    mPearlInfoDialogSize = mSettings.getDialogSize("InfoDialog");
+    mPearlInfoDialogLocation = mSettings.getDialogDimension("InfoDialog");
 	}
 
 	public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException
@@ -382,7 +288,7 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	{
 		mHasRightToDownload = true;
 
-		if (getPropertyBoolean("UpdateAtStart"))
+		if (mSettings.getUpdatePearlsAfterStart())
 		{
 			update();
 			mHasRightToDownload = false;
@@ -393,9 +299,9 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		}
 	}
 
-	public void handleTvDataUpdateFinished()
+  public void handleTvDataUpdateFinished()
 	{
-		if (mHasRightToDownload && getPropertyBoolean("UpdateAfterUpdateFinished"))
+		if (mHasRightToDownload && mSettings.getUpdatePearlsAfterDataUpdate())
 		{
 			update();
 		}
@@ -403,7 +309,7 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		updateChanges();
 	}
 
-	void update()
+  void update()
 	{
 		mThread = new Thread(this, "TV Pearl Update");
 		mThread.setPriority(Thread.MIN_PRIORITY);
@@ -471,45 +377,6 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		mComposerFilter = composers;
 	}
 
-	Properties getSettings()
-	{
-		return mProperties;
-	}
-
-	boolean getPropertyBoolean(String property)
-	{
-		boolean result = false;
-		try
-		{
-			result = Integer.parseInt(mProperties.getProperty(property)) == 1;
-		}
-		catch (Exception ex)
-		{}
-		return result;
-	}
-
-	void setProperty(String property, boolean value)
-	{
-		mProperties.setProperty(property, value ? "1" : "0");
-	}
-
-	Integer getPropertyInteger(String property)
-	{
-		Integer result = 0;
-		try
-		{
-			result = Integer.parseInt(mProperties.getProperty(property));
-		}
-		catch (Exception ex)
-		{}
-		return result;
-	}
-
-	void setProperty(String property, Integer value)
-	{
-		mProperties.setProperty(property, value.toString());
-	}
-
 	void showPearlInfo(TVPProgram p)
 	{
 		if (p != null)
@@ -531,7 +398,7 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 			}
 
 			mInfoDialog.pack();
-			mInfoDialog.setModal(getPropertyBoolean("ShowInfoModal"));
+			mInfoDialog.setModal(mSettings.getShowInfoModal());
 			mInfoDialog.addComponentListener(new java.awt.event.ComponentAdapter()
 			{
 
@@ -592,7 +459,7 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 
 	public int getMarkPriorityForProgram(Program p)
 	{
-		return getPropertyInteger("MarkPriority");
+		return mSettings.getMarkPriority();
 	}
 
 	public boolean hasPluginTarget()
@@ -625,4 +492,9 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 			mClientPluginTargets = new ProgramReceiveTarget[0];
 		}
 	}
+
+  public static TVPearlSettings getSettings() {
+    return getInstance().mSettings;
+  }
+
 }

@@ -52,7 +52,8 @@ import devplugin.SettingsTab;
 
 public class TVPearlPluginSettingsTab implements SettingsTab
 {
-	protected static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(TVPearlPluginSettingsTab.class);
+  protected static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(TVPearlPluginSettingsTab.class);
 
 	private JCheckBox mUpdateAtStart;
 	private JCheckBox mUpdateAfterUpdateFinished;
@@ -69,6 +70,12 @@ public class TVPearlPluginSettingsTab implements SettingsTab
 
 	private ProgramReceiveTarget[] mClientPluginTargets;
 
+  private TVPearlSettings mSettings;
+
+  public TVPearlPluginSettingsTab(TVPearlSettings settings) {
+    mSettings = settings;
+  }
+
 	public JPanel createSettingsPanel()
 	{
 		FormLayout layout = new FormLayout("5dlu, pref, 3dlu, fill:pref:grow, 5dlu", "5dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref");
@@ -79,20 +86,32 @@ public class TVPearlPluginSettingsTab implements SettingsTab
 
 		CellConstraints cc = new CellConstraints();
 
-		mUpdateAtStart = new JCheckBox(mLocalizer.msg("updateAtStart", "Update after TV-Browser start"), TVPearlPlugin.getInstance().getPropertyBoolean("UpdateAtStart"));
-		mUpdateAfterUpdateFinished = new JCheckBox(mLocalizer.msg("updateAfterUpdateFinished", "Update after program data download"), TVPearlPlugin.getInstance().getPropertyBoolean("UpdateAfterUpdateFinished"));
-		mUpdateManual = new JCheckBox(mLocalizer.msg("updateManual", "Update manual"), TVPearlPlugin.getInstance().getPropertyBoolean("UpdateManual"));
-		mViewOption = new JComboBox(getViewOption());
-		mViewOption.setSelectedIndex(TVPearlPlugin.getInstance().getPropertyInteger("ViewOption") - 1);
-		if (mViewOption.getSelectedIndex() < 0)
-		{
-			mViewOption.setSelectedIndex(0);
-		}
-		mMarkPearl = new JCheckBox(mLocalizer.msg("markPearl", "Mark pearls within the TV-Browser"), TVPearlPlugin.getInstance().getPropertyBoolean("MarkPearl"));
-		mMarkPriority = new JComboBox(getPriorities());
-		mMarkPriority.setRenderer(new MarkPriorityComboBoxRenderer());
-		mMarkPriority.setSelectedIndex(TVPearlPlugin.getInstance().getPropertyInteger("MarkPriority") + 1);
-		mShowInfoModal = new JCheckBox(mLocalizer.msg("modal", "modal Info dialog"), TVPearlPlugin.getInstance().getPropertyBoolean("ShowInfoModal"));
+		mUpdateAtStart = new JCheckBox(mLocalizer.msg("updateAtStart",
+        "Update after TV-Browser start"), mSettings.getUpdatePearlsAfterStart());
+    mUpdateAfterUpdateFinished = new JCheckBox(mLocalizer.msg(
+        "updateAfterUpdateFinished", "Update after program data download"),
+        mSettings.getUpdatePearlsAfterDataUpdate());
+    mUpdateManual = new JCheckBox(mLocalizer.msg("updateManual",
+        "Update manual"), mSettings.getUpdatePearlsManually());
+    mViewOption = new JComboBox(getViewOption());
+    if (mSettings.getShowAllPearls()) {
+      mViewOption.setSelectedIndex(0);
+    } else if (mSettings.getShowSubscribedChannels()) {
+      mViewOption.setSelectedIndex(1);
+    } else if (mSettings.getShowFoundPearls()) {
+      mViewOption.setSelectedIndex(2);
+    }
+    if (mViewOption.getSelectedIndex() < 0) {
+      mViewOption.setSelectedIndex(0);
+    }
+    mMarkPearl = new JCheckBox(mLocalizer.msg("markPearl",
+        "Mark pearls within the TV-Browser"), mSettings.getMarkPearls());
+    mMarkPriority = new JComboBox(getPriorities());
+    mMarkPriority.setRenderer(new MarkPriorityComboBoxRenderer());
+    mMarkPriority.setSelectedIndex(mSettings.getMarkPriority() + 1);
+    mShowInfoModal = new JCheckBox(
+        mLocalizer.msg("modal", "modal Info dialog"), mSettings
+            .getShowInfoModal());
 
 		mClientPluginTargets = TVPearlPlugin.getInstance().getClientPluginsTargets();
 		mPluginLabel = new JLabel();
@@ -135,10 +154,11 @@ public class TVPearlPluginSettingsTab implements SettingsTab
 		pluginPanel.add(choose, cc.xy(3, 1));
 
 		mEnableFilter = new JCheckBox(mLocalizer.msg("enableFilter",
-        "enable filter"), TVPearlPlugin.getInstance().getPropertyBoolean(
-        "ShowEnableFilter"));
-		mFilterShowOnly = new JRadioButton(mLocalizer.msg("filterShowOnly", "show only"), TVPearlPlugin.getInstance().getPropertyInteger("ShowFilter") == 0);
-		mFilterShowNot = new JRadioButton(mLocalizer.msg("filterShowNot", "show not"), TVPearlPlugin.getInstance().getPropertyInteger("ShowFilter") == 1);
+        "enable filter"), mSettings.getFilterEnabled());
+    mFilterShowOnly = new JRadioButton(mLocalizer.msg("filterShowOnly",
+        "show only"), mSettings.getFilterIncluding());
+    mFilterShowNot = new JRadioButton(mLocalizer.msg("filterShowNot",
+        "show not"), mSettings.getFilterExcluding());
 		ButtonGroup group = new ButtonGroup();
 		group.add(mFilterShowOnly);
 		group.add(mFilterShowNot);
@@ -213,15 +233,28 @@ public class TVPearlPluginSettingsTab implements SettingsTab
 
 	public void saveSettings()
 	{
-		TVPearlPlugin.getInstance().setProperty("UpdateAtStart", mUpdateAtStart.isSelected());
-		TVPearlPlugin.getInstance().setProperty("UpdateAfterUpdateFinished", mUpdateAfterUpdateFinished.isSelected());
-		TVPearlPlugin.getInstance().setProperty("UpdateManual", mUpdateManual.isSelected());
-		TVPearlPlugin.getInstance().setProperty("ViewOption", mViewOption.getSelectedIndex() + 1);
-		TVPearlPlugin.getInstance().setProperty("MarkPearl", mMarkPearl.isSelected());
-		TVPearlPlugin.getInstance().setProperty("MarkPriority", mMarkPriority.getSelectedIndex() - 1);
-		TVPearlPlugin.getInstance().setProperty("ShowInfoModal", mShowInfoModal.isSelected());
-		TVPearlPlugin.getInstance().setProperty("ShowEnableFilter", mEnableFilter.isSelected());
-		TVPearlPlugin.getInstance().setProperty("ShowFilter", mFilterShowOnly.isSelected() ? 0 : 1);
+		mSettings.setUpdatePearlsAfterStart(mUpdateAtStart.isSelected());
+    mSettings.setUpdatePearlsAfterDataUpdate(mUpdateAfterUpdateFinished
+        .isSelected());
+    mSettings.setUpdatePearlsManually(mUpdateManual.isSelected());
+    final int index = mViewOption.getSelectedIndex();
+    if (index == 0) {
+      mSettings.setShowAllPearls();
+    } else if (index == 1) {
+      mSettings.setShowSubscribedChannels();
+    } else if (index == 2) {
+      mSettings.setShowFoundPearls();
+    }
+    mSettings.setMarkPearls(mMarkPearl.isSelected());
+    mSettings.setMarkPriority(mMarkPriority.getSelectedIndex() - 1);
+    mSettings.setShowInfoModal(mShowInfoModal.isSelected());
+    mSettings.setFilterEnabled(mEnableFilter.isSelected());
+    if (mFilterShowOnly.isSelected()) {
+      mSettings.setFilterIncluding();
+    }
+    if (mFilterShowNot.isSelected()) {
+      mSettings.setFilterExcluding();
+    }
 		
 		TVPearlPlugin.getInstance().setClientPluginsTargets(mClientPluginTargets);
 		
@@ -244,7 +277,8 @@ public class TVPearlPluginSettingsTab implements SettingsTab
 		Vector<String> result = new Vector<String>();
 
 		result.add(mLocalizer.msg("viewAll", "View all pearls"));
-		result.add(mLocalizer.msg("viewChannel", "View pearls from subscribed channel"));
+		result.add(mLocalizer.msg("viewChannel",
+        "View pearls from subscribed channels"));
 		result.add(mLocalizer.msg("viewProgram", "View only pearls that where found within the local program data"));
 
 		return result;
