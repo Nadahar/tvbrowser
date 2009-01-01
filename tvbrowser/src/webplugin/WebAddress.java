@@ -25,24 +25,23 @@
 */
 package webplugin;
 
-import util.ui.ImageUtilities;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-
-import devplugin.Plugin;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
+import util.ui.ImageUtilities;
+import devplugin.Plugin;
+
 /**
- * A Web-Address
+ * a web address
  */
 public class WebAddress implements Cloneable {
-  /** Default-Icon */
-  private static ImageIcon DEFAULTICON = null;
+  /** default icon for all web addresses */
+  private static ImageIcon DEFAULT_ICON = null;
 
   /** URL */
   private String mUrl;
@@ -60,13 +59,23 @@ public class WebAddress implements Cloneable {
   private boolean mActive = true;
 
   /**
+   * cache image icon of this web address to avoid repeated file reads
+   */
+  private ImageIcon mIcon;
+
+  /**
    * Create the Address
-   *
-   * @param name Name
-   * @param url Url ( {0} as placeholder )
-   * @param iconFile Icon-File
-   * @param userEntry Is this Entry editable?
-   * @param active Is this Entry active?
+   * 
+   * @param name
+   *          Name
+   * @param url
+   *          Url ( {0} as placeholder )
+   * @param iconFile
+   *          Icon-File
+   * @param userEntry
+   *          Is this Entry editable?
+   * @param active
+   *          Is this Entry active?
    */
   public WebAddress(String name, String url, String iconFile, boolean userEntry, boolean active) {
     mName = name;
@@ -117,6 +126,8 @@ public class WebAddress implements Cloneable {
 
   public void setIconFile(String iconFile) {
     mIconFile = iconFile;
+    // reset currently loaded icon
+    mIcon = null;
   }
 
   public String getIconFile() {
@@ -124,25 +135,29 @@ public class WebAddress implements Cloneable {
   }
 
   public Icon getIcon() {
-
-    if (DEFAULTICON == null) {
-      DEFAULTICON = WebPlugin.getInstance().createImageIcon("actions", "web-search", 16);
+    if (mIcon != null) {
+      return mIcon;
     }
 
-    if (mIconFile == null || mIconFile.length() == 0) { return DEFAULTICON; }
+    if (DEFAULT_ICON == null) {
+      DEFAULT_ICON = WebPlugin.getInstance().createImageIcon("actions", "web-search", 16);
+    }
+
+    if (mIconFile == null || mIconFile.length() == 0) { return DEFAULT_ICON; }
 
     try {
       StringBuffer filePath = new StringBuffer(Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome());
       filePath.append(File.separator).append("WebFavIcons").append(File.separator).append(mIconFile);
       
-      Icon icon = new ImageIcon(ImageUtilities.createImage(filePath.toString()));
-      if ((icon != null) && (icon.getIconWidth() > 0)){
-        return icon;
+      mIcon = new ImageIcon(ImageUtilities.createImage(filePath.toString()));
+      if ((mIcon != null) && (mIcon.getIconWidth() > 0)) {
+        return mIcon;
       }
     } catch (Exception e) {
     }
     
-    return DEFAULTICON;
+    mIcon = null;
+    return DEFAULT_ICON;
   }
 
   public boolean isActive() {

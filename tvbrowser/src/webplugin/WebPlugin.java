@@ -46,6 +46,7 @@ import util.program.ProgramUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
+import devplugin.Channel;
 import devplugin.ContextMenuAction;
 import devplugin.ContextMenuSeparatorAction;
 import devplugin.Plugin;
@@ -253,9 +254,12 @@ public class WebPlugin extends Plugin {
             address = null;
           }
         }
-        //create adress of channel on the fly
+        // create address of channel on the fly
         if (address != null && address.getUrl().equals(CHANNEL_SITE)) {
-        	address = new WebAddress(mLocalizer.msg("channelPage", "Open page of {0}",program.getChannel().getName()),program.getChannel().getWebpage(),null,false,address.isActive());
+        	final Channel channel = program.getChannel();
+          address = new WebAddress(mLocalizer.msg("channelPage",
+              "Open page of {0}", channel.getName()), channel.getWebpage(),
+              null, false, address.isActive());
         	actionName = address.getName();
 /*
         	// automatically add separator if it is the last menu item (as it is by default)
