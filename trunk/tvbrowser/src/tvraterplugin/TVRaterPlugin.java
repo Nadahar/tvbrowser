@@ -96,6 +96,16 @@ public class TVRaterPlugin extends devplugin.Plugin {
    */
   private boolean mStartFinished;
 
+  /**
+   * cache for large context menu icon
+   */
+  private ImageIcon mLargeIcon;
+
+  /**
+   * cache for small context menu icon
+   */
+  private ImageIcon mSmallIcon;
+
   public TVRaterPlugin() {
     _tvRaterInstance = this;
   }
@@ -131,18 +141,31 @@ public class TVRaterPlugin extends devplugin.Plugin {
       }
     };
     action.putValue(Action.NAME, mLocalizer.msg("pluginName", "TV Rater"));
-    action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities
-        .createImageFromJar("tvraterplugin/imgs/tvrater.png",
-            TVRaterPlugin.class)));
-    action.putValue(BIG_ICON, new ImageIcon(ImageUtilities.createImageFromJar(
-        "tvraterplugin/imgs/tvrater22.png", TVRaterPlugin.class)));
+    action.putValue(Action.SMALL_ICON, getSmallIcon());
+    action.putValue(BIG_ICON, getLargeIcon());
 
     return new ActionMenu(action);
   }
 
+  private ImageIcon getLargeIcon() {
+    if (mLargeIcon == null) {
+      mLargeIcon = new ImageIcon(ImageUtilities.createImageFromJar(
+          "tvraterplugin/imgs/tvrater22.png", TVRaterPlugin.class));
+    }
+    return mLargeIcon;
+  }
+
+  private ImageIcon getSmallIcon() {
+    if (mSmallIcon == null) {
+      mSmallIcon = new ImageIcon(ImageUtilities.createImageFromJar(
+          "tvraterplugin/imgs/tvrater.png", TVRaterPlugin.class));
+    }
+    return mSmallIcon;
+  }
+
   /**
-   * This method is invoked by the host-application if the user has choosen
-   * your plugin from the menu.
+   * This method is invoked by the host-application if the user has chosen your
+   * plugin from the menu.
    */
   public void showDialog() {
     if ((_settings.getProperty("name", "").length() == 0)
@@ -175,9 +198,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
       action.putValue(Action.NAME, mLocalizer.msg("contextNoRating",
           "Rate program"));
     }
-    action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities
-        .createImageFromJar("tvraterplugin/imgs/tvrater.png",
-            TVRaterPlugin.class)));
+    action.putValue(Action.SMALL_ICON, getSmallIcon());
 
     return new ActionMenu(action);
   }
