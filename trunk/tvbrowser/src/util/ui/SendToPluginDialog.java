@@ -128,13 +128,17 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
 
     Arrays.sort(installedPluginArr, new ObjectComperator());
     
-    pb.add(mPluginList = new JComboBox(installedPluginArr), cc.xy(2,3));
+    mPluginList = new JComboBox(installedPluginArr);
+    pb.add(mPluginList, cc.xy(2, 3));
 
     pb.addSeparator(mLocalizer.msg("target","Target:"), cc.xyw(1,5,3));
     
-    pb.add(mTargetList = new JComboBox(installedPluginArr[0].getProgramReceiveTargets()), cc.xy(2,7));
+    mTargetList = new JComboBox(installedPluginArr[0]
+        .getProgramReceiveTargets());
+    pb.add(mTargetList, cc.xy(2, 7));
     final DefaultComboBoxModel model = (DefaultComboBoxModel)mTargetList.getModel();
-    mTargetList.setEnabled(installedPluginArr[0].canReceiveProgramsWithTarget());
+    mTargetList.setEnabled(installedPluginArr[0].canReceiveProgramsWithTarget()
+        && mTargetList.getItemCount() > 1);
     
     mPluginList.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
