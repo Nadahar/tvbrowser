@@ -239,51 +239,21 @@ public class TVPearl
 		List<TVPProgram> result = new ArrayList<TVPProgram>();
 		result.addAll(mProgramList);
 
-		switch (TVPearlPlugin.getInstance().getPropertyInteger("ViewOption"))
-		{
-			case 2:
-			case 3:
-				Integer threshold = TVPearlPlugin.getInstance().getPropertyInteger("ViewOption") - 1;
-				int i = 0;
-				while (i < result.size())
-				{
-					if (result.get(i).getStatus() < threshold)
-					{
-						result.remove(i);
-					}
-					else
-					{
-						i++;
-					}
-				}
-				break;
-			default:
-				break;
-		}
-		Calendar limit = getViewLimit();
-		int i = 0;
-		while (i < result.size())
-		{
-			if (result.get(i).getStart().compareTo(limit) < 0)
-			{
-				result.remove(i);
-				i--;
-			}
-			i++;
-		}
-		if (TVPearlPlugin.getInstance().getPropertyBoolean("ShowEnableFilter"))
-		{
-			i = 0;
-			while (i < result.size())
-			{
-				if (!TVPProgramFilter.showProgram(result.get(i)))
-				{
-					result.remove(i);
-					i--;
-				}
-				i++;
-			}
-		}
+    Calendar limit = getViewLimit();
+    final boolean filterEnabled = TVPearlPlugin.getSettings()
+        .getFilterEnabled();
+		final boolean showSubscribed = TVPearlPlugin.getSettings().getShowSubscribedChannels();
+    final boolean showFound = TVPearlPlugin.getSettings().getShowFoundPearls();
+    
+    for (int i = result.size() - 1; i >= 0; i--) {
+      final TVPProgram program = result.get(i);
+      if ((showSubscribed && !program.isSubscribedChannel())
+          || (showFound && !program.wasFound())
+          || (program.getStart().compareTo(limit) < 0)
+          || (filterEnabled && !TVPProgramFilter.showProgram(program))) {
+        result.remove(i);
+      }
+    }
 
 		return result.toArray(new TVPProgram[result.size()]);
 	}
@@ -439,7 +409,8 @@ public class TVPearl
 					Program p = program.getProgram();
 					if (p != null)
 					{
-						markProgram(p, TVPearlPlugin.getInstance().getPropertyBoolean("MarkPearl") && TVPProgramFilter.showProgram(program));
+						markProgram(p, TVPearlPlugin.getSettings().getMarkPearls()
+                && TVPProgramFilter.showProgram(program));
 					}
 				}
 			}

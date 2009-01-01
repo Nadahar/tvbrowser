@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Calendar;
+
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -40,12 +41,15 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+
 import tvbrowser.core.icontheme.IconLoader;
 import util.ui.Localizer;
 import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+
 import devplugin.Plugin;
 import devplugin.PluginManager;
 import devplugin.Program;
@@ -235,7 +239,7 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 				}
 			}
 		});
-		mUpdateBn.setVisible(TVPearlPlugin.getInstance().getPropertyBoolean("UpdateManual"));
+		mUpdateBn.setVisible(TVPearlPlugin.getSettings().getUpdatePearlsManually());
 		builderButton.addFixed(mUpdateBn);
 		builderButton.addRelatedGap();
 
