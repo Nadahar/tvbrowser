@@ -111,19 +111,22 @@ public class Movie {
     }
 
     // No title for a specific country was found, now try to find a title that matches that includes the director
-    final String director = program.getTextField(ProgramFieldType.DIRECTOR_TYPE);
+    if (mDirector != null) {
+      final String director = program
+          .getTextField(ProgramFieldType.DIRECTOR_TYPE);
 
-    if (director != null && director.equalsIgnoreCase(mDirector)) {
-      // Okay, the director fits, try to find a title
-      for (final String title : mTitles.values()) {
-        if (title.equalsIgnoreCase(programTitle)) {
-          return true;
-        }
-      }
-      for (final ArrayList<String> alternatives : mAlternativeTitles.values()) {
-        for (final String title : alternatives) {
+      if (director != null && director.equalsIgnoreCase(mDirector)) {
+        // Okay, the director fits, try to find a title
+        for (final String title : mTitles.values()) {
           if (title.equalsIgnoreCase(programTitle)) {
             return true;
+          }
+        }
+        for (final ArrayList<String> alternatives : mAlternativeTitles.values()) {
+          for (final String title : alternatives) {
+            if (title.equalsIgnoreCase(programTitle)) {
+              return true;
+            }
           }
         }
       }
