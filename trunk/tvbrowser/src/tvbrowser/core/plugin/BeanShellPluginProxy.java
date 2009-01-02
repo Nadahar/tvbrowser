@@ -362,4 +362,11 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
       // TODO Auto-generated method stub
       return false;
     }
+
+    @Override
+    protected void doHandleTvDataTouched(ChannelDayProgram removedDayProgram,
+        ChannelDayProgram addedDayProgram) {
+      // TODO Auto-generated method stub
+      
+    }
  }

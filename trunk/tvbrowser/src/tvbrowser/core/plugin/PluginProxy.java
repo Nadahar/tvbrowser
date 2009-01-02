@@ -90,6 +90,18 @@ public interface PluginProxy extends PluginAccess {
    * @see #handleTvDataUpdateFinished()
    */
   public void handleTvDataAdded(ChannelDayProgram newProg);
+  
+  /**
+   * This method is automatically called, when TV data was touched (that means something was done with it).
+   * (E.g. after an update).
+   * <p>
+   * @param removedDayProgram The old ChannelDayProgram.
+   * @param addedDayProgram The new ChannelDayProgram.
+   * @see #handleTvDataAdded(ChannelDayProgram)
+   * @see #handleTvDataDeleted(ChannelDayProgram)
+   * @see #handleTvDataUpdateFinished()
+   */
+  public void handleTvDataTouched(ChannelDayProgram removedDayProgram, ChannelDayProgram addedDayProgram);
 
   /**
    * This method is automatically called, when TV data was deleted.

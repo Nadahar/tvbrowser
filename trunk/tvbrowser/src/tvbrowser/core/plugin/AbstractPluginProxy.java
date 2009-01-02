@@ -566,6 +566,41 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    */
   protected abstract void doHandleTvDataDeleted(ChannelDayProgram oldProg);
 
+  /**
+   * This method is automatically called, when TV data was touched (that means something was done with it).
+   * (E.g. after an update).
+   * <p>
+   * @param removedDayProgram The old ChannelDayProgram.
+   * @param addedDayProgram The new ChannelDayProgram.
+   * @see #handleTvDataAdded(ChannelDayProgram)
+   * @see #handleTvDataDeleted(ChannelDayProgram)
+   * @see #handleTvDataUpdateFinished()
+   */
+  public final void handleTvDataTouched(ChannelDayProgram removedDayProgram, ChannelDayProgram addedDayProgram) {
+    try {
+      assertActivatedState();
+      doHandleTvDataTouched(removedDayProgram,addedDayProgram);
+    } catch (Throwable t) {
+      handlePluginException(t);
+    }
+  }
+
+  /**
+   * This method is automatically called, when TV data was added. (E.g. after an
+   * update).
+   * <p>
+   * The TV data may be modified by the plugin! So this method must be called
+   * before new TV data is saved.
+   * 
+   * @param newProg The new ChannelDayProgram.
+   * @see #handleTvDataAdded(ChannelDayProgram)
+   * @see #handleTvDataDeleted(ChannelDayProgram)
+   * @see #handleTvDataUpdateFinished()
+   */
+  protected abstract void doHandleTvDataTouched(ChannelDayProgram removedDayProgram, ChannelDayProgram addedDayProgram);
+  
+  
+  
   public void onActivation() {
     try {
       doOnActivation();

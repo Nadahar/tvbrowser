@@ -712,6 +712,20 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   public void handleTvDataDeleted(ChannelDayProgram oldProg) {
   }
 
+  /**
+   * This method is automatically called, when TV data was touched (that means something was done with it).
+   * (E.g. after an update).
+   * <p>
+   * @param removedDayProgram The old ChannelDayProgram.
+   * @param addedDayProgram The new ChannelDayProgram.
+   * @see #handleTvDataAdded(ChannelDayProgram)
+   * @see #handleTvDataDeleted(ChannelDayProgram)
+   * @see #handleTvDataUpdateFinished()
+   * @since 2.7.3
+   */
+  public void handleTvDataTouched(ChannelDayProgram removedDayProgram, ChannelDayProgram addedDayProgram) {
+    
+  }
 
   // The old and deprecated methods
 

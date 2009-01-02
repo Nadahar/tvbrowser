@@ -42,6 +42,9 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
@@ -151,8 +154,7 @@ public class FavoritesPlugin {
   private ArrayList<UpdateInfoThread> mUpdateInfoThreads;
   
   private boolean mShowInfoDialog = false;
-  private ArrayList<Thread> mMatchThreads;
-  private Hashtable<String,Thread> mRemoveThreads;
+  private ThreadPoolExecutor mThreadPool;
   
   /**
    * Creates a new instance of FavoritesPlugin.
@@ -166,31 +168,34 @@ public class FavoritesPlugin {
     mUpdateInfoThreads = new ArrayList<UpdateInfoThread>(0);
     load();
     mRootNode = new PluginTreeNode(mLocalizer.msg("manageFavorites","Favorites"));
-    mMatchThreads = new ArrayList<Thread>(0);
-    mRemoveThreads = new Hashtable<String,Thread>(0); 
 
     TvDataBase.getInstance().addTvDataListener(new TvDataBaseListener() {
-      public void dayProgramAdded(final ChannelDayProgram prog) {
-        Thread update = new Thread("match favorites thread") {
+      public void dayProgramTouched(final ChannelDayProgram removedDayProgram,
+          final ChannelDayProgram addedDayProgram) {
+        if(mThreadPool == null) {
+          mThreadPool = new ThreadPoolExecutor(5, 10, 100, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+        }
+        
+        Runnable update = new Runnable() {
           public void run() {
-            try {
-              final String dayProgramKey = getDayProgramKey(prog);
+            if(removedDayProgram != null) {
+              Iterator<Program> it = removedDayProgram.getPrograms();
               
-              Thread removeThread = null;
-              
-              synchronized(mRemoveThreads) {
-                removeThread = mRemoveThreads.get(dayProgramKey);
-              }
-              
-              if(removeThread != null && removeThread.isAlive()) {
+              while (it.hasNext()) {
                 try {
-                  removeThread.join();
-                } catch (InterruptedException e) {
-                  // Ignore
+                  Program p = it.next();
+                  
+                  for (Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()) {
+                    fav.removeProgram(p);
+                  }
+                }catch(Throwable t) {
+                  ErrorHandler.handle("Error in removing program from Favorites",t);
                 }
               }
-              
-              Iterator<Program> it = prog.getPrograms();
+            }
+            
+            if(addedDayProgram != null) {
+              Iterator<Program> it = addedDayProgram.getPrograms();
               while (it.hasNext()) {
                 final Program p = it.next();
       
@@ -202,55 +207,23 @@ public class FavoritesPlugin {
                   }                
                 }
               }
-            }catch(Throwable t) {
-              ErrorHandler.handle("Error during finding new Favoite programs ",t);
-            }
-            
-            mMatchThreads.remove(this);
-          }
-        };
-        mMatchThreads.add(update);
-        update.start();
-      }
-
-      public void dayProgramDeleted(final ChannelDayProgram prog) {
-        final String dayProgramKey = getDayProgramKey(prog);
-        
-        Thread removeThread = new Thread("favorite remove thread") {
-          public void run() {
-            Iterator<Program> it = prog.getPrograms();
-            while (it.hasNext()) {
-              try {
-                Program p = it.next();
-                
-                for (Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()) {
-                  fav.removeProgram(p);
-                }
-              }catch(Throwable t) {
-                ErrorHandler.handle("Error in removing program from Favorites",t);
-              }
-            }
-        
-            synchronized(mRemoveThreads) {
-              mRemoveThreads.remove(dayProgramKey);
             }
           }
         };
         
-        mRemoveThreads.put(dayProgramKey,removeThread);
-        removeThread.start();
+        mThreadPool.execute(update);
       }
-
-      public void dayProgramAdded(MutableChannelDayProgram prog) {
-        // ignore
-      }
+      
+      public void dayProgramAdded(ChannelDayProgram prog) {}
+      public void dayProgramDeleted(ChannelDayProgram prog) {}
+      public void dayProgramAdded(MutableChannelDayProgram prog) {}
     });
 
     TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
       public void tvDataUpdateStarted() {
         mHasRightToSave = false;
         mSendPluginsTable.clear();
-        mMatchThreads.clear();
+        
         for (Favorite favorite : FavoriteTreeModel.getInstance().getFavoriteArr()) {
           favorite.clearNewPrograms();
           favorite.clearRemovedPrograms();
@@ -278,7 +251,7 @@ public class FavoritesPlugin {
       public void run() {
         mLog.info("Favorites: Wait for update threads too finish");
         
-        int monitorMaximum = mMatchThreads.size();
+        int monitorMaximum = (int)mThreadPool.getTaskCount();
         ProgressMonitor monitor;
         
         if (monitorMaximum > 5) {    // if we have more then 5 favorites, we show a progress bar
@@ -292,40 +265,31 @@ public class FavoritesPlugin {
           monitor = new NullProgressMonitor();
         }
         
+        monitor.setValue(0);
         monitor.setMaximum(monitorMaximum);
         monitor.setMessage(mLocalizer.msg("updatingFavorites","Updating favorites"));
         
-        int oldMatchThreadSize = 0;
+        long oldMatchThreadSize = 0;
         int waitCount = 0;
         
-        while(!mMatchThreads.isEmpty() && (mMatchThreads.size() != oldMatchThreadSize || waitCount++ < 100)) {
-          if(oldMatchThreadSize != mMatchThreads.size()) {
+        while(!mThreadPool.isTerminated() && (mThreadPool.getCompletedTaskCount() != oldMatchThreadSize || waitCount++ < 100) && mThreadPool.getCompletedTaskCount() < mThreadPool.getTaskCount()) {
+          if(oldMatchThreadSize != mThreadPool.getCompletedTaskCount()) {
             waitCount = 0;
           }
           
-          oldMatchThreadSize = mMatchThreads.size();
+          oldMatchThreadSize = mThreadPool.getCompletedTaskCount();
           
           try {
             Thread.sleep(100);
           } catch (InterruptedException e) {
             e.printStackTrace();
           }
-          monitor.setValue(monitorMaximum - mMatchThreads.size());
+          monitor.setValue((int)(monitorMaximum - mThreadPool.getCompletedTaskCount()));
         }
         
-        if(!mMatchThreads.isEmpty()) {
-          mLog.info("Max wait count for Favorite update was reached. Number of currently not finished Threads: " + mMatchThreads.size());
-        }
-        else {
-          mLog.info("Favorites: Update threads were finished");
-        }
+        mLog.info("Favorites: Update threads were finished");
 
-        mMatchThreads.clear();
-        mRemoveThreads.clear();
-        
-        mMatchThreads = new ArrayList<Thread>(0);
-        mRemoveThreads = new Hashtable<String,Thread>(0);
-        
+        mThreadPool = null;
         monitor.setMessage("");
         monitor.setValue(0);
       }
@@ -1241,9 +1205,5 @@ public class FavoritesPlugin {
   
   public void showInfoDialog() {
     mShowInfoDialog = true;
-  }
-  
-  private String getDayProgramKey(ChannelDayProgram prog) {
-    return new StringBuilder(prog.getChannel().getUniqueId()).append("_").append(prog.getDate().getDateString()).toString();
   }
 }

@@ -145,6 +145,11 @@ public class PluginProxyManager {
       public void dayProgramAdded(MutableChannelDayProgram prog) {
         fireTvDataAdded(prog);
       }
+
+      public void dayProgramTouched(ChannelDayProgram removedDayProgram,
+          ChannelDayProgram addedDayProgram) {
+        fireTvDataTouched(removedDayProgram, addedDayProgram);
+      }
     });
 
     TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
@@ -977,6 +982,25 @@ public class PluginProxyManager {
       for (PluginListItem item : mPluginList) {
         if (item.getPlugin().isActivated()) {
           item.getPlugin().handleTvDataDeleted(deletedProg);
+        }
+      }
+    }
+  }
+  
+  /**
+   * Calls for every subscribed plugin the fireTvDataTouched(...) method, so
+   * the plugin can react on the added/deleted/changed data.
+   * 
+   * @param removedDayProgram The removed program
+   * @param addedDayProgram The added program
+   * @see PluginProxy#handleTvDataTouched(ChannelDayProgram,ChannelDayProgram)
+   */
+  private void fireTvDataTouched(ChannelDayProgram removedDayProgram,
+      ChannelDayProgram addedDayProgram) {
+    synchronized (mPluginList) {
+      for (PluginListItem item : mPluginList) {
+        if (item.getPlugin().isActivated()) {
+          item.getPlugin().handleTvDataTouched(removedDayProgram, addedDayProgram);
         }
       }
     }

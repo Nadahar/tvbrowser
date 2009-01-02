@@ -166,6 +166,7 @@ public class TvDataBase {
               + channel.getName());
           ChannelDayProgram dummyProg = new MutableChannelDayProgram(date,
               channel);
+          fireDayProgramTouched(dummyProg, null);
           fireDayProgramDeleted(dummyProg);
 
           mTvDataInventory.setUnknown(date, channel);
@@ -234,6 +235,7 @@ public class TvDataBase {
       
       for(Object dayProgram : dayPrograms) {
         if(dayProgram instanceof ChannelDayProgram) {
+          fireDayProgramTouched(null,(ChannelDayProgram)dayProgram);
           fireDayProgramAdded((ChannelDayProgram)dayProgram);
         }
       }
@@ -366,6 +368,7 @@ public class TvDataBase {
       mNewDayProgramsAfterUpdate.remove(key);
 
       // Inform the listeners about removing the new program
+      fireDayProgramTouched(prog, null);
       fireDayProgramDeleted(prog);
 
       // Try to restore the backup
@@ -498,8 +501,10 @@ public class TvDataBase {
         Date date = getDateFromFileName(deleteFile.getName());
 
         if(ch != null && date != null) {
-          if(informPlugins) {          
-            fireDayProgramDeleted(getDayProgram(date, ch));
+          if(informPlugins) {
+            ChannelDayProgram dayProgram = getDayProgram(date, ch);
+            fireDayProgramTouched(dayProgram, null);
+            fireDayProgramDeleted(dayProgram);
           }        
           
           removeCacheEntry(getDayProgramKey(date,ch));
@@ -596,7 +601,17 @@ public class TvDataBase {
       // Inform the listeners about adding the new program
       if(oldProg != null || somethingChanged) {
         OnDemandDayProgramFile dayProgramFile = getCacheEntry(date, channel, true, false);
-        fireDayProgramAdded((ChannelDayProgram)dayProgramFile.getDayProgram());
+        
+        ChannelDayProgram dayProgram = (ChannelDayProgram)dayProgramFile.getDayProgram();
+        
+        if(oldProg instanceof ChannelDayProgram) {
+          fireDayProgramTouched((ChannelDayProgram)oldProg,dayProgram);
+        }
+        else {
+          fireDayProgramTouched(null,dayProgram);
+        }
+        
+        fireDayProgramAdded(dayProgram);
       }
     } catch (Exception exc) {
       mLog.log(Level.WARNING, "Loading program for " + channel + " from "
@@ -736,6 +751,15 @@ public class TvDataBase {
       }
     }
   }
+  
+  private void fireDayProgramTouched(ChannelDayProgram removedDayProgram, ChannelDayProgram addedDayProgram) {
+    synchronized (mListenerList) {
+      for (int i = 0; i < mListenerList.size(); i++) {
+        TvDataBaseListener lst = mListenerList.get(i);
+        lst.dayProgramTouched(removedDayProgram,addedDayProgram);
+      }
+    }
+  }
 
   private void fireDayProgramAdded(ChannelDayProgram prog) {
     synchronized (mListenerList) {
@@ -767,6 +791,7 @@ public class TvDataBase {
 
         // Since we don't have the old day program we use a dummy program
         ChannelDayProgram dayProg = new MutableChannelDayProgram(date, channel);
+        fireDayProgramTouched(dayProg, null);
         fireDayProgramDeleted(dayProg);
       }
 
