@@ -79,6 +79,7 @@ import devplugin.PluginInfo;
 import devplugin.PluginsFilterComponent;
 import devplugin.PluginsProgramFilter;
 import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.Version;
 
@@ -89,6 +90,8 @@ import devplugin.Version;
  * @author René Mach
  */
 public class IDontWant2See extends Plugin {
+  private static final String RECEIVE_TARGET_EXCLUDE_EXACT = "target_exclude_exact";
+
   protected static final Localizer mLocalizer = Localizer.getLocalizerFor(IDontWant2See.class);
   
   private static Date mCurrentDate = Date.getCurrentDate();
@@ -204,16 +207,19 @@ public class IDontWant2See extends Plugin {
           temDlg = new JDialog((JFrame)w,true);
         }
         
-        final JDialog exlusionListDlg = temDlg;
-        exlusionListDlg.setTitle(mLocalizer.msg("name","I don't want to see!") + " - " + mLocalizer.msg("editExclusionList","Edit exclusion list"));
+        final JDialog exclusionListDlg = temDlg;
+        exclusionListDlg.setTitle(mLocalizer
+            .msg("name", "I don't want to see!")
+            + " - "
+            + mLocalizer.msg("editExclusionList", "Edit exclusion list"));
         
         UiUtilities.registerForClosing(new WindowClosingIf() {
           public void close() {
-            exlusionListDlg.dispose();
+            exclusionListDlg.dispose();
           }
 
           public JRootPane getRootPane() {
-            return exlusionListDlg.getRootPane();
+            return exclusionListDlg.getRootPane();
           }
         });
         
@@ -223,14 +229,14 @@ public class IDontWant2See extends Plugin {
         ok.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             exclusionPanel.saveSettings();
-            exlusionListDlg.dispose();
+            exclusionListDlg.dispose();
           }
         });
         
         JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
         cancel.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            exlusionListDlg.dispose();
+            exclusionListDlg.dispose();
           }
         });
         
@@ -238,7 +244,8 @@ public class IDontWant2See extends Plugin {
         layout.setColumnGroups(new int[][] {{2,4}});
         
         CellConstraints cc = new CellConstraints();
-        PanelBuilder pb = new PanelBuilder(layout,(JPanel)exlusionListDlg.getContentPane());
+        PanelBuilder pb = new PanelBuilder(layout, (JPanel) exclusionListDlg
+            .getContentPane());
         pb.setDefaultDialogBorder();
         
         pb.add(exclusionPanel, cc.xyw(1,1,4));
@@ -246,8 +253,9 @@ public class IDontWant2See extends Plugin {
         pb.add(ok, cc.xy(2,5));
         pb.add(cancel, cc.xy(4,5));
         
-        layoutWindow("exclusionListDlg", exlusionListDlg, new Dimension(600,450));
-        exlusionListDlg.setVisible(true);
+        layoutWindow("exclusionListDlg", exclusionListDlg, new Dimension(600,
+            450));
+        exclusionListDlg.setVisible(true);
       }
     });
     
@@ -692,4 +700,36 @@ public class IDontWant2See extends Plugin {
       updateFilter(true);
     }
   }
+
+  @Override
+  public boolean canReceiveProgramsWithTarget() {
+    return true;
+  }
+
+  @Override
+  public ProgramReceiveTarget[] getProgramReceiveTargets() {
+    return new ProgramReceiveTarget[] { new ProgramReceiveTarget(this,
+        mLocalizer.msg("programTarget", "Exclude programs"),
+        RECEIVE_TARGET_EXCLUDE_EXACT) };
+  }
+
+  @Override
+  public boolean receivePrograms(Program[] programArr,
+      ProgramReceiveTarget receiveTarget) {
+    if (receiveTarget.getTargetId().equals(RECEIVE_TARGET_EXCLUDE_EXACT)) {
+      if (programArr.length > 0) {
+        for (Program program : programArr) {
+          if (getSearchTextIndexForProgram(program) == -1) {
+            mSearchList
+                .add(new IDontWant2SeeListEntry(program.getTitle(), true));
+            mLastEnteredExclusionString = program.getTitle();
+          }
+        }
+        updateFilter(!mSwitchToMyFilter);
+      }
+      return true;
+    }
+    return false;
+  }
+  
 }
