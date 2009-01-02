@@ -59,13 +59,12 @@ import util.ui.ImageUtilities;
  * To create a plugin do the following:
  * <ol>
  * <li>Create a class that extends this class and name its package equal to the
- *     class name but with lowercase letters.
- *     E.g. <code>myplugin.MyPlugin</code>.</li>
+ * class name but with lower case letters. E.g. <code>myplugin.MyPlugin</code>.</li>
  * <li>Write your plugin code in that class.</li>
- * <li>Pack your plugin class including all needed ressources in a jar file
- *     named equal to your class. E.g. <code>MyPlugin.jar</code>.
+ * <li>Pack your plugin class including all needed resources in a jar file named
+ * equal to your class. E.g. <code>MyPlugin.jar</code>.
  * <li>Put the jar in the <code>plugin</code> directory of your TV-Browser
- *     installation.
+ * installation.
  * </ol>
  * 
  * @author Martin Oberhauser
@@ -165,9 +164,8 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
     }
   }
 
-
   /**
-   * Gets the jar file of this plugin. May be used to load ressources.
+   * Gets the jar file of this plugin. May be used to load resources.
    * 
    * @return The jar file of this plugin.
    */  
@@ -603,11 +601,12 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   public Icon[] getMarkIconsForProgram(Program p) {
     return null;
   }
-  
+
   /**
-   * This gets the ThemeIcon containg your mark icon.
+   * This gets the ThemeIcon containing your mark icon.
    * 
-   * This Function uses the Icon-Theme-Function of the TV-Browser. For details see {@link PluginManager#getIconFromTheme(Plugin, String, String, int)}
+   * This Function uses the Icon-Theme-Function of the TV-Browser. For details
+   * see {@link PluginManager#getIconFromTheme(Plugin, String, String, int)}
    * 
    * @return ThemeIcon that identifies the Icon in the Theme
    * @since 2.2
@@ -637,18 +636,17 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
     return null;
   }
 
-
   /**
    * This method is automatically called, when the TV data update is finished.
    * <p>
    * Override this method to react on this event.
    * 
-   * If you want to read data from the internet use this method to track if a
-   * connection was established. 
-   * ATTENTION: If you do so take care of the TV-Browser start, at the start this
-   * method mustn't use an internet connection. Use the method handleTvBrowserStartFinished()
-   * to track if the TV-Browser start was finished before allowing access to the
-   * internet in this method.
+   * If you want to read data from the Internet use this method to track if a
+   * connection was established. ATTENTION: If you do so take care of the
+   * TV-Browser start, at the start this method mustn't use an Internet
+   * connection. Use the method handleTvBrowserStartFinished() to track if the
+   * TV-Browser start was finished before allowing access to the Internet in
+   * this method.
    * 
    * @see #handleTvBrowserStartFinished()
    * @see #handleTvDataAdded(ChannelDayProgram)
@@ -661,16 +659,17 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   }
 
   /**
-   * This method is automatically called, when TV data was added.
-   * (E.g. after an update).
+   * This method is automatically called, when TV data was added. (E.g. after an
+   * update).
    * <p>
    * The TV data can be modified by the plugin!
    * <p>
-   * Override this method if you want to change/add data.
-   * Don't do other things than changing/adding data, 
-   * use {@link #handleTvDataAdded(ChannelDayProgram)} istead.
+   * Override this method if you want to change/add data. Don't do other things
+   * than changing/adding data, use
+   * {@link #handleTvDataAdded(ChannelDayProgram)} instead.
    * 
-   * @param newProg The new ChannelDayProgram.
+   * @param newProg
+   *          The new ChannelDayProgram.
    * @see #handleTvDataDeleted(ChannelDayProgram)
    * @see #handleTvDataChanged()
    */
@@ -679,17 +678,18 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   }
 
   /**
-   * This method is automatically called, when TV data was added.
-   * (E.g. after an update).
+   * This method is automatically called, when TV data was added. (E.g. after an
+   * update).
    * <p>
-   * The TV data cannot be changed in here because the saving of
-   * the data was allready done.
+   * The TV data cannot be changed in here because the saving of the data was
+   * already done.
    * <p>
-   * So use this method if you want to mark or do something else
-   * than changing with the program. If you want to change/add data
-   * use {@link #handleTvDataAdded(MutableChannelDayProgram)} instead.
+   * So use this method if you want to mark or do something else than changing
+   * with the program. If you want to change/add data use
+   * {@link #handleTvDataAdded(MutableChannelDayProgram)} instead.
    * 
-   * @param newProg The new ChannelDayProgram.
+   * @param newProg
+   *          The new ChannelDayProgram.
    * @see #handleTvDataDeleted(ChannelDayProgram)
    * @see #handleTvDataChanged()
    */
@@ -760,12 +760,12 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
     return null;
   }
 
-
   /**
-   * This method is invoked by the host-application if the user has choosen your
+   * This method is invoked by the host-application if the user has chosen your
    * plugin from the context menu.
    * 
-   * @param program The program from whichs context menu the plugin was chosen.
+   * @param program
+   *          The program from whichs context menu the plugin was chosen.
    * 
    * @deprecated Since 1.1. Use {@link #getContextMenuActions(Program)} instead.
    */
@@ -804,9 +804,8 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
     return null;
   }
 
-
   /**
-   * This method is invoked by the host-application if the user has choosen your
+   * This method is invoked by the host-application if the user has chosen your
    * plugin from the menu or the toolbar.
    * 
    * @deprecated Since 1.1. Use {@link #getButtonAction()} instead.
@@ -845,19 +844,19 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   }
 
   /**
-   * This method is automatically called immediatly before the plugin gets
+   * This method is automatically called immediately before the plugin gets
    * activated.
-   *
+   * 
    * @since 1.1
    */
   public void onActivation() {      
   }
 
   /**
-   * This method is automatically called immediatly after deactivating
-   * the plugin.
-   * ATTENTION: Don't use any logger, thread or access to Frames in this method.
-   *
+   * This method is automatically called immediately after deactivating the
+   * plugin. ATTENTION: Don't use any logger, thread or access to Frames in this
+   * method.
+   * 
    * @since 1.1
    */
   public void onDeactivation() {      
@@ -954,14 +953,16 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
       
     return false;
   }
-  
+
   /**
    * Receives a list of Strings from another plugin with a target.
    * 
-   * @param values The value array passed from the other plugin.
-   * @param receiveTarget The receive target of the programs.
-   * @return <code>True</code> if the value array was handled correct, 
-   * </code>false</code> otherwise.
+   * @param values
+   *          The value array passed from the other plugin.
+   * @param receiveTarget
+   *          The receive target of the programs.
+   * @return <code>true</code> if the value array was handled correct,
+   *         </code>false</code> otherwise.
    * 
    * @see #canReceiveProgramsWithTarget()
    * @since 2.7
@@ -1019,15 +1020,23 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
     return null;
   }
-  
+
   /**
    * Gets the mark priority for the given program that this Plugin uses.
    * <p>
-   * The mark priority can be {@link Program#NO_MARK_PRIORITY}, {@link Program#MIN_MARK_PRIORITY}, {@link Program#LOWER_MEDIUM_MARK_PRIORITY},
-   * {@link Program#MEDIUM_MARK_PRIORITY}, {@link Program#HIGHER_MEDIUM_MARK_PRIORITY} or
-   * {@link Program#MAX_MARK_PRIORITY}.
-   * <p>  
-   * @param p The program to get the mark prioriy for.
+   * The mark priority can be
+   * <ul>
+   * <li>{@link Program#NO_MARK_PRIORITY},</li>
+   * <li>{@link Program#MIN_MARK_PRIORITY},</li>
+   * <li>{@link Program#LOWER_MEDIUM_MARK_PRIORITY},</li>
+   * <li>{@link Program#MEDIUM_MARK_PRIORITY},</li>
+   * <li>{@link Program#HIGHER_MEDIUM_MARK_PRIORITY} or</li>
+   * <li>{@link Program#MAX_MARK_PRIORITY}.</li>
+   * </ul>
+   * <p>
+   * 
+   * @param p
+   *          The program to get the mark priority for.
    * @return The mark priority for the given program for this plugin.
    * @since 2.5.1
    */
