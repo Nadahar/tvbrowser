@@ -29,6 +29,8 @@ import java.awt.GridLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
@@ -99,15 +101,14 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
 
 import devplugin.Channel;
+import devplugin.SettingsTab;
 
 /**
  * This Class represents the Channel-Settings-Tab
  * 
  * @author Bodo Tasche
  */
-public class ChannelsSettingsTab implements
-    devplugin.SettingsTab/* ,DragGestureListener,DropTargetListener */,
-    ListDropAction {
+public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
 
   /**
    * Translation
@@ -146,7 +147,7 @@ public class ChannelsSettingsTab implements
   private JComboBox mCategoryCB, mCountryCB;
 
   /**
-   * Filter for Channelname
+   * Filter for channel name
    */
   private JTextField mChannelName;
 
@@ -156,22 +157,18 @@ public class ChannelsSettingsTab implements
   private ChannelFilter mFilter;
 
   /**
-   * True, if currently updateing Lists
+   * True, if currently updating Lists
    */
   private boolean mListUpdating = false;
 
-  /** MS after the last input of textfield */
+  /** MS after the last input of text field */
   private final static int REFRESH_AFTER_MS = 200;
-
-  /**
-   * This is the Number of ms since the last change of an Filter Item. If this
-   * is > REFRESH_AFTER_MS the list of available channels gets refiltered
-   */
-  private int mRefreshItemCounter = Integer.MAX_VALUE;
 
   private JComponent mAvailableSeparator;
 
   private JComponent mSubscribedSeparator;
+
+  private Timer mRefreshListTimer;
 
   /**
    * Create the SettingsTab
@@ -325,7 +322,17 @@ public class ChannelsSettingsTab implements
 
     centerPn.add(listBoxPnRight);
 
-    JPanel result = new JPanel(new BorderLayout());
+    final JPanel result = new JPanel(new BorderLayout());
+    result.addComponentListener(new ComponentAdapter() {
+
+      @Override
+      public void componentHidden(ComponentEvent e) {
+        if (e.getComponent() == result) {
+          mRefreshListTimer = null;
+        }
+      }
+
+    });
 
     result.add(createFilterPanel(), BorderLayout.NORTH);
 
@@ -438,22 +445,6 @@ public class ChannelsSettingsTab implements
 
     filter.add(filterPanel, cc.xy(1, 3));
 
-    final int period = 100; // repeat each 100ms
-    Timer timer = new Timer();
-
-    timer.scheduleAtFixedRate(new TimerTask() {
-      public void run() {
-        if ((mRefreshItemCounter == REFRESH_AFTER_MS) && (!mListUpdating)) {
-          mRefreshItemCounter = Integer.MAX_VALUE;
-          mListUpdating = true;
-          fillAvailableChannelsListBox();
-          mListUpdating = false;
-        } else if (mRefreshItemCounter < REFRESH_AFTER_MS) {
-          mRefreshItemCounter += period;
-        }
-      }
-    }, 0, period);
-
     final ItemListener filterItemListener = new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
         if ((e == null) || (e.getStateChange() == ItemEvent.SELECTED)) {
@@ -475,19 +466,42 @@ public class ChannelsSettingsTab implements
 
     mChannelName.getDocument().addDocumentListener(new DocumentListener() {
       public void changedUpdate(DocumentEvent e) {
-        mRefreshItemCounter = 0;
+        startTimer();
       }
 
       public void insertUpdate(DocumentEvent e) {
-        mRefreshItemCounter = 0;
+        startTimer();
       }
 
       public void removeUpdate(DocumentEvent e) {
-        mRefreshItemCounter = 0;
+        startTimer();
       }
     });
 
     return filter;
+  }
+
+  /**
+   * restart list refresh timer
+   */
+  protected void startTimer() {
+    if (mRefreshListTimer != null) {
+      mRefreshListTimer.cancel();
+    }
+    mRefreshListTimer = new Timer("Refresh channel list");
+    mRefreshListTimer.schedule(new TimerTask() {
+      public void run() {
+        if (!mListUpdating) {
+          mListUpdating = true;
+          fillAvailableChannelsListBox();
+          mListUpdating = false;
+          mRefreshListTimer = null;
+        } else {
+          // restart as update is currently not possible
+          startTimer();
+        }
+      }
+    }, REFRESH_AFTER_MS);
   }
 
   /**
