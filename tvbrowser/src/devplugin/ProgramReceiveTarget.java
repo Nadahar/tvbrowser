@@ -25,27 +25,34 @@ import java.io.ObjectOutputStream;
 import util.ui.Localizer;
 
 /**
- * Is a target for receiving of program from other plugins.
- * <br><br>
- * If your plugin should be able to receive programs from other plugins
- * and handle that programs in a specific way you have to create ProgramReceiveTargets
- * for the plugin.
- * <br><br>
- * To do this use the constructor <code>public ProgramReceiveTarget(ProgramReceiveIf receiveIf, String name, String targetId)</code>. 
- * The <code>receiveIf</code> is you Plugin, the <code>name</code> is the name the user will be see for selection 
- * of the target and the <code>targetId</code> is a unique id which is used for identifying the target.<br><br>
- * If your plugin only supports one target simply don't override the method <code>getProgramReceiveTargets()</code>.
- * <br><br>
- * If you want to compare two targets always use the equals method.
- * <br><br>
+ * Is a target for receiving of program from other plugins. <br>
+ * <br>
+ * If your plugin should be able to receive programs from other plugins and
+ * handle those programs in a specific way you have to create
+ * ProgramReceiveTargets for the plugin. <br>
+ * <br>
+ * To do this use the constructor
+ * <code>public ProgramReceiveTarget(ProgramReceiveIf receiveIf, String name, String targetId)</code>
+ * . The <code>receiveIf</code> is you Plugin, the <code>name</code> is the name
+ * the user will be see for selection of the target and the
+ * <code>targetId</code> is a unique id which is used for identifying the
+ * target.<br>
+ * <br>
+ * If your plugin only supports one target simply don't override the method
+ * <code>getProgramReceiveTargets()</code>. <br>
+ * <br>
+ * If you want to compare two targets always use the equals method. <br>
+ * <br>
  * Example:<br>
- * Plugin name MyPlugin.
- * <br><br>
+ * Plugin name MyPlugin. <br>
+ * <br>
  * MyPlugin is a plugin which want to receive programs for two types of targets.
  * One target will be used to show the received programs in a dialog window, the
- * other target will be used to mark the programs for the plugin.
- * <br><br>
- * MyPlugin overrides the methods used for identifying it as a receiveable plugin:<br><br>
+ * other target will be used to mark the programs for the plugin. <br>
+ * <br>
+ * MyPlugin overrides the methods used for identifying it as a receiveable
+ * plugin:<br>
+ * <br>
  * <code>public boolean canReceiveProgramsWithTarget() {<br>
   &nbsp;&nbsp;return true;<br>
   }<br>
@@ -62,18 +69,21 @@ import util.ui.Localizer;
   <br>
   public ProgramReceiveTarget[] getProgramReceiveTargets() {<br>
   &nbsp;&nbsp;return getSupportedTargets();<br>
-  }</code><br><br>
- * The method <code>getSupportedTargets()</code> looks like this:<br><br>
+  }</code><br>
+ * <br>
+ * The method <code>getSupportedTargets()</code> looks like this:<br>
+ * <br>
  * <code>private ProgramReceiveTarget[] getSupportedTargets() {<br>
   &nbsp;&nbsp;ProgramReceiveTarget target1 = new ProgramReceiveTarget(this,"Show programs in dialog","showDialog");<br>
   &nbsp;&nbsp;ProgramReceiveTarget target2 = new ProgramReceiveTarget(this,"Mark programs for MyPlugin","markPrograms");<br>
     <br>
   &nbsp;&nbsp;return new ProgramReceiveTarget[] {target1,target2};<br>
-  }</code>
- * <br><br>
- * With this code the plugin MyPlugin is able to receive the programs
- * from other plugins and handle it in the specified manner.
- * <br><br>
+  }</code> <br>
+ * <br>
+ * With this code the plugin MyPlugin is able to receive the programs from other
+ * plugins and handle it in the specified manner. <br>
+ * <br>
+ * 
  * @author René Mach
  * @since 2.5
  */
@@ -94,11 +104,11 @@ public final class ProgramReceiveTarget {
     return new ProgramReceiveTarget[] {new ProgramReceiveTarget(receiveIf, mLocalizer.msg("defaultTarget","Default target"), "NULL")};
   }
 
-
   /**
-   * Creates the default target for an id od a ProgramReceiveIf.
+   * Creates the default target for an id of a ProgramReceiveIf.
    * 
-   * @param receiveIfId The id of the ProgramReceiveIf to create for.
+   * @param receiveIfId
+   *          The id of the ProgramReceiveIf to create for.
    * @return The default target for the id of the ProgramReceiveIf.
    */
   public static ProgramReceiveTarget createDefaultTargetForProgramReceiveIfId(String receiveIfId) {
@@ -159,9 +169,19 @@ public final class ProgramReceiveTarget {
     out.writeUTF(mTargetId);
     out.writeUTF(mTargetName);
   }
+
+  /**
+   * get the target name (for display)
+   * 
+   * @return target name
+   * @since 3.0
+   */
+  public String getTargetName() {
+    return mTargetName;
+  }
   
   public String toString() {
-    return mTargetName;
+    return getTargetName();
   }
   
   /**

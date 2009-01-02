@@ -949,15 +949,6 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
     return false;
   }
   
-  /**
-   * Receives a list of programs from another plugin with a target.
-   * 
-   * @param programArr The programs passed from the other plugin.
-   * @param receiveTarget The receive target of the programs.
-   * 
-   * @see #canReceiveProgramsWithTarget()
-   * @since 2.5
-   */
   public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
     // check if this should call the old method
     if((receiveTarget == null || ProgramReceiveTarget.isDefaultProgramReceiveTargetForProgramReceiveIf(this,receiveTarget)) && canReceivePrograms()) {
@@ -985,14 +976,6 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
     return false;
   }
   
-  /**
-   * Returns an array of receive target or <code>null</code> if there is no target
-   * 
-   * @return The supported receive targets.
-   * @see #canReceiveProgramsWithTarget()
-   * @see #receivePrograms(Program[],ProgramReceiveTarget)
-   * @since 2.5
-   */
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
     return ProgramReceiveTarget.createDefaultTargetArrayForProgramReceiveIf(this);
   }
