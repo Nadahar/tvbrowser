@@ -30,7 +30,6 @@ import javax.swing.Icon;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.ButtonActionIf;
 import tvbrowser.extras.common.InternalPluginProxyIf;
-
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Marker;
@@ -48,6 +47,11 @@ import devplugin.SettingsTab;
  */
 public class ReminderPluginProxy implements ButtonActionIf, ContextMenuIf, ProgramReceiveIf, Marker, InternalPluginProxyIf {
 
+  /** The localizer for this class. */
+  public static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(ReminderPluginProxy.class);
+
+  private static final String PROGRAM_TARGET_REMIND = "target_remind";
   private static ReminderPluginProxy mInstance;
   private static ReminderPlugin mReminderInstance;
   private Icon mMarkIcon;
@@ -90,7 +94,8 @@ public class ReminderPluginProxy implements ButtonActionIf, ContextMenuIf, Progr
   }
   
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
-    return ProgramReceiveTarget.createDefaultTargetArrayForProgramReceiveIf(this);
+    return new ProgramReceiveTarget[] { new ProgramReceiveTarget(this,
+        mLocalizer.msg("programTarget", "Remind"), PROGRAM_TARGET_REMIND) };
   }
   
   /** @deprecated Since 2.5 */

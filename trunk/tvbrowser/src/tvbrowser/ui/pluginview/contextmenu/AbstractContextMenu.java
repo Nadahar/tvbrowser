@@ -43,6 +43,7 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.pluginview.Node;
 import tvbrowser.ui.pluginview.PluginTree;
@@ -152,7 +153,9 @@ public abstract class AbstractContextMenu implements ContextMenu {
     }
     
     if(o != ReminderPlugin.getInstance().getRootNode().getMutableTreeNode()) {
-      JMenuItem item = new JMenuItem(ReminderPlugin.getInstance().toString());
+      final ProgramReceiveTarget reminderTarget = ReminderPluginProxy
+          .getInstance().getProgramReceiveTargets()[0];
+      JMenuItem item = new JMenuItem(reminderTarget.getTargetName());
       item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
       item.setIcon(IconLoader.getInstance().getIconFromTheme("apps","appointment",16));
       menu.add(item);
@@ -160,7 +163,8 @@ public abstract class AbstractContextMenu implements ContextMenu {
         public void actionPerformed(ActionEvent e) {
           Program[] programs = collectProgramsFromNode(node);
           if ((programs != null) &&(programs.length > 0)) {
-            ReminderPlugin.getInstance().addPrograms(programs);
+            ReminderPluginProxy.getInstance().receivePrograms(programs,
+                reminderTarget);
           }
         }
       });      

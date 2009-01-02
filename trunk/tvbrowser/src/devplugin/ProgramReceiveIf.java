@@ -62,13 +62,16 @@ public interface ProgramReceiveIf {
    * @since 2.5
    */  
   public boolean canReceiveProgramsWithTarget();
-  
+
   /**
    * Receives a list of programs from another plugin with a target.
    * 
-   * @param programArr The programs passed from the other plugin.
-   * @param receiveTarget The receive target of the programs.
-   * @return If the programs were correct received (the target really exists).
+   * @param programArr
+   *          The programs passed from the other plugin.
+   * @param receiveTarget
+   *          The receive target of the programs.
+   * @return <code>true</code>, if the programs were correctly received and the
+   *         target really exists.
    * 
    * @see #canReceiveProgramsWithTarget()
    * @since 2.5
@@ -76,7 +79,8 @@ public interface ProgramReceiveIf {
   public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget);
 
   /**
-   * Returns an array of receive target or <code>null</code> if there is no target
+   * Returns an array of receive targets or <code>null</code> if there is no
+   * target
    * 
    * @return The supported receive targets.
    * @see #canReceiveProgramsWithTarget()
