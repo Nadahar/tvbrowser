@@ -20,6 +20,8 @@ package tvpearlplugin;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Window;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -42,6 +44,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
+import util.paramhandler.ParamParser;
+import util.program.LocalPluginProgramFormating;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
@@ -57,7 +61,9 @@ import devplugin.Version;
 public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 {
 
-	private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(TVPearlPlugin.class);
+	private static final String TARGET_PEARL_COPY = "pearlCopy";
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(TVPearlPlugin.class);
 	private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(TVPearlPlugin.class.getName());
 
 	private static TVPearlPlugin mInstance;
@@ -495,6 +501,47 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 
   public static TVPearlSettings getSettings() {
     return getInstance().mSettings;
+  }
+
+  @Override
+  public boolean canReceiveProgramsWithTarget() {
+    return true;
+  }
+
+  @Override
+  public ProgramReceiveTarget[] getProgramReceiveTargets() {
+    return new ProgramReceiveTarget[] { new ProgramReceiveTarget(this,
+        mLocalizer.msg("programTarget", "Copy as TV pearl to clipboard"),
+        TARGET_PEARL_COPY) };
+  }
+
+  @Override
+  public boolean receivePrograms(Program[] programArr,
+      ProgramReceiveTarget receiveTarget) {
+    if (receiveTarget.getTargetId().equals(TARGET_PEARL_COPY)) {
+      LocalPluginProgramFormating format = new LocalPluginProgramFormating(
+          mLocalizer.msg("name", "TV Pearl"),
+          "{title}",
+          "{start_day_of_week}, {start_day}. {start_month_name}, {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}, {channel_name}\n{title}\n\n{genre}",
+          "UTF-8");
+      ParamParser parser = new ParamParser();
+      StringBuffer buffer = new StringBuffer();
+      for (Program program : programArr) {
+        String programText = parser.analyse(format.getContentValue(), program);
+        if (programText != null) {
+          buffer.append(programText);
+          buffer.append("\n\n");
+        }
+      }
+      String text = buffer.toString();
+      if (text.length() > 0) {
+        Clipboard clip = java.awt.Toolkit.getDefaultToolkit()
+            .getSystemClipboard();
+        clip.setContents(new StringSelection(text), null);
+      }
+      return true;
+    }
+    return false;
   }
 
 }
