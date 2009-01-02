@@ -627,4 +627,10 @@ public class JavaPluginProxy extends AbstractPluginProxy {
 
     return mPlugin.receiveValues(values,receiveTarget);
   }
+
+  @Override
+  protected void doHandleTvDataTouched(ChannelDayProgram removedDayProgram,
+      ChannelDayProgram addedDayProgram) {
+    mPlugin.handleTvDataTouched(removedDayProgram,addedDayProgram);
+  }
 }

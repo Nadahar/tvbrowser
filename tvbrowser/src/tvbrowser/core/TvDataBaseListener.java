@@ -66,4 +66,22 @@ public interface TvDataBaseListener {
    */
   public void dayProgramDeleted(ChannelDayProgram prog);
 
+  /**
+   * Is called if something was done with the day program.
+   * Maybe it was removed, added or changed. What actually happend
+   * depends on the given parameter. This method is handy if you
+   * want to use threads for the handling of the day program changes
+   * and have to keep the order of the processing of removed and added
+   * programs.
+   * <p>
+   * @param removedDayProgram The day program that was removed.
+   * If it's <code>null</code> that means it didn't exist a day program
+   * for the day and channel before (or short a new day program was added).
+   * @param addedDayProgram The day program that was added.
+   * If it's <code>null</code> that means the day program was deleted if
+   * the removedDayProgram is not <code>null</code>.
+   * <p>
+   * @since 2.7.3
+   */
+  public void dayProgramTouched(ChannelDayProgram removedDayProgram, ChannelDayProgram addedDayProgram);
 }
