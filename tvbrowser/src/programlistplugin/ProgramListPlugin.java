@@ -53,12 +53,16 @@ import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
+import tvbrowser.core.icontheme.IconLoader;
 import util.program.ProgramUtilities;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
 import util.ui.ProgramList;
+import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -104,6 +108,8 @@ public class ProgramListPlugin extends Plugin {
   private ProgramFilter mRecieveFilter;
     
   private static ProgramListPlugin mInstance;
+
+  private JButton mSendBtn;
   
   /**
    * Creates an instance of this class.
@@ -358,6 +364,13 @@ public class ProgramListPlugin extends Plugin {
         mList = new ProgramList(mModel, mProgramPanelSettings);
 
         mList.addMouseListeners(null);
+        mList.addListSelectionListener(new ListSelectionListener() {
+
+          @Override
+          public void valueChanged(ListSelectionEvent e) {
+            mSendBtn.setEnabled(mList.getSelectedIndex() >= 0);
+          }
+        });
 
         mBox = new JComboBox(Plugin.getPluginManager().getSubscribedChannels());
         mBox.insertItemAt(mLocalizer.msg("allChannels", "All channels"), 0);
@@ -402,6 +415,22 @@ public class ProgramListPlugin extends Plugin {
         panel.add(new JLabel(mLocalizer.msg(SETTING_FILTER, "Filter:")), cc.xy(
             2, 3));
         panel.add(mFilterBox, cc.xy(4, 3));
+        
+        mSendBtn = new JButton(IconLoader.getInstance()
+            .getIconFromTheme("actions", "edit-copy", 16));
+        mSendBtn.setToolTipText(mLocalizer.msg("send", "Send to other Plugins"));
+        mSendBtn.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            Program[] programs = mList.getSelectedPrograms();
+            if (programs != null && programs.length > 0) {
+              SendToPluginDialog sendDialog = new SendToPluginDialog(
+                  ProgramListPlugin.getInstance(), mDialog, programs);
+              sendDialog.setVisible(true);
+            }
+          }
+        });
+        mSendBtn.setEnabled(false);
+        
 
         mShowDescription = new JCheckBox(mLocalizer.msg(
             "showProgramDescription", "Show program description"),
@@ -429,9 +458,10 @@ public class ProgramListPlugin extends Plugin {
         });
 
         JPanel southPanel = new JPanel(new FormLayout(
-            "default,0dlu:grow,default", "default"));
-        southPanel.add(mShowDescription, cc.xy(1, 1));
-        southPanel.add(close, cc.xy(3, 1));
+            "default,5dlu,default,0dlu:grow,default", "default"));
+        southPanel.add(mSendBtn, cc.xy(1, 1));
+        southPanel.add(mShowDescription, cc.xy(3, 1));
+        southPanel.add(close, cc.xy(5, 1));
 
         mDialog.getContentPane().add(panel, BorderLayout.NORTH);
         mDialog.getContentPane().add(new JScrollPane(mList),
