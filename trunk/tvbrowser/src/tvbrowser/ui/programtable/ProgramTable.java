@@ -762,10 +762,11 @@ public class ProgramTable extends JPanel
     int totalTimeY = 0;
     int parts = 0;
     int columnCount = mModel.getColumnCount();
+    int[] y = new int[columnCount];
     for (int col = 0; col < columnCount; col++) {
-      int timeY = getTimeYOfColumn(col, minutesAfterMidnight);
-      if (timeY != -1) {
-        totalTimeY += timeY;
+      y[col] = getTimeYOfColumn(col, minutesAfterMidnight);
+      if (y[col] > 0) {
+        totalTimeY += y[col];
         parts++;
       }
     }
@@ -793,9 +794,6 @@ public class ProgramTable extends JPanel
     int timeY = mLayout.getColumnStart(col);
     Date mainDate = mModel.getDate();
 
-    // Walk to the program that starts before the specified time
-    int lastCellHeight = 0;
-    int lastDuration = 0;
     int rowCount = mModel.getRowCount(col);
     for (int row = 0; row < rowCount; row++) {
       ProgramPanel panel = mModel.getProgramPanel(col, row);
@@ -805,21 +803,25 @@ public class ProgramTable extends JPanel
       // Add 24 hours for every day different to the model's main date
       startTime += program.getDate().getNumberOfDaysSince(mainDate) * 24 * 60;
 
-      if (startTime > minutesAfterMidnight || row == rowCount-1) {
-        // It was the last program
-        if(lastCellHeight != 0 && lastDuration > 0 && lastDuration < 360) {
-          timeY += getVisibleRect().height / 2 > lastCellHeight ? lastCellHeight / 2 : 0; // Hit the center of the program
-        } else {
-          timeY = -1;
-        }
+      // upper border of current program panel
+      if (startTime == minutesAfterMidnight) {
         return timeY;
-      } else {
-        timeY += lastCellHeight;
+      }
+      
+      // somewhere inside current panel
+      final int progLength = program.getLength();
+      if (progLength > 0 && startTime < minutesAfterMidnight
+          && startTime + progLength > minutesAfterMidnight) {
+        return timeY + panel.getHeight() * (minutesAfterMidnight - startTime)
+            / progLength;
       }
 
-      // Remember the cell height
-      lastCellHeight = panel.getHeight();
-      lastDuration = program.getLength();
+      // It was between current and previous program
+      if (startTime > minutesAfterMidnight) {
+        return timeY;
+      }
+      
+      timeY += panel.getHeight();
     }
 
     return -1;
@@ -1352,38 +1354,47 @@ public class ProgramTable extends JPanel
       final int panelX = mousePoint.x - panelIndex.x * mColumnWidth;
       final int panelY = mousePoint.y - currY;
       String tooltip = panel.getToolTipText(panelX, panelY);
-      if (tooltip == null) {
-        // if program is partially not visible then show the title as tooltip
-        final JViewport viewport = MainFrame.getInstance()
-            .getProgramTableScrollPane().getViewport();
-        Point viewPos = viewport.getViewPosition();
-        Dimension viewSize = viewport.getSize();
-        final Program program = panel.getProgram();
-        if ((currY < viewPos.y)
-            || (panelIndex.x * mColumnWidth + panel.getTitleX() < viewPos.x)
-            || ((panelIndex.x + 1) * mColumnWidth - 1 > viewPos.x
-                + viewSize.width)) {
-          return program.getTitle();
+      if (tooltip != null && tooltip.length() > 0) {
+        return tooltip;
+      }
+      
+      StringBuffer buffer = new StringBuffer();
+      // if program is partially not visible then show the title as tooltip
+      final JViewport viewport = MainFrame.getInstance()
+          .getProgramTableScrollPane().getViewport();
+      Point viewPos = viewport.getViewPosition();
+      Dimension viewSize = viewport.getSize();
+      final Program program = panel.getProgram();
+      if ((currY < viewPos.y)
+          || (panelIndex.x * mColumnWidth + panel.getTitleX() < viewPos.x)
+          || ((panelIndex.x + 1) * mColumnWidth - 1 > viewPos.x
+              + viewSize.width)) {
+        buffer.append(program.getTitle());
+      }
+
+      // show end time if start time of next
+      // shown program is not end of current program
+      ProgramPanel nextPanel = mModel.getProgramPanel(panelIndex.x,
+          panelIndex.y + 1);
+
+      if (nextPanel != null) {
+        int length = program.getLength();
+        int nextStartTime = nextPanel.getProgram().getStartTime();
+        if (nextStartTime < program.getStartTime()) {
+          nextStartTime += 24 * 60;
         }
-        ProgramPanel nextPanel = mModel.getProgramPanel(panelIndex.x,
-            panelIndex.y + 1);
-        
-        // show end time if next panel is not visible (and start time of next
-        // shown program is not end of current program)
-        if (nextPanel != null) {
-          int length = program.getLength();
-          int nextStartTime = nextPanel.getProgram().getStartTime();
-          if (nextStartTime < program.getStartTime()) {
-            nextStartTime += 24 * 60;
+        if ((length > 0)
+            && (program.getStartTime() + length + 1 < nextStartTime)) {
+          if (buffer.length() > 0) {
+            buffer.append(" - ");
           }
-          if ((length > 0)
-              && (program.getStartTime() + length + 1 < nextStartTime)) {
-            return mLocalizer.msg("until", "until {0}", program
-                .getEndTimeString());
-          }
+          buffer.append(mLocalizer.msg("until", "until {0}", program
+              .getEndTimeString()));
         }
       }
-      return tooltip;
+      if (buffer.length() > 0) {
+        return buffer.toString();
+      }
     }
     return null;
   }
