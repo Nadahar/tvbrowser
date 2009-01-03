@@ -345,9 +345,9 @@ public class SelectableItemList extends JPanel {
     mScrollPane.getVerticalScrollBar().setEnabled(value);
     mScrollPane.setWheelScrollingEnabled(value);
   }
-  
+
   /**
-   * Calcualtes the size of the list.
+   * Calculates the size of the list.
    */
   public void calculateSize() {
     if(mList != null) {
