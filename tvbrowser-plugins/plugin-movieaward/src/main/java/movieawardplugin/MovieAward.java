@@ -99,11 +99,6 @@ public class MovieAward implements Comparable<MovieAward> {
         }
       }
     }
-//    for (Movie movie:mMovies) {
-//      if (movie.matchesProgram(program) && mAwards.containsKey(movie.getId())) {
-//        return true;
-//      }
-//    }
 
     // No movie found, try to find a movie-id in the global movie database
     final Movie movie = mMovieDatabase.getMovieFor(program);

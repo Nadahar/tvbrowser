@@ -1,26 +1,27 @@
 package movieawardplugin;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
-import org.xml.sax.SAXException;
-
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
+
 /**
- * This class loads data from a xml file and creates the movieawards
+ * This class loads data from a XML file and creates the movie awards
  */
 public class MovieDataFactory {
   private static Logger mLog = Logger.getLogger(MovieDataFactory.class.getName());
 
-  public static MovieAward loadMovieDataFromStream(final InputStream stream, final MovieDatabase database) {
-    final MovieAward award = new MovieAward(database);
+  public static MovieAward loadMovieDataFromStream(final InputStream stream,
+      final MovieAward award) {
 
     try {
       SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
@@ -38,6 +39,11 @@ public class MovieDataFactory {
     }
 
     return award;
+  }
+
+  public static MovieAward loadMovieDataFromStream(final InputStream stream,
+      final MovieDatabase database) {
+    return loadMovieDataFromStream(stream, new MovieAward(database));
   }
 
 
