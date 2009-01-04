@@ -26,10 +26,15 @@ import devplugin.SettingsTab;
 import devplugin.Version;
 
 public class ZattooPlugin extends Plugin {
+  
+  private static final boolean PLUGIN_IS_STABLE = true;
+  private static final Version PLUGIN_VERSION = new Version(0, 4, 1,
+      PLUGIN_IS_STABLE);
+  
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ZattooPlugin.class);
   private static Logger mLog = Logger.getLogger(ZattooPlugin.class.getName());
 
-  private static final String COUNTRY = "COUNTRY";
+  private static final String KEY_COUNTRY = "COUNTRY";
 
   private ImageIcon mIcon;
   protected static ZattooPlugin mInstance;
@@ -45,7 +50,7 @@ public class ZattooPlugin extends Plugin {
   }
 
   public static Version getVersion() {
-    return new Version(0, 4, false);
+    return PLUGIN_VERSION;
   }
 
   @Override
@@ -57,7 +62,7 @@ public class ZattooPlugin extends Plugin {
   public void loadSettings(Properties properties) {
     mSettings = properties;
 
-    changeCountry(mSettings.getProperty(COUNTRY, "de"));
+    changeCountry(mSettings.getProperty(KEY_COUNTRY, "de"));
   }
 
   public void changeCountry(final String country) {
@@ -67,7 +72,7 @@ public class ZattooPlugin extends Plugin {
     if (stream != null) {
       try {
         mChannelMapping.load(stream);
-        mSettings.setProperty(COUNTRY, country);
+        mSettings.setProperty(KEY_COUNTRY, country);
       } catch (IOException e) {
         mLog.log(Level.WARNING, "Could not load File for Country " + country + ".", e);
       }
@@ -77,7 +82,7 @@ public class ZattooPlugin extends Plugin {
   }
 
   public String getCurrentCountry() {
-    return mSettings.getProperty(COUNTRY, "de");
+    return mSettings.getProperty(KEY_COUNTRY, "de");
   }
 
   public PluginInfo getInfo() {
