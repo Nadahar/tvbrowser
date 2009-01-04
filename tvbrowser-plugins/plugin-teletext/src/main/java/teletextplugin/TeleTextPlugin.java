@@ -25,6 +25,7 @@ package teletextplugin;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.Properties;
 
 import javax.swing.AbstractAction;
@@ -42,7 +43,7 @@ import devplugin.Program;
 import devplugin.Version;
 
 public class TeleTextPlugin extends Plugin {
-  private static final Version mVersion = new Version(2, 70, 1);
+  private static final Version mVersion = new Version(2, 70, 2);
 
   private PluginInfo mPluginInfo;
 
@@ -53,6 +54,9 @@ public class TeleTextPlugin extends Plugin {
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(TeleTextPlugin.class);
+
+  private static java.util.logging.Logger mLog = java.util.logging.Logger
+      .getLogger(TeleTextPlugin.class.getName());
 
   public static Version getVersion() {
     return mVersion;
@@ -106,21 +110,27 @@ public class TeleTextPlugin extends Plugin {
 
   private String getTextUrl(Channel channel) {
     initializeProperties();
-    String url = mPages.getProperty(channel.getId().toLowerCase().replaceAll(
-        " ", "_"));
-    if (url != null && url.length() > 0) {
-      // is this a mapping only?
-      if (!url.startsWith("http")) {
-        url = mPages.getProperty(url);
-      }
-      if (url != null && url.length() > 0 && url.startsWith("http")) {
-        return url;
-      }
+    String country = channel.getCountry();
+    final String id = channel.getId().toLowerCase().replaceAll(" ", "_");
+    // first try country and channel ID
+    String URL = lookupURL(country + "_" + id);
+    if (URL != null) {
+      return URL;
+    }
+    // if nothing was found, search only the ID
+    return lookupURL(id);
+  }
+
+  private String lookupURL(String key) {
+    String url = mPages.getProperty(key);
+    if (url != null && url.length() > 0 && url.startsWith("http")) {
+      return url;
     }
     return null;
   }
 
   private void initializeProperties() {
+    // load the URLs
     if (mPages == null) {
       InputStream is = getClass().getResourceAsStream("teletext.properties");
       mPages = new Properties();
@@ -129,6 +139,32 @@ public class TeleTextPlugin extends Plugin {
       } catch (IOException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
+      }
+      // check all URLs on first load
+      checkURLs();
+    }
+  }
+
+  private void checkURLs() {
+    for (Enumeration<?> keys = mPages.propertyNames(); keys.hasMoreElements();) {
+      String key = (String) keys.nextElement();
+      String url = mPages.getProperty(key);
+      if (url != null && url.length() > 0) {
+        // is this a mapping only?
+        if (!url.startsWith("http")) {
+          url = mPages.getProperty(url);
+          if (url != null) {
+            mPages.put(key, url);
+          }
+          else {
+            mLog.warning("Bad teletext mapping for " + key);
+          }
+        }
+        if (url == null || url.length() == 0 || !url.startsWith("http")) {
+          mLog.warning("Bad teletext URL " + url);
+        }
+      } else {
+        mLog.warning("Bad teletext key " + key + "=" + url);
       }
     }
   }
