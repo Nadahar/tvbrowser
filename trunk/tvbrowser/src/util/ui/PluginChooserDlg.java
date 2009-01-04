@@ -316,6 +316,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
     } else {
       contentPane.add(mPluginItemList, cc.xy(1, pos));
     }
+    mPluginItemList.setSelectedIndex(0);
 
     pos += 2;
     

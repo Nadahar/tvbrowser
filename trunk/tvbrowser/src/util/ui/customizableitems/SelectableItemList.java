@@ -305,7 +305,17 @@ public class SelectableItemList extends JPanel {
   public Object getSelectedValue() {
     return mList.getSelectedValue();
   }
-  
+
+  /**
+   * set the (focus) selection to the item with the given index
+   * 
+   * @param index
+   * @since 3.0
+   */
+  public void setSelectedIndex(int index) {
+    mList.setSelectedIndex(0);
+  }
+
   /**
    * Invert the selection
    */
