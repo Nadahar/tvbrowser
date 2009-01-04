@@ -86,7 +86,7 @@ public class Movie {
   public boolean matchesProgram(Program program) {
     // avoid String comparison by filtering for year first
     int year = program.getIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE);
-    if (year > 0) {
+    if (year > 0 && mYear > 0) {
       if (!(year >= mYear - 1 && year <= mYear + 1)) {
         return false;
       }
