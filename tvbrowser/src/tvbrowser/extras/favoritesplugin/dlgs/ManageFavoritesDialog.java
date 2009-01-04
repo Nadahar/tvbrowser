@@ -34,7 +34,14 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -66,6 +73,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
+
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
@@ -485,6 +493,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       }
     });
     
+    mFavoriteTree.setSelectionPath(new TreePath(mFavoriteTree.getRoot()));
     favoriteSelectionChanged();
   }
   
