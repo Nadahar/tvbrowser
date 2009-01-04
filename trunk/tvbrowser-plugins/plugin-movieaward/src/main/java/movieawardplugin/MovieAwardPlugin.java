@@ -97,6 +97,11 @@ public class MovieAwardPlugin extends Plugin {
    * Database of movies to reduce duplication
    */
   private MovieDatabase mMovieDatabase = new MovieDatabase();
+  
+  /**
+   * disable graphical updates of root node during full award search
+   */
+  private boolean mUpdateRootEnabled;
 
   public MovieAwardPlugin() {
     mInstance = this;
@@ -126,8 +131,16 @@ public class MovieAwardPlugin extends Plugin {
       mMovieAwards = new ArrayList<MovieAward>();
       mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
           .getResourceAsStream("data/cannes.xml"), mMovieDatabase));
-      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass().getResourceAsStream("data/europeanmovieawards.xml"), mMovieDatabase));
-      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass().getResourceAsStream("data/grimme.xml"), mMovieDatabase));
+      // mMovieAwards
+      // .add(MovieDataFactory.loadMovieDataFromStream(getClass()
+      // .getResourceAsStream("data/deutscher_filmpreis.xml"),
+      // new MovieAwardForMovies(mMovieDatabase)));
+      mMovieAwards
+          .add(MovieDataFactory.loadMovieDataFromStream(getClass()
+              .getResourceAsStream("data/europeanmovieawards.xml"),
+              new MovieAwardForMovies(mMovieDatabase)));
+      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
+          .getResourceAsStream("data/grimme.xml"), mMovieDatabase));
       mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
           .getResourceAsStream("data/menschenrechtsfilmpreis.xml"),
           mMovieDatabase));
@@ -256,7 +269,7 @@ public class MovieAwardPlugin extends Plugin {
     }
     node.addProgram(program);
     // defer update until tree is initialized
-    if (mRootNode != null) {
+    if (mRootNode != null && mUpdateRootEnabled) {
       mRootNode.update();
     }
   }
@@ -292,6 +305,7 @@ public class MovieAwardPlugin extends Plugin {
     Channel[] channels = devplugin.Plugin.getPluginManager()
         .getSubscribedChannels();
     Date date = Date.getCurrentDate();
+    mUpdateRootEnabled = false;
     for (int days = 0; days < 30; days++) {
       for (Channel channel : channels) {
         Iterator<Program> iter = Plugin.getPluginManager()
@@ -306,6 +320,8 @@ public class MovieAwardPlugin extends Plugin {
       }
       date = date.addDays(1);
     }
+    mUpdateRootEnabled = true;
+    mRootNode.update();
   }
 
   @Override
