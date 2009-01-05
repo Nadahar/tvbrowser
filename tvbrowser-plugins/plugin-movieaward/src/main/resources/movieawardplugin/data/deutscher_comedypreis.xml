@@ -1,0 +1,257 @@
+<awarddata>
+<name lang="de">Deutscher Comedypreis</name>
+<name lang="en">German Comedy Award</name>
+<url>http://www.koelncomedy.de/koelncomedy/comedypreis/</url>
+
+<categories>
+  <category id="comedian">
+    <name lang="de">Bester Comedian</name>
+  </category>
+  <category id="show">
+    <name lang="de">Beste Comedy-Show</name>
+  </category>
+    <category id="serie">
+    <name lang="de">Beste Comedy-Serie</name>
+  </category>
+  <category id="schauspieler">
+    <name lang="de">Bester Schauspieler in einer Comedy-Serie</name>
+  </category>
+  <category id="schauspielerin">
+    <name lang="de">Beste Schauspielerin in einer Comedy-Serie</name>
+  </category>
+  <category id="moderation">
+  <name lang="de">Beste Moderation</name>
+  </category>
+  <category id="sketch">
+  <name lang="de">Beste Sketch-Show</name>
+  </category>
+  <category id="newcomer">
+  <name lang="de">Bester Newcomer</name>
+  </category>
+  <category id="live">
+  <name lang="de">Beste Live-Comedy</name>
+  </category>
+  <category id="kino">
+  <name lang="de">Beste Kinokomödie</name>
+  </category>
+  <category id="comedypres">
+  <name lang="de">Deutscher Comedypreis</name>
+  </category>
+  <category id="sitcom">
+  <name lang="de">Beste Sitcom</name>
+  </category>
+  <category id="act">
+  <name lang="de">Bester Comedy-Act</name>
+  </category>
+  <category id="nebenrolle">
+  <name lang="de">Beste(r) Komiker(in) in einer Nebenrolle</name>
+  </category>
+  <category id="komiker">
+  <name lang="de">Bester Komiker</name>
+  </category>
+  <category id="komikerin">
+  <name lang="de">Beste Komikerin</name>
+  </category>
+  <category id="sonder_erste">
+  <name lang="de">Sonderpreis für die erste erfolgreiche Comedy-Show in Deutschland</name>
+  </category>
+  <category id="sonder_ausdauer">
+  <name lang="de">Sonderpreis für Ausdauer und Popularität</name>
+  </category>
+  <category id="impro">
+  <name lang="de">Beste Impro-Comedy</name>
+  </category>
+</categories>
+
+<movies>
+  <movie id="Quatsch Comedy Club">
+    <title lang="de" original="yes">Quatsch Comedy Club</title>
+  </movie>
+  <movie id="Kalkofes Mattscheibe">
+    <title lang="de" original="yes">Kalkofes Mattscheibe</title>
+  </movie>
+  <movie id="Ritas Welt">
+    <title lang="de" original="yes">Ritas Welt</title>
+  </movie>
+  <movie id="Die Wochenshow">
+    <title lang="de" original="yes">Die Wochenshow</title>
+  </movie>
+  <movie id="Lukas">
+    <title lang="de" original="yes">Lukas</title>
+  </movie>
+  <movie id="TV Total">
+    <title lang="de" original="yes">TV Total</title>
+  </movie>
+  <movie id="Alles Atze">
+    <title lang="de" original="yes">Alles Atze</title>
+  </movie>
+  <movie id="Bullyparade">
+    <title lang="de" original="yes">Bullyparade</title>
+  </movie>
+  <movie id="Anke">
+    <title lang="de" original="yes">Anke</title>
+  </movie>
+  <movie id="Was guckst du?!">
+    <title lang="de" original="yes">Was guckst du?!</title>
+  </movie>
+  <movie id="Der Schuh des Manitu">
+    <title lang="de" original="yes">Der Schuh des Manitu</title>
+  </movie>
+  <movie id="Ladykracher">
+    <title lang="de" original="yes">Ladykracher</title>
+  </movie>
+  <movie id="Hausmeister Krause">
+    <title lang="de" original="yes">Hausmeister Krause</title>
+  </movie>
+  <movie id="Mensch Markus">
+    <title lang="de" original="yes">Mensch Markus</title>
+  </movie>
+  <movie id="Knallharte Jungs">
+    <title lang="de" original="yes">Knallharte Jungs</title>
+  </movie>
+  <movie id="Ohne Worte">
+    <title lang="de" original="yes">Ohne Worte</title>
+  </movie>
+  <movie id="Genial daneben">
+    <title lang="de" original="yes">Genial daneben</title>
+  </movie>
+  <movie id="Klimbim">
+    <title lang="de" original="yes">Klimbim</title>
+  </movie>
+  <movie id="(T)Raumschiff Surprise – Periode 1">
+    <title lang="de" original="yes">(T)Raumschiff Surprise – Periode 1</title>
+  </movie>
+  <movie id="Olm!">
+    <title lang="de" original="yes">Olm!</title>
+  </movie>
+  <movie id="Familie Heinz Becker">
+    <title lang="de" original="yes">Familie Heinz Becker</title>
+  </movie>
+  <movie id="Mein Leben &amp; Ich">
+    <title lang="de" original="yes">Mein Leben &amp; Ich</title>
+  </movie>
+  <movie id="Die 70er Show">
+    <title lang="de" original="yes">Die 70er Show</title>
+  </movie>
+  <movie id="7 Tage, 7 Köpfe">
+    <title lang="de" original="yes">7 Tage, 7 Köpfe</title>
+  </movie>
+  <movie id="Rent a Pocher">
+    <title lang="de" original="yes">Rent a Pocher</title>
+  </movie>
+  <movie id="7 Zwerge – Männer allein im Wald">
+    <title lang="de" original="yes">7 Zwerge – Männer allein im Wald</title>
+  </movie>
+  <movie id="Bully &amp; Rick">
+    <title lang="de" original="yes">Bully &amp; Rick</title>
+  </movie>
+  <movie id="Stromberg">
+    <title lang="de" original="yes">Stromberg</title>
+  </movie>
+  <movie id="Schillerstraße">
+    <title lang="de" original="yes">Schillerstraße</title>
+  </movie>
+  <movie id="Pastewka">
+    <title lang="de" original="yes">Pastewka</title>
+  </movie>
+  <movie id="Ladyland">
+    <title lang="de" original="yes">Ladyland</title>
+  </movie>
+  <movie id="Switch reloaded">
+    <title lang="de" original="yes">Switch reloaded</title>
+  </movie>
+  <movie id="Kinder, Kinder">
+    <title lang="de" original="yes">Kinder, Kinder</title>
+  </movie>
+  <movie id="Frei Schnauze XXL">
+    <title lang="de" original="yes">Frei Schnauze XXL</title>
+  </movie>
+  <movie id="7 Zwerge - Der Wald ist nicht genug">
+    <title lang="de" original="yes">7 Zwerge - Der Wald ist nicht genug</title>
+  </movie>
+  <movie id="Doctor's Diary">
+    <title lang="de" original="yes">Doctor's Diary</title>
+  </movie>
+  <movie id="Maddin in Love">
+    <title lang="de" original="yes">Maddin in Love</title>
+  </movie>
+  <movie id="Elton vs. Simon - Die Show">
+    <title lang="de" original="yes">Elton vs. Simon - Die Show</title>
+  </movie>
+  <movie id="Achtung! Hartwich">
+    <title lang="de" original="yes">Achtung! Hartwich</title>
+  </movie>
+  <movie id="Two Funny">
+    <title lang="de" original="yes">Two Funny</title>
+  </movie>
+  <movie id="Keinohrhasen">
+    <title lang="de" original="yes">Keinohrhasen</title>
+  </movie>
+  <movie id="Krömers internationale Show">
+    <title lang="de" original="yes">Krömers internationale Show</title>
+  </movie>
+</movies>
+
+<awards>
+  <award category="comedypreis" status="winner" movie="Quatsch Comedy Club" year="1997" />
+  <award category="comedypreis" status="winner" movie="Kalkofes Mattscheibe" year="1998" />
+  <award category="comedian" status="winner" movie="Ritas Welt" year="1999" recipient="Gaby Köster"/>
+  <award category="show" status="winner" movie="Die Wochenshow" year="1999" />
+  <award category="sitcom" status="winner" movie="Lukas" year="1999" />
+  <award category="moderation" status="winner" movie="TV Total" year="1999" recipient="Stefan Raab"/>
+  <award category="act" status="winner" movie="Alles Atze" year="2000" recipient="Atze Schröder"/>
+  <award category="nebenrolle" status="winner" movie="Ritas Welt" year="2000" recipient="Franziska Traub" />
+  <award category="sitcom" status="winner" movie="Ritas Welt" year="2000" />
+  <award category="show" status="winner" movie="Quatsch Comedy Club" year="2000" />
+  <award category="komiker" status="winner" movie="Bullyparade" year="2001" recipient="Bully Herbig"/>
+  <award category="komikerin" status="winner" movie="Anke" year="2001" recipient="Anke Engelke"/>
+  <award category="show" status="winner" movie="Was guckst du?!" year="2001" />
+  <award category="serie" status="winner" movie="Ritas Welt" year="2001" />
+  <award category="kino" status="winner" movie="Der Schuh des Manitu" year="2001" />
+  <award category="show" status="winner" movie="Ladykracher" year="2002" />
+  <award category="serie" status="winner" movie="Hausmeister Krause" year="2002" />
+  <award category="nebenrolle" status="winner" movie="Ladykracher" year="2002" recipient="Christoph Maria Herbst"/>
+  <award category="komikerin" status="winner" movie="Ladykracher" year="2002" recipient="Anke Engelke"/>
+  <award category="komiker" status="winner" movie="Mensch Markus" year="2002" recipient="Markus Maria Profitlich"/>
+  <award category="kino" status="winner" movie="Knallharte Jungs" year="2002" />
+  <award category="comedian" status="winner" movie="Ohne Worte" year="2003" recipient="Bastian Pastewka"/>
+  <award category="show" status="winner" movie="Genial daneben" year="2003" />
+  <award category="serie" status="winner" movie="Alles Atze" year="2003" />
+  <award category="schauspielerin" status="winner" movie="Ritas Welt" year="2003" recipient="Gaby Köster"/>
+  <award category="schauspieler" status="winner" movie="Alles Atze" year="2003" recipient="Atze Schröder"/>
+  <award category="sketch" status="winner" movie="Ladykracher" year="2003" />
+  <award category="sonder_erste" status="winner" movie="Klimbim" year="2003" />
+  <award category="comedian" status="winner" movie="(T)Raumschiff Surprise – Periode 1" year="2004" recipient="Bulli Herbig"/>
+  <award category="show" status="winner" movie="Olm!" year="2004" />
+  <award category="serie" status="winner" movie="Familie Heinz Becker" year="2004" />
+  <award category="schauspielerin" status="winner" movie="Mein Leben &amp; Ich" year="2004" recipient="Wolke Hegenbarth"/>
+  <award category="schauspieler" status="winner" movie="Bewegte Männer" year="2004" recipient="Ingo Naujoks"/>
+  <award category="moderation" status="winner" movie="Die 70er Show" year="2004" recipient="Hape Kerkeling"/>
+  <award category="sketch" status="winner" movie="Mensch Markus" year="2004" recipient="Markus Maria Profitlich"/>
+  <award category="kino" status="winner" movie="(T)Raumschiff Surprise – Periode 1" year="2004" />
+  <award category="sonder_ausdauer" status="winner" movie="7 Tage, 7 Köpfe" year="2004" />
+  <award category="show" status="winner" movie="Rent a Pocher" year="2005" />
+  <award category="serie" status="winner" movie="Alles Atze" year="2005" />
+  <award category="schauspieler" status="winner" movie="Stromberg" year="2005" recipient="Christoph Maria Herbst"/>
+  <award category="sketch" status="winner" movie="Bully &amp; Rick" year="2005" />
+  <award category="kino" status="winner" movie="7 Zwerge – Männer allein im Wald" year="2005" />
+  <award category="impro" status="winner" movie="Schillerstraße" year="2005" />
+  <award category="show" status="winner" movie="Genial daneben" year="2006" />
+  <award category="serie" status="winner" movie="Pastewka" year="2006" />
+  <award category="sketch" status="winner" movie="Mensch Markus" year="2006" />
+  <award category="komödie" status="winner" movie="Ladyland" year="2006" />
+  <award category="sketch" status="winner" movie="Switch reloaded" year="2007" />
+  <award category="serie" status="winner" movie="Kinder, Kinder" year="2007" />
+  <award category="show" status="winner" movie="Frei Schnauze XXL" year="2007" />
+  <award category="kino" status="winner" movie="7 Zwerge - Der Wald ist nicht genug" year="2007" />
+  <award category="serie" status="winner" movie="Doctor's Diary" year="2008" />
+  <award category="serie" status="nominated" movie="Maddin in Love" year="2008" />
+  <award category="show" status="winner" movie="Elton vs. Simon - Die Show" year="2008" />
+  <award category="show" status="nominated" movie="Achtung! Hartwich" year="2008" />
+  <award category="sketch" status="winner" movie="Switch reloaded" year="2008" />
+  <award category="sketch" status="nominated" movie="Two Funny" year="2008" />
+  <award category="kino" status="winner" movie="Keinohrhasen" year="2008" />
+  <award category="show" status="nominated" movie="Krömers internationale Show" year="2008" />
+</awards>
+
+</awarddata>

@@ -131,8 +131,10 @@ public class MovieAwardPlugin extends Plugin {
       mMovieAwards = new ArrayList<MovieAward>();
       mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
           .getResourceAsStream("data/cannes.xml"), mMovieDatabase));
-      // mMovieAwards
-      // .add(MovieDataFactory.loadMovieDataFromStream(getClass()
+      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
+          .getResourceAsStream("data/deutscher_comedypreis.xml"),
+          mMovieDatabase));
+      // mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
       // .getResourceAsStream("data/deutscher_filmpreis.xml"),
       // new MovieAwardForMovies(mMovieDatabase)));
       mMovieAwards
@@ -296,11 +298,6 @@ public class MovieAwardPlugin extends Plugin {
     if (!mStartFinished) {
       return;
     }
-    // now insert the dangling sub nodes
-    if (mRootNode.isEmpty()) {
-      mRootNode.add(mAwardNode);
-      mRootNode.add(mDateNode);
-    }
     // search all awards
     Channel[] channels = devplugin.Plugin.getPluginManager()
         .getSubscribedChannels();
@@ -319,6 +316,11 @@ public class MovieAwardPlugin extends Plugin {
         }
       }
       date = date.addDays(1);
+    }
+    // now insert the dangling sub nodes
+    if (mRootNode.isEmpty()) {
+      mRootNode.add(mAwardNode);
+      mRootNode.add(mDateNode);
     }
     mUpdateRootEnabled = true;
     mRootNode.update();
