@@ -112,9 +112,12 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 				if (item instanceof TVPProgram)
 				{
 					TVPProgram p = (TVPProgram) item;
-					//return "<html>" + p.getInfo().replaceAll("\n", "<br>") + "</html>";
 					HTTPConverter converter = new HTTPConverter();
-					return converter.convertToString(p.getInfo());
+					final String info = converter.convertToString(p.getInfo());
+          if (info.length() == 0) {
+            return mLocalizer.msg("noInfo", "(no information)");
+          }
+          return info;
 				}
 				return null;
 			}
