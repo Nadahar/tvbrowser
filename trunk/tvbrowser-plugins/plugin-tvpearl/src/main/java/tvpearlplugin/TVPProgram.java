@@ -103,7 +103,7 @@ public class TVPProgram implements Comparable<TVPProgram>
 
 	public void setInfo(String info)
 	{
-		this.mInfo = info;
+		this.mInfo = info.trim();
 	}
 
 	public String getProgramID()
