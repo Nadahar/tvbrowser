@@ -22,10 +22,25 @@
  */
 package emailplugin;
 
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import devplugin.Program;
+import java.awt.Desktop;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.Properties;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JRootPane;
+
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.io.ExecutionHandler;
@@ -36,21 +51,11 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JRootPane;
-import java.awt.FlowLayout;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Properties;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.Program;
 
 /**
  * This class creates the Mail and launches the Mail-Application.
@@ -106,7 +111,30 @@ public class MailCreator {
       return;
     }
 
+    mail(parent, result.toString());
+  }
+
+  private void mail(Frame parent, String content) {
+    // Java 6 desktop API
+    boolean sent = false;
+    if (Desktop.isDesktopSupported()) {
+      Desktop desktop = Desktop.getDesktop();
+      try {
+        URI uriMailTo = new URI("mailto", "?body=" + content, null);
+        desktop.mail(uriMailTo);
+        sent = true;
+      } catch (Exception e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+    if (sent) {
+      return;
+    }
+
+    // fall back to non Java 6 code
     try {
+      final String mailTo = "mailto:?body=" + encodeString(content);
       String application;
       String execparam;
 
@@ -115,12 +143,10 @@ public class MailCreator {
 
         if (OperatingSystem.isMacOs()) {
           application = "/usr/bin/open";
-          execparam = "mailto:?body="
-              + encodeString(result.toString());
+          execparam = mailTo;
         } else {
           application = "rundll32.exe";
-          execparam = "url.dll,FileProtocolHandler mailto:?body="
-            + encodeString(result.toString());
+          execparam = "url.dll,FileProtocolHandler " + mailTo;
         }
 
       } else if (mSettings.getProperty("application", "").trim().equals("")) {
@@ -130,8 +156,7 @@ public class MailCreator {
           }
           application = mSettings.getProperty("application", "");
           execparam = mSettings.getProperty("parameter", "").replaceAll(
-              "\\{0\\}",
-              "mailto:?body=" + encodeString(result.toString()));
+              "\\{0\\}", mailTo);
         } else {
           showNotConfiguredCorrectly(parent);
           return;
@@ -139,9 +164,7 @@ public class MailCreator {
       } else {
         application = mSettings.getProperty("application", "");
         execparam = mSettings.getProperty("parameter", "").replaceAll(
-            "\\{0\\}",
-            "mailto:?body="
-              + encodeString(result.toString()));
+            "\\{0\\}", mailTo);
       }
 
       new ExecutionHandler(execparam, application).execute();
@@ -175,10 +198,11 @@ public class MailCreator {
   /**
    * Show the EMail-Open Dialog.
    * 
-   * This Dialog says that the EMail should have been opend. It gives the
-   * User a chance to specify another EMail Program if it went wrong.
+   * This Dialog says that the EMail should have been opened. It gives the User
+   * a chance to specify another EMail Program if it went wrong.
    * 
-   * @param parent Parent-Frame
+   * @param parent
+   *          Parent-Frame
    */
   private void showEMailOpenedDialog(Frame parent) {
     final JDialog dialog = new JDialog(parent, true);
@@ -248,10 +272,13 @@ public class MailCreator {
   }
 
   /**
-   * Gives the User the oppertunity to specify wich Desktop he uses (KDE or Gnome)
+   * Gives the User the opportunity to specify which Desktop he uses (KDE or
+   * Gnome)
    * 
-   * @param parent Parent Dialog
-   * @return true if KDE or Gnome has been selected, false if the User wanted to specify the App
+   * @param parent
+   *          Parent Dialog
+   * @return true if KDE or Gnome has been selected, false if the User wanted to
+   *         specify the App
    */
   private boolean showKdeGnomeDialog(Frame parent) {
     final JDialog dialog = new JDialog(parent, true);

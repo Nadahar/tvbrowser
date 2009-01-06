@@ -25,10 +25,12 @@
  */
 package util.browserlauncher;
 
+import java.awt.Desktop;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.net.URI;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -51,10 +53,10 @@ import com.jgoodies.forms.layout.FormLayout;
 import devplugin.SettingsItem;
 
 /**
- * This Class opens an Url in a Web-Browser. 
+ * This Class opens an Url in a Web-Browser.
  * 
- * If the Web-Browser was not found or a problem occured, the User is asked
- * to enter his Web-Browser in the Configuration.
+ * If the Web-Browser was not found or a problem occurred, the User is asked to
+ * enter his Web-Browser in the Configuration.
  */
 public class Launch {
   /** The localizer used by this class. */
@@ -85,7 +87,21 @@ public class Launch {
           new ExecutionHandler(new String[] { browserExecutable, url }).execute();
         }
       } else {
-        BrowserLauncher.openURL(url);
+        boolean opened = false;
+        // Java 6 specific code of how to run the browser
+        if (Desktop.isDesktopSupported()) {
+          try {
+            Desktop desktop = Desktop.getDesktop();
+            desktop.browse(new URI(url));
+            opened = true;
+          } catch (Exception e) {
+            BrowserLauncher.openURL(url);
+          }
+        }
+        // use alternative code for systems where desktop is not supported
+        if (!opened) {
+          BrowserLauncher.openURL(url);
+        }
       }
       
       if (Settings.propShowBrowserOpenDialog.getBoolean()){
