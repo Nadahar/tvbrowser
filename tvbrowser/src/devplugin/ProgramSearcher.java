@@ -45,19 +45,25 @@ public interface ProgramSearcher {
    */
   public boolean matches(Program prog, ProgramFieldType[] typeArr);
 
-
   /**
    * Searches the TV data base for programs that match the criteria of this
    * searcher.
    * 
-   * @param fieldArr The fields to search in
-   * @param startDate The date to start the search.
-   * @param nrDays The number of days to include after the start date. If
-   *        negative the days before the start date are used.
-   * @param channels The channels to search in.
-   * @param sortByStartTime Should the results be sorted by the start time?
-   *        If not, the results will be grouped by date and channel and the
-   *        search will be faster.
+   * @param fieldArr
+   *          The fields to search in
+   * @param startDate
+   *          The date to start the search.
+   * @param nrDays
+   *          The number of days to include after the start date. If this value
+   *          is negative, then all days are searched (beginning with yesterday)
+   *          and the startDate parameter is ignored.
+   * @param channels
+   *          The channels to search in. If this is <code>null</code>, then all
+   *          subscribed channels are searched.
+   * @param sortByStartTime
+   *          Should the results be sorted by the start time? If not, the
+   *          results will be grouped by date and channel and the search will be
+   *          faster.
    * @return The matching programs.
    */
   public Program[] search(ProgramFieldType[] fieldArr, Date startDate,
@@ -67,15 +73,23 @@ public interface ProgramSearcher {
    * Searches the TV data base for programs that match the criteria of this
    * searcher.
    * 
-   * @param fieldArr The fields to search in
-   * @param startDate The date to start the search.
-   * @param nrDays The number of days to include after the start date. If
-   *        negative the days before the start date are used.
-   * @param channels The channels to search in.
-   * @param sortByStartTime Should the results be sorted by the start time?
-   *        If not, the results will be grouped by date and channel and the
-   *        search will be faster.
-   * @param progress progressMonitor for showing the search progress
+   * @param fieldArr
+   *          The fields to search in
+   * @param startDate
+   *          The date to start the search.
+   * @param nrDays
+   *          The number of days to include after the start date. If this value
+   *          is negative, then all days are searched (beginning with yesterday)
+   *          and the startDate parameter is ignored.
+   * @param channels
+   *          The channels to search in. If this is <code>null</code>, then all
+   *          subscribed channels are searched.
+   * @param sortByStartTime
+   *          Should the results be sorted by the start time? If not, the
+   *          results will be grouped by date and channel and the search will be
+   *          faster.
+   * @param progress
+   *          progressMonitor for showing the search progress
    * @return The matching programs.
    */
   public Program[] search(ProgramFieldType[] fieldArr, Date startDate,
@@ -85,16 +99,25 @@ public interface ProgramSearcher {
    * Searches the TV data base for programs that match the criteria of this
    * searcher.
    * 
-   * @param fieldArr The fields to search in
-   * @param startDate The date to start the search.
-   * @param nrDays The number of days to include after the start date. If
-   *        negative the days before the start date are used.
-   * @param channels The channels to search in.
-   * @param sortByStartTime Should the results be sorted by the start time?
-   *        If not, the results will be grouped by date and channel and the
-   *        search will be faster.
-   * @param progress progressMonitor for showing the search progress
-   * @param listModel The list model the found programs should be stored in.
+   * @param fieldArr
+   *          The fields to search in
+   * @param startDate
+   *          The date to start the search.
+   * @param nrDays
+   *          The number of days to include after the start date. If this value
+   *          is negative, then all days are searched (beginning with yesterday)
+   *          and the startDate parameter is ignored.
+   * @param channels
+   *          The channels to search in. If this is <code>null</code>, then all
+   *          subscribed channels are searched.
+   * @param sortByStartTime
+   *          Should the results be sorted by the start time? If not, the
+   *          results will be grouped by date and channel and the search will be
+   *          faster.
+   * @param progress
+   *          progressMonitor for showing the search progress
+   * @param listModel
+   *          The list model the found programs should be stored in.
    * @return The matching programs.
    * @since 2.7
    */
