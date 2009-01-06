@@ -49,6 +49,7 @@ import util.ui.SearchHelper;
 import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+import util.ui.menu.MenuUtil;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 
@@ -134,8 +135,9 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 				if (mDataList.getModel().getElementAt(index) instanceof TVPProgram)
 				{
 
-					TVPProgram p = (TVPProgram) mDataList.getModel().getElementAt(index);
-					Program prog = p.getProgram();
+					TVPProgram pearl = (TVPProgram) mDataList.getModel().getElementAt(
+              index);
+          Program prog = pearl.getProgram();
 					if (prog != null)
 					{
 						if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2)
@@ -147,9 +149,14 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 							mng.handleProgramMiddleClick(prog);
 						}
 					}
+					else {
+            if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
+              TVPearlPlugin.getInstance().showPearlInfo(pearl);
+            }
+          }
 					if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1 && e.isShiftDown())
 					{
-						TVPearlPlugin.getInstance().showPearlInfo(p);
+						TVPearlPlugin.getInstance().showPearlInfo(pearl);
 					}
 				}
 			}
@@ -290,6 +297,7 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 					popup = new JPopupMenu();
 					JMenuItem item = new JMenuItem(mLocalizer.msg("comment", "TV Pearl comment"));
 					item.setIcon(TVPearlPlugin.getInstance().getSmallIcon());
+					item.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
 					item.addActionListener(new ActionListener()
 					{
 						public void actionPerformed(ActionEvent arg0)
