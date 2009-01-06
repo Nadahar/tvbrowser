@@ -44,6 +44,8 @@ import javax.swing.event.ListSelectionListener;
 
 import tvbrowser.core.icontheme.IconLoader;
 import util.ui.Localizer;
+import util.ui.SearchFormSettings;
+import util.ui.SearchHelper;
 import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -66,7 +68,6 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 	private JButton mCloseBn;
 	private JButton mUpdateBn;
 	private DefaultListModel mProgramList;
-	private TVPProgram mPopupProgram = null;
 
 	public PearlDialog(Dialog dialog)
 	{
@@ -266,23 +267,23 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 	{
 		if (e.isPopupTrigger())
 		{
-			PluginManager manager = Plugin.getPluginManager();
-			Program program;
-			JPopupMenu popup = null;
 			int index = mDataList.locationToIndex(e.getPoint());
 
 			if (mDataList.getModel().getElementAt(index) instanceof TVPProgram)
 			{
 				mDataList.setSelectedIndex(index);
-				TVPProgram p = (TVPProgram) mDataList.getModel().getElementAt(index);
-				program = p.getProgram();
-				if (program != null)
+        JPopupMenu popup;
+        TVPProgram pearlProgram = (TVPProgram) mDataList.getModel()
+            .getElementAt(index);
+        Program program = pearlProgram.getProgram();
+        if (program != null)
 				{
-					popup = manager.createPluginContextMenu(program, null);
+				  popup = Plugin.getPluginManager().createPluginContextMenu(program,
+              null);
 				}
-				if (popup == null)
+				else
 				{
-					mPopupProgram = p;
+					final TVPProgram popupProgram = pearlProgram;
 					popup = new JPopupMenu();
 					JMenuItem item = new JMenuItem(mLocalizer.msg("comment", "TV Pearl comment"));
 					item.setIcon(TVPearlPlugin.getInstance().getSmallIcon());
@@ -290,13 +291,28 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 					{
 						public void actionPerformed(ActionEvent arg0)
 						{
-							if (mPopupProgram != null)
+							if (popupProgram != null)
 							{
-								TVPearlPlugin.getInstance().showPearlInfo(mPopupProgram);
+								TVPearlPlugin.getInstance().showPearlInfo(popupProgram);
 							}
 						}
 					});
 					popup.add(item);
+					item = new JMenuItem(mLocalizer.msg("menu.repetitions",
+              "Search repetitions"), Plugin.getPluginManager()
+              .getIconFromTheme(TVPearlPlugin.getInstance(), "action",
+                  "system-search", 16));
+          item.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+              final SearchFormSettings searchSettings = new SearchFormSettings(
+                  popupProgram.getTitle());
+              searchSettings
+                  .setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY);
+              SearchHelper.search(PearlDialog.this, searchSettings);
+            }
+          });
+          popup.add(item);
 				}
 
 				final JPopupMenu openPopup = popup;
