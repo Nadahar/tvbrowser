@@ -310,18 +310,24 @@ public class PluginManagerImpl implements PluginManager {
     return searcher.search(fieldArr, startDate, nrDays, channels, false);
   }
 
-
   /**
    * Creates a ProgramSearcher.
-   *
-   * @param type The searcher type to create. Must be one of
-   *        {@link #SEARCHER_TYPE_EXACTLY}, {@link #SEARCHER_TYPE_KEYWORD},
-   *        {@link #SEARCHER_TYPE_REGULAR_EXPRESSION} or
-   *        {@link #SEARCHER_TYPE_BOOLEAN}.
-   * @param searchTerm The search term the searcher should look for.
-   * @param caseSensitive Specifies whether the searcher should be case sensitive.
+   * 
+   * @param type
+   *          The searcher type to create. Must be one of
+   *          <ul>
+   *          <li>{@link #SEARCHER_TYPE_EXACTLY},</li>
+   *          <li>{@link #SEARCHER_TYPE_KEYWORD},</li>
+   *          <li>{@link #SEARCHER_TYPE_REGULAR_EXPRESSION} or</li>
+   *          <li>{@link #SEARCHER_TYPE_BOOLEAN}.</li>
+   *          </ul>
+   * @param searchTerm
+   *          The search term the searcher should look for.
+   * @param caseSensitive
+   *          Specifies whether the searcher should be case sensitive.
    * @return A program searcher.
-   * @throws TvBrowserException If creating the program searcher failed.
+   * @throws TvBrowserException
+   *           If creating the program searcher failed.
    */
   public ProgramSearcher createProgramSearcher(int type, String searchTerm,
       boolean caseSensitive)
