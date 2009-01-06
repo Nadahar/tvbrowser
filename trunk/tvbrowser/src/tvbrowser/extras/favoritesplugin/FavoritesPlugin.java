@@ -247,62 +247,23 @@ public class FavoritesPlugin {
    * @since 2.7.2
    */
   public void waitForFinishingUpdateThreads() {
-    Thread waitThread = new Thread("Favorites wait for update threads finished") {
-      public void run() {
-        mLog.info("Favorites: Wait for update threads too finish");
-        
-        int monitorMaximum = (int)mThreadPool.getTaskCount();
-        ProgressMonitor monitor;
-        
-        if (monitorMaximum > 5) {    // if we have more then 5 favorites, we show a progress bar
-          try {
-            monitor = MainFrame.getInstance().createProgressMonitor();
-          }catch(Exception e) {e.printStackTrace();
-            monitor = new NullProgressMonitor();
-          }
-        }
-        else {
-          monitor = new NullProgressMonitor();
-        }
-        
-        monitor.setValue(0);
-        monitor.setMaximum(monitorMaximum);
-        monitor.setMessage(mLocalizer.msg("updatingFavorites","Updating favorites"));
-        
-        long oldMatchThreadSize = 0;
-        int waitCount = 0;
-        
-        while(!mThreadPool.isTerminated() && (mThreadPool.getCompletedTaskCount() != oldMatchThreadSize || waitCount++ < 100) && mThreadPool.getCompletedTaskCount() < mThreadPool.getTaskCount()) {
-          if(oldMatchThreadSize != mThreadPool.getCompletedTaskCount()) {
-            waitCount = 0;
-          }
-          
-          oldMatchThreadSize = mThreadPool.getCompletedTaskCount();
-          
-          try {
-            Thread.sleep(100);
-          } catch (InterruptedException e) {
-            e.printStackTrace();
-          }
-          monitor.setValue((int)(monitorMaximum - mThreadPool.getCompletedTaskCount()));
-        }
-        
-        mLog.info("Favorites: Update threads were finished");
-
-        mThreadPool = null;
-        monitor.setMessage("");
-        monitor.setValue(0);
-      }
-    };
-    waitThread.start();
+    mLog.info("Favorites: Wait for update threads too finish");
+    mThreadPool.shutdown();
     
-    while(waitThread.isAlive()) {
-      try {
-        waitThread.join();
-      } catch (InterruptedException e1) {
-        //ignore
+    try {
+      boolean success = mThreadPool.awaitTermination(Math.max(FavoriteTreeModel.getInstance().getFavoriteArr().length, 10), TimeUnit.SECONDS);
+      
+      if(success) {
+        mLog.info("Favorites: Update threads were finished");
       }
+      else {
+        mLog.severe("Favorites: Timeout on waiting for update threads too finish was reached");
+      }
+    } catch (InterruptedException e) {
+      ErrorHandler.handle("Waiting for favortie update finishing was interrupted",e);
     }
+    
+    mThreadPool = null;
   }
 
   private void handleTvDataUpdateFinished() {

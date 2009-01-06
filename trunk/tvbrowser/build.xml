@@ -595,7 +595,7 @@
         categories="Video;AudioVideo;TV;"
     	type="Application"
     >
-    	<name lang="de" value="TV-Bowser"/>
+    	<name lang="de" value="${programname}"/>
     	<genericName value="Digital TV Guide"/>
     	<genericName lang="de" value="Digitale TV-Zeitschrift"/>
     	<comment value="Themeable and easy to use TV Guide - written in Java"/>
@@ -607,13 +607,13 @@
   <target name="tvbrowser-desktop-entry-deb"> 	
   	<desktopEntry
         toFile="${tvbrowser-linux.runtime.dir}/tvbrowser.desktop"
-        name="TV-Browser"
+        name="${programname}"
         icon="/usr/share/tvbrowser/imgs/tvbrowser128.png"
         exec="tvbrowser"
         categories="Video;AudioVideo;TV;"
     	type="Application"
     >
-    	<name lang="de" value="TV-Bowser"/>
+    	<name lang="de" value="${programname}"/>
     	<genericName value="Digital TV Guide"/>
     	<genericName lang="de" value="Digitale TV-Zeitschrift"/>
     	<comment value="Themeable and easy to use TV Guide - written in Java"/>
