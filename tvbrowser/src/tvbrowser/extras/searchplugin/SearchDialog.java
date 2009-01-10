@@ -35,9 +35,11 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import tvbrowser.core.Settings;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.settings.PluginPictureSettings;
 import util.ui.Localizer;
 import util.ui.SearchForm;
@@ -165,8 +167,19 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
    * Starts the search.
    */
   private void search() {
-    SearchPlugin.setSearchHistory(mSearchForm.getHistory());
-    SearchHelper.search(this, new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), mSearchForm.getSearchFormSettings(),true);
+    final SearchFormSettings settings = mSearchForm.getSearchFormSettings();
+    if (settings.getFieldTypes().length == 0) {
+      String msg = mLocalizer.msg("noFields.message",
+          "No search fields selected!");
+      String title = mLocalizer.msg("noFields.title", "Error");
+      JOptionPane.showMessageDialog(MainFrame.getInstance(), msg, title,
+          JOptionPane.ERROR_MESSAGE);
+      mSearchForm.focusSearchFieldButton();
+    } else {
+      SearchPlugin.setSearchHistory(mSearchForm.getHistory());
+      SearchHelper.search(this, new PluginPictureSettings(
+          PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), settings, true);
+    }
   }
 
   public void close() {
