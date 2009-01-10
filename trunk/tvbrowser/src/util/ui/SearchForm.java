@@ -25,13 +25,15 @@
  */
 package util.ui;
 
-import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import devplugin.PluginManager;
-import devplugin.ProgramFieldType;
-import util.ui.customizableitems.SelectableItemList;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
@@ -45,15 +47,16 @@ import javax.swing.JRootPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.Iterator;
+
+import util.ui.customizableitems.SelectableItemList;
+
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.PluginManager;
+import devplugin.ProgramFieldType;
 
 /**
  * A search form for searching TV listings.
@@ -672,5 +675,9 @@ public class SearchForm extends JPanel {
     }
     
   } // inner class FieldSelectionDialog
+
+  public void focusSearchFieldButton() {
+    mChangeSearchFieldsBt.requestFocusInWindow();
+  }
 
 }

@@ -264,10 +264,13 @@ public class SearchFormSettings {
     mSearcher = null;
   }
 
-
   /**
-   * Gets where to search. Either {@link #SEARCH_IN_TITLE},
-   * {@link #SEARCH_IN_ALL} or {@link #SEARCH_IN_USER_DEFINED}.
+   * Gets where to search. Either
+   * <ul>
+   * <li>{@link #SEARCH_IN_TITLE},</li>
+   * <li>{@link #SEARCH_IN_ALL} or</li>
+   * <li>{@link #SEARCH_IN_USER_DEFINED}.</li>
+   * </ul>
    * 
    * @return Where to search
    */
@@ -275,12 +278,16 @@ public class SearchFormSettings {
     return mSearchIn;
   }
 
-
   /**
-   * Sets where to search. Must be either {@link #SEARCH_IN_TITLE},
-   * {@link #SEARCH_IN_ALL} or {@link #SEARCH_IN_USER_DEFINED}.
+   * Sets where to search. Must be either
+   * <ul>
+   * <li>{@link #SEARCH_IN_TITLE},</li>
+   * <li>{@link #SEARCH_IN_ALL} or</li>
+   * <li>{@link #SEARCH_IN_USER_DEFINED}.</li>
+   * </ul>
    * 
-   * @param searchIn Where to search
+   * @param searchIn
+   *          Where to search
    */
   public void setSearchIn(int searchIn) {
     mSearchIn = searchIn;
