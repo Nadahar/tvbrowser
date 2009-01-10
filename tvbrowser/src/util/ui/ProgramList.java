@@ -482,7 +482,8 @@ public class ProgramList extends JList implements ChangeListener,
         }
       }
     }
-    return super.getToolTipText(event);
+    // mouse is over an empty part of the list
+    return null;
   }
 
 }
