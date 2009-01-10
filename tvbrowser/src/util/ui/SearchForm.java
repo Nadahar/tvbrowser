@@ -47,6 +47,7 @@ import javax.swing.JRootPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentListener;
 
 import util.ui.customizableitems.SelectableItemList;
 
@@ -73,10 +74,10 @@ public class SearchForm extends JPanel {
   private static final String[] TIME_STRING_ARR = new String[] {
     Localizer.getLocalization(Localizer.I18N_TODAY),
     Localizer.getLocalization(Localizer.I18N_TOMORROW),
-    mLocalizer.msg("search.7", "Eine Woche"),
-    mLocalizer.msg("search.14", "Naechste 14 Tagen"),
-    mLocalizer.msg("search.21", "3 Wochen"),
-    mLocalizer.msg("search.1000", "Alle Daten")
+    mLocalizer.msg("search.7", "Next week"),
+      mLocalizer.msg("search.14", "2 weeks"),
+      mLocalizer.msg("search.21", "3 weeks"),
+      mLocalizer.msg("search.1000", "All data")
   };
 
   /** The values for the time combo box. */  
@@ -307,6 +308,23 @@ public class SearchForm extends JPanel {
       mPatternCB.getEditor().addActionListener(invokeLaterListener);
     } else {
       mPatternTF.addActionListener(listener);
+    }
+  }
+  
+  /**
+   * Adds a DocumentListener that will be called, when the user types text in
+   * the pattern text field.
+   * 
+   * @param listener
+   *          The DocumentListener to add
+   * @since 3.0
+   */
+  public void addPatternChangeListener(final DocumentListener listener) {
+    if (mPatternCB != null) {
+      JTextField textField = (JTextField)mPatternCB.getEditor().getEditorComponent();
+      textField.getDocument().addDocumentListener(listener);
+    } else {
+      mPatternTF.getDocument().addDocumentListener(listener);
     }
   }
   
