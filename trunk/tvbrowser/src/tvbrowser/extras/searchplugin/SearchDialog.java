@@ -37,6 +37,8 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -107,6 +109,27 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
     // pattern
     mSearchForm = new SearchForm(true, true);
     mSearchForm.setHistory(SearchPlugin.getSearchHistory());
+    mSearchForm.addPatternChangeListener(new DocumentListener() {
+
+      private void updateButton(DocumentEvent e) {
+        mSearchBt.setEnabled(e.getDocument().getLength() > 0);
+      }
+
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+        updateButton(e);
+      }
+
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+        updateButton(e);
+      }
+
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+        updateButton(e);
+      }
+    });
     mSearchForm.addPatternActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         search();
