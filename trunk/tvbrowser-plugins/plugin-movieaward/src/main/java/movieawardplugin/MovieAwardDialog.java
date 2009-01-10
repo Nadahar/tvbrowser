@@ -49,22 +49,36 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
 
     StringBuilder text = new StringBuilder();
 
-    text.append("<html><body><h1>").append(mLocalizer.msg("movieAwardFor","Movie Awards for")).append(" <i>").append(program.getTitle()).append("</i>:</h1><br>");
+    text.append("<html><body><h1>&nbsp;").append(
+        mLocalizer.msg("movieAwardFor", "Movie Awards for")).append(" <i>")
+        .append(program.getTitle()).append("</i></h1><br>");
     text.append("<ul>");
 
     for (MovieAward maward : mMovieAwards) {
       for (Award award : maward.getAwardsFor(program)) {
-        text.append("<li>").append(maward.getName()).append(" ").append(award.getAwardYear()).append(" - ");
-        text.append(maward.getCategoryName(award.getCategory()));
+        text.append("<li>").append(maward.getName()).append(" ").append(
+            award.getAwardYear()).append(": ");
 
+        final String category = maward.getCategoryName(award.getCategory());
         switch(award.getStatus()) {
-          case NOMINATED: text.append(" (").append(mLocalizer.msg("nominated", "nominated")).append(") "); break;
-          case WINNER: text.append(" (").append(mLocalizer.msg("winner", "winner")).append(") "); break;
-          case HONORED: text.append(" (").append(mLocalizer.msg("honored", "honored")).append(") "); break;
+          case NOMINATED:
+          text.append(mLocalizer.msg("nominated",
+              "Nominated for the category {0}", category));
+          break;
+        case WINNER:
+          text.append(mLocalizer.msg("winner", "Winner of the category {0}",
+              category));
+          break;
+        case HONORED:
+          text.append(mLocalizer.msg("honored", "Honored in the category {0}",
+              category));
+          break;
         }
 
         if (award.getRecipient() != null) {
-          text.append(" ").append(mLocalizer.msg("for", "for")).append(" ").append(award.getRecipient());
+          text.append("<br/><i>").append(
+              mLocalizer.msg("for", "awardee: {0}", award.getRecipient()))
+              .append("</i>");
         }
         text.append("</li>");
       }
