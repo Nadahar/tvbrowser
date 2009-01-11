@@ -1,22 +1,22 @@
 package imdbplugin;
 
-import org.apache.lucene.analysis.SimpleAnalyzer;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Hits;
-import org.apache.lucene.search.Hit;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.TermQuery;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.UUID;
+
+import org.apache.lucene.analysis.SimpleAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Hit;
+import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.TermQuery;
 
 public class ImdbDatabase {
   private static final String ITEM_TYPE = "ITEM_TYPE";
@@ -76,17 +76,27 @@ public class ImdbDatabase {
     try {
       Document doc = new Document();
       movieID = UUID.randomUUID().toString();
-      doc.add(new Field(MOVIE_ID, movieID, Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
-      doc.add(new Field(ITEM_TYPE, TYPE_MOVIE, Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_TITLE, movieTitle, Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_TITLE_NORMALISED, normalise(movieTitle), Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_YEAR, Integer.toString(year), Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_ID, movieID, Field.Store.COMPRESS,
+          Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(ITEM_TYPE, TYPE_MOVIE, Field.Store.COMPRESS,
+          Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_TITLE, movieTitle, Field.Store.COMPRESS,
+          Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_TITLE_NORMALISED, normalise(movieTitle),
+          Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_YEAR, Integer.toString(year),
+          Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
       if (type != null) {
-        doc.add(new Field(MOVIE_TYPE, type, Field.Store.YES, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+        doc.add(new Field(MOVIE_TYPE, type, Field.Store.YES,
+            Field.Index.NOT_ANALYZED, Field.TermVector.NO));
       }
       if (episode != null) {
-        doc.add(new Field(EPISODE_TITLE, episode, Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
-        doc.add(new Field(EPISODE_TITLE_NORMALISED, normalise(episode), Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+        doc.add(new Field(EPISODE_TITLE, episode, Field.Store.COMPRESS,
+            Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+        doc
+            .add(new Field(EPISODE_TITLE_NORMALISED, normalise(episode),
+                Field.Store.COMPRESS, Field.Index.NOT_ANALYZED,
+                Field.TermVector.NO));
       }
       mWriter.addDocument(doc);
     } catch (IOException e) {
@@ -99,17 +109,27 @@ public class ImdbDatabase {
   public void addAkaTitle(String movieId, String title, String episode, int year, String type) {
     try {
       Document doc = new Document();
-      doc.add(new Field(MOVIE_ID, movieId, Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
-      doc.add(new Field(ITEM_TYPE, TYPE_AKA, Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_TITLE, title, Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_TITLE_NORMALISED, normalise(title), Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_YEAR, Integer.toString(year), Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_ID, movieId, Field.Store.COMPRESS,
+          Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(ITEM_TYPE, TYPE_AKA, Field.Store.COMPRESS,
+          Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_TITLE, title, Field.Store.COMPRESS,
+          Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_TITLE_NORMALISED, normalise(title),
+          Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_YEAR, Integer.toString(year),
+          Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
       if (type != null) {
-        doc.add(new Field(MOVIE_TYPE, type, Field.Store.YES, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+        doc.add(new Field(MOVIE_TYPE, type, Field.Store.YES,
+            Field.Index.NOT_ANALYZED, Field.TermVector.NO));
       }
       if (episode != null) {
-        doc.add(new Field(EPISODE_TITLE, episode, Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
-        doc.add(new Field(EPISODE_TITLE_NORMALISED, normalise(episode), Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+        doc.add(new Field(EPISODE_TITLE, episode, Field.Store.COMPRESS,
+            Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+        doc
+            .add(new Field(EPISODE_TITLE_NORMALISED, normalise(episode),
+                Field.Store.COMPRESS, Field.Index.NOT_ANALYZED,
+                Field.TermVector.NO));
       }
       mWriter.addDocument(doc);
     } catch (IOException e) {
@@ -118,25 +138,30 @@ public class ImdbDatabase {
   }
 
   private String normalise(String str) {
-    // ToDo: replace this with better normaliser
-    str = str.replaceAll("ä", "ae");
-    str = str.replaceAll("ü", "ue");
-    str = str.replaceAll("ö", "oe");
-    str = str.replaceAll("ß", "ss");
-    str = str.replaceAll("Ä", "Ae");
-    str = str.replaceAll("Ü", "Ue");
-    str = str.replaceAll("Ö", "Oe");
+    // ToDo: replace this with better normalizer
+    str = str.replaceAll("Ã¤", "ae");
+    str = str.replaceAll("Ã¼", "ue");
+    str = str.replaceAll("Ã¶", "oe");
+    str = str.replaceAll("ÃŸ", "ss");
+    str = str.replaceAll("Ã„", "Ae");
+    str = str.replaceAll("Ãœ", "Ue");
+    str = str.replaceAll("Ã–", "Oe");
     return str;
   }
 
   public void addRating(String movieId, int rating, int votes, String distribution) {
     try {
       Document doc = new Document();
-      doc.add(new Field(MOVIE_ID, movieId, Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
-      doc.add(new Field(ITEM_TYPE, TYPE_RATING, Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_RATING, Integer.toString(rating), Field.Store.YES, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_VOTES, Integer.toString(votes), Field.Store.YES, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_DISTRIBUTION, distribution, Field.Store.COMPRESS, Field.Index.UN_TOKENIZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_ID, movieId, Field.Store.COMPRESS,
+          Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(ITEM_TYPE, TYPE_RATING, Field.Store.COMPRESS,
+          Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_RATING, Integer.toString(rating),
+          Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_VOTES, Integer.toString(votes), Field.Store.YES,
+          Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_DISTRIBUTION, distribution, Field.Store.COMPRESS,
+          Field.Index.NOT_ANALYZED, Field.TermVector.NO));
       mWriter.addDocument(doc);
     } catch (IOException e) {
       e.printStackTrace();
@@ -173,14 +198,14 @@ public class ImdbDatabase {
       }
     }
 
-    if (new File(mCurrentPath, "segments.gen").exists()) {
+    // if (new File(mCurrentPath, "segments.gen").exists()) {
       try {
         IndexReader reader = IndexReader.open(mCurrentPath);
         mSearcher = new IndexSearcher(reader);
       } catch (IOException e) {
         e.printStackTrace();
       }
-    }
+    // }
 
     try {
       mWriter = new IndexWriter(mCurrentPath, new SimpleAnalyzer());
