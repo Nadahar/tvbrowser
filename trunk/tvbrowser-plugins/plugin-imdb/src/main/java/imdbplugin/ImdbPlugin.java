@@ -113,7 +113,9 @@ public class ImdbPlugin extends Plugin {
           showRatingDialog(program);
         }
       };
-      action.putValue(Action.NAME, mLocalizer.msg("contextMenuDetails", "Details zur Imdb-Bewertung ({0})",  new DecimalFormat("##.#").format((double)rating.getRating() / 10)));
+      action.putValue(Action.NAME, mLocalizer.msg("contextMenuDetails",
+          "Details for the IMDb rating ({0})", new DecimalFormat("##.#")
+              .format((double) rating.getRating() / 10)));
       action.putValue(Action.SMALL_ICON, new ImdbIcon(rating));
       return new ActionMenu(action);
     }
@@ -125,8 +127,9 @@ public class ImdbPlugin extends Plugin {
     if (rating != null) {
       JOptionPane.showMessageDialog(UiUtilities.getBestDialogParent(getParentFrame()),
               "Rating for " + prg.getTitle() + ":\n" +
-              "Rating : " +  new DecimalFormat("##.#").format((double)rating.getRating() / 10) + "\n" +
-              "Votes : " + rating.getVotes()
+              "Rating: "
+          + new DecimalFormat("##.#").format((double) rating.getRating() / 10)
+          + "\n" + "Votes: " + rating.getVotes()
       );
     } else {
       JOptionPane.showMessageDialog(UiUtilities.getBestDialogParent(getParentFrame()), "No rating found!");
@@ -140,9 +143,7 @@ public class ImdbPlugin extends Plugin {
 
   @Override
   public void handleTvBrowserStartFinished() {
-    mImdbDatabase = new ImdbDatabase(new File(Plugin.getPluginManager()
-        .getTvBrowserSettings().getTvBrowserUserHome(), "imdbDatabase"));
-    mImdbDatabase.init();
+    initializeDatabase();
     if (!mProperties.getProperty("dontAskCreateDatabase", "false").equals("true") && !mImdbDatabase.isInitialised()) {
       SwingUtilities.invokeLater(new Runnable(){
         public void run() {
@@ -164,6 +165,14 @@ public class ImdbPlugin extends Plugin {
       });
     }
     mStartFinished = true;
+  }
+
+  private void initializeDatabase() {
+    if (mImdbDatabase == null) {
+      mImdbDatabase = new ImdbDatabase(new File(Plugin.getPluginManager()
+          .getTvBrowserSettings().getTvBrowserUserHome(), "imdbDatabase"));
+      mImdbDatabase.init();
+    }
   }
 
   public void showUpdateDialog() {
@@ -209,7 +218,7 @@ public class ImdbPlugin extends Plugin {
 
   @Override
   public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    int version = in.readInt();
+    in.readInt(); // version
 
     int count = in.readInt();
 
@@ -252,7 +261,6 @@ public class ImdbPlugin extends Plugin {
     mRatingCache.clear();
     Date currentDate = getPluginManager().getCurrentDate();
     final Channel[] channels = getPluginManager().getSubscribedChannels();
-    int i = 0;
     for (Channel channel : channels) {
       final Iterator<Program> iter = getPluginManager().getChannelDayProgram(currentDate, channel);
       if (null != iter) {
@@ -308,5 +316,10 @@ public class ImdbPlugin extends Plugin {
         showRatingDialog(p);
       }
     }};
+  }
+
+  @Override
+  public void onActivation() {
+    initializeDatabase();
   }
 }
