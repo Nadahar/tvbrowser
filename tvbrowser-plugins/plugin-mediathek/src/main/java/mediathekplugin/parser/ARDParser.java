@@ -16,9 +16,11 @@
  */
 package mediathekplugin.parser;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import mediathekplugin.MediathekPlugin;
+import mediathekplugin.MediathekProgram;
 import devplugin.Channel;
 
 public class ARDParser extends AbstractParser {
@@ -37,8 +39,7 @@ public class ARDParser extends AbstractParser {
             + Pattern.quote("\">")
             + "([^<]+)"
             + Pattern.quote("</option>"));
-    readContents("http://www.ardmediathek.de/ard/servlet/content/2570",
-        pattern, "ARD");
+    readContents(MAIN_URL + "2570", pattern, "ARD");
   }
 
   public boolean isSupportedChannel(Channel channel) {
@@ -57,6 +58,34 @@ public class ARDParser extends AbstractParser {
   protected void addProgram(String title, String relativeUrl) {
     MediathekPlugin.getInstance().addProgram(this, title,
         MAIN_URL + relativeUrl);
+  }
+
+  public boolean canReadEpisodes() {
+    return true;
+  }
+
+  public void parseEpisodes(MediathekProgram mediathekProgram) {
+    String url = mediathekProgram.getUrl();
+    // get page of program
+    String content = readUrl(url);
+    Pattern pattern = Pattern.compile(Pattern.quote("<a href=\"")
+        + "([^\"]*)"
+        + Pattern.quote("\" onclick=\"popupPodcast")
+        );
+    Matcher matcher = pattern.matcher(content);
+    if (matcher.find()) {
+      // get rss description page
+      url = matcher.group(1);
+      content = readUrl("http://www.ardmediathek.de" + url);
+      pattern = Pattern.compile(Pattern
+          .quote("<input name=\"\" type=\"text\" value=\"")
+          + "([^\"]*)" + Pattern.quote("\""));
+      matcher = pattern.matcher(content);
+      // finally read the RSS itself
+      if (matcher.find()) {
+        readRSS(mediathekProgram, matcher.group(1));
+      }
+    }
   }
 
 }
