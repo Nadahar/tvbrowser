@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,6 +30,16 @@ import javax.swing.SwingUtilities;
 import mediathekplugin.MediathekPlugin;
 import mediathekplugin.MediathekProgram;
 import mediathekplugin.MediathekProgramItem;
+
+import com.sun.syndication.feed.synd.SyndEntry;
+import com.sun.syndication.feed.synd.SyndFeed;
+import com.sun.syndication.fetcher.FeedFetcher;
+import com.sun.syndication.fetcher.FetcherException;
+import com.sun.syndication.fetcher.impl.FeedFetcherCache;
+import com.sun.syndication.fetcher.impl.HashMapFeedInfoCache;
+import com.sun.syndication.fetcher.impl.HttpURLFeedFetcher;
+import com.sun.syndication.io.FeedException;
+
 import devplugin.Channel;
 
 public abstract class AbstractParser implements IParser {
@@ -108,22 +119,34 @@ public abstract class AbstractParser implements IParser {
   }
   
   protected void readRSS(MediathekProgram program, String rssUrl) {
-    String rss = readUrl(rssUrl);
-    int count = 0;
-    if (rss.indexOf("item") > 0) {
-      Pattern pattern = Pattern.compile(
-          "<title>([^<]+)</title>(.*?)<link>([^<]+)</link>", Pattern.DOTALL);
-      Matcher matcher = pattern.matcher(rss);
-      matcher.region(rss.indexOf("item"), rss.length());
-      while (matcher.find()) {
-        String title = MediathekPlugin.getInstance().convertHTML(
-            matcher.group(1));
-        String link = matcher.group(3);
-        program.addItem(new MediathekProgramItem(title, link));
-        count++;
+    FeedFetcherCache feedInfoCache = HashMapFeedInfoCache.getInstance();
+    FeedFetcher feedFetcher = new HttpURLFeedFetcher(feedInfoCache);
+    feedFetcher.setUserAgent("TV-Browser Mediathek Plugin "
+        + MediathekPlugin.getVersion().toString());
+    try {
+      int count = 0;
+      SyndFeed feed = feedFetcher.retrieveFeed(new URL(rssUrl));
+      Iterator<?> iterator = feed.getEntries().iterator();
+      while (iterator.hasNext()) {
+        SyndEntry entry = (SyndEntry) iterator.next();
+        final String link = entry.getLink();
+        if (link != null) {
+          program.addItem(new MediathekProgramItem(entry.getTitle(), link));
+          count++;
+        }
       }
+      logInfo("Read " + count + " episodes for " + program.getTitle());
+    } catch (IllegalArgumentException e) {
+      e.printStackTrace();
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (FeedException e) {
+      e.printStackTrace();
+    } catch (FetcherException e) {
+      e.printStackTrace();
     }
-    logInfo("Read " + count + " episodes for " + program.getTitle());
     program.updatePluginTree(true);
   }
 }

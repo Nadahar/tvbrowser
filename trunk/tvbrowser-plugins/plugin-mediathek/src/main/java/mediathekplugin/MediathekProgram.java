@@ -106,24 +106,29 @@ public class MediathekProgram implements Comparable<MediathekProgram> {
   }
 
   protected ActionMenu actionMenuShowEpisodes() {
-    Action mainAction = new ContextMenuAction(mLocalizer.msg(
-        "context.episodes", "Episodes in the Mediathek"), plugin
-        .getContextMenuIcon());
-    ArrayList<Action> actionList = new ArrayList<Action>();
-    for (final MediathekProgramItem item : getItems()) {
-      actionList.add(new AbstractAction(item.getTitle()) {
+    final LaunchBrowserAction openURLAction = new LaunchBrowserAction(getUrl(),
+        mLocalizer.msg("context.open", "Show Mediathek"));
+    if (getItemCount() > 0) {
+      Action mainAction = new ContextMenuAction(mLocalizer.msg(
+          "context.episodes", "Episodes in the Mediathek"), plugin
+          .getContextMenuIcon());
+      ArrayList<Action> actionList = new ArrayList<Action>();
+      for (final MediathekProgramItem item : getItems()) {
+        actionList.add(new AbstractAction(item.getTitle()) {
 
-        public void actionPerformed(ActionEvent e) {
-          Launch.openURL(item.getUrl());
-        }
-      });
+          public void actionPerformed(ActionEvent e) {
+            Launch.openURL(item.getUrl());
+          }
+        });
+      }
+      actionList.add(ContextMenuSeparatorAction.getInstance());
+      actionList.add(openURLAction);
+      Action[] subActions = new Action[actionList.size()];
+      actionList.toArray(subActions);
+      return new ActionMenu(mainAction, subActions);
+    } else {
+      return new ActionMenu(openURLAction);
     }
-    actionList.add(ContextMenuSeparatorAction.getInstance());
-    actionList.add(new LaunchBrowserAction(getUrl(), mLocalizer.msg(
-        "context.open", "Show Mediathek")));
-    Action[] subActions = new Action[actionList.size()];
-    actionList.toArray(subActions);
-    return new ActionMenu(mainAction, subActions);
   }
 
   public int compareTo(MediathekProgram other) {
