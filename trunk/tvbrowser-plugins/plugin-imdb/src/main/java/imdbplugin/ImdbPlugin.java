@@ -31,6 +31,7 @@ import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
+import devplugin.ProgramFilter;
 import devplugin.ProgramRatingIf;
 import devplugin.SettingsTab;
 import devplugin.Version;
@@ -254,19 +255,23 @@ public class ImdbPlugin extends Plugin {
    * Internally called after a successful update of the imdb ratings database.
    */
   public void updateCurrentDateAndClearCache() {
-    // dont update the UI if the rating updater runs on TV-Browser start
+    // don't update the UI if the rating updater runs on TV-Browser start
     if (!mStartFinished) {
       return;
     }
     mRatingCache.clear();
     Date currentDate = getPluginManager().getCurrentDate();
+    ProgramFilter filter = getPluginManager().getFilterManager()
+        .getCurrentFilter();
     final Channel[] channels = getPluginManager().getSubscribedChannels();
     for (Channel channel : channels) {
       final Iterator<Program> iter = getPluginManager().getChannelDayProgram(currentDate, channel);
       if (null != iter) {
         while (iter.hasNext()) {
-          Program prog = iter.next();
-          prog.validateMarking();
+          Program program = iter.next();
+          if (filter.accept(program)) {
+            program.validateMarking();
+          }
         }
       }
     }
