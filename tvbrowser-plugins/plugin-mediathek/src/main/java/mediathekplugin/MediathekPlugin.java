@@ -46,6 +46,7 @@ import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
+import devplugin.ProgramFilter;
 import devplugin.SettingsTab;
 import devplugin.ThemeIcon;
 import devplugin.Version;
@@ -332,6 +333,8 @@ public class MediathekPlugin extends Plugin {
       }
     });
     // update programs of current day to force their icons to show
+    final ProgramFilter currentFilter = getPluginManager().getFilterManager()
+        .getCurrentFilter();
     Date date = getPluginManager().getCurrentDate();
     for (Channel channel : getPluginManager().getSubscribedChannels()) {
       if (isSupportedChannel(channel)) {
@@ -341,10 +344,12 @@ public class MediathekPlugin extends Plugin {
           if (iter != null) {
             while (iter.hasNext()) {
               Program program = iter.next();
-              MediathekProgram mediaProgram = findProgram(program);
-              if (mediaProgram != null) {
-                mediaProgram.readEpisodes();
-                program.validateMarking();
+              if (currentFilter.accept(program)) {
+                MediathekProgram mediaProgram = findProgram(program);
+                if (mediaProgram != null) {
+                  mediaProgram.readEpisodes();
+                  program.validateMarking();
+                }
               }
             }
           }
