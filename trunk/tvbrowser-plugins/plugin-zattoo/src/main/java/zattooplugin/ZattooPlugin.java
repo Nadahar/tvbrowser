@@ -37,7 +37,7 @@ public class ZattooPlugin extends Plugin {
   private static final String KEY_COUNTRY = "COUNTRY";
 
   private ImageIcon mIcon;
-  protected static ZattooPlugin mInstance;
+  private static ZattooPlugin mInstance;
   private Properties mChannelMapping;
   private Properties mSettings;
 
