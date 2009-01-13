@@ -235,7 +235,7 @@ public class SpeechPlugin extends Plugin {
     if (mEngine != null) {
       // switch voice after changed settings
       String voice = mSettings.getVoice();
-      if (mVoice == null || (mVoice != voice && voice != null)) {
+      if (mVoice == null || (voice != null && !mVoice.equals(voice))) {
         mVoice = voice;
         mEngine.setVoice(mVoice);
       }
