@@ -149,7 +149,7 @@ public class ProgramPanel extends JPanel
 		g.setColor(new Color(240, 240, 240));
 		for (int i = 0; i < mChannelCount; i++)
 		{
-			if (i % 2 == 1)
+			if (i % 2 != 0)
 			{
 				int y = mSizeChannel * i;
 				g.fillRect(0, y, this.getSize().width, mSizeChannel);
