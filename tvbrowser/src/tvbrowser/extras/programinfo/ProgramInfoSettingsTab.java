@@ -380,7 +380,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     mUserFont.setSelected(false);
     
     mZoomEnabled.setSelected(false);
-    mZoomValue.setValue(new Integer(100));
+    mZoomValue.setValue(100);
     
     String look = LookAndFeelAddons.getBestMatchAddonClassName();
     

@@ -655,7 +655,7 @@ public class MutableProgram implements Program {
 
     Integer obj = null;
     if (value != -1) {
-      obj = new Integer(value);
+      obj = value;
     }
     setField(type, ProgramFieldType.INT_FORMAT, obj);
   }
@@ -675,7 +675,7 @@ public class MutableProgram implements Program {
 
     Integer obj = null;
     if (value != -1) {
-      obj = new Integer(value);
+      obj = value;
     }
     setField(type, ProgramFieldType.TIME_FORMAT, obj);
 

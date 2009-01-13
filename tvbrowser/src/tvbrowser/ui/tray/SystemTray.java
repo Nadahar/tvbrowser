@@ -43,7 +43,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.event.PopupMenuEvent;
@@ -67,7 +66,6 @@ import util.misc.OperatingSystem;
 import util.ui.ScrollableMenu;
 import util.ui.UiUtilities;
 import util.ui.menu.MenuUtil;
-
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
@@ -583,9 +581,9 @@ public class SystemTray {
     
     for(int i = 0; i < tempTimes.length; i++)
       if(tempTimes[i] < IOUtilities.getMinutesAfterMidnight())
-        tomorrow.add(new Integer(tempTimes[i]));
+        tomorrow.add(tempTimes[i]);
       else
-        today.add(new Integer(tempTimes[i]));
+        today.add(tempTimes[i]);
     
     int[] times;
     

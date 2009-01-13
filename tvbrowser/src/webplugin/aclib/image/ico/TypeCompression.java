@@ -88,7 +88,7 @@ public final class TypeCompression {
      * @param pType
      */
     private static void register(final TypeCompression pType) {
-        TYPES.put(new Long(pType.getValue()), pType);
+        TYPES.put(Long.valueOf(pType.getValue()), pType);
     }
 
     /**
@@ -122,8 +122,7 @@ public final class TypeCompression {
      * @return Type for the value specified.
      */
     public static TypeCompression getType(final long pValue) {
-        final TypeCompression lResult = TYPES.get(new Long(
-                pValue));
+        final TypeCompression lResult = TYPES.get(pValue);
         if (lResult == null) {
             throw new IllegalArgumentException("Compression type " + pValue
                     + " unknown");

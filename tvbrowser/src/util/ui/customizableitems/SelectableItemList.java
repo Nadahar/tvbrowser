@@ -421,7 +421,7 @@ public class SelectableItemList extends JPanel {
     mListModel.setComboBox(filterBox);
   }
   
-  private class SelectableItemListModel extends AbstractListModel {
+  private static class SelectableItemListModel extends AbstractListModel {
     private JComboBox mFilterBox;
     
     private ArrayList<Object> mFullList = new ArrayList<Object>();

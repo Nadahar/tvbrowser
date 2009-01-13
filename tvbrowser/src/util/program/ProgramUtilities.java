@@ -341,10 +341,10 @@ public class ProgramUtilities {
         }
         else {
           String familyName = name.substring(name.lastIndexOf(" ")+1);
-          Integer count = new Integer(1);
+          Integer count = 1;
           if (familyNames[i].containsKey(familyName)) {
             count = familyNames[i].get(familyName);
-            count = new Integer(count.intValue()+1);
+            count = count.intValue() + 1;
           }
           familyNames[i].put(familyName, count);
         }

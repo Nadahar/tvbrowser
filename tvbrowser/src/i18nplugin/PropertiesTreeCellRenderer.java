@@ -114,7 +114,7 @@ public class PropertiesTreeCellRenderer extends DefaultTreeCellRenderer {
    * draws the state icon over the lower right corner of the target icon. 
    *
    */
-  private class CompositeIcon implements Icon {
+  private static class CompositeIcon implements Icon {
     
     /**
      * The "original" icon.

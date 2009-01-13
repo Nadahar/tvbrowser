@@ -339,13 +339,13 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
         } else if (e.getSource() == mAlphaSp) {
             mAlphaSl.setValue(((Integer) mAlphaSp.getValue()).intValue());
         } else if (e.getSource() == mRedSl) {
-            mRedSp.setValue(new Integer(mRedSl.getValue()));
+            mRedSp.setValue(mRedSl.getValue());
         } else if (e.getSource() == mGreenSl) {
-            mGreenSp.setValue(new Integer(mGreenSl.getValue()));
+            mGreenSp.setValue(mGreenSl.getValue());
         } else if (e.getSource() == mBlueSl) {
-            mBlueSp.setValue(new Integer(mBlueSl.getValue()));
+            mBlueSp.setValue(mBlueSl.getValue());
         } else if (e.getSource() == mAlphaSl) {
-            mAlphaSp.setValue(new Integer(mAlphaSl.getValue()));
+            mAlphaSp.setValue(mAlphaSl.getValue());
         }
         updateColorPanel();
     }

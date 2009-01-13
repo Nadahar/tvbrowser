@@ -29,6 +29,7 @@ import java.io.StringReader;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
 import util.misc.TextLineBreakerStringWidth;
 import util.ui.Localizer;
 import devplugin.Program;
@@ -49,7 +50,7 @@ public class ParamLibrary {
   private boolean mError = false;
 
   /** The Error */
-  private String mErrorString = new String();
+  private String mErrorString = "";
 
   /**
    * Has an Error occurred ?

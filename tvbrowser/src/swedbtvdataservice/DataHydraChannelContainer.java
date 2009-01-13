@@ -139,7 +139,9 @@ public class DataHydraChannelContainer {
    * @param lastUpdate New value of property lastUpdate.
    */
   public void setLastUpdate(devplugin.Date day, long lastUpdate) {
-    this.lastUpdate.put(Integer.toString(day.getYear()) + ":" + Integer.toString(day.getMonth()) + ":" + Integer.toString(day.getDayOfMonth()), new Long(lastUpdate));
+    this.lastUpdate.put(Integer.toString(day.getYear()) + ":"
+        + Integer.toString(day.getMonth()) + ":"
+        + Integer.toString(day.getDayOfMonth()), lastUpdate);
   }
 
   public String getLastUpdateString() {

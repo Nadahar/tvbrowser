@@ -26,11 +26,11 @@
 
 package primarydatamanager.primarydataservice.util.html2txt;
 
-import org.apache.commons.lang.StringEscapeUtils;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+
+import org.apache.commons.lang.StringEscapeUtils;
 
 
 public class TagReader {
@@ -49,7 +49,7 @@ public class TagReader {
   }
   
   public void setEncoding(String encoding) throws UnsupportedEncodingException {
-     new String("".toString().getBytes(),encoding); //create a string to test the encoding
+     new String("".getBytes(), encoding); // create a string to test the encoding
      mEncoding=encoding; 
   }
   
@@ -179,7 +179,6 @@ class HTMLTag implements Tag {
 
   
    private StringBuffer convert(StringBuffer line) {
-     int from=0;
      StringBuffer result=null;
      if (mEncoding!=null) {
        try {

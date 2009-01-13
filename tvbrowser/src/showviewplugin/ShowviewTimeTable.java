@@ -1163,8 +1163,8 @@ public class ShowviewTimeTable {
       throw new TvBrowserException(getClass(), "error.1",
         "No matching entry found in the time table for {0}:{1} {2} min. " +
         "(Best fit was {3})",
-        new Object[] { new Integer(hour), new Integer(minute),
-                       new Integer(length), bestEntry });
+        new Object[] { hour, minute, length,
+              bestEntry });
     }
 
     // Return the entrie's table index

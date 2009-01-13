@@ -194,8 +194,7 @@ public class TvDataBaseUpdater {
     field = frame.getProgramFieldOfType(ProgramFieldType.START_TIME_TYPE);
     if (field == null) {
       throw new TvBrowserException(getClass(), "error.3",
-        "Program frame with ID {0} has no start time.",
-        new Integer(frame.getId()));
+        "Program frame with ID {0} has no start time.", frame.getId());
     }
     int startTime = field.getTimeData();
     

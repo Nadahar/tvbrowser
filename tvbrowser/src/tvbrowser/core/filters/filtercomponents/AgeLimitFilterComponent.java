@@ -54,7 +54,7 @@ public class AgeLimitFilterComponent extends AbstractFilterComponent {
     JPanel content = new JPanel(new BorderLayout());
 
     mAgeSpinner = new JSpinner(new SpinnerNumberModel(16, 6, 21, 1));
-    mAgeSpinner.setValue(new Integer(14));
+    mAgeSpinner.setValue(14);
     content.add(UiUtilities.createHelpTextArea(mLocalizer
         .msg("description", "")), BorderLayout.NORTH);
     content.add(mAgeSpinner, BorderLayout.SOUTH);

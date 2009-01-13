@@ -26,27 +26,34 @@
 
 package tvbrowser.extras.favoritesplugin.wizards;
 
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
-
-import javax.swing.*;
-
-import devplugin.Program;
-import devplugin.Channel;
-import util.ui.TimePeriodChooser;
-import util.ui.ChannelChooserDlg;
-import util.ui.UiUtilities;
-import tvbrowser.extras.common.LimitationConfiguration;
-import tvbrowser.extras.common.DayListCellRenderer;
-import tvbrowser.extras.favoritesplugin.core.Favorite;
-
-import java.awt.event.ActionListener;
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.*;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import tvbrowser.extras.common.DayListCellRenderer;
+import tvbrowser.extras.common.LimitationConfiguration;
+import tvbrowser.extras.favoritesplugin.core.Favorite;
+import util.ui.ChannelChooserDlg;
+import util.ui.TimePeriodChooser;
+import util.ui.UiUtilities;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.Channel;
+import devplugin.Program;
 
 public class LimitationsWizardStep extends AbstractWizardStep {
 
@@ -90,12 +97,17 @@ public class LimitationsWizardStep extends AbstractWizardStep {
       mChannelArr = new Channel[]{};
     }
 
-    mDayOfWeekCombo = new JComboBox(new Object[] { new Integer(LimitationConfiguration.DAYLIMIT_DAILY),
-               new Integer(LimitationConfiguration.DAYLIMIT_WEEKDAY), new Integer(LimitationConfiguration.DAYLIMIT_WEEKEND),
-               new Integer(LimitationConfiguration.DAYLIMIT_MONDAY), new Integer(LimitationConfiguration.DAYLIMIT_TUESDAY),
-               new Integer(LimitationConfiguration.DAYLIMIT_WEDNESDAY),
-               new Integer(LimitationConfiguration.DAYLIMIT_THURSDAY), new Integer(LimitationConfiguration.DAYLIMIT_FRIDAY),
-               new Integer(LimitationConfiguration.DAYLIMIT_SATURDAY), new Integer(LimitationConfiguration.DAYLIMIT_SUNDAY), });
+    mDayOfWeekCombo = new JComboBox(new Object[] {
+        LimitationConfiguration.DAYLIMIT_DAILY,
+        LimitationConfiguration.DAYLIMIT_WEEKDAY,
+        LimitationConfiguration.DAYLIMIT_WEEKEND,
+        LimitationConfiguration.DAYLIMIT_MONDAY,
+        LimitationConfiguration.DAYLIMIT_TUESDAY,
+        LimitationConfiguration.DAYLIMIT_WEDNESDAY,
+        LimitationConfiguration.DAYLIMIT_THURSDAY,
+        LimitationConfiguration.DAYLIMIT_FRIDAY,
+        LimitationConfiguration.DAYLIMIT_SATURDAY,
+        LimitationConfiguration.DAYLIMIT_SUNDAY });
     mDayOfWeekCombo.setRenderer(new DayListCellRenderer());
 
     int lowBnd, upBnd;

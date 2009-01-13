@@ -638,10 +638,8 @@ private static Font getDynamicFontSize(Font font, int offset) {
     
     // if program table is anti-aliased, then this program panel too
     if (Settings.propEnableAntialiasing.getBoolean()) {
-      if (null != grp) {
-        grp.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-      }
+      grp.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+          RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     }
 
     // Draw the background if this program is on air

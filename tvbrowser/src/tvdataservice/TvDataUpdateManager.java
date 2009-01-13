@@ -52,9 +52,9 @@ public interface TvDataUpdateManager {
   public boolean isDayProgramAvailable(Date date, Channel channel);
 
   /**
-   * Returns wether the download should be canceled.
+   * Returns whether the download should be canceled.
    * 
-   * @return Wether the download should be canceled.
+   * @return Whether the download should be canceled.
    */  
   public boolean cancelDownload();
 

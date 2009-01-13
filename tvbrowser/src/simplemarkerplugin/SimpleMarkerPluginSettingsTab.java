@@ -648,7 +648,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
       else {
         mItem.setMarkPriority(mComboBox.getSelectedIndex()-1);
         
-        return new Integer(mComboBox.getSelectedIndex()-1);
+        return mComboBox.getSelectedIndex() - 1;
       }
     }
 

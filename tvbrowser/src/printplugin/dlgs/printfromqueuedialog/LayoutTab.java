@@ -58,13 +58,13 @@ public class LayoutTab extends JPanel {
   }
 
   public void setColumnsPerPage(int columns) {
-    mColumnsPerPageCB.setSelectedItem(new Integer(columns));
+    mColumnsPerPageCB.setSelectedItem(columns);
   }
 
   private Integer[] createIntegerArray(int from, int cnt) {
     Integer[] result = new Integer[cnt];
     for (int i=0; i<result.length; i++) {
-      result[i] = new Integer(i+from);
+      result[i] = i + from;
     }
     return result;
   }

@@ -74,7 +74,7 @@ public class LayoutTab extends JPanel {
 
   public void setColumnLayout(int columnsPerPage, int channelsPerColumn) {
     int channelsPerPage = columnsPerPage*channelsPerColumn;
-    mChannelsPerPageCB.setSelectedItem(new Integer(channelsPerPage));
+    mChannelsPerPageCB.setSelectedItem(channelsPerPage);
     for (int i=0; i<mLayoutCBModel.getSize(); i++) {
       LayoutOption option = (LayoutOption)mLayoutCBModel.getElementAt(i);
       if (channelsPerColumn == option.getChannelsPerColumn()) {
@@ -97,7 +97,7 @@ public class LayoutTab extends JPanel {
   private Integer[] createIntegerArray(int from, int cnt) {
     Integer[] result = new Integer[cnt];
     for (int i=0; i<result.length; i++) {
-      result[i] = new Integer(i+from);
+      result[i] = i + from;
     }
     return result;
   }
@@ -115,7 +115,7 @@ public class LayoutTab extends JPanel {
     ArrayList<Integer> list = new ArrayList<Integer>();
     for (int i=1; i<=val/2; i++) {
       if (val%i==0) {
-        list.add(new Integer(i));
+        list.add(i);
       }
     }
     int[] result = new int[list.size()];
@@ -145,7 +145,8 @@ public class LayoutTab extends JPanel {
 
     public String toString() {
       int columns = mChannelsPerPage/mChannelsPerColumn;
-      String s = mLocalizer.msg("layoutString", "{0} ({1} channels per column))", new Integer(columns), new Integer(mChannelsPerColumn));
+      String s = mLocalizer.msg("layoutString",
+          "{0} ({1} channels per column))", columns, mChannelsPerColumn);
       return s;
     }
   }
