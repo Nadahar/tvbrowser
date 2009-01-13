@@ -17,11 +17,16 @@
  */
 package timelineplugin;
 
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.plaf.*;
+import java.awt.Dimension;
+import java.awt.Graphics;
+
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JToolTip;
+import javax.swing.plaf.ComponentUI;
+
 import util.ui.ProgramPanel;
-import devplugin.*;
+import devplugin.Program;
 
 public class ProgramToolTip extends JToolTip
 {
@@ -32,7 +37,7 @@ public class ProgramToolTip extends JToolTip
 		setUI(new ProgramToolTipUI(p));
 	}
 
-	private class ProgramToolTipUI extends ComponentUI
+	private static class ProgramToolTipUI extends ComponentUI
 	{
 		private ProgramPanel mProgramPanel;
 
