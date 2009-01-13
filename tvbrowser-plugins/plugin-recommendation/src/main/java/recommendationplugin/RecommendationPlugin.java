@@ -1,5 +1,24 @@
 package recommendationplugin;
 
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+
+import recommendationplugin.inputimpl.FavoriteInput;
+import recommendationplugin.inputimpl.RatingInput;
+import recommendationplugin.inputimpl.ReminderInput;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.Date;
@@ -9,28 +28,10 @@ import devplugin.Program;
 import devplugin.ProgramRatingIf;
 import devplugin.SettingsTab;
 import devplugin.Version;
-import recommendationplugin.inputimpl.FavoriteInput;
-import recommendationplugin.inputimpl.RatingInput;
-import recommendationplugin.inputimpl.ReminderInput;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 public class RecommendationPlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(RecommendationPlugin.class);
-  protected static RecommendationPlugin mInstance;
+  private static RecommendationPlugin mInstance;
   private Icon mIcon;
   private List<RecommendationInputIf> mEnabledInput;
 
