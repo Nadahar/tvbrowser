@@ -147,12 +147,16 @@ public class IDontWant2See extends Plugin {
   }
   
   public void handleTvDataUpdateFinished() {
-    mCurrentDate = Date.getCurrentDate();
+    setCurrentDate();
     mDateWasSet = false;
     
     for(IDontWant2SeeListEntry entry : mSearchList) {
       entry.resetDateWasSetFlag();
     }
+  }
+
+  private static void setCurrentDate() {
+    mCurrentDate = Date.getCurrentDate();
   }
   
   protected boolean acceptInternal(Program prog) {
