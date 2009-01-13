@@ -17,8 +17,14 @@
  */
 package tvpearlplugin;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
 
 public class TVPearlListCellRenderer extends DefaultListCellRenderer
 {
@@ -40,7 +46,7 @@ public class TVPearlListCellRenderer extends DefaultListCellRenderer
             JPanel pan = new JPanel(new BorderLayout());
             pan.add(prog, BorderLayout.CENTER);
             pan.setBackground(label.getBackground());
-            if ((index % 2 == 1) && (!isSelected))
+            if ((index % 2 != 0) && (!isSelected))
             {
                 pan.setBackground(SECOND_ROW_COLOR);
             }
