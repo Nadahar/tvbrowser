@@ -60,8 +60,8 @@ public class TimeRangePanel extends JPanel {
     mDayStartCb.setRenderer(new TimeListCellRenderer());
     mDayEndCb.setRenderer(new TimeListCellRenderer());
 
-    mDayStartCb.setSelectedItem(new Integer(6));
-    mDayEndCb.setSelectedItem(new Integer(26));
+    mDayStartCb.setSelectedItem(Integer.valueOf(6));
+    mDayEndCb.setSelectedItem(Integer.valueOf(26));
   }
 
 
@@ -69,15 +69,15 @@ public class TimeRangePanel extends JPanel {
     Integer[] result = new Integer[(to-from)/step+1];
     int cur=from;
     for (int i=0;i<result.length;i++) {
-      result[i]=new Integer(cur);
+      result[i] = cur;
       cur+=step;
     }
     return result;
   }
 
   public void setRange(int from, int to) {
-    mDayStartCb.setSelectedItem(new Integer(from));
-    mDayEndCb.setSelectedItem(new Integer(to));
+    mDayStartCb.setSelectedItem(from);
+    mDayEndCb.setSelectedItem(to);
   }
 
   public int getFromTime() {

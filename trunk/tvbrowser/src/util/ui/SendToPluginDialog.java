@@ -206,7 +206,8 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
 
     if (mPrograms.length > 5) {
       result = JOptionPane.showConfirmDialog(this, mLocalizer.msg("AskBeforeSend",
-          "Are you really sure to send {0} programs\nto \"{1}\"?", new Integer(mPrograms.length), plug.toString()),
+          "Are you really sure to send {0} programs\nto \"{1}\"?",
+          mPrograms.length, plug.toString()),
           mLocalizer.msg("Attention", "Attention"), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
     }    
 

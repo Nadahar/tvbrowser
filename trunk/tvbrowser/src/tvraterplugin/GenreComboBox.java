@@ -66,7 +66,8 @@ public class GenreComboBox extends JComboBox implements ListCellRenderer, Compar
             return label;
     	}
     	
-		String str = RatingIconTextFactory.getGenres().getProperty(value.toString(), "[TRANSLATIONERROR:" + value.toString()+ " ]").toString();
+		String str = RatingIconTextFactory.getGenres().getProperty(
+        value.toString(), "[TRANSLATIONERROR:" + value.toString() + " ]");
         JLabel label = new JLabel(str);
 	    label.setOpaque(true);
 
@@ -102,8 +103,8 @@ public class GenreComboBox extends JComboBox implements ListCellRenderer, Compar
 			return 1;
 		} 
 
-		String aText = RatingIconTextFactory.getGenres().getProperty(a, "-").toString();
-		String bText = RatingIconTextFactory.getGenres().getProperty(b, "-").toString();
+		String aText = RatingIconTextFactory.getGenres().getProperty(a, "-");
+    String bText = RatingIconTextFactory.getGenres().getProperty(b, "-");
 		
 		return aText.compareTo(bText);
 	}

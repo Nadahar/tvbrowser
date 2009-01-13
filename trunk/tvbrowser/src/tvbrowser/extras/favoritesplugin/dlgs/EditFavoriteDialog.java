@@ -44,12 +44,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import tvbrowser.extras.common.DayListCellRenderer;
+import tvbrowser.extras.common.LimitationConfiguration;
 import tvbrowser.extras.common.ReminderConfiguration;
 import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
-import tvbrowser.extras.common.LimitationConfiguration;
-import tvbrowser.extras.common.DayListCellRenderer;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import util.exc.ErrorHandler;
@@ -303,14 +303,20 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     
     mChannelLabel = new JLabel(getChannelString(mChannelArr));
 
-    mLimitDaysCB = new JComboBox(new Object[] { new Integer(LimitationConfiguration.DAYLIMIT_DAILY),
-        new Integer(LimitationConfiguration.DAYLIMIT_WEEKDAY), new Integer(LimitationConfiguration.DAYLIMIT_WEEKEND),
-        new Integer(LimitationConfiguration.DAYLIMIT_MONDAY), new Integer(LimitationConfiguration.DAYLIMIT_TUESDAY),
-        new Integer(LimitationConfiguration.DAYLIMIT_WEDNESDAY),
-        new Integer(LimitationConfiguration.DAYLIMIT_THURSDAY), new Integer(LimitationConfiguration.DAYLIMIT_FRIDAY),
-        new Integer(LimitationConfiguration.DAYLIMIT_SATURDAY), new Integer(LimitationConfiguration.DAYLIMIT_SUNDAY), });
+    mLimitDaysCB = new JComboBox(new Object[] {
+        LimitationConfiguration.DAYLIMIT_DAILY,
+        LimitationConfiguration.DAYLIMIT_WEEKDAY,
+        LimitationConfiguration.DAYLIMIT_WEEKEND,
+        LimitationConfiguration.DAYLIMIT_MONDAY,
+        LimitationConfiguration.DAYLIMIT_TUESDAY,
+        LimitationConfiguration.DAYLIMIT_WEDNESDAY,
+        LimitationConfiguration.DAYLIMIT_THURSDAY,
+        LimitationConfiguration.DAYLIMIT_FRIDAY,
+        LimitationConfiguration.DAYLIMIT_SATURDAY,
+        LimitationConfiguration.DAYLIMIT_SUNDAY, });
     mLimitDaysCB.setRenderer(new DayListCellRenderer());
-    mLimitDaysCB.setSelectedItem(new Integer((mFavorite.getLimitationConfiguration().getDayLimit())));
+    mLimitDaysCB.setSelectedItem(mFavorite.getLimitationConfiguration()
+        .getDayLimit());
 
     boolean isLimitedByChannel = mFavorite.getLimitationConfiguration().isLimitedByChannel();
     boolean isLimitedByTime = mFavorite.getLimitationConfiguration().isLimitedByTime();

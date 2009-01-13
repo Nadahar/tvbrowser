@@ -124,9 +124,7 @@ public class ScrollableMenu extends JMenu {
 
         ScrollableMenu menu = (ScrollableMenu) path[len - 3];
         MenuElement selected = path[len - 1];
-        Component component = null;
-
-        component = menu.getFirstVisibleAndEnabledComponent();
+        Component component = menu.getFirstVisibleAndEnabledComponent();
         if (direction == UP && (component == null || selected == component)) {
           if (menu.scrollUp.enableScroll) {
             // scroll up

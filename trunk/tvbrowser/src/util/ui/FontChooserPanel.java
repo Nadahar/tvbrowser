@@ -54,7 +54,7 @@ public class FontChooserPanel extends JPanel {
 
   {
     for (int i = 0; i < FONTSIZES.length; i++) {
-      FONTSIZES[i] = new Integer(i + 8);
+      FONTSIZES[i] = i + 8;
     }
   }
 

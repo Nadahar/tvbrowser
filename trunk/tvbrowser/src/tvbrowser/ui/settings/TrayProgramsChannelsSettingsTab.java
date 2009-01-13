@@ -178,8 +178,8 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
   }
   
   public void saveSettings() {
-    if (mUseUserChannels != null)
-      Settings.propTrayUseSpecialChannels.setBoolean(mUseUserChannels.isSelected());
+    Settings.propTrayUseSpecialChannels.setBoolean(mUseUserChannels
+        .isSelected());
     
     Object[] order = mChannelOCh.getOrder();
     Channel[] ch = new Channel[order.length];

@@ -26,13 +26,15 @@
  
 package tvbrowser.ui.aboutbox;
 
-import tvbrowser.TVBrowser;
-import util.ui.ImageUtilities;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-import util.ui.html.ExtendedHTMLDocument;
-import util.ui.html.ExtendedHTMLEditorKit;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -43,15 +45,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Frame;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
+import tvbrowser.TVBrowser;
+import util.ui.ImageUtilities;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
+import util.ui.html.ExtendedHTMLDocument;
+import util.ui.html.ExtendedHTMLEditorKit;
 
 /**
  * 
@@ -210,8 +211,8 @@ public class AboutBox extends JDialog implements WindowClosingIf{
                
     java.util.TimeZone timezone = java.util.TimeZone.getDefault();
     int tzOffset = timezone.getRawOffset() / 1000 / 60 / 60;
-    String tzOffsetAsString = mLocalizer.msg("hours", "({0,number,+#;#} hours)",
-    new Integer(tzOffset));           
+    String tzOffsetAsString = mLocalizer.msg("hours",
+        "({0,number,+#;#} hours)", tzOffset);           
                
     createInfoEntry(buf, mLocalizer.msg("timezone", "Timezone") + ":",
        timezone.getDisplayName() + " " + tzOffsetAsString);         

@@ -240,8 +240,8 @@ public class ButtonsSettingsTab implements SettingsTab {
       for (int i = 0; i < mRows.size(); i++) {
         int value = (mRows.get(i)).getTime();
 
-        if (!list.contains(new Integer(value))) {
-          list.add(new Integer(value));
+        if (!list.contains(value)) {
+          list.add(value);
         }
       }
 

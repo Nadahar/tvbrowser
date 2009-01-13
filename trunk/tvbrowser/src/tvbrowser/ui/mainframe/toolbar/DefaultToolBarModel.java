@@ -452,8 +452,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
       };
 
       mSeparatorAction.putValue(ToolBar.ACTION_ID_KEY, "#separator");
-      mSeparatorAction.putValue(ToolBar.ACTION_TYPE_KEY, new Integer(
-          ToolBar.SEPARATOR));
+      mSeparatorAction.putValue(ToolBar.ACTION_TYPE_KEY, ToolBar.SEPARATOR);
       mSeparatorAction.putValue(Action.NAME, "Separator");
       mSeparatorAction.putValue(Plugin.BIG_ICON, new Icon() {
 
@@ -490,8 +489,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
       };
       
       mGlueAction.putValue(ToolBar.ACTION_ID_KEY, "#glue");
-      mGlueAction.putValue(ToolBar.ACTION_TYPE_KEY, new Integer(
-          ToolBar.GLUE));
+      mGlueAction.putValue(ToolBar.ACTION_TYPE_KEY, ToolBar.GLUE);
       mGlueAction.putValue(Action.NAME, mLocalizer.msg("flexibleSpace","Flexible Space"));
       mGlueAction.putValue(Plugin.BIG_ICON, new Icon() {
 
@@ -543,8 +541,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
       };
       
       mSpaceAction.putValue(ToolBar.ACTION_ID_KEY, "#space");
-      mSpaceAction.putValue(ToolBar.ACTION_TYPE_KEY, new Integer(
-          ToolBar.SPACE));
+      mSpaceAction.putValue(ToolBar.ACTION_TYPE_KEY, ToolBar.SPACE);
       mSpaceAction.putValue(Action.NAME, mLocalizer.msg("space","Space"));
       mSpaceAction.putValue(Plugin.BIG_ICON, new Icon() {
 
@@ -586,7 +583,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
     action.putValue(Action.SMALL_ICON, smallIcon);
     action.putValue(Plugin.BIG_ICON, bigIcon);
     action.putValue(Action.SHORT_DESCRIPTION, description);
-    action.putValue(ToolBar.ACTION_TYPE_KEY, new Integer(type));
+    action.putValue(ToolBar.ACTION_TYPE_KEY, type);
     action.putValue(ToolBar.ACTION_ID_KEY, id);
     mAvailableActions.put(id, action);
     actionOrder.add(action);

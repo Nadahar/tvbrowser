@@ -92,7 +92,7 @@ public class DateFilterComponent extends AbstractFilterComponent {
     content.add(new JLabel(mLocalizer.msg("from.1", "From today plus")), cc.xy(
         1, currentRow += 2));
     mFromSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 28, 1));
-    mFromSpinner.setValue(new Integer(0));
+    mFromSpinner.setValue(0);
     content.add(mFromSpinner, cc.xy(3, currentRow));
     content.add(new JLabel(mLocalizer.msg("from.2", "days")), cc
         .xy(5, currentRow));
@@ -102,7 +102,7 @@ public class DateFilterComponent extends AbstractFilterComponent {
     content.add(new JLabel(mLocalizer.msg("to.1", "Until today plus")), cc.xy(
         1, currentRow += 2));
     mToSpinner = new JSpinner(new SpinnerNumberModel(7, 0, 28, 1));
-    mToSpinner.setValue(new Integer(7));
+    mToSpinner.setValue(7);
     content.add(mToSpinner, cc.xy(3, currentRow));
     content.add(new JLabel(mLocalizer.msg("to.2", "days")), cc
         .xy(5, currentRow));

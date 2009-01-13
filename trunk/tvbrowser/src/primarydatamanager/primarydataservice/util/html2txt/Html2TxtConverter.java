@@ -99,7 +99,7 @@ public class Html2TxtConverter extends FilterReader {
     
     String result=s;
     try {
-			result=new String(s.toString().getBytes(),mEncoding);
+			result = new String(s.getBytes(), mEncoding);
 		} catch (UnsupportedEncodingException e) {
 			// ignore
 		}

@@ -25,24 +25,6 @@
  */
 package tvbrowser.extras.searchplugin;
 
-import devplugin.ActionMenu;
-import devplugin.ButtonAction;
-import devplugin.Channel;
-import devplugin.ContextMenuAction;
-import devplugin.PluginManager;
-import devplugin.Program;
-import devplugin.SettingsTab;
-import devplugin.ThemeIcon;
-import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.extras.common.ConfigurationHandler;
-import tvbrowser.extras.common.DataDeserializer;
-import tvbrowser.extras.common.DataSerializer;
-import tvbrowser.extras.common.InternalPluginProxyIf;
-import tvbrowser.ui.mainframe.MainFrame;
-import util.exc.ErrorHandler;
-import util.ui.SearchFormSettings;
-import util.ui.UiUtilities;
-
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.Window;
@@ -55,6 +37,24 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import javax.swing.KeyStroke;
+
+import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.extras.common.ConfigurationHandler;
+import tvbrowser.extras.common.DataDeserializer;
+import tvbrowser.extras.common.DataSerializer;
+import tvbrowser.extras.common.InternalPluginProxyIf;
+import tvbrowser.ui.mainframe.MainFrame;
+import util.exc.ErrorHandler;
+import util.ui.SearchFormSettings;
+import util.ui.UiUtilities;
+import devplugin.ActionMenu;
+import devplugin.ButtonAction;
+import devplugin.Channel;
+import devplugin.ContextMenuAction;
+import devplugin.PluginManager;
+import devplugin.Program;
+import devplugin.SettingsTab;
+import devplugin.ThemeIcon;
 
 /**
  * Provides a dialog for searching programs.
@@ -228,7 +228,7 @@ public class SearchPlugin {
 
         Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
 
-        Channel channel = program != null ? program.getChannel() : null;
+        Channel channel = program.getChannel();
         if (w instanceof Dialog) {
           dlg = new RepetitionDialog((Dialog) w, channel);
         } else {

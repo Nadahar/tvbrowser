@@ -74,7 +74,7 @@ public class DateRangePanel extends JPanel {
   }
 
   public void setNumberOfDays(int days) {
-    mDayCountSpinner.setValue(new Integer(days));
+    mDayCountSpinner.setValue(days);
   }
 
   public Date getFromDate() {

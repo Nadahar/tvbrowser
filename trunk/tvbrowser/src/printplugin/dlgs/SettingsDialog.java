@@ -192,7 +192,7 @@ public class SettingsDialog extends JDialog implements WindowClosingIf {
       public void actionPerformed(ActionEvent e) {
         String newSchemeName = JOptionPane.showInputDialog(parent, mLocalizer.msg("enterNewSchemeName","Enter new name for scheme:"), mLocalizer.msg("newScheme","New scheme"), JOptionPane.PLAIN_MESSAGE);
         if (newSchemeName != null) {
-          if (newSchemeName.toString().trim().length()>0) {
+          if (newSchemeName.trim().length() > 0) {
             Scheme newScheme = mDialogContent.createNewScheme(newSchemeName);
             newScheme.setSettings(mDialogContent.getSettings());
             mSchemeCBModel.addElement(newScheme);

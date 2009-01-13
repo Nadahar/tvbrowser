@@ -137,7 +137,8 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     mDoneBtnText = mLocalizer.msg("doneButton.exclusion","Create exclusion criteria now");
 
     if (mode == MODE_CREATE_EXCLUSION || mode == MODE_EDIT_EXCLUSION) {
-      mMainQuestion = mLocalizer.msg("mainQuestion.edit", "Welche Sendungen wollen Sie ausschließen?");
+      mMainQuestion = mLocalizer.msg("mainQuestion.edit",
+          "Welche Sendungen wollen Sie ausschließen?");
       mChannelQuestion = mLocalizer.msg("channelQuestion.edit", "Sendungen auf diesem Sender:");
       mTopicQuestion = mLocalizer.msg("topicQuestion.edit", "Sendungen mit diesem Stichwort:");
       mTimeQuestion = mLocalizer.msg("timeQuestion.edit", "Sendungen in diesem Zeitraum:");
@@ -173,11 +174,16 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     mFilterCb = new JCheckBox(mFilterQuestion);
     mFilterChooser = new JComboBox(FilterManagerImpl.getInstance().getAvailableFilters());
     
-    mDayChooser = new JComboBox(new Object[] { new Integer(LimitationConfiguration.DAYLIMIT_WEEKDAY),
-        new Integer(LimitationConfiguration.DAYLIMIT_WEEKEND), new Integer(LimitationConfiguration.DAYLIMIT_MONDAY),
-        new Integer(LimitationConfiguration.DAYLIMIT_TUESDAY), new Integer(LimitationConfiguration.DAYLIMIT_WEDNESDAY),
-        new Integer(LimitationConfiguration.DAYLIMIT_THURSDAY), new Integer(LimitationConfiguration.DAYLIMIT_FRIDAY),
-        new Integer(LimitationConfiguration.DAYLIMIT_SATURDAY), new Integer(LimitationConfiguration.DAYLIMIT_SUNDAY), });
+    mDayChooser = new JComboBox(new Object[] {
+        LimitationConfiguration.DAYLIMIT_WEEKDAY,
+        LimitationConfiguration.DAYLIMIT_WEEKEND,
+        LimitationConfiguration.DAYLIMIT_MONDAY,
+        LimitationConfiguration.DAYLIMIT_TUESDAY,
+        LimitationConfiguration.DAYLIMIT_WEDNESDAY,
+        LimitationConfiguration.DAYLIMIT_THURSDAY,
+        LimitationConfiguration.DAYLIMIT_FRIDAY,
+        LimitationConfiguration.DAYLIMIT_SATURDAY,
+        LimitationConfiguration.DAYLIMIT_SUNDAY });
     mDayChooser.setRenderer(new DayListCellRenderer());
     CellConstraints cc = new CellConstraints();
     FormLayout layout = new FormLayout("5dlu, pref, default:grow",
@@ -236,7 +242,8 @@ public class ExcludeWizardStep extends AbstractWizardStep {
       }
       mTimePeriodChooser.setFromTime(timeFrom);
       mTimePeriodChooser.setToTime(timeTo);
-      mDayChooser.setSelectedItem(new Integer(mProgram.getDate().getCalendar().get(Calendar.DAY_OF_WEEK)));
+      mDayChooser.setSelectedItem(mProgram.getDate().getCalendar().get(
+          Calendar.DAY_OF_WEEK));
     } else if (mMode == MODE_EDIT_EXCLUSION) {
       String title = mExclusion.getTitle();
       String topic = mExclusion.getTopic();
@@ -265,11 +272,11 @@ public class ExcludeWizardStep extends AbstractWizardStep {
         mTimeCb.setSelected(true);
         mTimePeriodChooser.setFromTime(timeFrom);
         mTimePeriodChooser.setToTime(timeTo);
-        mDayChooser.setSelectedItem(new Integer(mExclusion.getDayOfWeek()));
+        mDayChooser.setSelectedItem(mExclusion.getDayOfWeek());
       }
       if (dayOfWeek != Exclusion.DAYLIMIT_DAILY) {
         mDayCb.setSelected(true);
-        mDayChooser.setSelectedItem(new Integer(dayOfWeek));
+        mDayChooser.setSelectedItem(dayOfWeek);
       }
     }
 

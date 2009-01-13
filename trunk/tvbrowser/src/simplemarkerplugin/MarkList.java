@@ -40,7 +40,6 @@ import javax.swing.Icon;
 import util.io.IOUtilities;
 import util.program.ProgramUtilities;
 import util.ui.Localizer;
-
 import devplugin.Date;
 import devplugin.NodeFormatter;
 import devplugin.Plugin;
@@ -234,7 +233,7 @@ public class MarkList extends Vector<Program> {
       action.putValue(Action.NAME, SimpleMarkerPlugin.mLocalizer.msg(
           "list.mark", "Add program to'{0}'", getName()));
       action.putValue(Action.SMALL_ICON, mMarkIcon);
-      action.putValue(Program.MARK_PRIORITY, new Integer(getMarkPriority()));
+      action.putValue(Program.MARK_PRIORITY, getMarkPriority());
     }
     
     return action;

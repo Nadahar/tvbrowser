@@ -103,7 +103,7 @@ public class TvDataInventory {
    */  
   public synchronized void setKnown(Date date, Channel channel, int version) {
     String key = TvDataBase.getDayProgramKey(date, channel);
-    mInventoryHash.put(key, new Integer(version));
+    mInventoryHash.put(key, version);
   }
 
 
@@ -155,7 +155,7 @@ public class TvDataInventory {
       int count = in.readInt();
       for (int i = 0; i < count; i++) {
         String key = (String) in.readObject();
-        Integer ver = new Integer(in.readInt());
+        Integer ver = in.readInt();
         mInventoryHash.put(key, ver);
       }
       

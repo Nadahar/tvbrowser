@@ -53,9 +53,6 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.toolbar.ContextMenu;
@@ -64,6 +61,10 @@ import tvbrowser.ui.mainframe.toolbar.ToolBar;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import devplugin.Plugin;
 
 /**
@@ -353,7 +354,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     public TransferAction(String name, int index) {
       mName = name;
       mNF = new DataFlavor(Action.class, "Action");
-      mIndex = new Integer(index);
+      mIndex = index;
       mIF = new DataFlavor(Integer.class, "Integer");
     }
 

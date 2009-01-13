@@ -651,7 +651,7 @@ public class PluginProxyManager {
     } else if (state == ACTIVATED_STATE) {
       return mLocalizer.msg("state.activated", "activated");
     } else {
-      return mLocalizer.msg("state.unknown", "unknown ({0})", new Integer(state));
+      return mLocalizer.msg("state.unknown", "unknown ({0})", state);
     }
   }
 

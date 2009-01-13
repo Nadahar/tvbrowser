@@ -114,19 +114,18 @@ public interface PluginProxy extends PluginAccess {
    */
   public void handleTvDataDeleted(ChannelDayProgram oldProg);
 
-  
   /**
-   * This method is automatically called, when the plugin after activating
-   * the plugin.
-   *
+   * This method is automatically called after activating the plugin (either
+   * during the TV-Browser startup phase or after manually activating the
+   * disabled plugin in the settings).
+   * 
    * @since 1.1
    */
   public void onActivation();
-  
+
   /**
-   * This method is automatically called, when the plugin after deactivating
-   * the plugin.
-   *
+   * This method is automatically called after deactivating the plugin.
+   * 
    * @since 1.1
    */
   public void onDeactivation();

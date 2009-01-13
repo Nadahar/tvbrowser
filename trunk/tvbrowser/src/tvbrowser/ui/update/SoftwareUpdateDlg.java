@@ -467,7 +467,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     }
   }
   
-  private class FilterItem implements ItemFilter {
+  private static class FilterItem implements ItemFilter {
     private String mType;
     
     protected FilterItem(String type) {
