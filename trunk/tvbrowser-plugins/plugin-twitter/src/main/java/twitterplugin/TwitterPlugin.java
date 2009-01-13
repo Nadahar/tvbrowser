@@ -1,25 +1,22 @@
 package twitterplugin;
 
-import devplugin.Plugin;
-import devplugin.PluginInfo;
-import devplugin.SettingsTab;
-import devplugin.Version;
-import devplugin.ActionMenu;
-import devplugin.Program;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
+import java.awt.event.ActionEvent;
+import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
-import javax.swing.JFrame;
-import javax.swing.JDialog;
-import java.util.Properties;
-import java.awt.event.ActionEvent;
-import java.awt.Frame;
-import java.awt.Window;
+
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import devplugin.ActionMenu;
+import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.Program;
+import devplugin.SettingsTab;
+import devplugin.Version;
 
 public class TwitterPlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(TwitterPlugin.class);
@@ -32,7 +29,7 @@ public class TwitterPlugin extends Plugin {
 
   private Properties mSettings;
   private ImageIcon mIcon;
-  protected static TwitterPlugin mInstance;
+  private static TwitterPlugin mInstance;
 
   public static Version getVersion() {
     return new Version(0, 4, false);
