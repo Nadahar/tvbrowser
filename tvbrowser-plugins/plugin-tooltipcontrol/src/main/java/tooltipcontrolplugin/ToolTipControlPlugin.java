@@ -38,7 +38,7 @@ public class ToolTipControlPlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ToolTipControlPlugin.class);
   private Properties mSettings;
   
-  protected static ToolTipControlPlugin mInstance;
+  private static ToolTipControlPlugin mInstance;
   
   public static Version getVersion() {
     return new Version(0,21,false);
@@ -52,7 +52,9 @@ public class ToolTipControlPlugin extends Plugin {
   }
   
   public PluginInfo getInfo() {
-    return new PluginInfo(ToolTipControlPlugin.class,mLocalizer.msg("pluginName","Tooltip control"),mLocalizer.msg("description","Controls the function of all tooltips."),"René Mach","GPL");
+    return new PluginInfo(ToolTipControlPlugin.class, mLocalizer.msg(
+        "pluginName", "Tooltip control"), mLocalizer.msg("description",
+        "Controls the function of all tooltips."), "René Mach", "GPL");
   }
     
   public SettingsTab getSettingsTab() {

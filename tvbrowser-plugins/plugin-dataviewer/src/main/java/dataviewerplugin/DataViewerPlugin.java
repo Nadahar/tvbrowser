@@ -58,8 +58,8 @@ import devplugin.Version;
  */
 public class DataViewerPlugin extends Plugin implements Runnable {
 
-  protected static Localizer mLocalizer = util.ui.Localizer
-  .getLocalizerFor(DataViewerPlugin.class);
+  protected static final Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(DataViewerPlugin.class);
 
   private Object[][] mDataTable;
   private Channel[] mChannels;
@@ -103,7 +103,7 @@ public class DataViewerPlugin extends Plugin implements Runnable {
   @Override
   public PluginInfo getInfo() {
     return new PluginInfo(DataViewerPlugin.class,mLocalizer.msg("data","DataViewerPlugin"),mLocalizer.msg("info",
-    "Lists the available program data."),"René Mach","GPL");
+    "Lists the available program data."), "René Mach", "GPL");
   }
 
   @Override
@@ -480,7 +480,7 @@ public class DataViewerPlugin extends Plugin implements Runnable {
                 length = length >= 1439 ? length - 1439 : length;
 
                 if (p1.getStartTime() - acceptableGap > length || p1.getStartTime() + acceptableGap < length) {
-                  putInHashMap(err,p1,mChannels[i],new Integer(channels[i].size()));
+                  putInHashMap(err, p1, mChannels[i], channels[i].size());
                   complete = false;
                 }
               }
@@ -489,7 +489,7 @@ public class DataViewerPlugin extends Plugin implements Runnable {
             }
 
             if (endTimeLimit == startTimeLimit && (last[i].getStartTime() + last[i].getLength() <= last[i].getStartTime() && j != -1)) {
-              putInHashMap(err,last[i],mChannels[i],new Integer(channels[i].size()));
+              putInHashMap(err, last[i], mChannels[i], channels[i].size());
               complete = false;
             }
 
@@ -526,8 +526,8 @@ public class DataViewerPlugin extends Plugin implements Runnable {
 
           HashMap<Integer, ArrayList<Program>> dates = err.get(mChannels[i]);
 
-          if (dates.containsKey(new Integer(j))) {
-            mErrData[i][j] = dates.get(new Integer(j));
+          if (dates.containsKey(j)) {
+            mErrData[i][j] = dates.get(j);
           } else {
             mErrData[i][j] = null;
           }
