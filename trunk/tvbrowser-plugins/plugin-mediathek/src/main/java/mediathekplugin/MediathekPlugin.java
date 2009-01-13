@@ -397,7 +397,7 @@ public class MediathekPlugin extends Plugin {
     node.update();
   }
 
-  public MediathekProgram[] getSortedPrograms() {
+  protected MediathekProgram[] getSortedPrograms() {
     if (!sorted) {
       sortedPrograms = new MediathekProgram[programs.size()];
       programs.values().toArray(sortedPrograms);
