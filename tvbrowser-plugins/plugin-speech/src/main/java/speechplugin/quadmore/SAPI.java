@@ -76,8 +76,9 @@ public class SAPI {
       FileOutputStream outputStream = new FileOutputStream(dll);
       byte[] array = new byte[8192];
       int read = 0;
-      while ((read = inputStream.read(array)) > 0)
+      while ((read = inputStream.read(array)) > 0) {
         outputStream.write(array, 0, read);
+      }
       outputStream.close();
 
       // Delete on exit
