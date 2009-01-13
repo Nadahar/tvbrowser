@@ -17,9 +17,14 @@
  */
 package tvpearlplugin;
 
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.plaf.*;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+
+import javax.swing.JComponent;
+import javax.swing.JToolTip;
+import javax.swing.plaf.ComponentUI;
 
 public class TVPearlToolTip extends JToolTip
 {
@@ -30,7 +35,7 @@ public class TVPearlToolTip extends JToolTip
 		setUI(new TVPearlToolTipUI());
 	}
 
-	private class TVPearlToolTipUI extends ComponentUI
+	private static class TVPearlToolTipUI extends ComponentUI
 	{
 		private final static int mMaxWidth = 400;
 		private final static int mPadding = 5;

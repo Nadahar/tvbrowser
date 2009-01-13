@@ -487,7 +487,7 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		return list.toArray(new ProgramReceiveTarget[list.size()]);
 	}
 
-	public void setClientPluginsTargets(ProgramReceiveTarget[] targets)
+	protected void setClientPluginsTargets(ProgramReceiveTarget[] targets)
 	{
 		if (targets != null)
 		{
