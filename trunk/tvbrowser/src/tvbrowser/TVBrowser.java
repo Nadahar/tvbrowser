@@ -43,6 +43,7 @@ import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.nio.channels.FileLock;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -200,7 +201,7 @@ public class TVBrowser {
   private static boolean mFullscreen = false;
 
   /**
-   * Show only minimzed
+   * Show only minimized
    */
   private static boolean mMinimized = false;
 
@@ -653,8 +654,12 @@ public class TVBrowser {
     TvDataServiceProxyManager.getInstance().setParamFrame(mainFrame);
     
     // Set the program icon
-    Image iconImage = ImageUtilities.createImage("imgs/tvbrowser16.png");
-    mainFrame.setIconImage(iconImage);
+    ArrayList<Image> iconImages = new ArrayList<Image>(2);
+    iconImages.add(ImageUtilities.createImage("imgs/tvbrowser128.png"));
+    iconImages.add(ImageUtilities.createImage("imgs/tvbrowser48.png"));
+    iconImages.add(ImageUtilities.createImage("imgs/tvbrowser32.png"));
+    iconImages.add(ImageUtilities.createImage("imgs/tvbrowser16.png"));
+    mainFrame.setIconImages(iconImages);
 
     mTray = new SystemTray();
 
