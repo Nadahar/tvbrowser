@@ -235,7 +235,7 @@ public class ImdbParser {
 
   private String cleanEpisodeTitle(String episode) {
     if (episode == null) {
-      return null;
+      return "";
     }
 
     Matcher m = episodePattern.matcher(episode);

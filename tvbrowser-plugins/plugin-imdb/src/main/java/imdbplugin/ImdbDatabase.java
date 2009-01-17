@@ -17,6 +17,7 @@ import org.apache.lucene.search.Hit;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.TopDocs;
 
 public class ImdbDatabase {
   private static final String ITEM_TYPE = "ITEM_TYPE";
@@ -266,23 +267,80 @@ public class ImdbDatabase {
     return null;
   }
 
+  public String getMovieEpisodeId(String title, String episode,
+      String originalEpisode, int year) {
+    if (mSearcher == null) {
+      return null;
+    }
+    String id = getEpisodeId(title, episode, year);
+    if (id == null) {
+      id = getEpisodeId(title, originalEpisode, year);
+    }
+    return id;
+  }
+
+  private String getEpisodeId(String title, String episode, int year) {
+    if (episode == null) {
+      return null;
+    }
+    BooleanQuery bQuery = new BooleanQuery();
+    bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_MOVIE)),
+        BooleanClause.Occur.MUST);
+    bQuery.add(new TermQuery(new Term(MOVIE_TITLE, title)),
+        BooleanClause.Occur.MUST);
+    bQuery.add(new TermQuery(new Term(EPISODE_TITLE, episode)),
+        BooleanClause.Occur.MUST);
+
+    if (year > 0) {
+      bQuery.add(
+          new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year - 1))),
+          BooleanClause.Occur.SHOULD);
+      bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year))),
+          BooleanClause.Occur.SHOULD);
+      bQuery.add(
+          new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year + 1))),
+          BooleanClause.Occur.SHOULD);
+    }
+
+    try {
+      TopDocs hits = mSearcher.search(bQuery, 1);
+      if (hits.totalHits > 0) {
+        Document document = mSearcher.doc(hits.scoreDocs[0].doc);
+        printDocument(document);
+        return document.getField(MOVIE_ID).stringValue();
+      }
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return null;
+  }
+
   public String getMovieId(String title, String episode, int year) {
     if (mSearcher == null) {
       return null;
     }
 
+    BooleanQuery bQuery = new BooleanQuery();
+    bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_MOVIE)),
+        BooleanClause.Occur.MUST);
+    bQuery.add(new TermQuery(new Term(MOVIE_TITLE, title)),
+        BooleanClause.Occur.MUST);
+    bQuery.add(new TermQuery(new Term(EPISODE_TITLE, episode)),
+        BooleanClause.Occur.MUST);
+
+    if (year > 0) {
+      bQuery.add(
+          new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year - 1))),
+          BooleanClause.Occur.SHOULD);
+      bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year))),
+          BooleanClause.Occur.SHOULD);
+      bQuery.add(
+          new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year + 1))),
+          BooleanClause.Occur.SHOULD);
+    }
+
     try {
-
-      BooleanQuery bQuery = new BooleanQuery();
-      bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_MOVIE)),BooleanClause.Occur.MUST);
-      bQuery.add(new TermQuery(new Term(MOVIE_TITLE, title)),BooleanClause.Occur.MUST);
-      bQuery.add(new TermQuery(new Term(EPISODE_TITLE, episode)),BooleanClause.Occur.MUST);
-
-      if (year != -1) {
-        bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year-1))),BooleanClause.Occur.SHOULD);
-        bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year))),BooleanClause.Occur.SHOULD);
-        bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year+1))),BooleanClause.Occur.SHOULD);
-      }
 
       Hits hits = mSearcher.search(bQuery);
       Iterator it = hits.iterator();
@@ -299,7 +357,7 @@ public class ImdbDatabase {
       bQuery = new BooleanQuery();
       bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_AKA)),BooleanClause.Occur.MUST);
       bQuery.add(new TermQuery(new Term(MOVIE_TITLE, title)),BooleanClause.Occur.MUST);
-      if (year != -1) {
+      if (year > 0) {
         bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year-1))),BooleanClause.Occur.SHOULD);
         bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year))),BooleanClause.Occur.SHOULD);
         bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year+1))),BooleanClause.Occur.SHOULD);

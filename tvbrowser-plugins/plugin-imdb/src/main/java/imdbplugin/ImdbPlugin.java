@@ -31,6 +31,7 @@ import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
+import devplugin.ProgramFieldType;
 import devplugin.ProgramFilter;
 import devplugin.ProgramRatingIf;
 import devplugin.SettingsTab;
@@ -86,7 +87,10 @@ public class ImdbPlugin extends Plugin {
     if (!mExcludedChannels.contains(program.getChannel())) {
       rating = mRatingCache.get(program.getID());
       if (rating == null) {
-        rating = mImdbDatabase.getRatingForId(mImdbDatabase.getMovieId(program.getTitle(), "", -1));
+        rating = getEpisodeRating(program);
+        if (rating == null) {
+          rating = getProgramRating(program);
+        }
         if (rating != null) {
           mRatingCache.put(program.getID(), rating);
         } else {
@@ -102,10 +106,24 @@ public class ImdbPlugin extends Plugin {
     return rating;
   }
 
+  private ImdbRating getEpisodeRating(Program program) {
+    return mImdbDatabase.getRatingForId(mImdbDatabase.getMovieEpisodeId(program
+        .getTitle(), program.getTextField(ProgramFieldType.EPISODE_TYPE),
+        program.getTextField(ProgramFieldType.ORIGINAL_EPISODE_TYPE), program
+            .getIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE)));
+  }
+
+  private ImdbRating getProgramRating(Program program) {
+    return mImdbDatabase.getRatingForId(mImdbDatabase.getMovieId(program
+        .getTitle(), "", program
+        .getIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE)));
+  }
+
   @Override
   public ActionMenu getContextMenuActions(final Program program) {
     ImdbRating rating = getRatingFor(program);
-    if (getPluginManager().getExampleProgram().equals(program)) {
+    if (rating == null
+        && getPluginManager().getExampleProgram().equals(program)) {
     	rating = new ImdbRating(75, 1000, "", "");
     }
     if (rating != null) {
@@ -123,18 +141,37 @@ public class ImdbPlugin extends Plugin {
     return null;
   }
 
-  private void showRatingDialog(Program prg) {
-    ImdbRating rating = getRatingFor(prg);
-    if (rating != null) {
-      JOptionPane.showMessageDialog(UiUtilities.getBestDialogParent(getParentFrame()),
-              "Rating for " + prg.getTitle() + ":\n" +
-              "Rating: "
-          + new DecimalFormat("##.#").format((double) rating.getRating() / 10)
-          + "\n" + "Votes: " + rating.getVotes()
-      );
-    } else {
-      JOptionPane.showMessageDialog(UiUtilities.getBestDialogParent(getParentFrame()), "No rating found!");
+  private void showRatingDialog(Program program) {
+    ImdbRating episodeRating = getEpisodeRating(program);
+    ImdbRating rating = getProgramRating(program);
+    StringBuffer message = new StringBuffer();
+    if (rating != null || episodeRating != null) {
+      if (episodeRating != null) {
+        message.append(ratingMessage(program.getTitle() + " - "
+            + program.getTextField(ProgramFieldType.EPISODE_TYPE),
+            episodeRating));
+      }
+      if (rating != null) {
+        if (message.length() > 0) {
+          message.append("\n\n");
+        }
+        message.append(ratingMessage(program.getTitle(), rating));
+      }
     }
+    else {
+      message.append(mLocalizer.msg("noRating", "No rating found!", program
+          .getTitle()));
+    }
+    JOptionPane.showMessageDialog(UiUtilities
+        .getBestDialogParent(getParentFrame()), message.toString());
+  }
+
+  private String ratingMessage(String title, ImdbRating rating) {
+    return mLocalizer.msg("ratingFor", "Rating for \"{0}\":", title)
+        + "\n"
+        + mLocalizer.msg("rating", "Rating: {0}", new DecimalFormat("##.#")
+            .format((double) rating.getRating() / 10)) + "\n"
+        + mLocalizer.msg("votes", "Votes: {0}", rating.getVotes());
   }
 
   @Override
