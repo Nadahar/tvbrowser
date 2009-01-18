@@ -87,7 +87,8 @@ public class TaskMenuAction {
       } else {
         ActionMenu childMenu = getSingleActiveChild(menu);
         if (childMenu != null) {
-          childMenu.getAction().putValue(Action.NAME, menu.getAction().getValue(Action.NAME));
+          // childMenu.getAction().putValue(Action.NAME,
+          // menu.getAction().getValue(Action.NAME));
           childMenu.getAction().putValue(Action.SMALL_ICON, menu.getAction().getValue(Action.SMALL_ICON));
           addAction(parent, childMenu);
         }
