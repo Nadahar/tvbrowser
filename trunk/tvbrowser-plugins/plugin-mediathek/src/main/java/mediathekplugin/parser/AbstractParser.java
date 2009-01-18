@@ -44,8 +44,9 @@ import devplugin.Channel;
 
 public abstract class AbstractParser implements IParser {
   
-  protected void addProgram(String title, String relativeUrl) {
+  protected boolean addProgram(String title, String relativeUrl) {
     MediathekPlugin.getInstance().addProgram(this, title, relativeUrl);
+    return true;
   }
 
   public String readUrl(String urlString) {
@@ -78,8 +79,9 @@ public abstract class AbstractParser implements IParser {
     while (matcher.find()) {
       String relativeUrl = matcher.group(1);
       String title = plugin.convertHTML(matcher.group(2));
-      addProgram(title, relativeUrl);
-      count++;
+      if (addProgram(title, relativeUrl)) {
+        count++;
+      }
     }
     final String msg = "Read " + count + " programs from " + name
         + " Mediathek";

@@ -21,7 +21,7 @@ import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.ProgramItem;
 
-public class EpisodeNode extends PluginTreeNode {
+public final class EpisodeNode extends PluginTreeNode {
 
   @Override
   public boolean contains(Program prog, boolean recursive) {

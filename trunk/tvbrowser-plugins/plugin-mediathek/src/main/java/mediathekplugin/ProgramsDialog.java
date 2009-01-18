@@ -28,19 +28,17 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
-import devplugin.Plugin;
 
-public class ProgramsDialog extends JDialog implements WindowClosingIf {
+public final class ProgramsDialog extends JDialog implements WindowClosingIf {
 
   /** The localizer used by this class. */
   private static final Localizer mLocalizer = Localizer
       .getLocalizerFor(ProgramsDialog.class);
 
-  public ProgramsDialog(Frame frame, Plugin plugin) {
+  public ProgramsDialog(Frame frame) {
     super(frame, true);
     setTitle(mLocalizer.msg("title", "Programs in the Mediathek"));
     createGUI();
@@ -48,24 +46,24 @@ public class ProgramsDialog extends JDialog implements WindowClosingIf {
   }
 
   private void createGUI() {
-    JPanel content = (JPanel) this.getContentPane();
+    final JPanel content = (JPanel) this.getContentPane();
     content.setLayout(new BorderLayout());
     content.setBorder(UiUtilities.DIALOG_BORDER);
 
-    JList programList = new JList(MediathekPlugin.getInstance()
+    final JList programList = new JList(MediathekPlugin.getInstance()
         .getSortedPrograms());
     programList.setCellRenderer(new ItemListCellRenderer());
     content.add(new JScrollPane(programList), BorderLayout.CENTER);
 
-    JPanel buttonPn = new JPanel(new BorderLayout());
+    final JPanel buttonPn = new JPanel(new BorderLayout());
     buttonPn.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
     content.add(buttonPn, BorderLayout.SOUTH);
 
-    JButton closeButton = new JButton(Localizer
+    final JButton closeButton = new JButton(Localizer
         .getLocalization(Localizer.I18N_CLOSE));
     closeButton.addActionListener(new ActionListener() {
 
-      public void actionPerformed(ActionEvent evt) {
+      public void actionPerformed(final ActionEvent evt) {
         close();
       }
     });
