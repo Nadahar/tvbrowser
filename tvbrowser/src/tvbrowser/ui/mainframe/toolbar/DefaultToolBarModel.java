@@ -69,6 +69,7 @@ import util.ui.ScrollableMenu;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Channel;
+import devplugin.ContextMenuSeparatorAction;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.ProgressMonitor;
@@ -277,11 +278,16 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
         createPluginAction(plugin, menu.getSubItems());
       } else {
         Action action = menu.getAction();
-        action.putValue(ToolBar.ACTION_ID_KEY, plugin.getId() + "##" + action.getValue(Action.NAME));
-        mAvailableActions.put(plugin.getId() + "##" + action.getValue(Action.NAME), action);
-        String tooltip = (String) action.getValue(Action.SHORT_DESCRIPTION);
-        if (tooltip == null) {
-          action.putValue(Action.SHORT_DESCRIPTION, plugin.getButtonActionDescription());
+        if (!ContextMenuSeparatorAction.getInstance().equals(action)) {
+          action.putValue(ToolBar.ACTION_ID_KEY, plugin.getId() + "##"
+              + action.getValue(Action.NAME));
+          mAvailableActions.put(plugin.getId() + "##"
+              + action.getValue(Action.NAME), action);
+          String tooltip = (String) action.getValue(Action.SHORT_DESCRIPTION);
+          if (tooltip == null) {
+            action.putValue(Action.SHORT_DESCRIPTION, plugin
+                .getButtonActionDescription());
+          }
         }
       }
     }
@@ -436,7 +442,8 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
     if (actionMenu != null) {
       if (!actionMenu.hasSubItems()) {
         Action action = mAvailableActions.get(buttonAction.getId());
-        if (action != null) {
+        if (action != null
+            && !ContextMenuSeparatorAction.getInstance().equals(action)) {
           mVisibleActions.add(action);
         }
       }
