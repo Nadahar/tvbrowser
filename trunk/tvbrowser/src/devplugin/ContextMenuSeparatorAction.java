@@ -88,10 +88,10 @@ public final class ContextMenuSeparatorAction extends AbstractAction {
   private void setDisabledOnTaskMenu() {
     super.putValue(Plugin.DISABLED_ON_TASK_MENU, true);
   }
-  
+
   /**
-   * Overwritten to disable changings of values of this class.
-   * So use it or don't use it, it has no effect.
+   * Overwritten to disable changes of values of this class. So use it or don't
+   * use it, it has no effect.
    */
   public void putValue(String key, Object newValue) {}
   
@@ -102,10 +102,7 @@ public final class ContextMenuSeparatorAction extends AbstractAction {
   public boolean equals(Object o) {
     if(o instanceof Action) {
       String name = ((Action)o).getValue(Action.NAME).toString();
-      
-      if(name != null) {
-        return name.equals(SEPARATOR_NAME);
-      }
+      return SEPARATOR_NAME.equals(name);
     }
     
     return false;

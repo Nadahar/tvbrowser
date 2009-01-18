@@ -73,6 +73,7 @@ import util.ui.ScrollableMenu;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Channel;
+import devplugin.ContextMenuSeparatorAction;
 import devplugin.Date;
 import devplugin.PluginInfo;
 import devplugin.ProgramFilter;
@@ -585,10 +586,18 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
       
       ActionMenu[] subItems = menu.getSubItems();
       for (ActionMenu subItem : subItems) {
-        result.add(createMenuItem(subItem));
+        final JMenuItem menuItem = createMenuItem(subItem);
+        if (menuItem != null) {
+          result.add(menuItem);
+        } else {
+          ((JMenu) result).addSeparator();
+        }
       }
     }
     else {
+      if (ContextMenuSeparatorAction.getInstance().equals(menu.getAction())) {
+        return null;
+      }
       result = new JMenuItem(menu.getAction());
       if(menu.getAction().getValue(Action.SMALL_ICON) != null) {
         result.setIcon(new FixedSizeIcon(16, 16, (Icon) menu.getAction().getValue(Action.SMALL_ICON)));
