@@ -25,7 +25,7 @@ import mediathekplugin.MediathekPlugin;
 import mediathekplugin.MediathekProgram;
 import devplugin.Channel;
 
-public class ZDFParser extends AbstractParser {
+public final class ZDFParser extends AbstractParser {
 
   private static final String MAIN_URL = "http://www.zdf.de/ZDFmediathek/content/";
   private static String[] SUPPORTED_CHANNELS = { "ard", "zdf", "3sat" };
@@ -49,9 +49,10 @@ public class ZDFParser extends AbstractParser {
     return isSupportedChannel(channel, SUPPORTED_CHANNELS);
   } 
 
-  protected void addProgram(String title, String relativeUrl) {
+  protected boolean addProgram(String title, String relativeUrl) {
     MediathekPlugin.getInstance().addProgram(this, title,
         MAIN_URL + relativeUrl);
+    return true;
   }
 
   public String fixTitle(String title) {

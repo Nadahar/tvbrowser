@@ -72,11 +72,15 @@ public class MediathekProgramNode extends PluginTreeNode {
             channels.add(channel);
           }
         }
-        final SearchFormSettings searchSettings = new SearchFormSettings(
-            mediathekProgram.getTitle());
+        String title = mediathekProgram.getTitle();
+        if (title.endsWith("...")) {
+          title = title.substring(0, title.length() - 3).trim();
+        }
+        final SearchFormSettings searchSettings = new SearchFormSettings(title);
         Channel[] array = new Channel[channels.size()];
         channels.toArray(array);
         searchSettings.setChannels(array);
+        searchSettings.setCaseSensitive(false);
         SearchHelper.search(plugin.getFrame(), searchSettings);
       }
     });

@@ -21,25 +21,78 @@ import java.util.regex.Pattern;
 
 import mediathekplugin.MediathekPlugin;
 import mediathekplugin.MediathekProgram;
+import mediathekplugin.MediathekProgramItem;
 import devplugin.Channel;
 
-public class ARDParser extends AbstractParser {
+public final class ARDParser extends AbstractParser {
 
-  private static final String MAIN_URL = "http://www.ardmediathek.de/ard/servlet/content/";
+  private static final String SITE_URL = "http://www.ardmediathek.de";
+  private static final String CONTENT_URL = SITE_URL + "/ard/servlet/content/";
   private static final String[] SUPPORTED_CHANNELS = { "das erste", "ard",
-      "br", "dwtv", "einsextra", "einsfestival", "einsplus", "mdr", "ndr",
-      "rb", "rbb", "swr", "wdr", "zdf" };
+      "br", "dwtv", "einsextra", "einsfestival", "einsplus", "hr", "mdr",
+      "ndr", "rb", "rbb", "swr", "wdr", "zdf" };
+  
+  /**
+   * pattern for the (popup) link from the original program page
+   */
+  private static final Pattern POPUP_LINK_PATTERN = Pattern.compile(Pattern
+      .quote("<a href=\"")
+      + "([^\"]*)" + Pattern.quote("\" onclick=\"popupPodcast"));
+
+  /**
+   * pattern for the (textual) RSS link from the popup page
+   */
+  private static final Pattern RSS_LINK_PATTERN = Pattern.compile(Pattern
+      .quote("<input name=\"\" type=\"text\" value=\"")
+      + "([^\"]*)" + Pattern.quote("\""));
+
+  /**
+   * pattern to match for episodes on those pages which do not support RSS
+   */
+  private static final Pattern EPISODE_PATTERN = Pattern.compile(Pattern
+      .quote("\"beitragstitel\"><a href=\"")
+      + "([^\"]*)"
+      + Pattern.quote("\" class=\"blau\"><strong>")
+      + "([^<]*)"
+      + Pattern.quote("</strong>"));
+  
+  private enum TitleFix {
+    ARD_RATGEBER("ARD-Ratgeber", "ARD Ratgeber: "), LANDESSCHAU("Landesschau",
+        "Landesschau "), LAENDERSACHE("Ländersache", "LÄNDERSACHE "), SUEDWILD(
+        "Südwild", "Südwild ");
+    private static TitleFix currentFix;
+    private String mSearch;
+    private String mReplacement;
+
+    TitleFix(String search, String replacement) {
+      mSearch = search;
+      mReplacement = replacement;
+    }
+
+    public static String fixTitle(String title) {
+      title = title.trim();
+      if (title.startsWith("- ") && currentFix != null) {
+        return currentFix.mReplacement + title.substring(2).trim();
+      }
+      for (TitleFix fix : values()) {
+        if (title.startsWith(fix.mSearch)) {
+          currentFix = fix;
+        }
+      }
+      return title;
+    }
+  };
 
   public void readContents() {
     // <option value="http://www.ardmediathek.de/ard/servlet/content/967542">3
     // nach 9 (RB)</option>
     Pattern pattern = Pattern.compile(Pattern.quote("option value=\""
-        + MAIN_URL)
+        + SITE_URL)
             + "([^\"]+)"
             + Pattern.quote("\">")
             + "([^<]+)"
             + Pattern.quote("</option>"));
-    readContents(MAIN_URL + "2570", pattern, "ARD");
+    readContents(CONTENT_URL + "2570", pattern, "ARD");
   }
 
   public boolean isSupportedChannel(Channel channel) {
@@ -55,9 +108,14 @@ public class ARDParser extends AbstractParser {
     return title;
   }
 
-  protected void addProgram(String title, String relativeUrl) {
+  protected boolean addProgram(String title, String relativeUrl) {
+    title = TitleFix.fixTitle(title);
+    if (relativeUrl.length() <= 1) {
+      return false;
+    }
     MediathekPlugin.getInstance().addProgram(this, title,
-        MAIN_URL + relativeUrl);
+        SITE_URL + relativeUrl);
+    return true;
   }
 
   public boolean canReadEpisodes() {
@@ -68,24 +126,34 @@ public class ARDParser extends AbstractParser {
     String url = mediathekProgram.getUrl();
     // get page of program
     String content = readUrl(url);
-    Pattern pattern = Pattern.compile(Pattern.quote("<a href=\"")
-        + "([^\"]*)"
-        + Pattern.quote("\" onclick=\"popupPodcast")
-        );
-    Matcher matcher = pattern.matcher(content);
+    Matcher matcher = POPUP_LINK_PATTERN.matcher(content);
     if (matcher.find()) {
       // get rss description page
       url = matcher.group(1);
-      content = readUrl("http://www.ardmediathek.de" + url);
-      pattern = Pattern.compile(Pattern
-          .quote("<input name=\"\" type=\"text\" value=\"")
-          + "([^\"]*)" + Pattern.quote("\""));
-      matcher = pattern.matcher(content);
+      content = readUrl(SITE_URL + url);
+      matcher = RSS_LINK_PATTERN.matcher(content);
       // finally read the RSS itself
       if (matcher.find()) {
         readRSS(mediathekProgram, matcher.group(1));
       }
     }
+    else {
+      parseEpisodesWithoutRSS(mediathekProgram, content);
+    }
+  }
+
+  private void parseEpisodesWithoutRSS(MediathekProgram program, String content) {
+    Matcher matcher = EPISODE_PATTERN.matcher(content);
+    int count = 0;
+    while (matcher.find()) {
+      String url = SITE_URL + matcher.group(1);
+      String title = MediathekPlugin.getInstance()
+          .convertHTML(matcher.group(2));
+      program.addItem(new MediathekProgramItem(title, url));
+      count++;
+    }
+    logInfo("Read " + count + " episodes for " + program.getTitle());
+    program.updatePluginTree(true);
   }
 
 }

@@ -18,7 +18,7 @@ package mediathekplugin;
 
 import java.util.ArrayList;
 
-public class UpdateThread extends Thread {
+public final class UpdateThread extends Thread {
   private static UpdateThread instance = null;
 
   private ArrayList<MediathekProgram> updatePrograms;

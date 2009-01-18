@@ -16,7 +16,7 @@
  */
 package mediathekplugin;
 
-public class MediathekProgramItem {
+public final class MediathekProgramItem {
   private String title;
   private String url;
 

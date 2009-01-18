@@ -239,11 +239,13 @@ public class MediathekPlugin extends Plugin {
     }
     String title = program.getTitle();
     MediathekProgram mediathekProgram = programs.get(title);
-    if (mediathekProgram == null) {
-      if (title.endsWith(")") && title.contains("(")) {
-        title = title.substring(0, title.lastIndexOf("(") - 1);
-        mediathekProgram = programs.get(title);
-      }
+    if (mediathekProgram == null && title.endsWith(")") && title.contains("(")) {
+      title = title.substring(0, title.lastIndexOf("(") - 1);
+      mediathekProgram = programs.get(title);
+    }
+    if (mediathekProgram == null && title.endsWith("...")) {
+      title = title.substring(0, title.length() - 3).trim();
+      mediathekProgram = programs.get(title);
     }
     return mediathekProgram;
   }
@@ -262,7 +264,7 @@ public class MediathekPlugin extends Plugin {
   }
 
   private void showDialog() {
-    final ProgramsDialog dlg = new ProgramsDialog(getParentFrame(), this);
+    final ProgramsDialog dlg = new ProgramsDialog(getParentFrame());
 
     dlg.pack();
     dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -359,9 +361,9 @@ public class MediathekPlugin extends Plugin {
   }
 
   public String convertHTML(String html) {
-    html = HTMLTextHelper.convertHtmlToText(html);
-    html = IOUtilities.replace(html, "&amp;", "&");
-    return html;
+    String result = HTMLTextHelper.convertHtmlToText(html);
+    result = IOUtilities.replace(result, "&amp;", "&");
+    return result;
   }
 
   @Override

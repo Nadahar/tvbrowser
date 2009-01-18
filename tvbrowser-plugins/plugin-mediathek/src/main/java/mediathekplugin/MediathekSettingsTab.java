@@ -31,7 +31,7 @@ import com.jgoodies.forms.layout.RowSpec;
 
 import devplugin.SettingsTab;
 
-public class MediathekSettingsTab implements SettingsTab {
+public final class MediathekSettingsTab implements SettingsTab {
 
   private static final Localizer localizer = Localizer
       .getLocalizerFor(MediathekSettingsTab.class);

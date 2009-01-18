@@ -29,7 +29,7 @@ import devplugin.ContextMenuAction;
 import devplugin.ContextMenuSeparatorAction;
 import devplugin.PluginTreeNode;
 
-public class MediathekProgram implements Comparable<MediathekProgram> {
+public final class MediathekProgram implements Comparable<MediathekProgram> {
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(MediathekProgram.class);
@@ -144,4 +144,5 @@ public class MediathekProgram implements Comparable<MediathekProgram> {
   public boolean canReadEpisodes() {
     return mParser.canReadEpisodes();
   }
+
 }
