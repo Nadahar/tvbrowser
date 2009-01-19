@@ -28,7 +28,9 @@ package tvbrowser.extras.favoritesplugin.dlgs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,6 +43,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
 import tvbrowser.extras.common.DayListCellRenderer;
@@ -56,6 +59,7 @@ import util.exc.TvBrowserException;
 import util.ui.ChannelChooserDlg;
 import util.ui.Localizer;
 import util.ui.PluginChooserDlg;
+import util.ui.ScrollableJPanel;
 import util.ui.TabLayout;
 import util.ui.TimePeriodChooser;
 import util.ui.UiUtilities;
@@ -134,7 +138,8 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mFavoriteConfigurator = mFavorite.createConfigurator();
 
     setTitle(mLocalizer.msg("title", "Edit Favorite"));
-    JPanel rootPn = (JPanel) getContentPane();
+    
+    ScrollableJPanel rootPn = new ScrollableJPanel();
     rootPn.setLayout(new BorderLayout());
     rootPn.setBorder(Borders.DLU4_BORDER);
     
@@ -182,7 +187,18 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     rootPn.add(BorderLayout.SOUTH, buttons.getPanel());
     
     getRootPane().setDefaultButton(okBtn);
+    
+    JScrollPane scrollPane = new JScrollPane(rootPn);
+    scrollPane.setBorder(null);
+
+    setContentPane(scrollPane);
     pack();
+    
+    Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+
+    if (d.height < getHeight()) {
+      setSize(getWidth(), d.height);
+    }
   }
   
   private JPanel createTitleChangePanel() {
