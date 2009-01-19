@@ -245,23 +245,28 @@ public class FavoritesPlugin {
    * @since 2.7.2
    */
   public void waitForFinishingUpdateThreads() {
-    mLog.info("Favorites: Wait for update threads too finish");
-    mThreadPool.shutdown();
-    
-    try {
-      boolean success = mThreadPool.awaitTermination(Math.max(FavoriteTreeModel.getInstance().getFavoriteArr().length, 10), TimeUnit.SECONDS);
+    if (mThreadPool != null) {
+      mLog.info("Favorites: Wait for update threads to finish");
+      mThreadPool.shutdown();
       
-      if(success) {
-        mLog.info("Favorites: Update threads were finished");
+      try {
+        boolean success = mThreadPool.awaitTermination(Math.max(
+            FavoriteTreeModel.getInstance().getFavoriteArr().length, 10),
+            TimeUnit.SECONDS);
+
+        if (success) {
+          mLog.info("Favorites: Update threads were finished");
+        } else {
+          mLog
+              .severe("Favorites: Timeout on waiting for update threads to finish was reached");
+        }
+      } catch (InterruptedException e) {
+        ErrorHandler.handle(
+            "Waiting for favorite update finishing was interrupted", e);
       }
-      else {
-        mLog.severe("Favorites: Timeout on waiting for update threads too finish was reached");
-      }
-    } catch (InterruptedException e) {
-      ErrorHandler.handle("Waiting for favortie update finishing was interrupted",e);
+      
+      mThreadPool = null;
     }
-    
-    mThreadPool = null;
   }
 
   private void handleTvDataUpdateFinished() {
