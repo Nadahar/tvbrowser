@@ -34,12 +34,11 @@ package tvbrowser.extras.reminderplugin;
 
 
 import java.awt.BorderLayout;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.GridLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -53,11 +52,10 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import devplugin.Program;
-
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+import devplugin.Program;
 
 public class ReminderDialog extends JDialog implements WindowClosingIf {
 
@@ -86,13 +84,10 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
 
   private JCheckBox mRememberSettingsCb, mDontShowDialog;
   
-  public ReminderDialog(Frame parent, devplugin.Program program, final java.util.Properties settings) {
-    super(parent,true);
-    createGui(program, settings);
-  }
-  
-  public ReminderDialog(Dialog parent, devplugin.Program program, final java.util.Properties settings) {
-    super(parent,true);
+  public ReminderDialog(Window parent, devplugin.Program program,
+      final java.util.Properties settings) {
+    super(parent);
+    setModal(true);
     createGui(program, settings);
   }
   

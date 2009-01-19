@@ -35,7 +35,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -66,7 +65,8 @@ import devplugin.Plugin;
  * @author René Mach
  * @since 2.5.1
  */
-public class GlobalPluginProgramFormatingSettingsDialog extends JDialog implements WindowClosingIf, ActionListener {
+public final class GlobalPluginProgramFormatingSettingsDialog extends JDialog
+    implements WindowClosingIf, ActionListener {
   private static Localizer mLocalizer = Localizer.getLocalizerFor(GlobalPluginProgramFormatingSettingsDialog.class);
   
   private GlobalPluginProgramFormating mConfig, mDefaultConfig;
@@ -86,23 +86,19 @@ public class GlobalPluginProgramFormatingSettingsDialog extends JDialog implemen
    * @param showEncodingSetting If the settings dialog should contain the encoding setting.
    */
   public static void createInstance(Window parent, GlobalPluginProgramFormating config, GlobalPluginProgramFormating defaultConfig, boolean showTitleSetting, boolean showEncodingSetting) {
-    if(parent instanceof JDialog) {
-      new GlobalPluginProgramFormatingSettingsDialog((JDialog)parent, config, defaultConfig, showTitleSetting, showEncodingSetting);
-    } else {
-      new GlobalPluginProgramFormatingSettingsDialog((JFrame)parent, config, defaultConfig, showTitleSetting, showEncodingSetting);
-    }
+    new GlobalPluginProgramFormatingSettingsDialog(parent, config,
+        defaultConfig, showTitleSetting, showEncodingSetting);
   }
   
-  private GlobalPluginProgramFormatingSettingsDialog(JDialog parent, GlobalPluginProgramFormating config, GlobalPluginProgramFormating defaultConfig, boolean showTitleSetting, boolean showEncodingSetting) {
-    super(parent, true);
+  private GlobalPluginProgramFormatingSettingsDialog(Window parent,
+      GlobalPluginProgramFormating config,
+      GlobalPluginProgramFormating defaultConfig, boolean showTitleSetting,
+      boolean showEncodingSetting) {
+    super(parent);
+    setModal(true);
     createGui(parent, config, defaultConfig, showTitleSetting, showEncodingSetting);
   }
 
-  private GlobalPluginProgramFormatingSettingsDialog(JFrame parent, GlobalPluginProgramFormating config, GlobalPluginProgramFormating defaultConfig, boolean showTitleSetting, boolean showEncodingSetting) {
-    super(parent, true);
-    createGui(parent, config, defaultConfig, showTitleSetting, showEncodingSetting);
-  }
-  
   private void createGui(Window w, GlobalPluginProgramFormating config, GlobalPluginProgramFormating defaultConfig, boolean showTitleSetting, boolean showEncodingSetting) {
     mConfig = config;
     mDefaultConfig = defaultConfig;

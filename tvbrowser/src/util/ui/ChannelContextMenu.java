@@ -6,8 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -180,14 +178,9 @@ public class ChannelContextMenu implements ActionListener {
       if ((mSource instanceof ChannelsSettingsTab)) {
         ((ChannelsSettingsTab) mSource).configChannels();
       } else {
-        ChannelConfigDlg dialog;
 
-        Window w = UiUtilities.getBestDialogParent(mComponent);
-        if (w instanceof JDialog) {
-          dialog = new ChannelConfigDlg((JDialog) w, mChannel);
-        } else {
-          dialog = new ChannelConfigDlg((JFrame) w, mChannel);
-        }
+        Window parent = UiUtilities.getBestDialogParent(mComponent);
+        ChannelConfigDlg dialog = new ChannelConfigDlg(parent, mChannel);
         dialog.centerAndShow();
 
         // If from a ChannelLabel update it

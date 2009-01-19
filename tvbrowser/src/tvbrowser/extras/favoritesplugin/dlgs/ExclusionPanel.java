@@ -23,7 +23,7 @@
  */
 package tvbrowser.extras.favoritesplugin.dlgs;
 
-import java.awt.Component;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -63,15 +63,20 @@ public class ExclusionPanel extends JPanel{
   private JButton mDeleteExclusionBtn;
   
   private boolean mWasChanged;
-  
+
   /**
    * Creates an instance of this class.
    * 
-   * @param exclusions The current exlusions.
-   * @param parent The parent dialog of this panel.
-   * @param favorite The favorite of the exclusions or <code>null</code> if it is for global exclusions.
+   * @param exclusions
+   *          The current exclusions.
+   * @param parent
+   *          The parent dialog of this panel.
+   * @param favorite
+   *          The favorite of the exclusions or <code>null</code> if it is for
+   *          global exclusions.
    */
-  public ExclusionPanel(Exclusion[] exclusions, final Component parent, final Favorite favorite) {
+  public ExclusionPanel(Exclusion[] exclusions, final Window parent,
+      final Favorite favorite) {
     mWasChanged = false;
     
     setLayout(new FormLayout("5dlu, fill:pref:grow, 3dlu, pref",

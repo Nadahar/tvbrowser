@@ -27,7 +27,6 @@ package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Window;
@@ -44,7 +43,6 @@ import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
@@ -71,12 +69,12 @@ import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
-import util.browserlauncher.Launch;
-import util.exc.ErrorHandler;
-import util.ui.Localizer;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.waiting.dlgs.SettingsWaitingDialog;
+import util.browserlauncher.Launch;
+import util.exc.ErrorHandler;
 import util.ui.ChannelLabel;
+import util.ui.Localizer;
 import util.ui.SingleAndDoubleClickTreeUI;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -86,11 +84,11 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import devplugin.CancelableSettingsTab;
 import devplugin.PluginAccess;
 import devplugin.PluginInfo;
 import devplugin.SettingsItem;
 import devplugin.SettingsTab;
-import devplugin.CancelableSettingsTab;
 
 /**
  * 
@@ -120,7 +118,7 @@ public class SettingsDialog implements WindowClosingIf {
   /**
    * Creates a new instance of SettingsDialog.
    */
-  public SettingsDialog(Component parent, String selectedTabId) {
+  public SettingsDialog(Window parent, String selectedTabId) {
     mInstance = this;
     mDialog = UiUtilities.createDialog(parent, true);
     mDialog.setTitle(Localizer.getLocalization(Localizer.I18N_SETTINGS));
@@ -485,15 +483,8 @@ public class SettingsDialog implements WindowClosingIf {
     final Thread t = ChannelList.getChannelLoadThread();
 
     if (t != null && t.isAlive()) {
-      final SettingsWaitingDialog dialog;
-
-      Window comp = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-
-      if (comp instanceof Dialog) {
-        dialog = new SettingsWaitingDialog((JDialog) comp);
-      } else {
-        dialog = new SettingsWaitingDialog((JFrame) comp);
-      }
+      Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+      final SettingsWaitingDialog dialog = new SettingsWaitingDialog(parent);
 
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {

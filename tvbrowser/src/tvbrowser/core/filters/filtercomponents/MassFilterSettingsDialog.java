@@ -24,12 +24,12 @@ package tvbrowser.core.filters.filtercomponents;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import util.ui.Localizer;
@@ -56,33 +56,18 @@ public class MassFilterSettingsDialog extends JDialog {
   /**
    * Create the Dialog
    * 
-   * @param frame
+   * @param parent
    *          Parent-Frame
    * @param searchFormSettings
    *          Settings to use
    */
-  public MassFilterSettingsDialog(JFrame frame,
+  public MassFilterSettingsDialog(Window parent,
       SearchFormSettings searchFormSettings) {
-    super(frame, true);
+    super(parent);
+    setModal(true);
     mSearchFormSettings = searchFormSettings;
     createGui();
-    setLocationRelativeTo(frame);
-  }
-
-  /**
-   * Create the Dialog
-   * 
-   * @param dialog
-   *          parent dialog
-   * @param searchFormSettings
-   *          Settings to use
-   */
-  public MassFilterSettingsDialog(JDialog dialog,
-      SearchFormSettings searchFormSettings) {
-    super(dialog, true);
-    mSearchFormSettings = searchFormSettings;
-    createGui();
-    setLocationRelativeTo(dialog);
+    setLocationRelativeTo(parent);
   }
 
   /**

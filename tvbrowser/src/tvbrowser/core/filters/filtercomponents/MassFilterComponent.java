@@ -33,8 +33,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -174,15 +172,9 @@ public class MassFilterComponent extends AbstractFilterComponent {
    * Show the Config-Dialog and update the SeachFormSettings
    */
   private void showConfigDialog() {
-    Window w = UiUtilities.getBestDialogParent(mSettingsPanel);
-
-    MassFilterSettingsDialog dialog;
-
-    if (w instanceof JFrame) {
-      dialog = new MassFilterSettingsDialog((JFrame) w, mNewSearchFormSettings);
-    } else {
-      dialog = new MassFilterSettingsDialog((JDialog) w, mNewSearchFormSettings);
-    }
+    Window parent = UiUtilities.getBestDialogParent(mSettingsPanel);
+    MassFilterSettingsDialog dialog = new MassFilterSettingsDialog(parent,
+        mNewSearchFormSettings);
     dialog.setVisible(true);
 
     mNewSearchFormSettings = dialog.getSearchFormSettings();

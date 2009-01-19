@@ -392,13 +392,7 @@ public class SearchHelper {
       changeBt.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
           dlg.dispose();
-          SearchDialog searchDialog;
-          if (parentWindow instanceof Frame) {
-            searchDialog = new SearchDialog((Frame) parentWindow);
-          }
-          else {
-            searchDialog = new SearchDialog((Dialog) parentWindow);
-          }
+          SearchDialog searchDialog = new SearchDialog(parentWindow);
           searchDialog.setSearchSettings(searchSettings);
           UiUtilities.centerAndShow(searchDialog);
         }

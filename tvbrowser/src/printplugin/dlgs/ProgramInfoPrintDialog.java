@@ -39,7 +39,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JSeparator;
@@ -89,19 +88,9 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
    * @param parent The parent frame.
    * @param program Program to Print
    */
-  public ProgramInfoPrintDialog(JFrame parent, Program program) {
-    mDialog = new JDialog(parent ,true);  
-    createGUI(parent, program);
-  }
-
-  /**
-   * Creates a instance of this class
-   * 
-   * @param parent The parent dialog.
-   * @param program Program to Print
-   */
-  public ProgramInfoPrintDialog(JDialog parent, Program program) {
-    mDialog = new JDialog(parent ,true);
+  public ProgramInfoPrintDialog(Window parent, Program program) {
+    mDialog = new JDialog(parent);
+    mDialog.setModal(true);
     createGUI(parent, program);
   }
 

@@ -27,6 +27,7 @@ package tvbrowser.ui.mainframe;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -34,22 +35,21 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+
+import util.browserlauncher.Launch;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
-import util.browserlauncher.Launch;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
 
 /**
  * A class with a dialog that informs the user
@@ -66,21 +66,12 @@ public class PluginInformationDialog extends JDialog implements WindowClosingIf 
    * <p>
    * @param parent The parent dialog for this dialog.
    */
-  public PluginInformationDialog(JDialog parent) {
-    super(parent,true);
+  public PluginInformationDialog(Window parent) {
+    super(parent);
+    setModal(true);
     init();
   }
 
-  /**
-   * Creates an instance of this class.
-   * <p>
-   * @param parent The parent frame for this dialog.
-   */
-  public PluginInformationDialog(JFrame parent) {
-    super(parent,true);
-    init();
-  }
-  
   private void init() {
     setTitle(mLocalizer.msg("title","TV-Browser is able to do much more"));
     

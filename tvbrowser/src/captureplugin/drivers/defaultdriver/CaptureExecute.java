@@ -30,25 +30,25 @@
  */
 package captureplugin.drivers.defaultdriver;
 
-import captureplugin.drivers.utils.ProgramTime;
-import captureplugin.utils.CaptureUtilities;
-import org.apache.commons.codec.binary.Base64;
-import util.exc.ErrorHandler;
-import util.io.ExecutionHandler;
-import util.paramhandler.ParamParser;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import java.awt.Component;
+import java.awt.Window;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+
+import javax.swing.JOptionPane;
+
+import org.apache.commons.codec.binary.Base64;
+
+import util.exc.ErrorHandler;
+import util.io.ExecutionHandler;
+import util.paramhandler.ParamParser;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import captureplugin.drivers.utils.ProgramTime;
+import captureplugin.utils.CaptureUtilities;
 
 /**
  * This Class contains excutes the Application/URL
@@ -61,8 +61,8 @@ public class CaptureExecute {
     /** Data for Export */
     private DeviceConfig mData = new DeviceConfig();
 
-    /** ParentFrame */
-    private Component mParent;
+    /** parent window */
+  private Window mParent;
     
     /** Success ? */
     private boolean mError = true;
@@ -70,37 +70,38 @@ public class CaptureExecute {
     
     private static CaptureExecute mInstance = null;
 
-    /**
-     * Creates the Execute
-     * 
-     * @param frame Frame
-     * @param data Data
-     */
-    private CaptureExecute(Component frame, DeviceConfig data) {
-        mParent = frame;
+  /**
+   * Creates the Execute
+   * 
+   * @param window
+   *          Frame
+   * @param data
+   *          Data
+   */
+    private CaptureExecute(Window window, DeviceConfig data) {
+    mParent = window;
         mData = data;
         mInstance = this;
     }
     
     private DefaultKonfigurator createDialog() {
-      if (mParent instanceof JDialog)
-        return new DefaultKonfigurator((JDialog)mParent, mData);
-      else
-        return new DefaultKonfigurator((JFrame)mParent, mData);
+      return new DefaultKonfigurator(mParent, mData);
     }
-    
-    /**
-     * Gets the capture execute for the given values.
-     * 
-     * @param frame The parent frame for the capture execute.
-     * @param data The configuration for the capture execute.
-     * @return The capture execute for the given values.
-     */
-    public static CaptureExecute getInstance(Component frame, DeviceConfig data){
+
+  /**
+   * Gets the capture execute for the given values.
+   * 
+   * @param window
+   *          The parent frame for the capture execute.
+   * @param data
+   *          The configuration for the capture execute.
+   * @return The capture execute for the given values.
+   */
+    public static CaptureExecute getInstance(Window window, DeviceConfig data) {
       if(mInstance == null)
-        new CaptureExecute(frame, data);
+        new CaptureExecute(window, data);
       else {
-        mInstance.mParent = frame;
+        mInstance.mParent = window;
         mInstance.mData = data;
       }
       
@@ -184,27 +185,13 @@ public class CaptureExecute {
             }
             
             if (mError && mExitValue != 249) {
-                ResultDialog dialog;
-                
-                if (mParent instanceof JDialog) {
-                    dialog = new ResultDialog((JDialog) mParent, params, output, true);
-                } else {
-                    dialog = new ResultDialog((JFrame) mParent, params, output, true);
-                }
+                ResultDialog dialog = new ResultDialog(mParent, params, output, true);
                 UiUtilities.centerAndShow(dialog);
                 return false;
             } 
             
             if (!mData.getDialogOnlyOnError() || (mData.getDialogOnlyOnError() && mError && mExitValue != 249)) {
-                ResultDialog dialog;
-
-                if (mParent instanceof JDialog) {
-                    dialog = new ResultDialog((JDialog) mParent, params, output, false);
-                } else {
-                    dialog = new ResultDialog((JFrame) mParent, params, output, false);
-                }
-
-                
+                ResultDialog dialog = new ResultDialog(mParent, params, output, false);
                 UiUtilities.centerAndShow(dialog);
             }
 

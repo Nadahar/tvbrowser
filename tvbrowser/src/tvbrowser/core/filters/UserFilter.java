@@ -38,10 +38,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import devplugin.ProgramFilter;
-
-
 import util.exc.ErrorHandler;
+import devplugin.ProgramFilter;
 
 
 class Token {
@@ -399,7 +397,8 @@ public class UserFilter implements devplugin.ProgramFilter {
   
   public boolean equals(Object o) {
     if(o instanceof ProgramFilter) {
-      return getClass().getName().equals(o.getClass().getName()) && getName().equals(((ProgramFilter)o).getName());
+      return getClass().equals(o.getClass())
+          && getName().equals(((ProgramFilter) o).getName());
     }
     
     return false;

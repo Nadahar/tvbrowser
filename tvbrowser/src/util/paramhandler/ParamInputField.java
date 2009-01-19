@@ -31,8 +31,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -141,13 +139,8 @@ public class ParamInputField extends JPanel {
 
       public void actionPerformed(ActionEvent arg0) {
         Window bestparent = UiUtilities.getBestDialogParent(ParamInputField.this);
-        
-        ParamCheckDialog dialog;
-        if (bestparent instanceof JDialog) {
-          dialog = new ParamCheckDialog((JDialog)bestparent, mParamLibrary, mParamText.getText());
-        } else {
-          dialog = new ParamCheckDialog((JFrame)bestparent, mParamLibrary, mParamText.getText());
-        }
+        ParamCheckDialog dialog = new ParamCheckDialog(bestparent,
+            mParamLibrary, mParamText.getText());
         dialog.setVisible(true);
       }
       
@@ -161,13 +154,7 @@ public class ParamInputField extends JPanel {
 
       public void actionPerformed(ActionEvent arg0) {
         Window bestparent = UiUtilities.getBestDialogParent(ParamInputField.this);
-        
-        ParamHelpDialog dialog;
-        if (bestparent instanceof JDialog) {
-          dialog = new ParamHelpDialog((JDialog)bestparent, mParamLibrary);
-        } else {
-          dialog = new ParamHelpDialog((JFrame)bestparent, mParamLibrary);
-        }
+        ParamHelpDialog dialog = new ParamHelpDialog(bestparent, mParamLibrary);
         dialog.setVisible(true);
       }
       

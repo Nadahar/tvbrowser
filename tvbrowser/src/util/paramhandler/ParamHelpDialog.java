@@ -24,6 +24,7 @@
  */
 package util.paramhandler;
 
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -49,53 +50,85 @@ import com.jgoodies.forms.layout.FormLayout;
 public class ParamHelpDialog extends JDialog implements WindowClosingIf {
 	/** The ParamLibrary to use */
   private ParamLibrary mParamLib;
-	  
+
   /**
    * Creates the Help-Dialog
-   *  
-   * @param dialog Parent
+   * 
+   * @param parent
+   *          Parent window
+   * @since 3.0
+   */
+  public ParamHelpDialog(Window parent) {
+    super(parent);
+    setModal(true);
+    mParamLib = new ParamLibrary();
+    createGui();
+    setLocationRelativeTo(parent);
+  }
+
+  /**
+   * Creates the Help-Dialog
+   * 
+   * @param dialog
+   *          Parent
+   * @deprecated since 3.0
    */
 	public ParamHelpDialog(JDialog dialog) {
-		super(dialog, true);
-		mParamLib = new ParamLibrary();
-		createGui();
-		setLocationRelativeTo(dialog);
+	  this((Window) dialog);
 	}
-	
+
   /**
    * Creates the Help-Dialog
-   * @param dialog Parent
-   * @param lib Library to use  
+   * 
+   * @param parent
+   *          Parent window
+   * @param lib
+   *          Library to use
+   * @since 3.0
+   */
+  public ParamHelpDialog(Window parent, ParamLibrary lib) {
+    super(parent);
+    setModal(true);
+    mParamLib = lib;
+    createGui();
+    setLocationRelativeTo(parent);
+  }
+
+  /**
+   * Creates the Help-Dialog
+   * 
+   * @param dialog
+   *          Parent
+   * @param lib
+   *          Library to use
+   * @deprecated since 3.0
    */
 	public ParamHelpDialog(JDialog dialog, ParamLibrary lib) {
-		super(dialog, true);
-		mParamLib = lib;
-		createGui();
-		setLocationRelativeTo(dialog);
+	  this((Window) dialog, lib);
 	}
-	
+
   /**
    * Creates the Help-Dialog
-   *  
-   * @param frame Parent
+   * 
+   * @param frame
+   *          Parent
+   * @deprecated since 3.0
    */
 	public ParamHelpDialog(JFrame frame) {
-		super(frame, true);
-		mParamLib = new ParamLibrary();
-		createGui();
-		setLocationRelativeTo(frame);
+	  this((Window) frame);
 	}
-	
+
   /**
    * Creates the Help-Dialog
-   * @param frame Parent
-   * @param lib Library to use  
+   * 
+   * @param frame
+   *          Parent
+   * @param lib
+   *          Library to use
+   * @deprecated since 3.0
    */
 	public ParamHelpDialog(JFrame frame, ParamLibrary lib) {
-		super(frame, true);
-		mParamLib = lib;
-		createGui();
-		setLocationRelativeTo(frame);
+	  this((Window) frame, lib);
 	}
 
   /**

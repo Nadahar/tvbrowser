@@ -17,9 +17,8 @@
  */
 package tvraterplugin;
 
-import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
@@ -41,17 +40,15 @@ public class ListAction extends AbstractAction {
     /** Title of Program to show */
     private String _title;
     /** Parent */
-    private Frame _fparent;
-    /** Parent */
-    private Dialog _dparent;
+    private Window mParent;
     
     /**
      * Creates the Action 
      * @param parent Parent
      * @param title Title of Program to display in List
      */
-    public ListAction(Frame parent, String title) {
-        _fparent = parent;
+    public ListAction(Window parent, String title) {
+        mParent = parent;
         _title = title;
         createGui(true, true);
     }
@@ -63,37 +60,12 @@ public class ListAction extends AbstractAction {
      * @paran icon show Icon?
      * @paran name show Name ?
      */
-    public ListAction(Frame parent, String title, boolean icon, boolean name) {
-        _fparent = parent;
+    public ListAction(Window parent, String title, boolean icon, boolean name) {
+        mParent = parent;
         _title = title;
         createGui(icon, name);
     }
 
-    /**
-     * Creates the Action 
-     * @param parent Parent
-     * @param title Title of Program to display in List
-     */
-    public ListAction(Dialog parent, String title) {
-        _title = title;
-        _dparent = parent;
-        createGui(true, true);
-    }
-
-    /**
-     * Creates the Action 
-     * @param parent Parent
-     * @param title Title of Program to display in List
-     * @paran icon show Icon?
-     * @paran name show Name ?
-     */
-    public ListAction(Dialog parent, String title, boolean icon, boolean name) {
-        _title = title;
-        _dparent = parent;
-        createGui(icon, name);
-    }
-    
-    
     /**
      * Creates the GUI
      * @param icon show Icon?
@@ -113,12 +85,7 @@ public class ListAction extends AbstractAction {
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-        ProgramListDialog dialog;
-        
-        if (_dparent != null)
-            dialog = new ProgramListDialog(_dparent, _title);
-        else 
-            dialog = new ProgramListDialog(_fparent, _title);
+        ProgramListDialog dialog = new ProgramListDialog(mParent, _title);
         
         Dimension dimensionDialog = dialog.getSize();
         if (dimensionDialog.width < 300) {

@@ -1,7 +1,7 @@
 package tvbrowser.core.filters;
 
-import devplugin.ProgramFilter;
 import devplugin.Program;
+import devplugin.ProgramFilter;
 
 /**
  * This Filter filters Movies that have audio description for Handicaped Persons
@@ -47,7 +47,8 @@ public class AudioDescriptionFilter implements ProgramFilter {
   }
 
   public boolean equals(Object o) {
-    return o instanceof ProgramFilter && getClass().getName().equals(o.getClass().getName()) && getName().equals(((ProgramFilter) o).getName());
+    return o instanceof ProgramFilter && getClass().equals(o.getClass())
+        && getName().equals(((ProgramFilter) o).getName());
   }
 
 }

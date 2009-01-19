@@ -31,8 +31,6 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.swing.Icon;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import tvbrowser.core.Settings;
@@ -102,32 +100,36 @@ public class DirectoriesSettingsTab implements SettingsTab {
     
     if(!currentDir.equals(newDir)) {      
       
-        Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-        
-        if(w instanceof JFrame) {
-          mWaitingDlg = new TvDataCopyWaitingDlg((JFrame)w, true);
-        } else {
-          mWaitingDlg = new TvDataCopyWaitingDlg((JDialog)w, true);
-        }
-        
-        mShowWaiting = true;
-        
-        new Thread("Move TV data directory") {
-          public void run() {
-            try {
-              IOUtilities.copy(newDir.getName().toLowerCase().equals("tvdata") ? currentDir.listFiles() : new File[] {currentDir}, newDir, true);
-              Settings.propTVDataDirectory.setString((newDir.getName().equalsIgnoreCase("tvdata") ? newDir.getParentFile() : newDir).toString().replaceAll("\\\\","/") + "/" + currentDir.getName());
-            } catch (IOException e) {              
-              if(!currentDir.exists() && newDir.exists()) {
-                Settings.propTVDataDirectory.setString((newDir.getName().equalsIgnoreCase("tvdata") ? newDir.getParentFile() : newDir).toString().replaceAll("\\\\","/") + "/" + currentDir.getName());
-              }
+      Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+      mWaitingDlg = new TvDataCopyWaitingDlg(parent, true);
+
+      mShowWaiting = true;
+
+      new Thread("Move TV data directory") {
+        public void run() {
+          try {
+            IOUtilities.copy(
+                newDir.getName().toLowerCase().equals("tvdata") ? currentDir
+                    .listFiles() : new File[] { currentDir }, newDir, true);
+            Settings.propTVDataDirectory.setString((newDir.getName()
+                .equalsIgnoreCase("tvdata") ? newDir.getParentFile() : newDir)
+                .toString().replaceAll("\\\\", "/")
+                + "/" + currentDir.getName());
+          } catch (IOException e) {
+            if (!currentDir.exists() && newDir.exists()) {
+              Settings.propTVDataDirectory
+                  .setString((newDir.getName().equalsIgnoreCase("tvdata") ? newDir
+                      .getParentFile()
+                      : newDir).toString().replaceAll("\\\\", "/")
+                      + "/" + currentDir.getName());
             }
-            
-            mShowWaiting = false;
-            mWaitingDlg.setVisible(false);
           }
-        }.start();
-        mWaitingDlg.setVisible(mShowWaiting);
+
+          mShowWaiting = false;
+          mWaitingDlg.setVisible(false);
+        }
+      }.start();
+      mWaitingDlg.setVisible(mShowWaiting);
     }
   }
 

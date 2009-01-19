@@ -27,13 +27,13 @@
 package tvbrowser.ui.settings.channel;
 
 import java.awt.Dimension;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -70,19 +70,9 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener, Wi
    * @param parent Parent
    * @param channel Channel to show
    */
-  public MultiChannelConfigDlg(JDialog parent, Channel[] channel) {
-    super(parent, mLocalizer.msg("configChannel", "Configure Channel"), true);
-    mChannel = channel;
-    createDialog();
-  }
-
-  /**
-   * Create the Dialog
-   * @param parent Parent
-   * @param channel Channel to show
-   */
-  public MultiChannelConfigDlg(JFrame parent, Channel[] channel) {
-    super(parent,  mLocalizer.msg("configChannel", "Configure Channel"), true);
+  public MultiChannelConfigDlg(Window parent, Channel[] channel) {
+    super(parent, mLocalizer.msg("configChannel", "Configure Channel"));
+    setModal(true);
     mChannel = channel;
     createDialog();
   }

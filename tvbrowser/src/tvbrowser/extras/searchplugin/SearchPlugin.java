@@ -25,8 +25,6 @@
  */
 package tvbrowser.extras.searchplugin;
 
-import java.awt.Dialog;
-import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -224,16 +222,11 @@ public class SearchPlugin {
         "system-search", 16));
     action.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        RepetitionDialog dlg;
 
-        Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-
+        Window parent = UiUtilities
+            .getLastModalChildOf(MainFrame.getInstance());
         Channel channel = program.getChannel();
-        if (w instanceof Dialog) {
-          dlg = new RepetitionDialog((Dialog) w, channel);
-        } else {
-          dlg = new RepetitionDialog((Frame) w, channel);
-        }
+        RepetitionDialog dlg = new RepetitionDialog(parent, channel);
 
         dlg.setPatternText(program.getTitle());
         UiUtilities.centerAndShow(dlg);
@@ -300,15 +293,8 @@ public class SearchPlugin {
   }
 
   protected void openSearchDialog(String text) {
-    SearchDialog dlg;
-
-    Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-
-    if (w instanceof Dialog) {
-      dlg = new SearchDialog((Dialog) w);
-    } else {
-      dlg = new SearchDialog((Frame) w);
-    }
+    Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+    SearchDialog dlg = new SearchDialog(parent);
     dlg.setSearchText(text);
     UiUtilities.centerAndShow(dlg);
   }

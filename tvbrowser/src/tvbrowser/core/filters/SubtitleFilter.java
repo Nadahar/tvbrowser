@@ -75,6 +75,7 @@ public class SubtitleFilter implements ProgramFilter {
   }
 
   public boolean equals(Object o) {
-    return o instanceof ProgramFilter && getClass().getName().equals(o.getClass().getName()) && getName().equals(((ProgramFilter) o).getName());
+    return o instanceof ProgramFilter && getClass().equals(o.getClass())
+        && getName().equals(((ProgramFilter) o).getName());
   }
 }

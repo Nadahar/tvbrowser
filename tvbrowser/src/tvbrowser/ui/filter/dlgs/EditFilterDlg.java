@@ -256,8 +256,9 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
       return;
     }
     Object item = mRuleTableBox.getSelectedRows();
-    mEditBtn.setEnabled(item != null);
-    mRemoveBtn.setEnabled(item != null);
+    final boolean enabled = item != null;
+    mEditBtn.setEnabled(enabled);
+    mRemoveBtn.setEnabled(enabled);
 
     boolean validRule = true;
     try {

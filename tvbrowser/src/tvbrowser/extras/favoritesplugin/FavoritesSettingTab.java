@@ -34,14 +34,8 @@ import java.util.ArrayList;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.dlgs.ExclusionPanel;
@@ -51,6 +45,11 @@ import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.DefaultMarkingPrioritySelectionPanel;
 import util.ui.PluginChooserDlg;
 import util.ui.UiUtilities;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
@@ -109,15 +108,13 @@ public class FavoritesSettingTab implements SettingsTab {
     
     choose.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+        Window parent = UiUtilities
+            .getLastModalChildOf(MainFrame.getInstance());
         PluginChooserDlg chooser = null;
-        if(w instanceof JDialog) {
-          chooser = new PluginChooserDlg((JDialog)w,mClientPluginTargets, null, ReminderPluginProxy.getInstance());
-        } else {
-          chooser = new PluginChooserDlg((JFrame)w,mClientPluginTargets, null, ReminderPluginProxy.getInstance());
-        }
+        chooser = new PluginChooserDlg(parent, mClientPluginTargets, null,
+            ReminderPluginProxy.getInstance());
         
-        chooser.setLocationRelativeTo(w);
+        chooser.setLocationRelativeTo(parent);
         chooser.setVisible(true);
         
         if(chooser.getReceiveTargets() != null) {

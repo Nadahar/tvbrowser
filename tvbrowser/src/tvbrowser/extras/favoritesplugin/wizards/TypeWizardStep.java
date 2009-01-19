@@ -26,9 +26,7 @@
 
 package tvbrowser.extras.favoritesplugin.wizards;
 
-import java.awt.Component;
-import java.awt.Dialog;
-import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -183,13 +181,9 @@ public class TypeWizardStep extends AbstractWizardStep {
           title = "";
         }
         AdvancedFavorite favorite = new AdvancedFavorite(title);
-        Component parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-        EditFavoriteDialog dlg;
-        if (parent instanceof Dialog) {
-          dlg = new EditFavoriteDialog((Dialog) parent, favorite);
-        } else {
-          dlg = new EditFavoriteDialog((Frame) parent, favorite);
-        }
+        Window parent = UiUtilities
+            .getLastModalChildOf(MainFrame.getInstance());
+        EditFavoriteDialog dlg = new EditFavoriteDialog(parent, favorite);
         UiUtilities.centerAndShow(dlg);
         if (dlg.getOkWasPressed()) {
           FavoriteTreeModel.getInstance().addFavorite(favorite, mParentNode);

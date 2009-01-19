@@ -24,6 +24,7 @@
  */
 package util.paramhandler;
 
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -58,60 +59,99 @@ public class ParamCheckDialog extends JDialog implements WindowClosingIf {
 	private ParamLibrary mParamLib;
   /** The String to check */
 	private String mCheckString;
-	
+
   /**
    * Create the Dialog with a default ParamLibrary
-   * @param dialog Parent
-   * @param check Check this String
+   * 
+   * @param parent
+   *          Parent window
+   * @param check
+   *          Check this String
+   * @since 3.0
+   */
+  public ParamCheckDialog(Window parent, String check) {
+    super(parent);
+    setModal(true);
+    mCheckString = check;
+    mParamLib = new ParamLibrary();
+    createGui();
+    setLocationRelativeTo(parent);
+  }
+
+  /**
+   * Create the Dialog with a default ParamLibrary
+   * 
+   * @param dialog
+   *          Parent
+   * @param check
+   *          Check this String
+   * @deprecated since 3.0
    */
 	public ParamCheckDialog(JDialog dialog, String check) {
-		super(dialog, true);
-		mCheckString = check;
-		mParamLib = new ParamLibrary();
-		createGui();
-		setLocationRelativeTo(dialog);
+	  this((Window) dialog, check);
 	}
-	
+
   /**
    * Create the Dialog with a specific ParamLibrary
-   * @param dialog Parent
-   * @param lib ParamLibrary to use 
-   * @param check Check this String
+   * 
+   * @param parent
+   *          Parent window
+   * @param lib
+   *          ParamLibrary to use
+   * @param check
+   *          Check this String
+   * @since 3.0
+   */
+  public ParamCheckDialog(Window parent, ParamLibrary lib, String check) {
+    super(parent);
+    setModal(true);
+    mParamLib = lib;
+    mCheckString = check;
+    createGui();
+    setLocationRelativeTo(parent);
+  }
+
+  /**
+   * Create the Dialog with a specific ParamLibrary
+   * 
+   * @param dialog
+   *          Parent
+   * @param lib
+   *          ParamLibrary to use
+   * @param check
+   *          Check this String
+   * @deprecated since 3.0
    */
   public ParamCheckDialog(JDialog dialog, ParamLibrary lib, String check) {
-		super(dialog, true);
-		mParamLib = lib;
-		mCheckString = check;
-		createGui();
-		setLocationRelativeTo(dialog);
+    this((Window) dialog, lib, check);
 	}
-	
+
   /**
    * Create the Dialog with a default ParamLibrary
-   * @param frame Parent
-   * @param check Check this String
+   * 
+   * @param frame
+   *          Parent
+   * @param check
+   *          Check this String
+   * @deprecated since 3.0
    */
 	public ParamCheckDialog(JFrame frame, String check) {
-		super(frame, true);
-		mParamLib = new ParamLibrary();
-		mCheckString = check;
-		createGui();
-		setLocationRelativeTo(frame);
+	  this((Window) frame, check);
 	}
-	
+
   /**
    * Create the Dialog with a specific ParamLibrary
-   * @param frame Parent
-   * @param lib ParamLibrary to use 
-   * @param check Check this String
+   * 
+   * @param frame
+   *          Parent
+   * @param lib
+   *          ParamLibrary to use
+   * @param check
+   *          Check this String
+   * @deprecated since 3.0
    */
 	public ParamCheckDialog(JFrame frame, ParamLibrary lib, String check) {
-		super(frame, true);
-		setLocationRelativeTo(frame);
-		mParamLib = lib;
-    mCheckString = check;
-		createGui();
-		setLocationRelativeTo(frame);
+	  this((Window) frame, lib, check);
 	}
 	
   /**

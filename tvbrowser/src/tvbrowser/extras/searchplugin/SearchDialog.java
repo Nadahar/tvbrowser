@@ -28,8 +28,7 @@ package tvbrowser.extras.searchplugin;
 
 
 import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -79,21 +78,12 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
    *
    * @param parent The dialog's parent.
    */
-  public SearchDialog(Frame parent) {
-    super(parent, true);
+  public SearchDialog(Window parent) {
+    super(parent);
+    setModal(true);
     init();
   }
 
-  /**
-   * Creates a new instance of SearchDialog.
-   *
-   * @param parent The dialog's parent.
-   */
-  public SearchDialog(Dialog parent) {
-    super(parent, true);
-    init();
-  }
-  
   private void init() {
     UiUtilities.registerForClosing(this);
 

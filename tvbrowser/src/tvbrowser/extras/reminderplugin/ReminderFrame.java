@@ -38,7 +38,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
@@ -163,12 +162,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       }
     } 
 
-    if (parent instanceof JDialog) {
-      mDialog = new JDialog((JDialog) parent, title);
-    } else {
-      mDialog = new JDialog((JFrame) parent, title);
-    }
-    
+    mDialog = new JDialog(parent, title);
     UiUtilities.registerForClosing(this);
     
     mReminderList = list;

@@ -24,23 +24,12 @@
  */
 package captureplugin.drivers.simpledevice;
 
-import captureplugin.utils.ConfigTableModel;
-import captureplugin.utils.ExternalChannelTableCellEditor;
-import captureplugin.utils.ExternalChannelTableCellRenderer;
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.Sizes;
-import util.ui.ChannelTableCellRenderer;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -49,8 +38,21 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellEditor;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
+import util.ui.ChannelTableCellRenderer;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
+import captureplugin.utils.ConfigTableModel;
+import captureplugin.utils.ExternalChannelTableCellEditor;
+import captureplugin.utils.ExternalChannelTableCellRenderer;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
 
 /**
  * Config Dialog
@@ -74,15 +76,8 @@ public class SimpleConfigDialog extends JDialog implements WindowClosingIf {
 
   private JTextField mName;
 
-  /**
-   * Create Dialog
-   * @param frame Parent
-   * @param dev Device
-   * @param connection Connection
-   * @param config Configuration
-   */
-  public SimpleConfigDialog(JFrame frame, SimpleDevice dev, SimpleConnectionIf connection, SimpleConfig config) {
-    super(frame, true);
+  private void initialize(SimpleDevice dev, SimpleConnectionIf connection,
+      SimpleConfig config) {
     mConnection = connection;
     mConfig = (SimpleConfig) config.clone();
     mDevice = dev;
@@ -91,17 +86,21 @@ public class SimpleConfigDialog extends JDialog implements WindowClosingIf {
 
   /**
    * Create Dialog
-   * @param dialog Parent
-   * @param dev Device
-   * @param connection Connection
-   * @param config Configuration
+   * 
+   * @param parent
+   *          Parent
+   * @param dev
+   *          Device
+   * @param connection
+   *          Connection
+   * @param config
+   *          Configuration
    */
-  public SimpleConfigDialog(JDialog dialog, SimpleDevice dev, SimpleConnectionIf connection, SimpleConfig config) {
-    super(dialog, true);
-    mConnection = connection;
-    mConfig = (SimpleConfig) config.clone();
-    mDevice = dev;
-    createGui();
+  public SimpleConfigDialog(Window parent, SimpleDevice dev,
+      SimpleConnectionIf connection, SimpleConfig config) {
+    super(parent);
+    setModal(true);
+    initialize(dev, connection, config);
   }
 
   /**

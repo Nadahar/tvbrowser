@@ -64,14 +64,14 @@ public class AppleScriptRunner {
    * @throws IOException
    */
   public String executeScript(String script) throws IOException {
-    File file = File.createTempFile("osascript", "temp");
-    file.deleteOnExit();
+    File scriptFile = File.createTempFile("osascript", "temp");
+    scriptFile.deleteOnExit();
     
-    OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+    OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(scriptFile), "UTF-8");
     writer.write(script);
     writer.close();
 
-    ExecutionHandler executionHandler = new ExecutionHandler(file.getAbsolutePath(), "osascript");
+    ExecutionHandler executionHandler = new ExecutionHandler(scriptFile.getAbsolutePath(), "osascript");
     executionHandler.execute(true, "UTF-8");
 
     int time = 0;
@@ -129,7 +129,11 @@ public class AppleScriptRunner {
       return output;
     }
 
-    file.delete();
+    try {
+      scriptFile.delete();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
     return null;
   }

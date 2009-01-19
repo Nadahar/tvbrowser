@@ -32,9 +32,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JDialog;
 import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -177,15 +175,12 @@ public class PictureSettingsTab extends AbstractSettingsTab {
         choose = new JButton(mLocalizer.msg("selectPlugins", "Choose Plugins"));
         choose.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-            MarkerChooserDlg chooser;
-            if (w instanceof JDialog) {
-              chooser = new MarkerChooserDlg((JDialog) w, mClientPlugins, null);
-            } else {
-              chooser = new MarkerChooserDlg((JFrame) w, mClientPlugins, null);
-            }
+            Window parent = UiUtilities.getLastModalChildOf(MainFrame
+                .getInstance());
+            MarkerChooserDlg chooser = new MarkerChooserDlg(parent,
+                mClientPlugins, null);
 
-            chooser.setLocationRelativeTo(w);
+            chooser.setLocationRelativeTo(parent);
             chooser.setVisible(true);
 
             mClientPlugins = chooser.getMarker();

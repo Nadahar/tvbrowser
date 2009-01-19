@@ -24,7 +24,14 @@
  */
 package captureplugin.drivers.defaultdriver;
 
-import util.ui.Localizer;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -33,15 +40,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
-import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.FlowLayout;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
+import util.ui.Localizer;
 
 
 /**
@@ -58,20 +58,9 @@ public class ResultDialog extends JDialog {
      * @param output Output
      * @param error True if Error
      */
-    public ResultDialog(Frame parent, String input, String output, boolean error) {
-        super(parent, true);
-        createGui(input, output, error);
-    }
-
-    /**
-     * Create the Dialog
-     * @param parent Parent
-     * @param input Input
-     * @param output Output
-     * @param error True if Error
-     */
-    public ResultDialog(Dialog parent, String input, String output, boolean error) {
-        super(parent, true);
+    public ResultDialog(Window parent, String input, String output, boolean error) {
+    super(parent);
+    setModal(true);
         createGui(input, output, error);
     }    
     

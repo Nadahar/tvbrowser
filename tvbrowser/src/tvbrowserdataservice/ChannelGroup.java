@@ -495,15 +495,27 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   public void deleteAllFiles() {
     File channelFile = new File(mDataDir, mID + "_" + ChannelList.FILE_NAME);
     if (channelFile.exists()) {
-      channelFile.delete();
+      try {
+        channelFile.delete();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
     File mirrorFile = new File(mDataDir, mID + "_" + Mirror.MIRROR_LIST_FILE_NAME);
     if (mirrorFile.exists()) {
-      mirrorFile.delete();
+      try {
+        mirrorFile.delete();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
     File infoFile = new File(mDataDir, mID + "_info");
     if (infoFile.exists()) {
-      infoFile.delete();
+      try {
+        infoFile.delete();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
   }
 }

@@ -1,6 +1,28 @@
 package calendarexportplugin.exporter;
 
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Properties;
+import java.util.Vector;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+import util.exc.ErrorHandler;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 import calendarexportplugin.CalendarExportPlugin;
+
 import com.google.gdata.client.GoogleService;
 import com.google.gdata.data.calendar.CalendarEntry;
 import com.google.gdata.data.calendar.CalendarFeed;
@@ -12,26 +34,6 @@ import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
-import util.exc.ErrorHandler;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Properties;
-import java.util.Vector;
 
 /**
  * Settings for the Google Exporter
@@ -57,13 +59,9 @@ public class GoogleSettingsDialog extends JDialog  implements WindowClosingIf {
   private JLabel mReminderText;
   private JCheckBox mReminderStore;
 
-  public GoogleSettingsDialog(JDialog owner, Properties settings, String password) {
-    super (owner, true);
-    createGui(settings, password);
-  }
-
-  public GoogleSettingsDialog(JFrame owner, Properties settings, String password) {
-    super (owner, true);
+  public GoogleSettingsDialog(Window owner, Properties settings, String password) {
+    super(owner);
+    setModal(true);
     createGui(settings, password);
   }
 

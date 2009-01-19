@@ -27,6 +27,7 @@ package util.ui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -59,27 +60,52 @@ public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
   private boolean mOkPressed = false;
 
   private ParamLibrary mParamLibrary;
-  
+
   /**
    * Create the Dialog
    * 
-   * @param parent Parent
-   * @param execFile File to execute
-   * @param execParam parameters for the File
+   * @param parent
+   *          Parent
+   * @param execFile
+   *          File to execute
+   * @param execParam
+   *          parameters for the File
+   * @since 3.0
+   */
+  public ExecuteSettingsDialog(Window parent, String execFile, String execParam) {
+    this(parent, execFile, execParam, null);
+  }
+
+  /**
+   * Create the Dialog
+   * 
+   * @param parent
+   *          Parent
+   * @param execFile
+   *          File to execute
+   * @param execParam
+   *          parameters for the File
+   * @deprecated since 3.0
    */
   public ExecuteSettingsDialog(JDialog parent, String execFile, String execParam) {
-    this(parent, execFile, execParam, null);
+    this((Window) parent, execFile, execParam);
   }
 
   /**
    * Create the Dialog
    * 
-   * @param parent Parent
-   * @param execFile File to execute
-   * @param execParam parameters for the File
+   * @param parent
+   *          Parent
+   * @param execFile
+   *          File to execute
+   * @param execParam
+   *          parameters for the File
+   * @since 3.0
    */
-  public ExecuteSettingsDialog(JDialog parent, String execFile, String execParam, ParamLibrary library) {
-    super(parent, true);
+  public ExecuteSettingsDialog(Window parent, String execFile,
+      String execParam, ParamLibrary library) {
+    super(parent);
+    setModal(true);
     mExecFile = execFile;
     mExecParam =execParam;
     mParamLibrary = library;
@@ -89,27 +115,47 @@ public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
   /**
    * Create the Dialog
    * 
-   * @param parent Parent
-   * @param execFile File to execute
-   * @param execParam parameters for the File
+   * @param parent
+   *          Parent
+   * @param execFile
+   *          File to execute
+   * @param execParam
+   *          parameters for the File
+   * @deprecated since 3.0
+   */
+  public ExecuteSettingsDialog(JDialog parent, String execFile,
+      String execParam, ParamLibrary library) {
+    this((Window) parent, execFile, execParam, library);
+  }
+
+  /**
+   * Create the Dialog
+   * 
+   * @param parent
+   *          Parent
+   * @param execFile
+   *          File to execute
+   * @param execParam
+   *          parameters for the File
+   * @deprecated since 3.0
    */
   public ExecuteSettingsDialog(JFrame parent, String execFile, String execParam) {
-    this(parent, execFile, execParam, null);
+    this((Window) parent, execFile, execParam);
   }
 
   /**
    * Create the Dialog
    * 
-   * @param parent Parent
-   * @param execFile File to execute
-   * @param execParam parameters for the File
+   * @param parent
+   *          Parent
+   * @param execFile
+   *          File to execute
+   * @param execParam
+   *          parameters for the File
+   * @deprecated since 3.0
    */
   public ExecuteSettingsDialog(JFrame parent, String execFile, String execParam, ParamLibrary library) {
-    super(parent, true);
-    mExecFile = execFile;
-    mExecParam =execParam;
-    mParamLibrary = library;
-    createGui();
+    this((Window) parent, execFile, execParam, library);
   }
 
   /**

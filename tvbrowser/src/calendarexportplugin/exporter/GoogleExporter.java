@@ -30,8 +30,6 @@ import java.util.Calendar;
 import java.util.Properties;
 import java.util.TimeZone;
 
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import util.exc.ErrorHandler;
@@ -268,12 +266,7 @@ public class GoogleExporter extends AbstractExporter {
     GoogleSettingsDialog settingsDialog;
 
     Window wnd = CalendarExportPlugin.getInstance().getBestParentFrame();
-
-    if (wnd instanceof JDialog) {
-      settingsDialog = new GoogleSettingsDialog((JDialog) wnd, settings, mPassword);
-    } else {
-      settingsDialog = new GoogleSettingsDialog((JFrame) wnd, settings, mPassword);
-    }
+    settingsDialog = new GoogleSettingsDialog(wnd, settings, mPassword);
 
     return settingsDialog.showDialog() == JOptionPane.OK_OPTION;
 
@@ -281,33 +274,28 @@ public class GoogleExporter extends AbstractExporter {
 
   /**
    * Show the Login-Dialog
-   *
-   * @param settings Settings to use for this Dialog
-   * @return true, if successfull
+   * 
+   * @param settings
+   *          Settings to use for this Dialog
+   * @return true, if successful
    */
   private boolean showLoginDialog(Properties settings) {
     GoogleLoginDialog login;
 
-    Window wnd = CalendarExportPlugin.getInstance().getBestParentFrame();
+    Window parent = CalendarExportPlugin.getInstance().getBestParentFrame();
 
-    if (wnd instanceof JDialog) {
-      login = new GoogleLoginDialog((JDialog) wnd,
-              settings.getProperty(USERNAME, ""),
-              IOUtilities.xorDecode(settings.getProperty(PASSWORD, ""), 345903),
-              settings.getProperty(STOREPASSWORD, "false").equals("true"));
-    } else {
-      login = new GoogleLoginDialog((JFrame) wnd,
-              settings.getProperty(USERNAME, ""),
-              IOUtilities.xorDecode(settings.getProperty(PASSWORD, ""), 345903),
-              settings.getProperty(STOREPASSWORD, "false").equals("true"));
-    }
+    login = new GoogleLoginDialog(parent, settings.getProperty(USERNAME, ""),
+        IOUtilities.xorDecode(settings.getProperty(PASSWORD, ""), 345903),
+        settings.getProperty(STOREPASSWORD, "false").equals("true"));
 
     if (login.askLogin() != JOptionPane.OK_OPTION) {
       return false;
     }
 
     if ((login.getUsername().trim().length() == 0) || (login.getPassword().trim().length() == 0)) {
-      JOptionPane.showMessageDialog(wnd, mLocalizer.msg("noUserOrPassword", "No Username or Password entered!"), Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);
+      JOptionPane.showMessageDialog(parent, mLocalizer.msg("noUserOrPassword",
+          "No Username or Password entered!"), Localizer
+          .getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);
       return false;
     }
 

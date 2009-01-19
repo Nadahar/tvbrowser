@@ -24,22 +24,23 @@
  */
 package captureplugin.drivers.simpledevice;
 
-import captureplugin.drivers.DeviceIf;
-import captureplugin.drivers.DriverIf;
-import captureplugin.drivers.utils.ProgramTime;
-import captureplugin.drivers.utils.ProgramTimeDialog;
-import devplugin.Channel;
-import devplugin.Program;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-
-import javax.swing.*;
 import java.awt.Window;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import javax.swing.JOptionPane;
+
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import captureplugin.drivers.DeviceIf;
+import captureplugin.drivers.DriverIf;
+import captureplugin.drivers.utils.ProgramTime;
+import captureplugin.drivers.utils.ProgramTimeDialog;
+import devplugin.Channel;
+import devplugin.Program;
 
 /**
  * The Applescript-Device
@@ -113,14 +114,8 @@ public class SimpleDevice implements DeviceIf {
     }
 
     public void configDevice(Window parent) {
-        SimpleConfigDialog dialog;
-
-        if (parent instanceof JFrame) {
-            dialog = new SimpleConfigDialog((JFrame) parent, this, mConnection, mConfig);
-        } else {
-            dialog = new SimpleConfigDialog((JDialog) parent, this, mConnection, mConfig);
-        }
-
+        SimpleConfigDialog dialog = new SimpleConfigDialog(parent, this,
+        mConnection, mConfig);
         UiUtilities.centerAndShow(dialog);
 
         if (dialog.wasOkPressed()) {
@@ -163,15 +158,8 @@ public class SimpleDevice implements DeviceIf {
 
     public boolean add(Window parent, Program program) {
         if (testConfig(parent, program.getChannel())) {
-            ProgramTimeDialog dialog;
             ProgramTime time = new ProgramTime(program);
-
-            if (parent instanceof JDialog) {
-                dialog = new ProgramTimeDialog((JDialog) parent, time, false);
-            } else {
-                dialog = new ProgramTimeDialog((JFrame) parent, time, false);
-            }
-
+            ProgramTimeDialog dialog = new ProgramTimeDialog(parent, time, false);
             UiUtilities.centerAndShow(dialog);
 
             if (dialog.getPrgTime() != null) {
@@ -199,13 +187,8 @@ public class SimpleDevice implements DeviceIf {
             int ret = JOptionPane.showConfirmDialog(parent, mLocalizer.msg("channelAssign", "Please assign Channel first"), mLocalizer.msg("channelAssignTitle", "Assign Channel"), JOptionPane.YES_NO_OPTION);
 
             if (ret == JOptionPane.YES_OPTION) {
-                SimpleConfigDialog dialog;
-
-                if (parent instanceof JDialog) {
-                    dialog = new SimpleConfigDialog((JDialog) parent, this, mConnection, mConfig);
-                } else {
-                    dialog = new SimpleConfigDialog((JFrame) parent, this, mConnection, mConfig);
-                }
+                SimpleConfigDialog dialog = new SimpleConfigDialog(parent, this,
+            mConnection, mConfig);
                 UiUtilities.centerAndShow(dialog);
 
                 if (dialog.wasOkPressed()) {

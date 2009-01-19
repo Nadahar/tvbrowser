@@ -93,15 +93,23 @@ public class FavIconFetcher {
           File file = new File(filename.toString());
           
           if (!file.getParentFile().exists()) {
+          try {
             file.getParentFile().mkdirs();
+          } catch (Exception e) {
+            e.printStackTrace();
           }
+        }
           
           if ((img.getWidth(null) != 16) || (img.getHeight(null) != 16)) {
             img = ((ImageIcon)UiUtilities.scaleIcon(new ImageIcon(img),16,16)).getImage();
           }
           
           ImageIO.write(renderImage(img), "png", file);
+          try {
           temp.delete();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
           
           return file.getName();
         }

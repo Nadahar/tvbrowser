@@ -35,7 +35,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -83,23 +82,19 @@ public class LocalPluginProgramFormatingSettingsDialog extends JDialog implement
    * @param showEncodingSetting If the settings dialog should contain the encoding setting.
    */
   public static void createInstance(Window parent, LocalPluginProgramFormating config, LocalPluginProgramFormating defaultConfig, boolean showTitleSetting, boolean showEncodingSetting) {
-    if(parent instanceof JDialog) {
-      new LocalPluginProgramFormatingSettingsDialog((JDialog)parent, config, defaultConfig, showTitleSetting, showEncodingSetting);
-    } else {
-      new LocalPluginProgramFormatingSettingsDialog((JFrame)parent, config, defaultConfig, showTitleSetting, showEncodingSetting);
-    }
+    new LocalPluginProgramFormatingSettingsDialog(parent, config,
+        defaultConfig, showTitleSetting, showEncodingSetting);
   }
   
-  private LocalPluginProgramFormatingSettingsDialog(JDialog parent, LocalPluginProgramFormating config, LocalPluginProgramFormating defaultConfig, boolean showTitleSetting, boolean showEncodingSetting) {
-    super(parent, true);
+  private LocalPluginProgramFormatingSettingsDialog(Window parent,
+      LocalPluginProgramFormating config,
+      LocalPluginProgramFormating defaultConfig, boolean showTitleSetting,
+      boolean showEncodingSetting) {
+    super(parent);
+    setModal(true);
     createGui(parent, config, defaultConfig, showTitleSetting, showEncodingSetting);
   }
 
-  private LocalPluginProgramFormatingSettingsDialog(JFrame parent, LocalPluginProgramFormating config, LocalPluginProgramFormating defaultConfig, boolean showTitleSetting, boolean showEncodingSetting) {
-    super(parent, true);
-    createGui(parent, config, defaultConfig, showTitleSetting, showEncodingSetting);
-  }
-  
   private void createGui(Window w, LocalPluginProgramFormating config, LocalPluginProgramFormating defaultConfig, boolean showTitleSetting, boolean showEncodingSetting) {
     mConfig = config;
     mDefaultConfig = defaultConfig;

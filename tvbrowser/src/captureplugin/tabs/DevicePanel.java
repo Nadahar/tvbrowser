@@ -24,28 +24,6 @@
  */
 package captureplugin.tabs;
 
-import captureplugin.CapturePluginData;
-import captureplugin.drivers.DeviceCreatorDialog;
-import captureplugin.drivers.DeviceIf;
-import captureplugin.utils.DeviceImportAndExport;
-import util.exc.ErrorHandler;
-import util.ui.ExtensionFileFilter;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -57,6 +35,27 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.Vector;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import util.exc.ErrorHandler;
+import util.ui.ExtensionFileFilter;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import captureplugin.CapturePluginData;
+import captureplugin.drivers.DeviceCreatorDialog;
+import captureplugin.drivers.DeviceIf;
+import captureplugin.utils.DeviceImportAndExport;
 
 
 /**
@@ -212,17 +211,8 @@ public class DevicePanel extends JPanel {
      * Add a Device
      */
     private void addDevice() {
-        
         Window parent = UiUtilities.getLastModalChildOf(mOwner);
-        
-        DeviceCreatorDialog dialog;
-        
-        if (parent instanceof JDialog){
-            dialog = new DeviceCreatorDialog((JDialog) parent);
-        } else {
-            dialog = new DeviceCreatorDialog((JFrame) parent);
-        }
-        
+        DeviceCreatorDialog dialog = new DeviceCreatorDialog(parent);
         UiUtilities.centerAndShow(dialog);
         
         DeviceIf device = dialog.createDevice();
@@ -232,7 +222,6 @@ public class DevicePanel extends JPanel {
             device.configDevice(UiUtilities.getLastModalChildOf(mOwner));
             mDeviceList.setListData(new Vector<DeviceIf>(mData.getDevices()));
         }
-        
     }
 
     /**

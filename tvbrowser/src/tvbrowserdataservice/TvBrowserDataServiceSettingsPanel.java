@@ -44,8 +44,6 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -359,14 +357,8 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
       ChannelGroup group = (ChannelGroup) mGroupList.getSelectedValue();
 
       if (group != null) {
-        ChannelGroupDialog dialog;
-
         Window parent = UiUtilities.getBestDialogParent(this);
-        if (parent instanceof JFrame) {
-          dialog = new ChannelGroupDialog((JFrame)parent, group);
-        } else {
-          dialog = new ChannelGroupDialog((JDialog)parent, group);
-        }
+        ChannelGroupDialog dialog = new ChannelGroupDialog(parent, group);
         dialog.setVisible(true);
       }
     }

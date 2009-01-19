@@ -45,8 +45,6 @@ import java.util.Properties;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 
 import printplugin.dlgs.DialogContent;
 import printplugin.dlgs.MainPrintDialog;
@@ -175,12 +173,8 @@ public class PrintPlugin extends Plugin {
     }
     AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {
-        Window w = UiUtilities.getLastModalChildOf(getParentFrame());
-        if(w instanceof JDialog) {
-          new ProgramInfoPrintDialog((JDialog)w, program);
-        } else if(w instanceof JFrame) {
-          new ProgramInfoPrintDialog((JFrame)w, program);
-        }
+        Window parent = UiUtilities.getLastModalChildOf(getParentFrame());
+        new ProgramInfoPrintDialog(parent, program);
       }
     };
     action.putValue(Action.NAME, mLocalizer.msg("printProgramInfo","Print program info"));

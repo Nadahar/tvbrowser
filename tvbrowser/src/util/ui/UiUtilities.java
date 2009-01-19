@@ -26,29 +26,6 @@
 
 package util.ui;
 
-import tvbrowser.ui.mainframe.MainFrame;
-import util.browserlauncher.Launch;
-import util.misc.OperatingSystem;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.KeyStroke;
-import javax.swing.border.Border;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -76,10 +53,38 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
+import javax.swing.border.Border;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+
+import tvbrowser.ui.mainframe.MainFrame;
+import util.browserlauncher.Launch;
+import util.misc.OperatingSystem;
+
 /**
  * Provides utilities for UI stuff.
  * 
  * @author Til Schneider, www.murfman.de
+ */
+/**
+ * @author MadMan
+ * 
  */
 public class UiUtilities {
 
@@ -146,17 +151,6 @@ public class UiUtilities {
   }
 
   /**
-   * Der {@link JDialog} hat einen Riesennachteil: er hat zwei verschiedenen
-   * Konstrukturen: einer f�r einen Frame als Besitzer und einer f�r einen
-   * Dialog als Besitzer. Wenn man nun das �berliegende Fenster gar nicht
-   * kennt, dann hat man ein Problem (Z.B. Wenn man einen Button schreibt, der
-   * manchmal eine Fehlermeldung zeigt). Bisher habe ich einfach den
-   * Component-Pfad bis zum obersten Frame verfolgt (@link
-   * UiToolkit#getFrameFor(Component)). Das ganze wird dann zum Problem, wenn
-   * man in einem modalen Dialog einen nicht-modalen Dialog zeigt. Denn dann
-   * kann man den nicht-modalen Dialog n�mlich erst dann wieder bedienen, wenn
-   * der modale zu ist.
-   * 
    * @param parent
    *          A component in the component tree where the dialog should be
    *          created for.
@@ -166,18 +160,9 @@ public class UiUtilities {
    */
   public static JDialog createDialog(Component parent, boolean modal) {
     Window parentWin = getBestDialogParent(parent);
-
-    JDialog dlg;
-    if ((parentWin instanceof Frame) || (parentWin == null)) {
-      dlg = new JDialog((Frame) parentWin, modal);
-    } else if (parentWin instanceof Dialog) {
-      dlg = new JDialog((Dialog) parentWin, modal);
-    } else {
-      throw new IllegalArgumentException("parent has surrounding Window of "
-          + "unknown type: " + parentWin.getClass());
-    }
-
-    return dlg;
+    final JDialog result = new JDialog(parentWin);
+    result.setModal(modal);
+    return result;
   }
 
   /**

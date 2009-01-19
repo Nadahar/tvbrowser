@@ -29,11 +29,10 @@ package tvbrowser.extras.favoritesplugin.dlgs;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -126,13 +125,10 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
   private static ManageFavoritesDialog mInstance = null;
   private JCheckBox mBlackListChb;
 
-  public ManageFavoritesDialog(Dialog parent, Favorite[] favoriteArr, int splitPanePosition, boolean showNew) {
-    super(parent, true);
-    init(favoriteArr, splitPanePosition, showNew);
-  }
-
-  public ManageFavoritesDialog(Frame parent, Favorite[] favoriteArr, int splitPanePosition, boolean showNew) {
-    super(parent, true);
+  public ManageFavoritesDialog(Window parent, Favorite[] favoriteArr,
+      int splitPanePosition, boolean showNew) {
+    super(parent);
+    setModal(true);
     init(favoriteArr, splitPanePosition, showNew);
   }
 

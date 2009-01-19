@@ -28,6 +28,7 @@ package util.ui;
 
 import java.awt.Dialog;
 import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -72,49 +73,93 @@ public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
      = util.ui.Localizer.getLocalizerFor(ChannelChooserDlg.class);
 
   /**
-   *
+   * 
    * @param parent
-   * @param channelArr The initially selected channels
-   * @param description A description text below the channel list.
+   * @param channelArr
+   *          The initially selected channels
+   * @param description
+   *          A description text below the channel list.
+   * @since 3.0
+   */
+  public ChannelChooserDlg(Window parent, Channel[] channelArr,
+      String description) {
+    super(parent);
+    setModal(true);
+    init(channelArr, description, ORDER_CHOOSER);
+  }
+
+  /**
+   * 
+   * @param parent
+   * @param channelArr
+   *          The initially selected channels
+   * @param description
+   *          A description text below the channel list.
+   * @deprecated since 3.0
    */
   public ChannelChooserDlg(Dialog parent, Channel[] channelArr, String description) {
-    super(parent,true);
-    init(channelArr, description, ORDER_CHOOSER);
+    this((Window) parent, channelArr, description);
   }
 
   /**
-   *
+   * 
    * @param parent
-   * @param channelArr The initially selected channels
-   * @param description A description text below the channel list.
+   * @param channelArr
+   *          The initially selected channels
+   * @param description
+   *          A description text below the channel list.
+   * @deprecated since 3.0
    */
   public ChannelChooserDlg(Frame parent, Channel[] channelArr, String description) {
-    super(parent,true);
-    init(channelArr, description, ORDER_CHOOSER);
+    this((Window) parent, channelArr, description);
   }
-  
+
   /**
-  *
-  * @param parent
-  * @param channelArr The initially selected channels
-  * @param description A description text below the channel list.
-  * @param type The type of this ChannelChooser
-  */
+   * 
+   * @param parent
+   * @param channelArr
+   *          The initially selected channels
+   * @param description
+   *          A description text below the channel list.
+   * @param type
+   *          The type of this ChannelChooser
+   * @since 3.0
+   */
+  public ChannelChooserDlg(Window parent, Channel[] channelArr,
+      String description, int type) {
+    super(parent);
+    setModal(true);
+    init(channelArr, description, type);
+  }
+
+  /**
+   * 
+   * @param parent
+   * @param channelArr
+   *          The initially selected channels
+   * @param description
+   *          A description text below the channel list.
+   * @param type
+   *          The type of this ChannelChooser
+   * @deprecated since 3.0
+   */
  public ChannelChooserDlg(Dialog parent, Channel[] channelArr, String description, int type) {
-   super(parent,true);
-   init(channelArr, description, type);
+   this((Window) parent, channelArr, description, type);
  }
 
- /**
-  *
-  * @param parent
-  * @param channelArr The initially selected channels
-  * @param description A description text below the channel list.
-  * @param type The type of this ChannelChooser
-  */
+  /**
+   * 
+   * @param parent
+   * @param channelArr
+   *          The initially selected channels
+   * @param description
+   *          A description text below the channel list.
+   * @param type
+   *          The type of this ChannelChooser
+   * @deprecated since 3.0
+   */
  public ChannelChooserDlg(Frame parent, Channel[] channelArr, String description, int type) {
-   super(parent,true);
-   init(channelArr, description, type);
+   this((Window) parent, channelArr, description, type);
  }
 
   private void init(Channel[] channelArr, String description, int type) {

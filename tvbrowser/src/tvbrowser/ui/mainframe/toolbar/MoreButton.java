@@ -1,24 +1,33 @@
 package tvbrowser.ui.mainframe.toolbar;
 
-import javax.swing.*; 
-
-import javax.swing.event.PopupMenuListener; 
-import javax.swing.event.PopupMenuEvent; 
-
-import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.ui.mainframe.MainFrame;
-import util.ui.Localizer;
-
-import java.awt.event.ActionEvent; 
-import java.awt.event.ActionListener; 
-import java.awt.event.ComponentAdapter; 
-import java.awt.event.ComponentEvent; 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridLayout;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 
-import java.awt.*; 
+import javax.swing.AbstractButton;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
+
+import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.ui.mainframe.MainFrame;
+import util.ui.Localizer;
  
 /** 
  * MySwing: Advanced Swing Utilites 
@@ -151,7 +160,7 @@ public class MoreButton extends JToggleButton implements ActionListener{
         }
     } 
  
-    public static Component wrapToolBar(JToolBar toolbar, MainFrame mainFrame){
+    public static Component wrapToolBar(ToolBar toolbar, MainFrame mainFrame) {
       JToolBar moreToolbar = new JToolBar();
       moreToolbar.setOpaque(false);
       moreToolbar.setLayout(new GridLayout());
@@ -164,7 +173,7 @@ public class MoreButton extends JToggleButton implements ActionListener{
         
         panel.add(toolbar, BorderLayout.CENTER);
         
-        if(((ToolBar)toolbar).getToolbarLocation().compareTo(BorderLayout.NORTH) == 0) {
+        if (toolbar.getToolbarLocation().compareTo(BorderLayout.NORTH) == 0) {
           moreToolbar.setBorder(BorderFactory.createEmptyBorder(0,0,0,5));
           panel.add(moreToolbar, BorderLayout.EAST);
         }

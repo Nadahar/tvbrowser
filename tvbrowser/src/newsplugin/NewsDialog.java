@@ -26,9 +26,9 @@
 package newsplugin;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
@@ -99,7 +99,7 @@ public class NewsDialog implements WindowClosingIf {
    * @param newsList The news to show.
    * @param newNewsCount The number of news that should be marked as new.
    */
-  public NewsDialog(Component parent, ArrayList<News> newsList, int newNewsCount) {
+  public NewsDialog(Window parent, ArrayList<News> newsList, int newNewsCount) {
     mDialog = UiUtilities.createDialog(parent, false);
     mNewsList = newsList;
     mNewNewsCount = newNewsCount;

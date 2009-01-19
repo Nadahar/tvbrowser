@@ -46,7 +46,7 @@ import util.misc.StringPool;
 import util.ui.ImageUtilities;
 
 /**
- * A class that definies a TV-Browser channel
+ * A class that defines a TV-Browser channel
  */
 public class Channel implements Comparable<Channel> {
   /** The identifier for a channel that fits in no other category */

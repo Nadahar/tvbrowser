@@ -26,8 +26,7 @@
 
 package tvbrowser.extras.favoritesplugin.wizards;
 
-import java.awt.Dialog;
-import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -79,13 +78,9 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
 
   private Object mDataObject;
 
-  public WizardDlg(Dialog parent, WizardHandler handler, WizardStep step) {
-    super(parent, true);
-    init(step, handler);
-  }
-
-  public WizardDlg(Frame parent, WizardHandler handler, WizardStep step) {
-    super(parent, true);
+  public WizardDlg(Window parent, WizardHandler handler, WizardStep step) {
+    super(parent);
+    setModal(true);
     init(step, handler);
   }
 

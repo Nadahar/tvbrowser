@@ -48,19 +48,13 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -71,6 +65,11 @@ import util.ui.FileCheckBox;
 import util.ui.PluginChooserDlg;
 import util.ui.ScrollableJPanel;
 import util.ui.UiUtilities;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
@@ -177,15 +176,13 @@ public class ReminderSettingsTab implements SettingsTab {
     
     choose.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {try{
-        Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+        Window parent = UiUtilities.getLastModalChildOf(MainFrame
+              .getInstance());
         PluginChooserDlg chooser = null;
-        if(w instanceof JDialog) {
-          chooser = new PluginChooserDlg((JDialog)w,mClientPluginTargets, null, ReminderPluginProxy.getInstance());
-        } else {
-          chooser = new PluginChooserDlg((JFrame)w,mClientPluginTargets, null, ReminderPluginProxy.getInstance());
-        }
+        chooser = new PluginChooserDlg(parent, mClientPluginTargets, null,
+              ReminderPluginProxy.getInstance());
         
-        chooser.setLocationRelativeTo(w);
+        chooser.setLocationRelativeTo(parent);
         chooser.setVisible(true);
         
         if(chooser.getReceiveTargets() != null) {
@@ -457,13 +454,9 @@ public class ReminderSettingsTab implements SettingsTab {
   private void showFileSettingsDialog() {
     ExecuteSettingsDialog execSettingsDialog;
 
-    Window wnd = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-    
-    if (wnd instanceof JDialog) {
-      execSettingsDialog = new ExecuteSettingsDialog((JDialog) wnd, mExecFileStr, mExecParamStr);
-    } else {
-      execSettingsDialog = new ExecuteSettingsDialog((JFrame) wnd, mExecFileStr, mExecParamStr);
-    }
+    Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+    execSettingsDialog = new ExecuteSettingsDialog(parent, mExecFileStr,
+        mExecParamStr);
 
     execSettingsDialog.setVisible(true);
 
