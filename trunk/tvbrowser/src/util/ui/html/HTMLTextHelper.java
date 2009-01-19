@@ -104,6 +104,9 @@ public class HTMLTextHelper {
    * @since 2.7
    */
   public static String convertHtmlToText(String html) {
+    if (html == null) {
+      return null;
+    }
     html = html.trim();
     html = IOUtilities.replace(html, "&auml;", "\u00e4");
     html = IOUtilities.replace(html, "&Auml;", "\u00c4");

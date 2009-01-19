@@ -24,6 +24,7 @@
 package i18nplugin;
 
 import java.awt.CardLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -43,7 +44,6 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -89,7 +89,7 @@ import devplugin.Channel;
  * 
  * @author bodum
  */
-public class TranslationDialog extends JDialog implements WindowClosingIf{
+final public class TranslationDialog extends JDialog implements WindowClosingIf {
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(TranslationDialog.class);
 
@@ -114,16 +114,12 @@ public class TranslationDialog extends JDialog implements WindowClosingIf{
   
   private JButton mClearFilterB;
   
-  public TranslationDialog(JDialog owner, int splitPos) {
-    super(owner, true);
+  public TranslationDialog(final Window owner, final int splitPos) {
+    super(owner);
+    setModal(true);
     createGui(splitPos);
   }
   
-  public TranslationDialog(JFrame owner, int splitPos) {
-    super(owner, true);
-    createGui(splitPos);
-  }
-
   private void createGui(final int splitPos) {
     setTitle(mLocalizer.msg("title","Translation Tool"));
 

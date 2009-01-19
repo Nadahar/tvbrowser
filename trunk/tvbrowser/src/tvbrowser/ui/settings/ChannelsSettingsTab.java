@@ -53,8 +53,6 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -947,24 +945,16 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     if (channelList.length == 1) {
       ChannelConfigDlg dialog;
 
-      Window w = UiUtilities.getBestDialogParent(mAllChannels);
-      if (w instanceof JDialog) {
-        dialog = new ChannelConfigDlg((JDialog) w, channelList[0]);
-      } else {
-        dialog = new ChannelConfigDlg((JFrame) w, channelList[0]);
-      }
+      Window parent = UiUtilities.getBestDialogParent(mAllChannels);
+      dialog = new ChannelConfigDlg(parent, channelList[0]);
       dialog.centerAndShow();
       MainFrame.getInstance().getProgramTableScrollPane()
           .updateChannelLabelForChannel(channelList[0]);
     } else if (channelList.length > 1) {
       MultiChannelConfigDlg dialog;
 
-      Window w = UiUtilities.getBestDialogParent(mAllChannels);
-      if (w instanceof JDialog) {
-        dialog = new MultiChannelConfigDlg((JDialog) w, channelList);
-      } else {
-        dialog = new MultiChannelConfigDlg((JFrame) w, channelList);
-      }
+      Window parent = UiUtilities.getBestDialogParent(mAllChannels);
+      dialog = new MultiChannelConfigDlg(parent, channelList);
       dialog.centerAndShow();
     }
 

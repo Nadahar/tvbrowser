@@ -27,8 +27,7 @@
 package tvbrowser.extras.reminderplugin;
 
 import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -53,13 +52,9 @@ public class RemovedProgramsDialog extends JDialog implements WindowClosingIf{
      = util.ui.Localizer.getLocalizerFor(RemovedProgramsDialog. class );
   private JCheckBox mDisable;
 
-  public RemovedProgramsDialog(Dialog parent, Program[] programs) {
-    super(parent, false);
-    init(programs);
-  }
-
-  public RemovedProgramsDialog(Frame parent, Program[] programs) {
-    super(parent, false);
+  public RemovedProgramsDialog(Window parent, Program[] programs) {
+    super(parent);
+    setModal(true);
     init(programs);
   }
 

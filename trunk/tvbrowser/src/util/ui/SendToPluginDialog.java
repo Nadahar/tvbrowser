@@ -6,6 +6,7 @@ package util.ui;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -56,35 +57,82 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
   /**
    * Create the Dialog
    * 
-   * @param caller Sender-Plugin
-   * @param owner Owner Frame
-   * @param prg List of Programs to send
+   * @param caller
+   *          Sender-Plugin
+   * @param owner
+   *          Owner Frame
+   * @param prg
+   *          List of Programs to send
+   * @since 3.0
+   */
+  public SendToPluginDialog(ProgramReceiveIf caller, Window owner, Program[] prg) {
+    this(caller, null, owner, prg);
+  }
+
+  /**
+   * Create the Dialog
+   * 
+   * @param caller
+   *          Sender-Plugin
+   * @param owner
+   *          Owner Frame
+   * @param prg
+   *          List of Programs to send
+   * @deprecated since 3.0
    */
   public SendToPluginDialog(ProgramReceiveIf caller, Frame owner, Program[] prg) {
-    this(caller, null, owner, prg);
+    this(caller, null, (Window) owner, prg);
   }
 
   /**
    * Create the Dialog
    * 
-   * @param caller Sender-Plugin
-   * @param owner Owner Frame
-   * @param prg List of Programs to send
+   * @param caller
+   *          Sender-Plugin
+   * @param owner
+   *          Owner Frame
+   * @param prg
+   *          List of Programs to send
+   * @deprecated since 3.0
    */
   public SendToPluginDialog(ProgramReceiveIf caller, Dialog owner, Program[] prg) {
-    this(caller, null, owner, prg);
+    this(caller, null, (Window) owner, prg);
   }
-  
+
   /**
    * Create the Dialog
    * 
-   * @param caller Sender-Plugin
-   * @param callerTarget The target which calls this dialog
-   * @param owner Owner Frame
-   * @param prg List of Programs to send
+   * @param caller
+   *          Sender-Plugin
+   * @param callerTarget
+   *          The target which calls this dialog
+   * @param owner
+   *          Owner Frame
+   * @param prg
+   *          List of Programs to send
+   * @deprecated since 3.0
    */
   public SendToPluginDialog(ProgramReceiveIf caller, ProgramReceiveTarget callerTarget, Frame owner, Program[] prg) {
-    super(owner, true);
+    this(caller, callerTarget, (Window) owner, prg);
+  }
+
+  /**
+   * Create the Dialog
+   * 
+   * @param caller
+   *          Sender-Plugin
+   * @param callerTarget
+   *          The target which calls this dialog
+   * @param owner
+   *          Owner Frame
+   * @param prg
+   *          List of Programs to send
+   * @since 3.0
+   */
+  public SendToPluginDialog(ProgramReceiveIf caller,
+      ProgramReceiveTarget callerTarget, Window owner, Program[] prg) {
+    super(owner);
+    setModal(true);
     mPrograms = prg;
     mCaller = caller;
     mCallerTarget = callerTarget;
@@ -95,19 +143,19 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
   /**
    * Create the Dialog
    * 
-   * @param caller Sender-Plugin
-   * @param callerTarget The target which calls this dialog
-   * @param owner Owner Frame 
-   * @param prg List of Programs to send
+   * @param caller
+   *          Sender-Plugin
+   * @param callerTarget
+   *          The target which calls this dialog
+   * @param owner
+   *          Owner Frame
+   * @param prg
+   *          List of Programs to send
    * @since 2.5
+   * @deprecated since 3.0
    */
   public SendToPluginDialog(ProgramReceiveIf caller, ProgramReceiveTarget callerTarget, Dialog owner, Program[] prg) {
-    super(owner, true);
-    mPrograms = prg;
-    mCaller = caller;
-    mCallerTarget = callerTarget;
-    createDialog();
-    setLocationRelativeTo(owner);
+    this(caller, callerTarget, (Window) owner, prg);
   }
 
   /**

@@ -25,20 +25,20 @@
 
 package captureplugin;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.factories.Borders;
+import java.awt.BorderLayout;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.Frame;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
 
 /**
  * The Dialog for the Settings. Uses the PluginPanel
@@ -58,7 +58,7 @@ public class CapturePluginDialog extends JDialog implements WindowClosingIf {
      * @param parent Paren-Frame
      * @param data Config of the Plugin
      */
-    public CapturePluginDialog(Frame parent, CapturePluginData data) {
+    public CapturePluginDialog(Window parent, CapturePluginData data) {
         super(parent);
 
         mData = data;
@@ -66,19 +66,6 @@ public class CapturePluginDialog extends JDialog implements WindowClosingIf {
         createGui(parent);
     }
 
-    /**
-     * creates a new Dialog
-     * @param parent Paren-Frame
-     * @param data Config of the Plugin
-     */
-    public CapturePluginDialog(Dialog parent, CapturePluginData data) {
-        super(parent);
-
-        mData = data;
-        setModal(true);
-        createGui(parent);
-    }    
-    
     /**
      * Creates the GUI
      * @param parent Parent

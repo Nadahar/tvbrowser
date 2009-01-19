@@ -29,6 +29,7 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -36,7 +37,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -69,34 +69,18 @@ public class ProgramTimeDialog extends JDialog {
      * @param prgTime ProgramTime
      * @param editTitle is the Title editable?
      */
-    public ProgramTimeDialog(JDialog parent, ProgramTime prgTime, boolean editTitle) {
-        super(parent, true);
+    public ProgramTimeDialog(Window parent, ProgramTime prgTime, boolean editTitle) {
+    super(parent);
+    setModal(true);
         mPrgTime = prgTime;
         createGui(editTitle);
     }
 
 
-    public ProgramTimeDialog(JDialog parent, ProgramTime time, boolean editTitle, String additonalText, JComponent additionalComponent) {
-        super(parent, true);
-        mPrgTime = time;
-        createGui(editTitle, additonalText, additionalComponent);
-    }
-
-
-    /**
-     * Crate the Dialog
-     * @param parent Parent-Frame
-     * @param prgTime ProgramTime
-     * @param editTitle is the Title editable?
-     */
-    public ProgramTimeDialog(JFrame parent, ProgramTime prgTime, boolean editTitle) {
-        super(parent, true);
-        mPrgTime = prgTime;
-        createGui(editTitle);
-    }
-
-    public ProgramTimeDialog(JFrame parent, ProgramTime time, boolean editTitle, String additonalText, JComponent additionalComponent) {
-        super(parent, true);
+    public ProgramTimeDialog(Window parent, ProgramTime time, boolean editTitle,
+      String additonalText, JComponent additionalComponent) {
+    super(parent);
+    setModal(true);
         mPrgTime = time;
         createGui(editTitle, additonalText, additionalComponent);
     }

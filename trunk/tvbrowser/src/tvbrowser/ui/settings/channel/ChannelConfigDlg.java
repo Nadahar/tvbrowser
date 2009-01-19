@@ -28,6 +28,7 @@ package tvbrowser.ui.settings.channel;
 
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -39,7 +40,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
@@ -97,25 +97,19 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
   /** End time limit selection */
   private JSpinner mEndTimeLimit;
   private JLabel mIconLabel;
-  
-  /**
-   * Create the Dialog
-   * @param parent Parent
-   * @param channel Channel to show
-   */
-  public ChannelConfigDlg(JDialog parent, Channel channel) {
-    super(parent, mLocalizer.msg("configChannel", "Configure Channel"), true);
-    mChannel = channel;
-    createDialog();
-  }
 
   /**
    * Create the Dialog
-   * @param parent Parent
-   * @param channel Channel to show
+   * 
+   * @param parent
+   *          Parent
+   * @param channel
+   *          Channel to show
+   * @since 3.0
    */
-  public ChannelConfigDlg(JFrame parent, Channel channel) {
-    super(parent,  mLocalizer.msg("configChannel", "Configure Channel"), true);
+  public ChannelConfigDlg(Window parent, Channel channel) {
+    super(parent, mLocalizer.msg("configChannel", "Configure Channel"));
+    setModal(true);
     mChannel = channel;
     createDialog();
   }

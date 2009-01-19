@@ -29,13 +29,12 @@ package printplugin.dlgs;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -80,13 +79,10 @@ public class PreviewDlg extends JDialog implements ActionListener, WindowClosing
   private JButton mZoomOut;
   private JButton mZoomIn;
   
-  public PreviewDlg(Frame parent, Printable printer, PageFormat pageFormat, int numberOfPages) {
-    super(parent, true);
-    createGui(printer, pageFormat, numberOfPages);
-  }
-  
-  public PreviewDlg(Dialog parent, Printable printer, PageFormat pageFormat, int numberOfPages) {
-    super(parent, true);
+  public PreviewDlg(Window parent, Printable printer, PageFormat pageFormat,
+      int numberOfPages) {
+    super(parent);
+    setModal(true);
     createGui(printer, pageFormat, numberOfPages);
   }
   

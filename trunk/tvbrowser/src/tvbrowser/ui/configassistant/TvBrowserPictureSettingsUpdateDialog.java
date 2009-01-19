@@ -27,19 +27,18 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 import tvbrowser.core.Settings;
 import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * A class for the picture settings of the TvBrowserDataService.
@@ -56,16 +55,13 @@ public class TvBrowserPictureSettingsUpdateDialog extends JDialog implements Win
   private PictureConfigPanel mConfigPanel;
   private JButton mOkButton, mCancelButton;
   
-  private TvBrowserPictureSettingsUpdateDialog(JDialog parent) {
-    super(parent,PictureConfigPanel.mLocalizer.msg("pictureSettings","Picture settings"),true);
+  private TvBrowserPictureSettingsUpdateDialog(Window parent) {
+    super(parent, PictureConfigPanel.mLocalizer.msg("pictureSettings",
+        "Picture settings"));
+    setModal(true);
     createGui();
   }
 
-  private TvBrowserPictureSettingsUpdateDialog(JFrame parent) {
-    super(parent,PictureConfigPanel.mLocalizer.msg("pictureSettings","Picture settings"),true);
-    createGui();
-  }
-  
   /**
    * Create an show this dialog.
    * 
@@ -73,11 +69,7 @@ public class TvBrowserPictureSettingsUpdateDialog extends JDialog implements Win
    */
   public static void createAndShow(Window parent) {
     Window p = UiUtilities.getLastModalChildOf(parent);
-    
-    if(p instanceof JDialog)
-      new TvBrowserPictureSettingsUpdateDialog((JDialog)p);
-    else
-      new TvBrowserPictureSettingsUpdateDialog((JFrame)p);
+    new TvBrowserPictureSettingsUpdateDialog(p);
   }
 
   private void createGui() {

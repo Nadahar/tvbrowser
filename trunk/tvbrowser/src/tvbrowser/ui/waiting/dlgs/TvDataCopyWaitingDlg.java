@@ -7,7 +7,6 @@ import java.awt.Window;
 
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -31,22 +30,12 @@ public class TvDataCopyWaitingDlg extends JDialog {
    * @param parent The parent dialog for this dialog.
    * @param copy If the message should contains copy for <code>true</code> or import instead if it is <code>false</code>.
    */
-  public TvDataCopyWaitingDlg(JDialog parent, boolean copy) {
-    super(parent, true);
+  public TvDataCopyWaitingDlg(Window parent, boolean copy) {
+    super(parent);
+    setModal(true);
     createGUI(parent, copy);
   }
 
-  /**
-   * Creates an instance of this class.
-   * 
-   * @param parent The parent frame for this dialog.
-   * @param copy If the message should contains copy for <code>true</code> or import instead if it is <code>false</code>.
-   */
-  public TvDataCopyWaitingDlg(JFrame parent, boolean copy) {
-    super(parent, true);
-    createGUI(parent, copy);
-  }
-  
   private void createGUI(Window parent, boolean copy) {
     setUndecorated(true);
     setCursor(new Cursor(Cursor.WAIT_CURSOR));

@@ -24,17 +24,6 @@
  */
 package captureplugin.drivers.defaultdriver;
 
-import captureplugin.drivers.DeviceIf;
-import captureplugin.drivers.DriverIf;
-import captureplugin.drivers.utils.ProgramTime;
-import captureplugin.drivers.utils.ProgramTimeDialog;
-import devplugin.Program;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import java.awt.Window;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -42,6 +31,16 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+
+import javax.swing.JOptionPane;
+
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import captureplugin.drivers.DeviceIf;
+import captureplugin.drivers.DriverIf;
+import captureplugin.drivers.utils.ProgramTime;
+import captureplugin.drivers.utils.ProgramTimeDialog;
+import devplugin.Program;
 
 /**
  * The Default-Device
@@ -125,15 +124,8 @@ public class DefaultDevice implements DeviceIf {
      */
     public void configDevice(Window owner) {
         
-        
-        DefaultKonfigurator config;
-        
-        
-        if (owner instanceof JDialog) {
-            config = new DefaultKonfigurator((JDialog)owner, (DeviceConfig) mConfig.clone());
-        } else {
-            config = new DefaultKonfigurator((JFrame) owner, (DeviceConfig) mConfig.clone());
-        }
+        DefaultKonfigurator config = new DefaultKonfigurator(owner,
+        (DeviceConfig) mConfig.clone());
         UiUtilities.centerAndShow(config);
         
         if (config.okWasPressed()) {
@@ -184,13 +176,7 @@ public class DefaultDevice implements DeviceIf {
             return false;            
         }
         
-        ProgramTimeDialog cdialog;
-        
-        if (parent instanceof JDialog) {
-            cdialog = new ProgramTimeDialog((JDialog)parent, prgTime, true);
-        } else {
-            cdialog = new ProgramTimeDialog((JFrame)parent, prgTime, true);
-        }
+        ProgramTimeDialog cdialog = new ProgramTimeDialog(parent, prgTime, true);
         
         if(mConfig.getShowTitleAndTimeDialog())
           UiUtilities.centerAndShow(cdialog);

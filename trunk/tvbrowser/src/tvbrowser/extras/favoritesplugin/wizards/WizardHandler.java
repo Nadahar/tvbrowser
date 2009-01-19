@@ -26,15 +26,13 @@
 
 package tvbrowser.extras.favoritesplugin.wizards;
 
-import java.awt.Component;
-import java.awt.Dialog;
-import java.awt.Frame;
+import java.awt.Window;
 
 import util.ui.UiUtilities;
 
 public class WizardHandler {
 
-  private Component mParent;
+  private Window mParent;
 
   private WizardStep mStep;
 
@@ -43,7 +41,7 @@ public class WizardHandler {
   private boolean mAllowNext;
   private boolean mAllowFinish;
 
-  public WizardHandler(Component parent, WizardStep initialStep) {
+  public WizardHandler(Window parent, WizardStep initialStep) {
     mParent = parent;
     mStep = initialStep;
     mAllowNext = true;
@@ -55,11 +53,7 @@ public class WizardHandler {
     int result;
     Object obj = null;
 
-    if (mParent instanceof Frame) {
-      mWizardDialog = new WizardDlg((Frame) mParent, this, currentStep);
-    } else {
-      mWizardDialog = new WizardDlg((Dialog) mParent, this, currentStep);
-    }
+    mWizardDialog = new WizardDlg(mParent, this, currentStep);
     
     changeDoneBtnText();
     allowNext(mAllowNext);

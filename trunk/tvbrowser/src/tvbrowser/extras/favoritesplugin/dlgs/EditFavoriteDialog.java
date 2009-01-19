@@ -28,9 +28,8 @@ package tvbrowser.extras.favoritesplugin.dlgs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dialog;
-import java.awt.Frame;
 import java.awt.GridLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -122,19 +121,9 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
    * @param parent The parent frame of this dialog.
    * @param fav The favorite for this dialog.
    */
-  public EditFavoriteDialog(Frame parent, Favorite fav) {
-    super(parent, true);
-    init(fav);
-  }
-
-  /**
-   * Creates an instance of this dialog.
-   * <p>
-   * @param parent The parent dialog of this dialog.
-   * @param fav The favorite for this dialog.
-   */
-  public EditFavoriteDialog(Dialog parent, Favorite fav) {
-    super(parent, true);
+  public EditFavoriteDialog(Window parent, Favorite fav) {
+    super(parent);
+    setModal(true);
     init(fav);
   }
 

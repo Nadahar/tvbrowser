@@ -40,7 +40,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -315,7 +314,11 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
       WebAddress adr = (WebAddress) mAddressList.getModel().getElementAt(i);
       File f = new File(adr.getIconFile());
       if (f.exists()) {
-        f.delete();
+        try {
+          f.delete();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
       }
       adr.setIconFile(null);
     }
@@ -407,15 +410,8 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
   private void newPressed() {
     WebAddress newadr = new WebAddress("", null, null, true, true);
 
-    WebAddressEditDialog editor;
-
-    Window win = UiUtilities.getLastModalChildOf(mParent);
-
-    if (win instanceof JDialog) {
-      editor = new WebAddressEditDialog((JDialog) win, newadr);
-    } else {
-      editor = new WebAddressEditDialog((JFrame) win, newadr);
-    }
+    Window parent = UiUtilities.getLastModalChildOf(mParent);
+    WebAddressEditDialog editor = new WebAddressEditDialog(parent, newadr);
 
     UiUtilities.centerAndShow(editor);
 
@@ -437,16 +433,8 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
       return;
     }
 
-    WebAddressEditDialog editor;
-
-    Window win = UiUtilities.getLastModalChildOf(mParent);
-
-    if (win instanceof JDialog) {
-      editor = new WebAddressEditDialog((JDialog) win, seladr);
-    } else {
-      editor = new WebAddressEditDialog((JFrame) win, seladr);
-    }
-
+    Window parent = UiUtilities.getLastModalChildOf(mParent);
+    WebAddressEditDialog editor = new WebAddressEditDialog(parent, seladr);
     UiUtilities.centerAndShow(editor);
 
     mAddressList.repaint();

@@ -34,6 +34,7 @@ import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -97,39 +98,63 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
      * Return-Value (JOptionPane.CANCEL_OPTION / OK_OPTION)
      */
     private int mReturnValue = JOptionPane.CANCEL_OPTION;
-    
 
+  /**
+   * Creates the Dialog
+   * 
+   * @param parent
+   *          Parent-Dialog
+   * @param title
+   *          Title
+   * @param color
+   *          Color to start with
+   * @param stdColor
+   *          The standard color
+   * @since 3.0
+   */
+  public AlphaColorChooser(Window parent, String title, Color color,
+      Color stdColor) {
+    super(parent, title);
+    setModal(true);
+    mStandardColor = stdColor;
+    createGui();
+    mDefaultColor = color;
+    setColor(color);
+  }
 
-    /**
-     * Creates the Dialog
-     * 
-     * @param parent Parent-Dialog
-     * @param title Title
-     * @param color Color to start with
-     * @param stdColor The standard color
-     */
-    public AlphaColorChooser(JDialog parent, String title, Color color, Color stdColor) {
-        super(parent, title, true);
-        mStandardColor = stdColor;
-        createGui();
-        mDefaultColor = color;
-        setColor(color);
-    }
+  /**
+   * Creates the Dialog
+   * 
+   * @param parent
+   *          Parent-Dialog
+   * @param title
+   *          Title
+   * @param color
+   *          Color to start with
+   * @param stdColor
+   *          The standard color
+   * @deprecated since 3.0
+   */
+  public AlphaColorChooser(JDialog parent, String title, Color color,
+      Color stdColor) {
+    this((Window) parent, title, color, stdColor);
+  }
 
-    /**
-     * Creates the Dialog
-     * 
-     * @param parent Parent-Frame
-     * @param title Title
-     * @param color Color to start with
-     * @param stdColor The standard color
-     */
+  /**
+   * Creates the Dialog
+   * 
+   * @param parent
+   *          Parent-Frame
+   * @param title
+   *          Title
+   * @param color
+   *          Color to start with
+   * @param stdColor
+   *          The standard color
+   * @deprecated since 3.0
+   */
     public AlphaColorChooser(JFrame parent, String title, Color color, Color stdColor) {
-        super(parent, title, true);
-        mStandardColor = stdColor;
-        createGui();
-        mDefaultColor = color;        
-        setColor(color);
+      this((Window) parent, title, color, stdColor);
     }
     
     /**
@@ -283,24 +308,25 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
      * @param stdColor The standard color.
      * @return Selected Color
      */
-    public static Color showDialog(Component parent, String title, Color color, Color stdColor) {
+    public static Color showDialog(Component parent, String title, Color color,
+      Color stdColor) {
 
-        AlphaColorChooser chooser;        
+    AlphaColorChooser chooser;
 
-        if (parent instanceof JFrame) {
-            chooser = new AlphaColorChooser((JFrame) parent, title, color, stdColor);
-        } else if (parent instanceof JDialog) {
-            chooser = new AlphaColorChooser((JDialog) parent, title, color, stdColor);
-        } else {
-            chooser = new AlphaColorChooser((JFrame) null, title, color, stdColor);
-        }
-
-        UiUtilities.centerAndShow(chooser);
-        
-        if (chooser.getReturnValue() == JOptionPane.OK_OPTION) { return chooser.getColor(); }
-
-        return color;
+    if (parent instanceof Window) {
+      chooser = new AlphaColorChooser((Window) parent, title, color, stdColor);
+    } else {
+      chooser = new AlphaColorChooser((Window) null, title, color, stdColor);
     }
+
+    UiUtilities.centerAndShow(chooser);
+
+    if (chooser.getReturnValue() == JOptionPane.OK_OPTION) {
+      return chooser.getColor();
+    }
+
+    return color;
+  }
 
     /**
      * Get the Return Value (JOptionPane.OK_OPTION or CANCEL_OPTION)

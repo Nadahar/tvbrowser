@@ -23,24 +23,22 @@
  */
 package i18nplugin;
 
-import devplugin.ActionMenu;
-import devplugin.Plugin;
-import devplugin.PluginInfo;
-import devplugin.ThemeIcon;
-import devplugin.Version;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.util.Properties;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import devplugin.ActionMenu;
+import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.ThemeIcon;
+import devplugin.Version;
 
 /**
  * This Plugin should help a User to create Translations for the TV-Browser 
@@ -109,13 +107,8 @@ public class I18NPlugin extends Plugin {
   private void openTranslationTool() {
     TranslationDialog dialog;
     
-    Window wnd = UiUtilities.getLastModalChildOf(getParentFrame());
-    
-    if (wnd instanceof JDialog) {
-      dialog = new TranslationDialog((JDialog)wnd, mDevider);
-    } else {
-      dialog = new TranslationDialog((JFrame)wnd, mDevider);
-    }
+    Window parent = UiUtilities.getLastModalChildOf(getParentFrame());
+    dialog = new TranslationDialog(parent, mDevider);
     
     layoutWindow("i18nDlg", dialog, new Dimension(800,750));
     

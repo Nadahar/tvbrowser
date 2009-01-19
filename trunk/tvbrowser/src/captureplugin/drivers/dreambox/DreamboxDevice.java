@@ -24,6 +24,20 @@
  */
 package captureplugin.drivers.dreambox;
 
+import java.awt.Window;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+
+import util.paramhandler.ParamParser;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
 import captureplugin.drivers.DeviceIf;
 import captureplugin.drivers.DriverIf;
 import captureplugin.drivers.dreambox.connector.DreamboxChannel;
@@ -32,21 +46,6 @@ import captureplugin.drivers.utils.ProgramTime;
 import captureplugin.drivers.utils.ProgramTimeDialog;
 import captureplugin.utils.ExternalChannelIf;
 import devplugin.Program;
-import util.paramhandler.ParamParser;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import java.awt.Window;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 
 /**
  * The Dreambox-Device
@@ -146,13 +145,8 @@ public class DreamboxDevice implements DeviceIf {
      * @param parent Parent for the dialog
      */
     public void configDevice(Window parent) {
-        DreamboxConfigDialog dialog;
-
-        if (parent instanceof JDialog) {
-            dialog = new DreamboxConfigDialog((JDialog) parent, this, mConfig);
-        } else {
-            dialog = new DreamboxConfigDialog((JFrame) parent, this, mConfig);
-        }
+        DreamboxConfigDialog dialog = new DreamboxConfigDialog(parent, this,
+        mConfig);
 
         UiUtilities.centerAndShow(dialog);
 
@@ -217,11 +211,8 @@ public class DreamboxDevice implements DeviceIf {
                     mLocalizer.msg("afterEventStandby", "Standby"),
                     mLocalizer.msg("afterEventDeepstandby", "Deepstandby")});
 
-            if (parent instanceof JDialog) {
-                dialog = new ProgramTimeDialog((JDialog) parent, time, false, mLocalizer.msg("afterEventTitle", "After recording"), box);
-            } else {
-                dialog = new ProgramTimeDialog((JFrame) parent, time, false, mLocalizer.msg("afterEventTitle", "After recording"), box);
-            }
+            dialog = new ProgramTimeDialog(parent, time, false, mLocalizer.msg(
+          "afterEventTitle", "After recording"), box);
 
             UiUtilities.centerAndShow(dialog);
 

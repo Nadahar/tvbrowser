@@ -206,10 +206,10 @@ public class PluginTree extends JTree implements DragGestureListener,
 				Object node = model.getChild(comp, i);
 				collapseAll(path.pathByAddingChild(node));
 			}
+	    if (!path.getLastPathComponent().equals(model.getRoot())) {
+        collapsePath(path);
+      }
 		}
-    if(!path.getLastPathComponent().equals(model.getRoot())) {
-      collapsePath(path);
-    }
 	}
 
   private static class TransferNode implements Transferable {

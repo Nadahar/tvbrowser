@@ -41,16 +41,11 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
-
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.ProgramTableModel;
@@ -61,10 +56,12 @@ import util.ui.ProgramList;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import devplugin.ActionMenu;
-
 import devplugin.ContextMenuAction;
-
 import devplugin.ContextMenuSeparatorAction;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
@@ -109,9 +106,9 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   private PluginInfo mPluginInfo;
 
   private boolean mStartFinished = false;
-  
+
   /**
-   * Standard contructor for this class.
+   * Standard constructor for this class.
    */
   public SimpleMarkerPlugin() {
     mInstance = this;
@@ -350,16 +347,8 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
       if(!deletedPrograms.isEmpty() && mProperties.getProperty("showDeletedProgram","true").equals("true")) {
         ProgramList deletedProgramList = new ProgramList(deletedPrograms.toArray(new Program[deletedPrograms.size()]), new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.NO_PICTURE_TYPE),true));
         
-        JDialog deletedListDialog;
-        
-        Window w = UiUtilities.getLastModalChildOf(getParentFrame());
-        
-        if(w instanceof JFrame) {
-          deletedListDialog = new JDialog((JFrame)w);
-        }
-        else {
-          deletedListDialog = new JDialog((JDialog)w);
-        }
+        Window parent = UiUtilities.getLastModalChildOf(getParentFrame());
+        JDialog deletedListDialog = new JDialog(parent);
         
         deletedListDialog.setModal(false);
         deletedListDialog.getContentPane().setLayout(new FormLayout("default:grow","default,5dlu,fill:default:grow,5dlu,default"));
@@ -443,8 +432,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   }
   
   private void showProgramsList() {
-    final JDialog dialog = UiUtilities.createDialog(UiUtilities
-        .getBestDialogParent(getParentFrame()), true);
+    final JDialog dialog = UiUtilities.createDialog(getParentFrame(), true);
     dialog.setTitle(mLocalizer.msg("name","Marker plugin"));
     dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     

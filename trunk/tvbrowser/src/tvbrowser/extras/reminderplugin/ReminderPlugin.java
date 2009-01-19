@@ -58,8 +58,6 @@ import javax.sound.sampled.LineListener;
 import javax.sound.sampled.SourceDataLine;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import tvbrowser.core.Settings;
@@ -138,15 +136,9 @@ public class ReminderPlugin {
         	  if (mSettings.getProperty("showRemovedDialog","true").compareTo("true") == 0) {
 	            Program[] removedPrograms = mReminderList.updatePrograms();
 	            if (removedPrograms.length > 0) {
-	              RemovedProgramsDialog dlg;
 	              Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-	              if (parent instanceof JFrame) {
-	                dlg = new RemovedProgramsDialog((JFrame) parent,
-	                    removedPrograms);
-	              } else {
-	                dlg = new RemovedProgramsDialog((JDialog) parent,
-	                    removedPrograms);
-	              }
+                RemovedProgramsDialog dlg = new RemovedProgramsDialog(parent,
+                    removedPrograms);
 	              util.ui.UiUtilities.centerAndShow(dlg);
 	            }
         	  } else {
@@ -493,16 +485,7 @@ public class ReminderPlugin {
       action.setActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent event) {
           Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-          ReminderDialog dlg;
-          
-          if(w instanceof JFrame) {
-            dlg = new ReminderDialog((JFrame) w, program,
-              mSettings);
-          } else {
-            dlg = new ReminderDialog((JDialog) w, program,
-                mSettings);
-          }
-          
+          ReminderDialog dlg = new ReminderDialog(w, program, mSettings);
           Settings.layoutWindow("extras.remiderContext", dlg);
           
           if(mSettings.getProperty("showTimeSelectionDialog","true").compareTo("true") == 0) {
@@ -695,16 +678,9 @@ public class ReminderPlugin {
   protected ActionMenu getButtonAction() {
     AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent evt) {
-        ReminderListDialog dlg;
         
         Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-        
-        if(w instanceof JFrame) {
-          dlg = new ReminderListDialog((JFrame)w, mReminderList);
-        }
-        else {
-          dlg = new ReminderListDialog((JDialog)w, mReminderList);
-        }
+        ReminderListDialog dlg = new ReminderListDialog(w, mReminderList);
         
         int x = Integer.parseInt(mSettings.getProperty("dlgXPos","-1"));
         int y = Integer.parseInt(mSettings.getProperty("dlgYPos","-1"));

@@ -38,6 +38,7 @@ import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
+
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.extras.common.InternalPluginProxyIf;

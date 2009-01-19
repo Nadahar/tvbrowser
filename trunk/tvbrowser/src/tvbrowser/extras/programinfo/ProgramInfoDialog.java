@@ -57,7 +57,6 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -829,13 +828,10 @@ public class ProgramInfoDialog {
    * Creates the dialog an makes it visible
    */
   public void show() {
-    Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+    Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
     
-    if(w instanceof JDialog) {
-      mDialog = new JDialog((JDialog)w, true);
-    } else {
-      mDialog = new JDialog((JFrame)w, true);
-    }
+    mDialog = new JDialog(parent);
+    mDialog.setModal(true);
     
     mDialog.setTitle(mLocalizer.msg("title", "Program information"));
     mDialog.setContentPane(mMainPanel);

@@ -22,23 +22,17 @@
  */
 package calendarexportplugin;
 
-import calendarexportplugin.exporter.ExporterIf;
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import devplugin.SettingsTab;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.customizableitems.SelectableItemList;
+import java.awt.BorderLayout;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -49,11 +43,18 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Properties;
+
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.customizableitems.SelectableItemList;
+import calendarexportplugin.exporter.ExporterIf;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.SettingsTab;
 
 /**
  * Settings Tab for Calendar Export
@@ -236,15 +237,8 @@ public class CalendarSettingsTab implements SettingsTab {
    * @param panel Parent-Panel
    */
   private void showExtendedDialog(JPanel panel) {
-    ExtendedDialog dialog;
-    
-    Window comp = UiUtilities.getBestDialogParent(panel);
-    
-    if (comp instanceof JFrame) {
-      dialog = new ExtendedDialog((JFrame) comp);
-    } else {
-      dialog = new ExtendedDialog((JDialog) comp);
-    }
+    Window parent = UiUtilities.getBestDialogParent(panel);
+    ExtendedDialog dialog = new ExtendedDialog(parent);
     
     UiUtilities.centerAndShow(dialog);
   }  

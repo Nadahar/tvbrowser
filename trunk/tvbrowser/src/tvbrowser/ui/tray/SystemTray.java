@@ -112,7 +112,7 @@ public class SystemTray {
   /**
    * Initializes the System
    * 
-   * @return true if successfull
+   * @return true if successful
    */
   public boolean initSystemTray() {
 

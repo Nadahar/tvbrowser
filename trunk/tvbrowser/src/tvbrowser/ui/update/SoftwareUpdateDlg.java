@@ -28,11 +28,10 @@ package tvbrowser.ui.update;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -115,24 +114,13 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
    * @param onlyUpdate If this dialog should only show updates.
    * @param itemArr The array with the available update items.
    */
-  public SoftwareUpdateDlg(Dialog parent, String downloadUrl, boolean onlyUpdate, SoftwareUpdateItem[] itemArr) {
-    super(parent, true);
+  public SoftwareUpdateDlg(Window parent, String downloadUrl,
+      boolean onlyUpdate, SoftwareUpdateItem[] itemArr) {
+    super(parent);
+    setModal(true);
     createGui(downloadUrl,onlyUpdate, itemArr);
   }
 
-  /**
-   * Creates an instance of this class.
-   * <p>
-   * @param parent The parent frame.
-   * @param downloadUrl The url to download the data from.
-   * @param onlyUpdate If this dialog should only show updates.
-   * @param itemArr The array with the available update items.
-   */
-  public SoftwareUpdateDlg(Frame parent, String downloadUrl, boolean onlyUpdate, SoftwareUpdateItem[] itemArr) {
-    super(parent, true);
-    createGui(downloadUrl,onlyUpdate, itemArr);
-  }
-  
   private void createGui(String downloadUrl, boolean onlyUpdate, SoftwareUpdateItem[] itemArr) {
     mDownloadUrl = downloadUrl;
     setTitle(mLocalizer.msg("title", "Download plugins"));

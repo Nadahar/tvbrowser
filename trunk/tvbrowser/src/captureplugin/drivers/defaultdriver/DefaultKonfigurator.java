@@ -24,32 +24,34 @@
  */
 package captureplugin.drivers.defaultdriver;
 
-import captureplugin.CapturePlugin;
-import captureplugin.drivers.defaultdriver.configpanels.ApplicationPanel;
-import captureplugin.drivers.defaultdriver.configpanels.ChannelPanel;
-import captureplugin.drivers.defaultdriver.configpanels.ParameterPanel;
-import captureplugin.drivers.defaultdriver.configpanels.SettingsPanel;
-import captureplugin.drivers.defaultdriver.configpanels.VariablePanel;
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.factories.Borders;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
+import captureplugin.CapturePlugin;
+import captureplugin.drivers.defaultdriver.configpanels.ApplicationPanel;
+import captureplugin.drivers.defaultdriver.configpanels.ChannelPanel;
+import captureplugin.drivers.defaultdriver.configpanels.ParameterPanel;
+import captureplugin.drivers.defaultdriver.configpanels.SettingsPanel;
+import captureplugin.drivers.defaultdriver.configpanels.VariablePanel;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
 
 /**
  * The Configuration-Dialog for this Device
@@ -71,25 +73,18 @@ public class DefaultKonfigurator extends JDialog implements WindowClosingIf {
     public final static int TAB_PARAMETER = 1;
     public final static int TAB_SETTINGS = 2;
     public final static int TAB_CHANNELS = 3;
-    
-    /**
-     * Creates the Dialog
-     * @param owner Parent-Frame
-     * @param config Config
-     */
-    public DefaultKonfigurator(JFrame owner, DeviceConfig config) {
-      super(owner, true);
-      mConfig = config;
-      createGui();
-    }
-    
-    /**
-     * Creates the Dialog
-     * @param owner Parent-Frame
-     * @param config Config
-     */
-    public DefaultKonfigurator(JDialog owner, DeviceConfig config) {
-      super(owner, true);
+
+  /**
+   * Creates the Dialog
+   * 
+   * @param owner
+   *          Parent window
+   * @param config
+   *          Config
+   */
+    public DefaultKonfigurator(Window owner, DeviceConfig config) {
+    super(owner);
+    setModal(true);
       mConfig = config;
       createGui();
     }    

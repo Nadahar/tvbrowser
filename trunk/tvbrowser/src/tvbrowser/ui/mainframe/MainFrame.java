@@ -1422,17 +1422,9 @@ public class MainFrame extends JFrame implements DateListener {
   }
   
   protected void showPluginInfoDlg() {
-    Window w = UiUtilities.getLastModalChildOf(this);
-    
-    PluginInformationDialog dlg;
-    
-    if(w instanceof JFrame) {
-      dlg = new PluginInformationDialog((JFrame)w);
-    }
-    else {
-      dlg = new PluginInformationDialog((JDialog)w);
-    }
-    
+    Window parent = UiUtilities.getLastModalChildOf(this);
+    PluginInformationDialog dlg = new PluginInformationDialog(parent);
+
     Settings.layoutWindow("main.pluginInfoDlg",dlg, new Dimension(Sizes.dialogUnitXAsPixel(420,dlg),Sizes.dialogUnitYAsPixel(215,dlg)));
     
     dlg.setVisible(true);
@@ -1819,17 +1811,13 @@ public class MainFrame extends JFrame implements DateListener {
           JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("error.2",
               "No new items available"));
         } else if(mSoftwareUpdateItems != null && mSoftwareUpdateItems.length > 0) {
-          Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-          SoftwareUpdateDlg dlg = null;
-    
-          if(w instanceof JDialog) {
-            dlg = new SoftwareUpdateDlg((JDialog)w, baseUrl, showOnlyUpdates,mSoftwareUpdateItems);
-          } else {
-            dlg = new SoftwareUpdateDlg((JFrame)w, baseUrl, showOnlyUpdates,mSoftwareUpdateItems);
-          }
-    
+          Window parent = UiUtilities.getLastModalChildOf(MainFrame
+              .getInstance());
+          SoftwareUpdateDlg dlg = new SoftwareUpdateDlg(parent, baseUrl,
+              showOnlyUpdates, mSoftwareUpdateItems);
+   
           //dlg.setSoftwareUpdateItems(mSoftwareUpdateItems);
-          dlg.setLocationRelativeTo(w);
+          dlg.setLocationRelativeTo(parent);
           dlg.setVisible(true);
         }
         

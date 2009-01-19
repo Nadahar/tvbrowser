@@ -26,10 +26,8 @@
 
 package tvbrowser.extras.favoritesplugin;
 
-import java.awt.Component;
-import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -711,14 +709,8 @@ public class FavoritesPlugin {
 
   public void editFavorite(Favorite favorite) {
 
-    Component parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-    EditFavoriteDialog dlg;
-    if (parent instanceof Dialog) {
-      dlg = new EditFavoriteDialog((Dialog)parent, favorite);
-    }
-    else {
-      dlg = new EditFavoriteDialog((Frame)parent, favorite);
-    }
+    Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+    EditFavoriteDialog dlg = new EditFavoriteDialog(parent, favorite);
     UiUtilities.centerAndShow(dlg);
     if (dlg.getOkWasPressed()) {
       updateRootNode(true);
@@ -795,17 +787,11 @@ public class FavoritesPlugin {
   
   private void showCreateFavoriteWizardInternal(Program program, String actor,
       String topic) {
-    Component parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+    Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
     Favorite favorite;
     if (isUsingExpertMode()) {
       favorite = new AdvancedFavorite(program != null ? program.getTitle() : "");
-      EditFavoriteDialog dlg;
-      if (parent instanceof Dialog) {
-        dlg = new EditFavoriteDialog((Dialog)parent, favorite);
-      }
-      else {
-        dlg = new EditFavoriteDialog((Frame)parent, favorite);
-      }
+      EditFavoriteDialog dlg = new EditFavoriteDialog(parent, favorite);
       UiUtilities.centerAndShow(dlg);
       if (!dlg.getOkWasPressed()) {
         favorite = null;

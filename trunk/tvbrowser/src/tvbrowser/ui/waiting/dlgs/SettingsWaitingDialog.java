@@ -29,10 +29,10 @@ package tvbrowser.ui.waiting.dlgs;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.Window;
 
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -56,16 +56,12 @@ public class SettingsWaitingDialog extends JDialog {
 
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SettingsWaitingDialog.class);
 
-  public SettingsWaitingDialog(JDialog dialog) {
-    super(dialog, true);
+  public SettingsWaitingDialog(Window dialog) {
+    super(dialog);
+    setModal(true);
     createGui();
   }
 
-  public SettingsWaitingDialog(JFrame frame) {
-    super(frame, true);
-    createGui();
-  }
-  
   private void createGui () {
     setUndecorated(true);
     setCursor(new Cursor(Cursor.WAIT_CURSOR));

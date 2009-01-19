@@ -26,8 +26,6 @@
 
 package tvbrowser.extras.favoritesplugin.wizards;
 
-import java.awt.Dialog;
-import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -164,15 +162,9 @@ public class LimitationsWizardStep extends AbstractWizardStep {
     mChooseChannelsBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         Window parent = UiUtilities.getBestDialogParent(mContent);
-        ChannelChooserDlg dlg;
-        if (parent instanceof Dialog) {
-          dlg = new ChannelChooserDlg((Dialog)parent, mChannelArr, null,
+        ChannelChooserDlg dlg = new ChannelChooserDlg(parent, mChannelArr,
+            null,
             ChannelChooserDlg.SELECTABLE_ITEM_LIST);
-        }
-        else {
-          dlg = new ChannelChooserDlg((Frame)parent, mChannelArr, null,
-            ChannelChooserDlg.SELECTABLE_ITEM_LIST);
-        }
         UiUtilities.centerAndShow(dlg);
         Channel[] chArr = dlg.getChannels();
         if (chArr != null) {

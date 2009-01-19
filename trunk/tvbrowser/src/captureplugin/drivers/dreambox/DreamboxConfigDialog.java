@@ -24,29 +24,18 @@
  */
 package captureplugin.drivers.dreambox;
 
-import captureplugin.CapturePlugin;
-import captureplugin.drivers.dreambox.connector.DreamboxChannel;
-import captureplugin.drivers.dreambox.connector.DreamboxConnector;
-import captureplugin.utils.ConfigTableModel;
-import captureplugin.utils.ExternalChannelIf;
-import captureplugin.utils.ExternalChannelTableCellEditor;
-import captureplugin.utils.ExternalChannelTableCellRenderer;
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.Sizes;
-import devplugin.Channel;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.TimeZone;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -59,12 +48,26 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellEditor;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.TimeZone;
+
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
+import captureplugin.CapturePlugin;
+import captureplugin.drivers.dreambox.connector.DreamboxChannel;
+import captureplugin.drivers.dreambox.connector.DreamboxConnector;
+import captureplugin.utils.ConfigTableModel;
+import captureplugin.utils.ExternalChannelIf;
+import captureplugin.utils.ExternalChannelTableCellEditor;
+import captureplugin.utils.ExternalChannelTableCellRenderer;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
+
+import devplugin.Channel;
 
 /**
  * The configuration dialog for the dreambox
@@ -98,27 +101,20 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
     
     private JTextField mMediaplayer;
 
-    /**
-     * Create the Dialog
-     * @param frame Parent-Frame
-     * @param device Device to configure
-     * @param config Config for the Device
-     */
-    public DreamboxConfigDialog(JFrame frame, DreamboxDevice device, DreamboxConfig config) {
-        super(frame, true);
-        mConfig = config.clone();
-        mDevice = device;
-        createGui();
-    }
-
-    /**
-     * Create the Dialog
-     * @param frame Parent-Frame
-     * @param device Device to configure
-     * @param config Config for the Device
-     */
-    public DreamboxConfigDialog(JDialog frame, DreamboxDevice device, DreamboxConfig config) {
-        super(frame, true);
+  /**
+   * Create the Dialog
+   * 
+   * @param parent
+   *          Parent-Frame
+   * @param device
+   *          Device to configure
+   * @param config
+   *          Config for the Device
+   */
+    public DreamboxConfigDialog(Window parent, DreamboxDevice device,
+      DreamboxConfig config) {
+    super(parent);
+    setModal(true);
         mConfig = config.clone();
         mDevice = device;
         createGui();

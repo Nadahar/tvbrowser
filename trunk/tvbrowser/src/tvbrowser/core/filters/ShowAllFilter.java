@@ -49,7 +49,8 @@ public class ShowAllFilter implements devplugin.ProgramFilter {
    
   public boolean equals(Object o) {
     if(o instanceof ProgramFilter) {
-      return getClass().getName().equals(o.getClass().getName()) && getName().equals(((ProgramFilter)o).getName());
+      return getClass().equals(o.getClass())
+          && getName().equals(((ProgramFilter) o).getName());
     }
     
     return false;

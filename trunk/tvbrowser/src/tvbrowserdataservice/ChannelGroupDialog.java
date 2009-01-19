@@ -27,6 +27,7 @@ package tvbrowserdataservice;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
@@ -35,7 +36,6 @@ import java.util.Comparator;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -64,19 +64,9 @@ public class ChannelGroupDialog extends JDialog {
      * @param parent Parent-Frame
      * @param group Group to show
      */
-    public ChannelGroupDialog(JFrame parent, ChannelGroup group) {
-        super(parent, true);
-        mGroup = group;
-        createGui();
-    }
-
-    /**
-     * Create the Dialog
-     * @param parent Parent-Dialog
-     * @param group Group to show
-     */
-    public ChannelGroupDialog(JDialog parent, ChannelGroup group) {
-        super(parent, true);
+    public ChannelGroupDialog(Window parent, ChannelGroup group) {
+    super(parent);
+    setModal(true);
         mGroup = group;
         createGui();
     }

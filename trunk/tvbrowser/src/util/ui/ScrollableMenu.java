@@ -76,9 +76,9 @@ public class ScrollableMenu extends JMenu {
 
   private int maxItemsToDisplay = 1;
 
-  private static boolean DOWN = true;
-
-  private static boolean UP = false;
+  private enum ScrollDirection {
+    UP, DOWN
+  };
 
   static {
     // put a wrapper action between up and down selection action to scroll up or
@@ -93,8 +93,10 @@ public class ScrollableMenu extends JMenu {
       Action downAction = map.get("selectNext");
       Action upAction = map.get("selectPrevious");
 
-      map.put("selectNext", new SelectNextItemAction(DOWN, downAction));
-      map.put("selectPrevious", new SelectNextItemAction(UP, upAction));
+      map.put("selectNext", new SelectNextItemAction(ScrollDirection.DOWN,
+          downAction));
+      map.put("selectPrevious", new SelectNextItemAction(ScrollDirection.UP,
+          upAction));
     }
   }
 
@@ -105,11 +107,11 @@ public class ScrollableMenu extends JMenu {
   }
   
   private static class SelectNextItemAction extends AbstractAction {
-    private boolean direction;
+    private ScrollDirection direction;
 
     private Action wrappedAction;
 
-    SelectNextItemAction(boolean direction, Action wrappedAction) {
+    SelectNextItemAction(ScrollDirection direction, Action wrappedAction) {
       this.direction = direction;
       this.wrappedAction = wrappedAction;
     }
@@ -124,42 +126,39 @@ public class ScrollableMenu extends JMenu {
 
         ScrollableMenu menu = (ScrollableMenu) path[len - 3];
         MenuElement selected = path[len - 1];
-        Component component = menu.getFirstVisibleAndEnabledComponent();
-        if (direction == UP && (component == null || selected == component)) {
-          if (menu.scrollUp.enableScroll) {
-            // scroll up
+        Component component = (direction == ScrollDirection.UP ? menu
+            .getFirstVisibleAndEnabledComponent() : menu
+            .getLastVisibleAndEnabledComponent());
+        if (component == null || selected == component) {
+          boolean enableScroll = (direction == ScrollDirection.UP ? menu.scrollUp.enableScroll
+              : menu.scrollDown.enableScroll);
+          if (enableScroll) {
             do {
-              menu.scrollUpClicked();
-              component = menu.getFirstVisibleComponent();
+              if (direction == ScrollDirection.UP) {
+                menu.scrollUpClicked();
+                component = menu.getFirstVisibleComponent();
+                enableScroll = menu.scrollUp.enableScroll;
+              } else {
+                menu.scrollDownClicked();
+                component = menu.getLastVisibleComponent();
+                enableScroll = menu.scrollDown.enableScroll;
+              }
             } while (component != null && (!(component instanceof MenuElement)) && (component instanceof JSeparator)
-                && menu.scrollUp.enableScroll);
+                && enableScroll);
 
-            if (!component.isEnabled() || (!(component instanceof MenuElement))) {
+            if (component == null || !component.isEnabled()
+                || (!(component instanceof MenuElement))) {
               return;
             }
           } else {
-            // very first - scroll to end
             for (int index = 0; index < menu.getMenuComponentCount(); index++) {
-              menu.scrollDownClicked();
-            }
-          }
-        } else if (direction == DOWN
-            && (((component = menu.getLastVisibleAndEnabledComponent()) == null) || selected == component)) {
-          if (menu.scrollDown.enableScroll) {
-            // scroll down
-            do {
-              menu.scrollDownClicked();
-              component = menu.getLastVisibleComponent();
-            } while (component != null && (!(component instanceof MenuElement)) && (component instanceof JSeparator)
-                && menu.scrollDown.enableScroll);
-
-            if (!component.isEnabled() || (!(component instanceof MenuElement))) {
-              return;
-            }
-          } else {
-            // very last - scroll to begin
-            for (int index = 0; index < menu.getMenuComponentCount(); index++) {
-              menu.scrollUpClicked();
+              if (direction == ScrollDirection.UP) {
+                // very first - scroll to end
+                menu.scrollDownClicked();
+              } else {
+                // very last - scroll to begin
+                menu.scrollUpClicked();
+              }
             }
           }
         }
@@ -169,9 +168,11 @@ public class ScrollableMenu extends JMenu {
     }
   }
 
-  private ScrollUpOrDownButtonItem scrollUp = new ScrollUpOrDownButtonItem(UP);
+  private ScrollUpOrDownButtonItem scrollUp = new ScrollUpOrDownButtonItem(
+      ScrollDirection.UP);
 
-  private ScrollUpOrDownButtonItem scrollDown = new ScrollUpOrDownButtonItem(DOWN);
+  private ScrollUpOrDownButtonItem scrollDown = new ScrollUpOrDownButtonItem(
+      ScrollDirection.DOWN);
 
   private JSeparator upSeperator = new JSeparator();
 
@@ -623,11 +624,8 @@ public class ScrollableMenu extends JMenu {
   }
 
   private void scrollUpClicked() {
-    
-    if (scrollableItems.size() <= maxItemsToDisplay || beginIndex == 0) { // no
-      // need
-      // to
-      // scroll
+    if (scrollableItems.size() <= maxItemsToDisplay || beginIndex == 0) {
+      // no need to scroll
       return;
     }
 
@@ -642,12 +640,9 @@ public class ScrollableMenu extends JMenu {
   }
 
   private void scrollDownClicked() {
-    
-    if (scrollableItems.size() <= maxItemsToDisplay || beginIndex + maxItemsToDisplay == scrollableItems.size()) { // no
-      // need
-      // to
-      // scroll
-
+    if (scrollableItems.size() <= maxItemsToDisplay
+        || beginIndex + maxItemsToDisplay == scrollableItems.size()) {
+      // no need to scroll
       return;
     }
 
@@ -665,7 +660,7 @@ public class ScrollableMenu extends JMenu {
   
   private class ScrollUpOrDownButtonItem extends JPanel {
 
-    private boolean direction = UP;
+    private ScrollDirection direction = ScrollDirection.UP;
 
     private Polygon arrow = null;
 
@@ -683,8 +678,7 @@ public class ScrollableMenu extends JMenu {
 
     private Timer timer = null;
 
-    public ScrollUpOrDownButtonItem(boolean direction) { // direction can be UP
-      // or DOWN
+    public ScrollUpOrDownButtonItem(ScrollDirection direction) {
       this.direction = direction;
       setVisible(false);
 
@@ -728,7 +722,7 @@ public class ScrollableMenu extends JMenu {
     private Polygon getArrow() {
       if (arrow == null) {
         arrow = new Polygon();
-        if (direction == UP) {
+        if (direction == ScrollDirection.UP) {
           arrow.addPoint((int) (getSize().width / 2.0 - 6.0 + 0.5), (int) (getSize().height / 2.0 + 3.0 + 0.5));
           arrow.addPoint((int) (getSize().width / 2.0 + 6.0 + 0.5), (int) (getSize().height / 2.0 + 3.0 + 0.5));
           arrow.addPoint((int) (getSize().width / 2.0 + 0.5), (int) (getSize().height / 2.0 - 4.0 + 0.5));
@@ -742,7 +736,7 @@ public class ScrollableMenu extends JMenu {
     }
 
     private void scroll() {
-      if (direction == UP) {
+      if (direction == ScrollDirection.UP) {
         scrollUpClicked();
       } else {
         scrollDownClicked();

@@ -22,18 +22,20 @@
  */
 package calendarexportplugin;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import util.ui.Localizer;
-import util.ui.PluginProgramConfigurationPanel;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
+import util.ui.Localizer;
+import util.ui.PluginProgramConfigurationPanel;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * The Dialog for the Extended Settings.
@@ -48,22 +50,16 @@ public class ExtendedDialog extends JDialog {
           .getLocalizerFor(ExtendedDialog.class);
   
   private PluginProgramConfigurationPanel mConfigPanel;
-  
-  /**
-   * Creates the Dialog
-   * @param frame Parent-Frame
-   */
-  public ExtendedDialog(JFrame frame) {
-    super(frame, mLocalizer.msg("title","Formatings selection"), true);    
-    createGui();
-  }
 
   /**
    * Creates the Dialog
-   * @param dialog Parent-Dialog
+   * 
+   * @param parent
+   *          Parent-Frame
    */
-  public ExtendedDialog(JDialog dialog) {
-    super(dialog, mLocalizer.msg("title","Formatings selection"), true);    
+  public ExtendedDialog(Window parent) {
+    super(parent, mLocalizer.msg("title", "Formatings selection"));
+    setModal(true);
     createGui();
   }
 

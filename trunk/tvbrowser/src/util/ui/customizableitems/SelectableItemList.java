@@ -363,9 +363,8 @@ public class SelectableItemList extends JPanel {
     if(mList != null) {
       mList.setSize(mList.getPreferredSize());
       mList.ensureIndexIsVisible(mList.getSelectedIndex());
+      mList.repaint();
     }
-    
-    mList.repaint();
   }
   
   /**

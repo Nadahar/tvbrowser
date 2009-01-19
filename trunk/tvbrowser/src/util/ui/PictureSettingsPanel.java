@@ -32,9 +32,7 @@ import java.util.Date;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JDialog;
 import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -45,6 +43,13 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
+import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
+import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.settings.SettingsDialog;
+import util.settings.PluginPictureSettings;
+import util.settings.ProgramPanelSettings;
+
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -54,13 +59,6 @@ import devplugin.Marker;
 import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.SettingsItem;
-
-import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
-import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
-import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.settings.SettingsDialog;
-import util.settings.PluginPictureSettings;
-import util.settings.ProgramPanelSettings;
 
 /**
  * A class that contains settings components for picture settings.
@@ -230,14 +228,12 @@ public class PictureSettingsPanel extends JPanel implements Scrollable {
       choose = new JButton(mLocalizer.msg("selectPlugins","Choose Plugins"));
       choose.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-          MarkerChooserDlg chooser = null;
-          if(w instanceof JDialog)
-            chooser = new MarkerChooserDlg((JDialog)w,mClientPlugins, null);
-          else
-            chooser = new MarkerChooserDlg((JFrame)w,mClientPlugins, null);
+          Window parent = UiUtilities.getLastModalChildOf(MainFrame
+                .getInstance());
+            MarkerChooserDlg chooser = new MarkerChooserDlg(parent,
+                mClientPlugins, null);
           
-          chooser.setLocationRelativeTo(w);
+          chooser.setLocationRelativeTo(parent);
           chooser.setVisible(true);
           
           mClientPlugins = chooser.getMarker();

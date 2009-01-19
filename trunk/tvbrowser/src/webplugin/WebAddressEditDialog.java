@@ -35,7 +35,6 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -80,21 +79,9 @@ public class WebAddressEditDialog extends JDialog {
    * @param parent Parent
    * @param adr Address to edit
    */
-  public WebAddressEditDialog(JFrame parent, WebAddress adr) {
-    super(parent, true);
-    mWebAddress = adr;
-
-    createGui();
-  }
-
-  /**
-   * Creates the Dialog
-   * 
-   * @param parent Parent
-   * @param adr Address to edit
-   */
-  public WebAddressEditDialog(JDialog parent, WebAddress adr) {
-    super(parent, true);
+  public WebAddressEditDialog(Window parent, WebAddress adr) {
+    super(parent);
+    setModal(true);
     mWebAddress = adr;
 
     createGui();
@@ -160,11 +147,7 @@ public class WebAddressEditDialog extends JDialog {
         Window bestparent = UiUtilities.getBestDialogParent(panel);
         
         ParamCheckDialog dialog;
-        if (bestparent instanceof JDialog) {
-          dialog = new ParamCheckDialog((JDialog)bestparent, mUrl.getText());
-        } else {
-          dialog = new ParamCheckDialog((JFrame)bestparent, mUrl.getText());
-        }
+        dialog = new ParamCheckDialog(bestparent, mUrl.getText());
         dialog.setVisible(true);
       }
       
@@ -180,11 +163,7 @@ public class WebAddressEditDialog extends JDialog {
         Window bestparent = UiUtilities.getBestDialogParent(panel);
         
         ParamHelpDialog dialog;
-        if (bestparent instanceof JDialog) {
-          dialog = new ParamHelpDialog((JDialog)bestparent);
-        } else {
-          dialog = new ParamHelpDialog((JFrame)bestparent);
-        }
+        dialog = new ParamHelpDialog(bestparent);
         dialog.setVisible(true);
       }
       

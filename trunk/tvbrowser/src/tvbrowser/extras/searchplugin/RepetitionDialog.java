@@ -23,14 +23,22 @@
  */
 package tvbrowser.extras.searchplugin;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.Sizes;
-import devplugin.Channel;
-import devplugin.PluginManager;
+import java.awt.Dimension;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Vector;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import util.settings.PluginPictureSettings;
@@ -41,21 +49,15 @@ import util.ui.SearchHelper;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Vector;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
+
+import devplugin.Channel;
+import devplugin.PluginManager;
 
 /**
  * A dialog specifically for repetitions. It only shows a simple Input-Form and
@@ -84,46 +86,24 @@ public class RepetitionDialog extends JDialog implements WindowClosingIf {
   /**
    * Create the dialog
    * 
-   * @param dialog
+   * @param parent
    *          Parent-Dialog
    */
-  public RepetitionDialog(Dialog dialog) {
-    this(dialog, null);
+  public RepetitionDialog(Window parent) {
+    this(parent, null);
   }
 
   /**
    * Create the dialog
    * 
-   * @param dialog
+   * @param parent
    *          Parent-Dialog
    * @param channel
    *          defines the first channel of the channel list
    */
-  public RepetitionDialog(Dialog dialog, Channel channel) {
-    super(dialog, true);
-    createGui(channel);
-  }
-
-  /**
-   * Create the dialog
-   * 
-   * @param frame
-   *          Parent-Frame
-   */
-  public RepetitionDialog(Frame frame) {
-    this(frame, null);
-  }
-
-  /**
-   * Create the dialog
-   * 
-   * @param frame
-   *          Parent-Frame
-   * @param channel
-   *          defines the first channel of the channel list
-   */
-  public RepetitionDialog(Frame frame, Channel channel) {
-    super(frame, true);
+  public RepetitionDialog(Window parent, Channel channel) {
+    super(parent);
+    setModal(true);
     createGui(channel);
   }
 

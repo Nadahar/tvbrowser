@@ -30,6 +30,7 @@ import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -81,84 +82,163 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
      = util.ui.Localizer.getLocalizerFor(PluginChooserDlg.class);
 
   /**
-   *
+   * 
    * @param parent
-   * @param pluginArr The initially selected ProgramReceiveIfs.
-   * @param description A description text below the ProgramReceiveIf list.
-   * @param caller The caller ProgramReceiveIf.
+   * @param pluginArr
+   *          The initially selected ProgramReceiveIfs.
+   * @param description
+   *          A description text below the ProgramReceiveIf list.
+   * @param caller
+   *          The caller ProgramReceiveIf.
+   * @since 3.0
+   */
+  public PluginChooserDlg(Window parent, ProgramReceiveIf[] pluginArr,
+      String description, ProgramReceiveIf caller) {
+    super(parent);
+    setModal(true);
+    init(pluginArr, description, caller, null, null);
+  }
+
+  /**
+   * use the same method with the Window type parent instead
+   * 
+   * @param parent
+   * @param pluginArr
+   *          The initially selected ProgramReceiveIfs.
+   * @param description
+   *          A description text below the ProgramReceiveIf list.
+   * @param caller
+   *          The caller ProgramReceiveIf.
+   * @deprecated since 3.0
    */
   public PluginChooserDlg(Dialog parent, ProgramReceiveIf[] pluginArr, String description, ProgramReceiveIf caller) {
-    super(parent,true);
-    init(pluginArr, description, caller,null,null);
+    this((Window) parent, pluginArr, description, caller);
   }
-  
+
   /**
-  *
-  * @param parent
-  * @param pluginArr The initially selected ProgramReceiveIfs.
-  * @param description A description text below the ProgramReceiveIf list.
-  * @param caller The caller ProgramReceiveIf.
-  */
- public PluginChooserDlg(Dialog parent, ProgramReceiveTarget[] pluginArr, String description, ProgramReceiveIf caller) {
-   super(parent,true);
+   * 
+   * @param parent
+   * @param pluginArr
+   *          The initially selected ProgramReceiveIfs.
+   * @param description
+   *          A description text below the ProgramReceiveIf list.
+   * @param caller
+   *          The caller ProgramReceiveIf.
+   * @since 3.0
+   */
+ public PluginChooserDlg(Window parent, ProgramReceiveTarget[] pluginArr,
+      String description, ProgramReceiveIf caller) {
+    super(parent);
+    setModal(true);
    
    Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>> table = createReceiveTable(pluginArr);
    
    init(table.keySet().toArray(new ProgramReceiveIf[table.keySet().size()]), description, caller, table, null);
  }
  
-   /**
-   *
+  /**
+   * use the same method with the Window type for parent instead
+   * 
    * @param parent
-   * @param pluginArr The initially selected ProgramReceiveIfs.
-   * @param description A description text below the ProgramReceiveIf list.
-   * @param caller The caller ProgramReceiveIf.
-   * @param disabledTargets Targets that cannot be selected/deselected
+   * @param pluginArr
+   *          The initially selected ProgramReceiveIfs.
+   * @param description
+   *          A description text below the ProgramReceiveIf list.
+   * @param caller
+   *          The caller ProgramReceiveIf.
+   * @deprecated since 3.0
+   */
+  public PluginChooserDlg(Dialog parent, ProgramReceiveTarget[] pluginArr,
+      String description, ProgramReceiveIf caller) {
+    this((Window) parent, pluginArr, description, caller);
+  }
+ 
+  /**
+   * 
+   * @param parent
+   * @param pluginArr
+   *          The initially selected ProgramReceiveIfs.
+   * @param description
+   *          A description text below the ProgramReceiveIf list.
+   * @param caller
+   *          The caller ProgramReceiveIf.
+   * @param disabledTargets
+   *          Targets that cannot be selected/deselected
+   * @since 3.0
+   */
+  public PluginChooserDlg(Window parent, ProgramReceiveTarget[] pluginArr,
+      String description, ProgramReceiveIf caller,
+      ProgramReceiveTarget[] disabledTargets) {
+    super(parent);
+    setModal(true);
+
+    Hashtable<ProgramReceiveIf, ArrayList<ProgramReceiveTarget>> table = createReceiveTable(pluginArr);
+
+    init(table.keySet().toArray(new ProgramReceiveIf[table.keySet().size()]),
+        description, caller, table, disabledTargets);
+  }
+
+  /**
+   * 
+   * @param parent
+   * @param pluginArr
+   *          The initially selected ProgramReceiveIfs.
+   * @param description
+   *          A description text below the ProgramReceiveIf list.
+   * @param caller
+   *          The caller ProgramReceiveIf.
+   * @param disabledTargets
+   *          Targets that cannot be selected/deselected
    * @since 2.7.2
+   * @deprecated since 3.0
    */
   public PluginChooserDlg(Dialog parent, ProgramReceiveTarget[] pluginArr, String description, ProgramReceiveIf caller, ProgramReceiveTarget[] disabledTargets) {
-    super(parent,true);
-    
-    Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>> table = createReceiveTable(pluginArr);
-    
-    init(table.keySet().toArray(new ProgramReceiveIf[table.keySet().size()]), description, caller, table, disabledTargets);
+    this((Window) parent, pluginArr, description, caller, disabledTargets);
   }
 
   /**
-   *
+   * use the same method with the Window type instead
+   * 
    * @param parent
-   * @param pluginArr The initially selected ProgramReceiveIfs.
-   * @param description A description text below the ProgramReceiveIf list.
-   * @param caller The caller ProgramReceiveIf.
+   * @param pluginArr
+   *          The initially selected ProgramReceiveIfs.
+   * @param description
+   *          A description text below the ProgramReceiveIf list.
+   * @param caller
+   *          The caller ProgramReceiveIf.
+   * @deprecated since 3.0
    */
   public PluginChooserDlg(Frame parent, ProgramReceiveIf[] pluginArr, String description, ProgramReceiveIf caller) {
-    super(parent,true);
-    init(pluginArr, description, caller,null,null);
-  }
-  
-  public PluginChooserDlg(Frame parent, ProgramReceiveTarget[] targets, String description, ProgramReceiveIf caller) {
-    super(parent,true);
-
-    Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>> table = createReceiveTable(targets);
-    
-    init(table.keySet().toArray(new ProgramReceiveIf[table.keySet().size()]), description, caller, table, null);
+    this((Window) parent, pluginArr, description, caller);
   }
   
   /**
-  *
-  * @param parent
-  * @param targets The initially selected ProgramReceiveTargets.
-  * @param description A description text below the ProgramReceiveIf list.
-  * @param caller The caller ProgramReceiveIf.
-  * @param disabledTargets Targets that cannot be selected/deselected
-  * @since 2.7.2
-  */
-  public PluginChooserDlg(Frame parent, ProgramReceiveTarget[] targets, String description, ProgramReceiveIf caller, ProgramReceiveTarget[] disabledTargets) {
-    super(parent,true);
+   * @param parent
+   * @param targets
+   * @param description
+   * @param caller
+   * @deprecated since 3.0
+   */
+  public PluginChooserDlg(Frame parent, ProgramReceiveTarget[] targets, String description, ProgramReceiveIf caller) {
+    this((Window) parent, targets, description, caller);
+  }
 
-    Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>> table = createReceiveTable(targets);
-    
-    init(table.keySet().toArray(new ProgramReceiveIf[table.keySet().size()]), description, caller, table, disabledTargets);
+  /**
+   * 
+   * @param parent
+   * @param targets
+   *          The initially selected ProgramReceiveTargets.
+   * @param description
+   *          A description text below the ProgramReceiveIf list.
+   * @param caller
+   *          The caller ProgramReceiveIf.
+   * @param disabledTargets
+   *          Targets that cannot be selected/deselected
+   * @since 2.7.2
+   * @deprecated since 3.0
+   */
+  public PluginChooserDlg(Frame parent, ProgramReceiveTarget[] targets, String description, ProgramReceiveIf caller, ProgramReceiveTarget[] disabledTargets) {
+    this((Window) parent, targets, description, caller, disabledTargets);
   }
   
   private Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>> createReceiveTable(ProgramReceiveTarget[] targets) {

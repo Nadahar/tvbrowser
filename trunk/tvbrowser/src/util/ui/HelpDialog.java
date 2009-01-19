@@ -100,7 +100,8 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
 
 
   private HelpDialog(Component parent, String filename) {
-    mDialog = UiUtilities.createDialog(parent, false);
+    mDialog = UiUtilities.createDialog(UiUtilities.getBestDialogParent(parent),
+        false);
 
     initUi();
   }
