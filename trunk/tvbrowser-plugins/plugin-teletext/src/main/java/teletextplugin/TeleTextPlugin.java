@@ -43,7 +43,7 @@ import devplugin.Program;
 import devplugin.Version;
 
 public class TeleTextPlugin extends Plugin {
-  private static final Version mVersion = new Version(2, 70, 2);
+  private static final Version mVersion = new Version(2, 70, 3);
 
   private PluginInfo mPluginInfo;
 
@@ -64,10 +64,10 @@ public class TeleTextPlugin extends Plugin {
 
   public PluginInfo getInfo() {
     if (mPluginInfo == null) {
-      String name = mLocalizer.msg("name", "Teletext");
-      String desc = mLocalizer.msg("description",
+      final String name = mLocalizer.msg("name", "Teletext");
+      final String desc = mLocalizer.msg("description",
           "Shows Internet based teletext pages.");
-      String author = "Michael Keppler";
+      final String author = "Michael Keppler";
 
       mPluginInfo = new PluginInfo(TeleTextPlugin.class, name, desc, author);
     }
@@ -76,7 +76,7 @@ public class TeleTextPlugin extends Plugin {
   }
 
   @Override
-  public ActionMenu getContextMenuActions(Program program) {
+  public ActionMenu getContextMenuActions(final Program program) {
     // special handling of example program
     if (program == null
         || program.equals(getPluginManager().getExampleProgram())
@@ -85,13 +85,13 @@ public class TeleTextPlugin extends Plugin {
           "Teletext"), getPluginIcon()));
     }
 
-    Channel channel = program.getChannel();
+    final Channel channel = program.getChannel();
     final String url = getTextUrl(channel);
     if (url != null && url.length() > 0) {
-      Action action = new AbstractAction(mLocalizer.msg("contextMenu",
+      final Action action = new AbstractAction(mLocalizer.msg("contextMenu",
           "Teletext"), getPluginIcon()) {
 
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(final ActionEvent e) {
           Launch.openURL(url);
         }
       };
@@ -108,12 +108,12 @@ public class TeleTextPlugin extends Plugin {
     return mIcon;
   }
 
-  private String getTextUrl(Channel channel) {
+  private String getTextUrl(final Channel channel) {
     initializeProperties();
-    String country = channel.getCountry();
+    final String country = channel.getCountry();
     final String id = channel.getId().toLowerCase().replaceAll(" ", "_");
     // first try country and channel ID
-    String URL = lookupURL(country + "_" + id);
+    final String URL = lookupURL(country + "_" + id);
     if (URL != null) {
       return URL;
     }
@@ -121,8 +121,8 @@ public class TeleTextPlugin extends Plugin {
     return lookupURL(id);
   }
 
-  private String lookupURL(String key) {
-    String url = mPages.getProperty(key);
+  private String lookupURL(final String key) {
+    final String url = mPages.getProperty(key);
     if (url != null && url.length() > 0 && url.startsWith("http")) {
       return url;
     }
@@ -132,12 +132,12 @@ public class TeleTextPlugin extends Plugin {
   private void initializeProperties() {
     // load the URLs
     if (mPages == null) {
-      InputStream is = getClass().getResourceAsStream("teletext.properties");
+      final InputStream urlStream = getClass().getResourceAsStream(
+          "teletext.properties");
       mPages = new Properties();
       try {
-        mPages.load(is);
+        mPages.load(urlStream);
       } catch (IOException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
       // check all URLs on first load
@@ -146,8 +146,9 @@ public class TeleTextPlugin extends Plugin {
   }
 
   private void checkURLs() {
-    for (Enumeration<?> keys = mPages.propertyNames(); keys.hasMoreElements();) {
-      String key = (String) keys.nextElement();
+    for (final Enumeration<?> keys = mPages.propertyNames(); keys
+        .hasMoreElements();) {
+      final String key = (String) keys.nextElement();
       String url = mPages.getProperty(key);
       if (url != null && url.length() > 0) {
         // is this a mapping only?
