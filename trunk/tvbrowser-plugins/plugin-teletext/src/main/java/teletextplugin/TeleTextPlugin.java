@@ -42,8 +42,8 @@ import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.Version;
 
-public class TeleTextPlugin extends Plugin {
-  private static final Version mVersion = new Version(2, 70, 3);
+final public class TeleTextPlugin extends Plugin {
+  private static final Version mVersion = new Version(2, 70, 4);
 
   private PluginInfo mPluginInfo;
 
@@ -109,24 +109,45 @@ public class TeleTextPlugin extends Plugin {
   }
 
   private String getTextUrl(final Channel channel) {
-    initializeProperties();
-    final String country = channel.getCountry();
-    final String id = channel.getId().toLowerCase().replaceAll(" ", "_");
-    // first try country and channel ID
-    final String URL = lookupURL(country + "_" + id);
-    if (URL != null) {
-      return URL;
+    try {
+      initializeProperties();
+      final String channelCountry = channel.getCountry();
+      final String channelName = channel.getDefaultName();
+      for (final Enumeration<?> keys = mPages.propertyNames(); keys
+          .hasMoreElements();) {
+        final String key = (String) keys.nextElement();
+        final int separatorIndex = key.indexOf(',');
+        if (separatorIndex > 0) {
+          final String[] countries = key.substring(0, separatorIndex).split(
+              "\\W");
+          final String name = "(?i)"
+              + key.substring(separatorIndex + 1).replaceAll("\\*", ".*");
+          for (String country : countries) {
+            if (channelCountry.equalsIgnoreCase(country)
+                && channelName.matches(name)) {
+              String url = mPages.getProperty(key);
+              if (isValidURL(url)) {
+                return url;
+              }
+              else {
+                url = mPages.getProperty(url);
+                if (isValidURL(url)) {
+                  return url;
+                }
+              }
+            }
+          }
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
     }
-    // if nothing was found, search only the ID
-    return lookupURL(id);
+    // nothing found
+    return null;
   }
 
-  private String lookupURL(final String key) {
-    final String url = mPages.getProperty(key);
-    if (url != null && url.length() > 0 && url.startsWith("http")) {
-      return url;
-    }
-    return null;
+  private boolean isValidURL(final String url) {
+    return url != null && url.length() > 0 && url.startsWith("http");
   }
 
   private void initializeProperties() {
