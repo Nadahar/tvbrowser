@@ -95,8 +95,6 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
 
   private MarkListsVector mMarkListVector;
 
-  private Properties mProperties;
-
   private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
 
   private boolean mHasRightToUpdate = false, mHasToUpdate = false;
@@ -106,6 +104,8 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   private PluginInfo mPluginInfo;
 
   private boolean mStartFinished = false;
+
+  private SimpleMarkerSettings mSettings;
 
   /**
    * Standard constructor for this class.
@@ -143,15 +143,11 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   }
 
   public void loadSettings(Properties prop) {
-    if (prop == null) {
-      mProperties = new Properties();
-    } else {
-      mProperties = prop;
-    }
+    mSettings = new SimpleMarkerSettings(prop); 
   }
 
   public Properties storeSettings() {
-    return mProperties;
+    return mSettings.storeSettings();
   }
 
   /**
@@ -344,7 +340,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
         list.revalidateContainingPrograms(deletedPrograms);
       }
       
-      if(!deletedPrograms.isEmpty() && mProperties.getProperty("showDeletedProgram","true").equals("true")) {
+      if (!deletedPrograms.isEmpty() && mSettings.showDeletedPrograms()) {
         ProgramList deletedProgramList = new ProgramList(deletedPrograms.toArray(new Program[deletedPrograms.size()]), new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.NO_PICTURE_TYPE),true));
         
         Window parent = UiUtilities.getLastModalChildOf(getParentFrame());
@@ -506,6 +502,34 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
       updateTree();
     }
   }
+  
+  protected void addGroupingActions(PluginTreeNode node) {
+    ActionMenu displayBoth = new ActionMenu(new AbstractAction(mLocalizer.msg(
+        "grouping.both", "By title and date")) {
+      public void actionPerformed(ActionEvent e) {
+        mSettings.setNodeGroupingByBoth();
+        updateTree();
+      }
+    }, mSettings.isGroupingByBoth());
+    ActionMenu displayTitle = new ActionMenu(new AbstractAction(mLocalizer.msg(
+        "grouping.title", "By title")) {
+      public void actionPerformed(ActionEvent e) {
+        mSettings.setNodeGroupingByTitle();
+        updateTree();
+      }
+    }, mSettings.isGroupingByTitle());
+    ActionMenu displayDate = new ActionMenu(new AbstractAction(mLocalizer.msg(
+        "grouping.date", "By date")) {
+      public void actionPerformed(ActionEvent e) {
+        mSettings.setNodeGroupingByDate();
+        updateTree();
+      }
+    }, mSettings.isGroupingByDate());
+    ActionMenu[] groupActions = new ActionMenu[] { displayBoth, displayTitle,
+        displayDate };
+    node.addActionMenu(new ActionMenu(new ContextMenuAction(mLocalizer
+        .msg("grouping.grouping", "Grouping")), groupActions));
+  }
 
   /**
    * Updates the plugin tree.
@@ -514,24 +538,25 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     if (!mStartFinished) {
       return;
     }
-    PluginTreeNode node = getRootNode();
-    node.removeAllActions();
-    node.removeAllChildren();
-    node.getMutableTreeNode().setShowLeafCountEnabled(false);
+    PluginTreeNode root = getRootNode();
+    root.removeAllChildren();
+    root.getMutableTreeNode().setShowLeafCountEnabled(false);
 
     if (mMarkListVector.size() == 1) {
-      mMarkListVector.getListAt(0).createNodes(node, false);
+      mMarkListVector.getListAt(0).createNodes(root, false);
     } else {
       for (MarkList list : mMarkListVector) {
-        PluginTreeNode temp = node.addNode(list.getName());
-        temp.getMutableTreeNode().setShowLeafCountEnabled(false);
-        temp.getMutableTreeNode().setIcon(list.getMarkIcon());
-        temp.getMutableTreeNode().setProgramReceiveTarget(list.getReceiveTarget());
-        list.createNodes(temp, false);
+        PluginTreeNode listNode = root.addNode(list.getName());
+        listNode.getMutableTreeNode().setShowLeafCountEnabled(false);
+        listNode.getMutableTreeNode().setIcon(list.getMarkIcon());
+        listNode.getMutableTreeNode().setProgramReceiveTarget(
+            list.getReceiveTarget());
+        list.createNodes(listNode, false);
       }
+      addGroupingActions(root);
     }
-    
-    node.update();
+   
+    root.update();
   }
 
   protected ImageIcon createIconForTree(int i) {
@@ -630,8 +655,8 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     return null;
   }
     
-  protected Properties getSettings() {
-    return mProperties;
+  protected SimpleMarkerSettings getSettings() {
+    return mSettings;
   }
   
   protected void save() {

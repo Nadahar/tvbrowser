@@ -107,7 +107,10 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
         "default,5dlu,fill:default:grow,3dlu,pref,10dlu,pref,5dlu"));
     CellConstraints cc = new CellConstraints();
     
-    mShowDeletedPrograms = new JCheckBox(SimpleMarkerPlugin.mLocalizer.msg("settings.informAboutDeletedPrograms","Inform about program that were deleted during a data update"), SimpleMarkerPlugin.getInstance().getSettings().getProperty("showDeletedProgram","true").equals("true"));    
+    mShowDeletedPrograms = new JCheckBox(SimpleMarkerPlugin.mLocalizer.msg(
+        "settings.informAboutDeletedPrograms",
+        "Inform about program that were deleted during a data update"),
+        SimpleMarkerPlugin.getInstance().getSettings().showDeletedPrograms());    
     
     panel.add(mShowDeletedPrograms, cc.xy(2,1));
     
@@ -200,7 +203,8 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
   }
 
   public void saveSettings() { 
-    SimpleMarkerPlugin.getInstance().getSettings().setProperty("showDeletedProgram",String.valueOf(mShowDeletedPrograms.isSelected()));
+    SimpleMarkerPlugin.getInstance().getSettings().setShowDeletedPrograms(
+        mShowDeletedPrograms.isSelected());
     
     if (mListTable.isEditing())
       mListTable.getCellEditor().stopCellEditing();

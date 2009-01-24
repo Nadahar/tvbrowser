@@ -52,7 +52,7 @@ public class GroupUnmarkAction extends ContextMenuAction implements
    * @param node
    *          The PluginTreeNode to unmark it's programs.
    * @param list
-   *          The list that is telated to the node.
+   *          The list that is related to the node.
    */
   public GroupUnmarkAction(PluginTreeNode node, MarkList list) {
     super();

@@ -50,13 +50,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.Plugin;
-import devplugin.Program;
-
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
@@ -64,6 +57,13 @@ import util.ui.ProgramList;
 import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.Plugin;
+import devplugin.Program;
 
 /**
  * SimpleMarkerPlugin 1.4 Plugin for TV-Browser since version 2.3 to only mark
@@ -152,10 +152,11 @@ public class ManagePanel {
     
       panel.add(mSplitPane, cc.xy(1,4));
     
-      String pos = SimpleMarkerPlugin.getInstance().getSettings().getProperty("splitPosition");
+      int pos = SimpleMarkerPlugin.getInstance().getSettings()
+          .getSplitPosition();
     
-      if(pos != null) {
-        mSplitPane.setDividerLocation(Integer.parseInt(pos));
+      if (pos >= 0) {
+        mSplitPane.setDividerLocation(pos);
       }
     }
     else {
@@ -255,7 +256,8 @@ public class ManagePanel {
     mParent.dispose();
     
     if(mSplitPane != null) {
-      SimpleMarkerPlugin.getInstance().getSettings().setProperty("splitPosition", String.valueOf(mSplitPane.getDividerLocation()));
+      SimpleMarkerPlugin.getInstance().getSettings().setSplitPosition(
+          mSplitPane.getDividerLocation());
     }
     
     SimpleMarkerPlugin.getInstance().resetManagePanel();
