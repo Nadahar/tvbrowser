@@ -252,11 +252,7 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	public void loadSettings(Properties prop) {
     // settings are handled in another class, so do not store a reference to the
     // properties parameter!
-    if (prop == null) {
-      mSettings = new TVPearlSettings(new Properties());
-    } else {
-      mSettings = new TVPearlSettings(prop);
-    }
+    mSettings = new TVPearlSettings(prop);
     setDialogBounds();
     mTVPearls.setUrl(mSettings.getUrl());
   }
@@ -315,7 +311,7 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		updateChanges();
 	}
 
-  void update()
+  private void update()
 	{
 		mThread = new Thread(this, "TV Pearl Update");
 		mThread.setPriority(Thread.MIN_PRIORITY);
@@ -342,7 +338,7 @@ public class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		return createImageIcon("actions", "program_unknown", 16);
 	}
 
-	String getDayName(Calendar cal, boolean showToday)
+	protected static String getDayName(Calendar cal, boolean showToday)
 	{
 		SimpleDateFormat df = new SimpleDateFormat("E");
 		String day = df.format(cal.getTime());

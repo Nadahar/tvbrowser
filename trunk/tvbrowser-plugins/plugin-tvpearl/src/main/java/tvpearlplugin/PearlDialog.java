@@ -179,17 +179,13 @@ public class PearlDialog extends JDialog implements WindowClosingIf
 				{
 					boolean isEnable = false;
 					Object selectedValues[] = mDataList.getSelectedValues();
-					if (selectedValues.length == 1)
-					{
-						if (selectedValues[0] instanceof TVPProgram)
-						{
-							TVPProgram p = (TVPProgram) selectedValues[0];
-							if (p.wasFound())
-							{
-								isEnable = true;
-							}
-						}
-					}
+					if (selectedValues.length == 1
+              && (selectedValues[0] instanceof TVPProgram)) {
+            TVPProgram p = (TVPProgram) selectedValues[0];
+            if (p.wasFound()) {
+              isEnable = true;
+            }
+          }
 					mSendBn.setEnabled(isEnable);
 				}
 			}

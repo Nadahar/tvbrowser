@@ -37,12 +37,7 @@ public class TVPProgram implements Comparable<TVPProgram>
 	private boolean mSendTo = false;
 	private int mStatus = IProgramStatus.STATUS_NOT_FOUND;
 
-	public int compareTo(TVPProgram o)
-	{
-		return mStart.compareTo(o.getStart());
-	}
-
-	public String toString()
+  public String toString()
 	{
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(DateFormat.getDateInstance().format(mStart.getTime()));
@@ -218,4 +213,34 @@ public class TVPProgram implements Comparable<TVPProgram>
   public boolean isSubscribedChannel() {
     return getStatus() == IProgramStatus.STATUS_FOUND_CHANNEL || wasFound();
   }
+
+  public int compareTo(TVPProgram other) {
+    if (this == other) {
+      return 0;
+    }
+    // sort by start time first
+    int result = mStart.compareTo(other.getStart());
+    if (result != 0) {
+      return result;
+    }
+    // then by title
+    return mTitle.compareTo(other.mTitle);
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
+    if (object == null) {
+      return false;
+    }
+    if (!(object instanceof TVPProgram)) {
+      return false;
+    }
+    TVPProgram other = (TVPProgram) object;
+    return mTitle.equals(other.mTitle) && mChannel.equals(other.mChannel)
+        && mAuthor.equals(other.mAuthor) && mStart.equals(other.mStart);
+  }
+
 }
