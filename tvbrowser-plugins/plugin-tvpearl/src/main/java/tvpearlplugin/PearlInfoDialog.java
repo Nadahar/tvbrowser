@@ -166,7 +166,8 @@ public class PearlInfoDialog extends JDialog implements WindowClosingIf
 		buffer.append("</p></td><td>");
 		buffer.append("<div style=\"color:#ff0000; font-size:");
 		buffer.append(bodyFontSize).append(";\"><b>");
-		buffer.append(TVPearlPlugin.getInstance().getDayName(program.getStart(), false)).append(", ");
+		buffer.append(TVPearlPlugin.getDayName(program.getStart(), false)).append(
+        ", ");
 		buffer.append(DateFormat.getDateInstance().format(program.getStart().getTime()));
 		buffer.append(" · ");
 		buffer.append(DateFormat.getTimeInstance(DateFormat.SHORT).format(program.getStart().getTime()));

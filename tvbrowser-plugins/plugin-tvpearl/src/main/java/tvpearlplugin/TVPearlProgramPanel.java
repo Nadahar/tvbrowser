@@ -120,7 +120,11 @@ public class TVPearlProgramPanel extends JComponent implements ChangeListener
 
 	private String getHeader()
 	{
-		return TVPearlPlugin.getInstance().getDayName(mPearlProgram.getStart(), true) + ", " + DateFormat.getDateInstance().format(mPearlProgram.getStart().getTime()) + " - " + mPearlProgram.getChannel() + "   ";
+		return TVPearlPlugin.getDayName(mPearlProgram.getStart(), true)
+        + ", "
+        + DateFormat.getDateInstance().format(
+            mPearlProgram.getStart().getTime()) + " - "
+        + mPearlProgram.getChannel() + "   ";
 	}
 
 	private String getAuthor()

@@ -55,7 +55,11 @@ public class TVPearlSettings {
   private Properties mProperties;
 
   public TVPearlSettings(Properties properties) {
-    mProperties = properties;
+    if (properties != null) {
+      mProperties = properties;
+    } else {
+      mProperties = new Properties();
+    }
   }
 
   private int getPropertyShowFilter() {
