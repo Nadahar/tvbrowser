@@ -17,13 +17,20 @@
  */
 package timelineplugin;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+import java.util.Iterator;
 
-import devplugin.*;
+import javax.swing.JLabel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+
+import devplugin.Channel;
 import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.Program;
+import devplugin.ProgramFilter;
 
 public class ProgramScrollPanel extends JScrollPane implements MouseWheelListener
 {
@@ -55,12 +62,15 @@ public class ProgramScrollPanel extends JScrollPane implements MouseWheelListene
 		th.setPreferredWidth(mProgramPanel.getPreferredSize().width);
 		setColumnHeaderView(th);
 
-		ChannelHeader ch = new ChannelHeader(TimelinePlugin.getInstance().getChannelHeight());
+		ChannelHeader ch = new ChannelHeader(TimelinePlugin.getSettings()
+        .getChannelHeight());
 		ch.setPreferredHeight(mProgramPanel.getPreferredSize().height);
 		setRowHeaderView(ch);
 
-		getVerticalScrollBar().setUnitIncrement(TimelinePlugin.getInstance().getChannelHeight());
-		getHorizontalScrollBar().setUnitIncrement(TimelinePlugin.getInstance().getHourWidth() / 4);
+		getVerticalScrollBar().setUnitIncrement(
+        TimelinePlugin.getSettings().getChannelHeight());
+    getHorizontalScrollBar().setUnitIncrement(
+        TimelinePlugin.getSettings().getHourWidth() / 4);
 	}
 
 	private void addProgramList()
@@ -70,7 +80,7 @@ public class ProgramScrollPanel extends JScrollPane implements MouseWheelListene
 		int channelTop = 0;
 		Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
 		Date choosenDay = TimelinePlugin.getInstance().getChoosenDate();
-		int delta = 24 * TimelinePlugin.getInstance().getHourWidth();
+		int delta = 24 * TimelinePlugin.getSettings().getHourWidth();
 		double deltaHours = mOffset / TimelinePlugin.getInstance().getSizePerMinute() / 60;
 		int deltaDay = (int) Math.round(deltaHours / 24) + 1;
 
@@ -78,7 +88,7 @@ public class ProgramScrollPanel extends JScrollPane implements MouseWheelListene
 
 		for (int i = 0; i < channels.length; i++)
 		{
-			channelTop = i * TimelinePlugin.getInstance().getChannelHeight();
+			channelTop = i * TimelinePlugin.getSettings().getChannelHeight();
 
 			for (int j = deltaDay * -1; j <= deltaDay; j++)
 			{
@@ -107,7 +117,8 @@ public class ProgramScrollPanel extends JScrollPane implements MouseWheelListene
 		w = Math.abs(w - x);
 
 		ProgramLabel lbl = new ProgramLabel();
-		lbl.setBounds(x + delta, channelTop, w + 1, TimelinePlugin.getInstance().getChannelHeight() + 1);
+		lbl.setBounds(x + delta, channelTop, w + 1, TimelinePlugin.getSettings()
+        .getChannelHeight() + 1);
 		lbl.setProgram(p);
 		mProgramPanel.add(lbl);
 	}
@@ -176,7 +187,8 @@ public class ProgramScrollPanel extends JScrollPane implements MouseWheelListene
 		TimeHeader th = new TimeHeader();
 		th.setPreferredWidth(mProgramPanel.getPreferredSize().width);
 		setColumnHeaderView(th);
-		ChannelHeader ch = new ChannelHeader(TimelinePlugin.getInstance().getChannelHeight());
+		ChannelHeader ch = new ChannelHeader(TimelinePlugin.getSettings()
+        .getChannelHeight());
 		ch.setPreferredHeight(mProgramPanel.getPreferredSize().height);
 		setRowHeaderView(ch);
 		addProgramList();

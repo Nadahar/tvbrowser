@@ -167,7 +167,7 @@ public class ProgramLabel extends JComponent implements ChangeListener, MouseLis
 			g.fillRect(r.x, r.y, r.width, r.height);
 			g.setColor(oriColor);
 		}
-		if (TimelinePlugin.getInstance().showProgress() && mProgram.isOnAir())
+		if (TimelinePlugin.getSettings().showProgress() && mProgram.isOnAir())
 		{
 			g.setColor(Plugin.getPluginManager().getTvBrowserSettings().getProgramPanelOnAirDarkColor());
 			int positionX = Math.abs(TimelinePlugin.getInstance().getNowPosition() - rb.x);

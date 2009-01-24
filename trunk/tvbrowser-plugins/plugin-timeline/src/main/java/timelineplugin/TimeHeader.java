@@ -17,11 +17,15 @@
  */
 package timelineplugin;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 import javax.swing.event.MouseInputListener;
 
 public class TimeHeader extends JComponent implements MouseListener, MouseInputListener
@@ -35,7 +39,7 @@ public class TimeHeader extends JComponent implements MouseListener, MouseInputL
 	private int mStartHour;
 	private Cursor mLastCursor = null;
 
-	private Boolean mResizeing = false;
+	private boolean mResizeing = false;
 	private int mResizeStartX;
 	private int mResizeX;
 	private int mReferenceHourX;
@@ -46,7 +50,7 @@ public class TimeHeader extends JComponent implements MouseListener, MouseInputL
 		this.addMouseMotionListener(this);
 
 		mOffset = TimelinePlugin.getInstance().getOffset();
-		mSizeHour = TimelinePlugin.getInstance().getHourWidth();
+		mSizeHour = TimelinePlugin.getSettings().getHourWidth();
 		int deltaHour = (mOffset / mSizeHour) + 1;
 		mStartX = mOffset - (deltaHour * mSizeHour);
 		mStartHour = (24 - deltaHour) % 24;
@@ -139,7 +143,8 @@ public class TimeHeader extends JComponent implements MouseListener, MouseInputL
 		if (mResizeing)
 		{
 			mResizeing = false;
-			TimelinePlugin.getInstance().setProperty("HourWidth", Integer.toString(Math.abs(mReferenceHourX - e.getPoint().x)));
+			TimelinePlugin.getSettings().setHourWidth(
+          Math.abs(mReferenceHourX - e.getPoint().x));
 			TimelinePlugin.getInstance().resize();
 		}
 	}
@@ -171,7 +176,7 @@ public class TimeHeader extends JComponent implements MouseListener, MouseInputL
 
 	private boolean isMouseOverMargin(Point p)
 	{
-		if (!TimelinePlugin.getInstance().resizeWithMouse())
+		if (!TimelinePlugin.getSettings().resizeWithMouse())
 		{
 			return false;
 		}
