@@ -111,11 +111,9 @@ public class MovieAward implements Comparable<MovieAward> {
     ArrayList<Movie> movies = mMovies.getMovies(program);
     if (movies != null) {
       for (Movie movie : movies) {
-        if (movie.matchesProgram(program)) {
-          if (mAwards.containsKey(movie.getId())) {
-            for (Award award : mAwards.get(movie.getId())) {
-              list.add(award);
-            }
+        if (movie.matchesProgram(program) && mAwards.containsKey(movie.getId())) {
+          for (Award award : mAwards.get(movie.getId())) {
+            list.add(award);
           }
         }
       }
