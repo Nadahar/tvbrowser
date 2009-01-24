@@ -20,6 +20,8 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 
 public class ImdbDatabase {
+  private static final String[] TITLE_SUFFIX = { "(Fortsetzung)", "(Teil 1)",
+      "(Teil 2)", "(Teil 3)", "(Teil 4)" };
   private static final String ITEM_TYPE = "ITEM_TYPE";
   private static final String TYPE_MOVIE = "TYPE_MOVIE";
   private static final String TYPE_AKA = "TYPE_AKA";
@@ -49,7 +51,11 @@ public class ImdbDatabase {
   public void deleteDatabase() {
     close();
     for (File f : mCurrentPath.listFiles()) {
-      f.delete();
+      try {
+        f.delete();
+      } catch (SecurityException e) {
+        e.printStackTrace();
+      }
     }
     reOpen();
   }
@@ -188,7 +194,11 @@ public class ImdbDatabase {
         e.printStackTrace();
       }
     } else if (new File(mCurrentPath, "write.lock").exists()){
-      new File(mCurrentPath, "write.lock").delete();
+      try {
+        new File(mCurrentPath, "write.lock").delete();
+      } catch (SecurityException e) {
+        e.printStackTrace();
+      }
     }
     
     if (mWriter != null) {
@@ -378,6 +388,13 @@ public class ImdbDatabase {
 
     } catch (IOException e) {
       e.printStackTrace();
+    }
+    
+    for (String suffix : TITLE_SUFFIX) {
+      if (title.endsWith(suffix)) {
+        return getMovieId(title.substring(0, title.length() - suffix.length())
+            .trim(), episode, year);
+      }
     }
 
     return null;
