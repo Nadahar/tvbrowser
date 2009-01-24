@@ -29,12 +29,16 @@ import java.io.File;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.logging.Level;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.ui.DontShowAgainMessageBox;
 import tvdataservice.MarkedProgramsList;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.TvDataUpdateManager;
@@ -43,7 +47,9 @@ import util.io.NetworkUtilities;
 import util.ui.Localizer;
 import util.ui.progress.ProgressMonitorGroup;
 import devplugin.Channel;
+import devplugin.ChannelDayProgram;
 import devplugin.Date;
+import devplugin.Program;
 import devplugin.ProgressMonitor;
 
 /**
@@ -198,7 +204,7 @@ public class TvDataUpdater {
     // Reset the download flag
     mIsDownloading = false;
     
-    checkLocalTime();
+    checkLocalDateUsingNTP();
 
     ProgressMonitor monitor = monitorGroup.getNextProgressMonitor(subscribedChannels.length+1);
     monitor.setMessage(mLocalizer.msg("calculateEntries","Calculating new entries in the database"));
@@ -209,12 +215,69 @@ public class TvDataUpdater {
     // Inform the listeners
     fireTvDataUpdateFinished();
     monitor.setMessage("");
+    
+    checkLocalTime();
 
     // reset flag to avoid unnecessary favorite updates
     mTvDataWasChanged = false;
   }
 
   private void checkLocalTime() {
+    if (tvDataWasChanged()) {
+      int count = 0;
+      count += wrongTimeZone("Das Erste (ARD)", "Tagesschau", 20 * 60);
+      count += wrongTimeZone("ZDF", "ZDF-Morgenmagazin", 5 * 60 + 30);
+      count += wrongTimeZone("Sat.1", "Sat.1 Nachrichten", 20 * 60);
+      count += wrongTimeZone("RTL2", "RTL II News", 20 * 60);
+      // require at least 2 differences, so a program move on one channel does
+      // not yet trigger the message
+      if (count >= 2) {
+        DontShowAgainMessageBox.showMessageDialog("wrongTimeZone", null,
+            mLocalizer.msg("timezone", ""));
+      }
+    }
+  }
+
+  /**
+   * Check if a known program is found with an offset of exactly 1 or 2 hours
+   * for the known start time. This is a sign for incorrect time zone
+   * configuration.
+   * 
+   * @param channelName
+   * @param programTitle
+   * @param minutesAfterMidnight
+   * @return The return value is an integer instead of a boolean to make the
+   *         counting of programs easier
+   */
+  private int wrongTimeZone(String channelName, String programTitle,
+      int minutesAfterMidnight) {
+    for (Channel channel : ChannelList.getSubscribedChannels()) {
+      if (channel.getDefaultName().equalsIgnoreCase(channelName)) {
+        ChannelDayProgram dayProgram = TvDataBase.getInstance().getDayProgram(
+            Date.getCurrentDate(), channel);
+        if (dayProgram != null) {
+          Iterator<Program> it = dayProgram.getPrograms();
+          if (it != null) {
+            while (it.hasNext()) {
+              Program program = it.next();
+              if (program.getTitle().equals(programTitle)) {
+                int delta = Math.abs(program.getStartTime()
+                    - minutesAfterMidnight);
+                if (delta == 60 || delta == 120) {
+                  return 1;
+                }
+              }
+            }
+          }
+        }
+        return 0;
+      }
+    }
+    return 0;
+  }
+
+
+  private void checkLocalDateUsingNTP() {
     if (!tvDataWasChanged() && Settings.propNTPTimeCheck.getBoolean()) {
       if (Settings.propLastNTPCheck.getDate() == null || Settings.propLastNTPCheck.getDate().compareTo(Date.getCurrentDate()) < 0) {
         Settings.propLastNTPCheck.setDate(Date.getCurrentDate());
