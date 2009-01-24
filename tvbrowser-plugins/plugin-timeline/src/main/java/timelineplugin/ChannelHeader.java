@@ -49,17 +49,17 @@ public class ChannelHeader extends JComponent
 	private int mChannelCount;
 	private Channel[] mChannels;
 	private int mChannelHeight;
-	private Boolean mShowName;
-	private Boolean mShowIcon;
+	private boolean mShowName;
+  private boolean mShowIcon;
 
 	private Map<Channel, ImageIcon> mIcons;
 
-	private Boolean mRowResizeing = false;
+	private boolean mRowResizing = false;
 	private int mResizeStartY;
 	private int mResizeY;
 	private int mReferenceY;
 
-	private Boolean mColumnResizeing = false;
+	private boolean mColumnResizing = false;
 	private int mResizeX;
 
 	public ChannelHeader(int channelHeight)
@@ -70,8 +70,8 @@ public class ChannelHeader extends JComponent
 		mChannels = Plugin.getPluginManager().getSubscribedChannels();
 		mChannelCount = mChannels.length;
 
-		mShowName = TimelinePlugin.getInstance().showChannelName();
-		mShowIcon = TimelinePlugin.getInstance().showChannelIcon();
+		mShowName = TimelinePlugin.getSettings().showChannelName();
+    mShowIcon = TimelinePlugin.getSettings().showChannelIcon();
 
 		this.setOpaque(true);
 
@@ -79,12 +79,12 @@ public class ChannelHeader extends JComponent
 		{
 			public void mouseDragged(MouseEvent e)
 			{
-				if (mRowResizeing)
+				if (mRowResizing)
 				{
 					mResizeY = e.getPoint().y;
 					repaint();
 				}
-				else if (mColumnResizeing)
+				else if (mColumnResizing)
 				{
 					mResizeX = e.getPoint().x;
 					repaint();
@@ -130,26 +130,27 @@ public class ChannelHeader extends JComponent
 				if (isMouseOverRowMargin(e.getPoint()))
 				{
 					mResizeStartY = e.getPoint().y;
-					mRowResizeing = true;
+					mRowResizing = true;
 					mReferenceY = mResizeStartY - mChannelHeight;
 				}
 				else if (isMouseOverColumnMargin(e.getPoint()))
 				{
-					mColumnResizeing = true;
+					mColumnResizing = true;
 				}
 			}
 
 			public void mouseReleased(MouseEvent e)
 			{
-				if (mRowResizeing)
+				if (mRowResizing)
 				{
-					mRowResizeing = false;
-					TimelinePlugin.getInstance().setProperty("ChannelHeight", Integer.toString(Math.abs(mReferenceY - e.getPoint().y)));
+					mRowResizing = false;
+					TimelinePlugin.getSettings().setChannelHeight(
+              Math.abs(mReferenceY - e.getPoint().y));
 					TimelinePlugin.getInstance().resize();
 				}
-				if (mColumnResizeing)
+				if (mColumnResizing)
 				{
-					mColumnResizeing = false;
+					mColumnResizing = false;
 					TimelinePlugin.getInstance().setChannelWidth(mResizeX);
 					TimelinePlugin.getInstance().resize();
 				}
@@ -188,7 +189,7 @@ public class ChannelHeader extends JComponent
 			int y = mChannelHeight * i;
 			g.setColor(i % 2 == 0 ? Color.WHITE : cr);
 			g.fillRect(0, y, w, mChannelHeight);
-			g.setColor((!mRowResizeing && !mColumnResizeing) ? c : Color.LIGHT_GRAY);
+			g.setColor((!mRowResizing && !mColumnResizing) ? c : Color.LIGHT_GRAY);
 			if (mShowName)
 			{
 				g.drawString(mChannels[i].getName(), textBegin, y + h);
@@ -199,7 +200,7 @@ public class ChannelHeader extends JComponent
 			}
 		}
 
-		if (mRowResizeing)
+		if (mRowResizing)
 		{
 			g.setColor(Color.RED);
 			int diff = mResizeY - mReferenceY;
@@ -213,7 +214,7 @@ public class ChannelHeader extends JComponent
 			g.drawLine(x, mResizeY, x, end + 2);
 			g.drawLine(0, mResizeY, getSize().width, mResizeY);
 		}
-		else if (mColumnResizeing)
+		else if (mColumnResizing)
 		{
 			String text = Integer.toString(mResizeX);
 			int textWidth = g.getFontMetrics().stringWidth(text);
@@ -256,7 +257,7 @@ public class ChannelHeader extends JComponent
 
 	private boolean isMouseOverRowMargin(Point p)
 	{
-		if (!TimelinePlugin.getInstance().resizeWithMouse())
+		if (!TimelinePlugin.getSettings().resizeWithMouse())
 		{
 			return false;
 		}
@@ -269,7 +270,7 @@ public class ChannelHeader extends JComponent
 
 	private boolean isMouseOverColumnMargin(Point p)
 	{
-		if (!TimelinePlugin.getInstance().resizeWithMouse())
+		if (!TimelinePlugin.getSettings().resizeWithMouse())
 		{
 			return false;
 		}

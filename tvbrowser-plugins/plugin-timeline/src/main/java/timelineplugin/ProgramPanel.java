@@ -50,9 +50,13 @@ public class ProgramPanel extends JPanel
 	private int mStartX;
 	private Point mDraggingPoint = null;
 
-	private Stroke hourStroke = new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 15.0f, new float[] { 5.0f, 5.0f }, 5.0f);
-	private Stroke halfHourStroke = new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 15.0f, new float[] { 1.0f, 2.0f }, 5.0f);
-	private Stroke nowStroke = new BasicStroke(3);
+	private static Stroke hourStroke = new BasicStroke(1.0f,
+      BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 15.0f, new float[] { 5.0f,
+          5.0f }, 5.0f);
+  private static Stroke halfHourStroke = new BasicStroke(1.0f,
+      BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 15.0f, new float[] { 1.0f,
+          2.0f }, 5.0f);
+  private static Stroke nowStroke = new BasicStroke(3);
 
 	public ProgramPanel()
 	{
@@ -93,8 +97,8 @@ public class ProgramPanel extends JPanel
 
 	public void resize()
 	{
-		mSizeHour = TimelinePlugin.getInstance().getHourWidth();
-		mSizeChannel = TimelinePlugin.getInstance().getChannelHeight();
+		mSizeHour = TimelinePlugin.getSettings().getHourWidth();
+    mSizeChannel = TimelinePlugin.getSettings().getChannelHeight();
 		mOffset = TimelinePlugin.getInstance().getOffset();
 		mClientWidth = mSizeHour * 24;
 		mClientHeigh = mChannelCount * mSizeChannel;
@@ -173,7 +177,7 @@ public class ProgramPanel extends JPanel
 			g2.draw(l2);
 			x += mSizeHour;
 		}
-		if (TimelinePlugin.getInstance().showBar())
+		if (TimelinePlugin.getSettings().showBar())
 		{
 			Date d = Date.getCurrentDate();
 			if (d.equals(new Date(TimelinePlugin.getInstance().getChoosenDate())))

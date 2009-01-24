@@ -17,17 +17,30 @@
  */
 package timelineplugin;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.*;
-import javax.swing.*;
+import java.util.Calendar;
+import java.util.Properties;
 
-import devplugin.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
+
+import timelineplugin.format.TextFormatter;
+import devplugin.ActionMenu;
+import devplugin.Channel;
 import devplugin.Date;
-import timelineplugin.format.*;
+import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.ProgramFilter;
+import devplugin.SettingsTab;
+import devplugin.Version;
 
 public class TimelinePlugin extends devplugin.Plugin
 {
@@ -36,22 +49,22 @@ public class TimelinePlugin extends devplugin.Plugin
 	private static TimelinePlugin mInstance;
 
 	private static final Font DEFAULT_FONT = new Font("Dialog", Font.PLAIN, 12);
-	private static String DEFAULT_FORMAT = "{title}";
 
 	private TimelineDialog mDialog;
-	private Properties mProperties;
 	private Date mChoosenDate;
-	private String mTitleFormat;
 	private TextFormatter mFormatter;
 	private ProgramFilter mFilter;
 
 	private int mChannelWidth = -1;
 	private int mOffset;
 
+  private TimelineSettings mSettings;
+
+  private String mTitleFormat;
+
 	public TimelinePlugin()
 	{
 		mInstance = this;
-		mTitleFormat = DEFAULT_FORMAT;
 	}
 
 	public static TimelinePlugin getInstance()
@@ -115,48 +128,28 @@ public class TimelinePlugin extends devplugin.Plugin
 		mFormatter = new TextFormatter();
 		mFormatter.setFont(getFont());
 		mFormatter.setInitialiseMaxLine(true);
-		mFormatter.setFormat(getFormat());
+		mFormatter.setFormat(mSettings.getTitleFormat());
 
 		setChoosenDate(Date.getCurrentDate());
 
-		try
-		{
-			setOffset(Integer.parseInt(mProperties.getProperty("width", "620")) / 2);
-		}
-		catch (Exception e)
-		{
-			setOffset(620 / 2);
-		}
-		mDialog = new TimelineDialog(getParentFrame(), startWithNow());
+		setOffset(mSettings.getOffset() / 2);
+		mDialog = new TimelineDialog(getParentFrame(), mSettings.startWithNow());
 		mDialog.pack();
 
-		if (!mProperties.isEmpty())
-		{
 			try
 			{
-				int x = Integer.parseInt(mProperties.getProperty("xpos", "0"));
-				int y = Integer.parseInt(mProperties.getProperty("ypos", "0"));
-				int width = Integer.parseInt(mProperties.getProperty("width", "620"));
-				int height = Integer.parseInt(mProperties.getProperty("height", "390"));
-
-				mDialog.setBounds(x, y, width, height);
+			  Rectangle rect = mSettings.getPosition();
+        mDialog.setBounds(rect);
 			}
 			catch (Exception ee)
 			{}
-		}
-		else
-		{
-			mDialog.setSize(620, 390);
-			mDialog.setLocationRelativeTo(getParentFrame());
-		}
-
 		mDialog.setVisible(true);
 		savePosition();
 	}
 
 	public void handleTvBrowserStartFinished()
 	{
-		if (showAtStartUp())
+		if (mSettings.showAtStartUp())
 		{
 			SwingUtilities.invokeLater(new Runnable()
 			{
@@ -168,45 +161,11 @@ public class TimelinePlugin extends devplugin.Plugin
 		}
 	}
 
-	int getFocusDelta()
-	{
-		int result = 50;
-		try
-		{
-			result = Integer.parseInt(mProperties.getProperty("FocusDelta", "50"));
-		}
-		catch (Exception ee)
-		{}
-		return Math.abs(result);
-	}
 
-	int getHourWidth()
-	{
-		int result = 120;
-		try
-		{
-			result = Integer.parseInt(mProperties.getProperty("HourWidth", "120"));
-		}
-		catch (Exception ee)
-		{}
-		return Math.abs(result);
-	}
 
 	double getSizePerMinute()
 	{
-		return getHourWidth() / 60.0;
-	}
-
-	int getChannelHeight()
-	{
-		int result = 20;
-		try
-		{
-			result = Integer.parseInt(mProperties.getProperty("ChannelHeight", "20"));
-		}
-		catch (Exception ee)
-		{}
-		return Math.abs(result);
+		return mSettings.getHourWidth() / 60.0;
 	}
 
 	int getChannelWidth()
@@ -216,7 +175,7 @@ public class TimelinePlugin extends devplugin.Plugin
 			JLabel l = new JLabel();
 			FontMetrics fm = l.getFontMetrics(getFont());
 			int neededWidth = 0;
-			if (showChannelName())
+			if (mSettings.showChannelName())
 			{
 				Channel[] mChannels = Plugin.getPluginManager().getSubscribedChannels();
 				for (int i = 0; i < mChannels.length; i++)
@@ -229,7 +188,7 @@ public class TimelinePlugin extends devplugin.Plugin
 				}
 				neededWidth += 10;
 			}
-			mChannelWidth = neededWidth + (showChannelIcon() ? 42 : 0);
+			mChannelWidth = neededWidth + (mSettings.showChannelIcon() ? 42 : 0);
 		}
 		return mChannelWidth;
 	}
@@ -249,88 +208,6 @@ public class TimelinePlugin extends devplugin.Plugin
 		mOffset = offset;
 	}
 
-	boolean showBar()
-	{
-		return (getProgressView() & 2) == 2;
-	}
-
-	boolean showProgress()
-	{
-		return (getProgressView() & 1) == 1;
-	}
-
-	private int getProgressView()
-	{
-		int result = 1;
-		try
-		{
-			result = Integer.parseInt(mProperties.getProperty("ProgressView", "1"));
-		}
-		catch (Exception ee)
-		{}
-		return result;
-	}
-
-	boolean showAtStartUp()
-	{
-		Boolean result = false;
-		try
-		{
-			result = Integer.parseInt(mProperties.getProperty("ShowAtStartup")) == 1;
-		}
-		catch (Exception ex)
-		{}
-		return result;
-	}
-
-	boolean startWithNow()
-	{
-		Boolean result = false;
-		try
-		{
-			result = Integer.parseInt(mProperties.getProperty("StartWithNow")) == 1;
-		}
-		catch (Exception ex)
-		{}
-		return result;
-	}
-
-	boolean resizeWithMouse()
-	{
-		Boolean result = false;
-		try
-		{
-			result = Integer.parseInt(mProperties.getProperty("ResizeWithMouse")) == 1;
-		}
-		catch (Exception ex)
-		{}
-		return result;
-	}
-
-	boolean showChannelName()
-	{
-		Boolean result = true;
-		try
-		{
-			result = Integer.parseInt(mProperties.getProperty("ShowChannelName")) == 1;
-		}
-		catch (Exception ex)
-		{}
-		return result;
-	}
-
-	boolean showChannelIcon()
-	{
-		Boolean result = true;
-		try
-		{
-			result = Integer.parseInt(mProperties.getProperty("ShowChannelIcon")) == 1;
-		}
-		catch (Exception ex)
-		{}
-		return result;
-	}
-
 	void resetChannelWidth()
 	{
 		mChannelWidth = -1;
@@ -344,21 +221,6 @@ public class TimelinePlugin extends devplugin.Plugin
 	Date getChoosenDate()
 	{
 		return mChoosenDate;
-	}
-
-	String getFormat()
-	{
-		return mTitleFormat;
-	}
-
-	String getDefaultFormat()
-	{
-		return DEFAULT_FORMAT;
-	}
-
-	void setFormat(String format)
-	{
-		mTitleFormat = format;
 	}
 
 	void setChoosenDate(Date d)
@@ -392,16 +254,6 @@ public class TimelinePlugin extends devplugin.Plugin
 		return mFormatter;
 	}
 
-	void setProperty(String property, String value)
-	{
-		mProperties.setProperty(property, value);
-	}
-
-	void setProperty(String property, Boolean value)
-	{
-		mProperties.setProperty(property, value ? "1" : "0");
-	}
-
 	void resize()
 	{
 		mDialog.resize();
@@ -409,40 +261,20 @@ public class TimelinePlugin extends devplugin.Plugin
 
 	private void savePosition()
 	{
-		mProperties.setProperty("xpos", String.valueOf(mDialog.getX()));
-		mProperties.setProperty("ypos", String.valueOf(mDialog.getY()));
-		mProperties.setProperty("width", String.valueOf(mDialog.getWidth()));
-		mProperties.setProperty("height", String.valueOf(mDialog.getHeight()));
+	  mSettings.savePosition(mDialog.getX(), mDialog.getY(), mDialog.getWidth(),
+        mDialog.getHeight());
 	}
 
 	public void loadSettings(Properties prop)
 	{
-		if (prop == null)
-		{
-			mProperties = new Properties();
-		}
-		else
-		{
-			mProperties = prop;
-		}
-
-		try
-		{
-			mChannelWidth = Integer.parseInt(mProperties.getProperty("ChannelWidth", "-1"));
-		}
-		catch (Exception ee)
-		{
-			mChannelWidth = -1;
-		}
+	  mSettings = new TimelineSettings(prop);
+    mSettings.setTitleFormat(mTitleFormat);
+		mChannelWidth = mSettings.getChannelWidth();
 	}
 
 	public Properties storeSettings()
 	{
-		mProperties.setProperty("HourWidth", String.valueOf(getHourWidth()));
-		mProperties.setProperty("ChannelHeight", String.valueOf(getChannelHeight()));
-		mProperties.setProperty("ChannelWidth", String.valueOf(getChannelWidth()));
-		mProperties.setProperty("ProgressView", String.valueOf(getProgressView()));
-		return mProperties;
+		return mSettings.storeSettings();
 	}
 
 	public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException
@@ -458,6 +290,11 @@ public class TimelinePlugin extends devplugin.Plugin
 	public void writeData(ObjectOutputStream out) throws IOException
 	{
 		out.writeInt(1); // version
-		out.writeObject(mTitleFormat);
+    out.writeObject(mSettings.getTitleFormat());
 	}
+
+  public static TimelineSettings getSettings() {
+    return getInstance().mSettings;
+  }
+
 }

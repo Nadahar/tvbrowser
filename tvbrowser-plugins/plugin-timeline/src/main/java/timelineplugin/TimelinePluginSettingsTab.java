@@ -111,11 +111,12 @@ public class TimelinePluginSettingsTab implements SettingsTab
 		CellConstraints cc = new CellConstraints();
 
 		mProgressBar = new JComboBox(getProgressBarOption());
-		if (TimelinePlugin.getInstance().showBar())
+		if (TimelinePlugin.getSettings().showBar())
 		{
 			mProgressBar.setSelectedIndex(1);
 		}
-		mFocusDelta = new JSlider(JSlider.HORIZONTAL, 0, 100, TimelinePlugin.getInstance().getFocusDelta());
+		mFocusDelta = new JSlider(JSlider.HORIZONTAL, 0, 100, TimelinePlugin
+        .getSettings().getFocusDelta());
 		mFocusDelta.setToolTipText("xxx");
 		mFocusDelta.addChangeListener(new ChangeListener()
 		{
@@ -128,21 +129,24 @@ public class TimelinePluginSettingsTab implements SettingsTab
 		mFocusDeltaLabel = new JLabel(Integer.toString(mFocusDelta.getValue() - 50));
 
 		mAutoStart = new JCheckBox(mLocalizer.msg("showAtStart", "Show at startup"));
-		mAutoStart.setSelected(TimelinePlugin.getInstance().showAtStartUp());
+		mAutoStart.setSelected(TimelinePlugin.getSettings().showAtStartUp());
 		mStartWithNow = new JCheckBox(mLocalizer.msg("startWithNow", "Select Now at startup"));
-		mStartWithNow.setSelected(TimelinePlugin.getInstance().startWithNow());
+		mStartWithNow.setSelected(TimelinePlugin.getSettings().startWithNow());
 
 		mResizeWithMouse = new JCheckBox(mLocalizer.msg("resizeWithMouse", "Resize with the mouse"));
-		mResizeWithMouse.setSelected(TimelinePlugin.getInstance().resizeWithMouse());
+		mResizeWithMouse
+        .setSelected(TimelinePlugin.getSettings().resizeWithMouse());
 
 		NumberFormat nf = NumberFormat.getIntegerInstance();
 		nf.setGroupingUsed(false);
 
 		mHourWidth = new JFormattedTextField(nf);
-		mHourWidth.setText(Integer.toString(TimelinePlugin.getInstance().getHourWidth()));
+		mHourWidth.setText(Integer.toString(TimelinePlugin.getSettings()
+        .getHourWidth()));
 		mHourWidth.setColumns(10);
 		mChannelHeight = new JFormattedTextField(nf);
-		mChannelHeight.setText(Integer.toString(TimelinePlugin.getInstance().getChannelHeight()));
+		mChannelHeight.setText(Integer.toString(TimelinePlugin.getSettings()
+        .getChannelHeight()));
 		mChannelHeight.setColumns(10);
 
 		JButton resetHour = new JButton(Localizer
@@ -164,9 +168,18 @@ public class TimelinePluginSettingsTab implements SettingsTab
 			}
 		});
 
-		mShowIconAndName = new JRadioButton(mLocalizer.msg("showIconName", "Show channel icon and channel name"), TimelinePlugin.getInstance().showChannelName() && TimelinePlugin.getInstance().showChannelIcon());
-		mShowName = new JRadioButton(mLocalizer.msg("showName", "Show channel name"), TimelinePlugin.getInstance().showChannelName() && !TimelinePlugin.getInstance().showChannelIcon());
-		mShowIcon = new JRadioButton(mLocalizer.msg("showIcon", "Show channel icon"), !TimelinePlugin.getInstance().showChannelName() && TimelinePlugin.getInstance().showChannelIcon());
+		mShowIconAndName = new JRadioButton(mLocalizer.msg("showIconName",
+        "Show channel icon and channel name"), TimelinePlugin.getSettings()
+        .showChannelName()
+        && TimelinePlugin.getSettings().showChannelIcon());
+    mShowName = new JRadioButton(mLocalizer
+        .msg("showName", "Show channel name"), TimelinePlugin.getSettings()
+        .showChannelName()
+        && !TimelinePlugin.getSettings().showChannelIcon());
+    mShowIcon = new JRadioButton(mLocalizer
+        .msg("showIcon", "Show channel icon"), !TimelinePlugin.getSettings()
+        .showChannelName()
+        && TimelinePlugin.getSettings().showChannelIcon());
 
 		ButtonGroup bg1 = new ButtonGroup();
 		bg1.add(mShowIconAndName);
@@ -220,7 +233,7 @@ public class TimelinePluginSettingsTab implements SettingsTab
 		CellConstraints cc = new CellConstraints();
 
 		mFormat = new JTextArea(5, 20);
-		mFormat.setText(TimelinePlugin.getInstance().getFormat());
+		mFormat.setText(TimelinePlugin.getSettings().getTitleFormat());
 		JScrollPane scrollFormat = new JScrollPane(mFormat);
 		mFontPanel = new FontChooserPanel(TimelinePlugin.getInstance().getFont());
 		JButton addFontBtn = new JButton(Localizer
@@ -246,7 +259,7 @@ public class TimelinePluginSettingsTab implements SettingsTab
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				mFormat.setText(TimelinePlugin.getInstance().getDefaultFormat());
+				mFormat.setText(TimelinePlugin.getSettings().getDefaultTitleFormat());
 				mFontPanel.selectFont(TimelinePlugin.getInstance().getFont());
 			}
 		});
@@ -426,21 +439,30 @@ public class TimelinePluginSettingsTab implements SettingsTab
 
 	public void saveSettings()
 	{
-		if ((mShowIconAndName.isSelected() || mShowName.isSelected() != TimelinePlugin.getInstance().showChannelName()) || (mShowIconAndName.isSelected() || mShowIcon.isSelected() != TimelinePlugin.getInstance().showChannelIcon()))
+		if ((mShowIconAndName.isSelected() || mShowName.isSelected() != TimelinePlugin
+        .getSettings().showChannelName())
+        || (mShowIconAndName.isSelected() || mShowIcon.isSelected() != TimelinePlugin
+            .getSettings().showChannelIcon()))
 		{
 			TimelinePlugin.getInstance().resetChannelWidth();
 		}
 
-		TimelinePlugin.getInstance().setProperty("ProgressView", String.valueOf(mProgressBar.getSelectedIndex() + 1));
-		TimelinePlugin.getInstance().setProperty("FocusDelta", String.valueOf(mFocusDelta.getValue()));
-		TimelinePlugin.getInstance().setProperty("ShowAtStartup", mAutoStart.isSelected());
-		TimelinePlugin.getInstance().setProperty("StartWithNow", mStartWithNow.isSelected());
-		TimelinePlugin.getInstance().setProperty("ResizeWithMouse", mResizeWithMouse.isSelected());
-		TimelinePlugin.getInstance().setProperty("HourWidth", mHourWidth.getText());
-		TimelinePlugin.getInstance().setProperty("ChannelHeight", mChannelHeight.getText());
-		TimelinePlugin.getInstance().setProperty("ShowChannelName", mShowIconAndName.isSelected() || mShowName.isSelected());
-		TimelinePlugin.getInstance().setProperty("ShowChannelIcon", mShowIconAndName.isSelected() || mShowIcon.isSelected());
-		TimelinePlugin.getInstance().setFormat(mFormat.getText());
+		TimelinePlugin.getSettings().setProgressView(
+        mProgressBar.getSelectedIndex() + 1);
+    TimelinePlugin.getSettings().setFocusDelta(mFocusDelta.getValue());
+    TimelinePlugin.getSettings().setShowAtStartup(mAutoStart.isSelected());
+    TimelinePlugin.getSettings().setStartWithNow(mStartWithNow.isSelected());
+		TimelinePlugin.getSettings().setResizeWithMouse(
+        mResizeWithMouse.isSelected());
+    TimelinePlugin.getSettings().setHourWidth(
+        Integer.valueOf(mHourWidth.getText()));
+    TimelinePlugin.getSettings().setChannelHeight(
+        Integer.valueOf(mChannelHeight.getText()));
+		TimelinePlugin.getSettings().setShowChannelName(
+        mShowIconAndName.isSelected() || mShowName.isSelected());
+		TimelinePlugin.getSettings().setShowChannelIcon(
+        mShowIconAndName.isSelected() || mShowIcon.isSelected());
+		TimelinePlugin.getSettings().setTitleFormat(mFormat.getText());
 	}
 
 	private Vector<String> getProgressBarOption()
