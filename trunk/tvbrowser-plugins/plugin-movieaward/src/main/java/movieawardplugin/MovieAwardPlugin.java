@@ -26,9 +26,11 @@ package movieawardplugin;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
@@ -46,6 +48,7 @@ import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
+import devplugin.ContextMenuAction;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
@@ -56,7 +59,7 @@ import devplugin.Program;
 import devplugin.SettingsTab;
 import devplugin.Version;
 
-public class MovieAwardPlugin extends Plugin {
+final public class MovieAwardPlugin extends Plugin {
   /**
    * Translator
    */
@@ -102,6 +105,8 @@ public class MovieAwardPlugin extends Plugin {
    * disable graphical updates of root node during full award search
    */
   private boolean mUpdateRootEnabled;
+
+  private MovieAwardSettings mSettings;
 
   public MovieAwardPlugin() {
     mInstance = this;
@@ -248,6 +253,7 @@ public class MovieAwardPlugin extends Plugin {
     if (mRootNode == null) {
       mRootNode = new PluginTreeNode(this, false);
       mRootNode.getMutableTreeNode().setShowLeafCountEnabled(false);
+      addPluginTreeActions();
       if (mStartFinished) {
         // update the tree as the plugin view has been switched on for the first
         // time after start
@@ -259,6 +265,44 @@ public class MovieAwardPlugin extends Plugin {
       }
     }
     return mRootNode;
+  }
+
+  private void addPluginTreeActions() {
+    mRootNode.removeAllActions();
+    ActionMenu displayBoth = new ActionMenu(new AbstractAction(mLocalizer.msg(
+        "grouping.both", "By award and date")) {
+      public void actionPerformed(ActionEvent e) {
+        mSettings.setNodeGroupingBoth();
+        updateNodeGrouping();
+      }
+    }, mSettings.isGroupingByBoth());
+    ActionMenu displayAwards = new ActionMenu(new AbstractAction(mLocalizer
+        .msg("grouping.award", "By award")) {
+      public void actionPerformed(ActionEvent e) {
+        mSettings.setNodeGroupingAward();
+        updateNodeGrouping();
+      }
+    }, mSettings.isGroupingByAward());
+    ActionMenu displayDate = new ActionMenu(new AbstractAction(mLocalizer.msg(
+        "grouping.date", "By date")) {
+      public void actionPerformed(ActionEvent e) {
+        mSettings.setNodeGroupingDate();
+        updateNodeGrouping();
+      }
+    }, mSettings.isGroupingByDate());
+    ActionMenu[] groupActions = new ActionMenu[] { displayBoth, displayAwards,
+        displayDate };
+    mRootNode.addActionMenu(new ActionMenu(new ContextMenuAction(mLocalizer
+        .msg("grouping.grouping", "Grouping")), groupActions));
+  }
+
+  protected void updateNodeGrouping() {
+    // clear children and reset root node
+    if (mRootNode != null) {
+      mRootNode.clear();
+      addPluginTreeActions();
+    }
+    updateRootNode();
   }
 
   private void addToPluginTree(Program program, MovieAward award) {
@@ -317,12 +361,21 @@ public class MovieAwardPlugin extends Plugin {
       }
       date = date.addDays(1);
     }
+    mUpdateRootEnabled = true;
     // now insert the dangling sub nodes
     if (mRootNode.isEmpty()) {
-      mRootNode.add(mAwardNode);
-      mRootNode.add(mDateNode);
+      if (mSettings.isGroupingByBoth()) {
+        mRootNode.add(mAwardNode);
+        mRootNode.add(mDateNode);
+      }
+      else if (mSettings.isGroupingByAward()) {
+        for (PluginTreeNode award : mAwardNodes.values()) {
+          mRootNode.add(award);
+        }
+      } else if (mSettings.isGroupingByDate()) {
+        mRootNode.addPrograms(Arrays.asList(mDateNode.getPrograms()));
+      }
     }
-    mUpdateRootEnabled = true;
     mRootNode.update();
   }
 
@@ -377,18 +430,16 @@ public class MovieAwardPlugin extends Plugin {
         Program program = iter.next();
         // do not use program.getTitle() as the title field in the ondemand file
         // can already be deleted at this time
-        if (mAwardCache.containsKey(program)) {
-          if (mDateNode.contains(program)) {
-            mDateNode.removeProgram(program);
-            updateNeeded = true;
-            for (MovieAward award : mMovieAwards) {
-              PluginTreeNode node = mAwardNodes.get(award);
-              if (node != null) {
-                node.removeProgram(program);
-              }
+        if (mAwardCache.containsKey(program) && mDateNode.contains(program)) {
+          mDateNode.removeProgram(program);
+          updateNeeded = true;
+          for (MovieAward award : mMovieAwards) {
+            PluginTreeNode node = mAwardNodes.get(award);
+            if (node != null) {
+              node.removeProgram(program);
             }
-            mAwardCache.remove(program);
           }
+          mAwardCache.remove(program);
         }
       }
     }
@@ -402,4 +453,16 @@ public class MovieAwardPlugin extends Plugin {
   public void handleTvDataUpdateFinished() {
     updateRootNodeIfVisible();
   }
+
+  @Override
+  public void loadSettings(Properties properties) {
+    mSettings = new MovieAwardSettings(properties);
+  }
+
+  @Override
+  public Properties storeSettings() {
+    return mSettings.storeSettings();
+  }
+  
+  
 }
