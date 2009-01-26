@@ -50,9 +50,10 @@ public abstract class AbstractParser implements IParser {
   }
 
   public String readUrl(String urlString) {
+    BufferedReader reader = null;
     try {
       URL url = new URL(urlString);
-      BufferedReader reader = new BufferedReader(new InputStreamReader(url
+      reader = new BufferedReader(new InputStreamReader(url
           .openStream(), "utf-8"));
       String inputLine;
       StringBuffer buffer = new StringBuffer();
@@ -62,11 +63,18 @@ public abstract class AbstractParser implements IParser {
       reader.close();
       return buffer.toString();
     } catch (MalformedURLException e1) {
-      // TODO Auto-generated catch block
       e1.printStackTrace();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
+    }
+    finally {
+      if (reader != null) {
+        try {
+          reader.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
     }
     return "";
   }

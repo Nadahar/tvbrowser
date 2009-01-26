@@ -28,7 +28,7 @@ public final class UpdateThread extends Thread {
     updatePrograms = new ArrayList<MediathekProgram>();
   }
 
-  public static UpdateThread getInstance() {
+  public static synchronized UpdateThread getInstance() {
     if (instance == null) {
       instance = new UpdateThread();
     }
