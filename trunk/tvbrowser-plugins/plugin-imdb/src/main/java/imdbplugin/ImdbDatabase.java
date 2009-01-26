@@ -19,7 +19,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 
-public class ImdbDatabase {
+public final class ImdbDatabase {
   private static final String[] TITLE_SUFFIX = { "(Fortsetzung)", "(Teil 1)",
       "(Teil 2)", "(Teil 3)", "(Teil 4)" };
   private static final String ITEM_TYPE = "ITEM_TYPE";

@@ -1,28 +1,29 @@
 package imdbplugin;
 
-import devplugin.SettingsTab;
-import devplugin.Channel;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import javax.swing.JPanel;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JFrame;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
-import util.ui.Localizer;
 import util.ui.ChannelChooserDlg;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.CellConstraints;
+
 import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.FlowLayout;
-import java.awt.Component;
+import devplugin.Channel;
+import devplugin.SettingsTab;
 
-public class ImdbSettings implements SettingsTab {
+public final class ImdbSettings implements SettingsTab {
   /**
    * Translator
    */
