@@ -28,7 +28,12 @@ import devplugin.Channel;
 public final class ZDFParser extends AbstractParser {
 
   private static final String MAIN_URL = "http://www.zdf.de/ZDFmediathek/content/";
-  private static String[] SUPPORTED_CHANNELS = { "ard", "zdf", "3sat" };
+  /**
+   * ARD, Phoenix und KiKa sind Gemeinschaftsproduktionen von ARD/ZDF und
+   * anderen, die ARD zeigt das Vormittagsprogramm des ZDF
+   */
+  private static String[] SUPPORTED_CHANNELS = { "3sat", "ard", "arte",
+      "das erste", "kika", "phoenix", "zdf" };
 
   public void readContents() {
     Pattern pattern = Pattern.compile(Pattern

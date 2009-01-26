@@ -21,6 +21,7 @@ import java.awt.Frame;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,11 +37,15 @@ import javax.swing.SwingUtilities;
 import mediathekplugin.parser.ARDParser;
 import mediathekplugin.parser.IParser;
 import mediathekplugin.parser.ZDFParser;
+import tvbrowser.TVBrowser;
+import util.browserlauncher.Launch;
 import util.io.IOUtilities;
 import util.ui.UiUtilities;
 import util.ui.html.HTMLTextHelper;
 import devplugin.ActionMenu;
 import devplugin.Channel;
+import devplugin.ContextMenuAction;
+import devplugin.ContextMenuSeparatorAction;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
@@ -95,6 +100,8 @@ public class MediathekPlugin extends Plugin {
   }
   
   private IParser[] mParsers;
+  
+  private Icon[] EMPTY_ICON_LIST = {};
 
   @Override
   public PluginInfo getInfo() {
@@ -106,7 +113,7 @@ public class MediathekPlugin extends Plugin {
   }
 
   public MediathekPlugin() {
-    instance = this;
+    rememberInstance(this);
     programs = new HashMap<String, MediathekProgram>();
     pluginIconSmall = createImageIcon("actions", "web-search", 16);
     pluginIconLarge = createImageIcon("actions", "web-search", 22);
@@ -114,6 +121,10 @@ public class MediathekPlugin extends Plugin {
     markIcon = contextIcon;
     mIconWeb = createImageIcon("apps", "internet-web-browser", 16);
     rootNode.setGroupingByDateEnabled(false);
+  }
+
+  private static void rememberInstance(MediathekPlugin plugin) {
+    instance = plugin;
   }
 
   @Override
@@ -213,17 +224,17 @@ public class MediathekPlugin extends Plugin {
   @Override
   public Icon[] getProgramTableIcons(Program program) {
     if (programs.isEmpty()) {
-      return null;
+      return EMPTY_ICON_LIST;
     }
     if (!isSupportedChannel(program.getChannel())) {
-      return null;
+      return EMPTY_ICON_LIST;
     }
     MediathekProgram mediaProgram = findProgram(program);
     if (mediaProgram != null) {
       mediaProgram.readEpisodes();
       return new Icon[] { markIcon };
     }
-    return null;
+    return EMPTY_ICON_LIST;
   }
 
   /**
@@ -252,15 +263,40 @@ public class MediathekPlugin extends Plugin {
 
   @Override
   public ActionMenu getButtonAction() {
-    Action buttonAction = new AbstractAction("Mediathek",
+    ContextMenuAction menuAction = new ContextMenuAction("Mediathek",
+        pluginIconSmall);
+    ArrayList<Action> actionList = new ArrayList<Action>(4);
+    Action dialogAction = new AbstractAction("Mediathek",
         pluginIconSmall) {
 
       public void actionPerformed(ActionEvent e) {
         showDialog();
       }
     };
-    buttonAction.putValue(Plugin.BIG_ICON, pluginIconLarge);
-    return new ActionMenu(buttonAction);
+    dialogAction.putValue(Plugin.BIG_ICON, pluginIconLarge);
+    actionList.add(dialogAction);
+
+    if (TVBrowser.VERSION.getMajor() >= 3) {
+      actionList.add(ContextMenuSeparatorAction.getInstance());
+    }
+
+    actionList.add(new AbstractAction("ARD Mediathek",
+        createImageIcon("mediathekplugin/icons/ard.png")) {
+
+      public void actionPerformed(ActionEvent e) {
+        Launch.openURL("http://www.ardmediathek.de/");
+      }
+    });
+
+    actionList.add(new AbstractAction("ZDFmediathek",
+        createImageIcon("mediathekplugin/icons/zdf.png")) {
+
+      public void actionPerformed(ActionEvent e) {
+        Launch
+            .openURL("http://www.zdf.de/ZDFmediathek/content/9602?inPopup=true");
+      }
+    });
+    return new ActionMenu(menuAction, actionList.toArray());
   }
 
   private void showDialog() {
@@ -346,9 +382,11 @@ public class MediathekPlugin extends Plugin {
           if (iter != null) {
             while (iter.hasNext()) {
               Program program = iter.next();
-              if (currentFilter.accept(program)) {
-                MediathekProgram mediaProgram = findProgram(program);
-                if (mediaProgram != null) {
+              // first search mediathek, then filter -> typically better
+              // performance
+              MediathekProgram mediaProgram = findProgram(program);
+              if (mediaProgram != null) {
+                if (currentFilter.accept(program)) {
                   mediaProgram.readEpisodes();
                   program.validateMarking();
                 }

@@ -28,9 +28,13 @@ public final class ARDParser extends AbstractParser {
 
   private static final String SITE_URL = "http://www.ardmediathek.de";
   private static final String CONTENT_URL = SITE_URL + "/ard/servlet/content/";
-  private static final String[] SUPPORTED_CHANNELS = { "das erste", "ard",
-      "br", "dwtv", "einsextra", "einsfestival", "einsplus", "hr", "mdr",
-      "ndr", "rb", "rbb", "swr", "wdr", "zdf" };
+  /**
+   * ARD und alle Regionalsender, ZDF (gemeinsames Vormittagsprogram), Phoenix,
+   * Kika und 3sat in Gemeinschaftsproduktion
+   */
+  private static final String[] SUPPORTED_CHANNELS = { "3sat", "das erste",
+      "ard", "br", "dwtv", "einsextra", "einsfestival", "einsplus", "hr",
+      "kika", "mdr", "ndr", "phoenix", "rb", "rbb", "swr", "wdr", "zdf" };
   
   /**
    * pattern for the (popup) link from the original program page
