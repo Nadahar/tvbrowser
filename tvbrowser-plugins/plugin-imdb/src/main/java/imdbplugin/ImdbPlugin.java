@@ -9,7 +9,10 @@ import java.io.ObjectOutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.swing.AbstractAction;
@@ -30,6 +33,7 @@ import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
+import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramFilter;
@@ -37,7 +41,7 @@ import devplugin.ProgramRatingIf;
 import devplugin.SettingsTab;
 import devplugin.Version;
 
-public class ImdbPlugin extends Plugin {
+public final class ImdbPlugin extends Plugin {
   /**
    * Translator
    */
@@ -55,11 +59,14 @@ public class ImdbPlugin extends Plugin {
   private boolean mStartFinished = false;
   private ArrayList<Channel> mExcludedChannels = new ArrayList<Channel>();
 
+  private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
+
   @Override
   public PluginInfo getInfo() {
     if (mPluginInfo == null) {
       String name = mLocalizer.msg("pluginName", "Imdb Ratings");
-      String desc = mLocalizer.msg("description", "Display Imdb ratings in programs");
+      String desc = mLocalizer.msg("description",
+          "Display IMDb ratings of programs");
       String author = "TV-Browser Team";
 
       mPluginInfo = new PluginInfo(ImdbPlugin.class, name, desc, author);
@@ -133,8 +140,7 @@ public class ImdbPlugin extends Plugin {
         }
       };
       action.putValue(Action.NAME, mLocalizer.msg("contextMenuDetails",
-          "Details for the IMDb rating ({0})", new DecimalFormat("##.#")
-              .format((double) rating.getRating() / 10)));
+          "Details for the IMDb rating ({0})", rating.getRatingText()));
       action.putValue(Action.SMALL_ICON, new ImdbIcon(rating));
       return new ActionMenu(action);
     }
@@ -171,7 +177,10 @@ public class ImdbPlugin extends Plugin {
         + "\n"
         + mLocalizer.msg("rating", "Rating: {0}", new DecimalFormat("##.#")
             .format((double) rating.getRating() / 10)) + "\n"
-        + mLocalizer.msg("votes", "Votes: {0}", rating.getVotes());
+        + mLocalizer.msg("votes", "Votes: {0}", rating.getVotes()
+            + "\n"
+            + mLocalizer.msg("distribution", "Distribution: {0}", rating
+                .getDistribution()));
   }
 
   @Override
@@ -203,6 +212,8 @@ public class ImdbPlugin extends Plugin {
       });
     }
     mStartFinished = true;
+    // force an update of the plugin tree
+    updateCurrentDateAndClearCache();
   }
 
   private void initializeDatabase() {
@@ -297,6 +308,7 @@ public class ImdbPlugin extends Plugin {
       return;
     }
     mRatingCache.clear();
+    Map<String, RatingNode> nodes = new HashMap<String, RatingNode>();
     Date currentDate = getPluginManager().getCurrentDate();
     ProgramFilter filter = getPluginManager().getFilterManager()
         .getCurrentFilter();
@@ -306,12 +318,31 @@ public class ImdbPlugin extends Plugin {
       if (null != iter) {
         while (iter.hasNext()) {
           Program program = iter.next();
+          ImdbRating rating = getRatingFor(program);
+          if (rating != null && rating != DUMMY_RATING) {
+            final String key = rating.getRatingText() + program.getTitle();
+            RatingNode ratingNode = nodes.get(key);
+            if (ratingNode == null) {
+              ratingNode = new RatingNode(rating, program);
+              ratingNode.setGroupingByDateEnabled(false);
+              nodes.put(key, ratingNode);
+            }
+            ratingNode.addProgram(program);
+          }
           if (filter.accept(program)) {
             program.validateMarking();
           }
         }
       }
     }
+    ArrayList<RatingNode> nodeList = new ArrayList<RatingNode>(nodes.size());
+    nodeList.addAll(nodes.values());
+    Collections.sort(nodeList, Collections.reverseOrder());
+    mRootNode.clear();
+    for (RatingNode node : nodeList) {
+      mRootNode.add(node);
+    }
+    mRootNode.update();
   }
 
   public Channel[] getExcludedChannels() {
@@ -363,5 +394,15 @@ public class ImdbPlugin extends Plugin {
   @Override
   public void onActivation() {
     initializeDatabase();
+  }
+
+  @Override
+  public boolean canUseProgramTree() {
+    return true;
+  }
+
+  @Override
+  public PluginTreeNode getRootNode() {
+    return mRootNode;
   }
 }

@@ -1,30 +1,30 @@
 package imdbplugin;
 
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.Sizes;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
 
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.JButton;
 import javax.swing.SwingUtilities;
 
+import util.exc.ErrorHandler;
 import util.ui.Localizer;
 import util.ui.progress.ProgressBarProgressMonitor;
-import util.exc.ErrorHandler;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.io.IOException;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
 
 import devplugin.ProgressMonitor;
 
-public class ImdbUpdateDialog extends JDialog {
+public final class ImdbUpdateDialog extends JDialog {
   /**
    * Translator
    */
