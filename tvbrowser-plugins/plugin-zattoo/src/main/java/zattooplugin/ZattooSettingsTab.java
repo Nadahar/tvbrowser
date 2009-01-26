@@ -1,20 +1,21 @@
 package zattooplugin;
 
-import devplugin.SettingsTab;
-
-import javax.swing.JPanel;
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JComboBox;
-
-import util.ui.Localizer;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.factories.Borders;
-
 import java.util.Vector;
 
-public class ZattooSettingsTab implements SettingsTab {
+import javax.swing.Icon;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import util.ui.Localizer;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.SettingsTab;
+
+public final class ZattooSettingsTab implements SettingsTab {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ZattooSettingsTab.class);
   private JComboBox mCountry;
 

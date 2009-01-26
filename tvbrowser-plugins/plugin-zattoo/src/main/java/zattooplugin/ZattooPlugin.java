@@ -21,11 +21,13 @@ import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
+import devplugin.PluginsFilterComponent;
+import devplugin.PluginsProgramFilter;
 import devplugin.Program;
 import devplugin.SettingsTab;
 import devplugin.Version;
 
-public class ZattooPlugin extends Plugin {
+public final class ZattooPlugin extends Plugin {
   
   private static final boolean PLUGIN_IS_STABLE = true;
   private static final Version PLUGIN_VERSION = new Version(0, 4, 1,
@@ -40,6 +42,7 @@ public class ZattooPlugin extends Plugin {
   private static ZattooPlugin mInstance;
   private Properties mChannelMapping;
   private Properties mSettings;
+  private PluginsProgramFilter mFilters;
 
   /**
    * Creates an instance of this plugin.
@@ -155,6 +158,33 @@ public class ZattooPlugin extends Plugin {
 
   public static ZattooPlugin getInstance() {
     return mInstance;
+  }
+
+  @Override
+  public PluginsProgramFilter[] getAvailableFilter() {
+    if (mFilters == null) {
+      mFilters = new PluginsProgramFilter(this) {
+
+        @Override
+        public String getSubName() {
+          return mLocalizer.msg("supportedChannels", "Supported channels");
+        }
+
+        public boolean accept(Program program) {
+          return isChannelSupported(program.getChannel());
+        }
+      };
+    }
+    return new PluginsProgramFilter[] { mFilters };
+  }
+
+  @Override
+  public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
+    return (Class<? extends PluginsFilterComponent>[]) new Class[] { ZattooFilterComponent.class };
+  }
+
+  public boolean isChannelSupported(Channel channel) {
+    return getChannelId(channel) != null;
   }
 
 }
