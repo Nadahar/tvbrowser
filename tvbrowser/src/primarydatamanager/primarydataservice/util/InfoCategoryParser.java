@@ -46,12 +46,12 @@ public class InfoCategoryParser {
       "mysteryserie", "polizeiserie", "puppentrickserie",
       "sciencefictionserie", "scifiserie", "serie", "serienspecial", "sitcom",
       "soap", "thrillerserie", "westernserie", "zeichentrickserie",
-      "zoodokusoap", "justizserie", "polit-/drama-serie", "mafia-serie"  };
+      "zoodokusoap", "justizserie", "polit-/drama-serie", "mafia-serie" };
 
   private final String[] NEWS = { "nachrichten", "nachrichtenmagazin",
   "regionalnachrichten" };
 
-  private final String[] SHOW = { "musik", "show", "talkshow" };
+  private final String[] SHOW = { "musik", "show", "talkshow","talk" };
 
   private final String[] MAGAZINE = { "auslandsmagazin", "automagazin",
       "boulevardmagazin", "buchjournal", "diskussion", 
@@ -64,12 +64,12 @@ public class InfoCategoryParser {
       "regionalmagazin", "reisemagazin", "reiseundreportagemagazin", 
       "reportageundreisemagazin", "servicemagazin", "societymagazin",
       "sozialmagazin", "technikmagazin", "umweltmagazin", "verbrauchermagazin",
-      "wetter", "wirtschaftsmagazin", "wissenschaftsmagazin", "wissensmagazin",
+      "wetter", "wirtschaftsmagazin", "wissenschaftsmagazin", "wissensmagazin"
    };
 
   private final String[] DOCUMENTARY = { "dokumentarfilm", "doku", "dokumentation", 
       "reisedokumentation",  "reisereportage", "reportage", "dokumentarserie",
-      "zeitgeschichte"
+      "zeitgeschichte", "dokuserie" 
   };
   
   private final String[] ARTS = { "theater", "konzert", "oper", "musikkonzert",
