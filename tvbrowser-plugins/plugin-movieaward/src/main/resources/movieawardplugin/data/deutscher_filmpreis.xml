@@ -1,0 +1,3620 @@
+<awarddata>
+<name lang="de">Deutscher Filmpreis</name>
+<name lang="en">German Movie Award</name>
+<url>http://www.deutscherfilmpreis.de/</url>
+<categories>
+
+  <category id="c_71">
+    <name lang="de">beste weibliche Nebenrolle</name>
+    <name lang="en">beste weibliche Nebenrolle</name>
+  </category>
+  <category id="c_6">
+    <name lang="de">Darstellerische Leistungen</name>
+    <name lang="en">Darstellerische Leistungen</name>
+  </category>
+  <category id="c_31">
+    <name lang="de">Bester ausländischer Film</name>
+    <name lang="en">Bester ausländischer Film</name>
+  </category>
+  <category id="c_19">
+    <name lang="de">Bester sonstiger Kurzfilm in Farbe</name>
+    <name lang="en">Bester sonstiger Kurzfilm in Farbe</name>
+  </category>
+  <category id="c_87">
+    <name lang="de">Nebenrolle</name>
+    <name lang="en">Nebenrolle</name>
+  </category>
+  <category id="c_155">
+    <name lang="de">Sonderpreis</name>
+    <name lang="en">Sonderpreis</name>
+  </category>
+  <category id="c_148">
+    <name lang="de">Komödiantische Leistung</name>
+    <name lang="en">Komödiantische Leistung</name>
+  </category>
+  <category id="c_33">
+    <name lang="de">Abendfüllende Kultur- und Dokumentarfilme</name>
+    <name lang="en">Abendfüllende Kultur- und Dokumentarfilme</name>
+  </category>
+  <category id="c_145">
+    <name lang="de">Beste Einzelleistung: Kamera</name>
+    <name lang="en">Beste Einzelleistung: Kamera</name>
+  </category>
+  <category id="c_165">
+    <name lang="de">Ausstattung/Kostüme</name>
+    <name lang="en">Ausstattung/Kostüme</name>
+  </category>
+  <category id="c_150">
+    <name lang="de">Beste Darstellerin einer Hauptrolle</name>
+    <name lang="en">Beste Darstellerin einer Hauptrolle</name>
+  </category>
+  <category id="c_164">
+    <name lang="de">Film, der das soziale Problem besonders eindrucksvoll behandelt</name>
+    <name lang="en">Film, der das soziale Problem besonders eindrucksvoll behandelt</name>
+  </category>
+  <category id="c_107">
+    <name lang="de">Beste Architektur</name>
+    <name lang="en">Beste Architektur</name>
+  </category>
+  <category id="c_30">
+    <name lang="de">Beste Musik</name>
+    <name lang="en">Beste Musik</name>
+  </category>
+  <category id="c_142">
+    <name lang="de">Bester Spielfilm mit besonderem staatspolitischem Gehalt</name>
+    <name lang="en">Bester Spielfilm mit besonderem staatspolitischem Gehalt</name>
+  </category>
+  <category id="c_29">
+    <name lang="de">Bestes Kostümbild</name>
+    <name lang="en">Bestes Kostümbild</name>
+  </category>
+  <category id="c_85">
+    <name lang="de">Bester programmfüllender Spielfilm (Herstellung)</name>
+    <name lang="en">Bester programmfüllender Spielfilm (Herstellung)</name>
+  </category>
+  <category id="c_126">
+    <name lang="de">Bester Dokumentarfilm in Farbe</name>
+    <name lang="en">Bester Dokumentarfilm in Farbe</name>
+  </category>
+  <category id="c_100">
+    <name lang="de">Bester Kurzfilm</name>
+    <name lang="en">Bester Kurzfilm</name>
+  </category>
+  <category id="c_15">
+    <name lang="de">Abendfüllende Spielfilme</name>
+    <name lang="en">Abendfüllende Spielfilme</name>
+  </category>
+  <category id="c_91">
+    <name lang="de">Bester Darsteller einer Nebenrolle</name>
+    <name lang="en">Bester Darsteller einer Nebenrolle</name>
+  </category>
+  <category id="c_144">
+    <name lang="de">Beste Einzelleistung: Musik</name>
+    <name lang="en">Beste Einzelleistung: Musik</name>
+  </category>
+  <category id="c_46">
+    <name lang="de">Sonstiger Kurzfilm</name>
+    <name lang="en">Sonstiger Kurzfilm</name>
+  </category>
+  <category id="c_108">
+    <name lang="de">Beste Drehbuchautoren</name>
+    <name lang="en">Beste Drehbuchautoren</name>
+  </category>
+  <category id="c_140">
+    <name lang="de">Weiterer besonders wervoller Kulturfilm</name>
+    <name lang="en">Weiterer besonders wervoller Kulturfilm</name>
+  </category>
+  <category id="c_89">
+    <name lang="de">Bester abendfüllender Dokumentarfilm</name>
+    <name lang="en">Bester abendfüllender Dokumentarfilm</name>
+  </category>
+  <category id="c_40">
+    <name lang="de">Beste abendfüllende Spielfilme</name>
+    <name lang="en">Beste abendfüllende Spielfilme</name>
+  </category>
+  <category id="c_101">
+    <name lang="de">Gesamtkonzept</name>
+    <name lang="en">Gesamtkonzept</name>
+  </category>
+  <category id="c_39">
+    <name lang="de">Bester kurzer Kulturfilm</name>
+    <name lang="en">Bester kurzer Kulturfilm</name>
+  </category>
+  <category id="c_97">
+    <name lang="de">Bester abendfüllender Kulturfilm</name>
+    <name lang="en">Bester abendfüllender Kulturfilm</name>
+  </category>
+  <category id="c_134">
+    <name lang="de">Publikumspreis: Schauspielerin des Jahres</name>
+    <name lang="en">Publikumspreis: Schauspielerin des Jahres</name>
+  </category>
+  <category id="c_94">
+    <name lang="de">Sonderpreis für einen abendfüllenden Spielfilm</name>
+    <name lang="en">Sonderpreis für einen abendfüllenden Spielfilm</name>
+  </category>
+  <category id="c_76">
+    <name lang="de">Bester sonstiger Kurzfilm</name>
+    <name lang="en">Bester sonstiger Kurzfilm</name>
+  </category>
+  <category id="c_131">
+    <name lang="de">Beste Haudtdarstellerin</name>
+    <name lang="en">Beste Haudtdarstellerin</name>
+  </category>
+  <category id="c_158">
+    <name lang="de">Bester abendfüllender Film ohne Spielhandlung</name>
+    <name lang="en">Bester abendfüllender Film ohne Spielhandlung</name>
+  </category>
+  <category id="c_93">
+    <name lang="de">Bestes verfilmtes Drehbuch</name>
+    <name lang="en">Bestes verfilmtes Drehbuch</name>
+  </category>
+  <category id="c_151">
+    <name lang="de">Beste Nebendarstellerrin</name>
+    <name lang="en">Beste Nebendarstellerrin</name>
+  </category>
+  <category id="c_67">
+    <name lang="de">Bester Kulturfilm in Farbe mit internationalem Rang</name>
+    <name lang="en">Bester Kulturfilm in Farbe mit internationalem Rang</name>
+  </category>
+  <category id="c_47">
+    <name lang="de">Abendfüllender Dokumentarfilm</name>
+    <name lang="en">Abendfüllender Dokumentarfilm</name>
+  </category>
+  <category id="c_129">
+    <name lang="de">Beste Filme</name>
+    <name lang="en">Beste Filme</name>
+  </category>
+  <category id="c_3">
+    <name lang="de">Kamera</name>
+    <name lang="en">Kamera</name>
+  </category>
+  <category id="c_11">
+    <name lang="de">Nachwuchsregie</name>
+    <name lang="en">Nachwuchsregie</name>
+  </category>
+  <category id="c_171">
+    <name lang="de">Dialoge</name>
+    <name lang="en">Dialoge</name>
+  </category>
+  <category id="c_80">
+    <name lang="de">Darstellerische Leistung</name>
+    <name lang="en">Darstellerische Leistung</name>
+  </category>
+  <category id="c_132">
+    <name lang="de">Beste Kamera / Bildgestaltung</name>
+    <name lang="en">Beste Kamera / Bildgestaltung</name>
+  </category>
+  <category id="c_90">
+    <name lang="de">Beste Einzelleistung: Schnitt</name>
+    <name lang="en">Beste Einzelleistung: Schnitt</name>
+  </category>
+  <category id="c_121">
+    <name lang="de">Überdurchschnittlicher abendfüllender Kulturfilm</name>
+    <name lang="en">Überdurchschnittlicher abendfüllender Kulturfilm</name>
+  </category>
+  <category id="c_34">
+    <name lang="de">Weitere programmfüllende Spielfilme</name>
+    <name lang="en">Weitere programmfüllende Spielfilme</name>
+  </category>
+  <category id="c_105">
+    <name lang="de">Bester programmfüllender Spielfilm (Gestaltung)</name>
+    <name lang="en">Bester programmfüllender Spielfilm (Gestaltung)</name>
+  </category>
+  <category id="c_7">
+    <name lang="de">Bester Spielfilm</name>
+    <name lang="en">Bester Spielfilm</name>
+  </category>
+  <category id="c_127">
+    <name lang="de">Abendfüllender Spielfilm</name>
+    <name lang="en">Abendfüllender Spielfilm</name>
+  </category>
+  <category id="c_114">
+    <name lang="de">Bester Dokumentarfilm in Schwarz-Weiß</name>
+    <name lang="en">Bester Dokumentarfilm in Schwarz-Weiß</name>
+  </category>
+  <category id="c_26">
+    <name lang="de">Beste Regie</name>
+    <name lang="en">Beste Regie</name>
+  </category>
+  <category id="c_2">
+    <name lang="de">Programmfüllende Spielfilme</name>
+    <name lang="en">Programmfüllende Spielfilme</name>
+  </category>
+  <category id="c_68">
+    <name lang="de">Bester Drehbuchautor</name>
+    <name lang="en">Bester Drehbuchautor</name>
+  </category>
+  <category id="c_163">
+    <name lang="de">Weiterer überdurchschnittlicher abendfüllender Dokumentarfilm</name>
+    <name lang="en">Weiterer überdurchschnittlicher abendfüllender Dokumentarfilm</name>
+  </category>
+  <category id="c_118">
+    <name lang="de">Bester Dokumentarfilm in schwarz/weiß</name>
+    <name lang="en">Bester Dokumentarfilm in schwarz/weiß</name>
+  </category>
+  <category id="c_96">
+    <name lang="de">Programmfüllende Filme</name>
+    <name lang="en">Programmfüllende Filme</name>
+  </category>
+  <category id="c_32">
+    <name lang="de">Weitere Kurzfilme</name>
+    <name lang="en">Weitere Kurzfilme</name>
+  </category>
+  <category id="c_52">
+    <name lang="de">Beste Nebendarstellerin</name>
+    <name lang="en">Beste Nebendarstellerin</name>
+  </category>
+  <category id="c_59">
+    <name lang="de">Beste Kameraführung</name>
+    <name lang="en">Beste Kameraführung</name>
+  </category>
+  <category id="c_70">
+    <name lang="de">Beste abendfüllende Spielfilme (Gestaltung)</name>
+    <name lang="en">Beste abendfüllende Spielfilme (Gestaltung)</name>
+  </category>
+  <category id="c_98">
+    <name lang="de">Beste sonstige Kurzfilme</name>
+    <name lang="en">Beste sonstige Kurzfilme</name>
+  </category>
+  <category id="c_16">
+    <name lang="de">Kurzfilme</name>
+    <name lang="en">Kurzfilme</name>
+  </category>
+  <category id="c_109">
+    <name lang="de">Beste Haptdarstellerin</name>
+    <name lang="en">Beste Haptdarstellerin</name>
+  </category>
+  <category id="c_36">
+    <name lang="de">Publikumspreis: Film des Jahres</name>
+    <name lang="en">Publikumspreis: Film des Jahres</name>
+  </category>
+  <category id="c_79">
+    <name lang="de">Bester sonstiger Kurzfilm in schwarz/weiß</name>
+    <name lang="en">Bester sonstiger Kurzfilm in schwarz/weiß</name>
+  </category>
+  <category id="c_146">
+    <name lang="de">Regisseur</name>
+    <name lang="en">Regisseur</name>
+  </category>
+  <category id="c_88">
+    <name lang="de">Künstlerische Oberleitung</name>
+    <name lang="en">Künstlerische Oberleitung</name>
+  </category>
+  <category id="c_169">
+    <name lang="de">Bester kurzer Spielfilm</name>
+    <name lang="en">Bester kurzer Spielfilm</name>
+  </category>
+  <category id="c_162">
+    <name lang="de">Beste Drehbuchautorin</name>
+    <name lang="en">Beste Drehbuchautorin</name>
+  </category>
+  <category id="c_74">
+    <name lang="de">Wertvollster Kultur- und Dokumentarfilm</name>
+    <name lang="en">Wertvollster Kultur- und Dokumentarfilm</name>
+  </category>
+  <category id="c_161">
+    <name lang="de">Neuartige (avantgardistische) filmische Leistung</name>
+    <name lang="en">Neuartige (avantgardistische) filmische Leistung</name>
+  </category>
+  <category id="c_123">
+    <name lang="de">Nachwuchsschauspielerin</name>
+    <name lang="en">Nachwuchsschauspielerin</name>
+  </category>
+  <category id="c_25">
+    <name lang="de">Beste weibliche Nebenrolle</name>
+    <name lang="en">Beste weibliche Nebenrolle</name>
+  </category>
+  <category id="c_54">
+    <name lang="de">Bester programmfüllender Spielfilm</name>
+    <name lang="en">Bester programmfüllender Spielfilm</name>
+  </category>
+  <category id="c_58">
+    <name lang="de">Bester Nachwuchsregisseur</name>
+    <name lang="en">Bester Nachwuchsregisseur</name>
+  </category>
+  <category id="c_22">
+    <name lang="de">Regie</name>
+    <name lang="en">Regie</name>
+  </category>
+  <category id="c_95">
+    <name lang="de">Regie und Drehbuch</name>
+    <name lang="en">Regie und Drehbuch</name>
+  </category>
+  <category id="c_84">
+    <name lang="de">Beste Regisseure</name>
+    <name lang="en">Beste Regisseure</name>
+  </category>
+  <category id="c_37">
+    <name lang="de">Beste kurze Dokumentarfilme</name>
+    <name lang="en">Beste kurze Dokumentarfilme</name>
+  </category>
+  <category id="c_78">
+    <name lang="de">Beste darstellerische Leistung</name>
+    <name lang="en">Beste darstellerische Leistung</name>
+  </category>
+  <category id="c_117">
+    <name lang="de">Bester deutscher Kinder- und Jugendfilm</name>
+    <name lang="en">Bester deutscher Kinder- und Jugendfilm</name>
+  </category>
+  <category id="c_62">
+    <name lang="de">Bester abendfüllender Spielfilm</name>
+    <name lang="en">Bester abendfüllender Spielfilm</name>
+  </category>
+  <category id="c_14">
+    <name lang="de">Beste männliche Nebenrolle</name>
+    <name lang="en">Beste männliche Nebenrolle</name>
+  </category>
+  <category id="c_149">
+    <name lang="de">Beste Tongestaltung</name>
+    <name lang="en">Beste Tongestaltung</name>
+  </category>
+  <category id="c_147">
+    <name lang="de">Beste Nachwuchsregisseure</name>
+    <name lang="en">Beste Nachwuchsregisseure</name>
+  </category>
+  <category id="c_12">
+    <name lang="de">Bester Regisseur</name>
+    <name lang="en">Bester Regisseur</name>
+  </category>
+  <category id="c_83">
+    <name lang="de">Bester Nachwuchsschauspieler</name>
+    <name lang="en">Bester Nachwuchsschauspieler</name>
+  </category>
+  <category id="c_23">
+    <name lang="de">Schnitt</name>
+    <name lang="en">Schnitt</name>
+  </category>
+  <category id="c_154">
+    <name lang="de">Beste abendfüllende Kultur- oder Dokumentarfilme</name>
+    <name lang="en">Beste abendfüllende Kultur- oder Dokumentarfilme</name>
+  </category>
+  <category id="c_17">
+    <name lang="de">Bestes Szenenbild</name>
+    <name lang="en">Bestes Szenenbild</name>
+  </category>
+  <category id="c_20">
+    <name lang="de">Abendfüllender Zeichentrickfilm</name>
+    <name lang="en">Abendfüllender Zeichentrickfilm</name>
+  </category>
+  <category id="c_35">
+    <name lang="de">Filmschnitt</name>
+    <name lang="en">Filmschnitt</name>
+  </category>
+  <category id="c_110">
+    <name lang="de">Darstellerische Nachwuchsleistungen</name>
+    <name lang="en">Darstellerische Nachwuchsleistungen</name>
+  </category>
+  <category id="c_103">
+    <name lang="de">Publikumspreis Deutscher Kinofilm des Jahres</name>
+    <name lang="en">Publikumspreis Deutscher Kinofilm des Jahres</name>
+  </category>
+  <category id="c_55">
+    <name lang="de">Bester Kinder- und Jugendfilm</name>
+    <name lang="en">Bester Kinder- und Jugendfilm</name>
+  </category>
+  <category id="c_120">
+    <name lang="de">Bester abendfüllender Kulturfilm in Farbe</name>
+    <name lang="en">Bester abendfüllender Kulturfilm in Farbe</name>
+  </category>
+  <category id="c_63">
+    <name lang="de">Beste Filmarchitektur</name>
+    <name lang="en">Beste Filmarchitektur</name>
+  </category>
+  <category id="c_136">
+    <name lang="de">Beste programmfüllende Spielfilme (Herstellung)</name>
+    <name lang="en">Beste programmfüllende Spielfilme (Herstellung)</name>
+  </category>
+  <category id="c_130">
+    <name lang="de">Bester Kulturfilm in Schwarz - Weiß</name>
+    <name lang="en">Bester Kulturfilm in Schwarz - Weiß</name>
+  </category>
+  <category id="c_4">
+    <name lang="de">Film, der zur Förderung des demokratischen Gedankens beiträgt</name>
+    <name lang="en">Film, der zur Förderung des demokratischen Gedankens beiträgt</name>
+  </category>
+  <category id="c_106">
+    <name lang="de">Musikalische Gestaltung</name>
+    <name lang="en">Musikalische Gestaltung</name>
+  </category>
+  <category id="c_81">
+    <name lang="de">Besonders wertvoller Kulturfilm</name>
+    <name lang="en">Besonders wertvoller Kulturfilm</name>
+  </category>
+  <category id="c_168">
+    <name lang="de">Dritter Preis für abendfüllende Spielfilme</name>
+    <name lang="en">Dritter Preis für abendfüllende Spielfilme</name>
+  </category>
+  <category id="c_56">
+    <name lang="de">Ton/Mischung</name>
+    <name lang="en">Ton/Mischung</name>
+  </category>
+  <category id="c_82">
+    <name lang="de">Beste abendfüllende Spielfilme (Herstellung)</name>
+    <name lang="en">Beste abendfüllende Spielfilme (Herstellung)</name>
+  </category>
+  <category id="c_99">
+    <name lang="de">Beste Kamera</name>
+    <name lang="en">Beste Kamera</name>
+  </category>
+  <category id="c_51">
+    <name lang="de">Programmfüllende Filme ohne Spielhandlung</name>
+    <name lang="en">Programmfüllende Filme ohne Spielhandlung</name>
+  </category>
+  <category id="c_65">
+    <name lang="de">Lobende Anerkennung</name>
+    <name lang="en">Lobende Anerkennung</name>
+  </category>
+  <category id="c_141">
+    <name lang="de">Künstlerische Gesamtkonzeption</name>
+    <name lang="en">Künstlerische Gesamtkonzeption</name>
+  </category>
+  <category id="c_137">
+    <name lang="de">Männliche Nebenrolle</name>
+    <name lang="en">Männliche Nebenrolle</name>
+  </category>
+  <category id="c_60">
+    <name lang="de">Zweiter Preis für einen abendfüllenden Spielfilm (erster Preis in diesem Jahr nicht vergeben)</name>
+    <name lang="en">Zweiter Preis für einen abendfüllenden Spielfilm (erster Preis in diesem Jahr nicht vergeben)</name>
+  </category>
+  <category id="c_61">
+    <name lang="de">Beste Nachwuchsschauspielerin</name>
+    <name lang="en">Beste Nachwuchsschauspielerin</name>
+  </category>
+  <category id="c_73">
+    <name lang="de">Bester Nebendarsteller</name>
+    <name lang="en">Bester Nebendarsteller</name>
+  </category>
+  <category id="c_69">
+    <name lang="de">Regie, Drehbuch und Musikdramaturgie</name>
+    <name lang="en">Regie, Drehbuch und Musikdramaturgie</name>
+  </category>
+  <category id="c_48">
+    <name lang="de">Drehbuch</name>
+    <name lang="en">Drehbuch</name>
+  </category>
+  <category id="c_38">
+    <name lang="de">Weitere programmfüllende Filme</name>
+    <name lang="en">Weitere programmfüllende Filme</name>
+  </category>
+  <category id="c_139">
+    <name lang="de">Programmfüllender Film ohne Spielhandlung</name>
+    <name lang="en">Programmfüllender Film ohne Spielhandlung</name>
+  </category>
+  <category id="c_9">
+    <name lang="de">Sonstige Kurzfilme</name>
+    <name lang="en">Sonstige Kurzfilme</name>
+  </category>
+  <category id="c_159">
+    <name lang="de">Bester Speilfilm</name>
+    <name lang="en">Bester Speilfilm</name>
+  </category>
+  <category id="c_125">
+    <name lang="de">Visuelle Gestaltung</name>
+    <name lang="en">Visuelle Gestaltung</name>
+  </category>
+  <category id="c_86">
+    <name lang="de">Szenenbild</name>
+    <name lang="en">Szenenbild</name>
+  </category>
+  <category id="c_124">
+    <name lang="de">Beste kurze Kulturfilme</name>
+    <name lang="en">Beste kurze Kulturfilme</name>
+  </category>
+  <category id="c_170">
+    <name lang="de">Bester Kulturfilm in schwarz/weiß</name>
+    <name lang="en">Bester Kulturfilm in schwarz/weiß</name>
+  </category>
+  <category id="c_157">
+    <name lang="de">Nächstbester abendfüllender Dokumentarfilm</name>
+    <name lang="en">Nächstbester abendfüllender Dokumentarfilm</name>
+  </category>
+  <category id="c_104">
+    <name lang="de">Publikumspreis Schauspieler/in des Jahres</name>
+    <name lang="en">Publikumspreis Schauspieler/in des Jahres</name>
+  </category>
+  <category id="c_13">
+    <name lang="de">Beste Hauptdarstellerin</name>
+    <name lang="en">Beste Hauptdarstellerin</name>
+  </category>
+  <category id="c_53">
+    <name lang="de">Bester Dokumentarfilm</name>
+    <name lang="en">Bester Dokumentarfilm</name>
+  </category>
+  <category id="c_43">
+    <name lang="de">Bester Film</name>
+    <name lang="en">Bester Film</name>
+  </category>
+  <category id="c_8">
+    <name lang="de">Filmmusik</name>
+    <name lang="en">Filmmusik</name>
+  </category>
+  <category id="c_1">
+    <name lang="de">Drehbuch und Regie</name>
+    <name lang="en">Drehbuch und Regie</name>
+  </category>
+  <category id="c_143">
+    <name lang="de">Bestes unverfilmtes Drehbuch</name>
+    <name lang="en">Bestes unverfilmtes Drehbuch</name>
+  </category>
+  <category id="c_77">
+    <name lang="de">Beste programmfüllende Spielfilme (Gestaltung)</name>
+    <name lang="en">Beste programmfüllende Spielfilme (Gestaltung)</name>
+  </category>
+  <category id="c_57">
+    <name lang="de">Beste Filmmusik</name>
+    <name lang="en">Beste Filmmusik</name>
+  </category>
+  <category id="c_113">
+    <name lang="de">Bau und Ausstattung</name>
+    <name lang="en">Bau und Ausstattung</name>
+  </category>
+  <category id="c_102">
+    <name lang="de">Weitere Filme</name>
+    <name lang="en">Weitere Filme</name>
+  </category>
+  <category id="c_75">
+    <name lang="de">Bester Kulturfilm in Farbe</name>
+    <name lang="en">Bester Kulturfilm in Farbe</name>
+  </category>
+  <category id="c_122">
+    <name lang="de">Musikdramaturgie</name>
+    <name lang="en">Musikdramaturgie</name>
+  </category>
+  <category id="c_115">
+    <name lang="de">Zweitbester abendfüllender Spielfilm</name>
+    <name lang="en">Zweitbester abendfüllender Spielfilm</name>
+  </category>
+  <category id="c_156">
+    <name lang="de">Bester Problemfilm</name>
+    <name lang="en">Bester Problemfilm</name>
+  </category>
+  <category id="c_10">
+    <name lang="de">Weitere programmfüllende Spielfilme</name>
+    <name lang="en">Weitere programmfüllende Spielfilme</name>
+  </category>
+  <category id="c_152">
+    <name lang="de">Filmarchitektur</name>
+    <name lang="en">Filmarchitektur</name>
+  </category>
+  <category id="c_135">
+    <name lang="de">Bester deutscher Dokumentarfilm</name>
+    <name lang="en">Bester deutscher Dokumentarfilm</name>
+  </category>
+  <category id="c_116">
+    <name lang="de">Beste Kurzfilme</name>
+    <name lang="en">Beste Kurzfilme</name>
+  </category>
+  <category id="c_64">
+    <name lang="de">Nachwuchsschauspieler</name>
+    <name lang="en">Nachwuchsschauspieler</name>
+  </category>
+  <category id="c_153">
+    <name lang="de">Beste Farbfilmkameraführung</name>
+    <name lang="en">Beste Farbfilmkameraführung</name>
+  </category>
+  <category id="c_72">
+    <name lang="de">Filmkonzeption</name>
+    <name lang="en">Filmkonzeption</name>
+  </category>
+  <category id="c_42">
+    <name lang="de">Bester Schnitt</name>
+    <name lang="en">Bester Schnitt</name>
+  </category>
+  <category id="c_66">
+    <name lang="de">Ausstattung</name>
+    <name lang="en">Ausstattung</name>
+  </category>
+  <category id="c_44">
+    <name lang="de">Kurze Kulturfilme</name>
+    <name lang="en">Kurze Kulturfilme</name>
+  </category>
+  <category id="c_50">
+    <name lang="de">Bester kurzer Dokumentarfilm</name>
+    <name lang="en">Bester kurzer Dokumentarfilm</name>
+  </category>
+  <category id="c_112">
+    <name lang="de">Bester programmfüllender Film</name>
+    <name lang="en">Bester programmfüllender Film</name>
+  </category>
+  <category id="c_18">
+    <name lang="de">Kameraführung</name>
+    <name lang="en">Kameraführung</name>
+  </category>
+  <category id="c_111">
+    <name lang="de">Film, der für die europäische Idee wirbt</name>
+    <name lang="en">Film, der für die europäische Idee wirbt</name>
+  </category>
+  <category id="c_167">
+    <name lang="de">Weiterer überdurchschnittlicher abendfüllender Spielfilm</name>
+    <name lang="en">Weiterer überdurchschnittlicher abendfüllender Spielfilm</name>
+  </category>
+  <category id="c_5">
+    <name lang="de">Bester Hauptdarsteller</name>
+    <name lang="en">Bester Hauptdarsteller</name>
+  </category>
+  <category id="c_133">
+    <name lang="de">Nachwuchsdarsteller</name>
+    <name lang="en">Nachwuchsdarsteller</name>
+  </category>
+  <category id="c_24">
+    <name lang="de">Überdurchschnittlicher abendfüllender Spielfilm</name>
+    <name lang="en">Überdurchschnittlicher abendfüllender Spielfilm</name>
+  </category>
+  <category id="c_49">
+    <name lang="de">Nächstbester abendfüllender Spielfilm</name>
+    <name lang="en">Nächstbester abendfüllender Spielfilm</name>
+  </category>
+  <category id="c_166">
+    <name lang="de">Bester Kulturfilm in schwarz-weiß</name>
+    <name lang="en">Bester Kulturfilm in schwarz-weiß</name>
+  </category>
+  <category id="c_28">
+    <name lang="de">Bester Darsteller einer Hauptrolle</name>
+    <name lang="en">Bester Darsteller einer Hauptrolle</name>
+  </category>
+  <category id="c_138">
+    <name lang="de">Bester sonstiger Kurzfilm in Schwarz-Weiß</name>
+    <name lang="en">Bester sonstiger Kurzfilm in Schwarz-Weiß</name>
+  </category>
+  <category id="c_92">
+    <name lang="de">Weiterer besonders wertvoller Kulturfilm</name>
+    <name lang="en">Weiterer besonders wertvoller Kulturfilm</name>
+  </category>
+  <category id="c_27">
+    <name lang="de">Bestes Drehbuch</name>
+    <name lang="en">Bestes Drehbuch</name>
+  </category>
+  <category id="c_21">
+    <name lang="de">Beste Darstellerin einer Nebenrolle</name>
+    <name lang="en">Beste Darstellerin einer Nebenrolle</name>
+  </category>
+  <category id="c_119">
+    <name lang="de">Bester programmfüllender Film ohne Spielhandlung</name>
+    <name lang="en">Bester programmfüllender Film ohne Spielhandlung</name>
+  </category>
+  <category id="c_41">
+    <name lang="de">Kurzer Dokumentarfilm</name>
+    <name lang="en">Kurzer Dokumentarfilm</name>
+  </category>
+  <category id="c_45">
+    <name lang="de">Kurze Dokumentarfilme</name>
+    <name lang="en">Kurze Dokumentarfilme</name>
+  </category>
+  <category id="c_128">
+    <name lang="de">Beste Kulturfilme in Schwarz-Weiß</name>
+    <name lang="en">Beste Kulturfilme in Schwarz-Weiß</name>
+  </category>
+  <category id="c_160">
+    <name lang="de">Hervorragende Kameraführung in einem Kulturfilm</name>
+    <name lang="en">Hervorragende Kameraführung in einem Kulturfilm</name>
+  </category>
+</categories>
+
+<movies>
+  <movie id="m_1">
+      <title lang="de">1 + 1 = 3</title>
+  </movie>
+  <movie id="m_2">
+      <title lang="de">14 Tage lebenslänglich</title>
+  </movie>
+  <movie id="m_3">
+      <title lang="de">Der 20. Juli</title>
+  </movie>
+  <movie id="m_4">
+      <title lang="de">23</title>
+  </movie>
+  <movie id="m_5">
+      <title lang="de">40 m2 Deutschland</title>
+  </movie>
+  <movie id="m_6">
+      <title lang="de">Paradies</title>
+  </movie>
+  <movie id="m_7">
+      <title lang="de">Das Schweigen des Dichters</title>
+  </movie>
+  <movie id="m_8">
+      <title lang="de">A</title>
+  </movie>
+  <movie id="m_9">
+      <title lang="de">Die Abfahrer</title>
+  </movie>
+  <movie id="m_10">
+      <title lang="de">Abgeschminkt</title>
+  </movie>
+  <movie id="m_11">
+      <title lang="de">Abschied vom falschen Paradies</title>
+  </movie>
+  <movie id="m_12">
+      <title lang="de">Abschied von Agnes</title>
+  </movie>
+  <movie id="m_13">
+      <title lang="de">Abschied von gestern</title>
+  </movie>
+  <movie id="m_14">
+      <title lang="de">Absolute Giganten</title>
+  </movie>
+  <movie id="m_15">
+      <title lang="de">Abstrakte Oper Nr. 1</title>
+  </movie>
+  <movie id="m_16">
+      <title lang="de">ABSURDISTAN</title>
+  </movie>
+  <movie id="m_17">
+      <title lang="de">Abwärts</title>
+  </movie>
+  <movie id="m_18">
+      <title lang="de">Achtung, Synkope</title>
+  </movie>
+  <movie id="m_19">
+      <title lang="de">Adam 2</title>
+  </movie>
+  <movie id="m_20">
+      <title lang="de">Adolf, der Weber</title>
+  </movie>
+  <movie id="m_21">
+      <title lang="de">Agnes und seine Brüder</title>
+  </movie>
+  <movie id="m_22">
+      <title lang="de">Aguirre, der Zorn Gottes</title>
+  </movie>
+  <movie id="m_23">
+      <title lang="de">Aimée und Jaguar</title>
+  </movie>
+  <movie id="m_24">
+      <title lang="de">Meschugge</title>
+  </movie>
+  <movie id="m_25">
+      <title lang="de">alaska.de</title>
+  </movie>
+  <movie id="m_26">
+      <title lang="de">Albert - warum?</title>
+  </movie>
+  <movie id="m_27">
+      <title lang="de">Alibi</title>
+  </movie>
+  <movie id="m_28">
+      <title lang="de">Alle Jahre wieder</title>
+  </movie>
+  <movie id="m_29">
+      <title lang="de">Alle Menschen werden Brüder</title>
+  </movie>
+  <movie id="m_30">
+      <title lang="de">Alles auf Anfang</title>
+  </movie>
+  <movie id="m_31">
+      <title lang="de">Tafelspitz</title>
+  </movie>
+  <movie id="m_32">
+      <title lang="de">Alles auf Zucker</title>
+  </movie>
+  <movie id="m_33">
+      <title lang="de">Alles aus Zucker</title>
+  </movie>
+  <movie id="m_34">
+      <title lang="de">Alles über meine Mutter</title>
+  </movie>
+  <movie id="m_35">
+      <title lang="de">Als die Igel größer wurden</title>
+  </movie>
+  <movie id="m_36">
+      <title lang="de">Als wär´s von Beckett</title>
+  </movie>
+  <movie id="m_37">
+      <title lang="de">Alvorado - Aufbruch in Brasilien</title>
+  </movie>
+  <movie id="m_38">
+      <title lang="de">Am Ende der Gewalt</title>
+  </movie>
+  <movie id="m_39">
+      <title lang="de">Am Wegerand</title>
+  </movie>
+  <movie id="m_40">
+      <title lang="de">American Beauty Ltd.</title>
+  </movie>
+  <movie id="m_41">
+      <title lang="de">Der amerikanische Freund</title>
+  </movie>
+  <movie id="m_42">
+      <title lang="de">Die gläserne Zelle</title>
+  </movie>
+  <movie id="m_43">
+      <title lang="de">Die linkshändige Frau</title>
+  </movie>
+  <movie id="m_44">
+      <title lang="de">Anastasia, die letzte Zarentochter</title>
+  </movie>
+  <movie id="m_45">
+      <title lang="de">Anatomie</title>
+  </movie>
+  <movie id="m_46">
+      <title lang="de">Andalusische Wallfahrt</title>
+  </movie>
+  <movie id="m_47">
+      <title lang="de">Der Angriff der Gegenwart auf die übrige Zeit</title>
+  </movie>
+  <movie id="m_48">
+      <title lang="de">Angst essen Seele auf</title>
+  </movie>
+  <movie id="m_49">
+      <title lang="de">Die Apothekerin</title>
+  </movie>
+  <movie id="m_50">
+      <title lang="de">Bandits</title>
+  </movie>
+  <movie id="m_51">
+      <title lang="de">Armer kleiner Zirkus</title>
+  </movie>
+  <movie id="m_52">
+      <title lang="de">Die Artisten in der Zirkuskuppel: ratlos</title>
+  </movie>
+  <movie id="m_53">
+      <title lang="de">Auer Dult</title>
+  </movie>
+  <movie id="m_54">
+      <title lang="de">AUF DER ANDEREN SEITE</title>
+  </movie>
+  <movie id="m_55">
+      <title lang="de">Auf geht´s</title>
+  </movie>
+  <movie id="m_56">
+      <title lang="de">Auf Wiedersehen, Amerika</title>
+  </movie>
+  <movie id="m_57">
+      <title lang="de">Aufdermauer</title>
+  </movie>
+  <movie id="m_58">
+      <title lang="de">Der Aufstand</title>
+  </movie>
+  <movie id="m_59">
+      <title lang="de">Augusta Treverorum</title>
+  </movie>
+  <movie id="m_60">
+      <title lang="de">Aus der Geschichte der Menschheit</title>
+  </movie>
+  <movie id="m_61">
+      <title lang="de">Aus einem deutschen Leben</title>
+  </movie>
+  <movie id="m_62">
+      <title lang="de">Die Aussicht</title>
+  </movie>
+  <movie id="m_63">
+      <title lang="de">Auto, Auto</title>
+  </movie>
+  <movie id="m_64">
+      <title lang="de">Das Autogramm</title>
+  </movie>
+  <movie id="m_65">
+      <title lang="de">Bagnolo - Dorf zwischen schwarz und rot</title>
+  </movie>
+  <movie id="m_66">
+      <title lang="de">Balagan</title>
+  </movie>
+  <movie id="m_67">
+      <title lang="de">Balance</title>
+  </movie>
+  <movie id="m_68">
+      <title lang="de">Bauhütte 63</title>
+  </movie>
+  <movie id="m_69">
+      <title lang="de">Beim nächsten Kuß knall’ ich ihn nieder</title>
+  </movie>
+  <movie id="m_70">
+      <title lang="de">Bekenntnisse des Hochstaplers Felix Krull</title>
+  </movie>
+  <movie id="m_71">
+      <title lang="de">Bella Martha</title>
+  </movie>
+  <movie id="m_72">
+      <title lang="de">Berlin - Schicksal einer Stadt</title>
+  </movie>
+  <movie id="m_73">
+      <title lang="de">Berliner Stadtbahnbilder</title>
+  </movie>
+  <movie id="m_74">
+      <title lang="de">Der bewegte Mann</title>
+  </movie>
+  <movie id="m_75">
+      <title lang="de">Bibi Blocksberg</title>
+  </movie>
+  <movie id="m_76">
+      <title lang="de">Bin ich schön?</title>
+  </movie>
+  <movie id="m_77">
+      <title lang="de">Lola rennt</title>
+  </movie>
+  <movie id="m_78">
+      <title lang="de">Bitte stehen Sie auf</title>
+  </movie>
+  <movie id="m_79">
+      <title lang="de">Die bitteren Tränen der Petra von Kant</title>
+  </movie>
+  <movie id="m_80">
+      <title lang="de">Wildwechsel</title>
+  </movie>
+  <movie id="m_81">
+      <title lang="de">Black Box BRD</title>
+  </movie>
+  <movie id="m_82">
+      <title lang="de">Die Blechtrommel</title>
+  </movie>
+  <movie id="m_83">
+      <title lang="de">Die bleierne Zeit</title>
+  </movie>
+  <movie id="m_84">
+      <title lang="de">Lola</title>
+  </movie>
+  <movie id="m_85">
+      <title lang="de">Die Blindgänger</title>
+  </movie>
+  <movie id="m_86">
+      <title lang="de">Der Bockerer</title>
+  </movie>
+  <movie id="m_87">
+      <title lang="de">Das Boot</title>
+  </movie>
+  <movie id="m_88">
+      <title lang="de">Brassed off - mit Pauken und Trompeten</title>
+  </movie>
+  <movie id="m_89">
+      <title lang="de">Das Brot der frühen Jahre</title>
+  </movie>
+  <movie id="m_90">
+      <title lang="de">Das Brot des Bäckers</title>
+  </movie>
+  <movie id="m_91">
+      <title lang="de">Die Brücke</title>
+  </movie>
+  <movie id="m_92">
+      <title lang="de">Die Buddenbrooks</title>
+  </movie>
+  <movie id="m_93">
+      <title lang="de">Bübchen</title>
+  </movie>
+  <movie id="m_94">
+      <title lang="de">Buena Vista Social Club</title>
+  </movie>
+  <movie id="m_95">
+      <title lang="de">Burning Life</title>
+  </movie>
+  <movie id="m_96">
+      <title lang="de">Einer meiner ältesten Freunde</title>
+  </movie>
+  <movie id="m_97">
+      <title lang="de">Keiner liebt mich</title>
+  </movie>
+  <movie id="m_98">
+      <title lang="de">Bustelli, ein Spiel in Porzellan</title>
+  </movie>
+  <movie id="m_99">
+      <title lang="de">Buster’s Bedroom</title>
+  </movie>
+  <movie id="m_100">
+      <title lang="de">C 12 H 22 O 11 - Auf den Spuren des Lebens</title>
+  </movie>
+  <movie id="m_101">
+      <title lang="de">Canaris</title>
+  </movie>
+  <movie id="m_102">
+      <title lang="de">Caspar David Friedrich - Grenzen der Zeit</title>
+  </movie>
+  <movie id="m_103">
+      <title lang="de">Charly May</title>
+  </movie>
+  <movie id="m_104">
+      <title lang="de">Close Up</title>
+  </movie>
+  <movie id="m_105">
+      <title lang="de">Comedian Harmonists</title>
+  </movie>
+  <movie id="m_106">
+      <title lang="de">Crazy</title>
+  </movie>
+  <movie id="m_107">
+      <title lang="de">C’est la vie Rose</title>
+  </movie>
+  <movie id="m_108">
+      <title lang="de">David</title>
+  </movie>
+  <movie id="m_109">
+      <title lang="de">Deadlock</title>
+  </movie>
+  <movie id="m_110">
+      <title lang="de">Dear Mister Wonderful</title>
+  </movie>
+  <movie id="m_111">
+      <title lang="de">Derby Fever USA</title>
+  </movie>
+  <movie id="m_112">
+      <title lang="de">Des Anderen Last</title>
+  </movie>
+  <movie id="m_113">
+      <title lang="de">Des Teufels General</title>
+  </movie>
+  <movie id="m_114">
+      <title lang="de">Deutschland im Herbst</title>
+  </movie>
+  <movie id="m_115">
+      <title lang="de">Dialog oder Ariadnes Klage</title>
+  </movie>
+  <movie id="m_116">
+      <title lang="de">Dies rigorose Leben</title>
+  </movie>
+  <movie id="m_117">
+      <title lang="de">Der Stand der Dinge</title>
+  </movie>
+  <movie id="m_118">
+      <title lang="de">Don Camillo und Peppone</title>
+  </movie>
+  <movie id="m_119">
+      <title lang="de">Das doppelte Lottchen</title>
+  </movie>
+  <movie id="m_120">
+      <title lang="de">Drei Chinesen mit dem Kontrabass</title>
+  </movie>
+  <movie id="m_121">
+      <title lang="de">Drei Meister schneiden Holz</title>
+  </movie>
+  <movie id="m_122">
+      <title lang="de">Dresden 1964 - Im Zwinger</title>
+  </movie>
+  <movie id="m_123">
+      <title lang="de">Düsseldorfer Karussell</title>
+  </movie>
+  <movie id="m_124">
+      <title lang="de">Der Durchdreher</title>
+  </movie>
+  <movie id="m_125">
+      <title lang="de">Erbsen auf halb 6</title>
+  </movie>
+  <movie id="m_126">
+      <title lang="de">Ein großer graublauer Vogel</title>
+  </movie>
+  <movie id="m_127">
+      <title lang="de">Götter der Pest</title>
+  </movie>
+  <movie id="m_128">
+      <title lang="de">Katzelmacher</title>
+  </movie>
+  <movie id="m_129">
+      <title lang="de">Liebe ist kälter als der Tod</title>
+  </movie>
+  <movie id="m_130">
+      <title lang="de">Ein Mädchen aus Flandern</title>
+  </movie>
+  <movie id="m_131">
+      <title lang="de">Eine Kohlemine in Südwales</title>
+  </movie>
+  <movie id="m_132">
+      <title lang="de">Eine Liebesgeschichte</title>
+  </movie>
+  <movie id="m_133">
+      <title lang="de">Eine Melodie - vier Maler</title>
+  </movie>
+  <movie id="m_134">
+      <title lang="de">Eine Reise ins Licht (Despair)</title>
+  </movie>
+  <movie id="m_135">
+      <title lang="de">Eine schöne Maske</title>
+  </movie>
+  <movie id="m_136">
+      <title lang="de">Eine Stadt feiert Geburtstag</title>
+  </movie>
+  <movie id="m_137">
+      <title lang="de">Einer von uns beiden</title>
+  </movie>
+  <movie id="m_138">
+      <title lang="de">Gott schützt die Liebenden</title>
+  </movie>
+  <movie id="m_139">
+      <title lang="de">Einmal Kudamm und zurück</title>
+  </movie>
+  <movie id="m_140">
+      <title lang="de">EinMann im schönsten Alter</title>
+  </movie>
+  <movie id="m_141">
+      <title lang="de">Eins</title>
+  </movie>
+  <movie id="m_142">
+      <title lang="de">Eisenhans</title>
+  </movie>
+  <movie id="m_143">
+      <title lang="de">Elefantenherz</title>
+  </movie>
+  <movie id="m_144">
+      <title lang="de">Good Bye, Lenin!</title>
+  </movie>
+  <movie id="m_145">
+      <title lang="de">Ellis Island</title>
+  </movie>
+  <movie id="m_146">
+      <title lang="de">Empor</title>
+  </movie>
+  <movie id="m_147">
+      <title lang="de">Das Ende des Regenbogens</title>
+  </movie>
+  <movie id="m_148">
+      <title lang="de">Die endlose Nacht</title>
+  </movie>
+  <movie id="m_149">
+      <title lang="de">Endstation</title>
+  </movie>
+  <movie id="m_150">
+      <title lang="de">Endstation Freiheit</title>
+  </movie>
+  <movie id="m_151">
+      <title lang="de">Energie aus Materie</title>
+  </movie>
+  <movie id="m_152">
+      <title lang="de">Engel aus Eisen</title>
+  </movie>
+  <movie id="m_153">
+      <title lang="de">Engelchen oder die Jungfrau von Bamberg</title>
+  </movie>
+  <movie id="m_154">
+      <title lang="de">Ernst Barlach Teil 1</title>
+  </movie>
+  <movie id="m_155">
+      <title lang="de">Die Eroberung der Zitadelle</title>
+  </movie>
+  <movie id="m_156">
+      <title lang="de">Der Fangschuß</title>
+  </movie>
+  <movie id="m_157">
+      <title lang="de">Erste Liebe</title>
+  </movie>
+  <movie id="m_158">
+      <title lang="de">Es</title>
+  </movie>
+  <movie id="m_159">
+      <title lang="de">Es herrscht Ruhe im Land</title>
+  </movie>
+  <movie id="m_160">
+      <title lang="de">Execution - a study of Mary</title>
+  </movie>
+  <movie id="m_161">
+      <title lang="de">Das Experiment</title>
+  </movie>
+  <movie id="m_162">
+      <title lang="de">Im Juli</title>
+  </movie>
+  <movie id="m_163">
+      <title lang="de">Fabian</title>
+  </movie>
+  <movie id="m_164">
+      <title lang="de">Die Fälschung</title>
+  </movie>
+  <movie id="m_165">
+      <title lang="de">Der Fall Bachmeier</title>
+  </movie>
+  <movie id="m_166">
+      <title lang="de">Falsche Bewegung</title>
+  </movie>
+  <movie id="m_167">
+      <title lang="de">Das falsche Gewicht</title>
+  </movie>
+  <movie id="m_168">
+      <title lang="de">Trotta</title>
+  </movie>
+  <movie id="m_169">
+      <title lang="de">Der Fangschuß</title>
+  </movie>
+  <movie id="m_170">
+      <title lang="de">Faust</title>
+  </movie>
+  <movie id="m_171">
+      <title lang="de">Der Felsen</title>
+  </movie>
+  <movie id="m_172">
+      <title lang="de">Die Fetten Jahre sind vorbei</title>
+  </movie>
+  <movie id="m_173">
+      <title lang="de">Das Feuerschiff</title>
+  </movie>
+  <movie id="m_174">
+      <title lang="de">Feurige Hochzeit</title>
+  </movie>
+  <movie id="m_175">
+      <title lang="de">Fickende Fische</title>
+  </movie>
+  <movie id="m_176">
+      <title lang="de">Fitzcarraldo</title>
+  </movie>
+  <movie id="m_177">
+      <title lang="de">Flammende Herzen</title>
+  </movie>
+  <movie id="m_178">
+      <title lang="de">Hitler - ein Film aus Deutschland</title>
+  </movie>
+  <movie id="m_179">
+      <title lang="de">Das fliegende Klassenzimmer</title>
+  </movie>
+  <movie id="m_180">
+      <title lang="de">Flucht nach Berlin</title>
+  </movie>
+  <movie id="m_181">
+      <title lang="de">Flucht nach vorne</title>
+  </movie>
+  <movie id="m_182">
+      <title lang="de">Frage Sieben</title>
+  </movie>
+  <movie id="m_183">
+      <title lang="de">Francesca</title>
+  </movie>
+  <movie id="m_184">
+      <title lang="de">Frau2 sucht HappyEnd</title>
+  </movie>
+  <movie id="m_185">
+      <title lang="de">FREI NACH PLAN</title>
+  </movie>
+  <movie id="m_186">
+      <title lang="de">Das Freudenhaus</title>
+  </movie>
+  <movie id="m_187">
+      <title lang="de">Fritz Kortner spricht Monologe</title>
+  </movie>
+  <movie id="m_188">
+      <title lang="de">Frühlingssinfonie</title>
+  </movie>
+  <movie id="m_189">
+      <title lang="de">Fünf letzte Tage</title>
+  </movie>
+  <movie id="m_190">
+      <title lang="de">Die weiße Rose</title>
+  </movie>
+  <movie id="m_191">
+      <title lang="de">Fußball ist unser Leben</title>
+  </movie>
+  <movie id="m_192">
+      <title lang="de">Der Fußgänger</title>
+  </movie>
+  <movie id="m_193">
+      <title lang="de">Die Fälscher</title>
+  </movie>
+  <movie id="m_194">
+      <title lang="de">Galapagos - Trauminsel im Pazifik</title>
+  </movie>
+  <movie id="m_195">
+      <title lang="de">Ganz oder gar nicht</title>
+  </movie>
+  <movie id="m_196">
+      <title lang="de">Der Garten Eden</title>
+  </movie>
+  <movie id="m_197">
+      <title lang="de">Die Gartenzwerge</title>
+  </movie>
+  <movie id="m_198">
+      <title lang="de">Gegen die Wand</title>
+  </movie>
+  <movie id="m_199">
+      <title lang="de">Die Geige</title>
+  </movie>
+  <movie id="m_200">
+      <title lang="de">Das Geisterhaus</title>
+  </movie>
+  <movie id="m_201">
+      <title lang="de">Geliebtes Leben</title>
+  </movie>
+  <movie id="m_202">
+      <title lang="de">Generalprobe</title>
+  </movie>
+  <movie id="m_203">
+      <title lang="de">Georg Elser - Einer aus Deutschland</title>
+  </movie>
+  <movie id="m_204">
+      <title lang="de">Das Spinnennetz</title>
+  </movie>
+  <movie id="m_205">
+      <title lang="de">Die Geschichte eines Konzerts</title>
+  </movie>
+  <movie id="m_206">
+      <title lang="de">Geschichten aus dem Wienerwald</title>
+  </movie>
+  <movie id="m_207">
+      <title lang="de">Geschwindigkeit</title>
+  </movie>
+  <movie id="m_208">
+      <title lang="de">Geteiltes Land</title>
+  </movie>
+  <movie id="m_209">
+      <title lang="de">Die gläserne Zelle</title>
+  </movie>
+  <movie id="m_210">
+      <title lang="de">Das Glas Wasser</title>
+  </movie>
+  <movie id="m_211">
+      <title lang="de">Die glücklichen Jahre der Thorwalds</title>
+  </movie>
+  <movie id="m_212">
+      <title lang="de">Götter der Pest</title>
+  </movie>
+  <movie id="m_213">
+      <title lang="de">Katzelmacher</title>
+  </movie>
+  <movie id="m_214">
+      <title lang="de">Liebe ist kälter als der Tod</title>
+  </movie>
+  <movie id="m_215">
+      <title lang="de">Good Bye, Lenin!</title>
+  </movie>
+  <movie id="m_216">
+      <title lang="de">Gran Paradiso</title>
+  </movie>
+  <movie id="m_217">
+      <title lang="de">Grete Minde</title>
+  </movie>
+  <movie id="m_218">
+      <title lang="de">Das große Liebesspiel</title>
+  </movie>
+  <movie id="m_219">
+      <title lang="de">Die große Versuchung</title>
+  </movie>
+  <movie id="m_220">
+      <title lang="de">Die Grünstein-Variante</title>
+  </movie>
+  <movie id="m_221">
+      <title lang="de">Grüße von Rosita aus Peru</title>
+  </movie>
+  <movie id="m_222">
+      <title lang="de">Gruppenbild mit Dame</title>
+  </movie>
+  <movie id="m_223">
+      <title lang="de">Gustav Messmer - Der Flieger</title>
+  </movie>
+  <movie id="m_224">
+      <title lang="de">Gute Nacht</title>
+  </movie>
+  <movie id="m_225">
+      <title lang="de">Der Händler der vier Jahreszeiten</title>
+  </movie>
+  <movie id="m_226">
+      <title lang="de">Halbe Treppe</title>
+  </movie>
+  <movie id="m_227">
+      <title lang="de">Die Halbstarken</title>
+  </movie>
+  <movie id="m_228">
+      <title lang="de">Die Hallo-Sisters</title>
+  </movie>
+  <movie id="m_229">
+      <title lang="de">Hands up Mr. Rasnichi</title>
+  </movie>
+  <movie id="m_230">
+      <title lang="de">Hans Warns - Mein 20. Jahrhundert</title>
+  </movie>
+  <movie id="m_231">
+      <title lang="de">Harlis</title>
+  </movie>
+  <movie id="m_232">
+      <title lang="de">Der Hauptmann von Köpenick</title>
+  </movie>
+  <movie id="m_233">
+      <title lang="de">Das Haus in der Karpfengasse</title>
+  </movie>
+  <movie id="m_234">
+      <title lang="de">Havanna, mi amor</title>
+  </movie>
+  <movie id="m_235">
+      <title lang="de">Die Heartbreakers</title>
+  </movie>
+  <movie id="m_236">
+      <title lang="de">Heaven</title>
+  </movie>
+  <movie id="m_237">
+      <title lang="de">Heidelberger Romanze</title>
+  </movie>
+  <movie id="m_238">
+      <title lang="de">Heidenlöcher</title>
+  </movie>
+  <movie id="m_239">
+      <title lang="de">Heidi M.</title>
+  </movie>
+  <movie id="m_240">
+      <title lang="de">Heimspiel</title>
+  </movie>
+  <movie id="m_241">
+      <title lang="de">Heinrich</title>
+  </movie>
+  <movie id="m_242">
+      <title lang="de">Helden</title>
+  </movie>
+  <movie id="m_243">
+      <title lang="de">Herbstgedanken</title>
+  </movie>
+  <movie id="m_244">
+      <title lang="de">Herbstmilch</title>
+  </movie>
+  <movie id="m_245">
+      <title lang="de">Herr Kekulé, ich kenne Sie nicht</title>
+  </movie>
+  <movie id="m_246">
+      <title lang="de">Herr Lehmann</title>
+  </movie>
+  <movie id="m_247">
+      <title lang="de">Herr über Leben und Tod</title>
+  </movie>
+  <movie id="m_248">
+      <title lang="de">Die Ratten</title>
+  </movie>
+  <movie id="m_249">
+      <title lang="de">Herrenpartie</title>
+  </movie>
+  <movie id="m_250">
+      <title lang="de">Herz aus Glas</title>
+  </movie>
+  <movie id="m_251">
+      <title lang="de">Herz der Welt</title>
+  </movie>
+  <movie id="m_252">
+      <title lang="de">Himmel ohne Sterne</title>
+  </movie>
+  <movie id="m_253">
+      <title lang="de">Der Himmel über Berlin</title>
+  </movie>
+  <movie id="m_254">
+      <title lang="de">Das höchste Gut einer Frau ist ihr Schweigen</title>
+  </movie>
+  <movie id="m_255">
+      <title lang="de">Hokuspokus</title>
+  </movie>
+  <movie id="m_256">
+      <title lang="de">Hollywood in Deblatschka Pescara</title>
+  </movie>
+  <movie id="m_257">
+      <title lang="de">Homo Faber</title>
+  </movie>
+  <movie id="m_258">
+      <title lang="de">Hongkong - Insel im Roten Meer</title>
+  </movie>
+  <movie id="m_259">
+      <title lang="de">HUGO</title>
+  </movie>
+  <movie id="m_260">
+      <title lang="de">Hunde, wollt ihr ewig leben</title>
+  </movie>
+  <movie id="m_261">
+      <title lang="de">Hundertwassers Regentag</title>
+  </movie>
+  <movie id="m_262">
+      <title lang="de">Der Hut oder Mondo Novo</title>
+  </movie>
+  <movie id="m_263">
+      <title lang="de">Hynningen</title>
+  </movie>
+  <movie id="m_264">
+      <title lang="de">Hände weg von Mississippi</title>
+  </movie>
+  <movie id="m_265">
+      <title lang="de">Die Höhle des gelben Hundes</title>
+  </movie>
+  <movie id="m_266">
+      <title lang="de">Ich bin ein Elefant, Madame</title>
+  </movie>
+  <movie id="m_267">
+      <title lang="de">Ich denke oft an Hawaii</title>
+  </movie>
+  <movie id="m_268">
+      <title lang="de">Ich denke oft an Piroschka</title>
+  </movie>
+  <movie id="m_269">
+      <title lang="de">Ich deutsche Behörde</title>
+  </movie>
+  <movie id="m_270">
+      <title lang="de">Die Iltiskoppel</title>
+  </movie>
+  <movie id="m_271">
+      <title lang="de">Im Angesicht der Ewigkeit</title>
+  </movie>
+  <movie id="m_272">
+      <title lang="de">Im Jahr der Schildkröte</title>
+  </movie>
+  <movie id="m_273">
+      <title lang="de">Im Kreise der Lieben</title>
+  </movie>
+  <movie id="m_274">
+      <title lang="de">Im Namen des Volkes</title>
+  </movie>
+  <movie id="m_275">
+      <title lang="de">Im Schatten des Karakorum</title>
+  </movie>
+  <movie id="m_276">
+      <title lang="de">Im Zauber der Kordilleren</title>
+  </movie>
+  <movie id="m_277">
+      <title lang="de">Impuls unserer Zeit</title>
+  </movie>
+  <movie id="m_278">
+      <title lang="de">In Gefahr und größter Not bringt der Mittelweg den Tod</title>
+  </movie>
+  <movie id="m_279">
+      <title lang="de">Jeder für sich und Gott gegen alle</title>
+  </movie>
+  <movie id="m_280">
+      <title lang="de">in side out</title>
+  </movie>
+  <movie id="m_281">
+      <title lang="de">In the Mood for Love</title>
+  </movie>
+  <movie id="m_282">
+      <title lang="de">In weiter Ferne, so nah</title>
+  </movie>
+  <movie id="m_283">
+      <title lang="de">Der Indianer</title>
+  </movie>
+  <movie id="m_284">
+      <title lang="de">Das innere Auge</title>
+  </movie>
+  <movie id="m_285">
+      <title lang="de">Die innere Sicherheit</title>
+  </movie>
+  <movie id="m_286">
+      <title lang="de">Interview</title>
+  </movie>
+  <movie id="m_287">
+      <title lang="de">Jacqueline</title>
+  </movie>
+  <movie id="m_288">
+      <title lang="de">Jagdszenen aus Niederbayern</title>
+  </movie>
+  <movie id="m_289">
+      <title lang="de">Jaider - der einsame Jäger</title>
+  </movie>
+  <movie id="m_290">
+      <title lang="de">Jazz - Rhytmus der Zeit</title>
+  </movie>
+  <movie id="m_291">
+      <title lang="de">Jede Menge Kohle</title>
+  </movie>
+  <movie id="m_292">
+      <title lang="de">Jeder für sich und Gott gegen alle</title>
+  </movie>
+  <movie id="m_293">
+      <title lang="de">Jenseits der Stille</title>
+  </movie>
+  <movie id="m_294">
+      <title lang="de">Johanna d'Arc of Mongolia</title>
+  </movie>
+  <movie id="m_295">
+      <title lang="de">John Glückstadt</title>
+  </movie>
+  <movie id="m_296">
+      <title lang="de">Johnny West</title>
+  </movie>
+  <movie id="m_297">
+      <title lang="de">Jonas</title>
+  </movie>
+  <movie id="m_298">
+      <title lang="de">Jonathan</title>
+  </movie>
+  <movie id="m_299">
+      <title lang="de">jüm - jüm</title>
+  </movie>
+  <movie id="m_300">
+      <title lang="de">Jugend sieht Deutschland</title>
+  </movie>
+  <movie id="m_301">
+      <title lang="de">Der junge Törless</title>
+  </movie>
+  <movie id="m_302">
+      <title lang="de">Käpt’n Blaubär</title>
+  </movie>
+  <movie id="m_303">
+      <title lang="de">Kalte Heimat</title>
+  </movie>
+  <movie id="m_304">
+      <title lang="de">Kaltes Fieber</title>
+  </movie>
+  <movie id="m_305">
+      <title lang="de">Kanakerbraut</title>
+  </movie>
+  <movie id="m_306">
+      <title lang="de">Kandinsky</title>
+  </movie>
+  <movie id="m_307">
+      <title lang="de">Karl May</title>
+  </movie>
+  <movie id="m_308">
+      <title lang="de">Karl-Heinz</title>
+  </movie>
+  <movie id="m_309">
+      <title lang="de">Kaspar Hauser</title>
+  </movie>
+  <movie id="m_310">
+      <title lang="de">Die Katze</title>
+  </movie>
+  <movie id="m_311">
+      <title lang="de">Katzelmacher</title>
+  </movie>
+  <movie id="m_312">
+      <title lang="de">Kehraus</title>
+  </movie>
+  <movie id="m_313">
+      <title lang="de">Kein Platz für wilde Tiere</title>
+  </movie>
+  <movie id="m_314">
+      <title lang="de">Keiner liebt mich</title>
+  </movie>
+  <movie id="m_315">
+      <title lang="de">Kennwort: Reiher</title>
+  </movie>
+  <movie id="m_316">
+      <title lang="de">Kennzeichen Luftballon</title>
+  </movie>
+  <movie id="m_317">
+      <title lang="de">Kepler und sein Werk</title>
+  </movie>
+  <movie id="m_318">
+      <title lang="de">Die Kinder aus Nr. 67</title>
+  </movie>
+  <movie id="m_319">
+      <title lang="de">Die letzten Jahre der Kindheit</title>
+  </movie>
+  <movie id="m_320">
+      <title lang="de">Die Kinder sind tot</title>
+  </movie>
+  <movie id="m_321">
+      <title lang="de">Kinder, Mütter und ein General</title>
+  </movie>
+  <movie id="m_322">
+      <title lang="de">KIRSCHBLÜTEN</title>
+  </movie>
+  <movie id="m_323">
+      <title lang="de">Klassenfeind</title>
+  </movie>
+  <movie id="m_324">
+      <title lang="de">Die Klavierspielerin</title>
+  </movie>
+  <movie id="m_325">
+      <title lang="de">Kleine Haie</title>
+  </movie>
+  <movie id="m_326">
+      <title lang="de">Krücke</title>
+  </movie>
+  <movie id="m_327">
+      <title lang="de">Meine Tochter gehört mir</title>
+  </movie>
+  <movie id="m_328">
+      <title lang="de">Kleine Laus - ganz groß</title>
+  </movie>
+  <movie id="m_329">
+      <title lang="de">Kleine Nachtgespenster</title>
+  </movie>
+  <movie id="m_330">
+      <title lang="de">Der kleine Vampir</title>
+  </movie>
+  <movie id="m_331">
+      <title lang="de">Knallhart</title>
+  </movie>
+  <movie id="m_332">
+      <title lang="de">Knockin` on Heaven`s Door</title>
+  </movie>
+  <movie id="m_333">
+      <title lang="de">Königliche Hoheit</title>
+  </movie>
+  <movie id="m_334">
+      <title lang="de">Konzert am Tümpel</title>
+  </movie>
+  <movie id="m_335">
+      <title lang="de">Korczak</title>
+  </movie>
+  <movie id="m_336">
+      <title lang="de">Der Krieger und die Kaiserin</title>
+  </movie>
+  <movie id="m_337">
+      <title lang="de">Kroko</title>
+  </movie>
+  <movie id="m_338">
+      <title lang="de">Krücke</title>
+  </movie>
+  <movie id="m_339">
+      <title lang="de">La soufrière</title>
+  </movie>
+  <movie id="m_340">
+      <title lang="de">Labyrinth der Leidenschaften</title>
+  </movie>
+  <movie id="m_341">
+      <title lang="de">Das Land hinter dem Regenbogen</title>
+  </movie>
+  <movie id="m_342">
+      <title lang="de">Die Landarbeiter</title>
+  </movie>
+  <movie id="m_343">
+      <title lang="de">Der lange Jammer</title>
+  </movie>
+  <movie id="m_344">
+      <title lang="de">Lauras Stern</title>
+  </movie>
+  <movie id="m_345">
+      <title lang="de">Laßt uns auch leben</title>
+  </movie>
+  <movie id="m_346">
+      <title lang="de">Le Manège de Petit Pierre</title>
+  </movie>
+  <movie id="m_347">
+      <title lang="de">Das Leben der Anderen</title>
+  </movie>
+  <movie id="m_348">
+      <title lang="de">Das Leben ist eine Baustelle</title>
+  </movie>
+  <movie id="m_349">
+      <title lang="de">Rossini</title>
+  </movie>
+  <movie id="m_350">
+      <title lang="de">Das Leben ist Schön</title>
+  </movie>
+  <movie id="m_351">
+      <title lang="de">Lebenzeichen</title>
+  </movie>
+  <movie id="m_352">
+      <title lang="de">Leise Schatten</title>
+  </movie>
+  <movie id="m_353">
+      <title lang="de">Wildfeuer</title>
+  </movie>
+  <movie id="m_354">
+      <title lang="de">Lena Rais</title>
+  </movie>
+  <movie id="m_355">
+      <title lang="de">Lenz</title>
+  </movie>
+  <movie id="m_356">
+      <title lang="de">LEROY</title>
+  </movie>
+  <movie id="m_357">
+      <title lang="de">Letzte Ausfahrt Brooklyn</title>
+  </movie>
+  <movie id="m_358">
+      <title lang="de">Die letzte Brücke</title>
+  </movie>
+  <movie id="m_359">
+      <title lang="de">Der letzte Dreck</title>
+  </movie>
+  <movie id="m_360">
+      <title lang="de">Das letzte Loch</title>
+  </movie>
+  <movie id="m_361">
+      <title lang="de">Der letzte Zeuge</title>
+  </movie>
+  <movie id="m_362">
+      <title lang="de">Die letzten Jahre der Kindheit</title>
+  </movie>
+  <movie id="m_363">
+      <title lang="de">Lichter</title>
+  </movie>
+  <movie id="m_364">
+      <title lang="de">Liebe ist nur ein Wort</title>
+  </movie>
+  <movie id="m_365">
+      <title lang="de">Lieber Karl</title>
+  </movie>
+  <movie id="m_366">
+      <title lang="de">LIEBESLEBEN</title>
+  </movie>
+  <movie id="m_367">
+      <title lang="de">Liegen Lernen</title>
+  </movie>
+  <movie id="m_368">
+      <title lang="de">Lina Braake - Die Interessen der Bank können nicht die Interessen sein, die Lina Braake hat</title>
+  </movie>
+  <movie id="m_369">
+      <title lang="de">Lola</title>
+  </movie>
+  <movie id="m_370">
+      <title lang="de">Lola rennt</title>
+  </movie>
+  <movie id="m_371">
+      <title lang="de">Looping</title>
+  </movie>
+  <movie id="m_372">
+      <title lang="de">Der Lord von Barmbeck</title>
+  </movie>
+  <movie id="m_373">
+      <title lang="de">Lost Children</title>
+  </movie>
+  <movie id="m_374">
+      <title lang="de">Lost in Translation</title>
+  </movie>
+  <movie id="m_375">
+      <title lang="de">Ludwig - Requiem für einen jungfräulichen König</title>
+  </movie>
+  <movie id="m_376">
+      <title lang="de">Ludwig II.</title>
+  </movie>
+  <movie id="m_377">
+      <title lang="de">Mädchen ... nur mit Gewalt</title>
+  </movie>
+  <movie id="m_378">
+      <title lang="de">Mädchen, Mädchen</title>
+  </movie>
+  <movie id="m_379">
+      <title lang="de">Der Mädchenkrieg</title>
+  </movie>
+  <movie id="m_380">
+      <title lang="de">Männer</title>
+  </movie>
+  <movie id="m_381">
+      <title lang="de">Das magische Band</title>
+  </movie>
+  <movie id="m_382">
+      <title lang="de">Malatesta</title>
+  </movie>
+  <movie id="m_383">
+      <title lang="de">Malina</title>
+  </movie>
+  <movie id="m_384">
+      <title lang="de">Der Mann, der sich verkaufte</title>
+  </movie>
+  <movie id="m_385">
+      <title lang="de">Maries Lied</title>
+  </movie>
+  <movie id="m_386">
+      <title lang="de">Marionetten</title>
+  </movie>
+  <movie id="m_387">
+      <title lang="de">Marlene</title>
+  </movie>
+  <movie id="m_388">
+      <title lang="de">Die Marquise von O...</title>
+  </movie>
+  <movie id="m_389">
+      <title lang="de">Martha Jellneck</title>
+  </movie>
+  <movie id="m_390">
+      <title lang="de">Maschine</title>
+  </movie>
+  <movie id="m_391">
+      <title lang="de">Mathias Kneißl</title>
+  </movie>
+  <movie id="m_392">
+      <title lang="de">o.k.</title>
+  </movie>
+  <movie id="m_393">
+      <title lang="de">Mathias Kneißl</title>
+  </movie>
+  <movie id="m_394">
+      <title lang="de">Whity</title>
+  </movie>
+  <movie id="m_395">
+      <title lang="de">Max Ernst - Entdeckungsfahrten ins Unbewußte</title>
+  </movie>
+  <movie id="m_396">
+      <title lang="de">Mein letzter Film</title>
+  </movie>
+  <movie id="m_397">
+      <title lang="de">Meine Tochter gehört mir</title>
+  </movie>
+  <movie id="m_398">
+      <title lang="de">Meines Vaters Pferde</title>
+  </movie>
+  <movie id="m_399">
+      <title lang="de">Mensch und Kunstfigur, Oskar Schlemmer und die Bauhausbühne</title>
+  </movie>
+  <movie id="m_400">
+      <title lang="de">Menschen wie aus Glas</title>
+  </movie>
+  <movie id="m_401">
+      <title lang="de">Meschugge</title>
+  </movie>
+  <movie id="m_402">
+      <title lang="de">Pünktchen und Anton</title>
+  </movie>
+  <movie id="m_403">
+      <title lang="de">Messer im Kopf</title>
+  </movie>
+  <movie id="m_404">
+      <title lang="de">Das Mikroskop</title>
+  </movie>
+  <movie id="m_405">
+      <title lang="de">Mit starrem Blick aufs Geld</title>
+  </movie>
+  <movie id="m_406">
+      <title lang="de">Der Mittagsschlaf</title>
+  </movie>
+  <movie id="m_407">
+      <title lang="de">Modebummel</title>
+  </movie>
+  <movie id="m_408">
+      <title lang="de">Monarch</title>
+  </movie>
+  <movie id="m_409">
+      <title lang="de">Der Mond ist nur a nackerte Kugel</title>
+  </movie>
+  <movie id="m_410">
+      <title lang="de">Mord und Totschlag</title>
+  </movie>
+  <movie id="m_411">
+      <title lang="de">Morgen in Alabama</title>
+  </movie>
+  <movie id="m_412">
+      <title lang="de">Mozart - Aufzeichnungen einer Jugend</title>
+  </movie>
+  <movie id="m_413">
+      <title lang="de">Mutters Courage</title>
+  </movie>
+  <movie id="m_414">
+      <title lang="de">Muxmäuschenstill</title>
+  </movie>
+  <movie id="m_415">
+      <title lang="de">Die Nacht</title>
+  </movie>
+  <movie id="m_416">
+      <title lang="de">Die Nacht des Marders</title>
+  </movie>
+  <movie id="m_417">
+      <title lang="de">Die Nacht des Schicksals</title>
+  </movie>
+  <movie id="m_418">
+      <title lang="de">Nachtgestalten</title>
+  </movie>
+  <movie id="m_419">
+      <title lang="de">Nachts auf den Straßen</title>
+  </movie>
+  <movie id="m_420">
+      <title lang="de">Nachts, wenn der Teufel kam</title>
+  </movie>
+  <movie id="m_421">
+      <title lang="de">Nackt</title>
+  </movie>
+  <movie id="m_422">
+      <title lang="de">Der Name der Rose</title>
+  </movie>
+  <movie id="m_423">
+      <title lang="de">Nanga Parbat 1953</title>
+  </movie>
+  <movie id="m_424">
+      <title lang="de">Napola</title>
+  </movie>
+  <movie id="m_425">
+      <title lang="de">Nasser Asphalt</title>
+  </movie>
+  <movie id="m_426">
+      <title lang="de">Neapolitanische Geschwister</title>
+  </movie>
+  <movie id="m_427">
+      <title lang="de">Neue Kunst - neues Sehen</title>
+  </movie>
+  <movie id="m_428">
+      <title lang="de">Neuner</title>
+  </movie>
+  <movie id="m_429">
+      <title lang="de">Der neunte Tag</title>
+  </movie>
+  <movie id="m_430">
+      <title lang="de">Nichts bereuen</title>
+  </movie>
+  <movie id="m_431">
+      <title lang="de">Vaya con Dios</title>
+  </movie>
+  <movie id="m_432">
+      <title lang="de">Das weiße Rauschen</title>
+  </movie>
+  <movie id="m_433">
+      <title lang="de">Nick´s Film/Lightning over Water</title>
+  </movie>
+  <movie id="m_434">
+      <title lang="de">Nirgendwo in Afrika</title>
+  </movie>
+  <movie id="m_435">
+      <title lang="de">Nisshin Geppo - Großes Sportland Japan</title>
+  </movie>
+  <movie id="m_436">
+      <title lang="de">Noblesse Oblige</title>
+  </movie>
+  <movie id="m_437">
+      <title lang="de">Nordkurve</title>
+  </movie>
+  <movie id="m_438">
+      <title lang="de">Nosferatu - Phantom der Nacht</title>
+  </movie>
+  <movie id="m_439">
+      <title lang="de">Notabene Mezzogiorno</title>
+  </movie>
+  <movie id="m_440">
+      <title lang="de">Novemberkatzen</title>
+  </movie>
+  <movie id="m_441">
+      <title lang="de">Nr. 1 - Aus Berichten der Wach- und Patrouillendienste</title>
+  </movie>
+  <movie id="m_442">
+      <title lang="de">Nur über meine Leiche</title>
+  </movie>
+  <movie id="m_443">
+      <title lang="de">Stadtgespräch</title>
+  </movie>
+  <movie id="m_444">
+      <title lang="de">o.k.</title>
+  </movie>
+  <movie id="m_445">
+      <title lang="de">Oberst Redl</title>
+  </movie>
+  <movie id="m_446">
+      <title lang="de">Ödipussi</title>
+  </movie>
+  <movie id="m_447">
+      <title lang="de">Olümpia</title>
+  </movie>
+  <movie id="m_448">
+      <title lang="de">Der olympische Sommer</title>
+  </movie>
+  <movie id="m_449">
+      <title lang="de">Onkel Toms Hütte</title>
+  </movie>
+  <movie id="m_450">
+      <title lang="de">Ortsfremd ... wohnhaft vormals Mainzerlandstraße</title>
+  </movie>
+  <movie id="m_451">
+      <title lang="de">Die Ortsliebschen Frauen</title>
+  </movie>
+  <movie id="m_452">
+      <title lang="de">Die Reinheit des Herzens</title>
+  </movie>
+  <movie id="m_453">
+      <title lang="de">Die Ortsliebschen Frauen</title>
+  </movie>
+  <movie id="m_454">
+      <title lang="de">Out of Rosenheim</title>
+  </movie>
+  <movie id="m_455">
+      <title lang="de">Paarungen</title>
+  </movie>
+  <movie id="m_456">
+      <title lang="de">Panter Neuss Neonstadt</title>
+  </movie>
+  <movie id="m_457">
+      <title lang="de">Paradies</title>
+  </movie>
+  <movie id="m_458">
+      <title lang="de">Paradies und Feuerofen</title>
+  </movie>
+  <movie id="m_459">
+      <title lang="de">Das Parfum</title>
+  </movie>
+  <movie id="m_460">
+      <title lang="de">Paris, Texas</title>
+  </movie>
+  <movie id="m_461">
+      <title lang="de">Die Patriotin</title>
+  </movie>
+  <movie id="m_462">
+      <title lang="de">Peng! Du bist tot!</title>
+  </movie>
+  <movie id="m_463">
+      <title lang="de">Der Persönlichkeitstest</title>
+  </movie>
+  <movie id="m_464">
+      <title lang="de">Die Pistole</title>
+  </movie>
+  <movie id="m_465">
+      <title lang="de">Pizza Colonia</title>
+  </movie>
+  <movie id="m_466">
+      <title lang="de">playback</title>
+  </movie>
+  <movie id="m_467">
+      <title lang="de">Der plötzliche Reichtum der armen Leute von Kombach</title>
+  </movie>
+  <movie id="m_468">
+      <title lang="de">Polizeirevier Davidswache</title>
+  </movie>
+  <movie id="m_469">
+      <title lang="de">Portugal - unbekanntes Land am Meer</title>
+  </movie>
+  <movie id="m_470">
+      <title lang="de">Postlagernd Turteltaube</title>
+  </movie>
+  <movie id="m_471">
+      <title lang="de">Die Spur führt nach Berlin</title>
+  </movie>
+  <movie id="m_472">
+      <title lang="de">Premiere</title>
+  </movie>
+  <movie id="m_473">
+      <title lang="de">Prinzessinnen sind wir nie gewesen</title>
+  </movie>
+  <movie id="m_474">
+      <title lang="de">PRINZESSINNENBAD</title>
+  </movie>
+  <movie id="m_475">
+      <title lang="de">Problem Nr. 1</title>
+  </movie>
+  <movie id="m_476">
+      <title lang="de">Die Purpurlinie</title>
+  </movie>
+  <movie id="m_477">
+      <title lang="de">Quai de Valmy</title>
+  </movie>
+  <movie id="m_478">
+      <title lang="de">Quick - das Eichhörnchen</title>
+  </movie>
+  <movie id="m_479">
+      <title lang="de">Quo vadis, Adam?</title>
+  </movie>
+  <movie id="m_480">
+      <title lang="de">Rausch einer Nacht</title>
+  </movie>
+  <movie id="m_481">
+      <title lang="de">Requiem</title>
+  </movie>
+  <movie id="m_482">
+      <title lang="de">Rheingold</title>
+  </movie>
+  <movie id="m_483">
+      <title lang="de">Rhythm is it</title>
+  </movie>
+  <movie id="m_484">
+      <title lang="de">Der Richter und sein Henker</title>
+  </movie>
+  <movie id="m_485">
+      <title lang="de">Rivers and Tides</title>
+  </movie>
+  <movie id="m_486">
+      <title lang="de">Das Rokoko der Markgräfin Wilhelmine</title>
+  </movie>
+  <movie id="m_487">
+      <title lang="de">Rosa Luxemburg</title>
+  </movie>
+  <movie id="m_488">
+      <title lang="de">Rose Bernd</title>
+  </movie>
+  <movie id="m_489">
+      <title lang="de">Rosen für den Staatsanwalt</title>
+  </movie>
+  <movie id="m_490">
+      <title lang="de">Rossini</title>
+  </movie>
+  <movie id="m_491">
+      <title lang="de">Echte Kerle</title>
+  </movie>
+  <movie id="m_492">
+      <title lang="de">Rückkehr der Schleiereule?</title>
+  </movie>
+  <movie id="m_493">
+      <title lang="de">Rückwärts</title>
+  </movie>
+  <movie id="m_494">
+      <title lang="de">Die Sachverständigen</title>
+  </movie>
+  <movie id="m_495">
+      <title lang="de">Das Sams</title>
+  </movie>
+  <movie id="m_496">
+      <title lang="de">San Domingo</title>
+  </movie>
+  <movie id="m_497">
+      <title lang="de">Scarabea - Wieviel Erde braucht der Mensch</title>
+  </movie>
+  <movie id="m_498">
+      <title lang="de">Scarabea - Wieviel Erde braucht der Mensch?</title>
+  </movie>
+  <movie id="m_499">
+      <title lang="de">Die Schatten werden länger</title>
+  </movie>
+  <movie id="m_500">
+      <title lang="de">Zwei unter Millionen</title>
+  </movie>
+  <movie id="m_501">
+      <title lang="de">Schaut her und seht die Anmut meiner Hände</title>
+  </movie>
+  <movie id="m_502">
+      <title lang="de">Schicksal und Vermächtnis</title>
+  </movie>
+  <movie id="m_503">
+      <title lang="de">Schlaf der Vernunft</title>
+  </movie>
+  <movie id="m_504">
+      <title lang="de">Schlafes Bruder</title>
+  </movie>
+  <movie id="m_505">
+      <title lang="de">Wia die Zeit vergeht</title>
+  </movie>
+  <movie id="m_506">
+      <title lang="de">Das Schloß</title>
+  </movie>
+  <movie id="m_507">
+      <title lang="de">Schneeland</title>
+  </movie>
+  <movie id="m_508">
+      <title lang="de">Schöpfung ohne Ende</title>
+  </movie>
+  <movie id="m_509">
+      <title lang="de">Schonzeit für Füchse</title>
+  </movie>
+  <movie id="m_510">
+      <title lang="de">Das schreckliche Mädchen</title>
+  </movie>
+  <movie id="m_511">
+      <title lang="de">Schtonk</title>
+  </movie>
+  <movie id="m_512">
+      <title lang="de">Der Schüler Gerber</title>
+  </movie>
+  <movie id="m_513">
+      <title lang="de">Der Schuh des Manitu</title>
+  </movie>
+  <movie id="m_514">
+      <title lang="de">Die Schuld des Dr. Homma</title>
+  </movie>
+  <movie id="m_515">
+      <title lang="de">Schultze gets the blues</title>
+  </movie>
+  <movie id="m_516">
+      <title lang="de">Das schwarz-weiß-rote Himmelbett</title>
+  </movie>
+  <movie id="m_517">
+      <title lang="de">Schwarze Gesellen</title>
+  </movie>
+  <movie id="m_518">
+      <title lang="de">Das schwarze Schaf</title>
+  </movie>
+  <movie id="m_519">
+      <title lang="de">Das Schweigen des Dichters</title>
+  </movie>
+  <movie id="m_520">
+      <title lang="de">Die Schwestern oder die Balance des Glücks</title>
+  </movie>
+  <movie id="m_521">
+      <title lang="de">Seiltänzer</title>
+  </movie>
+  <movie id="m_522">
+      <title lang="de">Sense and Sensibility</title>
+  </movie>
+  <movie id="m_523">
+      <title lang="de">Septemberweizen</title>
+  </movie>
+  <movie id="m_524">
+      <title lang="de">Serengeti darf nicht sterben</title>
+  </movie>
+  <movie id="m_525">
+      <title lang="de">Sex-Business - made in Pasing</title>
+  </movie>
+  <movie id="m_526">
+      <title lang="de">Shibam - Stadt in Südarabien</title>
+  </movie>
+  <movie id="m_527">
+      <title lang="de">Sie heirateten in Gretna Green</title>
+  </movie>
+  <movie id="m_528">
+      <title lang="de">Sieben einfache Phänomene</title>
+  </movie>
+  <movie id="m_529">
+      <title lang="de">Signale</title>
+  </movie>
+  <movie id="m_530">
+      <title lang="de">Simon</title>
+  </movie>
+  <movie id="m_531">
+      <title lang="de">Skizzen zum Film Der lautlose Makubra</title>
+  </movie>
+  <movie id="m_532">
+      <title lang="de">Smoke</title>
+  </movie>
+  <movie id="m_533">
+      <title lang="de">Solange du da bist</title>
+  </movie>
+  <movie id="m_534">
+      <title lang="de">Sonnenallee</title>
+  </movie>
+  <movie id="m_535">
+      <title lang="de">Sophie Scholl</title>
+  </movie>
+  <movie id="m_536">
+      <title lang="de">Spätvorstellung</title>
+  </movie>
+  <movie id="m_537">
+      <title lang="de">Spezialist</title>
+  </movie>
+  <movie id="m_538">
+      <title lang="de">Der Spezialist</title>
+  </movie>
+  <movie id="m_539">
+      <title lang="de">Wilder Reiter GmbH</title>
+  </movie>
+  <movie id="m_540">
+      <title lang="de">Spiel der Spiralen</title>
+  </movie>
+  <movie id="m_541">
+      <title lang="de">Das Spinnennetz</title>
+  </movie>
+  <movie id="m_542">
+      <title lang="de">Spur eines Mädchens</title>
+  </movie>
+  <movie id="m_543">
+      <title lang="de">Stählerne Adern</title>
+  </movie>
+  <movie id="m_544">
+      <title lang="de">Stahl - Thema mit Variationen</title>
+  </movie>
+  <movie id="m_545">
+      <title lang="de">Der Stand der Dinge</title>
+  </movie>
+  <movie id="m_546">
+      <title lang="de">Stern von Bethlehem</title>
+  </movie>
+  <movie id="m_547">
+      <title lang="de">Sternsteinhof</title>
+  </movie>
+  <movie id="m_548">
+      <title lang="de">Der Stoff, aus dem die Träume sind</title>
+  </movie>
+  <movie id="m_549">
+      <title lang="de">Straßenbekanntschaft</title>
+  </movie>
+  <movie id="m_550">
+      <title lang="de">Stresemann</title>
+  </movie>
+  <movie id="m_551">
+      <title lang="de">Der Strom führt Eis</title>
+  </movie>
+  <movie id="m_552">
+      <title lang="de">Stunde Null</title>
+  </movie>
+  <movie id="m_553">
+      <title lang="de">Sündige Grenze</title>
+  </movie>
+  <movie id="m_554">
+      <title lang="de">Supermarkt</title>
+  </movie>
+  <movie id="m_555">
+      <title lang="de">Sydney an der Wupper - Dreamtime</title>
+  </movie>
+  <movie id="m_556">
+      <title lang="de">Tänzer im Wassertropfen</title>
+  </movie>
+  <movie id="m_557">
+      <title lang="de">Tätowierung</title>
+  </movie>
+  <movie id="m_558">
+      <title lang="de">Tafelspitz</title>
+  </movie>
+  <movie id="m_559">
+      <title lang="de">Tag der Idioten</title>
+  </movie>
+  <movie id="m_560">
+      <title lang="de">Tally Brown New York</title>
+  </movie>
+  <movie id="m_561">
+      <title lang="de">Der Tangospieler</title>
+  </movie>
+  <movie id="m_562">
+      <title lang="de">Tanzende Hände</title>
+  </movie>
+  <movie id="m_563">
+      <title lang="de">Taugenichts</title>
+  </movie>
+  <movie id="m_564">
+      <title lang="de">Tausend kleine Zeichen</title>
+  </movie>
+  <movie id="m_565">
+      <title lang="de">Teufel in Seide</title>
+  </movie>
+  <movie id="m_566">
+      <title lang="de">Die Teutonen kommen</title>
+  </movie>
+  <movie id="m_567">
+      <title lang="de">The far side of the sea</title>
+  </movie>
+  <movie id="m_568">
+      <title lang="de">The Hours</title>
+  </movie>
+  <movie id="m_569">
+      <title lang="de">Theodor Heuss</title>
+  </movie>
+  <movie id="m_570">
+      <title lang="de">Theodor Hirneis oder: Wie man ehem. Hofkoch wird</title>
+  </movie>
+  <movie id="m_571">
+      <title lang="de">Der Totmacher</title>
+  </movie>
+  <movie id="m_572">
+      <title lang="de">Touch the sound</title>
+  </movie>
+  <movie id="m_573">
+      <title lang="de">TRADE</title>
+  </movie>
+  <movie id="m_574">
+      <title lang="de">Traum in Tusche</title>
+  </movie>
+  <movie id="m_575">
+      <title lang="de">Traumoiden</title>
+  </movie>
+  <movie id="m_576">
+      <title lang="de">Trotta</title>
+  </movie>
+  <movie id="m_577">
+      <title lang="de">Umbra</title>
+  </movie>
+  <movie id="m_578">
+      <title lang="de">Die Unberührbare</title>
+  </movie>
+  <movie id="m_579">
+      <title lang="de">Die unendliche Geschichte</title>
+  </movie>
+  <movie id="m_580">
+      <title lang="de">Unter dem Pflaster ist der Strand</title>
+  </movie>
+  <movie id="m_581">
+      <title lang="de">Unter Palmen</title>
+  </movie>
+  <movie id="m_582">
+      <title lang="de">Valse Triste</title>
+  </movie>
+  <movie id="m_583">
+      <title lang="de">Vaterland, magst ruhig sein</title>
+  </movie>
+  <movie id="m_584">
+      <title lang="de">Die verlorene Ehre der Katharina Blum</title>
+  </movie>
+  <movie id="m_585">
+      <title lang="de">Verdammt zur Sünde</title>
+  </movie>
+  <movie id="m_586">
+      <title lang="de">Vergiß die Liebe nicht</title>
+  </movie>
+  <movie id="m_587">
+      <title lang="de">Verhängnis</title>
+  </movie>
+  <movie id="m_588">
+      <title lang="de">Der Verlorene</title>
+  </movie>
+  <movie id="m_589">
+      <title lang="de">Die verlorene Ehre der Katharina Blum</title>
+  </movie>
+  <movie id="m_590">
+      <title lang="de">Verlorenes Leben</title>
+  </movie>
+  <movie id="m_591">
+      <title lang="de">Das verräterische Herz</title>
+  </movie>
+  <movie id="m_592">
+      <title lang="de">Verriegelte Zeit</title>
+  </movie>
+  <movie id="m_593">
+      <title lang="de">Verspätung in Marienborn</title>
+  </movie>
+  <movie id="m_594">
+      <title lang="de">Der Versuch zu leben</title>
+  </movie>
+  <movie id="m_595">
+      <title lang="de">Viele kamen vorbei</title>
+  </movie>
+  <movie id="m_596">
+      <title lang="de">Vier Minuten</title>
+  </movie>
+  <movie id="m_597">
+      <title lang="de">Violin Concerto</title>
+  </movie>
+  <movie id="m_598">
+      <title lang="de">Von Richtern und anderen Sympathisanten</title>
+  </movie>
+  <movie id="m_599">
+      <title lang="de">Von wegen „Schicksal“</title>
+  </movie>
+  <movie id="m_600">
+      <title lang="de">Vor dem Feind</title>
+  </movie>
+  <movie id="m_601">
+      <title lang="de">Der vorletzte Akt</title>
+  </movie>
+  <movie id="m_602">
+      <title lang="de">Wälsungenblut</title>
+  </movie>
+  <movie id="m_603">
+      <title lang="de">Das wahre Leben</title>
+  </movie>
+  <movie id="m_604">
+      <title lang="de">Wallers letzter Gang</title>
+  </movie>
+  <movie id="m_605">
+      <title lang="de">Warum läuft Herr R. Amok?</title>
+  </movie>
+  <movie id="m_606">
+      <title lang="de">Warum sind sie gegen uns?</title>
+  </movie>
+  <movie id="m_607">
+      <title lang="de">Was denken Sie von mir?</title>
+  </movie>
+  <movie id="m_608">
+      <title lang="de">Weg der Hoffnung</title>
+  </movie>
+  <movie id="m_609">
+      <title lang="de">Weg in die Freiheit</title>
+  </movie>
+  <movie id="m_610">
+      <title lang="de">Weg ohne Umkehr</title>
+  </movie>
+  <movie id="m_611">
+      <title lang="de">Wege in die Nacht</title>
+  </movie>
+  <movie id="m_612">
+      <title lang="de">Das weite Land</title>
+  </movie>
+  <movie id="m_613">
+      <title lang="de">Die weiße Rose</title>
+  </movie>
+  <movie id="m_614">
+      <title lang="de">DIE WELLE</title>
+  </movie>
+  <movie id="m_615">
+      <title lang="de">Die Weltenuhr</title>
+  </movie>
+  <movie id="m_616">
+      <title lang="de">Wenn ich mich fürchte</title>
+  </movie>
+  <movie id="m_617">
+      <title lang="de">Wer früher stirbt ist länger tot</title>
+  </movie>
+  <movie id="m_618">
+      <title lang="de">Wer will krank sein auf der Welt</title>
+  </movie>
+  <movie id="m_619">
+      <title lang="de">Der Westen leuchtet</title>
+  </movie>
+  <movie id="m_620">
+      <title lang="de">White Star</title>
+  </movie>
+  <movie id="m_621">
+      <title lang="de">Whity</title>
+  </movie>
+  <movie id="m_622">
+      <title lang="de">Die widerrechtliche Ausübung der Astronomie</title>
+  </movie>
+  <movie id="m_623">
+      <title lang="de">Wie im Traum</title>
+  </movie>
+  <movie id="m_624">
+      <title lang="de">Wildfeuer</title>
+  </movie>
+  <movie id="m_625">
+      <title lang="de">Willi Baumeister</title>
+  </movie>
+  <movie id="m_626">
+      <title lang="de">Winterreise</title>
+  </movie>
+  <movie id="m_627">
+      <title lang="de">Winterschläfer</title>
+  </movie>
+  <movie id="m_628">
+      <title lang="de">Zugvögel... einmal nach Inari</title>
+  </movie>
+  <movie id="m_629">
+      <title lang="de">Wir können auch anders</title>
+  </movie>
+  <movie id="m_630">
+      <title lang="de">Wir Wunderkinder</title>
+  </movie>
+  <movie id="m_631">
+      <title lang="de">Das Wirtshaus im Spessart</title>
+  </movie>
+  <movie id="m_632">
+      <title lang="de">Wo die grünen Ameisen träumen</title>
+  </movie>
+  <movie id="m_633">
+      <title lang="de">Workingman's Death</title>
+  </movie>
+  <movie id="m_634">
+      <title lang="de">Das Wunder der Malachias</title>
+  </movie>
+  <movie id="m_635">
+      <title lang="de">Das Wunder von Bern</title>
+  </movie>
+  <movie id="m_636">
+      <title lang="de">Das Wunder von Mailand</title>
+  </movie>
+  <movie id="m_637">
+      <title lang="de">Das Wunderfenster</title>
+  </movie>
+  <movie id="m_638">
+      <title lang="de">Yasemin</title>
+  </movie>
+  <movie id="m_639">
+      <title lang="de">YELLA</title>
+  </movie>
+  <movie id="m_640">
+      <title lang="de">Der Zauberberg</title>
+  </movie>
+  <movie id="m_641">
+      <title lang="de">Zeichen der Zeit</title>
+  </movie>
+  <movie id="m_642">
+      <title lang="de">Die Zelle</title>
+  </movie>
+  <movie id="m_643">
+      <title lang="de">Zimmerleute des Waldes</title>
+  </movie>
+  <movie id="m_644">
+      <title lang="de">Zoff</title>
+  </movie>
+  <movie id="m_645">
+      <title lang="de">Zoologisches</title>
+  </movie>
+  <movie id="m_646">
+      <title lang="de">Zündhölzer</title>
+  </movie>
+  <movie id="m_647">
+      <title lang="de">Zugvögel...einmal nach Inari</title>
+  </movie>
+  <movie id="m_648">
+      <title lang="de">Zum Beispiel Bresson</title>
+  </movie>
+  <movie id="m_649">
+      <title lang="de">Zur Sache Schätzchen</title>
+  </movie>
+  <movie id="m_650">
+      <title lang="de">Zwei unter Millionen</title>
+  </movie>
+  <movie id="m_651">
+      <title lang="de">Das zweite Erwachen der Christa Klages</title>
+  </movie>
+
+</movies>
+<awards>
+  <award category="c_1" status="winner" movie="m_1" year="1980" recipient="Heidi Genée"/>
+  <award category="c_2" status="winner" movie="m_1" year="1980" recipient="Genée und von Fürstenberg"/>
+  <award category="c_3" status="winner" movie="m_2" year="1997" recipient="Martin Langer"/>
+  <award category="c_4" status="winner" movie="m_3" year="1956" recipient="Werner Jörg Lüddecke / Günther Weisenborn (Drehbuchautoren)"/>
+  <award category="c_5" status="winner" movie="m_3" year="1956" recipient="Wolfgang Preiss"/>
+  <award category="c_4" status="winner" movie="m_3" year="1956" recipient="CCC-Film"/>
+  <award category="c_6" status="winner" movie="m_4" year="1999" recipient="August Diehl"/>
+  <award category="c_7" status="winner" movie="m_4" year="1999" recipient="Claussen + Wöbke Filmproduktion"/>
+  <award category="c_6" status="winner" movie="m_5" year="1987" recipient="Özay Fecht"/>
+  <award category="c_8" status="winner" movie="m_5" year="1987" recipient="Claus Bantzer"/>
+  <award category="c_8" status="winner" movie="m_6" year="1987" recipient="Claus Bantzer"/>
+  <award category="c_8" status="winner" movie="m_7" year="1987" recipient="Claus Bantzer"/>
+  <award category="c_9" status="winner" movie="m_8" year="1965" recipient="Borresholm"/>
+  <award category="c_10" status="winner" movie="m_9" year="1979" recipient="Adolf Winkelmann"/>
+  <award category="c_11" status="winner" movie="m_10" year="1994" recipient="Katja von Garnier"/>
+  <award category="c_6" status="winner" movie="m_11" year="1989" recipient="Zuhal Olcay"/>
+  <award category="c_3" status="winner" movie="m_12" year="1994" recipient="Roland Dressel"/>
+  <award category="c_12" status="winner" movie="m_13" year="1967" recipient="Alexander Kluge"/>
+  <award category="c_13" status="winner" movie="m_13" year="1967" recipient="Alexandra Kluge"/>
+  <award category="c_14" status="winner" movie="m_13" year="1967" recipient="Günter Mack"/>
+  <award category="c_15" status="winner" movie="m_13" year="1967" recipient="Kairos-Film"/>
+  <award category="c_7" status="winner" movie="m_14" year="2000" recipient="X Filme creative pool"/>
+  <award category="c_16" status="winner" movie="m_15" year="1978" recipient="Ernst Reinboth"/>
+  <award category="c_17" status="winner" movie="m_16" year="2008" recipient="Erwin Prib"/>
+  <award category="c_6" status="winner" movie="m_17" year="1985" recipient="Götz George"/>
+  <award category="c_18" status="winner" movie="m_17" year="1985" recipient="Jacques Steyn"/>
+  <award category="c_19" status="winner" movie="m_18" year="1958" recipient="Filmaufbau"/>
+  <award category="c_20" status="winner" movie="m_19" year="1969" recipient="Lux-Film"/>
+  <award category="c_16" status="winner" movie="m_20" year="1979" recipient="Fritz Illing"/>
+  <award category="c_21" status="winner" movie="m_21" year="2005" recipient="Katja Riemann"/>
+  <award category="c_18" status="winner" movie="m_22" year="1973" recipient="Thomas Mauch"/>
+  <award category="c_13" status="winner" movie="m_23" year="1999" recipient="Juliane Köhler"/>
+  <award category="c_13" status="winner" movie="m_23" year="1999" recipient="Maria Schrader"/>
+  <award category="c_13" status="winner" movie="m_24" year="1999" recipient="Maria Schrader"/>
+  <award category="c_22" status="winner" movie="m_25" year="2001" recipient="Esther Gronenborn"/>
+  <award category="c_23" status="winner" movie="m_25" year="2001" recipient="Christian Lonk"/>
+  <award category="c_11" status="winner" movie="m_26" year="1979" recipient="Josef Rödl"/>
+  <award category="c_24" status="winner" movie="m_27" year="1956" recipient="Fama-Film"/>
+  <award category="c_25" status="winner" movie="m_28" year="1967" recipient="Ulla Jacobssen"/>
+  <award category="c_5" status="winner" movie="m_28" year="1967" recipient="Hans Dieter Schwarze"/>
+  <award category="c_15" status="winner" movie="m_28" year="1967" recipient="Peter Schamoni"/>
+  <award category="c_6" status="winner" movie="m_29" year="1973" recipient="Klaus Schwarzkopf"/>
+  <award category="c_6" status="winner" movie="m_30" year="1994" recipient="Christiane Hörbiger"/>
+  <award category="c_6" status="winner" movie="m_31" year="1994" recipient="Christiane Hörbiger"/>
+  <award category="c_26" status="winner" movie="m_32" year="2005" recipient="Dani Levy"/>
+  <award category="c_27" status="winner" movie="m_32" year="2005" recipient="Holger Franke, Dani Levy"/>
+  <award category="c_28" status="winner" movie="m_32" year="2005" recipient="Henry Hübchen "/>
+  <award category="c_7" status="winner" movie="m_32" year="2005" recipient="Manuela Stehr"/>
+  <award category="c_29" status="winner" movie="m_32" year="2005" recipient="Lucie Bates"/>
+  <award category="c_30" status="winner" movie="m_33" year="2005" recipient="Niki Reiser"/>
+  <award category="c_31" status="winner" movie="m_34" year="2000" recipient="Pedro Almodóvar"/>
+  <award category="c_16" status="winner" movie="m_35" year="1980" recipient="Winzentsen"/>
+  <award category="c_32" status="winner" movie="m_36" year="1977" recipient="Lutz Mommartz"/>
+  <award category="c_12" status="winner" movie="m_37" year="1963" recipient="Hugo Niebeling"/>
+  <award category="c_33" status="winner" movie="m_37" year="1963" recipient="Mannesmann"/>
+  <award category="c_22" status="winner" movie="m_38" year="1998" recipient="Wim Wenders"/>
+  <award category="c_16" status="winner" movie="m_39" year="1979" recipient="Bastian Clevé"/>
+  <award category="c_18" status="winner" movie="m_40" year="1990" recipient="Axel Block"/>
+  <award category="c_22" status="winner" movie="m_41" year="1978" recipient="Wim Wenders"/>
+  <award category="c_34" status="winner" movie="m_41" year="1978" recipient="Road Movies / Wim Wenders"/>
+  <award category="c_35" status="winner" movie="m_41" year="1978" recipient="Peter Przygodda"/>
+  <award category="c_35" status="winner" movie="m_42" year="1978" recipient="Peter Przygodda"/>
+  <award category="c_35" status="winner" movie="m_43" year="1978" recipient="Peter Przygodda"/>
+  <award category="c_13" status="winner" movie="m_44" year="1957" recipient="Lilli Palmer"/>
+  <award category="c_36" status="winner" movie="m_45" year="2000" recipient="Claussen + Wöbke Filmproduktion / Deutsche Columbia Pictures Filmproduktion"/>
+  <award category="c_37" status="winner" movie="m_46" year="1960" recipient="Fritz Illing"/>
+  <award category="c_38" status="winner" movie="m_47" year="1986" recipient="Kairos-Film"/>
+  <award category="c_6" status="winner" movie="m_48" year="1974" recipient="Brigitte Mira"/>
+  <award category="c_13" status="winner" movie="m_49" year="1998" recipient="Katja Riemann"/>
+  <award category="c_13" status="winner" movie="m_50" year="1998" recipient="Katja Riemann"/>
+  <award category="c_39" status="winner" movie="m_51" year="1959" recipient="Lehrfilm-Institut"/>
+  <award category="c_40" status="winner" movie="m_52" year="1969" recipient="Kairos-Film"/>
+  <award category="c_41" status="winner" movie="m_53" year="1963" recipient="Feuilleton-Film"/>
+  <award category="c_7" status="winner" movie="m_54" year="2008" recipient="Fatih Akin, Klaus Maeck, Andreas Thiel"/>
+  <award category="c_26" status="winner" movie="m_54" year="2008" recipient="Fatih Akin"/>
+  <award category="c_27" status="winner" movie="m_54" year="2008" recipient="Fatih Akin"/>
+  <award category="c_42" status="winner" movie="m_54" year="2008" recipient="Andrew Bird"/>
+  <award category="c_19" status="winner" movie="m_55" year="1956" recipient="Olympia-Filmproduktion"/>
+  <award category="c_43" status="winner" movie="m_56" year="1994" recipient="Novoskop Film Jan Schütte"/>
+  <award category="c_22" status="winner" movie="m_57" year="1983" recipient="Lutz Konermann"/>
+  <award category="c_35" status="winner" movie="m_58" year="1980" recipient="Siegrun Jäger"/>
+  <award category="c_2" status="winner" movie="m_58" year="1980" recipient="Provobis / Independent / von Vietinghoff"/>
+  <award category="c_44" status="winner" movie="m_59" year="1963" recipient="Blomberg"/>
+  <award category="c_33" status="winner" movie="m_60" year="1964" recipient="Hans-Joachim Hossfeld"/>
+  <award category="c_34" status="winner" movie="m_61" year="1978" recipient="Iduna-Film"/>
+  <award category="c_45" status="winner" movie="m_62" year="1966" recipient="Kurt Krigar"/>
+  <award category="c_46" status="winner" movie="m_63" year="1964" recipient="Senft / Furchner"/>
+  <award category="c_10" status="winner" movie="m_64" year="1985" recipient="Provobis / von Vietinghoff"/>
+  <award category="c_47" status="winner" movie="m_65" year="1965" recipient="Arpa-Film"/>
+  <award category="c_43" status="winner" movie="m_66" year="1994" recipient="Journal-Film Klaus Volkenborn / ZDF"/>
+  <award category="c_16" status="winner" movie="m_67" year="1989" recipient="Wolfgang und Christoph Lauenstein"/>
+  <award category="c_44" status="winner" movie="m_68" year="1964" recipient="Wolf Hart"/>
+  <award category="c_48" status="winner" movie="m_69" year="1996" recipient="Hans-Christoph Blumenberg"/>
+  <award category="c_49" status="winner" movie="m_70" year="1957" recipient="Filmaufbau"/>
+  <award category="c_13" status="winner" movie="m_71" year="2002" recipient="Martina Gedeck"/>
+  <award category="c_50" status="winner" movie="m_72" year="1957" recipient="Ikaros-Film"/>
+  <award category="c_51" status="winner" movie="m_73" year="1982" recipient="Basis Film"/>
+  <award category="c_6" status="winner" movie="m_74" year="1995" recipient="Joachim Król"/>
+  <award category="c_22" status="winner" movie="m_74" year="1995" recipient="Sönke Wortmann"/>
+  <award category="c_43" status="winner" movie="m_74" year="1995" recipient="Neue Constantin Film Produktion / Olga Film"/>
+  <award category="c_52" status="winner" movie="m_75" year="2003" recipient="Corinna Harfouch"/>
+  <award category="c_52" status="winner" movie="m_76" year="1999" recipient="Nina Petri"/>
+  <award category="c_52" status="winner" movie="m_77" year="1999" recipient="Nina Petri"/>
+  <award category="c_6" status="winner" movie="m_78" year="1972" recipient="Hugo Lindinger"/>
+  <award category="c_18" status="winner" movie="m_79" year="1973" recipient="Michael Ballhaus"/>
+  <award category="c_6" status="winner" movie="m_79" year="1973" recipient="Margit Carstensen"/>
+  <award category="c_6" status="winner" movie="m_79" year="1973" recipient="Eva Mattes"/>
+  <award category="c_6" status="winner" movie="m_80" year="1973" recipient="Eva Mattes"/>
+  <award category="c_53" status="winner" movie="m_81" year="2002" recipient="zero film"/>
+  <award category="c_54" status="winner" movie="m_82" year="1979" recipient="Franz Seitz / Bioskop-Film"/>
+  <award category="c_54" status="winner" movie="m_83" year="1982" recipient="Bioskop Film"/>
+  <award category="c_6" status="winner" movie="m_83" year="1982" recipient="Barbara Sukowa"/>
+  <award category="c_6" status="winner" movie="m_84" year="1982" recipient="Barbara Sukowa"/>
+  <award category="c_55" status="winner" movie="m_85" year="2004" recipient="Kinderfilm"/>
+  <award category="c_6" status="winner" movie="m_86" year="1982" recipient="Karl Merkatz"/>
+  <award category="c_56" status="winner" movie="m_87" year="1982" recipient="Milan Bor (stellvertretend für das gesamte Ton-Team)"/>
+  <award category="c_10" status="winner" movie="m_87" year="1982" recipient="Bavaria Atelier / Radiant"/>
+  <award category="c_31" status="winner" movie="m_88" year="1998" recipient="Prominent Features"/>
+  <award category="c_57" status="winner" movie="m_89" year="1962" recipient="Joachim E. Behrendt / Attila Zoller"/>
+  <award category="c_13" status="winner" movie="m_89" year="1962" recipient="Vera Tschechowa"/>
+  <award category="c_58" status="winner" movie="m_89" year="1962" recipient="Herbert Vesely"/>
+  <award category="c_59" status="winner" movie="m_89" year="1962" recipient="Wolf Wirth"/>
+  <award category="c_60" status="winner" movie="m_89" year="1962" recipient="Modern-Art-Film"/>
+  <award category="c_6" status="winner" movie="m_90" year="1977" recipient="Bernd Tauber"/>
+  <award category="c_10" status="winner" movie="m_90" year="1977" recipient="Erwin Keusch"/>
+  <award category="c_57" status="winner" movie="m_91" year="1960" recipient="Hans-Martin Majewski"/>
+  <award category="c_25" status="winner" movie="m_91" year="1960" recipient="Edith Schultze-Westrum"/>
+  <award category="c_61" status="winner" movie="m_91" year="1960" recipient="Cordula Trantow"/>
+  <award category="c_12" status="winner" movie="m_91" year="1960" recipient="Bernhard Wicki"/>
+  <award category="c_62" status="winner" movie="m_91" year="1960" recipient="Fono-Film"/>
+  <award category="c_63" status="winner" movie="m_92" year="1960" recipient="Robert Herlth"/>
+  <award category="c_14" status="winner" movie="m_92" year="1960" recipient="Hanns Lothar"/>
+  <award category="c_64" status="winner" movie="m_93" year="1969" recipient="Renate Roland"/>
+  <award category="c_53" status="winner" movie="m_94" year="2000" recipient="Road Movies Filmproduktion"/>
+  <award category="c_6" status="winner" movie="m_95" year="1995" recipient="Maria Schrader"/>
+  <award category="c_6" status="winner" movie="m_96" year="1995" recipient="Maria Schrader"/>
+  <award category="c_6" status="winner" movie="m_97" year="1995" recipient="Maria Schrader"/>
+  <award category="c_65" status="winner" movie="m_98" year="1951" recipient="Wolfgang Leckebusch"/>
+  <award category="c_66" status="winner" movie="m_99" year="1992" recipient="Nana von Hugo"/>
+  <award category="c_67" status="winner" movie="m_100" year="1958" recipient="Fritz Heydenreich"/>
+  <award category="c_14" status="winner" movie="m_101" year="1955" recipient="Martin Held"/>
+  <award category="c_68" status="winner" movie="m_101" year="1955" recipient="Herbert Reinecker"/>
+  <award category="c_12" status="winner" movie="m_101" year="1955" recipient="Alfred Weidenmann"/>
+  <award category="c_62" status="winner" movie="m_101" year="1955" recipient="Fama-Film"/>
+  <award category="c_18" status="winner" movie="m_102" year="1987" recipient="Gérard Vandenberg"/>
+  <award category="c_44" status="winner" movie="m_103" year="1966" recipient="A. Jahn"/>
+  <award category="c_32" status="winner" movie="m_104" year="1986" recipient="Filmprod. Perraudin"/>
+  <award category="c_23" status="winner" movie="m_105" year="1998" recipient="Peter R. Adam"/>
+  <award category="c_52" status="winner" movie="m_105" year="1998" recipient="Meret Becker"/>
+  <award category="c_5" status="winner" movie="m_105" year="1998" recipient="Ulrich Noethen"/>
+  <award category="c_43" status="winner" movie="m_105" year="1998" recipient="Perathon Film / Bavaria Film / Senator Film Produktion / Televersal Film- und Fensehproduktion"/>
+  <award category="c_66" status="winner" movie="m_105" year="1998" recipient="Rolf Zehetbauer"/>
+  <award category="c_7" status="winner" movie="m_106" year="2001" recipient="Claussen + Wöbke Filmproduktion"/>
+  <award category="c_69" status="winner" movie="m_107" year="1977" recipient="Hans-Christof Stenzel"/>
+  <award category="c_51" status="winner" movie="m_107" year="1977" recipient="Stenzel-Quast"/>
+  <award category="c_6" status="winner" movie="m_108" year="1979" recipient="Walter Taub"/>
+  <award category="c_10" status="winner" movie="m_108" year="1979" recipient="von Vietinghoff / Pro-ject Filmproduktion"/>
+  <award category="c_70" status="winner" movie="m_109" year="1971" recipient="Roland Klick / Regie"/>
+  <award category="c_22" status="winner" movie="m_110" year="1983" recipient="Peter Lilienthal"/>
+  <award category="c_51" status="winner" movie="m_111" year="1979" recipient="Karel Dirka"/>
+  <award category="c_50" status="winner" movie="m_112" year="1959" recipient="Institut für Film und Bild"/>
+  <award category="c_71" status="winner" movie="m_113" year="1955" recipient="Marianne Koch"/>
+  <award category="c_72" status="winner" movie="m_114" year="1978" recipient="Team des Films Deutschland im Herbst"/>
+  <award category="c_16" status="winner" movie="m_115" year="1985" recipient="TC Film Studio"/>
+  <award category="c_18" status="winner" movie="m_116" year="1983" recipient="Martin Schäfer"/>
+  <award category="c_18" status="winner" movie="m_117" year="1983" recipient="Martin Schäfer"/>
+  <award category="c_4" status="winner" movie="m_118" year="1953" recipient="Francinex, Pari / Rizzoli, Mailand"/>
+  <award category="c_12" status="winner" movie="m_119" year="1951" recipient="Josef von Baky"/>
+  <award category="c_68" status="winner" movie="m_119" year="1951" recipient="Erich Kästner"/>
+  <award category="c_62" status="winner" movie="m_119" year="1951" recipient="Carlton-Film"/>
+  <award category="c_73" status="winner" movie="m_120" year="2000" recipient="Edgar Selge"/>
+  <award category="c_74" status="winner" movie="m_121" year="1953" recipient="Hans Cürlis"/>
+  <award category="c_44" status="winner" movie="m_122" year="1965" recipient="Peter Schamoni"/>
+  <award category="c_75" status="winner" movie="m_123" year="1956" recipient="R. Engler Filme"/>
+  <award category="c_10" status="winner" movie="m_124" year="1979" recipient="Balance-Film"/>
+  <award category="c_30" status="winner" movie="m_125" year="2004" recipient="Max Berghaus / Dirk Reichardt / Stefan Hansen"/>
+  <award category="c_11" status="winner" movie="m_126" year="1970" recipient="Thomas Schamoni"/>
+  <award category="c_18" status="winner" movie="m_126" year="1970" recipient="Dietrich Lohmann"/>
+  <award category="c_18" status="winner" movie="m_127" year="1970" recipient="Dietrich Lohmann"/>
+  <award category="c_18" status="winner" movie="m_128" year="1970" recipient="Dietrich Lohmann"/>
+  <award category="c_18" status="winner" movie="m_129" year="1970" recipient="Dietrich Lohmann"/>
+  <award category="c_59" status="winner" movie="m_130" year="1956" recipient="Friedl Behn-Grund"/>
+  <award category="c_32" status="winner" movie="m_131" year="1984" recipient="Joachim Kreck"/>
+  <award category="c_59" status="winner" movie="m_132" year="1954" recipient="Hans Schneeberger"/>
+  <award category="c_75" status="winner" movie="m_133" year="1955" recipient="Königfilm"/>
+  <award category="c_18" status="winner" movie="m_134" year="1978" recipient="Michael Ballhaus"/>
+  <award category="c_22" status="winner" movie="m_134" year="1978" recipient="Rainer Werner Fassbinder"/>
+  <award category="c_66" status="winner" movie="m_134" year="1978" recipient="Rolf Zehetbauer"/>
+  <award category="c_16" status="winner" movie="m_135" year="1979" recipient="Egon Haase"/>
+  <award category="c_76" status="winner" movie="m_136" year="1959" recipient="Gesellschaft für bildende Künste"/>
+  <award category="c_11" status="winner" movie="m_137" year="1974" recipient="Wolfgang Petersen"/>
+  <award category="c_18" status="winner" movie="m_137" year="1974" recipient="Charly Steinberger"/>
+  <award category="c_18" status="winner" movie="m_138" year="1974" recipient="Charly Steinberger"/>
+  <award category="c_6" status="winner" movie="m_139" year="1985" recipient="Ursela Monn"/>
+  <award category="c_14" status="winner" movie="m_140" year="1964" recipient="Sigfrit Steiner"/>
+  <award category="c_18" status="winner" movie="m_141" year="1972" recipient="Igor Luther"/>
+  <award category="c_77" status="winner" movie="m_141" year="1972" recipient="Ulrich Schamoni / Regie"/>
+  <award category="c_6" status="winner" movie="m_142" year="1983" recipient="Susanne Lothar"/>
+  <award category="c_6" status="winner" movie="m_142" year="1983" recipient="Gerhard Olschewski"/>
+  <award category="c_5" status="winner" movie="m_143" year="2003" recipient="Daniel Brühl"/>
+  <award category="c_5" status="winner" movie="m_144" year="2003" recipient="Daniel Brühl"/>
+  <award category="c_32" status="winner" movie="m_145" year="1977" recipient="Ilona Grundmann"/>
+  <award category="c_16" status="winner" movie="m_146" year="1978" recipient="Bastian Clevé"/>
+  <award category="c_6" status="winner" movie="m_147" year="1980" recipient="Thomas Kufahl"/>
+  <award category="c_2" status="winner" movie="m_147" year="1980" recipient="Basis-Film"/>
+  <award category="c_59" status="winner" movie="m_148" year="1963" recipient="Hans Jura"/>
+  <award category="c_78" status="winner" movie="m_148" year="1963" recipient="Harald Leipnitz"/>
+  <award category="c_57" status="winner" movie="m_148" year="1963" recipient="Peter Thomas"/>
+  <award category="c_15" status="winner" movie="m_148" year="1963" recipient="Will Tremper / InterWest-Film"/>
+  <award category="c_16" status="winner" movie="m_149" year="1979" recipient="Michael Lentz"/>
+  <award category="c_6" status="winner" movie="m_150" year="1981" recipient="Rolf Zacher"/>
+  <award category="c_79" status="winner" movie="m_151" year="1956" recipient="Göttinger Lehrfilmproduktion"/>
+  <award category="c_6" status="winner" movie="m_152" year="1981" recipient="Ilse Pagé"/>
+  <award category="c_80" status="winner" movie="m_153" year="1968" recipient="Gila von Weitershausen"/>
+  <award category="c_81" status="winner" movie="m_154" year="1951" recipient="Ehrhardt, Alfred"/>
+  <award category="c_10" status="winner" movie="m_155" year="1977" recipient="Scorpion Film"/>
+  <award category="c_18" status="winner" movie="m_155" year="1977" recipient="Igor Luther"/>
+  <award category="c_18" status="winner" movie="m_156" year="1977" recipient="Igor Luther"/>
+  <award category="c_82" status="winner" movie="m_157" year="1971" recipient="Franz Seitz / Alfa-Productions"/>
+  <award category="c_83" status="winner" movie="m_158" year="1966" recipient="Bruno Dietrich"/>
+  <award category="c_84" status="winner" movie="m_158" year="1966" recipient="Ulrich Schamoni"/>
+  <award category="c_13" status="winner" movie="m_158" year="1966" recipient="Sabine Sinjen"/>
+  <award category="c_59" status="winner" movie="m_158" year="1966" recipient="Gerard Vandenberg"/>
+  <award category="c_15" status="winner" movie="m_158" year="1966" recipient="Adloff Filmproduktion"/>
+  <award category="c_85" status="winner" movie="m_159" year="1976" recipient="Film-Fernsehen Autorenteam"/>
+  <award category="c_16" status="winner" movie="m_160" year="1980" recipient="Muvie / Mikesch"/>
+  <award category="c_73" status="winner" movie="m_161" year="2001" recipient="Justus von Dohnányi"/>
+  <award category="c_86" status="winner" movie="m_161" year="2001" recipient="Uli Hanisch / Kessler Andrea"/>
+  <award category="c_36" status="winner" movie="m_161" year="2001" recipient="typhoon film / Fanes Film / Senator Film Produktion"/>
+  <award category="c_5" status="winner" movie="m_161" year="2001" recipient="Moritz Bleibtreu"/>
+  <award category="c_5" status="winner" movie="m_162" year="2001" recipient="Moritz Bleibtreu"/>
+  <award category="c_66" status="winner" movie="m_163" year="1980" recipient="Jan Schlubach"/>
+  <award category="c_6" status="winner" movie="m_164" year="1982" recipient="Jerzy Skolimowski"/>
+  <award category="c_6" status="winner" movie="m_165" year="1984" recipient="Marie Colbin"/>
+  <award category="c_6" status="winner" movie="m_166" year="1975" recipient="Gesamtensemble"/>
+  <award category="c_48" status="winner" movie="m_166" year="1975" recipient="Peter Handke"/>
+  <award category="c_8" status="winner" movie="m_166" year="1975" recipient="Jürgen Knieper"/>
+  <award category="c_18" status="winner" movie="m_166" year="1975" recipient="Robby Müller"/>
+  <award category="c_35" status="winner" movie="m_166" year="1975" recipient="Peter Przygodda"/>
+  <award category="c_22" status="winner" movie="m_166" year="1975" recipient="Wim Wenders"/>
+  <award category="c_18" status="winner" movie="m_167" year="1972" recipient="Jerzy Lipman"/>
+  <award category="c_6" status="winner" movie="m_167" year="1972" recipient="Helmut Qualtinger"/>
+  <award category="c_22" status="winner" movie="m_167" year="1972" recipient="Bernhard Wicki"/>
+  <award category="c_87" status="winner" movie="m_167" year="1972" recipient="Istvan Iglody"/>
+  <award category="c_87" status="winner" movie="m_168" year="1972" recipient="Istvan Iglody"/>
+  <award category="c_22" status="winner" movie="m_169" year="1977" recipient="Volker Schlöndorff"/>
+  <award category="c_12" status="winner" movie="m_170" year="1961" recipient="Peter Gorski"/>
+  <award category="c_88" status="winner" movie="m_170" year="1961" recipient="Gustaf Gründgens"/>
+  <award category="c_89" status="winner" movie="m_170" year="1961" recipient="Divina-Film"/>
+  <award category="c_90" status="winner" movie="m_171" year="2002" recipient="Hana Müllner"/>
+  <award category="c_91" status="winner" movie="m_172" year="2005" recipient="Burghart Klaußner"/>
+  <award category="c_7" status="winner" movie="m_172" year="2005" recipient="Hans Weingartner und Antonin Svoboda"/>
+  <award category="c_83" status="winner" movie="m_173" year="1963" recipient="Michael Hinz"/>
+  <award category="c_15" status="winner" movie="m_173" year="1963" recipient="Fono-Film"/>
+  <award category="c_92" status="winner" movie="m_174" year="1952" recipient="Epoche Color-Film"/>
+  <award category="c_93" status="winner" movie="m_175" year="2003" recipient="Almut Getto"/>
+  <award category="c_10" status="winner" movie="m_176" year="1982" recipient="Werner Herzog / Pro-ject"/>
+  <award category="c_34" status="winner" movie="m_177" year="1978" recipient="Enten-Produktion"/>
+  <award category="c_80" status="winner" movie="m_177" year="1978" recipient="Peter Kern"/>
+  <award category="c_80" status="winner" movie="m_178" year="1978" recipient="Peter Kern"/>
+  <award category="c_55" status="winner" movie="m_179" year="2003" recipient="Bavaria Filmverleih- und Produktion / Lunaris"/>
+  <award category="c_83" status="winner" movie="m_180" year="1961" recipient="Christian Doermer"/>
+  <award category="c_57" status="winner" movie="m_180" year="1961" recipient="Peter Thomas"/>
+  <award category="c_6" status="winner" movie="m_181" year="1984" recipient="Nina Hoger"/>
+  <award category="c_94" status="winner" movie="m_182" year="1962" recipient="Matthias-Filmges."/>
+  <award category="c_95" status="winner" movie="m_183" year="1987" recipient="Verena Rudolph"/>
+  <award category="c_96" status="winner" movie="m_183" year="1987" recipient="Heidi Breitel Filmproduktion"/>
+  <award category="c_3" status="winner" movie="m_184" year="2001" recipient="Gero Steffen"/>
+  <award category="c_21" status="winner" movie="m_185" year="2008" recipient="Christine Schorn"/>
+  <award category="c_80" status="winner" movie="m_186" year="1971" recipient="Karin Jacobsen"/>
+  <award category="c_45" status="winner" movie="m_187" year="1966" recipient="Preiser-Syberberg"/>
+  <award category="c_6" status="winner" movie="m_188" year="1983" recipient="Nastassja Kinski"/>
+  <award category="c_6" status="winner" movie="m_189" year="1983" recipient="Irm Hermann"/>
+  <award category="c_10" status="winner" movie="m_189" year="1983" recipient="Pelemele Film"/>
+  <award category="c_6" status="winner" movie="m_189" year="1983" recipient="Lena Stolze"/>
+  <award category="c_6" status="winner" movie="m_190" year="1983" recipient="Lena Stolze"/>
+  <award category="c_5" status="winner" movie="m_191" year="2000" recipient="Uwe Ochsenknecht"/>
+  <award category="c_6" status="winner" movie="m_192" year="1974" recipient="Gustav Rudolf Sellner"/>
+  <award category="c_85" status="winner" movie="m_192" year="1974" recipient="Franz Seitz / Alfa / MFG"/>
+  <award category="c_91" status="winner" movie="m_193" year="2007" recipient="Devid Striesow "/>
+  <award category="c_97" status="winner" movie="m_194" year="1962" recipient="Heinz Sielmann"/>
+  <award category="c_31" status="winner" movie="m_195" year="1998" recipient="Redwave Film"/>
+  <award category="c_51" status="winner" movie="m_196" year="1978" recipient="Lutz Mommartz"/>
+  <award category="c_98" status="winner" movie="m_197" year="1962" recipient="Lux-Film"/>
+  <award category="c_7" status="winner" movie="m_198" year="2004" recipient="WüsteFilmrpoduktion"/>
+  <award category="c_13" status="winner" movie="m_198" year="2004" recipient="Sibel Kekilli"/>
+  <award category="c_5" status="winner" movie="m_198" year="2004" recipient="Birol Ünel"/>
+  <award category="c_26" status="winner" movie="m_198" year="2004" recipient="Fatih Akin"/>
+  <award category="c_99" status="winner" movie="m_198" year="2004" recipient="Rainer Klausmann"/>
+  <award category="c_100" status="winner" movie="m_199" year="1986" recipient="Pavel Schnabel Filmproduktion"/>
+  <award category="c_101" status="winner" movie="m_200" year="1994" recipient="Bernd Eichinger"/>
+  <award category="c_13" status="winner" movie="m_201" year="1954" recipient="Ruth Leuwerik"/>
+  <award category="c_51" status="winner" movie="m_202" year="1981" recipient="Werner Schroeter"/>
+  <award category="c_23" status="winner" movie="m_203" year="1990" recipient="Dagmar Hirtz"/>
+  <award category="c_102" status="winner" movie="m_203" year="1990" recipient="Mutoskop Film"/>
+  <award category="c_6" status="winner" movie="m_203" year="1990" recipient="Klaus Maria Brandauer"/>
+  <award category="c_6" status="winner" movie="m_204" year="1990" recipient="Klaus Maria Brandauer"/>
+  <award category="c_44" status="winner" movie="m_205" year="1966" recipient="Hans-Joachim Hossfeld"/>
+  <award category="c_2" status="winner" movie="m_206" year="1980" recipient="MFG-Film"/>
+  <award category="c_44" status="winner" movie="m_207" year="1963" recipient="Insel-Film"/>
+  <award category="c_32" status="winner" movie="m_208" year="1986" recipient="Panorama Film"/>
+  <award category="c_54" status="winner" movie="m_209" year="1978" recipient="Roxy"/>
+  <award category="c_59" status="winner" movie="m_210" year="1961" recipient="Günther Anders"/>
+  <award category="c_63" status="winner" movie="m_210" year="1961" recipient="Albrecht Becker / Herbert Kirchhoff"/>
+  <award category="c_13" status="winner" movie="m_210" year="1961" recipient="Hilde Krahl"/>
+  <award category="c_13" status="winner" movie="m_211" year="1963" recipient="Elisabeth Bergner"/>
+  <award category="c_80" status="winner" movie="m_212" year="1970" recipient="Ensemble des Antitheaters"/>
+  <award category="c_80" status="winner" movie="m_213" year="1970" recipient="Ensemble des Antitheaters"/>
+  <award category="c_80" status="winner" movie="m_214" year="1970" recipient="Ensemble des Antitheaters"/>
+  <award category="c_7" status="winner" movie="m_215" year="2003" recipient="X Filme creative pool"/>
+  <award category="c_73" status="winner" movie="m_215" year="2003" recipient="Florian Lukas"/>
+  <award category="c_26" status="winner" movie="m_215" year="2003" recipient="Wolfgang Becker"/>
+  <award category="c_42" status="winner" movie="m_215" year="2003" recipient="Peter R. Adam"/>
+  <award category="c_30" status="winner" movie="m_215" year="2003" recipient="Yann Tiersen"/>
+  <award category="c_17" status="winner" movie="m_215" year="2003" recipient="Lothar Holler"/>
+  <award category="c_103" status="winner" movie="m_215" year="2003" recipient="X Filme creative pool"/>
+  <award category="c_104" status="winner" movie="m_215" year="2003" recipient="Daniel Brühl"/>
+  <award category="c_52" status="winner" movie="m_216" year="2001" recipient="Antje Westermann"/>
+  <award category="c_10" status="winner" movie="m_217" year="1977" recipient="Solaris / Bernd Eichinger"/>
+  <award category="c_78" status="winner" movie="m_218" year="1964" recipient="Elisabeth Flickenschildt"/>
+  <award category="c_83" status="winner" movie="m_219" year="1953" recipient="Claus Biederstaedt"/>
+  <award category="c_22" status="winner" movie="m_220" year="1985" recipient="Bernhard Wicki"/>
+  <award category="c_16" status="winner" movie="m_221" year="1978" recipient="S. Osterried"/>
+  <award category="c_6" status="winner" movie="m_222" year="1977" recipient="Romy Schneider"/>
+  <award category="c_10" status="winner" movie="m_222" year="1977" recipient="Stella / Cinema 77"/>
+  <award category="c_16" status="winner" movie="m_223" year="1982" recipient="Hartmut Schoen"/>
+  <award category="c_32" status="winner" movie="m_224" year="1987" recipient="Gerhard Schmidt scripts and films"/>
+  <award category="c_77" status="winner" movie="m_225" year="1972" recipient="Rainer Werner Fassbinder / Regie"/>
+  <award category="c_6" status="winner" movie="m_225" year="1972" recipient="Irm Hermann"/>
+  <award category="c_6" status="winner" movie="m_225" year="1972" recipient="Hans Hirschmüller"/>
+  <award category="c_7" status="winner" movie="m_226" year="2002" recipient="Peter Rommel Productions"/>
+  <award category="c_58" status="winner" movie="m_227" year="1957" recipient="Georg Tressler"/>
+  <award category="c_80" status="winner" movie="m_228" year="1991" recipient="Harald Juhnke / Gisela May / Ilse Werner"/>
+  <award category="c_16" status="winner" movie="m_229" year="1968" recipient="Hal Clay / Flo Nordhoff"/>
+  <award category="c_23" status="winner" movie="m_230" year="2000" recipient="Monika Schindler"/>
+  <award category="c_105" status="winner" movie="m_231" year="1973" recipient="Robert van Ackeren / Regie"/>
+  <award category="c_106" status="winner" movie="m_231" year="1973" recipient="Iris Wagner"/>
+  <award category="c_107" status="winner" movie="m_232" year="1957" recipient="Albrecht Becker / Herbert Kirchhoff"/>
+  <award category="c_12" status="winner" movie="m_232" year="1957" recipient="Helmut Käutner"/>
+  <award category="c_108" status="winner" movie="m_232" year="1957" recipient="Helmut Käutner / Carl Zuckmayer"/>
+  <award category="c_5" status="winner" movie="m_232" year="1957" recipient="Heinz Rühmann"/>
+  <award category="c_62" status="winner" movie="m_232" year="1957" recipient="Real-Film"/>
+  <award category="c_4" status="winner" movie="m_232" year="1957" recipient="Real-Film"/>
+  <award category="c_68" status="winner" movie="m_233" year="1965" recipient="Gerd Angermann"/>
+  <award category="c_13" status="winner" movie="m_233" year="1965" recipient="Jana Brejchowa"/>
+  <award category="c_12" status="winner" movie="m_233" year="1965" recipient="Kurt Hoffmann"/>
+  <award category="c_57" status="winner" movie="m_233" year="1965" recipient="Zdenek Liska"/>
+  <award category="c_15" status="winner" movie="m_233" year="1965" recipient="Independent"/>
+  <award category="c_53" status="winner" movie="m_234" year="2001" recipient="Flying Moon Filmproduktion"/>
+  <award category="c_10" status="winner" movie="m_235" year="1983" recipient="tura / Pro-ject"/>
+  <award category="c_7" status="winner" movie="m_236" year="2002" recipient="X Filme creative pool / Miramax Films"/>
+  <award category="c_61" status="winner" movie="m_237" year="1952" recipient="Gardy Granass"/>
+  <award category="c_18" status="winner" movie="m_238" year="1986" recipient="Wolfgang Simon"/>
+  <award category="c_109" status="winner" movie="m_239" year="2001" recipient="Kathrin Saß"/>
+  <award category="c_22" status="winner" movie="m_240" year="2000" recipient="Pepe Danquart"/>
+  <award category="c_48" status="winner" movie="m_241" year="1977" recipient="Helma Sanders-Brahms"/>
+  <award category="c_54" status="winner" movie="m_241" year="1977" recipient="Regina Ziegler"/>
+  <award category="c_5" status="winner" movie="m_242" year="1959" recipient="O.W. Fischer"/>
+  <award category="c_62" status="winner" movie="m_242" year="1959" recipient="Sokal / Goldbaum / Bavaria"/>
+  <award category="c_65" status="winner" movie="m_243" year="1952" recipient="Peter Pewas (Produzent und Regisseur)"/>
+  <award category="c_110" status="winner" movie="m_244" year="1989" recipient="Dana Vavrova"/>
+  <award category="c_38" status="winner" movie="m_244" year="1989" recipient="Perathon Film- und Fernsehproduktion"/>
+  <award category="c_44" status="winner" movie="m_245" year="1967" recipient="Gesellschaft für bildende Künste"/>
+  <award category="c_73" status="winner" movie="m_246" year="2004" recipient="Detlev Buck"/>
+  <award category="c_93" status="winner" movie="m_246" year="2004" recipient="Sven Regener"/>
+  <award category="c_59" status="winner" movie="m_247" year="1955" recipient="Göran Strindberg"/>
+  <award category="c_59" status="winner" movie="m_248" year="1955" recipient="Göran Strindberg"/>
+  <award category="c_25" status="winner" movie="m_249" year="1964" recipient="Nevenka Benkovic"/>
+  <award category="c_13" status="winner" movie="m_249" year="1964" recipient="Mira Stupica"/>
+  <award category="c_18" status="winner" movie="m_250" year="1977" recipient="Jörg Schmidt-Reitwein"/>
+  <award category="c_111" status="winner" movie="m_251" year="1953" recipient="Neue Deutsche Filmgesellschaft"/>
+  <award category="c_83" status="winner" movie="m_252" year="1956" recipient="Horst Buchholz"/>
+  <award category="c_61" status="winner" movie="m_252" year="1956" recipient="Eva Kotthaus"/>
+  <award category="c_14" status="winner" movie="m_252" year="1956" recipient="Erich Ponto"/>
+  <award category="c_49" status="winner" movie="m_252" year="1956" recipient="Neue deutsche Filmgesellschaft"/>
+  <award category="c_18" status="winner" movie="m_253" year="1988" recipient="Henri Alekan"/>
+  <award category="c_112" status="winner" movie="m_253" year="1988" recipient="Road Movies Filmproduktion"/>
+  <award category="c_51" status="winner" movie="m_254" year="1981" recipient="Gertrud Pinkus"/>
+  <award category="c_113" status="winner" movie="m_255" year="1966" recipient="Otto Pischinger"/>
+  <award category="c_44" status="winner" movie="m_256" year="1965" recipient="Axel Jahn"/>
+  <award category="c_102" status="winner" movie="m_257" year="1991" recipient="Bioskop"/>
+  <award category="c_114" status="winner" movie="m_258" year="1958" recipient="Internationale Fernseh-Agentur"/>
+  <award category="c_16" status="winner" movie="m_259" year="1985" recipient="Searcher Filmproduktion"/>
+  <award category="c_63" status="winner" movie="m_260" year="1959" recipient="Walter Haag"/>
+  <award category="c_12" status="winner" movie="m_260" year="1959" recipient="Frank Wisbar"/>
+  <award category="c_115" status="winner" movie="m_260" year="1959" recipient="Deutsche Film Hansa"/>
+  <award category="c_116" status="winner" movie="m_261" year="1972" recipient="Peter Schamoni"/>
+  <award category="c_9" status="winner" movie="m_262" year="1966" recipient="Cinegrafik"/>
+  <award category="c_100" status="winner" movie="m_263" year="1975" recipient="Werner Nekes"/>
+  <award category="c_117" status="winner" movie="m_264" year="2007" recipient="Claus Boje"/>
+  <award category="c_117" status="winner" movie="m_265" year="2006" recipient="Stephan Schesch"/>
+  <award category="c_64" status="winner" movie="m_266" year="1969" recipient="Wolfgang Schneider"/>
+  <award category="c_22" status="winner" movie="m_266" year="1969" recipient="Peter Zadek"/>
+  <award category="c_51" status="winner" movie="m_267" year="1978" recipient="Straub / Mikesch"/>
+  <award category="c_24" status="winner" movie="m_268" year="1956" recipient="Georg Witt-Film"/>
+  <award category="c_16" status="winner" movie="m_269" year="1982" recipient="Ezra Gerhardt"/>
+  <award category="c_118" status="winner" movie="m_270" year="1956" recipient="Institut für Film und Bild"/>
+  <award category="c_75" status="winner" movie="m_271" year="1958" recipient="Feuilleotn-Film"/>
+  <award category="c_6" status="winner" movie="m_272" year="1989" recipient="Heinz Bennent"/>
+  <award category="c_11" status="winner" movie="m_273" year="1992" recipient="Hermine Huntgeburth"/>
+  <award category="c_119" status="winner" movie="m_274" year="1975" recipient="Ottokar Runze"/>
+  <award category="c_120" status="winner" movie="m_275" year="1955" recipient="Eugen Schuhmacher"/>
+  <award category="c_121" status="winner" movie="m_276" year="1956" recipient="Martin Schließler"/>
+  <award category="c_89" status="winner" movie="m_277" year="1960" recipient="Gesellschaft für bildende Künste"/>
+  <award category="c_122" status="winner" movie="m_278" year="1975" recipient="Alexander Kluge / Edgar Reitz"/>
+  <award category="c_35" status="winner" movie="m_278" year="1975" recipient="Beate Mainka-Jellinghaus"/>
+  <award category="c_35" status="winner" movie="m_279" year="1975" recipient="Beate Mainka-Jellinghaus"/>
+  <award category="c_9" status="winner" movie="m_280" year="1965" recipient="Literarisches Colloquium"/>
+  <award category="c_31" status="winner" movie="m_281" year="2001" recipient="Wong Kar-wai"/>
+  <award category="c_3" status="winner" movie="m_282" year="1994" recipient="Jürgen Jürges"/>
+  <award category="c_38" status="winner" movie="m_283" year="1988" recipient="Oase Film"/>
+  <award category="c_16" status="winner" movie="m_284" year="1989" recipient="Roland Schraut Film-TV-Produktion"/>
+  <award category="c_7" status="winner" movie="m_285" year="2001" recipient="Schramm Film Koerner &amp; Weber"/>
+  <award category="c_123" status="winner" movie="m_286" year="1970" recipient="Renate Morel"/>
+  <award category="c_116" status="winner" movie="m_286" year="1970" recipient="Anton Triyandafilidis"/>
+  <award category="c_83" status="winner" movie="m_287" year="1960" recipient="Götz George"/>
+  <award category="c_6" status="winner" movie="m_288" year="1969" recipient="Michael Strixner"/>
+  <award category="c_40" status="winner" movie="m_288" year="1969" recipient="Houwer-Film"/>
+  <award category="c_70" status="winner" movie="m_289" year="1971" recipient="Volker Vogeler / Regie"/>
+  <award category="c_124" status="winner" movie="m_290" year="1957" recipient="v. Boyadjieff"/>
+  <award category="c_18" status="winner" movie="m_291" year="1981" recipient="David Slama"/>
+  <award category="c_2" status="winner" movie="m_291" year="1981" recipient="Adolf Winkelmann"/>
+  <award category="c_66" status="winner" movie="m_292" year="1975" recipient="Henning von Gierke"/>
+  <award category="c_105" status="winner" movie="m_292" year="1975" recipient="Werner Herzog / Regie"/>
+  <award category="c_8" status="winner" movie="m_293" year="1997" recipient="Niki Reiser"/>
+  <award category="c_6" status="winner" movie="m_293" year="1997" recipient="Sylvie Testud"/>
+  <award category="c_43" status="winner" movie="m_293" year="1997" recipient="Claussen + Wöbcke Filmproduktion / Roxy Film / BR / SPR / ARTE / DRS"/>
+  <award category="c_125" status="winner" movie="m_294" year="1989" recipient="Ulrike Ottinger"/>
+  <award category="c_6" status="winner" movie="m_295" year="1975" recipient="Dieter Laser"/>
+  <award category="c_11" status="winner" movie="m_295" year="1975" recipient="Ulf Miehe"/>
+  <award category="c_80" status="winner" movie="m_296" year="1978" recipient="Rio Reiser"/>
+  <award category="c_59" status="winner" movie="m_297" year="1957" recipient="Andor von Barsy"/>
+  <award category="c_30" status="winner" movie="m_297" year="1957" recipient="Duke Ellington / Winfried Zillig"/>
+  <award category="c_11" status="winner" movie="m_298" year="1970" recipient="Hans W. Geissendörfer"/>
+  <award category="c_116" status="winner" movie="m_299" year="1970" recipient="Werner Nekes"/>
+  <award category="c_50" status="winner" movie="m_300" year="1962" recipient="DIA-Film"/>
+  <award category="c_84" status="winner" movie="m_301" year="1966" recipient="Volker Schlöndorff"/>
+  <award category="c_68" status="winner" movie="m_301" year="1966" recipient="Volker Schlöndorff"/>
+  <award category="c_15" status="winner" movie="m_301" year="1966" recipient="Franz Seitz"/>
+  <award category="c_55" status="winner" movie="m_302" year="2000" recipient="Senator Film Produktion"/>
+  <award category="c_3" status="winner" movie="m_303" year="1996" recipient="Thomas Plenet"/>
+  <award category="c_22" status="winner" movie="m_304" year="1984" recipient="Josef Rusnak"/>
+  <award category="c_22" status="winner" movie="m_305" year="1984" recipient="Uwe Schrader"/>
+  <award category="c_126" status="winner" movie="m_306" year="1958" recipient="H.G. Zeiss-Film"/>
+  <award category="c_66" status="winner" movie="m_307" year="1975" recipient="Nino Borghi"/>
+  <award category="c_6" status="winner" movie="m_307" year="1975" recipient="Helmut Käutner"/>
+  <award category="c_100" status="winner" movie="m_308" year="1973" recipient="Dania-Film"/>
+  <award category="c_6" status="winner" movie="m_309" year="1994" recipient="André Eisermann"/>
+  <award category="c_22" status="winner" movie="m_309" year="1994" recipient="Peter Sehr"/>
+  <award category="c_43" status="winner" movie="m_309" year="1994" recipient="Multimedia München"/>
+  <award category="c_22" status="winner" movie="m_310" year="1988" recipient="Dominik Graf"/>
+  <award category="c_70" status="winner" movie="m_311" year="1970" recipient="Rainer Werner Fassbinder"/>
+  <award category="c_82" status="winner" movie="m_311" year="1970" recipient="Antitheater X-Film"/>
+  <award category="c_48" status="winner" movie="m_312" year="1984" recipient="Carlo Fedier / Hanns Christian Müller / Gerhard Polt"/>
+  <award category="c_10" status="winner" movie="m_312" year="1984" recipient="Solaris-Film / Maran Film"/>
+  <award category="c_121" status="winner" movie="m_313" year="1956" recipient="Okapia"/>
+  <award category="c_43" status="winner" movie="m_314" year="1995" recipient="Cobra Film"/>
+  <award category="c_63" status="winner" movie="m_315" year="1964" recipient="Wolf Englert"/>
+  <award category="c_59" status="winner" movie="m_315" year="1964" recipient="Hans Jura / Wolf Wirth"/>
+  <award category="c_83" status="winner" movie="m_315" year="1964" recipient="Fritz Wepper"/>
+  <award category="c_127" status="winner" movie="m_315" year="1964" recipient="Franz Seitz / Filmaufbau / Independent"/>
+  <award category="c_45" status="winner" movie="m_316" year="1967" recipient="Action Film"/>
+  <award category="c_128" status="winner" movie="m_317" year="1958" recipient="Rudolf Stölting"/>
+  <award category="c_11" status="winner" movie="m_318" year="1980" recipient="Usch Barthelmeß-Weller / Werner Meyer"/>
+  <award category="c_18" status="winner" movie="m_318" year="1980" recipient="Jürgen Jürges"/>
+  <award category="c_18" status="winner" movie="m_319" year="1980" recipient="Jürgen Jürges"/>
+  <award category="c_53" status="winner" movie="m_320" year="2004" recipient="zero film"/>
+  <award category="c_13" status="winner" movie="m_321" year="1955" recipient="Therese Giehse"/>
+  <award category="c_7" status="winner" movie="m_322" year="2008" recipient="Molly v. Fürstenberg, Harald Kügler"/>
+  <award category="c_28" status="winner" movie="m_322" year="2008" recipient="Elmar Wepper"/>
+  <award category="c_29" status="winner" movie="m_322" year="2008" recipient="Sabine Greunig"/>
+  <award category="c_18" status="winner" movie="m_323" year="1983" recipient="Robby Müller"/>
+  <award category="c_31" status="winner" movie="m_324" year="2002" recipient="Michael Haneke"/>
+  <award category="c_129" status="winner" movie="m_325" year="1993" recipient="Olga Film"/>
+  <award category="c_3" status="winner" movie="m_325" year="1993" recipient="Gernot Roll"/>
+  <award category="c_3" status="winner" movie="m_326" year="1993" recipient="Gernot Roll"/>
+  <award category="c_3" status="winner" movie="m_327" year="1993" recipient="Gernot Roll"/>
+  <award category="c_65" status="winner" movie="m_328" year="1954" recipient="Noldan-Film"/>
+  <award category="c_74" status="winner" movie="m_329" year="1951" recipient="GEA-Kulturfilm"/>
+  <award category="c_55" status="winner" movie="m_330" year="2001" recipient="Comet Film"/>
+  <award category="c_30" status="winner" movie="m_331" year="2006" recipient="Bert Wrede"/>
+  <award category="c_42" status="winner" movie="m_331" year="2006" recipient="Dirk Grau"/>
+  <award category="c_7" status="winner" movie="m_331" year="2006" recipient="Claus Boje"/>
+  <award category="c_6" status="winner" movie="m_332" year="1997" recipient="Moritz Bleibtreu"/>
+  <award category="c_25" status="winner" movie="m_333" year="1954" recipient="Lil Dagover"/>
+  <award category="c_130" status="winner" movie="m_334" year="1954" recipient="Institut für Film und Bild"/>
+  <award category="c_3" status="winner" movie="m_335" year="1991" recipient="Robby Müller"/>
+  <award category="c_7" status="winner" movie="m_336" year="2001" recipient="X Filme creative pool"/>
+  <award category="c_7" status="winner" movie="m_337" year="2004" recipient="Luna Film"/>
+  <award category="c_66" status="winner" movie="m_338" year="1993" recipient="Heike Bauersfeld"/>
+  <award category="c_6" status="winner" movie="m_338" year="1993" recipient="Heinz Hoenig"/>
+  <award category="c_16" status="winner" movie="m_339" year="1978" recipient="Werner Herzog"/>
+  <award category="c_59" status="winner" movie="m_340" year="1960" recipient="Klaus von Rautenfeld"/>
+  <award category="c_131" status="winner" movie="m_340" year="1960" recipient="Nadja Tiller"/>
+  <award category="c_102" status="winner" movie="m_341" year="1992" recipient="DEFA-Studio Babelsberg"/>
+  <award category="c_32" status="winner" movie="m_342" year="1984" recipient="Werner Klett"/>
+  <award category="c_119" status="winner" movie="m_343" year="1974" recipient="Basis-Film / News &amp; Documentary Film"/>
+  <award category="c_117" status="winner" movie="m_344" year="2005" recipient="Thilo Graf Rothkirch, Maya Gräfin Rothkirch"/>
+  <award category="c_65" status="winner" movie="m_345" year="1953" recipient="Zeit im Film"/>
+  <award category="c_16" status="winner" movie="m_346" year="1980" recipient="Windrose"/>
+  <award category="c_27" status="winner" movie="m_347" year="2006" recipient="Florian Henckel von Donnersmarck"/>
+  <award category="c_17" status="winner" movie="m_347" year="2006" recipient="Silke Buhr"/>
+  <award category="c_132" status="winner" movie="m_347" year="2006" recipient="Hagen Bogdanski"/>
+  <award category="c_26" status="winner" movie="m_347" year="2006" recipient="Florian Henckel von Donnersmarck"/>
+  <award category="c_28" status="winner" movie="m_347" year="2006" recipient="Ulrich Mühe"/>
+  <award category="c_91" status="winner" movie="m_347" year="2006" recipient="Ulrich Tukur "/>
+  <award category="c_7" status="winner" movie="m_347" year="2006" recipient="Quirin Berg, Max Wiedemann"/>
+  <award category="c_80" status="winner" movie="m_348" year="1997" recipient="Jürgen Vogel"/>
+  <award category="c_43" status="winner" movie="m_348" year="1997" recipient="X Filme creative pool / WDR"/>
+  <award category="c_6" status="winner" movie="m_348" year="1997" recipient="Martina Gedeck"/>
+  <award category="c_6" status="winner" movie="m_349" year="1997" recipient="Martina Gedeck"/>
+  <award category="c_31" status="winner" movie="m_350" year="1999" recipient="Melampo Cinemato grafica / Elda Ferri / Gianluigi Braschi"/>
+  <award category="c_15" status="winner" movie="m_351" year="1968" recipient="Werner Herzog"/>
+  <award category="c_80" status="winner" movie="m_352" year="1992" recipient="Ann Gisel Glass"/>
+  <award category="c_102" status="winner" movie="m_352" year="1992" recipient="Hager Moss Film"/>
+  <award category="c_8" status="winner" movie="m_352" year="1992" recipient="Norbert Schneider"/>
+  <award category="c_8" status="winner" movie="m_353" year="1992" recipient="Norbert Schneider"/>
+  <award category="c_6" status="winner" movie="m_354" year="1980" recipient="Nicolaus Paryla"/>
+  <award category="c_6" status="winner" movie="m_354" year="1980" recipient="Krista Stadler"/>
+  <award category="c_2" status="winner" movie="m_354" year="1980" recipient="Christian Rischert"/>
+  <award category="c_80" status="winner" movie="m_355" year="1971" recipient="Michael König"/>
+  <award category="c_18" status="winner" movie="m_355" year="1971" recipient="Gerard Vandenberg"/>
+  <award category="c_82" status="winner" movie="m_355" year="1971" recipient="Literarisches Colloquium"/>
+  <award category="c_55" status="winner" movie="m_356" year="2008" recipient="Oliver Stoltz"/>
+  <award category="c_30" status="winner" movie="m_356" year="2008" recipient="Ali N. Askin"/>
+  <award category="c_22" status="winner" movie="m_357" year="1990" recipient="Uli Edel"/>
+  <award category="c_43" status="winner" movie="m_357" year="1990" recipient="Neue Constantin Film / Bavaria Film"/>
+  <award category="c_12" status="winner" movie="m_358" year="1954" recipient="Helmut Käutner"/>
+  <award category="c_128" status="winner" movie="m_359" year="1958" recipient="Deutsche Wochenschau"/>
+  <award category="c_10" status="winner" movie="m_360" year="1982" recipient="Herbert Achternbusch"/>
+  <award category="c_25" status="winner" movie="m_361" year="1961" recipient="Blandine Ebinger"/>
+  <award category="c_14" status="winner" movie="m_361" year="1961" recipient="Hanns Lothar"/>
+  <award category="c_2" status="winner" movie="m_362" year="1980" recipient="FFAT / Pro-ject"/>
+  <award category="c_7" status="winner" movie="m_363" year="2003" recipient="Claussen + Wöbke Filmproduktion"/>
+  <award category="c_133" status="winner" movie="m_364" year="1972" recipient="Malte Thorsten"/>
+  <award category="c_22" status="winner" movie="m_365" year="1985" recipient="Maria Knilli"/>
+  <award category="c_132" status="winner" movie="m_366" year="2008" recipient="Benedict Neuenfels"/>
+  <award category="c_52" status="winner" movie="m_367" year="2004" recipient="Fritzi Haberlandt"/>
+  <award category="c_6" status="winner" movie="m_368" year="1975" recipient="Lina Carstens"/>
+  <award category="c_85" status="winner" movie="m_368" year="1975" recipient="B. Sinkel / U.L.M."/>
+  <award category="c_6" status="winner" movie="m_369" year="1982" recipient="Armin Mueller-Stahl"/>
+  <award category="c_10" status="winner" movie="m_369" year="1982" recipient="Rialto Film / Trio Film"/>
+  <award category="c_23" status="winner" movie="m_370" year="1999" recipient="Mathilde Bonnefoy"/>
+  <award category="c_3" status="winner" movie="m_370" year="1999" recipient="Frank Griebe"/>
+  <award category="c_22" status="winner" movie="m_370" year="1999" recipient="Tom Tykwer"/>
+  <award category="c_7" status="winner" movie="m_370" year="1999" recipient="X Filme Creative Pool"/>
+  <award category="c_36" status="winner" movie="m_370" year="1999" recipient="X Filme Creative Pool"/>
+  <award category="c_73" status="winner" movie="m_370" year="1999" recipient="Herbert Knaup"/>
+  <award category="c_134" status="winner" movie="m_370" year="1999" recipient="Franka Potente"/>
+  <award category="c_22" status="winner" movie="m_371" year="1981" recipient="Walter Bockmayer / Rolf Bührmann"/>
+  <award category="c_6" status="winner" movie="m_371" year="1981" recipient="Ingrid Caven"/>
+  <award category="c_66" status="winner" movie="m_371" year="1981" recipient="Tabea Blumenschein"/>
+  <award category="c_2" status="winner" movie="m_371" year="1981" recipient="Entenproduktion"/>
+  <award category="c_8" status="winner" movie="m_372" year="1974" recipient="Hans-Martin Majewski"/>
+  <award category="c_105" status="winner" movie="m_372" year="1974" recipient="Ottokar Runze / Regie"/>
+  <award category="c_135" status="winner" movie="m_373" year="2006" recipient="Oliver Stoltz"/>
+  <award category="c_31" status="winner" movie="m_374" year="2004" recipient="Sofia Coppola"/>
+  <award category="c_48" status="winner" movie="m_375" year="1972" recipient="Hans Jürgen Syberberg"/>
+  <award category="c_136" status="winner" movie="m_375" year="1972" recipient="TMS-Film"/>
+  <award category="c_5" status="winner" movie="m_376" year="1955" recipient="O.W. Fischer"/>
+  <award category="c_6" status="winner" movie="m_377" year="1970" recipient="Klaus Löwitsch"/>
+  <award category="c_61" status="winner" movie="m_378" year="1967" recipient="Helga Anders"/>
+  <award category="c_66" status="winner" movie="m_379" year="1977" recipient="Hans Gailling / Karel Vacek"/>
+  <award category="c_6" status="winner" movie="m_379" year="1977" recipient="Katherine Hunter"/>
+  <award category="c_10" status="winner" movie="m_379" year="1977" recipient="Independent / ABS / Maran"/>
+  <award category="c_48" status="winner" movie="m_380" year="1986" recipient="Doris Dörrie"/>
+  <award category="c_6" status="winner" movie="m_380" year="1986" recipient="Heiner Lauterbach"/>
+  <award category="c_6" status="winner" movie="m_380" year="1986" recipient="Uwe Ochsenknecht"/>
+  <award category="c_38" status="winner" movie="m_380" year="1986" recipient="Olga-Film"/>
+  <award category="c_39" status="winner" movie="m_381" year="1960" recipient="Gesellschaft für bildende Künste"/>
+  <award category="c_70" status="winner" movie="m_382" year="1970" recipient="Peter Lilienthal"/>
+  <award category="c_66" status="winner" movie="m_382" year="1970" recipient="Roger von Moellendorff"/>
+  <award category="c_18" status="winner" movie="m_382" year="1970" recipient="Willy Pankau"/>
+  <award category="c_137" status="winner" movie="m_382" year="1970" recipient="Vladimir Pucholdt"/>
+  <award category="c_82" status="winner" movie="m_382" year="1970" recipient="M. Durniok"/>
+  <award category="c_43" status="winner" movie="m_383" year="1991" recipient="Kuchenreuther Filmproduktion"/>
+  <award category="c_80" status="winner" movie="m_383" year="1991" recipient="Isabelle Huppert"/>
+  <award category="c_23" status="winner" movie="m_383" year="1991" recipient="Juliane Lorenz"/>
+  <award category="c_26" status="winner" movie="m_383" year="1991" recipient="Werner Schroeter"/>
+  <award category="c_25" status="winner" movie="m_384" year="1959" recipient="Hildegard Knef"/>
+  <award category="c_14" status="winner" movie="m_384" year="1959" recipient="Fritz Schmiedel"/>
+  <award category="c_3" status="winner" movie="m_385" year="1995" recipient="Jolanta Dylewska"/>
+  <award category="c_138" status="winner" movie="m_386" year="1958" recipient="D.H. Lemmel"/>
+  <award category="c_51" status="winner" movie="m_387" year="1984" recipient="OKO-Film Karl Dirka"/>
+  <award category="c_66" status="winner" movie="m_388" year="1976" recipient="Ausstattungsteam"/>
+  <award category="c_6" status="winner" movie="m_388" year="1976" recipient="Edith Clever"/>
+  <award category="c_6" status="winner" movie="m_388" year="1976" recipient="Bruno Ganz"/>
+  <award category="c_6" status="winner" movie="m_389" year="1989" recipient="Heidemarie Hatheyer"/>
+  <award category="c_9" status="winner" movie="m_390" year="1966" recipient="TC Trickstudio"/>
+  <award category="c_123" status="winner" movie="m_391" year="1971" recipient="Eva Mattes"/>
+  <award category="c_123" status="winner" movie="m_392" year="1971" recipient="Eva Mattes"/>
+  <award category="c_6" status="winner" movie="m_393" year="1971" recipient="Hanna Schygulla"/>
+  <award category="c_6" status="winner" movie="m_394" year="1971" recipient="Hanna Schygulla"/>
+  <award category="c_45" status="winner" movie="m_395" year="1964" recipient="Peter Schamoni"/>
+  <award category="c_13" status="winner" movie="m_396" year="2003" recipient="Hannelore Elsner"/>
+  <award category="c_6" status="winner" movie="m_397" year="1993" recipient="Babara Auer"/>
+  <award category="c_14" status="winner" movie="m_398" year="1954" recipient="Reinhold Schünzel"/>
+  <award category="c_116" status="winner" movie="m_399" year="1969" recipient="Bavaria"/>
+  <award category="c_32" status="winner" movie="m_400" year="1983" recipient="Lienhard Wawrzyn"/>
+  <award category="c_8" status="winner" movie="m_401" year="1999" recipient="Niki Reiser"/>
+  <award category="c_8" status="winner" movie="m_402" year="1999" recipient="Niki Reiser"/>
+  <award category="c_18" status="winner" movie="m_403" year="1979" recipient="Frank Brühne"/>
+  <award category="c_10" status="winner" movie="m_403" year="1979" recipient="Bioskop-Film / Hallelujah-Film"/>
+  <award category="c_6" status="winner" movie="m_404" year="1988" recipient="Adriana Altaras"/>
+  <award category="c_6" status="winner" movie="m_404" year="1988" recipient="Vladimir Weigl"/>
+  <award category="c_139" status="winner" movie="m_405" year="1983" recipient="Journal Film Klaus Volkenborn"/>
+  <award category="c_16" status="winner" movie="m_406" year="1989" recipient="Steffi Kammermeier"/>
+  <award category="c_140" status="winner" movie="m_407" year="1951" recipient="Georg-Witt-Film"/>
+  <award category="c_139" status="winner" movie="m_408" year="1980" recipient="R. Ziegler"/>
+  <award category="c_6" status="winner" movie="m_409" year="1981" recipient="Sigfrit Steiner"/>
+  <award category="c_2" status="winner" movie="m_409" year="1981" recipient="Bavaria Atelier"/>
+  <award category="c_59" status="winner" movie="m_410" year="1967" recipient="Franz Rath"/>
+  <award category="c_15" status="winner" movie="m_410" year="1967" recipient="Houwer Film"/>
+  <award category="c_6" status="winner" movie="m_411" year="1984" recipient="Maximilian Schell"/>
+  <award category="c_10" status="winner" movie="m_411" year="1984" recipient="Pro-ject / FFAT"/>
+  <award category="c_6" status="winner" movie="m_412" year="1976" recipient="Karl Maria Schley"/>
+  <award category="c_119" status="winner" movie="m_412" year="1976" recipient="Art-Film"/>
+  <award category="c_43" status="winner" movie="m_413" year="1996" recipient="Sentana Filmproduktion"/>
+  <award category="c_42" status="winner" movie="m_414" year="2004" recipient="Sarah Clara Weber"/>
+  <award category="c_6" status="winner" movie="m_415" year="1986" recipient="Edith Clever"/>
+  <award category="c_141" status="winner" movie="m_415" year="1986" recipient="Hans-Jürgen Syberberg"/>
+  <award category="c_11" status="winner" movie="m_416" year="1989" recipient="Maria Theresia Wagner"/>
+  <award category="c_10" status="winner" movie="m_417" year="1982" recipient="Helmer von Lützlburg"/>
+  <award category="c_7" status="winner" movie="m_418" year="1999" recipient="Peter Rommel Productions"/>
+  <award category="c_12" status="winner" movie="m_419" year="1953" recipient="Rudolf Jungert"/>
+  <award category="c_108" status="winner" movie="m_419" year="1953" recipient="Helmut Käutner / Fritz Rotter"/>
+  <award category="c_62" status="winner" movie="m_419" year="1953" recipient="Intercontinental / Neue Deutsche Filmgesellschaft"/>
+  <award category="c_83" status="winner" movie="m_420" year="1958" recipient="Mario Adorf"/>
+  <award category="c_25" status="winner" movie="m_420" year="1958" recipient="Annemarie Düringer"/>
+  <award category="c_59" status="winner" movie="m_420" year="1958" recipient="Georg Krause"/>
+  <award category="c_68" status="winner" movie="m_420" year="1958" recipient="Werner Jörg Lüddecke"/>
+  <award category="c_5" status="winner" movie="m_420" year="1958" recipient="Hannes Messemer"/>
+  <award category="c_14" status="winner" movie="m_420" year="1958" recipient="Werner Peters"/>
+  <award category="c_12" status="winner" movie="m_420" year="1958" recipient="Robert Siodmak"/>
+  <award category="c_62" status="winner" movie="m_420" year="1958" recipient="Divina-Film"/>
+  <award category="c_142" status="winner" movie="m_420" year="1958" recipient="Divina-Film"/>
+  <award category="c_107" status="winner" movie="m_420" year="1958" recipient="Rolf Zehetbauer / Gottfried Will"/>
+  <award category="c_7" status="winner" movie="m_421" year="2003" recipient="Constantin Film / Fanes Film"/>
+  <award category="c_66" status="winner" movie="m_422" year="1987" recipient="Ausstattungsteam DER NAME DER ROSE unter Leitung von Dante Ferretti"/>
+  <award category="c_6" status="winner" movie="m_422" year="1987" recipient="Sean Connery"/>
+  <award category="c_96" status="winner" movie="m_422" year="1987" recipient="Neue Constantin Filmproduktion"/>
+  <award category="c_65" status="winner" movie="m_423" year="1954" recipient="Hans Ertl (Produzent und Regisseur)"/>
+  <award category="c_143" status="winner" movie="m_424" year="2003" recipient="Maggie Peren / Dennis Gansel"/>
+  <award category="c_57" status="winner" movie="m_425" year="1958" recipient="Hans-Martin Majewski"/>
+  <award category="c_18" status="winner" movie="m_426" year="1979" recipient="Thomas Mauch"/>
+  <award category="c_22" status="winner" movie="m_426" year="1979" recipient="Werner Schroeter"/>
+  <award category="c_81" status="winner" movie="m_427" year="1952" recipient="Domnick Ottomar"/>
+  <award category="c_48" status="winner" movie="m_428" year="1991" recipient="Jurek Becker"/>
+  <award category="c_17" status="winner" movie="m_429" year="2005" recipient="Ari Hantke"/>
+  <award category="c_5" status="winner" movie="m_430" year="2002" recipient="Daniel Brühl"/>
+  <award category="c_5" status="winner" movie="m_431" year="2002" recipient="Daniel Brühl"/>
+  <award category="c_5" status="winner" movie="m_432" year="2002" recipient="Daniel Brühl"/>
+  <award category="c_2" status="winner" movie="m_433" year="1981" recipient="Road Movies / Wim Wenders"/>
+  <award category="c_7" status="winner" movie="m_434" year="2002" recipient="MTM Medien &amp; Television München"/>
+  <award category="c_73" status="winner" movie="m_434" year="2002" recipient="Matthias Habich"/>
+  <award category="c_26" status="winner" movie="m_434" year="2002" recipient="Caroline Link"/>
+  <award category="c_144" status="winner" movie="m_434" year="2002" recipient="Niki Reiser"/>
+  <award category="c_145" status="winner" movie="m_434" year="2002" recipient="Gernot Roll"/>
+  <award category="c_146" status="winner" movie="m_435" year="1964" recipient="Gert Abelbeck"/>
+  <award category="c_33" status="winner" movie="m_435" year="1964" recipient="Knoop Film"/>
+  <award category="c_100" status="winner" movie="m_436" year="1988" recipient="YAKUZA-Film"/>
+  <award category="c_6" status="winner" movie="m_437" year="1993" recipient="Renate Krößner"/>
+  <award category="c_22" status="winner" movie="m_437" year="1993" recipient="Adolf Winkelmann"/>
+  <award category="c_23" status="winner" movie="m_437" year="1993" recipient="Adolf Winkelmann"/>
+  <award category="c_6" status="winner" movie="m_438" year="1979" recipient="Klaus Kinski"/>
+  <award category="c_147" status="winner" movie="m_439" year="1963" recipient="Hans Rolf Strobel / Heinrich Tichawsky"/>
+  <award category="c_33" status="winner" movie="m_439" year="1963" recipient="Strobel-Tichawsky"/>
+  <award category="c_6" status="winner" movie="m_440" year="1986" recipient="Katharina Brauren"/>
+  <award category="c_16" status="winner" movie="m_441" year="1985" recipient="Helke Sander"/>
+  <award category="c_6" status="winner" movie="m_442" year="1996" recipient="Katja Riemann"/>
+  <award category="c_6" status="winner" movie="m_443" year="1996" recipient="Katja Riemann"/>
+  <award category="c_48" status="winner" movie="m_444" year="1971" recipient="Michael Verhoeven"/>
+  <award category="c_6" status="winner" movie="m_445" year="1985" recipient="Klaus Maria Brandauer"/>
+  <award category="c_54" status="winner" movie="m_445" year="1985" recipient="Durniok"/>
+  <award category="c_148" status="winner" movie="m_446" year="1989" recipient="Vicco von Bülow"/>
+  <award category="c_116" status="winner" movie="m_447" year="1972" recipient="Dieter Klama"/>
+  <award category="c_43" status="winner" movie="m_448" year="1993" recipient="Gordian Maugg"/>
+  <award category="c_59" status="winner" movie="m_449" year="1965" recipient="Heinz Hölscher"/>
+  <award category="c_100" status="winner" movie="m_450" year="1977" recipient="Hans Sachs"/>
+  <award category="c_2" status="winner" movie="m_451" year="1980" recipient="Solaris / von Vietinghoff / Frankenberg"/>
+  <award category="c_8" status="winner" movie="m_452" year="1980" recipient="Peer Raben"/>
+  <award category="c_8" status="winner" movie="m_453" year="1980" recipient="Peer Raben"/>
+  <award category="c_6" status="winner" movie="m_454" year="1988" recipient="Marianne Sägebrecht"/>
+  <award category="c_38" status="winner" movie="m_454" year="1988" recipient="Pelemele Film / Pro-ject"/>
+  <award category="c_80" status="winner" movie="m_455" year="1968" recipient="Ilona Grübel"/>
+  <award category="c_11" status="winner" movie="m_456" year="1982" recipient="Johann Schmid"/>
+  <award category="c_6" status="winner" movie="m_457" year="1987" recipient="Katharina Thalbach"/>
+  <award category="c_89" status="winner" movie="m_458" year="1959" recipient="IFA"/>
+  <award category="c_17" status="winner" movie="m_459" year="2007" recipient="Uli Hanisch"/>
+  <award category="c_132" status="winner" movie="m_459" year="2007" recipient="Frank Griebe"/>
+  <award category="c_42" status="winner" movie="m_459" year="2007" recipient="Alexander Berner"/>
+  <award category="c_7" status="winner" movie="m_459" year="2007" recipient="Bernd Eichinger"/>
+  <award category="c_29" status="winner" movie="m_459" year="2007" recipient="Pierre-Yves Gayraud"/>
+  <award category="c_149" status="winner" movie="m_459" year="2007" recipient="Stefan Busch, Dirk Jacob, Michael Kranz, Frank Kruse, Mathias Lempert, Hanse Warns, Roland Winke"/>
+  <award category="c_10" status="winner" movie="m_460" year="1985" recipient="Road Movies / Pro-ject"/>
+  <award category="c_51" status="winner" movie="m_461" year="1979" recipient="Kairos-Film"/>
+  <award category="c_6" status="winner" movie="m_462" year="1987" recipient="Rebecca Pauli"/>
+  <award category="c_32" status="winner" movie="m_463" year="1977" recipient="Cinema 80 Spieker"/>
+  <award category="c_9" status="winner" movie="m_464" year="1963" recipient="T.C. Trickstudio"/>
+  <award category="c_80" status="winner" movie="m_465" year="1992" recipient="Mario Adorf"/>
+  <award category="c_48" status="winner" movie="m_465" year="1992" recipient="Bernd Schroeder"/>
+  <award category="c_16" status="winner" movie="m_466" year="1979" recipient="Anton Triyandafilidis"/>
+  <award category="c_22" status="winner" movie="m_467" year="1971" recipient="Volker Schlöndorff"/>
+  <award category="c_5" status="winner" movie="m_468" year="1965" recipient="Wolfgang Kieling"/>
+  <award category="c_15" status="winner" movie="m_468" year="1965" recipient="Eckelkamp"/>
+  <award category="c_92" status="winner" movie="m_469" year="1953" recipient="Alfred Ehrhardt"/>
+  <award category="c_61" status="winner" movie="m_470" year="1953" recipient="Barbara Rütting"/>
+  <award category="c_61" status="winner" movie="m_471" year="1953" recipient="Barbara Rütting"/>
+  <award category="c_32" status="winner" movie="m_472" year="1988" recipient="Egon Haase Filmproduktion / NEF-Diffusion Francois Duplat Filmproduktion"/>
+  <award category="c_16" status="winner" movie="m_473" year="1979" recipient="Axel Engstfeld"/>
+  <award category="c_53" status="winner" movie="m_474" year="2008" recipient="Peter Schwartzkopff, Katja Siegel"/>
+  <award category="c_124" status="winner" movie="m_475" year="1961" recipient="Universum"/>
+  <award category="c_76" status="winner" movie="m_476" year="1960" recipient="Karl Ludwig"/>
+  <award category="c_16" status="winner" movie="m_477" year="1980" recipient="A. und Renate Härtl"/>
+  <award category="c_12" status="winner" movie="m_478" year="1953" recipient="Heinz Sielmann"/>
+  <award category="c_92" status="winner" movie="m_478" year="1953" recipient="Institut für Film und Bild"/>
+  <award category="c_16" status="winner" movie="m_479" year="1978" recipient="Leonaris-Film"/>
+  <award category="c_61" status="winner" movie="m_480" year="1952" recipient="Gertrud Kückelmann"/>
+  <award category="c_149" status="winner" movie="m_481" year="2006" recipient="Lars Ginzel, Dirk Jacob, Marc Parisotto, Martin Steyer"/>
+  <award category="c_29" status="winner" movie="m_481" year="2006" recipient="Bettina Marx"/>
+  <award category="c_150" status="winner" movie="m_481" year="2006" recipient="Sandra Hüller"/>
+  <award category="c_21" status="winner" movie="m_481" year="2006" recipient="Imogen Kogge"/>
+  <award category="c_7" status="winner" movie="m_481" year="2006" recipient="Hans-Christian Schmid"/>
+  <award category="c_18" status="winner" movie="m_482" year="1978" recipient="Ernst Wild"/>
+  <award category="c_10" status="winner" movie="m_482" year="1978" recipient="Visual-Film"/>
+  <award category="c_135" status="winner" movie="m_483" year="2005" recipient="Uwe Dierks, Thomas Grube, Andrea Thilo"/>
+  <award category="c_42" status="winner" movie="m_483" year="2005" recipient="Dirk Grau, Martin Hoffmann"/>
+  <award category="c_35" status="winner" movie="m_484" year="1979" recipient="Dagmar Hirtz"/>
+  <award category="c_10" status="winner" movie="m_484" year="1979" recipient="MFG-Filmgesellschaft"/>
+  <award category="c_53" status="winner" movie="m_485" year="2003" recipient="Mediopolis Film- und Fernsehproduktion"/>
+  <award category="c_99" status="winner" movie="m_485" year="2003" recipient="Thomas Riedelsheimer"/>
+  <award category="c_44" status="winner" movie="m_486" year="1964" recipient="Unda-Film"/>
+  <award category="c_6" status="winner" movie="m_487" year="1986" recipient="Barbara Sukowa"/>
+  <award category="c_112" status="winner" movie="m_487" year="1986" recipient="Bioskop-Film"/>
+  <award category="c_14" status="winner" movie="m_488" year="1957" recipient="Hannes Messemer"/>
+  <award category="c_5" status="winner" movie="m_489" year="1960" recipient="Walter Giller"/>
+  <award category="c_68" status="winner" movie="m_489" year="1960" recipient="Georg Hurdalek"/>
+  <award category="c_24" status="winner" movie="m_489" year="1960" recipient="K. Ulrich"/>
+  <award category="c_22" status="winner" movie="m_490" year="1997" recipient="Helmut Dietl"/>
+  <award category="c_43" status="winner" movie="m_490" year="1997" recipient="Diana Film / BA Film / Fanes Film / Bavaria Film / SAT 1"/>
+  <award category="c_23" status="winner" movie="m_490" year="1997" recipient="Inez Regnier"/>
+  <award category="c_23" status="winner" movie="m_491" year="1997" recipient="Inez Regnier"/>
+  <award category="c_32" status="winner" movie="m_492" year="1983" recipient="Helmut Barth"/>
+  <award category="c_16" status="winner" movie="m_493" year="1981" recipient="René Perraudin"/>
+  <award category="c_85" status="winner" movie="m_494" year="1973" recipient="Report / Guba"/>
+  <award category="c_55" status="winner" movie="m_495" year="2002" recipient="Kinowelt Filmproduktion"/>
+  <award category="c_151" status="winner" movie="m_495" year="2002" recipient="Eva Mattes"/>
+  <award category="c_18" status="winner" movie="m_496" year="1971" recipient="Christian Blackwood"/>
+  <award category="c_8" status="winner" movie="m_496" year="1971" recipient="Amon Düül"/>
+  <award category="c_18" status="winner" movie="m_497" year="1969" recipient="Petrus Schloemp"/>
+  <award category="c_6" status="winner" movie="m_498" year="1969" recipient="Walter Buschhoff"/>
+  <award category="c_61" status="winner" movie="m_499" year="1962" recipient="Loni von Friedl"/>
+  <award category="c_61" status="winner" movie="m_500" year="1962" recipient="Loni von Friedl"/>
+  <award category="c_11" status="winner" movie="m_501" year="1981" recipient="Carin Braun"/>
+  <award category="c_65" status="winner" movie="m_502" year="1954" recipient="Alfred Ehrhardt (Produzent und Regisseur)"/>
+  <award category="c_10" status="winner" movie="m_503" year="1985" recipient="Common Film / Ula Stöckl"/>
+  <award category="c_43" status="winner" movie="m_504" year="1996" recipient="Perathon Film- und Fernsehproduktion / Iduna Film / B.A. Produktion"/>
+  <award category="c_23" status="winner" movie="m_504" year="1996" recipient="Alexander Berner"/>
+  <award category="c_23" status="winner" movie="m_505" year="1996" recipient="Alexander Berner"/>
+  <award category="c_152" status="winner" movie="m_506" year="1968" recipient="Herta und Otto Pischinger"/>
+  <award category="c_18" status="winner" movie="m_506" year="1968" recipient="Wolfgang Treu"/>
+  <award category="c_132" status="winner" movie="m_507" year="2005" recipient="Hans-Günther Bücking"/>
+  <award category="c_153" status="winner" movie="m_508" year="1957" recipient="Fritz Brill / August Lutz / Ronald Martini / Herbert Thallmayer / Willy Zielke"/>
+  <award category="c_154" status="winner" movie="m_508" year="1957" recipient="Ges. für bildende Künste"/>
+  <award category="c_57" status="winner" movie="m_509" year="1966" recipient="Hans Posegga"/>
+  <award category="c_25" status="winner" movie="m_509" year="1966" recipient="Edda Seippel"/>
+  <award category="c_6" status="winner" movie="m_510" year="1990" recipient="Lena Stolze"/>
+  <award category="c_22" status="winner" movie="m_511" year="1992" recipient="Helmut Dietl"/>
+  <award category="c_80" status="winner" movie="m_511" year="1992" recipient="Götz George"/>
+  <award category="c_43" status="winner" movie="m_511" year="1992" recipient="Bavaria Film"/>
+  <award category="c_66" status="winner" movie="m_512" year="1981" recipient="Ausstattungsteam des Films „Der Schüler Gerber“"/>
+  <award category="c_6" status="winner" movie="m_512" year="1981" recipient="Werner Kreindl"/>
+  <award category="c_155" status="winner" movie="m_513" year="2002" recipient="Michael “Bully“ Herbig"/>
+  <award category="c_36" status="winner" movie="m_513" year="2002" recipient="herbX film gmbh"/>
+  <award category="c_68" status="winner" movie="m_514" year="1952" recipient="Hans-Otto Schröder"/>
+  <award category="c_156" status="winner" movie="m_514" year="1952" recipient="Nord-Lux-Film"/>
+  <award category="c_17" status="winner" movie="m_515" year="2004" recipient="Natascha E. Tagwerk"/>
+  <award category="c_25" status="winner" movie="m_516" year="1963" recipient="Elfriede Kuzmany"/>
+  <award category="c_63" status="winner" movie="m_516" year="1963" recipient="Max Mellin / Bruno Monden / Jürgen Rose"/>
+  <award category="c_65" status="winner" movie="m_517" year="1951" recipient="Burg-Film"/>
+  <award category="c_5" status="winner" movie="m_518" year="1961" recipient="Heinz Rühmann"/>
+  <award category="c_22" status="winner" movie="m_519" year="1987" recipient="Peter Lilienthal"/>
+  <award category="c_96" status="winner" movie="m_519" year="1987" recipient="Edgar Reitz Filmproduktion"/>
+  <award category="c_6" status="winner" movie="m_520" year="1980" recipient="Jutta Lampe"/>
+  <award category="c_100" status="winner" movie="m_521" year="1987" recipient="Raimund Krumme"/>
+  <award category="c_31" status="winner" movie="m_522" year="1997" recipient="Mirage Production"/>
+  <award category="c_51" status="winner" movie="m_523" year="1981" recipient="Teldok Film"/>
+  <award category="c_157" status="winner" movie="m_524" year="1960" recipient="Okapia-Film"/>
+  <award category="c_158" status="winner" movie="m_525" year="1970" recipient="TMS-Film"/>
+  <award category="c_45" status="winner" movie="m_526" year="1965" recipient="Walter Jacob"/>
+  <award category="c_45" status="winner" movie="m_527" year="1965" recipient="Fritz Illing"/>
+  <award category="c_16" status="winner" movie="m_528" year="1985" recipient="Cinegraphik Helmut Herbst"/>
+  <award category="c_45" status="winner" movie="m_529" year="1964" recipient="Gesellschaft für bildende Künste"/>
+  <award category="c_98" status="winner" movie="m_530" year="1962" recipient="Schonger-Film"/>
+  <award category="c_16" status="winner" movie="m_531" year="1981" recipient="Jochen Kuhn"/>
+  <award category="c_31" status="winner" movie="m_532" year="1996" recipient="Miramax International"/>
+  <award category="c_68" status="winner" movie="m_533" year="1954" recipient="Jochen Huth"/>
+  <award category="c_86" status="winner" movie="m_534" year="2000" recipient="Lothar Holler"/>
+  <award category="c_159" status="winner" movie="m_534" year="2000" recipient="Boje Buck Produktion"/>
+  <award category="c_7" status="winner" movie="m_535" year="2005" recipient="Christoph Müller und Sven Burgemeister, Fred Breinersdorfer und Marc Rothemund"/>
+  <award category="c_150" status="winner" movie="m_535" year="2005" recipient="Julia Jentsch"/>
+  <award category="c_32" status="winner" movie="m_536" year="1983" recipient="Kobra Filmproduktion"/>
+  <award category="c_46" status="winner" movie="m_537" year="1967" recipient="Cineropafilm"/>
+  <award category="c_57" status="winner" movie="m_538" year="1967" recipient="Erich Ferstl"/>
+  <award category="c_57" status="winner" movie="m_539" year="1967" recipient="Erich Ferstl"/>
+  <award category="c_74" status="winner" movie="m_540" year="1952" recipient="Alfred Ehrhardt"/>
+  <award category="c_66" status="winner" movie="m_541" year="1990" recipient="Götz Heymann / Karel Vacek"/>
+  <award category="c_22" status="winner" movie="m_541" year="1990" recipient="Bernhard Wicki"/>
+  <award category="c_102" status="winner" movie="m_541" year="1990" recipient="Provobis Gesellschaft für Film und Fernsehen"/>
+  <award category="c_11" status="winner" movie="m_542" year="1968" recipient="Gustav Ehmck"/>
+  <award category="c_80" status="winner" movie="m_542" year="1968" recipient="Carola Wied"/>
+  <award category="c_154" status="winner" movie="m_543" year="1957" recipient="Mannesmann"/>
+  <award category="c_76" status="winner" movie="m_544" year="1961" recipient="Mannesmann"/>
+  <award category="c_54" status="winner" movie="m_545" year="1983" recipient="Wim Wenders / Road Movies / Pro-ject"/>
+  <award category="c_75" status="winner" movie="m_546" year="1954" recipient="W. Leckebusch"/>
+  <award category="c_105" status="winner" movie="m_547" year="1976" recipient="Hans W. Geissendörfer / Regie"/>
+  <award category="c_6" status="winner" movie="m_547" year="1976" recipient="Ulrike Luderer"/>
+  <award category="c_133" status="winner" movie="m_548" year="1973" recipient="Paul Neuhaus"/>
+  <award category="c_32" status="winner" movie="m_549" year="1987" recipient="Panorama Film Arndt und Böhmert"/>
+  <award category="c_111" status="winner" movie="m_550" year="1957" recipient="Berliner Meteor-Film"/>
+  <award category="c_160" status="winner" movie="m_551" year="1955" recipient="Wolf Hart"/>
+  <award category="c_10" status="winner" movie="m_552" year="1977" recipient="Edgar Reitz"/>
+  <award category="c_83" status="winner" movie="m_553" year="1952" recipient="Jan Hendriks"/>
+  <award category="c_22" status="winner" movie="m_554" year="1974" recipient="Roland Klick"/>
+  <award category="c_6" status="winner" movie="m_554" year="1974" recipient="Walter Kohut"/>
+  <award category="c_100" status="winner" movie="m_555" year="1983" recipient="Bettina Woernle"/>
+  <award category="c_16" status="winner" movie="m_556" year="1982" recipient="Georg Schimanski"/>
+  <award category="c_80" status="winner" movie="m_557" year="1968" recipient="Alexander May"/>
+  <award category="c_22" status="winner" movie="m_557" year="1968" recipient="Johannes Schaaf"/>
+  <award category="c_15" status="winner" movie="m_557" year="1968" recipient="Houwer Film"/>
+  <award category="c_23" status="winner" movie="m_558" year="1994" recipient="Uli Schwarzenberger"/>
+  <award category="c_22" status="winner" movie="m_559" year="1982" recipient="Werner Schroeter"/>
+  <award category="c_51" status="winner" movie="m_560" year="1979" recipient="Rosa von Praunheim"/>
+  <award category="c_80" status="winner" movie="m_561" year="1991" recipient="Michael Gwisdek"/>
+  <award category="c_43" status="winner" movie="m_561" year="1991" recipient="DEFA-Studio Babelsberg"/>
+  <award category="c_37" status="winner" movie="m_562" year="1960" recipient="Roto-Film"/>
+  <award category="c_34" status="winner" movie="m_563" year="1978" recipient="ABS-Film"/>
+  <award category="c_124" status="winner" movie="m_564" year="1957" recipient="Dia-Film"/>
+  <award category="c_68" status="winner" movie="m_565" year="1956" recipient="Jochen Huth"/>
+  <award category="c_13" status="winner" movie="m_565" year="1956" recipient="Lilli Palmer"/>
+  <award category="c_25" status="winner" movie="m_565" year="1956" recipient="Adelheid Seeck"/>
+  <award category="c_49" status="winner" movie="m_565" year="1956" recipient="Fono-Film"/>
+  <award category="c_9" status="winner" movie="m_566" year="1963" recipient="Peter Schamoni"/>
+  <award category="c_143" status="winner" movie="m_567" year="2004" recipient="Marei Gerken"/>
+  <award category="c_31" status="winner" movie="m_568" year="2003" recipient="Stephen Daldry"/>
+  <award category="c_50" status="winner" movie="m_569" year="1961" recipient="IFAG"/>
+  <award category="c_6" status="winner" movie="m_570" year="1973" recipient="Walter Sedlmayr"/>
+  <award category="c_119" status="winner" movie="m_570" year="1973" recipient="TMS-Film"/>
+  <award category="c_6" status="winner" movie="m_571" year="1996" recipient="Götz George"/>
+  <award category="c_22" status="winner" movie="m_571" year="1996" recipient="Romuald Karmakar"/>
+  <award category="c_43" status="winner" movie="m_571" year="1996" recipient="Pantera Filmproduktion"/>
+  <award category="c_149" status="winner" movie="m_572" year="2005" recipient="Gregor Kuschel, Hubertus Rath, Thomas Riedelsheimer, Christoph von Schönburg, Marc von Stuerler"/>
+  <award category="c_149" status="winner" movie="m_573" year="2008" recipient="Dirk Jacob, Dominik Schleier, Martin Steyer, Pawel Wdowczak"/>
+  <award category="c_161" status="winner" movie="m_574" year="1953" recipient="Rolf Engler"/>
+  <award category="c_100" status="winner" movie="m_575" year="1984" recipient="Atelier-Film"/>
+  <award category="c_6" status="winner" movie="m_576" year="1972" recipient="Rosemarie Fendel"/>
+  <award category="c_35" status="winner" movie="m_576" year="1972" recipient="Dagmar Hirtz"/>
+  <award category="c_22" status="winner" movie="m_576" year="1972" recipient="Johannes Schaaf"/>
+  <award category="c_136" status="winner" movie="m_576" year="1972" recipient="Johannes Schaaf / Independent"/>
+  <award category="c_32" status="winner" movie="m_577" year="1984" recipient="Jörg Moser Metius"/>
+  <award category="c_109" status="winner" movie="m_578" year="2000" recipient="Hannelore Elsner"/>
+  <award category="c_7" status="winner" movie="m_578" year="2000" recipient="Distant Dreams"/>
+  <award category="c_66" status="winner" movie="m_579" year="1985" recipient="Rolf Zehetbauer"/>
+  <award category="c_6" status="winner" movie="m_580" year="1975" recipient="Heinrich Giskes"/>
+  <award category="c_6" status="winner" movie="m_580" year="1975" recipient="Grischa Huber"/>
+  <award category="c_32" status="winner" movie="m_581" year="1988" recipient="Primavera Film"/>
+  <award category="c_16" status="winner" movie="m_582" year="1980" recipient="R. Ziegler"/>
+  <award category="c_18" status="winner" movie="m_583" year="1976" recipient="Jost Vacano"/>
+  <award category="c_18" status="winner" movie="m_584" year="1976" recipient="Jost Vacano"/>
+  <award category="c_25" status="winner" movie="m_585" year="1965" recipient="Tilla Durieux"/>
+  <award category="c_162" status="winner" movie="m_586" year="1953" recipient="Juliane Kay"/>
+  <award category="c_156" status="winner" movie="m_586" year="1953" recipient="Standard-Film"/>
+  <award category="c_43" status="winner" movie="m_587" year="1995" recipient="Deutsche Film- und Fernsehakademie Berlin"/>
+  <award category="c_65" status="winner" movie="m_588" year="1952" recipient="Peter Lorre (Regisseur und Darsteller)"/>
+  <award category="c_6" status="winner" movie="m_589" year="1976" recipient="Angela Winkler"/>
+  <award category="c_6" status="winner" movie="m_590" year="1976" recipient="Gerhard Olschewski"/>
+  <award category="c_116" status="winner" movie="m_591" year="1969" recipient="Axel Jahn"/>
+  <award category="c_102" status="winner" movie="m_592" year="1991" recipient="alert Film / DEFA-Studio für Dokumentarfilme"/>
+  <award category="c_68" status="winner" movie="m_593" year="1964" recipient="Will Tremper"/>
+  <award category="c_51" status="winner" movie="m_594" year="1984" recipient="Johann Feindt"/>
+  <award category="c_30" status="winner" movie="m_595" year="1956" recipient="Peter Sandloff"/>
+  <award category="c_150" status="winner" movie="m_596" year="2007" recipient="Monica Bleibtreu"/>
+  <award category="c_7" status="winner" movie="m_596" year="2007" recipient="Meike Kordes, Alexandra Kordes"/>
+  <award category="c_100" status="winner" movie="m_597" year="1974" recipient="Continental Film"/>
+  <award category="c_51" status="winner" movie="m_598" year="1982" recipient="Axel Engstfeld"/>
+  <award category="c_11" status="winner" movie="m_599" year="1979" recipient="Helga Reidemeister"/>
+  <award category="c_16" status="winner" movie="m_600" year="1968" recipient="Iduna Film"/>
+  <award category="c_47" status="winner" movie="m_601" year="1966" recipient="Cineropafilm"/>
+  <award category="c_83" status="winner" movie="m_602" year="1965" recipient="Gerd Baltus"/>
+  <award category="c_14" status="winner" movie="m_602" year="1965" recipient="Rudolf Forster"/>
+  <award category="c_113" status="winner" movie="m_602" year="1965" recipient="Maleen Pacha"/>
+  <award category="c_21" status="winner" movie="m_603" year="2007" recipient="Hannah Herzsprung"/>
+  <award category="c_18" status="winner" movie="m_604" year="1989" recipient="Thomas Mauch"/>
+  <award category="c_38" status="winner" movie="m_604" year="1989" recipient="Christian Wagner Filmproduktion"/>
+  <award category="c_22" status="winner" movie="m_605" year="1971" recipient="Michael Fengler / Rainer Werner Fassbinder"/>
+  <award category="c_59" status="winner" movie="m_606" year="1959" recipient="Gerd von Bonin"/>
+  <award category="c_163" status="winner" movie="m_606" year="1959" recipient="Akzent-Film"/>
+  <award category="c_16" status="winner" movie="m_607" year="1979" recipient="Cornelia Schlingmann"/>
+  <award category="c_111" status="winner" movie="m_608" year="1952" recipient="Lux-Film S.A, Rom"/>
+  <award category="c_68" status="winner" movie="m_609" year="1953" recipient="Herbert Reinecker"/>
+  <award category="c_164" status="winner" movie="m_609" year="1953" recipient="Fink-Film"/>
+  <award category="c_5" status="winner" movie="m_610" year="1954" recipient="René Deltgen"/>
+  <award category="c_30" status="winner" movie="m_610" year="1954" recipient="Hans-Martin Majewski"/>
+  <award category="c_62" status="winner" movie="m_610" year="1954" recipient="Occident-Film / Trans-Rhein-Film"/>
+  <award category="c_52" status="winner" movie="m_611" year="2000" recipient="Henriette Heinze"/>
+  <award category="c_3" status="winner" movie="m_611" year="2000" recipient="Jürgen Jürges"/>
+  <award category="c_165" status="winner" movie="m_612" year="1988" recipient="Birgit Hutter / Béatrice Stein-Leppert / Ina Peichel"/>
+  <award category="c_6" status="winner" movie="m_612" year="1988" recipient="Michel Piccoli"/>
+  <award category="c_10" status="winner" movie="m_613" year="1983" recipient="Sentana / CCC-Filmkunst"/>
+  <award category="c_7" status="winner" movie="m_614" year="2008" recipient="Christian Becker "/>
+  <award category="c_91" status="winner" movie="m_614" year="2008" recipient="Frederick Lau"/>
+  <award category="c_166" status="winner" movie="m_615" year="1956" recipient="Türck-Film"/>
+  <award category="c_6" status="winner" movie="m_616" year="1984" recipient="Horst Buchholz"/>
+  <award category="c_26" status="winner" movie="m_617" year="2007" recipient="Marcus H. Rosenmüller"/>
+  <award category="c_7" status="winner" movie="m_617" year="2007" recipient="Annie Brunner, Andreas Richter, Ursula Woerner"/>
+  <award category="c_30" status="winner" movie="m_617" year="2007" recipient="Gerd Baumann"/>
+  <award category="c_27" status="winner" movie="m_617" year="2007" recipient="Christian Lerch, Marcus H. Rosenmüller"/>
+  <award category="c_51" status="winner" movie="m_618" year="1977" recipient="Maximiliane Mainka und Peter Schubert"/>
+  <award category="c_18" status="winner" movie="m_619" year="1982" recipient="Wolfgang Dickmann"/>
+  <award category="c_10" status="winner" movie="m_620" year="1984" recipient="Roland Klick / Maran Film"/>
+  <award category="c_66" status="winner" movie="m_621" year="1971" recipient="Kurt Raab"/>
+  <award category="c_44" status="winner" movie="m_622" year="1967" recipient="Peter Schamoni"/>
+  <award category="c_16" status="winner" movie="m_623" year="1978" recipient="Egon Haase"/>
+  <award category="c_3" status="winner" movie="m_624" year="1992" recipient="Gernot Roll"/>
+  <award category="c_65" status="winner" movie="m_625" year="1955" recipient="Ottomar Domnick (Produzent und Regisseur)"/>
+  <award category="c_28" status="winner" movie="m_626" year="2007" recipient="Josef Bierbichler "/>
+  <award category="c_43" status="winner" movie="m_627" year="1998" recipient="X Filme Creative Pool / Palladio Film"/>
+  <award category="c_3" status="winner" movie="m_627" year="1998" recipient="Frank Griebe"/>
+  <award category="c_3" status="winner" movie="m_628" year="1998" recipient="Frank Griebe"/>
+  <award category="c_48" status="winner" movie="m_629" year="1993" recipient="Detlev Buck / Ernst Kahl"/>
+  <award category="c_6" status="winner" movie="m_629" year="1993" recipient="Horst Krause / Joachim Król"/>
+  <award category="c_8" status="winner" movie="m_629" year="1993" recipient="Detlef Petersen"/>
+  <award category="c_43" status="winner" movie="m_629" year="1993" recipient="Boje Buck Produktion"/>
+  <award category="c_83" status="winner" movie="m_630" year="1959" recipient="Robert Graf"/>
+  <award category="c_167" status="winner" movie="m_630" year="1959" recipient="Filmaufbau"/>
+  <award category="c_13" status="winner" movie="m_631" year="1958" recipient="Liselotte Pulver"/>
+  <award category="c_18" status="winner" movie="m_632" year="1984" recipient="Jörg Schmidt-Reitwein"/>
+  <award category="c_54" status="winner" movie="m_632" year="1984" recipient="Werner Herzog Filmproduktion"/>
+  <award category="c_135" status="winner" movie="m_633" year="2007" recipient="Erich Lackner, Mirjam Quinte, Pepe Danquart"/>
+  <award category="c_5" status="winner" movie="m_634" year="1962" recipient="Richard Münch"/>
+  <award category="c_63" status="winner" movie="m_634" year="1962" recipient="Otto Pischinger / Ernst Schomer"/>
+  <award category="c_168" status="winner" movie="m_634" year="1962" recipient="Deutsche Film-Hansa"/>
+  <award category="c_7" status="winner" movie="m_635" year="2004" recipient="Little Shark Entertainment / Senator Film Produktion"/>
+  <award category="c_103" status="winner" movie="m_635" year="2004" recipient="Little Shark Entertainment / Senator Film Produktion"/>
+  <award category="c_104" status="winner" movie="m_635" year="2004" recipient="Peter Lohmeyer"/>
+  <award category="c_47" status="winner" movie="m_636" year="1967" recipient="Strobel-Tichawsky"/>
+  <award category="c_169" status="winner" movie="m_637" year="1954" recipient="Schonger"/>
+  <award category="c_110" status="winner" movie="m_638" year="1989" recipient="Aise Romey-Schlagenhof"/>
+  <award category="c_112" status="winner" movie="m_638" year="1989" recipient="Hamburger Kinokompanie"/>
+  <award category="c_150" status="winner" movie="m_639" year="2008" recipient="Nina Hoss"/>
+  <award category="c_66" status="winner" movie="m_640" year="1982" recipient="Heidi und Toni Lüdi"/>
+  <award category="c_10" status="winner" movie="m_640" year="1982" recipient="Franz Seitz / Iduna"/>
+  <award category="c_16" status="winner" movie="m_641" year="1981" recipient="Neue Filmproduktion"/>
+  <award category="c_11" status="winner" movie="m_642" year="1971" recipient="Horst Bienek"/>
+  <award category="c_170" status="winner" movie="m_643" year="1955" recipient="Institut für Film und Bild"/>
+  <award category="c_133" status="winner" movie="m_644" year="1972" recipient="Claus Theo Gärtner"/>
+  <award category="c_16" status="winner" movie="m_645" year="1968" recipient="Axel Jahn"/>
+  <award category="c_124" status="winner" movie="m_646" year="1961" recipient="Uwe Krauss"/>
+  <award category="c_73" status="winner" movie="m_647" year="1998" recipient="Peter Lohmeyer"/>
+  <award category="c_43" status="winner" movie="m_647" year="1998" recipient="Bosko Biati Film / Prokino Filmproduktion / WDR / Kinotuotanto"/>
+  <award category="c_45" status="winner" movie="m_648" year="1967" recipient="Iduna Film"/>
+  <award category="c_80" status="winner" movie="m_649" year="1968" recipient="Werner Enke"/>
+  <award category="c_171" status="winner" movie="m_649" year="1968" recipient="Werner Enke / May Spils"/>
+  <award category="c_14" status="winner" movie="m_650" year="1962" recipient="Walter Giller"/>
+  <award category="c_68" status="winner" movie="m_650" year="1962" recipient="Gerd Oelschlegel"/>
+  <award category="c_168" status="winner" movie="m_650" year="1962" recipient="Ufa-Film-Hansa"/>
+  <award category="c_80" status="winner" movie="m_651" year="1978" recipient="Tina Engel"/>
+  <award category="c_10" status="winner" movie="m_651" year="1978" recipient="Bioskop-Film"/>
+
+</awards>
+</awarddata>
