@@ -40,6 +40,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -614,10 +616,10 @@ public class IOUtilities {
       "' to '" + targetFile.getAbsolutePath() + "'");
     
     InputStream stream = null;
-    GZIPInputStream gzipStream = null;
+    InputStream gzipStream = null;
     try {
       stream = new BufferedInputStream(new FileInputStream(srcFile), 0x4000);
-      gzipStream = new GZIPInputStream(stream);
+      gzipStream = openSaveGZipInputStream(stream);
       
       saveStream(gzipStream, targetFile);
     }
@@ -872,4 +874,27 @@ public class IOUtilities {
       
       return null;
     }
+
+    /**
+     * This method tries to open an inputstream as gzip and uncompresses it. If it fails,
+     * a normal inputstream is returned
+     *
+     * @param is Inputstream that could be compressed
+     * @return uncompressed inputstream
+     * @throws IOException Problems during opening of the Stream
+     * @since 3.0
+     */
+    public static InputStream openSaveGZipInputStream(final InputStream is) throws IOException {
+        final BufferedInputStream bis = new BufferedInputStream(is);
+        bis.mark(64);
+        try {
+            final InputStream result = new GZIPInputStream(bis);
+            return result;
+        } catch (final IOException e) {
+            e.printStackTrace();
+            bis.reset();
+            return bis;
+        }
+    }
+
 }

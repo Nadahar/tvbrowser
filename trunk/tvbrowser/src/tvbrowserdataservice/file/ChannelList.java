@@ -40,7 +40,6 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.TimeZone;
 import java.util.logging.Level;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import javax.swing.Icon;
@@ -51,6 +50,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import tvbrowserdataservice.TvBrowserDataService;
 import tvdataservice.TvDataService;
 import util.io.FileFormatException;
+import util.io.IOUtilities;
 import util.misc.ChangeTrackingProperties;
 import util.misc.SoftReferenceCache;
 import util.ui.ImageUtilities;
@@ -126,7 +126,7 @@ public class ChannelList {
     CSVReader reader;
 
     if (compressed) {
-      GZIPInputStream gIn = new GZIPInputStream(stream);
+      InputStream gIn = IOUtilities.openSaveGZipInputStream(stream);
       reader = new CSVReader(new InputStreamReader(gIn, "ISO-8859-15"), ';');
     } else {
       reader = new CSVReader(new InputStreamReader(stream, "ISO-8859-15"), ';');

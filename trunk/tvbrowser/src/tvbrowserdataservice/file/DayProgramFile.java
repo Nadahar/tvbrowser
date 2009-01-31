@@ -34,7 +34,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import util.exc.TvBrowserException;
@@ -350,7 +349,7 @@ public class DayProgramFile extends AbstractFile {
   public static int readVersionFromStream(InputStream stream)
     throws IOException, FileFormatException
   {
-    GZIPInputStream gIn = new GZIPInputStream(stream);
+    InputStream gIn = IOUtilities.openSaveGZipInputStream(stream);
 
     int fileVersion = gIn.read();
     if (fileVersion > FILE_VERSION) {
@@ -387,7 +386,7 @@ public class DayProgramFile extends AbstractFile {
   public void readFromStream(InputStream stream, DownloadJob job)
     throws IOException, FileFormatException
   {
-    GZIPInputStream gIn = new GZIPInputStream(stream);
+    InputStream gIn = IOUtilities.openSaveGZipInputStream(stream);
 
     int fileVersion = gIn.read();
     if (fileVersion > FILE_VERSION) {
@@ -421,7 +420,7 @@ public class DayProgramFile extends AbstractFile {
   }
 
   private int readProgCountFromStream(InputStream stream) throws IOException, FileFormatException {
-    GZIPInputStream gIn = new GZIPInputStream(stream);
+    InputStream gIn = IOUtilities.openSaveGZipInputStream(stream);
 
     gIn.read(); //version
 

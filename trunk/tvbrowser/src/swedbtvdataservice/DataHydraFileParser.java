@@ -8,6 +8,7 @@ import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
 import util.ui.Localizer;
+import util.io.IOUtilities;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -15,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.logging.Logger;
-import java.util.zip.GZIPInputStream;
 
 public class DataHydraFileParser {
 
@@ -125,7 +125,7 @@ public class DataHydraFileParser {
                   .getDefaultNetworkConnectionTimeout());
 
           if (con.getResponseCode() == 200) {
-            DataHydraDayParser.parseNew(new GZIPInputStream(con
+            DataHydraDayParser.parseNew(IOUtilities.openSaveGZipInputStream(con
                     .getInputStream()), channel, date, dataHashtable, service);
             if (modifiedDates.contains(date)) {
               mLog.info("Updating lastUpdate property for date "

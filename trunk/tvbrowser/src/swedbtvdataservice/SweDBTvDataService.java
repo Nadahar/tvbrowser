@@ -36,7 +36,6 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.GZIPInputStream;
 import javax.swing.Icon;
 
 public class SweDBTvDataService extends devplugin.AbstractTvDataService {
@@ -303,7 +302,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
               "Channel list file for group \"{0}\" is empty: {1}.", group.getName(), url);
         }
         else {
-          DataHydraChannelContainer[] DataHydracontainers = DataHydraChannelParser.parse(new GZIPInputStream(con.getInputStream()));
+          DataHydraChannelContainer[] DataHydracontainers = DataHydraChannelParser.parse(IOUtilities.openSaveGZipInputStream(con.getInputStream()));
   
           if (monitor != null) {
             monitor.setMessage(mLocalizer.msg("Progressmessage.40", "Found {0} channels, downloading channel icons...", DataHydracontainers.length));
