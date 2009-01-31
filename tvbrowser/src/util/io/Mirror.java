@@ -39,7 +39,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.StringTokenizer;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import devplugin.Date;
@@ -136,7 +135,7 @@ public class Mirror {
    * @throws FileFormatException Thrown if something went wrong.
    */
   private static Mirror[] readMirrorListFromStream(InputStream stream) throws IOException, FileFormatException {
-    GZIPInputStream gIn = new GZIPInputStream(stream);
+    InputStream gIn = IOUtilities.openSaveGZipInputStream(stream);
     BufferedReader reader = new BufferedReader(new InputStreamReader(gIn));
 
     ArrayList<Mirror> list = new ArrayList<Mirror>();

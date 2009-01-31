@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import util.io.DownloadJob;
@@ -169,7 +168,7 @@ public class SummaryFile extends AbstractFile {
   public void readFromStream(InputStream stream, DownloadJob job)
     throws IOException, FileFormatException
   {
-    GZIPInputStream gIn = new GZIPInputStream(stream);
+    InputStream gIn = IOUtilities.openSaveGZipInputStream(stream);
     
     // The header
     int fileVersion = gIn.read();

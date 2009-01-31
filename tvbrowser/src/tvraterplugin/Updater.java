@@ -28,7 +28,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import javax.swing.JOptionPane;
@@ -413,7 +412,7 @@ public class Updater implements Progress {
        * line; try { do { line = dis.readLine(); System.out.println(line);
        * }while (line != null); } catch (IOException e) { line = "0";}
        */
-      document = builder.parse(new GZIPInputStream(uc.getInputStream()));
+      document = builder.parse(IOUtilities.openSaveGZipInputStream(uc.getInputStream()));
     } catch (Exception e) {
       throw e;
     }
