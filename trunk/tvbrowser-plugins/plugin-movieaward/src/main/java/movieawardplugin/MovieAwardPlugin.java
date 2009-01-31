@@ -139,15 +139,17 @@ final public class MovieAwardPlugin extends Plugin {
       mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
           .getResourceAsStream("data/deutscher_comedypreis.xml"),
           mMovieDatabase));
-      // mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
-      // .getResourceAsStream("data/deutscher_filmpreis.xml"),
-      // new MovieAwardForMovies(mMovieDatabase)));
+      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
+      .getResourceAsStream("data/deutscher_filmpreis.xml"),
+      new MovieAwardForMovies(mMovieDatabase)));
       mMovieAwards
           .add(MovieDataFactory.loadMovieDataFromStream(getClass()
               .getResourceAsStream("data/europeanmovieawards.xml"),
               new MovieAwardForMovies(mMovieDatabase)));
       mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
           .getResourceAsStream("data/grimme.xml"), mMovieDatabase));
+      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
+          .getResourceAsStream("data/max_ophuels.xml"), mMovieDatabase));
       mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
           .getResourceAsStream("data/menschenrechtsfilmpreis.xml"),
           mMovieDatabase));
