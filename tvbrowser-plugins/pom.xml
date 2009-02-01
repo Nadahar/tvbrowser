@@ -28,6 +28,7 @@
     </plugins>
   </build>
   <modules>
+    <module>plugin-checker</module>
     <module>plugin-countrycode</module>
     <module>plugin-dataviewer</module>
     <module>plugin-idontwant2see</module>
