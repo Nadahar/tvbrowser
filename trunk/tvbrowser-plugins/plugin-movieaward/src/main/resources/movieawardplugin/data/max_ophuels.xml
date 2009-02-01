@@ -18,7 +18,7 @@
   </category>
   <category id="c_3">
     <name lang="de">Filmpreis des saarländischen Ministerpräsidenten</name>
-    <name lang="en">Movie award of the  des saarländischen Ministerpräsidenten</name>
+    <name lang="en">Movie award of the Prime minister of Saarland</name>
   </category>
   <category id="c_4">
     <name lang="de">Dokumentarfilmpreis</name>
@@ -151,285 +151,315 @@
       <title lang="de">Selbstgespräche</title>
   </movie>
   <movie id="m_30">
-      <title lang="de">Böse Bilder</title>
+      <title lang="de">Universalove</title>
   </movie>
   <movie id="m_31">
-      <title lang="de">His mother's voice</title>
+      <title lang="de">Böse Bilder</title>
   </movie>
   <movie id="m_32">
-      <title lang="de">In your shoes</title>
+      <title lang="de">Torpedo</title>
   </movie>
   <movie id="m_33">
-      <title lang="de">12 Bilder für Konrad, Katharina Werner; Die Hochzeit</title>
+      <title lang="de">His mother's voice</title>
   </movie>
   <movie id="m_34">
-      <title lang="de">Fake!</title>
+      <title lang="de">In your shoes</title>
   </movie>
   <movie id="m_35">
-      <title lang="de">Gfrasta</title>
+      <title lang="de">12 Bilder für Konrad, Katharina Werner; Die Hochzeit</title>
   </movie>
   <movie id="m_36">
-      <title lang="de">Dobermann</title>
+      <title lang="de">Fake!</title>
   </movie>
   <movie id="m_37">
-      <title lang="de">Ich muss gehen</title>
+      <title lang="de">Gfrasta</title>
   </movie>
   <movie id="m_38">
-      <title lang="de">Du und ich, wir können einander gehören</title>
+      <title lang="de">Dobermann</title>
   </movie>
   <movie id="m_39">
-      <title lang="de">Insel der Schildkröte</title>
+      <title lang="de">Ich muss gehen</title>
   </movie>
   <movie id="m_40">
-      <title lang="de">Grauzone</title>
+      <title lang="de">Du und ich, wir können einander gehören</title>
   </movie>
   <movie id="m_41">
-      <title lang="de">Allein</title>
+      <title lang="de">Insel der Schildkröte</title>
   </movie>
   <movie id="m_42">
-      <title lang="de">37 ohne Zwiebeln</title>
+      <title lang="de">Grauzone</title>
   </movie>
   <movie id="m_43">
-      <title lang="de">Fair trade</title>
+      <title lang="de">Allein</title>
   </movie>
   <movie id="m_44">
-      <title lang="de">Dunkelrot</title>
+      <title lang="de">37 ohne Zwiebeln</title>
   </movie>
   <movie id="m_45">
-      <title lang="de">Junge Leute in der Stadt</title>
+      <title lang="de">Fair trade</title>
   </movie>
   <movie id="m_46">
-      <title lang="de">Schmetterlinge</title>
+      <title lang="de">Dunkelrot</title>
   </movie>
   <movie id="m_47">
-      <title lang="de">Die weißen Zwerge</title>
+      <title lang="de">Schautag</title>
   </movie>
   <movie id="m_48">
-      <title lang="de">Caracas</title>
+      <title lang="de">Junge Leute in der Stadt</title>
   </movie>
   <movie id="m_49">
-      <title lang="de">Himmel oder Hölle</title>
+      <title lang="de">Schmetterlinge</title>
   </movie>
   <movie id="m_50">
-      <title lang="de">Die blaue Stunde</title>
+      <title lang="de">Die weißen Zwerge</title>
   </movie>
   <movie id="m_51">
-      <title lang="de">Frankie, Jonnie und die anderen</title>
+      <title lang="de">Caracas</title>
   </movie>
   <movie id="m_52">
-      <title lang="de">Indien</title>
+      <title lang="de">Himmel oder Hölle</title>
   </movie>
   <movie id="m_53">
-      <title lang="de">Unter der Milchstraße</title>
+      <title lang="de">Die blaue Stunde</title>
   </movie>
   <movie id="m_54">
-      <title lang="de">Die Ameisenstraße</title>
+      <title lang="de">Frankie, Jonnie und die anderen</title>
   </movie>
   <movie id="m_55">
-      <title lang="de">Honig und Asche</title>
+      <title lang="de">Indien</title>
   </movie>
   <movie id="m_56">
-      <title lang="de">Die Siebtelbauern</title>
+      <title lang="de">Unter der Milchstraße</title>
   </movie>
   <movie id="m_57">
-      <title lang="de">Oi! Warning</title>
+      <title lang="de">Die Ameisenstraße</title>
   </movie>
   <movie id="m_58">
-      <title lang="de">Paul is Dead</title>
+      <title lang="de">Honig und Asche</title>
   </movie>
   <movie id="m_59">
-      <title lang="de">Der Überfall</title>
+      <title lang="de">Die Siebtelbauern</title>
   </movie>
   <movie id="m_60">
-      <title lang="de">Fickende Fische</title>
+      <title lang="de">Oi! Warning</title>
   </movie>
   <movie id="m_61">
-      <title lang="de">Oltre il confine</title>
+      <title lang="de">Paul is Dead</title>
   </movie>
   <movie id="m_62">
-      <title lang="de">Hurensohn</title>
+      <title lang="de">Der Überfall</title>
   </movie>
   <movie id="m_63">
-      <title lang="de">Hallesche Kometen</title>
+      <title lang="de">Fickende Fische</title>
   </movie>
   <movie id="m_64">
-      <title lang="de">Prinzessin</title>
+      <title lang="de">Oltre il confine</title>
   </movie>
   <movie id="m_65">
-      <title lang="de">Karger</title>
+      <title lang="de">Hurensohn</title>
   </movie>
   <movie id="m_66">
-      <title lang="de">Allein in vier Wänden</title>
+      <title lang="de">Hallesche Kometen</title>
   </movie>
   <movie id="m_67">
-      <title lang="de">Manana al mar</title>
+      <title lang="de">Prinzessin</title>
   </movie>
   <movie id="m_68">
-      <title lang="de">Exile family movie</title>
+      <title lang="de">Karger</title>
   </movie>
   <movie id="m_69">
-      <title lang="de">Krücke</title>
+      <title lang="de">Allein in vier Wänden</title>
   </movie>
   <movie id="m_70">
-      <title lang="de">Verhängnis</title>
+      <title lang="de">Ein Augenblick Freiheit</title>
   </movie>
   <movie id="m_71">
-      <title lang="de">Neben der Zeit</title>
+      <title lang="de">Manana al mar</title>
   </movie>
   <movie id="m_72">
-      <title lang="de">Lea</title>
+      <title lang="de">Exile family movie</title>
   </movie>
   <movie id="m_73">
-      <title lang="de">Härtetest</title>
+      <title lang="de">Alias</title>
   </movie>
   <movie id="m_74">
-      <title lang="de">Aprilkinder</title>
+      <title lang="de">Krücke</title>
   </movie>
   <movie id="m_75">
-      <title lang="de">Tuvalu</title>
+      <title lang="de">Verhängnis</title>
   </movie>
   <movie id="m_76">
-      <title lang="de">Birthday</title>
+      <title lang="de">Neben der Zeit</title>
   </movie>
   <movie id="m_77">
-      <title lang="de">Mein Bruder der Vampir</title>
+      <title lang="de">Lea</title>
   </movie>
   <movie id="m_78">
-      <title lang="de">Kiki &amp; Tiger</title>
+      <title lang="de">Härtetest</title>
   </movie>
   <movie id="m_79">
-      <title lang="de">Eine andere Liga</title>
+      <title lang="de">Aprilkinder</title>
   </movie>
   <movie id="m_80">
-      <title lang="de">Mondscheinkinder</title>
+      <title lang="de">Tuvalu</title>
   </movie>
   <movie id="m_81">
-      <title lang="de">Reine Geschmacksache</title>
+      <title lang="de">Birthday</title>
   </movie>
   <movie id="m_82">
-      <title lang="de">Novemberkind</title>
+      <title lang="de">Mein Bruder der Vampir</title>
   </movie>
   <movie id="m_83">
-      <title lang="de">Ravioli</title>
+      <title lang="de">Kiki &amp; Tiger</title>
   </movie>
   <movie id="m_84">
-      <title lang="de">Between the lines</title>
+      <title lang="de">Eine andere Liga</title>
   </movie>
   <movie id="m_85">
-      <title lang="de">Große Lügen</title>
+      <title lang="de">Mondscheinkinder</title>
   </movie>
   <movie id="m_86">
-      <title lang="de">Höhere Gewalt</title>
+      <title lang="de">Reine Geschmacksache</title>
   </movie>
   <movie id="m_87">
-      <title lang="de">Pipermint… das Leben möglicherweise</title>
+      <title lang="de">Novemberkind</title>
   </movie>
   <movie id="m_88">
-      <title lang="de">Preussisch Gangstar</title>
+      <title lang="de">Ganz nah bei dir</title>
   </movie>
   <movie id="m_89">
-      <title lang="de">Requiem für eine romantische Frau</title>
+      <title lang="de">Ravioli</title>
   </movie>
   <movie id="m_90">
-      <title lang="de">Nordrand</title>
+      <title lang="de">Between the lines</title>
   </movie>
   <movie id="m_91">
-      <title lang="de">Utopia blues</title>
+      <title lang="de">Große Lügen</title>
   </movie>
   <movie id="m_92">
-      <title lang="de">Ikarus</title>
+      <title lang="de">Höhere Gewalt</title>
   </movie>
   <movie id="m_93">
-      <title lang="de">Struggle, Ruth Mader, Martin Leidenfrost, Barbara Albert; Muxmäuschenstill</title>
+      <title lang="de">Kleiner Sonntag</title>
   </movie>
   <movie id="m_94">
-      <title lang="de">Reine Geschmacksache, Tom Streuber</title>
+      <title lang="de">Pipermint… das Leben möglicherweise</title>
   </movie>
   <movie id="m_95">
-      <title lang="de">Mein Freund aus Faro</title>
+      <title lang="de">Preussisch Gangstar</title>
   </movie>
   <movie id="m_96">
-      <title lang="de">Am seidenen Faden</title>
+      <title lang="de">So glücklich war ich noch nie</title>
   </movie>
   <movie id="m_97">
-      <title lang="de">Vater und Feind</title>
+      <title lang="de">Requiem für eine romantische Frau</title>
   </movie>
   <movie id="m_98">
-      <title lang="de">Die Gedanken sind frei</title>
+      <title lang="de">Nordrand</title>
   </movie>
   <movie id="m_99">
-      <title lang="de">Nur ein Sommer</title>
+      <title lang="de">Utopia blues</title>
   </movie>
   <movie id="m_100">
-      <title lang="de">Leise Schatten</title>
+      <title lang="de">Ikarus</title>
   </movie>
   <movie id="m_101">
-      <title lang="de">Langer Gang</title>
+      <title lang="de">Struggle, Ruth Mader, Martin Leidenfrost, Barbara Albert; Muxmäuschenstill</title>
   </movie>
   <movie id="m_102">
-      <title lang="de">Weltmeister</title>
+      <title lang="de">Reine Geschmacksache, Tom Streuber</title>
   </movie>
   <movie id="m_103">
-      <title lang="de">Der Kopf des Mohren</title>
+      <title lang="de">Mein Freund aus Faro</title>
   </movie>
   <movie id="m_104">
-      <title lang="de">Engelchen</title>
+      <title lang="de">Der Architekt</title>
   </movie>
   <movie id="m_105">
-      <title lang="de">Drachenland</title>
+      <title lang="de">Ein Teil von mir</title>
   </movie>
   <movie id="m_106">
-      <title lang="de">Verzweiflung</title>
+      <title lang="de">Am seidenen Faden</title>
   </movie>
   <movie id="m_107">
-      <title lang="de">Alaska.de</title>
+      <title lang="de">Vater und Feind</title>
   </movie>
   <movie id="m_108">
-      <title lang="de">Utopia Blues</title>
+      <title lang="de">Die Gedanken sind frei</title>
   </movie>
   <movie id="m_109">
-      <title lang="de">Der gläserne Blick</title>
+      <title lang="de">Nur ein Sommer</title>
   </movie>
   <movie id="m_110">
-      <title lang="de">Hello goodbye</title>
+      <title lang="de">Leise Schatten</title>
   </movie>
   <movie id="m_111">
-      <title lang="de">Mein unbekannter Ehemann</title>
+      <title lang="de">Langer Gang</title>
   </movie>
   <movie id="m_112">
-      <title lang="de">Cuba libre</title>
+      <title lang="de">Weltmeister</title>
   </movie>
   <movie id="m_113">
-      <title lang="de">Tempo</title>
+      <title lang="de">Der Kopf des Mohren</title>
   </movie>
   <movie id="m_114">
-      <title lang="de">Gesches Gift</title>
+      <title lang="de">Engelchen</title>
   </movie>
   <movie id="m_115">
-      <title lang="de">Plus-minus Null</title>
+      <title lang="de">Drachenland</title>
   </movie>
   <movie id="m_116">
-      <title lang="de">Als Großvater Rita Hayworth liebte</title>
+      <title lang="de">Verzweiflung</title>
   </movie>
   <movie id="m_117">
-      <title lang="de">Vollgas</title>
+      <title lang="de">Alaska.de</title>
   </movie>
   <movie id="m_118">
-      <title lang="de">Wir</title>
+      <title lang="de">Utopia Blues</title>
   </movie>
   <movie id="m_119">
-      <title lang="de">Verflixt verliebt</title>
+      <title lang="de">Der gläserne Blick</title>
   </movie>
   <movie id="m_120">
-      <title lang="de">Netto</title>
+      <title lang="de">Hello goodbye</title>
   </movie>
   <movie id="m_121">
-      <title lang="de">Der Plan des Herrn Thomaschek</title>
+      <title lang="de">Mein unbekannter Ehemann</title>
   </movie>
   <movie id="m_122">
-      <title lang="de">Die fliegenden Kinder</title>
+      <title lang="de">Cuba libre</title>
   </movie>
   <movie id="m_123">
+      <title lang="de">Tempo</title>
+  </movie>
+  <movie id="m_124">
+      <title lang="de">Gesches Gift</title>
+  </movie>
+  <movie id="m_125">
+      <title lang="de">Plus-minus Null</title>
+  </movie>
+  <movie id="m_126">
+      <title lang="de">Als Großvater Rita Hayworth liebte</title>
+  </movie>
+  <movie id="m_127">
+      <title lang="de">Vollgas</title>
+  </movie>
+  <movie id="m_128">
+      <title lang="de">Wir</title>
+  </movie>
+  <movie id="m_129">
+      <title lang="de">Verflixt verliebt</title>
+  </movie>
+  <movie id="m_130">
+      <title lang="de">Netto</title>
+  </movie>
+  <movie id="m_131">
+      <title lang="de">Der Plan des Herrn Thomaschek</title>
+  </movie>
+  <movie id="m_132">
+      <title lang="de">Die fliegenden Kinder</title>
+  </movie>
+  <movie id="m_133">
       <title lang="de">Richtung Zukunft durch die Nacht</title>
   </movie>
 
@@ -464,115 +494,127 @@
   <award category="c_1" status="winner" movie="m_26" year="2006" recipient="Benjamin Heisenberg"/>
   <award category="c_1" status="winner" movie="m_27" year="2007" recipient="Sung-Hyong Cho"/>
   <award category="c_1" status="winner" movie="m_28" year="2008" recipient="André Erkau"/>
-  <award category="c_2" status="winner" movie="m_29" year="2008" recipient="Stefan Schaller"/>
-  <award category="c_3" status="winner" movie="m_30" year="1995" recipient="Oliver Paulus"/>
-  <award category="c_3" status="winner" movie="m_31" year="1996" recipient="Christoph Röhl"/>
-  <award category="c_3" status="winner" movie="m_32" year="1997" recipient="Husam Chhadat"/>
-  <award category="c_3" status="winner" movie="m_33" year="1998" recipient="Sebastian Peterson"/>
-  <award category="c_3" status="winner" movie="m_34" year="1999" recipient="Ruth Mader"/>
-  <award category="c_3" status="winner" movie="m_35" year="2000" recipient="Florian Henckel von Donnersmarck"/>
-  <award category="c_3" status="winner" movie="m_36" year="2001" recipient="Florian Mischa Böder"/>
-  <award category="c_3" status="winner" movie="m_37" year="2002" recipient="Sven Harguth"/>
-  <award category="c_3" status="winner" movie="m_38" year="2003" recipient="Maru Solores"/>
-  <award category="c_3" status="winner" movie="m_39" year="2004" recipient="Karl Bretschneider"/>
-  <award category="c_3" status="winner" movie="m_40" year="2005" recipient="Thomas Durchschlag"/>
-  <award category="c_3" status="winner" movie="m_41" year="2006" recipient="André Erkau"/>
-  <award category="c_3" status="winner" movie="m_42" year="2007" recipient="Michael Dreher"/>
-  <award category="c_3" status="winner" movie="m_43" year="2008" recipient="Frauke Thielecke"/>
-  <award category="c_4" status="winner" movie="m_44" year="1987" recipient="Karl-Heinz Lotz"/>
-  <award category="c_4" status="winner" movie="m_45" year="1988" recipient="Wolfgang Becker"/>
-  <award category="c_4" status="winner" movie="m_46" year="1989" recipient="Dirk Schäfer"/>
-  <award category="c_4" status="winner" movie="m_47" year="1990" recipient="Michael Schottenberg"/>
-  <award category="c_4" status="winner" movie="m_48" year="1991" recipient="Wolfgang Murnberger"/>
-  <award category="c_4" status="winner" movie="m_49" year="1992" recipient="Marcel Gisler"/>
-  <award category="c_4" status="winner" movie="m_50" year="1993" recipient="Hans-Erich Viet"/>
-  <award category="c_4" status="winner" movie="m_51" year="1994" recipient="Paul Harather"/>
-  <award category="c_4" status="winner" movie="m_52" year="1995" recipient="Matthias X. Oberg"/>
-  <award category="c_4" status="winner" movie="m_53" year="1996" recipient="Michael Glawogger"/>
-  <award category="c_4" status="winner" movie="m_54" year="1997" recipient="Nadia Fares"/>
-  <award category="c_4" status="winner" movie="m_55" year="1998" recipient="Stefan Ruzowitzky"/>
-  <award category="c_4" status="winner" movie="m_56" year="1999" recipient="Benjamin und Dominik Reding"/>
-  <award category="c_4" status="winner" movie="m_57" year="2000" recipient="Hendrik Handloegten"/>
-  <award category="c_4" status="winner" movie="m_58" year="2001" recipient="Florian Flicker"/>
-  <award category="c_4" status="winner" movie="m_59" year="2002" recipient="Almut Getto"/>
-  <award category="c_4" status="winner" movie="m_60" year="2003" recipient="Rolando Colla"/>
-  <award category="c_4" status="winner" movie="m_61" year="2004" recipient="Michael Sturminger"/>
-  <award category="c_4" status="winner" movie="m_62" year="2005" recipient="Susanne Irina Zacharias"/>
-  <award category="c_4" status="winner" movie="m_63" year="2006" recipient="Birgit Grosskopf"/>
-  <award category="c_4" status="winner" movie="m_64" year="2007" recipient="Elke Hauck"/>
-  <award category="c_4" status="winner" movie="m_65" year="2008" recipient="Alexandra Westmeier"/>
-  <award category="c_5" status="winner" movie="m_66" year="2006" recipient="Ines Thomsen"/>
-  <award category="c_5" status="winner" movie="m_67" year="2007" recipient="Arash T. Riahi"/>
-  <award category="c_5" status="winner" movie="m_65" year="2008" recipient="Alexandra Westmeier"/>
-  <award category="c_6" status="winner" movie="m_68" year="1993" recipient="Jörg Grünler"/>
-  <award category="c_6" status="winner" movie="m_51" year="1994" recipient="Paul Harather"/>
-  <award category="c_6" status="winner" movie="m_69" year="1995" recipient="Fred Kelemen"/>
-  <award category="c_6" status="winner" movie="m_70" year="1996" recipient="Andreas Kleinert"/>
-  <award category="c_6" status="winner" movie="m_71" year="1997" recipient="Ivan Fila"/>
-  <award category="c_6" status="winner" movie="m_72" year="1998" recipient="Janek Rieke"/>
-  <award category="c_6" status="winner" movie="m_73" year="1999" recipient="Yüksel Yavuz"/>
-  <award category="c_6" status="winner" movie="m_74" year="2000" recipient="Veit Helmer"/>
-  <award category="c_6" status="winner" movie="m_75" year="2001" recipient="Stefan Jäger"/>
-  <award category="c_6" status="winner" movie="m_76" year="2002" recipient="Sven Taddicken"/>
-  <award category="c_6" status="winner" movie="m_77" year="2003" recipient="Alain Gsponer"/>
+  <award category="c_1" status="winner" movie="m_29" year="2009" recipient="Thomas Woschitz"/>
+  <award category="c_2" status="winner" movie="m_30" year="2008" recipient="Stefan Schaller"/>
+  <award category="c_2" status="winner" movie="m_31" year="2009" recipient="Helene Hegemann"/>
+  <award category="c_3" status="winner" movie="m_32" year="1995" recipient="Oliver Paulus"/>
+  <award category="c_3" status="winner" movie="m_33" year="1996" recipient="Christoph Röhl"/>
+  <award category="c_3" status="winner" movie="m_34" year="1997" recipient="Husam Chhadat"/>
+  <award category="c_3" status="winner" movie="m_35" year="1998" recipient="Sebastian Peterson"/>
+  <award category="c_3" status="winner" movie="m_36" year="1999" recipient="Ruth Mader"/>
+  <award category="c_3" status="winner" movie="m_37" year="2000" recipient="Florian Henckel von Donnersmarck"/>
+  <award category="c_3" status="winner" movie="m_38" year="2001" recipient="Florian Mischa Böder"/>
+  <award category="c_3" status="winner" movie="m_39" year="2002" recipient="Sven Harguth"/>
+  <award category="c_3" status="winner" movie="m_40" year="2003" recipient="Maru Solores"/>
+  <award category="c_3" status="winner" movie="m_41" year="2004" recipient="Karl Bretschneider"/>
+  <award category="c_3" status="winner" movie="m_42" year="2005" recipient="Thomas Durchschlag"/>
+  <award category="c_3" status="winner" movie="m_43" year="2006" recipient="André Erkau"/>
+  <award category="c_3" status="winner" movie="m_44" year="2007" recipient="Michael Dreher"/>
+  <award category="c_3" status="winner" movie="m_45" year="2008" recipient="Frauke Thielecke"/>
+  <award category="c_3" status="winner" movie="m_46" year="2009" recipient="Marvin Kren"/>
+  <award category="c_4" status="winner" movie="m_47" year="1987" recipient="Karl-Heinz Lotz"/>
+  <award category="c_4" status="winner" movie="m_48" year="1988" recipient="Wolfgang Becker"/>
+  <award category="c_4" status="winner" movie="m_49" year="1989" recipient="Dirk Schäfer"/>
+  <award category="c_4" status="winner" movie="m_50" year="1990" recipient="Michael Schottenberg"/>
+  <award category="c_4" status="winner" movie="m_51" year="1991" recipient="Wolfgang Murnberger"/>
+  <award category="c_4" status="winner" movie="m_52" year="1992" recipient="Marcel Gisler"/>
+  <award category="c_4" status="winner" movie="m_53" year="1993" recipient="Hans-Erich Viet"/>
+  <award category="c_4" status="winner" movie="m_54" year="1994" recipient="Paul Harather"/>
+  <award category="c_4" status="winner" movie="m_55" year="1995" recipient="Matthias X. Oberg"/>
+  <award category="c_4" status="winner" movie="m_56" year="1996" recipient="Michael Glawogger"/>
+  <award category="c_4" status="winner" movie="m_57" year="1997" recipient="Nadia Fares"/>
+  <award category="c_4" status="winner" movie="m_58" year="1998" recipient="Stefan Ruzowitzky"/>
+  <award category="c_4" status="winner" movie="m_59" year="1999" recipient="Benjamin und Dominik Reding"/>
+  <award category="c_4" status="winner" movie="m_60" year="2000" recipient="Hendrik Handloegten"/>
+  <award category="c_4" status="winner" movie="m_61" year="2001" recipient="Florian Flicker"/>
+  <award category="c_4" status="winner" movie="m_62" year="2002" recipient="Almut Getto"/>
+  <award category="c_4" status="winner" movie="m_63" year="2003" recipient="Rolando Colla"/>
+  <award category="c_4" status="winner" movie="m_64" year="2004" recipient="Michael Sturminger"/>
+  <award category="c_4" status="winner" movie="m_65" year="2005" recipient="Susanne Irina Zacharias"/>
+  <award category="c_4" status="winner" movie="m_66" year="2006" recipient="Birgit Grosskopf"/>
+  <award category="c_4" status="winner" movie="m_67" year="2007" recipient="Elke Hauck"/>
+  <award category="c_4" status="winner" movie="m_68" year="2008" recipient="Alexandra Westmeier"/>
+  <award category="c_4" status="winner" movie="m_69" year="2009" recipient="Arash T. Riahi"/>
+  <award category="c_5" status="winner" movie="m_70" year="2006" recipient="Ines Thomsen"/>
+  <award category="c_5" status="winner" movie="m_71" year="2007" recipient="Arash T. Riahi"/>
+  <award category="c_5" status="winner" movie="m_68" year="2008" recipient="Alexandra Westmeier"/>
+  <award category="c_5" status="winner" movie="m_72" year="2009" recipient="Jens Junker"/>
+  <award category="c_6" status="winner" movie="m_73" year="1993" recipient="Jörg Grünler"/>
+  <award category="c_6" status="winner" movie="m_54" year="1994" recipient="Paul Harather"/>
+  <award category="c_6" status="winner" movie="m_74" year="1995" recipient="Fred Kelemen"/>
+  <award category="c_6" status="winner" movie="m_75" year="1996" recipient="Andreas Kleinert"/>
+  <award category="c_6" status="winner" movie="m_76" year="1997" recipient="Ivan Fila"/>
+  <award category="c_6" status="winner" movie="m_77" year="1998" recipient="Janek Rieke"/>
+  <award category="c_6" status="winner" movie="m_78" year="1999" recipient="Yüksel Yavuz"/>
+  <award category="c_6" status="winner" movie="m_79" year="2000" recipient="Veit Helmer"/>
+  <award category="c_6" status="winner" movie="m_80" year="2001" recipient="Stefan Jäger"/>
+  <award category="c_6" status="winner" movie="m_81" year="2002" recipient="Sven Taddicken"/>
+  <award category="c_6" status="winner" movie="m_82" year="2003" recipient="Alain Gsponer"/>
   <award category="c_6" status="winner" movie="m_24" year="2004" recipient="Marcus Mittermeier"/>
-  <award category="c_6" status="winner" movie="m_78" year="2005" recipient="Buket Alakus"/>
-  <award category="c_6" status="winner" movie="m_79" year="2006" recipient="Manuela Stracke"/>
-  <award category="c_6" status="winner" movie="m_80" year="2007" recipient="Ingo Rasper"/>
-  <award category="c_6" status="winner" movie="m_81" year="2008" recipient="Christian Schwochow"/>
-  <award category="c_7" status="winner" movie="m_82" year="2003" recipient="Peter Payer"/>
+  <award category="c_6" status="winner" movie="m_83" year="2005" recipient="Buket Alakus"/>
+  <award category="c_6" status="winner" movie="m_84" year="2006" recipient="Manuela Stracke"/>
+  <award category="c_6" status="winner" movie="m_85" year="2007" recipient="Ingo Rasper"/>
+  <award category="c_6" status="winner" movie="m_86" year="2008" recipient="Christian Schwochow"/>
+  <award category="c_6" status="winner" movie="m_87" year="2009" recipient="Almut Getto"/>
+  <award category="c_7" status="winner" movie="m_88" year="2003" recipient="Peter Payer"/>
   <award category="c_7" status="winner" movie="m_24" year="2004" recipient="Marcus Mittermeier"/>
-  <award category="c_7" status="winner" movie="m_83" year="2006" recipient="Thomas Wartmann"/>
-  <award category="c_7" status="winner" movie="m_84" year="2007" recipient="Jany Tempel"/>
-  <award category="c_7" status="winner" movie="m_85" year="2008" recipient="Lars Henning Jung"/>
-  <award category="c_8" status="winner" movie="m_86" year="2004" recipient="Meret Becker"/>
+  <award category="c_7" status="winner" movie="m_89" year="2006" recipient="Thomas Wartmann"/>
+  <award category="c_7" status="winner" movie="m_90" year="2007" recipient="Jany Tempel"/>
+  <award category="c_7" status="winner" movie="m_91" year="2008" recipient="Lars Henning Jung"/>
+  <award category="c_7" status="winner" movie="m_92" year="2009" recipient="Philipp Ramspeck"/>
+  <award category="c_8" status="winner" movie="m_93" year="2004" recipient="Meret Becker"/>
   <award category="c_8" status="winner" movie="m_26" year="2006" recipient="Lorenz Daniel"/>
-  <award category="c_8" status="winner" movie="m_87" year="2007" recipient="Benjamin Krbetschek"/>
+  <award category="c_8" status="winner" movie="m_94" year="2007" recipient="Benjamin Krbetschek"/>
   <award category="c_8" status="winner" movie="m_28" year="2008" recipient="Dürbeck &amp; Dohmen"/>
+  <award category="c_8" status="winner" movie="m_95" year="2009" recipient="Dieter Schleip"/>
   <award category="c_9" status="winner" movie="m_18" year="1998" recipient="Sandra Nettelbeck"/>
-  <award category="c_9" status="winner" movie="m_88" year="1999" recipient="Dagmar Knöpfel"/>
-  <award category="c_9" status="winner" movie="m_89" year="2000" recipient="Barbara Albert"/>
-  <award category="c_9" status="winner" movie="m_75" year="2001" recipient="Stefan Jäger"/>
-  <award category="c_9" status="winner" movie="m_90" year="2002" recipient="Stefan Haupt"/>
-  <award category="c_9" status="winner" movie="m_91" year="2003" recipient="Bernhard Weirather"/>
-  <award category="c_9" status="winner" movie="m_92" year="2004" recipient="Jan Stahlberg"/>
+  <award category="c_9" status="winner" movie="m_96" year="1999" recipient="Dagmar Knöpfel"/>
+  <award category="c_9" status="winner" movie="m_97" year="2000" recipient="Barbara Albert"/>
+  <award category="c_9" status="winner" movie="m_80" year="2001" recipient="Stefan Jäger"/>
+  <award category="c_9" status="winner" movie="m_98" year="2002" recipient="Stefan Haupt"/>
+  <award category="c_9" status="winner" movie="m_99" year="2003" recipient="Bernhard Weirather"/>
+  <award category="c_9" status="winner" movie="m_100" year="2004" recipient="Jan Stahlberg"/>
   <award category="c_9" status="winner" movie="m_26" year="2006" recipient="Benjamin Heisenberg"/>
-  <award category="c_9" status="winner" movie="m_93" year="2007" recipient="Ingo Rasper"/>
-  <award category="c_9" status="winner" movie="m_94" year="2008" recipient="Nana Neul"/>
-  <award category="c_10" status="winner" movie="m_95" year="2005" recipient="Katarina Peters"/>
-  <award category="c_10" status="winner" movie="m_96" year="2006" recipient="Susanne Jäger"/>
-  <award category="c_10" status="winner" movie="m_97" year="2007" recipient="Saara Aila Waasner"/>
-  <award category="c_10" status="winner" movie="m_98" year="2008" recipient="Tamara Staudt"/>
-  <award category="c_11" status="winner" movie="m_99" year="1992" recipient="Sherry Hormann"/>
-  <award category="c_11" status="winner" movie="m_100" year="1993" recipient="Yilmaz Arslan"/>
-  <award category="c_11" status="winner" movie="m_101" year="1994" recipient="Zoran Solomun"/>
+  <award category="c_9" status="winner" movie="m_101" year="2007" recipient="Ingo Rasper"/>
+  <award category="c_9" status="winner" movie="m_102" year="2008" recipient="Nana Neul"/>
+  <award category="c_9" status="winner" movie="m_103" year="2009" recipient="Ina Weisse und Daphne Charizani"/>
+  <award category="c_9" status="winner" movie="m_104" year="2009" recipient="Christoph Röhl"/>
+  <award category="c_10" status="winner" movie="m_105" year="2005" recipient="Katarina Peters"/>
+  <award category="c_10" status="winner" movie="m_106" year="2006" recipient="Susanne Jäger"/>
+  <award category="c_10" status="winner" movie="m_107" year="2007" recipient="Saara Aila Waasner"/>
+  <award category="c_10" status="winner" movie="m_108" year="2008" recipient="Tamara Staudt"/>
+  <award category="c_10" status="winner" movie="m_104" year="2009" recipient="Christoph Röhl"/>
+  <award category="c_11" status="winner" movie="m_109" year="1992" recipient="Sherry Hormann"/>
+  <award category="c_11" status="winner" movie="m_110" year="1993" recipient="Yilmaz Arslan"/>
+  <award category="c_11" status="winner" movie="m_111" year="1994" recipient="Zoran Solomun"/>
   <award category="c_11" status="winner" movie="m_15" year="1995" recipient="Rainer Kaufmann"/>
-  <award category="c_11" status="winner" movie="m_102" year="1996" recipient="Paulus Manker"/>
-  <award category="c_11" status="winner" movie="m_103" year="1997" recipient="Heike Misselwitz"/>
-  <award category="c_11" status="winner" movie="m_72" year="1998" recipient="Janek Rieke"/>
-  <award category="c_11" status="winner" movie="m_104" year="1999" recipient="Florian Gärtner"/>
-  <award category="c_11" status="winner" movie="m_105" year="2000" recipient="Marcus Lauterbach"/>
-  <award category="c_11" status="winner" movie="m_106" year="2001" recipient="Esther Gronenborn"/>
-  <award category="c_11" status="winner" movie="m_107" year="2002" recipient="Stefan Haupt"/>
-  <award category="c_11" status="winner" movie="m_77" year="2003" recipient="Alain Gsponer"/>
-  <award category="c_11" status="winner" movie="m_108" year="2004" recipient="Markus Heltschl"/>
-  <award category="c_11" status="winner" movie="m_41" year="2006" recipient="André Erkau"/>
-  <award category="c_11" status="winner" movie="m_67" year="2007" recipient="Arash T. Riahi"/>
-  <award category="c_11" status="winner" movie="m_109" year="2008" recipient="Stefan Jäger"/>
-  <award category="c_12" status="winner" movie="m_110" year="1995" recipient="Andreas Dresen"/>
-  <award category="c_12" status="winner" movie="m_111" year="1996" recipient="Christian Petzold"/>
-  <award category="c_12" status="winner" movie="m_112" year="1997" recipient="Stefan Ruzowitzky"/>
-  <award category="c_12" status="winner" movie="m_113" year="1998" recipient="Walburg von Waldenfels"/>
-  <award category="c_12" status="winner" movie="m_114" year="1999" recipient="Eoin Moore"/>
-  <award category="c_12" status="winner" movie="m_89" year="2000" recipient="Barbara Albert"/>
-  <award category="c_12" status="winner" movie="m_115" year="2001" recipient="Iva Svarcová"/>
-  <award category="c_12" status="winner" movie="m_116" year="2002" recipient="Sabine Derflinger"/>
-  <award category="c_12" status="winner" movie="m_117" year="2003" recipient="Martin Gypkens"/>
-  <award category="c_12" status="winner" movie="m_118" year="2004" recipient="Peter Luisi"/>
-  <award category="c_12" status="winner" movie="m_119" year="2005" recipient="Robert Thalheim"/>
-  <award category="c_13" status="winner" movie="m_120" year="2003" recipient="Ralf Westhoff"/>
-  <award category="c_14" status="winner" movie="m_121" year="1992" recipient="Benedict Neuenfels"/>
-  <award category="c_14" status="winner" movie="m_122" year="2002" recipient="Jörg Kalt"/>
+  <award category="c_11" status="winner" movie="m_112" year="1996" recipient="Paulus Manker"/>
+  <award category="c_11" status="winner" movie="m_113" year="1997" recipient="Heike Misselwitz"/>
+  <award category="c_11" status="winner" movie="m_77" year="1998" recipient="Janek Rieke"/>
+  <award category="c_11" status="winner" movie="m_114" year="1999" recipient="Florian Gärtner"/>
+  <award category="c_11" status="winner" movie="m_115" year="2000" recipient="Marcus Lauterbach"/>
+  <award category="c_11" status="winner" movie="m_116" year="2001" recipient="Esther Gronenborn"/>
+  <award category="c_11" status="winner" movie="m_117" year="2002" recipient="Stefan Haupt"/>
+  <award category="c_11" status="winner" movie="m_82" year="2003" recipient="Alain Gsponer"/>
+  <award category="c_11" status="winner" movie="m_118" year="2004" recipient="Markus Heltschl"/>
+  <award category="c_11" status="winner" movie="m_43" year="2006" recipient="André Erkau"/>
+  <award category="c_11" status="winner" movie="m_71" year="2007" recipient="Arash T. Riahi"/>
+  <award category="c_11" status="winner" movie="m_119" year="2008" recipient="Stefan Jäger"/>
+  <award category="c_11" status="winner" movie="m_69" year="2009" recipient="Arash T. Riahi"/>
+  <award category="c_12" status="winner" movie="m_120" year="1995" recipient="Andreas Dresen"/>
+  <award category="c_12" status="winner" movie="m_121" year="1996" recipient="Christian Petzold"/>
+  <award category="c_12" status="winner" movie="m_122" year="1997" recipient="Stefan Ruzowitzky"/>
+  <award category="c_12" status="winner" movie="m_123" year="1998" recipient="Walburg von Waldenfels"/>
+  <award category="c_12" status="winner" movie="m_124" year="1999" recipient="Eoin Moore"/>
+  <award category="c_12" status="winner" movie="m_97" year="2000" recipient="Barbara Albert"/>
+  <award category="c_12" status="winner" movie="m_125" year="2001" recipient="Iva Svarcová"/>
+  <award category="c_12" status="winner" movie="m_126" year="2002" recipient="Sabine Derflinger"/>
+  <award category="c_12" status="winner" movie="m_127" year="2003" recipient="Martin Gypkens"/>
+  <award category="c_12" status="winner" movie="m_128" year="2004" recipient="Peter Luisi"/>
+  <award category="c_12" status="winner" movie="m_129" year="2005" recipient="Robert Thalheim"/>
+  <award category="c_13" status="winner" movie="m_130" year="2003" recipient="Ralf Westhoff"/>
+  <award category="c_14" status="winner" movie="m_131" year="1992" recipient="Benedict Neuenfels"/>
+  <award category="c_14" status="winner" movie="m_132" year="2002" recipient="Jörg Kalt"/>
 
 </awards>
 </awarddata>
