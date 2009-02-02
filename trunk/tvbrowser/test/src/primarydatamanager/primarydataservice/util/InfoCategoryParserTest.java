@@ -28,6 +28,9 @@ public class InfoCategoryParserTest extends TestCase {
     assertCategory("Wrestling", Program.INFO_CATEGORIE_SPORTS);
     assertCategory("Kinder-Serie", Program.INFO_CATEGORIE_SERIES);
     assertCategory("Oper", Program.INFO_CATEGORIE_ARTS);
+    assertCategory("Western", Program.INFO_CATEGORIE_MOVIE);
+    assertCategory("Western, Schicksalsdrama, Melodram",
+        Program.INFO_CATEGORIE_MOVIE);
   }
 
   private void assertCategory(String genre, int category) {
