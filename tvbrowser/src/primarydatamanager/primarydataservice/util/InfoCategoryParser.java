@@ -62,22 +62,28 @@ public class InfoCategoryParser {
     }
   }
 
-  public int getCategory(String genre) {
-    genre = genre.trim().replaceAll("(-| )", "").toLowerCase();
+  public int getCategory(String genreText) {
+    genreText = genreText.trim().replaceAll("(-| )", "").toLowerCase();
 
-    if (genre.length() == 0) {
+    if (genreText.length() == 0) {
       return 0;
     }
     
-    for (int i = 0; i < mGenres.size(); i++) {
-      if (mGenres.get(i).contains(genre)) {
-        return mCategoryInfos.get(i);
+    String[] genreParts = genreText.split(",");
+    for (int part = 0; part < genreParts.length; part++) {
+      String genre = genreParts[part].trim();
+      if (genre.length() > 0) {
+        for (int i = 0; i < mGenres.size(); i++) {
+          if (mGenres.get(i).contains(genre)) {
+            return mCategoryInfos.get(i);
+          }
+        }
+
+        if (!mUnknown.contains(genreText)) {
+          mUnknown.add(genreText);
+          System.out.println("Unknown Category : " + genreText);
+        }
       }
-    }
-    
-    if (!mUnknown.contains(genre)) {
-      mUnknown.add(genre);
-      System.out.println("Unknown Category : " + genre);
     }
 
     return 0;
