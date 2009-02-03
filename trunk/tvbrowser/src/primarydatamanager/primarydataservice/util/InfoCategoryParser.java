@@ -47,7 +47,7 @@ public class InfoCategoryParser {
             .hasMoreElements();) {
           String key = (String) genre.nextElement();
           if (key != null) {
-            key = key.trim();
+            key = key.trim().toLowerCase();
             if (key.length() > 0) {
               genres.add(key);
             }
