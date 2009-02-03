@@ -44,7 +44,7 @@ import devplugin.Channel;
 public class ChannelPanel extends JPanel {
 
   private int mColumnWidth;
-  private ChannelLabel[] mLabelArr;
+  private ProgramTableChannelLabel[] mLabelArr;
   /** Height of Panel, if an Icon is > 15, it get adjusted to it's needs */
   private int mColumnHeight = 15;  
   
@@ -60,15 +60,15 @@ public class ChannelPanel extends JPanel {
   }
 
   public static void fontChanged() {
-    ChannelLabel.fontChanged();
+    ProgramTableChannelLabel.fontChanged();
   }
   
   public void setShownChannels(Channel[] channelArr) {
     removeAll();
-    mLabelArr = new ChannelLabel[channelArr.length];
+    mLabelArr = new ProgramTableChannelLabel[channelArr.length];
     
     for (int i = 0; i < mLabelArr.length; i++) {
-      mLabelArr[i]=new ChannelLabel(channelArr[i]);  
+      mLabelArr[i]=new ProgramTableChannelLabel(channelArr[i]);  
       add(mLabelArr[i]);
    
       if ((mLabelArr[i] != null) && (mLabelArr[i].getIcon() != null) && 

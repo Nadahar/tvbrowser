@@ -21,6 +21,7 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
 import tvbrowser.ui.mainframe.ChannelChooserPanel;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.programtable.ProgramTableChannelLabel;
 import tvbrowser.ui.settings.ChannelsSettingsTab;
 import tvbrowser.ui.settings.channel.ChannelConfigDlg;
 import util.browserlauncher.Launch;
@@ -184,13 +185,12 @@ public class ChannelContextMenu implements ActionListener {
         dialog.centerAndShow();
 
         // If from a ChannelLabel update it
-        if (mSource instanceof tvbrowser.ui.programtable.ChannelLabel) {
-          ((tvbrowser.ui.programtable.ChannelLabel) mSource)
-              .setChannel(mChannel);
+        if (mSource instanceof ProgramTableChannelLabel) {
+          ((ProgramTableChannelLabel) mSource).setChannel(mChannel);
         }
       }
 
-      if (!(mSource instanceof tvbrowser.ui.programtable.ChannelLabel)) {
+      if (!(mSource instanceof ProgramTableChannelLabel)) {
         MainFrame.getInstance().getProgramTableScrollPane()
             .updateChannelLabelForChannel(mChannel);
       }

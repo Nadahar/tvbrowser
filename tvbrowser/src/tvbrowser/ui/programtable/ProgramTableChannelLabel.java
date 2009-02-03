@@ -18,17 +18,18 @@ import javax.swing.UIManager;
 import tvbrowser.core.Settings;
 import util.browserlauncher.Launch;
 import util.ui.ChannelContextMenu;
+import util.ui.ChannelLabel;
 import util.ui.ToolTipWithIcon;
 import devplugin.Channel;
 
-public class ChannelLabel extends util.ui.ChannelLabel {
+public class ProgramTableChannelLabel extends ChannelLabel {
 
   private static Cursor linkCursor=new Cursor(Cursor.HAND_CURSOR);
   private static Font channelNameFont;
 
   private Channel mChannel;
   
-  public ChannelLabel(Channel ch) {
+  public ProgramTableChannelLabel(Channel ch) {
     super(Settings.propShowChannelIconsInProgramTable.getBoolean(),Settings.propShowChannelNamesInProgramTable.getBoolean());
     mChannel = ch;
     
