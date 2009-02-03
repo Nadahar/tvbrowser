@@ -24,9 +24,9 @@
  */
 package captureplugin.utils;
 
-import devplugin.Channel;
-
 import java.util.Comparator;
+
+import devplugin.Channel;
 
 /**
  * Compares two Channels
@@ -39,13 +39,14 @@ public class ChannelComperator implements Comparator<Channel> {
    * Compares two channels
    */
   public int compare(Channel a, Channel b) {
-    
-    int value = a.getDataService().getInfo().getName().compareTo(b.getDataService().getInfo().getName());
-    
+
+    int value = a.getDataServiceProxy().getInfo().getName().compareTo(
+        b.getDataServiceProxy().getInfo().getName());
+
     if (value == 0) {
-         value = a.getId().compareTo(b.getId());
+      value = a.getId().compareTo(b.getId());
     }
-    
+
     return value;
   }
 
