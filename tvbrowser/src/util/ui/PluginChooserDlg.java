@@ -69,12 +69,10 @@ import devplugin.ProgramReceiveTarget;
  */
 public class PluginChooserDlg extends JDialog implements WindowClosingIf {
 
-  private static final long serialVersionUID = 1L;
   private ProgramReceiveIf[] mResultPluginArr;
   private ProgramReceiveIf[] mPluginArr;
   private Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>> mReceiveTargetTable;
   private SelectableItemList mPluginItemList;
-  // private JPanel mTargetPanel;
   private ProgramReceiveTarget[] mCurrentTargets;
   private boolean mOkWasPressed;
   
