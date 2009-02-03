@@ -46,6 +46,8 @@ import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MutableChannelDayProgram;
 import util.exc.TvBrowserException;
 import util.io.IOUtilities;
+import util.io.stream.ObjectOutputStreamProcessor;
+import util.io.stream.StreamUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
@@ -226,11 +228,14 @@ public class JavaPluginProxy extends AbstractPluginProxy {
 
     // save the plugin data in a temp file
     File tmpDatFile = new File(userDirectory, getId() + ".dat.temp");
-    ObjectOutputStream out = null;
     try {
-      out = new ObjectOutputStream(new FileOutputStream(tmpDatFile));
-      mPlugin.writeData(out);
-      out.close();
+      StreamUtilities.objectOutputStream(tmpDatFile,
+          new ObjectOutputStreamProcessor() {
+            public void process(ObjectOutputStream out) throws IOException {
+              mPlugin.writeData(out);
+              out.close();
+            }
+          });
 
       // Saving succeeded -> Delete the old file and rename the temp file
       File datFile = new File(userDirectory, getId() + ".dat");
@@ -241,13 +246,6 @@ public class JavaPluginProxy extends AbstractPluginProxy {
       throw new TvBrowserException(getClass(), "error.5",
           "Saving data for plugin {0} failed.\n({1})",
           getInfo().getName(), tmpDatFile.getAbsolutePath(), thr);
-    }
-    finally {
-      if (out != null) {
-        try { out.close(); } catch (IOException exc) {
-          // ignore
-        }
-      }
     }
     
     // save the plugin settings in a temp file

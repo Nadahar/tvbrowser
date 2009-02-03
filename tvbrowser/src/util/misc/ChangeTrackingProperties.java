@@ -24,9 +24,12 @@
 package util.misc;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Properties;
+
+import util.io.stream.OutputStreamProcessor;
+import util.io.stream.StreamUtilities;
 
 /**
  * properties implementation which tracks changes and only stores itself to disk
@@ -45,13 +48,24 @@ public class ChangeTrackingProperties extends Properties {
     return super.setProperty(key, value);
   }
 
+  /**
+   * whether or not the properties stored in this object have changed since
+   * object creation
+   * 
+   * @return changed
+   */
   public boolean changed() {
     return mChanged;
   }
 
   public void store(File file) throws IOException {
     if (changed()) {
-      store(new FileOutputStream(file), null);
+      StreamUtilities.outputStream(file, new OutputStreamProcessor() {
+        @Override
+        public void process(OutputStream outputStream) throws IOException {
+          store(outputStream, null);
+        }
+      });
     }
   }
 

@@ -45,6 +45,8 @@ public final class WindowSetting {
   private int mYPos;
   private int mWidth;
   private int mHeight;
+
+  private Dimension mMinSize;
   
   
   /**
@@ -100,7 +102,7 @@ public final class WindowSetting {
    * 
    * @param window The window to set the values for.
    */
-  public void layout(Window window) {
+  public void layout(final Window window) {
     Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
     
     int width = mWidth;
@@ -114,6 +116,16 @@ public final class WindowSetting {
     if(height < 20 || height > d.height + 10) {
       window.pack();
       height = window.getHeight();
+    }
+
+    // never make the dialog smaller than minimum size
+    window.pack();
+    mMinSize = window.getMinimumSize();
+    if (width < mMinSize.width) {
+      width = mMinSize.width;
+    }
+    if (height < mMinSize.height) {
+      height = mMinSize.height;
     }
     
     window.setSize(width, height);
@@ -129,25 +141,43 @@ public final class WindowSetting {
       window.addComponentListener(new ComponentListener() {
   
         public void componentHidden(ComponentEvent e) {
-          save(e);
+          savePos(e);
         }
   
         public void componentMoved(ComponentEvent e) {
-          save(e);
+          savePos(e);
         }
   
         public void componentResized(ComponentEvent e) {
-          save(e);
+          if (mMinSize != null) {
+            int width = window.getWidth();
+            int height = window.getHeight();
+            boolean resize = false;
+            if (width < mMinSize.getWidth()) {
+              width = mMinSize.width;
+              resize = true;
+            }
+            if (height < mMinSize.getHeight()) {
+              height = mMinSize.height;
+              resize = true;
+            }
+            if (resize) {
+              window.setSize(width, height);
+            }
+          }
+          saveSize(e);
         }
   
         public void componentShown(ComponentEvent e) {
-          save(e);
+          savePos(e);
         }
         
-        private void save(ComponentEvent e) {
+        private void savePos(ComponentEvent e) {
           mXPos = e.getComponent().getX();
           mYPos = e.getComponent().getY();
-  
+        }
+
+        private void saveSize(ComponentEvent e) {
           mWidth = e.getComponent().getWidth();
           mHeight = e.getComponent().getHeight();
         }

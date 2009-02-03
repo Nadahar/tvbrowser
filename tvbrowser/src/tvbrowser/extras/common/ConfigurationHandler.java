@@ -36,6 +36,8 @@ import java.io.ObjectOutputStream;
 import java.util.Properties;
 
 import tvbrowser.core.Settings;
+import util.io.stream.ObjectOutputStreamProcessor;
+import util.io.stream.StreamUtilities;
 
 
 /**
@@ -75,33 +77,24 @@ public class ConfigurationHandler {
 
   }
 
-  public void storeData(DataSerializer serializer) throws IOException {
+  public void storeData(final DataSerializer serializer) throws IOException {
     String userDirectoryName = Settings.getUserSettingsDirName();
     File userDirectory = new File(userDirectoryName);
 
-
     File tmpDatFile = new File(userDirectory, mFilePrefix + ".dat.temp");
     File datFile = new File(userDirectory, "java." + mFilePrefix + ".dat");
-    ObjectOutputStream out = null;
-    try {
-      out = new ObjectOutputStream(new FileOutputStream(tmpDatFile));
-      serializer.write(out);
-      out.close();
 
-      // Saving succeeded -> Delete the old file and rename the temp file
-      datFile.delete();
-      tmpDatFile.renameTo(datFile);
-    }
-//    catch(Throwable thr) {
-//      throw new IOException("Could not write file "+datFile.getAbsolutePath());
-//    }
-    finally {
-      if (out != null) {
-        try { out.close(); } catch (IOException exc) {
-          // ignore
-        }
-      }
-    }
+    StreamUtilities.objectOutputStream(tmpDatFile,
+        new ObjectOutputStreamProcessor() {
+          public void process(ObjectOutputStream out) throws IOException {
+            serializer.write(out);
+            out.close();
+          }
+        });
+
+    // Saving succeeded -> Delete the old file and rename the temp file
+    datFile.delete();
+    tmpDatFile.renameTo(datFile);
   }
 
   public Properties loadSettings() throws IOException {

@@ -41,11 +41,13 @@ import java.util.zip.ZipOutputStream;
 public class ZipUtil {
 
   /**
-   * Creates a zip file and stores all files in a directory recursivly
+   * Creates a zip file and stores all files in a directory recursively
    * 
-   * @param zipfile compress to this file
-   * @param directory compress this directory
-   * @throws IOException 
+   * @param zipfile
+   *          compress to this file
+   * @param directory
+   *          compress this directory
+   * @throws IOException
    */
   public void zipDirectory(File zipfile, File directory) throws IOException {
     zipfile.delete();

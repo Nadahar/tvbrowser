@@ -39,7 +39,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
@@ -58,6 +58,8 @@ import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.TvBrowserException;
+import util.io.stream.ObjectOutputStreamProcessor;
+import util.io.stream.StreamUtilities;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
@@ -121,14 +123,16 @@ public class SearchField extends JPanel {
    * Save the search form settings to the settings file.
    */
   private void saveSearchFormSettings() {
-    try {
-      String home = Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome();
-      File settingsFile = new File(home,SETTINGS_FILE);
-      
-      ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(settingsFile));
-      mSearchFormSettings.writeData(stream);
-      stream.close();
-    }catch(Exception e) {} 
+    String home = Plugin.getPluginManager().getTvBrowserSettings()
+        .getTvBrowserUserHome();
+    File settingsFile = new File(home, SETTINGS_FILE);
+    StreamUtilities.objectOutputStreamIgnoringExceptions(settingsFile,
+        new ObjectOutputStreamProcessor() {
+          public void process(ObjectOutputStream outputStream)
+              throws IOException {
+            mSearchFormSettings.writeData(outputStream);
+          }
+        });
   }
   
   /**

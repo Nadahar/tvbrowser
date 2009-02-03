@@ -27,13 +27,15 @@
 package tvbrowser.core.plugin;
 
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import util.io.stream.InputStreamProcessor;
+import util.io.stream.StreamUtilities;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
@@ -47,10 +49,16 @@ public class DefaultSettings {
 
   public DefaultSettings() {
     mProperties = new Properties();
-    try {
-      mProperties.load(new BufferedInputStream(new FileInputStream(new File(FILENAME)), 0x4000));
-    } catch (IOException e) {
-      //ignore
+    File settingsFile = new File(FILENAME);
+    if (settingsFile.canRead()) {
+      StreamUtilities.inputStreamIgnoringExceptions(settingsFile,
+          new InputStreamProcessor() {
+
+            @Override
+            public void process(InputStream input) throws IOException {
+              mProperties.load(input);
+            }
+          });
     }
   }
 

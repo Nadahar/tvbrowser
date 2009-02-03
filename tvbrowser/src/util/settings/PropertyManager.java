@@ -28,14 +28,16 @@ package util.settings;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
 
 import tvbrowser.TVBrowser;
+import util.io.stream.OutputStreamProcessor;
+import util.io.stream.StreamUtilities;
 
 /**
  * 
@@ -63,8 +65,6 @@ public class PropertyManager {
 
 
   public void writeToFile(File settingsFile) throws IOException {
-    FileOutputStream out = null;
-    
     if(TVBrowser.isTransportable()) {
       if(!mProperties.getProperty("dir.tvdata","").startsWith("."))
         mProperties.setProperty("dir.tvdata","./settings/tvdata");
@@ -72,15 +72,11 @@ public class PropertyManager {
       mProperties.remove("dir.plugins");
     }
     
-    try {
-      out = new FileOutputStream(settingsFile);
-      mProperties.store(out, null);
-    }
-    finally {
-      if (out != null) {
-        out.close();
+    StreamUtilities.outputStream(settingsFile, new OutputStreamProcessor() {
+      public void process(OutputStream outputStream) throws IOException {
+        mProperties.store(outputStream, null);
       }
-    }
+    });
   }
 
 

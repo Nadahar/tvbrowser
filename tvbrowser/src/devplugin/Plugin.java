@@ -33,7 +33,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -50,6 +49,8 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvdataservice.MutableChannelDayProgram;
 import util.exc.TvBrowserException;
+import util.io.stream.ObjectOutputStreamProcessor;
+import util.io.stream.StreamUtilities;
 import util.ui.FixedSizeIcon;
 import util.ui.ImageUtilities;
 
@@ -924,14 +925,16 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * Saves the entries under the root node in a file.
    */
   public void storeRootNode() {
-    ObjectOutputStream out;
     File f = new File(Settings.getUserSettingsDirName(),getId()+".node");
     try {
-      out = new ObjectOutputStream(new FileOutputStream(f));
-      if (mRootNode != null) {
-        mRootNode.store(out);
-      }
-      out.close();
+      StreamUtilities.objectOutputStream(f, new ObjectOutputStreamProcessor() {
+        public void process(ObjectOutputStream out) throws IOException {
+          if (mRootNode != null) {
+            mRootNode.store(out);
+          }
+          out.close();
+        }
+      });
     } catch (IOException e) {
       util.exc.ErrorHandler.handle(mLocalizer.msg("error.couldNotWriteFile","Storing file '{0}' failed.", f.getAbsolutePath()), e);
     }

@@ -33,10 +33,8 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -68,6 +66,8 @@ import tvbrowser.extras.common.ConfigurationHandler;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.io.IOUtilities;
+import util.io.stream.ObjectOutputStreamProcessor;
+import util.io.stream.StreamUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
@@ -264,9 +264,9 @@ public class ReminderPlugin {
   public Properties getSettings() {
     return mSettings;
   }
-  
+
   /**
-   * Halt the remider listener.
+   * Halt the reminder listener.
    */
   public void pauseRemider() {
     mReminderList.stopTimer();
@@ -276,31 +276,25 @@ public class ReminderPlugin {
    * Save the reminder data.
    */
   public synchronized void store() {
-    ObjectOutputStream out = null;
     try {
       String userDirectoryName = Settings.getUserSettingsDirName();
       File userDirectory = new File(userDirectoryName);
       File tmpDatFile = new File(userDirectory, DATAFILE_NAME + ".temp");
       File datFile = new File(userDirectory, DATAFILE_NAME);
-      out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(tmpDatFile)));
-      writeData(out);
-      out.flush();
-      out.close();
+      StreamUtilities.objectOutputStream(tmpDatFile,
+          new ObjectOutputStreamProcessor() {
+            public void process(ObjectOutputStream out) throws IOException {
+              writeData(out);
+              out.flush();
+              out.close();
+            }
+          });
       
       datFile.delete();
       tmpDatFile.renameTo(datFile);
     } catch (IOException e) {
       ErrorHandler.handle("Could not store reminder data.", e);
-    } finally {
-      if (out != null) {
-        try {
-          out.close();
-        } catch(IOException e) {
-          // ignore
-        }
-      }
     }
-
     try {
       mConfigurationHandler.storeSettings(mSettings);
     } catch (IOException e) {
@@ -621,7 +615,9 @@ public class ReminderPlugin {
   /**
    * Updates the plugin tree entry for this plugin.
    * <p>
-   * @param save <code>True</code> if the remider entries should be saved.
+   * 
+   * @param save
+   *          <code>True</code> if the reminder entries should be saved.
    */
   public void updateRootNode(boolean save) {
     mRootNode.removeAllActions();

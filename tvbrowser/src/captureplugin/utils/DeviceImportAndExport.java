@@ -24,23 +24,26 @@
  */
 package captureplugin.utils;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+import util.io.stream.ObjectOutputStreamProcessor;
+import util.io.stream.StreamUtilities;
+import util.ui.Localizer;
 import captureplugin.CapturePluginData;
 import captureplugin.drivers.DeviceIf;
 import captureplugin.drivers.DriverFactory;
 import captureplugin.tabs.DevicePanel;
-import util.ui.Localizer;
-
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 /**
- * This Class handles the im- and eexport of Device-Files
+ * This Class handles the import and export of Device-Files
  * 
  * @author Bodo Tasche
  */
@@ -76,10 +79,13 @@ public class DeviceImportAndExport {
   /**
    * Import a Device
    * 
-   * @param data CapturePlugin-Data 
-   * @param panel Panel is needed for JDialogs
-   * @param file File to Import
-   * @return Imported Device, null if an error occured
+   * @param data
+   *          CapturePlugin-Data
+   * @param panel
+   *          Panel is needed for JDialogs
+   * @param file
+   *          File to Import
+   * @return Imported Device, null if an error occurred
    */
   public DeviceIf importDevice(CapturePluginData data, JPanel panel, File file) {
     mError = "";
@@ -126,7 +132,8 @@ public class DeviceImportAndExport {
    * @param file File to Export
    * @return true if successfully
    */
-  public boolean exportDevice(DevicePanel panel, DeviceIf device, File file) {
+  public boolean exportDevice(DevicePanel panel, final DeviceIf device,
+      File file) {
     mError = "";
     mException = new Exception();
 
@@ -140,17 +147,20 @@ public class DeviceImportAndExport {
     }
     
     try {
-      ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
-      
-      out.writeInt(1);
-      out.writeObject("\n\nDon't touch this ;)\n\n");
-      
-      out.writeObject(device.getDriver().getClass().getName());
-      out.writeObject(device.getName());
-      
-      device.writeData(out);
-      
-      out.close();
+      StreamUtilities.objectOutputStream(file,
+          new ObjectOutputStreamProcessor() {
+            public void process(ObjectOutputStream out) throws IOException {
+              out.writeInt(1);
+              out.writeObject("\n\nDon't touch this ;)\n\n");
+
+              out.writeObject(device.getDriver().getClass().getName());
+              out.writeObject(device.getName());
+
+              device.writeData(out);
+
+              out.close();
+            }
+          });
     } catch (Exception e) {
       mError = mLocalizer.msg("ProblemsWriting","Problems while writing the File");
       mException = e;

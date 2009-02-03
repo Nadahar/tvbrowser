@@ -35,7 +35,6 @@ import java.awt.print.PrinterJob;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -60,6 +59,8 @@ import printplugin.settings.ProgramInfoPrintSettings;
 import printplugin.settings.QueuePrinterSettings;
 import printplugin.settings.QueueScheme;
 import printplugin.settings.Scheme;
+import util.io.stream.ObjectOutputStreamProcessor;
+import util.io.stream.StreamUtilities;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
@@ -253,37 +254,43 @@ public class PrintPlugin extends Plugin {
   }
 
 
-  private void storeDayProgramSchemes(Scheme[] schemes) {
+  private void storeDayProgramSchemes(final Scheme[] schemes) {
     String home = Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome();
     File schemeFile = new File(home,SCHEME_FILE_DAYPROGRAM);
-    ObjectOutputStream out=null;
     try {
-      out = new ObjectOutputStream(new FileOutputStream(schemeFile));
-      out.writeInt(1);  // version
-      out.writeInt(schemes.length);
-      for (Scheme scheme : schemes) {
-        out.writeObject(scheme.getName());
-        ((DayProgramScheme)scheme).store(out);
-      }
-      out.close();
+      StreamUtilities.objectOutputStream(schemeFile,
+          new ObjectOutputStreamProcessor() {
+            public void process(ObjectOutputStream out) throws IOException {
+              out.writeInt(1); // version
+              out.writeInt(schemes.length);
+              for (Scheme scheme : schemes) {
+                out.writeObject(scheme.getName());
+                ((DayProgramScheme) scheme).store(out);
+              }
+              out.close();
+            }
+          });
     }catch(IOException e) {
       util.exc.ErrorHandler.handle("Could not store settings.",e);
     }
   }
 
-  private void storeQueueSchemes(Scheme[] schemes) {
+  private void storeQueueSchemes(final Scheme[] schemes) {
     String home = Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome();
     File schemeFile = new File(home,SCHEME_FILE_QUEUE);
-    ObjectOutputStream out=null;
     try {
-      out = new ObjectOutputStream(new FileOutputStream(schemeFile));
-      out.writeInt(1);  // version
-      out.writeInt(schemes.length);
-      for (Scheme scheme : schemes) {
-        out.writeObject(scheme.getName());
-        ((QueueScheme)scheme).store(out);
-      }
-      out.close();
+      StreamUtilities.objectOutputStream(schemeFile,
+          new ObjectOutputStreamProcessor() {
+            public void process(ObjectOutputStream out) throws IOException {
+              out.writeInt(1); // version
+              out.writeInt(schemes.length);
+              for (Scheme scheme : schemes) {
+                out.writeObject(scheme.getName());
+                ((QueueScheme) scheme).store(out);
+              }
+              out.close();
+            }
+          });
     }catch(IOException e) {
       util.exc.ErrorHandler.handle("Could not store settings.",e);
     }

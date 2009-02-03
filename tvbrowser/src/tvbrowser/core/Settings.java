@@ -33,15 +33,12 @@ import java.awt.Window;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.Set;
 import java.util.logging.Level;
 
 import javax.swing.JFrame;
@@ -57,6 +54,9 @@ import tvbrowser.ui.programtable.ProgramTableScrollPane;
 import tvbrowser.ui.waiting.dlgs.TvDataCopyWaitingDlg;
 import util.exc.TvBrowserException;
 import util.io.IOUtilities;
+import util.io.stream.ObjectInputStreamProcessor;
+import util.io.stream.ObjectOutputStreamProcessor;
+import util.io.stream.StreamUtilities;
 import util.settings.BooleanProperty;
 import util.settings.ByteProperty;
 import util.settings.ChannelArrayProperty;
@@ -196,27 +196,23 @@ public class Settings {
    * Stores the window settings for this plugin
    */
   private static void storeWindowSettings() {
-    try {
-      File windowSettingsFile = new File(Settings.getUserSettingsDirName(),WINDOW_SETTINGS_FILE);
-      
-      ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(windowSettingsFile));
-      
-      out.writeInt(1); // write version
-    
-      out.writeInt(mWindowSettings.size());
-    
-      Set<String> keys = mWindowSettings.keySet();
-    
-      for(String key : keys) {
-        out.writeUTF(key);
-        mWindowSettings.get(key).saveSettings(out);
-      }
-      
-      out.close();
-      
-    } catch (FileNotFoundException e) { // Ignore
-    } catch (IOException e) { // Ignore
-    }
+    File windowSettingsFile = new File(Settings.getUserSettingsDirName(),
+        WINDOW_SETTINGS_FILE);
+    StreamUtilities.objectOutputStreamIgnoringExceptions(windowSettingsFile,
+        new ObjectOutputStreamProcessor() {
+          public void process(ObjectOutputStream out) throws IOException {
+            out.writeInt(1); // write version
+
+            out.writeInt(mWindowSettings.size());
+
+            for (String key : mWindowSettings.keySet()) {
+              out.writeUTF(key);
+              mWindowSettings.get(key).saveSettings(out);
+            }
+
+            out.close();
+          }
+        });
   }
 
   /**
@@ -485,34 +481,33 @@ public class Settings {
   }
   
   private static void loadWindowSettings() {
-    try {
-      try {
-        File windowSettingsFile = new File(Settings.getUserSettingsDirName(),WINDOW_SETTINGS_FILE);
-        
-        if(windowSettingsFile.isFile()) {
-          ObjectInputStream in = new ObjectInputStream(new FileInputStream(windowSettingsFile));
-          
-          if(in.available() > 0) {
-            in.readInt(); // read version
-            
-            int n = in.readInt(); // read number of window settings
-            
-            mWindowSettings = new HashMap<String,WindowSetting>(n);
-            
-            for(int i = 0; i < n; i++) {
-              mWindowSettings.put(in.readUTF(), new WindowSetting(in));
+    File windowSettingsFile = new File(Settings.getUserSettingsDirName(),
+        WINDOW_SETTINGS_FILE);
+
+    if (windowSettingsFile.isFile() && windowSettingsFile.canRead()) {
+      StreamUtilities.objectInputStreamIgnoringExceptions(windowSettingsFile,
+          new ObjectInputStreamProcessor() {
+            public void process(ObjectInputStream in) throws IOException {
+              if (in.available() > 0) {
+                in.readInt(); // read version
+
+                int n = in.readInt(); // read number of window settings
+
+                mWindowSettings = new HashMap<String, WindowSetting>(n);
+
+                for (int i = 0; i < n; i++) {
+                  mWindowSettings.put(in.readUTF(), new WindowSetting(in));
+                }
+              }
+
+              in.close();
             }
-          }
-          
-          in.close();
-        }
-      }catch(Exception e) {// Ignore
-      }
-      
-      if(mWindowSettings == null) {
-        mWindowSettings = new HashMap<String,WindowSetting>(1);
-      }
-    }catch(Exception e) {}
+          });
+    }
+
+    if (mWindowSettings == null) {
+      mWindowSettings = new HashMap<String, WindowSetting>(1);
+    }
   }
 
   public static void handleChangedSettings() {
