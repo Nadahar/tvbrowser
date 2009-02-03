@@ -208,7 +208,8 @@ public class NewsPlugin extends Plugin {
       }
       
       long randomNoConnectionTime = (long)((1.0 + Math.random() * 2) * 24 * 60 * 60 * 1000) + currentTime;
-      long serverNoConnectionTime = (serverWaitDays * 24 * 60 * 60 * 1000) + currentTime;
+      long serverNoConnectionTime = ((long) serverWaitDays * 24 * 60 * 60 * 1000)
+          + currentTime;
             
       mNoConnectionTime = Math.max(randomNoConnectionTime, serverNoConnectionTime);
     }
