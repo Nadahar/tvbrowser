@@ -1,0 +1,88 @@
+<awarddata>
+	<name lang="de">Internationaler Literaturfilmpreis
+	</name>
+	<name lang="en">International Film Adaptation Award</name>
+	<url>http://www.hessischer-filmpreis.de/de/literaturpreis.aspx
+	</url>
+
+	<categories>
+		<category id="preis">
+			<name lang="de">Internationaler Literaturfilmpreis
+			</name>
+		</category>
+	</categories>
+
+	<movies>
+		<movie id="2004" director="François Dupeyron" year="2003">
+			<title lang="de">Monsieur Ibrahim und die Blumen des Koran
+			</title>
+			<title lang="fr" original="yes">Monsieur Ibrahim et les fleurs du Coran</title>
+		</movie>
+		<movie id="2005" director="Andreas Dresen" year="2005">
+			<title lang="de" original="yes">Willenbrock</title>
+		</movie>
+		<movie id="2005n1" director="Peter Webber" year="2003">
+			<title lang="de">Das Mädchen mit dem Perlenohrring</title>
+			<title lang="en" original="yes">Girl with a Pearl Earring</title>
+		</movie>
+		<movie id="2005n2" director="Jean-Pierre Jeunet" year="2004">
+			<title lang="de">Mathilde - eine große Liebe</title>
+			<title lang="fr" original="yes">Un long dimanche de fiançailles</title>
+		</movie>
+		<movie id="2005n3" director="Clint Eastwood" year="2004">
+			<title lang="de">Million Dollar Baby</title>
+			<title lang="en" original="yes">Million Dollar Baby</title>
+		</movie>
+		<movie id="2005n4" director="Richard Kwietniowski" year="2003">
+			<title lang="de">Owning Mahowny</title>
+			<title lang="en" original="yes">Owning Mahowny</title>
+		</movie>
+		<movie id="2005n5" director="Alexander Payne" year="2004">
+			<title lang="de">Sideways</title>
+			<title lang="en" original="yes">Sideways</title>
+		</movie>
+		<movie id="2005n6" director="Tod Williams" year="2004">
+			<title lang="de">The Door in the Floor – Die Tür der Versuchung
+			</title>
+			<title lang="en" original="yes">The Door in the Floor</title>
+		</movie>
+		<movie id="2005n7" director="Marc Forster" year="2004">
+			<title lang="de">Wenn Träume fliegen lernen</title>
+			<title lang="en" original="yes">Finding Neverland</title>
+		</movie>
+		<movie id="2005n8" director="Ben Sombogaart" year="2002">
+			<title lang="de">Die Zwillinge</title>
+			<title lang="nl" original="yes">De Tweeling</title>
+		</movie>
+		<movie id="2006" director="Atom Egoyan" year="2006">
+			<title lang="de">Wahre Lügen</title>
+			<title lang="en">Where The Truth Lies</title>
+		</movie>
+		<movie id="2007" director="Michael Winterbottom" year="2007">
+			<title lang="de">Ein mutiger Weg</title>
+			<title lang="en">A Mighty Heart</title>
+		</movie>
+		<movie id="2008" director="Matteo Garrone" year="2008">
+			<title lang="de">Gomorrha – Reise in das Reich der Camorra
+			</title>
+			<title lang="en">Gomorrha</title>
+		</movie>
+	</movies>
+
+	<awards>
+		<award category="preis" status="winner" movie="2004" year="2004" />
+		<award category="preis" status="winner" movie="2005" year="2005" />
+		<award category="preis" status="nominated" movie="2005n1" year="2005" />
+		<award category="preis" status="nominated" movie="2005n2" year="2005" />
+		<award category="preis" status="nominated" movie="2005n3" year="2005" />
+		<award category="preis" status="nominated" movie="2005n4" year="2005" />
+		<award category="preis" status="nominated" movie="2005n5" year="2005" />
+		<award category="preis" status="nominated" movie="2005n6" year="2005" />
+		<award category="preis" status="nominated" movie="2005n7" year="2005" />
+		<award category="preis" status="nominated" movie="2005n8" year="2005" />
+		<award category="preis" status="winner" movie="2006" year="2006" />
+		<award category="preis" status="winner" movie="2007" year="2007" />
+		<award category="preis" status="winner" movie="2008" year="2008" />
+	</awards>
+
+</awarddata>
