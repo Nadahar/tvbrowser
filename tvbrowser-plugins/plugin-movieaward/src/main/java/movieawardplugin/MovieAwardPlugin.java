@@ -61,6 +61,16 @@ import devplugin.Version;
 
 final public class MovieAwardPlugin extends Plugin {
   /**
+   * all known awards (for movies, documentaries and so on)
+   */
+  private static final String[] KNOWN_AWARDS = { "cannes", "deutscher_comedypreis", "grimme",
+            "max_ophuels", "menschenrechtsfilmpreis", "oscars" };
+  /**
+   * all known awards (for movies ONLY)
+   */
+  private static final String[] KNOWN_MOVIE_AWARDS = { "deutscher_filmpreis",
+            "europeanmovieawards", "internationaler_literaturfilmpreis" };
+  /**
    * Translator
    */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(MovieAwardPlugin.class);
@@ -132,29 +142,20 @@ final public class MovieAwardPlugin extends Plugin {
   private void initDatabase() {
     // might be called multiple times
     if (mMovieAwards == null) {
-      MovieDataFactory.loadMovieDatabase(mMovieDatabase, getClass().getResourceAsStream("data/moviedatabase.xml"));
+      MovieDataFactory.loadMovieDatabase(mMovieDatabase, getClass()
+          .getResourceAsStream("data/moviedatabase.xml"));
       mMovieAwards = new ArrayList<MovieAward>();
-      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
-          .getResourceAsStream("data/cannes.xml"), mMovieDatabase));
-      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
-          .getResourceAsStream("data/deutscher_comedypreis.xml"),
-          mMovieDatabase));
-      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
-      .getResourceAsStream("data/deutscher_filmpreis.xml"),
-      new MovieAwardForMovies(mMovieDatabase)));
-      mMovieAwards
-          .add(MovieDataFactory.loadMovieDataFromStream(getClass()
-              .getResourceAsStream("data/europeanmovieawards.xml"),
-              new MovieAwardForMovies(mMovieDatabase)));
-      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
-          .getResourceAsStream("data/grimme.xml"), mMovieDatabase));
-      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
-          .getResourceAsStream("data/max_ophuels.xml"), mMovieDatabase));
-      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
-          .getResourceAsStream("data/menschenrechtsfilmpreis.xml"),
-          mMovieDatabase));
-      mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
-          .getResourceAsStream("data/oscars.xml"), mMovieDatabase));
+      for (String awardName : KNOWN_AWARDS) {
+        mMovieAwards
+            .add(MovieDataFactory.loadMovieDataFromStream(getClass()
+                .getResourceAsStream("data/" + awardName + ".xml"),
+                mMovieDatabase));
+      }
+      for (String awardName : KNOWN_MOVIE_AWARDS) {
+        mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
+            .getResourceAsStream("data/" + awardName + ".xml"),
+            new MovieAwardForMovies(mMovieDatabase)));
+      }
     }
 
     mLog.info("loaded movie award. " + mMovieAwards.size());
