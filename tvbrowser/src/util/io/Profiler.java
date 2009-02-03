@@ -28,8 +28,9 @@ package util.io;
 
 /**
  * A little helper class that allows a simple profiling (time measuring).
- *
- * @author  Til Schneider, www.murfman.de
+ * 
+ * @author Til Schneider, www.murfman.de
+ * @deprecated since 3.0
  */
 public class Profiler {
 
