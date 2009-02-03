@@ -240,8 +240,8 @@ public class TvDataUpdater {
 
   /**
    * Check if a known program is found with an offset of exactly 1 or 2 hours
-   * for the known start time. This is a sign for incorrect time zone
-   * configuration.
+   * for the known start time (for 3 days starting today). This is a sign for
+   * incorrect time zone configuration.
    * 
    * @param channelName
    * @param programTitle
@@ -251,26 +251,35 @@ public class TvDataUpdater {
    */
   private int wrongTimeZone(String channelName, String programTitle,
       int minutesAfterMidnight) {
+    final Date currentDate = Date.getCurrentDate();
     for (Channel channel : ChannelList.getSubscribedChannels()) {
       if (channel.getDefaultName().equalsIgnoreCase(channelName)) {
-        ChannelDayProgram dayProgram = TvDataBase.getInstance().getDayProgram(
-            Date.getCurrentDate(), channel);
-        if (dayProgram != null) {
-          Iterator<Program> it = dayProgram.getPrograms();
-          if (it != null) {
-            while (it.hasNext()) {
-              Program program = it.next();
-              if (program.getTitle().equals(programTitle)) {
-                int delta = Math.abs(program.getStartTime()
-                    - minutesAfterMidnight);
-                if (delta == 60 || delta == 120) {
-                  return 1;
+        int wrongDays = 0;
+        for (int days = 0; days < 3; days++) {
+          ChannelDayProgram dayProgram = TvDataBase.getInstance()
+              .getDayProgram(currentDate.addDays(days), channel);
+          if (dayProgram != null) {
+            Iterator<Program> it = dayProgram.getPrograms();
+            if (it != null) {
+              while (it.hasNext()) {
+                Program program = it.next();
+                if (program.getTitle().equals(programTitle)) {
+                  int delta = Math.abs(program.getStartTime()
+                      - minutesAfterMidnight);
+                  if (delta == 60 || delta == 120) {
+                    wrongDays++;
+                    break;
+                  }
                 }
               }
             }
           }
         }
-        return 0;
+        if (wrongDays >= 3) {
+          return 1;
+        } else {
+          return 0;
+        }
       }
     }
     return 0;
