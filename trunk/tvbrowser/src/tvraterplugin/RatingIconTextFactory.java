@@ -39,7 +39,7 @@ public class RatingIconTextFactory {
      * Returns the Genre-Property
      * @return Genre-Property
      */
-    public static Properties getGenres() {
+    public static synchronized Properties getGenres() {
         if (_genre == null) {
             try {
                 _genre = new Properties();

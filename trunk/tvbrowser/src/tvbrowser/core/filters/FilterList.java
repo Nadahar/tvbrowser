@@ -26,23 +26,24 @@
 
 package tvbrowser.core.filters;
 
-import devplugin.PluginAccess;
-import devplugin.PluginsProgramFilter;
-import devplugin.ProgramFilter;
-import tvbrowser.core.Settings;
-import tvbrowser.core.plugin.PluginManagerImpl;
-import tvbrowser.ui.mainframe.searchfield.SearchFilter;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import tvbrowser.core.Settings;
+import tvbrowser.core.plugin.PluginManagerImpl;
+import tvbrowser.ui.mainframe.searchfield.SearchFilter;
+import util.io.stream.BufferedReaderProcessor;
+import util.io.stream.BufferedWriterProcessor;
+import util.io.stream.StreamUtilities;
+import devplugin.PluginAccess;
+import devplugin.PluginsProgramFilter;
+import devplugin.ProgramFilter;
 
 public class FilterList {
 
@@ -76,7 +77,7 @@ public class FilterList {
   }
 
   private ProgramFilter[] createFilterList() {
-    HashMap<String, ProgramFilter> filterList = new HashMap<String, ProgramFilter>();
+    final HashMap<String, ProgramFilter> filterList = new HashMap<String, ProgramFilter>();
 
     /* Add default filters. The user may not remove them. */
 
@@ -122,39 +123,34 @@ public class FilterList {
           filterList.put(filter.getName(), filter);
     }
 
-    ArrayList<ProgramFilter> filterArr = new ArrayList<ProgramFilter>();
+    final ArrayList<ProgramFilter> filterArr = new ArrayList<ProgramFilter>();
 
     /* Sort the list*/
-    File inxFile = new File(mFilterDirectory, FILTER_INDEX);
-    BufferedReader inxIn = null;
     try {
-      inxIn = new BufferedReader(new FileReader(inxFile));
-      String curFilterName = inxIn.readLine();
-      while (curFilterName != null) {
-        if (curFilterName.equals("[SEPARATOR]")) {
-          filterArr.add(new SeparatorFilter());
-        } else {
-          ProgramFilter filter = filterList.get(curFilterName);
+      StreamUtilities.bufferedReader(new File(mFilterDirectory, FILTER_INDEX),
+          new BufferedReaderProcessor() {
+            public void process(BufferedReader inxIn) throws IOException {
+              String curFilterName = inxIn.readLine();
+              while (curFilterName != null) {
+                if (curFilterName.equals("[SEPARATOR]")) {
+                  filterArr.add(new SeparatorFilter());
+                } else {
+                  ProgramFilter filter = filterList.get(curFilterName);
 
-          if (filter != null) {
-            filterArr.add(filter);
-            filterList.remove(curFilterName);
-          }
-        }
+                  if (filter != null) {
+                    filterArr.add(filter);
+                    filterList.remove(curFilterName);
+                  }
+                }
 
-        curFilterName = inxIn.readLine();
-      }
+                curFilterName = inxIn.readLine();
+              }
+            }
+          });
     } catch (FileNotFoundException e) {
       // ignore
     } catch (IOException e) {
       e.printStackTrace();
-    } finally {
-      try {
-        if (inxIn != null) inxIn.close();
-      }
-      catch (IOException e) {
-        // Empty
-      }
     }
 
 
@@ -260,17 +256,15 @@ public class FilterList {
     }
 
     File inxFile = new File(mFilterDirectory, FILTER_INDEX);
-
-    try {
-      BufferedWriter inxOut = new BufferedWriter(new FileWriter(inxFile));
-
-      for (ProgramFilter filter : mFilterArr) {
-        inxOut.write(filter.getName() + "\n");
-      }
-      inxOut.close();
-    } catch (Exception e) {
-      // Empty
-    }
+    StreamUtilities.bufferedWriterIgnoringExceptions(inxFile,
+        new BufferedWriterProcessor() {
+          public void process(BufferedWriter writer) throws IOException {
+            for (ProgramFilter filter : mFilterArr) {
+              writer.write(filter.getName() + "\n");
+            }
+            writer.close();
+          }
+        });
   }
 
   /**

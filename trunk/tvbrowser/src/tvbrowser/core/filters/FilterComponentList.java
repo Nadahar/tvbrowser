@@ -30,7 +30,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -55,6 +54,8 @@ import tvbrowser.core.filters.filtercomponents.ProgramRunningFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ReminderFilterComponent;
 import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
 import tvbrowser.core.plugin.PluginManagerImpl;
+import util.io.stream.ObjectOutputStreamProcessor;
+import util.io.stream.StreamUtilities;
 import devplugin.PluginAccess;
 import devplugin.PluginsFilterComponent;
 
@@ -112,27 +113,19 @@ public class FilterComponentList {
 
   public void store() {
     File filterCompFile=new File(tvbrowser.core.filters.FilterList.FILTER_DIRECTORY,"filter.comp");
-    try {
-      ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(
-          filterCompFile));
-      out.writeInt(1);
-
-
-
-      out.writeInt(mComponentList.size());
-      Iterator<FilterComponent> it = mComponentList.iterator();
-      while (it.hasNext()) {
-        FilterComponent comp = it.next();
-        writeComponent(out,comp);
-      }
-      out.close();
-
-
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
+    StreamUtilities.objectOutputStreamIgnoringExceptions(filterCompFile,
+        new ObjectOutputStreamProcessor() {
+          public void process(ObjectOutputStream out) throws IOException {
+            out.writeInt(1); // version
+            out.writeInt(mComponentList.size());
+            Iterator<FilterComponent> it = mComponentList.iterator();
+            while (it.hasNext()) {
+              FilterComponent comp = it.next();
+              writeComponent(out, comp);
+            }
+            out.close();
+          }
+        });
   }
 
   private void writeComponent(ObjectOutputStream out, FilterComponent comp) throws IOException {

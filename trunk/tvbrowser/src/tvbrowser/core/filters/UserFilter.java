@@ -30,7 +30,6 @@ package tvbrowser.core.filters;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -39,6 +38,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import util.exc.ErrorHandler;
+import util.io.stream.ObjectOutputStreamProcessor;
+import util.io.stream.StreamUtilities;
 import devplugin.ProgramFilter;
 
 
@@ -115,18 +116,20 @@ public class UserFilter implements devplugin.ProgramFilter {
      }
     
   public void store() {
-    ObjectOutputStream out=null;
     try {
-      out=new ObjectOutputStream(new FileOutputStream(new File(tvbrowser.core.filters.FilterList.FILTER_DIRECTORY,mName+".filter")));
-      out.writeInt(1);  // version
-      out.writeObject(mName);
-      out.writeObject(mRule);
+      final File file = new File(
+          tvbrowser.core.filters.FilterList.FILTER_DIRECTORY, mName + ".filter");
+      StreamUtilities.objectOutputStream(file,
+          new ObjectOutputStreamProcessor() {
+            public void process(ObjectOutputStream out) throws IOException {
+              out.writeInt(1); // version
+              out.writeObject(mName);
+              out.writeObject(mRule);
+            }
+          });
     }catch (IOException e) {
       ErrorHandler.handle("Could not write filter to file", e); 
-    }finally {
-      try { if (out!=null) out.close(); } catch (IOException e) {}
-    }
-      
+    } 
   }
   
   public void delete() {

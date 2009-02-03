@@ -26,12 +26,13 @@ package tvbrowser.core.plugin.programformating;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import tvbrowser.core.Settings;
+import util.io.stream.ObjectOutputStreamProcessor;
+import util.io.stream.StreamUtilities;
 import util.ui.Localizer;
 
 /**
@@ -117,19 +118,20 @@ public class GlobalPluginProgramFormatingManager {
    */
   public void store() {
     File programConfigFile = new File(Settings.getUserSettingsDirName(),"programConfigurations.dat");
-    try {
-      ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(programConfigFile));
-      
-      // write version
-      out.writeInt(1);
-      //write number of configurations
-      out.writeInt(mAvailableProgramConfigurations.length);
-      
-      for(GlobalPluginProgramFormating config : mAvailableProgramConfigurations) {
-        config.store(out);
-      }
-      out.close();
-    }catch(Exception e) {}
+    StreamUtilities.objectOutputStreamIgnoringExceptions(programConfigFile,
+        new ObjectOutputStreamProcessor() {
+          public void process(ObjectOutputStream out) throws IOException {
+            // write version
+            out.writeInt(1);
+            // write number of configurations
+            out.writeInt(mAvailableProgramConfigurations.length);
+
+            for (GlobalPluginProgramFormating config : mAvailableProgramConfigurations) {
+              config.store(out);
+            }
+            out.close();
+          }
+        });
   }
   
   /**

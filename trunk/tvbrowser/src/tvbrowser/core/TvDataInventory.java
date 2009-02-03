@@ -28,13 +28,14 @@ package tvbrowser.core;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import util.io.stream.ObjectOutputStreamProcessor;
+import util.io.stream.StreamUtilities;
 import devplugin.Channel;
 import devplugin.Date;
 
@@ -181,29 +182,22 @@ public class TvDataInventory {
    * @see #readData(File)
    */
   public synchronized void writeData(File file) throws IOException {
-    FileOutputStream fOut = null;
-    try {
-      fOut = new FileOutputStream(file);
-      ObjectOutputStream out = new ObjectOutputStream(fOut);
-    
-      out.writeInt(1); // version
-      
-      out.writeInt(mInventoryHash.size());
-      Iterator<String> iter = mInventoryHash.keySet().iterator();
-      while (iter.hasNext()) {
-        String key = (String) iter.next();
-        Integer ver = mInventoryHash.get(key);
-        out.writeObject(key);
-        out.writeInt(ver.intValue());
+    StreamUtilities.objectOutputStream(file, new ObjectOutputStreamProcessor() {
+      public void process(ObjectOutputStream out) throws IOException {
+        out.writeInt(1); // version
+
+        out.writeInt(mInventoryHash.size());
+        Iterator<String> iter = mInventoryHash.keySet().iterator();
+        while (iter.hasNext()) {
+          String key = (String) iter.next();
+          Integer ver = mInventoryHash.get(key);
+          out.writeObject(key);
+          out.writeInt(ver.intValue());
+        }
+
+        out.close();
       }
-  
-      out.close();
-    }
-    finally {
-      if (fOut != null) {
-        fOut.close();
-      }
-    }
+    });
   }
 
 }

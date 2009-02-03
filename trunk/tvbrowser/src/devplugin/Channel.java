@@ -584,8 +584,9 @@ public class Channel implements Comparable<Channel> {
 
   /**
    * Gets the data service of this channel
-   * @return The deprecated data service of this channel
-   * @deprecated
+   * 
+   * @return The data service of this channel
+   * @deprecated use getDataServiceProxy() instead
    */
   public TvDataService getDataService() {
     return mDataService;
@@ -776,10 +777,12 @@ public class Channel implements Comparable<Channel> {
   public String getDefaultName() {
     return mName;
   }
-  
+
   /**
-   * Seth the WebPage used by the User
-   * @param url WebPage
+   * Set the WebPage used by the User
+   * 
+   * @param url
+   *          WebPage
    * @since 2.1
    */
   public void setUserWebPage(String url) {

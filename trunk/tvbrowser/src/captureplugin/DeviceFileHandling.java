@@ -24,17 +24,18 @@
  */
 package captureplugin;
 
-import captureplugin.drivers.DeviceIf;
-import captureplugin.drivers.DriverFactory;
-import devplugin.Plugin;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+import util.io.stream.ObjectOutputStreamProcessor;
+import util.io.stream.StreamUtilities;
+import captureplugin.drivers.DeviceIf;
+import captureplugin.drivers.DriverFactory;
+import devplugin.Plugin;
 
 
 /**
@@ -75,7 +76,7 @@ public class DeviceFileHandling {
      * @return Filename
      * @throws java.io.IOException Problems reading the Device
      */
-    public String writeDevice(DeviceIf dev) throws IOException {
+    public String writeDevice(final DeviceIf dev) throws IOException {
         
         if (mCount == -1) {
             return null;
@@ -84,12 +85,12 @@ public class DeviceFileHandling {
         
         File data = new File(Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome()  + File.separator + 
                 "CaptureDevices" + File.separator + mCount + ".dat");
-        
-        ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(data));
-        
+        StreamUtilities.objectOutputStream(data, new ObjectOutputStreamProcessor() {
+      public void process(ObjectOutputStream stream) throws IOException {
         dev.writeData(stream);
-        
         stream.close();
+      }
+    });
         
         return data.getName();
     }

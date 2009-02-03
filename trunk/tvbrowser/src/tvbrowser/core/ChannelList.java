@@ -29,8 +29,6 @@ package tvbrowser.core;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -46,6 +44,9 @@ import javax.swing.SwingUtilities;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.io.stream.ObjectInputStreamProcessor;
+import util.io.stream.ObjectOutputStreamProcessor;
+import util.io.stream.StreamUtilities;
 import devplugin.Channel;
 
 /**
@@ -131,8 +132,7 @@ public class ChannelList {
         /* remove subscribed channels which are not available any more */
         if(mSubscribedChannels.contains(ch)) {
           mLog.warning(ch+" is not available any more");
-          mSubscribedChannels.remove(ch);
-          mSubscribedChannelPosition.remove(ch.getUniqueId());
+          unsubscribeChannel(ch);
           
           removed = true;
         }
@@ -145,6 +145,12 @@ public class ChannelList {
     }
     
     MainFrame.resetOnAirArrays();
+  }
+
+  private static void unsubscribeChannel(Channel channel) {
+    mSubscribedChannels.remove(channel);
+    mSubscribedChannelPosition.remove(channel.getUniqueId());
+    handleChannelUnsubscribed(channel);
   }
 
   /**
@@ -301,26 +307,52 @@ public class ChannelList {
         }
       }
     }
+    
+    // remember channels which are no longer subscribed
+    ArrayList<Channel> unsubscribedChannels = new ArrayList<Channel>();
+    for (Channel channel : mSubscribedChannels) {
+      boolean found = false;
+      for (Channel newChannel : channelArr) {
+        if (channel == newChannel) {
+          found = true;
+        }
+      }
+      if (!found) {
+        unsubscribedChannels.add(channel);
+      }
+    }
+
     mSubscribedChannels = new ArrayList<Channel>(channelArr.length);
     for (int i = 0; i < channelArr.length; i++) {
-      if (channelArr[i] == null) {
+      final Channel channel = channelArr[i];
+      if (channel == null) {
         mLog.warning("cannot subscribe channel #" + i + " - is null");
       } else {
-        mSubscribedChannels.add(channelArr[i]);
+        mSubscribedChannels.add(channel);
       }
     }
     
     calculateChannelPositions();
-    
-    if (channelsAdded) {
-      if (update) {
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            MainFrame.getInstance().askForDataUpdateChannelsAdded();
-          }
-        });
-      }
+
+    // now remove all unsubscribed TV data
+    for (Channel channel : unsubscribedChannels) {
+      handleChannelUnsubscribed(channel);
     }
+    
+    if (channelsAdded && update) {
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          MainFrame.getInstance().askForDataUpdateChannelsAdded();
+        }
+      });
+    }
+  }
+
+  private static void handleChannelUnsubscribed(Channel channel) {
+    if (channel == null) {
+      return;
+    }
+    TvDataBase.getInstance().unsubscribeChannel(channel);
   }
 
   /**
@@ -432,9 +464,8 @@ public class ChannelList {
     if (channel == null) {
       return false;
     }
-    for (int i = 0; i < mSubscribedChannels.size(); i++) {
-      Channel ch = mSubscribedChannels.get(i);
-      if (ch != null && ch.equals(channel)) {
+    for (Channel subscribed : mSubscribedChannels) {
+      if (subscribed != null && subscribed.equals(channel)) {
         return true;
       }
     }
@@ -767,38 +798,32 @@ public class ChannelList {
   public static void loadChannelTimeLimits() {
     File f = new File(Settings.getUserSettingsDirName(), "channelTimeLimit.dat");
 
-    if (f.isFile()) {
-      ObjectInputStream in = null;
+    if (f.isFile() && f.canRead()) {
+      StreamUtilities.objectInputStreamIgnoringExceptions(f,
+          new ObjectInputStreamProcessor() {
+            public void process(ObjectInputStream in) throws IOException {
+              in.readShort(); // version
 
-      try {
-        in = new ObjectInputStream(new FileInputStream(f));
-        in.readShort(); // version
+              short n = in.readShort(); // write number of channels
 
-        short n = in.readShort(); // write number of channels
+              for (int i = 0; i < n; i++) {
+                try {
+                  Channel ch = Channel.readData(in, true);
+                  short startTimeLimit = in.readShort();
+                  short endTimeLimit = in.readShort();
 
-        for (int i = 0; i < n; i++) {
-          Channel ch = Channel.readData(in, true);
+                  if (ch != null) {
+                    ch.setStartTimeLimit(startTimeLimit);
+                    ch.setEndTimeLimit(endTimeLimit);
+                  }
+                } catch (ClassNotFoundException e) {
+                  e.printStackTrace();
+                }
 
-          short startTimeLimit = in.readShort();
-          short endTimeLimit = in.readShort();
-
-          if (ch != null) {
-            ch.setStartTimeLimit(startTimeLimit);
-            ch.setEndTimeLimit(endTimeLimit);
-          }
-        }
-
-        in.close();
-        in = null;
-      } catch (Exception e) {
-        // ignore
-      }
-      if (in != null) {
-        try {
-          in.close();
-        } catch (Exception e) {
-        }
-      }
+              }
+              in.close();
+            }
+          });
     }
   }
 
@@ -809,34 +834,24 @@ public class ChannelList {
    */
   public static void storeChannelTimeLimits() {
     File f = new File(Settings.getUserSettingsDirName(), "channelTimeLimit.dat");
+    StreamUtilities.objectOutputStreamIgnoringExceptions(f,
+        new ObjectOutputStreamProcessor() {
+          public void process(ObjectOutputStream out) throws IOException {
+            out.writeShort(1); // version
 
-    ObjectOutputStream out = null;
+            Channel[] channels = getSubscribedChannels();
 
-    try {
-      out = new ObjectOutputStream(new FileOutputStream(f));
-      out.writeShort(1); // version
+            out.writeShort(channels.length); // write number of channels
 
-      Channel[] channels = getSubscribedChannels();
+            for (int i = 0; i < channels.length; i++) {
+              channels[i].writeData(out);
+              out.writeShort(channels[i].getStartTimeLimit());
+              out.writeShort(channels[i].getEndTimeLimit());
+            }
 
-      out.writeShort(channels.length); // write number of channels
-      
-      for (int i = 0; i < channels.length; i++) {
-        channels[i].writeData(out);
-        out.writeShort(channels[i].getStartTimeLimit());
-        out.writeShort(channels[i].getEndTimeLimit());
-      }
-      
-      out.close();
-      out = null;
-    } catch (IOException e) {
-      // ignore
-    }
-    if (out != null) {
-      try {
-        out.close();
-      } catch (Exception e) {
-      }
-    }
+            out.close();
+          }
+        });
   }
   
   private static Channel getChannelForKey(String key) {

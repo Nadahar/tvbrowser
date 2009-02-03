@@ -40,12 +40,12 @@ import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
+import util.misc.SoftReferenceCache;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.Date;
 import devplugin.Program;
 import devplugin.ProgressMonitor;
-import util.misc.SoftReferenceCache;
 
 /**
  * 
@@ -455,10 +455,10 @@ public class TvDataBase {
     if (lifespan < 0) {
       return; // manually
     }
-    devplugin.Date d1 = new devplugin.Date();
-    final devplugin.Date d = d1.addDays(-lifespan);
+    Date d1 = new Date();
+    final Date d = d1.addDays(-lifespan);
 
-    FilenameFilter filter = new java.io.FilenameFilter() {
+    FilenameFilter filter = new FilenameFilter() {
       public boolean accept(File dir, String name) {
         int p = name.lastIndexOf('.');
         String s = name.substring(p + 1, name.length());
@@ -482,24 +482,28 @@ public class TvDataBase {
       }
     };
     
-    String tvDataDir = Settings.propTVDataDirectory.getString();
-    File fileList[] = new File(tvDataDir).listFiles(filter);
+    // Get the subscribed channels
+    Channel[] channelArr = ChannelList.getSubscribedChannels();
+    String[] channelIdArr = new String[channelArr.length];
+    for (int i = 0; i < channelArr.length; i++) {
+      channelIdArr[i] = getChannelKey(channelArr[i]);
+    }
+
+    deleteFiles(informPlugins, filter, channelArr, channelIdArr);
+  }
+
+  private void deleteFiles(boolean informPlugins, FilenameFilter filter,
+      Channel[] channelArr, String[] channelIdArr) {
+    File fileList[] = new File(Settings.propTVDataDirectory.getString())
+        .listFiles(filter);
     boolean somethingDeleted = false;
     
     if (fileList != null && fileList.length > 0) {
       somethingDeleted = true;
-      
-      // Get the channel of the subscribed channels
-      Channel[] channelArr = ChannelList.getSubscribedChannels();
-      String[] channelIdArr = new String[channelArr.length];
-      for (int i = 0; i < channelArr.length; i++) {
-        channelIdArr[i] = getChannelKey(channelArr[i]);
-      }
-      
       for (File deleteFile : fileList) {
         Channel ch = getChannelFromFileName(deleteFile.getName(), channelArr, channelIdArr);
         Date date = getDateFromFileName(deleteFile.getName());
-
+      
         if(ch != null && date != null) {
           if(informPlugins) {
             ChannelDayProgram dayProgram = getDayProgram(date, ch);
@@ -518,7 +522,7 @@ public class TvDataBase {
       TvDataUpdater.getInstance().fireTvDataUpdateFinished();
     }
   }
-  
+
   private synchronized void correctDayProgramFile(Date date,
       Channel channel) {
     File file = getDayProgramFile(date, channel);
@@ -692,7 +696,6 @@ public class TvDataBase {
    * @return if the data is available.
    */
   public boolean dataAvailable(Date date) {
-
     return mAvailableDateSet.contains(date);
   }
 
@@ -880,5 +883,34 @@ public class TvDataBase {
       }
     }
     return false;
+  }
+
+  /**
+   * delete all program files of a channel after unsubscribing it
+   * 
+   * @param channel
+   */
+  public void unsubscribeChannel(final Channel channel) {
+    if (channel == null) {
+      return;
+    }
+    final Channel[] channelArr = new Channel[] { channel };
+    final String[] channelIdArr = new String[] { getChannelKey(channel) };
+    
+    // get all files of this channel, independent of the date (but they still
+    // must have a date)
+    FilenameFilter filter = new FilenameFilter() {
+
+      @Override
+      public boolean accept(File dir, String name) {
+        Channel ch = getChannelFromFileName(name, channelArr, channelIdArr);
+        Date date = getDateFromFileName(name);
+
+        return ch != null && date != null;
+      }
+    };
+
+    // delete all channel files
+    deleteFiles(true, filter, channelArr, channelIdArr);
   }
 }
