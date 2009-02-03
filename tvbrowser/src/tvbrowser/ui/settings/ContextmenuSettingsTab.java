@@ -73,6 +73,9 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
   private SortableItemList mList;
 
+  /**
+   * localizer of this class
+   */
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ContextmenuSettingsTab.class);
 
   private int mSelectionWidth;
@@ -122,11 +125,11 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     mList.setCellRenderer(new ContextMenuCellRenderer());
 
     PluginProxyManager.getInstance().addPluginStateListener(new PluginStateAdapter() {
-      public void pluginActivated(Plugin p) {
+      public void pluginActivated(PluginProxy proxy) {
         fillListbox();
       }
 
-      public void pluginDeactivated(Plugin p) {
+      public void pluginDeactivated(PluginProxy proxy) {
         fillListbox();
       }
     });
