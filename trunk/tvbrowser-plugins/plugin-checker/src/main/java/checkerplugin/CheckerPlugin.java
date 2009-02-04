@@ -36,6 +36,7 @@ import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
+import devplugin.ProgramInfoHelper;
 import devplugin.Version;
 
 public class CheckerPlugin extends Plugin {
@@ -98,7 +99,85 @@ public class CheckerPlugin extends Plugin {
     checkShortDescription(program, results);
     checkDuration(program, results);
     checkTextFields(program, results);
+    checkURL(program, results);
+    checkTime(program, results);
+    checkSeriesByEpisode(program, results);
+    checkSeriesNumbers(program, results);
     return results;
+  }
+
+  private void checkSeriesNumbers(Program program, ArrayList<String> results) {
+    final int episodeNumber = program
+        .getIntField(ProgramFieldType.EPISODE_NUMBER_TYPE);
+    if (episodeNumber != -1) {
+      if (episodeNumber < 1) {
+        results.add(mLocalizer.msg("issue.episodeLess",
+            "Episode number is less than 1."));
+      }
+    }
+    final int total = program
+        .getIntField(ProgramFieldType.EPISODE_TOTAL_NUMBER_TYPE);
+    if (total != -1) {
+      if (total < 1) {
+        results.add(mLocalizer.msg("issue.totalLess",
+            "Total episode is less than 1."));
+      }
+      if (episodeNumber != -1 && episodeNumber > total) {
+        results.add(mLocalizer.msg("issue.episodeToLarge",
+            "Episode number is larger than total episode count."));
+      }
+    }
+  }
+
+  private void checkSeriesByEpisode(Program program, ArrayList<String> results) {
+    if (!ProgramInfoHelper.bitSet(program.getInfo(),
+        Program.INFO_CATEGORIE_SERIES)) {
+      final String episode = program
+          .getTextField(ProgramFieldType.EPISODE_TYPE);
+      if (episode != null) {
+        results.add(mLocalizer.msg("issue.seriesEpisode",
+            "Episode title is set, but category series is not set."));
+      }
+      final String original = program
+          .getTextField(ProgramFieldType.ORIGINAL_EPISODE_TYPE);
+      if (original != null) {
+        results.add(mLocalizer.msg("issue.seriesOriginal",
+            "Original episode title is set, but category series is not set."));
+      }
+      final int episodeNumber = program
+          .getIntField(ProgramFieldType.EPISODE_NUMBER_TYPE);
+      if (episodeNumber != -1) {
+        results.add(mLocalizer.msg("issue.seriesNumber",
+            "Episode number is set, but category series is not set."));
+      }
+      final int total = program
+          .getIntField(ProgramFieldType.EPISODE_TOTAL_NUMBER_TYPE);
+      if (total != -1) {
+        results.add(mLocalizer.msg("issue.seriesTotal",
+            "Total episode number is set, but category series is not set."));
+      }
+    }
+  }
+
+  private void checkTime(Program program, ArrayList<String> results) {
+    int netTime = program.getIntField(ProgramFieldType.NET_PLAYING_TIME_TYPE);
+    if (netTime != -1) {
+      int duration = program.getLength();
+      if (netTime > duration) {
+        results.add(mLocalizer.msg("issue.netTime",
+            "Net playing time is longer than duration."));
+      }
+    }
+  }
+
+  private void checkURL(Program program, ArrayList<String> results) {
+    String url = program.getTextField(ProgramFieldType.URL_TYPE);
+    if (url != null) {
+      if (!Character.isLetterOrDigit(url.charAt(0))) {
+        results.add(mLocalizer.msg("issue.urlFormat",
+            "URL not correctly formatted."));
+      }
+    }
   }
 
   private void checkTextFields(Program program, ArrayList<String> results) {
