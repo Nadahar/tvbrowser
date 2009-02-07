@@ -49,7 +49,7 @@ public class TVPGrabber
    * regular expression to grab the content of a TV pearl
    */
   private static Pattern PATTERN_CONTENT = Pattern
-      .compile("<p class=\"author\"><a href=\"([^\"]*)\">.*?<a href=\"./memberlist.php?[^\"]*\"[^>]*>(.*?)</a></strong> am (.*?)</p>[\\r\\n\\t ]*?<div class=\"content\">([\\w\\W]*?)(<dl class=\"postprofile\"|<div[^>]*class=\"signature\">|<div class=\"notice\")");
+      .compile("<p class=\"author\"><a href=\"([^\"]*)\">.*?<a href=\"./memberlist.php?[^\"]*\"[^>]*>(.*?)</a></strong> &raquo; (.*?)</p>[\\r\\n\\t ]*?<div class=\"content\">([\\w\\W]*?)(<dl class=\"postprofile\"|<div[^>]*class=\"signature\">|<div class=\"notice\")");
 
   /**
    * regular expression to grab the URL of the next forum page
