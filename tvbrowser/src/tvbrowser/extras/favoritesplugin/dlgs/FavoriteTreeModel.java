@@ -23,23 +23,6 @@
  */
 package tvbrowser.extras.favoritesplugin.dlgs;
 
-import devplugin.Channel;
-import devplugin.Date;
-import devplugin.NodeFormatter;
-import devplugin.PluginTreeNode;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
-import devplugin.ProgramItem;
-import devplugin.ProgramReceiveTarget;
-import tvbrowser.extras.common.ReminderConfiguration;
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
-import tvbrowser.extras.favoritesplugin.core.Favorite;
-import tvbrowser.extras.reminderplugin.ReminderPlugin;
-import tvbrowser.ui.mainframe.MainFrame;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -48,12 +31,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+
+import tvbrowser.extras.common.ReminderConfiguration;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
+import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.ui.mainframe.MainFrame;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.NodeFormatter;
+import devplugin.PluginTreeNode;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
+import devplugin.ProgramItem;
+import devplugin.ProgramReceiveTarget;
 
 /**
  * The model for the favorite tree.
@@ -273,18 +274,22 @@ public class FavoriteTreeModel extends DefaultTreeModel {
 
   /**
    * Adds a favorite to this tree at the given target node.
-   *
-   * @param fav The favorite to add.
-   * @param target The target node to add the favorite to or
-   * <code>null</code> if the root node should be used.
+   * 
+   * @param fav
+   *          The favorite to add.
+   * @param parent
+   *          The parent node to add the favorite to or <code>null</code> if the
+   *          root node should be used.
+   * @return the newly created node for the favorite
    */
-  public void addFavorite(Favorite fav, FavoriteNode target) {
-    if(target == null) {
-      target = (FavoriteNode) getRoot();
+  public FavoriteNode addFavorite(Favorite fav, FavoriteNode parent) {
+    if (parent == null) {
+      parent = (FavoriteNode) getRoot();
     }
-
-    reload(target.add(fav));
+    FavoriteNode newNode = parent.add(fav);
+    reload(parent);
     FavoritesPlugin.getInstance().updateRootNode(true);
+    return newNode;
   }
 
   public static String getFavoriteLabel(Favorite favorite, Program program) {

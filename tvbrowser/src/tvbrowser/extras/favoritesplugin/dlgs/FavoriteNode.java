@@ -29,13 +29,12 @@ import java.io.ObjectOutputStream;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import devplugin.Program;
-
 import tvbrowser.extras.favoritesplugin.core.ActorsFavorite;
 import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.core.TitleFavorite;
 import tvbrowser.extras.favoritesplugin.core.TopicFavorite;
+import devplugin.Program;
 
 /**
  * A node for the favorite tree.
@@ -151,18 +150,21 @@ public class FavoriteNode extends DefaultMutableTreeNode implements Comparable<F
   protected void setWasExpanded(boolean expanded) {
     mWasExpanded = expanded;
   }
-  
+
   /**
    * Add a favorite to this node if this is a directory node.
    * 
-   * @param fav The favorite to add.
-   * @return This node after adding the favorite.
+   * @param fav
+   *          The favorite to add.
+   * @return the newly created sub node or <code>null</code>
    */
   public FavoriteNode add(Favorite fav) {
     if(allowsChildren) {
-      super.add(new FavoriteNode(fav));
+      final FavoriteNode newChild = new FavoriteNode(fav);
+      super.add(newChild);
+      return newChild;
     }
-    return this;
+    return null;
   }
   
   protected void store(ObjectOutputStream out) throws IOException {

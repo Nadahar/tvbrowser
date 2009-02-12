@@ -799,6 +799,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
   }
 
   public void addFavorite(Favorite fav, boolean update, FavoriteNode parent) {
+    FavoriteNode newNode = null; 
     if (fav != null) {
       try {
         if (update) {
@@ -810,15 +811,19 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
           mFavoritesList.setSelectedIndex(idx);
           mFavoritesList.ensureIndexIsVisible(idx);
         }
-        FavoriteTreeModel.getInstance().addFavorite(fav, parent);
+        newNode = FavoriteTreeModel.getInstance().addFavorite(fav, parent);
       } catch (TvBrowserException e) {
         ErrorHandler.handle("Creating favorites failed.", e);
       }
     }
 
-    if(parent != null) {
-      mFavoriteTree.expandPath(new TreePath(parent.getPath()));
-      mFavoriteTree.reload(parent);
+    if (newNode != null) {
+      if (parent != null) {
+        mFavoriteTree.reload(parent);
+      }
+      TreePath path = new TreePath(newNode.getPath());
+      mFavoriteTree.scrollPathToVisible(path);
+      mFavoriteTree.setSelectionPath(path);
       favoriteSelectionChanged();
     }
   }
