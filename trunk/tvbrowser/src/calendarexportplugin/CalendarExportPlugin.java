@@ -79,7 +79,7 @@ public class CalendarExportPlugin extends Plugin {
   /**
    * Category of Item
    */
-  public static final String PROP_CATEGORIE = "Categorie";
+  public static final String PROP_CATEGORY = "Categorie";
 
   /**
    * Show Time as Busy or Free - 0 = Busy, 1 = Free

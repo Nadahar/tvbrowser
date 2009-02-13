@@ -61,7 +61,7 @@ public class ICalExporter extends CalExporter {
   @Override
   protected void export(File file, Program[] programs, Properties settings,
       AbstractPluginProgramFormating formating) {
-    new ICalFile().exportICal(file, programs, settings, formating);
+    new ICalFile().export(file, programs, settings, formating);
   }
 
 }

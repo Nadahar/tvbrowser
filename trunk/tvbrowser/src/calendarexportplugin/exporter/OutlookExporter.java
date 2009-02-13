@@ -150,7 +150,7 @@ public class OutlookExporter extends AbstractExporter {
         else
             classification = olNormal;
 
-        String categories = settings.getProperty(CalendarExportPlugin.PROP_CATEGORIE, "");
+        String categories = settings.getProperty(CalendarExportPlugin.PROP_CATEGORY, "");
 
         int showtime = 0;
         try {

@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 
 /**
  * Stream processor class for working with streams
@@ -36,6 +37,7 @@ import java.io.OutputStream;
  * can concentrate on your algorithm instead.
  * 
  * @author Bananeweizen
+ * @since 3.0
  * 
  */
 public class StreamUtilities {
@@ -48,6 +50,7 @@ public class StreamUtilities {
    * @param file
    * @param processor
    * @throws IOException
+   * @since 3.0
    */
   public static void inputStream(File file, InputStreamProcessor processor)
       throws IOException {
@@ -84,6 +87,7 @@ public class StreamUtilities {
    * 
    * @param fileName
    * @param processor
+   * @since 3.0
    */
   public static void inputStreamIgnoringExceptions(String fileName,
       InputStreamProcessor processor) {
@@ -302,6 +306,7 @@ public class StreamUtilities {
    * @param file
    * @param processor
    * @throws IOException
+   * @since 3.0
    */
   public static void objectInputStream(File file,
       ObjectInputStreamProcessor processor) throws IOException {
@@ -351,6 +356,48 @@ public class StreamUtilities {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  public static void printStream(File file, boolean autoFlush, String encoding,
+      PrintStreamProcessor processor) throws IOException {
+    IOException processException = null;
+    PrintStream printStream = null;
+    FileOutputStream fileStream = null;
+    try {
+      fileStream = new FileOutputStream(file);
+      if (encoding != null) {
+        printStream = new PrintStream(fileStream, autoFlush, encoding);
+      } else {
+        printStream = new PrintStream(fileStream, autoFlush);
+      }
+      processor.process(printStream);
+    } catch (IOException e) {
+      processException = e;
+    } finally {
+      // close stream
+      if (printStream != null) {
+        printStream.close();
+      }
+      if (fileStream != null) {
+        try {
+          fileStream.close();
+        } catch (IOException e) {
+          if (processException != null) {
+            processException = new IOException(processException);
+          } else {
+            processException = e;
+          }
+        }
+      }
+      if (processException != null) {
+        throw processException;
+      }
+    }
+  }
+
+  public static void printStream(File file, PrintStreamProcessor processor)
+      throws IOException {
+    printStream(file, false, null, processor);
   }
 
 

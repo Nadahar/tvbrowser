@@ -107,7 +107,7 @@ public class CalendarSettingsTab implements SettingsTab {
         "5dlu,pref,3dlu,pref,3dlu,pref,3dlu,pref,3dlu,pref, 3dlu, pref, 5dlu, pref, 3dlu,pref, 3dlu, fill:default:grow, 3dlu, pref"));
     CellConstraints cc = new CellConstraints();
     
-    mCategorie = new JTextField(mSettings.getProperty(CalendarExportPlugin.PROP_CATEGORIE, ""));
+    mCategorie = new JTextField(mSettings.getProperty(CalendarExportPlugin.PROP_CATEGORY, ""));
     
     String[] values = { mLocalizer.msg("Busy", "Busy"), mLocalizer.msg("Free", "Free") };
 
@@ -255,7 +255,7 @@ public class CalendarSettingsTab implements SettingsTab {
       mSettings.setProperty(CalendarExportPlugin.PROP_NULLTIME, "false");
     }
 
-    mSettings.setProperty(CalendarExportPlugin.PROP_CATEGORIE, mCategorie.getText());
+    mSettings.setProperty(CalendarExportPlugin.PROP_CATEGORY, mCategorie.getText());
     mSettings.setProperty(CalendarExportPlugin.PROP_SHOWTIME, Integer.toString(mShowTime.getSelectedIndex()));
     mSettings.setProperty(CalendarExportPlugin.PROP_CLASSIFICATION, Integer.toString(mClassification.getSelectedIndex()));
     
