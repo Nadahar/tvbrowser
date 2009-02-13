@@ -60,7 +60,7 @@ public class VCalExporter extends CalExporter {
   @Override
   protected void export(File file, Program[] programs, Properties settings,
       AbstractPluginProgramFormating formating) {
-    new VCalFile().exportVCal(file, programs, settings, formating);
+    new VCalFile().export(file, programs, settings, formating);
   }
 
 }
