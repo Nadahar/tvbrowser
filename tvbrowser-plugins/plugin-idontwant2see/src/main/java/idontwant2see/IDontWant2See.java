@@ -116,7 +116,7 @@ public class IDontWant2See extends Plugin {
                                                                  // only
   
   public static Version getVersion() {
-    return new Version(0,10,0,true);
+    return new Version(0,10,1,true);
   }
   
   /**
@@ -401,6 +401,7 @@ public class IDontWant2See extends Plugin {
         }
       }
     });
+    saveMe();
   }
   
   public PluginsProgramFilter[] getAvailableFilter() {
