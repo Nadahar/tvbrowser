@@ -36,6 +36,19 @@ public class TVPProgram implements Comparable<TVPProgram>
 	private String mProgramID;
 	private boolean mSendTo = false;
 	private int mStatus = IProgramStatus.STATUS_NOT_FOUND;
+	
+  public TVPProgram(String author, String contentUrl, Calendar cal,
+      String title, String channel, Calendar start, String info,
+      String programID) {
+    this.mAuthor = author;
+    this.mContentUrl = contentUrl;
+    this.mCreateDate = cal;
+    this.mTitle = title;
+    this.mChannel = channel;
+    this.mStart = start;
+    this.mInfo = info.trim();
+    setProgramID(programID);
+  }
 
   public String toString()
 	{
@@ -56,19 +69,9 @@ public class TVPProgram implements Comparable<TVPProgram>
 		return mAuthor;
 	}
 
-	public void setAuthor(String author)
-	{
-		this.mAuthor = author;
-	}
-
 	public String getChannel()
 	{
 		return mChannel;
-	}
-
-	public void setChannel(String channel)
-	{
-		this.mChannel = channel;
 	}
 
 	public String getContentUrl()
@@ -76,29 +79,14 @@ public class TVPProgram implements Comparable<TVPProgram>
 		return mContentUrl;
 	}
 
-	public void setContentUrl(String contentUrl)
-	{
-		this.mContentUrl = contentUrl;
-	}
-
 	public Calendar getCreateDate()
 	{
 		return mCreateDate;
 	}
 
-	public void setCreateDate(Calendar createDate)
-	{
-		this.mCreateDate = createDate;
-	}
-
 	public String getInfo()
 	{
 		return mInfo;
-	}
-
-	public void setInfo(String info)
-	{
-		this.mInfo = info.trim();
 	}
 
 	public String getProgramID()
@@ -120,19 +108,9 @@ public class TVPProgram implements Comparable<TVPProgram>
 		return mStart;
 	}
 
-	public void setStart(Calendar start)
-	{
-		this.mStart = start;
-	}
-
 	public String getTitle()
 	{
 		return mTitle;
-	}
-
-	public void setTitle(String title)
-	{
-		this.mTitle = title;
 	}
 
 	public boolean getSendTo()

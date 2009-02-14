@@ -50,9 +50,9 @@ import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 
-public class TVPearlPluginSettingsTab implements SettingsTab
+public final class TVPearlPluginSettingsTab implements SettingsTab
 {
-  protected static final util.ui.Localizer mLocalizer = util.ui.Localizer
+  static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(TVPearlPluginSettingsTab.class);
 
 	private JCheckBox mUpdateAtStart;

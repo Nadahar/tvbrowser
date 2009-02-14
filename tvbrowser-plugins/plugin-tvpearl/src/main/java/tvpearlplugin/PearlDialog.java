@@ -57,11 +57,12 @@ import devplugin.Plugin;
 import devplugin.PluginManager;
 import devplugin.Program;
 
-public class PearlDialog extends JDialog implements WindowClosingIf
+public final class PearlDialog extends JDialog implements WindowClosingIf
 {
 	private static final long serialVersionUID = 1L;
 
-	protected static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(TVPearlPlugin.class);
+	static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(TVPearlPlugin.class);
 
 	private JScrollPane mScrollPane;
 	private JList mDataList;

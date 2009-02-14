@@ -45,16 +45,17 @@ import util.ui.html.ExtendedHTMLEditorKit;
 import util.ui.html.HorizontalLine;
 import devplugin.Plugin;
 
-public class PearlInfoDialog extends JDialog implements WindowClosingIf
+public final class PearlInfoDialog extends JDialog implements WindowClosingIf
 {
-	protected static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(PearlInfoDialog.class);
+	static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(PearlInfoDialog.class);
 
 	private static final long serialVersionUID = 1L;
 
 	private JScrollPane mScrollPane;
 	private JEditorPane mInfoPane;
 	private JButton mCloseBn;
-	private TVPProgram mProgram;
+	transient private TVPProgram mProgram;
 
 	public PearlInfoDialog(Frame parent, TVPProgram program)
 	{
