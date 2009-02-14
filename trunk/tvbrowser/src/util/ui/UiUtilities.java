@@ -780,9 +780,9 @@ public class UiUtilities {
       double iWidth = ic.getIconWidth();
       double iHeight = ic.getIconHeight();
       if (iWidth / iHeight < 2.0) {
-        width = new Double(iWidth * (20.0 / iHeight)).intValue();
+        width = (int) (iWidth * (20.0 / iHeight));
       } else {
-        height = new Double(iHeight * (40.0 / iWidth)).intValue();
+        height = (int) (iHeight * (40.0 / iWidth));
       }
     }
     ic = scaleIcon(ic, width, height);

@@ -247,11 +247,11 @@ public class SearchPlugin {
     return mInstance;
   }
 
-  public static SearchFormSettings[] getSearchHistory() {
+  protected static SearchFormSettings[] getSearchHistory() {
     return mSearchHistory;
   }
 
-  public static void setSearchHistory(SearchFormSettings[] history) {
+  protected static void setSearchHistory(SearchFormSettings[] history) {
     mSearchHistory = history;
   }
 

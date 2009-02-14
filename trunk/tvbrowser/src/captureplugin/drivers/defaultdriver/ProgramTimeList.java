@@ -24,13 +24,13 @@
  */
 package captureplugin.drivers.defaultdriver;
 
-import captureplugin.drivers.utils.ProgramTime;
-import devplugin.Program;
-
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+
+import captureplugin.drivers.utils.ProgramTime;
+import devplugin.Program;
 
 
 /**
@@ -163,8 +163,7 @@ public class ProgramTimeList {
      * @throws ClassNotFoundException class creation problems
      */
     public void readData(java.io.ObjectInputStream in)throws IOException, ClassNotFoundException {
-        @SuppressWarnings("unused") // version not yet used
-        int version = in.readInt();
+        in.readInt(); // version not yet used
         
         int size = in.readInt();
         

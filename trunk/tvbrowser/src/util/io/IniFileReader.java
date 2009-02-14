@@ -120,7 +120,7 @@ public class IniFileReader {
    */
   public String[] getAllSections() {
     ArrayList<String> list = new ArrayList<String>(mSections.keySet());
-    return list.toArray(new String[0]);
+    return list.toArray(new String[list.size()]);
   }
  
 }

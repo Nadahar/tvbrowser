@@ -113,7 +113,8 @@ public class PropertyManager {
   
   void setProperty(String key, String value) {
     String oldVal = getProperty(key);
-    boolean equalsOld = (oldVal == null) ? (oldVal == value) : oldVal.equals(value);
+    boolean equalsOld = (oldVal == null) ? (value == null) : oldVal
+        .equals(value);
     
     if (! equalsOld) {
       if (value == null) {

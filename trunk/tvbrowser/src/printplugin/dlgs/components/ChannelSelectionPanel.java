@@ -35,12 +35,13 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import util.ui.ChannelChooserDlg;
+import util.ui.Localizer;
+
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-import util.ui.ChannelChooserDlg;
-import util.ui.Localizer;
 import devplugin.Channel;
 
 

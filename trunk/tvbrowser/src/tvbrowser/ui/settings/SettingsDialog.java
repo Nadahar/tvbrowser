@@ -234,7 +234,7 @@ public class SettingsDialog implements WindowClosingIf {
       showSettingsPanelForNode(n);
       TreePath selectedPath = new TreePath(n.getPath());
       mSelectionTree.setSelectionPath(selectedPath);
-      mSelectionTree.expandPath(selectedPath);
+      mSelectionTree.makeVisible(selectedPath);
       treeUI.setLastSelectedPath(selectedPath);
     } else {
       showSettingsPanelForSelectedNode();
@@ -680,7 +680,7 @@ public class SettingsDialog implements WindowClosingIf {
     public String getHelpUrl() {
       String url = mHelpUrl;
 
-      if (url == null || url == "") {
+      if (url == null || url.equals("")) {
         if (mSettingsTab instanceof ConfigPluginSettingsTab) {
           PluginAccess plugin = PluginProxyManager.getInstance()
               .getPluginForId(mId);

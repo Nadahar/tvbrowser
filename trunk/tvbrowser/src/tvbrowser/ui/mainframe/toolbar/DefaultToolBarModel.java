@@ -327,28 +327,25 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
   }
   
   protected void updateTimeButtons() {
-    Object[] keys = mAvailableActions.keySet().toArray();
+    String[] keys = new String[mAvailableActions.keySet().size()];
+    mAvailableActions.keySet().toArray(keys);
     ArrayList<String> availableTimeActions = new ArrayList<String>();
 
-    for (int i = 0; i < keys.length; i++) {
-      Action action = mAvailableActions.get(keys[i]);
+    for (String key : keys) {
+      Action action = mAvailableActions.get(key);
       String test = action.getValue(Action.NAME).toString();
 
       if (test.indexOf(":") != -1 && (test.length() == 4 || test.length() == 5)) {
-        availableTimeActions.add(keys[i].toString());
+        availableTimeActions.add(key);
       }
     }
 
     String scrollTo = MainFrame.mLocalizer
         .msg("menuinfo.scrollTo", "Scroll to")
         + ": ";
-    // create Time Buttons
-    int[] array = Settings.propTimeButtons.getIntArray();
-
-    for (int i = 0; i < array.length; i++) {
-      int hour = array[i] / 60;
-      final int scrollTime = array[i];
-      String time = String.valueOf(array[i] % 60);
+    for (final int timeMinutes : Settings.propTimeButtons.getIntArray()) {
+      int hour = timeMinutes / 60;
+      String time = String.valueOf(timeMinutes % 60);
 
       if (time.length() == 1) {
         time = hour + ":0" + time;
@@ -367,7 +364,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
               "actions", "scroll-to-specific-time", 22), ToolBar.BUTTON_ACTION,
           new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-              MainFrame.getInstance().scrollToTime(scrollTime);
+              MainFrame.getInstance().scrollToTime(timeMinutes);
             }
           });
     }
@@ -375,7 +372,8 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
     Iterator<String> it = availableTimeActions.iterator();
 
     while (it.hasNext()) {
-      Action action = mAvailableActions.remove(it.next());
+      final String timeActionId = it.next();
+      Action action = mAvailableActions.remove(timeActionId);
 
       if (mVisibleActions.contains(action)) {
         mVisibleActions.remove(action);

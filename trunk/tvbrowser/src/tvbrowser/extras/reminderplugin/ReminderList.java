@@ -294,7 +294,7 @@ public class ReminderList implements ActionListener {
    */
   @SuppressWarnings("unchecked")
   public Program[] updatePrograms() {
-    ArrayList<ReminderListItem> localItems = new ArrayList<ReminderListItem>(0);
+    ArrayList<ReminderListItem> localItems;
     
     synchronized(mList) {
       localItems = (ArrayList<ReminderListItem>) mList.clone();

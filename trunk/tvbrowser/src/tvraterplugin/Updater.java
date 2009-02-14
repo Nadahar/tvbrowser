@@ -223,22 +223,22 @@ public class Updater implements Progress {
       if (nodename.equals("title")) {
         rating.setTitle(getNodeValue(child));
       } else if (nodename.equals("overall")) {
-        int overall = new Double(Double.parseDouble(getNodeValue(child))).intValue();
+        int overall = Integer.parseInt(getNodeValue(child));
         rating.setOverallRating(overall);
       } else if (nodename.equals("action")) {
-        int action = new Double(Double.parseDouble(getNodeValue(child))).intValue();
+        int action = Integer.parseInt(getNodeValue(child));
         rating.setActionRating(action);
       } else if (nodename.equals("entitlement")) {
-        int entitlement = new Double(Double.parseDouble(getNodeValue(child))).intValue();
+        int entitlement = Integer.parseInt(getNodeValue(child));
         rating.setEntitlementRating(entitlement);
       } else if (nodename.equals("fun")) {
-        int fun = new Double(Double.parseDouble(getNodeValue(child))).intValue();
+        int fun = Integer.parseInt(getNodeValue(child));
         rating.setFunRating(fun);
       } else if (nodename.equals("tension")) {
-        int tension = new Double(Double.parseDouble(getNodeValue(child))).intValue();
+        int tension = Integer.parseInt(getNodeValue(child));
         rating.setTensionRating(tension);
       } else if (nodename.equals("erotic")) {
-        int erotic = new Double(Double.parseDouble(getNodeValue(child))).intValue();
+        int erotic = Integer.parseInt(getNodeValue(child));
         rating.setEroticRating(erotic);
       } else if (nodename.equals("count")) {
         int userCount = Integer.parseInt(getNodeValue(child));

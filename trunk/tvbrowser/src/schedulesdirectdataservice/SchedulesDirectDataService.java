@@ -25,35 +25,6 @@
  */
 package schedulesdirectdataservice;
 
-import devplugin.AbstractTvDataService;
-import devplugin.Channel;
-import devplugin.ChannelGroup;
-import devplugin.Date;
-import devplugin.PluginInfo;
-import devplugin.Program;
-import devplugin.ProgressMonitor;
-import devplugin.Version;
-import devplugin.ProgramFieldType;
-import net.sf.xtvdclient.xtvd.DataDirectException;
-import net.sf.xtvdclient.xtvd.SOAPRequest;
-import net.sf.xtvdclient.xtvd.datatypes.Schedule;
-import net.sf.xtvdclient.xtvd.datatypes.Station;
-import net.sf.xtvdclient.xtvd.datatypes.Xtvd;
-import net.sf.xtvdclient.xtvd.datatypes.MovieAdvisories;
-import net.sf.xtvdclient.xtvd.datatypes.Crew;
-import net.sf.xtvdclient.xtvd.datatypes.ProgramGenre;
-import net.sf.xtvdclient.xtvd.datatypes.CrewMember;
-import net.sf.xtvdclient.xtvd.datatypes.Genre;
-import net.sf.xtvdclient.xtvd.datatypes.StarRating;
-import tvdataservice.MutableChannelDayProgram;
-import tvdataservice.MutableProgram;
-import tvdataservice.SettingsPanel;
-import tvdataservice.TvDataUpdateManager;
-import util.exc.ErrorHandler;
-import util.exc.TvBrowserException;
-import util.io.IOUtilities;
-import util.ui.Localizer;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -63,6 +34,36 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
+import java.util.Map.Entry;
+
+import net.sf.xtvdclient.xtvd.DataDirectException;
+import net.sf.xtvdclient.xtvd.SOAPRequest;
+import net.sf.xtvdclient.xtvd.datatypes.Crew;
+import net.sf.xtvdclient.xtvd.datatypes.CrewMember;
+import net.sf.xtvdclient.xtvd.datatypes.Genre;
+import net.sf.xtvdclient.xtvd.datatypes.MovieAdvisories;
+import net.sf.xtvdclient.xtvd.datatypes.ProgramGenre;
+import net.sf.xtvdclient.xtvd.datatypes.Schedule;
+import net.sf.xtvdclient.xtvd.datatypes.StarRating;
+import net.sf.xtvdclient.xtvd.datatypes.Station;
+import net.sf.xtvdclient.xtvd.datatypes.Xtvd;
+import tvdataservice.MutableChannelDayProgram;
+import tvdataservice.MutableProgram;
+import tvdataservice.SettingsPanel;
+import tvdataservice.TvDataUpdateManager;
+import util.exc.ErrorHandler;
+import util.exc.TvBrowserException;
+import util.io.IOUtilities;
+import util.ui.Localizer;
+import devplugin.AbstractTvDataService;
+import devplugin.Channel;
+import devplugin.ChannelGroup;
+import devplugin.Date;
+import devplugin.PluginInfo;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
+import devplugin.ProgressMonitor;
+import devplugin.Version;
 
 
 public class SchedulesDirectDataService extends AbstractTvDataService {
@@ -475,8 +476,8 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
 
       Map stations = xtvd.getStations();
 
-      for (final Object key : stations.keySet()) {
-        final Station station = (Station) stations.get(key);
+      for (final Object entry : stations.entrySet()) {
+        final Station station = (Station) (((Entry) entry).getValue());
         allChannels.add(
                 new Channel(this, station.getName(), Integer.toString(station.getId()), TimeZone.getTimeZone("UTC"), "US", "(c) SchedulesDirect", "", mChannelGroup, null, Channel.CATEGORY_TV)
         );

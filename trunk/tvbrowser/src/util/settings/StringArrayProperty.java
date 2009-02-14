@@ -119,7 +119,7 @@ public class StringArrayProperty  extends Property {
     String[] arr = getStringArray();
     if (arr != null) {
       for (int i = 0; i < arr.length; i++) {
-        if ((arr[i] == null) ? (arr[i] == str) : arr[i].equals(str)) {
+        if ((arr[i] == null) ? (str == null) : arr[i].equals(str)) {
           return i;
         }
       }
@@ -211,7 +211,7 @@ public class StringArrayProperty  extends Property {
       }
     }
     
-    return list.toArray(new String[0]);
+    return list.toArray(new String[list.size()]);
   }
   
   /**

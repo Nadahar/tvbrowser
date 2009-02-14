@@ -62,9 +62,9 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ReminderDialog.class);
 
-  public static final String[] SMALL_REMIND_MSG_ARR = new String[ReminderFrame.REMIND_MSG_ARR.length - 1];
+  static final String[] SMALL_REMIND_MSG_ARR = new String[ReminderFrame.REMIND_MSG_ARR.length - 1];
 
-  public static final int[] SMALL_REMIND_VALUE_ARR = new int[ReminderFrame.REMIND_VALUE_ARR.length - 1];
+  static final int[] SMALL_REMIND_VALUE_ARR = new int[ReminderFrame.REMIND_VALUE_ARR.length - 1];
 
   static {
     // use the same entries as the ReminderFrame but without "don't remind me"

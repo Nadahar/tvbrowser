@@ -89,18 +89,18 @@ public class MassFilterComponent extends AbstractFilterComponent {
    * Generates the Search-Array
    */
   private void generateSearcher() {
-    ArrayList<ProgramSearcher> array = new ArrayList<ProgramSearcher>();
+    ArrayList<ProgramSearcher> list = new ArrayList<ProgramSearcher>();
     String[] keys = mText.split("\\n");
 
     for (String key : keys) {
       try {
-        array.add(mSearchFormSettings.createSearcher(key));
+        list.add(mSearchFormSettings.createSearcher(key));
       } catch (TvBrowserException ex) {
         ex.printStackTrace();
       }
     }
 
-    mSearcher = array.toArray(new ProgramSearcher[0]);
+    mSearcher = list.toArray(new ProgramSearcher[list.size()]);
   }
 
   public int getVersion() {

@@ -29,6 +29,7 @@ package util.ui;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,10 +39,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.Map.Entry;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.net.URL;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
@@ -533,10 +533,10 @@ public class Localizer {
     if (standardLocalizations == null) {
       standardLocalizations = new HashMap<String, String>(20);
       HashMap<String, String> standardResource = Localizer.getLocalizerFor(Localizer.class).mResource;
-      Set<String> standardKeys = standardResource.keySet();
-      for (String standardKey : standardKeys) {
+      for (Entry<String, String> entry : standardResource.entrySet()) {
+        String standardKey = entry.getKey();
         if (standardKey.startsWith("Localizer.")) {
-          standardLocalizations.put(standardResource.get(standardKey), standardKey);
+          standardLocalizations.put(entry.getValue(), standardKey);
         }
       }
     }

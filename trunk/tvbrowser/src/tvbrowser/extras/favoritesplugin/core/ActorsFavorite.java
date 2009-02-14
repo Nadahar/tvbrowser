@@ -48,8 +48,6 @@ public class ActorsFavorite extends Favorite {
 
   public static final String TYPE_ID = "actors";
 
-  public static final String[] SEPARATOR_ARR = new String[] { ",", ";" };
-
   private String mActors;
 
   public ActorsFavorite(String actors) {

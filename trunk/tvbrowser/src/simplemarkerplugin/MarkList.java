@@ -32,6 +32,7 @@ import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -63,7 +64,7 @@ public class MarkList extends Vector<Program> {
 
   private String mName;
   private String mId;
-  private PluginTreeNode mRootNode;
+  transient private PluginTreeNode mRootNode;
   private Hashtable<String, LinkedList<Program>> mProgram = new Hashtable<String, LinkedList<Program>>();
   private Icon mMarkIcon;
   private String mMarkIconPath;
@@ -310,8 +311,9 @@ public class MarkList extends Vector<Program> {
       root.addAction(getUnmarkAction(root));
 
       final Date currentDate = Date.getCurrentDate();
-      for (String name : sortedPrograms.keySet()) {
-        LinkedList<Program> sameTitlePrograms = sortedPrograms.get(name);
+      for (Entry<String, LinkedList<Program>> entry : sortedPrograms.entrySet()) {
+        String name = entry.getKey();
+        LinkedList<Program> sameTitlePrograms = entry.getValue();
 
         PluginTreeNode titleNode = null;
         if (settings.isGroupingByBoth()) {

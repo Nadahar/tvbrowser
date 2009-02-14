@@ -66,7 +66,8 @@ import devplugin.Program;
 
 public class TypeWizardStep extends AbstractWizardStep {
 
-  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(TypeWizardStep.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(TypeWizardStep.class);
 
   private JTextField mProgramNameTf;
 
@@ -247,15 +248,7 @@ public class TypeWizardStep extends AbstractWizardStep {
     mProgramNameTf.setEnabled(mTitleRb.isSelected());
     mTopicTf.setEnabled(mTopicRb.isSelected());
     mActorsCb.setEnabled(mActorsRb.isSelected());
-    if (mProgramNameTf.isEnabled()) {
-      mProgramNameTf.requestFocusInWindow();
-    }
-    else if (mTopicTf.isEnabled()) {
-      mTopicTf.requestFocusInWindow();
-    }
-    else if (mActorsCb.isEnabled()) {
-      mActorsCb.requestFocusInWindow();
-    }
+    handleFocusEvent();
   }
 
   private Favorite createFavorite() {

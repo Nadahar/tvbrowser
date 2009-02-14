@@ -41,10 +41,9 @@ import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.zip.GZIPOutputStream;
 
+import util.exc.TvBrowserException;
 import devplugin.Date;
 import devplugin.ProgressMonitor;
-
-import util.exc.TvBrowserException;
 
 /**
  * 
@@ -129,10 +128,13 @@ public class Mirror {
   /**
    * Reads the mirrors from the given stream.
    * 
-   * @param stream The stream to read the mirros from.
+   * @param stream
+   *          The stream to read the mirrors from.
    * @return The mirror array read from the stream.
-   * @throws IOException Thrown if something went wrong.
-   * @throws FileFormatException Thrown if something went wrong.
+   * @throws IOException
+   *           Thrown if something went wrong.
+   * @throws FileFormatException
+   *           Thrown if something went wrong.
    */
   private static Mirror[] readMirrorListFromStream(InputStream stream) throws IOException, FileFormatException {
     InputStream gIn = IOUtilities.openSaveGZipInputStream(stream);
@@ -177,10 +179,13 @@ public class Mirror {
   /**
    * Reads the mirrors in the given file.
    * 
-   * @param file The file to read the mirros from.
+   * @param file
+   *          The file to read the mirrors from.
    * @return The mirror array read from the file.
-   * @throws IOException Thrown if something went wrong.
-   * @throws FileFormatException Thrown if something went wrong.
+   * @throws IOException
+   *           Thrown if something went wrong.
+   * @throws FileFormatException
+   *           Thrown if something went wrong.
    */
   public static Mirror[] readMirrorListFromFile(File file) throws IOException, FileFormatException {
     BufferedInputStream stream = null;

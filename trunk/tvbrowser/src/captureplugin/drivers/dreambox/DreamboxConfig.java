@@ -24,13 +24,6 @@
  */
 package captureplugin.drivers.dreambox;
 
-import captureplugin.drivers.dreambox.connector.DreamboxChannel;
-import captureplugin.drivers.utils.IDGenerator;
-import captureplugin.utils.ConfigIf;
-import captureplugin.utils.ExternalChannelIf;
-import devplugin.Channel;
-import util.io.IOUtilities;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -38,6 +31,13 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.TimeZone;
+
+import util.io.IOUtilities;
+import captureplugin.drivers.dreambox.connector.DreamboxChannel;
+import captureplugin.drivers.utils.IDGenerator;
+import captureplugin.utils.ConfigIf;
+import captureplugin.utils.ExternalChannelIf;
+import devplugin.Channel;
 
 /**
  * The configuration for the dreambox
@@ -263,7 +263,7 @@ public class DreamboxConfig implements ConfigIf {
     /**
      * @param channels all channels on the dreambox
      */
-    public void setDreamboxChannels(DreamboxChannel[] channels) {
+    protected void setDreamboxChannels(DreamboxChannel[] channels) {
         Arrays.sort(channels, new Comparator<DreamboxChannel>() {
             public int compare(DreamboxChannel o1, DreamboxChannel o2) {
                 return o1.getName().compareToIgnoreCase(o2.getName());

@@ -46,6 +46,8 @@ import util.exc.TvBrowserException;
 import util.io.FileFormatException;
 import util.io.IOUtilities;
 import util.io.Mirror;
+import util.io.stream.InputStreamProcessor;
+import util.io.stream.StreamUtilities;
 import devplugin.Channel;
 import devplugin.ProgressMonitor;
 
@@ -181,16 +183,16 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
     File file = new File(mDataDir, mID + "_info");
     if (!file.exists()) { return ""; }
-    Properties prop = new Properties();
-    try {
-    	  // TODO init all props at once
-      prop.load(new BufferedInputStream(new FileInputStream(file), 0x400));
-      mDescription = getLocaleProperty(prop, "description", "");
-      return mDescription;
-    } catch (IOException e) {
-      return "";
-    }
-
+    final Properties prop = new Properties();
+    // TODO init all props at once
+    StreamUtilities.inputStreamIgnoringExceptions(file,
+        new InputStreamProcessor() {
+          public void process(InputStream input) throws IOException {
+            prop.load(input);
+          }
+        });
+    mDescription = getLocaleProperty(prop, "description", "");
+    return mDescription;
   }
 
   public String getName() {
@@ -199,9 +201,13 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     File file = new File(mDataDir, mID + "_info");
     if (!file.exists()) { return mID; }
 
-    Properties prop = new Properties();
+    final Properties prop = new Properties();
     try {
-      prop.load(new BufferedInputStream(new FileInputStream(file), 0x400));
+      StreamUtilities.inputStream(file, new InputStreamProcessor() {
+        public void process(InputStream input) throws IOException {
+          prop.load(input);
+        }
+      });
       Locale locale = Locale.getDefault();
       String language = locale.getLanguage();
       String result = prop.getProperty(language);
@@ -228,9 +234,13 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     }
     File file = new File(mDataDir, mID + "_info");
     if (!file.exists()) { return ""; }
-    Properties prop = new Properties();
+    final Properties prop = new Properties();
     try {
-      prop.load(new BufferedInputStream(new FileInputStream(file), 0x400));
+      StreamUtilities.inputStream(file, new InputStreamProcessor() {
+        public void process(InputStream input) throws IOException {
+          prop.load(input);
+        }
+      });
       providerName = prop.getProperty("provider",mLocalizer.msg("unknownProvider","unknown"));
       mSettings.setProperty(mID + "_provider", providerName);
       mProviderName = providerName;

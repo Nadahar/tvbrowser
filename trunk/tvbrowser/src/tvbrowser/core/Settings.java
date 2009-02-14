@@ -32,9 +32,9 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Window;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
@@ -54,6 +54,7 @@ import tvbrowser.ui.programtable.ProgramTableScrollPane;
 import tvbrowser.ui.waiting.dlgs.TvDataCopyWaitingDlg;
 import util.exc.TvBrowserException;
 import util.io.IOUtilities;
+import util.io.stream.InputStreamProcessor;
 import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
 import util.io.stream.StreamUtilities;
@@ -331,11 +332,14 @@ public class Settings {
         
         if(TVBrowser.isTransportable() && !(new File(getUserDirectoryName(),"tvdata").isDirectory())) {
           try {
-            Properties p = new Properties();
-            FileInputStream in = new FileInputStream(testFile);
-            p.load(in);
+            final Properties prop = new Properties();
+            StreamUtilities.inputStream(testFile, new InputStreamProcessor() {
+              public void process(InputStream input) throws IOException {
+                prop.load(input);
+              }
+            });
             
-            String temp = p.getProperty("dir.tvdata",null);
+            String temp = prop.getProperty("dir.tvdata", null);
             
             if(temp != null) {
               oldTvDataDir = new File(temp);
@@ -345,7 +349,6 @@ public class Settings {
               oldTvDataDir = new File(oldDir.getParent(), "tvdata");
             }
             
-            in.close();
           }catch(Exception e) {}
         }
         

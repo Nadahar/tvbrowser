@@ -33,12 +33,12 @@ import tvbrowserdataservice.file.ChannelList;
 import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.ProgramField;
 import tvbrowserdataservice.file.ProgramFrame;
+import tvdataservice.MutableProgram;
 import util.io.FileFormatException;
 import util.io.IOUtilities;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.ProgramFieldType;
-import tvdataservice.MutableProgram;
 
 /**
  * Compares the new raw data with the last prepared data and creates update
@@ -54,7 +54,7 @@ public class RawDataProcessor {
   /**
    * @Deprecated use #{tvdataservice.MutableProgram#MAX_SHORT_INFO_LENGTH}
    */
-  public static int MAX_SHORT_DESCRIPTION_LENGTH = MutableProgram.MAX_SHORT_INFO_LENGTH;
+  final public static int MAX_SHORT_DESCRIPTION_LENGTH = MutableProgram.MAX_SHORT_INFO_LENGTH;
   
   /**
    * The percentage of the number of frames that must stay in the version
