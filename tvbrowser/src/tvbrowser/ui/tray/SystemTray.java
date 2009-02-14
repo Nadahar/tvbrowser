@@ -27,6 +27,7 @@ package tvbrowser.ui.tray;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -38,7 +39,6 @@ import java.util.Iterator;
 
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -81,8 +81,8 @@ public class SystemTray {
   private boolean mUseSystemTray;
 
   /** Logger */
-  private static java.util.logging.Logger mLog
-  = java.util.logging.Logger.getLogger(SystemTray.class.getName());
+  private static java.util.logging.Logger mLog = java.util.logging.Logger
+      .getLogger(SystemTray.class.getName());
 
   /** The localizer for this class. */
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -95,11 +95,12 @@ public class SystemTray {
 
   private Java6Tray mSystemTray;
 
-  private JMenuItem mOpenCloseMenuItem, mQuitMenuItem, mConfigure, mReminderItem;
-  
+  private JMenuItem mOpenCloseMenuItem, mQuitMenuItem, mConfigure,
+      mReminderItem;
+
   private JPopupMenu mTrayMenu;
   private Thread mClickTimer;
-  
+
   private JMenu mPluginsMenu;
   private static JDialog mTrayParent;
 
@@ -107,7 +108,8 @@ public class SystemTray {
    * Creates the SystemTray
    * 
    */
-  public SystemTray() {}
+  public SystemTray() {
+  }
 
   /**
    * Initializes the System
@@ -119,16 +121,17 @@ public class SystemTray {
     mUseSystemTray = false;
 
     mSystemTray = Java6Tray.create();
-    
+
     if (mSystemTray != null) {
-      mUseSystemTray = mSystemTray.init(MainFrame.getInstance(), TVBrowser.MAINWINDOW_TITLE);      
+      mUseSystemTray = mSystemTray.init(MainFrame.getInstance(),
+          TVBrowser.MAINWINDOW_TITLE);
       mLog.info("using default system tray");
     } else {
       mUseSystemTray = false;
       Settings.propTrayIsEnabled.setBoolean(false);
     }
 
-    if(mUseSystemTray) {
+    if (mUseSystemTray) {
       mTrayParent = new JDialog();
       mTrayParent.setTitle("Tray-Menu-Program-Popup");
 
@@ -137,7 +140,7 @@ public class SystemTray {
       mTrayParent.setAlwaysOnTop(true);
       mTrayParent.setVisible(false);
     }
-    
+
     return mUseSystemTray;
   }
 
@@ -154,11 +157,15 @@ public class SystemTray {
 
       mOpenCloseMenuItem = new JMenuItem(mLocalizer.msg("menu.open", "Open"));
       Font f = mOpenCloseMenuItem.getFont();
-      
+
       mOpenCloseMenuItem.setFont(f.deriveFont(Font.BOLD));
-      mQuitMenuItem = new JMenuItem(mLocalizer.msg("menu.quit", "Quit"),IconLoader.getInstance().getIconFromTheme("actions", "system-log-out", 16));
-      mConfigure = new JMenuItem(mLocalizer.msg("menu.configure", "Configure"),IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));      
-      
+      mQuitMenuItem = new JMenuItem(mLocalizer.msg("menu.quit", "Quit"),
+          IconLoader.getInstance().getIconFromTheme("actions",
+              "system-log-out", 16));
+      mConfigure = new JMenuItem(mLocalizer.msg("menu.configure", "Configure"),
+          IconLoader.getInstance().getIconFromTheme("categories",
+              "preferences-system", 16));
+
       mConfigure.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           MainFrame.getInstance().showSettingsDialog(SettingsItem.TRAY);
@@ -170,8 +177,9 @@ public class SystemTray {
           toggleShowHide();
         }
       });
-      
-      mReminderItem = new JMenuItem(mLocalizer.msg("menu.pauseReminder","Pause Reminder"));
+
+      mReminderItem = new JMenuItem(mLocalizer.msg("menu.pauseReminder",
+          "Pause Reminder"));
       mReminderItem.setIcon(IconLoader.getInstance().getIconFromTheme("apps",
           "appointment", 16));
       mReminderItem.addActionListener(new ActionListener() {
@@ -200,19 +208,22 @@ public class SystemTray {
 
         public void componentResized(ComponentEvent e) {
           int state = MainFrame.getInstance().getExtendedState();
-          
-          if ((state & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH) {
-            mState = JFrame.MAXIMIZED_BOTH;
-          } else if((state & JFrame.ICONIFIED) != JFrame.ICONIFIED) {
-            mState = JFrame.NORMAL;
+
+          if ((state & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH) {
+            mState = Frame.MAXIMIZED_BOTH;
+          } else if ((state & Frame.ICONIFIED) != Frame.ICONIFIED) {
+            mState = Frame.NORMAL;
           }
         }
 
-        public void componentHidden(ComponentEvent e) {}
+        public void componentHidden(ComponentEvent e) {
+        }
 
-        public void componentMoved(ComponentEvent e) {}
+        public void componentMoved(ComponentEvent e) {
+        }
 
-        public void componentShown(ComponentEvent e) {}
+        public void componentShown(ComponentEvent e) {
+        }
       });
 
       MainFrame.getInstance().addWindowListener(
@@ -246,12 +257,11 @@ public class SystemTray {
       toggleOpenCloseMenuItem(false);
 
       mTrayMenu = new JPopupMenu();
-      
 
       mSystemTray.addRightClickAction(new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
-          //mTrayMenu.getPopupMenu().setVisible(false);
+          // mTrayMenu.getPopupMenu().setVisible(false);
           buildMenu();
         }
 
@@ -262,17 +272,20 @@ public class SystemTray {
 
       if (!Settings.propTrayUseSpecialChannels.getBoolean()
           && Settings.propTraySpecialChannels.getChannelArray().length == 0) {
-        Channel[] channelArr = Settings.propSubscribedChannels.getChannelArray();
+        Channel[] channelArr = Settings.propSubscribedChannels
+            .getChannelArray();
         Channel[] tempArr = new Channel[channelArr.length > 10 ? 10
             : channelArr.length];
-        for (int i = 0; i < tempArr.length; i++)
+        for (int i = 0; i < tempArr.length; i++) {
           tempArr[i] = channelArr[i];
+        }
 
         Settings.propTraySpecialChannels.setChannelArray(tempArr);
       }
       mMenuCreated = true;
-    } else
+    } else {
       mSystemTray.setVisible(Settings.propTrayIsEnabled.getBoolean());
+    }
   }
 
   /**
@@ -289,44 +302,49 @@ public class SystemTray {
     mTrayMenu.removeAll();
     mTrayMenu.add(mOpenCloseMenuItem);
     mTrayMenu.addSeparator();
-    
+
     mPluginsMenu = createPluginsMenu();
     mPluginsMenu.addSeparator();
     mPluginsMenu.add(mReminderItem);
 
     mTrayMenu.add(mPluginsMenu);
     mTrayMenu.addSeparator();
-    
+
     mTrayMenu.addPopupMenuListener(new PopupMenuListener() {
-      public void popupMenuCanceled(PopupMenuEvent e) {}
+      public void popupMenuCanceled(PopupMenuEvent e) {
+      }
 
       public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
         FavoritesPlugin.getInstance().showInfoDialog();
       }
 
-      public void popupMenuWillBecomeVisible(PopupMenuEvent e) {        
-        mPluginsMenu.setEnabled(!UiUtilities.containsModalDialogChild(MainFrame.getInstance()));
+      public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+        mPluginsMenu.setEnabled(!UiUtilities.containsModalDialogChild(MainFrame
+            .getInstance()));
       }
     });
 
     if (Settings.propTrayOnTimeProgramsEnabled.getBoolean()
         || Settings.propTrayNowProgramsEnabled.getBoolean()
         || Settings.propTraySoonProgramsEnabled.getBoolean()
-        || Settings.propTrayImportantProgramsEnabled.getBoolean())
+        || Settings.propTrayImportantProgramsEnabled.getBoolean()) {
       searchForToAddingPrograms();
+    }
 
     if (Settings.propTrayOnTimeProgramsEnabled.getBoolean()) {
-      if (!Settings.propTrayNowProgramsInSubMenu.getBoolean() &&
-          Settings.propTrayNowProgramsEnabled.getBoolean() && 
-          Settings.propTraySoonProgramsEnabled.getBoolean())
+      if (!Settings.propTrayNowProgramsInSubMenu.getBoolean()
+          && Settings.propTrayNowProgramsEnabled.getBoolean()
+          && Settings.propTraySoonProgramsEnabled.getBoolean()) {
         mTrayMenu.addSeparator();
+      }
       addTimeInfoMenu();
     }
 
-    if( Settings.propTrayNowProgramsEnabled.getBoolean() ||
-        Settings.propTraySoonProgramsEnabled.getBoolean() ||
-        Settings.propTrayOnTimeProgramsEnabled.getBoolean())
+    if (Settings.propTrayNowProgramsEnabled.getBoolean()
+        || Settings.propTraySoonProgramsEnabled.getBoolean()
+        || Settings.propTrayOnTimeProgramsEnabled.getBoolean()) {
       mTrayMenu.addSeparator();
+    }
     mTrayMenu.add(mConfigure);
     mTrayMenu.addSeparator();
     mTrayMenu.add(mQuitMenuItem);
@@ -342,12 +360,14 @@ public class SystemTray {
 
       JComponent subMenu;
 
-      // Put the programs in a submenu?
-      if (Settings.propTrayNowProgramsInSubMenu.getBoolean() && Settings.propTrayNowProgramsEnabled.getBoolean())
+      // Put the programs in a sub menu?
+      if (Settings.propTrayNowProgramsInSubMenu.getBoolean()
+          && Settings.propTrayNowProgramsEnabled.getBoolean()) {
         subMenu = new ScrollableMenu(mLocalizer.msg("menu.programsNow",
             "Now running programs"));
-      else
+      } else {
         subMenu = mTrayMenu;
+      }
 
       ArrayList<ProgramMenuItem> programs = new ArrayList<ProgramMenuItem>();
       ArrayList<ProgramMenuItem> additional = new ArrayList<ProgramMenuItem>();
@@ -371,13 +391,13 @@ public class SystemTray {
         ChannelDayProgram today = TvDataBase.getInstance().getDayProgram(
             currentDate, channel);
 
-        if (today != null && today.getProgramCount() > 0)
-          for (int j = 0; j < today.getProgramCount(); j++) {
+        if (today != null && today.getProgramCount() > 0) {
+          final int programCount = today.getProgramCount();
+          for (int j = 0; j < programCount; j++) {
             if (j == 0
                 && today.getProgramAt(j).getStartTime() > IOUtilities
                     .getMinutesAfterMidnight()) {
-              ChannelDayProgram yesterday = TvDataBase
-                  .getInstance()
+              ChannelDayProgram yesterday = TvDataBase.getInstance()
                   .getDayProgram(currentDate.addDays(-1), channel);
 
               if (yesterday != null && yesterday.getProgramCount() > 0) {
@@ -385,7 +405,7 @@ public class SystemTray {
                     .getProgramAt(yesterday.getProgramCount() - 1);
 
                 if (p.isOnAir()) {
-                  addProgramToNowRunning(p, programs, additional);
+                  addToNowRunning(p, programs, additional);
                   Program p1 = today.getProgramAt(0);
                   addToNext(p1, nextPrograms, nextAdditionalPrograms);
                   break;
@@ -396,97 +416,97 @@ public class SystemTray {
             Program p = today.getProgramAt(j);
 
             if (p.isOnAir()) {
-              addProgramToNowRunning(p, programs, additional);
-              if (j < today.getProgramCount() - 1) {
-                Program p1 = today.getProgramAt(j + 1);
-                addToNext(p1, nextPrograms, nextAdditionalPrograms);
+              addToNowRunning(p, programs, additional);
+              Program nextProgram = null;
+              if (j < programCount - 1) {
+                nextProgram = today.getProgramAt(j + 1);
               } else {
                 ChannelDayProgram tomorrow = TvDataBase.getInstance()
-                    .getDayProgram(currentDate.addDays(1),
-                        channel);
-
+                    .getDayProgram(currentDate.addDays(1), channel);
                 if (tomorrow != null && tomorrow.getProgramCount() > 0) {
-                  Program p1 = tomorrow.getProgramAt(0);
-                  addToNext(p1, nextPrograms, nextAdditionalPrograms);
-                  break;
+                  nextProgram = tomorrow.getProgramAt(0);
                 }
+              }
+              if (nextProgram != null) {
+                addToNext(nextProgram, nextPrograms, nextAdditionalPrograms);
               }
 
               break;
             }
           }
+        }
       }
 
       // Show important program?
-      if (Settings.propTrayImportantProgramsEnabled.getBoolean())
+      if (Settings.propTrayImportantProgramsEnabled.getBoolean()) {
         if (Settings.propTrayImportantProgramsInSubMenu.getBoolean()) {
           mTrayMenu.add(addToImportantMenu(new ScrollableMenu(mLocalizer.msg(
               "menu.programsImportant", "Important programs"))));
-        } else
+        } else {
           addToImportantMenu(mTrayMenu);
+        }
+      }
 
       /*
        * if there are running programs and they should be displayed add them to
        * the menu.
        */
-      
-      if (Settings.propTrayImportantProgramsEnabled.getBoolean())
+
+      if (Settings.propTrayImportantProgramsEnabled.getBoolean()) {
         mTrayMenu.addSeparator();
-      
+      }
+
       boolean now = false;
-      
+
       if (Settings.propTrayNowProgramsEnabled.getBoolean()
           && (programs.size() > 0 || additional.size() > 0)) {
 
-        for (ProgramMenuItem item : programs) {
-          if (item != null)
-            subMenu.add(item);
-        }
-        for (ProgramMenuItem item : additional)
-          subMenu.add(item);
-        
-        now = true;
-        
-        while(programs.contains(null))
+        while (programs.contains(null)) {
           programs.remove(null);
-        
-        if(subMenu instanceof JMenu && programs.isEmpty() && additional.isEmpty())
-          addNoProgramsItem(subMenu);
-      }
-      
-      if (Settings.propTrayNowProgramsInSubMenu.getBoolean() && Settings.propTrayNowProgramsEnabled.getBoolean())
-        mTrayMenu.add(subMenu);
-      
-      if(Settings.propTraySoonProgramsEnabled.getBoolean()
-          && (!nextPrograms.isEmpty() || !nextAdditionalPrograms.isEmpty())) {        
-        
-      final JMenu next = new ScrollableMenu(now ? mLocalizer.msg("menu.programsSoon",
-      "Soon runs") : mLocalizer.msg("menu.programsSoonAlone",
-      "Soon runs"));
+        }
 
-        int j = 0;
+        for (ProgramMenuItem item : programs) {
+          subMenu.add(item);
+        }
+        for (ProgramMenuItem item : additional) {
+          subMenu.add(item);
+        }
+
+        now = true;
+
+        if (subMenu instanceof JMenu) {
+          addNoProgramsItem((JMenu) subMenu);
+        }
+      }
+
+      if (Settings.propTrayNowProgramsInSubMenu.getBoolean()
+          && Settings.propTrayNowProgramsEnabled.getBoolean()) {
+        mTrayMenu.add(subMenu);
+      }
+
+      if (Settings.propTraySoonProgramsEnabled.getBoolean()
+          && (!nextPrograms.isEmpty() || !nextAdditionalPrograms.isEmpty())) {
+
+        final JMenu next = new ScrollableMenu(now ? mLocalizer.msg(
+            "menu.programsSoon", "Soon runs") : mLocalizer.msg(
+            "menu.programsSoonAlone", "Soon runs"));
+
+        while (nextPrograms.contains(null)) {
+          nextPrograms.remove(null);
+        }
 
         for (ProgramMenuItem item : nextPrograms) {
-          if (item != null) {
-            item.setBackground(j);
-            next.add(item);
-            j++;
-          }
+          item.setBackground(next.getItemCount());
+          next.add(item);
         }
         for (ProgramMenuItem pItem : nextAdditionalPrograms) {
-          pItem.setBackground(j);
+          pItem.setBackground(next.getItemCount());
           next.add(pItem);
-          j++;
         }
-       
-        while(nextPrograms.contains(null))
-          nextPrograms.remove(null);
-        
-        if(nextPrograms.isEmpty() && nextAdditionalPrograms.isEmpty())
-          addNoProgramsItem(next);
-          
-        if(Settings.propTraySoonProgramsEnabled.getBoolean())
-          mTrayMenu.add(next);
+
+        addNoProgramsItem(next);
+
+        mTrayMenu.add(next);
       }
 
     } catch (Exception e) {
@@ -503,15 +523,18 @@ public class SystemTray {
    */
   private JComponent addToImportantMenu(JComponent menu) {
     Program[] p = MarkedProgramsList.getInstance()
-        .getTimeSortedProgramsForTray(MainFrame.getInstance().getProgramFilter(),
-            Settings.propTrayImportantProgramsPriority.getInt(), Settings.propTrayImportantProgramsSize.getInt(),
+        .getTimeSortedProgramsForTray(
+            MainFrame.getInstance().getProgramFilter(),
+            Settings.propTrayImportantProgramsPriority.getInt(),
+            Settings.propTrayImportantProgramsSize.getInt(),
             !Settings.propTrayNowProgramsEnabled.getBoolean());
-    
+
     boolean added = false;
 
     if (p.length > 0) {
       for (int i = 0; i < p.length; i++) {
-        menu.add(new ProgramMenuItem(p[i], ProgramMenuItem.IMPORTANT_TYPE, -1,i));
+        menu.add(new ProgramMenuItem(p[i], ProgramMenuItem.IMPORTANT_TYPE, -1,
+            i));
         added = true;
       }
     }
@@ -541,7 +564,7 @@ public class SystemTray {
         return true;
       }
     }
-    
+
     return false;
   }
 
@@ -553,9 +576,11 @@ public class SystemTray {
   private int getIndexOfChannel(Channel ch) {
     Channel[] channels = Settings.propTraySpecialChannels.getChannelArray();
 
-    for (int i = 0; i < channels.length; i++)
-      if (ch.equals(channels[i]))
+    for (int i = 0; i < channels.length; i++) {
+      if (ch.equals(channels[i])) {
         return i;
+      }
+    }
 
     return -1;
   }
@@ -564,78 +589,83 @@ public class SystemTray {
    * Add the time info menu.
    */
   private void addTimeInfoMenu() {
-    JComponent time; 
-    
-    if(Settings.propTrayOnTimeProgramsInSubMenu.getBoolean()) {
-      time = new JMenu(mLocalizer.msg("menu.programsAtTime",
-        "Programs at time"));
+    JComponent time;
+
+    if (Settings.propTrayOnTimeProgramsInSubMenu.getBoolean()) {
+      time = new JMenu(mLocalizer
+          .msg("menu.programsAtTime", "Programs at time"));
       mTrayMenu.add(time);
-    }
-    else
+    } else {
       time = mTrayMenu;
+    }
 
     int[] tempTimes = Settings.propTimeButtons.getIntArray();
-    
+
     ArrayList<Integer> today = new ArrayList<Integer>();
     ArrayList<Integer> tomorrow = new ArrayList<Integer>();
-    
-    for(int i = 0; i < tempTimes.length; i++)
-      if(tempTimes[i] < IOUtilities.getMinutesAfterMidnight())
-        tomorrow.add(tempTimes[i]);
-      else
-        today.add(tempTimes[i]);
-    
+
+    for (int tempTime : tempTimes) {
+      if (tempTime < IOUtilities.getMinutesAfterMidnight()) {
+        tomorrow.add(tempTime);
+      } else {
+        today.add(tempTime);
+      }
+    }
+
     int[] times;
-    
-    if(tomorrow.isEmpty() || today.isEmpty())
+
+    if (tomorrow.isEmpty() || today.isEmpty()) {
       times = tempTimes;
-    else {
+    } else {
       times = new int[tempTimes.length + 1];
-      
+
       int j = 0;
-      
-      for(int i = 0; i < today.size(); i++) {
+
+      for (int i = 0; i < today.size(); i++) {
         times[j] = today.get(i).intValue();
         j++;
       }
-      
+
       times[j] = -1;
       j++;
-      
-      for(int i = 0; i < tomorrow.size(); i++) {
+
+      for (int i = 0; i < tomorrow.size(); i++) {
         times[j] = tomorrow.get(i).intValue();
         j++;
-      }        
+      }
     }
 
     for (int value : times) {
-      if(value == -1) {
-        if(time instanceof JMenu)
-          ((JMenu)time).addSeparator();
-        else
-          ((JPopupMenu)time).addSeparator();
-      }
-      else {
-      final int fvalue = value;
-      
-      final JMenu menu = new ScrollableMenu(IOUtilities.timeToString(value) + " "
-          + (mTime24 ? mLocalizer.msg("menu.time", "") : ""));
+      if (value == -1) {
+        if (time instanceof JMenu) {
+          ((JMenu) time).addSeparator();
+        } else {
+          ((JPopupMenu) time).addSeparator();
+        }
+      } else {
+        final int fvalue = value;
 
-      if (value < IOUtilities.getMinutesAfterMidnight())
-        menu
-            .setText(menu.getText() + " " + mLocalizer.msg("menu.tomorrow", ""));
+        final JMenu menu = new ScrollableMenu(IOUtilities.timeToString(value)
+            + " " + (mTime24 ? mLocalizer.msg("menu.time", "") : ""));
 
-      menu.addMenuListener(new MenuListener() {
-        public void menuSelected(MenuEvent e) {
-          createTimeProgramMenu(menu, fvalue);
+        if (value < IOUtilities.getMinutesAfterMidnight()) {
+          menu.setText(menu.getText() + " "
+              + mLocalizer.msg("menu.tomorrow", ""));
         }
 
-        public void menuCanceled(MenuEvent e) {}
+        menu.addMenuListener(new MenuListener() {
+          public void menuSelected(MenuEvent e) {
+            createTimeProgramMenu(menu, fvalue);
+          }
 
-        public void menuDeselected(MenuEvent e) {}
-      });
-      time.add(menu);
-    }
+          public void menuCanceled(MenuEvent e) {
+          }
+
+          public void menuDeselected(MenuEvent e) {
+          }
+        });
+        time.add(menu);
+      }
     }
   }
 
@@ -654,151 +684,151 @@ public class SystemTray {
 
       ArrayList<ProgramMenuItem> programs = new ArrayList<ProgramMenuItem>();
       ArrayList<ProgramMenuItem> additional = new ArrayList<ProgramMenuItem>();
-      
-      for (int i = 0; i < Settings.propTraySpecialChannels.getChannelArray().length; i++)
+
+      for (int i = 0; i < Settings.propTraySpecialChannels.getChannelArray().length; i++) {
         programs.add(i, null);
+      }
 
       Date currentDate = Date.getCurrentDate();
       for (Channel ch : c) {
         Iterator<Program> it = null;
         int day = 0;
-        
+
         try {
           it = TvDataBase.getInstance()
               .getDayProgram(
-                  currentDate.addDays(
-                      (time < IOUtilities.getMinutesAfterMidnight() ? ++day : day)),
-                  ch).getPrograms();
-        } catch (Exception ee) {}
-        
+                  currentDate.addDays((time < IOUtilities
+                      .getMinutesAfterMidnight() ? ++day : day)), ch)
+              .getPrograms();
+        } catch (Exception ee) {
+        }
+
         int count = 0;
-        
+
         while (it != null && it.hasNext()) {
           Program p = it.next();
 
           int start = p.getStartTime();
           int end = p.getStartTime() + p.getLength();
 
-          if (start <= time && time < end 
+          if (start <= time && time < end
               && MainFrame.getInstance().getProgramFilter().accept(p)) {
-            if (isOnChannelList(ch))
+            if (isOnChannelList(ch)) {
               programs.add(getIndexOfChannel(ch), new ProgramMenuItem(p,
                   ProgramMenuItem.ON_TIME_TYPE, time, -1));
-            else if (p.getMarkerArr().length > 0 && p.getMarkPriority() >= Settings.propTrayImportantProgramsPriority.getInt())
+            } else if (p.getMarkerArr().length > 0
+                && p.getMarkPriority() >= Settings.propTrayImportantProgramsPriority
+                    .getInt()) {
               additional.add(new ProgramMenuItem(p,
                   ProgramMenuItem.ON_TIME_TYPE, time, -1));
-          } else if(start > time && day == 1 && count == 0) {
+            }
+          } else if (start > time && day == 1 && count == 0) {
 
             int temptime = time + 24 * 60;
             try {
               ChannelDayProgram dayProg = TvDataBase.getInstance()
-                  .getDayProgram(
-                      currentDate,
-                      ch);
+                  .getDayProgram(currentDate, ch);
               p = dayProg.getProgramAt(dayProg.getProgramCount() - 1);
-              
+
               start = p.getStartTime();
               end = p.getStartTime() + p.getLength();
 
-              if (start <= temptime && temptime < end 
+              if (start <= temptime && temptime < end
                   && MainFrame.getInstance().getProgramFilter().accept(p)) {
-                if (isOnChannelList(ch))
+                if (isOnChannelList(ch)) {
                   programs.add(getIndexOfChannel(ch), new ProgramMenuItem(p,
                       ProgramMenuItem.ON_TIME_TYPE, time, -1));
-                else if (p.getMarkerArr().length > 0 && p.getMarkPriority() >= Settings.propTrayImportantProgramsPriority.getInt())
+                } else if (p.getMarkerArr().length > 0
+                    && p.getMarkPriority() >= Settings.propTrayImportantProgramsPriority
+                        .getInt()) {
                   additional.add(new ProgramMenuItem(p,
                       ProgramMenuItem.ON_TIME_TYPE, time, -1));
+                }
               }
-            } catch (Exception ee) {}
-          } else if(start > time)
+            } catch (Exception ee) {
+            }
+          } else if (start > time) {
             break;
-          
+          }
+
           count++;
         }
       }
 
-      int j = 0;
+      while (programs.contains(null)) {
+        programs.remove(null);
+      }
 
       for (ProgramMenuItem pItem : programs) {
-        if (pItem != null) {
-          pItem.setBackground(j);
-          menu.add(pItem);
-          j++;
-        }
+        pItem.setBackground(menu.getItemCount());
+        menu.add(pItem);
       }
       for (ProgramMenuItem pItem : additional) {
-        pItem.setBackground(j);
+        pItem.setBackground(menu.getItemCount());
         menu.add(pItem);
-        j++;
       }
-      
-      while(programs.contains(null))
-        programs.remove(null);
-            
-      if(programs.isEmpty() && additional.isEmpty()) 
-        addNoProgramsItem(menu);
+
+      addNoProgramsItem(menu);
     }
   }
 
-  private void addNoProgramsItem(JComponent menu) {
-    JMenuItem item = new JMenuItem(mLocalizer.msg("menu.noPrograms","No programs found."));
-    item.setEnabled(false);
-    menu.add(item);
+  private void addNoProgramsItem(JMenu menu) {
+    if (menu.getItemCount() == 0) {
+      JMenuItem item = new JMenuItem(mLocalizer.msg("menu.noPrograms",
+          "No programs found."));
+      item.setEnabled(false);
+      menu.add(item);
+    }
   }
-  
+
   /**
    * Checks and adds programs to a next list.
    * 
-   * @param p
+   * @param program
    *          The program to check and add.
-   * @return False if the program was put on a list.
    */
-  private boolean addToNext(Program p, ArrayList<ProgramMenuItem> nextPrograms,
+  private void addToNext(Program program,
+      ArrayList<ProgramMenuItem> nextPrograms,
       ArrayList<ProgramMenuItem> nextAdditionalPrograms) {
-    if (!p.isExpired() && !p.isOnAir() 
-        && MainFrame.getInstance().getProgramFilter().accept(p)) {
-      if (this.isOnChannelList(p.getChannel())) {
-        nextPrograms.set(getIndexOfChannel(p.getChannel()),
-            new ProgramMenuItem(p, ProgramMenuItem.SOON_TYPE, -1, -1));
-        return false;
-      } else if (p.getMarkerArr().length > 0 && p.getMarkPriority() >= Settings.propTrayImportantProgramsPriority.getInt()) {
-        nextAdditionalPrograms.add(new ProgramMenuItem(p,
-            ProgramMenuItem.SOON_TYPE, -1, -1));
-        return false;
-      }
+    if (!program.isExpired() && !program.isOnAir()
+        && MainFrame.getInstance().getProgramFilter().accept(program)) {
+      addToListInternal(program, nextPrograms, nextAdditionalPrograms,
+          ProgramMenuItem.SOON_TYPE);
     }
+  }
 
-    return true;
+  private void addToListInternal(Program program,
+      ArrayList<ProgramMenuItem> listStandard,
+      ArrayList<ProgramMenuItem> listAdditional, int menuItemType) {
+    // put the program on the standard list for selected channels
+    // or on the additional list if there is a marking
+    if (this.isOnChannelList(program.getChannel())) {
+      listStandard.set(getIndexOfChannel(program.getChannel()),
+          new ProgramMenuItem(program, menuItemType, -1, -1));
+    } else if (program.getMarkerArr().length > 0
+        && program.getMarkPriority() >= Settings.propTrayImportantProgramsPriority
+            .getInt()) {
+      listAdditional.add(new ProgramMenuItem(program, menuItemType, -1, -1));
+    }
   }
 
   /**
    * Checks and adds programs to a now running list.
    * 
-   * @param p
+   * @param program
    *          The program to check and add to a list.
-   * @param defaultList
+   * @param listStandard
    *          The list with the programs on a selected channel.
-   * @param addList
+   * @param listAdditional
    *          The list with the programs that are not on a selected channel, but
    *          are important.
-   * @return True if the program was added to a list.
    */
-  private boolean addProgramToNowRunning(Program p, ArrayList<ProgramMenuItem> defaultList,
-      ArrayList<ProgramMenuItem> addList) {
-    if (p.isOnAir()
-        && MainFrame.getInstance().getProgramFilter().accept(p)) {
-      if (isOnChannelList(p.getChannel())) {
-        defaultList.set(getIndexOfChannel(p.getChannel()), new ProgramMenuItem(
-            p, ProgramMenuItem.NOW_TYPE, -1, -1));
-        return true;
-      } else if (p.getMarkerArr().length > 0 && p.getMarkPriority() >= Settings.propTrayImportantProgramsPriority.getInt()) {
-        addList.add(new ProgramMenuItem(p, ProgramMenuItem.NOW_TYPE, -1,
-            -1));
-        return true;
-      }
+  private void addToNowRunning(Program program,
+      ArrayList<ProgramMenuItem> listStandard, ArrayList<ProgramMenuItem> listAdditional) {
+    if (program.isOnAir()
+        && MainFrame.getInstance().getProgramFilter().accept(program)) {
+      addToListInternal(program, listStandard, listAdditional, ProgramMenuItem.NOW_TYPE);
     }
-
-    return false;
   }
 
   /**
@@ -808,10 +838,11 @@ public class SystemTray {
    *          True, if "Open" should be displayed
    */
   private void toggleOpenCloseMenuItem(boolean open) {
-    if (open)
+    if (open) {
       mOpenCloseMenuItem.setText(mLocalizer.msg("menu.open", "Open"));
-    else
+    } else {
       mOpenCloseMenuItem.setText(mLocalizer.msg("menu.close", "Close"));
+    }
   }
 
   /**
@@ -822,44 +853,49 @@ public class SystemTray {
       public void run() {
         try {
           sleep(200);
-        }catch(InterruptedException e) {}
+        } catch (InterruptedException e) {
+        }
       }
     };
     mClickTimer.start();
 
     if (!MainFrame.getInstance().isVisible()
-        || ((MainFrame.getInstance().getExtendedState() & JFrame.ICONIFIED) 
-            == JFrame.ICONIFIED)) {
+        || ((MainFrame.getInstance().getExtendedState() & Frame.ICONIFIED) == Frame.ICONIFIED)) {
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
           MainFrame.getInstance().showFromTray(mState);
           toggleReminderState(true);
-          
-          if (Settings.propNowOnRestore.getBoolean())
+
+          if (Settings.propNowOnRestore.getBoolean()) {
             MainFrame.getInstance().scrollToNow();
+          }
         }
       });
       toggleOpenCloseMenuItem(false);
     } else {
-      if(OperatingSystem.isWindows() || !Settings.propTrayMinimizeTo.getBoolean()) {
-        MainFrame.getInstance().setExtendedState(JFrame.ICONIFIED);
+      if (OperatingSystem.isWindows()
+          || !Settings.propTrayMinimizeTo.getBoolean()) {
+        MainFrame.getInstance().setExtendedState(Frame.ICONIFIED);
       }
-      
+
       if (Settings.propTrayMinimizeTo.getBoolean()) {
         MainFrame.getInstance().setVisible(false);
       }
-      
+
       toggleOpenCloseMenuItem(true);
     }
   }
-  
+
   private void toggleReminderState(boolean tvbShown) {
-    if(mReminderItem.getText().compareTo(mLocalizer.msg("menu.pauseReminder","Pause Reminder")) == 0 && !tvbShown) {
-      mReminderItem.setText(mLocalizer.msg("menu.continueReminder","Continue Reminder"));
+    if (mReminderItem.getText().compareTo(
+        mLocalizer.msg("menu.pauseReminder", "Pause Reminder")) == 0
+        && !tvbShown) {
+      mReminderItem.setText(mLocalizer.msg("menu.continueReminder",
+          "Continue Reminder"));
       ReminderPlugin.getInstance().pauseRemider();
-    }
-    else {
-      mReminderItem.setText(mLocalizer.msg("menu.pauseReminder","Pause Reminder"));
+    } else {
+      mReminderItem.setText(mLocalizer.msg("menu.pauseReminder",
+          "Pause Reminder"));
       ReminderPlugin.getInstance().handleTvBrowserStartFinished();
     }
   }
@@ -875,7 +911,7 @@ public class SystemTray {
     PluginProxy[] plugins = PluginProxyManager.getInstance()
         .getActivatedPlugins();
     updatePluginsMenu(pluginsMenu, plugins);
-    
+
     return pluginsMenu;
   }
 
@@ -884,29 +920,31 @@ public class SystemTray {
    * @param pluginsMenu
    * @param plugins
    */
+  @Deprecated
   private static void updatePluginsMenu(JMenu pluginsMenu, PluginProxy[] plugins) {
     pluginsMenu.removeAll();
 
     Arrays.sort(plugins, new PluginProxy.Comparator());
 
-    InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList.getInstance().getAvailableProxys();
-    
-    for(InternalPluginProxyIf internalPlugin : internalPlugins) {
-      if(internalPlugin instanceof ButtonActionIf) {
-        ActionMenu action = ((ButtonActionIf)internalPlugin).getButtonAction();
-        
+    InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList
+        .getInstance().getAvailableProxys();
+
+    for (InternalPluginProxyIf internalPlugin : internalPlugins) {
+      if (internalPlugin instanceof ButtonActionIf) {
+        ActionMenu action = ((ButtonActionIf) internalPlugin).getButtonAction();
+
         if (action != null) {
-          pluginsMenu.add(MenuUtil.createMenuItem(action,false));
+          pluginsMenu.add(MenuUtil.createMenuItem(action, false));
         }
       }
     }
-    
+
     pluginsMenu.addSeparator();
-    
+
     for (PluginProxy plugin : plugins) {
       ActionMenu action = plugin.getButtonAction();
       if (action != null) {
-        pluginsMenu.add(MenuUtil.createMenuItem(action,false));
+        pluginsMenu.add(MenuUtil.createMenuItem(action, false));
       }
     }
   }
@@ -919,7 +957,7 @@ public class SystemTray {
   public boolean isTrayUsed() {
     return mUseSystemTray;
   }
-  
+
   protected static JDialog getProgamPopupParent() {
     return mTrayParent;
   }
