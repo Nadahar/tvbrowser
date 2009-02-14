@@ -4,16 +4,15 @@ import java.awt.Image;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.channels.FileChannel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import util.io.IOUtilities;
 import util.misc.ChangeTrackingProperties;
 import util.ui.ImageUtilities;
 
@@ -67,7 +66,8 @@ class IconLoader {
       if (mDataHydraTvDataService.getIconCache().containsKey(url)) {
         try {
           if (!mDataHydraTvDataService.getIconCache().get(url).equals(iconFile)) {
-            copyFile(mDataHydraTvDataService.getIconCache().get(url), iconFile);
+            IOUtilities.copy(mDataHydraTvDataService.getIconCache().get(url),
+                iconFile);
             icon = getIconFromFile(iconFile);
           }
         } catch (Exception e) {
@@ -103,31 +103,6 @@ class IconLoader {
 
   private String unescape(String name) {
     return name.replaceAll("_", "\\.");
-  }
-
-  /**
-   * Fast Copy of a File
-   *
-   * @param source Source File
-   * @param dest   Destination File
-   */
-  private void copyFile(File source, File dest) {
-    try {
-      // Create channel on the source
-      FileChannel srcChannel = new FileInputStream(source).getChannel();
-
-      // Create channel on the destination
-      FileChannel dstChannel = new FileOutputStream(dest).getChannel();
-
-      // Copy file contents from source to destination
-      dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
-
-      // Close the channels
-      srcChannel.close();
-      dstChannel.close();
-    } catch (IOException e) {
-      mLog.log(Level.SEVERE, e.getMessage(), e);
-    }
   }
 
   private Icon getIconFromFile(File file) {
