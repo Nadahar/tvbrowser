@@ -98,9 +98,9 @@ public class TableSorter extends AbstractTableModel {
 
   private JTableHeader tableHeader;
 
-  private MouseListener mouseListener;
+  transient private MouseListener mouseListener;
 
-  private TableModelListener tableModelListener;
+  transient private TableModelListener tableModelListener;
 
   private Map<Class<?>, Comparator<?>> columnComparators = new HashMap<Class<?>, Comparator<?>>();
 

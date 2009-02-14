@@ -570,6 +570,9 @@ public class PluginTreeNode {
    * @return the tree node containing the program
    */
   public synchronized PluginTreeNode addProgram(Program program) {
+    if (program == null) {
+      return null;
+    }
     // don't search using contains(), this would require a second search
     PluginTreeNode node = findProgramTreeNode(program, false);
     if (node != null) {

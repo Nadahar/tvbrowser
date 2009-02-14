@@ -24,33 +24,6 @@
  */
 package captureplugin;
 
-import captureplugin.drivers.DeviceIf;
-import devplugin.ActionMenu;
-import devplugin.ContextMenuAction;
-import devplugin.PluginInfo;
-import devplugin.PluginTreeNode;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
-import devplugin.ProgramReceiveTarget;
-import devplugin.SettingsTab;
-import devplugin.ThemeIcon;
-import devplugin.Version;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -66,6 +39,34 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Vector;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import captureplugin.drivers.DeviceIf;
+import devplugin.ActionMenu;
+import devplugin.ContextMenuAction;
+import devplugin.PluginInfo;
+import devplugin.PluginTreeNode;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
+import devplugin.ProgramReceiveTarget;
+import devplugin.SettingsTab;
+import devplugin.ThemeIcon;
+import devplugin.Version;
 
 /**
  * Plugin to send the TV-Data to an external program
@@ -510,7 +511,7 @@ public class CapturePlugin extends devplugin.Plugin {
             }
         }
 
-        return targets.toArray(new ProgramReceiveTarget[0]);
+        return targets.toArray(new ProgramReceiveTarget[targets.size()]);
     }
     
     public void handleTvBrowserStartFinished() {

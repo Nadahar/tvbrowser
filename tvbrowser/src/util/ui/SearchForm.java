@@ -543,14 +543,13 @@ public class SearchForm extends JPanel {
     }
   }
 
-  
   /**
-   * Gets all the fields that can be used for searching. This are all fields,
-   * except binaries. 
+   * Gets all the fields that can be used for searching. These are all fields,
+   * except binaries.
    * 
    * @return All searchable fields.
    */
-  public static ProgramFieldType[] getSearchableFieldTypes() {
+  public static final ProgramFieldType[] getSearchableFieldTypes() {
     if (mSearchableFieldTypes == null) {
       ArrayList<ProgramFieldType> list = new ArrayList<ProgramFieldType>();
       Iterator<ProgramFieldType> iter = ProgramFieldType.getTypeIterator();
@@ -569,7 +568,8 @@ public class SearchForm extends JPanel {
       mSearchableFieldTypes = list.toArray(new ProgramFieldType[list.size()]);
     }
     
-    return mSearchableFieldTypes;
+    // return a copy to not have clients manipulate the field
+    return mSearchableFieldTypes.clone();
   }
 
 

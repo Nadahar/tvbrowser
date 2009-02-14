@@ -103,11 +103,12 @@ public class GlobalPluginProgramFormatingManager {
   public GlobalPluginProgramFormating[] getAvailableGlobalPluginProgramFormatings() {
     return mAvailableProgramConfigurations;
   }
-  
+
   /**
    * Sets the available program configurations.
    * 
-   * @param configs The new program configuations array.
+   * @param configs
+   *          The new program configurations array.
    */
   public void setAvailableProgramConfigurations(GlobalPluginProgramFormating[] configs) {
     mAvailableProgramConfigurations = configs;

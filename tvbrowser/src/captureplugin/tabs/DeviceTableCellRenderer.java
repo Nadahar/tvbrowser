@@ -24,12 +24,13 @@
  */
 package captureplugin.tabs;
 
-import captureplugin.drivers.DeviceIf;
+import java.awt.Component;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-import java.awt.Component;
+
+import captureplugin.drivers.DeviceIf;
 
 
 /**
@@ -45,14 +46,11 @@ public class DeviceTableCellRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         
-        String str;
-        
         if (value instanceof DeviceIf) {
             DeviceIf device = (DeviceIf)value; 
-            str = device.getName() + " (" + device.getDriver().getDriverName() + ")";
+            String str = device.getName() + " (" + device.getDriver().getDriverName()
+          + ")";
             label.setText(str);
-        } else {
-            str = value.toString();
         }
         
         return label;

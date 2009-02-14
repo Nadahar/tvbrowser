@@ -257,8 +257,7 @@ public class PluginLoader {
       boolean stable = in.readBoolean();
       Version version = new Version(major, minor, stable);
       String pluginId = in.readUTF();
-      @SuppressWarnings("unused")
-      long fileSize = in.readLong();
+      in.readLong(); // file size is unused
       String lcFileName = in.readUTF();
       in.close();
       // check existence of plugin file

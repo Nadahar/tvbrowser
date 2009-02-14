@@ -99,8 +99,7 @@ public class DeviceImportAndExport {
     try {
       ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file), 0x4000));
       
-      @SuppressWarnings("unused") // version not yet used
-      int version = in.readInt();
+      in.readInt(); // version not yet used
       
       in.readObject(); // Warning in File
       

@@ -690,17 +690,17 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
     }
   }
   
-  protected void newFolder(FavoriteNode last) {
+  protected void newFolder(FavoriteNode parent) {
     String value = JOptionPane.showInputDialog(UiUtilities.getLastModalChildOf(ManageFavoritesDialog.getInstance()), mLocalizer.msg("folderName","Folder name:"), mLocalizer.msg("newFolder","New folder"));
     
     if(value != null && value.length() > 0) {
       FavoriteNode node = new FavoriteNode(value);
       
-      if(last.equals(mRootNode) || last.isDirectoryNode()) {
-        last.add(node);
-        expandPath(new TreePath(last.getPath()));
+      if(parent.equals(mRootNode) || parent.isDirectoryNode()) {
+        parent.add(node);
+        expandPath(new TreePath(parent.getPath()));
       } else {
-        ((FavoriteNode)last.getParent()).insert(node,last.getParent().getIndex(last));
+        ((FavoriteNode)parent.getParent()).insert(node,parent.getParent().getIndex(parent));
       }
       
       reload((FavoriteNode)node.getParent());

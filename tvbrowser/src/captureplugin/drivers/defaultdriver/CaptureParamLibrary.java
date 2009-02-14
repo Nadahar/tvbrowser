@@ -24,12 +24,13 @@
  */
 package captureplugin.drivers.defaultdriver;
 
-import captureplugin.drivers.utils.ProgramTime;
-import devplugin.Program;
+import java.util.Calendar;
+import java.util.Collection;
+
 import util.paramhandler.ParamLibrary;
 import util.ui.Localizer;
-
-import java.util.Calendar;
+import captureplugin.drivers.utils.ProgramTime;
+import devplugin.Program;
 
 /**
  * This Class extends the ParamLibrary with Capture-Plugin-Specific Parameters.  
@@ -128,7 +129,8 @@ public class CaptureParamLibrary extends ParamLibrary {
       
       try {
         int i = Integer.parseInt(params[0]);
-        Variable[] varArray = mConfig.getVariables().toArray(new Variable[0]);
+        final Collection<Variable> variables = mConfig.getVariables();
+        Variable[] varArray = variables.toArray(new Variable[variables.size()]);
         
         if (varArray.length < i) {
           return "";

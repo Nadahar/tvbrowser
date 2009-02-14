@@ -29,6 +29,7 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
@@ -80,7 +81,9 @@ public class JGoodiesLNFSettings extends JDialog implements WindowClosingIf {
    * Create the GUI
    */
   private void createGui() {
-    PlasticTheme[] themes = (PlasticTheme[])PlasticLookAndFeel.getInstalledThemes().toArray(new PlasticTheme[0]);
+    final List themesList = PlasticLookAndFeel.getInstalledThemes();
+    PlasticTheme[] themes = (PlasticTheme[]) themesList
+        .toArray(new PlasticTheme[themesList.size()]);
     
     JPanel content = (JPanel) getContentPane();
     

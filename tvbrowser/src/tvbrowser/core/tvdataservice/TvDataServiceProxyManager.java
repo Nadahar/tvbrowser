@@ -29,18 +29,19 @@ package tvbrowser.core.tvdataservice;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import devplugin.AbstractTvDataService;
+import javax.swing.JFrame;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import util.exc.ErrorHandler;
-
-import javax.swing.*;
+import util.io.stream.OutputStreamProcessor;
+import util.io.stream.StreamUtilities;
+import devplugin.AbstractTvDataService;
 
 
 /**
@@ -99,7 +100,7 @@ public class TvDataServiceProxyManager {
   }
 
   private void storeServiceSettings(TvDataServiceProxy service) {
-    Properties prop=service.storeSettings();
+    final Properties prop = service.storeSettings();
     if (prop!=null) {
       String dir=Settings.getUserSettingsDirName();
       File f=new File(dir);
@@ -108,9 +109,11 @@ public class TvDataServiceProxyManager {
       }
       f=new File(dir,service.getId()+".service");
       try {
-        FileOutputStream out=new FileOutputStream(f);
-        prop.store(out,"settings");
-        out.close();
+        StreamUtilities.outputStream(f, new OutputStreamProcessor() {
+          public void process(OutputStream outputStream) throws IOException {
+            prop.store(outputStream, "settings");
+          }
+        });
       } catch (IOException exc) {
         String msg = mLocalizer.msg("error.4", "Saving settings for plugin {0} failed!\n({1})",
             service.getInfo().getName(), f.getAbsolutePath(), exc);

@@ -32,8 +32,8 @@ public class AutoCompletion extends PlainDocument {
   
   boolean firstUpper = false;
 
-  KeyListener editorKeyListener;
-  FocusListener editorFocusListener;
+  transient KeyListener editorKeyListener;
+  transient FocusListener editorFocusListener;
   
   public AutoCompletion(final JComboBox comboBox) {
     this(comboBox, false);

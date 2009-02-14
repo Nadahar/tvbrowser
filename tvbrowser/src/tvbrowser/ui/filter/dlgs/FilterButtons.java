@@ -108,7 +108,8 @@ public class FilterButtons implements ActionListener {
                     }
                 });
 
-                if (curFilter != null && filter != null && (curFilter.getName().equals(filter.getName()))) {
+                if (curFilter != null
+              && (curFilter.getName().equals(filter.getName()))) {
                     result[i].setSelected(true);
                 } else if ((curFilter == null) && (filter instanceof ShowAllFilter)) {
                     result[i].setSelected(true);

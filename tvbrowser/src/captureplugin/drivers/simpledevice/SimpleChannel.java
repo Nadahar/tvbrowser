@@ -24,11 +24,11 @@
  */
 package captureplugin.drivers.simpledevice;
 
-import captureplugin.utils.ExternalChannelIf;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+import captureplugin.utils.ExternalChannelIf;
 
 /**
  * This Class represents an external channel
@@ -138,8 +138,7 @@ public class SimpleChannel implements ExternalChannelIf {
      * @throws ClassNotFoundException
      */
     public void readData(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-      @SuppressWarnings("unused") // version not yet used
-      int version = stream.readInt();
+      stream.readInt(); // version not yet used
       mNumber = stream.readInt();
       mName = stream.readUTF();
     } 

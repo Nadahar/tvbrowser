@@ -10,21 +10,6 @@
 
 package swedbtvdataservice;
 
-import devplugin.Channel;
-import devplugin.ChannelGroup;
-import devplugin.Date;
-import devplugin.Plugin;
-import devplugin.PluginInfo;
-import devplugin.ProgressMonitor;
-import devplugin.Version;
-import tvdataservice.SettingsPanel;
-import tvdataservice.TvDataUpdateManager;
-import util.exc.TvBrowserException;
-import util.ui.Localizer;
-import util.io.IOUtilities;
-import util.io.Mirror;
-import util.misc.SoftReferenceCache;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -36,7 +21,23 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.Icon;
+
+import tvdataservice.SettingsPanel;
+import tvdataservice.TvDataUpdateManager;
+import util.exc.TvBrowserException;
+import util.io.IOUtilities;
+import util.io.Mirror;
+import util.misc.SoftReferenceCache;
+import util.ui.Localizer;
+import devplugin.Channel;
+import devplugin.ChannelGroup;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.ProgressMonitor;
+import devplugin.Version;
 
 public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   /** The default plugins download URL */
@@ -221,13 +222,14 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
     mProperties.setProperty("NumberOfChannels", Integer.toString(mChannels.size()));
 
     for (int i = 0; i < mChannels.size(); i++) {
-      DataHydraChannelContainer container = mInternalChannels.get(mChannels.get(i));
+      final Channel channel = mChannels.get(i);
+      DataHydraChannelContainer container = mInternalChannels.get(channel);
       mProperties.setProperty("ChannelId-" + i, container.getId());
       mProperties.setProperty("ChannelTitle-" + i, container.getName());
       mProperties.setProperty("ChannelBaseUrl-" + i, container.getBaseUrl());
       mProperties.setProperty("ChannelIconUrl-" + i, container.getIconUrl());
       mProperties.setProperty("ChannelLastUpdate-" + i, container.getLastUpdateString());
-      mProperties.setProperty("ChannelGroup-" + i, mChannels.get(i).getGroup().getId());
+      mProperties.setProperty("ChannelGroup-" + i, channel.getGroup().getId());
     }
     mLog.info("Finished storing settings for DataHydraTvDataService. Returning properties...");
     return mProperties;

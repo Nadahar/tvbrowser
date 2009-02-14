@@ -22,24 +22,6 @@
  */
 package blogthisplugin;
 
-import devplugin.ActionMenu;
-import devplugin.ContextMenuAction;
-import devplugin.Plugin;
-import devplugin.PluginInfo;
-import devplugin.Program;
-import devplugin.SettingsTab;
-import devplugin.ThemeIcon;
-import devplugin.Version;
-import util.browserlauncher.Launch;
-import util.paramhandler.ParamParser;
-import util.program.AbstractPluginProgramFormating;
-import util.program.LocalPluginProgramFormating;
-import util.ui.Localizer;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -48,6 +30,25 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Properties;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+
+import util.browserlauncher.Launch;
+import util.paramhandler.ParamParser;
+import util.program.AbstractPluginProgramFormating;
+import util.program.LocalPluginProgramFormating;
+import util.ui.Localizer;
+import devplugin.ActionMenu;
+import devplugin.ContextMenuAction;
+import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.Program;
+import devplugin.SettingsTab;
+import devplugin.ThemeIcon;
+import devplugin.Version;
 
 /**
  * The Main-Class for the Blog-Plugin
@@ -60,11 +61,6 @@ public class BlogThisPlugin extends Plugin {
     /** Translator */
     private static final Localizer mLocalizer = Localizer
             .getLocalizerFor(BlogThisPlugin.class);
-
-    /** Default Text */
-    //public static final String DEFAULT_TITLE = "{title} ({channel_name})";
-
-    //public static final String DEFAULT_CONTENT = "<blockquote><strong>{title}</strong>\n\n<em>{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")} {channel_name}</em>\n\n{short_info}</blockquote>\n";
 
     /** Default URLs */
     public static final String URL_WORDPRESS = "http://yoursite.com/wordpress/wp-admin/bookmarklet.php";

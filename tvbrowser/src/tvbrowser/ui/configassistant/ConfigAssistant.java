@@ -59,7 +59,7 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
 
   private JButton mNextBt, mBackBt, mCancelBt;
 
-  private CardPanel mCurCardPanel, mFinishedPanel;
+  transient private CardPanel mCurCardPanel, mFinishedPanel;
 
   private JPanel mCardPn;
 

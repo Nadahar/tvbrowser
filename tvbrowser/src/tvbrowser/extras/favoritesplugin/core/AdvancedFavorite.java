@@ -26,29 +26,36 @@
 
 package tvbrowser.extras.favoritesplugin.core;
 
-import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.core.filters.ShowAllFilter;
-import devplugin.*;
-
-import java.io.ObjectOutputStream;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
-import util.ui.SearchFormSettings;
-import util.ui.SearchForm;
-import util.exc.TvBrowserException;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+import tvbrowser.core.filters.ShowAllFilter;
+import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import util.exc.ErrorHandler;
+import util.exc.TvBrowserException;
+import util.ui.SearchForm;
+import util.ui.SearchFormSettings;
 
-import javax.swing.*;
-
+import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.builder.PanelBuilder;
+
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.PluginManager;
+import devplugin.Program;
+import devplugin.ProgramFilter;
 
 public class AdvancedFavorite extends Favorite {
 
@@ -243,10 +250,8 @@ public class AdvancedFavorite extends Favorite {
         /* For compatibility reasons we read the programs here.
            Later we perform an complete refresh.
          */
-        @SuppressWarnings("unused")
-        Date programDate = new Date(in);
-        @SuppressWarnings("unused")
-        String programId = (String) in.readObject();
+        new Date(in); // program date
+        in.readObject(); // program id
       }
     }
 

@@ -305,13 +305,11 @@ public class SearchHelper {
 
     mListModel = new DefaultListModel();
     
-    if(programArr != null) {
-      for(Program program : programArr) {
-        mListModel.addElement(program);
-      }
+    for (Program program : programArr) {
+      mListModel.addElement(program);
     }
     
-    if(programArr == null || programArr.length == 0) {
+    if (programArr.length == 0) {
       mProgressBar = new JProgressBar();
       
       mProgressMonitor = new ProgressMonitor() {

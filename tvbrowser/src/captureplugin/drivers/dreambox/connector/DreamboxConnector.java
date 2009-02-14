@@ -24,19 +24,6 @@
  */
 package captureplugin.drivers.dreambox.connector;
 
-import captureplugin.CapturePlugin;
-import captureplugin.drivers.dreambox.DreamboxConfig;
-import captureplugin.drivers.utils.ProgramTime;
-import devplugin.Channel;
-import devplugin.Date;
-import devplugin.Program;
-import org.apache.commons.codec.binary.Base64;
-import org.xml.sax.SAXException;
-import util.io.IOUtilities;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -53,15 +40,31 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TimeZone;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.apache.commons.codec.binary.Base64;
+import org.xml.sax.SAXException;
+
+import util.io.IOUtilities;
+import captureplugin.CapturePlugin;
+import captureplugin.drivers.dreambox.DreamboxConfig;
+import captureplugin.drivers.utils.ProgramTime;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.Program;
 
 /**
  * Connector for the Dreambox
  */
 public class DreamboxConnector {
   /** get list of bouquets */
-  private final String BOUQUETLIST = "1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 195) || (type == 25)FROM BOUQUET \"bouquets.tv\" ORDER BY bouquet";
+  private final static String BOUQUETLIST = "1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 195) || (type == 25)FROM BOUQUET \"bouquets.tv\" ORDER BY bouquet";
   /** Config of the Dreambox */
   private DreamboxConfig mConfig;
 
@@ -149,31 +152,36 @@ public class DreamboxConnector {
         return null;
     }
 
-    /**
-     * @return All channels available in the dreambox
-     */
-    public Collection<DreamboxChannel> getChannels() {
-        try {
-            ArrayList<DreamboxChannel> allChannels = new ArrayList<DreamboxChannel>();
+  /**
+   * @return All channels available in the dreambox
+   */
+  public Collection<DreamboxChannel> getChannels() {
+    try {
+      ArrayList<DreamboxChannel> allChannels = new ArrayList<DreamboxChannel>();
 
-            TreeMap<String, String> bouquets = getServiceDataBonquets(URLEncoder.encode(BOUQUETLIST, "UTF8"));
+      TreeMap<String, String> bouquets = getServiceDataBonquets(URLEncoder
+          .encode(BOUQUETLIST, "UTF8"));
 
-            for (String key : bouquets.keySet()) {
-                String bouqetName = bouquets.get(key);
-                TreeMap<String, String> map = getServiceData(URLEncoder.encode(key, "UTF8"));
+      for (Entry<String, String> entry : bouquets.entrySet()) {
+        String key = entry.getKey();
+        String bouqetName = entry.getValue();
+        TreeMap<String, String> map = getServiceData(URLEncoder.encode(key,
+            "UTF8"));
 
-                for (String mkey : map.keySet()) {
-                    allChannels.add(new DreamboxChannel(mkey, map.get(mkey), bouqetName));
-                }
-            }
-
-            return allChannels;
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        for (Entry<String, String> mEntry : map.entrySet()) {
+          String mkey = mEntry.getKey();
+          allChannels.add(new DreamboxChannel(mkey, entry.getValue(),
+              bouqetName));
         }
+      }
 
-        return null;
+      return allChannels;
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
     }
+
+    return null;
+  }
 
     /**
      * Switch to channel on Dreambox
@@ -304,7 +312,7 @@ public class DreamboxConnector {
             }
         }
 
-        return programs.toArray(new ProgramTime[0]);
+        return programs.toArray(new ProgramTime[programs.size()]);
     }
 
     /**
