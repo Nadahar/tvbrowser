@@ -58,7 +58,7 @@ import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.Version;
 
-public class TVPearlPlugin extends devplugin.Plugin implements Runnable
+public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 {
 
 	private static final String TARGET_PEARL_COPY = "pearlCopy";

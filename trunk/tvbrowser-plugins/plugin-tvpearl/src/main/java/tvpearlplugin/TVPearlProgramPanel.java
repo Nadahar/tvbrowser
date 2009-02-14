@@ -42,8 +42,8 @@ public class TVPearlProgramPanel extends JComponent implements ChangeListener
 
 	private static final int ICON_SPACE = 25;
 
-	private TVPProgram mPearlProgram;
-	private Program mProgram;
+	transient private TVPProgram mPearlProgram;
+  transient private Program mProgram;
 	private Color mTextColor;
 	private Font mHeaderFont;
 	private Font mBodyFont;

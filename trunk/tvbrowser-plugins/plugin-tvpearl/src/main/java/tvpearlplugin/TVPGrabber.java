@@ -19,6 +19,7 @@ package tvpearlplugin;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,6 +31,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import util.io.IOUtilities;
 
 public class TVPGrabber
 {
@@ -123,23 +126,40 @@ public class TVPGrabber
 	private String downloadUrl(String webUrl)
 	{
 		String result = "";
-
+		InputStream stream = null;
+		BufferedReader in = null;
 		try
 		{
 			URL url = new URL(webUrl);
-
-			BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8")); //ISO-8859-1
+			stream = IOUtilities.getStream(url, false);
+      in = new BufferedReader(new InputStreamReader(stream,
+          "UTF-8")); // ISO-8859-1
 			String str;
 			while ((str = in.readLine()) != null)
 			{
 				result += str + "\n";
 			}
-			in.close();
 		}
 		catch (MalformedURLException e)
 		{}
 		catch (IOException e)
 		{}
+		finally {
+		  if (in != null) {
+        try {
+          in.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+      if (stream != null) {
+        try {
+          stream.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+    }
 
 		return result;
 	}
@@ -277,17 +297,12 @@ public class TVPGrabber
 
 		if (programName.length() > 0)
 		{
-			program = new TVPProgram();
-			program.setAuthor(author);
-			program.setContentUrl(contentUrl);
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(createDate);
-			program.setCreateDate(cal);
-			program.setTitle(mConverter.convertToString(programName));
-			program.setChannel(channel);
-			program.setStart(start);
-			program.setInfo(programInfo.trim().replaceAll("\\n.*:$", "").trim());
-			program.setProgramID("");
+      Calendar cal = Calendar.getInstance();
+      cal.setTime(createDate);
+      String title = mConverter.convertToString(programName);
+      String info = programInfo.trim().replaceAll("\\n.*:$", "").trim();
+      program = new TVPProgram(author, contentUrl, cal, title, channel, start,
+          info, "");
 		}
 		return program;
 	}
@@ -384,7 +399,7 @@ public class TVPGrabber
 					result.set(Calendar.HOUR, Integer.parseInt(splitTime[0 + delta]));
 					result.set(Calendar.MINUTE, Integer.parseInt(splitTime[1 + delta]));
 				}
-				catch (Exception e)
+				catch (NumberFormatException e)
 				{
 					result = null;
 				}

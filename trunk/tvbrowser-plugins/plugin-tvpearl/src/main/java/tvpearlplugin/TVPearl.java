@@ -281,18 +281,20 @@ public class TVPearl
 			int size = in.readInt();
 			for (int i = 0; i < size; i++)
 			{
-				TVPProgram p = new TVPProgram();
-				p.setAuthor((String) in.readObject());
+				String author = (String) in.readObject();
 				Calendar cal = Calendar.getInstance();
-				cal.setTime((Date) in.readObject());
-				p.setCreateDate(cal);
-				p.setContentUrl((String) in.readObject());
-				p.setChannel((String) in.readObject());
-				cal.setTime((Date) in.readObject());
-				p.setStart(cal);
-				p.setTitle((String) in.readObject());
-				p.setInfo((String) in.readObject());
-				p.setProgramID((String) in.readObject());
+				Date time = (Date) in.readObject();
+        cal.setTime(time);
+        String url = (String) in.readObject();
+        String channel = (String) in.readObject();
+        Calendar calStart = Calendar.getInstance();
+        Date startTime = (Date) in.readObject();
+        calStart.setTime(startTime);
+        String title = (String) in.readObject();
+        String info = (String) in.readObject();
+        String programID = (String) in.readObject();
+        TVPProgram p = new TVPProgram(author, url, cal, title, channel,
+            calStart, info, programID);
 				if (p.getStart().compareTo(limit) > 0)
 				{
 					addProgram(p);
@@ -311,19 +313,22 @@ public class TVPearl
 			int size = in.readInt();
 			for (int i = 0; i < size; i++)
 			{
-				TVPProgram p = new TVPProgram();
-				p.setAuthor((String) in.readObject());
+				String author = (String) in.readObject();
 				Calendar cal = Calendar.getInstance();
-				cal.setTime((Date) in.readObject());
-				p.setCreateDate(cal);
-				p.setContentUrl((String) in.readObject());
-				p.setChannel((String) in.readObject());
-				cal.setTime((Date) in.readObject());
-				p.setStart(cal);
-				p.setTitle((String) in.readObject());
-				p.setInfo((String) in.readObject());
-				p.setProgramID((String) in.readObject());
-				p.setSendTo(in.readBoolean());
+				Date time = (Date) in.readObject();
+        cal.setTime(time);
+        String url = (String) in.readObject();
+        String channel = (String) in.readObject();
+        Date startTime = (Date) in.readObject();
+        Calendar calStart = Calendar.getInstance();
+        calStart.setTime(startTime);
+        String title = (String) in.readObject();
+        String info = (String) in.readObject();
+        String programID = (String) in.readObject();
+        TVPProgram p = new TVPProgram(author, url, cal, title, channel,
+            calStart, info, programID);
+        boolean sendTo = in.readBoolean();
+        p.setSendTo(sendTo);
 				if (p.getStart().compareTo(limit) > 0)
 				{
 					addProgram(p);
