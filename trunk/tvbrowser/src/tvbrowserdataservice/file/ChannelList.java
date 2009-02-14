@@ -36,7 +36,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.TimeZone;
 import java.util.logging.Level;
@@ -306,7 +305,7 @@ public class ChannelList {
         try {
           File iconCacheFile = ICON_CACHE.get(url);
           if (iconCacheFile != null && !iconCacheFile.equals(iconFile)) {
-            copyFile(ICON_CACHE.get(url), iconFile);
+            IOUtilities.copy(ICON_CACHE.get(url), iconFile);
             icon = getIconFromFile(iconFile);
           }
         } catch (Exception e) {
@@ -333,29 +332,6 @@ public class ChannelList {
       }
 
       return icon;
-    }
-
-    /**
-     * Fast Copy of a File
-     * @param source Source File
-     * @param dest Destination File
-     */
-    private void copyFile(File source, File dest) {
-      try {
-        // Create channel on the source
-        FileChannel srcChannel = new FileInputStream(source).getChannel();
-
-        // Create channel on the destination
-        FileChannel dstChannel = new FileOutputStream(dest).getChannel();
-
-        // Copy file contents from source to destination
-        dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
-
-        // Close the channels
-        srcChannel.close();
-        dstChannel.close();
-      } catch (IOException e) {
-      }
     }
 
     private Icon getIconFromFile(File file) {
