@@ -62,10 +62,6 @@ import devplugin.Program;
  * 
  * @author Til Schneider, www.murfman.de
  */
-/**
- * @author bananeweizen
- *
- */
 public class PluginProxyManager {
 
   /** The logger for this class */
@@ -475,6 +471,11 @@ public class PluginProxyManager {
       MainFrame.getInstance().updateFilterMenu();
 
       deactivatePlugin(item, true);
+      
+      // Update the settings
+      String[] deactivatedPlugins = getDeactivatedPluginIds();
+      Settings.propDeactivatedPlugins.setStringArray(deactivatedPlugins);
+      MainFrame.getInstance().getToolbar().updatePluginButtons();
     }
   }
 
@@ -515,7 +516,7 @@ public class PluginProxyManager {
     // Inform the listeners
     firePluginDeactivated(item.getPlugin(), log);
     
-    // Run through all Programs and umark this Plugin
+    // Run through all Programs and unmark this Plugin
     if(plugin != null && !MainFrame.isShuttingDown()) {
       new Thread("Unmark all programs of plugin") {
         public void run() {
