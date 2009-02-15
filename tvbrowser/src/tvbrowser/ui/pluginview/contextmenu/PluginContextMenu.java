@@ -37,8 +37,11 @@ import javax.swing.JPopupMenu;
 import javax.swing.tree.TreePath;
 
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.pluginview.PluginTree;
+import util.exc.TvBrowserException;
 import util.ui.Localizer;
 import util.ui.menu.MenuUtil;
 import devplugin.ActionMenu;
@@ -49,6 +52,10 @@ import devplugin.ActionMenu;
  * Time: 22:07:57
  */
 public abstract class PluginContextMenu extends AbstractContextMenu {
+
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(PluginContextMenu.class);
+
   private ActionMenu[] mActionMenus;
   private Action mDefaultAction;
   private TreePath mPath;
@@ -93,17 +100,34 @@ public abstract class PluginContextMenu extends AbstractContextMenu {
       }
     }
 
+    menu.addSeparator();
     if (hasSettingsTab()) {
-      menu.addSeparator();
       JMenuItem menuItem = MenuUtil.createMenuItem(Localizer.getLocalization(Localizer.I18N_SETTINGS)+"...");
       menuItem.setIcon(IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
-      menu.add(menuItem);
       menuItem.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
           MainFrame.getInstance().showSettingsDialog(getPluginId());
         }
       });
+      menu.add(menuItem);
     }
+    JMenuItem menuItem = MenuUtil.createMenuItem(mLocalizer.msg(
+        "disablePlugin", "Disable plugin"));
+    menuItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        final PluginProxy plugin = PluginProxyManager.getInstance()
+            .getPluginForId(getPluginId());
+        if (plugin != null) {
+          try {
+            PluginProxyManager.getInstance().deactivatePlugin(plugin);
+          } catch (TvBrowserException e1) {
+            e1.printStackTrace();
+          }
+        }
+      }
+    });
+    menu.add(menuItem);
+    
 
     return menu;
   }
