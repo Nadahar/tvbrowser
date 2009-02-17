@@ -34,8 +34,8 @@ import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.Version;
 
-public class CountryCodePlugin extends Plugin {
-  private static final Version mVersion = new Version(2, 70, 2);
+public final class CountryCodePlugin extends Plugin {
+  private static final Version mVersion = new Version(2, 70, 3);
 
   private PluginInfo mPluginInfo;
 
@@ -51,10 +51,10 @@ public class CountryCodePlugin extends Plugin {
 
   public PluginInfo getInfo() {
     if(mPluginInfo == null) {
-      String name = mLocalizer.msg("name", "Country code");
-      String desc = mLocalizer.msg("description",
+      final String name = mLocalizer.msg("name", "Country code");
+      final String desc = mLocalizer.msg("description",
         "Replaces country codes in the description by country names." );
-      String author = "Michael Keppler" ;
+      final String author = "Michael Keppler";
       
       mPluginInfo = new PluginInfo(CountryCodePlugin.class, name, desc, author);
     }
@@ -63,15 +63,16 @@ public class CountryCodePlugin extends Plugin {
   }
 
   @Override
-  public void handleTvDataAdded(MutableChannelDayProgram newProg) {
-    Iterator<Program> iterator = newProg.getPrograms();
+  public void handleTvDataAdded(final MutableChannelDayProgram newProg) {
+    final Iterator<Program> iterator = newProg.getPrograms();
     if (iterator != null) {
       while (iterator.hasNext()) {
-        MutableProgram program = (MutableProgram) iterator.next();
-        String origin = program.getTextField(ProgramFieldType.ORIGIN_TYPE);
+        final MutableProgram program = (MutableProgram) iterator.next();
+        final String origin = program
+            .getTextField(ProgramFieldType.ORIGIN_TYPE);
         if (origin != null) {
-          StringBuilder builder = new StringBuilder();
-          Matcher matcher = mPattern.matcher(origin);
+          final StringBuilder builder = new StringBuilder();
+          final Matcher matcher = mPattern.matcher(origin);
           int start = 0;
           int end = 0;
           while (matcher.find()) {
@@ -80,8 +81,8 @@ public class CountryCodePlugin extends Plugin {
               builder.append(origin.substring(end, start));
             }
             end = matcher.end(1);
-            String code = matcher.group();
-            String replacement = mLocalizer.msg("code." + code, "");
+            final String code = matcher.group();
+            final String replacement = mLocalizer.msg("code." + code, "");
             if (replacement.length() > 0 && replacement.indexOf('#') < 0) {
               builder.append(replacement);
             }
@@ -92,7 +93,7 @@ public class CountryCodePlugin extends Plugin {
           if (end < origin.length()) {
             builder.append(origin.substring(end, origin.length()));
           }
-          String replaced = builder.toString();
+          final String replaced = builder.toString();
           if (!replaced.equals(origin)) {
             program.setTextField(ProgramFieldType.ORIGIN_TYPE, replaced);
           }
