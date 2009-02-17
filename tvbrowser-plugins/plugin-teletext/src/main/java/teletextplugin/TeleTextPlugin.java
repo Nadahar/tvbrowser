@@ -23,10 +23,6 @@
 package teletextplugin;
 
 import java.awt.event.ActionEvent;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -47,16 +43,13 @@ final public class TeleTextPlugin extends Plugin {
 
   private PluginInfo mPluginInfo;
 
-  private Properties mPages;
-
   private ImageIcon mIcon;
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(TeleTextPlugin.class);
 
-  private static java.util.logging.Logger mLog = java.util.logging.Logger
-      .getLogger(TeleTextPlugin.class.getName());
+  private TeleTextChannelProperties mUrlProperties = new TeleTextChannelProperties();
 
   public static Version getVersion() {
     return mVersion;
@@ -86,7 +79,7 @@ final public class TeleTextPlugin extends Plugin {
     }
 
     final Channel channel = program.getChannel();
-    final String url = getTextUrl(channel);
+    final String url = mUrlProperties.getProperty(channel);
     if (url != null && url.length() > 0) {
       final Action action = new AbstractAction(mLocalizer.msg("contextMenu",
           "Teletext"), getPluginIcon()) {
@@ -107,89 +100,5 @@ final public class TeleTextPlugin extends Plugin {
     }
     return mIcon;
   }
-
-  private String getTextUrl(final Channel channel) {
-    try {
-      initializeProperties();
-      final String channelCountry = channel.getCountry();
-      final String channelName = channel.getDefaultName();
-      for (final Enumeration<?> keys = mPages.propertyNames(); keys
-          .hasMoreElements();) {
-        final String key = (String) keys.nextElement();
-        final int separatorIndex = key.indexOf(',');
-        if (separatorIndex > 0) {
-          final String[] countries = key.substring(0, separatorIndex).split(
-              "\\W");
-          final String name = "(?i)"
-              + key.substring(separatorIndex + 1).replaceAll("\\*", ".*");
-          for (String country : countries) {
-            if (channelCountry.equalsIgnoreCase(country)
-                && channelName.matches(name)) {
-              String url = mPages.getProperty(key);
-              if (isValidURL(url)) {
-                return url;
-              }
-              else {
-                url = mPages.getProperty(url);
-                if (isValidURL(url)) {
-                  return url;
-                }
-              }
-            }
-          }
-        }
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    // nothing found
-    return null;
-  }
-
-  private boolean isValidURL(final String url) {
-    return url != null && url.length() > 0 && url.startsWith("http");
-  }
-
-  private void initializeProperties() {
-    // load the URLs
-    if (mPages == null) {
-      final InputStream urlStream = getClass().getResourceAsStream(
-          "teletext.properties");
-      mPages = new Properties();
-      try {
-        mPages.load(urlStream);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      // check all URLs on first load
-      checkURLs();
-    }
-  }
-
-  private void checkURLs() {
-    for (final Enumeration<?> keys = mPages.propertyNames(); keys
-        .hasMoreElements();) {
-      final String key = (String) keys.nextElement();
-      String url = mPages.getProperty(key);
-      if (url != null && url.length() > 0) {
-        // is this a mapping only?
-        if (!url.startsWith("http")) {
-          url = mPages.getProperty(url);
-          if (url != null) {
-            mPages.put(key, url);
-          }
-          else {
-            mLog.warning("Bad teletext mapping for " + key);
-          }
-        }
-        if (url == null || url.length() == 0 || !url.startsWith("http")) {
-          mLog.warning("Bad teletext URL " + url);
-        }
-      } else {
-        mLog.warning("Bad teletext key " + key + "=" + url);
-      }
-    }
-  }
-
 
 }
