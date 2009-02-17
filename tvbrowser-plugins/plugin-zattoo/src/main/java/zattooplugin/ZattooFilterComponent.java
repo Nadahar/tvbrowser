@@ -37,7 +37,7 @@ public final class ZattooFilterComponent extends PluginsFilterComponent {
     return mLocalizer.msg("name", "Zattoo channels");
   }
 
-  public boolean accept(Program program) {
+  public boolean accept(final Program program) {
     return ZattooPlugin.getInstance().isChannelSupported(program.getChannel());
   }
 
@@ -45,17 +45,18 @@ public final class ZattooFilterComponent extends PluginsFilterComponent {
     return 0;
   }
 
-  public void read(ObjectInputStream arg0, int arg1) throws IOException,
+  public void read(final ObjectInputStream arg0, final int arg1)
+      throws IOException,
       ClassNotFoundException {
     // no filter settings
   }
 
-  public void write(ObjectOutputStream arg0) throws IOException {
+  public void write(final ObjectOutputStream arg0) throws IOException {
     // no filter settings
   }
 
   public JPanel getSettingsPanel() {
-    JPanel descPanel = new JPanel();
+    final JPanel descPanel = new JPanel();
     descPanel.add(new JLabel(mLocalizer.msg("desc",
         "Accepts all programs of channels which are supported by Zattoo.")));
     return descPanel;

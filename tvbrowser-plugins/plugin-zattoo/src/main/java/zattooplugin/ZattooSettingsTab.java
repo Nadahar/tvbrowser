@@ -1,7 +1,5 @@
 package zattooplugin;
 
-import java.util.Vector;
-
 import javax.swing.Icon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -27,12 +25,12 @@ public final class ZattooSettingsTab implements SettingsTab {
 
     panel.add(new JLabel(mLocalizer.msg("country","Country:")), cc.xy(1,1));
 
-    Vector<ZattooCountry> data = new Vector<ZattooCountry>();
+    final ZattooCountry[] countries = new ZattooCountry[] {
+        new ZattooCountry("de", mLocalizer.msg("country_de", "Germany")),
+        // new ZattooCountry("at", mLocalizer.msg("country_at", "Austria")),
+        new ZattooCountry("ch", mLocalizer.msg("country_ch", "Switzerland")) };
 
-    data.add(new ZattooCountry("de", mLocalizer.msg("country_de", "Germany")));
-    data.add(new ZattooCountry("at", mLocalizer.msg("country_at", "Austria")));
-
-    mCountry = new JComboBox(data);
+    mCountry = new JComboBox(countries);
     mCountry.setSelectedItem(new ZattooCountry(ZattooPlugin.getInstance().getCurrentCountry(), ""));
 
     panel.add(mCountry, cc.xy(3,1));
