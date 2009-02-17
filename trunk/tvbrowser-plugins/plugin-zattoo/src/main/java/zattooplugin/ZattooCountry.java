@@ -13,7 +13,7 @@ public class ZattooCountry {
     return mCode;
   }
 
-  public void setCode(String code) {
+  public void setCode(final String code) {
     mCode = code;
   }
 
@@ -21,7 +21,7 @@ public class ZattooCountry {
     return mName;
   }
 
-  public void setName(String name) {
+  public void setName(final String name) {
     mName = name;
   }
 
@@ -30,11 +30,11 @@ public class ZattooCountry {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    ZattooCountry that = (ZattooCountry) o;
+    final ZattooCountry that = (ZattooCountry) o;
 
     if (mCode != null ? !mCode.equals(that.mCode) : that.mCode != null) return false;
 

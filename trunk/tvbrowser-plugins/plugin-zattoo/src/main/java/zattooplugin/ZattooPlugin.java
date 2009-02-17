@@ -2,7 +2,6 @@ package zattooplugin;
 
 import java.awt.event.ActionEvent;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,28 +27,28 @@ import devplugin.SettingsTab;
 import devplugin.Version;
 
 public final class ZattooPlugin extends Plugin {
-  
+
   private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 4, 2,
+  private static final Version PLUGIN_VERSION = new Version(0, 4, 3,
       PLUGIN_IS_STABLE);
-  
-  private static final Localizer mLocalizer = Localizer.getLocalizerFor(ZattooPlugin.class);
+
+  private static final Localizer mLocalizer = Localizer
+      .getLocalizerFor(ZattooPlugin.class);
   private static Logger mLog = Logger.getLogger(ZattooPlugin.class.getName());
 
   private static final String KEY_COUNTRY = "COUNTRY";
 
   private ImageIcon mIcon;
   private static ZattooPlugin mInstance;
-  private Properties mChannelMapping;
   private Properties mSettings;
   private PluginsProgramFilter mFilters;
+  private ZattooChannelProperties mChannelIds;
 
   /**
    * Creates an instance of this plugin.
    */
   public ZattooPlugin() throws IOException {
     mInstance = this;
-    mChannelMapping = new Properties();
   }
 
   public static Version getVersion() {
@@ -62,25 +61,19 @@ public final class ZattooPlugin extends Plugin {
   }
 
   @Override
-  public void loadSettings(Properties properties) {
+  public void loadSettings(final Properties properties) {
     mSettings = properties;
 
     changeCountry(mSettings.getProperty(KEY_COUNTRY, "de"));
   }
 
   public void changeCountry(final String country) {
-    mChannelMapping = new Properties();
-
-    final InputStream stream = ZattooPlugin.class.getResourceAsStream("channelid_" + country + ".properties");
-    if (stream != null) {
-      try {
-        mChannelMapping.load(stream);
-        mSettings.setProperty(KEY_COUNTRY, country);
-      } catch (IOException e) {
-        mLog.log(Level.WARNING, "Could not load File for Country " + country + ".", e);
-      }
-    } else {
-      mLog.log(Level.WARNING, "Could not find File for Country " + country + ".");
+    try {
+      mChannelIds = new ZattooChannelProperties("channels_" + country);
+      mSettings.setProperty(KEY_COUNTRY, country);
+    } catch (Exception e) {
+      mLog.log(Level.WARNING, "Could not load File for Country " + country
+          + ".", e);
     }
   }
 
@@ -108,9 +101,10 @@ public final class ZattooPlugin extends Plugin {
   }
 
   public ActionMenu getContextMenuActions(final Program program) {
-    if (getPluginManager().getExampleProgram().equals(program) || getChannelId(program.getChannel()) != null) {
-      AbstractAction action = new AbstractAction() {
-        public void actionPerformed(ActionEvent evt) {
+    if (getPluginManager().getExampleProgram().equals(program)
+        || getChannelId(program.getChannel()) != null) {
+      final AbstractAction action = new AbstractAction() {
+        public void actionPerformed(final ActionEvent evt) {
           SwingUtilities.invokeLater(new Runnable() {
             public void run() {
               openChannel(program.getChannel());
@@ -118,7 +112,8 @@ public final class ZattooPlugin extends Plugin {
           });
         }
       };
-      action.putValue(Action.NAME, mLocalizer.msg("contextMenuTweet", "Switch Channel"));
+      action.putValue(Action.NAME, mLocalizer.msg("contextMenuTweet",
+          "Switch Channel"));
       action.putValue(Action.SMALL_ICON, getPluginIcon());
       return new ActionMenu(action);
     }
@@ -135,20 +130,22 @@ public final class ZattooPlugin extends Plugin {
       } else if (OperatingSystem.isMacOs()) {
         executionHandler = new ExecutionHandler(zattooURI, "open");
       } else {
-        executionHandler = new ExecutionHandler(new String[] {"rundll32.exe", "url.dll,FileProtocolHandler", zattooURI});
+        executionHandler = new ExecutionHandler(new String[] { "rundll32.exe",
+            "url.dll,FileProtocolHandler", zattooURI });
       }
-      
+
       try {
         executionHandler.execute(false);
       } catch (IOException e) {
         e.printStackTrace();
-        ErrorHandler.handle(mLocalizer.msg("error.zatto", "Could not start zattoo"), e);
+        ErrorHandler.handle(mLocalizer.msg("error.zatto",
+            "Could not start zattoo"), e);
       }
     }
   }
 
   private String getChannelId(final Channel channel) {
-    final String ret = mChannelMapping.getProperty(channel.getUniqueId());
+    final String ret = mChannelIds.getProperty(channel);
     if (ret == null) {
       mLog.log(Level.INFO, "No channel mapping found for "
           + channel.getUniqueId());
@@ -170,7 +167,7 @@ public final class ZattooPlugin extends Plugin {
           return mLocalizer.msg("supportedChannels", "Supported channels");
         }
 
-        public boolean accept(Program program) {
+        public boolean accept(final Program program) {
           return isChannelSupported(program.getChannel());
         }
       };
@@ -183,9 +180,8 @@ public final class ZattooPlugin extends Plugin {
     return (Class<? extends PluginsFilterComponent>[]) new Class[] { ZattooFilterComponent.class };
   }
 
-  public boolean isChannelSupported(Channel channel) {
+  public boolean isChannelSupported(final Channel channel) {
     return getChannelId(channel) != null;
   }
 
 }
-
