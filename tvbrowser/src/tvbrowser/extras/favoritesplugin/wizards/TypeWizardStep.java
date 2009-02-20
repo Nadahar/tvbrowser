@@ -225,6 +225,10 @@ public class TypeWizardStep extends AbstractWizardStep {
       mTopicRb.setSelected(true);
       updateTextfields();
       mTopicTf.setText(mTopic);
+      // the topic might also be an actor name
+      if (mActor == null && ProgramUtilities.getActorNames(mProgram) == null) {
+        mActorsCb.setSelectedItem(mTopic);
+      }
     } else if (mActor != null) {
       mActorsRb.setSelected(true);
       updateTextfields();
@@ -325,14 +329,14 @@ public class TypeWizardStep extends AbstractWizardStep {
   }
   
   public void setActor(String actor) {
-    if (actor == null || actor.length() == 0) {
+    if (actor == null || actor.trim().length() == 0) {
       return;
     }
     mActor = actor;
   }
 
   public void setTopic(String topic) {
-    if (topic == null || topic.length() == 0) {
+    if (topic == null || topic.trim().length() == 0) {
       return;
     }
     mTopic = topic;
