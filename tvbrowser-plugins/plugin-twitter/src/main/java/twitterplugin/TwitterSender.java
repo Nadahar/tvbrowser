@@ -1,21 +1,18 @@
 package twitterplugin;
 
-import devplugin.Program;
-
-import java.awt.Frame;
 import java.awt.Window;
 import java.util.Properties;
 
-import twitter4j.Twitter;
-import twitter4j.Status;
-import twitter4j.TwitterException;
-import util.exc.ErrorHandler;
-import util.ui.Localizer;
-import util.io.IOUtilities;
-
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JDialog;
+
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import util.exc.ErrorHandler;
+import util.io.IOUtilities;
+import util.ui.Localizer;
+import devplugin.Program;
 
 public class TwitterSender {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(TwitterSender.class);

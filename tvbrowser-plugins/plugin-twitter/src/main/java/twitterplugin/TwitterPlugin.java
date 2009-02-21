@@ -18,14 +18,14 @@ import devplugin.Program;
 import devplugin.SettingsTab;
 import devplugin.Version;
 
-public class TwitterPlugin extends Plugin {
+public final class TwitterPlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(TwitterPlugin.class);
   public static final String DEFAULT_FORMAT = "{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}. {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")} {channel_name} - {title}";
 
   public static final String STORE_PASSWORD = "STOREPASSWORD";
   public static final String USERNAME = "USERNAME";
   public static final String PASSWORD = "PASSWORD";
-  protected static final String FORMAT = "paramForProgram";
+  static final String FORMAT = "paramForProgram";
 
   private Properties mSettings;
   private ImageIcon mIcon;

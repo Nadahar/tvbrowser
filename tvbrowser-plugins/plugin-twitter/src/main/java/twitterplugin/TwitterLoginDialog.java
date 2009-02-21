@@ -1,34 +1,32 @@
 package twitterplugin;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.JPasswordField;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JButton;
-import java.awt.Frame;
-import java.awt.Dialog;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Window;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.Sizes;
-import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
 
-public class TwitterLoginDialog extends JDialog implements WindowClosingIf {
+public final class TwitterLoginDialog extends JDialog implements
+    WindowClosingIf {
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(TwitterLoginDialog.class);
 

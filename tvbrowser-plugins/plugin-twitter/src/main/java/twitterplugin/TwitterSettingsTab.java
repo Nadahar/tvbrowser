@@ -1,26 +1,27 @@
 package twitterplugin;
 
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import util.paramhandler.ParamInputField;
+import util.ui.Localizer;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+
 import devplugin.SettingsTab;
 import devplugin.ThemeIcon;
 
-import javax.swing.JPanel;
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JButton;
-
-import util.ui.Localizer;
-import util.paramhandler.ParamInputField;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.RowSpec;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.factories.Borders;
-
-import java.awt.FlowLayout;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
-public class TwitterSettingsTab implements SettingsTab {
+public final class TwitterSettingsTab implements SettingsTab {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(TwitterSettingsTab.class);
   private boolean mUserStored = "true".equalsIgnoreCase(TwitterPlugin.getInstance().getSettings().getProperty(TwitterPlugin.STORE_PASSWORD, "false"));
   private ParamInputField mFormat;
