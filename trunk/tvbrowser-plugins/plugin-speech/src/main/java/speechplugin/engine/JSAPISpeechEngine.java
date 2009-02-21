@@ -40,19 +40,13 @@ public class JSAPISpeechEngine extends AbstractSpeechEngine {
   private static final String MODE_NAME = "general";
 
   private static final java.util.logging.Logger mLog = java.util.logging.Logger
-  .getLogger(JSAPISpeechEngine.class.getName());
+      .getLogger(JSAPISpeechEngine.class.getName());
 
   private Synthesizer mSynthesizer;
 
   private Thread mThread;
 
   private String mVoice;
-  
-  @Override
-  public void initialize() {
-    // TODO Auto-generated method stub
-    super.initialize();
-  }
 
   /**
    * Example of how to list all the known voices for a specific mode using just
@@ -63,17 +57,19 @@ public class JSAPISpeechEngine extends AbstractSpeechEngine {
    */
   @Override
   public List<String> getVoices() {
-    ArrayList<String> result = new ArrayList<String>();
-    
-    // get all synthesizers without any restrictions (locale, domain, voice etc.)
-    SynthesizerModeDesc unspecifiedSynthesizer = new SynthesizerModeDesc();
-    EngineList engineList = Central.availableSynthesizers(unspecifiedSynthesizer);
-    
+    final ArrayList<String> result = new ArrayList<String>();
+
+    // get all synthesizers without any restrictions (locale, domain, voice
+    // etc.)
+    final SynthesizerModeDesc unspecifiedSynthesizer = new SynthesizerModeDesc();
+    final EngineList engineList = Central
+        .availableSynthesizers(unspecifiedSynthesizer);
+
     // get all voices
     for (int i = 0; i < engineList.size(); i++) {
-      SynthesizerModeDesc desc = (SynthesizerModeDesc) engineList.get(i);
+      final SynthesizerModeDesc desc = (SynthesizerModeDesc) engineList.get(i);
       if (desc.getModeName().equals(MODE_NAME)) {
-        Voice[] voices = desc.getVoices();
+        final Voice[] voices = desc.getVoices();
         for (Voice voice : voices) {
           result.add(voice.getName());
         }
@@ -83,21 +79,23 @@ public class JSAPISpeechEngine extends AbstractSpeechEngine {
   }
 
   @Override
-  public void setVoice(String voiceName) {
+  public void setVoice(final String voiceName) {
     mVoice = voiceName;
   }
-  
-  private void startSynthesizer(String voiceName) {
+
+  private void startSynthesizer(final String voiceName) {
     if (mSynthesizer != null) {
       return;
     }
     try {
       Voice selectedVoice = null;
-      SynthesizerModeDesc unspecifiedSynthesizer = new SynthesizerModeDesc();
-      EngineList engineList = Central.availableSynthesizers(unspecifiedSynthesizer);
+      final SynthesizerModeDesc unspecifiedSynthesizer = new SynthesizerModeDesc();
+      final EngineList engineList = Central
+          .availableSynthesizers(unspecifiedSynthesizer);
       for (int i = 0; i < engineList.size(); i++) {
-        SynthesizerModeDesc desc = (SynthesizerModeDesc) engineList.get(i);
-        Voice[] voices = desc.getVoices();
+        final SynthesizerModeDesc desc = (SynthesizerModeDesc) engineList
+            .get(i);
+        final Voice[] voices = desc.getVoices();
         for (Voice voice : voices) {
           if (voice.getName().equals(voiceName)) {
             mSynthesizer = Central.createSynthesizer(desc);
@@ -135,12 +133,12 @@ public class JSAPISpeechEngine extends AbstractSpeechEngine {
     if (text == null) {
       return;
     }
-    
+
     // if synthesizer is still running, stop it first
     if (mThread != null) {
       mThread.interrupt();
     }
-    
+
     // run synthesizer in new thread to avoid GUI blocking
     mThread = new Thread("Speech") {
       @Override
@@ -209,6 +207,5 @@ public class JSAPISpeechEngine extends AbstractSpeechEngine {
         + "various conditions and then try again.\n";
     return message;
   }
-
 
 }

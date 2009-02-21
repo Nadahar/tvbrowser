@@ -59,7 +59,7 @@ import devplugin.Version;
  * @author Bananeweizen
  * 
  */
-public class SpeechPlugin extends Plugin {
+public final class SpeechPlugin extends Plugin {
 
   private static Version mVersion = new Version(2, 70);
 
@@ -82,7 +82,7 @@ public class SpeechPlugin extends Plugin {
 
   private String mVoice = null;
 
-  private LocalPluginProgramFormating[] mLocalFormatings;
+  private LocalPluginProgramFormating[] mLocalFormattings;
 
   private AbstractPluginProgramFormating[] mConfigs;
 
@@ -121,7 +121,7 @@ public class SpeechPlugin extends Plugin {
     return mInstance;
   }
 
-  public void loadSettings(Properties settings) {
+  public void loadSettings(final Properties settings) {
     if (settings == null) {
       mSettings = new SpeechPluginSettings(new Properties());
     } else {
@@ -147,8 +147,8 @@ public class SpeechPlugin extends Plugin {
   }
 
   @Override
-  public boolean receivePrograms(Program[] programArr,
-      ProgramReceiveTarget receiveTarget) {
+  public boolean receivePrograms(final Program[] programArr,
+      final ProgramReceiveTarget receiveTarget) {
     for (Program program : programArr) {
       if (receiveTarget.getTargetId().equals(TARGET_SPEAK_TITLE)) {
         speak(program.getTitle());
@@ -176,19 +176,18 @@ public class SpeechPlugin extends Plugin {
 
   @Override
   public ActionMenu getContextMenuActions(final Program program) {
-    ArrayList<Action> actions = new ArrayList<Action>();
+    final ArrayList<Action> actions = new ArrayList<Action>();
 
-    ParamParser parser = new ParamParser();
+    final ParamParser parser = new ParamParser();
 
     // add all selected formattings
-    AbstractPluginProgramFormating[] formattings = SpeechPlugin.getInstance()
-        .getSelectedPluginProgramFormattings();
+    final AbstractPluginProgramFormating[] formattings = getSelectedPluginProgramFormattings();
     for (AbstractPluginProgramFormating formatting : formattings) {
       final String content = parser.analyse(formatting.getContentValue(),
           program);
       if (content != null && content.length() > 0) {
         actions.add(new AbstractAction(formatting.getTitleValue()) {
-          public void actionPerformed(ActionEvent e) {
+          public void actionPerformed(final ActionEvent e) {
             speak(content);
           }
         });
@@ -199,30 +198,30 @@ public class SpeechPlugin extends Plugin {
     if (mEngine != null && mEngine.isSpeaking()) {
       actions.add(ContextMenuSeparatorAction.getInstance());
       actions.add(new AbstractAction(mLocalizer.msg("stop", "Stop speech")) {
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(final ActionEvent e) {
           stopSpeaking();
         }
       });
     }
-    
+
     // no cascaded menu for single action
     if (actions.size() == 1) {
-      Action action = actions.get(0);
+      final Action action = actions.get(0);
       action.putValue(Action.NAME, mLocalizer.msg("contextMenu", "Speak"));
       return new ActionMenu(action);
     }
 
     // build cascaded menu
-    Action[] result = new Action[actions.size()];
+    final Action[] result = new Action[actions.size()];
     actions.toArray(result);
-    Action contextMenuAction = new ContextMenuAction(mLocalizer.msg(
+    final Action contextMenuAction = new ContextMenuAction(mLocalizer.msg(
         "contextMenu", "Speak"));
     return new ActionMenu(contextMenuAction, result);
   }
 
   protected List<String> getAvailableVoices() {
     if (mEngine != null) {
-      List<String> result = mEngine.getVoices();
+      final List<String> result = mEngine.getVoices();
       if (result != null) {
         return result;
       }
@@ -230,11 +229,11 @@ public class SpeechPlugin extends Plugin {
     return new ArrayList<String>();
   }
 
-  protected void speak(String text) {
+  protected void speak(final String text) {
     startEngine();
     if (mEngine != null) {
       // switch voice after changed settings
-      String voice = mSettings.getVoice();
+      final String voice = mSettings.getVoice();
       if (mVoice == null || (voice != null && !mVoice.equals(voice))) {
         mVoice = voice;
         mEngine.setVoice(mVoice);
@@ -247,8 +246,8 @@ public class SpeechPlugin extends Plugin {
     startEngine(mSettings.getEngine());
   }
 
-  void startEngine(int engine) {
-    AbstractSpeechEngine oldEngine = mEngine;
+  void startEngine(final int engine) {
+    final AbstractSpeechEngine oldEngine = mEngine;
     if (engine == SpeechPluginSettings.ENGINE_JAVA
         && !(mEngine instanceof JSAPISpeechEngine)) {
       mEngine = new JSAPISpeechEngine();
@@ -260,8 +259,8 @@ public class SpeechPlugin extends Plugin {
       mEngine = new MacSpeechEngine();
     } else if (engine == SpeechPluginSettings.ENGINE_OTHER
         && !(mEngine instanceof CommandLineSpeechEngine)) {
-      String executable = mSettings.getOtherEngineExecutable();
-      String parameters = mSettings.getOtherEngineParameters();
+      final String executable = mSettings.getOtherEngineExecutable();
+      final String parameters = mSettings.getOtherEngineParameters();
       if (executable != null && executable.length() > 0) {
         mEngine = new CommandLineSpeechEngine(executable, parameters);
       }
@@ -306,11 +305,11 @@ public class SpeechPlugin extends Plugin {
         .getLocalizedName(), "{title}", "UTF-8");
   }
 
-  public void writeData(ObjectOutputStream out) throws IOException {
+  public void writeData(final ObjectOutputStream out) throws IOException {
     out.writeInt(1); // write version
 
     if (mConfigs != null) {
-      ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
+      final ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
 
       for (AbstractPluginProgramFormating config : mConfigs)
         if (config != null)
@@ -323,10 +322,10 @@ public class SpeechPlugin extends Plugin {
     } else
       out.writeInt(0);
 
-    if (mLocalFormatings != null) {
-      ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
+    if (mLocalFormattings != null) {
+      final ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
 
-      for (AbstractPluginProgramFormating config : mLocalFormatings)
+      for (AbstractPluginProgramFormating config : mLocalFormattings)
         if (config != null)
           list.add(config);
 
@@ -338,17 +337,17 @@ public class SpeechPlugin extends Plugin {
 
   }
 
-  public void readData(ObjectInputStream in) throws IOException,
+  public void readData(final ObjectInputStream in) throws IOException,
       ClassNotFoundException {
     try {
       in.readInt();
 
-      int n = in.readInt();
+      final int n = in.readInt();
 
-      ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
+      final ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
 
       for (int i = 0; i < n; i++) {
-        AbstractPluginProgramFormating value = AbstractPluginProgramFormating
+        final AbstractPluginProgramFormating value = AbstractPluginProgramFormating
             .readData(in);
 
         if (value != null) {
@@ -361,22 +360,23 @@ public class SpeechPlugin extends Plugin {
 
       mConfigs = list.toArray(new AbstractPluginProgramFormating[list.size()]);
 
-      mLocalFormatings = new LocalPluginProgramFormating[in.readInt()];
+      mLocalFormattings = new LocalPluginProgramFormating[in.readInt()];
 
-      for (int i = 0; i < mLocalFormatings.length; i++) {
-        LocalPluginProgramFormating value = (LocalPluginProgramFormating) LocalPluginProgramFormating
+      for (int i = 0; i < mLocalFormattings.length; i++) {
+        final LocalPluginProgramFormating value = (LocalPluginProgramFormating) LocalPluginProgramFormating
             .readData(in);
-        LocalPluginProgramFormating loadedInstance = getInstanceOfFormattingFromSelected(value);
+        final LocalPluginProgramFormating loadedInstance = getInstanceOfFormattingFromSelected(value);
 
-        mLocalFormatings[i] = loadedInstance == null ? value : loadedInstance;
+        mLocalFormattings[i] = loadedInstance == null ? value : loadedInstance;
       }
     } catch (Exception e) {
+      e.printStackTrace();
       // Empty
     }
   }
 
   private LocalPluginProgramFormating getInstanceOfFormattingFromSelected(
-      LocalPluginProgramFormating value) {
+      final LocalPluginProgramFormating value) {
     for (AbstractPluginProgramFormating config : mConfigs)
       if (config.equals(value))
         return (LocalPluginProgramFormating) config;
@@ -389,15 +389,15 @@ public class SpeechPlugin extends Plugin {
   }
 
   protected LocalPluginProgramFormating[] getAvailableLocalPluginProgramFormattings() {
-    return mLocalFormatings;
+    return mLocalFormattings;
   }
 
-  protected void setAvailableLocalPluginProgramFormatings(
-      LocalPluginProgramFormating[] value) {
+  protected void setAvailableLocalPluginProgramFormattings(
+      final LocalPluginProgramFormating[] value) {
     if (value == null || value.length < 1)
       createDefaultAvailable();
     else
-      mLocalFormatings = value;
+      mLocalFormattings = value;
   }
 
   protected AbstractPluginProgramFormating[] getSelectedPluginProgramFormattings() {
@@ -405,7 +405,7 @@ public class SpeechPlugin extends Plugin {
   }
 
   protected void setSelectedPluginProgramFormatings(
-      AbstractPluginProgramFormating[] value) {
+      final AbstractPluginProgramFormating[] value) {
     if (value == null || value.length < 1)
       createDefaultConfig();
     else
@@ -418,8 +418,8 @@ public class SpeechPlugin extends Plugin {
   }
 
   private void createDefaultAvailable() {
-    mLocalFormatings = new LocalPluginProgramFormating[2];
-    mLocalFormatings[0] = FORMATTING_TITLE;
-    mLocalFormatings[1] = FORMATTING_DESCRIPTION;
+    mLocalFormattings = new LocalPluginProgramFormating[2];
+    mLocalFormattings[0] = FORMATTING_TITLE;
+    mLocalFormattings[1] = FORMATTING_DESCRIPTION;
   }
 }

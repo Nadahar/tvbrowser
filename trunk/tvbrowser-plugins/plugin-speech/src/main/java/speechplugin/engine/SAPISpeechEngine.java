@@ -31,7 +31,7 @@ public class SAPISpeechEngine extends AbstractSpeechEngine {
 
   private SAPI mSapi;
   private Thread mThread;
-  
+
   @Override
   public List<String> getVoices() {
     initialize();
@@ -45,8 +45,8 @@ public class SAPISpeechEngine extends AbstractSpeechEngine {
   }
 
   @Override
-  public void setVoice(String voiceName) {
-    boolean result = mSapi.setVoice(voiceName);
+  public void setVoice(final String voiceName) {
+    final boolean result = mSapi.setVoice(voiceName);
     if (!result) {
       System.out.println("\nSet voice token NOT successful.");
     }
@@ -57,30 +57,24 @@ public class SAPISpeechEngine extends AbstractSpeechEngine {
     if (text == null) {
       return;
     }
-    
+
     // if synthesizer is still running, stop it first
     if (mThread != null) {
       mThread.interrupt();
     }
-    
-    boolean result = mSapi.speak(text);
+
+    final boolean result = mSapi.speak(text);
     if (!result) {
       System.out.println("\nSpeak text NOT successful.");
     }
-/*
-    // run synthesizer in new thread to avoid GUI blocking
-    mThread = new Thread("Speech via SAPI") {
-      @Override
-      public void run() {
-        boolean result = mSapi.speak(text);
-        if (!result) {
-          System.out.println("\nSpeak text NOT successful.");
-        }
-        mThread = null;
-      }
-    };
-    mThread.start();
-*/
+    /*
+     * // run synthesizer in new thread to avoid GUI blocking mThread = new
+     * Thread("Speech via SAPI") {
+     * 
+     * @Override public void run() { boolean result = mSapi.speak(text); if
+     * (!result) { System.out.println("\nSpeak text NOT successful."); } mThread
+     * = null; } }; mThread.start();
+     */
   }
 
   @Override

@@ -32,11 +32,13 @@ package speechplugin.quadmore;
  * around this class
  */
 
-public class QuadmoreTTS
-{
-    public static void main(String args[])
-    { }
-    public native boolean SpeakDarling(String strInput);
-    public native boolean setVoiceToken(String strVoiceToken);
-    public native String getVoiceToken();
+public class QuadmoreTTS {
+  public static void main(String args[]) {
+  }
+
+  public native boolean SpeakDarling(String strInput);
+
+  public native boolean setVoiceToken(String strVoiceToken);
+
+  public native String getVoiceToken();
 }

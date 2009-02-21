@@ -29,11 +29,17 @@ public abstract class AbstractSpeechEngine {
   public void initialize() {
     // empty initialization
   }
+
   public abstract List<String> getVoices();
+
   public abstract void setVoice(String voiceName);
+
   public abstract void speak(String text);
+
   public abstract void stopSpeaking();
+
   public abstract boolean isSpeaking();
+
   public void shutdown() {
     // empty shutdown
   }
