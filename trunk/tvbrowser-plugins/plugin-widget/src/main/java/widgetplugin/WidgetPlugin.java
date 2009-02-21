@@ -12,7 +12,7 @@ import devplugin.PluginInfo;
 import devplugin.SettingsTab;
 import devplugin.Version;
 
-public class WidgetPlugin extends Plugin {
+final public class WidgetPlugin extends Plugin {
 
 	private static final Version PLUGIN_VERSION = new Version(2, 70, 0, true);
 
