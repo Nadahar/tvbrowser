@@ -26,7 +26,8 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
   /**
    * Translator
    */
-  private static final Localizer mLocalizer = Localizer.getLocalizerFor(MovieAwardDialog.class);
+  private static final transient Localizer mLocalizer = Localizer
+      .getLocalizerFor(MovieAwardDialog.class);
 
   public MovieAwardDialog(JFrame frame, ArrayList<MovieAward> mMovieAwards, Program program) {
     super(frame, true);
@@ -56,7 +57,7 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
 
     for (MovieAward maward : mMovieAwards) {
       for (Award award : maward.getAwardsFor(program)) {
-        text.append("<li>").append(maward.getName()).append(" ").append(
+        text.append("<li>").append(maward.getName()).append(' ').append(
             award.getAwardYear()).append(": ");
 
         final String category = maward.getCategoryName(award.getCategory());

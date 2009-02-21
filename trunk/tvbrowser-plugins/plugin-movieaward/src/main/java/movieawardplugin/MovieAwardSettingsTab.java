@@ -61,7 +61,8 @@ public class MovieAwardSettingsTab implements SettingsTab {
       }
 
       if (award.getProviderName() != null) {
-        builder.append(" ").append(mLocalizer.msg("provided", "provided by")).append(" ");
+        builder.append(' ').append(mLocalizer.msg("provided", "provided by"))
+            .append(' ');
         if (award.getProviderUrl() != null) {
           builder.append("<a href=\"").append(award.getProviderUrl()).append("\">");
         }
