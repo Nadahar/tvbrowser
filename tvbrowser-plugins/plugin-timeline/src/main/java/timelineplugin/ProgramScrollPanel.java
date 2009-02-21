@@ -58,11 +58,11 @@ public class ProgramScrollPanel extends JScrollPane implements MouseWheelListene
 		addProgramList();
 		setViewportView(mProgramPanel);
 
-		TimeHeader th = new TimeHeader();
+		final TimeHeader th = new TimeHeader();
 		th.setPreferredWidth(mProgramPanel.getPreferredSize().width);
 		setColumnHeaderView(th);
 
-		ChannelHeader ch = new ChannelHeader(TimelinePlugin.getSettings()
+		final ChannelHeader ch = new ChannelHeader(TimelinePlugin.getSettings()
         .getChannelHeight());
 		ch.setPreferredHeight(mProgramPanel.getPreferredSize().height);
 		setRowHeaderView(ch);
@@ -78,13 +78,15 @@ public class ProgramScrollPanel extends JScrollPane implements MouseWheelListene
 		mProgramPanel.removeAll();
 
 		int channelTop = 0;
-		Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
-		Date choosenDay = TimelinePlugin.getInstance().getChoosenDate();
-		int delta = 24 * TimelinePlugin.getSettings().getHourWidth();
-		double deltaHours = mOffset / TimelinePlugin.getInstance().getSizePerMinute() / 60;
-		int deltaDay = (int) Math.round(deltaHours / 24) + 1;
+		final Channel[] channels = Plugin.getPluginManager()
+        .getSubscribedChannels();
+    final Date choosenDay = TimelinePlugin.getInstance().getChoosenDate();
+    final int delta = 24 * TimelinePlugin.getSettings().getHourWidth();
+    final double deltaHours = mOffset
+        / TimelinePlugin.getInstance().getSizePerMinute() / 60;
+    final int deltaDay = (int) Math.round(deltaHours / 24) + 1;
 
-		ProgramFilter filter = TimelinePlugin.getInstance().getFilter();
+    final ProgramFilter filter = TimelinePlugin.getInstance().getFilter();
 
 		for (int i = 0; i < channels.length; i++)
 		{
@@ -92,11 +94,12 @@ public class ProgramScrollPanel extends JScrollPane implements MouseWheelListene
 
 			for (int j = deltaDay * -1; j <= deltaDay; j++)
 			{
-				Date dayToShow = choosenDay.addDays(j);
-				Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(dayToShow, channels[i]);
+			  final Date dayToShow = choosenDay.addDays(j);
+        final Iterator<Program> it = Plugin.getPluginManager()
+            .getChannelDayProgram(dayToShow, channels[i]);
 				while ((it != null) && (it.hasNext()))
 				{
-					Program p = (Program) it.next();
+				  final Program p = (Program) it.next();
 					if (filter.accept(p))
 					{
 						addProgram(p, channelTop, delta * (j + p.getDate().compareTo(dayToShow)));
@@ -104,37 +107,41 @@ public class ProgramScrollPanel extends JScrollPane implements MouseWheelListene
 				}
 			}
 		}
-		JLabel dummy = new JLabel("");
+		final JLabel dummy = new JLabel("");
 		dummy.setBounds(0, 0, 1, 1);
 		mProgramPanel.add(dummy);
 		mProgramPanel.repaint();
 	}
 
-	private void addProgram(Program p, int channelTop, int delta)
+	private void addProgram(final Program p, final int channelTop, final int delta)
 	{
-		int x = mOffset + (int) Math.round(p.getStartTime() * TimelinePlugin.getInstance().getSizePerMinute());
+	  final int x = mOffset
+        + (int) Math.round(p.getStartTime()
+            * TimelinePlugin.getInstance().getSizePerMinute());
 		int w = mOffset + (int) Math.round((p.getStartTime() + p.getLength()) * TimelinePlugin.getInstance().getSizePerMinute());
 		w = Math.abs(w - x);
 
-		ProgramLabel lbl = new ProgramLabel();
+		final ProgramLabel lbl = new ProgramLabel();
 		lbl.setBounds(x + delta, channelTop, w + 1, TimelinePlugin.getSettings()
         .getChannelHeight() + 1);
 		lbl.setProgram(p);
 		mProgramPanel.add(lbl);
 	}
 
-	public void mouseWheelMoved(MouseWheelEvent e)
+	public void mouseWheelMoved(final MouseWheelEvent e)
 	{
 		if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL)
 		{
 			if ((e.getModifiersEx() & MouseWheelEvent.SHIFT_DOWN_MASK) == 0)
 			{
-				int amount = e.getUnitsToScroll() * getHorizontalScrollBar().getUnitIncrement();
+			  final int amount = e.getUnitsToScroll()
+            * getHorizontalScrollBar().getUnitIncrement();
 				getHorizontalScrollBar().setValue(getHorizontalScrollBar().getValue() + amount);
 			}
 			else
 			{
-				int amount = e.getUnitsToScroll() * getVerticalScrollBar().getUnitIncrement();
+			  final int amount = e.getUnitsToScroll()
+            * getVerticalScrollBar().getUnitIncrement();
 				getVerticalScrollBar().setValue(getVerticalScrollBar().getValue() + amount);
 			}
 		}
@@ -145,24 +152,27 @@ public class ProgramScrollPanel extends JScrollPane implements MouseWheelListene
 		addProgramList();
 	}
 
-	public void gotoTime(int minute)
+	public void gotoTime(final int minute)
 	{
 		gotoTime(minute, 0);
 	}
 
-	public void gotoTime(int minute, int delta)
+	public void gotoTime(final int minute, final int delta)
 	{
-		JScrollBar sb = getHorizontalScrollBar();
+	  final JScrollBar sb = getHorizontalScrollBar();
 
-		int value = (int) Math.round(((sb.getMaximum() - 2 * mOffset) / (24.0 * 60.0)) * minute + mOffset - (sb.getSize().width / 2));
-		sb.setValue(value + delta);
+	  final int value = (int) Math.round((sb.getMaximum() - 2 * mOffset) * minute
+        / (24.0 * 60.0))
+        + mOffset - (sb.getSize().width / 2);
+    sb.setValue(value + delta);
 	}
 
-	public void addTime(int minute)
+	public void addTime(final int minute)
 	{
-		JScrollBar sb = getHorizontalScrollBar();
+	  final JScrollBar sb = getHorizontalScrollBar();
 
-		int value = (int) Math.round(((sb.getMaximum() - 2 * mOffset) / (24.0 * 60.0)) * minute);
+	  final int value = (int) Math.round((sb.getMaximum() - 2 * mOffset) * minute
+        / (24.0 * 60.0));
 		sb.setValue(sb.getValue() + value);
 	}
 
@@ -184,10 +194,10 @@ public class ProgramScrollPanel extends JScrollPane implements MouseWheelListene
 	{
 		mOffset = TimelinePlugin.getInstance().getOffset();
 		mProgramPanel.resize();
-		TimeHeader th = new TimeHeader();
+		final TimeHeader th = new TimeHeader();
 		th.setPreferredWidth(mProgramPanel.getPreferredSize().width);
 		setColumnHeaderView(th);
-		ChannelHeader ch = new ChannelHeader(TimelinePlugin.getSettings()
+		final ChannelHeader ch = new ChannelHeader(TimelinePlugin.getSettings()
         .getChannelHeight());
 		ch.setPreferredHeight(mProgramPanel.getPreferredSize().height);
 		setRowHeaderView(ch);

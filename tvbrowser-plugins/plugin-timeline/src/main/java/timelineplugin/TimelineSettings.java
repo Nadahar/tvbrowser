@@ -36,7 +36,7 @@ public class TimelineSettings {
   private Properties mProperties;
   private String mTitleFormat = DEFAULT_TITLE_FORMAT;
 
-  public TimelineSettings(Properties prop) {
+  public TimelineSettings(final Properties prop) {
     if (prop != null) {
       mProperties = prop;
     } else {
@@ -52,7 +52,7 @@ public class TimelineSettings {
     return getProperty(KEY_HOUR_WIDTH, 120);
   }
   
-  void setHourWidth(int width) {
+  void setHourWidth(final int width) {
     mProperties.setProperty(KEY_HOUR_WIDTH, Integer.toString(width));
   }
 
@@ -84,7 +84,7 @@ public class TimelineSettings {
     return getProperty(KEY_SHOW_CHANNEL_ICON, true);
   }
   
-  private boolean getProperty(String key, boolean defaultValue) {
+  private boolean getProperty(final String key, final boolean defaultValue) {
     return getProperty(key, defaultValue ? 1 : 0) == 1;
   }
 
@@ -107,46 +107,46 @@ public class TimelineSettings {
     return (getProgressView() & 1) == 1;
   }
 
-  private void setProperty(String property, String value) {
+  private void setProperty(final String property, final String value) {
     mProperties.setProperty(property, value);
   }
 
-  private void setProperty(String property, boolean value) {
+  private void setProperty(final String property, final boolean value) {
     setProperty(property, value ? VALUE_TRUE : VALUE_FALSE);
   }
 
-  public void setShowChannelName(boolean show) {
+  public void setShowChannelName(final boolean show) {
     setProperty(KEY_SHOW_CHANNEL_NAME, show);
   }
 
-  public void setShowChannelIcon(boolean show) {
+  public void setShowChannelIcon(final boolean show) {
     setProperty(KEY_SHOW_CHANNEL_ICON, show);
   }
 
-  public void setChannelHeight(int height) {
+  public void setChannelHeight(final int height) {
     setProperty(KEY_CHANNEL_HEIGHT, height);
   }
 
-  private void setProperty(String key, int value) {
+  private void setProperty(final String key, final int value) {
     setProperty(key, String.valueOf(value));
   }
 
-  public void setResizeWithMouse(boolean resize) {
+  public void setResizeWithMouse(final boolean resize) {
     setProperty(KEY_RESIZE_WITH_MOUSE, resize);
   }
 
-  public void setStartWithNow(boolean start) {
+  public void setStartWithNow(final boolean start) {
     setProperty(KEY_START_WITH_NOW, start);
   }
 
-  public void setShowAtStartup(boolean show) {
+  public void setShowAtStartup(final boolean show) {
     setProperty(KEY_SHOW_AT_STARTUP, show);
   }
-  public void setFocusDelta(int delta) {
+  public void setFocusDelta(final int delta) {
     setProperty(KEY_FOCUS_DELTA, String.valueOf(delta));
   }
 
-  public void setProgressView(int i) {
+  public void setProgressView(final int i) {
     setProperty(KEY_PROGRESS_VIEW, i);
   }
 
@@ -154,7 +154,7 @@ public class TimelineSettings {
     return getProperty(KEY_CHANNEL_WIDTH, -1);
   }
 
-  private int getProperty(String key, int defaultValue) {
+  private int getProperty(final String key, final int defaultValue) {
     try {
       return Integer.parseInt(mProperties.getProperty(key, Integer
           .toString(defaultValue)));
@@ -164,7 +164,7 @@ public class TimelineSettings {
     }
   }
 
-  public void setTitleFormat(String text) {
+  public void setTitleFormat(final String text) {
     mTitleFormat = text;
   }
 
@@ -176,7 +176,8 @@ public class TimelineSettings {
     return DEFAULT_TITLE_FORMAT;
   }
 
-  public void savePosition(int x, int y, int width, int height) {
+  public void savePosition(final int x, final int y, final int width,
+      final int height) {
     setProperty("xpos", x);
     setProperty("ypos", y);
     setProperty("width", width);
@@ -184,10 +185,10 @@ public class TimelineSettings {
   }
 
   public Rectangle getPosition() {
-    int x = getProperty("xpos", 0);
-    int y = getProperty("ypos", 0);
-    int width = getProperty("width", 620);
-    int height = getProperty("height", 390);
+    final int x = getProperty("xpos", 0);
+    final int y = getProperty("ypos", 0);
+    final int width = getProperty("width", 620);
+    final int height = getProperty("height", 390);
     return new Rectangle(x, y, width, height);
   }
 

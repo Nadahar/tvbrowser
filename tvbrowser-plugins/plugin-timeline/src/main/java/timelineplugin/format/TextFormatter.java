@@ -17,10 +17,12 @@
  */
 package timelineplugin.format;
 
-import java.util.*;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.util.ArrayList;
 import java.util.List;
-import java.awt.*;
-import devplugin.*;
+
+import devplugin.Program;
 
 public class TextFormatter
 {
@@ -28,7 +30,7 @@ public class TextFormatter
 	private String mFormat;
 	private Font mFont;
 	private List<TextLine> mLines;
-	private Boolean mInitialiseMaxLine;
+	private boolean mInitialiseMaxLine;
 
 	public TextFormatter()
 	{
@@ -44,7 +46,7 @@ public class TextFormatter
 		return mFormat;
 	}
 
-	public void setFormat(String format)
+	public void setFormat(final String format)
 	{
 		mFormat = format;
 		parseFormat();
@@ -55,7 +57,7 @@ public class TextFormatter
 		return mPadding;
 	}
 
-	public void setPadding(int padding)
+	public void setPadding(final int padding)
 	{
 		mPadding = padding;
 	}
@@ -65,17 +67,17 @@ public class TextFormatter
 		return mFont;
 	}
 
-	public void setFont(Font font)
+	public void setFont(final Font font)
 	{
 		mFont = font;
 	}
 
-	public Boolean getInitialiseMaxLine()
+	public boolean getInitialiseMaxLine()
 	{
 		return mInitialiseMaxLine;
 	}
 
-	public void setInitialiseMaxLine(Boolean value)
+	public void setInitialiseMaxLine(final boolean value)
 	{
 		mInitialiseMaxLine = value;
 	}
@@ -92,16 +94,18 @@ public class TextFormatter
 		return true;
 	}
 
-	public void paint(Program p, Graphics g, int width, int height)
+	public void paint(final Program p, final Graphics g, final int width,
+      final int height)
 	{
 		paint(p, g, mPadding, width, height);
 	}
 
-	public void paint(Program p, Graphics g, int x, int width, int height)
+	public void paint(final Program p, final Graphics g, final int x,
+      final int width, final int height)
 	{
 		int y = mPadding;
-		int h = height - mPadding;
-		int w = width - mPadding;
+		final int h = height - mPadding;
+    final int w = width - mPadding;
 
 		for (TextLine line : mLines)
 		{
@@ -112,7 +116,7 @@ public class TextFormatter
 
 	private void parseFormat()
 	{
-		String[] lines = mFormat.split("\n");
+	  final String[] lines = mFormat.split("\n");
 		for (String line : lines)
 		{
 			mLines.add(new TextLine(line, mPadding, mInitialiseMaxLine));

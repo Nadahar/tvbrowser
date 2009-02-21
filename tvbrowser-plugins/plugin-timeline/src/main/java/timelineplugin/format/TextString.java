@@ -17,9 +17,12 @@
  */
 package timelineplugin.format;
 
-import java.awt.*;
-import util.paramhandler.*;
-import devplugin.*;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+
+import util.paramhandler.ParamParser;
+import devplugin.Plugin;
+import devplugin.Program;
 
 public class TextString implements ITextObject
 {
@@ -27,7 +30,7 @@ public class TextString implements ITextObject
 	private int mY;
 	private String mValue;
 
-	public TextString(String value)
+	public TextString(final String value)
 	{
 		mValue = value;
 	}
@@ -42,15 +45,16 @@ public class TextString implements ITextObject
 		return mY;
 	}
 
-	public void print(TextLine textLine, Program p, Graphics g, int width, int height, int x, int y)
+	public void print(final TextLine textLine, final Program p, final Graphics g,
+      final int width, final int height, final int x, final int y)
 	{
-		ParamParser parser = new ParamParser();
+	  final ParamParser parser = new ParamParser();
 		String value = parser.analyse(mValue, p);
 		if (value == null)
 		{
 			value = "";
 		}
-		FontMetrics metric = g.getFontMetrics();
+		final FontMetrics metric = g.getFontMetrics();
 
 		mX = x;
 		mY = y;
@@ -63,7 +67,7 @@ public class TextString implements ITextObject
 
 				for (int i = 0; i < textLine.getLines(); i++)
 				{
-					int w = metric.stringWidth(value);
+				  final int w = metric.stringWidth(value);
 					if (w + mX > width)
 					{
 						lines--;
@@ -76,8 +80,8 @@ public class TextString implements ITextObject
 						}
 						else
 						{
-							String text = shrinkString(value, metric, width - mX, "");
-							int index = text.lastIndexOf(" ");
+						  final String text = shrinkString(value, metric, width - mX, "");
+              final int index = text.lastIndexOf(' ');
 							if (index > 0)
 							{
 								printString(text.substring(0, index), g, mX, mY);
@@ -110,21 +114,23 @@ public class TextString implements ITextObject
 		mX += metric.stringWidth(value);
 	}
 
-	private void printString(String value, Graphics g, int x, int y)
+	private void printString(final String value, final Graphics g, final int x,
+      final int y)
 	{
 		g.drawString(value, x, y);
 	}
 
-	private String shrinkString(String value, FontMetrics metric, int width, String trailer)
+	private String shrinkString(String value, final FontMetrics metric,
+      final int width, final String trailer)
 	{
-		int usedWidth = width - metric.stringWidth(trailer);
+	  final int usedWidth = width - metric.stringWidth(trailer);
 		if (usedWidth > 0)
 		{
 			Boolean finishCut = false;
-			int l = value.length();
+			final int l = value.length();
 			for (int i = l - 1; i > 0; i--)
 			{
-				int w = metric.stringWidth(value.substring(0, i));
+			  final int w = metric.stringWidth(value.substring(0, i));
 				if (w <= usedWidth)
 				{
 					value = value.substring(0, i) + trailer;
@@ -144,7 +150,8 @@ public class TextString implements ITextObject
 		return value;
 	}
 
-	private Boolean lastLine(int lines, int y, int height, int fontSize)
+	private boolean lastLine(final int lines, final int y, final int height,
+      final int fontSize)
 	{
 		if (lines <= 0)
 		{
@@ -157,9 +164,9 @@ public class TextString implements ITextObject
 		return false;
 	}
 
-	public Boolean testFormat()
+	public boolean testFormat()
 	{
-		ParamParser parser = new ParamParser();
+	  final ParamParser parser = new ParamParser();
 		return parser.analyse(mValue, Plugin.getPluginManager().getExampleProgram()) != null;
 	}
 }
