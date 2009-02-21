@@ -127,7 +127,7 @@ public class IDontWant2SeeListEntry {
     mSearchText = searchText;
     mCaseSensitive = caseSensitive;
     
-    if(searchText.indexOf("*") != -1) {
+    if (searchText.indexOf('*') != -1) {
       String[] searchParts = searchText.split("\\*");
       
       if(searchParts != null && searchParts.length > 0) {
