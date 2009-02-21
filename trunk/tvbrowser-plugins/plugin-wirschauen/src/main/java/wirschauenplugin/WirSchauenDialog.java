@@ -77,7 +77,8 @@ import devplugin.Program;
 import devplugin.ProgramFieldType;
 
 
-public class WirSchauenDialog extends JDialog implements WindowClosingIf, ItemListener {
+public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
+    ItemListener {
   /**
    * Localizer
    */
@@ -86,7 +87,7 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf, ItemLi
   /**
    * main OMDB url, opened if the movie ID is not yet known
    */
-  protected static final String OMDB_MAIN_URL = "http://www.omdb.org";
+  static final String OMDB_MAIN_URL = "http://www.omdb.org";
 
   /**
    * prefix of any movie url from OMDB, this gets stripped for editing
@@ -101,12 +102,12 @@ public class WirSchauenDialog extends JDialog implements WindowClosingIf, ItemLi
   /**
    * warning status indication, used to display warning icon
    */
-  protected static final String STATUS_WARNING = "warning";
+  static final String STATUS_WARNING = "warning";
 
   /**
    * error status indication, used to display error icon
    */
-  protected static final String STATUS_ERROR = "error";
+  static final String STATUS_ERROR = "error";
 
   /**
    * information status indication, used to display information icon
