@@ -32,18 +32,20 @@ public class TVPearlListCellRenderer extends DefaultListCellRenderer
 
     private static final Color SECOND_ROW_COLOR = new Color(230, 230, 230);
 
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-            boolean cellHasFocus)
+    public Component getListCellRendererComponent(final JList list,
+      final Object value, final int index, final boolean isSelected,
+      final boolean cellHasFocus)
     {
-        JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+      final JLabel label = (JLabel) super.getListCellRendererComponent(list,
+        value, index, isSelected, cellHasFocus);
 
         if (value instanceof TVPProgram)
         {
-            TVPProgram p = (TVPProgram) value;
+          final TVPProgram p = (TVPProgram) value;
 
-            TVPearlProgramPanel prog = new TVPearlProgramPanel(p);
+          final TVPearlProgramPanel prog = new TVPearlProgramPanel(p);
             prog.setTextColor(label.getForeground());
-            JPanel pan = new JPanel(new BorderLayout());
+            final JPanel pan = new JPanel(new BorderLayout());
             pan.add(prog, BorderLayout.CENTER);
             pan.setBackground(label.getBackground());
             if ((index % 2 != 0) && (!isSelected))

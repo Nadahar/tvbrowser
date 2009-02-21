@@ -100,9 +100,10 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 
 	public PluginInfo getInfo()
 	{
-		String name = mLocalizer.msg("name", "TV Pearl");
-		String desc = mLocalizer.msg("description", "Shows the TV Pearls from the TV-Browser forum.");
-		String author = "Reinhard Lehrbaum";
+	  final String name = mLocalizer.msg("name", "TV Pearl");
+    final String desc = mLocalizer.msg("description",
+        "Shows the TV Pearls from the TV-Browser forum.");
+    final String author = "Reinhard Lehrbaum";
 
 		return new PluginInfo(TVPearlPlugin.class, name, desc, author);
 	}
@@ -125,11 +126,11 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 
 	public ActionMenu getButtonAction()
 	{
-		AbstractAction action = new AbstractAction()
+	  final AbstractAction action = new AbstractAction()
 		{
 			private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(ActionEvent evt)
+			public void actionPerformed(final ActionEvent evt)
 			{
 				showDialog();
 			}
@@ -146,7 +147,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	{
 		if (mDialog == null)
 		{
-			Window w = UiUtilities.getBestDialogParent(getParentFrame());
+		  final Window w = UiUtilities.getBestDialogParent(getParentFrame());
 
 			if (w instanceof JDialog)
 			{
@@ -159,12 +160,12 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 
 			mDialog.addWindowListener(new WindowAdapter()
 			{
-				public void windowClosed(WindowEvent e)
+				public void windowClosed(final WindowEvent e)
 				{
 					closeInfoDialog();
 				}
 
-				public void windowClosing(WindowEvent e)
+				public void windowClosing(final WindowEvent e)
 				{
 					closeInfoDialog();
 				}
@@ -175,12 +176,12 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 			mDialog.addComponentListener(new java.awt.event.ComponentAdapter()
 			{
 
-				public void componentResized(ComponentEvent e)
+				public void componentResized(final ComponentEvent e)
 				{
 					mPearlDialogSize = e.getComponent().getSize();
 				}
 
-				public void componentMoved(ComponentEvent e)
+				public void componentMoved(final ComponentEvent e)
 				{
 					e.getComponent().getLocation(mPearlDialogLocation);
 				}
@@ -210,17 +211,17 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 
 	public ActionMenu getContextMenuActions(final Program program)
 	{
-		TVPProgram p = mTVPearls.getPearl(program);
+	  final TVPProgram p = mTVPearls.getPearl(program);
 
 		if (p != null || program.getID() == null)
 		{
-			ContextMenuAction menu = new ContextMenuAction();
+		  final ContextMenuAction menu = new ContextMenuAction();
 			menu.setText(mLocalizer.msg("comment", "TV Pearl comment"));
 			menu.putValue(Action.ACTION_COMMAND_KEY, menu.getValue(Action.NAME));
 			menu.setSmallIcon(getSmallIcon());
 			menu.setActionListener(new ActionListener()
 			{
-				public void actionPerformed(ActionEvent event)
+				public void actionPerformed(final ActionEvent event)
 				{
 					showPearlInfo(mTVPearls.getPearl(program));
 				}
@@ -234,7 +235,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		}
 	}
 
-	public Icon[] getMarkIconsForProgram(Program p)
+	public Icon[] getMarkIconsForProgram(final Program p)
 	{
 		return new Icon[] { getSmallIcon() };
 	}
@@ -249,7 +250,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		return true;
 	}
 
-	public void loadSettings(Properties prop) {
+	public void loadSettings(final Properties prop) {
     // settings are handled in another class, so do not store a reference to the
     // properties parameter!
     mSettings = new TVPearlSettings(prop);
@@ -276,12 +277,13 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
     mPearlInfoDialogLocation = mSettings.getDialogDimension("InfoDialog");
 	}
 
-	public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException
+	public void readData(final ObjectInputStream in) throws IOException,
+      ClassNotFoundException
 	{
 		mTVPearls.readData(in);
 	}
 
-	public void writeData(ObjectOutputStream out) throws IOException
+	public void writeData(final ObjectOutputStream out) throws IOException
 	{
 		mTVPearls.writeData(out);
 	}
@@ -338,11 +340,11 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		return createImageIcon("actions", "program_unknown", 16);
 	}
 
-	protected static String getDayName(Calendar cal, boolean showToday)
+	protected static String getDayName(final Calendar cal, final boolean showToday)
 	{
-		SimpleDateFormat df = new SimpleDateFormat("E");
+	  final SimpleDateFormat df = new SimpleDateFormat("E");
 		String day = df.format(cal.getTime());
-		Calendar c = Calendar.getInstance();
+		final Calendar c = Calendar.getInstance();
 		if (showToday)
 		{
 			if (cal.get(Calendar.YEAR) == c.get(Calendar.YEAR) && cal.get(Calendar.MONTH) == c.get(Calendar.MONTH))
@@ -374,12 +376,12 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		return mComposerFilter;
 	}
 
-	void setComposers(Vector<String> composers)
+	void setComposers(final Vector<String> composers)
 	{
 		mComposerFilter = composers;
 	}
 
-	void showPearlInfo(TVPProgram p)
+	void showPearlInfo(final TVPProgram p)
 	{
 		if (p != null)
 		{
@@ -388,7 +390,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 				mInfoDialog.dispose();
 			}
 
-			Window w = UiUtilities.getLastModalChildOf(getParentFrame());
+			final Window w = UiUtilities.getLastModalChildOf(getParentFrame());
 
 			if (w instanceof JDialog)
 			{
@@ -404,12 +406,12 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 			mInfoDialog.addComponentListener(new java.awt.event.ComponentAdapter()
 			{
 
-				public void componentResized(ComponentEvent e)
+				public void componentResized(final ComponentEvent e)
 				{
 					mPearlInfoDialogSize = e.getComponent().getSize();
 				}
 
-				public void componentMoved(ComponentEvent e)
+				public void componentMoved(final ComponentEvent e)
 				{
 					e.getComponent().getLocation(mPearlInfoDialogLocation);
 				}
@@ -459,7 +461,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		mDialog.update();
 	}
 
-	public int getMarkPriorityForProgram(Program p)
+	public int getMarkPriorityForProgram(final Program p)
 	{
 		return mSettings.getMarkPriority();
 	}
@@ -471,10 +473,10 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 
 	public ProgramReceiveTarget[] getClientPluginsTargets()
 	{
-		ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>();
+	  final ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>();
 		for (ProgramReceiveTarget target : mClientPluginTargets)
 		{
-			ProgramReceiveIf plugin = target.getReceifeIfForIdOfTarget();
+		  final ProgramReceiveIf plugin = target.getReceifeIfForIdOfTarget();
 			if (plugin != null && plugin.canReceiveProgramsWithTarget())
 			{
 				list.add(target);
@@ -483,7 +485,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		return list.toArray(new ProgramReceiveTarget[list.size()]);
 	}
 
-	protected void setClientPluginsTargets(ProgramReceiveTarget[] targets)
+	protected void setClientPluginsTargets(final ProgramReceiveTarget[] targets)
 	{
 		if (targets != null)
 		{
@@ -512,26 +514,27 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
   }
 
   @Override
-  public boolean receivePrograms(Program[] programArr,
-      ProgramReceiveTarget receiveTarget) {
+  public boolean receivePrograms(final Program[] programArr,
+      final ProgramReceiveTarget receiveTarget) {
     if (receiveTarget.getTargetId().equals(TARGET_PEARL_COPY)) {
-      LocalPluginProgramFormating format = new LocalPluginProgramFormating(
+      final LocalPluginProgramFormating format = new LocalPluginProgramFormating(
           mLocalizer.msg("name", "TV Pearl"),
           "{title}",
           "{start_day_of_week}, {start_day}. {start_month_name}, {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}, {channel_name}\n{title}\n\n{genre}",
           "UTF-8");
-      ParamParser parser = new ParamParser();
-      StringBuffer buffer = new StringBuffer();
+      final ParamParser parser = new ParamParser();
+      final StringBuffer buffer = new StringBuffer();
       for (Program program : programArr) {
-        String programText = parser.analyse(format.getContentValue(), program);
+        final String programText = parser.analyse(format.getContentValue(),
+            program);
         if (programText != null) {
           buffer.append(programText);
           buffer.append("\n\n");
         }
       }
-      String text = buffer.toString();
+      final String text = buffer.toString();
       if (text.length() > 0) {
-        Clipboard clip = java.awt.Toolkit.getDefaultToolkit()
+        final Clipboard clip = java.awt.Toolkit.getDefaultToolkit()
             .getSystemClipboard();
         clip.setContents(new StringSelection(text), null);
       }

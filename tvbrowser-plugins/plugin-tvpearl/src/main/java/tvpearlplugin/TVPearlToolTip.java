@@ -40,18 +40,18 @@ public class TVPearlToolTip extends JToolTip
 		private final static int mMaxWidth = 400;
 		private final static int mPadding = 5;
 
-		public void paint(Graphics g, JComponent c)
+		public void paint(final Graphics g, final JComponent c)
 		{
-			Font font = c.getFont();
-			FontMetrics metrics = c.getFontMetrics(font);
+		  final Font font = c.getFont();
+      final FontMetrics metrics = c.getFontMetrics(font);
 			g.setFont(font);
 
-			Dimension size = c.getSize();
+			final Dimension size = c.getSize();
 			g.setColor(c.getBackground());
 			g.fillRect(0, 0, size.width, size.height);
 
 			g.setColor(c.getForeground());
-			String tipText = ((JToolTip) c).getTipText();
+			final String tipText = ((JToolTip) c).getTipText();
 			if (tipText != null)
 			{
 				g.drawRect(0, 0, size.width - 1, size.height - 1);
@@ -59,7 +59,7 @@ public class TVPearlToolTip extends JToolTip
 				int y = metrics.getAscent() + mPadding;
 				for (String line : tipText.split("\n"))
 				{
-					int lineWidth = metrics.stringWidth(line);
+				  final int lineWidth = metrics.stringWidth(line);
 					if (lineWidth > mMaxWidth)
 					{
 						int pos = line.lastIndexOf(" ");
@@ -92,12 +92,12 @@ public class TVPearlToolTip extends JToolTip
 			}
 		}
 
-		public Dimension getPreferredSize(JComponent c)
+		public Dimension getPreferredSize(final JComponent c)
 		{
-			Font font = c.getFont();
-			FontMetrics metrics = c.getFontMetrics(font);
+		  final Font font = c.getFont();
+      final FontMetrics metrics = c.getFontMetrics(font);
 
-			String tipText = ((JToolTip) c).getTipText();
+		  final String tipText = ((JToolTip) c).getTipText();
 			if (tipText == null)
 			{
 				return new Dimension(0, 0);
@@ -109,7 +109,7 @@ public class TVPearlToolTip extends JToolTip
 				for (String line : tipText.split("\n"))
 				{
 					height += metrics.getHeight();
-					int lineWidth = metrics.stringWidth(line);
+					final int lineWidth = metrics.stringWidth(line);
 					width = Math.max(width, lineWidth);
 					if (lineWidth > mMaxWidth)
 					{

@@ -54,7 +54,7 @@ public class TVPearlSettings {
    */
   private Properties mProperties;
 
-  public TVPearlSettings(Properties properties) {
+  public TVPearlSettings(final Properties properties) {
     if (properties != null) {
       mProperties = properties;
     } else {
@@ -98,7 +98,8 @@ public class TVPearlSettings {
     return getPropertyInteger(KEY_VIEW_OPTION, SHOW_ALL_PEARLS);
   }
 
-  private boolean getPropertyBoolean(String property, boolean defaultValue) {
+  private boolean getPropertyBoolean(final String property,
+      final boolean defaultValue) {
     try {
       return (Integer.parseInt(mProperties.getProperty(property,
           defaultValue ? VALUE_TRUE : VALUE_FALSE)) == 1);
@@ -107,7 +108,7 @@ public class TVPearlSettings {
     }
   }
 
-  private int getPropertyInteger(String property, int defaultValue) {
+  private int getPropertyInteger(final String property, final int defaultValue) {
     try {
       return Integer.parseInt(mProperties.getProperty(property, Integer
           .toString(defaultValue)));
@@ -116,49 +117,49 @@ public class TVPearlSettings {
     }
   }
 
-  private void setProperty(String property, boolean value)
+  private void setProperty(final String property, final boolean value)
   {
   	mProperties.setProperty(property, value ? VALUE_TRUE : VALUE_FALSE);
   }
 
-  private void setProperty(String property, Integer value)
+  private void setProperty(final String property, final Integer value)
   {
   	mProperties.setProperty(property, value.toString());
   }
 
-  public void setUpdatePearlsAfterStart(boolean update) {
+  public void setUpdatePearlsAfterStart(final boolean update) {
     setProperty(KEY_UPDATE_AT_START, update);
   }
 
-  public void setUpdatePearlsAfterDataUpdate(boolean update) {
+  public void setUpdatePearlsAfterDataUpdate(final boolean update) {
     setProperty(KEY_UPDATE_AFTER_UPDATE_FINISHED, update);
   }
 
-  public void setUpdatePearlsManually(boolean update) {
+  public void setUpdatePearlsManually(final boolean update) {
     setProperty(KEY_UPDATE_MANUAL, update);
   }
 
-  private void setPropertyViewOption(int i) {
+  private void setPropertyViewOption(final int i) {
     setProperty(KEY_VIEW_OPTION, i);
   }
 
-  public void setMarkPearls(boolean mark) {
+  public void setMarkPearls(final boolean mark) {
     setProperty(KEY_MARK_PEARL, mark);
   }
 
-  public void setMarkPriority(int priority) {
+  public void setMarkPriority(final int priority) {
     setProperty(KEY_MARK_PRIORITY, priority);
   }
 
-  public void setShowInfoModal(boolean modal) {
+  public void setShowInfoModal(final boolean modal) {
     setProperty(KEY_SHOW_INFO_MODAL, modal);
   }
 
-  public void setFilterEnabled(boolean enabled) {
+  public void setFilterEnabled(final boolean enabled) {
     setProperty(KEY_SHOW_ENABLE_FILTER, enabled);
   }
 
-  private void setPropertyShowFilter(int i) {
+  private void setPropertyShowFilter(final int i) {
     setProperty(KEY_SHOW_FILTER, i);
   }
 
@@ -166,7 +167,8 @@ public class TVPearlSettings {
     return mProperties;
   }
 
-  public void storeDialog(String dialogKey, Point location, Dimension size) {
+  public void storeDialog(final String dialogKey, final Point location,
+      final Dimension size) {
     if (location != null) {
       mProperties.setProperty(dialogKey + ".X", Integer.toString(location.x));
       mProperties.setProperty(dialogKey + ".Y", Integer.toString(location.y));
@@ -179,7 +181,7 @@ public class TVPearlSettings {
     }
   }
 
-  public Dimension getDialogSize(String dialogKey) {
+  public Dimension getDialogSize(final String dialogKey) {
     try {
       return new Dimension(Integer.parseInt(mProperties.getProperty(dialogKey
           + ".Width")), Integer.parseInt(mProperties.getProperty(dialogKey
@@ -189,7 +191,7 @@ public class TVPearlSettings {
     }
   }
   
-  public Point getDialogDimension(String dialogKey) {
+  public Point getDialogDimension(final String dialogKey) {
     try {
       return new Point(Integer
           .parseInt(mProperties.getProperty(dialogKey + ".X")), Integer
@@ -203,7 +205,7 @@ public class TVPearlSettings {
     return mProperties.getProperty("Url", DEFAULT_URL);
   }
 
-  public void setUrl(String url) {
+  public void setUrl(final String url) {
     mProperties.setProperty("Url", url);
   }
 

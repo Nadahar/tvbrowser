@@ -64,12 +64,12 @@ public class TVPearl
 		return mReindexAll;
 	}
 
-	public void setReindexAll(boolean reindexAll)
+	public void setReindexAll(final boolean reindexAll)
 	{
 		mReindexAll = reindexAll;
 	}
 
-	public void setUrl(String url)
+	public void setUrl(final String url)
 	{
 		mUrl = url;
 	}
@@ -85,19 +85,19 @@ public class TVPearl
 		{
 			mLastUpdate = Calendar.getInstance();
 
-			TVPGrabber grabber = new TVPGrabber();
-			List<TVPProgram> programList = grabber.parse(mUrl);
+			final TVPGrabber grabber = new TVPGrabber();
+      final List<TVPProgram> programList = grabber.parse(mUrl);
 			mUrl = grabber.getLastUrl();
 
 			for (TVPProgram program : programList)
 			{
 				addProgram(program);
 			}
-			Calendar limit = getViewLimit();
+			final Calendar limit = getViewLimit();
 			int i = 0;
 			while (i < mProgramList.size())
 			{
-				TVPProgram p = mProgramList.get(i);
+			  final TVPProgram p = mProgramList.get(i);
 				if (p.getStart().compareTo(limit) < 0)
 				{
 					mProgramList.remove(i);
@@ -110,7 +110,7 @@ public class TVPearl
 		}
 	}
 
-	private void addProgram(TVPProgram program)
+	private void addProgram(final TVPProgram program)
 	{
 		if (indexOf(program) == -1)
 		{
@@ -119,13 +119,14 @@ public class TVPearl
 		}
 	}
 
-	private void setProgramID(TVPProgram program, boolean reindex)
+	private void setProgramID(final TVPProgram program, final boolean reindex)
 	{
 		if (program.getProgramID().length() == 0 || reindex)
 		{
 			program.resetStatus();
 
-			List<Channel> channelList = getChannelsFromName(program.getChannel());
+			final List<Channel> channelList = getChannelsFromName(program
+          .getChannel());
 			if (!channelList.isEmpty())
 			{
 				program.setStatus(IProgramStatus.STATUS_FOUND_CHANNEL);
@@ -134,10 +135,11 @@ public class TVPearl
 			{
 				if (program.getStart().compareTo(getViewLimit()) > 0)
 				{
-					Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(program.getDate(), channel);
+				  final Iterator<Program> it = Plugin.getPluginManager()
+              .getChannelDayProgram(program.getDate(), channel);
 					while ((it != null) && (it.hasNext()))
 					{
-						Program p = it.next();
+					  final Program p = it.next();
 						if (compareTitle(p.getTitle(), program.getTitle()) && p.getHours() == program.getStart().get(Calendar.HOUR_OF_DAY) && p.getMinutes() == program.getStart().get(Calendar.MINUTE))
 						{
 							program.setProgram(p);
@@ -153,26 +155,26 @@ public class TVPearl
 		}
 	}
 
-	private boolean compareTitle(String title1, String title2)
+	private boolean compareTitle(final String title1, final String title2)
 	{
-		String t1 = title1.toLowerCase();
-		String t2 = title2.toLowerCase();
+	  final String t1 = title1.toLowerCase();
+    final String t2 = title2.toLowerCase();
 
 		return t1.equals(t2) || t1.indexOf(t2) >= 0 || t2.indexOf(t1) >= 0;
 	}
 
 	private Calendar getViewLimit()
 	{
-		Calendar limit = Calendar.getInstance();
+	  final Calendar limit = Calendar.getInstance();
 		limit.set(Calendar.DAY_OF_MONTH, limit.get(Calendar.DAY_OF_MONTH) - 1);
 		return limit;
 	}
 
-	private Integer indexOf(TVPProgram program)
+	private Integer indexOf(final TVPProgram program)
 	{
 		for (int i = 0; i < mProgramList.size(); i++)
 		{
-			TVPProgram p = mProgramList.get(i);
+		  final TVPProgram p = mProgramList.get(i);
 			if (p.getAuthor().equals(program.getAuthor()) && p.getStart().equals(program.getStart()) && p.getChannel().equals(program.getChannel()) && p.getTitle().equals(program.getTitle()))
 			{
 				return i;
@@ -187,10 +189,11 @@ public class TVPearl
 	 * @param channelName
 	 * @return
 	 */
-	private List<Channel> getChannelsFromName(String channelName)
+	private List<Channel> getChannelsFromName(final String channelName)
 	{
-		List<Channel> result = new ArrayList<Channel>();
-		Pattern pattern = Pattern.compile("^(.*[ ()])?" + Pattern.quote(channelName.trim()) + "([ ()].*)?$");
+	  final List<Channel> result = new ArrayList<Channel>();
+    final Pattern pattern = Pattern.compile("^(.*[ ()])?"
+        + Pattern.quote(channelName.trim()) + "([ ()].*)?$");
 		for (Channel channel : Plugin.getPluginManager().getSubscribedChannels())
 		{
 			// first search default name
@@ -214,15 +217,17 @@ public class TVPearl
 
 	private boolean canUpdate()
 	{
-		Calendar now = Calendar.getInstance();
+	  final Calendar now = Calendar.getInstance();
 
-		long hours = Math.round((double) (now.getTimeInMillis() - mLastUpdate.getTimeInMillis()) / (60 * 60 * 1000));
+	  final long hours = Math.round((double) (now.getTimeInMillis() - mLastUpdate
+        .getTimeInMillis())
+        / (60 * 60 * 1000));
 
 		// always allow update in developer version
 		return hours > UPDATE_WAIT_HOURS || !TVBrowser.isStable();
 	}
 
-	public TVPProgram getPearl(Program program)
+	public TVPProgram getPearl(final Program program)
 	{
 		for (TVPProgram p : mProgramList)
 		{
@@ -236,10 +241,10 @@ public class TVPearl
 
 	public TVPProgram[] getPearlList()
 	{
-		List<TVPProgram> result = new ArrayList<TVPProgram>();
+	  final List<TVPProgram> result = new ArrayList<TVPProgram>();
 		result.addAll(mProgramList);
 
-    Calendar limit = getViewLimit();
+		final Calendar limit = getViewLimit();
     final boolean filterEnabled = TVPearlPlugin.getSettings()
         .getFilterEnabled();
 		final boolean showSubscribed = TVPearlPlugin.getSettings().getShowSubscribedChannels();
@@ -266,34 +271,34 @@ public class TVPearl
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException
+	public void readData(final ObjectInputStream in) throws IOException,
+      ClassNotFoundException
 	{
-		Calendar limit = getViewLimit();
+	  final Calendar limit = getViewLimit();
 
-		int version = in.readInt();
+		final int version = in.readInt();
 
 		if (version == 1 || version == 2)
 		{
 			mLastUpdate = Calendar.getInstance();
 			mLastUpdate.setTime((Date) in.readObject());
 
-			int size = in.readInt();
+			final int size = in.readInt();
 			for (int i = 0; i < size; i++)
 			{
-				String author = (String) in.readObject();
-				Calendar cal = Calendar.getInstance();
-				Date time = (Date) in.readObject();
+			  final String author = (String) in.readObject();
+        final Calendar cal = Calendar.getInstance();
+        final Date time = (Date) in.readObject();
         cal.setTime(time);
-        String url = (String) in.readObject();
-        String channel = (String) in.readObject();
-        Calendar calStart = Calendar.getInstance();
-        Date startTime = (Date) in.readObject();
+        final String url = (String) in.readObject();
+        final String channel = (String) in.readObject();
+        final Calendar calStart = Calendar.getInstance();
+        final Date startTime = (Date) in.readObject();
         calStart.setTime(startTime);
-        String title = (String) in.readObject();
-        String info = (String) in.readObject();
-        String programID = (String) in.readObject();
-        TVPProgram p = new TVPProgram(author, url, cal, title, channel,
+        final String title = (String) in.readObject();
+        final String info = (String) in.readObject();
+        final String programID = (String) in.readObject();
+        final TVPProgram p = new TVPProgram(author, url, cal, title, channel,
             calStart, info, programID);
 				if (p.getStart().compareTo(limit) > 0)
 				{
@@ -310,39 +315,39 @@ public class TVPearl
 			mLastUpdate = Calendar.getInstance();
 			mLastUpdate.setTime((Date) in.readObject());
 
-			int size = in.readInt();
+			final int size = in.readInt();
 			for (int i = 0; i < size; i++)
 			{
-				String author = (String) in.readObject();
-				Calendar cal = Calendar.getInstance();
-				Date time = (Date) in.readObject();
+			  final String author = (String) in.readObject();
+        final Calendar cal = Calendar.getInstance();
+        final Date time = (Date) in.readObject();
         cal.setTime(time);
-        String url = (String) in.readObject();
-        String channel = (String) in.readObject();
-        Date startTime = (Date) in.readObject();
-        Calendar calStart = Calendar.getInstance();
+        final String url = (String) in.readObject();
+        final String channel = (String) in.readObject();
+        final Date startTime = (Date) in.readObject();
+        final Calendar calStart = Calendar.getInstance();
         calStart.setTime(startTime);
-        String title = (String) in.readObject();
-        String info = (String) in.readObject();
-        String programID = (String) in.readObject();
-        TVPProgram p = new TVPProgram(author, url, cal, title, channel,
+        final String title = (String) in.readObject();
+        final String info = (String) in.readObject();
+        final String programID = (String) in.readObject();
+        final TVPProgram p = new TVPProgram(author, url, cal, title, channel,
             calStart, info, programID);
-        boolean sendTo = in.readBoolean();
+        final boolean sendTo = in.readBoolean();
         p.setSendTo(sendTo);
 				if (p.getStart().compareTo(limit) > 0)
 				{
 					addProgram(p);
 				}
 			}
-			int countComposers = in.readInt();
-			Vector<String> composers = new Vector<String>();
+			final int countComposers = in.readInt();
+			final Vector<String> composers = new Vector<String>();
 			for (int i = 0; i < countComposers; i++)
 			{
 				composers.add((String) in.readObject());
 			}
 			TVPearlPlugin.getInstance().setComposers(composers);
 
-			int count = in.readInt();
+			final int count = in.readInt();
 			if (count > 0)
 			{
 				ProgramReceiveTarget[] targets = new ProgramReceiveTarget[count];
@@ -357,7 +362,7 @@ public class TVPearl
 		// updateProgramMark();
 	}
 
-	public void writeData(ObjectOutputStream out) throws IOException
+	public void writeData(final ObjectOutputStream out) throws IOException
 	{
 		out.writeInt(3); // version
 		out.writeObject(mLastUpdate.getTime());
@@ -374,14 +379,15 @@ public class TVPearl
 			out.writeObject(program.getProgramID());
 			out.writeBoolean(program.getSendTo());
 		}
-		Vector<String> composers = TVPearlPlugin.getInstance().getComposers();
+		final Vector<String> composers = TVPearlPlugin.getInstance().getComposers();
 		out.writeInt(composers.size());
 		for (String composer : composers)
 		{
 			out.writeObject(composer);
 		}
 
-		ProgramReceiveTarget[] targets = TVPearlPlugin.getInstance().getClientPluginsTargets();
+		final ProgramReceiveTarget[] targets = TVPearlPlugin.getInstance()
+        .getClientPluginsTargets();
 		out.writeInt(targets.length);
 
 		for (ProgramReceiveTarget target : targets)
@@ -411,7 +417,7 @@ public class TVPearl
 			{
 				if (program.wasFound())
 				{
-					Program p = program.getProgram();
+				  final Program p = program.getProgram();
 					if (p != null)
 					{
 						markProgram(p, TVPearlPlugin.getSettings().getMarkPearls()
@@ -434,7 +440,7 @@ public class TVPearl
 	 * @param setMark
 	 *          whether to mark or unmark the program
 	 */
-	private void markProgram(Program program, boolean setMark)
+	private void markProgram(final Program program, final boolean setMark)
 	{
 		// set or remove mark
 		if (setMark)
@@ -447,12 +453,13 @@ public class TVPearl
 		}
 		program.validateMarking();
 		// now find repetitions or continuations
-		Iterator<Program> dayProg = Plugin.getPluginManager().getChannelDayProgram(program.getDate(), program.getChannel());
+    final Iterator<Program> dayProg = Plugin.getPluginManager()
+        .getChannelDayProgram(program.getDate(), program.getChannel());
 		if (dayProg != null)
 		{
 			while (dayProg.hasNext())
 			{
-				Program nextProg = dayProg.next();
+			  final Program nextProg = dayProg.next();
 				if (nextProg.getStartTime() > program.getStartTime() && nextProg.getTitle().length() >= program.getTitle().length() && nextProg.getTitle().substring(0, program.getTitle().length()).equalsIgnoreCase(program.getTitle()))
 				{
 					if (setMark)

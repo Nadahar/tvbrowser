@@ -287,16 +287,16 @@ public class HTTPConverter
 
     }
 
-    public String convertToString(String value)
+    public String convertToString(final String value)
     {
         String result = value;
 
         // Replace known characters
-        Iterator<String> it = characterTable.keySet().iterator();
+    final Iterator<String> it = characterTable.keySet().iterator();
 
         while ((it != null) && (it.hasNext()))
         {
-            String key = it.next();
+            final String key = it.next();
             result = result.replaceAll(key, Character.toString(characterTable.get(key)));
         }
 

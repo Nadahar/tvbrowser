@@ -72,19 +72,22 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
 
   private TVPearlSettings mSettings;
 
-  public TVPearlPluginSettingsTab(TVPearlSettings settings) {
+  public TVPearlPluginSettingsTab(final TVPearlSettings settings) {
     mSettings = settings;
   }
 
 	public JPanel createSettingsPanel()
 	{
-		FormLayout layout = new FormLayout("5dlu, pref, 3dlu, fill:pref:grow, 5dlu", "5dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref");
+	  final FormLayout layout = new FormLayout(
+        "5dlu, pref, 3dlu, fill:pref:grow, 5dlu",
+        "5dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref");
 
-		PanelBuilder builder = new PanelBuilder(layout, new ScrollableJPanel());
+	  final PanelBuilder builder = new PanelBuilder(layout,
+        new ScrollableJPanel());
 		// builder.setDefaultDialogBorder();
 		builder.setBorder(null);
 
-		CellConstraints cc = new CellConstraints();
+		final CellConstraints cc = new CellConstraints();
 
 		mUpdateAtStart = new JCheckBox(mLocalizer.msg("updateAtStart",
         "Update after TV-Browser start"), mSettings.getUpdatePearlsAfterStart());
@@ -117,14 +120,16 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
 		mPluginLabel = new JLabel();
 		handlePluginSelection();
 
-		JButton choose = new JButton(mLocalizer.msg("selectPlugins", "Choose Plugins"));
+		final JButton choose = new JButton(mLocalizer.msg("selectPlugins",
+        "Choose Plugins"));
 		choose.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(final ActionEvent e)
 			{
 				try
 				{
-	        Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+				  final Window w = UiUtilities.getLastModalChildOf(MainFrame
+              .getInstance());
           PluginChooserDlg chooser = null;
           if (w instanceof JDialog) {
             chooser = new PluginChooserDlg((JDialog) w, mClientPluginTargets,
@@ -149,7 +154,8 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
 			}
 		});
 
-		JPanel pluginPanel = new JPanel(new FormLayout("fill:pref:grow, 3dlu, pref", "default"));
+		final JPanel pluginPanel = new JPanel(new FormLayout(
+        "fill:pref:grow, 3dlu, pref", "default"));
 		pluginPanel.add(mPluginLabel, cc.xy(1, 1));
 		pluginPanel.add(choose, cc.xy(3, 1));
 
@@ -159,16 +165,16 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
         "show only"), mSettings.getFilterIncluding());
     mFilterShowNot = new JRadioButton(mLocalizer.msg("filterShowNot",
         "show not"), mSettings.getFilterExcluding());
-		ButtonGroup group = new ButtonGroup();
+    final ButtonGroup group = new ButtonGroup();
 		group.add(mFilterShowOnly);
 		group.add(mFilterShowNot);
 		mFilterComposer = new JTextArea(3, 10);
 		mFilterComposer.setText(getComposers());
-		JScrollPane scrollComposer = new JScrollPane(mFilterComposer);
+		final JScrollPane scrollComposer = new JScrollPane(mFilterComposer);
 		
 		mEnableFilter.addActionListener(new ActionListener() {
 
-      public void actionPerformed(ActionEvent e) {
+      public void actionPerformed(final ActionEvent e) {
         updateFilterEnabled();
       }
     });
@@ -210,11 +216,12 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
 		builder.add(scrollComposer, cc.xyw(2, row, 3));
 		row += 2;
 
-		JScrollPane scrollPane = new JScrollPane(builder.getPanel());
+		final JScrollPane scrollPane = new JScrollPane(builder.getPanel());
 		scrollPane.setBorder(null);
 		scrollPane.setViewportBorder(null);
 
-		JPanel scrollPanel = new JPanel(new FormLayout("default:grow", "default"));
+		final JPanel scrollPanel = new JPanel(new FormLayout("default:grow",
+        "default"));
 		scrollPanel.setBorder(null);
 		scrollPanel.add(scrollPane, cc.xy(1, 1));
 
@@ -258,7 +265,7 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
 		
 		TVPearlPlugin.getInstance().setClientPluginsTargets(mClientPluginTargets);
 		
-		Vector<String> composers = new Vector<String>();
+		final Vector<String> composers = new Vector<String>();
 		for (String item : mFilterComposer.getText().split("\n"))
 		{
 			item = item.trim();
@@ -274,7 +281,7 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
 
 	private Vector<String> getViewOption()
 	{
-		Vector<String> result = new Vector<String>();
+	  final Vector<String> result = new Vector<String>();
 
 		result.add(mLocalizer.msg("viewAll", "View all pearls"));
 		result.add(mLocalizer.msg("viewChannel",
@@ -286,7 +293,7 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
 
 	private Vector<String> getPriorities()
 	{
-		Vector<String> result = new Vector<String>();
+	  final Vector<String> result = new Vector<String>();
 
 		result.add(mLocalizer.msg("noPriority", "None"));
 		result.add(mLocalizer.msg("min", "Minimum"));
@@ -310,7 +317,7 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
 
 	private void handlePluginSelection()
 	{
-		ArrayList<ProgramReceiveIf> plugins = new ArrayList<ProgramReceiveIf>();
+	  final ArrayList<ProgramReceiveIf> plugins = new ArrayList<ProgramReceiveIf>();
 
 		if (mClientPluginTargets != null)
 		{
@@ -322,7 +329,8 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
 				}
 			}
 
-			ProgramReceiveIf[] mClientPlugins = plugins.toArray(new ProgramReceiveIf[plugins.size()]);
+			final ProgramReceiveIf[] mClientPlugins = plugins
+          .toArray(new ProgramReceiveIf[plugins.size()]);
 
 			if (mClientPlugins.length > 0)
 			{
