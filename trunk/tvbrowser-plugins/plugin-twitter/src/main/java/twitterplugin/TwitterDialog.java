@@ -1,53 +1,58 @@
 package twitterplugin;
 
-import devplugin.Program;
-
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JEditorPane;
-import javax.swing.JScrollPane;
-import javax.swing.JLabel;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.DocumentEvent;
-import java.awt.Frame;
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.event.ActionListener;
+import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import com.jgoodies.forms.layout.FormLayout;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import util.paramhandler.ParamParser;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import util.ui.Localizer;
-import util.ui.WindowClosingIf;
-import util.ui.UiUtilities;
-import util.paramhandler.ParamParser;
 
-public class TwitterDialog extends JDialog implements WindowClosingIf {
+import devplugin.Program;
+
+public final class TwitterDialog extends JDialog implements WindowClosingIf {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(TwitterDialog.class);
   private JEditorPane mMessage = new JEditorPane();
   private boolean mOkWasPressed = false;
 
-  public TwitterDialog(Dialog parentDialog, Program program) {
+  public TwitterDialog(final Dialog parentDialog, final Program program) {
     super(parentDialog, true);
-    setTitle(mLocalizer.msg("title", "Enter Twitter Message"));
-    createGui(program);
-    setLocationRelativeTo(parentDialog);
+    initialize(parentDialog, program);
   }
 
-  public TwitterDialog(Frame parentFrame, Program program) {
+  private void initialize(final Window parent, final Program program) {
+    setTitle(mLocalizer.msg("title", "Enter Twitter Message"));
+    createGui(program);
+    setLocationRelativeTo(parent);
+  }
+
+  public TwitterDialog(final Frame parentFrame, final Program program) {
     super(parentFrame, true);
-    setTitle(mLocalizer.msg("title", "Enter Twitter Message"));
-    createGui(program);
-    setLocationRelativeTo(parentFrame);
+    initialize(parentFrame, program);
   }
 
-  private void createGui(Program program) {
+  private void createGui(final Program program) {
     final JPanel panel = (JPanel) getContentPane();
     panel.setBorder(Borders.DLU4_BORDER);
     final FormLayout layout = new FormLayout("3dlu, fill:min:grow, 3dlu");
@@ -78,13 +83,13 @@ public class TwitterDialog extends JDialog implements WindowClosingIf {
 
     final JButton ok = new JButton (Localizer.getLocalization(Localizer.I18N_OK));
     ok.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
+      public void actionPerformed(final ActionEvent e) {
         okPressed();
       }
     });
     final JButton cancel = new JButton (Localizer.getLocalization(Localizer.I18N_CANCEL));
     cancel.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
+      public void actionPerformed(final ActionEvent e) {
         close();
       }
     });
@@ -103,20 +108,20 @@ public class TwitterDialog extends JDialog implements WindowClosingIf {
     getRootPane().setDefaultButton(cancel);
 
     mMessage.getDocument().addDocumentListener(new DocumentListener(){
-      public void insertUpdate(DocumentEvent e) {
+      public void insertUpdate(final DocumentEvent e) {
         updateWarning();
       }
 
-      public void removeUpdate(DocumentEvent e) {
+      public void removeUpdate(final DocumentEvent e) {
         updateWarning();
       }
 
-      public void changedUpdate(DocumentEvent e) {
+      public void changedUpdate(final DocumentEvent e) {
         updateWarning();
       }
 
       private void updateWarning() {
-        int num = 140 - mMessage.getText().trim().length();
+        final int num = 140 - mMessage.getText().trim().length();
         warningCounter.setText(mLocalizer.msg("counter", "{0} chars left", num));
         if (num < 0) {
           warningCounter.setForeground(Color.RED);
