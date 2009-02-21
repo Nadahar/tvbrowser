@@ -449,4 +449,13 @@ public interface PluginManager {
    * @since 3.0
    */
   public void deleteFileOnNextStart(String path);
+
+  /**
+   * check if some TV data is available on the given date
+   * 
+   * @param date
+   * @return <code>true</code> if at least one channel has data for the date
+   * @since 3.0
+   */
+  public boolean isDataAvailable(Date date);
 }

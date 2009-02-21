@@ -943,4 +943,9 @@ public class PluginManagerImpl implements PluginManager {
   public void deleteFileOnNextStart(String path) {
     Settings.propDeleteFilesAtStart.addItem(path);
   }
+
+  @Override
+  public boolean isDataAvailable(Date date) {
+    return TvDataBase.getInstance().dataAvailable(date);
+  }
 }
