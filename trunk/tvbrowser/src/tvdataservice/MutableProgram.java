@@ -26,6 +26,7 @@
 
 package tvdataservice;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -87,6 +88,12 @@ public class MutableProgram implements Program {
 
   /** The cached ID of this program. */
   private String mId;
+  
+  /** The cached unique ID of this program. */
+  private String mUniqueId;
+  
+  /** The date format, which is used in the unique ID */
+  public static final String ID_DATE_FORMAT = "yyyy-MM-dd";
 
   /** The channel object of this program. */
   private Channel mChannel;
@@ -471,7 +478,7 @@ public class MutableProgram implements Program {
    *
    * @return The ID of this program.
    */
-  public String getID() {
+  public synchronized String getID() {
     if (mId == null) {
       if  (mChannel.getDataServiceProxy() != null) {
         String dataServiceId = mChannel.getDataServiceProxy().getId();
@@ -479,10 +486,29 @@ public class MutableProgram implements Program {
         String channelId = mChannel.getId();
         String country = mChannel.getCountry();
 
-        mId = (new StringBuffer(dataServiceId).append("_").append(groupId).append("_").append(country).append("_").append(channelId).append("_").append(getHours()).append(":").append(getMinutes()).append(":").append(TimeZone.getDefault().getRawOffset()/60000)).toString();
+        mId = (new StringBuffer(dataServiceId).append('_').append(groupId).append('_').append(country).append('_').append(channelId).append('_').append(getHours()).append(':').append(getMinutes()).append(':').append(TimeZone.getDefault().getRawOffset()/60000)).toString();
       }
     }
     return mId;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public synchronized String getUniqueID() {
+    if (mUniqueId == null) {
+      if  (mChannel.getDataServiceProxy() != null) {
+        String dataServiceId = mChannel.getDataServiceProxy().getId();
+        String groupId = mChannel.getGroup().getId();
+        String channelId = mChannel.getId();
+        String country = mChannel.getCountry();
+        String date = new SimpleDateFormat(ID_DATE_FORMAT).format(getDate().getCalendar().getTime());
+
+        mUniqueId = (new StringBuffer(dataServiceId).append('_').append(groupId).append('_').append(country).append('_').append(channelId).append('_').append(date).append('_').append(getHours()).append(':').append(getMinutes()).append(':').append(TimeZone.getDefault().getRawOffset()/60000)).toString();
+      }
+    }
+    return mUniqueId;
   }
 
 
