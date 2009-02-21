@@ -41,10 +41,11 @@ public final class MediathekProgram implements Comparable<MediathekProgram> {
   private static MediathekPlugin plugin = MediathekPlugin.getInstance();
 
   private PluginTreeNode mPluginTreeNode;
-  
+
   private IParser mParser;
 
-  public MediathekProgram(IParser parser, String title, String url) {
+  public MediathekProgram(final IParser parser, final String title,
+      final String url) {
     this.mParser = parser;
     this.mTitle = parser.fixTitle(title);
     this.mTitleLower = title.toLowerCase();
@@ -62,7 +63,7 @@ public final class MediathekProgram implements Comparable<MediathekProgram> {
     return mUrl;
   }
 
-  public void addItem(MediathekProgramItem item) {
+  public void addItem(final MediathekProgramItem item) {
     mItems.add(item);
   }
 
@@ -77,15 +78,14 @@ public final class MediathekProgram implements Comparable<MediathekProgram> {
     return mItems;
   }
 
-  public void updatePluginTree(boolean refreshUI) {
+  public void updatePluginTree(final boolean refreshUI) {
     if (mPluginTreeNode == null) {
       mPluginTreeNode = new MediathekProgramNode(this);
       plugin.getRootNode().add(mPluginTreeNode);
     }
     if (mItems != null && mItems.size() > 0) {
       for (MediathekProgramItem episode : getItems()) {
-        PluginTreeNode episodeNode = new EpisodeNode(episode);
-        mPluginTreeNode.add(episodeNode);
+        mPluginTreeNode.add(new EpisodeNode(episode));
       }
       mPluginTreeNode.getMutableTreeNode().setShowLeafCountEnabled(true);
       if (refreshUI) {
@@ -100,7 +100,7 @@ public final class MediathekProgram implements Comparable<MediathekProgram> {
     }
   }
 
-  protected void parseEpisodes(UpdateThread thread) {
+  protected void parseEpisodes(final UpdateThread thread) {
     initializeItems();
     mParser.parseEpisodes(this);
   }
@@ -109,29 +109,28 @@ public final class MediathekProgram implements Comparable<MediathekProgram> {
     final LaunchBrowserAction openURLAction = new LaunchBrowserAction(getUrl(),
         mLocalizer.msg("context.open", "Show Mediathek"));
     if (getItemCount() > 0) {
-      Action mainAction = new ContextMenuAction(mLocalizer.msg(
+      final Action mainAction = new ContextMenuAction(mLocalizer.msg(
           "context.episodes", "Episodes in the Mediathek"), plugin
           .getContextMenuIcon());
-      ArrayList<Action> actionList = new ArrayList<Action>();
+      final ArrayList<Action> actionList = new ArrayList<Action>();
       for (final MediathekProgramItem item : getItems()) {
         actionList.add(new AbstractAction(item.getTitle()) {
 
-          public void actionPerformed(ActionEvent e) {
+          public void actionPerformed(final ActionEvent e) {
             Launch.openURL(item.getUrl());
           }
         });
       }
       actionList.add(ContextMenuSeparatorAction.getInstance());
       actionList.add(openURLAction);
-      Action[] subActions = new Action[actionList.size()];
-      actionList.toArray(subActions);
-      return new ActionMenu(mainAction, subActions);
+      return new ActionMenu(mainAction, actionList
+          .toArray(new Action[actionList.size()]));
     } else {
       return new ActionMenu(openURLAction);
     }
   }
 
-  public int compareTo(MediathekProgram other) {
+  public int compareTo(final MediathekProgram other) {
     return mTitleLower.compareTo(other.mTitleLower);
   }
 

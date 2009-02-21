@@ -39,11 +39,11 @@ public final class MediathekSettingsTab implements SettingsTab {
   private JCheckBox autoReadPrograms;
 
   public JPanel createSettingsPanel() {
-    int currentRow = 1;
+    final int currentRow = 1;
     final FormLayout layout = new FormLayout("5dlu, pref, fill:default:grow",
         "");
-    PanelBuilder panelBuilder = new PanelBuilder(layout);
-    CellConstraints cc = new CellConstraints();
+    final PanelBuilder panelBuilder = new PanelBuilder(layout);
+    final CellConstraints cc = new CellConstraints();
 
     // settings
     layout.appendRow(RowSpec.decode("pref"));
@@ -71,7 +71,7 @@ public final class MediathekSettingsTab implements SettingsTab {
         autoReadPrograms.isSelected() ? "true" : "false");
   }
 
-  public MediathekSettingsTab(Properties settings) {
+  public MediathekSettingsTab(final Properties settings) {
     this.settings = settings;
   }
 

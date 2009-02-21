@@ -35,7 +35,7 @@ public final class ARDParser extends AbstractParser {
   private static final String[] SUPPORTED_CHANNELS = { "3sat", "das erste",
       "ard", "br", "dwtv", "einsextra", "einsfestival", "einsplus", "hr",
       "kika", "mdr", "ndr", "phoenix", "rb", "rbb", "swr", "wdr", "zdf" };
-  
+
   /**
    * pattern for the (popup) link from the original program page
    */
@@ -59,7 +59,7 @@ public final class ARDParser extends AbstractParser {
       + Pattern.quote("\" class=\"blau\"><strong>")
       + "([^<]*)"
       + Pattern.quote("</strong>"));
-  
+
   private enum TitleFix {
     ARD_RATGEBER("ARD-Ratgeber", "ARD Ratgeber: "), LANDESSCHAU("Landesschau",
         "Landesschau "), LAENDERSACHE("Ländersache", "LÄNDERSACHE "), SUEDWILD(
@@ -68,7 +68,7 @@ public final class ARDParser extends AbstractParser {
     private String mSearch;
     private String mReplacement;
 
-    TitleFix(String search, String replacement) {
+    TitleFix(final String search, final String replacement) {
       mSearch = search;
       mReplacement = replacement;
     }
@@ -90,20 +90,20 @@ public final class ARDParser extends AbstractParser {
   public void readContents() {
     // <option value="http://www.ardmediathek.de/ard/servlet/content/967542">3
     // nach 9 (RB)</option>
-    Pattern pattern = Pattern.compile(Pattern.quote("option value=\""
+    final Pattern pattern = Pattern.compile(Pattern.quote("option value=\""
         + SITE_URL)
-            + "([^\"]+)"
-            + Pattern.quote("\">")
-            + "([^<]+)"
-            + Pattern.quote("</option>"));
+        + "([^\"]+)"
+        + Pattern.quote("\">")
+        + "([^<]+)"
+        + Pattern.quote("</option>"));
     readContents(CONTENT_URL + "2570", pattern, "ARD");
   }
 
-  public boolean isSupportedChannel(Channel channel) {
+  public boolean isSupportedChannel(final Channel channel) {
     return isSupportedChannel(channel, SUPPORTED_CHANNELS);
   }
 
-  public String fixTitle(String title) {
+  public String fixTitle(final String title) {
     if (title.endsWith(")")) {
       return title.replace(" (BR)", "").replace(" (DW-TV)", "").replace(
           " (MDR)", "").replace(" (NDR)", "").replace(" (RB)", "").replace(
@@ -112,7 +112,7 @@ public final class ARDParser extends AbstractParser {
     return title;
   }
 
-  protected boolean addProgram(String title, String relativeUrl) {
+  protected boolean addProgram(String title, final String relativeUrl) {
     title = TitleFix.fixTitle(title);
     if (relativeUrl.length() <= 1) {
       return false;
@@ -126,7 +126,7 @@ public final class ARDParser extends AbstractParser {
     return true;
   }
 
-  public void parseEpisodes(MediathekProgram mediathekProgram) {
+  public void parseEpisodes(final MediathekProgram mediathekProgram) {
     String url = mediathekProgram.getUrl();
     // get page of program
     String content = readUrl(url);
@@ -140,19 +140,19 @@ public final class ARDParser extends AbstractParser {
       if (matcher.find()) {
         readRSS(mediathekProgram, matcher.group(1));
       }
-    }
-    else {
+    } else {
       parseEpisodesWithoutRSS(mediathekProgram, content);
     }
   }
 
-  private void parseEpisodesWithoutRSS(MediathekProgram program, String content) {
-    Matcher matcher = EPISODE_PATTERN.matcher(content);
+  private void parseEpisodesWithoutRSS(final MediathekProgram program,
+      final String content) {
+    final Matcher matcher = EPISODE_PATTERN.matcher(content);
     int count = 0;
     while (matcher.find()) {
-      String url = SITE_URL + matcher.group(1);
-      String title = MediathekPlugin.getInstance()
-          .convertHTML(matcher.group(2));
+      final String url = SITE_URL + matcher.group(1);
+      final String title = MediathekPlugin.getInstance().convertHTML(
+          matcher.group(2));
       program.addItem(new MediathekProgramItem(title, url));
       count++;
     }

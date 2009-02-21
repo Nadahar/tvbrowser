@@ -35,12 +35,12 @@ public class MediathekProgramNode extends PluginTreeNode {
       .getLocalizerFor(MediathekProgramNode.class);
 
   @Override
-  public boolean contains(Program prog, boolean recursive) {
+  public boolean contains(final Program prog, final boolean recursive) {
     return false;
   }
 
   @Override
-  public boolean contains(Program prog) {
+  public boolean contains(final Program prog) {
     return false;
   }
 
@@ -63,8 +63,8 @@ public class MediathekProgramNode extends PluginTreeNode {
         "Search programs"), Plugin.getPluginManager().getIconFromTheme(plugin,
         "action", "system-search", 16)) {
 
-      public void actionPerformed(ActionEvent e) {
-        ArrayList<Channel> channels = new ArrayList<Channel>();
+      public void actionPerformed(final ActionEvent e) {
+        final ArrayList<Channel> channels = new ArrayList<Channel>();
 
         for (Channel channel : Plugin.getPluginManager()
             .getSubscribedChannels()) {
@@ -77,7 +77,7 @@ public class MediathekProgramNode extends PluginTreeNode {
           title = title.substring(0, title.length() - 3).trim();
         }
         final SearchFormSettings searchSettings = new SearchFormSettings(title);
-        Channel[] array = new Channel[channels.size()];
+        final Channel[] array = new Channel[channels.size()];
         channels.toArray(array);
         searchSettings.setChannels(array);
         searchSettings.setCaseSensitive(false);

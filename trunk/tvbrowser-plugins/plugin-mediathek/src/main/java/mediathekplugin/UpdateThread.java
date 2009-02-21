@@ -35,7 +35,7 @@ public final class UpdateThread extends Thread {
     return instance;
   }
 
-  public void addProgram(MediathekProgram program) {
+  public void addProgram(final MediathekProgram program) {
     // check if we already read this program
     if (program.getItemCount() >= 0) {
       return;
@@ -54,7 +54,7 @@ public final class UpdateThread extends Thread {
   public void run() {
     while (!isInterrupted()) {
       if (!updatePrograms.isEmpty()) {
-        MediathekProgram program = updatePrograms.remove(0);
+        final MediathekProgram program = updatePrograms.remove(0);
         program.parseEpisodes(this);
       }
       try {

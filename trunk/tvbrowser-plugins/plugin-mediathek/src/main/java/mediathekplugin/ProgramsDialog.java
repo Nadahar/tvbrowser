@@ -38,7 +38,7 @@ public final class ProgramsDialog extends JDialog implements WindowClosingIf {
   private static final Localizer mLocalizer = Localizer
       .getLocalizerFor(ProgramsDialog.class);
 
-  public ProgramsDialog(Frame frame) {
+  public ProgramsDialog(final Frame frame) {
     super(frame, true);
     setTitle(mLocalizer.msg("title", "Programs in the Mediathek"));
     createGUI();

@@ -24,12 +24,12 @@ import devplugin.ProgramItem;
 public final class EpisodeNode extends PluginTreeNode {
 
   @Override
-  public boolean contains(Program prog, boolean recursive) {
+  public boolean contains(final Program prog, final boolean recursive) {
     return false;
   }
 
   @Override
-  public boolean contains(Program prog) {
+  public boolean contains(final Program prog) {
     return false;
   }
 

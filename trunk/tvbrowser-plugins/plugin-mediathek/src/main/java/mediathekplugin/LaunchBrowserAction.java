@@ -29,18 +29,17 @@ public class LaunchBrowserAction extends AbstractAction {
       .getLocalizerFor(LaunchBrowserAction.class);
   private final String url;
 
-  LaunchBrowserAction(String url) {
+  LaunchBrowserAction(final String url) {
     this(url, mLocalizer.msg("openMedia", "Open in browser"));
   }
 
-  public LaunchBrowserAction(String url, String title) {
-    super(title, Plugin
-        .getPluginManager().getIconFromTheme(MediathekPlugin.getInstance(),
-            "apps", "internet-web-browser", 16));
+  public LaunchBrowserAction(final String url, final String title) {
+    super(title, Plugin.getPluginManager().getIconFromTheme(
+        MediathekPlugin.getInstance(), "apps", "internet-web-browser", 16));
     this.url = url;
   }
 
-  public void actionPerformed(ActionEvent e) {
+  public void actionPerformed(final ActionEvent e) {
     Launch.openURL(url);
   }
 }

@@ -32,11 +32,11 @@ public final class ZDFParser extends AbstractParser {
    * ARD, Phoenix und KiKa sind Gemeinschaftsproduktionen von ARD/ZDF und
    * anderen, die ARD zeigt das Vormittagsprogramm des ZDF
    */
-  private static String[] SUPPORTED_CHANNELS = { "3sat", "ard", "arte",
+  private static final String[] SUPPORTED_CHANNELS = { "3sat", "ard", "arte",
       "das erste", "kika", "phoenix", "zdf" };
 
   public void readContents() {
-    Pattern pattern = Pattern.compile(Pattern
+    final Pattern pattern = Pattern.compile(Pattern
         .quote("<a href=\"/ZDFmediathek/content/")
         + "([^?]+)"
         + Pattern.quote("?reset=true\">")
@@ -49,38 +49,39 @@ public final class ZDFParser extends AbstractParser {
   public boolean canReadEpisodes() {
     return true;
   }
-  
-  public boolean isSupportedChannel(Channel channel) {
-    return isSupportedChannel(channel, SUPPORTED_CHANNELS);
-  } 
 
-  protected boolean addProgram(String title, String relativeUrl) {
+  public boolean isSupportedChannel(final Channel channel) {
+    return isSupportedChannel(channel, SUPPORTED_CHANNELS);
+  }
+
+  protected boolean addProgram(final String title, final String relativeUrl) {
     MediathekPlugin.getInstance().addProgram(this, title,
         MAIN_URL + relativeUrl);
     return true;
   }
 
-  public String fixTitle(String title) {
+  public String fixTitle(final String title) {
     if (title.endsWith(")")) {
       return title.replace(" (3sat)", "").replace(" (tivi)", "").trim();
     }
     return title;
   }
 
-  public void parseEpisodes(MediathekProgram mediathekProgram) {
+  public void parseEpisodes(final MediathekProgram mediathekProgram) {
     final String url = mediathekProgram.getUrl();
-    int num = Integer.parseInt(url.substring(url.lastIndexOf("/") + 1));
-    String rssUrl = "http://www.zdf.de/ZDFMediathek/content/"
+    final int num = Integer.parseInt(url.substring(url.lastIndexOf('/') + 1));
+    final String rssUrl = "http://www.zdf.de/ZDFMediathek/content/"
         + Integer.toString(num) + "?view=rss";
     if (rssUrl != null) {
       readRSS(mediathekProgram, rssUrl);
     }
   }
 
-  protected void readContents(String webPage, Pattern pattern, String name) {
+  protected void readContents(final String webPage, final Pattern pattern,
+      final String name) {
     final MediathekPlugin plugin = MediathekPlugin.getInstance();
-    String startPage = readUrl(webPage);
-    Matcher matcher = pattern.matcher(startPage);
+    final String startPage = readUrl(webPage);
+    final Matcher matcher = pattern.matcher(startPage);
     int count = 0;
     int endPos = Integer.MAX_VALUE;
     while (matcher.find() && matcher.start() < endPos) {
@@ -88,8 +89,8 @@ public final class ZDFParser extends AbstractParser {
       if (count == 0) {
         endPos = startPage.indexOf("</ul>", matcher.start());
       }
-      String relativeUrl = matcher.group(1);
-      String title = plugin.convertHTML(matcher.group(2));
+      final String relativeUrl = matcher.group(1);
+      final String title = plugin.convertHTML(matcher.group(2));
       addProgram(title, relativeUrl);
       count++;
     }
