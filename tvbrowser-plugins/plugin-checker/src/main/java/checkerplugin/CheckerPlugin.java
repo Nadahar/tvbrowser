@@ -26,10 +26,12 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ContextMenuAction;
+import devplugin.ContextMenuSeparatorAction;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
@@ -53,7 +55,7 @@ public class CheckerPlugin extends Plugin {
   private PluginInfo mPluginInfo;
 
   private ImageIcon mWarnIcon;
-  
+
   private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
 
   private static String HTML_PATTERN = Pattern.quote("&") + "\\w+"
@@ -73,7 +75,7 @@ public class CheckerPlugin extends Plugin {
   }
 
   @Override
-  public Icon[] getMarkIconsForProgram(Program program) {
+  public Icon[] getMarkIconsForProgram(final Program program) {
     if (program == null
         || getPluginManager().getExampleProgram().equals(program)) {
       return new Icon[] { mWarnIcon };
@@ -81,20 +83,20 @@ public class CheckerPlugin extends Plugin {
     if (!isSupportedChannel(program.getChannel())) {
       return null;
     }
-    ArrayList<String> results = getIssues(program);
+    final ArrayList<String> results = getIssues(program);
     if (!results.isEmpty()) {
       return new Icon[] { mWarnIcon };
     }
     return null;
   }
 
-  private boolean isSupportedChannel(Channel channel) {
-    return channel.getDataServiceProxy().getInfo()
-        .getDescription().contains("TV-Browser");
+  private boolean isSupportedChannel(final Channel channel) {
+    return channel.getDataServiceProxy().getInfo().getDescription().contains(
+        "TV-Browser");
   }
 
-  private ArrayList<String> getIssues(Program program) {
-    ArrayList<String> results = new ArrayList<String>();
+  private ArrayList<String> getIssues(final Program program) {
+    final ArrayList<String> results = new ArrayList<String>();
     checkCategories(program, results);
     checkShortDescription(program, results);
     checkDuration(program, results);
@@ -106,14 +108,13 @@ public class CheckerPlugin extends Plugin {
     return results;
   }
 
-  private void checkSeriesNumbers(Program program, ArrayList<String> results) {
+  private void checkSeriesNumbers(final Program program,
+      final ArrayList<String> results) {
     final int episodeNumber = program
         .getIntField(ProgramFieldType.EPISODE_NUMBER_TYPE);
-    if (episodeNumber != -1) {
-      if (episodeNumber < 1) {
-        results.add(mLocalizer.msg("issue.episodeLess",
-            "Episode number is less than 1."));
-      }
+    if (episodeNumber != -1 && episodeNumber < 1) {
+      results.add(mLocalizer.msg("issue.episodeLess",
+          "Episode number is less than 1."));
     }
     final int total = program
         .getIntField(ProgramFieldType.EPISODE_TOTAL_NUMBER_TYPE);
@@ -129,7 +130,8 @@ public class CheckerPlugin extends Plugin {
     }
   }
 
-  private void checkSeriesByEpisode(Program program, ArrayList<String> results) {
+  private void checkSeriesByEpisode(final Program program,
+      final ArrayList<String> results) {
     if (!ProgramInfoHelper.bitSet(program.getInfo(),
         Program.INFO_CATEGORIE_SERIES)) {
       final String episode = program
@@ -159,10 +161,11 @@ public class CheckerPlugin extends Plugin {
     }
   }
 
-  private void checkTime(Program program, ArrayList<String> results) {
-    int netTime = program.getIntField(ProgramFieldType.NET_PLAYING_TIME_TYPE);
+  private void checkTime(final Program program, final ArrayList<String> results) {
+    final int netTime = program
+        .getIntField(ProgramFieldType.NET_PLAYING_TIME_TYPE);
     if (netTime != -1) {
-      int duration = program.getLength();
+      final int duration = program.getLength();
       if (netTime > duration) {
         results.add(mLocalizer.msg("issue.netTime",
             "Net playing time is longer than duration."));
@@ -170,22 +173,27 @@ public class CheckerPlugin extends Plugin {
     }
   }
 
-  private void checkURL(Program program, ArrayList<String> results) {
-    String url = program.getTextField(ProgramFieldType.URL_TYPE);
+  private void checkURL(final Program program, final ArrayList<String> results) {
+    final String url = program.getTextField(ProgramFieldType.URL_TYPE);
     if (url != null) {
-      if (!Character.isLetterOrDigit(url.charAt(0))) {
-        results.add(mLocalizer.msg("issue.urlFormat",
-            "URL not correctly formatted."));
+      if (url.isEmpty()) {
+        results.add("URL length is zero.");
+      } else {
+        if (!Character.isLetterOrDigit(url.charAt(0))) {
+          results.add(mLocalizer.msg("issue.urlFormat",
+              "URL not correctly formatted."));
+        }
       }
     }
   }
 
-  private void checkTextFields(Program program, ArrayList<String> results) {
-    Iterator<ProgramFieldType> it = ProgramFieldType.getTypeIterator();
+  private void checkTextFields(final Program program,
+      final ArrayList<String> results) {
+    final Iterator<ProgramFieldType> it = ProgramFieldType.getTypeIterator();
     while (it.hasNext()) {
-      ProgramFieldType fieldType = it.next();
+      final ProgramFieldType fieldType = it.next();
       if (fieldType.getFormat() == ProgramFieldType.TEXT_FORMAT) {
-        String content = program.getTextField(fieldType);
+        final String content = program.getTextField(fieldType);
         if (content != null) {
           if (content.trim().length() < content.length()) {
             if (content.trim().length() == 0) {
@@ -193,9 +201,9 @@ public class CheckerPlugin extends Plugin {
                   "Text field {0} contains only whitespace.", fieldType
                       .getLocalizedName()));
             } else {
-            results.add(mLocalizer.msg("issue.trim",
-                "Text field {0} has blanks at beginning or end.", fieldType
-                    .getLocalizedName()));
+              results.add(mLocalizer.msg("issue.trim",
+                  "Text field {0} has blanks at beginning or end.", fieldType
+                      .getLocalizedName()));
             }
           }
           if (content.matches(HTML_PATTERN)) {
@@ -210,8 +218,7 @@ public class CheckerPlugin extends Plugin {
     if (title.indexOf('\n') >= 0) {
       results.add(mLocalizer.msg("issue.linebreak",
           "Title contains line break."));
-    }
-    else {
+    } else {
       for (int i = 0; i < title.length(); i++) {
         if (Character.isWhitespace(title.charAt(i)) && (title.charAt(i) != ' ')) {
           results.add(mLocalizer.msg("issue.whitespace",
@@ -221,7 +228,8 @@ public class CheckerPlugin extends Plugin {
     }
   }
 
-  private void checkDuration(Program program, ArrayList<String> results) {
+  private void checkDuration(final Program program,
+      final ArrayList<String> results) {
     final int length = program.getLength();
     if (length == -1) {
       results.add(mLocalizer.msg("issue.unknownDuration",
@@ -233,8 +241,9 @@ public class CheckerPlugin extends Plugin {
     }
   }
 
-  private void checkShortDescription(Program program, ArrayList<String> results) {
-    String desc = program.getShortInfo();
+  private void checkShortDescription(final Program program,
+      final ArrayList<String> results) {
+    final String desc = program.getShortInfo();
     final int maxChars = 200;
     if (desc != null && desc.length() > maxChars) {
       results.add(mLocalizer.msg("issue.shortDescription",
@@ -242,8 +251,9 @@ public class CheckerPlugin extends Plugin {
     }
   }
 
-  private void checkCategories(Program program, ArrayList<String> results) {
-    String genre = program.getTextField(ProgramFieldType.GENRE_TYPE);
+  private void checkCategories(final Program program,
+      final ArrayList<String> results) {
+    final String genre = program.getTextField(ProgramFieldType.GENRE_TYPE);
     if (genre != null && !genre.isEmpty() && program.getInfo() == 0) {
       results.add(mLocalizer.msg("issue.missingCategory",
           "Category info missing for genre {0}", genre));
@@ -257,12 +267,12 @@ public class CheckerPlugin extends Plugin {
   }
 
   @Override
-  public ActionMenu getContextMenuActions(Program program) {
+  public ActionMenu getContextMenuActions(final Program program) {
     if (getPluginManager().getExampleProgram().equals(program)) {
       return new ActionMenu(new AbstractAction("Checker") {
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(final ActionEvent e) {
           // do nothing, example program
         }
       });
@@ -270,26 +280,56 @@ public class CheckerPlugin extends Plugin {
     if (!isSupportedChannel(program.getChannel())) {
       return null;
     }
-    ArrayList<String> results = getIssues(program);
+    final ArrayList<String> results = getIssues(program);
+    final ArrayList<Object> actionList = new ArrayList<Object>();
     if (results.size() > 0) {
-      Action[] problems = new Action[results.size()];
-      for (int i = 0; i < problems.length; i++) {
-        problems[i] = new AbstractAction(results.get(i)) {
+      for (String result : results) {
+        actionList.add(new AbstractAction(result) {
           @Override
-          public void actionPerformed(ActionEvent e) {
+          public void actionPerformed(final ActionEvent e) {
             // do nothing
           }
-        };
+        });
       }
-      return new ActionMenu(new ContextMenuAction("Checker"), problems);
+    }
+    if (actionList.size() > 0) {
+      actionList.add(ContextMenuSeparatorAction.getInstance());
+    }
+    final ArrayList<Action> fieldActions = new ArrayList<Action>();
+    final Iterator<ProgramFieldType> it = program.getFieldIterator();
+    while (it.hasNext()) {
+      final ProgramFieldType field = it.next();
+      fieldActions.add(new AbstractAction(field.getLocalizedName()) {
+        public void actionPerformed(final ActionEvent e) {
+          String content = "";
+          final int format = field.getFormat();
+          if (format == ProgramFieldType.TEXT_FORMAT) {
+            content = program.getTextField(field);
+          } else if (format == ProgramFieldType.INT_FORMAT) {
+            content = program.getIntFieldAsString(field);
+          } else if (format == ProgramFieldType.TIME_FORMAT) {
+            content = program.getTimeFieldAsString(field);
+          } else if (format == ProgramFieldType.BINARY_FORMAT) {
+            content = program.getBinaryField(field).toString();
+          }
+          JOptionPane.showMessageDialog(null, content);
+        }
+      });
+    }
+    actionList.add(new ActionMenu(new ContextMenuAction(mLocalizer.msg(
+        "showField", "Show field")), fieldActions
+        .toArray(new Action[fieldActions.size()])));
+    if (actionList.size() > 0) {
+      return new ActionMenu(new ContextMenuAction(mLocalizer.msg("contextMenu",
+          "Checker")), actionList.toArray(new Object[actionList.size()]));
     }
     return null;
   }
 
   @Override
   public void handleTvBrowserStartFinished() {
-    HashMap<String, PluginTreeNode> nodes = new HashMap<String, PluginTreeNode>();
-    Channel[] channels = devplugin.Plugin.getPluginManager()
+    final HashMap<String, PluginTreeNode> nodes = new HashMap<String, PluginTreeNode>();
+    final Channel[] channels = devplugin.Plugin.getPluginManager()
         .getSubscribedChannels();
     for (Channel channel : channels) {
       if (!isSupportedChannel(channel)) {
@@ -297,12 +337,12 @@ public class CheckerPlugin extends Plugin {
       }
       Date date = Date.getCurrentDate();
       for (int days = 0; days < 30; days++) {
-        Iterator<Program> iter = Plugin.getPluginManager()
+        final Iterator<Program> iter = Plugin.getPluginManager()
             .getChannelDayProgram(date, channel);
         if (iter != null) {
           while (iter.hasNext()) {
-            Program program = iter.next();
-            ArrayList<String> issues = getIssues(program);
+            final Program program = iter.next();
+            final ArrayList<String> issues = getIssues(program);
             if (!issues.isEmpty()) {
               program.mark(this);
               for (String issue : issues) {
@@ -323,12 +363,8 @@ public class CheckerPlugin extends Plugin {
     mRootNode.update();
   }
 
-  private boolean hasIssues(Program program) {
-    return getIssues(program).size() > 0;
-  }
-
   @Override
-  public int getMarkPriorityForProgram(Program p) {
+  public int getMarkPriorityForProgram(final Program p) {
     return Program.MAX_MARK_PRIORITY;
   }
 
@@ -341,7 +377,5 @@ public class CheckerPlugin extends Plugin {
   public PluginTreeNode getRootNode() {
     return mRootNode;
   }
-  
-  
 
 }
