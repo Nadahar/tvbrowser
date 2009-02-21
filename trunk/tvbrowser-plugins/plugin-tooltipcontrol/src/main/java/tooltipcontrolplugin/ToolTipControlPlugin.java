@@ -34,7 +34,7 @@ import devplugin.Version;
  * 
  * @author René Mach
  */
-public class ToolTipControlPlugin extends Plugin {
+public final class ToolTipControlPlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ToolTipControlPlugin.class);
   private Properties mSettings;
   
