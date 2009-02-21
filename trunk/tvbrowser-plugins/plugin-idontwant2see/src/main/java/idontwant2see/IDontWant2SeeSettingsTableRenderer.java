@@ -51,7 +51,7 @@ public class IDontWant2SeeSettingsTableRenderer extends
   protected final static short OUTDATED_7_DAY_COUNT = 7;
   protected final static short OUTDATED_30_DAY_COUNT = 30;
   
-  private Date mLastUsedDate;
+  transient private Date mLastUsedDate;
   
   protected IDontWant2SeeSettingsTableRenderer(Date lastUsedDate) {
     mLastUsedDate = lastUsedDate;

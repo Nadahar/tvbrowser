@@ -89,10 +89,11 @@ import devplugin.Version;
  * 
  * @author René Mach
  */
-public class IDontWant2See extends Plugin {
+public final class IDontWant2See extends Plugin {
   private static final String RECEIVE_TARGET_EXCLUDE_EXACT = "target_exclude_exact";
 
-  protected static final Localizer mLocalizer = Localizer.getLocalizerFor(IDontWant2See.class);
+  static final Localizer mLocalizer = Localizer
+      .getLocalizerFor(IDontWant2See.class);
   
   private static Date mCurrentDate = Date.getCurrentDate();
   private ArrayList<IDontWant2SeeListEntry> mSearchList;

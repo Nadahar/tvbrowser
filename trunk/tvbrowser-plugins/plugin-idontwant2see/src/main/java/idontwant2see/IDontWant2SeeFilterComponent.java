@@ -35,7 +35,7 @@ import devplugin.Program;
  * 
  * @author René Mach
  */
-public class IDontWant2SeeFilterComponent extends PluginsFilterComponent {
+public final class IDontWant2SeeFilterComponent extends PluginsFilterComponent {
   public String getUserPresentableClassName() {
     return IDontWant2See.mLocalizer.msg("name","I don't want to see!");
   }
@@ -54,8 +54,10 @@ public class IDontWant2SeeFilterComponent extends PluginsFilterComponent {
 
   public void read(ObjectInputStream in, int version) throws IOException,
       ClassNotFoundException {
+    // no filter settings to read, as they are handled by the plugin
   }
 
   public void write(ObjectOutputStream out) throws IOException {
+    // no filter settings to store, as they are handled by the plugin
   }
 }
