@@ -55,7 +55,7 @@ public class MovieAward implements Comparable<MovieAward> {
    * @param name Name of the Award
    */
   public void addName(String language, String name) {
-    mLog.info("Added movie award " + name + " (" + language + ")");
+    mLog.info("Added movie award " + name + " (" + language + ')');
     mNames.put(language.toLowerCase(), name);
   }
 
