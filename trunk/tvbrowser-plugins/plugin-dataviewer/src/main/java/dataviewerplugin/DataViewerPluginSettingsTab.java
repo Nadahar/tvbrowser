@@ -16,7 +16,7 @@ import devplugin.SettingsTab;
  * 
  * @author René Mach
  */
-public class DataViewerPluginSettingsTab implements SettingsTab {
+public final class DataViewerPluginSettingsTab implements SettingsTab {
   private JSpinner mGapSpinner;
   
   public JPanel createSettingsPanel() {
