@@ -70,12 +70,12 @@ public class ProgramPanel extends JPanel
 
 		addMouseMotionListener(new MouseMotionAdapter()
 		{
-			public void mouseDragged(MouseEvent evt)
+			public void mouseDragged(final MouseEvent evt)
 			{
 				if (mDraggingPoint != null && !evt.isShiftDown())
 				{
-					int deltaX = mDraggingPoint.x - evt.getX();
-					int deltaY = mDraggingPoint.y - evt.getY();
+				  final int deltaX = mDraggingPoint.x - evt.getX();
+          final int deltaY = mDraggingPoint.y - evt.getY();
 					scrollBy(deltaX, deltaY);
 				}
 			}
@@ -83,12 +83,12 @@ public class ProgramPanel extends JPanel
 
 		addMouseListener(new MouseAdapter()
 		{
-			public void mousePressed(MouseEvent evt)
+			public void mousePressed(final MouseEvent evt)
 			{
 				mDraggingPoint = evt.getPoint();
 			}
 
-			public void mouseReleased(MouseEvent evt)
+			public void mouseReleased(final MouseEvent evt)
 			{
 				mDraggingPoint = null;
 			}
@@ -109,17 +109,17 @@ public class ProgramPanel extends JPanel
 		this.setSize(new Dimension(mClientWidth + 2 * mOffset, mClientHeigh + 1));
 	}
 
-	public void scrollBy(int deltaX, int deltaY)
+	public void scrollBy(final int deltaX, final int deltaY)
 	{
 		if (getParent() instanceof JViewport)
 		{
-			JViewport viewport = (JViewport) getParent();
+		  final JViewport viewport = (JViewport) getParent();
 			Point viewPos = viewport.getViewPosition();
 
 			if (deltaX != 0)
 			{
 				viewPos.x += deltaX;
-				int maxX = getWidth() - viewport.getWidth();
+				final int maxX = getWidth() - viewport.getWidth();
 
 				viewPos.x = Math.min(viewPos.x, maxX);
 				viewPos.x = Math.max(viewPos.x, 0);
@@ -127,7 +127,7 @@ public class ProgramPanel extends JPanel
 			if (deltaY != 0)
 			{
 				viewPos.y += deltaY;
-				int maxY = getHeight() - viewport.getHeight();
+				final int maxY = getHeight() - viewport.getHeight();
 
 				viewPos.y = Math.min(viewPos.y, maxY);
 				viewPos.y = Math.max(viewPos.y, 0);
@@ -136,41 +136,41 @@ public class ProgramPanel extends JPanel
 		}
 	}
 
-	public void paintComponent(Graphics g)
+	public void paintComponent(final Graphics g)
 	{
 		super.paintComponent(g);
-		Rectangle drawHere = g.getClipBounds();
+		final Rectangle drawHere = g.getClipBounds();
 
 		g.setFont(TimelinePlugin.getInstance().getFont());
 
-		Graphics2D g2 = (Graphics2D) g;
+		final Graphics2D g2 = (Graphics2D) g;
 
-		int top = 0;
-		int bottom = drawHere.height;
+		final int top = 0;
+    final int bottom = drawHere.height;
 
-		Color oriColor = g.getColor();
+    final Color oriColor = g.getColor();
 
 		g.setColor(new Color(240, 240, 240));
 		for (int i = 0; i < mChannelCount; i++)
 		{
 			if (i % 2 != 0)
 			{
-				int y = mSizeChannel * i;
+			  final int y = mSizeChannel * i;
 				g.fillRect(0, y, this.getSize().width, mSizeChannel);
 			}
 		}
 
 		g.setColor(Color.LIGHT_GRAY);
-		Stroke oriStroke = g2.getStroke();
+		final Stroke oriStroke = g2.getStroke();
 
-		int halfHourSize = mSizeHour / 2;
+		final int halfHourSize = mSizeHour / 2;
 		int x = mStartX;
 
 		while (x < this.getSize().width)
 		{
-			int xh = x + halfHourSize;
-			Line2D l = new Line2D.Double(x, top, x, bottom);
-			Line2D l2 = new Line2D.Double(xh, top, xh, bottom);
+		  final int xh = x + halfHourSize;
+		  final Line2D l = new Line2D.Double(x, top, x, bottom);
+      final Line2D l2 = new Line2D.Double(xh, top, xh, bottom);
 			g2.setStroke(hourStroke);
 			g2.draw(l);
 			g2.setStroke(halfHourStroke);
@@ -179,7 +179,7 @@ public class ProgramPanel extends JPanel
 		}
 		if (TimelinePlugin.getSettings().showBar())
 		{
-			Date d = Date.getCurrentDate();
+		  final Date d = Date.getCurrentDate();
 			if (d.equals(new Date(TimelinePlugin.getInstance().getChoosenDate())))
 			{
 				g2.setStroke(nowStroke);

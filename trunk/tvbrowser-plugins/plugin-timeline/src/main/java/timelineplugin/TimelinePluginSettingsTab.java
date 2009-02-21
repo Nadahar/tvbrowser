@@ -23,7 +23,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
-import java.util.Vector;
 
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
@@ -56,9 +55,10 @@ import com.jgoodies.forms.layout.FormLayout;
 import devplugin.Plugin;
 import devplugin.SettingsTab;
 
-public class TimelinePluginSettingsTab implements SettingsTab
+public final class TimelinePluginSettingsTab implements SettingsTab
 {
-	protected static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(TimelinePluginSettingsTab.class);
+	static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(TimelinePluginSettingsTab.class);
 
 	private JComboBox mProgressBar;
 	private JLabel mFocusDeltaLabel;
@@ -84,18 +84,21 @@ public class TimelinePluginSettingsTab implements SettingsTab
 
 	public JPanel createSettingsPanel()
 	{
-		JTabbedPane tab = new JTabbedPane();
+	  final JTabbedPane tab = new JTabbedPane();
 		tab.setBorder(null);
-		JScrollPane scrollCommonSettings = new JScrollPane(getCommonSettings());
+		final JScrollPane scrollCommonSettings = new JScrollPane(
+        getCommonSettings());
 		scrollCommonSettings.setBorder(null);
 		tab.addTab(mLocalizer.msg("common", "Common"), scrollCommonSettings);
-		JScrollPane scrollFormatSettings = new JScrollPane(getFormatSettings());
+		final JScrollPane scrollFormatSettings = new JScrollPane(
+        getFormatSettings());
 		scrollFormatSettings.setBorder(null);
 		tab.addTab(mLocalizer.msg("label", "Label"), scrollFormatSettings);
 
-		CellConstraints cc = new CellConstraints();
+		final CellConstraints cc = new CellConstraints();
 
-		JPanel p = new JPanel(new FormLayout("default:grow", "5dlu,fill:default:grow"));
+		final JPanel p = new JPanel(new FormLayout("default:grow",
+        "5dlu,fill:default:grow"));
 		p.add(tab, cc.xy(1, 2));
 
 		return p;
@@ -103,12 +106,14 @@ public class TimelinePluginSettingsTab implements SettingsTab
 
 	private JPanel getCommonSettings()
 	{
-		FormLayout layout = new FormLayout("5dlu, 5dlu, pref, 3dlu, fill:pref:grow, 3dlu, pref, 5dlu", "5dlu, pref, 2dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 2dlu, pref");
+	  final FormLayout layout = new FormLayout(
+        "5dlu, 5dlu, pref, 3dlu, fill:pref:grow, 3dlu, pref, 5dlu",
+        "5dlu, pref, 2dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 2dlu, pref");
 
-		PanelBuilder builder = new PanelBuilder(layout);
+	  final PanelBuilder builder = new PanelBuilder(layout);
 		builder.setBorder(null);
 
-		CellConstraints cc = new CellConstraints();
+		final CellConstraints cc = new CellConstraints();
 
 		mProgressBar = new JComboBox(getProgressBarOption());
 		if (TimelinePlugin.getSettings().showBar())
@@ -120,9 +125,9 @@ public class TimelinePluginSettingsTab implements SettingsTab
 		mFocusDelta.setToolTipText("xxx");
 		mFocusDelta.addChangeListener(new ChangeListener()
 		{
-			public void stateChanged(ChangeEvent e)
+			public void stateChanged(final ChangeEvent e)
 			{
-				JSlider source = (JSlider) e.getSource();
+			  final JSlider source = (JSlider) e.getSource();
 				mFocusDeltaLabel.setText(Integer.toString(source.getValue() - 50));
 			}
 		});
@@ -137,7 +142,7 @@ public class TimelinePluginSettingsTab implements SettingsTab
 		mResizeWithMouse
         .setSelected(TimelinePlugin.getSettings().resizeWithMouse());
 
-		NumberFormat nf = NumberFormat.getIntegerInstance();
+		final NumberFormat nf = NumberFormat.getIntegerInstance();
 		nf.setGroupingUsed(false);
 
 		mHourWidth = new JFormattedTextField(nf);
@@ -149,20 +154,20 @@ public class TimelinePluginSettingsTab implements SettingsTab
         .getChannelHeight()));
 		mChannelHeight.setColumns(10);
 
-		JButton resetHour = new JButton(Localizer
+		final JButton resetHour = new JButton(Localizer
         .getLocalization(Localizer.I18N_DEFAULT));
 		resetHour.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent arg0)
+			public void actionPerformed(final ActionEvent arg0)
 			{
 				mHourWidth.setText("120");
 			}
 		});
-		JButton resetChannel = new JButton(Localizer
+		final JButton resetChannel = new JButton(Localizer
         .getLocalization(Localizer.I18N_DEFAULT));
 		resetChannel.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent arg0)
+			public void actionPerformed(final ActionEvent arg0)
 			{
 				mChannelHeight.setText("20");
 			}
@@ -181,7 +186,7 @@ public class TimelinePluginSettingsTab implements SettingsTab
         .showChannelName()
         && TimelinePlugin.getSettings().showChannelIcon());
 
-		ButtonGroup bg1 = new ButtonGroup();
+    final ButtonGroup bg1 = new ButtonGroup();
 		bg1.add(mShowIconAndName);
 		bg1.add(mShowIcon);
 		bg1.add(mShowName);
@@ -225,39 +230,42 @@ public class TimelinePluginSettingsTab implements SettingsTab
 
 	private JPanel getFormatSettings()
 	{
-		FormLayout layout = new FormLayout("5dlu, 5dlu, pref, 3dlu, fill:pref:grow, 3dlu, pref, 5dlu", "5dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 2dlu, pref");
+	  final FormLayout layout = new FormLayout(
+        "5dlu, 5dlu, pref, 3dlu, fill:pref:grow, 3dlu, pref, 5dlu",
+        "5dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 2dlu, pref");
 
-		PanelBuilder builder = new PanelBuilder(layout);
+	  final PanelBuilder builder = new PanelBuilder(layout);
 		builder.setBorder(null);
 
-		CellConstraints cc = new CellConstraints();
+		final CellConstraints cc = new CellConstraints();
 
 		mFormat = new JTextArea(5, 20);
 		mFormat.setText(TimelinePlugin.getSettings().getTitleFormat());
-		JScrollPane scrollFormat = new JScrollPane(mFormat);
+		final JScrollPane scrollFormat = new JScrollPane(mFormat);
 		mFontPanel = new FontChooserPanel(TimelinePlugin.getInstance().getFont());
-		JButton addFontBtn = new JButton(Localizer
+		final JButton addFontBtn = new JButton(Localizer
         .getLocalization(Localizer.I18N_ADD));
 		addFontBtn.setToolTipText(mLocalizer.msg("addHint", "Add font"));
 		addFontBtn.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(final ActionEvent e)
 			{
-				String format = mFormat.getText();
-				String pre = format.substring(0, mFormat.getSelectionStart());
-				String post = format.substring(mFormat.getSelectionStart());
-				Font cf = mFontPanel.getChosenFont();
-				String choosenFont = String.format("{setFont(%1$s,%2$s,%3$s)}", cf.getName(), cf.getStyle(), cf.getSize());
+			  final String format = mFormat.getText();
+        final String pre = format.substring(0, mFormat.getSelectionStart());
+        final String post = format.substring(mFormat.getSelectionStart());
+        final Font cf = mFontPanel.getChosenFont();
+        final String choosenFont = String.format("{setFont(%1$s,%2$s,%3$s)}",
+            cf.getName(), cf.getStyle(), cf.getSize());
 
 				mFormat.setText(pre + choosenFont + post);
 			}
 		});
-		JButton resetBtn = new JButton(Localizer
+		final JButton resetBtn = new JButton(Localizer
         .getLocalization(Localizer.I18N_DEFAULT));
     resetBtn.setToolTipText(mLocalizer.msg("resetHint", "Reset formatting"));
 		resetBtn.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(final ActionEvent e)
 			{
 				mFormat.setText(TimelinePlugin.getSettings().getDefaultTitleFormat());
 				mFontPanel.selectFont(TimelinePlugin.getInstance().getFont());
@@ -271,16 +279,17 @@ public class TimelinePluginSettingsTab implements SettingsTab
 		{
 			mKeyList.addItem(mParamLibrary.getDescriptionForKey(key));
 		}
-		JButton addKeyBtn = new JButton(Localizer
+		final JButton addKeyBtn = new JButton(Localizer
         .getLocalization(Localizer.I18N_ADD));
 		addKeyBtn.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(final ActionEvent e)
 			{
-				String format = mFormat.getText();
-				String pre = format.substring(0, mFormat.getSelectionStart());
-				String post = format.substring(mFormat.getSelectionStart());
-				String key = String.format("{%1$s}", mParamLibrary.getPossibleKeys()[mKeyList.getSelectedIndex()]);
+			  final String format = mFormat.getText();
+        final String pre = format.substring(0, mFormat.getSelectionStart());
+        final String post = format.substring(mFormat.getSelectionStart());
+        final String key = String.format("{%1$s}", mParamLibrary
+            .getPossibleKeys()[mKeyList.getSelectedIndex()]);
 
 				mFormat.setText(pre + key + post);
 			}
@@ -296,7 +305,9 @@ public class TimelinePluginSettingsTab implements SettingsTab
 		{
 			private static final long serialVersionUID = 1L;
 
-			public JComponent getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus)
+			public JComponent getListCellRendererComponent(final JList list,
+          final Object value, final int index, final boolean isSelected,
+          final boolean cellHasFocus)
 			{
 				if (isSelected)
 				{
@@ -321,24 +332,25 @@ public class TimelinePluginSettingsTab implements SettingsTab
 				return this;
 			}
 		});
-		JButton addFunctionBtn = new JButton(Localizer
+		final JButton addFunctionBtn = new JButton(Localizer
         .getLocalization(Localizer.I18N_ADD));
 		addFunctionBtn.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(final ActionEvent e)
 			{
-				String format = mFormat.getText();
-				String pre = format.substring(0, mFormat.getSelectionStart());
-				String post = format.substring(mFormat.getSelectionStart());
+			  final String format = mFormat.getText();
+        final String pre = format.substring(0, mFormat.getSelectionStart());
+        final String post = format.substring(mFormat.getSelectionStart());
 				//String function = String.format("{%1$s()}", mParamLibrary.getPossibleFunctions()[mFunctionList.getSelectedIndex()]);
-				String function = String.format("{%1$s()}", mFunctionList.getSelectedItem());
+        final String function = String.format("{%1$s()}", mFunctionList
+            .getSelectedItem());
 
 				mFormat.setText(pre + function + post);
 			}
 		});
 
-		int pw = Integer.parseInt(mHourWidth.getText());
-		int ph = Integer.parseInt(mChannelHeight.getText());
+		final int pw = Integer.parseInt(mHourWidth.getText());
+    final int ph = Integer.parseInt(mChannelHeight.getText());
 		mPreview = new JPanel();
 		mPreview.setBackground(Color.WHITE);
 		mPreview.setPreferredSize(new Dimension(pw + 5, ph + 10));
@@ -347,23 +359,24 @@ public class TimelinePluginSettingsTab implements SettingsTab
 		mPreviewProgram.setProgram(Plugin.getPluginManager().getExampleProgram());
 		mPreviewProgram.setPreferredSize(new Dimension(pw, ph));
 		mPreview.add(mPreviewProgram);
-		JButton takeChangesBtn = new JButton(mLocalizer.msg("preview", "Preview"));
+		final JButton takeChangesBtn = new JButton(mLocalizer.msg("preview",
+        "Preview"));
 		takeChangesBtn.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(final ActionEvent e)
 			{
-				UpdatePreview();
+				updatePreview();
 			}
 		});
 		mDurationLabel = new JLabel("60");
 		mDuration = new JSlider(JSlider.HORIZONTAL, 5, 120, 60);
 		mDuration.addChangeListener(new ChangeListener()
 		{
-			public void stateChanged(ChangeEvent e)
+			public void stateChanged(final ChangeEvent e)
 			{
-				JSlider source = (JSlider) e.getSource();
+			  final JSlider source = (JSlider) e.getSource();
 				mDurationLabel.setText(Integer.toString(source.getValue()));
-				UpdatePreview();
+				updatePreview();
 			}
 		});
 
@@ -398,18 +411,19 @@ public class TimelinePluginSettingsTab implements SettingsTab
 		builder.add(mDuration, cc.xy(5, row));
 		builder.add(mDurationLabel, cc.xy(7, row));
 
-		UpdatePreview();
+		updatePreview();
 
 		return builder.getPanel();
 	}
 
-	private void UpdatePreview()
+	private void updatePreview()
 	{
-		int pw = Math.round(Integer.parseInt(mHourWidth.getText()) / 60.0f * mDuration.getValue());
-		int ph = Integer.parseInt(mChannelHeight.getText());
+	  final int pw = Math.round(Integer.parseInt(mHourWidth.getText()) / 60.0f
+        * mDuration.getValue());
+    final int ph = Integer.parseInt(mChannelHeight.getText());
 		mPreview.setPreferredSize(new Dimension(pw + 5, ph + 10));
 		mPreviewProgram.setPreferredSize(new Dimension(pw, ph));
-		TextFormatter formatter = new TextFormatter();
+		final TextFormatter formatter = new TextFormatter();
 		formatter.setFont(TimelinePlugin.getInstance().getFont());
 		formatter.setInitialiseMaxLine(true);
 		formatter.setFormat(mFormat.getText());
@@ -465,13 +479,9 @@ public class TimelinePluginSettingsTab implements SettingsTab
 		TimelinePlugin.getSettings().setTitleFormat(mFormat.getText());
 	}
 
-	private Vector<String> getProgressBarOption()
+	private String[] getProgressBarOption()
 	{
-		Vector<String> result = new Vector<String>();
-
-		result.add(mLocalizer.msg("progress", "Progress"));
-		result.add(mLocalizer.msg("bar", "Bar"));
-
-		return result;
+	  return new String[] { mLocalizer.msg("progress", "Progress"),
+        mLocalizer.msg("bar", "Bar") };
 	}
 }

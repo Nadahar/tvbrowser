@@ -28,7 +28,7 @@ public class TextFont implements ITextObject
 	int mX;
 	int mY;
 
-	public TextFont(String fontName, int style, int size)
+	public TextFont(final String fontName, final int style, final int size)
 	{
 		mFont = new Font(fontName, style, size);
 	}
@@ -38,7 +38,8 @@ public class TextFont implements ITextObject
 		return mFont;
 	}
 
-	public void print(TextLine line, Program p, Graphics g, int width, int height, int x, int y)
+	public void print(final TextLine line, final Program p, final Graphics g,
+      final int width, final int height, final int x, final int y)
 	{
 		mX = x;
 		mY = y;
@@ -55,7 +56,7 @@ public class TextFont implements ITextObject
 		return mY;
 	}
 
-	public Boolean testFormat()
+	public boolean testFormat()
 	{
 		return true;
 	}

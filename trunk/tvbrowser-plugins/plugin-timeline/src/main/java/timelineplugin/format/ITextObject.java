@@ -17,8 +17,9 @@
  */
 package timelineplugin.format;
 
-import java.awt.*;
-import devplugin.*;
+import java.awt.Graphics;
+
+import devplugin.Program;
 
 public interface ITextObject
 {
@@ -26,7 +27,8 @@ public interface ITextObject
 
 	public int getY();
 
-	public void print(TextLine line, Program p, Graphics g, int width, int height, int x, int y);
+	public void print(final TextLine line, final Program p, final Graphics g,
+      final int width, final int height, final int x, final int y);
 	
-	public Boolean testFormat();
+	public boolean testFormat();
 }

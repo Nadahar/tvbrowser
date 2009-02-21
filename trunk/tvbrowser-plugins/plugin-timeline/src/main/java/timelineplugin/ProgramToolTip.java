@@ -32,7 +32,7 @@ public class ProgramToolTip extends JToolTip
 {
 	private static final long serialVersionUID = 1L;
 
-	public ProgramToolTip(Program p)
+	public ProgramToolTip(final Program p)
 	{
 		setUI(new ProgramToolTipUI(p));
 	}
@@ -41,19 +41,19 @@ public class ProgramToolTip extends JToolTip
 	{
 		private ProgramPanel mProgramPanel;
 
-		public ProgramToolTipUI(Program p)
+		public ProgramToolTipUI(final Program p)
 		{
 			mProgramPanel = new ProgramPanel(p);
 			mProgramPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		}
 
-		public void paint(Graphics g, JComponent c)
+		public void paint(final Graphics g, final JComponent c)
 		{
 			mProgramPanel.paintComponent(g);
 			g.drawRect(0, 0, c.getSize().width - 1, c.getSize().height - 1);
 		}
 
-		public Dimension getPreferredSize(JComponent c)
+		public Dimension getPreferredSize(final JComponent c)
 		{
 			return new Dimension(200, mProgramPanel.getPreferredHeight());
 		}

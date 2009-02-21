@@ -47,7 +47,7 @@ public class ChannelHeader extends JComponent
 	private static final Cursor resizeColumnCursor = Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR);
 
 	private int mChannelCount;
-	private Channel[] mChannels;
+	transient private Channel[] mChannels;
 	private int mChannelHeight;
 	private boolean mShowName;
   private boolean mShowIcon;
@@ -62,7 +62,7 @@ public class ChannelHeader extends JComponent
 	private boolean mColumnResizing = false;
 	private int mResizeX;
 
-	public ChannelHeader(int channelHeight)
+	public ChannelHeader(final int channelHeight)
 	{
 		mIcons = new HashMap<Channel, ImageIcon>();
 
@@ -77,7 +77,7 @@ public class ChannelHeader extends JComponent
 
 		addMouseMotionListener(new MouseMotionListener()
 		{
-			public void mouseDragged(MouseEvent e)
+			public void mouseDragged(final MouseEvent e)
 			{
 				if (mRowResizing)
 				{
@@ -91,7 +91,7 @@ public class ChannelHeader extends JComponent
 				}
 			}
 
-			public void mouseMoved(MouseEvent e)
+			public void mouseMoved(final MouseEvent e)
 			{
 
 				if (isMouseOverRowMargin(e.getPoint()))
@@ -116,16 +116,16 @@ public class ChannelHeader extends JComponent
 
 		addMouseListener(new MouseAdapter()
 		{
-			public void mouseClicked(MouseEvent e)
+			public void mouseClicked(final MouseEvent e)
 			{
 				if (getCursor() == linkCursor && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1)
 				{
-					int index = (int) ((double) e.getY() / mChannelHeight);
+				  final int index = (int) ((double) e.getY() / mChannelHeight);
 					Launch.openURL(mChannels[index].getWebpage());
 				}
 			}
 
-			public void mousePressed(MouseEvent e)
+			public void mousePressed(final MouseEvent e)
 			{
 				if (isMouseOverRowMargin(e.getPoint()))
 				{
@@ -139,7 +139,7 @@ public class ChannelHeader extends JComponent
 				}
 			}
 
-			public void mouseReleased(MouseEvent e)
+			public void mouseReleased(final MouseEvent e)
 			{
 				if (mRowResizing)
 				{
@@ -158,18 +158,18 @@ public class ChannelHeader extends JComponent
 		});
 	}
 
-	public void setPreferredHeight(int ph)
+	public void setPreferredHeight(final int ph)
 	{
 		setPreferredSize(new Dimension(TimelinePlugin.getInstance().getChannelWidth(), ph));
 		setSize(new Dimension(TimelinePlugin.getInstance().getChannelWidth(), ph));
 	}
 
-	public void paintComponent(Graphics g)
+	public void paintComponent(final Graphics g)
 	{
 		super.paintComponent(g);
 
-		Color c = g.getColor();
-		Color cr = new Color(240, 240, 240);
+		final Color c = g.getColor();
+    final Color cr = new Color(240, 240, 240);
 		g.setFont(TimelinePlugin.getInstance().getFont());
 		g.setColor(c);
 
@@ -180,13 +180,13 @@ public class ChannelHeader extends JComponent
 			h += (mChannelHeight - h) / 2;
 			delta = (mChannelHeight - 20) / 2;
 		}
-		int w = this.getSize().width;
+		final int w = this.getSize().width;
 		g.setColor(Color.WHITE);
 		g.fillRect(1, 0, w - 1, this.getSize().height);
-		int textBegin = mShowIcon ? 45 : 5;
+		final int textBegin = mShowIcon ? 45 : 5;
 		for (int i = 0; i < mChannelCount; i++)
 		{
-			int y = mChannelHeight * i;
+		  final int y = mChannelHeight * i;
 			g.setColor(i % 2 == 0 ? Color.WHITE : cr);
 			g.fillRect(0, y, w, mChannelHeight);
 			g.setColor((!mRowResizing && !mColumnResizing) ? c : Color.LIGHT_GRAY);
@@ -203,11 +203,11 @@ public class ChannelHeader extends JComponent
 		if (mRowResizing)
 		{
 			g.setColor(Color.RED);
-			int diff = mResizeY - mReferenceY;
-			String text = Integer.toString(Math.abs(diff));
-			int x = getWidth() / 2;
-			int end = mReferenceY + (diff + g.getFont().getSize()) / 2;
-			int begin = end - g.getFont().getSize();
+			final int diff = mResizeY - mReferenceY;
+      final String text = Integer.toString(Math.abs(diff));
+      final int x = getWidth() / 2;
+      final int end = mReferenceY + (diff + g.getFont().getSize()) / 2;
+      final int begin = end - g.getFont().getSize();
 			g.drawString(text, (getWidth() - g.getFontMetrics().stringWidth(text)) / 2, end);
 			g.drawLine(0, mReferenceY, getSize().width, mReferenceY);
 			g.drawLine(x, mReferenceY, x, begin - 2);
@@ -216,14 +216,14 @@ public class ChannelHeader extends JComponent
 		}
 		else if (mColumnResizing)
 		{
-			String text = Integer.toString(mResizeX);
-			int textWidth = g.getFontMetrics().stringWidth(text);
-			int x = (mResizeX - textWidth) / 2;
+		  final String text = Integer.toString(mResizeX);
+      final int textWidth = g.getFontMetrics().stringWidth(text);
+      final int x = (mResizeX - textWidth) / 2;
 			g.setColor(Color.WHITE);
 			g.fillRect(x - 1, mResizeY - 6, textWidth + 2, g.getFont().getSize() + 2);
 			g.setColor(Color.RED);
-			int begin = x - 2;
-			int end = begin + textWidth + 2;
+			final int begin = x - 2;
+      final int end = begin + textWidth + 2;
 			g.drawLine(0, mResizeY, begin, mResizeY);
 			g.drawLine(end, mResizeY, mResizeX, mResizeY);
 			g.drawString(text, x, mResizeY + 5);
@@ -232,21 +232,23 @@ public class ChannelHeader extends JComponent
 		g.setColor(c);
 	}
 
-	private ImageIcon getIcon(Channel channel)
+	private ImageIcon getIcon(final Channel channel)
 	{
 		if (mIcons.containsKey(channel))
 		{
 			return mIcons.get(channel);
 		}
-		ImageIcon icon = UiUtilities.createChannelIcon(channel.getIcon());
+		final ImageIcon icon = UiUtilities.createChannelIcon(channel.getIcon());
 		mIcons.put(channel, icon);
 		return icon;
 	}
 
-	private boolean isMouseOverIcon(Point p)
+	private boolean isMouseOverIcon(final Point p)
 	{
-		int logoBegin = ((int) ((double) p.getY() / mChannelHeight)) * mChannelHeight + (mChannelHeight > 20 ? (mChannelHeight - 20) / 2 : 0);
-		int maxHeight = mChannelCount * mChannelHeight;
+	  final int logoBegin = ((int) ((double) p.getY() / mChannelHeight))
+        * mChannelHeight
+        + (mChannelHeight > 20 ? (mChannelHeight - 20) / 2 : 0);
+    final int maxHeight = mChannelCount * mChannelHeight;
 
 		if (p.getY() < maxHeight && p.getX() <= 42 && p.getY() > logoBegin && p.getY() < logoBegin + 22)
 		{
@@ -255,7 +257,7 @@ public class ChannelHeader extends JComponent
 		return false;
 	}
 
-	private boolean isMouseOverRowMargin(Point p)
+	private boolean isMouseOverRowMargin(final Point p)
 	{
 		if (!TimelinePlugin.getSettings().resizeWithMouse())
 		{
@@ -268,7 +270,7 @@ public class ChannelHeader extends JComponent
 		return false;
 	}
 
-	private boolean isMouseOverColumnMargin(Point p)
+	private boolean isMouseOverColumnMargin(final Point p)
 	{
 		if (!TimelinePlugin.getSettings().resizeWithMouse())
 		{

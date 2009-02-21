@@ -17,16 +17,24 @@
  */
 package timelineplugin.format;
 
-import java.awt.*;
+import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import devplugin.*;
+
+import devplugin.Program;
 
 public class TextLine
 {
-	private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(timelineplugin.TimelinePlugin.class.getName());
+	private static final Pattern SETFONT_PATTERN = Pattern.compile(
+          "\\{ *setfont *\\( *([^,]+) *, *([^,]+) *, *([^,]+) *\\) *\\}",
+          Pattern.CASE_INSENSITIVE);
+
+  private static final Pattern MAXLINES_PATTERN = Pattern.compile(
+          "\\{ *multiline *\\( *([0-9]+) *\\) *}", Pattern.CASE_INSENSITIVE);
+
+  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(timelineplugin.TimelinePlugin.class.getName());
 
 	private List<ITextObject> mList;
 	private int mY;
@@ -36,7 +44,8 @@ public class TextLine
 	private int mAvailableLines;
 	private int mPadding;
 
-	public TextLine(String format, int padding, Boolean setMaxline)
+	public TextLine(final String format, final int padding,
+      final boolean setMaxline)
 	{
 		mList = new ArrayList<ITextObject>();
 		mMaxSize = 0;
@@ -51,8 +60,7 @@ public class TextLine
 		format = parseMaxLines(format);
 		mSizeIndex = format.length();
 
-		Pattern pattern = Pattern.compile("\\{ *setfont *\\( *([^,]+) *, *([^,]+) *, *([^,]+) *\\) *\\}", Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(format);
+		final Matcher matcher = SETFONT_PATTERN.matcher(format);
 		int index = 0;
 		while (matcher.find())
 		{
@@ -68,10 +76,9 @@ public class TextLine
 		}
 	}
 
-	private String parseMaxLines(String format)
+	private String parseMaxLines(final String format)
 	{
-		Pattern pattern = Pattern.compile("\\{ *multiline *\\( *([0-9]+) *\\) *}", Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(format);
+	  final Matcher matcher = MAXLINES_PATTERN.matcher(format);
 
 		if (matcher.find())
 		{
@@ -80,7 +87,7 @@ public class TextLine
 		return matcher.replaceAll("");
 	}
 
-	private void addString(String value)
+	private void addString(final String value)
 	{
 		if (value.length() > 0)
 		{
@@ -88,14 +95,15 @@ public class TextLine
 		}
 	}
 
-	private int addFont(String fontName, String style, String size)
+	private int addFont(final String fontName, final String style,
+      final String size)
 	{
 		int resultSize = -1;
 		try
 		{
-			int fontStyle = Integer.parseInt(style);
-			int fontSize = Integer.parseInt(size);
-			TextFont f = new TextFont(fontName, fontStyle, fontSize);
+		  final int fontStyle = Integer.parseInt(style);
+      final int fontSize = Integer.parseInt(size);
+      final TextFont f = new TextFont(fontName, fontStyle, fontSize);
 			resultSize = f.getFont().getSize();
 			mList.add(f);
 		}
@@ -123,7 +131,8 @@ public class TextLine
 		return mY;
 	}
 
-	public void print(Program p, Graphics g, int width, int height, int x, int y)
+	public void print(final Program p, final Graphics g, final int width,
+      final int height, final int x, final int y)
 	{
 		mAvailableLines = mMaxLines;
 		mY = y;
@@ -162,7 +171,7 @@ public class TextLine
 		return mAvailableLines;
 	}
 
-	void setLines(int value)
+	void setLines(final int value)
 	{
 		mAvailableLines = value;
 	}

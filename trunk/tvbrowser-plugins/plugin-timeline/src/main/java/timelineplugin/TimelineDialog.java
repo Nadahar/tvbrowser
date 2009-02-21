@@ -56,24 +56,25 @@ import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.ProgramFilter;
 
-public class TimelineDialog extends JDialog implements WindowClosingIf
+public final class TimelineDialog extends JDialog implements WindowClosingIf
 {
 	private static final long serialVersionUID = 1L;
 
-	protected static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(TimelinePlugin.class);
+	static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(TimelinePlugin.class);
 
 	private ProgramScrollPanel mMainPane;
 	private JComboBox mDateList;
 	private JComboBox mTimeList;
 	private JComboBox mFilterList;
-	private Timer mTimer;
+	transient private Timer mTimer;
 	private int[] mTimes;
 	private boolean mLockNow = false;
 	private boolean mStartWithNow = false;
 	private boolean mIgnoreReset = false;
 	private double mRelation;
 
-	public TimelineDialog(Frame frame, boolean startWithNow)
+	public TimelineDialog(final Frame frame, final boolean startWithNow)
 	{
 		super(frame, true);
 		setTitle(mLocalizer.msg("name", "Timeline"));
@@ -125,7 +126,7 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 
 	private void createGUI()
 	{
-		JPanel content = (JPanel) this.getContentPane();
+	  final JPanel content = (JPanel) this.getContentPane();
 		content.setLayout(new BorderLayout());
 		content.setBorder(UiUtilities.DIALOG_BORDER);
 
@@ -144,15 +145,15 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 	{
 		return new AdjustmentListener()
 		{
-			public void adjustmentValueChanged(AdjustmentEvent e)
+			public void adjustmentValueChanged(final AdjustmentEvent e)
 			{
 				resetGoto();
-				int dayLimit = getDayLimit();
-				int value = e.getValue();
+				final int dayLimit = getDayLimit();
+        final int value = e.getValue();
 
 				if (value < dayLimit)
 				{
-					int index = mDateList.getSelectedIndex();
+				  final int index = mDateList.getSelectedIndex();
 					if (index > 0)
 					{
 						mDateList.setSelectedIndex(index - 1);
@@ -161,7 +162,7 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 				}
 				else if (value + mMainPane.getHorizontalScrollBar().getVisibleAmount() >= mMainPane.getHorizontalScrollBar().getMaximum() - dayLimit)
 				{
-					int index = mDateList.getSelectedIndex();
+				  final int index = mDateList.getSelectedIndex();
 					if (index < mDateList.getItemCount() - 1)
 					{
 						mDateList.setSelectedIndex(mDateList.getSelectedIndex() + 1);
@@ -174,17 +175,19 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 
 	private JPanel getInfoPanel()
 	{
-		FormLayout layout = new FormLayout("pref, 3dlu, pref, 15dlu, pref, 3dlu, pref, 15dlu, pref, 3dlu, pref", "pref, 5dlu");
+	  final FormLayout layout = new FormLayout(
+        "pref, 3dlu, pref, 15dlu, pref, 3dlu, pref, 15dlu, pref, 3dlu, pref",
+        "pref, 5dlu");
 
-		PanelBuilder builder = new PanelBuilder(layout);
+	  final PanelBuilder builder = new PanelBuilder(layout);
 		builder.setBorder(null);
-		CellConstraints cc = new CellConstraints();
+		final CellConstraints cc = new CellConstraints();
 
 		mDateList = new JComboBox(getDateList());
 		mDateList.setSelectedIndex(1);
 		mDateList.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(final ActionEvent e)
 			{
 				resetGoto();
 				TimelinePlugin.getInstance().setChoosenDate((Date) mDateList.getSelectedItem());
@@ -194,9 +197,9 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 		mTimeList = new JComboBox(getTimeList());
 		mTimeList.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(final ActionEvent e)
 			{
-				int index = mTimeList.getSelectedIndex();
+			  final int index = mTimeList.getSelectedIndex();
 				switch (index)
 				{
 					case 0:
@@ -213,12 +216,12 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 			}
 		});
 
-		mFilterList = new JComboBox(getFilterList());
+		mFilterList = new JComboBox(Plugin.getPluginManager().getFilterManager().getAvailableFilters());
 		TimelinePlugin.getInstance().setFilter(Plugin.getPluginManager().getFilterManager().getCurrentFilter());
 		mFilterList.setSelectedItem(TimelinePlugin.getInstance().getFilter());
 		mFilterList.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(final ActionEvent e)
 			{
 				TimelinePlugin.getInstance().setFilter((ProgramFilter)mFilterList.getSelectedItem());
 				mMainPane.updateProgram();
@@ -236,15 +239,15 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 
 	private JPanel getFooterPanel()
 	{
-		JPanel fp = new JPanel(new BorderLayout());
+	  final JPanel fp = new JPanel(new BorderLayout());
 		fp.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
-		JButton settingsBtn = new JButton(TimelinePlugin.getInstance()
+		final JButton settingsBtn = new JButton(TimelinePlugin.getInstance()
         .createImageIcon("categories", "preferences-system", 16));
 		settingsBtn.setToolTipText(mLocalizer.msg("settings", "Open settings"));
 		settingsBtn.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(final ActionEvent e)
 			{
 				close();
 				Plugin.getPluginManager().showSettings(TimelinePlugin.getInstance());
@@ -252,11 +255,11 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 		});
 		fp.add(settingsBtn, BorderLayout.WEST);
 
-		JButton closeBtn = new JButton(Localizer
+		final JButton closeBtn = new JButton(Localizer
         .getLocalization(Localizer.I18N_CLOSE));
 		closeBtn.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent evt)
+			public void actionPerformed(final ActionEvent evt)
 			{
 				dispose();
 			}
@@ -269,7 +272,7 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 
 	public void addKeyboardAction()
 	{
-		JRootPane rootPane = this.getRootPane();
+	  final JRootPane rootPane = this.getRootPane();
 
 		// Debug Info
 		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0), "debugInfo");
@@ -277,12 +280,12 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 		{
 			private static final long serialVersionUID = 1L;
 
-			private String formatDim(Dimension d)
+			private String formatDim(final Dimension d)
 			{
 				return "width=" + d.width + ", height=" + d.height;
 			}
 
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(final ActionEvent e)
 			{
 				String info = "Viewport: " + formatDim(mMainPane.getViewport().getSize()) + "\n";
 				info += "RowHeader: " + formatDim(mMainPane.getRowHeader().getSize()) + "\n";
@@ -301,7 +304,7 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 		{
 			private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(final ActionEvent e)
 			{
 				resetGoto();
 				gotoNow();
@@ -314,7 +317,7 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 		{
 			private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(final ActionEvent e)
 			{
 				mTimeList.setSelectedIndex(1);
 			}
@@ -327,9 +330,9 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 		{
 			private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(final ActionEvent e)
 			{
-				int index = mDateList.getSelectedIndex();
+			  final int index = mDateList.getSelectedIndex();
 				if (index < mDateList.getItemCount() - 1)
 				{
 					mDateList.setSelectedIndex(mDateList.getSelectedIndex() + 1);
@@ -344,9 +347,9 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 		{
 			private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(final ActionEvent e)
 			{
-				int index = mDateList.getSelectedIndex();
+			  final int index = mDateList.getSelectedIndex();
 				if (index > 0)
 				{
 					mDateList.setSelectedIndex(index - 1);
@@ -360,7 +363,7 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 		{
 			private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(final ActionEvent e)
 			{
 				gotoTime(0);
 			}
@@ -372,7 +375,7 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 		{
 			private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(final ActionEvent e)
 			{
 				gotoTime(23 * 60 + 59);
 			}
@@ -385,11 +388,11 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 		{
 			private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(final ActionEvent e)
 			{
 				if (mMainPane.getHorizontalScrollBar().getValue() + mMainPane.getHorizontalScrollBar().getVisibleAmount() >= mMainPane.getHorizontalScrollBar().getMaximum())
 				{
-					int index = mDateList.getSelectedIndex();
+				  final int index = mDateList.getSelectedIndex();
 					if (index < mDateList.getItemCount() - 1)
 					{
 						mDateList.setSelectedIndex(mDateList.getSelectedIndex() + 1);
@@ -410,11 +413,11 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 		{
 			private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(final ActionEvent e)
 			{
 				if (mMainPane.getHorizontalScrollBar().getValue() <= mMainPane.getHorizontalScrollBar().getMinimum())
 				{
-					int index = mDateList.getSelectedIndex();
+				  final int index = mDateList.getSelectedIndex();
 					if (index > 0)
 					{
 						mDateList.setSelectedIndex(index - 1);
@@ -440,20 +443,20 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 		}
 	}
 
-	private void gotoTime(int minute)
+	private void gotoTime(final int minute)
 	{
 		mMainPane.gotoTime(minute);
 	}
 
-	private void gotoTime(int minute, int delta)
+	private void gotoTime(final int minute, final int delta)
 	{
 		mMainPane.gotoTime(minute, delta);
 	}
 
 	private Vector<Date> getDateList()
 	{
-		Vector<Date> list = new Vector<Date>();
-		Date today = Date.getCurrentDate();
+	  final Vector<Date> list = new Vector<Date>();
+    final Date today = Date.getCurrentDate();
 		for (int i = -1; i < 28; i++)
 		{
 			list.add(today.addDays(i));
@@ -463,29 +466,18 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 
 	private Vector<String> getTimeList()
 	{
-		Vector<String> list = new Vector<String>();
+	  final Vector<String> list = new Vector<String>();
 		list.add(mLocalizer.msg("goto", "Goto..."));
 		list.add(mLocalizer.msg("now", "Now"));
 
 		mTimes = Plugin.getPluginManager().getTvBrowserSettings().getTimeButtonTimes();
-		TimeFormatter formatter = new TimeFormatter();
+		final TimeFormatter formatter = new TimeFormatter();
 
 		for (int i = 0; i < mTimes.length; i++)
 		{
-			int h = mTimes[i] / 60;
-			int m = mTimes[i] % 60;
+		  final int h = mTimes[i] / 60;
+      final int m = mTimes[i] % 60;
 			list.add(formatter.formatTime(h, m));
-		}
-		return list;
-	}
-
-	private Vector<ProgramFilter> getFilterList()
-	{
-		Vector<ProgramFilter> list = new Vector<ProgramFilter>();
-
-		for (ProgramFilter filter : Plugin.getPluginManager().getFilterManager().getAvailableFilters())
-		{
-			list.add(filter);
 		}
 		return list;
 	}
@@ -497,12 +489,12 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 
 	public void gotoNow()
 	{
-		Date now = Date.getCurrentDate();
+	  final Date now = Date.getCurrentDate();
 		if (!((Date) mDateList.getSelectedItem()).equals(now))
 		{
 			for (int i = 0; i < mDateList.getItemCount(); i++)
 			{
-				Date d = (Date) mDateList.getItemAt(i);
+			  final Date d = (Date) mDateList.getItemAt(i);
 				if (d.equals(now))
 				{
 					mDateList.setSelectedIndex(i);
@@ -520,7 +512,7 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 
 	public void resize()
 	{
-		JScrollBar sb = mMainPane.getHorizontalScrollBar();
+	  final JScrollBar sb = mMainPane.getHorizontalScrollBar();
 		mRelation = (double) sb.getValue() / (double) sb.getMaximum();
 		mMainPane.resize();
 
@@ -528,7 +520,7 @@ public class TimelineDialog extends JDialog implements WindowClosingIf
 		{
 			public void run()
 			{
-				JScrollBar sb = mMainPane.getHorizontalScrollBar();
+			  final JScrollBar sb = mMainPane.getHorizontalScrollBar();
 				sb.setValue((int) (sb.getMaximum() * mRelation));
 			}
 		});

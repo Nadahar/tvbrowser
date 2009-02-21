@@ -42,8 +42,8 @@ public class ProgramLabel extends JComponent implements ChangeListener, MouseLis
 {
 	private static final long serialVersionUID = 1L;
 
-	private Program mProgram;
-	private TextFormatter mTextFormatter = null;
+	transient private Program mProgram;
+  transient private TextFormatter mTextFormatter = null;
 
 	public ProgramLabel()
 	{
@@ -54,17 +54,17 @@ public class ProgramLabel extends JComponent implements ChangeListener, MouseLis
 		setCursor(new Cursor(Cursor.HAND_CURSOR));
 	}
 
-	public void setProgram(Program p)
+	public void setProgram(final Program p)
 	{
 		mProgram = p;
 
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		sb.append("<html>");
 		sb.append(mProgram.getDateString()).append(" � ");
     sb.append(mProgram.getTimeString()).append(" � ");
 		sb.append(mProgram.getChannel().getName()).append("<br>");
 		sb.append("<b>").append(mProgram.getTitle()).append("</b><br>");
-		String shortInfo = mProgram.getShortInfo();
+		final String shortInfo = mProgram.getShortInfo();
 		sb.append(shortInfo == null ? "" : shortInfo);
 		sb.append("</html>");
 		setToolTipText(sb.toString());
@@ -82,16 +82,16 @@ public class ProgramLabel extends JComponent implements ChangeListener, MouseLis
 		}
 	}
 
-	public void mouseClicked(MouseEvent e)
+	public void mouseClicked(final MouseEvent e)
 	{}
 
-	public void mouseEntered(MouseEvent e)
+	public void mouseEntered(final MouseEvent e)
 	{}
 
-	public void mouseExited(MouseEvent e)
+	public void mouseExited(final MouseEvent e)
 	{}
 
-	public void mousePressed(MouseEvent e)
+	public void mousePressed(final MouseEvent e)
 	{
 		if (e.isPopupTrigger())
 		{
@@ -99,9 +99,9 @@ public class ProgramLabel extends JComponent implements ChangeListener, MouseLis
 		}
 	}
 
-	public void mouseReleased(MouseEvent e)
+	public void mouseReleased(final MouseEvent e)
 	{
-		PluginManager mng = Plugin.getPluginManager();
+	  final PluginManager mng = Plugin.getPluginManager();
 
 		mProgram.addChangeListener(this);
 
@@ -126,25 +126,26 @@ public class ProgramLabel extends JComponent implements ChangeListener, MouseLis
 		}
 	}
 
-	private void showPopup(MouseEvent e)
+	private void showPopup(final MouseEvent e)
 	{
-		JPopupMenu menu = Plugin.getPluginManager().createPluginContextMenu(mProgram, TimelinePlugin.getInstance());
+	  final JPopupMenu menu = Plugin.getPluginManager().createPluginContextMenu(
+        mProgram, TimelinePlugin.getInstance());
 		menu.show(this, e.getX() - 15, e.getY() - 15);
 	}
 
-	protected void processMouseEvent(MouseEvent e)
+	protected void processMouseEvent(final MouseEvent e)
 	{
 		redispatch(e);
 		super.processMouseEvent(e);
 	}
 
-	protected void processMouseMotionEvent(MouseEvent e)
+	protected void processMouseMotionEvent(final MouseEvent e)
 	{
 		redispatch(e);
 		super.processMouseMotionEvent(e);
 	}
 
-	public void setFormatter(TextFormatter formatter)
+	public void setFormatter(final TextFormatter formatter)
 	{
 		mTextFormatter = formatter;
 	}
@@ -154,13 +155,14 @@ public class ProgramLabel extends JComponent implements ChangeListener, MouseLis
 		return mTextFormatter == null ? TimelinePlugin.getInstance().getFormatter() : mTextFormatter;
 	}
 
-	protected void paintComponent(Graphics g)
+	protected void paintComponent(final Graphics g)
 	{
-		Rectangle r = g.getClipBounds();
-		Rectangle rb = this.getBounds();
+	  final Rectangle r = g.getClipBounds();
+    final Rectangle rb = this.getBounds();
 
-		Color oriColor = g.getColor();
-		Color bc = Plugin.getPluginManager().getTvBrowserSettings().getColorForMarkingPriority(mProgram.getMarkPriority());
+    final Color oriColor = g.getColor();
+    final Color bc = Plugin.getPluginManager().getTvBrowserSettings()
+        .getColorForMarkingPriority(mProgram.getMarkPriority());
 		if (bc != null)
 		{
 			g.setColor(bc);
@@ -170,7 +172,9 @@ public class ProgramLabel extends JComponent implements ChangeListener, MouseLis
 		if (TimelinePlugin.getSettings().showProgress() && mProgram.isOnAir())
 		{
 			g.setColor(Plugin.getPluginManager().getTvBrowserSettings().getProgramPanelOnAirDarkColor());
-			int positionX = Math.abs(TimelinePlugin.getInstance().getNowPosition() - rb.x);
+			final int positionX = Math.abs(TimelinePlugin.getInstance()
+          .getNowPosition()
+          - rb.x);
 			g.fillRect(0, 0, positionX, rb.height);
 			g.setColor(Plugin.getPluginManager().getTvBrowserSettings().getProgramPanelOnAirLightColor());
 			g.fillRect(positionX, 0, rb.width - positionX, rb.height);
@@ -192,7 +196,7 @@ public class ProgramLabel extends JComponent implements ChangeListener, MouseLis
 		//		}
 	}
 
-	public void stateChanged(ChangeEvent evt)
+	public void stateChanged(final ChangeEvent evt)
 	{
 		if (evt.getSource() == mProgram)
 		{
@@ -212,10 +216,10 @@ public class ProgramLabel extends JComponent implements ChangeListener, MouseLis
 		mProgram.removeChangeListener(this);
 	}
 
-	private void redispatch(MouseEvent e)
+	private void redispatch(final MouseEvent e)
 	{
-		Component source = e.getComponent();
-		Component destination = source.getParent();
+	  final Component source = e.getComponent();
+    final Component destination = source.getParent();
 		destination.dispatchEvent(SwingUtilities.convertMouseEvent(source, e, destination));
 	}
 }

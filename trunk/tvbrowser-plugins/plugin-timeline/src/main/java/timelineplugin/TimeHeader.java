@@ -39,7 +39,7 @@ public class TimeHeader extends JComponent implements MouseListener, MouseInputL
 	private int mStartHour;
 	private Cursor mLastCursor = null;
 
-	private boolean mResizeing = false;
+	private boolean mResizing = false;
 	private int mResizeStartX;
 	private int mResizeX;
 	private int mReferenceHourX;
@@ -51,7 +51,7 @@ public class TimeHeader extends JComponent implements MouseListener, MouseInputL
 
 		mOffset = TimelinePlugin.getInstance().getOffset();
 		mSizeHour = TimelinePlugin.getSettings().getHourWidth();
-		int deltaHour = (mOffset / mSizeHour) + 1;
+		final int deltaHour = (mOffset / mSizeHour) + 1;
 		mStartX = mOffset - (deltaHour * mSizeHour);
 		mStartHour = (24 - deltaHour) % 24;
 		if (mStartHour < 0)
@@ -62,31 +62,31 @@ public class TimeHeader extends JComponent implements MouseListener, MouseInputL
 		this.setOpaque(true);
 	}
 
-	public void setPreferredWidth(int pw)
+	public void setPreferredWidth(final int pw)
 	{
 		setPreferredSize(new Dimension(pw, 30));
 	}
 
-	public void paintComponent(Graphics g)
+	public void paintComponent(final Graphics g)
 	{
 		super.paintComponent(g);
 
-		Color c = g.getColor();
+		final Color c = g.getColor();
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, this.getSize().width, this.getSize().height);
-		g.setColor(!mResizeing ? c : Color.LIGHT_GRAY);
+		g.setColor(!mResizing ? c : Color.LIGHT_GRAY);
 		g.setFont(TimelinePlugin.getInstance().getFont());
 
-		int h = g.getFontMetrics().getHeight() + 2;
-		int h5 = h + 5;
+		final int h = g.getFontMetrics().getHeight() + 2;
+    final int h5 = h + 5;
 
 		int x = mStartX;
 		int hour = mStartHour;
 
 		while (x < this.getSize().width)
 		{
-			String time = formatTime(hour % 24);
-			int left = x - (g.getFontMetrics().stringWidth(time) / 2);
+		  final String time = formatTime(hour % 24);
+		  final int left = x - (g.getFontMetrics().stringWidth(time) / 2);
 
 			g.drawString(time, left, h);
 			g.drawLine(x, h5, x, 50);
@@ -94,13 +94,15 @@ public class TimeHeader extends JComponent implements MouseListener, MouseInputL
 			hour++;
 		}
 
-		if (mResizeing)
+		if (mResizing)
 		{
 			g.setColor(Color.RED);
 			g.drawLine(mReferenceHourX, 0, mReferenceHourX, 50);
-			String diff = Integer.toString(Math.abs(mReferenceHourX - mResizeX));
-			int begin = mReferenceHourX + (mResizeX - mReferenceHourX) / 2 - g.getFontMetrics().stringWidth(diff) / 2;
-			int end = begin + g.getFontMetrics().stringWidth(diff);
+			final String diff = Integer
+          .toString(Math.abs(mReferenceHourX - mResizeX));
+      final int begin = mReferenceHourX + (mResizeX - mReferenceHourX) / 2
+          - g.getFontMetrics().stringWidth(diff) / 2;
+      final int end = begin + g.getFontMetrics().stringWidth(diff);
 			g.drawString(diff, begin, h);
 			g.drawLine(mReferenceHourX, h - 5, begin - 2, h - 5);
 			g.drawLine(mResizeX, h - 5, end + 2, h - 5);
@@ -108,9 +110,9 @@ public class TimeHeader extends JComponent implements MouseListener, MouseInputL
 		}
 	}
 
-	private String formatTime(int hour)
+	private String formatTime(final int hour)
 	{
-		StringBuilder sb = new StringBuilder();
+	  final StringBuilder sb = new StringBuilder();
 		sb.append("0").append(hour).append(":00");
 		if (sb.length() > 5)
 		{
@@ -119,46 +121,46 @@ public class TimeHeader extends JComponent implements MouseListener, MouseInputL
 		return sb.toString();
 	}
 
-	public void mouseClicked(MouseEvent e)
+	public void mouseClicked(final MouseEvent e)
 	{}
 
-	public void mouseEntered(MouseEvent e)
+	public void mouseEntered(final MouseEvent e)
 	{}
 
-	public void mouseExited(MouseEvent e)
+	public void mouseExited(final MouseEvent e)
 	{}
 
-	public void mousePressed(MouseEvent e)
+	public void mousePressed(final MouseEvent e)
 	{
 		if (isMouseOverMargin(e.getPoint()))
 		{
 			mResizeStartX = e.getPoint().x;
-			mResizeing = true;
+			mResizing = true;
 			mReferenceHourX = mResizeStartX - mSizeHour;
 		}
 	}
 
-	public void mouseReleased(MouseEvent e)
+	public void mouseReleased(final MouseEvent e)
 	{
-		if (mResizeing)
+		if (mResizing)
 		{
-			mResizeing = false;
+			mResizing = false;
 			TimelinePlugin.getSettings().setHourWidth(
           Math.abs(mReferenceHourX - e.getPoint().x));
 			TimelinePlugin.getInstance().resize();
 		}
 	}
 
-	public void mouseDragged(MouseEvent e)
+	public void mouseDragged(final MouseEvent e)
 	{
-		if (mResizeing)
+		if (mResizing)
 		{
 			mResizeX = e.getPoint().x;
 			repaint();
 		}
 	}
 
-	public void mouseMoved(MouseEvent e)
+	public void mouseMoved(final MouseEvent e)
 	{
 		if (isMouseOverMargin(e.getPoint()))
 		{
@@ -174,13 +176,13 @@ public class TimeHeader extends JComponent implements MouseListener, MouseInputL
 		}
 	}
 
-	private boolean isMouseOverMargin(Point p)
+	private boolean isMouseOverMargin(final Point p)
 	{
 		if (!TimelinePlugin.getSettings().resizeWithMouse())
 		{
 			return false;
 		}
-		int x = p.x - mStartX;
+		final int x = p.x - mStartX;
 		if ((p.y >= TimelinePlugin.getInstance().getFont().getSize() + 2 + 5 + 4) && (x % mSizeHour == 0))
 		{
 			return true;
