@@ -43,7 +43,7 @@ import devplugin.SettingsTab;
  * 
  * @author René Mach
  */
-public class ToolTipControlPluginSettingsTab implements SettingsTab {
+public final class ToolTipControlPluginSettingsTab implements SettingsTab {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ToolTipControlPluginSettingsTab.class);
   
   private JCheckBox mEnabled;
