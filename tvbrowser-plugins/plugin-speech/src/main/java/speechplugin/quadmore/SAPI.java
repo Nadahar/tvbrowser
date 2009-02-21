@@ -31,9 +31,9 @@ import java.util.List;
 
 import speechplugin.SpeechPlugin;
 
-public class SAPI {
+final public class SAPI {
   private QuadmoreTTS quadmore;
-  private String mExtractedLib;
+  private static String mExtractedLib = null;
 
   public SAPI() {
     if (mExtractedLib == null) {
@@ -42,25 +42,26 @@ public class SAPI {
     }
     quadmore = new QuadmoreTTS();
   }
-  
-  public boolean speak(String text) {
+
+  public boolean speak(final String text) {
     return quadmore.SpeakDarling(text);
   }
-  
+
   public List<String> getVoices() {
-    ArrayList<String> result = new ArrayList<String>();
-//    <?xml version="1.0"?><voice>Microsoft Sam</voice><voice>Microsoft Mike</voice><voice>Microsoft Mary</voice><voice>Sample TTS Voice</voice>
+    final ArrayList<String> result = new ArrayList<String>();
+    // <?xml version="1.0"?><voice>Microsoft Sam</voice><voice>Microsoft
+    // Mike</voice><voice>Microsoft Mary</voice><voice>Sample TTS Voice</voice>
     String voices = quadmore.getVoiceToken();
     while (voices.indexOf("<voice>") > -1) {
-      int start = voices.indexOf("<voice>") + 7;
-      int end = voices.indexOf("</voice>");
+      final int start = voices.indexOf("<voice>") + 7;
+      final int end = voices.indexOf("</voice>");
       result.add(voices.substring(start, end));
       voices = voices.substring(end + 8);
     }
     return result;
   }
-  
-  public boolean setVoice(String voiceName) {
+
+  public boolean setVoice(final String voiceName) {
     return quadmore.setVoiceToken(voiceName);
   }
 
@@ -68,13 +69,13 @@ public class SAPI {
     File dll;
     try {
       // Get input stream from jar resource
-      InputStream inputStream = getClass().getResource("QuadTTS.dll")
+      final InputStream inputStream = getClass().getResource("QuadTTS.dll")
           .openStream();
 
       // Copy resource to file system in a temporary folder with a unique name
       dll = File.createTempFile("tvbrowser_speech_", ".dll");
-      FileOutputStream outputStream = new FileOutputStream(dll);
-      byte[] array = new byte[8192];
+      final FileOutputStream outputStream = new FileOutputStream(dll);
+      final byte[] array = new byte[8192];
       int read = 0;
       while ((read = inputStream.read(array)) > 0) {
         outputStream.write(array, 0, read);
@@ -83,7 +84,6 @@ public class SAPI {
 
       // Delete on exit
       dll.deleteOnExit();
-      SpeechPlugin.getInstance();
       SpeechPlugin.getPluginManager().deleteFileOnNextStart(dll.getPath());
     } catch (Throwable e) {
       e.printStackTrace();

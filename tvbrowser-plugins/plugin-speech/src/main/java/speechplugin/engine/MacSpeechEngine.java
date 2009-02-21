@@ -26,7 +26,7 @@ package speechplugin.engine;
 public class MacSpeechEngine extends CommandLineSpeechEngine {
 
   public MacSpeechEngine() {
-    super("say","\"{text_to_speak}\"");
+    super("say", "\"{text_to_speak}\"");
   }
 
 }

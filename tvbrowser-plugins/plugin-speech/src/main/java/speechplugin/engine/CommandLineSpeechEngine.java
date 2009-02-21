@@ -32,17 +32,19 @@ import util.paramhandler.ParamParser;
 import util.ui.Localizer;
 
 public class CommandLineSpeechEngine extends AbstractSpeechEngine {
-  
+
   /** Localizer */
-  private static final Localizer mLocalizer = Localizer.getLocalizerFor(CommandLineSpeechEngine.class);
+  private static final Localizer mLocalizer = Localizer
+      .getLocalizerFor(CommandLineSpeechEngine.class);
 
   private static final java.util.logging.Logger mLog = java.util.logging.Logger
-  .getLogger(CommandLineSpeechEngine.class.getName());
+      .getLogger(CommandLineSpeechEngine.class.getName());
 
   private String mExecutable;
   private String mParameters;
 
-  public CommandLineSpeechEngine(String executable, String parameters) {
+  public CommandLineSpeechEngine(final String executable,
+      final String parameters) {
     super();
     mExecutable = executable.trim();
     mParameters = parameters;
@@ -61,25 +63,26 @@ public class CommandLineSpeechEngine extends AbstractSpeechEngine {
   }
 
   @Override
-  public void setVoice(String voiceName) {
+  public void setVoice(final String voiceName) {
     // empty, no voice selection
   }
 
   @Override
-  public void speak(String text) {
-    ParamParser parser = new ParamParser(new SpeechParamLibrary(text));
-    String parsedParams = parser.analyse(mParameters, null);
+  public void speak(final String text) {
+    final ParamParser parser = new ParamParser(new SpeechParamLibrary(text));
+    final String parsedParams = parser.analyse(mParameters, null);
 
     if (!mExecutable.equals("")) {
       try {
-        ExecutionHandler executionHandler = new ExecutionHandler(parsedParams, mExecutable);
+        final ExecutionHandler executionHandler = new ExecutionHandler(
+            parsedParams, mExecutable);
         executionHandler.execute();
       } catch (Exception exc) {
-        String msg = mLocalizer.msg( "error" ,"Error executing program ({0})" , mExecutable, exc);
+        final String msg = mLocalizer.msg("error",
+            "Error executing program ({0})", mExecutable, exc);
         ErrorHandler.handle(msg, exc);
       }
-    }
-    else {
+    } else {
       mLog.warning("Executable program name is not defined!");
     }
   }

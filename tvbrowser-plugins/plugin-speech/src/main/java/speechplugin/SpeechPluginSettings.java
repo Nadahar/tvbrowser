@@ -43,18 +43,21 @@ public class SpeechPluginSettings {
   private static final String KEY_OTHER_ENGINE_PARAMETERS = "ENGINE_PARAMETERS";
 
   private Properties mSettings;
-  public SpeechPluginSettings(Properties settings) {
+
+  public SpeechPluginSettings(final Properties settings) {
     mSettings = settings;
   }
-  
+
   /**
    * get currently selected voice
+   * 
    * @return voice name or <code>null</code>
    */
   protected String getVoice() {
-    String voice = mSettings.getProperty(KEY_SELECTED_VOICE, "");
+    final String voice = mSettings.getProperty(KEY_SELECTED_VOICE, "");
     if (voice.length() == 0) {
-      List<String> voices = SpeechPlugin.getInstance().getAvailableVoices();
+      final List<String> voices = SpeechPlugin.getInstance()
+          .getAvailableVoices();
       if (voices.size() > 0) {
         return voices.get(0);
       }
@@ -62,20 +65,21 @@ public class SpeechPluginSettings {
     }
     return voice;
   }
-  
+
   /**
    * get currently selected speech engine to be used
    */
   protected int getEngine() {
-    String engine = mSettings.getProperty(KEY_SELECTED_ENGINE, Integer.toString(ENGINE_NONE));
+    final String engine = mSettings.getProperty(KEY_SELECTED_ENGINE, Integer
+        .toString(ENGINE_NONE));
     return Integer.valueOf(engine);
   }
-  
-  protected void setEngine(int engine) {
+
+  protected void setEngine(final int engine) {
     mSettings.setProperty(KEY_SELECTED_ENGINE, Integer.toString(engine));
   }
-  
-  protected void setVoice(String voice) {
+
+  protected void setVoice(final String voice) {
     mSettings.setProperty(KEY_SELECTED_VOICE, voice);
   }
 
@@ -87,7 +91,7 @@ public class SpeechPluginSettings {
     return mSettings.getProperty(KEY_OTHER_ENGINE_EXECUTABLE, "");
   }
 
-  public void setOtherEngineExecutable(String executable) {
+  public void setOtherEngineExecutable(final String executable) {
     mSettings.setProperty(KEY_OTHER_ENGINE_EXECUTABLE, executable);
   }
 
@@ -95,7 +99,7 @@ public class SpeechPluginSettings {
     return mSettings.getProperty(KEY_OTHER_ENGINE_PARAMETERS, "");
   }
 
-  public void setOtherEngineParameters(String parameters) {
+  public void setOtherEngineParameters(final String parameters) {
     mSettings.setProperty(KEY_OTHER_ENGINE_PARAMETERS, parameters);
   }
 }
