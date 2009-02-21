@@ -696,6 +696,9 @@ public class TvDataBase {
    * @return if the data is available.
    */
   public boolean dataAvailable(Date date) {
+    if (date == null) {
+      return false;
+    }
     return mAvailableDateSet.contains(date);
   }
 
