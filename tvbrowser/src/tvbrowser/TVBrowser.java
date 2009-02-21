@@ -1066,11 +1066,11 @@ public class TVBrowser {
         
         String message = formatMessage(record);
         sb.append(mTimeFormat.format(new java.util.Date(System.currentTimeMillis())));
-        sb.append(" ");
+        sb.append(' ');
         sb.append(record.getLevel().getLocalizedName());
         sb.append(": ");
         sb.append(message);
-        sb.append("\n");
+        sb.append('\n');
         if (record.getThrown() != null) {
           try {
             StringWriter sw = new StringWriter();

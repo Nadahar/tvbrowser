@@ -332,7 +332,7 @@ public class PluginLoader {
    */
   private String getProxyIconFileName(File pluginFile) {
     String name = pluginFile.getName();
-    name = name.substring(0, name.indexOf("."));
+    name = name.substring(0, name.indexOf('.'));
     return Settings.getUserSettingsDirName() + File.separatorChar + name + ".icon.png";
   }
 

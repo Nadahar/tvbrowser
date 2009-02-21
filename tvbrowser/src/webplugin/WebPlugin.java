@@ -395,8 +395,8 @@ public class WebPlugin extends Plugin {
   private void addSearchItem(ArrayList<String> list, String search) {
     if (search != null) {
       // remove additional bracket parts from script and director fields
-      int leftBracket = search.indexOf("(");
-      int rightBracket = search.lastIndexOf(")");
+      int leftBracket = search.indexOf('(');
+      int rightBracket = search.lastIndexOf(')');
       if (leftBracket > 0 && rightBracket > leftBracket) {
         search = search.substring(0, leftBracket);
       }

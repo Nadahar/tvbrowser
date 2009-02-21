@@ -25,6 +25,17 @@
  */
 package bbcbackstagedataservice;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.TimeZone;
+import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import tvdataservice.MutableChannelDayProgram;
+import tvdataservice.MutableProgram;
 import bbc.rd.tvanytime.Duration;
 import bbc.rd.tvanytime.Genre;
 import bbc.rd.tvanytime.Synopsis;
@@ -45,17 +56,6 @@ import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
-import tvdataservice.MutableChannelDayProgram;
-import tvdataservice.MutableProgram;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.TimeZone;
-import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * This class parses the BBC Files
@@ -236,12 +236,12 @@ public class BbcFileParser {
                   
                   for (int cv =0;cv<credit.getNumCharacters();cv++) {
                     person.append(credit.getCharacter(cv).getName().trim());
-                    person.append("/");
+                    person.append('/');
                   }
   
                   person = new StringBuffer(person.substring(0, person.length()-1));
                   
-                  person.append("\t");
+                  person.append('\t');
                   
                   for (int cv =0;cv<credit.getNumPersonNames();cv++) {
                     String name = credit.getPersonName(cv).getName().trim();
@@ -249,7 +249,7 @@ public class BbcFileParser {
                       name = name.substring(2).trim();
                     }
                     person.append(name);
-                    person.append("/");
+                    person.append('/');
                   }
   
                   creditList.append(person.substring(0, person.length()-1));

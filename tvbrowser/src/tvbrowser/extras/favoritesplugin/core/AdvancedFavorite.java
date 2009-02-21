@@ -173,7 +173,7 @@ public class AdvancedFavorite extends Favorite {
       String certainChannelServiceClassName = (String) in.readObject();
       String certainChannelId;
       if (version==1) {
-        certainChannelId=""+in.readInt();
+        certainChannelId = Integer.toString(in.readInt());
       }else{
         certainChannelId=(String)in.readObject();
       }
@@ -190,7 +190,7 @@ public class AdvancedFavorite extends Favorite {
           String certainChannelServiceClassName = (String) in.readObject();
           String certainChannelId;
           if (version==1) {
-            certainChannelId=""+in.readInt();
+            certainChannelId = Integer.toString(in.readInt());
           }else{
             certainChannelId=(String)in.readObject();
           }

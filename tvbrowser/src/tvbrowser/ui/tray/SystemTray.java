@@ -276,9 +276,7 @@ public class SystemTray {
             .getChannelArray();
         Channel[] tempArr = new Channel[channelArr.length > 10 ? 10
             : channelArr.length];
-        for (int i = 0; i < tempArr.length; i++) {
-          tempArr[i] = channelArr[i];
-        }
+        System.arraycopy(channelArr, 0, tempArr, 0, tempArr.length);
 
         Settings.propTraySpecialChannels.setChannelArray(tempArr);
       }

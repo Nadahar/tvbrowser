@@ -335,7 +335,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
       Action action = mAvailableActions.get(key);
       String test = action.getValue(Action.NAME).toString();
 
-      if (test.indexOf(":") != -1 && (test.length() == 4 || test.length() == 5)) {
+      if (test.indexOf(':') != -1 && (test.length() == 4 || test.length() == 5)) {
         availableTimeActions.add(key);
       }
     }

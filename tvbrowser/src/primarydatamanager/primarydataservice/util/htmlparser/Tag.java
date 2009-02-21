@@ -256,7 +256,7 @@ public class Tag {
          int inx;
          inx=buf.indexOf(s);
          while (inx>=0) {
-           buf.replace(inx,inx+s.length(),""+c);
+           buf.replace(inx, inx + s.length(), Character.toString(c));
            inx=buf.indexOf(s);
          }    
        }

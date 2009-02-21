@@ -351,7 +351,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
                 "Unknown response during check for available channels in Swedb plugin: {0}", responseCode);
       }
     } catch (Exception e) {
-      e.printStackTrace();;
+      e.printStackTrace();
       throw new TvBrowserException(SweDBTvDataService.class,
               "checkAvailableError",
               "Error checking for available channels in Swedb plugin: {0}", e

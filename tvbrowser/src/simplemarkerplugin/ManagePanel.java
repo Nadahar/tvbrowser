@@ -421,7 +421,8 @@ public class ManagePanel {
   }
 
   private JPanel getButtonPanel(CellConstraints cc) {
-    JPanel p = new JPanel(new FormLayout("pref,5dlu,pref,5dlu,pref,5dlu,pref", "pref"));;
+    JPanel p = new JPanel(new FormLayout("pref,5dlu,pref,5dlu,pref,5dlu,pref",
+        "pref"));
 
     mSettings = new JButton(SimpleMarkerPlugin.getInstance().createImageIcon("categories",
         "preferences-system", 16));    

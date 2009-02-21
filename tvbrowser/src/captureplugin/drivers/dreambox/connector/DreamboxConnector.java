@@ -520,7 +520,7 @@ public class DreamboxConnector {
     Matcher match = p.matcher(version);
 
     if (match.find()) {
-      if (new Integer(match.group(1)) >= WEBIFMINIMUMVERSION) {
+      if (Integer.parseInt(match.group(1)) >= WEBIFMINIMUMVERSION) {
         return true;
       }
     }

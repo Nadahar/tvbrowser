@@ -138,9 +138,10 @@ public class HttpSession {
     StringBuffer contentBuf = new StringBuffer();
     for (int i=0; i<formFields.length; i++) {
       if (i>0) {
-        contentBuf.append("&");
+        contentBuf.append('&');
       }
-      contentBuf.append(formFields[i].getKey()).append("=").append(formFields[i].getValue());
+      contentBuf.append(formFields[i].getKey()).append('=').append(
+          formFields[i].getValue());
     }
 
     String content = contentBuf.toString().replaceAll(" ","+");
@@ -177,9 +178,10 @@ public class HttpSession {
     StringBuffer contentBuf = new StringBuffer();
     for (int i=0; i<formFields.length; i++) {
       if (i>0) {
-        contentBuf.append("&");
+        contentBuf.append('&');
       }
-      contentBuf.append(formFields[i].getKey()).append("=").append(formFields[i].getValue());
+      contentBuf.append(formFields[i].getKey()).append('=').append(
+          formFields[i].getValue());
     }
     
     String content = contentBuf.toString().replaceAll(" ","+");

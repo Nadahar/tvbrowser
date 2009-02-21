@@ -64,7 +64,9 @@ public class PluginAutoUpdater {
         String url = getPluginUpdatesMirror().getUrl();
         
         try {
-          String name = PLUGIN_UPDATES_FILENAME.substring(0,PLUGIN_UPDATES_FILENAME.indexOf(".")) + "_" + Mirror.MIRROR_LIST_FILE_NAME;
+          String name = PLUGIN_UPDATES_FILENAME.substring(0,
+              PLUGIN_UPDATES_FILENAME.indexOf('.'))
+              + "_" + Mirror.MIRROR_LIST_FILE_NAME;
           IOUtilities.download(new URL(url + (url.endsWith("/") ? "" : "/") + name), new File(Settings.getUserSettingsDirName(), name));
         } catch(Exception ee) {}
         
@@ -75,7 +77,10 @@ public class PluginAutoUpdater {
 
 
   private static Mirror getPluginUpdatesMirror() {
-    File file = new File(new File(Settings.getUserSettingsDirName()), PLUGIN_UPDATES_FILENAME.substring(0,PLUGIN_UPDATES_FILENAME.indexOf(".")) + "_" + Mirror.MIRROR_LIST_FILE_NAME);    
+    File file = new File(new File(Settings.getUserSettingsDirName()),
+        PLUGIN_UPDATES_FILENAME.substring(0, PLUGIN_UPDATES_FILENAME
+            .indexOf('.'))
+            + "_" + Mirror.MIRROR_LIST_FILE_NAME);    
     
     try {
       return Mirror.chooseUpToDateMirror(Mirror.readMirrorListFromFile(file),null,PLUGIN_UPDATES_FILENAME, "plugins", PluginAutoUpdater.class, mLocalizer.msg("error.additional"," Please inform the TV-Browser team."));

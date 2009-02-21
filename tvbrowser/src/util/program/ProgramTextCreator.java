@@ -199,7 +199,7 @@ public class ProgramTextCreator {
       boolean showPersonLinks) {
     try {
     // NOTE: All field types are included until type 25 (REPETITION_ON_TYPE)
-    StringBuffer buffer = new StringBuffer();
+      StringBuffer buffer = new StringBuffer(1024);
 
     String titleFont, titleSize, bodyFont;
 
@@ -258,7 +258,7 @@ public class ProgramTextCreator {
     buffer.append(" · ");
     buffer.append(prog.getTimeString());
     if (prog.getLength() > 0) {
-      buffer.append("-");
+      buffer.append('-');
       buffer.append(prog.getEndTimeString());
     }
     buffer.append(" · ");
@@ -493,7 +493,7 @@ public class ProgramTextCreator {
               msg = mLocalizer.msg("netMinuted", "{0} min net", netLength);
               buffer.append(" - ").append(msg);
             }
-            buffer.append(")");
+            buffer.append(')');
 
             closePara(buffer);
 
@@ -717,14 +717,14 @@ public class ProgramTextCreator {
 
   private static String addSearchLink(String topic, String displayText) {
       String style = " style=\"color:black; border-bottom: 1px dashed;\"";
-      StringBuffer buffer = new StringBuffer();
+      StringBuffer buffer = new StringBuffer(32);
       buffer.append("<a href=\"");
       buffer.append(TVBROWSER_URL_PROTOCOL);
       buffer.append(topic.replaceAll("\"", "").replaceAll("'", ""));
       
       buffer.append("\" ");
       buffer.append(style);
-      buffer.append(">");
+      buffer.append('>');
       buffer.append(displayText);
       buffer.append("</a>");
       return buffer.toString();
@@ -887,7 +887,7 @@ public class ProgramTextCreator {
           if (persons[i].trim().split(" ").length <= 3) {
             String link;
             if (persons[i].contains("(")) {
-              String topic = persons[i].substring(0, persons[i].indexOf("("))
+              String topic = persons[i].substring(0, persons[i].indexOf('('))
                   .trim();
               link = addSearchLink(topic, persons[i]);
             } else {
@@ -935,9 +935,9 @@ public class ProgramTextCreator {
         for (int i = 0; i < lines.length; i++) {
           result.append(lines[i]);
           if (lines[i].length() < avg - 10) {
-            result.append("\n");
+            result.append('\n');
           } else {
-            result.append(" ");
+            result.append(' ');
           }
         }
         return result.toString();

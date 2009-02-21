@@ -622,7 +622,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
         
         if(mMeSpinner.equals(mStartOfDayTimeSp)) {
           cal.setTime((Date)mEndOfDayTimeSp.getValue());
-          endTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);;
+          endTime = cal.get(Calendar.HOUR_OF_DAY) * 60
+              + cal.get(Calendar.MINUTE);
           
           cal.setTime(d);
           startTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
@@ -633,7 +634,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
         }
         else {
           cal.setTime(d);
-          endTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);;
+          endTime = cal.get(Calendar.HOUR_OF_DAY) * 60
+              + cal.get(Calendar.MINUTE);
           
           cal.setTime((Date)mStartOfDayTimeSp.getValue());
           startTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);

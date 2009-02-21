@@ -244,7 +244,9 @@ public class PreviewDlg extends JDialog implements ActionListener, WindowClosing
   }
   
   private void updateDialogState() {    
-    mSiteLb.setText(mLocalizer.msg("pageInfo","page {0} of {1}",""+(mPreviewComponent.getPageIndex()+1), ""+mPreviewComponent.getNumberOfPages()));
+    mSiteLb.setText(mLocalizer.msg("pageInfo", "page {0} of {1}",
+        mPreviewComponent.getPageIndex() + 1, mPreviewComponent
+            .getNumberOfPages()));
     mPrevBt.setEnabled(mPreviewComponent.getPageIndex() > 0);
     mNextBt.setEnabled(mPreviewComponent.getPageIndex()+1 < mPreviewComponent.getNumberOfPages());
   }

@@ -386,7 +386,7 @@ public class Mirror {
     // We didn't find a mirror? This should not happen -> throw exception
     StringBuffer buf = new StringBuffer();
     for (Mirror mirror : oldMirrorArr) {
-      buf.append(mirror.getUrl()).append("\n");
+      buf.append(mirror.getUrl()).append('\n');
     }
 
     throw new TvBrowserException(caller, "error.2", "No mirror found\ntried following mirrors: ", name, buf.toString());

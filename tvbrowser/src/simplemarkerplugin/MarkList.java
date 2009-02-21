@@ -158,7 +158,7 @@ public class MarkList extends Vector<Program> {
             dir.mkdir();
 
           String ext = mMarkIconPath;
-          ext = ext.substring(ext.lastIndexOf("."));
+          ext = ext.substring(ext.lastIndexOf('.'));
 
           try {
             IOUtilities.copy(src, new File(dir, mName + ext));

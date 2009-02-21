@@ -27,9 +27,9 @@
 package tvbrowser.extras.reminderplugin;
 
 
+import util.program.ProgramUtilities;
 import devplugin.Program;
 import devplugin.ProgramItem;
-import util.program.ProgramUtilities;
 
 /**
  * A class that contains the program for
@@ -50,8 +50,11 @@ public class ReminderListItem implements Comparable<ReminderListItem> {
   /**
    * Creates an instance of this class.
    * <p>
-   * @param prog The program for this item.
-   * @param minutes The remider time for this item.
+   * 
+   * @param prog
+   *          The program for this item.
+   * @param minutes
+   *          The reminder time for this item.
    */
   public ReminderListItem(Program prog, int minutes) {
     mProgramItem = new ProgramItem(prog);
@@ -64,7 +67,7 @@ public class ReminderListItem implements Comparable<ReminderListItem> {
    * @param refCnt The number of reminders for this item.
    */
   public void setReferenceCount(int refCnt) {
-    mProgramItem.setProperty("refCnt",""+ refCnt);
+    mProgramItem.setProperty("refCnt", Integer.toString(refCnt));
   }
 
   /**
@@ -98,7 +101,7 @@ public class ReminderListItem implements Comparable<ReminderListItem> {
    */
   public void incReferenceCount() {
     int cnt = getReferenceCount() + 1;
-    mProgramItem.setProperty("refCnt",""+ cnt);
+    mProgramItem.setProperty("refCnt", Integer.toString(cnt));
   }
 
   /**
@@ -107,14 +110,15 @@ public class ReminderListItem implements Comparable<ReminderListItem> {
   public void decReferenceCount() {
     int cnt = getReferenceCount() - 1;
     if (cnt >= 0) {
-      mProgramItem.setProperty("refCnt",""+ cnt);
+      mProgramItem.setProperty("refCnt", Integer.toString(cnt));
     }
   }
 
   /**
-   * Gets the reminder mintutes of this list item.
+   * Gets the reminder minutes of this list item.
    * <p>
-   * @return The reminder mintutes of this list item.
+   * 
+   * @return The reminder minutes of this list item.
    */
   public int getMinutes() {
     String m = mProgramItem.getProperty("minutes");
@@ -138,7 +142,7 @@ public class ReminderListItem implements Comparable<ReminderListItem> {
       minutes = ReminderPlugin.getInstance().getDefaultReminderTime();
     }
     
-    mProgramItem.setProperty("minutes",""+minutes);
+    mProgramItem.setProperty("minutes", Integer.toString(minutes));
   }
 
   /**

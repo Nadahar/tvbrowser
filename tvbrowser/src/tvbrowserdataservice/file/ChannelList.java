@@ -220,16 +220,21 @@ public class ChannelList {
       ChannelItem channelItem = mChannelList.get(i);
       Channel channel = channelItem.getChannel();
       StringBuffer line = new StringBuffer();
-      line.append(channel.getCountry()).append(";").append(channel.getTimeZone().getID());
-      line.append(";").append(channel.getId());
-      line.append(";").append(channel.getUnescapedName());
-      line.append(";").append(channel.getCopyrightNotice());
-      line.append(";").append(channel.getWebpage() == null ? "http://tvbrowser.org" : channel.getWebpage());
-      line.append(";").append(channelItem.getIconUrl() == null ? "" : channelItem.getIconUrl());
-      line.append(";").append(channel.getCategories());
-      line.append(";\"").append(StringEscapeUtils.escapeHtml(channel.getName())).append("\"");
+      line.append(channel.getCountry()).append(';').append(
+          channel.getTimeZone().getID());
+      line.append(';').append(channel.getId());
+      line.append(';').append(channel.getUnescapedName());
+      line.append(';').append(channel.getCopyrightNotice());
+      line.append(';').append(
+          channel.getWebpage() == null ? "http://tvbrowser.org" : channel
+              .getWebpage());
+      line.append(';').append(
+          channelItem.getIconUrl() == null ? "" : channelItem.getIconUrl());
+      line.append(';').append(channel.getCategories());
+      line.append(";\"")
+          .append(StringEscapeUtils.escapeHtml(channel.getName())).append('"');
       writer.write(line.toString());
-      writer.write("\n");
+      writer.write('\n');
     }
     writer.close();
 

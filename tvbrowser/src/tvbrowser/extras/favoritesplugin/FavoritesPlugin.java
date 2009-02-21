@@ -575,7 +575,9 @@ public class FavoritesPlugin {
           }
         }
         
-        buffer.append(target.getReceiveTarget().getReceifeIfForIdOfTarget().toString()).append(" - ").append(target.toString()).append("\n");
+        buffer.append(
+            target.getReceiveTarget().getReceifeIfForIdOfTarget().toString())
+            .append(" - ").append(target.toString()).append('\n');
       }
     }
     
@@ -681,7 +683,8 @@ public class FavoritesPlugin {
   private int getIntegerSetting(Properties prop, String key, int defaultValue) {
     int res = defaultValue;
     try {
-      res = Integer.parseInt(prop.getProperty(key, "" + defaultValue));
+      res = Integer.parseInt(prop.getProperty(key, Integer
+          .toString(defaultValue)));
     } catch (NumberFormatException e) {
       // ignore
     }
@@ -751,7 +754,8 @@ public class FavoritesPlugin {
     dlg.setVisible(true);
     
     splitPanePosition = dlg.getSplitpanePosition();
-    mSettings.setProperty("splitpanePosition", "" + splitPanePosition);
+    mSettings.setProperty("splitpanePosition", Integer
+        .toString(splitPanePosition));
     
     if (!showNew) {
       updateRootNode(true);

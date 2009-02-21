@@ -476,17 +476,20 @@ public class ReminderSettingsTab implements SettingsTab {
     mSettings.setProperty("execfile",mExecFileStr);
     mSettings.setProperty("execparam",mExecParamStr);
 
-    mSettings.setProperty("usemsgbox", Boolean.valueOf(mReminderWindowChB.isSelected()).toString());
-    mSettings.setProperty("usesound", Boolean.valueOf(mSoundFileChB.isSelected()).toString());
-    mSettings.setProperty("usebeep", Boolean.valueOf(mBeep.isSelected()).toString());
-    mSettings.setProperty("useexec", Boolean.valueOf(mExecChB.isSelected()).toString());
+    mSettings.setProperty("usemsgbox", String.valueOf(mReminderWindowChB
+        .isSelected()));
+    mSettings.setProperty("usesound", String
+        .valueOf(mSoundFileChB.isSelected()));
+    mSettings.setProperty("usebeep", String.valueOf(mBeep.isSelected()));
+    mSettings.setProperty("useexec", String.valueOf(mExecChB.isSelected()));
 
     ReminderPlugin.getInstance().setClientPluginsTargets(mClientPluginTargets);
     
     mSettings.setProperty("autoCloseBehaviour", mCloseOnEnd.isSelected() ? "onEnd" : mCloseNever.isSelected() ? "never" : "onTime");
     
     mSettings.setProperty("autoCloseReminderTime", mAutoCloseReminderTimeSp.getValue().toString());
-    mSettings.setProperty("defaultReminderEntry",""+mDefaultReminderEntryList.getSelectedIndex());
+    mSettings.setProperty("defaultReminderEntry", Integer
+        .toString(mDefaultReminderEntryList.getSelectedIndex()));
     mSettings.setProperty("showTimeSelectionDialog", String.valueOf(mShowTimeSelectionDlg.isSelected()));
     mSettings.setProperty("showRemovedDialog", String.valueOf(mShowRemovedDlg.isSelected()));
     

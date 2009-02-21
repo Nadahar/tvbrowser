@@ -131,9 +131,7 @@ public class ProgramLengthFilterComponent extends AbstractFilterComponent {
     JPanel panel = new JPanel();
 
     _minSpinner = new JSpinner(new SpinnerNumberModel(_min, 0, 1000, 1));
-    ;
     _maxSpinner = new JSpinner(new SpinnerNumberModel(_max, 0, 1000, 1));
-    ;
     _minBox = new JCheckBox(mLocalizer.msg("minimum", "minimum in Minutes")
         + ":", _useMin);
     _maxBox = new JCheckBox(mLocalizer.msg("maximum", "maximum in Minutes")

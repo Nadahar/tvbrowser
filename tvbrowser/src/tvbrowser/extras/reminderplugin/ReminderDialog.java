@@ -168,7 +168,8 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
       public void actionPerformed(ActionEvent e) {
         mOkPressed=true;
         if (mRememberSettingsCb.isSelected()) {
-          settings.setProperty("defaultReminderEntry",""+mList.getSelectedIndex());
+          settings.setProperty("defaultReminderEntry", Integer.toString(mList
+              .getSelectedIndex()));
         }
         settings.setProperty("showTimeSelectionDialog",String.valueOf(!mDontShowDialog.isSelected()));
         setVisible(false);
