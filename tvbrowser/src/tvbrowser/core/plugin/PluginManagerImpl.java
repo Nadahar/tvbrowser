@@ -27,8 +27,11 @@ package tvbrowser.core.plugin;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.TimeZone;
 import java.util.logging.Logger;
@@ -211,6 +214,24 @@ public class PluginManagerImpl implements PluginManager {
     }
 
     return null;
+  }
+  
+  /** {@inheritDoc} */
+  public Program getProgram(String uniqueID) {
+    String[] id = uniqueID.split("_");
+    Date progDate;
+    try {
+      java.util.Date date = new SimpleDateFormat(MutableProgram.ID_DATE_FORMAT).parse(id[4]);
+      Calendar cal = Calendar.getInstance();
+      cal.setTimeInMillis(date.getTime());
+      progDate = new Date(cal);
+    } catch (ParseException e) {
+      mLog.severe("Couldn't parse date from unique ID");
+      return null;
+    }
+    
+    String progID = new StringBuilder(id[0]).append('_').append(id[1]).append('_').append(id[2]).append('_').append(id[3]).append('_').append(id[5]).toString();
+    return getProgram(progDate, progID);
   }
 
 

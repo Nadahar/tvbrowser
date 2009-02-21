@@ -220,6 +220,15 @@ public interface Program {
    * @return The ID of this program.
    */
   public String getID();
+  
+  /**
+   * Gets the unique ID of this program. In contrast to getID() this method
+   * returns an ID, which is unique for all programs.
+   * This value becomes invalid when changing the application time zone.
+   *
+   * @return An unique ID of this program.
+   */
+  public String getUniqueID();
 
   public String getTitle();
   public String getShortInfo();

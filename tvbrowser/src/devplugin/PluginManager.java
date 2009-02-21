@@ -62,6 +62,14 @@ public interface PluginManager {
    * @return The program or <code>null</code> if there is no such program.
    */
   public Program getProgram(Date date, String progID);
+  
+  /**
+   * Gets a program.
+   *
+   * @param uniqueID The unique ID ({@link Program#getUniqueID()}) of this program.
+   * @return The program or <code>null</code> if there is no such program.
+   */
+  public Program getProgram(String uniqueID);
 
   /**
    * Gets all channels the user has subscribed.
