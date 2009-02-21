@@ -171,13 +171,13 @@ public class ProgramUtilities {
         }
         // actor and role separated by tab
         else if (actor.contains("\t")) {
-          listFirst.add(nameFrom(actor.substring(0, actor.indexOf("\t"))));
-          listSecond.add(nameFrom(actor.substring(actor.indexOf("\t")+1)));
+          listFirst.add(nameFrom(actor.substring(0, actor.indexOf('\t'))));
+          listSecond.add(nameFrom(actor.substring(actor.indexOf('\t') + 1)));
         }
         // actor and role separated by colon
         else if (actor.contains(":")) {
-          listFirst.add(nameFrom(actor.substring(0, actor.indexOf(":"))));
-          listSecond.add(nameFrom(actor.substring(actor.indexOf(":")+1)));
+          listFirst.add(nameFrom(actor.substring(0, actor.indexOf(':'))));
+          listSecond.add(nameFrom(actor.substring(actor.indexOf(':') + 1)));
         }
         // actor and role separated by brackets
         else if (actor.contains("(") || actor.contains(")")) {
@@ -189,7 +189,8 @@ public class ProgramUtilities {
             }
           }
           if (actor.contains("(") && actor.contains(")")) {
-            String secondPart = nameFrom(actor.substring(actor.indexOf("(")+1,actor.lastIndexOf(")")));
+            String secondPart = nameFrom(actor.substring(
+                actor.indexOf('(') + 1, actor.lastIndexOf(')')));
             // there are multiple brackets, lets look for something like "actor (age) (role)"
             if (secondPart.contains("(")) {
               Pattern agePattern = Pattern.compile(".*(\\(\\d+\\)).*");
@@ -197,14 +198,15 @@ public class ProgramUtilities {
               if (matcher.matches()) {
                 String age = matcher.group(1);
                 actor = nameFrom(actor.substring(0, actor.indexOf(age)) + actor.substring(actor.indexOf(age) + age.length()));
-                secondPart = nameFrom(actor.substring(actor.indexOf("(")+1,actor.lastIndexOf(")")));
+                secondPart = nameFrom(actor.substring(actor.indexOf('(') + 1,
+                    actor.lastIndexOf(')')));
               }
             }
             // only use a name with multiple brackets, if they are nested in the role part
-            int indexOpen = secondPart.indexOf("(");
-            int indexClose = secondPart.indexOf(")");
+            int indexOpen = secondPart.indexOf('(');
+            int indexClose = secondPart.indexOf(')');
             if ((indexOpen == -1 && indexClose == -1) || (indexOpen < indexClose)) {
-              listFirst.add(nameFrom(actor.substring(0, actor.indexOf("("))));
+              listFirst.add(nameFrom(actor.substring(0, actor.indexOf('('))));
               listSecond.add(secondPart);
             }
             else {
@@ -266,7 +268,9 @@ public class ProgramUtilities {
       name = name.substring(0, name.length() - 1);
     }
     // remove surrounding brackets
-    if (name.length() > 1 && name.startsWith("(") && name.endsWith(")") && name.indexOf("(",1) < 0 && name.lastIndexOf(")", name.length()-2) < 0) {
+    if (name.length() > 1 && name.startsWith("(") && name.endsWith(")")
+        && name.indexOf('(', 1) < 0
+        && name.lastIndexOf(')', name.length() - 2) < 0) {
       name = name.substring(1, name.length()-1);
     }
     // filter wrong dataservice actors

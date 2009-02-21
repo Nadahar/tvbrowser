@@ -277,7 +277,7 @@ class ErrorWindow {
       for (int i = 0; thr != null; i++) {
         JComponent detailComp = createDetailComponent(thr);
 
-        tabbedPane.addTab("" + (i + 1), detailComp);
+        tabbedPane.addTab(Integer.toString(i + 1), detailComp);
 
         thr = thr.getCause();
       }

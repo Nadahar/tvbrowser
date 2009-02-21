@@ -678,7 +678,9 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
       public boolean accept(File pathname) {
         String file = pathname.getName();
         
-        if(pathname.isFile() && file.substring(0,file.lastIndexOf(".")).equalsIgnoreCase(item.toString()))
+        if (pathname.isFile()
+            && file.substring(0, file.lastIndexOf('.')).equalsIgnoreCase(
+                item.toString()))
           return true;
         
         return false;
@@ -722,7 +724,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
           dir.mkdir();
   
         String ext =  chooser.getSelectedFile().getName();
-        ext = ext.substring(ext.lastIndexOf("."));
+        ext = ext.substring(ext.lastIndexOf('.'));
         
         Icon icon = SimpleMarkerPlugin.getInstance().getIconForFileName(
             chooser.getSelectedFile().getAbsolutePath());

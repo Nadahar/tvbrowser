@@ -25,24 +25,6 @@
  */
 package dreamboxdataservice;
 
-import devplugin.AbstractTvDataService;
-import devplugin.Channel;
-import devplugin.ChannelGroup;
-import devplugin.Date;
-import devplugin.PluginInfo;
-import devplugin.ProgressMonitor;
-import devplugin.Version;
-import org.apache.commons.codec.binary.Base64;
-import org.xml.sax.SAXException;
-import tvdataservice.SettingsPanel;
-import tvdataservice.TvDataUpdateManager;
-import util.exc.TvBrowserException;
-import util.io.IOUtilities;
-import util.ui.Localizer;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,6 +37,26 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.TimeZone;
 import java.util.TreeMap;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.apache.commons.codec.binary.Base64;
+import org.xml.sax.SAXException;
+
+import tvdataservice.SettingsPanel;
+import tvdataservice.TvDataUpdateManager;
+import util.exc.TvBrowserException;
+import util.io.IOUtilities;
+import util.ui.Localizer;
+import devplugin.AbstractTvDataService;
+import devplugin.Channel;
+import devplugin.ChannelGroup;
+import devplugin.Date;
+import devplugin.PluginInfo;
+import devplugin.ProgressMonitor;
+import devplugin.Version;
 
 
 public class DreamboxDataService extends AbstractTvDataService {
@@ -136,7 +138,7 @@ public class DreamboxDataService extends AbstractTvDataService {
 
       if (mProperties == null) {
         mProperties = new Properties();
-      };
+      }
       prop.setProperty("ip", mProperties.getProperty("ip",""));
       prop.setProperty("username", mProperties.getProperty("username", ""));
       prop.setProperty("password", mProperties.getProperty("password", ""));

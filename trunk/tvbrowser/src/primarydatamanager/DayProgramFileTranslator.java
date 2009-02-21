@@ -25,19 +25,19 @@
  */
 package primarydatamanager;
 
-import devplugin.Program;
-import devplugin.ProgramFieldType;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+
 import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.ProgramField;
 import tvbrowserdataservice.file.ProgramFrame;
 import util.io.FileFormatException;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.BufferedOutputStream;
-import java.io.FileNotFoundException;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
 
 /**
  * 
@@ -198,7 +198,7 @@ public class DayProgramFileTranslator {
     }
 
     private static String programInfoToString(int info) {
-    StringBuffer buf = new StringBuffer();
+    StringBuffer buf = new StringBuffer(128);
 
     if (bitSet(info, Program.INFO_VISION_BLACK_AND_WHITE)) {
       buf.append("Black and white  ");

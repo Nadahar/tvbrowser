@@ -24,11 +24,11 @@
  */
 package captureplugin.drivers.defaultdriver.configpanels;
 
+import javax.swing.table.AbstractTableModel;
+
+import util.ui.Localizer;
 import captureplugin.drivers.defaultdriver.DeviceConfig;
 import captureplugin.drivers.defaultdriver.Variable;
-import util.ui.Localizer;
-
-import javax.swing.table.AbstractTableModel;
 
 /**
  * TableModel for VariableTable
@@ -111,7 +111,7 @@ public class VariableTableModel extends AbstractTableModel {
      */
     public Object getValueAt(int row, int col) {
         if (col == 0) {
-            return ""+(row+1);
+            return Integer.toString(row + 1);
         } else if (row < mData.getVariables().size()) {
             Variable var = (Variable) mData.getVariables().toArray()[row];
             if (col == 1) {

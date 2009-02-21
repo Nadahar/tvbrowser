@@ -178,25 +178,25 @@ public class CaptureParamLibrary extends ParamLibrary {
     if (key.equals("title")) {
       return mPrgTime.getTitle();
     } else if (key.equals("start_day")) {
-      return ""+mStartTime.get(Calendar.DAY_OF_MONTH);
+      return Integer.toString(mStartTime.get(Calendar.DAY_OF_MONTH));
     } else if (key.equals("start_month")) {
-      return ""+(mStartTime.get(Calendar.MONTH)+1);
+      return Integer.toString(mStartTime.get(Calendar.MONTH) + 1);
     } else if (key.equals("start_year")) {
-      return ""+mStartTime.get(Calendar.YEAR);
+      return Integer.toString(mStartTime.get(Calendar.YEAR));
     } else if (key.equals("start_hour")) {
-      return ""+mStartTime.get(Calendar.HOUR_OF_DAY);
+      return Integer.toString(mStartTime.get(Calendar.HOUR_OF_DAY));
     } else if (key.equals("start_minute")) {
-      return ""+mStartTime.get(Calendar.MINUTE);
+      return Integer.toString(mStartTime.get(Calendar.MINUTE));
     } else if (key.equals("end_day")) {
-      return ""+mEndTime.get(Calendar.DAY_OF_MONTH);
+      return Integer.toString(mEndTime.get(Calendar.DAY_OF_MONTH));
     } else if (key.equals("end_month")) {
-      return ""+(mEndTime.get(Calendar.MONTH)+1);
+      return Integer.toString(mEndTime.get(Calendar.MONTH) + 1);
     } else if (key.equals("end_year")) {
-      return ""+mEndTime.get(Calendar.YEAR);
+      return Integer.toString(mEndTime.get(Calendar.YEAR));
     } else if (key.equals("end_hour")) {
-      return ""+mEndTime.get(Calendar.HOUR_OF_DAY);
+      return Integer.toString(mEndTime.get(Calendar.HOUR_OF_DAY));
     } else if (key.equals("end_minute")) {
-      return ""+mEndTime.get(Calendar.MINUTE);
+      return Integer.toString(mEndTime.get(Calendar.MINUTE));
     } else if (key.equals("channel_name_external")) {
       return getExternalChannelName(prg, true);
     } else if (key.equals("channel_name_external_quiet")) {
@@ -207,10 +207,10 @@ public class CaptureParamLibrary extends ParamLibrary {
       return getPassword();
     } else if (key.equals("length_minutes")) {
       int length = (int) ((mEndTime.getTimeInMillis() + 59000) / 60000 - (mStartTime.getTimeInMillis() + 59000) / 60000);
-      return "" +length;
+      return Integer.toString(length);
     } else if (key.equals("length_sec")) {
       int length = (int) ((mEndTime.getTimeInMillis() + 59000) / 60000 - (mStartTime.getTimeInMillis() + 59000) / 60000);
-      return "" + ((length) * 60);
+      return Integer.toString((length) * 60);
     }
     
     return super.getStringForKey(prg, key);

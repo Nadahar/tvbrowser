@@ -88,7 +88,8 @@ public abstract class AbstractPrintJob implements PrintJob {
 
 
 
-        String pageInfo = util.ui.Localizer.getLocalizerFor(PreviewDlg.class).msg("pageInfo","page {0} of {1}",""+(pageIndex+1), ""+mPages.length);
+        String pageInfo = util.ui.Localizer.getLocalizerFor(PreviewDlg.class)
+            .msg("pageInfo", "page {0} of {1}", (pageIndex + 1), mPages.length);
         int w = util.ui.UiUtilities.getStringWidth(FOOTER_FONT, pageInfo);
         graphics.setFont(FOOTER_FONT);
         graphics.setColor(Color.black);

@@ -146,7 +146,7 @@ public class Settings {
     String version = TVBrowser.ALL_VERSIONS[0];
     
     if(version.toLowerCase().indexOf("nightly") != -1) {
-      version = version.substring(0,version.indexOf("-"));
+      version = version.substring(0, version.indexOf('-'));
     }
     
     return new StringBuffer(getUserDirectoryName())

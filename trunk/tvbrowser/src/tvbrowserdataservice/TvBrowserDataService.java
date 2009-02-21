@@ -669,7 +669,9 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   }
 
   private Mirror getChannelGroupsMirror() {
-    File file = new File(mDataDir, CHANNEL_GROUPS_FILENAME.substring(0,CHANNEL_GROUPS_FILENAME.indexOf(".")) + "_" + Mirror.MIRROR_LIST_FILE_NAME);    
+    File file = new File(mDataDir, CHANNEL_GROUPS_FILENAME.substring(0,
+        CHANNEL_GROUPS_FILENAME.indexOf('.'))
+        + "_" + Mirror.MIRROR_LIST_FILE_NAME);    
     
     try {
       return Mirror.chooseUpToDateMirror(Mirror.readMirrorListFromFile(file),null,"Groups.txt", "groups", TvBrowserDataService.class, "  Please inform the TV-Browser team.");
@@ -696,7 +698,9 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
       String url = getChannelGroupsMirror().getUrl();
     
       try {
-        String name = CHANNEL_GROUPS_FILENAME.substring(0,CHANNEL_GROUPS_FILENAME.indexOf(".")) + "_" + Mirror.MIRROR_LIST_FILE_NAME;
+        String name = CHANNEL_GROUPS_FILENAME.substring(0,
+            CHANNEL_GROUPS_FILENAME.indexOf('.'))
+            + "_" + Mirror.MIRROR_LIST_FILE_NAME;
         IOUtilities.download(new URL(url + (url.endsWith("/") ? "" : "/") + name), new File(mDataDir, name));
       } catch(Exception ee) {}
     

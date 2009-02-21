@@ -161,8 +161,8 @@ public class AboutBox extends JDialog implements WindowClosingIf{
       
       buf.append("<div id=\"small\">");
 
-      buf.append(System.getProperty("java.vm.name") + "<br>");
-      buf.append(System.getProperty("java.vendor") + "<br>");
+      buf.append(System.getProperty("java.vm.name")).append("<br>");
+    buf.append(System.getProperty("java.vendor")).append("<br>");
       buf.append(System.getProperty("java.home"));
       
       buf.append("</div>");

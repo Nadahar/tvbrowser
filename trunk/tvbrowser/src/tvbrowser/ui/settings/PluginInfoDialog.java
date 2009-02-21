@@ -126,7 +126,7 @@ public class PluginInfoDialog extends JDialog implements WindowClosingIf {
    * @return Html-Text
    */
   private String generateHtml(ExtendedHTMLDocument doc) {
-    StringBuffer html = new StringBuffer();
+    StringBuffer html = new StringBuffer(1024);
     
     html.append("<html><style type=\"text/css\" media=\"screen\">"
                 + "<!--" +
@@ -141,7 +141,8 @@ public class PluginInfoDialog extends JDialog implements WindowClosingIf {
     
     html.append("</td><td valign=\"top\"><b>").append(mPluginInfo.getName()).append("</b></td></tr></table>");
     
-    html.append("<i>").append(mLocalizer.msg("version", "Version")).append(" ").append(mPluginInfo.getVersion()).append("</i><br>");
+    html.append("<i>").append(mLocalizer.msg("version", "Version")).append(' ')
+        .append(mPluginInfo.getVersion()).append("</i><br>");
     
     html.append("<h1>").append(mLocalizer.msg("author", "Author")).append("</h1>");
     html.append(HTMLTextHelper.convertTextToHtml(mPluginInfo.getAuthor(), true));

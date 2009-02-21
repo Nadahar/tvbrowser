@@ -1,21 +1,21 @@
 package swedbtvdataservice;
 
-import devplugin.Channel;
-import devplugin.Date;
-import devplugin.Plugin;
-import devplugin.ProgressMonitor;
-import tvdataservice.MutableChannelDayProgram;
-import tvdataservice.TvDataUpdateManager;
-import util.exc.TvBrowserException;
-import util.ui.Localizer;
-import util.io.IOUtilities;
-
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.logging.Logger;
+
+import tvdataservice.MutableChannelDayProgram;
+import tvdataservice.TvDataUpdateManager;
+import util.exc.TvBrowserException;
+import util.io.IOUtilities;
+import util.ui.Localizer;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.ProgressMonitor;
 
 public class DataHydraFileParser {
 
@@ -26,7 +26,7 @@ public class DataHydraFileParser {
     ArrayList<Date> modifiedDates = new ArrayList<Date>();
     monitor.setMessage(mLocalizer.msg("updateTvData.progressmessage.10",
             "{2}: Searching for updated/new programs on {0} for {1} days",
-            startDate.toString(), "" + dateCount, channel.getName()));
+            startDate.toString(), dateCount, channel.getName()));
     
     for (int b = 0; b < dateCount; b++) {
       Date testDay = testStart.addDays(b);

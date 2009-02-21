@@ -271,7 +271,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
     Object[] groups = mGroupListModel.toArray();
 
     for (int i = 0; i < groups.length - 1; i++) {
-      buf.append(((ChannelGroup) groups[i]).getId()).append(":");
+      buf.append(((ChannelGroup) groups[i]).getId()).append(':');
     }
     if (groups.length > 0) {
       buf.append(((ChannelGroup) groups[groups.length - 1]).getId());
@@ -281,7 +281,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
       StringBuffer urlBuf = new StringBuffer();
       String[] mirrorArr = ((ChannelGroup) groups[i]).getMirrorArr();
       for (int j = 0; j < mirrorArr.length - 1; j++) {
-        urlBuf.append(mirrorArr[j]).append(";");
+        urlBuf.append(mirrorArr[j]).append(';');
       }
       if (mirrorArr.length > 0) {
         urlBuf.append(mirrorArr[mirrorArr.length - 1]);

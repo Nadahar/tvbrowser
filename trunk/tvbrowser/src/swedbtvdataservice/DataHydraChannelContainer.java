@@ -39,7 +39,7 @@ public class DataHydraChannelContainer {
         StringTokenizer ST3 = new StringTokenizer(dateinfo, ":");
         devplugin.Date day = new devplugin.Date(Integer.parseInt(ST3.nextToken()), Integer.parseInt(ST3.nextToken()), Integer.parseInt(ST3.nextToken()));
         if (now.compareTo(day) <= 0) {
-          lastUpdate.put(dateinfo, new Long(ST2.nextToken()));
+          lastUpdate.put(dateinfo, Long.valueOf(ST2.nextToken()));
         }
       }
     } catch (Exception E) {
@@ -138,22 +138,22 @@ public class DataHydraChannelContainer {
    *
    * @param lastUpdate New value of property lastUpdate.
    */
-  public void setLastUpdate(devplugin.Date day, long lastUpdate) {
-    this.lastUpdate.put(Integer.toString(day.getYear()) + ":"
-        + Integer.toString(day.getMonth()) + ":"
+  public void setLastUpdate(final devplugin.Date day, final long lastUpdate) {
+    this.lastUpdate.put(Integer.toString(day.getYear()) + ':'
+        + Integer.toString(day.getMonth()) + ':'
         + Integer.toString(day.getDayOfMonth()), lastUpdate);
   }
 
   public String getLastUpdateString() {
-    StringBuffer SB = new StringBuffer();
+    StringBuffer buffer = new StringBuffer();
     Enumeration<String> enu = lastUpdate.keys();
     while (enu.hasMoreElements()) {
       String date = (String) enu.nextElement();
-      SB.append(date);
-      SB.append("-");
-      SB.append(lastUpdate.get(date).toString());
-      SB.append("_");
+      buffer.append(date);
+      buffer.append('-');
+      buffer.append(lastUpdate.get(date).toString());
+      buffer.append('_');
     }
-    return SB.toString();
+    return buffer.toString();
   }
 }

@@ -23,17 +23,11 @@
 */
 package util.ui;
 
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FontMetrics;
-import java.awt.Point;
-import java.awt.event.MouseEvent;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JToolTip;
-import javax.swing.SwingUtilities;
 
 import tvbrowser.core.Settings;
 import util.misc.SoftReferenceCache;
@@ -219,7 +213,7 @@ public class ChannelLabel extends JLabel {
    * @param ic Icon
    */
   public void setIcon(Icon ic) {
-    return;
+    // empty
   }
   
   private void setChannelIcon(Channel channel, Icon icon) {

@@ -61,7 +61,8 @@ public class TrayIcon {
   public void setToolTip(String toolTip) {
     try {
       mClass.getMethod("setToolTip",new Class[] {String.class}).invoke(mTrayIcon,new Object[] {toolTip});
-    }catch(Exception e){};
+    } catch (Exception e) {
+    }
   }
   
   /**

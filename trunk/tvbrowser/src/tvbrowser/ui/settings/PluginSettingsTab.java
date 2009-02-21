@@ -260,7 +260,8 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
           configurePlugin((PluginProxy)selection);
         }
         else {
-          mSettingsDialog.showSettingsTab(((InternalPluginProxyIf)selection).getSettingsId());;
+          mSettingsDialog.showSettingsTab(((InternalPluginProxyIf) selection)
+              .getSettingsId());
         }
       }
     });

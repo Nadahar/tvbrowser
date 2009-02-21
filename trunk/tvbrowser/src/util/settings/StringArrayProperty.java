@@ -203,7 +203,7 @@ public class StringArrayProperty  extends Property {
     for (int i= 0;i<splitted.length;i++) {
       if (splitted[i].endsWith("\\") && (countEndSlashes(splitted[i]) % 2 == 1)) {
         current.append(splitted[i].substring(0, splitted[i].length()-1));
-        current.append(",");
+        current.append(',');
       } else {
         current.append(splitted[i]);
         list.add(current.toString().replaceAll("\\\\\\\\", "\\\\"));

@@ -451,12 +451,12 @@ public class CapturePlugin extends devplugin.Plugin {
     @Override
     public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
         if (receiveTarget == null || receiveTarget.getTargetId() == null ||
-            receiveTarget.getTargetId().indexOf("#") == -1)
+            receiveTarget.getTargetId().indexOf('#') == -1)
             return false;
 
         String id = receiveTarget.getTargetId();
-        String deviceid = id.substring(0, id.indexOf("#"));
-        String command= id.substring(id.indexOf("#"));
+        String deviceid = id.substring(0, id.indexOf('#'));
+    String command = id.substring(id.indexOf('#'));
 
         for (DeviceIf device : mConfig.getDevices()) {
             if (device.getId().equals(deviceid)) {
@@ -627,10 +627,11 @@ public class CapturePlugin extends devplugin.Plugin {
                 if(chooser.getSelectedFile() != null) {
                   String file = chooser.getSelectedFile().getAbsolutePath();
                   
-                  if(!file.toLowerCase().endsWith(".txt") && file.indexOf(".") == -1)
+                  if (!file.toLowerCase().endsWith(".txt")
+                    && file.indexOf('.') == -1)
                     file = file + ".txt";
                   
-                  if(file.indexOf(".") != -1) {
+                  if (file.indexOf('.') != -1) {
                     try {
                       RandomAccessFile write = new RandomAccessFile(file,"rw");
                       write.setLength(0);
@@ -641,7 +642,7 @@ public class CapturePlugin extends devplugin.Plugin {
                         StringBuffer line = new StringBuffer();
                         
                         for(int j = 0; j < model.getColumnCount(); j++)
-                          line.append(model.getValueAt(i,j)).append(" ");
+                          line.append(model.getValueAt(i, j)).append(' ');
                         
                         line.append(eolStyle);
                         

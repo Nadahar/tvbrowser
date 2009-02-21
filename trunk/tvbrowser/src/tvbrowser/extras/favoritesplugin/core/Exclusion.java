@@ -26,20 +26,19 @@
 
 package tvbrowser.extras.favoritesplugin.core;
 
-import devplugin.Channel;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
-import devplugin.ProgramFilter;
-
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.Iterator;
 
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.extras.common.ChannelItem;
 import tvbrowser.extras.common.LimitationConfiguration;
+import devplugin.Channel;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
+import devplugin.ProgramFilter;
 
 public class Exclusion {
 
@@ -237,7 +236,7 @@ public class Exclusion {
         ProgramFieldType type = (ProgramFieldType)types.next();
         
         if(type.getFormat() == ProgramFieldType.TEXT_FORMAT)
-          value.append(prog.getTextField(type)).append(" ");
+          value.append(prog.getTextField(type)).append(' ');
       }
             
       if (value.toString() != null && value.toString().toLowerCase().indexOf(mTopic.toLowerCase()) >=0)

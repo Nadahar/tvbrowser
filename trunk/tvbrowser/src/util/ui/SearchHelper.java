@@ -189,7 +189,7 @@ public class SearchHelper {
           if (mProgressMonitor == null && !TvDataUpdater.getInstance().isDownloading()) {
             progressMonitor = MainFrame.getInstance().getStatusBar().createProgressMonitor();
             progressMonitor.setMessage(mLocalizer.msg("searching","Searching"));
-          };
+          }
           
           Program[] programArr = searcher.search(searcherSettings.getFieldTypes(), startDate, searcherSettings
               .getNrDays(), searcherSettings.getChannels(), true, mProgressMonitor != null ? mProgressMonitor : progressMonitor, mListModel);

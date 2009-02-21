@@ -389,7 +389,7 @@ public class ParamLibrary {
         
         for (int i=0;i<lines.length;i++) {
           result.append(lines[i]);
-          result.append("\n");
+          result.append('\n');
         }
         
       } catch (Exception ex) {

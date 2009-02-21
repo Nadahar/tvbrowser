@@ -133,7 +133,7 @@ public class ProgramIcon implements Icon {
     int time = minutes%(60*24);
     int h = time/60;
     int m = time%60;
-    String hString = ""+h;
+    String hString = Integer.toString(h);
     String mString = (m<10?"0":"")+m;
     return Localizer.getLocalizerFor(ProgramIcon.class).msg("timeString","",hString,mString);
   }

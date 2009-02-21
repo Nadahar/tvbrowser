@@ -228,14 +228,14 @@ public class NewsPlugin extends Plugin {
       int index2 = news.indexOf("<noconnection date");
     
       if(index1 != -1) {
-        int startPos = news.indexOf("\"",index1) + 1;
-        int endPos = news.indexOf("\"",startPos);
+        int startPos = news.indexOf('"', index1) + 1;
+        int endPos = news.indexOf('"', startPos);
       
         return Integer.parseInt(news.substring(startPos,endPos));
       }
       else if(index2 != -1) {
-        int startPos = news.indexOf("\"",index1) + 1;
-        int endPos = news.indexOf("\"",startPos);
+        int startPos = news.indexOf('"', index1) + 1;
+        int endPos = news.indexOf('"', startPos);
         
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         long value = format.parse(news.substring(startPos,endPos)).getTime();

@@ -259,14 +259,14 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
     hiddenGenres.clear();
     int filterCount = Integer.parseInt(mSettings.getProperty(FILTERED_GENRES_COUNT, "0"));
     for (int i = 0; i<filterCount; i++) {
-      hideGenre(mSettings.getProperty(FILTERED_GENRE+String.valueOf(i),""));
+      hideGenre(mSettings.getProperty(FILTERED_GENRE + i, ""));
     }
   }
 
   public void saveSettings(Object[] hidden) {
     mSettings.setProperty(FILTERED_GENRES_COUNT, String.valueOf(hidden.length));
     for (int i = 0; i < hidden.length; i++) {
-      mSettings.setProperty(FILTERED_GENRE+String.valueOf(i), (String) hidden[i]);
+      mSettings.setProperty(FILTERED_GENRE + i, (String) hidden[i]);
     }
   }
 

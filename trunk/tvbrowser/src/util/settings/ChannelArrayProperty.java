@@ -78,7 +78,7 @@ public class ChannelArrayProperty extends Property {
             String country = null;
             String channelId = splits[i].substring(pos + 1);
             
-            if(channelId.indexOf(":") != -1) {
+            if (channelId.indexOf(':') != -1) {
               String[] values = channelId.split(":");
               groupId = values[0];
               
@@ -138,7 +138,9 @@ public class ChannelArrayProperty extends Property {
           buffer.append(',');
         }
         String dataServiceId = value[i].getDataServiceProxy().getId();
-        buffer.append(dataServiceId).append(":").append(value[i].getGroup().getId()).append(":").append(value[i].getCountry()).append(':').append(value[i].getId());
+        buffer.append(dataServiceId).append(':').append(
+            value[i].getGroup().getId()).append(':').append(
+            value[i].getCountry()).append(':').append(value[i].getId());
       }
       
       setProperty(buffer.toString());

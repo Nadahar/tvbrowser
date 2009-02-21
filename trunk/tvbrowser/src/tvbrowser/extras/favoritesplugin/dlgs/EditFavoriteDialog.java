@@ -259,7 +259,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
       String result = buf.toString();
       if (result.length() > 50) {
         result = result.substring(0, 50);
-        int inx = result.lastIndexOf(",");
+        int inx = result.lastIndexOf(',');
         result = result.substring(0, inx) + ", ...";
       }
 
@@ -524,7 +524,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
       if (pluginArr.length > 2) {
         buf.append(" (");
         buf.append(pluginArr.length - 2);
-        buf.append(" ");
+        buf.append(' ');
         buf.append(mLocalizer.msg("more", "more"));
         buf.append("...)");
       }

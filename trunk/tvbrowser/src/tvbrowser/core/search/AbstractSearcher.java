@@ -142,7 +142,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
       }
 
       if (value != null) {
-        buf.append(value).append(" ");
+        buf.append(value).append(' ');
       }
     }
 

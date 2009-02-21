@@ -93,7 +93,9 @@ public class ChannelSelectionPanel extends JPanel {
   private void updateSelectedChannelsPanel() {
     String radioBtnText = mLocalizer.msg("selectedChannels","Ausgewaehlte");
     if (mChannels != null) {
-      radioBtnText+=" ("+ mLocalizer.msg("selectedChannelsCnt","{0} channels selected",""+mChannels.length)+")";
+      radioBtnText += " ("
+          + mLocalizer.msg("selectedChannelsCnt", "{0} channels selected",
+              mChannels.length) + ")";
     }
     mSelectedChannelsRb.setText(radioBtnText);
   }

@@ -78,14 +78,17 @@ public class StreamReaderThread extends Thread {
 
       BufferedReader reader;
 
-      if (mEncoding != null)
-          reader = new BufferedReader(new InputStreamReader(mInput, mEncoding));
-      else
-          reader = new BufferedReader(new InputStreamReader(mInput));
+      if (mEncoding != null) {
+        reader = new BufferedReader(new InputStreamReader(mInput, mEncoding));
+      } else {
+        reader = new BufferedReader(new InputStreamReader(mInput));
+      }
 
-      while ((line = reader.readLine()) != null)
-        if (mSaveOutput)
-          mOutput.append(line + "\n");
+      while ((line = reader.readLine()) != null) {
+        if (mSaveOutput) {
+          mOutput.append(line).append('\n');
+        }
+      }
 
     } catch (IOException e) {}
   }

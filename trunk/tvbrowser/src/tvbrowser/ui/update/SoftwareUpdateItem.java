@@ -36,7 +36,7 @@ import devplugin.PluginAccess;
 import devplugin.Version;
 
 /**
- * Contains informations about a sofware update.
+ * Contains informations about a software update.
  */
 public abstract class SoftwareUpdateItem {
 	
@@ -138,16 +138,16 @@ public abstract class SoftwareUpdateItem {
     if(prop == null) {
       return true;
     }
-    else if(prop.indexOf("w") != -1 && OperatingSystem.isWindows()) {
+    else if (prop.indexOf('w') != -1 && OperatingSystem.isWindows()) {
       return true;
     }
-    else if(prop.indexOf("m") != -1 && OperatingSystem.isMacOs()) {
+    else if (prop.indexOf('m') != -1 && OperatingSystem.isMacOs()) {
       return true;
     }
-    else if(prop.indexOf("l") != -1 && OperatingSystem.isLinux()) {
+    else if (prop.indexOf('l') != -1 && OperatingSystem.isLinux()) {
       return true;
     }
-    else if(prop.indexOf("o") != -1 && OperatingSystem.isOther()) {
+    else if (prop.indexOf('o') != -1 && OperatingSystem.isOther()) {
       return true;
     }    
     
@@ -271,7 +271,9 @@ public abstract class SoftwareUpdateItem {
 	 * @throws TvBrowserException
 	 */
 	public boolean download(String downloadUrl) throws TvBrowserException {	  
-    String url = getProperty("downloadtype") == null || !getProperty("downloadtype").toLowerCase().equals("mirros") ? getProperty("download") : downloadUrl + "/" + getProperty("filename");
+    String url = getProperty("downloadtype") == null
+        || !getProperty("downloadtype").equalsIgnoreCase("mirros") ? getProperty("download")
+        : downloadUrl + "/" + getProperty("filename");
     if (url == null) {
       throw new TvBrowserException(SoftwareUpdateItem.class, "error.2", "No Url");
     }

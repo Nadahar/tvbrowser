@@ -403,7 +403,7 @@ public class ReminderPlugin {
       settings.remove("usesendplugin");
       
       if(plugins.length() > 0 && sendEnabled) {
-        if(plugins.indexOf(";") == -1) {
+        if (plugins.indexOf(';') == -1) {
           mClientPluginTargets = new ProgramReceiveTarget[1];
           mClientPluginTargets[0] = ProgramReceiveTarget.createDefaultTargetForProgramReceiveIfId(plugins);
         }

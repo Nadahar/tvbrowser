@@ -167,7 +167,7 @@ public class ParamParser {
     
     if (newCommand.startsWith("\"") && newCommand.endsWith("\"")) {
       ret = newCommand.substring(1, newCommand.length()-1);
-    } else if (newCommand.indexOf("(") > -1) {
+    } else if (newCommand.indexOf('(') > -1) {
       String funcRet = parseFunction(prg, newCommand, pos);
       if (funcRet == null) {
         return null;
@@ -202,7 +202,7 @@ public class ParamParser {
    */
   private String parseFunction(Program prg, String function, int pos) {
     
-    String funcname = function.substring(0, function.indexOf("(")).trim();
+    String funcname = function.substring(0, function.indexOf('(')).trim();
     
     if (funcname.length() == 0) {
       mErrors = true;
@@ -216,7 +216,8 @@ public class ParamParser {
       return null;
     }
  
-    String params = function.substring(function.indexOf("(")+1, function.lastIndexOf(")"));
+    String params = function.substring(function.indexOf('(') + 1, function
+        .lastIndexOf(')'));
     
     String[] splitparams = splitParams(params, pos);
 

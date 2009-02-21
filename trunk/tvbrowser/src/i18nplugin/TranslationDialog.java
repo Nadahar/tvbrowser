@@ -324,15 +324,16 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
         }
       });
       
-      StringBuffer buffer = new StringBuffer(Settings.getUserSettingsDirName() + "/lang/tvbrowser/tvbrowser");
+      StringBuffer buffer = new StringBuffer(Settings.getUserSettingsDirName());
+      buffer.append("/lang/tvbrowser/tvbrowser");
 
-      buffer.append("_").append(locale.getLanguage());
+      buffer.append('_').append(locale.getLanguage());
       
       if (locale.getCountry().length() > 0)
-        buffer.append("_").append(locale.getCountry());
+        buffer.append('_').append(locale.getCountry());
 
       if (locale.getVariant().length() > 0)
-        buffer.append("_").append(locale.getVariant());
+        buffer.append('_').append(locale.getVariant());
 
       buffer.append(".properties");
 

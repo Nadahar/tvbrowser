@@ -358,7 +358,7 @@ public class Channel implements Comparable<Channel> {
     
     if (version==1) {
       dataServiceId = (String)in.readObject();
-      channelId=""+in.readInt();
+      channelId = Integer.toString(in.readInt());
     }
     else if (version < 3){
       dataServiceId = (String)in.readObject();

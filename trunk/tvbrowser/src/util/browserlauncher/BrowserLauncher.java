@@ -3,8 +3,6 @@ package util.browserlauncher;
 //import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-/*import java.io.InputStream;
-import java.io.InputStreamReader;*/
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -214,7 +212,7 @@ class BrowserLauncher {
             String javaVersion = System.getProperty("java.version");
             String majorJavaVersion = javaVersion.substring(0, 3);
             try {
-                double version = Double.valueOf(majorJavaVersion).doubleValue();
+                double version = Double.parseDouble(majorJavaVersion);
                 if (version >= 1.4) {
                     jvm = MRJ_COCOA;
                 }
@@ -225,7 +223,7 @@ class BrowserLauncher {
                 String mrjVersion = System.getProperty("mrj.version");
                 String majorMRJVersion = mrjVersion.substring(0, 3);
                 try {
-                    double version = Double.valueOf(majorMRJVersion).doubleValue();
+                    double version = Double.parseDouble(majorMRJVersion);
                     if (version == 2) {
                         jvm = MRJ_2_0;
                     } else if (version >= 2.1 && version < 3) {
@@ -248,7 +246,7 @@ class BrowserLauncher {
                 }
             }
         } else if (osName.startsWith("Windows")) {
-            if (osName.indexOf("9") != -1 || osName.indexOf("Me") != -1) {
+            if (osName.indexOf('9') != -1 || osName.indexOf("Me") != -1) {
                 jvm = WINDOWS_9x;
             } else {
                 jvm = WINDOWS_NT;

@@ -243,7 +243,7 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
         if (Character.isLetterOrDigit(e.getKeyChar()) && 
             !(e.isControlDown()||e.isMetaDown())) {
           actionPerformed(new ActionEvent(this, 0, "show"));
-          mSearchField.setText("" + e.getKeyChar());
+          mSearchField.setText(Character.toString(e.getKeyChar()));
           
           start();
         }

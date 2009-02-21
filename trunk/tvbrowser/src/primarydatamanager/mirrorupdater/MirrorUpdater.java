@@ -25,20 +25,6 @@
  */
 package primarydatamanager.mirrorupdater;
 
-import devplugin.Channel;
-import devplugin.Date;
-import primarydatamanager.mirrorupdater.config.Configuration;
-import primarydatamanager.mirrorupdater.config.PropertiesConfiguration;
-import primarydatamanager.mirrorupdater.data.DataSource;
-import primarydatamanager.mirrorupdater.data.DataTarget;
-import primarydatamanager.tvlistingstool.HtmlMirrorVisualizer;
-import primarydatamanager.tvlistingstool.MirrorVisualizer;
-import tvbrowserdataservice.file.ChannelList;
-import tvbrowserdataservice.file.DayProgramFile;
-import tvbrowserdataservice.file.SummaryFile;
-import util.io.Mirror;
-import util.io.VerySimpleFormatter;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -50,6 +36,20 @@ import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import primarydatamanager.mirrorupdater.config.Configuration;
+import primarydatamanager.mirrorupdater.config.PropertiesConfiguration;
+import primarydatamanager.mirrorupdater.data.DataSource;
+import primarydatamanager.mirrorupdater.data.DataTarget;
+import primarydatamanager.tvlistingstool.HtmlMirrorVisualizer;
+import primarydatamanager.tvlistingstool.MirrorVisualizer;
+import tvbrowserdataservice.file.ChannelList;
+import tvbrowserdataservice.file.DayProgramFile;
+import tvbrowserdataservice.file.SummaryFile;
+import util.io.Mirror;
+import util.io.VerySimpleFormatter;
+import devplugin.Channel;
+import devplugin.Date;
 
 /**
  * 
@@ -386,7 +386,7 @@ public class MirrorUpdater {
 
   
   private String createIndexHtmlOLD(Channel[] channelArr) {
-    StringBuffer buffer = new StringBuffer();
+    StringBuffer buffer = new StringBuffer(1024);
     
     buffer.append("<html><head>");
     buffer.append("<title>TV-Browser Mirror</title>");

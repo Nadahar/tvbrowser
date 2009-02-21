@@ -144,7 +144,7 @@ public class ChannelGroupInfoDialog extends JDialog implements WindowClosingIf{
    * @return Html-Text
    */
   private String generateHtml(ExtendedHTMLDocument doc) {
-    StringBuffer html = new StringBuffer();
+    StringBuffer html = new StringBuffer(1024);
 
     html.append("<html><style type=\"text/css\" media=\"screen\">"
                 + "<!--" +

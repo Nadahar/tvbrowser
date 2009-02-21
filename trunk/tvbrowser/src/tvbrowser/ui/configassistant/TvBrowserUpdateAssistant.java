@@ -115,7 +115,14 @@ public class TvBrowserUpdateAssistant extends JDialog implements ActionListener,
             }
             else {
               String[] options = new String[]{mLocalizer.msg("import","Importieren"),Localizer.getLocalization(Localizer.I18N_CANCEL)};
-               int n = JOptionPane.showOptionDialog(this, mLocalizer.msg("question.1","Es können TV-Daten mit {0} Sendern importiert werden.\nJetzt importieren?",importHandler.getChannelCount()+""),
+               int n = JOptionPane
+                  .showOptionDialog(
+                      this,
+                      mLocalizer
+                          .msg(
+                              "question.1",
+                              "Es können TV-Daten mit {0} Sendern importiert werden.\nJetzt importieren?",
+                              importHandler.getChannelCount()),
                   mLocalizer.msg("question.1.title","Importieren"),
                   JOptionPane.YES_NO_OPTION,
                   JOptionPane.QUESTION_MESSAGE,
@@ -164,7 +171,8 @@ public class TvBrowserUpdateAssistant extends JDialog implements ActionListener,
       public void run() {
         try {
           handler.importTo(destination);
-          mInfoLb.setText(mLocalizer.msg("status.2","{0} Sender importiert",""+handler.getChannelCount()));
+          mInfoLb.setText(mLocalizer.msg("status.2", "{0} Sender importiert",
+              handler.getChannelCount()));
           mListingsSuccessfullyImported = true;
         }catch(IOException e) {
           util.exc.ErrorHandler.handle(mLocalizer.msg("error.3","Could not import TV listings"), e);

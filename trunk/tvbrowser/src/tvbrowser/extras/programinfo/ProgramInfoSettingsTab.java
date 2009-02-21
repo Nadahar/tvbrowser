@@ -196,7 +196,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     
     Object[] order;
     
-    if (mOldOrder.indexOf(";") == -1) {
+    if (mOldOrder.indexOf(';') == -1) {
       if(mOldSetupState.compareTo("false") == 0) {
         order = ProgramTextCreator.getDefaultOrder();
       } else {
