@@ -56,9 +56,9 @@ import devplugin.Version;
  * @author René Mach
  * 
  */
-public class DataViewerPlugin extends Plugin implements Runnable {
+public final class DataViewerPlugin extends Plugin implements Runnable {
 
-  protected static final Localizer mLocalizer = util.ui.Localizer
+  static final Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(DataViewerPlugin.class);
 
   private Object[][] mDataTable;
