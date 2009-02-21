@@ -71,7 +71,7 @@ public final class PearlDialog extends JDialog implements WindowClosingIf
 	private JButton mUpdateBn;
 	private DefaultListModel mProgramList;
 
-	public PearlDialog(Dialog dialog)
+	public PearlDialog(final Dialog dialog)
 	{
 		super(dialog, true);
 
@@ -80,7 +80,7 @@ public final class PearlDialog extends JDialog implements WindowClosingIf
 		UiUtilities.registerForClosing(this);
 	}
 
-	public PearlDialog(Frame frame)
+	public PearlDialog(final Frame frame)
 	{
 		super(frame, true);
 
@@ -91,7 +91,7 @@ public final class PearlDialog extends JDialog implements WindowClosingIf
 
 	private void createGUI()
 	{
-		JPanel main = new JPanel(new BorderLayout());
+	  final JPanel main = new JPanel(new BorderLayout());
 		main.setBorder(UiUtilities.DIALOG_BORDER);
 
 		setContentPane(main);
@@ -106,15 +106,15 @@ public final class PearlDialog extends JDialog implements WindowClosingIf
 				return new TVPearlToolTip();
 			}
 
-			public String getToolTipText(MouseEvent evt)
+			public String getToolTipText(final MouseEvent evt)
 			{
-				int index = locationToIndex(evt.getPoint());
+			  final int index = locationToIndex(evt.getPoint());
 
-				Object item = getModel().getElementAt(index);
+			  final Object item = getModel().getElementAt(index);
 				if (item instanceof TVPProgram)
 				{
-					TVPProgram p = (TVPProgram) item;
-					HTTPConverter converter = new HTTPConverter();
+				  final TVPProgram p = (TVPProgram) item;
+          final HTTPConverter converter = new HTTPConverter();
 					final String info = converter.convertToString(p.getInfo());
           if (info.length() == 0) {
             return mLocalizer.msg("noInfo", "(no information)");
@@ -128,17 +128,18 @@ public final class PearlDialog extends JDialog implements WindowClosingIf
 		mDataList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		mDataList.addMouseListener(new MouseAdapter()
 		{
-			public void mouseClicked(MouseEvent e)
+			public void mouseClicked(final MouseEvent e)
 			{
-				PluginManager mng = Plugin.getPluginManager();
-				int index = mDataList.locationToIndex(e.getPoint());
+			  final PluginManager mng = Plugin.getPluginManager();
+        final int index = mDataList.locationToIndex(e.getPoint());
 
 				if (mDataList.getModel().getElementAt(index) instanceof TVPProgram)
 				{
 
-					TVPProgram pearl = (TVPProgram) mDataList.getModel().getElementAt(
+				  final TVPProgram pearl = (TVPProgram) mDataList.getModel()
+              .getElementAt(
               index);
-          Program prog = pearl.getProgram();
+				  final Program prog = pearl.getProgram();
 					if (prog != null)
 					{
 						if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2)
@@ -162,27 +163,27 @@ public final class PearlDialog extends JDialog implements WindowClosingIf
 				}
 			}
 
-			public void mouseReleased(MouseEvent e)
+			public void mouseReleased(final MouseEvent e)
 			{
 				checkPopup(e);
 			}
 
-			public void mousePressed(MouseEvent e)
+			public void mousePressed(final MouseEvent e)
 			{
 				checkPopup(e);
 			}
 		});
 		mDataList.addListSelectionListener(new ListSelectionListener()
 		{
-			public void valueChanged(ListSelectionEvent e)
+			public void valueChanged(final ListSelectionEvent e)
 			{
 				if (!mDataList.getValueIsAdjusting())
 				{
 					boolean isEnable = false;
-					Object selectedValues[] = mDataList.getSelectedValues();
+					final Object selectedValues[] = mDataList.getSelectedValues();
 					if (selectedValues.length == 1
               && (selectedValues[0] instanceof TVPProgram)) {
-            TVPProgram p = (TVPProgram) selectedValues[0];
+					  final TVPProgram p = (TVPProgram) selectedValues[0];
             if (p.wasFound()) {
               isEnable = true;
             }
@@ -195,14 +196,16 @@ public final class PearlDialog extends JDialog implements WindowClosingIf
 		mScrollPane = new JScrollPane(mDataList);
 		main.add(mScrollPane, BorderLayout.CENTER);
 
-		ButtonBarBuilder builderButton = ButtonBarBuilder.createLeftToRightBuilder();
+		final ButtonBarBuilder builderButton = ButtonBarBuilder
+        .createLeftToRightBuilder();
 		builderButton.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
-		JButton configBn = new JButton(IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
+		final JButton configBn = new JButton(IconLoader.getInstance()
+        .getIconFromTheme("categories", "preferences-system", 16));
 		configBn.setToolTipText(mLocalizer.msg("config", "Configure TV Pearl"));
 		configBn.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(final ActionEvent e)
 			{
 				close();
 				Plugin.getPluginManager().showSettings(TVPearlPlugin.getInstance());
@@ -215,7 +218,7 @@ public final class PearlDialog extends JDialog implements WindowClosingIf
 		mSendBn.setToolTipText(mLocalizer.msg("send", "Send to other Plugins"));
 		mSendBn.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(final ActionEvent e)
 			{
 				showSendDialog();
 			}
@@ -228,7 +231,7 @@ public final class PearlDialog extends JDialog implements WindowClosingIf
 		mUpdateBn = new JButton(mLocalizer.msg("update", "Update"));
 		mUpdateBn.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent evt)
+			public void actionPerformed(final ActionEvent evt)
 			{
 				try
 				{
@@ -254,7 +257,7 @@ public final class PearlDialog extends JDialog implements WindowClosingIf
 		mCloseBn = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
 		mCloseBn.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent evt)
+			public void actionPerformed(final ActionEvent evt)
 			{
 				dispose();
 			}
@@ -274,15 +277,15 @@ public final class PearlDialog extends JDialog implements WindowClosingIf
 	{
 		if (e.isPopupTrigger())
 		{
-			int index = mDataList.locationToIndex(e.getPoint());
+		  final int index = mDataList.locationToIndex(e.getPoint());
 
 			if (mDataList.getModel().getElementAt(index) instanceof TVPProgram)
 			{
 				mDataList.setSelectedIndex(index);
         JPopupMenu popup;
-        TVPProgram pearlProgram = (TVPProgram) mDataList.getModel()
+        final TVPProgram pearlProgram = (TVPProgram) mDataList.getModel()
             .getElementAt(index);
-        Program program = pearlProgram.getProgram();
+        final Program program = pearlProgram.getProgram();
         if (program != null)
 				{
 				  popup = Plugin.getPluginManager().createPluginContextMenu(program,
@@ -297,7 +300,7 @@ public final class PearlDialog extends JDialog implements WindowClosingIf
 					item.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
 					item.addActionListener(new ActionListener()
 					{
-						public void actionPerformed(ActionEvent arg0)
+						public void actionPerformed(final ActionEvent arg0)
 						{
 							if (popupProgram != null)
 							{
@@ -312,7 +315,7 @@ public final class PearlDialog extends JDialog implements WindowClosingIf
                   "system-search", 16));
           item.addActionListener(new ActionListener() {
 
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
               final SearchFormSettings searchSettings = new SearchFormSettings(
                   popupProgram.getTitle());
               searchSettings
@@ -340,17 +343,18 @@ public final class PearlDialog extends JDialog implements WindowClosingIf
 	 */
 	private void showSendDialog()
 	{
-		Object selectedValues[] = mDataList.getSelectedValues();
+	  final Object selectedValues[] = mDataList.getSelectedValues();
 		if (selectedValues.length == 1)
 		{
 			if (selectedValues[0] instanceof TVPProgram)
 			{
-				TVPProgram p = (TVPProgram) selectedValues[0];
+			  final TVPProgram p = (TVPProgram) selectedValues[0];
 				if (p.wasFound())
 				{
-					Program[] programArr = { p.getProgram() };
+				  final Program[] programArr = { p.getProgram() };
 
-					SendToPluginDialog send = new SendToPluginDialog(TVPearlPlugin.getInstance(), this, programArr);
+				  final SendToPluginDialog send = new SendToPluginDialog(TVPearlPlugin
+              .getInstance(), this, programArr);
 					send.setVisible(true);
 				}
 			}
@@ -359,7 +363,7 @@ public final class PearlDialog extends JDialog implements WindowClosingIf
 
 	public void updateProgramList()
 	{
-		Calendar now = Calendar.getInstance();
+	  final Calendar now = Calendar.getInstance();
 		int index = -1;
 
 		mProgramList.clear();

@@ -37,9 +37,9 @@ public class TVPProgram implements Comparable<TVPProgram>
 	private boolean mSendTo = false;
 	private int mStatus = IProgramStatus.STATUS_NOT_FOUND;
 	
-  public TVPProgram(String author, String contentUrl, Calendar cal,
-      String title, String channel, Calendar start, String info,
-      String programID) {
+  public TVPProgram(final String author, final String contentUrl,
+      final Calendar cal, final String title, final String channel,
+      final Calendar start, final String info, final String programID) {
     this.mAuthor = author;
     this.mContentUrl = contentUrl;
     this.mCreateDate = cal;
@@ -52,7 +52,7 @@ public class TVPProgram implements Comparable<TVPProgram>
 
   public String toString()
 	{
-		StringBuffer buffer = new StringBuffer();
+    final StringBuffer buffer = new StringBuffer();
 		buffer.append(DateFormat.getDateInstance().format(mStart.getTime()));
 		buffer.append(" · ");
 		buffer.append(DateFormat.getTimeInstance().format(mStart.getTime()));
@@ -94,7 +94,7 @@ public class TVPProgram implements Comparable<TVPProgram>
 		return mProgramID;
 	}
 
-	public void setProgramID(String programID)
+	public void setProgramID(final String programID)
 	{
 		this.mProgramID = programID.trim();
 		if (this.mProgramID != null && this.mProgramID.length() > 0)
@@ -118,7 +118,7 @@ public class TVPProgram implements Comparable<TVPProgram>
 		return mSendTo;
 	}
 
-	public void setSendTo(boolean sendTo)
+	public void setSendTo(final boolean sendTo)
 	{
 		mSendTo = sendTo;
 	}
@@ -128,7 +128,7 @@ public class TVPProgram implements Comparable<TVPProgram>
 		return mStatus;
 	}
 
-	public void setStatus(Integer status)
+	public void setStatus(final int status)
 	{
 		if (this.mStatus < status)
 		{
@@ -183,7 +183,7 @@ public class TVPProgram implements Comparable<TVPProgram>
 	 * 
 	 * @param program
 	 */
-	public void setProgram(Program program)
+	public void setProgram(final Program program)
 	{
 		setProgramID(program.getID());
 	}
@@ -192,12 +192,12 @@ public class TVPProgram implements Comparable<TVPProgram>
     return getStatus() == IProgramStatus.STATUS_FOUND_CHANNEL || wasFound();
   }
 
-  public int compareTo(TVPProgram other) {
+  public int compareTo(final TVPProgram other) {
     if (this == other) {
       return 0;
     }
     // sort by start time first
-    int result = mStart.compareTo(other.getStart());
+    final int result = mStart.compareTo(other.getStart());
     if (result != 0) {
       return result;
     }
@@ -216,7 +216,7 @@ public class TVPProgram implements Comparable<TVPProgram>
     if (!(object instanceof TVPProgram)) {
       return false;
     }
-    TVPProgram other = (TVPProgram) object;
+    final TVPProgram other = (TVPProgram) object;
     return mTitle.equals(other.mTitle) && mChannel.equals(other.mChannel)
         && mAuthor.equals(other.mAuthor) && mStart.equals(other.mStart);
   }

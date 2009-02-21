@@ -49,7 +49,7 @@ public class TVPearlProgramPanel extends JComponent implements ChangeListener
 	private Font mBodyFont;
 	private Icon[] mIconList = null;
 
-	public TVPearlProgramPanel(TVPProgram p)
+	public TVPearlProgramPanel(final TVPProgram p)
 	{
 		mPearlProgram = p;
 		mProgram = p.getProgram();
@@ -60,14 +60,14 @@ public class TVPearlProgramPanel extends JComponent implements ChangeListener
 		addNotify();
 	}
 
-	public void paintComponent(Graphics g)
+	public void paintComponent(final Graphics g)
 	{
-		Graphics2D grp = (Graphics2D) g;
+	  final Graphics2D grp = (Graphics2D) g;
 		boolean wellKnownProgram = false;
 
 		setForeground(mTextColor);
 		grp.setColor(mTextColor);
-		Calendar now = Calendar.getInstance();
+		final Calendar now = Calendar.getInstance();
 
 		if (mProgram != null)
 		{
@@ -97,8 +97,8 @@ public class TVPearlProgramPanel extends JComponent implements ChangeListener
 
 		setFont(mHeaderFont);
 
-		int headerHeight = grp.getFontMetrics().getHeight();
-		int titleHeight = grp.getFontMetrics(mBodyFont).getHeight();
+		final int headerHeight = grp.getFontMetrics().getHeight();
+    final int titleHeight = grp.getFontMetrics(mBodyFont).getHeight();
 
 		grp.drawString(getHeader(), 1 + ICON_SPACE, headerHeight);
 		grp.drawString(getAuthor(), getSize().width - grp.getFontMetrics().stringWidth(getAuthor()) - 1, headerHeight);
@@ -107,7 +107,7 @@ public class TVPearlProgramPanel extends JComponent implements ChangeListener
 		grp.drawString(getBody(), 1 + ICON_SPACE, headerHeight + titleHeight);
 
 		int x = getSize().width - 1;
-		int y = headerHeight + 3;
+		final int y = headerHeight + 3;
 		if (mIconList != null)
 		{
 			for (int i = mIconList.length - 1; i >= 0; i--)
@@ -134,17 +134,18 @@ public class TVPearlProgramPanel extends JComponent implements ChangeListener
 
 	private String getBody()
 	{
-		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+	  final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 		return timeFormat.format(mPearlProgram.getStart().getTime()) + " " + mPearlProgram.getTitle();
 	}
 
 	private void setPreferredSize()
 	{
-		int headerWidth = getFontMetrics(mHeaderFont).stringWidth(getHeader() + " " + getAuthor());
-		int bodyWidth = getFontMetrics(mBodyFont).stringWidth(getBody());
-		int headerHeight = getFontMetrics(mHeaderFont).getHeight();
-		int bodyHeight = getFontMetrics(mBodyFont).getHeight();
-		Dimension iconSize = getIconSize();
+	  final int headerWidth = getFontMetrics(mHeaderFont).stringWidth(
+        getHeader() + " " + getAuthor());
+    final int bodyWidth = getFontMetrics(mBodyFont).stringWidth(getBody());
+    final int headerHeight = getFontMetrics(mHeaderFont).getHeight();
+    final int bodyHeight = getFontMetrics(mBodyFont).getHeight();
+    final Dimension iconSize = getIconSize();
 
 		setPreferredSize(new Dimension(Math.max(headerWidth, bodyWidth + iconSize.width) + 2 + ICON_SPACE, headerHeight + Math.max(bodyHeight, iconSize.height) + 3));
 	}
@@ -153,12 +154,12 @@ public class TVPearlProgramPanel extends JComponent implements ChangeListener
 	{
 		if (mProgram != null)
 		{
-			ArrayList<Icon> list = new ArrayList<Icon>();
+		  final ArrayList<Icon> list = new ArrayList<Icon>();
 
-			Marker[] markedByPluginArr = mProgram.getMarkerArr();
+		  final Marker[] markedByPluginArr = mProgram.getMarkerArr();
 			for (Marker marker : markedByPluginArr)
 			{
-				Icon[] icons = marker.getMarkIcons(mProgram);
+			  final Icon[] icons = marker.getMarkIcons(mProgram);
 				if (icons != null)
 				{
 					for (int i = icons.length - 1; i >= 0; i--)
@@ -188,12 +189,12 @@ public class TVPearlProgramPanel extends JComponent implements ChangeListener
 		return new Dimension(w, h);
 	}
 
-	public void setTextColor(Color col)
+	public void setTextColor(final Color col)
 	{
 		mTextColor = col;
 	}
 
-	public void stateChanged(ChangeEvent e)
+	public void stateChanged(final ChangeEvent e)
 	{
 		if (e.getSource() == mProgram)
 		{

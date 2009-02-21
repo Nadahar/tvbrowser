@@ -75,7 +75,7 @@ public class TVPGrabber
 		return mOnlyProgramInFuture;
 	}
 
-	public void setOnlyProgrammInFuture(boolean onlyProgrammInFuture)
+	public void setOnlyProgrammInFuture(final boolean onlyProgrammInFuture)
 	{
 		mOnlyProgramInFuture = onlyProgrammInFuture;
 	}
@@ -85,7 +85,7 @@ public class TVPGrabber
 		return mRecursiveGrab;
 	}
 
-	public void setRecusiveGrab(boolean recursive)
+	public void setRecusiveGrab(final boolean recursive)
 	{
 		mRecursiveGrab = recursive;
 	}
@@ -95,9 +95,9 @@ public class TVPGrabber
 		return lastUrl;
 	}
 
-	public List<TVPProgram> parse(String url)
+	public List<TVPProgram> parse(final String url)
 	{
-		List<TVPProgram> programList = new ArrayList<TVPProgram>();
+	  final List<TVPProgram> programList = new ArrayList<TVPProgram>();
 
 		if (url.length() > 0)
 		{
@@ -108,7 +108,7 @@ public class TVPGrabber
 				{
 					lastUrl = workingUrl;
 				}
-				String webContent = downloadUrl(workingUrl);
+				final String webContent = downloadUrl(workingUrl);
 
 				workingUrl = extentUrl(getNextUrl(webContent), url);
 				parseContent(webContent, programList, url);
@@ -123,21 +123,21 @@ public class TVPGrabber
 		return programList;
 	}
 
-	private String downloadUrl(String webUrl)
+	private String downloadUrl(final String webUrl)
 	{
-		String result = "";
+    final StringBuffer buffer = new StringBuffer(1024);
 		InputStream stream = null;
 		BufferedReader in = null;
 		try
 		{
-			URL url = new URL(webUrl);
+		  final URL url = new URL(webUrl);
 			stream = IOUtilities.getStream(url, false);
       in = new BufferedReader(new InputStreamReader(stream,
           "UTF-8")); // ISO-8859-1
 			String str;
 			while ((str = in.readLine()) != null)
 			{
-				result += str + "\n";
+				buffer.append(str).append('\n');
 			}
 		}
 		catch (MalformedURLException e)
@@ -161,13 +161,13 @@ public class TVPGrabber
       }
     }
 
-		return result;
+		return buffer.toString();
 	}
 
-	private String getNextUrl(String content)
+	private String getNextUrl(final String content)
 	{
 		//Pattern pattern = Pattern.compile("<a href=\"([^\"]*?)\">Weiter</a></b><br />");
-    Matcher matcher = PATTERN_NEXT_URL.matcher(content);
+    final Matcher matcher = PATTERN_NEXT_URL.matcher(content);
 
 		String resultUrl = "";
 
@@ -179,7 +179,7 @@ public class TVPGrabber
 		return resultUrl;
 	}
 
-	private String extentUrl(String url, String originalUrl)
+	private String extentUrl(final String url, final String originalUrl)
 	{
 		String resultUrl = url;
 
@@ -197,16 +197,18 @@ public class TVPGrabber
 		return resultUrl.replaceAll("&amp;", "&");
 	}
 
-	private void parseContent(String content, List<TVPProgram> programList, String originalUrl)
+	private void parseContent(final String content,
+      final List<TVPProgram> programList, final String originalUrl)
 	{
 		//Pattern pattern = Pattern.compile("<td.*?class=\"ro[\\w\\W]*?<b>(.*?)</b>.*?</td>[\\w\\W]*?<a href=\"([^\"]*?)\"><img src=\"templates/subSilver/images/icon_minipost.gif\".*?<span class=\"postdetails\">[^:]*:(.*?)<[\\w\\W]*?<span class=\"postbody\">([\\w\\W]*?)</td>[\\n\\t\\r ]+</tr>[\\n\\t\\r ]+</table>");
-    Matcher matcher = PATTERN_CONTENT.matcher(content);
+    final Matcher matcher = PATTERN_CONTENT.matcher(content);
+    final SimpleDateFormat createDateFormat = new SimpleDateFormat(
+        "dd MMM yyyy, HH:mm", Locale.GERMAN);
 
 		while (matcher.find())
 		{
-			String author = matcher.group(2).trim();
-			String contentUrl = extentUrl(matcher.group(1).trim(), originalUrl);
-			SimpleDateFormat createDateFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.GERMAN);
+		  final String author = matcher.group(2).trim();
+		  final String contentUrl = extentUrl(matcher.group(1).trim(), originalUrl);
 			Date createDate = null;
 			try
 			{
@@ -227,10 +229,12 @@ public class TVPGrabber
 		}
 	}
 
-	private void containsInfo(String value, String author, String contentUrl,
-      Date createDate, List<TVPProgram> programList)
+	private void containsInfo(final String value, final String author,
+      final String contentUrl,
+      final Date createDate,
+      final List<TVPProgram> programList)
 	{
-		Calendar today = Calendar.getInstance();
+	  final Calendar today = Calendar.getInstance();
 		String programName = "";
 		String channel = "";
 		Calendar start = Calendar.getInstance();
@@ -244,7 +248,7 @@ public class TVPGrabber
 		{
 			boolean isHeader = false;
 
-			String[] items = line.split("[,|·]");
+			final String[] items = line.split("[,|·]");
 			if (items.length == 4)
 			{
 
@@ -291,16 +295,18 @@ public class TVPGrabber
 		}
 	}
 
-	private TVPProgram createProgram(String author, String contentUrl, Date createDate, String programName, String channel, Calendar start, String programInfo)
+	private TVPProgram createProgram(final String author,
+      final String contentUrl, final Date createDate, final String programName,
+      final String channel, final Calendar start, final String programInfo)
 	{
 		TVPProgram program = null;
 
 		if (programName.length() > 0)
 		{
-      Calendar cal = Calendar.getInstance();
+		  final Calendar cal = Calendar.getInstance();
       cal.setTime(createDate);
-      String title = mConverter.convertToString(programName);
-      String info = programInfo.trim().replaceAll("\\n.*:$", "").trim();
+      final String title = mConverter.convertToString(programName);
+      final String info = programInfo.trim().replaceAll("\\n.*:$", "").trim();
       program = new TVPProgram(author, contentUrl, cal, title, channel, start,
           info, "");
 		}
@@ -319,16 +325,18 @@ public class TVPGrabber
     return false;
 	}
 
-	private Calendar parseStart(String date, String time, Date createDate)
+	private Calendar parseStart(final String date, final String time,
+      final Date createDate)
 	{
 		Calendar result = null;
-		Calendar create = Calendar.getInstance();
+		final Calendar create = Calendar.getInstance();
 		create.setTime(createDate);
 
 		try
 		{
-			SimpleDateFormat dateFormat1 = new SimpleDateFormat("d. MMM", Locale.GERMAN);
-			Date d = dateFormat1.parse(date);
+		  final SimpleDateFormat dateFormat1 = new SimpleDateFormat("d. MMM",
+          Locale.GERMAN);
+      final Date d = dateFormat1.parse(date);
 			result = Calendar.getInstance();
 			result.setTime(d);
 			result.set(Calendar.YEAR, create.get(Calendar.YEAR));
@@ -342,8 +350,9 @@ public class TVPGrabber
 		{
 			try
 			{
-				SimpleDateFormat dateFormat1 = new SimpleDateFormat("d.MMM", Locale.GERMAN);
-				Date d = dateFormat1.parse(date);
+			  final SimpleDateFormat dateFormat1 = new SimpleDateFormat("d.MMM",
+            Locale.GERMAN);
+        final Date d = dateFormat1.parse(date);
 				result = Calendar.getInstance();
 				result.setTime(d);
 				result.set(Calendar.YEAR, create.get(Calendar.YEAR));
@@ -356,8 +365,8 @@ public class TVPGrabber
 
 		if (result == null)
 		{
-			int index = date.indexOf('.');
-			int month = getMonth(date.substring(index + 1).trim());
+		  final int index = date.indexOf('.');
+      final int month = getMonth(date.substring(index + 1).trim());
 
 			if (month >= 0 && month < 12)
 			{
@@ -372,7 +381,7 @@ public class TVPGrabber
 
 		if (result != null)
 		{
-			Calendar limit = Calendar.getInstance();
+		  final Calendar limit = Calendar.getInstance();
 			limit.setTime(createDate);
 			limit.set(Calendar.DAY_OF_MONTH, limit.get(Calendar.DAY_OF_MONTH) - 1);
 
@@ -381,7 +390,7 @@ public class TVPGrabber
 				result.set(Calendar.YEAR, result.get(Calendar.YEAR) + 1);
 			}
 
-			String[] splitTime = time.split("[: (-/]");
+			final String[] splitTime = time.split("[: (-/]");
 			if (splitTime.length > 1)
 			{
 				int delta = 0;

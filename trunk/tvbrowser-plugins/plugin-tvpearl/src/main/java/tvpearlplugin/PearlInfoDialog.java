@@ -57,7 +57,7 @@ public final class PearlInfoDialog extends JDialog implements WindowClosingIf
 	private JButton mCloseBn;
 	transient private TVPProgram mProgram;
 
-	public PearlInfoDialog(Frame parent, TVPProgram program)
+	public PearlInfoDialog(final Frame parent, final TVPProgram program)
 	{
 		super(parent, true);
 
@@ -65,7 +65,7 @@ public final class PearlInfoDialog extends JDialog implements WindowClosingIf
 		createGUI();
 	}
 
-	public PearlInfoDialog(Dialog parent, TVPProgram program)
+	public PearlInfoDialog(final Dialog parent, final TVPProgram program)
 	{
 		super(parent, true);
 
@@ -78,7 +78,7 @@ public final class PearlInfoDialog extends JDialog implements WindowClosingIf
 		setTitle(mLocalizer.msg("title", "TV Pearl Info"));
 		UiUtilities.registerForClosing(this);
 
-		JPanel main = new JPanel(new BorderLayout());
+		final JPanel main = new JPanel(new BorderLayout());
 		main.setBorder(UiUtilities.DIALOG_BORDER);
 		main.setPreferredSize(new Dimension(500, 350));
 		setContentPane(main);
@@ -88,11 +88,11 @@ public final class PearlInfoDialog extends JDialog implements WindowClosingIf
 		mInfoPane.setEditable(false);
 		mInfoPane.addHyperlinkListener(new HyperlinkListener()
 		{
-			public void hyperlinkUpdate(HyperlinkEvent evt)
+			public void hyperlinkUpdate(final HyperlinkEvent evt)
 			{
 				if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
 				{
-					URL url = evt.getURL();
+				  final URL url = evt.getURL();
 					if (url != null)
 					{
 						Launch.openURL(url.toString());
@@ -103,12 +103,12 @@ public final class PearlInfoDialog extends JDialog implements WindowClosingIf
 		mScrollPane = new JScrollPane(mInfoPane);
 		main.add(mScrollPane, BorderLayout.CENTER);
 
-		JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+		final JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
 		main.add(buttonPn, BorderLayout.SOUTH);
 
 		if (mProgram != null)
 		{
-			JButton GotoBn = new JButton(mLocalizer.msg("goto", "Goto"));
+		  final JButton GotoBn = new JButton(mLocalizer.msg("goto", "Goto"));
 			GotoBn.setVisible(mProgram.getProgramID().length() != 0);
 
 			GotoBn.addActionListener(new ActionListener()
@@ -136,7 +136,8 @@ public final class PearlInfoDialog extends JDialog implements WindowClosingIf
 
 		if (mProgram != null)
 		{
-			ExtendedHTMLDocument doc = (ExtendedHTMLDocument) mInfoPane.getDocument();
+		  final ExtendedHTMLDocument doc = (ExtendedHTMLDocument) mInfoPane
+          .getDocument();
 			mInfoPane.setText(createHtmlText(doc, mProgram));
 			mScrollPane.getVerticalScrollBar().setValue(0);
 		}
@@ -148,16 +149,17 @@ public final class PearlInfoDialog extends JDialog implements WindowClosingIf
 		dispose();
 	}
 
-	private String createHtmlText(ExtendedHTMLDocument doc, TVPProgram program)
+	private String createHtmlText(final ExtendedHTMLDocument doc,
+      final TVPProgram program)
 	{
-		Font tFont = new Font("Verdana", Font.BOLD, 18);
-		Font bFont = new Font("Verdana", Font.PLAIN, 11);
-		String titleFont = tFont.getFamily();
-		String titleSize = bFont.getFamily();
-		String bodyFont = String.valueOf(tFont.getSize());
-		String bodyFontSize = String.valueOf(bFont.getSize());
+	  final Font tFont = new Font("Verdana", Font.BOLD, 18);
+    final Font bFont = new Font("Verdana", Font.PLAIN, 11);
+    final String titleFont = tFont.getFamily();
+    final String titleSize = bFont.getFamily();
+    final String bodyFont = String.valueOf(tFont.getSize());
+    final String bodyFontSize = String.valueOf(bFont.getSize());
 
-		StringBuffer buffer = new StringBuffer();
+	  final StringBuffer buffer = new StringBuffer(1024);
 		buffer.append("<html><body>");
 		buffer.append("<table width=\"100%\" style=\"font-family:");
 		buffer.append(bodyFont);
@@ -182,7 +184,7 @@ public final class PearlInfoDialog extends JDialog implements WindowClosingIf
 		buffer.append("</b></div>");
 		buffer.append("</td></tr>");
 
-		addSeperator(doc, buffer);
+		addSeparator(doc, buffer);
 
 		buffer.append("<tr><td valign=\"top\" style=\"color:#808080; font-size:");
 		buffer.append(bodyFontSize).append("\"><b>");
@@ -192,7 +194,7 @@ public final class PearlInfoDialog extends JDialog implements WindowClosingIf
 		buffer.append(program.getAuthor());
 		buffer.append("</td></tr>");
 
-		addSeperator(doc, buffer);
+		addSeparator(doc, buffer);
 
 		buffer.append("<tr><td valign=\"top\" style=\"color:#808080; font-size:");
 		buffer.append(bodyFontSize).append("\"><b>");
@@ -202,7 +204,7 @@ public final class PearlInfoDialog extends JDialog implements WindowClosingIf
 		buffer.append(program.getInfo().replaceAll("\n", "<br>"));
 		buffer.append("</td></tr>");
 
-		addSeperator(doc, buffer);
+		addSeparator(doc, buffer);
 
 		buffer.append("<tr><td colspan=\"2\" valign=\"top\" align=\"center\" style=\"color:#808080; font-size:");
 		buffer.append(bodyFontSize).append("\">");
@@ -219,7 +221,8 @@ public final class PearlInfoDialog extends JDialog implements WindowClosingIf
 		return buffer.toString();
 	}
 
-	private void addSeperator(ExtendedHTMLDocument doc, StringBuffer buffer)
+	private void addSeparator(final ExtendedHTMLDocument doc,
+      final StringBuffer buffer)
 	{
 		buffer.append("<tr><td colspan=\"2\">");
 		buffer.append("<div style=\"font-size:0;\">").append(doc.createCompTag(new HorizontalLine())).append("</div></td></tr>");
