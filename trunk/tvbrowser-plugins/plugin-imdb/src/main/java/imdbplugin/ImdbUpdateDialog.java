@@ -30,10 +30,10 @@ public final class ImdbUpdateDialog extends JDialog {
    */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ImdbUpdateDialog.class);
   private String mServer;
-  private ImdbDatabase mDatabase;
-  private ImdbParser mParser;
-  private ProgressMonitor mMonitor;
-  private ImdbPlugin mPlugin;
+  transient private ImdbDatabase mDatabase;
+  transient private ImdbParser mParser;
+  transient private ProgressMonitor mMonitor;
+  transient private ImdbPlugin mPlugin;
 
   public ImdbUpdateDialog(ImdbPlugin plugin, JFrame frame, String server, ImdbDatabase db) {
     super(frame, true);
