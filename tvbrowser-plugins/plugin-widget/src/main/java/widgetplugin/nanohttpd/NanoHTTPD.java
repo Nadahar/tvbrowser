@@ -1,8 +1,24 @@
 package widgetplugin.nanohttpd;
 
-import java.io.*;
-import java.util.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.URLEncoder;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.StringTokenizer;
+import java.util.TimeZone;
 
 /**
  * A simple, tiny, nicely embeddable HTTP 1.0 server in Java
@@ -639,8 +655,8 @@ public class NanoHTTPD
 			FileInputStream fis = new FileInputStream( f );
 			fis.skip( startFrom );
 			Response r = new Response( HTTP_OK, mime, fis );
-			r.addHeader( "Content-length", "" + (f.length() - startFrom));
-			r.addHeader( "Content-range", "" + startFrom + "-" +
+			r.addHeader("Content-length", "" + (f.length() - startFrom));
+      r.addHeader("Content-range", "" + startFrom + "-" +
 						(f.length()-1) + "/" + f.length());
 			return r;
 		}

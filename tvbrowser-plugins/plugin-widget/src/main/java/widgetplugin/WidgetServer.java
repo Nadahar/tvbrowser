@@ -40,7 +40,7 @@ public class WidgetServer extends NanoHTTPD {
 		// check for localhost
 		String host = header.getProperty("host");
 		if (host.contains(":")) {
-			host = host.substring(0, host.indexOf(":"));
+			host = host.substring(0, host.indexOf(':'));
 		}
 		host = host.toLowerCase();
 		if (!host.equals("localhost")) {
@@ -71,7 +71,7 @@ public class WidgetServer extends NanoHTTPD {
 	}
 
 	private String currentProgramList() {
-		StringBuffer result = new StringBuffer();
+		StringBuffer result = new StringBuffer(1024);
 		Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
 		if (channels.length == 0) {
 			return mLocalizer.msg("noSubscriptions", "No channels subscribed");
