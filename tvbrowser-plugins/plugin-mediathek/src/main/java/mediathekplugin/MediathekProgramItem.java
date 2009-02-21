@@ -20,7 +20,9 @@ public final class MediathekProgramItem {
   private String title;
   private String url;
 
-  public MediathekProgramItem(String title, String url) {
+  public MediathekProgramItem(final String title, final String url) {
+    assert url != null;
+    assert title != null;
     this.title = title;
     this.url = url;
   }

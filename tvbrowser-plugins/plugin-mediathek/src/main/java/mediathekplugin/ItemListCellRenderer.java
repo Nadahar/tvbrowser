@@ -22,17 +22,17 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
-
 public class ItemListCellRenderer extends JLabel implements ListCellRenderer {
 
-  public Component getListCellRendererComponent(JList list, Object value,
-      int index, boolean isSelected, boolean cellHasFocus) {
+  public Component getListCellRendererComponent(final JList list,
+      final Object value, final int index, final boolean isSelected,
+      final boolean cellHasFocus) {
     if (value == null) {
       return new JLabel("");
     }
 
     if (value instanceof MediathekProgram) {
-      MediathekProgram program = (MediathekProgram) value;
+      final MediathekProgram program = (MediathekProgram) value;
       this.setText(program.getTitle());
       return this;
     }

@@ -18,6 +18,6 @@ package mediathekplugin;
 
 public interface IMediathekProperties {
 
-  public static String readProgramsOnStart = "readProgramsOnStart";
+  public static final String readProgramsOnStart = "readProgramsOnStart";
 
 }

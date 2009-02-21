@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,6 +32,7 @@ import mediathekplugin.MediathekPlugin;
 import mediathekplugin.MediathekProgram;
 import mediathekplugin.MediathekProgramItem;
 
+import com.sun.syndication.feed.synd.SyndEnclosure;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.fetcher.FeedFetcher;
@@ -43,20 +45,20 @@ import com.sun.syndication.io.FeedException;
 import devplugin.Channel;
 
 public abstract class AbstractParser implements IParser {
-  
-  protected boolean addProgram(String title, String relativeUrl) {
+
+  protected boolean addProgram(final String title, final String relativeUrl) {
     MediathekPlugin.getInstance().addProgram(this, title, relativeUrl);
     return true;
   }
 
-  public String readUrl(String urlString) {
+  public String readUrl(final String urlString) {
     BufferedReader reader = null;
     try {
-      URL url = new URL(urlString);
-      reader = new BufferedReader(new InputStreamReader(url
-          .openStream(), "utf-8"));
+      final URL url = new URL(urlString);
+      reader = new BufferedReader(new InputStreamReader(url.openStream(),
+          "utf-8"));
       String inputLine;
-      StringBuffer buffer = new StringBuffer();
+      final StringBuffer buffer = new StringBuffer();
       while ((inputLine = reader.readLine()) != null) {
         buffer.append(inputLine);
       }
@@ -66,8 +68,7 @@ public abstract class AbstractParser implements IParser {
       e1.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
-    }
-    finally {
+    } finally {
       if (reader != null) {
         try {
           reader.close();
@@ -79,14 +80,15 @@ public abstract class AbstractParser implements IParser {
     return "";
   }
 
-  protected void readContents(String webPage, Pattern pattern, String name) {
+  protected void readContents(final String webPage, final Pattern pattern,
+      final String name) {
     final MediathekPlugin plugin = MediathekPlugin.getInstance();
-    String startPage = readUrl(webPage);
-    Matcher matcher = pattern.matcher(startPage);
+    final String startPage = readUrl(webPage);
+    final Matcher matcher = pattern.matcher(startPage);
     int count = 0;
     while (matcher.find()) {
-      String relativeUrl = matcher.group(1);
-      String title = plugin.convertHTML(matcher.group(2));
+      final String relativeUrl = matcher.group(1);
+      final String title = plugin.convertHTML(matcher.group(2));
       if (addProgram(title, relativeUrl)) {
         count++;
       }
@@ -104,12 +106,12 @@ public abstract class AbstractParser implements IParser {
     return false;
   }
 
-  public void parseEpisodes(MediathekProgram mediathekProgram) {
+  public void parseEpisodes(final MediathekProgram mediathekProgram) {
     // do not parse anything
   }
-  
-  protected boolean isSupportedChannel(Channel channel,
-      String[] supportedChannels) {
+
+  protected boolean isSupportedChannel(final Channel channel,
+      final String[] supportedChannels) {
     final String name = channel.getName().toLowerCase();
     final String id = channel.getId().toLowerCase();
     for (String supported : supportedChannels) {
@@ -120,27 +122,36 @@ public abstract class AbstractParser implements IParser {
     return false;
   }
 
-  public String fixTitle(String title) {
+  public String fixTitle(final String title) {
     return title;
   }
 
-  protected void logInfo(String string) {
+  protected void logInfo(final String string) {
     MediathekPlugin.getInstance().getLogger().info(string);
   }
-  
-  protected void readRSS(MediathekProgram program, String rssUrl) {
-    FeedFetcherCache feedInfoCache = HashMapFeedInfoCache.getInstance();
-    FeedFetcher feedFetcher = new HttpURLFeedFetcher(feedInfoCache);
+
+  protected void readRSS(final MediathekProgram program, final String rssUrl) {
+    final FeedFetcherCache feedInfoCache = HashMapFeedInfoCache.getInstance();
+    final FeedFetcher feedFetcher = new HttpURLFeedFetcher(feedInfoCache);
     feedFetcher.setUserAgent("TV-Browser Mediathek Plugin "
         + MediathekPlugin.getVersion().toString());
     try {
       int count = 0;
-      SyndFeed feed = feedFetcher.retrieveFeed(new URL(rssUrl));
-      Iterator<?> iterator = feed.getEntries().iterator();
+      final SyndFeed feed = feedFetcher.retrieveFeed(new URL(rssUrl));
+      final Iterator<?> iterator = feed.getEntries().iterator();
       while (iterator.hasNext()) {
-        SyndEntry entry = (SyndEntry) iterator.next();
-        final String link = entry.getLink();
-        if (link != null) {
+        final SyndEntry entry = (SyndEntry) iterator.next();
+        String link = entry.getLink();
+        if (link == null || link.length() == 0) {
+          final List<SyndEnclosure> enclosures = entry.getEnclosures();
+          if (enclosures != null && !enclosures.isEmpty()) {
+            final SyndEnclosure enclosure = enclosures.get(0);
+            if (enclosure.getUrl() != null) {
+              link = enclosure.getUrl();
+            }
+          }
+        }
+        if (link != null && link.length() > 0) {
           program.addItem(new MediathekProgramItem(entry.getTitle(), link));
           count++;
         }

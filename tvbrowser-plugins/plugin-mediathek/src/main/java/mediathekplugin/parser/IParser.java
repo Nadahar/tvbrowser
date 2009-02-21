@@ -21,9 +21,14 @@ import devplugin.Channel;
 
 public interface IParser {
   public String readUrl(String urlString);
+
   public void readContents();
+
   public boolean canReadEpisodes();
+
   public boolean isSupportedChannel(Channel channel);
+
   public String fixTitle(String title);
+
   public void parseEpisodes(MediathekProgram mediathekProgram);
 }
