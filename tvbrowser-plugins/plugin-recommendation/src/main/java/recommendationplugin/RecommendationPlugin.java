@@ -29,7 +29,7 @@ import devplugin.ProgramRatingIf;
 import devplugin.SettingsTab;
 import devplugin.Version;
 
-public class RecommendationPlugin extends Plugin {
+public final class RecommendationPlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(RecommendationPlugin.class);
   private static RecommendationPlugin mInstance;
   private Icon mIcon;
