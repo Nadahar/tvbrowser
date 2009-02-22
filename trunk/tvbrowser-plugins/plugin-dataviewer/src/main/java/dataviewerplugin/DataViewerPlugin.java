@@ -36,7 +36,6 @@ import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableColumn;
 
-import tvbrowser.ui.mainframe.MainFrame;
 import util.io.IOUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -75,7 +74,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
   private boolean mReactOnDataUpdate = false;
   private int mMinChannelWidth = 0;
 
-  private static final Version mVersion = new Version(1,8);
+  private static final Version mVersion = new Version(1,10);
 
   private static DataViewerPlugin mInstance;
 
@@ -250,13 +249,11 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
                                                                       .columnAtPoint(e.getPoint())];
 
                 if (list != null) {
-                  MainFrame.getInstance().scrollToProgram(
-                      list.get(0));
+                  getPluginManager().scrollToProgram(list.get(0));
                 } else {
-                  MainFrame.getInstance().goTo(
+                  getPluginManager().goToDate(
                       mDates[table.columnAtPoint(e.getPoint())]);
-                  MainFrame.getInstance().getProgramTableScrollPane()
-                  .scrollToChannel(
+                  getPluginManager().scrollToChannel(
                       mChannels[table.rowAtPoint(e.getPoint())]);
                 }
               }
@@ -397,6 +394,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
 
   public void run() {
     int acceptableGap = getAcceptableGap();
+    int acceptableDuration = getAcceptableDuration();
 
     Channel[] temp = getPluginManager().getSubscribedChannels();
     ArrayList<Channel> ch = new ArrayList<Channel>();
@@ -479,7 +477,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
 
                 length = length >= 1439 ? length - 1439 : length;
 
-                if (p1.getStartTime() - acceptableGap > length || p1.getStartTime() + acceptableGap < length) {
+                if (p1.getStartTime() - acceptableGap > length || p1.getStartTime() + acceptableGap < length || p1.getLength() > acceptableDuration * 60) {
                   putInHashMap(err, p1, mChannels[i], channels[i].size());
                   complete = false;
                 }
@@ -572,6 +570,30 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
     return Integer.parseInt(mProperties.getProperty("acceptableGap","1"));
   }
 
+  protected int getAcceptableDuration() {
+	return Integer.parseInt(mProperties.getProperty("acceptableDuration","15"));
+  }
+  
+  protected void setAcceptableDuration(int duration) {
+	    if(Integer.parseInt(mProperties.getProperty("acceptableDuration","15")) != duration) {
+	      mProperties.setProperty("acceptableDuration", String.valueOf(duration));
+
+	      new Thread("Wait for table") {
+	        @Override
+	        public void run() {
+	          while(mThread == null || mThread.isAlive()) {
+	            try {
+	              Thread.sleep(200);
+	            }catch(Exception e) {}
+	          }
+
+	          handleTvBrowserStartFinished();
+	        }
+	      }.start();
+
+	    }
+	  }
+  
   protected void setAcceptableGap(int gap) {
     if(Integer.parseInt(mProperties.getProperty("acceptableGap","1")) != gap) {
       mProperties.setProperty("acceptableGap", String.valueOf(gap));
