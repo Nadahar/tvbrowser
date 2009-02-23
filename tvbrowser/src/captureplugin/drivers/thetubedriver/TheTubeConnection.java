@@ -1,5 +1,12 @@
 package captureplugin.drivers.thetubedriver;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.logging.Logger;
+
+import util.misc.AppleScriptRunner;
 import captureplugin.CapturePlugin;
 import captureplugin.drivers.simpledevice.SimpleChannel;
 import captureplugin.drivers.simpledevice.SimpleConfig;
@@ -8,13 +15,6 @@ import captureplugin.drivers.utils.ProgramTime;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Program;
-import util.misc.AppleScriptRunner;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.logging.Logger;
 
 /**
  * Applescripts for The Tube
@@ -31,7 +31,8 @@ public class TheTubeConnection implements SimpleConnectionIf {
    */
   private AppleScriptRunner mAppleScript = new AppleScriptRunner();
 
-  private final String CHANNELLIST = "set chList to {}\n" +
+  private final static String CHANNELLIST = "set chList to {}\n"
+      +
           "tell application \"TheTube\"\n" +
           "\trepeat with ch in channels\n" +
           "\t\tset end of chList to unique id of contents of ch\n" +
@@ -43,7 +44,8 @@ public class TheTubeConnection implements SimpleConnectionIf {
           "set outString to chList as text\n" +
           "outString";
 
-  private final String SWITCHCHANNEL = "tell application \"TheTube\"\n" +
+  private final static String SWITCHCHANNEL = "tell application \"TheTube\"\n"
+      +
           "\trepeat with ch in channels\n" +
           "\t\tif unique id of ch is {0} then\n" +
           "\t\t\tselect ch\n" +
@@ -51,7 +53,8 @@ public class TheTubeConnection implements SimpleConnectionIf {
           "\tend repeat\n" +
           "end tell";
 
-  private final String LISTRECORDINGS = "script x\n" +
+  private final static String LISTRECORDINGS = "script x\n"
+      +
           "\ton getIsoDate(dateObj)\n" +
           "\t\ttell dateObj\n" +
           "\t\t\treturn (its year as string) & \"-\" & text 2 thru 3 of ((100 + (its month as integer)) as string) & \"-\" & text 2 thru 3 of ((100 + (its day)) as string)\n" +
@@ -81,7 +84,8 @@ public class TheTubeConnection implements SimpleConnectionIf {
           "set outString to chList as text\n" +
           "outString";
 
-  private final String CREATERECORDING = "on stringToList from theString for myDelimiters\n" +
+  private final static String CREATERECORDING = "on stringToList from theString for myDelimiters\n"
+      +
           "\ttell AppleScript\n" +
           "\t\tset theSavedDelimiters to AppleScript's text item delimiters\n" +
           "\t\tset text item delimiters to myDelimiters\n" +
@@ -120,7 +124,8 @@ public class TheTubeConnection implements SimpleConnectionIf {
           "\tmake new scheduled recording with properties {name:\"{5}\", description:\"{6}\", rollIn interval:120.0, rollOut interval:300.0, startDate:a, endDate:b, channel id:{7}}\n" +
           "end tell";
 
-  private final String DELETERECORDING = "on stringToList from theString for myDelimiters\n" +
+  private final static String DELETERECORDING = "on stringToList from theString for myDelimiters\n"
+      +
       "\ttell AppleScript\n" +
       "\t\tset theSavedDelimiters to AppleScript's text item delimiters\n" +
       "\t\tset text item delimiters to myDelimiters\n" +
