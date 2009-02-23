@@ -4,6 +4,8 @@ package util.ui.html;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.htmlparser.util.Translate;
+
 import util.io.IOUtilities;
 
 /**
@@ -107,40 +109,7 @@ public class HTMLTextHelper {
     if (html == null) {
       return null;
     }
-    html = html.trim();
-    html = IOUtilities.replace(html, "&auml;", "\u00e4");
-    html = IOUtilities.replace(html, "&Auml;", "\u00c4");
-
-    html = IOUtilities.replace(html, "&ouml;", "\u00f6");
-    html = IOUtilities.replace(html, "&Ouml;", "\u00d6");
-    
-    html = IOUtilities.replace(html, "&uuml;", "\u00fc");
-    html = IOUtilities.replace(html, "&Uuml;", "\u00dc");
-    
-    html = IOUtilities.replace(html, "&szlig;", "\u00df");
-    
-    html = IOUtilities.replace(html, "&eacute;", "\u00E9");
-
-    html = IOUtilities.replace(html, "<br>", "\n");
-    
-    html = IOUtilities.replace(html.trim(), "<i>", "");
-    html = IOUtilities.replace(html.trim(), "</i>", "");
-    
-    html = IOUtilities.replace(html.trim(), "<b>", "");
-    html = IOUtilities.replace(html.trim(), "</b>", "");
-    
-    html = IOUtilities.replace(html.trim(), "<u>", "");
-    html = IOUtilities.replace(html.trim(), "</u>", "");
-    
-    html = html.trim();
-    
-    html = IOUtilities.replace(html, "&quot;", "\"");
-    html = IOUtilities.replace(html, "\\'", "'");
-    
-    // &amp; must be last, otherwise new wrong encodings may be created
-    html = IOUtilities.replace(html, "&amp;", "&");
-
-    return html;
+    return Translate.decode(html);
   }
   
 }
