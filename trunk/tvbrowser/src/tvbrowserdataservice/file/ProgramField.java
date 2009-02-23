@@ -25,10 +25,17 @@
  */
 package tvbrowserdataservice.file;
 
-import devplugin.ProgramFieldType;
-import util.io.FileFormatException;
-import util.io.IOUtilities;
-import util.ui.UiUtilities;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.logging.Level;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -36,16 +43,11 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
-import java.awt.image.BufferedImage;
-import java.awt.Graphics2D;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.Iterator;
-import java.util.logging.Level;
+
+import util.io.FileFormatException;
+import util.io.IOUtilities;
+import util.ui.UiUtilities;
+import devplugin.ProgramFieldType;
 
 /**
  * @author Til Schneider, www.murfman.de
@@ -476,27 +478,6 @@ public class ProgramField implements Cloneable {
         }
     }
 
-
-    public static boolean arraysAreEqual(byte[] array1, byte[] array2) {
-        if ((array1 == null) || (array2 == null)) {
-            return array1 == array2; // true when both are null
-        }
-
-        if (array1.length != array2.length) {
-            return false;
-        }
-
-        for (int i = 0; i < array1.length; i++) {
-            if (array1[i] != array2[i]) {
-                return false;
-            }
-        }
-
-        // Everything was equal
-        return true;
-    }
-
-
     public boolean equals(Object obj) {
         if (obj instanceof ProgramField) {
             ProgramField field = (ProgramField) obj;
@@ -505,7 +486,7 @@ public class ProgramField implements Cloneable {
                 return false;
             }
 
-            return arraysAreEqual(mData, field.mData);
+            return Arrays.equals(mData, field.mData);
         } else {
             return false;
         }

@@ -65,7 +65,7 @@ public class FavoritesSettingTab implements SettingsTab {
   public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(FavoritesSettingTab.class);
   
-  private ProgramReceiveTarget[] mClientPluginTargets, mCurrentCientPluginTargets;
+  private ProgramReceiveTarget[] mClientPluginTargets, mCurrentClientPluginTargets;
   private JLabel mPluginLabel;
   private JCheckBox mExpertMode, mShowRepetitions, mAutoSelectRemider;
   
@@ -102,7 +102,7 @@ public class FavoritesSettingTab implements SettingsTab {
       }
     }
     
-    mCurrentCientPluginTargets = mClientPluginTargets = clientPlugins.toArray(new ProgramReceiveTarget[clientPlugins.size()]);
+    mCurrentClientPluginTargets = mClientPluginTargets = clientPlugins.toArray(new ProgramReceiveTarget[clientPlugins.size()]);
     
     handlePluginSelection();
     
@@ -179,13 +179,13 @@ public class FavoritesSettingTab implements SettingsTab {
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
-    if(mCurrentCientPluginTargets != mClientPluginTargets) {
+    if(mCurrentClientPluginTargets != mClientPluginTargets) {
       FavoritesPlugin.getInstance().setClientPluginTargets(mClientPluginTargets);
       
       Favorite[] favoriteArr = FavoriteTreeModel.getInstance().getFavoriteArr();
       
       for(Favorite favorite : favoriteArr) {
-        favorite.handleNewGlobalReceiveTargets(mCurrentCientPluginTargets);
+        favorite.handleNewGlobalReceiveTargets(mCurrentClientPluginTargets);
       }
     }
     FavoritesPlugin.getInstance().setIsUsingExpertMode(mExpertMode.isSelected());    
