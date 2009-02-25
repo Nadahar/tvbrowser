@@ -113,11 +113,12 @@ public final class MediathekProgram implements Comparable<MediathekProgram> {
           "context.episodes", "Episodes in the Mediathek"), plugin
           .getContextMenuIcon());
       final ArrayList<Action> actionList = new ArrayList<Action>();
-      for (final MediathekProgramItem item : getItems()) {
-        actionList.add(new AbstractAction(item.getTitle()) {
+      for (final MediathekProgramItem episode : getItems()) {
+        actionList
+            .add(new AbstractAction(episode.getTitle(), episode.getIcon()) {
 
           public void actionPerformed(final ActionEvent e) {
-            Launch.openURL(item.getUrl());
+            Launch.openURL(episode.getUrl());
           }
         });
       }

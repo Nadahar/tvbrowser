@@ -45,7 +45,7 @@ import com.sun.syndication.io.FeedException;
 import devplugin.Channel;
 
 public abstract class AbstractParser implements IParser {
-
+  
   protected boolean addProgram(final String title, final String relativeUrl) {
     MediathekPlugin.getInstance().addProgram(this, title, relativeUrl);
     return true;
@@ -58,7 +58,7 @@ public abstract class AbstractParser implements IParser {
       reader = new BufferedReader(new InputStreamReader(url.openStream(),
           "utf-8"));
       String inputLine;
-      final StringBuffer buffer = new StringBuffer();
+      final StringBuffer buffer = new StringBuffer(1024);
       while ((inputLine = reader.readLine()) != null) {
         buffer.append(inputLine);
       }
@@ -79,7 +79,7 @@ public abstract class AbstractParser implements IParser {
     }
     return "";
   }
-
+  
   protected void readContents(final String webPage, final Pattern pattern,
       final String name) {
     final MediathekPlugin plugin = MediathekPlugin.getInstance();
@@ -142,17 +142,20 @@ public abstract class AbstractParser implements IParser {
       while (iterator.hasNext()) {
         final SyndEntry entry = (SyndEntry) iterator.next();
         String link = entry.getLink();
+        String type = entry.getDescription().getType();
         if (link == null || link.length() == 0) {
           final List<SyndEnclosure> enclosures = entry.getEnclosures();
           if (enclosures != null && !enclosures.isEmpty()) {
             final SyndEnclosure enclosure = enclosures.get(0);
             if (enclosure.getUrl() != null) {
               link = enclosure.getUrl();
+              type = enclosure.getType();
             }
           }
         }
         if (link != null && link.length() > 0) {
-          program.addItem(new MediathekProgramItem(entry.getTitle(), link));
+          program
+              .addItem(new MediathekProgramItem(entry.getTitle(), link, type));
           count++;
         }
       }
