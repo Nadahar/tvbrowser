@@ -3179,5 +3179,19 @@
       <title lang="de">Juno</title>
       <title lang="en" original="yes">Juno</title>
   </movie>
-
+  <movie id="movie_db_796" year="2008" director="Matteo Garrone">
+      <title lang="de">Gomorrha - Reise in das Reich der Camorra</title>
+      <title lang="en">Gomorrah</title>
+      <title lang="it" original="yes">Gomorra</title>
+  </movie>
+  <movie id="movie_db_797" year="2008" director="Philippe Claudel">
+      <title lang="de">So viele Jahre liebe ich dich</title>
+      <title lang="en">I’ve Loved You So Long</title>
+      <title lang="fr" original="yes">Il Y A Longtemps Que Je T'aime</title>
+  </movie>
+  <movie id="movie_db_798" year="2008" director="Paolo Sorrentino">
+      <title lang="de">Il Divo</title>
+      <title lang="en">Il Divo</title>
+      <title lang="it" original="yes">Il Divo</title>
+  </movie>
 </movies>
