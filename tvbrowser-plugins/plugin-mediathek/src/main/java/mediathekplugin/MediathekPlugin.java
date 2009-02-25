@@ -36,7 +36,6 @@ import javax.swing.SwingUtilities;
 import mediathekplugin.parser.ARDParser;
 import mediathekplugin.parser.IParser;
 import mediathekplugin.parser.ZDFParser;
-import tvbrowser.TVBrowser;
 import util.browserlauncher.Launch;
 import util.io.IOUtilities;
 import util.ui.UiUtilities;
@@ -44,7 +43,6 @@ import util.ui.html.HTMLTextHelper;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ContextMenuAction;
-import devplugin.ContextMenuSeparatorAction;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
@@ -83,7 +81,7 @@ public class MediathekPlugin extends Plugin {
   /** size of Dialog */
   private Dimension mSize = null;
 
-  private Properties settings;
+  private MediathekSettings mSettings;
 
   private PluginTreeNode rootNode = new PluginTreeNode(this, false);
 
@@ -264,19 +262,17 @@ public class MediathekPlugin extends Plugin {
     final ContextMenuAction menuAction = new ContextMenuAction("Mediathek",
         pluginIconSmall);
     final ArrayList<Action> actionList = new ArrayList<Action>(4);
-    final Action dialogAction = new AbstractAction("Mediathek", pluginIconSmall) {
-
-      public void actionPerformed(final ActionEvent e) {
-        showDialog();
-      }
-    };
-    dialogAction.putValue(Plugin.BIG_ICON, pluginIconLarge);
-    actionList.add(dialogAction);
-
-    if (TVBrowser.VERSION.getMajor() >= 3) {
-      actionList.add(ContextMenuSeparatorAction.getInstance());
-    }
-
+    /*
+     * final Action dialogAction = new AbstractAction("Mediathek",
+     * pluginIconSmall) {
+     * 
+     * public void actionPerformed(final ActionEvent e) { showDialog(); } };
+     * dialogAction.putValue(Plugin.BIG_ICON, pluginIconLarge);
+     * actionList.add(dialogAction);
+     * 
+     * if (TVBrowser.VERSION.getMajor() >= 3) {
+     * actionList.add(ContextMenuSeparatorAction.getInstance()); }
+     */
     actionList.add(new AbstractAction("ARD Mediathek",
         createImageIcon("mediathekplugin/icons/ard.png")) {
 
@@ -329,29 +325,24 @@ public class MediathekPlugin extends Plugin {
 
   @Override
   public SettingsTab getSettingsTab() {
-    return new MediathekSettingsTab(settings);
+    return new MediathekSettingsTab(mSettings);
   }
 
   @Override
   public void handleTvBrowserStartFinished() {
-    if (settings.getProperty(IMediathekProperties.readProgramsOnStart, "false")
-        .equals("true")) {
+    if (mSettings.isReadEpisodesOnStart()) {
       readMediathekContents();
     }
   }
 
   @Override
-  public void loadSettings(final Properties settings) {
-    if (settings == null) {
-      this.settings = new Properties();
-    } else {
-      this.settings = settings;
-    }
+  public void loadSettings(final Properties properties) {
+    mSettings = new MediathekSettings(properties);
   }
 
   @Override
   public Properties storeSettings() {
-    return settings;
+    return mSettings.storeSettings();
   }
 
   private void readMediathekContents() {

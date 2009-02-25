@@ -16,22 +16,56 @@
  */
 package mediathekplugin;
 
-public final class MediathekProgramItem {
-  private String title;
-  private String url;
+import javax.swing.Icon;
 
-  public MediathekProgramItem(final String title, final String url) {
+public final class MediathekProgramItem {
+  private static final int TYPE_LINK = 0;
+  private static final int TYPE_AUDIO = 1;
+  private static final int TYPE_IMAGE = 2;
+  private static final int TYPE_VIDEO = 3;
+  private static final Icon ICON_AUDIO = MediathekPlugin.getInstance()
+      .createImageIcon("mimetypes", "audio-x-generic", 16);
+  private static final Icon ICON_IMAGE = MediathekPlugin.getInstance()
+      .createImageIcon("mimetypes", "image-x-generic", 16);
+  private static final Icon ICON_VIDEO = MediathekPlugin.getInstance()
+      .createImageIcon("mimetypes", "video-x-generic", 16);
+
+  private String mTitle;
+  private String mUrl;
+  private int mType = TYPE_LINK;
+
+  public MediathekProgramItem(final String title, final String url,
+      final String contentType) {
     assert url != null;
     assert title != null;
-    this.title = title;
-    this.url = url;
+    this.mTitle = title;
+    this.mUrl = url;
+    if (contentType != null) {
+      if (contentType.contains("video")) {
+        this.mType = TYPE_VIDEO;
+      } else if (contentType.contains("audio")) {
+        this.mType = TYPE_AUDIO;
+      }
+    }
   }
 
   public String getUrl() {
-    return url;
+    return mUrl;
   }
 
   public String getTitle() {
-    return title;
+    return mTitle;
+  }
+
+  public Icon getIcon() {
+    switch (mType) {
+    case TYPE_VIDEO:
+      return ICON_VIDEO;
+    case TYPE_AUDIO:
+      return ICON_AUDIO;
+    case TYPE_IMAGE:
+      return ICON_IMAGE;
+    }
+    return MediathekPlugin.getInstance().getWebIcon();
   }
 }

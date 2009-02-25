@@ -16,8 +16,6 @@
  */
 package mediathekplugin;
 
-import java.util.Properties;
-
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
@@ -35,7 +33,7 @@ public final class MediathekSettingsTab implements SettingsTab {
 
   private static final Localizer localizer = Localizer
       .getLocalizerFor(MediathekSettingsTab.class);
-  private Properties settings;
+  private MediathekSettings mSettings;
   private JCheckBox autoReadPrograms;
 
   public JPanel createSettingsPanel() {
@@ -51,9 +49,8 @@ public final class MediathekSettingsTab implements SettingsTab {
 
     // automatic program reading
     autoReadPrograms = new JCheckBox(localizer.msg("readProgramsOnStartup",
-        "Automatically read programs from internet on startup"), settings
-        .getProperty(IMediathekProperties.readProgramsOnStart, "true").equals(
-            "true"));
+        "Automatically read programs from internet on startup"), mSettings
+        .isReadEpisodesOnStart());
     panelBuilder.add(autoReadPrograms, cc.xy(2, currentRow));
     return panelBuilder.getPanel();
   }
@@ -67,12 +64,11 @@ public final class MediathekSettingsTab implements SettingsTab {
   }
 
   public void saveSettings() {
-    settings.setProperty(IMediathekProperties.readProgramsOnStart,
-        autoReadPrograms.isSelected() ? "true" : "false");
+    mSettings.setReadEpisodesOnStart(autoReadPrograms.isSelected());
   }
 
-  public MediathekSettingsTab(final Properties settings) {
-    this.settings = settings;
+  public MediathekSettingsTab(final MediathekSettings settings) {
+    this.mSettings = settings;
   }
 
 }

@@ -57,7 +57,7 @@ public final class EpisodeNode extends PluginTreeNode {
     super(episode.getTitle());
     final Node treeNode = getMutableTreeNode();
     treeNode.setAllowsChildren(false);
-    treeNode.setIcon(MediathekPlugin.getInstance().getWebIcon());
+    treeNode.setIcon(episode.getIcon());
     // add web action
     removeAllActions();
     addAction(new LaunchBrowserAction(episode.getUrl()));

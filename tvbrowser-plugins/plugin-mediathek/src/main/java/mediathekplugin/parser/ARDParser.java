@@ -150,10 +150,21 @@ public final class ARDParser extends AbstractParser {
     final Matcher matcher = EPISODE_PATTERN.matcher(content);
     int count = 0;
     while (matcher.find()) {
+      String type = null;
       final String url = SITE_URL + matcher.group(1);
       final String title = MediathekPlugin.getInstance().convertHTML(
           matcher.group(2));
-      program.addItem(new MediathekProgramItem(title, url));
+      final String nextPart = content.substring(matcher.end(1),
+          matcher.end(1) + 1024 * 2);
+      int index = nextPart.indexOf(matcher.group(1) + "\" class=\"");
+      if (index > 0) {
+        index += matcher.group(1).length() + "\" class=\"".length();
+        final int stop = nextPart.indexOf('"', index + 1);
+        if (stop > 0) {
+          type = nextPart.substring(index, stop);
+        }
+      }
+      program.addItem(new MediathekProgramItem(title, url, type));
       count++;
     }
     logInfo("Read " + count + " episodes for " + program.getTitle());
