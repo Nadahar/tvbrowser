@@ -29,7 +29,7 @@ import devplugin.Version;
 public final class ZattooPlugin extends Plugin {
 
   private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 4, 3,
+  private static final Version PLUGIN_VERSION = new Version(0, 4, 4,
       PLUGIN_IS_STABLE);
 
   private static final Localizer mLocalizer = Localizer
