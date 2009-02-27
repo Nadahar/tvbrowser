@@ -18,6 +18,7 @@ package movieawardplugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import devplugin.Program;
 
@@ -32,23 +33,24 @@ import devplugin.Program;
 public class MovieHashMap {
   private HashMap<Integer, ArrayList<Movie>> mMovieLookup = new HashMap<Integer, ArrayList<Movie>>();
 
-  public void addMovie(Movie movie) {
+  public void addMovie(final Movie movie) {
+    final HashSet<String> singularTitles = new HashSet<String>();
     // hash titles
-    final HashMap<String, String> titles = movie.getTitles();
-    for (String title : titles.values()) {
-      addMovieTitle(movie, title);
-    }
+    singularTitles.addAll(movie.getTitles().values());
     // hash alternative titles
-    HashMap<String, ArrayList<String>> altTitles = movie.getAlternativeTitles();
+    final HashMap<String, ArrayList<String>> altTitles = movie
+        .getAlternativeTitles();
     for (ArrayList<String> langTitles : altTitles.values()) {
-      for (String title : langTitles) {
-        addMovieTitle(movie, title);
-      }
+      singularTitles.addAll(langTitles);
+    }
+    // add each title only once
+    for (String title : singularTitles) {
+      addMovieTitle(movie, title);
     }
   }
 
-  private void addMovieTitle(Movie movie, String title) {
-    int hash = title.toLowerCase().hashCode();
+  private void addMovieTitle(final Movie movie, final String title) {
+    final int hash = title.toLowerCase().hashCode();
     ArrayList<Movie> list = mMovieLookup.get(hash);
     if (list == null) {
       list = new ArrayList<Movie>(2);
@@ -57,7 +59,7 @@ public class MovieHashMap {
     list.add(movie);
   }
 
-  public ArrayList<Movie> getMovies(Program program) {
+  public ArrayList<Movie> getMovies(final Program program) {
     return mMovieLookup.get(program.getTitle().toLowerCase().hashCode());
   }
 

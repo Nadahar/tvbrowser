@@ -4,13 +4,13 @@ import devplugin.Program;
 
 public class MovieAwardForMovies extends MovieAward {
 
-  public MovieAwardForMovies(MovieDatabase database) {
+  public MovieAwardForMovies(final MovieDatabase database) {
     super(database);
   }
 
   @Override
-  public boolean containsAwardFor(Program program) {
-    boolean contains = super.containsAwardFor(program);
+  public boolean containsAwardFor(final Program program) {
+    final boolean contains = super.containsAwardFor(program);
     if (!contains) {
       return false;
     }
@@ -18,8 +18,8 @@ public class MovieAwardForMovies extends MovieAward {
     return isValid(program);
   }
 
-  private boolean isValid(Program program) {
-    int info = program.getInfo();
+  private boolean isValid(final Program program) {
+    final int info = program.getInfo();
     if (info > 0) {
       if (bitSet(info, Program.INFO_CATEGORIE_MOVIE)) {
         return true;
@@ -43,8 +43,8 @@ public class MovieAwardForMovies extends MovieAward {
   }
 
   @Override
-  public Award[] getAwardsFor(Program program) {
-    Award[] awards = super.getAwardsFor(program);
+  public Award[] getAwardsFor(final Program program) {
+    final Award[] awards = super.getAwardsFor(program);
     if (awards == null || awards.length == 0) {
       return awards;
     }
@@ -55,7 +55,7 @@ public class MovieAwardForMovies extends MovieAward {
     }
   }
 
-  private boolean bitSet(int info, int bit) {
+  private boolean bitSet(final int info, final int bit) {
     return (info & bit) == bit;
   }
 

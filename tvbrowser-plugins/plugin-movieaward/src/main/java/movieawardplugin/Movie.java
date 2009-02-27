@@ -39,21 +39,22 @@ public class Movie {
       4);
   private String mOriginalTitle;
 
-  public Movie(String id) {
+  public Movie(final String id) {
     mId = id;
   }
   public String getId() {
     return mId;
   }
 
-  public void addTitle(String lang, String title, boolean original) {
+  public void addTitle(final String lang, final String title,
+      final boolean original) {
     if (original) {
       mOriginalTitle = title;
     }
     mTitles.put(lang, title);
   }
 
-  public void setProductionYear(int year) {
+  public void setProductionYear(final int year) {
     mYear = year;
   }
 
@@ -61,7 +62,7 @@ public class Movie {
     return mYear;
   }
 
-  public void setYear(int year) {
+  public void setYear(final int year) {
     mYear = year;
   }
 
@@ -69,11 +70,11 @@ public class Movie {
     return mDirector;
   }
 
-  public void setDirector(String director) {
+  public void setDirector(final String director) {
     mDirector = director;
   }
 
-  public void addAlternativeTitle(String lang, String title) {
+  public void addAlternativeTitle(final String lang, final String title) {
     ArrayList<String> list = mAlternativeTitles.get(lang);
     
     if (list == null) {
@@ -83,9 +84,9 @@ public class Movie {
     list.add(title.toLowerCase());
   }
 
-  public boolean matchesProgram(Program program) {
+  public boolean matchesProgram(final Program program) {
     // avoid String comparison by filtering for year first
-    int year = program.getIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE);
+    final int year = program.getIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE);
     if (year > 0 && mYear > 0) {
       if (!(year >= mYear - 1 && year <= mYear + 1)) {
         return false;

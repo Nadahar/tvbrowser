@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import util.ui.Localizer;
 import devplugin.PluginsFilterComponent;
 import devplugin.Program;
-import util.ui.Localizer;
 
 /**
  * Filter component class of this plugin.
@@ -23,7 +23,7 @@ public class MovieAwardFilterComponent extends PluginsFilterComponent {
     return mLocalizer.msg("name","Movie Awards");
   }
 
-  public boolean accept(Program program) {
+  public boolean accept(final Program program) {
     return MovieAwardPlugin.getInstance() == null || MovieAwardPlugin.getInstance().hasAwards(program);
   }
 
@@ -31,10 +31,13 @@ public class MovieAwardFilterComponent extends PluginsFilterComponent {
     return 1;
   }
 
-  public void read(ObjectInputStream in, int version) throws IOException,
+  public void read(final ObjectInputStream in, final int version)
+      throws IOException,
       ClassNotFoundException {
+    // no user settings
   }
 
-  public void write(ObjectOutputStream out) throws IOException {
+  public void write(final ObjectOutputStream out) throws IOException {
+    // no user settings
   }
 }

@@ -29,7 +29,7 @@ public class MovieAwardCategory {
   private String mId;
   private HashMap<String, String> mNames = new HashMap<String, String>();
 
-  public MovieAwardCategory(String id) {
+  public MovieAwardCategory(final String id) {
     mId = id;
   }
 
@@ -37,11 +37,11 @@ public class MovieAwardCategory {
     return mId;
   }
 
-  public void addName(String lang, String name) {
+  public void addName(final String lang, final String name) {
     mNames.put(lang.toLowerCase(), name);
   }
 
-  public String getName(String lang) {
+  public String getName(final String lang) {
     return mNames.get(lang.toLowerCase());
   }
 }

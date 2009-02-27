@@ -24,7 +24,7 @@ public class MovieDatabase {
       return movie;
     }
 
-    ArrayList<Movie> movies = mMovies.getMovies(program);
+    final ArrayList<Movie> movies = mMovies.getMovies(program);
     if (movies != null) {
       for (Movie movie : movies) {
         if (movie.matchesProgram(program)) {
