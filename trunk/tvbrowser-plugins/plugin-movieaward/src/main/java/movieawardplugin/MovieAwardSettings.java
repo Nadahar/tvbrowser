@@ -34,7 +34,7 @@ public class MovieAwardSettings {
   private static final String KEY_GROUPING = "grouping";
   private Properties mProperties;
   
-  public MovieAwardSettings(Properties properties) {
+  public MovieAwardSettings(final Properties properties) {
     if (properties != null) {
       mProperties = properties;
     } else {
@@ -46,7 +46,7 @@ public class MovieAwardSettings {
     setNodeGrouping(GROUPING_BY_AWARD_AND_DATE);
   }
 
-  private void setNodeGrouping(int grouping) {
+  private void setNodeGrouping(final int grouping) {
     mProperties.setProperty(KEY_GROUPING, Integer.toString(grouping));
   }
 
@@ -54,7 +54,7 @@ public class MovieAwardSettings {
     return isGrouping(GROUPING_BY_AWARD_AND_DATE);
   }
 
-  private boolean isGrouping(int grouping) {
+  private boolean isGrouping(final int grouping) {
     return Integer.parseInt(mProperties.getProperty(KEY_GROUPING, "0")) == grouping;
   }
 

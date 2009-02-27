@@ -24,7 +24,7 @@ public class MovieDataFactory {
       final MovieAward award) {
 
     try {
-      SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+      final SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
       parser.parse(new InputSource(stream), new MovieAwardHandler(award));
     } catch (SAXNotRecognizedException e) {
       mLog.log(Level.SEVERE, "Could not parse Movie Award", e);
@@ -51,7 +51,7 @@ public class MovieDataFactory {
     movieDatabase.clear();
 
     try {
-      SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+      final SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
       parser.parse(new InputSource(stream), new MovieDatabaseHandler(movieDatabase));
     } catch (SAXNotRecognizedException e) {
       mLog.log(Level.SEVERE, "Could not parse Movie Award", e);

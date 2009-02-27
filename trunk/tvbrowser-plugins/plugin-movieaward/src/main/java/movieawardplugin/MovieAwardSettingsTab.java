@@ -26,16 +26,16 @@ public class MovieAwardSettingsTab implements SettingsTab {
 
   private MovieAwardPlugin mPlugin;
 
-  public MovieAwardSettingsTab(MovieAwardPlugin movieAwardPlugin) {
+  public MovieAwardSettingsTab(final MovieAwardPlugin movieAwardPlugin) {
     mPlugin = movieAwardPlugin;
   }
 
   public JPanel createSettingsPanel() {
     final JPanel panel = new JPanel(new FormLayout("fill:min:grow", "fill:min:grow"));
     panel.setBorder(Borders.DLU4_BORDER);
-    CellConstraints cc = new CellConstraints();
+    final CellConstraints cc = new CellConstraints();
 
-    StringBuilder builder = new StringBuilder();
+    final StringBuilder builder = new StringBuilder();
 
     builder.append("<html><body>");
 
@@ -46,7 +46,7 @@ public class MovieAwardSettingsTab implements SettingsTab {
 
     builder.append("<ul>");
 
-    List<MovieAward> awards = mPlugin.getMovieAwards();
+    final List<MovieAward> awards = mPlugin.getMovieAwards();
     Collections.sort(awards);
 
     for (MovieAward award : awards) {
@@ -80,7 +80,8 @@ public class MovieAwardSettingsTab implements SettingsTab {
     builder.append(mLocalizer.msg("footer", "footer"));
     builder.append("</body></html>");
 
-    JEditorPane editor = UiUtilities.createHtmlHelpTextArea(builder.toString(), Color.WHITE);
+    final JEditorPane editor = UiUtilities.createHtmlHelpTextArea(builder
+        .toString(), Color.WHITE);
     editor.setBackground(Color.WHITE);
     editor.setOpaque(true);
 

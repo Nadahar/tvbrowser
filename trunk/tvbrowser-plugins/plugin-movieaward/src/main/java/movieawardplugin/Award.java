@@ -34,7 +34,8 @@ public class Award {
   private String mMovieId;
   private String mRecipient;
 
-  public Award(String category, String status, String movieId, int awardYear, String recipient) {
+  public Award(final String category, final String status,
+      final String movieId, final int awardYear, final String recipient) {
     mCategory = category;
     if (status.equalsIgnoreCase("winner")) {
       mStatus = Status.WINNER;
@@ -56,7 +57,7 @@ public class Award {
     return mAwardYear;
   }
 
-  public void setAwardYear(int awardYear) {
+  public void setAwardYear(final int awardYear) {
     mAwardYear = awardYear;
   }
 
@@ -64,7 +65,7 @@ public class Award {
     return mCategory;
   }
 
-  public void setCategorie(String category) {
+  public void setCategorie(final String category) {
     mCategory = category;
   }
 
@@ -72,11 +73,11 @@ public class Award {
     return mStatus;
   }
 
-  public void setStatus(Status status) {
+  public void setStatus(final Status status) {
     mStatus = status;
   }
 
-  public void setMovieId(String movieId) {
+  public void setMovieId(final String movieId) {
     mMovieId = movieId;
   }
 
@@ -84,7 +85,7 @@ public class Award {
     return mRecipient;
   }
 
-  public void setRecipient(String recipient) {
+  public void setRecipient(final String recipient) {
     mRecipient = recipient;
   }
 

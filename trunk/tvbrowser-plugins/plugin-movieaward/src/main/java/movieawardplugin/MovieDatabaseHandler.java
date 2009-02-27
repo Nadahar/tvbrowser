@@ -23,13 +23,13 @@
  */
 package movieawardplugin;
 
-import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.Attributes;
-
-import java.util.logging.Logger;
-import java.util.logging.Level;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 
 public class MovieDatabaseHandler extends DefaultHandler {
@@ -51,7 +51,7 @@ public class MovieDatabaseHandler extends DefaultHandler {
   private MovieDatabase mMovieDatabase;
   private Movie mMovie;
 
-  public MovieDatabaseHandler(MovieDatabase movieAward) {
+  public MovieDatabaseHandler(final MovieDatabase movieAward) {
     mMovieDatabase = movieAward;
     mText = new StringBuffer();
   }
@@ -60,7 +60,7 @@ public class MovieDatabaseHandler extends DefaultHandler {
    * Handles the occurrence of tag text.
    */
   @Override
-  public void characters(char ch[], int start, int length)
+  public void characters(final char ch[], final int start, final int length)
       throws SAXException {
     // There is some text -> Add it to the text buffer
     mText.append(ch, start, length);
@@ -70,8 +70,8 @@ public class MovieDatabaseHandler extends DefaultHandler {
    * Handles the occurrence of a start tag.
    */
   @Override
-  public void startElement(String uri, String localName, String qName,
-                           Attributes attributes)
+  public void startElement(final String uri, final String localName,
+      final String qName, final Attributes attributes)
       throws SAXException {
 
     mNodeNames.add(qName);
@@ -104,7 +104,8 @@ public class MovieDatabaseHandler extends DefaultHandler {
    * Handles the occurrence of an end tag.
    */
   @Override
-  public void endElement(String uri, String localName, String qName)
+  public void endElement(final String uri, final String localName,
+      final String qName)
       throws SAXException {
     String parent = null;
     if (mNodeNames.size() > 1) {
@@ -112,7 +113,8 @@ public class MovieDatabaseHandler extends DefaultHandler {
     }
 
     if ("title".equals(qName) && "movie".equals(parent)) {
-      boolean original = "yes".equalsIgnoreCase(mAttributes.getValue("original"));
+      final boolean original = "yes".equalsIgnoreCase(mAttributes
+          .getValue("original"));
       mMovie.addTitle(mAttributes.getValue("lang"), mText.toString(), original);
     } else if ("movie".equals(qName)) {
       mMovieDatabase.addMovie(mMovie);
@@ -129,7 +131,7 @@ public class MovieDatabaseHandler extends DefaultHandler {
    *
    * @param buffer The StringBuffer to clear.
    */
-  private void clear(StringBuffer buffer) {
+  private void clear(final StringBuffer buffer) {
     buffer.delete(0, buffer.length());
   }
 }

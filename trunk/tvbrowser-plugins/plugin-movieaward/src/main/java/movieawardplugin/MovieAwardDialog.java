@@ -29,26 +29,29 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
   private static final transient Localizer mLocalizer = Localizer
       .getLocalizerFor(MovieAwardDialog.class);
 
-  public MovieAwardDialog(JFrame frame, ArrayList<MovieAward> mMovieAwards, Program program) {
+  public MovieAwardDialog(final JFrame frame,
+      final ArrayList<MovieAward> mMovieAwards, final Program program) {
     super(frame, true);
     createDialog(mMovieAwards, program);
   }
 
-  public MovieAwardDialog(JDialog dialog, ArrayList<MovieAward> mMovieAwards, Program program) {
+  public MovieAwardDialog(final JDialog dialog,
+      final ArrayList<MovieAward> mMovieAwards, final Program program) {
     super(dialog, true);
     createDialog(mMovieAwards, program);
   }
 
-  private void createDialog(ArrayList<MovieAward> mMovieAwards, Program program) {
+  private void createDialog(final ArrayList<MovieAward> mMovieAwards,
+      final Program program) {
     setTitle(mLocalizer.msg("title", "Movie Awards"));
 
-    JPanel panel = (JPanel) getContentPane();
+    final JPanel panel = (JPanel) getContentPane();
     panel.setBorder(Borders.DLU4_BORDER);
     panel.setLayout(new FormLayout("fill:min:grow", "fill:min:grow, 3dlu, pref"));
 
-    CellConstraints cc = new CellConstraints();
+    final CellConstraints cc = new CellConstraints();
 
-    StringBuilder text = new StringBuilder();
+    final StringBuilder text = new StringBuilder();
 
     text.append("<html><body><h1>&nbsp;").append(
         mLocalizer.msg("movieAwardFor", "Movie Awards for")).append(" <i>")
@@ -87,16 +90,16 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
 
     text.append("</ul></body></html>");
 
-    JEditorPane pane = new JEditorPane("text/html", text.toString());
+    final JEditorPane pane = new JEditorPane("text/html", text.toString());
     pane.setEditable(false);
     panel.add(new JScrollPane(pane), cc.xy(1,1));
 
-    ButtonBarBuilder builder = new ButtonBarBuilder();
+    final ButtonBarBuilder builder = new ButtonBarBuilder();
 
-    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
+    final JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
 
     ok.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
+      public void actionPerformed(final ActionEvent e) {
         close();
       }
     });

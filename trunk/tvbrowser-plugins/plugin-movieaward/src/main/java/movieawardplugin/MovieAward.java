@@ -44,7 +44,7 @@ public class MovieAward implements Comparable<MovieAward> {
   
   private MovieHashMap mMovies;
 
-  public MovieAward(MovieDatabase database) {
+  public MovieAward(final MovieDatabase database) {
     mMovieDatabase = database;
     mMovies = new MovieHashMap();
   }
@@ -54,7 +54,7 @@ public class MovieAward implements Comparable<MovieAward> {
    * @param language Language (e.g. en, de, de-at)
    * @param name Name of the Award
    */
-  public void addName(String language, String name) {
+  public void addName(final String language, final String name) {
     mLog.info("Added movie award " + name + " (" + language + ')');
     mNames.put(language.toLowerCase(), name);
   }
@@ -63,15 +63,15 @@ public class MovieAward implements Comparable<MovieAward> {
    * Add a category for the award
    * @param category category
    */
-  public void addCategorie(MovieAwardCategory category) {
+  public void addCategorie(final MovieAwardCategory category) {
     mCategory.put(category.getId(), category);
   }
 
-  public void addMovie(Movie movie) {
+  public void addMovie(final Movie movie) {
     mMovies.addMovie(movie);
   }
 
-  public void addAward(Award award) {
+  public void addAward(final Award award) {
     ArrayList<Award> awardList = mAwards.get(award.getMovieId());
 
     if (awardList == null) {
@@ -81,7 +81,7 @@ public class MovieAward implements Comparable<MovieAward> {
     awardList.add(award);
   }
 
-  public void setUrl(String url) {
+  public void setUrl(final String url) {
     mUrl = url;
   }
 
@@ -91,7 +91,7 @@ public class MovieAward implements Comparable<MovieAward> {
 
   public boolean containsAwardFor(final Program program) {
     // At first try to find movies in the award-data
-    ArrayList<Movie> movies = mMovies.getMovies(program);
+    final ArrayList<Movie> movies = mMovies.getMovies(program);
     if (movies != null) {
       for (Movie movie : movies) {
         if (movie.matchesProgram(program) && mAwards.containsKey(movie.getId())) {
@@ -108,7 +108,7 @@ public class MovieAward implements Comparable<MovieAward> {
   public Award[] getAwardsFor(final Program program) {
     final ArrayList<Award> list = new ArrayList<Award>();
 
-    ArrayList<Movie> movies = mMovies.getMovies(program);
+    final ArrayList<Movie> movies = mMovies.getMovies(program);
     if (movies != null) {
       for (Movie movie : movies) {
         if (movie.matchesProgram(program) && mAwards.containsKey(movie.getId())) {
@@ -142,8 +142,8 @@ public class MovieAward implements Comparable<MovieAward> {
     return name;
   }
 
-  public String getCategoryName(String category) {
-    MovieAwardCategory cat = mCategory.get(category);
+  public String getCategoryName(final String category) {
+    final MovieAwardCategory cat = mCategory.get(category);
 
     if (cat == null) {
       return category;
@@ -158,11 +158,11 @@ public class MovieAward implements Comparable<MovieAward> {
     return name;
   }
 
-  public void setProviderName(String providerName) {
+  public void setProviderName(final String providerName) {
     mProviderName = providerName;
   }
 
-  public void setProviderUrl(String providerUrl) {
+  public void setProviderUrl(final String providerUrl) {
     mProviderUrl = providerUrl;
   }
 
@@ -174,7 +174,7 @@ public class MovieAward implements Comparable<MovieAward> {
     return mProviderName;
   }
 
-  public int compareTo(MovieAward other) {
+  public int compareTo(final MovieAward other) {
     return getName().compareTo(other.getName());
   }
 }
