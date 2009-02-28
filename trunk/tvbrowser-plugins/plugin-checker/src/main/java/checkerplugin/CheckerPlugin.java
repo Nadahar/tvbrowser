@@ -18,6 +18,8 @@ package checkerplugin;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.regex.Pattern;
@@ -58,8 +60,8 @@ public class CheckerPlugin extends Plugin {
 
   private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
 
-  private static String HTML_PATTERN = Pattern.quote("&") + "\\w+"
-      + Pattern.quote(";");
+  private static Pattern HTML_PATTERN = Pattern.compile(Pattern.quote("&")
+      + "\\w+" + Pattern.quote(";"));
 
   public PluginInfo getInfo() {
     if (mPluginInfo == null) {
@@ -202,11 +204,11 @@ public class CheckerPlugin extends Plugin {
                       .getLocalizedName()));
             } else {
               results.add(mLocalizer.msg("issue.trim",
-                  "Text field {0} has blanks at beginning or end.", fieldType
-                      .getLocalizedName()));
+                  "Text field {0} has whitespace at beginning or end.",
+                  fieldType.getLocalizedName()));
             }
           }
-          if (content.matches(HTML_PATTERN)) {
+          if (HTML_PATTERN.matcher(content).find()) {
             results.add(mLocalizer.msg("issue.entity",
                 "Text field {0} contains HTML entity.", fieldType
                     .getLocalizedName()));
@@ -349,7 +351,6 @@ public class CheckerPlugin extends Plugin {
                 PluginTreeNode node = nodes.get(issue);
                 if (node == null) {
                   node = new PluginTreeNode(issue);
-                  mRootNode.add(node);
                   nodes.put(issue, node);
                 }
                 node.addProgram(program);
@@ -359,6 +360,14 @@ public class CheckerPlugin extends Plugin {
         }
         date = date.addDays(1);
       }
+    }
+    // sort nodes and add them to the root
+    final Collection<PluginTreeNode> values = nodes.values();
+    final PluginTreeNode[] nodeArray = new PluginTreeNode[values.size()];
+    values.toArray(nodeArray);
+    Arrays.sort(nodeArray);
+    for (PluginTreeNode node : nodeArray) {
+      mRootNode.add(node);
     }
     mRootNode.update();
   }
