@@ -424,7 +424,7 @@
   <award category="best_screenwriter" recipient="Hany Abu-Assad, Bero Beyer" status="winner" movie="movie_64" year="2005" />
   <award category="best_screenwriter" recipient="Florian Henckel von Donnersmarck" status="winner" movie="movie_19" year="2006" />
   <award category="best_screenwriter" recipient="Fatih Akın" status="winner" movie="movie_65" year="2007" />
-  <award category="best_screenwriter" recipient="Maurizio Braucci, Ugo Chiti, Gianni di Gregorio, Matteo Garrone, Massimo Gaudioso & Roberto Saviano" status="winner" movie="movie_db_796" year="2008" />
+  <award category="best_screenwriter" recipient="Maurizio Braucci, Ugo Chiti, Gianni di Gregorio, Matteo Garrone, Massimo Gaudioso &amp; Roberto Saviano" status="winner" movie="movie_db_796" year="2008" />
 
 </awards>
 
