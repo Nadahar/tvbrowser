@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import javax.swing.Icon;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -47,7 +48,7 @@ public class PluginIconFilterComponent extends AbstractFilterComponent {
 
   private PluginProxy mPlugin;
 
-  public PluginIconFilterComponent(String name, String desc) {
+  public PluginIconFilterComponent(final String name, final String desc) {
     super(name, desc);
   }
 
@@ -55,7 +56,8 @@ public class PluginIconFilterComponent extends AbstractFilterComponent {
     this("", "");
   }
 
-  public void read(ObjectInputStream in, int version) throws IOException,
+  public void read(final ObjectInputStream in, final int version)
+      throws IOException,
       ClassNotFoundException {
     String pluginId;
     pluginId = (String) in.readObject();
@@ -63,7 +65,7 @@ public class PluginIconFilterComponent extends AbstractFilterComponent {
     mPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
   }
 
-  public void write(ObjectOutputStream out) throws IOException {
+  public void write(final ObjectOutputStream out) throws IOException {
     if (mPlugin == null) {
       out.writeObject("[invalid]");
     } else {
@@ -71,18 +73,20 @@ public class PluginIconFilterComponent extends AbstractFilterComponent {
     }
   }
 
-  public boolean accept(Program program) {
-    if (mPlugin != null && mPlugin.isActivated()
-        && mPlugin.getProgramTableIcons(program) != null) {
-      return true;
+  public boolean accept(final Program program) {
+    if (mPlugin != null && mPlugin.isActivated()) {
+      Icon[] icons = mPlugin.getProgramTableIcons(program);
+      if (icons != null && icons.length > 0) {
+        return true;
+      }
     }
     return false;
   }
 
   public JPanel getSettingsPanel() {
 
-    JPanel content = new JPanel(new BorderLayout(0, 7));
-    JTextArea ta = new JTextArea(mLocalizer.msg("desc",
+    final JPanel content = new JPanel(new BorderLayout(0, 7));
+    final JTextArea ta = new JTextArea(mLocalizer.msg("desc",
         "Accept all programs marked by plugin:"));
     ta.setLineWrap(true);
     ta.setWrapStyleWord(true);
@@ -91,7 +95,7 @@ public class PluginIconFilterComponent extends AbstractFilterComponent {
     ta.setFocusable(false);
     content.add(ta, BorderLayout.NORTH);
 
-    PluginProxy[] plugins = PluginProxyManager.getInstance()
+    final PluginProxy[] plugins = PluginProxyManager.getInstance()
         .getActivatedPlugins();
     mBox = new JComboBox(plugins);
     if (mPlugin != null) {
