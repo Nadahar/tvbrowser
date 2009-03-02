@@ -113,7 +113,7 @@ public final class PearlInfoDialog extends JDialog implements WindowClosingIf
 
 			GotoBn.addActionListener(new ActionListener()
 			{
-				public void actionPerformed(ActionEvent evt)
+				public void actionPerformed(final ActionEvent evt)
 				{
 					Plugin.getPluginManager().scrollToProgram(mProgram.getProgram());
 				}
@@ -124,7 +124,7 @@ public final class PearlInfoDialog extends JDialog implements WindowClosingIf
 		mCloseBn = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
 		mCloseBn.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent evt)
+			public void actionPerformed(final ActionEvent evt)
 			{
 				dispose();
 			}

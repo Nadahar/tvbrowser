@@ -483,7 +483,7 @@ public class TVPearl
 	{
 		if (TVPearlPlugin.getInstance().hasPluginTarget())
 		{
-			ArrayList<Program> programList = new ArrayList<Program>();
+			final ArrayList<Program> programList = new ArrayList<Program>();
 			for (TVPProgram p : getPearlList())
 			{
 				if (p.wasFound() && !p.getSendTo())
@@ -495,10 +495,11 @@ public class TVPearl
 			Program[] prArray = new Program[programList.size()];
 			prArray = programList.toArray(prArray);
 
-			ProgramReceiveTarget[] targets = TVPearlPlugin.getInstance().getClientPluginsTargets();
+			final ProgramReceiveTarget[] targets = TVPearlPlugin.getInstance()
+          .getClientPluginsTargets();
 			for (ProgramReceiveTarget target : targets)
 			{
-				ProgramReceiveIf plugin = target.getReceifeIfForIdOfTarget();
+			  final ProgramReceiveIf plugin = target.getReceifeIfForIdOfTarget();
 				if (plugin != null && plugin.canReceiveProgramsWithTarget())
 				{
 					plugin.receivePrograms(prArray, target);
@@ -512,7 +513,7 @@ public class TVPearl
 	 */
 	private void updateTreeView()
 	{
-		PluginTreeNode root = TVPearlPlugin.getInstance().getRootNode();
+	  final PluginTreeNode root = TVPearlPlugin.getInstance().getRootNode();
 		root.removeAllActions();
 		root.removeAllChildren();
 		
