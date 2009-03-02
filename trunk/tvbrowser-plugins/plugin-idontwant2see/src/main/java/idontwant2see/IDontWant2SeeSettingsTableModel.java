@@ -40,8 +40,9 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
   private String mLastChangedValue;
   private JTable mTable;
   
-  protected IDontWant2SeeSettingsTableModel(ArrayList<IDontWant2SeeListEntry> entries,
-      String lastEnteredExclusionString) {
+  protected IDontWant2SeeSettingsTableModel(
+      final ArrayList<IDontWant2SeeListEntry> entries,
+      final String lastEnteredExclusionString) {
     mLastChangedValue = lastEnteredExclusionString;
     
     for(IDontWant2SeeListEntry entry : entries) {
@@ -68,7 +69,7 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
     return mData.size();
   }
   
-  public boolean isCellEditable(int row, int column) {
+  public boolean isCellEditable(final int row, final int column) {
     return column == 0;
   }
   
@@ -80,19 +81,20 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
     fireTableRowsInserted(mData.size()-1,mData.size()-1);
   }
   
-  protected boolean rowIsValid(int row) {
+  protected boolean rowIsValid(final int row) {
     return mData.get(row).isValid();
   }
   
-  protected boolean isRowOutdated(int row, Date compareValue, int outdatedDayCount) {
+  protected boolean isRowOutdated(final int row, final Date compareValue,
+      final int outdatedDayCount) {
     return mData.get(row).isOutdated(compareValue,outdatedDayCount);
   }
   
-  protected boolean isLastChangedRow(int row) {
+  protected boolean isLastChangedRow(final int row) {
     return mData.get(row).isLastChanged(mLastChangedValue);
   }
   
-  public String getColumnName(int column) {
+  public String getColumnName(final int column) {
     if(column == 0) {
       return IDontWant2See.mLocalizer.msg("searchText","Search text");
     }
@@ -104,13 +106,13 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
    * Deletes the row with the given row index.
    * @param row
    */
-  public void deleteRow(int row) {
+  public void deleteRow(final int row) {
     mData.remove(row);
     fireTableRowsDeleted(row,row);
   }
 
-  public Object getValueAt(int rowIndex, int columnIndex) {
-    IDontWant2SeeSettingsTableEntry entry = mData.get(rowIndex);
+  public Object getValueAt(final int rowIndex, final int columnIndex) {
+    final IDontWant2SeeSettingsTableEntry entry = mData.get(rowIndex);
     
     if(columnIndex == 0) {
       return entry.mNewSearchText;
@@ -120,8 +122,9 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
     }
   }
   
-  public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-    IDontWant2SeeSettingsTableEntry entry = mData.get(rowIndex);
+  public void setValueAt(final Object aValue, final int rowIndex,
+      final int columnIndex) {
+    final IDontWant2SeeSettingsTableEntry entry = mData.get(rowIndex);
     
     if(columnIndex == 0) {
       mLastChangedValue = (String)aValue;
@@ -139,12 +142,12 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
     }
   }
   
-  protected void setTable(JTable table) {
+  protected void setTable(final JTable table) {
     mTable = table;
   }
   
   protected ArrayList<IDontWant2SeeListEntry> getChangedList() {
-    ArrayList<IDontWant2SeeListEntry> newList = new ArrayList<IDontWant2SeeListEntry>();
+    final ArrayList<IDontWant2SeeListEntry> newList = new ArrayList<IDontWant2SeeListEntry>();
     
     for(IDontWant2SeeSettingsTableEntry entry : mData) {
       if(entry.isValid()) {
@@ -171,7 +174,7 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
     private String mNewSearchText;
     private Date mLastMatchedDate;
     
-    protected IDontWant2SeeSettingsTableEntry(IDontWant2SeeListEntry entry) {
+    protected IDontWant2SeeSettingsTableEntry(final IDontWant2SeeListEntry entry) {
       mListEntry = entry;
       mWasChanged = false;
       mNewCaseSensitve = entry.isCaseSensitive();
@@ -184,7 +187,7 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
      * <p>
      * @param value The new value for the case-sensitive flag.
      */
-    protected void setIsCaseSensitive(boolean value) {
+    protected void setIsCaseSensitive(final boolean value) {
       mWasChanged = !mNewSearchText.equals(mListEntry.getSearchText()) || mListEntry.isCaseSensitive() != value;
       mNewCaseSensitve = value;
       
@@ -201,7 +204,7 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
      * <p>
      * @param text The new search text.
      */
-    protected void setSearchText(String text) {
+    protected void setSearchText(final String text) {
       mWasChanged = !mListEntry.getSearchText().equals(text) || mListEntry.isCaseSensitive() != mNewCaseSensitve;
       mNewSearchText = text;
       
@@ -240,7 +243,8 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
       return mListEntry;
     }
     
-    protected boolean isOutdated(Date compareValue, int outdatedDayCount) {
+    protected boolean isOutdated(final Date compareValue,
+        final int outdatedDayCount) {
       if(mLastMatchedDate != null && compareValue != null) {
         return mLastMatchedDate.addDays(outdatedDayCount).compareTo(compareValue) < 0;
       }
@@ -248,11 +252,11 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
       return false;
     }
     
-    protected boolean isLastChanged(String lastChangedText) {
+    protected boolean isLastChanged(final String lastChangedText) {
       return mNewSearchText.equals(lastChangedText);
     }
     
-    public int compareTo(Object o) {
+    public int compareTo(final Object o) {
       if(o instanceof String) {
         return mNewSearchText.compareToIgnoreCase((String)o);
       }

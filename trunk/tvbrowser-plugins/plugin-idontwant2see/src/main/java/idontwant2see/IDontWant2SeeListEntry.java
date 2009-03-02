@@ -45,12 +45,14 @@ public class IDontWant2SeeListEntry {
   private boolean mDateWasSet;
   private Date mLastMatchedDate;
   
-  protected IDontWant2SeeListEntry(String searchText, boolean caseSensitive) {
+  protected IDontWant2SeeListEntry(final String searchText,
+      final boolean caseSensitive) {
     setValues(searchText,caseSensitive);
     mDateWasSet = true;
   }
   
-  protected IDontWant2SeeListEntry(ObjectInputStream in, int version) throws IOException, ClassNotFoundException {
+  protected IDontWant2SeeListEntry(final ObjectInputStream in, final int version)
+      throws IOException, ClassNotFoundException {
     mSearchText = in.readUTF();
     mCaseSensitive = in.readBoolean();
     
@@ -69,7 +71,7 @@ public class IDontWant2SeeListEntry {
     mDateWasSet = false;
   }
   
-  private boolean matchesTitle(String title) {
+  private boolean matchesTitle(final String title) {
     boolean matches = false;
     
     if(mPreSearchPart == null) {
@@ -78,9 +80,10 @@ public class IDontWant2SeeListEntry {
           .equalsIgnoreCase(mSearchText);
     } else {
       // or match with wild card
-      String preSearchValue = mCaseSensitive ? title : title.toLowerCase();
+      final String preSearchValue = mCaseSensitive ? title : title
+          .toLowerCase();
       if (preSearchValue.indexOf(mPreSearchPart) != -1) {
-        Matcher match = mSearchPattern.matcher(title);
+        final Matcher match = mSearchPattern.matcher(title);
         matches = match.matches();
       }
     }
@@ -94,8 +97,8 @@ public class IDontWant2SeeListEntry {
     return matches;
   }
   
-  protected boolean matches(Program p) {
-    String title = p.getTitle();
+  protected boolean matches(final Program p) {
+    final String title = p.getTitle();
     boolean found = matchesTitle(title);
     final String suffix = " (Fortsetzung)";
     if ((!found) && title.endsWith(suffix)) {
@@ -116,7 +119,7 @@ public class IDontWant2SeeListEntry {
     return mCaseSensitive;
   }
 
-  protected void setValues(String searchText, boolean caseSensitive) {
+  protected void setValues(final String searchText, final boolean caseSensitive) {
     mPreSearchPart = null;
     mSearchPattern = null;
     
@@ -128,7 +131,7 @@ public class IDontWant2SeeListEntry {
     mCaseSensitive = caseSensitive;
     
     if (searchText.indexOf('*') != -1) {
-      String[] searchParts = searchText.split("\\*");
+      final String[] searchParts = searchText.split("\\*");
       
       if(searchParts != null && searchParts.length > 0) {
         mPreSearchPart = searchParts[0];
@@ -147,7 +150,8 @@ public class IDontWant2SeeListEntry {
     }
   }
   
-  private Pattern createSearchPattern(String searchText, boolean caseSensitive) {
+  private Pattern createSearchPattern(final String searchText,
+      final boolean caseSensitive) {
     int flags = Pattern.DOTALL;
     if (! caseSensitive) {
       flags |= Pattern.CASE_INSENSITIVE;
@@ -161,7 +165,7 @@ public class IDontWant2SeeListEntry {
     return Pattern.compile("\\Q" + searchText.replace("*","\\E.*\\Q") + "\\E",flags);
   }
     
-  protected void writeData(ObjectOutputStream out) throws IOException {
+  protected void writeData(final ObjectOutputStream out) throws IOException {
     // version 6, keep syncron with data file version from IDontWant2See.java
     out.writeUTF(mSearchText);
     out.writeBoolean(mCaseSensitive);

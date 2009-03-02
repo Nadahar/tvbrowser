@@ -53,16 +53,19 @@ public class IDontWant2SeeSettingsTableRenderer extends
   
   transient private Date mLastUsedDate;
   
-  protected IDontWant2SeeSettingsTableRenderer(Date lastUsedDate) {
+  protected IDontWant2SeeSettingsTableRenderer(final Date lastUsedDate) {
     mLastUsedDate = lastUsedDate;
   }
   
-  public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)  {
+  public Component getTableCellRendererComponent(final JTable table,
+      final Object value, final boolean isSelected, final boolean hasFocus,
+      final int row, final int column) {
     if(column == 0) {
-      JPanel background = new JPanel(new FormLayout("fill:0dlu:grow","fill:default:grow"));
+      final JPanel background = new JPanel(new FormLayout("fill:0dlu:grow",
+          "fill:default:grow"));
       background.setOpaque(true);
       
-      JLabel label = new JLabel((String)value);
+      final JLabel label = new JLabel((String) value);
       
       if(!((IDontWant2SeeSettingsTableModel)table.getModel()).rowIsValid(row) && !isSelected) {
         background.setBackground(NOT_VALID_COLOR);
@@ -90,7 +93,8 @@ public class IDontWant2SeeSettingsTableRenderer extends
       return background;
     }
     else {
-      JPanel background = new JPanel(new FormLayout("0dlu:grow,default,0dlu:grow","0dlu:grow,default,0dlu:grow"));
+      final JPanel background = new JPanel(new FormLayout(
+          "0dlu:grow,default,0dlu:grow", "0dlu:grow,default,0dlu:grow"));
       background.setOpaque(true);
       
       if(!isSelected) {
@@ -100,7 +104,7 @@ public class IDontWant2SeeSettingsTableRenderer extends
         background.setBackground(table.getSelectionBackground());
       }
       
-      JCheckBox checkBox = new JCheckBox();
+      final JCheckBox checkBox = new JCheckBox();
       checkBox.setSelected((Boolean)value);
       checkBox.setOpaque(false);
       checkBox.setContentAreaFilled(false); 
