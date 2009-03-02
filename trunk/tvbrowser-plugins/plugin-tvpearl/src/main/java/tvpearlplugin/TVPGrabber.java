@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,18 +38,6 @@ import util.io.IOUtilities;
 public class TVPGrabber
 {
   /**
-   * German three letter abbreviation of the month names
-   */
-  private static String[] MONTH_ABBREVIATION = { "Jan", "Feb", "Mrz", "Apr",
-      "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez" };
-  
-  /**
-   * German weekday names
-   */
-  private static String[] WEEKDAY_NAME = { "Montag", "Dienstag", "Mittwoch",
-      "Donnerstag", "Freitag", "Samstag", "Sonntag" };
-
-  /**
    * regular expression to grab the content of a TV pearl
    */
   private static Pattern PATTERN_CONTENT = Pattern
@@ -59,6 +48,12 @@ public class TVPGrabber
    */
   private static Pattern PATTERN_NEXT_URL = Pattern
       .compile("<a href=\"([^\"]*?)\"[^>]*>Nächste</a>");
+
+  /**
+   * format of the post create date
+   */
+  private static SimpleDateFormat FORMAT_CREATE_DATE = new SimpleDateFormat(
+      "dd MMMM yyyy, HH:mm", Locale.GERMAN);
 
   private boolean mRecursiveGrab = true;
   private boolean mOnlyProgramInFuture = true;
@@ -202,22 +197,12 @@ public class TVPGrabber
 	{
 		//Pattern pattern = Pattern.compile("<td.*?class=\"ro[\\w\\W]*?<b>(.*?)</b>.*?</td>[\\w\\W]*?<a href=\"([^\"]*?)\"><img src=\"templates/subSilver/images/icon_minipost.gif\".*?<span class=\"postdetails\">[^:]*:(.*?)<[\\w\\W]*?<span class=\"postbody\">([\\w\\W]*?)</td>[\\n\\t\\r ]+</tr>[\\n\\t\\r ]+</table>");
     final Matcher matcher = PATTERN_CONTENT.matcher(content);
-    final SimpleDateFormat createDateFormat = new SimpleDateFormat(
-        "dd MMM yyyy, HH:mm", Locale.GERMAN);
 
 		while (matcher.find())
 		{
 		  final String author = matcher.group(2).trim();
 		  final String contentUrl = extentUrl(matcher.group(1).trim(), originalUrl);
-			Date createDate = null;
-			try
-			{
-				createDate = createDateFormat.parse(matcher.group(3).trim());
-			}
-			catch (Exception e)
-			{
-				TVPearlPlugin.getLogger().warning("Wrong dateformat (" + matcher.group(3).trim() + ")");
-			}
+			final Date createDate = parseDate(matcher.group(3).trim());
 			String itemContent = matcher.group(4);
 			//itemContent = itemContent.replaceAll("_+__<br[\\w\\W]+$", "");
 			itemContent = itemContent.replace("\n", "").replace("<br />", "\n").replaceAll("<.*?>", "");
@@ -228,6 +213,26 @@ public class TVPGrabber
 			}
 		}
 	}
+	
+	private Date parseDate(final String input) {
+    String source = input.trim();
+    try {
+      return FORMAT_CREATE_DATE.parse(source);
+    } catch (ParseException e) {
+      final String[] monthNames = FORMAT_CREATE_DATE.getDateFormatSymbols().getMonths();
+      for (int month = 0; month < 12; month++) {
+        source = source.replace(monthNames[month].substring(0, 3) + " ",
+            monthNames[month] + " ");
+      }
+      try {
+        return FORMAT_CREATE_DATE.parse(source);
+      } catch (ParseException e1) {
+        TVPearlPlugin.getLogger().warning(
+            "Unknown date format (" + source + ")");
+      }
+    }
+    return null;
+  }
 
 	private void containsInfo(final String value, final String author,
       final String contentUrl,
@@ -316,10 +321,13 @@ public class TVPGrabber
 	private boolean isWeekday(String value)
 	{
 	  value = value.trim();
-	  for (String weekDay : WEEKDAY_NAME) {
-      if (value.equalsIgnoreCase(weekDay)
+	  for (String weekDay : FORMAT_CREATE_DATE.getDateFormatSymbols()
+        .getWeekdays()) {
+      if (weekDay.length() > 0) {
+        if (value.equalsIgnoreCase(weekDay)
           || value.equalsIgnoreCase(weekDay.substring(0, 2))) {
-        return true;
+          return true;
+        }
       }
     }
     return false;
@@ -429,8 +437,10 @@ public class TVPGrabber
 	private int getMonth(String value)
 	{
     value = value.trim();
-    for (int i = 0; i < MONTH_ABBREVIATION.length; i++) {
-      if (value.equalsIgnoreCase(MONTH_ABBREVIATION[i])) {
+    final String[] months = FORMAT_CREATE_DATE.getDateFormatSymbols()
+        .getShortMonths();
+    for (int i = 0; i < months.length; i++) {
+      if (value.equalsIgnoreCase(months[i])) {
         return i;
       }
     }

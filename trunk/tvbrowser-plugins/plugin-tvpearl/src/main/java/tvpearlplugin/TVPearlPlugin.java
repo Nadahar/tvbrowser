@@ -110,7 +110,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 
 	public static Version getVersion()
 	{
-		return new Version(0, 19, 0);
+		return new Version(0, 20, 0);
 	}
 
 	public SettingsTab getSettingsTab()
