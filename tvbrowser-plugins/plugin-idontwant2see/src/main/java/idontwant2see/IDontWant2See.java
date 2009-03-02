@@ -23,9 +23,12 @@
  */
 package idontwant2see;
 
+import java.awt.AWTEvent;
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -89,7 +92,7 @@ import devplugin.Version;
  * 
  * @author René Mach
  */
-public final class IDontWant2See extends Plugin {
+public final class IDontWant2See extends Plugin implements AWTEventListener {
   private static final String RECEIVE_TARGET_EXCLUDE_EXACT = "target_exclude_exact";
 
   static final Localizer mLocalizer = Localizer
@@ -104,6 +107,8 @@ public final class IDontWant2See extends Plugin {
   private boolean mDateWasSet;
   private String mLastEnteredExclusionString;
   private Date mLastUsedDate;
+
+  private boolean mCtrlPressed;
 
   private static final Pattern PATTERN_TITLE_PART = Pattern.compile("(.*)"
       + "((" // one of two alternatives
@@ -137,7 +142,7 @@ public final class IDontWant2See extends Plugin {
         return "";
       }
 
-      public boolean accept(Program prog) {
+      public boolean accept(final Program prog) {
         return acceptInternal(prog);
       }
     };
@@ -160,7 +165,7 @@ public final class IDontWant2See extends Plugin {
     mCurrentDate = Date.getCurrentDate();
   }
   
-  protected boolean acceptInternal(Program prog) {
+  protected boolean acceptInternal(final Program prog) {
     if(!mDateWasSet) {
       mLastUsedDate = getCurrentDate();
       mDateWasSet = true;
@@ -182,7 +187,7 @@ public final class IDontWant2See extends Plugin {
         "René Mach", "GPL");
   }
   
-  private int getSearchTextIndexForProgram(Program p) {
+  private int getSearchTextIndexForProgram(final Program p) {
     if(p != null) {
       for(int i = 0; i < mSearchList.size(); i++) {
         if(mSearchList.get(i).matches(p)) {
@@ -195,13 +200,17 @@ public final class IDontWant2See extends Plugin {
   }
   
   public ActionMenu getButtonAction() {
-    ContextMenuAction baseAction = new ContextMenuAction(mLocalizer.msg("name","I don't want to see!"),createImageIcon("apps","idontwant2see",16));
+    final ContextMenuAction baseAction = new ContextMenuAction(mLocalizer.msg(
+        "name", "I don't want to see!"), createImageIcon("apps",
+        "idontwant2see", 16));
     
-    ContextMenuAction openExclusionList = new ContextMenuAction(mLocalizer.msg("editExclusionList","Edit exclusion list"),createImageIcon("apps","idontwant2see",16));
+    final ContextMenuAction openExclusionList = new ContextMenuAction(
+        mLocalizer.msg("editExclusionList", "Edit exclusion list"),
+        createImageIcon("apps", "idontwant2see", 16));
     openExclusionList.putValue(Plugin.BIG_ICON, createImageIcon("apps","idontwant2see",22));
     openExclusionList.setActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        Window w = UiUtilities.getLastModalChildOf(getParentFrame());
+      public void actionPerformed(final ActionEvent e) {
+        final Window w = UiUtilities.getLastModalChildOf(getParentFrame());
         
         JDialog temDlg = null;
         
@@ -230,26 +239,31 @@ public final class IDontWant2See extends Plugin {
         
         final ExclusionTablePanel exclusionPanel = new ExclusionTablePanel();
         
-        JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
+        final JButton ok = new JButton(Localizer
+            .getLocalization(Localizer.I18N_OK));
         ok.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
+          public void actionPerformed(final ActionEvent e) {
             exclusionPanel.saveSettings();
             exclusionListDlg.dispose();
           }
         });
         
-        JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
+        final JButton cancel = new JButton(Localizer
+            .getLocalization(Localizer.I18N_CANCEL));
         cancel.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
+          public void actionPerformed(final ActionEvent e) {
             exclusionListDlg.dispose();
           }
         });
         
-        FormLayout layout = new FormLayout("0dlu:grow,default,3dlu,default","fill:default:grow,2dlu,default,5dlu,default");
+        final FormLayout layout = new FormLayout(
+            "0dlu:grow,default,3dlu,default",
+            "fill:default:grow,2dlu,default,5dlu,default");
         layout.setColumnGroups(new int[][] {{2,4}});
         
-        CellConstraints cc = new CellConstraints();
-        PanelBuilder pb = new PanelBuilder(layout, (JPanel) exclusionListDlg
+        final CellConstraints cc = new CellConstraints();
+        final PanelBuilder pb = new PanelBuilder(layout,
+            (JPanel) exclusionListDlg
             .getContentPane());
         pb.setDefaultDialogBorder();
         
@@ -264,10 +278,12 @@ public final class IDontWant2See extends Plugin {
       }
     });
     
-    ContextMenuAction undo = new ContextMenuAction(mLocalizer.msg("undoLastExclusion","Undo last exclusion"), createImageIcon("action","edit-undo",16));
+    final ContextMenuAction undo = new ContextMenuAction(mLocalizer.msg(
+        "undoLastExclusion", "Undo last exclusion"), createImageIcon("actions",
+        "edit-undo", 16));
     undo.putValue(Plugin.BIG_ICON, createImageIcon("actions","edit-undo",22));
     undo.setActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
+      public void actionPerformed(final ActionEvent e) {
         if(mLastEnteredExclusionString.length() > 0) {
           for(int i = mSearchList.size()-1; i >= 0; i--) {
             if(mSearchList.get(i).getSearchText().equals(mLastEnteredExclusionString)) {
@@ -296,8 +312,8 @@ public final class IDontWant2See extends Plugin {
     if (index == -1 || p.equals(getPluginManager().getExampleProgram())) {
       AbstractAction actionDontWant = getActionDontWantToSee(p);
 
-      if (mSimpleMenu) {
-        Matcher matcher = PATTERN_TITLE_PART.matcher(p.getTitle());
+      if (mSimpleMenu && !mCtrlPressed) {
+        final Matcher matcher = PATTERN_TITLE_PART.matcher(p.getTitle());
         if (matcher.matches()) {
           actionDontWant = getActionInputTitle(p);
         }
@@ -307,8 +323,9 @@ public final class IDontWant2See extends Plugin {
         return new ActionMenu(actionDontWant);
       }
       else {
-        AbstractAction actionInput = getActionInputTitle(p);
-        ContextMenuAction baseAction = new ContextMenuAction(mLocalizer.msg("name","I don't want to see!"),
+        final AbstractAction actionInput = getActionInputTitle(p);
+        final ContextMenuAction baseAction = new ContextMenuAction(mLocalizer
+            .msg("name", "I don't want to see!"),
             createImageIcon("apps","idontwant2see",16));
         
         return new ActionMenu(baseAction, new Action[] {actionDontWant,actionInput});
@@ -323,7 +340,7 @@ public final class IDontWant2See extends Plugin {
     return new ContextMenuAction(mLocalizer
         .msg("menu.reshow", "I want to see!"), createImageIcon("actions",
         "edit-paste", 16)) {
-      public void actionPerformed(ActionEvent e) {
+      public void actionPerformed(final ActionEvent e) {
         final int index = getSearchTextIndexForProgram(p);
         mSearchList.remove(index);
         updateFilter(!mSwitchToMyFilter);
@@ -334,19 +351,22 @@ public final class IDontWant2See extends Plugin {
   private AbstractAction getActionInputTitle(final Program p) {
     return new AbstractAction(mLocalizer.msg("menu.userEntered",
         "User entered value")) {
-      public void actionPerformed(ActionEvent e) {
-        JCheckBox caseSensitive = new JCheckBox(mLocalizer.msg("caseSensitive",
+      public void actionPerformed(final ActionEvent e) {
+        final JCheckBox caseSensitive = new JCheckBox(mLocalizer.msg(
+            "caseSensitive",
             "case sensitive"));
-        JTextField input = new JTextField(p.getTitle());
+        final JTextField input = new JTextField(p.getTitle());
         
         input.addAncestorListener(new AncestorListener() {
-          public void ancestorAdded(AncestorEvent event) {
+          public void ancestorAdded(final AncestorEvent event) {
             event.getComponent().requestFocus();
           }
 
-          public void ancestorMoved(AncestorEvent event) {}
+          public void ancestorMoved(final AncestorEvent event) {
+          }
 
-          public void ancestorRemoved(AncestorEvent event) {}
+          public void ancestorRemoved(final AncestorEvent event) {
+          }
         });
 
         if (JOptionPane.showConfirmDialog(UiUtilities
@@ -383,7 +403,7 @@ public final class IDontWant2See extends Plugin {
   private AbstractAction getActionDontWantToSee(final Program p) {
     return new AbstractAction(mLocalizer.msg("menu.completeCaseSensitive",
         "Complete title case-sensitive")) {
-      public void actionPerformed(ActionEvent e) {
+      public void actionPerformed(final ActionEvent e) {
         mSearchList.add(new IDontWant2SeeListEntry(p.getTitle(), true));
         mLastEnteredExclusionString = p.getTitle();
         updateFilter(!mSwitchToMyFilter);
@@ -409,14 +429,15 @@ public final class IDontWant2See extends Plugin {
     return new PluginsProgramFilter[] {mFilter};
   }
   
-  public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    int version = in.readInt(); //read Version
+  public void readData(final ObjectInputStream in) throws IOException,
+      ClassNotFoundException {
+    final int version = in.readInt(); // read Version
     
     int n = in.readInt();
     
     if(version <= 2) {
       for(int i = 0; i < n; i++) {
-        StringBuilder value = new StringBuilder("*");
+        final StringBuilder value = new StringBuilder("*");
         value.append(in.readUTF()).append("*");
         
         mSearchList.add(new IDontWant2SeeListEntry(value.toString(),false));
@@ -451,7 +472,7 @@ public final class IDontWant2See extends Plugin {
     }
   }
   
-  public void writeData(ObjectOutputStream out) throws IOException {
+  public void writeData(final ObjectOutputStream out) throws IOException {
     out.writeInt(6); //version
     out.writeInt(mSearchList.size());
     
@@ -475,11 +496,13 @@ public final class IDontWant2See extends Plugin {
       private ExclusionTablePanel mExclusionPanel;
       
       public JPanel createSettingsPanel() {
-        CellConstraints cc = new CellConstraints();
-        PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default,0dlu:grow,default",
+        final CellConstraints cc = new CellConstraints();
+        final PanelBuilder pb = new PanelBuilder(
+            new FormLayout("5dlu,default,0dlu:grow,default",
             "default,10dlu,default,5dlu,default,5dlu,default,5dlu,fill:default:grow"));        
         
-        PanelBuilder pb2 = new PanelBuilder(new FormLayout("default,2dlu,default",
+        final PanelBuilder pb2 = new PanelBuilder(new FormLayout(
+            "default,2dlu,default",
             "default,1dlu,default,default"));
         
         mSimpleContextMenu = new JRadioButton(mLocalizer.msg("settings.menu.simple","Direct in the context menu:"),mSimpleMenu);
@@ -489,7 +512,7 @@ public final class IDontWant2See extends Plugin {
         mCascadedContextMenu.setHorizontalTextPosition(JRadioButton.RIGHT);
         mCascadedContextMenu.setVerticalAlignment(JRadioButton.TOP);
         
-        ButtonGroup bg = new ButtonGroup();
+        final ButtonGroup bg = new ButtonGroup();
         
         bg.add(mSimpleContextMenu);
         bg.add(mCascadedContextMenu);
@@ -509,7 +532,8 @@ public final class IDontWant2See extends Plugin {
         pb.addSeparator(mLocalizer.msg("settings.search","Search"), cc.xyw(1,7,4));
         pb.add(mExclusionPanel = new ExclusionTablePanel(), cc.xyw(2,9,3));
         
-        JPanel p = new JPanel(new FormLayout("0dlu,0dlu:grow","5dlu,fill:default:grow"));
+        final JPanel p = new JPanel(new FormLayout("0dlu,0dlu:grow",
+            "5dlu,fill:default:grow"));
         p.add(pb.getPanel(), cc.xy(2,2));
         
         return p;
@@ -563,11 +587,11 @@ public final class IDontWant2See extends Plugin {
       final JScrollPane scrollPane = new JScrollPane(mTable);
       
       mTable.addMouseListener(new MouseAdapter() {
-        public void mouseClicked(MouseEvent e) {
-          int column = mTable.columnAtPoint(e.getPoint());
+        public void mouseClicked(final MouseEvent e) {
+          final int column = mTable.columnAtPoint(e.getPoint());
           
           if(column == 1) {
-            int row = mTable.rowAtPoint(e.getPoint());
+            final int row = mTable.rowAtPoint(e.getPoint());
             
             mTable.getModel().setValueAt(!((Boolean)mTable.getValueAt(row,column)),row,1);
             mTable.repaint();
@@ -576,7 +600,7 @@ public final class IDontWant2See extends Plugin {
       });
       
       mTable.addKeyListener(new KeyAdapter() {
-        public void keyPressed(KeyEvent e) {
+        public void keyPressed(final KeyEvent e) {
           if(e.getKeyCode() == KeyEvent.VK_DELETE) {
             deleteSelectedRows();
             e.consume();
@@ -591,10 +615,10 @@ public final class IDontWant2See extends Plugin {
       });
       
       addAncestorListener(new AncestorListener() {
-        public void ancestorAdded(AncestorEvent event) {
+        public void ancestorAdded(final AncestorEvent event) {
           for(int row = 0; row < mTableModel.getRowCount(); row++) {
             if(mTableModel.isLastChangedRow(row)) {
-            	Rectangle rect = mTable.getCellRect(row,0,true);
+              final Rectangle rect = mTable.getCellRect(row, 0, true);
             	rect.setBounds(0,scrollPane.getVisibleRect().height + rect.y - rect.height,0,0);
             	
               mTable.scrollRectToVisible(rect);
@@ -603,14 +627,18 @@ public final class IDontWant2See extends Plugin {
           }
         }
 
-        public void ancestorMoved(AncestorEvent event) {}
-        public void ancestorRemoved(AncestorEvent event) {}
+        public void ancestorMoved(final AncestorEvent event) {
+        }
+
+        public void ancestorRemoved(final AncestorEvent event) {
+        }
       });
       
-      JButton add = new JButton(mLocalizer.msg("settings.add","Add entry"),
+      final JButton add = new JButton(mLocalizer.msg("settings.add",
+          "Add entry"),
           createImageIcon("actions","document-new",16));
       add.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(final ActionEvent e) {
           mTableModel.addRow();
           mTable.scrollRectToVisible(mTable.getCellRect(mTableModel.getRowCount()-1,0,true));
         }
@@ -620,45 +648,49 @@ public final class IDontWant2See extends Plugin {
           "Delete selected entries"),createImageIcon("actions","edit-delete",16));
       delete.setEnabled(false);
       delete.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(final ActionEvent e) {
           deleteSelectedRows();
         }
       });
       
       mTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-        public void valueChanged(ListSelectionEvent e) {
+        public void valueChanged(final ListSelectionEvent e) {
           if(!e.getValueIsAdjusting()) {
             delete.setEnabled(e.getFirstIndex() >= 0);
           }
         }
       });
       
-      FormLayout layout = new FormLayout("default,0dlu:grow,default",
+      final FormLayout layout = new FormLayout("default,0dlu:grow,default",
           "fill:default:grow,1dlu,default,4dlu,default,5dlu,pref");
-      PanelBuilder pb = new PanelBuilder(layout,this);
-      CellConstraints cc = new CellConstraints();
+      final PanelBuilder pb = new PanelBuilder(layout, this);
+      final CellConstraints cc = new CellConstraints();
       
       int y = 1;
       
       pb.add(scrollPane, cc.xyw(1,y++,3));
       
-      PanelBuilder pb2 = new PanelBuilder(
+      final PanelBuilder pb2 = new PanelBuilder(
           new FormLayout("default,3dlu:grow,default,3dlu:grow,default,3dlu:grow,default",
               "default"));
       
-      ColorLabel blueLabel = new ColorLabel(IDontWant2SeeSettingsTableRenderer.LAST_CHANGED_COLOR);
+      final ColorLabel blueLabel = new ColorLabel(
+          IDontWant2SeeSettingsTableRenderer.LAST_CHANGED_COLOR);
       blueLabel.setText(mLocalizer.msg("changed","Last change"));
       pb2.add(blueLabel, cc.xy(1,1));
       
-      ColorLabel yellowLabel = new ColorLabel(IDontWant2SeeSettingsTableRenderer.LAST_USAGE_7_COLOR);
+      final ColorLabel yellowLabel = new ColorLabel(
+          IDontWant2SeeSettingsTableRenderer.LAST_USAGE_7_COLOR);
       yellowLabel.setText(mLocalizer.msg("unusedSince","Not used for {0} days",IDontWant2SeeSettingsTableRenderer.OUTDATED_7_DAY_COUNT));
       pb2.add(yellowLabel, cc.xy(3,1));
       
-      ColorLabel orangeLabel = new ColorLabel(IDontWant2SeeSettingsTableRenderer.LAST_USAGE_30_COLOR);
+      final ColorLabel orangeLabel = new ColorLabel(
+          IDontWant2SeeSettingsTableRenderer.LAST_USAGE_30_COLOR);
       orangeLabel.setText(mLocalizer.msg("unusedSince","Not used for {0} days",IDontWant2SeeSettingsTableRenderer.OUTDATED_30_DAY_COUNT));
       pb2.add(orangeLabel, cc.xy(5,1));
       
-      ColorLabel redLabel = new ColorLabel(IDontWant2SeeSettingsTableRenderer.NOT_VALID_COLOR);
+      final ColorLabel redLabel = new ColorLabel(
+          IDontWant2SeeSettingsTableRenderer.NOT_VALID_COLOR);
       redLabel.setText(mLocalizer.msg("invalid","Invalid"));
       pb2.add(redLabel, cc.xy(7,1));
       
@@ -672,8 +704,8 @@ public final class IDontWant2See extends Plugin {
     }
     
     private void deleteSelectedRows() {
-      int selectedIndex = mTable.getSelectedRow();
-      int[] selection = mTable.getSelectedRows();
+      final int selectedIndex = mTable.getSelectedRow();
+      final int[] selection = mTable.getSelectedRows();
       
       for(int i = selection.length-1; i >= 0; i--) {
         mTableModel.deleteRow(selection[i]);
@@ -720,8 +752,8 @@ public final class IDontWant2See extends Plugin {
   }
 
   @Override
-  public boolean receivePrograms(Program[] programArr,
-      ProgramReceiveTarget receiveTarget) {
+  public boolean receivePrograms(final Program[] programArr,
+      final ProgramReceiveTarget receiveTarget) {
     if (receiveTarget.getTargetId().equals(RECEIVE_TARGET_EXCLUDE_EXACT)) {
       if (programArr.length > 0) {
         for (Program program : programArr) {
@@ -738,4 +770,23 @@ public final class IDontWant2See extends Plugin {
     return false;
   }
   
+  @Override
+  public void onActivation() {
+    Toolkit.getDefaultToolkit().addAWTEventListener(this,
+        AWTEvent.KEY_EVENT_MASK);
+  }
+
+  @Override
+  public void onDeactivation() {
+    Toolkit.getDefaultToolkit().removeAWTEventListener(this);
+  }
+
+  public void eventDispatched(final AWTEvent event) {
+    if (event instanceof KeyEvent) {
+      final KeyEvent keyEvent = (KeyEvent) event;
+      mCtrlPressed = keyEvent.isControlDown();
+      // System.out.println("Ctrl " + mCtrlPressed);
+    }
+  }
+
 }

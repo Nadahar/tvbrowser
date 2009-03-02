@@ -40,7 +40,7 @@ public final class IDontWant2SeeFilterComponent extends PluginsFilterComponent {
     return IDontWant2See.mLocalizer.msg("name","I don't want to see!");
   }
 
-  public boolean accept(Program program) {
+  public boolean accept(final Program program) {
     if(IDontWant2See.getInstance() != null) {
       return IDontWant2See.getInstance().acceptInternal(program);
     }
@@ -52,12 +52,13 @@ public final class IDontWant2SeeFilterComponent extends PluginsFilterComponent {
     return 0;
   }
 
-  public void read(ObjectInputStream in, int version) throws IOException,
+  public void read(final ObjectInputStream in, final int version)
+      throws IOException,
       ClassNotFoundException {
     // no filter settings to read, as they are handled by the plugin
   }
 
-  public void write(ObjectOutputStream out) throws IOException {
+  public void write(final ObjectOutputStream out) throws IOException {
     // no filter settings to store, as they are handled by the plugin
   }
 }
