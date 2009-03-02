@@ -257,6 +257,21 @@ public class DayProgramFileTranslator {
       if (bitSet(info, Program.INFO_CATEGORIE_SHOW)) {
         buf.append("Show  ");
       }
+      if (bitSet(info, Program.INFO_CATEGORIE_ARTS)) {
+        buf.append("Arts  ");
+      }
+      if (bitSet(info, Program.INFO_CATEGORIE_CHILDRENS)) {
+        buf.append("Childrens  ");
+      }
+      if (bitSet(info, Program.INFO_CATEGORIE_DOCUMENTARY)) {
+        buf.append("Documentary  ");
+      }
+      if (bitSet(info, Program.INFO_CATEGORIE_OTHERS)) {
+        buf.append("Other Category  ");
+      }
+      if (bitSet(info, Program.INFO_CATEGORIE_SPORTS)) {
+        buf.append("Sports  ");
+      }
 
     return buf.toString();
   }
