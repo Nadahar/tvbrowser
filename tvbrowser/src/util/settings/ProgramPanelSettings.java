@@ -73,7 +73,7 @@ public class ProgramPanelSettings {
    * @param showOnlyDateAndTitle If the program panel should only contain date and title.
    */
   public ProgramPanelSettings(PluginPictureSettings settings, boolean showOnlyDateAndTitle) {
-    this(settings, showOnlyDateAndTitle, Y_AXIS);
+    this(settings, showOnlyDateAndTitle, X_AXIS);
   }
   
   /**
