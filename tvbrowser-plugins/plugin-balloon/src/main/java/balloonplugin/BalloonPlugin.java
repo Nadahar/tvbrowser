@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import util.io.ExecutionHandler;
+import util.misc.OperatingSystem;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
@@ -59,32 +60,38 @@ public class BalloonPlugin extends Plugin {
   }
 
   public boolean canReceiveProgramsWithTarget() {
-    return true;
+    return OperatingSystem.isWindows();
   }
 
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
-    ProgramReceiveTarget target = new ProgramReceiveTarget(this, mLocalizer
-        .msg("targetName", "Show balloon tip"), BALLOON_TARGET);
-    return new ProgramReceiveTarget[] { target };
+    if (canReceiveProgramsWithTarget()) {
+      final ProgramReceiveTarget target = new ProgramReceiveTarget(this,
+          mLocalizer.msg("targetName", "Show balloon tip"), BALLOON_TARGET);
+      return new ProgramReceiveTarget[] { target };
+    }
+    return null;
   }
 
-  public boolean receivePrograms(Program[] programArr,
-      ProgramReceiveTarget receiveTarget) {
+  public boolean receivePrograms(final Program[] programArr,
+      final ProgramReceiveTarget receiveTarget) {
+    if (!canReceiveProgramsWithTarget()) {
+      return false;
+    }
     for (Program program : programArr) {
       showBalloon(program);
     }
     return true;
   }
 
-  private void showBalloon(Program program) {
+  private void showBalloon(final Program program) {
     if (mPath == null) {
       mPath = extractNotifier();
     }
     if (mPath != null) {
-      String params = "/m \"" + program.getChannel().getName() + " "
+      final String params = "/m \"" + program.getChannel().getName() + " "
           + program.getTimeString() + "\\n" + program.getTitle()
           + "\" /p \"TV-Browser\" /d 600000";
-      ExecutionHandler exec = new ExecutionHandler(params, mPath);
+      final ExecutionHandler exec = new ExecutionHandler(params, mPath);
       try {
         exec.execute();
       } catch (IOException e) {
@@ -119,6 +126,11 @@ public class BalloonPlugin extends Plugin {
       return null;
     }
     return executable.getPath();
+  }
+
+  @Override
+  protected String getMarkIconName() {
+    return "balloonplugin/icons/16x16/balloon.png";
   }
 
 }
