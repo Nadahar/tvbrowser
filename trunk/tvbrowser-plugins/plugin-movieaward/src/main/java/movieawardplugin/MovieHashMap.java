@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import devplugin.Program;
+import devplugin.ProgramFieldType;
 
 /**
  * Hash map for fast movie lookup. For all titles of the movie it creates an
@@ -60,7 +61,29 @@ public class MovieHashMap {
   }
 
   public ArrayList<Movie> getMovies(final Program program) {
-    return mMovieLookup.get(program.getTitle().toLowerCase().hashCode());
+    final int titleHash = program.getTitle().toLowerCase().hashCode();
+    final String original = program
+        .getTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE);
+    if (original == null || original.length() == 0) {
+      return mMovieLookup.get(titleHash);
+    } else {
+      final ArrayList<Movie> movies = mMovieLookup.get(titleHash);
+      final int originalHash = original.toLowerCase().hashCode();
+      if (originalHash != titleHash) {
+        final ArrayList<Movie> originalMovies = mMovieLookup.get(originalHash);
+        if (originalMovies != null) {
+          if (movies != null) {
+            // filter duplicates
+            final HashSet<Movie> result = new HashSet<Movie>(movies);
+            result.addAll(originalMovies);
+            return new ArrayList<Movie>(result);
+          } else {
+            return originalMovies;
+          }
+        }
+      }
+      return movies;
+    }
   }
 
 }
