@@ -1,3 +1,19 @@
+/*
+ * Copyright Michael Keppler
+ * 
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package widgetplugin;
 
 import javax.swing.Icon;
@@ -29,7 +45,8 @@ public class WidgetSettingsTab implements SettingsTab {
 
 	private JCheckBox mRefresh;
 
-	protected WidgetSettingsTab(WidgetPlugin plugin, WidgetSettings settings) {
+	protected WidgetSettingsTab(final WidgetPlugin plugin,
+      final WidgetSettings settings) {
 		super();
 		mPlugin = plugin;
 		mSettings = settings;
@@ -40,8 +57,8 @@ public class WidgetSettingsTab implements SettingsTab {
 		final FormLayout layout = new FormLayout(
 				"5dlu, pref, 3dlu, pref, fill:default:grow",
 				"");
-		PanelBuilder panelBuilder = new PanelBuilder(layout);
-		CellConstraints cc = new CellConstraints();
+		final PanelBuilder panelBuilder = new PanelBuilder(layout);
+    final CellConstraints cc = new CellConstraints();
 
 		// settings
 		layout.appendRow(RowSpec.decode("pref"));
@@ -50,10 +67,10 @@ public class WidgetSettingsTab implements SettingsTab {
 		layout.appendRow(RowSpec.decode("5dlu"));
 
 		// port
-		JLabel label = new JLabel(mLocalizer.msg("portNumber", "Port number"));
+    final JLabel label = new JLabel(mLocalizer.msg("portNumber", "Port number"));
 		panelBuilder.add(label, cc.xy(2, currentRow));
 
-		SpinnerNumberModel model = new SpinnerNumberModel(34567, 1, 65535, 1);
+		final SpinnerNumberModel model = new SpinnerNumberModel(34567, 1, 65535, 1);
 		mSpinner = new JSpinner(model);
 		mSpinner.setValue(mSettings.getPortNumber());
 		panelBuilder.add(mSpinner, cc.xy(4, currentRow));

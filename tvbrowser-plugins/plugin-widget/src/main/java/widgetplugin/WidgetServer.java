@@ -1,3 +1,19 @@
+/*
+ * Copyright Michael Keppler
+ * 
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package widgetplugin;
 
 import java.io.IOException;
@@ -29,14 +45,14 @@ public class WidgetServer extends NanoHTTPD {
 
   private WidgetSettings mSettings;
 
-  protected WidgetServer(WidgetSettings settings) throws IOException {
+  protected WidgetServer(final WidgetSettings settings) throws IOException {
     super(settings.getPortNumber());
     mSettings = settings;
 	}
 
 	@Override
-	public Response serve(String uri, String method, Properties header,
-			Properties parms) {
+	public Response serve(final String uri, final String method,
+      final Properties header, final Properties parms) {
 		// check for localhost
 		String host = header.getProperty("host");
 		if (host.contains(":")) {
@@ -51,7 +67,7 @@ public class WidgetServer extends NanoHTTPD {
 		if (action != null) {
 			action = action.toLowerCase();
 			if (action.equals(CMD_SHOWPROGRAMINFO)) {
-				String id = parms.getProperty(PARAM_ID);
+			  final String id = parms.getProperty(PARAM_ID);
 				if (id != null && id.length() > 0) {
 					final PluginManager pluginManager = Plugin.getPluginManager();
 					final Program program = pluginManager.getProgram(pluginManager.getCurrentDate(), id);
@@ -71,27 +87,29 @@ public class WidgetServer extends NanoHTTPD {
 	}
 
 	private String currentProgramList() {
-		StringBuffer result = new StringBuffer(1024);
-		Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
+	  final StringBuffer result = new StringBuffer(1024);
+    final Channel[] channels = Plugin.getPluginManager()
+        .getSubscribedChannels();
 		if (channels.length == 0) {
 			return mLocalizer.msg("noSubscriptions", "No channels subscribed");
 		}
-		Date date = Date.getCurrentDate();
+		final Date date = Date.getCurrentDate();
 		for (int i = 0; i < channels.length; i++) {
-			Iterator<Program> dayProgram = Plugin.getPluginManager().getChannelDayProgram(date, channels[i]);
+		  final Iterator<Program> dayProgram = Plugin.getPluginManager()
+          .getChannelDayProgram(date, channels[i]);
 			if (dayProgram != null) {
 				while (dayProgram.hasNext()) {
-					Program program = dayProgram.next();
+				  final Program program = dayProgram.next();
 					if (program.isOnAir()) {
 						result.append(convert(channels[i].getName())).append(" - ").append(
 								program.getTimeString()).append(" <a href=\"").append(
-								getProgramLink(program)).append("\"");
-						String shortInfo = program.getShortInfo();
+								getProgramLink(program)).append('"');
+            final String shortInfo = program.getShortInfo();
 						if (shortInfo != null) {
 							result.append(" title=\"").append(convert(shortInfo))
-									.append("\"");
+									.append('"');
 						}
-						result.append(">").append(convert(program.getTitle())).append(
+						result.append('>').append(convert(program.getTitle())).append(
 								"</a><br>");
 					}
 				}
@@ -116,10 +134,10 @@ public class WidgetServer extends NanoHTTPD {
 
 	private String convert(String in) {
 		in = HTMLTextHelper.convertTextToHtml(in.replaceAll("\n", " "), false);
-		StringBuffer buf = new StringBuffer();
-		int len = in.length();
+		final StringBuffer buf = new StringBuffer();
+    final int len = in.length();
 		for (int i = 0; i < len; i++) {
-			char c = in.charAt(i);
+		  final char c = in.charAt(i);
 			if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c >= '0' && c <= '9') {
 				buf.append(c);
 			} else {
@@ -129,7 +147,7 @@ public class WidgetServer extends NanoHTTPD {
 		return buf.toString();
 	}
 	
-	private String getProgramLink(Program program) {
+	private String getProgramLink(final Program program) {
 		return "?" + PARAM_ACTION + "=" + CMD_SHOWPROGRAMINFO + "&" + PARAM_ID + "=" + program.getID();
 	}
 
