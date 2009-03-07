@@ -79,17 +79,18 @@ public final class TimeListPlugin extends Plugin {
 
   @Override
   public PluginInfo getInfo() {
-    String name = mLocalizer.msg("pluginName", "Time list");
-    String desc = mLocalizer.msg("pluginDescription",
+    final String name = mLocalizer.msg("pluginName", "Time list");
+    final String desc = mLocalizer.msg("pluginDescription",
         "Shows the available programs by time only");
-    return new PluginInfo(TimeListPlugin.class, name, desc, "Michael Keppler");
+    return new PluginInfo(TimeListPlugin.class, name, desc, "Michael Keppler",
+        "GPL 3");
   }
 
   @Override
   public ActionMenu getButtonAction() {
-    AbstractAction action = new AbstractAction() {
+    final AbstractAction action = new AbstractAction() {
 
-      public void actionPerformed(ActionEvent e) {
+      public void actionPerformed(final ActionEvent e) {
         showDialog();
       }
     };
@@ -102,7 +103,7 @@ public final class TimeListPlugin extends Plugin {
   }
 
   private void showDialog() {
-    ProgramListDialog dialog = new ProgramListDialog(getParentFrame());
+    final ProgramListDialog dialog = new ProgramListDialog(getParentFrame());
     
     layoutWindow("programListDlg", dialog);
     
@@ -122,7 +123,7 @@ public final class TimeListPlugin extends Plugin {
   }
 
   @Override
-  public void loadSettings(Properties settings) {
+  public void loadSettings(final Properties settings) {
     mSettings = settings;
     if (mSettings == null) {
       mSettings = new Properties();
@@ -134,7 +135,8 @@ public final class TimeListPlugin extends Plugin {
     return mSettings;
   }
 
-  public void saveSettings(boolean showDescription, boolean showExpired) {
+  public void saveSettings(final boolean showDescription,
+      final boolean showExpired) {
     mSettings.setProperty(SHOW_DESCRIPTION, String.valueOf(showDescription));
     mSettings.setProperty(SHOW_EXPIRED, String.valueOf(showExpired));
   }
