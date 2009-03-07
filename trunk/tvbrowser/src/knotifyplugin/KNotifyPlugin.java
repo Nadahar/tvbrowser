@@ -1,26 +1,19 @@
 /*
- * KNotifyPlugin by Michael Keppler
+ * Copyright Michael Keppler
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- * CVS information:
- *     $Date$
- *   $Author$
- * $Revision$
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package knotifyplugin;
 
 import java.io.IOException;
@@ -78,7 +71,7 @@ public class KNotifyPlugin extends Plugin {
 
   private boolean isKDE() {
     try {
-      String kdeSession = System.getenv("KDE_FULL_SESSION");
+      final String kdeSession = System.getenv("KDE_FULL_SESSION");
       if (kdeSession != null) {
         return kdeSession.compareToIgnoreCase("true") == 0;
       }
@@ -88,10 +81,11 @@ public class KNotifyPlugin extends Plugin {
 
   @Override
   public PluginInfo getInfo() {
-    String name = mLocalizer.msg("pluginName", "KNotify");
-    String desc = mLocalizer.msg("description", "Sends all received programs to KNotify.");
-    String author = "Michael Keppler";
-    return new PluginInfo(this.getClass(), name, desc, author);
+    final String name = mLocalizer.msg("pluginName", "KNotify");
+    final String desc = mLocalizer.msg("description",
+        "Sends all received programs to KNotify.");
+    return new PluginInfo(this.getClass(), name, desc, "Michael Keppler",
+        "GPL 3");
   }
 
   @Override
@@ -106,13 +100,13 @@ public class KNotifyPlugin extends Plugin {
   /* (non-Javadoc)
    * @see devplugin.Plugin#getMarkIconsForProgram(devplugin.Program)
    */
-  public Icon[] getMarkIconsForProgram(Program p) {
+  public Icon[] getMarkIconsForProgram(final Program p) {
     return new Icon[] {new ImageIcon(ImageUtilities.createImageFromJar("knotifyplugin/knotify.png", KNotifySettingsTab.class))};
   }
 
   @Override
-  public boolean receivePrograms(Program[] programArr,
-      ProgramReceiveTarget receiveTarget) {
+  public boolean receivePrograms(final Program[] programArr,
+      final ProgramReceiveTarget receiveTarget) {
     if (mInitialized) {
       for (Program program : programArr) {
         sendToKNotify(mSettings, program);
@@ -121,9 +115,10 @@ public class KNotifyPlugin extends Plugin {
     return true;
   }
 
-  public void sendToKNotify(Properties settings, Program program) {
+  public void sendToKNotify(final Properties settings, final Program program) {
     try {
-      ExecutionHandler executionHandler = new ExecutionHandler("dcop","which");
+      final ExecutionHandler executionHandler = new ExecutionHandler("dcop",
+          "which");
       executionHandler.execute(true);
       
       String dcopLocation = executionHandler.getInputStreamReaderThread().getOutput();
@@ -135,11 +130,14 @@ public class KNotifyPlugin extends Plugin {
           if (mParser == null) {
             mParser = new ParamParser();
           }
-          String title = mParser.analyse(settings.getProperty("title"), program);
-          String message = mParser.analyse(settings.getProperty("description"), program);
+          final String title = mParser.analyse(settings.getProperty("title"),
+              program);
+          final String message = mParser.analyse(settings
+              .getProperty("description"), program);
           
           // run the notification command
-          String[] command = {dcopLocation, "knotify", "Notify", "notify", "event", title, message, "", "", "16", "0"};
+          final String[] command = { dcopLocation, "knotify", "Notify",
+              "notify", "event", title, message, "", "", "16", "0" };
           new ExecutionHandler(command).execute();
         }
       }
@@ -160,7 +158,7 @@ public class KNotifyPlugin extends Plugin {
   /**
    * Load the settings for this plugin and create default values if nothing was set
    */
-  public void loadSettings(Properties settings) {
+  public void loadSettings(final Properties settings) {
     mSettings = settings;
     
     mSettings.setProperty("title",       mSettings.getProperty("title", "{channel_name}, {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")} - {title}"));
