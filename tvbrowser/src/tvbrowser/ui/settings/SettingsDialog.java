@@ -236,6 +236,10 @@ public class SettingsDialog implements WindowClosingIf {
       mSelectionTree.setSelectionPath(selectedPath);
       mSelectionTree.makeVisible(selectedPath);
       treeUI.setLastSelectedPath(selectedPath);
+      // always expand plugin management node initially
+      if (selectedTabId.equals(SettingsItem.PLUGINS)) {
+        mSelectionTree.expandPath(selectedPath);
+      }
     } else {
       showSettingsPanelForSelectedNode();
     }
