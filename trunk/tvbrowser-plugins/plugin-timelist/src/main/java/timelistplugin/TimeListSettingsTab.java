@@ -54,14 +54,14 @@ public final class TimeListSettingsTab implements SettingsTab {
    */
   private JCheckBox mExpired;
 
-  public TimeListSettingsTab(TimeListPlugin plugin) {
+  public TimeListSettingsTab(final TimeListPlugin plugin) {
     mPlugin = plugin;
   }
 
   public JPanel createSettingsPanel() {
-    FormLayout layout = new FormLayout("5dlu,pref,5dlu,pref:grow",
+    final FormLayout layout = new FormLayout("5dlu,pref,5dlu,pref:grow",
     "5dlu,pref,3dlu,pref,default:grow");
-    CellConstraints cc = new CellConstraints();
+    final CellConstraints cc = new CellConstraints();
 
     final JPanel configPanel = new JPanel();
     configPanel.setLayout(layout);
@@ -73,7 +73,7 @@ public final class TimeListSettingsTab implements SettingsTab {
     mExpired.setSelected(mPlugin.isShowExpired());
     configPanel.add(mExpired, cc.xy(2, 4));
 
-    JPanel panel = new JPanel(new BorderLayout());
+    final JPanel panel = new JPanel(new BorderLayout());
     panel.add(configPanel, BorderLayout.WEST);
     return panel;
   }

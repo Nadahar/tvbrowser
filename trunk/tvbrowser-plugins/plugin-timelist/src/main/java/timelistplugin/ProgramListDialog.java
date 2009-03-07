@@ -23,9 +23,9 @@ import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -55,7 +55,7 @@ public final class ProgramListDialog extends JDialog implements WindowClosingIf 
   /**
    * vector of programs shown in the dialog
    */
-  private Vector<Program> programs;
+  private ArrayList<Program> programs;
 
   private ProgramList programList;
 
@@ -73,7 +73,7 @@ public final class ProgramListDialog extends JDialog implements WindowClosingIf 
    * @param parent
    *          parent frame
    */
-  public ProgramListDialog(Frame parent) {
+  public ProgramListDialog(final Frame parent) {
     super(parent, true);
     generateList();
     createGUI();
@@ -85,7 +85,7 @@ public final class ProgramListDialog extends JDialog implements WindowClosingIf 
    * @param parent
    *          parent frame
    */
-  public ProgramListDialog(Dialog parent) {
+  public ProgramListDialog(final Dialog parent) {
     super(parent, true);
     generateList();
     createGUI();
@@ -95,23 +95,25 @@ public final class ProgramListDialog extends JDialog implements WindowClosingIf 
    * find all programs to display
    */
   private void generateList() {
-    boolean showExpired = TimeListPlugin.getInstance().isShowExpired();
-    programs = new Vector<Program>();
-    Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
+    final boolean showExpired = TimeListPlugin.getInstance().isShowExpired();
+    programs = new ArrayList<Program>();
+    final Channel[] channels = Plugin.getPluginManager()
+        .getSubscribedChannels();
 
     Date date = Plugin.getPluginManager().getCurrentDate();
-    int startTime = Plugin.getPluginManager().getTvBrowserSettings()
+    final int startTime = Plugin.getPluginManager().getTvBrowserSettings()
         .getProgramTableStartOfDay();
-    int endTime = Plugin.getPluginManager().getTvBrowserSettings()
+    final int endTime = Plugin.getPluginManager().getTvBrowserSettings()
         .getProgramTableEndOfDay();
     for (int d = 0; d < 2; d++) {
 
       for (int i = 0; i < channels.length; i++) {
-        Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(
+        final Iterator<Program> it = Plugin.getPluginManager()
+            .getChannelDayProgram(
             date, channels[i]);
         if (it != null) {
           while (it.hasNext()) {
-            Program program = it.next();
+            final Program program = it.next();
             if (showExpired || !program.isExpired()) {
               if ((d == 0 && program.getStartTime() >= startTime)
                   || (d == 1 && program.getStartTime() <= endTime)) {
@@ -130,12 +132,12 @@ public final class ProgramListDialog extends JDialog implements WindowClosingIf 
    * create the dialog UI
    */
   private void createGUI() {
-    Date date = Plugin.getPluginManager().getCurrentDate();
+    final Date date = Plugin.getPluginManager().getCurrentDate();
     setTitle(mLocalizer.msg("title", "Programs by time for {0}", date
         .getShortDayLongMonthString()));
     UiUtilities.registerForClosing(this);
 
-    JPanel content = (JPanel) this.getContentPane();
+    final JPanel content = (JPanel) this.getContentPane();
     content.setLayout(new BorderLayout());
 
     Program[] prg = new Program[programs.size()];
@@ -148,7 +150,7 @@ public final class ProgramListDialog extends JDialog implements WindowClosingIf 
       }
     }
 
-    ProgramPanelSettings settings = new ProgramPanelSettings(
+    final ProgramPanelSettings settings = new ProgramPanelSettings(
         new PluginPictureSettings(PluginPictureSettings.NO_PICTURE_TYPE), true);
     programList = new ProgramList(prg, settings);
     programList.setCellRenderer(new TimeListCellRenderer());
@@ -160,16 +162,17 @@ public final class ProgramListDialog extends JDialog implements WindowClosingIf 
 
     content.add(scrollPane, BorderLayout.CENTER);
 
-    JPanel buttonPn = new JPanel(new BorderLayout());
+    final JPanel buttonPn = new JPanel(new BorderLayout());
     buttonPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     content.add(buttonPn, BorderLayout.SOUTH);
     
-    JButton buttonSettings = new JButton(TimeListPlugin.getInstance().createImageIcon("categories",
+    final JButton buttonSettings = new JButton(TimeListPlugin.getInstance()
+        .createImageIcon("categories",
         "preferences-system", 16));    
     buttonSettings.setToolTipText(mLocalizer.msg("settings","Open settings"));
 
     buttonSettings.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(final ActionEvent e) {
           close();
           Plugin.getPluginManager()
               .showSettings(TimeListPlugin.getInstance());
@@ -177,11 +180,11 @@ public final class ProgramListDialog extends JDialog implements WindowClosingIf 
       });
     buttonPn.add(buttonSettings, BorderLayout.WEST);
 
-    JButton closeButton = new JButton(Localizer
+    final JButton closeButton = new JButton(Localizer
         .getLocalization(Localizer.I18N_CLOSE));
     closeButton.addActionListener(new ActionListener() {
 
-      public void actionPerformed(ActionEvent evt) {
+      public void actionPerformed(final ActionEvent evt) {
         dispose();
       }
     });
@@ -211,7 +214,7 @@ public final class ProgramListDialog extends JDialog implements WindowClosingIf 
         scrollPane.getVerticalScrollBar().setValue(0);
         scrollPane.getHorizontalScrollBar().setValue(0);
 
-        Rectangle cellBounds = programList.getCellBounds(index, index);
+        final Rectangle cellBounds = programList.getCellBounds(index, index);
         if (cellBounds != null) {
           cellBounds.setLocation(cellBounds.x, cellBounds.y
               + scrollPane.getHeight() - cellBounds.height - 5);

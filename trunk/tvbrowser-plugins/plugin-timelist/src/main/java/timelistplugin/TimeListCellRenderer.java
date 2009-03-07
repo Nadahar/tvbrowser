@@ -43,7 +43,10 @@ public class TimeListCellRenderer extends DefaultListCellRenderer {
 
   protected TimeListCellRenderer() {
     super();
-    ProgramPanelSettings settings = new ProgramPanelSettings(ProgramPanelSettings.SHOW_PICTURES_NEVER, 0, 0, !TimeListPlugin.getInstance().isShowDescriptions(), false, 1000, ProgramPanelSettings.X_AXIS);
+    final ProgramPanelSettings settings = new ProgramPanelSettings(
+        ProgramPanelSettings.SHOW_PICTURES_NEVER, 0, 0, !TimeListPlugin
+            .getInstance().isShowDescriptions(), false, 1000,
+        ProgramPanelSettings.X_AXIS);
     mProgramPanel = new ProgramPanel(settings);
 
     mMainPanel = new JPanel(new BorderLayout());
@@ -53,19 +56,21 @@ public class TimeListCellRenderer extends DefaultListCellRenderer {
   }
 
   @Override
-  public Component getListCellRendererComponent(final JList list, Object value,
-      int index, boolean isSelected, boolean cellHasFocus) {
-    JLabel label = (JLabel) super.getListCellRendererComponent(list, value,
+  public Component getListCellRendererComponent(final JList list,
+      final Object value, final int index, final boolean isSelected,
+      final boolean cellHasFocus) {
+    final JLabel label = (JLabel) super.getListCellRendererComponent(list,
+        value,
         index, isSelected, cellHasFocus);
 
     if (value instanceof Program) {
-      Program program = (Program) value;
+      final Program program = (Program) value;
 
       mProgramPanel.setProgram(program);
       mProgramPanel.setTextColor(label.getForeground());
 
       program.addChangeListener(new ChangeListener() {
-        public void stateChanged(ChangeEvent e) {
+        public void stateChanged(final ChangeEvent e) {
           if (list != null) {
             list.repaint();
           }
