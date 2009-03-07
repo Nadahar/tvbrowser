@@ -37,10 +37,12 @@ import java.util.Set;
 /**
  * A wrapper class for programs to add properties to the program.
  */
-public class ProgramItem {
+public class ProgramItem implements Comparable<ProgramItem> {
    
   private Program mProgram;
   private Properties mProperties;
+  private transient String mProgId;
+  private transient Date mDate;
     
   
   public ProgramItem(Program prog) {
@@ -54,9 +56,8 @@ public class ProgramItem {
 
   public void read(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.readInt();  // version
-    Date date = new Date(in);
-    String progId = (String)in.readObject();
-    mProgram = Plugin.getPluginManager().getProgram(date, progId);
+    mDate = new Date(in);
+    mProgId = (String) in.readObject();
 
     int keyCnt = in.readInt();
     if (keyCnt > 0) {
@@ -72,10 +73,16 @@ public class ProgramItem {
   
   public void write(ObjectOutputStream out) throws IOException {
     out.writeInt(1); // version
-    Date date = mProgram.getDate();
-    date.writeData(out);
-    String progId = mProgram.getID();
-    out.writeObject(progId);
+    if (mDate != null) {
+      mDate.writeData(out);
+    } else {
+      mProgram.getDate().writeData(out);
+    }
+    if (mProgId != null) {
+      out.writeObject(mProgId);
+    } else {
+      out.writeObject(mProgram.getID());
+    }
     
     if (mProperties == null) {
       out.writeInt(0);
@@ -98,6 +105,9 @@ public class ProgramItem {
   }
   
   public Program getProgram() {
+    if (mProgram == null) {
+      mProgram = Plugin.getPluginManager().getProgram(mDate, mProgId);
+    }
     return mProgram;
   }
   
@@ -118,5 +128,50 @@ public class ProgramItem {
   public String toString() {
     return mProgram.getTitle();
   }
-    
+
+  /**
+   * Get the date of the program. Prefer this method over
+   * getProgram().getDate().
+   * 
+   * @return date of the program
+   * @since 3.0
+   */
+  public Date getDate() {
+    if (mDate != null) {
+      return mDate;
+    }
+    return getProgram().getDate();
+  }
+
+  /**
+   * get the start time of the program in minutes after midnight
+   * 
+   * @return start time of the program
+   * @since 3.0
+   */
+  public int getStartTime() {
+    if (mProgram != null) {
+      return getProgram().getStartTime();
+    }
+    String[] id = mProgId.split("_");
+    String[] hourMinute = id[id.length - 1].split(":");
+    return Integer.valueOf(hourMinute[0]) * 60 + Integer.valueOf(hourMinute[1]);
+  }
+
+  @Override
+  public int compareTo(final ProgramItem other) {
+    final int result = getDate().compareTo(other.getDate());
+    if (result != 0) {
+      return result;
+    }
+    int t1 = getStartTime();
+    int t2 = other.getStartTime();
+    if (t1 < t2) {
+      return -1;
+    } else if (t1 > t2) {
+      return 1;
+    }
+    return 0;
+  }
+
 }

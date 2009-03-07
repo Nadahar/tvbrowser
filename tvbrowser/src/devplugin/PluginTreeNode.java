@@ -52,7 +52,7 @@ import util.ui.Localizer;
  * The PluginTreeNode class represents a single node of the plugin tree view.
  *
  */
-public class PluginTreeNode {
+public class PluginTreeNode implements Comparable<PluginTreeNode> {
 
   private static final util.ui.Localizer mLocalizer =
       util.ui.Localizer.getLocalizerFor(PluginTreeNode.class);
@@ -66,7 +66,7 @@ public class PluginTreeNode {
   private boolean mGroupingByDate;
   private boolean mGroupWeekly;
 
-  private PluginTreeNode(int type, Object o) {
+  private PluginTreeNode(final int type, final Object o) {
     mChildNodes = null; // do not initialize to save memory
     mNodeType = type;
     mObject = o;
@@ -80,7 +80,7 @@ public class PluginTreeNode {
    * Creates a new PluginTreeNode object with a specified title
    * @param title
    */
-  public PluginTreeNode(String title) {
+  public PluginTreeNode(final String title) {
     this(Node.CUSTOM_NODE, title);
   }
 
@@ -89,57 +89,74 @@ public class PluginTreeNode {
    * On TV listings updates, the {@link PluginTreeListener} gets informed.
    * @param marker
    */
-  public PluginTreeNode(Marker marker) {
+  public PluginTreeNode(final Marker marker) {
     this(marker, true);
   }
 
+  /**
+   * creates a plugin root node WITHOUT marker
+   * 
+   * @since 3.0
+   * @param plugin
+   * 
+   */
+  public PluginTreeNode(final Plugin plugin) {
+    this(Node.PLUGIN_ROOT, plugin);
+    addRemovedProgramsListener();
+  }
+  
   /**
    * Creates a new root PluginTreeNode
    * @param marker
    * @param handleTvDataUpdate specifies, if the {@link PluginTreeListener}
    * should get called on TV listings updates
    */
-  public PluginTreeNode(Marker marker, boolean handleTvDataUpdate) {
+  public PluginTreeNode(final Marker marker, final boolean handleTvDataUpdate) {
     this(Node.PLUGIN_ROOT, marker);
     mMarker = marker;
 
     if (handleTvDataUpdate) {
-      final RemovedProgramsHandler removedProgramsHandler = new RemovedProgramsHandler();
-
-      TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
-        public void tvDataUpdateStarted() {
-          removedProgramsHandler.clear();
-        }
-
-        public void tvDataUpdateFinished() {
-          refreshAllPrograms(removedProgramsHandler);
-          update();
-          Program[] removedPrograms = removedProgramsHandler.getRemovedPrograms();
-          fireProgramsRemoved(removedPrograms);
-        }
-      });
+      addRemovedProgramsListener();
     }
 
+  }
+
+  private void addRemovedProgramsListener() {
+    final RemovedProgramsHandler removedProgramsHandler = new RemovedProgramsHandler();
+
+    TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
+      public void tvDataUpdateStarted() {
+        removedProgramsHandler.clear();
+      }
+
+      public void tvDataUpdateFinished() {
+        refreshAllPrograms(removedProgramsHandler);
+        update();
+        final Program[] removedPrograms = removedProgramsHandler
+                .getRemovedPrograms();
+        fireProgramsRemoved(removedPrograms);
+      }
+    });
   }
 
   /**
    * Creates a new Node containing a program item.
    * @param item
    */
-  public PluginTreeNode(ProgramItem item) {
+  public PluginTreeNode(final ProgramItem item) {
     this(Node.PROGRAM, item);
     mDefaultNode.setAllowsChildren(false);
   }
 
 
-  public void addNodeListener(PluginTreeListener listener) {
+  public void addNodeListener(final PluginTreeListener listener) {
     if (mNodeListeners == null) {
       mNodeListeners = new ArrayList<PluginTreeListener>(1);
     }
     mNodeListeners.add(listener);
   }
 
-  public boolean removeNodeListener(PluginTreeListener listener) {
+  public boolean removeNodeListener(final PluginTreeListener listener) {
     if (mNodeListeners == null) {
       return false;
     }
@@ -163,19 +180,20 @@ public class PluginTreeNode {
       return;
     }
     for (int i=mChildNodes.size()-1; i>=0; i--) {
-      PluginTreeNode node = mChildNodes.get(i);
+      final PluginTreeNode node = mChildNodes.get(i);
       node.mMarker = mMarker;
       
       if (node.isLeaf()) {
-        ProgramItem progItemInTree = (ProgramItem)node.getUserObject();
-        Program progInTree = progItemInTree.getProgram();
+        final ProgramItem progItemInTree = (ProgramItem) node.getUserObject();
+        final Program progInTree = progItemInTree.getProgram();
         
         if(progInTree.getProgramState() == Program.WAS_DELETED_STATE) {
           removeProgram(progInTree);
           handler.addRemovedProgram(progInTree);
         }
         else if(progInTree.getProgramState() == Program.WAS_UPDATED_STATE) {
-          Program updatedProg = Plugin.getPluginManager().getProgram(progInTree.getDate(), progInTree.getID());
+          final Program updatedProg = Plugin.getPluginManager().getProgram(
+              progInTree.getDate(), progInTree.getID());
           progItemInTree.setProgram(updatedProg);
         }
       }
@@ -203,7 +221,7 @@ public class PluginTreeNode {
    * Adds a an action menu to this node
    * @param menu
    */
-  public void addActionMenu(ActionMenu menu) {
+  public void addActionMenu(final ActionMenu menu) {
     mDefaultNode.addActionMenu(menu);
   }
 
@@ -248,11 +266,11 @@ public class PluginTreeNode {
    *
    * @param enable
    */
-  public void setGroupingByWeekEnabled(boolean enable) {
+  public void setGroupingByWeekEnabled(final boolean enable) {
     mGroupWeekly = enable;
   }
 
-  private NodeFormatter getNodeFormatter(boolean isWeekNodesEnabled) {
+  private NodeFormatter getNodeFormatter(final boolean isWeekNodesEnabled) {
     return mDefaultNode.getNodeFormatter(isWeekNodesEnabled);
   }
 
@@ -263,7 +281,7 @@ public class PluginTreeNode {
       return;
     }
     PluginTreeNode[] items = mChildNodes.toArray(new PluginTreeNode[mChildNodes.size()]);
-    Arrays.sort(items, sPluginTreeNodeComparator);
+    Arrays.sort(items);
     Date currentDate = null;
     for (int i=0; i<items.length; i++) {
       PluginTreeNode n = items[i];
@@ -320,7 +338,7 @@ public class PluginTreeNode {
         mDefaultNode.add(n.getMutableTreeNode());
       }
       else {
-      	Date date = ((ProgramItem)n.getUserObject()).getProgram().getDate();
+      	Date date = ((ProgramItem) n.getUserObject()).getDate();
                 
         if(date.addDays(1).compareTo(currentDate) >= 0) {
           ArrayList<PluginTreeNode> list = dateMap.get(date);
@@ -388,7 +406,7 @@ public class PluginTreeNode {
       List<PluginTreeNode> list = dateMap.get(dates[i]);
       PluginTreeNode[] nodeArr = new PluginTreeNode[list.size()];
       list.toArray(nodeArr);
-      Arrays.sort(nodeArr, sPluginTreeNodeComparator);
+      Arrays.sort(nodeArr);
       for (int k=0; k<nodeArr.length; k++) {
       	Node newNode = new Node((ProgramItem)nodeArr[k].getUserObject());
         newNode.setNodeFormatter(nodeArr[k].getNodeFormatter(createWeekNodes && isShowingWeekNodes));
@@ -398,44 +416,6 @@ public class PluginTreeNode {
       isShowingWeekNodes = createWeekNodes;
     }
   }
-
-  private static Comparator<PluginTreeNode> sPluginTreeNodeComparator = new Comparator<PluginTreeNode>() {
-    public int compare(PluginTreeNode n1, PluginTreeNode n2) {
-        Object u1 = n1.getUserObject();
-        Object u2 = n2.getUserObject();
-        if (u1 instanceof ProgramItem && u2 instanceof ProgramItem) {
-          return sProgramItemComparator.compare((ProgramItem)u1, (ProgramItem)u2);
-        }
-        if (u1 instanceof String && u2 instanceof String) {
-          return ((String)u1).compareToIgnoreCase((String)u2);
-        }
-        if (u1 instanceof String) {
-          return 1;
-        }
-        return -1;
-    }
-  };
-
-  private static Comparator<ProgramItem> sProgramItemComparator = new Comparator<ProgramItem>(){
-    public int compare(ProgramItem pi1, ProgramItem pi2) {
-        Program p1 = pi1.getProgram();
-        Program p2 = pi2.getProgram();
-        int result = p1.getDate().compareTo(p2.getDate());
-        if (result != 0) {
-          return result;
-        }
-        int t1 = p1.getStartTime();
-        int t2 = p2.getStartTime();
-        if (t1 < t2) {
-          return -1;
-        }
-        else if (t1 > t2) {
-          return 1;
-        }
-		return 0;
-    }
-  };
-
 
   public Object getUserObject() {
     return mObject;
@@ -456,7 +436,7 @@ public class PluginTreeNode {
   }
 
 
-  public synchronized void add(PluginTreeNode node) {
+  public synchronized void add(final PluginTreeNode node) {
     // create collection on demand only
     if (mChildNodes == null) {
       mChildNodes = new ArrayList<PluginTreeNode>(1);
@@ -465,12 +445,12 @@ public class PluginTreeNode {
     node.mMarker = mMarker;
   }
 
-  public boolean contains(Program prog, boolean recursive) {
+  public boolean contains(final Program prog, final boolean recursive) {
     PluginTreeNode node = findProgramTreeNode(prog, recursive);
     return node != null;
   }
 
-  public boolean contains(Program prog) {
+  public boolean contains(final Program prog) {
     return contains(prog, false);
   }
 
@@ -491,7 +471,7 @@ public class PluginTreeNode {
 
   }
 
-  public synchronized void addPrograms(List<Program> listNew) {
+  public synchronized void addPrograms(final List<Program> listNew) {
     Iterator<Program> newIt = listNew.iterator();
     // create sorted lists of current and new programs, but only if this node contains any children at all!
     if (mChildNodes != null && mChildNodes.size() > 0) {
@@ -554,7 +534,7 @@ public class PluginTreeNode {
     }
   }
 
-  private void markAndAdd(Program program) {
+  private void markAndAdd(final Program program) {
     if (mMarker != null) {
       program.mark(mMarker);
     }
@@ -569,7 +549,7 @@ public class PluginTreeNode {
    * @param program
    * @return the tree node containing the program
    */
-  public synchronized PluginTreeNode addProgram(Program program) {
+  public synchronized PluginTreeNode addProgram(final Program program) {
     if (program == null) {
       return null;
     }
@@ -596,7 +576,8 @@ public class PluginTreeNode {
    * @param program
    * @return the tree node containing the program
    */
-  public synchronized PluginTreeNode addProgramWithoutCheck(Program program) {
+  public synchronized PluginTreeNode addProgramWithoutCheck(
+      final Program program) {
     if (mMarker != null) {
       program.mark(mMarker);
     }
@@ -605,7 +586,8 @@ public class PluginTreeNode {
     return node;
   }
 
-  private PluginTreeNode findProgramTreeNode(PluginTreeNode root, Program prog, boolean recursive) {
+  private PluginTreeNode findProgramTreeNode(final PluginTreeNode root,
+      final Program prog, final boolean recursive) {
     if (root.mChildNodes != null) {
       Iterator<PluginTreeNode> it = root.mChildNodes.iterator();
       while (it.hasNext()) {
@@ -629,16 +611,17 @@ public class PluginTreeNode {
     return null;
   }
 
-  private PluginTreeNode findProgramTreeNode(Program prog, boolean recursive) {
+  private PluginTreeNode findProgramTreeNode(final Program prog,
+      final boolean recursive) {
     return findProgramTreeNode(this, prog, recursive);
   }
 
 
-  public synchronized void removeProgram(ProgramItem item) {
+  public synchronized void removeProgram(final ProgramItem item) {
     removeProgram(item.getProgram());
   }
 
-  public synchronized void removeProgram(Program program) {
+  public synchronized void removeProgram(final Program program) {
     PluginTreeNode node = findProgramTreeNode(program, false);
     if (node != null) {
       mChildNodes.remove(node);
@@ -648,7 +631,7 @@ public class PluginTreeNode {
     }
   }
 
-  public synchronized PluginTreeNode addNode(String title) {
+  public synchronized PluginTreeNode addNode(final String title) {
     PluginTreeNode node = new PluginTreeNode(title);
     add(node);
     return node;
@@ -698,7 +681,7 @@ public class PluginTreeNode {
   }
 
 
-  public void store(ObjectOutputStream out) throws IOException {
+  public void store(final ObjectOutputStream out) throws IOException {
     int childrenCnt = 0;
     if (mChildNodes != null) {
       childrenCnt = mChildNodes.size();
@@ -708,46 +691,48 @@ public class PluginTreeNode {
     for (int i=0; i<childrenCnt; i++) {
       PluginTreeNode n = mChildNodes.get(i);
       out.writeInt(n.mNodeType);
-      if (!n.isLeaf()) {
+      if (n.mNodeType == Node.PROGRAM) {
+        ProgramItem item = (ProgramItem) n.getUserObject();
+        item.write(out);
+      } else {
         String title = (String)n.getUserObject();
         out.writeObject(title);
-      }
-      else {
-        ProgramItem item = (ProgramItem)n.getUserObject();
-        item.write(out);
       }
       n.store(out);
     }
   }
 
-  public void load(ObjectInputStream in) throws IOException, ClassNotFoundException {
+  public void load(final ObjectInputStream in) throws IOException {
     int cnt = in.readInt();
     for (int i=0; i<cnt; i++) {
       int type = in.readInt();
       PluginTreeNode n;
       if (type == Node.PROGRAM) {
         ProgramItem item = new ProgramItem();
-        item.read(in);
+        try {
+          item.read(in);
+        } catch (ClassNotFoundException e) {
+          e.printStackTrace();
+        }
 
-        n = findProgramTreeNode(item.getProgram(), true);
-        if (n == null) {
-          n = new PluginTreeNode(item);
-          if (item.getProgram() != null) {
-            add(n);
-            if (mMarker != null) {
-              item.getProgram().mark(mMarker);
-            }
-          }
+        n = new PluginTreeNode(item);
+        add(n);
+        if (mMarker != null) {
+          item.getProgram().mark(mMarker);
         }
 
       }
       else {
-        String title = (String)in.readObject();
-        n = new PluginTreeNode(title);
-        add(n);
+        try {
+          String title = (String) in.readObject();
+          n = new PluginTreeNode(title);
+          add(n);
+        } catch (ClassNotFoundException e) {
+          e.printStackTrace();
+          return;
+        }
       }
       n.load(in);
-
     }
   }
 
@@ -808,7 +793,7 @@ public class PluginTreeNode {
       mProgArr.clear();
     }
 
-    public void addRemovedProgram(Program prog) {
+    public void addRemovedProgram(final Program prog) {
       mProgArr.add(prog);
     }
 
@@ -819,4 +804,30 @@ public class PluginTreeNode {
     }
   }
 
+  /**
+   * @return copy of child node collection
+   * @since 3.0
+   */
+  public PluginTreeNode[] getChildren() {
+    if (mChildNodes == null) {
+      return new PluginTreeNode[0];
+    }
+    return mChildNodes.toArray(new PluginTreeNode[mChildNodes.size()]);
+  }
+
+  @Override
+  public int compareTo(final PluginTreeNode other) {
+    final Object otherUserObject = other.getUserObject();
+    if (mObject instanceof ProgramItem
+        && otherUserObject instanceof ProgramItem) {
+      return ((ProgramItem) mObject).compareTo((ProgramItem) otherUserObject);
+    }
+    if (mObject instanceof String && otherUserObject instanceof String) {
+      return ((String) mObject).compareToIgnoreCase((String) otherUserObject);
+    }
+    if (mObject instanceof String) {
+      return 1;
+    }
+    return -1;
+  }
 }

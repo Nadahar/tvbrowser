@@ -29,10 +29,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -49,6 +46,7 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvdataservice.MutableChannelDayProgram;
 import util.exc.TvBrowserException;
+import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
 import util.io.stream.StreamUtilities;
 import util.ui.FixedSizeIcon;
@@ -905,32 +903,53 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
     if (mRootNode == null) {
       mRootNode = new PluginTreeNode(this);
 
-      ObjectInputStream in;
-      File f = new File(Settings.getUserSettingsDirName(),getId()+".node");
-      try {
-        in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(f), 0x2000));
-        mRootNode.load(in);
-        in.close();
-      } catch (FileNotFoundException e) {
-        // ignore
-      } catch (Exception e) {
-        util.exc.ErrorHandler.handle(mLocalizer.msg("error.couldNotReadFile","Reading file '{0}' failed.", f.getAbsolutePath()), e);
-      }
+      loadRootNode(mRootNode);
     }
 
     return mRootNode;
+  }
+
+  protected void loadRootNode(final PluginTreeNode node) {
+    if (node == null) {
+      return;
+    }
+    File nodeFile = new File(Settings.getUserSettingsDirName(), getId()
+        + ".node");
+    if (nodeFile.canRead()) {
+      try {
+        StreamUtilities.objectInputStream(nodeFile,
+            new ObjectInputStreamProcessor() {
+              public void process(ObjectInputStream inputStream)
+                  throws IOException {
+                node.load(inputStream);
+                inputStream.close();
+              }
+            });
+      } catch (Exception e) {
+        util.exc.ErrorHandler.handle(mLocalizer.msg("error.couldNotReadFile",
+            "Reading file '{0}' failed.", nodeFile.getAbsolutePath()), e);
+      }
+    }
   }
 
   /**
    * Saves the entries under the root node in a file.
    */
   public void storeRootNode() {
-    File f = new File(Settings.getUserSettingsDirName(),getId()+".node");
+    storeRootNode(mRootNode);
+  }
+
+  protected void storeRootNode(final PluginTreeNode node) {
+    File f = new File(Settings.getUserSettingsDirName(), getId() + ".node");
+    if (node == null || node.isEmpty()) {
+      f.delete();
+      return;
+    }
     try {
       StreamUtilities.objectOutputStream(f, new ObjectOutputStreamProcessor() {
         public void process(ObjectOutputStream out) throws IOException {
-          if (mRootNode != null) {
-            mRootNode.store(out);
+          if (node != null) {
+            node.store(out);
           }
           out.close();
         }
