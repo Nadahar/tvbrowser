@@ -51,9 +51,8 @@ public class BalloonPlugin extends Plugin {
       final String name = mLocalizer.msg("name", "Balloon Plugin");
       final String desc = mLocalizer.msg("description",
           "Show balloon tip as reminder for programs.");
-      final String author = "Michael Keppler";
-
-      mPluginInfo = new PluginInfo(BalloonPlugin.class, name, desc, author);
+      mPluginInfo = new PluginInfo(BalloonPlugin.class, name, desc,
+          "Michael Keppler", "GPL 3");
     }
 
     return mPluginInfo;
