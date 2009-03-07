@@ -68,9 +68,8 @@ public class CheckerPlugin extends Plugin {
       final String name = mLocalizer.msg("name", "Checker");
       final String desc = mLocalizer.msg("description",
           "Checks program data for bugs.");
-      final String author = "Michael Keppler";
-
-      mPluginInfo = new PluginInfo(CheckerPlugin.class, name, desc, author);
+      mPluginInfo = new PluginInfo(CheckerPlugin.class, name, desc,
+          "Michael Keppler", "GPL 3");
     }
 
     return mPluginInfo;
