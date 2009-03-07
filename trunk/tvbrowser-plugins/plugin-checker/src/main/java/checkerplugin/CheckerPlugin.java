@@ -168,8 +168,15 @@ public class CheckerPlugin extends Plugin {
     if (netTime != -1) {
       final int duration = program.getLength();
       if (netTime > duration) {
-        results.add(mLocalizer.msg("issue.netTime",
-            "Net playing time is longer than duration."));
+        if (duration > 0) {
+          results.add(mLocalizer.msg("issue.netTime",
+              "Net playing time is longer than duration ({0} min.)", netTime
+                  - duration));
+        }
+        else {
+          results.add(mLocalizer.msg("issue.netTimeAvailable",
+              "Net play time is set, but duration missing."));
+        }
       }
     }
   }
