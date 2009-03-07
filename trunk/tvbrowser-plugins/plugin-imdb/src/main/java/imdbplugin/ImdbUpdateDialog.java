@@ -35,7 +35,8 @@ public final class ImdbUpdateDialog extends JDialog {
   transient private ProgressMonitor mMonitor;
   transient private ImdbPlugin mPlugin;
 
-  public ImdbUpdateDialog(ImdbPlugin plugin, JFrame frame, String server, ImdbDatabase db) {
+  public ImdbUpdateDialog(final ImdbPlugin plugin, final JFrame frame,
+      final String server, final ImdbDatabase db) {
     super(frame, true);
     mServer = server;
     mDatabase = db;
@@ -43,7 +44,8 @@ public final class ImdbUpdateDialog extends JDialog {
     createGui();
   }
 
-  public ImdbUpdateDialog(ImdbPlugin plugin, JDialog dialog, String server, ImdbDatabase db) {
+  public ImdbUpdateDialog(final ImdbPlugin plugin, final JDialog dialog,
+      final String server, final ImdbDatabase db) {
     super(dialog, true);
     mServer = server;
     mDatabase = db;
@@ -54,24 +56,26 @@ public final class ImdbUpdateDialog extends JDialog {
   private void createGui() {
     setTitle(mLocalizer.msg("downloadingTitle","Downloading IMDb-Data"));
 
-    JPanel panel = (JPanel) getContentPane();
+    final JPanel panel = (JPanel) getContentPane();
     panel.setLayout(new FormLayout("fill:pref:grow", "pref, 3dlu, pref, fill:3dlu:grow, pref"));
     panel.setBorder(Borders.DLU4_BORDER);
 
-    CellConstraints cc = new CellConstraints();
+    final CellConstraints cc = new CellConstraints();
 
-    JLabel label = new JLabel(mLocalizer.msg("downloadingMsg", "Processing IMDb data..."));
+    final JLabel label = new JLabel(mLocalizer.msg("downloadingMsg",
+        "Processing IMDb data..."));
     panel.add(label, cc.xy(1,1));
-    JProgressBar progressBar = new JProgressBar();
+    final JProgressBar progressBar = new JProgressBar();
     panel.add(progressBar, cc.xy(1,3));
 
-    JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
+    final JButton cancel = new JButton(Localizer
+        .getLocalization(Localizer.I18N_CANCEL));
     cancel.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
+      public void actionPerformed(final ActionEvent e) {
         cancelPressed();
       }
     });
-    ButtonBarBuilder builder = new ButtonBarBuilder();
+    final ButtonBarBuilder builder = new ButtonBarBuilder();
     builder.addGlue();
     builder.addGriddedButtons(new JButton[] {cancel});
     panel.add(builder.getPanel(), cc.xy(1,5));
@@ -85,7 +89,7 @@ public final class ImdbUpdateDialog extends JDialog {
   }
 
   @Override
-  public void setVisible(boolean b) {
+  public void setVisible(final boolean b) {
     if (b) {
       startThread();
     } else {
@@ -95,7 +99,7 @@ public final class ImdbUpdateDialog extends JDialog {
   }
 
   private void startThread() {
-    Thread thread = new Thread(new Runnable() {
+    final Thread thread = new Thread(new Runnable() {
       public void run() {
         
         mParser = new ImdbParser(mDatabase, mServer);

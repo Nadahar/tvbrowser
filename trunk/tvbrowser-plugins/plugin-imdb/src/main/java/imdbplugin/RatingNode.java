@@ -25,13 +25,13 @@ public class RatingNode extends PluginTreeNode implements
   private int mRating;
   private Program mProgram;
 
-  public RatingNode(ImdbRating rating, Program program) {
+  public RatingNode(final ImdbRating rating, final Program program) {
     super(rating.getRatingText() + " " + program.getTitle());
     mRating = rating.getRating();
     mProgram = program;
   }
 
-  public int compareTo(RatingNode other) {
+  public int compareTo(final RatingNode other) {
     if (mRating < other.mRating) {
       return -1;
     } else if (mRating > other.mRating) {

@@ -13,7 +13,8 @@ public final class ImdbRating {
   private int mVotes;
   private int mRating;
 
-  public ImdbRating(int rating, int votes, String distribution, String movieid) {
+  public ImdbRating(final int rating, final int votes,
+      final String distribution, final String movieid) {
     mRating = rating;
     mVotes = votes;
     mDistribution = distribution;

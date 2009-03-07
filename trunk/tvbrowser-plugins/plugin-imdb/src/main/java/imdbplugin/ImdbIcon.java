@@ -12,7 +12,7 @@ public final class ImdbIcon implements Icon {
   private static Icon mEmptyImdbIcon;
   private int mLength = 0;
   
-  public ImdbIcon(ImdbRating rating) {
+  public ImdbIcon(final ImdbRating rating) {
     mLength = (getIconWidth() - 1) * rating.getRating()
         / ImdbRating.MAX_RATING_NORMALIZATION;
   }
@@ -25,12 +25,13 @@ public final class ImdbIcon implements Icon {
     return 16;
   }
 
-  public void paintIcon(Component c, Graphics g, int x, int y) {
+  public void paintIcon(final Component c, final Graphics g, final int x,
+      final int y) {
     if (mEmptyImdbIcon == null) {
       mEmptyImdbIcon = new ImageIcon(getClass().getResource("rating.png"));
     }
     mEmptyImdbIcon.paintIcon(c, g, x, y);
-    Color oc = g.getColor();
+    final Color oc = g.getColor();
     g.setColor(Color.yellow);
     g.fill3DRect(x, y+7, mLength, 5, true);
     g.setColor(oc);

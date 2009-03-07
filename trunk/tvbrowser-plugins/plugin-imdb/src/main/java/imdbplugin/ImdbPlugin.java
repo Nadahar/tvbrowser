@@ -64,10 +64,10 @@ public final class ImdbPlugin extends Plugin {
   @Override
   public PluginInfo getInfo() {
     if (mPluginInfo == null) {
-      String name = mLocalizer.msg("pluginName", "Imdb Ratings");
-      String desc = mLocalizer.msg("description",
+      final String name = mLocalizer.msg("pluginName", "Imdb Ratings");
+      final String desc = mLocalizer.msg("description",
           "Display IMDb ratings of programs");
-      String author = "TV-Browser Team";
+      final String author = "TV-Browser Team";
 
       mPluginInfo = new PluginInfo(ImdbPlugin.class, name, desc, author);
     }
@@ -80,8 +80,8 @@ public final class ImdbPlugin extends Plugin {
   }
 
   @Override
-  public Icon[] getProgramTableIcons(Program program) {
-    ImdbRating rating = getRatingFor(program);
+  public Icon[] getProgramTableIcons(final Program program) {
+    final ImdbRating rating = getRatingFor(program);
     if (rating == null) {
       return null;
     }
@@ -89,7 +89,7 @@ public final class ImdbPlugin extends Plugin {
     return new Icon[]{new ImdbIcon(rating)};
   }
 
-  private ImdbRating getRatingFor(Program program) {
+  private ImdbRating getRatingFor(final Program program) {
     ImdbRating rating = null;
     if (!mExcludedChannels.contains(program.getChannel())) {
       rating = mRatingCache.get(program.getID());
@@ -113,14 +113,14 @@ public final class ImdbPlugin extends Plugin {
     return rating;
   }
 
-  private ImdbRating getEpisodeRating(Program program) {
+  private ImdbRating getEpisodeRating(final Program program) {
     return mImdbDatabase.getRatingForId(mImdbDatabase.getMovieEpisodeId(program
         .getTitle(), program.getTextField(ProgramFieldType.EPISODE_TYPE),
         program.getTextField(ProgramFieldType.ORIGINAL_EPISODE_TYPE), program
             .getIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE)));
   }
 
-  private ImdbRating getProgramRating(Program program) {
+  private ImdbRating getProgramRating(final Program program) {
     return mImdbDatabase.getRatingForId(mImdbDatabase.getMovieId(program
         .getTitle(), "", program
         .getIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE)));
@@ -134,8 +134,8 @@ public final class ImdbPlugin extends Plugin {
     	rating = new ImdbRating(75, 1000, "", "");
     }
     if (rating != null) {
-      AbstractAction action = new AbstractAction() {
-        public void actionPerformed(ActionEvent evt) {
+      final AbstractAction action = new AbstractAction() {
+        public void actionPerformed(final ActionEvent evt) {
           showRatingDialog(program);
         }
       };
@@ -147,10 +147,10 @@ public final class ImdbPlugin extends Plugin {
     return null;
   }
 
-  private void showRatingDialog(Program program) {
-    ImdbRating episodeRating = getEpisodeRating(program);
-    ImdbRating rating = getProgramRating(program);
-    StringBuffer message = new StringBuffer();
+  private void showRatingDialog(final Program program) {
+    final ImdbRating episodeRating = getEpisodeRating(program);
+    final ImdbRating rating = getProgramRating(program);
+    final StringBuffer message = new StringBuffer();
     if (rating != null || episodeRating != null) {
       if (episodeRating != null) {
         message.append(ratingMessage(program.getTitle() + " - "
@@ -172,7 +172,7 @@ public final class ImdbPlugin extends Plugin {
         .getBestDialogParent(getParentFrame()), message.toString());
   }
 
-  private String ratingMessage(String title, ImdbRating rating) {
+  private String ratingMessage(final String title, final ImdbRating rating) {
     return mLocalizer.msg("ratingFor", "Rating for \"{0}\":", title)
         + "\n"
         + mLocalizer.msg("rating", "Rating: {0}", new DecimalFormat("##.#")
@@ -194,12 +194,15 @@ public final class ImdbPlugin extends Plugin {
     if (!mProperties.getProperty("dontAskCreateDatabase", "false").equals("true") && !mImdbDatabase.isInitialised()) {
       SwingUtilities.invokeLater(new Runnable(){
         public void run() {
-          JCheckBox askAgain = new JCheckBox(mLocalizer.msg("dontShowAgain", "Don't show this message again"));
+          final JCheckBox askAgain = new JCheckBox(mLocalizer.msg(
+              "dontShowAgain", "Don't show this message again"));
           Object[] shownObjects = new Object[2];
           shownObjects[0] = mLocalizer.msg("downloadData", "No IMDB-Database available, should I download the ImDB-Data now (aprox. 10MB) ?");
           shownObjects[1] = askAgain;
 
-          int ret = JOptionPane.showConfirmDialog(getParentFrame(), shownObjects, mLocalizer.msg("downloadDataTitle","No data available"), JOptionPane.YES_NO_OPTION);
+          final int ret = JOptionPane.showConfirmDialog(getParentFrame(),
+              shownObjects, mLocalizer.msg("downloadDataTitle",
+                  "No data available"), JOptionPane.YES_NO_OPTION);
 
           if (askAgain.isSelected()) {
             mProperties.setProperty("dontAskCreateDatabase", "true");
@@ -225,12 +228,15 @@ public final class ImdbPlugin extends Plugin {
   }
 
   public void showUpdateDialog() {
-    JComboBox box = new JComboBox(new String[] {"ftp.fu-berlin.de", "ftp.funet.fi", "ftp.sunet.se"});
+    final JComboBox box = new JComboBox(new String[] { "ftp.fu-berlin.de",
+        "ftp.funet.fi", "ftp.sunet.se" });
     Object[] shownObjects = new Object[2];
     shownObjects[0] = mLocalizer.msg("serverMsg", "Choose server:");
     shownObjects[1] = box;
 
-    int ret = JOptionPane.showConfirmDialog(getParentFrame(), shownObjects, mLocalizer.msg("serverTitle","Choose Server"), JOptionPane.OK_CANCEL_OPTION);
+    final int ret = JOptionPane.showConfirmDialog(getParentFrame(),
+        shownObjects, mLocalizer.msg("serverTitle", "Choose Server"),
+        JOptionPane.OK_CANCEL_OPTION);
 
     if (ret == JOptionPane.OK_OPTION) {
       String server = null;
@@ -242,7 +248,7 @@ public final class ImdbPlugin extends Plugin {
         case 2 : server = "ftp://ftp.sunet.se/pub/tv+movies/imdb/";
                  break;
       }
-      Window w = UiUtilities.getBestDialogParent(getParentFrame());
+      final Window w = UiUtilities.getBestDialogParent(getParentFrame());
 
       ImdbUpdateDialog dialog = null;
       if (w instanceof JFrame) {
@@ -256,7 +262,7 @@ public final class ImdbPlugin extends Plugin {
   }
 
   @Override
-  public void loadSettings(Properties settings) {
+  public void loadSettings(final Properties settings) {
     mProperties = settings;
   }
 
@@ -266,14 +272,15 @@ public final class ImdbPlugin extends Plugin {
   }
 
   @Override
-  public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
+  public void readData(final ObjectInputStream in) throws IOException,
+      ClassNotFoundException {
     in.readInt(); // version
 
-    int count = in.readInt();
+    final int count = in.readInt();
 
     mExcludedChannels.clear();
     for (int i = 0;i< count;i++) {
-      Channel ch = Channel.readData(in, true);
+      final Channel ch = Channel.readData(in, true);
       if (ch != null) {
         mExcludedChannels.add(ch);
       }
@@ -281,7 +288,7 @@ public final class ImdbPlugin extends Plugin {
   }
 
   @Override
-  public void writeData(ObjectOutputStream out) throws IOException {
+  public void writeData(final ObjectOutputStream out) throws IOException {
     out.writeInt(1);
 
     out.writeInt(mExcludedChannels.size());
@@ -308,17 +315,17 @@ public final class ImdbPlugin extends Plugin {
       return;
     }
     mRatingCache.clear();
-    Map<String, RatingNode> nodes = new HashMap<String, RatingNode>();
-    Date currentDate = getPluginManager().getCurrentDate();
-    ProgramFilter filter = getPluginManager().getFilterManager()
+    final Map<String, RatingNode> nodes = new HashMap<String, RatingNode>();
+    final Date currentDate = getPluginManager().getCurrentDate();
+    final ProgramFilter filter = getPluginManager().getFilterManager()
         .getCurrentFilter();
     final Channel[] channels = getPluginManager().getSubscribedChannels();
     for (Channel channel : channels) {
       final Iterator<Program> iter = getPluginManager().getChannelDayProgram(currentDate, channel);
       if (null != iter) {
         while (iter.hasNext()) {
-          Program program = iter.next();
-          ImdbRating rating = getRatingFor(program);
+          final Program program = iter.next();
+          final ImdbRating rating = getRatingFor(program);
           if (rating != null && rating != DUMMY_RATING) {
             final String key = rating.getRatingText() + program.getTitle();
             RatingNode ratingNode = nodes.get(key);
@@ -335,7 +342,8 @@ public final class ImdbPlugin extends Plugin {
         }
       }
     }
-    ArrayList<RatingNode> nodeList = new ArrayList<RatingNode>(nodes.size());
+    final ArrayList<RatingNode> nodeList = new ArrayList<RatingNode>(nodes
+        .size());
     nodeList.addAll(nodes.values());
     Collections.sort(nodeList, Collections.reverseOrder());
     mRootNode.clear();
@@ -349,7 +357,7 @@ public final class ImdbPlugin extends Plugin {
     return mExcludedChannels.toArray(new Channel[mExcludedChannels.size()]);
   }
 
-  public void setExcludedChannels(Channel[] excludedChannels) {
+  public void setExcludedChannels(final Channel[] excludedChannels) {
     mExcludedChannels = new ArrayList<Channel>(Arrays.asList(excludedChannels));
   }
 
@@ -364,8 +372,8 @@ public final class ImdbPlugin extends Plugin {
         return new ImdbIcon(new ImdbRating(75, 100, "", ""));
       }
 
-      public int getRatingForProgram(Program p) {
-        ImdbRating rating = getRatingFor(p);
+      public int getRatingForProgram(final Program p) {
+        final ImdbRating rating = getRatingFor(p);
         if (rating != null) {
           return rating.getRating();
         }
@@ -373,8 +381,8 @@ public final class ImdbPlugin extends Plugin {
         return -1;
       }
 
-      public Icon getIconForProgram(Program p) {
-        ImdbRating rating = getRatingFor(p);
+      public Icon getIconForProgram(final Program p) {
+        final ImdbRating rating = getRatingFor(p);
         if (rating != null) {
           return new ImdbIcon(rating);
         }
@@ -385,7 +393,7 @@ public final class ImdbPlugin extends Plugin {
         return true;
       }
 
-      public void showDetailsFor(Program p) {
+      public void showDetailsFor(final Program p) {
         showRatingDialog(p);
       }
     }};

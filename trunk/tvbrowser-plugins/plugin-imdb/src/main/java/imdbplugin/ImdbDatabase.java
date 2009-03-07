@@ -44,7 +44,7 @@ public final class ImdbDatabase {
   private IndexSearcher mSearcher;
   private IndexWriter mWriter;
 
-  public ImdbDatabase(File imdbDatabase) {
+  public ImdbDatabase(final File imdbDatabase) {
     mCurrentPath = imdbDatabase;
   }
 
@@ -78,10 +78,11 @@ public final class ImdbDatabase {
     return ret;
   }
 
-  public String addTitle(String movieTitle, String episode, int year, String type) {
+  public String addTitle(final String movieTitle, final String episode,
+      final int year, final String type) {
     String movieID = null;
     try {
-      Document doc = new Document();
+      final Document doc = new Document();
       movieID = UUID.randomUUID().toString();
       doc.add(new Field(MOVIE_ID, movieID, Field.Store.COMPRESS,
           Field.Index.NOT_ANALYZED, Field.TermVector.NO));
@@ -113,9 +114,10 @@ public final class ImdbDatabase {
     return movieID;
   }
 
-  public void addAkaTitle(String movieId, String title, String episode, int year, String type) {
+  public void addAkaTitle(final String movieId, final String title,
+      final String episode, final int year, final String type) {
     try {
-      Document doc = new Document();
+      final Document doc = new Document();
       doc.add(new Field(MOVIE_ID, movieId, Field.Store.COMPRESS,
           Field.Index.NOT_ANALYZED, Field.TermVector.NO));
       doc.add(new Field(ITEM_TYPE, TYPE_AKA, Field.Store.COMPRESS,
@@ -156,9 +158,10 @@ public final class ImdbDatabase {
     return str;
   }
 
-  public void addRating(String movieId, int rating, int votes, String distribution) {
+  public void addRating(final String movieId, final int rating,
+      final int votes, final String distribution) {
     try {
-      Document doc = new Document();
+      final Document doc = new Document();
       doc.add(new Field(MOVIE_ID, movieId, Field.Store.COMPRESS,
           Field.Index.NOT_ANALYZED, Field.TermVector.NO));
       doc.add(new Field(ITEM_TYPE, TYPE_RATING, Field.Store.COMPRESS,
@@ -211,7 +214,7 @@ public final class ImdbDatabase {
 
     // if (new File(mCurrentPath, "segments.gen").exists()) {
       try {
-        IndexReader reader = IndexReader.open(mCurrentPath);
+        final IndexReader reader = IndexReader.open(mCurrentPath);
         mSearcher = new IndexSearcher(reader);
       } catch (IOException e) {
         e.printStackTrace();
@@ -240,12 +243,13 @@ public final class ImdbDatabase {
     }
   }
 
-  public String getOrCreateMovieId(String movieTitle, String episode, int year, String type) {
+  public String getOrCreateMovieId(final String movieTitle,
+      final String episode, final int year, final String type) {
     if (mSearcher == null) {
       return null;
     }
     try {
-      BooleanQuery bQuery = new BooleanQuery();
+      final BooleanQuery bQuery = new BooleanQuery();
       bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_MOVIE)),BooleanClause.Occur.MUST);
       bQuery.add(new TermQuery(new Term(MOVIE_TITLE, movieTitle)),BooleanClause.Occur.MUST);
       bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year))),BooleanClause.Occur.MUST);
@@ -256,17 +260,17 @@ public final class ImdbDatabase {
         bQuery.add(new TermQuery(new Term(MOVIE_TYPE, type)),BooleanClause.Occur.MUST);
       }
 
-      Hits hits = mSearcher.search(bQuery);
+      final Hits hits = mSearcher.search(bQuery);
       
       if (hits == null) {
         return null;
       }
      
-      Iterator it = hits.iterator();
+      final Iterator it = hits.iterator();
 
       if (it.hasNext()) {
-        Hit hit = (Hit) it.next();
-        Document document = hit.getDocument();
+        final Hit hit = (Hit) it.next();
+        final Document document = hit.getDocument();
         return document.getField(MOVIE_ID).stringValue();
       } else {
         return addTitle(movieTitle, episode, year, type);
@@ -277,8 +281,8 @@ public final class ImdbDatabase {
     return null;
   }
 
-  public String getMovieEpisodeId(String title, String episode,
-      String originalEpisode, int year) {
+  public String getMovieEpisodeId(final String title, final String episode,
+      final String originalEpisode, final int year) {
     if (mSearcher == null) {
       return null;
     }
@@ -289,11 +293,12 @@ public final class ImdbDatabase {
     return id;
   }
 
-  private String getEpisodeId(String title, String episode, int year) {
+  private String getEpisodeId(final String title, final String episode,
+      final int year) {
     if (episode == null) {
       return null;
     }
-    BooleanQuery bQuery = new BooleanQuery();
+    final BooleanQuery bQuery = new BooleanQuery();
     bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_MOVIE)),
         BooleanClause.Occur.MUST);
     bQuery.add(new TermQuery(new Term(MOVIE_TITLE, title)),
@@ -313,9 +318,9 @@ public final class ImdbDatabase {
     }
 
     try {
-      TopDocs hits = mSearcher.search(bQuery, 1);
+      final TopDocs hits = mSearcher.search(bQuery, 1);
       if (hits.totalHits > 0) {
-        Document document = mSearcher.doc(hits.scoreDocs[0].doc);
+        final Document document = mSearcher.doc(hits.scoreDocs[0].doc);
         printDocument(document);
         return document.getField(MOVIE_ID).stringValue();
       }
@@ -326,7 +331,8 @@ public final class ImdbDatabase {
     return null;
   }
 
-  public String getMovieId(String title, String episode, int year) {
+  public String getMovieId(final String title, final String episode,
+      final int year) {
     if (mSearcher == null) {
       return null;
     }
@@ -356,8 +362,8 @@ public final class ImdbDatabase {
       Iterator it = hits.iterator();
 
       if (it.hasNext()) {
-        Hit hit = (Hit) it.next();
-        Document document = hit.getDocument();
+        final Hit hit = (Hit) it.next();
+        final Document document = hit.getDocument();
 
         printDocument(document);
 
@@ -377,8 +383,8 @@ public final class ImdbDatabase {
       it = hits.iterator();
 
       if (it.hasNext()) {
-        Hit hit = (Hit) it.next();
-        Document document = hit.getDocument();
+        final Hit hit = (Hit) it.next();
+        final Document document = hit.getDocument();
 
         printDocument(document);
 
@@ -400,7 +406,7 @@ public final class ImdbDatabase {
     return null;
   }
 
-  private void printDocument(Document document) {
+  private void printDocument(final Document document) {
 /*    System.out.print(document.getField(MOVIE_TITLE).stringValue());
 
     if (document.getField(EPISODE_TITLE) != null) {
@@ -411,21 +417,21 @@ public final class ImdbDatabase {
   */
   }
 
-  public ImdbRating getRatingForId(String id) {
+  public ImdbRating getRatingForId(final String id) {
     if (id == null) {
       return null;
     }
     try {
-      BooleanQuery bQuery = new BooleanQuery();
+      final BooleanQuery bQuery = new BooleanQuery();
       bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_RATING)),BooleanClause.Occur.MUST);
       bQuery.add(new TermQuery(new Term(MOVIE_ID, id)),BooleanClause.Occur.MUST);
 
-      Hits hits = mSearcher.search(bQuery);
-      Iterator it = hits.iterator();
+      final Hits hits = mSearcher.search(bQuery);
+      final Iterator it = hits.iterator();
 
       if (it.hasNext()) {
-        Hit hit = (Hit) it.next();
-        Document document = hit.getDocument();
+        final Hit hit = (Hit) it.next();
+        final Document document = hit.getDocument();
 
         return new ImdbRating(
                 Integer.parseInt(document.getField(MOVIE_RATING).stringValue()),

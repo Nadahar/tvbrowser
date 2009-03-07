@@ -32,26 +32,28 @@ public final class ImdbSettings implements SettingsTab {
   private JFrame mParent;
   private Channel[] mExcludedChannels;
 
-  public ImdbSettings(JFrame parent, ImdbPlugin imdbPlugin) {
+  public ImdbSettings(final JFrame parent, final ImdbPlugin imdbPlugin) {
     mParent = parent;
     mImdbPlugin = imdbPlugin;
     mExcludedChannels = mImdbPlugin.getExcludedChannels();
   }
 
   public JPanel createSettingsPanel() {
-    JPanel panel = new JPanel(new FormLayout("3dlu, fill:pref:grow, 3dlu, pref, 3dlu", "pref, 3dlu, pref, 3dlu, pref"));
+    final JPanel panel = new JPanel(new FormLayout(
+        "3dlu, fill:pref:grow, 3dlu, pref, 3dlu",
+        "pref, 3dlu, pref, 3dlu, pref"));
 
-    CellConstraints cc = new CellConstraints();
+    final CellConstraints cc = new CellConstraints();
     int y = 1;
 
     final JLabel excludedChannels = new JLabel(createExcludeChannelsLabelText());
     panel.add(excludedChannels, cc.xy(2,y));
-    JButton channelConfig = new JButton("bearbeiten");
+    final JButton channelConfig = new JButton("bearbeiten");
     channelConfig.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
+      public void actionPerformed(final ActionEvent e) {
         ChannelChooserDlg chooser;
 
-        Component parent = UiUtilities.getBestDialogParent(mParent);
+        final Component parent = UiUtilities.getBestDialogParent(mParent);
         if (parent instanceof JFrame) {
           chooser = new ChannelChooserDlg((JFrame) parent, mExcludedChannels, null, ChannelChooserDlg.SELECTABLE_ITEM_LIST);
         } else {
@@ -70,15 +72,16 @@ public final class ImdbSettings implements SettingsTab {
     panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("titleDatabase", "Database")), cc.xyw(1, y, 5));
     y += 2;
 
-    JButton update = new JButton(mLocalizer.msg("updateDB", "Update Database"));
+    final JButton update = new JButton(mLocalizer.msg("updateDB",
+        "Update Database"));
     update.addActionListener(new ActionListener(){
 
-      public void actionPerformed(ActionEvent e) {
+      public void actionPerformed(final ActionEvent e) {
         mImdbPlugin.showUpdateDialog();
       }
     });
 
-    JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    final JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT));
     buttons.add(update);
 
     panel.add(buttons,cc.xyw(2,y, 3));

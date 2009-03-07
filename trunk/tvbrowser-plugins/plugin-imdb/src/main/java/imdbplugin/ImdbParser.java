@@ -31,12 +31,12 @@ public class ImdbParser {
   private String mServer;
   private boolean mRunParser = true;
 
-  public ImdbParser(ImdbDatabase db, String server) {
+  public ImdbParser(final ImdbDatabase db, final String server) {
     mDatabase = db;
     mServer = server;
   }
 
-  public void startParsing(ProgressMonitor monitor) throws IOException {
+  public void startParsing(final ProgressMonitor monitor) throws IOException {
     mDatabase.deleteDatabase();
 
     monitor.setMaximum(getFileSize(mServer));
@@ -72,36 +72,40 @@ public class ImdbParser {
     System.out.println("PARSING DONE");
   }
 
-  private BufferedInputStream downloadFile(ProgressMonitor monitor,
-      String fileName) throws MalformedURLException, IOException,
+  private BufferedInputStream downloadFile(final ProgressMonitor monitor,
+      final String fileName) throws MalformedURLException, IOException,
       FileNotFoundException {
     final URL url = new URL(mServer + fileName);
-    File tempFile = File.createTempFile("imdb", null);
+    final File tempFile = File.createTempFile("imdb", null);
     IOUtilities.download(url, tempFile);
-    BufferedInputStream stream = new BufferedInputStream(new FileInputStream(
+    final BufferedInputStream stream = new BufferedInputStream(
+        new FileInputStream(
         tempFile));
     tempFile.deleteOnExit();
     return stream;
   }
 
-  private void optimizeDatabase(ProgressMonitor monitor) throws IOException {
+  private void optimizeDatabase(final ProgressMonitor monitor)
+      throws IOException {
     monitor.setMessage(mLocalizer.msg("optimize", "Optimizing database"));
     mDatabase.close();
     mDatabase.reOpen();
     mDatabase.optimizeIndex();
   }
 
-  private int getFileSize(String mServer) {
-    String[] fileNames = new String[] { "aka-titles", "ratings" };
-    Integer[] fileSizes = new Integer[] { 5950067, 5067908 };
+  private int getFileSize(final String mServer) {
+    final String[] fileNames = new String[] { "aka-titles", "ratings" };
+    final Integer[] fileSizes = new Integer[] { 5950067, 5067908 };
 
     try {
       
       int size = 0;
-      String filesizes = new String(IOUtilities.loadFileFromHttpServer(new URL(mServer + "filesizes")));
+      final String filesizes = new String(IOUtilities
+          .loadFileFromHttpServer(new URL(mServer + "filesizes")));
 
       for (int i = 0; i < fileNames.length; i++) {
-        Matcher m = Pattern.compile("^" + fileNames[i] + "\\.list\\W(\\d*)$",
+        final Matcher m = Pattern.compile(
+            "^" + fileNames[i] + "\\.list\\W(\\d*)$",
             Pattern.MULTILINE).matcher(filesizes);
 
         if (m.find()) {
@@ -127,12 +131,16 @@ public class ImdbParser {
     mRunParser = false;
   }
 
-  private void parseAkaTitles(InputStream inputStream, ProgressMonitor monitor) throws IOException {
-    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "ISO-8859-15"));
+  private void parseAkaTitles(final InputStream inputStream,
+      final ProgressMonitor monitor) throws IOException {
+    final BufferedReader reader = new BufferedReader(new InputStreamReader(
+        inputStream, "ISO-8859-15"));
     String line = reader.readLine();
 
-    Pattern moviePattern = Pattern.compile("^(.*)\\((?:(\\d{4,4}).*|\\?\\?\\?\\?)\\)(?:\\W*\\((.*)\\))?(?:\\W\\{(.*)\\})?.*$");
-    Pattern akaPattern = Pattern.compile("^\\(aka (.*) \\((?:(\\d{4,4}).*|\\?\\?\\?\\?)\\)(?:\\W\\((.*)\\))?(?:\\W\\{(.*)\\})?\\).*$");
+    final Pattern moviePattern = Pattern
+        .compile("^(.*)\\((?:(\\d{4,4}).*|\\?\\?\\?\\?)\\)(?:\\W*\\((.*)\\))?(?:\\W\\{(.*)\\})?.*$");
+    final Pattern akaPattern = Pattern
+        .compile("^\\(aka (.*) \\((?:(\\d{4,4}).*|\\?\\?\\?\\?)\\)(?:\\W\\((.*)\\))?(?:\\W\\{(.*)\\})?\\).*$");
 
     String movieId = null;
     boolean startFound = false;
@@ -145,15 +153,15 @@ public class ImdbParser {
 
         if (line.length() > 0) {
           if (line.startsWith("(aka ") && movieId != null) {
-            Matcher matcher = akaPattern.matcher(line);
+            final Matcher matcher = akaPattern.matcher(line);
             if (matcher.matches()) {
-              String title = cleanMovieTitle(matcher.group(1).trim());
+              final String title = cleanMovieTitle(matcher.group(1).trim());
               int year = -1;
               if (matcher.group(2) != null) {
                 year = Integer.parseInt(matcher.group(2));
               }
-              String type = matcher.group(3);
-              String episode = cleanEpisodeTitle(matcher.group(4));
+              final String type = matcher.group(3);
+              final String episode = cleanEpisodeTitle(matcher.group(4));
 
               mDatabase.addAkaTitle(movieId, title, episode, year, type);
               if (++count % 100 == 0) {
@@ -161,15 +169,15 @@ public class ImdbParser {
               }
             }
           } else {
-            Matcher matcher = moviePattern.matcher(line);
+            final Matcher matcher = moviePattern.matcher(line);
             if (matcher.matches()) {
-              String movieTitle = cleanMovieTitle(matcher.group(1).trim());
+              final String movieTitle = cleanMovieTitle(matcher.group(1).trim());
               int year = -1;
               if (matcher.group(2) != null) {
                 year = Integer.parseInt(matcher.group(2));
               }
-              String type = matcher.group(3);                        
-              String episode = cleanEpisodeTitle(matcher.group(4));
+              final String type = matcher.group(3);
+              final String episode = cleanEpisodeTitle(matcher.group(4));
               movieId = mDatabase.getOrCreateMovieId(movieTitle, episode, year, type);
             }
           }
@@ -182,10 +190,13 @@ public class ImdbParser {
     reader.close();
   }
 
-  private void parseRatings(InputStream inputStream, ProgressMonitor monitor) throws IOException {
-    Pattern ratingPattern = Pattern.compile("^(.*?)(?:\\W\\((\\d{4,4}|\\?\\?\\?\\?).*?\\))?(?:\\W\\((.*)\\))?(?:\\W\\{(.*)\\})?$");
+  private void parseRatings(final InputStream inputStream,
+      final ProgressMonitor monitor) throws IOException {
+    final Pattern ratingPattern = Pattern
+        .compile("^(.*?)(?:\\W\\((\\d{4,4}|\\?\\?\\?\\?).*?\\))?(?:\\W\\((.*)\\))?(?:\\W\\{(.*)\\})?$");
 
-    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "ISO-8859-15"));
+    final BufferedReader reader = new BufferedReader(new InputStreamReader(
+        inputStream, "ISO-8859-15"));
     String line = reader.readLine();
 
     boolean startFound = false;
@@ -199,15 +210,15 @@ public class ImdbParser {
       } else if (startFound && line.startsWith("New  Distribution  Votes  Rank  Title")) {
         // Ignore this line!
       } else if (startFound && line.length() > 0) {
-        String distribution = line.substring(0, 10);
-        int votes = Integer.parseInt(line.substring(11, 19).trim());
-        String ratingStr = line.substring(20, 25).trim();
-        int rating = Integer.parseInt(ratingStr.replaceAll("\\.", ""));
-        String title = line.substring(25).trim();
+        final String distribution = line.substring(0, 10);
+        final int votes = Integer.parseInt(line.substring(11, 19).trim());
+        final String ratingStr = line.substring(20, 25).trim();
+        final int rating = Integer.parseInt(ratingStr.replaceAll("\\.", ""));
+        final String title = line.substring(25).trim();
 
-        Matcher matcher = ratingPattern.matcher(title);
+        final Matcher matcher = ratingPattern.matcher(title);
         if (matcher.matches()) {
-          String movieTitle = cleanMovieTitle(matcher.group(1).trim());
+          final String movieTitle = cleanMovieTitle(matcher.group(1).trim());
           int year = -1;
           if (matcher.group(2) != null) {
             try {
@@ -216,8 +227,8 @@ public class ImdbParser {
               // NOP
             }
           }
-          String type = matcher.group(3);
-          String episode = cleanEpisodeTitle(matcher.group(4));
+          final String type = matcher.group(3);
+          final String episode = cleanEpisodeTitle(matcher.group(4));
 
           mDatabase.addRating(mDatabase.getOrCreateMovieId(movieTitle, episode, year, type), rating, votes, distribution);
           if (++count % 100 == 0) {
@@ -233,12 +244,12 @@ public class ImdbParser {
     reader.close();
   }
 
-  private String cleanEpisodeTitle(String episode) {
+  private String cleanEpisodeTitle(final String episode) {
     if (episode == null) {
       return "";
     }
 
-    Matcher m = episodePattern.matcher(episode);
+    final Matcher m = episodePattern.matcher(episode);
     m.find();
 
     return m.group(1);
