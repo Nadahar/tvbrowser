@@ -36,6 +36,8 @@
     <module>plugin-imdb</module>
     <module>plugin-mediathek</module>
     <module>plugin-movieaward</module>
+    <module>plugin-recommendation</module>
+    <module>plugin-snarl</module>
     <module>plugin-soundreminder</module>
     <module>plugin-speech</module>
     <module>plugin-teletext</module>
@@ -47,7 +49,6 @@
     <module>plugin-wirschauen</module>
     <module>plugin-widget</module>
     <module>plugin-zattoo</module>
-    <module>plugin-recommendation</module>
   </modules>
   <dependencyManagement>
     <dependencies>
