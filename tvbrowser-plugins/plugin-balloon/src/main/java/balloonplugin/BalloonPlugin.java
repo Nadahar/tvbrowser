@@ -17,11 +17,8 @@
 package balloonplugin;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
-import util.io.ExecutionHandler;
 import util.misc.OperatingSystem;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
@@ -36,11 +33,11 @@ public class BalloonPlugin extends Plugin {
 
   private static final Version mVersion = new Version(2, 70, 0);
 
-  private static final String BALLOON_TARGET = "BALLOON_TARGET";
+  private static final String TARGET = "BALLOON_TARGET";
 
   private PluginInfo mPluginInfo;
 
-  private String mPath;
+  private JarApplicationExecuter mExecuter;
 
   public static Version getVersion() {
     return mVersion;
@@ -48,9 +45,10 @@ public class BalloonPlugin extends Plugin {
 
   public PluginInfo getInfo() {
     if (mPluginInfo == null) {
-      final String name = mLocalizer.msg("name", "Balloon Plugin");
-      final String desc = mLocalizer.msg("description",
-          "Show balloon tip as reminder for programs.");
+      final String name = mLocalizer.msg("name", "Balloon Tips");
+      final String desc = mLocalizer
+          .msg("description",
+              "Show balloon tip as reminder for programs (only Windows XP or better).");
       mPluginInfo = new PluginInfo(BalloonPlugin.class, name, desc,
           "Michael Keppler", "GPL 3");
     }
@@ -65,7 +63,7 @@ public class BalloonPlugin extends Plugin {
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
     if (canReceiveProgramsWithTarget()) {
       final ProgramReceiveTarget target = new ProgramReceiveTarget(this,
-          mLocalizer.msg("targetName", "Show balloon tip"), BALLOON_TARGET);
+          mLocalizer.msg("targetName", "Show balloon tip"), TARGET);
       return new ProgramReceiveTarget[] { target };
     }
     return null;
@@ -77,54 +75,26 @@ public class BalloonPlugin extends Plugin {
       return false;
     }
     for (Program program : programArr) {
-      showBalloon(program);
+      showNotification(program);
     }
     return true;
   }
 
-  private void showBalloon(final Program program) {
-    if (mPath == null) {
-      mPath = extractNotifier();
+  private void showNotification(final Program program) {
+    if (mExecuter == null) {
+      mExecuter = new JarApplicationExecuter("notifu.exe");
     }
-    if (mPath != null) {
-      final String params = "/m \"" + program.getChannel().getName() + " "
-          + program.getTimeString() + "\\n" + program.getTitle()
-          + "\" /p \"TV-Browser\" /d 600000";
-      final ExecutionHandler exec = new ExecutionHandler(params, mPath);
-      try {
-        exec.execute();
-      } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-    }
-  }
-
-  private String extractNotifier() {
-    File executable;
+    final File curDir = new File(".");
+    String dir = "";
     try {
-      // Get input stream from jar resource
-      final InputStream inputStream = getClass().getResource("notifu.exe")
-          .openStream();
-
-      // Copy resource to file system in a temporary folder with a unique name
-      executable = File.createTempFile("tvbrowser_balloon_", ".exe");
-      final FileOutputStream outputStream = new FileOutputStream(executable);
-      final byte[] array = new byte[8192];
-      int read = 0;
-      while ((read = inputStream.read(array)) > 0) {
-        outputStream.write(array, 0, read);
-      }
-      outputStream.close();
-
-      // Delete on exit
-      executable.deleteOnExit();
-      // getPluginManager().deleteFileOnNextStart(executable.getPath());
-    } catch (Throwable e) {
+      dir = "/i \"" + curDir.getCanonicalPath() + "\\imgs\\systray.ico\"";
+    } catch (IOException e) {
       e.printStackTrace();
-      return null;
     }
-    return executable.getPath();
+    final String parameters = "/m \"" + program.getChannel().getName() + " "
+        + program.getTimeString() + "\\n" + program.getTitle()
+        + "\" /p \"TV-Browser\" " + dir + " /d 600000";
+    mExecuter.execute(parameters);
   }
 
   @Override
