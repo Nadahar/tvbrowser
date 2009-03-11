@@ -430,7 +430,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
 
 
-  Channel getChannel(String country, String channelName) {
+  protected Channel getChannel(String country, String channelName) {
     Iterator<ChannelGroup> it = mAvailableChannelGroupsSet.iterator();
     while (it.hasNext()) {
       Channel[] chArr = getAvailableChannels(it.next());
@@ -780,7 +780,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
 
   public static Version getVersion() {
-    return new Version(2,72);
+    return new Version(2,73);
   }
   
 

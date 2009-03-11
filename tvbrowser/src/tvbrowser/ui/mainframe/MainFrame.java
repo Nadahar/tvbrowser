@@ -27,6 +27,7 @@
 package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -112,6 +113,8 @@ import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 import util.ui.view.Node;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
 
 import devplugin.Channel;
@@ -1010,6 +1013,37 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   public void quit(boolean log) {
+    if (log && downloadingThread != null && downloadingThread.isAlive()) {
+      final JDialog info = new JDialog();
+      info.setModal(true);
+      info.setUndecorated(true);
+      info.setAlwaysOnTop(true);
+      
+      JPanel main = new JPanel(new FormLayout("5dlu,pref,5dlu","5dlu,pref,5dlu"));
+      main.setBorder(BorderFactory.createLineBorder(Color.black));
+      main.add(new JLabel(mLocalizer.msg("downloadinfo","A data update is running. TV-Browser will be closed when the update is done.")), new CellConstraints().xy(2,2));
+      
+      info.setContentPane(main);
+      info.pack();
+      info.setLocationRelativeTo(this);
+
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          if(downloadingThread != null && downloadingThread.isAlive()) {
+            try {
+              downloadingThread.join();              
+            } catch (InterruptedException e) {
+              e.printStackTrace();
+            }
+          }
+          
+          info.setVisible(false);
+          info.dispose();
+        }
+      });
+      
+      info.setVisible(true);
+    }
     if(log && this.isUndecorated()) {
       switchFullscreenMode();
     }
