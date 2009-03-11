@@ -146,8 +146,8 @@ public final class WirSchauenPlugin extends Plugin {
     if (getPluginManager().getExampleProgram().equals(program) ||
         mAllowedChannels.contains(name)) {
 
-      AbstractAction action = new AbstractAction() {
-        public void actionPerformed(ActionEvent evt) {
+      final AbstractAction action = new AbstractAction() {
+        public void actionPerformed(final ActionEvent evt) {
           showDescribeDialog(program);
         }
       };
@@ -170,7 +170,7 @@ public final class WirSchauenPlugin extends Plugin {
     return new ThemeIcon("apps", "wirschauen", 16);
   }
 
-  private void showDescribeDialog(Program program) {
+  private void showDescribeDialog(final Program program) {
     final Window parent = UiUtilities.getLastModalChildOf(getParentFrame());
 
     WirSchauenDialog dialog;
@@ -190,15 +190,15 @@ public final class WirSchauenPlugin extends Plugin {
       }
       
       // we have new input, so store it on the server
-      String category = dialog.getCategory();
-      String genre = dialog.getGenre();
-      String description = dialog.getDescription();
-      String flagSubtitle = dialog.getSubtitle();
-      String flagOws = dialog.getOws();
-      String flagPremiere = dialog.getPremiere();
-      String omdbUrl = dialog.getUrl();
+      final String category = dialog.getCategory();
+      final String genre = dialog.getGenre();
+      final String description = dialog.getDescription();
+      final String flagSubtitle = dialog.getSubtitle();
+      final String flagOws = dialog.getOws();
+      final String flagPremiere = dialog.getPremiere();
+      final String omdbUrl = dialog.getUrl();
 
-      StringBuilder url = new StringBuilder();
+      final StringBuilder url = new StringBuilder();
       try {
         url.append("channel=").append(URLEncoder.encode(program.getChannel().getId(), "UTF-8"));
         url.append("&day=").append(program.getDate().getDayOfMonth());
@@ -210,7 +210,8 @@ public final class WirSchauenPlugin extends Plugin {
         url.append("&title=").append(URLEncoder.encode(program.getTitle(), "UTF-8"));
         url.append("&category=").append(category);
         
-        String episodeField = program.getTextField(ProgramFieldType.EPISODE_TYPE);
+        final String episodeField = program
+            .getTextField(ProgramFieldType.EPISODE_TYPE);
         if (episodeField != null) {
           url.append("&episode=").append(URLEncoder.encode(episodeField, "UTF-8"));
         }
@@ -227,7 +228,7 @@ public final class WirSchauenPlugin extends Plugin {
         url.append("&omu=").append(URLEncoder.encode(flagOws, "UTF-8"));
         url.append("&premiere=").append(URLEncoder.encode(flagPremiere, "UTF-8"));
 
-        URL u = new URL(BASE_URL + "addTVBrowserEvent/?"+ url);
+        final URL u = new URL(BASE_URL + "addTVBrowserEvent/?" + url);
         IOUtilities.loadFileFromHttpServer(u);
 
         getRootNode().addProgram(program);
@@ -247,7 +248,7 @@ public final class WirSchauenPlugin extends Plugin {
   }
 
   @Override
-  public void writeData(ObjectOutputStream out) throws IOException {
+  public void writeData(final ObjectOutputStream out) throws IOException {
     getRootNode();
     storeRootNode();
   }

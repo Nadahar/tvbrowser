@@ -24,6 +24,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -148,23 +149,25 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
   private String mCurrentStatus = STATUS_NONE;
 
   private String mDefaultMessage = "";
+
+  private boolean mEnablePaste = false;
   
   private static final Color mNeededBg = new Color(255,0,0);
 
-  public WirSchauenDialog(JDialog parent, Program program) {
+  public WirSchauenDialog(final JDialog parent, final Program program) {
     super(parent, true);
-    createGui(program);
+    createGui(parent, program);
   }
 
-  public WirSchauenDialog(JFrame parent, Program program) {
+  public WirSchauenDialog(final JFrame parent, final Program program) {
     super(parent, true);
-    createGui(program);
+    createGui(parent, program);
   }
 
-  private void createGui(final Program program) {
+  private void createGui(final Window parent, final Program program) {
     setTitle(mLocalizer.msg("title", "WirSchauen.de suggestion"));
 
-    JPanel panel = (JPanel) getContentPane();
+    final JPanel panel = (JPanel) getContentPane();
 
     panel.setBorder(Borders.DLU4_BORDER);
 
@@ -192,17 +195,18 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
         +"pref");
     panel.setLayout(mLayout); // dialog buttons
 
-    CellConstraints cc = new CellConstraints();
+    final CellConstraints cc = new CellConstraints();
 
     // title
-    JLabel titleLabel = new JLabel(mLocalizer.msg("titleLabel", "Title") + ": ");
+    final JLabel titleLabel = new JLabel(mLocalizer.msg("titleLabel", "Title")
+        + ": ");
     titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD));
     panel.add(titleLabel, cc.xy(1, 1));
     final JTextField title = new JTextField(program.getTitle());
     title.setEditable(false);
     title.addMouseListener(new MouseAdapter() {
       @Override
-      public void mouseClicked(MouseEvent e) {
+      public void mouseClicked(final MouseEvent e) {
         title.selectAll();
       }
     });
@@ -214,14 +218,16 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
       text = program.getIntFieldAsString(ProgramFieldType.EPISODE_NUMBER_TYPE);
     }
     if (text != null && text.length() > 0) {
-      JLabel episodeLabel = new JLabel(ProgramFieldType.EPISODE_TYPE.getLocalizedName() + ": ");
+      final JLabel episodeLabel = new JLabel(ProgramFieldType.EPISODE_TYPE
+          .getLocalizedName()
+          + ": ");
       episodeLabel.setFont(episodeLabel.getFont().deriveFont(Font.BOLD));
       panel.add(episodeLabel, cc.xy(1, 3));
       final JTextField episode = new JTextField(text);
       episode.setEditable(false);
       episode.addMouseListener(new MouseAdapter() {
         @Override
-        public void mouseClicked(MouseEvent e) {
+        public void mouseClicked(final MouseEvent e) {
           episode.selectAll();
         }
       });
@@ -235,7 +241,7 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
 
     // server status message
     String labelText = mLocalizer.msg("countLoading", "Reading data from server...");
-    String description = program.getDescription();
+    final String description = program.getDescription();
     if (description != null && description.contains(OMDB_DESCRIPTION_TAG)) {
       labelText = mLocalizer.msg("countLoadingTagged", "One description available on the server. Updating data...");
     }
@@ -249,12 +255,12 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
     panel.add(mStatusLabel, cc.xyw(3,5,4));
 
     // URL
-    JLabel url = new JLabel(mLocalizer.msg("URL", "URL") + ": ");
+    final JLabel url = new JLabel(mLocalizer.msg("URL", "URL") + ": ");
     url.setFont(url.getFont().deriveFont(Font.BOLD));
     panel.add(url, cc.xy(1, 7));
     panel.add(new JLabel(OMDB_MOVIE_URL), cc.xy(3, 7));
 
-    NumberFormat integerFormat = NumberFormat.getIntegerInstance();
+    final NumberFormat integerFormat = NumberFormat.getIntegerInstance();
     integerFormat.setGroupingUsed(false);
     integerFormat.setParseIntegerOnly(true);
     mOmdb = new JTextField();
@@ -263,8 +269,9 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
 
     mOmdb.setDocument(new PlainDocument() {
       @Override
-      public void insertString(int offset, String input, AttributeSet a) throws BadLocationException {
-        String filtered = input.replaceAll("\\D", "");
+      public void insertString(final int offset, final String input,
+          final AttributeSet a) throws BadLocationException {
+        final String filtered = input.replaceAll("\\D", "");
         if (!filtered.equals(input)) {
           Toolkit.getDefaultToolkit().beep();
         }
@@ -273,15 +280,15 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
     });
     
     mOmdb.getDocument().addDocumentListener(new DocumentListener() {
-      public void changedUpdate(DocumentEvent e) {
+      public void changedUpdate(final DocumentEvent e) {
         updateOmdb();
       }
 
-      public void insertUpdate(DocumentEvent e) {
+      public void insertUpdate(final DocumentEvent e) {
         updateOmdb();
       }
 
-      public void removeUpdate(DocumentEvent e) {
+      public void removeUpdate(final DocumentEvent e) {
         updateOmdb();
       }
 
@@ -296,8 +303,8 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
     
     mOpenOmdb.addActionListener(new ActionListener() {
 
-      public void actionPerformed(ActionEvent e) {
-        String movieId = mOmdb.getText().trim();
+      public void actionPerformed(final ActionEvent e) {
+        final String movieId = mOmdb.getText().trim();
         if (movieId.length() == 0) {
           Launch.openURL(OMDB_MAIN_URL);
         }
@@ -308,20 +315,24 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
 
     
     // category
-    JLabel category = new JLabel(mLocalizer.msg("category","Category")+": ");
+    final JLabel category = new JLabel(mLocalizer.msg("category", "Category")
+        + ": ");
     category.setFont(category.getFont().deriveFont(Font.BOLD));
     
     panel.add(category, cc.xy(1, 9));
-    String[] categories = mLocalizer.msg("categories","Film,Series,Other").split(",");
+    final String[] categories = mLocalizer.msg("categories",
+        "Film,Series,Other").split(",");
     
     mCategory = new JComboBox(categories);
     mCategory.setRenderer(new DefaultListCellRenderer() {
-      public Component getListCellRendererComponent(JList list,Object value,
-          int index,boolean isSelected,boolean cellHasFocus) {
+      public Component getListCellRendererComponent(final JList list,
+          final Object value, final int index, final boolean isSelected,
+          final boolean cellHasFocus) {
         Component c = super.getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);
         
         if(!isSelected) {
-          JPanel colorPanel = new JPanel(new FormLayout("default:grow","fill:default:grow"));
+          final JPanel colorPanel = new JPanel(new FormLayout("default:grow",
+              "fill:default:grow"));
           ((JLabel)c).setOpaque(true);
           
           if((index == -1 && list.getSelectedIndex() == 0) || index == 0) {
@@ -349,11 +360,12 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
     panel.add(mCategory, cc.xyw(3, 9, 4));
     
     // genre
-    JLabel genre = new JLabel(mLocalizer.msg("genre","Genre")+": ");
+    final JLabel genre = new JLabel(mLocalizer.msg("genre", "Genre") + ": ");
     genre.setFont(genre.getFont().deriveFont(Font.BOLD));
     
     panel.add(genre, cc.xy(1, 11));
-    String[] genres = mLocalizer.msg("genreDefaults","Action,Adventure,Animation").split(",");
+    final String[] genres = mLocalizer.msg("genreDefaults",
+        "Action,Adventure,Animation").split(",");
     Arrays.sort(genres);
     mGenre = new JComboBox(genres);
     mGenre.setEditable(true);
@@ -365,7 +377,7 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
     panel.add(mGenre, cc.xyw(3, 11, 4));
 
     // description
-    JLabel descLabel = new JLabel(mLocalizer.msg("text","Text")+": ");
+    final JLabel descLabel = new JLabel(mLocalizer.msg("text", "Text") + ": ");
     descLabel.setVerticalAlignment(JLabel.TOP);
     descLabel.setFont(descLabel.getFont().deriveFont(Font.BOLD));
 
@@ -374,12 +386,25 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
     mDescription = new JTextArea();
     mDescription.setDocument(new PlainDocument() {
       @Override
-      public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
+      public void insertString(final int offs, String str, final AttributeSet a)
+          throws BadLocationException {
         str = str.replaceAll("\t", "");
         if (getLength() + str.length() > 200) {
           Toolkit.getDefaultToolkit().beep();
         } else {
-          super.insertString(offs, str, a);
+          if (mEnablePaste || str.length() == 1 || str.indexOf(' ') == -1) {
+            super.insertString(offs, str, a);
+          } else {
+            JOptionPane
+                .showMessageDialog(
+                    UiUtilities.getLastModalChildOf(parent),
+                    mLocalizer
+                        .msg(
+                            "paste.message",
+                            "Pasting of large texts is disabled to avoid copyright issues. Please use only selfmade texts!"),
+                    mLocalizer.msg("paste.title", "Pasting not possible"),
+                    JOptionPane.ERROR_MESSAGE);
+          }
         }
       }
     });
@@ -387,20 +412,20 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
     mDescription.setWrapStyleWord(true);
     mDescription.getDocument().addDocumentListener(new DocumentListener() {
       private void updateRemaining() {
-        int remaining = 200 - mDescription.getDocument().getLength();
+        final int remaining = 200 - mDescription.getDocument().getLength();
         mCounter.setText(mLocalizer.msg("remaining", "({0} characters remaining)", remaining));
         calculateOkButtonStatus();
       }
 
-      public void changedUpdate(DocumentEvent e) {
+      public void changedUpdate(final DocumentEvent e) {
         updateRemaining();
       }
 
-      public void insertUpdate(DocumentEvent e) {
+      public void insertUpdate(final DocumentEvent e) {
         updateRemaining();
       }
 
-      public void removeUpdate(DocumentEvent e) {
+      public void removeUpdate(final DocumentEvent e) {
         updateRemaining();
       }});
 
@@ -411,7 +436,7 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
     panel.add(mCounter, cc.xyw(3, 15, 4));
 
     // format information
-    JLabel format = new JLabel(mLocalizer.msg("format","Format")+": ");
+    final JLabel format = new JLabel(mLocalizer.msg("format", "Format") + ": ");
     format.setFont(format.getFont().deriveFont(Font.BOLD));
     panel.add(format, cc.xy(1, 17));
     
@@ -424,9 +449,10 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
     mPremiere.addItemListener(this);
 
     // buttons
-    JButton help = new JButton(Localizer.getLocalization(Localizer.I18N_HELP));
+    final JButton help = new JButton(Localizer
+        .getLocalization(Localizer.I18N_HELP));
     help.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
+      public void actionPerformed(final ActionEvent e) {
         Launch.openURL(PluginInfo.getHelpUrl(WirSchauenPlugin.getInstance().getId()));
       }
     });
@@ -434,19 +460,20 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
     mOk = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     mOk.setEnabled(false);
     mOk.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
+      public void actionPerformed(final ActionEvent e) {
         ok();
       }
     });
 
-    JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
+    final JButton cancel = new JButton(Localizer
+        .getLocalization(Localizer.I18N_CANCEL));
     cancel.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
+      public void actionPerformed(final ActionEvent e) {
         close();
       }
     });
 
-    ButtonBarBuilder builder = new ButtonBarBuilder();
+    final ButtonBarBuilder builder = new ButtonBarBuilder();
     builder.addGridded(help);
     builder.addGlue();
     builder.addGriddedButtons(new JButton[]{mOk, cancel});
@@ -474,7 +501,7 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         mOmdb.requestFocusInWindow();
-        int count = getCountForProgram(program);
+        final int count = getCountForProgram(program);
 
         if (count == -1) {
           showDefaultStatus(STATUS_ERROR, mLocalizer.msg("countError", "Could not load data from server..."));
@@ -536,7 +563,7 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
     }
   }
   
-  private boolean checkCurrentDate(Program program) {
+  private boolean checkCurrentDate(final Program program) {
     if (program.getDate().compareTo(Date.getCurrentDate()) <= 0) {
       mOmdb.setEnabled(false);
       enableWirSchauenInput(false);
@@ -549,7 +576,7 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
     return false;
   }
 
-  private void enableWirSchauenInput(boolean enable) {
+  private void enableWirSchauenInput(final boolean enable) {
     mDescription.setEnabled(enable);
     mCounter.setEnabled(enable);
     
@@ -581,7 +608,7 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
   }
 
   public String getUrl() {
-    String text = mOmdb.getText().trim();
+    final String text = mOmdb.getText().trim();
     if (text.length() > 0) {
       return OMDB_MOVIE_URL + text;
     }
@@ -589,7 +616,7 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
   }
 
   public String getGenre() {
-    Object selectedItem = mGenre.getSelectedItem();
+    final Object selectedItem = mGenre.getSelectedItem();
     if (selectedItem == null) {
       return "";
     }
@@ -616,7 +643,7 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
     return String.valueOf(mCategory.getSelectedIndex());
   }
 
-  public int getCountForProgram(Program program) {
+  public int getCountForProgram(final Program program) {
     // reset all old values
     mOldUrl = "";
     mOldGenre = "";
@@ -628,7 +655,7 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
     
     // now ask the server
     int count = -1;
-    StringBuilder url = new StringBuilder();
+    final StringBuilder url = new StringBuilder();
     try {
       url.append("channel=").append(URLEncoder.encode(program.getChannel().getId(), "UTF-8"));
       url.append("&day=").append(program.getDate().getDayOfMonth());
@@ -639,16 +666,17 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
       url.append("&length=").append(program.getLength());
       url.append("&title=").append(URLEncoder.encode(program.getTitle(), "UTF-8"));
 
-      URL scriptUrl = new URL(WirSchauenPlugin.BASE_URL + "findDescription/?"+ url);
+      final URL scriptUrl = new URL(WirSchauenPlugin.BASE_URL
+          + "findDescription/?" + url);
 
-      WirSchauenHandler handler = new WirSchauenHandler();
-      SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
+      final WirSchauenHandler handler = new WirSchauenHandler();
+      final SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
       saxParser.parse(scriptUrl.openStream(), handler);
 
       if (handler.getData().get("desc_id") != null) {
         count = 1;
 
-        HashMap<String, String> data = handler.getData();
+        final HashMap<String, String> data = handler.getData();
 
         mOldUrl = getServerValue(data, "url");
         String urlText = mOldUrl;
@@ -663,7 +691,9 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
         }
 
         mOldDescription = getServerValue(data, "desc");
+        mEnablePaste = true;
         mDescription.setText(mOldDescription);
+        mEnablePaste = false;
 
         mOldGenre = getServerValue(data, "genre");
         mGenre.setSelectedItem(mOldGenre);
@@ -697,7 +727,8 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
     return count;
   }
 
-  private String getServerValue(HashMap<String, String> data, String key) {
+  private String getServerValue(final HashMap<String, String> data,
+      final String key) {
     String text = data.get(key);
     if (text != null) {
       text = text.trim();
@@ -717,7 +748,7 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
         || Integer.parseInt(mOldCategory) != mCategory.getSelectedIndex();
   }
 
-  private void showStatus(String status, String message) {
+  private void showStatus(final String status, final String message) {
     if (STATUS_NONE.equals(mCurrentStatus) || STATUS_INFO.equals(mCurrentStatus) || STATUS_ERROR.equals(status) || STATUS_WARNING.equals(status)) {
       if (STATUS_NONE.equals(status)) {
         mIcon.setVisible(false);
@@ -734,12 +765,12 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
     }
   }
 
-  private void showDefaultStatus(String status, String message) {
+  private void showDefaultStatus(final String status, final String message) {
     mDefaultMessage = message;
     showStatus(status, message);
   }
 
-  public void itemStateChanged(ItemEvent e) {
+  public void itemStateChanged(final ItemEvent e) {
     calculateOkButtonStatus();
   }
 }
