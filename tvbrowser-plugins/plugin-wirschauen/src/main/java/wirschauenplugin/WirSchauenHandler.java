@@ -1,9 +1,10 @@
 package wirschauenplugin;
 
-import org.xml.sax.helpers.DefaultHandler;
+import java.util.HashMap;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import java.util.HashMap;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * This Class implements a Sax Handler that parses the Data from
@@ -17,17 +18,20 @@ public class WirSchauenHandler extends DefaultHandler {
   }
 
   @Override
-  public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+  public void startElement(final String uri, final String localName,
+      final String qName, final Attributes attributes) throws SAXException {
       mCharacters = new StringBuffer();
   }
 
   @Override
-  public void endElement(String uri, String localName, String qName) throws SAXException {
+  public void endElement(final String uri, final String localName,
+      final String qName) throws SAXException {
     mData.put(qName, mCharacters.toString());
   }
 
   @Override
-  public void characters(char ch[], int start, int length) throws SAXException {
+  public void characters(final char ch[], final int start, final int length)
+      throws SAXException {
       mCharacters.append(ch, start, length);
   }
 
