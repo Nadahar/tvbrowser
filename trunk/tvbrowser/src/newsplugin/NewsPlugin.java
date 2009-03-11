@@ -56,7 +56,7 @@ import devplugin.Version;
  * @author Til Schneider, www.murfman.de
  */
 public class NewsPlugin extends Plugin {
-  private static final Version mVersion = new Version(2,70);
+  private static final Version mVersion = new Version(2,73);
 
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -251,8 +251,14 @@ public class NewsPlugin extends Plugin {
 
   private News[] parseNews(String news) {
     // Create a regex that extracts news
-    String regex = "<news date=\"([^\"]*)\" author=\"([^\"]*)\">"
-        + "\\s*<title>([^<]*)</title>" + "\\s*<text>([^<]*)</text>";
+    String regex = 
+            "<news date=\"([^\"]*)\" author=\"([^\"]*)\">"
+            + "\\s*<title>([^<]*)</title>" + "\\s*<text>([^<]*)</text>";
+
+    if(news.indexOf("<title-en>") != -1) {
+      regex += "\\s*<title-en>([^<]*)</title-en>" + "\\s*<text-en>([^<]*)</text-en>";
+    }
+
     Matcher matcher = Pattern.compile(regex).matcher(news);
 
     // Extract the news
@@ -263,6 +269,13 @@ public class NewsPlugin extends Plugin {
       String author = matcher.group(2);
       String title = matcher.group(3);
       String text = matcher.group(4);
+      String engTitle = null;
+      String engText = null;
+      
+      if(matcher.groupCount() > 4) {
+        engTitle = matcher.group(5);
+        engText = matcher.group(6);
+      }
       
       // Convert the date to a real date. E.g.: "2004-09-17 15:38:31"
       Calendar cal = Calendar.getInstance();
@@ -281,7 +294,7 @@ public class NewsPlugin extends Plugin {
               .parseInt(dateAsString.substring(17, 19)));
       Date date = cal.getTime();
       
-      list.add(new News(date, author, title, text));
+      list.add(new News(date, author, title, text, engTitle, engText));
 
       lastPos = matcher.end();
     }

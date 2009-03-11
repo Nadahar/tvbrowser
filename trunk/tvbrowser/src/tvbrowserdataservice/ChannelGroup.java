@@ -274,7 +274,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     // Update the channel list
     // NOTE: We have to load the channel list before the programs, because
     // we need it for the programs.
-    updateChannelList(mCurMirror);
+    updateChannelList(mCurMirror, false);
 
     try {
       mSummary = loadSummaryFile(mCurMirror);
@@ -391,10 +391,6 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     }
   }
 
-  private void updateChannelList(Mirror mirror) throws TvBrowserException {
-    updateChannelList(mirror, false);
-  }
-
   private void updateChannelList(Mirror mirror, boolean forceUpdate) throws TvBrowserException {
     String fileName = mID + "_" + ChannelList.FILE_NAME;
     File file = new File(mDataDir, fileName + ".new");
@@ -452,7 +448,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
    * 
    * @return The available channel array.
    */
-  public Channel[] getAvailableChannels() {
+  public synchronized Channel[] getAvailableChannels() {
     if (mAvailableChannelArr == null) {
       File channelFile = new File(mDataDir, mID + "_" + ChannelList.FILE_NAME);
       if (channelFile.exists()) {

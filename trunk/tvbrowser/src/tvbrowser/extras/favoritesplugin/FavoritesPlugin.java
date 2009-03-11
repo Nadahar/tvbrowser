@@ -299,7 +299,7 @@ public class FavoritesPlugin {
               showInfoFavorites.add(favorite);
             }
           }
-    
+           
           if(!showInfoFavorites.isEmpty()) {
             UpdateInfoThread thread = new UpdateInfoThread(showInfoFavorites.toArray(new Favorite[showInfoFavorites.size()]));
             thread.setPriority(Thread.MIN_PRIORITY);
@@ -729,7 +729,7 @@ public class FavoritesPlugin {
     int splitPanePosition = getIntegerSetting(mSettings, "splitpanePosition",
             200);
     ManageFavoritesDialog dlg = new ManageFavoritesDialog(MainFrame.getInstance(), favoriteArr, splitPanePosition, showNew);
-    dlg.setModal(!showNew);
+    dlg.setModal(true);
     
     if(mShowInfoOnNewProgramsFound) {
       dlg.addComponentListener(new ComponentAdapter() {
@@ -1146,7 +1146,7 @@ public class FavoritesPlugin {
       }
       
       showDialog();
-      
+    
       mUpdateInfoThreads.remove(this);
       
       if(mUpdateInfoThreads.isEmpty()) {

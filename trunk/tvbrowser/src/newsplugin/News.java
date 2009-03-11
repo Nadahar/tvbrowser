@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * One news.
@@ -36,7 +37,8 @@ import java.util.Date;
  * @author Til Schneider, www.murfman.de
  */
 public class News implements Comparable<News> {
-
+  private static final String LANGUAGE_SEPARATOR = "###de###_###en###";
+  
   /** The timestamp of the news */
   private Date mTime;
 
@@ -49,6 +51,12 @@ public class News implements Comparable<News> {
   /** The text */
   private String mText;
   
+  /** The English title */
+  private String mEngTitle;
+  
+  /** The English text*/
+  private String mEngText;
+  
   
   /**
    * Creates a new instance of News.
@@ -57,12 +65,16 @@ public class News implements Comparable<News> {
    * @param author The author
    * @param title The title
    * @param text The text
+   * @param engTitle The English title
+   * @param engText The English text
    */
-  public News(Date time, String author, String title, String text) {
+  public News(Date time, String author, String title, String text, String engTitle, String engText) {
     mTime = time;
     mAuthor = author;
     mTitle = title;
     mText = text;
+    mEngTitle = engTitle != null ? engTitle : "";
+    mEngText = engText != null ? engText : "";
   }
 
 
@@ -92,6 +104,10 @@ public class News implements Comparable<News> {
    * @return The title.
    */
   public String getTitle() {
+    if(mEngTitle.trim().length() > 0 && !Locale.getDefault().getLanguage().equals(Locale.GERMAN.getLanguage())) {
+      return mEngTitle;
+    }
+    
     return mTitle;
   }
   
@@ -102,6 +118,10 @@ public class News implements Comparable<News> {
    * @return The text.
    */
   public String getText() {
+    if(mEngText.trim().length() > 0 && !Locale.getDefault().getLanguage().equals(Locale.GERMAN.getLanguage())) {
+      return mEngText;
+    }
+
     return mText;
   }
 
@@ -115,8 +135,20 @@ public class News implements Comparable<News> {
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeObject(mTime);
     out.writeObject(mAuthor);
-    out.writeObject(mTitle);
-    out.writeObject(mText);
+    
+    if(mEngTitle.trim().length() > 0) {
+      out.writeObject(mTitle + LANGUAGE_SEPARATOR + mEngTitle);
+    }
+    else {
+      out.writeObject(mTitle);
+    }
+    
+    if(mEngText.trim().length() > 0) {
+      out.writeObject(mText + LANGUAGE_SEPARATOR + mEngText);
+    }
+    else {
+      out.writeObject(mText);
+    }
   }
 
   
@@ -136,8 +168,24 @@ public class News implements Comparable<News> {
     String author = (String) in.readObject();
     String title = (String) in.readObject();
     String text = (String) in.readObject();
+    String engTitle = null;
+    String engText = null;
     
-    return new News(time, author, title, text);
+    int n = title.indexOf(LANGUAGE_SEPARATOR);
+    
+    if(n != -1) {
+      engTitle = title.substring(n+LANGUAGE_SEPARATOR.length());
+      title = title.substring(0,n);
+    }
+    
+    n = text.indexOf(LANGUAGE_SEPARATOR);
+    
+    if(n != -1) {
+      engText = text.substring(n+LANGUAGE_SEPARATOR.length());
+      text = text.substring(0,n);
+    }
+    
+    return new News(time, author, title, text, engTitle, engText);
   }
 
   

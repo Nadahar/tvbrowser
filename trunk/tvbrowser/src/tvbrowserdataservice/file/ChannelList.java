@@ -193,6 +193,7 @@ public class ChannelList {
     reader.close();
     if (iconLoader != null) {
       iconLoader.close();
+      iconLoader = null;
     }
   }
 
@@ -287,7 +288,10 @@ public class ChannelList {
       mIconIndexFile = new File(mIconDir, "index.txt");
       mProperties = new ChangeTrackingProperties();
       if (mIconIndexFile.exists()) {
-        mProperties.load(new BufferedInputStream(new FileInputStream(mIconIndexFile), 0x1000));
+        BufferedInputStream in = new BufferedInputStream(new FileInputStream(
+            mIconIndexFile), 0x1000);
+        mProperties.load(in);
+        in.close();
       } else {
         mLog.severe("index.txt not found");
         // System.exit(-1);
@@ -299,7 +303,7 @@ public class ChannelList {
       String prevUrl = (String) mProperties.get(key);
       Icon icon = null;
       File iconFile = new File(mIconDir, channelId);
-
+      
       if (url.equals(prevUrl)) {
         // the url hasn't changed; we should have the icon locally
         icon = getIconFromFile(iconFile);
@@ -348,7 +352,10 @@ public class ChannelList {
     }
 
     private void close() throws IOException {
-      mProperties.store(mIconIndexFile);
+      FileOutputStream out = new FileOutputStream(mIconIndexFile);
+      out.getChannel().lock();
+      mProperties.store(out, null);
+      out.close();
     }
   }
 

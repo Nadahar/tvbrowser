@@ -193,8 +193,6 @@ public class Java6Tray {
 
       public void popupMenuCanceled(PopupMenuEvent e) {}
     });
-    mPopupMenu.setVisible(true);
-    mPopupMenu.setVisible(false);
     
     mTrayIcon.addMouseListener(new MouseAdapter() {
 
