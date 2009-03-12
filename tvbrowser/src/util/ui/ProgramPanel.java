@@ -712,7 +712,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
     }
 
     if (mMouseOver || mIsSelected) {
-      Color test = Settings.propMouseOverColor.getColor();
+      Color test = Settings.propProgramTableMouseOverColor.getColor();
       if (mIsSelected) {
         test = Settings.propKeyboardSelectedColor.getColor();
       }

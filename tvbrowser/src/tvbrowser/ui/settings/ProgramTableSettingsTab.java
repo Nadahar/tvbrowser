@@ -363,14 +363,14 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
         (currentRow += 2), 8));
 
     mMouseOverCb = new JCheckBox(mLocalizer.msg("MouseOver", "Mouse-Over-Effect"));
-    mMouseOverCb.setSelected(Settings.propMouseOver.getBoolean());
+    mMouseOverCb.setSelected(Settings.propProgramTableMouseOver.getBoolean());
     mSettingsPn.add(mMouseOverCb, cc.xy(2, (currentRow += 2)));
     
-    mMouseOverColorLb = new ColorLabel(Settings.propMouseOverColor.getColor());
-    mMouseOverColorLb.setStandardColor(Settings.propMouseOverColor.getDefaultColor());
-    mMouseOverColorLb.setEnabled(Settings.propMouseOver.getBoolean());
+    mMouseOverColorLb = new ColorLabel(Settings.propProgramTableMouseOverColor.getColor());
+    mMouseOverColorLb.setStandardColor(Settings.propProgramTableMouseOverColor.getDefaultColor());
+    mMouseOverColorLb.setEnabled(Settings.propProgramTableMouseOver.getBoolean());
     final ColorButton mouseOverColorChangeBtn = new ColorButton(mMouseOverColorLb);
-    mouseOverColorChangeBtn.setEnabled(Settings.propMouseOver.getBoolean());
+    mouseOverColorChangeBtn.setEnabled(Settings.propProgramTableMouseOver.getBoolean());
     mMouseOverCb.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         boolean enabled = mMouseOverCb.isSelected();
@@ -500,9 +500,9 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     minutes = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
     Settings.propProgramTableEndOfDay.setInt(minutes);
 
-    Settings.propMouseOver.setBoolean(mMouseOverCb.isSelected());
+    Settings.propProgramTableMouseOver.setBoolean(mMouseOverCb.isSelected());
 
-    Settings.propMouseOverColor.setColor(mMouseOverColorLb.getColor());
+    Settings.propProgramTableMouseOverColor.setColor(mMouseOverColorLb.getColor());
     Settings.propProgramTableCutTitle.setBoolean(mCutLongTitlesCB.isSelected());
     Settings.propProgramTableCutTitleLines.setInt(mCutLongTitlesSelection
         .getSelectedIndex() + 1);

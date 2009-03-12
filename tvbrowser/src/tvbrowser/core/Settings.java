@@ -48,6 +48,8 @@ import javax.swing.UIManager;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.plugin.DefaultSettings;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.extras.programinfo.ProgramInfo;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
@@ -659,7 +661,7 @@ public class Settings {
       mProp, "usedefaultfonts", true);
 
   public static final BooleanProperty propEnableAntialiasing = new BooleanProperty(
-      mProp, "enableantialiasing", false);
+      mProp, "enableantialiasing", true);
 
   private static String getDefaultTvDataDir() {
     return TVBrowser.isTransportable() ? "./settings/tvdata" : getUserDirectoryName() + File.separator + "tvdata";
@@ -951,13 +953,13 @@ public class Settings {
       mProp, "toolbarLocation", "north");
   
   public static final StringProperty propLeftSingleClickIf = new StringProperty(
-      mProp, "leftSingleClickIf", "programinfo.ProgramInfo");
+      mProp, "leftSingleClickIf", ProgramInfo.getProgramInfoPluginId());
   
-  public static final StringProperty propDefaultContextMenuIf = new StringProperty(
-      mProp, "contextmenudefaultplugin", "programinfo.ProgramInfo");
+  public static final StringProperty propDoubleClickIf = new StringProperty(
+      mProp, "contextmenudefaultplugin", ProgramInfo.getProgramInfoPluginId());
 
   public static final StringProperty propMiddleClickIf = new StringProperty(
-      mProp, "middleclickplugin", "programinfo.ProgramInfo");
+      mProp, "middleclickplugin", ReminderPlugin.getReminderPluginId());
 
   /**
    * the last active program filter
@@ -1080,15 +1082,15 @@ public class Settings {
   /** Color for Programs marked with MAX_PRIORITY */
   public static final ColorProperty propProgramPanelMarkedMaxPriorityColor = new ColorProperty(
       mProp, "programpanel.ColorMarkedMax", new Color(255, 0, 0, 30));
-  /** Color of the foreground of a program pranel */
+  /** Color of the foreground of a program panel */
   public static final ColorProperty propProgramPanelForegroundColor = new ColorProperty(
       mProp, "programpanel.ColorForeground", Color.black);
   
-  public static final BooleanProperty propMouseOver = new BooleanProperty(
-      mProp, "programpanel.MouseOver", false);
+  public static final BooleanProperty propProgramTableMouseOver = new BooleanProperty(
+      mProp, "programpanel.MouseOver", true);
 
   /** Color for Mouse-Over */
-  public static final ColorProperty propMouseOverColor = new ColorProperty(
+  public static final ColorProperty propProgramTableMouseOverColor = new ColorProperty(
       mProp, "programpanel.MouseOverColor", new Color(200, 200, 0, 60));
 
   /** Color for selected Program */

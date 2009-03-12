@@ -99,12 +99,12 @@ public class ContextMenuManager {
     setLeftSingleClickIf(menuIf);
     
     // Get the default context menu action
-    id = Settings.propDefaultContextMenuIf.getString();
+    id = Settings.propDoubleClickIf.getString();
     menuIf = getContextMenuIfForId(id);
     if (menuIf == null) {
-      menuIf = getContextMenuIfForId(Settings.propDefaultContextMenuIf.getDefault());
+      menuIf = getContextMenuIfForId(Settings.propDoubleClickIf.getDefault());
       if (menuIf != null) {
-        Settings.propDefaultContextMenuIf.setString(menuIf.getId());
+        Settings.propDoubleClickIf.setString(menuIf.getId());
       }
     }
     setDefaultContextMenuIf(menuIf);

@@ -320,7 +320,7 @@ public class ProgramInfo {
   }
   
   protected String getId() {
-    return DATAFILE_PREFIX;
+    return getProgramInfoPluginId();
   }
   
   protected PluginPictureSettings getPictureSettings() {
@@ -337,5 +337,15 @@ public class ProgramInfo {
 
   public void showProgramInformation(Program program) {
     showProgramInformation(program, true);
+  }
+
+  /**
+   * get the plugin id without loading the plugin
+   * 
+   * @return the plugin id
+   * @since 3.0
+   */
+  public static String getProgramInfoPluginId() {
+    return DATAFILE_PREFIX;
   }
 }
