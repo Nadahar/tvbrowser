@@ -56,7 +56,7 @@ import devplugin.Program;
 
 public class MausSettingsTab implements devplugin.SettingsTab {
 
-  private ContextMenuIf mLeftSingleClickIf, mDefaultIf, mMiddleClickIf;
+  private ContextMenuIf mLeftSingleClickIf, mDoubleClickIf, mMiddleClickIf;
 
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(MausSettingsTab.class);
 
@@ -68,7 +68,7 @@ public class MausSettingsTab implements devplugin.SettingsTab {
 
   public JPanel createSettingsPanel() {
     mLeftSingleClickIf = ContextMenuManager.getInstance().getLeftSingleClickIf();
-    mDefaultIf = ContextMenuManager.getInstance().getDefaultContextMenuIf();
+    mDoubleClickIf = ContextMenuManager.getInstance().getDefaultContextMenuIf();
     mMiddleClickIf = ContextMenuManager.getInstance().getMiddleClickIf();
 
     JPanel contentPanel = new JPanel(new FormLayout("5dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu",
@@ -93,7 +93,7 @@ public class MausSettingsTab implements devplugin.SettingsTab {
     contentPanel.add(new JLabel(mLocalizer.msg("doubleClickLabel", "Double Click")), cc.xy(2, 7));
     
     mDoubleClickBox = new JComboBox();
-    mDoubleClickBox.setSelectedItem(mDefaultIf);
+    mDoubleClickBox.setSelectedItem(mDoubleClickIf);
     mDoubleClickBox.setMaximumRowCount(15);
     
     mDoubleClickBox.setRenderer(new ContextMenuCellRenderer());
@@ -137,13 +137,13 @@ public class MausSettingsTab implements devplugin.SettingsTab {
     }
     
     mLeftSingleClickBox.setSelectedItem(mLeftSingleClickIf);
-    mDoubleClickBox.setSelectedItem(mDefaultIf);
+    mDoubleClickBox.setSelectedItem(mDoubleClickIf);
     mMiddleClickBox.setSelectedItem(mMiddleClickIf);
   }
 
   public void saveSettings() {
     mLeftSingleClickIf = (ContextMenuIf) mLeftSingleClickBox.getSelectedItem();
-    mDefaultIf = (ContextMenuIf) mDoubleClickBox.getSelectedItem();
+    mDoubleClickIf = (ContextMenuIf) mDoubleClickBox.getSelectedItem();
     mMiddleClickIf = (ContextMenuIf) mMiddleClickBox.getSelectedItem();
 
     ContextMenuManager.getInstance().setLeftSingleClickIf(mLeftSingleClickIf);
@@ -153,11 +153,11 @@ public class MausSettingsTab implements devplugin.SettingsTab {
       Settings.propLeftSingleClickIf.setString(null);
     }
     
-    ContextMenuManager.getInstance().setDefaultContextMenuIf(mDefaultIf);
-    if (mDefaultIf != null) {
-      Settings.propDefaultContextMenuIf.setString(mDefaultIf.getId());
+    ContextMenuManager.getInstance().setDefaultContextMenuIf(mDoubleClickIf);
+    if (mDoubleClickIf != null) {
+      Settings.propDoubleClickIf.setString(mDoubleClickIf.getId());
     } else {
-      Settings.propDefaultContextMenuIf.setString(null);
+      Settings.propDoubleClickIf.setString(null);
     }
 
     ContextMenuManager.getInstance().setMiddleClickIf(mMiddleClickIf);

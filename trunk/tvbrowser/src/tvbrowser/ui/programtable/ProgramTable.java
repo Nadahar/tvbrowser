@@ -366,7 +366,7 @@ public class ProgramTable extends JPanel
           if (((y + cellHeight) > clipBounds.y)
               && (y < (clipBounds.y + clipBounds.height))) {
 
-            if (Settings.propMouseOver.getBoolean()) {
+            if (Settings.propProgramTableMouseOver.getBoolean()) {
               Rectangle rec = new Rectangle(x, y, mColumnWidth, cellHeight);
               if ((mMouse != null) && (rec.contains(mMouse))) {
                 mouseOver = true;
@@ -692,7 +692,7 @@ public class ProgramTable extends JPanel
 
 
   private void handleMouseMoved(MouseEvent evt) {
-    if (Settings.propMouseOver.getBoolean()) {
+    if (Settings.propProgramTableMouseOver.getBoolean()) {
       if ((mPopupMenu == null) || (!mPopupMenu.isVisible())) {
         mMouse = evt.getPoint();
         Point cellIndex = getMatrix(mMouse.x, mMouse.y);
@@ -739,7 +739,7 @@ public class ProgramTable extends JPanel
   
   
   private void handleMouseExited(MouseEvent evt) {
-    if (Settings.propMouseOver.getBoolean()) {
+    if (Settings.propProgramTableMouseOver.getBoolean()) {
       JViewport viewport = (JViewport) getParent();
       if (((mPopupMenu == null) || (!mPopupMenu.isVisible())) && !viewport.getViewRect().contains(evt.getPoint())) {
         repaintCell(mMouseMatrix);

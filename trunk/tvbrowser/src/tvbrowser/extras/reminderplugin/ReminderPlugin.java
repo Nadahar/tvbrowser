@@ -118,7 +118,7 @@ public class ReminderPlugin {
   private ReminderPlugin() {
     mInstance = this;
     mClientPluginTargets = new ProgramReceiveTarget[0];
-    mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
+    mConfigurationHandler = new ConfigurationHandler(getReminderPluginId());
     loadSettings();
     mReminderList = new ReminderList();
     mReminderList.setReminderTimerListener(new ReminderTimerListener(mSettings, mReminderList));
@@ -836,6 +836,16 @@ public class ReminderPlugin {
    * @return The id of this plugin.
    */
   public String getId() {
+    return getReminderPluginId();
+  }
+
+  /**
+   * get the ID of the plugin (without the need to load the plugin)
+   * 
+   * @return the id
+   * @since 3.0
+   */
+  public static String getReminderPluginId() {
     return DATAFILE_PREFIX;
   }
 
