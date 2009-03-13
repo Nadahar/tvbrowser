@@ -49,6 +49,8 @@ import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
+import devplugin.PluginsFilterComponent;
+import devplugin.PluginsProgramFilter;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ThemeIcon;
@@ -76,6 +78,10 @@ public final class WirSchauenPlugin extends Plugin {
   private PluginInfo mPluginInfo;
 
   private Icon mIcon;
+
+  private PluginsProgramFilter mFilter;
+
+  private WirSchauenFilterComponent mComponent;
   public static final String BASE_URL = "http://www.wirschauen.de/events/";
 
   /**
@@ -256,4 +262,29 @@ public final class WirSchauenPlugin extends Plugin {
     getRootNode();
     storeRootNode();
   }
+
+  @Override
+  public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
+    return (Class<? extends PluginsFilterComponent>[]) new Class[] { WirSchauenFilterComponent.class };
+  }
+
+  @Override
+  public PluginsProgramFilter[] getAvailableFilter() {
+    if (mFilter == null) {
+      mComponent = new WirSchauenFilterComponent();
+      mFilter = new PluginsProgramFilter(this) {
+        @Override
+        public String getSubName() {
+          return mComponent.getUserPresentableClassName();
+        }
+
+        public boolean accept(final Program program) {
+          return mComponent.accept(program);
+        }
+      };
+    }
+    return new PluginsProgramFilter[] { mFilter };
+  }
+  
+  
 }
