@@ -40,7 +40,7 @@ public class ActorSearcher extends RegexSearcher {
   public ActorSearcher(String actor)
       throws TvBrowserException {
     super(getSearchTerm(actor), false);
-    String[] actorStr = actor.split("\\s");
+    String[] actorStr = actor.trim().split("\\s");
     mLastName = actorStr[actorStr.length-1].toLowerCase();
   }
   
@@ -56,6 +56,10 @@ public class ActorSearcher extends RegexSearcher {
 
   private static String getSearchTerm(String actor) {
     if (actor == null) {
+      return null;
+    }
+    actor = actor.trim();
+    if (actor.length() == 0) {
       return null;
     }
     String[] actorStr = actor.split("\\s");

@@ -25,15 +25,18 @@
  */
 package tvbrowser.extras.favoritesplugin.core;
 
-import java.io.ObjectOutputStream;
+import java.awt.GridLayout;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.awt.*;
+import java.io.ObjectOutputStream;
 
-import util.ui.SearchFormSettings;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
-
-import javax.swing.*;
+import util.ui.SearchFormSettings;
 
 public class TopicFavorite extends Favorite {
 
@@ -54,6 +57,7 @@ public class TopicFavorite extends Favorite {
 
   public TopicFavorite(String topic) {
     super();
+    topic = topic.trim();
     mTopic = topic;
     setName(mTopic);
     mSearchFormSettings = new SearchFormSettings(mTopic);
