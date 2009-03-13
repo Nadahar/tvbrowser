@@ -52,6 +52,7 @@ public class ActorsFavorite extends Favorite {
 
   public ActorsFavorite(String actors) {
     super();
+    actors = actors.trim();
     setName(actors);
     mSearchFormSettings = createSearchFormSettings(actors);
   }

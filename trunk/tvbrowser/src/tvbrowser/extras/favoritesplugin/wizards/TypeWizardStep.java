@@ -268,7 +268,7 @@ public class TypeWizardStep extends AbstractWizardStep {
       }
     } else if (mActorsRb.isSelected()) {
       String actors = (String) mActorsCb.getSelectedItem();
-      if (actors != null && actors.length() > 0) {
+      if (actors != null && actors.trim().length() > 0) {
         return new ActorsFavorite(actors);
       }
     }
