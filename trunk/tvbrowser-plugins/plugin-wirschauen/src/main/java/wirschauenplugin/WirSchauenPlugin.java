@@ -58,7 +58,9 @@ import devplugin.Version;
  * With this plugin it is possible to add information about a program and send it to wirschauen.de
  */
 public final class WirSchauenPlugin extends Plugin {
-  private static final Version mVersion = new Version(0, 9, 0, false);
+  private static final boolean IS_STABLE = false;
+
+  private static final Version mVersion = new Version(0, 10, 0, IS_STABLE);
 
   private static Logger mLog = Logger.getLogger(WirSchauenPlugin.class.getName());
 
@@ -124,7 +126,9 @@ public final class WirSchauenPlugin extends Plugin {
   public PluginInfo getInfo() {
     if (mPluginInfo == null) {
       mPluginInfo = new PluginInfo(WirSchauenPlugin.class, mLocalizer.msg("name", "WirSchauenPlugin"),
-              mLocalizer.msg("desc", "Makes it possible to add descriptions to programs"), "TV-Browser Team");
+              mLocalizer.msg("desc",
+          "Makes it possible to add descriptions to programs"),
+          "TV-Browser Team", "GPL 3");
     }
 
     return mPluginInfo;
