@@ -75,7 +75,7 @@ final public class MovieAwardPlugin extends Plugin {
    */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(MovieAwardPlugin.class);
   private static Logger mLog = Logger.getLogger(MovieAwardPlugin.class.getName());
-  private static final Version mVersion = new Version(0, 6);
+  private static final Version mVersion = new Version(0, 7);
 
   private PluginInfo mPluginInfo;
   private ArrayList<MovieAward> mMovieAwards;
@@ -129,7 +129,8 @@ final public class MovieAwardPlugin extends Plugin {
       final String desc = mLocalizer.msg("description", "Shows movie awards");
       final String author = "TV-Browser Team";
 
-      mPluginInfo = new PluginInfo(MovieAwardPlugin.class, name, desc, author);
+      mPluginInfo = new PluginInfo(MovieAwardPlugin.class, name, desc, author,
+          "GPL 3");
     }
 
     return mPluginInfo;
