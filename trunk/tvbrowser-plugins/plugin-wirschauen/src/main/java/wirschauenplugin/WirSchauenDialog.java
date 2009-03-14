@@ -80,6 +80,8 @@ import devplugin.ProgramFieldType;
 
 public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
     ItemListener {
+  private static final String WIRSCHAUEN_EVENTS_URL = "http://wirschauen.de/events/";
+
   /**
    * Localizer
    */
@@ -151,6 +153,16 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
   private String mDefaultMessage = "";
 
   private boolean mEnablePaste = false;
+
+  /**
+   * event ID on the WirSchauen server
+   */
+  private int mEventId;
+
+  /**
+   * description ID on the WirSchauen server
+   */
+  private int mDescId;
   
   private static final Color mNeededBg = new Color(255,0,0);
 
@@ -253,6 +265,14 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
     mStatusLabel.setEnabled(false);
     mStatusLabel.setFont(mStatusLabel.getFont().deriveFont(Font.ITALIC));
     panel.add(mStatusLabel, cc.xyw(3,5,4));
+    mStatusLabel.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(final MouseEvent e) {
+        if (mEventId > 0) {
+          Launch.openURL(getEventUrl());
+        }
+      }
+    });
 
     // URL
     final JLabel url = new JLabel(mLocalizer.msg("URL", "URL") + ": ");
@@ -508,13 +528,23 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
         } else if (count == 0) {
           showDefaultStatus(STATUS_INFO, mLocalizer.msg("countNone", "No description available on the server."));
         } else if (count == 1) {
-          showDefaultStatus(STATUS_INFO, mLocalizer.msg("countOne", "One description available on the server. But you could add a better one."));
+          showDefaultStatus(
+              STATUS_INFO,
+              mLocalizer
+                  .msg(
+                      "countOne",
+                      "One description available on the server. But you could add a better one.",
+                      getEventUrl()));
         }
 
       }
     });
     
     calculateOkButtonStatus();
+  }
+
+  private String getEventUrl() {
+    return WIRSCHAUEN_EVENTS_URL + mEventId;
   }
 
   private void calculateOkButtonStatus() {
@@ -652,6 +682,8 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
     mOldOws = "false";
     mOldPremiere = "false";
     mOldCategory = "0";
+    mEventId = -1;
+    mDescId = -1;
     
     // now ask the server
     int count = -1;
@@ -677,6 +709,15 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
         count = 1;
 
         final HashMap<String, String> data = handler.getData();
+        
+        String s = getServerValue(data, "event_id");
+        if (s.length() > 0) {
+          mEventId = Integer.valueOf(s);
+        }
+        s = getServerValue(data, "desc_id");
+        if (s.length() > 0) {
+          mDescId = Integer.valueOf(s);
+        }
 
         mOldUrl = getServerValue(data, "url");
         String urlText = mOldUrl;
@@ -729,14 +770,11 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
 
   private String getServerValue(final HashMap<String, String> data,
       final String key) {
-    String text = data.get(key);
+    final String text = data.get(key);
     if (text != null) {
-      text = text.trim();
+      return text.trim();
     }
-    else {
-      text = "";
-    }
-    return text;
+    return "";
   }
   
   protected boolean hasChanged() {
