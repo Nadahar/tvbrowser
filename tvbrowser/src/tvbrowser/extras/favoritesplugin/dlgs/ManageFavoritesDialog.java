@@ -960,6 +960,14 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
                 }
                 // Import the favorite if it is new
                 if (! alreadyKnown) {
+                  line = line.replace(" *", " OR ").replace(" |", " OR ")
+                      .replace(" ODER ", " OR ").replace(" +", " AND ")
+                      .replace(" &", " AND ").replace(" UND ", " AND ")
+                      .replace(" \\", " NOT ").replace(" NICHT ", " NOT ")
+                      .replace("_", " ").trim();
+                  while (line.indexOf("  ") >= 0) {
+                    line = line.replace("  ", " ");
+                  }
                   AdvancedFavorite fav = new AdvancedFavorite(line);
                   fav.updatePrograms();
                   if (mFavoritesListModel != null) {
