@@ -22,16 +22,16 @@ import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvdataservice.PictureSettingsIf;
 import tvdataservice.SettingsPanel;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * A panel with the settings for the picture
@@ -61,8 +61,10 @@ public class PictureConfigPanel extends JPanel {
     
     mDownloadAll = new JRadioButton(mLocalizer.msg("allPictures","Download pictures for all programs"));
     mDownloadNoPictures = new JRadioButton(mLocalizer.msg("noPictures","Don't download pictures"));
-    mDownloadEvening = new JRadioButton(mLocalizer.msg("eveningPictures","Download only pictures for the evening programs"));
-    mDownloadMorning = new JRadioButton(mLocalizer.msg("morningPictures","Download only pictures for the night and day programs"));
+    mDownloadEvening = new JRadioButton(mLocalizer.msg("eveningPictures",
+        "Download only pictures for the evening programs (4 PM to midnight)"));
+    mDownloadMorning = new JRadioButton(mLocalizer.msg("morningPictures",
+        "Download only pictures for the day programs (midnight to 4 PM)"));
 
     pb.add(UiUtilities.createHtmlHelpTextArea((update ? mLocalizer.msg("preambelUpdate", "Preambel") : "") + mLocalizer.msg("preambel", "Preambel")), cc.xyw(2,2,2));
     
