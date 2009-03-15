@@ -164,7 +164,9 @@ final public class MovieAwardPlugin extends Plugin {
 
   @Override
   public void onActivation() {
-    initDatabase();
+    if (mStartFinished) {
+      handleTvBrowserStartFinished();
+    }
     // initialize sub nodes to be able to store entries
     // but do not initialize root node, to avoid updates
     mDateNode = new PluginTreeNode(mLocalizer.msg("dateNode", "Datum"));
@@ -218,6 +220,9 @@ final public class MovieAwardPlugin extends Plugin {
   }
 
   public boolean hasAwards(final Program program) {
+    if (!mStartFinished) {
+      return false;
+    }
     // no awards for very short programs
     final int length = program.getLength();
     if (length > 0 && length < 5) {
@@ -330,6 +335,7 @@ final public class MovieAwardPlugin extends Plugin {
 
   @Override
   public void handleTvBrowserStartFinished() {
+    initDatabase();
     updateRootNodeIfVisible();
   }
 
@@ -341,6 +347,20 @@ final public class MovieAwardPlugin extends Plugin {
     // update tree, but only if it is shown at all
     if (mRootNode != null) {
       updateRootNode();
+    }
+    // update program table
+    final Channel[] channels = devplugin.Plugin.getPluginManager()
+        .getSubscribedChannels();
+    final Date date = getPluginManager().getCurrentDate();
+    for (Channel channel : channels) {
+      final Iterator<Program> iter = Plugin.getPluginManager()
+          .getChannelDayProgram(date, channel);
+      if (iter != null) {
+        while (iter.hasNext()) {
+          final Program program = iter.next();
+          program.validateMarking();
+        }
+      }
     }
   }
 
@@ -431,6 +451,9 @@ final public class MovieAwardPlugin extends Plugin {
   public void handleTvDataDeleted(final ChannelDayProgram oldProg) {
     // handle deletion independent of updateFinished as this may be called
     // outside data update
+    if (oldProg == null) {
+      return;
+    }
     boolean updateNeeded = false;
     final Iterator<Program> iter = oldProg.getPrograms();
     if (iter != null) {
