@@ -99,6 +99,11 @@ public class AdvancedFavorite extends Favorite {
   public AdvancedFavorite(String searchText) {
     super();
     mSearchFormSettings = new SearchFormSettings(searchText);
+    if (searchText.contains(" OR ") || searchText.contains(" AND ")
+        || searchText.contains(" NOT ")) {
+      mSearchFormSettings.setSearcherType(PluginManager.SEARCHER_TYPE_BOOLEAN);
+      mSearchFormSettings.setSearchIn(SearchFormSettings.SEARCH_IN_ALL);
+    }
   }
 
   @Override
