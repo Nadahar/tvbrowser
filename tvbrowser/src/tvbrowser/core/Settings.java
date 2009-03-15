@@ -37,7 +37,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -104,20 +106,26 @@ public class Settings {
 
   private static final long PROXY_PASSWORD_SEED = 6528587292713416704L;
 
-  public static final int GET_DATA_FROM_SERVER = 0,
-      GET_DATA_FROM_LOCAL_DISK = 1;
-
-  public static final int NEVER = 0, DAILY = 1, ONSTARTUP = DAILY,
-      EVERY3DAYS = 2, WEEKLY = 3;
-
   private static final String SETTINGS_FILE = "settings.prop";
   private static final String DEFAULT_USER_DIR = ".tvbrowser";
   private static final String WINDOW_SETTINGS_FILE = "window.settings.dat";
 
-  private static final Font PROGRAMTITLEFONT = new Font("Dialog", Font.BOLD, 12);
-  private static final Font PROGRAMINFOFONT = new Font("Dialog", Font.PLAIN, 10);
-  private static final Font CHANNELNAMEFONT = new Font("Dialog", Font.BOLD, 12);
-  private static final Font PROGRAMTIMEFONT = new Font("Dialog", Font.BOLD, 12);
+  private static String DEFAULT_FONT_NAME = "Dialog";
+  private static Font DEFAULT_PROGRAMTITLEFONT = new Font(DEFAULT_FONT_NAME,
+      Font.BOLD, 12);
+  private static Font DEFAULT_PROGRAMINFOFONT = new Font(DEFAULT_FONT_NAME,
+      Font.PLAIN, 10);
+  private static final Font DEFAULT_CHANNELNAMEFONT = new Font(
+      DEFAULT_FONT_NAME, Font.BOLD, 12);
+  private static Font DEFAULT_PROGRAMTIMEFONT = new Font(DEFAULT_FONT_NAME,
+      Font.BOLD, 12);
+
+  /**
+   * if any of these fonts is found on the system then it is used as default
+   * font
+   */
+  private static final String[] KNOWN_GOOD_FONTS = { "Trebuchet MS",
+      "Arial Narrow", "Dialog" };
 
   private static PropertyManager mProp = new PropertyManager();
 
@@ -1021,16 +1029,16 @@ public class Settings {
       mProp, "lastdownload", null);
 
   public static final FontProperty propProgramTitleFont = new FontProperty(
-      mProp, "font.programtitle", PROGRAMTITLEFONT);
+      mProp, "font.programtitle", getDefaultFont(DEFAULT_PROGRAMTITLEFONT));
 
   public static final FontProperty propProgramInfoFont = new FontProperty(
-      mProp, "font.programinfo", PROGRAMINFOFONT);
+      mProp, "font.programinfo", getDefaultFont(DEFAULT_PROGRAMINFOFONT));
 
   public static final FontProperty propChannelNameFont = new FontProperty(
-      mProp, "font.channelname", CHANNELNAMEFONT);
+      mProp, "font.channelname", getDefaultFont(DEFAULT_CHANNELNAMEFONT));
 
   public static final FontProperty propProgramTimeFont = new FontProperty(
-      mProp, "font.programtime", PROGRAMTIMEFONT);
+      mProp, "font.programtime", getDefaultFont(DEFAULT_PROGRAMTIMEFONT));
 
   public static final ProgramFieldTypeArrayProperty propProgramInfoFields = new ProgramFieldTypeArrayProperty(
       mProp, "programpanel.infoFields", new ProgramFieldType[] {
@@ -1433,6 +1441,18 @@ public class Settings {
     layoutWindow(windowId, window, null);
   }
   
+  private static Font getDefaultFont(Font defFont) {
+    GraphicsEnvironment ge = java.awt.GraphicsEnvironment
+        .getLocalGraphicsEnvironment();
+    List<String> fontNames = Arrays.asList(ge.getAvailableFontFamilyNames());
+    for (String knownFont : KNOWN_GOOD_FONTS) {
+      if (fontNames.contains(knownFont)) {
+        return new Font(knownFont, defFont.getStyle(), defFont.getSize());
+      }
+    }
+    return defFont;
+  }
+
   /**
    * Sets the window position and size for the given window with the values of the given id.
 
