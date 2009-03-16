@@ -1121,6 +1121,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
       int markerY = mTitleIcon.getIconHeight()
           + mDescriptionIcon.getIconHeight() + mPictureAreaIcon.getIconHeight()
           + 2;
+      markerY = Math.min(markerY, getHeight() - 16); 
       if ((y >= markerY) && (y <= markerY + 16)) {
         return getMarkedByTooltip();
       }
