@@ -187,14 +187,18 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
         final ProgramItem progItemInTree = (ProgramItem) node.getUserObject();
         final Program progInTree = progItemInTree.getProgram();
         
-        if(progInTree.getProgramState() == Program.WAS_DELETED_STATE) {
-          removeProgram(progInTree);
-          handler.addRemovedProgram(progInTree);
+        if (progInTree == null) {
+          node.removeProgram(progItemInTree);
         }
-        else if(progInTree.getProgramState() == Program.WAS_UPDATED_STATE) {
-          final Program updatedProg = Plugin.getPluginManager().getProgram(
-              progInTree.getDate(), progInTree.getID());
-          progItemInTree.setProgram(updatedProg);
+        else {
+          if (progInTree.getProgramState() == Program.WAS_DELETED_STATE) {
+            removeProgram(progInTree);
+            handler.addRemovedProgram(progInTree);
+          } else if (progInTree.getProgramState() == Program.WAS_UPDATED_STATE) {
+            final Program updatedProg = Plugin.getPluginManager().getProgram(
+                progInTree.getDate(), progInTree.getID());
+            progItemInTree.setProgram(updatedProg);
+          }
         }
       }
       else {
@@ -627,7 +631,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
       mChildNodes.remove(node);
       if (mMarker != null) {
         program.unmark(mMarker);
-    }
+      }
     }
   }
 
