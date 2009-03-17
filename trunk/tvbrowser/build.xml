@@ -321,6 +321,8 @@
     <unjar src="${lib.dir}/jcom.jar" dest="${unpacked.dir}/jcom.jar" />
     <unjar src="${lib.dir}/opencsv-1.8.jar" dest="${unpacked.dir}/opencsv-1.8.jar" />
     <unjar src="${lib.dir}/htmlparser.jar" dest="${unpacked.dir}/htmlparser.jar" />
+    <unjar src="${lib.dir}/aclibico-2.1.jar" dest="${unpacked.dir}/aclibico-2.1.jar" />
+    <unjar src="${lib.dir}/log4j-1.2.8.jar" dest="${unpacked.dir}/log4j-1.2.8.jar" />
 
     <!-- Pack the tvbrowser.jar -->
     <jar jarfile="${tvbrowser-default.runtime.dir}/tvbrowser.jar"
@@ -425,6 +427,8 @@
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/WebPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="webplugin/**"/>
+      <fileset dir="${unpacked.dir}/aclibico-2.1.jar" includes="**" />   
+      <fileset dir="${unpacked.dir}/log4j-1.2.8.jar" includes="**" />   
     </jar>
 
     <!-- Pack the TV data service jars -->
