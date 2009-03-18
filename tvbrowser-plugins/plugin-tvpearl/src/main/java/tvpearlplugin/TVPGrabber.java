@@ -40,19 +40,19 @@ public class TVPGrabber
   /**
    * regular expression to grab the content of a TV pearl
    */
-  private static Pattern PATTERN_CONTENT = Pattern
+  private static final Pattern PATTERN_CONTENT = Pattern
       .compile("<p class=\"author\"><a href=\"([^\"]*)\">.*?<a href=\"./memberlist.php?[^\"]*\"[^>]*>(.*?)</a></strong> &raquo; (.*?)</p>[\\r\\n\\t ]*?<div class=\"content\">([\\w\\W]*?)(<dl class=\"postprofile\"|<div[^>]*class=\"signature\">|<div class=\"notice\")");
 
   /**
    * regular expression to grab the URL of the next forum page
    */
-  private static Pattern PATTERN_NEXT_URL = Pattern
+  private static final Pattern PATTERN_NEXT_URL = Pattern
       .compile("<a href=\"([^\"]*?)\"[^>]*>Nächste</a>");
 
   /**
    * format of the post create date
    */
-  private static SimpleDateFormat FORMAT_CREATE_DATE = new SimpleDateFormat(
+  private static final SimpleDateFormat FORMAT_CREATE_DATE = new SimpleDateFormat(
       "dd MMMM yyyy, HH:mm", Locale.GERMAN);
 
   private boolean mRecursiveGrab = true;
@@ -214,7 +214,7 @@ public class TVPGrabber
 		}
 	}
 	
-	private Date parseDate(final String input) {
+	private synchronized Date parseDate(final String input) {
     String source = input.trim();
     try {
       return FORMAT_CREATE_DATE.parse(source);
