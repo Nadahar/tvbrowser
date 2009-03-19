@@ -60,9 +60,9 @@ import devplugin.Version;
  * With this plugin it is possible to add information about a program and send it to wirschauen.de
  */
 public final class WirSchauenPlugin extends Plugin {
-  private static final boolean IS_STABLE = false;
+  private static final boolean IS_STABLE = true;
 
-  private static final Version mVersion = new Version(0, 10, 0, IS_STABLE);
+  private static final Version mVersion = new Version(0, 11, 0, IS_STABLE);
 
   private static Logger mLog = Logger.getLogger(WirSchauenPlugin.class.getName());
 
