@@ -1,3 +1,17 @@
+/*
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package imdbplugin;
 
 import java.io.File;
@@ -43,6 +57,9 @@ public final class ImdbDatabase {
 
   private IndexSearcher mSearcher;
   private IndexWriter mWriter;
+  private static final String[][] NORMALIZATION = new String[][] {
+      { "ä", "ae" }, { "ü", "ue" }, { "ö", "oe" }, { "ß", "ss" },
+      { "Ä", "Ae" }, { "Ü", "Ue" }, { "Ö", "Oe" } };
 
   public ImdbDatabase(final File imdbDatabase) {
     mCurrentPath = imdbDatabase;
@@ -65,17 +82,15 @@ public final class ImdbDatabase {
   }
 
   public boolean isInitialised() {
-    boolean ret = false;
-
     try {
       if ((mSearcher != null) && (mSearcher.maxDoc() > 1)) {
-        ret = true;
+        return true;
       }
     } catch (IOException e) {
-      // Empty catch Block
+      return false;
     }
 
-    return ret;
+    return false;
   }
 
   public String addTitle(final String movieTitle, final String episode,
@@ -147,14 +162,9 @@ public final class ImdbDatabase {
   }
 
   private String normalise(String str) {
-    // ToDo: replace this with better normalizer
-    str = str.replaceAll("ä", "ae");
-    str = str.replaceAll("ü", "ue");
-    str = str.replaceAll("ö", "oe");
-    str = str.replaceAll("ß", "ss");
-    str = str.replaceAll("Ä", "Ae");
-    str = str.replaceAll("Ü", "Ue");
-    str = str.replaceAll("Ö", "Oe");
+    for (String[] pair : NORMALIZATION) {
+      str = str.replaceAll(pair[0], pair[1]);
+    }
     return str;
   }
 
@@ -266,10 +276,10 @@ public final class ImdbDatabase {
         return null;
       }
      
-      final Iterator it = hits.iterator();
+      final Iterator<Hit> it = hits.iterator();
 
       if (it.hasNext()) {
-        final Hit hit = (Hit) it.next();
+        final Hit hit = it.next();
         final Document document = hit.getDocument();
         return document.getField(MOVIE_ID).stringValue();
       } else {
@@ -359,10 +369,10 @@ public final class ImdbDatabase {
     try {
 
       Hits hits = mSearcher.search(bQuery);
-      Iterator it = hits.iterator();
+      Iterator<Hit> it = hits.iterator();
 
       if (it.hasNext()) {
-        final Hit hit = (Hit) it.next();
+        final Hit hit = it.next();
         final Document document = hit.getDocument();
 
         printDocument(document);
@@ -427,10 +437,10 @@ public final class ImdbDatabase {
       bQuery.add(new TermQuery(new Term(MOVIE_ID, id)),BooleanClause.Occur.MUST);
 
       final Hits hits = mSearcher.search(bQuery);
-      final Iterator it = hits.iterator();
+      final Iterator<Hit> it = hits.iterator();
 
       if (it.hasNext()) {
-        final Hit hit = (Hit) it.next();
+        final Hit hit = it.next();
         final Document document = hit.getDocument();
 
         return new ImdbRating(
