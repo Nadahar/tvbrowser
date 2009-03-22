@@ -1,3 +1,17 @@
+/*
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package imdbplugin;
 
 import java.io.BufferedInputStream;
@@ -23,9 +37,12 @@ import devplugin.ProgressMonitor;
 public class ImdbParser {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ImdbParser.class);
 
-  private static final Pattern episodePattern = Pattern
+  private static final java.util.logging.Logger mLog = java.util.logging.Logger
+      .getLogger(ImdbParser.class.getName());
+
+  private static final Pattern EPISODE_PATTERN = Pattern
       .compile("^(.*?)(?:\\W\\(\\#.*\\))?$");
-  private static final Pattern moviePrefixPattern = Pattern.compile("(.*), ([A-Z][a-z']{0,2})");
+  private static final Pattern MOVIE_PREFIX_PATTERN = Pattern.compile("(.*), ([A-Z][a-z']{0,2})");
 
   private ImdbDatabase mDatabase;
   private String mServer;
@@ -47,20 +64,14 @@ public class ImdbParser {
     ProgressInputStream progressInputStream = new ProgressInputStream(
         downloadFile(monitor, "aka-titles.list.gz"), monitor);
 
-    System.out.println("AKA TITLES");
-
     parseAkaTitles(new GZIPInputStream(progressInputStream), monitor);
 
-    System.out.println("AKA TITLES DONE");
-
     optimizeDatabase(monitor);
-    System.out.println("RATINGS");
     if (mRunParser) {
       progressInputStream = new ProgressInputStream(downloadFile(monitor,
           "ratings.list.gz"), monitor, progressInputStream.getCurrentPosition());
       parseRatings(new GZIPInputStream(progressInputStream), monitor);
     }
-    System.out.println("RATINGS DONE");
 
     if (!mRunParser) {
       // Cancel was pressed, all Files have to be deleted
@@ -68,8 +79,6 @@ public class ImdbParser {
     } else {
       optimizeDatabase(monitor);
     }
-
-    System.out.println("PARSING DONE");
   }
 
   private BufferedInputStream downloadFile(final ProgressMonitor monitor,
@@ -152,21 +161,27 @@ public class ImdbParser {
       } else if (startFound) {
 
         if (line.length() > 0) {
-          if (line.startsWith("(aka ") && movieId != null) {
-            final Matcher matcher = akaPattern.matcher(line);
-            if (matcher.matches()) {
-              final String title = cleanMovieTitle(matcher.group(1).trim());
-              int year = -1;
-              if (matcher.group(2) != null) {
-                year = Integer.parseInt(matcher.group(2));
-              }
-              final String type = matcher.group(3);
-              final String episode = cleanEpisodeTitle(matcher.group(4));
+          if (line.startsWith("(aka ")) {
+            if (movieId != null) {
+              final Matcher matcher = akaPattern.matcher(line);
+              if (matcher.matches()) {
+                final String title = cleanMovieTitle(matcher.group(1).trim());
+                int year = -1;
+                if (matcher.group(2) != null) {
+                  year = Integer.parseInt(matcher.group(2));
+                }
+                final String type = matcher.group(3);
+                final String episode = cleanEpisodeTitle(matcher.group(4));
 
-              mDatabase.addAkaTitle(movieId, title, episode, year, type);
-              if (++count % 100 == 0) {
-                monitor.setMessage(mLocalizer.msg("akaTitles", "Alternative title {0}",count));
+                mDatabase.addAkaTitle(movieId, title, episode, year, type);
+                if (++count % 100 == 0 || count == 1) {
+                  monitor.setMessage(mLocalizer.msg("akaTitles",
+                      "Alternative title {0}", count));
+                }
               }
+            }
+            else {
+              mLog.severe("Parse error: movieId unknown for alternative title");
             }
           } else {
             final Matcher matcher = moviePattern.matcher(line);
@@ -181,6 +196,10 @@ public class ImdbParser {
               movieId = mDatabase.getOrCreateMovieId(movieTitle, episode, year, type);
             }
           }
+        }
+        else {
+          // blank line, prepare for new movie
+          movieId = null;
         }
 
       }
@@ -231,7 +250,7 @@ public class ImdbParser {
           final String episode = cleanEpisodeTitle(matcher.group(4));
 
           mDatabase.addRating(mDatabase.getOrCreateMovieId(movieTitle, episode, year, type), rating, votes, distribution);
-          if (++count % 100 == 0) {
+          if (++count % 100 == 0 || count == 1) {
             monitor.setMessage(mLocalizer.msg("ratings", "Rating {0}", count));
           }
         }
@@ -249,7 +268,7 @@ public class ImdbParser {
       return "";
     }
 
-    final Matcher m = episodePattern.matcher(episode);
+    final Matcher m = EPISODE_PATTERN.matcher(episode);
     m.find();
 
     return m.group(1);
@@ -260,7 +279,7 @@ public class ImdbParser {
       movieTitle = movieTitle.substring(1, movieTitle.length() - 1);
     }
 
-    final Matcher matcher = moviePrefixPattern.matcher(movieTitle);
+    final Matcher matcher = MOVIE_PREFIX_PATTERN.matcher(movieTitle);
     if (matcher.matches()) {
       movieTitle = matcher.group(2) + " " + matcher.group(1);
     }
