@@ -315,7 +315,7 @@ public final class ImdbPlugin extends Plugin {
 
   @Override
   public SettingsTab getSettingsTab() {
-    return new ImdbSettings((JFrame)getParentFrame(), this);
+    return new ImdbSettingsTab((JFrame)getParentFrame(), this);
   }
 
   /**

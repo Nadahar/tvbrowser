@@ -161,11 +161,12 @@ public final class ImdbDatabase {
     }
   }
 
-  private String normalise(String str) {
+  private String normalise(final String str) {
+    String result = str.toLowerCase();
     for (String[] pair : NORMALIZATION) {
-      str = str.replaceAll(pair[0], pair[1]);
+      result = result.replaceAll(pair[0], pair[1]);
     }
-    return str;
+    return result;
   }
 
   public void addRating(final String movieId, final int rating,
@@ -341,10 +342,15 @@ public final class ImdbDatabase {
     return null;
   }
 
-  public String getMovieId(final String title, final String episode,
+  public String getMovieId(String title, String episode,
       final int year) {
     if (mSearcher == null) {
       return null;
+    }
+    
+    title = normalise(title);
+    if (episode != null && episode.length() > 0) {
+      episode = normalise(episode);
     }
 
     BooleanQuery bQuery = new BooleanQuery();
