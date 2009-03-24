@@ -37,16 +37,16 @@ import com.jgoodies.forms.layout.FormLayout;
 import devplugin.Channel;
 import devplugin.SettingsTab;
 
-public final class ImdbSettings implements SettingsTab {
+public final class ImdbSettingsTab implements SettingsTab {
   /**
    * Translator
    */
-  private static final Localizer mLocalizer = Localizer.getLocalizerFor(ImdbSettings.class);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(ImdbSettingsTab.class);
   private ImdbPlugin mImdbPlugin;
   private JFrame mParent;
   private Channel[] mExcludedChannels;
 
-  public ImdbSettings(final JFrame parent, final ImdbPlugin imdbPlugin) {
+  public ImdbSettingsTab(final JFrame parent, final ImdbPlugin imdbPlugin) {
     mParent = parent;
     mImdbPlugin = imdbPlugin;
     mExcludedChannels = mImdbPlugin.getExcludedChannels();
